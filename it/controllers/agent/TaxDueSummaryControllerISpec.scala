@@ -47,7 +47,6 @@ class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
   )(FakeRequest())
 
   val implicitDateFormatter: ImplicitDateFormatter = app.injector.instanceOf[ImplicitDateFormatterImpl]
-  implicit val messages: Messages = app.injector.instanceOf[MessagesApi].preferred(FakeRequest())
 
   val incomeSourceDetailsSuccess: IncomeSourceDetailsModel = IncomeSourceDetailsModel(
     mtdbsa = testMtditid,
@@ -145,8 +144,7 @@ class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
 
         res should have(
           httpStatus(OK),
-          pageTitleAgent(taxDueSummaryTitle),
-          elementTextBySelector("h1")(taxDueSummaryHeadingAgentNew)
+          pageTitleAgent("taxCal_breakdown.heading")
         )
       }
     }
@@ -169,9 +167,8 @@ class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
 
       res should have(
         httpStatus(OK),
-        pageTitleAgent(taxDueSummaryTitle),
-        elementTextBySelector("h1")(taxDueSummaryHeading ++ " " + "Tax calculation"),
-        elementTextByID("additional_charges")("Additional charges")
+        pageTitleAgent("taxCal_breakdown.heading"),
+        elementTextByID("additional_charges")(additionCharges)
       )
     }
 
@@ -193,9 +190,8 @@ class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
 
       res should have(
         httpStatus(OK),
-        pageTitleAgent(taxDueSummaryTitle),
-        elementTextBySelector("h1")(taxDueSummaryHeading ++ " " + "Tax calculation"),
-        elementTextByID("additional_charges")("Additional charges")
+        pageTitleAgent("taxCal_breakdown.heading"),
+        elementTextByID("additional_charges")(additionCharges)
       )
     }
 
@@ -217,9 +213,8 @@ class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
 
       res should have(
         httpStatus(OK),
-        pageTitleAgent(taxDueSummaryTitle),
-        elementTextBySelector("h1")(taxDueSummaryHeading ++ " " + "Tax calculation"),
-        elementTextByID("additional_charges")("Additional charges")
+        pageTitleAgent("taxCal_breakdown.heading"),
+        elementTextByID("additional_charges")(additionCharges)
       )
     }
 
@@ -241,12 +236,11 @@ class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
 
       res should have(
         httpStatus(OK),
-        pageTitleAgent(taxDueSummaryTitle),
-        elementTextBySelector("h1")(taxDueSummaryHeading ++ " " + "Tax calculation")
+        pageTitleAgent("taxCal_breakdown.heading")
       )
 
       res shouldNot have(
-        elementTextByID("additional_charges")("Additional charges")
+        elementTextByID("additional_charges")(additionCharges)
       )
     }
 
@@ -268,9 +262,8 @@ class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
 
       res should have(
         httpStatus(OK),
-        pageTitleAgent(taxDueSummaryTitle),
-        elementTextBySelector("h1")(taxDueSummaryHeading ++ " " + "Tax calculation"),
-        elementTextBySelector("#national-insurance-contributions-table tbody:nth-child(3) td:nth-child(1)")(messages("taxCal_breakdown.table.nic2.false"))
+        pageTitleAgent("taxCal_breakdown.heading"),
+        elementTextBySelector("#national-insurance-contributions-table tbody:nth-child(3) td:nth-child(1)")(nonVoluntaryClass2Nics)
       )
     }
 
@@ -292,9 +285,8 @@ class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
 
       res should have(
         httpStatus(OK),
-        pageTitleAgent(taxDueSummaryTitle),
-        elementTextBySelector("h1")(taxDueSummaryHeading ++ " " + "Tax calculation"),
-        elementTextBySelector("#national-insurance-contributions-table tbody:nth-child(3) td:nth-child(1)")(messages("taxCal_breakdown.table.nic2.true"))
+        pageTitleAgent("taxCal_breakdown.heading"),
+        elementTextBySelector("#national-insurance-contributions-table tbody:nth-child(3) td:nth-child(1)")(voluntaryClass2Nics)
       )
     }
   }

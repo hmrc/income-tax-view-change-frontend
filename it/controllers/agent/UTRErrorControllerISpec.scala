@@ -70,7 +70,7 @@ class UTRErrorControllerISpec extends ComponentSpecBase with FeatureSwitching {
         Then("The UTR Error page is returned to the user")
         result should have(
           httpStatus(OK),
-          pageTitleAgent(titleThereIsAProblem)
+          pageTitleAgent("agent.utr_error.heading")
         )
       }
     }
@@ -100,7 +100,7 @@ class UTRErrorControllerISpec extends ComponentSpecBase with FeatureSwitching {
         Then("Technical difficulties are shown with status OK")
         result should have(
           httpStatus(OK),
-          pageTitleAgent(titleInternalServer)
+          pageTitleAgent(messagesAPI("standardError.heading"))
         )
       }
     }

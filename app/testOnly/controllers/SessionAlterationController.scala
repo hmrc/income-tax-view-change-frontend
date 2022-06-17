@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,12 +14,20 @@
  * limitations under the License.
  */
 
-package testConstants.messages
+package testOnly.controllers
 
-object AgentMessages {
+import forms.utils.SessionKeys.calculationId
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import javax.inject.Inject
 
-  val clientUTRErrorTitle = "Error: What is your client’s UTR?"
-  val clientUTRTitle = "What is your client’s UTR?"
-  val agentError = "You can't use this service yet"
-  val confirmClientDetails = "Confirm your client’s details"
+class SessionAlterationController @Inject()
+    (implicit mcc: MessagesControllerComponents)
+  extends FrontendController(mcc) {
+
+  def addCalcId(value: String): Action[AnyContent] = Action { implicit request =>
+    Ok(value)
+      .addingToSession(calculationId -> value)
+  }
+
 }

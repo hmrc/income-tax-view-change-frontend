@@ -16,9 +16,6 @@
 
 package controllers
 
-import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
-import testConstants.FinancialDetailsIntegrationTestConstants.financialDetailModelPartial
-import testConstants.IncomeSourceIntegrationTestConstants._
 import audit.models.ChargeSummaryAudit
 import auth.MtdItUser
 import config.featureswitch._
@@ -30,9 +27,12 @@ import models.financialDetails.{FinancialDetail, Payment, PaymentsWithChargeType
 import play.api.http.Status._
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
-import java.time.LocalDate
+import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
+import testConstants.FinancialDetailsIntegrationTestConstants.financialDetailModelPartial
+import testConstants.IncomeSourceIntegrationTestConstants._
+import testConstants.messages.ChargeSummaryMessages.{codingOutInsetPara, codingOutMessage, lpiCreated, notCurrentlyChargingInterest, paymentBreakdownHeading, underReview}
 
-import testConstants.messages.ChargeSummaryMessages.{balancingPaymentTitle, lpiBalancingPayment, lpiPoa2, poa1Title, saPayment}
+import java.time.LocalDate
 
 class ChargeSummaryControllerISpec extends ComponentSpecBase {
 
@@ -54,6 +54,9 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
     financialDetailModelPartial(originalAmount = 123.45, chargeType = "ITSA England & NI", mainType = "SA Balancing Charge", dunningLock = Some("Dunning Lock"), interestLock = Some("Interest Lock")),
     financialDetailModelPartial(originalAmount = 123.45, chargeType = "NIC4 Scotland", dunningLock = Some("Stand over order"), interestLock = Some("Breathing Space Moratorium Act")),
     financialDetailModelPartial(originalAmount = 123.45, chargeType = "NIC4 Scotland", mainType = "SA Payment on Account 2", dunningLock = Some("Dunning Lock"), interestLock = Some("Manual RPI Signal")))
+
+  val importantPaymentBreakdown: String = s"${messagesAPI("chargeSummary.dunning.locks.banner.title")} ${messagesAPI("chargeSummary.paymentBreakdown.heading")}"
+  val paymentHistory: String = messagesAPI("chargeSummary.chargeHistory.heading")
 
   "Navigating to /report-quarterly/income-and-expenses/view/payments-due" should {
 
@@ -78,10 +81,10 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
       Then("the result should have a HTTP status of OK (200) and load the correct page")
       res should have(
         httpStatus(OK),
-        pageTitleIndividual(poa1Title),
-        elementTextBySelector("#heading-payment-breakdown")("Payment breakdown"),
-        elementTextBySelector("dl:nth-of-type(2) dd span")("Under review"),
-        elementTextBySelector("dl:nth-of-type(2) dd div")("We are not currently charging interest on this payment")
+        pageTitleIndividual("chargeSummary.paymentOnAccount1.text"),
+        elementTextBySelector("#heading-payment-breakdown")(paymentBreakdownHeading),
+        elementTextBySelector("dl:nth-of-type(2) dd span")(underReview),
+        elementTextBySelector("dl:nth-of-type(2) dd div")(notCurrentlyChargingInterest)
       )
 
       AuditStub.verifyAuditEvent(ChargeSummaryAudit(
@@ -133,8 +136,8 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
       Then("the result should have a HTTP status of OK (200) and load the correct page")
       res should have(
         httpStatus(OK),
-        pageTitleIndividual(balancingPaymentTitle),
-        elementTextBySelector("main h2")("Important Payment breakdown")
+        pageTitleIndividual("chargeSummary.balancingCharge.text"),
+        elementTextBySelector("main h2")(importantPaymentBreakdown)
       )
     }
 
@@ -173,8 +176,8 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
       Then("the result should have a HTTP status of OK (200) and load the correct page")
       res should have(
         httpStatus(OK),
-        pageTitleIndividual(balancingPaymentTitle),
-        elementTextBySelector("main h2")("Important Payment breakdown")
+        pageTitleIndividual("chargeSummary.balancingCharge.text"),
+        elementTextBySelector("main h2")(importantPaymentBreakdown)
       )
     }
 
@@ -210,9 +213,9 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
       Then("the result should have a HTTP status of OK (200) and load the correct page")
       res should have(
         httpStatus(OK),
-        pageTitleIndividual(lpiBalancingPayment),
-        elementTextBySelector("main h2")("Payment history"),
-        elementTextBySelector("tbody tr:nth-child(1) td:nth-child(2)")("Late payment interest for Balancing payment created")
+        pageTitleIndividual("chargeSummary.lpi.balancingCharge.text"),
+        elementTextBySelector("main h2")(paymentHistory),
+        elementTextBySelector("tbody tr:nth-child(1) td:nth-child(2)")(lpiCreated)
       )
     }
 
@@ -233,8 +236,8 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
       Then("the result should have a HTTP status of OK (200) and load the correct page")
       res should have(
         httpStatus(OK),
-        pageTitleIndividual(lpiBalancingPayment),
-        elementTextBySelector("main h2")("Payment history"),
+        pageTitleIndividual("chargeSummary.lpi.balancingCharge.text"),
+        elementTextBySelector("main h2")(paymentHistory),
         elementTextBySelector("tbody tr:nth-child(1) td:nth-child(2)")("")
 
       )
@@ -257,7 +260,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
       Then("the result should have a HTTP status of OK (200) and load the correct page")
       res should have(
         httpStatus(OK),
-        pageTitleIndividual(lpiBalancingPayment),
+        pageTitleIndividual("chargeSummary.lpi.balancingCharge.text"),
         elementTextBySelector("main h2")("")
       )
     }
@@ -293,7 +296,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
       Then("the result should have a HTTP status of OK (200) and load the correct page")
       res should have(
         httpStatus(OK),
-        pageTitleIndividual(lpiPoa2),
+        pageTitleIndividual("chargeSummary.lpi.paymentOnAccount2.text"),
         elementTextBySelector("main h2")("")
       )
     }
@@ -334,11 +337,9 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
       Then("the result should have a HTTP status of OK (200) and load the correct page")
       res should have(
         httpStatus(OK),
-        pageTitleIndividual(saPayment),
-        elementTextBySelector("h1")(header),
-        elementTextBySelector("#coding-out-notice")(insetPara),
-        elementTextBySelector("#coding-out-message")(summaryMessage),
-        elementTextBySelector(".govuk-table tbody tr:nth-child(1)")(payHistoryLine1)
+        pageTitleIndividual("tax-year-summary.payments.codingOut.text"),
+        elementTextBySelector("#coding-out-notice")(codingOutInsetPara),
+        elementTextBySelector("#coding-out-message")(codingOutMessage(2017, 2018))
       )
     }
   }
@@ -361,7 +362,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
 
     result should have(
       httpStatus(OK),
-      pageTitleIndividual(balancingPaymentTitle)
+      pageTitleIndividual("chargeSummary.balancingCharge.text")
     )
   }
 
@@ -383,7 +384,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
 
     result should have(
       httpStatus(OK),
-      pageTitleIndividual(balancingPaymentTitle)
+      pageTitleIndividual("chargeSummary.balancingCharge.text")
     )
   }
 

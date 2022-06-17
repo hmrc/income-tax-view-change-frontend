@@ -29,7 +29,6 @@ import play.api.http.Status._
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants._
-import testConstants.messages.NextUpdatesMessages.nextUpdatesTitle
 import uk.gov.hmrc.auth.core.retrieve.Name
 
 import java.time.LocalDate
@@ -116,7 +115,7 @@ class NextUpdatesControllerISpec extends ComponentSpecBase with FeatureSwitching
       Then("the next update view displays the correct title")
       res should have(
         httpStatus(OK),
-        pageTitleAgent(nextUpdatesTitle)
+        pageTitleAgent("nextUpdates.heading")
       )
 
       verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)

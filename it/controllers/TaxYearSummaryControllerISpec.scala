@@ -32,8 +32,8 @@ import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.IncomeSourceIntegrationTestConstants._
 import testConstants.NewCalcBreakdownItTestConstants.{liabilityCalculationModelSuccessFull, liabilityCalculationModelSuccessFullNotCrystallised}
-import testConstants.messages.TaxYearSummaryMessages
-import testConstants.messages.TaxYearSummaryMessages.taxYearSummaryTitle
+import testConstants.messages.TaxYearSummaryMessages._
+
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -375,18 +375,14 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         )
 
         And("The expected result is returned")
-        val fromDate = LocalDate.of(getCurrentTaxYearEnd.getYear - 1, 4, 6).format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
-        val toDate = LocalDate.of(getCurrentTaxYearEnd.getYear, 4, 5).format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
-        val headingStr = fromDate + " to " + toDate + " " + TaxYearSummaryMessages.heading
         val tableText = if (featureSwitchEnabled) "Forecast Section Amount Income £12,500.00 Total income on which tax is due £12,500.00 Income " +
           "Tax and National Insurance contributions due £5,000.99" else ""
         val forecastTabHeader = if (featureSwitchEnabled) messagesAPI("tax-year-summary.forecast") else ""
-        val forecastTotal = if (featureSwitchEnabled) "6 April " + (getCurrentTaxYearEnd.getYear - 1).toString +
-          " to 5 April " + getCurrentTaxYearEnd.getYear.toString + " forecast £5,000.99" else ""
+        val forecastTotal = if (featureSwitchEnabled) s"${messagesAPI("tax-year-summary.forecast_total_title", (getCurrentTaxYearEnd.getYear - 1).toString,
+          getCurrentTaxYearEnd.getYear.toString)} £5,000.99" else ""
         res should have(
           httpStatus(OK),
-          pageTitleIndividual(taxYearSummaryTitle),
-          elementTextBySelector("h1.govuk-heading-xl")(headingStr),
+          pageTitleIndividual("tax-year-summary.heading"),
           elementTextBySelector("#calculation-date")("15 February 2019"),
           elementTextBySelector("#forecast_total")(forecastTotal),
           elementTextBySelector("""a[href$="#forecast"]""")(forecastTabHeader),
@@ -455,25 +451,23 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         And("The expected result is returned")
         val fromDate = LocalDate.of(getCurrentTaxYearEnd.getYear - 1, 4, 6).format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
         val toDate = LocalDate.of(getCurrentTaxYearEnd.getYear, 4, 5).format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
-        val headingStr = fromDate + " to " + toDate + " " + TaxYearSummaryMessages.heading
         res should have(
           httpStatus(OK),
-          pageTitleIndividual(taxYearSummaryTitle),
-          elementTextBySelector("h1.govuk-heading-xl")(headingStr),
+          pageTitleIndividual("tax-year-summary.heading"),
           elementTextBySelector("#calculation-date")("15 February 2019"),
           elementTextBySelector("#income-deductions-contributions-table tr:nth-child(1) td[class=govuk-table__cell govuk-table__cell--numeric]")("£12,500.00"),
           elementTextBySelector("#income-deductions-contributions-table tr:nth-child(2) td[class=govuk-table__cell govuk-table__cell--numeric]")("−£17,500.99"),
           elementTextBySelectorList("#income-deductions-contributions-table", "tbody", "tr:nth-child(4)", "td:nth-of-type(1)")("£90,500.99"),
-          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "th")("Overdue Payment on account 1 of 2"),
+          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "th")(s"$overdue $poa1"),
           elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("23 Apr 2021"),
           elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("£1,000.00"),
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "a")("Late payment interest for payment on account 1 of 2"),
+          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "a")(poa1Lpi),
           elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(1)")("24 Jun 2021"),
           elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(2)")("£100.00"),
-          elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(1)", "th:nth-of-type(1)")("Quarterly Update"),
+          elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(1)", "th:nth-of-type(1)")(quarterlyUpdate),
           elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("business"),
           elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("4 Apr " + getCurrentTaxYearEnd.getYear.toString),
-          elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(2)", "th:nth-of-type(1)")("Annual Update"),
+          elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(2)", "th:nth-of-type(1)")(annualUpdate),
           elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(1)")("business"),
           elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(2)")("5 Apr " + getCurrentTaxYearEnd.getYear.toString)
         )
@@ -530,31 +524,29 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         And("The expected result is returned")
         val fromDate = LocalDate.of(getCurrentTaxYearEnd.getYear - 1, 4, 6).format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
         val toDate = LocalDate.of(getCurrentTaxYearEnd.getYear, 4, 5).format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
-        val headingStr = fromDate + " to " + toDate + " " + TaxYearSummaryMessages.heading
         res should have(
           httpStatus(OK),
-          pageTitleIndividual(taxYearSummaryTitle),
-          elementTextBySelector("h1.govuk-heading-xl")(headingStr),
+          pageTitleIndividual("tax-year-summary.heading"),
           elementTextBySelector("#calculation-date")("15 February 2019"),
           elementTextBySelector("#income-deductions-contributions-table tr:nth-child(1) td[class=govuk-table__cell govuk-table__cell--numeric]")("£12,500.00"),
           elementTextBySelector("#income-deductions-contributions-table tr:nth-child(2) td[class=govuk-table__cell govuk-table__cell--numeric]")("−£17,500.99"),
           elementTextBySelectorList("#income-deductions-contributions-table", "tbody", "tr:nth-child(4)", "td:nth-of-type(1)")("£90,500.99"),
-          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "th")("Overdue Payment on account 1 of 2 Payment under review"),
+          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "th")(s"$overdue $poa1 $underReview"),
           elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("23 Apr 2021"),
           elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("£1,000.00"),
 
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "th")("Overdue Payment on account 2 of 2"),
+          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "th")(s"$overdue $poa2"),
           elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(1)")("23 Apr 2021"),
           elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(2)")("£2,000.00"),
 
-          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(3)", "th")("Late payment interest for payment on account 1 of 2 Payment under review"),
+          elementTextBySelectorList("#payments", "table", "tr:nth-of-type(3)", "th")(s"$poa1Lpi $underReview"),
           elementTextBySelectorList("#payments", "table", "tr:nth-of-type(3)", "td:nth-of-type(1)")("24 Jun 2021"),
           elementTextBySelectorList("#payments", "table", "tr:nth-of-type(3)", "td:nth-of-type(2)")("£100.00"),
 
-          elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(1)", "th:nth-of-type(1)")("Quarterly Update"),
+          elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(1)", "th:nth-of-type(1)")(quarterlyUpdate),
           elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("business"),
           elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("4 Apr " + getCurrentTaxYearEnd.getYear.toString),
-          elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(2)", "th:nth-of-type(1)")("Annual Update"),
+          elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(2)", "th:nth-of-type(1)")(annualUpdate),
           elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(1)")("business"),
           elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(2)")("5 Apr " + getCurrentTaxYearEnd.getYear.toString)
         )
@@ -618,9 +610,9 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         And("The expected result is returned")
         res should have(
           httpStatus(OK),
-          pageTitleIndividual(taxYearSummaryTitle),
-          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "a")("Balancing payment"),
-          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "th")("Overdue Class 2 National Insurance")
+          pageTitleIndividual("tax-year-summary.heading"),
+          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "a")(balancingPayment),
+          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "th")(s"$overdue $class2Nic")
 
         )
       }
@@ -676,9 +668,9 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         And("The expected result is returned")
         res should have(
           httpStatus(OK),
-          pageTitleIndividual(taxYearSummaryTitle),
-          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "th")("Overdue Class 2 National Insurance"),
-          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "th")("Overdue Cancelled Self Assessment payment (through your PAYE tax code)")
+          pageTitleIndividual("tax-year-summary.heading"),
+          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "th")(s"$overdue $class2Nic"),
+          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "th")(s"$overdue $cancelledPayeSA")
 
 
         )
@@ -737,10 +729,10 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         And("The expected result is returned")
         res should have(
           httpStatus(OK),
-          pageTitleIndividual(taxYearSummaryTitle),
-          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "th")("Overdue Balancing payment"),
-          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "a")("Class 2 National Insurance"),
-          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(3)", "a")("Cancelled Self Assessment payment (through your PAYE tax code)")
+          pageTitleIndividual("tax-year-summary.heading"),
+          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "th")(s"$overdue $balancingPayment"),
+          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "a")(class2Nic),
+          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(3)", "a")(cancelledPayeSA)
 
 
         )
@@ -797,8 +789,8 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         And("Page is displayed with no payments due")
         res should have(
           httpStatus(OK),
-          pageTitleIndividual(taxYearSummaryTitle),
-          elementTextBySelector("#payments p")("No payments currently due.")
+          pageTitleIndividual("tax-year-summary.heading"),
+          elementTextBySelector("#payments p")(noPaymentsDue)
         )
 
         AuditStub.verifyAuditEvent(TaxYearSummaryResponseAuditModel(
@@ -888,13 +880,11 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         And("The expected result with right headers are returned")
         val fromDate = LocalDate.of(2017, 4, 6).format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
         val toDate = LocalDate.of(2018, 4, 5).format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
-        val headingStr = fromDate + " to " + toDate + " " + TaxYearSummaryMessages.heading
         res should have(
           httpStatus(OK),
-          pageTitleIndividual(taxYearSummaryTitle),
-          elementTextBySelector("h1.govuk-heading-xl")(headingStr),
-          elementTextByID("no-calc-data-header")(TaxYearSummaryMessages.headingNoCalcData),
-          elementTextByID("no-calc-data-note")(TaxYearSummaryMessages.noCalcDataNote)
+          pageTitleIndividual("tax-year-summary.heading"),
+          elementTextByID("no-calc-data-header")(noCalcHeading),
+          elementTextByID("no-calc-data-note")(noCalcNote)
         )
       }
 

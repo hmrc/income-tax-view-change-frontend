@@ -16,7 +16,7 @@ import testConstants.BaseIntegrationTestConstants._
 import testConstants.FinancialDetailsIntegrationTestConstants._
 import testConstants.IncomeSourceIntegrationTestConstants._
 import testConstants.OutstandingChargesIntegrationTestConstants._
-import testConstants.messages.WhatYouOweMessages.whatYouOwePageTitle
+import testConstants.messages.WhatYouOweMessages.underReview
 import uk.gov.hmrc.auth.core.retrieve.Name
 
 import java.time.LocalDate
@@ -109,7 +109,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
       Then("The Payment Due what you owe page is returned to the user")
       result should have(
         httpStatus(OK),
-        pageTitleAgent(whatYouOwePageTitle),
+        pageTitleAgent("whatYouOwe.heading"),
         isElementVisibleById("balancing-charge-type-0")(expectedValue = true),
         isElementVisibleById("balancing-charge-type-1")(expectedValue = true),
         isElementVisibleById("payment-details-content-0")(expectedValue = true),
@@ -155,7 +155,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
       Then("The Payment Due what you owe page is returned to the user")
       result should have(
         httpStatus(OK),
-        pageTitleAgent(whatYouOwePageTitle),
+        pageTitleAgent("whatYouOwe.heading"),
         isElementVisibleById("balancing-charge-type-0")(expectedValue = false),
         isElementVisibleById("balancing-charge-type-1")(expectedValue = false),
         isElementVisibleById("payment-details-content-0")(expectedValue = true),
@@ -207,7 +207,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
       Then("The Payment Due what you owe page is returned to the user")
       result should have(
         httpStatus(OK),
-        pageTitleAgent(whatYouOwePageTitle),
+        pageTitleAgent("whatYouOwe.heading"),
         isElementVisibleById("balancing-charge-type-0")(expectedValue = true),
         isElementVisibleById("balancing-charge-type-1")(expectedValue = true),
         isElementVisibleById("payment-details-content-0")(expectedValue = true),
@@ -339,7 +339,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
     Then("the result should have a HTTP status of OK (200) and the payments due page")
     result should have(
       httpStatus(OK),
-      pageTitleAgent(whatYouOwePageTitle),
+      pageTitleAgent("whatYouOwe.heading"),
       isElementVisibleById("balancing-charge-type-0")(expectedValue = false),
       isElementVisibleById("balancing-charge-type-1")(expectedValue = false),
       isElementVisibleById("payment-details-content-0")(expectedValue = true),
@@ -381,7 +381,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
     Then("the result should have a HTTP status of OK (200) and the payments due page")
     res should have(
       httpStatus(OK),
-      pageTitleAgent(whatYouOwePageTitle),
+      pageTitleAgent("whatYouOwe.heading"),
       isElementVisibleById("balancing-charge-type-0")(expectedValue = false),
       isElementVisibleById("balancing-charge-type-1")(expectedValue = false),
       isElementVisibleById("payment-details-content-0")(expectedValue = true),
@@ -429,7 +429,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
       Then("the result should have a HTTP status of OK (200) and the what you owe page with no dunningLocks")
       result should have(
         httpStatus(OK),
-        pageTitleAgent(whatYouOwePageTitle),
+        pageTitleAgent("whatYouOwe.heading"),
         isElementVisibleById("disagree-with-tax-appeal-link")(expectedValue = false),
         elementTextBySelector("tr#over-due-type-1 td:nth-child(2) div:nth-of-type(3)")(""),
         elementTextBySelector("tr#over-due-type-2 td:nth-child(2) div:nth-of-type(3)")("")
@@ -467,10 +467,10 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
       Then("the result should have a HTTP status of OK (200) and the what you owe page with dunning lock present")
       result should have(
         httpStatus(OK),
-        pageTitleAgent(whatYouOwePageTitle),
+        pageTitleAgent("whatYouOwe.heading"),
         isElementVisibleById("disagree-with-tax-appeal-link")(expectedValue = true),
 
-        elementTextBySelector("tr#due-1 td:nth-child(2) div:nth-of-type(2)")("Payment under review"),
+        elementTextBySelector("tr#due-1 td:nth-child(2) div:nth-of-type(2)")(underReview),
         elementTextBySelector("tr#due-2 td:nth-child(2) div:nth-of-type(2)")("")
       )
     }
@@ -506,10 +506,10 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
       Then("the result should have a HTTP status of OK (200) and the what you owe page with multiple dunningLocks")
       result should have(
         httpStatus(OK),
-        pageTitleAgent(whatYouOwePageTitle),
+        pageTitleAgent("whatYouOwe.heading"),
         isElementVisibleById("disagree-with-tax-appeal-link")(expectedValue = true),
-        elementTextBySelector("tr#due-1 td:nth-child(2) div:nth-of-type(2)")("Payment under review"),
-        elementTextBySelector("tr#due-2 td:nth-child(2) div:nth-of-type(2)")("Payment under review")
+        elementTextBySelector("tr#due-1 td:nth-child(2) div:nth-of-type(2)")(underReview),
+        elementTextBySelector("tr#due-2 td:nth-child(2) div:nth-of-type(2)")(underReview)
       )
     }
   }
@@ -535,7 +535,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
         Then("the result should have a HTTP status of OK (200) and the payments due page")
         result should have(
           httpStatus(OK),
-          pageTitleAgent(whatYouOwePageTitle),
+          pageTitleAgent("whatYouOwe.heading"),
           isElementVisibleById("balancing-charge-type-0")(expectedValue = false),
           isElementVisibleById("balancing-charge-type-1")(expectedValue = false),
           isElementVisibleById("payment-details-content-0")(expectedValue = false),
@@ -573,7 +573,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
         Then("the result should have a HTTP status of OK (200) and the payments due page")
         result should have(
           httpStatus(OK),
-          pageTitleAgent(whatYouOwePageTitle),
+          pageTitleAgent("whatYouOwe.heading"),
           isElementVisibleById("balancing-charge-type-0")(expectedValue = false),
           isElementVisibleById("balancing-charge-type-1")(expectedValue = false),
           isElementVisibleById("payment-details-content-0")(expectedValue = false),
@@ -625,7 +625,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
         Then("the result should have a HTTP status of OK (200) and the payments due page")
         result should have(
           httpStatus(OK),
-          pageTitleAgent(whatYouOwePageTitle),
+          pageTitleAgent("whatYouOwe.heading"),
           isElementVisibleById("balancing-charge-type-0")(expectedValue = false),
           isElementVisibleById("payment-details-content-0")(expectedValue = false),
           isElementVisibleById("payment-details-content-1")(expectedValue = false),
@@ -678,7 +678,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
         Then("the result should have a HTTP status of OK (200) and the payments due page")
         result should have(
           httpStatus(OK),
-          pageTitleAgent(whatYouOwePageTitle),
+          pageTitleAgent("whatYouOwe.heading"),
           isElementVisibleById("balancing-charge-type-0")(expectedValue = true),
           isElementVisibleById("balancing-charge-type-1")(expectedValue = true),
           isElementVisibleById("payment-details-content-0")(expectedValue = true),
@@ -718,7 +718,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
         Then("the result should have a HTTP status of OK (200) and the payments due page")
         result should have(
           httpStatus(OK),
-          pageTitleAgent(whatYouOwePageTitle),
+          pageTitleAgent("whatYouOwe.heading"),
           isElementVisibleById("balancing-charge-type-0")(expectedValue = false),
           isElementVisibleById("balancing-charge-type-1")(expectedValue = false),
           isElementVisibleById("payment-details-content-0")(expectedValue = true),
@@ -760,7 +760,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
       Then("the result should have a HTTP status of OK (200) and the payments due page")
       result should have(
         httpStatus(OK),
-        pageTitleAgent(whatYouOwePageTitle),
+        pageTitleAgent("whatYouOwe.heading"),
       )
     }
 
@@ -789,7 +789,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
       Then("the result should have a HTTP status of OK (200) and the payments due page with coding out in future payments")
       result should have(
         httpStatus(OK),
-        pageTitleAgent(whatYouOwePageTitle),
+        pageTitleAgent("whatYouOwe.heading"),
         isElementVisibleById("balancing-charge-type-0")(expectedValue = false),
         isElementVisibleById("balancing-charge-type-1")(expectedValue = false),
         isElementVisibleById("payment-details-content-0")(expectedValue = true),
@@ -823,7 +823,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
       Then("the result should have a HTTP status of OK (200) and the payments due page with no coding out in future payments")
       result should have(
         httpStatus(OK),
-        pageTitleAgent(whatYouOwePageTitle),
+        pageTitleAgent("whatYouOwe.heading"),
         isElementVisibleById("balancing-charge-type-0")(expectedValue = false),
         isElementVisibleById("balancing-charge-type-1")(expectedValue = false),
         isElementVisibleById("payment-details-content-0")(expectedValue = true),

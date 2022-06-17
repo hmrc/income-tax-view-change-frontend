@@ -22,7 +22,6 @@ import play.api.http.Status._
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.IncomeSourceIntegrationTestConstants._
 import testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessFull
-import testConstants.messages.DeductionsSummaryMessages._
 
 class DeductionsSummaryControllerISpec extends ComponentSpecBase {
 
@@ -47,8 +46,7 @@ class DeductionsSummaryControllerISpec extends ComponentSpecBase {
         Then("I see Allowances and deductions page")
         res should have(
           httpStatus(OK),
-          pageTitleIndividual(deductionsSummaryTitle),
-          elementTextBySelector("h1")(deductionsSummaryHeading)
+          pageTitleIndividual("deduction_breakdown.heading"),
         )
 
       }

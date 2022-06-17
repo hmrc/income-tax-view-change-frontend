@@ -31,8 +31,6 @@ import testConstants.IncomeSourceIntegrationTestConstants._
 import testConstants.OutstandingChargesIntegrationTestConstants._
 import java.time.LocalDate
 
-import testConstants.messages.WhatYouOweMessages.whatYouOwePageTitle
-
 class WhatYouOweControllerISpec extends ComponentSpecBase {
 
   override def beforeEach(): Unit = {
@@ -79,7 +77,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
         Then("the result should have a HTTP status of OK (200) and the payments due page")
         res should have(
           httpStatus(OK),
-          pageTitleIndividual(whatYouOwePageTitle),
+          pageTitleIndividual("whatYouOwe.heading"),
         )
       }
 
@@ -110,7 +108,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
 
           res should have(
             httpStatus(OK),
-            pageTitleIndividual(whatYouOwePageTitle),
+            pageTitleIndividual("whatYouOwe.heading"),
             isElementVisibleById("balancing-charge-type-0")(expectedValue = true),
             isElementVisibleById("balancing-charge-type-1")(expectedValue = true),
             isElementVisibleById("payment-details-content-0")(expectedValue = true),
@@ -161,7 +159,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
           Then("the result should have a HTTP status of OK (200) and the payments due page")
           res should have(
             httpStatus(OK),
-            pageTitleIndividual(whatYouOwePageTitle),
+            pageTitleIndividual("whatYouOwe.heading"),
             isElementVisibleById("balancing-charge-type-0")(expectedValue = false),
             isElementVisibleById("balancing-charge-type-1")(expectedValue = false),
             isElementVisibleById("payment-details-content-0")(expectedValue = true),
@@ -216,7 +214,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
           Then("the result should have a HTTP status of OK (200) and the payments due page")
           res should have(
             httpStatus(OK),
-            pageTitleIndividual(whatYouOwePageTitle),
+            pageTitleIndividual("whatYouOwe.heading"),
             isElementVisibleById("balancing-charge-type-0")(expectedValue = true),
             isElementVisibleById("balancing-charge-type-1")(expectedValue = true),
             isElementVisibleById("payment-details-content-0")(expectedValue = true),
@@ -265,7 +263,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
           Then("the result should have a HTTP status of OK (200) and the payments due page")
           res should have(
             httpStatus(OK),
-            pageTitleIndividual(whatYouOwePageTitle),
+            pageTitleIndividual("whatYouOwe.heading"),
             isElementVisibleById("disagree-with-tax-appeal-link")(expectedValue = false)
           )
         }
@@ -304,7 +302,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
           Then("the result should have a HTTP status of OK (200) and the payments due page")
           res should have(
             httpStatus(OK),
-            pageTitleIndividual(whatYouOwePageTitle),
+            pageTitleIndividual("whatYouOwe.heading"),
             isElementVisibleById("disagree-with-tax-appeal-link")(expectedValue = true)
           )
         }
@@ -343,7 +341,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
           Then("the result should have a HTTP status of OK (200) and the payments due page")
           res should have(
             httpStatus(OK),
-            pageTitleIndividual(whatYouOwePageTitle),
+            pageTitleIndividual("whatYouOwe.heading"),
             isElementVisibleById("disagree-with-tax-appeal-link")(expectedValue = true)
           )
         }
@@ -451,7 +449,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
           Then("the result should have a HTTP status of OK (200) and the payments due page")
           res should have(
             httpStatus(OK),
-            pageTitleIndividual(whatYouOwePageTitle),
+            pageTitleIndividual("whatYouOwe.heading"),
             isElementVisibleById("balancing-charge-type-0")(expectedValue = false),
             isElementVisibleById("balancing-charge-type-1")(expectedValue = false),
             isElementVisibleById("payment-details-content-0")(expectedValue = false),
@@ -490,7 +488,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
           Then("the result should have a HTTP status of OK (200) and the payments due page")
           res should have(
             httpStatus(OK),
-            pageTitleIndividual(whatYouOwePageTitle),
+            pageTitleIndividual("whatYouOwe.heading"),
             isElementVisibleById("balancing-charge-type-0")(expectedValue = false),
             isElementVisibleById("balancing-charge-type-1")(expectedValue = false),
             isElementVisibleById("payment-details-content-0")(expectedValue = false),
@@ -547,7 +545,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
           Then("the result should have a HTTP status of OK (200) and the payments due page")
           res should have(
             httpStatus(OK),
-            pageTitleIndividual(whatYouOwePageTitle),
+            pageTitleIndividual("whatYouOwe.heading"),
             isElementVisibleById("balancing-charge-type-0")(expectedValue = false),
             isElementVisibleById("payment-details-content-0")(expectedValue = false),
             isElementVisibleById("payment-details-content-1")(expectedValue = false),
@@ -602,7 +600,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
           Then("the result should have a HTTP status of OK (200) and the payments due page")
           res should have(
             httpStatus(OK),
-            pageTitleIndividual(whatYouOwePageTitle),
+            pageTitleIndividual("whatYouOwe.heading"),
             isElementVisibleById("balancing-charge-type-0")(expectedValue = true),
             isElementVisibleById("balancing-charge-type-1")(expectedValue = true),
             isElementVisibleById("payment-details-content-0")(expectedValue = true),
@@ -645,7 +643,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
           Then("the result should have a HTTP status of OK (200) and the payments due page")
           res should have(
             httpStatus(OK),
-            pageTitleIndividual(whatYouOwePageTitle),
+            pageTitleIndividual("whatYouOwe.heading"),
             isElementVisibleById("balancing-charge-type-0")(expectedValue = false),
             isElementVisibleById("balancing-charge-type-1")(expectedValue = false),
             isElementVisibleById("payment-details-content-0")(expectedValue = true),
@@ -689,7 +687,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
           Then("the result should have a HTTP status of OK (200) and the payments due page")
           res should have(
             httpStatus(OK),
-            pageTitleIndividual(whatYouOwePageTitle),
+            pageTitleIndividual("whatYouOwe.heading"),
             isElementVisibleById("balancing-charge-type-0")(expectedValue = false),
             isElementVisibleById("balancing-charge-type-1")(expectedValue = false),
             isElementVisibleById("payment-details-content-0")(expectedValue = true),
@@ -734,7 +732,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
           Then("the result should have a HTTP status of OK (200) and the payments due page")
           res should have(
             httpStatus(OK),
-            pageTitleIndividual(whatYouOwePageTitle),
+            pageTitleIndividual("whatYouOwe.heading"),
             isElementVisibleById("balancing-charge-type-0")(expectedValue = false),
             isElementVisibleById("balancing-charge-type-1")(expectedValue = false),
             isElementVisibleById("payment-details-content-0")(expectedValue = true),

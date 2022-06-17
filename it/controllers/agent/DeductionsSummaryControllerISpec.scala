@@ -29,7 +29,6 @@ import play.api.http.Status._
 import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.NewCalcBreakdownItTestConstants._
-import testConstants.messages.DeductionsSummaryMessages.deductionsSummaryTitle
 import uk.gov.hmrc.auth.core.retrieve.Name
 
 import java.time.LocalDate
@@ -79,7 +78,7 @@ class DeductionsSummaryControllerISpec extends ComponentSpecBase with FeatureSwi
       Then("I see Allowances and deductions page")
       res should have(
         httpStatus(OK),
-        pageTitleAgent(deductionsSummaryTitle),
+        pageTitleAgent("deduction_breakdown.heading"),
       )
 
       verifyAuditContainsDetail(AllowanceAndDeductionsResponseAuditModel(testUser,
