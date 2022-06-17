@@ -65,7 +65,9 @@ case class FinancialDetail(taxYear: String,
   lazy val payments: Seq[Payment] = items match {
     case Some(subItems) => subItems.map { subItem =>
       Payment(reference = subItem.paymentReference, amount = subItem.paymentAmount, method = subItem.paymentMethod,
-        lot = subItem.paymentLot, lotItem = subItem.paymentLotItem, date = subItem.clearingDate, transactionId = subItem.transactionId)
+        lot = subItem.paymentLot, lotItem = subItem.paymentLotItem,
+        date = subItem.clearingDate, transactionId = subItem.transactionId,
+        documentDescription = None)
     }.filter(_.reference.isDefined)
     case None => Seq.empty[Payment]
   }
@@ -75,7 +77,10 @@ case class FinancialDetail(taxYear: String,
       subItems.collect {
         case subItem if subItem.paymentLot.isDefined && subItem.paymentLotItem.isDefined =>
           Payment(reference = subItem.paymentReference, amount = subItem.amount, method = subItem.paymentMethod,
-            lot = subItem.paymentLot, lotItem = subItem.paymentLotItem, date = subItem.clearingDate, transactionId = subItem.transactionId)
+            lot = subItem.paymentLot, lotItem = subItem.paymentLotItem, date = subItem.clearingDate,
+            transactionId = subItem.transactionId,
+            documentDescription = None
+          )
       }
     }
     .collect {
