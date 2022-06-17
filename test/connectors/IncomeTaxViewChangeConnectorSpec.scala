@@ -473,7 +473,9 @@ class IncomeTaxViewChangeConnectorSpec extends TestSupport with MockHttp with Mo
       s"http://localhost:9999/income-tax-view-change/$testNino/financial-details/payments/from/$testFrom/to/$testTo"
     }
 
-    val payments: Seq[Payment] = Seq(Payment(reference = Some("reference"), amount = Some(100.00), method = Some("method"), lot = Some("lot"), lotItem = Some("lotItem"), date = Some("date"), Some("DOCID01")))
+    val payments: Seq[Payment] = Seq(Payment(reference = Some("reference"), amount = Some(100.00),
+      method = Some("method"), lot = Some("lot"), lotItem = Some("lotItem"),
+      documentDescription = None, date = Some("date"), transactionId = Some("DOCID01")))
 
     val successResponse: HttpResponse = HttpResponse(
       status = OK,

@@ -44,7 +44,9 @@ class PaymentHistoryResponseAuditModelSpec extends TestSupport {
       arn = if (userType.contains("Agent")) Some(testArn) else None
     ),
     payments = Seq(
-      Payment(reference = Some("reference"), amount = Some(100.00), method = Some("method"), lot = Some("lot"), lotItem = Some("lotItem"), date = Some("2018-02-01"), None)
+      Payment(reference = Some("reference"), amount = Some(100.00),
+        method = Some("method"), lot = Some("lot"), lotItem = Some("lotItem"),
+        date = Some("2018-02-01"), documentDescription = None, transactionId = None)
     ),
     CutOverCreditsEnabled = false,
     R7bTxmEvents = false
@@ -63,7 +65,9 @@ class PaymentHistoryResponseAuditModelSpec extends TestSupport {
       arn = if (userType.contains("Agent")) Some(testArn) else None
     ),
     payments = Seq(
-      Payment(reference = Some("reference"), amount = Some(100.00), method = Some("method"), lot = Some("lot"), lotItem = Some("lotItem"), date = Some("2018-02-01"), None)
+      Payment(reference = Some("reference"), amount = Some(100.00),
+        method = Some("method"), lot = Some("lot"), lotItem = Some("lotItem"),
+        date = Some("2018-02-01"), documentDescription = None, transactionId = None)
     ),
     CutOverCreditsEnabled = true,
     R7bTxmEvents = true
@@ -82,7 +86,9 @@ class PaymentHistoryResponseAuditModelSpec extends TestSupport {
       arn = if (userType.contains("Agent")) Some(testArn) else None
     ),
     payments = Seq(
-      Payment(reference = Some("reference"), amount = Some(-10000.00), method = Some("method"), lot = None, lotItem = None, date = Some("2018-04-25"), Some("AY777777202206"))
+      Payment(reference = Some("reference"), amount = Some(-10000.00), method = Some("method"),
+        lot = None, lotItem = None, date = Some("2018-04-25"), documentDescription = None,
+        transactionId = Some("AY777777202206"))
     ),
     CutOverCreditsEnabled = true,
     R7bTxmEvents = true
