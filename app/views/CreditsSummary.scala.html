@@ -16,15 +16,15 @@
 
 @import _root_.implicits.ImplicitDateFormatterImpl
 @import _root_.implicits.ImplicitCurrencyFormatter._
-@import models.financialDetails.WhatYouOweChargesList
-@import java.time.LocalDate
-@import models.financialDetails.DocumentDetailWithDueDate
 @import models.financialDetails._
 @import auth.MtdItUser
 @import views.html.layouts.unifiedLayout
 @import views.html.components._
 @import exceptions.MissingFieldException
 @import uk.gov.hmrc.govukfrontend.views.html.components._
+@import cats.syntax.eq._
+@import cats.instances.option._
+@import cats.instances.bigDecimal._
 
 @this(
         mainTemplate: unifiedLayout,
@@ -43,6 +43,7 @@
         utr: Option[String],
         btaNavPartial: Option[Html] = None,
         enableMfaCreditsAndDebits: Boolean,
+        charges: List[DocumentDetail],
         isAgent: Boolean = false,
         origin: Option[String] = None)(implicit request: Request[_], user: MtdItUser[_], messages: Messages)
 
@@ -72,6 +73,17 @@
     </thead>
 }
 
+@*
+    outstandingAmount == original amount(not yet allocated)
+    outstandingAmount != original amount(partially allocated)
+    outstandingAmount == 0 (allocated)
+*@
+@getStatus(charges: DocumentDetail) = @{
+    if(charges.outstandingAmount === charges.originalAmount) getMessage("table.status-not-yet-allocated")
+    else if (charges.outstandingAmount === Some(BigDecimal("0"))) getMessage("table.status-allocated")
+    else getMessage("table.status-partially-allocated")
+}
+
 @mainTemplate(
     pageTitle = getMessage("heading"),
     backUrl = Some(backUrl),
@@ -82,49 +94,27 @@
     @* TODO implement it *@
     @h1(msg = "credits.heading", id = Some("page-heading"))
     <div>
-        <div id="payments-due-table">
-            <table class="govuk-table">
-                <caption class="govuk-table__caption govuk-visually-hidden">@getMessage("credits.heading")</caption>
-                @tableHead("over-due-payments-table-head")
-                <tbody class="govuk-table__body">
-                    <tr class="govuk-table__row " id="balancing-charge-type-0">
-                        <td class="govuk-table__cell govuk-!-width-one-quarter">Some Date</td>
-                        <td class="govuk-table__cell govuk-!-width-one-half">@getMessage("tableHead.type.value")</td>
-                        <td class="govuk-table__cell numeric govuk-!-width-one-quarter">Some Tax year summary</td>
-                        <td class="govuk-table__cell numeric govuk-!-width-one-quarter">Some Amount Due</td>
-                    </tr>
-
-                    @* @if(whatYouOweChargesList.chargesList.nonEmpty){
-                    @for((charge, index) <- whatYouOweChargesList.sortedChargesList.zipWithIndex) {
-                    @tableRow(s"due-$index", charge, isOverduePayment = charge.isOverdue, index, "taxYearSummary-link")
-                    @if(charge.isOverdue && charge.documentDetail.hasAccruingInterest) {
-                    <tr class="govuk-table__row" id=@(s"charge-interest-$index")>
-                    <td class="govuk-table__cell govuk-!-width-one-quarter"></td>
-                    <td class="govuk-table__cell govuk-!-width-one-half">
-                    @getMessage("over-due.interest.line1")
-                    <div>
-                    @getMessage("over-due.interest.line2",
-                    charge.documentDetail.interestFromDate.getOrElse(throw MissingFieldException("Overdue Payment Interest From Date")).toLongDateShort,
-                    charge.documentDetail.interestEndDate.getOrElse(throw MissingFieldException("Overdue Payment Interest End Date")).toLongDateShort,
-                    charge.documentDetail.interestRate.getOrElse(throw MissingFieldException("Overdue Payment Interest Rate")).toString
-                    )
-                    </div>
-                    </td>
-                    <td class="govuk-table__cell numeric govuk-!-width-one-quarter">
-                    @taxYearSummaryLink(charge.documentDetail.taxYear.toInt, index, "taxYearSummary-accuring-interest-link")
-                    </td>
-                    <td class="govuk-table__cell numeric govuk-!-width-one-quarter">@{
-                    charge.documentDetail.interestOutstandingAmount.getOrElse(throw MissingFieldException("Overdue Payment Interest Outstanding Amount")).toCurrency
-                    }</td>
-                    </tr>
-                    }
-                    }
-                    } *@
-                </tbody>
-            </table>
-        </div>
+        @for((documentDetail, index) <- charges.zipWithIndex) {
+            <div id="payments-due-table">
+                <table class="govuk-table">
+                    <caption class="govuk-table__caption govuk-visually-hidden">@getMessage("credits.heading")</caption>
+                    @tableHead("over-due-payments-table-head")
+                    <tbody class="govuk-table__body">
+                        <tr class="govuk-table__row " id="balancing-charge-type-0">
+                            <td class="govuk-table__cell govuk-!-width-one-quarter">@documentDetail.documentDate.toLongDateShort</td>
+                            <td class="govuk-table__cell govuk-!-width-one-half">@getMessage("tableHead.type.value")</td>
+                            <td class="govuk-table__cell numeric govuk-!-width-one-quarter">@getStatus(documentDetail)</td>
+                            <td class="govuk-table__cell numeric govuk-!-width-one-quarter">@documentDetail.originalAmount.getOrElse(throw MissingFieldException("Original Amount")).toCurrencyString</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        }
     </div>
 
+    @if(charges.isEmpty){
+        @h1(msg = "Charges are empty!!!!" , id = Some("page-heading"))
+    }
 
     @link(
         link = creditAndRefundsControllerURL,

@@ -410,6 +410,10 @@ credits.tableHead.type                                          = Type
 credits.tableHead.status                                        = Status
 credits.tableHead.status                                        = Amount
 credits.tableHead.type.value                                    = Credit from HMRC adjustment
+credits.table.status-allocated                                  = Allocated
+credits.table.status-not-yet-allocated                          = Not yet allocated
+credits.table.status-partially-allocated                        = Partially allocated
+
 
 ## Previous Obligations ##
 previous-obligations.no-previous-obligations                    = No previously submitted updates
