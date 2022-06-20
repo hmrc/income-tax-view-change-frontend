@@ -73,7 +73,7 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
 
 
   val emptyPayments: List[Payment] = List(
-    Payment(reference = None, amount = None, outstandingAmount = None, method = None, lot = None, lotItem = None, date = None, transactionId = None)
+    Payment(reference = None, amount = None, outstandingAmount = None, method = None, documentDescription = None, lot = None, lotItem = None, date = None, transactionId = None)
   )
 
   class PaymentHistorySetup(testPayments: List[Payment], saUtr: Option[String] = Some("1234567890"), isAgent: Boolean = false) extends Setup(
