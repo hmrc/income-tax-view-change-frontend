@@ -18,7 +18,6 @@ package models.financialDetails
 
 import play.api.Logger
 import play.api.libs.json.{Format, Json}
-
 import java.time.LocalDate
 
 case class DocumentDetail(taxYear: String,
@@ -165,6 +164,9 @@ case class DocumentDetail(taxYear: String,
       Logger("application").error(s"[DocumentDetail][getChargeTypeKey] Missing or non-matching charge type: $error found")
       "unknownCharge"
   }
+
+  def validMFACreditDescription() : Boolean = MfaCreditUtils.validMFACreditDescription(this.documentDescription)
+
 }
 
 case class DocumentDetailWithDueDate(documentDetail: DocumentDetail, dueDate: Option[LocalDate],
@@ -174,4 +176,5 @@ case class DocumentDetailWithDueDate(documentDetail: DocumentDetail, dueDate: Op
 
 object DocumentDetail {
   implicit val format: Format[DocumentDetail] = Json.format[DocumentDetail]
+
 }
