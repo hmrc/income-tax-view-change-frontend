@@ -57,17 +57,18 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
   }
 
   val testPayments: List[Payment] = List(
-    Payment(Some("AAAAA"), Some(10000), None, Some("Payment"), Some("lot"), Some("lotitem"), Some("2019-12-25"), Some("DOCID01")),
-    Payment(Some("BBBBB"), Some(5000), None, Some("tnemyap"), Some("lot"), Some("lotitem"), Some("2007-03-23"), Some("DOCID02"))
+    Payment(Some("AAAAA"), Some(10000), None, Some("Payment"), None, Some("lot"), Some("lotitem"), Some("2019-12-25"), Some("DOCID01")),
+    Payment(Some("BBBBB"), Some(5000), None, Some("tnemyap"), None, Some("lot"), Some("lotitem"), Some("2007-03-23"), Some("DOCID02"))
   )
 
   val testNoPaymentLot: List[Payment] = List(
-    Payment(Some("AAAAA"), Some(10000), None, Some("Payment"), None, None, Some("2019-12-25"), Some("DOCID01")),
-    Payment(Some("BBBBB"), Some(5000), None, Some("tnemyap"), None, None, Some("2007-03-23"), Some("DOCID02"))
+    Payment(Some("AAAAA"), Some(10000), None, Some("Payment"), None, None, None, Some("2019-12-25"), Some("DOCID01")),
+    Payment(Some("BBBBB"), Some(5000), None, Some("tnemyap"), None, None, None, Some("2007-03-23"), Some("DOCID02"))
   )
 
   val paymentsnotFull: List[Payment] = List(
-    Payment(reference = Some("reference"), amount = Some(-10000.00), None, method = Some("method"), lot = None, lotItem = None, date = Some("2018-04-25"), Some("AY777777202206"))
+    Payment(reference = Some("reference"), amount = Some(-10000.00), None, method = Some("method"), None, lot = None,
+      lotItem = None, date = Some("2018-04-25"), Some("AY777777202206"))
   )
 
 
@@ -84,11 +85,11 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
   )
 
   val testMultiplePayments: List[Payment] = List(
-    Payment(Some("AAAAA"), Some(10000), None, Some("Payment"), Some("lot"), Some("lotitem"), Some("2019-12-25"), Some("DOCID01")),
-    Payment(Some("AAAAA"), Some(10000), None, Some("Payment"), Some("lot"), Some("lotitem"), Some("2019-12-25"), Some("DOCID01")),
-    Payment(Some("AAAAA"), Some(90000), None, Some("Payment"), Some("lot"), Some("lotitem"), Some("2019-12-25"), Some("DOCID01")),
-    Payment(Some("BBBBB"), Some(5000), None, Some("tnemyap"), Some("lot"), Some("lotitem"), Some("2007-03-23"), Some("DOCID02")),
-    Payment(Some("BBBBB"), Some(5000), None, Some("tnemyap"), Some("lot"), Some("lotitem"), Some("2007-03-23"), Some("DOCID02"))
+    Payment(Some("AAAAA"), Some(10000), None, Some("Payment"), None, Some("lot"), Some("lotitem"), Some("2019-12-25"), Some("DOCID01")),
+    Payment(Some("AAAAA"), Some(10000), None, Some("Payment"), None, Some("lot"), Some("lotitem"), Some("2019-12-25"), Some("DOCID01")),
+    Payment(Some("AAAAA"), Some(90000), None, Some("Payment"), None, Some("lot"), Some("lotitem"), Some("2019-12-25"), Some("DOCID01")),
+    Payment(Some("BBBBB"), Some(5000), None, Some("tnemyap"), None, Some("lot"), Some("lotitem"), Some("2007-03-23"), Some("DOCID02")),
+    Payment(Some("BBBBB"), Some(5000), None, Some("tnemyap"), None, Some("lot"), Some("lotitem"), Some("2007-03-23"), Some("DOCID02"))
   )
 
   val paymentHistoryMessageInfo = s"${messages("paymentHistory.info")} ${messages("taxYears.oldSa.agent.content.2")}${messages("pagehelp.opensInNewTabText")}. ${messages("paymentHistory.info.2")}"
