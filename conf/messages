@@ -409,6 +409,7 @@ credits.tableHead.date                                          = Date
 credits.tableHead.type                                          = Type
 credits.tableHead.status                                        = Status
 credits.tableHead.status                                        = Amount
+credits.tableHead.type.value                                    = Credit from HMRC adjustment
 
 ## Previous Obligations ##
 previous-obligations.no-previous-obligations                    = No previously submitted updates

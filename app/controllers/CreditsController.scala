@@ -61,7 +61,7 @@ class CreditsController @Inject()(creditsView: CreditsSummary,
       origin = origin)))
   }
 
-  def showTaxYears(origin: Option[String] = None): Action[AnyContent] = {
+  def showTaxYears(calendarYear: Int, origin: Option[String] = None): Action[AnyContent] = {
     (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
       implicit user =>
         handleRequest(
@@ -72,7 +72,7 @@ class CreditsController @Inject()(creditsView: CreditsSummary,
     }
   }
 
-  def showAgentTaxYears: Action[AnyContent] = {
+  def showAgentTaxYears(calendarYear: Int): Action[AnyContent] = {
     Authenticated.async { implicit request =>
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true) flatMap { implicit mtdItUser =>
