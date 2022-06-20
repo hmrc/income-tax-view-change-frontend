@@ -17,41 +17,60 @@
 package models.financialDetails
 
 import org.scalacheck.{Gen, Properties}
+import org.scalacheck.Prop.{forAll, propBoolean}
 
 object MfaCreditUtilsSpec extends Properties("MfaCreditUtils_validMFACreditDescription") {
 
-    import org.scalacheck.Prop.forAll
-    import MfaCreditUtils.validMFACreditDescription
+  import org.scalacheck.Prop.forAll
+  import MfaCreditUtils.validMFACreditDescription
 
-    val validMfaCreditDescription = Gen.oneOf(
-      "ITSA Overpayment Relief",
-      "ITSA Standalone Claim",
-      "ITSA Averaging Adjustment",
-      "ITSA Literary Artistic Spread",
-      "ITSA Loss Relief Claim",
-      "ITSA Post Cessation Claim",
-      "ITSA Pension Relief Claim",
-      "ITSA PAYE in year Repayment",
-      "ITSA NPS Overpayment",
-      "ITSA In year Rept pension schm",
-      "ITSA Increase in PAYE Credit",
-      "ITSA CIS Non Resident Subbie",
-      "ITSA CIS Incorrect Deductions",
-      "ITSA Stand Alone Assessment",
-      "ITSA Infml Dschrg Cntrct Sett",
-      "ITSA Third Party Rept - FIS",
-      "ITSA CGT Adjustments",
-      "ITSA EIS Carry Back Claims",
-      "ITSA Calc Error Correction",
-      "ITSA Misc Credit"
-    )
+  val defaultPayment = Payment(reference = Some("ref"), amount = Some(0.00), method = Some("method"),
+    lot = Some("lot2"), lotItem = Some("lotItem2"), documentDescription = None,
+    date = Some("2018-12-12"), transactionId = Some("DOCID02"))
 
-    property("ValidMFACreditDescription") = forAll(validMfaCreditDescription) { documentDescription =>
-        validMFACreditDescription(Some(documentDescription))
-    }
+  val validMfaCreditDescription = Gen.oneOf(
+    "ITSA Overpayment Relief",
+    "ITSA Standalone Claim",
+    "ITSA Averaging Adjustment",
+    "ITSA Literary Artistic Spread",
+    "ITSA Loss Relief Claim",
+    "ITSA Post Cessation Claim",
+    "ITSA Pension Relief Claim",
+    "ITSA PAYE in year Repayment",
+    "ITSA NPS Overpayment",
+    "ITSA In year Rept pension schm",
+    "ITSA Increase in PAYE Credit",
+    "ITSA CIS Non Resident Subbie",
+    "ITSA CIS Incorrect Deductions",
+    "ITSA Stand Alone Assessment",
+    "ITSA Infml Dschrg Cntrct Sett",
+    "ITSA Third Party Rept - FIS",
+    "ITSA CGT Adjustments",
+    "ITSA EIS Carry Back Claims",
+    "ITSA Calc Error Correction",
+    "ITSA Misc Credit"
+  )
 
-  property("Not_validMFACreditDescription") = forAll{ ( documentDescription : String) =>
+  property("ValidMFACreditDescription") = forAll(validMfaCreditDescription) { documentDescription =>
+    validMFACreditDescription(Some(documentDescription))
+  }
+
+  property("Not_validMFACreditDescription") = forAll { (documentDescription: String) =>
     !validMFACreditDescription(Some(documentDescription))
+  }
+
+  property("Credit payment") = forAll { negAmount: BigDecimal =>
+    (negAmount < 0) ==> {
+      val payment = defaultPayment.copy(amount = Some(negAmount))
+      payment.validMFACredit()
+    }
+  }
+
+  property("Debit Payment") = forAll { amount: BigDecimal =>
+    (amount >= 0) ==> {
+      val payment = defaultPayment.copy(amount = Some(amount))
+      !payment.validMFACredit()
+    }
   }
 
 }

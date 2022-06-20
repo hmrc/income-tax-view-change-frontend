@@ -41,6 +41,11 @@ case class Payment(reference: Option[String],
   }
 
   def validMFACreditDescription() : Boolean = MfaCreditUtils.validMFACreditDescription(this.documentDescription)
+
+  // draft version::
+  def validMFACredit() : Boolean = amount
+    .map( _ < 0 )
+    .getOrElse(false)
 }
 
 
