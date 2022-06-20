@@ -42,15 +42,13 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase {
   }
 
   val paymentsFull: Seq[Payment] = Seq(
-    Payment(reference = Some("reference"), amount = Some(100.00), method = Some("method"),
-      lot = Some("lot"), lotItem = Some("lotItem"), date = Some("2018-04-25"),
-      documentDescription = None, transactionId = Some("DOCID01"))
+    Payment(reference = Some("reference"), amount = Some(100.00), outstandingAmount = None, method = Some("method"),
+      documentDescription = None, lot = Some("lot"), lotItem = Some("lotItem"), date = Some("2018-04-25"), Some("DOCID01"))
   )
 
   val paymentsnotFull: List[Payment] = List(
-    Payment(reference = Some("reference"), amount = Some(-10000.00), method = Some("method"),
-      lot = None, lotItem = None, date = Some("2018-04-25"),
-      documentDescription = None, transactionId = Some("AY777777202206"))
+    Payment(reference = Some("reference"), amount = Some(-10000.00), outstandingAmount = None, method = Some("method"),
+      documentDescription = None, lot = None, lotItem = None, date = Some("2018-04-25"), Some("AY777777202206"))
   )
 
   val testArn: String = "1"

@@ -26,6 +26,7 @@ case class PaymentsError(status: Int, error: String) extends PaymentsResponse
 
 case class Payment(reference: Option[String],
                    amount: Option[BigDecimal],
+                   outstandingAmount: Option[BigDecimal],
                    method: Option[String],
                    documentDescription: Option[String],
                    lot: Option[String],
@@ -47,7 +48,6 @@ case class Payment(reference: Option[String],
 
 object Payment {
   implicit val format: Format[Payment] = Json.format[Payment]
-
 }
 
 case class PaymentsWithChargeType(payments: Seq[Payment], mainType: Option[String], chargeType: Option[String]) {
