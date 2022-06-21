@@ -16,18 +16,13 @@
 
 package models.financialDetails
 
-import org.scalacheck.Prop.exception.==>
+import org.scalacheck.Prop.propBoolean
 import org.scalacheck.{Gen, Properties}
-import org.scalacheck.Prop.{forAll, propBoolean}
 
 object MfaCreditUtilsSpec extends Properties("MfaCreditUtils_validMFACreditDescription") {
 
-  import org.scalacheck.Prop.forAll
   import MfaCreditUtils.validMFACreditDescription
-
-  val defaultPayment = Payment(reference = Some("ref"), amount = Some(0.00), method = Some("method"),
-    lot = Some("lot2"), lotItem = Some("lotItem2"), documentDescription = None,
-    date = Some("2018-12-12"), outstandingAmount = None, transactionId = Some("DOCID02"))
+  import org.scalacheck.Prop.forAll
 
   val validMfaCreditDescription = Gen.oneOf(
     "ITSA Overpayment Relief",
@@ -58,32 +53,6 @@ object MfaCreditUtilsSpec extends Properties("MfaCreditUtils_validMFACreditDescr
 
   property("Not_validMFACreditDescription") = forAll { (documentDescription: String) =>
     !validMFACreditDescription(Some(documentDescription))
-  }
-
-  property("allocationStatus_FullyAllocatedPaymentStatus") = forAll { outstanding: BigDecimal =>
-    (outstanding != 0) ==> {
-      val payment = defaultPayment.copy(amount = Some(outstanding), outstandingAmount = Some(BigDecimal(0.0)))
-      payment.allocationStatus() == Some(FullyAllocatedPaymentStatus)
-    }
-  }
-
-  property("allocationStatus_NotYetAllocatedPaymentStatus") = forAll { someAmount: BigDecimal =>
-    (someAmount != 0) ==> {
-      val payment = defaultPayment.copy(amount = Some(someAmount), outstandingAmount = Some(someAmount))
-      payment.allocationStatus() == Some(NotYetAllocatedPaymentStatus)
-    }
-  }
-
-  property("allocationStatus_PartiallyAllocatedPaymentStatus") = forAll { (originalAmount: BigDecimal, outstanding: BigDecimal) =>
-    (outstanding != 0 && originalAmount != outstanding) ==> {
-      val payment = defaultPayment.copy(amount = Some(originalAmount), outstandingAmount = Some(outstanding))
-      payment.allocationStatus() == Some(PartiallyAllocatedPaymentStatus)
-    }
-  }
-
-  property("allocationStatus_None") = forAll { _: BigDecimal =>
-    val payment = defaultPayment.copy(amount = None, outstandingAmount = None)
-    payment.allocationStatus() == None
   }
 
 }
