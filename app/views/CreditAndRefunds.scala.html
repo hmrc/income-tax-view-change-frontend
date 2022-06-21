@@ -104,12 +104,16 @@
             <div class="govuk-details__text">
                 <dl class="govuk-summary-list">
                     @creditCharges.map { charge =>
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__value">
-                                <a href="@getControllerHref(charge._1.documentDetail, isAgent)" class="govuk-link">@charge._1.dueDate.get.toLongDate @messages("credit-and-refund.payment")</a>
-                            </dt>
-                            <dd class="govuk-summary-list__value">@charge._1.documentDetail.paymentOrChargeCredit.get.toCurrencyString</dd>
-                        </div>
+                      <div class="govuk-summary-list__row">
+                           <dt class="govuk-summary-list__value">
+                                 @if(charge._1.documentDetail.validMFACreditDescription()) {
+                                   <a href="@getControllerHref(charge._1.documentDetail, isAgent)" class="govuk-link">@messages("credit-and-refund.credit-from-hrmc-title")</a>
+                                 } else {
+                                   <a href="@getControllerHref(charge._1.documentDetail, isAgent)" class="govuk-link">@charge._1.dueDate.get.toLongDate @messages("credit-and-refund.payment")</a>
+                                }
+                           </dt>
+                         <dd class="govuk-summary-list__value">@charge._1.documentDetail.paymentOrChargeCredit.get.toCurrencyString</dd>
+                      </div>
                     }
 
                     @{

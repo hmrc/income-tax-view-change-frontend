@@ -820,6 +820,7 @@ credit-and-refund.details-intro                                   = What’s in 
 credit-and-refund.no-credit                                       = You have no money in your account.
 credit-and-refund.claim-refund-btn                                = Claim a refund
 credit-and-refund.check-refund-btn                                = Check refund status
+credit-and-refund.credit-from-hrmc-title                          = Credit from HRMC adjustment
 
 #Language Selector
 language-switcher.english.hidden                                = Change the language to English
