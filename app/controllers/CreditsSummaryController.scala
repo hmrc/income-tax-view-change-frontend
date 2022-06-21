@@ -18,12 +18,12 @@ package controllers
 
 import auth.MtdItUser
 import config.featureswitch.{FeatureSwitching, MFACreditsAndDebits}
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import models.financialDetails.{DocumentDetail, FinancialDetailsErrorModel, FinancialDetailsModel}
 import play.api.Logger
-import play.api.i18n.I18nSupport
+import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.{FinancialDetailsService, IncomeSourceDetailsService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
@@ -46,10 +46,10 @@ class CreditsSummaryController @Inject()(creditsView: CreditsSummary,
                                          retrieveIncomeSources: IncomeSourceDetailsPredicate)
                                         (implicit val appConfig: FrontendAppConfig,
                                          mcc: MessagesControllerComponents,
-                                         implicit val ec: ExecutionContext,
-                                         agentItvcErrorHandler: AgentItvcErrorHandler,
-                                         itvcHeaderCarrierForPartialsConverter: ItvcHeaderCarrierForPartialsConverter
-                                        ) extends ClientConfirmedController with I18nSupport with FeatureSwitching {
+                                         val ec: ExecutionContext,
+                                         val agentItvcErrorHandler: AgentItvcErrorHandler /*,
+                                         itvcHeaderCarrierForPartialsConverter: ItvcHeaderCarrierForPartialsConverter*/
+                                        ) extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
   // TODO needs to be implemented
   private def getFinancialsByTaxYear(calendarYear: Int, isAgent: Boolean)(f: List[DocumentDetail] => Future[Result])
@@ -79,7 +79,8 @@ class CreditsSummaryController @Inject()(creditsView: CreditsSummary,
                     backUrl: String,
                     isAgent: Boolean,
                     origin: Option[String] = None)
-                   (implicit user: MtdItUser[AnyContent], hc: HeaderCarrier): Future[Result] = {
+                   (implicit user: MtdItUser[AnyContent], hc: HeaderCarrier,
+                    ec: ExecutionContext/*,  ec: ExecutionContext, messages: Messages*/): Future[Result] = {
     getFinancialsByTaxYear(calendarYear, isAgent) { charges =>
 
       Future.successful(Ok(creditsView(
@@ -93,7 +94,7 @@ class CreditsSummaryController @Inject()(creditsView: CreditsSummary,
     }
   }
 
-  def showTaxYears(calendarYear: Int, origin: Option[String] = None): Action[AnyContent] = {
+  def showCreditsSummary(calendarYear: Int, origin: Option[String] = None): Action[AnyContent] = {
     (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
       implicit user =>
         handleRequest(
@@ -105,7 +106,7 @@ class CreditsSummaryController @Inject()(creditsView: CreditsSummary,
     }
   }
 
-  def showAgentTaxYears(calendarYear: Int): Action[AnyContent] = {
+  def showAgentCreditsSummary(calendarYear: Int): Action[AnyContent] = {
     Authenticated.async { implicit request =>
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true) flatMap { implicit mtdItUser =>

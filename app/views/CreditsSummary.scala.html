@@ -68,7 +68,7 @@
             <th scope="col" class="govuk-table__header">@getMessage("tableHead.date")</th>
             <th scope="col" class="govuk-table__header">@getMessage("tableHead.type")</th>
             <th scope="col" class="govuk-table__header">@getMessage("tableHead.status")</th>
-            <th scope="col" class="govuk-table__header">@getMessage("tableHead.status")</th>
+            <th scope="col" class="govuk-table__header">@getMessage("tableHead.amount")</th>
         </tr>
     </thead>
 }
@@ -112,6 +112,7 @@
         }
     </div>
 
+    @* TODO remove it later as it's only for debugging *@
     @if(charges.isEmpty){
         @h1(msg = "Charges are empty!!!!" , id = Some("page-heading"))
     }

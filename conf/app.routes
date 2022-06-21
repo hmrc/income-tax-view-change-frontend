@@ -132,5 +132,5 @@ GET          /claim-refund                                                contro
 GET          /agents/claim-refund                                         controllers.CreditAndRefundController.showAgent()
 
 #Credits
-GET         /credits-from-hmrc/:calendarYear                              controllers.CreditsSummaryController.showTaxYears(calendarYear: Int, origin: Option[String] ?= None)
-GET         /agents/credits-from-hmrc/:calendarYear                       controllers.CreditsSummaryController.showAgentTaxYears(calendarYear: Int)
+GET         /credits-from-hmrc/:calendarYear                              controllers.CreditsSummaryController.showCreditsSummary(calendarYear: Int, origin: Option[String] ?= None)
+GET         /agents/credits-from-hmrc/:calendarYear                       controllers.CreditsSummaryController.showAgentCreditsSummary(calendarYear: Int)
