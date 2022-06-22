@@ -22,13 +22,14 @@ import auth.{MtdItUser, MtdItUserWithNino}
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
 import models.chargeHistory._
-import models.core.{NinoResponseSuccess, NinoResponse, NinoResponseError, Nino}
+import models.core.{Nino, NinoResponse, NinoResponseError, NinoResponseSuccess}
 import models.financialDetails._
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel, IncomeSourceDetailsResponse}
 import models.outstandingCharges._
 import models.paymentAllocationCharges.{FinancialDetailsWithDocumentDetailsErrorModel, FinancialDetailsWithDocumentDetailsModel, FinancialDetailsWithDocumentDetailsResponse}
 import models.paymentAllocations.{PaymentAllocations, PaymentAllocationsError, PaymentAllocationsResponse}
-import models.nextUpdates.{ObligationsModel, NextUpdatesErrorModel, NextUpdatesResponseModel}
+import models.nextUpdates.{NextUpdatesErrorModel, NextUpdatesResponseModel, ObligationsModel}
+import models.repaymentHistory.{RepaymentHistoryErrorModel, RepaymentHistoryModel, RepaymentHistoryResponseModel}
 import play.api.Logger
 import play.api.http.Status
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
@@ -99,9 +100,16 @@ trait IncomeTaxViewChangeConnector extends RawResponseReads with FeatureSwitchin
     s"${appConfig.itvcProtectedService}/income-tax-view-change/$nino/financial-details/charges/documentId/$documentNumber"
   }
 
+  def getRepaymentHistoryByIdUrl(nino: String, repaymentId: String): String = {
+    s"${appConfig.itvcProtectedService}/income-tax-view-change/repayments/$nino/repaymentId/$repaymentId"
+  }
+
+  def getRepaymentHistoryByDateUrl(nino: String, fromDate: String, toDate: String): String = {
+    s"${appConfig.itvcProtectedService}/repayments/$nino/fromDate/$fromDate/toDate/$toDate"
+  }
+
 
   def getBusinessDetails(nino: String)(implicit headerCarrier: HeaderCarrier): Future[IncomeSourceDetailsResponse] = {
-
     val url = getBusinessDetailsUrl(nino)
     Logger("application").debug(s"[IncomeTaxViewChangeConnector][getBusinessDetails] - GET $url")
 
@@ -509,6 +517,60 @@ trait IncomeTaxViewChangeConnector extends RawResponseReads with FeatureSwitchin
             Logger("application").warn(s"[IncomeTaxViewChangeConnector][getFinancialDetailsByDocumentId] - Response status: ${response.status}, body: ${response.body}")
           }
           FinancialDetailsWithDocumentDetailsErrorModel(response.status, response.body)
+      }
+    }
+  }
+
+  def getRepaymentHistoryByRepaymentId(nino: Nino, repaymentId: String)
+                                     (implicit headerCarrier: HeaderCarrier): Future[RepaymentHistoryResponseModel] = {
+    http.GET[HttpResponse](getRepaymentHistoryByIdUrl(nino.value, repaymentId))(
+      httpReads,
+      headerCarrier.withExtraHeaders("Accept" -> "application/vnd.hmrc.2.0+json"),
+      ec
+    ) map { response =>
+      response.status match {
+        case OK =>
+          response.json.validate[RepaymentHistoryModel].fold(
+            invalid => {
+              Logger("application").error(s"[IncomeTaxViewChangeConnector][getRepaymentHistoryByRepaymentId] - Json validation error parsing repayment response, error $invalid")
+              RepaymentHistoryErrorModel(INTERNAL_SERVER_ERROR, "Json validation error parsing repayment response")
+            },
+            valid => valid
+          )
+        case status =>
+          if (status >= INTERNAL_SERVER_ERROR) {
+            Logger("application").error(s"[IncomeTaxViewChangeConnector][getRepaymentHistoryByRepaymentId] - Response status: ${response.status}, body: ${response.body}")
+          } else {
+            Logger("application").warn(s"[IncomeTaxViewChangeConnector][getPaymentHistoryByRepaymentId] - Response status: ${response.status}, body: ${response.body}")
+          }
+          RepaymentHistoryErrorModel(response.status, response.body)
+      }
+    }
+  }
+
+  def getRepaymentHistoryByRepaymentDate(nino: Nino, fromDate: String, toDate: String)
+                                    (implicit headerCarrier: HeaderCarrier): Future[RepaymentHistoryResponseModel] = {
+    http.GET[HttpResponse](getRepaymentHistoryByDateUrl(nino.value, fromDate: String, toDate: String))(
+      httpReads,
+      headerCarrier.withExtraHeaders("Accept" -> "application/vnd.hmrc.2.0+json"),
+      ec
+    ) map { response =>
+      response.status match {
+        case OK =>
+          response.json.validate[RepaymentHistoryModel].fold(
+            invalid => {
+              Logger("application").error(s"[IncomeTaxViewChangeConnector][getRepaymentHistoryByRepaymentDate] - Json validation error parsing repayment response, error $invalid")
+              RepaymentHistoryErrorModel(INTERNAL_SERVER_ERROR, "Json validation error parsing repayment response")
+            },
+            valid => valid
+          )
+        case status =>
+          if (status >= INTERNAL_SERVER_ERROR) {
+            Logger("application").error(s"[IncomeTaxViewChangeConnector][getRepaymentHistoryByRepaymentDate] - Response status: ${response.status}, body: ${response.body}")
+          } else {
+            Logger("application").warn(s"[IncomeTaxViewChangeConnector][getPaymentHistoryByRepaymentDate] - Response status: ${response.status}, body: ${response.body}")
+          }
+          RepaymentHistoryErrorModel(response.status, response.body)
       }
     }
   }
