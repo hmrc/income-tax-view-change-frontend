@@ -38,8 +38,7 @@
         govukInsetText: GovukInsetText
 )
 @* TODO implement it *@
-@(/*creditCharges: List[DocumentDetail],*/
-        backUrl: String,
+@(backUrl: String,
         utr: Option[String],
         btaNavPartial: Option[Html] = None,
         enableMfaCreditsAndDebits: Boolean,
@@ -51,15 +50,6 @@
 
 @getMessage(key: String, args: String*) = @{
     messages(s"credits.$key", args: _*)
-}
-
-
-@getReturnHref(year: Int) = @{
-    if(isAgent) {
-        controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(year).url
-    } else {
-        controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(year, origin).url
-    }
 }
 
 @tableHead(headId: String) = {
@@ -124,20 +114,10 @@
 
 }
 
-
-
-@getCodingOutHref(taxYear: Int, transactionId: String) = @{
-    if(isAgent) {
-        controllers.routes.ChargeSummaryController.showAgent(taxYear, transactionId)
-    } else {
-        controllers.routes.ChargeSummaryController.show(taxYear, transactionId, origin = origin)
+    @creditAndRefundsControllerURL = @{
+        if(isAgent) {
+            controllers.routes.CreditAndRefundController.showAgent().url
+        } else {
+            controllers.routes.CreditAndRefundController.show().url
+        }
     }
-}
-
-@creditAndRefundsControllerURL = @{
-    if(isAgent) {
-        controllers.routes.CreditAndRefundController.showAgent().url
-    } else {
-        controllers.routes.CreditAndRefundController.show().url
-    }
-}

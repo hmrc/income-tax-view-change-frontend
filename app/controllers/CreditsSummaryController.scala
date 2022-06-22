@@ -23,17 +23,17 @@ import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import models.financialDetails.{DocumentDetail, FinancialDetailsErrorModel, FinancialDetailsModel}
 import play.api.Logger
-import play.api.i18n.{I18nSupport, Messages}
+import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.{FinancialDetailsService, IncomeSourceDetailsService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
 import views.html.CreditsSummary
 
+import java.net.URI
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-// TODO implement it
 class CreditsSummaryController @Inject()(creditsView: CreditsSummary,
                                          val authorisedFunctions: AuthorisedFunctions,
                                          incomeSourceDetailsService: IncomeSourceDetailsService,
@@ -47,8 +47,7 @@ class CreditsSummaryController @Inject()(creditsView: CreditsSummary,
                                         (implicit val appConfig: FrontendAppConfig,
                                          mcc: MessagesControllerComponents,
                                          val ec: ExecutionContext,
-                                         val agentItvcErrorHandler: AgentItvcErrorHandler /*,
-                                         itvcHeaderCarrierForPartialsConverter: ItvcHeaderCarrierForPartialsConverter*/
+                                         val agentItvcErrorHandler: AgentItvcErrorHandler
                                         ) extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
   // TODO needs to be implemented
@@ -56,12 +55,13 @@ class CreditsSummaryController @Inject()(creditsView: CreditsSummary,
                                     (implicit user: MtdItUser[AnyContent]): Future[Result] = {
     financialDetailsService.getFinancialDetails(calendarYear, user.nino).flatMap {
       case FinancialDetailsModel(_, _, documentDetails, _) =>
-        val docDetailsNoPayments = documentDetails.filter(_.paymentLot.isEmpty)
+        val docDetailsMFACredits = documentDetails.filter(_.validMFACreditDescription())
 
-        val financialDetailsWithCredit: List[DocumentDetail] = docDetailsNoPayments.filter { dd =>
-          dd.isPayeSelfAssessment && dd.documentDate.getYear == calendarYear && dd.originalAmountIsNotZeroOrNegative
+        val financialDetailsWithCredit: List[DocumentDetail] = docDetailsMFACredits.filter { dd =>
+          dd.documentDate.getYear == calendarYear
         }
 
+        println(s"££££££££££££££££££££ $financialDetailsWithCredit £££££££££££££££££££££££££ ")
         f(financialDetailsWithCredit)
 
       case FinancialDetailsErrorModel(NOT_FOUND, _) => f(List.empty)
@@ -75,22 +75,45 @@ class CreditsSummaryController @Inject()(creditsView: CreditsSummary,
     }
   }
 
+  private def creditsSummaryUrl(calendarYear: Int, origin: Option[String]): String = controllers.routes.CreditsSummaryController.showCreditsSummary(calendarYear, origin).url
+
+  private def paymentHistoryUrl(origin: Option[String]): String = controllers.routes.PaymentHistoryController.show(origin).url
+
+  private def agentCreditsSummaryUrl(calendarYear: Int): String = controllers.routes.CreditsSummaryController.showAgentCreditsSummary(calendarYear).url
+
+  lazy val agentPaymentHistoryHomeUrl: String = controllers.routes.PaymentHistoryController.showAgent().url
+
+  private def getBackURL(referer: Option[String], origin: Option[String], calendarYear: Int): String = {
+    referer.map(URI.create(_).getPath.equals(creditsSummaryUrl(calendarYear, origin))) match {
+      case Some(true) => creditsSummaryUrl(calendarYear, origin)
+      case _ => paymentHistoryUrl(origin)
+    }
+  }
+
+  private def getAgentBackURL(referer: Option[String], calendarYear: Int): String = {
+    referer.map(URI.create(_).getPath.equals(agentCreditsSummaryUrl(calendarYear))) match {
+      case Some(true) => agentCreditsSummaryUrl(calendarYear)
+      case _ => agentPaymentHistoryHomeUrl
+    }
+  }
+
   def handleRequest(calendarYear: Int,
-                    backUrl: String,
                     isAgent: Boolean,
                     origin: Option[String] = None)
-                   (implicit user: MtdItUser[AnyContent], hc: HeaderCarrier,
-                    ec: ExecutionContext/*,  ec: ExecutionContext, messages: Messages*/): Future[Result] = {
-    getFinancialsByTaxYear(calendarYear, isAgent) { charges =>
-
-      Future.successful(Ok(creditsView(
-        backUrl,
-        isAgent = isAgent,
-        utr = user.saUtr,
-        btaNavPartial = user.btaNavPartial,
-        enableMfaCreditsAndDebits = isEnabled(MFACreditsAndDebits),
-        charges = charges,
-        origin = origin)))
+                   (implicit user: MtdItUser[AnyContent], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] = {
+    if (isEnabled(MFACreditsAndDebits)) {
+      getFinancialsByTaxYear(calendarYear, isAgent) { charges =>
+        Future.successful(Ok(creditsView(
+          backUrl = if (isAgent) getAgentBackURL(user.headers.get(REFERER), calendarYear) else getBackURL(user.headers.get(REFERER), origin, calendarYear),
+          isAgent = isAgent,
+          utr = user.saUtr,
+          btaNavPartial = user.btaNavPartial,
+          enableMfaCreditsAndDebits = isEnabled(MFACreditsAndDebits),
+          charges = charges,
+          origin = origin)))
+      }
+    } else {
+      Future.successful(Redirect(controllers.routes.HomeController.show().url))
     }
   }
 
@@ -99,7 +122,6 @@ class CreditsSummaryController @Inject()(creditsView: CreditsSummary,
       implicit user =>
         handleRequest(
           calendarYear = calendarYear,
-          backUrl = controllers.routes.PaymentHistoryController.show(origin).url,
           isAgent = false,
           origin = origin
         )
@@ -112,7 +134,6 @@ class CreditsSummaryController @Inject()(creditsView: CreditsSummary,
         getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true) flatMap { implicit mtdItUser =>
           handleRequest(
             calendarYear = calendarYear,
-            backUrl = controllers.routes.PaymentHistoryController.showAgent().url,
             isAgent = true
           )
         }

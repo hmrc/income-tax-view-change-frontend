@@ -122,13 +122,6 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar wi
     HeaderNames.REFERER -> "http://www.somedomain.org/report-quarterly/income-and-expenses/view"
   )
 
-  lazy val fakeRequestWithActiveAndRefererToPaymentRefundHistoryPage: FakeRequest[AnyContentAsEmpty.type] = FakeRequest().withSession(
-    SessionKeys.lastRequestTimestamp -> "1498236506662",
-    SessionKeys.authToken -> "Bearer Token"
-  ).withHeaders(
-    HeaderNames.REFERER -> "http://www.somedomain.org/report-quarterly/income-and-expenses/view//payment-refund-history"
-  )
-
   lazy val fakeRequestWithClientDetails: FakeRequest[AnyContentAsEmpty.type] = fakeRequestWithActiveSession.withSession(
     utils.SessionKeys.clientFirstName -> "Test",
     utils.SessionKeys.clientLastName -> "User",
