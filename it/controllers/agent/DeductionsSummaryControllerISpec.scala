@@ -54,8 +54,8 @@ class DeductionsSummaryControllerISpec extends ComponentSpecBase with FeatureSwi
   )
 
   "Calling the DeductionsSummaryController.showDeductionsSummary(taxYear)" should {
-    def test(): Unit = {
-      And("I wiremock stub a successful Deductions Source Details response with single Business and Property income")
+    "give the correct response" in {
+      Given("I login as agent")
       stubAuthorisedAgentUser(authorised = true)
 
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
@@ -64,7 +64,7 @@ class DeductionsSummaryControllerISpec extends ComponentSpecBase with FeatureSwi
       )
 
       And("I stub a successful calculation response for 2017-18")
-      IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, "idOne")(
+      IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, testYear)(
         status = OK,
         body = liabilityCalculationModelSuccessFull
       )
@@ -73,7 +73,7 @@ class DeductionsSummaryControllerISpec extends ComponentSpecBase with FeatureSwi
       val res = IncomeTaxViewChangeFrontend.getDeductionsSummary(testYear, clientDetailsWithConfirmation)
 
       verifyIncomeSourceDetailsCall(testMtditid, 0)
-      IncomeTaxCalculationStub.verifyGetCalculationResponse(testNino, "idOne", 1)
+      IncomeTaxCalculationStub.verifyGetCalculationResponse(testNino, testYear, 1)
 
       Then("I see Allowances and deductions page")
       res should have(
