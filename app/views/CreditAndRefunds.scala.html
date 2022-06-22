@@ -75,15 +75,6 @@
     }
 }
 
-@getCharges(charge: (DocumentDetailWithDueDate, FinancialDetail))  = @{
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__value">
-                <a href="@getControllerHref(charge._1.documentDetail, isAgent)" class="govuk-link">@charge._1.dueDate.get.toLongDate @messages("credit-and-refund.payment")</a>
-            </dt>
-            <dd class="govuk-summary-list__value">@charge._1.documentDetail.paymentOrChargeCredit.get.toCurrencyString</dd>
-        </div>
-}
-
 @mainTemplate(
     pageTitle = messages("credit-and-refund.heading"),
     backUrl = Some(backUrl),
