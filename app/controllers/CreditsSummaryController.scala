@@ -50,7 +50,6 @@ class CreditsSummaryController @Inject()(creditsView: CreditsSummary,
                                          val agentItvcErrorHandler: AgentItvcErrorHandler
                                         ) extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
-  // TODO needs to be implemented
   private def getFinancialsByTaxYear(calendarYear: Int, isAgent: Boolean)(f: List[DocumentDetail] => Future[Result])
                                     (implicit user: MtdItUser[AnyContent]): Future[Result] = {
     financialDetailsService.getFinancialDetails(calendarYear, user.nino).flatMap {
@@ -61,7 +60,6 @@ class CreditsSummaryController @Inject()(creditsView: CreditsSummary,
           dd.documentDate.getYear == calendarYear
         }
 
-        println(s"££££££££££££££££££££ $financialDetailsWithCredit £££££££££££££££££££££££££ ")
         f(financialDetailsWithCredit)
 
       case FinancialDetailsErrorModel(NOT_FOUND, _) => f(List.empty)
