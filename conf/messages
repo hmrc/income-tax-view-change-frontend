@@ -404,13 +404,13 @@ obligations.eops                                                = Whole tax year
 obligations.noReports                                           = You don’t have any reports due right now. Your next deadline will show here on the first Monday of next month.
 
 ## Credits Summary Page ##
-credits.heading                                                 = Credits
+credits.heading                                                 = Credits in {0}
 credits.tableHead.date                                          = Date
 credits.tableHead.type                                          = Type
 credits.tableHead.status                                        = Status
 credits.tableHead.amount                                        = Amount
 credits.tableHead.type.value                                    = Credit from HMRC adjustment
-credits.table.status-allocated                                  = Allocated
+credits.table.status-fully-allocated                            = Fully allocated
 credits.table.status-not-yet-allocated                          = Not yet allocated
 credits.table.status-partially-allocated                        = Partially allocated
 

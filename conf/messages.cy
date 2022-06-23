@@ -487,7 +487,7 @@ credits.tableHead.type                                          = Math
 credits.tableHead.status                                        = Statws
 credits.tableHead.amount                                        = Swm
 credits.tableHead.type.value                                    = Credit from HMRC adjustment
-credits.table.status-allocated                                  = Allocated
+credits.table.status-fully-allocated                            = Wedi ei ddyrannu’n llwyr
 credits.table.status-not-yet-allocated                          = Heb ei ddyrannu eto
 credits.table.status-partially-allocated                        = Wedi ei ddyrannu’n rhannol
 

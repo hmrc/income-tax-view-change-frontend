@@ -37,14 +37,15 @@
         detailsDropdown: detailsDropdown,
         govukInsetText: GovukInsetText
 )
-@* TODO implement it *@
-@(backUrl: String,
-        utr: Option[String],
-        btaNavPartial: Option[Html] = None,
-        enableMfaCreditsAndDebits: Boolean,
-        charges: List[DocumentDetail],
-        isAgent: Boolean = false,
-        origin: Option[String] = None)(implicit request: Request[_], user: MtdItUser[_], messages: Messages)
+@(
+    calendarYear: Int,
+    backUrl: String,
+    utr: Option[String],
+    btaNavPartial: Option[Html] = None,
+    enableMfaCreditsAndDebits: Boolean,
+    charges: List[DocumentDetail],
+    isAgent: Boolean = false,
+    origin: Option[String] = None)(implicit request: Request[_], user: MtdItUser[_], messages: Messages)
 
 @import implicitDateFormatter.longDate
 
@@ -70,7 +71,7 @@
 *@
 @getStatus(charges: DocumentDetail) = @{
     if(charges.outstandingAmount === charges.originalAmount) getMessage("table.status-not-yet-allocated")
-    else if (charges.outstandingAmount === Some(BigDecimal("0"))) getMessage("table.status-allocated")
+    else if (charges.outstandingAmount === Some(BigDecimal("0"))) getMessage("table.status-fully-allocated")
     else getMessage("table.status-partially-allocated")
 }
 
@@ -81,13 +82,12 @@
     btaNavPartial = btaNavPartial,
     useFallbackBackLink = true
 ) {
-    @* TODO implement it *@
-    @h1(msg = "credits.heading", id = Some("page-heading"))
+    @h1(msg = messages("credits.heading", s"$calendarYear"), id = Some("page-heading"))
     <div>
         @for((documentDetail, index) <- charges.zipWithIndex) {
             <div id="payments-due-table">
                 <table class="govuk-table">
-                    <caption class="govuk-table__caption govuk-visually-hidden">@getMessage("credits.heading")</caption>
+                    <caption class="govuk-table__caption govuk-visually-hidden">@messages("credits.heading", s"$calendarYear")</caption>
                     @tableHead("over-due-payments-table-head")
                     <tbody class="govuk-table__body">
                         <tr class="govuk-table__row " id="balancing-charge-type-0">
@@ -102,22 +102,17 @@
         }
     </div>
 
-    @* TODO remove it later as it's only for debugging *@
-    @if(charges.isEmpty){
-        @h1(msg = "Charges are empty!!!!" , id = Some("page-heading"))
-    }
-
-    @link(
-        link = creditAndRefundsControllerURL,
-        messageKey = "home.credAndRefund.view"
-    )
+@link(
+    link = creditAndRefundsControllerURL,
+    messageKey = "home.credAndRefund.view"
+)
 
 }
 
-    @creditAndRefundsControllerURL = @{
-        if(isAgent) {
-            controllers.routes.CreditAndRefundController.showAgent().url
-        } else {
-            controllers.routes.CreditAndRefundController.show().url
-        }
+@creditAndRefundsControllerURL = @{
+    if(isAgent) {
+        controllers.routes.CreditAndRefundController.showAgent().url
+    } else {
+        controllers.routes.CreditAndRefundController.show().url
     }
+}

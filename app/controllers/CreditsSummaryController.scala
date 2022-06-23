@@ -77,23 +77,29 @@ class CreditsSummaryController @Inject()(creditsView: CreditsSummary,
 
   private def creditsSummaryUrl(calendarYear: Int, origin: Option[String]): String = controllers.routes.CreditsSummaryController.showCreditsSummary(calendarYear, origin).url
 
+  lazy val creditAndRefundUrl: String = controllers.routes.CreditAndRefundController.show().url
+
   private def paymentHistoryUrl(origin: Option[String]): String = controllers.routes.PaymentHistoryController.show(origin).url
 
   private def agentCreditsSummaryUrl(calendarYear: Int): String = controllers.routes.CreditsSummaryController.showAgentCreditsSummary(calendarYear).url
 
+  lazy val agentCreditAndRefundUrl: String = controllers.routes.CreditAndRefundController.showAgent().url
+
   lazy val agentPaymentHistoryHomeUrl: String = controllers.routes.PaymentHistoryController.showAgent().url
 
   private def getBackURL(referer: Option[String], origin: Option[String], calendarYear: Int): String = {
-    referer.map(URI.create(_).getPath.equals(creditsSummaryUrl(calendarYear, origin))) match {
-      case Some(true) => creditsSummaryUrl(calendarYear, origin)
-      case _ => paymentHistoryUrl(origin)
+    referer.map(URI.create(_).getPath) match {
+      case Some(url) if url.equals(paymentHistoryUrl(origin)) => paymentHistoryUrl(origin)
+      case Some(url) if url.equals(creditAndRefundUrl) => creditAndRefundUrl
+      case _ => creditsSummaryUrl(calendarYear, origin)
     }
   }
 
   private def getAgentBackURL(referer: Option[String], calendarYear: Int): String = {
-    referer.map(URI.create(_).getPath.equals(agentCreditsSummaryUrl(calendarYear))) match {
-      case Some(true) => agentCreditsSummaryUrl(calendarYear)
-      case _ => agentPaymentHistoryHomeUrl
+    referer.map(URI.create(_).getPath) match {
+      case Some(`agentPaymentHistoryHomeUrl`) => agentPaymentHistoryHomeUrl
+      case Some(`agentCreditAndRefundUrl`) => agentCreditAndRefundUrl
+      case _ => agentCreditsSummaryUrl(calendarYear)
     }
   }
 
@@ -104,6 +110,7 @@ class CreditsSummaryController @Inject()(creditsView: CreditsSummary,
     if (isEnabled(MFACreditsAndDebits)) {
       getFinancialsByTaxYear(calendarYear, isAgent) { charges =>
         Future.successful(Ok(creditsView(
+          calendarYear = calendarYear,
           backUrl = if (isAgent) getAgentBackURL(user.headers.get(REFERER), calendarYear) else getBackURL(user.headers.get(REFERER), origin, calendarYear),
           isAgent = isAgent,
           utr = user.saUtr,
