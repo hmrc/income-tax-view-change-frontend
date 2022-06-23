@@ -481,7 +481,7 @@ sections.open												    = Dangos
 sections.close												    = Cuddio
 
 ## Credits Summary Page ##
-credits.heading                                                 = Credits
+credits.heading                                                 = Credits in {0}
 credits.tableHead.date                                          = Dyddiad
 credits.tableHead.type                                          = Math
 credits.tableHead.status                                        = Statws
