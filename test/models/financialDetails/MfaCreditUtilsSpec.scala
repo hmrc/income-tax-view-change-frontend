@@ -16,41 +16,42 @@
 
 package models.financialDetails
 
+import org.scalacheck.Prop.propBoolean
 import org.scalacheck.{Gen, Properties}
 
 object MfaCreditUtilsSpec extends Properties("MfaCreditUtils_validMFACreditDescription") {
 
-    import org.scalacheck.Prop.forAll
-    import MfaCreditUtils.validMFACreditDescription
+  import MfaCreditUtils.validMFACreditDescription
+  import org.scalacheck.Prop.forAll
 
-    val validMfaCreditDescription = Gen.oneOf(
-      "ITSA Overpayment Relief",
-      "ITSA Standalone Claim",
-      "ITSA Averaging Adjustment",
-      "ITSA Literary Artistic Spread",
-      "ITSA Loss Relief Claim",
-      "ITSA Post Cessation Claim",
-      "ITSA Pension Relief Claim",
-      "ITSA PAYE in year Repayment",
-      "ITSA NPS Overpayment",
-      "ITSA In year Rept pension schm",
-      "ITSA Increase in PAYE Credit",
-      "ITSA CIS Non Resident Subbie",
-      "ITSA CIS Incorrect Deductions",
-      "ITSA Stand Alone Assessment",
-      "ITSA Infml Dschrg Cntrct Sett",
-      "ITSA Third Party Rept - FIS",
-      "ITSA CGT Adjustments",
-      "ITSA EIS Carry Back Claims",
-      "ITSA Calc Error Correction",
-      "ITSA Misc Credit"
-    )
+  val validMfaCreditDescription = Gen.oneOf(
+    "ITSA Overpayment Relief",
+    "ITSA Standalone Claim",
+    "ITSA Averaging Adjustment",
+    "ITSA Literary Artistic Spread",
+    "ITSA Loss Relief Claim",
+    "ITSA Post Cessation Claim",
+    "ITSA Pension Relief Claim",
+    "ITSA PAYE in year Repayment",
+    "ITSA NPS Overpayment",
+    "ITSA In year Rept pension schm",
+    "ITSA Increase in PAYE Credit",
+    "ITSA CIS Non Resident Subbie",
+    "ITSA CIS Incorrect Deductions",
+    "ITSA Stand Alone Assessment",
+    "ITSA Infml Dschrg Cntrct Sett",
+    "ITSA Third Party Rept - FIS",
+    "ITSA CGT Adjustments",
+    "ITSA EIS Carry Back Claims",
+    "ITSA Calc Error Correction",
+    "ITSA Misc Credit"
+  )
 
-    property("ValidMFACreditDescription") = forAll(validMfaCreditDescription) { documentDescription =>
-        validMFACreditDescription(Some(documentDescription))
-    }
+  property("ValidMFACreditDescription") = forAll(validMfaCreditDescription) { documentDescription =>
+    validMFACreditDescription(Some(documentDescription))
+  }
 
-  property("Not_validMFACreditDescription") = forAll{ ( documentDescription : String) =>
+  property("Not_validMFACreditDescription") = forAll { (documentDescription: String) =>
     !validMFACreditDescription(Some(documentDescription))
   }
 
