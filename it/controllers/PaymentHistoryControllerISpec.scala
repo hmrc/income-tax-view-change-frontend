@@ -36,21 +36,6 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase {
     enable(R7bTxmEvents)
   }
 
-//  val paymentsFull: Seq[Payment] = Seq(
-//    Payment(reference = Some("reference"), amount = Some(100.00), outstandingAmount = None, method = Some("method"),
-//      documentDescription = None, lot = Some("lot"), lotItem = Some("lotItem"), date = Some("2018-04-25"), Some("DOCID01"))
-//  )
-//
-//  val paymentsFull2: Seq[Payment] = Seq(
-//    Payment(reference = Some("reference2"), amount = Some(200.00), outstandingAmount = None, method = Some("method2"),
-//      documentDescription = None, lot = Some("lot2"), lotItem = Some("lotItem2"), date = Some("2018-12-12"), Some("DOCID02"))
-//  )
-//
-//  val paymentsnotFull: List[Payment] = List(
-//    Payment(reference = Some("reference"), amount = Some(-10000.00), outstandingAmount = None, method = Some("method"),
-//      documentDescription = None, lot = None, lotItem = None, date = Some("2018-04-25"), Some("AY777777202206"))
-//  )
-
   val payments: List[Payment] = List(
     Payment(reference = Some("payment1"), amount = Some(100.00), outstandingAmount = None, method = Some("method"),
       documentDescription = None, lot = Some("lot"), lotItem = Some("lotItem"), date = Some("2018-04-25"), Some("DOCID01")),
