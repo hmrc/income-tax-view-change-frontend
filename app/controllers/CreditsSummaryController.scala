@@ -73,13 +73,16 @@ class CreditsSummaryController @Inject()(creditsView: CreditsSummary,
     }
   }
 
-  private def creditsSummaryUrl(calendarYear: Int, origin: Option[String]): String = controllers.routes.CreditsSummaryController.showCreditsSummary(calendarYear, origin).url
+  private def creditsSummaryUrl(calendarYear: Int, origin: Option[String]): String =
+    controllers.routes.CreditsSummaryController.showCreditsSummary(calendarYear, origin).url
 
   lazy val creditAndRefundUrl: String = controllers.routes.CreditAndRefundController.show().url
 
-  private def paymentHistoryUrl(origin: Option[String]): String = controllers.routes.PaymentHistoryController.show(origin).url
+  private def paymentHistoryUrl(origin: Option[String]): String =
+    controllers.routes.PaymentHistoryController.show(origin).url
 
-  private def agentCreditsSummaryUrl(calendarYear: Int): String = controllers.routes.CreditsSummaryController.showAgentCreditsSummary(calendarYear).url
+  private def agentCreditsSummaryUrl(calendarYear: Int): String =
+    controllers.routes.CreditsSummaryController.showAgentCreditsSummary(calendarYear).url
 
   lazy val agentCreditAndRefundUrl: String = controllers.routes.CreditAndRefundController.showAgent().url
 

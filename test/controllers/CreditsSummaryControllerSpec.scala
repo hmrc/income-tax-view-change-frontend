@@ -16,7 +16,6 @@
 
 package controllers
 
-import audit.mocks.MockAuditingService
 import config.featureswitch.{FeatureSwitching, MFACreditsAndDebits}
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
@@ -27,7 +26,7 @@ import models.financialDetails.DocumentDetail
 import play.api.http.Status
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers._
-import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testAgentAuthRetrievalSuccessNoEnrolment, testMtditid, testTaxYear}
+import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testAgentAuthRetrievalSuccessNoEnrolment, testMtditid, testTaxYear, testYearPlusTwo}
 import testConstants.FinancialDetailsTestConstants._
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.BearerTokenExpired
@@ -37,7 +36,7 @@ import views.html.CreditsSummary
 class CreditsSummaryControllerSpec extends TestSupport with MockCalculationService
   with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicateNoCache
   with MockFinancialDetailsService with FeatureSwitching with MockItvcErrorHandler
-  with MockAuditingService with MockNextUpdatesService with MockIncomeSourceDetailsPredicate {
+  with MockNextUpdatesService with MockIncomeSourceDetailsPredicate {
 
   val creditsSummaryView: CreditsSummary = app.injector.instanceOf[CreditsSummary]
 
@@ -173,11 +172,11 @@ class CreditsSummaryControllerSpec extends TestSupport with MockCalculationServi
 
   "The CreditsSummaryController.showAgentCreditsSummary(year) action" when {
 
-    /*"the user is not authenticated" should {
+    // todo do we need this test
+   /* "the user is not authenticated" should {
       "redirect them to sign in" in {
-        mockSingleBusinessIncomeSource()
+        enable(MFACreditsAndDebits)
         setupMockAgentAuthorisationException(withClientPredicate = false)
-        mockFinancialDetailsSuccess(financialDetailCreditChargeMFA)
 
         val result = TestCreditsSummaryController.showAgentCreditsSummary(testTaxYear)(fakeRequestWithClientDetails)
 
@@ -216,8 +215,9 @@ class CreditsSummaryControllerSpec extends TestSupport with MockCalculationServi
         result.getMessage shouldBe "[ClientConfirmedController][getMtdItUserWithIncomeSources] IncomeSourceDetailsModel not created"
       }
     }
-    /*"there was a problem retrieving the charges for the user" should {
+    "there was a problem retrieving the charges for the user" should {
       "return technical difficulties" in {
+        enable(MFACreditsAndDebits)
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         mockBothIncomeSources()
         setupMockGetFinancialDetailsWithTaxYearAndNino(testYearPlusTwo, "AA111111A")(testFinancialDetailsErrorModel)
@@ -228,6 +228,6 @@ class CreditsSummaryControllerSpec extends TestSupport with MockCalculationServi
         status(result) shouldBe INTERNAL_SERVER_ERROR
         contentType(result) shouldBe Some(HTML)
       }
-    }*/
+    }
   }
 }
