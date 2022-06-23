@@ -70,13 +70,17 @@
     outstandingAmount == 0 (allocated)
 *@
 @getStatus(charges: DocumentDetail) = @{
-    if(charges.outstandingAmount === charges.originalAmount) getMessage("table.status-not-yet-allocated")
-    else if (charges.outstandingAmount === Some(BigDecimal("0"))) getMessage("table.status-fully-allocated")
+    if(charges.outstandingAmount.map(_.abs) === charges.originalAmount) getMessage("table.status-not-yet-allocated")
+    else if (charges.outstandingAmount === Some(BigDecimal(0))) getMessage("table.status-fully-allocated")
     else getMessage("table.status-partially-allocated")
 }
 
+@getIndex(idx: Int) = @{
+    s"balancing-charge-type-$idx"
+}
+
 @mainTemplate(
-    pageTitle = getMessage("heading"),
+    pageTitle = messages("credits.heading", s"$calendarYear"),
     backUrl = Some(backUrl),
     isAgent = isAgent,
     btaNavPartial = btaNavPartial,
@@ -87,24 +91,26 @@
         <div id="payments-due-table">
             <table class="govuk-table">
                 <caption class="govuk-table__caption govuk-visually-hidden">@messages("credits.heading", s"$calendarYear")</caption>
-                @tableHead("over-due-payments-table-head")
-                    @for((documentDetail, index) <- charges.zipWithIndex) {
-                        <tbody class="govuk-table__body">
-                            <tr class="govuk-table__row " id="balancing-charge-type-0">
+                @if(charges.nonEmpty) {
+                    @tableHead("over-due-payments-table-head")
+                    <tbody class="govuk-table__body">
+                        @for((documentDetail, index) <- charges.zipWithIndex) {
+                            <tr class="govuk-table__row " id=@getIndex(index)>
                                 <td class="govuk-table__cell govuk-!-width-one-quarter">@documentDetail.documentDate.toLongDateShort</td>
                                 <td class="govuk-table__cell govuk-!-width-one-half">@getMessage("tableHead.type.value")</td>
                                 <td class="govuk-table__cell numeric govuk-!-width-one-quarter">@getStatus(documentDetail)</td>
                                 <td class="govuk-table__cell numeric govuk-!-width-one-quarter">@documentDetail.originalAmount.getOrElse(throw MissingFieldException("Original Amount")).toCurrencyString</td>
                             </tr>
-                        </tbody>
-                    }
+                        }
+                    </tbody>
+                }
             </table>
         </div>
     </div>
 
 @link(
     link = creditAndRefundsControllerURL,
-    messageKey = "home.credAndRefund.view"
+    messageKey = "credit-and-refund.claim-refund-btn"
 )
 
 }
