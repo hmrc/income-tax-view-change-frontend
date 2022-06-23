@@ -84,22 +84,22 @@
 ) {
     @h1(msg = messages("credits.heading", s"$calendarYear"), id = Some("page-heading"))
     <div>
-        @for((documentDetail, index) <- charges.zipWithIndex) {
-            <div id="payments-due-table">
-                <table class="govuk-table">
-                    <caption class="govuk-table__caption govuk-visually-hidden">@messages("credits.heading", s"$calendarYear")</caption>
-                    @tableHead("over-due-payments-table-head")
-                    <tbody class="govuk-table__body">
-                        <tr class="govuk-table__row " id="balancing-charge-type-0">
-                            <td class="govuk-table__cell govuk-!-width-one-quarter">@documentDetail.documentDate.toLongDateShort</td>
-                            <td class="govuk-table__cell govuk-!-width-one-half">@getMessage("tableHead.type.value")</td>
-                            <td class="govuk-table__cell numeric govuk-!-width-one-quarter">@getStatus(documentDetail)</td>
-                            <td class="govuk-table__cell numeric govuk-!-width-one-quarter">@documentDetail.originalAmount.getOrElse(throw MissingFieldException("Original Amount")).toCurrencyString</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        }
+        <div id="payments-due-table">
+            <table class="govuk-table">
+                <caption class="govuk-table__caption govuk-visually-hidden">@messages("credits.heading", s"$calendarYear")</caption>
+                @tableHead("over-due-payments-table-head")
+                    @for((documentDetail, index) <- charges.zipWithIndex) {
+                        <tbody class="govuk-table__body">
+                            <tr class="govuk-table__row " id="balancing-charge-type-0">
+                                <td class="govuk-table__cell govuk-!-width-one-quarter">@documentDetail.documentDate.toLongDateShort</td>
+                                <td class="govuk-table__cell govuk-!-width-one-half">@getMessage("tableHead.type.value")</td>
+                                <td class="govuk-table__cell numeric govuk-!-width-one-quarter">@getStatus(documentDetail)</td>
+                                <td class="govuk-table__cell numeric govuk-!-width-one-quarter">@documentDetail.originalAmount.getOrElse(throw MissingFieldException("Original Amount")).toCurrencyString</td>
+                            </tr>
+                        </tbody>
+                    }
+            </table>
+        </div>
     </div>
 
 @link(
