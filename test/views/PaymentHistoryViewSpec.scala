@@ -71,6 +71,18 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
       lotItem = None, date = Some("2018-04-25"), Some("AY777777202206"))
   )
 
+  val paymentsMFA: List[Payment] = List(
+    Payment(reference = Some("reference"), amount = Some(-10000.00), Some(-150.00), method = Some("method"),
+      documentDescription = Some("ITSA Overpayment Relief"), lot = None, lotItem = None, date = Some("2020-04-25"),
+      Some("AY777777202201")),
+    Payment(reference = Some("reference"), amount = Some(-10000.00), Some(-150.00), method = Some("method"),
+      documentDescription = Some("ITSA Literary Artistic Spread"), lot = None, lotItem = None, date = Some("2019-04-25"),
+      Some("AY777777202202")),
+    Payment(reference = Some("reference"), amount = Some(-10000.00), Some(-150.00), method = Some("method"),
+      documentDescription = Some("ITSA Post Cessation Claim"), lot = None, lotItem = None, date = Some("2018-04-25"),
+      Some("AY777777202203"))
+  )
+
 
   val emptyPayments: List[Payment] = List(
     Payment(reference = None, amount = None, outstandingAmount = None, method = None, documentDescription = None, lot = None, lotItem = None, date = None, transactionId = None)
@@ -82,6 +94,11 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
 
   class PaymentHistorySetup1(paymentsnotFull: List[Payment], saUtr: Option[String] = Some("1234567890")) extends Setup(
     paymentHistoryView(paymentsnotFull, CutOverCreditsEnabled = true, "testBackURL", saUtr, isAgent = false)(FakeRequest(), implicitly)
+  )
+
+  class PaymentHistorySetupMFA(testPayments: List[Payment], MFACreditsEnabled: Boolean, saUtr: Option[String] = Some("1234567890")) extends Setup(
+    paymentHistoryView(testPayments, CutOverCreditsEnabled = true, "testBackURL", saUtr, isAgent = false,
+      MFACreditsEnabled = MFACreditsEnabled)(FakeRequest(), implicitly)
   )
 
   val testMultiplePayments: List[Payment] = List(
@@ -147,7 +164,7 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
         }
       }
 
-      "display payment history by year with FS On" in new PaymentHistorySetup1(paymentsnotFull) {
+      "display payment history by year with CutOverCredits FS On" in new PaymentHistorySetup1(paymentsnotFull) {
         val orderedPayments: Map[Int, List[Payment]] = paymentsnotFull.groupBy { payment => LocalDate.parse(payment.date.get).getYear }
         for (((year, payments), index) <- orderedPayments.zipWithIndex) {
           layoutContent.selectHead(s"#accordion-with-summary-sections-heading-$year").text shouldBe PaymentHistoryMessages.button(year)
@@ -168,7 +185,31 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
         layoutContent.selectHead("h1").text shouldBe PaymentHistoryMessages.heading
         layoutContent.selectHead("h2").text.contains(PaymentHistoryMessages.partialH2Heading)
         layoutContent.getElementById("paymentFromEarlierYear") shouldBe null
+      }
 
+      "display MFA Credits with FS On" in new PaymentHistorySetupMFA(paymentsMFA, true) {
+        val orderedPayments: Map[Int, List[Payment]] = paymentsMFA.groupBy { payment => LocalDate.parse(payment.date.get).getYear }
+        for (((year, payments), index) <- orderedPayments.zipWithIndex) {
+          layoutContent.selectHead(s"#accordion-with-summary-sections-heading-$year").text shouldBe PaymentHistoryMessages.button(year)
+          val sectionContent = layoutContent.selectHead(s"#accordion-default-content-${index + 1}")
+          val tbody = sectionContent.selectHead("table > tbody")
+          payments.zipWithIndex.foreach {
+            case (payment, index) =>
+              val row = tbody.selectNth("tr", index + 1)
+              row.selectNth("td", 1).text shouldBe LocalDate.parse(payment.date.get).toLongDate
+              row.selectNth("td", 2).text shouldBe messages("paymentHistory.mfaCredit") + s" ${payment.transactionId.get}"
+              val url = s"/report-quarterly/income-and-expenses/view/credits-from-hmrc/${LocalDate.parse(payment.date.get).getYear}"
+              row.selectNth("td", 2).select("a").attr("href") shouldBe url
+          }
+        }
+      }
+
+      "display MFA Credits with FS Off" in new PaymentHistorySetupMFA(paymentsMFA, false) {
+        document.title() shouldBe PaymentHistoryMessages.title
+        layoutContent.selectHead("h1").text shouldBe PaymentHistoryMessages.heading
+        layoutContent.selectHead("h2").text.contains(PaymentHistoryMessages.partialH2Heading)
+        layoutContent.getElementById("mfacredit") shouldBe null
+        layoutContent.getElementById("paymentFromEarlierYear") shouldBe null
       }
 
       "display payment history by year with multiple payments for the same year" in new PaymentHistorySetup(testMultiplePayments) {

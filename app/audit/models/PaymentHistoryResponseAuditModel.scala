@@ -18,7 +18,6 @@ package audit.models
 
 import audit.Utilities.userAuditDetails
 import auth.MtdItUser
-import config.featureswitch.R7bTxmEvents
 import models.financialDetails.Payment
 import play.api.libs.json.{JsObject, JsValue, Json}
 import utils.Utilities.JsonUtil
@@ -26,31 +25,36 @@ import utils.Utilities.JsonUtil
 case class PaymentHistoryResponseAuditModel(mtdItUser: MtdItUser[_],
                                             payments: Seq[Payment],
                                             CutOverCreditsEnabled: Boolean,
+                                            MFACreditsEnabled: Boolean,
                                             R7bTxmEvents: Boolean) extends ExtendedAuditModel {
 
   override val transactionName: String = "payment-history-response"
   override val auditType: String = "PaymentHistoryResponse"
 
-  private def paymentHistoryDetail(payment: Payment): JsObject =
-    paymentHistoryDescriptionType(payment) ++
-      ("paymentDate", payment.date) ++
-      ("amount", payment.amount)
+  private def getPayment(payment: Payment, desc: String): JsObject = Json.obj("description" -> desc) ++
+    ("paymentDate", payment.date) ++
+    ("amount", payment.amount)
 
-
-  private def paymentHistoryDescriptionType(payment: Payment): JsObject = {
+  private def paymentHistoryMapper(payment: Payment): Option[JsObject] = {
     if (R7bTxmEvents) {
-      if (payment.credit.isDefined && CutOverCreditsEnabled) {
-        Json.obj("description" -> "Payment from an earlier tax year")
+      if (payment.credit.isDefined) {
+        if (payment.validMFACreditDescription()) {
+          if (MFACreditsEnabled) Some(getPayment(payment, "Credit from HMRC adjustment")) else None
+        } else {
+          if (CutOverCreditsEnabled) Some(getPayment(payment, "Payment from an earlier tax year")) else None
+        }
       }
       else {
-        Json.obj("description" -> "Payment Made to HMRC")
+        Some(getPayment(payment, "Payment Made to HMRC"))
       }
     }
-    else Json.obj("description" -> "Payment Made to HMRC")
+    else {
+      if (!payment.credit.isDefined) Some(getPayment(payment, "Payment Made to HMRC")) else None
+    }
   }
 
 
-  private val paymentHistory: Seq[JsObject] = payments.map(paymentHistoryDetail)
+  private val paymentHistory: Seq[JsObject] = payments.flatMap(paymentHistoryMapper)
 
   override val detail: JsValue = userAuditDetails(mtdItUser) ++
     Json.obj("paymentHistory" -> paymentHistory)
