@@ -50,7 +50,7 @@ class CreditsSummaryController @Inject()(creditsView: CreditsSummary,
                                          val agentItvcErrorHandler: AgentItvcErrorHandler
                                         ) extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
-  private def getFinancialsByTaxYear(calendarYear: Int, isAgent: Boolean)(f: List[DocumentDetail] => Future[Result])
+  private def getFinancialsByTaxYear(calendarYear: Int, isAgent: Boolean)(callback: List[DocumentDetail] => Future[Result])
                                     (implicit user: MtdItUser[AnyContent]): Future[Result] = {
     financialDetailsService.getFinancialDetails(calendarYear, user.nino).flatMap {
       case FinancialDetailsModel(_, _, documentDetails, _) =>
@@ -60,9 +60,9 @@ class CreditsSummaryController @Inject()(creditsView: CreditsSummary,
           dd.documentDate.getYear == calendarYear
         }.sortBy(_.documentDate.toEpochDay())
 
-        f(financialDetailsWithCredit)
+        callback(financialDetailsWithCredit)
 
-      case FinancialDetailsErrorModel(NOT_FOUND, _) => f(List.empty)
+      case FinancialDetailsErrorModel(NOT_FOUND, _) => callback(List.empty)
 
       case _ if isAgent =>
         Logger("application").error(s"[TaxYearSummaryController][withTaxYearFinancials] - Could not retrieve financial details for year: $calendarYear")
