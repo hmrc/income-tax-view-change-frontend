@@ -692,6 +692,7 @@ paymentHistory.button                                           = Taliadau ar gy
 paymentsHistory.CardRef                                         = Cyfeirnod ar gyfer taliad a wnaed drwy gerdyn debyd:
 paymentHistory.paymentToHmrc                                    = Taliad a wnaed i CThEM
 paymentHistory.paymentFromEarlierYear                           = Taliad o flwyddyn dreth gynharach
+paymentHistory.mfaCredit                                        = Credyd o addasiad gan CThEM
 paymentHistory.table.header.date                                = Dyddiad
 paymentHistory.table.header.description                         = Disgrifiad
 paymentHistory.table.header.amount                              = Swm
