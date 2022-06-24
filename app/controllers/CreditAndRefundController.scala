@@ -19,7 +19,7 @@ package controllers
 
 import auth.{FrontendAuthorisedFunctions, MtdItUser}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
-import config.featureswitch.{CreditsRefundsRepay, FeatureSwitching}
+import config.featureswitch.{CreditsRefundsRepay, FeatureSwitching, MFACreditsAndDebits}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
 import models.financialDetails.{BalanceDetails, DocumentDetailWithDueDate, FinancialDetail, FinancialDetailsModel}
@@ -65,7 +65,7 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
           financialDetails => (financialDetails.getAllDocumentDetailsWithDueDates().zip(financialDetails.financialDetails))
         ).flatten
 
-        Ok(view(charges, balance, isAgent, backUrl)(user, user, messages))
+        Ok(view(charges, balance, isAgent, backUrl, isEnabled(MFACreditsAndDebits))(user, user, messages))
       case _ => Logger("application").error(
         s"${if (isAgent) "[Agent]"}[CreditAndRefundController][show] Invalid response from financial transactions")
         itvcErrorHandler.showInternalServerError()

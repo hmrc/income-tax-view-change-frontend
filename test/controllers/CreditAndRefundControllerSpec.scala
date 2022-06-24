@@ -16,7 +16,7 @@
 
 package controllers
 
-import config.featureswitch.{CreditsRefundsRepay, FeatureSwitching}
+import config.featureswitch.{CreditsRefundsRepay, FeatureSwitching, MFACreditsAndDebits}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import mocks.auth.MockFrontendAuthorisedFunctions
@@ -38,6 +38,7 @@ import scala.concurrent.Future
 
 class CreditAndRefundControllerSpec extends MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate with MockNavBarEnumFsPredicate
   with MockFrontendAuthorisedFunctions with FeatureSwitching {
+
 
   trait Setup {
 
@@ -68,8 +69,28 @@ class CreditAndRefundControllerSpec extends MockAuthenticationPredicate with Moc
 
   "The CreditAndRefund Controller" should {
     "show the credit and refund page" when {
-      "credit charges are returned" in new Setup {
+
+      "MFACreditsAndDebits disabled: credit charges are returned" in new Setup {
         enable(CreditsRefundsRepay)
+        disable(MFACreditsAndDebits)
+        mockSingleBISWithCurrentYearAsMigrationYear()
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthSuccessWithSaUtrResponse())
+
+        when(mockCreditService.getCreditCharges()(any(), any()))
+          .thenReturn(Future.successful(List(financialDetailCreditAndRefundCharge)))
+
+        val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
+        val resultAgent: Future[Result] = controller.showAgent()(fakeRequestConfirmedClient())
+
+        status(result) shouldBe Status.OK
+        status(resultAgent) shouldBe Status.OK
+
+      }
+
+      "MFACreditsAndDebits enabled: credit charges are returned" in new Setup {
+        enable(CreditsRefundsRepay)
+        enable(MFACreditsAndDebits)
         mockSingleBISWithCurrentYearAsMigrationYear()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthSuccessWithSaUtrResponse())
@@ -87,10 +108,12 @@ class CreditAndRefundControllerSpec extends MockAuthenticationPredicate with Moc
 
       "redirect to the custom not found error page" in new Setup {
         disable(CreditsRefundsRepay)
+        enable(MFACreditsAndDebits)
         mockSingleBISWithCurrentYearAsMigrationYear()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthSuccessWithSaUtrResponse())
 
+        val expectedContent: String = controller.customNotFoundErrorView().toString()
 
         when(mockCreditService.getCreditCharges()(any(), any()))
           .thenReturn(Future.successful(List(financialDetailCreditCharge)))
@@ -99,8 +122,8 @@ class CreditAndRefundControllerSpec extends MockAuthenticationPredicate with Moc
         val resultAgent: Future[Result] = controller.showAgent()(fakeRequestConfirmedClient())
 
         status(result) shouldBe Status.OK
+        contentAsString(result) shouldBe  expectedContent
         status(resultAgent) shouldBe Status.OK
-
       }
 
       "User fails to be authorised" in new Setup {

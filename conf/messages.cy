@@ -797,6 +797,8 @@ InYear-tax-overview.goToTaxAccount                               = mynd i gyfrif
 inYear-tax-overview.agent.heading                                = Trosolwg o dreth eich cleient 6 Ebrill {0} i {1}
 inYear-tax-overview.agent.inset                                  = Mae’r cyfrifiad hwn yn seiliedig ar ddiweddariadau gorffenedig eich cleient ar gyfer y flwyddyn dreth hon hyd at {0} yn unig. Nid dyma ei fil treth terfynol ar gyfer y flwyddyn. Cyfrifiad o’r flwyddyn hyd yma yw hwn ar sail yr wybodaeth sydd wedi cael ei nodi hyd yma.
 
+## credits and refunds
+credit-and-refund.credit-from-hmrc-title                          = Credyd o addasiad gan CThEM
 
 shortMonth.1 = Ion
 shortMonth.2 = Chwe

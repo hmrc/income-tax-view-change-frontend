@@ -55,7 +55,8 @@
     govukInsetText : GovukInsetText
 )
 
-@(creditCharges: List[(DocumentDetailWithDueDate, FinancialDetail)], balance: Option[BalanceDetails], isAgent: Boolean = false, backUrl: String)(implicit request: Request[_], user: MtdItUser[_], messages: Messages)
+@(creditCharges: List[(DocumentDetailWithDueDate, FinancialDetail)], balance: Option[BalanceDetails],
+        isAgent: Boolean = false, backUrl: String, isMFACreditsAndDebitsEnabled: Boolean = false)(implicit request: Request[_], user: MtdItUser[_], messages: Messages)
 @import implicitDateFormatter.longDate
 
 @getControllerHref(credit: DocumentDetail, isAgent: Boolean) = @{
@@ -103,13 +104,33 @@
             </summary>
             <div class="govuk-details__text">
                 <dl class="govuk-summary-list">
-                    @creditCharges.map { charge =>
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__value">
-                                <a href="@getControllerHref(charge._1.documentDetail, isAgent)" class="govuk-link">@charge._1.dueDate.get.toLongDate @messages("credit-and-refund.payment")</a>
-                            </dt>
-                            <dd class="govuk-summary-list__value">@charge._1.documentDetail.paymentOrChargeCredit.get.toCurrencyString</dd>
-                        </div>
+                    @for(charge <- creditCharges){
+                        @if(isMFACreditsAndDebitsEnabled){
+                            @if(charge._1.documentDetail.validMFACreditDescription()) {
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__value">
+                                        <span>@messages("credit-and-refund.credit-from-hmrc-title")</span>
+                                    </dt>
+                                    <dd class="govuk-summary-list__value">@charge._1.documentDetail.paymentOrChargeCredit.get.toCurrencyString</dd>
+                                </div>
+                            }
+                            @if(!charge._1.documentDetail.validMFACreditDescription()) {
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__value">
+                                        <a href="@getControllerHref(charge._1.documentDetail, isAgent)" class="govuk-link">@charge._1.dueDate.get.toLongDate @messages("credit-and-refund.payment")</a>
+                                    </dt>
+                                    <dd class="govuk-summary-list__value">@charge._1.documentDetail.paymentOrChargeCredit.get.toCurrencyString</dd>
+                                </div>
+                            }
+                        }
+                        @if(!isMFACreditsAndDebitsEnabled && !charge._1.documentDetail.validMFACreditDescription()){
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__value">
+                                    <a href="@getControllerHref(charge._1.documentDetail, isAgent)" class="govuk-link">@charge._1.dueDate.get.toLongDate @messages("credit-and-refund.payment")</a>
+                                </dt>
+                                <dd class="govuk-summary-list__value">@charge._1.documentDetail.paymentOrChargeCredit.get.toCurrencyString</dd>
+                            </div>
+                        }
                     }
 
                     @{
