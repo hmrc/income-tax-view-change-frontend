@@ -38,9 +38,11 @@ import models.outstandingCharges.{OutstandingChargesErrorModel, OutstandingCharg
 import models.paymentAllocationCharges.{FinancialDetailsWithDocumentDetailsErrorModel, FinancialDetailsWithDocumentDetailsResponse}
 import models.paymentAllocations.{PaymentAllocationsError, PaymentAllocationsResponse}
 import models.nextUpdates.{NextUpdatesErrorModel, NextUpdatesResponseModel}
+import models.repaymentHistory.{RepaymentHistoryErrorModel, RepaymentHistoryModel, RepaymentHistoryResponseModel}
 import org.mockito.Mockito.when
 import play.api.libs.json.Json
 import play.mvc.Http.Status
+import testConstants.RepaymentHistoryTestConstants.{repaymentHistoryFull, validMultipleRepaymentHistoryJson, validRepaymentHistoryJson}
 import testUtils.TestSupport
 import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.http.HttpClient
@@ -60,6 +62,18 @@ class IncomeTaxViewChangeConnectorSpec extends TestSupport with MockHttp with Mo
 
     when(appConfig.itvcProtectedService) thenReturn baseUrl
 
+  }
+
+  "getPaymentHistoryByIdUrl" should {
+    "return the correct url" in new Setup {
+      getRepaymentHistoryByIdUrl(testNino, repaymentId) shouldBe s"$baseUrl/income-tax-view-change/repayments/$testNino/repaymentId/$repaymentId"
+    }
+  }
+
+  "getPaymentHistoryByDateUrl" should {
+    "return the correct url" in new Setup {
+      getRepaymentHistoryByDateUrl(testNino, dateFrom, dateTo) shouldBe s"$baseUrl/repayments/$testNino/fromDate/$dateFrom/toDate/$dateTo"
+    }
   }
 
   "getBusinessDetailsUrl" should {
@@ -582,6 +596,112 @@ class IncomeTaxViewChangeConnectorSpec extends TestSupport with MockHttp with Mo
 
         val result: Future[FinancialDetailsWithDocumentDetailsResponse] = getFinancialDetailsByDocumentId(testUserNino, docNumber)
         result.futureValue shouldBe FinancialDetailsWithDocumentDetailsErrorModel(400, """"Error message"""")
+      }
+    }
+  }
+
+  ".getRepaymentHistoryByRepaymentId" should {
+
+    "return a valid RepaymentHistoryModel" when {
+
+      val successResponse = HttpResponse(status = OK, json = validRepaymentHistoryJson, headers = Map.empty)
+      val successResponseMultipleRepayments = HttpResponse(status = OK, json = validMultipleRepaymentHistoryJson, headers = Map.empty)
+
+      "receiving an OK with only one valid data item" in new Setup {
+        setupMockHttpGet(getRepaymentHistoryByIdUrl(testNino, repaymentId))(successResponse)
+
+        val result: Future[RepaymentHistoryResponseModel] = getRepaymentHistoryByRepaymentId(testUserNino, repaymentId)
+        result.futureValue shouldBe RepaymentHistoryModel(List(repaymentHistoryFull))
+      }
+
+      "receiving an OK with multiple valid data items" in new Setup {
+        setupMockHttpGet(getRepaymentHistoryByIdUrl(testNino, repaymentId))(successResponseMultipleRepayments)
+
+        val result: Future[RepaymentHistoryResponseModel] = getRepaymentHistoryByRepaymentId(testUserNino, repaymentId)
+        result.futureValue shouldBe RepaymentHistoryModel(List(repaymentHistoryFull, repaymentHistoryFull))
+      }
+    }
+
+    "return a NOT FOUND repayment history error" when {
+
+      "receiving a not found response" in new Setup {
+        setupMockHttpGet(getRepaymentHistoryByIdUrl(testNino, repaymentId))(HttpResponse(status = Status.NOT_FOUND,
+          json = Json.toJson("Error message"), headers = Map.empty))
+
+        val result: Future[RepaymentHistoryResponseModel] = getRepaymentHistoryByRepaymentId(testUserNino, repaymentId)
+        result.futureValue shouldBe RepaymentHistoryErrorModel(404, """"Error message"""")
+      }
+    }
+
+    "return an INTERNAL_SERVER_ERROR repayment history error" when {
+
+      "receiving a 500+ response" in new Setup {
+        setupMockHttpGet(getRepaymentHistoryByIdUrl(testNino, repaymentId))(HttpResponse(status = Status.SERVICE_UNAVAILABLE,
+          json = Json.toJson("Error message"), headers = Map.empty))
+
+        val result: Future[RepaymentHistoryResponseModel] = getRepaymentHistoryByRepaymentId(testUserNino, repaymentId)
+        result.futureValue shouldBe RepaymentHistoryErrorModel(503, """"Error message"""")
+      }
+
+      "receiving a 400- response" in new Setup {
+        setupMockHttpGet(getRepaymentHistoryByIdUrl(testNino, repaymentId))(HttpResponse(status = Status.BAD_REQUEST,
+          json = Json.toJson("Error message"), headers = Map.empty))
+
+        val result: Future[RepaymentHistoryResponseModel] = getRepaymentHistoryByRepaymentId(testUserNino, repaymentId)
+        result.futureValue shouldBe RepaymentHistoryErrorModel(400, """"Error message"""")
+      }
+    }
+  }
+
+  ".getRepaymentHistoryByDateUrl" should {
+
+    "return a valid RepaymentHistoryModel" when {
+
+      val successResponse = HttpResponse(status = OK, json = validRepaymentHistoryJson, headers = Map.empty)
+      val successResponseMultipleRepayments = HttpResponse(status = OK, json = validMultipleRepaymentHistoryJson, headers = Map.empty)
+
+      "receiving an OK with only one valid data item" in new Setup {
+        setupMockHttpGet(getRepaymentHistoryByDateUrl(testNino, dateFrom, dateTo))(successResponse)
+
+        val result: Future[RepaymentHistoryResponseModel] = getRepaymentHistoryByRepaymentDate(testUserNino, dateFrom, dateTo)
+        result.futureValue shouldBe RepaymentHistoryModel(List(repaymentHistoryFull))
+      }
+
+      "receiving an OK with multiple valid data items" in new Setup {
+        setupMockHttpGet(getRepaymentHistoryByDateUrl(testNino, dateFrom, dateTo))(successResponseMultipleRepayments)
+
+        val result: Future[RepaymentHistoryResponseModel] = getRepaymentHistoryByRepaymentDate(testUserNino, dateFrom, dateTo)
+        result.futureValue shouldBe RepaymentHistoryModel(List(repaymentHistoryFull, repaymentHistoryFull))
+      }
+    }
+
+    "return a NOT FOUND repayment history error" when {
+
+      "receiving a not found response" in new Setup {
+        setupMockHttpGet(getRepaymentHistoryByDateUrl(testNino, dateFrom, dateTo))(HttpResponse(status = Status.NOT_FOUND,
+          json = Json.toJson("Error message"), headers = Map.empty))
+
+        val result: Future[RepaymentHistoryResponseModel] = getRepaymentHistoryByRepaymentDate(testUserNino, dateFrom, dateTo)
+        result.futureValue shouldBe RepaymentHistoryErrorModel(404, """"Error message"""")
+      }
+    }
+
+    "return an INTERNAL_SERVER_ERROR repayment history error" when {
+
+      "receiving a 500+ response" in new Setup {
+        setupMockHttpGet(getRepaymentHistoryByDateUrl(testNino, dateFrom, dateTo))(HttpResponse(status = Status.SERVICE_UNAVAILABLE,
+          json = Json.toJson("Error message"), headers = Map.empty))
+
+        val result: Future[RepaymentHistoryResponseModel] = getRepaymentHistoryByRepaymentDate(testUserNino, dateFrom, dateTo)
+        result.futureValue shouldBe RepaymentHistoryErrorModel(503, """"Error message"""")
+      }
+
+      "receiving a 400- response" in new Setup {
+        setupMockHttpGet(getRepaymentHistoryByDateUrl(testNino, dateFrom, dateTo))(HttpResponse(status = Status.BAD_REQUEST,
+          json = Json.toJson("Error message"), headers = Map.empty))
+
+        val result: Future[RepaymentHistoryResponseModel] = getRepaymentHistoryByRepaymentDate(testUserNino, dateFrom, dateTo)
+        result.futureValue shouldBe RepaymentHistoryErrorModel(400, """"Error message"""")
       }
     }
   }
