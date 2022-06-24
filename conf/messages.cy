@@ -481,12 +481,12 @@ sections.open												    = Dangos
 sections.close												    = Cuddio
 
 ## Credits Summary Page ##
-credits.heading                                                 = Credits in {0}
+credits.heading                                                 = Credydau yn {0}
 credits.tableHead.date                                          = Dyddiad
 credits.tableHead.type                                          = Math
 credits.tableHead.status                                        = Statws
 credits.tableHead.amount                                        = Swm
-credits.tableHead.type.value                                    = Credit from HMRC adjustment
+credits.tableHead.type.value                                    = Credyd o addasiad gan CThEM
 credits.table.status-fully-allocated                            = Wedi ei ddyrannu’n llwyr
 credits.table.status-not-yet-allocated                          = Heb ei ddyrannu eto
 credits.table.status-partially-allocated                        = Wedi ei ddyrannu’n rhannol
