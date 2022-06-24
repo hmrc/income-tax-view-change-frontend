@@ -108,7 +108,6 @@ class CreditAndRefundControllerSpec extends MockAuthenticationPredicate with Moc
 
       "redirect to the custom not found error page" in new Setup {
         disable(CreditsRefundsRepay)
-        // redirect even in case MFACreditsAndDebits is ON
         enable(MFACreditsAndDebits)
         mockSingleBISWithCurrentYearAsMigrationYear()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)

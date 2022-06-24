@@ -109,7 +109,6 @@
                             @if(charge._1.documentDetail.validMFACreditDescription()) {
                                 <div class="govuk-summary-list__row">
                                     <dt class="govuk-summary-list__value">
-                                        @* => MISUV-3648*@
                                         <span>@messages("credit-and-refund.credit-from-hmrc-title")</span>
                                     </dt>
                                     <dd class="govuk-summary-list__value">@charge._1.documentDetail.paymentOrChargeCredit.get.toCurrencyString</dd>
