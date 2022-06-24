@@ -90,8 +90,6 @@ class CreditsSummaryControllerSpec extends TestSupport with MockCalculationServi
 
         contentAsString(result) shouldBe expectedContent
         contentType(result) shouldBe Some(HTML)
-        //        result.futureValue.session.get(gatewayPage) shouldBe Some("taxYearSummary")
-        //        result.futureValue.session.get(calcPagesBackPage) shouldBe Some("ITVC")
       }
     }
 
