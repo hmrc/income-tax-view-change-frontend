@@ -170,18 +170,17 @@ class CreditsSummaryControllerSpec extends TestSupport with MockCalculationServi
 
   "The CreditsSummaryController.showAgentCreditsSummary(year) action" when {
 
-    // todo do we need this test
-   /* "the user is not authenticated" should {
+    "the user is not authenticated" should {
       "redirect them to sign in" in {
         enable(MFACreditsAndDebits)
         setupMockAgentAuthorisationException(withClientPredicate = false)
 
-        val result = TestCreditsSummaryController.showAgentCreditsSummary(testTaxYear)(fakeRequestWithClientDetails)
+        val result = TestCreditsSummaryController.showAgentCreditsSummary(testTaxYear)(fakeRequestWithActiveSession)
 
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn().url)
       }
-    }*/
+    }
     "the user has timed out" should {
       "redirect to the session timeout page" in {
         setupMockAgentAuthorisationException(exception = BearerTokenExpired())
