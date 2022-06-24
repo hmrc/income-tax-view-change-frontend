@@ -36,7 +36,7 @@ class CreditsSummaryViewSpec extends TestSupport with FeatureSwitching with Impl
   val creditsSummaryView: CreditsSummary = app.injector.instanceOf[CreditsSummary]
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
-  val testCalendarYear: Int = 2022
+  val testCalendarYear: Int = 2018
   val expectedDate: String = "29 Mar 2018"
   val utr: Option[String] = Some(testMtditid)
 
