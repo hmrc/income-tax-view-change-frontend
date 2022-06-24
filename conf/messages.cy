@@ -480,6 +480,17 @@ sections.close.all												= Cuddio pob un
 sections.open												    = Dangos
 sections.close												    = Cuddio
 
+## Credits Summary Page ##
+credits.heading                                                 = Credydau yn {0}
+credits.tableHead.date                                          = Dyddiad
+credits.tableHead.type                                          = Math
+credits.tableHead.status                                        = Statws
+credits.tableHead.amount                                        = Swm
+credits.tableHead.type.value                                    = Credyd o addasiad gan CThEM
+credits.table.status-fully-allocated                            = Wedi ei ddyrannu’n llwyr
+credits.table.status-not-yet-allocated                          = Heb ei ddyrannu eto
+credits.table.status-partially-allocated                        = Wedi ei ddyrannu’n rhannol
+
 ## Payment Due Page ##
 paymentDue.heading                                              = Taliadau treth incwm
 paymentDue.description                                          = Os ydych wedi gwneud taliad yn ystod y 7 diwrnod diwethaf, mae’n bosibl na fydd y symiau a ddangosir yma yn gywir.
