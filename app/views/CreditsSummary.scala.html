@@ -65,7 +65,7 @@
     outstandingAmount == 0 (allocated)
 *@
 @getStatus(charges: DocumentDetail) = @{
-    if(charges.outstandingAmount.map(_.abs) === charges.originalAmount) getMessage("table.status-not-yet-allocated")
+    if(charges.outstandingAmount.map(_.abs) === charges.originalAmount.map(_.abs)) getMessage("table.status-not-yet-allocated")
     else if (charges.outstandingAmount === Some(BigDecimal(0))) getMessage("table.status-fully-allocated")
     else getMessage("table.status-partially-allocated")
 }
@@ -94,7 +94,7 @@
                                 <td class="govuk-table__cell govuk-!-width-one-quarter">@documentDetail.documentDate.toLongDateShort</td>
                                 <td class="govuk-table__cell govuk-!-width-one-half">@getMessage("tableHead.type.value")</td>
                                 <td class="govuk-table__cell numeric govuk-!-width-one-quarter">@getStatus(documentDetail)</td>
-                                <td class="govuk-table__cell numeric govuk-!-width-one-quarter">@documentDetail.originalAmount.getOrElse(throw MissingFieldException("Original Amount")).toCurrencyString</td>
+                                <td class="govuk-table__cell numeric govuk-!-width-one-quarter">@documentDetail.originalAmount.map(_.abs).getOrElse(throw MissingFieldException("Original Amount")).toCurrencyString</td>
                             </tr>
                         }
                     </tbody>
