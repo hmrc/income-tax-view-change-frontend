@@ -36,20 +36,16 @@ case class PaymentHistoryResponseAuditModel(mtdItUser: MtdItUser[_],
     ("amount", payment.amount)
 
   private def paymentHistoryMapper(payment: Payment): Option[JsObject] = {
-    if (R7bTxmEvents) {
-      if (payment.credit.isDefined) {
-        if (payment.validMFACreditDescription()) {
-          if (MFACreditsEnabled) Some(getPayment(payment, "Credit from HMRC adjustment")) else None
-        } else {
-          if (CutOverCreditsEnabled) Some(getPayment(payment, "Payment from an earlier tax year")) else None
-        }
-      }
-      else {
-        Some(getPayment(payment, "Payment Made to HMRC"))
-      }
-    }
-    else {
-      if (!payment.credit.isDefined) Some(getPayment(payment, "Payment Made to HMRC")) else None
+    val isCredit = payment.credit.isDefined
+    val isMFA = payment.validMFACreditDescription()
+    (R7bTxmEvents, isCredit, isMFA) match {
+      case (false, _, _) =>
+        if (!isCredit) Some(getPayment(payment, "Payment Made to HMRC")) else None
+      case (true, true, true) =>
+        if (MFACreditsEnabled) Some(getPayment(payment, "Credit from HMRC adjustment")) else None
+      case (true, true, false) =>
+        if (CutOverCreditsEnabled) Some(getPayment(payment, "Payment from an earlier tax year")) else None
+      case (true, false, _) => Some(getPayment(payment, "Payment Made to HMRC"))
     }
   }
 

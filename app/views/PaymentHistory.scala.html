@@ -55,21 +55,22 @@ btaNavPartial: Option[Html] = None, origin: Option[String] = None, MFACreditsEna
 }
 
 @getMFACreditsLink(payment: Payment, isAgent: Boolean) = @{
+    val year = LocalDate.parse(payment.date.getOrElse(throw MissingFieldException("Payment Date"))).getYear
     if(isAgent) {
-        "/report-quarterly/income-and-expenses/view/agents/credits-from-hmrc/" + LocalDate.parse(payment.date.get).getYear
+        "/report-quarterly/income-and-expenses/view/agents/credits-from-hmrc/" + year
     } else {
-        "/report-quarterly/income-and-expenses/view/credits-from-hmrc/" + LocalDate.parse(payment.date.get).getYear
+        "/report-quarterly/income-and-expenses/view/credits-from-hmrc/" + year
     }
 }
 
 @paymentHistoryInfo(messageInfo: String, infoLink: => String, infoLinkText: String) = {
     @if(saUtr.isDefined) {
         @p() {
-        @messages(messageInfo)
-        @link(link = infoLink, messageKey = infoLinkText, outerMessage = ".", rel = Some ("noreferrer noopener"), target = Some ("_blank") )
-        @if(isAgent){
-            @messages(s"$messageInfo.2")
-        }
+            @messages(messageInfo)
+            @link(link = infoLink, messageKey = infoLinkText, outerMessage = ".", rel = Some ("noreferrer noopener"), target = Some ("_blank") )
+            @if(isAgent){
+                @messages(s"$messageInfo.2")
+            }
         }
     }
 }
