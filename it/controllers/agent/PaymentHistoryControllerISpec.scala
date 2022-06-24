@@ -19,7 +19,7 @@ package controllers.agent
 import audit.models.PaymentHistoryResponseAuditModel
 import auth.MtdItUser
 import com.github.tomakehurst.wiremock.client.WireMock
-import config.featureswitch.{CutOverCredits, R7bTxmEvents}
+import config.featureswitch.{CutOverCredits, MFACreditsAndDebits, R7bTxmEvents}
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
 import helpers.servicemocks.IncomeTaxViewChangeStub
@@ -41,14 +41,13 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase {
     WireMock.reset()
   }
 
-  val paymentsFull: Seq[Payment] = Seq(
-    Payment(reference = Some("reference"), amount = Some(100.00), outstandingAmount = None, method = Some("method"),
-      documentDescription = None, lot = Some("lot"), lotItem = Some("lotItem"), date = Some("2018-04-25"), Some("DOCID01"))
-  )
-
-  val paymentsnotFull: List[Payment] = List(
-    Payment(reference = Some("reference"), amount = Some(-10000.00), outstandingAmount = None, method = Some("method"),
-      documentDescription = None, lot = None, lotItem = None, date = Some("2018-04-25"), Some("AY777777202206"))
+  val payments: List[Payment] = List(
+    Payment(reference = Some("payment1"), amount = Some(100.00), outstandingAmount = None, method = Some("method"),
+      documentDescription = None, lot = Some("lot"), lotItem = Some("lotItem"), date = Some("2018-04-25"), Some("DOCID01")),
+    Payment(reference = Some("mfa1"), amount = Some(-10000.00), outstandingAmount = None, method = Some("method"),
+      documentDescription = Some("ITSA Overpayment Relief"), lot = None, lotItem = None, date = Some("2018-04-25"), Some("AY777777202206")),
+    Payment(reference = Some("cutover1"), amount = Some(-10000.00), outstandingAmount = None, method = Some("method"),
+      documentDescription = None, lot = None, lotItem = None, date = Some("2018-04-25"), Some("AY777777202206")),
   )
 
   val testArn: String = "1"
@@ -83,7 +82,7 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase {
           response = incomeSourceDetailsModel
         )
 
-        IncomeTaxViewChangeStub.stubGetPaymentsResponse(testNino, s"$previousTaxYearEnd-04-06", s"$currentTaxYearEnd-04-05")(OK, paymentsFull)
+        IncomeTaxViewChangeStub.stubGetPaymentsResponse(testNino, s"$previousTaxYearEnd-04-06", s"$currentTaxYearEnd-04-05")(OK, payments)
 
         val result = IncomeTaxViewChangeFrontend.getPaymentHistory(clientDetailsWithConfirmation)
 
@@ -97,6 +96,9 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase {
 
   s"return $OK with the enter client utr page" when {
     s"return $OK" in {
+      disable(R7bTxmEvents)
+      disable(CutOverCredits)
+      disable(MFACreditsAndDebits)
       stubAuthorisedAgentUser(authorised = true)
 
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
@@ -104,7 +106,7 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase {
         response = incomeSourceDetailsModel
       )
 
-      IncomeTaxViewChangeStub.stubGetPaymentsResponse(testNino, s"$previousTaxYearEnd-04-06", s"$currentTaxYearEnd-04-05")(OK, paymentsFull)
+      IncomeTaxViewChangeStub.stubGetPaymentsResponse(testNino, s"$previousTaxYearEnd-04-06", s"$currentTaxYearEnd-04-05")(OK, payments)
 
       val result = IncomeTaxViewChangeFrontend.getPaymentHistory(clientDetailsWithConfirmation)
 
@@ -114,12 +116,14 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase {
         pageTitleAgent("paymentHistory.heading")
       )
 
-      verifyAuditContainsDetail(PaymentHistoryResponseAuditModel(testUser, paymentsFull, CutOverCreditsEnabled = false, R7bTxmEvents = false).detail)
+      verifyAuditContainsDetail(PaymentHistoryResponseAuditModel(testUser, payments, CutOverCreditsEnabled = false,
+        MFACreditsEnabled = false, R7bTxmEvents = false).detail)
     }
 
     s"return payment from earlier tax year description when CutOverCreditsEnabled and credit is defined $OK" in {
       enable(R7bTxmEvents)
       enable(CutOverCredits)
+      enable(MFACreditsAndDebits)
       stubAuthorisedAgentUser(authorised = true)
 
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
@@ -127,7 +131,7 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase {
         response = incomeSourceDetailsModel
       )
 
-      IncomeTaxViewChangeStub.stubGetPaymentsResponse(testNino, s"$previousTaxYearEnd-04-06", s"$currentTaxYearEnd-04-05")(OK, paymentsnotFull)
+      IncomeTaxViewChangeStub.stubGetPaymentsResponse(testNino, s"$previousTaxYearEnd-04-06", s"$currentTaxYearEnd-04-05")(OK, payments)
 
       val result = IncomeTaxViewChangeFrontend.getPaymentHistory(clientDetailsWithConfirmation)
 
@@ -137,7 +141,8 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase {
         pageTitleAgent("paymentHistory.heading")
       )
 
-      verifyAuditContainsDetail(PaymentHistoryResponseAuditModel(testUser, paymentsnotFull, CutOverCreditsEnabled = true, R7bTxmEvents = true).detail)
+      verifyAuditContainsDetail(PaymentHistoryResponseAuditModel(testUser, payments, CutOverCreditsEnabled = true,
+        MFACreditsEnabled = true, R7bTxmEvents = true).detail)
     }
 
   }

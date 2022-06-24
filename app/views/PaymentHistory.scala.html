@@ -39,7 +39,7 @@
 )
 
 @(payments: List[Payment], CutOverCreditsEnabled: Boolean, backUrl: String, saUtr: Option[String], isAgent: Boolean = false,
-btaNavPartial: Option[Html] = None, origin: Option[String] = None)(implicit request: Request[_], messages: Messages)
+btaNavPartial: Option[Html] = None, origin: Option[String] = None, MFACreditsEnabled: Boolean = true)(implicit request: Request[_], messages: Messages)
 @import implicitDateFormatter.longDate
 
 @groupedPayments = @{
@@ -54,14 +54,23 @@ btaNavPartial: Option[Html] = None, origin: Option[String] = None)(implicit requ
     }
 }
 
+@getMFACreditsLink(payment: Payment, isAgent: Boolean) = @{
+    val year = LocalDate.parse(payment.date.getOrElse(throw MissingFieldException("Payment Date"))).getYear
+    if(isAgent) {
+        "/report-quarterly/income-and-expenses/view/agents/credits-from-hmrc/" + year
+    } else {
+        "/report-quarterly/income-and-expenses/view/credits-from-hmrc/" + year
+    }
+}
+
 @paymentHistoryInfo(messageInfo: String, infoLink: => String, infoLinkText: String) = {
     @if(saUtr.isDefined) {
         @p() {
-        @messages(messageInfo)
-        @link(link = infoLink, messageKey = infoLinkText, outerMessage = ".", rel = Some ("noreferrer noopener"), target = Some ("_blank") )
-        @if(isAgent){
-            @messages(s"$messageInfo.2")
-        }
+            @messages(messageInfo)
+            @link(link = infoLink, messageKey = infoLinkText, outerMessage = ".", rel = Some ("noreferrer noopener"), target = Some ("_blank") )
+            @if(isAgent){
+                @messages(s"$messageInfo.2")
+            }
         }
     }
 }
@@ -84,29 +93,46 @@ btaNavPartial: Option[Html] = None, origin: Option[String] = None)(implicit requ
         </thead>
         <tbody>
         @for((payment, index) <- yearPayments.zipWithIndex) {
-            @if(CutOverCreditsEnabled && payment.credit.isDefined){
+            @if(!payment.credit.isDefined){
                 <tr class="govuk-table__row">
-                    <td class="govuk-table__cell">@LocalDate.parse(payment.date.getOrElse(throw MissingFieldException("Payment Date"))).toLongDate</td>
-                    <td class="govuk-table__cell" id="paymentFromEarlierYear">
+                    <td class="govuk-table__cell">@LocalDate.parse(payment.date.getOrElse(throw MissingFieldException("Payment Date"))).toLongDate
+                    </td>
+                    <td class="govuk-table__cell">
                         <a class="govuk-link" href="@getControllerHref(payment, isAgent)">
-                            @messages("paymentHistory.paymentFromEarlierYear")
-                            <span class="govuk-visually-hidden">@payment.transactionId.getOrElse(throw MissingFieldException("Document ID"))</span>
+                            @messages("paymentHistory.paymentToHmrc")
+                            <span class="govuk-visually-hidden">@LocalDate.parse(payment.date.getOrElse(throw MissingFieldException("Payment Date"))).toLongDate @payment.amount.map(_.abs.toCurrency) @if(yearPayments.size > 1){ Item @(index + 1)}</span>
                         </a>
                     </td>
                     <td class="govuk-table__cell numeric"> @payment.amount.map(_.abs.toCurrency)</td>
                 </tr>
-                } else if(!payment.credit.isDefined){
-                    <tr class="govuk-table__row">
-                        <td class="govuk-table__cell">@LocalDate.parse(payment.date.getOrElse(throw MissingFieldException("Payment Date"))).toLongDate
-                        </td>
-                        <td class="govuk-table__cell">
-                            <a class="govuk-link" href="@getControllerHref(payment, isAgent)">
-                                @messages("paymentHistory.paymentToHmrc")
-                                <span class="govuk-visually-hidden">@LocalDate.parse(payment.date.getOrElse(throw MissingFieldException("Payment Date"))).toLongDate @payment.amount.map(_.abs.toCurrency) @if(yearPayments.size > 1){ Item @(index + 1)}</span>
-                            </a>
-                        </td>
-                        <td class="govuk-table__cell numeric"> @payment.amount.map(_.abs.toCurrency)</td>
-                    </tr>
+            } else {
+                @if(payment.validMFACreditDescription()) {
+                    @if(MFACreditsEnabled) {
+                        <tr class="govuk-table__row">
+                            <td class="govuk-table__cell">@LocalDate.parse(payment.date.getOrElse(throw MissingFieldException("Payment Date"))).toLongDate</td>
+                            <td class="govuk-table__cell" id="mfacredit">
+                                <a class="govuk-link" href="@getMFACreditsLink(payment, isAgent)">
+                                    @messages("paymentHistory.mfaCredit")
+                                    <span class="govuk-visually-hidden">@payment.transactionId.getOrElse(throw MissingFieldException("Document ID"))</span>
+                                <a/>
+                            </td>
+                            <td class="govuk-table__cell numeric"> @payment.amount.map(_.abs.toCurrency)</td>
+                        </tr>
+                    }
+                } else {
+                    @if(CutOverCreditsEnabled) {
+                        <tr class="govuk-table__row">
+                            <td class="govuk-table__cell">@LocalDate.parse(payment.date.getOrElse(throw MissingFieldException("Payment Date"))).toLongDate</td>
+                            <td class="govuk-table__cell" id="paymentFromEarlierYear">
+                                <a class="govuk-link" href="@getControllerHref(payment, isAgent)">
+                                    @messages("paymentHistory.paymentFromEarlierYear")
+                                    <span class="govuk-visually-hidden">@payment.transactionId.getOrElse(throw MissingFieldException("Document ID"))</span>
+                                </a>
+                            </td>
+                            <td class="govuk-table__cell numeric"> @payment.amount.map(_.abs.toCurrency)</td>
+                        </tr>
+                    }
+                }
             }
         }
         </tbody>

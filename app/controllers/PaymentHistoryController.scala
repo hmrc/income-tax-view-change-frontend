@@ -19,7 +19,7 @@ package controllers
 import audit.AuditingService
 import audit.models.PaymentHistoryResponseAuditModel
 import auth.MtdItUser
-import config.featureswitch.{CutOverCredits, FeatureSwitching, R7bTxmEvents}
+import config.featureswitch.{CutOverCredits, FeatureSwitching, MFACreditsAndDebits, R7bTxmEvents}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
@@ -30,8 +30,8 @@ import services.{IncomeSourceDetailsService, PaymentHistoryService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
 import views.html.PaymentHistory
-import javax.inject.{Inject, Singleton}
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 import enums.GatewayPage.PaymentHistoryPage
 
@@ -59,10 +59,13 @@ class PaymentHistoryController @Inject()(val paymentHistoryView: PaymentHistory,
                    (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
     paymentHistoryService.getPaymentHistory.map {
       case Right(payments) =>
-          auditingService.extendedAudit(PaymentHistoryResponseAuditModel(user, payments, R7bTxmEvents=isEnabled(R7bTxmEvents), CutOverCreditsEnabled=isEnabled(CutOverCredits)))
+        auditingService.extendedAudit(PaymentHistoryResponseAuditModel(user, payments, R7bTxmEvents = isEnabled(R7bTxmEvents),
+          CutOverCreditsEnabled = isEnabled(CutOverCredits),
+          MFACreditsEnabled = isEnabled(MFACreditsAndDebits)))
 
-        Ok(paymentHistoryView(payments, CutOverCreditsEnabled=isEnabled(CutOverCredits),backUrl, user.saUtr,
-          btaNavPartial = user.btaNavPartial, isAgent = isAgent)).addingToSession(gatewayPage -> PaymentHistoryPage.name)
+        Ok(paymentHistoryView(payments, CutOverCreditsEnabled = isEnabled(CutOverCredits), backUrl, user.saUtr,
+          btaNavPartial = user.btaNavPartial, isAgent = isAgent, MFACreditsEnabled = isEnabled(MFACreditsAndDebits))
+        ).addingToSession(gatewayPage -> PaymentHistoryPage.name)
       case Left(_) => itvcErrorHandler.showInternalServerError()
     }
 
