@@ -58,7 +58,7 @@ class CreditsSummaryController @Inject()(creditsView: CreditsSummary,
 
         val financialDetailsWithCredit: List[DocumentDetail] = docDetailsMFACredits.filter { dd =>
           dd.documentDate.getYear == calendarYear
-        }
+        }.sortBy(_.documentDate.toEpochDay())
 
         f(financialDetailsWithCredit)
 

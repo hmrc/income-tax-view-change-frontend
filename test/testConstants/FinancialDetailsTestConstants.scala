@@ -329,6 +329,7 @@ object FinancialDetailsTestConstants {
                           documentText: Option[String] = Some("documentText"),
                           outstandingAmount: Option[BigDecimal] = Some(1400.00),
                           originalAmount: Option[BigDecimal] = Some(1400.00),
+                          documentDate: LocalDate = LocalDate.of(2018, 3, 29),
                           paymentLotItem: Option[String] = Some("paymentLotItem"),
                           paymentLot: Option[String] = Some("paymentLot"),
                           latePaymentInterestAmount: Option[BigDecimal] = Some(100),
@@ -342,7 +343,7 @@ object FinancialDetailsTestConstants {
       documentText = documentText,
       outstandingAmount = outstandingAmount,
       originalAmount = originalAmount,
-      documentDate = LocalDate.of(2018, 3, 29),
+      documentDate = documentDate,
       interestOutstandingAmount = interestOutstandingAmount,
       interestRate = Some(100),
       interestFromDate = Some(LocalDate.of(2018, 3, 29)),
@@ -914,18 +915,20 @@ object FinancialDetailsTestConstants {
 
   val creditAndRefundDocumentDetailListMultipleChargesMFA = List(
     documentDetailModel(
-      documentDescription = Some("ITSA Overpayment Relief"),
-      outstandingAmount = Some(BigDecimal(-1400.00)),
-      paymentLotItem = None,
-      paymentLot = None,
-      originalAmount = Some(BigDecimal(1400.00))
-    ),
-    documentDetailModel(
       documentDescription = Some("ITSA Standalone Claim"),
       outstandingAmount = Some(BigDecimal(-500.00)),
       paymentLotItem = None,
       paymentLot = None,
-      originalAmount = Some(BigDecimal(800.00))
+      originalAmount = Some(BigDecimal(800.00)),
+      documentDate = LocalDate.of(2018,4,16)
+    ),
+    documentDetailModel(
+      documentDescription = Some("ITSA Overpayment Relief"),
+      outstandingAmount = Some(BigDecimal(-1400.00)),
+      paymentLotItem = None,
+      paymentLot = None,
+      originalAmount = Some(BigDecimal(1400.00)),
+      documentDate = LocalDate.of(2018,7,30)
     )
   )
 

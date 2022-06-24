@@ -117,6 +117,30 @@ class CreditsSummaryControllerSpec extends TestSupport with MockCalculationServi
       }
     }
 
+    "all calls are returned correctly and Referer was a Payment Refund History page" should {
+      "show the Credits Summary Page with multiple records ordered properly and back link should be to the Payment Refund History page" in {
+        enable(MFACreditsAndDebits)
+        mockSingleBusinessIncomeSource()
+        mockFinancialDetailsSuccess(financialDetailCreditChargeMFA.copy(documentDetails = creditAndRefundDocumentDetailListMultipleChargesMFA))
+
+        val expectedContent: String = creditsSummaryView(
+          backUrl = paymentRefundHistoryBackLink,
+          utr = Some(testMtditid),
+          enableMfaCreditsAndDebits = true,
+          charges = creditAndRefundDocumentDetailListMultipleChargesMFA,
+          calendarYear = testTaxYear
+        ).toString
+
+        val result = TestCreditsSummaryController.showCreditsSummary(testTaxYear)(fakeRequestWithActiveSessionWithReferer(referer = paymentRefundHistoryBackLink))
+
+        status(result) shouldBe Status.OK
+
+        contentAsString(result) shouldBe expectedContent
+        contentType(result) shouldBe Some(HTML)
+        contentAsString(result) shouldBe expectedContent
+      }
+    }
+
     "getFinancialDetails returns an error" should {
       "show the internal server error page" in {
         enable(MFACreditsAndDebits)

@@ -81,15 +81,17 @@ class CreditsSummaryViewSpec extends TestSupport with FeatureSwitching with Impl
       document.select("th:nth-child(2)").text() shouldBe creditsTableHeadTypeText
       document.select("th:nth-child(3)").text() shouldBe creditsTableHeadStatusText
       document.select("th:nth-child(4)").text() shouldBe creditsTableHeadAmountText
-      document.selectById("balancing-charge-type-0").select("td:nth-child(1)").first().text() shouldBe expectedDate
-      document.selectById("balancing-charge-type-0").select("td:nth-child(2)").first().text() shouldBe creditsTableHeadTypeValue
-      document.selectById("balancing-charge-type-0").select("td:nth-child(3)").first().text() shouldBe creditsTableStatusNotYetAllocatedValue
-      document.selectById("balancing-charge-type-0").select("td:nth-child(4)").first().text() shouldBe "£1,400.00"
 
-      document.selectById("balancing-charge-type-1").select("td:nth-child(1)").first().text() shouldBe expectedDate
+      document.selectById("balancing-charge-type-0").select("td:nth-child(1)").first().text() shouldBe "16 Apr 2018"
+      document.selectById("balancing-charge-type-0").select("td:nth-child(2)").first().text() shouldBe creditsTableHeadTypeValue
+      document.selectById("balancing-charge-type-0").select("td:nth-child(3)").first().text() shouldBe creditsTableStatusPartiallyAllocatedValue
+      document.selectById("balancing-charge-type-0").select("td:nth-child(4)").first().text() shouldBe "£800.00"
+
+      document.selectById("balancing-charge-type-1").select("td:nth-child(1)").first().text() shouldBe "30 Jul 2018"
       document.selectById("balancing-charge-type-1").select("td:nth-child(2)").first().text() shouldBe creditsTableHeadTypeValue
-      document.selectById("balancing-charge-type-1").select("td:nth-child(3)").first().text() shouldBe creditsTableStatusPartiallyAllocatedValue
-      document.selectById("balancing-charge-type-1").select("td:nth-child(4)").first().text() shouldBe "£800.00"
+      document.selectById("balancing-charge-type-1").select("td:nth-child(3)").first().text() shouldBe creditsTableStatusNotYetAllocatedValue
+      document.selectById("balancing-charge-type-1").select("td:nth-child(4)").first().text() shouldBe "£1,400.00"
+
       document.getElementsByClass("govuk-link govuk-body").first().text() shouldBe creditAndRefundClaimRefundBtn
       document.getElementsByClass("govuk-link").last().text() shouldBe getPageHelpLinkTextBtn
     }
@@ -170,15 +172,17 @@ class CreditsSummaryViewSpec extends TestSupport with FeatureSwitching with Impl
         document.select("th:nth-child(2)").text() shouldBe creditsTableHeadTypeText
         document.select("th:nth-child(3)").text() shouldBe creditsTableHeadStatusText
         document.select("th:nth-child(4)").text() shouldBe creditsTableHeadAmountText
-        document.selectById("balancing-charge-type-0").select("td:nth-child(1)").first().text() shouldBe expectedDate
-        document.selectById("balancing-charge-type-0").select("td:nth-child(2)").first().text() shouldBe creditsTableHeadTypeValue
-        document.selectById("balancing-charge-type-0").select("td:nth-child(3)").first().text() shouldBe creditsTableStatusNotYetAllocatedValue
-        document.selectById("balancing-charge-type-0").select("td:nth-child(4)").first().text() shouldBe "£1,400.00"
 
-        document.selectById("balancing-charge-type-1").select("td:nth-child(1)").first().text() shouldBe expectedDate
+        document.selectById("balancing-charge-type-0").select("td:nth-child(1)").first().text() shouldBe "16 Apr 2018"
+        document.selectById("balancing-charge-type-0").select("td:nth-child(2)").first().text() shouldBe creditsTableHeadTypeValue
+        document.selectById("balancing-charge-type-0").select("td:nth-child(3)").first().text() shouldBe creditsTableStatusPartiallyAllocatedValue
+        document.selectById("balancing-charge-type-0").select("td:nth-child(4)").first().text() shouldBe "£800.00"
+
+        document.selectById("balancing-charge-type-1").select("td:nth-child(1)").first().text() shouldBe "30 Jul 2018"
         document.selectById("balancing-charge-type-1").select("td:nth-child(2)").first().text() shouldBe creditsTableHeadTypeValue
-        document.selectById("balancing-charge-type-1").select("td:nth-child(3)").first().text() shouldBe creditsTableStatusPartiallyAllocatedValue
-        document.selectById("balancing-charge-type-1").select("td:nth-child(4)").first().text() shouldBe "£800.00"
+        document.selectById("balancing-charge-type-1").select("td:nth-child(3)").first().text() shouldBe creditsTableStatusNotYetAllocatedValue
+        document.selectById("balancing-charge-type-1").select("td:nth-child(4)").first().text() shouldBe "£1,400.00"
+
         document.getElementsByClass("govuk-link govuk-body").first().text() shouldBe creditAndRefundClaimRefundBtn
         document.getElementsByClass("govuk-link").last().text() shouldBe getPageHelpLinkTextBtn
         enable(MFACreditsAndDebits)
