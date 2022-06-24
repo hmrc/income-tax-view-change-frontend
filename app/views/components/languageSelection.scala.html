@@ -14,24 +14,23 @@
  * limitations under the License.
  *@
 
-@import cats.syntax.eq._
 @import cats.instances.string._
-
+@import cats.syntax.eq._
 
 @this()
 @()(implicit messages: Messages)
 
 <script>
-    function getFragmentParam() {
-        if (window.location.hash) {
-            return "?fragment=" + window.location.hash.replace('#', '')
-        } else {
-            return ""
+        function getFragmentParam() {
+            if (window.location.hash) {
+                return "?fragment=" + window.location.hash.replace('#', '')
+            } else {
+                return ""
+            }
         }
-    }
-    function switchTo(url) {
-        window.location = url + getFragmentParam()
-    }
+        function switchTo(url) {
+            window.location = url + getFragmentParam()
+        }
 </script>
 
 @if(messages.lang.code === "en") {
@@ -41,32 +40,45 @@
                 <span aria-current="true">English</span>
             </li>
             <li class="hmrc-language-select__list-item">
-                <a href="javascript:switchTo('@controllers.routes.ItvcLanguageController.switchToWelsh(None)')"
-                   hreflang="cy" lang="cy" rel="alternate" class="govuk-link">
-                    <span class="govuk-visually-hidden">Newid yr iaith ir Gymraeg</span>
-                    <span id="switch-welsh" aria-hidden="true">Cymraeg</span>
-                </a>
+                <script>
+                    document.write(`<a href="javascript:switchTo('@controllers.routes.ItvcLanguageController.switchToWelsh(None)')"
+                           hreflang="cy" lang="cy" rel="alternate" class="govuk-link">
+                            <span class="govuk-visually-hidden">Newid yr iaith ir Gymraeg</span>
+                            <span id="switch-welsh" aria-hidden="true">Cymraeg</span>
+                        </a>`)
+                </script>
+                <noscript>
+                    <a href="@controllers.routes.ItvcLanguageController.switchToWelsh(None)"
+                    hreflang="cy" lang="cy" rel="alternate" class="govuk-link">
+                        <span class="govuk-visually-hidden">Newid yr iaith ir Gymraeg</span>
+                        <span id="switch-welsh" aria-hidden="true">Cymraeg</span>
+                    </a>
+                </noscript>
             </li>
         </ul>
     </nav>
-
 } else {
-
     <nav class="hmrc-language-select" aria-label="Switcher iaith">
         <ul class="hmrc-language-select__list">
             <li class="hmrc-language-select__list-item">
-                <a href="javascript:switchTo('@controllers.routes.ItvcLanguageController.switchToEnglish(None)')"
-                   hreflang="en" lang="en" rel="alternate" class="govuk-link">
-                    <span class="govuk-visually-hidden">Change the language to English</span>
-                    <span aria-hidden="true">English</span>
-                </a>
+                <script>
+                    document.write(`<a href="javascript:switchTo('@controllers.routes.ItvcLanguageController.switchToEnglish(None)')"
+                       hreflang="en" lang="en" rel="alternate" class="govuk-link">
+                        <span class="govuk-visually-hidden">Change the language to English</span>
+                        <span aria-hidden="true">English</span>
+                    </a>`)
+                </script>
+                <noscript>
+                    <a href="@controllers.routes.ItvcLanguageController.switchToEnglish(None)"
+                        hreflang="en" lang="en" rel="alternate" class="govuk-link">
+                        <span class="govuk-visually-hidden">Change the language to English</span>
+                        <span aria-hidden="true">English</span>
+                    </a>
+                </noscript>
             </li>
             <li class="hmrc-language-select__list-item">
                 <span aria-current="true">Cymraeg</span>
             </li>
         </ul>
     </nav>
-
 }
-
-
