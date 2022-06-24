@@ -403,6 +403,18 @@ obligations.quarterly.to                                        = to
 obligations.eops                                                = Whole tax year (final check)
 obligations.noReports                                           = You don’t have any reports due right now. Your next deadline will show here on the first Monday of next month.
 
+## Credits Summary Page ##
+credits.heading                                                 = Credits in {0}
+credits.tableHead.date                                          = Date
+credits.tableHead.type                                          = Type
+credits.tableHead.status                                        = Status
+credits.tableHead.amount                                        = Amount
+credits.tableHead.type.value                                    = Credit from HMRC adjustment
+credits.table.status-fully-allocated                            = Fully allocated
+credits.table.status-not-yet-allocated                          = Not yet allocated
+credits.table.status-partially-allocated                        = Partially allocated
+
+
 ## Previous Obligations ##
 previous-obligations.no-previous-obligations                    = No previously submitted updates
 previous-obligations.income-source.property-income              = Property Income
@@ -821,6 +833,7 @@ credit-and-refund.details-intro                                   = What’s in 
 credit-and-refund.no-credit                                       = You have no money in your account.
 credit-and-refund.claim-refund-btn                                = Claim a refund
 credit-and-refund.check-refund-btn                                = Check refund status
+credit-and-refund.credit-from-hmrc-title                          = Credit from HMRC adjustment
 
 #Language Selector
 language-switcher.english.hidden                                = Change the language to English

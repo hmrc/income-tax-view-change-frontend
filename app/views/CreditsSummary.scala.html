@@ -1,0 +1,119 @@
+@*
+ * Copyright 2022 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import _root_.implicits.ImplicitDateFormatterImpl
+@import _root_.implicits.ImplicitCurrencyFormatter._
+@import models.financialDetails._
+@import auth.MtdItUser
+@import views.html.layouts.unifiedLayout
+@import views.html.components._
+@import exceptions.MissingFieldException
+@import cats.syntax.eq._
+@import cats.instances.option._
+@import cats.instances.bigDecimal._
+
+@this(
+        mainTemplate: unifiedLayout,
+        implicitDateFormatter: ImplicitDateFormatterImpl,
+        appConfig: config.FrontendAppConfig,
+        h1: h1,
+        link: link
+)
+@(
+    calendarYear: Int,
+    backUrl: String,
+    utr: Option[String],
+    btaNavPartial: Option[Html] = None,
+    enableMfaCreditsAndDebits: Boolean,
+    charges: List[DocumentDetail],
+    isAgent: Boolean = false,
+    origin: Option[String] = None)(implicit request: Request[_], user: MtdItUser[_], messages: Messages)
+
+@import implicitDateFormatter.longDate
+
+@getMessage(key: String, args: String*) = @{
+    messages(s"credits.$key", args: _*)
+}
+
+@tableHead(headId: String) = {
+    <thead class="govuk-table__head" id="@headId">
+        <tr class="govuk-table__row">
+            <th scope="col" class="govuk-table__header">@getMessage("tableHead.date")</th>
+            <th scope="col" class="govuk-table__header">@getMessage("tableHead.type")</th>
+            <th scope="col" class="govuk-table__header">@getMessage("tableHead.status")</th>
+            <th scope="col" class="govuk-table__header">@getMessage("tableHead.amount")</th>
+        </tr>
+    </thead>
+}
+
+@*
+    outstandingAmount == original amount(not yet allocated)
+    outstandingAmount != original amount(partially allocated)
+    outstandingAmount == 0 (allocated)
+*@
+@getStatus(charges: DocumentDetail) = @{
+    if(charges.outstandingAmount.map(_.abs) === charges.originalAmount.map(_.abs)) getMessage("table.status-not-yet-allocated")
+    else if (charges.outstandingAmount === Some(BigDecimal(0))) getMessage("table.status-fully-allocated")
+    else getMessage("table.status-partially-allocated")
+}
+
+@getIndex(idx: Int) = @{
+    s"balancing-charge-type-$idx"
+}
+
+@mainTemplate(
+    pageTitle = messages("credits.heading", s"$calendarYear"),
+    backUrl = Some(backUrl),
+    isAgent = isAgent,
+    btaNavPartial = btaNavPartial,
+    useFallbackBackLink = true
+) {
+    @h1(msg = messages("credits.heading", s"$calendarYear"), id = Some("page-heading"))
+    <div>
+        <div id="payments-due-table">
+            <table class="govuk-table">
+                <caption class="govuk-table__caption govuk-visually-hidden">@messages("credits.heading", s"$calendarYear")</caption>
+                @if(charges.nonEmpty) {
+                    @tableHead("over-due-payments-table-head")
+                    <tbody class="govuk-table__body">
+                        @for((documentDetail, index) <- charges.zipWithIndex) {
+                            <tr class="govuk-table__row " id=@getIndex(index)>
+                                <td class="govuk-table__cell govuk-!-width-one-quarter">@documentDetail.documentDate.toLongDateShort</td>
+                                <td class="govuk-table__cell govuk-!-width-one-half">@getMessage("tableHead.type.value")</td>
+                                <td class="govuk-table__cell numeric govuk-!-width-one-quarter">@getStatus(documentDetail)</td>
+                                <td class="govuk-table__cell numeric govuk-!-width-one-quarter">@documentDetail.originalAmount.map(_.abs).getOrElse(throw MissingFieldException("Original Amount")).toCurrencyString</td>
+                            </tr>
+                        }
+                    </tbody>
+                }
+            </table>
+        </div>
+    </div>
+
+@link(
+    link = creditAndRefundsControllerURL,
+    messageKey = "credit-and-refund.claim-refund-btn"
+)
+
+}
+
+@creditAndRefundsControllerURL = @{
+    if(isAgent) {
+        controllers.routes.CreditAndRefundController.showAgent().url
+    } else {
+        controllers.routes.CreditAndRefundController.show().url
+    }
+}

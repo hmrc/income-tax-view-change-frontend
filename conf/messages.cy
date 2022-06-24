@@ -480,6 +480,17 @@ sections.close.all												= Cuddio pob un
 sections.open												    = Dangos
 sections.close												    = Cuddio
 
+## Credits Summary Page ##
+credits.heading                                                 = Credydau yn {0}
+credits.tableHead.date                                          = Dyddiad
+credits.tableHead.type                                          = Math
+credits.tableHead.status                                        = Statws
+credits.tableHead.amount                                        = Swm
+credits.tableHead.type.value                                    = Credyd o addasiad gan CThEM
+credits.table.status-fully-allocated                            = Wedi ei ddyrannu’n llwyr
+credits.table.status-not-yet-allocated                          = Heb ei ddyrannu eto
+credits.table.status-partially-allocated                        = Wedi ei ddyrannu’n rhannol
+
 ## Payment Due Page ##
 paymentDue.heading                                              = Taliadau treth incwm
 paymentDue.description                                          = Os ydych wedi gwneud taliad yn ystod y 7 diwrnod diwethaf, mae’n bosibl na fydd y symiau a ddangosir yma yn gywir.
@@ -798,6 +809,8 @@ InYear-tax-overview.goToTaxAccount                               = mynd i gyfrif
 inYear-tax-overview.agent.heading                                = Trosolwg o dreth eich cleient 6 Ebrill {0} i {1}
 inYear-tax-overview.agent.inset                                  = Mae’r cyfrifiad hwn yn seiliedig ar ddiweddariadau gorffenedig eich cleient ar gyfer y flwyddyn dreth hon hyd at {0} yn unig. Nid dyma ei fil treth terfynol ar gyfer y flwyddyn. Cyfrifiad o’r flwyddyn hyd yma yw hwn ar sail yr wybodaeth sydd wedi cael ei nodi hyd yma.
 
+## credits and refunds
+credit-and-refund.credit-from-hmrc-title                          = Credyd o addasiad gan CThEM
 
 shortMonth.1 = Ion
 shortMonth.2 = Chwe
