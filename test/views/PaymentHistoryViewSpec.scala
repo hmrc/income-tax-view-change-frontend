@@ -28,6 +28,7 @@ import testUtils.ViewSpec
 import views.html.PaymentHistory
 
 import java.time.LocalDate
+import scala.collection.mutable.ListBuffer
 
 
 class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
@@ -46,6 +47,8 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
     def button(year: Int): String = s"$year payments"
 
     val paymentToHmrc: String = messages("paymentHistory.paymentToHmrc")
+    val creditFromToHmrc: String = messages("credit-and-refund.credit-from-hmrc-title")
+
     val CardRef: String = messages("paymentsHistory.CardRef")
     val earlierPaymentToHMRC: String = messages("paymentAllocation.earlyTaxYear.heading")
 
@@ -57,11 +60,17 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
   }
 
   val testPayments: List[Payment] = List(
-    Payment(Some("AAAAA"), Some(10000), None, Some("Payment"), None, Some("lot"), Some("lotitem"), Some("2019-12-25"),
+    Payment(Some("AAAAA"), Some(10000), None, Some("Payment"), None, Some("lot"), Some("lotitem"), Some("2019-11-25"),
+      "2019-11-25", Some("DOCID01")),
+    Payment(Some("AAAAB"), Some(10000), None, Some("Payment"), None, Some("lot"), Some("lotitem"), Some("2019-12-25"),
       "2019-12-25", Some("DOCID01")),
-    Payment(Some("BBBBB"), Some(5000), None, Some("tnemyap"), None, Some("lot"), Some("lotitem"), Some("2007-03-23"),
-      "2019-12-25", Some("DOCID02"))
+    Payment(Some("BBBB1"), Some(5000), None, Some("tnemyap"), None, Some("lot"), Some("lotitem"), Some("2007-03-23"),
+      "2019-10-25", Some("DOCID02")),
+    Payment(Some("BBBB2"), Some(5000), None, Some("tnemyap"), None, Some("lot"), Some("lotitem"), Some("2007-04-23"),
+      "2019-11-25", Some("DOCID02"))
   )
+
+  val expectedDatesOrder = List("25 November 2019", "25 December 2019", "23 March 2007", "23 April 2007")
 
   val testNoPaymentLot: List[Payment] = List(
     Payment(Some("AAAAA"), Some(10000), None, Some("Payment"), None, None, None, Some("2019-12-25"), "2019-12-25", Some("DOCID01")),
@@ -150,8 +159,11 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
         layoutContent.select("#payment-history-info").text should not be PaymentHistoryMessages.info
       }
 
-      "display payment history by year" in new PaymentHistorySetup(testPayments) {
-        val orderedPayments: Map[Int, List[Payment]] = testPayments.groupBy { payment => LocalDate.parse(payment.dueDate.get).getYear }
+      "display payment history by year: in required dates order" in new PaymentHistorySetup(testPayments) {
+        val dates = new ListBuffer[String]()
+        val orderedPayments: Map[Int, List[Payment]] = testPayments.groupBy { payment =>
+          LocalDate.parse(payment.dueDate.get).getYear
+        }
         for (((year, payments), index) <- orderedPayments.zipWithIndex) {
           layoutContent.selectHead(s"#accordion-with-summary-sections-heading-$year").text shouldBe PaymentHistoryMessages.button(year)
           val sectionContent = layoutContent.selectHead(s"#accordion-default-content-${index + 1}")
@@ -160,11 +172,17 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
             case (payment, index) =>
               val row = tbody.selectNth("tr", index + 1)
               row.selectNth("td", 1).text shouldBe LocalDate.parse(payment.dueDate.get).toLongDate
-              row.selectNth("td", 2).text shouldBe PaymentHistoryMessages.paymentToHmrc + s" ${LocalDate.parse(payment.dueDate.get).toLongDate} ${payment.amount.get.toCurrencyString}"
+              dates.append( (row.selectNth("td", 1).text) )
+              if (payments.size > 1) {
+                row.selectNth("td", 2).text shouldBe PaymentHistoryMessages.paymentToHmrc + s" ${LocalDate.parse(payment.dueDate.get).toLongDate} ${payment.amount.get.toCurrencyString} Item ${index + 1}"
+              } else {
+                row.selectNth("td", 2).text shouldBe PaymentHistoryMessages.paymentToHmrc + s" ${LocalDate.parse(payment.dueDate.get).toLongDate} ${payment.amount.get.toCurrencyString}"
+              }
               row.selectNth("td", 2).select("a").attr("href") shouldBe s"/report-quarterly/income-and-expenses/view/payment-made-to-hmrc?documentNumber=${payment.transactionId.get}"
               row.selectNth("td", 3).text shouldBe payment.amount.get.toCurrencyString
           }
         }
+        dates shouldBe expectedDatesOrder
       }
 
       "display payment history by year with CutOverCredits FS On" in new PaymentHistorySetup1(paymentsnotFull) {
