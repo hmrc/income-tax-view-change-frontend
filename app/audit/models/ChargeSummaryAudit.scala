@@ -105,7 +105,7 @@ case class ChargeSummaryAudit(mtdItUser: MtdItUser[_], docDateDetail: DocumentDe
 
   private def paymentAllocationsChargeHistoryJSon(paymentAllocation: PaymentsWithChargeType): Seq[JsObject] =
     paymentAllocation.payments.map(payment => Json.obj() ++
-      ("date", payment.date) ++
+      ("date", payment.dueDate) ++
       ("description", Some(getAllocationDescriptionFromKey(paymentAllocation.getPaymentAllocationTextInChargeSummary))) ++
       ("amount", payment.amount.map(_.abs))
     )
