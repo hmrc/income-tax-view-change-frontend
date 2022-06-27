@@ -42,8 +42,18 @@
 btaNavPartial: Option[Html] = None, origin: Option[String] = None, MFACreditsEnabled: Boolean = true)(implicit request: Request[_], messages: Messages)
 @import implicitDateFormatter.longDate
 
+@sortPayments(payments: List[Payment]) = @{
+    payments.map(payment => ( LocalDate.parse(payment
+            .date.getOrElse(throw MissingFieldException("Payment Date::Sorting"))).toEpochDay, payment )
+    ).sortWith( (left,right) => left._1 > right._1)
+    .map(_._2)
+}
+
 @groupedPayments = @{
-    payments.groupBy[Int]{payment => LocalDate.parse(payment.date.getOrElse(throw MissingFieldException("Payment Date"))).getYear}.toList.sortBy(_._1).reverse
+    payments.groupBy[Int]{payment =>
+        LocalDate.parse(payment.date.getOrElse(throw MissingFieldException("Payment Date"))).getYear}.toList
+            .sortBy(_._1).reverse
+            .map(recordByYear => (recordByYear._1, sortPayments(recordByYear._2)) )
 }
 
 @getControllerHref(payment: Payment, isAgent: Boolean) = @{
