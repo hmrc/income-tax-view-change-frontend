@@ -54,7 +54,7 @@
             <th scope="col" class="govuk-table__header">@getMessage("tableHead.date")</th>
             <th scope="col" class="govuk-table__header">@getMessage("tableHead.type")</th>
             <th scope="col" class="govuk-table__header">@getMessage("tableHead.status")</th>
-            <th scope="col" class="govuk-table__header">@getMessage("tableHead.amount")</th>
+            <th scope="col" class="govuk-table__header govuk-!-text-align-right">@getMessage("tableHead.amount")</th>
         </tr>
     </thead>
 }
@@ -94,7 +94,7 @@
                                 <td class="govuk-table__cell govuk-!-width-one-quarter">@documentDetail.documentDate.toLongDateShort</td>
                                 <td class="govuk-table__cell govuk-!-width-one-half">@getMessage("tableHead.type.value")</td>
                                 <td class="govuk-table__cell numeric govuk-!-width-one-quarter">@getStatus(documentDetail)</td>
-                                <td class="govuk-table__cell numeric govuk-!-width-one-quarter">@documentDetail.originalAmount.map(_.abs).getOrElse(throw MissingFieldException("Original Amount")).toCurrencyString</td>
+                                <td class="govuk-table__cell numeric govuk-!-width-one-quarter govuk-!-text-align-right">@documentDetail.originalAmount.map(_.abs).getOrElse(throw MissingFieldException("Original Amount")).toCurrencyString</td>
                             </tr>
                         }
                     </tbody>
