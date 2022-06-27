@@ -43,7 +43,11 @@ btaNavPartial: Option[Html] = None, origin: Option[String] = None, MFACreditsEna
 @import implicitDateFormatter.longDate
 
 @groupedPayments = @{
-    payments.groupBy[Int]{payment => LocalDate.parse(payment.date.getOrElse(throw MissingFieldException("Payment Date"))).getYear}.toList.sortBy(_._1).reverse
+    payments.groupBy[Int]{payment => {
+            if (payment.validMFACreditDescription()) LocalDate.parse(payment.documentDate).getYear
+            else LocalDate.parse(payment.dueDate.getOrElse(throw MissingFieldException("Payment Date"))).getYear
+        }
+    }.toList.sortBy(_._1).reverse
 }
 
 @getControllerHref(payment: Payment, isAgent: Boolean) = @{
@@ -55,7 +59,7 @@ btaNavPartial: Option[Html] = None, origin: Option[String] = None, MFACreditsEna
 }
 
 @getMFACreditsLink(payment: Payment, isAgent: Boolean) = @{
-    val year = LocalDate.parse(payment.date.getOrElse(throw MissingFieldException("Payment Date"))).getYear
+    val year = LocalDate.parse(payment.documentDate).getYear
     if(isAgent) {
         "/report-quarterly/income-and-expenses/view/agents/credits-from-hmrc/" + year
     } else {
@@ -95,12 +99,12 @@ btaNavPartial: Option[Html] = None, origin: Option[String] = None, MFACreditsEna
         @for((payment, index) <- yearPayments.zipWithIndex) {
             @if(!payment.credit.isDefined){
                 <tr class="govuk-table__row">
-                    <td class="govuk-table__cell">@LocalDate.parse(payment.date.getOrElse(throw MissingFieldException("Payment Date"))).toLongDate
+                    <td class="govuk-table__cell">@LocalDate.parse(payment.dueDate.getOrElse(throw MissingFieldException("Payment Due Date"))).toLongDate
                     </td>
                     <td class="govuk-table__cell">
                         <a class="govuk-link" href="@getControllerHref(payment, isAgent)">
                             @messages("paymentHistory.paymentToHmrc")
-                            <span class="govuk-visually-hidden">@LocalDate.parse(payment.date.getOrElse(throw MissingFieldException("Payment Date"))).toLongDate @payment.amount.map(_.abs.toCurrency) @if(yearPayments.size > 1){ Item @(index + 1)}</span>
+                            <span class="govuk-visually-hidden">@LocalDate.parse(payment.dueDate.getOrElse(throw MissingFieldException("Payment Due Date"))).toLongDate @payment.amount.map(_.abs.toCurrency) @if(yearPayments.size > 1){ Item @(index + 1)}</span>
                         </a>
                     </td>
                     <td class="govuk-table__cell numeric"> @payment.amount.map(_.abs.toCurrency)</td>
@@ -109,7 +113,7 @@ btaNavPartial: Option[Html] = None, origin: Option[String] = None, MFACreditsEna
                 @if(payment.validMFACreditDescription()) {
                     @if(MFACreditsEnabled) {
                         <tr class="govuk-table__row">
-                            <td class="govuk-table__cell">@LocalDate.parse(payment.date.getOrElse(throw MissingFieldException("Payment Date"))).toLongDate</td>
+                            <td class="govuk-table__cell">@LocalDate.parse(payment.documentDate).toLongDate</td>
                             <td class="govuk-table__cell" id="mfacredit">
                                 <a class="govuk-link" href="@getMFACreditsLink(payment, isAgent)">
                                     @messages("paymentHistory.mfaCredit")
@@ -122,7 +126,7 @@ btaNavPartial: Option[Html] = None, origin: Option[String] = None, MFACreditsEna
                 } else {
                     @if(CutOverCreditsEnabled) {
                         <tr class="govuk-table__row">
-                            <td class="govuk-table__cell">@LocalDate.parse(payment.date.getOrElse(throw MissingFieldException("Payment Date"))).toLongDate</td>
+                            <td class="govuk-table__cell">@LocalDate.parse(payment.dueDate.getOrElse(throw MissingFieldException("Payment Due Date"))).toLongDate</td>
                             <td class="govuk-table__cell" id="paymentFromEarlierYear">
                                 <a class="govuk-link" href="@getControllerHref(payment, isAgent)">
                                     @messages("paymentHistory.paymentFromEarlierYear")
