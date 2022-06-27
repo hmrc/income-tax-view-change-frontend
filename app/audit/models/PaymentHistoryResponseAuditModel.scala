@@ -32,7 +32,7 @@ case class PaymentHistoryResponseAuditModel(mtdItUser: MtdItUser[_],
   override val auditType: String = "PaymentHistoryResponse"
 
   private def getPayment(payment: Payment, desc: String): JsObject = Json.obj("description" -> desc) ++
-    ("paymentDate", payment.dueDate) ++
+    ("paymentDate", if (payment.validMFACreditDescription()) Some(payment.documentDate) else payment.dueDate) ++
     ("amount", payment.amount)
 
   private def paymentHistoryMapper(payment: Payment): Option[JsObject] = {

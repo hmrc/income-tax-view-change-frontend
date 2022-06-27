@@ -42,7 +42,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
   def paymentsWithCharge(mainType: String, chargeType: String, date: String, amount: BigDecimal, lotItem: String): PaymentsWithChargeType =
     PaymentsWithChargeType(
       payments = List(Payment(reference = Some("reference"), amount = Some(amount), outstandingAmount = None, method = Some("method"),
-        documentDescription = None, lot = Some("lot"), lotItem = Some(lotItem), dueDate = Some(date), transactionId = None)),
+        documentDescription = None, lot = Some("lot"), lotItem = Some(lotItem), dueDate = Some(date), documentDate = date, transactionId = None)),
       mainType = Some(mainType), chargeType = Some(chargeType))
 
   val paymentAllocation: List[PaymentsWithChargeType] = List(
