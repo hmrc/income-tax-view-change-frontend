@@ -67,6 +67,14 @@
     }
 }
 
+@getCreditsSummaryControllerHref(credit: DocumentDetail, isAgent: Boolean) = @{
+    if(isAgent) {
+        controllers.routes.CreditsSummaryController.showAgentCreditsSummary(credit.documentDate.getYear)
+    } else {
+        controllers.routes.CreditsSummaryController.showCreditsSummary(credit.documentDate.getYear)
+    }
+}
+
 @getWhatYouOwe(isAgent: Boolean) = @{
     if(isAgent) {
         controllers.routes.WhatYouOweController.showAgent().url
@@ -109,9 +117,19 @@
                             @if(charge._1.documentDetail.validMFACreditDescription()) {
                                 <div class="govuk-summary-list__row">
                                     <dt class="govuk-summary-list__value">
-                                        <span>@messages("credit-and-refund.credit-from-hmrc-title")</span>
+                                        <span>
+                                            <a href="@getCreditsSummaryControllerHref(charge._1.documentDetail, isAgent)" class="govuk-link">
+                                                     @messages("credit-and-refund.credit-from-hmrc-title")
+                                            </a>
+                                        </span>
                                     </dt>
-                                    <dd class="govuk-summary-list__value">@charge._1.documentDetail.paymentOrChargeCredit.get.toCurrencyString</dd>
+                                    @* TODO remove it when done with the implementation above *@
+                                    @* http://localhost:9081/report-quarterly/income-and-expenses/view/credits-from-hmrc/2022 *@
+                                   @* <dt>
+                                        <a href="@getCreditsSummaryControllerHref(charge._1.documentDetail, isAgent)" class="govuk-link">@charge._1.documentDetail.paymentOrChargeCredit.get.toCurrencyString</a>
+                                        <a href="@getCreditsSummaryControllerHref(charge._1.documentDetail, isAgent)" class="govuk-link">@charge._1.documentDetail.paymentOrChargeCredit.get.toCurrencyString @messages("credit-and-refund.payment")</a>
+                                    </dt> *@
+                                    <dd class="govuk-summary-list__value">@charge._1.documentDetail.paymentOrChargeCredit.get.toCurrencyString </dd>
                                 </div>
                             }
                             @if(!charge._1.documentDetail.validMFACreditDescription()) {
