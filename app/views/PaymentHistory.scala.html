@@ -42,6 +42,14 @@
 btaNavPartial: Option[Html] = None, origin: Option[String] = None, MFACreditsEnabled: Boolean = true)(implicit request: Request[_], messages: Messages)
 @import implicitDateFormatter.longDate
 
+@sortPayments(payments: List[Payment]) = @{
+            payments
+                .map(payment => if (payment.validMFACreditDescription() ) ( Some(payment.documentDate), payment) else (payment.dueDate, payment) )
+                .map(rec => ( LocalDate.parse(rec._1.getOrElse(throw MissingFieldException("Payment/Credits::Sorting"))).toEpochDay, rec._2) )
+                .sortWith( (left,right) => left._1 > right._1)
+                .map(_._2)
+}
+
 @groupedPayments = @{
     payments.groupBy[Int]{payment => {
             if (payment.validMFACreditDescription()) LocalDate.parse(payment.documentDate).getYear
