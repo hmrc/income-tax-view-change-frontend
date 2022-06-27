@@ -427,7 +427,7 @@
             @if(paymentAllocationEnabled && !latePaymentInterestCharge) {
                 @for(allocation <- paymentAllocations ; payment <- allocation.payments) {
                     <tr>
-                        <td class="govuk-table__cell govuk-!-width-one-quarter">@LocalDate.parse(payment.date.getOrElse(throw MissingFieldException("Payment Date"))).toLongDateShort</td>
+                        <td class="govuk-table__cell govuk-!-width-one-quarter">@LocalDate.parse(payment.dueDate.getOrElse(throw MissingFieldException("Payment Date"))).toLongDateShort</td>
                         <td class="govuk-table__cell">
                             @if(payments.findMatchingPaymentDocument(payment.lot.getOrElse(throw MissingFieldException("Payment Lot")), payment.lotItem.getOrElse(throw MissingFieldException("Payment Lot Item"))).isDefined) {
                                 @if(isAgent) {
