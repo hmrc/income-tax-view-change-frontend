@@ -488,7 +488,7 @@ class IncomeTaxViewChangeConnectorSpec extends TestSupport with MockHttp with Mo
     }
 
     val payments: Seq[Payment] = Seq(Payment(reference = Some("reference"), amount = Some(100.00), outstandingAmount = None,
-      method = Some("method"), documentDescription = None, lot = Some("lot"), lotItem = Some("lotItem"), date = Some("date"), Some("DOCID01")))
+      method = Some("method"), documentDescription = None, lot = Some("lot"), lotItem = Some("lotItem"), dueDate = Some("date"), Some("DOCID01")))
 
     val successResponse: HttpResponse = HttpResponse(
       status = OK,

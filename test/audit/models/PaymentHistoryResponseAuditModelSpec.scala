@@ -46,15 +46,15 @@ class PaymentHistoryResponseAuditModelSpec extends TestSupport {
     ),
     payments = Seq(
       Payment(reference = Some("payment1"), amount = Some(100.00), outstandingAmount = None,
-        method = Some("method"), documentDescription = None, lot = Some("lot"), lotItem = Some("lotItem"), date = Some("2018-02-01"), None),
+        method = Some("method"), documentDescription = None, lot = Some("lot"), lotItem = Some("lotItem"), dueDate = Some("2018-02-01"), None),
       Payment(reference = Some("cutover1"), amount = Some(-100.00), outstandingAmount = None,
-        method = Some("method"), documentDescription = None, lot = None, lotItem = None, date = Some("2018-02-02"), None),
+        method = Some("method"), documentDescription = None, lot = None, lotItem = None, dueDate = Some("2018-02-02"), None),
       Payment(reference = Some("cutover2"), amount = Some(-100.00), outstandingAmount = None,
-        method = Some("method"), documentDescription = None, lot = None, lotItem = None, date = Some("2018-02-03"), None),
+        method = Some("method"), documentDescription = None, lot = None, lotItem = None, dueDate = Some("2018-02-03"), None),
       Payment(reference = Some("mfa1"), amount = Some(-100.00), outstandingAmount = None,
-        method = Some("method"), documentDescription = Some("ITSA Overpayment Relief"), lot = None, lotItem = None, date = Some("2018-02-04"), None),
+        method = Some("method"), documentDescription = Some("ITSA Overpayment Relief"), lot = None, lotItem = None, dueDate = Some("2018-02-04"), None),
       Payment(reference = Some("mfa2"), amount = Some(-100.00), outstandingAmount = None,
-        method = Some("method"), documentDescription = Some("ITSA Overpayment Relief"), lot = None, lotItem = None, date = Some("2018-02-05"), None)
+        method = Some("method"), documentDescription = Some("ITSA Overpayment Relief"), lot = None, lotItem = None, dueDate = Some("2018-02-05"), None)
     ),
     CutOverCreditsEnabled = CutOver,
     MFACreditsEnabled = MFA,

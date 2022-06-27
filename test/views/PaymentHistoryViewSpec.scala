@@ -68,24 +68,24 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
 
   val paymentsnotFull: List[Payment] = List(
     Payment(reference = Some("reference"), amount = Some(-10000.00), None, method = Some("method"), None, lot = None,
-      lotItem = None, date = Some("2018-04-25"), Some("AY777777202206"))
+      lotItem = None, dueDate = Some("2018-04-25"), Some("AY777777202206"))
   )
 
   val paymentsMFA: List[Payment] = List(
     Payment(reference = Some("reference"), amount = Some(-10000.00), Some(-150.00), method = Some("method"),
-      documentDescription = Some("ITSA Overpayment Relief"), lot = None, lotItem = None, date = Some("2020-04-25"),
+      documentDescription = Some("ITSA Overpayment Relief"), lot = None, lotItem = None, dueDate = Some("2020-04-25"),
       Some("AY777777202201")),
     Payment(reference = Some("reference"), amount = Some(-10000.00), Some(-150.00), method = Some("method"),
-      documentDescription = Some("ITSA Literary Artistic Spread"), lot = None, lotItem = None, date = Some("2019-04-25"),
+      documentDescription = Some("ITSA Literary Artistic Spread"), lot = None, lotItem = None, dueDate = Some("2019-04-25"),
       Some("AY777777202202")),
     Payment(reference = Some("reference"), amount = Some(-10000.00), Some(-150.00), method = Some("method"),
-      documentDescription = Some("ITSA Post Cessation Claim"), lot = None, lotItem = None, date = Some("2018-04-25"),
+      documentDescription = Some("ITSA Post Cessation Claim"), lot = None, lotItem = None, dueDate = Some("2018-04-25"),
       Some("AY777777202203"))
   )
 
 
   val emptyPayments: List[Payment] = List(
-    Payment(reference = None, amount = None, outstandingAmount = None, method = None, documentDescription = None, lot = None, lotItem = None, date = None, transactionId = None)
+    Payment(reference = None, amount = None, outstandingAmount = None, method = None, documentDescription = None, lot = None, lotItem = None, dueDate = None, transactionId = None)
   )
 
   class PaymentHistorySetup(testPayments: List[Payment], saUtr: Option[String] = Some("1234567890"), isAgent: Boolean = false) extends Setup(
@@ -148,7 +148,7 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
       }
 
       "display payment history by year" in new PaymentHistorySetup(testPayments) {
-        val orderedPayments: Map[Int, List[Payment]] = testPayments.groupBy { payment => LocalDate.parse(payment.date.get).getYear }
+        val orderedPayments: Map[Int, List[Payment]] = testPayments.groupBy { payment => LocalDate.parse(payment.dueDate.get).getYear }
         for (((year, payments), index) <- orderedPayments.zipWithIndex) {
           layoutContent.selectHead(s"#accordion-with-summary-sections-heading-$year").text shouldBe PaymentHistoryMessages.button(year)
           val sectionContent = layoutContent.selectHead(s"#accordion-default-content-${index + 1}")
@@ -156,8 +156,8 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
           payments.zipWithIndex.foreach {
             case (payment, index) =>
               val row = tbody.selectNth("tr", index + 1)
-              row.selectNth("td", 1).text shouldBe LocalDate.parse(payment.date.get).toLongDate
-              row.selectNth("td", 2).text shouldBe PaymentHistoryMessages.paymentToHmrc + s" ${LocalDate.parse(payment.date.get).toLongDate} ${payment.amount.get.toCurrencyString}"
+              row.selectNth("td", 1).text shouldBe LocalDate.parse(payment.dueDate.get).toLongDate
+              row.selectNth("td", 2).text shouldBe PaymentHistoryMessages.paymentToHmrc + s" ${LocalDate.parse(payment.dueDate.get).toLongDate} ${payment.amount.get.toCurrencyString}"
               row.selectNth("td", 2).select("a").attr("href") shouldBe s"/report-quarterly/income-and-expenses/view/payment-made-to-hmrc?documentNumber=${payment.transactionId.get}"
               row.selectNth("td", 3).text shouldBe payment.amount.get.toCurrencyString
           }
@@ -165,7 +165,7 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
       }
 
       "display payment history by year with CutOverCredits FS On" in new PaymentHistorySetup1(paymentsnotFull) {
-        val orderedPayments: Map[Int, List[Payment]] = paymentsnotFull.groupBy { payment => LocalDate.parse(payment.date.get).getYear }
+        val orderedPayments: Map[Int, List[Payment]] = paymentsnotFull.groupBy { payment => LocalDate.parse(payment.dueDate.get).getYear }
         for (((year, payments), index) <- orderedPayments.zipWithIndex) {
           layoutContent.selectHead(s"#accordion-with-summary-sections-heading-$year").text shouldBe PaymentHistoryMessages.button(year)
           val sectionContent = layoutContent.selectHead(s"#accordion-default-content-${index + 1}")
@@ -173,7 +173,7 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
           payments.zipWithIndex.foreach {
             case (payment, index) =>
               val row = tbody.selectNth("tr", index + 1)
-              row.selectNth("td", 1).text shouldBe LocalDate.parse(payment.date.get).toLongDate
+              row.selectNth("td", 1).text shouldBe LocalDate.parse(payment.dueDate.get).toLongDate
               row.selectNth("td", 2).text shouldBe PaymentHistoryMessages.earlierPaymentToHMRC + s" ${payment.transactionId.get}"
               row.selectNth("td", 2).select("a").attr("href") shouldBe s"/report-quarterly/income-and-expenses/view/payment-made-to-hmrc?documentNumber=${payment.transactionId.get}"
           }
@@ -188,7 +188,7 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
       }
 
       "display MFA Credits with FS On" in new PaymentHistorySetupMFA(paymentsMFA, true) {
-        val orderedPayments: Map[Int, List[Payment]] = paymentsMFA.groupBy { payment => LocalDate.parse(payment.date.get).getYear }
+        val orderedPayments: Map[Int, List[Payment]] = paymentsMFA.groupBy { payment => LocalDate.parse(payment.dueDate.get).getYear }
         for (((year, payments), index) <- orderedPayments.zipWithIndex) {
           layoutContent.selectHead(s"#accordion-with-summary-sections-heading-$year").text shouldBe PaymentHistoryMessages.button(year)
           val sectionContent = layoutContent.selectHead(s"#accordion-default-content-${index + 1}")
@@ -196,9 +196,9 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
           payments.zipWithIndex.foreach {
             case (payment, index) =>
               val row = tbody.selectNth("tr", index + 1)
-              row.selectNth("td", 1).text shouldBe LocalDate.parse(payment.date.get).toLongDate
+              row.selectNth("td", 1).text shouldBe LocalDate.parse(payment.dueDate.get).toLongDate
               row.selectNth("td", 2).text shouldBe messages("paymentHistory.mfaCredit") + s" ${payment.transactionId.get}"
-              val url = s"/report-quarterly/income-and-expenses/view/credits-from-hmrc/${LocalDate.parse(payment.date.get).getYear}"
+              val url = s"/report-quarterly/income-and-expenses/view/credits-from-hmrc/${LocalDate.parse(payment.dueDate.get).getYear}"
               row.selectNth("td", 2).select("a").attr("href") shouldBe url
           }
         }
@@ -213,7 +213,7 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
       }
 
       "display payment history by year with multiple payments for the same year" in new PaymentHistorySetup(testMultiplePayments) {
-        val orderedPayments: Map[Int, List[Payment]] = testMultiplePayments.groupBy { payment => LocalDate.parse(payment.date.get).getYear }
+        val orderedPayments: Map[Int, List[Payment]] = testMultiplePayments.groupBy { payment => LocalDate.parse(payment.dueDate.get).getYear }
         for (((year, payments), index) <- orderedPayments.zipWithIndex) {
           layoutContent.selectHead(s"#accordion-with-summary-sections-heading-$year").text shouldBe PaymentHistoryMessages.button(year)
           val sectionContent = layoutContent.selectHead(s"#accordion-default-content-${index + 1}")
@@ -221,8 +221,8 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
           payments.zipWithIndex.foreach {
             case (payment, index) =>
               val row = tbody.selectNth("tr", index + 1)
-              row.selectNth("td", 1).text shouldBe LocalDate.parse(payment.date.get).toLongDate
-              row.selectNth("td", 2).text shouldBe PaymentHistoryMessages.paymentToHmrc + s" ${LocalDate.parse(payment.date.get).toLongDate} ${payment.amount.get.toCurrencyString} Item ${index + 1}"
+              row.selectNth("td", 1).text shouldBe LocalDate.parse(payment.dueDate.get).toLongDate
+              row.selectNth("td", 2).text shouldBe PaymentHistoryMessages.paymentToHmrc + s" ${LocalDate.parse(payment.dueDate.get).toLongDate} ${payment.amount.get.toCurrencyString} Item ${index + 1}"
               row.selectNth("td", 2).select("a").attr("href") shouldBe s"/report-quarterly/income-and-expenses/view/payment-made-to-hmrc?documentNumber=${payment.transactionId.get}"
               row.selectNth("td", 3).text shouldBe payment.amount.get.toCurrencyString
           }

@@ -25,7 +25,7 @@ class PaymentSpec extends WordSpecLike with Matchers {
 
   val paymentFull: Payment = Payment(reference = Some("reference"), amount = Some(100.00), outstandingAmount = Some(50.00),
     method = Some("method"), documentDescription = Some("docDescription"), lot = Some("lot"), lotItem = Some("lotItem"),
-    date = Some("date"), Some("DOCID01"))
+    dueDate = Some("date"), Some("DOCID01"))
 
   val paymentFullJson: JsObject = Json.obj(
     "reference" -> "reference",
@@ -35,7 +35,7 @@ class PaymentSpec extends WordSpecLike with Matchers {
     "documentDescription" -> "docDescription",
     "lot" -> "lot",
     "lotItem" -> "lotItem",
-    "date" -> "date",
+    "dueDate" -> "date",
     "transactionId" -> "DOCID01"
   )
 

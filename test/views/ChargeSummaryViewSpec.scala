@@ -77,7 +77,7 @@ class ChargeSummaryViewSpec extends ViewSpec {
   def paymentsForCharge(mainType: String, chargeType: String, date: String, amount: BigDecimal): PaymentsWithChargeType =
     PaymentsWithChargeType(
       payments = List(Payment(reference = Some("reference"), amount = Some(amount), outstandingAmount = None, method = Some("method"),
-        documentDescription = None, lot = Some("lot"), lotItem = Some("lotItem"), date = Some(date), transactionId = None)),
+        documentDescription = None, lot = Some("lot"), lotItem = Some("lotItem"), dueDate = Some(date), transactionId = None)),
       mainType = Some(mainType), chargeType = Some(chargeType))
 
   object Messages {

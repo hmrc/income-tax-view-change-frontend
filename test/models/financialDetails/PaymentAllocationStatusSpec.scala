@@ -23,7 +23,7 @@ object PaymentAllocationStatusSpec extends Properties("PaymentAllocationStatus_a
 
   val defaultPayment = Payment(reference = Some("ref"), amount = Some(0.00), method = Some("method"),
     lot = Some("lot2"), lotItem = Some("lotItem2"), documentDescription = None,
-    date = Some("2018-12-12"), outstandingAmount = None, transactionId = Some("DOCID02"))
+    dueDate = Some("2018-12-12"), outstandingAmount = None, transactionId = Some("DOCID02"))
 
   property("allocationStatus_FullyAllocatedPaymentStatus") = forAll { outstanding: BigDecimal =>
     (outstanding != 0) ==> {

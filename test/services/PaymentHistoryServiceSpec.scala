@@ -42,7 +42,7 @@ class PaymentHistoryServiceSpec extends TestSupport with MockIncomeTaxViewChange
 
   val paymentFull: List[Payment] = List(Payment(reference = Some("reference"), amount = Some(100.00),
     outstandingAmount = Some(1.00), method = Some("method"), documentDescription = None, lot = Some("lot"), lotItem = Some("lotItem"),
-    date = Some("date"), Some("DOCID01")))
+    dueDate = Some("date"), Some("DOCID01")))
 
   val oldUser: MtdItUser[_] = MtdItUser(
     mtditid = testMtditid,
