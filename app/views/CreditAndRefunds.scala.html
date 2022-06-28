@@ -123,7 +123,7 @@
                                             </a>
                                         </span>
                                     </dt>
-                                    <dd class="govuk-summary-list__value">@charge._1.documentDetail.paymentOrChargeCredit.get.toCurrencyString </dd>
+                                    <dd class="govuk-summary-list__value govuk-!-text-align-right">@charge._1.documentDetail.paymentOrChargeCredit.get.toCurrencyString </dd>
                                 </div>
                             }
                             @if(!charge._1.documentDetail.validMFACreditDescription()) {
@@ -131,7 +131,7 @@
                                     <dt class="govuk-summary-list__value">
                                         <a href="@getControllerHref(charge._1.documentDetail, isAgent)" class="govuk-link">@charge._1.dueDate.get.toLongDate @messages("credit-and-refund.payment")</a>
                                     </dt>
-                                    <dd class="govuk-summary-list__value">@charge._1.documentDetail.paymentOrChargeCredit.get.toCurrencyString</dd>
+                                    <dd class="govuk-summary-list__value govuk-!-text-align-right">@charge._1.documentDetail.paymentOrChargeCredit.get.toCurrencyString</dd>
                                 </div>
                             }
                         }
@@ -140,7 +140,7 @@
                                 <dt class="govuk-summary-list__value">
                                     <a href="@getControllerHref(charge._1.documentDetail, isAgent)" class="govuk-link">@charge._1.dueDate.get.toLongDate @messages("credit-and-refund.payment")</a>
                                 </dt>
-                                <dd class="govuk-summary-list__value">@charge._1.documentDetail.paymentOrChargeCredit.get.toCurrencyString</dd>
+                                <dd class="govuk-summary-list__value govuk-!-text-align-right">@charge._1.documentDetail.paymentOrChargeCredit.get.toCurrencyString</dd>
                             </div>
                         }
                     }
@@ -149,7 +149,7 @@
                         balance.get.firstPendingAmountRequested map { amount =>
                             <div class="govuk-summary-list__row">
                                 <dt class="govuk-summary-list__value">{messages("credit-and-refund.refundProgress")}</dt>
-                                <dd class="govuk-summary-list__value">{amount.toCurrencyString}</dd>
+                                <dd class="govuk-summary-list__value govuk-!-text-align-right">{amount.toCurrencyString}</dd>
                             </div>
                         }
                     }
@@ -157,14 +157,14 @@
                         balance.get.secondPendingAmountRequested map { amount =>
                             <div class="govuk-summary-list__row">
                                 <dt class="govuk-summary-list__value">{messages("credit-and-refund.refundProgress")}</dt>
-                                <dd class="govuk-summary-list__value">{amount.toCurrencyString}</dd>
+                                <dd class="govuk-summary-list__value govuk-!-text-align-right">{amount.toCurrencyString}</dd>
                             </div>
                         }
                     }
                     @if(balance.get.availableCredit.get != 0){
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">@messages("credit-and-refund.total")</dt>
-                            <dd class="govuk-summary-list__value">@{balance.get.availableCredit.get.toCurrencyString}</dd>
+                            <dd class="govuk-summary-list__value govuk-!-text-align-right">@{balance.get.availableCredit.get.toCurrencyString}</dd>
                         </div>
                     }
                 </dl>
