@@ -43,9 +43,9 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
   val creditAndRefundHeadingWithTitleServiceNameGovUk: String = messages("titlePattern.serviceName.govUk", creditAndRefundHeading)
   val creditAndRefundHeadingAgentWithTitleServiceNameGovUkAgent: String = messages("agent.title_pattern.service_name.govuk", creditAndRefundHeading)
 
- def balanceDetailsModel(firstPendingAmountRequested: Option[BigDecimal] = Some(3.50),
-                         secondPendingAmountRequested: Option[BigDecimal] = Some(2.50),
-                         availableCredit: Option[BigDecimal] = Some(7.00)): BalanceDetails = BalanceDetails(
+  def balanceDetailsModel(firstPendingAmountRequested: Option[BigDecimal] = Some(3.50),
+                          secondPendingAmountRequested: Option[BigDecimal] = Some(2.50),
+                          availableCredit: Option[BigDecimal] = Some(7.00)): BalanceDetails = BalanceDetails(
     balanceDueWithin30Days = 1.00,
     overDueAmount = 2.00,
     totalBalance = 3.00,
@@ -60,21 +60,35 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
     (documentDetailWithDueDateModel(paymentLot = None, outstandingAmount = outstandingAmount), financialDetail())
   }
 
+  def documentDetailWithDueDateFinancialDetailListModelMFA(outstandingAmount: Option[BigDecimal] = Some(BigDecimal(-1400.0))):
+  (DocumentDetailWithDueDate, FinancialDetail) = {
+    (documentDetailWithDueDateModel(
+      paymentLot = None,
+      paymentLotItem = None,
+      documentDescription = Some("ITSA Overpayment Relief"),
+      outstandingAmount = outstandingAmount,
+      originalAmount = Some(BigDecimal(-2400.0))),
+      financialDetail()
+    )
+  }
+
   class Setup(creditCharges: List[(DocumentDetailWithDueDate, FinancialDetail)] = List(documentDetailWithDueDateFinancialDetailListModel()),
               balance: Option[BalanceDetails] = Some(balanceDetailsModel()),
               isAgent: Boolean = false,
-              backUrl: String = "testString") {
+              backUrl: String = "testString",
+              isMFACreditsAndDebitsEnabled: Boolean = false) {
     lazy val page: HtmlFormat.Appendable =
-      creditAndRefundView(creditCharges, balance, isAgent = isAgent, backUrl)(FakeRequest(), implicitly, implicitly)
+      creditAndRefundView(creditCharges, balance, isAgent = isAgent, backUrl, isMFACreditsAndDebitsEnabled = isMFACreditsAndDebitsEnabled)(FakeRequest(), implicitly, implicitly)
     lazy val document: Document = Jsoup.parse(contentAsString(page))
     lazy val layoutContent: Element = document.selectHead("#main-content")
   }
 
   "displaying individual credit and refund page" should {
     val link = "/report-quarterly/income-and-expenses/view/payment-made-to-hmrc?documentNumber=1040000123"
+    val linkCreditsSummaryPage = "/report-quarterly/income-and-expenses/view/credits-from-hmrc/2018"
 
     "display the page" when {
-      "a user has requested a refund" in new Setup(){
+      "a user has requested a refund" in new Setup() {
 
         document.title() shouldBe creditAndRefundHeadingWithTitleServiceNameGovUk
         layoutContent.selectHead("h1").text shouldBe creditAndRefundHeading
@@ -89,7 +103,7 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
 
       }
 
-      "a user has not requested a refund" in new Setup(balance = Some(balanceDetailsModel(None, None))){
+      "a user has not requested a refund" in new Setup(balance = Some(balanceDetailsModel(None, None))) {
 
         document.title() shouldBe creditAndRefundHeadingWithTitleServiceNameGovUk
         layoutContent.selectHead("h1").text shouldBe creditAndRefundHeading
@@ -104,26 +118,47 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
 
       "a user has a Refund claimed for full amount and claim is in a pending state" in
         new Setup(creditCharges = List(documentDetailWithDueDateFinancialDetailListModel(Some(-6.00))),
-                  balance = Some(balanceDetailsModel(availableCredit = Some(0)))
-        ){
+          balance = Some(balanceDetailsModel(availableCredit = Some(0)))
+        ) {
 
-        document.title() shouldBe creditAndRefundHeadingWithTitleServiceNameGovUk
-        layoutContent.selectHead("h1").text shouldBe creditAndRefundHeading
-        document.select("h2").first().select("span").text().contains(subHeadingWithCredits) shouldBe false
-        document.select("dt").first().text() shouldBe s"15 May 2019 $paymentText"
-        document.select("dt").first().select("a").attr("href") shouldBe link
-        document.select("dt").last().text().contains("Total") shouldBe false
-        document.select("govuk-list govuk-list--bullet").isEmpty shouldBe true
+          document.title() shouldBe creditAndRefundHeadingWithTitleServiceNameGovUk
+          layoutContent.selectHead("h1").text shouldBe creditAndRefundHeading
+          document.select("h2").first().select("span").text().contains(subHeadingWithCredits) shouldBe false
+          document.select("dt").first().text() shouldBe s"15 May 2019 $paymentText"
+          document.select("dt").first().select("a").attr("href") shouldBe link
+          document.select("dt").last().text().contains("Total") shouldBe false
+          document.select("govuk-list govuk-list--bullet").isEmpty shouldBe true
 
-        document.getElementsByClass("govuk-button").first().text() shouldBe checkBtn
-      }
+          document.getElementsByClass("govuk-button").first().text() shouldBe checkBtn
+        }
 
       "a user has no available credit or current pending refunds" in
-        new Setup(balance = None){
+        new Setup(balance = None) {
 
           document.title() shouldBe creditAndRefundHeadingWithTitleServiceNameGovUk
           layoutContent.selectHead("h1").text shouldBe creditAndRefundHeading
           document.select("p").last.text() shouldBe messages("credit-and-refund.no-credit")
+
+          document.getElementsByClass("govuk-button").first().text() shouldBe checkBtn
+        }
+
+      "a user has a Credit from HMRC adjustment" in
+        new Setup(creditCharges = List(documentDetailWithDueDateFinancialDetailListModelMFA()),
+          balance = Some(balanceDetailsModel(
+            firstPendingAmountRequested = Some(4.50),
+            secondPendingAmountRequested = None,
+            availableCredit = Some(0))),
+          isMFACreditsAndDebitsEnabled = true
+        ) {
+
+          document.title() shouldBe creditAndRefundHeadingWithTitleServiceNameGovUk
+          layoutContent.selectHead("h1").text shouldBe creditAndRefundHeading
+          document.select("h2").first().select("span").text().contains(subHeadingWithCredits) shouldBe false
+          document.select("dt").select("dt:nth-child(1)").first().text() shouldBe messages("credit-and-refund.credit-from-hmrc-title")
+          document.select("dd").first().text() shouldBe "£1,400.00"
+          document.select("dt").first().select("a").attr("href") shouldBe linkCreditsSummaryPage
+          document.select("dt").last().text().contains("Total") shouldBe false
+          document.select("govuk-list govuk-list--bullet").isEmpty shouldBe true
 
           document.getElementsByClass("govuk-button").first().text() shouldBe checkBtn
         }
@@ -133,7 +168,7 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
   "displaying agent credit and refund page" should {
     val link = "/report-quarterly/income-and-expenses/view/agents/payment-made-to-hmrc?documentNumber=1040000123"
     "display the page" when {
-      "correct data is provided" in new Setup(isAgent = true){
+      "correct data is provided" in new Setup(isAgent = true) {
 
         document.title() shouldBe creditAndRefundHeadingAgentWithTitleServiceNameGovUkAgent
         layoutContent.selectHead("h1").text shouldBe creditAndRefundHeading
