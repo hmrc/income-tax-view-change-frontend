@@ -47,7 +47,6 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
     def button(year: Int): String = s"$year payments"
 
     val paymentToHmrc: String = messages("paymentHistory.paymentToHmrc")
-    val creditFromToHmrc: String = messages("credit-and-refund.credit-from-hmrc-title")
 
     val CardRef: String = messages("paymentsHistory.CardRef")
     val earlierPaymentToHMRC: String = messages("paymentAllocation.earlyTaxYear.heading")
