@@ -43,20 +43,20 @@ btaNavPartial: Option[Html] = None, origin: Option[String] = None, MFACreditsEna
 @import implicitDateFormatter.longDate
 
 @sortPayments(payments: List[Payment]) = @{
-            payments
-                .map(payment => if (payment.validMFACreditDescription() ) ( Some(payment.documentDate), payment) else (payment.dueDate, payment) )
-                .map(rec => ( LocalDate.parse(rec._1.getOrElse(throw MissingFieldException("Payment/Credits::Sorting"))).toEpochDay, rec._2) )
-                .sortWith( (left,right) => left._1 < right._1)
-                .map(_._2)
+    payments
+    .map(payment => if (payment.validMFACreditDescription() ) ( Some(payment.documentDate), payment) else (payment.dueDate, payment) )
+    .map{ case(date, payments) => ( LocalDate.parse(date.getOrElse(throw MissingFieldException("Payment/Credits::Sorting"))).toEpochDay, payments ) }
+    .sortWith( (left,right) => left._1 < right._1)
+    .map{ case(_, payments) => payments }
 }
 
 @groupedPayments = @{
-    payments.groupBy[Int]{payment => {
+    payments.groupBy[Int]{ payment => {
             if (payment.validMFACreditDescription()) LocalDate.parse(payment.documentDate).getYear
             else LocalDate.parse(payment.dueDate.getOrElse(throw MissingFieldException("Payment Date"))).getYear
         }
     }.toList.sortBy(_._1).reverse
-      .map(rec => (rec._1, sortPayments(rec._2)))
+    .map{ case(year, payments) => (year, sortPayments(payments)) }
 }
 
 @getControllerHref(payment: Payment, isAgent: Boolean) = @{
