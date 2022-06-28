@@ -45,7 +45,7 @@ btaNavPartial: Option[Html] = None, origin: Option[String] = None, MFACreditsEna
 @sortPayments(payments: List[Payment]) = @{
     payments
     .map(payment => if (payment.validMFACreditDescription() ) ( Some(payment.documentDate), payment) else (payment.dueDate, payment) )
-    .map{ case(date, payments) => ( LocalDate.parse(date.getOrElse(throw MissingFieldException("Payment/Credits::Sorting"))).toEpochDay, payments ) }
+    .map{ case(date, payment) => ( LocalDate.parse(date.getOrElse(throw MissingFieldException("Payment/Credits::Sorting"))).toEpochDay, payment ) }
     .sortWith( (left,right) => left._1 < right._1)
     .map{ case(_, payments) => payments }
 }
