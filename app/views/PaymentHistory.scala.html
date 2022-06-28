@@ -42,12 +42,21 @@
 btaNavPartial: Option[Html] = None, origin: Option[String] = None, MFACreditsEnabled: Boolean = true)(implicit request: Request[_], messages: Messages)
 @import implicitDateFormatter.longDate
 
+@sortPayments(payments: List[Payment]) = @{
+    payments
+    .map(payment => if (payment.validMFACreditDescription() ) ( Some(payment.documentDate), payment) else (payment.dueDate, payment) )
+    .map{ case(date, payment) => ( LocalDate.parse(date.getOrElse(throw MissingFieldException("Payment/Credits::Sorting"))).toEpochDay, payment ) }
+    .sortWith( (left,right) => left._1 < right._1)
+    .map{ case(_, payments) => payments }
+}
+
 @groupedPayments = @{
-    payments.groupBy[Int]{payment => {
+    payments.groupBy[Int]{ payment => {
             if (payment.validMFACreditDescription()) LocalDate.parse(payment.documentDate).getYear
             else LocalDate.parse(payment.dueDate.getOrElse(throw MissingFieldException("Payment Date"))).getYear
         }
     }.toList.sortBy(_._1).reverse
+    .map{ case(year, payments) => (year, sortPayments(payments)) }
 }
 
 @getControllerHref(payment: Payment, isAgent: Boolean) = @{
