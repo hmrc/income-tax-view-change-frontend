@@ -18,13 +18,15 @@ package models.repaymentHistory
 
 import play.api.libs.json.{Json, OFormat}
 
+import java.time.LocalDate
+
 case class RepaymentHistory(amountApprovedforRepayment: Option[BigDecimal],
                             amountRequested: BigDecimal,
                             repaymentMethod: String,
                             totalRepaymentAmount: BigDecimal,
                             repaymentItems : Seq[RepaymentItem],
-                            estimatedRepaymentDate: String,
-                            creationDate: String,
+                            estimatedRepaymentDate: LocalDate,
+                            creationDate: LocalDate,
                             repaymentRequestNumber: String
                            )
 

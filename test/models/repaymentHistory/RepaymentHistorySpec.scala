@@ -20,6 +20,8 @@ import org.scalatest.Matchers
 import testUtils.UnitSpec
 import play.api.libs.json.{JsSuccess, JsValue, Json}
 
+import java.time.LocalDate
+
 class RepaymentHistorySpec extends UnitSpec with Matchers {
 
   val repaymentHistoryFull: RepaymentHistory = RepaymentHistory(
@@ -33,15 +35,15 @@ class RepaymentHistorySpec extends UnitSpec with Matchers {
             RepaymentSupplementItem(
               parentCreditReference = Some("002420002231"),
               amount = Some(400.0),
-              fromDate = Some("2021-07-23"),
-              toDate = Some("2021-08-23"),
+              fromDate = Some( LocalDate.parse("2021-07-23") ),
+              toDate = Some( LocalDate.parse("2021-08-23") ),
               rate = Some(500.0)
             )
           )
       )
     ),
-    estimatedRepaymentDate = "2021-08-21",
-    creationDate = "2021-07-21",
+    estimatedRepaymentDate = LocalDate.parse("2021-08-21"),
+    creationDate = LocalDate.parse("2021-07-21"),
     repaymentRequestNumber = "000000003135"
   )
 
@@ -56,15 +58,15 @@ class RepaymentHistorySpec extends UnitSpec with Matchers {
           Json.obj(
             "parentCreditReference" -> Some("002420002231"),
             "amount" -> Some(400.0),
-            "fromDate" -> Some("2021-07-23"),
-            "toDate" -> Some("2021-08-23"),
+            "fromDate" -> Some( LocalDate.parse("2021-07-23") ),
+            "toDate" -> Some( LocalDate.parse("2021-08-23") ),
             "rate" -> Some(500.0)
           )
         )
       )
     ),
-    "estimatedRepaymentDate" -> "2021-08-21",
-    "creationDate" -> "2021-07-21",
+    "estimatedRepaymentDate" -> LocalDate.parse("2021-08-21"),
+    "creationDate" -> LocalDate.parse("2021-07-21"),
     "repaymentRequestNumber" -> "000000003135"
   )
 

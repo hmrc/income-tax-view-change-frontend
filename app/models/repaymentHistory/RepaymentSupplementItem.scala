@@ -18,10 +18,12 @@ package models.repaymentHistory
 
 import play.api.libs.json.{Format, Json}
 
+import java.time.LocalDate
+
 case class RepaymentSupplementItem(parentCreditReference: Option[String],
                                    amount: Option[BigDecimal],
-                                   fromDate: Option[String],
-                                   toDate: Option[String],
+                                   fromDate: Option[LocalDate],
+                                   toDate: Option[LocalDate],
                                    rate: Option[BigDecimal])
 
 object RepaymentSupplementItem {
