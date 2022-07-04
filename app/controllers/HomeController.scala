@@ -62,7 +62,6 @@ class HomeController @Inject()(val homeView: views.html.Home,
                    overDueUpdatesCount: Option[Int], dunningLockExists: Boolean, currentTaxYear: Int, isAgent: Boolean,
                    origin : Option[String] = None)
                   (implicit user: MtdItUser[_]): Html = {
-    val userMigrated = user.incomeSources.yearOfMigration.isDefined
     homeView(
       nextPaymentDueDate = nextPaymentDueDate,
       nextUpdate = nextUpdate,
@@ -75,7 +74,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
       isAgent = isAgent,
       origin = origin,
       creditAndRefundEnabled = isEnabled(CreditsRefundsRepay),
-      isUserMigrated = userMigrated
+      isUserMigrated = user.incomeSources.yearOfMigration.isDefined
     )
   }
 
