@@ -742,6 +742,7 @@ paymentHistory.paymentToHmrc                                    = Payment made t
 paymentHistory.paymentFromEarlierYear                           = Payment from an earlier tax year
 paymentHistory.mfaCredit                                        = Credit from HMRC adjustment
 paymentsHistory.CardRef                                         = Payment made by debit card ref:
+paymentHistory.refund                                           = Refund
 paymentHistory.table.header.date                                = Date
 paymentHistory.table.header.description                         = Description
 paymentHistory.table.header.amount                              = Amount

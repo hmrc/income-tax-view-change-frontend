@@ -105,7 +105,7 @@ trait IncomeTaxViewChangeConnector extends RawResponseReads with FeatureSwitchin
   }
 
   def getRepaymentHistoryByDateUrl(nino: String, fromDate: String, toDate: String): String = {
-    s"${appConfig.itvcProtectedService}/repayments/$nino/fromDate/$fromDate/toDate/$toDate"
+    s"${appConfig.itvcProtectedService}/income-tax-view-change/repayments/$nino/fromDate/$fromDate/toDate/$toDate"
   }
 
 
@@ -550,7 +550,8 @@ trait IncomeTaxViewChangeConnector extends RawResponseReads with FeatureSwitchin
 
   def getRepaymentHistoryByRepaymentDate(nino: Nino, fromDate: String, toDate: String)
                                     (implicit headerCarrier: HeaderCarrier): Future[RepaymentHistoryResponseModel] = {
-    http.GET[HttpResponse](getRepaymentHistoryByDateUrl(nino.value, fromDate: String, toDate: String))(
+    println("dates: ", fromDate, toDate)
+    http.GET[HttpResponse](getRepaymentHistoryByDateUrl(nino.value, fromDate, toDate))(
       httpReads,
       headerCarrier.withExtraHeaders("Accept" -> "application/vnd.hmrc.2.0+json"),
       ec

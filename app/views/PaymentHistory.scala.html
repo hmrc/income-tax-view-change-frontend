@@ -38,43 +38,9 @@
     govukAccordion : GovukAccordion
 )
 
-@(payments: List[Payment], CutOverCreditsEnabled: Boolean, backUrl: String, saUtr: Option[String], isAgent: Boolean = false,
+@(groupedPayments: List[(Int, List[PaymentHistoryEntry])], CutOverCreditsEnabled: Boolean, backUrl: String, saUtr: Option[String], isAgent: Boolean = false,
 btaNavPartial: Option[Html] = None, origin: Option[String] = None, MFACreditsEnabled: Boolean = true)(implicit request: Request[_], messages: Messages)
 @import implicitDateFormatter.longDate
-
-@sortPayments(payments: List[Payment]) = @{
-    payments
-    .map(payment => if (payment.validMFACreditDescription() ) ( Some(payment.documentDate), payment) else (payment.dueDate, payment) )
-    .map{ case(date, payment) => ( LocalDate.parse(date.getOrElse(throw MissingFieldException("Payment/Credits::Sorting"))).toEpochDay, payment ) }
-    .sortWith( (left,right) => left._1 < right._1)
-    .map{ case(_, payments) => payments }
-}
-
-@groupedPayments = @{
-    payments.groupBy[Int]{ payment => {
-            if (payment.validMFACreditDescription()) LocalDate.parse(payment.documentDate).getYear
-            else LocalDate.parse(payment.dueDate.getOrElse(throw MissingFieldException("Payment Date"))).getYear
-        }
-    }.toList.sortBy(_._1).reverse
-    .map{ case(year, payments) => (year, sortPayments(payments)) }
-}
-
-@getControllerHref(payment: Payment, isAgent: Boolean) = @{
-    if(isAgent) {
-        controllers.routes.PaymentAllocationsController.viewPaymentAllocationAgent(payment.transactionId.getOrElse(throw MissingFieldException("Document ID")))
-    } else {
-        controllers.routes.PaymentAllocationsController.viewPaymentAllocation(payment.transactionId.getOrElse(throw MissingFieldException("Document ID")), origin)
-    }
-}
-
-@getMFACreditsLink(payment: Payment, isAgent: Boolean) = @{
-    val year = LocalDate.parse(payment.documentDate).getYear
-    if(isAgent) {
-        "/report-quarterly/income-and-expenses/view/agents/credits-from-hmrc/" + year
-    } else {
-        "/report-quarterly/income-and-expenses/view/credits-from-hmrc/" + year
-    }
-}
 
 @paymentHistoryInfo(messageInfo: String, infoLink: => String, infoLinkText: String) = {
     @if(saUtr.isDefined) {
@@ -94,7 +60,7 @@ btaNavPartial: Option[Html] = None, origin: Option[String] = None, MFACreditsEna
     </span>
 }
 
-@bodyContent(year: Int, yearPayments: List[Payment], index: Int) = {
+@bodyContent(year: Int, yearPayments: List[PaymentHistoryEntry]) = {
     <table class="govuk-table govuk-!-margin-bottom-3">
         <caption class="govuk-table__caption govuk-visually-hidden">@messages("paymentHistory.button", year.toString)</caption>
         <thead class="govuk-table__head">
@@ -106,6 +72,7 @@ btaNavPartial: Option[Html] = None, origin: Option[String] = None, MFACreditsEna
         </thead>
         <tbody>
         @for((payment, index) <- yearPayments.zipWithIndex) {
+@********
             @if(!payment.credit.isDefined){
                 <tr class="govuk-table__row">
                     <td class="govuk-table__cell">@LocalDate.parse(payment.dueDate.getOrElse(throw MissingFieldException("Payment Due Date"))).toLongDate
@@ -147,17 +114,29 @@ btaNavPartial: Option[Html] = None, origin: Option[String] = None, MFACreditsEna
                     }
                 }
             }
+********@
+            <tr class="govuk-table__row">
+                <td class="govuk-table__cell">@LocalDate.parse(payment.date).toLongDate</td>
+                <td class="govuk-table__cell">
+                    <a class="govuk-link" href="@payment.linkUrl">
+                        @messages(payment.description)
+                        <span class="govuk-visually-hidden">stuff</span>
+                    </a>
+                </td>
+                <td class="govuk-table__cell numeric"> @payment.amount.map(_.abs.toCurrency)</td>
+            </tr>
+
         }
         </tbody>
     </table>
 }
 
 @getItems = @{
-    groupedPayments.zipWithIndex.map{
-        case ((year: Int, yearPayments: List[Payment]), index) =>
+    groupedPayments.map {
+        case ((year: Int, yearPayments: List[PaymentHistoryEntry])) =>
             Section(
                 headingContent = HtmlContent(headingContent(year)),
-                content = HtmlContent(bodyContent(year, yearPayments, index))
+                content = HtmlContent(bodyContent(year, yearPayments))
             )
     }
 }
@@ -172,7 +151,7 @@ btaNavPartial: Option[Html] = None, origin: Option[String] = None, MFACreditsEna
 
     @h1(msg = "paymentHistory.heading")
 
-    @if(payments.nonEmpty) {
+    @if(groupedPayments.nonEmpty) {
         @govukAccordion(Accordion(
             id = "accordion-default",
             items = getItems

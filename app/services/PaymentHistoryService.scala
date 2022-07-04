@@ -19,11 +19,15 @@ package services
 import auth.MtdItUser
 import config.FrontendAppConfig
 import connectors.IncomeTaxViewChangeConnector
+import models.core.Nino
+
 import javax.inject.Inject
 import models.financialDetails.{Payment, Payments, PaymentsError}
+import models.repaymentHistory.{RepaymentHistory, RepaymentHistoryErrorModel, RepaymentHistoryModel}
 import services.PaymentHistoryService.PaymentHistoryError
 import uk.gov.hmrc.http.HeaderCarrier
 
+import java.time.LocalDate
 import scala.concurrent.{ExecutionContext, Future}
 
 class PaymentHistoryService @Inject()(incomeTaxViewChangeConnector: IncomeTaxViewChangeConnector, val appConfig: FrontendAppConfig)
@@ -44,6 +48,30 @@ class PaymentHistoryService @Inject()(incomeTaxViewChangeConnector: IncomeTaxVie
       } else {
         Right(paymentResponses.collect {
           case Payments(payments) => payments
+        }.flatten.distinct)
+      }
+    }
+  }
+
+  def getRepaymentHistory(implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[RepaymentHistoryErrorModel.type, List[RepaymentHistory]]] = {
+
+    val orderedTaxYears: List[Int] = user.incomeSources.orderedTaxYearsByYearOfMigration.reverse.take(appConfig.paymentHistoryLimit)
+
+    Future.sequence(orderedTaxYears.map(year =>
+      incomeTaxViewChangeConnector.getRepaymentHistoryByRepaymentDate(Nino(user.nino),
+        fromDate = s"${year - 1}-04-06",
+        toDate = s"$year-04-05"
+      ))) map { repaymentResponses =>
+      val repaymentsContainsFailure: Boolean = repaymentResponses.exists {
+        case RepaymentHistoryModel(_) => false
+        case RepaymentHistoryErrorModel(status, _) if status == 404 => false
+        case RepaymentHistoryErrorModel(_, _) => true
+      }
+      if (repaymentsContainsFailure) {
+        Left(RepaymentHistoryErrorModel)
+      } else {
+        Right(repaymentResponses.collect {
+          case RepaymentHistoryModel(repaymentsViewerDetails) => repaymentsViewerDetails
         }.flatten.distinct)
       }
     }

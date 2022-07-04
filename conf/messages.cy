@@ -704,6 +704,7 @@ paymentsHistory.CardRef                                         = Cyfeirnod ar g
 paymentHistory.paymentToHmrc                                    = Taliad a wnaed i CThEM
 paymentHistory.paymentFromEarlierYear                           = Taliad o flwyddyn dreth gynharach
 paymentHistory.mfaCredit                                        = Credyd o addasiad gan CThEM
+paymentHistory.refund                                           = Ad-daliad
 paymentHistory.table.header.date                                = Dyddiad
 paymentHistory.table.header.description                         = Disgrifiad
 paymentHistory.table.header.amount                              = Swm
