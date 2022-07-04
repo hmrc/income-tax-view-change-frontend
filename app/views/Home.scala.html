@@ -47,7 +47,9 @@
   	currentTaxYear: Int,
     isAgent: Boolean,
     origin: Option[String] = None,
-    creditAndRefundEnabled: Boolean)(
+    creditAndRefundEnabled: Boolean,
+    isUserMigrated: Boolean = false
+)(
   	implicit request: Request[_],
 	messages: Messages,
   	user: auth.MtdItUser[_],
@@ -94,12 +96,18 @@
     }
 
     @creditAndRefundsControllerURL = @{
+        if (isUserMigrated) {
            if(isAgent) {
                controllers.routes.CreditAndRefundController.showAgent().url
            } else {
                controllers.routes.CreditAndRefundController.show().url
             }
+        } else {
+            ""
+        }
     }
+
+
 
     @tiles() = {
         <div class="grid-row">
@@ -246,10 +254,17 @@
     }
 
     @if(creditAndRefundEnabled) {
-        @link(
-            link = creditAndRefundsControllerURL,
-            messageKey = "home.credAndRefund.view"
-        )
+        @if(isUserMigrated) {
+            @link(
+                link = creditAndRefundsControllerURL,
+                messageKey = "home.credAndRefund.view"
+            )
+        } else {
+            @link(
+                link = creditAndRefundsControllerURL,
+                messageKey = "home.credAndRefund_howToClaim.view"
+            )
+        }
     }
 }
 }

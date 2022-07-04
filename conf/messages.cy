@@ -106,6 +106,7 @@ home.updates.overdue.payments                                   = {0} TALIADAU S
 home.updates.overdue.updates                                    = {0} YN HWYR Diweddariadau
 home.self-assessment.description                                = Defnyddiwch y gwasanaeth hwn i fwrw golwg dros eich gwybodaeth am flynyddoedd treth cynharach cyn i chi gofrestru ar gyfer y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm.
 home.credAndRefund.view                                         = Hawlio ad-daliad
+home.credAndRefund_howToClaim.view                              = Sut i hawlio ad-daliad
 
 
 ## Recruitment Banner ##
