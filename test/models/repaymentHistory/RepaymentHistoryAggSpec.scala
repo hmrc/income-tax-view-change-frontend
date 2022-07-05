@@ -57,9 +57,7 @@ object RepaymentHistoryAggSpec extends Properties("RepaymentHistory_aggregate") 
     repaymentRequestNumber = "04005005659")
 
   property("aggregate") = forAll(repaymentHistoryGen) { repaymentHistoryRecord =>
-    println(repaymentHistoryRecord)
     val agg = repaymentHistoryRecord.aggregate
-
     val minDateOpt = repaymentHistoryRecord
       .repaymentItems.headOption.map(_.repaymentSupplementItem.map(_.fromDate)
       .collect {
