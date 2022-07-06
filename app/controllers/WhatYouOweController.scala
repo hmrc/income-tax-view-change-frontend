@@ -64,21 +64,21 @@ class WhatYouOweController @Inject()(val checkSessionTimeout: SessionTimeoutPred
 
         val codingOutEnabled = isEnabled(CodingOut)
 
-        whatYouOweService.getCreditCharges(). map {
+        whatYouOweService.getCreditCharges().map {
           creditCharges =>
 
-        Ok(whatYouOwe(
-          creditCharges,
-          whatYouOweChargesList = whatYouOweChargesList, hasLpiWithDunningBlock = whatYouOweChargesList.hasLpiWithDunningBlock,
-          currentTaxYear = user.incomeSources.getCurrentTaxEndYear, backUrl = backUrl, utr = user.saUtr,
-          btaNavPartial = user.btaNavPartial,
-          dunningLock = whatYouOweChargesList.hasDunningLock,
-          codingOutEnabled = codingOutEnabled,
-          isAgent = isAgent,
-          whatYouOweCreditAmountEnabled = isEnabled(WhatYouOweCreditAmount),
-          origin = origin)(user, user, messages)
-        ).addingToSession(gatewayPage -> WhatYouOwePage.name)
-    }
+            Ok(whatYouOwe(
+              creditCharges,
+              whatYouOweChargesList = whatYouOweChargesList, hasLpiWithDunningBlock = whatYouOweChargesList.hasLpiWithDunningBlock,
+              currentTaxYear = user.incomeSources.getCurrentTaxEndYear, backUrl = backUrl, utr = user.saUtr,
+              btaNavPartial = user.btaNavPartial,
+              dunningLock = whatYouOweChargesList.hasDunningLock,
+              codingOutEnabled = codingOutEnabled,
+              isAgent = isAgent,
+              whatYouOweCreditAmountEnabled = isEnabled(WhatYouOweCreditAmount),
+              origin = origin)(user, user, messages)
+            ).addingToSession(gatewayPage -> WhatYouOwePage.name)
+        }
     } recover {
       case ex: Exception =>
         Logger("application").error(s"${if (isAgent) "[Agent]"}" +

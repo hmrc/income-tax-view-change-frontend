@@ -32,6 +32,7 @@ import services.PaymentHistoryService
 import services.PaymentHistoryService.PaymentHistoryError
 import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
 import uk.gov.hmrc.http.InternalServerException
+import uk.gov.hmrc.play.language.LanguageUtils
 import views.html.PaymentHistory
 
 import scala.concurrent.Future
@@ -66,6 +67,7 @@ class PaymentHistoryControllerSpec extends MockAuthenticationPredicate
       app.injector.instanceOf[ItvcErrorHandler],
       mockItvcErrorHandler,
       paymentHistoryService,
+      languageUtils
     )(app.injector.instanceOf[MessagesControllerComponents],
       ec,
       app.injector.instanceOf[FrontendAppConfig])

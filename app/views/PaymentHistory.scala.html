@@ -23,6 +23,7 @@
 @import models.financialDetails.DocumentDetailWithDueDate
 @import models.financialDetails.FinancialDetailsModel
 @import models.financialDetails._
+@import models.repaymentHistory.PaymentHistoryEntry
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 
 @import views.html.layouts.unifiedLayout
@@ -38,8 +39,8 @@
     govukAccordion : GovukAccordion
 )
 
-@(groupedPayments: List[(Int, List[PaymentHistoryEntry])], CutOverCreditsEnabled: Boolean, backUrl: String, saUtr: Option[String], isAgent: Boolean = false,
-btaNavPartial: Option[Html] = None, origin: Option[String] = None, MFACreditsEnabled: Boolean = true)(implicit request: Request[_], messages: Messages)
+@(groupedPayments: List[(Int, List[PaymentHistoryEntry])], backUrl: String, saUtr: Option[String], isAgent: Boolean = false,
+btaNavPartial: Option[Html] = None, origin: Option[String] = None)(implicit request: Request[_], messages: Messages)
 @import implicitDateFormatter.longDate
 
 @paymentHistoryInfo(messageInfo: String, infoLink: => String, infoLinkText: String) = {
@@ -72,60 +73,16 @@ btaNavPartial: Option[Html] = None, origin: Option[String] = None, MFACreditsEna
         </thead>
         <tbody>
         @for((payment, index) <- yearPayments.zipWithIndex) {
-@********
-            @if(!payment.credit.isDefined){
-                <tr class="govuk-table__row">
-                    <td class="govuk-table__cell">@LocalDate.parse(payment.dueDate.getOrElse(throw MissingFieldException("Payment Due Date"))).toLongDate
-                    </td>
-                    <td class="govuk-table__cell">
-                        <a class="govuk-link" href="@getControllerHref(payment, isAgent)">
-                            @messages("paymentHistory.paymentToHmrc")
-                            <span class="govuk-visually-hidden">@LocalDate.parse(payment.dueDate.getOrElse(throw MissingFieldException("Payment Due Date"))).toLongDate @payment.amount.map(_.abs.toCurrency) @if(yearPayments.size > 1){ Item @(index + 1)}</span>
-                        </a>
-                    </td>
-                    <td class="govuk-table__cell numeric"> @payment.amount.map(_.abs.toCurrency)</td>
-                </tr>
-            } else {
-                @if(payment.validMFACreditDescription()) {
-                    @if(MFACreditsEnabled) {
-                        <tr class="govuk-table__row">
-                            <td class="govuk-table__cell">@LocalDate.parse(payment.documentDate).toLongDate</td>
-                            <td class="govuk-table__cell mfacredit">
-                                <a class="govuk-link" href="@getMFACreditsLink(payment, isAgent)">
-                                    @messages("paymentHistory.mfaCredit")
-                                    <span class="govuk-visually-hidden">@payment.transactionId.getOrElse(throw MissingFieldException("Document ID"))</span>
-                                <a/>
-                            </td>
-                            <td class="govuk-table__cell numeric"> @payment.amount.map(_.abs.toCurrency)</td>
-                        </tr>
-                    }
-                } else {
-                    @if(CutOverCreditsEnabled) {
-                        <tr class="govuk-table__row">
-                            <td class="govuk-table__cell">@LocalDate.parse(payment.dueDate.getOrElse(throw MissingFieldException("Payment Due Date"))).toLongDate</td>
-                            <td class="govuk-table__cell paymentFromEarlierYear">
-                                <a class="govuk-link" href="@getControllerHref(payment, isAgent)">
-                                    @messages("paymentHistory.paymentFromEarlierYear")
-                                    <span class="govuk-visually-hidden">@payment.transactionId.getOrElse(throw MissingFieldException("Document ID"))</span>
-                                </a>
-                            </td>
-                            <td class="govuk-table__cell numeric"> @payment.amount.map(_.abs.toCurrency)</td>
-                        </tr>
-                    }
-                }
-            }
-********@
             <tr class="govuk-table__row">
                 <td class="govuk-table__cell">@LocalDate.parse(payment.date).toLongDate</td>
                 <td class="govuk-table__cell">
                     <a class="govuk-link" href="@payment.linkUrl">
                         @messages(payment.description)
-                        <span class="govuk-visually-hidden">stuff</span>
+                        <span class="govuk-visually-hidden">@payment.visuallyHiddenText @if(yearPayments.size > 1){ Item @(index + 1)}</span>
                     </a>
                 </td>
                 <td class="govuk-table__cell numeric"> @payment.amount.map(_.abs.toCurrency)</td>
             </tr>
-
         }
         </tbody>
     </table>
