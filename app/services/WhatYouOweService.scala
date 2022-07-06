@@ -18,7 +18,7 @@ package services
 
 import auth.MtdItUser
 import config.FrontendAppConfig
-import config.featureswitch.{CodingOut, FeatureSwitching}
+import config.featureswitch.{CodingOut, FeatureSwitching, MFACreditsAndDebits}
 import connectors.IncomeTaxViewChangeConnector
 import models.financialDetails._
 import models.outstandingCharges.{OutstandingChargesErrorModel, OutstandingChargesModel}
@@ -40,7 +40,11 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
     documentDescription == "ITSA- POA 1" ||
       documentDescription == "ITSA - POA 2" ||
       documentDescription == "TRM New Charge" ||
-      documentDescription == "TRM Amend Charge"
+      documentDescription == "TRM Amend Charge" ||
+      documentDescription == "ITSA PAYE Charge" ||
+      documentDescription == "ITSA Calc Error Correction" ||
+      documentDescription == "ITSA Manual Penalty Pre CY-4" ||
+      documentDescription == "ITSA Misc Charge"
   }
 
   def getCreditCharges()(implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[List[DocumentDetail]]= {
