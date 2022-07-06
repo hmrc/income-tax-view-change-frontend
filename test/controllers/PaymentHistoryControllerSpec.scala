@@ -71,7 +71,6 @@ class PaymentHistoryControllerSpec extends MockAuthenticationPredicate
     )(app.injector.instanceOf[MessagesControllerComponents],
       ec,
       app.injector.instanceOf[FrontendAppConfig])
-
   }
 
   "The PaymentHistoryControllerSpec.viewPaymentsHistory function" when {
