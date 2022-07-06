@@ -35,59 +35,59 @@ case class RepaymentHistory(amountApprovedforRepayment: Option[BigDecimal],
                            ) {
 
   private val fromDateOpt = (repayments: Seq[RepaymentItem]) => {
-    val itemsOpt = repayments
-      .headOption
-      .map(_.repaymentSupplementItem.map(x => x.fromDate).collect {
+    val items = repayments
+      .flatMap(_.repaymentSupplementItem)
+      .map(_.fromDate).collect {
         case Some(date) => (date.toEpochDay, date)
-      })
-    itemsOpt.map(items => if (items.nonEmpty) {
+      }
+
+    if (items.nonEmpty) {
       val (_, fromDates) = items.minBy(_._1)
       Some((fromDates))
     } else {
       None
     }
-    ).flatten
+
   }
 
   private val fromRateOpt = (repayments: Seq[RepaymentItem]) => {
-    val itemsOpt = repayments
-      .headOption
-      .map(_.repaymentSupplementItem.map(x => x.rate).collect {
+    val items = repayments
+      .flatMap(_.repaymentSupplementItem)
+      .map(_.rate).collect {
         case Some(rate) => rate
-      })
-    itemsOpt.map(items => if (items.nonEmpty) {
+      }
+    if (items.nonEmpty) {
       Some(items.min)
     } else {
       None
     }
-    ).flatten
   }
 
   private val toDateOpt = (repayments: Seq[RepaymentItem]) => {
-    val itemsOpt = repayments
-      .headOption
-      .map(_.repaymentSupplementItem.map(x => x.toDate).collect {
+    val items = repayments
+      .flatMap(_.repaymentSupplementItem)
+      .map(_.toDate).collect {
         case Some(date) => (date.toEpochDay, date)
-      })
-    itemsOpt.map(items => if (items.nonEmpty) {
+      }
+    if (items.nonEmpty) {
       val (_, toDates) = items.maxBy(_._1)
-      Some((toDates))
+      Some(toDates)
     } else {
       None
-    }).flatten
+    }
   }
 
   private val toRateOpt = (repayments: Seq[RepaymentItem]) => {
-    val itemsOpt = repayments
-      .headOption
-      .map(_.repaymentSupplementItem.map(x => x.rate).collect {
+    val items = repayments
+      .flatMap(_.repaymentSupplementItem)
+      .map(_.rate).collect {
         case Some(rate) => rate
-      })
-    itemsOpt.map(items => if (items.nonEmpty) {
+      }
+    if (items.nonEmpty) {
       Some(items.max)
     } else {
       None
-    }).flatten
+    }
   }
 
   private val totalOpt = (repayments: Seq[RepaymentItem]) => {
@@ -97,7 +97,6 @@ case class RepaymentHistory(amountApprovedforRepayment: Option[BigDecimal],
     }.sum)
   }
 
-  // TODO: still awaiting confirmation if we should use first record Or merge all in one list
   def aggregate: Option[TotalInterest] = {
     for {
       fromDate <- fromDateOpt(repaymentItems)
@@ -112,9 +111,7 @@ case class RepaymentHistory(amountApprovedforRepayment: Option[BigDecimal],
       toRate = toRate,
       total = totalAmount)
   }
-
 }
-
 
 object RepaymentHistory {
   implicit val format: OFormat[RepaymentHistory] = Json.format[RepaymentHistory]
