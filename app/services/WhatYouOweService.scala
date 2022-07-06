@@ -18,7 +18,7 @@ package services
 
 import auth.MtdItUser
 import config.FrontendAppConfig
-import config.featureswitch.{CodingOut, FeatureSwitching, MFACreditsAndDebits}
+import config.featureswitch.{CodingOut, FeatureSwitching}
 import connectors.IncomeTaxViewChangeConnector
 import models.financialDetails._
 import models.outstandingCharges.{OutstandingChargesErrorModel, OutstandingChargesModel}
