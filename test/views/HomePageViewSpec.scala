@@ -30,6 +30,7 @@ import testUtils.TestSupport
 import views.html.Home
 
 import java.time.LocalDate
+import scala.util.Random
 
 
 class HomePageViewSpec extends TestSupport {
@@ -42,11 +43,42 @@ class HomePageViewSpec extends TestSupport {
     else currentDate.getYear + 1
   }
 
-  def testMtdItUser(saUtr: Option[String] = Some("testUtr")): MtdItUser[_] = MtdItUser(
+  def testMtdItUser(saUtr: Option[String] = Some("testUtr")): MtdItUser[_] = {
+    val yearOfMigrationOpt = if (Random.nextBoolean()) {
+      Some("2018")
+    } else {
+      None
+    }
+    MtdItUser(
+      testMtditid,
+      testNino,
+      Some(testRetrievedUserName),
+      IncomeSourceDetailsModel(mtdbsa = testMtditid, yearOfMigration = yearOfMigrationOpt, businesses = Nil, property = None),
+      testNavHtml,
+      saUtr,
+      Some("testCredId"),
+      Some("Individual"),
+      None
+    )(FakeRequest())
+  }
+
+  def testMtdItUserMigrated(saUtr: Option[String] = Some("testUtr")): MtdItUser[_] = MtdItUser(
     testMtditid,
     testNino,
     Some(testRetrievedUserName),
-    IncomeSourceDetailsModel(testMtditid, None, Nil, None),
+    IncomeSourceDetailsModel(mtdbsa = testMtditid, yearOfMigration = Some("2018"), businesses = Nil, property = None),
+    testNavHtml,
+    saUtr,
+    Some("testCredId"),
+    Some("Individual"),
+    None
+  )(FakeRequest())
+
+  def testMtdItUserNotMigrated(saUtr: Option[String] = Some("testUtr")): MtdItUser[_] = MtdItUser(
+    testMtditid,
+    testNino,
+    Some(testRetrievedUserName),
+    IncomeSourceDetailsModel(mtdbsa = testMtditid, yearOfMigration = None, businesses = Nil, property = None),
     testNavHtml,
     saUtr,
     Some("testCredId"),
@@ -80,7 +112,8 @@ class HomePageViewSpec extends TestSupport {
       dunningLockExists = dunningLockExists,
       currentTaxYear = currentTaxYear,
       isAgent = isAgent,
-      creditAndRefundEnabled = creditAndRefundEnabled
+      creditAndRefundEnabled = creditAndRefundEnabled,
+      isUserMigrated = user.incomeSources.yearOfMigration.isDefined
     )(FakeRequest(), implicitly, user, implicitly)
     lazy val document: Document = Jsoup.parse(contentAsString(page))
 
@@ -214,20 +247,37 @@ class HomePageViewSpec extends TestSupport {
       "has a heading" in new Setup {
         getElementById("payment-history-tile").map(_.select("h2").text) shouldBe Some(messages("home.paymentHistory.heading"))
       }
-      "has a link to the payment and refund history page" in new Setup {
+
+      "has a link to the payment and refund history page for migrated user" in new Setup {
         val link: Option[Element] = getElementById("payment-history-tile").map(_.select("a").first)
+        link.map(_.attr("href")) shouldBe Some(controllers.routes.PaymentHistoryController.show().url)
+        link.map(_.text) shouldBe Some(messages("home.paymentHistory.view"))
+      }
+
+      "has an link to the 'How to claim a refund' for not migrated user" in new Setup(user = testMtdItUserNotMigrated()) {
+        val link: Option[Element] = getElementById("payment-history-tile").map(_.select("a").first)
+        // next line would change as part of MISUV-3710 implementation
         link.map(_.attr("href")) shouldBe Some(controllers.routes.PaymentHistoryController.show().url)
         link.map(_.text) shouldBe Some(messages("home.paymentHistory.view"))
       }
     }
 
-    "show the claim refund link" when {
-      "the claim a refund feature switch is on" in new Setup(creditAndRefundEnabled = true) {
+    "show the 'Claim refund' link for migrated user" when {
+      "the claim a refund feature switch is on" in new Setup(user = testMtdItUserMigrated(), creditAndRefundEnabled = true) {
         val link: Option[Element] = getElementById("payment-history-tile").map(_.select("a").last())
         link.map(_.attr("href")) shouldBe Some(controllers.routes.CreditAndRefundController.show().url)
         link.map(_.text) shouldBe Some(messages("home.credAndRefund.view"))
-
       }
     }
+
+    "show the 'How to claim a refund' link for not migrated user" when {
+      "the claim a refund feature switch is on" in new Setup(user = testMtdItUserMigrated(), creditAndRefundEnabled = true) {
+        val link: Option[Element] = getElementById("payment-history-tile").map(_.select("a").last())
+        // next line would change as part of MISUV-3710 implementation
+        link.map(_.attr("href")) shouldBe Some(controllers.routes.CreditAndRefundController.show().url)
+        link.map(_.text) shouldBe Some(messages("home.credAndRefund.view"))
+      }
+    }
+
   }
 }

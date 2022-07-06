@@ -73,7 +73,8 @@ class HomeController @Inject()(val homeView: views.html.Home,
       currentTaxYear = currentTaxYear,
       isAgent = isAgent,
       origin = origin,
-      creditAndRefundEnabled = isEnabled(CreditsRefundsRepay)
+      creditAndRefundEnabled = isEnabled(CreditsRefundsRepay),
+      isUserMigrated = user.incomeSources.yearOfMigration.isDefined
     )
   }
 

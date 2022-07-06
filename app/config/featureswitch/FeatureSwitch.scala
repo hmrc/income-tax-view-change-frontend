@@ -40,7 +40,8 @@ object FeatureSwitch {
     WhatYouOweCreditAmount,
     R7bTxmEvents,
     NewStateBenefitIncome,
-    MFACreditsAndDebits
+    MFACreditsAndDebits,
+    PaymentHistoryRefunds
   )
 
   def apply(str: String): FeatureSwitch =
@@ -121,6 +122,11 @@ case object NewStateBenefitIncome extends FeatureSwitch {
 case object MFACreditsAndDebits extends FeatureSwitch {
   override val name = s"$prefix.enable-mfa-credits-and-debits"
   override val displayText = "MFA Credits and Debits"
+}
+
+case object PaymentHistoryRefunds extends FeatureSwitch {
+  override val name = s"$prefix.enable-payment-history-refunds"
+  override val displayText = "Payment History Refunds"
 }
 
 

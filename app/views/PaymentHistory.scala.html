@@ -123,7 +123,7 @@ btaNavPartial: Option[Html] = None, origin: Option[String] = None, MFACreditsEna
                     @if(MFACreditsEnabled) {
                         <tr class="govuk-table__row">
                             <td class="govuk-table__cell">@LocalDate.parse(payment.documentDate).toLongDate</td>
-                            <td class="govuk-table__cell" id="mfacredit">
+                            <td class="govuk-table__cell mfacredit">
                                 <a class="govuk-link" href="@getMFACreditsLink(payment, isAgent)">
                                     @messages("paymentHistory.mfaCredit")
                                     <span class="govuk-visually-hidden">@payment.transactionId.getOrElse(throw MissingFieldException("Document ID"))</span>
@@ -136,7 +136,7 @@ btaNavPartial: Option[Html] = None, origin: Option[String] = None, MFACreditsEna
                     @if(CutOverCreditsEnabled) {
                         <tr class="govuk-table__row">
                             <td class="govuk-table__cell">@LocalDate.parse(payment.dueDate.getOrElse(throw MissingFieldException("Payment Due Date"))).toLongDate</td>
-                            <td class="govuk-table__cell" id="paymentFromEarlierYear">
+                            <td class="govuk-table__cell paymentFromEarlierYear">
                                 <a class="govuk-link" href="@getControllerHref(payment, isAgent)">
                                     @messages("paymentHistory.paymentFromEarlierYear")
                                     <span class="govuk-visually-hidden">@payment.transactionId.getOrElse(throw MissingFieldException("Document ID"))</span>
