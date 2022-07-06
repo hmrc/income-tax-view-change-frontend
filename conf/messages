@@ -847,3 +847,8 @@ language-switcher.nav                                           = Language switc
 #technical helper
 getpagehelp.linkText                                            = Get help with this page
 pagehelp.opensInNewTabText                                      = ' (opens in new tab)'
+
+#Not migrated to ETMP
+notmigrated.user.heading                                        = How to claim a refund
+notmigrated.user.content                                        = To claim money that's in your account from earlier tax years (before you signed up to Making Tax Digital for Income Tax), you need to visit your earlier
+notmigrated.user.link_title                                     = Self Assessment online account (opens in new tab)

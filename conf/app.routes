@@ -134,3 +134,10 @@ GET          /agents/claim-refund                                         contro
 #Credits
 GET         /credits-from-hmrc/:calendarYear                              controllers.CreditsSummaryController.showCreditsSummary(calendarYear: Int, origin: Option[String] ?= None)
 GET         /agents/credits-from-hmrc/:calendarYear                       controllers.CreditsSummaryController.showAgentCreditsSummary(calendarYear: Int)
+
+# Users not migrated to ETMP
+GET          /how-to-claim-refund                                         controllers.NotMigratedUserController.show()
+GET          /agents/how-to-claim-refund                                  controllers.NotMigratedUserController.showAgent()
+
+GET          /how-to-claim-refund-external                                controllers.NotMigratedUserController.redirect()
+GET          /agents/how-to-claim-refund-external                         controllers.NotMigratedUserController.redirectAgent()

@@ -826,3 +826,7 @@ shortMonth.10 = Hyd
 shortMonth.11 = Tach
 shortMonth.12 = Rhag
 
+#Not migrated to ETMP
+notmigrated.user.heading                                        = Sut i hawlio ad-daliad
+notmigrated.user.content                                        = Er mwyn bwrw golwg dros yr arian yn eich cyfrif o flynyddoedd treth blaenorol (cyn y gwnaethoch gofrestru ar gyfer y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm) mae angen i chi fynd i’ch
+notmigrated.user.link_title                                     = cyfrif Hunanasesiad ar-lein (yn agor tab newydd)
