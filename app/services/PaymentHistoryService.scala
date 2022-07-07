@@ -19,12 +19,16 @@ package services
 import auth.MtdItUser
 import config.FrontendAppConfig
 import connectors.IncomeTaxViewChangeConnector
+import models.core.Nino
+
 import javax.inject.Inject
 import models.financialDetails.{Payment, Payments, PaymentsError}
+import models.repaymentHistory.{RepaymentHistory, RepaymentHistoryErrorModel, RepaymentHistoryModel}
 import services.PaymentHistoryService.PaymentHistoryError
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
+
 
 class PaymentHistoryService @Inject()(incomeTaxViewChangeConnector: IncomeTaxViewChangeConnector, val appConfig: FrontendAppConfig)
                                      (implicit ec: ExecutionContext) {
@@ -46,6 +50,15 @@ class PaymentHistoryService @Inject()(incomeTaxViewChangeConnector: IncomeTaxVie
           case Payments(payments) => payments
         }.flatten.distinct)
       }
+    }
+  }
+
+  def getRepaymentHistory(implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[RepaymentHistoryErrorModel.type, List[RepaymentHistory]]] = {
+
+    incomeTaxViewChangeConnector.getRepaymentHistoryByNino(Nino(user.nino)).map {
+      case RepaymentHistoryModel(repaymentsViewerDetails) => Right(repaymentsViewerDetails)
+      case RepaymentHistoryErrorModel(status, _) if status == 404 => Right(List())
+      case RepaymentHistoryErrorModel(_, _) => Left(RepaymentHistoryErrorModel)
     }
   }
 }
