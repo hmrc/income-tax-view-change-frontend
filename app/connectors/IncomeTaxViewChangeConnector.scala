@@ -547,8 +547,8 @@ trait IncomeTaxViewChangeConnector extends RawResponseReads with FeatureSwitchin
     }
   }
 
-  def getRepaymentHistoryByRepaymentDate(nino: Nino)
-                                    (implicit headerCarrier: HeaderCarrier): Future[RepaymentHistoryResponseModel] = {
+  def getRepaymentHistoryByNino(nino: Nino)
+                               (implicit headerCarrier: HeaderCarrier): Future[RepaymentHistoryResponseModel] = {
 
     http.GET[HttpResponse](getAllRepaymentHistoryUrl(nino.value))(
       httpReads,

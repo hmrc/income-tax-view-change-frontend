@@ -55,7 +55,7 @@ class PaymentHistoryService @Inject()(incomeTaxViewChangeConnector: IncomeTaxVie
 
   def getRepaymentHistory(implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[RepaymentHistoryErrorModel.type, List[RepaymentHistory]]] = {
 
-    incomeTaxViewChangeConnector.getRepaymentHistoryByRepaymentDate(Nino(user.nino)).map {
+    incomeTaxViewChangeConnector.getRepaymentHistoryByNino(Nino(user.nino)).map {
       case RepaymentHistoryModel(repaymentsViewerDetails) => Right(repaymentsViewerDetails)
       case RepaymentHistoryErrorModel(status, _) if status == 404 => Right(List())
       case RepaymentHistoryErrorModel(_, _) => Left(RepaymentHistoryErrorModel)

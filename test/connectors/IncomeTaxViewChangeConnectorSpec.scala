@@ -665,14 +665,14 @@ class IncomeTaxViewChangeConnectorSpec extends TestSupport with MockHttp with Mo
       "receiving an OK with only one valid data item" in new Setup {
         setupMockHttpGet(getAllRepaymentHistoryUrl(testNino))(successResponse)
 
-        val result: Future[RepaymentHistoryResponseModel] = getRepaymentHistoryByRepaymentDate(testUserNino)
+        val result: Future[RepaymentHistoryResponseModel] = getRepaymentHistoryByNino(testUserNino)
         result.futureValue shouldBe RepaymentHistoryModel(List(repaymentHistoryFull))
       }
 
       "receiving an OK with multiple valid data items" in new Setup {
         setupMockHttpGet(getAllRepaymentHistoryUrl(testNino))(successResponseMultipleRepayments)
 
-        val result: Future[RepaymentHistoryResponseModel] = getRepaymentHistoryByRepaymentDate(testUserNino)
+        val result: Future[RepaymentHistoryResponseModel] = getRepaymentHistoryByNino(testUserNino)
         result.futureValue shouldBe RepaymentHistoryModel(List(repaymentHistoryFull, repaymentHistoryFull))
       }
     }
@@ -683,7 +683,7 @@ class IncomeTaxViewChangeConnectorSpec extends TestSupport with MockHttp with Mo
         setupMockHttpGet(getAllRepaymentHistoryUrl(testNino))(HttpResponse(status = Status.NOT_FOUND,
           json = Json.toJson("Error message"), headers = Map.empty))
 
-        val result: Future[RepaymentHistoryResponseModel] = getRepaymentHistoryByRepaymentDate(testUserNino)
+        val result: Future[RepaymentHistoryResponseModel] = getRepaymentHistoryByNino(testUserNino)
         result.futureValue shouldBe RepaymentHistoryErrorModel(404, """"Error message"""")
       }
     }
@@ -694,7 +694,7 @@ class IncomeTaxViewChangeConnectorSpec extends TestSupport with MockHttp with Mo
         setupMockHttpGet(getAllRepaymentHistoryUrl(testNino))(HttpResponse(status = Status.SERVICE_UNAVAILABLE,
           json = Json.toJson("Error message"), headers = Map.empty))
 
-        val result: Future[RepaymentHistoryResponseModel] = getRepaymentHistoryByRepaymentDate(testUserNino)
+        val result: Future[RepaymentHistoryResponseModel] = getRepaymentHistoryByNino(testUserNino)
         result.futureValue shouldBe RepaymentHistoryErrorModel(503, """"Error message"""")
       }
 
@@ -702,7 +702,7 @@ class IncomeTaxViewChangeConnectorSpec extends TestSupport with MockHttp with Mo
         setupMockHttpGet(getAllRepaymentHistoryUrl(testNino))(HttpResponse(status = Status.BAD_REQUEST,
           json = Json.toJson("Error message"), headers = Map.empty))
 
-        val result: Future[RepaymentHistoryResponseModel] = getRepaymentHistoryByRepaymentDate(testUserNino)
+        val result: Future[RepaymentHistoryResponseModel] = getRepaymentHistoryByNino(testUserNino)
         result.futureValue shouldBe RepaymentHistoryErrorModel(400, """"Error message"""")
       }
     }

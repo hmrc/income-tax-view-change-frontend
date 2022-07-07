@@ -16,19 +16,13 @@
 
 package models.repaymentHistory
 
-import config.featureswitch.{CutOverCredits, MFACreditsAndDebits}
-
-import enums.{CutOverCredit, MFACredit, Refund, StandardPayment}
 import exceptions.MissingFieldException
 import models.financialDetails.Payment
-import play.api.i18n.{Langs, Messages, MessagesApi}
+import play.api.i18n.Messages
 import implicits.ImplicitCurrencyFormatter.CurrencyFormatter
 import uk.gov.hmrc.play.language.LanguageUtils
-import implicits.ImplicitDateFormatter
-import play.api.Configuration
 
 import java.time.LocalDate
-import javax.inject.Inject
 
 object RepaymentHistoryUtils {
 
