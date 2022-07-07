@@ -91,10 +91,12 @@ case class RepaymentHistory(amountApprovedforRepayment: Option[BigDecimal],
   }
 
   private val totalOpt = (repayments: Seq[RepaymentItem]) => {
-    repayments
-      .headOption.map(_.repaymentSupplementItem.map(_.amount).collect {
-      case Some(amount) => amount
-    }.sum)
+    Some(repayments
+      .flatMap(_.repaymentSupplementItem.map(_.amount))
+      .collect{
+        case Some(amount) => amount
+      }.sum
+    )
   }
 
   def aggregate: Option[TotalInterest] = {
