@@ -38,15 +38,10 @@ class NotMigratedUserController @Inject()(val notMigrated: NotMigratedUser,
                                           val authorisedFunctions: AuthorisedFunctions,
                                           val retrieveNino: NinoPredicate,
                                           val retrieveIncomeSources: IncomeSourceDetailsPredicate,
-                                          val nextUpdatesService: NextUpdatesService,
                                           val itvcErrorHandler: ItvcErrorHandler,
                                           implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                           val incomeSourceDetailsService: IncomeSourceDetailsService,
-                                          val financialDetailsService: FinancialDetailsService,
-                                          val dateService: DateService,
-                                          val whatYouOweService: WhatYouOweService,
-                                          val retrieveBtaNavBar: NavBarPredicate,
-                                          auditingService: AuditingService)
+                                          val retrieveBtaNavBar: NavBarPredicate)
                                          (implicit val ec: ExecutionContext,
                                           mcc: MessagesControllerComponents,
                                           val appConfig: FrontendAppConfig) extends ClientConfirmedController with I18nSupport with FeatureSwitching {
@@ -54,13 +49,19 @@ class NotMigratedUserController @Inject()(val notMigrated: NotMigratedUser,
 
   def handleShowRequest(errorHandler: ShowInternalServerError, isAgent: Boolean, backUrl: String)
                        (implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
-    Future {
-      Ok(notMigrated(isAgent, backUrl))
-    }.recover {
-      case ex =>
-        Logger("application").error(s"[NotMigratedUserController][NotMigrated] error, ${ex.getMessage}")
-        itvcErrorHandler.showInternalServerError()
-    }
+    {
+      if (user.incomeSources.yearOfMigration.isEmpty) {
+        Future {
+          Ok(notMigrated(isAgent, backUrl))
+        }
+      } else {
+        Future.failed(new Exception("Migrated user not allowed to access this page"))
+      }
+    } .recover {
+        case ex =>
+          Logger("application").error(s"[NotMigratedUserController][NotMigrated] error, ${ex.getMessage}")
+          itvcErrorHandler.showInternalServerError()
+      }
   }
 
   def show(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
