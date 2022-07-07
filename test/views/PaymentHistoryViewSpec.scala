@@ -59,48 +59,6 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
     val saLink: String = s"${messages("whatYouOwe.sa-link")}${messages("pagehelp.opensInNewTabText")}"
   }
 
-//  val testPayments: List[Payment] = List(
-//    Payment(Some("AAAAA"), Some(10000), None, Some("Payment"), None, Some("lot"), Some("lotitem"), Some("2019-11-25"),
-//      "2019-11-25", Some("DOCID01")),
-//    Payment(Some("AAAAB"), Some(10000), None, Some("Payment"), None, Some("lot"), Some("lotitem"), Some("2019-12-25"),
-//      "2019-12-25", Some("DOCID01")),
-//    Payment(Some("BBBB1"), Some(5000), None, Some("tnemyap"), None, Some("lot"), Some("lotitem"), Some("2007-03-23"),
-//      "2019-10-25", Some("DOCID02")),
-//    Payment(Some("BBBB2"), Some(5000), None, Some("tnemyap"), None, Some("lot"), Some("lotitem"), Some("2007-04-23"),
-//      "2019-11-25", Some("DOCID02"))
-//  )
-//
-//  val testNoPaymentLot: List[Payment] = List(
-//    Payment(Some("AAAAA"), Some(10000), None, Some("Payment"), None, None, None, Some("2019-12-25"), "2019-12-25", Some("DOCID01")),
-//    Payment(Some("BBBBB"), Some(5000), None, Some("tnemyap"), None, None, None, Some("2007-03-23"), "2007-03-23", Some("DOCID02"))
-//  )
-//
-//  val paymentsnotFull: List[Payment] = List(
-//    Payment(reference = Some("reference"), amount = Some(-10000.00), None, method = Some("method"), None, lot = None,
-//      lotItem = None, dueDate = Some("2018-04-25"), documentDate = "2018-04-25", Some("AY777777202206"))
-//  )
-
-
-  //  val paymentsMFA: List[Payment] = List(
-  //    Payment(reference = Some("reference"), amount = Some(-10000.00), Some(-150.00), method = Some("method"),
-  //      documentDescription = Some("ITSA Overpayment Relief"), lot = None, lotItem = None, dueDate = None,
-  //      documentDate = "2020-04-13", Some("AY777777202201")),
-  //    Payment(reference = Some("reference"), amount = Some(-10000.00), Some(-150.00), method = Some("method"),
-  //      documentDescription = Some("ITSA Overpayment Relief"), lot = None, lotItem = None, dueDate = None,
-  //      documentDate = "2020-12-25", Some("AY777777202210")),
-  //    Payment(reference = Some("reference"), amount = Some(-10000.00), Some(-150.00), method = Some("method"),
-  //      documentDescription = Some("ITSA Literary Artistic Spread"), lot = None, lotItem = None, dueDate = None,
-  //      documentDate = "2019-04-25", Some("AY777777202202")),
-  //    Payment(reference = Some("reference"), amount = Some(-10000.00), Some(-150.00), method = Some("method"),
-  //      documentDescription = Some("ITSA Post Cessation Claim"), lot = None, lotItem = None, dueDate = None,
-  //      documentDate = "2018-04-25", Some("AY777777202203")),
-  //    Payment(reference = Some("reference"), amount = Some(-10000.00), Some(-110.00), method = Some("method"),
-  //      documentDescription = Some("ITSA Post Cessation Claim"), lot = None, lotItem = None, dueDate = None,
-  //      documentDate = "2019-09-25", Some("AY777777202204")),
-  //    Payment(reference = Some("reference"), amount = Some(-10000.00), Some(-110.00), method = Some("method"),
-  //      documentDescription = Some("ITSA Post Cessation Claim"), lot = None, lotItem = None, dueDate = None,
-  //      documentDate = "2019-12-25", Some("AY777777202206")),
-  //  )
   val paymentEntriesMFA = List(
     (2020, List(PaymentHistoryEntry(date = "2020-04-13", description = "desc1", amount = Some(-10000.00), transactionId = Some("TRANS123"),
       linkUrl = "link1", visuallyHiddenText = "hidden-text1"),
