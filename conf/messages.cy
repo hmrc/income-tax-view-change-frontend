@@ -829,4 +829,6 @@ shortMonth.12 = Rhag
 #Not migrated to ETMP
 notmigrated.user.heading                                        = Sut i hawlio ad-daliad
 notmigrated.user.content                                        = Er mwyn bwrw golwg dros yr arian yn eich cyfrif o flynyddoedd treth blaenorol (cyn y gwnaethoch gofrestru ar gyfer y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm) mae angen i chi fynd i’ch
+notmigrated.agent.content                                       = I hawlio arian o flynyddoedd treth blaenorol (cyn y gwnaeth eich cleient gofrestru am y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm), bydd angen i chi fewngofnodi i’ch
+notmigrated.agent.content_extra                                 = Bydd hyn yn Ddynodydd Defnyddiwr (ID) a chyfrinair ar gyfer Porth y Llywodraeth sy’n wahanol i’ch cyfrif Gwasanaethau Asiant.
 notmigrated.user.link_title                                     = cyfrif Hunanasesiad ar-lein (yn agor tab newydd)

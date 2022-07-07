@@ -38,21 +38,35 @@
     isAgent = isAgent,
     btaNavPartial = user.btaNavPartial
 ) {
-    <div class="grid-row">
-        <div class="column-two-thirds">
+    @if(isAgent) {
+        <div class="grid-row">
+            <div class="column-two-thirds">
+                <br/>
+                <h1 class="govuk-heading-xl">@messages("notmigrated.user.heading")</h1>
+                @p() {
+                    @messages("notmigrated.agent.content")
+                    @link(
+                        link = controllers.routes.NotMigratedUserController.redirectAgent().url,
+                        messageKey = messages("notmigrated.user.link_title"),
+                        outerMessage = ".", rel = Some ("noreferrer noopener"), target = Some ("_blank")
+                    )
+                    @messages("notmigrated.agent.content_extra")
+            }
+            </div>
+        </div>
+    } else {
+        <div class="grid-row">
+            <div class="column-two-thirds">
             <br/>
             <h1 class="govuk-heading-xl">@messages("notmigrated.user.heading")</h1>
             @p() {
                 @messages("notmigrated.user.content")
-                @link(link =
-                        if (isAgent) {
-                            controllers.routes.NotMigratedUserController.redirectAgent().url
-                        } else {
-                            controllers.routes.NotMigratedUserController.redirect().url
-                        },
+                @link(
+                    link = controllers.routes.NotMigratedUserController.redirect().url,
                     messageKey = messages("notmigrated.user.link_title"),
                     outerMessage = ".", rel = Some ("noreferrer noopener"), target = Some ("_blank") )
             }
+            </div>
         </div>
-    </div>
+    }
 }
