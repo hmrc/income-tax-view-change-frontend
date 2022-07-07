@@ -854,3 +854,4 @@ notmigrated.user.content                                        = To claim money
 notmigrated.agent.content                                       = To claim money from earlier tax years (before your client signed up to Making Tax Digital for Income Tax), you need to visit your
 notmigrated.agent.content_extra                                 = This will be a different Government Gateway ID and password to your Agent Services account.
 notmigrated.user.link_title                                     = Self Assessment online account (opens in new tab)
+notmigrated.agent.link_title                                    = Self Assessment for Agents Account (opens in new tab)

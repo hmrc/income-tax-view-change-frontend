@@ -832,3 +832,4 @@ notmigrated.user.content                                        = Er mwyn bwrw g
 notmigrated.agent.content                                       = I hawlio arian o flynyddoedd treth blaenorol (cyn y gwnaeth eich cleient gofrestru am y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm), bydd angen i chi fewngofnodi i’ch
 notmigrated.agent.content_extra                                 = Bydd hyn yn Ddynodydd Defnyddiwr (ID) a chyfrinair ar gyfer Porth y Llywodraeth sy’n wahanol i’ch cyfrif Gwasanaethau Asiant.
 notmigrated.user.link_title                                     = cyfrif Hunanasesiad ar-lein (yn agor tab newydd)
+notmigrated.agent.link_title                                    = cyfrif Hunanasesiad ar gyfer Asiantau (yn agor tab newydd)
