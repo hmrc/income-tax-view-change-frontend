@@ -134,3 +134,7 @@ GET          /agents/claim-refund                                         contro
 #Credits
 GET         /credits-from-hmrc/:calendarYear                              controllers.CreditsSummaryController.showCreditsSummary(calendarYear: Int, origin: Option[String] ?= None)
 GET         /agents/credits-from-hmrc/:calendarYear                       controllers.CreditsSummaryController.showAgentCreditsSummary(calendarYear: Int)
+
+#Refund to taxpayer
+GET         /refund-to-taxpayer/:repaymentRequestNumber                    controllers.RefundToTaxPayerController.show(repaymentRequestNumber: String, origin: Option[String] ?= None)
+GET         /agents/refund-to-taxpayer/:repaymentRequestNumber             controllers.RefundToTaxPayerController.showAgent(repaymentRequestNumber: String)
