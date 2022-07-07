@@ -85,7 +85,7 @@ object RepaymentHistoryUtils {
       Some(PaymentHistoryEntry(
         date = languageUtils.Dates.shortDate(repayment.estimatedRepaymentDate)(messages),
         description = "paymentHistory.refund",
-        amount = repayment.amountApprovedforRepayment,
+        amount = Some(repayment.totalRepaymentAmount),
         linkUrl = "refund-to-taxpayer",
         visuallyHiddenText = s"${repayment.repaymentRequestNumber}"
       ))
