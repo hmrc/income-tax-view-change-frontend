@@ -20,6 +20,7 @@
 @import _root_.implicits.ImplicitDateFormatter
 @import _root_.implicits.ImplicitDateFormatterImpl
 @import models.repaymentHistory.RepaymentHistoryModel
+@import models.repaymentHistory.TotalInterest
 @import exceptions.MissingFieldException
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 
@@ -33,29 +34,107 @@
     h1: h1,
     p: p,
     link: link,
-    govukAccordion : GovukAccordion
+    govukAccordion: GovukAccordion
 )
 
-
 @(repaymentHistoryModel: RepaymentHistoryModel, paymentHistoryRefundsEnabled: Boolean, backUrl: String, saUtr: Option[String], isAgent: Boolean = false,
-btaNavPartial: Option[Html] = None, origin: Option[String] = None)(implicit request: Request[_], messages: Messages)
-@import implicitDateFormatter.longDate
+        btaNavPartial: Option[Html] = None, origin: Option[String] = None)(implicit request: Request[_], messages: Messages)
+    @import implicitDateFormatter.longDate
 
-@headingContent(year: Int) = {
-    <span id="accordion-with-summary-sections-heading-@year">
+    @headingContent(year: Int) = {
+        <span id="accordion-with-summary-sections-heading-@year">
         @messages("paymentHistory.button", year.toString)
-    </span>
-}
+        </span>
+    }
 
-@mainTemplate(
-    pageTitle = messages("refund-to-taxpayer.heading"),
-    backUrl = Some(backUrl),
-    isAgent = isAgent,
-    btaNavPartial = btaNavPartial,
-    useFallbackBackLink = true
-) {
+    @getInterestContent(repaymentHistoryModel: RepaymentHistoryModel) = @{
+        repaymentHistoryModel.repaymentsViewerDetails.head.aggregate.getOrElse(throw MissingFieldException("Total Interest Item"))
+    }
 
-    @h1(msg = "refund-to-taxpayer.heading")
-    @* TODO implement it *@
+    @mainTemplate(
+        pageTitle = messages("refund-to-taxpayer.heading"),
+        backUrl = Some(backUrl),
+        isAgent = isAgent,
+        btaNavPartial = btaNavPartial,
+        useFallbackBackLink = true
+    ) {
 
-}
+        <div class="govuk-grid-row">
+            <div class="column-two-thirds">
+            @h1(msg = "refund-to-taxpayer.heading")
+            </div>
+        </div>
+        @* TODO implement it *@
+        <div class="govuk-grid-row">
+            <div class="column-two-thirds">
+                <dl class="govuk-summary-list" id="refund-to-taxpayer-table">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key" style="width:70%;">@messages("refund-to-taxpayer.tableHead.estimated-date")</dt>
+                        <dd class="govuk-summary-list__value">@{
+                            repaymentHistoryModel.repaymentsViewerDetails.head.estimatedRepaymentDate.toLongDate
+                        }</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">@messages("refund-to-taxpayer.tableHead.method")</dt>
+                        <dd class="govuk-summary-list__value">@{
+                            repaymentHistoryModel.repaymentsViewerDetails.head.repaymentMethod
+                        }</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">@messages("refund-to-taxpayer.tableHead.total-refund")</dt>
+                        <dd class="govuk-summary-list__value">@{
+                            repaymentHistoryModel.repaymentsViewerDetails.head.totalRepaymentAmount.toCurrencyString
+                        }</dd>
+                    </div>
+                </dl>
+            </div>
+        </div>
+        <div class="govuk-grid-row">
+            <div class="column-two-thirds">
+                <details class="govuk-details" data-module="govuk-details">
+                    <summary class="govuk-details__summary">
+                        <span class="govuk-details__summary-text">
+                        @messages("refund-to-taxpayer.tableHead.further-details")
+                        </span>
+                    </summary>
+                    <div class="govuk-details__text">
+                        <dl class="govuk-summary-list">
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key" style="width:70%;>@messages("refund-to-taxpayer.tableHead.requested-on")</dt>
+                                <dd class="govuk-summary-list__value">@{repaymentHistoryModel.repaymentsViewerDetails.head.creationDate.toLongDate}</dd>
+                            </div>
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">@messages("refund-to-taxpayer.tableHead.refund-reference")</dt>
+                                <dd class="govuk-summary-list__value">@{
+                                    repaymentHistoryModel.repaymentsViewerDetails.head.repaymentRequestNumber
+                                }</dd>
+                            </div>
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">@messages("refund-to-taxpayer.tableHead.requested-amount")</dt>
+                                <dd class="govuk-summary-list__value">@{
+                                    repaymentHistoryModel.repaymentsViewerDetails.head.amountRequested.toCurrencyString
+                                }</dd>
+                            </div>
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">@messages("refund-to-taxpayer.tableHead.refund-amount")</dt>
+                                <dd class="govuk-summary-list__value">@{
+                                    repaymentHistoryModel.repaymentsViewerDetails.head.amountApprovedforRepayment.getOrElse(throw MissingFieldException("Requested Amount Item")).toCurrencyString
+                                }</dd>
+                            </div>
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key govuk-!-width-three-quarters">@messages("refund-to-taxpayer.tableHead.total-interest")
+                                    @p(classes = "govuk-!-margin-bottom-0", id = Some("refund-to-taxpayer-interests")) {
+                                        @messages("refund-to-taxpayer.tableHead.varied-interest-rates", getInterestContent(repaymentHistoryModel).fromRate, getInterestContent(repaymentHistoryModel).toRate, getInterestContent(repaymentHistoryModel).fromDate.toLongDate, getInterestContent(repaymentHistoryModel).toDate.toLongDate)
+                                    }
+                                </dt>
+                                <dd class="govuk-summary-list__value">@{
+                                    getInterestContent(repaymentHistoryModel).total.toCurrencyString
+                                }</dd>
+                            </div>
+                        </dl>
+                    </div>
+                </details>
+            </div>
+        </div>
+
+    }

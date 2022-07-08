@@ -58,16 +58,15 @@ class RefundToTaxPayerController @Inject()(val refundToTaxPayerView: RefundToTax
                                            val appConfig: FrontendAppConfig,
                                            val itvcErrorHandlerAgent: AgentItvcErrorHandler) extends ClientConfirmedController with I18nSupport with FeatureSwitching {
 
-  private def getRepaymentHistoryModel(repaymentRequestNumber: String, isAgent: Boolean)(callback: List[RepaymentHistoryModel] => Future[Result])
+  private def getRepaymentHistoryModel(repaymentRequestNumber: String, isAgent: Boolean)(callback: RepaymentHistoryModel => Future[Result])
                                       (implicit user: MtdItUser[AnyContent]): Future[Result] = {
     incomeTaxViewChangeConnector.getRepaymentHistoryByRepaymentId(Nino(user.nino), repaymentRequestNumber).flatMap {
       case repaymentHistoryModel: RepaymentHistoryModel => {
-        println(s"@@@@@@@@@@@@@@@@@@@@@ repaymentHistoryModel = $repaymentHistoryModel @@@@@@@@@@@@@@@@@@@@@@@@@@")
-        callback(List(repaymentHistoryModel))
+        callback(repaymentHistoryModel)
       }
 
       // TODO do we need it
-      case RepaymentHistoryErrorModel(NOT_FOUND, _) => callback(List.empty)
+//      case RepaymentHistoryErrorModel(NOT_FOUND, _) => callback(List.empty)
 
       case _ if isAgent =>
         Logger("application").error(s"[RefundToTaxPayerController][withTaxYearFinancials] - Could not retrieve repayment history for repaymentRequestNumber: $repaymentRequestNumber")
@@ -87,9 +86,11 @@ class RefundToTaxPayerController @Inject()(val refundToTaxPayerView: RefundToTax
     if (isEnabled(PaymentHistoryRefunds)) {
       // TODO implement it
       getRepaymentHistoryModel(repaymentRequestNumber, isAgent) { repaymentHistoryModel =>
+        println(s"@@@@@@@@@@@@@@@@@@@@@ repaymentHistoryModel = $repaymentHistoryModel @@@@@@@@@@@@@@@@@@@@@@@@@@")
+
         Future.successful(Ok(
           refundToTaxPayerView(
-            repaymentHistoryModel.head,
+            repaymentHistoryModel,
             paymentHistoryRefundsEnabled = isEnabled(PaymentHistoryRefunds),
             backUrl, user.saUtr,
             btaNavPartial = user.btaNavPartial,
