@@ -338,7 +338,6 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
           TestWhatYouOweService.validChargeTypeCondition(dd)) shouldBe true
       }
     }
-
     "accept non-MFA debits document descriptions" when {
       "MFA Credits and Debits is enabled" in {
         enable(MFACreditsAndDebits)
@@ -346,7 +345,6 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
           TestWhatYouOweService.validChargeTypeCondition(dd)) shouldBe true
       }
     }
-
     "reject MFA debits document descriptions" when {
       "MFA Credits and Debits is disabled" in {
         disable(MFACreditsAndDebits)
@@ -354,7 +352,6 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
           TestWhatYouOweService.validChargeTypeCondition(dd)) shouldBe false
       }
     }
-
     "accept non-MFA debits document descriptions" when {
       "MFA Credits and Debits is disabled" in {
         disable(MFACreditsAndDebits)
