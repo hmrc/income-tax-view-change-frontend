@@ -567,6 +567,7 @@ whatYouOwe.paymentOnAccount2.text							       = Payment on account 2 of 2
 whatYouOwe.lpi.paymentOnAccount1.text                              = Late payment interest for payment on account 1 of 2
 whatYouOwe.lpi.paymentOnAccount2.text                              = Late payment interest for payment on account 2 of 2
 whatYouOwe.lpi.balancingCharge.text                                = Late payment interest for Balancing payment
+whatYouOwe.mfaDebit.text                                           = HMRC Adjustment
 
 whatYouOwe.balancingCharge.text  							       = Balancing payment
 whatYouOwe.balancingCharge.interest.line1.text                     = Interest on Balancing payment
@@ -618,6 +619,7 @@ chargeSummary.balancingCharge.text  							   = Balancing payment
 chargeSummary.class2Nic.text                                       = Class 2 National Insurance
 chargeSummary.codingOut.text                                       = Balancing payment collected through PAYE tax code
 chargeSummary.cancelledPayeSelfAssessment.text                     = Cancelled Self Assessment payment (through your PAYE tax code)
+chargeSummary.mfaDebit.text                                        = HMRC Adjustment
 chargeSummary.dueDate											   = Due date
 chargeSummary.paymentAmount   									   = Full payment amount
 chargeSummary.paymentAmountCodingOut							   = Payment amount
@@ -661,6 +663,7 @@ chargeSummary.chargeHistory.description							        = Description
 chargeSummary.chargeHistory.amount								        = Amount
 chargeSummary.chargeHistory.created.paymentOnAccount1.text		        = Payment on account 1 of 2 created
 chargeSummary.chargeHistory.created.paymentOnAccount2.text		        = Payment on account 2 of 2 created
+chargeSummary.chargeHistory.created.mfaDebit.text                       = HMRC Adjustment created
 chargeSummary.chargeHistory.created.balancingCharge.text		        = Balancing payment created
 chargeSummary.chargeHistory.created.class2Nic.text                      = Class 2 National Insurance created
 chargeSummary.chargeHistory.created.codingOut.text                      = Self Assessment payment (through your PAYE tax code) created
@@ -680,6 +683,7 @@ chargeSummary.lpi.interestPeriod.dates							   = {0} to {1}
 chargeSummary.lpi.chargeHistory.created.paymentOnAccount1.text	   = Late payment interest for payment on account 1 of 2 created
 chargeSummary.lpi.chargeHistory.created.paymentOnAccount2.text	   = Late payment interest for payment on account 2 of 2 created
 chargeSummary.lpi.chargeHistory.created.balancingCharge.text	   = Late payment interest for Balancing payment created
+chargeSummary.lpi.chargeHistory.created.mfaDebit.text              = Late payment interest for HMRC adjustment created
 
 chargeSummary.paymentAllocations.poa1.incomeTax                    = Payment allocated to Income Tax for payment on account 1 of 2
 chargeSummary.paymentAllocations.poa1.nic4                         = Payment allocated to Class 4 National Insurance for payment on account 1 of 2
@@ -691,6 +695,7 @@ chargeSummary.paymentAllocations.bcd.vcnic2                        = Payment all
 chargeSummary.paymentAllocations.bcd.nic4                          = Payment allocated to Class 4 National Insurance for Balancing payment
 chargeSummary.paymentAllocations.bcd.sl                            = Payment allocated to Student Loans for Balancing payment
 chargeSummary.paymentAllocations.bcd.cgt                           = Payment allocated to Capital Gains Tax for Balancing payment
+chargeSummary.paymentAllocations.bcd.mfaDebit                      = Payment put towards to HMRC adjustment
 
 chargeSummary.codingOutHeader                                      = Self Assessment payment (through your PAYE tax code)
 chargeSummary.codingOutMessage                                     = This is the remaining tax you owe for the {0} to {1} tax year.
@@ -778,7 +783,7 @@ paymentAllocation.paymentAllocations.bcd.cgt                    = Capital Gains 
 paymentAllocation.paymentAllocations.paymentOnAccount1.text     = Late payment interest for payment on account 1 of 2
 paymentAllocation.paymentAllocations.paymentOnAccount2.text     = Late payment interest for payment on account 2 of 2
 paymentAllocation.paymentAllocations.balancingCharge.text       = Late payment interest for Balancing payment
-
+paymentAllocation.paymentAllocations.mfaDebit.text              = HMRC Adjustment
 
 ##Tax Years Overview Update Tab##
 updateTab.due                                                   = Due {0}

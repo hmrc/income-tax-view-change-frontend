@@ -47,6 +47,7 @@
     btaNavPartial: Option[Html] = None,
     dunningLock: Boolean,
     codingOutEnabled: Boolean,
+    mfaCreditsAndDebitsEnabled: Boolean,
     whatYouOweCreditAmountEnabled: Boolean,
     isAgent: Boolean = false,
     origin: Option[String] = None)(implicit request: Request[_], user: MtdItUser[_], messages: Messages)
@@ -152,7 +153,7 @@
 @paymentTypeEntry(documentDetail: DocumentDetail, rowId: String, isLatePaymentInterest: Boolean,
     showTaxYear: Boolean = true, linkSuffix: String) = @{
 
-    val chargeTypeKey = documentDetail.getChargeTypeKey(codingOutEnabled)
+    val chargeTypeKey = documentDetail.getChargeTypeKey(codingOutEnabled, mfaCreditsAndDebitsEnabled)
     val lpi = if (isLatePaymentInterest) "lpi." else ""
     val linkText = getMessage(s"${lpi}${chargeTypeKey}")
     val taxYear = documentDetail.taxYear

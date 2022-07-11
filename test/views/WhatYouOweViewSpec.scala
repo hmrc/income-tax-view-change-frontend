@@ -89,7 +89,8 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
               dunningLock: Boolean = false,
               whatYouOweCreditAmountEnabled: Boolean = false,
               migrationYear: Int = LocalDate.now().getYear - 1,
-              codingOutEnabled: Boolean = true
+              codingOutEnabled: Boolean = true,
+             mfaCreditsAndDebitsEnabled: Boolean = false
              ) {
     val individualUser: MtdItUser[_] = MtdItUser(
       mtditid = testMtditid,
@@ -104,7 +105,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     )(FakeRequest())
 
     val html: HtmlFormat.Appendable = whatYouOweView(creditCharges, charges, hasLpiWithDunningBlock, currentTaxYear, "testBackURL",
-      Some("1234567890"), None, dunningLock, codingOutEnabled, whatYouOweCreditAmountEnabled)(FakeRequest(), individualUser, implicitly)
+      Some("1234567890"), None, dunningLock, codingOutEnabled, mfaCreditsAndDebitsEnabled, whatYouOweCreditAmountEnabled)(FakeRequest(), individualUser, implicitly)
     val pageDocument: Document = Jsoup.parse(contentAsString(html))
 
     def verifySelfAssessmentLink(): Unit = {
@@ -120,6 +121,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
                    currentTaxYear: Int = LocalDate.now().getYear,
                    migrationYear: Int = LocalDate.now().getYear - 1,
                    codingOutEnabled: Boolean = true,
+                   mfaCreditsAndDebitsEnabled: Boolean = false,
                    whatYouOweCreditAmountEnabled: Boolean = false,
                    dunningLock: Boolean = false,
                    hasLpiWithDunningBlock: Boolean = false) {
@@ -147,6 +149,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       utr = Some("1234567890"),
       dunningLock = dunningLock,
       codingOutEnabled = codingOutEnabled,
+      mfaCreditsAndDebitsEnabled = mfaCreditsAndDebitsEnabled,
       whatYouOweCreditAmountEnabled = whatYouOweCreditAmountEnabled,
       isAgent = true)(FakeRequest(), agentUser, implicitly)
     val pageDocument: Document = Jsoup.parse(contentAsString(html))

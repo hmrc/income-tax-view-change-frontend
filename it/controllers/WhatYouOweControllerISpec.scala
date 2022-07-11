@@ -18,7 +18,7 @@ package controllers
 
 import audit.models.WhatYouOweResponseAuditModel
 import auth.MtdItUser
-import config.featureswitch.{CodingOut, R7bTxmEvents}
+import config.featureswitch.{CodingOut, MFACreditsAndDebits, R7bTxmEvents}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import models.financialDetails.{BalanceDetails, FinancialDetailsModel, WhatYouOweChargesList}
@@ -29,6 +29,7 @@ import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino, testSa
 import testConstants.FinancialDetailsIntegrationTestConstants._
 import testConstants.IncomeSourceIntegrationTestConstants._
 import testConstants.OutstandingChargesIntegrationTestConstants._
+
 import java.time.LocalDate
 
 class WhatYouOweControllerISpec extends ComponentSpecBase {
@@ -755,6 +756,13 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
     "caching should be ENABLED" in {
       testIncomeSourceDetailsCaching(false, 1,
         () => IncomeTaxViewChangeFrontend.getPaymentsDue)
+    }
+  }
+
+  "MFA Credits and Debits is enabled" when {
+    "render the MFA Debits" in {
+      Given("MFA Credits and Debits is enabled")
+      enable(MFACreditsAndDebits)
     }
   }
 }

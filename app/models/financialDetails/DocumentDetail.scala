@@ -150,8 +150,13 @@ case class DocumentDetail(taxYear: String,
     case _ => false
   }
 
+  def isMfaDebit: Boolean = (documentDescription, documentText) match {
+    case ((Some("ITSA PAYE Charge") | Some("ITSA Calc Error Correction")), Some("ITSA Manual Penalty Pre CY-4") | Some("ITSA Misc Charge")) => true
+    case _ => false
+  }
 
-  def getChargeTypeKey(codedOutEnabled: Boolean = false): String = documentDescription match {
+
+  def getChargeTypeKey(codedOutEnabled: Boolean = false, mfaCreditsAndDebitsEnabled: Boolean = false): String = documentDescription match {
     case Some("ITSA- POA 1") => "paymentOnAccount1.text"
     case Some("ITSA - POA 2") => "paymentOnAccount2.text"
     case Some("TRM New Charge") | Some("TRM Amend Charge") => (codedOutEnabled, isClass2Nic, isPayeSelfAssessment, isCancelledPayeSelfAssessment) match {
@@ -160,17 +165,20 @@ case class DocumentDetail(taxYear: String,
       case (true, false, false, true) => "cancelledPayeSelfAssessment.text"
       case _ => "balancingCharge.text"
     }
+    case Some("ITSA PAYE Charge") | Some("ITSA Calc Error Correction") | Some("ITSA Manual Penalty Pre CY-4") | Some("ITSA Misc Charge") => (mfaCreditsAndDebitsEnabled) match {
+      case (true) => "mfaDebit.text"
+    }
     case error =>
       Logger("application").error(s"[DocumentDetail][getChargeTypeKey] Missing or non-matching charge type: $error found")
       "unknownCharge"
   }
 
   def validMFACreditDescription() : Boolean = MfaCreditUtils.validMFACreditDescription(this.documentDescription)
-
+  def validMFADebitDescription() : Boolean = MfaDebitUtils.validMFADebitDescription(this.documentDescription)
 }
 
 case class DocumentDetailWithDueDate(documentDetail: DocumentDetail, dueDate: Option[LocalDate],
-                                     isLatePaymentInterest: Boolean = false, dunningLock: Boolean = false, codingOutEnabled: Boolean = false) {
+                                     isLatePaymentInterest: Boolean = false, dunningLock: Boolean = false, codingOutEnabled: Boolean = false, mfaCreditsAndDebitsEnabled: Boolean = false) {
   val isOverdue: Boolean = dueDate.exists(_ isBefore LocalDate.now)
 }
 

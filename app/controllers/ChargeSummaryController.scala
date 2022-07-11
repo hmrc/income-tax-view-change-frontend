@@ -125,7 +125,6 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
       if (!isLatePaymentCharge) {
         financialDetails.filter(_.messageKeyByTypes.isDefined)
       } else Nil
-
     val paymentAllocationEnabled: Boolean = isEnabled(PaymentAllocation)
     val paymentAllocations: List[PaymentsWithChargeType] =
       if (paymentAllocationEnabled) {
@@ -152,6 +151,7 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
             paymentAllocationEnabled = paymentAllocationEnabled,
             latePaymentInterestCharge = isLatePaymentCharge,
             codingOutEnabled = isEnabled(CodingOut),
+            mfaCreditsAndDebitsEnabled = isEnabled(MFACreditsAndDebits),
             btaNavPartial = user.btaNavPartial,
             isAgent = isAgent
           ))
