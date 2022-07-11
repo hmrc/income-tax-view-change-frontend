@@ -66,7 +66,6 @@ class WhatYouOweController @Inject()(val checkSessionTimeout: SessionTimeoutPred
 
         whatYouOweService.getCreditCharges().map {
           creditCharges =>
-            println(Console.GREEN + whatYouOweChargesList + Console.WHITE)
 
             Ok(whatYouOwe(
               creditCharges,

@@ -150,8 +150,8 @@ case class DocumentDetail(taxYear: String,
     case _ => false
   }
 
-  def isMfaDebit: Boolean = (documentDescription, documentText) match {
-    case ((Some("ITSA PAYE Charge") | Some("ITSA Calc Error Correction")), Some("ITSA Manual Penalty Pre CY-4") | Some("ITSA Misc Charge")) => true
+  def isMfaDebit: Boolean = (documentDescription) match {
+    case (Some("ITSA PAYE Charge") | Some("ITSA Calc Error Correction") | Some("ITSA Manual Penalty Pre CY-4") | Some("ITSA Misc Charge")) => true
     case _ => false
   }
 
@@ -165,7 +165,7 @@ case class DocumentDetail(taxYear: String,
       case (true, false, false, true) => "cancelledPayeSelfAssessment.text"
       case _ => "balancingCharge.text"
     }
-    case Some("ITSA PAYE Charge") | Some("ITSA Calc Error Correction") | Some("ITSA Manual Penalty Pre CY-4") | Some("ITSA Misc Charge") => (mfaCreditsAndDebitsEnabled) match {
+    case (Some("ITSA PAYE Charge") | Some("ITSA Calc Error Correction") | Some("ITSA Manual Penalty Pre CY-4") | Some("ITSA Misc Charge")) => (mfaCreditsAndDebitsEnabled) match {
       case (true) => "mfaDebit.text"
     }
     case error =>

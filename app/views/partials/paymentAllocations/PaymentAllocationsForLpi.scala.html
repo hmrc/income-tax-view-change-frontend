@@ -19,7 +19,7 @@
 
 @this(implicitDateFormatter: ImplicitDateFormatterImpl)
 
-@(paymentAllocations: models.paymentAllocationCharges.PaymentAllocationViewModel,isAgent: Boolean, origin: Option[String] = None)(implicit messages: Messages)
+@(paymentAllocations: models.paymentAllocationCharges.PaymentAllocationViewModel,isAgent: Boolean, origin: Option[String] = None, mfaCreditsAndDebitsEnabled: Boolean = false)(implicit messages: Messages)
 
 
 @paymentAllocations.latePaymentInterestPaymentAllocationDetails.map { lpiAllocationDetails =>
@@ -28,10 +28,10 @@
             <td class="govuk-table__cell" id="payment-allocation-0">
                 @if(isAgent){
                     <a class="govuk-link" style="display:block" href="@{controllers.routes.ChargeSummaryController.showAgent(lpiAllocationDetails.documentDetail.taxYear.toInt, lpiAllocationDetails.documentDetail.transactionId, true)}" class="govuk-link">
-                    @messages(s"paymentAllocation.paymentAllocations.${lpiAllocationDetails.documentDetail.getChargeTypeKey()}")
+                    @messages(s"paymentAllocation.paymentAllocations.${lpiAllocationDetails.documentDetail.getChargeTypeKey(mfaCreditsAndDebitsEnabled)}")
                 } else {
                     <a class="govuk-link" style="display:block" href="@{controllers.routes.ChargeSummaryController.show(lpiAllocationDetails.documentDetail.taxYear.toInt, lpiAllocationDetails.documentDetail.transactionId, true, origin)}" class="govuk-link">
-                    @messages(s"paymentAllocation.paymentAllocations.${lpiAllocationDetails.documentDetail.getChargeTypeKey()}")
+                    @messages(s"paymentAllocation.paymentAllocations.${lpiAllocationDetails.documentDetail.getChargeTypeKey(mfaCreditsAndDebitsEnabled)}")
                 }
                 <span class="govuk-visually-hidden"> @lpiAllocationDetails.documentDetail.taxYear</span>
                 </a>

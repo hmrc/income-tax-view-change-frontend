@@ -85,7 +85,7 @@ class PaymentAllocationsController @Inject()(val paymentAllocationView: PaymentA
           Ok(paymentAllocationView(paymentAllocations, backUrl = backUrl, user.saUtr,
             CutOverCreditsEnabled = isEnabled(CutOverCredits), btaNavPartial = user.btaNavPartial,
             isAgent = isAgent, origin = origin, gatewayPage = sessionGatewayPage,
-            creditsRefundsRepayEnabled = isEnabled(CreditsRefundsRepay))(implicitly, messages))
+            creditsRefundsRepayEnabled = isEnabled(CreditsRefundsRepay), mfaCreditsAndDebitsEnabled = isEnabled(MFACreditsAndDebits))(implicitly, messages))
         }
 
       case Left(PaymentAllocationError(Some(Http.Status.NOT_FOUND))) =>

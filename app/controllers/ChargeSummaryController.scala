@@ -137,6 +137,8 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
           documentDetailWithDueDate.documentDetail.isClass2Nic ||
           documentDetailWithDueDate.documentDetail.isCancelledPayeSelfAssessment)) {
           onError("Coding Out is disabled and redirected to not found page", isAgent, showInternalServerError = false)
+        } else if (isDisabled(MFACreditsAndDebits)&& documentDetailWithDueDate.documentDetail.isMfaDebit) {
+            onError("MFA Credits and Debits is disabled and redirected to not found page", isAgent, showInternalServerError = false)
         } else {
           auditChargeSummary(documentDetailWithDueDate, paymentBreakdown, chargeHistory, paymentAllocations, isLatePaymentCharge)
           Ok(chargeSummaryView(
