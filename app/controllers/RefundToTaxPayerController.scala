@@ -32,7 +32,7 @@ import models.repaymentHistory.{RepaymentHistory, RepaymentHistoryErrorModel, Re
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import services.{IncomeSourceDetailsService, PaymentHistoryService}
+import services.IncomeSourceDetailsService
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
 import views.html.RefundToTaxPayer
@@ -51,8 +51,7 @@ class RefundToTaxPayerController @Inject()(val refundToTaxPayerView: RefundToTax
                                            val authorisedFunctions: AuthorisedFunctions,
                                            auditingService: AuditingService,
                                            retrieveBtaNavBar: NavBarPredicate,
-                                           itvcErrorHandler: ItvcErrorHandler,
-                                           paymentHistoryService: PaymentHistoryService)
+                                           itvcErrorHandler: ItvcErrorHandler)
                                           (implicit mcc: MessagesControllerComponents,
                                            val ec: ExecutionContext,
                                            val appConfig: FrontendAppConfig,
@@ -60,6 +59,8 @@ class RefundToTaxPayerController @Inject()(val refundToTaxPayerView: RefundToTax
 
   private def getRepaymentHistoryModel(repaymentRequestNumber: String, isAgent: Boolean)(callback: RepaymentHistoryModel => Future[Result])
                                       (implicit user: MtdItUser[AnyContent]): Future[Result] = {
+
+    println(s"££££££££££££££££ user = ${user.nino} ££££££££££££££££££")
     incomeTaxViewChangeConnector.getRepaymentHistoryByRepaymentId(Nino(user.nino), repaymentRequestNumber).flatMap {
       case repaymentHistoryModel: RepaymentHistoryModel => {
         callback(repaymentHistoryModel)
