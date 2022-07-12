@@ -93,14 +93,6 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
     paymentHistoryView(testPayments, "testBackURL", saUtr, isAgent = false)(FakeRequest(), implicitly)
   )
 
-  val testMultiplePayments: List[Payment] = List(
-    Payment(Some("AAAAA"), Some(10000), None, Some("Payment"), None, Some("lot"), Some("lotitem"), Some("2019-12-25"), "2019-12-25", Some("DOCID01")),
-    Payment(Some("AAAAA"), Some(10000), None, Some("Payment"), None, Some("lot"), Some("lotitem"), Some("2019-12-25"), "2019-12-25", Some("DOCID01")),
-    Payment(Some("AAAAA"), Some(90000), None, Some("Payment"), None, Some("lot"), Some("lotitem"), Some("2019-12-25"), "2019-12-25", Some("DOCID01")),
-    Payment(Some("BBBBB"), Some(5000), None, Some("tnemyap"), None, Some("lot"), Some("lotitem"), Some("2007-03-23"), "2007-03-23", Some("DOCID02")),
-    Payment(Some("BBBBB"), Some(5000), None, Some("tnemyap"), None, Some("lot"), Some("lotitem"), Some("2007-03-23"), "2007-03-23", Some("DOCID02"))
-  )
-
   val paymentHistoryMessageInfo = s"${messages("paymentHistory.info")} ${messages("taxYears.oldSa.agent.content.2")}${messages("pagehelp.opensInNewTabText")}. ${messages("paymentHistory.info.2")}"
 
   "The payments history view with payment response model" should {

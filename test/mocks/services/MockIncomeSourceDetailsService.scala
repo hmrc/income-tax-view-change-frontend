@@ -44,7 +44,13 @@ trait MockIncomeSourceDetailsService extends BeforeAndAfterEach with MockitoSuga
       .thenReturn(Future.successful(sources))
   }
 
-  def mockSingleBusinessIncomeSource(): Unit = setupMockGetIncomeSourceDetails()(singleBusinessIncome)
+  def mockSingleBusinessIncomeSource(userMigrated : Boolean = true): Unit = setupMockGetIncomeSourceDetails()(
+    if (userMigrated){
+      singleBusinessIncome
+    } else {
+      singleBusinessIncomeNotMigrated
+    }
+  )
 
   def mockSingleBISWithCurrentYearAsMigrationYear(): Unit = setupMockGetIncomeSourceDetails()(singleBusinessIncomeWithCurrentYear)
 
