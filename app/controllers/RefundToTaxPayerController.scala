@@ -58,7 +58,7 @@ class RefundToTaxPayerController @Inject()(val refundToTaxPayerView: RefundToTax
                                            val itvcErrorHandlerAgent: AgentItvcErrorHandler) extends ClientConfirmedController with I18nSupport with FeatureSwitching {
 
   private def getRepaymentHistoryModel(repaymentRequestNumber: String, isAgent: Boolean)(callback: RepaymentHistoryModel => Future[Result])
-                                      (implicit user: MtdItUser[AnyContent]): Future[Result] = {
+                                      (implicit user: MtdItUser[_]): Future[Result] = {
 
     println(s"££££££££££££££££ user = ${user.nino} ££££££££££££££££££")
     incomeTaxViewChangeConnector.getRepaymentHistoryByRepaymentId(Nino(user.nino), repaymentRequestNumber).flatMap {
@@ -141,7 +141,5 @@ class RefundToTaxPayerController @Inject()(val refundToTaxPayerView: RefundToTax
         }
     }
   }
-
-
 }
 

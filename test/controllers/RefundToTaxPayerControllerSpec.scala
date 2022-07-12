@@ -16,35 +16,23 @@
 
 package controllers
 
-import audit.AuditingService
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import connectors.IncomeTaxViewChangeConnector
-import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
-import forms.utils.SessionKeys.gatewayPage
-import implicits.ImplicitDateFormatter
 import config.featureswitch.{FeatureSwitching, PaymentHistoryRefunds}
+import config.{FrontendAppConfig, ItvcErrorHandler}
+import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
+import implicits.ImplicitDateFormatter
 import mocks.MockItvcErrorHandler
-import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.connectors.MockIncomeTaxViewChangeConnector
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
-import models.core.Nino
-import models.financialDetails.Payment
-import models.repaymentHistory.{RepaymentHistory, RepaymentHistoryModel, RepaymentItem, RepaymentSupplementItem}
-import org.mockito.ArgumentMatchers
-import org.mockito.ArgumentMatchers.{any, anyString, matches}
-import org.mockito.Mockito.{reset, when}
+import models.repaymentHistory._
 import play.api.http.Status
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers._
-import services.PaymentHistoryService
-import services.PaymentHistoryService.PaymentHistoryError
-import testConstants.BaseTestConstants
-import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
-import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
-import views.html.{PaymentHistory, RefundToTaxPayer}
+import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testMtditid}
+import uk.gov.hmrc.http.InternalServerException
+import views.html.RefundToTaxPayer
 
 import java.time.LocalDate
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
 class RefundToTaxPayerControllerSpec extends MockAuthenticationPredicate
   with MockIncomeSourceDetailsPredicate with ImplicitDateFormatter with MockItvcErrorHandler
@@ -55,14 +43,12 @@ class RefundToTaxPayerControllerSpec extends MockAuthenticationPredicate
   }
 
   val repaymentRequestNumber: String = "023942042349"
-  val testNino: String = "AY888881A"
+  val testNino: String = "AB123456C"
 
-  val testPayments: List[Payment] = List(
-    Payment(Some("AAAAA"), Some(10000), None, Some("Payment"), None, Some("lot"), Some("lotitem"), Some("2019-12-25"),
-      "2019-12-25", Some("DOCID01")),
-    Payment(Some("BBBBB"), Some(5000), None, Some("tnemyap"), None, Some("lot"), Some("lotitem"), Some("2007-03-23"),
-      "2007-03-23", Some("DOCID02"))
-  )
+  val paymentRefundHistoryBackLink: String = "/report-quarterly/income-and-expenses/view/payment-refund-history"
+  val paymentRefundHistoryBackLinkAgent: String = "/report-quarterly/income-and-expenses/view/agents/payment-refund-history"
+
+  val refundToTaxPayerView: RefundToTaxPayer = app.injector.instanceOf[RefundToTaxPayer]
 
   val testRepaymentHistoryModel: RepaymentHistoryModel = RepaymentHistoryModel(
     List(RepaymentHistory(
@@ -102,7 +88,7 @@ class RefundToTaxPayerControllerSpec extends MockAuthenticationPredicate
   trait Setup {
 
     val controller = new RefundToTaxPayerController(
-      app.injector.instanceOf[RefundToTaxPayer],
+      refundToTaxPayerView,
       app.injector.instanceOf[SessionTimeoutPredicate],
       MockAuthenticationPredicate,
       app.injector.instanceOf[NinoPredicate],
@@ -118,7 +104,6 @@ class RefundToTaxPayerControllerSpec extends MockAuthenticationPredicate
       app.injector.instanceOf[FrontendAppConfig],
       mockItvcErrorHandler
     )
-
   }
 
   "The RefundToTaxPayerController.show function" when {
@@ -126,26 +111,32 @@ class RefundToTaxPayerControllerSpec extends MockAuthenticationPredicate
     "obtaining a users repayments when PaymentHistoryRefunds FS is on" should {
       "send the user to the refund to tax payer page with data" in new Setup {
         enable(PaymentHistoryRefunds)
-//        setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthSuccessWithSaUtrResponse())
         mockSingleBusinessIncomeSource()
-
         setupGetRepaymentHistoryByRepaymentId(testNino, repaymentRequestNumber)(testRepaymentHistoryModel)
+
+        val expectedContent: String = refundToTaxPayerView(
+          backUrl = paymentRefundHistoryBackLink,
+          repaymentHistoryModel = testRepaymentHistoryModel,
+          saUtr = Some(testMtditid),
+          paymentHistoryRefundsEnabled = true,
+          isAgent = false
+        ).toString
 
         val result: Future[Result] = controller.show(repaymentRequestNumber)(fakeRequestWithActiveSession)
 
         status(result) shouldBe Status.OK
-        //        result.futureValue.session.get(gatewayPage) shouldBe Some("paymentHistory")
+        contentAsString(result) shouldBe expectedContent
+        contentType(result) shouldBe Some(HTML)
       }
 
     }
 
-    /*"Failing to retrieve a user's payments" should {
+    "Failing to retrieve a user's re-payments history" should {
       "send the user to the internal service error page" in new Setup {
         mockSingleBusinessIncomeSource()
-        when(paymentHistoryService.getPaymentHistory(any(), any()))
-          .thenReturn(Future.successful(Left(PaymentHistoryError)))
+        setupGetRepaymentHistoryByRepaymentIdError(testNino, repaymentRequestNumber)(RepaymentHistoryErrorModel(404, "Not found"))
 
-        val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
+        val result: Future[Result] = controller.show(repaymentRequestNumber)(fakeRequestWithActiveSession)
 
         status(result) shouldBe Status.INTERNAL_SERVER_ERROR
       }
@@ -155,7 +146,8 @@ class RefundToTaxPayerControllerSpec extends MockAuthenticationPredicate
     "Failing to retrieve income sources" should {
       "send the user to internal server error page" in new Setup {
         mockErrorIncomeSource()
-        val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
+
+        val result: Future[Result] = controller.show(repaymentRequestNumber)(fakeRequestWithActiveSession)
 
         status(result) shouldBe Status.INTERNAL_SERVER_ERROR
       }
@@ -164,13 +156,13 @@ class RefundToTaxPayerControllerSpec extends MockAuthenticationPredicate
     "User fails to be authorised" should {
       "redirect the user to the login page" in new Setup {
         setupMockAuthorisationException()
-        val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
+
+        val result: Future[Result] = controller.show(repaymentRequestNumber)(fakeRequestWithActiveSession)
 
         status(result) shouldBe Status.SEE_OTHER
-
         redirectLocation(result) shouldBe Some("/report-quarterly/income-and-expenses/view/sign-in")
       }
-    }*/
+    }
   }
 
   "PaymentHistoryRefunds feature switch is disabled" should {
@@ -198,26 +190,31 @@ class RefundToTaxPayerControllerSpec extends MockAuthenticationPredicate
         mockSingleBusinessIncomeSource()
         setupGetRepaymentHistoryByRepaymentId(testNino, repaymentRequestNumber)(testRepaymentHistoryModel)
 
-        val result = controller.showAgent(repaymentRequestNumber)(fakeRequestConfirmedClient())
+        val expectedContent: String = refundToTaxPayerView(
+          backUrl = paymentRefundHistoryBackLinkAgent,
+          repaymentHistoryModel = testRepaymentHistoryModel,
+          saUtr = Some(testMtditid),
+          paymentHistoryRefundsEnabled = true,
+          isAgent = true
+        ).toString
+
+        val result = controller.showAgent(repaymentRequestNumber)(fakeRequestConfirmedClient(testNino))
 
         status(result) shouldBe Status.OK
-//        result.futureValue.session.get(gatewayPage) shouldBe Some("paymentHistory")
+        contentAsString(result) shouldBe expectedContent
+        contentType(result) shouldBe Some(HTML)
       }
 
     }
 
-    "Failing to retrieve a user's payments - left" should {
+    "Failing to retrieve a user's payments" should {
       "send the user to the internal service error page" in new Setup {
         enable(PaymentHistoryRefunds)
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         mockErrorIncomeSource()
-        setupGetRepaymentHistoryByRepaymentId(testNino, repaymentRequestNumber)(testRepaymentHistoryModel)
-        /*when(mockIncomeTaxViewChangeConnector.getRepaymentHistoryByRepaymentId(any(), matches(repaymentRequestNumber))(any()))
-          .thenReturn(Future.successful(Left(PaymentHistoryError)))*/
 
-        val result: Future[Result] = controller.showAgent(repaymentRequestNumber)(fakeRequestConfirmedClient())
+        val result: Future[Result] = controller.showAgent(repaymentRequestNumber)(fakeRequestConfirmedClient(testNino))
         result.failed.futureValue shouldBe an[InternalServerException]
-
       }
 
     }
@@ -228,7 +225,7 @@ class RefundToTaxPayerControllerSpec extends MockAuthenticationPredicate
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         mockErrorIncomeSource()
 
-        val result: Future[Result] = controller.showAgent(repaymentRequestNumber)(fakeRequestConfirmedClient())
+        val result: Future[Result] = controller.showAgent(repaymentRequestNumber)(fakeRequestConfirmedClient(testNino))
         result.failed.futureValue shouldBe an[InternalServerException]
       }
     }
