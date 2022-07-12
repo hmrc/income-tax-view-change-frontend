@@ -13,6 +13,7 @@ base.error_summary.heading                                      = There is a pro
 base.error-prefix                                               = Error:
 base.govUk                                                      = GOV.UK
 
+
 # Fallback Back Links
 back.whatYouOwe = Back to What You Owe
 back.paymentHistory = Back to Payment History
@@ -242,7 +243,7 @@ forecast_income.source_types.13                                = Share schemes
 forecast_income.source_types.15                                = Profit from overseas property
 forecast_income.source_types.16                                = Interest from overseas
 forecast_income.source_types.17                                = Other Dividends
-forecast_income.source_types.18                                = UK Securities
+forecast_income.source_types.18                                = UK securities
 forecast_income.source_types.19                                = Other Income
 forecast_income.source_types.20                                = Overseas pension
 forecast_income.source_types.98                                = Gift Aid and Payroll Giving
@@ -310,7 +311,7 @@ taxCal_breakdown.table.head.rates.uk                                = UK rates f
 taxCal_breakdown.table.head.rates.scotland                          = UK rates for Scotland
 
 taxCal_breakdown.table.cgt.taxable_capital_gains                    = Taxable Capital Gains
-taxCal_breakdown.table.cgt.assets_or_investors_relief.band.single   = Business Asset Disposal Relief and or Investors’ Relief gains ({0} at {1}%)
+taxCal_breakdown.table.cgt.assets_or_investors_relief.band.single   = Business Asset Disposal Relief or Investors' Relief gains (or both) ({0} at {1}%)
 taxCal_breakdown.table.cgt.property_and_interest.band.lowerRate     = Residential property and carried interest basic rate ({0} at {1}%)
 taxCal_breakdown.table.cgt.property_and_interest.band.higherRate    = Residential property and carried interest higher rate ({0} at {1}%)
 taxCal_breakdown.table.cgt.other_gains.band.lowerRate               = Other gains basic rate ({0} at {1}%)
@@ -556,7 +557,7 @@ whatYouOwe.payment-days-note                                       = Payments ca
 whatYouOwe.credit-on-account                                       = If you make a payment more than 30 days before a payment is due, you will see it as credit on account.
 whatYouOwe.payNow                                                  = Make a payment
 whatYouOwe.pay-now-aria                                            = Pay now for Tax year {0} to {1}
-whatYouOwe.pre-mtd-year                                            = {0} to {1}
+whatYouOwe.pre-mtd-year                                            = {0} to {1} at %
 whatYouOwe.pre-mtd-digital                                         = (Pre-Making Tax Digital)
 whatYouOwe.tableHead.due-date                                      = Due date
 whatYouOwe.tableHead.payment-type                                  = Payment type
@@ -593,7 +594,7 @@ whatYouOwe.future-payments                                         = Future paym
 whatYouOwe.due-in-thirty-days-payments                             = Due within 30 days
 whatYouOwe.payment-type.taxYear                                    = Tax year {0} to {1}
 whatYouOwe.taxYear                                                 = Tax year
-whatYouOwe.tax-year-summary.taxYear                                = {0} to {1}
+whatYouOwe.tax-year-summary.taxYear                                = {0} to {1} at %
 whatYouOwe.paymentUnderReview                                      = Payment under review
 whatYouOwe.dunningLock.text                                        = One or more of your payments are currently under review because {0}
 whatYouOwe.dunningLock.link                                        = there is a current appeal against a tax decision
@@ -843,7 +844,6 @@ language-switcher.english                                       = English
 language-switcher.welsh                                         = Cymraeg
 language-switcher.welsh.hidden                                  = Newid yr iaith ir Gymraeg
 language-switcher.nav                                           = Language switcher
-
 
 #technical helper
 getpagehelp.linkText                                            = Get help with this page
