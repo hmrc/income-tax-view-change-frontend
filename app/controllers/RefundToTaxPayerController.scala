@@ -17,18 +17,14 @@
 package controllers
 
 import audit.AuditingService
-import audit.models.PaymentHistoryResponseAuditModel
 import auth.MtdItUser
-import config.featureswitch.{CutOverCredits, FeatureSwitching, MFACreditsAndDebits, PaymentHistoryRefunds, R7bTxmEvents}
+import config.featureswitch.{FeatureSwitching, PaymentHistoryRefunds}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import connectors.IncomeTaxViewChangeConnector
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
-import enums.GatewayPage.PaymentHistoryPage
-import forms.utils.SessionKeys.gatewayPage
 import models.core.Nino
-import models.financialDetails.{DocumentDetail, FinancialDetailsErrorModel, FinancialDetailsModel}
-import models.repaymentHistory.{RepaymentHistory, RepaymentHistoryErrorModel, RepaymentHistoryModel, RepaymentHistoryResponseModel}
+import models.repaymentHistory.RepaymentHistoryModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
@@ -57,27 +53,6 @@ class RefundToTaxPayerController @Inject()(val refundToTaxPayerView: RefundToTax
                                            val appConfig: FrontendAppConfig,
                                            val itvcErrorHandlerAgent: AgentItvcErrorHandler) extends ClientConfirmedController with I18nSupport with FeatureSwitching {
 
-  private def getRepaymentHistoryModel(repaymentRequestNumber: String, isAgent: Boolean)(callback: RepaymentHistoryModel => Future[Result])
-                                      (implicit user: MtdItUser[_]): Future[Result] = {
-
-    println(s"££££££££££££££££ user = ${user.nino} ££££££££££££££££££")
-    incomeTaxViewChangeConnector.getRepaymentHistoryByRepaymentId(Nino(user.nino), repaymentRequestNumber).flatMap {
-      case repaymentHistoryModel: RepaymentHistoryModel => {
-        callback(repaymentHistoryModel)
-      }
-
-      // TODO do we need it
-//      case RepaymentHistoryErrorModel(NOT_FOUND, _) => callback(List.empty)
-
-      case _ if isAgent =>
-        Logger("application").error(s"[RefundToTaxPayerController][withTaxYearFinancials] - Could not retrieve repayment history for repaymentRequestNumber: $repaymentRequestNumber")
-        Future.successful(itvcErrorHandlerAgent.showInternalServerError())
-      case _ =>
-        Logger("application").error(s"[Agent][RefundToTaxPayerController][withTaxYearFinancials] - Could not retrieve repayment history for repaymentRequestNumber: $repaymentRequestNumber")
-        Future.successful(itvcErrorHandler.showInternalServerError())
-    }
-  }
-
   def handleRequest(backUrl: String,
                     origin: Option[String] = None,
                     isAgent: Boolean,
@@ -85,35 +60,29 @@ class RefundToTaxPayerController @Inject()(val refundToTaxPayerView: RefundToTax
                     repaymentRequestNumber: String)
                    (implicit user: MtdItUser[AnyContent], hc: HeaderCarrier): Future[Result] = {
     if (isEnabled(PaymentHistoryRefunds)) {
-      // TODO implement it
-      getRepaymentHistoryModel(repaymentRequestNumber, isAgent) { repaymentHistoryModel =>
-        println(s"@@@@@@@@@@@@@@@@@@@@@ repaymentHistoryModel = $repaymentHistoryModel @@@@@@@@@@@@@@@@@@@@@@@@@@")
-
-        Future.successful(Ok(
+      (for {
+        repaymentHistoryModel <- incomeTaxViewChangeConnector.getRepaymentHistoryByRepaymentId(Nino(user.nino), repaymentRequestNumber).collect {
+          case repaymentHistoryModel: RepaymentHistoryModel => repaymentHistoryModel
+        }
+      } yield {
+        Ok(
           refundToTaxPayerView(
             repaymentHistoryModel,
             paymentHistoryRefundsEnabled = isEnabled(PaymentHistoryRefunds),
             backUrl, user.saUtr,
             btaNavPartial = user.btaNavPartial,
-            isAgent = isAgent)))
+            isAgent = isAgent))
+      }).recover {
+        case _ if isAgent =>
+          Logger("application").error(s"[RefundToTaxPayerController][withTaxYearFinancials] - Could not retrieve repayment history for repaymentRequestNumber: $repaymentRequestNumber")
+          itvcErrorHandlerAgent.showInternalServerError()
+        case _ =>
+          Logger("application").error(s"[Agent][RefundToTaxPayerController][withTaxYearFinancials] - Could not retrieve repayment history for repaymentRequestNumber: $repaymentRequestNumber")
+          itvcErrorHandler.showInternalServerError()
       }
     } else {
       Future.successful(Redirect(controllers.routes.HomeController.show().url))
     }
-
-    /*paymentHistoryService.getPaymentHistory.map {
-      case Right(payments) =>
-        auditingService.extendedAudit(PaymentHistoryResponseAuditModel(user, payments, R7bTxmEvents = isEnabled(R7bTxmEvents),
-          CutOverCreditsEnabled = isEnabled(CutOverCredits),
-          MFACreditsEnabled = isEnabled(MFACreditsAndDebits)))
-
-        Ok(refundToTaxPayerView(payments, paymentHistoryRefundsEnabled = isEnabled(PaymentHistoryRefunds), backUrl, user.saUtr,
-          btaNavPartial = user.btaNavPartial, isAgent = isAgent)
-        ).addingToSession(gatewayPage -> PaymentHistoryPage.name)
-      case Left(_) => itvcErrorHandler.showInternalServerError()
-    }*/
-
-
   }
 
   def show(repaymentRequestNumber: String, origin: Option[String] = None): Action[AnyContent] =

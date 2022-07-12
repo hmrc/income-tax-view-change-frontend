@@ -195,12 +195,14 @@
                         repaymentHistoryModel.repaymentsViewerDetails.head.repaymentRequestNumber
                     }</dd>
                 </div>
-                <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">@messages("refund-to-taxpayer.tableHead.requested-amount")</dt>
-                    <dd class="govuk-summary-list__value">@{
-                        repaymentHistoryModel.repaymentsViewerDetails.head.amountRequested.toCurrencyString
-                    }</dd>
-                </div>
+                @if(repaymentHistoryModel.repaymentsViewerDetails.head.amountApprovedforRepayment.isDefined && repaymentHistoryModel.repaymentsViewerDetails.head.amountRequested.toCurrencyString != repaymentHistoryModel.repaymentsViewerDetails.head.amountApprovedforRepayment.getOrElse(throw MissingFieldException("Requested Amount Item")).toCurrencyString) {
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">@messages("refund-to-taxpayer.tableHead.requested-amount")</dt>
+                        <dd class="govuk-summary-list__value">@{
+                            repaymentHistoryModel.repaymentsViewerDetails.head.amountRequested.toCurrencyString
+                        }</dd>
+                    </div>
+                }
                 <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key">@messages("refund-to-taxpayer.tableHead.refund-amount")</dt>
                     <dd class="govuk-summary-list__value">@{
