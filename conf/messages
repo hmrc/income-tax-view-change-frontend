@@ -13,7 +13,6 @@ base.error_summary.heading                                      = There is a pro
 base.error-prefix                                               = Error:
 base.govUk                                                      = GOV.UK
 
-
 # Fallback Back Links
 back.whatYouOwe = Back to What You Owe
 back.paymentHistory = Back to Payment History
@@ -117,7 +116,6 @@ home.your-returns.updatesLink                                   = Update and sub
 home.returns.viewLink                                           = View your current {0} to {1} return
 home.self-assessment.description                                = Use this service to view your earlier tax year information before you signed up for Making Tax Digital for Income Tax.
 home.credAndRefund.view                                         = Claim a refund
-home.credAndRefund_howToClaim.view                              = How to claim a refund
 
 home.overdue.message.dunningLock.true                           = You have overdue payments and one or more of your tax decisions are being reviewed. You may be charged interest on these until they are paid in full.
 home.overdue.message.dunningLock.false                          = You have overdue payments. You may be charged interest on these until they are paid in full.
@@ -744,7 +742,6 @@ paymentHistory.paymentToHmrc                                    = Payment made t
 paymentHistory.paymentFromEarlierYear                           = Payment from an earlier tax year
 paymentHistory.mfaCredit                                        = Credit from HMRC adjustment
 paymentsHistory.CardRef                                         = Payment made by debit card ref:
-paymentHistory.refund                                           = Refund
 paymentHistory.table.header.date                                = Date
 paymentHistory.table.header.description                         = Description
 paymentHistory.table.header.amount                              = Amount
