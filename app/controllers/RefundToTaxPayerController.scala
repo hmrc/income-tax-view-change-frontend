@@ -45,7 +45,6 @@ class RefundToTaxPayerController @Inject()(val refundToTaxPayerView: RefundToTax
                                            val retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                            val incomeSourceDetailsService: IncomeSourceDetailsService,
                                            val authorisedFunctions: AuthorisedFunctions,
-                                           auditingService: AuditingService,
                                            retrieveBtaNavBar: NavBarPredicate,
                                            itvcErrorHandler: ItvcErrorHandler)
                                           (implicit mcc: MessagesControllerComponents,

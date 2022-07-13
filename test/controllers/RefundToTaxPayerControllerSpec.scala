@@ -96,7 +96,6 @@ class RefundToTaxPayerControllerSpec extends MockAuthenticationPredicate
       MockIncomeSourceDetailsPredicate,
       mockIncomeSourceDetailsService,
       mockAuthService,
-      mockAuditingService,
       app.injector.instanceOf[NavBarPredicate],
       app.injector.instanceOf[ItvcErrorHandler]
     )(app.injector.instanceOf[MessagesControllerComponents],
