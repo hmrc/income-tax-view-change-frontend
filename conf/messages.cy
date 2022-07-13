@@ -517,7 +517,7 @@ whatYouOwe.payment-days-note                                    = Gall gymryd hy
 whatYouOwe.credit-on-account                                    = Os ydych yn gwneud taliad fwy na 30 diwrnod cyn bod taliad yn ddyledus, byddwch yn ei weld fel credyd ar gyfrif.
 whatYouOwe.payNow                                               = Gwneud taliad
 whatYouOwe.pay-now-aria                                         = Talu nawr ar gyfer Blwyddyn dreth  {0} i {1}
-whatYouOwe.pre-mtd-year                                         = {0} i {1} ar %
+whatYouOwe.pre-mtd-year                                         = {0} i {1}
 whatYouOwe.pre-mtd-digital                                      = (Cyn y cynllun Troi Treth yn Ddigidol)
 whatYouOwe.tableHead.due-date                                   = Dyddiad dyledus
 whatYouOwe.tableHead.payment-type                               = Math o daliad
@@ -569,7 +569,7 @@ whatYouOwe.dunningLock.link                                     = bod apêl ar y
 whatYouOwe.credit-overpaid-prefix                               = Mae gennych
 whatYouOwe.credit-overpaid-amount                               = {0} yn eich cyfrif
 whatYouOwe.unallocated-credit-note                              = . Byddwn yn defnyddio hwn i dalu'r symiau sy'n ddyledus ar y dyddiad dyledus nesaf.
-whatYouOwe.tax-year-summary.taxYear                             = {0} to {1} ar %
+whatYouOwe.tax-year-summary.taxYear                             = {0} to {1}
 
 ## Charge Summary ##
 chargeSummary.paymentOnAccount1.text                            = Taliad ar gyfrif 1 o 2
