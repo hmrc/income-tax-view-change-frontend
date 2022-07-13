@@ -18,6 +18,8 @@ package models.financialDetails
 
 import play.api.libs.json.{Format, Json}
 
+import java.time.LocalDate
+
 
 
 sealed trait PaymentsResponse
@@ -39,8 +41,8 @@ case class Payment(reference: Option[String],
                    documentDescription: Option[String],
                    lot: Option[String],
                    lotItem: Option[String],
-                   dueDate: Option[String],
-                   documentDate: String,
+                   dueDate: Option[LocalDate], //TODO
+                   documentDate: LocalDate, //TODO
                    transactionId: Option[String]) {
 
   def credit: Option[BigDecimal] = amount match {

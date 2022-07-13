@@ -24,7 +24,8 @@ import testOnly.views.html.TestBTAPartial
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class TestBTAPartialController @Inject()(testBTAPartial: TestBTAPartial)
+class
+TestBTAPartialController @Inject()(testBTAPartial: TestBTAPartial)
                                         (implicit mcc: MessagesControllerComponents,
                                          val executionContext: ExecutionContext) extends BaseController {
 

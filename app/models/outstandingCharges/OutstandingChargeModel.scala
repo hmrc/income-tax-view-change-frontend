@@ -17,9 +17,10 @@
 package models.outstandingCharges
 
 import play.api.libs.json.{Format, Json}
+import java.time.LocalDate
 
 case class OutstandingChargeModel(chargeName: String,
-                                  relevantDueDate: Option[String],
+                                  relevantDueDate: Option[LocalDate], //TODO
                                   chargeAmount: BigDecimal,
                                   tieBreaker: Int
                                  )

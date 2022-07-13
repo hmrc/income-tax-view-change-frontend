@@ -18,11 +18,12 @@ package models.financialDetails
 
 import models.financialDetails.FinancialDetail.Types._
 import play.api.libs.json.{Format, Json}
+import java.time.LocalDate
 
 case class FinancialDetail(taxYear: String,
                            mainType: Option[String] = None,
                            transactionId: Option[String] = None,
-                           transactionDate: Option[String] = None,
+                           transactionDate: Option[LocalDate] = None, //TODO
                            `type`: Option[String] = None,
                            totalAmount: Option[BigDecimal] = None,
                            originalAmount: Option[BigDecimal] = None,
