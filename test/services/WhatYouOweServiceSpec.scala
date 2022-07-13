@@ -17,7 +17,7 @@
 package services
 
 import auth.MtdItUser
-import config.featureswitch.{CodingOut, FeatureSwitching}
+import config.featureswitch.{CodingOut, FeatureSwitching, MFACreditsAndDebits}
 import connectors.IncomeTaxViewChangeConnector
 import models.financialDetails._
 import models.outstandingCharges.{OutstandingChargesErrorModel, OutstandingChargesModel}
@@ -324,6 +324,39 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
 
         result shouldBe an[Exception]
         result.getMessage shouldBe "[WhatYouOweService][getCreditCharges] Error response while getting Unpaid financial details"
+      }
+    }
+  }
+
+  "WhatYouOweService.validChargeType val" should {
+    val mfaDebitsDocumentDescriptions = List("ITSA PAYE Charge", "ITSA Calc Error Correction", "ITSA Manual Penalty Pre CY-4", "ITSA Misc Charge")
+    val nonMfaDebitsDocumentDescriptions = List("ITSA- POA 1", "ITSA - POA 2", "TRM New Charge", "TRM Amend Charge")
+    "accept MFA debits document descriptions" when {
+      "MFA Credits and Debits is enabled" in {
+        enable(MFACreditsAndDebits)
+        mfaDebitsDocumentDescriptions.forall(dd =>
+          TestWhatYouOweService.validChargeTypeCondition(dd)) shouldBe true
+      }
+    }
+    "accept non-MFA debits document descriptions" when {
+      "MFA Credits and Debits is enabled" in {
+        enable(MFACreditsAndDebits)
+        nonMfaDebitsDocumentDescriptions.forall(dd =>
+          TestWhatYouOweService.validChargeTypeCondition(dd)) shouldBe true
+      }
+    }
+    "reject MFA debits document descriptions" when {
+      "MFA Credits and Debits is disabled" in {
+        disable(MFACreditsAndDebits)
+        mfaDebitsDocumentDescriptions.forall(dd =>
+          TestWhatYouOweService.validChargeTypeCondition(dd)) shouldBe false
+      }
+    }
+    "accept non-MFA debits document descriptions" when {
+      "MFA Credits and Debits is disabled" in {
+        disable(MFACreditsAndDebits)
+        nonMfaDebitsDocumentDescriptions.forall(dd =>
+          TestWhatYouOweService.validChargeTypeCondition(dd)) shouldBe true
       }
     }
   }
