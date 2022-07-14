@@ -154,10 +154,8 @@ case class DocumentDetail(taxYear: String,
   def getChargeTypeKey(codedOutEnabled: Boolean = false): String = documentDescription match {
     case Some("ITSA- POA 1") => "paymentOnAccount1.text"
     case Some("ITSA - POA 2") => "paymentOnAccount2.text"
-    case Some("ITSA PAYE Charge") => "hmrcAdjustment"
-    case Some("ITSA Calc Error Correction") => "hmrcAdjustment"
-    case Some("ITSA Manual Penalty Pre CY-4") => "hmrcAdjustment"
-    case Some("ITSA Misc Charge") => "hmrcAdjustment"
+    case Some("ITSA PAYE Charge") | Some("ITSA Calc Error Correction") | Some("ITSA Manual Penalty Pre CY-4") |
+         Some("ITSA Misc Charge") => "hmrcAdjustment"
     case Some("TRM New Charge") | Some("TRM Amend Charge") => (codedOutEnabled, isClass2Nic, isPayeSelfAssessment, isCancelledPayeSelfAssessment) match {
       case (true, true, false, false) => "class2Nic.text"
       case (true, false, true, false) => "codingOut.text"
@@ -169,8 +167,13 @@ case class DocumentDetail(taxYear: String,
       "unknownCharge"
   }
 
-  def validMFACreditDescription() : Boolean = MfaCreditUtils.validMFACreditDescription(this.documentDescription)
+  def validMFACreditDescription(): Boolean = MfaCreditUtils.validMFACreditDescription(this.documentDescription)
 
+  def isMFADebit(): Boolean = documentDescription match {
+    case Some("ITSA PAYE Charge") | Some("ITSA Calc Error Correction") |
+         Some("ITSA Manual Penalty Pre CY-4") | Some("ITSA Misc Charge") => true
+    case _ => false
+  }
 }
 
 case class DocumentDetailWithDueDate(documentDetail: DocumentDetail, dueDate: Option[LocalDate],
