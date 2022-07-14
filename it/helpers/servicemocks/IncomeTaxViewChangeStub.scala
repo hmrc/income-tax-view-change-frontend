@@ -22,7 +22,7 @@ import models.core.{Nino, NinoResponseError, NinoResponseSuccess}
 import models.financialDetails.Payment
 import models.incomeSourceDetails.IncomeSourceDetailsResponse
 import models.nextUpdates.ObligationsModel
-import models.repaymentHistory.{RepaymentHistoryModel, RepaymentHistoryResponseModel}
+import models.repaymentHistory.RepaymentHistoryModel
 import play.api.http.Status
 import play.api.libs.json.{JsValue, Json}
 

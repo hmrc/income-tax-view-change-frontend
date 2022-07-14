@@ -72,7 +72,7 @@ class RefundToTaxPayerControllerISpec extends ComponentSpecBase {
   )
 
   val repaymentRequestNumber: String = "023942042349"
-  val testNino: String = "AB123456C"
+  val testNino: String = "AA123456A"
 
   val testUser: MtdItUser[_] = MtdItUser(
     testMtditid, testNino, None, paymentHistoryBusinessAndPropertyResponse,
@@ -86,7 +86,6 @@ class RefundToTaxPayerControllerISpec extends ComponentSpecBase {
         stubUserDetails()
         enable(PaymentHistoryRefunds)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, paymentHistoryBusinessAndPropertyResponse)
-        IncomeTaxViewChangeStub.stubGetRepaymentHistoryByRepaymentId(Nino(testNino), repaymentRequestNumber)(OK, testRepaymentHistoryModel)
 
         val result: WSResponse = IncomeTaxViewChangeFrontend.getPaymentHistory
 
