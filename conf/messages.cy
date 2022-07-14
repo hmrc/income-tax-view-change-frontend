@@ -721,6 +721,7 @@ paymentHistory.info.2                                           = Bydd hwn yn Dd
 paymentHistory.textLink1                                        = gwasanaeth Hunanasesiad arferol
 paymentHistory.button                                           = Taliadau {0}
 paymentsHistory.CardRef                                         = Cyfeirnod ar gyfer taliad a wnaed drwy gerdyn debyd:
+paymentHistory.refund                                           = Ad-daliad
 paymentHistory.paymentToHmrc                                    = Taliad a wnaed i CThEM
 paymentHistory.paymentFromEarlierYear                           = Taliad o flwyddyn dreth gynharach
 paymentHistory.mfaCredit                                        = Credyd o addasiad gan CThEM
