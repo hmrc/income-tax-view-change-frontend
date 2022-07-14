@@ -23,7 +23,7 @@ import java.time.LocalDate
 case class TotalInterest(fromDate: LocalDate, fromRate: BigDecimal,
                          toDate: LocalDate, toRate: BigDecimal,
                          total: BigDecimal)
-//TODO CHECK
+
 case class RepaymentHistory(amountApprovedforRepayment: Option[BigDecimal],
                             amountRequested: BigDecimal,
                             repaymentMethod: String,

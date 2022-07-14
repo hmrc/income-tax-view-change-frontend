@@ -41,8 +41,8 @@ case class Payment(reference: Option[String],
                    documentDescription: Option[String],
                    lot: Option[String],
                    lotItem: Option[String],
-                   dueDate: Option[LocalDate], //TODO
-                   documentDate: LocalDate, //TODO
+                   dueDate: Option[LocalDate],
+                   documentDate: LocalDate,
                    transactionId: Option[String]) {
 
   def credit: Option[BigDecimal] = amount match {

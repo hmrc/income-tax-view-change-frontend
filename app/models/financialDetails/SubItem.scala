@@ -21,12 +21,12 @@ import play.api.Logger
 import java.time.LocalDate
 
 
-case class SubItem(dueDate: Option[LocalDate] = None, //TODO
+case class SubItem(dueDate: Option[LocalDate] = None,
                    subItemId: Option[String] = None,
                    amount: Option[BigDecimal] = None,
                    dunningLock: Option[String] = None,
                    interestLock: Option[String] = None,
-                   clearingDate: Option[LocalDate] = None, //TODO
+                   clearingDate: Option[LocalDate] = None,
                    clearingReason: Option[String] = None,
                    outgoingPaymentMethod: Option[String] = None,
                    paymentReference: Option[String] = None,

@@ -23,7 +23,7 @@ import java.time.LocalDate
 
 case class ChargeHistoryModel(taxYear: String,
                               documentId: String,
-                              documentDate: LocalDate, //TODO
+                              documentDate: LocalDate,
                               documentDescription: String,
                               totalAmount: BigDecimal,
                               reversalDate: LocalDate,

@@ -18,7 +18,7 @@ package models.repaymentHistory
 
 import java.time.LocalDate
 
-case class PaymentHistoryEntry(date: LocalDate, //TODO
+case class PaymentHistoryEntry(date: LocalDate,
                                description: String,
                                amount: Option[BigDecimal],
                                transactionId: Option[String] = None,

@@ -20,7 +20,7 @@ import play.api.libs.json.{Format, Json}
 import java.time.LocalDate
 
 case class OutstandingChargeModel(chargeName: String,
-                                  relevantDueDate: Option[LocalDate], //TODO
+                                  relevantDueDate: Option[LocalDate],
                                   chargeAmount: BigDecimal,
                                   tieBreaker: Int
                                  )

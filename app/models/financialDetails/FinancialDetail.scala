@@ -23,7 +23,7 @@ import java.time.LocalDate
 case class FinancialDetail(taxYear: String,
                            mainType: Option[String] = None,
                            transactionId: Option[String] = None,
-                           transactionDate: Option[LocalDate] = None, //TODO
+                           transactionDate: Option[LocalDate] = None,
                            `type`: Option[String] = None,
                            totalAmount: Option[BigDecimal] = None,
                            originalAmount: Option[BigDecimal] = None,
