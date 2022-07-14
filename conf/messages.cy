@@ -159,6 +159,7 @@ tax-year-summary.payments.lpi.paymentOnAccount1.text           = Llog am dalu’
 tax-year-summary.payments.lpi.paymentOnAccount2.text           = Llog am dalu’n hwyr ar gyfer taliad ar gyfrif 2 o 2
 tax-year-summary.payments.lpi.balancingCharge.text             = Llog am dalu’n hwyr ar gyfer y Taliad Mantoli
 tax-year-summary.payments.cancelledPayeSelfAssessment.text     = Cancelled Self Assessment payment (through your PAYE tax code)
+tax-year-summary.payments.hmrcAdjustment                       = Addasiad CThEM
 tax-year-summary.payments.overdue                              = Yn hwyr
 tax-year-summary.payments.no-payments                          = Dim taliadau’n ddyledus ar hyn o bryd.
 tax-year-summary.forecast_tab.insetText                        = Amcangyfrif yw hwn o’ch bil treth ar gyfer y flwyddyn gyfan hyd at 5 Ebrill {0}. Bydd hyn yn cael ei ddiweddaru drwy gydol y flwyddyn wrth i ni gael rhagor o wybodaeth.

@@ -177,7 +177,7 @@ tax-year-summary.payments.lpi.paymentOnAccount1.text               = Late paymen
 tax-year-summary.payments.lpi.paymentOnAccount2.text               = Late payment interest for payment on account 2 of 2
 tax-year-summary.payments.lpi.balancingCharge.text                 = Late payment interest for Balancing payment
 tax-year-summary.payments.cancelledPayeSelfAssessment.text         = Cancelled Self Assessment payment (through your PAYE tax code)
-
+tax-year-summary.payments.hmrcAdjustment                           = HMRC adjustment
 tax-year-summary.payments.overdue                                  = Overdue
 tax-year-summary.payments.no-payments                              = No payments currently due.
 tax-year-summary.payments.paymentUnderReview                       = Payment under review
