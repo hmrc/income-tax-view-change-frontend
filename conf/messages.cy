@@ -492,6 +492,24 @@ credits.table.status-fully-allocated                            = Wedi ei ddyran
 credits.table.status-not-yet-allocated                          = Heb ei ddyrannu eto
 credits.table.status-partially-allocated                        = Wedi ei ddyrannu’n rhannol
 
+## Refund to taxpayer page ##
+refund-to-taxpayer.heading                                      = Ad-daliad i’r trethdalwr
+refund-to-taxpayer.tableHead.estimated-date                     = Amcan o’r dyddiad
+refund-to-taxpayer.tableHead.method                             = Dull
+refund-to-taxpayer.tableHead.total-refund                       = Cyfanswm yr ad-daliad
+refund-to-taxpayer.tableHead.further-details                    = Manylion pellach
+refund-to-taxpayer.tableHead.requested-on                       = Gofynnwyd amdano ar
+refund-to-taxpayer.tableHead.refund-reference                   = Cyfeirnod yr ad-daliad
+refund-to-taxpayer.tableHead.requested-amount                   = Y swm y gofynnir amdano
+refund-to-taxpayer.tableHead.refund-amount                      = Swm yr ad-daliad
+refund-to-taxpayer.tableHead.interest                           = Llog
+refund-to-taxpayer.tableHead.interest-value                     = {0} i {1} ar {2}%
+refund-to-taxpayer.tableHead.total-interest                     = Cyfanswm y llog
+refund-to-taxpayer.tableHead.varied-interest-rates-value        = Roedd y gyfradd llog yn amrywio rhwng {0}% a {1}% o {2} and {3}
+refund-to-taxpayer.method-type-bacs                             = Bacs
+refund-to-taxpayer.method-type-card                             = Cerdyn
+refund-to-taxpayer.method-type-postal-order                     = Archeb Bost
+
 ## Payment Due Page ##
 paymentDue.heading                                              = Taliadau treth incwm
 paymentDue.description                                          = Os ydych wedi gwneud taliad yn ystod y 7 diwrnod diwethaf, mae’n bosibl na fydd y symiau a ddangosir yma yn gywir.

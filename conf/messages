@@ -415,6 +415,24 @@ credits.table.status-fully-allocated                            = Fully allocate
 credits.table.status-not-yet-allocated                          = Not yet allocated
 credits.table.status-partially-allocated                        = Partially allocated
 
+## Refund to taxpayer page ##
+refund-to-taxpayer.heading                                      = Refund to taxpayer
+refund-to-taxpayer.tableHead.estimated-date                     = Estimated date
+refund-to-taxpayer.tableHead.method                             = Method
+refund-to-taxpayer.tableHead.total-refund                       = Total refund
+refund-to-taxpayer.tableHead.further-details                    = Further details
+refund-to-taxpayer.tableHead.requested-on                       = Requested on
+refund-to-taxpayer.tableHead.refund-reference                   = Refund reference
+refund-to-taxpayer.tableHead.requested-amount                   = Requested amount
+refund-to-taxpayer.tableHead.refund-amount                      = Refund amount
+refund-to-taxpayer.tableHead.interest                           = Interest
+refund-to-taxpayer.tableHead.interest-value                     = {0} to {1} at {2}%
+refund-to-taxpayer.tableHead.total-interest                     = Total interest
+refund-to-taxpayer.tableHead.varied-interest-rates-value        = Rate of interest varied between {0}% and {1}% from {2} and {3}
+refund-to-taxpayer.method-type-bacs                             = Bacs
+refund-to-taxpayer.method-type-card                             = Card
+refund-to-taxpayer.method-type-postal-order                     = Postal Order
+
 
 ## Previous Obligations ##
 previous-obligations.no-previous-obligations                    = No previously submitted updates

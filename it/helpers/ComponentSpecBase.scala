@@ -201,6 +201,8 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
     def getCreditsSummary(calendarYear: String): WSResponse = get(s"/credits-from-hmrc/$calendarYear")
 
+    def getRefundToTaxPayer(repaymentRequestNumber: String): WSResponse = get(s"/refund-to-taxpayer/$repaymentRequestNumber ")
+
   }
 
   def unauthorisedTest(uri: String): Unit = {
