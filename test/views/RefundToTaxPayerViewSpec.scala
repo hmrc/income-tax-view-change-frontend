@@ -50,9 +50,6 @@ class RefundToTaxPayerViewSpec extends ViewSpec with ImplicitDateFormatter {
     val tableHeadTotalInterest: String = messages("refund-to-taxpayer.tableHead.total-interest")
     val variedInterest: String = s"${messages("refund-to-taxpayer.tableHead.total-interest")} ${messages("refund-to-taxpayer.tableHead.varied-interest-rates-value", "1.76", "2.01", "31 July 2021", "30 November 2021")}"
 
-    // todo check if it's needed
-    //    val partialH2Heading = "payments"
-    //    val saLink: String = s"${messages("whatYouOwe.sa-link")}${messages("pagehelp.opensInNewTabText")}"
   }
 
   val testRepaymentHistoryModel: RepaymentHistoryModel = RepaymentHistoryModel(
@@ -105,8 +102,6 @@ class RefundToTaxPayerViewSpec extends ViewSpec with ImplicitDateFormatter {
   class RefundToTaxPayerViewSetup(testRepaymentHistoryModel: RepaymentHistoryModel, saUtr: Option[String] = Some("AY888881A"), isAgent: Boolean = false) extends Setup(
     refundToTaxPayerView(testRepaymentHistoryModel, paymentHistoryRefundsEnabled = false, "testBackURL", saUtr, isAgent = isAgent)(FakeRequest(), implicitly)
   )
-
-  //  val paymentHistoryMessageInfo = s"${messages("paymentHistory.info")} ${messages("taxYears.oldSa.agent.content.2")}${messages("pagehelp.opensInNewTabText")}. ${messages("paymentHistory.info.2")}"
 
   "The refund to tax payer view with repayment history response model" should {
     "when the user has repayment history" should {
