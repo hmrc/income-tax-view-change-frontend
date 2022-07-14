@@ -42,6 +42,11 @@ class RefundToTaxPayerControllerSpec extends MockAuthenticationPredicate
     super.beforeEach()
   }
 
+  override def afterEach(): Unit = {
+    super.afterEach()
+    disable(PaymentHistoryRefunds)
+  }
+
   val repaymentRequestNumber: String = "023942042349"
   val testNino: String = "AB123456C"
 
@@ -85,7 +90,7 @@ class RefundToTaxPayerControllerSpec extends MockAuthenticationPredicate
     )
   )
 
-  trait Setup {
+  trait Test {
 
     val controller = new RefundToTaxPayerController(
       refundToTaxPayerView,
@@ -108,7 +113,7 @@ class RefundToTaxPayerControllerSpec extends MockAuthenticationPredicate
   "The RefundToTaxPayerController.show function" when {
 
     "obtaining a users repayments when PaymentHistoryRefunds FS is on" should {
-      "send the user to the refund to tax payer page with data" in new Setup {
+      "send the user to the refund to tax payer page with data" in new Test {
         enable(PaymentHistoryRefunds)
         mockSingleBusinessIncomeSource()
         setupGetRepaymentHistoryByRepaymentId(testNino, repaymentRequestNumber)(testRepaymentHistoryModel)
@@ -131,7 +136,8 @@ class RefundToTaxPayerControllerSpec extends MockAuthenticationPredicate
     }
 
     "Failing to retrieve a user's re-payments history" should {
-      "send the user to the internal service error page" in new Setup {
+      "send the user to the internal service error page" in new Test {
+        enable(PaymentHistoryRefunds)
         mockSingleBusinessIncomeSource()
         setupGetRepaymentHistoryByRepaymentIdError(testNino, repaymentRequestNumber)(RepaymentHistoryErrorModel(404, "Not found"))
 
@@ -143,7 +149,7 @@ class RefundToTaxPayerControllerSpec extends MockAuthenticationPredicate
     }
 
     "Failing to retrieve income sources" should {
-      "send the user to internal server error page" in new Setup {
+      "send the user to internal server error page" in new Test {
         mockErrorIncomeSource()
 
         val result: Future[Result] = controller.show(repaymentRequestNumber)(fakeRequestWithActiveSession)
@@ -153,7 +159,7 @@ class RefundToTaxPayerControllerSpec extends MockAuthenticationPredicate
     }
 
     "User fails to be authorised" should {
-      "redirect the user to the login page" in new Setup {
+      "redirect the user to the login page" in new Test {
         setupMockAuthorisationException()
 
         val result: Future[Result] = controller.show(repaymentRequestNumber)(fakeRequestWithActiveSession)
@@ -166,7 +172,7 @@ class RefundToTaxPayerControllerSpec extends MockAuthenticationPredicate
 
   "PaymentHistoryRefunds feature switch is disabled" should {
     "not obtaining a users repayments" should {
-      "redirect the user to the home page" in new Setup {
+      "redirect the user to the home page" in new Test {
         disable(PaymentHistoryRefunds)
         mockSingleBusinessIncomeSource()
 
@@ -183,7 +189,7 @@ class RefundToTaxPayerControllerSpec extends MockAuthenticationPredicate
   "The RefundToTaxPayerController.showAgent function" when {
 
     "obtaining a users repayments when PaymentHistoryRefunds FS is on" should {
-      "send the user to the refund to tax payer page with data" in new Setup {
+      "send the user to the refund to tax payer page with data" in new Test {
         enable(PaymentHistoryRefunds)
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         mockSingleBusinessIncomeSource()
@@ -207,7 +213,7 @@ class RefundToTaxPayerControllerSpec extends MockAuthenticationPredicate
     }
 
     "Failing to retrieve a user's payments" should {
-      "send the user to the internal service error page" in new Setup {
+      "send the user to the internal service error page" in new Test {
         enable(PaymentHistoryRefunds)
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         mockErrorIncomeSource()
@@ -219,7 +225,7 @@ class RefundToTaxPayerControllerSpec extends MockAuthenticationPredicate
     }
 
     "Failing to retrieve income sources" should {
-      "send the user to internal server error page" in new Setup {
+      "send the user to internal server error page" in new Test {
         enable(PaymentHistoryRefunds)
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         mockErrorIncomeSource()
@@ -229,7 +235,7 @@ class RefundToTaxPayerControllerSpec extends MockAuthenticationPredicate
       }
     }
 
-    "User fails to be authorised" in new Setup {
+    "User fails to be authorised" in new Test {
       enable(PaymentHistoryRefunds)
       setupMockAgentAuthorisationException(withClientPredicate = false)
 
@@ -238,5 +244,4 @@ class RefundToTaxPayerControllerSpec extends MockAuthenticationPredicate
       status(result) shouldBe Status.SEE_OTHER
     }
   }
-
 }
