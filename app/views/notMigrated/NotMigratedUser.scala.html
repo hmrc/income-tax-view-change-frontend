@@ -1,0 +1,71 @@
+@*
+ * Copyright 2022 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import config.FrontendAppConfig
+@import views.html.layouts.unifiedLayout
+@import views.html.components._
+
+
+@this(mainTemplate: unifiedLayout,
+    appConfig: FrontendAppConfig,
+    h1: h1,
+    link: link,
+    p: p)
+
+
+@(isAgent: Boolean,
+        backUrl: String)(
+        implicit messages: Messages,
+        user: auth.MtdItUser[_])
+
+@mainTemplate(
+    pageTitle = messages("notmigrated.user.heading"),
+    backUrl = Some(backUrl),
+    isAgent = isAgent,
+    btaNavPartial = user.btaNavPartial
+) {
+    @if(isAgent) {
+        <div class="grid-row">
+            <div class="column-two-thirds">
+                <br/>
+                <h1 class="govuk-heading-xl">@messages("notmigrated.user.heading")</h1>
+                @p() {
+                    @messages("notmigrated.agent.content")
+                    @link(
+                        link = controllers.routes.NotMigratedUserController.redirectAgent().url,
+                        messageKey = messages("notmigrated.agent.link_title"),
+                        outerMessage = ".", rel = Some ("noreferrer noopener"), target = Some ("_blank")
+                    )
+                    @messages("notmigrated.agent.content_extra")
+            }
+            </div>
+        </div>
+    } else {
+        <div class="grid-row">
+            <div class="column-two-thirds">
+            <br/>
+            <h1 class="govuk-heading-xl">@messages("notmigrated.user.heading")</h1>
+            @p() {
+                @messages("notmigrated.user.content")
+                @link(
+                    link = controllers.routes.NotMigratedUserController.redirect().url,
+                    messageKey = messages("notmigrated.user.link_title"),
+                    outerMessage = ".", rel = Some ("noreferrer noopener"), target = Some ("_blank") )
+            }
+            </div>
+        </div>
+    }
+}

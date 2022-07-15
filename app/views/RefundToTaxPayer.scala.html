@@ -1,0 +1,137 @@
+@*
+ * Copyright 2022 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import models.financialDetails.Payment
+@import java.time.LocalDate
+@import _root_.implicits.ImplicitCurrencyFormatter._
+@import _root_.implicits.ImplicitDateFormatter
+@import _root_.implicits.ImplicitDateFormatterImpl
+@import models.repaymentHistory.RepaymentHistoryModel
+@import models.repaymentHistory.TotalInterest
+@import exceptions.MissingFieldException
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+
+@import views.html.layouts.unifiedLayout
+@import views.html.components._
+
+@this(
+        mainTemplate: unifiedLayout,
+        appConfig: config.FrontendAppConfig,
+        implicitDateFormatter: ImplicitDateFormatterImpl,
+        h1: h1,
+        p: p,
+        link: link,
+        govukAccordion: GovukAccordion,
+        govukDetails: GovukDetails,
+        govukSummaryList: GovukSummaryList
+)
+
+@(repaymentHistoryModel: RepaymentHistoryModel, paymentHistoryRefundsEnabled: Boolean, backUrl: String, saUtr: Option[String], isAgent: Boolean = false,
+        btaNavPartial: Option[Html] = None, origin: Option[String] = None)(implicit request: Request[_], messages: Messages)
+@import implicitDateFormatter.longDate
+
+@headingContent(year: Int) = {
+    <span id="accordion-with-summary-sections-heading-@year">
+    @messages("paymentHistory.button", year.toString)
+    </span>
+    }
+
+@getInterestContent(repaymentHistoryModel: RepaymentHistoryModel) = @{
+    repaymentHistoryModel.repaymentsViewerDetails.head.aggregate.getOrElse(throw MissingFieldException("Total Interest Item"))
+}
+
+@mainTemplate(
+    pageTitle = messages("refund-to-taxpayer.heading"),
+    backUrl = Some(backUrl),
+    isAgent = isAgent,
+    btaNavPartial = btaNavPartial,
+    useFallbackBackLink = true
+) {
+
+    @h1(msg = "refund-to-taxpayer.heading")
+
+    <dl class="govuk-summary-list" id="refund-to-taxpayer-table">
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key" style="width:70%">@messages("refund-to-taxpayer.tableHead.estimated-date")</dt>
+            <dd class="govuk-summary-list__value">@{
+                repaymentHistoryModel.repaymentsViewerDetails.head.estimatedRepaymentDate.toLongDate
+            }</dd>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">@messages("refund-to-taxpayer.tableHead.method")</dt>
+            <dd class="govuk-summary-list__value">@{
+                repaymentHistoryModel.repaymentsViewerDetails.head.repaymentMethod
+            }</dd>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">@messages("refund-to-taxpayer.tableHead.total-refund")</dt>
+            <dd class="govuk-summary-list__value">@{
+                repaymentHistoryModel.repaymentsViewerDetails.head.totalRepaymentAmount.toCurrencyString
+            }</dd>
+        </div>
+    </dl>
+    <details class="govuk-details" data-module="govuk-details">
+        <summary class="govuk-details__summary">
+            <span class="govuk-details__summary-text">
+            @messages("refund-to-taxpayer.tableHead.further-details")
+            </span>
+        </summary>
+        <div class="govuk-details__text">
+            <dl class="govuk-summary-list" id="refund-to-taxpayer-table-under-details">
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key" style="width:70%">@messages("refund-to-taxpayer.tableHead.requested-on")</dt>
+                    <dd class="govuk-summary-list__value">@{
+                        repaymentHistoryModel.repaymentsViewerDetails.head.creationDate.toLongDate
+                    }</dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">@messages("refund-to-taxpayer.tableHead.refund-reference")</dt>
+                    <dd class="govuk-summary-list__value">@{
+                        repaymentHistoryModel.repaymentsViewerDetails.head.repaymentRequestNumber
+                    }</dd>
+                </div>
+                @if(repaymentHistoryModel.repaymentsViewerDetails.head.amountApprovedforRepayment.isEmpty || repaymentHistoryModel.repaymentsViewerDetails.head.amountRequested.toCurrencyString != repaymentHistoryModel.repaymentsViewerDetails.head.amountApprovedforRepayment.getOrElse(throw MissingFieldException("Requested Amount Item")).toCurrencyString) {
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">@messages("refund-to-taxpayer.tableHead.requested-amount")</dt>
+                        <dd class="govuk-summary-list__value">@{
+                            repaymentHistoryModel.repaymentsViewerDetails.head.amountRequested.toCurrencyString
+                        }</dd>
+                    </div>
+                }
+                @if(repaymentHistoryModel.repaymentsViewerDetails.head.amountApprovedforRepayment.isDefined) {
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">@messages("refund-to-taxpayer.tableHead.refund-amount")</dt>
+                        <dd class="govuk-summary-list__value">@{
+                            repaymentHistoryModel.repaymentsViewerDetails.head.amountApprovedforRepayment.getOrElse(throw MissingFieldException("Refund Amount Item")).toCurrencyString
+                        }</dd>
+                    </div>
+                }
+                @if(repaymentHistoryModel.repaymentsViewerDetails.head.aggregate.isDefined) {
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key govuk-!-width-three-quarters">@messages("refund-to-taxpayer.tableHead.total-interest")
+                            @p(id = Some("refund-to-taxpayer-interests")) {
+                                @messages("refund-to-taxpayer.tableHead.varied-interest-rates-value", getInterestContent(repaymentHistoryModel).fromRate, getInterestContent(repaymentHistoryModel).toRate, getInterestContent(repaymentHistoryModel).fromDate.toLongDate, getInterestContent(repaymentHistoryModel).toDate.toLongDate)
+                            }
+                        </dt>
+                        <dd class="govuk-summary-list__value govuk-!-text-align-left">@{
+                            getInterestContent(repaymentHistoryModel).total.toCurrencyString
+                        }</dd>
+                    </div>
+                }
+            </dl>
+        </div>
+    </details>
+}

@@ -244,7 +244,7 @@ forecast_income.source_types.13                                = Share schemes
 forecast_income.source_types.15                                = Profit from overseas property
 forecast_income.source_types.16                                = Interest from overseas
 forecast_income.source_types.17                                = Other Dividends
-forecast_income.source_types.18                                = UK Securities
+forecast_income.source_types.18                                = UK securities
 forecast_income.source_types.19                                = Other Income
 forecast_income.source_types.20                                = Overseas pension
 forecast_income.source_types.98                                = Gift Aid and Payroll Giving
@@ -312,7 +312,7 @@ taxCal_breakdown.table.head.rates.uk                                = UK rates f
 taxCal_breakdown.table.head.rates.scotland                          = UK rates for Scotland
 
 taxCal_breakdown.table.cgt.taxable_capital_gains                    = Taxable Capital Gains
-taxCal_breakdown.table.cgt.assets_or_investors_relief.band.single   = Business Asset Disposal Relief and or Investors’ Relief gains ({0} at {1}%)
+taxCal_breakdown.table.cgt.assets_or_investors_relief.band.single   = Business Asset Disposal Relief or Investors’ Relief gains (or both) ({0} at {1}%)
 taxCal_breakdown.table.cgt.property_and_interest.band.lowerRate     = Residential property and carried interest basic rate ({0} at {1}%)
 taxCal_breakdown.table.cgt.property_and_interest.band.higherRate    = Residential property and carried interest higher rate ({0} at {1}%)
 taxCal_breakdown.table.cgt.other_gains.band.lowerRate               = Other gains basic rate ({0} at {1}%)
@@ -416,6 +416,24 @@ credits.tableHead.type.value                                    = Credit from HM
 credits.table.status-fully-allocated                            = Fully allocated
 credits.table.status-not-yet-allocated                          = Not yet allocated
 credits.table.status-partially-allocated                        = Partially allocated
+
+## Refund to taxpayer page ##
+refund-to-taxpayer.heading                                      = Refund to taxpayer
+refund-to-taxpayer.tableHead.estimated-date                     = Estimated date
+refund-to-taxpayer.tableHead.method                             = Method
+refund-to-taxpayer.tableHead.total-refund                       = Total refund
+refund-to-taxpayer.tableHead.further-details                    = Further details
+refund-to-taxpayer.tableHead.requested-on                       = Requested on
+refund-to-taxpayer.tableHead.refund-reference                   = Refund reference
+refund-to-taxpayer.tableHead.requested-amount                   = Requested amount
+refund-to-taxpayer.tableHead.refund-amount                      = Refund amount
+refund-to-taxpayer.tableHead.interest                           = Interest
+refund-to-taxpayer.tableHead.interest-value                     = {0} to {1} at {2}%
+refund-to-taxpayer.tableHead.total-interest                     = Total interest
+refund-to-taxpayer.tableHead.varied-interest-rates-value        = Rate of interest varied between {0}% and {1}% from {2} and {3}
+refund-to-taxpayer.method-type-bacs                             = Bacs
+refund-to-taxpayer.method-type-card                             = Card
+refund-to-taxpayer.method-type-postal-order                     = Postal Order
 
 
 ## Previous Obligations ##
@@ -846,7 +864,14 @@ language-switcher.welsh                                         = Cymraeg
 language-switcher.welsh.hidden                                  = Newid yr iaith ir Gymraeg
 language-switcher.nav                                           = Language switcher
 
-
 #technical helper
 getpagehelp.linkText                                            = Get help with this page
 pagehelp.opensInNewTabText                                      = ' (opens in new tab)'
+
+#Not migrated to ETMP
+notmigrated.user.heading                                        = How to claim a refund
+notmigrated.user.content                                        = To claim money that's in your account from earlier tax years (before you signed up to Making Tax Digital for Income Tax), you need to visit your earlier
+notmigrated.agent.content                                       = To claim money from earlier tax years (before your client signed up to Making Tax Digital for Income Tax), you need to visit your
+notmigrated.agent.content_extra                                 = This will be a different Government Gateway ID and password to your Agent Services account.
+notmigrated.user.link_title                                     = Self Assessment online account
+notmigrated.agent.link_title                                    = Self Assessment for Agents Account

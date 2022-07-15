@@ -60,21 +60,6 @@ class PaymentHistoryController @Inject()(val paymentHistoryView: PaymentHistory,
                                          implicit val appConfig: FrontendAppConfig) extends ClientConfirmedController
   with I18nSupport with FeatureSwitching with ImplicitDateFormatter {
 
-  private def groupedPayments(payments: List[PaymentHistoryEntry]): List[(Int, List[PaymentHistoryEntry])] = {
-    def sortPayments(payments: List[PaymentHistoryEntry]) = {
-      payments
-        .map(payment => (LocalDate.parse(payment.date).toEpochDay, payment))
-        .sortWith((left, right) => left._1 < right._1)
-        .map { case (_, payments) => payments }
-    }
-
-    payments.groupBy[Int] { payment => {
-      LocalDate.parse(payment.date).getYear
-    }
-    }.toList.sortBy(_._1).reverse
-      .map { case (year, payments) => (year, sortPayments(payments)) }
-  }
-
   def handleRequest(backUrl: String,
                     origin: Option[String] = None,
                     isAgent: Boolean,
@@ -91,10 +76,9 @@ class PaymentHistoryController @Inject()(val paymentHistoryView: PaymentHistory,
               auditingService.extendedAudit(PaymentHistoryResponseAuditModel(user, payments, R7bTxmEvents = isEnabled(R7bTxmEvents),
                 CutOverCreditsEnabled = CutOverCreditsEnabled,
                 MFACreditsEnabled = MFACreditsEnabled))
-              val paymentHistoryEntries = RepaymentHistoryUtils.combinePaymentHistoryData(payments, repayments, isAgent,
+              val paymentHistoryEntries = RepaymentHistoryUtils.getGroupedPaymentHistoryData(payments, repayments, isAgent,
                 MFACreditsEnabled = MFACreditsEnabled, CutOverCreditsEnabled = CutOverCreditsEnabled, languageUtils)
-              val groupedPaymentHistoryEntries = groupedPayments(paymentHistoryEntries)
-              Ok(paymentHistoryView(groupedPaymentHistoryEntries, backUrl, user.saUtr,
+              Ok(paymentHistoryView(paymentHistoryEntries, backUrl, user.saUtr,
                 btaNavPartial = user.btaNavPartial, isAgent = isAgent)
               ).addingToSession(gatewayPage -> PaymentHistoryPage.name)
             case Left(_) => itvcErrorHandler.showInternalServerError()
@@ -103,10 +87,9 @@ class PaymentHistoryController @Inject()(val paymentHistoryView: PaymentHistory,
           auditingService.extendedAudit(PaymentHistoryResponseAuditModel(user, payments, R7bTxmEvents = isEnabled(R7bTxmEvents),
             CutOverCreditsEnabled = CutOverCreditsEnabled,
             MFACreditsEnabled = MFACreditsEnabled))
-          val paymentHistoryEntries = RepaymentHistoryUtils.combinePaymentHistoryData(payments, List(), isAgent,
+          val paymentHistoryEntries = RepaymentHistoryUtils.getGroupedPaymentHistoryData(payments, List(), isAgent,
             MFACreditsEnabled = MFACreditsEnabled, CutOverCreditsEnabled = CutOverCreditsEnabled, languageUtils)
-          val groupedPaymentHistoryEntries = groupedPayments(paymentHistoryEntries)
-          Future(Ok(paymentHistoryView(groupedPaymentHistoryEntries, backUrl, user.saUtr,
+          Future(Ok(paymentHistoryView(paymentHistoryEntries, backUrl, user.saUtr,
             btaNavPartial = user.btaNavPartial, isAgent = isAgent)
           ).addingToSession(gatewayPage -> PaymentHistoryPage.name))
         }

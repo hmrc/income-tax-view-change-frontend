@@ -60,7 +60,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
 
   private def view(nextPaymentDueDate: Option[LocalDate], nextUpdate: LocalDate, overDuePaymentsCount: Option[Int],
                    overDueUpdatesCount: Option[Int], dunningLockExists: Boolean, currentTaxYear: Int, isAgent: Boolean,
-                   origin : Option[String] = None)
+                   origin: Option[String] = None)
                   (implicit user: MtdItUser[_]): Html = {
     homeView(
       nextPaymentDueDate = nextPaymentDueDate,
@@ -82,56 +82,56 @@ class HomeController @Inject()(val homeView: views.html.Home,
   def handleShowRequest(itvcErrorHandler: ShowInternalServerError, isAgent: Boolean, incomeSourceCurrentTaxYear: Int, origin: Option[String] = None)
                        (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
 
-      nextUpdatesService.getNextDeadlineDueDateAndOverDueObligations().flatMap { latestDeadlineDate =>
+    nextUpdatesService.getNextDeadlineDueDateAndOverDueObligations().flatMap { latestDeadlineDate =>
 
-        val unpaidCharges: Future[List[FinancialDetailsResponseModel]] = financialDetailsService.getAllUnpaidFinancialDetails
+      val unpaidCharges: Future[List[FinancialDetailsResponseModel]] = financialDetailsService.getAllUnpaidFinancialDetails
 
-        val dueDates: Future[List[LocalDate]] = unpaidCharges.map {
-          _.flatMap {
-            case fdm: FinancialDetailsModel => fdm.validChargesWithRemainingToPay.getAllDueDates
-            case _ => List.empty[LocalDate]
-          }.sortWith(_ isBefore _)
-        }
-
-        for {
-          paymentsDue <- dueDates.map(_.sortBy(_.toEpochDay()))
-          dunningLockExistsValue <- unpaidCharges.map(_.collectFirst { case fdm: FinancialDetailsModel if fdm.dunningLockExists => true })
-          outstandingChargesModel <- whatYouOweService.getWhatYouOweChargesList.map(_.outstandingChargesModel match {
-            case Some(OutstandingChargesModel(locm)) => locm.filter(ocm => ocm.relevantDueDate.isDefined && ocm.chargeName == "BCD")
-            case _ => Nil
-          })
-          outstandingChargesDueDate = outstandingChargesModel.flatMap {
-            case OutstandingChargeModel(_, Some(relevantDate), _, _) => List(LocalDate.parse(relevantDate))
-            case _ => Nil
-          }
-          overDuePaymentsCount = paymentsDue.count(_.isBefore(dateService.getCurrentDate)) + outstandingChargesModel.length
-          overDueUpdatesCount = latestDeadlineDate._2.size
-          paymentsDueMerged = (paymentsDue ::: outstandingChargesDueDate).sortWith(_ isBefore _).headOption
-        } yield {
-            auditingService.extendedAudit(HomeAudit(
-              mtdItUser = user,
-              paymentsDueMerged,
-              latestDeadlineDate._1,
-              overDuePaymentsCount,
-              overDueUpdatesCount))
-          Ok(
-            view(
-              paymentsDueMerged,
-              latestDeadlineDate._1,
-              Some(overDuePaymentsCount),
-              Some(overDueUpdatesCount),
-              dunningLockExistsValue.isDefined,
-              incomeSourceCurrentTaxYear,
-              isAgent = isAgent
-            )
-          )
-        }
-
-      }.recover {
-        case ex =>
-          Logger("application").error(s"[HomeController][Home] Downstream error, ${ex.getMessage}")
-          itvcErrorHandler.showInternalServerError()
+      val dueDates: Future[List[LocalDate]] = unpaidCharges.map {
+        _.flatMap {
+          case fdm: FinancialDetailsModel => fdm.validChargesWithRemainingToPay.getAllDueDates
+          case _ => List.empty[LocalDate]
+        }.sortWith(_ isBefore _)
       }
+
+      for {
+        paymentsDue <- dueDates.map(_.sortBy(_.toEpochDay()))
+        dunningLockExistsValue <- unpaidCharges.map(_.collectFirst { case fdm: FinancialDetailsModel if fdm.dunningLockExists => true })
+        outstandingChargesModel <- whatYouOweService.getWhatYouOweChargesList.map(_.outstandingChargesModel match {
+          case Some(OutstandingChargesModel(locm)) => locm.filter(ocm => ocm.relevantDueDate.isDefined && ocm.chargeName == "BCD")
+          case _ => Nil
+        })
+        outstandingChargesDueDate = outstandingChargesModel.flatMap {
+          case OutstandingChargeModel(_, Some(relevantDate), _, _) => List(LocalDate.parse(relevantDate))
+          case _ => Nil
+        }
+        overDuePaymentsCount = paymentsDue.count(_.isBefore(dateService.getCurrentDate)) + outstandingChargesModel.length
+        overDueUpdatesCount = latestDeadlineDate._2.size
+        paymentsDueMerged = (paymentsDue ::: outstandingChargesDueDate).sortWith(_ isBefore _).headOption
+      } yield {
+        auditingService.extendedAudit(HomeAudit(
+          mtdItUser = user,
+          paymentsDueMerged,
+          latestDeadlineDate._1,
+          overDuePaymentsCount,
+          overDueUpdatesCount))
+        Ok(
+          view(
+            paymentsDueMerged,
+            latestDeadlineDate._1,
+            Some(overDuePaymentsCount),
+            Some(overDueUpdatesCount),
+            dunningLockExistsValue.isDefined,
+            incomeSourceCurrentTaxYear,
+            isAgent = isAgent
+          )
+        )
+      }
+
+    }.recover {
+      case ex =>
+        Logger("application").error(s"[HomeController][Home] Downstream error, ${ex.getMessage}")
+        itvcErrorHandler.showInternalServerError()
+    }
   }
 
   def show(origin: Option[String] = None): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino

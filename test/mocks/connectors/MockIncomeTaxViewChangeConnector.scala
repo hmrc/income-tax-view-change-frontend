@@ -23,8 +23,9 @@ import models.incomeSourceDetails.IncomeSourceDetailsResponse
 import models.paymentAllocationCharges.FinancialDetailsWithDocumentDetailsResponse
 import models.paymentAllocations.PaymentAllocationsResponse
 import models.nextUpdates.NextUpdatesResponseModel
+import models.repaymentHistory.{RepaymentHistoryErrorModel, RepaymentHistoryModel}
 import org.mockito.ArgumentMatchers
-import org.mockito.ArgumentMatchers.{any, eq => matches}
+import org.mockito.ArgumentMatchers.{any, anyString, eq => matches}
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
@@ -102,5 +103,15 @@ trait MockIncomeTaxViewChangeConnector extends UnitSpec with MockitoSugar with B
     when(
       mockIncomeTaxViewChangeConnector.getFinancialDetailsByDocumentId(Nino(ArgumentMatchers.eq(nino)), ArgumentMatchers.eq(documentId))(any())
     ).thenReturn(Future.successful(response))
+  }
+
+  def setupGetRepaymentHistoryByRepaymentId(nino: String, repaymentId: String)(response: RepaymentHistoryModel): Unit = {
+    when(mockIncomeTaxViewChangeConnector.getRepaymentHistoryByRepaymentId(Nino(ArgumentMatchers.eq(nino)), ArgumentMatchers.eq(repaymentId))(any()))
+      .thenReturn(Future.successful(response))
+  }
+
+  def setupGetRepaymentHistoryByRepaymentIdError(nino: String, repaymentId: String)(response: RepaymentHistoryErrorModel): Unit = {
+    when(mockIncomeTaxViewChangeConnector.getRepaymentHistoryByRepaymentId(Nino(ArgumentMatchers.eq(nino)), ArgumentMatchers.eq(repaymentId))(any()))
+      .thenReturn(Future.successful(response))
   }
 }

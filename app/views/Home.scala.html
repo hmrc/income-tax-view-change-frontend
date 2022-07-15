@@ -104,7 +104,11 @@
                controllers.routes.CreditAndRefundController.show().url
             }
         } else {
-            ""
+            if (isAgent) {
+                controllers.routes.NotMigratedUserController.showAgent().url
+            } else {
+                controllers.routes.NotMigratedUserController.show().url
+            }
         }
     }
 

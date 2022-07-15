@@ -249,11 +249,12 @@ class HomePageViewSpec extends TestSupport {
         getElementById("payment-history-tile").map(_.select("h2").text) shouldBe Some(messages("home.paymentHistoryRefund.heading"))
       }
 
-      "has a link to the payment and refund history page for migrated user" in new Setup {
+      "has a link to the payment and refund history page" in new Setup {
         val link: Option[Element] = getElementById("payment-history-tile").map(_.select("a").first)
         link.map(_.attr("href")) shouldBe Some(controllers.routes.PaymentHistoryController.show().url)
         link.map(_.text) shouldBe Some(messages("home.paymentHistoryRefund.view"))
       }
+
 
       "has an link to the 'How to claim a refund' for not migrated user" in new Setup(user = testMtdItUserNotMigrated()) {
         val link: Option[Element] = getElementById("payment-history-tile").map(_.select("a").first)
@@ -261,6 +262,7 @@ class HomePageViewSpec extends TestSupport {
         link.map(_.attr("href")) shouldBe Some(controllers.routes.PaymentHistoryController.show().url)
         link.map(_.text) shouldBe Some(messages("home.paymentHistoryRefund.view"))
       }
+
     }
 
     "show the 'Claim refund' link for migrated user" when {
@@ -272,11 +274,19 @@ class HomePageViewSpec extends TestSupport {
     }
 
     "show the 'How to claim a refund' link for not migrated user" when {
-      "the claim a refund feature switch is on" in new Setup(user = testMtdItUserMigrated(), creditAndRefundEnabled = true) {
+      "the claim a refund feature switch is on" in new Setup(user = testMtdItUserNotMigrated(), creditAndRefundEnabled = true) {
         val link: Option[Element] = getElementById("payment-history-tile").map(_.select("a").last())
-        // next line would change as part of MISUV-3710 implementation
-        link.map(_.attr("href")) shouldBe Some(controllers.routes.CreditAndRefundController.show().url)
-        link.map(_.text) shouldBe Some(messages("home.credAndRefund.view"))
+        link.map(_.attr("href")) shouldBe Some(controllers.routes.NotMigratedUserController.show().url)
+        link.map(_.text) shouldBe Some(messages("notmigrated.user.heading"))
+      }
+    }
+
+    "show the 'How to claim a refund' link for not migrated agent" when {
+      "the claim a refund feature switch is on" in new Setup(user = testMtdItUserNotMigrated(),
+        creditAndRefundEnabled = true, isAgent = true) {
+        val link: Option[Element] = getElementById("payment-history-tile").map(_.select("a").last())
+        link.map(_.attr("href")) shouldBe Some(controllers.routes.NotMigratedUserController.showAgent().url)
+        link.map(_.text) shouldBe Some(messages("notmigrated.user.heading"))
       }
     }
 

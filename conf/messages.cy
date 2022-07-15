@@ -185,7 +185,7 @@ income_breakdown.table.benefits_received                        = Buddiannau a t
 income_breakdown.table.allowable_expenses                       = Treuliau caniataol
 income_breakdown.table.self_employment                          = Elw o bob hunangyflogaeth
 income_breakdown.table.property                                 = Elw o dir ac eiddo yn y DU
-income_breakdown.table.bbsi                                     = Llog o fanciau, cymdeithasau adeiladu a gwarantau ac ati yn y DU
+income_breakdown.table.bbsi                                     = Llog o fanciau, cymdeithasau adeiladu a gwarantau yn y DU
 income_breakdown.table.dividends                                = Difidendau o gwmnïau yn y DU
 income_breakdown.table.occupational_pensions                    = Pensiynau galwedigaethol
 income_breakdown.table.state_benefit                            = Incwm o fudd-daliadau’r Wladwriaeth
@@ -203,7 +203,7 @@ income_breakdown.table.share_schemes                            = Cynlluniau cyf
 income_breakdown.total                                          = Cyfanswm yr incwm a gafwyd
 
 ## Forecast Income Summary Page ##
-forecast_income.heading                                        = Incwm rhagolwg
+forecast_income.heading                                        = Incwm a ragwelir
 forecast_income.table.header                                   = Math o incwm
 forecast_income.table.header.amount                            = Swm
 forecast_income.dates                                          = 6 Ebrill {0} hyd at 5 Ebrill {1}
@@ -216,8 +216,8 @@ forecast_income.source_types.03                                = Elw o lety gwyl
 forecast_income.source_types.04                                = Elw o lety gwyliau wedi’i ddodrefnu yn y DU
 forecast_income.source_types.05                                = Cyflog o {0}
 forecast_income.source_types.06                                = Incwm o dramor
-forecast_income.source_types.07                                = Llog ar fenthyciad cymwys
-forecast_income.source_types.09                                = Llog o fanciau, cymdeithasau adeiladu a gwarantau ac ati yn y DU
+forecast_income.source_types.07                                = Difidendau gan gwmnïau tramor
+forecast_income.source_types.09                                = Llog o fanciau, cymdeithasau adeiladu a gwarantau yn y DU
 forecast_income.source_types.10                                = Difidendau o gwmnïau yn y DU
 forecast_income.source_types.11                                = Incwm o fudd-daliadau’r Wladwriaeth
 forecast_income.source_types.12                                = Enillion ar bolisïau yswiriant bywyd
@@ -333,7 +333,7 @@ taxCal_breakdown.message.C22219                                 = Mae’r cynnyd
 taxCal_breakdown.table.head.rate_band                           = Haen cyfradd
 taxCal_breakdown.table.head.reduction                           = Gostyngiad
 taxCal_breakdown.table.marriage_allowance_transfer              = Trosglwyddo Lwfans Priodasol
-taxCal_breakdown.table.top_slicing_relief                       = Rhyddhad Haenen Uchaf
+taxCal_breakdown.table.top_slicing_relief                       = Rhyddhad haenen uchaf
 taxCal_breakdown.table.head.charge_type                         = Math o gost
 taxCal_breakdown.table.head.deduction                           = Math o ddidyniad
 taxCal_breakdown.table.amount                                   = Swm
@@ -343,8 +343,8 @@ taxCal_breakdown.table.head.national_insurance_type             = Math o Yswiria
 taxCal_breakdown.table.capital_gains_tax                        = Treth Enillion Cyfalaf
 taxCal_breakdown.table.head.cgt_type                            = Math o Dreth Enillion Cyfalaf
 taxCal_breakdown.table.cgt.taxable_capital_gains                = Enillion Cyfalaf trethadwy
-taxCal_breakdown.table.cgt.assets_or_investors_relief.band.single = Enillion Rhyddhad Gwaredu Ased Busnes a neu Ryddhad Buddsoddwyr ({0} at {1}%)
-taxCal_breakdown.table.cgt.property_and_interest.band.lowerRate   = Eiddo preswyl a budd a drosglwyddir ar y gyfradd sylfaenol ({0} at {1}%)
+taxCal_breakdown.table.cgt.assets_or_investors_relief.band.single = Enillion Rhyddhad Gwaredu Ased Busnes neu Ryddhad Buddsoddwyr (neu’r ddau) ({0} at {1}%)
+taxCal_breakdown.table.cgt.property_and_interest.band.lowerRate   = Eiddo preswyl a llog ar y gyfradd sylfaenol wedi’i gario ({0} at {1}%)
 taxCal_breakdown.table.cgt.adjustment                           = Addasiad ar gyfer Treth Enillion Cyfalaf
 taxCal_breakdown.table.cgt.already_paid                         = Treth ar enillion a dalwyd yn barod
 taxCal_breakdown.table.cgt.due                                  = Treth Enillion Cyfalaf sy’n ddyledus
@@ -494,6 +494,24 @@ credits.table.status-fully-allocated                            = Wedi ei ddyran
 credits.table.status-not-yet-allocated                          = Heb ei ddyrannu eto
 credits.table.status-partially-allocated                        = Wedi ei ddyrannu’n rhannol
 
+## Refund to taxpayer page ##
+refund-to-taxpayer.heading                                      = Ad-daliad i’r trethdalwr
+refund-to-taxpayer.tableHead.estimated-date                     = Amcan o’r dyddiad
+refund-to-taxpayer.tableHead.method                             = Dull
+refund-to-taxpayer.tableHead.total-refund                       = Cyfanswm yr ad-daliad
+refund-to-taxpayer.tableHead.further-details                    = Manylion pellach
+refund-to-taxpayer.tableHead.requested-on                       = Gofynnwyd amdano ar
+refund-to-taxpayer.tableHead.refund-reference                   = Cyfeirnod yr ad-daliad
+refund-to-taxpayer.tableHead.requested-amount                   = Y swm y gofynnir amdano
+refund-to-taxpayer.tableHead.refund-amount                      = Swm yr ad-daliad
+refund-to-taxpayer.tableHead.interest                           = Llog
+refund-to-taxpayer.tableHead.interest-value                     = {0} i {1} ar {2}%
+refund-to-taxpayer.tableHead.total-interest                     = Cyfanswm y llog
+refund-to-taxpayer.tableHead.varied-interest-rates-value        = Roedd y gyfradd llog yn amrywio rhwng {0}% a {1}% o {2} and {3}
+refund-to-taxpayer.method-type-bacs                             = Bacs
+refund-to-taxpayer.method-type-card                             = Cerdyn
+refund-to-taxpayer.method-type-postal-order                     = Archeb Bost
+
 ## Payment Due Page ##
 paymentDue.heading                                              = Taliadau treth incwm
 paymentDue.description                                          = Os ydych wedi gwneud taliad yn ystod y 7 diwrnod diwethaf, mae’n bosibl na fydd y symiau a ddangosir yma yn gywir.
@@ -571,6 +589,7 @@ whatYouOwe.dunningLock.link                                     = bod apêl ar y
 whatYouOwe.credit-overpaid-prefix                               = Mae gennych
 whatYouOwe.credit-overpaid-amount                               = {0} yn eich cyfrif
 whatYouOwe.unallocated-credit-note                              = . Byddwn yn defnyddio hwn i dalu'r symiau sy'n ddyledus ar y dyddiad dyledus nesaf.
+whatYouOwe.tax-year-summary.taxYear                             = {0} to {1}
 
 ## Charge Summary ##
 chargeSummary.paymentOnAccount1.text                            = Taliad ar gyfrif 1 o 2
@@ -702,12 +721,12 @@ paymentHistory.heading                                          = Hanes taliadau
 paymentHistory.info                                             = Er mwyn bwrw golwg dros gyfrif eich cleient o’r adeg cyn iddo gofrestru ar gyfer y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm, mae angen i chi fewngofnodi i’ch
 paymentHistory.info.2                                           = Bydd hwn yn Ddynodydd Defnyddiwr (ID) a chyfrinair ar gyfer Porth y Llywodraeth sy’n wahanol i’ch cyfrif Gwasanaethau Asiant.
 paymentHistory.textLink1                                        = gwasanaeth Hunanasesiad arferol
-paymentHistory.button                                           = Taliadau ar gyfer {0}
+paymentHistory.button                                           = Taliadau {0}
 paymentsHistory.CardRef                                         = Cyfeirnod ar gyfer taliad a wnaed drwy gerdyn debyd:
+paymentHistory.refund                                           = Ad-daliad
 paymentHistory.paymentToHmrc                                    = Taliad a wnaed i CThEM
 paymentHistory.paymentFromEarlierYear                           = Taliad o flwyddyn dreth gynharach
 paymentHistory.mfaCredit                                        = Credyd o addasiad gan CThEM
-paymentHistory.refund                                           = Ad-daliad
 paymentHistory.table.header.date                                = Dyddiad
 paymentHistory.table.header.description                         = Disgrifiad
 paymentHistory.table.header.amount                              = Swm
@@ -829,3 +848,10 @@ shortMonth.10 = Hyd
 shortMonth.11 = Tach
 shortMonth.12 = Rhag
 
+#Not migrated to ETMP
+notmigrated.user.heading                                        = Sut i hawlio ad-daliad
+notmigrated.user.content                                        = Er mwyn bwrw golwg dros yr arian yn eich cyfrif o flynyddoedd treth blaenorol (cyn y gwnaethoch gofrestru ar gyfer y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm) mae angen i chi fynd i’ch
+notmigrated.agent.content                                       = I hawlio arian o flynyddoedd treth blaenorol (cyn y gwnaeth eich cleient gofrestru am y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm), bydd angen i chi fewngofnodi i’ch
+notmigrated.agent.content_extra                                 = Bydd hyn yn Ddynodydd Defnyddiwr (ID) a chyfrinair ar gyfer Porth y Llywodraeth sy’n wahanol i’ch cyfrif Gwasanaethau Asiant.
+notmigrated.user.link_title                                     = cyfrif Hunanasesiad ar-lein
+notmigrated.agent.link_title                                    = cyfrif Hunanasesiad ar gyfer Asiantau
