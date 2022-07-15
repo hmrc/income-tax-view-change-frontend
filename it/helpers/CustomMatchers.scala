@@ -91,7 +91,7 @@ trait CustomMatchers extends UnitSpec with GivenWhenThen {
 
       def apply(response: WSResponse) = {
         val body = Jsoup.parse(response.body)
-        val titlePattern: String = if(isError) "agent.error.title_pattern.service_name.govuk" else "agent.title_pattern.service_name.govuk"
+        val titlePattern: String = if (isError) "agent.error.title_pattern.service_name.govuk" else "agent.title_pattern.service_name.govuk"
         val expectedTitle = messagesAPI(titlePattern, messagesAPI(messageKey))
         Then(s"the page title should be '$expectedTitle'")
         HavePropertyMatchResult(
@@ -129,6 +129,22 @@ trait CustomMatchers extends UnitSpec with GivenWhenThen {
           s"elementByID($id)",
           expectedValue,
           body.select(s"#$id").text
+        )
+      }
+    }
+
+  def elementCountBySelector(selectors: String*)(expectedValue: Int): HavePropertyMatcher[WSResponse, Int] =
+    new HavePropertyMatcher[WSResponse, Int] {
+
+      def apply(response: WSResponse) = {
+        val body = Jsoup.parse(response.body)
+        Then(s"the count of selector should be '$expectedValue'")
+
+        HavePropertyMatchResult(
+          body.select(selectors.toList.mkString(" ")).asScala.toList.length == expectedValue,
+          s"select($selectors)",
+          expectedValue,
+          body.select(selectors.toList.mkString(" ")).asScala.toList.length
         )
       }
     }

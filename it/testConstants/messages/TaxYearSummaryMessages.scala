@@ -32,6 +32,7 @@ object TaxYearSummaryMessages {
   val class2Nic: String = messagesAPI("tax-year-summary.payments.class2Nic.text")
   val cancelledPayeSA: String = messagesAPI("tax-year-summary.payments.cancelledPayeSelfAssessment.text")
   val noPaymentsDue: String = messagesAPI("tax-year-summary.payments.no-payments")
+  val hmrcAdjustment: String = messagesAPI("tax-year-summary.payments.hmrcAdjustment.text")
 
   def updateTabDue(dueDate: String): String = messagesAPI("updateTab.due", dueDate)
   val quarterlyUpdate: String = messagesAPI("updateTab.updateType.quarterly")

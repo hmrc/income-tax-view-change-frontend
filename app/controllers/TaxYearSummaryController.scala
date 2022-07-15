@@ -19,7 +19,7 @@ package controllers
 import audit.AuditingService
 import audit.models.TaxYearSummaryResponseAuditModel
 import auth.MtdItUser
-import config.featureswitch.{CodingOut, FeatureSwitching, ForecastCalculation, R7bTxmEvents}
+import config.featureswitch.{CodingOut, FeatureSwitching, ForecastCalculation, R7bTxmEvents, MFACreditsAndDebits}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
@@ -137,7 +137,13 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
         val docDetailsNoPayments = documentDetails.filter(_.paymentLot.isEmpty)
         val docDetailsCodingOut = docDetailsNoPayments.filter(_.isCodingOutDocumentDetail(isEnabled(CodingOut)))
         val documentDetailsWithDueDates: List[DocumentDetailWithDueDate] = {
-          docDetailsNoPayments.filter(_.isNotCodingOutDocumentDetail).filter(_.originalAmountIsNotZeroOrNegative).map(
+          docDetailsNoPayments
+            .filter(_.isNotCodingOutDocumentDetail)
+            .filter(_.originalAmountIsNotZeroOrNegative)
+            .filter(dd => {
+              if (isDisabled(MFACreditsAndDebits) && dd.isMFADebit) false else true
+            })
+            .map(
             documentDetail => DocumentDetailWithDueDate(documentDetail, financialDetails.findDueDateByDocumentDetails(documentDetail),
               dunningLock = financialDetails.dunningLockExists(documentDetail.transactionId)))
         }

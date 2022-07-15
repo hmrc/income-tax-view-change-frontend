@@ -17,7 +17,7 @@
 package controllers
 
 import audit.mocks.MockAuditingService
-import config.featureswitch.{CodingOut, FeatureSwitching, ForecastCalculation}
+import config.featureswitch.{CodingOut, FeatureSwitching, ForecastCalculation, MFACreditsAndDebits}
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
 import forms.utils.SessionKeys.{calcPagesBackPage, gatewayPage}
@@ -193,6 +193,48 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
         contentType(result) shouldBe Some("text/html")
         result.futureValue.session.get(gatewayPage) shouldBe Some("taxYearSummary")
         result.futureValue.session.get(calcPagesBackPage) shouldBe Some("ITVC")
+      }
+    }
+
+    "MFA Debits" should {
+      def testMFA(MFAisEnabled: Boolean): Any = {
+        if(MFAisEnabled) {
+          enable(MFACreditsAndDebits)
+        } else disable(MFACreditsAndDebits)
+
+        mockSingleBusinessIncomeSource()
+        mockCalculationSuccessFullNew(testMtditid)
+        mockFinancialDetailsSuccess(
+          financialDetailsModelResponse = financialDetails(
+            documentDetails = documentDetailMFADebit.documentDetail
+          )
+        )
+        mockgetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
+          toDate = LocalDate.of(testTaxYear, 4, 5))(
+          response = testObligtionsModel
+        )
+        val ddList = if (MFAisEnabled) List(documentDetailMFADebit) else List()
+        val calcOverview: TaxYearSummaryViewModel = TaxYearSummaryViewModel(liabilityCalculationModelSuccessFull)
+        val expectedContent: String = taxYearSummaryView(
+          testTaxYear,
+          Some(calcOverview),
+          ddList,
+          testObligtionsModel,
+          taxYearsBackLink,
+          codingOutEnabled = true
+        ).toString
+
+        val result = TestTaxYearSummaryController.renderTaxYearSummaryPage(testTaxYear)(fakeRequestWithActiveSessionWithReferer(referer = taxYearsBackLink))
+
+        status(result) shouldBe Status.OK
+        contentAsString(result) shouldBe expectedContent
+      }
+
+      "display an MFA Debit item when FS is ENABLED" in {
+        testMFA(true)
+      }
+      "not display the MFA Debit item when FS is DISABLED" in {
+        testMFA(false)
       }
     }
 
