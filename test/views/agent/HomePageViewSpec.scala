@@ -89,7 +89,9 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
       dunningLockExists,
       currentTaxYear,
       isAgent,
-      creditAndRefundEnabled = false
+      creditAndRefundEnabled = false,
+      paymentHistoryEnabled = isEnabled(PaymentHistoryRefunds)
+
     )(FakeRequest(), implicitly, testMtdItUser, mockAppConfig)
 
     lazy val document: Document = Jsoup.parse(contentAsString(view))

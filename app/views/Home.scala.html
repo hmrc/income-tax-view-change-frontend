@@ -48,6 +48,7 @@
     isAgent: Boolean,
     origin: Option[String] = None,
     creditAndRefundEnabled: Boolean,
+    paymentHistoryEnabled: Boolean,
     isUserMigrated: Boolean = false
 )(
   	implicit request: Request[_],
@@ -242,30 +243,53 @@
 }
 
 @paymentHistoryTile = {
-@home_tile("payment-history-tile", messages("home.paymentHistory.heading")) {
-    @p(classes = "govuk-!-margin-bottom-4") {
-            @link(
-                link = paymentHistoryControllerURL,
-                messageKey = "home.paymentHistory.view"
-
-            )
-    }
-
-    @if(creditAndRefundEnabled) {
-        @if(isUserMigrated) {
-            @link(
-                link = creditAndRefundsControllerURL,
-                messageKey = "home.credAndRefund.view"
-            )
-        } else {
-            @link(
-                link = creditAndRefundsControllerURL,
-                messageKey = "home.credAndRefund_howToClaim.view"
-            )
-        }
-    }
+    @if(paymentHistoryEnabled) {
+             @home_tile("payment-history-tile", messages("home.paymentHistoryRefund.heading")) {
+             @p(classes = "govuk-!-margin-bottom-4") {
+                     @link(
+                            link = paymentHistoryControllerURL,
+                            messageKey = "home.paymentHistoryRefund.view"
+                           )
+                      }
+                  @if(creditAndRefundEnabled) {
+                     @if(isUserMigrated) {
+                         @link(
+                               link = creditAndRefundsControllerURL,
+                               messageKey = "home.credAndRefund.view"
+                               )
+                 } else {
+                        @link(
+                             link = creditAndRefundsControllerURL,
+                              messageKey = "home.credAndRefund_howToClaim.view"
+                             )
+                        }
+                  }
+             }
+    } else {
+           @home_tile("payment-history-tile", messages("home.paymentHistory.heading")) {
+           @p(classes = "govuk-!-margin-bottom-4") {
+           @link(
+                 link = paymentHistoryControllerURL,
+                 messageKey = "home.paymentHistory.view"
+                 )
+          }
+               @if(creditAndRefundEnabled) {
+                         @if(isUserMigrated) {
+                            @link(
+                                 link = creditAndRefundsControllerURL,
+                                 messageKey = "home.credAndRefund.view"
+                                 )
+                        } else {
+                           @link(
+                                link = creditAndRefundsControllerURL,
+                                messageKey = "home.credAndRefund_howToClaim.view"
+                                )
+                           }
+                        }
+               }
+          }
 }
-}
+
 
 @updatesTileContentUpdatesDue0 = { @nextUpdate.toLongDate }
 

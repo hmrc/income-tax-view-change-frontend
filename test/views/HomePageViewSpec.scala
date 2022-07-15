@@ -113,6 +113,7 @@ class HomePageViewSpec extends TestSupport {
       currentTaxYear = currentTaxYear,
       isAgent = isAgent,
       creditAndRefundEnabled = creditAndRefundEnabled,
+      paymentHistoryEnabled = paymentHistoryEnabled,
       isUserMigrated = user.incomeSources.yearOfMigration.isDefined
     )(FakeRequest(), implicitly, user, implicitly)
     lazy val document: Document = Jsoup.parse(contentAsString(page))
@@ -245,20 +246,20 @@ class HomePageViewSpec extends TestSupport {
 
     "have a payment history tile" which {
       "has a heading" in new Setup {
-        getElementById("payment-history-tile").map(_.select("h2").text) shouldBe Some(messages("home.paymentHistory.heading"))
+        getElementById("payment-history-tile").map(_.select("h2").text) shouldBe Some(messages("home.paymentHistoryRefund.heading"))
       }
 
       "has a link to the payment and refund history page for migrated user" in new Setup {
         val link: Option[Element] = getElementById("payment-history-tile").map(_.select("a").first)
         link.map(_.attr("href")) shouldBe Some(controllers.routes.PaymentHistoryController.show().url)
-        link.map(_.text) shouldBe Some(messages("home.paymentHistory.view"))
+        link.map(_.text) shouldBe Some(messages("home.paymentHistoryRefund.view"))
       }
 
       "has an link to the 'How to claim a refund' for not migrated user" in new Setup(user = testMtdItUserNotMigrated()) {
         val link: Option[Element] = getElementById("payment-history-tile").map(_.select("a").first)
         // next line would change as part of MISUV-3710 implementation
         link.map(_.attr("href")) shouldBe Some(controllers.routes.PaymentHistoryController.show().url)
-        link.map(_.text) shouldBe Some(messages("home.paymentHistory.view"))
+        link.map(_.text) shouldBe Some(messages("home.paymentHistoryRefund.view"))
       }
     }
 
