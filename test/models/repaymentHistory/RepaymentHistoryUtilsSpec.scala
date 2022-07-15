@@ -26,6 +26,8 @@ import java.time.LocalDate
 
 class RepaymentHistoryUtilsSpec extends TestSupport with Matchers {
 
+  val repaymentRequestNumber: String = "000000003135"
+
   val paymentsWithMFA: List[Payment] = List(
     Payment(reference = Some("mfa1"), amount = Some(-10000.00), Some(-150.00), method = Some("method"),
       documentDescription = Some("ITSA Overpayment Relief"), lot = None, lotItem = None, dueDate = None,
@@ -63,7 +65,7 @@ class RepaymentHistoryUtilsSpec extends TestSupport with Matchers {
       ),
       estimatedRepaymentDate = LocalDate.parse("2021-08-21"),
       creationDate = LocalDate.parse("2021-07-21"),
-      repaymentRequestNumber = "000000003135"
+      repaymentRequestNumber = repaymentRequestNumber
     ),
     RepaymentHistory(
       amountApprovedforRepayment = Some(100.0),
@@ -85,12 +87,12 @@ class RepaymentHistoryUtilsSpec extends TestSupport with Matchers {
       ),
       estimatedRepaymentDate = LocalDate.parse("2021-08-20"),
       creationDate = LocalDate.parse("2021-07-21"),
-      repaymentRequestNumber = "000000003135"
+      repaymentRequestNumber = repaymentRequestNumber
     ))
 
   private def groupedRepayments(isAgent: Boolean = false) = List(
-    (2021, List(PaymentHistoryEntry("2021-08-20", "paymentHistory.refund", Some(301.0), None, s"${if (isAgent) "agents/" else ""}refund-to-taxpayer", "000000003135"),
-      PaymentHistoryEntry("2021-08-21", "paymentHistory.refund", Some(300.0), None, s"${if (isAgent) "agents/" else ""}refund-to-taxpayer", "000000003135"))),
+    (2021, List(PaymentHistoryEntry("2021-08-20", "paymentHistory.refund", Some(301.0), None, s"${if (isAgent) "agents/" else ""}refund-to-taxpayer/$repaymentRequestNumber", repaymentRequestNumber),
+      PaymentHistoryEntry("2021-08-21", "paymentHistory.refund", Some(300.0), None, s"${if (isAgent) "agents/" else ""}refund-to-taxpayer/$repaymentRequestNumber", repaymentRequestNumber))),
   )
 
   private def groupedPayments(cutoverEnabled: Boolean = true, mfaEnabled: Boolean = true, isAgent: Boolean = false) = {
