@@ -155,7 +155,7 @@ case class DocumentDetail(taxYear: String,
     case Some("ITSA- POA 1") => "paymentOnAccount1.text"
     case Some("ITSA - POA 2") => "paymentOnAccount2.text"
     case Some("ITSA PAYE Charge") | Some("ITSA Calc Error Correction") | Some("ITSA Manual Penalty Pre CY-4") |
-         Some("ITSA Misc Charge") => "hmrcAdjustment"
+         Some("ITSA Misc Charge") => "hmrcAdjustment.text"
     case Some("TRM New Charge") | Some("TRM Amend Charge") => (codedOutEnabled, isClass2Nic, isPayeSelfAssessment, isCancelledPayeSelfAssessment) match {
       case (true, true, false, false) => "class2Nic.text"
       case (true, false, true, false) => "codingOut.text"
