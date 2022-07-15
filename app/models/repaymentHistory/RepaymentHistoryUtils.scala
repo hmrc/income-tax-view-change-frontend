@@ -118,7 +118,7 @@ object RepaymentHistoryUtils {
         date = languageUtils.Dates.shortDate(repayment.estimatedRepaymentDate)(messages),
         description = "paymentHistory.refund",
         amount = Some(repayment.totalRepaymentAmount),
-        linkUrl = getRefundsLink(isAgent),
+        linkUrl = s"${getRefundsLink(isAgent)}/${repayment.repaymentRequestNumber}",
         visuallyHiddenText = s"${repayment.repaymentRequestNumber}"
       ))
     })
