@@ -419,6 +419,7 @@ object FinancialDetailsTestConstants {
   val documentDetailAmendedBalCharge: DocumentDetailWithDueDate = documentDetailWithDueDateModel(documentDescription = Some("TRM Amend Charge"))
   val documentDetailClass2Nic: DocumentDetailWithDueDate = documentDetailWithDueDateModel(documentDescription = Some("TRM New Charge"), documentText = Some("Class 2 National Insurance"), paymentLot = None, latePaymentInterestAmount = None)
   val documentDetailPaye: DocumentDetailWithDueDate = documentDetailWithDueDateModel(documentDescription = Some("TRM New Charge"), documentText = Some("PAYE Self Assessment"), paymentLot = None, latePaymentInterestAmount = None)
+  val documentDetailMFADebit: DocumentDetailWithDueDate = documentDetailWithDueDateModel(documentDescription = Some("ITSA Calc Error Correction"), documentText = None, paymentLot = None, latePaymentInterestAmount = None)
 
   val fullDocumentDetailModel: DocumentDetail = documentDetailModel()
   val fullFinancialDetailModel: FinancialDetail = financialDetail()
