@@ -544,6 +544,7 @@ whatYouOwe.tableHead.amount-due                                 = Swm sy’n ddy
 whatYouOwe.tableHead.tax-year-summary                           = Crynodeb o’r flwyddyn dreth
 whatYouOwe.paymentOnAccount1.text							    = Taliad ar gyfrif 1 o 2
 whatYouOwe.paymentOnAccount2.text							    = Taliad ar gyfrif 2 o 2
+whatYouOwe.hmrcAdjustment.text                                  = Addasiad CThEM
 whatYouOwe.balancingCharge.text  							    = Taliad mantoli
 whatYouOwe.remaining-balance.heading                            = Taliad mantoli
 whatYouOwe.remaining-balance.line1                              = Y balans sy’n weddill yw’r dreth sydd dal gennych i’w thalu ar gyfer blwyddyn dreth.
