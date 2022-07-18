@@ -109,12 +109,13 @@ useFallbackBackLink = true
     @if(charge._1.documentDetail.validMFACreditDescription()) {
     <li>
         <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__value govuk-heading-s">
+                @charge._1.documentDetail.paymentOrChargeCredit.get.toCurrencyString
+            </dt>
             <dt class="govuk-summary-list__value">
-                <span>
-                    <a href="@getCreditsSummaryControllerHref(charge._1.documentDetail, isAgent)"
-                       class="govuk-link">@messages("credit-and-refund.credit-from-hmrc-title")
-                    </a>
-                </span>
+                <a href="@getCreditsSummaryControllerHref(charge._1.documentDetail, isAgent)"
+                   class="govuk-link">@messages("credit-and-refund.credit-from-hmrc-title")
+                </a>
             </dt>
         </div>
     </li>
@@ -124,8 +125,9 @@ useFallbackBackLink = true
         <dt class="govuk-summary-list__value govuk-heading-s">
             @charge._1.documentDetail.paymentOrChargeCredit.get.toCurrencyString
         </dt>
-        <dt class="govuk-summary-list__value"><a href="@getControllerHref(charge._1.documentDetail, isAgent)"
-                                                 class="govuk-link">@charge._1.dueDate.get.toLongDate @messages("credit-and-refund.payment")
+        <dt class="govuk-summary-list__value">@messages("credit-and-refund.payment")
+            <a href="@getControllerHref(charge._1.documentDetail, isAgent)"
+                                                 class="govuk-link">@charge._1.dueDate.get.toLongDate
         </a>
         </dt>
     </li>
