@@ -93,7 +93,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
               whatYouOweCreditAmountEnabled: Boolean = false,
               migrationYear: Int = LocalDate.now().getYear - 1,
               codingOutEnabled: Boolean = true,
-              mfaCreditsAndDebitsEnabled: Boolean = true
+              MFADebitsEnabled: Boolean = true
              ) {
     val individualUser: MtdItUser[_] = MtdItUser(
       mtditid = testMtditid,
@@ -108,7 +108,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     )(FakeRequest())
 
     val html: HtmlFormat.Appendable = whatYouOweView(creditCharges, charges, hasLpiWithDunningBlock, currentTaxYear, "testBackURL",
-      Some("1234567890"), None, dunningLock, codingOutEnabled, mfaCreditsAndDebitsEnabled, whatYouOweCreditAmountEnabled)(FakeRequest(), individualUser, implicitly)
+      Some("1234567890"), None, dunningLock, codingOutEnabled, MFADebitsEnabled, whatYouOweCreditAmountEnabled)(FakeRequest(), individualUser, implicitly)
     val pageDocument: Document = Jsoup.parse(contentAsString(html))
 
     def verifySelfAssessmentLink(): Unit = {
@@ -124,7 +124,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
                    currentTaxYear: Int = LocalDate.now().getYear,
                    migrationYear: Int = LocalDate.now().getYear - 1,
                    codingOutEnabled: Boolean = true,
-                   mfaCreditsAndDebitsEnabled: Boolean = true,
+                   MFADebitsEnabled: Boolean = true,
                    whatYouOweCreditAmountEnabled: Boolean = false,
                    dunningLock: Boolean = false,
                    hasLpiWithDunningBlock: Boolean = false) {
@@ -152,7 +152,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       utr = Some("1234567890"),
       dunningLock = dunningLock,
       codingOutEnabled = codingOutEnabled,
-      mfaCreditsAndDebitsEnabled = mfaCreditsAndDebitsEnabled,
+      MFADebitsEnabled = MFADebitsEnabled,
       whatYouOweCreditAmountEnabled = whatYouOweCreditAmountEnabled,
       isAgent = true)(FakeRequest(), agentUser, implicitly)
     val pageDocument: Document = Jsoup.parse(contentAsString(html))
@@ -1079,13 +1079,13 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
   }
 
   "MFA Debits is enabled" should {
-    "have an HMRC adjustment payment due" in new Setup(charges = whatYouOweDataWithMFADebits, mfaCreditsAndDebitsEnabled = true) {
+    "have an HMRC adjustment payment due" in new Setup(charges = whatYouOweDataWithMFADebits, MFADebitsEnabled = true) {
       pageDocument.title() shouldBe whatYouOweTitle
       pageDocument.selectFirst("h1").text shouldBe whatYouOweHeading
       pageDocument.getElementById("due-0").text.contains(hmrcAdjustment) shouldBe true
       pageDocument.select("#payments-due-table tbody > tr").size() shouldBe 1
     }
-    "display the payment details content" in new Setup(charges = whatYouOweDataWithMFADebits, mfaCreditsAndDebitsEnabled = true) {
+    "display the payment details content" in new Setup(charges = whatYouOweDataWithMFADebits, MFADebitsEnabled = true) {
       pageDocument.getElementById("hmrc-adjustment-heading").text  shouldBe hmrcAdjustmentHeading
       pageDocument.getElementById("hmrc-adjustment-line1").text  shouldBe hmrcAdjustmentLine1
     }

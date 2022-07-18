@@ -74,7 +74,7 @@ class WhatYouOweController @Inject()(val checkSessionTimeout: SessionTimeoutPred
               btaNavPartial = user.btaNavPartial,
               dunningLock = whatYouOweChargesList.hasDunningLock,
               codingOutEnabled = codingOutEnabled,
-              mfaCreditsAndDebitsEnabled = isEnabled(MFACreditsAndDebits),
+              MFADebitsEnabled = isEnabled(MFACreditsAndDebits),
               isAgent = isAgent,
               whatYouOweCreditAmountEnabled = isEnabled(WhatYouOweCreditAmount),
               origin = origin)(user, user, messages)
