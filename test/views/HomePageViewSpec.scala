@@ -244,18 +244,29 @@ class HomePageViewSpec extends TestSupport {
       }
     }
 
-    "have a payment history tile" which {
-      "has a heading" in new Setup {
+     "have a payment history tile" which {
+      "has a payment and history refunds heading when payment history feature switch is enabled" in new Setup {
         getElementById("payment-history-tile").map(_.select("h2").text) shouldBe Some(messages("home.paymentHistoryRefund.heading"))
       }
-
-      "has a link to the payment and refund history page" in new Setup {
-        val link: Option[Element] = getElementById("payment-history-tile").map(_.select("a").first)
-        link.map(_.attr("href")) shouldBe Some(controllers.routes.PaymentHistoryController.show().url)
-        link.map(_.text) shouldBe Some(messages("home.paymentHistoryRefund.view"))
+      "have a payment history tile" which {
+        "has a payment history heading when payment history feature switch is disabled" in new Setup(paymentHistoryEnabled = false) {
+          getElementById("payment-history-tile").map(_.select("h2").text) shouldBe Some(messages("home.paymentHistory.heading"))
+        }
       }
-
-
+      "has a link to the payment and refund history page" which {
+        "has a payment and refund history link when payment history feature switch is enabled" in new Setup() {
+          val link: Option[Element] = getElementById("payment-history-tile").map(_.select("a").first)
+          link.map(_.attr("href")) shouldBe Some(controllers.routes.PaymentHistoryController.show().url)
+          link.map(_.text) shouldBe Some(messages("home.paymentHistoryRefund.view"))
+        }
+      }
+       "has a link to the payment history page" which {
+         "has a payment history link when payment history feature switch is disabled" in new Setup(paymentHistoryEnabled = false) {
+           val link: Option[Element] = getElementById("payment-history-tile").map(_.select("a").first)
+           link.map(_.attr("href")) shouldBe Some(controllers.routes.PaymentHistoryController.show().url)
+           link.map(_.text) shouldBe Some(messages("home.paymentHistory.view"))
+         }
+       }
       "has an link to the 'How to claim a refund' for not migrated user" in new Setup(user = testMtdItUserNotMigrated()) {
         val link: Option[Element] = getElementById("payment-history-tile").map(_.select("a").first)
         // next line would change as part of MISUV-3710 implementation
