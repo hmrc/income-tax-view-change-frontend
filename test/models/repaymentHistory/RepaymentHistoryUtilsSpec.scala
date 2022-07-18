@@ -20,7 +20,7 @@ package models.repaymentHistory
 import models.financialDetails.Payment
 import models.repaymentHistory.RepaymentHistoryUtils._
 import org.scalatest.Matchers
-import testUtils.{TestSupport}
+import testUtils.TestSupport
 
 import java.time.LocalDate
 
@@ -138,12 +138,6 @@ class RepaymentHistoryUtilsSpec extends TestSupport with Matchers {
         getGroupedPaymentHistoryData(paymentsWithMFA, List(), isAgent = false,
           MFACreditsEnabled = false, CutOverCreditsEnabled = true, languageUtils
         )(messages) shouldBe groupedPayments(true, false)
-      }
-
-      "agent links present when isAgent is TRUE" in {
-        getGroupedPaymentHistoryData(paymentsWithMFA, repaymentHistory, isAgent = true,
-          MFACreditsEnabled = true, CutOverCreditsEnabled = true, languageUtils
-        )(messages) shouldBe groupedRepayments(isAgent = true) ++ groupedPayments(isAgent = true)
       }
     }
   }
