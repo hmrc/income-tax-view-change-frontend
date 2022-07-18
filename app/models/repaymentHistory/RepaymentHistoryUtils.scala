@@ -43,14 +43,6 @@ object RepaymentHistoryUtils {
     }
   }
 
-  private def getRefundsLink(isAgent: Boolean) = {
-    if (isAgent) {
-      "agents/refund-to-taxpayer"
-    } else {
-      "refund-to-taxpayer"
-    }
-  }
-
   private def groupedPayments(payments: List[PaymentHistoryEntry]): List[(Int, List[PaymentHistoryEntry])] = {
     def sortPayments(payments: List[PaymentHistoryEntry]) = {
       payments
@@ -118,7 +110,7 @@ object RepaymentHistoryUtils {
         date = languageUtils.Dates.shortDate(repayment.estimatedRepaymentDate)(messages),
         description = "paymentHistory.refund",
         amount = Some(repayment.totalRepaymentAmount),
-        linkUrl = s"${getRefundsLink(isAgent)}/${repayment.repaymentRequestNumber}",
+        linkUrl = s"refund-to-taxpayer/${repayment.repaymentRequestNumber}",
         visuallyHiddenText = s"${repayment.repaymentRequestNumber}"
       ))
     })
