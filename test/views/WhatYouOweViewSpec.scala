@@ -29,6 +29,7 @@ import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import testConstants.BaseTestConstants.{testArn, testCredId, testMtditid, testNino, testRetrievedUserName, testSaUtr, testUserTypeAgent, testUserTypeIndividual}
 import testConstants.FinancialDetailsTestConstants._
+import testConstants.messages.WhatYouOweMessages.{hmrcAdjustmentHeading, hmrcAdjustmentLine1}
 import testUtils.{TestSupport, ViewSpec}
 import uk.gov.hmrc.auth.core.retrieve.Name
 import views.html.WhatYouOwe
@@ -71,6 +72,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
   val payNow: String = messages("whatYouOwe.payNow")
   val saPaymentOnAccount1: String = "SA Payment on Account 1"
   val saPaymentOnAccount2: String = "SA Payment on Account 2"
+  val hmrcAdjustment: String = messages("whatYouOwe.hmrcAdjustment.text")
   val itsaPOA1: String = "ITSA- POA 1"
   val itsaPOA2: String = "ITSA - POA 2"
   val cancelledPayeSelfAssessment: String = "Cancelled Self Assessment payment (through your PAYE tax code)"
@@ -89,7 +91,8 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
               dunningLock: Boolean = false,
               whatYouOweCreditAmountEnabled: Boolean = false,
               migrationYear: Int = LocalDate.now().getYear - 1,
-              codingOutEnabled: Boolean = true
+              codingOutEnabled: Boolean = true,
+              mfaCreditsAndDebitsEnabled: Boolean = true
              ) {
     val individualUser: MtdItUser[_] = MtdItUser(
       mtditid = testMtditid,
@@ -104,7 +107,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     )(FakeRequest())
 
     val html: HtmlFormat.Appendable = whatYouOweView(creditCharges, charges, hasLpiWithDunningBlock, currentTaxYear, "testBackURL",
-      Some("1234567890"), None, dunningLock, codingOutEnabled, whatYouOweCreditAmountEnabled)(FakeRequest(), individualUser, implicitly)
+      Some("1234567890"), None, dunningLock, codingOutEnabled, mfaCreditsAndDebitsEnabled, whatYouOweCreditAmountEnabled)(FakeRequest(), individualUser, implicitly)
     val pageDocument: Document = Jsoup.parse(contentAsString(html))
 
     def verifySelfAssessmentLink(): Unit = {
@@ -120,6 +123,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
                    currentTaxYear: Int = LocalDate.now().getYear,
                    migrationYear: Int = LocalDate.now().getYear - 1,
                    codingOutEnabled: Boolean = true,
+                   mfaCreditsAndDebitsEnabled: Boolean = true,
                    whatYouOweCreditAmountEnabled: Boolean = false,
                    dunningLock: Boolean = false,
                    hasLpiWithDunningBlock: Boolean = false) {
@@ -147,6 +151,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       utr = Some("1234567890"),
       dunningLock = dunningLock,
       codingOutEnabled = codingOutEnabled,
+      mfaCreditsAndDebitsEnabled = mfaCreditsAndDebitsEnabled,
       whatYouOweCreditAmountEnabled = whatYouOweCreditAmountEnabled,
       isAgent = true)(FakeRequest(), agentUser, implicitly)
     val pageDocument: Document = Jsoup.parse(contentAsString(html))
@@ -278,6 +283,13 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     outstandingChargesModel = None,
     codedOutDocumentDetail = Some(DocumentDetailWithCodingDetails(codedOutDocumentDetail,
       CodingDetails(taxYearReturn = "2021", amountCodedOut = codingOutAmount, taxYearCoding = "2020")))
+  )
+
+  val whatYouOweDataWithMfaDebits: WhatYouOweChargesList = WhatYouOweChargesList(
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
+    chargesList = List(financialDetailsMfaDebits.getAllDocumentDetailsWithDueDates().head),
+    outstandingChargesModel = None,
+    codedOutDocumentDetail = None
   )
 
   val whatYouOweDataWithCodingOutFuture: WhatYouOweChargesList = WhatYouOweChargesList(
@@ -1062,6 +1074,19 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         pageDocument.getElementById("outstanding-charges-note-migrated").text shouldBe osChargesNote
 
       }
+    }
+  }
+
+  "MFA Debits is enabled" should {
+    "have an HMRC adjustment payment due" in new Setup(charges = whatYouOweDataWithMfaDebits, mfaCreditsAndDebitsEnabled = true) {
+      pageDocument.title() shouldBe whatYouOweTitle
+      pageDocument.selectFirst("h1").text shouldBe whatYouOweHeading
+      pageDocument.getElementById("due-0").text.contains(hmrcAdjustment) shouldBe true
+      pageDocument.select("#payments-due-table tbody > tr").size() shouldBe 1
+    }
+    "display the payment details content" in new Setup(charges = whatYouOweDataWithMfaDebits, mfaCreditsAndDebitsEnabled = true) {
+      pageDocument.getElementById("hmrc-adjustment-heading").text  shouldBe hmrcAdjustmentHeading
+      pageDocument.getElementById("hmrc-adjustment-line1").text  shouldBe hmrcAdjustmentLine1
     }
   }
 

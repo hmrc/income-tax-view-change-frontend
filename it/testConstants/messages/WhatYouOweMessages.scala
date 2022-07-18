@@ -20,6 +20,9 @@ import helpers.servicemocks.AuthStub.{messagesAPI, lang}
 
 object WhatYouOweMessages {
 
+  val hmrcAdjustment: String = messagesAPI("whatYouOwe.hmrcAdjustment.text")
+  val hmrcAdjustmentHeading: String = messagesAPI("whatYouOwe.hmrcAdjustment.heading")
+  val hmrcAdjustmentLine1: String = messagesAPI("whatYouOwe.hmrcAdjustment.line1")
   val underReview: String = messagesAPI("whatYouOwe.paymentUnderReview")
 
 }

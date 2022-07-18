@@ -527,6 +527,120 @@ object IncomeSourceIntegrationTestConstants {
     )
   )
 
+  def testValidFinancialDetailsModelJsonMfaDebits(originalAmount: BigDecimal, outstandingAmount: BigDecimal, taxYear: String = "2018",
+                                         dueDate: String = "2018-02-14", dunningLock: List[String] = noDunningLock,
+                                         interestLocks: List[String] = noInterestLock,
+                                         latePaymentInterestAmount: Option[BigDecimal] = Some(100)
+                                        ): JsValue = Json.obj(
+    "balanceDetails" -> Json.obj(
+      "balanceDueWithin30Days" -> 1.00,
+      "overDueAmount" -> 2.00,
+      "totalBalance" -> 3.00
+    ),
+    "documentDetails" -> Json.arr(
+      Json.obj(
+        "taxYear" -> taxYear,
+        "transactionId" -> "1040000123",
+        "documentDescription" -> "ITSA PAYE Charge",
+        "outstandingAmount" -> outstandingAmount,
+        "originalAmount" -> originalAmount,
+        "documentDate" -> "2018-03-29",
+        "interestFromDate" -> "2018-03-29",
+        "interestEndDate" -> "2018-03-29"
+      ),
+      Json.obj(
+        "taxYear" -> taxYear,
+        "transactionId" -> "1040000124",
+        "documentDescription" -> "ITSA Calc Error Correction",
+        "outstandingAmount" -> outstandingAmount,
+        "originalAmount" -> originalAmount,
+        "documentDate" -> "2018-03-29"
+      ),
+      Json.obj(
+        "taxYear" -> taxYear,
+        "transactionId" -> "1040000125",
+        "documentDescription" -> "ITSA Manual Penalty Pre CY-4",
+        "outstandingAmount" -> outstandingAmount,
+        "originalAmount" -> originalAmount,
+        "documentDate" -> "2018-03-29"
+      ),
+      Json.obj(
+        "taxYear" -> taxYear,
+        "transactionId" -> "1040000126",
+        "documentDescription" -> "ITSA Misc Charge",
+        "outstandingAmount" -> outstandingAmount,
+        "originalAmount" -> originalAmount,
+        "documentDate" -> "2018-03-29"
+      ),
+    ),
+    "financialDetails" -> Json.arr(
+      Json.obj(
+        "taxYear" -> taxYear,
+        "mainType" -> "ITSA PAYE Charge",
+        "transactionId" -> "1040000123",
+        "chargeType" -> "ITSA NI",
+        "originalAmount" -> originalAmount,
+        "items" -> Json.arr(
+          Json.obj("amount" -> 10000,
+            "clearingDate" -> "2019-08-13",
+            "dueDate" -> dueDate,
+            "paymentLot" -> "081203010024",
+            "paymentLotItem" -> "000001"))
+      ),
+      Json.obj(
+        "taxYear" -> taxYear,
+        "mainType" -> "ITSA Calc Error Correction",
+        "transactionId" -> "1040000124",
+        "chargeType" -> "ITSA NI",
+        "originalAmount" -> originalAmount,
+        "items" -> Json.arr(
+          Json.obj("amount" -> 9000,
+            "clearingDate" -> "2019-08-13",
+            "dueDate" -> dueDate,
+            "paymentLot" -> "081203010024",
+            "paymentLotItem" -> "000001"),
+          Json.obj(
+            "interestLock" -> interestLocks.head,
+            "dunningLock" -> dunningLock.head
+          ))
+      ),
+      Json.obj(
+        "taxYear" -> taxYear,
+        "mainType" -> "ITSA Manual Penalty Pre CY-4",
+        "transactionId" -> "1040000125",
+        "chargeType" -> "ITSA NI",
+        "originalAmount" -> originalAmount,
+        "items" -> Json.arr(
+          Json.obj("amount" -> 8000,
+            "clearingDate" -> "2019-08-13",
+            "dueDate" -> dueDate,
+            "paymentLot" -> "081203010024",
+            "paymentLotItem" -> "000001"),
+          Json.obj(
+            "interestLock" -> interestLocks(1),
+            "dunningLock" -> dunningLock(1)
+          ))
+      ),
+      Json.obj(
+        "taxYear" -> taxYear,
+        "mainType" -> "ITSA Manual Penalty Pre CY-4",
+        "transactionId" -> "1040000126",
+        "chargeType" -> "ITSA NI",
+        "originalAmount" -> originalAmount,
+        "items" -> Json.arr(
+          Json.obj("amount" -> 8000,
+            "clearingDate" -> "2019-08-13",
+            "dueDate" -> dueDate,
+            "paymentLot" -> "081203010024",
+            "paymentLotItem" -> "000001"),
+          Json.obj(
+            "interestLock" -> interestLocks(1),
+            "dunningLock" -> dunningLock(1)
+          ))
+      )
+    )
+  )
+
   def documentDetailJson(originalAmount: BigDecimal,
                          outstandingAmount: BigDecimal,
                          taxYear: String = "2018",
@@ -782,3 +896,5 @@ object IncomeSourceIntegrationTestConstants {
     )
   )
 }
+
+

@@ -794,6 +794,14 @@ object FinancialDetailsTestConstants {
     dunningLock = noDunningLocks
   )
 
+  val financialDetailsMfaDebits: FinancialDetailsModel = testFinancialDetailsModel(
+    documentDescription = List(Some("ITSA PAYE Charge"), Some("ITSA Calc Error Correction")),
+    mainType = List(Some("HMRC Adjustment"), Some("HMRC Adjustment")),
+    dueDate = dueDateOverdue,
+    taxYear = LocalDate.now().getYear.toString,
+    dunningLock = noDunningLocks
+  )
+
   val financialDetailsWithMixedData1: FinancialDetailsModel = testFinancialDetailsModelWithChargesOfSameType(
     documentDescription = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
     mainType = List(Some("SA Payment on Account 1"), Some("SA Payment on Account 2")),
