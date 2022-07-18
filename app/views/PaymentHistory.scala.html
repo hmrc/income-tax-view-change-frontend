@@ -39,7 +39,7 @@
     govukAccordion : GovukAccordion
 )
 
-@(groupedPayments: List[(Int, List[PaymentHistoryEntry])], backUrl: String, saUtr: Option[String], isAgent: Boolean = false,
+@(groupedPayments: List[(Int, List[PaymentHistoryEntry])], paymentHistoryAndRefundsEnabled: Boolean = false, backUrl: String, saUtr: Option[String], isAgent: Boolean = false,
 btaNavPartial: Option[Html] = None, origin: Option[String] = None)(implicit request: Request[_], messages: Messages)
 @import implicitDateFormatter.longDate
 
@@ -106,7 +106,12 @@ btaNavPartial: Option[Html] = None, origin: Option[String] = None)(implicit requ
     useFallbackBackLink = true
 ) {
 
+@if(paymentHistoryAndRefundsEnabled){
+    @h1(msg = "home.paymentHistoryRefund.heading")
+} else {
     @h1(msg = "paymentHistory.heading")
+}
+
 
     @if(groupedPayments.nonEmpty) {
         @govukAccordion(Accordion(
