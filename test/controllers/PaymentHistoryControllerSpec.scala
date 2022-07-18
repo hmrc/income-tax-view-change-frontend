@@ -16,6 +16,7 @@
 
 package controllers
 
+import config.featureswitch.PaymentHistoryRefunds
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
 import forms.utils.SessionKeys.gatewayPage

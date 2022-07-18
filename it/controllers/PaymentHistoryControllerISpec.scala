@@ -18,8 +18,8 @@ package controllers
 
 import audit.models.PaymentHistoryResponseAuditModel
 import auth.MtdItUser
-import config.featureswitch.{CutOverCredits, MFACreditsAndDebits, R7bTxmEvents}
-import helpers.ComponentSpecBase
+import config.featureswitch.{CutOverCredits, MFACreditsAndDebits, PaymentHistoryRefunds, R7bTxmEvents}
+import helpers.{ComponentSpecBase, servicemocks}
 import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.financialDetails.Payment
@@ -28,6 +28,7 @@ import play.api.libs.ws.WSResponse
 import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.IncomeSourceIntegrationTestConstants._
+import testConstants.messages.{PaymentHistoryMessages, TaxYearSummaryMessages}
 
 class PaymentHistoryControllerISpec extends ComponentSpecBase {
 
@@ -104,6 +105,7 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase {
       enable(R7bTxmEvents)
       enable(CutOverCredits)
       enable(MFACreditsAndDebits)
+      enable(PaymentHistoryRefunds)
       isAuthorisedUser(authorised = true)
       stubUserDetails()
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, paymentHistoryBusinessAndPropertyResponse)
@@ -114,8 +116,10 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase {
       Then("The Payment History page is returned to the user")
       result should have(
         httpStatus(OK),
-        pageTitleIndividual("paymentHistory.heading")
+        pageTitleIndividual("paymentHistory.heading"),
+        elementTextBySelector("h1")(PaymentHistoryMessages.paymentHistoryHeading)
       )
+
 
       verifyAuditContainsDetail(PaymentHistoryResponseAuditModel(testUser, payments, CutOverCreditsEnabled = true,
         MFACreditsEnabled = true, R7bTxmEvents = true).detail)
@@ -128,4 +132,7 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase {
         () => IncomeTaxViewChangeFrontend.getPaymentHistory)
     }
   }
+
+
+
 }

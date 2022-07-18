@@ -128,6 +128,7 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
         runForecastTest(crystallised = false, calcDataNotFound = true, forecastCalcFeatureSwitchEnabled = true, shouldShowForecastData = true)
       }
     }
+
     "ForecastCalculation feature switch is disabled" should {
       "NOT show the Forecast tab before crystallisation" in {
         runForecastTest(crystallised = false, forecastCalcFeatureSwitchEnabled = false, shouldShowForecastData = false)
@@ -490,6 +491,7 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
       }
     }
   }
+
   "The TaxYearSummary.renderAgentTaxYearSummaryPage(year) action" when {
 
     "the user is not authenticated" should {
