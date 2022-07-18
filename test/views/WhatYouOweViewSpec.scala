@@ -286,9 +286,9 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       CodingDetails(taxYearReturn = "2021", amountCodedOut = codingOutAmount, taxYearCoding = "2020")))
   )
 
-  val whatYouOweDataWithMfaDebits: WhatYouOweChargesList = WhatYouOweChargesList(
+  val whatYouOweDataWithMFADebits: WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
-    chargesList = List(financialDetailsMfaDebits.getAllDocumentDetailsWithDueDates().head),
+    chargesList = List(financialDetailsMFADebits.getAllDocumentDetailsWithDueDates().head),
     outstandingChargesModel = None,
     codedOutDocumentDetail = None
   )
@@ -1079,13 +1079,13 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
   }
 
   "MFA Debits is enabled" should {
-    "have an HMRC adjustment payment due" in new Setup(charges = whatYouOweDataWithMfaDebits, mfaCreditsAndDebitsEnabled = true) {
+    "have an HMRC adjustment payment due" in new Setup(charges = whatYouOweDataWithMFADebits, mfaCreditsAndDebitsEnabled = true) {
       pageDocument.title() shouldBe whatYouOweTitle
       pageDocument.selectFirst("h1").text shouldBe whatYouOweHeading
       pageDocument.getElementById("due-0").text.contains(hmrcAdjustment) shouldBe true
       pageDocument.select("#payments-due-table tbody > tr").size() shouldBe 1
     }
-    "display the payment details content" in new Setup(charges = whatYouOweDataWithMfaDebits, mfaCreditsAndDebitsEnabled = true) {
+    "display the payment details content" in new Setup(charges = whatYouOweDataWithMFADebits, mfaCreditsAndDebitsEnabled = true) {
       pageDocument.getElementById("hmrc-adjustment-heading").text  shouldBe hmrcAdjustmentHeading
       pageDocument.getElementById("hmrc-adjustment-line1").text  shouldBe hmrcAdjustmentLine1
     }

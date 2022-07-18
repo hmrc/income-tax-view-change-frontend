@@ -794,7 +794,7 @@ object FinancialDetailsTestConstants {
     dunningLock = noDunningLocks
   )
 
-  val financialDetailsMfaDebits: FinancialDetailsModel = testFinancialDetailsModel(
+  val financialDetailsMFADebits: FinancialDetailsModel = testFinancialDetailsModel(
     documentDescription = List(Some("ITSA PAYE Charge"), Some("ITSA Calc Error Correction")),
     mainType = List(Some("HMRC Adjustment"), Some("HMRC Adjustment")),
     dueDate = dueDateOverdue,

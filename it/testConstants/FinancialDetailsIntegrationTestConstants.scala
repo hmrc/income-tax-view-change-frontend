@@ -390,6 +390,32 @@ object FinancialDetailsIntegrationTestConstants {
     taxYear = LocalDate.now().getYear.toString
   )
 
+  val financialDetailsWithMFADebits: FinancialDetailsModel = testFinancialDetailsModelWithChargesOfSameType(
+    documentDescription = List(Some("ITSA PAYE Charge"), Some("ITSA Calc Error Correction")),
+    mainType = List(Some("ITSA PAYE Charge"), Some("ITSA Calc Error Correction")),
+    transactionIds = List(Some("mfaId1"), Some("mfaId2")),
+    transactionDate = Some("transactionDate"),
+    `type` = Some("type"),
+    totalAmount = Some(100),
+    originalAmount = Some(100),
+    clearedAmount = Some(100),
+    chargeType = Some("NIC4 Wales"),
+    dueDate = List(Some(LocalDate.now().plusDays(30).toString), Some(LocalDate.now().minusDays(30).toString)),
+    subItemId = Some("1"),
+    amount = Some(100),
+    clearingDate = Some("clearingDate"),
+    clearingReason = Some("clearingReason"),
+    outgoingPaymentMethod = Some("outgoingPaymentMethod"),
+    paymentReference = Some("paymentReference"),
+    paymentAmount = Some(100),
+    paymentMethod = Some("paymentMethod"),
+    paymentLot = Some("paymentLot"),
+    paymentLotItem = Some("paymentLotItem"),
+    paymentId = Some("paymentId"),
+    outstandingAmount = List(Some(2500), Some(500)),
+    taxYear = LocalDate.now().getYear.toString
+  )
+
   val whatYouOweDataWithDataDueIn30Days: WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
     chargesList = List(DocumentDetailWithDueDate(DocumentDetail("2021","1040000123",
@@ -439,6 +465,11 @@ object FinancialDetailsIntegrationTestConstants {
       ++ List(financialDetailsWithMixedData2.getAllDocumentDetailsWithDueDates().head),
     outstandingChargesModel = Some(OutstandingChargesModel(List()))
   )
+
+  val whatYouOweDataWithMFADebitsData: WhatYouOweChargesList = WhatYouOweChargesList(
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
+    chargesList = List(financialDetailsWithMFADebits.getAllDocumentDetailsWithDueDates().head),
+    outstandingChargesModel = Some(OutstandingChargesModel(List())))
 
   val whatYouOweWithAZeroOutstandingAmount: WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),

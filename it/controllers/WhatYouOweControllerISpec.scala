@@ -103,7 +103,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
           AuditStub.verifyAuditContainsDetail(WhatYouOweResponseAuditModel(testUser, whatYouOweDataWithDataDueIn30Days, false).detail)
 
           verifyIncomeSourceDetailsCall(testMtditid)
-          IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05",2)
+          IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05", 2)
           IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear - 1).toString)
 
           Then("the result should have a HTTP status of OK (200) and the payments due page")
@@ -670,10 +670,10 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
             propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
 
 
-            And("I wiremock stub a financial details response with coded out documents")
-            IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK,
-              testValidFinancialDetailsModelJsonCodingOut(2000, 2000, testTaxYear.toString,
-                LocalDate.now().toString, 0 , (getCurrentTaxYearEnd.getYear - 1).toString, 2000))
+          And("I wiremock stub a financial details response with coded out documents")
+          IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK,
+            testValidFinancialDetailsModelJsonCodingOut(2000, 2000, testTaxYear.toString,
+              LocalDate.now().toString, 0, (getCurrentTaxYearEnd.getYear - 1).toString, 2000))
 
           IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
             "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
@@ -750,182 +750,43 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
         }
       }
 
-      "MFA Debits is enabled" when {
-        "render the HMRC adjustment payments owed" in {
-          Given("MFA Debits is enabled")
-          enable(MFACreditsAndDebits)
+      "MFA Debits" should {
+        def testMFADebits(MFADebitsEnabled: Boolean): Unit = {
+          if (MFADebitsEnabled) enable(MFACreditsAndDebits) else disable(MFACreditsAndDebits)
+          Given("I wiremock stub a multiple financial details response")
+          verifyIncomeSourceDetailsCall(testMtditid)
+          IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05", 2)
+          IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear - 1).toString)
 
-          And("I wiremock stub a successful Income Source Details response with multiple business and property")
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
-
-          And("I wiremock stub an MFA Debit financial details response")
-          val financialDetailsResponseJson = testValidFinancialDetailsModelJsonMfaDebits(2000,
-            2000, testTaxYear.toString, LocalDate.now().minusDays(15).toString,
-            dunningLock = noDunningLock)
-
-          IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK,
-            financialDetailsResponseJson)
-          IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
-            "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
-
-          When("I call GET /what-you-owe")
+          When("I call GET /report-quarterly/income-and-expenses/view/payments-owed")
+          AuditStub.verifyAuditEvent(WhatYouOweResponseAuditModel(testUser, whatYouOweDataWithMFADebitsData, R7bTxmEvents = false))
           val res = IncomeTaxViewChangeFrontend.getPaymentsDue
           IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear - 1).toString)
 
-          Then("the result should have a HTTP status of OK (200) and the payments due page")
-          res should have(
-            httpStatus(OK),
-            pageTitleIndividual("whatYouOwe.heading"),
-            isElementVisibleById("balancing-charge-type-0")(expectedValue = false),
-            isElementVisibleById("balancing-charge-type-1")(expectedValue = false),
-            isElementVisibleById("payment-details-content-0")(expectedValue = true),
-            isElementVisibleById("payment-details-content-1")(expectedValue = true),
-            elementTextBySelectorList("#payments-due-table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)", "a:nth-of-type(1)")(s"$hmrcAdjustment $testTaxYear"),
-            elementTextBySelectorList("#payments-due-table", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(2)", "a:nth-of-type(1)")(s"$hmrcAdjustment $testTaxYear"),
-            elementTextBySelectorList("#payments-due-table", "tbody", "tr:nth-of-type(3)", "td:nth-of-type(2)", "a:nth-of-type(1)")(s"$hmrcAdjustment $testTaxYear"),
-            elementTextBySelectorList("#payments-due-table", "tbody", "tr:nth-of-type(4)", "td:nth-of-type(2)", "a:nth-of-type(1)")(s"$hmrcAdjustment $testTaxYear"),
-            isElementVisibleById("balancing-charge-type-0")(expectedValue = false),
-            isElementVisibleById("balancing-charge-type-1")(expectedValue = false),
-            elementTextBySelectorList("#payment-details-content-5")(expectedValue = s"$hmrcAdjustmentHeading $hmrcAdjustmentLine1"),
-            isElementVisibleById(s"payment-button")(expectedValue = true),
-            isElementVisibleById("no-payments-due")(expectedValue = false),
-            isElementVisibleById("sa-note-migrated")(expectedValue = true),
-            isElementVisibleById("outstanding-charges-note-migrated")(expectedValue = true),
-            isElementVisibleById(s"payments-made-bullets")(expectedValue = true),
-            isElementVisibleById(s"sa-tax-bill")(expectedValue = true))
-        }
-        "render the non-HMRC adjustment payments owed" in {
-          Given("MFA Debits is enabled")
-          enable(MFACreditsAndDebits)
-
-          And("I wiremock stub a successful Income Source Details response with multiple business and property")
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
-
-          And("I wiremock stub an MFA Debit financial details response")
-          val financialDetailsResponseJson = testValidFinancialDetailsModelJson(2000,
-            2000, testTaxYear.toString, LocalDate.now().minusDays(15).toString,
-            dunningLock = noDunningLock)
-
-          IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK,
-            financialDetailsResponseJson)
-          IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
-            "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
-
-          When("I call GET /what-you-owe")
-          val res = IncomeTaxViewChangeFrontend.getPaymentsDue
-          IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear - 1).toString)
-
-          Then("the result should have a HTTP status of OK (200) and the payments due page")
-          res should have(
-            httpStatus(OK),
-            pageTitleIndividual("whatYouOwe.heading"),
-            isElementVisibleById("balancing-charge-type-0")(expectedValue = false),
-            isElementVisibleById("balancing-charge-type-1")(expectedValue = false),
-            isElementVisibleById("payment-details-content-0")(expectedValue = true),
-            isElementVisibleById("payment-details-content-1")(expectedValue = true),
-            isElementVisibleById("due-0")(expectedValue = true),
-            isElementVisibleById("due-1")(expectedValue = true),
-            isElementVisibleById("balancing-charge-type-0")(expectedValue = false),
-            isElementVisibleById("balancing-charge-type-1")(expectedValue = false),
-            elementTextBySelectorList("#payment-details-content-5")(expectedValue = s"$hmrcAdjustmentHeading $hmrcAdjustmentLine1"),
-            isElementVisibleById(s"payment-button")(expectedValue = true),
-            isElementVisibleById("no-payments-due")(expectedValue = false),
-            isElementVisibleById("sa-note-migrated")(expectedValue = true),
-            isElementVisibleById("outstanding-charges-note-migrated")(expectedValue = true),
-            isElementVisibleById(s"payments-made-bullets")(expectedValue = true),
-            isElementVisibleById(s"sa-tax-bill")(expectedValue = true))
+          Then("The expected result is returned")
+          if (MFADebitsEnabled) {
+            res should have(
+              httpStatus(OK),
+              pageTitleIndividual("whatYouOwe.heading"),
+              elementTextBySelectorList("#payments-due-table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)", "a:nth-of-type(1)")(s"$hmrcAdjustment $testTaxYear"),
+              elementTextBySelectorList("#payments-due-table", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(2)", "a:nth-of-type(1)")(s"$hmrcAdjustment $testTaxYear"),
+              elementTextBySelectorList("#payments-due-table", "tbody", "tr:nth-of-type(3)", "td:nth-of-type(2)", "a:nth-of-type(1)")(s"$hmrcAdjustment $testTaxYear"),
+              elementTextBySelectorList("#payments-due-table", "tbody", "tr:nth-of-type(4)", "td:nth-of-type(2)", "a:nth-of-type(1)")(s"$hmrcAdjustment $testTaxYear"),
+              elementTextBySelectorList("#payment-details-content-5")(expectedValue = s"$hmrcAdjustmentHeading $hmrcAdjustmentLine1"))
+          } else {
+            res should have(
+              httpStatus(OK),
+              pageTitleIndividual("whatYouOwe.heading"),
+              isElementVisibleById("no-payments-due")(expectedValue = true))
+          }
+          "show What You Owe page with MFA Debits on the Payment Tab with FS ENABLED" in {
+            testMFADebits(true)
+          }
+          "show What You Owe page with MFA Debits on the Payment Tab with FS DISABLED" in {
+            testMFADebits(false)
+          }
         }
       }
-
-      "MFA Debits is disabled" when {
-        "not render the HMRC adjustment payments owed" in {
-          Given("MFA Debits is disabled")
-          disable(MFACreditsAndDebits)
-
-          And("I wiremock stub a successful Income Source Details response with multiple business and property")
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
-
-          And("I wiremock stub an MFA Debit financial details response")
-          val financialDetailsResponseJson = testValidFinancialDetailsModelJsonMfaDebits(2000,
-            2000, testTaxYear.toString, LocalDate.now().minusDays(15).toString,
-            dunningLock = noDunningLock)
-
-          IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK,
-            financialDetailsResponseJson)
-          IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
-            "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
-
-          When("I call GET /what-you-owe")
-          val res = IncomeTaxViewChangeFrontend.getPaymentsDue
-          IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear - 1).toString)
-
-          Then("the result should have a HTTP status of OK (200) and the payments due page")
-          res should have(
-            httpStatus(OK),
-            pageTitleIndividual("whatYouOwe.heading"),
-            isElementVisibleById("balancing-charge-type-0")(expectedValue = false),
-            isElementVisibleById("balancing-charge-type-1")(expectedValue = false),
-            isElementVisibleById("payment-details-content-0")(expectedValue = false),
-            isElementVisibleById("payment-details-content-1")(expectedValue = false),
-            isElementVisibleById("due-0")(expectedValue = false),
-            isElementVisibleById("due-1")(expectedValue = false),
-            isElementVisibleById("due-2")(expectedValue = false),
-            isElementVisibleById("due-3")(expectedValue = false),
-            isElementVisibleById("balancing-charge-type-0")(expectedValue = false),
-            isElementVisibleById("balancing-charge-type-1")(expectedValue = false),
-            isElementVisibleById("hmrc-adjustment-heading")(expectedValue = false),
-            isElementVisibleById("hmrc-adjustment-line1")(expectedValue = false),
-            isElementVisibleById(s"payment-button")(expectedValue = false),
-            isElementVisibleById("no-payments-due")(expectedValue = true),
-            isElementVisibleById("sa-note-migrated")(expectedValue = true),
-            isElementVisibleById("outstanding-charges-note-migrated")(expectedValue = true),
-            isElementVisibleById(s"payments-made-bullets")(expectedValue = true),
-            isElementVisibleById(s"sa-tax-bill")(expectedValue = true))
-        }
-        "render the non-HMRC adjustment payments owed" in {
-          Given("MFA Debits is disabled")
-          disable(MFACreditsAndDebits)
-
-          And("I wiremock stub a successful Income Source Details response with multiple business and property")
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
-
-          And("I wiremock stub an MFA Debit financial details response")
-          val financialDetailsResponseJson = testValidFinancialDetailsModelJson(2000,
-            2000, testTaxYear.toString, LocalDate.now().minusDays(15).toString,
-            dunningLock = noDunningLock)
-
-          IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK,
-            financialDetailsResponseJson)
-          IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
-            "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
-
-          When("I call GET /what-you-owe")
-          val res = IncomeTaxViewChangeFrontend.getPaymentsDue
-          IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear - 1).toString)
-
-          Then("the result should have a HTTP status of OK (200) and the payments due page")
-          res should have(
-            httpStatus(OK),
-            pageTitleIndividual("whatYouOwe.heading"),
-            isElementVisibleById("balancing-charge-type-0")(expectedValue = false),
-            isElementVisibleById("balancing-charge-type-1")(expectedValue = false),
-            isElementVisibleById("payment-details-content-0")(expectedValue = true),
-            isElementVisibleById("payment-details-content-1")(expectedValue = true),
-            isElementVisibleById("due-0")(expectedValue = true),
-            isElementVisibleById("due-1")(expectedValue = true),
-            isElementVisibleById("balancing-charge-type-0")(expectedValue = false),
-            isElementVisibleById("balancing-charge-type-1")(expectedValue = false),
-            isElementVisibleById("hmrc-adjustment-heading")(expectedValue = false),
-            isElementVisibleById("hmrc-adjustment-line1")(expectedValue = false),
-            isElementVisibleById(s"payment-button")(expectedValue = true),
-            isElementVisibleById("no-payments-due")(expectedValue = false),
-            isElementVisibleById("sa-note-migrated")(expectedValue = true),
-            isElementVisibleById("outstanding-charges-note-migrated")(expectedValue = true),
-            isElementVisibleById(s"payments-made-bullets")(expectedValue = true),
-            isElementVisibleById(s"sa-tax-bill")(expectedValue = true))
-        }
-      }
-
     }
   }
 
