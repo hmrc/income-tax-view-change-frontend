@@ -29,7 +29,6 @@ import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import testConstants.BaseTestConstants.{testArn, testCredId, testMtditid, testNino, testRetrievedUserName, testSaUtr, testUserTypeAgent, testUserTypeIndividual}
 import testConstants.FinancialDetailsTestConstants._
-import testConstants.messages.WhatYouOweMessages.{hmrcAdjustmentHeading, hmrcAdjustmentLine1}
 import testUtils.{TestSupport, ViewSpec}
 import uk.gov.hmrc.auth.core.retrieve.Name
 import views.html.WhatYouOwe
@@ -73,6 +72,8 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
   val saPaymentOnAccount1: String = "SA Payment on Account 1"
   val saPaymentOnAccount2: String = "SA Payment on Account 2"
   val hmrcAdjustment: String = messages("whatYouOwe.hmrcAdjustment.text")
+  val hmrcAdjustmentHeading: String = messages("whatYouOwe.hmrcAdjustment.heading")
+  val hmrcAdjustmentLine1: String = messages("whatYouOwe.hmrcAdjustment.line1")
   val itsaPOA1: String = "ITSA- POA 1"
   val itsaPOA2: String = "ITSA - POA 2"
   val cancelledPayeSelfAssessment: String = "Cancelled Self Assessment payment (through your PAYE tax code)"
