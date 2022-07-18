@@ -838,6 +838,15 @@ inYear-tax-overview.agent.inset                                  = Mae’r cyfri
 
 ## credits and refunds
 credit-and-refund.credit-from-hmrc-title                          = Credyd o addasiad gan CThEM
+credit-and-refund.subHeading.has-credits                          = Mae cyfanswm o
+credit-and-refund.heading                                         = Hawlio ad-daliad
+credit-and-refund.claim-refund-btn                                = Hawlio ad-daliad
+credit-and-refund.bullet-text-intro                               = Yr hyn y gallwch ei wneud
+credit-and-refund.check-refund-btn                                = Gwirio statws ad-daliad
+credit-and-refund.payment                                         = yn sgil taliad a wnaed ar
+credit-and-refund.refundProgress                                  = mae ad-daliad o wrthi'n cael ei brosesu
+
+
 
 shortMonth.1 = Ion
 shortMonth.2 = Chwe
