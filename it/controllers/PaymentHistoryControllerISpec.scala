@@ -147,7 +147,7 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase {
         )
 
 
-        
+
 
       }
     }
