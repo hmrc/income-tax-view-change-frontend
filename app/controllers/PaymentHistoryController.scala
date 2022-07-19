@@ -79,7 +79,7 @@ class PaymentHistoryController @Inject()(val paymentHistoryView: PaymentHistory,
                 MFACreditsEnabled = MFACreditsEnabled))
               val paymentHistoryEntries = RepaymentHistoryUtils.getGroupedPaymentHistoryData(payments, repayments, isAgent,
                 MFACreditsEnabled = MFACreditsEnabled, CutOverCreditsEnabled = CutOverCreditsEnabled, languageUtils)
-              Ok(paymentHistoryView(paymentHistoryEntries, paymentHistoryAndRefundsEnabled, backUrl, user.saUtr,
+              Ok(paymentHistoryView(paymentHistoryEntries, paymentHistoryAndRefundsEnabled = paymentHistoryAndRefundsEnabled, backUrl, user.saUtr,
                 btaNavPartial = user.btaNavPartial, isAgent = isAgent)
               ).addingToSession(gatewayPage -> PaymentHistoryPage.name)
             case Left(_) => itvcErrorHandler.showInternalServerError()

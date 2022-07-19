@@ -20,6 +20,7 @@ import helpers.servicemocks.AuthStub.{lang, messagesAPI}
 object PaymentHistoryMessages {
 
   val paymentHistoryHeading: String = messagesAPI("Payment and refund history")
+  val paymentHistoryHeadingFSOff: String = messagesAPI("Payment history")
 
 
 }

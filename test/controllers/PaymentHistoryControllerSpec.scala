@@ -122,6 +122,14 @@ class PaymentHistoryControllerSpec extends MockAuthenticationPredicate
         redirectLocation(result) shouldBe Some("/report-quarterly/income-and-expenses/view/sign-in")
       }
     }
+
+    "When the feature switch is enabled" should {
+      "navigate user to the Payment history page" in new Setup {
+
+      }
+    }
+
+
   }
 
 
@@ -171,7 +179,6 @@ class PaymentHistoryControllerSpec extends MockAuthenticationPredicate
       setupMockAgentAuthorisationException(withClientPredicate = false)
 
       val result: Future[Result] = controller.showAgent()(fakeRequestWithActiveSession)
-
       status(result) shouldBe Status.SEE_OTHER
 
     }
