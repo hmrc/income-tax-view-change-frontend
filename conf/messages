@@ -104,7 +104,6 @@ home.updates.heading                                            = Next updates d
 home.updates.view                                               = View update deadlines
 home.paymentHistory.heading                                     = Payment history
 home.paymentHistory.view                                        = Payment history
-home.paymentHistoryRefund.heading                               = Payment and refund history
 home.overdue.date.payment.count                                 = {0} OVERDUE PAYMENTS
 home.overdue.date.update.count                                  = {0} OVERDUE UPDATES
 home.overdue.date                                               = OVERDUE

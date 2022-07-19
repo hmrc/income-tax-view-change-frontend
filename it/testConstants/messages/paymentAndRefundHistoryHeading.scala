@@ -17,7 +17,7 @@ package testConstants.messages
 
 import helpers.servicemocks.AuthStub.{lang, messagesAPI}
 
-object PaymentHistoryMessages {
+object paymentAndRefundHistoryHeading {
 
   val paymentHistoryHeading: String = messagesAPI("Payment and refund history")
   val paymentHistoryHeadingFSOff: String = messagesAPI("Payment history")

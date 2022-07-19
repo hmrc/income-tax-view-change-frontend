@@ -141,7 +141,6 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
 
       s"Display the heading ${PaymentHistoryMessages.pageHeading}" in new PaymentHistorySetup(paymentEntriesMFA) {
         layoutContent.selectHead("h1").text shouldBe PaymentHistoryMessages.pageHeading
-
     }
   }
 

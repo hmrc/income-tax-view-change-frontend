@@ -28,7 +28,7 @@ import play.api.libs.ws.WSResponse
 import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.IncomeSourceIntegrationTestConstants._
-import testConstants.messages.{PaymentHistoryMessages, TaxYearSummaryMessages}
+import testConstants.messages.{paymentAndRefundHistoryHeading, TaxYearSummaryMessages}
 
 class PaymentHistoryControllerISpec extends ComponentSpecBase {
 
@@ -117,7 +117,7 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase {
       result should have(
         httpStatus(OK),
         pageTitleIndividual("paymentHistory.heading"),
-        elementTextBySelector("h1")(PaymentHistoryMessages.paymentHistoryHeading)
+        elementTextBySelector("h1")(paymentAndRefundHistoryHeading.paymentHistoryHeading)
       )
 
 
@@ -136,28 +136,15 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase {
         stubUserDetails()
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, paymentHistoryBusinessAndPropertyResponse)
         IncomeTaxViewChangeStub.stubGetPaymentsResponse(testNino, s"$twoPreviousTaxYearEnd-04-06", s"$previousTaxYearEnd-04-05")(OK, payments)
-
         val result: WSResponse = IncomeTaxViewChangeFrontend.getPaymentHistory
-
         Then("The Payment History page is returned to the user")
         result should have(
           httpStatus(OK),
           pageTitleIndividual("paymentHistory.heading"),
-          elementTextBySelector("h1")(PaymentHistoryMessages.paymentHistoryHeadingFSOff)
+          elementTextBySelector("h1")(paymentAndRefundHistoryHeading.paymentHistoryHeadingFSOff)
         )
-
-
-
-
       }
     }
-
-
-
-
-
-
-
   }
 
   "API#1171 IncomeSourceDetails Caching" when {
@@ -166,15 +153,4 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase {
         () => IncomeTaxViewChangeFrontend.getPaymentHistory)
     }
   }
-
-
-
-
-
-
-
-
-
-
-
 }

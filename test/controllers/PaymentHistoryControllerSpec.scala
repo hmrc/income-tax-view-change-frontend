@@ -123,13 +123,6 @@ class PaymentHistoryControllerSpec extends MockAuthenticationPredicate
       }
     }
 
-    "When the feature switch is enabled" should {
-      "navigate user to the Payment history page" in new Setup {
-
-      }
-    }
-
-
   }
 
 
@@ -142,9 +135,7 @@ class PaymentHistoryControllerSpec extends MockAuthenticationPredicate
         mockSingleBusinessIncomeSource()
         when(paymentHistoryService.getPaymentHistory(any(), any()))
           .thenReturn(Future.successful(Right(testPayments)))
-
         val result = controller.showAgent()(fakeRequestConfirmedClient())
-
         status(result) shouldBe Status.OK
         result.futureValue.session.get(gatewayPage) shouldBe Some("paymentHistory")
       }
@@ -157,7 +148,6 @@ class PaymentHistoryControllerSpec extends MockAuthenticationPredicate
         mockErrorIncomeSource()
         when(paymentHistoryService.getPaymentHistory(any(), any()))
           .thenReturn(Future.successful(Left(PaymentHistoryError)))
-
         val result: Future[Result] = controller.showAgent()(fakeRequestConfirmedClient())
         result.failed.futureValue shouldBe an[InternalServerException]
 
@@ -169,7 +159,6 @@ class PaymentHistoryControllerSpec extends MockAuthenticationPredicate
       "send the user to internal server error page" in new Setup {
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         mockErrorIncomeSource()
-
         val result: Future[Result] = controller.showAgent()(fakeRequestConfirmedClient())
         result.failed.futureValue shouldBe an[InternalServerException]
       }
@@ -177,7 +166,6 @@ class PaymentHistoryControllerSpec extends MockAuthenticationPredicate
 
     "User fails to be authorised" in new Setup {
       setupMockAgentAuthorisationException(withClientPredicate = false)
-
       val result: Future[Result] = controller.showAgent()(fakeRequestWithActiveSession)
       status(result) shouldBe Status.SEE_OTHER
 
