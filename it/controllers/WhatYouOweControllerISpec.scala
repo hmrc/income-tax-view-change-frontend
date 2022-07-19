@@ -772,7 +772,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
               elementTextBySelectorList("#payments-due-table", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(2)", "a:nth-of-type(1)")(s"$hmrcAdjustment $testTaxYear"),
               elementTextBySelectorList("#payments-due-table", "tbody", "tr:nth-of-type(3)", "td:nth-of-type(2)", "a:nth-of-type(1)")(s"$hmrcAdjustment $testTaxYear"),
               elementTextBySelectorList("#payments-due-table", "tbody", "tr:nth-of-type(4)", "td:nth-of-type(2)", "a:nth-of-type(1)")(s"$hmrcAdjustment $testTaxYear"),
-              elementTextBySelectorList("#payment-details-content-5")(expectedValue = s"$hmrcAdjustmentHeading $hmrcAdjustmentLine1"))
+              elementTextBySelectorList("#payment-details-content-5")(s"$hmrcAdjustmentHeading $hmrcAdjustmentLine1"))
           } else {
             res should have(
               httpStatus(OK),
