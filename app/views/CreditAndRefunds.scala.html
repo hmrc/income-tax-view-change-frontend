@@ -94,8 +94,10 @@ useFallbackBackLink = true
 
 @if(balance.isDefined){
 @if(balance.get.availableCredit.get != 0){
-<h2 class="govuk-heading-m">@{balance.get.availableCredit.get.toCurrency}
-    <span class="govuk-body"> @messages("credit-and-refund.subHeading.has-credits")</span>
+<h2 class="govuk-heading-m">
+    <span class="govuk-body"> @messages("credit-and-refund.subHeading.has-credits-1") </span>
+    @{balance.get.availableCredit.get.toCurrency}
+    <span class="govuk-body">@messages("credit-and-refund.subHeading.has-credits-2")</span>
 </h2>
 } else {
 <h2 class="govuk-heading-m">@{balance.get.firstPendingAmountRequested.get.toCurrency}
@@ -108,38 +110,36 @@ useFallbackBackLink = true
     @if(isMFACreditsAndDebitsEnabled){
     @if(charge._1.documentDetail.validMFACreditDescription()) {
     <li>
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__value govuk-heading-s">
-                @charge._1.documentDetail.paymentOrChargeCredit.get.toCurrencyString
-            </dt>
-            <dt class="govuk-summary-list__value">
+        <dt class="govuk-heading-s">
+            @charge._1.documentDetail.paymentOrChargeCredit.get.toCurrencyString
+            <span class="govuk-body">
                 <a href="@getCreditsSummaryControllerHref(charge._1.documentDetail, isAgent)"
                    class="govuk-link">@messages("credit-and-refund.credit-from-hmrc-title")
                 </a>
-            </dt>
-        </div>
+            </span>
+        </dt>
     </li>
     }
     @if(!charge._1.documentDetail.validMFACreditDescription()) {
     <li>
-        <dt class="govuk-summary-list__value govuk-heading-s">
+        <dt class="govuk-heading-s">
             @charge._1.documentDetail.paymentOrChargeCredit.get.toCurrencyString
-        </dt>
-        <dt class="govuk-summary-list__value">@messages("credit-and-refund.payment")
+            <span class="govuk-body">@messages("credit-and-refund.payment")
             <a href="@getControllerHref(charge._1.documentDetail, isAgent)"
-                                                 class="govuk-link">@charge._1.dueDate.get.toLongDate
-        </a>
+               class="govuk-link">@charge._1.dueDate.get.toLongDate
+            </a>
+        </span>
         </dt>
     </li>
     }
     }
     @if(!isMFACreditsAndDebitsEnabled && !charge._1.documentDetail.validMFACreditDescription()){
     <li>
-        <dt class="govuk-summary-list__value govuk-heading-s">
+        <dt class="govuk-heading-s">
             @charge._1.documentDetail.paymentOrChargeCredit.get.toCurrencyString
-        </dt>
-        <dt class="govuk-summary-list__value">@messages("credit-and-refund.payment") <a
-                href="@getControllerHref(charge._1.documentDetail, isAgent)" class="govuk-link">@charge._1.dueDate.get.toLongDate</a>
+            <span class="govuk-body">@messages("credit-and-refund.payment") <a
+                    href="@getControllerHref(charge._1.documentDetail, isAgent)" class="govuk-link">@charge._1.dueDate.get.toLongDate</a>
+        </span>
         </dt>
     </li>
     }
@@ -147,30 +147,30 @@ useFallbackBackLink = true
     @{
     balance.get.firstPendingAmountRequested map { amount =>
     <li>
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__value govuk-heading-s">{amount.toCurrencyString}</dt>
-            <dt class="govuk-summary-list__value">{messages("credit-and-refund.refundProgress")}</dt>
-        </div>
+        <dt class="govuk-heading-s">{amount.toCurrencyString}
+            <span class="govuk-body">{messages("credit-and-refund.refundProgress")}</span>
+        </dt>
     </li>
     }
     }
     @{
     balance.get.secondPendingAmountRequested map { amount =>
     <li>
-        <div class="govuk-summary-list__row">
-            <dd class="govuk-summary-list__value govuk-heading-s">{amount.toCurrencyString}</dd>
-            <dt class="govuk-summary-list__value">{messages("credit-and-refund.refundProgress")}</dt>
-        </div>
+        <dt class="govuk-heading-s">{amount.toCurrencyString}
+            <span class="govuk-body">{messages("credit-and-refund.refundProgress")}</span>
+        </dt>
     </li>
     }
     }
 </ul>
 @if(balance.get.availableCredit.get != 0){
 @p(){
-@messages("credit-and-refund.bullet-text-intro")
+<h2 class="govuk-heading-m">
+    @messages("credit-and-refund.bullet-text-intro")
+</h2>
 }
 
-<ul class="govuk-list govuk-list--bullet">
+<ul class="govuk-list">
     <li>
         @p(){
         @messages("credit-and-refund.bullet-one-prt-1")
@@ -181,7 +181,9 @@ useFallbackBackLink = true
         }
     </li>
     <li>
-        @messages("credit-and-refund.bullet-two")
+        @messages("credit-and-refund.bullet-two-prt-1")
+        @{balance.get.availableCredit.get.toCurrency}
+        @messages("credit-and-refund.bullet-two-prt-2")
     </li>
 </ul>
 }
