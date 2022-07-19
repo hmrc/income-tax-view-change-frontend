@@ -837,15 +837,22 @@ inYear-tax-overview.agent.heading                                = Trosolwg o dr
 inYear-tax-overview.agent.inset                                  = Mae’r cyfrifiad hwn yn seiliedig ar ddiweddariadau gorffenedig eich cleient ar gyfer y flwyddyn dreth hon hyd at {0} yn unig. Nid dyma ei fil treth terfynol ar gyfer y flwyddyn. Cyfrifiad o’r flwyddyn hyd yma yw hwn ar sail yr wybodaeth sydd wedi cael ei nodi hyd yma.
 
 ## credits and refunds
-credit-and-refund.credit-from-hmrc-title                          = Credyd o addasiad gan CThEM
-credit-and-refund.subHeading.has-credits                          = Mae cyfanswm o
+credit-and-refund.subHeading.has-credits-1                        = Mae cyfanswm o
+credit-and-refund.subHeading.has-credits-2                        = yn eich cyfrif:
 credit-and-refund.heading                                         = Hawlio ad-daliad
 credit-and-refund.claim-refund-btn                                = Hawlio ad-daliad
 credit-and-refund.bullet-text-intro                               = Yr hyn y gallwch ei wneud
 credit-and-refund.check-refund-btn                                = Gwirio statws ad-daliad
 credit-and-refund.payment                                         = yn sgil taliad a wnaed ar
-credit-and-refund.refundProgress                                  = mae ad-daliad o wrthi'n cael ei brosesu
-
+credit-and-refund.refundProgress-prt-1                            = mae ad-daliad o
+credit-and-refund.refundProgress-prt-2                            = wrthi'n cael ei brosesu
+credit-and-refund.credit-from-hmrc-title-prt-1                    = yn sgil
+credit-and-refund.credit-from-hmrc-title-prt-2                    = Credyd o addasiad gan CThEM
+credit-and-refund.bullet-one-prt-1                                = Os gadewch  yr arian hwn yn eich cyfrif, caiff ei ddefnyddio i dalu'r
+credit-and-refund.bullet-one-link                                 = hyn sydd arnoch
+credit-and-refund.bullet-one-prt-2                                = yn awtomatig ac mewn pryd.
+credit-and-refund.bullet-two-prt-1                                = Mae gennych yr opsiwn i hawlio hyd at
+credit-and-refund.bullet-two-prt-2                                = yn ôl. Os byddwch yn hawlio arian yn ôl sydd wedi'i neilltuo ar gyfer taliadau sydd i ddod, bydd angen i chi wneud y taliadau hynny erbyn y dyddiad cau i osgoi costau ychwanegol.
 
 
 shortMonth.1 = Ion
