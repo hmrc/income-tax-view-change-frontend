@@ -71,6 +71,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
               overDuePaymentsCount: Option[Int] = None,
               overDueUpdatesCount: Option[Int] = None,
               utr: Option[String] = None,
+              paymentHistoryEnabled: Boolean = true,
               ITSASubmissionIntegrationEnabled: Boolean = true,
               dunningLockExists: Boolean = false,
               currentTaxYear: Int = currentTaxYear,
@@ -89,7 +90,8 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
       dunningLockExists,
       currentTaxYear,
       isAgent,
-      creditAndRefundEnabled = false
+      creditAndRefundEnabled = false,
+      paymentHistoryEnabled = paymentHistoryEnabled
     )(FakeRequest(), implicitly, testMtdItUser, mockAppConfig)
 
     lazy val document: Document = Jsoup.parse(contentAsString(view))
@@ -220,14 +222,26 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
       }
 
       "have a payment history tile" which {
-        "has a heading" in new Setup {
+        "has payment and refund history heading when payment history feature switch is enabled" in new Setup() {
+          getElementById("payment-history-tile").map(_.select("h2").text) shouldBe Some(messages("home.paymentHistoryRefund.heading"))
+        }
+
+        "has payment history heading when payment history feature switch is disabled" in new Setup(paymentHistoryEnabled = false) {
           getElementById("payment-history-tile").map(_.select("h2").text) shouldBe Some(messages("home.paymentHistory.heading"))
         }
-        "has a link to the payment history page" in new Setup {
+
+        "has a link to the Payment and refund history page when payment history feature switch is enabled" in new Setup {
+          val link: Option[Element] = getElementById("payment-history-tile").map(_.select("a").first)
+          link.map(_.attr("href")) shouldBe Some(controllers.routes.PaymentHistoryController.showAgent().url)
+          link.map(_.text) shouldBe Some(messages("home.paymentHistoryRefund.view"))
+        }
+
+        "has a link to the payment history page when payment history feature switch is disabled" in new Setup(paymentHistoryEnabled = false) {
           val link: Option[Element] = getElementById("payment-history-tile").map(_.select("a").first)
           link.map(_.attr("href")) shouldBe Some(controllers.routes.PaymentHistoryController.showAgent().url)
           link.map(_.text) shouldBe Some(messages("home.paymentHistory.view"))
         }
+
       }
 
       s"have a change client link" in new Setup {

@@ -97,8 +97,8 @@ home.your-returns.description                                   = Defnyddiwch y 
 home.tax-years.view                                             = Bwrw golwg dros bob blwyddyn dreth
 home.paymentHistory.heading                                     = Hanes taliadau
 home.paymentHistory.view                                        = Hanes taliadau
-home.paymentHistoryRefund.view                                  = Hanes taliadau ac ad-daliadau
 home.paymentHistoryRefund.heading                               = Hanes taliadau ac ad-daliadau
+home.paymentHistoryRefund.view                                  = Hanes taliadau ac ad-daliadau
 home.your-returns.updatesLink                                   = Diweddaru a chyflwyno’ch Ffurflen Dreth ar gyfer {0} i {1}
 home.returns.viewLink                                           = Bwrw golwg dros eich Ffurflen Dreth gyfredol ar gyfer {0} i {1}
 home.overdue.message.dunningLock.true                           = Mae gennych daliadau sy’n hwyr ac mae un neu fwy o’ch penderfyniadau treth yn cael eu hadolygu. Mae’n bosibl y codir llog arnoch ar y rhain hyd nes eu bod wedi’u talu’n llawn.
@@ -508,7 +508,7 @@ refund-to-taxpayer.tableHead.refund-amount                      = Swm yr ad-dali
 refund-to-taxpayer.tableHead.interest                           = Llog
 refund-to-taxpayer.tableHead.interest-value                     = {0} i {1} ar {2}%
 refund-to-taxpayer.tableHead.total-interest                     = Cyfanswm y llog
-refund-to-taxpayer.tableHead.varied-interest-rates-value        = Roedd y gyfradd llog yn amrywio rhwng {0}% a {1}% o {2} and {3}
+refund-to-taxpayer.tableHead.varied-interest-rates-value        = Roedd y gyfradd llog yn amrywio rhwng {0}% a {1}% o {2} i {3}
 refund-to-taxpayer.method-type-bacs                             = Bacs
 refund-to-taxpayer.method-type-card                             = Cerdyn
 refund-to-taxpayer.method-type-postal-order                     = Archeb Bost
@@ -732,7 +732,6 @@ paymentHistory.table.header.date                                = Dyddiad
 paymentHistory.table.header.description                         = Disgrifiad
 paymentHistory.table.header.amount                              = Swm
 PaymentHistory.classicSA                                        = Er mwyn bwrw golwg dros eich hanes taliadau o’r adeg cyn i chi gofrestru ar gyfer y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm, mae angen i chi fynd i’ch
-paymentHistory.paymentAndRefundHistory.heading                  = Hanes taliadau ac ad-daliadau
 
 # Agent Base
 agent.base.service_name                                         = Treth Incwm fanylion eich cleient
