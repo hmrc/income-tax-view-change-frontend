@@ -49,6 +49,9 @@ class RefundToTaxPayerViewSpec extends ViewSpec with ImplicitDateFormatter {
     val tableHeadInterest: String = messages("refund-to-taxpayer.tableHead.interest")
     val tableHeadTotalInterest: String = messages("refund-to-taxpayer.tableHead.total-interest")
     val variedInterest: String = s"${messages("refund-to-taxpayer.tableHead.total-interest")} ${messages("refund-to-taxpayer.tableHead.varied-interest-rates-value", "1.76", "2.01", "31 July 2021", "30 November 2021")}"
+    val tableValueMethodTypeBacs: String = messages("refund-to-taxpayer.method-type-bacs")
+    val tableValueMethodTypeCard: String = messages("refund-to-taxpayer.method-type-card")
+    val tableValueMethodTypePostalOrder: String = messages("refund-to-taxpayer.method-type-postal-order")
 
   }
 
@@ -56,7 +59,7 @@ class RefundToTaxPayerViewSpec extends ViewSpec with ImplicitDateFormatter {
     List(RepaymentHistory(
       Some(705.2),
       705.2,
-      "BACS",
+      RefundToTaxPayerMessages.tableValueMethodTypeBacs,
       12345,
       Vector(
         RepaymentItem(
@@ -90,13 +93,23 @@ class RefundToTaxPayerViewSpec extends ViewSpec with ImplicitDateFormatter {
   val testRepaymentHistoryModelRequestedAmountDiffersToRefundAmount: RepaymentHistoryModel =
     testRepaymentHistoryModel.copy(
       List(
-        testRepaymentHistoryModel.repaymentsViewerDetails.head.copy(amountApprovedforRepayment = Some(800.12), amountRequested = 345.5))
+        testRepaymentHistoryModel.repaymentsViewerDetails.head.copy(
+          amountApprovedforRepayment = Some(800.12),
+          amountRequested = 345.5,
+          repaymentMethod = RefundToTaxPayerMessages.tableValueMethodTypeCard
+        )
+      )
     )
 
   val testRepaymentHistoryModelRequestedMissingRefundAmount: RepaymentHistoryModel =
     testRepaymentHistoryModel.copy(
       List(
-        testRepaymentHistoryModel.repaymentsViewerDetails.head.copy(amountApprovedforRepayment = None, amountRequested = 345.5))
+        testRepaymentHistoryModel.repaymentsViewerDetails.head.copy(
+          amountApprovedforRepayment = None,
+          amountRequested = 345.5,
+          repaymentMethod = RefundToTaxPayerMessages.tableValueMethodTypePostalOrder
+        )
+      )
     )
 
   class RefundToTaxPayerViewSetup(testRepaymentHistoryModel: RepaymentHistoryModel, saUtr: Option[String] = Some("AY888881A"), isAgent: Boolean = false) extends Setup(
@@ -134,7 +147,7 @@ class RefundToTaxPayerViewSpec extends ViewSpec with ImplicitDateFormatter {
         s"has summary list values without amount requested" in new RefundToTaxPayerViewSetup(testRepaymentHistoryModel) {
           val allTableData: Elements = document.getElementById("refund-to-taxpayer-table").getElementsByTag("dd")
           allTableData.get(0).text() shouldBe "23 July 2021"
-          allTableData.get(1).text() shouldBe "BACS"
+          allTableData.get(1).text() shouldBe RefundToTaxPayerMessages.tableValueMethodTypeBacs
           allTableData.get(2).text() shouldBe "£12,345.00"
 
           layoutContent.select(".govuk-details__summary").select("span").first().text shouldBe RefundToTaxPayerMessages.tableHeadFurtherDetails
@@ -169,7 +182,7 @@ class RefundToTaxPayerViewSpec extends ViewSpec with ImplicitDateFormatter {
         s"has summary list values with requested amount present due to difference in refund amount and requested amount fileds" in new RefundToTaxPayerViewSetup(testRepaymentHistoryModelRequestedAmountDiffersToRefundAmount) {
           val allTableData: Elements = document.getElementById("refund-to-taxpayer-table").getElementsByTag("dd")
           allTableData.get(0).text() shouldBe "23 July 2021"
-          allTableData.get(1).text() shouldBe "BACS"
+          allTableData.get(1).text() shouldBe RefundToTaxPayerMessages.tableValueMethodTypeCard
           allTableData.get(2).text() shouldBe "£12,345.00"
 
           layoutContent.select(".govuk-details__summary").select("span").first().text shouldBe RefundToTaxPayerMessages.tableHeadFurtherDetails
@@ -204,7 +217,7 @@ class RefundToTaxPayerViewSpec extends ViewSpec with ImplicitDateFormatter {
         s"has summary list values without refund amount field when interest has not been paid" in new RefundToTaxPayerViewSetup(testRepaymentHistoryModelRequestedMissingRefundAmount) {
           val allTableData: Elements = document.getElementById("refund-to-taxpayer-table").getElementsByTag("dd")
           allTableData.get(0).text() shouldBe "23 July 2021"
-          allTableData.get(1).text() shouldBe "BACS"
+          allTableData.get(1).text() shouldBe RefundToTaxPayerMessages.tableValueMethodTypePostalOrder
           allTableData.get(2).text() shouldBe "£12,345.00"
 
           layoutContent.select(".govuk-details__summary").select("span").first().text shouldBe RefundToTaxPayerMessages.tableHeadFurtherDetails
@@ -250,7 +263,7 @@ class RefundToTaxPayerViewSpec extends ViewSpec with ImplicitDateFormatter {
         s"has summary list values without amount requested" in new RefundToTaxPayerViewSetup(testRepaymentHistoryModel, isAgent = true) {
           val allTableData: Elements = document.getElementById("refund-to-taxpayer-table").getElementsByTag("dd")
           allTableData.get(0).text() shouldBe "23 July 2021"
-          allTableData.get(1).text() shouldBe "BACS"
+          allTableData.get(1).text() shouldBe RefundToTaxPayerMessages.tableValueMethodTypeBacs
           allTableData.get(2).text() shouldBe "£12,345.00"
 
           layoutContent.select(".govuk-details__summary").select("span").first().text shouldBe RefundToTaxPayerMessages.tableHeadFurtherDetails

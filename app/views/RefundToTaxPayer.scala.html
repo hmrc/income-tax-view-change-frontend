@@ -73,7 +73,9 @@
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">@messages("refund-to-taxpayer.tableHead.method")</dt>
             <dd class="govuk-summary-list__value">@{
-                repaymentHistoryModel.repaymentsViewerDetails.head.repaymentMethod
+                messages(s"refund-to-taxpayer.method-type-${
+                    repaymentHistoryModel.repaymentsViewerDetails.head.repaymentMethod.replace(" ", "-").toLowerCase
+                }")
             }</dd>
         </div>
         <div class="govuk-summary-list__row">
