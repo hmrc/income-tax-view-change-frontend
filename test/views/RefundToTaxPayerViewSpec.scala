@@ -93,23 +93,25 @@ class RefundToTaxPayerViewSpec extends ViewSpec with ImplicitDateFormatter {
   val testRepaymentHistoryModelRequestedAmountDiffersToRefundAmount: RepaymentHistoryModel =
     testRepaymentHistoryModel.copy(
       List(
-        testRepaymentHistoryModel.repaymentsViewerDetails.head.copy(
+        testRepaymentHistoryModel.repaymentsViewerDetails.map(_.copy(
           amountApprovedforRepayment = Some(800.12),
           amountRequested = 345.5,
           repaymentMethod = RefundToTaxPayerMessages.tableValueMethodTypeCard
         )
-      )
+        )
+      ).flatten
     )
 
   val testRepaymentHistoryModelRequestedMissingRefundAmount: RepaymentHistoryModel =
     testRepaymentHistoryModel.copy(
       List(
-        testRepaymentHistoryModel.repaymentsViewerDetails.head.copy(
+        testRepaymentHistoryModel.repaymentsViewerDetails.headOption.map(_.copy(
           amountApprovedforRepayment = None,
           amountRequested = 345.5,
           repaymentMethod = RefundToTaxPayerMessages.tableValueMethodTypePostalOrder
         )
-      )
+        )
+      ).flatten
     )
 
   class RefundToTaxPayerViewSetup(testRepaymentHistoryModel: RepaymentHistoryModel, saUtr: Option[String] = Some("AY888881A"), isAgent: Boolean = false) extends Setup(
