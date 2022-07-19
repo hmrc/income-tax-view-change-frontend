@@ -93,7 +93,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
               whatYouOweCreditAmountEnabled: Boolean = false,
               migrationYear: Int = LocalDate.now().getYear - 1,
               codingOutEnabled: Boolean = true,
-              MFADebitsEnabled: Boolean = true
+              MFADebitsEnabled: Boolean
              ) {
     val individualUser: MtdItUser[_] = MtdItUser(
       mtditid = testMtditid,
@@ -124,7 +124,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
                    currentTaxYear: Int = LocalDate.now().getYear,
                    migrationYear: Int = LocalDate.now().getYear - 1,
                    codingOutEnabled: Boolean = true,
-                   MFADebitsEnabled: Boolean = true,
+                   MFADebitsEnabled: Boolean,
                    whatYouOweCreditAmountEnabled: Boolean = false,
                    dunningLock: Boolean = false,
                    hasLpiWithDunningBlock: Boolean = false) {
@@ -1082,7 +1082,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     "have an HMRC adjustment payment due" in new Setup(charges = whatYouOweDataWithMFADebits, MFADebitsEnabled = true) {
       pageDocument.title() shouldBe whatYouOweTitle
       pageDocument.selectFirst("h1").text shouldBe whatYouOweHeading
-      pageDocument.getElementById("due-0").text.contains(hmrcAdjustment) shouldBe true
+      pageDocument.select("#due-0-late-link2").text.shouldBe(s"$hmrcAdjustment ${LocalDate.now().getYear.toString}")
       pageDocument.select("#payments-due-table tbody > tr").size() shouldBe 1
     }
     "display the payment details content" in new Setup(charges = whatYouOweDataWithMFADebits, MFADebitsEnabled = true) {

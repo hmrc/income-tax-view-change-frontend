@@ -25,6 +25,7 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.test.FakeRequest
 import testConstants.BaseTestConstants.{testMtditid, testNino, testRetrievedUserName}
+import testConstants.FinancialDetailsIntegrationTestConstants.{financialDetailsWithMFADebits, whatYouOweDataWithMFADebitsData, whatYouOweEmptyMFA}
 import testConstants.FinancialDetailsTestConstants._
 import testConstants.IncomeSourceDetailsTestConstants.singleBusinessIncomeWithCurrentYear
 import testUtils.TestSupport
@@ -290,7 +291,25 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
           )
         }
       }
-
+    }
+    "with MFA Debits and non-MFA Debits charges" should {
+      def testGetWhatYouOweChargesList(MFADebitsEnabled: Boolean, financialDetails: FinancialDetailsModel, expectedResult: WhatYouOweChargesList): Unit = {
+        if (MFADebitsEnabled) enable(MFACreditsAndDebits) else disable(MFACreditsAndDebits)
+        when(mockIncomeTaxViewChangeConnector.getOutstandingCharges(any(), any(), any())(any()))
+          .thenReturn(Future.successful(OutstandingChargesModel(List())))
+        when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any(), any(), any()))
+          .thenReturn(Future.successful(List(financialDetails)))
+        println(TestWhatYouOweService.getWhatYouOweChargesList()(headerCarrier, mtdItUser).futureValue)
+        TestWhatYouOweService.getWhatYouOweChargesList()(headerCarrier, mtdItUser).futureValue shouldBe expectedResult
+      }
+      "return MFA Debits and non-MFA debits with FS ENABLED" in {
+        testGetWhatYouOweChargesList(MFADebitsEnabled = true, financialDetails = financialDetailsWithMFADebits, expectedResult = whatYouOweDataWithMFADebitsData)
+        testGetWhatYouOweChargesList(MFADebitsEnabled = true, financialDetails = financialDetailsWithMixedData1, expectedResult = whatYouOweDataWithMixedData1)
+      }
+      "return non-MFA debits and no MFA debits with FS DISABLED" in {
+        testGetWhatYouOweChargesList(MFADebitsEnabled = false, financialDetails = financialDetailsWithMixedData1, expectedResult = whatYouOweDataWithMixedData1)
+        testGetWhatYouOweChargesList(MFADebitsEnabled = false, financialDetails = financialDetailsWithMFADebits, expectedResult = whatYouOweEmptyMFA)
+      }
     }
   }
 
@@ -327,37 +346,25 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
       }
     }
   }
-
   "WhatYouOweService.validChargeType val" should {
     val mfaDebitsDocumentDescriptions = List("ITSA PAYE Charge", "ITSA Calc Error Correction", "ITSA Manual Penalty Pre CY-4", "ITSA Misc Charge")
     val nonMfaDebitsDocumentDescriptions = List("ITSA- POA 1", "ITSA - POA 2", "TRM New Charge", "TRM Amend Charge")
-    "accept MFA debits document descriptions" when {
-      "MFA Credits and Debits is enabled" in {
-        enable(MFACreditsAndDebits)
-        mfaDebitsDocumentDescriptions.forall(dd =>
-          TestWhatYouOweService.validChargeTypeCondition(dd)) shouldBe true
-      }
+
+    def testValidChargeType(MFADebitsEnabled: Boolean, documentDescriptions: List[String], expectedResult: Boolean): Unit = {
+      if (MFADebitsEnabled) enable(MFACreditsAndDebits) else disable(MFACreditsAndDebits)
+      assertResult(expected = expectedResult)(actual = documentDescriptions.forall(dd => TestWhatYouOweService.validChargeTypeCondition(dd)))
     }
-    "accept non-MFA debits document descriptions" when {
-      "MFA Credits and Debits is enabled" in {
-        enable(MFACreditsAndDebits)
-        nonMfaDebitsDocumentDescriptions.forall(dd =>
-          TestWhatYouOweService.validChargeTypeCondition(dd)) shouldBe true
-      }
+
+    "validate MFA Debits and non-MFA Debits with FS ENABLED" in {
+      testValidChargeType(MFADebitsEnabled = true, mfaDebitsDocumentDescriptions ++ nonMfaDebitsDocumentDescriptions, expectedResult = true)
     }
-    "reject MFA debits document descriptions" when {
-      "MFA Credits and Debits is disabled" in {
-        disable(MFACreditsAndDebits)
-        mfaDebitsDocumentDescriptions.forall(dd =>
-          TestWhatYouOweService.validChargeTypeCondition(dd)) shouldBe false
-      }
+
+    "not validate MFA Debits with FS DISABLED" in {
+      testValidChargeType(MFADebitsEnabled = false, mfaDebitsDocumentDescriptions, expectedResult = false)
     }
-    "accept non-MFA debits document descriptions" when {
-      "MFA Credits and Debits is disabled" in {
-        disable(MFACreditsAndDebits)
-        nonMfaDebitsDocumentDescriptions.forall(dd =>
-          TestWhatYouOweService.validChargeTypeCondition(dd)) shouldBe true
-      }
+
+    "validate non-MFA Debits with FS DISABLED" in {
+      testValidChargeType(MFADebitsEnabled = false, nonMfaDebitsDocumentDescriptions, expectedResult = true)
     }
   }
 }
