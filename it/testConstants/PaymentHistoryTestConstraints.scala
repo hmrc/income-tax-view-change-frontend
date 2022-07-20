@@ -20,7 +20,6 @@ object PaymentHistoryTestConstraints {
   val b1AddressLine4 = "England"
   val b1AddressLine5 = "ZL1 064"
   val b1CountryCode = "UK"
-
   val b2CessationDate = LocalDate.of(2018, 12, 31)
   val b2CessationReason = "It really, really was a bad idea"
   val b2TradingStart = "2018-01-01"

@@ -685,6 +685,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
             )(FakeRequest()), auditDD,
             allObligations, Some(TaxYearSummaryViewModel(liabilityCalculationModelSuccessFull)), isEnabled(R7bTxmEvents)))
         }
+
         "should show Tax Year Summary page with MFA Debits on the Payment Tab with FS ENABLED" in {
           testsMFADebits(true)
         }

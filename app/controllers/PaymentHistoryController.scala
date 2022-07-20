@@ -70,7 +70,8 @@ class PaymentHistoryController @Inject()(val paymentHistoryView: PaymentHistory,
       case Right(payments) =>
         val MFACreditsEnabled = isEnabled(MFACreditsAndDebits)
         val CutOverCreditsEnabled = isEnabled(CutOverCredits)
-        if (isEnabled(PaymentHistoryRefunds)) {
+        val paymentHistoryAndRefundsEnabled = isEnabled(PaymentHistoryRefunds)
+        if (paymentHistoryAndRefundsEnabled) {
           paymentHistoryService.getRepaymentHistory.map {
             case Right(repayments) =>
               auditingService.extendedAudit(PaymentHistoryResponseAuditModel(user, payments, R7bTxmEvents = isEnabled(R7bTxmEvents),
@@ -78,7 +79,7 @@ class PaymentHistoryController @Inject()(val paymentHistoryView: PaymentHistory,
                 MFACreditsEnabled = MFACreditsEnabled))
               val paymentHistoryEntries = RepaymentHistoryUtils.getGroupedPaymentHistoryData(payments, repayments, isAgent,
                 MFACreditsEnabled = MFACreditsEnabled, CutOverCreditsEnabled = CutOverCreditsEnabled, languageUtils)
-              Ok(paymentHistoryView(paymentHistoryEntries, backUrl, user.saUtr,
+              Ok(paymentHistoryView(paymentHistoryEntries, paymentHistoryAndRefundsEnabled = paymentHistoryAndRefundsEnabled, backUrl, user.saUtr,
                 btaNavPartial = user.btaNavPartial, isAgent = isAgent)
               ).addingToSession(gatewayPage -> PaymentHistoryPage.name)
             case Left(_) => itvcErrorHandler.showInternalServerError()
@@ -89,7 +90,7 @@ class PaymentHistoryController @Inject()(val paymentHistoryView: PaymentHistory,
             MFACreditsEnabled = MFACreditsEnabled))
           val paymentHistoryEntries = RepaymentHistoryUtils.getGroupedPaymentHistoryData(payments, List(), isAgent,
             MFACreditsEnabled = MFACreditsEnabled, CutOverCreditsEnabled = CutOverCreditsEnabled, languageUtils)
-          Future(Ok(paymentHistoryView(paymentHistoryEntries, backUrl, user.saUtr,
+          Future(Ok(paymentHistoryView(paymentHistoryEntries, paymentHistoryAndRefundsEnabled, backUrl, user.saUtr,
             btaNavPartial = user.btaNavPartial, isAgent = isAgent)
           ).addingToSession(gatewayPage -> PaymentHistoryPage.name))
         }
