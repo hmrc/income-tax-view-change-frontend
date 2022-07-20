@@ -910,7 +910,7 @@ object FinancialDetailsTestConstants {
   val whatYouOweDataWithMFADebitsData: WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
     chargesList = financialDetailsMFADebits.getAllDocumentDetailsWithDueDates(),
-    outstandingChargesModel = Some(OutstandingChargesModel(List())),
+    outstandingChargesModel = Some(OutstandingChargesModel(List()))
   )
 
   val whatYouOweEmptyMFA: WhatYouOweChargesList = WhatYouOweChargesList(BalanceDetails(1.0,2.0,3.0,None,None,None,None),List(),Some(OutstandingChargesModel(List())),None)
