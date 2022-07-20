@@ -93,7 +93,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
               whatYouOweCreditAmountEnabled: Boolean = false,
               migrationYear: Int = LocalDate.now().getYear - 1,
               codingOutEnabled: Boolean = true,
-              MFADebitsEnabled: Boolean
+              MFADebitsEnabled: Boolean = false
              ) {
     val individualUser: MtdItUser[_] = MtdItUser(
       mtditid = testMtditid,
@@ -124,7 +124,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
                    currentTaxYear: Int = LocalDate.now().getYear,
                    migrationYear: Int = LocalDate.now().getYear - 1,
                    codingOutEnabled: Boolean = true,
-                   MFADebitsEnabled: Boolean,
+                   MFADebitsEnabled: Boolean = false,
                    whatYouOweCreditAmountEnabled: Boolean = false,
                    dunningLock: Boolean = false,
                    hasLpiWithDunningBlock: Boolean = false) {

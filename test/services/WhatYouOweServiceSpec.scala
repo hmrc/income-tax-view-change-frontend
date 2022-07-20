@@ -25,7 +25,6 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.test.FakeRequest
 import testConstants.BaseTestConstants.{testMtditid, testNino, testRetrievedUserName}
-import testConstants.FinancialDetailsIntegrationTestConstants.{financialDetailsWithMFADebits, whatYouOweDataWithMFADebitsData, whatYouOweEmptyMFA}
 import testConstants.FinancialDetailsTestConstants._
 import testConstants.IncomeSourceDetailsTestConstants.singleBusinessIncomeWithCurrentYear
 import testUtils.TestSupport
@@ -303,12 +302,12 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
         TestWhatYouOweService.getWhatYouOweChargesList()(headerCarrier, mtdItUser).futureValue shouldBe expectedResult
       }
       "return MFA Debits and non-MFA debits with FS ENABLED" in {
-        testGetWhatYouOweChargesList(MFADebitsEnabled = true, financialDetails = financialDetailsWithMFADebits, expectedResult = whatYouOweDataWithMFADebitsData)
+        testGetWhatYouOweChargesList(MFADebitsEnabled = true, financialDetails = financialDetailsMFADebits, expectedResult = whatYouOweDataWithMFADebitsData)
         testGetWhatYouOweChargesList(MFADebitsEnabled = true, financialDetails = financialDetailsWithMixedData1, expectedResult = whatYouOweDataWithMixedData1)
       }
       "return non-MFA debits and no MFA debits with FS DISABLED" in {
         testGetWhatYouOweChargesList(MFADebitsEnabled = false, financialDetails = financialDetailsWithMixedData1, expectedResult = whatYouOweDataWithMixedData1)
-        testGetWhatYouOweChargesList(MFADebitsEnabled = false, financialDetails = financialDetailsWithMFADebits, expectedResult = whatYouOweEmptyMFA)
+        testGetWhatYouOweChargesList(MFADebitsEnabled = false, financialDetails = financialDetailsMFADebits, expectedResult = whatYouOweEmptyMFA)
       }
     }
   }
