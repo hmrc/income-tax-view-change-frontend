@@ -256,7 +256,6 @@
         <span class="govuk-caption-xl">@messages("tax-year-summary.heading-secondary", (taxYear - 1).toString, taxYear.toString)</span>
         @messages("tax-year-summary.heading")
     </h1>
-
     @modelOpt.map { model =>
         @if(!model.crystallised.contains(true)) {
             @govukInsetText(InsetText(content = HtmlContent(
