@@ -93,17 +93,16 @@ useFallbackBackLink = true
 @h1(msg = "credit-and-refund.heading")
 
 @if(balance.isDefined){
-@if(balance.get.availableCredit.get != 0){
-<h2 class="govuk-heading-m">
-    <span class="govuk-body"> @messages("credit-and-refund.subHeading.has-credits-1") </span>
-    @{balance.get.availableCredit.get.toCurrency}
-    <span class="govuk-body">@messages("credit-and-refund.subHeading.has-credits-2")</span>
-</h2>
-} else {
-<h2 class="govuk-heading-m">@{balance.get.firstPendingAmountRequested.get.toCurrency}
-    <span class="govuk-body"> @messages("credit-and-refund.subHeading.has-no-credits")</span>
-</h2>
-}
+    @if(balance.get.availableCredit.get != 0){
+        <h2 class="govuk-heading-m">
+            <span class="govuk-body"> @messages("credit-and-refund.subHeading.has-credits-1") </span>
+            @{balance.get.availableCredit.get.toCurrency}<span class="govuk-body">@messages("credit-and-refund.subHeading.has-credits-2")</span>
+        </h2>
+    } else {
+        <h2 class="govuk-heading-m">@{balance.get.firstPendingAmountRequested.get.toCurrency}
+            <span class="govuk-body"> @messages("credit-and-refund.subHeading.has-no-credits")</span>
+        </h2>
+    }
 
 <ul class="govuk-list govuk-list--bullet">
     @for(charge <- creditCharges){
