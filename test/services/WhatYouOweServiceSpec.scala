@@ -298,7 +298,6 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
           .thenReturn(Future.successful(OutstandingChargesModel(List())))
         when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any(), any(), any()))
           .thenReturn(Future.successful(List(financialDetails)))
-        println(TestWhatYouOweService.getWhatYouOweChargesList()(headerCarrier, mtdItUser).futureValue)
         TestWhatYouOweService.getWhatYouOweChargesList()(headerCarrier, mtdItUser).futureValue shouldBe expectedResult
       }
       "return MFA Debits and non-MFA debits with FS ENABLED" in {

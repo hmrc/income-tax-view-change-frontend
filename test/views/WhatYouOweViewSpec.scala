@@ -27,7 +27,7 @@ import org.jsoup.nodes.{Document, Element}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
-import testConstants.BaseTestConstants.{testArn, testCredId, testMtditid, testNino, testRetrievedUserName, testSaUtr, testUserTypeAgent, testUserTypeIndividual}
+import testConstants.BaseTestConstants.{taxYear, testArn, testCredId, testMtditid, testNino, testRetrievedUserName, testSaUtr, testUserTypeAgent, testUserTypeIndividual}
 import testConstants.FinancialDetailsTestConstants._
 import testUtils.{TestSupport, ViewSpec}
 import uk.gov.hmrc.auth.core.retrieve.Name
@@ -1083,11 +1083,12 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       pageDocument.title() shouldBe whatYouOweTitle
       pageDocument.selectFirst("h1").text shouldBe whatYouOweHeading
       pageDocument.getElementById("due-0").text.contains(hmrcAdjustment)
+      pageDocument.select("#due-0 a").get(0).text() shouldBe hmrcAdjustment + s" ${LocalDate.now().getYear.toString}"
       pageDocument.select("#payments-due-table tbody > tr").size() shouldBe 1
     }
     "display the payment details content" in new Setup(charges = whatYouOweDataWithMFADebits, MFADebitsEnabled = true) {
-      pageDocument.getElementById("hmrc-adjustment-heading").text  shouldBe hmrcAdjustmentHeading
-      pageDocument.getElementById("hmrc-adjustment-line1").text  shouldBe hmrcAdjustmentLine1
+      pageDocument.getElementById("hmrc-adjustment-heading").text shouldBe hmrcAdjustmentHeading
+      pageDocument.getElementById("hmrc-adjustment-line1").text shouldBe hmrcAdjustmentLine1
     }
   }
 
