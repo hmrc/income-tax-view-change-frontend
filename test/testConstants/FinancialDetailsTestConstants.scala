@@ -794,6 +794,16 @@ object FinancialDetailsTestConstants {
     dunningLock = noDunningLocks
   )
 
+  val financialDetailsMFADebits: FinancialDetailsModel = testFinancialDetailsModelWithChargesOfSameType(
+    documentDescription = List(Some("ITSA PAYE Charge"), Some("ITSA Calc Error Correction")),
+    mainType = List(Some("HMRC Adjustment"), Some("HMRC Adjustment")),
+    dueDate = List(Some(LocalDate.now().minusDays(1).toString), Some(LocalDate.now().plusDays(35).toString)),
+    outstandingAmount = List(Some(100), Some(50)),
+    taxYear = LocalDate.now().getYear.toString,
+    interestOutstandingAmount = List(None, None),
+    latePaymentInterestAmount = List(None, None)
+  )
+
   val financialDetailsWithMixedData1: FinancialDetailsModel = testFinancialDetailsModelWithChargesOfSameType(
     documentDescription = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
     mainType = List(Some("SA Payment on Account 1"), Some("SA Payment on Account 2")),
@@ -896,6 +906,14 @@ object FinancialDetailsTestConstants {
         taxYear = LocalDate.now().getYear.toString).getAllDocumentDetailsWithDueDates(),
     outstandingChargesModel = Some(outstandingChargesOverdueData)
   )
+
+  val whatYouOweDataWithMFADebitsData: WhatYouOweChargesList = WhatYouOweChargesList(
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
+    chargesList = financialDetailsMFADebits.getAllDocumentDetailsWithDueDates(),
+    outstandingChargesModel = Some(OutstandingChargesModel(List()))
+  )
+
+  val whatYouOweEmptyMFA: WhatYouOweChargesList = WhatYouOweChargesList(BalanceDetails(1.0,2.0,3.0,None,None,None,None),List(),Some(OutstandingChargesModel(List())),None)
 
 
 

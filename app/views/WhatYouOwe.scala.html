@@ -47,6 +47,7 @@
     btaNavPartial: Option[Html] = None,
     dunningLock: Boolean,
     codingOutEnabled: Boolean,
+    MFADebitsEnabled: Boolean,
     whatYouOweCreditAmountEnabled: Boolean,
     isAgent: Boolean = false,
     origin: Option[String] = None)(implicit request: Request[_], user: MtdItUser[_], messages: Messages)
@@ -122,6 +123,12 @@
         @h2(msg = "whatYouOwe.cancelled-paye-sa.heading", optId = Some("cancelled-paye-sa-heading"))
         @p(id = Some("cancelled-paye-sa-line1"))(Html(messages("whatYouOwe.cancelled-paye-sa.line1")))
     </div>
+    @if(MFADebitsEnabled) {
+        <div id="payment-details-content-5" >
+            @h2(msg = "whatYouOwe.hmrcAdjustment.heading", optId = Some("hmrc-adjustment-heading"))
+            @p(id = Some("hmrc-adjustment-line1"))(Html(messages("whatYouOwe.hmrcAdjustment.line1")))
+        </div>
+    }
 }
 
 @dunningLockParagraph = {
