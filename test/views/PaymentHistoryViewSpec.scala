@@ -17,20 +17,16 @@
 package views
 
 import config.FrontendAppConfig
-import exceptions.MissingFieldException
 import implicits.ImplicitCurrencyFormatter._
 import implicits.ImplicitDateFormatter
-import models.financialDetails.Payment
 import models.repaymentHistory.PaymentHistoryEntry
 import org.jsoup.nodes.Element
 import play.api.test.FakeRequest
 import testConstants.BaseTestConstants.appConfig.saForAgents
 import testUtils.ViewSpec
-import uk.gov.hmrc.play.language.LanguageUtils
 import views.html.PaymentHistory
 
 import java.time.LocalDate
-import scala.collection.mutable.ListBuffer
 
 
 class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
@@ -72,6 +68,13 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
       linkUrl = "link1", visuallyHiddenText = "hidden-text1"),
       PaymentHistoryEntry(date = "2019-12-25", description = "desc1", amount = Some(-10000.00), transactionId = Some("TRANS123"),
         linkUrl = "link1", visuallyHiddenText = "hidden-text1")))
+  )
+
+  val repaymentRequestNumber = "000000003135"
+
+  val groupedRepayments = List(
+    (2021, List(PaymentHistoryEntry("2021-08-20", "paymentHistory.refund", Some(301.0), None, s"refund-to-taxpayer/$repaymentRequestNumber", repaymentRequestNumber),
+      PaymentHistoryEntry("2021-08-21", "paymentHistory.refund", Some(300.0), None, s"refund-to-taxpayer/$repaymentRequestNumber", repaymentRequestNumber))),
   )
 
   val expectedDatesOrder = List("13 April 2020", "25 December 2020", "25 April 2019", "25 September 2019", "25 December 2019", "25 April 2018")
@@ -141,6 +144,21 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
           }
         }
       }
+
+      s"should have a refund block with correct relative link" in new PaymentHistorySetup(groupedRepayments) {
+        val sectionContent = layoutContent.selectHead(s"#accordion-default-content-1")
+        val tbody = sectionContent.selectHead("table > tbody")
+
+        tbody.selectNth("tr", 1).selectNth("td", 1).text() shouldBe "20 August 2021"
+        tbody.selectNth("tr", 1).selectNth("td", 2).text() shouldBe "Refund 000000003135 Item 1"
+        tbody.selectNth("tr", 1).select("a").attr("href") shouldBe "refund-to-taxpayer/000000003135"
+        tbody.selectNth("tr", 1).selectNth("td", 3).text() shouldBe "£301.00"
+
+        tbody.selectNth("tr", 2).selectNth("td", 1).text() shouldBe "21 August 2021"
+        tbody.selectNth("tr", 2).selectNth("td", 2).text() shouldBe "Refund 000000003135 Item 2"
+        tbody.selectNth("tr", 2).select("a").attr("href") shouldBe "refund-to-taxpayer/000000003135"
+        tbody.selectNth("tr", 2).selectNth("td", 3).text() shouldBe "£300.00"
+      }
     }
   }
 
@@ -152,6 +170,21 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
 
     s"not have the information  ${PaymentHistoryMessages.info} when no utr is provided" in new PaymentHistorySetup(paymentEntriesMFA, None, isAgent = true) {
       layoutContent.select("#payment-history-info").text should not be paymentHistoryMessageInfo
+    }
+
+    s"should have a refund block with correct relative link" in new PaymentHistorySetup(groupedRepayments, None, isAgent = true) {
+      val sectionContent = layoutContent.selectHead(s"#accordion-default-content-1")
+      val tbody = sectionContent.selectHead("table > tbody")
+
+      tbody.selectNth("tr", 1).selectNth("td", 1).text() shouldBe "20 August 2021"
+      tbody.selectNth("tr", 1).selectNth("td", 2).text() shouldBe "Refund 000000003135 Item 1"
+      tbody.selectNth("tr", 1).select("a").attr("href") shouldBe "refund-to-taxpayer/000000003135"
+      tbody.selectNth("tr", 1).selectNth("td", 3).text() shouldBe "£301.00"
+
+      tbody.selectNth("tr", 2).selectNth("td", 1).text() shouldBe "21 August 2021"
+      tbody.selectNth("tr", 2).selectNth("td", 2).text() shouldBe "Refund 000000003135 Item 2"
+      tbody.selectNth("tr", 2).select("a").attr("href") shouldBe "refund-to-taxpayer/000000003135"
+      tbody.selectNth("tr", 2).selectNth("td", 3).text() shouldBe "£300.00"
     }
   }
 

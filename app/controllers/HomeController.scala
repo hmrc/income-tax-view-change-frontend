@@ -74,6 +74,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
       isAgent = isAgent,
       origin = origin,
       creditAndRefundEnabled = isEnabled(CreditsRefundsRepay),
+      paymentHistoryEnabled = isEnabled(PaymentHistoryRefunds),
       isUserMigrated = user.incomeSources.yearOfMigration.isDefined
     )
   }
