@@ -28,7 +28,6 @@ val wiremockVersion           = "2.26.1"
 val compile = Seq(
   ws,
   "uk.gov.hmrc" %% "bootstrap-frontend-play-28" % bootstrapPlayVersion,
-  "uk.gov.hmrc" %% "govuk-template" % govTemplateVersion,
   "uk.gov.hmrc" %% "play-ui" % playUiVersion,
   "uk.gov.hmrc" %% "play-partials" % playPartialsVersion,
   "org.typelevel" %% "cats" % catsVersion,
