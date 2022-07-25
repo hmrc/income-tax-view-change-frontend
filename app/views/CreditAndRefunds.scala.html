@@ -43,7 +43,6 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 
 
-
 @this(
     mainTemplate: unifiedLayout,
     implicitDateFormatter: ImplicitDateFormatterImpl,
@@ -56,7 +55,7 @@
 )
 
 @(creditCharges: List[(DocumentDetailWithDueDate, FinancialDetail)], balance: Option[BalanceDetails],
-        isAgent: Boolean = false, backUrl: String, isMFACreditsAndDebitsEnabled: Boolean = false)(implicit request: Request[_], user: MtdItUser[_], messages: Messages)
+    isAgent: Boolean = false, backUrl: String, isMFACreditsAndDebitsEnabled: Boolean = false)(implicit request: Request[_], user: MtdItUser[_], messages: Messages)
 @import implicitDateFormatter.longDate
 
 @getControllerHref(credit: DocumentDetail, isAgent: Boolean) = @{
@@ -95,87 +94,109 @@
 
     @if(balance.isDefined){
         @if(balance.get.availableCredit.get != 0){
-            <h2 class="govuk-heading-m">@{balance.get.availableCredit.get.toCurrency}
-                <span class ="govuk-body"> @messages("credit-and-refund.subHeading.has-credits")</span>
+            <h2 class="govuk-heading-m">
+                <span class="govuk-body"> @messages("credit-and-refund.subHeading.has-credits-1") </span>
+                @{balance.get.availableCredit.get.toCurrency}<span class="govuk-body"> @messages("credit-and-refund.subHeading.has-credits-2")</span>
             </h2>
         } else {
             <h2 class="govuk-heading-m">@{balance.get.firstPendingAmountRequested.get.toCurrency}
-                <span class ="govuk-body"> @messages("credit-and-refund.subHeading.has-no-credits")</span>
+                <span class="govuk-body"> @messages("credit-and-refund.subHeading.has-no-credits")</span>
             </h2>
         }
 
-        <details class="govuk-details" data-module="govuk-details">
-            <summary class="govuk-details__summary">
-                <span class="govuk-details__summary-text">
-                  @messages("credit-and-refund.details-intro")
-                </span>
-            </summary>
-            <div class="govuk-details__text">
-                <dl class="govuk-summary-list">
-                    @for(charge <- creditCharges){
-                        @if(isMFACreditsAndDebitsEnabled){
-                            @if(charge._1.documentDetail.validMFACreditDescription()) {
-                                <div class="govuk-summary-list__row">
-                                    <dt class="govuk-summary-list__value">
-                                        <span>
-                                            <a href="@getCreditsSummaryControllerHref(charge._1.documentDetail, isAgent)" class="govuk-link">
-                                                     @messages("credit-and-refund.credit-from-hmrc-title")
-                                            </a>
-                                        </span>
-                                    </dt>
-                                    <dd class="govuk-summary-list__value govuk-!-text-align-right">@charge._1.documentDetail.paymentOrChargeCredit.get.toCurrencyString </dd>
-                                </div>
-                            }
-                            @if(!charge._1.documentDetail.validMFACreditDescription()) {
-                                <div class="govuk-summary-list__row">
-                                    <dt class="govuk-summary-list__value">
-                                        <a href="@getControllerHref(charge._1.documentDetail, isAgent)" class="govuk-link">@charge._1.dueDate.get.toLongDate @messages("credit-and-refund.payment")</a>
-                                    </dt>
-                                    <dd class="govuk-summary-list__value govuk-!-text-align-right">@charge._1.documentDetail.paymentOrChargeCredit.get.toCurrencyString</dd>
-                                </div>
-                            }
-                        }
-                        @if(!isMFACreditsAndDebitsEnabled && !charge._1.documentDetail.validMFACreditDescription()){
-                            <div class="govuk-summary-list__row">
-                                <dt class="govuk-summary-list__value">
-                                    <a href="@getControllerHref(charge._1.documentDetail, isAgent)" class="govuk-link">@charge._1.dueDate.get.toLongDate @messages("credit-and-refund.payment")</a>
-                                </dt>
-                                <dd class="govuk-summary-list__value govuk-!-text-align-right">@charge._1.documentDetail.paymentOrChargeCredit.get.toCurrencyString</dd>
-                            </div>
-                        }
+        <ul class="govuk-list govuk-list--bullet">
+            @for(charge <- creditCharges){
+                @if(isMFACreditsAndDebitsEnabled){
+                    @if(charge._1.documentDetail.validMFACreditDescription()) {
+                        <li>
+                            <dt class="govuk-heading-s">
+                                @charge._1.documentDetail.paymentOrChargeCredit.get.toCurrencyString
+                                <span class="govuk-body">
+                                    @messages("credit-and-refund.credit-from-hmrc-title-prt-1")
+                                    <a href="@getCreditsSummaryControllerHref(charge._1.documentDetail, isAgent)" class="govuk-link">
+                                        @messages("credit-and-refund.credit-from-hmrc-title-prt-2")
+                                    </a>
+                                </span>
+                            </dt>
+                        </li>
                     }
+                    @if(!charge._1.documentDetail.validMFACreditDescription()) {
+                        <li>
+                            <dt class="govuk-heading-s">
+                                @charge._1.documentDetail.paymentOrChargeCredit.get.toCurrencyString
+                                <span class="govuk-body">@messages("credit-and-refund.payment")
+                                    <a href="@getControllerHref(charge._1.documentDetail, isAgent)"
+                                        class="govuk-link">@charge._1.dueDate.get.toLongDate
+                                    </a>
+                                </span>
+                            </dt>
+                        </li>
+                    }
+    }
 
-                    @{
-                        balance.get.firstPendingAmountRequested map { amount =>
-                            <div class="govuk-summary-list__row">
-                                <dt class="govuk-summary-list__value">{messages("credit-and-refund.refundProgress")}</dt>
-                                <dd class="govuk-summary-list__value govuk-!-text-align-right">{amount.toCurrencyString}</dd>
-                            </div>
-                        }
-                    }
-                    @{
-                        balance.get.secondPendingAmountRequested map { amount =>
-                            <div class="govuk-summary-list__row">
-                                <dt class="govuk-summary-list__value">{messages("credit-and-refund.refundProgress")}</dt>
-                                <dd class="govuk-summary-list__value govuk-!-text-align-right">{amount.toCurrencyString}</dd>
-                            </div>
-                        }
-                    }
-                    @if(balance.get.availableCredit.get != 0){
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">@messages("credit-and-refund.total")</dt>
-                            <dd class="govuk-summary-list__value govuk-!-text-align-right">@{balance.get.availableCredit.get.toCurrencyString}</dd>
-                        </div>
-                    }
-                </dl>
-            </div>
-        </details>
+    @if(!isMFACreditsAndDebitsEnabled && !charge._1.documentDetail.validMFACreditDescription()){
+        <li>
+            <dt class="govuk-heading-s">
+                @charge._1.documentDetail.paymentOrChargeCredit.get.toCurrencyString
+                <span class="govuk-body">@messages("credit-and-refund.payment") <a
+                    href="@getControllerHref(charge._1.documentDetail, isAgent)" class="govuk-link">@charge._1.dueDate.get.toLongDate</a>
+                </span>
+            </dt>
+        </li>
+    }
+}
+
+        @{
+            balance.get.firstPendingAmountRequested map { amount =>
+                if(messages.lang.language.toLowerCase().equals("cy")){
+                    <li>
+                        <dt class="govuk-heading-s">
+                            <span class="govuk-body">{messages("credit-and-refund.refundProgress-prt-1")}</span>
+                                {amount.toCurrencyString}
+                            <span class="govuk-body">{messages("credit-and-refund.refundProgress-prt-2")}</span>
+                        </dt>
+                    </li>
+                }
+                else{
+                    <li>
+                        <dt class="govuk-heading-s">{amount.toCurrencyString}
+                            <span class="govuk-body">{messages("credit-and-refund.refundProgress")}</span>
+                        </dt>
+                    </li>
+                }
+            }
+        }
+        @{
+            balance.get.secondPendingAmountRequested map { amount =>
+                if(messages.lang.language.toLowerCase().equals("cy")){
+                    <li>
+                        <dt class="govuk-heading-s">
+                            <span class="govuk-body">{messages("credit-and-refund.refundProgress-prt-1")}</span>
+                                {amount.toCurrencyString}
+                            <span class="govuk-body">{messages("credit-and-refund.refundProgress-prt-2")}</span>
+                        </dt>
+                    </li>
+                }
+                else{
+                    <li>
+                        <dt class="govuk-heading-s">{amount.toCurrencyString}
+                            <span class="govuk-body">{messages("credit-and-refund.refundProgress")}</span>
+                        </dt>
+                    </li>
+                }
+            }
+        }
+        </ul>
+
+
         @if(balance.get.availableCredit.get != 0){
             @p(){
-                @messages("credit-and-refund.bullet-text-intro")
+                <h2 class="govuk-heading-m">
+                    @messages("credit-and-refund.bullet-text-intro")
+                </h2>
             }
 
-            <ul class="govuk-list govuk-list--bullet">
+            <ul class="govuk-list">
                 <li>
                     @p(){
                         @messages("credit-and-refund.bullet-one-prt-1")
@@ -186,7 +207,9 @@
                     }
                 </li>
                 <li>
-                    @messages("credit-and-refund.bullet-two")
+                    @messages("credit-and-refund.bullet-two-prt-1")
+                    @{balance.get.availableCredit.get.toCurrency}
+                    @messages("credit-and-refund.bullet-two-prt-2")
                 </li>
             </ul>
         }
@@ -196,17 +219,18 @@
         }
     }
 
-    <div class="govuk-button-group">
-        @if(balance.isDefined){
-            @if(balance.get.availableCredit.get != 0){
-                @link(link = "https://www.tax.service.gov.uk/self-assessment-repayment/repayment-amount",
-                messageKey = "credit-and-refund.claim-refund-btn", classes = "govuk-button", role=Some("button"))
+        <div class="govuk-button-group">
+            @if(balance.isDefined){
+                @if(balance.get.availableCredit.get != 0){
+                    @link(link = "https://www.tax.service.gov.uk/self-assessment-repayment/repayment-amount",
+                        messageKey = "credit-and-refund.claim-refund-btn", classes = "govuk-button", role=Some("button"))
+                }
             }
-        }
 
-        @link(link =  "https://www.tax.service.gov.uk/self-assessment-repayment/repayment-status",
-            messageKey = "credit-and-refund.check-refund-btn", classes = "govuk-button govuk-button--secondary", role=Some("button")
-        )
-    </div>
+            @link(link = "https://www.tax.service.gov.uk/self-assessment-repayment/repayment-status",
+                messageKey = "credit-and-refund.check-refund-btn", classes = "govuk-button govuk-button--secondary",
+                role=Some("button")
+                )
+        </div>
 
-}
+    }

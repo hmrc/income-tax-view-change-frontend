@@ -845,21 +845,25 @@ inYear-tax-overview.agent.inset                                  = This calculat
 
 ## credits and refunds
 credit-and-refund.heading                                         = Claim a refund
-credit-and-refund.subHeading.has-credits                          = in your account.
+credit-and-refund.subHeading.has-credits-1                        = There is a total of
+credit-and-refund.subHeading.has-credits-2                        = in your account:
 credit-and-refund.subHeading.has-no-credits                       = has been requested as a refund and is in progress.
-credit-and-refund.bullet-text-intro                               = You can:
-credit-and-refund.bullet-one-prt-1                                = leave this money in your account to automatically pay
+credit-and-refund.bullet-text-intro                               = What you can do
+credit-and-refund.bullet-one-prt-1                                = If you leave this money in your account it will be used to automatically pay
 credit-and-refund.bullet-one-link                                 = what you owe
-credit-and-refund.bullet-one-prt-2                                = on time
-credit-and-refund.bullet-two                                      = claim this money back and make any payments as normal
+credit-and-refund.bullet-one-prt-2                                = on time.
+credit-and-refund.bullet-two-prt-1                                = You have the option to claim up to
+credit-and-refund.bullet-two-prt-2                                = back. If you claim back money allocated towards upcoming payments, you'll need to make those payments by the deadline to avoid extra charges.
 credit-and-refund.total                                           = Total
-credit-and-refund.refundProgress                                  = Refund - in progress
-credit-and-refund.payment                                         = payment
+credit-and-refund.refundProgress                                  = is a refund currently in progress
+credit-and-refund.payment                                         = from a payment made on
 credit-and-refund.details-intro                                   = What’s in your account
 credit-and-refund.no-credit                                       = You have no money in your account.
 credit-and-refund.claim-refund-btn                                = Claim a refund
 credit-and-refund.check-refund-btn                                = Check refund status
-credit-and-refund.credit-from-hmrc-title                          = Credit from HMRC adjustment
+credit-and-refund.credit-from-hmrc-title-prt-1                    = from a
+credit-and-refund.credit-from-hmrc-title-prt-2                    = Credit from HMRC adjustment
+
 
 #Language Selector
 language-switcher.english.hidden                                = Change the language to English
