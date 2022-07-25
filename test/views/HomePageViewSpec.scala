@@ -31,6 +31,7 @@ import views.html.Home
 
 import java.time.LocalDate
 import scala.util.Random
+import scala.util.matching.Regex
 
 
 class HomePageViewSpec extends TestSupport {
@@ -140,9 +141,6 @@ class HomePageViewSpec extends TestSupport {
     s"have the title ${messages("titlePattern.serviceName.govUk", messages("home.heading"))}" in new Setup {
       document.title() shouldBe s"${messages("titlePattern.serviceName.govUk", messages("home.heading"))}"
     }
-    "display the language selection switch" in new Setup {
-      getTextOfElementById("switch-welsh") shouldBe Some(messages("language-switcher.welsh"))
-    }
 
     s"have the page heading '${messages("home.heading")}'" in new Setup {
       getTextOfElementById("income-tax-heading") shouldBe Some(messages("home.heading"))
@@ -158,6 +156,25 @@ class HomePageViewSpec extends TestSupport {
 
     "not have the users UTR when it is absent in user profile" in new Setup(user = testMtdItUser(saUtr = None)) {
       getElementById("utr-reference-heading") shouldBe None
+    }
+
+    "have a language selection switch" which {
+      "displays the current language" in new Setup {
+        val langSwitch: Option[Element] = getElementById("lang-switch-en")
+        langSwitch.map(_.select("li:nth-child(1)").text) shouldBe Some(messages("language-switcher.english"))
+      }
+
+      "changes with JS ENABLED" in new Setup {
+        val langSwitchScript: Option[Element] = getElementById("lang-switch-en-js")
+        langSwitchScript.toString.contains("javascript:switchTo('/report-quarterly/income-and-expenses/view/switch-to-welsh')") shouldBe true
+        langSwitchScript.toString.contains(messages("language-switcher.welsh")) shouldBe true
+      }
+
+      "changes with JS DISABLED" in new Setup {
+        val langSwitchNoScript: Option[Element] = getElementById("lang-switch-en-no-js")
+        langSwitchNoScript.map(_.select("a").attr("href")) shouldBe Some("/report-quarterly/income-and-expenses/view/switch-to-welsh")
+        langSwitchNoScript.map(_.select("a span:nth-child(2)").text) shouldBe Some(messages("language-switcher.welsh"))
+      }
     }
 
     "have an updates tile" which {
@@ -244,7 +261,7 @@ class HomePageViewSpec extends TestSupport {
       }
     }
 
-     "have a payment history tile" which {
+    "have a payment history tile" which {
       "has a payment and history refunds heading when payment history feature switch is enabled" in new Setup {
         getElementById("payment-history-tile").map(_.select("h2").text) shouldBe Some(messages("home.paymentHistoryRefund.heading"))
       }
@@ -260,13 +277,13 @@ class HomePageViewSpec extends TestSupport {
           link.map(_.text) shouldBe Some(messages("home.paymentHistoryRefund.view"))
         }
       }
-       "has a link to the payment history page" which {
-         "has a payment history link when payment history feature switch is disabled" in new Setup(paymentHistoryEnabled = false) {
-           val link: Option[Element] = getElementById("payment-history-tile").map(_.select("a").first)
-           link.map(_.attr("href")) shouldBe Some(controllers.routes.PaymentHistoryController.show().url)
-           link.map(_.text) shouldBe Some(messages("home.paymentHistory.view"))
-         }
-       }
+      "has a link to the payment history page" which {
+        "has a payment history link when payment history feature switch is disabled" in new Setup(paymentHistoryEnabled = false) {
+          val link: Option[Element] = getElementById("payment-history-tile").map(_.select("a").first)
+          link.map(_.attr("href")) shouldBe Some(controllers.routes.PaymentHistoryController.show().url)
+          link.map(_.text) shouldBe Some(messages("home.paymentHistory.view"))
+        }
+      }
       "has an link to the 'How to claim a refund' for not migrated user" in new Setup(user = testMtdItUserNotMigrated()) {
         val link: Option[Element] = getElementById("payment-history-tile").map(_.select("a").first)
         // next line would change as part of MISUV-3710 implementation
@@ -300,6 +317,5 @@ class HomePageViewSpec extends TestSupport {
         link.map(_.text) shouldBe Some(messages("notmigrated.user.heading"))
       }
     }
-
   }
 }
