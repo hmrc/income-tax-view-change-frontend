@@ -109,39 +109,45 @@
                 @if(isMFACreditsAndDebitsEnabled){
                     @if(charge._1.documentDetail.validMFACreditDescription()) {
                         <li>
-                            <dt class="govuk-heading-s">
-                                @charge._1.documentDetail.paymentOrChargeCredit.get.toCurrencyString
-                                <span class="govuk-body">
-                                    @messages("credit-and-refund.credit-from-hmrc-title-prt-1")
-                                    <a href="@getCreditsSummaryControllerHref(charge._1.documentDetail, isAgent)" class="govuk-link">
-                                        @messages("credit-and-refund.credit-from-hmrc-title-prt-2")
-                                    </a>
-                                </span>
-                            </dt>
+                            <dl>
+                                <dt class="govuk-heading-s">
+                                    @charge._1.documentDetail.paymentOrChargeCredit.get.toCurrencyString
+                                    <span class="govuk-body">
+                                        @messages("credit-and-refund.credit-from-hmrc-title-prt-1")
+                                        <a href="@getCreditsSummaryControllerHref(charge._1.documentDetail, isAgent)" class="govuk-link">
+                                            @messages("credit-and-refund.credit-from-hmrc-title-prt-2")
+                                        </a>
+                                    </span>
+                                </dt>
+                            </dl>
                         </li>
                     }
                     @if(!charge._1.documentDetail.validMFACreditDescription()) {
                         <li>
-                            <dt class="govuk-heading-s">
-                                @charge._1.documentDetail.paymentOrChargeCredit.get.toCurrencyString
-                                <span class="govuk-body">@messages("credit-and-refund.payment")
-                                    <a href="@getControllerHref(charge._1.documentDetail, isAgent)"
-                                        class="govuk-link">@charge._1.dueDate.get.toLongDate
-                                    </a>
-                                </span>
-                            </dt>
+                            <dl>
+                                <dt class="govuk-heading-s">
+                                    @charge._1.documentDetail.paymentOrChargeCredit.get.toCurrencyString
+                                    <span class="govuk-body">@messages("credit-and-refund.payment")
+                                        <a href="@getControllerHref(charge._1.documentDetail, isAgent)"
+                                            class="govuk-link">@charge._1.dueDate.get.toLongDate
+                                        </a>
+                                    </span>
+                                </dt>
+                            </dl>
                         </li>
                     }
     }
 
     @if(!isMFACreditsAndDebitsEnabled && !charge._1.documentDetail.validMFACreditDescription()){
         <li>
-            <dt class="govuk-heading-s">
-                @charge._1.documentDetail.paymentOrChargeCredit.get.toCurrencyString
-                <span class="govuk-body">@messages("credit-and-refund.payment") <a
-                    href="@getControllerHref(charge._1.documentDetail, isAgent)" class="govuk-link">@charge._1.dueDate.get.toLongDate</a>
-                </span>
-            </dt>
+            </dl>
+                <dt class="govuk-heading-s">
+                    @charge._1.documentDetail.paymentOrChargeCredit.get.toCurrencyString
+                    <span class="govuk-body">@messages("credit-and-refund.payment") <a
+                        href="@getControllerHref(charge._1.documentDetail, isAgent)" class="govuk-link">@charge._1.dueDate.get.toLongDate</a>
+                    </span>
+                </dt>
+            </dl>
         </li>
     }
 }
@@ -150,18 +156,22 @@
             balance.get.firstPendingAmountRequested map { amount =>
                 if(messages.lang.language.toLowerCase().equals("cy")){
                     <li>
-                        <dt class="govuk-heading-s">
-                            <span class="govuk-body">{messages("credit-and-refund.refundProgress-prt-1")}</span>
-                                {amount.toCurrencyString}
-                            <span class="govuk-body">{messages("credit-and-refund.refundProgress-prt-2")}</span>
-                        </dt>
+                        <dl>
+                            <dt class="govuk-heading-s">
+                                <span class="govuk-body">{messages("credit-and-refund.refundProgress-prt-1")}</span>
+                                    {amount.toCurrencyString}
+                                <span class="govuk-body">{messages("credit-and-refund.refundProgress-prt-2")}</span>
+                            </dt>
+                        </dl>
                     </li>
                 }
                 else{
                     <li>
-                        <dt class="govuk-heading-s">{amount.toCurrencyString}
-                            <span class="govuk-body">{messages("credit-and-refund.refundProgress")}</span>
-                        </dt>
+                        <dl>
+                            <dt class="govuk-heading-s">{amount.toCurrencyString}
+                                <span class="govuk-body">{messages("credit-and-refund.refundProgress")}</span>
+                            </dt>
+                        </dl>
                     </li>
                 }
             }
@@ -170,18 +180,22 @@
             balance.get.secondPendingAmountRequested map { amount =>
                 if(messages.lang.language.toLowerCase().equals("cy")){
                     <li>
-                        <dt class="govuk-heading-s">
-                            <span class="govuk-body">{messages("credit-and-refund.refundProgress-prt-1")}</span>
-                                {amount.toCurrencyString}
-                            <span class="govuk-body">{messages("credit-and-refund.refundProgress-prt-2")}</span>
-                        </dt>
+                        <dl>
+                            <dt class="govuk-heading-s">
+                                <span class="govuk-body">{messages("credit-and-refund.refundProgress-prt-1")}</span>
+                                    {amount.toCurrencyString}
+                                <span class="govuk-body">{messages("credit-and-refund.refundProgress-prt-2")}</span>
+                            </dt>
+                        </dl>
                     </li>
                 }
                 else{
                     <li>
-                        <dt class="govuk-heading-s">{amount.toCurrencyString}
-                            <span class="govuk-body">{messages("credit-and-refund.refundProgress")}</span>
-                        </dt>
+                        <dl>
+                            <dt class="govuk-heading-s">{amount.toCurrencyString}
+                                <span class="govuk-body">{messages("credit-and-refund.refundProgress")}</span>
+                            </dt>
+                        </dl>
                     </li>
                 }
             }
