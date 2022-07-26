@@ -31,7 +31,6 @@ import views.html.Home
 
 import java.time.LocalDate
 import scala.util.Random
-import scala.util.matching.Regex
 
 
 class HomePageViewSpec extends TestSupport {
