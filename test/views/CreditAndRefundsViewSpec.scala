@@ -32,9 +32,8 @@ import views.html.CreditAndRefunds
 
 class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with ImplicitDateFormatter with ViewSpec {
 
-  val creditAndRefundView: CreditAndRefunds = app.injector.instanceOf[CreditAndRefunds]
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
-
+  val creditAndRefundView: CreditAndRefunds = app.injector.instanceOf[CreditAndRefunds]
   val creditAndRefundHeading: String = messages("credit-and-refund.heading")
   val subHeadingWithCreditsPart1: String = messages("credit-and-refund.subHeading.has-credits-1")
   val subHeadingWithCreditsPart2: String = messages("credit-and-refund.subHeading.has-credits-2")
@@ -96,9 +95,9 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
         document.title() shouldBe creditAndRefundHeadingWithTitleServiceNameGovUk
         layoutContent.selectHead("h1").text shouldBe creditAndRefundHeading
         document.select("h2").first().select("span").text() shouldBe s"$subHeadingWithCreditsPart1 $subHeadingWithCreditsPart2"
-        document.select("dt").first().text() shouldBe s"£1,400.00 $paymentText 15 May 2019"
-        document.select("dt").first().select("a").attr("href") shouldBe link
-        document.select("dt").last().text().contains("Total") shouldBe false
+        document.select("p").get(2).text() shouldBe s"£1,400.00 $paymentText 15 May 2019"
+        document.select("p").get(2).select("a").attr("href") shouldBe link
+        document.select("p").eachText().contains("Total") shouldBe false
 
         document.getElementsByClass("govuk-button").first().text() shouldBe claimBtn
         document.getElementsByClass("govuk-button govuk-button--secondary").text() shouldBe checkBtn
@@ -111,9 +110,9 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
         document.title() shouldBe creditAndRefundHeadingWithTitleServiceNameGovUk
         layoutContent.selectHead("h1").text shouldBe creditAndRefundHeading
         document.select("h2").first().select("span").text() shouldBe s"$subHeadingWithCreditsPart1 $subHeadingWithCreditsPart2"
-        document.select("dt").first().text() shouldBe s"£1,400.00 $paymentText 15 May 2019"
-        document.select("dt").first().select("a").attr("href") shouldBe link
-        document.select("dt").last().text().contains("Total") shouldBe false
+        document.select("p").get(2).text() shouldBe s"£1,400.00 $paymentText 15 May 2019"
+        document.select("p").get(2).select("a").attr("href") shouldBe link
+        document.select("p").eachText().contains("Total") shouldBe false
 
         document.getElementsByClass("govuk-button").first().text() shouldBe claimBtn
 
@@ -127,9 +126,9 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
           document.title() shouldBe creditAndRefundHeadingWithTitleServiceNameGovUk
           layoutContent.selectHead("h1").text shouldBe creditAndRefundHeading
           document.select("h2").first().select("span").text().contains(subHeadingWithCreditsPart1 + subHeadingWithCreditsPart2) shouldBe false
-          document.select("dt").first().text() shouldBe s"£6.00 $paymentText 15 May 2019"
-          document.select("dt").first().select("a").attr("href") shouldBe link
-          document.select("dt").last().text().contains("Total") shouldBe false
+          document.select("p").get(2).text() shouldBe s"£6.00 $paymentText 15 May 2019"
+          document.select("p").get(2).select("a").attr("href") shouldBe link
+          document.select("dt").eachText().contains("Total") shouldBe false
           document.select("govuk-list govuk-list--bullet").isEmpty shouldBe true
 
           document.getElementsByClass("govuk-button").first().text() shouldBe checkBtn
@@ -157,10 +156,10 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
           document.title() shouldBe creditAndRefundHeadingWithTitleServiceNameGovUk
           layoutContent.selectHead("h1").text shouldBe creditAndRefundHeading
           document.select("h2").first().select("span").text().contains(subHeadingWithCreditsPart1 + subHeadingWithCreditsPart2) shouldBe false
-          document.select("dt").select("dt:nth-child(1)").first().text() shouldBe
+          document.select("p").get(2).select("p:nth-child(1)").first().text() shouldBe
             s"£1,400.00 $creditAndRefundFromHMRCTitlePart1 $creditAndRefundFromHMRCTitlePart2"
-          document.select("dt").first().select("a").attr("href") shouldBe linkCreditsSummaryPage
-          document.select("dt").last().text().contains("Total") shouldBe false
+          document.select("p").get(2).select("a").attr("href") shouldBe linkCreditsSummaryPage
+          document.select("p").eachText().contains("Total") shouldBe false
           document.select("govuk-list govuk-list--bullet").isEmpty shouldBe true
 
           document.getElementsByClass("govuk-button").first().text() shouldBe checkBtn
@@ -175,8 +174,8 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
 
         document.title() shouldBe creditAndRefundHeadingAgentWithTitleServiceNameGovUkAgent
         layoutContent.selectHead("h1").text shouldBe creditAndRefundHeading
-        document.select("dt").first().text() shouldBe s"£1,400.00 $paymentText 15 May 2019"
-        document.select("dt").first().select("a").attr("href") shouldBe link
+        document.select("p").get(2).text() shouldBe s"£1,400.00 $paymentText 15 May 2019"
+        document.select("p").get(2).select("a").attr("href") shouldBe link
 
         document.getElementsByClass("govuk-button").first().text() shouldBe claimBtn
         document.getElementsByClass("govuk-button govuk-button--secondary").text() shouldBe checkBtn
