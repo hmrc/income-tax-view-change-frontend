@@ -93,13 +93,13 @@
     @h1(msg = "credit-and-refund.heading")
 
     @if(balance.isDefined){
-        @if(balance.get.availableCredit.get != 0){
+        @if(balance.getOrElse(throw MissingFieldException("Balance")).availableCredit.getOrElse(throw MissingFieldException("Available Credit")) != 0){
             <h2 class="govuk-heading-s">
                 <span class="govuk-body"> @messages("credit-and-refund.subHeading.has-credits-1") </span>
-                @{balance.get.availableCredit.get.toCurrency}<span class="govuk-body"> @messages("credit-and-refund.subHeading.has-credits-2")</span>
+                @{balance.getOrElse(throw MissingFieldException("Balance")).availableCredit.getOrElse(throw MissingFieldException("Available Credit")).toCurrency}<span class="govuk-body"> @messages("credit-and-refund.subHeading.has-credits-2")</span>
             </h2>
         } else {
-            <h2 class="govuk-heading-s">@{balance.get.firstPendingAmountRequested.get.toCurrency}
+            <h2 class="govuk-heading-s">@{balance.getOrElse(throw MissingFieldException("Balance")).firstPendingAmountRequested.getOrElse(throw MissingFieldException("First Pending Amount")).toCurrency}
                 <span class="govuk-body"> @messages("credit-and-refund.subHeading.has-no-credits")</span>
             </h2>
         }
@@ -110,7 +110,7 @@
                     @if(charge._1.documentDetail.validMFACreditDescription()) {
                         <li>
                             <p class="govuk-heading-s">
-                                @charge._1.documentDetail.paymentOrChargeCredit.get.toCurrencyString
+                                @charge._1.documentDetail.paymentOrChargeCredit.getOrElse(throw MissingFieldException("Payment Or Charge Credit")).toCurrencyString
                                 <span class="govuk-body">
                                     @messages("credit-and-refund.credit-from-hmrc-title-prt-1")
                                     <a href="@getCreditsSummaryControllerHref(charge._1.documentDetail, isAgent)" class="govuk-link">
@@ -123,10 +123,10 @@
                     @if(!charge._1.documentDetail.validMFACreditDescription()) {
                         <li>
                             <p class="govuk-heading-s">
-                                @charge._1.documentDetail.paymentOrChargeCredit.get.toCurrencyString
+                                @charge._1.documentDetail.paymentOrChargeCredit.getOrElse(throw MissingFieldException("Payment Or Charge Credit")).toCurrencyString
                                 <span class="govuk-body">@messages("credit-and-refund.payment")
                                     <a href="@getControllerHref(charge._1.documentDetail, isAgent)"
-                                        class="govuk-link">@charge._1.dueDate.get.toLongDate
+                                        class="govuk-link">@charge._1.dueDate.getOrElse(throw MissingFieldException("Due Date")).toLongDate
                                     </a>
                                 </span>
                             </p>
@@ -137,9 +137,9 @@
     @if(!isMFACreditsAndDebitsEnabled && !charge._1.documentDetail.validMFACreditDescription()){
         <li>
                 <p class="govuk-heading-s">
-                    @charge._1.documentDetail.paymentOrChargeCredit.get.toCurrencyString
+                    @charge._1.documentDetail.paymentOrChargeCredit.getOrElse(throw MissingFieldException("Payment Or Charge Credit")).toCurrencyString
                     <span class="govuk-body">@messages("credit-and-refund.payment") <a
-                        href="@getControllerHref(charge._1.documentDetail, isAgent)" class="govuk-link">@charge._1.dueDate.get.toLongDate</a>
+                        href="@getControllerHref(charge._1.documentDetail, isAgent)" class="govuk-link">@charge._1.dueDate.getOrElse(throw MissingFieldException("Due Date")).toLongDate</a>
                     </span>
                 </p>
         </li>
@@ -147,7 +147,7 @@
 }
 
         @{
-            balance.get.firstPendingAmountRequested map { amount =>
+            balance.getOrElse(throw MissingFieldException("Balance")).firstPendingAmountRequested map { amount =>
                 if(messages.lang.language.toLowerCase().equals("cy")){
                     <li>
                         <p class="govuk-heading-s">
@@ -167,7 +167,7 @@
             }
         }
         @{
-            balance.get.secondPendingAmountRequested map { amount =>
+            balance.getOrElse(throw MissingFieldException("Balance")).secondPendingAmountRequested map { amount =>
                 if(messages.lang.language.toLowerCase().equals("cy")){
                     <li>
                         <p class="govuk-heading-s">
@@ -189,7 +189,7 @@
         </ul>
 
 
-        @if(balance.get.availableCredit.get != 0){
+        @if(balance.getOrElse(throw MissingFieldException("Balance")).availableCredit.getOrElse(throw MissingFieldException("Available Credit")) != 0){
             @p(){
                 <h2 class="govuk-heading-m">
                     @messages("credit-and-refund.bullet-text-intro")
@@ -208,7 +208,7 @@
                 </li>
                 <li>
                     @messages("credit-and-refund.bullet-two-prt-1")
-                    @{balance.get.availableCredit.get.toCurrency}
+                    @{balance.getOrElse(throw MissingFieldException("Balance")).availableCredit.getOrElse(throw MissingFieldException("Available Credit")).toCurrency}
                     @messages("credit-and-refund.bullet-two-prt-2")
                 </li>
             </ul>
@@ -221,7 +221,7 @@
 
         <div class="govuk-button-group">
             @if(balance.isDefined){
-                @if(balance.get.availableCredit.get != 0){
+                @if(balance.getOrElse(throw MissingFieldException("Balance")).availableCredit.getOrElse(throw MissingFieldException("Available Credit")) != 0){
                     @link(link = "https://www.tax.service.gov.uk/self-assessment-repayment/repayment-amount",
                         messageKey = "credit-and-refund.claim-refund-btn", classes = "govuk-button", role=Some("button"))
                 }
