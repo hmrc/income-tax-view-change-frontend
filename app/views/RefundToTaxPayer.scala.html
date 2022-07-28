@@ -57,7 +57,9 @@
     getRepaymentHistoryData(repaymentHistoryModel).aggregate.getOrElse(throw MissingFieldException("Total Interest Item"))
 }
 
-
+@getRepaymentSupplementItemSize(repaymentHistoryModel: RepaymentHistoryModel) = @{
+    getRepaymentHistoryData(repaymentHistoryModel).repaymentItems.headOption.getOrElse(throw MissingFieldException("Repayment Items")).repaymentSupplementItem.size
+}
 
 @mainTemplate(
     pageTitle = messages("refund-to-taxpayer.heading"),
@@ -128,16 +130,29 @@
                     </div>
                 }
                 @if(getRepaymentHistoryData(repaymentHistoryModel).aggregate.isDefined) {
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key govuk-!-width-three-quarters">@messages("refund-to-taxpayer.tableHead.total-interest")
-                            @p(id = Some("refund-to-taxpayer-interests")) {
-                                @messages("refund-to-taxpayer.tableHead.varied-interest-rates-value", getInterestContent(repaymentHistoryModel).fromRate, getInterestContent(repaymentHistoryModel).toRate, getInterestContent(repaymentHistoryModel).fromDate.toLongDate, getInterestContent(repaymentHistoryModel).toDate.toLongDate)
-                            }
-                        </dt>
-                        <dd class="govuk-summary-list__value govuk-!-text-align-left">@{
-                            getInterestContent(repaymentHistoryModel).total.toCurrencyString
-                        }</dd>
-                    </div>
+                    @if(getRepaymentSupplementItemSize(repaymentHistoryModel) == 1) {
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key govuk-!-width-three-quarters">@messages("refund-to-taxpayer.tableHead.interest")
+                                @p(id = Some("refund-to-taxpayer-interests")) {
+                                    @messages("refund-to-taxpayer.tableHead.interest-value", getInterestContent(repaymentHistoryModel).fromDate.toLongDate, getInterestContent(repaymentHistoryModel).toDate.toLongDate, getInterestContent(repaymentHistoryModel).fromRate)
+                                }
+                            </dt>
+                            <dd class="govuk-summary-list__value govuk-!-text-align-left">@{
+                                getInterestContent(repaymentHistoryModel).total.toCurrencyString
+                            }</dd>
+                        </div>
+                    } else {
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key govuk-!-width-three-quarters">@messages("refund-to-taxpayer.tableHead.total-interest")
+                                @p(id = Some("refund-to-taxpayer-interests")) {
+                                    @messages("refund-to-taxpayer.tableHead.varied-interest-rates-value", getInterestContent(repaymentHistoryModel).fromRate, getInterestContent(repaymentHistoryModel).toRate, getInterestContent(repaymentHistoryModel).fromDate.toLongDate, getInterestContent(repaymentHistoryModel).toDate.toLongDate)
+                                }
+                            </dt>
+                            <dd class="govuk-summary-list__value govuk-!-text-align-left">@{
+                                getInterestContent(repaymentHistoryModel).total.toCurrencyString
+                            }</dd>
+                        </div>
+                    }
                 }
             </dl>
         </div>

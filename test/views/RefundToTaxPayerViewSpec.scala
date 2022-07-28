@@ -52,6 +52,8 @@ class RefundToTaxPayerViewSpec extends ViewSpec with ImplicitDateFormatter {
     val tableValueMethodTypeBacs: String = messages("refund-to-taxpayer.method-type-bacs")
     val tableValueMethodTypeCard: String = messages("refund-to-taxpayer.method-type-card")
     val tableValueMethodTypePostalOrder: String = messages("refund-to-taxpayer.method-type-postal-order")
+    val interest: String = s"${messages("refund-to-taxpayer.tableHead.interest")} ${messages("refund-to-taxpayer.tableHead.interest-value", "31 July 2021", "15 September 2021", "2.01")}"
+
 
   }
 
@@ -89,6 +91,31 @@ class RefundToTaxPayerViewSpec extends ViewSpec with ImplicitDateFormatter {
       ), LocalDate.of(2021, 7, 23), LocalDate.of(2021, 7, 21), "000000003135")
     )
   )
+
+  val testRepaymentHistoryModelOneItem: RepaymentHistoryModel =
+    testRepaymentHistoryModel.copy(
+      List(
+        testRepaymentHistoryModel.repaymentsViewerDetails.map(_.copy(
+          amountApprovedforRepayment = Some(800.12),
+          amountRequested = 345.5,
+          repaymentMethod = RefundToTaxPayerMessages.tableValueMethodTypeCard,
+          repaymentItems = Vector(
+            RepaymentItem(
+              Vector(
+                RepaymentSupplementItem(
+                  Some("002420002231"),
+                  Some(3.78),
+                  Some(LocalDate.of(2021, 7, 31)),
+                  Some(LocalDate.of(2021, 9, 15)),
+                  Some(2.01)
+                )
+              )
+            )
+          )
+        )
+        )
+      ).flatten
+    )
 
   val testRepaymentHistoryModelRequestedAmountDiffersToRefundAmount: RepaymentHistoryModel =
     testRepaymentHistoryModel.copy(
@@ -230,6 +257,22 @@ class RefundToTaxPayerViewSpec extends ViewSpec with ImplicitDateFormatter {
           underDetailsTable.get(2).text() shouldBe "£345.50"
           underDetailsTable.get(3).text() shouldBe "£9.67"
         }
+      }
+
+      s"has summary list headings without amount requested and only one repayment supplement item" in new RefundToTaxPayerViewSetup(testRepaymentHistoryModelOneItem) {
+        val allTableData: Elements = document.getElementById("refund-to-taxpayer-table").getElementsByTag("dt")
+        allTableData.get(0).text() shouldBe RefundToTaxPayerMessages.tableHeadEstimatedDate
+        allTableData.get(1).text() shouldBe RefundToTaxPayerMessages.tableHeadMethod
+        allTableData.get(2).text() shouldBe RefundToTaxPayerMessages.tableHeadTotalRefund
+
+        layoutContent.select(".govuk-details__summary").select("span").first().text shouldBe RefundToTaxPayerMessages.tableHeadFurtherDetails
+
+        val underDetailsTable: Elements = document.getElementById("refund-to-taxpayer-table-under-details").getElementsByTag("dt")
+        underDetailsTable.get(0).text() shouldBe RefundToTaxPayerMessages.tableHeadRequestedOn
+        underDetailsTable.get(1).text() shouldBe RefundToTaxPayerMessages.tableHeadRefundReference
+        underDetailsTable.get(2).text() shouldBe RefundToTaxPayerMessages.tableHeadRequestedAmount
+        underDetailsTable.get(3).text() shouldBe RefundToTaxPayerMessages.tableHeadRefundAmount
+        underDetailsTable.get(4).text() shouldBe RefundToTaxPayerMessages.interest
       }
     }
   }
