@@ -25,13 +25,12 @@ agent.client_relationship_failure.info.link                     = eich awdurdodi
 agent.client_relationship_failure.enter_different_details       = Nodwch UTR arallxf
 
 ## Agent - UTR Error
-agent.utr_error.heading                                         = Mae problem wedi codi
-agent.utr_error.utr_wrong.part1                                 = Mae’n bosibl bod yr UTR yr ydych wedi’i nodi, sef
-agent.utr_error.utr_wrong.part2                                 = , yn anghywir oherwydd:
-agent.utr_error.reason.bullet1                                  = eich bod wedi’i nodi’n anghywir
-agent.utr_error.reason.bullet2                                  = nid ydych chi na’ch cleient wedi cofrestru ar gyfer y cynllun {0} hyd yn hyn
-agent.utr_error.reason.bullet2_link                             = Troi Treth yn Ddigidol ar gyfer Treth Incwm
-agent.utr_error.go_back                                         = Ewch yn ôl a nodwch UTR gwahanol
+agent.utr_error.heading                                         = Ni allwch fwrw golwg dros y cleient hwn
+agent.utr_error.utr_wrong                                       = Gallai hyn fod oherwydd y canlynol:
+agent.utr_error.reason.bullet1                                  = rydych wedi nodi Cyfeirnod Unigryw y Trethdalwr (UTR) anghywir
+agent.utr_error.reason.bullet2                                  = mae angen i’ch cleient {0}
+agent.utr_error.reason.bullet2_link                             = gofrestru ar gyfer y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm
+agent.utr_error.go_back                                         = Nodwch UTR arall
 
 ## Agent Error Page ##
 agent-error.heading                                            = Ni allwch ddefnyddio’r gwasanaeth hwn ar hyn o bryd

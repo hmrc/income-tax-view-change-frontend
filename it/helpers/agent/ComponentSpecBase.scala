@@ -164,11 +164,11 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
     def getClientRelationshipFailure: WSResponse = get("/need-permission-to-view")
 
-    def getUTRError(clientUTR: Map[String, String] = Map.empty): WSResponse = get("/utr-problem", clientUTR)
+    def getUTRError(clientUTR: Map[String, String] = Map.empty): WSResponse = get("/cannot-view-client", clientUTR)
 
     def getAgentError: WSResponse = get("/agent-error")
 
-    def postUTRError: WSResponse = post("/utr-problem")(Map.empty)
+    def postUTRError: WSResponse = post("/cannot-view-client")(Map.empty)
 
     def getAgentHome(additionalCookies: Map[String, String] = Map.empty): WSResponse =
       getWithClientDetailsInSession("/agents/client-income-tax", additionalCookies)

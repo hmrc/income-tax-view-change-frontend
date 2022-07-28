@@ -46,13 +46,12 @@ agent.client_relationship_failure.info.link                     = authorise you 
 agent.client_relationship_failure.enter_different_details       = Enter another UTR
 
 ## Agent - UTR Error
-agent.utr_error.heading                                         = There’s a problem
-agent.utr_error.utr_wrong.part1                                 = The UTR you have entered
-agent.utr_error.utr_wrong.part2                                 = may be wrong because:
+agent.utr_error.heading                                         = You cannot view this client
+agent.utr_error.utr_wrong                                       = This may be because:
 agent.utr_error.reason.bullet1                                  = you have entered it incorrectly
-agent.utr_error.reason.bullet2                                  = you or your client have not signed up to {0} yet
-agent.utr_error.reason.bullet2_link                             = Making Tax Digital for Income Tax
-agent.utr_error.go_back                                         = Go back and enter a different UTR
+agent.utr_error.reason.bullet2                                  = your client needs to {0}
+agent.utr_error.reason.bullet2_link                             = sign up for Making Tax Digital for Income Tax
+agent.utr_error.go_back                                         = Enter another UTR
 
 ## Agent Error Page ##
 agent-error.heading                                            = You can''t use this service yet
