@@ -117,6 +117,19 @@ class RefundToTaxPayerViewSpec extends ViewSpec with ImplicitDateFormatter {
       ).flatten
     )
 
+  val testRepaymentHistoryModelWithoutRepaymentSupplementItems: RepaymentHistoryModel =
+    testRepaymentHistoryModel.copy(
+      List(
+        testRepaymentHistoryModel.repaymentsViewerDetails.map(_.copy(
+          amountApprovedforRepayment = Some(800.12),
+          amountRequested = 345.5,
+          repaymentMethod = RefundToTaxPayerMessages.tableValueMethodTypeCard,
+          repaymentItems = Vector.empty
+        )
+        )
+      ).flatten
+    )
+
   val testRepaymentHistoryModelRequestedAmountDiffersToRefundAmount: RepaymentHistoryModel =
     testRepaymentHistoryModel.copy(
       List(
@@ -273,6 +286,23 @@ class RefundToTaxPayerViewSpec extends ViewSpec with ImplicitDateFormatter {
         underDetailsTable.get(2).text() shouldBe RefundToTaxPayerMessages.tableHeadRequestedAmount
         underDetailsTable.get(3).text() shouldBe RefundToTaxPayerMessages.tableHeadRefundAmount
         underDetailsTable.get(4).text() shouldBe RefundToTaxPayerMessages.interest
+      }
+
+      s"has summary list headings without repayment supplement items and interest row not present" in new RefundToTaxPayerViewSetup(testRepaymentHistoryModelWithoutRepaymentSupplementItems) {
+        val allTableData: Elements = document.getElementById("refund-to-taxpayer-table").getElementsByTag("dt")
+        allTableData.get(0).text() shouldBe RefundToTaxPayerMessages.tableHeadEstimatedDate
+        allTableData.get(1).text() shouldBe RefundToTaxPayerMessages.tableHeadMethod
+        allTableData.get(2).text() shouldBe RefundToTaxPayerMessages.tableHeadTotalRefund
+
+        layoutContent.select(".govuk-details__summary").select("span").first().text shouldBe RefundToTaxPayerMessages.tableHeadFurtherDetails
+
+        val underDetailsTable: Elements = document.getElementById("refund-to-taxpayer-table-under-details").getElementsByTag("dt")
+        underDetailsTable.get(0).text() shouldBe RefundToTaxPayerMessages.tableHeadRequestedOn
+        underDetailsTable.get(1).text() shouldBe RefundToTaxPayerMessages.tableHeadRefundReference
+        underDetailsTable.get(2).text() shouldBe RefundToTaxPayerMessages.tableHeadRequestedAmount
+        underDetailsTable.get(3).text() shouldBe RefundToTaxPayerMessages.tableHeadRefundAmount
+        underDetailsTable.size() shouldBe 4
+        underDetailsTable.last().text().contentEquals(RefundToTaxPayerMessages.interest.split(" ").head) shouldBe false
       }
     }
   }
