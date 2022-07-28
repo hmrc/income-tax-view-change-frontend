@@ -27,7 +27,7 @@
     p:  p
 )
 
-@(clientUtr: String, postAction: Call)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
+@(postAction: Call)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
 
 @mainTemplate(
     pageTitle = messages("agent.utr_error.heading"),
@@ -36,9 +36,7 @@
 
 @h1(msg ="agent.utr_error.heading")
 
-    @p(){@messages("agent.utr_error.utr_wrong.part1")
-        <span class="client-utr">@clientUtr</span>
-        @messages("agent.utr_error.utr_wrong.part2")}
+    @p(){@messages("agent.utr_error.utr_wrong") }
 
     <ul class="govuk-list govuk-list--bullet">
         <li id = "list-bullet1">@messages("agent.utr_error.reason.bullet1")</li>

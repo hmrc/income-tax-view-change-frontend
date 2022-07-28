@@ -29,10 +29,7 @@ class UTRErrorViewSpec extends ViewSpec {
 
   val utrError: UTRError = app.injector.instanceOf[UTRError]
 
-  val utrErrorView: Html = utrError(
-    testClientUtr,
-    postAction
-  )
+  val utrErrorView: Html = utrError(postAction)
 
   object utrErrorMessages {
     val heading: String = messages("agent.utr_error.heading")

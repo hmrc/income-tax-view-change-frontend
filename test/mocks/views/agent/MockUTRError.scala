@@ -34,7 +34,7 @@ trait MockUTRError extends BeforeAndAfterEach with MockitoSugar {
   }
 
   def mockUTRError(response: Html): Unit = {
-    when(utrError.apply(any(), any())(any(), any(), any()))
+    when(utrError.apply(any())(any(), any(), any()))
       .thenReturn(response)
   }
 
