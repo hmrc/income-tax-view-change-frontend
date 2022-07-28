@@ -50,7 +50,7 @@ agent.utr_error.heading                                         = You are not au
 agent.utr_error.utr_wrong                                       = This may be because:
 agent.utr_error.reason.bullet1                                  = you entered the wrong Unique Taxpayer Reference (UTR)
 agent.utr_error.reason.bullet2                                  = your client needs to authorise you as their agent {0}
-agent.utr_error.reason.bullet2_link                             = Making Tax Digital for Income Tax
+agent.utr_error.reason.bullet2_link                             = authorise you as their agent
 agent.utr_error.go_back                                         = Enter another UTR
 
 ## Agent Error Page ##

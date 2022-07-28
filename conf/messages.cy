@@ -29,7 +29,7 @@ agent.utr_error.heading                                         = Nid ydych wedi
 agent.utr_error.utr_wrong                                       = Gallai hyn fod oherwydd y canlynol:
 agent.utr_error.reason.bullet1                                  = rydych wedi nodi Cyfeirnod Unigryw y Trethdalwr (UTR) anghywir
 agent.utr_error.reason.bullet2                                  = mae angen i’ch cleient eich awdurdodi fel ei asiant {0}
-agent.utr_error.reason.bullet2_link                             = Troi Treth yn Ddigidol ar gyfer Treth Incwm
+agent.utr_error.reason.bullet2_link                             = eich awdurdodi fel ei asiant
 agent.utr_error.go_back                                         = Nodwch UTR arall
 
 ## Agent Error Page ##
