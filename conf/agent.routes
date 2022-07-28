@@ -12,7 +12,7 @@ GET         /confirm-client-details                                        contr
 POST        /confirm-client-details                                        controllers.agent.ConfirmClientUTRController.submit
 
 # Client Relationship Failure
-GET         /need-permission-to-view                                       controllers.agent.ClientRelationshipFailureController.show
+GET         /not-authorised-to-view-client                                controllers.agent.ClientRelationshipFailureController.show
 
 # UTR Error
 GET         /utr-problem                                                  controllers.agent.UTRErrorController.show
