@@ -34,7 +34,7 @@ class UTRErrorViewSpec extends ViewSpec {
   object utrErrorMessages {
     val heading: String = messages("agent.utr_error.heading")
     val title: String = messages("agent.title_pattern.service_name.govuk", heading)
-    val utrWrong: String = s"${messages("agent.utr_error.utr_wrong.part1")} $testClientUtr ${messages("agent.utr_error.utr_wrong.part2")}"
+    val utrWrong: String = s"${messages("agent.utr_error.utr_wrong")}"
     val reasonBullet1: String = messages("agent.utr_error.reason.bullet1")
     val reasonBullet2Link: String = s"${messages("agent.utr_error.reason.bullet2_link")}${messages("pagehelp.opensInNewTabText")}"
     val reasonBullet2: String = messages("agent.utr_error.reason.bullet2", reasonBullet2Link)
