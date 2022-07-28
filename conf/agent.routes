@@ -15,8 +15,8 @@ POST        /confirm-client-details                                        contr
 GET         /need-permission-to-view                                       controllers.agent.ClientRelationshipFailureController.show
 
 # UTR Error
-GET         /utr-problem                                                  controllers.agent.UTRErrorController.show
-POST        /utr-problem                                                  controllers.agent.UTRErrorController.submit
+GET         /not-authorised-to-view-client                                 controllers.agent.UTRErrorController.show
+POST        /not-authorised-to-view-client                                 controllers.agent.UTRErrorController.submit
 
 #Home Controller
 GET         /remove-client-sessions                                       controllers.agent.RemoveClientDetailsSessionsController.show
