@@ -20,9 +20,13 @@ back.taxYearSummary = Back to Tax Year Summary
 back.nomatch = Back
 
 # Agent Base
-agent.base.service_name                                         = Your client’s Income Tax details
-agent.title_pattern.service_name.govuk                          = {0} - Your client’s Income Tax details - GOV.UK
-agent.error.title_pattern.service_name.govuk                    = Error: {0} - Your client’s Income Tax details - GOV.UK
+agent.base.service_name                             = Your client’s Income Tax details
+
+# Page Titles
+titlePattern.serviceName.govUk                      = Manage your Income Tax updates
+agent.titlePattern.serviceName.govUk                = Manage your client’s Income Tax updates
+error.titlePattern.serviceName.govUk                = Error: {0} - Manage your Income Tax updates
+agent.error.titlePattern.serviceName.govUk          = Error: {0} - Manage your client’s Income Tax updates
 
 # Agent - Enter clients details
 agent.enter_clients_utr.heading                                 = What is your client’s UTR?
@@ -748,12 +752,6 @@ upliftFailure.content = You cannot access this service. This may be because:
 upliftFailure.bullet.1 = you took too long to enter information and the service has timed out
 upliftFailure.bullet.2 = you have failed to answer enough questions correctly
 upliftFailure.bullet.3 = we could not match your details to our system
-
-## Title pattern
-titlePattern.serviceName.govUk = {0} - Business Tax account - GOV.UK
-error.titlePattern.serviceName.govUk = Error: {0} - Business Tax account - GOV.UK
-agent.titlePattern.serviceName.govUk = {0} - Your client’s Income Tax details - GOV.UK
-titlePattern.serviceName.itsa.govUk = {0} - Update and submit an Income Tax Return - GOV.UK
 
 ## Payment History Page ##
 
