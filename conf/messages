@@ -40,10 +40,12 @@ agent.confirmClient.changeClient                                = Change client
 agent.confirmClient.confirmContinue                             = Confirm and continue
 
 # Agent - Client Relationship Failure
-agent.client_relationship_failure.heading                       = You need permission to view this client
-agent.client_relationship_failure.info                          = Your client needs to {0} before you can access this service. You may want to check the Unique Taxpayer Reference (UTR) to make sure it’s the right one or look up another client.
+agent.client_relationship_failure.heading                       = You are not authorised to view this client
+agent.client_relationship_failure.info                          = your client needs to {0}
 agent.client_relationship_failure.info.link                     = authorise you as their agent
 agent.client_relationship_failure.enter_different_details       = Enter another UTR
+agent.client_relationship_failure.bullet1                       = you entered the wrong Unique Taxpayer Reference (UTR)
+
 
 ## Agent - UTR Error
 agent.utr_error.heading                                         = There’s a problem
