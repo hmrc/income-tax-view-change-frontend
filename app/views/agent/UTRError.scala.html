@@ -31,8 +31,7 @@
 
 @mainTemplate(pageTitle = messages("agent.utr_error.heading"), isAgent = true) {
     @h1(msg ="agent.utr_error.heading")
-    @p(){@messages("agent.utr_error.utr_wrong")
-}
+    @p(){@messages("agent.utr_error.utr_wrong")}
 
     <ul class="govuk-list govuk-list--bullet">
         <li id = "list-bullet1">@messages("agent.utr_error.reason.bullet1")</li>
@@ -42,9 +41,8 @@
         </li>
     </ul>
 
-
     @form(postAction){
         @continueButton(Some(messages("agent.utr_error.go_back")))
     }
-
+    
 }
