@@ -761,7 +761,7 @@ paymentHistory.info.2                                           = This will be a
 paymentHistory.textLink1                                        = Self Assessment service
 paymentHistory.button                                           = {0} payments
 paymentHistory.paymentToHmrc                                    = Payment made to HMRC
-paymentHistory.paymentFromEarlierYear                           = Payment from an earlier tax year
+paymentHistory.paymentFromEarlierYear                           = Credit from an earlier tax year
 paymentHistory.mfaCredit                                        = Credit from HMRC adjustment
 paymentsHistory.CardRef                                         = Payment made by debit card ref:
 paymentHistory.refund                                           = Refund
@@ -774,7 +774,7 @@ paymentHistory.paymentAndRefundHistory.heading                  = Payment and re
 ## Payment Allocation ##
 paymentAllocation.heading                                       = Payment made to HMRC
 paymentAllocation.sa.info                                       = This is money you paid into your account before you signed up for Making Tax Digital for Income Tax. Visit your previous
-paymentAllocation.earlyTaxYear.heading                          = Payment from an earlier tax year
+paymentAllocation.earlyTaxYear.heading                          = Credit from an earlier tax year
 paymentAllocation.date                                          = Date
 paymentAllocation.amount                                        = Amount
 paymentAllocation.info                                          = Payments are first allocated to penalties and earlier tax years, then current and future tax years.
