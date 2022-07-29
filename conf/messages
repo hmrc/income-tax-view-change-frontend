@@ -45,7 +45,7 @@ agent.client_relationship_failure.info                          = your client ne
 agent.client_relationship_failure.info.link                     = authorise you as their agent
 agent.client_relationship_failure.enter_different_details       = Enter another UTR
 agent.client_relationship_failure.bullet1                       = you entered the wrong Unique Taxpayer Reference (UTR)
-
+agent.client_relationship_failure.reason                        = This may be because:
 
 ## Agent - UTR Error
 agent.utr_error.heading                                         = There’s a problem

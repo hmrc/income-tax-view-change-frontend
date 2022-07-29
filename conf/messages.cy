@@ -24,6 +24,7 @@ agent.client_relationship_failure.info                          = mae angen i’
 agent.client_relationship_failure.info.link                     = eich awdurdodi fel ei asiant
 agent.client_relationship_failure.enter_different_details       = Nodwch UTR arallxf
 agent.client_relationship_failure.bullet1                       = rydych wedi nodi Cyfeirnod Unigryw y Trethdalwr (UTR) anghywir
+agent.client_relationship_failure.reason                        = Gallai hyn fod oherwydd y canlynol:
 
 ## Agent - UTR Error
 agent.utr_error.heading                                         = Mae problem wedi codi
