@@ -48,7 +48,7 @@ agent.client_relationship_failure.enter_different_details       = Enter another 
 ## Agent - UTR Error
 agent.utr_error.heading                                         = You cannot view this client
 agent.utr_error.utr_wrong                                       = This may be because:
-agent.utr_error.reason.bullet1                                  = you have entered it incorrectly
+agent.utr_error.reason.bullet1                                  = you entered the wrong Unique Taxpayer Reference (UTR)
 agent.utr_error.reason.bullet2                                  = your client needs to {0}
 agent.utr_error.reason.bullet2_link                             = sign up for Making Tax Digital for Income Tax
 agent.utr_error.go_back                                         = Enter another UTR
