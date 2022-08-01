@@ -743,8 +743,9 @@ timeoutDialog.message                                           = For your secur
 button.continue                                                 = Stay signed in
 
 ## Uplift Failure
-upliftFailure.title = There’s a problem
-upliftFailure.content = You cannot access this service. This may be because:
+upliftFailure.title = You cannot view this page
+upliftFailure.content = This may be because:
+upliftFailure.sign.out = Return to Sign in
 upliftFailure.bullet.1 = you took too long to enter information and the service has timed out
 upliftFailure.bullet.2 = you have failed to answer enough questions correctly
 upliftFailure.bullet.3 = we could not match your details to our system

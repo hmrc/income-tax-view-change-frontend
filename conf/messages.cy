@@ -709,8 +709,9 @@ notFound.heading = Ni ellir dod o hyd i’r dudalen hon
 notFound.message = Gwiriwch eich bod wedi nodi’r cyfeiriad gwe cywir.
 
 ## Uplift Failure
-upliftFailure.title = Mae problem wedi codi
-upliftFailure.content = Ni allwch gael mynediad at y gwasanaeth hwn. Gall hyn fod oherwydd y canlynol:
+upliftFailure.title = Ni allwch fwrw golwg dros y dudalen hon
+upliftFailure.content = Gallai hyn fod oherwydd y canlynol:
+upliftFailure.sign.out = REwch yn ôl i fewngofnodi
 upliftFailure.bullet.1 = gwnaethoch gymryd gormod o amser i nodi gwybodaeth ac mae’ch cyfle i ddefnyddio’r gwasanaeth wedi dod i ben
 upliftFailure.bullet.2 = rydych wedi methu ag ateb digon o gwestiynau’n gywir
 upliftFailure.bullet.3 = nid oeddem yn gallu paru’ch manylion â’r hyn sydd ar ein system
