@@ -728,7 +728,7 @@ paymentHistory.button                                           = Taliadau {0}
 paymentsHistory.CardRef                                         = Cyfeirnod ar gyfer taliad a wnaed drwy gerdyn debyd:
 paymentHistory.refund                                           = Ad-daliad
 paymentHistory.paymentToHmrc                                    = Taliad a wnaed i CThEM
-paymentHistory.paymentFromEarlierYear                           = Taliad o flwyddyn dreth gynharach
+paymentHistory.paymentFromEarlierYear                           = Credyd o flwyddyn dreth gynharach
 paymentHistory.mfaCredit                                        = Credyd o addasiad gan CThEM
 paymentHistory.table.header.date                                = Dyddiad
 paymentHistory.table.header.description                         = Disgrifiad
@@ -782,7 +782,7 @@ pagehelp.opensInNewTabText                                      = ' (yn agor tab
 
 ## Payment Allocation ##
 paymentAllocation.heading                                       = Taliad a wnaed i CThEM
-paymentAllocation.earlyTaxYear.heading                          = Taliad o flwyddyn dreth gynharach
+paymentAllocation.earlyTaxYear.heading                          = Credyd o flwyddyn dreth gynharach
 paymentAllocation.date                                          = Dyddiad
 paymentAllocation.amount                                        = Swm
 paymentAllocation.info                                          = Caiff taliadau eu dyrannu’n gyntaf i gosbau a blynyddoedd treth cynharach, yna’r flwyddyn dreth bresennol a blynyddoedd treth yn y dyfodol.
