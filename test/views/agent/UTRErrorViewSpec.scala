@@ -37,7 +37,7 @@ class UTRErrorViewSpec extends ViewSpec {
   object utrErrorMessages {
     val heading: String = messages("agent.utr_error.heading")
     val title: String = messages("agent.titlePattern.serviceName.govUk", heading)
-    val utrWrong: String = s"${messages("agent.utr_error.utr_wrong.part1")} $testClientUtr ${messages("agent.utr_error.utr_wrong.part2")}"
+    val utrWrong: String = messages("agent.utr_error.utr_wrong")
     val reasonBullet1: String = messages("agent.utr_error.reason.bullet1")
     val reasonBullet2Link: String = s"${messages("agent.utr_error.reason.bullet2_link")}${messages("pagehelp.opensInNewTabText")}"
     val reasonBullet2: String = messages("agent.utr_error.reason.bullet2", reasonBullet2Link)
@@ -65,7 +65,6 @@ class UTRErrorViewSpec extends ViewSpec {
     s"have a second bullet point: ${utrErrorMessages.reasonBullet2}" in new Setup(utrErrorView) {
       layoutContent.select("ul li:nth-child(2)").text shouldBe utrErrorMessages.reasonBullet2
     }
-
 
     s"have a link in the second bullet point: ${utrErrorMessages.reasonBullet2Link}" in new Setup(utrErrorView) {
       val link: Elements = layoutContent.select("ul li:nth-child(2) a")
