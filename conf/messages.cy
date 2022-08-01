@@ -415,10 +415,9 @@ bta_partial.p2                                                  = Gallwch fwrw g
 bta_partial.home_button                                         = Bwrw golwg ar fanylion eich Treth Incwm
 
 ## Not Enrolled
-not_enrolled.heading                                            = Ni chewch weld y dudalen hon
-not_enrolled.sign-up.1                                          = Mae’n rhaid i chi
-not_enrolled.sign-up.2                                          = gofrestru ar gyfer adrodd chwarterol
-not_enrolled.sign-up.3                                          = cyn i chi allu fwrw golwg ar y dudalen hon.
+not_enrolled.heading                                            = Ni allwch gael mynediad at y gwasanaeth hwn
+not_enrolled.sign-up                                            = Mae angen i chi
+not_enrolled.sign-up.link                                       = gofrestru ar gyfer y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm
 
 ## Standard Error Page ##
 standardError.heading                                           = Mae’n ddrwg gennym, mae problem gyda’r gwasanaeth

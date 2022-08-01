@@ -32,10 +32,8 @@
 
     @h1(msg="not_enrolled.heading", id=Some("page-heading"))
     @p(id=Some("sign-up")){
-        @messages("not_enrolled.sign-up.1")
-        @link(link = appConfig.signUpUrl, messageKey = "not_enrolled.sign-up.2", id=Some("sign-up-link")
-)
-        @messages("not_enrolled.sign-up.3")
+        @messages("not_enrolled.sign-up")
+        @link(id=Some("sign-up-link"), link = appConfig.signUpUrl, messageKey = "not_enrolled.sign-up.link", target = Some("_blank"), rel=Some("noreferrer noopener"), outerMessage = ".")
     }
 
 }

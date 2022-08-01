@@ -465,10 +465,9 @@ bta_partial.p2                                                  = You can view y
 bta_partial.home_button                                         = View your Income Tax details
 
 ## Not Enrolled
-not_enrolled.heading                                            = You can’t view this page
-not_enrolled.sign-up.1                                          = You need to
-not_enrolled.sign-up.2                                          = sign up for quarterly reporting
-not_enrolled.sign-up.3                                          = before you can view this page.
+not_enrolled.heading                                            = You cannot access this service
+not_enrolled.sign-up                                            = You need to
+not_enrolled.sign-up.link                                       = sign up for Making Tax Digital for Income Tax
 
 ## Standard Error Page ##
 standardError.heading                                           = Sorry, there is a problem with the service
