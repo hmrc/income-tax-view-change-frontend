@@ -1,26 +1,26 @@
 # agent specific routes
 
 # Language
-GET         /language/:lang                                               controllers.agent.AgentLanguageController.switchToLanguage(lang: String)
+GET         /language/:lang                                                controllers.agent.AgentLanguageController.switchToLanguage(lang: String)
 
 # Enter Clients UTR
 GET         /client-utr                                                    controllers.agent.EnterClientsUTRController.show
 POST        /client-utr                                                    controllers.agent.EnterClientsUTRController.submit
 
 # Confirm Client
-GET         /confirm-client-details                                        controllers.agent.ConfirmClientUTRController.show
-POST        /confirm-client-details                                        controllers.agent.ConfirmClientUTRController.submit
+GET         /confirm-client-details                                         controllers.agent.ConfirmClientUTRController.show
+POST        /confirm-client-details                                         controllers.agent.ConfirmClientUTRController.submit
 
 # Client Relationship Failure
-GET         /need-permission-to-view                                       controllers.agent.ClientRelationshipFailureController.show
+GET         /not-authorised-to-view-client                                controllers.agent.ClientRelationshipFailureController.show
 
 # UTR Error
-GET         /utr-problem                                                  controllers.agent.UTRErrorController.show
-POST        /utr-problem                                                  controllers.agent.UTRErrorController.submit
+GET         /cannot-view-client                                            controllers.agent.UTRErrorController.show
+POST        /cannot-view-client                                            controllers.agent.UTRErrorController.submit
 
 #Home Controller
-GET         /remove-client-sessions                                       controllers.agent.RemoveClientDetailsSessionsController.show
+GET         /remove-client-sessions                                        controllers.agent.RemoveClientDetailsSessionsController.show
 
 #Agent Error
-GET         /agent-error                                                  controllers.agent.errors.AgentErrorController.show
-GET         /custom-not-found                                             controllers.agent.errors.AgentNotFoundDocumentIDLookupController.show
+GET         /agent-error                                                   controllers.agent.errors.AgentErrorController.show
+GET         /custom-not-found                                              controllers.agent.errors.AgentNotFoundDocumentIDLookupController.show

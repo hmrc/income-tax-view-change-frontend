@@ -19,19 +19,20 @@ back.taxYearSummary = Yn ôl i Crynodeb o’r flwyddyn dreth
 back.nomatch = Yn ôl
 
 # Agent - Client Relationship Failure
-agent.client_relationship_failure.heading                       = Mae angen caniatâd arnoch i fwrw golwg dros y cleient hwn
-agent.client_relationship_failure.info                          = Mae’n rhaid i’ch cleient {0} cyn i chi allu cael at y gwasanaeth hwn. Mae’n bosibl y byddwch am wirio Cyfeirnod Unigryw y Trethdalwr (UTR) i wneud yn siŵr mai dyma’r un iawn, neu chwilio am gleient arall.
+agent.client_relationship_failure.heading                       = Nid ydych wedi’ch awdurdodi i fwrw golwg dros y cleient hwn
+agent.client_relationship_failure.info                          = mae angen i’ch cleient {0}
 agent.client_relationship_failure.info.link                     = eich awdurdodi fel ei asiant
 agent.client_relationship_failure.enter_different_details       = Nodwch UTR arallxf
+agent.client_relationship_failure.bullet1                       = rydych wedi nodi Cyfeirnod Unigryw y Trethdalwr (UTR) anghywir
+agent.client_relationship_failure.reason                        = Gallai hyn fod oherwydd y canlynol:
 
 ## Agent - UTR Error
-agent.utr_error.heading                                         = Mae problem wedi codi
-agent.utr_error.utr_wrong.part1                                 = Mae’n bosibl bod yr UTR yr ydych wedi’i nodi, sef
-agent.utr_error.utr_wrong.part2                                 = , yn anghywir oherwydd:
-agent.utr_error.reason.bullet1                                  = eich bod wedi’i nodi’n anghywir
-agent.utr_error.reason.bullet2                                  = nid ydych chi na’ch cleient wedi cofrestru ar gyfer y cynllun {0} hyd yn hyn
-agent.utr_error.reason.bullet2_link                             = Troi Treth yn Ddigidol ar gyfer Treth Incwm
-agent.utr_error.go_back                                         = Ewch yn ôl a nodwch UTR gwahanol
+agent.utr_error.heading                                         = Ni allwch fwrw golwg dros y cleient hwn
+agent.utr_error.utr_wrong                                       = Gallai hyn fod oherwydd y canlynol:
+agent.utr_error.reason.bullet1                                  = rydych wedi nodi Cyfeirnod Unigryw y Trethdalwr (UTR) anghywir
+agent.utr_error.reason.bullet2                                  = mae angen i’ch cleient {0}
+agent.utr_error.reason.bullet2_link                             = gofrestru ar gyfer y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm
+agent.utr_error.go_back                                         = Nodwch UTR arall
 
 ## Agent Error Page ##
 agent-error.heading                                            = Ni allwch ddefnyddio’r gwasanaeth hwn ar hyn o bryd
