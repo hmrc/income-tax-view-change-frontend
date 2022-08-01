@@ -162,7 +162,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
     def getPaymentsDue: WSResponse = get("/payments-owed")
 
-    def getClientRelationshipFailure: WSResponse = get("/need-permission-to-view")
+    def getClientRelationshipFailure: WSResponse = get("/not-authorised-to-view-client")
 
     def getUTRError(clientUTR: Map[String, String] = Map.empty): WSResponse = get("/utr-problem", clientUTR)
 

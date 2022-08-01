@@ -36,10 +36,14 @@
 
 @h1(msg ="agent.client_relationship_failure.heading", classes="govuk-heading-l")
     @p(){
-        @Html(messages(
-           "agent.client_relationship_failure.info",
-            <a href={appConfig.clientAuthorisationGuidance} rel="noreferrer noopener" target="_blank">{messages("agent.client_relationship_failure.info.link")} {messages("pagehelp.opensInNewTabText")}</a>
-        ))
+        @messages("agent.client_relationship_failure.reason")
+        <ul class="govuk-list govuk-list--bullet">
+            <li id="relationship_failure_bullet">@messages("agent.client_relationship_failure.bullet1")</li>
+            <li>@Html(messages("agent.client_relationship_failure.info",
+                   <a href={appConfig.clientAuthorisationGuidance} rel="noreferrer noopener" target="_blank">{messages("agent.client_relationship_failure.info.link")} {messages("pagehelp.opensInNewTabText")}</a>
+                ))
+            </li>
+        </ul>
     }
 
     @form(action = postAction) {
