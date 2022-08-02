@@ -91,7 +91,7 @@ trait CustomMatchers extends UnitSpec with GivenWhenThen {
 
       def apply(response: WSResponse) = {
         val body = Jsoup.parse(response.body)
-        val titlePattern: String = if (isError) "agent.error.title_pattern.service_name.govuk" else "agent.title_pattern.service_name.govuk"
+        val titlePattern: String = if (isError) "agent.error.titlePattern.serviceName.govUk" else "agent.titlePattern.serviceName.govUk"
         val expectedTitle = messagesAPI(titlePattern, messagesAPI(messageKey))
         Then(s"the page title should be '$expectedTitle'")
         HavePropertyMatchResult(

@@ -62,9 +62,14 @@
 )(contentBlock: Html)(implicit request : Request[_], messages: Messages)
 
 @siteHeader = @{
-    val serviceName = if (isAgent) Some(messages("agent.base.service_name"))
-        else if(request.session.get("origin") == Some("PTA")) Some(messages("base.service_name.pta"))
-        else Some(messages("base.service_name"))
+
+    val serviceName = (itsaTaxYear.isDefined, isAgent, request.session.get("origin")) match {
+        case (true, _, _) => Some(messages("base.service_name.itsa"))
+        case (false, true, _) => Some(messages("agent.base.service_name"))
+        case (false, false, Some("PTA")) => Some(messages("base.service_name.pta"))
+        case (false, false, _) => Some(messages("base.service_name"))
+    }
+
     val serviceUrl = if (isAgent) controllers.routes.HomeController.showAgent().url
         else if(request.session.get("origin") == Some("PTA")) appConfig.personalTaxAccount
         else appConfig.businessTaxAccount
@@ -127,17 +132,14 @@
 }
 
 @titlePattern = @{
-    if(isAgent) {
-        if(form.exists(_.hasErrors)) {
-            messages("agent.error.title_pattern.service_name.govuk", pageTitle)
-        } else {
-            messages("agent.title_pattern.service_name.govuk", pageTitle)
-        }
-    } else if(form.exists(_.hasErrors)) {
-            messages("error.titlePattern.serviceName.govUk", pageTitle)
-        } else {
-            messages("titlePattern.serviceName.govUk", pageTitle)
+
+    (isAgent, form.exists(_.hasErrors)) match {
+        case (true, true) => messages("agent.error.titlePattern.serviceName.govUk", pageTitle)
+        case (true, false) => messages("agent.titlePattern.serviceName.govUk", pageTitle)
+        case (false, true) => messages("error.titlePattern.serviceName.govUk", pageTitle)
+        case (false, false) => messages("titlePattern.serviceName.govUk", pageTitle)
     }
+
 }
 
 @if(mainClass.isDefined){
