@@ -22,7 +22,7 @@ back.nomatch = Yn ôl
 agent.client_relationship_failure.heading                       = Nid ydych wedi’ch awdurdodi i fwrw golwg dros y cleient hwn
 agent.client_relationship_failure.info                          = Mae angen i’ch cleient {0}
 agent.client_relationship_failure.info.link                     = eich awdurdodi fel ei asiant
-agent.client_relationship_failure.enter_different_details       = Nodwch UTR arall
+agent.client_relationship_failure.enter_different_details       = Gwirio cleient arall
 
 # Agent Base
 agent.base.service_name                                         = Treth Incwm fanylion eich cleient
