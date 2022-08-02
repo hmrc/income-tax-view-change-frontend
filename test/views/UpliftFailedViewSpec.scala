@@ -20,6 +20,8 @@ import play.twirl.api.Html
 import testUtils.ViewSpec
 import views.html.errorPages.UpliftFailed
 
+import scala.collection.convert.ImplicitConversions.`collection AsScalaIterable`
+
 class UpliftFailedViewSpec extends ViewSpec {
 
   def upliftFailedView: Html = app.injector.instanceOf[UpliftFailed].apply()
@@ -32,14 +34,26 @@ class UpliftFailedViewSpec extends ViewSpec {
     }
 
     s"have the content ${messages("upliftFailure.content")}" in new Setup(upliftFailedView) {
+
       layoutContent.select(Selectors.p).text shouldBe messages("upliftFailure.content")
     }
 
     "not have a back link" in new Setup(upliftFailedView) {
+
       document doesNotHave Selectors.backLink
     }
 
-    "sample" in new Setup(upliftFailedView) {}
+    "have the list elements" in new Setup(upliftFailedView) {
+
+      document.select("li").get(2).text() shouldBe messages("upliftFailure.bullet.1")
+      document.select("li").get(3).text() shouldBe messages("upliftFailure.bullet.2")
+      document.select("li").get(4).text() shouldBe messages("upliftFailure.bullet.3")
+    }
+
+    s"have the link ${messages("Return to Sign in")}" in new Setup(upliftFailedView){
+
+      document.select("a").eachText().toList.contains(messages("Return to Sign in"))
+    }
   }
 
 }
