@@ -20,7 +20,7 @@ back.nomatch = Yn ôl
 
 # Agent - Client Relationship Failure
 agent.client_relationship_failure.heading                       = Nid ydych wedi’ch awdurdodi i fwrw golwg dros y cleient hwn
-agent.client_relationship_failure.info                          = mae angen i’ch cleient {0}
+agent.client_relationship_failure.info                          = Mae angen i’ch cleient {0}
 agent.client_relationship_failure.info.link                     = eich awdurdodi fel ei asiant
 agent.client_relationship_failure.enter_different_details       = Nodwch UTR arall
 

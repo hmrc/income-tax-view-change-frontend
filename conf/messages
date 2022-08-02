@@ -45,7 +45,7 @@ agent.confirmClient.confirmContinue                             = Confirm and co
 
 # Agent - Client Relationship Failure
 agent.client_relationship_failure.heading                       = You are not authorised to view this client
-agent.client_relationship_failure.info                          = your client needs to {0}
+agent.client_relationship_failure.info                          = Your client needs to {0}
 agent.client_relationship_failure.info.link                     = authorise you as their agent
 agent.client_relationship_failure.enter_different_details       = Enter another UTR
 
