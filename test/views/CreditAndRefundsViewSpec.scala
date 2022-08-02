@@ -41,7 +41,7 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
   val claimBtn: String = messages("credit-and-refund.claim-refund-btn")
   val checkBtn: String = messages("credit-and-refund.check-refund-btn")
   val creditAndRefundHeadingWithTitleServiceNameGovUk: String = messages("titlePattern.serviceName.govUk", creditAndRefundHeading)
-  val creditAndRefundHeadingAgentWithTitleServiceNameGovUkAgent: String = messages("agent.title_pattern.service_name.govuk", creditAndRefundHeading)
+  val creditAndRefundHeadingAgentWithTitleServiceNameGovUkAgent: String = messages("agent.titlePattern.serviceName.govUk", creditAndRefundHeading)
   val creditAndRefundFromHMRCTitlePart1: String = messages("credit-and-refund.credit-from-hmrc-title-prt-1")
   val creditAndRefundFromHMRCTitlePart2: String = messages("credit-and-refund.credit-from-hmrc-title-prt-2")
 

@@ -24,6 +24,15 @@ agent.client_relationship_failure.info                          = mae angen i’
 agent.client_relationship_failure.info.link                     = eich awdurdodi fel ei asiant
 agent.client_relationship_failure.enter_different_details       = Nodwch UTR arall
 
+# Agent Base
+agent.base.service_name                                         = Treth Incwm fanylion eich cleient
+
+# Page Titles
+titlePattern.serviceName.govUk                                  = Rheoli’ch diweddariadau Treth Incwm
+agent.titlePattern.serviceName.govUk                            = Rheoli diweddariadau Treth Incwm eich cleient
+error.titlePattern.serviceName.govUk                            = Gwall: {0} - Rheoli’ch diweddariadau Treth Incwm
+agent.error.titlePattern.serviceName.govUk                      = Gwall: {0} - Rheoli diweddariadau Treth Incwm eich cleient
+
 ## Agent - UTR Error
 agent.utr_error.heading                                         = Ni allwch fwrw golwg dros y cleient hwn
 agent.utr_error.utr_wrong                                       = Gallai hyn fod oherwydd y canlynol:
@@ -714,11 +723,6 @@ upliftFailure.bullet.1 = gwnaethoch gymryd gormod o amser i nodi gwybodaeth ac m
 upliftFailure.bullet.2 = rydych wedi methu ag ateb digon o gwestiynau’n gywir
 upliftFailure.bullet.3 = nid oeddem yn gallu paru’ch manylion â’r hyn sydd ar ein system
 
-## Title pattern
-titlePattern.serviceName.govUk = {0} - Cyfrif Treth Busnes - GOV.UK
-error.titlePattern.serviceName.govUk = Gwall: {0} - Cyfrif Treth Busnes - GOV.UK
-titlePattern.serviceName.itsa.govUk = {0} - Diweddaru a chyflwyno Ffurflen Dreth Incwm - GOV.UK
-
 ## Payment History Page ##
 paymentHistory.heading                                          = Hanes taliadau
 paymentHistory.info                                             = Er mwyn bwrw golwg dros gyfrif eich cleient o’r adeg cyn iddo gofrestru ar gyfer y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm, mae angen i chi fewngofnodi i’ch
@@ -735,10 +739,6 @@ paymentHistory.table.header.description                         = Disgrifiad
 paymentHistory.table.header.amount                              = Swm
 PaymentHistory.classicSA                                        = Er mwyn bwrw golwg dros eich hanes taliadau o’r adeg cyn i chi gofrestru ar gyfer y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm, mae angen i chi fynd i’ch
 paymentHistory.paymentAndRefundHistory.heading                  = Hanes taliadau ac ad-daliadau
-# Agent Base
-agent.base.service_name                                         = Treth Incwm fanylion eich cleient
-agent.title_pattern.service_name.govuk                          = {0} - Treth Incwm fanylion eich cleient - GOV.UK
-agent.error.title_pattern.service_name.govuk                    = Gwall: {0} - Treth Incwm fanylion eich cleient - GOV.UK
 
 # Agent - Enter clients details
 agent.enter_clients_utr.heading                                 = Beth yw UTR eich cleient?
