@@ -43,7 +43,6 @@ class NotEnrolledViewSpec extends TestSupport {
     s"have a paragraph" which {
 
       "has the text" in {
-        println(document.getElementById("sign-up").text())
         document.getElementById("sign-up").text() shouldBe  s"${messages("not_enrolled.sign-up")} ${messages("not_enrolled.sign-up.link")}${messages("pagehelp.opensInNewTabText")}."
       }
 
