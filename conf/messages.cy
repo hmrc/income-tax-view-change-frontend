@@ -19,19 +19,29 @@ back.taxYearSummary = Yn ôl i Crynodeb o’r flwyddyn dreth
 back.nomatch = Yn ôl
 
 # Agent - Client Relationship Failure
-agent.client_relationship_failure.heading                       = Mae angen caniatâd arnoch i fwrw golwg dros y cleient hwn
-agent.client_relationship_failure.info                          = Mae’n rhaid i’ch cleient {0} cyn i chi allu cael at y gwasanaeth hwn. Mae’n bosibl y byddwch am wirio Cyfeirnod Unigryw y Trethdalwr (UTR) i wneud yn siŵr mai dyma’r un iawn, neu chwilio am gleient arall.
+agent.client_relationship_failure.heading                       = Nid ydych wedi’ch awdurdodi i fwrw golwg dros y cleient hwn
+agent.client_relationship_failure.info                          = mae angen i’ch cleient {0}
 agent.client_relationship_failure.info.link                     = eich awdurdodi fel ei asiant
 agent.client_relationship_failure.enter_different_details       = Nodwch UTR arallxf
+agent.client_relationship_failure.bullet1                       = rydych wedi nodi Cyfeirnod Unigryw y Trethdalwr (UTR) anghywir
+agent.client_relationship_failure.reason                        = Gallai hyn fod oherwydd y canlynol:
+
+# Agent Base
+agent.base.service_name                                         = Treth Incwm fanylion eich cleient
+
+# Page Titles
+titlePattern.serviceName.govUk                                  = Rheoli’ch diweddariadau Treth Incwm
+agent.titlePattern.serviceName.govUk                            = Rheoli diweddariadau Treth Incwm eich cleient
+error.titlePattern.serviceName.govUk                            = Gwall: {0} - Rheoli’ch diweddariadau Treth Incwm
+agent.error.titlePattern.serviceName.govUk                      = Gwall: {0} - Rheoli diweddariadau Treth Incwm eich cleient
 
 ## Agent - UTR Error
-agent.utr_error.heading                                         = Mae problem wedi codi
-agent.utr_error.utr_wrong.part1                                 = Mae’n bosibl bod yr UTR yr ydych wedi’i nodi, sef
-agent.utr_error.utr_wrong.part2                                 = , yn anghywir oherwydd:
-agent.utr_error.reason.bullet1                                  = eich bod wedi’i nodi’n anghywir
-agent.utr_error.reason.bullet2                                  = nid ydych chi na’ch cleient wedi cofrestru ar gyfer y cynllun {0} hyd yn hyn
-agent.utr_error.reason.bullet2_link                             = Troi Treth yn Ddigidol ar gyfer Treth Incwm
-agent.utr_error.go_back                                         = Ewch yn ôl a nodwch UTR gwahanol
+agent.utr_error.heading                                         = Ni allwch fwrw golwg dros y cleient hwn
+agent.utr_error.utr_wrong                                       = Gallai hyn fod oherwydd y canlynol:
+agent.utr_error.reason.bullet1                                  = rydych wedi nodi Cyfeirnod Unigryw y Trethdalwr (UTR) anghywir
+agent.utr_error.reason.bullet2                                  = mae angen i’ch cleient {0}
+agent.utr_error.reason.bullet2_link                             = gofrestru ar gyfer y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm
+agent.utr_error.go_back                                         = Nodwch UTR arall
 
 ## Agent Error Page ##
 agent-error.heading                                            = Ni allwch ddefnyddio’r gwasanaeth hwn ar hyn o bryd
@@ -716,11 +726,6 @@ upliftFailure.bullet.1 = gwnaethoch gymryd gormod o amser i nodi gwybodaeth ac m
 upliftFailure.bullet.2 = rydych wedi methu ag ateb digon o gwestiynau’n gywir
 upliftFailure.bullet.3 = nid oeddem yn gallu paru’ch manylion â’r hyn sydd ar ein system
 
-## Title pattern
-titlePattern.serviceName.govUk = {0} - Cyfrif Treth Busnes - GOV.UK
-error.titlePattern.serviceName.govUk = Gwall: {0} - Cyfrif Treth Busnes - GOV.UK
-titlePattern.serviceName.itsa.govUk = {0} - Diweddaru a chyflwyno Ffurflen Dreth Incwm - GOV.UK
-
 ## Payment History Page ##
 paymentHistory.heading                                          = Hanes taliadau
 paymentHistory.info                                             = Er mwyn bwrw golwg dros gyfrif eich cleient o’r adeg cyn iddo gofrestru ar gyfer y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm, mae angen i chi fewngofnodi i’ch
@@ -737,10 +742,6 @@ paymentHistory.table.header.description                         = Disgrifiad
 paymentHistory.table.header.amount                              = Swm
 PaymentHistory.classicSA                                        = Er mwyn bwrw golwg dros eich hanes taliadau o’r adeg cyn i chi gofrestru ar gyfer y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm, mae angen i chi fynd i’ch
 paymentHistory.paymentAndRefundHistory.heading                  = Hanes taliadau ac ad-daliadau
-# Agent Base
-agent.base.service_name                                         = Treth Incwm fanylion eich cleient
-agent.title_pattern.service_name.govuk                          = {0} - Treth Incwm fanylion eich cleient - GOV.UK
-agent.error.title_pattern.service_name.govuk                    = Gwall: {0} - Treth Incwm fanylion eich cleient - GOV.UK
 
 # Agent - Enter clients details
 agent.enter_clients_utr.heading                                 = Beth yw UTR eich cleient?
