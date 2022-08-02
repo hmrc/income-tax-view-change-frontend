@@ -20,11 +20,9 @@ back.nomatch = Yn ôl
 
 # Agent - Client Relationship Failure
 agent.client_relationship_failure.heading                       = Nid ydych wedi’ch awdurdodi i fwrw golwg dros y cleient hwn
-agent.client_relationship_failure.info                          = mae angen i’ch cleient {0}
+agent.client_relationship_failure.info                          = Mae angen i’ch cleient {0}
 agent.client_relationship_failure.info.link                     = eich awdurdodi fel ei asiant
-agent.client_relationship_failure.enter_different_details       = Nodwch UTR arallxf
-agent.client_relationship_failure.bullet1                       = rydych wedi nodi Cyfeirnod Unigryw y Trethdalwr (UTR) anghywir
-agent.client_relationship_failure.reason                        = Gallai hyn fod oherwydd y canlynol:
+agent.client_relationship_failure.enter_different_details       = Gwirio cleient arall
 
 # Agent Base
 agent.base.service_name                                         = Treth Incwm fanylion eich cleient
