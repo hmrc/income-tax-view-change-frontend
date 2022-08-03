@@ -76,7 +76,7 @@ GET         /sign-out                                                     contro
 GET         /sign-in                                                      controllers.SignInController.signIn
 
 #Not Enrolled
-GET         /not-enrolled                                                 controllers.errors.NotEnrolledController.show
+GET         /cannot-access-service                                        controllers.errors.NotEnrolledController.show
 
 #Uplift Failed
 GET         /cannot-view-page                                             controllers.errors.UpliftFailedController.show
