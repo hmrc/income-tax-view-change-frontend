@@ -63,22 +63,16 @@
 
 @siteHeader = @{
 
-    val serviceName = (itsaTaxYear.isDefined, isAgent, request.session.get("origin")) match {
-        case (true, _, _) => Some(messages("base.service_name.itsa"))
-        case (false, true, _) => Some(messages("agent.base.service_name"))
-        case (false, false, Some("PTA")) => Some(messages("base.service_name.pta"))
-        case (false, false, _) => Some(messages("base.service_name"))
-    }
+    val serviceName = if (isAgent) Some(messages("agent.titlePattern.serviceName.govUk"))
+        else Some(messages("titlePattern.serviceName.govUk"))
 
     val serviceUrl = if (isAgent) controllers.routes.HomeController.showAgent().url
-        else if(request.session.get("origin") == Some("PTA")) appConfig.personalTaxAccount
-        else appConfig.businessTaxAccount
+        else controllers.routes.HomeController.show().url
 
     hmrcHeader(HmrcHeaderArgs(
         homepageUrl = "https://www.gov.uk",
         serviceName = serviceName,
         serviceUrl = serviceUrl,
-        containerClasses = "govuk-width-container",
         language = CurrentLanguage(),
         signOutHref = Some(controllers.routes.SignOutController.signOut.url),
         userResearchBanner =  Some(UserResearchBanner(url = appConfig.enterSurveyUrl))
