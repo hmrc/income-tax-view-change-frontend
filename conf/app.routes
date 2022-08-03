@@ -79,7 +79,7 @@ GET         /sign-in                                                      contro
 GET         /not-enrolled                                                 controllers.errors.NotEnrolledController.show
 
 #Uplift Failed
-GET         /uplift-failed                                                controllers.errors.UpliftFailedController.show
+GET         /cannot-view-page                                             controllers.errors.UpliftFailedController.show
 
 #Uplift Success
 GET         /uplift-success                                               controllers.UpliftSuccessController.success
