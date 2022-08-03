@@ -20,9 +20,13 @@ back.taxYearSummary = Back to Tax Year Summary
 back.nomatch = Back
 
 # Agent Base
-agent.base.service_name                                         = Your client’s Income Tax details
-agent.title_pattern.service_name.govuk                          = {0} - Your client’s Income Tax details - GOV.UK
-agent.error.title_pattern.service_name.govuk                    = Error: {0} - Your client’s Income Tax details - GOV.UK
+agent.base.service_name                             = Your client’s Income Tax details
+
+# Page Titles
+titlePattern.serviceName.govUk                      = Manage your Income Tax updates
+agent.titlePattern.serviceName.govUk                = Manage your client’s Income Tax updates
+error.titlePattern.serviceName.govUk                = Error: {0} - Manage your Income Tax updates
+agent.error.titlePattern.serviceName.govUk          = Error: {0} - Manage your client’s Income Tax updates
 
 # Agent - Enter clients details
 agent.enter_clients_utr.heading                                 = What is your client’s UTR?
@@ -40,19 +44,18 @@ agent.confirmClient.changeClient                                = Change client
 agent.confirmClient.confirmContinue                             = Confirm and continue
 
 # Agent - Client Relationship Failure
-agent.client_relationship_failure.heading                       = You need permission to view this client
-agent.client_relationship_failure.info                          = Your client needs to {0} before you can access this service. You may want to check the Unique Taxpayer Reference (UTR) to make sure it’s the right one or look up another client.
+agent.client_relationship_failure.heading                       = You are not authorised to view this client
+agent.client_relationship_failure.info                          = Your client needs to {0}
 agent.client_relationship_failure.info.link                     = authorise you as their agent
-agent.client_relationship_failure.enter_different_details       = Enter another UTR
+agent.client_relationship_failure.enter_different_details       = Check another client
 
 ## Agent - UTR Error
-agent.utr_error.heading                                         = There’s a problem
-agent.utr_error.utr_wrong.part1                                 = The UTR you have entered
-agent.utr_error.utr_wrong.part2                                 = may be wrong because:
-agent.utr_error.reason.bullet1                                  = you have entered it incorrectly
-agent.utr_error.reason.bullet2                                  = you or your client have not signed up to {0} yet
-agent.utr_error.reason.bullet2_link                             = Making Tax Digital for Income Tax
-agent.utr_error.go_back                                         = Go back and enter a different UTR
+agent.utr_error.heading                                         = You cannot view this client
+agent.utr_error.utr_wrong                                       = This may be because:
+agent.utr_error.reason.bullet1                                  = you entered the wrong Unique Taxpayer Reference (UTR)
+agent.utr_error.reason.bullet2                                  = your client needs to {0}
+agent.utr_error.reason.bullet2_link                             = sign up for Making Tax Digital for Income Tax
+agent.utr_error.go_back                                         = Enter another UTR
 
 ## Agent Error Page ##
 agent-error.heading                                            = You can''t use this service yet
@@ -742,17 +745,12 @@ timeoutDialog.message                                           = For your secur
 button.continue                                                 = Stay signed in
 
 ## Uplift Failure
-upliftFailure.title = There’s a problem
-upliftFailure.content = You cannot access this service. This may be because:
+upliftFailure.title = You cannot view this page
+upliftFailure.content = This may be because:
+upliftFailure.sign.out = Return to Sign in
 upliftFailure.bullet.1 = you took too long to enter information and the service has timed out
 upliftFailure.bullet.2 = you have failed to answer enough questions correctly
 upliftFailure.bullet.3 = we could not match your details to our system
-
-## Title pattern
-titlePattern.serviceName.govUk = {0} - Business Tax account - GOV.UK
-error.titlePattern.serviceName.govUk = Error: {0} - Business Tax account - GOV.UK
-agent.titlePattern.serviceName.govUk = {0} - Your client’s Income Tax details - GOV.UK
-titlePattern.serviceName.itsa.govUk = {0} - Update and submit an Income Tax Return - GOV.UK
 
 ## Payment History Page ##
 

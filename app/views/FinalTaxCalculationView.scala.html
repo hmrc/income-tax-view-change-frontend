@@ -21,10 +21,10 @@
 @import uk.gov.hmrc.play.views.html.helpers.FormWithCSRF
 @import config.FrontendAppConfig
 @import views.html.components._
-@import views.html.layouts.layout
+@import views.html.layouts.unifiedLayout
 @import models.liabilitycalculation.viewmodels.TaxYearSummaryViewModel
 
-@this(layout: layout,
+@this(layout: unifiedLayout,
       breakdownPartial: taxYearSummaryBreakdownPartial,
       inset: GovukInsetText,
       form: FormWithCSRF,
@@ -64,7 +64,8 @@
     pageTitle = headingText,
     backUrl = Some(backUrl),
     itsaTaxYear = Some(taxYear),
-    btaNavPartial = btaNavPartial
+    btaNavPartial = btaNavPartial,
+    isAgent = isAgent
 ) {
     @h1Caption(headingText, Some(subHeadingText))
 

@@ -40,7 +40,8 @@ class ClientDetailsFailureViewSpec extends ViewSpec {
   object ClientRelationshipMessages {
     val heading: String = messages("agent.client_relationship_failure.heading")
     val title: String = messages("agent.titlePattern.serviceName.govUk", heading)
-    val info: String = messages("agent.client_relationship_failure.info", s"${messages("agent.client_relationship_failure.info.link")}${messages("pagehelp.opensInNewTabText")}")
+    val info: String = messages("agent.client_relationship_failure.info")
+      .replace("{0}", messages("agent.client_relationship_failure.info.link") + " (opens in new tab)")
     val clientAuthorisationLink: String = s"${messages("agent.client_relationship_failure.info.link")}${messages("pagehelp.opensInNewTabText")}"
     val enterDifferentDetails: String = messages("agent.client_relationship_failure.enter_different_details")
   }
@@ -56,7 +57,7 @@ class ClientDetailsFailureViewSpec extends ViewSpec {
     }
 
     s"have information about why the user is not authorised for the client" in new ClientRelationshipFailureSetup {
-      layoutContent.getElementsByTag("p").get(0).text shouldBe ClientRelationshipMessages.info
+      layoutContent.selectById("relationship_failure_bullet").text shouldBe ClientRelationshipMessages.info
     }
 
     "have a link to the govuk client authorisation overview" in new ClientRelationshipFailureSetup {
