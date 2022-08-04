@@ -132,7 +132,7 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
 
       "display payment history by year" in new PaymentHistorySetup(paymentEntriesMFA) {
         for (((year, payments), index) <- paymentEntriesMFA.zipWithIndex) {
-          layoutContent.selectHead(s"#accordion-with-summary-sections-heading-$year").text shouldBe PaymentHistoryMessages.button(year)
+          layoutContent.selectHead(s"#accordion-with-summary-sections-heading-$year").text shouldBe year.toString
           val sectionContent = layoutContent.selectHead(s"#accordion-default-content-${index + 1}")
           val tbody = sectionContent.selectHead("table > tbody")
           payments.zipWithIndex.foreach {

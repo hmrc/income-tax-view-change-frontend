@@ -728,7 +728,6 @@ paymentHistory.heading                                          = Hanes taliadau
 paymentHistory.info                                             = Er mwyn bwrw golwg dros gyfrif eich cleient o’r adeg cyn iddo gofrestru ar gyfer y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm, mae angen i chi fewngofnodi i’ch
 paymentHistory.info.2                                           = Bydd hwn yn Ddynodydd Defnyddiwr (ID) a chyfrinair ar gyfer Porth y Llywodraeth sy’n wahanol i’ch cyfrif Gwasanaethau Asiant.
 paymentHistory.textLink1                                        = gwasanaeth Hunanasesiad arferol
-paymentHistory.button                                           = Taliadau {0}
 paymentsHistory.CardRef                                         = Cyfeirnod ar gyfer taliad a wnaed drwy gerdyn debyd:
 paymentHistory.refund                                           = Ad-daliad
 paymentHistory.paymentToHmrc                                    = Taliad a wnaed i CThEM
