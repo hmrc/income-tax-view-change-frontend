@@ -57,7 +57,7 @@ btaNavPartial: Option[Html] = None, origin: Option[String] = None)(implicit requ
 
 @headingContent(year: Int) = {
     <span id="accordion-with-summary-sections-heading-@year">
-        @messages("paymentHistory.button", year.toString)
+        @year.toString
     </span>
 }
 
