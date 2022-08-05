@@ -34,7 +34,7 @@ class IncomeBreakdownViewModelSpec extends UnitSpec {
 
     "successful successModelFull" should {
 
-      "create a full IncomeBreakdownViewModel when there is a full Calculation" in {
+      "create a full IncomeBreakdownViewModel when there is a full Calculation and NewStateBenefitIncome FS is disabled" in {
         val expectedIncomeBreakdownViewModel = IncomeBreakdownViewModel(
           totalPayeEmploymentAndLumpSumIncome = Some(5000.99),
           totalBenefitsInKind = Some(5000.99),
