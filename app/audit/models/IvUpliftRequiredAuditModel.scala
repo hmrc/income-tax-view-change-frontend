@@ -16,6 +16,8 @@
 
 package audit.models
 
+import enums.LowConfidenceLevelIvHandoff
+
 case class IvUpliftRequiredAuditModel(reasonForHandoff: String,
                                       currentConfidenceLevel: Int,
                                       minimumConfidenceLevelToProceed: Int) extends AuditModel {
@@ -25,5 +27,5 @@ case class IvUpliftRequiredAuditModel(reasonForHandoff: String,
     "currentConfidenceLevel" -> s"CL$currentConfidenceLevel",
     "minimumConfidenceLevelToProceed" -> s"CL$minimumConfidenceLevelToProceed"
   )
-  override val auditType: String = "LowConfidenceLevelIvHandoff"
+  override val auditType: String = LowConfidenceLevelIvHandoff.name
 }

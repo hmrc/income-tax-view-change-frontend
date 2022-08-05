@@ -17,6 +17,7 @@
 package audit.models
 
 import auth.MtdItUser
+import enums.ChargeSummary
 import implicits.ImplicitCurrencyFormatter.CurrencyFormatter
 import models.chargeHistory.ChargeHistoryModel
 import models.financialDetails.{DocumentDetailWithDueDate, FinancialDetail, PaymentsWithChargeType}
@@ -150,6 +151,6 @@ case class ChargeSummaryAudit(mtdItUser: MtdItUser[_], docDateDetail: DocumentDe
       Json.obj("charge" -> chargeDetails) ++
       release6Update
   }
-  override val auditType: String = "ChargeSummary"
+  override val auditType: String = ChargeSummary.name
 
 }

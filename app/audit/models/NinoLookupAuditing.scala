@@ -16,12 +16,13 @@
 
 package audit.models
 
-import models.core.{NinoResponseSuccess, NinoResponseError}
+import enums.{ninoLookup, ninoLookupError}
+import models.core.{NinoResponseError, NinoResponseSuccess}
 
 object NinoLookupAuditing {
 
   val ninoLookupTransactionName = "ITVCNinoLookup"
-  val ninoLookupAuditType = "ninoLookup"
+  val ninoLookupAuditType: String = ninoLookup.name
 
   case class NinoLookupAuditModel(nino: NinoResponseSuccess, mtdRef: String) extends AuditModel {
     override val transactionName: String = ninoLookupTransactionName
@@ -39,6 +40,6 @@ object NinoLookupAuditing {
       "status" -> ninoError.status.toString,
       "reason" -> ninoError.reason
     )
-    override val auditType: String = "ninoLookupError"
+    override val auditType: String = ninoLookupError.name
   }
 }

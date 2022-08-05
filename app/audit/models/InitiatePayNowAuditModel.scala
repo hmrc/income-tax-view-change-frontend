@@ -16,6 +16,7 @@
 
 package audit.models
 
+import enums.InitiatePayNow
 import play.api.libs.json.{JsValue, Json, Writes}
 
 case class InitiatePayNowAuditModel(mtditid: String, nino: Option[String],
@@ -23,7 +24,7 @@ case class InitiatePayNowAuditModel(mtditid: String, nino: Option[String],
                                     userType: Option[String]) extends ExtendedAuditModel {
 
   override val transactionName: String = "initiate-pay-now"
-  override val auditType: String = "InitiatePayNow"
+  override val auditType: String = InitiatePayNow.name
 
   private case class AuditDetail(mtditid: String, nationalInsuranceNumber: Option[String],
                                  saUtr: Option[String], credId: Option[String],
