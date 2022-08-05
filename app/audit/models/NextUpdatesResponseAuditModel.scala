@@ -17,6 +17,7 @@
 package audit.models
 
 import auth.MtdItUser
+import enums.ViewObligationsResponse
 import models.nextUpdates.NextUpdateModel
 import play.api.libs.json._
 import utils.Utilities.JsonUtil
@@ -26,7 +27,7 @@ case class NextUpdatesResponseAuditModel(mtdItUser: MtdItUser[_],
                                          nextUpdates: Seq[NextUpdateModel]) extends ExtendedAuditModel {
 
   override val transactionName: String = "view-obligations-response"
-  override val auditType: String = "ViewObligationsResponse"
+  override val auditType: String = ViewObligationsResponse
 
   private def nextUpdateJson(nextUpdate: NextUpdateModel): JsObject = Json.obj(
     "startDate" -> nextUpdate.start,
