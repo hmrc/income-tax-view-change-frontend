@@ -30,7 +30,7 @@ case class WhatYouOweResponseAuditModel(user: MtdItUser[_],
 
   val currentTaxYear = user.incomeSources.getCurrentTaxEndYear
   override val transactionName: String = "what-you-owe-response"
-  override val auditType: String = WhatYouOweResponse.name
+  override val auditType: String = WhatYouOweResponse
 
   private val docDetailsListJson: List[JsObject] =
     whatYouOweChargesList.chargesList.map(documentDetails) ++ whatYouOweChargesList.outstandingChargesModel.map(outstandingChargeDetails)

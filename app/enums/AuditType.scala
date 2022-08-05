@@ -18,6 +18,10 @@ package enums
 
 sealed trait AuditType {
   val name: String
+
+  implicit def auditTypeToString(auditType: AuditType): String = {
+    auditType.name
+  }
 }
 
 case object AllowancesDeductionsDetailsResponse extends AuditType {
@@ -32,7 +36,7 @@ case object ItsaHomePage extends AuditType {
   val name = "ItsaHomePage"
 }
 
-case object incomeSourceDetailsResponse extends AuditType {
+case object IncomeSourceDetailsResponse extends AuditType {
   val name = "incomeSourceDetailsResponse"
 }
 
@@ -52,7 +56,7 @@ case object LowConfidenceLevelIvHandoff extends AuditType {
   val name = "LowConfidenceLevelIvHandoff"
 }
 
-case object obligationsPageView extends AuditType {
+case object ObligationsPageView extends AuditType {
   val name = "obligationsPageView"
 }
 
@@ -60,11 +64,11 @@ case object ViewObligationsResponse extends AuditType {
   val name = "ViewObligationsResponse"
 }
 
-case object ninoLookup extends AuditType {
+case object NinoLookup extends AuditType {
   val name = "ninoLookup"
 }
 
-case object ninoLookupError extends AuditType {
+case object NinoLookupError extends AuditType {
   val name = "ninoLookupError"
 }
 

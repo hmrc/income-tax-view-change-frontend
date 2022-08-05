@@ -34,7 +34,7 @@ case class TaxYearSummaryResponseAuditModel(mtdItUser: MtdItUser[_],
 
 
   override val transactionName: String = "tax-year-overview-response"
-  override val auditType: String = TaxYearOverviewResponse.name
+  override val auditType: String = TaxYearOverviewResponse
 
   private val taxYearSummaryJson = {
     if (R7bTxmEvents) {

@@ -49,7 +49,7 @@ case class HomeAudit(mtdItUser: MtdItUser[_],
     ("credId", mtdItUser.credId) ++
     ("agentReferenceNumber", mtdItUser.arn)
 
-  override val auditType: String = ItsaHomePage.name
+  override val auditType: String = ItsaHomePage
 
 }
 

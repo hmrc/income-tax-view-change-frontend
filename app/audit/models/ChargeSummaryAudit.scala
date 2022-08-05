@@ -151,6 +151,6 @@ case class ChargeSummaryAudit(mtdItUser: MtdItUser[_], docDateDetail: DocumentDe
       Json.obj("charge" -> chargeDetails) ++
       release6Update
   }
-  override val auditType: String = ChargeSummary.name
+  override val auditType: String = ChargeSummary
 
 }

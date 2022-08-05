@@ -23,5 +23,5 @@ case class IvOutcomeFailureAuditModel(journeyId: String) extends AuditModel() {
   override val detail: Seq[(String, String)] = Seq(
     "ivJourneyId" -> journeyId
   )
-  override val auditType: String = LowConfidenceLevelIvOutcomeFail.name
+  override val auditType: String = LowConfidenceLevelIvOutcomeFail
 }

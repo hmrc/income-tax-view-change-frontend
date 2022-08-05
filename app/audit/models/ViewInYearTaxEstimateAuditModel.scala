@@ -29,7 +29,7 @@ case class ViewInYearTaxEstimateAuditModel(
                                           ) extends AuditModel {
   
   override val transactionName: String = "ViewInYearTaxEstimate"
-  override val auditType: String = ViewInYearTaxEstimate.name
+  override val auditType: String = ViewInYearTaxEstimate
   
   override val detail: Seq[(String, String)] = Seq(
     "nino" -> nino,

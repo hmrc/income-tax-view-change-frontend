@@ -27,7 +27,7 @@ case class AllowanceAndDeductionsResponseAuditModel(mtdItUser: MtdItUserBase[_],
                                                     viewModel: AllowancesAndDeductionsViewModel) extends ExtendedAuditModel {
 
   override val transactionName: String = "allowances-deductions-details-response"
-  override val auditType: String = AllowancesDeductionsDetailsResponse.name
+  override val auditType: String = AllowancesDeductionsDetailsResponse
 
   override val detail: JsValue = {
     userAuditDetails(mtdItUser) ++

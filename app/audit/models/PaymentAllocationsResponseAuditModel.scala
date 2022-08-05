@@ -34,7 +34,7 @@ case class PaymentAllocationsResponseAuditModel(mtdItUser: MtdItUserBase[_],
   extends ExtendedAuditModel {
 
   override val transactionName: String = "payment-allocations-response"
-  override val auditType: String = PaymentAllocations.name
+  override val auditType: String = PaymentAllocations
 
   private def getTaxYearString(periodTo: String): String = {
     val taxYear = AccountingPeriodModel.determineTaxYearFromPeriodEnd(LocalDate.parse(periodTo))

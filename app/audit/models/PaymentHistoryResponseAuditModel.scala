@@ -30,7 +30,7 @@ case class PaymentHistoryResponseAuditModel(mtdItUser: MtdItUser[_],
                                             R7bTxmEvents: Boolean) extends ExtendedAuditModel {
 
   override val transactionName: String = "payment-history-response"
-  override val auditType: String = PaymentHistoryResponse.name
+  override val auditType: String = PaymentHistoryResponse
 
   private def getPayment(payment: Payment, desc: String): JsObject = Json.obj("description" -> desc) ++
     ("paymentDate", if (payment.validMFACreditDescription()) Some(payment.documentDate) else payment.dueDate) ++

@@ -17,13 +17,13 @@
 package audit.models
 
 import auth.MtdItUser
-import enums.obligationsPageView
+import enums.ObligationsPageView
 import models.incomeSourceDetails.BusinessDetailsModel
 
 object NextUpdatesAuditing {
 
   val nextUpdateTransactionName = "ITVCObligations"
-  val nextUpdateAuditType: String = obligationsPageView.name
+  val nextUpdateAuditType: String = ObligationsPageView
 
   case class NextUpdatesAuditModel[A](user: MtdItUser[A]) extends AuditModel {
     override val transactionName: String = nextUpdateTransactionName

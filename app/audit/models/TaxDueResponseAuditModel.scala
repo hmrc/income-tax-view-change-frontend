@@ -33,7 +33,7 @@ case class TaxDueResponseAuditModel(mtdItUser: MtdItUser[_],
   import implicits.ImplicitCurrencyFormatter._
 
   override val transactionName: String = "tax-calculation-response"
-  override val auditType: String = TaxCalculationDetailsResponse.name
+  override val auditType: String = TaxCalculationDetailsResponse
 
 
   private def calcMessageCodeToString(id: String): Option[String] =

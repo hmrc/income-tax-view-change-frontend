@@ -24,7 +24,7 @@ case class InitiatePayNowAuditModel(mtditid: String, nino: Option[String],
                                     userType: Option[String]) extends ExtendedAuditModel {
 
   override val transactionName: String = "initiate-pay-now"
-  override val auditType: String = InitiatePayNow.name
+  override val auditType: String = InitiatePayNow
 
   private case class AuditDetail(mtditid: String, nationalInsuranceNumber: Option[String],
                                  saUtr: Option[String], credId: Option[String],

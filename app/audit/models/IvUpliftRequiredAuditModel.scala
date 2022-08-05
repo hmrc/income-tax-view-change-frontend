@@ -27,5 +27,5 @@ case class IvUpliftRequiredAuditModel(reasonForHandoff: String,
     "currentConfidenceLevel" -> s"CL$currentConfidenceLevel",
     "minimumConfidenceLevelToProceed" -> s"CL$minimumConfidenceLevelToProceed"
   )
-  override val auditType: String = LowConfidenceLevelIvHandoff.name
+  override val auditType: String = LowConfidenceLevelIvHandoff
 }
