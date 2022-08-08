@@ -18,6 +18,7 @@ package audit.models
 
 import audit.Utilities.{getChargeType, userAuditDetails}
 import auth.MtdItUser
+import enums.TaxYearOverviewResponse
 import implicits.ImplicitDateParser
 import models.financialDetails.DocumentDetailWithDueDate
 import models.liabilitycalculation.viewmodels.TaxYearSummaryViewModel
@@ -33,7 +34,7 @@ case class TaxYearSummaryResponseAuditModel(mtdItUser: MtdItUser[_],
 
 
   override val transactionName: String = "tax-year-overview-response"
-  override val auditType: String = "TaxYearOverviewResponse"
+  override val auditType: String = TaxYearOverviewResponse
 
   private val taxYearSummaryJson = {
     if (R7bTxmEvents) {
