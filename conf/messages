@@ -758,6 +758,7 @@ paymentHistory.heading                                          = Payment histor
 paymentHistory.info                                             = To view your client’s payment history from before they signed up to Making Tax Digital for Income Tax, you need to sign in to your
 paymentHistory.info.2                                           = This will be a different Government Gateway ID and password to your Agent Services account.
 paymentHistory.textLink1                                        = Self Assessment service
+paymentHistory.button                                           = {0} payments
 paymentHistory.paymentToHmrc                                    = Payment made to HMRC
 paymentHistory.paymentFromEarlierYear                           = Credit from an earlier tax year
 paymentHistory.mfaCredit                                        = Credit from HMRC adjustment
