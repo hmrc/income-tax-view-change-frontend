@@ -45,6 +45,15 @@ class SessionTimeoutPredicateSpec extends TestSupport {
 
     }
 
+    "called with an active test session" should {
+
+      "return status OK" in {
+        def result: Future[Result] = setupResult()(fakeRequestWithTestSession)
+
+        status(result) shouldBe Status.OK
+      }
+    }
+
     "called with a timed out session" should {
 
       def result: Future[Result] = setupResult()(fakeRequestWithTimeoutSession)

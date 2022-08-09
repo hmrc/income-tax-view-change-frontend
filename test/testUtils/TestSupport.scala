@@ -150,6 +150,10 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar wi
       forms.utils.SessionKeys.calculationId -> "1234567890"
     )
 
+  lazy val fakeRequestWithTestSession: FakeRequest[AnyContentAsEmpty.type] = FakeRequest().withSession(
+    "Gov-Test-Scenario" -> "data"
+  )
+
   def fakeRequestConfirmedClientWithReferer(clientNino: String = "AA111111A", referer: String): FakeRequest[AnyContentAsEmpty.type] =
     fakeRequestWithActiveSession.withSession(
       utils.SessionKeys.clientFirstName -> "Test",
