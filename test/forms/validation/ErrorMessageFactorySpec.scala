@@ -28,7 +28,7 @@ class ErrorMessageFactorySpec extends WordSpec with MustMatchers {
         val result = List(Seq(FieldError("invalid form", Seq("Please enter a value")),
           SummaryError("invalid form", Seq("Please enter a value"))))
 
-        ErrorMessageFactory.error("invalid data", "Please enter a value").errors.map(_.args) mustBe result
+        ErrorMessageFactory.error("invalid form", "Please enter a value").errors.map(_.args) mustBe result
       }
     }
   }
