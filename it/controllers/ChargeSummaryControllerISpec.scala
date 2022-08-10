@@ -84,7 +84,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
         pageTitleIndividual("chargeSummary.paymentOnAccount1.text"),
         elementTextBySelector("#heading-payment-breakdown")(paymentBreakdownHeading),
         elementTextBySelector("dl:nth-of-type(2) dd span")(underReview),
-        elementTextBySelector("dl:nth-of-type(2) dd div")(notCurrentlyChargingInterest)
+        elementTextBySelector("dl:nth-of-type(2) dd div div")(notCurrentlyChargingInterest)
       )
 
       AuditStub.verifyAuditEvent(ChargeSummaryAudit(

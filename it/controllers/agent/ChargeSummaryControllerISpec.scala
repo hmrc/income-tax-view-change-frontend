@@ -57,7 +57,6 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
     financialDetailModelPartial(originalAmount = 123.45, chargeType = "ITSA England & NI", dunningLock = Some("Stand over order"), interestLock = Some("Breathing Space Moratorium Act")),
     financialDetailModelPartial(originalAmount = 123.45, chargeType = "NIC4 Scotland", mainType = "SA Payment on Account 2", dunningLock = Some("Dunning Lock"), interestLock = Some("Manual RPI Signal")))
 
-  
 
   val currentYear: Int = LocalDate.now().getYear
   val testArn: String = "1"
@@ -88,7 +87,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
         pageTitleAgent("chargeSummary.paymentOnAccount1.text"),
         elementTextBySelector("#heading-payment-breakdown")(paymentBreakdownHeading),
         elementTextBySelector("dl:nth-of-type(2) dd span")(underReview),
-        elementTextBySelector("dl:nth-of-type(2) dd div")(notCurrentlyChargingInterest)
+        elementTextBySelector("dl:nth-of-type(2) dd div div")(notCurrentlyChargingInterest)
       )
     }
 
