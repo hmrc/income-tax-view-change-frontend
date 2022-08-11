@@ -58,6 +58,7 @@
     btaNavPartial: Option[Html] = None,
     origin: Option[String] = None,
     useFallbackBackLink: Boolean = false,
+    showServiceName: Boolean = true,
     gatewayPage: Option[GatewayPage] = None
 )(contentBlock: Html)(implicit request : Request[_], messages: Messages)
 
@@ -71,7 +72,7 @@
 
     hmrcHeader(HmrcHeaderArgs(
         homepageUrl = "https://www.gov.uk",
-        serviceName = serviceName,
+        serviceName = if(showServiceName) serviceName else None,
         serviceUrl = serviceUrl,
         language = CurrentLanguage(),
         signOutHref = Some(controllers.routes.SignOutController.signOut.url),
