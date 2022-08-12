@@ -67,7 +67,8 @@ class PaymentHistoryService @Inject()(incomeTaxViewChangeConnector: IncomeTaxVie
                                     (implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[PaymentHistoryError.type, List[Payment]]]  =
     for {
       paymentHistory <- this.getPaymentHistory
-      if paymentHistory.toOption.flatMap(_.map(_.dueDate == calendarYear.toString)).headOption.getOrElse(false)
+      x = paymentHistory.toOption.flatMap(t =>
+        t.flatMap(y => y.dueDate.map(w => w == calendarYear.toString)).headOption).headOption.getOrElse(false)
       payment = paymentHistory.toOption.getOrElse(List.empty)
       if payment.map(p => p.validMFACreditDescription() || p.credit.isDefined ).headOption.getOrElse(false)
     } yield paymentHistory
