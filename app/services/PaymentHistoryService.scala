@@ -61,6 +61,16 @@ class PaymentHistoryService @Inject()(incomeTaxViewChangeConnector: IncomeTaxVie
       case RepaymentHistoryErrorModel(_, _) => Left(RepaymentHistoryErrorModel)
     }
   }
+
+  // TODO: implement // both: MFA credits and
+  def getPaymentHistoryByCalendarYear(calendarYear: Int)
+                                    (implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[PaymentHistoryError.type, List[Payment]]]  =
+    for {
+      paymentHistory <- this.getPaymentHistory
+      if paymentHistory.toOption.flatMap(_.map(_.dueDate == calendarYear.toString)).headOption.getOrElse(false)
+      payment = paymentHistory.toOption.getOrElse(List.empty)
+      if payment.map(p => p.validMFACreditDescription() || p.credit.isDefined ).headOption.getOrElse(false)
+    } yield paymentHistory
 }
 
 object PaymentHistoryService {
