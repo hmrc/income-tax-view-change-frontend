@@ -71,8 +71,9 @@ class CreditHistoryServiceSpec extends TestSupport with MockIncomeTaxViewChangeC
       "return a list of MFA and CutOver credits" in {
         setupGetPayments(taxYear)(Payments(creditsForTheGivenTaxYear))
         setupMockGetFinancialDetails(taxYear, nino)(taxYearFinancialDetails)
-        setupGetPaymentAllocationCharges(nino, documentId)(cutOverCreditsAsFinancialDocument)
-        TestCreditHistoryService.getCreditsHistory(taxYear, nino).futureValue shouldBe Right(cutOverCredit +: creditModels)
+        setupGetPaymentAllocationCharges(nino, documentIdA)(cutOverCreditsAsFinancialDocumentA)
+        setupGetPaymentAllocationCharges(nino, documentIdB)(cutOverCreditsAsFinancialDocumentB)
+        TestCreditHistoryService.getCreditsHistory(taxYear, nino).futureValue shouldBe Right(List(cutOverCreditA, cutOverCreditB) ++ creditModels)
       }
 
     }

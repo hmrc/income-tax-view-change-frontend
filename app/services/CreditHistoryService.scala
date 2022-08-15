@@ -74,7 +74,7 @@ class CreditHistoryService @Inject()(incomeTaxViewChangeConnector: IncomeTaxView
                       val creditDetailsModel: CreditDetailsModel = document
                       creditDetailsModel
                     case _ =>
-                      throw new Exception("Something else")
+                      throw new Exception("CreditHistoryService::ERROR::CutOverCredits")
                   }
               }
             } yield creditModel

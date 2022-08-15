@@ -30,13 +30,19 @@ trait CreditHistoryDataHelper {
     outstandingAmount = Some(1.00), method = Some("method"), documentDescription = None, lot = Some("lot"), lotItem = Some("lotItem"),
     dueDate = Some("date"), documentDate = "docDate", Some("DOCID01")))
 
-  val creditsForTheGivenTaxYear: List[Payment] = List(Payment(reference = Some("reference"), amount = Some(-100.00),
-    outstandingAmount = Some(1.00), method = Some("method"), documentDescription = None, lot = None, lotItem = Some("lotItem"),
-    dueDate = Some("date"), documentDate = "docDate", Some("DOCID01")))
+  val creditsForTheGivenTaxYear: List[Payment] = List(
+    Payment(reference = Some("reference"), amount = Some(-100.00),
+      outstandingAmount = Some(1.00), method = Some("method"), documentDescription = None, lot = None, lotItem = Some("lotItem"),
+      dueDate = Some("date"), documentDate = "docDate", Some("DOCID01")),
+    Payment(reference = Some("reference"), amount = Some(-100.00),
+      outstandingAmount = Some(1.00), method = Some("method"), documentDescription = None, lot = None, lotItem = Some("lotItem"),
+      dueDate = Some("date"), documentDate = "docDate", Some("DOCID02"))
+  )
 
   val taxYear: Int = 2022
   val nino: String = "someNino"
-  val documentId: String = "DOCID01"
+  val documentIdA: String = "DOCID01"
+  val documentIdB: String = "DOCID02"
   val taxYearFinancialDetails = FinancialDetailsModel(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
     codingDetails = None,
@@ -91,10 +97,10 @@ trait CreditHistoryDataHelper {
         paymentId = None
       )))
   )
-  val cutOverCreditsAsFinancialDocument: FinancialDetailsWithDocumentDetailsModel = FinancialDetailsWithDocumentDetailsModel(
+  val cutOverCreditsAsFinancialDocumentA: FinancialDetailsWithDocumentDetailsModel = FinancialDetailsWithDocumentDetailsModel(
     List(
       DocumentDetail(
-        taxYear = "2018",
+        taxYear = "2019",
         transactionId = "id",
         documentDescription = Some("documentDescription"),
         documentText = Some("documentText"),
@@ -110,7 +116,27 @@ trait CreditHistoryDataHelper {
     )
   )
 
-  val cutOverCredit: CreditDetailsModel = cutOverCreditsAsFinancialDocument
+  val cutOverCreditsAsFinancialDocumentB: FinancialDetailsWithDocumentDetailsModel = FinancialDetailsWithDocumentDetailsModel(
+    List(
+      DocumentDetail(
+        taxYear = "2022",
+        transactionId = "id",
+        documentDescription = Some("documentDescription"),
+        documentText = Some("documentText"),
+        originalAmount = Some(-300.00),
+        outstandingAmount = Some(-200.00),
+        documentDate = LocalDate.of(2018, 3, 29),
+        paymentLot = Some("paymentLot"),
+        paymentLotItem = Some("paymentLotItem")
+      )
+    ),
+    financialDetails = List(
+      financialDetail
+    )
+  )
+
+  val cutOverCreditA: CreditDetailsModel = cutOverCreditsAsFinancialDocumentA
+  val cutOverCreditB: CreditDetailsModel = cutOverCreditsAsFinancialDocumentB
 
   val creditModels: List[CreditDetailsModel] = List(taxYearFinancialDetails)
 }
