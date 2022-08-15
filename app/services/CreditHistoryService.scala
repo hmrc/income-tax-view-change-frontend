@@ -59,7 +59,7 @@ class CreditHistoryService @Inject()(incomeTaxViewChangeConnector: IncomeTaxView
 
   // B: Get cutOver credits models for the given tax year and Nino
   private def getAllCutOverCreditsByTaxYear(taxYear: Int, nino: String)
-                                   (implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[CreditHistoryError.type, List[CreditDetailsModel]]] = {
+                                           (implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[CreditHistoryError.type, List[CreditDetailsModel]]] = {
     import CreditDetailsModel._
     getCutOverDocumentNumbersByTaxYear(taxYear).flatMap { result =>
       result match {

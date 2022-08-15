@@ -21,7 +21,7 @@ import config.featureswitch.FeatureSwitching
 import mocks.connectors.MockIncomeTaxViewChangeConnector
 import models.CreditDetailsModel
 import models.financialDetails.{BalanceDetails, DocumentDetail, FinancialDetail, FinancialDetailsErrorModel, FinancialDetailsModel, Payment, Payments, PaymentsError, SubItem}
-import models.paymentAllocationCharges.FinancialDetailsWithDocumentDetailsModel
+import models.paymentAllocationCharges.{FinancialDetailsWithDocumentDetailsErrorModel, FinancialDetailsWithDocumentDetailsModel}
 import play.api.test.FakeRequest
 import services.CreditHistoryService.CreditHistoryError
 import services.helpers.CreditHistoryDataHelper
@@ -55,9 +55,21 @@ class CreditHistoryServiceSpec extends TestSupport with MockIncomeTaxViewChangeC
   "getCreditHistory" when {
 
     "an error is returned from the connector" should {
-      "return a credit history error" in {
+
+      "return a credit history error (~GetFinancialDetails failed)" in {
         setupMockGetFinancialDetails(taxYear, nino)(FinancialDetailsErrorModel(500, "ERROR"))
         TestCreditHistoryService.getCreditsHistory(taxYear, nino).futureValue shouldBe Left(CreditHistoryError)
+      }
+
+      "return a credit history error (~getFinancialDetailsByDocumentId failed)" in {
+        setupGetPayments(taxYear)(Payments(creditsForTheGivenTaxYear))
+        setupMockGetFinancialDetails(taxYear, nino)(taxYearFinancialDetails)
+        setupGetPaymentAllocationCharges(nino, documentIdA)(FinancialDetailsWithDocumentDetailsErrorModel(0, "error-1"))
+        setupGetPaymentAllocationCharges(nino, documentIdB)(FinancialDetailsWithDocumentDetailsErrorModel(1, "error-2"))
+        val futureResult = TestCreditHistoryService.getCreditsHistory(taxYear, nino)
+        whenReady(futureResult.failed) { failureValue =>
+          failureValue.getMessage shouldBe "CreditHistoryService::ERROR::CutOverCredits"
+        }
       }
     }
 
