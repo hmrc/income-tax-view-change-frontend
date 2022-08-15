@@ -60,8 +60,6 @@ class PaymentHistoryService @Inject()(incomeTaxViewChangeConnector: IncomeTaxVie
       case RepaymentHistoryErrorModel(_, _) => Left(RepaymentHistoryErrorModel)
     }
   }
-
-
 }
 
 object PaymentHistoryService {
