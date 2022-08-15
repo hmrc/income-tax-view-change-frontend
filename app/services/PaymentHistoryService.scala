@@ -19,16 +19,13 @@ package services
 import auth.MtdItUser
 import config.FrontendAppConfig
 import connectors.IncomeTaxViewChangeConnector
-import models.CreditDetailsModel
 import models.core.Nino
-
-import javax.inject.Inject
-import models.financialDetails.{FinancialDetailsErrorModel, FinancialDetailsModel, Payment, Payments, PaymentsError}
-import models.paymentAllocationCharges.FinancialDetailsWithDocumentDetailsModel
+import models.financialDetails.{Payment, Payments, PaymentsError}
 import models.repaymentHistory.{RepaymentHistory, RepaymentHistoryErrorModel, RepaymentHistoryModel}
 import services.PaymentHistoryService.PaymentHistoryError
 import uk.gov.hmrc.http.HeaderCarrier
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 
