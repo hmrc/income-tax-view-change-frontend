@@ -169,15 +169,17 @@ case class DocumentDetail(taxYear: String,
 
   def validMFACreditDescription(): Boolean = MfaCreditUtils.validMFACreditDescription(this.documentDescription)
 
-  def isMFADebit(): Boolean = documentDescription match {
+  def isMFADebit(): Boolean = documentDescription match {     //needs deletion
     case Some("ITSA PAYE Charge") | Some("ITSA Calc Error Correction") |
          Some("ITSA Manual Penalty Pre CY-4") | Some("ITSA Misc Charge") => true
     case _ => false
   }
+
 }
 
 case class DocumentDetailWithDueDate(documentDetail: DocumentDetail, dueDate: Option[LocalDate],
-                                     isLatePaymentInterest: Boolean = false, dunningLock: Boolean = false, codingOutEnabled: Boolean = false) {
+                                     isLatePaymentInterest: Boolean = false, dunningLock: Boolean = false,
+                                     codingOutEnabled: Boolean = false, isMFADebit: Option[Boolean] = None) {
   val isOverdue: Boolean = dueDate.exists(_ isBefore LocalDate.now)
 }
 
