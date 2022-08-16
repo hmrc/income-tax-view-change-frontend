@@ -36,17 +36,14 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
 
   implicit lazy val localDateOrdering: Ordering[LocalDate] = Ordering.by(_.toEpochDay)
 
-  val validChargeTypeCondition: String => Boolean = (documentDescription: String) => {
-    val chargeTypes: List[String] = List("ITSA- POA 1", "ITSA - POA 2", "TRM New Charge", "TRM Amend Charge")
-    val mfaDebitsChargeTypes: List[String] = List("ITSA PAYE Charge", "ITSA Calc Error Correction", "ITSA Manual Penalty Pre CY-4", "ITSA Misc Charge")
-    if (isDisabled(MFACreditsAndDebits)) {
-      chargeTypes.contains(documentDescription)
-    } else {
-      (chargeTypes ::: mfaDebitsChargeTypes).contains(documentDescription)
-    }
+  val validChargeTypeCondition: String => Boolean = documentDescription => {
+    documentDescription == "ITSA- POA 1" ||
+      documentDescription == "ITSA - POA 2" ||
+      documentDescription == "TRM New Charge" ||
+      documentDescription == "TRM Amend Charge"
   }
 
-  def getCreditCharges()(implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[List[DocumentDetail]]= {
+  def getCreditCharges()(implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[List[DocumentDetail]] = {
     financialDetailsService.getAllCreditFinancialDetails.map {
       case financialDetails if financialDetails.exists(_.isInstanceOf[FinancialDetailsErrorModel]) =>
         throw new Exception("[WhatYouOweService][getCreditCharges] Error response while getting Unpaid financial details")
@@ -63,7 +60,7 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
       case financialDetails =>
         val financialDetailsModelList = financialDetails.asInstanceOf[List[FinancialDetailsModel]]
         val balanceDetails = financialDetailsModelList.headOption
-          .map(_.balanceDetails).getOrElse(BalanceDetails(0.00, 0.00, 0.00, None, None, None,None))
+          .map(_.balanceDetails).getOrElse(BalanceDetails(0.00, 0.00, 0.00, None, None, None, None))
         val codedOutDocumentDetail: Option[DocumentDetailWithCodingDetails] = if (isEnabled(CodingOut)) {
           financialDetailsModelList.flatMap(fdm =>
             fdm.documentDetails.find(dd => dd.isPayeSelfAssessment
@@ -101,12 +98,18 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
     documentDetailWithDueDate.documentDetail.documentDescription.isDefined && documentDetailWithDueDate.dueDate.isDefined
   }
 
+  private def filterMFADebits(documentDetailsWithDueDate: List[DocumentDetailWithDueDate]): List[DocumentDetailWithDueDate] = {
+    documentDetailsWithDueDate.filterNot(documentDetailWithDueDate => documentDetailWithDueDate.isMFADebit.contains(true))
+  }
+
   private def getFilteredChargesList(financialDetailsList: List[FinancialDetailsModel]): List[DocumentDetailWithDueDate] = {
-    financialDetailsList.flatMap(financialDetails =>
-      financialDetails.getAllDocumentDetailsWithDueDates(isEnabled(CodingOut))
-        .filter(documentDetailWithDueDate => whatYouOwePageDataExists(documentDetailWithDueDate)
-          && validChargeTypeCondition(documentDetailWithDueDate.documentDetail.documentDescription.get)
-          && !documentDetailWithDueDate.documentDetail.isPayeSelfAssessment
-          && documentDetailWithDueDate.documentDetail.checkIfEitherChargeOrLpiHasRemainingToPay)).sortBy(_.dueDate.get)
+    val documentDetailsWithDueDates = financialDetailsList.flatMap(financialDetails =>
+      financialDetails.getAllDocumentDetailsWithDueDates(isEnabled(CodingOut)))
+      .filter(documentDetailWithDueDate => whatYouOwePageDataExists(documentDetailWithDueDate)
+        && validChargeTypeCondition(documentDetailWithDueDate.documentDetail.documentDescription.get)
+        && !documentDetailWithDueDate.documentDetail.isPayeSelfAssessment
+        && documentDetailWithDueDate.documentDetail.checkIfEitherChargeOrLpiHasRemainingToPay)
+      .sortBy(_.dueDate.get)
+    if(isDisabled(MFACreditsAndDebits)) filterMFADebits(documentDetailsWithDueDates) else documentDetailsWithDueDates
   }
 }
