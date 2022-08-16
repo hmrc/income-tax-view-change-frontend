@@ -25,6 +25,7 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 
 @import java.time.LocalDate
+@import views.html.partials.chargeSummary._
 @import models.chargeHistory.ChargeHistoryModel
 @import models.financialDetails.FinancialDetailsModel
 @import enums.GatewayPage._
@@ -35,6 +36,7 @@
     implicitDateFormatter: ImplicitDateFormatterImpl,
     p: p,
     link: link,
+    chargeSummaryLpiCharge: ChargeSummaryLpiCharge,
     govukInsetText : GovukInsetText
 )
 @(documentDetailWithDueDate: DocumentDetailWithDueDate, backUrl: String,
@@ -323,17 +325,7 @@
                 </div>
             }
             @if(latePaymentInterestCharge) {
-                <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">@messages("chargeSummary.paymentBreakdown.lpiWithDunning.text")</dt>
-                    <dd class="govuk-summary-list__value">
-                        @p(){
-                            @documentDetail.latePaymentInterestAmount.getOrElse(throw MissingFieldException("Late Payment Interest Amount")).toCurrency
-                            <span class="govuk-body-s half-light govuk-!-margin-bottom-0" style="display:block">
-                                @messages("chargeSummary.paymentBreakdown.dunningLocks.underReview")
-                            </span>
-                        }
-                    </dd>
-                </div>
+                @chargeSummaryLpiCharge(documentDetail)
             }
         </dl>
     }
