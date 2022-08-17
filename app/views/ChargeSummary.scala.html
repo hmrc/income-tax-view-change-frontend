@@ -190,15 +190,67 @@
 
     <dl class="govuk-summary-list">
         @if(!(codingOutEnabled && documentDetail.isPayeSelfAssessment)) {
-          @chargeSummaryNotCodingOutAndNotPayeSelfAssessment(
-              documentDetailWithDueDate,
-              documentDetail,
-              dueDate,
-              latePaymentInterestCharge,
-              codingOutEnabled,
-              taxYearFromCodingOut,
-              taxYearToCodingOut,
-              appConfig)
+            @chargeSummaryNotCodingOutAndNotPayeSelfAssessment(
+                documentDetailWithDueDate,
+                documentDetail,
+                dueDate,
+                latePaymentInterestCharge,
+                codingOutEnabled,
+                taxYearFromCodingOut,
+                taxYearToCodingOut,
+                appConfig)
+
+            @* TODO move it to the above Partial *@
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">@messages("chargeSummary.dueDate")</dt>
+                <dd class="govuk-summary-list__value">
+                    @if(documentDetailWithDueDate.isOverdue && !documentDetail.checkIsPaid(latePaymentInterestCharge)) {
+                        <span class="govuk-tag govuk-tag--red">@messages("chargeSummary.overdue")</span>
+                    }
+                    @{
+                        if(latePaymentInterestCharge) documentDetail.interestEndDate.getOrElse(throw MissingFieldException("Interest End Date")).toLongDate
+                        else dueDate.getOrElse(throw MissingFieldException("Due Date")).toLongDate
+                    }
+                </dd>
+            </div>
+
+        @if(latePaymentInterestCharge) {
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">@messages("chargeSummary.lpi.interestPeriod")</dt>
+                <dd class="govuk-summary-list__value">
+                    @messages("chargeSummary.lpi.interestPeriod.dates",
+                        documentDetail.interestFromDate.getOrElse(throw MissingFieldException("Interest From Date")).toLongDateShort,
+                        documentDetail.interestEndDate.getOrElse(throw MissingFieldException("Interest End Date")).toLongDateShort)</dd>
+            </div>
+        }
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+                @{
+                    if (documentDetail.isCodingOutDocumentDetail(codingOutEnabled)) {
+                        messages("chargeSummary.paymentAmountCodingOut")
+                    } else messages("chargeSummary.paymentAmount")
+                }
+            </dt>
+            <dd class="govuk-summary-list__value">
+                <span>
+                    @{
+                        if (latePaymentInterestCharge) documentDetail.latePaymentInterestAmount.getOrElse(throw MissingFieldException("Late Payment Interest Amount")).toCurrency
+                        else documentDetail.originalAmount.getOrElse(throw MissingFieldException("Original Amount")).toCurrency
+                    }
+                </span>
+            </dd>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">@messages("chargeSummary.remainingDue")</dt>
+            <dd class="govuk-summary-list__value">
+                @{
+                    if (codingOutEnabled && documentDetail.isPayeSelfAssessment) {
+                        messages("chargeSummary.codingOutRemainingToPay", taxYearFromCodingOut, taxYearToCodingOut)
+                    } else if (latePaymentInterestCharge) documentDetail.interestRemainingToPay.toCurrency
+                    else documentDetail.remainingToPay.toCurrency
+                }
+            </dd>
+        </div>
         }
 
     </dl>
@@ -224,6 +276,56 @@
             chargeSummaryLpiCharge,
             isAgent
         )
+
+        // todo should be moved to the above partial
+        <h2 class="govuk-heading-m" id="heading-payment-breakdown">@messages("chargeSummary.paymentBreakdown.heading")</h2>
+        <dl class="govuk-summary-list govuk-!-margin-bottom-8">
+            @for(financialDetail <- paymentBreakdown) {
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        @messages(s"chargeSummary.paymentBreakdown.${financialDetail.messageKeyForChargeType.getOrElse(throw MissingFieldException("Message Key For Charge Type"))}")
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        <span>@financialDetail.originalAmount.getOrElse(throw MissingFieldException("Original Amount")).toCurrency</span>
+                        @if(financialDetail.dunningLockExists) {
+                            <span class="govuk-body-s half-light govuk-!-margin-bottom-0" style="display:block">
+                                @messages("chargeSummary.paymentBreakdown.dunningLocks.underReview")
+                            </span>
+                        }
+                        @if(latePaymentInterestCharge && documentDetail.hasLpiWithDunningBlock) {
+                            @p(){
+                                <span>@messages("chargeSummary.paymentBreakdown.lpiWithDunning.text")</span>
+                                <span class="govuk-body-s half-light">@messages("chargeSummary.paymentBreakdown.dunningLocks.underReview")</span>
+                            }
+                        }
+                        @if(hasInterestLocks){
+                            @if(!financialDetail.interestLockExists){
+                                <div class="form-hint govuk-body-s"> @messages("chargeSummary.paymentBreakdown.interestLocks.charging") </div>
+                            }
+                            @if(financialDetail.interestLockExists && !financialDetail.hasAccruedInterest){
+                                <div class="form-hint govuk-body-s"> @messages("chargeSummary.paymentBreakdown.interestLocks.notCharging") </div>
+                            }
+                            @if(financialDetail.interestLockExists && financialDetail.hasAccruedInterest){
+                                <div class="form-hint govuk-body-s"> @messages("chargeSummary.paymentBreakdown.interestLocks.previouslyCharged") </div>
+                            }
+                        }
+                    </dd>
+                </div>
+            }
+            @if(latePaymentInterestCharge) {
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">@messages("chargeSummary.paymentBreakdown.lpiWithDunning.text")</dt>
+                    <dd class="govuk-summary-list__value">
+                        @p(){
+                            @documentDetail.latePaymentInterestAmount.getOrElse(throw MissingFieldException("Late Payment Interest Amount")).toCurrency
+                            <span class="govuk-body-s half-light govuk-!-margin-bottom-0" style="display:block">
+                                @messages("chargeSummary.paymentBreakdown.dunningLocks.underReview")
+                            </span>
+                        }
+                    </dd>
+                </div>
+            }
+        </dl>
     }
 
     @if(hasInterestLocks && hasAccruedInterest) {

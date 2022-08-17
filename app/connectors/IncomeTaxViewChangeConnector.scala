@@ -355,6 +355,7 @@ trait IncomeTaxViewChangeConnector extends RawResponseReads with FeatureSwitchin
 
   }
 
+  // TODO: MFA Credits
   def getFinancialDetails(taxYear: Int, nino: String)
                          (implicit headerCarrier: HeaderCarrier): Future[FinancialDetailsResponseModel] = {
 
@@ -493,6 +494,7 @@ trait IncomeTaxViewChangeConnector extends RawResponseReads with FeatureSwitchin
     }
   }
 
+  // CUTOVER_CREDITS
   def getFinancialDetailsByDocumentId(nino: Nino, documentNumber: String)
                                      (implicit headerCarrier: HeaderCarrier): Future[FinancialDetailsWithDocumentDetailsResponse] = {
     http.GET[HttpResponse](getFinancialDetailsByDocumentIdUrl(nino.value, documentNumber))(
