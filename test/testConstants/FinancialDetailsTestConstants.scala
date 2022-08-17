@@ -785,7 +785,7 @@ object FinancialDetailsTestConstants {
     testFinancialDetailsModelWithInterest(
       dueDate = dueDateOverdue,
       dunningLock = dunningLocks
-  )
+    )
 
   val financialDetailsBalancingCharges: FinancialDetailsModel = testFinancialDetailsModel(
     documentDescription = List(Some("TRM New Charge"), Some("TRM Amend Charge")),
@@ -795,8 +795,8 @@ object FinancialDetailsTestConstants {
   )
 
   val financialDetailsMFADebits: FinancialDetailsModel = testFinancialDetailsModelWithChargesOfSameType(
-    documentDescription = List(Some("ITSA PAYE Charge"), Some("ITSA Calc Error Correction")),
-    mainType = List(Some("HMRC Adjustment"), Some("HMRC Adjustment")),
+    documentDescription = List(Some("TRM New Charge"), Some("TRM New Charge")),
+    mainType = List(Some("ITSA PAYE Charge"), Some("ITSA Calc Error Correction")),
     dueDate = List(Some(LocalDate.now().minusDays(1).toString), Some(LocalDate.now().plusDays(35).toString)),
     outstandingAmount = List(Some(100), Some(50)),
     taxYear = LocalDate.now().getYear.toString,
@@ -894,16 +894,16 @@ object FinancialDetailsTestConstants {
         interestRate = List(Some(2.6), Some(6.2)),
         latePaymentInterestAmount = List(Some(34.56), None)
       ).getAllDocumentDetailsWithDueDates() ++
-      testFinancialDetailsModelOneItemInList(documentDescription = Some("ITSA - POA 2"),
-        mainType = Some("SA Payment on Account 2"),
-        dueDate = Some(LocalDate.now().plusDays(1).toString),
-        outstandingAmount = Some(100),
-        taxYear = LocalDate.now().getYear.toString).getAllDocumentDetailsWithDueDates() ++
-      testFinancialDetailsModelOneItemInList(documentDescription = Some("ITSA- POA 1"),
-        mainType = Some("SA Payment on Account 1"),
-        dueDate = Some(LocalDate.now().plusDays(45).toString),
-        outstandingAmount = Some(125),
-        taxYear = LocalDate.now().getYear.toString).getAllDocumentDetailsWithDueDates(),
+        testFinancialDetailsModelOneItemInList(documentDescription = Some("ITSA - POA 2"),
+          mainType = Some("SA Payment on Account 2"),
+          dueDate = Some(LocalDate.now().plusDays(1).toString),
+          outstandingAmount = Some(100),
+          taxYear = LocalDate.now().getYear.toString).getAllDocumentDetailsWithDueDates() ++
+        testFinancialDetailsModelOneItemInList(documentDescription = Some("ITSA- POA 1"),
+          mainType = Some("SA Payment on Account 1"),
+          dueDate = Some(LocalDate.now().plusDays(45).toString),
+          outstandingAmount = Some(125),
+          taxYear = LocalDate.now().getYear.toString).getAllDocumentDetailsWithDueDates(),
     outstandingChargesModel = Some(outstandingChargesOverdueData)
   )
 
@@ -913,8 +913,7 @@ object FinancialDetailsTestConstants {
     outstandingChargesModel = Some(OutstandingChargesModel(List()))
   )
 
-  val whatYouOweEmptyMFA: WhatYouOweChargesList = WhatYouOweChargesList(BalanceDetails(1.0,2.0,3.0,None,None,None,None),List(),Some(OutstandingChargesModel(List())),None)
-
+  val whatYouOweEmptyMFA: WhatYouOweChargesList = WhatYouOweChargesList(BalanceDetails(1.0, 2.0, 3.0, None, None, None, None), List(), Some(OutstandingChargesModel(List())), None)
 
 
   val creditDocumentDetailList = List(
@@ -939,7 +938,7 @@ object FinancialDetailsTestConstants {
       paymentLotItem = None,
       paymentLot = None,
       originalAmount = Some(BigDecimal(800.00)),
-      documentDate = LocalDate.of(2018,4,16)
+      documentDate = LocalDate.of(2018, 4, 16)
     ),
     documentDetailModel(
       documentDescription = Some("ITSA Overpayment Relief"),
@@ -947,7 +946,7 @@ object FinancialDetailsTestConstants {
       paymentLotItem = None,
       paymentLot = None,
       originalAmount = Some(BigDecimal(1400.00)),
-      documentDate = LocalDate.of(2018,7,30)
+      documentDate = LocalDate.of(2018, 7, 30)
     )
   )
 

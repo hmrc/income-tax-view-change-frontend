@@ -186,4 +186,16 @@ class FinancialDetailsResponseModelSpec extends UnitSpec with Matchers {
       fdmWithEmptyCodingDetail.getDocumentDetailWithCodingDetails(documentDetail1) shouldBe None
     }
   }
+  "isMFADebit" should {
+    def testIsMFADebit(documentId: String, financialDetailsModel: FinancialDetailsModel): Boolean = {
+      val fdm: FinancialDetailsModel = financialDetailsModel
+      fdm.isMFADebit(documentId)
+    }
+    "return true for MFA debits" in {
+      testIsMFADebit(id1040000123, financialDetailsMFADebits) shouldBe true
+    }
+    "return false for non-MFA debits" in {
+      testIsMFADebit(id1040000123, financialDetailsWithMixedData1) shouldBe false
+    }
+  }
 }
