@@ -19,7 +19,8 @@ package services
 import auth.MtdItUser
 import config.FrontendAppConfig
 import connectors.IncomeTaxViewChangeConnector
-import models.CreditDetailsModel
+import models.CreditDetailsModel.financialDetailsModelToCreditModel
+import models.{CreditDetailsModel, CutOverCredit, MFACreditType}
 import models.core.Nino
 import models.financialDetails.{FinancialDetailsErrorModel, FinancialDetailsModel, Payments, PaymentsError}
 import models.paymentAllocationCharges.FinancialDetailsWithDocumentDetailsModel
@@ -71,7 +72,7 @@ class CreditHistoryService @Inject()(incomeTaxViewChangeConnector: IncomeTaxView
                   .getFinancialDetailsByDocumentId(Nino(nino), documentNumber)
                   .map {
                     case document: FinancialDetailsWithDocumentDetailsModel =>
-                      val creditDetailsModel: CreditDetailsModel = document
+                      val creditDetailsModel: CreditDetailsModel = documentDetailsModelToCreditDetailsModel(document, CutOverCredit)
                       println(s"\nCUTOVER CREDIT: ${creditDetailsModel}\n")
                       creditDetailsModel
                     case _ =>
@@ -97,11 +98,11 @@ class CreditHistoryService @Inject()(incomeTaxViewChangeConnector: IncomeTaxView
           x <- getAllCutOverCreditsByTaxYear(taxYear, nino).flatMap { result =>
             result match {
               case Right(creditModels) => Future {
-                val mfaCredits: CreditDetailsModel = financialDetails
+                val mfaCredits: CreditDetailsModel = financialDetailsModelToCreditModel(financialDetails, MFACreditType)
                 // merge cutOver credits with MFA credits
                 println(s"\nCUTOVER: ${creditModels}\n")
                 println(s"\nMFA: ${mfaCredits}\n")
-                Right((creditModels :+ mfaCredits))
+                Right(creditModels :+ mfaCredits)
               }
               case e@Left(_) => Future {
                 e

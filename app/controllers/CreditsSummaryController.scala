@@ -118,7 +118,10 @@ class CreditsSummaryController @Inject()(creditsView: CreditsSummary,
             utr = user.saUtr,
             btaNavPartial = user.btaNavPartial,
             enableMfaCreditsAndDebits = isEnabled(MFACreditsAndDebits),
-            charges = credits.flatMap(_.documentDetails).filter(_.documentDate.getYear == calendarYear).sortBy(_.documentDate.toEpochDay),
+            charges = credits,
+              //.flatMap(x => (x.documentDetails, x.creditType)),
+              //.filter(_.documentDate.getYear == calendarYear)
+              //.sortBy(_.documentDate.toEpochDay),
             origin = origin
           )))
         case Left(_) => Future.successful(Redirect(controllers.routes.HomeController.show().url))

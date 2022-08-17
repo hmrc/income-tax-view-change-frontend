@@ -19,16 +19,20 @@ package models
 import models.financialDetails.{BalanceDetails, CodingDetails, DocumentDetail, FinancialDetail, FinancialDetailsModel}
 import models.paymentAllocationCharges.FinancialDetailsWithDocumentDetailsModel
 
-case class CreditDetailsModel(documentDetails: List[DocumentDetail])
+case class CreditDetailsModel(documentDetails: List[DocumentDetail], creditType: CreditType)
+
+trait CreditType
+case object MFACreditType extends  CreditType
+case object CutOverCredit extends CreditType
 
 object CreditDetailsModel {
 
-  implicit def financialDetailsWithDocumentDetailsModelToCreditDetailsModel(document: FinancialDetailsWithDocumentDetailsModel): CreditDetailsModel = {
-    CreditDetailsModel(documentDetails = document.documentDetails)
+   def documentDetailsModelToCreditDetailsModel(document: FinancialDetailsWithDocumentDetailsModel, creditType: CreditType): CreditDetailsModel = {
+    CreditDetailsModel(documentDetails = document.documentDetails, creditType)
   }
 
-  implicit def financialDetailsModelToCreditModel(document: FinancialDetailsModel): CreditDetailsModel = {
-    CreditDetailsModel(documentDetails = document.documentDetails)
+   def financialDetailsModelToCreditModel(document: FinancialDetailsModel,  creditType: CreditType): CreditDetailsModel = {
+    CreditDetailsModel(documentDetails = document.documentDetails, creditType)
   }
 
 }
