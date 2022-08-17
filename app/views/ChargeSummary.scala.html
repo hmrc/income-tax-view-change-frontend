@@ -39,6 +39,7 @@
     chargeSummaryLpiCharge: ChargeSummaryLpiCharge,
     chargeSummaryPaymentAllocation: ChargeSummaryPaymentAllocation,
     chargeSummaryHasPaymentBreakdown: ChargeSummaryHasPaymentBreakdown,
+    chargeSummaryCodingOut: ChargeSummaryCodingOut,
     govukInsetText : GovukInsetText
 )
 @(documentDetailWithDueDate: DocumentDetailWithDueDate, backUrl: String,
@@ -271,24 +272,13 @@
     </dl>
 
     @if(codingOutEnabled && documentDetail.isPayeSelfAssessment) {
-        <p id="paymentAmount" class="govuk-body govuk-!-margin-bottom-1 govuk-!-margin-top-5">
-            <strong class="govuk-body govuk-!-font-weight-bold govuk-!-margin-right-8">
-                @messages("chargeSummary.paymentAmountCodingOut")
-            </strong>
-            @{
-                documentDetail.originalAmount.getOrElse(throw MissingFieldException("Original Amount")).toCurrency
-            }
-        </p>
-
-        <p id = "codingOutRemainingToPay" class="govuk-body govuk-!-margin-bottom-6" style="color:#505a5f;">
-            @{
-                if (codingOutEnabled && documentDetail.isPayeSelfAssessment) {
-                    messages("chargeSummary.codingOutRemainingToPay", taxYearFromCodingOut, taxYearToCodingOut)
-                } else if (latePaymentInterestCharge) documentDetail.interestRemainingToPay.toCurrency
-                else documentDetail.remainingToPay.toCurrency
-            }
-
-        </p>
+        @chargeSummaryCodingOut(
+            documentDetail,
+            codingOutEnabled,
+            taxYearFromCodingOut,
+            taxYearToCodingOut,
+            latePaymentInterestCharge
+        )
     }
 
     @if(hasPaymentBreakdown) {
