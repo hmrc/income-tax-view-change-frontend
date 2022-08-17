@@ -68,10 +68,12 @@
     }
     </dt>
     <dd class="govuk-summary-list__value">
-    @{
-        if (latePaymentInterestCharge) documentDetail.latePaymentInterestAmount.getOrElse(throw MissingFieldException("Late Payment Interest Amount")).toCurrency
-        else documentDetail.originalAmount.getOrElse(throw MissingFieldException("Original Amount")).toCurrency
-    }
+        <span>
+        @{
+            if (latePaymentInterestCharge) documentDetail.latePaymentInterestAmount.getOrElse(throw MissingFieldException("Late Payment Interest Amount")).toCurrency
+            else documentDetail.originalAmount.getOrElse(throw MissingFieldException("Original Amount")).toCurrency
+        }
+        </span>
     </dd>
 </div>
 <div class="govuk-summary-list__row">

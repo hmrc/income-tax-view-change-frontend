@@ -47,7 +47,7 @@
             @messages(s"chargeSummary.paymentBreakdown.${financialDetail.messageKeyForChargeType.getOrElse(throw MissingFieldException("Message Key For Charge Type"))}")
             </dt>
             <dd class="govuk-summary-list__value">
-                @financialDetail.originalAmount.getOrElse(throw MissingFieldException("Original Amount")).toCurrency
+                <span>@financialDetail.originalAmount.getOrElse(throw MissingFieldException("Original Amount")).toCurrency</span>
                 @if(financialDetail.dunningLockExists) {
                     <span class="govuk-body-s half-light govuk-!-margin-bottom-0" style="display:block">
                     @messages("chargeSummary.paymentBreakdown.dunningLocks.underReview")
@@ -55,7 +55,7 @@
                 }
                 @if(latePaymentInterestCharge && documentDetail.hasLpiWithDunningBlock) {
                     @p(){
-                        @messages("chargeSummary.paymentBreakdown.lpiWithDunning.text")
+                        <span>@messages("chargeSummary.paymentBreakdown.lpiWithDunning.text")</span>
                         <span class="govuk-body-s half-light">@messages("chargeSummary.paymentBreakdown.dunningLocks.underReview")</span>
                     }
                 }
