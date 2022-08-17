@@ -20,9 +20,13 @@ back.taxYearSummary = Back to Tax Year Summary
 back.nomatch = Back
 
 # Agent Base
-agent.base.service_name                                         = Your client’s Income Tax details
-agent.title_pattern.service_name.govuk                          = {0} - Your client’s Income Tax details - GOV.UK
-agent.error.title_pattern.service_name.govuk                    = Error: {0} - Your client’s Income Tax details - GOV.UK
+agent.base.service_name                             = Your client’s Income Tax details
+
+# Page Titles
+titlePattern.serviceName.govUk                      = Manage your Income Tax updates
+agent.titlePattern.serviceName.govUk                = Manage your client’s Income Tax updates
+error.titlePattern.serviceName.govUk                = Error: {0} - Manage your Income Tax updates
+agent.error.titlePattern.serviceName.govUk          = Error: {0} - Manage your client’s Income Tax updates
 
 # Agent - Enter clients details
 agent.enter_clients_utr.heading                                 = What is your client’s UTR?
@@ -40,19 +44,18 @@ agent.confirmClient.changeClient                                = Change client
 agent.confirmClient.confirmContinue                             = Confirm and continue
 
 # Agent - Client Relationship Failure
-agent.client_relationship_failure.heading                       = You need permission to view this client
-agent.client_relationship_failure.info                          = Your client needs to {0} before you can access this service. You may want to check the Unique Taxpayer Reference (UTR) to make sure it’s the right one or look up another client.
+agent.client_relationship_failure.heading                       = You are not authorised to view this client
+agent.client_relationship_failure.info                          = Your client needs to {0}
 agent.client_relationship_failure.info.link                     = authorise you as their agent
-agent.client_relationship_failure.enter_different_details       = Enter another UTR
+agent.client_relationship_failure.enter_different_details       = Check another client
 
 ## Agent - UTR Error
-agent.utr_error.heading                                         = There’s a problem
-agent.utr_error.utr_wrong.part1                                 = The UTR you have entered
-agent.utr_error.utr_wrong.part2                                 = may be wrong because:
-agent.utr_error.reason.bullet1                                  = you have entered it incorrectly
-agent.utr_error.reason.bullet2                                  = you or your client have not signed up to {0} yet
-agent.utr_error.reason.bullet2_link                             = Making Tax Digital for Income Tax
-agent.utr_error.go_back                                         = Go back and enter a different UTR
+agent.utr_error.heading                                         = You cannot view this client
+agent.utr_error.utr_wrong                                       = This may be because:
+agent.utr_error.reason.bullet1                                  = you entered the wrong Unique Taxpayer Reference (UTR)
+agent.utr_error.reason.bullet2                                  = your client needs to {0}
+agent.utr_error.reason.bullet2_link                             = sign up for Making Tax Digital for Income Tax
+agent.utr_error.go_back                                         = Enter another UTR
 
 ## Agent Error Page ##
 agent-error.heading                                            = You can''t use this service yet
@@ -104,6 +107,8 @@ home.updates.heading                                            = Next updates d
 home.updates.view                                               = View update deadlines
 home.paymentHistory.heading                                     = Payment history
 home.paymentHistory.view                                        = Payment history
+home.paymentHistoryRefund.heading                               = Payment history and refunds
+home.paymentHistoryRefund.view                                  = Payment and refund history
 home.overdue.date.payment.count                                 = {0} OVERDUE PAYMENTS
 home.overdue.date.update.count                                  = {0} OVERDUE UPDATES
 home.overdue.date                                               = OVERDUE
@@ -177,7 +182,7 @@ tax-year-summary.payments.lpi.paymentOnAccount1.text               = Late paymen
 tax-year-summary.payments.lpi.paymentOnAccount2.text               = Late payment interest for payment on account 2 of 2
 tax-year-summary.payments.lpi.balancingCharge.text                 = Late payment interest for Balancing payment
 tax-year-summary.payments.cancelledPayeSelfAssessment.text         = Cancelled Self Assessment payment (through your PAYE tax code)
-
+tax-year-summary.payments.hmrcAdjustment.text                      = HMRC adjustment
 tax-year-summary.payments.overdue                                  = Overdue
 tax-year-summary.payments.no-payments                              = No payments currently due.
 tax-year-summary.payments.paymentUnderReview                       = Payment under review
@@ -310,7 +315,7 @@ taxCal_breakdown.table.head.rates.uk                                = UK rates f
 taxCal_breakdown.table.head.rates.scotland                          = UK rates for Scotland
 
 taxCal_breakdown.table.cgt.taxable_capital_gains                    = Taxable Capital Gains
-taxCal_breakdown.table.cgt.assets_or_investors_relief.band.single   = Business Asset Disposal Relief or Investors' Relief gains (or both) ({0} at {1}%)
+taxCal_breakdown.table.cgt.assets_or_investors_relief.band.single   = Business Asset Disposal Relief or Investors’ Relief gains (or both) ({0} at {1}%)
 taxCal_breakdown.table.cgt.property_and_interest.band.lowerRate     = Residential property and carried interest basic rate ({0} at {1}%)
 taxCal_breakdown.table.cgt.property_and_interest.band.higherRate    = Residential property and carried interest higher rate ({0} at {1}%)
 taxCal_breakdown.table.cgt.other_gains.band.lowerRate               = Other gains basic rate ({0} at {1}%)
@@ -415,6 +420,24 @@ credits.table.status-fully-allocated                            = Fully allocate
 credits.table.status-not-yet-allocated                          = Not yet allocated
 credits.table.status-partially-allocated                        = Partially allocated
 
+## Refund to taxpayer page ##
+refund-to-taxpayer.heading                                      = Refund to taxpayer
+refund-to-taxpayer.tableHead.estimated-date                     = Estimated date
+refund-to-taxpayer.tableHead.method                             = Method
+refund-to-taxpayer.tableHead.total-refund                       = Total refund
+refund-to-taxpayer.tableHead.further-details                    = Further details
+refund-to-taxpayer.tableHead.requested-on                       = Requested on
+refund-to-taxpayer.tableHead.refund-reference                   = Refund reference
+refund-to-taxpayer.tableHead.requested-amount                   = Requested amount
+refund-to-taxpayer.tableHead.refund-amount                      = Refund amount
+refund-to-taxpayer.tableHead.interest                           = Interest
+refund-to-taxpayer.tableHead.interest-value                     = {0} to {1} at {2}%
+refund-to-taxpayer.tableHead.total-interest                     = Total interest
+refund-to-taxpayer.tableHead.varied-interest-rates-value        = Rate of interest varied between {0}% and {1}% from {2} and {3}
+refund-to-taxpayer.method-type-bacs                             = Bacs
+refund-to-taxpayer.method-type-card                             = Card
+refund-to-taxpayer.method-type-postal-order                     = Postal Order
+
 
 ## Previous Obligations ##
 previous-obligations.no-previous-obligations                    = No previously submitted updates
@@ -445,10 +468,9 @@ bta_partial.p2                                                  = You can view y
 bta_partial.home_button                                         = View your Income Tax details
 
 ## Not Enrolled
-not_enrolled.heading                                            = You can’t view this page
-not_enrolled.sign-up.1                                          = You need to
-not_enrolled.sign-up.2                                          = sign up for quarterly reporting
-not_enrolled.sign-up.3                                          = before you can view this page.
+not_enrolled.heading                                            = You cannot access this service
+not_enrolled.sign-up                                            = You need to
+not_enrolled.sign-up.link                                       = sign up for Making Tax Digital for Income Tax
 
 ## Standard Error Page ##
 standardError.heading                                           = Sorry, there is a problem with the service
@@ -564,6 +586,7 @@ whatYouOwe.tableHead.tax-year-summary                              = Tax year su
 whatYouOwe.tableHead.amount-due                                    = Amount due
 whatYouOwe.paymentOnAccount1.text							       = Payment on account 1 of 2
 whatYouOwe.paymentOnAccount2.text							       = Payment on account 2 of 2
+whatYouOwe.hmrcAdjustment.text                                     = HMRC adjustment
 whatYouOwe.lpi.paymentOnAccount1.text                              = Late payment interest for payment on account 1 of 2
 whatYouOwe.lpi.paymentOnAccount2.text                              = Late payment interest for payment on account 2 of 2
 whatYouOwe.lpi.balancingCharge.text                                = Late payment interest for Balancing payment
@@ -571,6 +594,8 @@ whatYouOwe.lpi.balancingCharge.text                                = Late paymen
 whatYouOwe.balancingCharge.text  							       = Balancing payment
 whatYouOwe.balancingCharge.interest.line1.text                     = Interest on Balancing payment
 whatYouOwe.balancingCharge.interest.line2.text                     = From {0} to {1}
+whatYouOwe.hmrcAdjustment.heading                                  = HMRC adjustment
+whatYouOwe.hmrcAdjustment.line1                                    = This payment has been created by HMRC.
 whatYouOwe.remaining-balance.heading                               = Balancing payment
 whatYouOwe.remaining-balance.line1                                 = The Balancing payment is the tax you still need to pay for a tax year.
 whatYouOwe.payment-on-account.heading                              = Payment on account
@@ -720,17 +745,12 @@ timeoutDialog.message                                           = For your secur
 button.continue                                                 = Stay signed in
 
 ## Uplift Failure
-upliftFailure.title = There’s a problem
-upliftFailure.content = You cannot access this service. This may be because:
+upliftFailure.title = You cannot view this page
+upliftFailure.content = This may be because:
+upliftFailure.sign.out = Return to Sign in
 upliftFailure.bullet.1 = you took too long to enter information and the service has timed out
 upliftFailure.bullet.2 = you have failed to answer enough questions correctly
 upliftFailure.bullet.3 = we could not match your details to our system
-
-## Title pattern
-titlePattern.serviceName.govUk = {0} - Business Tax account - GOV.UK
-error.titlePattern.serviceName.govUk = Error: {0} - Business Tax account - GOV.UK
-agent.titlePattern.serviceName.govUk = {0} - Your client’s Income Tax details - GOV.UK
-titlePattern.serviceName.itsa.govUk = {0} - Update and submit an Income Tax Return - GOV.UK
 
 ## Payment History Page ##
 
@@ -740,7 +760,7 @@ paymentHistory.info.2                                           = This will be a
 paymentHistory.textLink1                                        = Self Assessment service
 paymentHistory.button                                           = {0} payments
 paymentHistory.paymentToHmrc                                    = Payment made to HMRC
-paymentHistory.paymentFromEarlierYear                           = Payment from an earlier tax year
+paymentHistory.paymentFromEarlierYear                           = Credit from an earlier tax year
 paymentHistory.mfaCredit                                        = Credit from HMRC adjustment
 paymentsHistory.CardRef                                         = Payment made by debit card ref:
 paymentHistory.refund                                           = Refund
@@ -748,11 +768,12 @@ paymentHistory.table.header.date                                = Date
 paymentHistory.table.header.description                         = Description
 paymentHistory.table.header.amount                              = Amount
 PaymentHistory.classicSA                                        = To view your payment history from before you signed up to Making Tax Digital for Income Tax, you need to visit your previous
+paymentHistory.paymentAndRefundHistory.heading                  = Payment and refund history
 
 ## Payment Allocation ##
 paymentAllocation.heading                                       = Payment made to HMRC
 paymentAllocation.sa.info                                       = This is money you paid into your account before you signed up for Making Tax Digital for Income Tax. Visit your previous
-paymentAllocation.earlyTaxYear.heading                          = Payment from an earlier tax year
+paymentAllocation.earlyTaxYear.heading                          = Credit from an earlier tax year
 paymentAllocation.date                                          = Date
 paymentAllocation.amount                                        = Amount
 paymentAllocation.info                                          = Payments are first allocated to penalties and earlier tax years, then current and future tax years.
@@ -821,21 +842,25 @@ inYear-tax-overview.agent.inset                                  = This calculat
 
 ## credits and refunds
 credit-and-refund.heading                                         = Claim a refund
-credit-and-refund.subHeading.has-credits                          = in your account.
+credit-and-refund.subHeading.has-credits-1                        = There is a total of
+credit-and-refund.subHeading.has-credits-2                        = in your account:
 credit-and-refund.subHeading.has-no-credits                       = has been requested as a refund and is in progress.
-credit-and-refund.bullet-text-intro                               = You can:
-credit-and-refund.bullet-one-prt-1                                = leave this money in your account to automatically pay
+credit-and-refund.bullet-text-intro                               = What you can do
+credit-and-refund.bullet-one-prt-1                                = If you leave this money in your account it will be used to automatically pay
 credit-and-refund.bullet-one-link                                 = what you owe
-credit-and-refund.bullet-one-prt-2                                = on time
-credit-and-refund.bullet-two                                      = claim this money back and make any payments as normal
+credit-and-refund.bullet-one-prt-2                                = on time.
+credit-and-refund.bullet-two-prt-1                                = You have the option to claim up to
+credit-and-refund.bullet-two-prt-2                                = back. If you claim back money allocated towards upcoming payments, you'll need to make those payments by the deadline to avoid extra charges.
 credit-and-refund.total                                           = Total
-credit-and-refund.refundProgress                                  = Refund - in progress
-credit-and-refund.payment                                         = payment
+credit-and-refund.refundProgress                                  = is a refund currently in progress
+credit-and-refund.payment                                         = from a payment made on
 credit-and-refund.details-intro                                   = What’s in your account
 credit-and-refund.no-credit                                       = You have no money in your account.
 credit-and-refund.claim-refund-btn                                = Claim a refund
 credit-and-refund.check-refund-btn                                = Check refund status
-credit-and-refund.credit-from-hmrc-title                          = Credit from HMRC adjustment
+credit-and-refund.credit-from-hmrc-title-prt-1                    = from a
+credit-and-refund.credit-from-hmrc-title-prt-2                    = Credit from HMRC adjustment
+
 
 #Language Selector
 language-switcher.english.hidden                                = Change the language to English
@@ -843,7 +868,6 @@ language-switcher.english                                       = English
 language-switcher.welsh                                         = Cymraeg
 language-switcher.welsh.hidden                                  = Newid yr iaith ir Gymraeg
 language-switcher.nav                                           = Language switcher
-
 
 #technical helper
 getpagehelp.linkText                                            = Get help with this page

@@ -35,6 +35,7 @@ import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
 import testConstants.FinancialDetailsTestConstants._
 import views.html.WhatYouOwe
 
+import java.time.LocalDate
 import scala.concurrent.Future
 
 class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate with MockNavBarEnumFsPredicate
@@ -72,7 +73,7 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockInco
       ++ List(documentDetailWithDueDateModel(2020))
       ++ List(documentDetailWithDueDateModel(2021)),
     Some(OutstandingChargesModel(List(
-      OutstandingChargeModel("BCD", Some("2020-12-31"), 10.23, 1234), OutstandingChargeModel("ACI", None, 1.23, 1234))
+      OutstandingChargeModel("BCD", Some(LocalDate.parse("2020-12-31")), 10.23, 1234), OutstandingChargeModel("ACI", None, 1.23, 1234))
     ))
   )
 

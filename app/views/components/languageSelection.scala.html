@@ -34,45 +34,47 @@
 </script>
 
 @if(messages.lang.code === "en") {
-    <nav class="hmrc-language-select" aria-label="Language switcher">
+    <nav class="hmrc-language-select" id="lang-switch-en" aria-label="Language switcher">
         <ul class="hmrc-language-select__list">
             <li class="hmrc-language-select__list-item">
                 <span aria-current="true">English</span>
             </li>
             <li class="hmrc-language-select__list-item">
-                <script>
-                    document.write(`<a href="javascript:switchTo('@controllers.routes.ItvcLanguageController.switchToWelsh(None)')"
-                           hreflang="cy" lang="cy" rel="alternate" class="govuk-link">
-                            <span class="govuk-visually-hidden">Newid yr iaith ir Gymraeg</span>
-                            <span id="switch-welsh" aria-hidden="true">Cymraeg</span>
-                        </a>`)
+                <script id="lang-switch-en-js">
+                    document.currentScript.insertAdjacentHTML('beforebegin',
+                        `<a href="javascript:switchTo('@controllers.routes.ItvcLanguageController.switchToWelsh(None)')"
+                            hreflang="cy" lang="cy" rel="alternate" class="govuk-link">
+                         <span class="govuk-visually-hidden">Newid yr iaith ir Gymraeg</span>
+                         <span aria-hidden="true">Cymraeg</span>
+                         </a>`)
                 </script>
-                <noscript>
+                <noscript id="lang-switch-en-no-js">
                     <a href="@controllers.routes.ItvcLanguageController.switchToWelsh(None)"
-                    hreflang="cy" lang="cy" rel="alternate" class="govuk-link">
+                       hreflang="cy" lang="cy" rel="alternate" class="govuk-link">
                         <span class="govuk-visually-hidden">Newid yr iaith ir Gymraeg</span>
-                        <span id="switch-welsh" aria-hidden="true">Cymraeg</span>
+                        <span aria-hidden="true">Cymraeg</span>
                     </a>
                 </noscript>
             </li>
         </ul>
     </nav>
 } else {
-    <nav class="hmrc-language-select" aria-label="Switcher iaith">
+    <nav class="hmrc-language-select" id="lang-switch-cy" aria-label="Switcher iaith">
         <ul class="hmrc-language-select__list">
             <li class="hmrc-language-select__list-item">
-                <script>
-                    document.write(`<a href="javascript:switchTo('@controllers.routes.ItvcLanguageController.switchToEnglish(None)')"
-                       hreflang="en" lang="en" rel="alternate" class="govuk-link">
-                        <span class="govuk-visually-hidden">Change the language to English</span>
-                        <span aria-hidden="true">English</span>
-                    </a>`)
+                <script id="lang-switch-cy-js">
+                    document.currentScript.insertAdjacentHTML('beforebegin',
+                        `<a href="javascript:switchTo('@controllers.routes.ItvcLanguageController.switchToEnglish(None)')"
+                            hreflang="en" lang="en" rel="alternate" class="govuk-link">
+                         <span class="govuk-visually-hidden">Change the language to English</span>
+                         <span aria-hidden="true">English</span>
+                         </a>`)
                 </script>
-                <noscript>
+                <noscript id="lang-switch-cy-no-js">
                     <a href="@controllers.routes.ItvcLanguageController.switchToEnglish(None)"
-                        hreflang="en" lang="en" rel="alternate" class="govuk-link">
-                        <span class="govuk-visually-hidden">Change the language to English</span>
-                        <span aria-hidden="true">English</span>
+                       hreflang="en" lang="en" rel="alternate" class="govuk-link">
+                    <span class="govuk-visually-hidden">Change the language to English</span>
+                    <span aria-hidden="true">English</span>
                     </a>
                 </noscript>
             </li>

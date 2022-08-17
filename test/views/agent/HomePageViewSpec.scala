@@ -71,6 +71,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
               overDuePaymentsCount: Option[Int] = None,
               overDueUpdatesCount: Option[Int] = None,
               utr: Option[String] = None,
+              paymentHistoryEnabled: Boolean = true,
               ITSASubmissionIntegrationEnabled: Boolean = true,
               dunningLockExists: Boolean = false,
               currentTaxYear: Int = currentTaxYear,
@@ -89,7 +90,8 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
       dunningLockExists,
       currentTaxYear,
       isAgent,
-      creditAndRefundEnabled = false
+      creditAndRefundEnabled = false,
+      paymentHistoryEnabled = paymentHistoryEnabled
     )(FakeRequest(), implicitly, testMtdItUser, mockAppConfig)
 
     lazy val document: Document = Jsoup.parse(contentAsString(view))
@@ -114,10 +116,6 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
 
       s"have the title ${messages("agent.titlePattern.serviceName.govUk", messages("home.agent.heading"))}" in new Setup() {
         document.title() shouldBe messages("agent.titlePattern.serviceName.govUk", messages("home.agent.heading"))
-      }
-
-      "display the language selection switch" in new Setup {
-        getTextOfElementById("switch-welsh") shouldBe Some(messages("language-switcher.welsh"))
       }
 
       s"have the page heading ${messages("home.agent.heading")}" in new Setup {
@@ -193,6 +191,25 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
         }
       }
 
+      "have a language selection switch" which {
+        "displays the current language" in new Setup {
+          val langSwitch: Option[Element] = getElementById("lang-switch-en")
+          langSwitch.map(_.select("li:nth-child(1)").text) shouldBe Some(messages("language-switcher.english"))
+        }
+
+        "changes with JS ENABLED" in new Setup {
+          val langSwitchScript: Option[Element] = getElementById("lang-switch-en-js")
+          langSwitchScript.toString.contains("javascript:switchTo('/report-quarterly/income-and-expenses/view/switch-to-welsh')") shouldBe true
+          langSwitchScript.toString.contains(messages("language-switcher.welsh")) shouldBe true
+        }
+
+        "changes with JS DISABLED" in new Setup {
+          val langSwitchNoScript: Option[Element] = getElementById("lang-switch-en-no-js")
+          langSwitchNoScript.map(_.select("a").attr("href")) shouldBe Some("/report-quarterly/income-and-expenses/view/switch-to-welsh")
+          langSwitchNoScript.map(_.select("a span:nth-child(2)").text) shouldBe Some(messages("language-switcher.welsh"))
+        }
+      }
+
       "have a returns tile" which {
         "has a heading" in new Setup {
           getElementById("returns-tile").map(_.select("h2").text) shouldBe Some(messages("home.tax-years.heading"))
@@ -220,14 +237,26 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
       }
 
       "have a payment history tile" which {
-        "has a heading" in new Setup {
+        "has payment and refund history heading when payment history feature switch is enabled" in new Setup() {
+          getElementById("payment-history-tile").map(_.select("h2").text) shouldBe Some(messages("home.paymentHistoryRefund.heading"))
+        }
+
+        "has payment history heading when payment history feature switch is disabled" in new Setup(paymentHistoryEnabled = false) {
           getElementById("payment-history-tile").map(_.select("h2").text) shouldBe Some(messages("home.paymentHistory.heading"))
         }
-        "has a link to the payment history page" in new Setup {
+
+        "has a link to the Payment and refund history page when payment history feature switch is enabled" in new Setup {
+          val link: Option[Element] = getElementById("payment-history-tile").map(_.select("a").first)
+          link.map(_.attr("href")) shouldBe Some(controllers.routes.PaymentHistoryController.showAgent().url)
+          link.map(_.text) shouldBe Some(messages("home.paymentHistoryRefund.view"))
+        }
+
+        "has a link to the payment history page when payment history feature switch is disabled" in new Setup(paymentHistoryEnabled = false) {
           val link: Option[Element] = getElementById("payment-history-tile").map(_.select("a").first)
           link.map(_.attr("href")) shouldBe Some(controllers.routes.PaymentHistoryController.showAgent().url)
           link.map(_.text) shouldBe Some(messages("home.paymentHistory.view"))
         }
+
       }
 
       s"have a change client link" in new Setup {

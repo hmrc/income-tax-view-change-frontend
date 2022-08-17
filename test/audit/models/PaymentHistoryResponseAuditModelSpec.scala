@@ -25,6 +25,8 @@ import play.api.libs.json._
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.retrieve.Name
 
+import java.time.LocalDate
+
 class PaymentHistoryResponseAuditModelSpec extends TestSupport {
 
   val transactionName = "payment-history-response"
@@ -47,19 +49,19 @@ class PaymentHistoryResponseAuditModelSpec extends TestSupport {
     payments = Seq(
       Payment(reference = Some("payment1"), amount = Some(100.00), outstandingAmount = None,
         method = Some("method"), documentDescription = None, lot = Some("lot"), lotItem = Some("lotItem"),
-        dueDate = Some("2018-02-01"), documentDate = "2018-02-05", None),
+        dueDate = Some(LocalDate.parse("2018-02-01")), documentDate = LocalDate.parse("2018-02-05"), None),
       Payment(reference = Some("cutover1"), amount = Some(-100.00), outstandingAmount = None,
-        method = Some("method"), documentDescription = None, lot = None, lotItem = None, dueDate = Some("2018-02-02"),
-        documentDate = "2018-02-05", None),
+        method = Some("method"), documentDescription = None, lot = None, lotItem = None, dueDate = Some(LocalDate.parse("2018-02-02")),
+        documentDate = LocalDate.parse("2018-02-05"), None),
       Payment(reference = Some("cutover2"), amount = Some(-100.00), outstandingAmount = None,
-        method = Some("method"), documentDescription = None, lot = None, lotItem = None, dueDate = Some("2018-02-03"),
-        documentDate = "2018-02-05", None),
+        method = Some("method"), documentDescription = None, lot = None, lotItem = None, dueDate = Some(LocalDate.parse("2018-02-03")),
+        documentDate = LocalDate.parse("2018-02-05"), None),
       Payment(reference = Some("mfa1"), amount = Some(-100.00), outstandingAmount = None,
         method = Some("method"), documentDescription = Some("ITSA Overpayment Relief"), lot = None, lotItem = None,
-        dueDate = None, documentDate = "2018-02-04", None),
+        dueDate = None, documentDate = LocalDate.parse("2018-02-04"), None),
       Payment(reference = Some("mfa2"), amount = Some(-100.00), outstandingAmount = None,
         method = Some("method"), documentDescription = Some("ITSA Overpayment Relief"), lot = None, lotItem = None,
-        dueDate = None, documentDate = "2018-02-05", None)
+        dueDate = None, documentDate = LocalDate.parse("2018-02-05"), None)
     ),
     CutOverCreditsEnabled = CutOver,
     MFACreditsEnabled = MFA,

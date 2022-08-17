@@ -19,19 +19,27 @@ back.taxYearSummary = Yn ôl i Crynodeb o’r flwyddyn dreth
 back.nomatch = Yn ôl
 
 # Agent - Client Relationship Failure
-agent.client_relationship_failure.heading                       = Mae angen caniatâd arnoch i fwrw golwg dros y cleient hwn
-agent.client_relationship_failure.info                          = Mae’n rhaid i’ch cleient {0} cyn i chi allu cael at y gwasanaeth hwn. Mae’n bosibl y byddwch am wirio Cyfeirnod Unigryw y Trethdalwr (UTR) i wneud yn siŵr mai dyma’r un iawn, neu chwilio am gleient arall.
+agent.client_relationship_failure.heading                       = Nid ydych wedi’ch awdurdodi i fwrw golwg dros y cleient hwn
+agent.client_relationship_failure.info                          = Mae angen i’ch cleient {0}
 agent.client_relationship_failure.info.link                     = eich awdurdodi fel ei asiant
-agent.client_relationship_failure.enter_different_details       = Nodwch UTR arallxf
+agent.client_relationship_failure.enter_different_details       = Gwirio cleient arall
+
+# Agent Base
+agent.base.service_name                                         = Treth Incwm fanylion eich cleient
+
+# Page Titles
+titlePattern.serviceName.govUk                                  = Rheoli’ch diweddariadau Treth Incwm
+agent.titlePattern.serviceName.govUk                            = Rheoli diweddariadau Treth Incwm eich cleient
+error.titlePattern.serviceName.govUk                            = Gwall: {0} - Rheoli’ch diweddariadau Treth Incwm
+agent.error.titlePattern.serviceName.govUk                      = Gwall: {0} - Rheoli diweddariadau Treth Incwm eich cleient
 
 ## Agent - UTR Error
-agent.utr_error.heading                                         = Mae problem wedi codi
-agent.utr_error.utr_wrong.part1                                 = Mae’n bosibl bod yr UTR yr ydych wedi’i nodi, sef
-agent.utr_error.utr_wrong.part2                                 = , yn anghywir oherwydd:
-agent.utr_error.reason.bullet1                                  = eich bod wedi’i nodi’n anghywir
-agent.utr_error.reason.bullet2                                  = nid ydych chi na’ch cleient wedi cofrestru ar gyfer y cynllun {0} hyd yn hyn
-agent.utr_error.reason.bullet2_link                             = Troi Treth yn Ddigidol ar gyfer Treth Incwm
-agent.utr_error.go_back                                         = Ewch yn ôl a nodwch UTR gwahanol
+agent.utr_error.heading                                         = Ni allwch fwrw golwg dros y cleient hwn
+agent.utr_error.utr_wrong                                       = Gallai hyn fod oherwydd y canlynol:
+agent.utr_error.reason.bullet1                                  = rydych wedi nodi Cyfeirnod Unigryw y Trethdalwr (UTR) anghywir
+agent.utr_error.reason.bullet2                                  = mae angen i’ch cleient {0}
+agent.utr_error.reason.bullet2_link                             = gofrestru ar gyfer y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm
+agent.utr_error.go_back                                         = Nodwch UTR arall
 
 ## Agent Error Page ##
 agent-error.heading                                            = Ni allwch ddefnyddio’r gwasanaeth hwn ar hyn o bryd
@@ -97,6 +105,8 @@ home.your-returns.description                                   = Defnyddiwch y 
 home.tax-years.view                                             = Bwrw golwg dros bob blwyddyn dreth
 home.paymentHistory.heading                                     = Hanes taliadau
 home.paymentHistory.view                                        = Hanes taliadau
+home.paymentHistoryRefund.heading                               = Hanes taliadau ac ad-daliadau
+home.paymentHistoryRefund.view                                  = Hanes taliadau ac ad-daliadau
 home.your-returns.updatesLink                                   = Diweddaru a chyflwyno’ch Ffurflen Dreth ar gyfer {0} i {1}
 home.returns.viewLink                                           = Bwrw golwg dros eich Ffurflen Dreth gyfredol ar gyfer {0} i {1}
 home.overdue.message.dunningLock.true                           = Mae gennych daliadau sy’n hwyr ac mae un neu fwy o’ch penderfyniadau treth yn cael eu hadolygu. Mae’n bosibl y codir llog arnoch ar y rhain hyd nes eu bod wedi’u talu’n llawn.
@@ -159,6 +169,7 @@ tax-year-summary.payments.lpi.paymentOnAccount1.text           = Llog am dalu’
 tax-year-summary.payments.lpi.paymentOnAccount2.text           = Llog am dalu’n hwyr ar gyfer taliad ar gyfrif 2 o 2
 tax-year-summary.payments.lpi.balancingCharge.text             = Llog am dalu’n hwyr ar gyfer y Taliad Mantoli
 tax-year-summary.payments.cancelledPayeSelfAssessment.text     = Cancelled Self Assessment payment (through your PAYE tax code)
+tax-year-summary.payments.hmrcAdjustment.text                  = Addasiad CThEM
 tax-year-summary.payments.overdue                              = Yn hwyr
 tax-year-summary.payments.no-payments                          = Dim taliadau’n ddyledus ar hyn o bryd.
 tax-year-summary.forecast_tab.insetText                        = Amcangyfrif yw hwn o’ch bil treth ar gyfer y flwyddyn gyfan hyd at 5 Ebrill {0}. Bydd hyn yn cael ei ddiweddaru drwy gydol y flwyddyn wrth i ni gael rhagor o wybodaeth.
@@ -412,10 +423,9 @@ bta_partial.p2                                                  = Gallwch fwrw g
 bta_partial.home_button                                         = Bwrw golwg ar fanylion eich Treth Incwm
 
 ## Not Enrolled
-not_enrolled.heading                                            = Ni chewch weld y dudalen hon
-not_enrolled.sign-up.1                                          = Mae’n rhaid i chi
-not_enrolled.sign-up.2                                          = gofrestru ar gyfer adrodd chwarterol
-not_enrolled.sign-up.3                                          = cyn i chi allu fwrw golwg ar y dudalen hon.
+not_enrolled.heading                                            = Ni allwch gael mynediad at y gwasanaeth hwn
+not_enrolled.sign-up                                            = Mae angen i chi
+not_enrolled.sign-up.link                                       = gofrestru ar gyfer y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm
 
 ## Standard Error Page ##
 standardError.heading                                           = Mae’n ddrwg gennym, mae problem gyda’r gwasanaeth
@@ -492,6 +502,24 @@ credits.table.status-fully-allocated                            = Wedi ei ddyran
 credits.table.status-not-yet-allocated                          = Heb ei ddyrannu eto
 credits.table.status-partially-allocated                        = Wedi ei ddyrannu’n rhannol
 
+## Refund to taxpayer page ##
+refund-to-taxpayer.heading                                      = Ad-daliad i’r trethdalwr
+refund-to-taxpayer.tableHead.estimated-date                     = Amcan o’r dyddiad
+refund-to-taxpayer.tableHead.method                             = Dull
+refund-to-taxpayer.tableHead.total-refund                       = Cyfanswm yr ad-daliad
+refund-to-taxpayer.tableHead.further-details                    = Manylion pellach
+refund-to-taxpayer.tableHead.requested-on                       = Gofynnwyd amdano ar
+refund-to-taxpayer.tableHead.refund-reference                   = Cyfeirnod yr ad-daliad
+refund-to-taxpayer.tableHead.requested-amount                   = Y swm y gofynnir amdano
+refund-to-taxpayer.tableHead.refund-amount                      = Swm yr ad-daliad
+refund-to-taxpayer.tableHead.interest                           = Llog
+refund-to-taxpayer.tableHead.interest-value                     = {0} i {1} ar {2}%
+refund-to-taxpayer.tableHead.total-interest                     = Cyfanswm y llog
+refund-to-taxpayer.tableHead.varied-interest-rates-value        = Roedd y gyfradd llog yn amrywio rhwng {0}% a {1}% o {2} i {3}
+refund-to-taxpayer.method-type-bacs                             = Bacs
+refund-to-taxpayer.method-type-card                             = Cerdyn
+refund-to-taxpayer.method-type-postal-order                     = Archeb Bost
+
 ## Payment Due Page ##
 paymentDue.heading                                              = Taliadau treth incwm
 paymentDue.description                                          = Os ydych wedi gwneud taliad yn ystod y 7 diwrnod diwethaf, mae’n bosibl na fydd y symiau a ddangosir yma yn gywir.
@@ -525,11 +553,14 @@ whatYouOwe.tableHead.amount-due                                 = Swm sy’n ddy
 whatYouOwe.tableHead.tax-year-summary                           = Crynodeb o’r flwyddyn dreth
 whatYouOwe.paymentOnAccount1.text							    = Taliad ar gyfrif 1 o 2
 whatYouOwe.paymentOnAccount2.text							    = Taliad ar gyfrif 2 o 2
+whatYouOwe.hmrcAdjustment.text                                  = Addasiad CThEM
 whatYouOwe.balancingCharge.text  							    = Taliad mantoli
 whatYouOwe.remaining-balance.heading                            = Taliad mantoli
 whatYouOwe.remaining-balance.line1                              = Y balans sy’n weddill yw’r dreth sydd dal gennych i’w thalu ar gyfer blwyddyn dreth.
 whatYouOwe.payment-on-account.heading                           = Taliad ar gyfrif
 whatYouOwe.payment-on-account.line1                             = Mae hwn yn daliad tuag at y bil treth ar gyfer y flwyddyn nesaf. Mae swm pob taliad yn hanner eich bil treth ar gyfer y flwyddyn flaenorol.
+whatYouOwe.hmrcAdjustment.heading                               = Addasiad CThEM
+whatYouOwe.hmrcAdjustment.line1                                 = Mae’r taliad hwn wedi’i greu gan CThEM.
 whatYouOwe.late-payment-interest.heading                        = Llog am dalu’n hwyr
 whatYouOwe.late-payment-interest.line1                          = Dyma log sydd arnoch am dalu’n hwyr.
 whatYouOwe.class2-nic.heading                                   = Yswiriant Gwladol Dosbarth 2
@@ -569,7 +600,7 @@ whatYouOwe.dunningLock.link                                     = bod apêl ar y
 whatYouOwe.credit-overpaid-prefix                               = Mae gennych
 whatYouOwe.credit-overpaid-amount                               = {0} yn eich cyfrif
 whatYouOwe.unallocated-credit-note                              = . Byddwn yn defnyddio hwn i dalu'r symiau sy'n ddyledus ar y dyddiad dyledus nesaf.
-whatYouOwe.tax-year-summary.taxYear                             = {0} to {1} ar %
+whatYouOwe.tax-year-summary.taxYear                             = {0} to {1}
 
 ## Charge Summary ##
 chargeSummary.paymentOnAccount1.text                            = Taliad ar gyfrif 1 o 2
@@ -685,16 +716,12 @@ notFound.heading = Ni ellir dod o hyd i’r dudalen hon
 notFound.message = Gwiriwch eich bod wedi nodi’r cyfeiriad gwe cywir.
 
 ## Uplift Failure
-upliftFailure.title = Mae problem wedi codi
-upliftFailure.content = Ni allwch gael mynediad at y gwasanaeth hwn. Gall hyn fod oherwydd y canlynol:
+upliftFailure.title = Ni allwch fwrw golwg dros y dudalen hon
+upliftFailure.content = Gallai hyn fod oherwydd y canlynol:
+upliftFailure.sign.out = REwch yn ôl i fewngofnodi
 upliftFailure.bullet.1 = gwnaethoch gymryd gormod o amser i nodi gwybodaeth ac mae’ch cyfle i ddefnyddio’r gwasanaeth wedi dod i ben
 upliftFailure.bullet.2 = rydych wedi methu ag ateb digon o gwestiynau’n gywir
 upliftFailure.bullet.3 = nid oeddem yn gallu paru’ch manylion â’r hyn sydd ar ein system
-
-## Title pattern
-titlePattern.serviceName.govUk = {0} - Cyfrif Treth Busnes - GOV.UK
-error.titlePattern.serviceName.govUk = Gwall: {0} - Cyfrif Treth Busnes - GOV.UK
-titlePattern.serviceName.itsa.govUk = {0} - Diweddaru a chyflwyno Ffurflen Dreth Incwm - GOV.UK
 
 ## Payment History Page ##
 paymentHistory.heading                                          = Hanes taliadau
@@ -703,19 +730,15 @@ paymentHistory.info.2                                           = Bydd hwn yn Dd
 paymentHistory.textLink1                                        = gwasanaeth Hunanasesiad arferol
 paymentHistory.button                                           = Taliadau {0}
 paymentsHistory.CardRef                                         = Cyfeirnod ar gyfer taliad a wnaed drwy gerdyn debyd:
-paymentHistory.paymentToHmrc                                    = Taliad a wnaed i CThEM
-paymentHistory.paymentFromEarlierYear                           = Taliad o flwyddyn dreth gynharach
-paymentHistory.mfaCredit                                        = Credyd o addasiad gan CThEM
 paymentHistory.refund                                           = Ad-daliad
+paymentHistory.paymentToHmrc                                    = Taliad a wnaed i CThEM
+paymentHistory.paymentFromEarlierYear                           = Credyd o flwyddyn dreth gynharach
+paymentHistory.mfaCredit                                        = Credyd o addasiad gan CThEM
 paymentHistory.table.header.date                                = Dyddiad
 paymentHistory.table.header.description                         = Disgrifiad
 paymentHistory.table.header.amount                              = Swm
 PaymentHistory.classicSA                                        = Er mwyn bwrw golwg dros eich hanes taliadau o’r adeg cyn i chi gofrestru ar gyfer y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm, mae angen i chi fynd i’ch
-
-# Agent Base
-agent.base.service_name                                         = Treth Incwm fanylion eich cleient
-agent.title_pattern.service_name.govuk                          = {0} - Treth Incwm fanylion eich cleient - GOV.UK
-agent.error.title_pattern.service_name.govuk                    = Gwall: {0} - Treth Incwm fanylion eich cleient - GOV.UK
+paymentHistory.paymentAndRefundHistory.heading                  = Hanes taliadau ac ad-daliadau
 
 # Agent - Enter clients details
 agent.enter_clients_utr.heading                                 = Beth yw UTR eich cleient?
@@ -759,7 +782,7 @@ pagehelp.opensInNewTabText                                      = ' (yn agor tab
 
 ## Payment Allocation ##
 paymentAllocation.heading                                       = Taliad a wnaed i CThEM
-paymentAllocation.earlyTaxYear.heading                          = Taliad o flwyddyn dreth gynharach
+paymentAllocation.earlyTaxYear.heading                          = Credyd o flwyddyn dreth gynharach
 paymentAllocation.date                                          = Dyddiad
 paymentAllocation.amount                                        = Swm
 paymentAllocation.info                                          = Caiff taliadau eu dyrannu’n gyntaf i gosbau a blynyddoedd treth cynharach, yna’r flwyddyn dreth bresennol a blynyddoedd treth yn y dyfodol.
@@ -813,7 +836,23 @@ inYear-tax-overview.agent.heading                                = Trosolwg o dr
 inYear-tax-overview.agent.inset                                  = Mae’r cyfrifiad hwn yn seiliedig ar ddiweddariadau gorffenedig eich cleient ar gyfer y flwyddyn dreth hon hyd at {0} yn unig. Nid dyma ei fil treth terfynol ar gyfer y flwyddyn. Cyfrifiad o’r flwyddyn hyd yma yw hwn ar sail yr wybodaeth sydd wedi cael ei nodi hyd yma.
 
 ## credits and refunds
-credit-and-refund.credit-from-hmrc-title                          = Credyd o addasiad gan CThEM
+credit-and-refund.subHeading.has-credits-1                        = Mae cyfanswm o
+credit-and-refund.subHeading.has-credits-2                        = yn eich cyfrif:
+credit-and-refund.heading                                         = Hawlio ad-daliad
+credit-and-refund.claim-refund-btn                                = Hawlio ad-daliad
+credit-and-refund.bullet-text-intro                               = Yr hyn y gallwch ei wneud
+credit-and-refund.check-refund-btn                                = Gwirio statws ad-daliad
+credit-and-refund.payment                                         = yn sgil taliad a wnaed ar
+credit-and-refund.refundProgress-prt-1                            = mae ad-daliad o
+credit-and-refund.refundProgress-prt-2                            = wrthi'n cael ei brosesu
+credit-and-refund.credit-from-hmrc-title-prt-1                    = yn sgil
+credit-and-refund.credit-from-hmrc-title-prt-2                    = Credyd o addasiad gan CThEM
+credit-and-refund.bullet-one-prt-1                                = Os gadewch  yr arian hwn yn eich cyfrif, caiff ei ddefnyddio i dalu'r
+credit-and-refund.bullet-one-link                                 = hyn sydd arnoch
+credit-and-refund.bullet-one-prt-2                                = yn awtomatig ac mewn pryd.
+credit-and-refund.bullet-two-prt-1                                = Mae gennych yr opsiwn i hawlio hyd at
+credit-and-refund.bullet-two-prt-2                                = yn ôl. Os byddwch yn hawlio arian yn ôl sydd wedi'i neilltuo ar gyfer taliadau sydd i ddod, bydd angen i chi wneud y taliadau hynny erbyn y dyddiad cau i osgoi costau ychwanegol.
+
 
 shortMonth.1 = Ion
 shortMonth.2 = Chwe

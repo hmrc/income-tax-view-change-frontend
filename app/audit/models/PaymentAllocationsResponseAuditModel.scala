@@ -18,11 +18,13 @@ package audit.models
 
 import audit.Utilities.userAuditDetails
 import auth.MtdItUserBase
+import enums.PaymentAllocations
 import models.core.AccountingPeriodModel
 import models.paymentAllocationCharges.{AllocationDetailWithClearingDate, PaymentAllocationViewModel}
 import models.paymentAllocations.AllocationDetail
 import play.api.libs.json.{JsObject, JsValue, Json}
 import utils.Utilities.JsonUtil
+
 import java.time.LocalDate
 
 
@@ -32,10 +34,10 @@ case class PaymentAllocationsResponseAuditModel(mtdItUser: MtdItUserBase[_],
   extends ExtendedAuditModel {
 
   override val transactionName: String = "payment-allocations-response"
-  override val auditType: String = "PaymentAllocations"
+  override val auditType: String = PaymentAllocations
 
-  private def getTaxYearString(periodTo: String): String = {
-    val taxYear = AccountingPeriodModel.determineTaxYearFromPeriodEnd(LocalDate.parse(periodTo))
+  private def getTaxYearString(periodTo: LocalDate): String = {
+    val taxYear = AccountingPeriodModel.determineTaxYearFromPeriodEnd(periodTo)
     s"${taxYear - 1} to $taxYear"
   }
 
@@ -79,7 +81,7 @@ case class PaymentAllocationsResponseAuditModel(mtdItUser: MtdItUserBase[_],
           Json.obj() ++
             ("paymentAllocationDescription", Some(getAllocationDescriptionFromKey(lpiad.documentDetail.getChargeTypeKey()))) ++
             ("amount", Some(lpiad.amount)) ++
-            ("taxYear", Some(getTaxYearString(s"${lpiad.documentDetail.taxYear}-04-05")))
+            ("taxYear", Some(getTaxYearString(LocalDate.parse(s"${lpiad.documentDetail.taxYear}-04-05"))))
         }
       ))
     } else {

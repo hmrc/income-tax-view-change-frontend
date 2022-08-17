@@ -47,6 +47,7 @@
     btaNavPartial: Option[Html] = None,
     dunningLock: Boolean,
     codingOutEnabled: Boolean,
+    MFADebitsEnabled: Boolean,
     whatYouOweCreditAmountEnabled: Boolean,
     isAgent: Boolean = false,
     origin: Option[String] = None)(implicit request: Request[_], user: MtdItUser[_], messages: Messages)
@@ -122,6 +123,12 @@
         @h2(msg = "whatYouOwe.cancelled-paye-sa.heading", optId = Some("cancelled-paye-sa-heading"))
         @p(id = Some("cancelled-paye-sa-line1"))(Html(messages("whatYouOwe.cancelled-paye-sa.line1")))
     </div>
+    @if(MFADebitsEnabled) {
+        <div id="payment-details-content-5" >
+            @h2(msg = "whatYouOwe.hmrcAdjustment.heading", optId = Some("hmrc-adjustment-heading"))
+            @p(id = Some("hmrc-adjustment-line1"))(Html(messages("whatYouOwe.hmrcAdjustment.line1")))
+        </div>
+    }
 }
 
 @dunningLockParagraph = {
@@ -261,9 +268,9 @@
                         <tbody class="govuk-table__body">
                             @if(whatYouOweChargesList.bcdChargeTypeDefinedAndGreaterThanZero) {
                                 <tr class="govuk-table__row " id="balancing-charge-type-0">
-                                    <td class="govuk-table__cell govuk-!-width-one-quarter">@LocalDate.parse(whatYouOweChargesList.outstandingChargesModel.get.bcdChargeType.get.relevantDueDate.getOrElse(throw MissingFieldException("Outstanding Charge Relevant Due Date"))).toLongDateShort</td>
+                                    <td class="govuk-table__cell govuk-!-width-one-quarter">@{whatYouOweChargesList.outstandingChargesModel.get.bcdChargeType.get.relevantDueDate.getOrElse(throw MissingFieldException("Outstanding Charge Relevant Due Date")).toLongDateShort}</td>
                                     <td class="govuk-table__cell govuk-!-width-one-half">
-                                        @if(LocalDate.parse(whatYouOweChargesList.outstandingChargesModel.get.bcdChargeType.get.relevantDueDate.getOrElse(throw MissingFieldException("Outstanding Charge Relevant Due Date"))).isBefore(LocalDate.now())) {
+                                        @if(whatYouOweChargesList.outstandingChargesModel.get.bcdChargeType.get.relevantDueDate.getOrElse(throw MissingFieldException("Outstanding Charge Relevant Due Date")).isBefore(LocalDate.now())) {
                                             <span id="balancing-charge-type-overdue" class="govuk-tag govuk-tag--red">@getMessage("over-due")</span>
                                         }
                                         @p(id=Some("balancing-charge"))(Html(getMessage("balancingCharge.text")))
@@ -277,14 +284,14 @@
                                     }</td>
                                 </tr>
                                 @if(whatYouOweChargesList.outstandingChargesModel.get.getAciChargeWithTieBreaker.isDefined
-                                        && LocalDate.parse(whatYouOweChargesList.outstandingChargesModel.get.bcdChargeType.get.relevantDueDate.getOrElse(throw MissingFieldException("Outstanding Charge Relevant Due Date"))).isBefore(LocalDate.now())) {
+                                        && whatYouOweChargesList.outstandingChargesModel.get.bcdChargeType.get.relevantDueDate.getOrElse(throw MissingFieldException("Outstanding Charge Relevant Due Date")).isBefore(LocalDate.now())) {
                                     <tr class="govuk-table__row" id="balancing-charge-type-1">
                                         <td class="govuk-table__cell govuk-!-width-one-quarter"></td>
                                         <td class="govuk-table__cell govuk-!-width-one-half">
                                             @getMessage("balancingCharge.interest.line1.text")
                                             <div>
                                             @getMessage("balancingCharge.interest.line2.text",
-                                                LocalDate.parse(whatYouOweChargesList.outstandingChargesModel.get.bcdChargeType.get.relevantDueDate.getOrElse(throw MissingFieldException("Outstanding Charge Relevant Due Date"))).toLongDateShort,
+                                                whatYouOweChargesList.outstandingChargesModel.get.bcdChargeType.get.relevantDueDate.getOrElse(throw MissingFieldException("Outstanding Charge Relevant Due Date")).toLongDateShort,
                                                 LocalDate.now().toLongDateShort
                                             )
                                             </div>

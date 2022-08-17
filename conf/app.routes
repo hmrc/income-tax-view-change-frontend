@@ -76,10 +76,10 @@ GET         /sign-out                                                     contro
 GET         /sign-in                                                      controllers.SignInController.signIn
 
 #Not Enrolled
-GET         /not-enrolled                                                 controllers.errors.NotEnrolledController.show
+GET         /cannot-access-service                                        controllers.errors.NotEnrolledController.show
 
 #Uplift Failed
-GET         /uplift-failed                                                controllers.errors.UpliftFailedController.show
+GET         /cannot-view-page                                             controllers.errors.UpliftFailedController.show
 
 #Uplift Success
 GET         /uplift-success                                               controllers.UpliftSuccessController.success
@@ -134,6 +134,10 @@ GET          /agents/claim-refund                                         contro
 #Credits
 GET         /credits-from-hmrc/:calendarYear                              controllers.CreditsSummaryController.showCreditsSummary(calendarYear: Int, origin: Option[String] ?= None)
 GET         /agents/credits-from-hmrc/:calendarYear                       controllers.CreditsSummaryController.showAgentCreditsSummary(calendarYear: Int)
+
+#Refund to taxpayer
+GET         /refund-to-taxpayer/:repaymentRequestNumber                    controllers.RefundToTaxPayerController.show(repaymentRequestNumber: String, origin: Option[String] ?= None)
+GET         /agents/refund-to-taxpayer/:repaymentRequestNumber             controllers.RefundToTaxPayerController.showAgent(repaymentRequestNumber: String)
 
 # Users not migrated to ETMP
 GET          /how-to-claim-refund                                         controllers.NotMigratedUserController.show()

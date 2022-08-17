@@ -17,7 +17,7 @@
 package services
 
 import auth.MtdItUser
-import config.featureswitch.{CodingOut, FeatureSwitching}
+import config.featureswitch.{CodingOut, FeatureSwitching, MFACreditsAndDebits}
 import connectors.IncomeTaxViewChangeConnector
 import models.financialDetails._
 import models.outstandingCharges.{OutstandingChargesErrorModel, OutstandingChargesModel}
@@ -228,12 +228,12 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
               codingDetails = Some(List(cd1, cd2)),
               documentDetails = List(dd1, dd2, dd3),
               financialDetails = List(
-                FinancialDetail("2021", Some("SA Balancing Charge"), Some(id1040000124), Some("transactionDate"), Some("type"), Some(100), Some(100),
-                  Some(100), Some(100), Some("NIC4 Wales"), Some(100), Some(Seq(SubItem(dueDate = Some("2021-08-24"))))),
-                FinancialDetail("2021", Some("SA Balancing Charge"), Some(id1040000125), Some("transactionDate"), Some("type"), Some(100), Some(100),
-                  Some(100), Some(100), Some("NIC4 Wales"), Some(100), Some(Seq(SubItem(dueDate = Some("2021-08-25"), dunningLock = Some("Coding out"))))),
-                FinancialDetail("2021", Some("SA Balancing Charge"), Some(id1040000126), Some("transactionDate"), Some("type"), Some(100), Some(100),
-                  Some(100), Some(100), Some("NIC4 Wales"), Some(100), Some(Seq(SubItem(dueDate = Some("2021-08-25"), dunningLock = Some("Coding out")))))
+                FinancialDetail("2021", Some("SA Balancing Charge"), Some(id1040000124), None, Some("type"), Some(100), Some(100),
+                  Some(100), Some(100), Some("NIC4 Wales"), Some(100), Some(Seq(SubItem(dueDate = Some(LocalDate.parse("2021-08-24")))))),
+                FinancialDetail("2021", Some("SA Balancing Charge"), Some(id1040000125), None, Some("type"), Some(100), Some(100),
+                  Some(100), Some(100), Some("NIC4 Wales"), Some(100), Some(Seq(SubItem(dueDate = Some(LocalDate.parse("2021-08-25")), dunningLock = Some("Coding out"))))),
+                FinancialDetail("2021", Some("SA Balancing Charge"), Some(id1040000126),None, Some("type"), Some(100), Some(100),
+                  Some(100), Some(100), Some("NIC4 Wales"), Some(100), Some(Seq(SubItem(dueDate = Some(LocalDate.parse("2021-08-25")), dunningLock = Some("Coding out")))))
               )
             ))))
 
@@ -272,12 +272,12 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
               codingDetails = Some(List(cd1)),
               documentDetails = List(dd1, dd2, dd3),
               financialDetails = List(
-                FinancialDetail("2021", Some("SA Balancing Charge"), Some(id1040000124), Some("transactionDate"), Some("type"), Some(100), Some(100),
-                  Some(100), Some(100), Some("NIC4 Wales"), Some(100), Some(Seq(SubItem(dueDate = Some("2021-08-24"))))),
-                FinancialDetail("2021", Some("SA Balancing Charge"), Some(id1040000125), Some("transactionDate"), Some("type"), Some(100), Some(100),
-                  Some(100), Some(100), Some("NIC4 Wales"), Some(100), Some(Seq(SubItem(dueDate = Some("2021-08-25"), dunningLock = Some("Coding out"))))),
-                FinancialDetail("2021", Some("SA Balancing Charge"), Some(id1040000126), Some("transactionDate"), Some("type"), Some(100), Some(100),
-                  Some(100), Some(100), Some("NIC4 Wales"), Some(100), Some(Seq(SubItem(dueDate = Some("2021-08-25"), dunningLock = Some("Coding out"))))),
+                FinancialDetail("2021", Some("SA Balancing Charge"), Some(id1040000124), None, Some("type"), Some(100), Some(100),
+                  Some(100), Some(100), Some("NIC4 Wales"), Some(100), Some(Seq(SubItem(dueDate = Some(LocalDate.parse("2021-08-24")))))),
+                FinancialDetail("2021", Some("SA Balancing Charge"), Some(id1040000125), None, Some("type"), Some(100), Some(100),
+                  Some(100), Some(100), Some("NIC4 Wales"), Some(100), Some(Seq(SubItem(dueDate = Some(LocalDate.parse("2021-08-25")), dunningLock = Some("Coding out"))))),
+                FinancialDetail("2021", Some("SA Balancing Charge"), Some(id1040000126), None, Some("type"), Some(100), Some(100),
+                  Some(100), Some(100), Some("NIC4 Wales"), Some(100), Some(Seq(SubItem(dueDate = Some(LocalDate.parse("2021-08-25")), dunningLock = Some("Coding out"))))),
               )
             ))))
 
@@ -290,7 +290,24 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
           )
         }
       }
-
+    }
+    "with MFA Debits and non-MFA Debits charges" should {
+      def testGetWhatYouOweChargesList(MFADebitsEnabled: Boolean, financialDetails: FinancialDetailsModel, expectedResult: WhatYouOweChargesList): Unit = {
+        if (MFADebitsEnabled) enable(MFACreditsAndDebits) else disable(MFACreditsAndDebits)
+        when(mockIncomeTaxViewChangeConnector.getOutstandingCharges(any(), any(), any())(any()))
+          .thenReturn(Future.successful(OutstandingChargesModel(List())))
+        when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any(), any(), any()))
+          .thenReturn(Future.successful(List(financialDetails)))
+        TestWhatYouOweService.getWhatYouOweChargesList()(headerCarrier, mtdItUser).futureValue shouldBe expectedResult
+      }
+      "return MFA Debits and non-MFA debits with FS ENABLED" in {
+        testGetWhatYouOweChargesList(MFADebitsEnabled = true, financialDetails = financialDetailsMFADebits, expectedResult = whatYouOweDataWithMFADebitsData)
+        testGetWhatYouOweChargesList(MFADebitsEnabled = true, financialDetails = financialDetailsWithMixedData1, expectedResult = whatYouOweDataWithMixedData1)
+      }
+      "return non-MFA debits and no MFA debits with FS DISABLED" in {
+        testGetWhatYouOweChargesList(MFADebitsEnabled = false, financialDetails = financialDetailsWithMixedData1, expectedResult = whatYouOweDataWithMixedData1)
+        testGetWhatYouOweChargesList(MFADebitsEnabled = false, financialDetails = financialDetailsMFADebits, expectedResult = whatYouOweEmptyMFA)
+      }
     }
   }
 
@@ -303,12 +320,12 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
             codingDetails = None,
             documentDetails = creditDocumentDetailList,
             financialDetails = List(
-              FinancialDetail("2021", Some("SA Balancing Charge"), Some(id1040000124), Some("transactionDate"), Some("type"), Some(100), Some(100),
-                Some(100), Some(100), Some("NIC4 Wales"), Some(100), Some(Seq(SubItem(dueDate = Some("2021-08-24"))))),
-              FinancialDetail("2021", Some("SA Balancing Charge"), Some(id1040000125), Some("transactionDate"), Some("type"), Some(100), Some(100),
-                Some(100), Some(100), Some("NIC4 Wales"), Some(100), Some(Seq(SubItem(dueDate = Some("2021-08-25"), dunningLock = Some("Coding out"))))),
-              FinancialDetail("2021", Some("SA Balancing Charge"), Some(id1040000126), Some("transactionDate"), Some("type"), Some(100), Some(100),
-                Some(100), Some(100), Some("NIC4 Wales"), Some(100), Some(Seq(SubItem(dueDate = Some("2021-08-25"), dunningLock = Some("Coding out"))))),
+              FinancialDetail("2021", Some("SA Balancing Charge"), Some(id1040000124), None, Some("type"), Some(100), Some(100),
+                Some(100), Some(100), Some("NIC4 Wales"), Some(100), Some(Seq(SubItem(dueDate = Some(LocalDate.parse("2021-08-24")))))),
+              FinancialDetail("2021", Some("SA Balancing Charge"), Some(id1040000125), None, Some("type"), Some(100), Some(100),
+                Some(100), Some(100), Some("NIC4 Wales"), Some(100), Some(Seq(SubItem(dueDate = Some(LocalDate.parse("2021-08-25")), dunningLock = Some("Coding out"))))),
+              FinancialDetail("2021", Some("SA Balancing Charge"), Some(id1040000126), None, Some("type"), Some(100), Some(100),
+                Some(100), Some(100), Some("NIC4 Wales"), Some(100), Some(Seq(SubItem(dueDate = Some(LocalDate.parse("2021-08-25")), dunningLock = Some("Coding out"))))),
             )
           ))))
 
@@ -325,6 +342,27 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
         result shouldBe an[Exception]
         result.getMessage shouldBe "[WhatYouOweService][getCreditCharges] Error response while getting Unpaid financial details"
       }
+    }
+  }
+  "WhatYouOweService.validChargeType val" should {
+    val mfaDebitsDocumentDescriptions = List("ITSA PAYE Charge", "ITSA Calc Error Correction", "ITSA Manual Penalty Pre CY-4", "ITSA Misc Charge")
+    val nonMfaDebitsDocumentDescriptions = List("ITSA- POA 1", "ITSA - POA 2", "TRM New Charge", "TRM Amend Charge")
+
+    def testValidChargeType(MFADebitsEnabled: Boolean, documentDescriptions: List[String], expectedResult: Boolean): Unit = {
+      if (MFADebitsEnabled) enable(MFACreditsAndDebits) else disable(MFACreditsAndDebits)
+      assertResult(expected = expectedResult)(actual = documentDescriptions.forall(dd => TestWhatYouOweService.validChargeTypeCondition(dd)))
+    }
+
+    "validate MFA Debits and non-MFA Debits with FS ENABLED" in {
+      testValidChargeType(MFADebitsEnabled = true, mfaDebitsDocumentDescriptions ++ nonMfaDebitsDocumentDescriptions, expectedResult = true)
+    }
+
+    "not validate MFA Debits with FS DISABLED" in {
+      testValidChargeType(MFADebitsEnabled = false, mfaDebitsDocumentDescriptions, expectedResult = false)
+    }
+
+    "validate non-MFA Debits with FS DISABLED" in {
+      testValidChargeType(MFADebitsEnabled = false, nonMfaDebitsDocumentDescriptions, expectedResult = true)
     }
   }
 }

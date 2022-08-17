@@ -63,7 +63,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
       outstandingChargesModel = Some(OutstandingChargesModel(List(OutstandingChargeModel("BCD", Some("2019-01-31"), 1.67, 2345))))
     )
   val homePageTitle = s"${messages("titlePattern.serviceName.govUk", messages("home.heading"))}"
-  val agentTitle = s"${messages("agent.title_pattern.service_name.govuk", messages("home.agent.heading"))}"
+  val agentTitle = s"${messages("agent.titlePattern.serviceName.govUk", messages("home.agent.heading"))}"
 
   trait Setup {
     val mockDateService: DateService = mock[DateService]

@@ -74,6 +74,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
       isAgent = isAgent,
       origin = origin,
       creditAndRefundEnabled = isEnabled(CreditsRefundsRepay),
+      paymentHistoryEnabled = isEnabled(PaymentHistoryRefunds),
       isUserMigrated = user.incomeSources.yearOfMigration.isDefined
     )
   }
@@ -100,7 +101,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
           case _ => Nil
         })
         outstandingChargesDueDate = outstandingChargesModel.flatMap {
-          case OutstandingChargeModel(_, Some(relevantDate), _, _) => List(LocalDate.parse(relevantDate))
+          case OutstandingChargeModel(_, Some(relevantDate), _, _) => List(relevantDate)
           case _ => Nil
         }
         overDuePaymentsCount = paymentsDue.count(_.isBefore(dateService.getCurrentDate)) + outstandingChargesModel.length

@@ -39,14 +39,14 @@ class PaymentAllocationsResponseAuditModelSpec extends TestSupport {
     chargeType = Some("ITSA- POA 1"),
     mainType = Some("SA Payment on Account 1"),
     transactionId = Some("transid2"),
-    items = Some(Seq(SubItem(Some("2017-02-28")), SubItem(Some("2018-02-28"))))
+    items = Some(Seq(SubItem(Some(LocalDate.parse("2017-02-28"))), SubItem(Some(LocalDate.parse("2018-02-28")))))
   )
   private val fd2 = FinancialDetail(
     taxYear = "2017",
     chargeType = Some("Cutover Credits"),
     mainType = Some("ITSA Cutover Credits"),
     transactionId = Some("transid2"),
-    items = Some(Seq(SubItem(Some("2017-02-28")), SubItem(Some("2018-02-28"))))
+    items = Some(Seq(SubItem(Some(LocalDate.parse("2017-02-28"))), SubItem(Some(LocalDate.parse("2018-02-28")))))
   )
 
   private val dd1 = DocumentDetail(taxYear = "2017",
@@ -67,17 +67,17 @@ class PaymentAllocationsResponseAuditModelSpec extends TestSupport {
   private val paymentAllocationChargeModel = FinancialDetailsWithDocumentDetailsModel(List(dd1), List(fd1))
   private val paymentAllocationChargeModelCredit = FinancialDetailsWithDocumentDetailsModel(List(dd2), List(fd2))
 
-  private val allocationDetail = AllocationDetail(transactionId = Some("transid2"), from = Some("2017-03-21"), to = Some("2017-03-20"),
+  private val allocationDetail = AllocationDetail(transactionId = Some("transid2"), from = Some(LocalDate.parse("2017-03-21")), to = Some(LocalDate.parse("2017-03-20")),
     chargeType = Some("ITSA- POA 1"), mainType = Some("SA Payment on Account 1"), amount = Some(12345.67), clearedAmount = Some(12345.67), Some("chargeReference1"))
 
-  private val allocationDetailCredit = AllocationDetail(transactionId = Some("transid2"), from = Some("2017-03-21"), to = Some("2017-03-20"),
+  private val allocationDetailCredit = AllocationDetail(transactionId = Some("transid2"), from = Some(LocalDate.parse("2017-03-21")), to = Some(LocalDate.parse("2017-03-20")),
     chargeType = Some("ITSA- POA 1"), mainType = Some("SA Payment on Account 1"), amount = Some(12345.67), clearedAmount = Some(12345.67), Some("chargeReference1"))
 
   private val originalPaymentAllocationWithClearingDate: Seq[AllocationDetailWithClearingDate] =
-    Seq(AllocationDetailWithClearingDate(Some(allocationDetail), Some("2017-03-21")))
+    Seq(AllocationDetailWithClearingDate(Some(allocationDetail), Some(LocalDate.parse("2017-03-21"))))
 
   private val originalPaymentAllocationWithClearingDateCredit: Seq[AllocationDetailWithClearingDate] =
-    Seq(AllocationDetailWithClearingDate(Some(allocationDetailCredit), Some("2017-03-21")))
+    Seq(AllocationDetailWithClearingDate(Some(allocationDetailCredit), Some(LocalDate.parse("2017-03-21"))))
 
 
   def paymentAllocationsAuditFull(userType: Option[String] = Some("Agent")): PaymentAllocationsResponseAuditModel = {
@@ -172,12 +172,12 @@ class PaymentAllocationsResponseAuditModelSpec extends TestSupport {
             "saUtr" -> testSaUtr,
             "credId" -> testCredId,
             "userType" -> "Individual",
-            "paymentMadeDate" -> "2017-02-28",
+            "paymentMadeDate" -> LocalDate.parse("2017-02-28"),
             "paymentMadeAmount" -> 23456.78,
             "paymentAllocations" -> Json.arr(
               Json.obj(
                 "paymentAllocationDescription" -> poa1IncomeTax,
-                "dateAllocated" -> "2017-03-21",
+                "dateAllocated" -> LocalDate.parse("2017-03-21"),
                 "amount" -> 12345.67,
                 "taxYear" -> "2016 to 2017"
               )
@@ -193,12 +193,12 @@ class PaymentAllocationsResponseAuditModelSpec extends TestSupport {
             "credId" -> testCredId,
             "userType" -> "Agent",
             "agentReferenceNumber" -> testArn,
-            "paymentMadeDate" -> "2017-02-28",
+            "paymentMadeDate" -> LocalDate.parse("2017-02-28"),
             "paymentMadeAmount" -> 23456.78,
             "paymentAllocations" -> Json.arr(
               Json.obj(
                 "paymentAllocationDescription" -> poa1IncomeTax,
-                "dateAllocated" -> "2017-03-21",
+                "dateAllocated" -> LocalDate.parse("2017-03-21"),
                 "amount" -> 12345.67,
                 "taxYear" -> "2016 to 2017"
               )
@@ -229,12 +229,12 @@ class PaymentAllocationsResponseAuditModelSpec extends TestSupport {
             "saUtr" -> testSaUtr,
             "credId" -> testCredId,
             "userType" -> "Individual",
-            "paymentMadeDate" -> "2017-02-28",
+            "paymentMadeDate" -> LocalDate.parse("2017-02-28"),
             "paymentMadeAmount" -> 23456.78,
             "paymentAllocations" -> Json.arr(
               Json.obj(
                 "paymentAllocationDescription" -> poa1IncomeTax,
-                "dateAllocated" -> "2017-03-21",
+                "dateAllocated" -> LocalDate.parse("2017-03-21"),
                 "amount" -> 12345.67,
                 "taxYear" -> "2016 to 2017"
               )
@@ -250,12 +250,12 @@ class PaymentAllocationsResponseAuditModelSpec extends TestSupport {
             "credId" -> testCredId,
             "userType" -> "Agent",
             "agentReferenceNumber" -> testArn,
-            "paymentMadeDate" -> "2017-02-28",
+            "paymentMadeDate" -> LocalDate.parse("2017-02-28"),
             "paymentMadeAmount" -> 23456.78,
             "paymentAllocations" -> Json.arr(
               Json.obj(
                 "paymentAllocationDescription" -> poa1IncomeTax,
-                "dateAllocated" -> "2017-03-21",
+                "dateAllocated" -> LocalDate.parse("2017-03-21"),
                 "amount" -> 12345.67,
                 "taxYear" -> "2016 to 2017"
               )
@@ -286,13 +286,13 @@ class PaymentAllocationsResponseAuditModelSpec extends TestSupport {
             "saUtr" -> testSaUtr,
             "credId" -> testCredId,
             "userType" -> "Individual",
-            "paymentMadeDate" -> "2017-02-28",
+            "paymentMadeDate" -> LocalDate.parse("2017-02-28"),
             "paymentMadeAmount" -> 23456.78,
             "paymentType" -> "Payment made to HMRC",
             "paymentAllocations" -> Json.arr(
               Json.obj(
                 "paymentAllocationDescription" -> poa1IncomeTax,
-                "dateAllocated" -> "2017-03-21",
+                "dateAllocated" -> LocalDate.parse("2017-03-21"),
                 "amount" -> 12345.67,
                 "taxYear" -> "2016 to 2017"
               )
@@ -308,13 +308,13 @@ class PaymentAllocationsResponseAuditModelSpec extends TestSupport {
             "credId" -> testCredId,
             "userType" -> "Agent",
             "agentReferenceNumber" -> testArn,
-            "paymentMadeDate" -> "2017-02-28",
+            "paymentMadeDate" -> LocalDate.parse("2017-02-28"),
             "paymentMadeAmount" -> 23456.78,
             "paymentType" -> "Payment made to HMRC",
             "paymentAllocations" -> Json.arr(
               Json.obj(
                 "paymentAllocationDescription" -> poa1IncomeTax,
-                "dateAllocated" -> "2017-03-21",
+                "dateAllocated" -> LocalDate.parse("2017-03-21"),
                 "amount" -> 12345.67,
                 "taxYear" -> "2016 to 2017"
               )
@@ -345,13 +345,13 @@ class PaymentAllocationsResponseAuditModelSpec extends TestSupport {
             "saUtr" -> testSaUtr,
             "credId" -> testCredId,
             "userType" -> "Individual",
-            "paymentMadeDate" -> "2017-02-28",
+            "paymentMadeDate" -> LocalDate.parse("2017-02-28"),
             "paymentMadeAmount" -> 23456.78,
             "paymentType" -> "Payment made from earlier tax year",
             "paymentAllocations" -> Json.arr(
               Json.obj(
                 "paymentAllocationDescription" -> poa1IncomeTax,
-                "dateAllocated" -> "2017-03-21",
+                "dateAllocated" -> LocalDate.parse("2017-03-21"),
                 "amount" -> 12345.67,
                 "taxYear" -> "2016 to 2017"
               )
@@ -367,13 +367,13 @@ class PaymentAllocationsResponseAuditModelSpec extends TestSupport {
             "credId" -> testCredId,
             "userType" -> "Agent",
             "agentReferenceNumber" -> testArn,
-            "paymentMadeDate" -> "2017-02-28",
+            "paymentMadeDate" -> LocalDate.parse("2017-02-28"),
             "paymentMadeAmount" -> 23456.78,
             "paymentType" -> "Payment made from earlier tax year",
             "paymentAllocations" -> Json.arr(
               Json.obj(
                 "paymentAllocationDescription" -> poa1IncomeTax,
-                "dateAllocated" -> "2017-03-21",
+                "dateAllocated" -> LocalDate.parse("2017-03-21"),
                 "amount" -> 12345.67,
                 "taxYear" -> "2016 to 2017"
               )

@@ -25,16 +25,29 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.http.HeaderNames
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND, OK, SEE_OTHER}
+import play.api.i18n.{Lang, Messages, MessagesApi}
+import play.api.mvc.MessagesControllerComponents
+import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testMtditid, testNino}
 import testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessFull
 
 import java.time.LocalDate
+import java.util.Locale
 
 class FinalTaxCalculationControllerISpec extends ComponentSpecBase with SessionCookieBaker {
 
   val (taxYear, month, dayOfMonth) = (2018, 5, 6)
   val (hour, minute) = (12, 0)
   val url: String = s"http://localhost:$port" + controllers.routes.FinalTaxCalculationController.showAgent(taxYear).url
+
+  implicit val messages: Messages = app.injector.instanceOf[MessagesApi].preferred(FakeRequest())
+  lazy val mcc: MessagesControllerComponents = app.injector.instanceOf[MessagesControllerComponents]
+
+  def toMessages(language: String): Messages = {
+    mcc.messagesApi.preferred(Seq(
+      new Lang(new Locale(language))
+    ))
+  }
 
   def calculationStub(taxYearString: String = "2017-18"): Unit = {
     IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, "2018")(
@@ -75,7 +88,7 @@ class FinalTaxCalculationControllerISpec extends ComponentSpecBase with SessionC
   }
 
   object ExpectedValues {
-    val title = "Your client’s final tax overview - Update and submit an Income Tax Return - GOV.UK"
+    val title = messages(s"agent.titlePattern.serviceName.govUk")
     val caption = "6 April 2017 to 5 April 2018"
 
     val insetTextFull = "If you think this information is incorrect, you can check your client’s Income Tax Return."
@@ -103,7 +116,7 @@ class FinalTaxCalculationControllerISpec extends ComponentSpecBase with SessionC
   }
 
   object ExpectedValuesWelsh {
-    val title = "Trosolwg treth terfynol eich cleient - Diweddaru a chyflwyno Ffurflen Dreth Incwm - GOV.UK"
+    val title = toMessages("CY")(s"agent.titlePattern.serviceName.govUk")
     val caption = "6 Ebrill 2017 i 5 Ebrill 2018"
 
     val insetTextFull = "Os ydych o’r farn bod yr wybodaeth hon yn anghywir gallwch wirio Ffurflen Dreth Incwm eich cleient."

@@ -21,11 +21,13 @@ import models.financialDetails._
 import org.scalatest.{Matchers, WordSpecLike}
 import play.api.libs.json.{JsObject, JsSuccess, Json}
 
+import java.time.LocalDate
+
 class PaymentSpec extends WordSpecLike with Matchers {
 
   val paymentFull: Payment = Payment(reference = Some("reference"), amount = Some(100.00), outstandingAmount = Some(50.00),
     method = Some("method"), documentDescription = Some("docDescription"), lot = Some("lot"), lotItem = Some("lotItem"),
-    dueDate = Some("dueDate"), documentDate = "date", Some("DOCID01"))
+    dueDate = Some(LocalDate.now()), documentDate = LocalDate.now(), Some("DOCID01"))
 
   val paymentFullJson: JsObject = Json.obj(
     "reference" -> "reference",
@@ -35,14 +37,14 @@ class PaymentSpec extends WordSpecLike with Matchers {
     "documentDescription" -> "docDescription",
     "lot" -> "lot",
     "lotItem" -> "lotItem",
-    "dueDate" -> "dueDate",
-    "documentDate" -> "date",
+    "dueDate" -> "2022-08-16",
+    "documentDate" -> "2022-08-16",
     "transactionId" -> "DOCID01"
   )
 
-  val paymentMinimal: Payment = Payment(None, None, None, None, None, None, None, None, "date", None)
+  val paymentMinimal: Payment = Payment(None, None, None, None, None, None, None, None, LocalDate.parse("2018-08-16"), None)
 
-  val paymentMinimalJson: JsObject = Json.obj("documentDate" -> "date")
+  val paymentMinimalJson: JsObject = Json.obj("documentDate" -> "2018-08-16")
 
   "Payment" should {
 

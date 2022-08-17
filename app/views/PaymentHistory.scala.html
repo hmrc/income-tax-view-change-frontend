@@ -39,7 +39,7 @@
     govukAccordion : GovukAccordion
 )
 
-@(groupedPayments: List[(Int, List[PaymentHistoryEntry])], backUrl: String, saUtr: Option[String], isAgent: Boolean = false,
+@(groupedPayments: List[(Int, List[PaymentHistoryEntry])], paymentHistoryAndRefundsEnabled: Boolean = false, backUrl: String, saUtr: Option[String], isAgent: Boolean = false,
 btaNavPartial: Option[Html] = None, origin: Option[String] = None)(implicit request: Request[_], messages: Messages)
 @import implicitDateFormatter.longDate
 
@@ -57,7 +57,7 @@ btaNavPartial: Option[Html] = None, origin: Option[String] = None)(implicit requ
 
 @headingContent(year: Int) = {
     <span id="accordion-with-summary-sections-heading-@year">
-        @messages("paymentHistory.button", year.toString)
+        @year.toString
     </span>
 }
 
@@ -74,7 +74,7 @@ btaNavPartial: Option[Html] = None, origin: Option[String] = None)(implicit requ
         <tbody>
         @for((payment, index) <- yearPayments.zipWithIndex) {
             <tr class="govuk-table__row">
-                <td class="govuk-table__cell">@LocalDate.parse(payment.date).toLongDate</td>
+                <td class="govuk-table__cell">@payment.date.toLongDate</td>
                 <td class="govuk-table__cell">
                     <a class="govuk-link" href="@payment.linkUrl">
                         @messages(payment.description)
@@ -106,7 +106,12 @@ btaNavPartial: Option[Html] = None, origin: Option[String] = None)(implicit requ
     useFallbackBackLink = true
 ) {
 
+@if(paymentHistoryAndRefundsEnabled){
+    @h1(msg = "paymentHistory.paymentAndRefundHistory.heading")
+} else {
     @h1(msg = "paymentHistory.heading")
+}
+
 
     @if(groupedPayments.nonEmpty) {
         @govukAccordion(Accordion(

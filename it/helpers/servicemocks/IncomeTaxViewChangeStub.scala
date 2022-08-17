@@ -18,10 +18,11 @@ package helpers.servicemocks
 
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import helpers.WiremockHelper
-import models.core.{NinoResponseSuccess, NinoResponseError}
+import models.core.{Nino, NinoResponseError, NinoResponseSuccess}
 import models.financialDetails.Payment
 import models.incomeSourceDetails.IncomeSourceDetailsResponse
 import models.nextUpdates.ObligationsModel
+import models.repaymentHistory.RepaymentHistoryModel
 import play.api.http.Status
 import play.api.libs.json.{JsValue, Json}
 
@@ -183,5 +184,15 @@ object IncomeTaxViewChangeStub { // scalastyle:off number.of.methods
 
   def stubGetPaymentAllocationResponse(nino: String, paymentLot: String, paymentLotItem: String)(status: Int, response: JsValue): Unit =
     WiremockHelper.stubGet(paymentAllocationChargesUrl(nino, paymentLot, paymentLotItem), status, response.toString())
+
+  // Repayment History By RepaymentId stubs
+  def getRepaymentHistoryByIdUrl(nino: String, repaymentId: String): String = {
+    s"/income-tax-view-change/repayments/$nino/repaymentId/$repaymentId"
+  }
+
+  def stubGetRepaymentHistoryByRepaymentId(nino: Nino, repaymentId: String)
+                                          (status: Int, response: RepaymentHistoryModel): StubMapping = {
+    WiremockHelper.stubGet(getRepaymentHistoryByIdUrl(nino.value, repaymentId), status, Json.toJson(response).toString())
+  }
 
 }

@@ -20,26 +20,28 @@ package models.repaymentHistory
 import models.financialDetails.Payment
 import models.repaymentHistory.RepaymentHistoryUtils._
 import org.scalatest.Matchers
-import testUtils.{TestSupport}
+import testUtils.TestSupport
 
 import java.time.LocalDate
 
 class RepaymentHistoryUtilsSpec extends TestSupport with Matchers {
 
+  val repaymentRequestNumber: String = "000000003135"
+
   val paymentsWithMFA: List[Payment] = List(
     Payment(reference = Some("mfa1"), amount = Some(-10000.00), Some(-150.00), method = Some("method"),
       documentDescription = Some("ITSA Overpayment Relief"), lot = None, lotItem = None, dueDate = None,
-      documentDate = "2020-04-13", Some("AY777777202201")),
+      documentDate = LocalDate.parse("2020-04-13"), Some("AY777777202201")),
     Payment(reference = Some("mfa2"), amount = Some(-11000.00), Some(-150.00), method = Some("method"),
       documentDescription = Some("ITSA Overpayment Relief"), lot = None, lotItem = None, dueDate = None,
-      documentDate = "2020-04-12", Some("AY777777202210")),
+      documentDate = LocalDate.parse("2020-04-12"), Some("AY777777202210")),
     Payment(reference = Some("cutover1"), amount = Some(-11000.00), Some(-150.00), method = Some("method"),
-      documentDescription = Some("desc1"), lot = None, lotItem = None, dueDate = Some("2019-12-25"),
-      documentDate = "2019-04-25", Some("AY777777202202")),
+      documentDescription = Some("desc1"), lot = None, lotItem = None, dueDate = Some(LocalDate.parse("2019-12-25")),
+      documentDate = LocalDate.parse("2019-04-25"), Some("AY777777202202")),
     Payment(reference = Some("payment1"), amount = Some(10000), None, Some("Payment"), None, Some("lot"), Some("lotitem"),
-      Some("2019-12-26"), "2019-12-25", Some("DOCID01")),
-    Payment(Some("payment2"), Some(10000), None, Some("Payment"), None, Some("lot"), Some("lotitem"), Some("2019-12-25"),
-      "2019-12-25", Some("DOCID02"))
+      Some(LocalDate.parse("2019-12-26")), LocalDate.parse("2019-12-25"), Some("DOCID01")),
+    Payment(Some("payment2"), Some(10000), None, Some("Payment"), None, Some("lot"), Some("lotitem"), Some(LocalDate.parse("2019-12-25")),
+      LocalDate.parse("2019-12-25"), Some("DOCID02"))
   )
 
   val repaymentHistory = List(
@@ -63,7 +65,7 @@ class RepaymentHistoryUtilsSpec extends TestSupport with Matchers {
       ),
       estimatedRepaymentDate = LocalDate.parse("2021-08-21"),
       creationDate = LocalDate.parse("2021-07-21"),
-      repaymentRequestNumber = "000000003135"
+      repaymentRequestNumber = repaymentRequestNumber
     ),
     RepaymentHistory(
       amountApprovedforRepayment = Some(100.0),
@@ -85,23 +87,23 @@ class RepaymentHistoryUtilsSpec extends TestSupport with Matchers {
       ),
       estimatedRepaymentDate = LocalDate.parse("2021-08-20"),
       creationDate = LocalDate.parse("2021-07-21"),
-      repaymentRequestNumber = "000000003135"
+      repaymentRequestNumber = repaymentRequestNumber
     ))
 
   private def groupedRepayments(isAgent: Boolean = false) = List(
-    (2021, List(PaymentHistoryEntry("2021-08-20", "paymentHistory.refund", Some(301.0), None, s"${if (isAgent) "agents/" else ""}refund-to-taxpayer", "000000003135"),
-      PaymentHistoryEntry("2021-08-21", "paymentHistory.refund", Some(300.0), None, s"${if (isAgent) "agents/" else ""}refund-to-taxpayer", "000000003135"))),
+    (2021, List(PaymentHistoryEntry(LocalDate.parse("2021-08-20"), "paymentHistory.refund", Some(301.0), None, s"${if (isAgent) "agents/" else ""}refund-to-taxpayer/$repaymentRequestNumber", repaymentRequestNumber),
+      PaymentHistoryEntry(LocalDate.parse("2021-08-21"), "paymentHistory.refund", Some(300.0), None, s"${if (isAgent) "agents/" else ""}refund-to-taxpayer/$repaymentRequestNumber", repaymentRequestNumber))),
   )
 
   private def groupedPayments(cutoverEnabled: Boolean = true, mfaEnabled: Boolean = true, isAgent: Boolean = false) = {
-    val cutover = if (cutoverEnabled) List(PaymentHistoryEntry("2019-12-25", "paymentHistory.paymentFromEarlierYear", Some(-11000.0), None,
+    val cutover = if (cutoverEnabled) List(PaymentHistoryEntry(LocalDate.parse("2019-12-25"), "paymentHistory.paymentFromEarlierYear", Some(-11000.0), None,
       s"/report-quarterly/income-and-expenses/view/${if (isAgent) "agents/" else ""}payment-made-to-hmrc?documentNumber=AY777777202202", "AY777777202202")) else Nil
     val standardPayments = List(
-      PaymentHistoryEntry("2019-12-25", "paymentHistory.paymentToHmrc", Some(10000), Some("DOCID02"), s"/report-quarterly/income-and-expenses/view/${if (isAgent) "agents/" else ""}payment-made-to-hmrc?documentNumber=DOCID02", "2019-12-25 &pound;10,000.00"),
-      PaymentHistoryEntry("2019-12-26", "paymentHistory.paymentToHmrc", Some(10000), Some("DOCID01"), s"/report-quarterly/income-and-expenses/view/${if (isAgent) "agents/" else ""}payment-made-to-hmrc?documentNumber=DOCID01", "2019-12-26 &pound;10,000.00")
+      PaymentHistoryEntry(LocalDate.parse("2019-12-25"), "paymentHistory.paymentToHmrc", Some(10000), Some("DOCID02"), s"/report-quarterly/income-and-expenses/view/${if (isAgent) "agents/" else ""}payment-made-to-hmrc?documentNumber=DOCID02", "2019-12-25 &pound;10,000.00"),
+      PaymentHistoryEntry(LocalDate.parse("2019-12-26"), "paymentHistory.paymentToHmrc", Some(10000), Some("DOCID01"), s"/report-quarterly/income-and-expenses/view/${if (isAgent) "agents/" else ""}payment-made-to-hmrc?documentNumber=DOCID01", "2019-12-26 &pound;10,000.00")
     )
-    val mfa = if (mfaEnabled) List((2020, List(PaymentHistoryEntry("2020-04-12", "paymentHistory.mfaCredit", Some(-11000.0), None, s"/report-quarterly/income-and-expenses/view/${if (isAgent) "agents/" else ""}credits-from-hmrc/2020", "AY777777202210"),
-      PaymentHistoryEntry("2020-04-13", "paymentHistory.mfaCredit", Some(-10000.0), None, s"/report-quarterly/income-and-expenses/view/${if (isAgent) "agents/" else ""}credits-from-hmrc/2020", "AY777777202201")))) else List()
+    val mfa = if (mfaEnabled) List((2020, List(PaymentHistoryEntry(LocalDate.parse("2020-04-12"), "paymentHistory.mfaCredit", Some(-11000.0), None, s"/report-quarterly/income-and-expenses/view/${if (isAgent) "agents/" else ""}credits-from-hmrc/2020", "AY777777202210"),
+      PaymentHistoryEntry(LocalDate.parse("2020-04-13"), "paymentHistory.mfaCredit", Some(-10000.0), None, s"/report-quarterly/income-and-expenses/view/${if (isAgent) "agents/" else ""}credits-from-hmrc/2020", "AY777777202201")))) else List()
 
     mfa ++ List((2019, cutover ++ standardPayments))
   }
@@ -136,12 +138,6 @@ class RepaymentHistoryUtilsSpec extends TestSupport with Matchers {
         getGroupedPaymentHistoryData(paymentsWithMFA, List(), isAgent = false,
           MFACreditsEnabled = false, CutOverCreditsEnabled = true, languageUtils
         )(messages) shouldBe groupedPayments(true, false)
-      }
-
-      "agent links present when isAgent is TRUE" in {
-        getGroupedPaymentHistoryData(paymentsWithMFA, repaymentHistory, isAgent = true,
-          MFACreditsEnabled = true, CutOverCreditsEnabled = true, languageUtils
-        )(messages) shouldBe groupedRepayments(isAgent = true) ++ groupedPayments(isAgent = true)
       }
     }
   }

@@ -61,12 +61,12 @@ object SubItem {
       pli <- paymentLotItem
     } yield s"$pl-$pli"
     SubItem(
-      dueDate,
+      dueDate.map(date => LocalDate.parse(date)),
       subItemId,
       amount,
       dunningLock,
       interestLock,
-      clearingDate,
+      clearingDate.map(date => LocalDate.parse(date)),
       clearingReason,
       outgoingPaymentMethod,
       paymentReference,

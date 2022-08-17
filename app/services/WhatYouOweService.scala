@@ -18,7 +18,7 @@ package services
 
 import auth.MtdItUser
 import config.FrontendAppConfig
-import config.featureswitch.{CodingOut, FeatureSwitching}
+import config.featureswitch.{CodingOut, FeatureSwitching, MFACreditsAndDebits}
 import connectors.IncomeTaxViewChangeConnector
 import models.financialDetails._
 import models.outstandingCharges.{OutstandingChargesErrorModel, OutstandingChargesModel}
@@ -36,11 +36,14 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
 
   implicit lazy val localDateOrdering: Ordering[LocalDate] = Ordering.by(_.toEpochDay)
 
-  val validChargeTypeCondition: String => Boolean = documentDescription => {
-    documentDescription == "ITSA- POA 1" ||
-      documentDescription == "ITSA - POA 2" ||
-      documentDescription == "TRM New Charge" ||
-      documentDescription == "TRM Amend Charge"
+  val validChargeTypeCondition: String => Boolean = (documentDescription: String) => {
+    val chargeTypes: List[String] = List("ITSA- POA 1", "ITSA - POA 2", "TRM New Charge", "TRM Amend Charge")
+    val mfaDebitsChargeTypes: List[String] = List("ITSA PAYE Charge", "ITSA Calc Error Correction", "ITSA Manual Penalty Pre CY-4", "ITSA Misc Charge")
+    if (isDisabled(MFACreditsAndDebits)) {
+      chargeTypes.contains(documentDescription)
+    } else {
+      (chargeTypes ::: mfaDebitsChargeTypes).contains(documentDescription)
+    }
   }
 
   def getCreditCharges()(implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[List[DocumentDetail]]= {
