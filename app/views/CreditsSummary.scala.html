@@ -42,6 +42,8 @@
     isAgent: Boolean = false,
     origin: Option[String] = None)(implicit request: Request[_], user: MtdItUser[_], messages: Messages)
 
+<a>@charges</a>
+
 @import implicitDateFormatter.longDate
 
 @getMessage(key: String, args: String*) = @{

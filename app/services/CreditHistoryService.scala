@@ -72,6 +72,7 @@ class CreditHistoryService @Inject()(incomeTaxViewChangeConnector: IncomeTaxView
                   .map {
                     case document: FinancialDetailsWithDocumentDetailsModel =>
                       val creditDetailsModel: CreditDetailsModel = document
+                      println(s"\nCUTOVER CREDIT: ${creditDetailsModel}\n")
                       creditDetailsModel
                     case _ =>
                       throw new Exception("CreditHistoryService::ERROR::CutOverCredits")
@@ -98,7 +99,9 @@ class CreditHistoryService @Inject()(incomeTaxViewChangeConnector: IncomeTaxView
               case Right(creditModels) => Future {
                 val mfaCredits: CreditDetailsModel = financialDetails
                 // merge cutOver credits with MFA credits
-                Right(creditModels :+ mfaCredits)
+                println(s"\nCUTOVER: ${creditModels}\n")
+                println(s"\nMFA: ${mfaCredits}\n")
+                Right((creditModels :+ mfaCredits))
               }
               case e@Left(_) => Future {
                 e
