@@ -140,9 +140,6 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
           docDetailsNoPayments
             .filter(_.isNotCodingOutDocumentDetail)
             .filter(_.originalAmountIsNotZeroOrNegative)
-            .filter(dd => {
-              if (isDisabled(MFACreditsAndDebits) && dd.isMFADebit) false else true
-            })
             .map(
             documentDetail => DocumentDetailWithDueDate(documentDetail, financialDetails.findDueDateByDocumentDetails(documentDetail),
               dunningLock = financialDetails.dunningLockExists(documentDetail.transactionId)))

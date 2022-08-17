@@ -99,7 +99,7 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
   }
 
   private def filterMFADebits(documentDetailsWithDueDate: List[DocumentDetailWithDueDate]): List[DocumentDetailWithDueDate] = {
-    documentDetailsWithDueDate.filterNot(documentDetailWithDueDate => documentDetailWithDueDate.isMFADebit.contains(true))
+    documentDetailsWithDueDate.filterNot(documentDetailWithDueDate => documentDetailWithDueDate.isMFADebit)
   }
 
   private def getFilteredChargesList(financialDetailsList: List[FinancialDetailsModel]): List[DocumentDetailWithDueDate] = {
@@ -110,6 +110,6 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
         && !documentDetailWithDueDate.documentDetail.isPayeSelfAssessment
         && documentDetailWithDueDate.documentDetail.checkIfEitherChargeOrLpiHasRemainingToPay)
       .sortBy(_.dueDate.get)
-    if(isDisabled(MFACreditsAndDebits)) filterMFADebits(documentDetailsWithDueDates) else documentDetailsWithDueDates
+    if (isDisabled(MFACreditsAndDebits)) filterMFADebits(documentDetailsWithDueDates) else documentDetailsWithDueDates
   }
 }
