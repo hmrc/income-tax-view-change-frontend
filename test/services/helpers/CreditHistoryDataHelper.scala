@@ -28,15 +28,15 @@ trait CreditHistoryDataHelper {
 
   val paymentsForTheGivenTaxYear: List[Payment] = List(Payment(reference = Some("reference"), amount = Some(100.00),
     outstandingAmount = Some(1.00), method = Some("method"), documentDescription = None, lot = Some("lot"), lotItem = Some("lotItem"),
-    dueDate = Some("date"), documentDate = "docDate", Some("DOCID01")))
+    dueDate = Some(LocalDate.parse("2020-08-20")), documentDate = LocalDate.parse("2020-08-20"), Some("DOCID01")))
 
   val creditsForTheGivenTaxYear: List[Payment] = List(
     Payment(reference = Some("reference"), amount = Some(-100.00),
       outstandingAmount = Some(1.00), method = Some("method"), documentDescription = None, lot = None, lotItem = Some("lotItem"),
-      dueDate = Some("date"), documentDate = "docDate", Some("DOCID01")),
+      dueDate = Some(LocalDate.parse("2020-08-20")), documentDate = LocalDate.parse("2020-08-20"), Some("DOCID01")),
     Payment(reference = Some("reference"), amount = Some(-100.00),
       outstandingAmount = Some(1.00), method = Some("method"), documentDescription = None, lot = None, lotItem = Some("lotItem"),
-      dueDate = Some("date"), documentDate = "docDate", Some("DOCID02"))
+      dueDate =Some(LocalDate.parse("2020-08-20")), documentDate = LocalDate.parse("2020-08-20"), Some("DOCID02"))
   )
 
   val taxYear: Int = 2022
@@ -51,15 +51,15 @@ trait CreditHistoryDataHelper {
       DocumentDetail("testYear2", "testTransactionId2", None, None, None, None, LocalDate.of(taxYear, 3, 29))
     ),
     financialDetails = List(
-      FinancialDetail("testYear2", None, Some("testTransactionId1"), None, None, None, None, None, None, None, None, Some(Seq(SubItem(Some(LocalDate.now.plusDays(3).toString))))),
-      FinancialDetail("testYear2", None, Some("testTransactionId2"), None, None, None, None, None, None, None, None, Some(Seq(SubItem(Some(LocalDate.now.plusDays(5).toString)))))
+      FinancialDetail("testYear2", None, Some("testTransactionId1"), None, None, None, None, None, None, None, None, Some(Seq(SubItem(Some(LocalDate.now.plusDays(3)))))),
+      FinancialDetail("testYear2", None, Some("testTransactionId2"), None, None, None, None, None, None, None, None, Some(Seq(SubItem(Some(LocalDate.now.plusDays(5))))))
     )
   )
 
   val financialDetail: FinancialDetail = FinancialDetail(
     taxYear = "2018",
     transactionId = Some("transactionId"),
-    transactionDate = Some("2018-03-29"),
+    transactionDate = Some(LocalDate.parse("2018-03-29")),
     `type` = Some("type"),
     totalAmount = Some(BigDecimal("1000.00")),
     originalAmount = Some(BigDecimal(500.00)),
@@ -71,12 +71,12 @@ trait CreditHistoryDataHelper {
       SubItem(
         subItemId = Some("1"),
         amount = Some(BigDecimal("100.00")),
-        clearingDate = Some("2021-01-31"),
+        clearingDate = Some(LocalDate.parse("2021-01-31")),
         clearingReason = None,
         outgoingPaymentMethod = Some("outgoingPaymentMethod"),
         paymentReference = Some("paymentReference"),
         paymentAmount = Some(BigDecimal("2000.00")),
-        dueDate = Some("2021-01-31"),
+        dueDate = Some(LocalDate.parse("2021-01-31")),
         paymentMethod = Some("paymentMethod"),
         paymentLot = Some("paymentLot"),
         paymentLotItem = Some("paymentLotItem"),
@@ -90,7 +90,7 @@ trait CreditHistoryDataHelper {
         outgoingPaymentMethod = Some("outgoingPaymentMethod2"),
         paymentReference = None,
         paymentAmount = Some(BigDecimal("3000.00")),
-        dueDate = Some("2021-01-31"),
+        dueDate = Some(LocalDate.parse("2021-01-31")),
         paymentMethod = Some("paymentMethod2"),
         paymentLot = Some("paymentLot2"),
         paymentLotItem = None,
