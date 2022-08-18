@@ -19,17 +19,15 @@ package services
 import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
 import mocks.connectors.MockIncomeTaxViewChangeConnector
-import models.{CreditDetailModel, CutOverCreditType, MfaCreditType}
-import models.financialDetails.{BalanceDetails, DocumentDetail, FinancialDetail, FinancialDetailsErrorModel, FinancialDetailsModel, Payment, Payments, PaymentsError, SubItem}
-import models.paymentAllocationCharges.{FinancialDetailsWithDocumentDetailsErrorModel, FinancialDetailsWithDocumentDetailsModel}
+import models.financialDetails.{FinancialDetailsErrorModel, Payments}
+import models.paymentAllocationCharges.FinancialDetailsWithDocumentDetailsErrorModel
+import models.{CutOverCreditType, MfaCreditType}
 import play.api.test.FakeRequest
 import services.CreditHistoryService.CreditHistoryError
 import services.helpers.CreditHistoryDataHelper
 import testConstants.BaseTestConstants.{testMtditid, testNino, testRetrievedUserName}
 import testConstants.IncomeSourceDetailsTestConstants.oldUserDetails
 import testUtils.TestSupport
-
-import java.time.LocalDate
 
 class CreditHistoryServiceSpec extends TestSupport with MockIncomeTaxViewChangeConnector
   with FeatureSwitching with CreditHistoryDataHelper {

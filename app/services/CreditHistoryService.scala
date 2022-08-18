@@ -64,7 +64,7 @@ class CreditHistoryService @Inject()(incomeTaxViewChangeConnector: IncomeTaxView
     getCutOverDocumentNumbersByTaxYear(taxYear).flatMap { result =>
       result match {
         case Right(documentIds) =>
-           val futureCreditModels = Future.sequence(
+          val futureCreditModels = Future.sequence(
             for {
               creditModel <- documentIds.map { documentNumber =>
                 incomeTaxViewChangeConnector
@@ -79,7 +79,9 @@ class CreditHistoryService @Inject()(incomeTaxViewChangeConnector: IncomeTaxView
               }
             } yield creditModel
           )
-          futureCreditModels.flatMap( e => Future { Right(e.flatten) } )
+          futureCreditModels.flatMap(e => Future {
+            Right(e.flatten)
+          })
         case Left(error) =>
           Future {
             Left(error)
