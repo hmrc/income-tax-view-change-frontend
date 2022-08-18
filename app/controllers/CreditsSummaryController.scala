@@ -21,6 +21,7 @@ import config.featureswitch.{FeatureSwitching, MFACreditsAndDebits}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
+import models.CreditDetailModel
 import models.financialDetails.{DocumentDetail, FinancialDetailsErrorModel, FinancialDetailsModel}
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -112,6 +113,10 @@ class CreditsSummaryController @Inject()(creditsView: CreditsSummary,
     if (isEnabled(MFACreditsAndDebits)) {
       creditHistoryService.getCreditsHistory(calendarYear, user.nino).flatMap {
         case Right(credits) =>
+          val charges = credits
+              .map(x => CreditDetailModel(x.documentDetail, x.creditType))
+              .sortBy(_.documentDetail.documentDate.toEpochDay)
+
           Future.successful(Ok(creditsView(
             calendarYear = calendarYear,
             backUrl = if (isAgent) getAgentBackURL(user.headers.get(REFERER), calendarYear) else getBackURL(user.headers.get(REFERER), origin, calendarYear),
@@ -119,7 +124,7 @@ class CreditsSummaryController @Inject()(creditsView: CreditsSummary,
             utr = user.saUtr,
             btaNavPartial = user.btaNavPartial,
             enableMfaCreditsAndDebits = isEnabled(MFACreditsAndDebits),
-            charges = credits.map(_.documentDetail),
+            charges = charges,
             origin = origin)))
         case Left(_) => Future.successful(Redirect(controllers.routes.HomeController.show().url))
       }
