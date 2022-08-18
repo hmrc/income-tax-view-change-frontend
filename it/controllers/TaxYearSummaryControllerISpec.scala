@@ -601,7 +601,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
           )(FakeRequest()), financialDetailsDunningLockSuccess.getAllDocumentDetailsWithDueDates(),
           allObligations, Some(TaxYearSummaryViewModel(liabilityCalculationModelSuccessFull)), isEnabled(R7bTxmEvents)))
       }
-      
+
 
       "should show user has Coding out that is requested and immediately rejected by NPS" in {
         enable(CodingOut)
