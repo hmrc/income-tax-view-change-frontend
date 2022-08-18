@@ -1,0 +1,59 @@
+@*
+ * Copyright 2022 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import _root_.implicits.ImplicitCurrencyFormatter.CurrencyFormatter
+@import _root_.implicits.ImplicitDateFormatterImpl
+@import models.financialDetails.PaymentsWithChargeType
+@import models.financialDetails.FinancialDetailsModel
+@import models.financialDetails.DocumentDetailWithDueDate
+@import exceptions.MissingFieldException
+@import java.time.LocalDate
+
+@this(implicitDateFormatter: ImplicitDateFormatterImpl)
+
+
+@(  paymentAllocations: List[PaymentsWithChargeType],
+    payments: FinancialDetailsModel,
+    documentDetailWithDueDate: DocumentDetailWithDueDate,
+    isAgent: Boolean = false,
+    origin: Option[String] = None)(implicit messages: Messages)
+
+@import implicitDateFormatter.longDate
+
+@taxYearTo = @{documentDetailWithDueDate.documentDetail.taxYear}
+
+@for(allocation <- paymentAllocations ; payment <- allocation.payments) {
+    <tr>
+        <td class="govuk-table__cell govuk-!-width-one-quarter">@LocalDate.parse(payment.dueDate.getOrElse(throw MissingFieldException("Payment Date"))).toLongDateShort</td>
+        <td class="govuk-table__cell">
+            @if(payments.findMatchingPaymentDocument(payment.lot.getOrElse(throw MissingFieldException("Payment Lot")), payment.lotItem.getOrElse(throw MissingFieldException("Payment Lot Item"))).isDefined) {
+                @if(isAgent) {
+                    <a class="govuk-link" href="@{controllers.routes.PaymentAllocationsController.viewPaymentAllocationAgent(payments.findMatchingPaymentDocument(payment.lot.get, payment.lotItem.get).get.transactionId)}">
+                    } else {
+                    <a class="govuk-link" href="@{controllers.routes.PaymentAllocationsController.viewPaymentAllocation(payments.findMatchingPaymentDocument(payment.lot.get, payment.lotItem.get).get.transactionId, origin)}">
+                    }
+                @allocation.getPaymentAllocationTextInChargeSummary.map(messages(_))
+                <span class="govuk-visually-hidden"> @taxYearTo</span>
+            </a>
+            }
+
+            @if(payments.findMatchingPaymentDocument(payment.lot.getOrElse(throw MissingFieldException("Payment Lot")), payment.lotItem.getOrElse(throw MissingFieldException("Payment Lot Item"))).isEmpty) {
+                @allocation.getPaymentAllocationTextInChargeSummary.map(messages(_))
+            }
+        </td>
+        <td class="govuk-table__cell numeric">@payment.amount.getOrElse(throw MissingFieldException("Payment Amount")).abs.toCurrency</td>
+    </tr>
+}

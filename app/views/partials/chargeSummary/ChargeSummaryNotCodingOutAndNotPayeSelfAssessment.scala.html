@@ -1,0 +1,89 @@
+@*
+ * Copyright 2022 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import _root_.implicits.ImplicitDateFormatterImpl
+@import _root_.implicits.ImplicitCurrencyFormatter.CurrencyFormatter
+@import views.html.components._
+@import models.financialDetails.{DocumentDetailWithDueDate, DocumentDetail}
+
+@import java.time.LocalDate
+@import exceptions.MissingFieldException
+
+@this(p: p, link: link, implicitDateFormatter: ImplicitDateFormatterImpl)
+
+@(
+    documentDetailWithDueDate: DocumentDetailWithDueDate,
+    documentDetail: DocumentDetail,
+    dueDate: Option[LocalDate],
+    latePaymentInterestCharge: Boolean,
+    codingOutEnabled: Boolean,
+    taxYearFromCodingOut: String,
+    taxYearToCodingOut: String,
+    appConfig: config.FrontendAppConfig
+)(implicit messages: Messages)
+
+@import implicitDateFormatter.longDate
+
+<div class="govuk-summary-list__row">
+    <dt class="govuk-summary-list__key">@messages("chargeSummary.dueDate")</dt>
+    <dd class="govuk-summary-list__value">
+        @if(documentDetailWithDueDate.isOverdue && !documentDetail.checkIsPaid(latePaymentInterestCharge)) {
+            <span class="govuk-tag govuk-tag--red">@messages("chargeSummary.overdue")</span>
+        }
+        @{
+            if(latePaymentInterestCharge) documentDetail.interestEndDate.getOrElse(throw MissingFieldException("Interest End Date")).toLongDate
+            else dueDate.getOrElse(throw MissingFieldException("Due Date")).toLongDate
+        }
+    </dd>
+</div>
+
+@if(latePaymentInterestCharge) {
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">@messages("chargeSummary.lpi.interestPeriod")</dt>
+        <dd class="govuk-summary-list__value">
+        @messages("chargeSummary.lpi.interestPeriod.dates",
+            documentDetail.interestFromDate.getOrElse(throw MissingFieldException("Interest From Date")).toLongDateShort,
+            documentDetail.interestEndDate.getOrElse(throw MissingFieldException("Interest End Date")).toLongDateShort)</dd>
+    </div>
+}
+<div class="govuk-summary-list__row">
+    <dt class="govuk-summary-list__key">
+    @{
+        if (documentDetail.isCodingOutDocumentDetail(codingOutEnabled)) {
+            messages("chargeSummary.paymentAmountCodingOut")
+        } else messages("chargeSummary.paymentAmount")
+    }
+    </dt>
+    <dd class="govuk-summary-list__value">
+        <span>
+        @{
+            if (latePaymentInterestCharge) documentDetail.latePaymentInterestAmount.getOrElse(throw MissingFieldException("Late Payment Interest Amount")).toCurrency
+            else documentDetail.originalAmount.getOrElse(throw MissingFieldException("Original Amount")).toCurrency
+        }
+        </span>
+    </dd>
+</div>
+<div class="govuk-summary-list__row">
+    <dt class="govuk-summary-list__key">@messages("chargeSummary.remainingDue")</dt>
+    <dd class="govuk-summary-list__value">
+    @{
+        if (codingOutEnabled && documentDetail.isPayeSelfAssessment) {
+            messages("chargeSummary.codingOutRemainingToPay", taxYearFromCodingOut, taxYearToCodingOut)
+        } else if (latePaymentInterestCharge) documentDetail.interestRemainingToPay.toCurrency
+        else documentDetail.remainingToPay.toCurrency
+    }
+    </dd>
+</div>
