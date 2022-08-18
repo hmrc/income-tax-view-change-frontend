@@ -19,7 +19,7 @@ package services
 import auth.MtdItUser
 import config.FrontendAppConfig
 import connectors.IncomeTaxViewChangeConnector
-import models.CreditDetailsModel
+import models.CreditDetailModel
 import models.core.Nino
 import models.financialDetails.{FinancialDetailsErrorModel, FinancialDetailsModel, Payments, PaymentsError}
 import models.paymentAllocationCharges.FinancialDetailsWithDocumentDetailsModel
@@ -59,26 +59,27 @@ class CreditHistoryService @Inject()(incomeTaxViewChangeConnector: IncomeTaxView
 
   // B: Get cutOver credits models for the given tax year and Nino
   private def getAllCutOverCreditsByTaxYear(taxYear: Int, nino: String)
-                                           (implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[CreditHistoryError.type, List[CreditDetailsModel]]] = {
-    import CreditDetailsModel._
+                                           (implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[CreditHistoryError.type, List[CreditDetailModel]]] = {
+    import CreditDetailModel._
     getCutOverDocumentNumbersByTaxYear(taxYear).flatMap { result =>
       result match {
         case Right(documentIds) =>
-          Future.sequence(
+           val futureCreditModels = Future.sequence(
             for {
               creditModel <- documentIds.map { documentNumber =>
                 incomeTaxViewChangeConnector
                   .getFinancialDetailsByDocumentId(Nino(nino), documentNumber)
                   .map {
                     case document: FinancialDetailsWithDocumentDetailsModel =>
-                      val creditDetailsModel: CreditDetailsModel = document
+                      val creditDetailsModel: List[CreditDetailModel] = document
                       creditDetailsModel
                     case _ =>
                       throw new Exception("CreditHistoryService::ERROR::CutOverCredits")
                   }
               }
             } yield creditModel
-          ).map(creditModels => Right(creditModels))
+          )
+          futureCreditModels.flatMap( e => Future { Right(e.flatten) } )
         case Left(error) =>
           Future {
             Left(error)
@@ -89,16 +90,16 @@ class CreditHistoryService @Inject()(incomeTaxViewChangeConnector: IncomeTaxView
 
   // C: Get all credits (MFA + CutOver one) by tax year (and given Nino)
   def getCreditsHistory(taxYear: Int, nino: String)
-                       (implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[CreditHistoryError.type, List[CreditDetailsModel]]] = {
+                       (implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[CreditHistoryError.type, List[CreditDetailModel]]] = {
     incomeTaxViewChangeConnector.getFinancialDetails(taxYear, nino).map {
       case financialDetails: FinancialDetailsModel =>
         for {
           x <- getAllCutOverCreditsByTaxYear(taxYear, nino).flatMap { result =>
             result match {
               case Right(creditModels) => Future {
-                val mfaCredits: CreditDetailsModel = financialDetails
+                val mfaCredits: List[CreditDetailModel] = financialDetails
                 // merge cutOver credits with MFA credits
-                Right(creditModels :+ mfaCredits)
+                Right(creditModels ++ mfaCredits)
               }
               case e@Left(_) => Future {
                 e
