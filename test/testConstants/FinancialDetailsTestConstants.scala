@@ -795,14 +795,9 @@ object FinancialDetailsTestConstants {
   )
 
   val financialDetailsMFADebits: FinancialDetailsModel = testFinancialDetailsModelWithChargesOfSameType(
-    <<<<<<< HEAD
-      documentDescription = List(Some("TRM New Charge"), Some("TRM New Charge")),
+    documentDescription = List(Some("TRM New Charge"), Some("TRM New Charge")),
     mainType = List(Some("ITSA PAYE Charge"), Some("ITSA Calc Error Correction")),
-    =======
-      documentDescription = List(Some("ITSA PAYE Charge"), Some("ITSA Calc Error Correction")),
-    mainType = List(Some("HMRC Adjustment"), Some("HMRC Adjustment")),
-    >>>>>>> main
-      dueDate = List(Some(LocalDate.now().minusDays(1).toString), Some(LocalDate.now().plusDays(35).toString)),
+    dueDate = List(Some(LocalDate.now().minusDays(1).toString), Some(LocalDate.now().plusDays(35).toString)),
     outstandingAmount = List(Some(100), Some(50)),
     taxYear = LocalDate.now().getYear.toString,
     interestOutstandingAmount = List(None, None),

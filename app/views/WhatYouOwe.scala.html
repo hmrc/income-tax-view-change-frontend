@@ -157,7 +157,7 @@
 }
 
 @paymentTypeEntry(documentDetail: DocumentDetail, rowId: String, isLatePaymentInterest: Boolean,
-    isMFADebit: Boolean = false, showTaxYear: Boolean = true, linkSuffix: String) = @{
+    isMFADebit: Boolean, showTaxYear: Boolean = true, linkSuffix: String) = @{
 
     val chargeTypeKey = if(isMFADebit) "hmrcAdjustment.text" else documentDetail.getChargeTypeKey(codingOutEnabled)
     val lpi = if (isLatePaymentInterest) "lpi." else ""
