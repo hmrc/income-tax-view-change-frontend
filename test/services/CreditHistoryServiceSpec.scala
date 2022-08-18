@@ -19,17 +19,15 @@ package services
 import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
 import mocks.connectors.MockIncomeTaxViewChangeConnector
-import models.CreditDetailsModel
-import models.financialDetails.{BalanceDetails, DocumentDetail, FinancialDetail, FinancialDetailsErrorModel, FinancialDetailsModel, Payment, Payments, PaymentsError, SubItem}
-import models.paymentAllocationCharges.{FinancialDetailsWithDocumentDetailsErrorModel, FinancialDetailsWithDocumentDetailsModel}
+import models.financialDetails.{FinancialDetailsErrorModel, Payments}
+import models.paymentAllocationCharges.FinancialDetailsWithDocumentDetailsErrorModel
+import models.{CutOverCreditType, MfaCreditType}
 import play.api.test.FakeRequest
 import services.CreditHistoryService.CreditHistoryError
 import services.helpers.CreditHistoryDataHelper
 import testConstants.BaseTestConstants.{testMtditid, testNino, testRetrievedUserName}
 import testConstants.IncomeSourceDetailsTestConstants.oldUserDetails
 import testUtils.TestSupport
-
-import java.time.LocalDate
 
 class CreditHistoryServiceSpec extends TestSupport with MockIncomeTaxViewChangeConnector
   with FeatureSwitching with CreditHistoryDataHelper {
@@ -77,7 +75,13 @@ class CreditHistoryServiceSpec extends TestSupport with MockIncomeTaxViewChangeC
       "return a list of MFA credits only" in {
         setupGetPayments(taxYear)(Payments(paymentsForTheGivenTaxYear))
         setupMockGetFinancialDetails(taxYear, nino)(taxYearFinancialDetails)
-        TestCreditHistoryService.getCreditsHistory(taxYear, nino).futureValue shouldBe Right(creditModels)
+        val mfaCreditModels = TestCreditHistoryService.getCreditsHistory(taxYear, nino).futureValue
+        mfaCreditModels shouldBe Right(creditModels)
+        mfaCreditModels.right.foreach { ds =>
+          ds.foreach{ d =>
+            d.creditType shouldBe MfaCreditType
+          }
+        }
       }
 
       "return a list of MFA and CutOver credits" in {
@@ -85,7 +89,12 @@ class CreditHistoryServiceSpec extends TestSupport with MockIncomeTaxViewChangeC
         setupMockGetFinancialDetails(taxYear, nino)(taxYearFinancialDetails)
         setupGetPaymentAllocationCharges(nino, documentIdA)(cutOverCreditsAsFinancialDocumentA)
         setupGetPaymentAllocationCharges(nino, documentIdB)(cutOverCreditsAsFinancialDocumentB)
-        TestCreditHistoryService.getCreditsHistory(taxYear, nino).futureValue shouldBe Right(List(cutOverCreditA, cutOverCreditB) ++ creditModels)
+        val cs = TestCreditHistoryService.getCreditsHistory(taxYear, nino).futureValue
+        cs shouldBe Right(cutOverCreditA ++ cutOverCreditB ++ creditModels)
+        cs.right.foreach { ds =>
+          ds.filter(_.creditType == CutOverCreditType).length shouldBe (cutOverCreditA ++ cutOverCreditB).length
+          ds.filter(_.creditType == MfaCreditType).length shouldBe creditModels.length
+        }
       }
 
     }
