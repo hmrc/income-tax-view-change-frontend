@@ -165,6 +165,12 @@ case class DocumentDetail(taxYear: String,
       "unknownCharge"
   }
 
+  def isMFADebit(): Boolean = documentDescription match { //remove in MISUV-3666
+    case Some("ITSA PAYE Charge") | Some("ITSA Calc Error Correction") |
+         Some("ITSA Manual Penalty Pre CY-4") | Some("ITSA Misc Charge") => true
+    case _ => false
+  }
+
   def validMFACreditDescription(): Boolean = MfaCreditUtils.validMFACreditDescription(this.documentDescription)
 
 

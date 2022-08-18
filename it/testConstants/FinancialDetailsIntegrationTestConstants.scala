@@ -485,6 +485,7 @@ object FinancialDetailsIntegrationTestConstants {
     outstandingChargesModel = Some(outstandingChargesOverdueData))
 
   val whatYouOweEmptyMFA: WhatYouOweChargesList = WhatYouOweChargesList(BalanceDetails(1.0, 2.0, 3.0, None, None, None, None), List(), Some(OutstandingChargesModel(List())), None)
+
   val whatYouOweNoChargeList: WhatYouOweChargesList = WhatYouOweChargesList(BalanceDetails(0.00, 0.00, 0.00, None, None, None, None), List.empty)
 
   val whatYouOweFinancialDetailsEmptyBCDCharge: WhatYouOweChargesList = WhatYouOweChargesList(balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),

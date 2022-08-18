@@ -83,7 +83,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
         httpStatus(OK),
         pageTitleIndividual("chargeSummary.paymentOnAccount1.text"),
         elementTextBySelector("#heading-payment-breakdown")(paymentBreakdownHeading),
-        elementTextBySelector("dl:nth-of-type(2) dd span")(underReview),
+        elementTextBySelector("dl:nth-of-type(2) dd span:nth-of-type(2)")(underReview),
         elementTextBySelector("dl:nth-of-type(2) dd div")(notCurrentlyChargingInterest)
       )
 

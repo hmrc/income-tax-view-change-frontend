@@ -185,6 +185,10 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar wi
 
   lazy val fakeRequestNoSession: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
 
+  lazy val fakeRequestWithTestSession: FakeRequest[AnyContentAsEmpty.type] = FakeRequest().withSession(
+    "Gov-Test-Scenario" -> "data"
+  )
+
   implicit class FakeRequestUtil[C](fakeRequest: FakeRequest[C]) {
     def addingToSession(newSessions: (String, String)*): FakeRequest[C] = {
       fakeRequest.withSession(fakeRequest.session.data ++: newSessions: _*)

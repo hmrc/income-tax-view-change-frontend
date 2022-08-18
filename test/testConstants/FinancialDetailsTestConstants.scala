@@ -795,9 +795,14 @@ object FinancialDetailsTestConstants {
   )
 
   val financialDetailsMFADebits: FinancialDetailsModel = testFinancialDetailsModelWithChargesOfSameType(
-    documentDescription = List(Some("TRM New Charge"), Some("TRM New Charge")),
+    <<<<<<< HEAD
+      documentDescription = List(Some("TRM New Charge"), Some("TRM New Charge")),
     mainType = List(Some("ITSA PAYE Charge"), Some("ITSA Calc Error Correction")),
-    dueDate = List(Some(LocalDate.now().minusDays(1).toString), Some(LocalDate.now().plusDays(35).toString)),
+    =======
+      documentDescription = List(Some("ITSA PAYE Charge"), Some("ITSA Calc Error Correction")),
+    mainType = List(Some("HMRC Adjustment"), Some("HMRC Adjustment")),
+    >>>>>>> main
+      dueDate = List(Some(LocalDate.now().minusDays(1).toString), Some(LocalDate.now().plusDays(35).toString)),
     outstandingAmount = List(Some(100), Some(50)),
     taxYear = LocalDate.now().getYear.toString,
     interestOutstandingAmount = List(None, None),
@@ -914,7 +919,6 @@ object FinancialDetailsTestConstants {
   )
 
   val whatYouOweEmptyMFA: WhatYouOweChargesList = WhatYouOweChargesList(BalanceDetails(1.0, 2.0, 3.0, None, None, None, None), List(), Some(OutstandingChargesModel(List())), None)
-
 
   val creditDocumentDetailList = List(
     documentDetailModel(originalAmount = Some(BigDecimal(-100.00)), paymentLotItem = None, paymentLot = None),

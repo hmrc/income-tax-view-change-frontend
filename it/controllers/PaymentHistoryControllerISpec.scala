@@ -18,8 +18,8 @@ package controllers
 
 import audit.models.PaymentHistoryResponseAuditModel
 import auth.MtdItUser
-import config.featureswitch.{CutOverCredits, MFACreditsAndDebits, R7bTxmEvents}
-import helpers.ComponentSpecBase
+import config.featureswitch.{CutOverCredits, MFACreditsAndDebits, PaymentHistoryRefunds, R7bTxmEvents}
+import helpers.{ComponentSpecBase, servicemocks}
 import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.financialDetails.Payment
@@ -28,6 +28,7 @@ import play.api.libs.ws.WSResponse
 import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.IncomeSourceIntegrationTestConstants._
+import testConstants.messages.{paymentAndRefundHistoryHeading, TaxYearSummaryMessages}
 
 class PaymentHistoryControllerISpec extends ComponentSpecBase {
 
@@ -104,6 +105,7 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase {
       enable(R7bTxmEvents)
       enable(CutOverCredits)
       enable(MFACreditsAndDebits)
+      enable(PaymentHistoryRefunds)
       isAuthorisedUser(authorised = true)
       stubUserDetails()
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, paymentHistoryBusinessAndPropertyResponse)
@@ -114,11 +116,34 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase {
       Then("The Payment History page is returned to the user")
       result should have(
         httpStatus(OK),
-        pageTitleIndividual("paymentHistory.heading")
+        pageTitleIndividual("paymentHistory.heading"),
+        elementTextBySelector("h1")(paymentAndRefundHistoryHeading.paymentHistoryHeading)
       )
+
 
       verifyAuditContainsDetail(PaymentHistoryResponseAuditModel(testUser, payments, CutOverCreditsEnabled = true,
         MFACreditsEnabled = true, R7bTxmEvents = true).detail)
+    }
+
+
+    "Show the user the payments history page" when {
+      "The feature switch is disabled" in {
+        disable(PaymentHistoryRefunds)
+        enable(R7bTxmEvents)
+        enable(CutOverCredits)
+        enable(MFACreditsAndDebits)
+        isAuthorisedUser(authorised = true)
+        stubUserDetails()
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, paymentHistoryBusinessAndPropertyResponse)
+        IncomeTaxViewChangeStub.stubGetPaymentsResponse(testNino, s"$twoPreviousTaxYearEnd-04-06", s"$previousTaxYearEnd-04-05")(OK, payments)
+        val result: WSResponse = IncomeTaxViewChangeFrontend.getPaymentHistory
+        Then("The Payment History page is returned to the user")
+        result should have(
+          httpStatus(OK),
+          pageTitleIndividual("paymentHistory.heading"),
+          elementTextBySelector("h1")(paymentAndRefundHistoryHeading.paymentHistoryHeadingFSOff)
+        )
+      }
     }
   }
 

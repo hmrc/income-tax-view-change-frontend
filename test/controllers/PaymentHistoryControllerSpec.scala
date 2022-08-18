@@ -16,6 +16,7 @@
 
 package controllers
 
+import config.featureswitch.PaymentHistoryRefunds
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
 import forms.utils.SessionKeys.gatewayPage
@@ -121,6 +122,7 @@ class PaymentHistoryControllerSpec extends MockAuthenticationPredicate
         redirectLocation(result) shouldBe Some("/report-quarterly/income-and-expenses/view/sign-in")
       }
     }
+
   }
 
 
@@ -133,9 +135,7 @@ class PaymentHistoryControllerSpec extends MockAuthenticationPredicate
         mockSingleBusinessIncomeSource()
         when(paymentHistoryService.getPaymentHistory(any(), any()))
           .thenReturn(Future.successful(Right(testPayments)))
-
         val result = controller.showAgent()(fakeRequestConfirmedClient())
-
         status(result) shouldBe Status.OK
         result.futureValue.session.get(gatewayPage) shouldBe Some("paymentHistory")
       }
@@ -148,7 +148,6 @@ class PaymentHistoryControllerSpec extends MockAuthenticationPredicate
         mockErrorIncomeSource()
         when(paymentHistoryService.getPaymentHistory(any(), any()))
           .thenReturn(Future.successful(Left(PaymentHistoryError)))
-
         val result: Future[Result] = controller.showAgent()(fakeRequestConfirmedClient())
         result.failed.futureValue shouldBe an[InternalServerException]
 
@@ -160,7 +159,6 @@ class PaymentHistoryControllerSpec extends MockAuthenticationPredicate
       "send the user to internal server error page" in new Setup {
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         mockErrorIncomeSource()
-
         val result: Future[Result] = controller.showAgent()(fakeRequestConfirmedClient())
         result.failed.futureValue shouldBe an[InternalServerException]
       }
@@ -168,9 +166,7 @@ class PaymentHistoryControllerSpec extends MockAuthenticationPredicate
 
     "User fails to be authorised" in new Setup {
       setupMockAgentAuthorisationException(withClientPredicate = false)
-
       val result: Future[Result] = controller.showAgent()(fakeRequestWithActiveSession)
-
       status(result) shouldBe Status.SEE_OTHER
 
     }

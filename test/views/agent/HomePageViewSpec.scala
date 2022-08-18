@@ -118,10 +118,6 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
         document.title() shouldBe messages("agent.titlePattern.serviceName.govUk", messages("home.agent.heading"))
       }
 
-      "display the language selection switch" in new Setup {
-        getTextOfElementById("switch-welsh") shouldBe Some(messages("language-switcher.welsh"))
-      }
-
       s"have the page heading ${messages("home.agent.heading")}" in new Setup {
         document.select("h1").text() shouldBe messages("home.agent.heading")
       }
@@ -192,6 +188,25 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
           val link: Option[Elements] = getElementById("updates-tile").map(_.select("a"))
           link.map(_.attr("href")) shouldBe Some("/report-quarterly/income-and-expenses/view/agents/next-updates")
           link.map(_.text) shouldBe Some(messages("home.updates.view"))
+        }
+      }
+
+      "have a language selection switch" which {
+        "displays the current language" in new Setup {
+          val langSwitch: Option[Element] = getElementById("lang-switch-en")
+          langSwitch.map(_.select("li:nth-child(1)").text) shouldBe Some(messages("language-switcher.english"))
+        }
+
+        "changes with JS ENABLED" in new Setup {
+          val langSwitchScript: Option[Element] = getElementById("lang-switch-en-js")
+          langSwitchScript.toString.contains("javascript:switchTo('/report-quarterly/income-and-expenses/view/switch-to-welsh')") shouldBe true
+          langSwitchScript.toString.contains(messages("language-switcher.welsh")) shouldBe true
+        }
+
+        "changes with JS DISABLED" in new Setup {
+          val langSwitchNoScript: Option[Element] = getElementById("lang-switch-en-no-js")
+          langSwitchNoScript.map(_.select("a").attr("href")) shouldBe Some("/report-quarterly/income-and-expenses/view/switch-to-welsh")
+          langSwitchNoScript.map(_.select("a span:nth-child(2)").text) shouldBe Some(messages("language-switcher.welsh"))
         }
       }
 
