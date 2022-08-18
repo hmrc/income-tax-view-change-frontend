@@ -21,11 +21,17 @@ import models.paymentAllocationCharges.FinancialDetailsWithDocumentDetailsModel
 
 case class CreditDetailModel(documentDetail: DocumentDetail, creditType: CreditType)
 
-sealed trait CreditType
+sealed trait CreditType {
+  val creditTypeAsString: String
+}
 
-case object MfaCreditType extends CreditType
+case object MfaCreditType extends CreditType {
+  override val creditTypeAsString = "Credit from HMRC adjustment"
+}
 
-case object CutOverCreditType extends CreditType
+case object CutOverCreditType extends CreditType {
+  override val creditTypeAsString = "Credit from an earlier tax year"
+}
 
 object CreditDetailModel {
 
