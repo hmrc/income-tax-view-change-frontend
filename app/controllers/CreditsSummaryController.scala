@@ -21,6 +21,7 @@ import config.featureswitch.{FeatureSwitching, MFACreditsAndDebits}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
+import models.{CreditDetailsModel, MFACreditType}
 import models.financialDetails.{DocumentDetail, FinancialDetailsErrorModel, FinancialDetailsModel}
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -118,10 +119,7 @@ class CreditsSummaryController @Inject()(creditsView: CreditsSummary,
             utr = user.saUtr,
             btaNavPartial = user.btaNavPartial,
             enableMfaCreditsAndDebits = isEnabled(MFACreditsAndDebits),
-            charges = credits,
-              //.flatMap(x => (x.documentDetails, x.creditType)),
-              //.filter(_.documentDate.getYear == calendarYear)
-              //.sortBy(_.documentDate.toEpochDay),
+            charges = credits.map(x => CreditDetailsModel(x.documentDetails.filter(_.documentDate.getYear == calendarYear), x.creditType)),
             origin = origin
           )))
         case Left(_) => Future.successful(Redirect(controllers.routes.HomeController.show().url))

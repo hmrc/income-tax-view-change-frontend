@@ -21,9 +21,19 @@ import models.paymentAllocationCharges.FinancialDetailsWithDocumentDetailsModel
 
 case class CreditDetailsModel(documentDetails: List[DocumentDetail], creditType: CreditType)
 
-trait CreditType
-case object MFACreditType extends  CreditType
-case object CutOverCredit extends CreditType
+trait CreditType {
+  val getCreditTypeString: String
+}
+case object MFACreditType extends CreditType {
+
+  override val getCreditTypeString = "Credit from HMRC adjustment"
+
+}
+case object CutOverCredit extends CreditType {
+
+  override val getCreditTypeString = "Credit from an earlier tax year"
+
+}
 
 object CreditDetailsModel {
 

@@ -42,8 +42,6 @@
     isAgent: Boolean = false,
     origin: Option[String] = None)(implicit request: Request[_], user: MtdItUser[_], messages: Messages)
 
-<a>@charges</a>
-
 @import implicitDateFormatter.longDate
 
 @getMessage(key: String, args: String*) = @{
@@ -66,12 +64,12 @@
     outstandingAmount != original amount(partially allocated)
     outstandingAmount == 0 (allocated)
 *@
-@*@getStatus(cs: CreditDetailsModel) = @{*@
-@*    val c = cs.documentDetails*@
-@*    if(c.outstandingAmount.map(_.abs) === c.originalAmount.map(_.abs)) getMessage("table.status-not-yet-allocated")*@
-@*    else if (c.outstandingAmount === Some(BigDecimal(0))) getMessage("table.status-fully-allocated")*@
-@*    else getMessage("table.status-partially-allocated")*@
-@*}*@
+@getStatus(cs: DocumentDetail) = @{
+    val c = cs
+    if(c.outstandingAmount.map(_.abs) === c.originalAmount.map(_.abs)) getMessage("table.status-not-yet-allocated")
+    else if (c.outstandingAmount === Some(BigDecimal(0))) getMessage("table.status-fully-allocated")
+    else getMessage("table.status-partially-allocated")
+}
 
 @getIndex(idx: Int) = @{
     s"balancing-charge-type-$idx"
@@ -96,9 +94,8 @@
                             @for( (documentDetail, index) <- documentDetails.zipWithIndex) {
                                 <tr class="govuk-table__row " id=@getIndex(index)>
                                     <td class="govuk-table__cell govuk-!-width-one-quarter">@documentDetail.documentDate.toLongDateShort</td>
-                                    <td class="govuk-table__cell govuk-!-width-one-half">@creditType.toString</td>
-                                    // <td class="govuk-table__cell numeric govuk-!-width-one-quarter"></td>
-                                    @* <td class="govuk-table__cell numeric govuk-!-width-one-quarter">@getStatus(documentDetail)</td>*@
+                                    <td class="govuk-table__cell govuk-!-width-one-half">@creditType.getCreditTypeString</td>
+                                    <td class="govuk-table__cell numeric govuk-!-width-one-quarter">@getStatus(documentDetail)</td>
                                     <td class="govuk-table__cell numeric govuk-!-width-one-quarter govuk-!-text-align-right">@documentDetail.originalAmount.map(_.abs).getOrElse(throw MissingFieldException("Original Amount")).toCurrencyString</td>
                                 </tr>
                             }
