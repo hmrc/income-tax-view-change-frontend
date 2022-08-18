@@ -19,8 +19,10 @@ package services
 import auth.MtdItUser
 import config.FrontendAppConfig
 import connectors.IncomeTaxViewChangeConnector
-import models.financialDetails.FinancialDetailsModel
-import models.{CreditDetailModel, CutOverCreditType, MfaCreditType}
+import models.CreditDetailModel
+import models.core.Nino
+import models.financialDetails.{FinancialDetailsErrorModel, FinancialDetailsModel, Payments, PaymentsError}
+import models.paymentAllocationCharges.FinancialDetailsWithDocumentDetailsModel
 import services.CreditHistoryService.CreditHistoryError
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -31,59 +33,89 @@ class CreditHistoryService @Inject()(incomeTaxViewChangeConnector: IncomeTaxView
                                      val appConfig: FrontendAppConfig)
                                     (implicit ec: ExecutionContext) {
 
-  // This logic is based on the findings in => RepaymentHistoryUtils.combinePaymentHistoryData method
-  // Problem: we need to get list of credits (MFA + CutOver) and filter it out by calendar year
-  // MFA credits are driven by documentDate
-  // CutOver credit by dueDate found in financialDetails related to the corresponding documentDetail (see getDueDateFor)
-  private def getCreditsByTaxYear(taxYear: Int, nino: String)
-                                 (implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[CreditHistoryError.type, List[CreditDetailModel]]] = {
-    incomeTaxViewChangeConnector.getFinancialDetails(taxYear, nino).flatMap { result =>
+  // A: list of documentNumbers for CutOver Credits for the given tax year
+  private def getCutOverDocumentNumbersByTaxYear(taxYear: Int)
+                                                (implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[CreditHistoryError.type, List[String]]] = {
+    for {
+      paymentsResponse <- incomeTaxViewChangeConnector.getPayments(taxYear)
+      payments = paymentsResponse match {
+        case Payments(payments) => Right(Payments(payments))
+        case PaymentsError(status, _) if status == 404 => Left(CreditHistoryError)
+        case PaymentsError(_, _) => Left(CreditHistoryError)
+      }
+    } yield payments match {
+      case Right(payments) =>
+        val documentNumbers: List[String] = payments
+          .payments
+          .filter(_.credit.isDefined)
+          .map(_.transactionId)
+          .filter(_.isDefined)
+          .map(_.get)
+          .toList
+        Right(documentNumbers)
+      case Left(errors) => Left(errors)
+    }
+  }
+
+  // B: Get cutOver credits models for the given tax year and Nino
+  private def getAllCutOverCreditsByTaxYear(taxYear: Int, nino: String)
+                                           (implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[CreditHistoryError.type, List[CreditDetailModel]]] = {
+    import CreditDetailModel._
+    getCutOverDocumentNumbersByTaxYear(taxYear).flatMap { result =>
       result match {
-        case financialDetails: FinancialDetailsModel =>
-          val fdRes = financialDetails.documentDetails.map { document =>
-            (document.validMFACreditDescription(), document.credit.isDefined) match {
-              case (true, false) =>
-                Some(CreditDetailModel(date = document.documentDate, document, MfaCreditType))
-              case (false, true) =>
-                // if we didn't find CutOverCredit dueDate than we "lost" this document
-                financialDetails
-                  .getDueDateFor(document)
-                  .map(dueDate => CreditDetailModel(date = dueDate, document, CutOverCreditType))
-              case (true, true) =>
-                // Is this a bug ? we have MFA credits with properties of CutOver redits
-                // TODO: raise a story to tidy up these data.
-                Some(CreditDetailModel(date = document.documentDate, document, MfaCreditType))
-              case (_, _) =>
-                None
-            }
-          }.flatten
+        case Right(documentIds) =>
+          val futureCreditModels = Future.sequence(
+            for {
+              creditModel <- documentIds.map { documentNumber =>
+                incomeTaxViewChangeConnector
+                  .getFinancialDetailsByDocumentId(Nino(nino), documentNumber)
+                  .map {
+                    case document: FinancialDetailsWithDocumentDetailsModel =>
+                      val creditDetailsModel: List[CreditDetailModel] = document
+                      println(s"\n @@@@@@@@@@ CUTOVER CREDIT: $creditDetailsModel\n")
+                      creditDetailsModel
+                    case _ =>
+                      throw new Exception("CreditHistoryService::ERROR::CutOverCredits")
+                  }
+              }
+            } yield creditModel
+          )
+          futureCreditModels.flatMap(e => Future {
+            Right(e.flatten)
+          })
+        case Left(error) =>
           Future {
-            Right(fdRes)
-          }
-        case _ =>
-          Future {
-            Left(CreditHistoryError)
+            Left(error)
           }
       }
     }
   }
 
-  def getCreditsHistory(calendarYear: Int, nino: String)
+  // C: Get all credits (MFA + CutOver one) by tax year (and given Nino)
+  def getCreditsHistory(taxYear: Int, nino: String)
                        (implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[CreditHistoryError.type, List[CreditDetailModel]]] = {
-    for {
-      creditModelForTaxYear <- getCreditsByTaxYear(calendarYear, nino)
-      creditModelForTaxYearPlusOne <- getCreditsByTaxYear(calendarYear + 1, nino)
-    } yield (creditModelForTaxYear, creditModelForTaxYearPlusOne) match {
-      case (Right(creditModelTY), Right(creditModelTYandOne)) =>
-        Right((creditModelTY ++ creditModelTYandOne).filter(_.date.getYear == calendarYear))
-      case (Right(creditModelTY), Left(_)) =>
-        Right(creditModelTY.filter(_.date.getYear == calendarYear))
-      case (Left(_), Right(creditModelTYandOne)) =>
-        Right(creditModelTYandOne.filter(_.date.getYear == calendarYear))
-      case (_, _) =>
-        Left(CreditHistoryError)
-    }
+    incomeTaxViewChangeConnector.getFinancialDetails(taxYear, nino).map {
+      case financialDetails: FinancialDetailsModel =>
+        println(s"\n######### MFA CREDIT: $financialDetails\n")
+        for {
+          x <- getAllCutOverCreditsByTaxYear(taxYear, nino).flatMap { result =>
+            result match {
+              case Right(creditModels) => Future {
+                val mfaCredits: List[CreditDetailModel] = financialDetails
+                // merge cutOver credits with MFA credits
+                Right(creditModels ++ mfaCredits)
+              }
+              case e@Left(_) => Future {
+                e
+              }
+            }
+          }
+        } yield x
+      case _: FinancialDetailsErrorModel =>
+        Future(Left(CreditHistoryError))
+    }.flatten
   }
+
 }
 
 object CreditHistoryService {
