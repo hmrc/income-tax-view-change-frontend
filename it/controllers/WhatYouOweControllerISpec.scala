@@ -751,34 +751,43 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
       }
 
       "MFA Debits" should {
-        def testMFADebits(MFADebitsEnabled: Boolean): Unit = {
-          if (MFADebitsEnabled) enable(MFACreditsAndDebits) else disable(MFACreditsAndDebits)
-          Given("I wiremock stub a multiple financial details response")
-          verifyIncomeSourceDetailsCall(testMtditid)
-          IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05", 2)
-          IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear - 1).toString)
+        "render the payments owed" when {
+          def testMFADebits(MFADebitsEnabled: Boolean): Unit = {
+            Given(s"MFADebitsEnabled is ${MFADebitsEnabled}")
+            if (MFADebitsEnabled) enable(MFACreditsAndDebits) else disable(MFACreditsAndDebits)
 
-          When("I call GET /report-quarterly/income-and-expenses/view/payments-owed")
-          AuditStub.verifyAuditEvent(WhatYouOweResponseAuditModel(testUser, whatYouOweDataWithMFADebitsData, R7bTxmEvents = false))
-          val res = IncomeTaxViewChangeFrontend.getPaymentsDue
-          IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear - 1).toString)
+            And("I wiremock stub a successful Income Source Details response with multiple business and property")
+            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
 
-          Then("The expected result is returned")
-          if (MFADebitsEnabled) {
-            res should have(
-              httpStatus(OK),
-              pageTitleIndividual("whatYouOwe.heading"),
-              elementTextBySelectorList("#payments-due-table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)", "a:nth-of-type(1)")(s"$hmrcAdjustment $testTaxYear"),
-              elementTextBySelectorList("#payments-due-table", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(2)", "a:nth-of-type(1)")(s"$hmrcAdjustment $testTaxYear"),
-              elementTextBySelectorList("#payments-due-table", "tbody", "tr:nth-of-type(3)", "td:nth-of-type(2)", "a:nth-of-type(1)")(s"$hmrcAdjustment $testTaxYear"),
-              elementTextBySelectorList("#payments-due-table", "tbody", "tr:nth-of-type(4)", "td:nth-of-type(2)", "a:nth-of-type(1)")(s"$hmrcAdjustment $testTaxYear"),
-              elementTextBySelectorList("#payment-details-content-5")(s"$hmrcAdjustmentHeading $hmrcAdjustmentLine1"))
-          } else {
-            res should have(
-              httpStatus(OK),
-              pageTitleIndividual("whatYouOwe.heading"),
-              isElementVisibleById("no-payments-due")(expectedValue = true))
+            And("I wiremock stub a multiple financial details response")
+            IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK,
+              testValidFinancialDetailsModelMFADebitsJson(2000, 2000, testTaxYear.toString, LocalDate.now().plusYears(1).toString))
+            IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
+              "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
+
+            When("I call GET /report-quarterly/income-and-expenses/view/payments-owed")
+            val res = IncomeTaxViewChangeFrontend.getPaymentsDue
+            verifyIncomeSourceDetailsCall(testMtditid)
+            IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05", 2)
+            IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear - 1).toString)
+            Then("The expected result is returned")
+            if (MFADebitsEnabled) {
+              res should have(
+                httpStatus(OK),
+                pageTitleIndividual("whatYouOwe.heading"),
+                elementTextBySelectorList("#payments-due-table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)", "a:nth-of-type(1)")(s"$hmrcAdjustment $testTaxYear"),
+                elementTextBySelectorList("#payments-due-table", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(2)", "a:nth-of-type(1)")(s"$hmrcAdjustment $testTaxYear"),
+                elementTextBySelectorList("#payments-due-table", "tbody", "tr:nth-of-type(3)", "td:nth-of-type(2)", "a:nth-of-type(1)")(s"$hmrcAdjustment $testTaxYear"),
+                elementTextBySelectorList("#payments-due-table", "tbody", "tr:nth-of-type(4)", "td:nth-of-type(2)", "a:nth-of-type(1)")(s"$hmrcAdjustment $testTaxYear"),
+                elementTextBySelectorList("#payment-details-content-5")(s"$hmrcAdjustmentHeading $hmrcAdjustmentLine1"))
+            } else {
+              res should have(
+                httpStatus(OK),
+                pageTitleIndividual("whatYouOwe.heading"),
+                isElementVisibleById("no-payments-due")(expectedValue = true))
+            }
           }
+
           "show What You Owe page with MFA Debits on the Payment Tab with FS ENABLED" in {
             testMFADebits(true)
           }
@@ -788,12 +797,14 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
         }
       }
     }
-  }
 
-  "API#1171 IncomeSourceDetails Caching" when {
-    "caching should be ENABLED" in {
-      testIncomeSourceDetailsCaching(false, 1,
-        () => IncomeTaxViewChangeFrontend.getPaymentsDue)
+
+    "API#1171 IncomeSourceDetails Caching" when {
+      "caching should be ENABLED" in {
+        testIncomeSourceDetailsCaching(false, 1,
+          () => IncomeTaxViewChangeFrontend.getPaymentsDue)
+      }
     }
   }
 }
+
