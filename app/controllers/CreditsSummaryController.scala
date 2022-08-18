@@ -25,7 +25,7 @@ import models.financialDetails.{DocumentDetail, FinancialDetailsErrorModel, Fina
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import services.{FinancialDetailsService, IncomeSourceDetailsService}
+import services.{CreditHistoryService, FinancialDetailsService, IncomeSourceDetailsService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
 import views.html.CreditsSummary
@@ -37,6 +37,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class CreditsSummaryController @Inject()(creditsView: CreditsSummary,
                                          val authorisedFunctions: AuthorisedFunctions,
                                          incomeSourceDetailsService: IncomeSourceDetailsService,
+                                         creditHistoryService: CreditHistoryService,
                                          financialDetailsService: FinancialDetailsService,
                                          itvcErrorHandler: ItvcErrorHandler,
                                          checkSessionTimeout: SessionTimeoutPredicate,
@@ -109,16 +110,18 @@ class CreditsSummaryController @Inject()(creditsView: CreditsSummary,
                     origin: Option[String] = None)
                    (implicit user: MtdItUser[AnyContent], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] = {
     if (isEnabled(MFACreditsAndDebits)) {
-      getFinancialsByTaxYear(calendarYear, isAgent) { charges =>
-        Future.successful(Ok(creditsView(
-          calendarYear = calendarYear,
-          backUrl = if (isAgent) getAgentBackURL(user.headers.get(REFERER), calendarYear) else getBackURL(user.headers.get(REFERER), origin, calendarYear),
-          isAgent = isAgent,
-          utr = user.saUtr,
-          btaNavPartial = user.btaNavPartial,
-          enableMfaCreditsAndDebits = isEnabled(MFACreditsAndDebits),
-          charges = charges,
-          origin = origin)))
+      creditHistoryService.getCreditsHistory(calendarYear, user.nino).flatMap {
+        case Right(credits) =>
+          Future.successful(Ok(creditsView(
+            calendarYear = calendarYear,
+            backUrl = if (isAgent) getAgentBackURL(user.headers.get(REFERER), calendarYear) else getBackURL(user.headers.get(REFERER), origin, calendarYear),
+            isAgent = isAgent,
+            utr = user.saUtr,
+            btaNavPartial = user.btaNavPartial,
+            enableMfaCreditsAndDebits = isEnabled(MFACreditsAndDebits),
+            charges = credits.map(_.documentDetail),
+            origin = origin)))
+        case Left(_) => Future.successful(Redirect(controllers.routes.HomeController.show().url))
       }
     } else {
       Future.successful(Redirect(controllers.routes.HomeController.show().url))
