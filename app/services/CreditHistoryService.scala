@@ -72,6 +72,7 @@ class CreditHistoryService @Inject()(incomeTaxViewChangeConnector: IncomeTaxView
                   .map {
                     case document: FinancialDetailsWithDocumentDetailsModel =>
                       val creditDetailsModel: List[CreditDetailModel] = document
+                      println(s"\n @@@@@@@@@@ CUTOVER CREDIT: $creditDetailsModel\n")
                       creditDetailsModel
                     case _ =>
                       throw new Exception("CreditHistoryService::ERROR::CutOverCredits")
@@ -95,6 +96,7 @@ class CreditHistoryService @Inject()(incomeTaxViewChangeConnector: IncomeTaxView
                        (implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[CreditHistoryError.type, List[CreditDetailModel]]] = {
     incomeTaxViewChangeConnector.getFinancialDetails(taxYear, nino).map {
       case financialDetails: FinancialDetailsModel =>
+        println(s"\n######### MFA CREDIT: $financialDetails\n")
         for {
           x <- getAllCutOverCreditsByTaxYear(taxYear, nino).flatMap { result =>
             result match {
