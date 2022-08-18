@@ -353,7 +353,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
             mainType = Some("SA Payment on Account 1"),
             chargeType = chargeType1,
             originalAmount = Some(123.45),
-            items = Some(Seq(SubItem(Some(LocalDate), paymentLotItem = Some("000001"), paymentLot = Some("paymentLot"),
+            items = Some(Seq(SubItem(Some(LocalDate.parse("2020-08-16")), paymentLotItem = Some("000001"), paymentLot = Some("paymentLot"),
               amount = Some(10000), clearingDate = Some(LocalDate.parse("2019-08-13")), dunningLock = Some("Stand over order"), interestLock = Some("Manual RPI Signal"))))
           ),
           FinancialDetail(
