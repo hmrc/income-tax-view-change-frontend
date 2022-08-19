@@ -19,14 +19,11 @@ package services
 import auth.MtdItUser
 import config.FrontendAppConfig
 import connectors.IncomeTaxViewChangeConnector
-import models.{CreditDetailModel, CreditType, CutOverCreditType, MfaCreditType}
-import models.core.Nino
-import models.financialDetails.{FinancialDetailsErrorModel, FinancialDetailsModel, Payments, PaymentsError}
-import models.paymentAllocationCharges.FinancialDetailsWithDocumentDetailsModel
+import models.financialDetails.FinancialDetailsModel
+import models.{CreditDetailModel, CutOverCreditType, MfaCreditType}
 import services.CreditHistoryService.CreditHistoryError
 import uk.gov.hmrc.http.HeaderCarrier
 
-import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -39,24 +36,34 @@ class CreditHistoryService @Inject()(incomeTaxViewChangeConnector: IncomeTaxView
   // MFA credits are driven by documentDate
   // CutOver credit by dueDate found in financialDetails related to the corresponding documentDetail (see getDueDateFor)
   private def getCreditsByTaxYear(taxYear: Int, nino: String)
-                         (implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[CreditHistoryError.type, List[CreditDetailModel]]] = {
-    incomeTaxViewChangeConnector.getFinancialDetails(taxYear, nino) match {
-      case financialDetails: FinancialDetailsModel =>
-        val creditModels = financialDetails.documentDetails.map{ document =>
-          (document.validMFACreditDescription(), document.credit.isDefined ) match {
-            case (true, false) =>
-              Some(CreditDetailModel(date = document.documentDate, document, MfaCreditType))
-            case (false, true) =>
-              // if we didn't find CutOverCredit dueDate then we "lost" this document
-              financialDetails
-                .getDueDateFor(document)
-                .map(dueDate => CreditDetailModel(date = dueDate, document, CutOverCreditType))
-            case (_, _) => None
+                                 (implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[CreditHistoryError.type, List[CreditDetailModel]]] = {
+    incomeTaxViewChangeConnector.getFinancialDetails(taxYear, nino).flatMap { result =>
+      result match {
+        case financialDetails: FinancialDetailsModel =>
+          val fdRes = financialDetails.documentDetails.map { document =>
+            (document.validMFACreditDescription(), document.credit.isDefined) match {
+              case (true, false) =>
+                Some(CreditDetailModel(date = document.documentDate, document, MfaCreditType))
+              case (false, true) =>
+                // if we didn't find CutOverCredit dueDate than we "lost" this document
+                financialDetails
+                  .getDueDateFor(document)
+                  .map(dueDate => CreditDetailModel(date = dueDate, document, CutOverCreditType))
+              case (true, true) =>
+                // Is this a bug ? we have MFA credits with properties of CutOver redits
+                // TODO: this is might be to do with the data we have, we might need to have a strict distinction between MFA and CutOver creds
+                Some(CreditDetailModel(date = document.documentDate, document, MfaCreditType))
+              case (_, _) => None
+            }
+          }.flatten
+          Future {
+            Right(fdRes)
           }
-        }.flatten
-        Future{ Right(creditModels) }
-      case _ =>
-        Future{ Left(CreditHistoryError) }
+        case _ =>
+          Future {
+            Left(CreditHistoryError)
+          }
+      }
     }
   }
 
@@ -65,18 +72,17 @@ class CreditHistoryService @Inject()(incomeTaxViewChangeConnector: IncomeTaxView
     for {
       creditModelForTaxYear <- getCreditsByTaxYear(calendarYear, nino)
       creditModelForTaxYearPlusOne <- getCreditsByTaxYear(calendarYear + 1, nino)
-    } yield (creditModelForTaxYear,  creditModelForTaxYearPlusOne) match {
+    } yield (creditModelForTaxYear, creditModelForTaxYearPlusOne) match {
       case (Right(creditModelTY), Right(creditModelTYandOne)) =>
         Right((creditModelTY ++ creditModelTYandOne).filter(_.date.getYear == calendarYear))
       case (Right(creditModelTY), Left(_)) =>
         Right(creditModelTY.filter(_.date.getYear == calendarYear))
       case (Left(_), Right(creditModelTYandOne)) =>
-        Right( creditModelTYandOne.filter(_.date.getYear == calendarYear))
+        Right(creditModelTYandOne.filter(_.date.getYear == calendarYear))
       case (_, _) =>
         Left(CreditHistoryError)
     }
   }
-
 }
 
 object CreditHistoryService {
