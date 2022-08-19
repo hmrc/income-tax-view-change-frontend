@@ -50,7 +50,7 @@ object FinancialDetailsIntegrationTestConstants {
     taxYear = taxYear.toString,
     mainType = Some("ITSA- POA 1"),
     transactionId = Some("transactionId"),
-    transactionDate = Some("transactionDate"),
+    transactionDate = Some(LocalDate.parse("2020-08-16")),
     `type` = Some("type"),
     totalAmount = Some(100),
     originalAmount = Some(100),
@@ -60,10 +60,10 @@ object FinancialDetailsIntegrationTestConstants {
     items =
       Some(Seq(
         SubItem(
-          dueDate = Some(LocalDate.of(2019, 5, 15).toString),
+          dueDate = Some(LocalDate.of(2019, 5, 15)),
           subItemId = Some("1"),
           amount = Some(100),
-          clearingDate = Some("clearingDate"),
+          clearingDate = Some(LocalDate.parse("2020-08-16")),
           clearingReason = Some("clearingReason"),
           outgoingPaymentMethod = Some("outgoingPaymentMethod"),
           paymentReference = Some("paymentReference"),
@@ -108,7 +108,7 @@ object FinancialDetailsIntegrationTestConstants {
     taxYear = taxYear.toString,
     mainType = Some(mainType),
     transactionId = Some(id1040000123),
-    transactionDate = Some("transactionDate"),
+    transactionDate = Some(LocalDate.parse("2020-08-16")),
     `type` = Some("type"),
     totalAmount = Some(100),
     originalAmount = Some(originalAmount),
@@ -119,12 +119,12 @@ object FinancialDetailsIntegrationTestConstants {
     items =
       Some(Seq(
         SubItem(
-          dueDate = Some(LocalDate.of(2019, 5, 15).toString),
+          dueDate = Some(LocalDate.of(2019, 5, 15)),
           subItemId = Some("1"),
           amount = Some(100),
           dunningLock = dunningLock,
           interestLock = interestLock,
-          clearingDate = Some("2019-07-23"),
+          clearingDate = Some(LocalDate.parse("2019-07-23")),
           clearingReason = Some("clearingReason")
         )
       ) ++ additionalSubItems)
@@ -133,18 +133,18 @@ object FinancialDetailsIntegrationTestConstants {
   def testFinancialDetailsModel(documentDescription: List[Option[String]],
                                 mainType: List[Option[String]],
                                 transactionIds: List[Option[String]],
-                                transactionDate: Option[String],
+                                transactionDate: Option[LocalDate],
                                 `type`: Option[String],
                                 totalAmount: Option[BigDecimal],
                                 originalAmount: Option[BigDecimal],
                                 clearedAmount: Option[BigDecimal],
                                 chargeType: Option[String],
-                                dueDate: List[Option[String]],
+                                dueDate: List[Option[LocalDate]],
                                 dunningLock: List[String] = noDunningLock,
                                 interestLock: List[String] = noInterestLock,
                                 subItemId: Option[String],
                                 amount: Option[BigDecimal],
-                                clearingDate: Option[String],
+                                clearingDate: Option[LocalDate],
                                 clearingReason: Option[String],
                                 outgoingPaymentMethod: Option[String],
                                 paymentReference: Option[String],
@@ -167,8 +167,8 @@ object FinancialDetailsIntegrationTestConstants {
           Some(LocalDate.of(2018, 3, 29)), Some(LocalDate.of(2018, 3, 29)), latePaymentInterestAmount(1), Some(100), Some("paymentLotItem"), Some("paymentLot"))
       ),
       financialDetails = List(
-        FinancialDetail(taxYear, mainType.head, transactionIds(0), Some("transactionDate"), Some("type"), Some(100), Some(100), Some(100), Some(100), Some("NIC4 Wales"), Some(100), Some(Seq(SubItem(dueDate.head, dunningLock = Some(dunningLock.head), interestLock = Some(interestLock.head))))),
-        FinancialDetail(taxYear, mainType(1), transactionIds(1), Some("transactionDate"), Some("type"), Some(100), Some(100), Some(100), Some(100), Some("NIC4 Wales"), Some(100), Some(Seq(SubItem(dueDate(1), dunningLock = Some(dunningLock(1)), interestLock = Some(interestLock(1))))))
+        FinancialDetail(taxYear, mainType.head, transactionIds(0), Some(LocalDate.parse("2020-08-16")), Some("type"), Some(100), Some(100), Some(100), Some(100), Some("NIC4 Wales"), Some(100), Some(Seq(SubItem(dueDate.head, dunningLock = Some(dunningLock.head), interestLock = Some(interestLock.head))))),
+        FinancialDetail(taxYear, mainType(1), transactionIds(1), Some(LocalDate.parse("2020-08-16")), Some("type"), Some(100), Some(100), Some(100), Some(100), Some("NIC4 Wales"), Some(100), Some(Seq(SubItem(dueDate(1), dunningLock = Some(dunningLock(1)), interestLock = Some(interestLock(1))))))
       )
     )
 
@@ -176,16 +176,16 @@ object FinancialDetailsIntegrationTestConstants {
   def testFinancialDetailsModelWithChargesOfSameType(documentDescription: List[Option[String]],
                                                      mainType: List[Option[String]],
                                                      transactionIds: List[Option[String]],
-                                                     transactionDate: Option[String],
+                                                     transactionDate: Option[LocalDate],
                                                      `type`: Option[String],
                                                      totalAmount: Option[BigDecimal],
                                                      originalAmount: Option[BigDecimal],
                                                      clearedAmount: Option[BigDecimal],
                                                      chargeType: Option[String],
-                                                     dueDate: List[Option[String]],
+                                                     dueDate: List[Option[LocalDate]],
                                                      subItemId: Option[String],
                                                      amount: Option[BigDecimal],
-                                                     clearingDate: Option[String],
+                                                     clearingDate: Option[LocalDate],
                                                      clearingReason: Option[String],
                                                      outgoingPaymentMethod: Option[String],
                                                      paymentReference: Option[String],
@@ -206,41 +206,41 @@ object FinancialDetailsIntegrationTestConstants {
           Some(LocalDate.of(2018, 3, 29)), Some(LocalDate.of(2018, 3, 29)), Some(100), Some(100), Some("paymentLotItem"), Some("paymentLot"))
       ),
       financialDetails = List(
-        FinancialDetail(taxYear, mainType.head, transactionIds(0), Some("transactionDate"), Some("type"), Some(100), Some(100), Some(100), Some(100), Some("NIC4 Wales"), Some(100), Some(Seq(SubItem(dueDate.head)))),
-        FinancialDetail(taxYear, mainType(1), transactionIds(1), Some("transactionDate"), Some("type"), Some(100), Some(100), Some(100), Some(100), Some("NIC4 Wales"), Some(100), Some(Seq(SubItem(dueDate(1)))))
+        FinancialDetail(taxYear, mainType.head, transactionIds(0), Some(LocalDate.parse("2020-08-16")), Some("type"), Some(100), Some(100), Some(100), Some(100), Some("NIC4 Wales"), Some(100), Some(Seq(SubItem(dueDate.head)))),
+        FinancialDetail(taxYear, mainType(1), transactionIds(1), Some(LocalDate.parse("2020-08-16")), Some("type"), Some(100), Some(100), Some(100), Some(100), Some("NIC4 Wales"), Some(100), Some(Seq(SubItem(dueDate(1)))))
       )
     )
 
-  def outstandingChargesModel(dueDate: String): OutstandingChargesModel = OutstandingChargesModel(
+  def outstandingChargesModel(dueDate: LocalDate): OutstandingChargesModel = OutstandingChargesModel(
     List(OutstandingChargeModel("BCD", Some(dueDate), 123456789012345.67, 1234), OutstandingChargeModel("ACI", None, 12.67, 1234)))
 
-  def outstandingChargesEmptyBCDModel(dueDate: String): OutstandingChargesModel = OutstandingChargesModel(
+  def outstandingChargesEmptyBCDModel(dueDate: LocalDate): OutstandingChargesModel = OutstandingChargesModel(
     List(OutstandingChargeModel("LATE", Some(dueDate), 123456789012345.67, 1234)))
 
-  val outstandingChargesEmptyBCDModel: OutstandingChargesModel = outstandingChargesEmptyBCDModel(LocalDate.now().plusDays(30).toString)
+  val outstandingChargesEmptyBCDModel: OutstandingChargesModel = outstandingChargesEmptyBCDModel(LocalDate.now().plusDays(30))
 
-  val outstandingChargesDueInMoreThan30Days: OutstandingChargesModel = outstandingChargesModel(LocalDate.now().plusDays(35).toString)
+  val outstandingChargesDueInMoreThan30Days: OutstandingChargesModel = outstandingChargesModel(LocalDate.now().plusDays(35))
 
-  val outstandingChargesOverdueData: OutstandingChargesModel = outstandingChargesModel(LocalDate.now().minusYears(1).minusMonths(1).toString)
+  val outstandingChargesOverdueData: OutstandingChargesModel = outstandingChargesModel(LocalDate.now().minusYears(1).minusMonths(1))
 
-  val outstandingChargesDueIn30Days: OutstandingChargesModel = outstandingChargesModel(LocalDate.now().plusDays(30).toString)
+  val outstandingChargesDueIn30Days: OutstandingChargesModel = outstandingChargesModel(LocalDate.now().plusDays(30))
 
   val financialDetailsDueInMoreThan30Days: FinancialDetailsModel = testFinancialDetailsModel(
     documentDescription = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
     mainType = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
     transactionIds = List(Some("transId1"), Some("transId2")),
-    transactionDate = Some("transactionDate"),
+    transactionDate = Some(LocalDate.parse("2020-08-16")),
     `type` = Some("type"),
     totalAmount = Some(100),
     originalAmount = Some(100),
     clearedAmount = Some(100),
     chargeType = Some("NIC4 Wales"),
-    dueDate = List(Some(LocalDate.now().plusDays(45).toString), Some(LocalDate.now().plusDays(50).toString)),
+    dueDate = List(Some(LocalDate.now().plusDays(45)), Some(LocalDate.now().plusDays(50))),
     noDunningLock,
     noInterestLock,
     subItemId = Some("1"),
     amount = Some(100),
-    clearingDate = Some("clearingDate"),
+    clearingDate = Some(LocalDate.parse("2020-08-16")),
     clearingReason = Some("clearingReason"),
     outgoingPaymentMethod = Some("outgoingPaymentMethod"),
     paymentReference = Some("paymentReference"),
@@ -257,18 +257,18 @@ object FinancialDetailsIntegrationTestConstants {
     documentDescription = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
     mainType = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
     transactionIds = List(Some("transId1"), Some("transId2")),
-    transactionDate = Some("transactionDate"),
+    transactionDate = Some(LocalDate.parse("2020-08-16")),
     `type` = Some("type"),
     totalAmount = Some(100),
     originalAmount = Some(100),
     clearedAmount = Some(100),
     chargeType = Some("NIC4 Wales"),
-    dueDate = List(Some(LocalDate.now().toString), Some(LocalDate.now().toString)),
+    dueDate = List(Some(LocalDate.now()), Some(LocalDate.now())),
     noDunningLock,
     noInterestLock,
     subItemId = Some("1"),
     amount = Some(100),
-    clearingDate = Some("clearingDate"),
+    clearingDate = Some(LocalDate.parse("2020-08-16")),
     clearingReason = Some("clearingReason"),
     outgoingPaymentMethod = Some("outgoingPaymentMethod"),
     paymentReference = Some("paymentReference"),
@@ -286,18 +286,18 @@ object FinancialDetailsIntegrationTestConstants {
     documentDescription = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
     mainType = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
     transactionIds = List(Some("transId1"), Some("transId2")),
-    transactionDate = Some("transactionDate"),
+    transactionDate = Some(LocalDate.parse("2020-08-16")),
     `type` = Some("type"),
     totalAmount = Some(100),
     originalAmount = Some(100),
     clearedAmount = Some(100),
     chargeType = Some("NIC4 Wales"),
-    dueDate = List(Some(LocalDate.now().minusDays(15).toString), Some(LocalDate.now().minusDays(15).toString)),
+    dueDate = List(Some(LocalDate.now().minusDays(15)), Some(LocalDate.now().minusDays(15))),
     dunningLock,
     interestLock,
     subItemId = Some("1"),
     amount = Some(100),
-    clearingDate = Some("clearingDate"),
+    clearingDate = Some(LocalDate.parse("2020-08-16")),
     clearingReason = Some("clearingReason"),
     outgoingPaymentMethod = Some("outgoingPaymentMethod"),
     paymentReference = Some("paymentReference"),
@@ -314,16 +314,16 @@ object FinancialDetailsIntegrationTestConstants {
     documentDescription = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
     mainType = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
     transactionIds = List(Some("transId1"), Some("transId2")),
-    transactionDate = Some("transactionDate"),
+    transactionDate = Some(LocalDate.parse("2020-08-16")),
     `type` = Some("type"),
     totalAmount = Some(100),
     originalAmount = Some(100),
     clearedAmount = Some(100),
     chargeType = Some("NIC4 Wales"),
-    dueDate = List(Some(LocalDate.now().plusDays(35).toString), Some(LocalDate.now().minusDays(1).toString)),
+    dueDate = List(Some(LocalDate.now().plusDays(35)), Some(LocalDate.now().minusDays(1))),
     subItemId = Some("1"),
     amount = Some(100),
-    clearingDate = Some("clearingDate"),
+    clearingDate = Some(LocalDate.parse("2020-08-16")),
     clearingReason = Some("clearingReason"),
     outgoingPaymentMethod = Some("outgoingPaymentMethod"),
     paymentReference = Some("paymentReference"),
@@ -340,16 +340,16 @@ object FinancialDetailsIntegrationTestConstants {
     documentDescription = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
     mainType = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
     transactionIds = List(Some("transId1"), Some("transId2")),
-    transactionDate = Some("transactionDate"),
+    transactionDate = Some(LocalDate.parse("2020-08-16")),
     `type` = Some("type"),
     totalAmount = Some(100),
     originalAmount = Some(100),
     clearedAmount = Some(100),
     chargeType = Some("NIC4 Wales"),
-    dueDate = List(Some(LocalDate.now().plusDays(30).toString), Some(LocalDate.now().minusDays(1).toString)),
+    dueDate = List(Some(LocalDate.now().plusDays(30)), Some(LocalDate.now().minusDays(1))),
     subItemId = Some("1"),
     amount = Some(100),
-    clearingDate = Some("clearingDate"),
+    clearingDate = Some(LocalDate.parse("2020-08-16")),
     clearingReason = Some("clearingReason"),
     outgoingPaymentMethod = Some("outgoingPaymentMethod"),
     paymentReference = Some("paymentReference"),
@@ -366,18 +366,18 @@ object FinancialDetailsIntegrationTestConstants {
     documentDescription = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
     mainType = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
     transactionIds = List(Some("transId1"), Some("transId2")),
-    transactionDate = Some("transactionDate"),
+    transactionDate = Some(LocalDate.parse("2020-08-16")),
     `type` = Some("type"),
     totalAmount = Some(100),
     originalAmount = Some(100),
     clearedAmount = Some(100),
     chargeType = Some("NIC4 Wales"),
-    dueDate = List(Some(LocalDate.now().plusDays(1).toString), Some(LocalDate.now().toString)),
+    dueDate = List(Some(LocalDate.now().plusDays(1)), Some(LocalDate.now())),
     noDunningLock,
     noInterestLock,
     subItemId = Some("1"),
     amount = Some(100),
-    clearingDate = Some("clearingDate"),
+    clearingDate = Some(LocalDate.parse("2020-08-16")),
     clearingReason = Some("clearingReason"),
     outgoingPaymentMethod = Some("outgoingPaymentMethod"),
     paymentReference = Some("paymentReference"),
@@ -394,16 +394,16 @@ object FinancialDetailsIntegrationTestConstants {
     documentDescription = List(Some("ITSA PAYE Charge"), Some("ITSA Calc Error Correction")),
     mainType = List(Some("ITSA PAYE Charge"), Some("ITSA Calc Error Correction")),
     transactionIds = List(Some("mfaId1"), Some("mfaId2")),
-    transactionDate = Some("transactionDate"),
+    transactionDate = Some(LocalDate.parse("2020-08-16")),
     `type` = Some("type"),
     totalAmount = Some(100),
     originalAmount = Some(100),
     clearedAmount = Some(100),
     chargeType = Some("NIC4 Wales"),
-    dueDate = List(Some(LocalDate.now().plusDays(30).toString), Some(LocalDate.now().minusDays(30).toString)),
+    dueDate = List(Some(LocalDate.now().plusDays(30)), Some(LocalDate.now().minusDays(30))),
     subItemId = Some("1"),
     amount = Some(100),
-    clearingDate = Some("clearingDate"),
+    clearingDate = Some(LocalDate.parse("2020-08-16")),
     clearingReason = Some("clearingReason"),
     outgoingPaymentMethod = Some("outgoingPaymentMethod"),
     paymentReference = Some("paymentReference"),

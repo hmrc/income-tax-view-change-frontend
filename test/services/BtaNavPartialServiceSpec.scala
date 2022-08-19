@@ -23,6 +23,7 @@ import org.scalatest.concurrent.ScalaFutures
 import play.api.i18n.{Lang, Messages}
 import testUtils.TestSupport
 
+
 class BtaNavPartialServiceSpec extends TestSupport with ScalaFutures with Matchers {
 
   val mockService: BtaNavBarService = new BtaNavBarService()(appConfig)

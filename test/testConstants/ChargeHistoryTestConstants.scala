@@ -63,7 +63,7 @@ object ChargeHistoryTestConstants {
     idValue = "XAIT000000000000",
     regimeType = "ITSA",
     chargeHistoryDetails = Some(List(
-      ChargeHistoryModel("2017", "123456789", "2020-01-29", "Balancing Charge", 123456789012345.67, LocalDate.of(2020, 2, 24), "amended return"))))
+      ChargeHistoryModel("2017", "123456789", LocalDate.parse("2020-01-29"), "Balancing Charge", 123456789012345.67, LocalDate.of(2020, 2, 24), "amended return"))))
 
   val testChargeHistoryErrorModelParsing: ChargesHistoryErrorModel = ChargesHistoryErrorModel(
     testErrorStatus, "Json Validation Error. Parsing ChargeHistory Data Response")

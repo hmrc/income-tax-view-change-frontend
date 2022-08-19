@@ -20,10 +20,12 @@ import models.paymentAllocations.AllocationDetail
 import org.scalatest.Matchers
 import testUtils.TestSupport
 
+import java.time.LocalDate
+
 class AllocationDetailSpec extends TestSupport with Matchers {
 
   def allocationDetails(mainType: String, chargeType: String): AllocationDetail = {
-    AllocationDetail(Some("id"), Some("2018-08-04"), Some("2019-01-04"), Some(chargeType), Some(mainType), Some(10000.0), Some(5000.0), Some("chargeReference1"))
+    AllocationDetail(Some("id"), Some(LocalDate.parse("2018-08-04")), Some(LocalDate.parse("2019-01-04")), Some(chargeType), Some(mainType), Some(10000.0), Some(5000.0), Some("chargeReference1"))
   }
 
   "AllocationDetail" when {
@@ -58,7 +60,7 @@ class AllocationDetailSpec extends TestSupport with Matchers {
 
       "determine the allocation tax year by the period end date in the model" in {
         def allocationDetailWithDateTo(taxPeriodEndDate: String): AllocationDetail = {
-          AllocationDetail(Some("id"), Some("2018-08-04"), to = Some(taxPeriodEndDate),
+          AllocationDetail(Some("id"), Some(LocalDate.parse("2018-08-04")), to = Some(LocalDate.parse(taxPeriodEndDate)),
             Some("ITSA"), Some("SA Balancing Charge"), Some(10000.0), Some(5000.0), Some("chargeReference1"))
         }
 

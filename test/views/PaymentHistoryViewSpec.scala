@@ -138,7 +138,7 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
           payments.zipWithIndex.foreach {
             case (payment, index) =>
               val row = tbody.selectNth("tr", index + 1)
-              row.selectNth("td", 1).text shouldBe LocalDate.parse(payment.date).toLongDate
+              row.selectNth("td", 1).text shouldBe payment.date.toLongDate
               row.selectNth("td", 2).text shouldBe s"desc1 hidden-text1 Item ${index + 1}"
               row.selectNth("td", 2).select("a").attr("href") shouldBe s"link1"
               row.selectNth("td", 3).text shouldBe payment.amount.get.abs.toCurrencyString
