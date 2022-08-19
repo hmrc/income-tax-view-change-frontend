@@ -52,47 +52,23 @@ class CreditHistoryServiceSpec extends TestSupport with MockIncomeTaxViewChangeC
 
     "an error is returned from the connector" should {
 
-      "return a credit history error (~GetFinancialDetails failed)" in {
+      "return a credit history error (~getFinancialDetails failed)" in {
         setupMockGetFinancialDetails(taxYear, nino)(FinancialDetailsErrorModel(500, "ERROR"))
         setupMockGetFinancialDetails(taxYear + 1, nino)(FinancialDetailsErrorModel(500, "ERROR"))
         TestCreditHistoryService.getCreditsHistory(taxYear, nino).futureValue shouldBe Left(CreditHistoryError)
       }
+    }
 
-      "return a credit history error (~getFinancialDetailsByDocumentId failed)" in {
+    "a successful response returned from the connector" should {
+      "return a list of MFA credits only" in {
         setupMockGetFinancialDetails(taxYear, nino)(taxYearFinancialDetails)
         setupMockGetFinancialDetails(taxYear + 1, nino)(taxYearFinancialDetails_PlusOneYear)
         val futureResult = TestCreditHistoryService.getCreditsHistory(taxYear, nino)
-        futureResult.isCompleted shouldBe false
+        whenReady(futureResult) { result =>
+          result shouldBe Right(List(creditDetailModel))
+        }
+      }
     }
-
-//    "a successful Payment/Credit History response is returned from the connector" should {
-//      "return a list of MFA credits only" in {
-//        setupGetPayments(taxYear)(Payments(paymentsForTheGivenTaxYear))
-//        setupMockGetFinancialDetails(taxYear, nino)(taxYearFinancialDetails)
-//        val mfaCreditModels = TestCreditHistoryService.getCreditsHistory(taxYear, nino).futureValue
-//        mfaCreditModels shouldBe Right(creditModels)
-//        mfaCreditModels.right.foreach { ds =>
-//          ds.foreach{ d =>
-//            d.creditType shouldBe MfaCreditType
-//          }
-//        }
-//      }
-//
-//      "return a list of MFA and CutOver credits" in {
-//        setupGetPayments(taxYear)(Payments(creditsForTheGivenTaxYear))
-//        setupMockGetFinancialDetails(taxYear, nino)(taxYearFinancialDetails)
-//        setupGetPaymentAllocationCharges(nino, documentIdA)(cutOverCreditsAsFinancialDocumentA)
-//        setupGetPaymentAllocationCharges(nino, documentIdB)(cutOverCreditsAsFinancialDocumentB)
-//        val cs = TestCreditHistoryService.getCreditsHistory(taxYear, nino).futureValue
-//        cs shouldBe Right(cutOverCreditA ++ cutOverCreditB ++ creditModels)
-//        cs.right.foreach { ds =>
-//          ds.filter(_.creditType == CutOverCreditType).length shouldBe (cutOverCreditA ++ cutOverCreditB).length
-//          ds.filter(_.creditType == MfaCreditType).length shouldBe creditModels.length
-//        }
-//      }
-
-    }
-
   }
 
 }

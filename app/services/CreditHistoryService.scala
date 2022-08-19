@@ -51,12 +51,14 @@ class CreditHistoryService @Inject()(incomeTaxViewChangeConnector: IncomeTaxView
                   .map(dueDate => CreditDetailModel(date = dueDate, document, CutOverCreditType))
               case (true, true) =>
                 // Is this a bug ? we have MFA credits with properties of CutOver redits
-                // TODO: this is might be to do with the data we have, we might need to have a strict distinction between MFA and CutOver creds
+                // TODO: raise a story to tidy up these data.
                 Some(CreditDetailModel(date = document.documentDate, document, MfaCreditType))
-              case (_, _) => None
+              case (_, _) =>
+                None
             }
           }.flatten
           Future {
+            println(fdRes)
             Right(fdRes)
           }
         case _ =>

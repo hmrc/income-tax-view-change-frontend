@@ -16,7 +16,7 @@
 
 package services.helpers
 
-import models.CreditDetailModel
+import models.{CreditDetailModel, CutOverCreditType, MfaCreditType}
 import models.financialDetails.{BalanceDetails, DocumentDetail, FinancialDetail, FinancialDetailsModel, Payment, SubItem}
 import models.paymentAllocationCharges.FinancialDetailsWithDocumentDetailsModel
 
@@ -41,11 +41,13 @@ trait CreditHistoryDataHelper {
   val nino: String = "someNino"
   val documentIdA: String = "DOCID01"
   val documentIdB: String = "DOCID02"
+
+  val documentDetailsWhichIsCredit = DocumentDetail("testYear2", "testTransactionId1", None, None, Some(100.00), Some(-120.00), LocalDate.of(taxYear, 3, 29))
   val taxYearFinancialDetails = FinancialDetailsModel(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
     codingDetails = None,
     documentDetails = List(
-      DocumentDetail("testYear2", "testTransactionId1", None, None, Some(100.00), None, LocalDate.of(taxYear, 3, 29)),
+      documentDetailsWhichIsCredit,
       DocumentDetail("testYear2", "testTransactionId2", None, None, None, None, LocalDate.of(taxYear, 3, 29))
     ),
     financialDetails = List(
@@ -53,6 +55,7 @@ trait CreditHistoryDataHelper {
       FinancialDetail("testYear2", None, Some("testTransactionId2"), None, None, None, None, None, None, None, None, Some(Seq(SubItem(Some(LocalDate.now.plusDays(5).toString)))))
     )
   )
+  val creditDetailModel = CreditDetailModel(date = LocalDate.parse("2022-08-22"), documentDetail = documentDetailsWhichIsCredit, CutOverCreditType)
 
   val taxYearFinancialDetails_PlusOneYear = FinancialDetailsModel(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
