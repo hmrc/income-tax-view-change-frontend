@@ -24,8 +24,6 @@ import java.time.LocalDate
 
 trait CreditHistoryDataHelper {
 
-  import CreditDetailModel._
-
   val paymentsForTheGivenTaxYear: List[Payment] = List(Payment(reference = Some("reference"), amount = Some(100.00),
     outstandingAmount = Some(1.00), method = Some("method"), documentDescription = None, lot = Some("lot"), lotItem = Some("lotItem"),
     dueDate = Some("date"), documentDate = "docDate", Some("DOCID01")))
@@ -44,6 +42,19 @@ trait CreditHistoryDataHelper {
   val documentIdA: String = "DOCID01"
   val documentIdB: String = "DOCID02"
   val taxYearFinancialDetails = FinancialDetailsModel(
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
+    codingDetails = None,
+    documentDetails = List(
+      DocumentDetail("testYear2", "testTransactionId1", None, None, Some(100.00), None, LocalDate.of(taxYear, 3, 29)),
+      DocumentDetail("testYear2", "testTransactionId2", None, None, None, None, LocalDate.of(taxYear, 3, 29))
+    ),
+    financialDetails = List(
+      FinancialDetail("testYear2", None, Some("testTransactionId1"), None, None, None, None, None, None, None, None, Some(Seq(SubItem(Some(LocalDate.now.plusDays(3).toString))))),
+      FinancialDetail("testYear2", None, Some("testTransactionId2"), None, None, None, None, None, None, None, None, Some(Seq(SubItem(Some(LocalDate.now.plusDays(5).toString)))))
+    )
+  )
+
+  val taxYearFinancialDetails_PlusOneYear = FinancialDetailsModel(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
     codingDetails = None,
     documentDetails = List(
@@ -135,8 +146,8 @@ trait CreditHistoryDataHelper {
     )
   )
 
-  val cutOverCreditA: List[CreditDetailModel] = cutOverCreditsAsFinancialDocumentA
-  val cutOverCreditB: List[CreditDetailModel] = cutOverCreditsAsFinancialDocumentB
+  //val cutOverCreditA: List[CreditDetailModel] = cutOverCreditsAsFinancialDocumentA
+  //val cutOverCreditB: List[CreditDetailModel] = cutOverCreditsAsFinancialDocumentB
 
-  val creditModels: List[CreditDetailModel] = taxYearFinancialDetails
+  //val creditModels: List[CreditDetailModel] = taxYearFinancialDetails
 }
