@@ -79,7 +79,7 @@
     <dl class="govuk-summary-list" id="payment-allocation-charge-table">
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">@messages("paymentAllocation.date")</dt>
-            <dd class="govuk-summary-list__value">@{paymentAllocations.paymentAllocationChargeModel.financialDetails.head.items.getOrElse(throw MissingFieldException("Financial Details Sub Item")).head.dueDate.getOrElse(throw MissingFieldException("Payment Allocation Due Date")).toLocalDate.toLongDate}</dd>
+            <dd class="govuk-summary-list__value">@{paymentAllocations.paymentAllocationChargeModel.financialDetails.head.items.getOrElse(throw MissingFieldException("Financial Details Sub Item")).head.dueDate.getOrElse(throw MissingFieldException("Payment Allocation Due Date")).toLongDate}</dd>
         </div>
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">@messages("paymentAllocation.amount")</dt>

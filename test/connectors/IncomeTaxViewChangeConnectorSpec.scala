@@ -47,6 +47,7 @@ import testUtils.TestSupport
 import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.http.HttpClient
 
+import java.time.LocalDate
 import scala.concurrent.{ExecutionContext, Future}
 
 class IncomeTaxViewChangeConnectorSpec extends TestSupport with MockHttp with MockAuditingService {
@@ -489,7 +490,7 @@ class IncomeTaxViewChangeConnectorSpec extends TestSupport with MockHttp with Mo
 
     val payments: Seq[Payment] = Seq(Payment(reference = Some("reference"), amount = Some(100.00), outstandingAmount = None,
       method = Some("method"), documentDescription = None, lot = Some("lot"), lotItem = Some("lotItem"),
-      dueDate = Some("date"), documentDate = "docDate", Some("DOCID01")))
+      dueDate = Some(LocalDate.now), documentDate = LocalDate.now, Some("DOCID01")))
 
     val successResponse: HttpResponse = HttpResponse(
       status = OK,

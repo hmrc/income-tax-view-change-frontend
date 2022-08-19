@@ -74,7 +74,7 @@ btaNavPartial: Option[Html] = None, origin: Option[String] = None)(implicit requ
         <tbody>
         @for((payment, index) <- yearPayments.zipWithIndex) {
             <tr class="govuk-table__row">
-                <td class="govuk-table__cell">@LocalDate.parse(payment.date).toLongDate</td>
+                <td class="govuk-table__cell">@payment.date.toLongDate</td>
                 <td class="govuk-table__cell">
                     <a class="govuk-link" href="@payment.linkUrl">
                         @messages(payment.description)
