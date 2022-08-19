@@ -65,7 +65,7 @@ class CreditHistoryServiceSpec extends TestSupport with MockIncomeTaxViewChangeC
         setupMockGetFinancialDetails(taxYear + 1, nino)(taxYearFinancialDetails_PlusOneYear)
         val futureResult = TestCreditHistoryService.getCreditsHistory(taxYear, nino)
         whenReady(futureResult) { result =>
-          result shouldBe Right(List(creditDetailModel))
+          result shouldBe Right(List(creditDetailModelasCutOver, creditDetailModelasMfa))
         }
       }
     }
