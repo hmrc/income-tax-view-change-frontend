@@ -96,7 +96,7 @@ case class DocumentDetail(taxYear: String,
     else isPaid
   }
 
-  val isPartPaid: Boolean = outstandingAmount.getOrElse[BigDecimal](0) != originalAmount.getOrElse[BigDecimal](0)
+  val isPartPaid: Boolean = outstandingAmount.getOrElse[BigDecimal](0).abs != originalAmount.getOrElse[BigDecimal](0).abs
 
   def remainingToPay: BigDecimal = {
     if (isPaid) BigDecimal(0)
