@@ -18,11 +18,12 @@ package models.financialDetails
 
 import models.financialDetails.FinancialDetail.Types._
 import play.api.libs.json.{Format, Json}
+import java.time.LocalDate
 
 case class FinancialDetail(taxYear: String,
                            mainType: Option[String] = None,
                            transactionId: Option[String] = None,
-                           transactionDate: Option[String] = None,
+                           transactionDate: Option[LocalDate] = None,
                            `type`: Option[String] = None,
                            totalAmount: Option[BigDecimal] = None,
                            originalAmount: Option[BigDecimal] = None,
@@ -66,7 +67,7 @@ case class FinancialDetail(taxYear: String,
     case Some(subItems) => subItems.map { subItem =>
       Payment(reference = subItem.paymentReference, amount = subItem.paymentAmount, outstandingAmount = None,
         method = subItem.paymentMethod, documentDescription = None, lot = subItem.paymentLot, lotItem = subItem.paymentLotItem,
-        dueDate = subItem.clearingDate, documentDate = "", transactionId = subItem.transactionId)
+        dueDate = subItem.clearingDate, documentDate = LocalDate.now, transactionId = subItem.transactionId)
     }.filter(_.reference.isDefined)
     case None => Seq.empty[Payment]
   }
@@ -77,7 +78,7 @@ case class FinancialDetail(taxYear: String,
         case subItem if subItem.paymentLot.isDefined && subItem.paymentLotItem.isDefined =>
           Payment(reference = subItem.paymentReference, amount = subItem.amount, outstandingAmount = None,
             method = subItem.paymentMethod, documentDescription = None, lot = subItem.paymentLot, lotItem = subItem.paymentLotItem,
-            dueDate = subItem.clearingDate, documentDate = "", transactionId = subItem.transactionId)
+            dueDate = subItem.clearingDate, documentDate = LocalDate.now(), transactionId = subItem.transactionId)
       }
     }
     .collect {

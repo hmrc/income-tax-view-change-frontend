@@ -77,7 +77,7 @@ class ChargeSummaryViewSpec extends ViewSpec {
   def paymentsForCharge(mainType: String, chargeType: String, date: String, amount: BigDecimal): PaymentsWithChargeType =
     PaymentsWithChargeType(
       payments = List(Payment(reference = Some("reference"), amount = Some(amount), outstandingAmount = None, method = Some("method"),
-        documentDescription = None, lot = Some("lot"), lotItem = Some("lotItem"), dueDate = Some(date), documentDate = date, transactionId = None)),
+        documentDescription = None, lot = Some("lot"), lotItem = Some("lotItem"), dueDate = Some(LocalDate.parse(date)), documentDate = LocalDate.parse(date), transactionId = None)),
       mainType = Some(mainType), chargeType = Some(chargeType))
 
   object Messages {
@@ -153,8 +153,8 @@ class ChargeSummaryViewSpec extends ViewSpec {
       s"$dunningLockBannerLink ${messages("chargeSummary.dunning.locks.banner.note", s"$formattedAmount", s"$date")}"
   }
 
-  val amendedChargeHistoryModel: ChargeHistoryModel = ChargeHistoryModel("", "", "", "", 1500, LocalDate.of(2018, 7, 6), "amended return")
-  val customerRequestChargeHistoryModel: ChargeHistoryModel = ChargeHistoryModel("", "", "", "", 1500, LocalDate.of(2018, 7, 6), "Customer Request")
+  val amendedChargeHistoryModel: ChargeHistoryModel = ChargeHistoryModel("", "", LocalDate.now(), "", 1500, LocalDate.of(2018, 7, 6), "amended return")
+  val customerRequestChargeHistoryModel: ChargeHistoryModel = ChargeHistoryModel("", "", LocalDate.now(), "", 1500, LocalDate.of(2018, 7, 6), "Customer Request")
 
   val paymentBreakdown: List[FinancialDetail] = List(
     financialDetail(originalAmount = 123.45, chargeType = "ITSA England & NI"),
@@ -206,7 +206,7 @@ class ChargeSummaryViewSpec extends ViewSpec {
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
     codingDetails = None,
     documentDetails = List(DocumentDetail("9999", "PAYID01", Some("Payment on Account"), Some("documentText"), Some(-5000), Some(-15000), LocalDate.of(2018, 8, 6), None, None, None, None, None, None, None, Some("lotItem"), Some("lot"))),
-    financialDetails = List(FinancialDetail("9999", transactionId = Some("PAYIDO1"), items = Some(Seq(SubItem(dueDate = Some("2017-08-07"), paymentLot = Some("lot"), paymentLotItem = Some("lotItem"))))))
+    financialDetails = List(FinancialDetail("9999", transactionId = Some("PAYIDO1"), items = Some(Seq(SubItem(dueDate = Some(LocalDate.parse("2017-08-07")), paymentLot = Some("lot"), paymentLotItem = Some("lotItem"))))))
   )
 
   def checkPaymentProcessingInfo(document: Document): Unit = {

@@ -36,7 +36,7 @@ object PaymentAllocationIntegrationTestConstants {
   val financialDetail: FinancialDetail = FinancialDetail(
     taxYear = "2018",
     transactionId = Some("transactionId"),
-    transactionDate = Some("2018-03-29"),
+    transactionDate = Some(LocalDate.parse("2018-03-29")),
     `type` = Some("type"),
     totalAmount = Some(BigDecimal("1000.00")),
     originalAmount = Some(BigDecimal(500.00)),
@@ -48,12 +48,12 @@ object PaymentAllocationIntegrationTestConstants {
       SubItem(
         subItemId = Some("1"),
         amount = Some(BigDecimal("100.00")),
-        clearingDate = Some("2021-01-31"),
+        clearingDate = Some(LocalDate.parse("2021-01-31")),
         clearingReason = None,
         outgoingPaymentMethod = Some("outgoingPaymentMethod"),
         paymentReference = Some("paymentReference"),
         paymentAmount = Some(BigDecimal("2000.00")),
-        dueDate = Some("2021-01-31"),
+        dueDate = Some(LocalDate.parse("2021-01-31")),
         paymentMethod = Some("paymentMethod"),
         paymentLot = Some("paymentLot"),
         paymentLotItem = Some("paymentLotItem"),
@@ -67,7 +67,7 @@ object PaymentAllocationIntegrationTestConstants {
         outgoingPaymentMethod = Some("outgoingPaymentMethod2"),
         paymentReference = None,
         paymentAmount = Some(BigDecimal("3000.00")),
-        dueDate = Some("2021-01-31"),
+        dueDate = Some(LocalDate.parse("2021-01-31")),
         paymentMethod = Some("paymentMethod2"),
         paymentLot = Some("paymentLot2"),
         paymentLotItem = None,
@@ -78,7 +78,7 @@ object PaymentAllocationIntegrationTestConstants {
   val financialDetail2: FinancialDetail = FinancialDetail(
     taxYear = "2019",
     transactionId = Some("transactionId2"),
-    transactionDate = Some("transactionDate2"),
+    transactionDate = Some(LocalDate.parse("2020-08-16")),
     `type` = Some("type2"),
     totalAmount = Some(BigDecimal("2000.00")),
     originalAmount = Some(BigDecimal(500.00)),
@@ -95,7 +95,7 @@ object PaymentAllocationIntegrationTestConstants {
         outgoingPaymentMethod = Some("outgoingPaymentMethod2"),
         paymentReference = Some("paymentReference2"),
         paymentAmount = Some(BigDecimal("3000.00")),
-        dueDate = Some("2021-01-31"),
+        dueDate = Some(LocalDate.parse("2021-01-31")),
         paymentMethod = Some("paymentMethod2"),
         paymentLot = Some("paymentLot2"),
         paymentLotItem = Some("paymentLotItem2"),
@@ -221,25 +221,25 @@ object PaymentAllocationIntegrationTestConstants {
   val testValidPaymentAllocationsModel: PaymentAllocations = PaymentAllocations(
     Some(110.10), Some("Payment by Card"), Some("2019-05-27"), Some("reference"),
     Seq(
-      AllocationDetail(Some("1040000872"), Some("2019-06-27"), Some("2019-08-27"), Some("NIC4 Wales"), Some("SA Payment on Account 1"), Some(10.10), Some(5.50), Some("chargeReference1")),
-      AllocationDetail(Some("1040000873"), Some("2019-07-28"), Some("2019-09-28"), Some("NIC4 Wales"), Some("SA Payment on Account 1"), Some(10.90), Some(5.90), Some("chargeReference2"))
+      AllocationDetail(Some("1040000872"), Some(LocalDate.parse("2019-06-27")), Some(LocalDate.parse("2019-08-27")), Some("NIC4 Wales"), Some("SA Payment on Account 1"), Some(10.10), Some(5.50), Some("chargeReference1")),
+      AllocationDetail(Some("1040000873"), Some(LocalDate.parse("2019-07-28")), Some(LocalDate.parse("2019-09-28")), Some("NIC4 Wales"), Some("SA Payment on Account 1"), Some(10.90), Some(5.90), Some("chargeReference2"))
     )
   )
 
   val testValidLpiPaymentAllocationsModel: PaymentAllocations = PaymentAllocations(
     Some(110.10), Some("Payment by Card"), Some("2019-05-27"), Some("reference"),
     Seq(
-      AllocationDetail(Some("1040000872"), Some("2019-06-27"), Some("2019-08-27"), Some("ITSA NIC4 Interest GB"), Some("SA Late Payment Interest"), Some(10.10), Some(5.50), Some("latePaymentInterestId")),
-      AllocationDetail(Some("1040000873"), Some("2019-07-28"), Some("2019-09-28"), Some("ITSA NIC2 Interest GB"), Some("SA Late Payment Interest"), Some(10.90), Some(5.90), Some("latePaymentInterestId"))
+      AllocationDetail(Some("1040000872"), Some(LocalDate.parse("2019-06-27")), Some(LocalDate.parse("2019-08-27")), Some("ITSA NIC4 Interest GB"), Some("SA Late Payment Interest"), Some(10.10), Some(5.50), Some("latePaymentInterestId")),
+      AllocationDetail(Some("1040000873"), Some(LocalDate.parse("2019-07-28")), Some(LocalDate.parse("2019-09-28")), Some("ITSA NIC2 Interest GB"), Some("SA Late Payment Interest"), Some(10.90), Some(5.90), Some("latePaymentInterestId"))
     )
   )
 
   val paymentAllocationViewModel: PaymentAllocationViewModel = PaymentAllocationViewModel(paymentAllocationChargesModel,
     Seq(
-      AllocationDetailWithClearingDate(Some(AllocationDetail(Some("1040000872"), Some("2019-06-27"), Some("2019-08-27"), Some("NIC4 Wales"), Some("SA Payment on Account 1"), Some(10.10), Some(5.50), Some("chargeReference1"))),
-        Some("2021-01-31")),
-      AllocationDetailWithClearingDate(Some(AllocationDetail(Some("1040000873"), Some("2019-07-28"), Some("2019-09-28"), Some("NIC4 Wales"), Some("SA Payment on Account 1"), Some(10.90), Some(5.90), Some("chargeReference2"))),
-        Some("2021-01-31"))
+      AllocationDetailWithClearingDate(Some(AllocationDetail(Some("1040000872"), Some(LocalDate.parse("2019-06-27")), Some(LocalDate.parse("2019-08-27")), Some("NIC4 Wales"), Some("SA Payment on Account 1"), Some(10.10), Some(5.50), Some("chargeReference1"))),
+        Some(LocalDate.parse("2021-01-31"))),
+      AllocationDetailWithClearingDate(Some(AllocationDetail(Some("1040000873"), Some(LocalDate.parse("2019-07-28")), Some(LocalDate.parse("2019-09-28")), Some("NIC4 Wales"), Some("SA Payment on Account 1"), Some(10.90), Some(5.90), Some("chargeReference2"))),
+        Some(LocalDate.parse("2021-01-31")))
     ))
 
   val lpiDocumentDetail = DocumentDetail(
@@ -456,7 +456,7 @@ object PaymentAllocationIntegrationTestConstants {
 			|            "outstandingAmount": 200.00,
 			|            "taxYear": "2019",
 			|            "totalAmount": 2000.00,
-			|            "transactionDate": "transactionDate2",
+			|            "transactionDate": "2020-08-16",
 			|            "transactionId": "transactionId2",
 			|            "type": "type2"
 			|        }

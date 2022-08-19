@@ -86,7 +86,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         taxYear = getCurrentTaxYearEnd.getYear.toString,
         mainType = Some("SA Payment on Account 1"),
         transactionId = Some("testTransactionId"),
-        items = Some(Seq(SubItem(Some(LocalDate.now.toString))))
+        items = Some(Seq(SubItem(Some(LocalDate.now))))
       )
     ),
     codingDetails = None
@@ -123,13 +123,13 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         taxYear = getCurrentTaxYearEnd.getYear.toString,
         transactionId = Some("testDunningTransactionId"),
         mainType = Some("SA Payment on Account 1"),
-        items = Some(Seq(SubItem(Some(LocalDate.now.toString), amount = Some(12), dunningLock = Some("Stand over order"), transactionId = Some("testDunningTransactionId"))))
+        items = Some(Seq(SubItem(Some(LocalDate.now), amount = Some(12), dunningLock = Some("Stand over order"), transactionId = Some("testDunningTransactionId"))))
       ),
       FinancialDetail(
         taxYear = getCurrentTaxYearEnd.getYear.toString,
         transactionId = Some("testDunningTransactionId2"),
         mainType = Some("SA Payment on Account 2"),
-        items = Some(Seq(SubItem(Some(LocalDate.now.toString), amount = Some(12), dunningLock = Some("Dunning Lock"), transactionId = Some("testDunningTransactionId2"))))
+        items = Some(Seq(SubItem(Some(LocalDate.now), amount = Some(12), dunningLock = Some("Dunning Lock"), transactionId = Some("testDunningTransactionId2"))))
       )
     )
   )
