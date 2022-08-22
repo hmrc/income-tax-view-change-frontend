@@ -60,7 +60,7 @@ class CreditHistoryServiceSpec extends TestSupport with MockIncomeTaxViewChangeC
     }
 
     "a successful response returned from the connector" should {
-      "return a list of MFA credits only" in {
+      "return a list of MFA and CutOver credits" in {
         setupMockGetFinancialDetails(taxYear, nino)(taxYearFinancialDetails)
         setupMockGetFinancialDetails(taxYear + 1, nino)(taxYearFinancialDetails_PlusOneYear)
         val futureResult = TestCreditHistoryService.getCreditsHistory(taxYear, nino)

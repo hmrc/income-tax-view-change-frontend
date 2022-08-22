@@ -61,12 +61,12 @@ trait CreditHistoryDataHelper {
       DocumentDetail("testYear2", "testTransactionId2", None, None, None, None, LocalDate.of(taxYear, 3, 29))
     ),
     financialDetails = List(
-      FinancialDetail("testYear2", None, Some("testTransactionId1"), None, None, None, None, None, None, None, None, Some(Seq(SubItem(Some(LocalDate.now.plusDays(3).toString))))),
-      FinancialDetail("testYear2", None, Some("testTransactionId2"), None, None, None, None, None, None, None, None, Some(Seq(SubItem(Some(LocalDate.now.plusDays(5).toString)))))
+      FinancialDetail("testYear2", None, Some("testTransactionId1"), None, None, None, None, None, None, None, None, Some(Seq(SubItem(Some(LocalDate.parse("2022-08-25").toString))))),
+      FinancialDetail("testYear2", None, Some("testTransactionId2"), None, None, None, None, None, None, None, None, Some(Seq(SubItem(Some(LocalDate.parse("2022-08-25").toString)))))
     )
   )
 
-  val creditDetailModelasCutOver = CreditDetailModel(date = LocalDate.parse("2022-08-22"), documentDetail = documentDetailsWhichIsCutOverCredit, CutOverCreditType)
+  val creditDetailModelasCutOver = CreditDetailModel(date = LocalDate.parse("2022-08-25"), documentDetail = documentDetailsWhichIsCutOverCredit, CutOverCreditType)
   val creditDetailModelasMfa = CreditDetailModel(date = LocalDate.parse("2022-03-29"), documentDetail = documentDetailsWhichIsMfaCredit, MfaCreditType)
 
   val taxYearFinancialDetails_PlusOneYear = FinancialDetailsModel(
@@ -77,8 +77,8 @@ trait CreditHistoryDataHelper {
       DocumentDetail("testYear2", "testTransactionId2", None, None, None, None, LocalDate.of(taxYear, 3, 29))
     ),
     financialDetails = List(
-      FinancialDetail("testYear2", None, Some("testTransactionId1"), None, None, None, None, None, None, None, None, Some(Seq(SubItem(Some(LocalDate.now.plusDays(3).toString))))),
-      FinancialDetail("testYear2", None, Some("testTransactionId2"), None, None, None, None, None, None, None, None, Some(Seq(SubItem(Some(LocalDate.now.plusDays(5).toString)))))
+      FinancialDetail("testYear2", None, Some("testTransactionId1"), None, None, None, None, None, None, None, None, Some(Seq(SubItem(Some(LocalDate.parse("2022-08-25").toString))))),
+      FinancialDetail("testYear2", None, Some("testTransactionId2"), None, None, None, None, None, None, None, None, Some(Seq(SubItem(Some(LocalDate.parse("2022-08-25").toString)))))
     )
   )
 
