@@ -9,6 +9,7 @@ import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino, testTa
 import testConstants.IncomeSourceIntegrationTestConstants.{propertyOnlyResponseWithMigrationData, testValidFinancialDetailsModelCreditAndRefundsJson}
 
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 class CreditAndRefundControllerISpec extends ComponentSpecBase {
 
@@ -32,9 +33,11 @@ class CreditAndRefundControllerISpec extends ComponentSpecBase {
         res should have(
           httpStatus(OK),
           elementTextBySelectorList("#main-content", "li:nth-child(1)", "p")(expectedValue = "£2,000.00 " +
-           messagesAPI("credit-and-refund.payment") + " 22 August 2023"),
+           messagesAPI("credit-and-refund.payment") + " " + DateTimeFormatter.ofPattern("dd MMMM YYYY")
+            .format(LocalDate.now().plusYears(1))),
           elementTextBySelectorList("#main-content", "li:nth-child(2)", "p")(expectedValue = "£2,000.00 " +
-            messagesAPI("credit-and-refund.payment") + " 22 August 2023"),
+            messagesAPI("credit-and-refund.payment") + " " + DateTimeFormatter.ofPattern("dd MMMM YYYY")
+            .format(LocalDate.now().plusYears(1))),
           elementTextBySelectorList("#main-content", "li:nth-child(3)", "p")(expectedValue = "£2,000.00 " +
             messagesAPI("credit-and-refund.payment") + " 29 March 2018"),
           elementTextBySelectorList("#main-content", "li:nth-child(4)", "p")(expectedValue = "£3.00 "
