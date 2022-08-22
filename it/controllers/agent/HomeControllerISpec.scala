@@ -169,7 +169,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
                       taxYear = getCurrentTaxYearEnd.getYear.toString,
                       mainType = Some("SA Payment on Account 1"),
                       transactionId = Some("testTransactionId"),
-                      items = Some(Seq(SubItem(Some(LocalDate.now.toString))))
+                      items = Some(Seq(SubItem(Some(LocalDate.now))))
                     )
                   ),
                   codingDetails = None
@@ -239,7 +239,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
                       taxYear = getCurrentTaxYearEnd.getYear.toString,
                       mainType = Some("SA Payment on Account 1"),
                       transactionId = Some("testTransactionId"),
-                      items = Some(Seq(SubItem(Some(LocalDate.now.toString))))
+                      items = Some(Seq(SubItem(Some(LocalDate.now))))
                     )
                   ),
                   codingDetails = None
@@ -308,7 +308,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
                         taxYear = getCurrentTaxYearEnd.getYear.toString,
                         mainType = Some("SA Payment on Account 1"),
                         transactionId = Some("testTransactionId"),
-                        items = Some(Seq(SubItem(Some(LocalDate.now.minusDays(1).toString))))
+                        items = Some(Seq(SubItem(Some(LocalDate.now.minusDays(1)))))
                       )
                     ),
                     codingDetails = None
@@ -376,7 +376,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
                         taxYear = getCurrentTaxYearEnd.getYear.toString,
                         mainType = Some("SA Payment on Account 1"),
                         transactionId = Some("testTransactionId"),
-                        items = Some(Seq(SubItem(Some(LocalDate.now.minusDays(1).toString))))
+                        items = Some(Seq(SubItem(Some(LocalDate.now.minusDays(1)))))
                       )
                     ),
                     codingDetails = None
@@ -457,13 +457,13 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
                       taxYear = getCurrentTaxYearEnd.getYear.toString,
                       mainType = Some("SA Payment on Account 1"),
                       transactionId = Some("testTransactionId1"),
-                      items = Some(Seq(SubItem(Some(LocalDate.now.minusDays(1).toString))))
+                      items = Some(Seq(SubItem(Some(LocalDate.now.minusDays(1)))))
                     ),
                     FinancialDetail(
                       taxYear = getCurrentTaxYearEnd.getYear.toString,
                       mainType = Some("SA Payment on Account 2"),
                       transactionId = Some("testTransactionId2"),
-                      items = Some(Seq(SubItem(Some(LocalDate.now.minusDays(2).toString))))
+                      items = Some(Seq(SubItem(Some(LocalDate.now.minusDays(2)))))
                     )
                   ),
                   codingDetails = None

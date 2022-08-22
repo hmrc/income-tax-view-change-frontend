@@ -20,6 +20,8 @@ import testConstants.BaseTestConstants._
 import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesErrorModel, OutstandingChargesModel}
 import play.api.libs.json.{JsValue, Json}
 
+import java.time.LocalDate
+
 object OutstandingChargesTestConstants {
 
   val testValidOutstandingChargesModelJson: JsValue = Json.parse(
@@ -40,7 +42,7 @@ object OutstandingChargesTestConstants {
       )))
 
   val testValidOutstandingChargesModel: OutstandingChargesModel = OutstandingChargesModel(List(
-    OutstandingChargeModel("LATE", Some("2021-01-31"), 123456789012345.67, 1234)))
+    OutstandingChargeModel("LATE", Some(LocalDate.parse("2021-01-31")), 123456789012345.67, 1234)))
 
 
   val testOutstandingChargesErrorModelParsing: OutstandingChargesErrorModel = OutstandingChargesErrorModel(

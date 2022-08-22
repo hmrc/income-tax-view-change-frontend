@@ -20,20 +20,22 @@ import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesMode
 import org.scalatest.Matchers
 import testUtils.UnitSpec
 
+import java.time.LocalDate
+
 class OutstandingChargesModelSpec extends UnitSpec with Matchers {
 
   val validOutstandingChargesModel = OutstandingChargesModel(
-    List(OutstandingChargeModel("BCD", Some("2021-12-01"), 123456.67, 1234), OutstandingChargeModel("ACI", None, 12.67, 1234),
-      OutstandingChargeModel("LATE", Some("2021-12-01"), 123456.67, 1234)))
+    List(OutstandingChargeModel("BCD", Some(LocalDate.parse("2021-12-01")), 123456.67, 1234), OutstandingChargeModel("ACI", None, 12.67, 1234),
+      OutstandingChargeModel("LATE", Some(LocalDate.parse("2021-12-01")), 123456.67, 1234)))
 
   val validOutstandingChargesModelWithNoMatchingTieBreaker = OutstandingChargesModel(
-    List(OutstandingChargeModel("BCD", Some("2021-12-01"), 123456.67, 4321), OutstandingChargeModel("ACI", None, 12.67, 1234)))
+    List(OutstandingChargeModel("BCD", Some(LocalDate.parse("2021-12-01")), 123456.67, 4321), OutstandingChargeModel("ACI", None, 12.67, 1234)))
 
   val validOutstandingChargesModelWithOneChargeValueZero = OutstandingChargesModel(
-    List(OutstandingChargeModel("BCD", Some("2021-12-01"), 0, 1234), OutstandingChargeModel("ACI", None, 12.67, 1234)))
+    List(OutstandingChargeModel("BCD", Some(LocalDate.parse("2021-12-01")), 0, 1234), OutstandingChargeModel("ACI", None, 12.67, 1234)))
 
   val validOutstandingChargesModelWithNoBcdCharges = OutstandingChargesModel(
-    List(OutstandingChargeModel("LATE", Some("2021-12-01"), 123456.67, 1234), OutstandingChargeModel("ACI", None, 12.67, 1234)))
+    List(OutstandingChargeModel("LATE", Some(LocalDate.parse("2021-12-01")), 123456.67, 1234), OutstandingChargeModel("ACI", None, 12.67, 1234)))
 
   "The OutstandingChargesModel" when {
 

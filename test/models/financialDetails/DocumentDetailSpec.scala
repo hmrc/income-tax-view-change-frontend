@@ -229,5 +229,17 @@ class DocumentDetailSpec extends UnitSpec {
         fullDocumentDetailModel.copy(documentDescription = Some("anything")).isMFADebit() shouldBe false
       }
     }
+
+    "getChargePaidStatus" should {
+      "return correct charge paid status paid for various outstandingAmount" in {
+        fullDocumentDetailModel.copy(outstandingAmount = Some(0)).getChargePaidStatus shouldBe "paid"
+        fullDocumentDetailModel.copy(outstandingAmount = Some(50), originalAmount = Some(100)).getChargePaidStatus shouldBe "part-paid"
+        fullDocumentDetailModel.copy(outstandingAmount = Some(-50), originalAmount = Some(100)).getChargePaidStatus shouldBe "part-paid"
+        fullDocumentDetailModel.copy(outstandingAmount = Some(-50), originalAmount = Some(-100)).getChargePaidStatus shouldBe "part-paid"
+        fullDocumentDetailModel.copy(outstandingAmount = Some(-50), originalAmount = Some(50)).getChargePaidStatus shouldBe "part-paid"
+        fullDocumentDetailModel.copy(outstandingAmount = Some(300), originalAmount = Some(300)).getChargePaidStatus shouldBe "unpaid"
+        fullDocumentDetailModel.copy(outstandingAmount = Some(-300), originalAmount = Some(-300)).getChargePaidStatus shouldBe "unpaid"
+      }
+    }
   }
 }
