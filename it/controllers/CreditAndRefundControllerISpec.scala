@@ -31,6 +31,16 @@ class CreditAndRefundControllerISpec extends ComponentSpecBase {
 
         res should have(
           httpStatus(OK),
+          elementTextBySelectorList("#main-content", "li:nth-child(1)", "p")(expectedValue = "£2,000.00 " +
+           messagesAPI("credit-and-refund.payment") + " 22 August 2023"),
+          elementTextBySelectorList("#main-content", "li:nth-child(2)", "p")(expectedValue = "£2,000.00 " +
+            messagesAPI("credit-and-refund.payment") + " 22 August 2023"),
+          elementTextBySelectorList("#main-content", "li:nth-child(3)", "p")(expectedValue = "£2,000.00 " +
+            messagesAPI("credit-and-refund.payment") + " 29 March 2018"),
+          elementTextBySelectorList("#main-content", "li:nth-child(4)", "p")(expectedValue = "£3.00 "
+            + messagesAPI("credit-and-refund.refundProgress")),
+          elementTextBySelectorList("#main-content", "li:nth-child(5)", "p")(expectedValue = "£2.00 "
+            + messagesAPI("credit-and-refund.refundProgress")),
           pageTitleIndividual("credit-and-refund.heading")
         )
       }
