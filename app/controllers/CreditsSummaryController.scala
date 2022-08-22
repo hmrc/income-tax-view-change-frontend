@@ -51,29 +51,6 @@ class CreditsSummaryController @Inject()(creditsView: CreditsSummary,
                                          val agentItvcErrorHandler: AgentItvcErrorHandler
                                         ) extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
-  private def getFinancialsByTaxYear(calendarYear: Int, isAgent: Boolean)(callback: List[DocumentDetail] => Future[Result])
-                                    (implicit user: MtdItUser[AnyContent]): Future[Result] = {
-    financialDetailsService.getFinancialDetails(calendarYear, user.nino).flatMap {
-      case FinancialDetailsModel(_, _, documentDetails, _) =>
-        val docDetailsMFACredits = documentDetails.filter(_.validMFACreditDescription())
-
-        val financialDetailsWithCredit: List[DocumentDetail] = docDetailsMFACredits.filter { dd =>
-          dd.documentDate.getYear == calendarYear
-        }.sortBy(_.documentDate.toEpochDay())
-
-        callback(financialDetailsWithCredit)
-
-      case FinancialDetailsErrorModel(NOT_FOUND, _) => callback(List.empty)
-
-      case _ if isAgent =>
-        Logger("application").error(s"[TaxYearSummaryController][withTaxYearFinancials] - Could not retrieve financial details for year: $calendarYear")
-        Future.successful(agentItvcErrorHandler.showInternalServerError())
-      case _ =>
-        Logger("application").error(s"[Agent][TaxYearSummaryController][withTaxYearFinancials] - Could not retrieve financial details for year: $calendarYear")
-        Future.successful(itvcErrorHandler.showInternalServerError())
-    }
-  }
-
   private def creditsSummaryUrl(calendarYear: Int, origin: Option[String]): String =
     controllers.routes.CreditsSummaryController.showCreditsSummary(calendarYear, origin).url
 
