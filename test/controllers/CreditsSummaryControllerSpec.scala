@@ -21,7 +21,7 @@ import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
 import mocks.MockItvcErrorHandler
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockIncomeSourceDetailsPredicateNoCache}
-import mocks.services.{MockCalculationService, MockFinancialDetailsService, MockNextUpdatesService}
+import mocks.services.{MockCalculationService, MockCreditHistoryService, MockFinancialDetailsService, MockNextUpdatesService}
 import models.financialDetails.DocumentDetail
 import play.api.http.Status
 import play.api.mvc.MessagesControllerComponents
@@ -36,7 +36,7 @@ import views.html.CreditsSummary
 class CreditsSummaryControllerSpec extends TestSupport with MockCalculationService
   with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicateNoCache
   with MockFinancialDetailsService with FeatureSwitching with MockItvcErrorHandler
-  with MockNextUpdatesService with MockIncomeSourceDetailsPredicate {
+  with MockNextUpdatesService with MockIncomeSourceDetailsPredicate with MockCreditHistoryService {
 
   val creditsSummaryView: CreditsSummary = app.injector.instanceOf[CreditsSummary]
 
@@ -44,8 +44,7 @@ class CreditsSummaryControllerSpec extends TestSupport with MockCalculationServi
     creditsSummaryView,
     mockAuthService,
     mockIncomeSourceDetailsService,
-    mockFinancialDetailsService,
-    app.injector.instanceOf[ItvcErrorHandler],
+    mockCreditHistoryService,
     app.injector.instanceOf[SessionTimeoutPredicate],
     app.injector.instanceOf[NavBarPredicate],
     MockAuthenticationPredicate,
