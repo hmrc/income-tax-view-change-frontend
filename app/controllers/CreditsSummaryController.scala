@@ -18,14 +18,12 @@ package controllers
 
 import auth.MtdItUser
 import config.featureswitch.{FeatureSwitching, MFACreditsAndDebits}
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import config.{AgentItvcErrorHandler, FrontendAppConfig}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
-import models.financialDetails.{DocumentDetail, FinancialDetailsErrorModel, FinancialDetailsModel}
-import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import services.{CreditHistoryService, FinancialDetailsService, IncomeSourceDetailsService}
+import services.{CreditHistoryService, IncomeSourceDetailsService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
 import views.html.CreditsSummary
