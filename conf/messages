@@ -410,20 +410,21 @@ obligations.eops                                                = Whole tax year
 obligations.noReports                                           = You don’t have any reports due right now. Your next deadline will show here on the first Monday of next month.
 
 ## Credits Summary Page ##
-credits.heading                                                 = Credits in {0}
-credits.tableHead.date                                          = Date
-credits.tableHead.type                                          = Type
-credits.tableHead.status                                        = Status
-credits.tableHead.amount                                        = Amount
-credits.tableHead.type.value                                    = Credit from HMRC adjustment
-credits.table.status-fully-allocated                            = Fully allocated
-credits.table.status-not-yet-allocated                          = Not yet allocated
-credits.table.status-partially-allocated                        = Partially allocated
-credits.drop-down-list.name                                     = What are the credit types?
-credits.drop-down-list.credit-from-hmrc-adjustment              = Credit from HMRC adjustment
-credits.drop-down-list.credit-from-hmrc-adjustment.value        = This credit has been created as a result of a relief applied by HMRC.
-credits.drop-down-list.credit-from-an-earlier-tax-year          = Credit from an earlier tax year
-credits.drop-down-list.credit-from-an-earlier-tax-year.sa-note  = This is money you paid into your account before you signed up for Making Tax Digital for Income Tax. Visit your previous
+credits.heading                                                         = Credits in {0}
+credits.tableHead.date                                                  = Date
+credits.tableHead.type                                                  = Type
+credits.tableHead.status                                                = Status
+credits.tableHead.amount                                                = Amount
+credits.tableHead.type.value                                            = Credit from HMRC adjustment
+credits.table.status-fully-allocated                                    = Fully allocated
+credits.table.status-not-yet-allocated                                  = Not yet allocated
+credits.table.status-partially-allocated                                = Partially allocated
+credits.drop-down-list.name                                             = What are the credit types?
+credits.drop-down-list.credit-from-hmrc-adjustment                      = Credit from HMRC adjustment
+credits.drop-down-list.credit-from-hmrc-adjustment.value                = This credit has been created as a result of a relief applied by HMRC.
+credits.drop-down-list.credit-from-an-earlier-tax-year                  = Credit from an earlier tax year
+credits.drop-down-list.credit-from-an-earlier-tax-year.sa-note          = This is money you paid into your account before you signed up for Making Tax Digital for Income Tax. Visit your previous
+credits.drop-down-list.credit-from-an-earlier-tax-year.agent.sa-note    = This is money your client paid into their account before they were signed up for Making Tax Digital for Income Tax. Sign in to your
 
 ## Refund to taxpayer page ##
 refund-to-taxpayer.heading                                      = Refund to taxpayer

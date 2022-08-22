@@ -27,7 +27,10 @@
         implicitDateFormatter: ImplicitDateFormatterImpl,
         appConfig: config.FrontendAppConfig,
         h1: h1,
-        link: link
+        h3: h3,
+        p: p,
+        link: link,
+        detailsDropdown: detailsDropdown
 )
 @(
     calendarYear: Int,
@@ -73,6 +76,23 @@
     s"balancing-charge-type-$idx"
 }
 
+@dropDownDetails(isAgent: Boolean) = {
+    @h3(msg = "credits.drop-down-list.credit-from-hmrc-adjustment", classes = "govuk-heading-s")
+    @p(){@messages("credits.drop-down-list.credit-from-hmrc-adjustment.value")}
+    @h3(msg = "credits.drop-down-list.credit-from-an-earlier-tax-year", classes = "govuk-heading-s")
+    @if(isAgent) {
+        @p(id = Some("sa-note-migrated")) {
+            @messages("credits.drop-down-list.credit-from-an-earlier-tax-year.agent.sa-note")
+            <a class="govuk-link" id="coding-out-summary-link" href="self-assessment/ind/4455662021/account">@messages("notmigrated.agent.link_title")@messages("pagehelp.opensInNewTabText")</a>
+        }
+    } else {
+        @p(id = Some("sa-note-migrated")) {
+            @messages("credits.drop-down-list.credit-from-an-earlier-tax-year.sa-note")
+            <a class="govuk-link" id="coding-out-summary-link" href="self-assessment/ind/4455662021/account">@messages("notmigrated.user.link_title")@messages("pagehelp.opensInNewTabText")</a>
+        }
+    }
+}
+
 @mainTemplate(
     pageTitle = messages("credits.heading", s"$calendarYear"),
     backUrl = Some(backUrl),
@@ -102,10 +122,12 @@
         </div>
     </div>
 
-@link(
-    link = creditAndRefundsControllerURL,
-    messageKey = "credit-and-refund.claim-refund-btn"
-)
+    @detailsDropdown(messages("credits.drop-down-list.name"), dropDownDetails(isAgent))
+
+    @link(
+        link = creditAndRefundsControllerURL,
+        messageKey = "credit-and-refund.claim-refund-btn"
+    )
 
 }
 
