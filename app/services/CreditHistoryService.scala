@@ -58,7 +58,6 @@ class CreditHistoryService @Inject()(incomeTaxViewChangeConnector: IncomeTaxView
             }
           }.flatten
           Future {
-            println(fdRes)
             Right(fdRes)
           }
         case _ =>
