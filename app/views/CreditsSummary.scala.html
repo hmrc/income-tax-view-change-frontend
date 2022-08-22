@@ -21,9 +21,6 @@
 @import views.html.layouts.unifiedLayout
 @import views.html.components._
 @import exceptions.MissingFieldException
-@import cats.syntax.eq._
-@import cats.instances.option._
-@import cats.instances.bigDecimal._
 
 @this(
         mainTemplate: unifiedLayout,
@@ -65,9 +62,11 @@
     outstandingAmount == 0 (allocated)
 *@
 @getStatus(charges: DocumentDetail) = @{
-    if(charges.outstandingAmount.map(_.abs) === charges.originalAmount.map(_.abs)) getMessage("table.status-not-yet-allocated")
-    else if (charges.outstandingAmount === Some(BigDecimal(0))) getMessage("table.status-fully-allocated")
-    else getMessage("table.status-partially-allocated")
+    charges.getChargePaidStatus match {
+        case "paid" => getMessage("table.status-fully-allocated")
+        case "part-paid" => getMessage("table.status-partially-allocated")
+        case _ => getMessage("table.status-not-yet-allocated")
+    }
 }
 
 @getIndex(idx: Int) = @{

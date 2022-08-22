@@ -25,6 +25,7 @@ import org.scalatestplus.mockito.MockitoSugar
 import services.WhatYouOweService
 import testUtils.UnitSpec
 
+import java.time.LocalDate
 import scala.concurrent.Future
 
 trait MockWhatYouOweService extends UnitSpec with MockitoSugar with BeforeAndAfterEach {
@@ -35,7 +36,7 @@ trait MockWhatYouOweService extends UnitSpec with MockitoSugar with BeforeAndAft
 
   val oneOverdueBCDPaymentInWhatYouOweChargesList: WhatYouOweChargesList =
     emptyWhatYouOweChargesList.copy(
-      outstandingChargesModel = Some(OutstandingChargesModel(List(OutstandingChargeModel("BCD", Some("2019-01-31"), 1.67, 2345))))
+      outstandingChargesModel = Some(OutstandingChargesModel(List(OutstandingChargeModel("BCD", Some(LocalDate.parse("2019-01-31")), 1.67, 2345))))
     )
 
   override def beforeEach(): Unit = {

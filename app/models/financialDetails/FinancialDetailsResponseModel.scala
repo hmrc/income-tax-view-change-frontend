@@ -35,7 +35,7 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
       financialDetails.find { fd =>
         fd.transactionId.contains(documentDetail.transactionId) &&
           fd.taxYear == documentDetail.taxYear
-      } flatMap (_.items.flatMap(_.headOption.flatMap(_.dueDate))) map LocalDate.parse
+      } flatMap (_.items.flatMap(_.headOption.flatMap(_.dueDate)))
     }
   }
 
@@ -68,7 +68,7 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
     financialDetails.find { fd =>
       fd.transactionId.contains(documentDetail.transactionId) &&
         fd.taxYear == documentDetail.taxYear
-    } flatMap (_.items.flatMap(_.headOption.flatMap(_.dueDate))) map LocalDate.parse
+    } flatMap (_.items.flatMap(_.headOption.flatMap(_.dueDate)))
   }
 
   def findDocumentDetailForYearWithDueDate(taxYear: Int): Option[DocumentDetailWithDueDate] = {

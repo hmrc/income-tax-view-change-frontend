@@ -22,9 +22,11 @@ import models.financialDetails.FinancialDetail
 import play.api.Logger
 import play.api.libs.json.{Format, Json}
 
+import java.time.LocalDate
+
 case class AllocationDetail(transactionId: Option[String],
-                            from: Option[String],
-                            to: Option[String],
+                            from: Option[LocalDate],
+                            to: Option[LocalDate],
                             chargeType: Option[String],
                             mainType: Option[String],
                             amount: Option[BigDecimal],
@@ -41,10 +43,9 @@ case class AllocationDetail(transactionId: Option[String],
   }
 
   def getTaxYear(implicit implicitDateFormatter: ImplicitDateFormatter): Int = {
-    import implicitDateFormatter.localDate
 
     AccountingPeriodModel.determineTaxYearFromPeriodEnd(
-      to.getOrElse(throw new Exception("Missing tax period end date")).toLocalDate)
+      to.getOrElse(throw new Exception("Missing tax period end date")))
   }
 }
 

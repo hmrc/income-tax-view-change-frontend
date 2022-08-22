@@ -18,14 +18,15 @@ package models.financialDetails
 
 import play.api.libs.json._
 import play.api.Logger
+import java.time.LocalDate
 
 
-case class SubItem(dueDate: Option[String] = None,
+case class SubItem(dueDate: Option[LocalDate] = None,
                    subItemId: Option[String] = None,
                    amount: Option[BigDecimal] = None,
                    dunningLock: Option[String] = None,
                    interestLock: Option[String] = None,
-                   clearingDate: Option[String] = None,
+                   clearingDate: Option[LocalDate] = None,
                    clearingReason: Option[String] = None,
                    outgoingPaymentMethod: Option[String] = None,
                    paymentReference: Option[String] = None,
@@ -60,12 +61,12 @@ object SubItem {
       pli <- paymentLotItem
     } yield s"$pl-$pli"
     SubItem(
-      dueDate,
+      dueDate.map(date => LocalDate.parse(date)),
       subItemId,
       amount,
       dunningLock,
       interestLock,
-      clearingDate,
+      clearingDate.map(date => LocalDate.parse(date)),
       clearingReason,
       outgoingPaymentMethod,
       paymentReference,
