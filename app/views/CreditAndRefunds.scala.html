@@ -121,44 +121,52 @@
                         </li>
                     }
                     @if(!charge._1.documentDetail.validMFACreditDescription()) {
-                        <li>
-                            <p class="govuk-heading-s">
-                                @charge._1.documentDetail.paymentOrChargeCredit.getOrElse(throw MissingFieldException("Payment Or Charge Credit")).toCurrencyString
-                                @if(charge._1.documentDetail.documentDescription.getOrElse(throw MissingFieldException("Document Description")).toString().toLowerCase().equals("new charge")) {
+                        @if(charge._1.documentDetail.documentDescription.getOrElse(throw MissingFieldException("Document Description")).toString().toLowerCase().equals("new charge")) {
+                            <li>
+                                <p class="govuk-heading-s">
+                                    @charge._1.documentDetail.paymentOrChargeCredit.getOrElse(throw MissingFieldException("Payment Or Charge Credit")).toCurrencyString
                                     <span class="govuk-body"> @messages("credit-and-refund.credit-from-hmrc-title-prt-1")
                                         <a href="@getControllerHref(charge._1.documentDetail, isAgent)"
                                            class="govuk-link">@messages("paymentHistory.paymentFromEarlierYear")
                                         </a>
                                     </span>
-                                }
-                                @if(charge._1.documentDetail.documentDescription.getOrElse(throw MissingFieldException("Document Description")).toString().toLowerCase().equals("payment")) {
+                                </p>
+                            </li>
+                        } else {
+                            <li>
+                                <p class="govuk-heading-s">
+                                    @charge._1.documentDetail.paymentOrChargeCredit.getOrElse(throw MissingFieldException("Payment Or Charge Credit")).toCurrencyString
                                     <span class="govuk-body">@messages("credit-and-refund.payment")
                                         <a href="@getControllerHref(charge._1.documentDetail, isAgent)"
                                            class="govuk-link">@charge._1.dueDate.getOrElse(throw MissingFieldException("Due Date")).toLongDate
                                         </a>
                                     </span>
-                                }
-                            </p>
-                        </li>
+                                </p>
+                            </li>
+                        }
                     }
     }
 
     @if(!isMFACreditsAndDebitsEnabled && !charge._1.documentDetail.validMFACreditDescription()){
-        <li>
+        @if(charge._1.documentDetail.documentDescription.getOrElse(throw MissingFieldException("Document Description")).toString().toLowerCase().equals("new charge")) {
+            <li>
                 <p class="govuk-heading-s">
                     @charge._1.documentDetail.paymentOrChargeCredit.getOrElse(throw MissingFieldException("Payment Or Charge Credit")).toCurrencyString
-                    @if(charge._1.documentDetail.documentDescription.getOrElse(throw MissingFieldException("Document Description")).toString().toLowerCase().equals("new charge")) {
-                        <span class="govuk-body">@messages("credit-and-refund.credit-from-hmrc-title-prt-1") <a
-                            href="@getControllerHref(charge._1.documentDetail, isAgent)" class="govuk-link">@messages("paymentHistory.paymentFromEarlierYear")</a>
-                        </span>
-                    }
-                    @if(charge._1.documentDetail.documentDescription.getOrElse(throw MissingFieldException("Document Description")).toString().toLowerCase().equals("payment")) {
-                        <span class="govuk-body">@messages("credit-and-refund.payment") <a
-                                href="@getControllerHref(charge._1.documentDetail, isAgent)" class="govuk-link">@charge._1.dueDate.getOrElse(throw MissingFieldException("Due Date")).toLongDate</a>
-                        </span>
-                    }
+                    <span class="govuk-body">@messages("credit-and-refund.credit-from-hmrc-title-prt-1") <a
+                        href="@getControllerHref(charge._1.documentDetail, isAgent)" class="govuk-link">@messages("paymentHistory.paymentFromEarlierYear")</a>
+                    </span>
                 </p>
-        </li>
+            </li>
+        } else {
+            <li>
+                <p class="govuk-heading-s">
+                    @charge._1.documentDetail.paymentOrChargeCredit.getOrElse(throw MissingFieldException("Payment Or Charge Credit")).toCurrencyString
+                    <span class="govuk-body">@messages("credit-and-refund.payment") <a
+                            href="@getControllerHref(charge._1.documentDetail, isAgent)" class="govuk-link">@charge._1.dueDate.getOrElse(throw MissingFieldException("Due Date")).toLongDate</a>
+                    </span>
+                </p>
+            </li>
+        }
     }
 }
 
