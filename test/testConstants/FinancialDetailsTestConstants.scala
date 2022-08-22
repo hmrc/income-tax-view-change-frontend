@@ -938,7 +938,7 @@ object FinancialDetailsTestConstants {
       outstandingAmount = Some(BigDecimal(-500.00)),
       paymentLotItem = None,
       paymentLot = None,
-      originalAmount = Some(BigDecimal(800.00)),
+      originalAmount = Some(BigDecimal(-800.00)),
       documentDate = LocalDate.of(2018,4,16)
     ),
     documentDetailModel(
@@ -946,7 +946,7 @@ object FinancialDetailsTestConstants {
       outstandingAmount = Some(BigDecimal(-1400.00)),
       paymentLotItem = None,
       paymentLot = None,
-      originalAmount = Some(BigDecimal(1400.00)),
+      originalAmount = Some(BigDecimal(-1400.00)),
       documentDate = LocalDate.of(2018,7,30)
     )
   )
@@ -967,7 +967,7 @@ object FinancialDetailsTestConstants {
       outstandingAmount = Some(BigDecimal(-3000)),
       paymentLotItem = None,
       paymentLot = None,
-      originalAmount = Some(BigDecimal(3000))
+      originalAmount = Some(BigDecimal(-3000))
     )
   )
 
