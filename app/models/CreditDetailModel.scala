@@ -19,22 +19,12 @@ package models
 import models.financialDetails.{DocumentDetail, FinancialDetailsModel}
 import models.paymentAllocationCharges.FinancialDetailsWithDocumentDetailsModel
 
-case class CreditDetailModel(documentDetail: DocumentDetail, creditType: CreditType)
+import java.time.LocalDate
+
+case class CreditDetailModel(date: LocalDate , documentDetail: DocumentDetail, creditType: CreditType)
 
 sealed trait CreditType
 
 case object MfaCreditType extends CreditType
 
 case object CutOverCreditType extends CreditType
-
-object CreditDetailModel {
-
-  implicit def financialDetailsWithDocumentDetailsModelToCreditDetailsModel(document: FinancialDetailsWithDocumentDetailsModel): List[CreditDetailModel] = {
-    document.documentDetails.map(documentDetail => CreditDetailModel(documentDetail = documentDetail, creditType = CutOverCreditType))
-  }
-
-  implicit def financialDetailsModelToCreditModel(document: FinancialDetailsModel): List[CreditDetailModel] = {
-    document.documentDetails.map(documentDetail => CreditDetailModel(documentDetail = documentDetail, creditType = MfaCreditType))
-  }
-
-}
