@@ -501,6 +501,11 @@ credits.tableHead.type.value                                    = Credyd o addas
 credits.table.status-fully-allocated                            = Wedi ei ddyrannu’n llwyr
 credits.table.status-not-yet-allocated                          = Heb ei ddyrannu eto
 credits.table.status-partially-allocated                        = Wedi ei ddyrannu’n rhannol
+credits.drop-down-list.name                                     = Beth yw’r mathau o gredyd?
+credits.drop-down-list.credit-from-hmrc-adjustment              = Credyd o addasiad gan CThEM
+credits.drop-down-list.credit-from-hmrc-adjustment.value        = Mae’r credyd hwn wedi’i greu o ganlyniad i ryddhad a roddwyd ar waith gan CThEM.
+credits.drop-down-list.credit-from-an-earlier-tax-year          = Credyd o flwyddyn dreth gynharach
+credits.drop-down-list.credit-from-an-earlier-tax-year.sa-note  = Dyma arian a dalodd eich cleient i mewn i’w gyfrif cyn iddo gael ei gofrestru ar gyfer y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm. Mewngofnodwch i'ch
 
 ## Refund to taxpayer page ##
 refund-to-taxpayer.heading                                      = Ad-daliad i’r trethdalwr

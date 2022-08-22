@@ -419,6 +419,11 @@ credits.tableHead.type.value                                    = Credit from HM
 credits.table.status-fully-allocated                            = Fully allocated
 credits.table.status-not-yet-allocated                          = Not yet allocated
 credits.table.status-partially-allocated                        = Partially allocated
+credits.drop-down-list.name                                     = What are the credit types?
+credits.drop-down-list.credit-from-hmrc-adjustment              = Credit from HMRC adjustment
+credits.drop-down-list.credit-from-hmrc-adjustment.value        = This credit has been created as a result of a relief applied by HMRC.
+credits.drop-down-list.credit-from-an-earlier-tax-year          = Credit from an earlier tax year
+credits.drop-down-list.credit-from-an-earlier-tax-year.sa-note  = This is money you paid into your account before you signed up for Making Tax Digital for Income Tax. Visit your previous
 
 ## Refund to taxpayer page ##
 refund-to-taxpayer.heading                                      = Refund to taxpayer
