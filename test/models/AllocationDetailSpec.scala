@@ -89,8 +89,8 @@ class AllocationDetailSpec extends TestSupport with Matchers {
     }
 
     "calling .determineTaxYearFromPeriodEnd" should {
-      "periodEndDate is None " when {
-        "throw Exception" in {
+      "throw Exception" when {
+        "periodEndDate is None" in {
           intercept[Exception] {
             allocationDetails("SA Payment on Account 1", "NIC4", None).getTaxYear
           }
