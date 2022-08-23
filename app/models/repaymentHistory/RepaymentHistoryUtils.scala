@@ -46,13 +46,13 @@ object RepaymentHistoryUtils {
   private def groupedPayments(payments: List[PaymentHistoryEntry]): List[(Int, List[PaymentHistoryEntry])] = {
     def sortPayments(payments: List[PaymentHistoryEntry]) = {
       payments
-        .map(payment => (LocalDate.parse(payment.date).toEpochDay, payment))
+        .map(payment => (payment.date.toEpochDay, payment))
         .sortWith((left, right) => left._1 < right._1)
         .map { case (_, payments) => payments }
     }
 
     payments.groupBy[Int] { payment => {
-      LocalDate.parse(payment.date).getYear
+      payment.date.getYear
     }
     }.toList.sortBy(_._1).reverse
       .map { case (year, payments) => (year, sortPayments(payments)) }
@@ -87,7 +87,7 @@ object RepaymentHistoryUtils {
               date = payment.documentDate,
               description = "paymentHistory.mfaCredit",
               amount = payment.amount,
-              linkUrl = getMFAandCutoverCreditsLink(payment.documentDate, isAgent),
+              linkUrl = getMFAandCutoverCreditsLink(payment.documentDate.toString, isAgent),
               visuallyHiddenText = s"${payment.transactionId.getOrElse(throw MissingFieldException("Transaction ID"))}"
             ))
           } else None
@@ -98,7 +98,7 @@ object RepaymentHistoryUtils {
               date = paymentDueDate,
               description = "paymentHistory.paymentFromEarlierYear",
               amount = payment.amount,
-              linkUrl = getMFAandCutoverCreditsLink(paymentDueDate, isAgent),
+              linkUrl = getMFAandCutoverCreditsLink(paymentDueDate.toString, isAgent),
               visuallyHiddenText = s"${payment.transactionId.getOrElse(throw MissingFieldException("Document ID"))}"
             ))
           } else None
@@ -108,7 +108,7 @@ object RepaymentHistoryUtils {
 
     val filteredRepayments = repayments.flatMap(repayment => {
       Some(PaymentHistoryEntry(
-        date = languageUtils.Dates.shortDate(repayment.estimatedRepaymentDate)(messages),
+        date = LocalDate.parse(languageUtils.Dates.shortDate(repayment.estimatedRepaymentDate)(messages)),
         description = "paymentHistory.refund",
         amount = Some(repayment.totalRepaymentAmount),
         linkUrl = s"refund-to-taxpayer/${repayment.repaymentRequestNumber}",
