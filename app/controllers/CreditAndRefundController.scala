@@ -56,14 +56,14 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
   def handleRequest(isAgent: Boolean, itvcErrorHandler: ShowInternalServerError, backUrl: String)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
     creditService.getCreditCharges()(implicitly,user) map {
-      case _ if isEnabled(CreditsRefundsRepay) == false =>
+      case _ if(isEnabled(CreditsRefundsRepay) == false) =>
         Ok(customNotFoundErrorView()(user, messages))
       case financialDetailsModel : List[FinancialDetailsModel] =>
         val balance: Option[BalanceDetails] = financialDetailsModel.headOption.map(balance => balance.balanceDetails)
 
-        val charges: List[(DocumentDetailWithDueDate, FinancialDetail)] = financialDetailsModel.flatMap(
-          financialDetails => sortChargesGroupedPaymentTypes(financialDetails.getAllDocumentDetailsWithDueDates().zip(financialDetails.financialDetails))
-        )
+        val charges: List[(DocumentDetailWithDueDate, FinancialDetail)] = financialDetailsModel.map(
+          financialDetails => (financialDetails.getAllDocumentDetailsWithDueDates().zip(financialDetails.financialDetails))
+        ).flatten
 
         Ok(view(charges, balance, isAgent, backUrl, isEnabled(MFACreditsAndDebits))(user, user, messages))
       case _ => Logger("application").error(
@@ -96,27 +96,5 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
               )
           }
     }
-  }
-
-  private def sortChargesGroupedPaymentTypes(charges: List[(DocumentDetailWithDueDate, FinancialDetail)])
-  : List[(DocumentDetailWithDueDate, FinancialDetail)] = {
-
-    def sortCharges(charges: List[(DocumentDetailWithDueDate, FinancialDetail)])
-    : List[(DocumentDetailWithDueDate, FinancialDetail)] = {
-      charges
-        .sortBy(_._1.documentDetail.paymentOrChargeCredit).reverse
-    }
-
-    val chargesGroupedPaymentTypes = charges
-      .groupBy[String] {
-        charges => {
-          charges._1.documentDetail.documentDescription.get.substring(0, 3)
-        }
-      }.map {
-      case (documentId, charges) => (documentId, sortCharges(charges))
-    }.map {
-      case (_, charges) => charges
-    }.toList.flatten.sortBy(_._1.documentDetail.documentDescription.get.substring(0, 3))
-    chargesGroupedPaymentTypes
   }
 }
