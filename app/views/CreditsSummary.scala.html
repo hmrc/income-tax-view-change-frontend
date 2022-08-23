@@ -88,8 +88,8 @@
                 @if(charges.nonEmpty) {
                     @tableHead("over-due-payments-table-head")
                     <tbody class="govuk-table__body">
-                        @for((documentDetail, creditType, date) <- charges.map(x => (x.documentDetail, x.creditType, x.date))) {
-                            <tr class="govuk-table__row " id="row">
+                        @for((documentDetail, creditType, date, index) <- charges.zipWithIndex.map(x => (x._1.documentDetail, x._1.creditType, x._1.date, x._2))) {
+                            <tr class="govuk-table__row " id="@getIndex(index)">
                                 <td class="govuk-table__cell govuk-!-width-one-quarter">@date.toLongDateShort</td>
                                 <td class="govuk-table__cell govuk-!-width-one-half">@creditType.creditTypeAsString</td>
                                 <td class="govuk-table__cell numeric govuk-!-width-one-quarter">@getStatus(documentDetail)</td>

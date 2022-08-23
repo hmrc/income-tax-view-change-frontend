@@ -16,23 +16,18 @@
 
 package mocks.services
 
-import models.{CreditDetailModel, MfaCreditType}
+import models.CreditDetailModel
 import org.mockito.ArgumentMatchers
-import org.mockito.ArgumentMatchers.{any, eq => matches}
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import services.CreditHistoryService
 import services.CreditHistoryService.CreditHistoryError
-import services.agent.ClientDetailsService
-import services.agent.ClientDetailsService.{ClientDetails, ClientDetailsFailure}
-import testConstants.BaseTestConstants.testNino
-import testConstants.FinancialDetailsTestConstants.{creditAndRefundCreditDetailMFA, creditAndRefundDocumentDetailListMFA}
-import testUtils.UnitSpec
-import uk.gov.hmrc.http.HeaderCarrier
 
-import java.time.LocalDate
-import scala.concurrent.{ExecutionContext, Future}
+import testUtils.UnitSpec
+
+import scala.concurrent.Future
 
 trait MockCreditHistoryService extends UnitSpec with MockitoSugar with BeforeAndAfterEach {
 
@@ -48,9 +43,7 @@ trait MockCreditHistoryService extends UnitSpec with MockitoSugar with BeforeAnd
       .thenReturn(Future.successful(Right(creditDetailsModel)))
   }
 
-
-
-  def mockCreditHistoryServiceError(): Unit = {
+  def mockCreditHistoryFailed(): Unit = {
     when(mockCreditHistoryService.getCreditsHistory(any(), any())(ArgumentMatchers.any(), ArgumentMatchers.any()))
       .thenReturn(Future.successful(Left(CreditHistoryError)))
   }
