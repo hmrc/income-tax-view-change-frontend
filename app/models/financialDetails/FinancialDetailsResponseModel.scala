@@ -56,6 +56,12 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
     }
   }
 
+  def isMFADebit(documentId: String): Boolean = {
+    financialDetails.exists { fd =>
+      fd.transactionId.contains(documentId) && MfaDebitUtils.isMFADebitMainType(fd.mainType)
+    }
+  }
+
   def findDocumentDetailForTaxYear(taxYear: Int): Option[DocumentDetail] = documentDetails.find(_.taxYear.toInt == taxYear)
 
   def findDueDateByDocumentDetails(documentDetail: DocumentDetail): Option[LocalDate] = {
@@ -79,7 +85,8 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
   def getAllDocumentDetailsWithDueDates(codingOutEnabled: Boolean = false): List[DocumentDetailWithDueDate] = {
     documentDetails.map(documentDetail =>
       DocumentDetailWithDueDate(documentDetail, getDueDateFor(documentDetail),
-        documentDetail.isLatePaymentInterest, dunningLockExists(documentDetail.transactionId), codingOutEnabled))
+        documentDetail.isLatePaymentInterest, dunningLockExists(documentDetail.transactionId),
+        codingOutEnabled = codingOutEnabled, isMFADebit = isMFADebit(documentDetail.transactionId)))
   }
 
   def isAllPaid()(implicit user: MtdItUser[_]): Boolean = documentDetails.forall(_.isPaid)

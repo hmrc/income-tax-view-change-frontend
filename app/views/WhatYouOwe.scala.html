@@ -157,9 +157,9 @@
 }
 
 @paymentTypeEntry(documentDetail: DocumentDetail, rowId: String, isLatePaymentInterest: Boolean,
-    showTaxYear: Boolean = true, linkSuffix: String) = @{
+    isMFADebit: Boolean, showTaxYear: Boolean = true, linkSuffix: String) = @{
 
-    val chargeTypeKey = documentDetail.getChargeTypeKey(codingOutEnabled)
+    val chargeTypeKey = if(isMFADebit) "hmrcAdjustment.text" else documentDetail.getChargeTypeKey(codingOutEnabled)
     val lpi = if (isLatePaymentInterest) "lpi." else ""
     val linkText = getMessage(s"${lpi}${chargeTypeKey}")
     val taxYear = documentDetail.taxYear
@@ -182,7 +182,7 @@
 
 }
 
-@getPaymentTypeEntry(documentDetail: DocumentDetail, rowId: String, isOverduePayment: Boolean) = @{
+@getPaymentTypeEntry(documentDetail: DocumentDetail, rowId: String, isOverduePayment: Boolean, isMFADebit: Boolean) = @{
     val isLatePaymentInterest = isOverduePayment && documentDetail.isLatePaymentInterest
     def getLinkSuffix() : String = {
         if(!isOverduePayment) {
@@ -196,7 +196,7 @@
         }
     }
     paymentTypeEntry(documentDetail, rowId, isLatePaymentInterest = isLatePaymentInterest,
-    linkSuffix = getLinkSuffix())
+    linkSuffix = getLinkSuffix(), isMFADebit = isMFADebit)
 }
 
 @getReturnHref(year: Int) = @{
@@ -227,7 +227,7 @@
                 </div>
             }
             @getPaymentTypeEntry(documentDetail = documentDetailWithDueDate.documentDetail, isOverduePayment = isOverduePayment,
-                rowId = rowId2)
+                rowId = rowId2, isMFADebit = documentDetailWithDueDate.isMFADebit)
 
             @if(documentDetailWithDueDate.dunningLock){
                 <div class="form-hint govuk-body-s"> @getMessage("paymentUnderReview") </div>
