@@ -16,8 +16,9 @@
 
 package testConstants
 
-import java.time.LocalDate
+import models.{CreditDetailModel, MfaCreditType}
 
+import java.time.LocalDate
 import testConstants.BaseTestConstants.{testErrorMessage, testErrorNotFoundStatus, testErrorStatus}
 import models.financialDetails._
 import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
@@ -931,6 +932,14 @@ object FinancialDetailsTestConstants {
     documentDetailModel(documentDescription = Some("ITSA Standalone Claim"), outstandingAmount = Some(BigDecimal(-500.00)), paymentLotItem = None, paymentLot = None)
   )
 
+  val creditAndRefundCreditDetailMFA = List(
+    CreditDetailModel(LocalDate.now(), documentDetailModel(documentDescription = Some("ITSA Overpayment Relief"), outstandingAmount = Some(BigDecimal(-1400.00)), paymentLotItem = None, paymentLot = None), MfaCreditType),
+    CreditDetailModel(LocalDate.now(), documentDetailModel(documentDescription = Some("ITSA Standalone Claim"), outstandingAmount = Some(BigDecimal(-500.00)), paymentLotItem = None, paymentLot = None), MfaCreditType)
+  )
+
+  val creditAndRefundDocumentDetailMFA = documentDetailModel(documentDescription = Some("ITSA Overpayment Relief"), outstandingAmount = Some(BigDecimal(-1400.00)), paymentLotItem = None, paymentLot = None)
+
+
   val creditAndRefundDocumentDetailListMultipleChargesMFA = List(
     documentDetailModel(
       documentDescription = Some("ITSA Standalone Claim"),
@@ -948,6 +957,29 @@ object FinancialDetailsTestConstants {
       originalAmount = Some(BigDecimal(-1400.00)),
       documentDate = LocalDate.of(2018,7,30)
     )
+  )
+
+  val creditAndRefundCreditDetailListMultipleChargesMFA = List(
+    CreditDetailModel(
+      LocalDate.now(),
+      documentDetailModel(
+      documentDescription = Some("ITSA Standalone Claim"),
+      outstandingAmount = Some(BigDecimal(-500.00)),
+      paymentLotItem = None,
+      paymentLot = None,
+      originalAmount = Some(BigDecimal(-800.00)),
+      documentDate = LocalDate.of(2018, 4, 16)),
+      MfaCreditType),
+    CreditDetailModel(
+      LocalDate.now(),
+      documentDetailModel(
+      documentDescription = Some("ITSA Overpayment Relief"),
+      outstandingAmount = Some(BigDecimal(-1400.00)),
+      paymentLotItem = None,
+      paymentLot = None,
+      originalAmount = Some(BigDecimal(-1400.00)),
+      documentDate = LocalDate.of(2018, 7, 30)),
+      MfaCreditType)
   )
 
   val creditAndRefundDocumentDetailListFullyAllocatedMFA = List(

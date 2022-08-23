@@ -79,7 +79,6 @@ class CreditHistoryService @Inject()(incomeTaxViewChangeConnector: IncomeTaxView
       case (Left(_), Right(creditModelTYandOne)) =>
         Right(creditModelTYandOne.filter(_.date.getYear == calendarYear))
       case (_, _) =>
-        println("We here ...")
         Left(CreditHistoryError)
     }
   }
