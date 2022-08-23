@@ -77,18 +77,24 @@
 }
 
 @dropDownDetails(isAgent: Boolean) = {
-    @h3(msg = "credits.drop-down-list.credit-from-hmrc-adjustment", classes = "govuk-heading-s")
-    @p(){@messages("credits.drop-down-list.credit-from-hmrc-adjustment.value")}
-    @h3(msg = "credits.drop-down-list.credit-from-an-earlier-tax-year", classes = "govuk-heading-s")
+    @h3(msg = "credits.drop-down-list.credit-from-hmrc-adjustment", classes = "govuk-heading-s", optId = Some("h3-credit-from-hmrc-adjustment"))
+    @p(id = Some("p-credit-from-hmrc-adjustment")){@messages("credits.drop-down-list.credit-from-hmrc-adjustment.value")}
+    @h3(msg = "credits.drop-down-list.credit-from-an-earlier-tax-year", classes = "govuk-heading-s", optId = Some("h3-credit-from-an-earlier-tax-year"))
     @if(isAgent) {
-        @p(id = Some("sa-note-migrated")) {
-            @messages("credits.drop-down-list.credit-from-an-earlier-tax-year.agent.sa-note")
-            <a class="govuk-link" id="coding-out-summary-link" href="self-assessment/ind/4455662021/account">@messages("notmigrated.agent.link_title")@messages("pagehelp.opensInNewTabText")</a>
-        }
+            @p(id = Some("sa-note-migrated-agent")) {
+                @messages("credits.drop-down-list.credit-from-an-earlier-tax-year.agent.sa-note")
+                @link(link = appConfig.saForAgents, messageKey = messages("notmigrated.agent.link_title"),
+                    id = Some("sa-note-migrated-agent-online-account-link"),
+                    outerMessage = ".", rel=Some("noreferrer noopener"), target = Some("_blank"))
+            }
     } else {
-        @p(id = Some("sa-note-migrated")) {
-            @messages("credits.drop-down-list.credit-from-an-earlier-tax-year.sa-note")
-            <a class="govuk-link" id="coding-out-summary-link" href="self-assessment/ind/4455662021/account">@messages("notmigrated.user.link_title")@messages("pagehelp.opensInNewTabText")</a>
+        @utr.map { utrValue =>
+            @p(id = Some("sa-note-migrated")) {
+                @messages("credits.drop-down-list.credit-from-an-earlier-tax-year.sa-note")
+                @link(link = appConfig.saViewLandPService(utrValue), messageKey = s"${messages("notmigrated.user.link_title")}${messages("pagehelp.opensInNewTabText")}",
+                    id = Some("sa-note-migrated-online-account-link"),
+                    outerMessage = ".", rel = Some("noreferrer noopener"), target = Some("_blank"))
+            }
         }
     }
 }
@@ -126,6 +132,7 @@
 
     @link(
         link = creditAndRefundsControllerURL,
+        id = Some("credit-and-refund-claim-refund-btn"),
         messageKey = "credit-and-refund.claim-refund-btn"
     )
 
