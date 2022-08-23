@@ -19,6 +19,7 @@ package views
 import config.FrontendAppConfig
 import config.featureswitch.{FeatureSwitching, MFACreditsAndDebits}
 import implicits.ImplicitDateFormatter
+import models.{CreditDetailModel, MfaCreditType}
 import models.financialDetails.DocumentDetail
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
@@ -29,6 +30,8 @@ import testConstants.BaseTestConstants.testMtditid
 import testConstants.FinancialDetailsTestConstants._
 import testUtils.{TestSupport, ViewSpec}
 import views.html.CreditsSummary
+
+import java.time.LocalDate
 
 
 class CreditsSummaryViewSpec extends TestSupport with FeatureSwitching with ImplicitDateFormatter with ViewSpec {
@@ -64,7 +67,7 @@ class CreditsSummaryViewSpec extends TestSupport with FeatureSwitching with Impl
         utr = utr,
         btaNavPartial = None,
         enableMfaCreditsAndDebits = true,
-        charges = creditCharges,
+        charges = creditCharges.map(creditCharge => CreditDetailModel(LocalDate.now(), creditCharge, MfaCreditType)),
         isAgent = isAgent
       )(FakeRequest(), implicitly, implicitly)
     lazy val document: Document = Jsoup.parse(contentAsString(page))

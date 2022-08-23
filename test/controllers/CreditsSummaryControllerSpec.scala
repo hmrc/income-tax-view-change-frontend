@@ -22,6 +22,7 @@ import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPre
 import mocks.MockItvcErrorHandler
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockIncomeSourceDetailsPredicateNoCache}
 import mocks.services.{MockCalculationService, MockCreditHistoryService, MockFinancialDetailsService, MockNextUpdatesService}
+import models.{CreditDetailModel, MfaCreditType}
 import models.financialDetails.DocumentDetail
 import play.api.http.Status
 import play.api.mvc.MessagesControllerComponents
@@ -32,6 +33,8 @@ import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.BearerTokenExpired
 import uk.gov.hmrc.http.InternalServerException
 import views.html.CreditsSummary
+
+import java.time.LocalDate
 
 class CreditsSummaryControllerSpec extends TestSupport with MockCalculationService
   with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicateNoCache
@@ -45,6 +48,7 @@ class CreditsSummaryControllerSpec extends TestSupport with MockCalculationServi
     mockAuthService,
     mockIncomeSourceDetailsService,
     mockCreditHistoryService,
+    app.injector.instanceOf[ItvcErrorHandler],
     app.injector.instanceOf[SessionTimeoutPredicate],
     app.injector.instanceOf[NavBarPredicate],
     MockAuthenticationPredicate,
@@ -74,12 +78,13 @@ class CreditsSummaryControllerSpec extends TestSupport with MockCalculationServi
         enable(MFACreditsAndDebits)
         mockSingleBusinessIncomeSource()
         mockFinancialDetailsSuccess(financialDetailCreditChargeMFA)
+        mockCreditHistoryService(creditAndRefundCreditDetailMFA)
 
         val expectedContent: String = creditsSummaryView(
           backUrl = paymentRefundHistoryBackLink,
           utr = Some(testMtditid),
           enableMfaCreditsAndDebits = true,
-          charges = creditAndRefundDocumentDetailListMFA,
+          charges = creditAndRefundCreditDetailMFA,
           calendarYear = testTaxYear
         ).toString
 
@@ -97,6 +102,7 @@ class CreditsSummaryControllerSpec extends TestSupport with MockCalculationServi
         enable(MFACreditsAndDebits)
         mockSingleBusinessIncomeSource()
         mockFinancialDetailsNotFound()
+        mockCreditHistoryService(List.empty[CreditDetailModel])
 
         val expectedContent: String = creditsSummaryView(
           backUrl = paymentRefundHistoryBackLink,
@@ -121,12 +127,14 @@ class CreditsSummaryControllerSpec extends TestSupport with MockCalculationServi
         enable(MFACreditsAndDebits)
         mockSingleBusinessIncomeSource()
         mockFinancialDetailsSuccess(financialDetailCreditChargeMFA.copy(documentDetails = creditAndRefundDocumentDetailListMultipleChargesMFA))
+        mockCreditHistoryService(creditAndRefundCreditDetailListMultipleChargesMFA)
+
 
         val expectedContent: String = creditsSummaryView(
           backUrl = paymentRefundHistoryBackLink,
           utr = Some(testMtditid),
           enableMfaCreditsAndDebits = true,
-          charges = creditAndRefundDocumentDetailListMultipleChargesMFA,
+          charges = creditAndRefundCreditDetailListMultipleChargesMFA,
           calendarYear = testTaxYear
         ).toString
 
@@ -241,8 +249,8 @@ class CreditsSummaryControllerSpec extends TestSupport with MockCalculationServi
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         mockBothIncomeSources()
         setupMockGetFinancialDetailsWithTaxYearAndNino(testYearPlusTwo, "AA111111A")(testFinancialDetailsErrorModel)
+        mockCreditHistoryServiceError()
         mockShowInternalServerError()
-
         val result = TestCreditsSummaryController.showAgentCreditsSummary(calendarYear = testYearPlusTwo)(fakeRequestConfirmedClient())
 
         status(result) shouldBe INTERNAL_SERVER_ERROR

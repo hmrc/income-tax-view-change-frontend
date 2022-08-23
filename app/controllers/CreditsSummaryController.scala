@@ -18,9 +18,10 @@ package controllers
 
 import auth.MtdItUser
 import config.featureswitch.{FeatureSwitching, MFACreditsAndDebits}
-import config.{AgentItvcErrorHandler, FrontendAppConfig}
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
+import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.{CreditHistoryService, IncomeSourceDetailsService}
@@ -36,6 +37,7 @@ class CreditsSummaryController @Inject()(creditsView: CreditsSummary,
                                          val authorisedFunctions: AuthorisedFunctions,
                                          incomeSourceDetailsService: IncomeSourceDetailsService,
                                          creditHistoryService: CreditHistoryService,
+                                         itvcErrorHandler: ItvcErrorHandler,
                                          checkSessionTimeout: SessionTimeoutPredicate,
                                          retrieveBtaNavBar: NavBarPredicate,
                                          authenticate: AuthenticationPredicate,
@@ -96,7 +98,14 @@ class CreditsSummaryController @Inject()(creditsView: CreditsSummary,
             enableMfaCreditsAndDebits = isEnabled(MFACreditsAndDebits),
             charges = charges,
             origin = origin)))
-        case Left(_) => Future.successful(Redirect(controllers.routes.HomeController.show().url))
+        case Left(_) => {
+          Logger("application").error(s"Could not retrieve financial details for year: $calendarYear")
+          if (isAgent) Future.successful(agentItvcErrorHandler.showInternalServerError())
+          else Future.successful(itvcErrorHandler.showInternalServerError())
+        }
+
+
+          Future.successful(Redirect(controllers.routes.HomeController.show().url))
       }
     } else {
       Future.successful(Redirect(controllers.routes.HomeController.show().url))
