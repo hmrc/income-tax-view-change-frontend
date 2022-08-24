@@ -24,14 +24,13 @@ import java.time.LocalDate
 case class CreditDetailModel(date: LocalDate , documentDetail: DocumentDetail, creditType: CreditType)
 
 sealed trait CreditType {
-  val creditTypeAsString: String
+  val key: String
 }
 
 case object MfaCreditType extends CreditType {
-  override val creditTypeAsString = "Credit from HMRC adjustment"
+  override val key = "paymentHistory.mfaCredit"
 }
 
 case object CutOverCreditType extends CreditType {
-  override val creditTypeAsString = "Credit from an earlier tax year"
+  override val key = "paymentHistory.paymentFromEarlierYear"
 }
-
