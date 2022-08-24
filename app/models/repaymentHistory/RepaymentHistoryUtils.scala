@@ -34,8 +34,8 @@ object RepaymentHistoryUtils {
     }
   }
 
-  private def getMFAandCutoverCreditsLink(date: String, isAgent: Boolean) = {
-    val year = LocalDate.parse(date).getYear
+  private def getMFAandCutoverCreditsLink(date: LocalDate, isAgent: Boolean) = {
+    val year = date.getYear
     if (isAgent) {
       controllers.routes.CreditsSummaryController.showAgentCreditsSummary(year).url
     } else {
@@ -87,7 +87,7 @@ object RepaymentHistoryUtils {
               date = payment.documentDate,
               description = "paymentHistory.mfaCredit",
               amount = payment.amount,
-              linkUrl = getMFAandCutoverCreditsLink(payment.documentDate.toString, isAgent),
+              linkUrl = getMFAandCutoverCreditsLink(payment.documentDate, isAgent),
               visuallyHiddenText = s"${payment.transactionId.getOrElse(throw MissingFieldException("Transaction ID"))}"
             ))
           } else None
@@ -98,7 +98,7 @@ object RepaymentHistoryUtils {
               date = paymentDueDate,
               description = "paymentHistory.paymentFromEarlierYear",
               amount = payment.amount,
-              linkUrl = getMFAandCutoverCreditsLink(paymentDueDate.toString, isAgent),
+              linkUrl = getMFAandCutoverCreditsLink(paymentDueDate, isAgent),
               visuallyHiddenText = s"${payment.transactionId.getOrElse(throw MissingFieldException("Document ID"))}"
             ))
           } else None
