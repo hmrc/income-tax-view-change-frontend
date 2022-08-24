@@ -91,7 +91,7 @@
         @utr.map { utrValue =>
             @p(id = Some("sa-note-migrated")) {
                 @messages("credits.drop-down-list.credit-from-an-earlier-tax-year.sa-note")
-                @link(link = appConfig.saViewLandPService(utrValue), messageKey = s"${messages("notmigrated.user.link_title")}${messages("pagehelp.opensInNewTabText")}",
+                @link(link = appConfig.saViewLandPService(utrValue), messageKey = s"${messages("notmigrated.user.link_title")}",
                     id = Some("sa-note-migrated-online-account-link"),
                     outerMessage = ".", rel = Some("noreferrer noopener"), target = Some("_blank"))
             }
