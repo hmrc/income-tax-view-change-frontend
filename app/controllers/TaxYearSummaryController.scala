@@ -19,7 +19,7 @@ package controllers
 import audit.AuditingService
 import audit.models.TaxYearSummaryResponseAuditModel
 import auth.MtdItUser
-import config.featureswitch.{CodingOut, FeatureSwitching, ForecastCalculation, R7bTxmEvents, MFACreditsAndDebits}
+import config.featureswitch.{CodingOut, FeatureSwitching, ForecastCalculation, MFACreditsAndDebits, R7bTxmEvents}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
@@ -134,6 +134,7 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
 
     financialDetailsService.getFinancialDetails(taxYear, user.nino) flatMap {
       case financialDetails@FinancialDetailsModel(_, _, documentDetails, _) =>
+        println(financialDetails)
         val docDetailsNoPayments = documentDetails.filter(_.paymentLot.isEmpty)
         val docDetailsCodingOut = docDetailsNoPayments.filter(_.isCodingOutDocumentDetail(isEnabled(CodingOut)))
         val documentDetailsWithDueDates: List[DocumentDetailWithDueDate] = {
@@ -142,8 +143,10 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
             .filter(_.originalAmountIsNotZeroOrNegative)
             .map(
             documentDetail => DocumentDetailWithDueDate(documentDetail, financialDetails.findDueDateByDocumentDetails(documentDetail),
-              dunningLock = financialDetails.dunningLockExists(documentDetail.transactionId)))
-        }
+              dunningLock = financialDetails.dunningLockExists(documentDetail.transactionId), codingOutEnabled = isEnabled(CodingOut),
+              isMFADebit = financialDetails.isMFADebit(documentDetail.transactionId)))
+        }.filter(documentDetailWithDueDate => if(isDisabled(MFACreditsAndDebits) && documentDetailWithDueDate.isMFADebit) false else true)
+
         val documentDetailsWithDueDatesForLpi: List[DocumentDetailWithDueDate] = {
           docDetailsNoPayments.filter(_.isLatePaymentInterest).map(
             documentDetail => DocumentDetailWithDueDate(documentDetail, documentDetail.interestEndDate, isLatePaymentInterest = true,
