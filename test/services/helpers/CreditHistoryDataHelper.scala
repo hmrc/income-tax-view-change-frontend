@@ -16,15 +16,13 @@
 
 package services.helpers
 
-import models.CreditDetailModel
-import models.financialDetails.{BalanceDetails, DocumentDetail, FinancialDetail, FinancialDetailsModel, Payment, SubItem}
+import models.financialDetails._
 import models.paymentAllocationCharges.FinancialDetailsWithDocumentDetailsModel
+import models.{CreditDetailModel, CutOverCreditType, MfaCreditType}
 
 import java.time.LocalDate
 
 trait CreditHistoryDataHelper {
-
-  import CreditDetailModel._
 
   val paymentsForTheGivenTaxYear: List[Payment] = List(Payment(reference = Some("reference"), amount = Some(100.00),
     outstandingAmount = Some(1.00), method = Some("method"), documentDescription = None, lot = Some("lot"), lotItem = Some("lotItem"),
@@ -43,11 +41,39 @@ trait CreditHistoryDataHelper {
   val nino: String = "someNino"
   val documentIdA: String = "DOCID01"
   val documentIdB: String = "DOCID02"
+
+  val documentDetailsWhichIsCutOverCredit = DocumentDetail(
+    "testYear2", "testTransactionId1",
+    None,
+    None, Some(100.00), Some(-120.00),
+    LocalDate.of(taxYear, 3, 29)
+  )
+  val documentDetailsWhichIsMfaCredit = DocumentDetail("testYear2",
+    "testTransactionId1",
+    Some("ITSA Overpayment Relief"), None, Some(100.00), None,
+    LocalDate.of(taxYear, 3, 29))
+
   val taxYearFinancialDetails = FinancialDetailsModel(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
     codingDetails = None,
     documentDetails = List(
-      DocumentDetail("testYear2", "testTransactionId1", None, None, Some(100.00), None, LocalDate.of(taxYear, 3, 29)),
+      documentDetailsWhichIsCutOverCredit,
+      DocumentDetail("testYear2", "testTransactionId2", None, None, None, None, LocalDate.of(taxYear, 3, 29))
+    ),
+    financialDetails = List(
+      FinancialDetail("testYear2", None, Some("testTransactionId1"), None, None, None, None, None, None, None, None, Some(Seq(SubItem(Some(LocalDate.parse("2022-08-25")))))),
+      FinancialDetail("testYear2", None, Some("testTransactionId2"), None, None, None, None, None, None, None, None, Some(Seq(SubItem(Some(LocalDate.parse("2022-08-25"))))))
+    )
+  )
+
+  val creditDetailModelasCutOver = CreditDetailModel(date = LocalDate.parse("2022-08-25"), documentDetail = documentDetailsWhichIsCutOverCredit, CutOverCreditType)
+  val creditDetailModelasMfa = CreditDetailModel(date = LocalDate.parse("2022-03-29"), documentDetail = documentDetailsWhichIsMfaCredit, MfaCreditType)
+
+  val taxYearFinancialDetails_PlusOneYear = FinancialDetailsModel(
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
+    codingDetails = None,
+    documentDetails = List(
+      documentDetailsWhichIsMfaCredit,
       DocumentDetail("testYear2", "testTransactionId2", None, None, None, None, LocalDate.of(taxYear, 3, 29))
     ),
     financialDetails = List(
@@ -134,9 +160,4 @@ trait CreditHistoryDataHelper {
       financialDetail
     )
   )
-
-  val cutOverCreditA: List[CreditDetailModel] = cutOverCreditsAsFinancialDocumentA
-  val cutOverCreditB: List[CreditDetailModel] = cutOverCreditsAsFinancialDocumentB
-
-  val creditModels: List[CreditDetailModel] = taxYearFinancialDetails
 }

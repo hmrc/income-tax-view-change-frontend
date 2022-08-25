@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package models
+package models.financialDetails
 
-import models.financialDetails.{DocumentDetail, FinancialDetailsModel}
-import models.paymentAllocationCharges.FinancialDetailsWithDocumentDetailsModel
+object MfaDebitUtils {
+  private val mfaDebitType: Map[Int, String] = Map(
+    4004 -> "ITSA PAYE Charge",
+    4005 -> "ITSA Calc Error Correction",
+    4006 -> "ITSA Manual Penalty Pre CY-4",
+    4007 -> "ITSA Misc Charge"
+  )
 
-import java.time.LocalDate
-
-case class CreditDetailModel(date: LocalDate , documentDetail: DocumentDetail, creditType: CreditType)
-
-sealed trait CreditType
-
-case object MfaCreditType extends CreditType
-
-case object CutOverCreditType extends CreditType
+  def isMFADebitMainType(mainType: Option[String]): Boolean = {
+    mainType.exists(mfaDebitType.values.toList.contains(_))
+  }
+}
