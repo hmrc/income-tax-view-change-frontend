@@ -30,6 +30,8 @@ import testConstants.FinancialDetailsTestConstants._
 import testUtils.{TestSupport, ViewSpec}
 import views.html.CreditsSummary
 
+import java.net.URL
+
 
 class CreditsSummaryViewSpec extends TestSupport with FeatureSwitching with ImplicitDateFormatter with ViewSpec {
 
@@ -58,7 +60,10 @@ class CreditsSummaryViewSpec extends TestSupport with FeatureSwitching with Impl
   val creditsDropDownListCreditFromAnEarlierTaxYear: String = messages("credits.drop-down-list.credit-from-an-earlier-tax-year")
   val saNoteMigratedIndividual: String = s"${messages("credits.drop-down-list.credit-from-an-earlier-tax-year.sa-note")} ${messages("credits.drop-down-list.sa-link")}${messages("pagehelp.opensInNewTabText")}."
   val saNoteMigratedAgent: String = s"${messages("credits.drop-down-list.credit-from-an-earlier-tax-year.agent.sa-note")} ${messages("credits.drop-down-list.sa-link-agent")}${messages("pagehelp.opensInNewTabText")}."
-
+  val saNoteMigratedOnlineAccountLink: String = s"/self-assessment/ind/$testMtditid/account"
+  val saNoteMigratedOnlineAccountLinkText: String = s"${messages("credits.drop-down-list.sa-link")}${messages("pagehelp.opensInNewTabText")}"
+  val saNoteMigratedOnlineAccountAgentLink: String = s"https://www.gov.uk/guidance/self-assessment-for-agents-online-service"
+  val saNoteMigratedOnlineAccountAgentLinkText: String = s"${messages("credits.drop-down-list.sa-link-agent")}${messages("pagehelp.opensInNewTabText")}"
   class Setup(creditCharges: List[DocumentDetail] = List.empty,
               isAgent: Boolean = false,
               backUrl: String = "testString") {
@@ -101,6 +106,8 @@ class CreditsSummaryViewSpec extends TestSupport with FeatureSwitching with Impl
       document.selectById("h3-credit-from-hmrc-adjustment").nextElementSibling().text() shouldBe creditsDropDownListCreditFomHmrcAdjustmentValue
       document.selectById("h3-credit-from-an-earlier-tax-year").text() shouldBe creditsDropDownListCreditFromAnEarlierTaxYear
       document.selectById("sa-note-migrated").text() shouldBe saNoteMigratedIndividual
+      document.selectById("sa-note-migrated-online-account-link").text() shouldBe saNoteMigratedOnlineAccountLinkText
+      new URL(document.selectById("sa-note-migrated-online-account-link").attr("href")).getPath shouldBe saNoteMigratedOnlineAccountLink
 
       document.selectById("credit-and-refund-claim-refund-btn").text() shouldBe creditAndRefundClaimRefundBtn
       document.getElementsByClass("govuk-link").last().text() shouldBe getPageHelpLinkTextBtn
@@ -197,6 +204,8 @@ class CreditsSummaryViewSpec extends TestSupport with FeatureSwitching with Impl
         document.selectById("h3-credit-from-hmrc-adjustment").nextElementSibling().text() shouldBe creditsDropDownListCreditFomHmrcAdjustmentValue
         document.selectById("h3-credit-from-an-earlier-tax-year").text() shouldBe creditsDropDownListCreditFromAnEarlierTaxYear
         document.selectById("sa-note-migrated-agent").text() shouldBe saNoteMigratedAgent
+        document.selectById("sa-note-migrated-agent-online-account-link").text() shouldBe saNoteMigratedOnlineAccountAgentLinkText
+        document.selectById("sa-note-migrated-agent-online-account-link").attr("href") shouldBe saNoteMigratedOnlineAccountAgentLink
 
         document.selectById("credit-and-refund-claim-refund-btn").text() shouldBe creditAndRefundClaimRefundBtn
         document.getElementsByClass("govuk-link").last().text() shouldBe getPageHelpLinkTextBtn
