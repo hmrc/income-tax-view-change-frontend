@@ -425,6 +425,8 @@ credits.drop-down-list.credit-from-hmrc-adjustment.value                = This c
 credits.drop-down-list.credit-from-an-earlier-tax-year                  = Credit from an earlier tax year
 credits.drop-down-list.credit-from-an-earlier-tax-year.sa-note          = This is money you paid into your account before you signed up for Making Tax Digital for Income Tax. Visit your previous
 credits.drop-down-list.credit-from-an-earlier-tax-year.agent.sa-note    = This is money your client paid into their account before they were signed up for Making Tax Digital for Income Tax. Sign in to your
+credits.drop-down-list.sa-link                                          = Self Assessment online account
+credits.drop-down-list.sa-link-agent                                    = Self Assessment for Agents account
 
 ## Refund to taxpayer page ##
 refund-to-taxpayer.heading                                      = Refund to taxpayer

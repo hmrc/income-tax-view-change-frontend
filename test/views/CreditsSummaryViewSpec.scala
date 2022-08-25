@@ -56,8 +56,8 @@ class CreditsSummaryViewSpec extends TestSupport with FeatureSwitching with Impl
   val creditsDropDownListCreditFomHmrcAdjustment: String = messages("credits.drop-down-list.credit-from-hmrc-adjustment")
   val creditsDropDownListCreditFomHmrcAdjustmentValue: String = messages("credits.drop-down-list.credit-from-hmrc-adjustment.value")
   val creditsDropDownListCreditFromAnEarlierTaxYear: String = messages("credits.drop-down-list.credit-from-an-earlier-tax-year")
-  val saNoteMigratedIndividual: String = s"${messages("credits.drop-down-list.credit-from-an-earlier-tax-year.sa-note")} ${messages("notmigrated.user.link_title")}${messages("pagehelp.opensInNewTabText")}."
-  val saNoteMigratedAgent: String = s"${messages("credits.drop-down-list.credit-from-an-earlier-tax-year.agent.sa-note")} ${messages("notmigrated.agent.link_title")}${messages("pagehelp.opensInNewTabText")}."
+  val saNoteMigratedIndividual: String = s"${messages("credits.drop-down-list.credit-from-an-earlier-tax-year.sa-note")} ${messages("credits.drop-down-list.sa-link")}${messages("pagehelp.opensInNewTabText")}."
+  val saNoteMigratedAgent: String = s"${messages("credits.drop-down-list.credit-from-an-earlier-tax-year.agent.sa-note")} ${messages("credits.drop-down-list.sa-link-agent")}${messages("pagehelp.opensInNewTabText")}."
 
   class Setup(creditCharges: List[DocumentDetail] = List.empty,
               isAgent: Boolean = false,
