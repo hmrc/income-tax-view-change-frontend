@@ -19,8 +19,7 @@ package views
 import config.FrontendAppConfig
 import config.featureswitch.{FeatureSwitching, MFACreditsAndDebits}
 import implicits.ImplicitDateFormatter
-import models.{CreditDetailModel, MfaCreditType}
-import models.financialDetails.DocumentDetail
+import models.CreditDetailModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import play.api.test.FakeRequest
@@ -31,7 +30,6 @@ import testConstants.FinancialDetailsTestConstants._
 import testUtils.{TestSupport, ViewSpec}
 import views.html.CreditsSummary
 
-import java.time.LocalDate
 import java.net.URL
 
 
