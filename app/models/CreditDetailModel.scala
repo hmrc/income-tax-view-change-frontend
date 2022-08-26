@@ -17,14 +17,20 @@
 package models
 
 import models.financialDetails.{DocumentDetail, FinancialDetailsModel}
-import models.paymentAllocationCharges.FinancialDetailsWithDocumentDetailsModel
+
 
 import java.time.LocalDate
 
 case class CreditDetailModel(date: LocalDate , documentDetail: DocumentDetail, creditType: CreditType)
 
-sealed trait CreditType
+sealed trait CreditType {
+  val key: String
+}
 
-case object MfaCreditType extends CreditType
+case object MfaCreditType extends CreditType {
+  override val key = "paymentHistory.mfaCredit"
+}
 
-case object CutOverCreditType extends CreditType
+case object CutOverCreditType extends CreditType {
+  override val key = "paymentHistory.paymentFromEarlierYear"
+}

@@ -19,6 +19,7 @@ package views
 import config.FrontendAppConfig
 import config.featureswitch.{FeatureSwitching, MFACreditsAndDebits}
 import implicits.ImplicitDateFormatter
+import models.{CreditDetailModel, MfaCreditType}
 import models.financialDetails.DocumentDetail
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
@@ -30,6 +31,7 @@ import testConstants.FinancialDetailsTestConstants._
 import testUtils.{TestSupport, ViewSpec}
 import views.html.CreditsSummary
 
+import java.time.LocalDate
 import java.net.URL
 
 
@@ -64,7 +66,8 @@ class CreditsSummaryViewSpec extends TestSupport with FeatureSwitching with Impl
   val saNoteMigratedOnlineAccountLinkText: String = s"${messages("credits.drop-down-list.sa-link")}${messages("pagehelp.opensInNewTabText")}"
   val saNoteMigratedOnlineAccountAgentLink: String = s"https://www.gov.uk/guidance/self-assessment-for-agents-online-service"
   val saNoteMigratedOnlineAccountAgentLinkText: String = s"${messages("credits.drop-down-list.sa-link-agent")}${messages("pagehelp.opensInNewTabText")}"
-  class Setup(creditCharges: List[DocumentDetail] = List.empty,
+
+  class Setup(creditCharges: List[CreditDetailModel] = List.empty,
               isAgent: Boolean = false,
               backUrl: String = "testString") {
     lazy val page: HtmlFormat.Appendable =
@@ -82,7 +85,7 @@ class CreditsSummaryViewSpec extends TestSupport with FeatureSwitching with Impl
   }
 
   "display the Credits Summary page" when {
-    "a user have multiple credits" in new Setup(creditCharges = creditAndRefundDocumentDetailListMultipleChargesMFA) {
+    "a user have multiple credits" in new Setup(creditCharges = creditAndRefundCreditDetailListMultipleChargesMFA) {
       enable(MFACreditsAndDebits)
 
       document.title() shouldBe creditsSummaryTitle
@@ -113,7 +116,7 @@ class CreditsSummaryViewSpec extends TestSupport with FeatureSwitching with Impl
       document.getElementsByClass("govuk-link").last().text() shouldBe getPageHelpLinkTextBtn
     }
 
-    "a user has a credit and the Status is Fully allocated" in new Setup(creditCharges = creditAndRefundDocumentDetailListFullyAllocatedMFA) {
+    "a user has a credit and the Status is Fully allocated" in new Setup(creditCharges = creditAndRefundCreditDetailListFullyAllocatedMFA) {
       enable(MFACreditsAndDebits)
 
       document.title() shouldBe creditsSummaryTitle
@@ -130,7 +133,7 @@ class CreditsSummaryViewSpec extends TestSupport with FeatureSwitching with Impl
       document.getElementsByClass("govuk-link").last().text() shouldBe getPageHelpLinkTextBtn
     }
 
-    "a user has a credit and the Status is Not yet allocated" in new Setup(creditCharges = creditAndRefundDocumentDetailListNotYetAllocatedMFA) {
+    "a user has a credit and the Status is Not yet allocated" in new Setup(creditCharges = creditAndRefundCreditDetailListNotYetAllocatedMFA) {
       enable(MFACreditsAndDebits)
 
       document.title() shouldBe creditsSummaryTitle
@@ -147,7 +150,7 @@ class CreditsSummaryViewSpec extends TestSupport with FeatureSwitching with Impl
       document.getElementsByClass("govuk-link").last().text() shouldBe getPageHelpLinkTextBtn
     }
 
-    "a user has a credit and the Status is Partially allocated" in new Setup(creditCharges = creditAndRefundDocumentDetailListPartiallyAllocatedMFA) {
+    "a user has a credit and the Status is Partially allocated" in new Setup(creditCharges = creditAndRefundCreditDetailListPartiallyAllocatedMFA) {
       enable(MFACreditsAndDebits)
 
       document.title() shouldBe creditsSummaryTitle
@@ -180,7 +183,7 @@ class CreditsSummaryViewSpec extends TestSupport with FeatureSwitching with Impl
 
   "displaying agent credit and refund page" should {
     "display the page" when {
-      "correct data is provided" in new Setup(creditCharges = creditAndRefundDocumentDetailListMultipleChargesMFA, isAgent = true) {
+      "correct data is provided" in new Setup(creditCharges = creditAndRefundCreditDetailListMultipleChargesMFA, isAgent = true) {
         enable(MFACreditsAndDebits)
 
         document.title() shouldBe creditsSummaryTitleAgent

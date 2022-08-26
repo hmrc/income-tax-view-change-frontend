@@ -38,7 +38,7 @@
     utr: Option[String],
     btaNavPartial: Option[Html] = None,
     enableMfaCreditsAndDebits: Boolean,
-    charges: List[DocumentDetail],
+    charges: List[CreditDetailModel],
     isAgent: Boolean = false,
     origin: Option[String] = None)(implicit request: Request[_], user: MtdItUser[_], messages: Messages)
 
@@ -114,10 +114,10 @@
                 @if(charges.nonEmpty) {
                     @tableHead("over-due-payments-table-head")
                     <tbody class="govuk-table__body">
-                        @for((documentDetail, index) <- charges.zipWithIndex) {
-                            <tr class="govuk-table__row " id=@getIndex(index)>
-                                <td class="govuk-table__cell govuk-!-width-one-quarter">@documentDetail.documentDate.toLongDateShort</td>
-                                <td class="govuk-table__cell govuk-!-width-one-half">@getMessage("tableHead.type.value")</td>
+                        @for((documentDetail, creditType, date, index) <- charges.zipWithIndex.map(x => (x._1.documentDetail, x._1.creditType, x._1.date, x._2))) {
+                            <tr class="govuk-table__row " id="@getIndex(index)">
+                                <td class="govuk-table__cell govuk-!-width-one-quarter">@date.toLongDateShort</td>
+                                <td class="govuk-table__cell govuk-!-width-one-half">@messages(creditType.key)</td>
                                 <td class="govuk-table__cell numeric govuk-!-width-one-quarter">@getStatus(documentDetail)</td>
                                 <td class="govuk-table__cell numeric govuk-!-width-one-quarter govuk-!-text-align-right">@documentDetail.originalAmount.map(_.abs).getOrElse(throw MissingFieldException("Original Amount")).toCurrencyString</td>
                             </tr>

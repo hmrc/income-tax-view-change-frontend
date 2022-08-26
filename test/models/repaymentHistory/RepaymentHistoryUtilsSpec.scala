@@ -97,7 +97,7 @@ class RepaymentHistoryUtilsSpec extends TestSupport with Matchers {
 
   private def groupedPayments(cutoverEnabled: Boolean = true, mfaEnabled: Boolean = true, isAgent: Boolean = false) = {
     val cutover = if (cutoverEnabled) List(PaymentHistoryEntry(LocalDate.parse("2019-12-25"), "paymentHistory.paymentFromEarlierYear", Some(-11000.0), None,
-      s"/report-quarterly/income-and-expenses/view/${if (isAgent) "agents/" else ""}payment-made-to-hmrc?documentNumber=AY777777202202", "AY777777202202")) else Nil
+      s"/report-quarterly/income-and-expenses/view/${if (isAgent) "agents/" else ""}credits-from-hmrc/2019", "AY777777202202")) else Nil
     val standardPayments = List(
       PaymentHistoryEntry(LocalDate.parse("2019-12-25"), "paymentHistory.paymentToHmrc", Some(10000), Some("DOCID02"), s"/report-quarterly/income-and-expenses/view/${if (isAgent) "agents/" else ""}payment-made-to-hmrc?documentNumber=DOCID02", "2019-12-25 &pound;10,000.00"),
       PaymentHistoryEntry(LocalDate.parse("2019-12-26"), "paymentHistory.paymentToHmrc", Some(10000), Some("DOCID01"), s"/report-quarterly/income-and-expenses/view/${if (isAgent) "agents/" else ""}payment-made-to-hmrc?documentNumber=DOCID01", "2019-12-26 &pound;10,000.00")
