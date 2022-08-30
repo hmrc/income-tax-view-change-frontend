@@ -36,6 +36,7 @@
 
 @taxYearTo = @{documentDetailWithDueDate.documentDetail.taxYear}
 
+
 @allocationLinkHTML(link: String, linkText: String) = {
     <a class="govuk-link" href="@link">
         @linkText
@@ -45,7 +46,7 @@
 
 @for(allocation <- paymentAllocations ; payment <- allocation.payments) {
     <tr>
-        <td class="govuk-table__cell govuk-!-width-one-quarter">@LocalDate.parse(payment.dueDate.getOrElse(throw MissingFieldException("Payment Date"))).toLongDateShort</td>
+        <td class="govuk-table__cell govuk-!-width-one-quarter">@{payment.dueDate.getOrElse(throw MissingFieldException("Payment Date")).toLongDateShort}</td>
         <td class="govuk-table__cell">
             @{
                 val paymentLot = payment.lot.getOrElse(throw MissingFieldException("Payment Lot"))

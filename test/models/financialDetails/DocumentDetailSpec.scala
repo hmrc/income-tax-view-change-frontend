@@ -78,12 +78,6 @@ class DocumentDetailSpec extends UnitSpec {
     }
 
     "getChargeTypeKey" should {
-      "return HMRC Adjustment" in {
-        fullDocumentDetailModel.copy(documentDescription = Some("ITSA PAYE Charge")).getChargeTypeKey(false) shouldBe "hmrcAdjustment.text"
-        fullDocumentDetailModel.copy(documentDescription = Some("ITSA Calc Error Correction")).getChargeTypeKey(false) shouldBe "hmrcAdjustment.text"
-        fullDocumentDetailModel.copy(documentDescription = Some("ITSA Manual Penalty Pre CY-4")).getChargeTypeKey(false) shouldBe "hmrcAdjustment.text"
-        fullDocumentDetailModel.copy(documentDescription = Some("ITSA Misc Charge")).getChargeTypeKey(false) shouldBe "hmrcAdjustment.text"
-      }
       "return POA1" when {
         "when document description is ITSA- POA 1" in {
           fullDocumentDetailModel.copy(documentDescription = Some("ITSA- POA 1")).getChargeTypeKey(false) shouldBe "paymentOnAccount1.text"
@@ -217,16 +211,15 @@ class DocumentDetailSpec extends UnitSpec {
       }
     }
 
-    "isMFADebit" should {
-      "return true if document description matches MFA debit strings" in {
-        fullDocumentDetailModel.copy(documentDescription = Some("ITSA PAYE Charge")).isMFADebit() shouldBe true
-        fullDocumentDetailModel.copy(documentDescription = Some("ITSA Calc Error Correction")).isMFADebit() shouldBe true
-        fullDocumentDetailModel.copy(documentDescription = Some("ITSA Manual Penalty Pre CY-4")).isMFADebit() shouldBe true
-        fullDocumentDetailModel.copy(documentDescription = Some("ITSA Misc Charge")).isMFADebit() shouldBe true
-      }
-      "return false if document description does NOT match an MFA debit string" in {
-        fullDocumentDetailModel.copy(documentDescription = Some("TRM New Charge")).isMFADebit() shouldBe false
-        fullDocumentDetailModel.copy(documentDescription = Some("anything")).isMFADebit() shouldBe false
+    "getChargePaidStatus" should {
+      "return correct charge paid status paid for various outstandingAmount" in {
+        fullDocumentDetailModel.copy(outstandingAmount = Some(0)).getChargePaidStatus shouldBe "paid"
+        fullDocumentDetailModel.copy(outstandingAmount = Some(50), originalAmount = Some(100)).getChargePaidStatus shouldBe "part-paid"
+        fullDocumentDetailModel.copy(outstandingAmount = Some(-50), originalAmount = Some(100)).getChargePaidStatus shouldBe "part-paid"
+        fullDocumentDetailModel.copy(outstandingAmount = Some(-50), originalAmount = Some(-100)).getChargePaidStatus shouldBe "part-paid"
+        fullDocumentDetailModel.copy(outstandingAmount = Some(-50), originalAmount = Some(50)).getChargePaidStatus shouldBe "part-paid"
+        fullDocumentDetailModel.copy(outstandingAmount = Some(300), originalAmount = Some(300)).getChargePaidStatus shouldBe "unpaid"
+        fullDocumentDetailModel.copy(outstandingAmount = Some(-300), originalAmount = Some(-300)).getChargePaidStatus shouldBe "unpaid"
       }
     }
   }

@@ -19,7 +19,9 @@ package models.paymentAllocationCharges
 import models.financialDetails.DocumentDetail
 import models.paymentAllocations.AllocationDetail
 
-case class AllocationDetailWithClearingDate(allocationDetail: Option[AllocationDetail], clearingDate: Option[String])
+import java.time.LocalDate
+
+case class AllocationDetailWithClearingDate(allocationDetail: Option[AllocationDetail], clearingDate: Option[LocalDate])
 
 case class LatePaymentInterestPaymentAllocationDetails(documentDetail: DocumentDetail, amount: BigDecimal)
 

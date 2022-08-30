@@ -27,7 +27,7 @@
 
 @()(implicit request : Request[_], messages: Messages)
 
-@mainTemplate(messages("upliftFailure.title")) {
+@mainTemplate(messages("upliftFailure.title"),showServiceName = false) {
     @h1(msg = "upliftFailure.title")
 
     @p(){@messages("upliftFailure.content")}
@@ -37,6 +37,6 @@
 	</div>
 
 	<div>
-        @link(link = controllers.routes.SignOutController.signOut.url,  messageKey = "upliftFailure.sign.out", classes = "govuk-link")
+        @link(link = controllers.routes.SignOutController.signOut.url,  messageKey = "upliftFailure.sign.out", classes = "govuk-body govuk-link")
 	</div>
 }

@@ -21,16 +21,16 @@
 @import views.html.layouts.unifiedLayout
 @import views.html.components._
 @import exceptions.MissingFieldException
-@import cats.syntax.eq._
-@import cats.instances.option._
-@import cats.instances.bigDecimal._
 
 @this(
         mainTemplate: unifiedLayout,
         implicitDateFormatter: ImplicitDateFormatterImpl,
         appConfig: config.FrontendAppConfig,
         h1: h1,
-        link: link
+        h3: h3,
+        p: p,
+        link: link,
+        detailsDropdown: detailsDropdown
 )
 @(
     calendarYear: Int,
@@ -38,7 +38,7 @@
     utr: Option[String],
     btaNavPartial: Option[Html] = None,
     enableMfaCreditsAndDebits: Boolean,
-    charges: List[DocumentDetail],
+    charges: List[CreditDetailModel],
     isAgent: Boolean = false,
     origin: Option[String] = None)(implicit request: Request[_], user: MtdItUser[_], messages: Messages)
 
@@ -65,13 +65,38 @@
     outstandingAmount == 0 (allocated)
 *@
 @getStatus(charges: DocumentDetail) = @{
-    if(charges.outstandingAmount.map(_.abs) === charges.originalAmount.map(_.abs)) getMessage("table.status-not-yet-allocated")
-    else if (charges.outstandingAmount === Some(BigDecimal(0))) getMessage("table.status-fully-allocated")
-    else getMessage("table.status-partially-allocated")
+    charges.getChargePaidStatus match {
+        case "paid" => getMessage("table.status-fully-allocated")
+        case "part-paid" => getMessage("table.status-partially-allocated")
+        case _ => getMessage("table.status-not-yet-allocated")
+    }
 }
 
 @getIndex(idx: Int) = @{
     s"balancing-charge-type-$idx"
+}
+
+@dropDownDetails(isAgent: Boolean) = {
+    @h3(msg = "credits.drop-down-list.credit-from-hmrc-adjustment", classes = "govuk-heading-s", optId = Some("h3-credit-from-hmrc-adjustment"))
+    @p(id = Some("p-credit-from-hmrc-adjustment")){@messages("credits.drop-down-list.credit-from-hmrc-adjustment.value")}
+    @h3(msg = "credits.drop-down-list.credit-from-an-earlier-tax-year", classes = "govuk-heading-s", optId = Some("h3-credit-from-an-earlier-tax-year"))
+    @if(isAgent) {
+            @p(id = Some("sa-note-migrated-agent")) {
+                @messages("credits.drop-down-list.credit-from-an-earlier-tax-year.agent.sa-note")
+                @link(link = appConfig.saForAgents, messageKey = messages("credits.drop-down-list.sa-link-agent"),
+                    id = Some("sa-note-migrated-agent-online-account-link"),
+                    outerMessage = ".", rel=Some("noreferrer noopener"), target = Some("_blank"))
+            }
+    } else {
+        @utr.map { utrValue =>
+            @p(id = Some("sa-note-migrated")) {
+                @messages("credits.drop-down-list.credit-from-an-earlier-tax-year.sa-note")
+                @link(link = appConfig.saViewLandPService(utrValue), messageKey = s"${messages("credits.drop-down-list.sa-link")}",
+                    id = Some("sa-note-migrated-online-account-link"),
+                    outerMessage = ".", rel = Some("noreferrer noopener"), target = Some("_blank"))
+            }
+        }
+    }
 }
 
 @mainTemplate(
@@ -89,10 +114,10 @@
                 @if(charges.nonEmpty) {
                     @tableHead("over-due-payments-table-head")
                     <tbody class="govuk-table__body">
-                        @for((documentDetail, index) <- charges.zipWithIndex) {
-                            <tr class="govuk-table__row " id=@getIndex(index)>
-                                <td class="govuk-table__cell govuk-!-width-one-quarter">@documentDetail.documentDate.toLongDateShort</td>
-                                <td class="govuk-table__cell govuk-!-width-one-half">@getMessage("tableHead.type.value")</td>
+                        @for((documentDetail, creditType, date, index) <- charges.zipWithIndex.map(x => (x._1.documentDetail, x._1.creditType, x._1.date, x._2))) {
+                            <tr class="govuk-table__row " id="@getIndex(index)">
+                                <td class="govuk-table__cell govuk-!-width-one-quarter">@date.toLongDateShort</td>
+                                <td class="govuk-table__cell govuk-!-width-one-half">@messages(creditType.key)</td>
                                 <td class="govuk-table__cell numeric govuk-!-width-one-quarter">@getStatus(documentDetail)</td>
                                 <td class="govuk-table__cell numeric govuk-!-width-one-quarter govuk-!-text-align-right">@documentDetail.originalAmount.map(_.abs).getOrElse(throw MissingFieldException("Original Amount")).toCurrencyString</td>
                             </tr>
@@ -103,10 +128,13 @@
         </div>
     </div>
 
-@link(
-    link = creditAndRefundsControllerURL,
-    messageKey = "credit-and-refund.claim-refund-btn"
-)
+    @detailsDropdown(messages("credits.drop-down-list.name"), dropDownDetails(isAgent))
+
+    @link(
+        link = creditAndRefundsControllerURL,
+        id = Some("credit-and-refund-claim-refund-btn"),
+        messageKey = "credit-and-refund.claim-refund-btn"
+    )
 
 }
 

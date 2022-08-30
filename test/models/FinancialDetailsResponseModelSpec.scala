@@ -79,13 +79,13 @@ class FinancialDetailsResponseModelSpec extends UnitSpec with Matchers {
       taxYear = "2018",
       mainType = Some("SA Payment on Account 2"),
       transactionId = Some("transid1"),
-      items = Some(Seq(SubItem(Some("2017-01-31")), SubItem(Some("2018-01-31"))))
+      items = Some(Seq(SubItem(Some(LocalDate.parse("2017-01-31"))), SubItem(Some(LocalDate.parse("2018-01-31")))))
     )
     val fd2 = FinancialDetail(
       taxYear = "2017",
       mainType = Some("SA Payment on Account 1"),
       transactionId = Some("transid2"),
-      items = Some(Seq(SubItem(Some("2017-02-28")), SubItem(Some("2018-02-28"))))
+      items = Some(Seq(SubItem(Some(LocalDate.parse("2021-12-01"))), SubItem(Some(LocalDate.parse("2021-12-01")))))
     )
     val dd1 = DocumentDetail(taxYear = "2017",
       transactionId = "transid2",
@@ -98,7 +98,7 @@ class FinancialDetailsResponseModelSpec extends UnitSpec with Matchers {
     val fdm: FinancialDetailsModel = FinancialDetailsModel(BalanceDetails(1, 2, 3, None, None, None, None), None, List.empty, List(fd1, fd2))
 
     "return the right due date" in {
-      fdm.getDueDateFor(dd1).get.toString shouldBe "2017-02-28"
+      fdm.getDueDateFor(dd1).get shouldBe LocalDate.parse("2021-12-01")
     }
   }
 
@@ -109,25 +109,25 @@ class FinancialDetailsResponseModelSpec extends UnitSpec with Matchers {
       taxYear = "2017",
       mainType = Some("SA Payment on Account 1"),
       transactionId = Some("transid1"),
-      items = Some(Seq(SubItem(Some("2017-01-31")), SubItem(Some("2018-01-31"))))
+      items = Some(Seq(SubItem(Some(LocalDate.parse("2017-01-31"))), SubItem(Some(LocalDate.parse("2018-01-31")))))
     )
     val fd2 = FinancialDetail(
       taxYear = "2017",
       mainType = Some("SA Payment on Account 2"),
       transactionId = Some("transid2"),
-      items = Some(Seq(SubItem(Some("2017-02-28")), SubItem(Some("2018-02-28"))))
+      items = Some(Seq(SubItem(Some(LocalDate.parse("2021-12-01"))), SubItem(Some(LocalDate.parse("2021-12-01")))))
     )
     val fd3 = FinancialDetail(
       taxYear = "2018",
       mainType = Some("SA Payment on Account 1"),
       transactionId = Some("transid1"),
-      items = Some(Seq(SubItem(Some("2017-02-28")), SubItem(Some("2018-02-28"))))
+      items = Some(Seq(SubItem(Some(LocalDate.parse("2021-12-01"))), SubItem(Some(LocalDate.parse("2021-12-01")))))
     )
     val fd4 = FinancialDetail(
       taxYear = "2018",
       mainType = Some("SA Payment on Account 2"),
       transactionId = Some("transid2"),
-      items = Some(Seq(SubItem(Some("2017-02-28")), SubItem(Some("2018-02-28"))))
+      items = Some(Seq(SubItem(Some(LocalDate.parse("2021-12-01"))), SubItem(Some(LocalDate.parse("2021-12-01")))))
     )
 
     val dd1 = DocumentDetail(taxYear = "2017",
@@ -149,7 +149,7 @@ class FinancialDetailsResponseModelSpec extends UnitSpec with Matchers {
     val fdm: FinancialDetailsModel = FinancialDetailsModel(BalanceDetails(1, 2, 3, None, None, None, None), None, List(dd1, dd2), List(fd1, fd2, fd3, fd4))
 
     "return a list of due dates" in {
-      fdm.getAllDueDates.map(_.toString) shouldBe List("2017-01-31", "2017-02-28")
+      fdm.getAllDueDates shouldBe List(LocalDate.parse("2017-01-31"), LocalDate.parse("2021-12-01"))
     }
   }
 
@@ -184,6 +184,18 @@ class FinancialDetailsResponseModelSpec extends UnitSpec with Matchers {
     }
     "return None when coding out details is empty" in {
       fdmWithEmptyCodingDetail.getDocumentDetailWithCodingDetails(documentDetail1) shouldBe None
+    }
+  }
+  "isMFADebit" should {
+    def testIsMFADebit(documentId: String, financialDetailsModel: FinancialDetailsModel): Boolean = {
+      val fdm: FinancialDetailsModel = financialDetailsModel
+      fdm.isMFADebit(documentId)
+    }
+    "return true for MFA debits" in {
+      testIsMFADebit(id1040000123, financialDetailsMFADebits) shouldBe true
+    }
+    "return false for non-MFA debits" in {
+      testIsMFADebit(id1040000123, financialDetailsWithMixedData1) shouldBe false
     }
   }
 }

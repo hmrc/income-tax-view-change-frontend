@@ -42,7 +42,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
   def paymentsWithCharge(mainType: String, chargeType: String, date: String, amount: BigDecimal, lotItem: String): PaymentsWithChargeType =
     PaymentsWithChargeType(
       payments = List(Payment(reference = Some("reference"), amount = Some(amount), outstandingAmount = None, method = Some("method"),
-        documentDescription = None, lot = Some("lot"), lotItem = Some(lotItem), dueDate = Some(date), documentDate = date, transactionId = None)),
+        documentDescription = None, lot = Some("lot"), lotItem = Some(lotItem), dueDate = Some(LocalDate.parse(date)), documentDate = LocalDate.parse(date), transactionId = None)),
       mainType = Some(mainType), chargeType = Some(chargeType))
 
   val paymentAllocation: List[PaymentsWithChargeType] = List(
@@ -50,7 +50,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
     paymentsWithCharge("SA Payment on Account 2", "NIC4 Scotland", "2019-08-13", -9000.0, lotItem = "000001")
   )
 
-  val chargeHistories: List[ChargeHistoryModel] = List(ChargeHistoryModel("2019", "1040000124", LocalDate.of(2018, 3, 29).toString,
+  val chargeHistories: List[ChargeHistoryModel] = List(ChargeHistoryModel("2019", "1040000124", LocalDate.of(2018, 3, 29),
     "ITSA- POA 1", 123456789012345.67, LocalDate.of(2020, 2, 24), "amended return"))
 
   val paymentBreakdown: List[FinancialDetail] = List(
@@ -353,8 +353,8 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
             mainType = Some("SA Payment on Account 1"),
             chargeType = chargeType1,
             originalAmount = Some(123.45),
-            items = Some(Seq(SubItem(Some(LocalDate.now.toString), paymentLotItem = Some("000001"), paymentLot = Some("paymentLot"),
-              amount = Some(10000), clearingDate = Some("2019-08-13"), dunningLock = Some("Stand over order"), interestLock = Some("Manual RPI Signal"))))
+            items = Some(Seq(SubItem(Some(LocalDate.parse("2020-08-16")), paymentLotItem = Some("000001"), paymentLot = Some("paymentLot"),
+              amount = Some(10000), clearingDate = Some(LocalDate.parse("2019-08-13")), dunningLock = Some("Stand over order"), interestLock = Some("Manual RPI Signal"))))
           ),
           FinancialDetail(
             taxYear = getCurrentTaxYearEnd.getYear.toString,
@@ -362,8 +362,8 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
             mainType = Some("SA Payment on Account 2"),
             chargeType = chargeType2,
             originalAmount = Some(123.45),
-            items = Some(Seq(SubItem(Some(LocalDate.now.toString), paymentLotItem = Some("000001"), paymentLot = Some("paymentLot"),
-              amount = Some(9000), clearingDate = Some("2019-08-13"), dunningLock = Some("dunning lock"), interestLock = Some("Manual RPI Signal"))))
+            items = Some(Seq(SubItem(Some(LocalDate.now), paymentLotItem = Some("000001"), paymentLot = Some("paymentLot"),
+              amount = Some(9000), clearingDate = Some(LocalDate.parse("2019-08-13")), dunningLock = Some("dunning lock"), interestLock = Some("Manual RPI Signal"))))
           )
         ),
         codingDetails = None
@@ -398,8 +398,8 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
             mainType = Some("SA Payment on Account 1"),
             chargeType = Some("ITSA NI"),
             originalAmount = Some(123.45),
-            items = Some(Seq(SubItem(Some(LocalDate.now.toString),
-              amount = Some(10000), clearingDate = Some("2019-08-13"))))
+            items = Some(Seq(SubItem(Some(LocalDate.now),
+              amount = Some(10000), clearingDate = Some(LocalDate.parse("2019-08-13")))))
           )
         ),
         codingDetails = Some(List(CodingDetails(taxYearReturn = "2021", amountCodedOut = 2500, taxYearCoding = "2020")))
