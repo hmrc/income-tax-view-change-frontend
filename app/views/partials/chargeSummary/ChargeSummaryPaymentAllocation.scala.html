@@ -1,0 +1,72 @@
+@*
+ * Copyright 2022 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import _root_.implicits.ImplicitCurrencyFormatter.CurrencyFormatter
+@import _root_.implicits.ImplicitDateFormatterImpl
+@import models.financialDetails.PaymentsWithChargeType
+@import models.financialDetails.FinancialDetailsModel
+@import models.financialDetails.DocumentDetailWithDueDate
+@import exceptions.MissingFieldException
+@import java.time.LocalDate
+
+@this(implicitDateFormatter: ImplicitDateFormatterImpl)
+
+
+@(  paymentAllocations: List[PaymentsWithChargeType],
+    payments: FinancialDetailsModel,
+    documentDetailWithDueDate: DocumentDetailWithDueDate,
+    isAgent: Boolean = false,
+    isMFADebit: Boolean,
+    origin: Option[String] = None)(implicit messages: Messages)
+
+@import implicitDateFormatter.longDate
+
+@taxYearTo = @{documentDetailWithDueDate.documentDetail.taxYear}
+
+@allocationLinkHTML(link: String, linkText: String) = {
+    <a class="govuk-link" href="@link">
+        @linkText
+        <span class="govuk-visually-hidden"> @taxYearTo</span>
+    </a>
+}
+
+@for(allocation <- paymentAllocations ; payment <- allocation.payments) {
+    <tr>
+        <td class="govuk-table__cell govuk-!-width-one-quarter">@LocalDate.parse(payment.dueDate.getOrElse(throw MissingFieldException("Payment Date"))).toLongDateShort</td>
+        <td class="govuk-table__cell">
+            @{
+                val paymentLot = payment.lot.getOrElse(throw MissingFieldException("Payment Lot"))
+                val paymentLotItem = payment.lotItem.getOrElse(throw MissingFieldException("Payment Lot Item"))
+                val matchingPayment = payments.findMatchingPaymentDocument(paymentLot, paymentLotItem)
+                if(matchingPayment.isDefined) {
+                    val link = if(isAgent) {
+                        controllers.routes.PaymentAllocationsController.viewPaymentAllocationAgent(matchingPayment.get.transactionId).url
+                    } else {
+                        controllers.routes.PaymentAllocationsController.viewPaymentAllocation(matchingPayment.get.transactionId, origin).url
+                    }
+                    val linkText = if (isMFADebit) messages("chargeSummary.paymentAllocations.mfaDebit") else
+                        allocation.getPaymentAllocationTextInChargeSummary.map(messages(_)).getOrElse(
+                            throw MissingFieldException("Allocation link text missing")
+                        )
+                    allocationLinkHTML(link, linkText)
+                } else {
+                    allocation.getPaymentAllocationTextInChargeSummary.map(messages(_))
+                }
+            }
+        </td>
+        <td class="govuk-table__cell numeric">@payment.amount.getOrElse(throw MissingFieldException("Payment Amount")).abs.toCurrency</td>
+    </tr>
+}

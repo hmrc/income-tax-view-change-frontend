@@ -1,0 +1,79 @@
+@*
+ * Copyright 2022 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import _root_.implicits.ImplicitCurrencyFormatter.CurrencyFormatter
+@import _root_.implicits.ImplicitDateFormatterImpl
+@import models.financialDetails.PaymentsWithChargeType
+@import models.financialDetails.FinancialDetailsModel
+@import models.financialDetails.DocumentDetail
+@import models.financialDetails.FinancialDetail
+@import models.financialDetails.DocumentDetailWithDueDate
+@import exceptions.MissingFieldException
+@import views.html.partials.chargeSummary._
+@import views.html.components._
+
+@this(p: p, implicitDateFormatter: ImplicitDateFormatterImpl)
+
+@(  paymentAllocations: List[PaymentsWithChargeType],
+    payments: FinancialDetailsModel,
+    documentDetailWithDueDate: DocumentDetailWithDueDate,
+    paymentBreakdown: List[FinancialDetail],
+    latePaymentInterestCharge: Boolean,
+    documentDetail: DocumentDetail,
+    chargeSummaryLpiCharge: ChargeSummaryLpiCharge,
+    isAgent: Boolean = false,
+    origin: Option[String] = None)(implicit messages: Messages)
+
+@hasInterestLocks = @{ paymentBreakdown.exists(_.interestLockExists) }
+
+<h2 class="govuk-heading-m" id="heading-payment-breakdown">@messages("chargeSummary.paymentBreakdown.heading")</h2>
+<dl class="govuk-summary-list govuk-!-margin-bottom-8">
+    @for(financialDetail <- paymentBreakdown) {
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+            @messages(s"chargeSummary.paymentBreakdown.${financialDetail.messageKeyForChargeType.getOrElse(throw MissingFieldException("Message Key For Charge Type"))}")
+            </dt>
+            <dd class="govuk-summary-list__value">
+                <span>@financialDetail.originalAmount.getOrElse(throw MissingFieldException("Original Amount")).toCurrency</span>
+                @if(financialDetail.dunningLockExists) {
+                    <span class="govuk-body-s half-light govuk-!-margin-bottom-0" style="display:block">
+                    @messages("chargeSummary.paymentBreakdown.dunningLocks.underReview")
+                    </span>
+                }
+                @if(latePaymentInterestCharge && documentDetail.hasLpiWithDunningBlock) {
+                    @p(){
+                        <span>@messages("chargeSummary.paymentBreakdown.lpiWithDunning.text")</span>
+                        <span class="govuk-body-s half-light">@messages("chargeSummary.paymentBreakdown.dunningLocks.underReview")</span>
+                    }
+                }
+                @if(hasInterestLocks){
+                    @if(!financialDetail.interestLockExists){
+                        <div class="form-hint govuk-body-s"> @messages("chargeSummary.paymentBreakdown.interestLocks.charging") </div>
+                    }
+                    @if(financialDetail.interestLockExists && !financialDetail.hasAccruedInterest){
+                        <div class="form-hint govuk-body-s"> @messages("chargeSummary.paymentBreakdown.interestLocks.notCharging") </div>
+                    }
+                    @if(financialDetail.interestLockExists && financialDetail.hasAccruedInterest){
+                        <div class="form-hint govuk-body-s"> @messages("chargeSummary.paymentBreakdown.interestLocks.previouslyCharged") </div>
+                    }
+                }
+            </dd>
+        </div>
+    }
+    @if(latePaymentInterestCharge) {
+        @chargeSummaryLpiCharge(documentDetail)
+    }
+</dl>

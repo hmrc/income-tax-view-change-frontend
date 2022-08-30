@@ -1,0 +1,46 @@
+@*
+ * Copyright 2022 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import _root_.implicits.ImplicitCurrencyFormatter.CurrencyFormatter
+@import exceptions.MissingFieldException
+
+@this()
+
+@(
+    documentDetail: models.financialDetails.DocumentDetail,
+    codingOutEnabled: Boolean,
+    taxYearFromCodingOut: String,
+    taxYearToCodingOut: String,
+    latePaymentInterestCharge: Boolean
+)(implicit messages: Messages)
+
+<p id="paymentAmount" class="govuk-body govuk-!-margin-bottom-1 govuk-!-margin-top-5">
+    <strong class="govuk-body govuk-!-font-weight-bold govuk-!-margin-right-8">
+        @messages("chargeSummary.paymentAmountCodingOut")
+    </strong>
+    @{
+        documentDetail.originalAmount.getOrElse(throw MissingFieldException("Original Amount")).toCurrency
+    }
+</p>
+
+<p id = "codingOutRemainingToPay" class="govuk-body govuk-!-margin-bottom-6" style="color:#505a5f;">
+    @{
+        if (codingOutEnabled && documentDetail.isPayeSelfAssessment) {
+            messages("chargeSummary.codingOutRemainingToPay", taxYearFromCodingOut, taxYearToCodingOut)
+        } else if (latePaymentInterestCharge) documentDetail.interestRemainingToPay.toCurrency
+        else documentDetail.remainingToPay.toCurrency
+    }
+</p>

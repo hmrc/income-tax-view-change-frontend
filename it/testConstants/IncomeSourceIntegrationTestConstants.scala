@@ -678,10 +678,10 @@ object IncomeSourceIntegrationTestConstants {
   )
 
   def testValidFinancialDetailsModelCreditAndRefundsJson(originalAmount: BigDecimal, outstandingAmount: BigDecimal, taxYear: String = "2018",
-                                         dueDate: String = "2018-02-14", dunningLock: List[String] = noDunningLock,
-                                         interestLocks: List[String] = noInterestLock,
-                                         latePaymentInterestAmount: Option[BigDecimal] = Some(100)
-                                        ): JsValue = Json.obj(
+                                                         dueDate: String = "2018-02-14", dunningLock: List[String] = noDunningLock,
+                                                         interestLocks: List[String] = noInterestLock,
+                                                         latePaymentInterestAmount: Option[BigDecimal] = Some(100)
+                                                        ): JsValue = Json.obj(
     "balanceDetails" -> Json.obj(
       "balanceDueWithin30Days" -> 1.00,
       "overDueAmount" -> 2.00,

@@ -150,7 +150,7 @@ case class DocumentDetail(taxYear: String,
     case _ => false
   }
 
-
+  // TODO: remove MFADebit keys from here
   def getChargeTypeKey(codedOutEnabled: Boolean = false): String = documentDescription match {
     case Some("ITSA- POA 1") => "paymentOnAccount1.text"
     case Some("ITSA - POA 2") => "paymentOnAccount2.text"
