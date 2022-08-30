@@ -19,8 +19,7 @@ package views
 import config.FrontendAppConfig
 import config.featureswitch.{FeatureSwitching, MFACreditsAndDebits}
 import implicits.ImplicitDateFormatter
-import models.{CreditDetailModel, MfaCreditType}
-import models.financialDetails.DocumentDetail
+import models.CreditDetailModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import play.api.test.FakeRequest
@@ -31,7 +30,7 @@ import testConstants.FinancialDetailsTestConstants._
 import testUtils.{TestSupport, ViewSpec}
 import views.html.CreditsSummary
 
-import java.time.LocalDate
+import java.net.URL
 
 
 class CreditsSummaryViewSpec extends TestSupport with FeatureSwitching with ImplicitDateFormatter with ViewSpec {
@@ -56,6 +55,15 @@ class CreditsSummaryViewSpec extends TestSupport with FeatureSwitching with Impl
   val creditsTableStatusPartiallyAllocatedValue: String = messages("credits.table.status-partially-allocated")
   val creditAndRefundClaimRefundBtn: String = messages("credit-and-refund.claim-refund-btn")
   val getPageHelpLinkTextBtn: String = s"${messages("getpagehelp.linkText")}${messages("pagehelp.opensInNewTabText")}"
+  val creditsDropDownListCreditFomHmrcAdjustment: String = messages("credits.drop-down-list.credit-from-hmrc-adjustment")
+  val creditsDropDownListCreditFomHmrcAdjustmentValue: String = messages("credits.drop-down-list.credit-from-hmrc-adjustment.value")
+  val creditsDropDownListCreditFromAnEarlierTaxYear: String = messages("credits.drop-down-list.credit-from-an-earlier-tax-year")
+  val saNoteMigratedIndividual: String = s"${messages("credits.drop-down-list.credit-from-an-earlier-tax-year.sa-note")} ${messages("credits.drop-down-list.sa-link")}${messages("pagehelp.opensInNewTabText")}."
+  val saNoteMigratedAgent: String = s"${messages("credits.drop-down-list.credit-from-an-earlier-tax-year.agent.sa-note")} ${messages("credits.drop-down-list.sa-link-agent")}${messages("pagehelp.opensInNewTabText")}."
+  val saNoteMigratedOnlineAccountLink: String = s"/self-assessment/ind/$testMtditid/account"
+  val saNoteMigratedOnlineAccountLinkText: String = s"${messages("credits.drop-down-list.sa-link")}${messages("pagehelp.opensInNewTabText")}"
+  val saNoteMigratedOnlineAccountAgentLink: String = s"https://www.gov.uk/guidance/self-assessment-for-agents-online-service"
+  val saNoteMigratedOnlineAccountAgentLinkText: String = s"${messages("credits.drop-down-list.sa-link-agent")}${messages("pagehelp.opensInNewTabText")}"
 
   class Setup(creditCharges: List[CreditDetailModel] = List.empty,
               isAgent: Boolean = false,
@@ -95,7 +103,14 @@ class CreditsSummaryViewSpec extends TestSupport with FeatureSwitching with Impl
       document.selectById("balancing-charge-type-1").select("td:nth-child(3)").first().text() shouldBe creditsTableStatusNotYetAllocatedValue
       document.selectById("balancing-charge-type-1").select("td:nth-child(4)").first().text() shouldBe "£1,400.00"
 
-      document.getElementsByClass("govuk-link govuk-body").first().text() shouldBe creditAndRefundClaimRefundBtn
+      document.selectById("h3-credit-from-hmrc-adjustment").text() shouldBe creditsDropDownListCreditFomHmrcAdjustment
+      document.selectById("h3-credit-from-hmrc-adjustment").nextElementSibling().text() shouldBe creditsDropDownListCreditFomHmrcAdjustmentValue
+      document.selectById("h3-credit-from-an-earlier-tax-year").text() shouldBe creditsDropDownListCreditFromAnEarlierTaxYear
+      document.selectById("sa-note-migrated").text() shouldBe saNoteMigratedIndividual
+      document.selectById("sa-note-migrated-online-account-link").text() shouldBe saNoteMigratedOnlineAccountLinkText
+      new URL(document.selectById("sa-note-migrated-online-account-link").attr("href")).getPath shouldBe saNoteMigratedOnlineAccountLink
+
+      document.selectById("credit-and-refund-claim-refund-btn").text() shouldBe creditAndRefundClaimRefundBtn
       document.getElementsByClass("govuk-link").last().text() shouldBe getPageHelpLinkTextBtn
     }
 
@@ -112,7 +127,7 @@ class CreditsSummaryViewSpec extends TestSupport with FeatureSwitching with Impl
       document.select("td:nth-child(3)").first().text() shouldBe creditsTableStatusFullyAllocatedValue
       document.select("th:nth-child(4)").text() shouldBe creditsTableHeadAmountText
       document.select("td:nth-child(4)").first().text() shouldBe "£20.00"
-      document.getElementsByClass("govuk-link govuk-body").first().text() shouldBe creditAndRefundClaimRefundBtn
+      document.selectById("credit-and-refund-claim-refund-btn").text() shouldBe creditAndRefundClaimRefundBtn
       document.getElementsByClass("govuk-link").last().text() shouldBe getPageHelpLinkTextBtn
     }
 
@@ -129,7 +144,7 @@ class CreditsSummaryViewSpec extends TestSupport with FeatureSwitching with Impl
       document.select("td:nth-child(3)").first().text() shouldBe creditsTableStatusNotYetAllocatedValue
       document.select("th:nth-child(4)").text() shouldBe creditsTableHeadAmountText
       document.select("td:nth-child(4)").first().text() shouldBe "£3,000.00"
-      document.getElementsByClass("govuk-link govuk-body").first().text() shouldBe creditAndRefundClaimRefundBtn
+      document.selectById("credit-and-refund-claim-refund-btn").text() shouldBe creditAndRefundClaimRefundBtn
       document.getElementsByClass("govuk-link").last().text() shouldBe getPageHelpLinkTextBtn
     }
 
@@ -146,7 +161,7 @@ class CreditsSummaryViewSpec extends TestSupport with FeatureSwitching with Impl
       document.select("td:nth-child(3)").first().text() shouldBe creditsTableStatusPartiallyAllocatedValue
       document.select("th:nth-child(4)").text() shouldBe creditsTableHeadAmountText
       document.select("td:nth-child(4)").first().text() shouldBe "£1,000.00"
-      document.getElementsByClass("govuk-link govuk-body").first().text() shouldBe creditAndRefundClaimRefundBtn
+      document.selectById("credit-and-refund-claim-refund-btn").text() shouldBe creditAndRefundClaimRefundBtn
       document.getElementsByClass("govuk-link").last().text() shouldBe getPageHelpLinkTextBtn
     }
 
@@ -157,7 +172,7 @@ class CreditsSummaryViewSpec extends TestSupport with FeatureSwitching with Impl
       layoutContent.selectHead("h1").text shouldBe creditsSummaryHeading
       document.select("th").isEmpty shouldBe true
       document.select("td").isEmpty shouldBe true
-      document.getElementsByClass("govuk-link govuk-body").first().text() shouldBe creditAndRefundClaimRefundBtn
+      document.selectById("credit-and-refund-claim-refund-btn").text() shouldBe creditAndRefundClaimRefundBtn
       document.getElementsByClass("govuk-link").last().text() shouldBe getPageHelpLinkTextBtn
     }
 
@@ -186,7 +201,14 @@ class CreditsSummaryViewSpec extends TestSupport with FeatureSwitching with Impl
         document.selectById("balancing-charge-type-1").select("td:nth-child(3)").first().text() shouldBe creditsTableStatusNotYetAllocatedValue
         document.selectById("balancing-charge-type-1").select("td:nth-child(4)").first().text() shouldBe "£1,400.00"
 
-        document.getElementsByClass("govuk-link govuk-body").first().text() shouldBe creditAndRefundClaimRefundBtn
+        document.selectById("h3-credit-from-hmrc-adjustment").text() shouldBe creditsDropDownListCreditFomHmrcAdjustment
+        document.selectById("h3-credit-from-hmrc-adjustment").nextElementSibling().text() shouldBe creditsDropDownListCreditFomHmrcAdjustmentValue
+        document.selectById("h3-credit-from-an-earlier-tax-year").text() shouldBe creditsDropDownListCreditFromAnEarlierTaxYear
+        document.selectById("sa-note-migrated-agent").text() shouldBe saNoteMigratedAgent
+        document.selectById("sa-note-migrated-agent-online-account-link").text() shouldBe saNoteMigratedOnlineAccountAgentLinkText
+        document.selectById("sa-note-migrated-agent-online-account-link").attr("href") shouldBe saNoteMigratedOnlineAccountAgentLink
+
+        document.selectById("credit-and-refund-claim-refund-btn").text() shouldBe creditAndRefundClaimRefundBtn
         document.getElementsByClass("govuk-link").last().text() shouldBe getPageHelpLinkTextBtn
         enable(MFACreditsAndDebits)
       }

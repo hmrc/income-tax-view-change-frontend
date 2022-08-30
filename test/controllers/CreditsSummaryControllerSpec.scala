@@ -26,7 +26,7 @@ import models.financialDetails.DocumentDetail
 import play.api.http.Status
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers._
-import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testAgentAuthRetrievalSuccessNoEnrolment, testMtditid, testTaxYear, testYearPlusTwo}
+import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testAgentAuthRetrievalSuccessNoEnrolment, testAuthSuccessWithSaUtrResponse, testSaUtrId, testTaxYear, testYearPlusTwo}
 import testConstants.FinancialDetailsTestConstants._
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.BearerTokenExpired
@@ -78,10 +78,11 @@ class CreditsSummaryControllerSpec extends TestSupport with MockCalculationServi
         enable(MFACreditsAndDebits)
         mockSingleBusinessIncomeSource()
         mockCreditHistoryService(chargesList)
+        setupMockAuthRetrievalSuccess(testAuthSuccessWithSaUtrResponse())
 
         val expectedContent: String = creditsSummaryView(
           backUrl = paymentRefundHistoryBackLink,
-          utr = Some(testMtditid),
+          utr = Some(testSaUtrId),
           enableMfaCreditsAndDebits = true,
           charges = chargesList,
           calendarYear = testTaxYear
@@ -103,10 +104,11 @@ class CreditsSummaryControllerSpec extends TestSupport with MockCalculationServi
         enable(MFACreditsAndDebits)
         mockSingleBusinessIncomeSource()
         mockCreditHistoryService(chargesList)
+        setupMockAuthRetrievalSuccess(testAuthSuccessWithSaUtrResponse())
 
         val expectedContent: String = creditsSummaryView(
           backUrl = paymentRefundHistoryBackLink,
-          utr = Some(testMtditid),
+          utr = Some(testSaUtrId),
           enableMfaCreditsAndDebits = true,
           charges = chargesList,
           calendarYear = testTaxYear
@@ -221,6 +223,7 @@ class CreditsSummaryControllerSpec extends TestSupport with MockCalculationServi
         enable(MFACreditsAndDebits)
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         mockBothIncomeSources()
+        setupMockGetFinancialDetailsWithTaxYearAndNino(testYearPlusTwo, "AA111111A")(testFinancialDetailsErrorModel)
         mockCreditHistoryFailed()
         val result = TestCreditsSummaryController.showAgentCreditsSummary(calendarYear = testYearPlusTwo)(fakeRequestConfirmedClient())
 
