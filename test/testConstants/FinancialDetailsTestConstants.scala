@@ -16,7 +16,7 @@
 
 package testConstants
 
-import models.{CreditDetailModel, MfaCreditType}
+import models.creditDetailModel.{CreditDetailModel, MfaCreditType}
 
 import java.time.LocalDate
 import testConstants.BaseTestConstants.{testErrorMessage, testErrorNotFoundStatus, testErrorStatus, testTaxYear}

@@ -19,14 +19,11 @@ package services.helpers
 
 import models.financialDetails._
 import models.paymentAllocationCharges.FinancialDetailsWithDocumentDetailsModel
-import models.{CreditDetailModel}
-
+import models.creditDetailModel._
 import java.time.LocalDate
 
 trait CreditHistoryDataHelper {
 
-
-  import CreditDetailModel._
 
   val paymentsForTheGivenTaxYear: List[Payment] = List(Payment(reference = Some("reference"), amount = Some(100.00),
     outstandingAmount = Some(1.00), method = Some("method"), documentDescription = None, lot = Some("lot"), lotItem = Some("lotItem"),
@@ -170,10 +167,5 @@ trait CreditHistoryDataHelper {
       financialDetail
     )
   )
-
-  val cutOverCreditA: List[CreditDetailModel] = cutOverCreditsAsFinancialDocumentA
-  val cutOverCreditB: List[CreditDetailModel] = cutOverCreditsAsFinancialDocumentB
-
-  val creditModels: List[CreditDetailModel] = taxYearFinancialDetails
 
 }
