@@ -19,8 +19,10 @@ package services
 import auth.MtdItUser
 import config.FrontendAppConfig
 import connectors.IncomeTaxViewChangeConnector
-import models.financialDetails.FinancialDetailsModel
 import models.{CreditDetailModel, CutOverCreditType, MfaCreditType}
+import models.core.Nino
+import models.financialDetails.{FinancialDetailsErrorModel, FinancialDetailsModel, Payments, PaymentsError}
+import models.paymentAllocationCharges.FinancialDetailsWithDocumentDetailsModel
 import services.CreditHistoryService.CreditHistoryError
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -45,28 +47,24 @@ class CreditHistoryService @Inject()(incomeTaxViewChangeConnector: IncomeTaxView
               case (true, false) =>
                 Some(CreditDetailModel(date = document.documentDate, document, MfaCreditType))
               case (false, true) =>
-                // if we didn't find CutOverCredit dueDate than we "lost" this document
+                // if we didn't find CutOverCredit dueDate then we "lost" this document
                 financialDetails
                   .getDueDateFor(document)
                   .map(dueDate => CreditDetailModel(date = dueDate, document, CutOverCreditType))
               case (true, true) =>
                 // Is this a bug ? we have MFA credits with properties of CutOver redits
-                // TODO: raise a story to tidy up these data.
                 Some(CreditDetailModel(date = document.documentDate, document, MfaCreditType))
-              case (_, _) =>
-                None
+              case (_, _) => None
             }
           }.flatten
-          Future {
-            Right(fdRes)
-          }
+          Future{ Right (fdRes) }
         case _ =>
-          Future {
-            Left(CreditHistoryError)
-          }
+          Future { Left(CreditHistoryError) }
       }
     }
   }
+
+
 
   def getCreditsHistory(calendarYear: Int, nino: String)
                        (implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[CreditHistoryError.type, List[CreditDetailModel]]] = {
