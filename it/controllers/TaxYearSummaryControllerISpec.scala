@@ -28,6 +28,7 @@ import models.liabilitycalculation.viewmodels.TaxYearSummaryViewModel
 import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, ObligationsModel}
 import play.api.http.Status._
 import play.api.libs.json.Json
+import play.api.libs.ws.WSResponse
 import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.IncomeSourceIntegrationTestConstants._
@@ -265,7 +266,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
       DocumentDetail(
         taxYear = getCurrentTaxYearEnd.getYear.toString,
         transactionId = "testMFA1",
-        documentDescription = Some("ITSA PAYE Charge"),
+        documentDescription = Some("TRM New Charge"),
         documentText = Some("documentText"),
         documentDate = LocalDate.of(2018, 3, 29),
         originalAmount = Some(1234.00),
@@ -276,7 +277,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
       DocumentDetail(
         taxYear = getCurrentTaxYearEnd.getYear.toString,
         transactionId = "testMFA2",
-        documentDescription = Some("ITSA Calc Error Correction"),
+        documentDescription = Some("TRM New Charge"),
         documentText = Some("documentText"),
         documentDate = LocalDate.of(2018, 3, 29),
         originalAmount = Some(2234.00),
@@ -406,7 +407,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         )
 
         When(s"I call GET ${controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(getCurrentTaxYearEnd.getYear).url}")
-        val res = IncomeTaxViewChangeFrontend.getCalculation(getCurrentTaxYearEnd.getYear.toString)
+        val res = IncomeTaxViewChangeFrontend.getTaxYearSummary(getCurrentTaxYearEnd.getYear.toString)
 
         Then("I check all calls expected were made")
         verifyIncomeSourceDetailsCall(testMtditid)
@@ -479,7 +480,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         )
 
         When(s"I call GET ${controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(getCurrentTaxYearEnd.getYear).url}")
-        val res = IncomeTaxViewChangeFrontend.getCalculation(getCurrentTaxYearEnd.getYear.toString)
+        val res = IncomeTaxViewChangeFrontend.getTaxYearSummary(getCurrentTaxYearEnd.getYear.toString)
 
         Then("I check all calls expected were made")
         verifyIncomeSourceDetailsCall(testMtditid)
@@ -552,7 +553,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         )
 
         When(s"I call GET ${controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(getCurrentTaxYearEnd.getYear).url}")
-        val res = IncomeTaxViewChangeFrontend.getCalculation(getCurrentTaxYearEnd.getYear.toString)
+        val res = IncomeTaxViewChangeFrontend.getTaxYearSummary(getCurrentTaxYearEnd.getYear.toString)
 
         Then("I check all calls expected were made")
         verifyIncomeSourceDetailsCall(testMtditid)
@@ -640,7 +641,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         )
 
         When(s"I call GET ${controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(getCurrentTaxYearEnd.getYear).url}")
-        val res = IncomeTaxViewChangeFrontend.getCalculation(getCurrentTaxYearEnd.getYear.toString)
+        val res = IncomeTaxViewChangeFrontend.getTaxYearSummary(getCurrentTaxYearEnd.getYear.toString)
 
         Then("I check all calls expected were made")
         verifyIncomeSourceDetailsCall(testMtditid)
@@ -698,7 +699,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         )
 
         When(s"I call GET ${controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(getCurrentTaxYearEnd.getYear).url}")
-        val res = IncomeTaxViewChangeFrontend.getCalculation(getCurrentTaxYearEnd.getYear.toString)
+        val res = IncomeTaxViewChangeFrontend.getTaxYearSummary(getCurrentTaxYearEnd.getYear.toString)
 
         Then("I check all calls expected were made")
         verifyIncomeSourceDetailsCall(testMtditid)
@@ -757,7 +758,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         )
 
         When(s"I call GET ${controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(getCurrentTaxYearEnd.getYear).url}")
-        val res = IncomeTaxViewChangeFrontend.getCalculation(getCurrentTaxYearEnd.getYear.toString)
+        val res = IncomeTaxViewChangeFrontend.getTaxYearSummary(getCurrentTaxYearEnd.getYear.toString)
 
         Then("I check all calls expected were made")
         verifyIncomeSourceDetailsCall(testMtditid)
@@ -817,7 +818,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         )
 
         When(s"I call GET ${controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(testYearInt).url}")
-        val res = IncomeTaxViewChangeFrontend.getCalculation(getCurrentTaxYearEnd.getYear.toString)
+        val res = IncomeTaxViewChangeFrontend.getTaxYearSummary(getCurrentTaxYearEnd.getYear.toString)
 
         Then("I check all calls expected were made")
         verifyIncomeSourceDetailsCall(testMtditid)
@@ -857,7 +858,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(INTERNAL_SERVER_ERROR, testFinancialDetailsErrorModelJson())
 
         When(s"I call GET ${controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(testYearInt).url}")
-        val res = IncomeTaxViewChangeFrontend.getCalculation(testYear)
+        val res = IncomeTaxViewChangeFrontend.getTaxYearSummary(testYear)
 
         Then("I check all calls expected were made")
         verifyIncomeSourceDetailsCall(testMtditid)
@@ -915,7 +916,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         )
 
         When(s"I call GET ${controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(testYearInt).url}")
-        val res = IncomeTaxViewChangeFrontend.getCalculation(testYear)
+        val res = IncomeTaxViewChangeFrontend.getTaxYearSummary(testYear)
 
         Then("I check all calls expected were made")
         verifyIncomeSourceDetailsCall(testMtditid)
@@ -978,7 +979,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         )
 
         When(s"I call GET ${controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(testYearInt).url}")
-        val res = IncomeTaxViewChangeFrontend.getCalculation(testYear)
+        val res = IncomeTaxViewChangeFrontend.getTaxYearSummary(testYear)
 
         Then("I check all calls expected were made")
         verifyIncomeSourceDetailsCall(testMtditid)
@@ -1014,7 +1015,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
           LocalDate.of(2018, 4, 5))
 
         When(s"I call GET ${controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(testYearInt).url}")
-        val res = IncomeTaxViewChangeFrontend.getCalculation(testYear)
+        val res = IncomeTaxViewChangeFrontend.getTaxYearSummary(testYear)
 
         Then("I check all calls expected were made")
         verifyIncomeSourceDetailsCall(testMtditid)
@@ -1042,7 +1043,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         IncomeTaxViewChangeStub.stubGetNextUpdatesError(testNino)
 
         When(s"I call GET ${controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(testYearInt).url}")
-        val res = IncomeTaxViewChangeFrontend.getCalculation(testYear)
+        val res = IncomeTaxViewChangeFrontend.getTaxYearSummary(testYear)
 
         Then("I check all calls expected were made")
         verifyIncomeSourceDetailsCall(testMtditid)
@@ -1086,7 +1087,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
       IncomeTaxCalculationStub.stubGetCalculationErrorResponse(testNino, "2018")(INTERNAL_SERVER_ERROR, LiabilityCalculationError(INTERNAL_SERVER_ERROR, "Error"))
 
       When(s"I call GET ${controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(testYearInt).url}")
-      val res = IncomeTaxViewChangeFrontend.getCalculation(testYear)
+      val res = IncomeTaxViewChangeFrontend.getTaxYearSummary(testYear)
 
       Then("I check all calls expected were made")
       verifyIncomeSourceDetailsCall(testMtditid)
@@ -1109,7 +1110,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
       IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(INTERNAL_SERVER_ERROR, testFinancialDetailsErrorModelJson())
 
       When(s"I call GET ${controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(testYearInt).url}")
-      val res = IncomeTaxViewChangeFrontend.getCalculation(testYear)
+      val res = IncomeTaxViewChangeFrontend.getTaxYearSummary(testYear)
 
       Then("I check all calls expected were made")
       verifyIncomeSourceDetailsCall(testMtditid)
@@ -1120,12 +1121,105 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         httpStatus(INTERNAL_SERVER_ERROR)
       )
     }
+
+    "MFA Debits" should {
+      def testMFADebits(MFADebitsEnabled: Boolean): Any = {
+        if (MFADebitsEnabled) enable(MFACreditsAndDebits) else disable(MFACreditsAndDebits)
+
+        Given("Business details returns a successful response back")
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWoMigration)
+
+        And(s"A non crystallised calculation for $calculationTaxYear is returned")
+        IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, getCurrentTaxYearEnd.getYear.toString)(
+          status = OK,
+          body = liabilityCalculationModelSuccessFull
+        )
+
+        And("A financial transaction call returns a success")
+        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
+          nino = testNino,
+          from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
+          to = getCurrentTaxYearEnd.toString
+        )(
+          status = OK,
+          response = Json.toJson(financialDetailsMFADebits)
+        )
+
+        And("previous obligations returns a success")
+        IncomeTaxViewChangeStub.stubGetPreviousObligations(
+          nino = testNino,
+          fromDate = getCurrentTaxYearEnd.minusYears(1).plusDays(1),
+          toDate = getCurrentTaxYearEnd,
+          deadlines = previousObligationsSuccess
+        )
+
+        And("current obligations returns a success")
+        IncomeTaxViewChangeStub.stubGetNextUpdates(
+          nino = testNino,
+          deadlines = currentObligationsSuccess
+        )
+
+        When(s"I call GET ${controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(getCurrentTaxYearEnd.getYear).url}")
+        val res = IncomeTaxViewChangeFrontend.getTaxYearSummary(getCurrentTaxYearEnd.getYear.toString)
+
+        Then("I check all calls expected were made")
+        verifyIncomeSourceDetailsCall(testMtditid)
+        IncomeTaxCalculationStub.verifyGetCalculationResponse(testNino, getCurrentTaxYearEnd.getYear.toString)
+        IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino,
+          from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
+          to = getCurrentTaxYearEnd.toString
+        )
+        verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "ABC123456789", previousObligationsSuccess.obligations.flatMap(_.obligations)).detail)
+        verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "ABC123456789", currentObligationsSuccess.obligations.flatMap(_.obligations)).detail)
+
+        And("The expected result is returned")
+        verifyMFADebitsResults(res)
+      }
+
+      def verifyMFADebitsResults(res: WSResponse): Any = {
+        if (isEnabled(MFACreditsAndDebits)) {
+          res should have(
+            httpStatus(OK),
+            pageTitleIndividual("tax-year-summary.heading"),
+            elementTextBySelector("#calculation-date")("15 February 2019"),
+            elementTextBySelectorList("#payments-table", "tbody", "tr:nth-of-type(1)", "th")(s"$hmrcAdjustment"),
+            elementTextBySelectorList("#payments-table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("22 Apr 2021"),
+            elementTextBySelectorList("#payments-table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("£2,234.00"),
+            elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "th")(s"$hmrcAdjustment"),
+            elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(1)")("23 Apr 2021"),
+            elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(2)")("£1,234.00"),
+            elementCountBySelector("#payments-table", "tbody", "tr")(2)
+          )
+        } else {
+          res should have(
+            httpStatus(OK),
+            pageTitleIndividual("tax-year-summary.heading"),
+            elementTextBySelector("#calculation-date")("15 February 2019"),
+            elementCountBySelector("#payments-table", "tbody", "tr")(0))
+        }
+        val auditDD = if (isEnabled(MFACreditsAndDebits)) financialDetailsMFADebits.getAllDocumentDetailsWithDueDates() else Nil
+        AuditStub.verifyAuditEvent(TaxYearSummaryResponseAuditModel(
+          MtdItUser(testMtditid, testNino, None, singleBusinessResponse,
+            None, Some("1234567890"), Some("12345-credId"), Some("Individual"), None
+          )(FakeRequest()), auditDD,
+          allObligations, Some(TaxYearSummaryViewModel(liabilityCalculationModelSuccessFull)), isEnabled(R7bTxmEvents)))
+      }
+
+      "should show Tax Year Summary page with MFA Debits on the Payment Tab with FS ENABLED" in {
+        testMFADebits(true)
+      }
+      "should show Tax Year Summary page with MFA Debits on the Payment Tab with FS DISABLED" in {
+        testMFADebits(false)
+      }
+    }
   }
 
   "API#1171 IncomeSourceDetails Caching" when {
     "caching should be DISABLED" in {
       testIncomeSourceDetailsCaching(false, 2,
-        () => IncomeTaxViewChangeFrontend.getCalculation(testYear))
+        () => IncomeTaxViewChangeFrontend.getTaxYearSummary(testYear))
     }
   }
+
+
 }

@@ -76,12 +76,18 @@
 }
 
 
-@getChargeSummaryHref(documentDetailWithDueDate: DocumentDetailWithDueDate, isLatePaymentCharge: Boolean = false) = @{
+@getChargeSummaryHref(documentDetailWithDueDate: DocumentDetailWithDueDate) = @{
     if(isAgent){
-        controllers.routes.ChargeSummaryController.showAgent(taxYear, documentDetailWithDueDate.documentDetail.transactionId, isLatePaymentCharge).url
+        controllers.routes.ChargeSummaryController.showAgent(taxYear, documentDetailWithDueDate.documentDetail.transactionId, documentDetailWithDueDate.documentDetail.isLatePaymentInterest).url
     } else {
-        controllers.routes.ChargeSummaryController.show(taxYear, documentDetailWithDueDate.documentDetail.transactionId, isLatePaymentCharge, origin).url
+        controllers.routes.ChargeSummaryController.show(taxYear, documentDetailWithDueDate.documentDetail.transactionId, documentDetailWithDueDate.documentDetail.isLatePaymentInterest, origin).url
     }
+}
+
+@getChargeSummaryMessage(documentDetailWithDueDate: DocumentDetailWithDueDate) = @{
+    val chargeTypeKey = if (documentDetailWithDueDate.isMFADebit) "hmrcAdjustment.text" else documentDetailWithDueDate.documentDetail.getChargeTypeKey(codingOutEnabled)
+    val lpi = if (documentDetailWithDueDate.documentDetail.isLatePaymentInterest) "lpi." else ""
+    messages(s"tax-year-summary.payments.${lpi}${chargeTypeKey}")
 }
 
 @getForecastSummaryHref(taxYear: Int, isAgent: Boolean) = @{
@@ -116,16 +122,7 @@
                             <div class="govuk-tag govuk-tag--red">@messages("tax-year-summary.payments.overdue")</div>
                         }
                         <div>
-                            @if(documentDetailWithDueDate.isMFADebit && documentDetailWithDueDate.isLatePaymentInterest) {
-                            <p>hello</p>
-                            <a class="govuk-link"  id="paymentTypeLink-@{index}" href="@getChargeSummaryHref(documentDetailWithDueDate, true)">@messages(s"tax-year-summary.payments.lpi.hmrcAdjustment.text")</a>
-                            } else if(documentDetailWithDueDate.isMFADebit && !documentDetailWithDueDate.isLatePaymentInterest) {
-                            <a class="govuk-link"  id="paymentTypeLink-@{index}" href="@getChargeSummaryHref(documentDetailWithDueDate)">@messages(s"tax-year-summary.payments.hmrcAdjustment.text")</a>
-                            } else if(documentDetailWithDueDate.isLatePaymentInterest) {
-                                <a class="govuk-link"  id="paymentTypeLink-@{index}" href="@getChargeSummaryHref(documentDetailWithDueDate, true)">@messages(s"tax-year-summary.payments.lpi.${documentDetailWithDueDate.documentDetail.getChargeTypeKey()}")</a>
-                            } else {
-                                <a class="govuk-link"  id="paymentTypeLink-@{index}" href="@getChargeSummaryHref(documentDetailWithDueDate)">@messages(s"tax-year-summary.payments.${documentDetailWithDueDate.documentDetail.getChargeTypeKey(codingOutEnabled)}")</a>
-                            }
+                            <a class="govuk-link"  id="paymentTypeLink-@{index}" href="@getChargeSummaryHref(documentDetailWithDueDate)">@getChargeSummaryMessage(documentDetailWithDueDate)</a>
                         </div>
                         @if(documentDetailWithDueDate.dunningLock){<div class="form-hint govuk-body-s"> @messages("tax-year-summary.payments.paymentUnderReview") </div>}
                         @if(documentDetailWithDueDate.documentDetail.hasLpiWithDunningBlock){<div class="form-hint govuk-body-s"> @messages("tax-year-summary.payments.paymentUnderReview") </div>}
@@ -208,15 +205,14 @@
     }
 }
 
-@noForcastContent = {
+@noForecastContent = {
     @h2(msg = messages("forecast_taxCalc.noForecast.heading"), classes = "govuk-heading-l", optId=Some("no-forecast-data-header"))
     @p(id=Some("no-forecast-data-note"))(Html(messages("forecast_taxCalc.noForecast.text")))
 }
 
 @forecastContent = {
-
     @if(modelOpt.isEmpty){
-        @noForcastContent
+        @noForecastContent
     } else {
         @forecastContentTable
         @govukInsetText(InsetText(content = Text(messages("tax-year-summary.forecast_tab.insetText", taxYear.toString)), id=Some("inset_forecast")))

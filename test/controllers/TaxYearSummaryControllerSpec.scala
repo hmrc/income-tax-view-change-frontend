@@ -25,9 +25,11 @@ import mocks.MockItvcErrorHandler
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicateNoCache}
 import mocks.services.{MockCalculationService, MockFinancialDetailsService, MockNextUpdatesService}
 import models.financialDetails.DocumentDetailWithDueDate
+import models.financialDetails.MfaDebitUtils.filterMFADebits
 import models.liabilitycalculation.viewmodels.TaxYearSummaryViewModel
 import models.nextUpdates.{NextUpdatesErrorModel, ObligationsModel}
 import org.jsoup.Jsoup
+import org.scalatest.Assertion
 import play.api.http.Status
 import play.api.http.Status.INTERNAL_SERVER_ERROR
 import play.api.mvc.{MessagesControllerComponents, Result}
@@ -324,6 +326,43 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
         contentAsString(result) shouldBe expectedContent
       }
     }
+
+    "MFA Debits" should {
+      def testMFADebits(MFAEnabled: Boolean): Assertion = {
+        if (MFAEnabled) enable(MFACreditsAndDebits) else disable(MFACreditsAndDebits)
+
+        mockSingleBusinessIncomeSource()
+        mockCalculationSuccessFullNew(testMtditid)
+        mockFinancialDetailsSuccess(financialDetailsModelResponse = MFADebitsFinancialDetails)
+        mockgetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
+          toDate = LocalDate.of(testTaxYear, 4, 5))(
+          response = testObligtionsModel
+        )
+
+        val calcOverview: TaxYearSummaryViewModel = TaxYearSummaryViewModel(liabilityCalculationModelSuccessFull)
+        val charges = if (MFAEnabled) MFADebitsDocumentDetailsWithDueDates else testEmptyChargesList
+        val expectedContent: String = taxYearSummaryView(
+          testTaxYear,
+          Some(calcOverview),
+          charges,
+          testObligtionsModel,
+          taxYearsBackLink,
+          codingOutEnabled = true
+        ).toString
+        val result = TestTaxYearSummaryController.renderTaxYearSummaryPage(testTaxYear)(fakeRequestWithActiveSessionWithReferer(referer = taxYearsBackLink))
+
+        status(result) shouldBe Status.OK
+        contentAsString(result) shouldBe expectedContent
+      }
+
+      "display MFA Debits when FS is enabled" in {
+        testMFADebits(true)
+      }
+      "not display MFA Debits when FS is disabled" in {
+        testMFADebits(false)
+      }
+    }
+
 
     s"getFinancialDetails returns a $NOT_FOUND" should {
       "show the Tax Year Summary Page" in {
