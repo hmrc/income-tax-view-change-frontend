@@ -61,11 +61,11 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
       case financialDetailsModel : List[FinancialDetailsModel] =>
         val balance: Option[BalanceDetails] = financialDetailsModel.headOption.map(balance => balance.balanceDetails)
 
-        val charges: List[(DocumentDetailWithDueDate, FinancialDetail)] = financialDetailsModel.flatMap(
-          financialDetails => sortChargesGroupedPaymentTypes(financialDetails.getAllDocumentDetailsWithDueDates().zip(financialDetails.financialDetails))
+        val credits: List[(DocumentDetailWithDueDate, FinancialDetail)] = financialDetailsModel.flatMap(
+          financialDetails => sortCreditsGroupedPaymentTypes(financialDetails.getAllDocumentDetailsWithDueDates().zip(financialDetails.financialDetails))
         )
 
-        Ok(view(charges, balance, isAgent, backUrl, isEnabled(MFACreditsAndDebits))(user, user, messages))
+        Ok(view(credits, balance, isAgent, backUrl, isEnabled(MFACreditsAndDebits))(user, user, messages))
       case _ => Logger("application").error(
         s"${if (isAgent) "[Agent]"}[CreditAndRefundController][show] Invalid response from financial transactions")
         itvcErrorHandler.showInternalServerError()
@@ -98,25 +98,29 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
     }
   }
 
-  private def sortChargesGroupedPaymentTypes(charges: List[(DocumentDetailWithDueDate, FinancialDetail)])
+  private def sortCreditsGroupedPaymentTypes(credits: List[(DocumentDetailWithDueDate, FinancialDetail)])
   : List[(DocumentDetailWithDueDate, FinancialDetail)] = {
 
-    def sortCharges(charges: List[(DocumentDetailWithDueDate, FinancialDetail)])
+    def sortCredits(credits: List[(DocumentDetailWithDueDate, FinancialDetail)])
     : List[(DocumentDetailWithDueDate, FinancialDetail)] = {
-      charges
+      credits
         .sortBy(_._1.documentDetail.paymentOrChargeCredit).reverse
     }
 
-    val chargesGroupedPaymentTypes = charges
+    val sortingOrderPaymentType = Map("ITS" -> 0, "New" -> 1, "Pay" -> 2)
+
+    val creditsGroupedPaymentTypes = credits
       .groupBy[String] {
-        charges => {
-          charges._1.documentDetail.documentDescription.get.substring(0, 3)
+        credits => {
+          credits._1.documentDetail.documentDescription.get.substring(0, 3)
         }
-      }.map {
-      case (documentId, charges) => (documentId, sortCharges(charges))
-    }.map {
-      case (_, charges) => charges
-    }.toList.flatten.sortBy(_._1.documentDetail.documentDescription.get.substring(0, 3))
-    chargesGroupedPaymentTypes
+      }
+      .toList.sortWith((p1, p2) => sortingOrderPaymentType(p1._1) < sortingOrderPaymentType(p2._1))
+      .map {
+        case (documentId, credits) => (documentId, sortCredits(credits))
+    }.flatMap {
+        case (_, credits) => credits
+    }
+    creditsGroupedPaymentTypes
   }
 }
