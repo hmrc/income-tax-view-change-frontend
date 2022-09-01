@@ -34,6 +34,7 @@ import views.html.errorPages.CustomNotFoundError
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import sext._
 
 class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAuthorisedFunctions,
                                           val creditService: CreditService,
@@ -53,19 +54,20 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
                                           val customNotFoundErrorView: CustomNotFoundError)
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
+
   def handleRequest(isAgent: Boolean, itvcErrorHandler: ShowInternalServerError, backUrl: String)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
     creditService.getCreditCharges()(implicitly,user) map {
-      case _ if isEnabled(CreditsRefundsRepay) == false =>
+      case _ if isDisabled(CreditsRefundsRepay) =>
         Ok(customNotFoundErrorView()(user, messages))
       case financialDetailsModel : List[FinancialDetailsModel] =>
         val balance: Option[BalanceDetails] = financialDetailsModel.headOption.map(balance => balance.balanceDetails)
 
-        val charges: List[(DocumentDetailWithDueDate, FinancialDetail)] = financialDetailsModel.flatMap(
-          financialDetails => sortChargesGroupedPaymentTypes(financialDetails.getAllDocumentDetailsWithDueDates().zip(financialDetails.financialDetails))
+        val credits: List[(DocumentDetailWithDueDate, FinancialDetail)] = financialDetailsModel.flatMap(
+          financialDetailsModel => sortChargesGroupedPaymentTypes(financialDetailsModel.getAllDocumentDetailsWithDueDatesAndFinancialDetails())
         )
-
-        Ok(view(charges, balance, isAgent, backUrl, isEnabled(MFACreditsAndDebits))(user, user, messages))
+        println("credits: " + credits.treeString)
+        Ok(view(credits, balance, isAgent, backUrl, isEnabled(MFACreditsAndDebits))(user, user, messages))
       case _ => Logger("application").error(
         s"${if (isAgent) "[Agent]"}[CreditAndRefundController][show] Invalid response from financial transactions")
         itvcErrorHandler.showInternalServerError()

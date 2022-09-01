@@ -43,7 +43,8 @@ case class Payment(reference: Option[String],
                    lotItem: Option[String],
                    dueDate: Option[LocalDate],
                    documentDate: LocalDate,
-                   transactionId: Option[String]) {
+                   transactionId: Option[String],
+                   mainType: Option[String] = None) {
 
   def credit: Option[BigDecimal] = amount match {
     case None => None
@@ -52,7 +53,7 @@ case class Payment(reference: Option[String],
     case Some(credit) => Some(credit)
   }
 
-  def validMFACreditDescription() : Boolean = MfaCreditUtils.validMFACreditDescription(documentDescription)
+  def validMFACreditDescription() : Boolean = MfaCreditUtils.validMFACreditDescription(mainType)
 
   def allocationStatus() : Option[PaymentAllocationStatus] = (outstandingAmount, amount) match {
     case (Some(outstandingAmountValue), _) if outstandingAmountValue.equals(BigDecimal(0.0)) =>

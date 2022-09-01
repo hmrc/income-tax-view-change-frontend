@@ -106,7 +106,7 @@
 
         <ul class="govuk-list govuk-list--bullet">
             @for(charge <- creditCharges) {
-                @if(charge._1.documentDetail.validMFACreditDescription()) {
+                @if(charge._2.validMFACreditType()) {
                     @if(isMFACreditsAndDebitsEnabled) {
                         <li>
                             <p class="govuk-heading-s">
@@ -121,7 +121,7 @@
                         </li>
                     }
                 }
-                @if(!charge._1.documentDetail.validMFACreditDescription()) {
+                @if(!charge._2.validMFACreditType()) {
                     @if(charge._1.documentDetail.documentDescription.getOrElse(throw MissingFieldException("Document Description")).toString().toLowerCase().equals("new charge")) {
                         <li>
                             <p class="govuk-heading-s">

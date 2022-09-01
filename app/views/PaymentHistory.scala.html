@@ -106,11 +106,11 @@ btaNavPartial: Option[Html] = None, origin: Option[String] = None)(implicit requ
     useFallbackBackLink = true
 ) {
 
-@if(paymentHistoryAndRefundsEnabled){
-    @h1(msg = "paymentHistory.paymentAndRefundHistory.heading")
-} else {
-    @h1(msg = "paymentHistory.heading")
-}
+    @if(paymentHistoryAndRefundsEnabled){
+        @h1(msg = "paymentHistory.paymentAndRefundHistory.heading")
+    } else {
+        @h1(msg = "paymentHistory.heading")
+    }
 
 
     @if(groupedPayments.nonEmpty) {

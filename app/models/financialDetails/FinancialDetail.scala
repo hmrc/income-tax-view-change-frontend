@@ -85,6 +85,8 @@ case class FinancialDetail(taxYear: String,
       case payments if payments.nonEmpty => PaymentsWithChargeType(payments, mainType, chargeType)
     }
     .filter(_.getPaymentAllocationTextInChargeSummary.isDefined)
+
+  def validMFACreditType(): Boolean = MfaCreditUtils.validMFACreditDescription(mainType)
 }
 
 
