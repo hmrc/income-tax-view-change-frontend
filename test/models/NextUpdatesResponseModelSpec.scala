@@ -25,10 +25,10 @@ import javax.inject.Inject
 import models.nextUpdates._
 import org.scalatest.Matchers
 import play.api.libs.json.{JsSuccess, Json}
-import testUtils.UnitSpec
+import testUtils.{TestSupport, UnitSpec}
 import uk.gov.hmrc.play.language.LanguageUtils
 
-class NextUpdatesResponseModelSpec @Inject()(val languageUtils: LanguageUtils) extends UnitSpec with Matchers with ImplicitDateFormatter {
+class NextUpdatesResponseModelSpec extends TestSupport with Matchers with ImplicitDateFormatter {
 
 
   "The NextUpdatesModel" should {
@@ -187,37 +187,52 @@ class NextUpdatesResponseModelSpec @Inject()(val languageUtils: LanguageUtils) e
       "calling .allDeadlinesWithSource" in {
         NextUpdatesTestConstants.obligationsAllDeadlinesSuccessModel.allDeadlinesWithSource()(
           BaseTestConstants.testMtdItUser) shouldBe List(
-          NextUpdateModelWithIncomeType("Property", overdueEOPSObligation),
-          NextUpdateModelWithIncomeType("business", overdueObligation),
-          NextUpdateModelWithIncomeType("business", openObligation),
-          NextUpdateModelWithIncomeType("Property", openEOPSObligation),
-          NextUpdateModelWithIncomeType("Crystallised", crystallisedObligation)
+          NextUpdateModelWithIncomeType("nextUpdates.propertyIncome", overdueEOPSObligation),
+          NextUpdateModelWithIncomeType("nextUpdates.business", overdueObligation),
+          NextUpdateModelWithIncomeType("nextUpdates.business", openObligation),
+          NextUpdateModelWithIncomeType("nextUpdates.propertyIncome", openEOPSObligation),
+          NextUpdateModelWithIncomeType("nextUpdates.crystallisedAll", crystallisedObligation)
         )
       }
     }
+
+    // TODO implement it
+    /*"return a list of all models with source in date order is crystallisedAll" when {
+
+      "calling .allDeadlinesWithSource" in {
+        NextUpdatesTestConstants.obligationsAllDeadlinesSuccessModel.allDeadlinesWithSource()(
+          BaseTestConstants.testMtdItUser) shouldBe List(
+          NextUpdateModelWithIncomeType("nextUpdates.propertyIncome", overdueEOPSObligation),
+          NextUpdateModelWithIncomeType("nextUpdates.business", overdueObligation),
+          NextUpdateModelWithIncomeType("nextUpdates.business", openObligation),
+          NextUpdateModelWithIncomeType("nextUpdates.propertyIncome", openEOPSObligation),
+          NextUpdateModelWithIncomeType("Crystallised", crystallisedObligation)
+        )
+      }
+    }*/
 
     "return a list of only specific updates with source in date order" when {
 
       "calling .allQuarterly" in {
         NextUpdatesTestConstants.obligationsAllDeadlinesSuccessModel.allQuarterly(
           BaseTestConstants.testMtdItUser) shouldBe List(
-          NextUpdateModelWithIncomeType("business", overdueObligation),
-          NextUpdateModelWithIncomeType("business", openObligation)
+          NextUpdateModelWithIncomeType("nextUpdates.business", overdueObligation),
+          NextUpdateModelWithIncomeType("nextUpdates.business", openObligation)
         )
       }
 
       "calling .allEops" in {
         NextUpdatesTestConstants.obligationsAllDeadlinesSuccessModel.allEops(
           BaseTestConstants.testMtdItUser) shouldBe List(
-          NextUpdateModelWithIncomeType("Property", overdueEOPSObligation),
-          NextUpdateModelWithIncomeType("Property", openEOPSObligation)
+          NextUpdateModelWithIncomeType("nextUpdates.propertyIncome", overdueEOPSObligation),
+          NextUpdateModelWithIncomeType("nextUpdates.propertyIncome", openEOPSObligation)
         )
       }
 
       "calling .allCrystallised" in {
         NextUpdatesTestConstants.obligationsAllDeadlinesSuccessModel.allCrystallised(
           BaseTestConstants.testMtdItUser) shouldBe List(
-          NextUpdateModelWithIncomeType("Crystallised", crystallisedObligation)
+          NextUpdateModelWithIncomeType("nextUpdates.crystallisedAll", crystallisedObligation)
         )
       }
     }

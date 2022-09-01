@@ -39,7 +39,6 @@ object BusinessDetailsTestConstants {
   val test2019BusinessAccountingPeriod = AccountingPeriodModel(start = LocalDate.of(year2018, Month.MARCH, 5), end = LocalDate.of(year2019, Month.MARCH, 6))
   val test2018BusinessAccountingPeriod = AccountingPeriodModel(start = LocalDate.of(year2019, Month.MARCH, 6), end = LocalDate.of(year2018, Month.MARCH, 6))
   val testTradeName = "Business income"
-  val testTradeName2 = "business"
   val testBizAddress = AddressModel(
     addressLine1 = "64 Zoo Lane",
     addressLine2 = Some("Happy Place"),
@@ -62,7 +61,7 @@ object BusinessDetailsTestConstants {
   val business2 = BusinessDetailsModel(
     incomeSourceId = Some(testSelfEmploymentId2),
     accountingPeriod = Some(testBusinessAccountingPeriod),
-    tradingName = Some(testTradeName2),
+    tradingName = Some(testTradeName),
     firstAccountingPeriodEndDate = None
   )
 
