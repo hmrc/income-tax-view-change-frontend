@@ -41,10 +41,4 @@ class ItvcErrorHandler @Inject()(val errorTemplate: ErrorTemplate,
     messagesApi.preferred(request)("standardError.message")
   ))
 
-  def showOkTechnicalDifficulties()(implicit request: Request[_]): Result = Ok(standardErrorTemplate(
-    messagesApi.preferred(request)("standardError.heading"),
-    messagesApi.preferred(request)("standardError.heading"),
-    messagesApi.preferred(request)("standardError.message")
-  ))
-
 }
