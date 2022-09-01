@@ -534,7 +534,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
       documentDate = LocalDate.of(2018, 3, 29)
     )
     val docDetailPaid = docDetailUnpaid.copy(outstandingAmount = Some(0))
-    
+
     "load the charge summary page with an UNPAID MFADebit" in {
       Given("the MFADebitsAndCredits feature switch is enabled")
       enable(MFACreditsAndDebits)
