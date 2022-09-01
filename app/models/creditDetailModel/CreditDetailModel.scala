@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-package models
+package models.creditDetailModel
 
-import models.financialDetails.{DocumentDetail, FinancialDetailsModel}
-
+import models.financialDetails.DocumentDetail
 
 import java.time.LocalDate
 

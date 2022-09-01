@@ -28,7 +28,8 @@ import utils.Utilities._
 
 case class ChargeSummaryAudit(mtdItUser: MtdItUser[_], docDateDetail: DocumentDetailWithDueDate,
                               paymentBreakdown: List[FinancialDetail], chargeHistories: List[ChargeHistoryModel],
-                              paymentAllocations: List[PaymentsWithChargeType], isLatePaymentCharge: Boolean) extends ExtendedAuditModel {
+                              paymentAllocations: List[PaymentsWithChargeType], isLatePaymentCharge: Boolean,
+                              isMFADebit: Boolean = false) extends ExtendedAuditModel {
 
   private val userType: JsObject = mtdItUser.userType match {
     case Some("Agent") => Json.obj("userType" -> "Agent")
@@ -37,6 +38,7 @@ case class ChargeSummaryAudit(mtdItUser: MtdItUser[_], docDateDetail: DocumentDe
   }
 
   val getChargeType: String = docDateDetail.documentDetail.documentDescription match {
+    case _ if isMFADebit => "MFADebit"
     case Some("ITSA- POA 1") => if (isLatePaymentCharge) "Late Payment Interest on payment on account 1 of 2" else "Payment on account 1 of 2"
     case Some("ITSA - POA 2") => if (isLatePaymentCharge) "Late Payment Interest on payment on account 2 of 2" else "Payment on account 2 of 2"
     case Some("TRM New Charge") | Some("TRM Amend Charge") =>
@@ -48,6 +50,7 @@ case class ChargeSummaryAudit(mtdItUser: MtdItUser[_], docDateDetail: DocumentDe
   }
 
   private def getAllocationDescriptionFromKey(key: Option[String]): String = key match {
+    case Some("chargeSummary.paymentAllocations.mfaDebit") => "Payment put towards HMRC adjustment"
     case Some("chargeSummary.paymentAllocations.poa1.incomeTax") => "Income Tax for payment on account 1 of 2"
     case Some("chargeSummary.paymentAllocations.poa1.nic4") => "Class 4 National Insurance for payment on account 1 of 2"
     case Some("chargeSummary.paymentAllocations.poa2.incomeTax") => "Income Tax for payment on account 2 of 2"

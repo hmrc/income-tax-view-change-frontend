@@ -16,21 +16,24 @@
 
 package services.helpers
 
+
 import models.financialDetails._
 import models.paymentAllocationCharges.FinancialDetailsWithDocumentDetailsModel
-import models.{CreditDetailModel, CutOverCreditType, MfaCreditType}
-
+import models.creditDetailModel._
 import java.time.LocalDate
 
 trait CreditHistoryDataHelper {
+
 
   val paymentsForTheGivenTaxYear: List[Payment] = List(Payment(reference = Some("reference"), amount = Some(100.00),
     outstandingAmount = Some(1.00), method = Some("method"), documentDescription = None, lot = Some("lot"), lotItem = Some("lotItem"),
     dueDate = Some(LocalDate.parse("2020-08-20")), documentDate = LocalDate.parse("2020-08-20"), Some("DOCID01")))
 
+
   val creditsForTheGivenTaxYear: List[Payment] = List(
     Payment(reference = Some("reference"), amount = Some(-100.00),
       outstandingAmount = Some(1.00), method = Some("method"), documentDescription = None, lot = None, lotItem = Some("lotItem"),
+
       dueDate = Some(LocalDate.parse("2020-08-20")), documentDate = LocalDate.parse("2020-08-20"), Some("DOCID01")),
     Payment(reference = Some("reference"), amount = Some(-100.00),
       outstandingAmount = Some(1.00), method = Some("method"), documentDescription = None, lot = None, lotItem = Some("lotItem"),
@@ -41,6 +44,7 @@ trait CreditHistoryDataHelper {
   val nino: String = "someNino"
   val documentIdA: String = "DOCID01"
   val documentIdB: String = "DOCID02"
+
 
   val documentDetailsWhichIsCutOverCredit = DocumentDetail(
     taxYear = "testYear2", transactionId = "testTransactionId1",
@@ -53,6 +57,7 @@ trait CreditHistoryDataHelper {
     documentDescription = Some("TRM New Charge"), documentText = None,
     outstandingAmount = Some(-150.00), originalAmount = Some(-150.00),
     documentDate = LocalDate.of(taxYear, 3, 29))
+
 
   val taxYearFinancialDetails = FinancialDetailsModel(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
@@ -172,4 +177,5 @@ trait CreditHistoryDataHelper {
       financialDetail
     )
   )
+
 }

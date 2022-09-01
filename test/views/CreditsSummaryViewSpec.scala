@@ -19,7 +19,7 @@ package views
 import config.FrontendAppConfig
 import config.featureswitch.{FeatureSwitching, MFACreditsAndDebits}
 import implicits.ImplicitDateFormatter
-import models.CreditDetailModel
+import models.creditDetailModel.CreditDetailModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import play.api.test.FakeRequest

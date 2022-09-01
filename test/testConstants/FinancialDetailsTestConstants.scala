@@ -16,10 +16,10 @@
 
 package testConstants
 
-import models.{CreditDetailModel, MfaCreditType}
+import models.creditDetailModel.{CreditDetailModel, MfaCreditType}
 
 import java.time.LocalDate
-import testConstants.BaseTestConstants.{testErrorMessage, testErrorNotFoundStatus, testErrorStatus}
+import testConstants.BaseTestConstants.{testErrorMessage, testErrorNotFoundStatus, testErrorStatus, testTaxYear}
 import models.financialDetails._
 import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
 import play.api.libs.json.{JsValue, Json}
@@ -454,6 +454,16 @@ object FinancialDetailsTestConstants {
       documentDetails = List(documentDetailModel(taxYear, outstandingAmount = outstandingAmount, paymentLot = None,
         paymentLotItem = None, lpiWithDunningBlock = lpiWithDunningBlock, latePaymentInterestAmount = latePaymentInterestAmount)),
       financialDetails = List(financialDetail(taxYear, dunningLock = dunningLock, dueDateValue = dueDateValue)
+      )
+    )
+
+  def financialDetailsModelWithMFADebit() =
+    FinancialDetailsModel(
+      balanceDetails = balanceDetails,
+      codingDetails = None,
+      documentDetails = List(documentDetailModel(testTaxYear, paymentLot = None,
+        paymentLotItem = None, latePaymentInterestAmount = None)),
+      financialDetails = List(financialDetail(testTaxYear, mainType = "ITSA Calc Error Correction")
       )
     )
 
