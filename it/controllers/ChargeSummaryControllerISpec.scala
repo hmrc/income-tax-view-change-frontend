@@ -523,6 +523,18 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
         )
       )
     )
+
+    val docDetailUnpaid = DocumentDetail(
+      taxYear = "2018",
+      transactionId = "1040000124",
+      documentDescription = Some("TRM New Charge"),
+      documentText = Some("documentText"),
+      originalAmount = Some(1200),
+      outstandingAmount = Some(1200),
+      documentDate = LocalDate.of(2018, 3, 29)
+    )
+    val docDetailPaid = docDetailUnpaid.copy(outstandingAmount = Some(0))
+    
     "load the charge summary page with an UNPAID MFADebit" in {
       Given("the MFADebitsAndCredits feature switch is enabled")
       enable(MFACreditsAndDebits)
@@ -563,15 +575,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
           Some("12345-credId"), Some("Individual"), None
         )(FakeRequest()),
         DocumentDetailWithDueDate(
-          documentDetail = DocumentDetail(
-            taxYear = "2018",
-            transactionId = "1040000124",
-            documentDescription = Some("TRM New Charge"),
-            documentText = Some("documentText"),
-            originalAmount = Some(1200),
-            outstandingAmount = Some(1200),
-            documentDate = LocalDate.of(2018, 3, 29)
-          ),
+          documentDetail = docDetailUnpaid,
           dueDate = Some(LocalDate.parse("2018-03-30"))
         ),
         paymentBreakdown = List(),
@@ -625,15 +629,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
           Some("12345-credId"), Some("Individual"), None
         )(FakeRequest()),
         DocumentDetailWithDueDate(
-          documentDetail = DocumentDetail(
-            taxYear = "2018",
-            transactionId = "1040000124",
-            documentDescription = Some("TRM New Charge"),
-            documentText = Some("documentText"),
-            originalAmount = Some(1200),
-            outstandingAmount = Some(0),
-            documentDate = LocalDate.of(2018, 3, 29)
-          ),
+          documentDetail = docDetailPaid,
           dueDate = Some(LocalDate.parse("2018-03-30"))
         ),
         paymentBreakdown = List(),
