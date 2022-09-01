@@ -42,13 +42,16 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase {
   val payments: List[Payment] = List(
     Payment(reference = Some("payment1"), amount = Some(100.00), outstandingAmount = None, method = Some("method"),
       documentDescription = None, lot = Some("lot"), lotItem = Some("lotItem"), dueDate = Some(LocalDate.parse("2018-04-25")),
-      documentDate = LocalDate.parse("2018-04-25"), Some("DOCID01")),
+      documentDate = LocalDate.parse("2018-04-25"), transactionId = Some("DOCID01"),
+      mainType = Some("SA Balancing Charge")),
     Payment(reference = Some("mfa1"), amount = Some(-10000.00), outstandingAmount = None, method = Some("method"),
-      documentDescription = Some("ITSA Overpayment Relief"), lot = None, lotItem = None, dueDate = None,
-      documentDate = LocalDate.parse("2018-04-25"), Some("AY777777202206")),
+      documentDescription = Some("TRM New Charge"), lot = None, lotItem = None, dueDate = None,
+      documentDate = LocalDate.parse("2018-04-25"), transactionId = Some("AY777777202206"),
+      mainType = Some("ITSA Overpayment Relief")),
     Payment(reference = Some("cutover1"), amount = Some(-10000.00), outstandingAmount = None, method = Some("method"),
       documentDescription = None, lot = None, lotItem = None, dueDate = Some(LocalDate.parse("2018-04-25")), documentDate = LocalDate.parse("2018-04-25"),
-      Some("AY777777202206")),
+      transactionId = Some("AY777777202206"),
+      mainType = Some("ITSA Cutover Credits")),
   )
 
   val currentTaxYearEnd: Int = getCurrentTaxYearEnd.getYear
