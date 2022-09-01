@@ -45,7 +45,7 @@ case class PaymentHistoryResponseAuditModel(mtdItUser: MtdItUser[_],
       case (true, true, true) =>
         if (MFACreditsEnabled) Some(getPayment(payment, "Credit from HMRC adjustment")) else None
       case (true, true, false) =>
-        if (CutOverCreditsEnabled) Some(getPayment(payment, "Payment from an earlier tax year")) else None
+        if (CutOverCreditsEnabled) Some(getPayment(payment, "Credit from an earlier tax year")) else None
       case (true, false, _) => Some(getPayment(payment, "Payment Made to HMRC"))
     }
   }

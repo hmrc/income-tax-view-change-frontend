@@ -52,16 +52,16 @@ class PaymentHistoryResponseAuditModelSpec extends TestSupport {
         dueDate = Some(LocalDate.parse("2018-02-01")), documentDate = LocalDate.parse("2018-02-05"), None),
       Payment(reference = Some("cutover1"), amount = Some(-100.00), outstandingAmount = None,
         method = Some("method"), documentDescription = None, lot = None, lotItem = None, dueDate = Some(LocalDate.parse("2018-02-02")),
-        documentDate = LocalDate.parse("2018-02-05"), None),
+        documentDate = LocalDate.parse("2018-02-05"), None, mainType = Some("ITSA Cutover Credits")),
       Payment(reference = Some("cutover2"), amount = Some(-100.00), outstandingAmount = None,
         method = Some("method"), documentDescription = None, lot = None, lotItem = None, dueDate = Some(LocalDate.parse("2018-02-03")),
-        documentDate = LocalDate.parse("2018-02-05"), None),
+        documentDate = LocalDate.parse("2018-02-05"), None, mainType = Some("ITSA Cutover Credits")),
       Payment(reference = Some("mfa1"), amount = Some(-100.00), outstandingAmount = None,
-        method = Some("method"), documentDescription = Some("ITSA Overpayment Relief"), lot = None, lotItem = None,
-        dueDate = None, documentDate = LocalDate.parse("2018-02-04"), None),
+        method = Some("method"), mainType = Some("ITSA Overpayment Relief"), lot = None, lotItem = None,
+        dueDate = None, documentDate = LocalDate.parse("2018-02-04"), transactionId = None, documentDescription = None),
       Payment(reference = Some("mfa2"), amount = Some(-100.00), outstandingAmount = None,
-        method = Some("method"), documentDescription = Some("ITSA Overpayment Relief"), lot = None, lotItem = None,
-        dueDate = None, documentDate = LocalDate.parse("2018-02-05"), None)
+        method = Some("method"), mainType = Some("ITSA Overpayment Relief"), lot = None, lotItem = None,
+        dueDate = None, documentDate = LocalDate.parse("2018-02-05"), transactionId = None, documentDescription = None)
     ),
     CutOverCreditsEnabled = CutOver,
     MFACreditsEnabled = MFA,
@@ -89,12 +89,12 @@ class PaymentHistoryResponseAuditModelSpec extends TestSupport {
     def getCutOver(CutOver:Boolean): JsArray = if (CutOver) Json.arr(
       Json.obj(
         "paymentDate" -> "2018-02-02",
-        "description" -> "Payment from an earlier tax year",
+        "description" -> "Credit from an earlier tax year",
         "amount" -> -100.00
       ),
       Json.obj(
         "paymentDate" -> "2018-02-03",
-        "description" -> "Payment from an earlier tax year",
+        "description" -> "Credit from an earlier tax year",
         "amount" -> -100.00
       ),
     ) else Json.arr()
