@@ -21,8 +21,7 @@ object MfaDebitUtils {
     4004 -> "ITSA PAYE Charge",
     4005 -> "ITSA Calc Error Correction",
     4006 -> "ITSA Manual Penalty Pre CY-4",
-    4007 -> "ITSA Misc Charge"
-  )
+    4007 -> "ITSA Misc Charge")
 
   def isMFADebitMainType(mainType: Option[String]): Boolean = {
     mainType.exists(MFADebitType.values.toList.contains(_))

@@ -29,29 +29,43 @@
     payments: FinancialDetailsModel,
     documentDetailWithDueDate: DocumentDetailWithDueDate,
     isAgent: Boolean = false,
+    isMFADebit: Boolean,
     origin: Option[String] = None)(implicit messages: Messages)
 
 @import implicitDateFormatter.longDate
 
 @taxYearTo = @{documentDetailWithDueDate.documentDetail.taxYear}
 
+
+@allocationLinkHTML(link: String, linkText: String) = {
+    <a class="govuk-link" href="@link">
+        @linkText
+        <span class="govuk-visually-hidden"> @taxYearTo</span>
+    </a>
+}
+
 @for(allocation <- paymentAllocations ; payment <- allocation.payments) {
     <tr>
         <td class="govuk-table__cell govuk-!-width-one-quarter">@{payment.dueDate.getOrElse(throw MissingFieldException("Payment Date")).toLongDateShort}</td>
         <td class="govuk-table__cell">
-            @if(payments.findMatchingPaymentDocument(payment.lot.getOrElse(throw MissingFieldException("Payment Lot")), payment.lotItem.getOrElse(throw MissingFieldException("Payment Lot Item"))).isDefined) {
-                @if(isAgent) {
-                    <a class="govuk-link" href="@{controllers.routes.PaymentAllocationsController.viewPaymentAllocationAgent(payments.findMatchingPaymentDocument(payment.lot.get, payment.lotItem.get).get.transactionId)}">
+            @{
+                val paymentLot = payment.lot.getOrElse(throw MissingFieldException("Payment Lot"))
+                val paymentLotItem = payment.lotItem.getOrElse(throw MissingFieldException("Payment Lot Item"))
+                val matchingPayment = payments.findMatchingPaymentDocument(paymentLot, paymentLotItem)
+                if(matchingPayment.isDefined) {
+                    val link = if(isAgent) {
+                        controllers.routes.PaymentAllocationsController.viewPaymentAllocationAgent(matchingPayment.get.transactionId).url
                     } else {
-                    <a class="govuk-link" href="@{controllers.routes.PaymentAllocationsController.viewPaymentAllocation(payments.findMatchingPaymentDocument(payment.lot.get, payment.lotItem.get).get.transactionId, origin)}">
+                        controllers.routes.PaymentAllocationsController.viewPaymentAllocation(matchingPayment.get.transactionId, origin).url
                     }
-                @allocation.getPaymentAllocationTextInChargeSummary.map(messages(_))
-                <span class="govuk-visually-hidden"> @taxYearTo</span>
-            </a>
-            }
-
-            @if(payments.findMatchingPaymentDocument(payment.lot.getOrElse(throw MissingFieldException("Payment Lot")), payment.lotItem.getOrElse(throw MissingFieldException("Payment Lot Item"))).isEmpty) {
-                @allocation.getPaymentAllocationTextInChargeSummary.map(messages(_))
+                    val linkText = if (isMFADebit) messages("chargeSummary.paymentAllocations.mfaDebit") else
+                        allocation.getPaymentAllocationTextInChargeSummary.map(messages(_)).getOrElse(
+                            throw MissingFieldException("Allocation link text missing")
+                        )
+                    allocationLinkHTML(link, linkText)
+                } else {
+                    allocation.getPaymentAllocationTextInChargeSummary.map(messages(_))
+                }
             }
         </td>
         <td class="govuk-table__cell numeric">@payment.amount.getOrElse(throw MissingFieldException("Payment Amount")).abs.toCurrency</td>
