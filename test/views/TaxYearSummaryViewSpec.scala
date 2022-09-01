@@ -576,7 +576,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
               divAccordion.selectHead("thead").selectNth("th", 3).text shouldBe updateDateSubmitted
               val row = divAccordion.selectHead("tbody").selectHead("tr")
               row.selectNth("th", 1).text shouldBe updateType(testObligation.obligation.obligationType)
-              row.selectNth("td", 1).text shouldBe incomeType(testObligation.incomeType)
+              row.selectNth("td", 1).text shouldBe incomeType(messages(testObligation.incomeType))
               row.selectNth("td", 2).text shouldBe testObligation.obligation.dateReceived.map(_.toLongDateShort).getOrElse("")
           }
         }

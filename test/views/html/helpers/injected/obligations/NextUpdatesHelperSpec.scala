@@ -65,7 +65,7 @@ class  NextUpdatesHelperSpec extends TestSupport {
 
       section.select("dl").size() shouldBe 1
       section.select("dl dt").text() shouldBe "Quarterly update"
-      section.select("dl dd").text() shouldBe testTradeName
+      section.select("dl dd").text() shouldBe messages(testTradeName)
     }
 
     "display the later due date" in new Setup(obligationsModel) {
@@ -77,7 +77,7 @@ class  NextUpdatesHelperSpec extends TestSupport {
 
       section.select("dl").size() shouldBe 1
       section.select("dl dt").text() shouldBe messages("nextUpdates.eops")
-      section.select("dl dd").text() shouldBe testTradeName
+      section.select("dl dd").text() shouldBe messages(testTradeName)
     }
 
     "display the correct due date text for a quarterly date" in new Setup(obligationsModel) {
