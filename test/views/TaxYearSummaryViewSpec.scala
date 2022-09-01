@@ -25,7 +25,7 @@ import models.liabilitycalculation.viewmodels.TaxYearSummaryViewModel
 import models.nextUpdates.{NextUpdateModelWithIncomeType, ObligationsModel}
 import org.jsoup.nodes.Element
 import play.twirl.api.Html
-import testConstants.FinancialDetailsTestConstants.{fullDocumentDetailModel, fullDocumentDetailWithDueDateModel}
+import testConstants.FinancialDetailsTestConstants.{MFADebitsDocumentDetailsWithDueDates, fullDocumentDetailModel, fullDocumentDetailWithDueDateModel}
 import testConstants.NextUpdatesTestConstants._
 import testUtils.ViewSpec
 import views.html.TaxYearSummary
@@ -170,6 +170,11 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
   def forecastWithNoCalcData(codingOutEnabled: Boolean = false, isAgent: Boolean = false): Html = taxYearSummaryView(
     testYear, None, testChargesList, testObligationsModel, "testBackURL", isAgent, codingOutEnabled, showForecastData = true)
 
+  def mfaDebitsView(codingOutEnabled: Boolean, isAgent: Boolean): Html = taxYearSummaryView(
+    testYear, Some(modelComplete(Some(true))), MFADebitsDocumentDetailsWithDueDates, testObligationsModel, "testBackURL", isAgent, codingOutEnabled,
+    showForecastData = false)
+
+
   implicit val localDateOrdering: Ordering[LocalDate] = Ordering.by(_.toEpochDay)
 
   object TaxYearSummaryMessages {
@@ -218,7 +223,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
     val taxYearSummaryClass2Nic: String = messages("tax-year-summary.payments.class2Nic.text")
     val remainingBalance: String = messages("tax-year-summary.payments.balancingCharge.text")
     val payeSA: String = messages("tax-year-summary.payments.codingOut.text")
-
+    val hmrcAdjustment: String = messages("tax-year-summary.payments.hmrcAdjustment.text")
     val cancelledPaye: String = messages("tax-year-summary.payments.cancelledPayeSelfAssessment.text")
     val na: String = messages("tax-year-summary.na")
     val payeTaxCode: String = messages("tax-year-summary.paye-tax-code")
@@ -752,6 +757,20 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
         paymentTypeLink.text shouldBe cancelledPaye
         paymentTypeLink.attr("href") shouldBe controllers.routes.ChargeSummaryController.showAgent(
           testYear, fullDocumentDetailModel.transactionId).url
+      }
+
+      "display MFA Debits - Individual" in new Setup(mfaDebitsView(codingOutEnabled = false, isAgent = false)) {
+        val paymentTypeLink: Element = layoutContent.getElementById("paymentTypeLink-0")
+        paymentTypeLink.text shouldBe hmrcAdjustment
+        paymentTypeLink.attr("href") shouldBe controllers.routes.ChargeSummaryController.show(
+          testYear, MFADebitsDocumentDetailsWithDueDates.head.documentDetail.transactionId).url
+      }
+
+      "display MFA Debits - Agent" in new Setup(mfaDebitsView(codingOutEnabled = false, isAgent = true)) {
+        val paymentTypeLink: Element = layoutContent.getElementById("paymentTypeLink-0")
+        paymentTypeLink.text shouldBe hmrcAdjustment
+        paymentTypeLink.attr("href") shouldBe controllers.routes.ChargeSummaryController.showAgent(
+          testYear, MFADebitsDocumentDetailsWithDueDates.head.documentDetail.transactionId).url
       }
 
     }

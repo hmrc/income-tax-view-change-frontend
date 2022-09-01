@@ -6,7 +6,7 @@ import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxCalculationStub
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND, OK}
 import testConstants.BaseIntegrationTestConstants.{testNino, testYear}
-import testConstants.NewCalcBreakdownItTestConstants.{liabilityCalculationModelError, liabilityCalculationModelSuccessFull}
+import testConstants.NewCalcBreakdownItTestConstants.{liabilityCalculationModelError, liabilityCalculationModelSuccessful}
 
 class ForecastTaxCalcSummaryControllerISpec extends ComponentSpecBase {
 
@@ -20,7 +20,7 @@ class ForecastTaxCalcSummaryControllerISpec extends ComponentSpecBase {
         And("I stub a successful calculation response")
         IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, testYear)(
           status = OK,
-          body = liabilityCalculationModelSuccessFull
+          body = liabilityCalculationModelSuccessful
         )
 
         When(s"I call GET /report-quarterly/income-and-expenses/view/calculation/$testYear/tax-due/forecast")

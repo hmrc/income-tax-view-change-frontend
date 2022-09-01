@@ -78,15 +78,15 @@
 
 @getChargeSummaryHref(documentDetailWithDueDate: DocumentDetailWithDueDate) = @{
     if(isAgent){
-        controllers.routes.ChargeSummaryController.showAgent(taxYear, documentDetailWithDueDate.documentDetail.transactionId, documentDetailWithDueDate.documentDetail.isLatePaymentInterest).url
+        controllers.routes.ChargeSummaryController.showAgent(taxYear, documentDetailWithDueDate.documentDetail.transactionId, documentDetailWithDueDate.isLatePaymentInterest).url
     } else {
-        controllers.routes.ChargeSummaryController.show(taxYear, documentDetailWithDueDate.documentDetail.transactionId, documentDetailWithDueDate.documentDetail.isLatePaymentInterest, origin).url
+        controllers.routes.ChargeSummaryController.show(taxYear, documentDetailWithDueDate.documentDetail.transactionId, documentDetailWithDueDate.isLatePaymentInterest, origin).url
     }
 }
 
 @getChargeSummaryMessage(documentDetailWithDueDate: DocumentDetailWithDueDate) = @{
-    val chargeTypeKey = if (documentDetailWithDueDate.isMFADebit) "hmrcAdjustment.text" else documentDetailWithDueDate.documentDetail.getChargeTypeKey(codingOutEnabled)
-    val lpi = if (documentDetailWithDueDate.documentDetail.isLatePaymentInterest) "lpi." else ""
+    val chargeTypeKey = if (documentDetailWithDueDate.isMFADebit) "hmrcAdjustment.text" else s"${documentDetailWithDueDate.documentDetail.getChargeTypeKey(codingOutEnabled)}"
+    val lpi = if (documentDetailWithDueDate.isLatePaymentInterest) "lpi." else ""
     messages(s"tax-year-summary.payments.${lpi}${chargeTypeKey}")
 }
 

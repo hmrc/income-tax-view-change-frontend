@@ -20,9 +20,9 @@ import models.liabilitycalculation._
 
 object NewCalcBreakdownItTestConstants {
 
-  val liabilityCalculationModelError = LiabilityCalculationError(432, "someerrorhere")
+  val liabilityCalculationModelError: LiabilityCalculationError = LiabilityCalculationError(432, "someerrorhere")
 
-  val liabilityCalculationModelDeductionsMinimal = LiabilityCalculationResponse(
+  val liabilityCalculationModelDeductionsMinimal: LiabilityCalculationResponse = LiabilityCalculationResponse(
     inputs = Inputs(personalInformation = PersonalInformation(
       taxRegime = "UK", class2VoluntaryContributions = None
     )),
@@ -35,7 +35,7 @@ object NewCalcBreakdownItTestConstants {
     messages = None
   )
 
-  val liabilityCalculationModelSuccessFull = LiabilityCalculationResponse(
+  val liabilityCalculationModelSuccessful: LiabilityCalculationResponse = LiabilityCalculationResponse(
     inputs = Inputs(personalInformation = PersonalInformation(
       taxRegime = "UK", class2VoluntaryContributions = Some(true)
     )),
@@ -268,7 +268,7 @@ object NewCalcBreakdownItTestConstants {
       calculationReason = Some("customerRequest"))
   )
 
-  val liabilityCalculationModelSuccessFullNotCrystallised = liabilityCalculationModelSuccessFull.copy(
+  val liabilityCalculationModelSuccessfulNotCrystallised: LiabilityCalculationResponse = liabilityCalculationModelSuccessful.copy(
     metadata = Metadata(
       calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
       crystallised = Some(false)

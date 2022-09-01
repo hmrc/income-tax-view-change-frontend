@@ -17,7 +17,7 @@
 package models.liabilitycalculation.viewmodels
 
 import models.liabilitycalculation.Calculation
-import testConstants.NewCalcBreakdownUnitTestConstants.liabilityCalculationModelSuccessFull
+import testConstants.NewCalcBreakdownUnitTestConstants.liabilityCalculationModelSuccessful
 import testUtils.UnitSpec
 
 class IncomeBreakdownViewModelSpec extends UnitSpec {
@@ -59,7 +59,7 @@ class IncomeBreakdownViewModelSpec extends UnitSpec {
           totalIncomeReceived = Some(12500)
         )
 
-        IncomeBreakdownViewModel(Some(liabilityCalculationModelSuccessFull.calculation.get), false) shouldBe Some(expectedIncomeBreakdownViewModel)
+        IncomeBreakdownViewModel(Some(liabilityCalculationModelSuccessful.calculation.get), false) shouldBe Some(expectedIncomeBreakdownViewModel)
       }
 
       "create a full IncomeBreakdownViewModel when there is a full Calculation and NewStateBenefitIncome FS is enabled" in {
@@ -87,7 +87,7 @@ class IncomeBreakdownViewModelSpec extends UnitSpec {
           totalIncomeReceived = Some(12500)
         )
 
-        IncomeBreakdownViewModel(Some(liabilityCalculationModelSuccessFull.calculation.get), true) shouldBe Some(expectedIncomeBreakdownViewModel)
+        IncomeBreakdownViewModel(Some(liabilityCalculationModelSuccessful.calculation.get), true) shouldBe Some(expectedIncomeBreakdownViewModel)
       }
     }
   }

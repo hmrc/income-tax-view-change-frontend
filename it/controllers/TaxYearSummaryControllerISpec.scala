@@ -20,7 +20,7 @@ import audit.models.{NextUpdatesResponseAuditModel, TaxYearSummaryResponseAuditM
 import auth.MtdItUser
 import config.featureswitch.{CodingOut, FeatureSwitching, ForecastCalculation, MFACreditsAndDebits, R7bTxmEvents}
 import helpers.ComponentSpecBase
-import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
+import helpers.servicemocks.AuditStub.{verifyAuditContainsDetail, verifyAuditEvent}
 import helpers.servicemocks._
 import models.financialDetails._
 import models.liabilitycalculation.LiabilityCalculationError
@@ -32,7 +32,7 @@ import play.api.libs.ws.WSResponse
 import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.IncomeSourceIntegrationTestConstants._
-import testConstants.NewCalcBreakdownItTestConstants.{liabilityCalculationModelSuccessFull, liabilityCalculationModelSuccessFullNotCrystallised}
+import testConstants.NewCalcBreakdownItTestConstants.{liabilityCalculationModelSuccessful, liabilityCalculationModelSuccessfulNotCrystallised}
 import testConstants.messages.TaxYearSummaryMessages._
 
 import java.time.LocalDate
@@ -379,7 +379,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         And(s"A non crystallised calculation for $calculationTaxYear is returned")
         IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, getCurrentTaxYearEnd.getYear.toString)(
           status = OK,
-          body = liabilityCalculationModelSuccessFullNotCrystallised
+          body = liabilityCalculationModelSuccessfulNotCrystallised
         )
 
         And("A financial transaction call returns a success")
@@ -452,7 +452,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
 
         IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, getCurrentTaxYearEnd.getYear.toString)(
           status = OK,
-          body = liabilityCalculationModelSuccessFull
+          body = liabilityCalculationModelSuccessful
         )
 
         And("A financial transaction call returns a success")
@@ -525,7 +525,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         And(s"A non crystallised calculation for $calculationTaxYear is returned")
         IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, getCurrentTaxYearEnd.getYear.toString)(
           status = OK,
-          body = liabilityCalculationModelSuccessFull
+          body = liabilityCalculationModelSuccessful
         )
 
         And("A financial transaction call returns a success")
@@ -600,7 +600,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
           MtdItUser(testMtditid, testNino, None, singleBusinessResponse,
             None, Some("1234567890"), Some("12345-credId"), Some("Individual"), None
           )(FakeRequest()), financialDetailsDunningLockSuccess.getAllDocumentDetailsWithDueDates(),
-          allObligations, Some(TaxYearSummaryViewModel(liabilityCalculationModelSuccessFull)), isEnabled(R7bTxmEvents)))
+          allObligations, Some(TaxYearSummaryViewModel(liabilityCalculationModelSuccessful)), isEnabled(R7bTxmEvents)))
       }
 
 
@@ -613,7 +613,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
 
         IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, calculationTaxYear)(
           status = OK,
-          body = liabilityCalculationModelSuccessFull
+          body = liabilityCalculationModelSuccessful
         )
 
         And("A financial transaction call returns a success")
@@ -671,7 +671,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         And(s"A non crystallised calculation for $calculationTaxYear is returned")
         IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, calculationTaxYear)(
           status = OK,
-          body = liabilityCalculationModelSuccessFull
+          body = liabilityCalculationModelSuccessful
         )
 
         And("A financial transaction call returns a success")
@@ -730,7 +730,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         And(s"A non crystallised calculation for $calculationTaxYear is returned")
         IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, calculationTaxYear)(
           status = OK,
-          body = liabilityCalculationModelSuccessFull
+          body = liabilityCalculationModelSuccessful
         )
 
         And("A financial transaction call returns a success")
@@ -790,7 +790,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         And(s"A non crystallised calculation for $calculationTaxYear is returned")
         IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, getCurrentTaxYearEnd.getYear.toString)(
           status = OK,
-          body = liabilityCalculationModelSuccessFull
+          body = liabilityCalculationModelSuccessful
         )
 
         And(s"A financial transaction call returns a $NOT_FOUND")
@@ -841,7 +841,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         AuditStub.verifyAuditEvent(TaxYearSummaryResponseAuditModel(
           MtdItUser(testMtditid, testNino, None, multipleBusinessesAndPropertyResponse,
             None, Some("1234567890"), Some("12345-credId"), Some("Individual"), None
-          )(FakeRequest()), emptyPaymentsList, allObligations, Some(TaxYearSummaryViewModel(liabilityCalculationModelSuccessFull)), isEnabled(R7bTxmEvents)))
+          )(FakeRequest()), emptyPaymentsList, allObligations, Some(TaxYearSummaryViewModel(liabilityCalculationModelSuccessful)), isEnabled(R7bTxmEvents)))
       }
 
       "financial details service returns an error" in {
@@ -851,7 +851,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         And("A non crystallised calculation for 2017-18 is returned")
         IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, testYear)(
           status = OK,
-          body = liabilityCalculationModelSuccessFull
+          body = liabilityCalculationModelSuccessful
         )
 
         And("A financial transaction call fails")
@@ -1125,17 +1125,21 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
     "MFA Debits" should {
       def testMFADebits(MFADebitsEnabled: Boolean): Any = {
         if (MFADebitsEnabled) enable(MFACreditsAndDebits) else disable(MFACreditsAndDebits)
+        setupMFADebitsTests()
+        verifyMFADebitsResults(IncomeTaxViewChangeFrontend.getTaxYearSummary(getCurrentTaxYearEnd.getYear.toString))
+      }
 
-        Given("Business details returns a successful response back")
+      def setupMFADebitsTests(): Unit = {
+        Given("A successful getIncomeSourceDetails call is made")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWoMigration)
 
         And(s"A non crystallised calculation for $calculationTaxYear is returned")
         IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, getCurrentTaxYearEnd.getYear.toString)(
           status = OK,
-          body = liabilityCalculationModelSuccessFull
+          body = liabilityCalculationModelSuccessful
         )
 
-        And("A financial transaction call returns a success")
+        And("A successful getFinancialDetails call is made")
         IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
           nino = testNino,
           from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
@@ -1145,22 +1149,23 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
           response = Json.toJson(financialDetailsMFADebits)
         )
 
-        And("previous obligations returns a success")
+        And("A current obligations call is made")
+        IncomeTaxViewChangeStub.stubGetNextUpdates(
+          nino = testNino,
+          deadlines = currentObligationsSuccess
+        )
+
+        And("A previous obligations call is made")
         IncomeTaxViewChangeStub.stubGetPreviousObligations(
           nino = testNino,
           fromDate = getCurrentTaxYearEnd.minusYears(1).plusDays(1),
           toDate = getCurrentTaxYearEnd,
           deadlines = previousObligationsSuccess
         )
+      }
 
-        And("current obligations returns a success")
-        IncomeTaxViewChangeStub.stubGetNextUpdates(
-          nino = testNino,
-          deadlines = currentObligationsSuccess
-        )
-
-        When(s"I call GET ${controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(getCurrentTaxYearEnd.getYear).url}")
-        val res = IncomeTaxViewChangeFrontend.getTaxYearSummary(getCurrentTaxYearEnd.getYear.toString)
+      def verifyMFADebitsResults(result: WSResponse): Any = {
+        val auditDD = if (isEnabled(MFACreditsAndDebits)) financialDetailsMFADebits.getAllDocumentDetailsWithDueDates() else Nil
 
         Then("I check all calls expected were made")
         verifyIncomeSourceDetailsCall(testMtditid)
@@ -1169,16 +1174,16 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
           from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
           to = getCurrentTaxYearEnd.toString
         )
+        verifyAuditEvent(TaxYearSummaryResponseAuditModel(
+          MtdItUser(testMtditid, testNino, None, singleBusinessResponse,
+            None, Some("1234567890"), Some("12345-credId"), Some("Individual"), None
+          )(FakeRequest()), auditDD,
+          allObligations, Some(TaxYearSummaryViewModel(liabilityCalculationModelSuccessful)), isEnabled(R7bTxmEvents)))
         verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "ABC123456789", previousObligationsSuccess.obligations.flatMap(_.obligations)).detail)
         verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "ABC123456789", currentObligationsSuccess.obligations.flatMap(_.obligations)).detail)
 
-        And("The expected result is returned")
-        verifyMFADebitsResults(res)
-      }
-
-      def verifyMFADebitsResults(res: WSResponse): Any = {
         if (isEnabled(MFACreditsAndDebits)) {
-          res should have(
+          result should have(
             httpStatus(OK),
             pageTitleIndividual("tax-year-summary.heading"),
             elementTextBySelector("#calculation-date")("15 February 2019"),
@@ -1191,18 +1196,12 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
             elementCountBySelector("#payments-table", "tbody", "tr")(2)
           )
         } else {
-          res should have(
+          result should have(
             httpStatus(OK),
             pageTitleIndividual("tax-year-summary.heading"),
             elementTextBySelector("#calculation-date")("15 February 2019"),
             elementCountBySelector("#payments-table", "tbody", "tr")(0))
         }
-        val auditDD = if (isEnabled(MFACreditsAndDebits)) financialDetailsMFADebits.getAllDocumentDetailsWithDueDates() else Nil
-        AuditStub.verifyAuditEvent(TaxYearSummaryResponseAuditModel(
-          MtdItUser(testMtditid, testNino, None, singleBusinessResponse,
-            None, Some("1234567890"), Some("12345-credId"), Some("Individual"), None
-          )(FakeRequest()), auditDD,
-          allObligations, Some(TaxYearSummaryViewModel(liabilityCalculationModelSuccessFull)), isEnabled(R7bTxmEvents)))
       }
 
       "should show Tax Year Summary page with MFA Debits on the Payment Tab with FS ENABLED" in {

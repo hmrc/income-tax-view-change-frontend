@@ -21,7 +21,7 @@ import models.liabilitycalculation.taxcalculation.TaxBands
 import models.liabilitycalculation.viewmodels.TaxDueSummaryViewModel
 import play.api.http.Status
 import play.api.libs.json._
-import testConstants.NewCalcBreakdownUnitTestConstants.liabilityCalculationModelSuccessFull
+import testConstants.NewCalcBreakdownUnitTestConstants.liabilityCalculationModelSuccessful
 import testUtils.UnitSpec
 
 import scala.io.Source
@@ -68,7 +68,7 @@ class LiabilityCalculationResponseModelSpec extends UnitSpec with LiabilityCalcu
       val expectedJsonPruned = try source.mkString finally source.close()
 
       "be translated to Json correctly" in {
-        Json.toJson(liabilityCalculationModelSuccessFull) shouldBe Json.parse(expectedJsonPruned)
+        Json.toJson(liabilityCalculationModelSuccessful) shouldBe Json.parse(expectedJsonPruned)
       }
 
       "should convert from json to model" in {
@@ -103,22 +103,22 @@ class LiabilityCalculationResponseModelSpec extends UnitSpec with LiabilityCalcu
   "LiabilityCalculationResponse conversion to TaxDueSummaryViewModel" when {
     "there is no calculation in response" should {
       "convert to empty model" in {
-        val model: TaxDueSummaryViewModel = TaxDueSummaryViewModel(liabilityCalculationModelSuccessFullWithNoCalc)
+        val model: TaxDueSummaryViewModel = TaxDueSummaryViewModel(liabilityCalculationModelSuccessfulWithNoCalc)
         model shouldBe TaxDueSummaryViewModel()
       }
     }
 
     "call getModifiedBaseTaxBand" should {
       "return expected TaxBand" in {
-        TaxDueSummaryViewModel(liabilityCalculationModelSuccessFullConversionPB)
+        TaxDueSummaryViewModel(liabilityCalculationModelSuccessfulConversionPB)
           .getModifiedBaseTaxBand shouldBe Some(TaxBands("BRT", BigDecimal("20"), 12500, 12500, 12500, BigDecimal("5000.99")))
-        TaxDueSummaryViewModel(liabilityCalculationModelSuccessFullConversionSB)
+        TaxDueSummaryViewModel(liabilityCalculationModelSuccessfulConversionSB)
           .getModifiedBaseTaxBand shouldBe Some(TaxBands("BRT", BigDecimal("20"), 12510, 12520, 12530, BigDecimal("5001.99")))
-        TaxDueSummaryViewModel(liabilityCalculationModelSuccessFullConversionDB)
+        TaxDueSummaryViewModel(liabilityCalculationModelSuccessfulConversionDB)
           .getModifiedBaseTaxBand shouldBe Some(TaxBands("BRT", BigDecimal("21"), 12700, 12800, 12900, BigDecimal("5123.99")))
-        TaxDueSummaryViewModel(liabilityCalculationModelSuccessFullConversionLS)
+        TaxDueSummaryViewModel(liabilityCalculationModelSuccessfulConversionLS)
           .getModifiedBaseTaxBand shouldBe Some(TaxBands("BRT", BigDecimal("30"), 13500, 15500, 16500, BigDecimal("7000.99")))
-        TaxDueSummaryViewModel(liabilityCalculationModelSuccessFullConversionGLP)
+        TaxDueSummaryViewModel(liabilityCalculationModelSuccessfulConversionGLP)
           .getModifiedBaseTaxBand shouldBe Some(TaxBands("BRT", BigDecimal("50"), 32500, 42500, 52500, BigDecimal("7000.99")))
       }
     }
