@@ -18,10 +18,10 @@ package testConstants
 
 import java.time.{LocalDate, Month}
 import testConstants.BaseTestConstants._
-import testConstants.NextUpdatesTestConstants.{openObligation, overdueObligation}
+import testConstants.NextUpdatesTestConstants.{fakeNextUpdatesModel, openObligation, overdueObligation}
 import models.core._
 import models.incomeSourceDetails.BusinessDetailsModel
-import models.nextUpdates.NextUpdatesModel
+import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, ObligationsModel}
 
 object BusinessDetailsTestConstants {
 
@@ -79,6 +79,15 @@ object BusinessDetailsTestConstants {
     firstAccountingPeriodEndDate = None
   )
 
+  val businessNotValidObligationType = fakeNextUpdatesModel(NextUpdateModel(
+    start = LocalDate.of(2017, 7, 1),
+    end = LocalDate.of(2017, 9, 30),
+    due = LocalDate.of(2017, 10, 30),
+    obligationType = "notValidObligationType",
+    dateReceived = None,
+    periodKey = "#002"
+  ))
+
   val alignedBusiness = BusinessDetailsModel(
     incomeSourceId = Some(testSelfEmploymentId),
     accountingPeriod = Some(AccountingPeriodModel(start = LocalDate.of(year2017, Month.APRIL, 6), end = LocalDate.of(year2018, Month.APRIL, 5))),
@@ -103,5 +112,6 @@ object BusinessDetailsTestConstants {
   val businessErrorModel = ErrorModel(testErrorStatus, testErrorMessage)
 
   val obligationsDataSuccessModel: NextUpdatesModel = NextUpdatesModel(testSelfEmploymentId, List(overdueObligation, openObligation))
+  val obligationsAllDeadlinesSuccessNotValidObligationType: ObligationsModel = ObligationsModel(Seq(NextUpdatesModel(testSelfEmploymentId, List(businessNotValidObligationType))))
 
 }

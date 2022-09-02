@@ -16,16 +16,18 @@
 
 package testConstants
 
-import testConstants.BaseTestConstants.{testErrorMessage, testErrorStatus, testMtditid, testNino, testPropertyIncomeId, testSelfEmploymentId, testSelfEmploymentId2}
-import models.nextUpdates.{ObligationsModel, NextUpdateModel, NextUpdatesErrorModel, NextUpdatesModel}
+import models.nextUpdates.{NextUpdateModel, NextUpdatesErrorModel, NextUpdatesModel, ObligationsModel}
 import play.api.libs.json.{JsValue, Json}
+import testConstants.BaseTestConstants.{testErrorMessage, testErrorStatus, testMtditid, testNino, testPropertyIncomeId, testSelfEmploymentId, testSelfEmploymentId2}
 
 import java.time.LocalDate
 
 object NextUpdatesTestConstants {
 
+  val mockedCurrentTime20171031: LocalDate = LocalDate.of(2017, 10, 31)
+
   def fakeNextUpdatesModel(m: NextUpdateModel): NextUpdateModel = new NextUpdateModel(m.start, m.end, m.due, m.obligationType, m.dateReceived, m.periodKey) {
-    override def currentTime() = LocalDate.of(2017, 10, 31)
+    override def currentTime(): LocalDate = mockedCurrentTime20171031
   }
 
   val testStartDate = LocalDate.of(2017, 7, 1)
@@ -51,7 +53,7 @@ object NextUpdatesTestConstants {
   val openObligation = fakeNextUpdatesModel(NextUpdateModel(
     start = LocalDate.of(2017, 7, 1),
     end = LocalDate.of(2017, 9, 30),
-    due = LocalDate.of(2017, 10, 31),
+    due = mockedCurrentTime20171031,
     obligationType = "Quarterly",
     dateReceived = None,
     periodKey = "#003"
@@ -60,8 +62,8 @@ object NextUpdatesTestConstants {
 
   val secondQuarterlyObligation = fakeNextUpdatesModel(NextUpdateModel(
     start = LocalDate.of(2017, 10, 1),
-    end = LocalDate.of(2017, 10, 31),
-    due = LocalDate.of(2017, 10, 31),
+    end = mockedCurrentTime20171031,
+    due = mockedCurrentTime20171031,
     obligationType = "Quarterly",
     dateReceived = None,
     periodKey = "#002"
@@ -70,7 +72,7 @@ object NextUpdatesTestConstants {
   val crystallisedObligation = fakeNextUpdatesModel(NextUpdateModel(
     start = LocalDate.of(2017, 10, 1),
     end = LocalDate.of(2018, 10, 30),
-    due = LocalDate.of(2017, 10, 31),
+    due = mockedCurrentTime20171031,
     obligationType = "Crystallised",
     dateReceived = None,
     periodKey = ""
@@ -194,7 +196,7 @@ object NextUpdatesTestConstants {
   val openEOPSObligation: NextUpdateModel = fakeNextUpdatesModel(NextUpdateModel(
     start = LocalDate.of(2017, 4, 6),
     end = LocalDate.of(2018, 4, 5),
-    due = LocalDate.of(2017, 10, 31),
+    due = mockedCurrentTime20171031,
     obligationType = "EOPS",
     dateReceived = None,
     periodKey = "#003"

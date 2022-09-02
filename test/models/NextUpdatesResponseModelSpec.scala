@@ -16,17 +16,15 @@
 
 package models
 
-import testConstants.BaseTestConstants._
-import testConstants.NextUpdatesTestConstants._
-import testConstants.{BaseTestConstants, NextUpdatesTestConstants}
 import implicits.ImplicitDateFormatter
-
-import javax.inject.Inject
 import models.nextUpdates._
 import org.scalatest.Matchers
 import play.api.libs.json.{JsSuccess, Json}
-import testUtils.{TestSupport, UnitSpec}
-import uk.gov.hmrc.play.language.LanguageUtils
+import testConstants.BaseTestConstants._
+import testConstants.BusinessDetailsTestConstants.obligationsAllDeadlinesSuccessNotValidObligationType
+import testConstants.NextUpdatesTestConstants._
+import testConstants.{BaseTestConstants, NextUpdatesTestConstants}
+import testUtils.TestSupport
 
 class NextUpdatesResponseModelSpec extends TestSupport with Matchers with ImplicitDateFormatter {
 
@@ -159,6 +157,13 @@ class NextUpdatesResponseModelSpec extends TestSupport with Matchers with Implic
         valid => valid) shouldBe nextUpdatesDataSelfEmploymentSuccessModel
     }
 
+    // TODO remove it when done
+    "call to obligation.currentTime() should return expected date" in {
+      val obligation = nextUpdatesDataSelfEmploymentSuccessModel.obligations.head
+
+      obligation.currentTime() shouldBe mockedCurrentTime20171031
+    }
+
   }
 
   "The NextUpdatesErrorModel" should {
@@ -196,20 +201,13 @@ class NextUpdatesResponseModelSpec extends TestSupport with Matchers with Implic
       }
     }
 
-    // TODO implement it
-    /*"return a list of all models with source in date order is crystallisedAll" when {
+    "return an empty list" when {
 
       "calling .allDeadlinesWithSource" in {
-        NextUpdatesTestConstants.obligationsAllDeadlinesSuccessModel.allDeadlinesWithSource()(
-          BaseTestConstants.testMtdItUser) shouldBe List(
-          NextUpdateModelWithIncomeType("nextUpdates.propertyIncome", overdueEOPSObligation),
-          NextUpdateModelWithIncomeType("nextUpdates.business", overdueObligation),
-          NextUpdateModelWithIncomeType("nextUpdates.business", openObligation),
-          NextUpdateModelWithIncomeType("nextUpdates.propertyIncome", openEOPSObligation),
-          NextUpdateModelWithIncomeType("Crystallised", crystallisedObligation)
-        )
+        obligationsAllDeadlinesSuccessNotValidObligationType.allDeadlinesWithSource()(
+          BaseTestConstants.testMtdItUserNoIncomeSource) shouldBe List()
       }
-    }*/
+    }
 
     "return a list of only specific updates with source in date order" when {
 
