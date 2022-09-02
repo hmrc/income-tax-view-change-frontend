@@ -70,7 +70,7 @@ class InYearTaxCalculationController @Inject()(
     calcService.getLiabilityCalculationDetail(user.mtditid, user.nino, taxYear).map {
       case calculationResponse: LiabilityCalculationResponse =>
 
-        val taxCalc: TaxYearSummaryViewModel = TaxYearSummaryViewModel(calculationResponse)
+        val taxCalc: TaxYearSummaryViewModel = TaxYearSummaryViewModel(calculationResponse,taxYear)
 
         val auditModel = ViewInYearTaxEstimateAuditModel(
           user.nino,
