@@ -115,7 +115,7 @@ class NextUpdatesViewSpec extends TestSupport {
 
       section.select("dl").size() shouldBe 1
       section.select("dl dt").text() shouldBe "Annual Update"
-      section.select("dl dd").text() shouldBe testTradeName
+      section.select("dl dd").text() shouldBe messages(testTradeName)
     }
   }
 }
