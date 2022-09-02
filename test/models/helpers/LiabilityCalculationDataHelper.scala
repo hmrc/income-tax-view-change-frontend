@@ -623,7 +623,7 @@ trait LiabilityCalculationDataHelper {
       inYearAdjustmentCodedInLaterTaxYear = Some(5000.99),
     )))
 
-  val liabilityCalculationModelSuccessFullConversionPB = LiabilityCalculationResponse(
+  val liabilityCalculationModelSuccessfulConversionPB = LiabilityCalculationResponse(
     inputs = Inputs(personalInformation = PersonalInformation(
       taxRegime = "UK", class2VoluntaryContributions = Some(true)
     )),
@@ -639,7 +639,7 @@ trait LiabilityCalculationDataHelper {
       calculationReason = Some("customerRequest"))
   )
 
-  val liabilityCalculationModelSuccessFullConversionSB = LiabilityCalculationResponse(
+  val liabilityCalculationModelSuccessfulConversionSB = LiabilityCalculationResponse(
     inputs = Inputs(personalInformation = PersonalInformation(
       taxRegime = "UK", class2VoluntaryContributions = Some(true)
     )),
@@ -654,7 +654,7 @@ trait LiabilityCalculationDataHelper {
       crystallised = Some(true),
       calculationReason = Some("customerRequest"))
   )
-  val liabilityCalculationModelSuccessFullConversionDB = LiabilityCalculationResponse(
+  val liabilityCalculationModelSuccessfulConversionDB = LiabilityCalculationResponse(
     inputs = Inputs(personalInformation = PersonalInformation(
       taxRegime = "UK", class2VoluntaryContributions = Some(true)
     )),
@@ -669,7 +669,7 @@ trait LiabilityCalculationDataHelper {
       crystallised = Some(true),
       calculationReason = Some("customerRequest"))
   )
-  val liabilityCalculationModelSuccessFullConversionLS = LiabilityCalculationResponse(
+  val liabilityCalculationModelSuccessfulConversionLS = LiabilityCalculationResponse(
     inputs = Inputs(personalInformation = PersonalInformation(
       taxRegime = "UK", class2VoluntaryContributions = Some(true)
     )),
@@ -684,7 +684,7 @@ trait LiabilityCalculationDataHelper {
       crystallised = Some(true),
       calculationReason = Some("customerRequest"))
   )
-  val liabilityCalculationModelSuccessFullConversionGLP = LiabilityCalculationResponse(
+  val liabilityCalculationModelSuccessfulConversionGLP = LiabilityCalculationResponse(
     inputs = Inputs(personalInformation = PersonalInformation(
       taxRegime = "UK", class2VoluntaryContributions = Some(true)
     )),
@@ -700,7 +700,7 @@ trait LiabilityCalculationDataHelper {
       calculationReason = Some("customerRequest"))
   )
 
-  val liabilityCalculationModelSuccessFullWithNoCalc = liabilityCalculationModelSuccessFullConversionPB.copy(
+  val liabilityCalculationModelSuccessfulWithNoCalc = liabilityCalculationModelSuccessfulConversionPB.copy(
     calculation = None
   )
 

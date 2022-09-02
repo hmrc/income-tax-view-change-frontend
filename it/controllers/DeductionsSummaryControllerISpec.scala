@@ -21,7 +21,7 @@ import helpers.servicemocks._
 import play.api.http.Status._
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.IncomeSourceIntegrationTestConstants._
-import testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessFull
+import testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessful
 
 class DeductionsSummaryControllerISpec extends ComponentSpecBase {
 
@@ -34,7 +34,7 @@ class DeductionsSummaryControllerISpec extends ComponentSpecBase {
         And("I stub a successful calculation response")
         IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, testYear)(
           status = OK,
-          body = liabilityCalculationModelSuccessFull
+          body = liabilityCalculationModelSuccessful
         )
 
         When(s"I call GET /report-quarterly/income-and-expenses/view/calculation/$testYear/income")

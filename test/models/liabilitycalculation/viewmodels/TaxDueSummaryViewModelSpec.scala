@@ -109,7 +109,7 @@ class TaxDueSummaryViewModelSpec extends UnitSpec {
             inYearAdjustmentCodedInLaterTaxYear = Some(5000.99))
         )
 
-        TaxDueSummaryViewModel(liabilityCalculationModelSuccessFull) shouldBe expectedTaxDueSummaryViewModel
+        TaxDueSummaryViewModel(liabilityCalculationModelSuccessful) shouldBe expectedTaxDueSummaryViewModel
       }
     }
   }

@@ -10,7 +10,7 @@ import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsMode
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
 import testConstants.BaseIntegrationTestConstants._
-import testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessFull
+import testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessful
 
 import java.time.LocalDate
 
@@ -93,7 +93,7 @@ class ForecastTaxCalcSummaryControllerISpec extends ComponentSpecBase {
         And("I stub a successful calculation response")
         IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, getCurrentTaxYearEnd.getYear.toString)(
           status = OK,
-          body = liabilityCalculationModelSuccessFull
+          body = liabilityCalculationModelSuccessful
         )
 
         When(s"I call GET /report-quarterly/income-and-expenses/view/agents/calculation/${getCurrentTaxYearEnd.getYear}/tax-due/forecast")

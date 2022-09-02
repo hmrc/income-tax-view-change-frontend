@@ -16,10 +16,10 @@
 
 package testConstants
 
-import models.{CreditDetailModel, MfaCreditType}
+import models.creditDetailModel.{CreditDetailModel, MfaCreditType}
 
 import java.time.LocalDate
-import testConstants.BaseTestConstants.{testErrorMessage, testErrorNotFoundStatus, testErrorStatus}
+import testConstants.BaseTestConstants.{testErrorMessage, testErrorNotFoundStatus, testErrorStatus, testTaxYear}
 import models.financialDetails._
 import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
 import play.api.libs.json.{JsValue, Json}
@@ -401,10 +401,11 @@ object FinancialDetailsTestConstants {
                                      latePaymentInterestAmount: Option[BigDecimal] = Some(100),
                                      paymentLot: Option[String] = Some("paymentLot"),
                                      paymentLotItem: Option[String] = None,
-                                     dueDate: Option[LocalDate] = Some(LocalDate.of(2019, 5, 15))): DocumentDetailWithDueDate =
+                                     dueDate: Option[LocalDate] = Some(LocalDate.of(2019, 5, 15)),
+                                     isMFADebit: Boolean = false): DocumentDetailWithDueDate =
     DocumentDetailWithDueDate(documentDetailModel(taxYear = taxYear, documentDescription = documentDescription, outstandingAmount = outstandingAmount,
       originalAmount = originalAmount, documentText = documentText, transactionId = transactionId, paymentLot = paymentLot, paymentLotItem = paymentLotItem,
-      latePaymentInterestAmount = latePaymentInterestAmount), dueDate)
+      latePaymentInterestAmount = latePaymentInterestAmount), dueDate = dueDate, isMFADebit = isMFADebit)
 
   val balanceDetails: BalanceDetails = BalanceDetails(
     balanceDueWithin30Days = 1.00,
@@ -422,11 +423,8 @@ object FinancialDetailsTestConstants {
   val documentDetailAmendedBalCharge: DocumentDetailWithDueDate = documentDetailWithDueDateModel(documentDescription = Some("TRM Amend Charge"))
   val documentDetailClass2Nic: DocumentDetailWithDueDate = documentDetailWithDueDateModel(documentDescription = Some("TRM New Charge"), documentText = Some("Class 2 National Insurance"), paymentLot = None, latePaymentInterestAmount = None)
   val documentDetailPaye: DocumentDetailWithDueDate = documentDetailWithDueDateModel(documentDescription = Some("TRM New Charge"), documentText = Some("PAYE Self Assessment"), paymentLot = None, latePaymentInterestAmount = None)
-  val documentDetailMFADebit: DocumentDetailWithDueDate = documentDetailWithDueDateModel(documentDescription = Some("ITSA Calc Error Correction"), documentText = None, paymentLot = None, latePaymentInterestAmount = None)
-
   val fullDocumentDetailModel: DocumentDetail = documentDetailModel()
   val fullFinancialDetailModel: FinancialDetail = financialDetail()
-
   val fullDocumentDetailWithDueDateModel: DocumentDetailWithDueDate = DocumentDetailWithDueDate(fullDocumentDetailModel, Some(LocalDate.of(2019, 5, 15)))
 
   def financialDetails(balanceDetails: BalanceDetails = balanceDetails,
@@ -454,6 +452,16 @@ object FinancialDetailsTestConstants {
       documentDetails = List(documentDetailModel(taxYear, outstandingAmount = outstandingAmount, paymentLot = None,
         paymentLotItem = None, lpiWithDunningBlock = lpiWithDunningBlock, latePaymentInterestAmount = latePaymentInterestAmount)),
       financialDetails = List(financialDetail(taxYear, dunningLock = dunningLock, dueDateValue = dueDateValue)
+      )
+    )
+
+  def financialDetailsModelWithMFADebit() =
+    FinancialDetailsModel(
+      balanceDetails = balanceDetails,
+      codingDetails = None,
+      documentDetails = List(documentDetailModel(testTaxYear, paymentLot = None,
+        paymentLotItem = None, latePaymentInterestAmount = None)),
+      financialDetails = List(financialDetail(testTaxYear, mainType = "ITSA Calc Error Correction")
       )
     )
 
@@ -610,6 +618,22 @@ object FinancialDetailsTestConstants {
       financialDetails = List(
         FinancialDetail("2021", Some("SA Balancing Charge"), Some("CODINGOUT01"), Some(LocalDate.parse("2022-08-16")), Some("type"), Some(100), Some(100),
           Some(100), Some(100), Some("NIC4 Wales"), Some(100), Some(Seq(SubItem(dueDate = Some(LocalDate.parse("2021-08-25")))))),
+      )
+    )
+
+  def testFinancialDetailsModelWithMFADebits(): FinancialDetailsModel =
+    FinancialDetailsModel(
+      balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
+      codingDetails = None,
+      documentDetails = List(
+        DocumentDetail(taxYear = "2018", transactionId = "id1040000123", documentDescription = Some("TRM New Charge"),
+          documentText = Some("documentText"), outstandingAmount = Some(1400.00), originalAmount = Some(1400.00),
+          documentDate = LocalDate.of(2018, 3, 29), latePaymentInterestAmount = Some(100),
+          interestOutstandingAmount = Some(80), lpiWithDunningBlock = Some(100))
+      ),
+      financialDetails = List(
+        FinancialDetail("2018", Some("ITSA PAYE Charge"), Some("id1040000123"), Some(LocalDate.parse("2022-08-16")), Some("type"), Some(100), Some(1400),
+          Some(1400), Some(100), Some("NIC4 Wales"), Some(100), Some(Seq(SubItem(dueDate = Some(LocalDate.parse("2019-05-15")))))),
       )
     )
 
@@ -955,7 +979,7 @@ object FinancialDetailsTestConstants {
       paymentLotItem = None,
       paymentLot = None,
       originalAmount = Some(BigDecimal(-800.00)),
-      documentDate = LocalDate.of(2018,4,16)
+      documentDate = LocalDate.of(2018, 4, 16)
     ),
     documentDetailModel(
       documentDescription = Some("ITSA Overpayment Relief"),
@@ -963,7 +987,7 @@ object FinancialDetailsTestConstants {
       paymentLotItem = None,
       paymentLot = None,
       originalAmount = Some(BigDecimal(-1400.00)),
-      documentDate = LocalDate.of(2018,7,30)
+      documentDate = LocalDate.of(2018, 7, 30)
     )
   )
 
@@ -1105,4 +1129,24 @@ object FinancialDetailsTestConstants {
         Some(100), Some(100), Some("NIC4 Wales"), Some(100), Some(Seq(SubItem(dueDate = Some(LocalDate.parse("2021-08-25")), dunningLock = Some("Coding out"))))),
     )
   )
+
+  val MFADebitsDocumentDetails: List[DocumentDetail] = List(
+    documentDetailModel(documentDescription = Some("TRM New Charge"), transactionId = "MFADEBIT01", documentDate = LocalDate.of(2018, 3, 29), originalAmount = Some(100.00), outstandingAmount = Some(BigDecimal(100.00)), paymentLotItem = None, paymentLot = None, latePaymentInterestAmount = None),
+    documentDetailModel(documentDescription = Some("TRM New Charge"), transactionId = "MFADEBIT02", documentDate = LocalDate.of(2018, 3, 29), originalAmount = Some(100.00), outstandingAmount = Some(BigDecimal(100.00)), paymentLotItem = None, paymentLot = None, latePaymentInterestAmount = None),
+    documentDetailModel(documentDescription = Some("TRM New Charge"), transactionId = "MFADEBIT03", documentDate = LocalDate.of(2018, 3, 29), originalAmount = Some(100.00), outstandingAmount = Some(BigDecimal(100.00)), paymentLotItem = None, paymentLot = None, latePaymentInterestAmount = None)
+  )
+
+  val MFADebitsFinancialDetails: FinancialDetailsModel = FinancialDetailsModel(
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, Some(6.00), Some(2.00), Some(4.00), None),
+    codingDetails = None,
+    documentDetails = MFADebitsDocumentDetails,
+    financialDetails = List(
+      FinancialDetail("2018", Some("ITSA PAYE Charge"), Some("MFADEBIT01"), totalAmount = Some(100), originalAmount = Some(100), outstandingAmount = Some(100), items = Some(Seq(SubItem(Some(LocalDate.of(2019, 5, 15)))))),
+      FinancialDetail("2018", Some("ITSA Calc Error Correction"), Some("MFADEBIT02"), totalAmount = Some(100), originalAmount = Some(100), outstandingAmount = Some(100), items = Some(Seq(SubItem(Some(LocalDate.of(2019, 5, 15)))))),
+      FinancialDetail("2018", Some("ITSA Manual Penalty Pre CY-4"), Some("MFADEBIT03"), totalAmount = Some(100), originalAmount = Some(100), outstandingAmount = Some(100), items = Some(Seq(SubItem(Some(LocalDate.of(2019, 5, 15))))))
+    )
+  )
+
+  val MFADebitsDocumentDetailsWithDueDates: List[DocumentDetailWithDueDate] = MFADebitsFinancialDetails.getAllDocumentDetailsWithDueDates()
+
 }
