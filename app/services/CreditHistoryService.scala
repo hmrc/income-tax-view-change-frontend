@@ -19,15 +19,9 @@ package services
 import auth.MtdItUser
 import config.FrontendAppConfig
 import connectors.IncomeTaxViewChangeConnector
-<<<<<<< HEAD
-import models.{CreditDetailModel, CutOverCreditType, MfaCreditType}
-import models.core.Nino
-import models.financialDetails.{DocumentDetail, FinancialDetail, FinancialDetailsErrorModel, FinancialDetailsModel, Payments, PaymentsError}
-import models.paymentAllocationCharges.FinancialDetailsWithDocumentDetailsModel
-=======
+import models.financialDetails.{DocumentDetail, FinancialDetail}
 import models.creditDetailModel._
 import models.financialDetails.FinancialDetailsModel
->>>>>>> a1b1c75ca439d20e3f4fb0cc94887a3b08ff391c
 import services.CreditHistoryService.CreditHistoryError
 import uk.gov.hmrc.http.HeaderCarrier
 
