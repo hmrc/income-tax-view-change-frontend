@@ -19,9 +19,14 @@ package controllers
 import config.featureswitch.{CreditsRefundsRepay, FeatureSwitching, MFACreditsAndDebits}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
+import helpers.servicemocks.AuthStub.{lang, messagesAPI}
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
 import models.financialDetails.FinancialDetailsModel
+import org.hamcrest.core.Is.is
+import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
+import org.junit.Assert.assertThat
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.http.Status
@@ -104,6 +109,32 @@ class CreditAndRefundControllerSpec extends MockAuthenticationPredicate with Moc
         status(result) shouldBe Status.OK
         status(resultAgent) shouldBe Status.OK
 
+      }
+
+      "MFACreditsAndDebits enabled: credit charges are returned in sorted order of credits" in new Setup {
+        enable(CreditsRefundsRepay)
+        enable(MFACreditsAndDebits)
+        mockSingleBISWithCurrentYearAsMigrationYear()
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthSuccessWithSaUtrResponse())
+
+        when(mockCreditService.getCreditCharges()(any(), any()))
+          .thenReturn(Future.successful(List(financialDetailCreditAndRefundCharge)))
+
+        val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
+        val resultAgent: Future[Result] = controller.showAgent()(fakeRequestConfirmedClient())
+
+        status(result) shouldBe Status.OK
+        status(resultAgent) shouldBe Status.OK
+        val doc : Document = Jsoup.parse(contentAsString(result))
+        assertThat(doc.select("#main-content")
+          .select("li:nth-child(1)").select("p").first().text(),
+          is("£500.00 " +
+            messagesAPI("credit-and-refund.payment") + " 15 June 2018"))
+        assertThat(doc.select("#main-content")
+          .select("li:nth-child(2)").select("p").first().text(),
+          is("£100.00 " +
+            messagesAPI("credit-and-refund.payment") + " 15 June 2018"))
       }
 
       "redirect to the custom not found error page" in new Setup {
