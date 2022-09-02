@@ -63,7 +63,7 @@ class ForecastTaxCalcSummaryControllerSpec extends TestSupport with MockCalculat
       "given a tax year which can be found in ETMP" should {
         s"return Status $NOT_FOUND" in {
           disable(ForecastCalculation)
-          mockCalculationSuccessFullNew(testMtditid)
+          mockCalculationSuccessfulNew(testMtditid)
           status(result) shouldBe NOT_FOUND
         }
 
@@ -85,7 +85,7 @@ class ForecastTaxCalcSummaryControllerSpec extends TestSupport with MockCalculat
       "given a tax year which can be found in ETMP" should {
         s"return status $OK" in {
           enable(ForecastCalculation)
-          mockCalculationSuccessFullNew(testMtditid)
+          mockCalculationSuccessfulNew(testMtditid)
           status(result) shouldBe OK
         }
 
@@ -142,7 +142,7 @@ class ForecastTaxCalcSummaryControllerSpec extends TestSupport with MockCalculat
         s"return status $NOT_FOUND" in {
           disable(ForecastCalculation)
           setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-          mockCalculationSuccessFullNew(testMtditidAgent)
+          mockCalculationSuccessfulNew(testMtditidAgent)
           status(result) shouldBe NOT_FOUND
         }
 
@@ -166,7 +166,7 @@ class ForecastTaxCalcSummaryControllerSpec extends TestSupport with MockCalculat
         s"return $OK" in {
           enable(ForecastCalculation)
           setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-          mockCalculationSuccessFullNew(testMtditidAgent)
+          mockCalculationSuccessfulNew(testMtditidAgent)
           status(result) shouldBe OK
         }
 

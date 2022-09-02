@@ -619,6 +619,7 @@ chargeSummary.dueDate                                           = Dyddiad dyledu
 chargeSummary.class2Nic.text                                    = Class 2 National Insurance
 chargeSummary.codingOut.text                                    = Balancing payment collected through PAYE tax code
 chargeSummary.cancelledPayeSelfAssessment.text                  = Cancelled Self Assessment payment (through your PAYE tax code)
+chargeSummary.hmrcAdjustment.text                               = Addasiad CThEM
 chargeSummary.paymentAmount                                     = Swm y taliad
 chargeSummary.paidToDate                                        = wedi'i dalu hyd yma
 chargeSummary.remainingDue                                      = Yn weddill i dalu
@@ -679,7 +680,7 @@ chargeSummary.chargeHistory.request.balancingCharge.text	   	        = Taliad Ma
 chargeSummary.chargeHistory.amend.paymentOnAccount1.text 	   	        = Taliad ar gyfrif 1 o 2 wedi’i ostwng oherwydd Ffurflen Dreth ddiwygiedig
 chargeSummary.chargeHistory.amend.paymentOnAccount2.text 	   	        = Taliad ar gyfrif 2 o 2 wedi’i ostwng oherwydd Ffurflen Dreth ddiwygiedig
 chargeSummary.chargeHistory.amend.balancingCharge.text 	   	   	        = Taliad Mantoli wedi’i ostwng oherwydd Ffurflen Dreth ddiwygiedig
-
+chargeSummary.chargeHistory.created.hmrcAdjustment.text                 = Addasiad CThEM wedi’i greu
 chargeSummary.paymentAllocations.bcd.incomeTax                  = Taliad wedi’i ddyrannu i Dreth Incwm ar gyfer y Taliad Mantoli
 chargeSummary.paymentAllocations.bcd.nic2                       = Taliad wedi’i ddyrannu i Yswiriant Gwladol Dosbarth 2 ar gyfer y Taliad Mantoli
 chargeSummary.paymentAllocations.bcd.vcnic2                     = Taliad wedi’i ddyrannu i Yswiriant Gwladol Dosbarth 2 Gwirfoddol ar gyfer y Taliad Mantoli
@@ -691,6 +692,7 @@ chargeSummary.paymentAllocations.poa1.incomeTax                 = Taliad wedi’
 chargeSummary.paymentAllocations.poa2.incomeTax                 = Taliad wedi’i ddyrannu i Dreth Incwm ar gyfer taliad ar gyfrif 2 o 2
 chargeSummary.paymentAllocations.poa1.nic4                      = Taliad wedi’i ddyrannu i Yswiriant Gwladol Dosbarth 4 ar gyfer taliad ar gyfrif 1 o 2
 chargeSummary.paymentAllocations.poa2.nic4                      = Taliad wedi’i ddyrannu i Yswiriant Gwladol Dosbarth 4 ar gyfer taliad ar gyfrif 2 o 2
+chargeSummary.paymentAllocations.mfaDebit                       = Taliad wedi’i roi tuag at addasiad CThEM
 
 chargeSummary.codingOutHeader                                      = Self Assessment payment (through your PAYE tax code)
 chargeSummary.codingOutMessage                                     = This is the remaining tax you owe for the {0} to {1} tax year.

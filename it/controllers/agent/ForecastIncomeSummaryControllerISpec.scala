@@ -29,7 +29,7 @@ import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.ws.WSResponse
 import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants._
-import testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessFull
+import testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessful
 
 import java.time.LocalDate
 
@@ -136,7 +136,7 @@ class ForecastIncomeSummaryControllerISpec extends ComponentSpecBase with Featur
 
         IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, getCurrentTaxYearEnd.getYear.toString)(
           status = OK,
-          body = liabilityCalculationModelSuccessFull
+          body = liabilityCalculationModelSuccessful
         )
 
         When(s"I call GET /report-quarterly/income-and-expenses/view/calculation/$testYear/income/forecast")

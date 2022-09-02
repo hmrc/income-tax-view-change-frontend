@@ -23,7 +23,7 @@ import org.scalatest.{MustMatchers, WordSpecLike}
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import testConstants.BaseTestConstants.{testMtditid, testTaxYear}
-import testConstants.NewCalcBreakdownUnitTestConstants.{liabilityCalculationModelDeductionsMinimal, liabilityCalculationModelSuccessFull}
+import testConstants.NewCalcBreakdownUnitTestConstants.{liabilityCalculationModelDeductionsMinimal, liabilityCalculationModelSuccessful}
 import uk.gov.hmrc.auth.core.retrieve.Name
 
 class TaxCalculationDetailsResponseAuditModelSpec extends WordSpecLike with MustMatchers {
@@ -44,7 +44,7 @@ class TaxCalculationDetailsResponseAuditModelSpec extends WordSpecLike with Must
         userType = Some("Individual"),
         arn = None
       )(FakeRequest()),
-      viewModel = TaxDueSummaryViewModel(liabilityCalculationModelSuccessFull),
+      viewModel = TaxDueSummaryViewModel(liabilityCalculationModelSuccessful),
       taxYear = testTaxYear
     )
 

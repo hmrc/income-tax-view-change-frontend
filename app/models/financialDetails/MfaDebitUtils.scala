@@ -17,14 +17,18 @@
 package models.financialDetails
 
 object MfaDebitUtils {
-  private val mfaDebitType: Map[Int, String] = Map(
+  private val MFADebitType: Map[Int, String] = Map(
     4004 -> "ITSA PAYE Charge",
     4005 -> "ITSA Calc Error Correction",
     4006 -> "ITSA Manual Penalty Pre CY-4",
-    4007 -> "ITSA Misc Charge"
-  )
+    4007 -> "ITSA Misc Charge")
 
   def isMFADebitMainType(mainType: Option[String]): Boolean = {
-    mainType.exists(mfaDebitType.values.toList.contains(_))
+    mainType.exists(MFADebitType.values.toList.contains(_))
   }
+
+  def filterMFADebits(MFADebitsEnabled: Boolean, documentDetailWithDueDate: DocumentDetailWithDueDate): Boolean = {
+    if (!MFADebitsEnabled && documentDetailWithDueDate.isMFADebit) false else true
+  }
+
 }

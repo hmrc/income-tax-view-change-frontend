@@ -16,7 +16,7 @@
 
 package mocks.services
 
-import models.CreditDetailModel
+import models.creditDetailModel.CreditDetailModel
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._

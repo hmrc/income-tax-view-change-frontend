@@ -20,14 +20,14 @@ import audit.models.ChargeSummaryAudit
 import auth.MtdItUser
 import config.featureswitch._
 import helpers.ComponentSpecBase
-import helpers.servicemocks.DocumentDetailsStub.{docDateDetail, docDateDetailWithInterest}
+import helpers.servicemocks.DocumentDetailsStub.{docDateDetail, docDateDetailWithInterest, docDetail}
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import models.chargeHistory.ChargeHistoryModel
-import models.financialDetails.{FinancialDetail, Payment, PaymentsWithChargeType}
+import models.financialDetails.{DocumentDetail, DocumentDetailWithDueDate, FinancialDetail, Payment, PaymentsWithChargeType}
 import play.api.http.Status._
-import play.api.libs.json.Json
+import play.api.libs.json.{JsValue, Json}
 import play.api.test.FakeRequest
-import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
+import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino, testTaxYear}
 import testConstants.FinancialDetailsIntegrationTestConstants.financialDetailModelPartial
 import testConstants.IncomeSourceIntegrationTestConstants._
 import testConstants.messages.ChargeSummaryMessages.{codingOutInsetPara, codingOutMessage, lpiCreated, notCurrentlyChargingInterest, paymentBreakdownHeading, underReview}
@@ -58,7 +58,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
   val importantPaymentBreakdown: String = s"${messagesAPI("chargeSummary.dunning.locks.banner.title")} ${messagesAPI("chargeSummary.paymentBreakdown.heading")}"
   val paymentHistory: String = messagesAPI("chargeSummary.chargeHistory.heading")
 
-  "Navigating to /report-quarterly/income-and-expenses/view/payments-due" should {
+  "Navigating to the Charge Summary Page" should {
 
     "load the page with right data for Payments Breakdown" in {
       Given("I wiremock stub a successful Income Source Details response with property only")
@@ -409,6 +409,236 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
         httpStatus(INTERNAL_SERVER_ERROR),
         pageTitleIndividual(titleInternalServer)
       )
+    }
+  }
+
+  "MFADebits feature on Charge Summary Page" should {
+    val financialDetailsUnpaidMFA = Json.obj(
+      "balanceDetails" -> Json.obj(
+        "balanceDueWithin30Days" -> 1.00,
+        "overDueAmount" -> 2.00,
+        "totalBalance" -> 3.00
+      ),
+      "documentDetails" -> Json.arr(
+        Json.obj(
+          "taxYear" -> s"$testTaxYear",
+          "transactionId" -> "1040000123",
+          "documentDescription" -> "TRM New Charge",
+          "outstandingAmount" -> 1200.00,
+          "originalAmount" -> 1200.00,
+          "documentDate" -> "2018-03-29"
+        )
+      ),
+      "financialDetails" -> Json.arr(
+        Json.obj(
+          "taxYear" -> s"$testTaxYear",
+          "mainType" -> "ITSA Manual Penalty Pre CY-4",
+          "transactionId" -> "1040000123",
+          "chargeType" -> "ITSA NI",
+          "originalAmount" -> 1200.00,
+          "items" -> Json.arr(
+            Json.obj("subItem" -> "001",
+              "amount" -> 10000,
+              "dueDate" -> "2018-03-30"))
+        )
+      )
+    )
+
+    val financialDetailsPaidMFA = Json.obj(
+      "balanceDetails" -> Json.obj(
+        "balanceDueWithin30Days" -> 1.00,
+        "overDueAmount" -> 2.00,
+        "totalBalance" -> 3.00
+      ),
+      "documentDetails" -> Json.arr(
+        Json.obj(
+          "taxYear" -> s"$testTaxYear",
+          "transactionId" -> "1",
+          "documentDescription" -> "TRM New Charge",
+          "outstandingAmount" -> 0,
+          "originalAmount" -> 1200.00,
+          "documentDate" -> "2018-03-29"
+        ),
+        Json.obj(
+          "taxYear" -> s"$testTaxYear",
+          "transactionId" -> "2",
+          "documentDate" -> "2022-04-06",
+          "documentDescription" -> "TRM New Charge",
+          "documentText" -> "documentText",
+          "documentDueDate" -> "2021-04-15",
+          "formBundleNumber" -> "88888888",
+          "totalAmount" -> 1200,
+          "documentOutstandingAmount" -> 1200,
+          "statisticalFlag" -> false,
+          "paymentLot" -> "MA999991A",
+          "paymentLotItem" -> "5"
+        )
+      ),
+      "financialDetails" -> Json.arr(
+        Json.obj(
+          "taxYear" -> s"$testTaxYear",
+          "mainType" -> "ITSA Manual Penalty Pre CY-4",
+          "transactionId" -> "1",
+          "chargeType" -> "ITSA NI",
+          "originalAmount" -> 1200.00,
+          "items" -> Json.arr(
+            Json.obj("subItem" -> "001",
+              "amount" -> 1200,
+              "dueDate" -> "2018-03-30"),
+            Json.obj(
+              "subItem" -> "002",
+              "dueDate" -> "2022-07-28",
+              "clearingDate" -> "2022-07-28",
+              "amount" -> 1200,
+              "paymentReference" -> "GF235687",
+              "paymentAmount" -> 1200,
+              "paymentMethod" -> "Payment",
+              "paymentLot" -> "MA999991A",
+              "paymentLotItem" -> "5"
+            )
+          )
+        ),
+        Json.obj(
+          "taxYear" -> s"$testTaxYear",
+          "mainType" -> "Payment on Account",
+          "transactionId" -> "2",
+          "chargeType" -> "ITSA NI",
+          "originalAmount" -> 1200.00,
+          "items" -> Json.arr(
+            Json.obj("subItem" -> "001",
+              "amount" -> 1200,
+              "dueDate" -> "2018-03-30"),
+            Json.obj(
+              "subItem" -> "002",
+              "dueDate" -> "2022-07-28",
+              "clearingDate" -> "2022-07-28",
+              "amount" -> 1200,
+              "paymentReference" -> "GF235687",
+              "paymentAmount" -> 1200,
+              "paymentMethod" -> "Payment",
+              "paymentLot" -> "MA999991A",
+              "paymentLotItem" -> "5"
+            )
+          )
+        )
+      )
+    )
+
+    val docDetailUnpaid = DocumentDetail(
+      taxYear = "2018",
+      transactionId = "1040000124",
+      documentDescription = Some("TRM New Charge"),
+      documentText = Some("documentText"),
+      originalAmount = Some(1200),
+      outstandingAmount = Some(1200),
+      documentDate = LocalDate.of(2018, 3, 29)
+    )
+    val docDetailPaid = docDetailUnpaid.copy(outstandingAmount = Some(0))
+
+    "load the charge summary page with an UNPAID MFADebit" in {
+      Given("the MFADebitsAndCredits feature switch is enabled")
+      enable(MFACreditsAndDebits)
+      enable(ChargeHistory)
+      enable(PaymentAllocation)
+
+      Given("I wiremock stub a successful Income Source Details response with property only")
+      IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
+
+      And("I wiremock stub a single financial transaction response")
+      IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(OK, financialDetailsUnpaidMFA)
+
+      And("I wiremock stub a charge history response")
+      IncomeTaxViewChangeStub.stubChargeHistoryResponse(testMtditid, "1040000124")(OK, testChargeHistoryJson(testMtditid, "1040000124", 2500))
+
+      val res = IncomeTaxViewChangeFrontend.getChargeSummary(s"$testTaxYear", "1040000123")
+
+      verifyIncomeSourceDetailsCall(testMtditid)
+
+      val summaryListText = "Due date OVERDUE 30 March 2018 Full payment amount £1,200.00 Remaining to pay £1,200.00"
+      val hmrcCreated = messagesAPI("chargeSummary.chargeHistory.created.hmrcAdjustment.text")
+      val paymentHistoryText = "Date Description Amount 29 Mar 2018 " + hmrcCreated + " £1,200.00"
+
+      Then("the result should have a HTTP status of OK (200) and load the correct page")
+      res should have(
+        httpStatus(OK),
+        pageTitleIndividual("chargeSummary.hmrcAdjustment.text"),
+        elementTextBySelector(".govuk-summary-list")(summaryListText),
+        elementCountBySelector(s"#payment-link-$testTaxYear")(1),
+        elementCountBySelector("#payment-history-table tr")(2),
+        elementTextBySelector("#payment-history-table tr")(paymentHistoryText)
+      )
+
+      AuditStub.verifyAuditEvent(ChargeSummaryAudit(
+        MtdItUser(
+          testMtditid, testNino, None,
+          multipleBusinessesAndPropertyResponse, None, Some("1234567890"),
+          Some("12345-credId"), Some("Individual"), None
+        )(FakeRequest()),
+        DocumentDetailWithDueDate(
+          documentDetail = docDetailUnpaid,
+          dueDate = Some(LocalDate.parse("2018-03-30"))
+        ),
+        paymentBreakdown = List(),
+        chargeHistories = List.empty,
+        paymentAllocations = List.empty,
+        isLatePaymentCharge = false,
+        isMFADebit = true
+      ))
+
+    }
+
+    "load the charge summary page with a PAID MFADebit" in {
+      Given("the MFADebitsAndCredits feature switch is enabled")
+      enable(MFACreditsAndDebits)
+      enable(ChargeHistory)
+      enable(PaymentAllocation)
+
+      Given("I wiremock stub a successful Income Source Details response with property only")
+      IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
+
+      And("I wiremock stub a single financial transaction response")
+      IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(OK, financialDetailsPaidMFA)
+
+      And("I wiremock stub a charge history response")
+      IncomeTaxViewChangeStub.stubChargeHistoryResponse(testMtditid, "1040000124")(OK, testChargeHistoryJson(testMtditid, "1040000124", 2500))
+
+      val res = IncomeTaxViewChangeFrontend.getChargeSummary(s"$testTaxYear", "1")
+
+      verifyIncomeSourceDetailsCall(testMtditid)
+
+      val summaryListText = "Due date 30 March 2018 Full payment amount £1,200.00 Remaining to pay £0.00"
+      val hmrcCreated = messagesAPI("chargeSummary.chargeHistory.created.hmrcAdjustment.text")
+      val paymentHistoryText = "Date Description Amount 29 Mar 2018 " + hmrcCreated + " £1,200.00"
+      val paymentHistoryText2 = "28 Jul 2022 Payment put towards HMRC adjustment 2018 £1,200.00"
+
+      Then("the result should have a HTTP status of OK (200) and load the correct page")
+      res should have(
+        httpStatus(OK),
+        pageTitleIndividual("chargeSummary.hmrcAdjustment.text"),
+        elementTextBySelector(".govuk-summary-list")(summaryListText),
+        elementCountBySelector(s"#payment-link-$testTaxYear")(0),
+        elementCountBySelector("#payment-history-table tr")(3),
+        elementTextBySelector("#payment-history-table tr:nth-child(1)")(paymentHistoryText),
+        elementTextBySelector("#payment-history-table tr:nth-child(2)")(paymentHistoryText2)
+      )
+
+      AuditStub.verifyAuditEvent(ChargeSummaryAudit(
+        MtdItUser(
+          testMtditid, testNino, None,
+          multipleBusinessesAndPropertyResponse, None, Some("1234567890"),
+          Some("12345-credId"), Some("Individual"), None
+        )(FakeRequest()),
+        DocumentDetailWithDueDate(
+          documentDetail = docDetailPaid,
+          dueDate = Some(LocalDate.parse("2018-03-30"))
+        ),
+        paymentBreakdown = List(),
+        chargeHistories = List.empty,
+        paymentAllocations = List.empty,
+        isLatePaymentCharge = false,
+        isMFADebit = true
+      ))
+
     }
   }
 

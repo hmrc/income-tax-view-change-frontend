@@ -21,7 +21,7 @@ import config.featureswitch._
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.AuditStub.{verifyAuditContainsDetail, verifyAuditEvent}
 import helpers.servicemocks.AuthStub.{titleInternalServer, titleTechError}
-import helpers.servicemocks.{IncomeTaxCalculationStub, IncomeTaxViewChangeStub}
+import helpers.servicemocks.{AuditStub, IncomeTaxCalculationStub, IncomeTaxViewChangeStub}
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
 import models.core.AccountingPeriodModel
 import models.financialDetails._
@@ -35,7 +35,8 @@ import play.api.libs.json.Json
 import play.api.libs.ws.WSResponse
 import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants._
-import testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessFull
+import testConstants.IncomeSourceIntegrationTestConstants.{singleBusinessResponse, singleBusinessResponseWoMigration}
+import testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessful
 import testConstants.messages.TaxYearSummaryMessages._
 import uk.gov.hmrc.auth.core.retrieve.Name
 
@@ -133,6 +134,49 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
       )
     )
   )
+
+  val financialDetailsMFADebits: FinancialDetailsModel = FinancialDetailsModel(
+    BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
+    None,
+    List(
+      DocumentDetail(
+        taxYear = getCurrentTaxYearEnd.getYear.toString,
+        transactionId = "testMFA1",
+        documentDescription = Some("TRM New Charge"),
+        documentText = Some("documentText"),
+        documentDate = LocalDate.of(2018, 3, 29),
+        originalAmount = Some(1234.00),
+        outstandingAmount = Some(0),
+        interestOutstandingAmount = None,
+        interestEndDate = None
+      ),
+      DocumentDetail(
+        taxYear = getCurrentTaxYearEnd.getYear.toString,
+        transactionId = "testMFA2",
+        documentDescription = Some("TRM New Charge"),
+        documentText = Some("documentText"),
+        documentDate = LocalDate.of(2018, 3, 29),
+        originalAmount = Some(2234.00),
+        outstandingAmount = Some(0),
+        interestOutstandingAmount = None,
+        interestEndDate = None
+      )),
+    List(
+      FinancialDetail(
+        taxYear = getCurrentTaxYearEnd.getYear.toString,
+        transactionId = Some("testMFA1"),
+        mainType = Some("ITSA PAYE Charge"),
+        items = Some(Seq(SubItem(Some(LocalDate.of(2021, 4, 23)), amount = Some(12), transactionId = Some("testMFA1"))))
+      ),
+      FinancialDetail(
+        taxYear = getCurrentTaxYearEnd.getYear.toString,
+        transactionId = Some("testMFA2"),
+        mainType = Some("ITSA Calc Error Correction"),
+        items = Some(Seq(SubItem(Some(LocalDate.of(2021, 4, 22)), amount = Some(12), transactionId = Some("testMFA2"))))
+      )
+    )
+  )
+
   val currentObligationsSuccess: ObligationsModel = ObligationsModel(Seq(
     NextUpdatesModel(
       identification = "testId",
@@ -265,7 +309,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
 
         IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, getCurrentTaxYearEnd.getYear.toString)(
           status = OK,
-          body = liabilityCalculationModelSuccessFull
+          body = liabilityCalculationModelSuccessful
         )
 
 
@@ -324,7 +368,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         )
 
         verifyAuditEvent(TaxYearSummaryResponseAuditModel(testUser, financialDetailsSuccess.getAllDocumentDetailsWithDueDates(),
-          allObligations, Some(TaxYearSummaryViewModel(liabilityCalculationModelSuccessFull)), false))
+          allObligations, Some(TaxYearSummaryViewModel(liabilityCalculationModelSuccessful)), false))
         verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligationsSuccess.obligations.flatMap(_.obligations)).detail)
         verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId2", previousObligationsSuccess.obligations.flatMap(_.obligations)).detail)
 
@@ -339,7 +383,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
 
         IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, getCurrentTaxYearEnd.getYear.toString)(
           status = OK,
-          body = liabilityCalculationModelSuccessFull
+          body = liabilityCalculationModelSuccessful
         )
 
         IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
@@ -397,7 +441,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         )
 
         verifyAuditEvent(TaxYearSummaryResponseAuditModel(testUser, financialDetailsDunningLockSuccess.getAllDocumentDetailsWithDueDates(),
-          allObligations, Some(TaxYearSummaryViewModel(liabilityCalculationModelSuccessFull)), false))
+          allObligations, Some(TaxYearSummaryViewModel(liabilityCalculationModelSuccessful)), false))
         verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligationsSuccess.obligations.flatMap(_.obligations)).detail)
         verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId2", previousObligationsSuccess.obligations.flatMap(_.obligations)).detail)
 
@@ -458,7 +502,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
 
         IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, getCurrentTaxYearEnd.getYear.toString)(
           status = OK,
-          body = liabilityCalculationModelSuccessFull
+          body = liabilityCalculationModelSuccessful
         )
 
         IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
@@ -523,7 +567,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
 
         IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, getCurrentTaxYearEnd.getYear.toString)(
           status = OK,
-          body = liabilityCalculationModelSuccessFull
+          body = liabilityCalculationModelSuccessful
         )
 
         IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
@@ -575,7 +619,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         )
 
         verifyAuditEvent(TaxYearSummaryResponseAuditModel(testUser, financialDetailsSuccess.getAllDocumentDetailsWithDueDates(),
-          currentObligationsSuccess, Some(TaxYearSummaryViewModel(liabilityCalculationModelSuccessFull)), false))
+          currentObligationsSuccess, Some(TaxYearSummaryViewModel(liabilityCalculationModelSuccessful)), false))
         verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligationsSuccess.obligations.flatMap(_.obligations)).detail)
       }
     }
@@ -708,7 +752,100 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligationsSuccess.obligations.flatMap(_.obligations)).detail)
       }
     }
+    "MFA Debits" when {
+      def testMFADebits(MFADebitsEnabled: Boolean): Any = {
+        if (MFADebitsEnabled) enable(MFACreditsAndDebits) else disable(MFACreditsAndDebits)
+        stubAuthorisedAgentUser(authorised = true)
+        setupMFADebitsTests()
+
+        And("The expected result is returned")
+        verifyMFADebitsResults(IncomeTaxViewChangeFrontend.getTaxYearSummary(getCurrentTaxYearEnd.getYear)(clientDetailsWithConfirmation))
+      }
+
+      def setupMFADebitsTests(): Unit = {
+        Given("A successful getIncomeSourceDetails call is made")
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+          status = OK,
+          response = incomeSourceDetailsSuccess
+        )
+
+        And(s"A non crystallised calculation for ${getCurrentTaxYearEnd.getYear.toString} is returned")
+        IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, getCurrentTaxYearEnd.getYear.toString)(
+          status = OK,
+          body = liabilityCalculationModelSuccessful
+        )
+
+        And("A successful getFinancialDetails call is made")
+        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
+          nino = testNino,
+          from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
+          to = getCurrentTaxYearEnd.toString
+        )(
+          status = OK,
+          response = Json.toJson(financialDetailsMFADebits)
+        )
+
+        And("A current obligations call is made")
+        IncomeTaxViewChangeStub.stubGetNextUpdates(
+          nino = testNino,
+          deadlines = currentObligationsSuccess
+        )
+
+        And("A previous obligations call is made")
+        IncomeTaxViewChangeStub.stubGetPreviousObligations(
+          nino = testNino,
+          fromDate = getCurrentTaxYearEnd.minusYears(1).plusDays(1),
+          toDate = getCurrentTaxYearEnd,
+          deadlines = previousObligationsSuccess
+        )
+      }
+
+      def verifyMFADebitsResults(result: WSResponse): Any = {
+        val auditDD = if (isEnabled(MFACreditsAndDebits)) financialDetailsMFADebits.getAllDocumentDetailsWithDueDates() else Nil
+
+        Then("I check all calls expected were made")
+        verifyIncomeSourceDetailsCall(testMtditid)
+        IncomeTaxCalculationStub.verifyGetCalculationResponse(testNino, getCurrentTaxYearEnd.getYear.toString)
+        IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino,
+          from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
+          to = getCurrentTaxYearEnd.toString
+        )
+        verifyAuditEvent(TaxYearSummaryResponseAuditModel(testUser, auditDD, allObligations,
+          Some(TaxYearSummaryViewModel(liabilityCalculationModelSuccessful)), isEnabled(R7bTxmEvents)))
+        verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligationsSuccess.obligations.flatMap(_.obligations)).detail)
+        verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId2", previousObligationsSuccess.obligations.flatMap(_.obligations)).detail)
+
+        if (isEnabled(MFACreditsAndDebits)) {
+          result should have(
+            httpStatus(OK),
+            pageTitleAgent("agent.titlePattern.serviceName.govUk"),
+            elementTextBySelector("#calculation-date")("15 February 2019"),
+            elementTextBySelectorList("#payments-table", "tbody", "tr:nth-of-type(1)", "th")(s"$hmrcAdjustment"),
+            elementTextBySelectorList("#payments-table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("22 Apr 2021"),
+            elementTextBySelectorList("#payments-table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("£2,234.00"),
+            elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "th")(s"$hmrcAdjustment"),
+            elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(1)")("23 Apr 2021"),
+            elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(2)")("£1,234.00"),
+            elementCountBySelector("#payments-table", "tbody", "tr")(2)
+          )
+        } else {
+          result should have(
+            httpStatus(OK),
+            pageTitleAgent("agent.titlePattern.serviceName.govUk"),
+            elementTextBySelector("#calculation-date")("15 February 2019"),
+            elementCountBySelector("#payments-table", "tbody", "tr")(0))
+        }
+      }
+
+      "should show Tax Year Summary page with MFA Debits on the Payment Tab with FS ENABLED" in {
+        testMFADebits(true)
+      }
+      "should show Tax Year Summary page with MFA Debits on the Payment Tab with FS DISABLED" in {
+        testMFADebits(false)
+      }
+    }
   }
+
 
   "API#1171 IncomeSourceDetails Caching" when {
     "caching should be DISABLED" in {
