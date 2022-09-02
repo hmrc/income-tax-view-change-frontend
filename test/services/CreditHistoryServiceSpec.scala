@@ -19,7 +19,9 @@ package services
 import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
 import mocks.connectors.MockIncomeTaxViewChangeConnector
-import models.financialDetails.FinancialDetailsErrorModel
+import models.financialDetails.{FinancialDetailsErrorModel, Payments}
+import models.paymentAllocationCharges.FinancialDetailsWithDocumentDetailsErrorModel
+import models.creditDetailModel.{CutOverCreditType, MfaCreditType}
 import play.api.test.FakeRequest
 import services.CreditHistoryService.CreditHistoryError
 import services.helpers.CreditHistoryDataHelper

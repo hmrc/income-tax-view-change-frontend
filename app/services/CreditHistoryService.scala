@@ -19,10 +19,8 @@ package services
 import auth.MtdItUser
 import config.FrontendAppConfig
 import connectors.IncomeTaxViewChangeConnector
-import models.{CreditDetailModel, CutOverCreditType, MfaCreditType}
-import models.core.Nino
-import models.financialDetails.{FinancialDetailsErrorModel, FinancialDetailsModel, Payments, PaymentsError}
-import models.paymentAllocationCharges.FinancialDetailsWithDocumentDetailsModel
+import models.creditDetailModel._
+import models.financialDetails.FinancialDetailsModel
 import services.CreditHistoryService.CreditHistoryError
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -32,6 +30,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class CreditHistoryService @Inject()(incomeTaxViewChangeConnector: IncomeTaxViewChangeConnector,
                                      val appConfig: FrontendAppConfig)
                                     (implicit ec: ExecutionContext) {
+
 
   // This logic is based on the findings in => RepaymentHistoryUtils.combinePaymentHistoryData method
   // Problem: we need to get list of credits (MFA + CutOver) and filter it out by calendar year
@@ -63,8 +62,6 @@ class CreditHistoryService @Inject()(incomeTaxViewChangeConnector: IncomeTaxView
       }
     }
   }
-
-
 
   def getCreditsHistory(calendarYear: Int, nino: String)
                        (implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[CreditHistoryError.type, List[CreditDetailModel]]] = {

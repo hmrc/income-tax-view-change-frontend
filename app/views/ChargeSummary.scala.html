@@ -48,7 +48,7 @@
     paymentBreakdown: List[FinancialDetail], chargeHistory: List[ChargeHistoryModel], paymentAllocations: List[PaymentsWithChargeType],
     payments: FinancialDetailsModel, chargeHistoryEnabled: Boolean, paymentAllocationEnabled: Boolean,
     latePaymentInterestCharge: Boolean, codingOutEnabled: Boolean, isAgent: Boolean = false, btaNavPartial: Option[Html] = None,
-    origin: Option[String] = None, gatewayPage: Option[GatewayPage] = None
+    origin: Option[String] = None, gatewayPage: Option[GatewayPage] = None, isMFADebit: Boolean
     )(implicit request : Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
 
 @import implicitDateFormatter.{longDate, toTaxYearEndDate, toTaxYearStartDate}
@@ -146,6 +146,8 @@
     }
 }
 
+
+
 @mainTemplate(pageTitle = pageTitle, backUrl = Some(backUrl), isAgent = isAgent, btaNavPartial = btaNavPartial,
     useFallbackBackLink = true, gatewayPage = gatewayPage) {
 
@@ -160,8 +162,11 @@
             <span class="govuk-caption-xl">{messages("paymentDue.tax-year", taxYearStartDate, taxYearEndDate)}</span>
         }
         @{
-            val key = if (latePaymentInterestCharge) s"chargeSummary.lpi.${documentDetail.getChargeTypeKey()}"
-                else s"chargeSummary.${documentDetail.getChargeTypeKey(codingOutEnabled)}"
+            val key = (latePaymentInterestCharge, isMFADebit) match {
+                case (true, _) => s"chargeSummary.lpi.${documentDetail.getChargeTypeKey()}"
+                case (_, true) => s"chargeSummary.hmrcAdjustment.text"
+                case (_, _) => s"chargeSummary.${documentDetail.getChargeTypeKey(codingOutEnabled)}"
+            }
             messages(key)
         }
     </h1>
@@ -260,7 +265,7 @@
             <h2 class="govuk-heading-l">@messages("chargeSummary.chargeHistory.heading")</h2>
         }
 
-        <table class="govuk-table">
+        <table class="govuk-table" id="payment-history-table">
 
             <thead class="govuk-table__head">
             <tr class="govuk-table__row">
@@ -277,8 +282,10 @@
                         <td class="govuk-table__cell govuk-!-width-one-quarter">@{
                             documentDetail.documentDate.toLongDateShort
                         }</td>
-                        <td class="govuk-table__cell">
-                            @messages(s"chargeSummary.chargeHistory.created.${documentDetail.getChargeTypeKey(codingOutEnabled)}")
+                        <td class="govuk-table__cell">@{
+                            if (isMFADebit) messages(s"chargeSummary.chargeHistory.created.hmrcAdjustment.text") else
+                                messages(s"chargeSummary.chargeHistory.created.${documentDetail.getChargeTypeKey(codingOutEnabled)}")
+                        }
                         </td>
                         <td class="govuk-table__cell numeric">@{
                             documentDetail.originalAmount.getOrElse(throw MissingFieldException("Original Amount")).toCurrency
@@ -312,7 +319,7 @@
             }
 
             @if(paymentAllocationEnabled && !latePaymentInterestCharge) {
-                @chargeSummaryPaymentAllocation(paymentAllocations, payments, documentDetailWithDueDate, isAgent)
+                @chargeSummaryPaymentAllocation(paymentAllocations, payments, documentDetailWithDueDate, isAgent, isMFADebit)
             }
             </tbody>
         </table>
