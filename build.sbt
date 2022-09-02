@@ -37,8 +37,7 @@ val compile = Seq(
   "com.typesafe.play" %% "play-json-joda" % "2.6.10",
   "uk.gov.hmrc" %% "mongo-lock" % "7.0.0-play-28",
   "uk.gov.hmrc" %% "simple-reactivemongo" % "8.0.0-play-28",
-  "uk.gov.hmrc" %% "play-frontend-hmrc" % playFrontendHMRCVersion,
-  "com.github.nikita-volkov" % "sext" % "0.2.4"
+  "uk.gov.hmrc" %% "play-frontend-hmrc" % playFrontendHMRCVersion
 )
 
 def test(scope: String = "test"): Seq[ModuleID] = Seq(
