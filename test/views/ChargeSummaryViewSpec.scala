@@ -47,9 +47,11 @@ class ChargeSummaryViewSpec extends ViewSpec {
               paymentAllocationEnabled: Boolean = false,
               latePaymentInterestCharge: Boolean = false,
               codingOutEnabled: Boolean = false,
-              isAgent: Boolean = false) {
+              isAgent: Boolean = false,
+              isMFADebit: Boolean = false) {
     val view: Html = chargeSummary(DocumentDetailWithDueDate(documentDetail, dueDate), "testBackURL",
-      paymentBreakdown, chargeHistory, paymentAllocations, payments, chargeHistoryEnabled, paymentAllocationEnabled, latePaymentInterestCharge, codingOutEnabled, isAgent)
+      paymentBreakdown, chargeHistory, paymentAllocations, payments, chargeHistoryEnabled, paymentAllocationEnabled,
+      latePaymentInterestCharge, codingOutEnabled, isAgent, isMFADebit = isMFADebit)
     val document: Document = Jsoup.parse(view.toString())
 
     def verifySummaryListRow(rowNumber: Int, expectedKeyText: String, expectedValueText: String): Assertion = {
@@ -111,7 +113,7 @@ class ChargeSummaryViewSpec extends ViewSpec {
     val remainingToPay: String = messages("chargeSummary.remainingDue")
     val paymentBreakdownHeading: String = messages("chargeSummary.paymentBreakdown.heading")
     val chargeHistoryHeading: String = messages("chargeSummary.chargeHistory.heading")
-    val historyRowPOA1Created: String =  s"29 Mar 2018 ${messages("chargeSummary.chargeHistory.created.paymentOnAccount1.text")} £1,400.00"
+    val historyRowPOA1Created: String = s"29 Mar 2018 ${messages("chargeSummary.chargeHistory.created.paymentOnAccount1.text")} £1,400.00"
     val codingOutHeader: String = s"$taxYearHeading ${messages("taxYears.taxYears", "6 April 2017", "5 April 2018")} PAYE self assessment"
     val paymentprocessingbullet1: String = s"${messages("chargeSummary.payments-bullet1-1")} ${messages("chargeSummary.payments-bullet1-2")}${messages("pagehelp.opensInNewTabText")} ${messages("chargeSummary.payments-bullet1-3")}"
 
@@ -128,7 +130,7 @@ class ChargeSummaryViewSpec extends ViewSpec {
 
     def paymentOnAccountRequest(number: Int) = s"Payment on account $number of 2 reduced by taxpayer request"
 
-    def class2NicTaxYear(year: Int) =  messages("chargeSummary.nic2TaxYear", s"${year - 1}", s"$year")
+    def class2NicTaxYear(year: Int) = messages("chargeSummary.nic2TaxYear", s"${year - 1}", s"$year")
 
     val class2NicChargeCreated: String = messages("chargeSummary.chargeHistory.created.class2Nic.text")
     val cancelledSaPayeCreated: String = messages("chargeSummary.chargeHistory.created.cancelledPayeSelfAssessment.text")
@@ -688,7 +690,56 @@ class ChargeSummaryViewSpec extends ViewSpec {
         }
       }
 
+      "MFA Credits" when {
+        val paymentAllocations = List(
+          paymentsForCharge(typePOA1, "ITSA NI", "2018-03-30", 1500.0),
+          paymentsForCharge(typePOA1, "NIC4 Scotland", "2018-03-31", 1600.0),
+        )
 
+        "Display an unpaid MFA Credit" in new Setup(
+          documentDetailModel(taxYear = 2019, documentDescription = Some("TRM New Charge")), isMFADebit = true) {
+          val summaryListText = "Due date OVERDUE 15 May 2019 Full payment amount £1,400.00 Remaining to pay £1,400.00 "
+          val hmrcCreated = messages("chargeSummary.chargeHistory.created.hmrcAdjustment.text")
+          val paymentHistoryText = "Date Description Amount 29 Mar 2018 " + hmrcCreated + " £1,400.00"
+          // heading should be hmrc adjustment
+          document.select("h1").text() shouldBe s"$taxYearHeading 6 April 2018 to 5 April 2019 " +
+            messages("chargeSummary.hmrcAdjustment.text")
+          // remaining to pay should be the same as payment amount
+          document.select(".govuk-summary-list").text() shouldBe summaryListText
+          // there should be a "make a payment" button
+          document.select("#payment-link-2019").size() shouldBe 1
+          // payment history should show only "HMRC adjustment created"
+          document.select("#payment-history-table tr").size shouldBe 2
+          document.select("#payment-history-table tr").text() shouldBe paymentHistoryText
+        }
+
+        "Display a paid MFA Credit" in new Setup(
+          documentDetailModel(taxYear = 2019, documentDescription = Some("TRM New Charge"),
+            outstandingAmount = Some(0.00)), isMFADebit = true,
+          paymentAllocationEnabled = true,
+          paymentAllocations = paymentAllocations) {
+          val summaryListText = "Due date 15 May 2019 Full payment amount £1,400.00 Remaining to pay £0.00 "
+          val hmrcCreated = messages("chargeSummary.chargeHistory.created.hmrcAdjustment.text")
+          val paymentHistoryText = "Date Description Amount 29 Mar 2018 " + hmrcCreated + " £1,400.00"
+          val MFADebitAllocation1 = "30 Mar 2018 " + messages("chargeSummary.paymentAllocations.mfaDebit") + " 2019 £1,500.00"
+          val MFADebitAllocation2 = "31 Mar 2018 " + messages("chargeSummary.paymentAllocations.mfaDebit") + " 2019 £1,600.00"
+          val allocationLinkHref = "/report-quarterly/income-and-expenses/view/payment-made-to-hmrc?documentNumber=PAYID01"
+          // heading should be hmrc adjustment
+          document.select("h1").text() shouldBe s"$taxYearHeading 6 April 2018 to 5 April 2019 " +
+            messages("chargeSummary.hmrcAdjustment.text")
+          // remaining to pay should be zero
+          document.select(".govuk-summary-list").text() shouldBe summaryListText
+          // there should not be a "make a payment" button
+          document.select("#payment-link-2019").size() shouldBe 0
+          // payment history should show two rows "HMRC adjustment created" and "payment put towards HMRC Adjustment"
+          document.select("#payment-history-table tr").size shouldBe 4
+          document.select("#payment-history-table tr:nth-child(1)").text() shouldBe paymentHistoryText
+          document.select("#payment-history-table tr:nth-child(2)").text() shouldBe MFADebitAllocation1
+          document.select("#payment-history-table tr:nth-child(3)").text() shouldBe MFADebitAllocation2
+          // allocation link should be to agent payment allocation page
+          document.select("#payment-history-table tr:nth-child(3) a").attr("href") shouldBe allocationLinkHref
+        }
+      }
     }
   }
 
@@ -696,7 +747,7 @@ class ChargeSummaryViewSpec extends ViewSpec {
     "throw a MissingFieldException" in {
       val thrownException = intercept[MissingFieldException] {
         chargeSummary(DocumentDetailWithDueDate(documentDetailModel(), None), "testBackURL",
-          paymentBreakdown, List(), List(), payments, true, false, false, false, false)
+          paymentBreakdown, List(), List(), payments, true, false, false, false, false, isMFADebit = false)
       }
       thrownException.getMessage shouldBe "Missing Mandatory Expected Field: Due Date"
     }
@@ -747,6 +798,56 @@ class ChargeSummaryViewSpec extends ViewSpec {
           paymentsForCharge(typePOA1, "ITSA NI", "2018-03-30", 1500.0)), isAgent = true) {
         document.select(Selectors.table).select("a").size shouldBe 1
         document.select(Selectors.table).select("a").forall(_.attr("href") == controllers.routes.PaymentAllocationsController.viewPaymentAllocationAgent("PAYID01").url) shouldBe true
+      }
+    }
+    "MFA Credits" when {
+      val paymentAllocations = List(
+        paymentsForCharge(typePOA1, "ITSA NI", "2018-03-30", 1500.0),
+        paymentsForCharge(typePOA1, "NIC4 Scotland", "2018-03-31", 1600.0),
+      )
+
+      "Display an unpaid MFA Credit" in new Setup(
+        documentDetailModel(taxYear = 2019, documentDescription = Some("TRM New Charge")), isMFADebit = true,
+        isAgent = true) {
+        val summaryListText = "Due date OVERDUE 15 May 2019 Full payment amount £1,400.00 Remaining to pay £1,400.00 "
+        val hmrcCreated = messages("chargeSummary.chargeHistory.created.hmrcAdjustment.text")
+        val paymentHistoryText = "Date Description Amount 29 Mar 2018 " + hmrcCreated + " £1,400.00"
+        // heading should be hmrc adjustment
+        document.select("h1").text() shouldBe s"$taxYearHeading 6 April 2018 to 5 April 2019 " +
+          messages("chargeSummary.hmrcAdjustment.text")
+        // remaining to pay should be the same as payment amount
+        document.select(".govuk-summary-list").text() shouldBe summaryListText
+        // there should be a "make a payment" button
+        document.select("#payment-link-2019").size() shouldBe 0
+        // payment history should show only "HMRC adjustment created"
+        document.select("#payment-history-table tr").size shouldBe 2
+        document.select("#payment-history-table tr").text() shouldBe paymentHistoryText
+      }
+
+      "Display a paid MFA Credit" in new Setup(
+        documentDetailModel(taxYear = 2019, documentDescription = Some("TRM New Charge"),
+          outstandingAmount = Some(0.00)), isMFADebit = true, isAgent = true,
+        paymentAllocationEnabled = true, paymentAllocations = paymentAllocations) {
+        val summaryListText = "Due date 15 May 2019 Full payment amount £1,400.00 Remaining to pay £0.00 "
+        val hmrcCreated = messages("chargeSummary.chargeHistory.created.hmrcAdjustment.text")
+        val paymentHistoryText = "Date Description Amount 29 Mar 2018 " + hmrcCreated + " £1,400.00"
+        val MFADebitAllocation1 = "30 Mar 2018 " + messages("chargeSummary.paymentAllocations.mfaDebit") + " 2019 £1,500.00"
+        val MFADebitAllocation2 = "31 Mar 2018 " + messages("chargeSummary.paymentAllocations.mfaDebit") + " 2019 £1,600.00"
+        val allocationLinkHref = "/report-quarterly/income-and-expenses/view/agents/payment-made-to-hmrc?documentNumber=PAYID01"
+        // heading should be hmrc adjustment
+        document.select("h1").text() shouldBe s"$taxYearHeading 6 April 2018 to 5 April 2019 " +
+          messages("chargeSummary.hmrcAdjustment.text")
+        // remaining to pay should be zero
+        document.select(".govuk-summary-list").text() shouldBe summaryListText
+        // there should not be a "make a payment" button
+        document.select("#payment-link-2019").size() shouldBe 0
+        // payment history should show two rows "HMRC adjustment created" and "payment put towards HMRC Adjustment"
+        document.select("#payment-history-table tr").size shouldBe 4
+        document.select("#payment-history-table tr:nth-child(1)").text() shouldBe paymentHistoryText
+        document.select("#payment-history-table tr:nth-child(2)").text() shouldBe MFADebitAllocation1
+        document.select("#payment-history-table tr:nth-child(3)").text() shouldBe MFADebitAllocation2
+        // allocation link should be to agent payment allocation page
+        document.select("#payment-history-table tr:nth-child(3) a").attr("href") shouldBe allocationLinkHref
       }
     }
   }

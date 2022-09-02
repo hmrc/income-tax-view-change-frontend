@@ -41,7 +41,7 @@ class SessionTimeoutControllerSpec extends TestSupport {
     }
 
     "return HTML" in {
-      contentType(result) shouldBe Some("text/html")
+      contentType(result) shouldBe Some(HTML)
       charset(result) shouldBe Some("utf-8")
     }
 
@@ -49,4 +49,25 @@ class SessionTimeoutControllerSpec extends TestSupport {
       document.title() shouldBe messages("titlePattern.serviceName.govUk", messages("timeout.heading"))
     }
   }
+
+  "Calling the keepAlive action of the SessionTimeoutController" should {
+
+    lazy val result = TestSessionTimeoutController.keepAlive(fakeRequestWithTestSession)
+
+    "return OK (200)" in {
+      status(result) shouldBe Status.OK
+    }
+
+    "return text/plain content type" in {
+      contentType(result) shouldBe Some(TEXT)
+      charset(result) shouldBe Some("utf-8")
+    }
+
+    s"has the correct session" in {
+      whenReady(result) { response =>
+        response.session.get("Gov-Test-Scenario") shouldBe Some("data")
+      }
+    }
+  }
+
 }

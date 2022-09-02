@@ -36,6 +36,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.language.LanguageUtils
 import utils.FallBackBackLinks
 import views.html.ChargeSummary
+import views.html.errorPages.CustomNotFoundError
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -51,7 +52,8 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
                                         val chargeSummaryView: ChargeSummary,
                                         val retrievebtaNavPartial: NavBarPredicate,
                                         val incomeSourceDetailsService: IncomeSourceDetailsService,
-                                        val authorisedFunctions: FrontendAuthorisedFunctions)
+                                        val authorisedFunctions: FrontendAuthorisedFunctions,
+                                        val customNotFoundErrorView: CustomNotFoundError)
                                        (implicit val appConfig: FrontendAppConfig,
                                         val languageUtils: LanguageUtils,
                                         mcc: MessagesControllerComponents,
@@ -63,15 +65,19 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
     checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources andThen retrievebtaNavPartial
 
   def onError(message: String, isAgent: Boolean, showInternalServerError: Boolean)(implicit request: Request[_]): Result = {
-    val errorPrefix: String = s"[ForecastTaxCalcSummaryController]${if (isAgent) "[Agent]" else ""}[showChargeSummary]"
+    val errorPrefix: String = s"[ChargeSummaryController]${if (isAgent) "[Agent]" else ""}[showChargeSummary]"
     Logger("application").error(s"$errorPrefix $message")
-    if(showInternalServerError) {
+    if (showInternalServerError) {
       if (isAgent) itvcErrorHandlerAgent.showInternalServerError()
       else itvcErrorHandler.showInternalServerError()
     } else {
-      if(isAgent) Redirect(controllers.agent.errors.routes.AgentNotFoundDocumentIDLookupController.show().url)
+      if (isAgent) Redirect(controllers.agent.errors.routes.AgentNotFoundDocumentIDLookupController.show().url)
       else Redirect(controllers.errors.routes.NotFoundDocumentIDLookupController.show().url)
     }
+  }
+
+  private def isMFADebit(fdm: FinancialDetailsModel, id: String): Boolean = {
+    fdm.financialDetails.exists(fd => fd.transactionId == Some(id) && MfaDebitUtils.isMFADebitMainType(fd.mainType))
   }
 
   def handleRequest(taxYear: Int, id: String, isLatePaymentCharge: Boolean = false, isAgent: Boolean, origin: Option[String] = None)
@@ -86,8 +92,10 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
       }
 
       matchingYear.headOption match {
-        case Some(success: FinancialDetailsModel) if success.documentDetails.exists(_.transactionId == id) =>
-          doShowChargeSummary(taxYear, id, isLatePaymentCharge, success, payments, isAgent, origin)
+        case Some(fdm: FinancialDetailsModel) if (isDisabled(MFACreditsAndDebits) && isMFADebit(fdm, id)) =>
+          Future.successful(Ok(customNotFoundErrorView()))
+        case Some(fdm: FinancialDetailsModel) if fdm.documentDetails.exists(_.transactionId == id) =>
+          doShowChargeSummary(taxYear, id, isLatePaymentCharge, fdm, payments, isAgent, origin, isMFADebit(fdm, id))
         case Some(_: FinancialDetailsModel) =>
           Future.successful(onError(s"Transaction id not found for tax year $taxYear", isAgent, showInternalServerError = false))
         case _ =>
@@ -108,14 +116,15 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
         implicit user =>
           getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true) flatMap {
             implicit mtdItUser =>
-            handleRequest(taxYear, id, isLatePaymentCharge, isAgent = true)
+              handleRequest(taxYear, id, isLatePaymentCharge, isAgent = true)
           }
     }
 
 
   private def doShowChargeSummary(taxYear: Int, id: String, isLatePaymentCharge: Boolean,
                                   chargeDetails: FinancialDetailsModel, payments: FinancialDetailsModel,
-                                  isAgent: Boolean, origin: Option[String])
+                                  isAgent: Boolean, origin: Option[String],
+                                  isMFADebit: Boolean)
                                  (implicit user: MtdItUser[_]): Future[Result] = {
     val sessionGatewayPage = user.session.get(gatewayPage).map(GatewayPage(_))
     val documentDetailWithDueDate: DocumentDetailWithDueDate = chargeDetails.findDocumentDetailByIdWithDueDate(id).get
@@ -139,7 +148,8 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
           documentDetailWithDueDate.documentDetail.isCancelledPayeSelfAssessment)) {
           onError("Coding Out is disabled and redirected to not found page", isAgent, showInternalServerError = false)
         } else {
-          auditChargeSummary(documentDetailWithDueDate, paymentBreakdown, chargeHistory, paymentAllocations, isLatePaymentCharge)
+          auditChargeSummary(documentDetailWithDueDate, paymentBreakdown, chargeHistory, paymentAllocations,
+            isLatePaymentCharge, isMFADebit)
           Ok(chargeSummaryView(
             documentDetailWithDueDate = documentDetailWithDueDate,
             backUrl = getChargeSummaryBackUrl(sessionGatewayPage, taxYear, origin, isAgent),
@@ -153,7 +163,8 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
             latePaymentInterestCharge = isLatePaymentCharge,
             codingOutEnabled = isEnabled(CodingOut),
             btaNavPartial = user.btaNavPartial,
-            isAgent = isAgent
+            isAgent = isAgent,
+            isMFADebit = isMFADebit
           ))
         }
       case _ =>
@@ -175,7 +186,8 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
 
   private def auditChargeSummary(documentDetailWithDueDate: DocumentDetailWithDueDate,
                                  paymentBreakdown: List[FinancialDetail], chargeHistories: List[ChargeHistoryModel],
-                                 paymentAllocations: List[PaymentsWithChargeType], isLatePaymentCharge: Boolean)
+                                 paymentAllocations: List[PaymentsWithChargeType], isLatePaymentCharge: Boolean,
+                                 isMFADebit: Boolean)
                                 (implicit hc: HeaderCarrier, user: MtdItUser[_]): Unit = {
 
     auditingService.extendedAudit(ChargeSummaryAudit(
@@ -184,7 +196,8 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
       paymentBreakdown = paymentBreakdown,
       chargeHistories = chargeHistories,
       paymentAllocations = paymentAllocations,
-      isLatePaymentCharge = isLatePaymentCharge
+      isLatePaymentCharge = isLatePaymentCharge,
+      isMFADebit = isMFADebit
     ))
   }
 }

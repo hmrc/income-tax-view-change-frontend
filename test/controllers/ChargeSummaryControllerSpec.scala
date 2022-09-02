@@ -17,7 +17,7 @@
 package controllers
 
 import audit.mocks.MockAuditingService
-import config.featureswitch.{ChargeHistory, CodingOut, FeatureSwitching, PaymentAllocation}
+import config.featureswitch.{ChargeHistory, CodingOut, FeatureSwitching, MFACreditsAndDebits, PaymentAllocation}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import connectors.IncomeTaxViewChangeConnector
 import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
@@ -80,7 +80,8 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
       app.injector.instanceOf[views.html.ChargeSummary],
       app.injector.instanceOf[NavBarPredicate],
       mockIncomeSourceDetailsService,
-      mockAuthService
+      mockAuthService,
+      app.injector.instanceOf[views.html.errorPages.CustomNotFoundError],
     )(
       app.injector.instanceOf[FrontendAppConfig],
       languageUtils,
@@ -246,6 +247,28 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
         JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe errorHeading
       }
     }
+
+    "Displays an MFA Debit charge" when {
+      "the charge is an MFA Debit and MFACreditsAndDebits FS is Enabled" in new Setup(
+        financialDetailsModelWithMFADebit()) {
+        enable(MFACreditsAndDebits)
+        val result: Future[Result] = controller.show(testTaxYear, "1040000123")(fakeRequestWithActiveSession)
+
+        status(result) shouldBe Status.OK
+        JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe "Tax year 6 April 2017 to 5 April 2018 " +
+          messages("chargeSummary.hmrcAdjustment.text")
+      }
+    }
+    "Redirects to Not Found Page" when {
+      "the charge is an MFA Debit and MFACreditsAndDebits FS is Disabled" in new Setup(
+        financialDetailsModelWithMFADebit()) {
+          disable(MFACreditsAndDebits)
+          val result: Future[Result] = controller.show(testTaxYear, "1040000123")(fakeRequestWithActiveSession)
+
+          status(result) shouldBe Status.OK
+          JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe messages("error.custom.heading")
+      }
+    }
   }
 
   "The ChargeSummaryController for Agents" should {
@@ -395,6 +418,28 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
 
         status(result) shouldBe Status.INTERNAL_SERVER_ERROR
         JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe errorHeading
+      }
+    }
+
+    "Display an MFA Debit charge" when {
+      "the charge is an MFA Debit and MFACreditsAndDebits FS is Enabled" in new Setup(
+        financialDetailsModelWithMFADebit(), isAgent = true) {
+        enable(MFACreditsAndDebits)
+        val result: Future[Result] = controller.showAgent(testTaxYear, "1040000123")(fakeRequestConfirmedClient("AB123456C"))
+
+        status(result) shouldBe Status.OK
+        JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe "Tax year 6 April 2017 to 5 April 2018 " +
+          messages("chargeSummary.hmrcAdjustment.text")
+      }
+    }
+    "Redirect to Not Found Page" when {
+      "the charge is an MFA Debit and MFACreditsAndDebits FS is Disabled" in new Setup(
+        financialDetailsModelWithMFADebit(), isAgent = true) {
+        disable(MFACreditsAndDebits)
+        val result: Future[Result] = controller.showAgent(testTaxYear, "1040000123")(fakeRequestConfirmedClient("AB123456C"))
+
+        status(result) shouldBe Status.OK
+        JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe messages("error.custom.heading")
       }
     }
   }

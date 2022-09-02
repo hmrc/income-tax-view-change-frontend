@@ -18,10 +18,10 @@ package models.financialDetails
 
 object MfaDebitUtils {
   private val mfaDebitType: Map[Int, String] = Map(
-    4004 -> "ITSA PAYE Charge",
-    4005 -> "ITSA Calc Error Correction",
-    4006 -> "ITSA Manual Penalty Pre CY-4",
-    4007 -> "ITSA Misc Charge"
+    4000 -> "ITSA PAYE Charge",
+    4001 -> "ITSA Calc Error Correction",
+    4002 -> "ITSA Manual Penalty Pre CY-4",
+    4003 -> "ITSA Misc Charge"
   )
 
   def isMFADebitMainType(mainType: Option[String]): Boolean = {
