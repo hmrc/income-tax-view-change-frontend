@@ -164,6 +164,12 @@ class NextUpdatesResponseModelSpec extends TestSupport with Matchers with Implic
       obligation.currentTime() shouldBe mockedCurrentTime20171031
     }
 
+    "call to .currentCrystDeadlines should return sorted obligations by Crystallised obligationType" in {
+      val nextUpdatesModel: NextUpdatesModel = NextUpdatesModel(testSelfEmploymentId, List(openObligation, crystallisedObligation, quarterlyBusinessObligation, crystallisedObligationTwo))
+
+      nextUpdatesModel.currentCrystDeadlines shouldBe List(crystallisedObligation, crystallisedObligationTwo)
+    }
+
   }
 
   "The NextUpdatesErrorModel" should {
