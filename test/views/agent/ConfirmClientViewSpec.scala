@@ -87,6 +87,10 @@ class ConfirmClientViewSpec extends ViewSpec {
       button.attr("type") shouldBe "submit"
       button.text shouldBe confirmClientMessages.confirmContinue
     }
+    s"have the black banner empty" in new Setup(confirmClientView) {
+      document.select(".govuk-header__content")
+        .select(".hmrc-header__service-name hmrc-header__service-name--linked").text shouldBe ("")
+    }
   }
 
 
