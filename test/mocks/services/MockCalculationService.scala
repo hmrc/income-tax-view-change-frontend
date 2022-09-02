@@ -55,11 +55,11 @@ trait MockCalculationService extends UnitSpec with MockitoSugar with BeforeAndAf
     )(ArgumentMatchers.any())) thenReturn Future.successful(response)
   }
 
-  def mockCalculationSuccessFullNew(mtditid: String = "XAIT00000000015", nino: String = testNino, taxYear: Int = testTaxYear): Unit =
-    setupMockGetCalculationNew(mtditid, nino, taxYear)(liabilityCalculationModelSuccessFull)
+  def mockCalculationSuccessfulNew(mtditid: String = "XAIT00000000015", nino: String = testNino, taxYear: Int = testTaxYear): Unit =
+    setupMockGetCalculationNew(mtditid, nino, taxYear)(liabilityCalculationModelSuccessful)
 
-  def mockCalculationSuccessFullNotCrystallised(mtditid: String = "XAIT00000000015", nino: String = testNino, taxYear: Int = testTaxYear): Unit =
-    setupMockGetCalculationNew(mtditid, nino, taxYear)(liabilityCalculationModelSuccessFullNotCrystallised)
+  def mockCalculationSuccessfulNotCrystallised(mtditid: String = "XAIT00000000015", nino: String = testNino, taxYear: Int = testTaxYear): Unit =
+    setupMockGetCalculationNew(mtditid, nino, taxYear)(liabilityCalculationModelSuccessfulNotCrystallised)
 
   def mockCalculationSuccessMinimalNew(mtditid: String = "XAIT00000000015", taxYear: Int = testTaxYear): Unit =
     setupMockGetCalculationNew(mtditid, testNino, taxYear)(liabilityCalculationModelDeductionsMinimal())

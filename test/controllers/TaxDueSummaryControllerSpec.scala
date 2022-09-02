@@ -64,7 +64,7 @@ class TaxDueSummaryControllerSpec extends TestSupport with MockCalculationServic
       lazy val document = resultIndividual.toHtmlDocument
 
       "return Status OK (200)" in {
-        mockCalculationSuccessFullNew("XAIT0000123456")
+        mockCalculationSuccessfulNew("XAIT0000123456")
         setupMockGetIncomeSourceDetails()(businessIncome2018and2019)
         status(resultIndividual) shouldBe Status.OK
       }
@@ -104,7 +104,7 @@ class TaxDueSummaryControllerSpec extends TestSupport with MockCalculationServic
       "return Status OK (200) with HTML" in {
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         mockBothIncomeSources()
-        mockCalculationSuccessFullNew("XAIT00000000015", "AA111111A", testYear)
+        mockCalculationSuccessfulNew("XAIT00000000015", "AA111111A", testYear)
 
         lazy val result = TestTaxDueSummaryController.showTaxDueSummaryAgent(testYear)(fakeRequestConfirmedClient())
 

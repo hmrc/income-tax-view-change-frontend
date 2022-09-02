@@ -38,7 +38,7 @@ object NewCalcBreakdownUnitTestConstants {
       calculationReason = calculationReason)
   )
 
-  val liabilityCalculationModelSuccessFull = LiabilityCalculationResponse(
+  val liabilityCalculationModelSuccessful = LiabilityCalculationResponse(
     inputs = Inputs(personalInformation = PersonalInformation(
       taxRegime = "UK", class2VoluntaryContributions = Some(true)
     )),
@@ -271,7 +271,7 @@ object NewCalcBreakdownUnitTestConstants {
       calculationReason = Some("customerRequest"))
   )
 
-  val liabilityCalculationModelSuccessFullNotCrystallised = liabilityCalculationModelSuccessFull.copy(metadata =
+  val liabilityCalculationModelSuccessfulNotCrystallised = liabilityCalculationModelSuccessful.copy(metadata =
     Metadata(
       calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
       crystallised = Some(false))

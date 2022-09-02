@@ -66,7 +66,7 @@ class DeductionsSummaryControllerISpec extends ComponentSpecBase with FeatureSwi
       And("I stub a successful calculation response for 2017-18")
       IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, testYear)(
         status = OK,
-        body = liabilityCalculationModelSuccessFull
+        body = liabilityCalculationModelSuccessful
       )
 
       When(s"I call GET /report-quarterly/income-and-expenses/view/agents/calculation/$testYear/income")
@@ -82,7 +82,7 @@ class DeductionsSummaryControllerISpec extends ComponentSpecBase with FeatureSwi
       )
 
       verifyAuditContainsDetail(AllowanceAndDeductionsResponseAuditModel(testUser,
-        AllowancesAndDeductionsViewModel(liabilityCalculationModelSuccessFull.calculation)).detail)
+        AllowancesAndDeductionsViewModel(liabilityCalculationModelSuccessful.calculation)).detail)
     }
   }
 }
