@@ -201,6 +201,18 @@ class NextUpdatesResponseModelSpec extends TestSupport with Matchers with Implic
       }
     }
 
+    "return a list of all models with source in dateReceived order if the previous flag is set to true" when {
+
+      "calling .allDeadlinesWithSource" in {
+        NextUpdatesTestConstants.obligationsAllDeadlinesWithDateReceivedSuccessModel.allDeadlinesWithSource(previous = true)(
+          BaseTestConstants.testMtdItUser) shouldBe List(
+          NextUpdateModelWithIncomeType("nextUpdates.business", openObligation.copy(dateReceived = Some(mockedCurrentTime20171031.plusDays(1)))),
+          NextUpdateModelWithIncomeType("nextUpdates.propertyIncome", overdueEOPSObligation.copy(dateReceived = Some(mockedCurrentTime20171031.minusDays(3)))),
+          NextUpdateModelWithIncomeType("nextUpdates.crystallisedAll", crystallisedObligation.copy(dateReceived = Some(mockedCurrentTime20171031.minusDays(6))))
+        )
+      }
+    }
+
     "return an empty list" when {
 
       "calling .allDeadlinesWithSource" in {

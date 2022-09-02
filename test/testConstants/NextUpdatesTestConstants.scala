@@ -219,6 +219,23 @@ object NextUpdatesTestConstants {
   val obligationsAllDeadlinesSuccessModel: ObligationsModel = ObligationsModel(Seq(nextUpdatesDataSelfEmploymentSuccessModel,
     obligationsEOPSDataSuccessModel, obligationsCrystallisedSuccessModel))
 
+  val obligationsAllDeadlinesWithDateReceivedSuccessModel: ObligationsModel = ObligationsModel(
+    Seq(
+      nextUpdatesDataSelfEmploymentSuccessModel.copy(
+        obligations = List(
+          openObligation.copy(dateReceived = Some(mockedCurrentTime20171031.plusDays(1))))
+      ),
+      obligationsEOPSDataSuccessModel.copy(
+        obligations = List(
+          overdueEOPSObligation.copy(dateReceived = Some(mockedCurrentTime20171031.minusDays(3)))
+        )
+      ),
+      obligationsCrystallisedSuccessModel.copy(
+        obligations = List(
+          crystallisedObligation.copy(dateReceived = Some(mockedCurrentTime20171031.minusDays(6)))))
+    )
+  )
+
   val obligationsCrystallisedEmptySuccessModel: NextUpdatesModel = NextUpdatesModel(testNino, List())
 
   val obligationsPropertyOnlySuccessModel: ObligationsModel = ObligationsModel(Seq(obligationsEOPSDataSuccessModel, obligationsCrystallisedEmptySuccessModel))
