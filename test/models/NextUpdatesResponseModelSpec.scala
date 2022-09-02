@@ -157,13 +157,6 @@ class NextUpdatesResponseModelSpec extends TestSupport with Matchers with Implic
         valid => valid) shouldBe nextUpdatesDataSelfEmploymentSuccessModel
     }
 
-    // TODO remove it when done
-    "call to obligation.currentTime() should return expected date" in {
-      val obligation = nextUpdatesDataSelfEmploymentSuccessModel.obligations.head
-
-      obligation.currentTime() shouldBe mockedCurrentTime20171031
-    }
-
     "call to .currentCrystDeadlines should return sorted obligations by Crystallised obligationType" in {
       val nextUpdatesModel: NextUpdatesModel = NextUpdatesModel(testSelfEmploymentId, List(openObligation, crystallisedObligation, quarterlyBusinessObligation, crystallisedObligationTwo))
 
