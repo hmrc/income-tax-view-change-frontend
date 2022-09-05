@@ -40,8 +40,8 @@ object MfaCreditUtils {
     4023 -> "ITSA Misc Credit"
   )
 
-  def validMFACreditDescription(documentDescription: Option[String]): Boolean = {
-    documentDescription
+  def validMFACreditType(mainType: Option[String]): Boolean = {
+    mainType
       .map(mfaCreditDescription.values.toList.contains(_))
       .getOrElse(false)
   }

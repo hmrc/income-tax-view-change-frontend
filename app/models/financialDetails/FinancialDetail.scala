@@ -86,7 +86,7 @@ case class FinancialDetail(taxYear: String,
     }
     .filter(_.getPaymentAllocationTextInChargeSummary.isDefined)
 
-  def validMFACreditType(): Boolean = MfaCreditUtils.validMFACreditDescription(mainType)
+  def validMFACreditType(): Boolean = MfaCreditUtils.validMFACreditType(mainType)
 }
 
 
