@@ -70,8 +70,4 @@ trait MockHttp extends UnitSpec with MockitoSugar with BeforeAndAfterEach {
   def setupMockHttpGetPartial(url: String)(response: HtmlPartial): OngoingStubbing[Future[HtmlPartial]] =
     when(mockHttpGet.GET[HtmlPartial](matches(url))
       (ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any())).thenReturn(Future.successful(response))
-
-  def setupMockServiceUnavialabeHttpGet(url: String): OngoingStubbing[Future[HttpResponse]] =
-    when(mockHttpGet.GET[HttpResponse](matches(url), ArgumentMatchers.any(), ArgumentMatchers.any())
-      (ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any())).thenReturn(Future.failed(new Exception("service unavailable")))
 }

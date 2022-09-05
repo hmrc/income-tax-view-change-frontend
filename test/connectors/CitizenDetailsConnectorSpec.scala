@@ -16,13 +16,12 @@
 
 package connectors
 
-import testConstants.BaseTestConstants.{testMtditid, testSaUtr, testTaxYear}
-import testConstants.CitizenDetailsTestConstants._
 import connectors.agent.CitizenDetailsConnector
 import mocks.MockHttp
 import models.citizenDetails.{CitizenDetailsErrorModel, CitizenDetailsModel, CitizenDetailsResponseModel}
-import play.api.libs.json.Json
 import play.mvc.Http.Status
+import testConstants.BaseTestConstants.testSaUtr
+import testConstants.CitizenDetailsTestConstants._
 import testUtils.TestSupport
 import uk.gov.hmrc.http.HttpResponse
 
