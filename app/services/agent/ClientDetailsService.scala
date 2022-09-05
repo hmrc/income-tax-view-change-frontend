@@ -18,7 +18,6 @@ package services.agent
 
 import connectors.IncomeTaxViewChangeConnector
 import connectors.agent.CitizenDetailsConnector
-
 import javax.inject.{Inject, Singleton}
 import models.citizenDetails.{CitizenDetailsErrorModel, CitizenDetailsModel}
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel}
@@ -40,20 +39,15 @@ class ClientDetailsService @Inject()(citizenDetailsConnector: CitizenDetailsConn
           case IncomeSourceDetailsModel(mtdbsa, _, _, _) =>
             Future.successful(Right(ClientDetailsService.ClientDetails(optionalFirstName, optionalLastName, nino, mtdbsa)))
           case IncomeSourceDetailsError(code, _) if code == 404 => Future.successful(Left(BusinessDetailsNotFound))
-          case IncomeSourceDetailsError(code, _) => {
+          case IncomeSourceDetailsError(code, _) =>
             Logger("application").error(s"[ClientDetailsService][checkClientDetails] - Error retrieving Business Details, status: $code")
             Future.successful(Left(UnexpectedResponse))
-          }
-          case _ => Future.successful(Left(UnexpectedResponse))
         }
       case CitizenDetailsErrorModel(code, _) if code == 404 => Future.successful(Left(CitizenDetailsNotFound))
-      case CitizenDetailsErrorModel(code, _) => {
+      case CitizenDetailsErrorModel(code, _) =>
         Logger("application").error(s"[ClientDetailsService][checkClientDetails] - Error retrieving Citizen Details, status: $code")
         Future.successful(Left(UnexpectedResponse))
-      }
-      case _ => Future.successful(Left(UnexpectedResponse))
     }
-
 }
 
 object ClientDetailsService {
