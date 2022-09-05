@@ -42,7 +42,7 @@ class ClientDetailsService @Inject()(citizenDetailsConnector: CitizenDetailsConn
           case IncomeSourceDetailsError(code, _) =>
             Logger("application").error(s"[ClientDetailsService][checkClientDetails] - Error retrieving Business Details, status: $code")
             Future.successful(Left(UnexpectedResponse))
-          case ex: Exception =>
+          case ex =>
             Logger("application").error(s"[ClientDetailsService][checkClientDetails] - Unexpected response retrieving Business Details: $ex")
             Future.successful(Left(UnexpectedResponse))
         }
@@ -50,7 +50,7 @@ class ClientDetailsService @Inject()(citizenDetailsConnector: CitizenDetailsConn
       case CitizenDetailsErrorModel(code, _) =>
         Logger("application").error(s"[ClientDetailsService][checkClientDetails] - Error retrieving Citizen Details, status: $code")
         Future.successful(Left(UnexpectedResponse))
-      case ex: Exception =>
+      case ex =>
         Logger("application").error(s"[ClientDetailsService][checkClientDetails] - Unexpected response retrieving Citizen Details: $ex")
         Future.successful(Left(UnexpectedResponse))
     }
