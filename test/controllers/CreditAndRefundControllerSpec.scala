@@ -19,7 +19,6 @@ package controllers
 import config.featureswitch.{CreditsRefundsRepay, FeatureSwitching, MFACreditsAndDebits}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
-import helpers.servicemocks.AuthStub.{lang, messagesAPI}
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
 import models.financialDetails.FinancialDetailsModel
@@ -130,11 +129,11 @@ class CreditAndRefundControllerSpec extends MockAuthenticationPredicate with Moc
         assertThat(doc.select("#main-content")
           .select("li:nth-child(1)").select("p").first().text(),
           is("£500.00 " +
-            messagesAPI("credit-and-refund.payment") + " 15 June 2018"))
+            messages("credit-and-refund.payment") + " 15 June 2018"))
         assertThat(doc.select("#main-content")
           .select("li:nth-child(2)").select("p").first().text(),
           is("£100.00 " +
-            messagesAPI("credit-and-refund.payment") + " 15 June 2018"))
+            messages("credit-and-refund.payment") + " 15 June 2018"))
       }
 
       "redirect to the custom not found error page" in new Setup {

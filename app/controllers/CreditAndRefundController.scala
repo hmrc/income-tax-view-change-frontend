@@ -119,10 +119,10 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
     val creditsGroupedPaymentTypes = credits
       .groupBy[String] {
         credits => {
-          getCreditTypeGroupKey(credits._2)
+          getCreditTypeGroupKey(credits)
         }
       }
-      .toList.sortWith((p1, p2) => sortingOrderCreditType(p1._1) <= sortingOrderCreditType(p2._1))
+      .toList.sortWith((p1, p2) => sortingOrderCreditType(p1._1) < sortingOrderCreditType(p2._1))
       .map {
         case (documentId, credits) => (documentId, sortCredits(credits))
     }.flatMap {
@@ -131,13 +131,15 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
     creditsGroupedPaymentTypes
   }
 
-  def getCreditTypeGroupKey(credits : FinancialDetail): String = {
-    val isMFA : Boolean = credits.validMFACreditType()
-    val isCutOverCredit : Boolean = credits.mainType.get == "ITSA Cutover Credits"
-    (isMFA, isCutOverCredit) match {
-      case (true, false) => creditsFromHMRC
-      case (false, true) => cutOverCredits
-      case (_, _) => payment
+  def getCreditTypeGroupKey(credits: (DocumentDetailWithDueDate, FinancialDetail)): String = {
+    val isMFA : Boolean = credits._2.validMFACreditType()
+    val isCutOverCredit : Boolean = credits._2.mainType.get == "ITSA Cutover Credits"
+    val isPayment : Boolean = credits._1.documentDetail.paymentLot.isDefined
+    (isMFA, isCutOverCredit, isPayment) match {
+      case (true, false, false) => creditsFromHMRC
+      case (false, true, false) => cutOverCredits
+      case (false, false, true) => payment
+      case (_, _, _) => throw new Exception("Credit Type Not Found")
     }
   }
 
