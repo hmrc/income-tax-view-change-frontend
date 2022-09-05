@@ -119,7 +119,7 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
     val creditsGroupedPaymentTypes = credits
       .groupBy[String] {
         credits => {
-          creditTypeGroupKey(credits._2.mainType.get)
+          getCreditTypeGroupKey(credits._2)
         }
       }
       .toList.sortWith((p1, p2) => sortingOrderCreditType(p1._1) <= sortingOrderCreditType(p2._1))
@@ -131,33 +131,14 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
     creditsGroupedPaymentTypes
   }
 
-  def creditTypeGroupKey(creditType: String): String = {
-
-    val creditTypeMap = Map(
-      "ITSA Overpayment Relief" -> creditsFromHMRC,
-      "ITSA Standalone Claim" -> creditsFromHMRC,
-      "ITSA Averaging Adjustment" -> creditsFromHMRC,
-      "ITSA Literary Artistic Spread" -> creditsFromHMRC,
-      "ITSA Loss Relief Claim" -> creditsFromHMRC,
-      "ITSA Post Cessation Claim" -> creditsFromHMRC,
-      "ITSA PAYE in year Repayment" -> creditsFromHMRC,
-      "ITSA NPS Overpayment" -> creditsFromHMRC,
-      "ITSA In year Rept pension schm" -> creditsFromHMRC,
-      "ITSA Increase in PAYE Credit" -> creditsFromHMRC,
-      "ITSA CIS Non Resident Subbie" -> creditsFromHMRC,
-      "ITSA CIS Incorrect Deductions" -> creditsFromHMRC,
-      "ITSA Stand Alone Assessment" -> creditsFromHMRC,
-      "ITSA Infml Dschrg Cntrct Sett" -> creditsFromHMRC,
-      "ITSA Third Party Rept - FIS" -> creditsFromHMRC,
-      "ITSA EIS Carry Back Claims" -> creditsFromHMRC,
-      "ITSA Calc Error Correction" -> creditsFromHMRC,
-      "ITSA Misc Credit" -> creditsFromHMRC,
-      "ITSA CGT Adjustments" -> creditsFromHMRC,
-      "ITSA Pension Relief Claim" -> creditsFromHMRC,
-      "ITSA Cutover Credits" -> cutOverCredits,
-      "Payment on Account" -> payment)
-
-    creditTypeMap.getOrElse(creditType,"")
+  def getCreditTypeGroupKey(credits : FinancialDetail): String = {
+    val isMFA : Boolean = credits.validMFACreditType()
+    val isCutOverCredit : Boolean = credits.mainType.get == "ITSA Cutover Credits"
+    (isMFA, isCutOverCredit) match {
+      case (true, false) => creditsFromHMRC
+      case (false, true) => cutOverCredits
+      case (_, _) => payment
+    }
   }
 
 }
