@@ -39,6 +39,10 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
     }
   }
 
+  def getDueDateForFinancialDetail(financialDetail: FinancialDetail): Option[LocalDate] = {
+    financialDetail.items.flatMap(_.headOption.flatMap(_.dueDate))
+  }
+
   def getAllDueDates: List[LocalDate] = {
     documentDetails.flatMap(getDueDateFor)
   }
@@ -88,6 +92,24 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
         documentDetail.isLatePaymentInterest, dunningLockExists(documentDetail.transactionId),
         codingOutEnabled = codingOutEnabled, isMFADebit = isMFADebit(documentDetail.transactionId)))
   }
+
+  def getAllDocumentDetailsWithDueDatesAndFinancialDetails(codingOutEnabled: Boolean = false): List[(DocumentDetailWithDueDate, FinancialDetail)] = {
+    documentDetails.map(documentDetail =>
+      (DocumentDetailWithDueDate(documentDetail, getDueDateFor(documentDetail),
+        documentDetail.isLatePaymentInterest, dunningLockExists(documentDetail.transactionId),
+        codingOutEnabled = codingOutEnabled, isMFADebit = isMFADebit(documentDetail.transactionId)),
+        financialDetails.find(_.transactionId.get == documentDetail.transactionId)
+          .getOrElse(throw new Exception("no financialDetail found for documentDetail" + documentDetail)))
+    )
+  }
+
+  def getPairedDocumentDetails(): List[(DocumentDetail, FinancialDetail)] = {
+    documentDetails.map(documentDetail =>
+      (documentDetail, financialDetails.find(_.transactionId.get == documentDetail.transactionId)
+          .getOrElse(throw new Exception("no financialDetail found for documentDetail" + documentDetail)))
+    )
+  }
+
 
   def isAllPaid()(implicit user: MtdItUser[_]): Boolean = documentDetails.forall(_.isPaid)
 
