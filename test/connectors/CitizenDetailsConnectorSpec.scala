@@ -33,6 +33,7 @@ class CitizenDetailsConnectorSpec extends TestSupport with MockHttp {
   val successResponse = HttpResponse(status = Status.OK, json = testValidCitizenDetailsModelJson, headers = Map.empty)
   val successResponseBadJson = HttpResponse(status = Status.OK, json = testInvalidCitizenDetailsJson, headers = Map.empty)
   val badResponse = HttpResponse(status = Status.BAD_REQUEST, body = "Error Message")
+  val serviceUnavailabeResponse = HttpResponse(status = Status.SERVICE_UNAVAILABLE, body = "Error Message")
 
 
   object TestCitizenDetailsConnector extends CitizenDetailsConnector(mockHttpGet, appConfig)
@@ -56,6 +57,11 @@ class CitizenDetailsConnectorSpec extends TestSupport with MockHttp {
     "return CitizenDetailErrorModel when bad request recieved" in {
       setupMockHttpGet(testUrl)(badResponse)
       result.futureValue shouldBe CitizenDetailsErrorModel(Status.BAD_REQUEST, "Error Message")
+    }
+
+    "return CitizenDetailErrorModel when serviceUnavailable request received" in {
+      setupMockHttpGet(testUrl)(serviceUnavailabeResponse)
+      result.futureValue shouldBe CitizenDetailsErrorModel(Status.SERVICE_UNAVAILABLE, "Error Message")
     }
 
     "return CitizenDetailErrorModel when GET fails" in {
