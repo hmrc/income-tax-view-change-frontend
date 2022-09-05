@@ -107,7 +107,8 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
     val sortingOrderCreditType = Map(
       creditsFromHMRC -> 0,
       cutOverCredits -> 1,
-      payment -> 2
+      payment -> 2,
+      "" -> 3
     )
 
     def sortCredits(credits: List[(DocumentDetailWithDueDate, FinancialDetail)])
