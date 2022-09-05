@@ -53,6 +53,9 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
                                           val customNotFoundErrorView: CustomNotFoundError)
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
+  private val creditsFromHMRC = "HMRC"
+  private val cutOverCredits = "CutOver"
+  private val payment = "Payment"
 
   def handleRequest(isAgent: Boolean, itvcErrorHandler: ShowInternalServerError, backUrl: String)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
@@ -63,7 +66,7 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
         val balance: Option[BalanceDetails] = financialDetailsModel.headOption.map(balance => balance.balanceDetails)
 
         val credits: List[(DocumentDetailWithDueDate, FinancialDetail)] = financialDetailsModel.flatMap(
-          financialDetailsModel => sortChargesGroupedPaymentTypes(financialDetailsModel.getAllDocumentDetailsWithDueDatesAndFinancialDetails())
+          financialDetailsModel => sortCreditsGroupedPaymentTypes(financialDetailsModel.getAllDocumentDetailsWithDueDatesAndFinancialDetails())
         )
         Ok(view(credits, balance, isAgent, backUrl, isEnabled(MFACreditsAndDebits))(user, user, messages))
       case _ => Logger("application").error(
@@ -98,25 +101,63 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
     }
   }
 
-  private def sortChargesGroupedPaymentTypes(charges: List[(DocumentDetailWithDueDate, FinancialDetail)])
+  def sortCreditsGroupedPaymentTypes(credits: List[(DocumentDetailWithDueDate, FinancialDetail)])
   : List[(DocumentDetailWithDueDate, FinancialDetail)] = {
 
-    def sortCharges(charges: List[(DocumentDetailWithDueDate, FinancialDetail)])
+    val sortingOrderCreditType = Map(
+      creditsFromHMRC -> 0,
+      cutOverCredits -> 1,
+      payment -> 2
+    )
+
+    def sortCredits(credits: List[(DocumentDetailWithDueDate, FinancialDetail)])
     : List[(DocumentDetailWithDueDate, FinancialDetail)] = {
-      charges
+      credits
         .sortBy(_._1.documentDetail.paymentOrChargeCredit).reverse
     }
 
-    val chargesGroupedPaymentTypes = charges
+    val creditsGroupedPaymentTypes = credits
       .groupBy[String] {
-        charges => {
-          charges._1.documentDetail.documentDescription.get.substring(0, 3)
+        credits => {
+          creditTypeGroupKey(credits._2.mainType.get)
         }
-      }.map {
-      case (documentId, charges) => (documentId, sortCharges(charges))
-    }.map {
-      case (_, charges) => charges
-    }.toList.flatten.sortBy(_._1.documentDetail.documentDescription.get.substring(0, 3))
-    chargesGroupedPaymentTypes
+      }
+      .toList.sortWith((p1, p2) => sortingOrderCreditType(p1._1) <= sortingOrderCreditType(p2._1))
+      .map {
+        case (documentId, credits) => (documentId, sortCredits(credits))
+    }.flatMap {
+        case (_, credits) => credits
+    }
+    creditsGroupedPaymentTypes
   }
+
+  def creditTypeGroupKey(creditType: String): String = {
+
+    val creditTypeMap = Map(
+      "ITSA Overpayment Relief" -> creditsFromHMRC,
+      "ITSA Standalone Claim" -> creditsFromHMRC,
+      "ITSA Averaging Adjustment" -> creditsFromHMRC,
+      "ITSA Literary Artistic Spread" -> creditsFromHMRC,
+      "ITSA Loss Relief Claim" -> creditsFromHMRC,
+      "ITSA Post Cessation Claim" -> creditsFromHMRC,
+      "ITSA PAYE in year Repayment" -> creditsFromHMRC,
+      "ITSA NPS Overpayment" -> creditsFromHMRC,
+      "ITSA In year Rept pension schm" -> creditsFromHMRC,
+      "ITSA Increase in PAYE Credit" -> creditsFromHMRC,
+      "ITSA CIS Non Resident Subbie" -> creditsFromHMRC,
+      "ITSA CIS Incorrect Deductions" -> creditsFromHMRC,
+      "ITSA Stand Alone Assessment" -> creditsFromHMRC,
+      "ITSA Infml Dschrg Cntrct Sett" -> creditsFromHMRC,
+      "ITSA Third Party Rept - FIS" -> creditsFromHMRC,
+      "ITSA EIS Carry Back Claims" -> creditsFromHMRC,
+      "ITSA Calc Error Correction" -> creditsFromHMRC,
+      "ITSA Misc Credit" -> creditsFromHMRC,
+      "ITSA CGT Adjustments" -> creditsFromHMRC,
+      "ITSA Pension Relief Claim" -> creditsFromHMRC,
+      "ITSA Cutover Credits" -> cutOverCredits,
+      "Payment on Account" -> payment)
+
+    creditTypeMap.getOrElse(creditType,"")
+  }
+
 }

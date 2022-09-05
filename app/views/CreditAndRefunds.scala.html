@@ -122,7 +122,7 @@
                     }
                 }
                 @if(!charge._2.validMFACreditType()) {
-                    @if(charge._1.documentDetail.documentDescription.getOrElse(throw MissingFieldException("Document Description")).toString().toLowerCase().equals("new charge")) {
+                    @if(charge._2.mainType.getOrElse(throw MissingFieldException("Main Type")).toString().toLowerCase().equals("itsa cutover credits")) {
                         <li>
                             <p class="govuk-heading-s">
                                 @charge._1.documentDetail.paymentOrChargeCredit.getOrElse(throw MissingFieldException("Payment Or Charge Credit")).toCurrencyString
