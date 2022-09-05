@@ -21,7 +21,7 @@ import org.scalacheck.{Gen, Properties}
 
 object MfaCreditUtilsSpec extends Properties("MfaCreditUtils_validMFACreditDescription") {
 
-  import MfaCreditUtils.validMFACreditDescription
+  import MfaCreditUtils.validMFACreditType
   import org.scalacheck.Prop.forAll
 
   val validMfaCreditDescription = Gen.oneOf(
@@ -48,11 +48,11 @@ object MfaCreditUtilsSpec extends Properties("MfaCreditUtils_validMFACreditDescr
   )
 
   property("ValidMFACreditDescription") = forAll(validMfaCreditDescription) { documentDescription =>
-    validMFACreditDescription(Some(documentDescription))
+    validMFACreditType(Some(documentDescription))
   }
 
   property("Not_validMFACreditDescription") = forAll { (documentDescription: String) =>
-    !validMFACreditDescription(Some(documentDescription))
+    !validMFACreditType(Some(documentDescription))
   }
 
 }

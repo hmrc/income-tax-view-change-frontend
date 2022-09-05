@@ -949,8 +949,9 @@ object FinancialDetailsTestConstants {
   )
 
   val creditAndRefundDocumentDetailList = List(
-    documentDetailModel(outstandingAmount = Some(BigDecimal(-100.00)), paymentLotItem = Some("1"), paymentLot = Some("01")),
-    documentDetailModel(outstandingAmount = Some(BigDecimal(-500.00)), paymentLotItem = Some("2"), paymentLot = Some("02"))
+    documentDetailModel(transactionId = id1040000124, outstandingAmount = Some(BigDecimal(-100.00)), paymentLotItem = Some("1"),
+      paymentLot = Some("01")),
+    documentDetailModel(transactionId = id1040000125, outstandingAmount = Some(BigDecimal(-500.00)), paymentLotItem = Some("2"), paymentLot = Some("02"))
   )
 
   val creditAndRefundDocumentDetailListMFA = List(

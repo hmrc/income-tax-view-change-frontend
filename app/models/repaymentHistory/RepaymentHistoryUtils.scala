@@ -81,7 +81,7 @@ object RepaymentHistoryUtils {
           visuallyHiddenText = s"${payment.dueDate.get} ${payment.amount.getOrElse(throw MissingFieldException("Amount")).abs.toCurrency}"
         ))
       } else {
-        if (payment.validMFACreditDescription()) {
+        if (payment.validMFACreditType()) {
           if (MFACreditsEnabled) {
             Some(PaymentHistoryEntry(
               date = payment.documentDate,
