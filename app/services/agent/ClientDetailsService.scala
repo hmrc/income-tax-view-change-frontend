@@ -42,14 +42,14 @@ class ClientDetailsService @Inject()(citizenDetailsConnector: CitizenDetailsConn
           case IncomeSourceDetailsError(code, _) if code == 404 => Future.successful(Left(BusinessDetailsNotFound))
           case IncomeSourceDetailsError(code, _) => {
             Logger("application").error(s"[ClientDetailsService][checkClientDetails] - Error retrieving Business Details, status: $code")
-            Future.successful(Left(BusinessDetailsNotFound))
+            Future.successful(Left(UnexpectedResponse))
           }
           case _ => Future.successful(Left(UnexpectedResponse))
         }
       case CitizenDetailsErrorModel(code, _) if code == 404 => Future.successful(Left(CitizenDetailsNotFound))
       case CitizenDetailsErrorModel(code, _) => {
         Logger("application").error(s"[ClientDetailsService][checkClientDetails] - Error retrieving Citizen Details, status: $code")
-        Future.successful(Left(CitizenDetailsNotFound))
+        Future.successful(Left(UnexpectedResponse))
       }
       case _ => Future.successful(Left(UnexpectedResponse))
     }
