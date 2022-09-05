@@ -282,7 +282,11 @@
                     @messages("tax-year-summary.total-due")
                 } else {
                     @{
-                        messages("tax-year-summary.tax-calculation.date", s"${taxYear - 1}", s"$taxYear")
+                        if(model.inYearCalculationRunDate.isDefined) {
+                            messages("tax-year-summary.tax-calculation.date", s"${taxYear - 1}", s"${model.inYearCalculationRunDate.get} $taxYear")
+                        } else {
+                            messages("tax-year-summary.tax-calculation.date.not.found")
+                        }
                     }
                 }
                 </dt>

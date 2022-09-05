@@ -296,7 +296,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
       }
 
       "display the estimate due for an ongoing tax year" in new Setup(estimateView()) {
-        layoutContent.selectHead("dl > div:nth-child(2) > dt:nth-child(1)").text shouldBe taxCalculation
+        layoutContent.selectHead("dl > div:nth-child(2) > dt:nth-child(1)").text shouldBe "No in year calculation can be run"
         layoutContent.selectHead("dl > div:nth-child(2) > dd:nth-child(2)").text shouldBe modelComplete(Some(false)).taxDue.toCurrencyString
       }
 
@@ -325,7 +325,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
 
       "when in an ongoing year should display the correct heading in the Tax Calculation tab" in new Setup(estimateView()) {
         layoutContent.selectHead(" #income-deductions-contributions-table caption").text shouldBe taxCalculationHeading
-        layoutContent.selectHead("dl > div:nth-child(2) > dt:nth-child(1)").text shouldBe taxCalculation
+        layoutContent.selectHead("dl > div:nth-child(2) > dt:nth-child(1)").text shouldBe "No in year calculation can be run"
       }
 
       "show the unattended calculation info when an unattended calc is returned" in new Setup(unattendedCalcView(unattendedCalc = true)) {

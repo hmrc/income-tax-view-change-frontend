@@ -83,7 +83,7 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
                   )(implicit mtdItUser: MtdItUser[_]): Result = {
     liabilityCalc match {
       case liabilityCalc: LiabilityCalculationResponse =>
-        val taxYearSummaryViewModel: TaxYearSummaryViewModel = TaxYearSummaryViewModel(liabilityCalc)
+        val taxYearSummaryViewModel: TaxYearSummaryViewModel = TaxYearSummaryViewModel(liabilityCalc, taxYear)
         auditingService.extendedAudit(TaxYearSummaryResponseAuditModel(
           mtdItUser, documentDetailsWithDueDates, obligations, Some(taxYearSummaryViewModel), isEnabled(R7bTxmEvents)))
 
@@ -212,9 +212,9 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
     withTaxYearFinancials(taxYear, isAgent) { charges =>
       withObligationsModel(taxYear, isAgent) { obligationsModel =>
         val codingOutEnabled: Boolean = isEnabled(CodingOut)
-        val mtdItId: String = if (isAgent) getClientMtditid else user.mtditid
-        val nino: String = if (isAgent) getClientNino else user.nino
-        calculationService.getLiabilityCalculationDetail(mtdItId, nino, taxYear).map { liabilityCalcResponse =>
+        val mtdItId: String = if(isAgent) getClientMtditid else user.mtditid
+        val nino: String = if(isAgent) getClientNino else user.nino
+        calculationService.getLiabilityCalculationDetail(mtdItId, nino, taxYear).map { liabilityCalcResponse: LiabilityCalculationResponseModel =>
           view(liabilityCalcResponse, charges, taxYear, obligationsModel, codingOutEnabled,
             backUrl = if (isAgent) getAgentBackURL(user.headers.get(REFERER)) else getBackURL(user.headers.get(REFERER), origin),
             origin = origin, isAgent = isAgent)
