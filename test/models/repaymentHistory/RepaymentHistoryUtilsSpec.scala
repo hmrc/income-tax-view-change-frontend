@@ -30,18 +30,19 @@ class RepaymentHistoryUtilsSpec extends TestSupport with Matchers {
 
   val paymentsWithMFA: List[Payment] = List(
     Payment(reference = Some("mfa1"), amount = Some(-10000.00), Some(-150.00), method = Some("method"),
-      documentDescription = Some("ITSA Overpayment Relief"), lot = None, lotItem = None, dueDate = None,
-      documentDate = LocalDate.parse("2020-04-13"), Some("AY777777202201")),
+      documentDescription = Some("mfa1"), lot = None, lotItem = None, dueDate = None,
+      documentDate = LocalDate.parse("2020-04-13"), Some("AY777777202201"), mainType = Some("ITSA Overpayment Relief")),
     Payment(reference = Some("mfa2"), amount = Some(-11000.00), Some(-150.00), method = Some("method"),
-      documentDescription = Some("ITSA Overpayment Relief"), lot = None, lotItem = None, dueDate = None,
-      documentDate = LocalDate.parse("2020-04-12"), Some("AY777777202210")),
+      documentDescription = Some("mfa2"), lot = None, lotItem = None, dueDate = None,
+      documentDate = LocalDate.parse("2020-04-12"), Some("AY777777202210"), mainType = Some("ITSA Overpayment Relief")),
     Payment(reference = Some("cutover1"), amount = Some(-11000.00), Some(-150.00), method = Some("method"),
       documentDescription = Some("desc1"), lot = None, lotItem = None, dueDate = Some(LocalDate.parse("2019-12-25")),
-      documentDate = LocalDate.parse("2019-04-25"), Some("AY777777202202")),
+      documentDate = LocalDate.parse("2019-04-25"), Some("AY777777202202"), mainType = Some("ITSA Cutover Credits")),
     Payment(reference = Some("payment1"), amount = Some(10000), None, Some("Payment"), None, Some("lot"), Some("lotitem"),
-      Some(LocalDate.parse("2019-12-26")), LocalDate.parse("2019-12-25"), Some("DOCID01")),
+      Some(LocalDate.parse("2019-12-26")), LocalDate.parse("2019-12-25"), Some("DOCID01"),
+      mainType = Some("SA Balancing Charge")),
     Payment(Some("payment2"), Some(10000), None, Some("Payment"), None, Some("lot"), Some("lotitem"), Some(LocalDate.parse("2019-12-25")),
-      LocalDate.parse("2019-12-25"), Some("DOCID02"))
+      LocalDate.parse("2019-12-25"), Some("DOCID02"), mainType = Some("SA Balancing Charge"))
   )
 
   val repaymentHistory = List(

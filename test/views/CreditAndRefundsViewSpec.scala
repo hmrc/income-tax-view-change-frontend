@@ -67,10 +67,10 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
     (documentDetailWithDueDateModel(
       paymentLot = None,
       paymentLotItem = None,
-      documentDescription = Some("ITSA Overpayment Relief"),
+      documentDescription = Some("TRM New Charge"),
       outstandingAmount = outstandingAmount,
       originalAmount = Some(BigDecimal(-2400.0))),
-      financialDetail()
+      financialDetail(mainType = "ITSA Overpayment Relief")
     )
   }
 

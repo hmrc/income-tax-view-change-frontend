@@ -53,18 +53,18 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
                                           val customNotFoundErrorView: CustomNotFoundError)
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
+
   def handleRequest(isAgent: Boolean, itvcErrorHandler: ShowInternalServerError, backUrl: String)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
     creditService.getCreditCharges()(implicitly,user) map {
-      case _ if isEnabled(CreditsRefundsRepay) == false =>
+      case _ if isDisabled(CreditsRefundsRepay) =>
         Ok(customNotFoundErrorView()(user, messages))
       case financialDetailsModel : List[FinancialDetailsModel] =>
         val balance: Option[BalanceDetails] = financialDetailsModel.headOption.map(balance => balance.balanceDetails)
 
         val credits: List[(DocumentDetailWithDueDate, FinancialDetail)] = financialDetailsModel.flatMap(
-          financialDetails => sortCreditsGroupedPaymentTypes(financialDetails.getAllDocumentDetailsWithDueDates().zip(financialDetails.financialDetails))
+          financialDetailsModel => sortChargesGroupedPaymentTypes(financialDetailsModel.getAllDocumentDetailsWithDueDatesAndFinancialDetails())
         )
-
         Ok(view(credits, balance, isAgent, backUrl, isEnabled(MFACreditsAndDebits))(user, user, messages))
       case _ => Logger("application").error(
         s"${if (isAgent) "[Agent]"}[CreditAndRefundController][show] Invalid response from financial transactions")
@@ -98,29 +98,25 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
     }
   }
 
-  private def sortCreditsGroupedPaymentTypes(credits: List[(DocumentDetailWithDueDate, FinancialDetail)])
+  private def sortChargesGroupedPaymentTypes(charges: List[(DocumentDetailWithDueDate, FinancialDetail)])
   : List[(DocumentDetailWithDueDate, FinancialDetail)] = {
 
-    def sortCredits(credits: List[(DocumentDetailWithDueDate, FinancialDetail)])
+    def sortCharges(charges: List[(DocumentDetailWithDueDate, FinancialDetail)])
     : List[(DocumentDetailWithDueDate, FinancialDetail)] = {
-      credits
+      charges
         .sortBy(_._1.documentDetail.paymentOrChargeCredit).reverse
     }
 
-    val sortingOrderPaymentType = Map("ITS" -> 0, "New" -> 1, "Pay" -> 2)
-
-    val creditsGroupedPaymentTypes = credits
+    val chargesGroupedPaymentTypes = charges
       .groupBy[String] {
-        credits => {
-          credits._1.documentDetail.documentDescription.get.substring(0, 3)
+        charges => {
+          charges._1.documentDetail.documentDescription.get.substring(0, 3)
         }
-      }
-      .toList.sortWith((p1, p2) => sortingOrderPaymentType(p1._1) < sortingOrderPaymentType(p2._1))
-      .map {
-        case (documentId, credits) => (documentId, sortCredits(credits))
-    }.flatMap {
-        case (_, credits) => credits
-    }
-    creditsGroupedPaymentTypes
+      }.map {
+      case (documentId, charges) => (documentId, sortCharges(charges))
+    }.map {
+      case (_, charges) => charges
+    }.toList.flatten.sortBy(_._1.documentDetail.documentDescription.get.substring(0, 3))
+    chargesGroupedPaymentTypes
   }
 }
