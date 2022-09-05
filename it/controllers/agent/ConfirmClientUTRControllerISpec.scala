@@ -4,6 +4,10 @@ package controllers.agent
 import config.featureswitch.FeatureSwitching
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.AuthStub.titleInternalServer
+import org.hamcrest.core.Is.is
+import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
+import org.junit.Assert.assertThat
 import play.api.http.Status._
 import play.api.libs.ws.WSResponse
 import testConstants.BaseIntegrationTestConstants.clientDetailsWithoutConfirmation
@@ -60,6 +64,22 @@ class ConfirmClientUTRControllerISpec extends ComponentSpecBase with FeatureSwit
       val result: WSResponse = IncomeTaxViewChangeFrontend.getConfirmClientUTR(clientDetailsWithoutConfirmation)
 
       Then("The confirm client's utr page is returned to the user")
+      result should have(
+        httpStatus(OK),
+        pageTitleAgent("agent.confirmClient.heading")
+      )
+    }
+
+    s"return $OK with empty black banner on the confirm client utr page" in {
+      stubAuthorisedAgentUser(authorised = true)
+
+      val result: WSResponse = IncomeTaxViewChangeFrontend.getConfirmClientUTR(clientDetailsWithoutConfirmation)
+
+      val document: Document = Jsoup.parse(result.toString)
+      assertThat(document.select(".govuk-header__content")
+        .select(".hmrc-header__service-name hmrc-header__service-name--linked")
+        .text(), is(""));
+
       result should have(
         httpStatus(OK),
         pageTitleAgent("agent.confirmClient.heading")

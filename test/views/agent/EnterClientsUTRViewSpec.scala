@@ -109,5 +109,10 @@ class EnterClientsUTRViewSpec extends ViewSpec {
         }
       }
     }
+
+    "have the black banner empty" in new Setup(pageWithoutError) {
+      document.select(".govuk-header__content")
+        .select(".hmrc-header__service-name hmrc-header__service-name--linked").text shouldBe ("")
+    }
   }
 }

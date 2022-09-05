@@ -19,6 +19,10 @@ import config.featureswitch.FeatureSwitching
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.AuthStub.{titleInternalServer, titleTechError}
 import helpers.servicemocks.{CitizenDetailsStub, IncomeTaxViewChangeStub}
+import org.hamcrest.core.Is.is
+import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
+import org.junit.Assert.assertThat
 import play.api.http.Status._
 import play.api.libs.json.Json
 import play.api.libs.ws.WSResponse
@@ -294,6 +298,22 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
         result should have(
           httpStatus(INTERNAL_SERVER_ERROR),
           pageTitleIndividual(titleTechError)
+        )
+      }
+
+      s"return $OK with empty black banner on the enter client utr page" in {
+        stubAuthorisedAgentUser(authorised = true)
+
+        val result: WSResponse = IncomeTaxViewChangeFrontend.getConfirmClientUTR(clientDetailsWithoutConfirmation)
+
+        val document: Document = Jsoup.parse(result.toString)
+        assertThat(document.select(".govuk-header__content")
+          .select(".hmrc-header__service-name hmrc-header__service-name--linked")
+          .text(), is(""));
+
+        result should have(
+          httpStatus(OK),
+          pageTitleAgent("agent.enter_clients_utr.heading")
         )
       }
     }
