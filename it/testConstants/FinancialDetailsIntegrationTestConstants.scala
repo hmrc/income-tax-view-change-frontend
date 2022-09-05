@@ -390,30 +390,46 @@ object FinancialDetailsIntegrationTestConstants {
     taxYear = LocalDate.now().getYear.toString
   )
 
-  val financialDetailsWithMFADebits: FinancialDetailsModel = testFinancialDetailsModelWithChargesOfSameType(
-    documentDescription = List(Some("TRM New Charge"), Some("TRM New Charge")),
-    mainType = List(Some("ITSA PAYE Charge"), Some("ITSA Calc Error Correction")),
-    transactionIds = List(Some("mfaId1"), Some("mfaId2")),
-    transactionDate = Some(LocalDate.parse("2020-08-16")),
-    `type` = Some("type"),
-    totalAmount = Some(100),
-    originalAmount = Some(100),
-    clearedAmount = Some(100),
-    chargeType = Some("NIC4 Wales"),
-    dueDate = List(Some(LocalDate.now().plusDays(30)), Some(LocalDate.now().minusDays(30))),
-    subItemId = Some("1"),
-    amount = Some(100),
-    clearingDate = Some(LocalDate.parse("2020-08-16")),
-    clearingReason = Some("clearingReason"),
-    outgoingPaymentMethod = Some("outgoingPaymentMethod"),
-    paymentReference = Some("paymentReference"),
-    paymentAmount = Some(100),
-    paymentMethod = Some("paymentMethod"),
-    paymentLot = Some("paymentLot"),
-    paymentLotItem = Some("paymentLotItem"),
-    paymentId = Some("paymentId"),
-    outstandingAmount = List(Some(2500), Some(500)),
-    taxYear = LocalDate.now().getYear.toString
+  val financialDetailsWithMFADebits: FinancialDetailsModel = FinancialDetailsModel(
+    BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
+    None,
+    List(
+      DocumentDetail(
+        taxYear = LocalDate.now.getYear.toString,
+        transactionId = "testMFA1",
+        documentDescription = Some("ITSA PAYE Charge"),
+        documentText = Some("documentText"),
+        documentDate = LocalDate.of(2018, 3, 29),
+        originalAmount = Some(1234.00),
+        outstandingAmount = Some(0),
+        interestOutstandingAmount = None,
+        interestEndDate = None
+      ),
+      DocumentDetail(
+        taxYear = LocalDate.now.getYear.toString,
+        transactionId = "testMFA2",
+        documentDescription = Some("ITSA Calc Error Correction"),
+        documentText = Some("documentText"),
+        documentDate = LocalDate.of(2018, 3, 29),
+        originalAmount = Some(2234.00),
+        outstandingAmount = Some(0),
+        interestOutstandingAmount = None,
+        interestEndDate = None
+      )),
+    List(
+      FinancialDetail(
+        taxYear = LocalDate.now.getYear.toString,
+        transactionId = Some("testMFA1"),
+        mainType = Some("ITSA PAYE Charge"),
+        items = Some(Seq(SubItem(Some(LocalDate.of(2021, 4, 23)), amount = Some(12), transactionId = Some("testMFA1"))))
+      ),
+      FinancialDetail(
+        taxYear = LocalDate.now.getYear.toString,
+        transactionId = Some("testMFA2"),
+        mainType = Some("ITSA Calc Error Correction"),
+        items = Some(Seq(SubItem(Some(LocalDate.of(2021, 4, 22)), amount = Some(12), transactionId = Some("testMFA2"))))
+      )
+    )
   )
 
   val whatYouOweDataWithDataDueIn30Days: WhatYouOweChargesList = WhatYouOweChargesList(

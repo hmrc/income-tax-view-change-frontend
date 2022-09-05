@@ -52,7 +52,7 @@ class TaxYearSummaryViewModelSpec extends UnitSpec {
           forecastIncomeTaxAndNics = Some(5000.99)
         )
 
-        TaxYearSummaryViewModel(liabilityCalculationModelSuccessFull,taxYear = 2022) shouldBe expectedTaxYearSummaryViewModel
+        TaxYearSummaryViewModel(liabilityCalculationModelSuccessful,taxYear = 2022) shouldBe expectedTaxYearSummaryViewModel
       }
     }
 

@@ -16,19 +16,17 @@
 
 package models
 
-import testConstants.BaseTestConstants._
-import testConstants.NextUpdatesTestConstants._
-import testConstants.{BaseTestConstants, NextUpdatesTestConstants}
 import implicits.ImplicitDateFormatter
-
-import javax.inject.Inject
 import models.nextUpdates._
 import org.scalatest.Matchers
 import play.api.libs.json.{JsSuccess, Json}
-import testUtils.UnitSpec
-import uk.gov.hmrc.play.language.LanguageUtils
+import testConstants.BaseTestConstants._
+import testConstants.BusinessDetailsTestConstants.obligationsAllDeadlinesSuccessNotValidObligationType
+import testConstants.NextUpdatesTestConstants._
+import testConstants.{BaseTestConstants, NextUpdatesTestConstants}
+import testUtils.TestSupport
 
-class NextUpdatesResponseModelSpec @Inject()(val languageUtils: LanguageUtils) extends UnitSpec with Matchers with ImplicitDateFormatter {
+class NextUpdatesResponseModelSpec extends TestSupport with Matchers with ImplicitDateFormatter {
 
 
   "The NextUpdatesModel" should {
@@ -159,6 +157,12 @@ class NextUpdatesResponseModelSpec @Inject()(val languageUtils: LanguageUtils) e
         valid => valid) shouldBe nextUpdatesDataSelfEmploymentSuccessModel
     }
 
+    "call to .currentCrystDeadlines should return sorted obligations by Crystallised obligationType" in {
+      val nextUpdatesModel: NextUpdatesModel = NextUpdatesModel(testSelfEmploymentId, List(openObligation, crystallisedObligation, quarterlyBusinessObligation, crystallisedObligationTwo))
+
+      nextUpdatesModel.currentCrystDeadlines shouldBe List(crystallisedObligation, crystallisedObligationTwo)
+    }
+
   }
 
   "The NextUpdatesErrorModel" should {
@@ -187,12 +191,32 @@ class NextUpdatesResponseModelSpec @Inject()(val languageUtils: LanguageUtils) e
       "calling .allDeadlinesWithSource" in {
         NextUpdatesTestConstants.obligationsAllDeadlinesSuccessModel.allDeadlinesWithSource()(
           BaseTestConstants.testMtdItUser) shouldBe List(
-          NextUpdateModelWithIncomeType("Property", overdueEOPSObligation),
-          NextUpdateModelWithIncomeType("business", overdueObligation),
-          NextUpdateModelWithIncomeType("business", openObligation),
-          NextUpdateModelWithIncomeType("Property", openEOPSObligation),
-          NextUpdateModelWithIncomeType("Crystallised", crystallisedObligation)
+          NextUpdateModelWithIncomeType("nextUpdates.propertyIncome", overdueEOPSObligation),
+          NextUpdateModelWithIncomeType("nextUpdates.business", overdueObligation),
+          NextUpdateModelWithIncomeType("nextUpdates.business", openObligation),
+          NextUpdateModelWithIncomeType("nextUpdates.propertyIncome", openEOPSObligation),
+          NextUpdateModelWithIncomeType("nextUpdates.crystallisedAll", crystallisedObligation)
         )
+      }
+    }
+
+    "return a list of all models with source in dateReceived order if the previous flag is set to true" when {
+
+      "calling .allDeadlinesWithSource" in {
+        NextUpdatesTestConstants.obligationsAllDeadlinesWithDateReceivedSuccessModel.allDeadlinesWithSource(previous = true)(
+          BaseTestConstants.testMtdItUser) shouldBe List(
+          NextUpdateModelWithIncomeType("nextUpdates.business", openObligation.copy(dateReceived = Some(mockedCurrentTime20171031.plusDays(1)))),
+          NextUpdateModelWithIncomeType("nextUpdates.propertyIncome", overdueEOPSObligation.copy(dateReceived = Some(mockedCurrentTime20171031.minusDays(3)))),
+          NextUpdateModelWithIncomeType("nextUpdates.crystallisedAll", crystallisedObligation.copy(dateReceived = Some(mockedCurrentTime20171031.minusDays(6))))
+        )
+      }
+    }
+
+    "return an empty list" when {
+
+      "calling .allDeadlinesWithSource" in {
+        obligationsAllDeadlinesSuccessNotValidObligationType.allDeadlinesWithSource()(
+          BaseTestConstants.testMtdItUserNoIncomeSource) shouldBe List()
       }
     }
 
@@ -201,23 +225,23 @@ class NextUpdatesResponseModelSpec @Inject()(val languageUtils: LanguageUtils) e
       "calling .allQuarterly" in {
         NextUpdatesTestConstants.obligationsAllDeadlinesSuccessModel.allQuarterly(
           BaseTestConstants.testMtdItUser) shouldBe List(
-          NextUpdateModelWithIncomeType("business", overdueObligation),
-          NextUpdateModelWithIncomeType("business", openObligation)
+          NextUpdateModelWithIncomeType("nextUpdates.business", overdueObligation),
+          NextUpdateModelWithIncomeType("nextUpdates.business", openObligation)
         )
       }
 
       "calling .allEops" in {
         NextUpdatesTestConstants.obligationsAllDeadlinesSuccessModel.allEops(
           BaseTestConstants.testMtdItUser) shouldBe List(
-          NextUpdateModelWithIncomeType("Property", overdueEOPSObligation),
-          NextUpdateModelWithIncomeType("Property", openEOPSObligation)
+          NextUpdateModelWithIncomeType("nextUpdates.propertyIncome", overdueEOPSObligation),
+          NextUpdateModelWithIncomeType("nextUpdates.propertyIncome", openEOPSObligation)
         )
       }
 
       "calling .allCrystallised" in {
         NextUpdatesTestConstants.obligationsAllDeadlinesSuccessModel.allCrystallised(
           BaseTestConstants.testMtdItUser) shouldBe List(
-          NextUpdateModelWithIncomeType("Crystallised", crystallisedObligation)
+          NextUpdateModelWithIncomeType("nextUpdates.crystallisedAll", crystallisedObligation)
         )
       }
     }

@@ -69,7 +69,7 @@ class DeductionsSummaryControllerSpec extends TestSupport with MockCalculationSe
       lazy val document = result.toHtmlDocument
 
       "render the Allowances and Deductions page" in {
-        mockCalculationSuccessFullNew(testMtditid)
+        mockCalculationSuccessfulNew(testMtditid)
         status(result) shouldBe Status.OK
         document.title() shouldBe allowancesAndDeductionsServiceNameIndividual
         document.getElementById("total-value").text() shouldBe "£17,500.99"
@@ -102,7 +102,7 @@ class DeductionsSummaryControllerSpec extends TestSupport with MockCalculationSe
   "showDeductionsSummaryAgent" when {
     "render the Allowances and Deductions page with full calc data" in {
       setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-      mockCalculationSuccessFullNew(taxYear = testYear)
+      mockCalculationSuccessfulNew(taxYear = testYear)
 
       val result: Future[Result] = TestDeductionsSummaryController.showDeductionsSummaryAgent(taxYear = testYear)(fakeRequestConfirmedClient("AB123456C"))
       val document = result.toHtmlDocument
