@@ -126,14 +126,10 @@ class CreditAndRefundControllerSpec extends MockAuthenticationPredicate with Moc
         status(result) shouldBe Status.OK
         status(resultAgent) shouldBe Status.OK
         val doc : Document = Jsoup.parse(contentAsString(result))
-        assertThat(doc.select("#main-content")
-          .select("li:nth-child(1)").select("p").first().text(),
-          is("£500.00 " +
-            messages("credit-and-refund.payment") + " 15 June 2018"))
-        assertThat(doc.select("#main-content")
-          .select("li:nth-child(2)").select("p").first().text(),
-          is("£100.00 " +
-            messages("credit-and-refund.payment") + " 15 June 2018"))
+        doc.select("#main-content").select("li:nth-child(1)")
+          .select("p").first().text() shouldBe "£500.00 " + messages("credit-and-refund.payment") + " 15 June 2018"
+        doc.select("#main-content").select("li:nth-child(2)")
+          .select("p").first().text() shouldBe "£100.00 " + messages("credit-and-refund.payment") + " 15 June 2018"
       }
 
       "redirect to the custom not found error page" in new Setup {

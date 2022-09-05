@@ -139,7 +139,7 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
       case (true, false, false) => creditsFromHMRC
       case (false, true, false) => cutOverCredits
       case (false, false, true) => payment
-      case (_, _, _) => throw new Exception("Credit Type Not Found")
+      case (_, _, _) => ""
     }
   }
 
