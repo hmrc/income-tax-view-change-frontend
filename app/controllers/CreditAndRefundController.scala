@@ -34,7 +34,6 @@ import views.html.errorPages.CustomNotFoundError
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-import sext._
 
 class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAuthorisedFunctions,
                                           val creditService: CreditService,
