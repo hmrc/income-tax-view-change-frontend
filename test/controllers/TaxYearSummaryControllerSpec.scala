@@ -25,16 +25,18 @@ import mocks.MockItvcErrorHandler
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicateNoCache}
 import mocks.services.{MockCalculationService, MockFinancialDetailsService, MockNextUpdatesService}
 import models.financialDetails.DocumentDetailWithDueDate
+import models.financialDetails.MfaDebitUtils.filterMFADebits
 import models.liabilitycalculation.viewmodels.TaxYearSummaryViewModel
 import models.nextUpdates.{NextUpdatesErrorModel, ObligationsModel}
 import org.jsoup.Jsoup
+import org.scalatest.Assertion
 import play.api.http.Status
 import play.api.http.Status.INTERNAL_SERVER_ERROR
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers._
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testAgentAuthRetrievalSuccessNoEnrolment, testMtditid, testTaxYear, testYearPlusOne, testYearPlusTwo}
 import testConstants.FinancialDetailsTestConstants._
-import testConstants.NewCalcBreakdownUnitTestConstants.{liabilityCalculationModelSuccessFull, liabilityCalculationModelSuccessFullNotCrystallised}
+import testConstants.NewCalcBreakdownUnitTestConstants.{liabilityCalculationModelSuccessful, liabilityCalculationModelSuccessfulNotCrystallised}
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.BearerTokenExpired
 import uk.gov.hmrc.http.InternalServerException
@@ -88,17 +90,17 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
       else disable(ForecastCalculation)
       mockSingleBusinessIncomeSource()
       if (crystallised) {
-        mockCalculationSuccessFullNew(testMtditid, taxYear = taxYear)
+        mockCalculationSuccessfulNew(testMtditid, taxYear = taxYear)
       } else if (calcDataNotFound) {
         mockCalculationNotFoundNew(testMtditid, year = taxYear)
-      } else mockCalculationSuccessFullNotCrystallised(testMtditid, taxYear = taxYear)
+      } else mockCalculationSuccessfulNotCrystallised(testMtditid, taxYear = taxYear)
       mockFinancialDetailsSuccess(taxYear = taxYear)
       mockgetNextUpdates(fromDate = LocalDate.of(taxYear - 1, 4, 6),
         toDate = LocalDate.of(taxYear, 4, 5))(
         response = testObligtionsModel
       )
 
-      val calcModel = if (crystallised) liabilityCalculationModelSuccessFull else liabilityCalculationModelSuccessFullNotCrystallised
+      val calcModel = if (crystallised) liabilityCalculationModelSuccessful else liabilityCalculationModelSuccessfulNotCrystallised
       val calcOverview: Option[TaxYearSummaryViewModel] = if (calcDataNotFound) None else Some(TaxYearSummaryViewModel(calcModel))
       val expectedContent: String = taxYearSummaryView(
         taxYear,
@@ -140,14 +142,14 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
     "all calls are returned correctly" should {
       "show the Tax Year Summary Page" in {
         mockSingleBusinessIncomeSource()
-        mockCalculationSuccessFullNew(testMtditid)
+        mockCalculationSuccessfulNew(testMtditid)
         mockFinancialDetailsSuccess()
         mockgetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
           toDate = LocalDate.of(testTaxYear, 4, 5))(
           response = testObligtionsModel
         )
 
-        val calcOverview: TaxYearSummaryViewModel = TaxYearSummaryViewModel(liabilityCalculationModelSuccessFull)
+        val calcOverview: TaxYearSummaryViewModel = TaxYearSummaryViewModel(liabilityCalculationModelSuccessful)
         val expectedContent: String = taxYearSummaryView(
           testTaxYear,
           Some(calcOverview),
@@ -170,14 +172,14 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
     "all calls are returned correctly and Referer was a Home page" should {
       "show the Tax Year Summary Page and back link should be to the Home page" in {
         mockSingleBusinessIncomeSource()
-        mockCalculationSuccessFullNew(testMtditid)
+        mockCalculationSuccessfulNew(testMtditid)
         mockFinancialDetailsSuccess()
         mockgetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
           toDate = LocalDate.of(testTaxYear, 4, 5))(
           response = testObligtionsModel
         )
 
-        val calcOverview: TaxYearSummaryViewModel = TaxYearSummaryViewModel(liabilityCalculationModelSuccessFull)
+        val calcOverview: TaxYearSummaryViewModel = TaxYearSummaryViewModel(liabilityCalculationModelSuccessful)
         val expectedContent: String = taxYearSummaryView(
           testTaxYear,
           Some(calcOverview),
@@ -202,7 +204,7 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
         enable(CodingOut)
 
         mockSingleBusinessIncomeSource()
-        mockCalculationSuccessFullNew(testMtditid)
+        mockCalculationSuccessfulNew(testMtditid)
         mockFinancialDetailsSuccess(
           financialDetailsModelResponse = financialDetails(
             documentDetails = documentDetailClass2Nic.documentDetail
@@ -213,7 +215,7 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
           response = testObligtionsModel
         )
 
-        val calcOverview: TaxYearSummaryViewModel = TaxYearSummaryViewModel(liabilityCalculationModelSuccessFull)
+        val calcOverview: TaxYearSummaryViewModel = TaxYearSummaryViewModel(liabilityCalculationModelSuccessful)
         val expectedContent: String = taxYearSummaryView(
           testTaxYear,
           Some(calcOverview),
@@ -233,7 +235,7 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
         enable(CodingOut)
 
         mockSingleBusinessIncomeSource()
-        mockCalculationSuccessFullNew(testMtditid)
+        mockCalculationSuccessfulNew(testMtditid)
         mockFinancialDetailsSuccess(
           financialDetailsModelResponse = financialDetails(
             documentDetails = documentDetailPaye.documentDetail
@@ -244,7 +246,7 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
           response = testObligtionsModel
         )
 
-        val calcOverview: TaxYearSummaryViewModel = TaxYearSummaryViewModel(liabilityCalculationModelSuccessFull)
+        val calcOverview: TaxYearSummaryViewModel = TaxYearSummaryViewModel(liabilityCalculationModelSuccessful)
         val expectedContent: String = taxYearSummaryView(
           testTaxYear,
           Some(calcOverview),
@@ -266,7 +268,7 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
         disable(CodingOut)
 
         mockSingleBusinessIncomeSource()
-        mockCalculationSuccessFullNew(testMtditid)
+        mockCalculationSuccessfulNew(testMtditid)
         mockFinancialDetailsSuccess(
           financialDetailsModelResponse = financialDetails(
             documentDetails = documentDetailClass2Nic.documentDetail
@@ -277,7 +279,7 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
           response = testObligtionsModel
         )
 
-        val calcOverview: TaxYearSummaryViewModel = TaxYearSummaryViewModel(liabilityCalculationModelSuccessFull)
+        val calcOverview: TaxYearSummaryViewModel = TaxYearSummaryViewModel(liabilityCalculationModelSuccessful)
         val expectedContent: String = taxYearSummaryView(
           testTaxYear,
           Some(calcOverview),
@@ -297,7 +299,7 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
         disable(CodingOut)
 
         mockSingleBusinessIncomeSource()
-        mockCalculationSuccessFullNew(testMtditid)
+        mockCalculationSuccessfulNew(testMtditid)
         mockFinancialDetailsSuccess(
           financialDetailsModelResponse = financialDetails(
             documentDetails = documentDetailPaye.documentDetail
@@ -308,7 +310,7 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
           response = testObligtionsModel
         )
 
-        val calcOverview: TaxYearSummaryViewModel = TaxYearSummaryViewModel(liabilityCalculationModelSuccessFull)
+        val calcOverview: TaxYearSummaryViewModel = TaxYearSummaryViewModel(liabilityCalculationModelSuccessful)
         val expectedContent: String = taxYearSummaryView(
           testTaxYear,
           Some(calcOverview),
@@ -325,10 +327,47 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
       }
     }
 
+    "MFA Debits" should {
+      def testMFADebits(MFAEnabled: Boolean): Assertion = {
+        if (MFAEnabled) enable(MFACreditsAndDebits) else disable(MFACreditsAndDebits)
+
+        mockSingleBusinessIncomeSource()
+        mockCalculationSuccessfulNew(testMtditid)
+        mockFinancialDetailsSuccess(financialDetailsModelResponse = MFADebitsFinancialDetails)
+        mockgetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
+          toDate = LocalDate.of(testTaxYear, 4, 5))(
+          response = testObligtionsModel
+        )
+
+        val calcOverview: TaxYearSummaryViewModel = TaxYearSummaryViewModel(liabilityCalculationModelSuccessful)
+        val charges = if (MFAEnabled) MFADebitsDocumentDetailsWithDueDates else testEmptyChargesList
+        val expectedContent: String = taxYearSummaryView(
+          testTaxYear,
+          Some(calcOverview),
+          charges,
+          testObligtionsModel,
+          taxYearsBackLink,
+          codingOutEnabled = true
+        ).toString
+        val result = TestTaxYearSummaryController.renderTaxYearSummaryPage(testTaxYear)(fakeRequestWithActiveSessionWithReferer(referer = taxYearsBackLink))
+
+        status(result) shouldBe Status.OK
+        contentAsString(result) shouldBe expectedContent
+      }
+
+      "display MFA Debits when FS is enabled" in {
+        testMFADebits(true)
+      }
+      "not display MFA Debits when FS is disabled" in {
+        testMFADebits(false)
+      }
+    }
+
+
     s"getFinancialDetails returns a $NOT_FOUND" should {
       "show the Tax Year Summary Page" in {
         mockSingleBusinessIncomeSource()
-        mockCalculationSuccessFullNew(testMtditid)
+        mockCalculationSuccessfulNew(testMtditid)
         mockFinancialDetailsNotFound()
         mockgetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
           toDate = LocalDate.of(testTaxYear, 4, 5))(
@@ -336,7 +375,7 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
         )
 
 
-        val calcOverview: TaxYearSummaryViewModel = TaxYearSummaryViewModel(liabilityCalculationModelSuccessFull)
+        val calcOverview: TaxYearSummaryViewModel = TaxYearSummaryViewModel(liabilityCalculationModelSuccessful)
         val expectedContent: String = taxYearSummaryView(
           testTaxYear,
           Some(calcOverview),
@@ -560,7 +599,7 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
       "show the tax year summary page" in {
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         mockBothIncomeSources()
-        mockCalculationSuccessFullNew(nino = "AA111111A", taxYear = testYearPlusTwo)
+        mockCalculationSuccessfulNew(nino = "AA111111A", taxYear = testYearPlusTwo)
         setupMockGetFinancialDetailsWithTaxYearAndNino(testYearPlusTwo, "AA111111A")(financialDetailsModel(testYearPlusTwo))
         mockgetNextUpdates(fromDate = LocalDate.of(testYearPlusOne, 4, 6), toDate = LocalDate.of(testYearPlusTwo, 4, 5))(
           ObligationsModel(Nil)
@@ -580,7 +619,7 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
 
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         mockBothIncomeSources()
-        mockCalculationSuccessFullNew(nino = "AA111111A", taxYear = testYearPlusTwo)
+        mockCalculationSuccessfulNew(nino = "AA111111A", taxYear = testYearPlusTwo)
         setupMockGetFinancialDetailsWithTaxYearAndNino(testYearPlusTwo, "AA111111A")(financialDetails(
           documentDetails = documentDetailClass2Nic.documentDetail
         ))
@@ -588,7 +627,7 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
           ObligationsModel(Nil)
         )
 
-        val calcOverview: TaxYearSummaryViewModel = TaxYearSummaryViewModel(liabilityCalculationModelSuccessFull)
+        val calcOverview: TaxYearSummaryViewModel = TaxYearSummaryViewModel(liabilityCalculationModelSuccessful)
         val expectedContent: String = taxYearSummaryView(
           testYearPlusTwo,
           Some(calcOverview),

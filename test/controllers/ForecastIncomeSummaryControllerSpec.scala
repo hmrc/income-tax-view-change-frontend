@@ -31,7 +31,7 @@ import play.api.test.Helpers.{charset, contentType, _}
 import services.IncomeSourceDetailsService
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testMtditid, testMtditidAgent, testTaxYear}
 import testConstants.IncomeSourceDetailsTestConstants.businessIncome2018and2019
-import testConstants.NewCalcBreakdownUnitTestConstants.liabilityCalculationModelSuccessFull
+import testConstants.NewCalcBreakdownUnitTestConstants.liabilityCalculationModelSuccessful
 import testUtils.TestSupport
 import views.html.ForecastIncomeSummary
 
@@ -74,7 +74,7 @@ class ForecastIncomeSummaryControllerSpec extends TestSupport with MockCalculati
 
         "return Status Not Found" in {
           disable(ForecastCalculation)
-          mockCalculationSuccessFullNew(testMtditid)
+          mockCalculationSuccessfulNew(testMtditid)
           status(result) shouldBe Status.NOT_FOUND
         }
 
@@ -95,7 +95,7 @@ class ForecastIncomeSummaryControllerSpec extends TestSupport with MockCalculati
 
       "given a tax year which can be found in ETMP" should {
         val backlink = "/report-quarterly/income-and-expenses/view/tax-year-summary/2018"
-        val endOfYearEstimateModel = liabilityCalculationModelSuccessFull.calculation.get.endOfYearEstimate.get
+        val endOfYearEstimateModel = liabilityCalculationModelSuccessful.calculation.get.endOfYearEstimate.get
         val expectedContent: String = forecastIncomeView(
           endOfYearEstimateModel = endOfYearEstimateModel,
           taxYear = testTaxYear,
@@ -106,7 +106,7 @@ class ForecastIncomeSummaryControllerSpec extends TestSupport with MockCalculati
 
         "return Status OK (200)" in {
           enable(ForecastCalculation)
-          mockCalculationSuccessFullNew(testMtditid)
+          mockCalculationSuccessfulNew(testMtditid)
           status(result) shouldBe Status.OK
         }
 
@@ -167,7 +167,7 @@ class ForecastIncomeSummaryControllerSpec extends TestSupport with MockCalculati
         "return Status Not Found" in {
           disable(ForecastCalculation)
           setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-          mockCalculationSuccessFullNew(testMtditidAgent)
+          mockCalculationSuccessfulNew(testMtditidAgent)
           status(result) shouldBe Status.NOT_FOUND
         }
 
@@ -188,7 +188,7 @@ class ForecastIncomeSummaryControllerSpec extends TestSupport with MockCalculati
 
       "given a tax year which can be found in ETMP" should {
         val backlink = "/report-quarterly/income-and-expenses/view/agents/tax-year-summary/2018"
-        val endOfYearEstimateModel = liabilityCalculationModelSuccessFull.calculation.get.endOfYearEstimate.get
+        val endOfYearEstimateModel = liabilityCalculationModelSuccessful.calculation.get.endOfYearEstimate.get
         val expectedContent: String = forecastIncomeView(
           endOfYearEstimateModel = endOfYearEstimateModel,
           taxYear = testTaxYear,
@@ -200,7 +200,7 @@ class ForecastIncomeSummaryControllerSpec extends TestSupport with MockCalculati
         "return Status OK (200)" in {
           enable(ForecastCalculation)
           setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-          mockCalculationSuccessFullNew(testMtditidAgent)
+          mockCalculationSuccessfulNew(testMtditidAgent)
           status(result) shouldBe Status.OK
         }
 

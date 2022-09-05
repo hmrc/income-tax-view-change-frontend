@@ -33,7 +33,7 @@ import play.api.libs.ws.WSResponse
 import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.IncomeSourceIntegrationTestConstants._
-import testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessFull
+import testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessful
 import testConstants.NewCalcDataIntegrationTestConstants._
 import testConstants.messages.TaxDueSummaryMessages._
 
@@ -131,7 +131,7 @@ class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
 
         IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, testYear)(
           status = OK,
-          body = liabilityCalculationModelSuccessFull
+          body = liabilityCalculationModelSuccessful
         )
 
         When(s"I call GET /report-quarterly/income-and-expenses/view/agents/calculation/2018/tax-due")
@@ -140,7 +140,7 @@ class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
         verifyIncomeSourceDetailsCall(testMtditid)
         IncomeTaxCalculationStub.verifyGetCalculationResponse(testNino, testYear)
 
-        verifyAuditEvent(TaxDueResponseAuditModel(testUser, TaxDueSummaryViewModel(liabilityCalculationModelSuccessFull), testYearInt))
+        verifyAuditEvent(TaxDueResponseAuditModel(testUser, TaxDueSummaryViewModel(liabilityCalculationModelSuccessful), testYearInt))
 
         res should have(
           httpStatus(OK),
