@@ -46,6 +46,7 @@ class ClientDetailsService @Inject()(citizenDetailsConnector: CitizenDetailsConn
             Logger("application").error(s"[ClientDetailsService][checkClientDetails] - Unexpected response retrieving Business Details: $ex")
             Future.successful(Left(UnexpectedResponse))
         }
+      case CitizenDetailsModel(_, _, None) => Future.successful(Left(CitizenDetailsNotFound))
       case CitizenDetailsErrorModel(code, _) if code == 404 => Future.successful(Left(CitizenDetailsNotFound))
       case CitizenDetailsErrorModel(code, _) =>
         Logger("application").error(s"[ClientDetailsService][checkClientDetails] - Error retrieving Citizen Details, status: $code")
