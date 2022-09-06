@@ -34,13 +34,13 @@ class CreditAndRefundControllerISpec extends ComponentSpecBase {
           httpStatus(OK),
           elementTextBySelectorList("#main-content", "li:nth-child(1)", "p")(expectedValue = "£2,000.00 " +
             messagesAPI("credit-and-refund.credit-from-hmrc-title-prt-1") + " " +
-            messagesAPI("credits.drop-down-list.credit-from-an-earlier-tax-year")),
+            messagesAPI("credits.drop-down-list.credit-from-an-earlier-tax-year") + " 0"),
           elementTextBySelectorList("#main-content", "li:nth-child(2)", "p")(expectedValue = "£2,000.00 " +
             messagesAPI("credit-and-refund.credit-from-hmrc-title-prt-1") + " " +
-            messagesAPI("credits.drop-down-list.credit-from-an-earlier-tax-year")),
+            messagesAPI("credits.drop-down-list.credit-from-an-earlier-tax-year") + " 1"),
           elementTextBySelectorList("#main-content", "li:nth-child(3)", "p")(expectedValue = "£2,000.00 " +
             messagesAPI("credit-and-refund.credit-from-hmrc-title-prt-1") + " " +
-            messagesAPI("credits.drop-down-list.credit-from-an-earlier-tax-year")),
+            messagesAPI("credits.drop-down-list.credit-from-an-earlier-tax-year") + " 2"),
           elementTextBySelectorList("#main-content", "li:nth-child(4)", "p")(expectedValue = "£3.00 "
             + messagesAPI("credit-and-refund.refundProgress")),
           elementTextBySelectorList("#main-content", "li:nth-child(5)", "p")(expectedValue = "£2.00 "
