@@ -36,7 +36,7 @@ class CurrencyFormatterSpec extends TestSupport with ImplicitCurrencyFormatter {
       }
     }
 
-    "The CurrencyFormatterInt.toNegativeCurrency" should {
+    "The new CurrencyFormatterInt.toNegativeCurrency" should {
       "return a value as negative" when {
         "the number is more than 0" in {
           val amount: Int = 1
