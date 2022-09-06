@@ -87,6 +87,7 @@ case class FinancialDetail(taxYear: String,
     .filter(_.getPaymentAllocationTextInChargeSummary.isDefined)
 
   def validMFACreditType(): Boolean = MfaCreditUtils.validMFACreditType(mainType)
+  def validCutoverCreditType(): Boolean = mainType.contains("ITSA Cutover Credits")
 }
 
 
