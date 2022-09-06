@@ -723,7 +723,7 @@ object IncomeSourceIntegrationTestConstants {
     "financialDetails" -> Json.arr(
       Json.obj(
         "taxYear" -> taxYear,
-        "mainType" -> "SA Balancing Charge",
+        "mainType" -> "ITSA Cutover Credits",
         "transactionId" -> "1040000123",
         "chargeType" -> "ITSA NI",
         "originalAmount" -> originalAmount,
@@ -736,7 +736,7 @@ object IncomeSourceIntegrationTestConstants {
       ),
       Json.obj(
         "taxYear" -> taxYear,
-        "mainType" -> "SA Payment on Account 1",
+        "mainType" -> "ITSA Cutover Credits",
         "transactionId" -> "1040000124",
         "chargeType" -> "ITSA NI",
         "originalAmount" -> originalAmount,
@@ -753,7 +753,7 @@ object IncomeSourceIntegrationTestConstants {
       ),
       Json.obj(
         "taxYear" -> taxYear,
-        "mainType" -> "SA Payment on Account 2",
+        "mainType" -> "ITSA Cutover Credits",
         "transactionId" -> "1040000125",
         "chargeType" -> "ITSA NI",
         "originalAmount" -> originalAmount,
