@@ -103,9 +103,9 @@ class CreditsSummaryViewSpec extends TestSupport with FeatureSwitching with Impl
       document.selectById("balancing-charge-type-1").select("td:nth-child(3)").first().text() shouldBe creditsTableStatusNotYetAllocatedValue
       document.selectById("balancing-charge-type-1").select("td:nth-child(4)").first().text() shouldBe "£1,400.00"
 
-      document.selectById("h3-credit-from-hmrc-adjustment").text() shouldBe creditsDropDownListCreditFomHmrcAdjustment
-      document.selectById("h3-credit-from-hmrc-adjustment").nextElementSibling().text() shouldBe creditsDropDownListCreditFomHmrcAdjustmentValue
-      document.selectById("h3-credit-from-an-earlier-tax-year").text() shouldBe creditsDropDownListCreditFromAnEarlierTaxYear
+      document.selectById("h2-credit-from-hmrc-adjustment").text() shouldBe creditsDropDownListCreditFomHmrcAdjustment
+      document.selectById("h2-credit-from-hmrc-adjustment").nextElementSibling().text() shouldBe creditsDropDownListCreditFomHmrcAdjustmentValue
+      document.selectById("h2-credit-from-an-earlier-tax-year").text() shouldBe creditsDropDownListCreditFromAnEarlierTaxYear
       document.selectById("sa-note-migrated").text() shouldBe saNoteMigratedIndividual
       document.selectById("sa-note-migrated-online-account-link").text() shouldBe saNoteMigratedOnlineAccountLinkText
       new URL(document.selectById("sa-note-migrated-online-account-link").attr("href")).getPath shouldBe saNoteMigratedOnlineAccountLink
@@ -201,9 +201,9 @@ class CreditsSummaryViewSpec extends TestSupport with FeatureSwitching with Impl
         document.selectById("balancing-charge-type-1").select("td:nth-child(3)").first().text() shouldBe creditsTableStatusNotYetAllocatedValue
         document.selectById("balancing-charge-type-1").select("td:nth-child(4)").first().text() shouldBe "£1,400.00"
 
-        document.selectById("h3-credit-from-hmrc-adjustment").text() shouldBe creditsDropDownListCreditFomHmrcAdjustment
-        document.selectById("h3-credit-from-hmrc-adjustment").nextElementSibling().text() shouldBe creditsDropDownListCreditFomHmrcAdjustmentValue
-        document.selectById("h3-credit-from-an-earlier-tax-year").text() shouldBe creditsDropDownListCreditFromAnEarlierTaxYear
+        document.selectById("h2-credit-from-hmrc-adjustment").text() shouldBe creditsDropDownListCreditFomHmrcAdjustment
+        document.selectById("h2-credit-from-hmrc-adjustment").nextElementSibling().text() shouldBe creditsDropDownListCreditFomHmrcAdjustmentValue
+        document.selectById("h2-credit-from-an-earlier-tax-year").text() shouldBe creditsDropDownListCreditFromAnEarlierTaxYear
         document.selectById("sa-note-migrated-agent").text() shouldBe saNoteMigratedAgent
         document.selectById("sa-note-migrated-agent-online-account-link").text() shouldBe saNoteMigratedOnlineAccountAgentLinkText
         document.selectById("sa-note-migrated-agent-online-account-link").attr("href") shouldBe saNoteMigratedOnlineAccountAgentLink
