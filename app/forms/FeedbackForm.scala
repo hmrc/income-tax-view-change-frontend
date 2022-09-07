@@ -80,7 +80,6 @@ object FeedbackForm {
           data.get(key) match {
             case Some(value) if value.trim.nonEmpty => Right(value.trim)
             case Some(_) => Left(Seq(FormError(key, commentsEmptyError, Nil)))
-            case None => Left(Seq(FormError(key, commentsEmptyError, Nil)))
           }
         }
 
