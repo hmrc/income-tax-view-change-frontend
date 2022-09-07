@@ -68,5 +68,18 @@ class TaxYearSummaryViewModelSpec extends UnitSpec {
           totalTaxableIncome = 0
         )
     }
+    "return in year calculation quarter based on the valid calculation date and tax year" in {
+      val calculationDate = "2023-02-15T09:35:15.094Z"
+      val taxYear = 2023
+      val result = TaxYearSummaryViewModel.getInYearCalculationRunDateQuater(calculationDate, taxYear)
+      result shouldBe Some("third")
+    }
+
+    "return in None based on the invalid calculation date and tax year" in {
+      val calculationDate = "2019-02-15T09:35:15.094Z"
+      val taxYear = 2023
+      val result = TaxYearSummaryViewModel.getInYearCalculationRunDateQuater(calculationDate, taxYear)
+      result shouldBe None
+    }
   }
 }

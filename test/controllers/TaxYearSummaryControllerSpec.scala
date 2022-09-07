@@ -113,7 +113,6 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
       ).toString
 
       val result = TestTaxYearSummaryController.renderTaxYearSummaryPage(taxYear)(fakeRequestWithActiveSessionWithReferer(referer = taxYearsBackLink))
-       val asd = TaxYearSummaryViewModel(calc = calcModel, taxYear = taxYear)
       status(result) shouldBe Status.OK
       contentAsString(result) shouldBe expectedContent
       contentType(result) shouldBe Some("text/html")

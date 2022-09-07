@@ -17,9 +17,9 @@
 package models.liabilitycalculation.viewmodels
 
 import models.liabilitycalculation.LiabilityCalculationResponse
+import utils.DateUtil
 
-import java.time.{LocalDate, LocalDateTime, ZoneId, ZoneOffset}
-import java.time.format.DateTimeFormatter
+import java.time._
 
 case class TaxYearSummaryViewModel(timestamp: Option[String],
                                    crystallised: Option[Boolean],
@@ -30,7 +30,7 @@ case class TaxYearSummaryViewModel(timestamp: Option[String],
                                    totalTaxableIncome: Int,
                                    forecastIncome: Option[Int] = None,
                                    forecastIncomeTaxAndNics: Option[BigDecimal] = None,
-                                   inYearCalculationRunDate: Option[String] = None)
+                                   inYearCalculationRunDateQuater: Option[String] = None)
 
 object TaxYearSummaryViewModel {
   def apply(calc: LiabilityCalculationResponse, taxYear: Int): TaxYearSummaryViewModel = {
@@ -44,7 +44,7 @@ object TaxYearSummaryViewModel {
       totalTaxableIncome = calc.calculation.flatMap(c => c.taxCalculation.map(_.incomeTax.totalTaxableIncome)).getOrElse(0),
       forecastIncome = calc.calculation.flatMap(c => c.endOfYearEstimate.flatMap(_.totalEstimatedIncome)),
       forecastIncomeTaxAndNics = calc.calculation.flatMap(c => c.endOfYearEstimate.flatMap(_.incomeTaxNicAndCgtAmount)),
-      inYearCalculationRunDate = calc.metadata.calculationTimestamp.flatMap(timestamp => getInYearCalculationRunDate(timestamp, taxYear))
+      inYearCalculationRunDateQuater = calc.metadata.calculationTimestamp.flatMap(timestamp => getInYearCalculationRunDateQuater(timestamp, taxYear))
     )
   }
 
@@ -53,22 +53,19 @@ object TaxYearSummaryViewModel {
     case _ => false
   }
 
-  def getInYearCalculationRunDate(calculationTimestamp: String, taxYear: Int): Option[String] = {
-    val firstQuarterstart = LocalDate.parse(s"${taxYear - 1}-04-05")
-    val firstQuarterEnd = LocalDate.parse(s"${taxYear - 1}-07-05")
-    val SecondQuarterEnd = LocalDate.parse(s"${taxYear - 1}-10-05")
-    val thirdQuarterEnd = LocalDate.parse(s"${taxYear}-01-05")
-    val fourthQuarterEnd = LocalDate.parse(s"${taxYear}-04-05")
+  def getInYearCalculationRunDateQuater(calculationTimestamp: String, taxYear: Int): Option[String] = {
+    val firstQuarterstart = DateUtil.getFirstQuaterStart(taxYear)
+    val firstQuarterEnd = DateUtil.getFirstQuaterEnd(taxYear)
+    val SecondQuarterEnd = DateUtil.getSecondQuaterEnd(taxYear)
+    val thirdQuarterEnd = DateUtil.getThirdQuaterEnd(taxYear)
+    val fourthQuarterEnd = DateUtil.getFourthQuaterEnd(taxYear)
 
-    val instant = java.time.Instant.parse(calculationTimestamp)
-    val date = LocalDateTime.ofInstant(instant,ZoneId.of(ZoneOffset.UTC.getId)).toLocalDate
-
-    date match {
+    DateUtil.getLocalDateFromTimestamp(calculationTimestamp) flatMap {
       case date: LocalDate if (date.isBefore(firstQuarterEnd) || date.isEqual(firstQuarterEnd)) && date.isAfter(firstQuarterstart) => None
-      case date: LocalDate if (date.isBefore(SecondQuarterEnd) || date.isEqual(SecondQuarterEnd)) && date.isAfter(firstQuarterEnd) => Some("5th July")
-      case date: LocalDate if (date.isBefore(thirdQuarterEnd) || date.isEqual(thirdQuarterEnd)) && date.isAfter(SecondQuarterEnd) => Some("5th October")
-      case date: LocalDate if (date.isBefore(fourthQuarterEnd) || date.isEqual(fourthQuarterEnd)) && date.isAfter(thirdQuarterEnd) => Some("5th January")
-      case date: LocalDate if date.isAfter(fourthQuarterEnd)  => Some("5th April")
+      case date: LocalDate if (date.isBefore(SecondQuarterEnd) || date.isEqual(SecondQuarterEnd)) && date.isAfter(firstQuarterEnd) => Some("first")
+      case date: LocalDate if (date.isBefore(thirdQuarterEnd) || date.isEqual(thirdQuarterEnd)) && date.isAfter(SecondQuarterEnd) => Some("second")
+      case date: LocalDate if (date.isBefore(fourthQuarterEnd) || date.isEqual(fourthQuarterEnd)) && date.isAfter(thirdQuarterEnd) => Some("third")
+      case date: LocalDate if date.isAfter(fourthQuarterEnd) => Some("fourth")
       case _ => None
     }
   }

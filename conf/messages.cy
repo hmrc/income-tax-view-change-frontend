@@ -178,7 +178,11 @@ tax-year-summary.forecast_total_title                          = Rhagolwg 6 Ebri
 ## Tax Year Summary Page new ##
 tax-year-summary.tax-calculation.no-calc                       = Dim cyfrifiad eto
 tax-year-summary.tax-calculation.no-calc.note                  = Byddwch yn gallu gweld eich cyfrifiad blwyddyn dreth ddiweddaraf yma unwaith y byddwch wedi anfon diweddariad.
-tax-year-summary.tax-calculation.date                          = Cyfrifiad 6 Ebrill {0} i 5 Ionawr {1}
+tax-year-summary.tax-calculation.date.first                    = 6 Ebrill {0} to 5 Gorffennaf {1} calculation
+tax-year-summary.tax-calculation.date.second                   = 6 Ebrill {0} to 5 Hydref {1} calculation
+tax-year-summary.tax-calculation.date.third                    = 6 Ebrill {0} to 5 Ionawr {1} calculation
+tax-year-summary.tax-calculation.date.fourth                   = 6 Ebrill {0} to 5 Ebrill {1} calculation
+tax-year-summary.tax-calculation.date.not.found                = No in year calculation can be run
 tax-year-summary.tax-calculation.unattended-calc               = Rydym wedi diweddaru’r cyfrifiad i chi. Gwiriwch eich meddalwedd cadw cofnodion am ragor o fanylion.
 
 

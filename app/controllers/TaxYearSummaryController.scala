@@ -223,6 +223,7 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
         }
       }
     }
+
   }
 
   def renderTaxYearSummaryPage(taxYear: Int, origin: Option[String] = None): Action[AnyContent] = action.async {

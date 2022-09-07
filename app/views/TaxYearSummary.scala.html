@@ -283,7 +283,8 @@
                 } else {
                     @{
                         if(model.inYearCalculationRunDate.isDefined) {
-                            messages("tax-year-summary.tax-calculation.date", s"${taxYear - 1}", s"${model.inYearCalculationRunDate.get} $taxYear")
+                            val quater = model.inYearCalculationRunDate.get
+                            messages(s"tax-year-summary.tax-calculation.date.$quater", s"${taxYear - 1}", s"$taxYear")
                         } else {
                             messages("tax-year-summary.tax-calculation.date.not.found")
                         }
