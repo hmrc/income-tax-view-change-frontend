@@ -36,6 +36,23 @@ class CurrencyFormatterSpec extends TestSupport with ImplicitCurrencyFormatter {
       }
     }
 
+    "CurrencyFormatter.toNegativeCurrency" should {
+      "return a value as negative" when {
+        "the number is more than 0.01" in {
+          val amount: BigDecimal = 0.01
+          amount.toNegativeCurrency shouldBe Html("&minus;&pound;0.01")
+        }
+        "the number is 0.00" in {
+          val amount: BigDecimal = 0.00
+          amount.toNegativeCurrency shouldBe Html("&pound;0.00")
+        }
+        "return the same value in pence" in {
+          val amount: BigDecimal = 45.00
+          amount.toPence shouldBe 4500
+        }
+      }
+    }
+
     "CurrencyFormatterInt.toNegativeCurrency" should {
       "return a value as negative" when {
         "the number is more than 0" in {
