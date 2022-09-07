@@ -33,19 +33,19 @@ case class PaymentHistoryResponseAuditModel(mtdItUser: MtdItUser[_],
   override val auditType: String = PaymentHistoryResponse
 
   private def getPayment(payment: Payment, desc: String): JsObject = Json.obj("description" -> desc) ++
-    ("paymentDate", if (payment.validMFACreditDescription()) Some(payment.documentDate) else payment.dueDate) ++
+    ("paymentDate", if (payment.validMFACreditType()) Some(payment.documentDate) else payment.dueDate) ++
     ("amount", payment.amount)
 
   private def paymentHistoryMapper(payment: Payment): Option[JsObject] = {
     val isCredit = payment.credit.isDefined
-    val isMFA = payment.validMFACreditDescription()
+    val isMFA = payment.validMFACreditType()
     (R7bTxmEvents, isCredit, isMFA) match {
       case (false, _, _) =>
         if (!isCredit) Some(getPayment(payment, "Payment Made to HMRC")) else None
       case (true, true, true) =>
         if (MFACreditsEnabled) Some(getPayment(payment, "Credit from HMRC adjustment")) else None
       case (true, true, false) =>
-        if (CutOverCreditsEnabled) Some(getPayment(payment, "Payment from an earlier tax year")) else None
+        if (CutOverCreditsEnabled) Some(getPayment(payment, "Credit from an earlier tax year")) else None
       case (true, false, _) => Some(getPayment(payment, "Payment Made to HMRC"))
     }
   }

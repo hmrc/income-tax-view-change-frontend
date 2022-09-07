@@ -145,7 +145,7 @@ taxYears.oldSa.agent.content.3								   = Bydd hyn yn Ddynodydd Defnyddiwr (ID)
 tax-year-summary.heading                                       = Crynodeb o’r flwyddyn dreth
 tax-year-summary.heading-secondary                             = 6 Ebrill {0} i 5 Ebrill {1}
 tax-year-summary.calculation-date                              = Dyddiad y cyfrifiad
-tax-year-summary.total-due                                     = Cyfanswm sy’n ddyledus
+tax-year-summary.total-due                                     = Cyfanswm y bil treth
 tax-year-summary.calc-from-last-time                           = Nid dyma’ch bil treth terfynol – mae’n seiliedig ar ffigurau rydym eisoes wedi’u cael yn unig.
 tax-year-summary.calc-estimate-info                            = Mae hyn yn amcangyfrif ar gyfer y flwyddyn hyd yn hyn sy’n seiliedig ar ffigurau sydd gennym eisoes.
 tax-year-summary.tax-calculation                               = Cyfrifiad
@@ -492,15 +492,24 @@ sections.open												    = Dangos
 sections.close												    = Cuddio
 
 ## Credits Summary Page ##
-credits.heading                                                 = Credydau yn {0}
-credits.tableHead.date                                          = Dyddiad
-credits.tableHead.type                                          = Math
-credits.tableHead.status                                        = Statws
-credits.tableHead.amount                                        = Swm
-credits.tableHead.type.value                                    = Credyd o addasiad gan CThEM
-credits.table.status-fully-allocated                            = Wedi ei ddyrannu’n llwyr
-credits.table.status-not-yet-allocated                          = Heb ei ddyrannu eto
-credits.table.status-partially-allocated                        = Wedi ei ddyrannu’n rhannol
+credits.heading                                                         = Credydau yn {0}
+credits.tableHead.date                                                  = Dyddiad
+credits.tableHead.type                                                  = Math
+credits.tableHead.status                                                = Statws
+credits.tableHead.amount                                                = Swm
+credits.tableHead.type.value                                            = Credyd o addasiad gan CThEM
+credits.table.status-fully-allocated                                    = Wedi ei ddyrannu’n llwyr
+credits.table.status-not-yet-allocated                                  = Heb ei ddyrannu eto
+credits.table.status-partially-allocated                                = Wedi ei ddyrannu’n rhannol
+credits.drop-down-list.name                                             = Beth yw’r mathau o gredyd?
+credits.drop-down-list.credit-from-hmrc-adjustment                      = Credyd o addasiad gan CThEM
+credits.drop-down-list.credit-from-hmrc-adjustment.value                = Mae’r credyd hwn wedi’i greu o ganlyniad i ryddhad a roddwyd ar waith gan CThEM.
+credits.drop-down-list.credit-from-an-earlier-tax-year                  = Credyd o flwyddyn dreth gynharach
+credits.drop-down-list.credit-from-an-earlier-tax-year.sa-note          = Dyma arian a daloch i mewn i’ch cyfrif cyn i chi gofrestru ar gyfer y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm. Ewch i’ch
+credits.drop-down-list.credit-from-an-earlier-tax-year.agent.sa-note    = Dyma arian a dalodd eich cleient i mewn i’w gyfrif cyn iddo gael ei gofrestru ar gyfer y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm. Mewngofnodwch i’ch
+credits.drop-down-list.sa-link                                          = cyfrif Hunanasesiad ar-lein blaenorol
+credits.drop-down-list.sa-link-agent                                    = cyfrif Hunanasesiad ar gyfer Asiantau
+
 
 ## Refund to taxpayer page ##
 refund-to-taxpayer.heading                                      = Ad-daliad i’r trethdalwr
@@ -610,6 +619,7 @@ chargeSummary.dueDate                                           = Dyddiad dyledu
 chargeSummary.class2Nic.text                                    = Class 2 National Insurance
 chargeSummary.codingOut.text                                    = Balancing payment collected through PAYE tax code
 chargeSummary.cancelledPayeSelfAssessment.text                  = Cancelled Self Assessment payment (through your PAYE tax code)
+chargeSummary.hmrcAdjustment.text                               = Addasiad CThEM
 chargeSummary.paymentAmount                                     = Swm y taliad
 chargeSummary.paidToDate                                        = wedi'i dalu hyd yma
 chargeSummary.remainingDue                                      = Yn weddill i dalu
@@ -670,7 +680,7 @@ chargeSummary.chargeHistory.request.balancingCharge.text	   	        = Taliad Ma
 chargeSummary.chargeHistory.amend.paymentOnAccount1.text 	   	        = Taliad ar gyfrif 1 o 2 wedi’i ostwng oherwydd Ffurflen Dreth ddiwygiedig
 chargeSummary.chargeHistory.amend.paymentOnAccount2.text 	   	        = Taliad ar gyfrif 2 o 2 wedi’i ostwng oherwydd Ffurflen Dreth ddiwygiedig
 chargeSummary.chargeHistory.amend.balancingCharge.text 	   	   	        = Taliad Mantoli wedi’i ostwng oherwydd Ffurflen Dreth ddiwygiedig
-
+chargeSummary.chargeHistory.created.hmrcAdjustment.text                 = Addasiad CThEM wedi’i greu
 chargeSummary.paymentAllocations.bcd.incomeTax                  = Taliad wedi’i ddyrannu i Dreth Incwm ar gyfer y Taliad Mantoli
 chargeSummary.paymentAllocations.bcd.nic2                       = Taliad wedi’i ddyrannu i Yswiriant Gwladol Dosbarth 2 ar gyfer y Taliad Mantoli
 chargeSummary.paymentAllocations.bcd.vcnic2                     = Taliad wedi’i ddyrannu i Yswiriant Gwladol Dosbarth 2 Gwirfoddol ar gyfer y Taliad Mantoli
@@ -682,6 +692,7 @@ chargeSummary.paymentAllocations.poa1.incomeTax                 = Taliad wedi’
 chargeSummary.paymentAllocations.poa2.incomeTax                 = Taliad wedi’i ddyrannu i Dreth Incwm ar gyfer taliad ar gyfrif 2 o 2
 chargeSummary.paymentAllocations.poa1.nic4                      = Taliad wedi’i ddyrannu i Yswiriant Gwladol Dosbarth 4 ar gyfer taliad ar gyfrif 1 o 2
 chargeSummary.paymentAllocations.poa2.nic4                      = Taliad wedi’i ddyrannu i Yswiriant Gwladol Dosbarth 4 ar gyfer taliad ar gyfrif 2 o 2
+chargeSummary.paymentAllocations.mfaDebit                       = Taliad wedi’i roi tuag at addasiad CThEM
 
 chargeSummary.codingOutHeader                                      = Self Assessment payment (through your PAYE tax code)
 chargeSummary.codingOutMessage                                     = This is the remaining tax you owe for the {0} to {1} tax year.

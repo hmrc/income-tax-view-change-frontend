@@ -156,7 +156,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
     def getTaxYears: WSResponse = get("/tax-years")
 
-    def getCalculation(year: String): WSResponse = get(s"/tax-year-summary/$year")
+    def getTaxYearSummary(year: String): WSResponse = get(s"/tax-year-summary/$year")
 
     def getCalculationPoller(year: String, additionalCookies: Map[String, String], isAgent: Boolean = false): WSResponse =
       getWithCalcIdInSession(s"${if (isAgent) "/agents" else ""}/calculation/$year/submitted", additionalCookies)

@@ -16,25 +16,28 @@
 
 package services.helpers
 
+
 import models.financialDetails._
 import models.paymentAllocationCharges.FinancialDetailsWithDocumentDetailsModel
-import models.{CreditDetailModel, CutOverCreditType, MfaCreditType}
-
+import models.creditDetailModel._
 import java.time.LocalDate
 
 trait CreditHistoryDataHelper {
+
 
   val paymentsForTheGivenTaxYear: List[Payment] = List(Payment(reference = Some("reference"), amount = Some(100.00),
     outstandingAmount = Some(1.00), method = Some("method"), documentDescription = None, lot = Some("lot"), lotItem = Some("lotItem"),
     dueDate = Some(LocalDate.parse("2020-08-20")), documentDate = LocalDate.parse("2020-08-20"), Some("DOCID01")))
 
+
   val creditsForTheGivenTaxYear: List[Payment] = List(
     Payment(reference = Some("reference"), amount = Some(-100.00),
       outstandingAmount = Some(1.00), method = Some("method"), documentDescription = None, lot = None, lotItem = Some("lotItem"),
+
       dueDate = Some(LocalDate.parse("2020-08-20")), documentDate = LocalDate.parse("2020-08-20"), Some("DOCID01")),
     Payment(reference = Some("reference"), amount = Some(-100.00),
       outstandingAmount = Some(1.00), method = Some("method"), documentDescription = None, lot = None, lotItem = Some("lotItem"),
-      dueDate =Some(LocalDate.parse("2020-08-20")), documentDate = LocalDate.parse("2020-08-20"), Some("DOCID02"))
+      dueDate = Some(LocalDate.parse("2020-08-20")), documentDate = LocalDate.parse("2020-08-20"), Some("DOCID02"))
   )
 
   val taxYear: Int = 2022
@@ -42,16 +45,19 @@ trait CreditHistoryDataHelper {
   val documentIdA: String = "DOCID01"
   val documentIdB: String = "DOCID02"
 
+
   val documentDetailsWhichIsCutOverCredit = DocumentDetail(
-    "testYear2", "testTransactionId1",
-    None,
-    None, Some(100.00), Some(-120.00),
-    LocalDate.of(taxYear, 3, 29)
+    taxYear = "testYear2", transactionId = "testTransactionId1",
+    documentDescription = None,
+    documentText = None, outstandingAmount = Some(100.00), originalAmount = Some(-120.00),
+    documentDate = LocalDate.of(taxYear, 3, 29)
   )
-  val documentDetailsWhichIsMfaCredit = DocumentDetail("testYear2",
-    "testTransactionId1",
-    Some("ITSA Overpayment Relief"), None, Some(100.00), None,
-    LocalDate.of(taxYear, 3, 29))
+  val documentDetailsWhichIsMfaCredit = DocumentDetail(taxYear = "testYear2",
+    transactionId = "testTransactionId1",
+    documentDescription = Some("TRM New Charge"), documentText = None,
+    outstandingAmount = Some(-150.00), originalAmount = Some(-150.00),
+    documentDate = LocalDate.of(taxYear, 3, 29))
+
 
   val taxYearFinancialDetails = FinancialDetailsModel(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
@@ -61,8 +67,14 @@ trait CreditHistoryDataHelper {
       DocumentDetail("testYear2", "testTransactionId2", None, None, None, None, LocalDate.of(taxYear, 3, 29))
     ),
     financialDetails = List(
-      FinancialDetail("testYear2", None, Some("testTransactionId1"), None, None, None, None, None, None, None, None, Some(Seq(SubItem(Some(LocalDate.parse("2022-08-25")))))),
-      FinancialDetail("testYear2", None, Some("testTransactionId2"), None, None, None, None, None, None, None, None, Some(Seq(SubItem(Some(LocalDate.parse("2022-08-25"))))))
+      FinancialDetail(taxYear = "testYear2", mainType = None, transactionId = Some("testTransactionId1"),
+        transactionDate = None, `type` = None, totalAmount = None, originalAmount = None, outstandingAmount = None,
+        clearedAmount = None, chargeType = None, accruedInterest = None,
+        items = Some(Seq(SubItem(Some(LocalDate.parse("2022-08-25")))))),
+      FinancialDetail(taxYear = "testYear2", mainType = None, transactionId = Some("testTransactionId2"),
+        transactionDate = None, `type` = None, totalAmount = None, originalAmount = None, outstandingAmount = None,
+        clearedAmount = None, chargeType = None, accruedInterest = None,
+        items = Some(Seq(SubItem(Some(LocalDate.parse("2022-08-25"))))))
     )
   )
 
@@ -74,11 +86,16 @@ trait CreditHistoryDataHelper {
     codingDetails = None,
     documentDetails = List(
       documentDetailsWhichIsMfaCredit,
-      DocumentDetail("testYear2", "testTransactionId2", None, None, None, None, LocalDate.of(taxYear, 3, 29))
+      DocumentDetail(taxYear = "testYear2", transactionId = "testTransactionId2", documentDescription = None,
+        documentText = None, outstandingAmount = None, originalAmount = None, documentDate = LocalDate.of(taxYear, 3, 29))
     ),
     financialDetails = List(
-      FinancialDetail("testYear2", None, Some("testTransactionId1"), None, None, None, None, None, None, None, None, Some(Seq(SubItem(Some(LocalDate.now.plusDays(3)))))),
-      FinancialDetail("testYear2", None, Some("testTransactionId2"), None, None, None, None, None, None, None, None, Some(Seq(SubItem(Some(LocalDate.now.plusDays(5))))))
+      FinancialDetail(taxYear = "testYear2", mainType = Some("ITSA Overpayment Relief"), transactionId = Some("testTransactionId1"),
+        transactionDate = None, `type` = None, totalAmount = None, originalAmount = None, outstandingAmount = None,
+        clearedAmount = None, chargeType = None, accruedInterest = None, items = Some(Seq(SubItem(Some(LocalDate.now.plusDays(3)))))),
+      FinancialDetail(taxYear = "testYear2", mainType = None, transactionId = Some("testTransactionId2"),
+        transactionDate = None, `type` = None, totalAmount = None, originalAmount = None, outstandingAmount = None,
+        clearedAmount = None, chargeType = None, accruedInterest = None, items = Some(Seq(SubItem(Some(LocalDate.now.plusDays(5))))))
     )
   )
 
@@ -160,4 +177,5 @@ trait CreditHistoryDataHelper {
       financialDetail
     )
   )
+
 }

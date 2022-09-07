@@ -150,7 +150,6 @@ case class DocumentDetail(taxYear: String,
     case _ => false
   }
 
-
   def getChargeTypeKey(codedOutEnabled: Boolean = false): String = documentDescription match {
     case Some("ITSA- POA 1") => "paymentOnAccount1.text"
     case Some("ITSA - POA 2") => "paymentOnAccount2.text"
@@ -165,7 +164,7 @@ case class DocumentDetail(taxYear: String,
       "unknownCharge"
   }
 
-  def validMFACreditDescription(): Boolean = MfaCreditUtils.validMFACreditDescription(this.documentDescription)
+  def validMFACreditDescription(): Boolean = MfaCreditUtils.validMFACreditType(this.documentDescription)
 
 
 }

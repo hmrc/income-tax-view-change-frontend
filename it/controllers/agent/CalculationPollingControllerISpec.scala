@@ -51,7 +51,7 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
   def calculationStub(): Unit = {
     IncomeTaxCalculationStub.stubGetCalculationResponseByCalcId(testNino, "idOne")(
       status = OK,
-      body = liabilityCalculationModelSuccessFull
+      body = liabilityCalculationModelSuccessful
     )
   }
 

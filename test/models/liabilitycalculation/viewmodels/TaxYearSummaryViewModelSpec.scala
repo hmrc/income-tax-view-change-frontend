@@ -23,7 +23,7 @@ class TaxYearSummaryViewModelSpec extends UnitSpec {
 
   "TaxYearSummaryViewModel model" when {
     "create a minimal TaxYearSummaryViewModel when there is a minimal Calculation response" in {
-      TaxYearSummaryViewModel(liabilityCalculationModelDeductionsMinimal()) shouldBe
+      TaxYearSummaryViewModel(liabilityCalculationModelDeductionsMinimal(),2023) shouldBe
         TaxYearSummaryViewModel(
           timestamp = None,
           crystallised = None,
@@ -52,12 +52,12 @@ class TaxYearSummaryViewModelSpec extends UnitSpec {
           forecastIncomeTaxAndNics = Some(5000.99)
         )
 
-        TaxYearSummaryViewModel(liabilityCalculationModelSuccessFull) shouldBe expectedTaxYearSummaryViewModel
+        TaxYearSummaryViewModel(liabilityCalculationModelSuccessful,taxYear = 2022) shouldBe expectedTaxYearSummaryViewModel
       }
     }
 
     "return unattendedCalc as true when calculationReason is 'unattendedCalculation'" in {
-      TaxYearSummaryViewModel(liabilityCalculationModelDeductionsMinimal(calculationReason = Some("unattendedCalculation"))) shouldBe
+      TaxYearSummaryViewModel(liabilityCalculationModelDeductionsMinimal(calculationReason = Some("unattendedCalculation")),2023) shouldBe
         TaxYearSummaryViewModel(
           timestamp = None,
           crystallised = None,

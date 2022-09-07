@@ -29,7 +29,7 @@ import play.api.mvc.MessagesControllerComponents
 import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
 import testConstants.IncomeSourceIntegrationTestConstants.{multipleBusinessesAndPropertyResponse, multipleBusinessesAndPropertyResponseWoMigration}
-import testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessFull
+import testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessful
 
 import java.util.Locale
 
@@ -51,7 +51,7 @@ class FinalTaxCalculationControllerISpec extends ComponentSpecBase {
   def calculationStub(): Unit = {
     IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, "2018")(
       status = OK,
-      body = liabilityCalculationModelSuccessFull
+      body = liabilityCalculationModelSuccessful
     )
   }
 

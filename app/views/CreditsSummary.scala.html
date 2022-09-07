@@ -21,13 +21,17 @@
 @import views.html.layouts.unifiedLayout
 @import views.html.components._
 @import exceptions.MissingFieldException
+@import models.creditDetailModel.CreditDetailModel
 
 @this(
         mainTemplate: unifiedLayout,
         implicitDateFormatter: ImplicitDateFormatterImpl,
         appConfig: config.FrontendAppConfig,
         h1: h1,
-        link: link
+        h2: h2,
+        p: p,
+        link: link,
+        detailsDropdown: detailsDropdown
 )
 @(
     calendarYear: Int,
@@ -73,6 +77,29 @@
     s"balancing-charge-type-$idx"
 }
 
+@dropDownDetails(isAgent: Boolean) = {
+    @h2(msg = "credits.drop-down-list.credit-from-hmrc-adjustment", classes = "govuk-heading-s", optId = Some("h2-credit-from-hmrc-adjustment"))
+    @p(id = Some("p-credit-from-hmrc-adjustment")){@messages("credits.drop-down-list.credit-from-hmrc-adjustment.value")}
+    @h2(msg = "credits.drop-down-list.credit-from-an-earlier-tax-year", classes = "govuk-heading-s", optId = Some("h2-credit-from-an-earlier-tax-year"))
+    @if(isAgent) {
+            @p(id = Some("sa-note-migrated-agent")) {
+                @messages("credits.drop-down-list.credit-from-an-earlier-tax-year.agent.sa-note")
+                @link(link = appConfig.saForAgents, messageKey = messages("credits.drop-down-list.sa-link-agent"),
+                    id = Some("sa-note-migrated-agent-online-account-link"),
+                    outerMessage = ".", rel=Some("noreferrer noopener"), target = Some("_blank"))
+            }
+    } else {
+        @utr.map { utrValue =>
+            @p(id = Some("sa-note-migrated")) {
+                @messages("credits.drop-down-list.credit-from-an-earlier-tax-year.sa-note")
+                @link(link = appConfig.saViewLandPService(utrValue), messageKey = s"${messages("credits.drop-down-list.sa-link")}",
+                    id = Some("sa-note-migrated-online-account-link"),
+                    outerMessage = ".", rel = Some("noreferrer noopener"), target = Some("_blank"))
+            }
+        }
+    }
+}
+
 @mainTemplate(
     pageTitle = messages("credits.heading", s"$calendarYear"),
     backUrl = Some(backUrl),
@@ -102,10 +129,13 @@
         </div>
     </div>
 
-@link(
-    link = creditAndRefundsControllerURL,
-    messageKey = "credit-and-refund.claim-refund-btn"
-)
+    @detailsDropdown(messages("credits.drop-down-list.name"), dropDownDetails(isAgent))
+
+    @link(
+        link = creditAndRefundsControllerURL,
+        id = Some("credit-and-refund-claim-refund-btn"),
+        messageKey = "credit-and-refund.claim-refund-btn"
+    )
 
 }
 

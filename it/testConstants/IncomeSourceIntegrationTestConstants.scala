@@ -718,23 +718,12 @@ object IncomeSourceIntegrationTestConstants {
         "outstandingAmount" -> outstandingAmount,
         "originalAmount" -> originalAmount,
         "documentDate" -> "2018-03-29"
-      ),
-      Json.obj(
-        "taxYear" -> "9999",
-        "transactionId" -> "PAYID01",
-        "documentDescription" -> "TRM Amend Charge",
-        "outstandingAmount" -> -outstandingAmount,
-        "originalAmount" -> -originalAmount,
-        "documentDate" -> "2018-03-29",
-        "paymentLot" -> "081203010024",
-        "paymentLotItem" -> "000001",
-        "latePaymentInterestId" -> "latePaymentInterestId"
       )
     ),
     "financialDetails" -> Json.arr(
       Json.obj(
         "taxYear" -> taxYear,
-        "mainType" -> "SA Balancing Charge",
+        "mainType" -> "ITSA Cutover Credits",
         "transactionId" -> "1040000123",
         "chargeType" -> "ITSA NI",
         "originalAmount" -> originalAmount,
@@ -747,7 +736,7 @@ object IncomeSourceIntegrationTestConstants {
       ),
       Json.obj(
         "taxYear" -> taxYear,
-        "mainType" -> "SA Payment on Account 1",
+        "mainType" -> "ITSA Cutover Credits",
         "transactionId" -> "1040000124",
         "chargeType" -> "ITSA NI",
         "originalAmount" -> originalAmount,
@@ -764,7 +753,7 @@ object IncomeSourceIntegrationTestConstants {
       ),
       Json.obj(
         "taxYear" -> taxYear,
-        "mainType" -> "SA Payment on Account 2",
+        "mainType" -> "ITSA Cutover Credits",
         "transactionId" -> "1040000125",
         "chargeType" -> "ITSA NI",
         "originalAmount" -> originalAmount,

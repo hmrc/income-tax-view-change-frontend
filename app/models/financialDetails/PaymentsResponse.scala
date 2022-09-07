@@ -43,7 +43,8 @@ case class Payment(reference: Option[String],
                    lotItem: Option[String],
                    dueDate: Option[LocalDate],
                    documentDate: LocalDate,
-                   transactionId: Option[String]) {
+                   transactionId: Option[String],
+                   mainType: Option[String] = None) {
 
   def credit: Option[BigDecimal] = amount match {
     case None => None
@@ -52,7 +53,7 @@ case class Payment(reference: Option[String],
     case Some(credit) => Some(credit)
   }
 
-  def validMFACreditDescription() : Boolean = MfaCreditUtils.validMFACreditDescription(documentDescription)
+  def validMFACreditType() : Boolean = MfaCreditUtils.validMFACreditType(mainType)
 
   def allocationStatus() : Option[PaymentAllocationStatus] = (outstandingAmount, amount) match {
     case (Some(outstandingAmountValue), _) if outstandingAmountValue.equals(BigDecimal(0.0)) =>
@@ -74,7 +75,11 @@ object Payment {
 
 case class PaymentsWithChargeType(payments: Seq[Payment], mainType: Option[String], chargeType: Option[String]) {
   def getPaymentAllocationTextInChargeSummary: Option[String] = {
-    FinancialDetail.getMessageKeyByTypes(mainType, chargeType)
-      .map(typesKey => s"chargeSummary.paymentAllocations.$typesKey")
+    if (MfaDebitUtils.isMFADebitMainType(mainType)) {
+      Some(s"chargeSummary.paymentAllocations.mfaDebit")
+    } else {
+      FinancialDetail.getMessageKeyByTypes(mainType, chargeType)
+        .map(typesKey => s"chargeSummary.paymentAllocations.$typesKey")
+    }
   }
 }

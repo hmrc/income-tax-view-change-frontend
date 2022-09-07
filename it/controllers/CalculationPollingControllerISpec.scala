@@ -41,7 +41,7 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
 
         IncomeTaxCalculationStub.stubGetCalculationResponseByCalcId(testNino, "idOne")(
           status = OK,
-          body = liabilityCalculationModelSuccessFull
+          body = liabilityCalculationModelSuccessful
         )
 
         When(s"I call GET ${controllers.routes.CalculationPollingController.calculationPoller(testYearInt, isFinalCalc = false).url}")
@@ -112,7 +112,7 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
         Thread.sleep(1500)
         IncomeTaxCalculationStub.stubGetCalculationResponseByCalcId(testNino, "idFour")(
           status = OK,
-          body = liabilityCalculationModelSuccessFull
+          body = liabilityCalculationModelSuccessful
         )
 
         And("The expected result is returned")
@@ -135,7 +135,7 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
 
         val res = IncomeTaxViewChangeFrontend.getCalculationPollerWithoutAwait(testYear, Map(SessionKeys.calculationId -> "idFive"))
 
-        Thread.sleep(100)
+        Thread.sleep(200)
         mongoDbConnection.repo.findById("idFive").futureValue.get.id shouldBe "idFive"
 
         //After 1.5 seconds responding with success message
@@ -162,7 +162,7 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
 
       "redirect the user to the final tax calculation page" which {
         lazy val result = {
-          IncomeTaxCalculationStub.stubGetCalculationResponseByCalcId(testNino, "idOne")(OK, liabilityCalculationModelSuccessFull)
+          IncomeTaxCalculationStub.stubGetCalculationResponseByCalcId(testNino, "idOne")(OK, liabilityCalculationModelSuccessful)
           IncomeTaxViewChangeFrontend.getFinalTaxCalculationPoller(testYear, Map(SessionKeys.calculationId -> "idOne"))
         }
 

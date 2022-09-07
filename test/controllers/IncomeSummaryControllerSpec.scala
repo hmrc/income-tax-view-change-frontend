@@ -32,7 +32,7 @@ import play.api.test.Helpers.{charset, contentType, _}
 import play.twirl.api.HtmlFormat
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testMtditid, testTaxYear}
 import testConstants.IncomeSourceDetailsTestConstants.businessIncome2018and2019
-import testConstants.NewCalcBreakdownUnitTestConstants.liabilityCalculationModelSuccessFull
+import testConstants.NewCalcBreakdownUnitTestConstants.liabilityCalculationModelSuccessful
 import testUtils.TestSupport
 import uk.gov.hmrc.http.InternalServerException
 import views.html.IncomeBreakdown
@@ -78,7 +78,7 @@ class IncomeSummaryControllerSpec extends TestSupport with MockCalculationServic
     "given a tax year which can be found in ETMP" should {
 
       "return Status OK (200)" in {
-        mockCalculationSuccessFullNew(testMtditid)
+        mockCalculationSuccessfulNew(testMtditid)
         setupMockGetIncomeSourceDetails()(businessIncome2018and2019)
         status(resultIndividual) shouldBe Status.OK
       }
@@ -133,8 +133,8 @@ class IncomeSummaryControllerSpec extends TestSupport with MockCalculationServic
       "return Status OK (200) with html content and right title" in {
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         mockBothIncomeSources()
-        setupMockGetCalculationNew("XAIT00000000015", "AA111111A", testYear)(liabilityCalculationModelSuccessFull)
-        mockIncomeBreakdown(testYear, IncomeBreakdownViewModel(liabilityCalculationModelSuccessFull.calculation, false).get,
+        setupMockGetCalculationNew("XAIT00000000015", "AA111111A", testYear)(liabilityCalculationModelSuccessful)
+        mockIncomeBreakdown(testYear, IncomeBreakdownViewModel(liabilityCalculationModelSuccessful.calculation, false).get,
           controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(testYear).url, isAgent)(HtmlFormat.empty)
 
         lazy val result: Future[Result] = TestIncomeSummaryController.showIncomeSummaryAgent(testYear)(fakeRequestConfirmedClient())
@@ -147,7 +147,7 @@ class IncomeSummaryControllerSpec extends TestSupport with MockCalculationServic
       "throw an internal server exception" in {
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         mockErrorIncomeSource()
-        setupMockGetCalculationNew("XAIT00000000015", "AA111111A", testYear)(liabilityCalculationModelSuccessFull)
+        setupMockGetCalculationNew("XAIT00000000015", "AA111111A", testYear)(liabilityCalculationModelSuccessful)
         mockShowInternalServerError()
         val exception = TestIncomeSummaryController.showIncomeSummaryAgent(testYear)(fakeRequestConfirmedClient()).failed.futureValue
         exception shouldBe an[InternalServerException]

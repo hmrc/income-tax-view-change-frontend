@@ -19,10 +19,9 @@ package services
 import auth.MtdItUser
 import config.FrontendAppConfig
 import connectors.IncomeTaxViewChangeConnector
-import models.{CreditDetailModel, CutOverCreditType, MfaCreditType}
-import models.core.Nino
-import models.financialDetails.{FinancialDetailsErrorModel, FinancialDetailsModel, Payments, PaymentsError}
-import models.paymentAllocationCharges.FinancialDetailsWithDocumentDetailsModel
+import models.financialDetails.{DocumentDetail, FinancialDetail}
+import models.creditDetailModel._
+import models.financialDetails.FinancialDetailsModel
 import services.CreditHistoryService.CreditHistoryError
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -39,32 +38,30 @@ class CreditHistoryService @Inject()(incomeTaxViewChangeConnector: IncomeTaxView
   // CutOver credit by dueDate found in financialDetails related to the corresponding documentDetail (see getDueDateFor)
   private def getCreditsByTaxYear(taxYear: Int, nino: String)
                                  (implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[CreditHistoryError.type, List[CreditDetailModel]]] = {
-    incomeTaxViewChangeConnector.getFinancialDetails(taxYear, nino).flatMap { result =>
-      result match {
-        case financialDetails: FinancialDetailsModel =>
-          val fdRes = financialDetails.documentDetails.map { document =>
-            (document.validMFACreditDescription(), document.credit.isDefined) match {
-              case (true, false) =>
+    incomeTaxViewChangeConnector.getFinancialDetails(taxYear, nino).flatMap {
+      case financialDetailsModel: FinancialDetailsModel =>
+        val fdRes = financialDetailsModel.getPairedDocumentDetails().flatMap {
+          case (document: DocumentDetail, financialDetail: FinancialDetail) => {
+            (financialDetail.validMFACreditType(), document.credit.isDefined) match {
+              case (true, true) =>
                 Some(CreditDetailModel(date = document.documentDate, document, MfaCreditType))
               case (false, true) =>
                 // if we didn't find CutOverCredit dueDate then we "lost" this document
-                financialDetails
-                  .getDueDateFor(document)
+                financialDetailsModel.getDueDateForFinancialDetail(financialDetail)
                   .map(dueDate => CreditDetailModel(date = dueDate, document, CutOverCreditType))
-              case (true, true) =>
-                // Is this a bug ? we have MFA credits with properties of CutOver redits
-                Some(CreditDetailModel(date = document.documentDate, document, MfaCreditType))
               case (_, _) => None
             }
-          }.flatten
-          Future{ Right (fdRes) }
-        case _ =>
-          Future { Left(CreditHistoryError) }
-      }
+          }
+        }
+        Future {
+          Right(fdRes)
+        }
+      case _ =>
+        Future {
+          Left(CreditHistoryError)
+        }
     }
   }
-
-
 
   def getCreditsHistory(calendarYear: Int, nino: String)
                        (implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[CreditHistoryError.type, List[CreditDetailModel]]] = {

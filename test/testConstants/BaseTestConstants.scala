@@ -18,13 +18,16 @@ package testConstants
 
 import auth.{MtdItUser, MtdItUserOptionNino, MtdItUserWithNino}
 import config.FrontendAppConfig
-import models.btaNavBar.{ListLinks, NavContent, NavLinks}
+import models.btaNavBar.ListLinks
 import models.core.Nino
+import models.incomeSourceDetails.IncomeSourceDetailsModel
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.Status
 import play.api.test.FakeRequest
 import play.twirl.api.{Html, HtmlFormat}
+import testConstants.BusinessDetailsTestConstants.business1
 import testConstants.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
+import testConstants.PropertyDetailsTestConstants.propertyDetails
 import testUtils.UnitSpec
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, Name, ~}
@@ -36,8 +39,8 @@ object BaseTestConstants extends UnitSpec with GuiceOneAppPerSuite {
   val testNinoAgent = "AA111111A"
   val testNino = "AB123456C"
   val repaymentId = "123456789"
-  val dateFrom="12/02/2021"
-  val dateTo="12/02/2022"
+  val dateFrom = "12/02/2021"
+  val dateTo = "12/02/2022"
   val testUserNino: Nino = Nino(testNino)
   val testSaUtrId = "1234567890"
   val testSaUtr = "testSaUtr"
@@ -68,6 +71,8 @@ object BaseTestConstants extends UnitSpec with GuiceOneAppPerSuite {
     businessesAndPropertyIncome, btaNavPartial = None, Some(testSaUtr), Some(testCredId), Some(testUserTypeAgent), Some(testArn))(FakeRequest())
   lazy val testMtdItUserMinimal: MtdItUser[_] = MtdItUser(testMtditid, testNino, userName = None,
     incomeSources = businessesAndPropertyIncome, btaNavPartial = None, saUtr = None, credId = None, userType = None, arn = None)(FakeRequest())
+  lazy val testMtdItUserNoIncomeSource: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testRetrievedUserName),
+    IncomeSourceDetailsModel("", Some("2018"), List(business1.copy(None, None, None, None)), Some(propertyDetails.copy(None, None, None))), btaNavPartial = None, Some(testSaUtr), Some(testCredId), Some(testUserTypeIndividual), None)(FakeRequest())
   val testSelfEmploymentId = "XA00001234"
   val testSelfEmploymentId2 = "XA00001235"
   val testPropertyIncomeId = "1234"

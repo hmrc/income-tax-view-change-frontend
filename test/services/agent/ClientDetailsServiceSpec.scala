@@ -90,6 +90,16 @@ class ClientDetailsServiceSpec extends TestSupport
         result shouldBe Left(CitizenDetailsNotFound)
       }
 
+      "a successful citizen details response does not contain a nino" in {
+
+        setupMockCitizenDetails("testSaUtr")(Future.successful(CitizenDetailsModel(Some("James"), Some("Bond"), None)))
+
+        val result = TestClientDetailsService.checkClientDetails("testSaUtr").futureValue
+
+        result shouldBe Left(CitizenDetailsNotFound)
+
+      }
+
     }
 
     "return a UnexpectedResponse" when {
