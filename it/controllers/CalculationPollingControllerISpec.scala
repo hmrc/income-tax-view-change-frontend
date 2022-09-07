@@ -135,7 +135,7 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
 
         val res = IncomeTaxViewChangeFrontend.getCalculationPollerWithoutAwait(testYear, Map(SessionKeys.calculationId -> "idFive"))
 
-        Thread.sleep(100)
+        Thread.sleep(200)
         mongoDbConnection.repo.findById("idFive").futureValue.get.id shouldBe "idFive"
 
         //After 1.5 seconds responding with success message
