@@ -157,7 +157,7 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
           layoutContent.selectHead("h1").text shouldBe creditAndRefundHeading
           document.select("h2").first().select("span").text().contains(subHeadingWithCreditsPart1 + subHeadingWithCreditsPart2) shouldBe false
           document.select("p").get(2).select("p:nth-child(1)").first().text() shouldBe
-            s"£1,400.00 $creditAndRefundFromHMRCTitlePart1 $creditAndRefundFromHMRCTitlePart2"
+            s"£1,400.00 $creditAndRefundFromHMRCTitlePart1 $creditAndRefundFromHMRCTitlePart2 0"
           document.select("p").get(2).select("a").attr("href") shouldBe linkCreditsSummaryPage
           document.select("p").eachText().contains("Total") shouldBe false
           document.select("govuk-list govuk-list--bullet").isEmpty shouldBe true
@@ -175,13 +175,15 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
           isMFACreditsAndDebitsEnabled = true
         ) {
 
+          println("mfa1:" + documentDetailWithDueDateFinancialDetailListModelMFA())
+          println("mfa2:" + documentDetailWithDueDateFinancialDetailListModelMFA(Some(-1000.0)))
           document.title() shouldBe creditAndRefundHeadingWithTitleServiceNameGovUk
           layoutContent.selectHead("h1").text shouldBe creditAndRefundHeading
           document.select("h2").first().select("span").text().contains(subHeadingWithCreditsPart1 + subHeadingWithCreditsPart2) shouldBe false
-          document.select("p").get(2).select("p:nth-child(1)").first().text() shouldBe
-            s"£1,400.00 $creditAndRefundFromHMRCTitlePart1 $creditAndRefundFromHMRCTitlePart2"
-          document.select("p").get(3).select("p:nth-child(1)").first().text() shouldBe
-            s"£1,000.00 $creditAndRefundFromHMRCTitlePart1 $creditAndRefundFromHMRCTitlePart2"
+          document.select("ul#credits-list li:nth-child(1)").text() shouldBe
+            s"£1,400.00 $creditAndRefundFromHMRCTitlePart1 $creditAndRefundFromHMRCTitlePart2 0"
+          document.select("ul#credits-list li:nth-child(2)").text() shouldBe
+            s"£1,000.00 $creditAndRefundFromHMRCTitlePart1 $creditAndRefundFromHMRCTitlePart2 1"
           document.select("p").get(2).select("a").attr("href") shouldBe linkCreditsSummaryPage
           document.select("p").eachText().contains("Total") shouldBe false
           document.select("govuk-list govuk-list--bullet").isEmpty shouldBe true

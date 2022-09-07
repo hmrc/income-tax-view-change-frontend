@@ -164,9 +164,6 @@ case class DocumentDetail(taxYear: String,
       "unknownCharge"
   }
 
-  def validMFACreditDescription(): Boolean = MfaCreditUtils.validMFACreditType(this.documentDescription)
-
-
 }
 
 case class DocumentDetailWithDueDate(documentDetail: DocumentDetail, dueDate: Option[LocalDate],
