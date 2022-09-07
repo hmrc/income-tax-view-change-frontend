@@ -22,6 +22,10 @@ import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
 import models.financialDetails.FinancialDetailsModel
+import org.hamcrest.core.Is.is
+import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
+import org.junit.Assert.assertThat
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.http.Status
@@ -104,6 +108,53 @@ class CreditAndRefundControllerSpec extends MockAuthenticationPredicate with Moc
         status(result) shouldBe Status.OK
         status(resultAgent) shouldBe Status.OK
 
+      }
+
+      "MFACreditsAndDebits enabled: credit charges are returned in sorted order of credits" in new Setup {
+        enable(CreditsRefundsRepay)
+        enable(MFACreditsAndDebits)
+        mockSingleBISWithCurrentYearAsMigrationYear()
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthSuccessWithSaUtrResponse())
+
+        when(mockCreditService.getCreditCharges()(any(), any()))
+          .thenReturn(Future.successful(List(financialDetailCreditAndRefundChargeAllCreditTypes)))
+
+        val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
+        val resultAgent: Future[Result] = controller.showAgent()(fakeRequestConfirmedClient())
+
+        status(result) shouldBe Status.OK
+        status(resultAgent) shouldBe Status.OK
+
+        val doc : Document = Jsoup.parse(contentAsString(result))
+        doc.select("#main-content").select("li:nth-child(1)")
+          .select("p").first().text() shouldBe "£1,000.00 " + messages("credit-and-refund.credit-from-hmrc-title-prt-1") + " " +
+          messages("credit-and-refund.credit-from-hmrc-title-prt-2") + " 0"
+        doc.select("#main-content").select("li:nth-child(2)")
+          .select("p").first().text() shouldBe "£800.00 " + messages("credit-and-refund.credit-from-hmrc-title-prt-1") + " " +
+          messages("credit-and-refund.credit-from-hmrc-title-prt-2") + " 1"
+        doc.select("#main-content").select("li:nth-child(3)")
+          .select("p").first().text() shouldBe "£100.00 " + messages("credit-and-refund.credit-from-hmrc-title-prt-1") + " " +
+          messages("credit-and-refund.credit-from-hmrc-title-prt-2") + " 2"
+        doc.select("#main-content").select("li:nth-child(4)")
+          .select("p").first().text() shouldBe "£2,000.00 " + messages("credit-and-refund.credit-from-hmrc-title-prt-1") + " " +
+          messages("credits.drop-down-list.credit-from-an-earlier-tax-year") + " 3"
+        doc.select("#main-content").select("li:nth-child(5)")
+          .select("p").first().text() shouldBe "£700.00 " + messages("credit-and-refund.credit-from-hmrc-title-prt-1") + " " +
+          messages("credits.drop-down-list.credit-from-an-earlier-tax-year") + " 4"
+        doc.select("#main-content").select("li:nth-child(6)")
+          .select("p").first().text() shouldBe "£200.00 " + messages("credit-and-refund.credit-from-hmrc-title-prt-1") + " " +
+          messages("credits.drop-down-list.credit-from-an-earlier-tax-year") + " 5"
+        doc.select("#main-content").select("li:nth-child(7)")
+          .select("p").first().text() shouldBe "£500.00 " + messages("credit-and-refund.payment") + " 15 June 2018"
+        doc.select("#main-content").select("li:nth-child(8)")
+          .select("p").first().text() shouldBe "£300.00 " + messages("credit-and-refund.payment") + " 15 June 2018"
+        doc.select("#main-content").select("li:nth-child(9)")
+          .select("p").first().text() shouldBe "£100.00 " + messages("credit-and-refund.payment") + " 15 June 2018"
+        doc.select("#main-content").select("li:nth-child(10)")
+          .select("p").first().text() shouldBe "£4.00 " + messages("credit-and-refund.refundProgress")
+        doc.select("#main-content").select("li:nth-child(11)")
+          .select("p").first().text() shouldBe "£2.00 " + messages("credit-and-refund.refundProgress")
       }
 
       "redirect to the custom not found error page" in new Setup {
