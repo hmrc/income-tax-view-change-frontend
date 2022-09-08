@@ -21,10 +21,11 @@ import config.featureswitch.{FeatureSwitching, MFACreditsAndDebits}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
+import models.financialDetails.{BalanceDetails, FinancialDetailsModel}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import services.{CreditHistoryService, IncomeSourceDetailsService}
+import services.{CreditHistoryService, CreditService, IncomeSourceDetailsService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
 import views.html.CreditsSummary
@@ -37,6 +38,7 @@ class CreditsSummaryController @Inject()(creditsView: CreditsSummary,
                                          val authorisedFunctions: AuthorisedFunctions,
                                          incomeSourceDetailsService: IncomeSourceDetailsService,
                                          creditHistoryService: CreditHistoryService,
+                                         creditService: CreditService,
                                          itvcErrorHandler: ItvcErrorHandler,
                                          checkSessionTimeout: SessionTimeoutPredicate,
                                          retrieveBtaNavBar: NavBarPredicate,
@@ -85,27 +87,38 @@ class CreditsSummaryController @Inject()(creditsView: CreditsSummary,
                     origin: Option[String] = None)
                    (implicit user: MtdItUser[AnyContent], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] = {
     if (isEnabled(MFACreditsAndDebits)) {
-      creditHistoryService.getCreditsHistory(calendarYear, user.nino).flatMap {
-        case Right(credits) =>
-          val charges = credits
-            .sortBy(_.date.toEpochDay)
-          Future.successful(Ok(creditsView(
-            calendarYear = calendarYear,
-            backUrl = if (isAgent) getAgentBackURL(user.headers.get(REFERER), calendarYear) else getBackURL(user.headers.get(REFERER), origin, calendarYear),
-            isAgent = isAgent,
-            utr = user.saUtr,
-            btaNavPartial = user.btaNavPartial,
-            enableMfaCreditsAndDebits = isEnabled(MFACreditsAndDebits),
-            charges = charges,
-            origin = origin)))
-        case Left(_) => {
-          if (isAgent) {
-            Logger("application").error(s"[CreditsSummaryController][showAgentCreditsSummary] - Could not retrieve financial details for Calendar year: $calendarYear, NINO: ${user.nino}")
-            Future.successful(agentItvcErrorHandler.showInternalServerError())
-          }
-          else {
-            Logger("application").error(s"[CreditsSummaryController][showCreditsSummary] - Could not retrieve financial details for Calendar year: $calendarYear, NINO: ${user.nino}")
-            Future.successful(itvcErrorHandler.showInternalServerError())
+      creditService.getCreditCharges().flatMap { financialDetailsModels =>
+        creditHistoryService.getCreditsHistory(calendarYear, user.nino).flatMap {
+          case Right(credits) =>
+            val charges = credits
+              .sortBy(_.date.toEpochDay)
+
+            // todo check if we need to pass Option[BigDecimal] as availableCredit ?
+            val maybeBalanceDetails: Option[BalanceDetails] = financialDetailsModels match {
+              case financialDetailsModel: List[FinancialDetailsModel] =>
+                financialDetailsModel.headOption.map(balance => balance.balanceDetails)
+              case _ => None
+            }
+
+            Future.successful(Ok(creditsView(
+              calendarYear = calendarYear,
+              backUrl = if (isAgent) getAgentBackURL(user.headers.get(REFERER), calendarYear) else getBackURL(user.headers.get(REFERER), origin, calendarYear),
+              isAgent = isAgent,
+              utr = user.saUtr,
+              btaNavPartial = user.btaNavPartial,
+              enableMfaCreditsAndDebits = isEnabled(MFACreditsAndDebits),
+              charges = charges,
+              maybeBalanceDetails = maybeBalanceDetails,
+              origin = origin)))
+          case Left(_) => {
+            if (isAgent) {
+              Logger("application").error(s"[CreditsSummaryController][showAgentCreditsSummary] - Could not retrieve financial details for Calendar year: $calendarYear, NINO: ${user.nino}")
+              Future.successful(agentItvcErrorHandler.showInternalServerError())
+            }
+            else {
+              Logger("application").error(s"[CreditsSummaryController][showCreditsSummary] - Could not retrieve financial details for Calendar year: $calendarYear, NINO: ${user.nino}")
+              Future.successful(itvcErrorHandler.showInternalServerError())
+            }
           }
         }
       }
