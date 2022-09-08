@@ -368,7 +368,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         )
 
         verifyAuditEvent(TaxYearSummaryResponseAuditModel(testUser, financialDetailsSuccess.getAllDocumentDetailsWithDueDates(),
-          allObligations, Some(TaxYearSummaryViewModel(liabilityCalculationModelSuccessful,testTaxYear)), false))
+          allObligations, Some(TaxYearSummaryViewModel(liabilityCalculationModelSuccessful)), false))
         verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligationsSuccess.obligations.flatMap(_.obligations)).detail)
         verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId2", previousObligationsSuccess.obligations.flatMap(_.obligations)).detail)
 
@@ -441,7 +441,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         )
 
         verifyAuditEvent(TaxYearSummaryResponseAuditModel(testUser, financialDetailsDunningLockSuccess.getAllDocumentDetailsWithDueDates(),
-          allObligations, Some(TaxYearSummaryViewModel(liabilityCalculationModelSuccessful,testTaxYear)), false))
+          allObligations, Some(TaxYearSummaryViewModel(liabilityCalculationModelSuccessful)), false))
         verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligationsSuccess.obligations.flatMap(_.obligations)).detail)
         verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId2", previousObligationsSuccess.obligations.flatMap(_.obligations)).detail)
 
@@ -619,7 +619,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         )
 
         verifyAuditEvent(TaxYearSummaryResponseAuditModel(testUser, financialDetailsSuccess.getAllDocumentDetailsWithDueDates(),
-          currentObligationsSuccess, Some(TaxYearSummaryViewModel(liabilityCalculationModelSuccessful,testTaxYear)), false))
+          currentObligationsSuccess, Some(TaxYearSummaryViewModel(liabilityCalculationModelSuccessful)), false))
         verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligationsSuccess.obligations.flatMap(_.obligations)).detail)
       }
     }
@@ -811,7 +811,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
           to = getCurrentTaxYearEnd.toString
         )
         verifyAuditEvent(TaxYearSummaryResponseAuditModel(testUser, auditDD, allObligations,
-          Some(TaxYearSummaryViewModel(liabilityCalculationModelSuccessful,testTaxYear)), isEnabled(R7bTxmEvents)))
+          Some(TaxYearSummaryViewModel(liabilityCalculationModelSuccessful)), isEnabled(R7bTxmEvents)))
         verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligationsSuccess.obligations.flatMap(_.obligations)).detail)
         verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId2", previousObligationsSuccess.obligations.flatMap(_.obligations)).detail)
 
