@@ -80,6 +80,9 @@ class FeedbackFormSpec extends WordSpec with MustMatchers {
       "bound with a valid feedbackEmail" in {
         form(Some(testFeedbackForm(email = "test@test.com"))).value.get.name mustBe Some(testFeedbackForm(email = "test@test.com")).value.name
       }
+      "bound with a valid feedbackEmail with domain as ip" in {
+        form(Some(testFeedbackForm(email = "test@0.0.0.0"))).value.get.name mustBe Some(testFeedbackForm(email = "test@0.0.0.0")).value.name
+      }
       "bound with a invalid feedbackEmail format" in {
         form(Some(testFeedbackForm(email = aToZString))).errors mustBe Seq(
           FormError("feedback-email", Seq("feedback.email.error")))
@@ -88,14 +91,32 @@ class FeedbackFormSpec extends WordSpec with MustMatchers {
         form(Some(testFeedbackForm(email = s"${aToZString * 3}@${aToZString * 7}.com"))).errors mustBe Seq(
           FormError("feedback-email", Seq("feedback.email.error.length")))
       }
+      "bound with a invalid feedbackEmail format with domain as ip" in {
+        form(Some(testFeedbackForm(email = "test@0.0.0"))).errors mustBe Seq(
+          FormError("feedback-email", Seq("feedback.email.error")))
+      }
     }
     "feedbackComments" when {
       "bound with a valid feedbackComments" in {
         form(Some(testFeedbackForm(comments = "test comments"))).value.get.name mustBe Some(testFeedbackForm(comments = "test comments")).value.name
       }
+      "bound with a empty feedbackComments " in {
+        form(Some(testFeedbackForm(comments = ""))).errors mustBe Seq(
+          FormError("feedback-comments", Seq("feedback.comments.error.empty")))
+      }
       "bound with a invalid feedbackComments length" in {
         form(Some(testFeedbackForm(comments = s"${aToZString * 77}"))).errors mustBe Seq(
           FormError("feedback-comments", Seq("feedback.comments.error.length")))
+      }
+    }
+    "feedbackFill" when {
+      "new form is created from FeedbackForm object" in {
+        form(Some(testFeedbackForm())).value.get.name mustBe FeedbackForm.form.fill(testFeedbackForm()).value.get.name
+      }
+      "updating a value using form.fill " in {
+        FeedbackForm.form.fill(testFeedbackForm())
+          .fill(testFeedbackForm(comments = "test changed comment"))
+          .value.get.comments mustBe testFeedbackForm(comments = "test changed comment").comments
       }
     }
   }
