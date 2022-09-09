@@ -310,7 +310,7 @@ class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockInc
 
         "failed to retrieve a set of Business NextUpdates" should {
 
-          "return Status OK (500)" in {
+          "return Status ERROR (500)" in {
             mockSingleBusinessIncomeSourceError()
             mockSingleBusinessIncomeSourceWithDeadlines()
             mockObligations
