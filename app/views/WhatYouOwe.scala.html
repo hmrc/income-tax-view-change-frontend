@@ -50,6 +50,7 @@
     MFADebitsEnabled: Boolean,
     whatYouOweCreditAmountEnabled: Boolean,
     isAgent: Boolean = false,
+    isUserMigrated: Boolean = false,
     origin: Option[String] = None)(implicit request: Request[_], user: MtdItUser[_], messages: Messages)
 
 @import implicitDateFormatter.longDate
@@ -100,6 +101,22 @@
         outerMessage = messages("whatYouOwe.unallocated-credit-note"),
         messageKey = messages("whatYouOwe.credit-overpaid-amount", amount),
         id = Some("unallocated-credit-link")).toString()))
+}
+
+@creditAndRefundsControllerURL = @{
+    if (isUserMigrated) {
+        if(isAgent) {
+            controllers.routes.CreditAndRefundController.showAgent().url
+        } else {
+            controllers.routes.CreditAndRefundController.show().url
+        }
+    } else {
+        if (isAgent) {
+            controllers.routes.NotMigratedUserController.showAgent().url
+        } else {
+            controllers.routes.NotMigratedUserController.show().url
+        }
+    }
 }
 
 @detailsContent= {
@@ -375,6 +392,24 @@
             @messages("whatYouOwe.payments-made-bullet-1.3")</li>
         <li> @messages("whatYouOwe.payments-made-bullet-2")</li>
     </ul>
+
+    @if(whatYouOweChargesList.balanceDetails.availableCredit.getOrElse(throw MissingFieldException("Available Credit")) > 0) {
+        @if(isAgent){
+        <div class="govuk-body">
+            @h2(msg = "whatYouOwe.moneyOnAccount-agent")
+            @messages("whatYouOwe.moneyOnAccount-1") @whatYouOweChargesList.balanceDetails.availableCredit.getOrElse(throw MissingFieldException("Available Credit")).toCurrencyString
+            @messages("whatYouOwe.moneyOnAccount-agent-2")
+            @link(link = creditAndRefundsControllerURL,  messageKey = "whatYouOwe.moneyOnAccount-3", rel=Some("noreferrer noopener")).
+        </div>
+        } else {
+        <div class="govuk-body">
+            @h2(msg = "whatYouOwe.moneyOnAccount")
+            @messages("whatYouOwe.moneyOnAccount-1") @whatYouOweChargesList.balanceDetails.availableCredit.getOrElse(throw MissingFieldException("Available Credit")).toCurrencyString
+            @messages("whatYouOwe.moneyOnAccount-2")
+            @link(link = creditAndRefundsControllerURL,  messageKey = "whatYouOwe.moneyOnAccount-3", rel=Some("noreferrer noopener")).
+        </div>
+        }
+    }
 }
 
 

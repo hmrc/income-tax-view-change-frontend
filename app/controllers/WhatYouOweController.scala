@@ -77,6 +77,7 @@ class WhatYouOweController @Inject()(val checkSessionTimeout: SessionTimeoutPred
               MFADebitsEnabled = isEnabled(MFACreditsAndDebits),
               isAgent = isAgent,
               whatYouOweCreditAmountEnabled = isEnabled(WhatYouOweCreditAmount),
+              isUserMigrated = user.incomeSources.yearOfMigration.isDefined,
               origin = origin)(user, user, messages)
             ).addingToSession(gatewayPage -> WhatYouOwePage.name)
         }
