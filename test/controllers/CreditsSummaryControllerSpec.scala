@@ -23,9 +23,12 @@ import mocks.MockItvcErrorHandler
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockIncomeSourceDetailsPredicateNoCache}
 import mocks.services.{MockCalculationService, MockCreditHistoryService, MockFinancialDetailsService, MockNextUpdatesService}
 import models.financialDetails.DocumentDetail
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.{reset, when}
 import play.api.http.Status
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers._
+import services.CreditService
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testAgentAuthRetrievalSuccessNoEnrolment, testAuthSuccessWithSaUtrResponse, testSaUtrId, testTaxYear, testYearPlusTwo}
 import testConstants.FinancialDetailsTestConstants._
 import testUtils.TestSupport
@@ -33,19 +36,28 @@ import uk.gov.hmrc.auth.core.BearerTokenExpired
 import uk.gov.hmrc.http.InternalServerException
 import views.html.CreditsSummary
 
+import scala.concurrent.Future
+
 
 class CreditsSummaryControllerSpec extends TestSupport with MockCalculationService
   with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicateNoCache
   with MockFinancialDetailsService with FeatureSwitching with MockItvcErrorHandler
   with MockNextUpdatesService with MockIncomeSourceDetailsPredicate with MockCreditHistoryService {
 
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    reset(mockCreditService)
+  }
+
   val creditsSummaryView: CreditsSummary = app.injector.instanceOf[CreditsSummary]
+  val mockCreditService: CreditService = mock[CreditService]
 
   object TestCreditsSummaryController extends CreditsSummaryController(
     creditsSummaryView,
     mockAuthService,
     mockIncomeSourceDetailsService,
     mockCreditHistoryService,
+    mockCreditService,
     app.injector.instanceOf[ItvcErrorHandler],
     app.injector.instanceOf[SessionTimeoutPredicate],
     app.injector.instanceOf[NavBarPredicate],
@@ -80,11 +92,15 @@ class CreditsSummaryControllerSpec extends TestSupport with MockCalculationServi
         mockCreditHistoryService(chargesList)
         setupMockAuthRetrievalSuccess(testAuthSuccessWithSaUtrResponse())
 
+        when(mockCreditService.getCreditCharges()(any(), any()))
+          .thenReturn(Future.successful(List(financialDetailCreditAndRefundCharge)))
+
         val expectedContent: String = creditsSummaryView(
           backUrl = paymentRefundHistoryBackLink,
           utr = Some(testSaUtrId),
           enableMfaCreditsAndDebits = true,
           charges = chargesList,
+          maybeBalanceDetails = Some(financialDetailCreditCharge.balanceDetails),
           calendarYear = testTaxYear
         ).toString
 
@@ -106,11 +122,15 @@ class CreditsSummaryControllerSpec extends TestSupport with MockCalculationServi
         mockCreditHistoryService(chargesList)
         setupMockAuthRetrievalSuccess(testAuthSuccessWithSaUtrResponse())
 
+        when(mockCreditService.getCreditCharges()(any(), any()))
+          .thenReturn(Future.successful(List(financialDetailCreditAndRefundCharge)))
+
         val expectedContent: String = creditsSummaryView(
           backUrl = paymentRefundHistoryBackLink,
           utr = Some(testSaUtrId),
           enableMfaCreditsAndDebits = true,
           charges = chargesList,
+          maybeBalanceDetails = Some(financialDetailCreditCharge.balanceDetails),
           calendarYear = testTaxYear
         ).toString
 
@@ -224,7 +244,13 @@ class CreditsSummaryControllerSpec extends TestSupport with MockCalculationServi
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         mockBothIncomeSources()
         setupMockGetFinancialDetailsWithTaxYearAndNino(testYearPlusTwo, "AA111111A")(testFinancialDetailsErrorModel)
+
+        when(mockCreditService.getCreditCharges()(any(), any()))
+          .thenReturn(Future.successful(List(financialDetailCreditAndRefundCharge)))
+
         mockCreditHistoryFailed()
+
+
         val result = TestCreditsSummaryController.showAgentCreditsSummary(calendarYear = testYearPlusTwo)(fakeRequestConfirmedClient())
 
         status(result) shouldBe INTERNAL_SERVER_ERROR
