@@ -399,14 +399,14 @@
             @h2(msg = "whatYouOwe.moneyOnAccount-agent")
             @messages("whatYouOwe.moneyOnAccount-1") @whatYouOweChargesList.balanceDetails.availableCredit.getOrElse(throw MissingFieldException("Available Credit")).toCurrencyString
             @messages("whatYouOwe.moneyOnAccount-agent-2")
-            @link(link = creditAndRefundsControllerURL,  messageKey = "whatYouOwe.moneyOnAccount-3", rel=Some("noreferrer noopener")).
+            @link(link = creditAndRefundsControllerURL,  messageKey = "whatYouOwe.moneyOnAccount-3", outerMessage = ".", rel=Some("noreferrer noopener"))
         </div>
         } else {
         <div class="govuk-body">
             @h2(msg = "whatYouOwe.moneyOnAccount")
             @messages("whatYouOwe.moneyOnAccount-1") @whatYouOweChargesList.balanceDetails.availableCredit.getOrElse(throw MissingFieldException("Available Credit")).toCurrencyString
             @messages("whatYouOwe.moneyOnAccount-2")
-            @link(link = creditAndRefundsControllerURL,  messageKey = "whatYouOwe.moneyOnAccount-3", rel=Some("noreferrer noopener")).
+            @link(link = creditAndRefundsControllerURL,  messageKey = "whatYouOwe.moneyOnAccount-3", outerMessage = ".", rel=Some("noreferrer noopener"))
         </div>
         }
     }
