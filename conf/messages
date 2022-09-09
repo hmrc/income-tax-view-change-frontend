@@ -432,7 +432,7 @@ credits.money-in-your-account-section.name                              = Money 
 credits.money-in-your-account-section.content                           = There is a total of {0} in your account. You can leave the money there to pay your next bill or
 credits.money-in-your-account-section.agent.name                        = Money in your client’s account
 credits.money-in-your-account-section.agent.content                     = There is a total of {0} in your client's account. You can leave the money there to pay their next bill or
-credits.money-in-your-account-section.claim-a-refund-link               = claim a refund.
+credits.money-in-your-account-section.claim-a-refund-link               = claim a refund
 
 ## Refund to taxpayer page ##
 refund-to-taxpayer.heading                                      = Refund to taxpayer
