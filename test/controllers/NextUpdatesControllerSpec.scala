@@ -302,6 +302,23 @@ class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockInc
       }
     }
 
+    "the Next Updates feature switch disabled: other cases" should {
+
+      lazy val result = TestNextUpdatesController.getNextUpdates()(fakeRequestWithActiveSession)
+
+      "called with an Authenticated HMRC-MTD-IT user with NINO" which {
+
+        "failed to retrieve a set of Business NextUpdates" should {
+
+          "return Status OK (500)" in {
+            mockSingleBusinessIncomeSourceError()
+            mockSingleBusinessIncomeSourceWithDeadlines()
+            mockObligations
+            status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+          }
+        }
+      }
+    }
   }
 
   /* AGENT **/
