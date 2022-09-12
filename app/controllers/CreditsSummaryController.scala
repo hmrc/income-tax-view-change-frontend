@@ -93,7 +93,6 @@ class CreditsSummaryController @Inject()(creditsView: CreditsSummary,
             val charges = credits
               .sortBy(_.date.toEpochDay)
 
-            // todo check if we need to pass Option[BigDecimal] as availableCredit ?
             val maybeBalanceDetails: Option[BalanceDetails] = financialDetailsModels match {
               case financialDetailsModel: List[FinancialDetailsModel] =>
                 financialDetailsModel.headOption.map(balance => balance.balanceDetails)

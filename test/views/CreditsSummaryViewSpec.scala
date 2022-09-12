@@ -184,8 +184,6 @@ class CreditsSummaryViewSpec extends TestSupport with FeatureSwitching with Impl
       layoutContent.selectHead("h1").text shouldBe creditsSummaryHeading
       document.select("th").isEmpty shouldBe true
       document.select("td").isEmpty shouldBe true
-      // todo what should we do if BalanceDetails.availableCredit is not available
-      //      document.selectById("credit-and-refund-claim-refund-btn").text() shouldBe creditAndRefundClaimRefundBtn
       document.getElementsByClass("govuk-link").last().text() shouldBe getPageHelpLinkTextBtn
     }
 
