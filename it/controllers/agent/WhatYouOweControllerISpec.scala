@@ -844,7 +844,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
     }
   }
 
-  "render the money in your account section when balance details has available credits" in {
+  "render the money in clients account section when balance details has available credits" in {
     stubAuthorisedAgentUser(authorised = true)
 
     IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
@@ -889,7 +889,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
     )
   }
 
-  "should not render the money in your account section when balance details has zero available credits" in {
+  "should not render the money in clients account section when balance details has zero available credits" in {
     stubAuthorisedAgentUser(authorised = true)
 
     IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
