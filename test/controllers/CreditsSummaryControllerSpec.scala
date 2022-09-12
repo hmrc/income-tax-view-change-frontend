@@ -29,10 +29,11 @@ import play.api.http.Status
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers._
 import services.CreditService
-import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testAgentAuthRetrievalSuccessNoEnrolment, testAuthSuccessWithSaUtrResponse, testSaUtrId, testTaxYear, testYearPlusTwo}
+import testConstants.BaseTestConstants
+import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testAgentAuthRetrievalSuccessNoEnrolment, testAuthSuccessResponse, testAuthSuccessWithSaUtrResponse, testSaUtrId, testTaxYear, testYearPlusTwo}
 import testConstants.FinancialDetailsTestConstants._
 import testUtils.TestSupport
-import uk.gov.hmrc.auth.core.BearerTokenExpired
+import uk.gov.hmrc.auth.core.{AffinityGroup, BearerTokenExpired, ConfidenceLevel}
 import uk.gov.hmrc.http.InternalServerException
 import views.html.CreditsSummary
 
@@ -81,6 +82,8 @@ class CreditsSummaryControllerSpec extends TestSupport with MockCalculationServi
 
   val paymentRefundHistoryBackLink: String = "/report-quarterly/income-and-expenses/view/payment-refund-history"
   val agentHomeBackLink: String = "/report-quarterly/income-and-expenses/view/agents/client-income-tax"
+  lazy val creditAndRefundUrl: String = controllers.routes.CreditAndRefundController.show().url
+  lazy val defaultCreditsSummaryUrl: String = controllers.routes.CreditsSummaryController.showCreditsSummary(2018, None).url
 
   "MFACreditsAndDebits feature switch is enabled" should {
     "all calls are returned correctly and Referer was a Payment Refund History page" should {
@@ -105,6 +108,66 @@ class CreditsSummaryControllerSpec extends TestSupport with MockCalculationServi
         ).toString
 
         val result = TestCreditsSummaryController.showCreditsSummary(testTaxYear)(fakeRequestWithActiveSessionWithReferer(referer = paymentRefundHistoryBackLink))
+
+        status(result) shouldBe Status.OK
+
+        contentAsString(result) shouldBe expectedContent
+        contentType(result) shouldBe Some(HTML)
+      }
+    }
+
+    "all calls are returned correctly and Referer was a Credit and Refund page" should {
+      "show the Credits Summary Page and back link should be to the Credit and Refund page" in {
+        val chargesList = creditAndRefundCreditDetailListMFA
+
+        enable(MFACreditsAndDebits)
+        mockSingleBusinessIncomeSource()
+        mockCreditHistoryService(chargesList)
+        setupMockAuthRetrievalSuccess(testAuthSuccessWithSaUtrResponse())
+
+        when(mockCreditService.getCreditCharges()(any(), any()))
+          .thenReturn(Future.successful(List(financialDetailCreditAndRefundCharge)))
+
+        val expectedContent: String = creditsSummaryView(
+          backUrl = creditAndRefundUrl,
+          utr = Some(testSaUtrId),
+          enableMfaCreditsAndDebits = true,
+          charges = chargesList,
+          maybeBalanceDetails = Some(financialDetailCreditCharge.balanceDetails),
+          calendarYear = testTaxYear
+        ).toString
+
+        val result = TestCreditsSummaryController.showCreditsSummary(testTaxYear)(fakeRequestWithActiveSessionWithReferer(referer = creditAndRefundUrl))
+
+        status(result) shouldBe Status.OK
+
+        contentAsString(result) shouldBe expectedContent
+        contentType(result) shouldBe Some(HTML)
+      }
+    }
+
+    "all calls are returned correctly and Referer was a Credits Summary page when referrer is not provided" should {
+      "show the Credits Summary Page and back link should be to the Credits Summary page" in {
+        val chargesList = creditAndRefundCreditDetailListMFA
+
+        enable(MFACreditsAndDebits)
+        mockSingleBusinessIncomeSource()
+        mockCreditHistoryService(chargesList)
+        setupMockAuthRetrievalSuccess(testAuthSuccessWithSaUtrResponse())
+
+        when(mockCreditService.getCreditCharges()(any(), any()))
+          .thenReturn(Future.successful(List(financialDetailCreditAndRefundCharge)))
+
+        val expectedContent: String = creditsSummaryView(
+          backUrl = defaultCreditsSummaryUrl,
+          utr = Some(testSaUtrId),
+          enableMfaCreditsAndDebits = true,
+          charges = chargesList,
+          maybeBalanceDetails = Some(financialDetailCreditCharge.balanceDetails),
+          calendarYear = testTaxYear
+        ).toString
+
+        val result = TestCreditsSummaryController.showCreditsSummary(testTaxYear)(fakeRequestWithActiveSessionWithReferer(referer = ""))
 
         status(result) shouldBe Status.OK
 
