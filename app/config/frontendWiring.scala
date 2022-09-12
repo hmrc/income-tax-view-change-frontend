@@ -38,26 +38,12 @@ class FrontendAuthConnector @Inject()(config: ServicesConfig,
 }
 
 @Singleton
-class ItvcHeaderCarrierForPartialsConverter @Inject()(val sessionCookieCrypto: SessionCookieCrypto) extends HeaderCarrierForPartialsConverter {
-
-  def encryptCookieString(cookie: String): String = {
-    sessionCookieCrypto.crypto.encrypt(PlainText(cookie)).value
-  }
-
-  val crypto: String => String = identity
-}
+class ItvcHeaderCarrierForPartialsConverter @Inject()(val sessionCookieCrypto: SessionCookieCrypto) extends HeaderCarrierForPartialsConverter {}
 
 @Singleton
 class FormPartialProvider @Inject()(override val httpGet: HttpClient,
                                     override val headerCarrierForPartialsConverter: HeaderCarrierForPartialsConverter
-                                   )(implicit executionContext: ExecutionContext) extends FormPartialRetriever {
-
-  val crypto: (String) => String = cookie => cookie
-
-  def getPartialContent(url: String)(implicit request: RequestHeader): Html = {
-    Await.result(super.getPartialContentAsync(url), 10.seconds)
-  }
-}
+                                   )(implicit executionContext: ExecutionContext) extends FormPartialRetriever { }
 
 
 
