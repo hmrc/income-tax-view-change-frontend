@@ -137,6 +137,8 @@ class AuthenticationPredicateSpec extends TestSupport with MockitoSugar with Moc
           redirectLocation(result) shouldBe Some(ivUpliftRedirectUrl)
         }
 
+
+
         "the feature switch is enabled for an organisation without a nino" in {
           enable(IvUplift)
           setupMockAuthRetrievalSuccess(testAuthSuccessResponseOrgNoNino(ConfidenceLevel.L50))
@@ -158,6 +160,18 @@ class AuthenticationPredicateSpec extends TestSupport with MockitoSugar with Moc
           status(result) shouldBe Status.OK
         }
       }
+
+      "expect exception to be raised" when {
+        "affinity group set to Agent" in {
+          enable(IvUplift)
+          setupMockAuthRetrievalSuccess(testAuthSuccessResponse(ConfidenceLevel.L50, AffinityGroup.Agent))
+
+          intercept[UnsupportedAuthProvider] {
+            setupResult()(fakeRequestWithActiveSession)
+          }
+        }
+      }
+
     }
   }
 }

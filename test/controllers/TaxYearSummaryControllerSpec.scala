@@ -101,7 +101,7 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
       )
 
       val calcModel = if (crystallised) liabilityCalculationModelSuccessful else liabilityCalculationModelSuccessfulNotCrystallised
-      val calcOverview: Option[TaxYearSummaryViewModel] = if (calcDataNotFound) None else Some(TaxYearSummaryViewModel(calcModel,taxYear))
+      val calcOverview: Option[TaxYearSummaryViewModel] = if (calcDataNotFound) None else Some(TaxYearSummaryViewModel(calcModel))
       val expectedContent: String = taxYearSummaryView(
         taxYear,
         calcOverview,
@@ -113,7 +113,6 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
       ).toString
 
       val result = TestTaxYearSummaryController.renderTaxYearSummaryPage(taxYear)(fakeRequestWithActiveSessionWithReferer(referer = taxYearsBackLink))
-       val asd = TaxYearSummaryViewModel(calc = calcModel, taxYear = taxYear)
       status(result) shouldBe Status.OK
       contentAsString(result) shouldBe expectedContent
       contentType(result) shouldBe Some("text/html")
@@ -149,7 +148,7 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
           response = testObligtionsModel
         )
 
-        val calcOverview: TaxYearSummaryViewModel = TaxYearSummaryViewModel(liabilityCalculationModelSuccessful,testTaxYear)
+        val calcOverview: TaxYearSummaryViewModel = TaxYearSummaryViewModel(liabilityCalculationModelSuccessful)
         val expectedContent: String = taxYearSummaryView(
           testTaxYear,
           Some(calcOverview),
@@ -179,7 +178,7 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
           response = testObligtionsModel
         )
 
-        val calcOverview: TaxYearSummaryViewModel = TaxYearSummaryViewModel(liabilityCalculationModelSuccessful,testTaxYear)
+        val calcOverview: TaxYearSummaryViewModel = TaxYearSummaryViewModel(liabilityCalculationModelSuccessful)
         val expectedContent: String = taxYearSummaryView(
           testTaxYear,
           Some(calcOverview),
@@ -215,7 +214,7 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
           response = testObligtionsModel
         )
 
-        val calcOverview: TaxYearSummaryViewModel = TaxYearSummaryViewModel(liabilityCalculationModelSuccessful,testTaxYear)
+        val calcOverview: TaxYearSummaryViewModel = TaxYearSummaryViewModel(liabilityCalculationModelSuccessful)
         val expectedContent: String = taxYearSummaryView(
           testTaxYear,
           Some(calcOverview),
@@ -246,7 +245,7 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
           response = testObligtionsModel
         )
 
-        val calcOverview: TaxYearSummaryViewModel = TaxYearSummaryViewModel(liabilityCalculationModelSuccessful,testTaxYear)
+        val calcOverview: TaxYearSummaryViewModel = TaxYearSummaryViewModel(liabilityCalculationModelSuccessful)
         val expectedContent: String = taxYearSummaryView(
           testTaxYear,
           Some(calcOverview),
@@ -279,7 +278,7 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
           response = testObligtionsModel
         )
 
-        val calcOverview: TaxYearSummaryViewModel = TaxYearSummaryViewModel(liabilityCalculationModelSuccessful,testTaxYear)
+        val calcOverview: TaxYearSummaryViewModel = TaxYearSummaryViewModel(liabilityCalculationModelSuccessful)
         val expectedContent: String = taxYearSummaryView(
           testTaxYear,
           Some(calcOverview),
@@ -310,7 +309,7 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
           response = testObligtionsModel
         )
 
-        val calcOverview: TaxYearSummaryViewModel = TaxYearSummaryViewModel(liabilityCalculationModelSuccessful,testTaxYear)
+        val calcOverview: TaxYearSummaryViewModel = TaxYearSummaryViewModel(liabilityCalculationModelSuccessful)
         val expectedContent: String = taxYearSummaryView(
           testTaxYear,
           Some(calcOverview),
@@ -339,7 +338,7 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
           response = testObligtionsModel
         )
 
-        val calcOverview: TaxYearSummaryViewModel = TaxYearSummaryViewModel(liabilityCalculationModelSuccessful,testTaxYear)
+        val calcOverview: TaxYearSummaryViewModel = TaxYearSummaryViewModel(liabilityCalculationModelSuccessful)
         val charges = if (MFAEnabled) MFADebitsDocumentDetailsWithDueDates else testEmptyChargesList
         val expectedContent: String = taxYearSummaryView(
           testTaxYear,
@@ -375,7 +374,7 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
         )
 
 
-        val calcOverview: TaxYearSummaryViewModel = TaxYearSummaryViewModel(liabilityCalculationModelSuccessful,testTaxYear)
+        val calcOverview: TaxYearSummaryViewModel = TaxYearSummaryViewModel(liabilityCalculationModelSuccessful)
         val expectedContent: String = taxYearSummaryView(
           testTaxYear,
           Some(calcOverview),
@@ -627,7 +626,7 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
           ObligationsModel(Nil)
         )
 
-        val calcOverview: TaxYearSummaryViewModel = TaxYearSummaryViewModel(liabilityCalculationModelSuccessful,testTaxYear)
+        val calcOverview: TaxYearSummaryViewModel = TaxYearSummaryViewModel(liabilityCalculationModelSuccessful)
         val expectedContent: String = taxYearSummaryView(
           testYearPlusTwo,
           Some(calcOverview),
