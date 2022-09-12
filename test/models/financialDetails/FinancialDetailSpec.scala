@@ -172,6 +172,7 @@ class FinancialDetailSpec extends UnitSpec {
         getMessageKeyByTypes(Some("SA Balancing Charge"), Some("Voluntary NIC2-GB")) shouldBe Some("bcd.vcnic2")
         getMessageKeyByTypes(Some("SA Balancing Charge"), Some("CGT")) shouldBe Some("bcd.cgt")
         getMessageKeyByTypes(Some("SA Balancing Charge"), Some("SL")) shouldBe Some("bcd.sl")
+        getMessageKeyByTypes(Some("ITSA Misc Charge"), Some("test")) shouldBe Some("hmrcAdjustment.text")
       }
 
 
