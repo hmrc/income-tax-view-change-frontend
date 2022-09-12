@@ -52,6 +52,10 @@ trait MockIncomeSourceDetailsService extends BeforeAndAfterEach with MockitoSuga
     }
   )
 
+  def mockSingleBusinessIncomeSourceError(): Unit = setupMockGetIncomeSourceDetails()(
+    errorResponse
+  )
+
   def mockSingleBISWithCurrentYearAsMigrationYear(): Unit = setupMockGetIncomeSourceDetails()(singleBusinessIncomeWithCurrentYear)
 
   def mockPropertyIncomeSource(): Unit = setupMockGetIncomeSourceDetails()(propertyIncomeOnly)
