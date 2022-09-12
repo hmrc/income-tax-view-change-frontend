@@ -393,7 +393,7 @@
         <li> @messages("whatYouOwe.payments-made-bullet-2")</li>
     </ul>
 
-    @if(whatYouOweChargesList.balanceDetails.availableCredit.getOrElse(throw MissingFieldException("Available Credit")) > 0) {
+    @if(whatYouOweChargesList.balanceDetails.availableCredit.isDefined && whatYouOweChargesList.balanceDetails.availableCredit.get > 0) {
         @if(isAgent){
         <div class="govuk-body">
             @h2(msg = "whatYouOwe.moneyOnAccount-agent")
