@@ -16,20 +16,17 @@
 
 package controllers.predicates
 
-import testConstants.BaseTestConstants.{testAuthSuccessResponse, testAuthSuccessResponseOrgNoNino, testMtditid, testNino}
-import audit.AuditingService
 import audit.mocks.MockAuditingService
 import config.featureswitch.{FeatureSwitching, IvUplift}
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
-import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.http.Status
-import play.api.i18n.MessagesApi
 import play.api.mvc.Results.Ok
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import play.api.test.Helpers._
 import play.api.{Configuration, Environment}
+import testConstants.BaseTestConstants.{testAuthSuccessResponse, testAuthSuccessResponseOrgNoNino, testMtditid, testNino}
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core._
 
