@@ -29,11 +29,10 @@ import play.api.http.Status
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers._
 import services.CreditService
-import testConstants.BaseTestConstants
-import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testAgentAuthRetrievalSuccessNoEnrolment, testAuthSuccessResponse, testAuthSuccessWithSaUtrResponse, testSaUtrId, testTaxYear, testYearPlusTwo}
+import testConstants.BaseTestConstants.{calendarYear2018, testAgentAuthRetrievalSuccess, testAgentAuthRetrievalSuccessNoEnrolment, testAuthSuccessWithSaUtrResponse, testSaUtrId, testYearPlusTwo}
 import testConstants.FinancialDetailsTestConstants._
 import testUtils.TestSupport
-import uk.gov.hmrc.auth.core.{AffinityGroup, BearerTokenExpired, ConfidenceLevel}
+import uk.gov.hmrc.auth.core.BearerTokenExpired
 import uk.gov.hmrc.http.InternalServerException
 import views.html.CreditsSummary
 
@@ -98,16 +97,19 @@ class CreditsSummaryControllerSpec extends TestSupport with MockCalculationServi
         when(mockCreditService.getCreditCharges()(any(), any()))
           .thenReturn(Future.successful(List(financialDetailCreditAndRefundCharge)))
 
+        when(mockCreditService.maybeBalanceDetails(List(financialDetailCreditAndRefundCharge)))
+          .thenReturn(Some(financialDetailCreditAndRefundCharge.balanceDetails))
+
         val expectedContent: String = creditsSummaryView(
           backUrl = paymentRefundHistoryBackLink,
           utr = Some(testSaUtrId),
           enableMfaCreditsAndDebits = true,
           charges = chargesList,
           maybeBalanceDetails = Some(financialDetailCreditCharge.balanceDetails),
-          calendarYear = testTaxYear
+          calendarYear = calendarYear2018
         ).toString
 
-        val result = TestCreditsSummaryController.showCreditsSummary(testTaxYear)(fakeRequestWithActiveSessionWithReferer(referer = paymentRefundHistoryBackLink))
+        val result = TestCreditsSummaryController.showCreditsSummary(calendarYear2018)(fakeRequestWithActiveSessionWithReferer(referer = paymentRefundHistoryBackLink))
 
         status(result) shouldBe Status.OK
 
@@ -128,16 +130,19 @@ class CreditsSummaryControllerSpec extends TestSupport with MockCalculationServi
         when(mockCreditService.getCreditCharges()(any(), any()))
           .thenReturn(Future.successful(List(financialDetailCreditAndRefundCharge)))
 
+        when(mockCreditService.maybeBalanceDetails(List(financialDetailCreditAndRefundCharge)))
+          .thenReturn(Some(financialDetailCreditAndRefundCharge.balanceDetails))
+
         val expectedContent: String = creditsSummaryView(
           backUrl = creditAndRefundUrl,
           utr = Some(testSaUtrId),
           enableMfaCreditsAndDebits = true,
           charges = chargesList,
           maybeBalanceDetails = Some(financialDetailCreditCharge.balanceDetails),
-          calendarYear = testTaxYear
+          calendarYear = calendarYear2018
         ).toString
 
-        val result = TestCreditsSummaryController.showCreditsSummary(testTaxYear)(fakeRequestWithActiveSessionWithReferer(referer = creditAndRefundUrl))
+        val result = TestCreditsSummaryController.showCreditsSummary(calendarYear2018)(fakeRequestWithActiveSessionWithReferer(referer = creditAndRefundUrl))
 
         status(result) shouldBe Status.OK
 
@@ -158,16 +163,19 @@ class CreditsSummaryControllerSpec extends TestSupport with MockCalculationServi
         when(mockCreditService.getCreditCharges()(any(), any()))
           .thenReturn(Future.successful(List(financialDetailCreditAndRefundCharge)))
 
+        when(mockCreditService.maybeBalanceDetails(List(financialDetailCreditAndRefundCharge)))
+          .thenReturn(Some(financialDetailCreditAndRefundCharge.balanceDetails))
+
         val expectedContent: String = creditsSummaryView(
           backUrl = defaultCreditsSummaryUrl,
           utr = Some(testSaUtrId),
           enableMfaCreditsAndDebits = true,
           charges = chargesList,
           maybeBalanceDetails = Some(financialDetailCreditCharge.balanceDetails),
-          calendarYear = testTaxYear
+          calendarYear = calendarYear2018
         ).toString
 
-        val result = TestCreditsSummaryController.showCreditsSummary(testTaxYear)(fakeRequestWithActiveSessionWithReferer(referer = ""))
+        val result = TestCreditsSummaryController.showCreditsSummary(calendarYear2018)(fakeRequestWithActiveSessionWithReferer(referer = ""))
 
         status(result) shouldBe Status.OK
 
@@ -188,16 +196,19 @@ class CreditsSummaryControllerSpec extends TestSupport with MockCalculationServi
         when(mockCreditService.getCreditCharges()(any(), any()))
           .thenReturn(Future.successful(List(financialDetailCreditAndRefundCharge)))
 
+        when(mockCreditService.maybeBalanceDetails(List(financialDetailCreditAndRefundCharge)))
+          .thenReturn(Some(financialDetailCreditAndRefundCharge.balanceDetails))
+
         val expectedContent: String = creditsSummaryView(
           backUrl = paymentRefundHistoryBackLink,
           utr = Some(testSaUtrId),
           enableMfaCreditsAndDebits = true,
           charges = chargesList,
           maybeBalanceDetails = Some(financialDetailCreditCharge.balanceDetails),
-          calendarYear = testTaxYear
+          calendarYear = calendarYear2018
         ).toString
 
-        val result = TestCreditsSummaryController.showCreditsSummary(testTaxYear)(fakeRequestWithActiveSessionWithReferer(referer = paymentRefundHistoryBackLink))
+        val result = TestCreditsSummaryController.showCreditsSummary(calendarYear2018)(fakeRequestWithActiveSessionWithReferer(referer = paymentRefundHistoryBackLink))
 
         status(result) shouldBe Status.OK
 
@@ -213,7 +224,7 @@ class CreditsSummaryControllerSpec extends TestSupport with MockCalculationServi
         mockSingleBusinessIncomeSource()
         mockCreditHistoryFailed()
 
-        val result = TestCreditsSummaryController.showCreditsSummary(testTaxYear)(fakeRequestWithActiveSession)
+        val result = TestCreditsSummaryController.showCreditsSummary(calendarYear2018)(fakeRequestWithActiveSession)
 
         status(result) shouldBe Status.INTERNAL_SERVER_ERROR
         contentType(result) shouldBe Some(HTML)
@@ -224,7 +235,7 @@ class CreditsSummaryControllerSpec extends TestSupport with MockCalculationServi
       "return redirect SEE_OTHER (303)" in {
         setupMockAuthorisationException()
 
-        val result = TestCreditsSummaryController.showCreditsSummary(testTaxYear)(fakeRequestWithActiveSession)
+        val result = TestCreditsSummaryController.showCreditsSummary(calendarYear2018)(fakeRequestWithActiveSession)
 
         status(result) shouldBe Status.SEE_OTHER
       }
@@ -235,7 +246,7 @@ class CreditsSummaryControllerSpec extends TestSupport with MockCalculationServi
         "return Internal Service Error (500)" in {
           mockPropertyIncomeSource()
 
-          val result = TestCreditsSummaryController.showCreditsSummary(testTaxYear)(fakeRequestWithActiveSession)
+          val result = TestCreditsSummaryController.showCreditsSummary(calendarYear2018)(fakeRequestWithActiveSession)
 
           status(result) shouldBe Status.INTERNAL_SERVER_ERROR
         }
@@ -249,7 +260,7 @@ class CreditsSummaryControllerSpec extends TestSupport with MockCalculationServi
         disable(MFACreditsAndDebits)
         mockSingleBusinessIncomeSource()
 
-        val result = TestCreditsSummaryController.showCreditsSummary(testTaxYear)(fakeRequestWithActiveSession)
+        val result = TestCreditsSummaryController.showCreditsSummary(calendarYear2018)(fakeRequestWithActiveSession)
 
         status(result) shouldBe Status.SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.routes.HomeController.show().url)
@@ -264,7 +275,7 @@ class CreditsSummaryControllerSpec extends TestSupport with MockCalculationServi
         enable(MFACreditsAndDebits)
         setupMockAgentAuthorisationException(withClientPredicate = false)
 
-        val result = TestCreditsSummaryController.showAgentCreditsSummary(testTaxYear)(fakeRequestWithActiveSession)
+        val result = TestCreditsSummaryController.showAgentCreditsSummary(calendarYear2018)(fakeRequestWithActiveSession)
 
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn().url)
@@ -274,7 +285,7 @@ class CreditsSummaryControllerSpec extends TestSupport with MockCalculationServi
       "redirect to the session timeout page" in {
         setupMockAgentAuthorisationException(exception = BearerTokenExpired())
 
-        val result = TestCreditsSummaryController.showAgentCreditsSummary(testTaxYear)(fakeRequestWithClientDetails)
+        val result = TestCreditsSummaryController.showAgentCreditsSummary(calendarYear2018)(fakeRequestWithClientDetails)
 
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout().url)
@@ -285,7 +296,7 @@ class CreditsSummaryControllerSpec extends TestSupport with MockCalculationServi
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccessNoEnrolment, withClientPredicate = false)
         mockShowOkTechnicalDifficulties()
 
-        val result = TestCreditsSummaryController.showAgentCreditsSummary(testTaxYear)(fakeRequestWithActiveSession)
+        val result = TestCreditsSummaryController.showAgentCreditsSummary(calendarYear2018)(fakeRequestWithActiveSession)
 
         status(result) shouldBe OK
         contentType(result) shouldBe Some(HTML)
@@ -296,7 +307,7 @@ class CreditsSummaryControllerSpec extends TestSupport with MockCalculationServi
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         mockErrorIncomeSource()
         mockShowInternalServerError()
-        val result = TestCreditsSummaryController.showAgentCreditsSummary(testTaxYear)(fakeRequestConfirmedClient()).failed.futureValue
+        val result = TestCreditsSummaryController.showAgentCreditsSummary(calendarYear2018)(fakeRequestConfirmedClient()).failed.futureValue
         result shouldBe an[InternalServerException]
         result.getMessage shouldBe "[ClientConfirmedController][getMtdItUserWithIncomeSources] IncomeSourceDetailsModel not created"
       }

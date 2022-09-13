@@ -56,6 +56,7 @@ object BaseTestConstants extends UnitSpec with GuiceOneAppPerSuite {
   val testUserTypeAgent = "Agent"
   val testUserType: String = testUserTypeIndividual
   val testTaxYear = 2018
+  val calendarYear2018 = 2018
   val testYearPlusOne = 2019
   val testYearPlusTwo = 2020
   val testYearPlusThree = 2021

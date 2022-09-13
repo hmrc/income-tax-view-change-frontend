@@ -21,7 +21,7 @@ import config.featureswitch.{FeatureSwitching, MFACreditsAndDebits}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
-import models.financialDetails.{BalanceDetails, FinancialDetailsModel}
+import models.financialDetails.BalanceDetails
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
@@ -93,11 +93,7 @@ class CreditsSummaryController @Inject()(creditsView: CreditsSummary,
             val charges = credits
               .sortBy(_.date.toEpochDay)
 
-            val maybeBalanceDetails: Option[BalanceDetails] = financialDetailsModels match {
-              case financialDetailsModel: List[FinancialDetailsModel] =>
-                financialDetailsModel.headOption.map(balance => balance.balanceDetails)
-              case _ => None
-            }
+            val maybeBalanceDetails: Option[BalanceDetails] = creditService.maybeBalanceDetails(financialDetailsModels)
 
             Future.successful(Ok(creditsView(
               calendarYear = calendarYear,
