@@ -127,7 +127,7 @@
                             <p class="govuk-heading-s">
                                 @charge._1.documentDetail.paymentOrChargeCredit.getOrElse(throw MissingFieldException("Payment Or Charge Credit")).toCurrencyString
                                 <span class="govuk-body"> @messages("credit-and-refund.credit-from-hmrc-title-prt-1")
-                                    <a href="@getControllerHref(charge._1.documentDetail, isAgent)"
+                                    <a href="@getCreditsSummaryControllerHref(charge._1.documentDetail, isAgent)"
                                        class="govuk-link">@messages("paymentHistory.paymentFromEarlierYear")
                                         <span class="govuk-visually-hidden"> @index</span>
                                     </a>
