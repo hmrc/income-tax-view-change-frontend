@@ -34,7 +34,8 @@ class CreditService @Inject()(val financialDetailsService: FinancialDetailsServi
       case financialDetails: List[FinancialDetailsResponseModel] => financialDetails.asInstanceOf[List[FinancialDetailsModel]]
     }
   }
-
+}
+object CreditService {
   def maybeBalanceDetails(financialDetailsModels: List[FinancialDetailsModel]): Option[BalanceDetails] =
     financialDetailsModels match {
       case financialDetailsModel: List[FinancialDetailsModel] if financialDetailsModels.nonEmpty =>

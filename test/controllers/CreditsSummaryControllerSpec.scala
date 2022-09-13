@@ -97,9 +97,6 @@ class CreditsSummaryControllerSpec extends TestSupport with MockCalculationServi
         when(mockCreditService.getCreditCharges()(any(), any()))
           .thenReturn(Future.successful(List(financialDetailCreditAndRefundCharge)))
 
-        when(mockCreditService.maybeBalanceDetails(List(financialDetailCreditAndRefundCharge)))
-          .thenReturn(Some(financialDetailCreditAndRefundCharge.balanceDetails))
-
         val expectedContent: String = creditsSummaryView(
           backUrl = paymentRefundHistoryBackLink,
           utr = Some(testSaUtrId),
@@ -129,9 +126,6 @@ class CreditsSummaryControllerSpec extends TestSupport with MockCalculationServi
 
         when(mockCreditService.getCreditCharges()(any(), any()))
           .thenReturn(Future.successful(List(financialDetailCreditAndRefundCharge)))
-
-        when(mockCreditService.maybeBalanceDetails(List(financialDetailCreditAndRefundCharge)))
-          .thenReturn(Some(financialDetailCreditAndRefundCharge.balanceDetails))
 
         val expectedContent: String = creditsSummaryView(
           backUrl = creditAndRefundUrl,
@@ -163,9 +157,6 @@ class CreditsSummaryControllerSpec extends TestSupport with MockCalculationServi
         when(mockCreditService.getCreditCharges()(any(), any()))
           .thenReturn(Future.successful(List(financialDetailCreditAndRefundCharge)))
 
-        when(mockCreditService.maybeBalanceDetails(List(financialDetailCreditAndRefundCharge)))
-          .thenReturn(Some(financialDetailCreditAndRefundCharge.balanceDetails))
-
         val expectedContent: String = creditsSummaryView(
           backUrl = defaultCreditsSummaryUrl,
           utr = Some(testSaUtrId),
@@ -195,9 +186,6 @@ class CreditsSummaryControllerSpec extends TestSupport with MockCalculationServi
 
         when(mockCreditService.getCreditCharges()(any(), any()))
           .thenReturn(Future.successful(List(financialDetailCreditAndRefundCharge)))
-
-        when(mockCreditService.maybeBalanceDetails(List(financialDetailCreditAndRefundCharge)))
-          .thenReturn(Some(financialDetailCreditAndRefundCharge.balanceDetails))
 
         val expectedContent: String = creditsSummaryView(
           backUrl = paymentRefundHistoryBackLink,

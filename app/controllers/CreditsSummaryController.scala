@@ -93,7 +93,7 @@ class CreditsSummaryController @Inject()(creditsView: CreditsSummary,
             val charges = credits
               .sortBy(_.date.toEpochDay)
 
-            val maybeBalanceDetails: Option[BalanceDetails] = creditService.maybeBalanceDetails(financialDetailsModels)
+            val maybeBalanceDetails: Option[BalanceDetails] = CreditService.maybeBalanceDetails(financialDetailsModels)
 
             Future.successful(Ok(creditsView(
               calendarYear = calendarYear,
