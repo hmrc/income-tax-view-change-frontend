@@ -18,7 +18,7 @@ package controllers
 
 import audit.models.WhatYouOweResponseAuditModel
 import auth.MtdItUser
-import config.featureswitch.{CodingOut, MFACreditsAndDebits, R7bTxmEvents}
+import config.featureswitch.{CodingOut, CreditsRefundsRepay, MFACreditsAndDebits, R7bTxmEvents}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import models.financialDetails.{BalanceDetails, FinancialDetailsModel, WhatYouOweChargesList}
@@ -807,7 +807,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
     }
 
     "render the money in your account section when balance details has available credits" in {
-
+      enable(CreditsRefundsRepay)
       Given("I wiremock stub a successful Income Source Details response with multiple business and property")
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
 
@@ -850,7 +850,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
     }
 
     "should not render the money in your account section when balance details has zero available credits" in {
-
+      enable(CreditsRefundsRepay)
       Given("I wiremock stub a successful Income Source Details response with multiple business and property")
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
 

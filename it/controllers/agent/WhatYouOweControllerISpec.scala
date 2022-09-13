@@ -3,7 +3,7 @@ package controllers.agent
 
 import audit.models.WhatYouOweResponseAuditModel
 import auth.MtdItUser
-import config.featureswitch.{CodingOut, FeatureSwitching}
+import config.featureswitch.{CodingOut, CreditsRefundsRepay, FeatureSwitching}
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import models.core.AccountingPeriodModel
@@ -846,6 +846,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
 
   "render the money in clients account section when balance details has available credits" in {
     stubAuthorisedAgentUser(authorised = true)
+    enable(CreditsRefundsRepay)
 
     IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
       status = OK,
@@ -891,6 +892,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
 
   "should not render the money in clients account section when balance details has zero available credits" in {
     stubAuthorisedAgentUser(authorised = true)
+    enable(CreditsRefundsRepay)
 
     IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
       status = OK,
