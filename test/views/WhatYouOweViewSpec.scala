@@ -407,6 +407,17 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
         }
 
+        "money in your account section with available credits" in new Setup(charges = whatYouOweDataWithAvailableCredits()) {
+          pageDocument.getElementById("money-in-your-account").text shouldBe messages("whatYouOwe.moneyOnAccount") + " " +
+            messages("whatYouOwe.moneyOnAccount-1") + " £300.00" + " " +
+            messages("whatYouOwe.moneyOnAccount-2") + " " +
+            messages("whatYouOwe.moneyOnAccount-3") + "."
+        }
+
+        "money in your account section with zero available credits" in new Setup(charges = whatYouOweDataWithDataDueIn30Days()) {
+          pageDocument.getElementById("money-in-your-account") shouldBe null
+        }
+
       }
 
       "the user has charges and access viewer within 30 days of due date" should {
@@ -1109,6 +1120,17 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       }
       "not have button Pay now with charges" in new AgentSetup(charges = whatYouOweDataWithDataDueIn30Days()) {
         Option(pageDocument.getElementById("payment-button")) shouldBe None
+      }
+
+      "money in your account section with available credits" in new AgentSetup(charges = whatYouOweDataWithAvailableCredits()) {
+        pageDocument.getElementById("money-in-your-account").text shouldBe messages("whatYouOwe.moneyOnAccount-agent") + " " +
+          messages("whatYouOwe.moneyOnAccount-1") + " £300.00" + " " +
+          messages("whatYouOwe.moneyOnAccount-agent-2") + " " +
+          messages("whatYouOwe.moneyOnAccount-3") + "."
+      }
+
+      "money in your account section with zero available credits" in new AgentSetup(charges = whatYouOweDataWithDataDueIn30Days()) {
+        pageDocument.getElementById("money-in-your-account") shouldBe null
       }
     }
   }
