@@ -394,23 +394,30 @@
         <li> @messages("whatYouOwe.payments-made-bullet-2")</li>
     </ul>
 
-    @if(creditAndRefundEnabled && whatYouOweChargesList.balanceDetails.availableCredit.isDefined && whatYouOweChargesList.balanceDetails.availableCredit.get > 0) {
-        <div class="govuk-body" id="money-in-your-account">
+    @if(creditAndRefundEnabled){
+        @whatYouOweChargesList.balanceDetails.availableCredit.map { availableCredit =>
+            @if(availableCredit > 0) {
+                @availableCreditInAccount(availableCredit.toCurrencyString)
+            }
+        }
+    }
+}
+
+@availableCreditInAccount(availableCredit: String) = {
+    <div class="govuk-body" id="money-in-your-account">
         @if(isAgent) {
             @h2(msg = "whatYouOwe.moneyOnAccount-agent")
-            @messages("whatYouOwe.moneyOnAccount-1") @whatYouOweChargesList.balanceDetails.availableCredit.getOrElse(throw MissingFieldException("Available Credit")).toCurrencyString
+            @messages("whatYouOwe.moneyOnAccount-1") @availableCredit
             @messages("whatYouOwe.moneyOnAccount-agent-2")
             @link(link = creditAndRefundsControllerURL,  messageKey = "whatYouOwe.moneyOnAccount-3", outerMessage = ".", rel=Some("noreferrer noopener"))
         } else {
             @h2(msg = "whatYouOwe.moneyOnAccount")
-            @messages("whatYouOwe.moneyOnAccount-1") @whatYouOweChargesList.balanceDetails.availableCredit.getOrElse(throw MissingFieldException("Available Credit")).toCurrencyString
+            @messages("whatYouOwe.moneyOnAccount-1") @availableCredit
             @messages("whatYouOwe.moneyOnAccount-2")
             @link(link = creditAndRefundsControllerURL,  messageKey = "whatYouOwe.moneyOnAccount-3", outerMessage = ".", rel=Some("noreferrer noopener"))
         }
-        </div>
-    }
+    </div>
 }
-
 
 @getCodingOutHref(taxYear: Int, transactionId: String) = @{
     if (isAgent) {
