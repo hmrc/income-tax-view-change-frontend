@@ -51,6 +51,7 @@
     whatYouOweCreditAmountEnabled: Boolean,
     isAgent: Boolean = false,
     isUserMigrated: Boolean = false,
+    creditAndRefundEnabled: Boolean,
     origin: Option[String] = None)(implicit request: Request[_], user: MtdItUser[_], messages: Messages)
 
 @import implicitDateFormatter.longDate
@@ -393,7 +394,7 @@
         <li> @messages("whatYouOwe.payments-made-bullet-2")</li>
     </ul>
 
-    @if(whatYouOweChargesList.balanceDetails.availableCredit.isDefined && whatYouOweChargesList.balanceDetails.availableCredit.get > 0) {
+    @if(creditAndRefundEnabled && whatYouOweChargesList.balanceDetails.availableCredit.isDefined && whatYouOweChargesList.balanceDetails.availableCredit.get > 0) {
         <div class="govuk-body" id="money-in-your-account">
         @if(isAgent){
             @h2(msg = "whatYouOwe.moneyOnAccount-agent")
