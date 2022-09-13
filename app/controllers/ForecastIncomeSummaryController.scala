@@ -19,7 +19,7 @@ package controllers
 import audit.AuditingService
 import auth.MtdItUserWithNino
 import config.featureswitch.{FeatureSwitching, ForecastCalculation}
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import implicits.ImplicitDateFormatter
@@ -44,7 +44,6 @@ class ForecastIncomeSummaryController @Inject()(val forecastIncomeSummaryView: F
                                                 val retrieveNino: NinoPredicate,
                                                 val retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                                 val calculationService: CalculationService,
-                                                val itvcHeaderCarrierForPartialsConverter: ItvcHeaderCarrierForPartialsConverter,
                                                 val auditingService: AuditingService,
                                                 val retrieveBtaNavBar: NavBarFromNinoPredicate,
                                                 val itvcErrorHandler: ItvcErrorHandler,

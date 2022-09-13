@@ -17,7 +17,7 @@
 package controllers
 
 import config.featureswitch.FeatureSwitching
-import config.{FrontendAppConfig, ItvcHeaderCarrierForPartialsConverter}
+import config.{FrontendAppConfig}
 import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
 import implicits.ImplicitDateFormatter
 import mocks.MockItvcErrorHandler
@@ -59,8 +59,7 @@ class TaxYearsControllerSpec extends MockAuthenticationPredicate
     app.injector.instanceOf[NavBarPredicate],
     MockAuthenticationPredicate,
     app.injector.instanceOf[NinoPredicate],
-    MockIncomeSourceDetailsPredicate,
-    app.injector.instanceOf[ItvcHeaderCarrierForPartialsConverter]
+    MockIncomeSourceDetailsPredicate
   )
 
   ".viewTaxYears" when {
