@@ -46,7 +46,6 @@ class DeductionsSummaryController @Inject()(val checkSessionTimeout: SessionTime
                                             val authorisedFunctions: AuthorisedFunctions,
                                             val retrieveNino: NinoPredicate,
                                             val calculationService: CalculationService,
-                                            val itvcHeaderCarrierForPartialsConverter: ItvcHeaderCarrierForPartialsConverter,
                                             val auditingService: AuditingService,
                                             val deductionBreakdownView: DeductionBreakdown,
                                             val retrieveBtaNavBar: NavBarFromNinoPredicate,

@@ -16,7 +16,7 @@
 
 package controllers
 
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import forms.utils.SessionKeys
 import forms.utils.SessionKeys.gatewayPage
@@ -51,7 +51,6 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockInco
       app.injector.instanceOf[NinoPredicate],
       MockIncomeSourceDetailsPredicate,
       whatYouOweService,
-      app.injector.instanceOf[ItvcHeaderCarrierForPartialsConverter],
       app.injector.instanceOf[ItvcErrorHandler],
       app.injector.instanceOf[AgentItvcErrorHandler],
       MockNavBarPredicate,
