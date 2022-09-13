@@ -97,7 +97,7 @@ object FinancialDetail {
 
   def getMessageKeyByTypes(mainType: Option[String], chargeType: Option[String]): Option[String] = {
     if (MfaDebitUtils.isMFADebitMainType(mainType)) {
-      Option("hmrcAdjustment.text")
+      Some("hmrcAdjustment.text")
     }
     else {
       for {

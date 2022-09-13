@@ -81,6 +81,18 @@ object PaymentAllocationsTestConstants {
     paymentLotItem = Some("paymentLotItem2")
   )
 
+  val documentDetail3: DocumentDetail = DocumentDetail(
+    taxYear = "2022",
+    transactionId = "chargeReference3",
+    documentDescription = Some("documentDescription2"),
+    documentText = Some("documentText2"),
+    originalAmount = Some(-300),
+    outstandingAmount = Some(0.00),
+    documentDate = LocalDate.of(2022, 4, 6),
+    paymentLot = Some("paymentLot3"),
+    paymentLotItem = Some("paymentLotItem3")
+  )
+
   val financialDetail: FinancialDetail = FinancialDetail(
     taxYear = "2018",
     transactionId = Some("transactionId"),
@@ -225,6 +237,34 @@ object PaymentAllocationsTestConstants {
       )))
   )
 
+  val financialDetail3: FinancialDetail = FinancialDetail(
+    taxYear = "2022",
+    transactionId = Some("transactionId3"),
+    transactionDate = Some(LocalDate.parse("2022-04-06")),
+    `type` = Some("type3"),
+    totalAmount = Some(BigDecimal("300.00")),
+    originalAmount = Some(BigDecimal(300.00)),
+    outstandingAmount = Some(BigDecimal("00.00")),
+    clearedAmount = Some(BigDecimal(300.00)),
+    chargeType = Some("Test"),
+    mainType = Some("ITSA Misc Charge"),
+    items = Some(Seq(
+      SubItem(
+        subItemId = Some("001"),
+        amount = Some(BigDecimal("300.00")),
+        clearingDate = None,
+        clearingReason = None,
+        outgoingPaymentMethod = Some("outgoingPaymentMethod3"),
+        paymentReference = Some("paymentReference3"),
+        paymentAmount = Some(BigDecimal("300.00")),
+        dueDate = Some(LocalDate.parse("2021-01-31")),
+        paymentMethod = Some("paymentMethod3"),
+        paymentLot = Some("paymentLot3"),
+        paymentLotItem = Some("paymentLotItem3"),
+        paymentId = Some("paymentLot3-paymentLotItem3")
+      )))
+  )
+
   val testValidPaymentAllocationsModelJson: JsValue = Json.obj(
     "amount" -> 110.10,
     "method" -> "Payment by Card",
@@ -289,7 +329,6 @@ object PaymentAllocationsTestConstants {
   val paymentAllocationChargesModelWithCredit: FinancialDetailsWithDocumentDetailsModel = FinancialDetailsWithDocumentDetailsModel(List(documentDetailWithCredit), List(financialDetail))
   val paymentAllocationChargesModelNoPayment: FinancialDetailsWithDocumentDetailsModel = FinancialDetailsWithDocumentDetailsModel(List(documentDetailNoPayment), List(financialDetailNoPayment))
 
-
   val paymentAllocationViewModel: PaymentAllocationViewModel = PaymentAllocationViewModel(paymentAllocationChargesModel,
     Seq(
       AllocationDetailWithClearingDate(
@@ -312,6 +351,11 @@ object PaymentAllocationsTestConstants {
   val financialDetailsWithCreditZeroOutstanding: FinancialDetailsWithDocumentDetailsModel = FinancialDetailsWithDocumentDetailsModel(
     List(documentDetailNoPaymentCredit),
     List(financialDetailNoPaymentCredit)
+  )
+
+  val financialDetailsHmrcAdjustment: FinancialDetailsWithDocumentDetailsModel = FinancialDetailsWithDocumentDetailsModel(
+    List(documentDetail3),
+    List(financialDetail3)
   )
 
   val paymentAllocationViewModelWithNoOriginalAmount: PaymentAllocationViewModel = PaymentAllocationViewModel(financialDetailsWithNoOriginalAmount,
@@ -341,6 +385,13 @@ object PaymentAllocationsTestConstants {
       AllocationDetailWithClearingDate(
         Some(AllocationDetail(Some("1040000872"), Some(LocalDate.parse("2019-06-27")), Some(LocalDate.parse("2019-08-27")), Some("NIC4 Wales"), Some("SA Payment on Account 1"), Some(10.10), Some(5.50), Some("chargeReference1"))),
         None)
+    ))
+
+  val paymentAllocationViewModelHmrcAdjustment: PaymentAllocationViewModel = PaymentAllocationViewModel(financialDetailsHmrcAdjustment,
+    Seq(
+      AllocationDetailWithClearingDate(
+        Some(AllocationDetail(Some("chargeReference3"), Some(LocalDate.parse("2021-04-06")), Some(LocalDate.parse("2022-04-05")), Some("Test"), Some("ITSA Misc Charge"), Some(300.00), Some(300.00), Some("chargeReference3"))),
+        Some(LocalDate.parse("2021-01-31")))
     ))
 
   val lpiParentChargeDocumentDetail = DocumentDetail(
