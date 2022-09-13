@@ -37,7 +37,7 @@ class CreditService @Inject()(val financialDetailsService: FinancialDetailsServi
 
   def maybeBalanceDetails(financialDetailsModels: List[FinancialDetailsModel]): Option[BalanceDetails] =
     financialDetailsModels match {
-      case financialDetailsModel: List[FinancialDetailsModel] =>
+      case financialDetailsModel: List[FinancialDetailsModel] if financialDetailsModels.nonEmpty =>
         financialDetailsModel.headOption.map(balance => balance.balanceDetails)
       case _ => None
     }

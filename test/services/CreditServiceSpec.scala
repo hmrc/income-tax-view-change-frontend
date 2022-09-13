@@ -69,4 +69,26 @@ class CreditServiceSpec extends TestSupport {
       }
     }
   }
+
+  "CreditService.maybeBalanceDetails method" should {
+    "return an some of balance details" when {
+      "a successful response is received in all tax year calls" in {
+
+        when(mockFinancialDetailsService.getAllCreditChargesandPaymentsFinancialDetails(any(), any(), any()))
+          .thenReturn(Future.successful(List(financialDetailCreditAndRefundCharge)))
+
+        service.maybeBalanceDetails(List(financialDetailCreditAndRefundCharge)) shouldBe Some(financialDetailCreditAndRefundCharge.balanceDetails)
+      }
+    }
+
+    "return none" when {
+      "a successful response is received in all tax year calls but it returns an empty list" in {
+
+        when(mockFinancialDetailsService.getAllCreditChargesandPaymentsFinancialDetails(any(), any(), any()))
+          .thenReturn(Future.successful(List.empty))
+
+        service.maybeBalanceDetails(List.empty) shouldBe None
+      }
+    }
+  }
 }
