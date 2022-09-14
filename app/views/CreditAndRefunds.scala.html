@@ -14,26 +14,8 @@
  * limitations under the License.
  *@
 
-@*
-* Copyright 2022 HM Revenue & Customs
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*@
-
-@import implicits.ImplicitDateFormatterImpl
-@import implicits.ImplicitCurrencyFormatter._
-@import models.financialDetails.WhatYouOweChargesList
-@import java.time.LocalDate
+@import _root_.implicits.ImplicitDateFormatterImpl
+@import _root_.implicits.ImplicitCurrencyFormatter._
 @import models.financialDetails.DocumentDetailWithDueDate
 @import models.financialDetails._
 @import auth.MtdItUser
@@ -79,6 +61,24 @@
         controllers.routes.WhatYouOweController.showAgent().url
     } else {
         controllers.routes.WhatYouOweController.show().url
+    }
+}
+
+@creditAndRefundRefundProgressHtml(amount: BigDecimal) = {
+    @if(messages.lang.language.toLowerCase().equals("cy")) {
+        <li>
+            <p class="govuk-heading-s">
+                <span class="govuk-body">@messages("credit-and-refund.refundProgress-prt-1")</span>
+                @amount.toCurrencyString
+                <span class="govuk-body">@messages("credit-and-refund.refundProgress-prt-2")</span>
+            </p>
+        </li>
+    } else {
+        <li>
+            <p class="govuk-heading-s">@amount.toCurrencyString
+                <span class="govuk-body">@messages("credit-and-refund.refundProgress")</span>
+            </p>
+        </li>
     }
 }
 
@@ -172,22 +172,7 @@
                 }
                 else {
                     balance.getOrElse(throw MissingFieldException("Balance")).secondPendingAmountRequested map { amount =>
-                        if(messages.lang.language.toLowerCase().equals("cy")){
-                        <li>
-                            <p class="govuk-heading-s">
-                                <span class="govuk-body">{messages("credit-and-refund.refundProgress-prt-1")}</span>
-                                {amount.toCurrencyString}
-                                <span class="govuk-body">{messages("credit-and-refund.refundProgress-prt-2")}</span>
-                            </p>
-                        </li>
-                        }
-                        else{
-                        <li>
-                            <p class="govuk-heading-s">{amount.toCurrencyString}
-                                <span class="govuk-body">{messages("credit-and-refund.refundProgress")}</span>
-                            </p>
-                        </li>
-                        }
+                        creditAndRefundRefundProgressHtml(amount)
                     }
                 }
             }
@@ -195,42 +180,12 @@
             @{
                 if(balance.getOrElse(throw MissingFieldException("Balance")).firstPendingAmountRequested < balance.getOrElse(throw MissingFieldException("Balance")).secondPendingAmountRequested){
                     balance.getOrElse(throw MissingFieldException("Balance")).firstPendingAmountRequested map { amount =>
-                        if(messages.lang.language.toLowerCase().equals("cy")){
-                        <li>
-                            <p class="govuk-heading-s">
-                                <span class="govuk-body">{messages("credit-and-refund.refundProgress-prt-1")}</span>
-                                {amount.toCurrencyString}
-                                <span class="govuk-body">{messages("credit-and-refund.refundProgress-prt-2")}</span>
-                            </p>
-                        </li>
-                        }
-                        else{
-                        <li>
-                            <p class="govuk-heading-s">{amount.toCurrencyString}
-                                <span class="govuk-body">{messages("credit-and-refund.refundProgress")}</span>
-                            </p>
-                        </li>
-                        }
+                        creditAndRefundRefundProgressHtml(amount)
                     }
                 }
                 else {
                     balance.getOrElse(throw MissingFieldException("Balance")).secondPendingAmountRequested map { amount =>
-                        if(messages.lang.language.toLowerCase().equals("cy")){
-                        <li>
-                            <p class="govuk-heading-s">
-                                <span class="govuk-body">{messages("credit-and-refund.refundProgress-prt-1")}</span>
-                                {amount.toCurrencyString}
-                                <span class="govuk-body">{messages("credit-and-refund.refundProgress-prt-2")}</span>
-                            </p>
-                        </li>
-                        }
-                        else{
-                        <li>
-                            <p class="govuk-heading-s">{amount.toCurrencyString}
-                                <span class="govuk-body">{messages("credit-and-refund.refundProgress")}</span>
-                            </p>
-                        </li>
-                        }
+                        creditAndRefundRefundProgressHtml(amount)
                     }
                 }
             }
