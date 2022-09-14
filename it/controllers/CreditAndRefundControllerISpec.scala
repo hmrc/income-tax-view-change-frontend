@@ -7,9 +7,7 @@ import helpers.servicemocks.IncomeTaxViewChangeStub
 import play.api.http.Status.OK
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino, testTaxYear}
 import testConstants.IncomeSourceIntegrationTestConstants.{propertyOnlyResponseWithMigrationData, testValidFinancialDetailsModelCreditAndRefundsJson}
-
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 
 class CreditAndRefundControllerISpec extends ComponentSpecBase {
 

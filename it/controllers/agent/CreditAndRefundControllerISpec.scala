@@ -10,9 +10,7 @@ import play.api.http.Status.{OK, SEE_OTHER}
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.IncomeSourceIntegrationTestConstants.{propertyOnlyResponseWithMigrationData, testValidFinancialDetailsModelCreditAndRefundsJson, testValidFinancialDetailsModelJson}
 import testConstants.OutstandingChargesIntegrationTestConstants.validOutStandingChargeResponseJsonWithAciAndBcdCharges
-
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 
 class CreditAndRefundControllerISpec extends ComponentSpecBase {
 
