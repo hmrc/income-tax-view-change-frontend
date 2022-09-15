@@ -38,6 +38,7 @@ import play.api.{Application, Environment, Mode}
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
 import testConstants.IncomeSourceIntegrationTestConstants._
 import uk.gov.hmrc.play.language.LanguageUtils
+import views.helpers.PageTitle
 
 import scala.concurrent.Future
 
@@ -55,7 +56,6 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
   val languageUtils: LanguageUtils = app.injector.instanceOf[LanguageUtils]
   implicit val lang: Lang = Lang("GB")
   val messagesAPI: MessagesApi = app.injector.instanceOf[MessagesApi]
-
   val mockLanguageUtils: LanguageUtils = app.injector.instanceOf[LanguageUtils]
   implicit val mockImplicitDateFormatter: ImplicitDateFormatterImpl = new ImplicitDateFormatterImpl(mockLanguageUtils)
 

@@ -20,7 +20,7 @@ import org.jsoup.nodes.Element
 import play.api.mvc.Call
 import play.twirl.api.Html
 import testUtils.ViewSpec
-import views.html.agent.ClientRelationshipFailure
+import views.html.agent.errorPages.ClientRelationshipFailure
 
 
 class ClientDetailsFailureViewSpec extends ViewSpec {
@@ -39,7 +39,6 @@ class ClientDetailsFailureViewSpec extends ViewSpec {
 
   object ClientRelationshipMessages {
     val heading: String = messages("agent.client_relationship_failure.heading")
-    val title: String = messages("agent.titlePattern.serviceName.govUk", heading)
     val info: String = messages("agent.client_relationship_failure.info")
       .replace("{0}", messages("agent.client_relationship_failure.info.link") + " (opens in new tab)")
     val clientAuthorisationLink: String = s"${messages("agent.client_relationship_failure.info.link")}${messages("pagehelp.opensInNewTabText")}"
@@ -48,8 +47,8 @@ class ClientDetailsFailureViewSpec extends ViewSpec {
 
   "The Client Relationship Failure page" should {
 
-    s"have the title ${ClientRelationshipMessages.title}" in new ClientRelationshipFailureSetup {
-      document.title shouldBe ClientRelationshipMessages.title
+    s"have the title ${ClientRelationshipMessages.heading}" in new ClientRelationshipFailureSetup {
+      document.title shouldBe ClientRelationshipMessages.heading
     }
 
     s"have the heading ${ClientRelationshipMessages.heading}" in new ClientRelationshipFailureSetup {

@@ -23,7 +23,7 @@ import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers._
 import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
 import testUtils.TestSupport
-import views.html.errorPages.AgentError
+import views.html.agent.errorPages.AgentError
 
 class AgentErrorControllerSpec extends TestSupport
   with MockFrontendAuthorisedFunctions

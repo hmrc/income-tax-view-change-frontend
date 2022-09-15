@@ -27,7 +27,7 @@ class EnterClientsUTRViewSpec extends ViewSpec {
   object EnterClientsUTRMessages {
     val heading: String =  messages("agent.enter_clients_utr.heading")
     val title: String = messages("agent.titlePattern.serviceName.govUk")
-    val titleWithError: String = s"${messages("agent.error.titlePattern.serviceName.govUk", heading)}"
+    val titleWithInputError: String = s"${messages("agent.error.titlePattern.serviceName.govUk", heading)}"
     val info: String = messages{"agent.enter_clients_utr.info"}
     val errorEmptyUTR: String =  messages("agent.error.enter_clients_utr.empty")
     val errorWrongLength: String = messages("agent.error.enter_clients_utr.length")
@@ -77,7 +77,7 @@ class EnterClientsUTRViewSpec extends ViewSpec {
         button.text shouldBe EnterClientsUTRMessages.continue
       }
     }
-    "there is an error on the page" should {
+    "there is an input error on the page" should {
       List(
         ClientsUTRForm.utrEmptyError -> EnterClientsUTRMessages.errorEmptyUTR,
         ClientsUTRForm.utrNonNumeric -> EnterClientsUTRMessages.errorNonNumeric,
@@ -85,7 +85,7 @@ class EnterClientsUTRViewSpec extends ViewSpec {
       ) foreach { case (errorKey, errorMessage) =>
         s"for the error '$errorMessage'" should {
           "have the correct error title" in new Setup(pageWithError(errorKey)) {
-            document.title shouldBe EnterClientsUTRMessages.titleWithError
+            document.title shouldBe EnterClientsUTRMessages.titleWithInputError
           }
           "have an error summary" in new Setup(pageWithError(errorKey)) {
             layoutContent.hasErrorSummary(ClientsUTRForm.utr -> errorMessage)

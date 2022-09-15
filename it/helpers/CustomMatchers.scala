@@ -25,6 +25,7 @@ import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.json.Reads
 import play.api.libs.ws.WSResponse
 import play.api.test.FakeRequest
+import views.helpers.PageTitle
 
 import scala.annotation.tailrec
 import scala.collection.JavaConverters._
@@ -86,12 +87,13 @@ trait CustomMatchers extends UnitSpec with GivenWhenThen {
       }
     }
 
-  def pageTitleAgent(messageKey: String, isError: Boolean = false): HavePropertyMatcher[WSResponse, String] =
+  def pageTitleAgent(messageKey: String, isInvalidUserInput: Option[Boolean] = None, isErrorPage: Option[Boolean] = None): HavePropertyMatcher[WSResponse, String] =
     new HavePropertyMatcher[WSResponse, String] {
 
-      def apply(response: WSResponse) = {
+      def apply(response: WSResponse): HavePropertyMatchResult[String] = {
         val body = Jsoup.parse(response.body)
-        val titlePattern: String = if (isError) "agent.error.titlePattern.serviceName.govUk" else "agent.titlePattern.serviceName.govUk"
+        val titlePattern: String =
+//        val titlePattern: String = PageTitle(isAgent = true, messageKey,)
         val expectedTitle = messagesAPI(titlePattern, messagesAPI(messageKey))
         Then(s"the page title should be '$expectedTitle'")
         HavePropertyMatchResult(
