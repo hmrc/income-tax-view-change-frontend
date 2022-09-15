@@ -382,9 +382,9 @@ object PaymentAllocationIntegrationTestConstants {
     """{
       |		"documentDetails" : [
       |			{
-      |       "transactionId":"MA999991A202202",
-      |       "outstandingAmount": 0,
-      |       "originalAmount": 800,
+      |				"transactionId":"MA999991A202202",
+      |				"outstandingAmount": 0,
+      |				"originalAmount": 800,
       |				"taxYear": "2022",
       |				"documentId": "MA999991A202202",
       |				"documentDate": "2022-04-06",
