@@ -29,6 +29,8 @@ import testConstants.FinancialDetailsTestConstants.{documentDetailWithDueDateMod
 import testUtils.{TestSupport, ViewSpec}
 import views.html.CreditAndRefunds
 
+import java.time.LocalDate
+
 
 class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with ImplicitDateFormatter with ViewSpec {
 
@@ -37,6 +39,7 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
   val creditAndRefundHeading: String = messages("credit-and-refund.heading")
   val subHeadingWithCreditsPart1: String = messages("credit-and-refund.subHeading.has-credits-1")
   val subHeadingWithCreditsPart2: String = messages("credit-and-refund.subHeading.has-credits-2")
+  val subHeadingWithCreditsPart3: String = messages("credit-and-refund.subHeading.unallocated-credits-one-payment", "", "")
   val paymentText: String = messages("credit-and-refund.payment")
   val claimBtn: String = messages("credit-and-refund.claim-refund-btn")
   val checkBtn: String = messages("credit-and-refund.check-refund-btn")
@@ -47,19 +50,27 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
 
   def balanceDetailsModel(firstPendingAmountRequested: Option[BigDecimal] = Some(3.50),
                           secondPendingAmountRequested: Option[BigDecimal] = Some(2.50),
-                          availableCredit: Option[BigDecimal] = Some(7.00)): BalanceDetails = BalanceDetails(
+                          availableCredit: Option[BigDecimal] = Some(7.00),
+                          unallocatedCredit: Option[BigDecimal] = None): BalanceDetails = BalanceDetails(
     balanceDueWithin30Days = 1.00,
     overDueAmount = 2.00,
     totalBalance = 3.00,
     availableCredit = availableCredit,
     firstPendingAmountRequested = firstPendingAmountRequested,
     secondPendingAmountRequested = secondPendingAmountRequested,
-    None
+    unallocatedCredit
   )
 
-  def documentDetailWithDueDateFinancialDetailListModel(outstandingAmount: Option[BigDecimal] = Some(-1400.0)):
+  def documentDetailWithDueDateFinancialDetailListModel(outstandingAmount: Option[BigDecimal] = Some(-1400.0),
+                                                        dueDate: Option[LocalDate] = Some(LocalDate.of(2019, 5, 15)),
+                                                        originalAmount: Option[BigDecimal] = Some(1400.00)):
   (DocumentDetailWithDueDate, FinancialDetail) = {
-    (documentDetailWithDueDateModel(paymentLot = None, outstandingAmount = outstandingAmount), financialDetail())
+    (documentDetailWithDueDateModel(
+      paymentLot = None,
+      outstandingAmount = outstandingAmount,
+      dueDate = dueDate,
+      originalAmount = originalAmount),
+      financialDetail())
   }
 
   def documentDetailWithDueDateFinancialDetailListModelMFA(outstandingAmount: Option[BigDecimal] = Some(BigDecimal(-1400.0))):
@@ -101,8 +112,6 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
 
         document.getElementsByClass("govuk-button").first().text() shouldBe claimBtn
         document.getElementsByClass("govuk-button govuk-button--secondary").text() shouldBe checkBtn
-
-
       }
 
       "a user has not requested a refund" in new Setup(balance = Some(balanceDetailsModel(None, None))) {
@@ -175,8 +184,6 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
           isMFACreditsAndDebitsEnabled = true
         ) {
 
-          println("mfa1:" + documentDetailWithDueDateFinancialDetailListModelMFA())
-          println("mfa2:" + documentDetailWithDueDateFinancialDetailListModelMFA(Some(-1000.0)))
           document.title() shouldBe creditAndRefundHeadingWithTitleServiceNameGovUk
           layoutContent.selectHead("h1").text shouldBe creditAndRefundHeading
           document.select("h2").first().select("span").text().contains(subHeadingWithCreditsPart1 + subHeadingWithCreditsPart2) shouldBe false
@@ -210,6 +217,59 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
 
           document.getElementsByClass("govuk-button").first().text() shouldBe checkBtn
         }
+
+      "a user has an unallocated credits from exactly one payment" in
+        new Setup(creditCharges = List(
+          documentDetailWithDueDateFinancialDetailListModel(Some(-500.00), dueDate = Some(LocalDate.of(2022, 1, 12)), originalAmount = Some(-1000))),
+          balance = Some(
+            balanceDetailsModel(
+              availableCredit = Some(-500.00),
+              firstPendingAmountRequested = None,
+              secondPendingAmountRequested = None,
+              unallocatedCredit = Some(-500.00)
+            )
+          )
+        ) {
+
+          println(s"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@  document=$document  @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
+          document.title() shouldBe creditAndRefundHeadingWithTitleServiceNameGovUk
+          layoutContent.selectHead("h1").text shouldBe creditAndRefundHeading
+          // todo this needs to be fixed
+          document.select("h2").first().select("span").text() shouldBe subHeadingWithCreditsPart3
+          document.select("p").get(2).text() shouldBe s"£500.00 $paymentText 12 January 2022"
+          document.select("p").get(2).select("a").attr("href") shouldBe link
+          document.select("dt").eachText().contains("Total") shouldBe false
+          document.select("govuk-list govuk-list--bullet").isEmpty shouldBe true
+//
+          document.getElementsByClass("govuk-button").first().text() shouldBe claimBtn
+          document.getElementsByClass("govuk-button govuk-button--secondary").text() shouldBe checkBtn
+        }
+
+      /*"a user has an unallocated credits from exactly a single credit item" in
+        new Setup(creditCharges = List(
+          documentDetailWithDueDateFinancialDetailListModel(Some(-500.00), dueDate = Some(LocalDate.of(2022, 1, 12)))),
+          balance = Some(
+            balanceDetailsModel(
+              availableCredit = Some(-500.00),
+              firstPendingAmountRequested = None,
+              secondPendingAmountRequested = None,
+              unallocatedCredit = Some(-12.00)
+            )
+          )
+        ) {
+
+//          println(s"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@  document=$document  @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
+          document.title() shouldBe creditAndRefundHeadingWithTitleServiceNameGovUk
+          layoutContent.selectHead("h1").text shouldBe creditAndRefundHeading
+          document.select("h2").first().select("span").text().contains(subHeadingWithCreditsPart1 + subHeadingWithCreditsPart2) shouldBe false
+          document.select("p").get(2).text() shouldBe s"£6.00 $paymentText 15 May 2019"
+          document.select("p").get(2).select("a").attr("href") shouldBe link
+          document.select("dt").eachText().contains("Total") shouldBe false
+          document.select("govuk-list govuk-list--bullet").isEmpty shouldBe true
+
+          document.getElementsByClass("govuk-button").first().text() shouldBe claimBtn
+          document.getElementsByClass("govuk-button govuk-button--secondary").text() shouldBe checkBtn
+        }*/
     }
   }
 
@@ -225,7 +285,6 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
 
         document.getElementsByClass("govuk-button").first().text() shouldBe claimBtn
         document.getElementsByClass("govuk-button govuk-button--secondary").text() shouldBe checkBtn
-
       }
     }
   }

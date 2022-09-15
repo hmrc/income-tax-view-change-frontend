@@ -89,19 +89,41 @@
     useFallbackBackLink = true
 ) {
 
+    @* TODO implement it to simplify getOrElse logic for availableCredit *@
+   @* @getAvailableCredit(balance: Option[BalanceDetails]) = @{
+        balance.getOrElse(throw MissingFieldException("Balance")).availableCredit
+    } *@
+
 
     @h1(msg = "credit-and-refund.heading")
 
+    @* TODO this should be finished *@
     @if(balance.isDefined){
-        @if(balance.getOrElse(throw MissingFieldException("Balance")).availableCredit.getOrElse(throw MissingFieldException("Available Credit")) != 0){
+        @if(balance.getOrElse(throw MissingFieldException("Balance")).unallocatedCredit.isDefined && balance.getOrElse(throw MissingFieldException("Balance")).availableCredit.getOrElse(throw MissingFieldException("Available Credit")) != 0 && creditCharges.size == 1) {
+
             <h2 class="govuk-heading-s">
-                <span class="govuk-body"> @messages("credit-and-refund.subHeading.has-credits-1") </span>
-                @{balance.getOrElse(throw MissingFieldException("Balance")).availableCredit.getOrElse(throw MissingFieldException("Available Credit")).toCurrency}<span class="govuk-body"> @messages("credit-and-refund.subHeading.has-credits-2")</span>
+                <span class="govuk-body"> @messages("credit-and-refund.subHeading.unallocated-credits-one-payment", balance.getOrElse(throw MissingFieldException("Balance")).availableCredit.getOrElse(throw MissingFieldException("Available Credit")).toCurrencyString, creditCharges.head._1.dueDate.getOrElse(throw MissingFieldException("Due Date")).toLongDate) </span>
+                    <span class="govuk-body">
+                        <a href="@getControllerHref(creditCharges.head._1.documentDetail, isAgent)"
+                        class="govuk-link">@creditCharges.head._1.dueDate.getOrElse(throw MissingFieldException("Due Date")).toLongDate
+                        </a>
+                    </span>
             </h2>
         } else {
-            <h2 class="govuk-heading-s">@{balance.getOrElse(throw MissingFieldException("Balance")).firstPendingAmountRequested.getOrElse(throw MissingFieldException("First Pending Amount")).toCurrency}
-                <span class="govuk-body"> @messages("credit-and-refund.subHeading.has-no-credits")</span>
-            </h2>
+            @if(balance.getOrElse(throw MissingFieldException("Balance")).availableCredit.getOrElse(throw MissingFieldException("Available Credit")) != 0) {
+                <h2 class="govuk-heading-s">
+                    <span class="govuk-body"> @messages("credit-and-refund.subHeading.has-credits-1") </span>
+                    @{
+                        balance.getOrElse(throw MissingFieldException("Balance")).availableCredit.getOrElse(throw MissingFieldException("Available Credit")).toCurrency
+                    }<span class="govuk-body"> @messages("credit-and-refund.subHeading.has-credits-2")</span>
+                </h2>
+            } else {
+                <h2 class="govuk-heading-s">@{
+                    balance.getOrElse(throw MissingFieldException("Balance")).firstPendingAmountRequested.getOrElse(throw MissingFieldException("First Pending Amount")).toCurrency
+                }
+                    <span class="govuk-body"> @messages("credit-and-refund.subHeading.has-no-credits")</span>
+                </h2>
+            }
         }
 
         <ul class="govuk-list govuk-list--bullet" id="credits-list">
