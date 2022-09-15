@@ -59,6 +59,7 @@
     origin: Option[String] = None,
     useFallbackBackLink: Boolean = false,
     showServiceName: Boolean = true,
+    serviceNameIsPageTitle: Boolean = true,
     gatewayPage: Option[GatewayPage] = None
 )(contentBlock: Html)(implicit request : Request[_], messages: Messages)
 
@@ -128,13 +129,16 @@
 
 @titlePattern = @{
 
-    (isAgent, form.exists(_.hasErrors)) match {
+    if(serviceNameIsPageTitle) {
+        (isAgent, form.exists(_.hasErrors)) match {
         case (true, true) => messages("agent.error.titlePattern.serviceName.govUk", pageTitle)
         case (true, false) => messages("agent.titlePattern.serviceName.govUk", pageTitle)
         case (false, true) => messages("error.titlePattern.serviceName.govUk", pageTitle)
         case (false, false) => messages("titlePattern.serviceName.govUk", pageTitle)
+        }
+    } else {
+        s"$pageTitle - GOV.UK"
     }
-
 }
 
 @if(mainClass.isDefined){
