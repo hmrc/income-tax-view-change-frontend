@@ -19,7 +19,7 @@ package controllers
 import audit.AuditingService
 import audit.models.WhatYouOweResponseAuditModel
 import auth.{FrontendAuthorisedFunctions, MtdItUser}
-import config.featureswitch.{CodingOut, CutOverCredits, FeatureSwitching, MFACreditsAndDebits, R7bTxmEvents, WhatYouOweCreditAmount}
+import config.featureswitch.{CodingOut, CreditsRefundsRepay, CutOverCredits, FeatureSwitching, MFACreditsAndDebits, R7bTxmEvents, WhatYouOweCreditAmount}
 import config._
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
@@ -40,7 +40,6 @@ class WhatYouOweController @Inject()(val checkSessionTimeout: SessionTimeoutPred
                                      val retrieveNino: NinoPredicate,
                                      val retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                      val whatYouOweService: WhatYouOweService,
-                                     val itvcHeaderCarrierForPartialsConverter: ItvcHeaderCarrierForPartialsConverter,
                                      val itvcErrorHandler: ItvcErrorHandler,
                                      implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                      val retrieveBtaNavBar: NavBarPredicate,
@@ -77,6 +76,8 @@ class WhatYouOweController @Inject()(val checkSessionTimeout: SessionTimeoutPred
               MFADebitsEnabled = isEnabled(MFACreditsAndDebits),
               isAgent = isAgent,
               whatYouOweCreditAmountEnabled = isEnabled(WhatYouOweCreditAmount),
+              isUserMigrated = user.incomeSources.yearOfMigration.isDefined,
+              creditAndRefundEnabled = isEnabled(CreditsRefundsRepay),
               origin = origin)(user, user, messages)
             ).addingToSession(gatewayPage -> WhatYouOwePage.name)
         }

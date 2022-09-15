@@ -615,6 +615,12 @@ whatYouOwe.credit-overpaid-prefix                               = Mae gennych
 whatYouOwe.credit-overpaid-amount                               = {0} yn eich cyfrif
 whatYouOwe.unallocated-credit-note                              = . Byddwn yn defnyddio hwn i dalu'r symiau sy'n ddyledus ar y dyddiad dyledus nesaf.
 whatYouOwe.tax-year-summary.taxYear                             = {0} to {1}
+whatYouOwe.moneyOnAccount                                       = Arian yn eich cyfrif
+whatYouOwe.moneyOnAccount-1                                     = Mae cyfanswm o
+whatYouOwe.moneyOnAccount-2                                     = yn eich cyfrif. Gallwch adael yr arian yno i dalu’ch bil nesaf neu gallwch
+whatYouOwe.moneyOnAccount-3                                     = hawlio ad-daliad
+whatYouOwe.moneyOnAccount-agent                                 = Arian yng nghyfrif eich cleient
+whatYouOwe.moneyOnAccount-agent-2                               = yng nghyfrif eich cleient. Gallwch adael yr arian yno i dalu bil nesaf eich cleient neu gallwch
 
 ## Charge Summary ##
 chargeSummary.paymentOnAccount1.text                            = Taliad ar gyfrif 1 o 2

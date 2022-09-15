@@ -18,7 +18,7 @@ package controllers
 
 import audit.mocks.MockAuditingService
 import config.featureswitch.FeatureSwitching
-import config.{AgentItvcErrorHandler, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
+import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import controllers.predicates.{NavBarFromNinoPredicate, NinoPredicate, SessionTimeoutPredicate}
 import mocks.MockItvcErrorHandler
 import mocks.controllers.predicates.MockAuthenticationPredicate
@@ -44,7 +44,6 @@ class DeductionsSummaryControllerSpec extends TestSupport with MockCalculationSe
     mockAuthService,
     app.injector.instanceOf[NinoPredicate],
     mockCalculationService,
-    app.injector.instanceOf[ItvcHeaderCarrierForPartialsConverter],
     mockAuditingService,
     app.injector.instanceOf[views.html.DeductionBreakdown],
     app.injector.instanceOf[NavBarFromNinoPredicate],

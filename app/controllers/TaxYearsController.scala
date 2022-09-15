@@ -18,7 +18,7 @@ package controllers
 
 import auth.MtdItUser
 import config.featureswitch.{FeatureSwitching, ITSASubmissionIntegration}
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcHeaderCarrierForPartialsConverter}
+import config.{AgentItvcErrorHandler, FrontendAppConfig}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import javax.inject.Inject
@@ -42,8 +42,7 @@ class TaxYearsController @Inject()(taxYearsView: TaxYears,
                                    val retrieveBtaNavBar: NavBarPredicate,
                                    val authenticate: AuthenticationPredicate,
                                    val retrieveNino: NinoPredicate,
-                                   val retrieveIncomeSources: IncomeSourceDetailsPredicate,
-                                   val itvcHeaderCarrierForPartialsConverter: ItvcHeaderCarrierForPartialsConverter
+                                   val retrieveIncomeSources: IncomeSourceDetailsPredicate
                                   ) extends ClientConfirmedController with I18nSupport with FeatureSwitching {
 
   def handleRequest(backUrl: String,

@@ -648,6 +648,12 @@ whatYouOwe.cancelledPayeSelfAssessment.text                        = Cancelled S
 whatYouOwe.credit-overpaid-prefix                                  = You have
 whatYouOwe.credit-overpaid-amount                                  = {0} in your account
 whatYouOwe.unallocated-credit-note                                 = . We’ll use this to pay the amount due on the next due date.
+whatYouOwe.moneyOnAccount                                          = Money in your account
+whatYouOwe.moneyOnAccount-1                                        = There is a total of
+whatYouOwe.moneyOnAccount-2                                        = in your account. You can leave the money there to pay your next bill or
+whatYouOwe.moneyOnAccount-3                                        = claim a refund
+whatYouOwe.moneyOnAccount-agent                                    = Money in your client''s account
+whatYouOwe.moneyOnAccount-agent-2                                  = in your client''s account. You can leave the money there to pay their next bill or
 
 ## Charge Summary ##
 chargeSummary.paymentOnAccount1.text							   = Payment on account 1 of 2
