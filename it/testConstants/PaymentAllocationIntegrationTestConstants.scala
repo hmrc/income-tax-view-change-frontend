@@ -33,6 +33,18 @@ object PaymentAllocationIntegrationTestConstants {
     paymentLotItem = Some("paymentLotItem2")
   )
 
+  val documentDetail3: DocumentDetail = DocumentDetail(
+    taxYear = "2022",
+    transactionId = "MA999991A202202",
+    documentDescription = Some("Payment"),
+    documentText = Some("documentText"),
+    originalAmount = Some(800),
+    outstandingAmount = Some(0.00),
+    documentDate = LocalDate.of(2022, 4, 6),
+    paymentLot = Some("MA999991A"),
+    paymentLotItem = Some("5")
+  )
+
   val financialDetail: FinancialDetail = FinancialDetail(
     taxYear = "2018",
     transactionId = Some("transactionId"),
@@ -103,10 +115,41 @@ object PaymentAllocationIntegrationTestConstants {
       )))
   )
 
+  val financialDetail3: FinancialDetail = FinancialDetail(
+    taxYear = "2022",
+    transactionId = Some("MA999991A202202"),
+    transactionDate = Some(LocalDate.parse("2022-04-06")),
+    `type` = Some("type3"),
+    totalAmount = Some(BigDecimal("800.00")),
+    originalAmount = Some(BigDecimal(800.00)),
+    outstandingAmount = Some(BigDecimal("00.00")),
+    clearedAmount = Some(BigDecimal(800.00)),
+    chargeType = Some("ITSA England & NI"),
+    mainType = Some("ITSA Misc Charge"),
+    items = Some(Seq(
+      SubItem(
+        subItemId = Some("001"),
+        amount = Some(BigDecimal("800.00")),
+        clearingDate = Some(LocalDate.parse("2021-01-28")),
+        paymentReference = Some("GF235687"),
+        paymentAmount = Some(BigDecimal("800.00")),
+        dueDate = Some(LocalDate.parse("2021-01-28")),
+        paymentMethod = Some("Payment"),
+        paymentLot = Some("MA999991A"),
+        paymentLotItem = Some("5"),
+      )))
+  )
+
+
   val paymentAllocationChargesModel: FinancialDetailsWithDocumentDetailsModel = FinancialDetailsWithDocumentDetailsModel(List(documentDetail), List(financialDetail))
 
   val paymentAllocationChargesModelMultiplePayments: FinancialDetailsWithDocumentDetailsModel = FinancialDetailsWithDocumentDetailsModel(List(documentDetail, documentDetail2),
     List(financialDetail, financialDetail2))
+
+  val financialDetailsHmrcAdjustment: FinancialDetailsWithDocumentDetailsModel = FinancialDetailsWithDocumentDetailsModel(
+    List(documentDetail3),
+    List(financialDetail3)
+  )
 
   val variedFinancialDetailsJson: JsValue = Json.parse(
     """{
@@ -234,12 +277,30 @@ object PaymentAllocationIntegrationTestConstants {
     )
   )
 
+  val testValidNoLpiPaymentAllocationHmrcAdjustment: PaymentAllocations = PaymentAllocations(
+    amount = Some(-800.00), method = Some("Payment"), transactionDate = Some("2021-01-31"), reference = Some("GF235688"),
+    allocations = Seq(
+      AllocationDetail(Some("MA999991A202202"),
+        Some(LocalDate.parse("2021-04-06")),
+        Some(LocalDate.parse("2022-04-05")),
+        Some("ITSA England & NI"), Some("ITSA Misc Charge"),
+        Some(800.00), Some(800.00),
+        Some("MA999991A202202")))
+  )
+
   val paymentAllocationViewModel: PaymentAllocationViewModel = PaymentAllocationViewModel(paymentAllocationChargesModel,
     Seq(
       AllocationDetailWithClearingDate(Some(AllocationDetail(Some("1040000872"), Some(LocalDate.parse("2019-06-27")), Some(LocalDate.parse("2019-08-27")), Some("NIC4 Wales"), Some("SA Payment on Account 1"), Some(10.10), Some(5.50), Some("chargeReference1"))),
         Some(LocalDate.parse("2021-01-31"))),
       AllocationDetailWithClearingDate(Some(AllocationDetail(Some("1040000873"), Some(LocalDate.parse("2019-07-28")), Some(LocalDate.parse("2019-09-28")), Some("NIC4 Wales"), Some("SA Payment on Account 1"), Some(10.90), Some(5.90), Some("chargeReference2"))),
         Some(LocalDate.parse("2021-01-31")))
+    ))
+
+  val paymentAllocationViewModelHmrcAdjustment: PaymentAllocationViewModel = PaymentAllocationViewModel(financialDetailsHmrcAdjustment,
+    Seq(
+      AllocationDetailWithClearingDate(
+        Some(AllocationDetail(Some("MA999991A202202"), Some(LocalDate.parse("2021-04-06")), Some(LocalDate.parse("2022-04-05")), Some("ITSA England & NI"), Some("ITSA Misc Charge"), Some(800.00), Some(800.00), Some("XM002610011594"))),
+        Some(LocalDate.parse("2021-01-28")))
     ))
 
   val lpiDocumentDetail = DocumentDetail(
@@ -316,6 +377,57 @@ object PaymentAllocationIntegrationTestConstants {
 			|    ]
 			|}
 			|""".stripMargin)
+
+  val validPaymentAllocationChargesHmrcAdjustmentJson: JsValue = Json.parse(
+    """{
+      |		"documentDetails" : [
+      |			{
+      |       "transactionId":"MA999991A202202",
+      |       "outstandingAmount": 0,
+      |       "originalAmount": 800,
+      |				"taxYear": "2022",
+      |				"documentId": "MA999991A202202",
+      |				"documentDate": "2022-04-06",
+      |				"documentDescription": "Payment",
+      |				"documentText": "documentText",
+      |				"formBundleNumber": "88888888",
+      |				"totalAmount": 800,
+      |				"documentOutstandingAmount": 0,
+      |				"paymentLot": "MA999991A",
+      |				"paymentLotItem": "5",
+      |				"statisticalFlag": false
+      |			}
+      |		],
+      |		"financialDetails": [
+      |			{
+      |				"taxYear": "2022",
+      |				"documentId": "MA999991A202202",
+      |				"chargeType": "ITSA England & NI",
+      |				"mainType": "ITSA Misc Charge",
+      |				"sapDocumentNumber": "1040000872",
+      |				"sapDocumentNumberItem": "XM00",
+      |				"chargeReference": "XM002610011594",
+      |				"originalAmount": 800.0,
+      |				"outstandingAmount": 0.0,
+      |				"clearedAmount": 800.0,
+      |				"items": [
+      |					{
+      |						"subItem": "001",
+      |						"dueDate": "2021-01-28",
+      |						"clearingDate": "2021-01-28",
+      |						"amount": 800,
+      |						"paymentReference": "GF235687",
+      |						"paymentAmount": 800,
+      |						"paymentMethod": "Payment",
+      |						"paymentLot": "MA999991A",
+      |						"paymentLotItem": "5"
+      |					}
+      |				]
+      |			}
+      |		]
+      |	}
+      |""".stripMargin
+  )
 
   val validWrittenPaymentAllocationChargesJson: JsValue = Json.parse(
     """{

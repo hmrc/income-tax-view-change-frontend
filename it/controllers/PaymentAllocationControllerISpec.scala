@@ -3,7 +3,7 @@ package controllers
 
 import audit.models.PaymentAllocationsResponseAuditModel
 import auth.MtdItUser
-import config.featureswitch.{FeatureSwitching, PaymentAllocation, R7bTxmEvents}
+import config.featureswitch.{FeatureSwitching, MFACreditsAndDebits, PaymentAllocation, R7bTxmEvents}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
 import helpers.servicemocks.IncomeTaxViewChangeStub
@@ -97,6 +97,27 @@ class PaymentAllocationControllerISpec extends ComponentSpecBase with FeatureSwi
         )
 
         verifyAuditContainsDetail(PaymentAllocationsResponseAuditModel(testUser, paymentAllocationViewModel, false).detail)
+      }
+
+      "payment allocation for HMRC adjustment is shown" in {
+        enable(PaymentAllocation)
+        isAuthorisedUser(authorised = true)
+        stubUserDetails()
+        val docNumber = "MA999991A202202"
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, paymentHistoryBusinessAndPropertyResponse)
+        IncomeTaxViewChangeStub.stubGetFinancialsByDocumentId(testNino, docNumber)(OK, validPaymentAllocationChargesHmrcAdjustmentJson)
+        IncomeTaxViewChangeStub.stubGetPaymentAllocationResponse(testNino, "MA999991A", "5")(OK, Json.toJson(testValidNoLpiPaymentAllocationHmrcAdjustment))
+
+        val result: WSResponse = IncomeTaxViewChangeFrontend.getPaymentAllocationCharges(docNumber)
+
+        Then("The Payment allocation page is returned to the user")
+        result should have(
+          httpStatus(OK),
+          pageTitleIndividual("paymentAllocation.heading"),
+          elementTextBySelector("tbody")("HMRC adjustment 2022 Tax year 2021 to 2022 28 Jan 2021 £800.00"),
+        )
+
+        verifyAuditContainsDetail(PaymentAllocationsResponseAuditModel(testUser, paymentAllocationViewModelHmrcAdjustment, false).detail)
       }
     }
 
