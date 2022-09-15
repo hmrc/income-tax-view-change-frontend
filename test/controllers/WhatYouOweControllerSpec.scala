@@ -16,14 +16,17 @@
 
 package controllers
 
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
+import config.featureswitch.CreditsRefundsRepay
+import config.featureswitch.FeatureSwitching
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
-import forms.utils.SessionKeys
 import forms.utils.SessionKeys.gatewayPage
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
 import models.financialDetails.{BalanceDetails, FinancialDetailsModel, WhatYouOweChargesList}
 import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
+import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.http.Status
@@ -39,7 +42,7 @@ import java.time.LocalDate
 import scala.concurrent.Future
 
 class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate with MockNavBarEnumFsPredicate
-  with MockFrontendAuthorisedFunctions {
+  with MockFrontendAuthorisedFunctions with FeatureSwitching{
 
   trait Setup {
 
@@ -51,7 +54,6 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockInco
       app.injector.instanceOf[NinoPredicate],
       MockIncomeSourceDetailsPredicate,
       whatYouOweService,
-      app.injector.instanceOf[ItvcHeaderCarrierForPartialsConverter],
       app.injector.instanceOf[ItvcErrorHandler],
       app.injector.instanceOf[AgentItvcErrorHandler],
       MockNavBarPredicate,
@@ -149,6 +151,91 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockInco
 
         status(result) shouldBe Status.SEE_OTHER
 
+      }
+
+      def whatYouOweWithAvailableCredits: WhatYouOweChargesList = WhatYouOweChargesList(BalanceDetails(1.00, 2.00, 3.00, Option(300.00), None, None, None), List.empty)
+
+      "show money in your account if the user has available credit in his account" in new Setup {
+        enable(CreditsRefundsRepay)
+        mockSingleBISWithCurrentYearAsMigrationYear()
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthSuccessWithSaUtrResponse())
+
+
+        when(whatYouOweService.getWhatYouOweChargesList()(any(), any()))
+          .thenReturn(Future.successful(whatYouOweWithAvailableCredits))
+
+        when(whatYouOweService.getCreditCharges()(any(), any()))
+          .thenReturn(Future.successful(List()))
+
+        val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
+        val resultAgent: Future[Result] = controller.showAgent()(fakeRequestConfirmedClient())
+
+        status(result) shouldBe Status.OK
+        result.futureValue.session.get(gatewayPage) shouldBe Some("whatYouOwe")
+        val doc: Document = Jsoup.parse(contentAsString(result))
+        Option(doc.getElementById("money-in-your-account")).isDefined shouldBe(true)
+        doc.select("#money-in-your-account").select("div h2").text() shouldBe messages("whatYouOwe.moneyOnAccount")
+
+        status(resultAgent) shouldBe Status.OK
+        resultAgent.futureValue.session.get(gatewayPage) shouldBe Some("whatYouOwe")
+        val docAgent: Document = Jsoup.parse(contentAsString(resultAgent))
+        Option(docAgent.getElementById("money-in-your-account")).isDefined shouldBe (true)
+        docAgent.select("#money-in-your-account").select("div h2").text() shouldBe messages("whatYouOwe.moneyOnAccount-agent")
+      }
+
+      def whatYouOweWithZeroAvailableCredits: WhatYouOweChargesList = WhatYouOweChargesList(BalanceDetails(1.00, 2.00, 3.00, Option(0.00), None, None, None), List.empty)
+
+      "hide money in your account if the user has zero available credit in his account" in new Setup {
+        enable(CreditsRefundsRepay)
+        mockSingleBISWithCurrentYearAsMigrationYear()
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthSuccessWithSaUtrResponse())
+
+        when(whatYouOweService.getWhatYouOweChargesList()(any(), any()))
+          .thenReturn(Future.successful(whatYouOweWithZeroAvailableCredits))
+
+        when(whatYouOweService.getCreditCharges()(any(), any()))
+          .thenReturn(Future.successful(List()))
+
+        val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
+        val resultAgent: Future[Result] = controller.showAgent()(fakeRequestConfirmedClient())
+
+        status(result) shouldBe Status.OK
+        result.futureValue.session.get(gatewayPage) shouldBe Some("whatYouOwe")
+        val doc: Document = Jsoup.parse(contentAsString(result))
+        Option(doc.getElementById("money-in-your-account")).isDefined shouldBe (false)
+
+        status(resultAgent) shouldBe Status.OK
+        resultAgent.futureValue.session.get(gatewayPage) shouldBe Some("whatYouOwe")
+        val docAgent: Document = Jsoup.parse(contentAsString(resultAgent))
+        Option(docAgent.getElementById("money-in-your-account")).isDefined shouldBe (false)
+      }
+
+      "hide money in your account if the credit and refund feature switch is disabled" in new Setup {
+        disable(CreditsRefundsRepay)
+        mockSingleBISWithCurrentYearAsMigrationYear()
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthSuccessWithSaUtrResponse())
+
+        when(whatYouOweService.getWhatYouOweChargesList()(any(), any()))
+          .thenReturn(Future.successful(whatYouOweWithZeroAvailableCredits))
+
+        when(whatYouOweService.getCreditCharges()(any(), any()))
+          .thenReturn(Future.successful(List()))
+
+        val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
+        val resultAgent: Future[Result] = controller.showAgent()(fakeRequestConfirmedClient())
+
+        status(result) shouldBe Status.OK
+        result.futureValue.session.get(gatewayPage) shouldBe Some("whatYouOwe")
+        val doc: Document = Jsoup.parse(contentAsString(result))
+        Option(doc.getElementById("money-in-your-account")).isDefined shouldBe (false)
+
+        status(resultAgent) shouldBe Status.OK
+        resultAgent.futureValue.session.get(gatewayPage) shouldBe Some("whatYouOwe")
+        val docAgent: Document = Jsoup.parse(contentAsString(resultAgent))
+        Option(docAgent.getElementById("money-in-your-account")).isDefined shouldBe (false)
       }
     }
 

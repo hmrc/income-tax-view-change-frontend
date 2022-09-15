@@ -18,7 +18,7 @@ package controllers
 
 import audit.AuditingService
 import config.featureswitch.FeatureSwitching
-import config.{AgentItvcErrorHandler, ItvcErrorHandler, ItvcHeaderCarrierForPartialsConverter}
+import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
@@ -55,7 +55,6 @@ class IncomeSummaryControllerSpec extends TestSupport with MockCalculationServic
     MockIncomeSourceDetailsPredicate,
     mockIncomeSourceDetailsService,
     mockCalculationService,
-    app.injector.instanceOf[ItvcHeaderCarrierForPartialsConverter],
     app.injector.instanceOf[AuditingService],
     app.injector.instanceOf[NavBarPredicate],
     app.injector.instanceOf[ItvcErrorHandler],
