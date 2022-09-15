@@ -3,7 +3,7 @@ package controllers
 
 import audit.models.PaymentAllocationsResponseAuditModel
 import auth.MtdItUser
-import config.featureswitch.{FeatureSwitching, MFACreditsAndDebits, PaymentAllocation, R7bTxmEvents}
+import config.featureswitch.{FeatureSwitching, PaymentAllocation, R7bTxmEvents}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
 import helpers.servicemocks.IncomeTaxViewChangeStub
