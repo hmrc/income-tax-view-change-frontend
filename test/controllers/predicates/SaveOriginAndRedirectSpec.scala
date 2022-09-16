@@ -22,6 +22,7 @@ import config.featureswitch.FeatureSwitching
 import mocks.services.MockAsyncCacheApi
 import org.scalatestplus.selenium.WebBrowser.Query
 import play.api.http.HeaderNames
+import play.api.http.Status.SEE_OTHER
 import play.api.i18n.MessagesApi
 import play.api.mvc.{AnyContentAsEmpty, Result}
 import play.api.test.FakeRequest
@@ -68,27 +69,27 @@ class SaveOriginAndRedirectSpec extends TestSupport with MockAsyncCacheApi with 
     "Valid request is passed" should {
       "redirect to call with session origin changes to BTA" in {
         val result: Future[Result] = obj.saveOriginAndReturnToHomeWithoutQueryParams(successResponseWithSessionOriginPTA, false)
-        result.futureValue.header.status shouldBe 303
+        result.futureValue.header.status shouldBe SEE_OTHER
         result.futureValue.session.get("origin") shouldBe Some("BTA")
       }
       "redirect to call with adding origin BTA to session" in {
         val result: Future[Result] = obj.saveOriginAndReturnToHomeWithoutQueryParams(successResponseWithBtaOriginAndWithoutSession, false)
-        result.futureValue.header.status shouldBe 303
+        result.futureValue.header.status shouldBe SEE_OTHER
         result.futureValue.session.get("origin") shouldBe Some("BTA")
       }
       "return to original call when invalid queryString is passed" in {
         val result: Future[Result] = obj.saveOriginAndReturnToHomeWithoutQueryParams(successResponseWithInvalidQueryString, false)
-        result.futureValue.header.status shouldBe 303
+        result.futureValue.header.status shouldBe SEE_OTHER
         result.futureValue.session.get("origin") shouldBe None
       }
       "return to original call when query string is not passed" in {
         val result: Future[Result] = obj.saveOriginAndReturnToHomeWithoutQueryParams(successResponseWithoutOrigin, false)
-        result.futureValue.header.status shouldBe 303
+        result.futureValue.header.status shouldBe SEE_OTHER
         result.futureValue.session.get("origin") shouldBe None
       }
       "return to original call when navBarFs is disabled" in {
         val result: Future[Result] = obj.saveOriginAndReturnToHomeWithoutQueryParams(successResponseWithoutOrigin)
-        result.futureValue.header.status shouldBe 303
+        result.futureValue.header.status shouldBe SEE_OTHER
         result.futureValue.session.get("origin") shouldBe None
       }
     }
