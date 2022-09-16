@@ -86,7 +86,7 @@
     }
 }
 
-@getMoneyInYourAccountSectioName(isAgent: Boolean) = @{
+@getMoneyInYourAccountSectioName = @{
     if(isAgent) messages("credits.money-in-your-account-section.agent.name") else messages("credits.money-in-your-account-section.name")
 }
 
@@ -115,7 +115,7 @@
 
 @moneyInYourAccount(isAgent: Boolean) = {
     @maybeAvailableCredit.map { availableCredit =>
-        @h2(msg = getMoneyInYourAccountSectioName(isAgent), classes = "govuk-heading-s", optId = Some("h2-money-in-your-account"))
+        @h2(msg = getMoneyInYourAccountSectioName, classes = "govuk-heading-s", optId = Some("h2-money-in-your-account"))
         @if(isAgent) {
             @p(id = Some("p-money-in-your-account")) {
                 @messages("credits.money-in-your-account-section.agent.content", availableCredit.toCurrencyString)
