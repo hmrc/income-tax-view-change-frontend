@@ -93,7 +93,9 @@ class CreditsSummaryController @Inject()(creditsView: CreditsSummary,
             val charges = credits
               .sortBy(_.date.toEpochDay)
 
-            val maybeBalanceDetails: Option[BalanceDetails] = CreditService.maybeBalanceDetails(financialDetailsModels)
+            val maybeAvailableCredit: Option[BigDecimal] = CreditService
+              .maybeBalanceDetails(financialDetailsModels)
+              .flatMap(_.availableCredit.filter(_ > 0.00))
 
             Future.successful(Ok(creditsView(
               calendarYear = calendarYear,
@@ -103,7 +105,7 @@ class CreditsSummaryController @Inject()(creditsView: CreditsSummary,
               btaNavPartial = user.btaNavPartial,
               enableMfaCreditsAndDebits = isEnabled(MFACreditsAndDebits),
               charges = charges,
-              maybeBalanceDetails = maybeBalanceDetails,
+              maybeAvailableCredit = maybeAvailableCredit,
               origin = origin)))
           case Left(_) => {
             if (isAgent) {

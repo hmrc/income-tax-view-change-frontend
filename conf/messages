@@ -428,6 +428,7 @@ credits.drop-down-list.credit-from-an-earlier-tax-year.agent.sa-note    = This i
 credits.drop-down-list.sa-link                                          = Self Assessment online account
 credits.drop-down-list.sa-link-agent                                    = Self Assessment for Agents account
 credits.money-in-your-account-section.name                              = Money in your account
+credits.money-in-your-account-section.agent.name                        = Money in your client’s account
 credits.money-in-your-account-section.content                           = There is a total of {0} in your account. You can leave the money there to pay your next bill or
 credits.money-in-your-account-section.agent.name                        = Money in your client’s account
 credits.money-in-your-account-section.agent.content                     = There is a total of {0} in your client’s account. You can leave the money there to pay their next bill or

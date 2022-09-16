@@ -510,6 +510,7 @@ credits.drop-down-list.credit-from-an-earlier-tax-year.agent.sa-note    = Dyma a
 credits.drop-down-list.sa-link                                          = cyfrif Hunanasesiad ar-lein blaenorol
 credits.drop-down-list.sa-link-agent                                    = cyfrif Hunanasesiad ar gyfer Asiantau
 credits.money-in-your-account-section.name                              = Arian yn eich cyfrif
+credits.money-in-your-account-section.agent.name                        = Arian yng nghyfrif eich cleient
 credits.money-in-your-account-section.content                           = Mae cyfanswm o {0} yn eich cyfrif. Gallwch adael yr arian yno i dalu’ch bil nesaf neu gallwch
 credits.money-in-your-account-section.agent.name                        = Arian yng nghyfrif eich cleient
 credits.money-in-your-account-section.agent.content                     = Mae cyfanswm o {0} yng nghyfrif eich cleient. Gallwch adael yr arian yno i dalu bil nesaf eich cleient neu gallwch
