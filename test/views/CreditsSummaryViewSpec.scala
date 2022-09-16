@@ -21,7 +21,6 @@ import config.FrontendAppConfig
 import config.featureswitch.{FeatureSwitching, MFACreditsAndDebits}
 import implicits.ImplicitDateFormatter
 import models.creditDetailModel.CreditDetailModel
-import models.financialDetails.BalanceDetails
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import play.api.test.FakeRequest
@@ -43,8 +42,7 @@ class CreditsSummaryViewSpec extends TestSupport with FeatureSwitching with Impl
   val testCalendarYear: Int = 2018
   val expectedDate: String = "29 Mar 2018"
   val utr: Option[String] = Some(testMtditid)
-  val testMaybeBalanceDetails: Option[BalanceDetails] = Some(financialDetailCreditCharge.balanceDetails)
-  val testMaybeBalanceDetailsWithZeroAvailableCredit: Option[BalanceDetails] = Some(financialDetailCreditCharge.balanceDetails.copy(availableCredit = Some(0.00)))
+  val testMaybeBalanceDetails: Option[BigDecimal] = financialDetailCreditCharge.balanceDetails.availableCredit
 
   val creditsSummaryHeading: String = messages("credits.heading", s"$testCalendarYear")
   val creditsSummaryTitle: String = messages("titlePattern.serviceName.govUk", creditsSummaryHeading)
@@ -77,7 +75,7 @@ class CreditsSummaryViewSpec extends TestSupport with FeatureSwitching with Impl
   val moneyInYourAccountMoneyClaimARefundAgentLink: String = "/report-quarterly/income-and-expenses/view/agents/claim-refund"
 
   class Setup(creditCharges: List[CreditDetailModel] = List.empty,
-              maybeBalanceDetails: Option[BalanceDetails] = None,
+              maybeAvailableCredit: Option[BigDecimal] = None,
               isAgent: Boolean = false,
               backUrl: String = "testString") {
     lazy val page: HtmlFormat.Appendable =
@@ -88,7 +86,7 @@ class CreditsSummaryViewSpec extends TestSupport with FeatureSwitching with Impl
         btaNavPartial = None,
         enableMfaCreditsAndDebits = true,
         charges = creditCharges,
-        maybeBalanceDetails = maybeBalanceDetails,
+        maybeAvailableCredit = maybeAvailableCredit,
         isAgent = isAgent
       )(FakeRequest(), implicitly, implicitly)
     lazy val document: Document = Jsoup.parse(contentAsString(page))
@@ -96,7 +94,7 @@ class CreditsSummaryViewSpec extends TestSupport with FeatureSwitching with Impl
   }
 
   "display the Credits Summary page" when {
-    "a user have multiple credits" in new Setup(creditCharges = creditAndRefundCreditDetailListMultipleChargesMFA, maybeBalanceDetails = testMaybeBalanceDetails) {
+    "a user have multiple credits" in new Setup(creditCharges = creditAndRefundCreditDetailListMultipleChargesMFA, maybeAvailableCredit = testMaybeBalanceDetails) {
       enable(MFACreditsAndDebits)
 
       document.title() shouldBe creditsSummaryTitle
@@ -189,29 +187,12 @@ class CreditsSummaryViewSpec extends TestSupport with FeatureSwitching with Impl
       document.getElementsByClass("govuk-link").last().text() shouldBe getPageHelpLinkTextBtn
     }
 
-    "a user has a credit and the Status is Partially allocated and availableCredit is 0.00 then Money in your account should not be present" in new Setup(creditCharges = creditAndRefundCreditDetailListPartiallyAllocatedMFA, maybeBalanceDetails = testMaybeBalanceDetailsWithZeroAvailableCredit) {
-      enable(MFACreditsAndDebits)
-
-      document.title() shouldBe creditsSummaryTitle
-      layoutContent.selectHead("h1").text shouldBe creditsSummaryHeading
-      document.select("th:nth-child(1)").first().text() shouldBe creditsTableHeadDateText
-      document.select("td:nth-child(1)").first().text() shouldBe expectedDate
-      document.select("th:nth-child(2)").text() shouldBe creditsTableHeadTypeText
-      document.select("td:nth-child(2)").first().text() shouldBe creditsTableHeadTypeValue
-      document.select("th:nth-child(3)").text() shouldBe creditsTableHeadStatusText
-      document.select("td:nth-child(3)").first().text() shouldBe creditsTableStatusPartiallyAllocatedValue
-      document.select("th:nth-child(4)").text() shouldBe creditsTableHeadAmountText
-      document.select("td:nth-child(4)").first().text() shouldBe "£1,000.00"
-      document.select("#h2-money-in-your-account").isEmpty shouldBe true
-      document.getElementsByClass("govuk-link").last().text() shouldBe getPageHelpLinkTextBtn
-    }
-
   }
 
 
   "displaying agent credit and refund page" should {
     "display the page" when {
-      "correct data is provided" in new Setup(creditCharges = creditAndRefundCreditDetailListMultipleChargesMFA, isAgent = true, maybeBalanceDetails = testMaybeBalanceDetails) {
+      "correct data is provided" in new Setup(creditCharges = creditAndRefundCreditDetailListMultipleChargesMFA, isAgent = true, maybeAvailableCredit = testMaybeBalanceDetails) {
         enable(MFACreditsAndDebits)
 
         document.title() shouldBe creditsSummaryTitleAgent

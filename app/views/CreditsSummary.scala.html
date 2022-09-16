@@ -40,7 +40,7 @@
     btaNavPartial: Option[Html] = None,
     enableMfaCreditsAndDebits: Boolean,
     charges: List[CreditDetailModel],
-    maybeBalanceDetails: Option[BalanceDetails],
+    maybeAvailableCredit: Option[BigDecimal],
     isAgent: Boolean = false,
     origin: Option[String] = None)(implicit request: Request[_], user: MtdItUser[_], messages: Messages)
 
@@ -114,24 +114,22 @@
 }
 
 @moneyInYourAccount(isAgent: Boolean) = {
-    @maybeBalanceDetails.map { balanceDetails =>
-        @balanceDetails.availableCredit.filter(_ > 0.00).map { availableCredit =>
-            @h2(msg = getMoneyInYourAccountSectioName(isAgent), classes = "govuk-heading-s", optId = Some("h2-money-in-your-account"))
-            @if(isAgent) {
-                @p(id = Some("p-money-in-your-account")) {
-                    @messages("credits.money-in-your-account-section.agent.content", availableCredit.toCurrencyString)
-                    @* @messages("credits.money-in-your-account-section.agent.content", balanceDetails.availableCredit.getOrElse(throw MissingFieldException("Available Credit")).toCurrencyString)) *@
-                    @link(link = creditAndRefundsControllerURL, messageKey = messages("credits.money-in-your-account-section.claim-a-refund-link"),
-                        id = Some("money-in-your-account-claim-a-refund-link"),
-                        outerMessage = ".", rel = Some("noreferrer noopener"))
-                }
-            } else {
-                @p(id = Some("p-money-in-your-account")) {
-                    @messages("credits.money-in-your-account-section.content", availableCredit.toCurrencyString)
-                    @link(link = creditAndRefundsControllerURL, messageKey = messages("credits.money-in-your-account-section.claim-a-refund-link"),
-                        id = Some("money-in-your-account-claim-a-refund-link"),
-                        outerMessage = ".", rel = Some("noreferrer noopener"))
-                }
+    @maybeAvailableCredit.map { availableCredit =>
+        @h2(msg = getMoneyInYourAccountSectioName(isAgent), classes = "govuk-heading-s", optId = Some("h2-money-in-your-account"))
+        @if(isAgent) {
+            @p(id = Some("p-money-in-your-account")) {
+                @messages("credits.money-in-your-account-section.agent.content", availableCredit.toCurrencyString)
+                @* @messages("credits.money-in-your-account-section.agent.content", balanceDetails.availableCredit.getOrElse(throw MissingFieldException("Available Credit")).toCurrencyString)) *@
+                @link(link = creditAndRefundsControllerURL, messageKey = messages("credits.money-in-your-account-section.claim-a-refund-link"),
+                    id = Some("money-in-your-account-claim-a-refund-link"),
+                    outerMessage = ".", rel = Some("noreferrer noopener"))
+            }
+        } else {
+            @p(id = Some("p-money-in-your-account")) {
+                @messages("credits.money-in-your-account-section.content", availableCredit.toCurrencyString)
+                @link(link = creditAndRefundsControllerURL, messageKey = messages("credits.money-in-your-account-section.claim-a-refund-link"),
+                    id = Some("money-in-your-account-claim-a-refund-link"),
+                    outerMessage = ".", rel = Some("noreferrer noopener"))
             }
         }
     }
