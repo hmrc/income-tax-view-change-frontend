@@ -44,6 +44,7 @@ class CreditsSummaryViewSpec extends TestSupport with FeatureSwitching with Impl
   val expectedDate: String = "29 Mar 2018"
   val utr: Option[String] = Some(testMtditid)
   val testMaybeBalanceDetails: Option[BalanceDetails] = Some(financialDetailCreditCharge.balanceDetails)
+  val testMaybeBalanceDetailsWithZeroAvailableCredit: Option[BalanceDetails] = Some(financialDetailCreditCharge.balanceDetails.copy(availableCredit = Some(0.00)))
 
   val creditsSummaryHeading: String = messages("credits.heading", s"$testCalendarYear")
   val creditsSummaryTitle: String = messages("titlePattern.serviceName.govUk", creditsSummaryHeading)
@@ -68,6 +69,7 @@ class CreditsSummaryViewSpec extends TestSupport with FeatureSwitching with Impl
   val saNoteMigratedOnlineAccountAgentLink: String = s"https://www.gov.uk/guidance/self-assessment-for-agents-online-service"
   val saNoteMigratedOnlineAccountAgentLinkText: String = s"${messages("credits.drop-down-list.sa-link-agent")}${messages("pagehelp.opensInNewTabText")}"
   val moneyInYourAccountHeading: String = messages("credits.money-in-your-account-section.name")
+  val moneyInYourAccountAgentHeading: String = messages("credits.money-in-your-account-section.agent.name")
   val moneyInYourAccountMoneyClaimARefundLinkText: String = messages("credits.money-in-your-account-section.claim-a-refund-link")
   val moneyInYourAccountContent: String = s"""${messages("credits.money-in-your-account-section.content", s"${financialDetailCreditCharge.balanceDetails.availableCredit.get.toCurrencyString}")} ${moneyInYourAccountMoneyClaimARefundLinkText}."""
   val moneyInYourAccountAgentContent: String = s"""${messages("credits.money-in-your-account-section.agent.content", s"${financialDetailCreditCharge.balanceDetails.availableCredit.get.toCurrencyString}")} ${moneyInYourAccountMoneyClaimARefundLinkText}."""
@@ -187,6 +189,23 @@ class CreditsSummaryViewSpec extends TestSupport with FeatureSwitching with Impl
       document.getElementsByClass("govuk-link").last().text() shouldBe getPageHelpLinkTextBtn
     }
 
+    "a user has a credit and the Status is Partially allocated and availableCredit is 0.00 then Money in your account should not be present" in new Setup(creditCharges = creditAndRefundCreditDetailListPartiallyAllocatedMFA, maybeBalanceDetails = testMaybeBalanceDetailsWithZeroAvailableCredit) {
+      enable(MFACreditsAndDebits)
+
+      document.title() shouldBe creditsSummaryTitle
+      layoutContent.selectHead("h1").text shouldBe creditsSummaryHeading
+      document.select("th:nth-child(1)").first().text() shouldBe creditsTableHeadDateText
+      document.select("td:nth-child(1)").first().text() shouldBe expectedDate
+      document.select("th:nth-child(2)").text() shouldBe creditsTableHeadTypeText
+      document.select("td:nth-child(2)").first().text() shouldBe creditsTableHeadTypeValue
+      document.select("th:nth-child(3)").text() shouldBe creditsTableHeadStatusText
+      document.select("td:nth-child(3)").first().text() shouldBe creditsTableStatusPartiallyAllocatedValue
+      document.select("th:nth-child(4)").text() shouldBe creditsTableHeadAmountText
+      document.select("td:nth-child(4)").first().text() shouldBe "£1,000.00"
+      document.select("#h2-money-in-your-account").isEmpty shouldBe true
+      document.getElementsByClass("govuk-link").last().text() shouldBe getPageHelpLinkTextBtn
+    }
+
   }
 
 
@@ -219,7 +238,7 @@ class CreditsSummaryViewSpec extends TestSupport with FeatureSwitching with Impl
         document.selectById("sa-note-migrated-agent-online-account-link").text() shouldBe saNoteMigratedOnlineAccountAgentLinkText
         document.selectById("sa-note-migrated-agent-online-account-link").attr("href") shouldBe saNoteMigratedOnlineAccountAgentLink
 
-        document.selectById("h2-money-in-your-account").text() shouldBe moneyInYourAccountHeading
+        document.selectById("h2-money-in-your-account").text() shouldBe moneyInYourAccountAgentHeading
         document.selectById("p-money-in-your-account").text() shouldBe moneyInYourAccountAgentContent
         document.selectById("money-in-your-account-claim-a-refund-link").text() shouldBe moneyInYourAccountMoneyClaimARefundLinkText
         document.selectById("money-in-your-account-claim-a-refund-link").attr("href") shouldBe moneyInYourAccountMoneyClaimARefundAgentLink

@@ -86,6 +86,10 @@
     }
 }
 
+@getMoneyInYourAccountSectioName(isAgent: Boolean) = @{
+    if(isAgent) messages("credits.money-in-your-account-section.agent.name") else messages("credits.money-in-your-account-section.name")
+}
+
 @dropDownDetails(isAgent: Boolean) = {
     @h2(msg = "credits.drop-down-list.credit-from-hmrc-adjustment", classes = "govuk-heading-s", optId = Some("h2-credit-from-hmrc-adjustment"))
     @p(id = Some("p-credit-from-hmrc-adjustment")){@messages("credits.drop-down-list.credit-from-hmrc-adjustment.value")}
@@ -111,8 +115,8 @@
 
 @moneyInYourAccount(isAgent: Boolean) = {
     @maybeBalanceDetails.map { balanceDetails =>
-        @balanceDetails.availableCredit.map { availableCredit =>
-            @h2(msg = "credits.money-in-your-account-section.name", classes = "govuk-heading-s", optId = Some("h2-money-in-your-account"))
+        @balanceDetails.availableCredit.filter(_ > 0.00).map { availableCredit =>
+            @h2(msg = getMoneyInYourAccountSectioName(isAgent), classes = "govuk-heading-s", optId = Some("h2-money-in-your-account"))
             @if(isAgent) {
                 @p(id = Some("p-money-in-your-account")) {
                     @messages("credits.money-in-your-account-section.agent.content", availableCredit.toCurrencyString)
