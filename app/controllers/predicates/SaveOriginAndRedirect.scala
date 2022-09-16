@@ -28,8 +28,6 @@ import scala.concurrent.Future
 
 trait SaveOriginAndRedirect extends I18nSupport with FeatureSwitching {
 
-  def redirectToHome: Result = Redirect(controllers.routes.HomeController.show())
-
   def saveOriginAndReturnToHomeWithoutQueryParams[A](request: MtdItUserBase[A], navBarFsDisabled: Boolean = true): Future[Result] = {
     val originStringOpt: Option[String] = request.getQueryString(SessionKeys.origin)
     val redirectToOriginalCall: Result = Redirect(request.path)
