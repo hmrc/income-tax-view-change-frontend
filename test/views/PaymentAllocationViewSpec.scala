@@ -70,6 +70,8 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
   val paymentAllocationTaxYearFrom2017to2018: String = messages("paymentAllocation.taxYear", "2017", "2018")
   val paymentAllocationTaxYearFrom2018to2019: String = messages("paymentAllocation.taxYear", "2018", "2019")
   val paymentAllocationTaxYearFrom2019to2020: String = messages("paymentAllocation.taxYear", "2019", "2020")
+  val paymentAllocationTaxYearFrom2021to2022: String = messages("paymentAllocation.taxYear", "2021", "2022")
+  val paymentAllocationsHmrcAdjustment: String = messages("paymentAllocation.paymentAllocations.hmrcAdjustment.text")
 
   class PaymentAllocationSetup(viewModel: PaymentAllocationViewModel = paymentAllocationViewModel,
                                CutOverCreditsEnabled: Boolean = false, saUtr: Option[String] = None,
@@ -144,11 +146,11 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
 
       "has a Credit on account text row within payment details when refunds page FS disabled" in
         new PaymentAllocationSetup(creditsRefundsRepayEnabled = false) {
-        val allTableData = document.getElementById("money-on-account").getElementsByTag("td")
-        document.select("a#money-on-account-link").size() shouldBe 0
-        allTableData.get(0).text() shouldBe moneyOnAccount
-        allTableData.get(2).text() shouldBe moneyOnAccountAmount
-      }
+          val allTableData = document.getElementById("money-on-account").getElementsByTag("td")
+          document.select("a#money-on-account-link").size() shouldBe 0
+          allTableData.get(0).text() shouldBe moneyOnAccount
+          allTableData.get(2).text() shouldBe moneyOnAccountAmount
+        }
 
       "should not have Credit on account row within payment details" in new PaymentAllocationSetup(paymentAllocationViewModel.copy(
         paymentAllocationChargeModel = singleTestPaymentAllocationChargeWithOutstandingAmountZero)) {
@@ -157,12 +159,24 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
 
       "checking the earlier tax year page when the cutOverCredit FS enabled with no payment items" in
         new PaymentAllocationSetup(paymentAllocationViewModelNoPayment, true, saUtr = Some("1234567890")) {
-        document.getElementsByTag("h1").text shouldBe messages("paymentAllocation.earlyTaxYear.heading")
-        document.getElementById("sa-note-migrated").text shouldBe s"${messages("paymentAllocation.sa.info")} ${messages("taxYears.oldSa.content.link")}${messages("pagehelp.opensInNewTabText")}."
-        val moneyOnAccountData: Elements = document.getElementById("money-on-account").getElementsByTag("td")
-        moneyOnAccountData.get(0).text() shouldBe moneyOnAccount
-        moneyOnAccountData.get(1).text() shouldBe "N/A"
-        moneyOnAccountData.get(2).text() shouldBe moneyOnAccountAmount
+          document.getElementsByTag("h1").text shouldBe messages("paymentAllocation.earlyTaxYear.heading")
+          document.getElementById("sa-note-migrated").text shouldBe s"${messages("paymentAllocation.sa.info")} ${messages("taxYears.oldSa.content.link")}${messages("pagehelp.opensInNewTabText")}."
+          val moneyOnAccountData: Elements = document.getElementById("money-on-account").getElementsByTag("td")
+          moneyOnAccountData.get(0).text() shouldBe moneyOnAccount
+          moneyOnAccountData.get(1).text() shouldBe "N/A"
+          moneyOnAccountData.get(2).text() shouldBe moneyOnAccountAmount
+        }
+
+      "has a payment within the table for HMRC Adjustments with link back to charge view" in new PaymentAllocationSetup(viewModel = paymentAllocationViewModelHmrcAdjustment) {
+        val allTableData = document.selectHead("tbody").selectHead("tr")
+        val chargePageLink = document.selectHead("tbody").link.attr("href")
+        val taxYear = "2022"
+        val chargePageLinkTrue = s"/report-quarterly/income-and-expenses/view/tax-years/$taxYear/charge?id=chargeReference3"
+
+        allTableData.selectNth("td", 1).text() shouldBe s"$paymentAllocationsHmrcAdjustment $taxYear $paymentAllocationTaxYearFrom2021to2022"
+        allTableData.selectNth("td", 2).text() shouldBe "31 Jan 2021"
+        allTableData.selectNth("td", 3).text() shouldBe amount
+        chargePageLink shouldBe chargePageLinkTrue
       }
 
     }

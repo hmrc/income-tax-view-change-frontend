@@ -105,6 +105,15 @@ class PaymentAllocationControllerSpec extends MockAuthenticationPredicate
         status(result) shouldBe Status.OK
       }
 
+      "Successfully retrieving a user's non lpi payment allocation (HMRC adjustment)" in new Setup {
+        enable(PaymentAllocation)
+        mockSingleBusinessIncomeSource()
+        when(mockPaymentAllocationsService.getPaymentAllocation(Nino(any()), any())(any(), any()))
+          .thenReturn(Future.successful(Right(paymentAllocationViewModelHmrcAdjustment)))
+        val result = controller.viewPaymentAllocation(documentNumber = docNumber)(fakeRequestWithActiveSession)
+        status(result) shouldBe Status.OK
+      }
+
       "Failing to retrieve a user's payment allocation" in new Setup {
         enable(PaymentAllocation)
         mockSingleBusinessIncomeSource()
@@ -229,7 +238,7 @@ class PaymentAllocationControllerSpec extends MockAuthenticationPredicate
 
         mockPaymentAllocationView(
           paymentAllocationViewModel,
-          controllers.routes.PaymentHistoryController.showAgent().url, saUtr= None, CutOverCreditsEnabled = false, isAgent = true
+          controllers.routes.PaymentHistoryController.showAgent().url, saUtr = None, CutOverCreditsEnabled = false, isAgent = true
         )(HtmlFormat.empty)
 
         val result = controller.viewPaymentAllocationAgent(documentNumber = docNumber)(fakeRequestConfirmedClient())
@@ -245,7 +254,7 @@ class PaymentAllocationControllerSpec extends MockAuthenticationPredicate
 
         mockPaymentAllocationView(
           paymentAllocationViewModelLpi,
-          controllers.routes.PaymentHistoryController.showAgent().url, saUtr= None, CutOverCreditsEnabled = false, isAgent = true
+          controllers.routes.PaymentHistoryController.showAgent().url, saUtr = None, CutOverCreditsEnabled = false, isAgent = true
         )(HtmlFormat.empty)
 
         val result = controller.viewPaymentAllocationAgent(documentNumber = docNumber)(fakeRequestConfirmedClient())
