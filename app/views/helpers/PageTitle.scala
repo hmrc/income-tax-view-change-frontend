@@ -15,17 +15,19 @@
  */
 
 package views.helpers
+
 import play.api.i18n.Messages
 
 object PageTitle {
   def apply(isAgent: Boolean = false, isErrorPage: Boolean = false, isInvalidInput: Boolean = false, headingMessageKey: String)
-                  (implicit messages: Messages): String = {
+           (implicit messages: Messages): String = {
+
     val agent: String = if (isAgent) "agent." else ""
 
     (isInvalidInput, isErrorPage) match {
-      case (false, false) => s"${messages(agent + "titlePattern.serviceName.govUk", headingMessageKey)} - ${messages("base.gov.Uk")}"
-      case (false, true) => s"$headingMessageKey - ${messages("base.gov.Uk")}"
-      case (true, _) => s"${messages(agent + "error.titlePattern.serviceName.govUk", headingMessageKey)} - ${messages("base.gov.Uk")}"
+      case (false, false) => s"${messages(agent + "titlePattern.serviceName.govUk", messages(headingMessageKey))}"
+      case (false, true) => s"${messages(headingMessageKey)} - GOV.UK"
+      case (true, _) => s"${messages(agent + "error.titlePattern.serviceName.govUk", messages(headingMessageKey))}"
     }
   }
 }

@@ -17,8 +17,7 @@ package controllers.agent
 
 import config.featureswitch.FeatureSwitching
 import helpers.agent.ComponentSpecBase
-import helpers.servicemocks.AuthStub
-import helpers.servicemocks.AuthStub.{titleInternalServer, titleNeedPermission, titleThereIsAProblem}
+import helpers.servicemocks.AuthStub.{titleInternalServer, titleClientRelationshipFailure}
 import play.api.http.Status._
 import play.api.libs.ws.WSResponse
 
@@ -59,7 +58,7 @@ class ClientDetailsFailureControllerISpec extends ComponentSpecBase with Feature
       Then("The enter client's utr page is returned to the user")
       result should have(
         httpStatus(OK),
-        pageTitleAgent(titleNeedPermission)
+        pageTitleAgent(titleClientRelationshipFailure, isErrorPage = true)
       )
     }
   }

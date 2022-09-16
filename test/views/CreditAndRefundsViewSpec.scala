@@ -175,8 +175,6 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
           isMFACreditsAndDebitsEnabled = true
         ) {
 
-          println("mfa1:" + documentDetailWithDueDateFinancialDetailListModelMFA())
-          println("mfa2:" + documentDetailWithDueDateFinancialDetailListModelMFA(Some(-1000.0)))
           document.title() shouldBe creditAndRefundHeadingWithTitleServiceNameGovUk
           layoutContent.selectHead("h1").text shouldBe creditAndRefundHeading
           document.select("h2").first().select("span").text().contains(subHeadingWithCreditsPart1 + subHeadingWithCreditsPart2) shouldBe false

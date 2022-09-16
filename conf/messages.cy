@@ -29,9 +29,9 @@ agent.base.service_name                                         = Treth Incwm fa
 
 # Page Titles
 titlePattern.serviceName.govUk                                  = Rheoli’ch diweddariadau Treth Incwm
-agent.titlePattern.serviceName.govUk                            = Rheoli diweddariadau Treth Incwm eich cleient
+agent.titlePattern.serviceName.govUk                            = Rheoli diweddariadau Treth Incwm eich cleient - GOV.UK
 error.titlePattern.serviceName.govUk                            = Gwall: {0} - Rheoli’ch diweddariadau Treth Incwm
-agent.error.titlePattern.serviceName.govUk                      = Gwall: {0} - Rheoli diweddariadau Treth Incwm eich cleient
+agent.error.titlePattern.serviceName.govUk                      = Gwall: {0} - Rheoli diweddariadau Treth Incwm eich cleient - GOV.UK
 
 ## Agent - UTR Error
 agent.utr_error.heading                                         = Ni allwch fwrw golwg dros y cleient hwn

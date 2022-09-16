@@ -24,9 +24,9 @@ agent.base.service_name                             = Your client’s Income Tax
 
 # Page Titles
 titlePattern.serviceName.govUk                      = Manage your Income Tax updates
-agent.titlePattern.serviceName.govUk                = Manage your client’s Income Tax updates
+agent.titlePattern.serviceName.govUk                = Manage your client’s Income Tax updates - GOV.UK
 error.titlePattern.serviceName.govUk                = Error: {0} - Manage your Income Tax updates
-agent.error.titlePattern.serviceName.govUk          = Error: {0} - Manage your client’s Income Tax updates
+agent.error.titlePattern.serviceName.govUk          = Error: {0} - Manage your client’s Income Tax updates - GOV.UK
 
 # Agent - Enter clients details
 agent.enter_clients_utr.heading                                 = What is your client’s UTR?

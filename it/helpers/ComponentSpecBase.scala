@@ -33,12 +33,10 @@ import play.api.i18n.{Lang, MessagesApi}
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.crypto.DefaultCookieSigner
 import play.api.libs.ws.WSResponse
-import play.api.test.FakeRequest
 import play.api.{Application, Environment, Mode}
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
 import testConstants.IncomeSourceIntegrationTestConstants._
 import uk.gov.hmrc.play.language.LanguageUtils
-import views.helpers.PageTitle
 
 import scala.concurrent.Future
 
@@ -50,7 +48,6 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
   val mockHost: String = WiremockHelper.wiremockHost
   val mockPort: String = WiremockHelper.wiremockPort.toString
   val mockUrl: String = s"http://$mockHost:$mockPort"
-
   val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
   val cache: AsyncCacheApi = app.injector.instanceOf[AsyncCacheApi]
   val languageUtils: LanguageUtils = app.injector.instanceOf[LanguageUtils]
@@ -66,7 +63,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
   val titleNotFound = "Page not found - 404"
   val titleProbWithService = "There is a problem with the service"
   val titleThereIsAProblem = "There’s a problem"
-  val titleNeedPermission: String = "agent.client_relationship_failure.heading"
+  val titleClientRelationshipFailure: String = "agent.client_relationship_failure.heading"
 
   def config: Map[String, String] = Map(
     "microservice.services.auth.host" -> mockHost,
