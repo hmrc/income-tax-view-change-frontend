@@ -16,10 +16,9 @@
 
 package services
 
-import akka.pattern.FutureRef
 import auth.MtdItUser
 import config.FrontendAppConfig
-import models.financialDetails.{FinancialDetailsErrorModel, FinancialDetailsModel, FinancialDetailsResponseModel}
+import models.financialDetails.{BalanceDetails, FinancialDetailsErrorModel, FinancialDetailsModel, FinancialDetailsResponseModel}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject
@@ -28,11 +27,19 @@ import scala.concurrent.{ExecutionContext, Future}
 class CreditService @Inject()(val financialDetailsService: FinancialDetailsService)
                              (implicit ec: ExecutionContext, implicit val appConfig: FrontendAppConfig) {
 
-  def getCreditCharges()(implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[List[FinancialDetailsModel]]= {
+  def getCreditCharges()(implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[List[FinancialDetailsModel]] = {
     financialDetailsService.getAllCreditChargesandPaymentsFinancialDetails.map {
       case financialDetails if financialDetails.exists(_.isInstanceOf[FinancialDetailsErrorModel]) =>
         throw new Exception("[CreditService][getCreditCharges] Error response while getting Unpaid financial details")
       case financialDetails: List[FinancialDetailsResponseModel] => financialDetails.asInstanceOf[List[FinancialDetailsModel]]
     }
   }
+}
+object CreditService {
+  def maybeBalanceDetails(financialDetailsModels: List[FinancialDetailsModel]): Option[BalanceDetails] =
+    financialDetailsModels match {
+      case financialDetailsModel: List[FinancialDetailsModel] if financialDetailsModels.nonEmpty =>
+        financialDetailsModel.headOption.map(balance => balance.balanceDetails)
+      case _ => None
+    }
 }

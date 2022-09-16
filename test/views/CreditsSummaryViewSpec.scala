@@ -16,10 +16,12 @@
 
 package views
 
+import _root_.implicits.ImplicitCurrencyFormatter._
 import config.FrontendAppConfig
 import config.featureswitch.{FeatureSwitching, MFACreditsAndDebits}
 import implicits.ImplicitDateFormatter
 import models.creditDetailModel.CreditDetailModel
+import models.financialDetails.BalanceDetails
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import play.api.test.FakeRequest
@@ -41,6 +43,7 @@ class CreditsSummaryViewSpec extends TestSupport with FeatureSwitching with Impl
   val testCalendarYear: Int = 2018
   val expectedDate: String = "29 Mar 2018"
   val utr: Option[String] = Some(testMtditid)
+  val testMaybeBalanceDetails: Option[BalanceDetails] = Some(financialDetailCreditCharge.balanceDetails)
 
   val creditsSummaryHeading: String = messages("credits.heading", s"$testCalendarYear")
   val creditsSummaryTitle: String = messages("titlePattern.serviceName.govUk", creditsSummaryHeading)
@@ -64,8 +67,15 @@ class CreditsSummaryViewSpec extends TestSupport with FeatureSwitching with Impl
   val saNoteMigratedOnlineAccountLinkText: String = s"${messages("credits.drop-down-list.sa-link")}${messages("pagehelp.opensInNewTabText")}"
   val saNoteMigratedOnlineAccountAgentLink: String = s"https://www.gov.uk/guidance/self-assessment-for-agents-online-service"
   val saNoteMigratedOnlineAccountAgentLinkText: String = s"${messages("credits.drop-down-list.sa-link-agent")}${messages("pagehelp.opensInNewTabText")}"
+  val moneyInYourAccountHeading: String = messages("credits.money-in-your-account-section.name")
+  val moneyInYourAccountMoneyClaimARefundLinkText: String = messages("credits.money-in-your-account-section.claim-a-refund-link")
+  val moneyInYourAccountContent: String = s"""${messages("credits.money-in-your-account-section.content", s"${financialDetailCreditCharge.balanceDetails.availableCredit.get.toCurrencyString}")} ${moneyInYourAccountMoneyClaimARefundLinkText}."""
+  val moneyInYourAccountAgentContent: String = s"""${messages("credits.money-in-your-account-section.agent.content", s"${financialDetailCreditCharge.balanceDetails.availableCredit.get.toCurrencyString}")} ${moneyInYourAccountMoneyClaimARefundLinkText}."""
+  val moneyInYourAccountMoneyClaimARefundLink: String = "/report-quarterly/income-and-expenses/view/claim-refund"
+  val moneyInYourAccountMoneyClaimARefundAgentLink: String = "/report-quarterly/income-and-expenses/view/agents/claim-refund"
 
   class Setup(creditCharges: List[CreditDetailModel] = List.empty,
+              maybeBalanceDetails: Option[BalanceDetails] = None,
               isAgent: Boolean = false,
               backUrl: String = "testString") {
     lazy val page: HtmlFormat.Appendable =
@@ -76,6 +86,7 @@ class CreditsSummaryViewSpec extends TestSupport with FeatureSwitching with Impl
         btaNavPartial = None,
         enableMfaCreditsAndDebits = true,
         charges = creditCharges,
+        maybeBalanceDetails = maybeBalanceDetails,
         isAgent = isAgent
       )(FakeRequest(), implicitly, implicitly)
     lazy val document: Document = Jsoup.parse(contentAsString(page))
@@ -83,7 +94,7 @@ class CreditsSummaryViewSpec extends TestSupport with FeatureSwitching with Impl
   }
 
   "display the Credits Summary page" when {
-    "a user have multiple credits" in new Setup(creditCharges = creditAndRefundCreditDetailListMultipleChargesMFA) {
+    "a user have multiple credits" in new Setup(creditCharges = creditAndRefundCreditDetailListMultipleChargesMFA, maybeBalanceDetails = testMaybeBalanceDetails) {
       enable(MFACreditsAndDebits)
 
       document.title() shouldBe creditsSummaryTitle
@@ -110,7 +121,11 @@ class CreditsSummaryViewSpec extends TestSupport with FeatureSwitching with Impl
       document.selectById("sa-note-migrated-online-account-link").text() shouldBe saNoteMigratedOnlineAccountLinkText
       new URL(document.selectById("sa-note-migrated-online-account-link").attr("href")).getPath shouldBe saNoteMigratedOnlineAccountLink
 
-      document.selectById("credit-and-refund-claim-refund-btn").text() shouldBe creditAndRefundClaimRefundBtn
+      document.selectById("h2-money-in-your-account").text() shouldBe moneyInYourAccountHeading
+      document.selectById("p-money-in-your-account").text() shouldBe moneyInYourAccountContent
+      document.selectById("money-in-your-account-claim-a-refund-link").text() shouldBe moneyInYourAccountMoneyClaimARefundLinkText
+      document.selectById("money-in-your-account-claim-a-refund-link").attr("href") shouldBe moneyInYourAccountMoneyClaimARefundLink
+
       document.getElementsByClass("govuk-link").last().text() shouldBe getPageHelpLinkTextBtn
     }
 
@@ -127,7 +142,6 @@ class CreditsSummaryViewSpec extends TestSupport with FeatureSwitching with Impl
       document.select("td:nth-child(3)").first().text() shouldBe creditsTableStatusFullyAllocatedValue
       document.select("th:nth-child(4)").text() shouldBe creditsTableHeadAmountText
       document.select("td:nth-child(4)").first().text() shouldBe "£20.00"
-      document.selectById("credit-and-refund-claim-refund-btn").text() shouldBe creditAndRefundClaimRefundBtn
       document.getElementsByClass("govuk-link").last().text() shouldBe getPageHelpLinkTextBtn
     }
 
@@ -144,7 +158,6 @@ class CreditsSummaryViewSpec extends TestSupport with FeatureSwitching with Impl
       document.select("td:nth-child(3)").first().text() shouldBe creditsTableStatusNotYetAllocatedValue
       document.select("th:nth-child(4)").text() shouldBe creditsTableHeadAmountText
       document.select("td:nth-child(4)").first().text() shouldBe "£3,000.00"
-      document.selectById("credit-and-refund-claim-refund-btn").text() shouldBe creditAndRefundClaimRefundBtn
       document.getElementsByClass("govuk-link").last().text() shouldBe getPageHelpLinkTextBtn
     }
 
@@ -161,7 +174,6 @@ class CreditsSummaryViewSpec extends TestSupport with FeatureSwitching with Impl
       document.select("td:nth-child(3)").first().text() shouldBe creditsTableStatusPartiallyAllocatedValue
       document.select("th:nth-child(4)").text() shouldBe creditsTableHeadAmountText
       document.select("td:nth-child(4)").first().text() shouldBe "£1,000.00"
-      document.selectById("credit-and-refund-claim-refund-btn").text() shouldBe creditAndRefundClaimRefundBtn
       document.getElementsByClass("govuk-link").last().text() shouldBe getPageHelpLinkTextBtn
     }
 
@@ -172,7 +184,6 @@ class CreditsSummaryViewSpec extends TestSupport with FeatureSwitching with Impl
       layoutContent.selectHead("h1").text shouldBe creditsSummaryHeading
       document.select("th").isEmpty shouldBe true
       document.select("td").isEmpty shouldBe true
-      document.selectById("credit-and-refund-claim-refund-btn").text() shouldBe creditAndRefundClaimRefundBtn
       document.getElementsByClass("govuk-link").last().text() shouldBe getPageHelpLinkTextBtn
     }
 
@@ -181,7 +192,7 @@ class CreditsSummaryViewSpec extends TestSupport with FeatureSwitching with Impl
 
   "displaying agent credit and refund page" should {
     "display the page" when {
-      "correct data is provided" in new Setup(creditCharges = creditAndRefundCreditDetailListMultipleChargesMFA, isAgent = true) {
+      "correct data is provided" in new Setup(creditCharges = creditAndRefundCreditDetailListMultipleChargesMFA, isAgent = true, maybeBalanceDetails = testMaybeBalanceDetails) {
         enable(MFACreditsAndDebits)
 
         document.title() shouldBe creditsSummaryTitleAgent
@@ -208,7 +219,11 @@ class CreditsSummaryViewSpec extends TestSupport with FeatureSwitching with Impl
         document.selectById("sa-note-migrated-agent-online-account-link").text() shouldBe saNoteMigratedOnlineAccountAgentLinkText
         document.selectById("sa-note-migrated-agent-online-account-link").attr("href") shouldBe saNoteMigratedOnlineAccountAgentLink
 
-        document.selectById("credit-and-refund-claim-refund-btn").text() shouldBe creditAndRefundClaimRefundBtn
+        document.selectById("h2-money-in-your-account").text() shouldBe moneyInYourAccountHeading
+        document.selectById("p-money-in-your-account").text() shouldBe moneyInYourAccountAgentContent
+        document.selectById("money-in-your-account-claim-a-refund-link").text() shouldBe moneyInYourAccountMoneyClaimARefundLinkText
+        document.selectById("money-in-your-account-claim-a-refund-link").attr("href") shouldBe moneyInYourAccountMoneyClaimARefundAgentLink
+
         document.getElementsByClass("govuk-link").last().text() shouldBe getPageHelpLinkTextBtn
         enable(MFACreditsAndDebits)
       }
