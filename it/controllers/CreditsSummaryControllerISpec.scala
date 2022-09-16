@@ -37,11 +37,10 @@ class CreditsSummaryControllerISpec extends ComponentSpecBase {
             LocalDate.now().plusYears(1).toString)
         )
 
-
         val res = IncomeTaxViewChangeFrontend.getCreditsSummary(calendarYear)
 
-        verifyIncomeSourceDetailsCall(testMtditid)
-        IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
+        verifyIncomeSourceDetailsCall(testMtditid, 1)
+        IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05", 2)
 
         res should have(
           httpStatus(OK),

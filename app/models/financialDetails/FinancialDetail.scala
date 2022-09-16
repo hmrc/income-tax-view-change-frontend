@@ -87,6 +87,7 @@ case class FinancialDetail(taxYear: String,
     .filter(_.getPaymentAllocationTextInChargeSummary.isDefined)
 
   def validMFACreditType(): Boolean = MfaCreditUtils.validMFACreditType(mainType)
+
   def validCutoverCreditType(): Boolean = mainType.contains("ITSA Cutover Credits")
 }
 
@@ -95,14 +96,19 @@ object FinancialDetail {
   implicit val format: Format[FinancialDetail] = Json.format[FinancialDetail]
 
   def getMessageKeyByTypes(mainType: Option[String], chargeType: Option[String]): Option[String] = {
-    for {
-      mainTypeValue <- mainType
-      chargeTypeValue <- chargeType
-      chargeTypeParts <- supportedCTypePartsByMainType.get(mainTypeValue)
-      if chargeTypeParts.exists(supportedCTypePart => chargeTypeValue.startsWith(supportedCTypePart))
-      mainTypeKey <- getMessageKeyForMainType(mainType)
-      chargeTypeKey <- getMessageKeyForChargeType(chargeType)
-    } yield s"$mainTypeKey.$chargeTypeKey"
+    if (MfaDebitUtils.isMFADebitMainType(mainType)) {
+      Some("hmrcAdjustment.text")
+    }
+    else {
+      for {
+        mainTypeValue <- mainType
+        chargeTypeValue <- chargeType
+        chargeTypeParts <- supportedCTypePartsByMainType.get(mainTypeValue)
+        if chargeTypeParts.exists(supportedCTypePart => chargeTypeValue.startsWith(supportedCTypePart))
+        mainTypeKey <- getMessageKeyForMainType(mainType)
+        chargeTypeKey <- getMessageKeyForChargeType(chargeType)
+      } yield s"$mainTypeKey.$chargeTypeKey"
+    }
   }
 
   def getMessageKeyForMainType(mainType: Option[String]): Option[String] = mainType collect {

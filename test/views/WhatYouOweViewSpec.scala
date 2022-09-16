@@ -108,7 +108,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     )(FakeRequest())
 
     val html: HtmlFormat.Appendable = whatYouOweView(creditCharges, charges, hasLpiWithDunningBlock, currentTaxYear, "testBackURL",
-      Some("1234567890"), None, dunningLock, codingOutEnabled, MFADebitsEnabled, whatYouOweCreditAmountEnabled)(FakeRequest(), individualUser, implicitly)
+      Some("1234567890"), None, dunningLock, codingOutEnabled, MFADebitsEnabled, whatYouOweCreditAmountEnabled,creditAndRefundEnabled = true)(FakeRequest(), individualUser, implicitly)
     val pageDocument: Document = Jsoup.parse(contentAsString(html))
 
     def verifySelfAssessmentLink(): Unit = {
@@ -154,6 +154,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       codingOutEnabled = codingOutEnabled,
       MFADebitsEnabled = MFADebitsEnabled,
       whatYouOweCreditAmountEnabled = whatYouOweCreditAmountEnabled,
+      creditAndRefundEnabled = true,
       isAgent = true)(FakeRequest(), agentUser, implicitly)
     val pageDocument: Document = Jsoup.parse(contentAsString(html))
   }
@@ -404,6 +405,17 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           paymentProcessingBullet.select("li").get(0).text shouldBe paymentProcessingBullet1
           paymentProcessingBullet.select("li").get(1).text shouldBe paymentProcessingBullet2
           pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
+        }
+
+        "money in your account section with available credits" in new Setup(charges = whatYouOweDataWithAvailableCredits()) {
+          pageDocument.getElementById("money-in-your-account").text shouldBe messages("whatYouOwe.moneyOnAccount") + " " +
+            messages("whatYouOwe.moneyOnAccount-1") + " £300.00" + " " +
+            messages("whatYouOwe.moneyOnAccount-2") + " " +
+            messages("whatYouOwe.moneyOnAccount-3") + "."
+        }
+
+        "money in your account section with zero available credits" in new Setup(charges = whatYouOweDataWithDataDueIn30Days()) {
+          pageDocument.getElementById("money-in-your-account") shouldBe null
         }
 
       }
@@ -1108,6 +1120,17 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       }
       "not have button Pay now with charges" in new AgentSetup(charges = whatYouOweDataWithDataDueIn30Days()) {
         Option(pageDocument.getElementById("payment-button")) shouldBe None
+      }
+
+      "money in your account section with available credits" in new AgentSetup(charges = whatYouOweDataWithAvailableCredits()) {
+        pageDocument.getElementById("money-in-your-account").text shouldBe messages("whatYouOwe.moneyOnAccount-agent") + " " +
+          messages("whatYouOwe.moneyOnAccount-1") + " £300.00" + " " +
+          messages("whatYouOwe.moneyOnAccount-agent-2") + " " +
+          messages("whatYouOwe.moneyOnAccount-3") + "."
+      }
+
+      "money in your account section with zero available credits" in new AgentSetup(charges = whatYouOweDataWithDataDueIn30Days()) {
+        pageDocument.getElementById("money-in-your-account") shouldBe null
       }
     }
   }

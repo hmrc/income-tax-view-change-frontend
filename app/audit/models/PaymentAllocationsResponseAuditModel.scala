@@ -62,6 +62,7 @@ case class PaymentAllocationsResponseAuditModel(mtdItUser: MtdItUserBase[_],
     case "paymentAllocation.paymentAllocations.bcd.nic4" => "Class 4 National Insurance for remaining balance"
     case "paymentAllocation.paymentAllocations.bcd.sl" => "Student Loans for remaining balance"
     case "paymentAllocation.paymentAllocations.bcd.cgt" => "Capital Gains Tax for remaining balance"
+    case "paymentAllocation.paymentAllocations.hmrcAdjustment.text" => "HMRC adjustment"
     case "paymentOnAccount1.text" => "Late payment interest for payment on account 1 of 2"
     case "paymentOnAccount2.text" => "Late payment interest for payment on account 2 of 2"
     case "balancingCharge.text" => "Late payment interest for remaining balance"

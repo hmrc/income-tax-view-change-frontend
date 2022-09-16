@@ -127,7 +127,7 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   //Accounting software guidance
   lazy val accountingSoftwareLinkUrl: String = "https://www.gov.uk/guidance/use-software-to-send-income-tax-updates"
 
-  lazy val clientAuthorisationGuidance: String = "https://www.gov.uk/guidance/client-authorisation-an-overview"
+  lazy val clientAuthorisationGuidance: String = "https://www.gov.uk/government/collections/making-tax-digital-for-income-tax-as-an-agent-step-by-step"
 
   //Calculation Polling config
   lazy val calcPollSchedulerInterval: Int = servicesConfig.getInt("calculation-polling.interval")
@@ -159,9 +159,5 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
 
   //Auth variables
   lazy val requiredConfidenceLevel: Int = servicesConfig.getInt("auth.confidenceLevel")
-
-  def routeToSwitchLanguage: String => Call = (lang: String) => controllers.routes.ItvcLanguageController.switchToLanguage(lang)
-
-  def routeToSwitchAgentLanguage: String => Call = (lang: String) => controllers.agent.routes.AgentLanguageController.switchToLanguage(lang)
 
 }
