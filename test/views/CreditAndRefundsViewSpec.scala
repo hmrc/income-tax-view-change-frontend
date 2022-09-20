@@ -39,7 +39,7 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
   val creditAndRefundHeading: String = messages("credit-and-refund.heading")
   val subHeadingWithCreditsPart1: String = messages("credit-and-refund.subHeading.has-credits-1")
   val subHeadingWithCreditsPart2: String = messages("credit-and-refund.subHeading.has-credits-2")
-  val subHeadingWithCreditsPart3: String = messages("credit-and-refund.subHeading.unallocated-credits-one-payment", "", "")
+  val subHeadingWithCreditsPart3: String = messages("credit-and-refund.subHeading.unallocated-credits-one-payment", "£500.00")
   val paymentText: String = messages("credit-and-refund.payment")
   val claimBtn: String = messages("credit-and-refund.claim-refund-btn")
   val checkBtn: String = messages("credit-and-refund.check-refund-btn")
@@ -115,8 +115,6 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
       }
 
       "a user has not requested a refund" in new Setup(balance = Some(balanceDetailsModel(None, None))) {
-
-        println(s"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@  document=$document  @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
 
         document.title() shouldBe creditAndRefundHeadingWithTitleServiceNameGovUk
         layoutContent.selectHead("h1").text shouldBe creditAndRefundHeading
@@ -225,24 +223,24 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
           documentDetailWithDueDateFinancialDetailListModel(Some(-500.00), dueDate = Some(LocalDate.of(2022, 1, 12)), originalAmount = Some(-1000))),
           balance = Some(
             balanceDetailsModel(
-              availableCredit = Some(-500.00),
+              availableCredit = Some(500.00),
               firstPendingAmountRequested = None,
               secondPendingAmountRequested = None,
-              unallocatedCredit = Some(-500.00)
+              unallocatedCredit = Some(500.00)
             )
           )
         ) {
 
-//          println(s"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@  document=$document  @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
+          println(s"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@  document = $document  @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
+
           document.title() shouldBe creditAndRefundHeadingWithTitleServiceNameGovUk
           layoutContent.selectHead("h1").text shouldBe creditAndRefundHeading
           // todo this needs to be fixed
-          document.select("h2").first().select("span").text() shouldBe subHeadingWithCreditsPart3
-          document.select("p").get(2).text() shouldBe s"£500.00 $paymentText 12 January 2022"
-          document.select("p").get(2).select("a").attr("href") shouldBe link
+          document.select("h2").first().select("span").first().text() shouldBe subHeadingWithCreditsPart3
+          document.select("h2").first().select("span").next().select("a").text() shouldBe "12 January 2022"
+          document.select("h2").first().select("span").next().select("a").attr("href") shouldBe link
           document.select("dt").eachText().contains("Total") shouldBe false
           document.select("govuk-list govuk-list--bullet").isEmpty shouldBe true
-//
           document.getElementsByClass("govuk-button").first().text() shouldBe claimBtn
           document.getElementsByClass("govuk-button govuk-button--secondary").text() shouldBe checkBtn
         }

@@ -82,14 +82,17 @@
     }
 }
 
-@maybeBalancesDetails(balance: Option[BalanceDetails]) = @{
+@maybeBalancesDetails = @{
     balance.getOrElse(throw MissingFieldException("Balance"))
 }
 
-@maybeAvailableCredit(balance: Option[BalanceDetails]) = @{
-    maybeBalancesDetails(balance).availableCredit.getOrElse(throw MissingFieldException("Available Credit"))
+@maybeAvailableCredit = @{
+    maybeBalancesDetails.availableCredit.getOrElse(throw MissingFieldException("Available Credit"))
 }
 
+@isUnallocatedCreditFromOnePayment = @{
+    maybeBalancesDetails.unallocatedCredit.isDefined && maybeAvailableCredit != 0 && creditCharges.size == 1 && creditCharges.head._2.mainType.filter(_.contains("Payment on Account")).isDefined
+}
 
 
 @mainTemplate(
@@ -103,10 +106,9 @@
 
     @* TODO this should be finished *@
     @if(balance.isDefined){
-        @if(maybeBalancesDetails(balance).unallocatedCredit.isDefined && maybeAvailableCredit(balance) != 0 && creditCharges.size == 1) {
-
+        @if(isUnallocatedCreditFromOnePayment) {
             <h2 class="govuk-heading-s">
-                <span class="govuk-body"> @messages("credit-and-refund.subHeading.unallocated-credits-one-payment", maybeAvailableCredit(balance).toCurrencyString, creditCharges.head._1.dueDate.getOrElse(throw MissingFieldException("Due Date")).toLongDate) </span>
+                <span class="govuk-body"> @messages("credit-and-refund.subHeading.unallocated-credits-one-payment", maybeAvailableCredit.toCurrencyString, creditCharges.head._1.dueDate.getOrElse(throw MissingFieldException("Due Date")).toLongDate) </span>
                     <span class="govuk-body">
                         <a href="@getControllerHref(creditCharges.head._1.documentDetail, isAgent)"
                         class="govuk-link">@creditCharges.head._1.dueDate.getOrElse(throw MissingFieldException("Due Date")).toLongDate
@@ -114,57 +116,53 @@
                     </span>
             </h2>
         } else {
-            @if(maybeAvailableCredit(balance) != 0) {
+            @if(maybeAvailableCredit != 0) {
                 <h2 class="govuk-heading-s">
                     <span class="govuk-body"> @messages("credit-and-refund.subHeading.has-credits-1") </span>
-                        @maybeAvailableCredit(balance).toCurrency
+                        @maybeAvailableCredit.toCurrency
                     <span class="govuk-body"> @messages("credit-and-refund.subHeading.has-credits-2")</span>
                 </h2>
             } else {
                 <h2 class="govuk-heading-s">@{
-                    maybeBalancesDetails(balance).firstPendingAmountRequested.getOrElse(throw MissingFieldException("First Pending Amount")).toCurrency
+                    maybeBalancesDetails.firstPendingAmountRequested.getOrElse(throw MissingFieldException("First Pending Amount")).toCurrency
                 }
                     <span class="govuk-body"> @messages("credit-and-refund.subHeading.has-no-credits")</span>
                 </h2>
             }
         }
 
-        <ul class="govuk-list govuk-list--bullet" id="credits-list">
-            @for((charge, index) <- creditCharges.zipWithIndex) {
-                @if(charge._2.validMFACreditType()) {
-                    @if(isMFACreditsAndDebitsEnabled) {
-                        <li>
-                            <p class="govuk-heading-s">
-                                @charge._1.documentDetail.paymentOrChargeCredit.getOrElse(throw MissingFieldException("Payment Or Charge Credit")).toCurrencyString
-                                <span class="govuk-body">
-                                    @messages("credit-and-refund.credit-from-hmrc-title-prt-1")
-                                    <a href="@getCreditsSummaryControllerHref(charge._1.documentDetail, isAgent)" class="govuk-link">
-                                        @messages("credit-and-refund.credit-from-hmrc-title-prt-2")
-                                        <span class="govuk-visually-hidden"> @index</span>
-                                    </a>
-                                </span>
-                            </p>
-                        </li>
-                    }
-                } else {
-                    @if(charge._2.validCutoverCreditType()) {
-                        <li>
-                            <p class="govuk-heading-s">
-                        @* TODO remove it's just for debugging                                 *@
-                       @* <h1>creditCharges.size = @creditCharges.size</h1>*@
-                            @*                                <h1>firstPendingAmountRequested = @maybeBalancesDetails(balance).firstPendingAmountRequested</h1>*@
-                            @*                                <h1>secondPendingAmountRequested = @maybeBalancesDetails(balance).secondPendingAmountRequested</h1>*@
-                                @charge._1.documentDetail.paymentOrChargeCredit.getOrElse(throw MissingFieldException("Payment Or Charge Credit")).toCurrencyString
-                                <span class="govuk-body"> @messages("credit-and-refund.credit-from-hmrc-title-prt-1")
-                                    <a href="@getCreditsSummaryControllerHref(charge._1.documentDetail, isAgent)"
-                                       class="govuk-link">@messages("paymentHistory.paymentFromEarlierYear")
-                                        <span class="govuk-visually-hidden"> @index</span>
-                                    </a>
-                                </span>
-                            </p>
-                        </li>
+        @if(!isUnallocatedCreditFromOnePayment) {
+            <ul class="govuk-list govuk-list--bullet" id="credits-list">
+                @for((charge, index) <- creditCharges.zipWithIndex) {
+                    @if(charge._2.validMFACreditType()) {
+                        @if(isMFACreditsAndDebitsEnabled) {
+                            <li>
+                                <p class="govuk-heading-s">
+                                    @charge._1.documentDetail.paymentOrChargeCredit.getOrElse(throw MissingFieldException("Payment Or Charge Credit")).toCurrencyString
+                                    <span class="govuk-body">
+                                        @messages("credit-and-refund.credit-from-hmrc-title-prt-1")
+                                        <a href="@getCreditsSummaryControllerHref(charge._1.documentDetail, isAgent)" class="govuk-link">
+                                            @messages("credit-and-refund.credit-from-hmrc-title-prt-2")
+                                            <span class="govuk-visually-hidden"> @index</span>
+                                        </a>
+                                    </span>
+                                </p>
+                            </li>
+                        }
                     } else {
-                        @if(maybeBalancesDetails(balance).firstPendingAmountRequested.nonEmpty && maybeBalancesDetails(balance).secondPendingAmountRequested.nonEmpty) {
+                        @if(charge._2.validCutoverCreditType()) {
+                            <li>
+                                <p class="govuk-heading-s">
+                                    @charge._1.documentDetail.paymentOrChargeCredit.getOrElse(throw MissingFieldException("Payment Or Charge Credit")).toCurrencyString
+                                    <span class="govuk-body"> @messages("credit-and-refund.credit-from-hmrc-title-prt-1")
+                                        <a href="@getCreditsSummaryControllerHref(charge._1.documentDetail, isAgent)"
+                                        class="govuk-link">@messages("paymentHistory.paymentFromEarlierYear")
+                                            <span class="govuk-visually-hidden"> @index</span>
+                                        </a>
+                                    </span>
+                                </p>
+                            </li>
+                        } else {
                             <li>
                                 <p class="govuk-heading-s">
                                     @charge._1.documentDetail.paymentOrChargeCredit.getOrElse(throw MissingFieldException("Payment Or Charge Credit")).toCurrencyString
@@ -178,52 +176,51 @@
                         }
                     }
                 }
-            }
 
-            @{
-                if(maybeBalancesDetails(balance).firstPendingAmountRequested > maybeBalancesDetails(balance).secondPendingAmountRequested){
-                    maybeBalancesDetails(balance).firstPendingAmountRequested map { amount =>
-                        if(messages.lang.language.toLowerCase().equals("cy")){
-                            <li>
-                                <p class="govuk-heading-s">
-                                    <span class="govuk-body">{messages("credit-and-refund.refundProgress-prt-1")}</span>
-                                    {amount.toCurrencyString}
-                                    <span class="govuk-body">{messages("credit-and-refund.refundProgress-prt-2")}</span>
-                                </p>
-                            </li>
+                @{
+                    if(maybeBalancesDetails.firstPendingAmountRequested > maybeBalancesDetails.secondPendingAmountRequested){
+                        maybeBalancesDetails.firstPendingAmountRequested map { amount =>
+                            if(messages.lang.language.toLowerCase().equals("cy")){
+                                <li>
+                                    <p class="govuk-heading-s">
+                                        <span class="govuk-body">{messages("credit-and-refund.refundProgress-prt-1")}</span>
+                                            {amount.toCurrencyString}
+                                        <span class="govuk-body">{messages("credit-and-refund.refundProgress-prt-2")}</span>
+                                    </p>
+                                </li>
+                            }
+                            else{
+                                <li>
+                                    <p class="govuk-heading-s">{amount.toCurrencyString}
+                                        <span class="govuk-body">{messages("credit-and-refund.refundProgress")}</span>
+                                    </p>
+                                </li>
+                            }
                         }
-                        else{
-                            <li>
-                                <p class="govuk-heading-s">{amount.toCurrencyString}
-                                    <span class="govuk-body">{messages("credit-and-refund.refundProgress")}</span>
-                                </p>
-                            </li>
+                    }
+                    else {
+                        maybeBalancesDetails.secondPendingAmountRequested map { amount =>
+                            creditAndRefundRefundProgressHtml(amount)
                         }
                     }
                 }
-                else {
-                    maybeBalancesDetails(balance).secondPendingAmountRequested map { amount =>
-                        creditAndRefundRefundProgressHtml(amount)
+
+                @{
+                    if(maybeBalancesDetails.firstPendingAmountRequested < maybeBalancesDetails.secondPendingAmountRequested){
+                        maybeBalancesDetails.firstPendingAmountRequested map { amount =>
+                            creditAndRefundRefundProgressHtml(amount)
+                        }
+                    }
+                    else {
+                        maybeBalancesDetails.secondPendingAmountRequested map { amount =>
+                            creditAndRefundRefundProgressHtml(amount)
+                        }
                     }
                 }
-            }
+            </ul>
+        }
 
-            @{
-                if(maybeBalancesDetails(balance).firstPendingAmountRequested < maybeBalancesDetails(balance).secondPendingAmountRequested){
-                    maybeBalancesDetails(balance).firstPendingAmountRequested map { amount =>
-                        creditAndRefundRefundProgressHtml(amount)
-                    }
-                }
-                else {
-                    maybeBalancesDetails(balance).secondPendingAmountRequested map { amount =>
-                        creditAndRefundRefundProgressHtml(amount)
-                    }
-                }
-            }
-        </ul>
-
-
-        @if(maybeAvailableCredit(balance) != 0){
+        @if(maybeAvailableCredit != 0){
             @p(){
                 <h2 class="govuk-heading-m">
                     @messages("credit-and-refund.bullet-text-intro")
@@ -242,7 +239,7 @@
                 </li>
                 <li>
                     @messages("credit-and-refund.bullet-two-prt-1")
-                    @maybeAvailableCredit(balance).toCurrency
+                    @maybeAvailableCredit.toCurrency
                     @messages("credit-and-refund.bullet-two-prt-2")
                 </li>
             </ul>
@@ -255,7 +252,7 @@
 
         <div class="govuk-button-group">
             @if(balance.isDefined){
-                @if(maybeAvailableCredit(balance) != 0){
+                @if(maybeAvailableCredit != 0){
                     @link(link = "https://www.tax.service.gov.uk/self-assessment-repayment/repayment-amount",
                         messageKey = "credit-and-refund.claim-refund-btn", classes = "govuk-button", role=Some("button"))
                 }
