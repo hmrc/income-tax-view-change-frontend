@@ -116,6 +116,8 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
 
       "a user has not requested a refund" in new Setup(balance = Some(balanceDetailsModel(None, None))) {
 
+        println(s"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@  document=$document  @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
+
         document.title() shouldBe creditAndRefundHeadingWithTitleServiceNameGovUk
         layoutContent.selectHead("h1").text shouldBe creditAndRefundHeading
         document.select("h2").first().select("span").text() shouldBe s"$subHeadingWithCreditsPart1 $subHeadingWithCreditsPart2"
@@ -231,7 +233,7 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
           )
         ) {
 
-          println(s"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@  document=$document  @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
+//          println(s"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@  document=$document  @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
           document.title() shouldBe creditAndRefundHeadingWithTitleServiceNameGovUk
           layoutContent.selectHead("h1").text shouldBe creditAndRefundHeading
           // todo this needs to be fixed
