@@ -82,6 +82,10 @@
     }
 }
 
+@maybeCreditChargesHead = @{
+    creditCharges.headOption.getOrElse(throw MissingFieldException("Credit Charges"))
+}
+
 @maybeBalancesDetails = @{
     balance.getOrElse(throw MissingFieldException("Balance"))
 }
@@ -91,9 +95,12 @@
 }
 
 @isUnallocatedCreditFromOnePayment = @{
-    maybeBalancesDetails.unallocatedCredit.isDefined && maybeAvailableCredit != 0 && creditCharges.size == 1 && creditCharges.head._2.mainType.filter(_.contains("Payment on Account")).isDefined
+    maybeBalancesDetails.unallocatedCredit.isDefined && maybeAvailableCredit != 0 && creditCharges.size == 1 && maybeCreditChargesHead._2.mainType.filter(_.contains("Payment on Account")).isDefined
 }
 
+@isUnallocatedCreditFromSingleCreditItem(financialDetails: FinancialDetail) = @{
+    maybeBalancesDetails.unallocatedCredit.isDefined && maybeAvailableCredit != 0 && creditCharges.size == 1 && (MfaCreditUtils.validMFACreditType(financialDetails.mainType) || financialDetails.validCutoverCreditType())
+}
 
 @mainTemplate(
     pageTitle = messages("credit-and-refund.heading"),
@@ -104,37 +111,48 @@
 
     @h1(msg = "credit-and-refund.heading")
 
-    @* TODO this should be finished *@
     @if(balance.isDefined){
         @if(isUnallocatedCreditFromOnePayment) {
             <h2 class="govuk-heading-s">
-                <span class="govuk-body"> @messages("credit-and-refund.subHeading.unallocated-credits-one-payment", maybeAvailableCredit.toCurrencyString, creditCharges.head._1.dueDate.getOrElse(throw MissingFieldException("Due Date")).toLongDate) </span>
+                <span class="govuk-body"> @messages("credit-and-refund.subHeading.unallocated-credits-one-payment", maybeAvailableCredit.toCurrencyString, maybeCreditChargesHead._1.dueDate.getOrElse(throw MissingFieldException("Due Date")).toLongDate) </span>
                     <span class="govuk-body">
-                        <a href="@getControllerHref(creditCharges.head._1.documentDetail, isAgent)"
-                        class="govuk-link">@creditCharges.head._1.dueDate.getOrElse(throw MissingFieldException("Due Date")).toLongDate
+                        <a href="@getControllerHref(maybeCreditChargesHead._1.documentDetail, isAgent)" class="govuk-link">
+                            @maybeCreditChargesHead._1.dueDate.getOrElse(throw MissingFieldException("Due Date")).toLongDate
                         </a>
                     </span>
             </h2>
         } else {
-            @if(maybeAvailableCredit != 0) {
+            @if(isUnallocatedCreditFromSingleCreditItem(maybeCreditChargesHead._2)) {
                 <h2 class="govuk-heading-s">
-                    <span class="govuk-body"> @messages("credit-and-refund.subHeading.has-credits-1") </span>
-                        @maybeAvailableCredit.toCurrency
-                    <span class="govuk-body"> @messages("credit-and-refund.subHeading.has-credits-2")</span>
+                    <span class="govuk-body"> @messages("credit-and-refund.subHeading.unallocated-credits-single-credit", maybeAvailableCredit.toCurrencyString, maybeCreditChargesHead._1.dueDate.getOrElse(throw MissingFieldException("Due Date")).toLongDate) </span>
+                    <span class="govuk-body">
+                        <a href="@getCreditsSummaryControllerHref(maybeCreditChargesHead._1.documentDetail, isAgent)" class="govuk-link">
+                            @messages("credit-and-refund.credit-from-hmrc-title-prt-2")
+                        </a>
+                    </span>
                 </h2>
             } else {
-                <h2 class="govuk-heading-s">@{
-                    maybeBalancesDetails.firstPendingAmountRequested.getOrElse(throw MissingFieldException("First Pending Amount")).toCurrency
+                @if(maybeAvailableCredit != 0) {
+                    <h2 class="govuk-heading-s">
+                        <span class="govuk-body"> @messages("credit-and-refund.subHeading.has-credits-1") </span>
+                            @maybeAvailableCredit.toCurrency
+                        <span class="govuk-body"> @messages("credit-and-refund.subHeading.has-credits-2")</span>
+                    </h2>
+                } else {
+                    <h2 class="govuk-heading-s">@{
+                        maybeBalancesDetails.firstPendingAmountRequested.getOrElse(throw MissingFieldException("First Pending Amount")).toCurrency
+                    }
+                        <span class="govuk-body"> @messages("credit-and-refund.subHeading.has-no-credits")</span>
+                    </h2>
                 }
-                    <span class="govuk-body"> @messages("credit-and-refund.subHeading.has-no-credits")</span>
-                </h2>
             }
         }
 
-        @if(!isUnallocatedCreditFromOnePayment) {
-            <ul class="govuk-list govuk-list--bullet" id="credits-list">
-                @for((charge, index) <- creditCharges.zipWithIndex) {
-                    @if(charge._2.validMFACreditType()) {
+
+            @if(!isUnallocatedCreditFromOnePayment) {
+                <ul class="govuk-list govuk-list--bullet" id="credits-list">
+                    @for((charge, index) <- creditCharges.zipWithIndex) {
+                    @if(charge._2.validMFACreditType() && !isUnallocatedCreditFromSingleCreditItem(maybeCreditChargesHead._2)) {
                         @if(isMFACreditsAndDebitsEnabled) {
                             <li>
                                 <p class="govuk-heading-s">
@@ -150,7 +168,7 @@
                             </li>
                         }
                     } else {
-                        @if(charge._2.validCutoverCreditType()) {
+                        @if(charge._2.validCutoverCreditType() && !isUnallocatedCreditFromSingleCreditItem(maybeCreditChargesHead._2)) {
                             <li>
                                 <p class="govuk-heading-s">
                                     @charge._1.documentDetail.paymentOrChargeCredit.getOrElse(throw MissingFieldException("Payment Or Charge Credit")).toCurrencyString
@@ -163,16 +181,18 @@
                                 </p>
                             </li>
                         } else {
-                            <li>
-                                <p class="govuk-heading-s">
-                                    @charge._1.documentDetail.paymentOrChargeCredit.getOrElse(throw MissingFieldException("Payment Or Charge Credit")).toCurrencyString
-                                    <span class="govuk-body">@messages("credit-and-refund.payment")
-                                        <a href="@getControllerHref(charge._1.documentDetail, isAgent)"
-                                        class="govuk-link">@charge._1.dueDate.getOrElse(throw MissingFieldException("Due Date")).toLongDate
-                                        </a>
-                                    </span>
-                                </p>
-                            </li>
+                            @if(!isUnallocatedCreditFromSingleCreditItem(maybeCreditChargesHead._2)) {
+                                <li>
+                                    <p class="govuk-heading-s">
+                                        @charge._1.documentDetail.paymentOrChargeCredit.getOrElse(throw MissingFieldException("Payment Or Charge Credit")).toCurrencyString
+                                        <span class="govuk-body">@messages("credit-and-refund.payment")
+                                            <a href="@getControllerHref(charge._1.documentDetail, isAgent)"
+                                            class="govuk-link">@charge._1.dueDate.getOrElse(throw MissingFieldException("Due Date")).toLongDate
+                                            </a>
+                                        </span>
+                                    </p>
+                                </li>
+                            }
                         }
                     }
                 }
@@ -219,6 +239,7 @@
                 }
             </ul>
         }
+
 
         @if(maybeAvailableCredit != 0){
             @p(){

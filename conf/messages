@@ -855,6 +855,7 @@ credit-and-refund.heading                                         = Claim a refu
 credit-and-refund.subHeading.has-credits-1                        = There is a total of
 credit-and-refund.subHeading.has-credits-2                        = in your account:
 credit-and-refund.subHeading.unallocated-credits-one-payment      = There is a total of {0} in your account from a payment made on
+credit-and-refund.subHeading.unallocated-credits-single-credit    = There is a total of {0} in your account from a
 credit-and-refund.subHeading.has-no-credits                       = has been requested as a refund and is in progress.
 credit-and-refund.bullet-text-intro                               = What you can do
 credit-and-refund.bullet-one-prt-1                                = If you leave this money in your account it will be used to automatically pay
