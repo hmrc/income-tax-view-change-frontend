@@ -65,8 +65,8 @@
 )(contentBlock: Html)(implicit request : Request[_], messages: Messages)
 
 @siteHeader = @{
-    val serviceName = if (isAgent) Some(messages("agent.titlePattern.serviceName.govUk"))
-        else Some(messages("titlePattern.serviceName.govUk"))
+    val serviceName = if (isAgent) Some(messages("agent.header.serviceName.govUk"))
+        else Some(messages("header.serviceName.govUk"))
 
     val serviceUrl = if (isAgent) controllers.routes.HomeController.showAgent().url
         else controllers.routes.HomeController.show().url

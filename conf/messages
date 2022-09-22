@@ -22,11 +22,15 @@ back.nomatch = Back
 # Agent Base
 agent.base.service_name                             = Your client’s Income Tax details
 
+# Header
+header.serviceName.govUk                           = Manage your Income Tax updates
+agent.header.serviceName.govUk                     = Manage your client’s Income Tax updates
+
 # Page Titles
 titlePattern.serviceName.govUk                      = Manage your Income Tax updates
-agent.titlePattern.serviceName.govUk                = Manage your client’s Income Tax updates - GOV.UK
+agent.titlePattern.serviceName.govUk                = Manage your client’s Income Tax updates
 error.titlePattern.serviceName.govUk                = Error: {0} - Manage your Income Tax updates
-agent.error.titlePattern.serviceName.govUk          = Error: {0} - Manage your client’s Income Tax updates - GOV.UK
+agent.error.titlePattern.serviceName.govUk          = Error: {0} - Manage your client’s Income Tax updates
 
 # Agent - Enter clients details
 agent.enter_clients_utr.heading                                 = What is your client’s UTR?
