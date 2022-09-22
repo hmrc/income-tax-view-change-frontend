@@ -160,8 +160,4 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   //Auth variables
   lazy val requiredConfidenceLevel: Int = servicesConfig.getInt("auth.confidenceLevel")
 
-  def routeToSwitchLanguage: String => Call = (lang: String) => controllers.routes.ItvcLanguageController.switchToLanguage(lang)
-
-  def routeToSwitchAgentLanguage: String => Call = (lang: String) => controllers.agent.routes.AgentLanguageController.switchToLanguage(lang)
-
 }

@@ -21,6 +21,7 @@ import models.financialDetails._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.test.FakeRequest
+import services.CreditService.maybeBalanceDetails
 import testConstants.BaseTestConstants.{testMtditid, testNino, testRetrievedUserName}
 import testConstants.FinancialDetailsTestConstants._
 import testConstants.IncomeSourceDetailsTestConstants.singleBusinessIncomeWithCurrentYear
@@ -66,6 +67,22 @@ class CreditServiceSpec extends TestSupport {
 
         result shouldBe an[Exception]
         result.getMessage shouldBe "[CreditService][getCreditCharges] Error response while getting Unpaid financial details"
+      }
+    }
+  }
+
+  "CreditService.maybeBalanceDetails method" should {
+    "return an some of balance details" when {
+      "a successful response is received in all tax year calls" in {
+
+        maybeBalanceDetails(List(financialDetailCreditAndRefundCharge)) shouldBe Some(financialDetailCreditAndRefundCharge.balanceDetails)
+      }
+    }
+
+    "return none" when {
+      "a successful response is received in all tax year calls but it returns an empty list" in {
+
+        maybeBalanceDetails(List.empty) shouldBe None
       }
     }
   }

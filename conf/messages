@@ -45,7 +45,7 @@ agent.confirmClient.confirmContinue                             = Confirm and co
 
 # Agent - Client Relationship Failure
 agent.client_relationship_failure.heading                       = You are not authorised to view this client
-agent.client_relationship_failure.info                          = Your client needs to {0}
+agent.client_relationship_failure.info                          = Your client needs to {0}.
 agent.client_relationship_failure.info.link                     = authorise you as their agent
 agent.client_relationship_failure.enter_different_details       = Check another client
 
@@ -427,6 +427,12 @@ credits.drop-down-list.credit-from-an-earlier-tax-year.sa-note          = This i
 credits.drop-down-list.credit-from-an-earlier-tax-year.agent.sa-note    = This is money your client paid into their account before they were signed up for Making Tax Digital for Income Tax. Sign in to your
 credits.drop-down-list.sa-link                                          = Self Assessment online account
 credits.drop-down-list.sa-link-agent                                    = Self Assessment for Agents account
+credits.money-in-your-account-section.name                              = Money in your account
+credits.money-in-your-account-section.agent.name                        = Money in your client’s account
+credits.money-in-your-account-section.content                           = There is a total of {0} in your account. You can leave the money there to pay your next bill or
+credits.money-in-your-account-section.agent.name                        = Money in your client’s account
+credits.money-in-your-account-section.agent.content                     = There is a total of {0} in your client’s account. You can leave the money there to pay their next bill or
+credits.money-in-your-account-section.claim-a-refund-link               = claim a refund
 
 ## Refund to taxpayer page ##
 refund-to-taxpayer.heading                                      = Refund to taxpayer
@@ -643,6 +649,12 @@ whatYouOwe.cancelledPayeSelfAssessment.text                        = Cancelled S
 whatYouOwe.credit-overpaid-prefix                                  = You have
 whatYouOwe.credit-overpaid-amount                                  = {0} in your account
 whatYouOwe.unallocated-credit-note                                 = . We’ll use this to pay the amount due on the next due date.
+whatYouOwe.moneyOnAccount                                          = Money in your account
+whatYouOwe.moneyOnAccount-1                                        = There is a total of
+whatYouOwe.moneyOnAccount-2                                        = in your account. You can leave the money there to pay your next bill or
+whatYouOwe.moneyOnAccount-3                                        = claim a refund
+whatYouOwe.moneyOnAccount-agent                                    = Money in your client''s account
+whatYouOwe.moneyOnAccount-agent-2                                  = in your client''s account. You can leave the money there to pay their next bill or
 
 ## Charge Summary ##
 chargeSummary.paymentOnAccount1.text							   = Payment on account 1 of 2
@@ -809,6 +821,7 @@ paymentAllocation.paymentAllocations.bcd.cgt                    = Capital Gains 
 paymentAllocation.paymentAllocations.paymentOnAccount1.text     = Late payment interest for payment on account 1 of 2
 paymentAllocation.paymentAllocations.paymentOnAccount2.text     = Late payment interest for payment on account 2 of 2
 paymentAllocation.paymentAllocations.balancingCharge.text       = Late payment interest for Balancing payment
+paymentAllocation.paymentAllocations.hmrcAdjustment.text        = HMRC adjustment
 
 
 ##Tax Years Overview Update Tab##

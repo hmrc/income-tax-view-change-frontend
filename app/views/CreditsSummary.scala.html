@@ -40,6 +40,7 @@
     btaNavPartial: Option[Html] = None,
     enableMfaCreditsAndDebits: Boolean,
     charges: List[CreditDetailModel],
+    maybeAvailableCredit: Option[BigDecimal],
     isAgent: Boolean = false,
     origin: Option[String] = None)(implicit request: Request[_], user: MtdItUser[_], messages: Messages)
 
@@ -77,6 +78,18 @@
     s"balancing-charge-type-$idx"
 }
 
+@creditAndRefundsControllerURL = @{
+    if(isAgent) {
+        controllers.routes.CreditAndRefundController.showAgent().url
+    } else {
+        controllers.routes.CreditAndRefundController.show().url
+    }
+}
+
+@getMoneyInYourAccountSectioName = @{
+    if(isAgent) messages("credits.money-in-your-account-section.agent.name") else messages("credits.money-in-your-account-section.name")
+}
+
 @dropDownDetails(isAgent: Boolean) = {
     @h2(msg = "credits.drop-down-list.credit-from-hmrc-adjustment", classes = "govuk-heading-s", optId = Some("h2-credit-from-hmrc-adjustment"))
     @p(id = Some("p-credit-from-hmrc-adjustment")){@messages("credits.drop-down-list.credit-from-hmrc-adjustment.value")}
@@ -95,6 +108,28 @@
                 @link(link = appConfig.saViewLandPService(utrValue), messageKey = s"${messages("credits.drop-down-list.sa-link")}",
                     id = Some("sa-note-migrated-online-account-link"),
                     outerMessage = ".", rel = Some("noreferrer noopener"), target = Some("_blank"))
+            }
+        }
+    }
+}
+
+@moneyInYourAccount(isAgent: Boolean) = {
+    @maybeAvailableCredit.map { availableCredit =>
+        @h2(msg = getMoneyInYourAccountSectioName, classes = "govuk-heading-s", optId = Some("h2-money-in-your-account"))
+        @if(isAgent) {
+            @p(id = Some("p-money-in-your-account")) {
+                @messages("credits.money-in-your-account-section.agent.content", availableCredit.toCurrencyString)
+                @* @messages("credits.money-in-your-account-section.agent.content", balanceDetails.availableCredit.getOrElse(throw MissingFieldException("Available Credit")).toCurrencyString)) *@
+                @link(link = creditAndRefundsControllerURL, messageKey = messages("credits.money-in-your-account-section.claim-a-refund-link"),
+                    id = Some("money-in-your-account-claim-a-refund-link"),
+                    outerMessage = ".", rel = Some("noreferrer noopener"))
+            }
+        } else {
+            @p(id = Some("p-money-in-your-account")) {
+                @messages("credits.money-in-your-account-section.content", availableCredit.toCurrencyString)
+                @link(link = creditAndRefundsControllerURL, messageKey = messages("credits.money-in-your-account-section.claim-a-refund-link"),
+                    id = Some("money-in-your-account-claim-a-refund-link"),
+                    outerMessage = ".", rel = Some("noreferrer noopener"))
             }
         }
     }
@@ -131,18 +166,5 @@
 
     @detailsDropdown(messages("credits.drop-down-list.name"), dropDownDetails(isAgent))
 
-    @link(
-        link = creditAndRefundsControllerURL,
-        id = Some("credit-and-refund-claim-refund-btn"),
-        messageKey = "credit-and-refund.claim-refund-btn"
-    )
-
-}
-
-@creditAndRefundsControllerURL = @{
-    if(isAgent) {
-        controllers.routes.CreditAndRefundController.showAgent().url
-    } else {
-        controllers.routes.CreditAndRefundController.show().url
-    }
+    @moneyInYourAccount(isAgent)
 }

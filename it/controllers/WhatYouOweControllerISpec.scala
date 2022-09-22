@@ -18,7 +18,7 @@ package controllers
 
 import audit.models.WhatYouOweResponseAuditModel
 import auth.MtdItUser
-import config.featureswitch.{CodingOut, MFACreditsAndDebits, R7bTxmEvents}
+import config.featureswitch.{CodingOut, CreditsRefundsRepay, MFACreditsAndDebits, R7bTxmEvents}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import models.financialDetails.{BalanceDetails, FinancialDetailsModel, WhatYouOweChargesList}
@@ -804,6 +804,86 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
         testIncomeSourceDetailsCaching(false, 1,
           () => IncomeTaxViewChangeFrontend.getPaymentsDue)
       }
+    }
+
+    "render the money in your account section when balance details has available credits" in {
+      enable(CreditsRefundsRepay)
+      Given("I wiremock stub a successful Income Source Details response with multiple business and property")
+      IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
+
+
+      And("I wiremock stub a single financial details response")
+      val mixedJson = Json.obj(
+        "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "totalBalance" -> 3.00, "availableCredit" -> 300.00),
+        "documentDetails" -> Json.arr(
+          documentDetailJson(3400.00, 1000.00, testTaxYear.toString, "ITSA- POA 1", transactionId = "transId1"),
+          documentDetailJson(1000.00, 100.00, testTaxYear.toString, "ITSA- POA 1", transactionId = "transId2"),
+          documentDetailJson(1000.00, 0.00, testTaxYear.toString, "ITSA - POA 2", transactionId = "transId3")
+        ),
+        "financialDetails" -> Json.arr(
+          financialDetailJson(testTaxYear.toString, transactionId = "transId1"),
+          financialDetailJson(testTaxYear.toString, "SA Payment on Account 1", LocalDate.now().plusDays(1).toString, "transId2"),
+          financialDetailJson(testTaxYear.toString, "SA Payment on Account 2", LocalDate.now().minusDays(1).toString, "transId3")
+        )
+      )
+
+      IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK, mixedJson)
+      IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
+        "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithAciAndBcdCharges)
+
+
+      When("I call GET /report-quarterly/income-and-expenses/view/payments-owed")
+      val res = IncomeTaxViewChangeFrontend.getPaymentsDue
+
+      Then("the result should have a HTTP status of OK (200) and the payments due page")
+      res should have(
+        httpStatus(OK),
+        pageTitleIndividual("whatYouOwe.heading"),
+        isElementVisibleById(s"money-in-your-account")(expectedValue = true),
+        elementTextBySelector("#money-in-your-account")(
+            messagesAPI("whatYouOwe.moneyOnAccount") + " " +
+            messagesAPI("whatYouOwe.moneyOnAccount-1") + " £300.00" + " " +
+            messagesAPI("whatYouOwe.moneyOnAccount-2") + " " +
+            messagesAPI("whatYouOwe.moneyOnAccount-3") + "."
+        )
+      )
+    }
+
+    "should not render the money in your account section when balance details has zero available credits" in {
+      enable(CreditsRefundsRepay)
+      Given("I wiremock stub a successful Income Source Details response with multiple business and property")
+      IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
+
+
+      And("I wiremock stub a single financial details response")
+      val mixedJson = Json.obj(
+        "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "totalBalance" -> 3.00, "availableCredit" -> 0.00),
+        "documentDetails" -> Json.arr(
+          documentDetailJson(3400.00, 1000.00, testTaxYear.toString, "ITSA- POA 1", transactionId = "transId1"),
+          documentDetailJson(1000.00, 100.00, testTaxYear.toString, "ITSA- POA 1", transactionId = "transId2"),
+          documentDetailJson(1000.00, 0.00, testTaxYear.toString, "ITSA - POA 2", transactionId = "transId3")
+        ),
+        "financialDetails" -> Json.arr(
+          financialDetailJson(testTaxYear.toString, transactionId = "transId1"),
+          financialDetailJson(testTaxYear.toString, "SA Payment on Account 1", LocalDate.now().plusDays(1).toString, "transId2"),
+          financialDetailJson(testTaxYear.toString, "SA Payment on Account 2", LocalDate.now().minusDays(1).toString, "transId3")
+        )
+      )
+
+      IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK, mixedJson)
+      IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
+        "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithAciAndBcdCharges)
+
+
+      When("I call GET /report-quarterly/income-and-expenses/view/payments-owed")
+      val res = IncomeTaxViewChangeFrontend.getPaymentsDue
+
+      Then("the result should have a HTTP status of OK (200) and the payments due page")
+      res should have(
+        httpStatus(OK),
+        pageTitleIndividual("whatYouOwe.heading"),
+        isElementVisibleById(s"money-in-your-account")(expectedValue = false)
+      )
     }
   }
 }

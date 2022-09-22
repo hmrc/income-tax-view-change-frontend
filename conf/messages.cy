@@ -20,7 +20,7 @@ back.nomatch = Yn ôl
 
 # Agent - Client Relationship Failure
 agent.client_relationship_failure.heading                       = Nid ydych wedi’ch awdurdodi i fwrw golwg dros y cleient hwn
-agent.client_relationship_failure.info                          = Mae angen i’ch cleient {0}
+agent.client_relationship_failure.info                          = Mae angen i’ch cleient {0}.
 agent.client_relationship_failure.info.link                     = eich awdurdodi fel ei asiant
 agent.client_relationship_failure.enter_different_details       = Gwirio cleient arall
 
@@ -509,6 +509,12 @@ credits.drop-down-list.credit-from-an-earlier-tax-year.sa-note          = Dyma a
 credits.drop-down-list.credit-from-an-earlier-tax-year.agent.sa-note    = Dyma arian a dalodd eich cleient i mewn i’w gyfrif cyn iddo gael ei gofrestru ar gyfer y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm. Mewngofnodwch i’ch
 credits.drop-down-list.sa-link                                          = cyfrif Hunanasesiad ar-lein blaenorol
 credits.drop-down-list.sa-link-agent                                    = cyfrif Hunanasesiad ar gyfer Asiantau
+credits.money-in-your-account-section.name                              = Arian yn eich cyfrif
+credits.money-in-your-account-section.agent.name                        = Arian yng nghyfrif eich cleient
+credits.money-in-your-account-section.content                           = Mae cyfanswm o {0} yn eich cyfrif. Gallwch adael yr arian yno i dalu’ch bil nesaf neu gallwch
+credits.money-in-your-account-section.agent.name                        = Arian yng nghyfrif eich cleient
+credits.money-in-your-account-section.agent.content                     = Mae cyfanswm o {0} yng nghyfrif eich cleient. Gallwch adael yr arian yno i dalu bil nesaf eich cleient neu gallwch
+credits.money-in-your-account-section.claim-a-refund-link               = hawlio ad-daliad
 
 
 ## Refund to taxpayer page ##
@@ -610,6 +616,12 @@ whatYouOwe.credit-overpaid-prefix                               = Mae gennych
 whatYouOwe.credit-overpaid-amount                               = {0} yn eich cyfrif
 whatYouOwe.unallocated-credit-note                              = . Byddwn yn defnyddio hwn i dalu'r symiau sy'n ddyledus ar y dyddiad dyledus nesaf.
 whatYouOwe.tax-year-summary.taxYear                             = {0} to {1}
+whatYouOwe.moneyOnAccount                                       = Arian yn eich cyfrif
+whatYouOwe.moneyOnAccount-1                                     = Mae cyfanswm o
+whatYouOwe.moneyOnAccount-2                                     = yn eich cyfrif. Gallwch adael yr arian yno i dalu’ch bil nesaf neu gallwch
+whatYouOwe.moneyOnAccount-3                                     = hawlio ad-daliad
+whatYouOwe.moneyOnAccount-agent                                 = Arian yng nghyfrif eich cleient
+whatYouOwe.moneyOnAccount-agent-2                               = yng nghyfrif eich cleient. Gallwch adael yr arian yno i dalu bil nesaf eich cleient neu gallwch
 
 ## Charge Summary ##
 chargeSummary.paymentOnAccount1.text                            = Taliad ar gyfrif 1 o 2
@@ -819,6 +831,7 @@ paymentAllocation.paymentAllocations.bcd.cgt                    = Treth Enillion
 paymentAllocation.paymentAllocations.paymentOnAccount1.text     = Llog am dalu’n hwyr ar gyfer taliad ar gyfrif 1 o 2 wedi’i greu
 paymentAllocation.paymentAllocations.paymentOnAccount2.text     = Llog am dalu’n hwyr ar gyfer taliad ar gyfrif 2 o 2 wedi’i greu
 paymentAllocation.paymentAllocations.balancingCharge.text       = Llog am dalu’n hwyr ar gyfer y Taliad Mantoli
+paymentAllocation.paymentAllocations.hmrcAdjustment.text        = Addasiad CThEM
 
 ## Final Tax Overview (Individual/Common Content)
 final-tax-overview.individual.heading                            = Eich trosolwg treth terfynol
