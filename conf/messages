@@ -23,14 +23,14 @@ back.nomatch = Back
 agent.base.service_name                             = Your client’s Income Tax details
 
 # Header
-header.serviceName.govUk                           = Manage your Income Tax updates
-agent.header.serviceName.govUk                     = Manage your client’s Income Tax updates
+header.serviceName                                  = Manage your Income Tax updates
+agent.header.serviceName                            = Manage your client’s Income Tax updates
 
-# Page Titles
+# HTML Titles
 titlePattern.serviceName.govUk                      = Manage your Income Tax updates
-agent.titlePattern.serviceName.govUk                = Manage your client’s Income Tax updates
-error.titlePattern.serviceName.govUk                = Error: {0} - Manage your Income Tax updates
-agent.error.titlePattern.serviceName.govUk          = Error: {0} - Manage your client’s Income Tax updates
+htmlTitle.agent                                     = Manage your client’s Income Tax updates
+htmlTitle.errorPage                                 = {0} - GOV.UK
+htmlTitle.invalidInput                              = Error: {0} - GOV.UK
 
 # Agent - Enter clients details
 agent.enter_clients_utr.heading                                 = What is your client’s UTR?
@@ -45,7 +45,7 @@ agent.confirmClient.heading                                     = Confirm your c
 agent.confirmClient.clientName                                  = Client’s name
 agent.confirmClient.clientUtr                                   = Client’s Unique Taxpayer Reference (UTR)
 agent.confirmClient.changeClient                                = Change client
-agent.confirmClient.confirmContinue                             = Confirm and continue
+agent.confirmClient.confirmContinue                              = Confirm and continue
 
 # Agent - Client Relationship Failure
 agent.client_relationship_failure.heading                       = You are not authorised to view this client

@@ -38,7 +38,7 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
     val heading: String = messages("paymentHistory.heading")
     val paymentHistoryRefundHeading = "Payment and refund history"
     val title: String = messages("titlePattern.serviceName.govUk", heading)
-    val titleWhenAgentView: String = messages("agent.titlePattern.serviceName.govUk", heading)
+    val titleWhenAgentView: String = messages("htmlTitle.agent", heading)
 
     val info: String = s"${messages("PaymentHistory.classicSA")} ${messages("taxYears.oldSa.content.link")}${messages("pagehelp.opensInNewTabText")}."
 

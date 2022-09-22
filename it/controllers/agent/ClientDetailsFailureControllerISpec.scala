@@ -46,7 +46,7 @@ class ClientDetailsFailureControllerISpec extends ComponentSpecBase with Feature
         Then(s"Technical difficulties are shown with status OK")
         result should have(
           httpStatus(OK),
-          pageTitleAgent(titleInternalServer)
+          pageTitleAgent(titleInternalServer, isErrorPage = true)
         )
       }
     }
@@ -55,7 +55,7 @@ class ClientDetailsFailureControllerISpec extends ComponentSpecBase with Feature
 
       val result: WSResponse = IncomeTaxViewChangeFrontend.getClientRelationshipFailure
 
-      Then("The enter client's utr page is returned to the user")
+      Then("The client relationship failure page is returned to the user")
       result should have(
         httpStatus(OK),
         pageTitleAgent(titleClientRelationshipFailure, isErrorPage = true)

@@ -28,14 +28,14 @@ agent.client_relationship_failure.enter_different_details       = Gwirio cleient
 agent.base.service_name                                         = Treth Incwm fanylion eich cleient
 
 # Header
-header.serviceName.govUk                           = Rheoli’ch diweddariadau Treth Incwm
-agent.header.serviceName.govUk                     = Rheoli diweddariadau Treth Incwm eich cleient
+header.serviceName                                             = Rheoli’ch diweddariadau Treth Incwm
+agent.header.serviceName                                       = Rheoli diweddariadau Treth Incwm eich cleient
 
-# Page Titles
+# HTML Titles
 titlePattern.serviceName.govUk                                  = Rheoli’ch diweddariadau Treth Incwm
-agent.titlePattern.serviceName.govUk                            = Rheoli diweddariadau Treth Incwm eich cleient
-error.titlePattern.serviceName.govUk                            = Gwall: {0} - Rheoli’ch diweddariadau Treth Incwm
-agent.error.titlePattern.serviceName.govUk                      = Gwall: {0} - Rheoli diweddariadau Treth Incwm eich cleient
+htmlTitle.agent                                                 = Rheoli diweddariadau Treth Incwm eich cleient
+htmlTitle.inputError                                            = Gwall: {0} - GOV.UK
+
 
 ## Agent - UTR Error
 agent.utr_error.heading                                         = Ni allwch fwrw golwg dros y cleient hwn

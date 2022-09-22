@@ -15,7 +15,7 @@
  *@
 
 @import views.helpers.CurrentLanguage
-@import views.helpers.PageTitle
+@import views.helpers.HtmlTitle
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.hmrcfrontend.views.html.components._
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.{Header => HmrcHeaderArgs}
@@ -65,8 +65,8 @@
 )(contentBlock: Html)(implicit request : Request[_], messages: Messages)
 
 @siteHeader = @{
-    val serviceName = if (isAgent) Some(messages("agent.header.serviceName.govUk"))
-        else Some(messages("header.serviceName.govUk"))
+    val serviceName = if (isAgent) Some(messages("agent.header.serviceName"))
+        else Some(messages("header.serviceName"))
 
     val serviceUrl = if (isAgent) controllers.routes.HomeController.showAgent().url
         else controllers.routes.HomeController.show().url
@@ -129,7 +129,7 @@
 
 @if(mainClass.isDefined){
     @govukLayout(
-        pageTitle = Some(PageTitle(isAgent, isErrorPage, form.exists(_.hasErrors), pageTitle)),
+        pageTitle = Some(HtmlTitle(isAgent, isErrorPage, form.exists(_.hasErrors), pageTitle)),
         headBlock = Some(head),
         beforeContentBlock = Some(beforeContentBlock),
         bodyEndBlock = None,
@@ -140,7 +140,7 @@
     )(content)
 } else {
     @govukLayout(
-        pageTitle = Some(PageTitle(isAgent, isErrorPage, form.exists(_.hasErrors), pageTitle)),
+        pageTitle = Some(HtmlTitle(isAgent, isErrorPage, form.exists(_.hasErrors), pageTitle)),
         headBlock = Some(head),
         beforeContentBlock = Some(beforeContentBlock),
         bodyEndBlock = None,
