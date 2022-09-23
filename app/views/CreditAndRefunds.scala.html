@@ -115,7 +115,7 @@
         @if(isUnallocatedCreditFromOnePayment) {
             <h2 class="govuk-heading-s">
                 <span class="govuk-body">
-                    @messages("credit-and-refund.subHeading.unallocated-credits-one-payment-1")@* maybeCreditChargesHead._1.dueDate.getOrElse(throw MissingFieldException("Due Date")).toLongDate)*@
+                    @messages("credit-and-refund.subHeading.unallocated-credits-one-payment-1")
                     <strong class="govuk-body govuk-!-font-weight-bold">@maybeAvailableCredit.toCurrencyString</strong>
                     @messages("credit-and-refund.subHeading.unallocated-credits-one-payment-2")
                 </span>
@@ -129,13 +129,21 @@
             @if(isUnallocatedCreditFromSingleCreditItem(maybeCreditChargesHead._2)) {
                 <h2 class="govuk-heading-s">
                     <span class="govuk-body">
-                        @messages("credit-and-refund.subHeading.unallocated-credits-single-credit-1")@* maybeCreditChargesHead._1.dueDate.getOrElse(throw MissingFieldException("Due Date")).toLongDate)*@
+                        @messages("credit-and-refund.subHeading.unallocated-credits-single-credit-1")
                         <strong class="govuk-body govuk-!-font-weight-bold">@maybeAvailableCredit.toCurrencyString</strong>
                         @messages("credit-and-refund.subHeading.unallocated-credits-single-credit-2")
                     </span>
                     <span class="govuk-body">
-                        <a href="@getCreditsSummaryControllerHref(maybeCreditChargesHead._1.documentDetail, isAgent)" class="govuk-body govuk-!-font-weight-bold govuk-link--no-visited-state">
-                            @messages("credit-and-refund.credit-from-hmrc-title-prt-2").                        </a>
+                        @if(MfaCreditUtils.validMFACreditType((maybeCreditChargesHead._2.mainType))) {
+                            <a href="@getCreditsSummaryControllerHref(maybeCreditChargesHead._1.documentDetail, isAgent)"
+                                class="govuk-body govuk-!-font-weight-bold govuk-link--no-visited-state">
+                                @messages("credit-and-refund.credit-from-hmrc-title-prt-2").
+                            </a>
+                        } else {
+                            <a href="@getCreditsSummaryControllerHref(maybeCreditChargesHead._1.documentDetail, isAgent)"
+                                class="govuk-body govuk-!-font-weight-bold govuk-link--no-visited-state">@messages("paymentHistory.paymentFromEarlierYear").
+                            </a>
+                        }
                     </span>
                 </h2>
             } else {
