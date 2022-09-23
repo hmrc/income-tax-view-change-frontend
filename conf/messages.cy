@@ -114,7 +114,6 @@ home.agent.overdue.message.dunningLock.true                     = Mae gan eich c
 home.agent.overdue.message.dunningLock.false                    = Mae gan eich cleient daliadau sy’n hwyr. Mae’n bosibl y codir llog arno ar y rhain hyd nes eu bod wedi’u talu’n llawn.
 home.overdue.message.dunningLock.true                           = Mae gennych daliadau sy’n hwyr ac mae un neu fwy o’ch penderfyniadau treth yn cael eu hadolygu. Mae’n bosibl y codir llog arnoch ar y rhain hyd nes eu bod wedi’u talu’n llawn.
 home.overdue.message.dunningLock.false                          = Mae gennych daliadau sy’n hwyr. Mae’n bosibl y codir llog arnoch ar y rhain hyd nes eu bod wedi’u talu’n llawn.
-home.agent.overdue.message                                      = Mae gennych daliadau sy’n hwyr. Mae’n bosibl y codir llog arnoch ar y rhain hyd nes eu bod wedi’u talu’n llawn.
 home.updates.overdue.payments                                   = {0} TALIADAU SY’N HWYR
 home.updates.overdue.updates                                    = {0} YN HWYR Diweddariadau
 home.self-assessment.description                                = Defnyddiwch y gwasanaeth hwn i fwrw golwg dros eich gwybodaeth am flynyddoedd treth cynharach cyn i chi gofrestru ar gyfer y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm.
