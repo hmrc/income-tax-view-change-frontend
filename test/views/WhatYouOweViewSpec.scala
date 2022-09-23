@@ -50,7 +50,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
   val paymentType: String = messages("tax-year-summary.payments.payment-type")
   val taxYearSummary: String = messages("whatYouOwe.tableHead.tax-year-summary")
   val amountDue: String = messages("whatYouOwe.tableHead.amount-due")
-  val paymentProcessingBullet1: String = s"${messages("whatYouOwe.payments-made-bullet-1.1")} ${messages("whatYouOwe.payments-made-bullet-1.2")}${messages("pagehelp.opensInNewTabText")} ${messages("whatYouOwe.payments-made-bullet-1.3")}"
+  val paymentProcessingBullet1: String = s"${messages("whatYouOwe.payments-made-bullet-1.1")} ${messages("whatYouOwe.payments-made-bullet-1.2")}${messages("pagehelp.opensInNewTabText")}"
   val paymentProcessingBullet2: String = messages("whatYouOwe.payments-made-bullet-2")
   val paymentsMade: String = messages("whatYouOwe.payments-made")
   val poa1Text: String = messages("whatYouOwe.paymentOnAccount1.text")

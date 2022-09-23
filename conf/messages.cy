@@ -548,6 +548,7 @@ paymentDue.due                                                  = ddyledus
 
 ## What you owe
 whatYouOwe.heading                                              = Yr hyn sydd arnoch
+whatYouOwe.heading-agent                                        = Yr hyn sydd ar eich cleient
 whatYouOwe.no-payments-due                                      = Nid oes gennych taliadau sy’n ddyledus.
 whatYouOwe.sa-note                                              = Mae gennych daliadau’n ddyledus o hyd ar gyfer eich blynyddoedd treth Hunanasesiad blaenorol. Er mwyn bwrw golwg dros y taliadau hyn sydd heb eu talu, mae angen i chi fynd i’ch
 whatYouOwe.sa-note-agent-1                                      = Mae’n bosibl y bydd gan eich cleient daliadau sy’n ddyledus o hyd ar gyfer blynyddoedd treth Hunanasesiad blaenorol
@@ -585,16 +586,11 @@ whatYouOwe.cancelled-paye-sa.heading                            = Hunanasesiad T
 whatYouOwe.cancelled-paye-sa.line1                              = Rydych eisoes wedi cytuno i dalu peth o’ch treth hunanasesiad trwy eich cod treth TWE. Nid yw CThEM wedi gallu casglu’r holl daliadau hyn gennych, felly dyma’r dreth sy’n wedill y mae angen i chi ei thalu.
 whatYouOwe.payments-due                                         = Taliadau treth incwm
 whatYouOwe.payments-made                                        = Ynglŷn ag unrhyw daliadau a wnaed gennych:
-whatYouOwe.payments-made-bullet-1.1                             = gall cymryd hyd at 5 diwrnod gwaith i daliadau gael eu prosesu, yn dibynnu ar y
-whatYouOwe.payments-made-bullet-1.2                             = dull talu
-whatYouOwe.payments-made-bullet-1.3                             = rydych yn ei ddefnyddio
-whatYouOwe.payments-made-bullet-2                               = mae’n rhaid iddo ein cyrraedd erbyn y dyddiad cau – os bydd eich taliad yn hwyr, codir llog arnoch ac efallai y bydd yn rhaid i chi dalu cosb
+whatYouOwe.payments-made-bullet-1.1                             = gall gymryd hyd at 5 diwrnod gwaith i daliadau gael eu prosesu, yn dibynnu ar y
+whatYouOwe.payments-made-bullet-1.2                             = dull talu rydych yn ei ddefnyddio
+whatYouOwe.payments-made-bullet-2                               = mae’n rhaid i daliadau ein cyrraedd erbyn y dyddiad cau – os bydd y taliad yn hwyr, codir llog arnoch ac efallai y bydd yn rhaid i chi dalu cosb
 whatYouOwe.over-due                                             = YN HWYR
 whatYouOwe.payments-made                                        = Ynglŷn ag unrhyw daliadau a wnaed gennych:
-whatYouOwe.payments-made-bullet-1.1                             = gall cymryd hyd at 5 diwrnod gwaith i daliadau gael eu prosesu, yn dibynnu ar y
-whatYouOwe.payments-made-bullet-1.2                             = dull talu
-whatYouOwe.payments-made-bullet-1.3                             = rydych yn ei ddefnyddio
-whatYouOwe.payments-made-bullet-2                               = mae’n rhaid iddo ein cyrraedd erbyn y dyddiad cau – os bydd eich taliad yn hwyr, codir llog arnoch ac efallai y bydd yn rhaid i chi dalu cosb
 whatYouOwe.due-in-thirty-days-payments                          = Yn ddyledus cyn pen 30 diwrnod
 whatYouOwe.future-payments                                      = Taliadau yn y dyfodol
 whatYouOwe.payment-type.taxYear                                 = Blwyddyn dreth {0} i {1}

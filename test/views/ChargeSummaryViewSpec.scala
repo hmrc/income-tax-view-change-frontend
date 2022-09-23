@@ -34,6 +34,7 @@ import java.time.LocalDate
 class ChargeSummaryViewSpec extends ViewSpec {
 
   lazy val chargeSummary: ChargeSummary = app.injector.instanceOf[ChargeSummary]
+  val whatYouOweAgentUrl = controllers.routes.WhatYouOweController.showAgent.url
 
   import Messages._
 
@@ -766,24 +767,24 @@ class ChargeSummaryViewSpec extends ViewSpec {
 
       "have a interest lock payment link when the interest is accruing" in new Setup(documentDetailModel(lpiWithDunningBlock = None), paymentBreakdown = paymentBreakdownWhenInterestAccrues, isAgent = true) {
         document.select("#main-content p a").text() shouldBe interestLinkText
-        document.select("#main-content p a").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/agents/what-you-owe"
+        document.select("#main-content p a").attr("href") shouldBe whatYouOweAgentUrl
         document.select("#p-interest-locks-msg").text() shouldBe s"${interestLinkFirstWord} ${interestLinkText} ${interestLinkFullText}"
       }
 
       "have a interest lock payment link when the interest has previously" in new Setup(documentDetailModel(lpiWithDunningBlock = None), paymentBreakdown = paymentBreakdownWithPreviouslyAccruedInterest, isAgent = true) {
         document.select("#main-content p a").text() shouldBe interestLinkText
-        document.select("#main-content p a").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/agents/what-you-owe"
+        document.select("#main-content p a").attr("href") shouldBe whatYouOweAgentUrl
         document.select("#p-interest-locks-msg").text() shouldBe s"${interestLinkFirstWord} ${interestLinkText} ${interestLinkFullText}"
       }
 
       "have no interest lock payment link when there is no accrued interest" in new Setup(documentDetailModel(lpiWithDunningBlock = None), paymentBreakdown = paymentBreakdownWithOnlyAccruedInterest, isAgent = true) {
         document.select("#main-content p a").text() shouldBe "what you owe"
-        document.select("#main-content p a").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/agents/what-you-owe"
+        document.select("#main-content p a").attr("href") shouldBe whatYouOweAgentUrl
       }
 
       "have no interest lock payment link when there is an intererst lock but no accrued interest" in new Setup(documentDetailModel(lpiWithDunningBlock = None), paymentBreakdown = paymentBreakdownWithOnlyInterestLock, isAgent = true) {
         document.select("#main-content p a").text() shouldBe "what you owe"
-        document.select("#main-content p a").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/agents/what-you-owe"
+        document.select("#main-content p a").attr("href") shouldBe whatYouOweAgentUrl
       }
 
       "does not have any payment lock notes or link when there is no interest locks on the page " in new Setup(documentDetailModel(), paymentBreakdown = paymentBreakdown, isAgent = true) {

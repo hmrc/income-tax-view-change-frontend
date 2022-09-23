@@ -14,8 +14,8 @@
  * limitations under the License.
  *@
 
-@import implicits.ImplicitDateFormatterImpl
-@import implicits.ImplicitCurrencyFormatter._
+@import _root_.implicits.ImplicitDateFormatterImpl
+@import _root_.implicits.ImplicitCurrencyFormatter._
 @import models.financialDetails.WhatYouOweChargesList
 @import java.time.LocalDate
 @import models.financialDetails.DocumentDetailWithDueDate
@@ -265,6 +265,10 @@
     </tr>
 }
 
+@getHeading = @{
+    if(isAgent) getPrefix("heading-agent") else getPrefix("heading")
+}
+
 @mainTemplate(
     pageTitle = getMessage("heading"),
     backUrl = Some(backUrl),
@@ -272,7 +276,7 @@
     btaNavPartial = btaNavPartial,
     useFallbackBackLink = true
 ) {
-    @h1(msg = getPrefix("heading"), id = Some("page-heading"))
+    @h1(msg = getHeading, id = Some("page-heading"))
     @if(whatYouOweChargesList.isChargesListEmpty && whatYouOweChargesList.codedOutDocumentDetail.isEmpty) {
         @p(id=Some("no-payments-due"))(Html(getMessage("no-payments-due")))
         @saNoteParagraph
@@ -390,7 +394,7 @@
     <ul class="govuk-list govuk-list--bullet" id="payments-made-bullets">
         <li>@messages("whatYouOwe.payments-made-bullet-1.1")
             @link(link = "https://www.gov.uk/pay-self-assessment-tax-bill", id=Some("sa-tax-bill"),  messageKey = "whatYouOwe.payments-made-bullet-1.2", target = Some("_blank"), rel=Some("noreferrer noopener"))
-            @messages("whatYouOwe.payments-made-bullet-1.3")</li>
+        </li>
         <li> @messages("whatYouOwe.payments-made-bullet-2")</li>
     </ul>
 
