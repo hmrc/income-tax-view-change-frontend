@@ -862,8 +862,10 @@ inYear-tax-overview.agent.inset                                  = Mae’r cyfri
 ## credits and refunds
 credit-and-refund.subHeading.has-credits-1                        = Mae cyfanswm o
 credit-and-refund.subHeading.has-credits-2                        = yn eich cyfrif:
-credit-and-refund.subHeading.unallocated-credits-one-payment      = Mae cyfanswm o {0} yn eich cyfrif yn sgil taliad a wnaed ar
-credit-and-refund.subHeading.unallocated-credits-single-credit    = Mae cyfanswm o {0} yn eich cyfrif yn sgil
+credit-and-refund.subHeading.unallocated-credits-one-payment-1    = Mae cyfanswm o
+credit-and-refund.subHeading.unallocated-credits-one-payment-2    = yn eich cyfrif yn sgil taliad a wnaed ar
+credit-and-refund.subHeading.unallocated-credits-single-credit-1  = Mae cyfanswm o
+credit-and-refund.subHeading.unallocated-credits-single-credit-2  = yn eich cyfrif yn sgil
 credit-and-refund.heading                                         = Hawlio ad-daliad
 credit-and-refund.claim-refund-btn                                = Hawlio ad-daliad
 credit-and-refund.bullet-text-intro                               = Yr hyn y gallwch ei wneud
