@@ -641,14 +641,18 @@ chargeSummary.paidToDate                                        = wedi'i dalu hy
 chargeSummary.remainingDue                                      = Yn weddill i dalu
 chargeSummary.whatYouOwe.textOne                                = Gweld
 chargeSummary.whatYouOwe.textTwo                                = i wirio a oes gennych unrhyw daliadau eraill sy'n ddyledus.
+chargeSummary.whatYouOwe.textTwo-agent							= to check if they have any other payments due.
 chargeSummary.whatYouOwe.linkText                               = yr hyn sy'n ddyledus gennych
+chargeSummary.whatYouOwe.linkText-agent							= what your client owes
 chargeSummary.overdue                                           = YN HWYR
 
 chargeSummary.payment-days-note                                    = Ynglŷn ag unrhyw daliadau a wnaed gennych:
-chargeSummary.payments-bullet1-1                                   = gall cymryd hyd at 5 diwrnod gwaith i daliadau gael eu prosesu, yn dibynnu ar y
-chargeSummary.payments-bullet1-2                                   = dull talu
-chargeSummary.payments-bullet1-3                                   = rydych yn ei ddefnyddio
-chargeSummary.payments-bullet2                                     = mae’n rhaid iddo ein cyrraedd erbyn y dyddiad cau – os bydd eich taliad yn hwyr, codir llog arnoch ac efallai y bydd yn rhaid i chi dalu cosb
+chargeSummary.payments-bullet1-1                                   = gall gymryd hyd at 5 diwrnod gwaith i daliadau gael eu prosesu, yn dibynnu ar y
+chargeSummary.payments-bullet1-2                                   = dull talu rydych yn ei ddefnyddio
+chargeSummary.payments-bullet2                                     = mae’n rhaid i daliadau ein cyrraedd erbyn y dyddiad cau – os bydd y taliad yn hwyr, codir llog arnoch ac efallai y bydd yn rhaid i chi dalu cosb
+chargeSummary.payment-days-note-agent                              = O ran unrhyw daliadau a wneir gan eich cleient:
+chargeSummary.payments-bullet1-2-agent                             = dull talu mae’n ei ddefnyddio
+chargeSummary.payments-bullet2-agent                               = mae’n rhaid i daliadau ein cyrraedd erbyn y dyddiad cau – os bydd y taliad yn hwyr, codir llog ar eich cleient ac efallai y bydd yn rhaid iddo dalu cosb
 
 chargeSummary.lpi.paymentOnAccount1.text						   = Llog am dalu’n hwyr ar gyfer taliad ar gyfrif 1 o2
 chargeSummary.lpi.paymentOnAccount2.text						   = Llog am dalu’n hwyr ar gyfer taliad ar gyfrif 2 o2
