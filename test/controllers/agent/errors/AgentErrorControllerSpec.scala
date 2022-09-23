@@ -23,7 +23,7 @@ import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers._
 import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
 import testUtils.TestSupport
-import views.html.errorPages.AgentError
+import views.html.agent.errorPages.AgentError
 
 class AgentErrorControllerSpec extends TestSupport
   with MockFrontendAuthorisedFunctions
@@ -55,9 +55,9 @@ class AgentErrorControllerSpec extends TestSupport
       charset(result) shouldBe Some("utf-8")
     }
 
-    s"have the title ${messages("agent.titlePattern.serviceName.govUk", messages("agent-error.heading"))}" in {
+    s"have the title ${messages("htmlTitle.agent", messages("agent-error.heading"))}" in {
       setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
-      document.title() shouldBe messages("agent.titlePattern.serviceName.govUk", messages("agent-error.heading"))
+      document.title() shouldBe messages("htmlTitle.errorPage", messages("agent-error.heading"))
     }
   }
 

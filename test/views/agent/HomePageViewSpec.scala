@@ -114,8 +114,8 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
         document.getElementsByClass("govuk-header__link").attr("href") shouldBe "https://www.gov.uk"
       }
 
-      s"have the title ${messages("agent.titlePattern.serviceName.govUk", messages("home.agent.heading"))}" in new Setup() {
-        document.title() shouldBe messages("agent.titlePattern.serviceName.govUk", messages("home.agent.heading"))
+      s"have the title ${messages("htmlTitle.agent", messages("home.agent.heading"))}" in new Setup() {
+        document.title() shouldBe messages("htmlTitle.agent", messages("home.agent.heading"))
       }
 
       s"have the page heading ${messages("home.agent.heading")}" in new Setup {

@@ -90,7 +90,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
         Then(s"Technical difficulties are shown with status OK")
         result should have(
           httpStatus(OK),
-          pageTitleAgent(titleInternalServer)
+          pageTitleAgent(titleInternalServer, isErrorPage = true)
         )
       }
     }
@@ -522,7 +522,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
           result should have(
             httpStatus(INTERNAL_SERVER_ERROR),
-            pageTitleAgent(titleInternalServer)
+            pageTitleAgent(titleInternalServer, isErrorPage = true)
           )
 
           verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
@@ -543,7 +543,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
         result should have(
           httpStatus(INTERNAL_SERVER_ERROR),
-          pageTitleAgent(titleInternalServer)
+          pageTitleAgent(titleInternalServer, isErrorPage = true)
         )
       }
     }
