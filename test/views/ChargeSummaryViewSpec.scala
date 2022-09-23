@@ -115,7 +115,8 @@ class ChargeSummaryViewSpec extends ViewSpec {
     val chargeHistoryHeading: String = messages("chargeSummary.chargeHistory.heading")
     val historyRowPOA1Created: String = s"29 Mar 2018 ${messages("chargeSummary.chargeHistory.created.paymentOnAccount1.text")} £1,400.00"
     val codingOutHeader: String = s"$taxYearHeading ${messages("taxYears.taxYears", "6 April 2017", "5 April 2018")} PAYE self assessment"
-    val paymentprocessingbullet1: String = s"${messages("chargeSummary.payments-bullet1-1")} ${messages("chargeSummary.payments-bullet1-2")}${messages("pagehelp.opensInNewTabText")} ${messages("chargeSummary.payments-bullet1-3")}"
+    val paymentprocessingbullet1: String = s"${messages("chargeSummary.payments-bullet1-1")} ${messages("chargeSummary.payments-bullet1-2")}${messages("pagehelp.opensInNewTabText")}"
+    val paymentprocessingbullet1Agent: String = s"${messages("chargeSummary.payments-bullet1-1")} ${messages("chargeSummary.payments-bullet1-2-agent")}${messages("pagehelp.opensInNewTabText")}"
 
     def paymentOnAccountCreated(number: Int) = s"Payment on account $number of 2 created"
 
@@ -148,6 +149,7 @@ class ChargeSummaryViewSpec extends ViewSpec {
     val dunningLockBannerLink: String = s"${messages("chargeSummary.dunning.locks.banner.linkText")}${messages("pagehelp.opensInNewTabText")}."
     val interestLinkFirstWord: String = messages("chargeSummary.whatYouOwe.textOne")
     val interestLinkText: String = messages("chargeSummary.whatYouOwe.linkText")
+    val interestLinkTextAgent: String = messages("chargeSummary.whatYouOwe.linkText-agent")
     val interestLinkFullText: String = messages("chargeSummary.interestLocks.text")
     val cancelledPAYESelfAssessment: String = messages("whatYouOwe.cancelled-paye-sa.heading")
 
@@ -214,7 +216,7 @@ class ChargeSummaryViewSpec extends ViewSpec {
   def checkPaymentProcessingInfo(document: Document): Unit = {
     document.select("#payment-days-note").text() shouldBe messages("chargeSummary.payment-days-note")
     document.select("#payment-processing-bullets li:nth-child(1)").text() shouldBe
-      s"${messages("chargeSummary.payments-bullet1-1")} ${messages("chargeSummary.payments-bullet1-2")} ${messages("chargeSummary.payments-bullet1-3")}"
+      s"${messages("chargeSummary.payments-bullet1-1")} ${messages("chargeSummary.payments-bullet1-2")}"
     document.select("#payment-processing-bullets li:nth-child(2)").text() shouldBe messages("chargeSummary.payments-bullet2")
   }
 
@@ -458,7 +460,7 @@ class ChargeSummaryViewSpec extends ViewSpec {
       }
 
       "have a payment processing information section" in new Setup(documentDetailModel(lpiWithDunningBlock = None), isAgent = true) {
-        document.select("#payment-processing-bullets li:nth-child(1)").text() shouldBe paymentprocessingbullet1
+        document.select("#payment-processing-bullets li:nth-child(1)").text() shouldBe paymentprocessingbullet1Agent
       }
 
       "have a interest lock payment link when the interest is accruing" in new Setup(documentDetailModel(lpiWithDunningBlock = None), paymentBreakdown = paymentBreakdownWhenInterestAccrues) {
@@ -761,28 +763,28 @@ class ChargeSummaryViewSpec extends ViewSpec {
       }
 
       "should have a payment processing information section" in new Setup(documentDetailModel(lpiWithDunningBlock = None), isAgent = true) {
-        document.select("#payment-processing-bullets li:nth-child(1)").text() shouldBe paymentprocessingbullet1
+        document.select("#payment-processing-bullets li:nth-child(1)").text() shouldBe paymentprocessingbullet1Agent
       }
 
       "have a interest lock payment link when the interest is accruing" in new Setup(documentDetailModel(lpiWithDunningBlock = None), paymentBreakdown = paymentBreakdownWhenInterestAccrues, isAgent = true) {
-        document.select("#main-content p a").text() shouldBe interestLinkText
+        document.select("#main-content p a").text() shouldBe interestLinkTextAgent
         document.select("#main-content p a").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/agents/what-you-owe"
-        document.select("#p-interest-locks-msg").text() shouldBe s"${interestLinkFirstWord} ${interestLinkText} ${interestLinkFullText}"
+        document.select("#p-interest-locks-msg").text() shouldBe s"${interestLinkFirstWord} ${interestLinkTextAgent} ${interestLinkFullText}"
       }
 
       "have a interest lock payment link when the interest has previously" in new Setup(documentDetailModel(lpiWithDunningBlock = None), paymentBreakdown = paymentBreakdownWithPreviouslyAccruedInterest, isAgent = true) {
-        document.select("#main-content p a").text() shouldBe interestLinkText
+        document.select("#main-content p a").text() shouldBe interestLinkTextAgent
         document.select("#main-content p a").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/agents/what-you-owe"
-        document.select("#p-interest-locks-msg").text() shouldBe s"${interestLinkFirstWord} ${interestLinkText} ${interestLinkFullText}"
+        document.select("#p-interest-locks-msg").text() shouldBe s"${interestLinkFirstWord} ${interestLinkTextAgent} ${interestLinkFullText}"
       }
 
       "have no interest lock payment link when there is no accrued interest" in new Setup(documentDetailModel(lpiWithDunningBlock = None), paymentBreakdown = paymentBreakdownWithOnlyAccruedInterest, isAgent = true) {
-        document.select("#main-content p a").text() shouldBe "what you owe"
+        document.select("#main-content p a").text() shouldBe interestLinkTextAgent
         document.select("#main-content p a").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/agents/what-you-owe"
       }
 
       "have no interest lock payment link when there is an intererst lock but no accrued interest" in new Setup(documentDetailModel(lpiWithDunningBlock = None), paymentBreakdown = paymentBreakdownWithOnlyInterestLock, isAgent = true) {
-        document.select("#main-content p a").text() shouldBe "what you owe"
+        document.select("#main-content p a").text() shouldBe interestLinkTextAgent
         document.select("#main-content p a").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/agents/what-you-owe"
       }
 
