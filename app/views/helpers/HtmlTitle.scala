@@ -25,7 +25,7 @@ object HtmlTitle {
            (implicit messages: Messages): String = {
 
     (isInvalidInput, isErrorPage) match {
-      case (_, true) => if(isAgent) messages("htmlTitle.errorPage", h1Text) else messages("titlePattern.serviceName.govUk", h1Text)
+      case (_, true) => messages("htmlTitle.errorPage", h1Text)
       case (true, _) => messages("htmlTitle.invalidInput", h1Text)
       case (_, _) => if(isAgent) messages("htmlTitle.agent") else messages("titlePattern.serviceName.govUk", h1Text)
     }
