@@ -275,6 +275,37 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
           document.getElementsByClass("govuk-button").first().text() shouldBe claimBtn
           document.getElementsByClass("govuk-button govuk-button--secondary").text() shouldBe checkBtn
         }
+
+      "a user has an unallocated credits from exactly a single credit item as a cut over credit" in
+        new Setup(creditCharges = List(
+          documentDetailWithDueDateFinancialDetailListModel(
+            Some(-500.00),
+            dueDate = Some(LocalDate.of(2022, 1, 12)),
+            originalAmount = Some(-1000),
+            mainType = "ITSA Cutover Credits"
+          )
+        ),
+          balance = Some(
+            balanceDetailsModel(
+              availableCredit = Some(500.00),
+              firstPendingAmountRequested = None,
+              secondPendingAmountRequested = None,
+              unallocatedCredit = Some(12.00)
+            )
+          )
+        ) {
+
+          document.title() shouldBe creditAndRefundHeadingWithTitleServiceNameGovUk
+          layoutContent.selectHead("h1").text shouldBe creditAndRefundHeading
+          document.select("h2").first().select("span").first().text() shouldBe subHeadingWithUnallocatedCreditsSingleCredit
+          document.select("h2").first().select("span").next().select("a").text() shouldBe s"$creditAndRefundFromHMRCTitlePart2."
+          document.select("h2").first().select("span").next().select("a").attr("href") shouldBe linkCreditsSummaryPage
+          document.select("dt").eachText().contains("Total") shouldBe false
+          document.select("govuk-list govuk-list--bullet").isEmpty shouldBe true
+
+          document.getElementsByClass("govuk-button").first().text() shouldBe claimBtn
+          document.getElementsByClass("govuk-button govuk-button--secondary").text() shouldBe checkBtn
+        }
     }
   }
 
