@@ -147,6 +147,7 @@ tax-year-summary.heading-secondary                             = 6 Ebrill {0} i 
 tax-year-summary.calculation-date                              = Dyddiad y cyfrifiad
 tax-year-summary.total-due                                     = Cyfanswm y bil treth
 tax-year-summary.calc-from-last-time                           = Nid dyma’ch bil treth terfynol – mae’n seiliedig ar ffigurau rydym eisoes wedi’u cael yn unig.
+tax-year-summary.agent.calc-from-last-time                     = Nid dyma fil treth terfynol eich cleient – mae’n seiliedig ar ffigurau rydym eisoes wedi’u cael yn unig.
 tax-year-summary.calc-estimate-info                            = Mae hyn yn amcangyfrif ar gyfer y flwyddyn hyd yn hyn sy’n seiliedig ar ffigurau sydd gennym eisoes.
 tax-year-summary.tax-calculation                               = Cyfrifiad
 tax-year-summary.payments.paymentUnderReview                   = Taliad dan adolygiad
