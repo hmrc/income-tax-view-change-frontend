@@ -148,11 +148,6 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
           val paymentDueDateLongDate: String = s"31 January $year2019"
           getElementById("payments-tile").map(_.select("p:nth-child(2)").text) shouldBe Some(paymentDueDateLongDate)
         }
-        "has a link to check what you owe" in new Setup(isAgent = false) {
-          val link: Option[Elements] = getElementById("payments-tile").map(_.select("a"))
-          link.map(_.attr("href")) shouldBe Some("/report-quarterly/income-and-expenses/view/what-you-owe")
-          link.map(_.text) shouldBe Some(messages("home.payments.view"))
-        }
         "has a link to check what your client owes" in new Setup {
           val link: Option[Elements] = getElementById("payments-tile").map(_.select("a"))
           link.map(_.attr("href")) shouldBe Some("/report-quarterly/income-and-expenses/view/agents/what-you-owe")
@@ -164,23 +159,13 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
         getTextOfElementById("overdue-warning") shouldBe None
       }
 
-      "display an overdue warning message to an agent when a payment is overdue and dunning lock does not exist" in new Setup(overDuePaymentsCount = Some(1)) {
+      "display an overdue warning message when a payment is overdue and dunning lock does not exist" in new Setup(overDuePaymentsCount = Some(1)) {
         val overdueMessageWithoutDunningLock = "! Your client has overdue payments. They may be charged interest on these until they are paid in full."
         getTextOfElementById("overdue-warning") shouldBe Some(overdueMessageWithoutDunningLock)
       }
 
-      "display an overdue warning message to an individual when a payment is overdue and dunning lock does not exist" in new Setup(overDuePaymentsCount = Some(1), isAgent = false) {
-        val overdueMessageWithoutDunningLock = "! Warning You have overdue payments. You may be charged interest on these until they are paid in full."
-        getTextOfElementById("overdue-warning") shouldBe Some(overdueMessageWithoutDunningLock)
-      }
-
-      "display an overdue warning message to an agent when a payment is overdue and dunning lock exists" in new Setup(overDuePaymentsCount = Some(1), dunningLockExists = true) {
+      "display an overdue warning message when a payment is overdue and dunning lock exists" in new Setup(overDuePaymentsCount = Some(1), dunningLockExists = true) {
         val overdueMessageWithDunningLock = "! Your client has overdue payments and one or more of their tax decisions are being reviewed. They may be charged interest on these until they are paid in full."
-        getTextOfElementById("overdue-warning") shouldBe Some(overdueMessageWithDunningLock)
-      }
-
-      "display an overdue warning message to an individual when a payment is overdue and dunning lock exists" in new Setup(overDuePaymentsCount = Some(1), dunningLockExists = true, isAgent = false) {
-        val overdueMessageWithDunningLock = "! Warning You have overdue payments and one or more of your tax decisions are being reviewed. You may be charged interest on these until they are paid in full."
         getTextOfElementById("overdue-warning") shouldBe Some(overdueMessageWithDunningLock)
       }
 
