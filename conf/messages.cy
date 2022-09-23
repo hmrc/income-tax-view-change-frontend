@@ -20,7 +20,7 @@ back.nomatch = Yn ôl
 
 # Agent - Client Relationship Failure
 agent.client_relationship_failure.heading                       = Nid ydych wedi’ch awdurdodi i fwrw golwg dros y cleient hwn
-agent.client_relationship_failure.info                          = Mae angen i’ch cleient {0}
+agent.client_relationship_failure.info                          = Mae angen i’ch cleient {0}.
 agent.client_relationship_failure.info.link                     = eich awdurdodi fel ei asiant
 agent.client_relationship_failure.enter_different_details       = Gwirio cleient arall
 
@@ -150,6 +150,7 @@ tax-year-summary.heading-secondary                             = 6 Ebrill {0} i 
 tax-year-summary.calculation-date                              = Dyddiad y cyfrifiad
 tax-year-summary.total-due                                     = Cyfanswm y bil treth
 tax-year-summary.calc-from-last-time                           = Nid dyma’ch bil treth terfynol – mae’n seiliedig ar ffigurau rydym eisoes wedi’u cael yn unig.
+tax-year-summary.agent.calc-from-last-time                     = Nid dyma fil treth terfynol eich cleient – mae’n seiliedig ar ffigurau rydym eisoes wedi’u cael yn unig.
 tax-year-summary.calc-estimate-info                            = Mae hyn yn amcangyfrif ar gyfer y flwyddyn hyd yn hyn sy’n seiliedig ar ffigurau sydd gennym eisoes.
 tax-year-summary.tax-calculation                               = Cyfrifiad
 tax-year-summary.payments.paymentUnderReview                   = Taliad dan adolygiad
@@ -513,6 +514,7 @@ credits.drop-down-list.credit-from-an-earlier-tax-year.agent.sa-note    = Dyma a
 credits.drop-down-list.sa-link                                          = cyfrif Hunanasesiad ar-lein blaenorol
 credits.drop-down-list.sa-link-agent                                    = cyfrif Hunanasesiad ar gyfer Asiantau
 credits.money-in-your-account-section.name                              = Arian yn eich cyfrif
+credits.money-in-your-account-section.agent.name                        = Arian yng nghyfrif eich cleient
 credits.money-in-your-account-section.content                           = Mae cyfanswm o {0} yn eich cyfrif. Gallwch adael yr arian yno i dalu’ch bil nesaf neu gallwch
 credits.money-in-your-account-section.agent.name                        = Arian yng nghyfrif eich cleient
 credits.money-in-your-account-section.agent.content                     = Mae cyfanswm o {0} yng nghyfrif eich cleient. Gallwch adael yr arian yno i dalu bil nesaf eich cleient neu gallwch

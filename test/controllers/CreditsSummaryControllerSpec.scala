@@ -22,7 +22,7 @@ import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPre
 import mocks.MockItvcErrorHandler
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockIncomeSourceDetailsPredicateNoCache}
 import mocks.services.{MockCalculationService, MockCreditHistoryService, MockFinancialDetailsService, MockNextUpdatesService}
-import models.financialDetails.DocumentDetail
+import models.financialDetails.{BalanceDetails, DocumentDetail}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import play.api.http.Status
@@ -102,7 +102,35 @@ class CreditsSummaryControllerSpec extends TestSupport with MockCalculationServi
           utr = Some(testSaUtrId),
           enableMfaCreditsAndDebits = true,
           charges = chargesList,
-          maybeBalanceDetails = Some(financialDetailCreditCharge.balanceDetails),
+          maybeAvailableCredit = financialDetailCreditCharge.balanceDetails.availableCredit,
+          calendarYear = calendarYear2018
+        ).toString
+
+        val result = TestCreditsSummaryController.showCreditsSummary(calendarYear2018)(fakeRequestWithActiveSessionWithReferer(referer = paymentRefundHistoryBackLink))
+
+        status(result) shouldBe Status.OK
+
+        contentAsString(result) shouldBe expectedContent
+        contentType(result) shouldBe Some(HTML)
+      }
+
+      "show the Credits Summary Page and back link should be to the Payment Refund History page and the money Money in your account section should not be available when available credit is Some(0.00)" in {
+        val chargesList = creditAndRefundCreditDetailListMFA
+
+        enable(MFACreditsAndDebits)
+        mockSingleBusinessIncomeSource()
+        mockCreditHistoryService(chargesList)
+        setupMockAuthRetrievalSuccess(testAuthSuccessWithSaUtrResponse())
+
+        when(mockCreditService.getCreditCharges()(any(), any()))
+          .thenReturn(Future.successful(List(financialDetailCreditAndRefundCharge.copy(balanceDetails = BalanceDetails(0.00, 0.00, 0.00, Some(0.0), None, None, None)))))
+
+        val expectedContent: String = creditsSummaryView(
+          backUrl = paymentRefundHistoryBackLink,
+          utr = Some(testSaUtrId),
+          enableMfaCreditsAndDebits = true,
+          charges = chargesList,
+          maybeAvailableCredit = None,
           calendarYear = calendarYear2018
         ).toString
 
@@ -132,7 +160,7 @@ class CreditsSummaryControllerSpec extends TestSupport with MockCalculationServi
           utr = Some(testSaUtrId),
           enableMfaCreditsAndDebits = true,
           charges = chargesList,
-          maybeBalanceDetails = Some(financialDetailCreditCharge.balanceDetails),
+          maybeAvailableCredit = financialDetailCreditCharge.balanceDetails.availableCredit,
           calendarYear = calendarYear2018
         ).toString
 
@@ -162,7 +190,7 @@ class CreditsSummaryControllerSpec extends TestSupport with MockCalculationServi
           utr = Some(testSaUtrId),
           enableMfaCreditsAndDebits = true,
           charges = chargesList,
-          maybeBalanceDetails = Some(financialDetailCreditCharge.balanceDetails),
+          maybeAvailableCredit = financialDetailCreditCharge.balanceDetails.availableCredit,
           calendarYear = calendarYear2018
         ).toString
 
@@ -192,7 +220,7 @@ class CreditsSummaryControllerSpec extends TestSupport with MockCalculationServi
           utr = Some(testSaUtrId),
           enableMfaCreditsAndDebits = true,
           charges = chargesList,
-          maybeBalanceDetails = Some(financialDetailCreditCharge.balanceDetails),
+          maybeAvailableCredit = financialDetailCreditCharge.balanceDetails.availableCredit,
           calendarYear = calendarYear2018
         ).toString
 

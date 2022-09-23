@@ -49,7 +49,7 @@ agent.confirmClient.confirmContinue                              = Confirm and c
 
 # Agent - Client Relationship Failure
 agent.client_relationship_failure.heading                       = You are not authorised to view this client
-agent.client_relationship_failure.info                          = Your client needs to {0}
+agent.client_relationship_failure.info                          = Your client needs to {0}.
 agent.client_relationship_failure.info.link                     = authorise you as their agent
 agent.client_relationship_failure.enter_different_details       = Check another client
 
@@ -161,6 +161,7 @@ tax-year-summary.heading                                           = Tax year su
 tax-year-summary.heading-secondary                                 = 6 April {0} to 5 April {1}
 tax-year-summary.calculation-date                                  = Calculation date
 tax-year-summary.calc-from-last-time                               = This is not your final tax bill, it’s only based on figures we’ve already received.
+tax-year-summary.agent.calc-from-last-time                         = This is not your client’s final tax bill, it’s only based on figures we’ve already received.
 tax-year-summary.calc-estimate-info                                = This is a year to date estimate based on figures we’ve already received.
 tax-year-summary.total-due                                         = Total tax bill
 tax-year-summary.contents                                          = Contents
@@ -432,6 +433,7 @@ credits.drop-down-list.credit-from-an-earlier-tax-year.agent.sa-note    = This i
 credits.drop-down-list.sa-link                                          = Self Assessment online account
 credits.drop-down-list.sa-link-agent                                    = Self Assessment for Agents account
 credits.money-in-your-account-section.name                              = Money in your account
+credits.money-in-your-account-section.agent.name                        = Money in your client’s account
 credits.money-in-your-account-section.content                           = There is a total of {0} in your account. You can leave the money there to pay your next bill or
 credits.money-in-your-account-section.agent.name                        = Money in your client’s account
 credits.money-in-your-account-section.agent.content                     = There is a total of {0} in your client’s account. You can leave the money there to pay their next bill or

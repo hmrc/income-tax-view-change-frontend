@@ -145,6 +145,12 @@ class HomePageViewSpec extends TestSupport {
       getTextOfElementById("income-tax-heading") shouldBe Some(messages("home.heading"))
     }
 
+    "have the right keep-alive url in hmrc timeout dialog" in new Setup {
+      val keepAliveUrl = "/report-quarterly/income-and-expenses/view/keep-alive"
+      document.head().select("meta[name='hmrc-timeout-dialog']")
+        .attr("data-keep-alive-url") shouldBe keepAliveUrl
+    }
+
     s"have the subheading with the users name '$testUserName'" in new Setup {
       getTextOfElementById("sub-heading") shouldBe Some(testUserName)
     }
