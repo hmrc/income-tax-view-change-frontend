@@ -80,7 +80,7 @@ class ForecastIncomeSummaryControllerSpec extends TestSupport with MockCalculati
         }
 
         "render the IncomeBreakdown page" in {
-          document.title() shouldBe messages("titlePattern.serviceName.govUk", "Page not found - 404")
+          document.title() shouldBe messages("htmlTitle.errorPage", "Page not found - 404")
         }
       }
     }
