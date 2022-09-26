@@ -311,7 +311,7 @@
         @p(classes = "govuk-!-margin-bottom-4") {
             @link(
                 link = getReturnHref(currentTaxYear),
-                messageKey = messages("home.returns.viewLink", s"${currentTaxYear - 1}", s"$currentTaxYear")
+                messageKey = messages("home.agent.returns.viewLink", s"${currentTaxYear - 1}", s"$currentTaxYear")
 
             )
         }
@@ -319,7 +319,7 @@
             @if(ITSASubmissionIntegrationEnabled) {
                 @link(
                     link = appConfig.submissionFrontendTaxYearsPage(currentTaxYear),
-                    messageKey = messages("home.your-returns.updatesLink", s"${currentTaxYear - 1}", s"$currentTaxYear")
+                    messageKey = messages(s"home${if(isAgent) ".agent" else ""}.your-returns.updatesLink", s"${currentTaxYear - 1}", s"$currentTaxYear")
 
                 )
             }
