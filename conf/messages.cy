@@ -641,9 +641,10 @@ chargeSummary.paidToDate                                        = wedi'i dalu hy
 chargeSummary.remainingDue                                      = Yn weddill i dalu
 chargeSummary.whatYouOwe.textOne                                = Gweld
 chargeSummary.whatYouOwe.textTwo                                = i wirio a oes gennych unrhyw daliadau eraill sy'n ddyledus.
-chargeSummary.whatYouOwe.textTwo-agent							= to check if they have any other payments due.
+chargeSummary.whatYouOwe.textOne-agent                          = Bwrw golwg dros
+chargeSummary.whatYouOwe.textTwo-agent							= i wirio a oes ganddo unrhyw daliadau eraill sy’n ddyledus.
 chargeSummary.whatYouOwe.linkText                               = yr hyn sy'n ddyledus gennych
-chargeSummary.whatYouOwe.linkText-agent							= what your client owes
+chargeSummary.whatYouOwe.linkText-agent							= yr hyn sydd ar eich cleient
 chargeSummary.overdue                                           = YN HWYR
 
 chargeSummary.payment-days-note                                    = Ynglŷn ag unrhyw daliadau a wnaed gennych:
