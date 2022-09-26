@@ -40,6 +40,7 @@
     }
 }
 
+
 @paymentAllocations.paymentAllocationChargeModel.documentDetails.head.outstandingAmount.map { outstandingAmount =>
     @if(outstandingAmount != 0) {
          <tbody class="govuk-table__body">
@@ -47,7 +48,12 @@
                    <td class="govuk-table__cell">
                        @getLink
                    </td>
-                   <td class="govuk-table__cell">@messages("paymentAllocation.na")</td>
+                   <td class="govuk-table__cell">
+                       @{paymentAllocations.paymentAllocationChargeModel
+                       .financialDetails.head.items.flatMap(_.head.dueDate)
+                       .getOrElse(throw MissingFieldException("Due Date")).toLongDateShort
+                       }
+                   </td>
                    <td class="govuk-table__cell">@{outstandingAmount.abs.toCurrencyString}</td>
                </tr>
          </tbody>
