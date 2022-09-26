@@ -33,7 +33,7 @@ class NotEnrolledViewSpec extends TestSupport {
   "The Not Enrolled view" should {
 
     s"have the title ${messages("titlePattern.serviceName.govUk", messages("not_enrolled.heading"))}" in {
-      document.title() shouldBe messages("titlePattern.serviceName.govUk", messages("not_enrolled.heading"))
+      document.title() shouldBe messages("htmlTitle.errorPage", messages("not_enrolled.heading"))
     }
 
     s"have the H1 ${messages("not_enrolled.heading")}" in {
