@@ -152,7 +152,7 @@ class ForecastTaxCalcSummaryControllerSpec extends TestSupport with MockCalculat
         }
 
         "return the forecast tax calc summary page" in {
-          document.title() shouldBe messages("agent.titlePattern.serviceName.govUk", "Page not found - 404")
+          document.title() shouldBe messages("htmlTitle.errorPage", "Page not found - 404")
         }
       }
     }
@@ -176,7 +176,7 @@ class ForecastTaxCalcSummaryControllerSpec extends TestSupport with MockCalculat
         }
 
         "return the forecast tax calc summary page" in {
-          document.title() shouldBe messages("agent.titlePattern.serviceName.govUk", messages("forecast_taxCalc.heading"))
+          document.title() shouldBe messages("htmlTitle.agent", messages("forecast_taxCalc.heading"))
         }
       }
 

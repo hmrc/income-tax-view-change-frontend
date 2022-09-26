@@ -82,7 +82,7 @@ class FeedbackViewSpec extends ViewSpec {
 
     "an agent loads the page" should {
       "have the correct title" in new Setup(isAgent = true) {
-        document.title shouldBe msgs("agent.titlePattern.serviceName.govUk", msgs("feedback.heading"))
+        document.title shouldBe msgs("htmlTitle.agent", msgs("feedback.heading"))
       }
     }
   }

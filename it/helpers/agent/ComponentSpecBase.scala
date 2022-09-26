@@ -54,7 +54,6 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
   implicit val lang: Lang = Lang("GB")
   val messagesAPI: MessagesApi = app.injector.instanceOf[MessagesApi]
 
-
   def config: Map[String, String] = Map(
     "play.filters.csrf.header.bypassHeaders.Csrf-Token" -> "nocheck",
     "microservice.services.auth.host" -> mockHost,
