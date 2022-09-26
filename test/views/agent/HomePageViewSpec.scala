@@ -217,12 +217,12 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
         "has a link to the view payments page" in new Setup {
           val link: Option[Element] = getElementById("returns-tile").map(_.select("a").first)
           link.map(_.attr("href")) shouldBe Some(controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(currentTaxYear).url)
-          link.map(_.text) shouldBe Some(s"${messages("home.returns.viewLink", s"${currentTaxYear - 1}", s"$currentTaxYear")}")
+          link.map(_.text) shouldBe Some(s"${messages("home.agent.returns.viewLink", s"${currentTaxYear - 1}", s"$currentTaxYear")}")
         }
         "has a link to the update and submit page" in new Setup {
           val link: Option[Element] = getElementById("returns-tile").map(_.select("a").get(1))
           link.map(_.attr("href")) shouldBe Some(appConfig.submissionFrontendTaxYearsPage(currentTaxYear))
-          link.map(_.text) shouldBe Some(s"${messages("home.your-returns.updatesLink", s"${currentTaxYear - 1}", s"$currentTaxYear")}")
+          link.map(_.text) shouldBe Some(s"${messages("home.agent.your-returns.updatesLink", s"${currentTaxYear - 1}", s"$currentTaxYear")}")
         }
         "dont have a link to the update and submit page when ITSASubmissionIntegrationEnabled is disabled" in new Setup(ITSASubmissionIntegrationEnabled = false) {
           val link: Option[Element] = getElementById("returns-tile").map(_.select("a").get(1))
