@@ -269,6 +269,18 @@
     if(isAgent) getPrefix("heading-agent") else getPrefix("heading")
 }
 
+@getPaymentsMadeBulletLinkText = @{
+    if(isAgent) messages("whatYouOwe.payments-made-bullet-agent-1.2") else messages("whatYouOwe.payments-made-bullet-1.2")
+}
+
+@getPaymentsMadeBulletText = @{
+    if(isAgent) messages("whatYouOwe.payments-made-bullet-agent-2") else messages("whatYouOwe.payments-made-bullet-2")
+}
+
+@getNoPaymentsDueText = @{
+    if(isAgent) messages("whatYouOwe.no-payments-due-agent") else messages("whatYouOwe.no-payments-due")
+}
+
 @mainTemplate(
     pageTitle = getMessage("heading"),
     backUrl = Some(backUrl),
@@ -278,7 +290,7 @@
 ) {
     @h1(msg = getHeading, id = Some("page-heading"))
     @if(whatYouOweChargesList.isChargesListEmpty && whatYouOweChargesList.codedOutDocumentDetail.isEmpty) {
-        @p(id=Some("no-payments-due"))(Html(getMessage("no-payments-due")))
+        @p(id = Some("no-payments-due"))(Html(getNoPaymentsDueText))
         @saNoteParagraph
     } else {
         <div>
@@ -290,13 +302,15 @@
                         <tbody class="govuk-table__body">
                             @if(whatYouOweChargesList.bcdChargeTypeDefinedAndGreaterThanZero) {
                                 <tr class="govuk-table__row " id="balancing-charge-type-0">
-                                    <td class="govuk-table__cell govuk-!-width-one-quarter">@{whatYouOweChargesList.outstandingChargesModel.get.bcdChargeType.get.relevantDueDate.getOrElse(throw MissingFieldException("Outstanding Charge Relevant Due Date")).toLongDateShort}</td>
+                                    <td class="govuk-table__cell govuk-!-width-one-quarter">@{
+                                        whatYouOweChargesList.outstandingChargesModel.get.bcdChargeType.get.relevantDueDate.getOrElse(throw MissingFieldException("Outstanding Charge Relevant Due Date")).toLongDateShort
+                                    }</td>
                                     <td class="govuk-table__cell govuk-!-width-one-half">
                                         @if(whatYouOweChargesList.outstandingChargesModel.get.bcdChargeType.get.relevantDueDate.getOrElse(throw MissingFieldException("Outstanding Charge Relevant Due Date")).isBefore(LocalDate.now())) {
                                             <span id="balancing-charge-type-overdue" class="govuk-tag govuk-tag--red">@getMessage("over-due")</span>
                                         }
-                                        @p(id=Some("balancing-charge"))(Html(getMessage("balancingCharge.text")))
-                                        @p(id=Some("pre-mtd-digital"))(Html(getMessage("pre-mtd-digital")))
+                                        @p(id = Some("balancing-charge"))(Html(getMessage("balancingCharge.text")))
+                                        @p(id = Some("pre-mtd-digital"))(Html(getMessage("pre-mtd-digital")))
                                     </td>
                                     <td class="govuk-table__cell numeric govuk-!-width-one-quarter">
                                     @getMessage("pre-mtd-year", (currentTaxYear - 2).toString, (currentTaxYear - 1).toString)
@@ -328,7 +342,7 @@
                                     </tr>
                                 }
                             }
-                            @if(whatYouOweChargesList.chargesList.nonEmpty){
+                            @if(whatYouOweChargesList.chargesList.nonEmpty) {
                                 @for((charge, index) <- whatYouOweChargesList.sortedChargesList.zipWithIndex) {
                                     @tableRow(s"due-$index", charge, isOverduePayment = charge.isOverdue, index, "taxYearSummary-link")
                                     @if(charge.isOverdue && charge.documentDetail.hasAccruingInterest) {
@@ -345,7 +359,7 @@
                                                 </div>
                                             </td>
                                             <td class="govuk-table__cell numeric govuk-!-width-one-quarter">
-                                                @taxYearSummaryLink(charge.documentDetail.taxYear.toInt, index, "taxYearSummary-accuring-interest-link")
+                                            @taxYearSummaryLink(charge.documentDetail.taxYear.toInt, index, "taxYearSummary-accuring-interest-link")
                                             </td>
                                             <td class="govuk-table__cell numeric govuk-!-width-one-quarter">@{
                                                 charge.documentDetail.interestOutstandingAmount.getOrElse(throw MissingFieldException("Overdue Payment Interest Outstanding Amount")).toCurrency
@@ -385,17 +399,17 @@
         @if(utr.isDefined && !isAgent && whatYouOweChargesList.getEarliestTaxYearAndAmountByDueDate.isDefined) {
             <div id="payment-button">
             @link(link = controllers.routes.PaymentController.paymentHandoff(whatYouOweChargesList.getEarliestTaxYearAndAmountByDueDate.get._2.toPence, origin).url,
-                messageKey = getPrefix("payNow"), classes = "govuk-button", role=Some("button"),
+                messageKey = getPrefix("payNow"), classes = "govuk-button", role = Some("button"),
                 id = Some("payment-button-link"))
             </div>
         }
     }
-    @p(id=Some("payments-made"))(Html(getMessage("payments-made")))
+    @p(id = Some("payments-made"))(Html(getMessage("payments-made")))
     <ul class="govuk-list govuk-list--bullet" id="payments-made-bullets">
         <li>@messages("whatYouOwe.payments-made-bullet-1.1")
-            @link(link = "https://www.gov.uk/pay-self-assessment-tax-bill", id=Some("sa-tax-bill"),  messageKey = "whatYouOwe.payments-made-bullet-1.2", target = Some("_blank"), rel=Some("noreferrer noopener"))
+            @link(link = "https://www.gov.uk/pay-self-assessment-tax-bill", id = Some("sa-tax-bill"), messageKey = getPaymentsMadeBulletLinkText, target = Some("_blank"), rel = Some("noreferrer noopener"))
         </li>
-        <li> @messages("whatYouOwe.payments-made-bullet-2")</li>
+        <li>@getPaymentsMadeBulletText</li>
     </ul>
 
     @if(creditAndRefundEnabled){
