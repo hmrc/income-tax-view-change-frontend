@@ -95,7 +95,7 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
         Then(s"Technical difficulties are shown with status OK")
         result should have(
           httpStatus(OK),
-          pageTitleAgent(titleInternalServer)
+          pageTitleAgent(titleInternalServer, isErrorPage = true)
         )
       }
     }
@@ -108,7 +108,7 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
         Then("The enter clients utr page is returned with an error")
         result should have(
           httpStatus(BAD_REQUEST),
-          pageTitleAgent("agent.enter_clients_utr.heading", isError = true)
+          pageTitleAgent("agent.enter_clients_utr.heading", isInvalidInput = true)
         )
       }
       "an empty utr string is submitted" in {
@@ -119,7 +119,7 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
         Then("The enter clients utr page is returned with an error")
         result should have(
           httpStatus(BAD_REQUEST),
-          pageTitleAgent("agent.enter_clients_utr.heading", isError = true)
+          pageTitleAgent("agent.enter_clients_utr.heading", isInvalidInput = true)
         )
       }
       "a utr containing non-digits is submitted" in {
@@ -130,7 +130,7 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
         Then("The enter clients utr page is returned with an error")
         result should have(
           httpStatus(BAD_REQUEST),
-          pageTitleAgent("agent.enter_clients_utr.heading", isError = true)
+          pageTitleAgent("agent.enter_clients_utr.heading", isInvalidInput = true)
         )
       }
       "a utr which has less than 10 digits is submitted" in {
@@ -141,7 +141,7 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
         Then("The enter clients utr page is returned with an error")
         result should have(
           httpStatus(BAD_REQUEST),
-          pageTitleAgent("agent.enter_clients_utr.heading", isError = true)
+          pageTitleAgent("agent.enter_clients_utr.heading", isInvalidInput = true)
         )
       }
       "a utr which has more than 10 digits is submitted" in {
@@ -152,7 +152,7 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
         Then("The enter clients utr page is returned with an error")
         result should have(
           httpStatus(BAD_REQUEST),
-          pageTitleAgent("agent.enter_clients_utr.heading", isError = true)
+          pageTitleAgent("agent.enter_clients_utr.heading", isInvalidInput = true)
         )
       }
     }

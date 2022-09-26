@@ -39,7 +39,7 @@ class ConfirmClientUTRControllerISpec extends ComponentSpecBase with FeatureSwit
         Then(s"Technical difficulties are shown with status OK")
         result should have(
           httpStatus(OK),
-          pageTitleAgent(titleInternalServer)
+          pageTitleAgent(titleInternalServer, isErrorPage = true)
         )
       }
     }
@@ -111,7 +111,7 @@ class ConfirmClientUTRControllerISpec extends ComponentSpecBase with FeatureSwit
         Then(s"Technical difficulties are shown with status OK")
         result should have(
           httpStatus(OK),
-          pageTitleAgent(titleInternalServer)
+          pageTitleAgent(titleInternalServer, isErrorPage = true)
         )
       }
     }

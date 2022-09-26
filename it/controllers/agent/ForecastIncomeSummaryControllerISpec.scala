@@ -102,7 +102,7 @@ class ForecastIncomeSummaryControllerISpec extends ComponentSpecBase with Featur
         Then(s"Technical difficulties are shown with status OK")
         result should have(
           httpStatus(OK),
-          pageTitleAgent(titleInternalServer)
+          pageTitleAgent(titleInternalServer, isErrorPage = true)
         )
       }
     }
