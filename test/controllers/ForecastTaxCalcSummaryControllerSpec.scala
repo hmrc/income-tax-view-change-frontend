@@ -73,7 +73,7 @@ class ForecastTaxCalcSummaryControllerSpec extends TestSupport with MockCalculat
         }
 
         "render the Not Found page" in {
-          document.title() shouldBe messages("titlePattern.serviceName.govUk", "Page not found - 404")
+          document.title() shouldBe messages("htmlTitle.errorPage", "Page not found - 404")
         }
       }
     }
