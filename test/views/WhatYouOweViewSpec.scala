@@ -1152,8 +1152,8 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     }
 
     "the user has no charges" should {
-      s"have the title ${messages("agent.titlePattern.serviceName.govUk", messages("whatYouOwe.heading"))} and page header and notes" in new AgentSetup(charges = noChargesModel) {
-        pageDocument.title() shouldBe messages("agent.titlePattern.serviceName.govUk", messages("whatYouOwe.heading"))
+      s"have the title ${messages("agent.header.serviceName", messages("whatYouOwe.heading"))} and page header and notes" in new AgentSetup(charges = noChargesModel) {
+        pageDocument.title() shouldBe messages("agent.header.serviceName", messages("whatYouOwe.heading"))
         pageDocument.selectFirst("h1").text shouldBe whatYouOweAgentHeading
         pageDocument.getElementById("no-payments-due").text shouldBe noPaymentsAgentDue
         pageDocument.getElementById("payments-due-note").selectFirst("a").text.contains(saNote)
