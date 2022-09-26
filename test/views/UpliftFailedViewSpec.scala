@@ -54,6 +54,11 @@ class UpliftFailedViewSpec extends ViewSpec {
 
       document.select("a").eachText().toList.contains(messages("Return to Sign in"))
     }
+
+    s"have the title: ${messages("htmlTitle.errorPage", messages("upliftFailure.title"))}" in new Setup(upliftFailedView) {
+
+      document.title() shouldBe messages("htmlTitle.errorPage", messages("upliftFailure.title"))
+    }
   }
 
 }
