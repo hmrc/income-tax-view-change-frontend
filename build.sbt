@@ -81,6 +81,8 @@ lazy val scoverageSettings = {
   )
 }
 
+Test/javaOptions ++= Seq("-Dconfig.file=conf/application.test.conf")
+
 lazy val microservice = Project(appName, file("."))
   .enablePlugins(play.sbt.PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin)
   .disablePlugins(JUnitXmlReportPlugin)
