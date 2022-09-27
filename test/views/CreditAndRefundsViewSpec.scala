@@ -25,7 +25,7 @@ import org.jsoup.nodes.{Document, Element}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
-import testConstants.FinancialDetailsTestConstants.{documentDetailWithDueDateModel, financialDetail}
+import testConstants.CreditAndRefundConstants.{balanceDetailsModel, documentDetailWithDueDateFinancialDetailListModel, documentDetailWithDueDateFinancialDetailListModelMFA}
 import testUtils.{TestSupport, ViewSpec}
 import views.html.CreditAndRefunds
 
@@ -53,45 +53,6 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
   val link = "/report-quarterly/income-and-expenses/view/payment-made-to-hmrc?documentNumber=1040000123"
   val linkCreditsSummaryPage = "/report-quarterly/income-and-expenses/view/credits-from-hmrc/2018"
   val linkPaymentMadeToHmrc = "/report-quarterly/income-and-expenses/view/agents/payment-made-to-hmrc?documentNumber=1040000123"
-
-  def balanceDetailsModel(firstPendingAmountRequested: Option[BigDecimal] = Some(3.50),
-                          secondPendingAmountRequested: Option[BigDecimal] = Some(2.50),
-                          availableCredit: Option[BigDecimal] = Some(7.00),
-                          unallocatedCredit: Option[BigDecimal] = None): BalanceDetails = BalanceDetails(
-    balanceDueWithin30Days = 1.00,
-    overDueAmount = 2.00,
-    totalBalance = 3.00,
-    availableCredit = availableCredit,
-    firstPendingAmountRequested = firstPendingAmountRequested,
-    secondPendingAmountRequested = secondPendingAmountRequested,
-    unallocatedCredit
-  )
-
-  def documentDetailWithDueDateFinancialDetailListModel(outstandingAmount: Option[BigDecimal] = Some(-1400.0),
-                                                        dueDate: Option[LocalDate] = Some(LocalDate.of(2019, 5, 15)),
-                                                        originalAmount: Option[BigDecimal] = Some(1400.00),
-                                                        mainType: String = "SA Payment on Account 1"):
-  (DocumentDetailWithDueDate, FinancialDetail) = {
-    (documentDetailWithDueDateModel(
-      paymentLot = None,
-      outstandingAmount = outstandingAmount,
-      dueDate = dueDate,
-      originalAmount = originalAmount),
-      financialDetail(mainType = mainType))
-  }
-
-  def documentDetailWithDueDateFinancialDetailListModelMFA(outstandingAmount: Option[BigDecimal] = Some(BigDecimal(-1400.0))):
-  (DocumentDetailWithDueDate, FinancialDetail) = {
-    (documentDetailWithDueDateModel(
-      paymentLot = None,
-      paymentLotItem = None,
-      documentDescription = Some("TRM New Charge"),
-      outstandingAmount = outstandingAmount,
-      originalAmount = Some(BigDecimal(-2400.0))),
-      financialDetail(mainType = "ITSA Overpayment Relief")
-    )
-  }
-
   class Setup(creditCharges: List[(DocumentDetailWithDueDate, FinancialDetail)] = List(documentDetailWithDueDateFinancialDetailListModel()),
               balance: Option[BalanceDetails] = Some(balanceDetailsModel()),
               isAgent: Boolean = false,

@@ -59,10 +59,10 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
 
   def handleRequest(isAgent: Boolean, itvcErrorHandler: ShowInternalServerError, backUrl: String)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
-    creditService.getCreditCharges()(implicitly,user) map {
+    creditService.getCreditCharges()(implicitly, user) map {
       case _ if isDisabled(CreditsRefundsRepay) =>
         Ok(customNotFoundErrorView()(user, messages))
-      case financialDetailsModel : List[FinancialDetailsModel] =>
+      case financialDetailsModel: List[FinancialDetailsModel] =>
         val balance: Option[BalanceDetails] = financialDetailsModel.headOption.map(balance => balance.balanceDetails)
 
         val credits: List[(DocumentDetailWithDueDate, FinancialDetail)] = financialDetailsModel.flatMap(
@@ -125,16 +125,16 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
       .toList.sortWith((p1, p2) => sortingOrderCreditType(p1._1) < sortingOrderCreditType(p2._1))
       .map {
         case (documentId, credits) => (documentId, sortCredits(credits))
-    }.flatMap {
-        case (_, credits) => credits
+      }.flatMap {
+      case (_, credits) => credits
     }
     creditsGroupedPaymentTypes
   }
 
   def getCreditTypeGroupKey(credits: (DocumentDetailWithDueDate, FinancialDetail)): String = {
-    val isMFA : Boolean = credits._2.validMFACreditType()
-    val isCutOverCredit : Boolean = credits._2.mainType.get == "ITSA Cutover Credits"
-    val isPayment : Boolean = credits._1.documentDetail.paymentLot.isDefined
+    val isMFA: Boolean = credits._2.validMFACreditType()
+    val isCutOverCredit: Boolean = credits._2.mainType.get == "ITSA Cutover Credits"
+    val isPayment: Boolean = credits._1.documentDetail.paymentLot.isDefined
     (isMFA, isCutOverCredit, isPayment) match {
       case (true, false, false) => creditsFromHMRC
       case (false, true, false) => cutOverCredits
@@ -142,5 +142,4 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
       case (_, _, _) => throw new Exception("Credit Type Not Found")
     }
   }
-
 }

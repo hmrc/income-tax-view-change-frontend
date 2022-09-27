@@ -18,6 +18,7 @@
 @import _root_.implicits.ImplicitCurrencyFormatter._
 @import models.financialDetails.DocumentDetailWithDueDate
 @import models.financialDetails._
+@import _root_.utils.CreditAndRefundUtils.UnallocatedCreditType._
 @import auth.MtdItUser
 @import views.html.layouts.unifiedLayout
 @import views.html.components._
@@ -94,14 +95,6 @@
     maybeBalancesDetails.availableCredit.getOrElse(throw MissingFieldException("Available Credit"))
 }
 
-@isUnallocatedCreditFromOnePayment = @{
-    maybeBalancesDetails.unallocatedCredit.isDefined && maybeAvailableCredit != 0 && creditCharges.size == 1 && maybeCreditChargesHead._2.mainType.filter(_.contains("Payment on Account")).isDefined
-}
-
-@isUnallocatedCreditFromSingleCreditItem(financialDetails: FinancialDetail) = @{
-    maybeBalancesDetails.unallocatedCredit.isDefined && maybeAvailableCredit != 0 && creditCharges.size == 1 && (MfaCreditUtils.validMFACreditType(financialDetails.mainType) || financialDetails.validCutoverCreditType())
-}
-
 @mainTemplate(
     pageTitle = messages("credit-and-refund.heading"),
     backUrl = Some(backUrl),
@@ -112,7 +105,7 @@
     @h1(msg = "credit-and-refund.heading")
 
     @if(balance.isDefined){
-        @if(isUnallocatedCreditFromOnePayment) {
+        @if(maybeUnallocatedCreditType(creditCharges, balance).contains(UnallocatedCreditFromOnePayment)) {
             <h2 class="govuk-heading-s">
                 <span class="govuk-body">
                     @messages("credit-and-refund.subHeading.unallocated-credits-one-payment-1")
@@ -126,7 +119,7 @@
                 </span>
             </h2>
         } else {
-            @if(isUnallocatedCreditFromSingleCreditItem(maybeCreditChargesHead._2)) {
+            @if(maybeUnallocatedCreditType(creditCharges, balance).contains(UnallocatedCreditFromSingleCreditItem)) {
                 <h2 class="govuk-heading-s">
                     <span class="govuk-body">
                         @messages("credit-and-refund.subHeading.unallocated-credits-single-credit-1")
@@ -164,10 +157,10 @@
         }
 
 
-            @if(!isUnallocatedCreditFromOnePayment) {
+            @if(!maybeUnallocatedCreditType(creditCharges, balance).contains(UnallocatedCreditFromOnePayment)) {
                 <ul class="govuk-list govuk-list--bullet" id="credits-list">
                     @for((charge, index) <- creditCharges.zipWithIndex) {
-                    @if(charge._2.validMFACreditType() && !isUnallocatedCreditFromSingleCreditItem(maybeCreditChargesHead._2)) {
+                    @if(charge._2.validMFACreditType() && !maybeUnallocatedCreditType(creditCharges, balance).contains(UnallocatedCreditFromSingleCreditItem)) {
                         @if(isMFACreditsAndDebitsEnabled) {
                             <li>
                                 <p class="govuk-heading-s">
@@ -183,7 +176,7 @@
                             </li>
                         }
                     } else {
-                        @if(charge._2.validCutoverCreditType() && !isUnallocatedCreditFromSingleCreditItem(maybeCreditChargesHead._2)) {
+                        @if(charge._2.validCutoverCreditType() && !maybeUnallocatedCreditType(creditCharges, balance).contains(UnallocatedCreditFromSingleCreditItem)) {
                             <li>
                                 <p class="govuk-heading-s">
                                     @charge._1.documentDetail.paymentOrChargeCredit.getOrElse(throw MissingFieldException("Payment Or Charge Credit")).toCurrencyString
@@ -196,7 +189,7 @@
                                 </p>
                             </li>
                         } else {
-                            @if(!isUnallocatedCreditFromSingleCreditItem(maybeCreditChargesHead._2)) {
+                            @if(!maybeUnallocatedCreditType(creditCharges, balance).contains(UnallocatedCreditFromSingleCreditItem)) {
                                 <li>
                                     <p class="govuk-heading-s">
                                         @charge._1.documentDetail.paymentOrChargeCredit.getOrElse(throw MissingFieldException("Payment Or Charge Credit")).toCurrencyString
