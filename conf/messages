@@ -583,6 +583,7 @@ whatYouOwe.heading-agent                                           = What your c
 whatYouOwe.no-payments-due                                         = You have no payments due.
 whatYouOwe.no-payments-due-agent                                   = Your client has no payments due.
 whatYouOwe.payments-made                                           = Any payments you make:
+whatYouOwe.payments-made-agent                                     = Any payments your client makes:
 whatYouOwe.payments-made-bullet-1.1                                = may take up to 5 working days to process, depending on the
 whatYouOwe.payments-made-bullet-1.2                                = payment method you use
 whatYouOwe.payments-made-bullet-agent-1.2                          = payment method they use

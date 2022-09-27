@@ -281,6 +281,10 @@
     if(isAgent) messages("whatYouOwe.no-payments-due-agent") else messages("whatYouOwe.no-payments-due")
 }
 
+@getPaymentsMadeText = @{
+    if(isAgent) messages("whatYouOwe.payments-made-agent") else messages("whatYouOwe.payments-made")
+}
+
 @mainTemplate(
     pageTitle = getMessage("heading"),
     backUrl = Some(backUrl),
@@ -404,7 +408,7 @@
             </div>
         }
     }
-    @p(id = Some("payments-made"))(Html(getMessage("payments-made")))
+    @p(id = Some("payments-made"))(Html(getPaymentsMadeText))
     <ul class="govuk-list govuk-list--bullet" id="payments-made-bullets">
         <li>@messages("whatYouOwe.payments-made-bullet-1.1")
             @link(link = "https://www.gov.uk/pay-self-assessment-tax-bill", id = Some("sa-tax-bill"), messageKey = getPaymentsMadeBulletLinkText, target = Some("_blank"), rel = Some("noreferrer noopener"))

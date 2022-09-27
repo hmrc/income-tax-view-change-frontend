@@ -58,6 +58,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
   val paymentProcessingBulletAgent1: String = s"${messages("whatYouOwe.payments-made-bullet-1.1")} ${messages("whatYouOwe.payments-made-bullet-agent-1.2")}${messages("pagehelp.opensInNewTabText")}"
   val paymentProcessingBulletAgent2: String = messages("whatYouOwe.payments-made-bullet-agent-2")
   val paymentsMade: String = messages("whatYouOwe.payments-made")
+  val paymentsMadeAgent: String = messages("whatYouOwe.payments-made-agent")
   val poa1Text: String = messages("whatYouOwe.paymentOnAccount1.text")
   val latePoa1Text: String = messages("whatYouOwe.lpi.paymentOnAccount1.text")
   val poa2Text: String = messages("whatYouOwe.paymentOnAccount2.text")
@@ -1142,7 +1143,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     "should have payment processing bullets when there is multiple charge" in new AgentSetup(
       charges = whatYouOweDataWithDataDueIn30Days(twoDunningLocks)) {
 
-      pageDocument.getElementById("payments-made").text shouldBe paymentsMade
+      pageDocument.getElementById("payments-made").text shouldBe paymentsMadeAgent
       val paymentProcessingBullet: Element = pageDocument.getElementById("payments-made-bullets")
       paymentProcessingBullet.select("li").get(0).text shouldBe paymentProcessingBulletAgent1
       paymentProcessingBullet.select("li").get(1).text shouldBe paymentProcessingBulletAgent2
