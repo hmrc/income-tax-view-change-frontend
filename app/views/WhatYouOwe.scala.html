@@ -54,7 +54,7 @@
     creditAndRefundEnabled: Boolean,
     origin: Option[String] = None)(implicit request: Request[_], user: MtdItUser[_], messages: Messages)
 
-@import implicitDateFormatter.longDate
+@import implicitDateFormatter._
 
 @getPrefix(key: String) = @{
     s"whatYouOwe.$key"
@@ -100,7 +100,7 @@
 @unallocatedCreditParagraphContent(amount: String) = {
     @p(id = Some("unallocated-credit-note"))(Html(messages("whatYouOwe.credit-overpaid-prefix") + link(link = creditAndRefundUrl,
         outerMessage = messages("whatYouOwe.unallocated-credit-note"),
-        messageKey = messages("whatYouOwe.credit-overpaid-amount", amount),
+        messageKey = isAgent.messagesIfElse("whatYouOwe.credit-overpaid-amount", amount) ,
         id = Some("unallocated-credit-link")).toString()))
 }
 
@@ -135,7 +135,7 @@
     </div>
     <div id="payment-details-content-3" >
         @h2(msg = "whatYouOwe.class2-nic.heading", optId = Some("class2-nic-heading"))
-        @p(id = Some("class2-nic-line1"))(Html(messages("whatYouOwe.class2-nic.line1")))
+
     </div>
     <div id="payment-details-content-4" >
         @h2(msg = "whatYouOwe.cancelled-paye-sa.heading", optId = Some("cancelled-paye-sa-heading"))
@@ -273,6 +273,14 @@
     useFallbackBackLink = true
 ) {
     @h1(msg = getPrefix("heading"), id = Some("page-heading"))
+
+    <div id="payments-due-table">
+        messagesIfElse usage example<br/>
+        @false.messagesIfElse("whatYouOwe.moneyOnAccount", "chargeSummary.paymentOnAccount1.text") <br/>
+        @true.messagesIfElse("whatYouOwe.moneyOnAccount", "chargeSummary.paymentOnAccount1.text") <br/>
+
+    </div>
+
     @if(whatYouOweChargesList.isChargesListEmpty && whatYouOweChargesList.codedOutDocumentDetail.isEmpty) {
         @p(id=Some("no-payments-due"))(Html(getMessage("no-payments-due")))
         @saNoteParagraph

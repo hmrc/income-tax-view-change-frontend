@@ -18,10 +18,10 @@ package implicits
 
 import java.time.format.DateTimeFormatter
 import java.time.{LocalDate, LocalDateTime, ZonedDateTime}
-
 import javax.inject.{Inject, Singleton}
-import play.api.i18n.Messages
+import play.api.i18n.{Messages, MessagesProvider}
 import uk.gov.hmrc.play.language.LanguageUtils
+
 import scala.language.implicitConversions
 
 
@@ -60,6 +60,12 @@ trait ImplicitDateFormatter extends ImplicitDateParser {
   implicit class longDateTime(dt: LocalDateTime)(implicit messages: Messages) {
     def toLongDateTime: String = {
       languageUtils.Dates.formatDate(dt.toLocalDate)(messages)
+    }
+  }
+
+  implicit class msgIfElse(predicate: Boolean)(implicit messages: Messages) {
+    def messagesIfElse(ifKey: String, elseKey: String): String = {
+      if (predicate) messages(ifKey) else messages(elseKey)
     }
   }
 
