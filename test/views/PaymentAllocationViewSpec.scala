@@ -67,7 +67,8 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
   val paymentAllocationsPoa1Nic4: String = messages("paymentAllocation.paymentAllocations.poa1.nic4")
   val paymentAllocationsPoa2Nic4: String = messages("paymentAllocation.paymentAllocations.poa2.nic4")
   val moneyOnAccountNA: String = s"${messages("paymentAllocation.moneyOnAccount")} ${messages("paymentAllocation.na")}"
-  val moneyOnAccountDueDate: String = s"${messages("paymentAllocation.moneyOnAccount")} 31 Jan 2021"
+  val moneyOnAccountMessage: String = s"${messages("paymentAllocation.moneyOnAccount")}"
+  val dueDate =  "31 Jan 2021"
   val paymentAllocationTaxYearFrom2017to2018: String = messages("paymentAllocation.taxYear", "2017", "2018")
   val paymentAllocationTaxYearFrom2018to2019: String = messages("paymentAllocation.taxYear", "2018", "2019")
   val paymentAllocationTaxYearFrom2019to2020: String = messages("paymentAllocation.taxYear", "2019", "2020")
@@ -292,7 +293,7 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
              |$paymentAllocationsPoa1Nic4 2019 $paymentAllocationTaxYearFrom2018to2019 28 Aug 2019 £8,765.43
              |$paymentAllocationsPoa1Nic4 2019 $paymentAllocationTaxYearFrom2018to2019 29 Aug 2019 £7,654.32
              |$paymentAllocationsPoa1Nic4 2020 $paymentAllocationTaxYearFrom2019to2020 30 Aug 2019 £6,543.21
-             |$moneyOnAccountDueDate £200.00
+             |$moneyOnAccountMessage $dueDate £200.00
              |""".stripMargin.trim.linesIterator.mkString(" ")
 
         layoutContent.selectById("payment-allocation-table").select(Selectors.tableRow).select(Selectors.link)
@@ -333,7 +334,7 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
              |$paymentAllocationsPoa2Nic4 2019 $paymentAllocationTaxYearFrom2018to2019 28 Aug 2019 £8,765.43
              |$paymentAllocationsPoa2Nic4 2019 $paymentAllocationTaxYearFrom2018to2019 29 Aug 2019 £7,654.32
              |$paymentAllocationsPoa2Nic4 2020 $paymentAllocationTaxYearFrom2019to2020 30 Aug 2019 £6,543.21
-             |$moneyOnAccountDueDate £200.00
+             |$moneyOnAccountMessage $dueDate £200.00
              |""".stripMargin.trim.linesIterator.mkString(" ")
 
         layoutContent.selectById("payment-allocation-table").select(Selectors.tableRow).select(Selectors.link)
@@ -368,7 +369,7 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
              |${messages("paymentAllocation.paymentAllocations.bcd.cgt")} 2019 $paymentAllocationTaxYearFrom2018to2019 27 Aug 2019 £9,876.54
              |${messages("paymentAllocation.paymentAllocations.bcd.sl")} 2019 $paymentAllocationTaxYearFrom2018to2019 28 Aug 2019 £8,765.43
              |${messages("paymentAllocation.paymentAllocations.bcd.vcnic2")} 2020 $paymentAllocationTaxYearFrom2019to2020 29 Aug 2019 £7,654.32
-             |$moneyOnAccountDueDate £200.00
+             |$moneyOnAccountMessage $dueDate £200.00
              |""".stripMargin.trim.linesIterator.mkString(" ")
 
         layoutContent.selectById("payment-allocation-table").select(Selectors.tableRow).select(Selectors.link)
