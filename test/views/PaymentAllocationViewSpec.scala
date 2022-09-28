@@ -76,15 +76,15 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
   val paymentAllocationTaxYearFrom2021to2022: String = messages("paymentAllocation.taxYear", "2021", "2022")
   val paymentAllocationsHmrcAdjustment: String = messages("paymentAllocation.paymentAllocations.hmrcAdjustment.text")
   val paymentAllocationViewModelDueDate: Option[LocalDate] = paymentAllocationViewModel.paymentAllocationChargeModel
-    .financialDetails.head.items.flatMap(_.head.dueDate)
+    .financialDetails.headOption.flatMap(_.items.flatMap(_.headOption.flatMap(_.dueDate)))
   val paymentAllocationViewModelOutstandingAmount: Option[BigDecimal] = paymentAllocationViewModel
-    .paymentAllocationChargeModel.documentDetails.head.outstandingAmount
+    .paymentAllocationChargeModel.documentDetails.headOption.flatMap(_.outstandingAmount)
   val paymentAllocationViewModelWithCreditZeroOutstandingDueDate: Option[LocalDate] =
     paymentAllocationViewModelWithCreditZeroOutstanding.paymentAllocationChargeModel
-      .financialDetails.head.items.flatMap(_.head.dueDate)
+      .financialDetails.headOption.flatMap(_.items.flatMap(_.headOption.flatMap(_.dueDate)))
   val paymentAllocationViewModelWithCreditZeroOutstandingOutstandingAmount: Option[BigDecimal] =
     paymentAllocationViewModelWithCreditZeroOutstanding
-      .paymentAllocationChargeModel.documentDetails.head.outstandingAmount
+      .paymentAllocationChargeModel.documentDetails.headOption.flatMap(_.outstandingAmount)
 
   class PaymentAllocationSetup(viewModel: PaymentAllocationViewModel = paymentAllocationViewModel,
                                CutOverCreditsEnabled: Boolean = false, saUtr: Option[String] = None,

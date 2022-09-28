@@ -95,8 +95,9 @@ class PaymentAllocationsController @Inject()(val paymentAllocationView: PaymentA
           Redirect(controllers.errors.routes.NotFoundDocumentIDLookupController.show().url)
         } else {
           auditingService.extendedAudit(PaymentAllocationsResponseAuditModel(user, paymentAllocations, isEnabled(R7bTxmEvents)))
-          val dueDate: Option[LocalDate] = paymentAllocations.paymentAllocationChargeModel.financialDetails.head.items.flatMap(_.head.dueDate)
-          val outstandingAmount = paymentAllocations.paymentAllocationChargeModel.documentDetails.head.outstandingAmount
+          val dueDate: Option[LocalDate] = paymentAllocations.paymentAllocationChargeModel.financialDetails.headOption
+            .flatMap(_.items.flatMap(_.headOption.flatMap(_.dueDate)))
+          val outstandingAmount = paymentAllocations.paymentAllocationChargeModel.documentDetails.headOption.flatMap(_.outstandingAmount)
             Ok(paymentAllocationView(paymentAllocations, backUrl = backUrl, user.saUtr,
               CutOverCreditsEnabled = isEnabled(CutOverCredits), btaNavPartial = user.btaNavPartial,
               isAgent = isAgent, origin = origin, gatewayPage = sessionGatewayPage,
