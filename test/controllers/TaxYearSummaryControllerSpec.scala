@@ -17,6 +17,7 @@
 package controllers
 
 import audit.mocks.MockAuditingService
+import config.featureswitch.FeatureSwitch.switches
 import config.featureswitch.{CodingOut, FeatureSwitching, ForecastCalculation, MFACreditsAndDebits}
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
@@ -82,9 +83,14 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
   val homeBackLink: String = "/report-quarterly/income-and-expenses/view"
   val agentHomeBackLink: String = "/report-quarterly/income-and-expenses/view/agents/client-income-tax"
 
+  def disableAllSwitches() : Unit = {
+    switches.foreach(switch => disable(switch))
+  }
+
   "The TaxYearSummary.renderTaxYearSummaryPage(year) action" when {
     def runForecastTest(crystallised: Boolean, calcDataNotFound: Boolean = false, forecastCalcFeatureSwitchEnabled: Boolean, taxYear: Int = testTaxYear,
                         shouldShowForecastData: Boolean): Unit = {
+      disableAllSwitches()
       if (forecastCalcFeatureSwitchEnabled)
         enable(ForecastCalculation)
       else disable(ForecastCalculation)
