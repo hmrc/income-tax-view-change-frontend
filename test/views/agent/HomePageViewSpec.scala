@@ -148,10 +148,10 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
           val paymentDueDateLongDate: String = s"31 January $year2019"
           getElementById("payments-tile").map(_.select("p:nth-child(2)").text) shouldBe Some(paymentDueDateLongDate)
         }
-        "has a link to check what you owe" in new Setup {
+        "has a link to check what your client owes" in new Setup {
           val link: Option[Elements] = getElementById("payments-tile").map(_.select("a"))
           link.map(_.attr("href")) shouldBe Some("/report-quarterly/income-and-expenses/view/agents/what-you-owe")
-          link.map(_.text) shouldBe Some(messages("home.payments.view"))
+          link.map(_.text) shouldBe Some(messages("home.agent.payments.view"))
         }
       }
 
@@ -160,12 +160,12 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
       }
 
       "display an overdue warning message when a payment is overdue and dunning lock does not exist" in new Setup(overDuePaymentsCount = Some(1)) {
-        val overdueMessageWithoutDunningLock = "! You have overdue payments. You may be charged interest on these until they are paid in full."
+        val overdueMessageWithoutDunningLock = "! Your client has overdue payments. They may be charged interest on these until they are paid in full."
         getTextOfElementById("overdue-warning") shouldBe Some(overdueMessageWithoutDunningLock)
       }
 
       "display an overdue warning message when a payment is overdue and dunning lock exists" in new Setup(overDuePaymentsCount = Some(1), dunningLockExists = true) {
-        val overdueMessageWithDunningLock = "! You have overdue payments and one or more of your tax decisions are being reviewed. You may be charged interest on these until they are paid in full."
+        val overdueMessageWithDunningLock = "! Your client has overdue payments and one or more of their tax decisions are being reviewed. They may be charged interest on these until they are paid in full."
         getTextOfElementById("overdue-warning") shouldBe Some(overdueMessageWithDunningLock)
       }
 
@@ -217,12 +217,12 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
         "has a link to the view payments page" in new Setup {
           val link: Option[Element] = getElementById("returns-tile").map(_.select("a").first)
           link.map(_.attr("href")) shouldBe Some(controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(currentTaxYear).url)
-          link.map(_.text) shouldBe Some(s"${messages("home.returns.viewLink", s"${currentTaxYear - 1}", s"$currentTaxYear")}")
+          link.map(_.text) shouldBe Some(s"${messages("home.agent.returns.viewLink", s"${currentTaxYear - 1}", s"$currentTaxYear")}")
         }
         "has a link to the update and submit page" in new Setup {
           val link: Option[Element] = getElementById("returns-tile").map(_.select("a").get(1))
           link.map(_.attr("href")) shouldBe Some(appConfig.submissionFrontendTaxYearsPage(currentTaxYear))
-          link.map(_.text) shouldBe Some(s"${messages("home.your-returns.updatesLink", s"${currentTaxYear - 1}", s"$currentTaxYear")}")
+          link.map(_.text) shouldBe Some(s"${messages("home.agent.your-returns.updatesLink", s"${currentTaxYear - 1}", s"$currentTaxYear")}")
         }
         "dont have a link to the update and submit page when ITSASubmissionIntegrationEnabled is disabled" in new Setup(ITSASubmissionIntegrationEnabled = false) {
           val link: Option[Element] = getElementById("returns-tile").map(_.select("a").get(1))
