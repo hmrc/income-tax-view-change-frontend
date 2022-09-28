@@ -23,23 +23,23 @@ import config.featureswitch._
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
-import enums.GatewayPage.{GatewayPage, PaymentHistoryPage, TaxYearSummaryPage, WhatYouOwePage}
+import enums.GatewayPage.GatewayPage
 import forms.utils.SessionKeys.gatewayPage
 import implicits.ImplicitDateFormatterImpl
 import models.core.Nino
 import models.paymentAllocationCharges.{PaymentAllocationError, PaymentAllocationViewModel}
+import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import play.mvc.Http
 import services.{IncomeSourceDetailsService, PaymentAllocationsService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
+import utils.FallBackBackLinks
 import views.html.PaymentAllocation
 
+import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
-import play.api.Logger
-import utils.FallBackBackLinks
-
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -64,6 +64,19 @@ class PaymentAllocationsController @Inject()(val paymentAllocationView: PaymentA
   private lazy val redirectUrlIndividual: String = controllers.errors.routes.NotFoundDocumentIDLookupController.show().url
   private lazy val redirectUrlAgent: String = controllers.agent.errors.routes.AgentNotFoundDocumentIDLookupController.show().url
 
+  def viewPaymentAllocation(documentNumber: String, origin: Option[String] = None): Action[AnyContent] =
+    (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
+      implicit user =>
+        if (isEnabled(PaymentAllocation)) {
+          handleRequest(
+            itvcErrorHandler = itvcErrorHandler,
+            documentNumber = documentNumber,
+            redirectUrl = redirectUrlIndividual,
+            isAgent = false,
+            origin = origin
+          )
+        } else Future.successful(Redirect(redirectUrlIndividual))
+    }
 
   def handleRequest(itvcErrorHandler: ShowInternalServerError,
                     documentNumber: String,
@@ -82,10 +95,13 @@ class PaymentAllocationsController @Inject()(val paymentAllocationView: PaymentA
           Redirect(controllers.errors.routes.NotFoundDocumentIDLookupController.show().url)
         } else {
           auditingService.extendedAudit(PaymentAllocationsResponseAuditModel(user, paymentAllocations, isEnabled(R7bTxmEvents)))
-          Ok(paymentAllocationView(paymentAllocations, backUrl = backUrl, user.saUtr,
-            CutOverCreditsEnabled = isEnabled(CutOverCredits), btaNavPartial = user.btaNavPartial,
-            isAgent = isAgent, origin = origin, gatewayPage = sessionGatewayPage,
-            creditsRefundsRepayEnabled = isEnabled(CreditsRefundsRepay))(implicitly, messages))
+          val dueDate: Option[LocalDate] = paymentAllocations.paymentAllocationChargeModel.financialDetails.head.items.flatMap(_.head.dueDate)
+          val outstandingAmount = paymentAllocations.paymentAllocationChargeModel.documentDetails.head.outstandingAmount
+            Ok(paymentAllocationView(paymentAllocations, backUrl = backUrl, user.saUtr,
+              CutOverCreditsEnabled = isEnabled(CutOverCredits), btaNavPartial = user.btaNavPartial,
+              isAgent = isAgent, origin = origin, gatewayPage = sessionGatewayPage,
+              creditsRefundsRepayEnabled = isEnabled(CreditsRefundsRepay), dueDate = dueDate,
+              outstandingAmount = outstandingAmount)(implicitly, messages))
         }
 
       case Left(PaymentAllocationError(Some(Http.Status.NOT_FOUND))) =>
@@ -93,20 +109,6 @@ class PaymentAllocationsController @Inject()(val paymentAllocationView: PaymentA
       case _ => itvcErrorHandler.showInternalServerError()
     }
   }
-
-  def viewPaymentAllocation(documentNumber: String, origin: Option[String] = None): Action[AnyContent] =
-    (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
-      implicit user =>
-        if (isEnabled(PaymentAllocation)) {
-          handleRequest(
-            itvcErrorHandler = itvcErrorHandler,
-            documentNumber = documentNumber,
-            redirectUrl = redirectUrlIndividual,
-            isAgent = false,
-            origin = origin
-          )
-        } else Future.successful(Redirect(redirectUrlIndividual))
-    }
 
   def viewPaymentAllocationAgent(documentNumber: String): Action[AnyContent] = {
     Authenticated.async { implicit request =>
