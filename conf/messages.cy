@@ -814,14 +814,14 @@ paymentAllocation.date                                          = Dyddiad
 paymentAllocation.amount                                        = Swm
 paymentAllocation.info                                          = Caiff taliadau eu dyrannu’n gyntaf i gosbau a blynyddoedd treth cynharach, yna’r flwyddyn dreth bresennol a blynyddoedd treth yn y dyfodol.
 paymentAllocation.tableSection.heading                          = Dyraniadau taliad
-paymentAllocation.tableHead.allocation                          = Dyrannu taliad
-paymentAllocation.tableHead.allocated-date                      = Dyddiad dyrannu
+paymentAllocation.tableHead.allocation                          = Ble aeth eich arian
+paymentAllocation.tableHead.allocated-date                      = Dyddiad
 paymentAllocation.tableHead.amount                              = Swm
 paymentAllocation.taxYear										= Blwyddyn dreth {0} i {1}
 paymentAllocation.creditOnAccount                               = Credyd ar gyfrif
 paymentAllocation.na                                            = Amh
 paymentAllocation.moneyOnAccount                                = Arian yn eich cyfrif
-
+paymentAllocation.moneyOnAccount.agent                          = Arian yng nghyfrif eich cleient
 paymentAllocation.paymentAllocations.poa1.incomeTax             = Treth Incwm ar gyfer taliad ar gyfrif 1 o 2
 paymentAllocation.paymentAllocations.poa1.nic4                  = Yswiriant Gwladol Dosbarth 4 ar gyfer taliad ar gyfrif 1 o 2
 paymentAllocation.paymentAllocations.poa2.incomeTax             = Treth Incwm ar gyfer taliad ar gyfrif 2 o 2
