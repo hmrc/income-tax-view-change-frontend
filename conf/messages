@@ -101,7 +101,10 @@ feedback.received                                               = Your feedback 
 home.heading                                                    = Income Tax
 home.agent.heading                                              = Your client’s Income Tax
 home.agent.changeClientLink                                     = Change client
+home.agent.payments.view                                        = Check what your client owes
+home.agent.returns.viewLink                                     = View your client’s current {0} to {1} return
 home.agent.visualHidden.clientsName                             = Client’s name
+home.agent.your-returns.updatesLink                             = Update and submit your client’s {0} to {1} return
 home.unique.taxpayer.reference                                  = Unique Taxpayer Reference (UTR): {0}
 home.utr                                                        = UTR: {0}
 home.payments.heading                                           = Next payments due
@@ -127,9 +130,10 @@ home.self-assessment.description                                = Use this servi
 home.credAndRefund.view                                         = Claim a refund
 home.credAndRefund_howToClaim.view                              = How to claim a refund
 
+home.agent.overdue.message.dunningLock.true                     = Your client has overdue payments and one or more of their tax decisions are being reviewed. They may be charged interest on these until they are paid in full.
+home.agent.overdue.message.dunningLock.false                    = Your client has overdue payments. They may be charged interest on these until they are paid in full.
 home.overdue.message.dunningLock.true                           = You have overdue payments and one or more of your tax decisions are being reviewed. You may be charged interest on these until they are paid in full.
 home.overdue.message.dunningLock.false                          = You have overdue payments. You may be charged interest on these until they are paid in full.
-home.agent.overdue.message                                      = You have overdue payments. You may be charged interest on these until they are paid in full.
 
 home.updates.overdue.payments                                   = {0} OVERDUE PAYMENTS
 home.updates.overdue.updates                                    = {0} OVERDUE UPDATES
