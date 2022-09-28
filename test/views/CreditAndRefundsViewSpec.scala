@@ -44,6 +44,12 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
   val creditAndRefundHeadingAgentWithTitleServiceNameGovUkAgent: String = messages("agent.titlePattern.serviceName.govUk", creditAndRefundHeading)
   val creditAndRefundFromHMRCTitlePart1: String = messages("credit-and-refund.credit-from-hmrc-title-prt-1")
   val creditAndRefundFromHMRCTitlePart2: String = messages("credit-and-refund.credit-from-hmrc-title-prt-2")
+  val creditAndRefundAgentHasCredits2: String = messages("credit-and-refund.agent.subHeading.has-credits-2")
+  val creditAndRefundAgentNoCredit: String = messages("credit-and-refund.agent.no-credit")
+  val creditAndRefundAgentHasCreditBullet1Prt1: String = messages("credit-and-refund.agent.bullet-one-prt-1")
+  val creditAndRefundAgentHasCreditBullet1Link: String = messages("credit-and-refund.agent.bullet-one-link")
+  val creditAndRefundAgentHasCreditBullet1Prt2: String = messages("credit-and-refund.bullet-one-prt-2")
+  val creditAndRefundAgentHasCreditBullet2Prt1: String = messages("credit-and-refund.bullet-two-prt-1")
 
   def balanceDetailsModel(firstPendingAmountRequested: Option[BigDecimal] = Some(3.50),
                           secondPendingAmountRequested: Option[BigDecimal] = Some(2.50),
@@ -225,7 +231,12 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
 
         document.getElementsByClass("govuk-button").first().text() shouldBe claimBtn
         document.getElementsByClass("govuk-button govuk-button--secondary").text() shouldBe checkBtn
+        document.getElementsByClass("govuk-heading-s").first().text() should include(creditAndRefundAgentHasCredits2)
+        document.select("p").get(7).text() shouldBe (creditAndRefundAgentHasCreditBullet1Prt1 + " " + creditAndRefundAgentHasCreditBullet1Link + " " + creditAndRefundAgentHasCreditBullet1Prt2)
+      }
+      "custom account has no credit" in new Setup(isAgent = true, balance = None) {
 
+        document.getElementsByClass("govuk-body").first().text() shouldBe creditAndRefundAgentNoCredit
       }
     }
   }
