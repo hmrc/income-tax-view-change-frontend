@@ -45,11 +45,11 @@
                 </div>
             </div>
             <div class="govuk-checkboxes" data-module="govuk-checkboxes">
-                @for(switch <- switchNames) {
+                @for((switch, state) <- switchNames) {
                     <div class="govuk-checkboxes__item">
-                        <input class="govuk-checkboxes__input" type="checkbox" id="@switch._1.name" name="@switch._1.name"
-                               value="true" @{if(switch._2){"Checked"}}>
-                        <label class="govuk-label govuk-checkboxes__label" for="@switch._1.name">@switch._1.displayText</label>
+                        <input class="govuk-checkboxes__input" type="checkbox" id="@switch.name" name="@switch.name"
+                               value="true" @{if(state){"Checked"}}>
+                        <label class="govuk-label govuk-checkboxes__label" for="@switch.name">@switch.displayText</label>
                     </div>
                 }
             </div>
