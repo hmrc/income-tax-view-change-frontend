@@ -27,6 +27,8 @@ import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import testConstants.CreditAndRefundConstants.{balanceDetailsModel, documentDetailWithDueDateFinancialDetailListModel, documentDetailWithDueDateFinancialDetailListModelMFA}
 import testUtils.{TestSupport, ViewSpec}
+import utils.CreditAndRefundUtils.UnallocatedCreditType
+import utils.CreditAndRefundUtils.UnallocatedCreditType.{UnallocatedCreditFromOnePayment, UnallocatedCreditFromSingleCreditItem}
 import views.html.CreditAndRefunds
 
 import java.time.LocalDate
@@ -55,11 +57,19 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
   val linkPaymentMadeToHmrc = "/report-quarterly/income-and-expenses/view/agents/payment-made-to-hmrc?documentNumber=1040000123"
   class Setup(creditCharges: List[(DocumentDetailWithDueDate, FinancialDetail)] = List(documentDetailWithDueDateFinancialDetailListModel()),
               balance: Option[BalanceDetails] = Some(balanceDetailsModel()),
+              creditAndRefundType: Option[UnallocatedCreditType] = None,
               isAgent: Boolean = false,
               backUrl: String = "testString",
               isMFACreditsAndDebitsEnabled: Boolean = false) {
     lazy val page: HtmlFormat.Appendable =
-      creditAndRefundView(creditCharges, balance, isAgent = isAgent, backUrl, isMFACreditsAndDebitsEnabled = isMFACreditsAndDebitsEnabled)(FakeRequest(), implicitly, implicitly)
+      creditAndRefundView(
+        creditCharges,
+        balance,
+        creditAndRefundType,
+        isAgent = isAgent,
+        backUrl,
+        isMFACreditsAndDebitsEnabled = isMFACreditsAndDebitsEnabled
+      )(FakeRequest(), implicitly, implicitly)
     lazy val document: Document = Jsoup.parse(contentAsString(page))
     lazy val layoutContent: Element = document.selectHead("#main-content")
   }
@@ -193,7 +203,8 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
               secondPendingAmountRequested = None,
               unallocatedCredit = Some(500.00)
             )
-          )
+          ),
+          creditAndRefundType =  Some(UnallocatedCreditFromOnePayment)
         ) {
 
           document.title() shouldBe creditAndRefundHeadingWithTitleServiceNameGovUk
@@ -223,7 +234,8 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
               secondPendingAmountRequested = None,
               unallocatedCredit = Some(12.00)
             )
-          )
+          ),
+          creditAndRefundType =  Some(UnallocatedCreditFromSingleCreditItem)
         ) {
 
           document.title() shouldBe creditAndRefundHeadingWithTitleServiceNameGovUk
@@ -254,7 +266,8 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
               secondPendingAmountRequested = None,
               unallocatedCredit = Some(12.00)
             )
-          )
+          ),
+          creditAndRefundType =  Some(UnallocatedCreditFromSingleCreditItem)
         ) {
 
           document.title() shouldBe creditAndRefundHeadingWithTitleServiceNameGovUk

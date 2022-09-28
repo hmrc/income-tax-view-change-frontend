@@ -29,6 +29,9 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.{CreditService, IncomeSourceDetailsService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.language.LanguageUtils
+import utils.CreditAndRefundUtils
+import utils.CreditAndRefundUtils.UnallocatedCreditType
+import utils.CreditAndRefundUtils.UnallocatedCreditType.maybeUnallocatedCreditType
 import views.html.CreditAndRefunds
 import views.html.errorPages.CustomNotFoundError
 
@@ -68,7 +71,10 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
         val credits: List[(DocumentDetailWithDueDate, FinancialDetail)] = financialDetailsModel.flatMap(
           financialDetailsModel => sortCreditsGroupedPaymentTypes(financialDetailsModel.getAllDocumentDetailsWithDueDatesAndFinancialDetails())
         )
-        Ok(view(credits, balance, isAgent, backUrl, isEnabled(MFACreditsAndDebits))(user, user, messages))
+
+        val creditAndRefundType: Option[UnallocatedCreditType] = maybeUnallocatedCreditType(credits, balance)
+
+        Ok(view(credits, balance, creditAndRefundType, isAgent, backUrl, isEnabled(MFACreditsAndDebits))(user, user, messages))
       case _ => Logger("application").error(
         s"${if (isAgent) "[Agent]"}[CreditAndRefundController][show] Invalid response from financial transactions")
         itvcErrorHandler.showInternalServerError()
