@@ -34,6 +34,9 @@ class FeatureSwitchController @Inject()(featureSwitchView: FeatureSwitchView)
                                         val appConfig: FrontendAppConfig)
   extends FrontendController(mcc) with FeatureSwitching with I18nSupport {
 
+  val ENABLE_ALL_FEATURE: String = "enableall"
+  val DISABLE_ALL_FEATURE: String = "disableall"
+
   private def view(switchNames: Map[FeatureSwitch, Boolean])(implicit request: Request[_]): Html = {
     featureSwitchView(
       switchNames = switchNames,
@@ -56,8 +59,14 @@ class FeatureSwitchController @Inject()(featureSwitchView: FeatureSwitchView)
     val featureSwitches = submittedData flatMap FeatureSwitch.get
 
     switches.foreach(fs =>
-      if (featureSwitches.contains(fs)) enable(fs)
-      else disable(fs)
+      if (submittedData.contains(ENABLE_ALL_FEATURE))
+        enable(fs)
+      else if(submittedData.contains(DISABLE_ALL_FEATURE))
+        disable(fs)
+      else if(featureSwitches.contains(fs))
+        enable(fs)
+      else
+        disable(fs)
     )
 
     Redirect(testOnly.controllers.routes.FeatureSwitchController.show())

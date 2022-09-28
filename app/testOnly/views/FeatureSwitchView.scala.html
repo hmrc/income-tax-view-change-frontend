@@ -1,18 +1,18 @@
 @*
- * Copyright 2022 HM Revenue & Customs
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *@
+* Copyright 2022 HM Revenue & Customs
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*     http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*@
 
 @import helper._
 @import config.featureswitch.FeatureSwitch
@@ -23,25 +23,37 @@
 @(switchNames: Map[FeatureSwitch, Boolean],action: Call)(implicit request: Request[_], messages: Messages)
 
 @unifiedLayout(pageTitle = Messages("Feature switch")) {
-    <form class="govuk-form-group" method="@action.method" action="@action.url">
-        @CSRF.formField
-        <fieldset class="govuk-fieldset govuk-!-padding-bottom-8" aria-describedby="waste-hint">
-            <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
-                <h1 class="govuk-fieldset__heading">
-                    Which features would you like to have enabled?
-                </h1>
-            </legend>
-            <h3 class="govuk-heading-m">Frontend features</h3>
-            <div class="govuk-checkboxes" data-module="govuk-checkboxes">
-                @for((switch, state) <- switchNames) {
-                    <div class="govuk-checkboxes__item">
-                        <input class="govuk-checkboxes__input" type="checkbox" id="@switch.name" name="@switch.name"
-                               value="true" @{if(state){"Checked"}}>
-                        <label class="govuk-label govuk-checkboxes__label" for="@switch.name">@switch.displayText</label>
-                    </div>
-                }
+<form class="govuk-form-group" method="@action.method" action="@action.url">
+    @CSRF.formField
+    <fieldset class="govuk-fieldset govuk-!-padding-bottom-8" aria-describedby="waste-hint">
+        <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+            <h1 class="govuk-fieldset__heading">
+                Which features would you like to have enabled?
+            </h1>
+        </legend>
+        <h3 class="govuk-heading-m">Frontend features</h3>
+        <div class="govuk-checkboxes" data-module="govuk-checkboxes">
+            <div class="govuk-checkboxes__item" style="display:inline-block">
+                <input class="govuk-checkboxes__input" type="checkbox" id="enableall" name="enableall"
+                       value="true" onChange='submit();'>
+                <label class="govuk-label govuk-checkboxes__label" for="enableall">Enable All Features</label>
             </div>
-        </fieldset>
-        <button class="govuk-button" type="submit">Update global settings</button>
-    </form>
+            <div class="govuk-checkboxes__item" style="display:inline-block">
+                <input class="govuk-checkboxes__input" type="checkbox" id="disableall" name="disableall"
+                       value="true" onChange='submit();'>
+                <label class="govuk-label govuk-checkboxes__label" for="disableall">Disable All Features</label>
+            </div>
+        </div>
+        <div class="govuk-checkboxes" data-module="govuk-checkboxes">
+            @for((switch, state) <- switchNames) {
+            <div class="govuk-checkboxes__item">
+                <input class="govuk-checkboxes__input" type="checkbox" id="@switch.name" name="@switch.name"
+                       value="true" @{if(state){"Checked"}}>
+                <label class="govuk-label govuk-checkboxes__label" for="@switch.name">@switch.displayText</label>
+            </div>
+            }
+        </div>
+    </fieldset>
+    <button class="govuk-button" type="submit">Update global settings</button>
+</form>
 }
