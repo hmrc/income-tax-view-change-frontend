@@ -25,9 +25,13 @@ import org.jsoup.nodes.{Document, Element}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
-import testConstants.FinancialDetailsTestConstants.{documentDetailWithDueDateModel, financialDetail}
+import testConstants.CreditAndRefundConstants.{balanceDetailsModel, documentDetailWithDueDateFinancialDetailListModel, documentDetailWithDueDateFinancialDetailListModelMFA}
 import testUtils.{TestSupport, ViewSpec}
+import utils.CreditAndRefundUtils.UnallocatedCreditType
+import utils.CreditAndRefundUtils.UnallocatedCreditType.{UnallocatedCreditFromOnePayment, UnallocatedCreditFromSingleCreditItem}
 import views.html.CreditAndRefunds
+
+import java.time.LocalDate
 
 
 class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with ImplicitDateFormatter with ViewSpec {
@@ -37,6 +41,8 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
   val creditAndRefundHeading: String = messages("credit-and-refund.heading")
   val subHeadingWithCreditsPart1: String = messages("credit-and-refund.subHeading.has-credits-1")
   val subHeadingWithCreditsPart2: String = messages("credit-and-refund.subHeading.has-credits-2")
+  val subHeadingWithUnallocatedCreditsOnePayment: String = s"${messages("credit-and-refund.subHeading.unallocated-credits-one-payment-1")} £500.00 ${messages("credit-and-refund.subHeading.unallocated-credits-one-payment-2")}"
+  val subHeadingWithUnallocatedCreditsSingleCredit: String = s"${messages("credit-and-refund.subHeading.unallocated-credits-single-credit-1")} £500.00 ${messages("credit-and-refund.subHeading.unallocated-credits-single-credit-2")}"
   val paymentText: String = messages("credit-and-refund.payment")
   val claimBtn: String = messages("credit-and-refund.claim-refund-btn")
   val checkBtn: String = messages("credit-and-refund.check-refund-btn")
@@ -44,51 +50,31 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
   val creditAndRefundHeadingAgentWithTitleServiceNameGovUkAgent: String = messages("htmlTitle.agent", creditAndRefundHeading)
   val creditAndRefundFromHMRCTitlePart1: String = messages("credit-and-refund.credit-from-hmrc-title-prt-1")
   val creditAndRefundFromHMRCTitlePart2: String = messages("credit-and-refund.credit-from-hmrc-title-prt-2")
+  val creditAndRefundPaymentFromEarlierYearLinkText: String = messages("paymentHistory.paymentFromEarlierYear")
 
-  def balanceDetailsModel(firstPendingAmountRequested: Option[BigDecimal] = Some(3.50),
-                          secondPendingAmountRequested: Option[BigDecimal] = Some(2.50),
-                          availableCredit: Option[BigDecimal] = Some(7.00)): BalanceDetails = BalanceDetails(
-    balanceDueWithin30Days = 1.00,
-    overDueAmount = 2.00,
-    totalBalance = 3.00,
-    availableCredit = availableCredit,
-    firstPendingAmountRequested = firstPendingAmountRequested,
-    secondPendingAmountRequested = secondPendingAmountRequested,
-    None
-  )
-
-  def documentDetailWithDueDateFinancialDetailListModel(outstandingAmount: Option[BigDecimal] = Some(-1400.0)):
-  (DocumentDetailWithDueDate, FinancialDetail) = {
-    (documentDetailWithDueDateModel(paymentLot = None, outstandingAmount = outstandingAmount), financialDetail())
-  }
-
-  def documentDetailWithDueDateFinancialDetailListModelMFA(outstandingAmount: Option[BigDecimal] = Some(BigDecimal(-1400.0))):
-  (DocumentDetailWithDueDate, FinancialDetail) = {
-    (documentDetailWithDueDateModel(
-      paymentLot = None,
-      paymentLotItem = None,
-      documentDescription = Some("TRM New Charge"),
-      outstandingAmount = outstandingAmount,
-      originalAmount = Some(BigDecimal(-2400.0))),
-      financialDetail(mainType = "ITSA Overpayment Relief")
-    )
-  }
-
+  val link = "/report-quarterly/income-and-expenses/view/payment-made-to-hmrc?documentNumber=1040000123"
+  val linkCreditsSummaryPage = "/report-quarterly/income-and-expenses/view/credits-from-hmrc/2018"
+  val linkPaymentMadeToHmrc = "/report-quarterly/income-and-expenses/view/agents/payment-made-to-hmrc?documentNumber=1040000123"
   class Setup(creditCharges: List[(DocumentDetailWithDueDate, FinancialDetail)] = List(documentDetailWithDueDateFinancialDetailListModel()),
               balance: Option[BalanceDetails] = Some(balanceDetailsModel()),
+              creditAndRefundType: Option[UnallocatedCreditType] = None,
               isAgent: Boolean = false,
               backUrl: String = "testString",
               isMFACreditsAndDebitsEnabled: Boolean = false) {
     lazy val page: HtmlFormat.Appendable =
-      creditAndRefundView(creditCharges, balance, isAgent = isAgent, backUrl, isMFACreditsAndDebitsEnabled = isMFACreditsAndDebitsEnabled)(FakeRequest(), implicitly, implicitly)
+      creditAndRefundView(
+        creditCharges,
+        balance,
+        creditAndRefundType,
+        isAgent = isAgent,
+        backUrl,
+        isMFACreditsAndDebitsEnabled = isMFACreditsAndDebitsEnabled
+      )(FakeRequest(), implicitly, implicitly)
     lazy val document: Document = Jsoup.parse(contentAsString(page))
     lazy val layoutContent: Element = document.selectHead("#main-content")
   }
 
   "displaying individual credit and refund page" should {
-    val link = "/report-quarterly/income-and-expenses/view/payment-made-to-hmrc?documentNumber=1040000123"
-    val linkCreditsSummaryPage = "/report-quarterly/income-and-expenses/view/credits-from-hmrc/2018"
-
     "display the page" when {
       "a user has requested a refund" in new Setup() {
 
@@ -101,8 +87,6 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
 
         document.getElementsByClass("govuk-button").first().text() shouldBe claimBtn
         document.getElementsByClass("govuk-button govuk-button--secondary").text() shouldBe checkBtn
-
-
       }
 
       "a user has not requested a refund" in new Setup(balance = Some(balanceDetailsModel(None, None))) {
@@ -208,22 +192,109 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
 
           document.getElementsByClass("govuk-button").first().text() shouldBe checkBtn
         }
+
+      "a user has an unallocated credits from exactly one payment" in
+        new Setup(creditCharges = List(
+          documentDetailWithDueDateFinancialDetailListModel(Some(-500.00), dueDate = Some(LocalDate.of(2022, 1, 12)), originalAmount = Some(-1000))),
+          balance = Some(
+            balanceDetailsModel(
+              availableCredit = Some(500.00),
+              firstPendingAmountRequested = None,
+              secondPendingAmountRequested = None,
+              unallocatedCredit = Some(500.00)
+            )
+          ),
+          creditAndRefundType =  Some(UnallocatedCreditFromOnePayment)
+        ) {
+
+          document.title() shouldBe creditAndRefundHeadingWithTitleServiceNameGovUk
+          layoutContent.selectHead("h1").text shouldBe creditAndRefundHeading
+          document.select("h2").first().select("span").first().text() shouldBe subHeadingWithUnallocatedCreditsOnePayment
+          document.select("h2").first().select("span").next().select("a").text() shouldBe "12 January 2022."
+          document.select("h2").first().select("span").next().select("a").attr("href") shouldBe link
+          document.select("dt").eachText().contains("Total") shouldBe false
+          document.select("govuk-list govuk-list--bullet").isEmpty shouldBe true
+          document.getElementsByClass("govuk-button").first().text() shouldBe claimBtn
+          document.getElementsByClass("govuk-button govuk-button--secondary").text() shouldBe checkBtn
+        }
+
+      "a user has an unallocated credits from exactly a single credit item" in
+        new Setup(creditCharges = List(
+          documentDetailWithDueDateFinancialDetailListModel(
+            Some(-500.00),
+            dueDate = Some(LocalDate.of(2022, 1, 12)),
+            originalAmount = Some(-1000),
+            mainType = "ITSA Overpayment Relief"
+          )
+        ),
+          balance = Some(
+            balanceDetailsModel(
+              availableCredit = Some(500.00),
+              firstPendingAmountRequested = None,
+              secondPendingAmountRequested = None,
+              unallocatedCredit = Some(12.00)
+            )
+          ),
+          creditAndRefundType =  Some(UnallocatedCreditFromSingleCreditItem)
+        ) {
+
+          document.title() shouldBe creditAndRefundHeadingWithTitleServiceNameGovUk
+          layoutContent.selectHead("h1").text shouldBe creditAndRefundHeading
+          document.select("h2").first().select("span").first().text() shouldBe subHeadingWithUnallocatedCreditsSingleCredit
+          document.select("h2").first().select("span").next().select("a").text() shouldBe s"$creditAndRefundFromHMRCTitlePart2."
+          document.select("h2").first().select("span").next().select("a").attr("href") shouldBe linkCreditsSummaryPage
+          document.select("dt").eachText().contains("Total") shouldBe false
+          document.select("govuk-list govuk-list--bullet").isEmpty shouldBe true
+
+          document.getElementsByClass("govuk-button").first().text() shouldBe claimBtn
+          document.getElementsByClass("govuk-button govuk-button--secondary").text() shouldBe checkBtn
+        }
+
+      "a user has an unallocated credits from exactly a single credit item as a cut over credit" in
+        new Setup(creditCharges = List(
+          documentDetailWithDueDateFinancialDetailListModel(
+            Some(-500.00),
+            dueDate = Some(LocalDate.of(2022, 1, 12)),
+            originalAmount = Some(-1000),
+            mainType = "ITSA Cutover Credits"
+          )
+        ),
+          balance = Some(
+            balanceDetailsModel(
+              availableCredit = Some(500.00),
+              firstPendingAmountRequested = None,
+              secondPendingAmountRequested = None,
+              unallocatedCredit = Some(12.00)
+            )
+          ),
+          creditAndRefundType =  Some(UnallocatedCreditFromSingleCreditItem)
+        ) {
+
+          document.title() shouldBe creditAndRefundHeadingWithTitleServiceNameGovUk
+          layoutContent.selectHead("h1").text shouldBe creditAndRefundHeading
+          document.select("h2").first().select("span").first().text() shouldBe subHeadingWithUnallocatedCreditsSingleCredit
+          document.select("h2").first().select("span").next().select("a").text() shouldBe s"$creditAndRefundPaymentFromEarlierYearLinkText."
+          document.select("h2").first().select("span").next().select("a").attr("href") shouldBe linkCreditsSummaryPage
+          document.select("dt").eachText().contains("Total") shouldBe false
+          document.select("govuk-list govuk-list--bullet").isEmpty shouldBe true
+
+          document.getElementsByClass("govuk-button").first().text() shouldBe claimBtn
+          document.getElementsByClass("govuk-button govuk-button--secondary").text() shouldBe checkBtn
+        }
     }
   }
 
   "displaying agent credit and refund page" should {
-    val link = "/report-quarterly/income-and-expenses/view/agents/payment-made-to-hmrc?documentNumber=1040000123"
     "display the page" when {
       "correct data is provided" in new Setup(isAgent = true) {
 
         document.title() shouldBe creditAndRefundHeadingAgentWithTitleServiceNameGovUkAgent
         layoutContent.selectHead("h1").text shouldBe creditAndRefundHeading
         document.select("p").get(2).text() shouldBe s"£1,400.00 $paymentText 15 May 2019"
-        document.select("p").get(2).select("a").attr("href") shouldBe link
+        document.select("p").get(2).select("a").attr("href") shouldBe linkPaymentMadeToHmrc
 
         document.getElementsByClass("govuk-button").first().text() shouldBe claimBtn
         document.getElementsByClass("govuk-button govuk-button--secondary").text() shouldBe checkBtn
-
       }
     }
   }
