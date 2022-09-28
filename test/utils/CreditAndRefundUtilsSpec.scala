@@ -24,7 +24,7 @@ import utils.CreditAndRefundUtils.UnallocatedCreditType.{UnallocatedCreditFromOn
 
 class CreditAndRefundUtilsSpec extends TestSupport {
 
-  val validMfaCreditDescriptions: TableFor1[String] = Table(
+  val validMfaCreditMainTypes: TableFor1[String] = Table(
     "mfaCreditDescription",
     "ITSA Overpayment Relief",
     "ITSA Standalone Claim",
@@ -67,9 +67,9 @@ class CreditAndRefundUtilsSpec extends TestSupport {
     "maybeUnallocatedCreditType method called with proper values for unallocated credit from single credit item" should {
 
       "return Option[UnallocatedCreditFromSingleCreditItem]" in {
-        forAll(validMfaCreditDescriptions) { mfaCreditDescription =>
+        forAll(validMfaCreditMainTypes) { validMfaCreditMainType =>
           val unallocatedCreditType = maybeUnallocatedCreditType(
-            List(documentDetailWithDueDateFinancialDetailListModel(mainType = mfaCreditDescription)),
+            List(documentDetailWithDueDateFinancialDetailListModel(mainType = validMfaCreditMainType)),
             Some(balanceDetailsModel(
               firstPendingAmountRequested = None,
               secondPendingAmountRequested = None,
