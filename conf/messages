@@ -10,7 +10,7 @@ base.error_heading                                              = There’s a pr
 base.backToHome                                                 = Back to Income Tax home
 base.continue                                                   = Continue
 base.error_summary.heading                                      = There is a problem
-base.error-prefix                                               = Error:
+base.error-prefix                                                = Error:
 base.govUk                                                      = GOV.UK
 
 # Fallback Back Links
@@ -22,11 +22,15 @@ back.nomatch = Back
 # Agent Base
 agent.base.service_name                             = Your client’s Income Tax details
 
-# Page Titles
+# Header
+header.serviceName                                  = Manage your Income Tax updates
+agent.header.serviceName                            = Manage your client’s Income Tax updates
+
+# HTML Titles
 titlePattern.serviceName.govUk                      = Manage your Income Tax updates
-agent.titlePattern.serviceName.govUk                = Manage your client’s Income Tax updates
-error.titlePattern.serviceName.govUk                = Error: {0} - Manage your Income Tax updates
-agent.error.titlePattern.serviceName.govUk          = Error: {0} - Manage your client’s Income Tax updates
+htmlTitle.agent                                     = Manage your client’s Income Tax updates
+htmlTitle.errorPage                                 = {0} - GOV.UK
+htmlTitle.invalidInput                              = Error: {0} - GOV.UK
 
 # Agent - Enter clients details
 agent.enter_clients_utr.heading                                 = What is your client’s UTR?
@@ -41,7 +45,7 @@ agent.confirmClient.heading                                     = Confirm your c
 agent.confirmClient.clientName                                  = Client’s name
 agent.confirmClient.clientUtr                                   = Client’s Unique Taxpayer Reference (UTR)
 agent.confirmClient.changeClient                                = Change client
-agent.confirmClient.confirmContinue                             = Confirm and continue
+agent.confirmClient.confirmContinue                              = Confirm and continue
 
 # Agent - Client Relationship Failure
 agent.client_relationship_failure.heading                       = You are not authorised to view this client
@@ -161,6 +165,7 @@ tax-year-summary.heading                                           = Tax year su
 tax-year-summary.heading-secondary                                 = 6 April {0} to 5 April {1}
 tax-year-summary.calculation-date                                  = Calculation date
 tax-year-summary.calc-from-last-time                               = This is not your final tax bill, it’s only based on figures we’ve already received.
+tax-year-summary.agent.calc-from-last-time                         = This is not your client’s final tax bill, it’s only based on figures we’ve already received.
 tax-year-summary.calc-estimate-info                                = This is a year to date estimate based on figures we’ve already received.
 tax-year-summary.total-due                                         = Total tax bill
 tax-year-summary.contents                                          = Contents

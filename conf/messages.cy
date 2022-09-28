@@ -27,11 +27,15 @@ agent.client_relationship_failure.enter_different_details       = Gwirio cleient
 # Agent Base
 agent.base.service_name                                         = Treth Incwm fanylion eich cleient
 
-# Page Titles
+# Header
+header.serviceName                                             = Rheoli’ch diweddariadau Treth Incwm
+agent.header.serviceName                                       = Rheoli diweddariadau Treth Incwm eich cleient
+
+# HTML Titles
 titlePattern.serviceName.govUk                                  = Rheoli’ch diweddariadau Treth Incwm
-agent.titlePattern.serviceName.govUk                            = Rheoli diweddariadau Treth Incwm eich cleient
-error.titlePattern.serviceName.govUk                            = Gwall: {0} - Rheoli’ch diweddariadau Treth Incwm
-agent.error.titlePattern.serviceName.govUk                      = Gwall: {0} - Rheoli diweddariadau Treth Incwm eich cleient
+htmlTitle.agent                                                 = Rheoli diweddariadau Treth Incwm eich cleient
+htmlTitle.inputError                                            = Gwall: {0} - GOV.UK
+
 
 ## Agent - UTR Error
 agent.utr_error.heading                                         = Ni allwch fwrw golwg dros y cleient hwn
@@ -45,7 +49,6 @@ agent.utr_error.go_back                                         = Nodwch UTR ara
 agent-error.heading                                            = Ni allwch ddefnyddio’r gwasanaeth hwn ar hyn o bryd
 agent-error.note                                               = I ddefnyddio’r gwasanaeth hwn, mae’n rhaid i chi sefydlu
 agent-error.link                                               = cyfrif gwasanaethau asiant
-
 
 ## Custom Error Page ##
 error.custom.heading                                          = Mae problem wedi codi
@@ -151,6 +154,7 @@ tax-year-summary.heading-secondary                             = 6 Ebrill {0} i 
 tax-year-summary.calculation-date                              = Dyddiad y cyfrifiad
 tax-year-summary.total-due                                     = Cyfanswm y bil treth
 tax-year-summary.calc-from-last-time                           = Nid dyma’ch bil treth terfynol – mae’n seiliedig ar ffigurau rydym eisoes wedi’u cael yn unig.
+tax-year-summary.agent.calc-from-last-time                     = Nid dyma fil treth terfynol eich cleient – mae’n seiliedig ar ffigurau rydym eisoes wedi’u cael yn unig.
 tax-year-summary.calc-estimate-info                            = Mae hyn yn amcangyfrif ar gyfer y flwyddyn hyd yn hyn sy’n seiliedig ar ffigurau sydd gennym eisoes.
 tax-year-summary.tax-calculation                               = Cyfrifiad
 tax-year-summary.payments.paymentUnderReview                   = Taliad dan adolygiad
