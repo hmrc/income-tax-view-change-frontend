@@ -21,6 +21,9 @@ import testUtils.TestSupport
 
 class FallBackBackLinkSpec extends TestSupport with FallBackBackLinks {
 
+  val whatYouOweUrl = controllers.routes.WhatYouOweController.show(None).url
+  val whatYouOweAgentUrl = controllers.routes.WhatYouOweController.showAgent().url
+
   "FallBackBacklinks trait" when {
 
     "getPaymentAllocationBackUrl method" should {
@@ -50,12 +53,12 @@ class FallBackBackLinkSpec extends TestSupport with FallBackBackLinks {
 
       "return What You Owe link" in {
         val url = getPaymentAllocationBackUrl(Some(WhatYouOwePage), None, None, false)
-        url shouldBe "/report-quarterly/income-and-expenses/view/what-you-owe"
+        url shouldBe whatYouOweUrl
       }
 
       "return Agent What You Owe link" in {
         val url = getPaymentAllocationBackUrl(Some(WhatYouOwePage), None, None, true)
-        url shouldBe "/report-quarterly/income-and-expenses/view/agents/what-you-owe"
+        url shouldBe whatYouOweAgentUrl
       }
 
       "return homepage link if NoMatchPage" in {
@@ -91,12 +94,12 @@ class FallBackBackLinkSpec extends TestSupport with FallBackBackLinks {
 
       "return What You Owe link" in {
         val url = getChargeSummaryBackUrl(Some(WhatYouOwePage), 2018, None, false)
-        url shouldBe "/report-quarterly/income-and-expenses/view/what-you-owe"
+        url shouldBe whatYouOweUrl
       }
 
       "return Agent What You Owe link" in {
         val url = getChargeSummaryBackUrl(Some(WhatYouOwePage), 2018, None, true)
-        url shouldBe "/report-quarterly/income-and-expenses/view/agents/what-you-owe"
+        url shouldBe whatYouOweAgentUrl
       }
 
       "return homepage link if NoMatchPage" in {
