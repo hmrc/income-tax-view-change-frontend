@@ -269,7 +269,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         Then(s"Technical difficulties are shown with status OK")
         result should have(
           httpStatus(OK),
-          pageTitleAgent(titleInternalServer)
+          pageTitleAgent(titleInternalServer, isErrorPage = true)
         )
       }
     }
@@ -657,7 +657,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
 
         result should have(
           httpStatus(INTERNAL_SERVER_ERROR),
-          pageTitleAgent(titleInternalServer)
+          pageTitleAgent(titleInternalServer, isErrorPage = true)
         )
       }
       " [IT-AGENT-TEST-2.3.4] there was a problem retrieving financial details for the tax year" in {
@@ -681,7 +681,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
 
         result should have(
           httpStatus(INTERNAL_SERVER_ERROR),
-          pageTitleAgent(titleInternalServer)
+          pageTitleAgent(titleInternalServer, isErrorPage = true)
         )
 
       }
@@ -710,7 +710,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
 
         result should have(
           httpStatus(INTERNAL_SERVER_ERROR),
-          pageTitleAgent(titleInternalServer)
+          pageTitleAgent(titleInternalServer, isErrorPage = true)
         )
 
       }
@@ -746,7 +746,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
 
         result should have(
           httpStatus(INTERNAL_SERVER_ERROR),
-          pageTitleAgent(titleInternalServer)
+          pageTitleAgent(titleInternalServer, isErrorPage = true)
         )
 
         verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligationsSuccess.obligations.flatMap(_.obligations)).detail)
@@ -818,7 +818,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         if (isEnabled(MFACreditsAndDebits)) {
           result should have(
             httpStatus(OK),
-            pageTitleAgent("agent.titlePattern.serviceName.govUk"),
+            pageTitleAgent("htmlTitle.agent"),
             elementTextBySelector("#calculation-date")("15 February 2019"),
             elementTextBySelectorList("#payments-table", "tbody", "tr:nth-of-type(1)", "th")(s"$hmrcAdjustment"),
             elementTextBySelectorList("#payments-table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("22 Apr 2021"),
@@ -831,7 +831,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         } else {
           result should have(
             httpStatus(OK),
-            pageTitleAgent("agent.titlePattern.serviceName.govUk"),
+            pageTitleAgent("htmlTitle.agent"),
             elementTextBySelector("#calculation-date")("15 February 2019"),
             elementCountBySelector("#payments-table", "tbody", "tr")(0))
         }

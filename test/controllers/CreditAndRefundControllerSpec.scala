@@ -16,7 +16,8 @@
 
 package controllers
 
-import config.featureswitch.{CreditsRefundsRepay, FeatureSwitching, MFACreditsAndDebits}
+import config.featureswitch.FeatureSwitch.switches
+import config.featureswitch.{ChargeHistory, Class4UpliftEnabled, CodingOut, CreditsRefundsRepay, CutOverCredits, FeatureSwitching, ForecastCalculation, ITSASubmissionIntegration, IvUplift, MFACreditsAndDebits, NavBarFs, NewStateBenefitIncome, PaymentAllocation, PaymentHistoryRefunds, R7bTxmEvents, WhatYouOweCreditAmount}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import mocks.auth.MockFrontendAuthorisedFunctions
@@ -61,12 +62,16 @@ class CreditAndRefundControllerSpec extends MockAuthenticationPredicate with Moc
     )(
       appConfig = app.injector.instanceOf[FrontendAppConfig],
       languageUtils = languageUtils,
-      mcc =  app.injector.instanceOf[MessagesControllerComponents],
+      mcc = app.injector.instanceOf[MessagesControllerComponents],
       ec = ec,
       itvcErrorHandlerAgent = app.injector.instanceOf[AgentItvcErrorHandler],
       view = app.injector.instanceOf[CreditAndRefunds],
       customNotFoundErrorView = app.injector.instanceOf[CustomNotFoundError]
     )
+  }
+
+  def disableAllSwitches() : Unit = {
+    switches.foreach(switch => disable(switch))
   }
 
   def testFinancialDetail(taxYear: Int): FinancialDetailsModel = financialDetailsModel(taxYear)
@@ -75,8 +80,9 @@ class CreditAndRefundControllerSpec extends MockAuthenticationPredicate with Moc
     "show the credit and refund page" when {
 
       "MFACreditsAndDebits disabled: credit charges are returned" in new Setup {
+        disableAllSwitches()
         enable(CreditsRefundsRepay)
-        disable(MFACreditsAndDebits)
+
         mockSingleBISWithCurrentYearAsMigrationYear()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthSuccessWithSaUtrResponse())
@@ -93,8 +99,10 @@ class CreditAndRefundControllerSpec extends MockAuthenticationPredicate with Moc
       }
 
       "MFACreditsAndDebits enabled: credit charges are returned" in new Setup {
+        disableAllSwitches()
         enable(CreditsRefundsRepay)
         enable(MFACreditsAndDebits)
+
         mockSingleBISWithCurrentYearAsMigrationYear()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthSuccessWithSaUtrResponse())
@@ -113,6 +121,7 @@ class CreditAndRefundControllerSpec extends MockAuthenticationPredicate with Moc
       "MFACreditsAndDebits enabled: credit charges are returned in sorted order of credits" in new Setup {
         enable(CreditsRefundsRepay)
         enable(MFACreditsAndDebits)
+
         mockSingleBISWithCurrentYearAsMigrationYear()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthSuccessWithSaUtrResponse())
@@ -126,7 +135,7 @@ class CreditAndRefundControllerSpec extends MockAuthenticationPredicate with Moc
         status(result) shouldBe Status.OK
         status(resultAgent) shouldBe Status.OK
 
-        val doc : Document = Jsoup.parse(contentAsString(result))
+        val doc: Document = Jsoup.parse(contentAsString(result))
         doc.select("#main-content").select("li:nth-child(1)")
           .select("p").first().text() shouldBe "£1,000.00 " + messages("credit-and-refund.credit-from-hmrc-title-prt-1") + " " +
           messages("credit-and-refund.credit-from-hmrc-title-prt-2") + " 0"
@@ -158,8 +167,9 @@ class CreditAndRefundControllerSpec extends MockAuthenticationPredicate with Moc
       }
 
       "redirect to the custom not found error page" in new Setup {
-        disable(CreditsRefundsRepay)
+        disableAllSwitches()
         enable(MFACreditsAndDebits)
+
         mockSingleBISWithCurrentYearAsMigrationYear()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthSuccessWithSaUtrResponse())
@@ -173,7 +183,7 @@ class CreditAndRefundControllerSpec extends MockAuthenticationPredicate with Moc
         val resultAgent: Future[Result] = controller.showAgent()(fakeRequestConfirmedClient())
 
         status(result) shouldBe Status.OK
-        contentAsString(result) shouldBe  expectedContent
+        contentAsString(result) shouldBe expectedContent
         status(resultAgent) shouldBe Status.OK
       }
 

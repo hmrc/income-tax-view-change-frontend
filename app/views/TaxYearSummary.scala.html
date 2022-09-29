@@ -260,7 +260,10 @@
     @modelOpt.map { model =>
         @if(!model.crystallised.contains(true)) {
             @govukInsetText(InsetText(content = HtmlContent(
-                p(id=Some("calc-date-info"))(content = Html(messages("tax-year-summary.calc-from-last-time", model.timestamp.map(_.toZonedDateTime.toLocalDate.toLongDate).getOrElse(throw MissingFieldException("Calculation timestamp")))))
+                p(id=Some("calc-date-info"))(content = Html(
+                    messages(if(isAgent) "tax-year-summary.agent.calc-from-last-time" else "tax-year-summary.calc-from-last-time",
+                    model.timestamp.map(_.toZonedDateTime.toLocalDate.toLongDate).getOrElse(throw MissingFieldException("Calculation timestamp"))))
+                )
             )))
         }
         <dl class="govuk-summary-list">
@@ -282,7 +285,11 @@
                     @messages("tax-year-summary.total-due")
                 } else {
                     @{
-                        messages("tax-year-summary.tax-calculation.date", s"${taxYear - 1}", s"$taxYear")
+                        if ( !model.periodFrom.isEmpty && !model.periodTo.isEmpty ){
+                            val calculationDateFrom = implicitDateFormatter.longDate(model.periodFrom.get).toLongDate
+                            val calculationDateTo = implicitDateFormatter.longDate(model.periodTo.get).toLongDate
+                            messages("tax-year-summary.tax-calculation.date", calculationDateFrom, calculationDateTo)
+                        }
                     }
                 }
                 </dt>

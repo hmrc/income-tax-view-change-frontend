@@ -78,7 +78,7 @@ class DeductionsSummaryControllerISpec extends ComponentSpecBase with FeatureSwi
       Then("I see Allowances and deductions page")
       res should have(
         httpStatus(OK),
-        pageTitleAgent("deduction_breakdown.heading"),
+        pageTitleAgent("deduction_breakdown.heading")
       )
 
       verifyAuditContainsDetail(AllowanceAndDeductionsResponseAuditModel(testUser,

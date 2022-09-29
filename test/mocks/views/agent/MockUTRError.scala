@@ -21,7 +21,7 @@ import org.mockito.Mockito.{reset, when}
 import org.scalatest.{BeforeAndAfterEach, Suite}
 import org.scalatestplus.mockito.MockitoSugar
 import play.twirl.api.Html
-import views.html.agent.UTRError
+import views.html.agent.errorPages.UTRError
 
 trait MockUTRError extends BeforeAndAfterEach with MockitoSugar {
   self: Suite =>

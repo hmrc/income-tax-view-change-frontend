@@ -21,7 +21,7 @@ import org.mockito.Mockito.{reset, when}
 import org.scalatest.{BeforeAndAfterEach, Suite}
 import org.scalatestplus.mockito.MockitoSugar
 import play.twirl.api.Html
-import views.html.agent.ClientRelationshipFailure
+import views.html.agent.errorPages.ClientRelationshipFailure
 
 trait MockClientRelationshipFailure extends BeforeAndAfterEach with MockitoSugar {
   self: Suite =>

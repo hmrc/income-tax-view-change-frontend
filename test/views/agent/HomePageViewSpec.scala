@@ -114,8 +114,8 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
         document.getElementsByClass("govuk-header__link").attr("href") shouldBe "https://www.gov.uk"
       }
 
-      s"have the title ${messages("agent.titlePattern.serviceName.govUk", messages("home.agent.heading"))}" in new Setup() {
-        document.title() shouldBe messages("agent.titlePattern.serviceName.govUk", messages("home.agent.heading"))
+      s"have the title ${messages("htmlTitle.agent", messages("home.agent.heading"))}" in new Setup() {
+        document.title() shouldBe messages("htmlTitle.agent", messages("home.agent.heading"))
       }
 
       s"have the page heading ${messages("home.agent.heading")}" in new Setup {
@@ -150,7 +150,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
         }
         "has a link to check what your client owes" in new Setup {
           val link: Option[Elements] = getElementById("payments-tile").map(_.select("a"))
-          link.map(_.attr("href")) shouldBe Some("/report-quarterly/income-and-expenses/view/agents/what-you-owe")
+          link.map(_.attr("href")) shouldBe Some(controllers.routes.WhatYouOweController.showAgent.url)
           link.map(_.text) shouldBe Some(messages("home.agent.payments.view"))
         }
       }

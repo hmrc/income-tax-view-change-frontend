@@ -84,7 +84,7 @@ class PaymentAllocationsControllerISpec extends ComponentSpecBase with FeatureSw
         Then(s"Technical difficulties are shown with status OK")
         result should have(
           httpStatus(OK),
-          pageTitleAgent(titleInternalServer)
+          pageTitleAgent(titleInternalServer, isErrorPage = true)
         )
       }
     }
@@ -179,7 +179,7 @@ class PaymentAllocationsControllerISpec extends ComponentSpecBase with FeatureSw
 
       result should have(
         httpStatus(INTERNAL_SERVER_ERROR),
-        pageTitleAgent(titleInternalServer)
+        pageTitleAgent(titleInternalServer, isErrorPage = true)
       )
     }
   }

@@ -27,11 +27,15 @@ agent.client_relationship_failure.enter_different_details       = Gwirio cleient
 # Agent Base
 agent.base.service_name                                         = Treth Incwm fanylion eich cleient
 
-# Page Titles
+# Header
+header.serviceName                                             = Rheoli’ch diweddariadau Treth Incwm
+agent.header.serviceName                                       = Rheoli diweddariadau Treth Incwm eich cleient
+
+# HTML Titles
 titlePattern.serviceName.govUk                                  = Rheoli’ch diweddariadau Treth Incwm
-agent.titlePattern.serviceName.govUk                            = Rheoli diweddariadau Treth Incwm eich cleient
-error.titlePattern.serviceName.govUk                            = Gwall: {0} - Rheoli’ch diweddariadau Treth Incwm
-agent.error.titlePattern.serviceName.govUk                      = Gwall: {0} - Rheoli diweddariadau Treth Incwm eich cleient
+htmlTitle.agent                                                 = Rheoli diweddariadau Treth Incwm eich cleient
+htmlTitle.inputError                                            = Gwall: {0} - GOV.UK
+
 
 ## Agent - UTR Error
 agent.utr_error.heading                                         = Ni allwch fwrw golwg dros y cleient hwn
@@ -45,7 +49,6 @@ agent.utr_error.go_back                                         = Nodwch UTR ara
 agent-error.heading                                            = Ni allwch ddefnyddio’r gwasanaeth hwn ar hyn o bryd
 agent-error.note                                               = I ddefnyddio’r gwasanaeth hwn, mae’n rhaid i chi sefydlu
 agent-error.link                                               = cyfrif gwasanaethau asiant
-
 
 ## Custom Error Page ##
 error.custom.heading                                          = Mae problem wedi codi
@@ -151,6 +154,7 @@ tax-year-summary.heading-secondary                             = 6 Ebrill {0} i 
 tax-year-summary.calculation-date                              = Dyddiad y cyfrifiad
 tax-year-summary.total-due                                     = Cyfanswm y bil treth
 tax-year-summary.calc-from-last-time                           = Nid dyma’ch bil treth terfynol – mae’n seiliedig ar ffigurau rydym eisoes wedi’u cael yn unig.
+tax-year-summary.agent.calc-from-last-time                     = Nid dyma fil treth terfynol eich cleient – mae’n seiliedig ar ffigurau rydym eisoes wedi’u cael yn unig.
 tax-year-summary.calc-estimate-info                            = Mae hyn yn amcangyfrif ar gyfer y flwyddyn hyd yn hyn sy’n seiliedig ar ffigurau sydd gennym eisoes.
 tax-year-summary.tax-calculation                               = Cyfrifiad
 tax-year-summary.payments.paymentUnderReview                   = Taliad dan adolygiad
@@ -182,7 +186,7 @@ tax-year-summary.forecast_total_title                          = Rhagolwg 6 Ebri
 ## Tax Year Summary Page new ##
 tax-year-summary.tax-calculation.no-calc                       = Dim cyfrifiad eto
 tax-year-summary.tax-calculation.no-calc.note                  = Byddwch yn gallu gweld eich cyfrifiad blwyddyn dreth ddiweddaraf yma unwaith y byddwch wedi anfon diweddariad.
-tax-year-summary.tax-calculation.date                          = Cyfrifiad 6 Ebrill {0} i 5 Ionawr {1}
+tax-year-summary.tax-calculation.date                          = {0} i {1}
 tax-year-summary.tax-calculation.unattended-calc               = Rydym wedi diweddaru’r cyfrifiad i chi. Gwiriwch eich meddalwedd cadw cofnodion am ragor o fanylion.
 
 
@@ -551,7 +555,9 @@ paymentDue.due                                                  = ddyledus
 
 ## What you owe
 whatYouOwe.heading                                              = Yr hyn sydd arnoch
+whatYouOwe.heading-agent                                        = Yr hyn sydd ar eich cleient
 whatYouOwe.no-payments-due                                      = Nid oes gennych taliadau sy’n ddyledus.
+whatYouOwe.no-payments-due-agent                                = Nid oes gan eich cleient daliadau sy’n ddyledus.
 whatYouOwe.sa-note                                              = Mae gennych daliadau’n ddyledus o hyd ar gyfer eich blynyddoedd treth Hunanasesiad blaenorol. Er mwyn bwrw golwg dros y taliadau hyn sydd heb eu talu, mae angen i chi fynd i’ch
 whatYouOwe.sa-note-agent-1                                      = Mae’n bosibl y bydd gan eich cleient daliadau sy’n ddyledus o hyd ar gyfer blynyddoedd treth Hunanasesiad blaenorol
 whatYouOwe.sa-note-agent-2                                      = Er mwyn bwrw golwg dros flynyddoedd treth eich cleient cyn iddo gofrestru ar gyfer y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm, mae angen i chi fewngofnodi i’ch
@@ -588,16 +594,13 @@ whatYouOwe.cancelled-paye-sa.heading                            = Hunanasesiad T
 whatYouOwe.cancelled-paye-sa.line1                              = Rydych eisoes wedi cytuno i dalu peth o’ch treth hunanasesiad trwy eich cod treth TWE. Nid yw CThEM wedi gallu casglu’r holl daliadau hyn gennych, felly dyma’r dreth sy’n wedill y mae angen i chi ei thalu.
 whatYouOwe.payments-due                                         = Taliadau treth incwm
 whatYouOwe.payments-made                                        = Ynglŷn ag unrhyw daliadau a wnaed gennych:
-whatYouOwe.payments-made-bullet-1.1                             = gall cymryd hyd at 5 diwrnod gwaith i daliadau gael eu prosesu, yn dibynnu ar y
-whatYouOwe.payments-made-bullet-1.2                             = dull talu
-whatYouOwe.payments-made-bullet-1.3                             = rydych yn ei ddefnyddio
-whatYouOwe.payments-made-bullet-2                               = mae’n rhaid iddo ein cyrraedd erbyn y dyddiad cau – os bydd eich taliad yn hwyr, codir llog arnoch ac efallai y bydd yn rhaid i chi dalu cosb
+whatYouOwe.payments-made-agent                                  = O ran unrhyw daliadau a wneir gan eich cleient:
+whatYouOwe.payments-made-bullet-1.1                             = gall gymryd hyd at 5 diwrnod gwaith i daliadau gael eu prosesu, yn dibynnu ar y
+whatYouOwe.payments-made-bullet-1.2                             = dull talu rydych yn ei ddefnyddio
+whatYouOwe.payments-made-bullet-agent-1.2                       = dull talu mae’n ei ddefnyddio
+whatYouOwe.payments-made-bullet-2                               = mae’n rhaid i daliadau ein cyrraedd erbyn y dyddiad cau – os bydd y taliad yn hwyr, codir llog arnoch ac efallai y bydd yn rhaid i chi dalu cosb
+whatYouOwe.payments-made-bullet-agent-2                         = mae’n rhaid i daliadau ein cyrraedd erbyn y dyddiad cau – os bydd y taliad yn hwyr, codir llog ar eich cleient ac efallai y bydd yn rhaid iddo dalu cosb
 whatYouOwe.over-due                                             = YN HWYR
-whatYouOwe.payments-made                                        = Ynglŷn ag unrhyw daliadau a wnaed gennych:
-whatYouOwe.payments-made-bullet-1.1                             = gall cymryd hyd at 5 diwrnod gwaith i daliadau gael eu prosesu, yn dibynnu ar y
-whatYouOwe.payments-made-bullet-1.2                             = dull talu
-whatYouOwe.payments-made-bullet-1.3                             = rydych yn ei ddefnyddio
-whatYouOwe.payments-made-bullet-2                               = mae’n rhaid iddo ein cyrraedd erbyn y dyddiad cau – os bydd eich taliad yn hwyr, codir llog arnoch ac efallai y bydd yn rhaid i chi dalu cosb
 whatYouOwe.due-in-thirty-days-payments                          = Yn ddyledus cyn pen 30 diwrnod
 whatYouOwe.future-payments                                      = Taliadau yn y dyfodol
 whatYouOwe.payment-type.taxYear                                 = Blwyddyn dreth {0} i {1}
@@ -641,14 +644,19 @@ chargeSummary.paidToDate                                        = wedi'i dalu hy
 chargeSummary.remainingDue                                      = Yn weddill i dalu
 chargeSummary.whatYouOwe.textOne                                = Gweld
 chargeSummary.whatYouOwe.textTwo                                = i wirio a oes gennych unrhyw daliadau eraill sy'n ddyledus.
+chargeSummary.whatYouOwe.textOne-agent                          = Bwrw golwg dros
+chargeSummary.whatYouOwe.textTwo-agent							= i wirio a oes ganddo unrhyw daliadau eraill sy’n ddyledus.
 chargeSummary.whatYouOwe.linkText                               = yr hyn sy'n ddyledus gennych
+chargeSummary.whatYouOwe.linkText-agent							= yr hyn sydd ar eich cleient
 chargeSummary.overdue                                           = YN HWYR
 
 chargeSummary.payment-days-note                                    = Ynglŷn ag unrhyw daliadau a wnaed gennych:
-chargeSummary.payments-bullet1-1                                   = gall cymryd hyd at 5 diwrnod gwaith i daliadau gael eu prosesu, yn dibynnu ar y
-chargeSummary.payments-bullet1-2                                   = dull talu
-chargeSummary.payments-bullet1-3                                   = rydych yn ei ddefnyddio
-chargeSummary.payments-bullet2                                     = mae’n rhaid iddo ein cyrraedd erbyn y dyddiad cau – os bydd eich taliad yn hwyr, codir llog arnoch ac efallai y bydd yn rhaid i chi dalu cosb
+chargeSummary.payments-bullet1-1                                   = gall gymryd hyd at 5 diwrnod gwaith i daliadau gael eu prosesu, yn dibynnu ar y
+chargeSummary.payments-bullet1-2                                   = dull talu rydych yn ei ddefnyddio
+chargeSummary.payments-bullet2                                     = mae’n rhaid i daliadau ein cyrraedd erbyn y dyddiad cau – os bydd y taliad yn hwyr, codir llog arnoch ac efallai y bydd yn rhaid i chi dalu cosb
+chargeSummary.payment-days-note-agent                              = O ran unrhyw daliadau a wneir gan eich cleient:
+chargeSummary.payments-bullet1-2-agent                             = dull talu mae’n ei ddefnyddio
+chargeSummary.payments-bullet2-agent                               = mae’n rhaid i daliadau ein cyrraedd erbyn y dyddiad cau – os bydd y taliad yn hwyr, codir llog ar eich cleient ac efallai y bydd yn rhaid iddo dalu cosb
 
 chargeSummary.lpi.paymentOnAccount1.text						   = Llog am dalu’n hwyr ar gyfer taliad ar gyfrif 1 o2
 chargeSummary.lpi.paymentOnAccount2.text						   = Llog am dalu’n hwyr ar gyfer taliad ar gyfrif 2 o2
@@ -814,14 +822,14 @@ paymentAllocation.date                                          = Dyddiad
 paymentAllocation.amount                                        = Swm
 paymentAllocation.info                                          = Caiff taliadau eu dyrannu’n gyntaf i gosbau a blynyddoedd treth cynharach, yna’r flwyddyn dreth bresennol a blynyddoedd treth yn y dyfodol.
 paymentAllocation.tableSection.heading                          = Dyraniadau taliad
-paymentAllocation.tableHead.allocation                          = Dyrannu taliad
-paymentAllocation.tableHead.allocated-date                      = Dyddiad dyrannu
+paymentAllocation.tableHead.allocation                          = Ble aeth eich arian
+paymentAllocation.tableHead.allocated-date                      = Dyddiad
 paymentAllocation.tableHead.amount                              = Swm
 paymentAllocation.taxYear										= Blwyddyn dreth {0} i {1}
 paymentAllocation.creditOnAccount                               = Credyd ar gyfrif
 paymentAllocation.na                                            = Amh
 paymentAllocation.moneyOnAccount                                = Arian yn eich cyfrif
-
+paymentAllocation.moneyOnAccount.agent                          = Arian yng nghyfrif eich cleient
 paymentAllocation.paymentAllocations.poa1.incomeTax             = Treth Incwm ar gyfer taliad ar gyfrif 1 o 2
 paymentAllocation.paymentAllocations.poa1.nic4                  = Yswiriant Gwladol Dosbarth 4 ar gyfer taliad ar gyfrif 1 o 2
 paymentAllocation.paymentAllocations.poa2.incomeTax             = Treth Incwm ar gyfer taliad ar gyfrif 2 o 2
@@ -866,6 +874,10 @@ inYear-tax-overview.agent.inset                                  = Mae’r cyfri
 ## credits and refunds
 credit-and-refund.subHeading.has-credits-1                        = Mae cyfanswm o
 credit-and-refund.subHeading.has-credits-2                        = yn eich cyfrif:
+credit-and-refund.subHeading.unallocated-credits-one-payment-1    = Mae cyfanswm o
+credit-and-refund.subHeading.unallocated-credits-one-payment-2    = yn eich cyfrif yn sgil taliad a wnaed ar
+credit-and-refund.subHeading.unallocated-credits-single-credit-1  = Mae cyfanswm o
+credit-and-refund.subHeading.unallocated-credits-single-credit-2  = yn eich cyfrif yn sgil
 credit-and-refund.heading                                         = Hawlio ad-daliad
 credit-and-refund.claim-refund-btn                                = Hawlio ad-daliad
 credit-and-refund.bullet-text-intro                               = Yr hyn y gallwch ei wneud

@@ -22,6 +22,7 @@
 @import views.html.partials.paymentAllocations._
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import enums.GatewayPage._
+@import java.time.LocalDate
 
 
 @this(mainTemplate: unifiedLayout,
@@ -38,8 +39,8 @@
 
 @(paymentAllocations: models.paymentAllocationCharges.PaymentAllocationViewModel, backUrl: String, saUtr: Option[String],
     CutOverCreditsEnabled: Boolean, isAgent: Boolean = false, btaNavPartial: Option[Html] = None,
-    origin: Option[String] = None, gatewayPage: Option[GatewayPage] = None, creditsRefundsRepayEnabled: Boolean = true)(
-    implicit request: Request[_], messages: Messages)
+    origin: Option[String] = None, gatewayPage: Option[GatewayPage] = None, creditsRefundsRepayEnabled: Boolean = true,
+    dueDate: Option[LocalDate], outstandingAmount: Option[BigDecimal])(implicit request: Request[_], messages: Messages)
 @import implicitDateFormatter._
 
 @paymentAllocationInset = {
@@ -108,6 +109,6 @@
             } else {
                 @paymentAllocationsForNonLpi(paymentAllocations, isAgent)
             }
-            @paymentAllocationsCreditAmount(paymentAllocations, creditsRefundsRepayEnabled, isAgent)
+            @paymentAllocationsCreditAmount(outstandingAmount, dueDate, creditsRefundsRepayEnabled, isAgent)
         </table> }
 }

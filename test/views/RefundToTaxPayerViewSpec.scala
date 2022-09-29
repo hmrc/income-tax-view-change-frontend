@@ -35,8 +35,8 @@ class RefundToTaxPayerViewSpec extends ViewSpec with ImplicitDateFormatter {
   object RefundToTaxPayerMessages {
     val heading: String = messages("refund-to-taxpayer.heading")
     val title: String = messages("titlePattern.serviceName.govUk", heading)
-    val agentTitle: String = messages("agent.titlePattern.serviceName.govUk", heading)
-    val titleWhenAgentView: String = messages("agent.titlePattern.serviceName.govUk", heading)
+    val agentTitle: String = messages("htmlTitle.agent", heading)
+    val titleWhenAgentView: String = messages("htmlTitle.agent", heading)
 
     val tableHeadEstimatedDate: String = messages("refund-to-taxpayer.tableHead.estimated-date")
     val tableHeadMethod: String = messages("refund-to-taxpayer.tableHead.method")

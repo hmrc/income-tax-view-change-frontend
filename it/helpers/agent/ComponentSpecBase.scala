@@ -54,7 +54,6 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
   implicit val lang: Lang = Lang("GB")
   val messagesAPI: MessagesApi = app.injector.instanceOf[MessagesApi]
 
-
   def config: Map[String, String] = Map(
     "play.filters.csrf.header.bypassHeaders.Csrf-Token" -> "nocheck",
     "microservice.services.auth.host" -> mockHost,
@@ -177,7 +176,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
       getWithClientDetailsInSession("/agents/claim-refund", additionalCookies)
 
     def getPaymentsDue(additionalCookies: Map[String, String] = Map.empty): WSResponse =
-      getWithClientDetailsInSession("/agents/what-you-owe", additionalCookies)
+      getWithClientDetailsInSession("/agents/what-your-client-owes", additionalCookies)
 
     def getTaxYearSummary(taxYear: Int)(additionalCookies: Map[String, String] = Map.empty): WSResponse =
       getWithClientDetailsInSession(s"/agents/tax-year-summary/$taxYear", additionalCookies)

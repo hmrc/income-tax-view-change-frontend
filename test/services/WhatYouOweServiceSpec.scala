@@ -17,12 +17,13 @@
 package services
 
 import auth.MtdItUser
+import config.featureswitch.FeatureSwitch.switches
 import config.featureswitch.{CodingOut, FeatureSwitching, MFACreditsAndDebits}
 import connectors.IncomeTaxViewChangeConnector
 import models.financialDetails._
 import models.outstandingCharges.{OutstandingChargesErrorModel, OutstandingChargesModel}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{reset, when}
 import play.api.test.FakeRequest
 import testConstants.BaseTestConstants.{testMtditid, testNino, testRetrievedUserName}
 import testConstants.FinancialDetailsTestConstants._
@@ -45,6 +46,16 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
     userType = Some("Individual"),
     None
   )(FakeRequest())
+
+
+  def disableAllSwitches() : Unit = {
+    switches.foreach(switch => disable(switch))
+  }
+
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    disableAllSwitches
+  }
 
   val mockFinancialDetailsService: FinancialDetailsService = mock[FinancialDetailsService]
   val mockIncomeTaxViewChangeConnector: IncomeTaxViewChangeConnector = mock[IncomeTaxViewChangeConnector]

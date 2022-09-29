@@ -16,6 +16,7 @@
 
 package config.featureswitch
 
+import config.featureswitch.FeatureSwitch.switches
 import testUtils.TestSupport
 
 class FeatureSwitchingSpec extends TestSupport with FeatureSwitching {
@@ -43,6 +44,7 @@ class FeatureSwitchingSpec extends TestSupport with FeatureSwitching {
       }
 
       "a feature is disabled" in new FoldSetup {
+        switches.foreach(switch => disable(switch))
         expectedDisabledFeatures.head.fold(
           ifEnabled = unexpectedBranch(),
           ifDisabled = expectedBranch()) shouldBe aValue

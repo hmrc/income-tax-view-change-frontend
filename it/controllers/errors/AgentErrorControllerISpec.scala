@@ -36,7 +36,7 @@ class AgentErrorControllerISpec extends ComponentSpecBase {
         Then("I can see the correct page")
         res should have(
           httpStatus(OK),
-          pageTitleAgent("agent-error.heading")
+          pageTitleAgent("agent-error.heading", isErrorPage = true)
         )
       }
     }

@@ -51,7 +51,7 @@ GET         /agents/payment-made-to-hmrc                                  contro
 
 #WhatYouOwe
 GET         /what-you-owe                                                 controllers.WhatYouOweController.show(origin: Option[String] ?= None)
-GET         /agents/what-you-owe                                          controllers.WhatYouOweController.showAgent
+GET         /agents/what-your-client-owes                                 controllers.WhatYouOweController.showAgent
 
 #Charge summary
 GET         /tax-years/:taxYear/charge                                    controllers.ChargeSummaryController.show(taxYear: Int, id: String, latePaymentCharge: Boolean ?= false, origin: Option[String] ?= None)

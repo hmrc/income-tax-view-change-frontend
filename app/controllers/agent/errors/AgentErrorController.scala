@@ -23,7 +23,7 @@ import controllers.predicates.agent.AgentAuthenticationPredicate.{defaultAgentPr
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import views.html.errorPages.AgentError
+import views.html.agent.errorPages.AgentError
 
 import scala.concurrent.{ExecutionContext, Future}
 

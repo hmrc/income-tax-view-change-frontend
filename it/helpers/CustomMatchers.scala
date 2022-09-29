@@ -21,6 +21,7 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import org.scalatest._
 import org.scalatest.matchers._
+import play.api.i18n.Messages.implicitMessagesProviderToMessages
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.json.Reads
 import play.api.libs.ws.WSResponse
@@ -86,13 +87,17 @@ trait CustomMatchers extends UnitSpec with GivenWhenThen {
       }
     }
 
-  def pageTitleAgent(messageKey: String, isError: Boolean = false): HavePropertyMatcher[WSResponse, String] =
+  def pageTitleAgent(messageKey: String, isInvalidInput: Boolean = false, isErrorPage: Boolean = false): HavePropertyMatcher[WSResponse, String] =
     new HavePropertyMatcher[WSResponse, String] {
 
-      def apply(response: WSResponse) = {
+      def apply(response: WSResponse): HavePropertyMatchResult[String] = {
         val body = Jsoup.parse(response.body)
-        val titlePattern: String = if (isError) "agent.error.titlePattern.serviceName.govUk" else "agent.titlePattern.serviceName.govUk"
-        val expectedTitle = messagesAPI(titlePattern, messagesAPI(messageKey))
+        val expectedTitle = (isInvalidInput, isErrorPage) match {
+          case (_, true) => messagesAPI("htmlTitle.errorPage", messagesAPI(messageKey))
+          case (true, _) => messagesAPI("htmlTitle.invalidInput", messagesAPI(messageKey))
+          case (_, _) => messagesAPI("htmlTitle.agent")
+        }
+
         Then(s"the page title should be '$expectedTitle'")
         HavePropertyMatchResult(
           body.title == expectedTitle,

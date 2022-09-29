@@ -16,6 +16,7 @@
 
 package controllers
 
+import config.featureswitch.FeatureSwitch.switches
 import config.featureswitch.{FeatureSwitching, MFACreditsAndDebits}
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
@@ -35,7 +36,6 @@ import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.BearerTokenExpired
 import uk.gov.hmrc.http.InternalServerException
 import views.html.CreditsSummary
-
 import scala.concurrent.Future
 
 
@@ -44,9 +44,14 @@ class CreditsSummaryControllerSpec extends TestSupport with MockCalculationServi
   with MockFinancialDetailsService with FeatureSwitching with MockItvcErrorHandler
   with MockNextUpdatesService with MockIncomeSourceDetailsPredicate with MockCreditHistoryService {
 
+  def disableAllSwitches() : Unit = {
+    switches.foreach(switch => disable(switch))
+  }
+
   override def beforeEach(): Unit = {
     super.beforeEach()
     reset(mockCreditService)
+    disableAllSwitches()
   }
 
   val creditsSummaryView: CreditsSummary = app.injector.instanceOf[CreditsSummary]
@@ -260,6 +265,7 @@ class CreditsSummaryControllerSpec extends TestSupport with MockCalculationServi
     "Called with an Authenticated HMRC-MTD-IT User" when {
       "provided with a negative tax year" should {
         "return Internal Service Error (500)" in {
+          enable(MFACreditsAndDebits)
           mockPropertyIncomeSource()
 
           val result = TestCreditsSummaryController.showCreditsSummary(calendarYear2018)(fakeRequestWithActiveSession)

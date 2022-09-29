@@ -52,7 +52,9 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
     crystallised = crystallised,
     unattendedCalc = unattendedCalc,
     forecastIncome = Some(12500),
-    forecastIncomeTaxAndNics = Some(5000.99)
+    forecastIncomeTaxAndNics = Some(5000.99),
+    periodFrom = Some(LocalDate.of(testYear-1,1,1)),
+    periodTo = Some(LocalDate.of(testYear,1,1))
   )
 
   val testDunningLockChargesList: List[DocumentDetailWithDueDate] = List(
@@ -180,16 +182,18 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
   object TaxYearSummaryMessages {
     val heading: String = messages("tax-year-summary.heading")
     val title: String = messages("titlePattern.serviceName.govUk", heading)
-    val agentTitle: String = messages("agent.titlePattern.serviceName.govUk", heading)
+    val agentTitle: String = messages("htmlTitle.agent", heading)
     val secondaryHeading: String = messages("tax-year-summary.heading-secondary", s"${testYear - 1}", s"$testYear")
     val calculationDate: String = messages("tax-year-summary.calculation-date")
     val calcDate: String = "1 January 2020"
     val estimate: String = s"6 April ${testYear - 1} to 1 January 2020 estimate"
     val totalDue: String = messages("tax-year-summary.total-due")
     val taxDue: String = "£4.04"
+    val calDateFrom:String = implicitDateFormatter.longDate(LocalDate.of(testYear-1,1,1)).toLongDate
+    val calDateTo:String = implicitDateFormatter.longDate(LocalDate.of(testYear,1,1)).toLongDate
     val calcDateInfo: String = messages("tax-year-summary.calc-from-last-time")
     val calcEstimateInfo: String = messages("tax-year-summary.calc-estimate-info")
-    val taxCalculation: String = messages("tax-year-summary.tax-calculation.date", s"${testYear - 1}", s"$testYear")
+    val taxCalculation: String = messages("tax-year-summary.tax-calculation.date",calDateFrom,calDateTo)
     val taxCalculationHeading: String = messages("tax-year-summary.tax-calculation")
     val taxCalculationTab: String = messages("tax-year-summary.tax-calculation")
     val taxCalculationNoData: String = messages("tax-year-summary.tax-calculation.no-calc")

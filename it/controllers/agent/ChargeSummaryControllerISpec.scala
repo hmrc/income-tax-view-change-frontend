@@ -31,6 +31,7 @@ import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.FinancialDetailsIntegrationTestConstants.financialDetailModelPartial
 import testConstants.IncomeSourceIntegrationTestConstants._
+import testConstants.messages.ChargeSummaryMessages
 import testConstants.messages.ChargeSummaryMessages.{codingOutInsetPara, codingOutMessage, notCurrentlyChargingInterest, paymentBreakdownHeading, underReview}
 
 import java.time.LocalDate
@@ -314,11 +315,34 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
 
         result should have(
           httpStatus(INTERNAL_SERVER_ERROR),
-          pageTitleAgent(titleInternalServer)
+          pageTitleAgent(titleInternalServer, isErrorPage = true)
         )
       }
     }
 
+    "load the page with any payments you make" in {
+      Given("I wiremock stub a successful Income Source Details response with property only")
+      stubAuthorisedAgentUser(authorised = true)
+      IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+
+      And("I wiremock stub a single financial transaction response")
+      IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(OK, testValidFinancialDetailsModelJson(10.34, 1.2,
+        dunningLock = twoDunningLocks, interestLocks = twoInterestLocks))
+
+      stubChargeHistorySuccess()
+
+
+      val result = IncomeTaxViewChangeFrontend.getChargeSummary(
+        "2018", "1040000124", clientDetailsWithConfirmation
+      )
+
+      Then("the result should have a HTTP status of OK (200) and load the correct page")
+      result should have(
+        httpStatus(OK),
+        pageTitleAgent("chargeSummary.paymentOnAccount1.text"),
+        elementTextBySelector("#payment-processing-bullets")(ChargeSummaryMessages.paymentprocessingbullet1Agent)
+      )
+    }
   }
 
   private def stubGetFinancialDetailsSuccess(chargeType1: Option[String] = Some("ITSA NI"),

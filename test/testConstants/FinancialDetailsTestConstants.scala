@@ -23,6 +23,7 @@ import testConstants.BaseTestConstants.{testErrorMessage, testErrorNotFoundStatu
 import models.financialDetails._
 import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
 import play.api.libs.json.{JsValue, Json}
+import testConstants.FinancialDetailsTestConstants.{documentDetailWithDueDateModel, financialDetail}
 
 import scala.math.BigDecimal
 
@@ -1185,4 +1186,44 @@ object FinancialDetailsTestConstants {
     outstandingChargesModel = Some(outstandingChargesDueInMoreThan30Days)
   )
 
+}
+
+object CreditAndRefundConstants {
+  def balanceDetailsModel(firstPendingAmountRequested: Option[BigDecimal] = Some(3.50),
+                          secondPendingAmountRequested: Option[BigDecimal] = Some(2.50),
+                          availableCredit: Option[BigDecimal] = Some(7.00),
+                          unallocatedCredit: Option[BigDecimal] = None): BalanceDetails = BalanceDetails(
+    balanceDueWithin30Days = 1.00,
+    overDueAmount = 2.00,
+    totalBalance = 3.00,
+    availableCredit = availableCredit,
+    firstPendingAmountRequested = firstPendingAmountRequested,
+    secondPendingAmountRequested = secondPendingAmountRequested,
+    unallocatedCredit
+  )
+
+  def documentDetailWithDueDateFinancialDetailListModel(outstandingAmount: Option[BigDecimal] = Some(-1400.0),
+                                                        dueDate: Option[LocalDate] = Some(LocalDate.of(2019, 5, 15)),
+                                                        originalAmount: Option[BigDecimal] = Some(1400.00),
+                                                        mainType: String = "SA Payment on Account 1"):
+  (DocumentDetailWithDueDate, FinancialDetail) = {
+    (documentDetailWithDueDateModel(
+      paymentLot = None,
+      outstandingAmount = outstandingAmount,
+      dueDate = dueDate,
+      originalAmount = originalAmount),
+      financialDetail(mainType = mainType))
+  }
+
+  def documentDetailWithDueDateFinancialDetailListModelMFA(outstandingAmount: Option[BigDecimal] = Some(BigDecimal(-1400.0))):
+  (DocumentDetailWithDueDate, FinancialDetail) = {
+    (documentDetailWithDueDateModel(
+      paymentLot = None,
+      paymentLotItem = None,
+      documentDescription = Some("TRM New Charge"),
+      outstandingAmount = outstandingAmount,
+      originalAmount = Some(BigDecimal(-2400.0))),
+      financialDetail(mainType = "ITSA Overpayment Relief")
+    )
+  }
 }

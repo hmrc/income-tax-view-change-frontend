@@ -56,6 +56,15 @@ class EnterClientsUTRController @Inject()(enterClientsUTR: EnterClientsUTR,
       )))
   }
 
+  def showWithUtr(utr: String): Action[AnyContent] = Authenticated.asyncWithoutClientAuth(notAnAgentPredicate) { implicit request =>
+    implicit user =>
+      val utrSafe = utr.filter(_.isDigit).take(10)
+      Future.successful(Ok(enterClientsUTR(
+        clientUTRForm = ClientsUTRForm.form.fill(utrSafe),
+        postAction = routes.EnterClientsUTRController.submit()
+      )))
+  }
+
   def submit: Action[AnyContent] = Authenticated.asyncWithoutClientAuth() { implicit request =>
     implicit user =>
       ClientsUTRForm.form.bindFromRequest.fold(

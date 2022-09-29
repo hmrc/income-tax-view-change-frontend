@@ -25,7 +25,7 @@
 
 @(pageTitle: String, heading: String, message: String, isAgent: Boolean)(implicit request : Request[_], messages: Messages)
 
-@mainTemplate(pageTitle = pageTitle, isAgent = isAgent) {
+@mainTemplate(pageTitle = pageTitle, isAgent = isAgent, isErrorPage = true) {
 
      @h1(msg = heading)
      @p(message)

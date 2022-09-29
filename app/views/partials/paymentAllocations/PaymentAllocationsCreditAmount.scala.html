@@ -19,11 +19,12 @@
 @import exceptions.MissingFieldException
 @import models.paymentAllocationCharges._
 @import views.html.components.link
+@import java.time.LocalDate
 
 @this(implicitDateFormatter: ImplicitDateFormatterImpl,
     link: link)
 
-@(paymentAllocations: models.paymentAllocationCharges.PaymentAllocationViewModel, creditsRefundsRepayEnabled: Boolean,
+@(outstandingAmount: Option[BigDecimal], dueDate: Option[LocalDate], creditsRefundsRepayEnabled: Boolean,
     isAgent: Boolean = false)(implicit messages: Messages)
 @import implicitDateFormatter._
 
@@ -34,21 +35,36 @@
 
 @getLink = @{
     if (creditsRefundsRepayEnabled) {
-        link(id = Some("money-on-account-link"), link = creditAndRefundUrl, messageKey = "paymentAllocation.moneyOnAccount")
+        if(isAgent) {
+            link(id = Some("money-on-account-link"), link = creditAndRefundUrl, messageKey = "paymentAllocation.moneyOnAccount.agent")
+        }
+        else {
+            link(id = Some("money-on-account-link"), link = creditAndRefundUrl, messageKey = "paymentAllocation.moneyOnAccount")
+        }
+
     } else {
-        messages("paymentAllocation.moneyOnAccount")
+        if(isAgent) {
+            messages("paymentAllocation.moneyOnAccount.agent")
+        }
+        else {
+            messages("paymentAllocation.moneyOnAccount")
+        }
     }
 }
 
-@paymentAllocations.paymentAllocationChargeModel.documentDetails.head.outstandingAmount.map { outstandingAmount =>
-    @if(outstandingAmount != 0) {
+
+
+@outstandingAmount.map { amount =>
+    @if(amount != 0) {
          <tbody class="govuk-table__body">
                <tr id="money-on-account">
                    <td class="govuk-table__cell">
                        @getLink
                    </td>
-                   <td class="govuk-table__cell">@messages("paymentAllocation.na")</td>
-                   <td class="govuk-table__cell">@{outstandingAmount.abs.toCurrencyString}</td>
+                   <td class="govuk-table__cell">
+                       @{dueDate.getOrElse(throw MissingFieldException("Due Date")).toLongDateShort}
+                   </td>
+                   <td class="govuk-table__cell">@{amount.abs.toCurrencyString}</td>
                </tr>
          </tbody>
     }

@@ -173,7 +173,7 @@ class ForecastIncomeSummaryControllerSpec extends TestSupport with MockCalculati
         }
 
         "render the IncomeBreakdown page" in {
-          document.title() shouldBe messages("agent.titlePattern.serviceName.govUk", "Page not found - 404")
+          document.title() shouldBe messages("htmlTitle.errorPage", "Page not found - 404")
         }
       }
     }
@@ -206,7 +206,7 @@ class ForecastIncomeSummaryControllerSpec extends TestSupport with MockCalculati
         }
 
         "render the IncomeBreakdown page" in {
-          document.title() shouldBe messages("agent.titlePattern.serviceName.govUk", messages("forecast_income.heading"))
+          document.title() shouldBe messages("htmlTitle.agent", messages("forecast_income.heading"))
           contentAsString(result) shouldBe expectedContent
         }
       }

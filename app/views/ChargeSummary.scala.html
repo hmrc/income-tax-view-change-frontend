@@ -100,14 +100,24 @@
 
 @paymentProcessingInfo = {
     @p(id = Some("payment-days-note")){
-        @messages("chargeSummary.payment-days-note")
+        @if(isAgent) {
+            @messages("chargeSummary.payment-days-note-agent")
+        } else {
+            @messages("chargeSummary.payment-days-note")
+        }
     }
     <ul class="govuk-list govuk-list--bullet" id="payment-processing-bullets">
-        <li>@messages("chargeSummary.payments-bullet1-1")
-            @link(link = "https://www.gov.uk/pay-self-assessment-tax-bill", messageKey = "chargeSummary.payments-bullet1-2", target = Some("_blank"), rel=Some("noreferrer noopener"))
-            @messages("chargeSummary.payments-bullet1-3")
-        </li>
-        <li>@messages("chargeSummary.payments-bullet2")</li>
+        @if(isAgent) {
+            <li>@messages("chargeSummary.payments-bullet1-1")
+                @link(link = "https://www.gov.uk/pay-self-assessment-tax-bill", messageKey = "chargeSummary.payments-bullet1-2-agent", target = Some("_blank"), rel=Some("noreferrer noopener"))
+            </li>
+            <li>@messages("chargeSummary.payments-bullet2-agent")</li>
+        } else {
+            <li>@messages("chargeSummary.payments-bullet1-1")
+                @link(link = "https://www.gov.uk/pay-self-assessment-tax-bill", messageKey = "chargeSummary.payments-bullet1-2", target = Some("_blank"), rel=Some("noreferrer noopener"))
+            </li>
+            <li>@messages("chargeSummary.payments-bullet2")</li>
+        }
     </ul>
 }
 
@@ -232,15 +242,26 @@
 
     @if(hasInterestLocks && hasAccruedInterest) {
         @p(id=Some("p-interest-locks-msg")){
-            @messages("chargeSummary.whatYouOwe.textOne")
-            @link(link = whatYouOweUrl, messageKey = "chargeSummary.whatYouOwe.linkText")
+            @if(isAgent) {
+                @messages("chargeSummary.whatYouOwe.textOne-agent")
+                @link(link = whatYouOweUrl, messageKey = "chargeSummary.whatYouOwe.linkText-agent")
+            } else {
+                @messages("chargeSummary.whatYouOwe.textOne")
+                @link(link = whatYouOweUrl, messageKey = "chargeSummary.whatYouOwe.linkText")
+            }
             @messages("chargeSummary.interestLocks.text")
         }
     } else {
         @p(){
-            @messages("chargeSummary.whatYouOwe.textOne")
-            <a class="govuk-link" href="@whatYouOweUrl">@messages("chargeSummary.whatYouOwe.linkText")</a>
-            @messages("chargeSummary.whatYouOwe.textTwo")
+            @if(isAgent) {
+                @messages("chargeSummary.whatYouOwe.textOne-agent")
+                <a class="govuk-link" href="@whatYouOweUrl">@messages("chargeSummary.whatYouOwe.linkText-agent")</a>
+                @messages("chargeSummary.whatYouOwe.textTwo-agent")
+            } else {
+                @messages("chargeSummary.whatYouOwe.textOne")
+                <a class="govuk-link" href="@whatYouOweUrl">@messages("chargeSummary.whatYouOwe.linkText")</a>
+                @messages("chargeSummary.whatYouOwe.textTwo")
+            }
         }
     }
 
