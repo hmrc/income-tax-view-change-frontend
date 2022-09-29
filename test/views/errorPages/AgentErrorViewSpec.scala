@@ -18,36 +18,40 @@ package views.errorPages
 
 import play.twirl.api.Html
 import testUtils.ViewSpec
-import views.html.errorPages.AgentError
+import views.html.agent.errorPages.AgentError
 
 class AgentErrorViewSpec extends ViewSpec {
 
-  val setupAccountLink: String = s"${messages("agent-error.link")}${messages("pagehelp.opensInNewTabText")}"
-  val notAnAgentNote: String = s"${messages("agent-error.note")} $setupAccountLink."
+  object AgentErrorMessages {
+    val heading: String = messages("agent-error.heading")
+    val title: String = messages("htmlTitle.errorPage", messages("agent-error.heading"))
+    val setupAccountLink: String = s"${messages("agent-error.link")}${messages("pagehelp.opensInNewTabText")}"
+    val notAnAgentNote: String = s"${messages("agent-error.note")} $setupAccountLink."
+  }
 
   def agentErrorView: Html = app.injector.instanceOf[AgentError].apply()
 
   "The Agent Error page" should {
 
-    s"have the title: ${messages("agent.titlePattern.serviceName.govUk", messages("agent-error.heading"))}" in new Setup(agentErrorView) {
-      document.title shouldBe messages("agent.titlePattern.serviceName.govUk", messages("agent-error.heading"))
+    s"have the title: ${AgentErrorMessages.heading}" in new Setup(agentErrorView) {
+      document.title shouldBe AgentErrorMessages.title
     }
 
-    s"have the heading: ${messages("agent-error.heading")}" in new Setup(agentErrorView) {
-      document hasPageHeading messages("agent-error.heading")
+    s"have the heading: ${AgentErrorMessages.heading}" in new Setup(agentErrorView) {
+      document hasPageHeading AgentErrorMessages.heading
     }
 
     "not have a back link" in new Setup(agentErrorView) {
       document doesNotHave Selectors.backLink
     }
 
-    s"have a paragraph stating: $notAnAgentNote" in new Setup(agentErrorView) {
-      layoutContent.select(Selectors.p).text shouldBe notAnAgentNote
+    s"have a paragraph stating: ${AgentErrorMessages.notAnAgentNote}" in new Setup(agentErrorView) {
+      layoutContent.select(Selectors.p).text shouldBe AgentErrorMessages.notAnAgentNote
     }
 
-    s"have a link in the paragraph: $setupAccountLink" in new Setup(agentErrorView) {
+    s"have a link in the paragraph: ${AgentErrorMessages.setupAccountLink}" in new Setup(agentErrorView) {
       layoutContent.selectFirst(Selectors.p)
-        .hasCorrectLink(setupAccountLink, "https://www.gov.uk/guidance/get-an-hmrc-agent-services-account")
+        .hasCorrectLink(AgentErrorMessages.setupAccountLink, "https://www.gov.uk/guidance/get-an-hmrc-agent-services-account")
     }
 
     s"have a sign out button stating: ${messages("base.sign-out")}" in new Setup(agentErrorView) {

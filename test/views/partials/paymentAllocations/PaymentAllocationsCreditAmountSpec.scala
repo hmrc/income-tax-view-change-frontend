@@ -26,6 +26,8 @@ import testConstants.PaymentAllocationsTestConstants.{paymentAllocationChargesMo
 import testUtils.TestSupport
 import views.html.partials.paymentAllocations.PaymentAllocationsCreditAmount
 
+import java.time.LocalDate
+
 
 class PaymentAllocationsCreditAmountSpec extends TestSupport {
 
@@ -33,7 +35,10 @@ class PaymentAllocationsCreditAmountSpec extends TestSupport {
 
   class Setup(isAgent: Boolean = false, creditsRefundsFSEnabled: Boolean = true) {
     val paymentAllocations = PaymentAllocationViewModel(paymentAllocationChargesModelWithCredit, Seq())
-    val html: HtmlFormat.Appendable = paymentAllocationsCreditAmount(paymentAllocations, creditsRefundsFSEnabled, isAgent)
+    val dueDate: Option[LocalDate] = paymentAllocations.paymentAllocationChargeModel.financialDetails.head.items.flatMap(_.head.dueDate)
+    val outstandingAmount: Option[BigDecimal] = paymentAllocations.paymentAllocationChargeModel.documentDetails.head.outstandingAmount
+
+    val html: HtmlFormat.Appendable = paymentAllocationsCreditAmount(outstandingAmount, dueDate, creditsRefundsFSEnabled, isAgent)
     val pageDocument: Document = Jsoup.parse("<table>" + contentAsString(html) + "</table>")
   }
 

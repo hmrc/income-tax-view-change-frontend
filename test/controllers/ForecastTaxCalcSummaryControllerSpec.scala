@@ -16,6 +16,7 @@
 
 package controllers
 
+import config.featureswitch.FeatureSwitch.switches
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import config.featureswitch.{FeatureSwitching, ForecastCalculation}
 import controllers.predicates.{NavBarFromNinoPredicate, NinoPredicate, SessionTimeoutPredicate}
@@ -55,6 +56,10 @@ class ForecastTaxCalcSummaryControllerSpec extends TestSupport with MockCalculat
     super.beforeEach()
   }
 
+  def disableAllSwitches() : Unit = {
+    switches.foreach(switch => disable(switch))
+  }
+
   "individual user" when {
     "show(taxYear) with forecast calculation fs disabled" when {
       lazy val result = TestForecastTaxCalcSummaryController.show(testTaxYear)(fakeRequestWithActiveSession)
@@ -62,17 +67,19 @@ class ForecastTaxCalcSummaryControllerSpec extends TestSupport with MockCalculat
 
       "given a tax year which can be found in ETMP" should {
         s"return Status $NOT_FOUND" in {
-          disable(ForecastCalculation)
+          disableAllSwitches()
           mockCalculationSuccessfulNew(testMtditid)
           status(result) shouldBe NOT_FOUND
         }
 
         "return HTML" in {
+          disableAllSwitches()
           contentType(result) shouldBe Some("text/html")
           charset(result) shouldBe Some("utf-8")
         }
 
         "render the Not Found page" in {
+          disableAllSwitches()
           document.title() shouldBe messages("titlePattern.serviceName.govUk", "Page not found - 404")
         }
       }
@@ -84,6 +91,7 @@ class ForecastTaxCalcSummaryControllerSpec extends TestSupport with MockCalculat
 
       "given a tax year which can be found in ETMP" should {
         s"return status $OK" in {
+          disableAllSwitches()
           enable(ForecastCalculation)
           mockCalculationSuccessfulNew(testMtditid)
           status(result) shouldBe OK
@@ -103,6 +111,7 @@ class ForecastTaxCalcSummaryControllerSpec extends TestSupport with MockCalculat
         lazy val result = TestForecastTaxCalcSummaryController.show(testTaxYear)(fakeRequestWithActiveSession)
 
         s"return status $INTERNAL_SERVER_ERROR" in {
+          disableAllSwitches()
           enable(ForecastCalculation)
           mockCalculationNotFoundNew(testMtditid)
           status(result) shouldBe INTERNAL_SERVER_ERROR
@@ -113,6 +122,7 @@ class ForecastTaxCalcSummaryControllerSpec extends TestSupport with MockCalculat
         lazy val result = TestForecastTaxCalcSummaryController.show(testTaxYear)(fakeRequestWithActiveSession)
 
         s"return status $INTERNAL_SERVER_ERROR" in {
+          disableAllSwitches()
           enable(ForecastCalculation)
           mockCalculationNotFoundNew(testMtditid)
           status(result) shouldBe INTERNAL_SERVER_ERROR
@@ -123,6 +133,7 @@ class ForecastTaxCalcSummaryControllerSpec extends TestSupport with MockCalculat
         lazy val result = TestForecastTaxCalcSummaryController.show(testTaxYear)(fakeRequestWithActiveSession)
 
         s"return status $INTERNAL_SERVER_ERROR" in {
+          disableAllSwitches()
           enable(ForecastCalculation)
           mockCalculationErrorNew(testMtditid)
           status(result) shouldBe INTERNAL_SERVER_ERROR
@@ -152,7 +163,7 @@ class ForecastTaxCalcSummaryControllerSpec extends TestSupport with MockCalculat
         }
 
         "return the forecast tax calc summary page" in {
-          document.title() shouldBe messages("agent.titlePattern.serviceName.govUk", "Page not found - 404")
+          document.title() shouldBe messages("htmlTitle.errorPage", "Page not found - 404")
         }
       }
     }
@@ -164,6 +175,7 @@ class ForecastTaxCalcSummaryControllerSpec extends TestSupport with MockCalculat
 
       "given a tax year which can be found in ETMP" should {
         s"return $OK" in {
+          disableAllSwitches()
           enable(ForecastCalculation)
           setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
           mockCalculationSuccessfulNew(testMtditidAgent)
@@ -176,7 +188,7 @@ class ForecastTaxCalcSummaryControllerSpec extends TestSupport with MockCalculat
         }
 
         "return the forecast tax calc summary page" in {
-          document.title() shouldBe messages("agent.titlePattern.serviceName.govUk", messages("forecast_taxCalc.heading"))
+          document.title() shouldBe messages("htmlTitle.agent", messages("forecast_taxCalc.heading"))
         }
       }
 
@@ -185,6 +197,7 @@ class ForecastTaxCalcSummaryControllerSpec extends TestSupport with MockCalculat
         lazy val result = TestForecastTaxCalcSummaryController.showAgent(testTaxYear)(fakeRequestConfirmedClient("AB123456C"))
 
         s"return status $INTERNAL_SERVER_ERROR" in {
+          disableAllSwitches()
           enable(ForecastCalculation)
           setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
           mockCalculationNotFoundNew(testMtditidAgent)
@@ -197,6 +210,7 @@ class ForecastTaxCalcSummaryControllerSpec extends TestSupport with MockCalculat
         lazy val result = TestForecastTaxCalcSummaryController.showAgent(testTaxYear)(fakeRequestConfirmedClient("AB123456C"))
 
         s"return status $INTERNAL_SERVER_ERROR" in {
+          disableAllSwitches()
           enable(ForecastCalculation)
           setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
           mockCalculationNotFoundNew(testMtditidAgent)
@@ -209,6 +223,7 @@ class ForecastTaxCalcSummaryControllerSpec extends TestSupport with MockCalculat
         lazy val result = TestForecastTaxCalcSummaryController.showAgent(testTaxYear)(fakeRequestConfirmedClient("AB123456C"))
 
         s"return status $INTERNAL_SERVER_ERROR" in {
+          disableAllSwitches()
           enable(ForecastCalculation)
           setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
           mockCalculationErrorNew(testMtditidAgent)

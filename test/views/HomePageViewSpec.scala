@@ -94,7 +94,7 @@ class HomePageViewSpec extends TestSupport {
   val nextPaymentDueDate: LocalDate = LocalDate.of(2019, 1, 31)
   val paymentDateLongDate = "31 January 2019"
   val multipleOverduePayments = s"${messages("home.updates.overdue.payments", "3")}"
-  val overdueMessage = s"! Warning ${messages("home.agent.overdue.message")}"
+  val overdueMessage = s"! Warning ${messages("home.overdue.message.dunningLock.false")}"
   val overdueMessageForDunningLocks = s"! Warning ${messages("home.overdue.message.dunningLock.true")}"
 
   class Setup(paymentDueDate: Option[LocalDate] = Some(nextPaymentDueDate), overDuePaymentsCount: Option[Int] = Some(0),

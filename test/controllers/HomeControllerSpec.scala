@@ -17,6 +17,8 @@
 package controllers
 
 import audit.mocks.MockAuditingService
+import config.featureswitch.FeatureSwitch.switches
+import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
 import mocks.MockItvcErrorHandler
@@ -28,7 +30,7 @@ import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{reset, when}
 import org.scalatest.BeforeAndAfterEach
 import play.api.http.Status
 import play.api.i18n.Lang
@@ -47,7 +49,8 @@ import uk.gov.hmrc.http.InternalServerException
 import java.time.{LocalDate, Month}
 import scala.concurrent.Future
 
-class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService with MockFrontendAuthorisedFunctions
+class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
+  with MockFrontendAuthorisedFunctions with FeatureSwitching
   with MockAuditingService with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate with BeforeAndAfterEach
   with MockItvcErrorHandler with MockNextUpdatesService with MockFinancialDetailsService with MockWhatYouOweService with Injecting {
 
@@ -63,7 +66,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
       outstandingChargesModel = Some(OutstandingChargesModel(List(OutstandingChargeModel("BCD", Some("2019-01-31"), 1.67, 2345))))
     )
   val homePageTitle = s"${messages("titlePattern.serviceName.govUk", messages("home.heading"))}"
-  val agentTitle = s"${messages("agent.titlePattern.serviceName.govUk", messages("home.agent.heading"))}"
+  val agentTitle = s"${messages("htmlTitle.agent", messages("home.agent.heading"))}"
 
   trait Setup {
     val mockDateService: DateService = mock[DateService]
@@ -104,8 +107,8 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
   val mockDateService: DateService = mock[DateService]
   val updateDateAndOverdueObligationsLPI: (LocalDate, Seq[LocalDate]) = (LocalDate.of(2021, Month.MAY, 15), Seq.empty[LocalDate])
   val javaMessagesApi: MessagesApi = inject[play.i18n.MessagesApi]
-  val overdueWarningMessageDunningLockTrue: String = javaMessagesApi.get(new i18n.Lang(lang), "home.overdue.message.dunningLock.true")
-  val overdueWarningMessageDunningLockFalse: String = javaMessagesApi.get(new i18n.Lang(lang), "home.overdue.message.dunningLock.false")
+  val overdueWarningMessageDunningLockTrue: String = javaMessagesApi.get(new i18n.Lang(lang), "home.agent.overdue.message.dunningLock.true")
+  val overdueWarningMessageDunningLockFalse: String = javaMessagesApi.get(new i18n.Lang(lang), "home.agent.overdue.message.dunningLock.false")
   val expectedOverDuePaymentsText = s"${messages("home.overdue.date")} 31 January 2019"
   val twoOverduePayments: String = messages("home.overdue.date.payment.count", "2")
 
@@ -132,10 +135,19 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
   )
   when(mockDateService.getCurrentDate) thenReturn LocalDate.now()
 
+  def disableAllSwitches() : Unit = {
+    switches.foreach(switch => disable(switch))
+  }
+
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    disableAllSwitches()
+  }
 
   "navigating to the home page" should {
     "return ok (200)" which {
       "there is a next payment due date to display" in new Setup {
+        disableAllSwitches()
         when(NextUpdatesService.getNextDeadlineDueDateAndOverDueObligations()(any(), any(), any())) thenReturn Future.successful(updateDateAndOverdueObligations)
         mockSingleBusinessIncomeSource()
         when(financialDetailsService.getAllUnpaidFinancialDetails(any(), any(), any()))
@@ -159,6 +171,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
       }
 
       "there is a next payment due date to display when getWhatYouOweChargesList contains overdue payment" in new Setup {
+        disableAllSwitches()
         when(NextUpdatesService.getNextDeadlineDueDateAndOverDueObligations()(any(), any(), any())) thenReturn Future.successful(updateDateAndOverdueObligations)
         mockSingleBusinessIncomeSource()
         when(financialDetailsService.getAllUnpaidFinancialDetails(any(), any(), any()))
@@ -175,6 +188,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
       }
 
       "display number of payments due when there are multiple payment due and dunning locks" in new Setup {
+        disableAllSwitches()
         when(NextUpdatesService.getNextDeadlineDueDateAndOverDueObligations()(any(), any(), any())) thenReturn Future.successful(updateDateAndOverdueObligations)
         mockSingleBusinessIncomeSource()
 
