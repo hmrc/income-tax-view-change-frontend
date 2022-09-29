@@ -25,7 +25,8 @@
 @import views.html.components._
 @import exceptions.MissingFieldException
 @import uk.gov.hmrc.govukfrontend.views.html.components._
-
+@import cats.instances.string._
+@import cats.syntax.eq._
 
 @this(
     mainTemplate: unifiedLayout,
@@ -66,7 +67,7 @@
 }
 
 @creditAndRefundRefundProgressHtml(amount: BigDecimal) = {
-    @if(messages.lang.language.toLowerCase().equals("cy")) {
+    @if(messages.lang.code === "cy") {
         <li>
             <p class="govuk-heading-s">
                 <span class="govuk-body">@messages("credit-and-refund.refundProgress-prt-1")</span>
@@ -88,11 +89,11 @@
 }
 
 @maybeBalancesDetails = @{
-    balance.getOrElse(throw MissingFieldException("Balance"))
+balance.getOrElse(throw MissingFieldException("Balance"))
 }
 
 @maybeAvailableCredit = @{
-    maybeBalancesDetails.availableCredit.getOrElse(throw MissingFieldException("Available Credit"))
+    maybeBalancesDetails.availableCredit.getOrElse(BigDecimal(0))
 }
 
 @mainTemplate(
@@ -150,7 +151,7 @@
                     </h2>
                 } else {
                     <h2 class="govuk-heading-s">@{
-                        maybeBalancesDetails.firstPendingAmountRequested.getOrElse(throw MissingFieldException("First Pending Amount")).toCurrency
+                        balance.get.firstPendingAmountRequested.getOrElse(throw MissingFieldException("First Pending Amount")).toCurrency
                     }
                         <span class="govuk-body"> @messages("credit-and-refund.subHeading.has-no-credits")</span>
                     </h2>
@@ -202,9 +203,9 @@
                     }
 
                     @{
-                        if(maybeBalancesDetails.firstPendingAmountRequested > maybeBalancesDetails.secondPendingAmountRequested){
-                            maybeBalancesDetails.firstPendingAmountRequested map { amount =>
-                                if(messages.lang.language.toLowerCase().equals("cy")){
+                        if(balance.get.firstPendingAmountRequested > balance.get.secondPendingAmountRequested){
+                            balance.get.firstPendingAmountRequested map { amount =>
+                                if(messages.lang.code === "cy"){
                                         <li>
                                         <p class="govuk-heading-s">
                                         <span class="govuk-body">{messages("credit-and-refund.refundProgress-prt-1")}</span>
@@ -223,20 +224,20 @@
                             }
                         }
                         else {
-                            maybeBalancesDetails.secondPendingAmountRequested map { amount =>
+                            balance.get.secondPendingAmountRequested map { amount =>
                                 creditAndRefundRefundProgressHtml(amount)
                             }
                         }
                     }
 
                     @{
-                        if(maybeBalancesDetails.firstPendingAmountRequested < maybeBalancesDetails.secondPendingAmountRequested){
-                            maybeBalancesDetails.firstPendingAmountRequested map { amount =>
+                        if(balance.get.firstPendingAmountRequested < balance.get.secondPendingAmountRequested){
+                            balance.get.firstPendingAmountRequested map { amount =>
                                 creditAndRefundRefundProgressHtml(amount)
                             }
                         }
                         else {
-                            maybeBalancesDetails.secondPendingAmountRequested map { amount =>
+                             balance.get.secondPendingAmountRequested map { amount =>
                                 creditAndRefundRefundProgressHtml(amount)
                             }
                         }
