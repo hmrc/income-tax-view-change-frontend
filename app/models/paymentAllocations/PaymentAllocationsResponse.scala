@@ -17,12 +17,13 @@
 package models.paymentAllocations
 
 import play.api.libs.json.{Format, Json}
+import java.time.LocalDate
 
 sealed trait PaymentAllocationsResponse
 
 case class PaymentAllocations(amount: Option[BigDecimal],
                               method: Option[String],
-                              transactionDate: Option[String],
+                              transactionDate: Option[LocalDate],
                               reference: Option[String],
                               allocations: Seq[AllocationDetail]) extends PaymentAllocationsResponse
 
