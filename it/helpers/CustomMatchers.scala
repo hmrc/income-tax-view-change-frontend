@@ -78,7 +78,6 @@ trait CustomMatchers extends UnitSpec with GivenWhenThen {
         val body = Jsoup.parse(response.body)
         val expectedTitle = (isInvalidInput, isErrorPage) match {
           case (_, true) => messagesAPI("htmlTitle.errorPage", messagesAPI(messageKey))
-          case (true, _) => messagesAPI("htmlTitle.invalidInput", messagesAPI(messageKey))
           case (_, _) => messagesAPI("titlePattern.serviceName.govUk")
         }
 
