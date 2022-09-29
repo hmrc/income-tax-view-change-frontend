@@ -433,7 +433,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
 
       result should have(
         httpStatus(INTERNAL_SERVER_ERROR),
-        pageTitleIndividual(titleInternalServer)
+        pageTitleIndividual(titleInternalServer, isErrorPage = true)
       )
     }
   }
