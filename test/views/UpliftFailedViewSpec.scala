@@ -28,6 +28,11 @@ class UpliftFailedViewSpec extends ViewSpec {
 
   "The Uplift Failed Error page" should {
 
+    s"have the title: ${messages("htmlTitle.errorPage", messages("upliftFailure.title"))}" in new Setup(upliftFailedView) {
+
+      document.title() shouldBe messages("htmlTitle.errorPage", messages("upliftFailure.title"))
+    }
+
     s"have the heading: ${messages("upliftFailure.title")}" in new Setup(upliftFailedView) {
 
       document hasPageHeading messages("upliftFailure.title")
