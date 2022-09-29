@@ -10,13 +10,13 @@ import play.sbt.routes.RoutesKeys
 
 val appName = "income-tax-view-change-frontend"
 
-val bootstrapPlayVersion      = "5.20.0"
-val govTemplateVersion        = "5.75.0-play-28"
-val playPartialsVersion       = "8.2.0-play-28"
-val playUiVersion             = "9.8.0-play-28"
+val bootstrapPlayVersion      = "5.22.0"
+val govTemplateVersion        = "5.78.0-play-28"
+val playPartialsVersion       = "8.3.0-play-28"
+val playUiVersion             = "9.11.0-play-28"
 val playFrontendHMRCVersion   = "3.15.0-play-28"
-val playLanguageVersion       = "5.1.0-play-28"
-val catsVersion               = "0.9.0"
+val playLanguageVersion       = "5.3.0-play-28"
+val catsVersion               = "2.8.0"
 
 val scalaTestPlusVersion      = "5.0.0"
 val pegdownVersion            = "1.6.0"
@@ -27,16 +27,20 @@ val wiremockVersion           = "2.26.1"
 
 val compile = Seq(
   ws,
+  // TODO Check where is this REPO
   "uk.gov.hmrc" %% "bootstrap-frontend-play-28" % bootstrapPlayVersion,
   "uk.gov.hmrc" %% "govuk-template" % govTemplateVersion,
   "uk.gov.hmrc" %% "play-ui" % playUiVersion,
   "uk.gov.hmrc" %% "play-partials" % playPartialsVersion,
   "org.typelevel" %% "cats" % catsVersion,
   "uk.gov.hmrc" %% "play-language" % playLanguageVersion,
-  "uk.gov.hmrc" %% "logback-json-logger" % "5.1.0",
-  "com.typesafe.play" %% "play-json-joda" % "2.6.10",
-  "uk.gov.hmrc" %% "mongo-lock" % "7.0.0-play-28",
-  "uk.gov.hmrc" %% "simple-reactivemongo" % "8.0.0-play-28",
+  "uk.gov.hmrc" %% "logback-json-logger" % "5.2.0",
+// TODO check if we using it ???
+//  "com.typesafe.play" %% "play-json-joda" % "2.9.0",
+    // TODO does this will be redundant ???
+  "uk.gov.hmrc" %% "mongo-lock" % "7.1.0-play-28",
+    // TODO this will be replaced with hmrc-mongo ver. 0.73.0 when this ticket is done https://jira.tools.tax.service.gov.uk/browse/MISUV-4047
+  "uk.gov.hmrc" %% "simple-reactivemongo" % "8.1.0-play-28",
   "uk.gov.hmrc" %% "play-frontend-hmrc" % playFrontendHMRCVersion
 )
 
@@ -86,7 +90,7 @@ lazy val microservice = Project(appName, file("."))
   .disablePlugins(JUnitXmlReportPlugin)
   .settings(playSettings : _*)
   .settings(scalaSettings: _*)
-  .settings(scalaVersion := "2.12.13")
+  .settings(scalaVersion := "2.13.8")
   .settings(publishingSettings: _*)
   .settings(scoverageSettings: _*)
   .settings(defaultSettings(): _*)
