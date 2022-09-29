@@ -20,6 +20,7 @@ package testConstants
 import models.liabilitycalculation._
 import models.liabilitycalculation.taxcalculation._
 import models.liabilitycalculation.viewmodels.{CapitalGainsTaxViewModel, TaxDeductedAtSourceViewModel, TaxDueSummaryViewModel}
+import java.time.LocalDate
 
 object NewCalcBreakdownUnitTestConstants {
 
@@ -35,7 +36,9 @@ object NewCalcBreakdownUnitTestConstants {
     metadata = Metadata(
       calculationTimestamp = None,
       crystallised = None,
-      calculationReason = calculationReason)
+      calculationReason = calculationReason,
+      periodFrom = None,
+      periodTo = None)
   )
 
   val liabilityCalculationModelSuccessful = LiabilityCalculationResponse(
@@ -268,13 +271,20 @@ object NewCalcBreakdownUnitTestConstants {
     metadata = Metadata(
       calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
       crystallised = Some(true),
-      calculationReason = Some("customerRequest"))
+      calculationReason = Some("customerRequest"),
+      periodFrom = Some(LocalDate.of(2018,1,1)),
+      periodTo = Some(LocalDate.of(2019,1,1))
+    )
   )
 
   val liabilityCalculationModelSuccessfulNotCrystallised = liabilityCalculationModelSuccessful.copy(metadata =
     Metadata(
       calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
-      crystallised = Some(false))
+      crystallised = Some(false),
+      periodFrom = Some(LocalDate.of(2018,1,1)),
+      periodTo = Some(LocalDate.of(2019,1,1))
+    )
+
   )
 
 

@@ -285,7 +285,11 @@
                     @messages("tax-year-summary.total-due")
                 } else {
                     @{
-                        messages("tax-year-summary.tax-calculation.date", s"${taxYear - 1}", s"$taxYear")
+                        if ( !model.periodFrom.isEmpty && !model.periodTo.isEmpty ){
+                            val calculationDateFrom = implicitDateFormatter.longDate(model.periodFrom.get).toLongDate
+                            val calculationDateTo = implicitDateFormatter.longDate(model.periodTo.get).toLongDate
+                            messages("tax-year-summary.tax-calculation.date", calculationDateFrom, calculationDateTo)
+                        }
                     }
                 }
                 </dt>
