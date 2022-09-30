@@ -30,7 +30,7 @@ import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino, testTaxYear}
 import testConstants.FinancialDetailsIntegrationTestConstants.financialDetailModelPartial
 import testConstants.IncomeSourceIntegrationTestConstants._
-import testConstants.messages.ChargeSummaryMessages.{codingOutInsetPara, codingOutMessage, lpiCreated, notCurrentlyChargingInterest, paymentBreakdownHeading, underReview}
+import testConstants.messages.ChargeSummaryMessages.{codingOutInsetPara, codingOutMessage, lpiCreated, notCurrentlyChargingInterest, paymentBreakdownHeading, paymentprocessingbullet1, underReview}
 
 import java.time.LocalDate
 
@@ -342,6 +342,32 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
         elementTextBySelector("#coding-out-message")(codingOutMessage(2017, 2018))
       )
     }
+
+    "load the page with any payments you make" in {
+      Given("I wiremock stub a successful Income Source Details response with property only")
+      IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
+
+      And("I wiremock stub a single financial transaction response")
+      IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(OK, testValidFinancialDetailsModelJson(10.34, 1.2,
+        dunningLock = twoDunningLocks, interestLocks = twoInterestLocks))
+
+      And("I wiremock stub a charge history response")
+      IncomeTaxViewChangeStub.stubChargeHistoryResponse(testMtditid, "1040000124")(OK, testChargeHistoryJson(testMtditid, "1040000124", 2500))
+
+      Given("the ChargeHistory feature switch is disabled")
+      disable(ChargeHistory)
+
+      val res = IncomeTaxViewChangeFrontend.getChargeSummary("2018", "1040000124")
+
+      verifyIncomeSourceDetailsCall(testMtditid)
+
+      Then("the result should have a HTTP status of OK (200) and load the correct page")
+      res should have(
+        httpStatus(OK),
+        pageTitleIndividual("chargeSummary.paymentOnAccount1.text"),
+        elementTextBySelector("#payment-processing-bullets")(paymentprocessingbullet1)
+      )
+    }
   }
 
   s"return $OK with correct page title and ChargeHistory FS is enabled and the charge history details API responds with a $NOT_FOUND" in {
@@ -407,7 +433,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
 
       result should have(
         httpStatus(INTERNAL_SERVER_ERROR),
-        pageTitleIndividual(titleInternalServer)
+        pageTitleIndividual(titleInternalServer, isErrorPage = true)
       )
     }
   }

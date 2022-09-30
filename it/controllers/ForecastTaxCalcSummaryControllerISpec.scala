@@ -43,7 +43,7 @@ class ForecastTaxCalcSummaryControllerISpec extends ComponentSpecBase {
 
         res should have (
           httpStatus(NOT_FOUND),
-          pageTitleIndividual("Page not found - 404")
+          pageTitleIndividual("Page not found - 404", isErrorPage = true)
         )
       }
     }

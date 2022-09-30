@@ -41,18 +41,24 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
   val whatYouOweTitle: String = messages("titlePattern.serviceName.govUk", messages("whatYouOwe.heading"))
   val whatYouOweHeading: String = messages("whatYouOwe.heading")
+  val whatYouOweAgentHeading: String = messages("whatYouOwe.heading-agent")
   val noPaymentsDue: String = messages("whatYouOwe.no-payments-due")
+  val noPaymentsAgentDue: String = messages("whatYouOwe.no-payments-due-agent")
   val saLink: String = s"${messages("whatYouOwe.sa-link")}${messages("pagehelp.opensInNewTabText")}"
   val saNote: String = s"${messages("whatYouOwe.sa-note")} $saLink."
+  val saNoteAgent: String = s"${messages("whatYouOwe.sa-note-agent-1")}. ${messages("whatYouOwe.sa-note-agent-2")} ${messages("whatYouOwe.sa-link-agent")}${messages("pagehelp.opensInNewTabText")}. ${messages("whatYouOwe.sa-note-agent-3")}"
   val osChargesNote: String = messages("whatYouOwe.outstanding-charges-note")
   val dropDownInfo: String = messages("whatYouOwe.dropdown.info")
   val paymentUnderReviewPara: String = s"${messages("whatYouOwe.dunningLock.text", s"${messages("whatYouOwe.dunningLock.link")}${messages("pagehelp.opensInNewTabText")}")}."
   val paymentType: String = messages("tax-year-summary.payments.payment-type")
   val taxYearSummary: String = messages("whatYouOwe.tableHead.tax-year-summary")
   val amountDue: String = messages("whatYouOwe.tableHead.amount-due")
-  val paymentProcessingBullet1: String = s"${messages("whatYouOwe.payments-made-bullet-1.1")} ${messages("whatYouOwe.payments-made-bullet-1.2")}${messages("pagehelp.opensInNewTabText")} ${messages("whatYouOwe.payments-made-bullet-1.3")}"
+  val paymentProcessingBullet1: String = s"${messages("whatYouOwe.payments-made-bullet-1.1")} ${messages("whatYouOwe.payments-made-bullet-1.2")}${messages("pagehelp.opensInNewTabText")}"
   val paymentProcessingBullet2: String = messages("whatYouOwe.payments-made-bullet-2")
+  val paymentProcessingBulletAgent1: String = s"${messages("whatYouOwe.payments-made-bullet-1.1")} ${messages("whatYouOwe.payments-made-bullet-agent-1.2")}${messages("pagehelp.opensInNewTabText")}"
+  val paymentProcessingBulletAgent2: String = messages("whatYouOwe.payments-made-bullet-agent-2")
   val paymentsMade: String = messages("whatYouOwe.payments-made")
+  val paymentsMadeAgent: String = messages("whatYouOwe.payments-made-agent")
   val poa1Text: String = messages("whatYouOwe.paymentOnAccount1.text")
   val latePoa1Text: String = messages("whatYouOwe.lpi.paymentOnAccount1.text")
   val poa2Text: String = messages("whatYouOwe.paymentOnAccount2.text")
@@ -1131,6 +1137,28 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
       "money in your account section with zero available credits" in new AgentSetup(charges = whatYouOweDataWithDataDueIn30Days()) {
         pageDocument.getElementById("money-in-your-account") shouldBe null
+      }
+    }
+
+    "should have payment processing bullets when there is multiple charge" in new AgentSetup(
+      charges = whatYouOweDataWithDataDueIn30Days(twoDunningLocks)) {
+
+      pageDocument.getElementById("payments-made").text shouldBe paymentsMadeAgent
+      val paymentProcessingBullet: Element = pageDocument.getElementById("payments-made-bullets")
+      paymentProcessingBullet.select("li").get(0).text shouldBe paymentProcessingBulletAgent1
+      paymentProcessingBullet.select("li").get(1).text shouldBe paymentProcessingBulletAgent2
+      pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
+      pageDocument.getElementById("sa-note-migrated").text shouldBe saNoteAgent
+
+    }
+
+    "the user has no charges" should {
+      s"have the title ${messages("agent.header.serviceName", messages("whatYouOwe.heading"))} and page header and notes" in new AgentSetup(charges = noChargesModel) {
+        pageDocument.title() shouldBe messages("agent.header.serviceName", messages("whatYouOwe.heading"))
+        pageDocument.selectFirst("h1").text shouldBe whatYouOweAgentHeading
+        pageDocument.getElementById("no-payments-due").text shouldBe noPaymentsAgentDue
+        pageDocument.getElementById("payments-due-note").selectFirst("a").text.contains(saNote)
+        pageDocument.getElementById("outstanding-charges-note-migrated").text shouldBe osChargesNote
       }
     }
   }

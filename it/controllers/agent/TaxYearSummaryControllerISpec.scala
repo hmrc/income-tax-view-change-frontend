@@ -636,7 +636,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
 
         result should have(
           httpStatus(INTERNAL_SERVER_ERROR),
-          pageTitleIndividual(titleTechError)
+          pageTitleIndividual(titleTechError, isErrorPage = true)
         )
 
       }

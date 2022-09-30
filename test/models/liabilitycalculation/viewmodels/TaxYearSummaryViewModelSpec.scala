@@ -19,6 +19,8 @@ package models.liabilitycalculation.viewmodels
 import testConstants.NewCalcBreakdownUnitTestConstants._
 import testUtils.UnitSpec
 
+import java.time.LocalDate
+
 class TaxYearSummaryViewModelSpec extends UnitSpec {
 
   "TaxYearSummaryViewModel model" when {
@@ -33,7 +35,9 @@ class TaxYearSummaryViewModelSpec extends UnitSpec {
           deductions = 0.0,
           totalTaxableIncome = 0,
           forecastIncome = None,
-          forecastIncomeTaxAndNics = None
+          forecastIncomeTaxAndNics = None,
+          periodFrom = None,
+          periodTo = None
         )
     }
 
@@ -49,7 +53,9 @@ class TaxYearSummaryViewModelSpec extends UnitSpec {
           deductions = 17500.99,
           totalTaxableIncome = 12500,
           forecastIncome = Some(12500),
-          forecastIncomeTaxAndNics = Some(5000.99)
+          forecastIncomeTaxAndNics = Some(5000.99),
+          periodFrom = Some(LocalDate.of(2018,1,1)),
+          periodTo = Some(LocalDate.of(2019,1,1))
         )
 
         TaxYearSummaryViewModel(liabilityCalculationModelSuccessful) shouldBe expectedTaxYearSummaryViewModel

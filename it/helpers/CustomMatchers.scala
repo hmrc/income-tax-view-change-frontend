@@ -71,12 +71,17 @@ trait CustomMatchers extends UnitSpec with GivenWhenThen {
       }
     }
 
-  def pageTitleIndividual(messageKey: String): HavePropertyMatcher[WSResponse, String] =
+  def pageTitleIndividual(messageKey: String, isInvalidInput: Boolean = false, isErrorPage: Boolean = false): HavePropertyMatcher[WSResponse, String] =
     new HavePropertyMatcher[WSResponse, String] {
 
       def apply(response: WSResponse) = {
         val body = Jsoup.parse(response.body)
-        val expectedTitle = messagesAPI("titlePattern.serviceName.govUk", messagesAPI(messageKey))
+        val expectedTitle = (isInvalidInput, isErrorPage) match {
+          case (false, true) => messagesAPI("htmlTitle.errorPage", messagesAPI(messageKey))
+          case (true, false) => messagesAPI("htmlTitle.invalidInput", messagesAPI(messageKey))
+          case (_, _) => messagesAPI("titlePattern.serviceName.govUk")
+        }
+
         Then(s"the page title should be '$expectedTitle'")
         HavePropertyMatchResult(
           body.title == expectedTitle,
@@ -93,8 +98,8 @@ trait CustomMatchers extends UnitSpec with GivenWhenThen {
       def apply(response: WSResponse): HavePropertyMatchResult[String] = {
         val body = Jsoup.parse(response.body)
         val expectedTitle = (isInvalidInput, isErrorPage) match {
-          case (_, true) => messagesAPI("htmlTitle.errorPage", messagesAPI(messageKey))
-          case (true, _) => messagesAPI("htmlTitle.invalidInput", messagesAPI(messageKey))
+          case (false, true) => messagesAPI("htmlTitle.errorPage", messagesAPI(messageKey))
+          case (true, false) => messagesAPI("htmlTitle.invalidInput", messagesAPI(messageKey))
           case (_, _) => messagesAPI("htmlTitle.agent")
         }
 

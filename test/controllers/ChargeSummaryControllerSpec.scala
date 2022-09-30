@@ -97,6 +97,8 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
   val paymentBreakdownHeading: String = messages("chargeSummary.paymentBreakdown.heading")
   val paymentHistoryHeading: String = messages("chargeSummary.chargeHistory.heading")
   val lateInterestSuccessHeading = s"Tax year 6 April 2017 to 5 April 2018 ${messages("chargeSummary.lpi.paymentOnAccount1.text")}"
+  val paymentprocessingbullet1: String = s"${messages("chargeSummary.payments-bullet1-1")} ${messages("chargeSummary.payments-bullet1-2")}${messages("pagehelp.opensInNewTabText")} ${messages("chargeSummary.payments-bullet2")}"
+  val paymentprocessingbullet1Agent: String = s"${messages("chargeSummary.payments-bullet1-1")} ${messages("chargeSummary.payments-bullet1-2-agent")}${messages("pagehelp.opensInNewTabText")} ${messages("chargeSummary.payments-bullet2-agent")}"
 
   "The ChargeSummaryController for Individuals" should {
 
@@ -227,6 +229,16 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
         JsoupParse(result).toHtmlDocument.select("main h2").text() shouldBe s"$dunningLocksBannerHeading $paymentBreakdownHeading"
       }
 
+      "display any payments you make" in new Setup(
+        financialDetailsModel()) {
+        disable(ChargeHistory)
+        disable(PaymentAllocation)
+        val result: Future[Result] = controller.show(testTaxYear, "1040000123")(fakeRequestWithActiveSession)
+
+        status(result) shouldBe Status.OK
+        JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe successHeading
+        JsoupParse(result).toHtmlDocument.select("#payment-processing-bullets").text() shouldBe s"$paymentprocessingbullet1"
+      }
     }
 
     "load an error page" when {
@@ -291,6 +303,17 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
 
         status(result) shouldBe Status.SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.agent.errors.routes.AgentNotFoundDocumentIDLookupController.show().url)
+      }
+
+      "display any payments you make with contents for agent" in new Setup(
+        financialDetailsModel(), isAgent = true) {
+        disable(ChargeHistory)
+        disable(PaymentAllocation)
+        val result: Future[Result] = controller.showAgent(testTaxYear, "1040000123")(fakeRequestConfirmedClient("AB123456C"))
+
+        status(result) shouldBe Status.OK
+        JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe successHeading
+        JsoupParse(result).toHtmlDocument.select("#payment-processing-bullets").text() shouldBe s"$paymentprocessingbullet1Agent"
       }
     }
 

@@ -107,8 +107,8 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
   val mockDateService: DateService = mock[DateService]
   val updateDateAndOverdueObligationsLPI: (LocalDate, Seq[LocalDate]) = (LocalDate.of(2021, Month.MAY, 15), Seq.empty[LocalDate])
   val javaMessagesApi: MessagesApi = inject[play.i18n.MessagesApi]
-  val overdueWarningMessageDunningLockTrue: String = javaMessagesApi.get(new i18n.Lang(lang), "home.overdue.message.dunningLock.true")
-  val overdueWarningMessageDunningLockFalse: String = javaMessagesApi.get(new i18n.Lang(lang), "home.overdue.message.dunningLock.false")
+  val overdueWarningMessageDunningLockTrue: String = javaMessagesApi.get(new i18n.Lang(lang), "home.agent.overdue.message.dunningLock.true")
+  val overdueWarningMessageDunningLockFalse: String = javaMessagesApi.get(new i18n.Lang(lang), "home.agent.overdue.message.dunningLock.false")
   val expectedOverDuePaymentsText = s"${messages("home.overdue.date")} 31 January 2019"
   val twoOverduePayments: String = messages("home.overdue.date.payment.count", "2")
 

@@ -27,7 +27,7 @@
 
 @()(implicit request : Request[_], messages: Messages)
 
-@mainTemplate(messages("upliftFailure.title"),showServiceName = false) {
+@mainTemplate(messages("upliftFailure.title"), showServiceName = false, isErrorPage = true) {
     @h1(msg = "upliftFailure.title")
 
     @p(){@messages("upliftFailure.content")}

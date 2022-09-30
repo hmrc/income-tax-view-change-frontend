@@ -18,6 +18,8 @@ package models.liabilitycalculation.viewmodels
 
 import models.liabilitycalculation.LiabilityCalculationResponse
 
+import java.time.LocalDate
+
 case class TaxYearSummaryViewModel(timestamp: Option[String],
                                    crystallised: Option[Boolean],
                                    unattendedCalc: Boolean,
@@ -26,7 +28,9 @@ case class TaxYearSummaryViewModel(timestamp: Option[String],
                                    deductions: BigDecimal,
                                    totalTaxableIncome: Int,
                                    forecastIncome: Option[Int] = None,
-                                   forecastIncomeTaxAndNics: Option[BigDecimal] = None)
+                                   forecastIncomeTaxAndNics: Option[BigDecimal] = None,
+                                   periodFrom:Option[LocalDate] = None,
+                                   periodTo:Option[LocalDate] = None)
 
 object TaxYearSummaryViewModel {
   def isUnattendedCalc(calculationReason: Option[String]): Boolean = calculationReason match {
@@ -44,7 +48,9 @@ object TaxYearSummaryViewModel {
       deductions = calc.calculation.flatMap(c => c.taxCalculation.map(tc => tc.incomeTax.totalAllowancesDeductionsReliefs)).getOrElse(0.00),
       totalTaxableIncome = calc.calculation.flatMap(c => c.taxCalculation.map(_.incomeTax.totalTaxableIncome)).getOrElse(0),
       forecastIncome = calc.calculation.flatMap(c => c.endOfYearEstimate.flatMap(_.totalEstimatedIncome)),
-      forecastIncomeTaxAndNics = calc.calculation.flatMap(c => c.endOfYearEstimate.flatMap(_.incomeTaxNicAndCgtAmount))
+      forecastIncomeTaxAndNics = calc.calculation.flatMap(c => c.endOfYearEstimate.flatMap(_.incomeTaxNicAndCgtAmount)),
+      periodFrom = calc.metadata.periodFrom,
+      periodTo = calc.metadata.periodTo
     )
   }
 }

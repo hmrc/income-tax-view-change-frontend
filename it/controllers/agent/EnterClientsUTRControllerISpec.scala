@@ -272,7 +272,7 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
         Then(s"Technical difficulties are shown with status $INTERNAL_SERVER_ERROR")
         result should have(
           httpStatus(INTERNAL_SERVER_ERROR),
-          pageTitleIndividual(titleTechError)
+          pageTitleIndividual(titleTechError, isErrorPage = true)
         )
       }
       "there was an unexpected response retrieving the business details" in {
@@ -297,7 +297,7 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
         Then(s"Technical difficulties are shown with status $INTERNAL_SERVER_ERROR")
         result should have(
           httpStatus(INTERNAL_SERVER_ERROR),
-          pageTitleIndividual(titleTechError)
+          pageTitleIndividual(titleTechError, isErrorPage = true)
         )
       }
 
