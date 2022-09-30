@@ -139,7 +139,7 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
 
   def getCreditTypeGroupKey(credits: (DocumentDetailWithDueDate, FinancialDetail)): String = {
     val isMFA: Boolean = credits._2.validMFACreditType()
-    val isCutOverCredit: Boolean = credits._2.mainType.get == "ITSA Cutover Credits"
+    val isCutOverCredit: Boolean = credits._2.validCutoverCreditType()
     val isPayment: Boolean = credits._1.documentDetail.paymentLot.isDefined
     (isMFA, isCutOverCredit, isPayment) match {
       case (true, false, false) => creditsFromHMRC
