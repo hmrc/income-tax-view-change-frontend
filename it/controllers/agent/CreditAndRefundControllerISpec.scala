@@ -54,10 +54,10 @@ class CreditAndRefundControllerISpec extends ComponentSpecBase {
           elementAttributeBySelector("#credit-and-refund-2", "href")("/report-quarterly/income-and-expenses/view/agents/credits-from-hmrc/2018"),
 
           elementTextBySelectorList("#main-content", "li:nth-child(4)", "p")(expectedValue = "£3.00 "
-            + messagesAPI("credit-and-refund.refundProgress")),
+            + messagesAPI("credit-and-refund.refundProgress-prt-2")),
 
           elementTextBySelectorList("#main-content", "li:nth-child(5)", "p")(expectedValue = "£2.00 "
-            + messagesAPI("credit-and-refund.refundProgress")),
+            + messagesAPI("credit-and-refund.refundProgress-prt-2")),
           pageTitleAgent("credit-and-refund.heading")
 
         )
