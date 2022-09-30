@@ -210,7 +210,7 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
           document.title() shouldBe creditAndRefundHeadingWithTitleServiceNameGovUk
           layoutContent.selectHead("h1").text shouldBe creditAndRefundHeading
           document.select("h2").first().select("span").first().text() shouldBe subHeadingWithUnallocatedCreditsOnePayment
-          document.select("h2").first().select("span").next().text() shouldBe "12 January 2022 ."
+          document.select("h2").first().select("span").next().text() shouldBe "12 January 2022."
           document.select("h2").first().select("span").next().select("a").text() shouldBe "12 January 2022"
           document.select("h2").first().select("span").next().select("a").attr("href") shouldBe link
           document.select("dt").eachText().contains("Total") shouldBe false
@@ -242,7 +242,7 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
           document.title() shouldBe creditAndRefundHeadingWithTitleServiceNameGovUk
           layoutContent.selectHead("h1").text shouldBe creditAndRefundHeading
           document.select("h2").first().select("span").first().text() shouldBe subHeadingWithUnallocatedCreditsSingleCredit
-          document.select("h2").first().select("span").next().text() shouldBe s"$creditAndRefundFromHMRCTitlePart2 ."
+          document.select("h2").first().select("span").next().text() shouldBe s"$creditAndRefundFromHMRCTitlePart2."
           document.select("h2").first().select("span").next().select("a").text() shouldBe creditAndRefundFromHMRCTitlePart2
           document.select("h2").first().select("span").next().select("a").attr("href") shouldBe linkCreditsSummaryPage
           document.select("dt").eachText().contains("Total") shouldBe false
@@ -275,7 +275,7 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
           document.title() shouldBe creditAndRefundHeadingWithTitleServiceNameGovUk
           layoutContent.selectHead("h1").text shouldBe creditAndRefundHeading
           document.select("h2").first().select("span").first().text() shouldBe subHeadingWithUnallocatedCreditsSingleCredit
-          document.select("h2").first().select("span").next().text() shouldBe s"$creditAndRefundPaymentFromEarlierYearLinkText ."
+          document.select("h2").first().select("span").next().text() shouldBe s"$creditAndRefundPaymentFromEarlierYearLinkText."
           document.select("h2").first().select("span").next().select("a").text() shouldBe creditAndRefundPaymentFromEarlierYearLinkText
           document.select("h2").first().select("span").next().select("a").attr("href") shouldBe linkCreditsSummaryPage
           document.select("dt").eachText().contains("Total") shouldBe false
