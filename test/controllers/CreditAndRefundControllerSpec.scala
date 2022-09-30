@@ -161,9 +161,9 @@ class CreditAndRefundControllerSpec extends MockAuthenticationPredicate with Moc
         doc.select("#main-content").select("li:nth-child(9)")
           .select("p").first().text() shouldBe "£100.00 " + messages("credit-and-refund.payment") + " 15 June 2018"
         doc.select("#main-content").select("li:nth-child(10)")
-          .select("p").first().text() shouldBe "£4.00 " + messages("credit-and-refund.refundProgress")
+          .select("p").first().text() shouldBe "£4.00 " + messages("credit-and-refund.refundProgress-prt-2")
         doc.select("#main-content").select("li:nth-child(11)")
-          .select("p").first().text() shouldBe "£2.00 " + messages("credit-and-refund.refundProgress")
+          .select("p").first().text() shouldBe "£2.00 " + messages("credit-and-refund.refundProgress-prt-2")
       }
 
       "redirect to the custom not found error page" in new Setup {
