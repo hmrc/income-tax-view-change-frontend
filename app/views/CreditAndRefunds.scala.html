@@ -253,27 +253,15 @@
             }
 
             <ul class="govuk-list">
-                @if(isAgent) {
-                    <li>
-                        @p(){
-                            @messages("credit-and-refund.agent.bullet-one-prt-1")
-                            @link(link = getWhatYouOwe(isAgent),
-                                messageKey = "credit-and-refund.agent.bullet-one-link",
-                                target = None)
-                            @messages("credit-and-refund.bullet-one-prt-2")
+                <li>
+                    @p(){
+                        @messages(if(isAgent)"credit-and-refund.agent.bullet-one-prt-1" else "credit-and-refund.bullet-one-prt-1")
+                        @link(link = getWhatYouOwe(isAgent),
+                            messageKey = (if(isAgent)"credit-and-refund.agent.bullet-one-link" else "credit-and-refund.bullet-one-link"),
+                            target = None)
+                        @messages("credit-and-refund.bullet-one-prt-2")
                         }
-                    </li>
-                } else {
-                    <li>
-                        @p(){
-                            @messages("credit-and-refund.bullet-one-prt-1")
-                            @link(link = getWhatYouOwe(isAgent),
-                                messageKey = "credit-and-refund.bullet-one-link",
-                                target = None)
-                            @messages("credit-and-refund.bullet-one-prt-2")
-                        }
-                    </li>
-                }
+                </li>
                 <li>
                     @messages("credit-and-refund.bullet-two-prt-1")
                     @maybeAvailableCredit.toCurrency
