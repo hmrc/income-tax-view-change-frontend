@@ -111,7 +111,7 @@
                     <span class="govuk-body">
                         @messages("credit-and-refund.subHeading.unallocated-credits-one-payment-1")
                         <strong class="govuk-body govuk-!-font-weight-bold">@maybeAvailableCredit.toCurrencyString</strong>
-                        @messages("credit-and-refund.subHeading.unallocated-credits-one-payment-2")
+                        @messages(if(isAgent) "credit-and-refund.agent.subHeading.unallocated-credits-one-payment-2" else "credit-and-refund.subHeading.unallocated-credits-one-payment-2")
                     </span>
                     <span class="govuk-body">
                         <a href="@getControllerHref(maybeCreditChargesHead._1.documentDetail, isAgent)" class="govuk-body govuk-!-font-weight-bold govuk-link--no-visited-state">
@@ -125,7 +125,7 @@
                     <span class="govuk-body">
                         @messages("credit-and-refund.subHeading.unallocated-credits-single-credit-1")
                         <strong class="govuk-body govuk-!-font-weight-bold">@maybeAvailableCredit.toCurrencyString</strong>
-                            @messages("credit-and-refund.subHeading.unallocated-credits-single-credit-2")
+                            @messages(if(isAgent) "credit-and-refund.agent.subHeading.unallocated-credits-single-credit-2" else "credit-and-refund.subHeading.unallocated-credits-single-credit-2")
                         </span>
                     <span class="govuk-body">
                         @if(MfaCreditUtils.validMFACreditType((maybeCreditChargesHead._2.mainType))) {
