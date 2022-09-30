@@ -107,9 +107,12 @@ balance.getOrElse(throw MissingFieldException("Balance"))
                         @messages("credit-and-refund.subHeading.unallocated-credits-one-payment-2")
                     </span>
                     <span class="govuk-body">
-                        <a href="@getControllerHref(maybeCreditChargesHead._1.documentDetail, isAgent)" class="govuk-body govuk-!-font-weight-bold govuk-link--no-visited-state">
-                            @maybeCreditChargesHead._1.dueDate.getOrElse(throw MissingFieldException("Due Date")).toLongDate.
-                        </a>
+                        @link(
+                            link = s"${getControllerHref(maybeCreditChargesHead._1.documentDetail, isAgent)}",
+                            outerMessage = ".",
+                            messageKey = maybeCreditChargesHead._1.dueDate.getOrElse(throw MissingFieldException("Due Date")).toLongDate,
+                            classes = "govuk-body govuk-!-font-weight-bold govuk-link--no-visited-state"
+                        )
                     </span>
                 </h2>
             }
@@ -122,14 +125,19 @@ balance.getOrElse(throw MissingFieldException("Balance"))
                         </span>
                     <span class="govuk-body">
                         @if(MfaCreditUtils.validMFACreditType((maybeCreditChargesHead._2.mainType))) {
-                            <a href="@getCreditsSummaryControllerHref(maybeCreditChargesHead._1.documentDetail, isAgent)"
-                            class="govuk-body govuk-!-font-weight-bold govuk-link--no-visited-state">
-                                @messages("credit-and-refund.credit-from-hmrc-title-prt-2").
-                            </a>
+                            @link(
+                                link = s"${getCreditsSummaryControllerHref(maybeCreditChargesHead._1.documentDetail, isAgent)}",
+                                outerMessage = ".",
+                                messageKey = messages("credit-and-refund.credit-from-hmrc-title-prt-2"),
+                                classes = "govuk-body govuk-!-font-weight-bold govuk-link--no-visited-state"
+                            )
                         } else {
-                            <a href="@getCreditsSummaryControllerHref(maybeCreditChargesHead._1.documentDetail, isAgent)"
-                            class="govuk-body govuk-!-font-weight-bold govuk-link--no-visited-state">@messages("paymentHistory.paymentFromEarlierYear").
-                            </a>
+                            @link(
+                                link = s"${getCreditsSummaryControllerHref(maybeCreditChargesHead._1.documentDetail, isAgent)}",
+                                outerMessage = ".",
+                                messageKey = messages("paymentHistory.paymentFromEarlierYear"),
+                                classes = "govuk-body govuk-!-font-weight-bold govuk-link--no-visited-state"
+                            )
                         }
                     </span>
                 </h2>
