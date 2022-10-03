@@ -547,8 +547,8 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
           isElementVisibleById("overdueAmount")(expectedValue = false),
           isElementVisibleById("balanceDueWithin30Days")(expectedValue = false),
           isElementVisibleById("totalBalance")(expectedValue = false),
-          isElementVisibleById(s"payments-made-bullets")(expectedValue = true),
-          isElementVisibleById(s"sa-tax-bill")(expectedValue = true)
+          isElementVisibleById(s"payments-made-bullets")(expectedValue = false),
+          isElementVisibleById(s"sa-tax-bill")(expectedValue = false)
         )
       }
     }
@@ -585,8 +585,8 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
           isElementVisibleById("overdueAmount")(expectedValue = false),
           isElementVisibleById("balanceDueWithin30Days")(expectedValue = false),
           isElementVisibleById("totalBalance")(expectedValue = false),
-          isElementVisibleById(s"payments-made-bullets")(expectedValue = true),
-          isElementVisibleById(s"sa-tax-bill")(expectedValue = true)
+          isElementVisibleById(s"payments-made-bullets")(expectedValue = false),
+          isElementVisibleById(s"sa-tax-bill")(expectedValue = false)
         )
       }
     }
@@ -636,8 +636,8 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
           isElementVisibleById("overdueAmount")(expectedValue = false),
           isElementVisibleById("balanceDueWithin30Days")(expectedValue = false),
           isElementVisibleById("totalBalance")(expectedValue = false),
-          isElementVisibleById(s"payments-made-bullets")(expectedValue = true),
-          isElementVisibleById(s"sa-tax-bill")(expectedValue = true)
+          isElementVisibleById(s"payments-made-bullets")(expectedValue = false),
+          isElementVisibleById(s"sa-tax-bill")(expectedValue = false)
         )
       }
     }
