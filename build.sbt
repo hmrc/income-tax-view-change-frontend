@@ -27,12 +27,11 @@ val wiremockVersion           = "2.26.1"
 
 val compile = Seq(
   ws,
-  // TODO Check where is this REPO
   "uk.gov.hmrc" %% "bootstrap-frontend-play-28" % bootstrapPlayVersion,
   "uk.gov.hmrc" %% "govuk-template" % govTemplateVersion,
   "uk.gov.hmrc" %% "play-ui" % playUiVersion,
   "uk.gov.hmrc" %% "play-partials" % playPartialsVersion,
-  "org.typelevel" %% "cats" % catsVersion,
+  "org.typelevel" %% "cats-core" % catsVersion,
   "uk.gov.hmrc" %% "play-language" % playLanguageVersion,
   "uk.gov.hmrc" %% "logback-json-logger" % "5.2.0",
 // TODO check if we using it ???
