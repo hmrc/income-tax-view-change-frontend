@@ -44,6 +44,26 @@ To test the application execute:
 sbt clean scalastyle coverage test it:test coverageOff coverageReport
 ```
 
+## How to run sbt-scoverage plugin for the application
+
+To generate scoverage report for the unit tests execute:
+
+```
+sbt clean coverage test coverageOff coverageReport
+```
+
+To generate scoverage report for the integration tests execute:
+
+```
+sbt clean coverage it:test coverageOff coverageReport
+```
+
+To generate aggregated scoverage report for the unit and integration tests in one go execute:
+
+```
+sbt clean coverage test it:test coverageOff coverageReport
+```
+
 
 ### License
 
