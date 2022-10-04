@@ -147,7 +147,7 @@ balance.getOrElse(throw MissingFieldException("Balance"))
                     <h2 class="govuk-heading-s">
                         <span class="govuk-body"> @messages("credit-and-refund.subHeading.has-credits-1") </span>
                             @maybeAvailableCredit.toCurrency
-                        <span class="govuk-body"> @messages("credit-and-refund.subHeading.has-credits-2")</span>
+                        <span class="govuk-body"> @messages(if(isAgent) "credit-and-refund.agent.subHeading.has-credits-2" else "credit-and-refund.subHeading.has-credits-2")</span>
                     </h2>
                 } else {
                     <h2 class="govuk-heading-s">@{
@@ -247,23 +247,23 @@ balance.getOrElse(throw MissingFieldException("Balance"))
             <ul class="govuk-list">
                 <li>
                     @p(){
-                        @messages("credit-and-refund.bullet-one-prt-1")
+                        @messages(if(isAgent)"credit-and-refund.agent.bullet-one-prt-1" else "credit-and-refund.bullet-one-prt-1")
                         @link(link = getWhatYouOwe(isAgent),
-                            messageKey = "credit-and-refund.bullet-one-link",
+                            messageKey = (if(isAgent)"credit-and-refund.agent.bullet-one-link" else "credit-and-refund.bullet-one-link"),
                             target = None)
                         @messages("credit-and-refund.bullet-one-prt-2")
-                    }
+                        }
                 </li>
                 <li>
                     @messages("credit-and-refund.bullet-two-prt-1")
                     @maybeAvailableCredit.toCurrency
-                    @messages("credit-and-refund.bullet-two-prt-2")
+                    @messages(if(isAgent) "credit-and-refund.agent.bullet-two-prt-2" else "credit-and-refund.bullet-two-prt-2")
                 </li>
             </ul>
         }
     } else {
         @p(){
-            @messages("credit-and-refund.no-credit")
+            @messages(if(isAgent) "credit-and-refund.agent.no-credit" else "credit-and-refund.no-credit")
         }
     }
 

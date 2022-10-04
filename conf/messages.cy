@@ -874,6 +874,7 @@ inYear-tax-overview.agent.inset                                  = Mae’r cyfri
 ## credits and refunds
 credit-and-refund.subHeading.has-credits-1                        = Mae cyfanswm o
 credit-and-refund.subHeading.has-credits-2                        = yn eich cyfrif:
+credit-and-refund.agent.subHeading.has-credits-2                  = yng nghyfrif eich cleient:
 credit-and-refund.subHeading.unallocated-credits-one-payment-1    = Mae cyfanswm o
 credit-and-refund.subHeading.unallocated-credits-one-payment-2    = yn eich cyfrif yn sgil taliad a wnaed ar
 credit-and-refund.subHeading.unallocated-credits-single-credit-1  = Mae cyfanswm o
@@ -884,14 +885,19 @@ credit-and-refund.bullet-text-intro                               = Yr hyn y gal
 credit-and-refund.check-refund-btn                                = Gwirio statws ad-daliad
 credit-and-refund.payment                                         = yn sgil taliad a wnaed ar
 credit-and-refund.refundProgress-prt-1                            = mae ad-daliad o
-credit-and-refund.refundProgress-prt-2                            = wrthi'n cael ei brosesu
+credit-and-refund.refundProgress-prt-2                            = wrthi’n cael ei brosesu
 credit-and-refund.credit-from-hmrc-title-prt-1                    = yn sgil
 credit-and-refund.credit-from-hmrc-title-prt-2                    = Credyd o addasiad gan CThEM
-credit-and-refund.bullet-one-prt-1                                = Os gadewch  yr arian hwn yn eich cyfrif, caiff ei ddefnyddio i dalu'r
+credit-and-refund.bullet-one-prt-1                                = Os gadewch  yr arian hwn yn eich cyfrif, caiff ei ddefnyddio i dalu’r
+credit-and-refund.agent.bullet-one-prt-1                          = Os gadewch yr arian hwn yng nghyfrif eich cleient, caiff ei ddefnyddio i dalu’r
 credit-and-refund.bullet-one-link                                 = hyn sydd arnoch
+credit-and-refund.agent.bullet-one-link                           = hyn sydd arno
 credit-and-refund.bullet-one-prt-2                                = yn awtomatig ac mewn pryd.
 credit-and-refund.bullet-two-prt-1                                = Mae gennych yr opsiwn i hawlio hyd at
-credit-and-refund.bullet-two-prt-2                                = yn ôl. Os byddwch yn hawlio arian yn ôl sydd wedi'i neilltuo ar gyfer taliadau sydd i ddod, bydd angen i chi wneud y taliadau hynny erbyn y dyddiad cau i osgoi costau ychwanegol.
+credit-and-refund.bullet-two-prt-2                                = yn ôl. Os byddwch yn hawlio arian yn ôl sydd wedi’i neilltuo ar gyfer taliadau sydd i ddod, bydd angen i chi wneud y taliadau hynny erbyn y dyddiad cau i osgoi costau ychwanegol.
+credit-and-refund.agent.bullet-two-prt-2                          = yn ôl. Os byddwch yn hawlio arian yn ôl sydd wedi’i neilltuo ar gyfer taliadau sydd i ddod, bydd angen i’ch cleient wneud y taliadau hynny erbyn y dyddiad cau i osgoi costau ychwanegol.
+credit-and-refund.no-credit                                       = Nid oes gennych arian yn eich cyfrif.
+credit-and-refund.agent.no-credit                                 = Nid oes gan eich cleient arian yn ei gyfrif.
 
 
 shortMonth.1 = Ion
