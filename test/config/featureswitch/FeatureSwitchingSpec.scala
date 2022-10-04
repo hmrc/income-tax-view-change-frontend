@@ -19,6 +19,8 @@ package config.featureswitch
 import config.featureswitch.FeatureSwitch.switches
 import testUtils.TestSupport
 
+import scala.util.matching.Regex
+
 class FeatureSwitchingSpec extends TestSupport with FeatureSwitching {
 
   val expectedDisabledFeatures: Set[FeatureSwitch] = FeatureSwitch.switches
@@ -50,6 +52,21 @@ class FeatureSwitchingSpec extends TestSupport with FeatureSwitching {
           ifDisabled = expectedBranch()) shouldBe aValue
         hasBeenCalled shouldBe true
       }
+
+      // This regExp is not including digits in the name
+      val validFormat: Regex = """^feature\-switch\.enable\-([a-zA-Z\-]+)+$""".r
+
+      "feature switches name formatted " in {
+        switches.foreach(switch => {
+          if (validFormat.findFirstIn(switch.name).isDefined) {
+            succeed
+          } else {
+            println(s"Not valid format: ${switch.name}")
+            //fail(s"Not valid format: ${switch.name}")
+          }
+        })
+      }
+
     }
 
   }
