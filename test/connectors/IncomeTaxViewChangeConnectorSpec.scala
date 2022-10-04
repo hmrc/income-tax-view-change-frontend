@@ -39,7 +39,7 @@ import models.paymentAllocationCharges.{FinancialDetailsWithDocumentDetailsError
 import models.paymentAllocations.{PaymentAllocationsError, PaymentAllocationsResponse}
 import models.nextUpdates.{NextUpdatesErrorModel, NextUpdatesResponseModel}
 import models.repaymentHistory.{RepaymentHistoryErrorModel, RepaymentHistoryModel, RepaymentHistoryResponseModel}
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{mock, when}
 import play.api.libs.json.Json
 import play.mvc.Http.Status
 import testConstants.RepaymentHistoryTestConstants.{repaymentHistoryFull, validMultipleRepaymentHistoryJson, validRepaymentHistoryJson}
@@ -56,7 +56,7 @@ class IncomeTaxViewChangeConnectorSpec extends TestSupport with MockHttp with Mo
 
     val http: HttpClient = mockHttpGet
     val auditingService: AuditingService = mockAuditingService
-    val appConfig: FrontendAppConfig = mock[FrontendAppConfig]
+    val appConfig: FrontendAppConfig = mock(classOf[FrontendAppConfig])
     val ec: ExecutionContext = app.injector.instanceOf[ExecutionContext]
 
     val baseUrl = "http://localhost:9999"

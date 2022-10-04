@@ -28,7 +28,7 @@ import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{mock, when}
 import play.api.http.Status
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{status, _}
@@ -46,7 +46,7 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockInco
 
   trait Setup {
 
-    val whatYouOweService: WhatYouOweService = mock[WhatYouOweService]
+    val whatYouOweService: WhatYouOweService = mock(classOf[WhatYouOweService])
 
     val controller = new WhatYouOweController(
       app.injector.instanceOf[SessionTimeoutPredicate],

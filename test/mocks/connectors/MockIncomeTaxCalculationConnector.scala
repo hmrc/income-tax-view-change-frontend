@@ -21,14 +21,14 @@ import models.liabilitycalculation.LiabilityCalculationResponseModel
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.Mockito.mock
 import testUtils.UnitSpec
 
 import scala.concurrent.Future
 
-trait MockIncomeTaxCalculationConnector extends UnitSpec with MockitoSugar with BeforeAndAfterEach {
+trait MockIncomeTaxCalculationConnector extends UnitSpec with BeforeAndAfterEach {
 
-  val mockIncomeTaxCalculationConnector: IncomeTaxCalculationConnector = mock[IncomeTaxCalculationConnector]
+  val mockIncomeTaxCalculationConnector: IncomeTaxCalculationConnector = mock(classOf[IncomeTaxCalculationConnector])
 
   def mockGetCalculationResponse(mtditid: String, nino: String, taxYear: String)(response: LiabilityCalculationResponseModel): Unit = {
     when(mockIncomeTaxCalculationConnector.getCalculationResponse(

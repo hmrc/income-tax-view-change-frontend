@@ -21,7 +21,6 @@ import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
-import org.scalatestplus.mockito.MockitoSugar
 import services.CreditHistoryService
 import services.CreditHistoryService.CreditHistoryError
 
@@ -29,9 +28,9 @@ import testUtils.UnitSpec
 
 import scala.concurrent.Future
 
-trait MockCreditHistoryService extends UnitSpec with MockitoSugar with BeforeAndAfterEach {
+trait MockCreditHistoryService extends UnitSpec with BeforeAndAfterEach {
 
-  val mockCreditHistoryService: CreditHistoryService = mock[CreditHistoryService]
+  val mockCreditHistoryService: CreditHistoryService = mock(classOf[CreditHistoryService])
 
   override def beforeEach(): Unit = {
     super.beforeEach()

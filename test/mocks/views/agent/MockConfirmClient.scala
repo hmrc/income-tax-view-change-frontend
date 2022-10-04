@@ -19,14 +19,14 @@ package mocks.views.agent
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import org.scalatest.{BeforeAndAfterEach, Suite}
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.Mockito.mock
 import play.twirl.api.Html
 import views.html.agent.confirmClient
 
-trait MockConfirmClient extends BeforeAndAfterEach with MockitoSugar {
+trait MockConfirmClient extends BeforeAndAfterEach {
   self: Suite =>
 
-  val confirmClient: confirmClient = mock[confirmClient]
+  val confirmClient: confirmClient = mock(classOf[confirmClient])
 
   override def beforeEach(): Unit = {
     super.beforeEach()

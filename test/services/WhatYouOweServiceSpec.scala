@@ -23,7 +23,7 @@ import connectors.IncomeTaxViewChangeConnector
 import models.financialDetails._
 import models.outstandingCharges.{OutstandingChargesErrorModel, OutstandingChargesModel}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, when}
+import org.mockito.Mockito.{mock, reset, when}
 import play.api.test.FakeRequest
 import testConstants.BaseTestConstants.{testMtditid, testNino, testRetrievedUserName}
 import testConstants.FinancialDetailsTestConstants._
@@ -57,8 +57,8 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
     disableAllSwitches
   }
 
-  val mockFinancialDetailsService: FinancialDetailsService = mock[FinancialDetailsService]
-  val mockIncomeTaxViewChangeConnector: IncomeTaxViewChangeConnector = mock[IncomeTaxViewChangeConnector]
+  val mockFinancialDetailsService: FinancialDetailsService = mock(classOf[FinancialDetailsService])
+  val mockIncomeTaxViewChangeConnector: IncomeTaxViewChangeConnector = mock(classOf[IncomeTaxViewChangeConnector])
   val currentYearAsInt: Int = LocalDate.now.getYear
 
   object mockDateService extends DateService() {

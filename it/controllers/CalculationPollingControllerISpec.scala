@@ -21,7 +21,6 @@ import helpers.ComponentSpecBase
 import helpers.servicemocks._
 import models.liabilitycalculation.LiabilityCalculationError
 import play.api.http.Status._
-import repositories.MongoLockRepositoryImpl
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.NewCalcBreakdownItTestConstants._
 
@@ -29,7 +28,6 @@ import scala.concurrent.ExecutionContext
 
 class CalculationPollingControllerISpec extends ComponentSpecBase {
 
-  val mongoDbConnection = app.injector.instanceOf[MongoLockRepositoryImpl]
   implicit val ec = app.injector.instanceOf[ExecutionContext]
 
   unauthorisedTest(s"/calculation/$testYear/submitted")
@@ -55,8 +53,6 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
           httpStatus(SEE_OTHER),
           redirectURI(routes.TaxYearSummaryController.renderTaxYearSummaryPage(testYearInt).url)
         )
-
-        mongoDbConnection.repo.findById("idOne").futureValue shouldBe None
       }
       "calculation service returns non-retryable response back" in {
         Given("Calculation service returns a 500 error response back")
@@ -75,7 +71,6 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
         res should have(
           httpStatus(INTERNAL_SERVER_ERROR)
         )
-        mongoDbConnection.repo.findById("idTwo").futureValue shouldBe None
       }
       "calculation service returns retryable response back" in {
         Given("Calculation service returns a 404 error response back during total duration of timeout interval")
@@ -93,7 +88,6 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
         res should have(
           httpStatus(INTERNAL_SERVER_ERROR)
         )
-        mongoDbConnection.repo.findById("idThree").futureValue shouldBe None
       }
       "calculation service returns retryable response back initially and then returns success response before interval time completed" in {
         Given("Calculation service returns a 404 error response back during total duration of timeout interval")
@@ -106,7 +100,6 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
         val res = IncomeTaxViewChangeFrontend.getCalculationPollerWithoutAwait(testYear, Map(SessionKeys.calculationId -> "idFour"))
 
         Thread.sleep(100)
-        mongoDbConnection.repo.findById("idFour").futureValue.get.id shouldBe "idFour"
 
         //After 1.5 seconds responding with success message
         Thread.sleep(1500)
@@ -124,7 +117,6 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
         Then("I check all calls expected were made")
         IncomeTaxCalculationStub.verifyGetCalculationResponseByCalcId(testNino, "idFour", 6)
 
-        mongoDbConnection.repo.findById("idFour").futureValue shouldBe None
       }
       "calculation service returns retryable response back initially and then returns non-retryable error before interval time completed" in {
         Given("Calculation service returns a 404 error response back during total duration of timeout interval")
@@ -136,7 +128,6 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
         val res = IncomeTaxViewChangeFrontend.getCalculationPollerWithoutAwait(testYear, Map(SessionKeys.calculationId -> "idFive"))
 
         Thread.sleep(200)
-        mongoDbConnection.repo.findById("idFive").futureValue.get.id shouldBe "idFive"
 
         //After 1.5 seconds responding with success message
         Thread.sleep(1500)
@@ -151,7 +142,6 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
         Then("I check all calls expected were made")
         IncomeTaxCalculationStub.verifyGetCalculationResponseByCalcId(testNino, "idFive", 6)
 
-        mongoDbConnection.repo.findById("idFive").futureValue shouldBe None
       }
     }
   }

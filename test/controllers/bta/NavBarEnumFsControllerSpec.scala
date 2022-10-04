@@ -24,7 +24,7 @@ import models.btaNavBar._
 import org.mockito.ArgumentMatchers.{any, contains}
 import org.mockito.Mockito.when
 import org.scalatest.concurrent.ScalaFutures
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.Mockito.mock
 import play.api.i18n.{Lang, Messages}
 import play.api.mvc.MessagesControllerComponents
 import services.BtaNavBarService
@@ -37,10 +37,10 @@ import views.html.navBar.BtaNavBar
 import scala.concurrent.Future
 
 class NavBarEnumFsControllerSpec extends MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate
-  with UnitSpec with TestSupport with MockitoSugar with ScalaFutures {
+  with UnitSpec with TestSupport with ScalaFutures {
 
-  val mockNavBarService: BtaNavBarService = mock[BtaNavBarService]
-  val mockBtaNavBarPartialConnector: BtaNavBarPartialConnector = mock[BtaNavBarPartialConnector]
+  val mockNavBarService: BtaNavBarService = mock(classOf[BtaNavBarService])
+  val mockBtaNavBarPartialConnector: BtaNavBarPartialConnector = mock(classOf[BtaNavBarPartialConnector])
   val testView: BtaNavBar = app.injector.instanceOf[BtaNavBar]
   val mockMcc: MessagesControllerComponents = app.injector.instanceOf[MessagesControllerComponents]
   val saUtr = "1234567800"

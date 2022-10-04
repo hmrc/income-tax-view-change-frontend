@@ -24,7 +24,7 @@ import controllers.predicates.agent.AgentAuthenticationPredicate._
 import org.scalatest.EitherValues
 import org.scalatest.MustMatchers.convertToAnyMustWrapper
 import org.scalatest.concurrent.ScalaFutures
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.Mockito.mock
 import play.api.mvc.{AnyContentAsEmpty, Result}
 import play.api.test.FakeRequest
 import testUtils.TestSupport
@@ -34,7 +34,7 @@ import uk.gov.hmrc.http.SessionKeys.{authToken, lastRequestTimestamp}
 
 import scala.concurrent.Future
 
-class AgentAuthenticationPredicateSpec extends TestSupport with MockitoSugar with ScalaFutures with EitherValues {
+class AgentAuthenticationPredicateSpec extends TestSupport with ScalaFutures with EitherValues {
 
   private def testUser(affinityGroup: Option[AffinityGroup],
                        confidenceLevel: ConfidenceLevel,
@@ -79,7 +79,7 @@ class AgentAuthenticationPredicateSpec extends TestSupport with MockitoSugar wit
     }
 
     "return a custom result when a user does not have AgentReferenceNumber in their enrolments" in {
-      val customResult = mock[Future[Result]]
+      val customResult = mock(classOf[Future[Result]])
       arnPredicate(customResult).apply(FakeRequest())(blankUser).left.value mustBe customResult
     }
   }

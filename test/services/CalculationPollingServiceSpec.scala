@@ -17,14 +17,24 @@
 package services
 
 import config.FrontendAppConfig
-import mocks.services.{MockCalculationService, MockPollCalculationLockKeeper}
+import mocks.services.{LockServiceDidNotAcquireMongoLock, MockCalculationService, MockLockService}
 import models.liabilitycalculation._
+import org.mockito.ArgumentMatchers
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.{doAnswer, mock, when}
+import org.scalatest.time.{Seconds, Span}
 import play.api.http.Status
 import testConstants.BaseTestConstants._
 import testUtils.TestSupport
+import uk.gov.hmrc.mongo.lock.{Lock, LockService, MongoLockRepository}
+import uk.gov.hmrc.mongo.test.DefaultPlayMongoRepositorySupport
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
-class CalculationPollingServiceSpec extends TestSupport with MockCalculationService with MockPollCalculationLockKeeper {
+import java.time.Instant
+import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.duration.{Duration, DurationInt, FiniteDuration, MILLISECONDS}
+
+class CalculationPollingServiceSpec extends TestSupport with MockCalculationService {
 
   val liabilityCalculationSuccessResponse: LiabilityCalculationResponse = LiabilityCalculationResponse(
     inputs = Inputs(personalInformation = PersonalInformation(
@@ -36,6 +46,7 @@ class CalculationPollingServiceSpec extends TestSupport with MockCalculationServ
 
   val liabilityCalculationNotFoundResponse: LiabilityCalculationError = LiabilityCalculationError(Status.NOT_FOUND, "not found")
   val liabilityCalculationErrorResponse: LiabilityCalculationError = LiabilityCalculationError(Status.INTERNAL_SERVER_ERROR, "Internal server error")
+  val testCalcId: String = "1234567890"
 
   def fakeServicesConfig(interval: Int, timeout: Int): ServicesConfig = new ServicesConfig(conf) {
     override def getInt(key: String): Int = key match {
@@ -44,7 +55,10 @@ class CalculationPollingServiceSpec extends TestSupport with MockCalculationServ
     }
   }
 
-  val frontendAppConfig = new FrontendAppConfig(fakeServicesConfig(250, 1500), conf)
+  val frontendAppConfig: FrontendAppConfig = new FrontendAppConfig(fakeServicesConfig(250, 1500), conf)
+  val mockMongoLockRepository: MongoLockRepository = app.injector.instanceOf[MongoLockRepository]
+  override implicit val patienceConfig: PatienceConfig = PatienceConfig(Span(5, Seconds))
+
 
   object TestCalculationPollingService extends CalculationPollingService(
     frontendAppConfig,
@@ -55,7 +69,6 @@ class CalculationPollingServiceSpec extends TestSupport with MockCalculationServ
   "The CalculationPollingService.initiateCalculationPollingSchedulerWithMongoLock method" when {
     "when MongoLock is acquired and success response is received from calculation service" should {
       "return a success response back" in {
-        mockLockRepositoryIsLockedTrue()
         setupMockGetLatestCalculation(testMtditid, testNino, testCalcId)(liabilityCalculationSuccessResponse)
 
         TestCalculationPollingService
@@ -65,7 +78,6 @@ class CalculationPollingServiceSpec extends TestSupport with MockCalculationServ
 
     "when MongoLock is acquired and non-retryable response is received from calculation service" should {
       "return a non-retryable(500) response back" in {
-        mockLockRepositoryIsLockedTrue()
         setupMockGetLatestCalculation(testMtditid, testNino, testCalcId)(liabilityCalculationErrorResponse)
 
         TestCalculationPollingService
@@ -76,7 +88,6 @@ class CalculationPollingServiceSpec extends TestSupport with MockCalculationServ
     "when MongoLock is acquired and retryable response(502) is received from calculation service for all retries" should {
       "return a retryable(502) response back" in {
 
-        mockLockRepositoryIsLockedTrue()
         setupMockGetLatestCalculation(testMtditid, testNino, testCalcId)(LiabilityCalculationError(Status.BAD_GATEWAY, "bad gateway"))
 
         TestCalculationPollingService
@@ -86,7 +97,6 @@ class CalculationPollingServiceSpec extends TestSupport with MockCalculationServ
 
     "when MongoLock is acquired and retryable response(404) is received from calculation service for all retries" should {
       "return a retryable(404) response back" in {
-        mockLockRepositoryIsLockedTrue()
         setupMockGetLatestCalculation(testMtditid, testNino, testCalcId)(liabilityCalculationNotFoundResponse)
 
         TestCalculationPollingService
@@ -96,7 +106,6 @@ class CalculationPollingServiceSpec extends TestSupport with MockCalculationServ
 
     "when MongoLock is acquired and retryable response(404) is received initially from calculation service and 200 after few seconds" should {
       "return a retryable(404) response back" in {
-        mockLockRepositoryIsLockedTrue()
         setupMockGetLatestCalculation(testMtditid, testNino, testCalcId)(liabilityCalculationNotFoundResponse)
 
         val result = TestCalculationPollingService
@@ -111,7 +120,6 @@ class CalculationPollingServiceSpec extends TestSupport with MockCalculationServ
 
     "when MongoLock is acquired and retryable response(502) is received initially from calculation service and 504 after few seconds" should {
       "return a retryable(404) response back" in {
-        mockLockRepositoryIsLockedTrue()
         setupMockGetLatestCalculation(testMtditid, testNino, testCalcId)(LiabilityCalculationError(Status.BAD_GATEWAY, "Bad gateway found"))
 
         val result = TestCalculationPollingService
@@ -126,11 +134,15 @@ class CalculationPollingServiceSpec extends TestSupport with MockCalculationServ
 
     "when MongoLock acquired failed" should {
       "return a 500 found response back" in {
-        mockLockRepositoryIsLockedFalse()
-
-        val result = TestCalculationPollingService
-          .initiateCalculationPollingSchedulerWithMongoLock(testCalcId, testNino, testMtditid)
-
+        object TestCalculationPollingServiceWithFailedMongoLock extends CalculationPollingService(
+          frontendAppConfig,
+          mockMongoLockRepository,
+          mockCalculationService
+        ) {
+          override lazy val lockService: LockService =
+            new LockServiceDidNotAcquireMongoLock
+        }
+        val result = TestCalculationPollingServiceWithFailedMongoLock.initiateCalculationPollingSchedulerWithMongoLock(testCalcId, testNino, testMtditid)
         result.futureValue shouldBe Status.INTERNAL_SERVER_ERROR
       }
     }
