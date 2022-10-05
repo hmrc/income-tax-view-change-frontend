@@ -993,13 +993,10 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       "not have button Pay now" in new Setup(charges = noChargesModel) {
         Option(pageDocument.getElementById("payment-button")) shouldBe None
       }
-      "should have payment processing bullets" in new Setup(charges = noChargesModel) {
-
-        pageDocument.getElementById("payments-made").text shouldBe paymentsMade
-        val paymentProcessingBullet: Element = pageDocument.getElementById("payments-made-bullets")
-        paymentProcessingBullet.select("li").get(0).text shouldBe paymentProcessingBullet1
-        paymentProcessingBullet.select("li").get(1).text shouldBe paymentProcessingBullet2
-        pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
+      "not have payment processing bullets" in new Setup(charges = noChargesModel) {
+        Option(pageDocument.getElementById("payments-made")) shouldBe None
+        Option(pageDocument.getElementById("payments-made-bullets")) shouldBe None
+        Option(pageDocument.getElementById("sa-tax-bill")) shouldBe None
         pageDocument.getElementById("sa-note-migrated").text shouldBe saNote
 
       }
