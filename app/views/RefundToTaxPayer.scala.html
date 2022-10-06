@@ -103,20 +103,20 @@
             <dl class="govuk-summary-list" id="refund-to-taxpayer-table-under-details">
                 <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key dt-cell-width">@messages("refund-to-taxpayer.tableHead.requested-on")</dt>
-                    <dd class="govuk-summary-list__value">@{
+                    <dd class="govuk-summary-list__value", style="text-align: right">@{
                         getRepaymentHistoryData(repaymentHistoryModel).creationDate.toLongDate
                     }</dd>
                 </div>
                 <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key">@messages("refund-to-taxpayer.tableHead.refund-reference")</dt>
-                    <dd class="govuk-summary-list__value">@{
+                    <dd class="govuk-summary-list__value", style="text-align: right">@{
                         getRepaymentHistoryData(repaymentHistoryModel).repaymentRequestNumber
                     }</dd>
                 </div>
                 @if(getRepaymentHistoryData(repaymentHistoryModel).amountApprovedforRepayment.isEmpty || getRepaymentHistoryData(repaymentHistoryModel).amountRequested.toCurrencyString != getRepaymentHistoryData(repaymentHistoryModel).amountApprovedforRepayment.getOrElse(throw MissingFieldException("Requested Amount Item")).toCurrencyString) {
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">@messages("refund-to-taxpayer.tableHead.requested-amount")</dt>
-                        <dd class="govuk-summary-list__value">@{
+                        <dd class="govuk-summary-list__value", style="text-align: right">@{
                             getRepaymentHistoryData(repaymentHistoryModel).amountRequested.toCurrencyString
                         }</dd>
                     </div>
@@ -124,7 +124,7 @@
                 @if(getRepaymentHistoryData(repaymentHistoryModel).amountApprovedforRepayment.isDefined) {
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">@messages("refund-to-taxpayer.tableHead.refund-amount")</dt>
-                        <dd class="govuk-summary-list__value">@{
+                        <dd class="govuk-summary-list__value", style="text-align: right">@{
                             getRepaymentHistoryData(repaymentHistoryModel).amountApprovedforRepayment.getOrElse(throw MissingFieldException("Refund Amount Item")).toCurrencyString
                         }</dd>
                     </div>
@@ -138,7 +138,7 @@
                                     @messages("refund-to-taxpayer.tableHead.interest-value", getInterestContent(repaymentHistoryModel).fromDate.toLongDate, getInterestContent(repaymentHistoryModel).toDate.toLongDate, getInterestContent(repaymentHistoryModel).fromRate)
                                 }
                             </dt>
-                            <dd class="govuk-summary-list__value govuk-!-text-align-left">@{
+                            <dd class="govuk-summary-list__value govuk-!-text-align-right">@{
                                 getInterestContent(repaymentHistoryModel).total.toCurrencyString
                             }</dd>
                         </div>
@@ -150,7 +150,7 @@
                                     @messages("refund-to-taxpayer.tableHead.varied-interest-rates-value", getInterestContent(repaymentHistoryModel).fromRate, getInterestContent(repaymentHistoryModel).toRate, getInterestContent(repaymentHistoryModel).fromDate.toLongDate, getInterestContent(repaymentHistoryModel).toDate.toLongDate)
                                 }
                             </dt>
-                            <dd class="govuk-summary-list__value govuk-!-text-align-left">@{
+                            <dd class="govuk-summary-list__value govuk-!-text-align-right">@{
                                 getInterestContent(repaymentHistoryModel).total.toCurrencyString
                             }</dd>
                         </div>
