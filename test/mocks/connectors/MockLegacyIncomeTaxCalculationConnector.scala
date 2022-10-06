@@ -26,7 +26,7 @@ import testUtils.UnitSpec
 
 import scala.concurrent.Future
 
-trait MockIncomeTaxCalculationConnector extends UnitSpec with MockitoSugar with BeforeAndAfterEach {
+trait MockLegacyIncomeTaxCalculationConnector extends UnitSpec with MockitoSugar with BeforeAndAfterEach {
 
   val mockIncomeTaxCalculationConnector: IncomeTaxCalculationConnector = mock[IncomeTaxCalculationConnector]
 

@@ -25,7 +25,9 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class CalculationService @Inject()(incomeTaxCalculationConnector: IncomeTaxCalculationConnector)(implicit ec: ExecutionContext) {
+class CalculationService @Inject()(incomeTaxCalculationConnector: IncomeTaxCalculationConnector,
+                                   newCalculationConnector: NewCalculationConnector
+                                  )(implicit ec: ExecutionContext) {
 
   def getLatestCalculation(mtditid: String, nino: String, calcId: String)
                           (implicit headerCarrier: HeaderCarrier): Future[LiabilityCalculationResponseModel] = {
@@ -35,6 +37,10 @@ class CalculationService @Inject()(incomeTaxCalculationConnector: IncomeTaxCalcu
 
   def getLiabilityCalculationDetail(mtditid: String, nino: String, taxYear: Int)
                                    (implicit headerCarrier: HeaderCarrier): Future[LiabilityCalculationResponseModel] = {
-    incomeTaxCalculationConnector.getCalculationResponse(mtditid, nino, taxYear.toString)
+    if(taxYear <= 2023) {
+      incomeTaxCalculationConnector.getCalculationResponse(mtditid, nino, taxYear.toString)
+    } else {
+      newCalculationConnector.getCalculationResponse(mtditid, nino, taxYear.toString)
+    }
   }
 }

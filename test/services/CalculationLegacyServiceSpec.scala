@@ -17,13 +17,13 @@
 package services
 
 import config.featureswitch.FeatureSwitching
-import mocks.connectors.MockIncomeTaxCalculationConnector
+import mocks.connectors.MockLegacyIncomeTaxCalculationConnector
 import models.liabilitycalculation._
 import play.api.http.Status
 import testConstants.BaseTestConstants._
 import testUtils.TestSupport
 
-class CalculationServiceSpec extends TestSupport with MockIncomeTaxCalculationConnector with FeatureSwitching {
+class CalculationLegacyServiceSpec extends TestSupport with MockLegacyIncomeTaxCalculationConnector with FeatureSwitching {
 
   val liabilityCalculationSuccessResponse: LiabilityCalculationResponse = LiabilityCalculationResponse(
     inputs = Inputs(personalInformation = PersonalInformation(
@@ -44,22 +44,28 @@ class CalculationServiceSpec extends TestSupport with MockIncomeTaxCalculationCo
     "when the  Calculation Data api feature switch is enabled" should {
       "successful response is returned from the IncomeTaxCalculationConnector" should {
 
-        "return a LiabilityCalculationModel" in {
-          mockGetCalculationResponse(testMtditid, testNino, "2018")(liabilityCalculationSuccessResponse)
+        "return a LiabilityCalculationModel from the legacy connector" in {
+          mockGetLegacyCalculationResponse(testMtditid, testNino, "2018")(liabilityCalculationSuccessResponse)
 
           TestCalculationService.getLiabilityCalculationDetail(testMtditid, testNino, testTaxYear).futureValue shouldBe liabilityCalculationSuccessResponse
 
         }
+        "return a LiabilityCalculationModel from the connector" in {
+          mockGetCalculationResponse(testMtditid, testNino, "2023")(liabilityCalculationSuccessResponse)
+
+          TestCalculationService.getLiabilityCalculationDetail(testMtditid, testNino, 2023.toInt).futureValue shouldBe liabilityCalculationSuccessResponse
+
+        }
         "NOT_FOUND response is returned from the IncomeTaxCalculationConnector" should {
           "return a LiabilityCalculationError" in {
-            mockGetCalculationResponse(testMtditid, testNino, "2018")(liabilityCalculationNotFoundResponse)
+            mockGetLegacyCalculationResponse(testMtditid, testNino, "2018")(liabilityCalculationNotFoundResponse)
 
             TestCalculationService.getLiabilityCalculationDetail(testMtditid, testNino, testTaxYear).futureValue shouldBe liabilityCalculationNotFoundResponse
           }
         }
         "error response is returned from the IncomeTaxCalculationConnector" should {
           "return a LiabilityCalculationError" in {
-            mockGetCalculationResponse(testMtditid, testNino, "2018")(liabilityCalculationErrorResponse)
+            mockGetLegacyCalculationResponse(testMtditid, testNino, "2018")(liabilityCalculationErrorResponse)
 
             TestCalculationService.getLiabilityCalculationDetail(testMtditid, testNino, testTaxYear).futureValue shouldBe liabilityCalculationErrorResponse
           }
