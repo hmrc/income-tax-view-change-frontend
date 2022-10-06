@@ -38,7 +38,7 @@ class CalculationPollingService @Inject()(val frontendAppConfig: FrontendAppConf
 
   private lazy val retryableStatusCodes: List[Int] = List(Status.BAD_GATEWAY, Status.NOT_FOUND)
 
-  def initiateCalculationPollingSchedulerWithMongoLock(calcId: String, nino: String, mtditid: String)
+  def initiateCalculationPollingSchedulerWithMongoLock(calcId: String, nino: String, taxYear: Int, mtditid: String)
                                                       (implicit headerCarrier: HeaderCarrier): Future[Int] = {
 
 
@@ -55,12 +55,12 @@ class CalculationPollingService @Inject()(val frontendAppConfig: FrontendAppConf
       isLocked =>
         if (isLocked) {
           //to avoid wait time for first call, calling getCalculationResponse with end time as current time
-          getCalculationResponse(System.currentTimeMillis(), endTimeInMillis, calcId, nino, mtditid).flatMap {
+          getCalculationResponse(System.currentTimeMillis(), endTimeInMillis, calcId, nino, taxYear, mtditid).flatMap {
             case statusCode if !retryableStatusCodes.contains(statusCode) => {
               lockKeeper.releaseLock
               Future.successful(statusCode)
             }
-            case _ => pollCalcInIntervals(calcId, nino, mtditid, lockKeeper, endTimeInMillis)
+            case _ => pollCalcInIntervals(calcId, nino, taxYear, mtditid, lockKeeper, endTimeInMillis)
           }
         } else {
           Future.successful(Status.INTERNAL_SERVER_ERROR)
@@ -73,6 +73,7 @@ class CalculationPollingService @Inject()(val frontendAppConfig: FrontendAppConf
                                      endTimeInMillis: Long,
                                      calcId: String,
                                      nino: String,
+                                     taxYear: Int,
                                      mtditid: String
                                     )
                                     (implicit hc: HeaderCarrier): Future[Int] = {
@@ -82,7 +83,7 @@ class CalculationPollingService @Inject()(val frontendAppConfig: FrontendAppConf
       //Waiting until interval time is complete
     }
 
-    calculationService.getLatestCalculation(mtditid, nino, calcId).map {
+    calculationService.getLatestCalculation(mtditid, nino, calcId, taxYear).map {
       case _: LiabilityCalculationResponse => Status.OK
       case error: LiabilityCalculationError => {
         if (System.currentTimeMillis() > endTimeInMillis) Status.INTERNAL_SERVER_ERROR
@@ -91,7 +92,7 @@ class CalculationPollingService @Inject()(val frontendAppConfig: FrontendAppConf
     }
   }
 
-  private def pollCalcInIntervals(calcId: String, nino: String, mtditid: String,
+  private def pollCalcInIntervals(calcId: String, nino: String, taxYear: Int, mtditid: String,
                                   lockKeeper: PollCalculationLockKeeper,
                                   endTimeInMillis: Long)
                                  (implicit hc: HeaderCarrier): Future[Int] = {
@@ -100,13 +101,13 @@ class CalculationPollingService @Inject()(val frontendAppConfig: FrontendAppConf
         Await.result(getCalculationResponse(
           System.currentTimeMillis() + frontendAppConfig.calcPollSchedulerInterval,
           endTimeInMillis,
-          calcId, nino, mtditid
+          calcId, nino, taxYear, mtditid
         ), frontendAppConfig.calcPollSchedulerTimeout.millis))) {
         //polling calc service until non retryable response code is received
       }
 
       lockKeeper.releaseLock
-      getCalculationResponse(System.currentTimeMillis(), endTimeInMillis, calcId, nino, mtditid)
+      getCalculationResponse(System.currentTimeMillis(), endTimeInMillis, calcId, nino, taxYear, mtditid)
     }
   }
 }

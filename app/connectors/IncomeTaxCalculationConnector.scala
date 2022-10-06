@@ -62,11 +62,11 @@ class IncomeTaxCalculationConnector @Inject()(http: HttpClient,
     }
   }
 
-  def getCalculationResponseByCalcId(mtditid: String, nino: String, calcId: String)
+  def getCalculationResponseByCalcId(mtditid: String, nino: String, calcId: String, taxYear: Int)
                                     (implicit headerCarrier: HeaderCarrier,
                                      ec: ExecutionContext): Future[LiabilityCalculationResponseModel] = {
 
-    http.GET[HttpResponse](getCalculationResponseByCalcIdUrl(nino, calcId))(httpReads,
+    http.GET[HttpResponse](getCalculationResponseByCalcIdUrl(nino, calcId), Seq(("taxYear", taxYear.toString)))(httpReads,
       headerCarrier.withExtraHeaders("mtditid" -> mtditid), ec) map { response =>
       response.status match {
         case OK =>
