@@ -99,8 +99,8 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
 
         val res = IncomeTaxViewChangeFrontend.getCalculationPollerWithoutAwait(testYear, Map(SessionKeys.calculationId -> "idFour"))
 
-        //After 1.6 seconds responding with success message
-        Thread.sleep(1600)
+        //After 1.75 seconds responding with success message
+        Thread.sleep(1750)
         IncomeTaxCalculationStub.stubGetCalculationResponseByCalcId(testNino, "idFour")(
           status = OK,
           body = liabilityCalculationModelSuccessful
@@ -113,7 +113,7 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
         )
 
         Then("I check all calls expected were made")
-        IncomeTaxCalculationStub.verifyGetCalculationResponseByCalcId(testNino, "idFour", 5)
+        IncomeTaxCalculationStub.verifyGetCalculationResponseByCalcId(testNino, "idFour", 6)
 
       }
       "calculation service returns retryable response back initially and then returns non-retryable error before interval time completed" in {
@@ -125,8 +125,8 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
 
         val res = IncomeTaxViewChangeFrontend.getCalculationPollerWithoutAwait(testYear, Map(SessionKeys.calculationId -> "idFive"))
 
-        //After 1.6 seconds responding with success message
-        Thread.sleep(1600)
+        //After 1.75 seconds responding with success message
+        Thread.sleep(1750)
         IncomeTaxCalculationStub.stubGetCalculationErrorResponseByCalcId(testNino, "idFive")(INTERNAL_SERVER_ERROR,
           LiabilityCalculationError(INTERNAL_SERVER_ERROR, "error"))
 
@@ -136,7 +136,7 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
         )
 
         Then("I check all calls expected were made")
-        IncomeTaxCalculationStub.verifyGetCalculationResponseByCalcId(testNino, "idFive", 5)
+        IncomeTaxCalculationStub.verifyGetCalculationResponseByCalcId(testNino, "idFive", 6)
 
       }
     }
