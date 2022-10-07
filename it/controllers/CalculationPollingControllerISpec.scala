@@ -91,7 +91,7 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
         val res = IncomeTaxViewChangeFrontend.getCalculationPoller(testYear, Map(SessionKeys.calculationId -> "idThree"))
 
         Then("I check all calls expected were made")
-        //IncomeTaxCalculationStub.verifyGetCalculationResponseByCalcId(testNino, "idThree", testTaxYear)
+        IncomeTaxCalculationStub.verifyGetCalculationResponseByCalcId(testNino, "idThree", testTaxYear, noOfCalls = 8)
 
         And("The expected result is returned")
         res should have(
@@ -127,7 +127,7 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
         )
 
         Then("I check all calls expected were made")
-        //IncomeTaxCalculationStub.verifyGetCalculationResponseByCalcId(testNino, "idFour", 6)
+        IncomeTaxCalculationStub.verifyGetCalculationResponseByCalcId(testNino, "idFour", testTaxYear, noOfCalls = 6)
 
         mongoDbConnection.repo.findById("idFour").futureValue shouldBe None
       }
@@ -146,8 +146,7 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
 
         //After 1.5 seconds responding with success message
         Thread.sleep(1500)
-        //IncomeTaxCalculationStub.stubGetCalculationErrorResponseByCalcId(testNino, "idFive", testTaxYear)(INTERNAL_SERVER_ERROR,
-//          LiabilityCalculationError(INTERNAL_SERVER_ERROR, "error"))
+        IncomeTaxCalculationStub.stubGetCalculationErrorResponseByCalcId(testNino, "idFive", testTaxYear)(INTERNAL_SERVER_ERROR, LiabilityCalculationError(INTERNAL_SERVER_ERROR, "error"))
 
         And("The expected result is returned")
         res.futureValue should have(
@@ -155,7 +154,7 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
         )
 
         Then("I check all calls expected were made")
-//        IncomeTaxCalculationStub.verifyGetCalculationResponseByCalcId(testNino, "idFive", 6)
+        IncomeTaxCalculationStub.verifyGetCalculationResponseByCalcId(testNino, "idFive", testTaxYear, noOfCalls = 6)
 
         mongoDbConnection.repo.findById("idFive").futureValue shouldBe None
       }
@@ -177,7 +176,6 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
         }
 
         s"redirect to '${controllers.routes.FinalTaxCalculationController.show(testTaxYear).url}''" in {
-          println(result.header("Location"))
           result.header("Location").head shouldBe controllers.routes.FinalTaxCalculationController.show(testTaxYear).url
         }
       }
