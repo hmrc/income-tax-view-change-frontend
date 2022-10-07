@@ -49,7 +49,7 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
   unauthorisedTest(s"/calculation/$testYear/submitted")
 
   def calculationStub(): Unit = {
-    IncomeTaxCalculationStub.stubGetCalculationResponseByCalcId(testNino, taxYear.toInt, "idOne")(
+    IncomeTaxCalculationStub.stubGetCalculationResponseByCalcId(testNino, testTaxYear, "idOne")(
       status = OK,
       body = liabilityCalculationModelSuccessful
     )

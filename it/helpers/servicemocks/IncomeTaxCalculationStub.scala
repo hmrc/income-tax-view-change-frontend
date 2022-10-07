@@ -25,7 +25,11 @@ object IncomeTaxCalculationStub {
   def getCalculationResponseUrl(nino: String, taxYear: String): String = s"/income-tax-calculation/income-tax/nino/$nino/calculation-details?taxYear=$taxYear"
 
   def getCalculationResponseByCalcIdUrl(nino: String, calcId: String, taxYear: Int): String =
+    //s"/income-tax-calculation/income-tax/nino/$nino/calc-id/$calcId/calculation-details"
     s"/income-tax-calculation/income-tax/nino/$nino/calc-id/$calcId/calculation-details?taxYear=$taxYear"
+
+  def getCalculationResponseByCalcIdPureUrl(nino: String, calcId: String): String =
+    s"/income-tax-calculation/income-tax/nino/$nino/calc-id/$calcId/calculation-details"
 
   def stubGetCalculationResponse(nino: String, taxYear: String)(status: Int, body: LiabilityCalculationResponse): Unit = {
     WiremockHelper.stubGet(getCalculationResponseUrl(nino, taxYear), status, Json.toJson(body).toString())
