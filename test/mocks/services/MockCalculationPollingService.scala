@@ -44,7 +44,9 @@ trait MockCalculationPollingService extends UnitSpec with MockitoSugar with Befo
       .initiateCalculationPollingSchedulerWithMongoLock(
         ArgumentMatchers.eq(calcId),
         ArgumentMatchers.eq(nino),
-        ArgumentMatchers.eq(mtditid)
+        //ArgumentMatchers.eq(taxYear),
+        ArgumentMatchers.any(),
+        ArgumentMatchers.eq(mtditid),
       )(ArgumentMatchers.any()))
       .thenReturn(Future.successful(response))
 

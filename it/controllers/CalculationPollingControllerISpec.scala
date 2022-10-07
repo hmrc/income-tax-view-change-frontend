@@ -39,7 +39,7 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
       "redirects to calculation home page" in {
         Given("Calculation service returns a successful response back")
 
-        IncomeTaxCalculationStub.stubGetCalculationResponseByCalcId(testNino, "idOne")(
+        IncomeTaxCalculationStub.stubGetCalculationResponseByCalcId(testNino, taxYear.toInt, "idOne")(
           status = OK,
           body = liabilityCalculationModelSuccessful
         )
@@ -48,7 +48,7 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
         val res = IncomeTaxViewChangeFrontend.getCalculationPoller(testYear, Map(SessionKeys.calculationId -> "idOne"))
 
         Then("I check all calls expected were made")
-        IncomeTaxCalculationStub.verifyGetCalculationResponseByCalcId(testNino, "idOne")
+        IncomeTaxCalculationStub.verifyGetCalculationResponseByCalcId(testNino, "idOne", taxYear.toInt)
 
         And("The expected result is returned")
         res should have(
@@ -61,7 +61,7 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
       "calculation service returns non-retryable response back" in {
         Given("Calculation service returns a 500 error response back")
 
-        IncomeTaxCalculationStub.stubGetCalculationErrorResponseByCalcId(testNino, "idTwo")(INTERNAL_SERVER_ERROR,
+        IncomeTaxCalculationStub.stubGetCalculationErrorResponseByCalcId(testNino, "idTwo", taxYear.toInt)(INTERNAL_SERVER_ERROR,
           LiabilityCalculationError(INTERNAL_SERVER_ERROR, "error"))
 
         When(s"I call GET ${controllers.routes.CalculationPollingController.calculationPoller(testYearInt, isFinalCalc = false).url}")
@@ -69,7 +69,7 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
         val res = IncomeTaxViewChangeFrontend.getCalculationPoller(testYear, Map(SessionKeys.calculationId -> "idTwo"))
 
         Then("I check all calls expected were made")
-        IncomeTaxCalculationStub.verifyGetCalculationResponseByCalcId(testNino, "idTwo")
+        IncomeTaxCalculationStub.verifyGetCalculationResponseByCalcId(testNino, "idTwo", taxYear.toInt)
 
         And("The expected result is returned")
         res should have(
@@ -80,7 +80,7 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
       "calculation service returns retryable response back" in {
         Given("Calculation service returns a 404 error response back during total duration of timeout interval")
 
-        IncomeTaxCalculationStub.stubGetCalculationErrorResponseByCalcId(testNino, "idThree")(NOT_FOUND,
+        IncomeTaxCalculationStub.stubGetCalculationErrorResponseByCalcId(testNino, "idThree", taxYear.toInt)(NOT_FOUND,
           LiabilityCalculationError(NOT_FOUND, "not found"))
 
         When(s"I call GET ${controllers.routes.CalculationPollingController.calculationPoller(testYearInt, isFinalCalc = false).url}")
@@ -98,7 +98,7 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
       "calculation service returns retryable response back initially and then returns success response before interval time completed" in {
         Given("Calculation service returns a 404 error response back during total duration of timeout interval")
 
-        IncomeTaxCalculationStub.stubGetCalculationErrorResponseByCalcId(testNino, "idFour")(NOT_FOUND,
+        IncomeTaxCalculationStub.stubGetCalculationErrorResponseByCalcId(testNino, "idFour", taxYear.toInt)(NOT_FOUND,
           LiabilityCalculationError(NOT_FOUND, "not found"))
 
         When(s"I call GET ${controllers.routes.CalculationPollingController.calculationPoller(testYearInt, isFinalCalc = false).url}")
@@ -110,7 +110,7 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
 
         //After 1.5 seconds responding with success message
         Thread.sleep(1500)
-        IncomeTaxCalculationStub.stubGetCalculationResponseByCalcId(testNino, "idFour")(
+        IncomeTaxCalculationStub.stubGetCalculationResponseByCalcId(testNino, taxYear.toInt, "idFour")(
           status = OK,
           body = liabilityCalculationModelSuccessful
         )
@@ -129,7 +129,7 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
       "calculation service returns retryable response back initially and then returns non-retryable error before interval time completed" in {
         Given("Calculation service returns a 404 error response back during total duration of timeout interval")
 
-        IncomeTaxCalculationStub.stubGetCalculationErrorResponseByCalcId(testNino, "idFive")(NOT_FOUND, LiabilityCalculationError(NOT_FOUND, "not found"))
+        IncomeTaxCalculationStub.stubGetCalculationErrorResponseByCalcId(testNino, "idFive", taxYear.toInt)(NOT_FOUND, LiabilityCalculationError(NOT_FOUND, "not found"))
 
         When(s"I call GET ${controllers.routes.CalculationPollingController.calculationPoller(testYearInt, isFinalCalc = false).url}")
 
@@ -140,7 +140,7 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
 
         //After 1.5 seconds responding with success message
         Thread.sleep(1500)
-        IncomeTaxCalculationStub.stubGetCalculationErrorResponseByCalcId(testNino, "idFive")(INTERNAL_SERVER_ERROR,
+        IncomeTaxCalculationStub.stubGetCalculationErrorResponseByCalcId(testNino, "idFive", taxYear.toInt)(INTERNAL_SERVER_ERROR,
           LiabilityCalculationError(INTERNAL_SERVER_ERROR, "error"))
 
         And("The expected result is returned")
@@ -162,7 +162,7 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
 
       "redirect the user to the final tax calculation page" which {
         lazy val result = {
-          IncomeTaxCalculationStub.stubGetCalculationResponseByCalcId(testNino, "idOne")(OK, liabilityCalculationModelSuccessful)
+          IncomeTaxCalculationStub.stubGetCalculationResponseByCalcId(testNino, testYear.toInt, "idOne")(OK, liabilityCalculationModelSuccessful)
           IncomeTaxViewChangeFrontend.getFinalTaxCalculationPoller(testYear, Map(SessionKeys.calculationId -> "idOne"))
         }
 
@@ -171,9 +171,11 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
         }
 
         s"redirect to '${controllers.routes.FinalTaxCalculationController.show(testTaxYear).url}''" in {
+          println(result.header("Location"))
           result.header("Location").head shouldBe controllers.routes.FinalTaxCalculationController.show(testTaxYear).url
         }
       }
     }
   }
+
 }
