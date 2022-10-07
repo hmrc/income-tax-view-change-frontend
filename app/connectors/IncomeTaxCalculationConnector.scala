@@ -33,7 +33,7 @@ class IncomeTaxCalculationConnector @Inject()(http: HttpClient,
   def getCalculationResponseUrl(nino: String): String = s"$baseUrl/income-tax-calculation/income-tax/nino/$nino/calculation-details"
 
   def getCalculationResponseByCalcIdUrl(nino: String, calcId: String, taxYear: Int): String =
-    s"$baseUrl/income-tax-calculation/income-tax/nino/$nino/calc-id/$calcId/calculation-details?taxYear=$taxYear"
+    s"$baseUrl/income-tax-calculation/income-tax/nino/$nino/calc-id/$calcId/calculation-details"
 
   def getCalculationResponse(mtditid: String, nino: String, taxYear: String)
                             (implicit headerCarrier: HeaderCarrier,
@@ -64,7 +64,7 @@ class IncomeTaxCalculationConnector @Inject()(http: HttpClient,
   def getCalculationResponseByCalcId(mtditid: String, nino: String, calcId: String, taxYear: Int)
                                     (implicit headerCarrier: HeaderCarrier,
                                      ec: ExecutionContext): Future[LiabilityCalculationResponseModel] = {
-    http.GET[HttpResponse](getCalculationResponseByCalcIdUrl(nino, calcId, taxYear))(httpReads,
+    http.GET[HttpResponse](getCalculationResponseByCalcIdUrl(nino, calcId, taxYear), Seq(("taxYear", taxYear.toString)), Seq.empty)(httpReads,
       headerCarrier.withExtraHeaders("mtditid" -> mtditid), ec) map { response =>
       response.status match {
         case OK =>
