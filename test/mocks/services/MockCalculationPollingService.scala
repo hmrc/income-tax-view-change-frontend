@@ -39,20 +39,19 @@ trait MockCalculationPollingService extends UnitSpec with MockitoSugar with Befo
     reset(mockCalculationPollingService)
   }
 
-  def setupMockInitiateCalculationPolling(calcId: String, nino: String, mtditid: String)(response: Int): Unit =
+  def setupMockInitiateCalculationPolling(calcId: String, nino: String, mtditid: String, taxYear: Int)(response: Int): Unit =
     when(mockCalculationPollingService
       .initiateCalculationPollingSchedulerWithMongoLock(
         ArgumentMatchers.eq(calcId),
         ArgumentMatchers.eq(nino),
-        //ArgumentMatchers.eq(taxYear),
-        ArgumentMatchers.any(),
+        ArgumentMatchers.eq(taxYear),
         ArgumentMatchers.eq(mtditid),
       )(ArgumentMatchers.any()))
       .thenReturn(Future.successful(response))
 
-  def mockCalculationPollingSuccess(): Unit = setupMockInitiateCalculationPolling(testCalcId, testNino, testMtditid)(Status.OK)
+  def mockCalculationPollingSuccess(): Unit = setupMockInitiateCalculationPolling(testCalcId, testNino, testMtditid, testTaxYear)(Status.OK)
 
-  def mockCalculationPollingRetryableError(): Unit = setupMockInitiateCalculationPolling(testCalcId, testNino, testMtditid)(Status.NOT_FOUND)
+  def mockCalculationPollingRetryableError(): Unit = setupMockInitiateCalculationPolling(testCalcId, testNino, testMtditid, testTaxYear)(Status.NOT_FOUND)
 
-  def mockCalculationPollingNonRetryableError(): Unit = setupMockInitiateCalculationPolling(testCalcId, testNino, testMtditid)(Status.INTERNAL_SERVER_ERROR)
+  def mockCalculationPollingNonRetryableError(): Unit = setupMockInitiateCalculationPolling(testCalcId, testNino, testMtditid, testTaxYear)(Status.INTERNAL_SERVER_ERROR)
 }
