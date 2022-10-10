@@ -36,7 +36,7 @@ class IncomeTaxCalculationConnectorSpec extends TestSupport with MockHttp {
   class GetCalculationResponseByCalcIdTest(nino: String, calcId: String, response: HttpResponse) {
     val connector = new IncomeTaxCalculationConnector(mockHttpGet, appConfig)
 
-    setupMockHttpGet(connector.getCalculationResponseByCalcIdUrl(nino, calcId, taxYear.toInt))(response)
+    setupMockHttpGet(connector.getCalculationResponseByCalcIdUrl(nino, calcId))(response)
   }
 
   val mtditid = "XAIT0000123456"
