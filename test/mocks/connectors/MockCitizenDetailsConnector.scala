@@ -21,14 +21,14 @@ import models.citizenDetails.CitizenDetailsResponseModel
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.Mockito.mock
 import testUtils.UnitSpec
 
 import scala.concurrent.Future
 
-trait MockCitizenDetailsConnector extends UnitSpec with MockitoSugar with BeforeAndAfterEach {
+trait MockCitizenDetailsConnector extends UnitSpec with BeforeAndAfterEach {
 
-  val mockCitizenDetailsConnector: CitizenDetailsConnector = mock[CitizenDetailsConnector]
+  val mockCitizenDetailsConnector: CitizenDetailsConnector = mock(classOf[CitizenDetailsConnector])
 
   override def beforeEach(): Unit = {
     super.beforeEach()

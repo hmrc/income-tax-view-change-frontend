@@ -10,20 +10,21 @@ import play.sbt.routes.RoutesKeys
 
 val appName = "income-tax-view-change-frontend"
 
-val bootstrapPlayVersion      = "5.20.0"
-val govTemplateVersion        = "5.75.0-play-28"
-val playPartialsVersion       = "8.2.0-play-28"
-val playUiVersion             = "9.8.0-play-28"
-val playFrontendHMRCVersion   = "3.15.0-play-28"
-val playLanguageVersion       = "5.1.0-play-28"
-val catsVersion               = "0.9.0"
+val bootstrapPlayVersion = "5.20.0"
+val govTemplateVersion = "5.75.0-play-28"
+val playPartialsVersion = "8.2.0-play-28"
+val playUiVersion = "9.8.0-play-28"
+val playFrontendHMRCVersion = "3.15.0-play-28"
+val playLanguageVersion = "5.1.0-play-28"
+val catsVersion = "0.9.0"
 
-val scalaTestPlusVersion      = "5.0.0"
-val pegdownVersion            = "1.6.0"
-val jsoupVersion              = "1.11.3"
-val mockitoVersion            = "2.27.0"
-val scalaMockVersion          = "3.5.0"
-val wiremockVersion           = "2.26.1"
+val scalaTestPlusVersion = "5.0.0"
+val pegdownVersion = "1.6.0"
+val jsoupVersion = "1.11.3"
+val mockitoVersion = "3.12.4"
+val scalaMockVersion = "3.5.0"
+val wiremockVersion = "2.26.1"
+val hmrcMongoVersion = "0.73.0"
 
 val compile = Seq(
   ws,
@@ -35,8 +36,7 @@ val compile = Seq(
   "uk.gov.hmrc" %% "play-language" % playLanguageVersion,
   "uk.gov.hmrc" %% "logback-json-logger" % "5.1.0",
   "com.typesafe.play" %% "play-json-joda" % "2.6.10",
-  "uk.gov.hmrc" %% "mongo-lock" % "7.0.0-play-28",
-  "uk.gov.hmrc" %% "simple-reactivemongo" % "8.0.0-play-28",
+  "uk.gov.hmrc.mongo" %% "hmrc-mongo-play-28" % hmrcMongoVersion,
   "uk.gov.hmrc" %% "play-frontend-hmrc" % playFrontendHMRCVersion
 )
 
@@ -48,7 +48,7 @@ def test(scope: String = "test"): Seq[ModuleID] = Seq(
   "com.typesafe.play" %% "play-test" % PlayVersion.current % scope,
   "org.mockito" % "mockito-core" % mockitoVersion % scope,
   "com.github.tomakehurst" % "wiremock-jre8" % wiremockVersion % scope,
-  "uk.gov.hmrc" %% "reactivemongo-test" % "5.0.0-play-28" % scope,
+  "uk.gov.hmrc.mongo" %% "hmrc-mongo-test-play-28" % hmrcMongoVersion % scope,
   caffeine
 )
 
@@ -60,7 +60,7 @@ def it(scope: String = "it"): Seq[ModuleID] = Seq(
   "com.typesafe.play" %% "play-test" % PlayVersion.current % scope,
   "org.mockito" % "mockito-core" % mockitoVersion % scope,
   "com.github.tomakehurst" % "wiremock-jre8" % wiremockVersion % scope,
-  "uk.gov.hmrc" %% "reactivemongo-test" % "5.0.0-play-28" % scope,
+  "uk.gov.hmrc.mongo" %% "hmrc-mongo-test-play-28" % hmrcMongoVersion % scope,
   caffeine
 )
 
@@ -84,7 +84,7 @@ lazy val scoverageSettings = {
 lazy val microservice = Project(appName, file("."))
   .enablePlugins(play.sbt.PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin)
   .disablePlugins(JUnitXmlReportPlugin)
-  .settings(playSettings : _*)
+  .settings(playSettings: _*)
   .settings(scalaSettings: _*)
   .settings(scalaVersion := "2.12.13")
   .settings(publishingSettings: _*)
@@ -103,7 +103,7 @@ lazy val microservice = Project(appName, file("."))
   .settings(inConfig(IntegrationTest)(Defaults.itSettings): _*)
   .settings(
     Keys.fork in IntegrationTest := false,
-    unmanagedSourceDirectories in IntegrationTest := (baseDirectory in IntegrationTest)(base => Seq(base / "it")).value,
+    unmanagedSourceDirectories in IntegrationTest := (baseDirectory in IntegrationTest) (base => Seq(base / "it")).value,
     addTestReportOption(IntegrationTest, "int-test-reports"),
     parallelExecution in IntegrationTest := false,
     TwirlKeys.templateImports ++= Seq(

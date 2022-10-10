@@ -20,7 +20,7 @@ import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculat
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.Mockito.mock
 import services.CalculationService
 import testConstants.BaseTestConstants._
 import testConstants.NewCalcBreakdownUnitTestConstants._
@@ -28,9 +28,9 @@ import testUtils.UnitSpec
 
 import scala.concurrent.Future
 
-trait MockCalculationService extends UnitSpec with MockitoSugar with BeforeAndAfterEach {
+trait MockCalculationService extends UnitSpec with BeforeAndAfterEach {
 
-  val mockCalculationService: CalculationService = mock[CalculationService]
+  val mockCalculationService: CalculationService = mock(classOf[CalculationService])
 
   override def beforeEach(): Unit = {
     super.beforeEach()

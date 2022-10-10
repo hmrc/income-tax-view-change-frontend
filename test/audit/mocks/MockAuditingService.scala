@@ -36,7 +36,7 @@ trait MockAuditingService extends TestSupport with BeforeAndAfterEach {
     reset(mockAuditingService)
   }
 
-  val mockAuditingService: AuditingService = mock[AuditingService]
+  val mockAuditingService: AuditingService = mock(classOf[AuditingService])
 
   def verifyAudit(model: AuditModel, path: Option[String] = None): Unit = {
     verify(mockAuditingService).audit(

@@ -19,16 +19,16 @@ package mocks.services
 import org.mockito.ArgumentMatchers.{any, eq => matches}
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.Mockito.mock
 import services.agent.ClientDetailsService
 import services.agent.ClientDetailsService.{ClientDetails, ClientDetailsFailure}
 import testUtils.UnitSpec
 
 import scala.concurrent.Future
 
-trait MockClientDetailsService extends UnitSpec with MockitoSugar with BeforeAndAfterEach {
+trait MockClientDetailsService extends UnitSpec with BeforeAndAfterEach {
 
-  val mockClientDetailsService: ClientDetailsService = mock[ClientDetailsService]
+  val mockClientDetailsService: ClientDetailsService = mock(classOf[ClientDetailsService])
 
   override def beforeEach(): Unit = {
     super.beforeEach()

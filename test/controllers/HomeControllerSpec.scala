@@ -30,7 +30,7 @@ import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, when}
+import org.mockito.Mockito.{mock, reset, when}
 import org.scalatest.BeforeAndAfterEach
 import play.api.http.Status
 import play.api.i18n.Lang
@@ -69,10 +69,10 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
   val agentTitle = s"${messages("htmlTitle.agent", messages("home.agent.heading"))}"
 
   trait Setup {
-    val mockDateService: DateService = mock[DateService]
-    val NextUpdatesService: NextUpdatesService = mock[NextUpdatesService]
-    val financialDetailsService: FinancialDetailsService = mock[FinancialDetailsService]
-    val whatYouOweService: WhatYouOweService = mock[WhatYouOweService]
+    val mockDateService: DateService = mock(classOf[DateService])
+    val NextUpdatesService: NextUpdatesService = mock(classOf[NextUpdatesService])
+    val financialDetailsService: FinancialDetailsService = mock(classOf[FinancialDetailsService])
+    val whatYouOweService: WhatYouOweService = mock(classOf[WhatYouOweService])
 
     val controller = new HomeController(
       app.injector.instanceOf[views.html.Home],
@@ -104,7 +104,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
 
   //new setup for agent
   implicit val lang: Lang = Lang("en-US")
-  val mockDateService: DateService = mock[DateService]
+  val mockDateService: DateService = mock(classOf[DateService])
   val updateDateAndOverdueObligationsLPI: (LocalDate, Seq[LocalDate]) = (LocalDate.of(2021, Month.MAY, 15), Seq.empty[LocalDate])
   val javaMessagesApi: MessagesApi = inject[play.i18n.MessagesApi]
   val overdueWarningMessageDunningLockTrue: String = javaMessagesApi.get(new i18n.Lang(lang), "home.agent.overdue.message.dunningLock.true")

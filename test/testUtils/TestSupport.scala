@@ -23,7 +23,7 @@ import implicits.ImplicitDateFormatterImpl
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.scalatest.{BeforeAndAfterEach, Suite}
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.Mockito.mock
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.HeaderNames
 import play.api.i18n.{Messages, MessagesApi}
@@ -41,7 +41,7 @@ import uk.gov.hmrc.play.partials.HeaderCarrierForPartials
 import scala.concurrent.duration._
 import scala.concurrent.{ExecutionContext, Future}
 
-trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar with BeforeAndAfterEach with MaterializerSupport with Injecting {
+trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterEach with MaterializerSupport with Injecting {
   this: Suite =>
 
   import org.scalactic.Equality
@@ -66,7 +66,7 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar wi
 
   def messagesApi: MessagesApi = inject[MessagesApi]
 
-  implicit val mockItvcHeaderCarrierForPartialsConverter: ItvcHeaderCarrierForPartialsConverter = mock[ItvcHeaderCarrierForPartialsConverter]
+  implicit val mockItvcHeaderCarrierForPartialsConverter: ItvcHeaderCarrierForPartialsConverter = mock(classOf[ItvcHeaderCarrierForPartialsConverter])
 
   implicit val headerCarrier: HeaderCarrier = HeaderCarrier().withExtraHeaders(HeaderNames.REFERER -> testReferrerUrl)
   implicit val hcwc: HeaderCarrierForPartials = HeaderCarrierForPartials(headerCarrier)

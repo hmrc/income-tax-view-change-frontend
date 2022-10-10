@@ -20,7 +20,6 @@ import audit.mocks.MockAuditingService
 import config.featureswitch.{FeatureSwitching, IvUplift}
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
-import org.scalatestplus.mockito.MockitoSugar
 import play.api.http.Status
 import play.api.mvc.Results.Ok
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
@@ -32,7 +31,7 @@ import uk.gov.hmrc.auth.core._
 
 import scala.concurrent.Future
 
-class AuthenticationPredicateSpec extends TestSupport with MockitoSugar with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate with MockAuditingService with FeatureSwitching {
+class AuthenticationPredicateSpec extends TestSupport with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate with MockAuditingService with FeatureSwitching {
 
   val ivUpliftRedirectUrl: String = s"/mdtp/uplift?origin=ITVC&confidenceLevel=200&" +
     s"completionURL=${appConfig.itvcFrontendEnvironment + "/" + appConfig.baseUrl + controllers.routes.UpliftSuccessController.success().url}&" +

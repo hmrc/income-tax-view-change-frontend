@@ -25,7 +25,7 @@ import mocks.MockItvcErrorHandler
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import models.financialDetails.Payment
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{mock, when}
 import play.api.http.Status
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers._
@@ -53,7 +53,7 @@ class PaymentHistoryControllerSpec extends MockAuthenticationPredicate
   )
 
   trait Setup {
-    val paymentHistoryService: PaymentHistoryService = mock[PaymentHistoryService]
+    val paymentHistoryService: PaymentHistoryService = mock(classOf[PaymentHistoryService])
 
     val controller = new PaymentHistoryController(
       app.injector.instanceOf[PaymentHistory],

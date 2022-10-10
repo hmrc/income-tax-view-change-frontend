@@ -23,14 +23,14 @@ import config.ItvcErrorHandler
 import mocks.services.MockNinoLookupService
 import models.core.{NinoResponseError, NinoResponseSuccess}
 import org.scalatest.EitherValues
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.Mockito.mock
 import play.api.http.Status
 import play.api.test.Helpers._
 import testUtils.TestSupport
 
 import scala.concurrent.Future
 
-class NinoPredicateSpec extends TestSupport with MockitoSugar with MockNinoLookupService with EitherValues {
+class NinoPredicateSpec extends TestSupport with MockNinoLookupService with EitherValues {
 
   "The NinoPredicate" when {
 

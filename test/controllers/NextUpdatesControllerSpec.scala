@@ -28,7 +28,7 @@ import mocks.views.agent.MockNextUpdates
 import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, NextUpdatesResponseModel, ObligationsModel}
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.{any, eq => matches}
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{mock, when}
 import org.mockito.stubbing.OngoingStubbing
 import play.api.http.Status
 import play.api.mvc.{MessagesControllerComponents, Result}
@@ -91,7 +91,7 @@ class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockInc
     ec
   )
 
-  val NextUpdatesService: NextUpdatesService = mock[NextUpdatesService]
+  val NextUpdatesService: NextUpdatesService = mock(classOf[NextUpdatesService])
 
   val date: LocalDate = LocalDate.now
 

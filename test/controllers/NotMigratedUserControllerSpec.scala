@@ -21,6 +21,7 @@ import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPre
 import implicits.ImplicitDateFormatter
 import mocks.MockItvcErrorHandler
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
+import org.mockito.Mockito.mock
 import play.api.mvc.MessagesControllerComponents
 import services.PaymentHistoryService
 import views.html.notMigrated.NotMigratedUser
@@ -39,7 +40,7 @@ class NotMigratedUserControllerSpec extends MockAuthenticationPredicate
   }
 
   trait Setup {
-    val paymentHistoryService: PaymentHistoryService = mock[PaymentHistoryService]
+    val paymentHistoryService: PaymentHistoryService = mock(classOf[PaymentHistoryService])
 
     val controller = new NotMigratedUserController(
       app.injector.instanceOf[NotMigratedUser],

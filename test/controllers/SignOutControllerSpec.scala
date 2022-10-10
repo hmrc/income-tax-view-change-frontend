@@ -19,7 +19,7 @@ package controllers
 import auth.FrontendAuthorisedFunctions
 import config.{FrontendAppConfig, FrontendAuthConnector}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{mock, when}
 import play.api.http.Status
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers._
@@ -31,7 +31,7 @@ import scala.concurrent.Future
 
 class SignOutControllerSpec extends TestSupport {
 
-  val mockAuthConnector: FrontendAuthConnector = mock[FrontendAuthConnector]
+  val mockAuthConnector: FrontendAuthConnector = mock(classOf[FrontendAuthConnector])
 
   def mockAuth(authResult: Future[Option[AffinityGroup]]): Any =
     when(mockAuthConnector.authorise(any(), any[Retrieval[Option[AffinityGroup]]]())(any(), any()))
