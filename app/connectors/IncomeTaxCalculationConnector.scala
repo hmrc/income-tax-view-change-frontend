@@ -32,7 +32,7 @@ class IncomeTaxCalculationConnector @Inject()(http: HttpClient,
 
   def getCalculationResponseUrl(nino: String): String = s"$baseUrl/income-tax-calculation/income-tax/nino/$nino/calculation-details"
 
-  def getCalculationResponseByCalcIdUrl(nino: String, calcId: String, taxYear: Int): String =
+  def getCalculationResponseByCalcIdUrl(nino: String, calcId: String): String =
     s"$baseUrl/income-tax-calculation/income-tax/nino/$nino/calc-id/$calcId/calculation-details"
 
   def getCalculationResponse(mtditid: String, nino: String, taxYear: String)
