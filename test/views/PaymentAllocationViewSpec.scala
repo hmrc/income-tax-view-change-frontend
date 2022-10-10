@@ -201,6 +201,16 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
         chargePageLink shouldBe chargePageLinkTrue
       }
 
+      "has a payment within the table right aligned" in new PaymentAllocationSetup() {
+        val allTableData = document.selectHead("tbody").selectHead("tr")
+        allTableData.selectNth("td", 3).hasClass("govuk-table__cell--numeric")
+      }
+
+      "has a payment headers right aligned" in new PaymentAllocationSetup() {
+        val allTableData = document.selectHead("thead").selectHead("tr")
+        allTableData.selectNth("th", 3).hasClass("govuk-table__header--numeric")
+      }
+
     }
   }
   "Payment Allocation Page for LPI" should {
@@ -242,6 +252,11 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
         allTableData.selectNth("td", 2).text() shouldBe messages("paymentAllocation.na")
         allTableData.selectNth("td", 3).text() shouldBe "£300.00"
 
+      }
+
+      "has a payment within the table right aligned" in new PaymentAllocationSetup(paymentAllocationViewModelLpi) {
+        val allTableData = document.selectHead("tbody").selectHead("tr")
+        allTableData.selectNth("td", 3).hasClass("govuk-table__cell--numeric")
       }
     }
   }

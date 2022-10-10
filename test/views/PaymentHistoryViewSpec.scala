@@ -119,6 +119,10 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
           row.selectNth("th", 2).text shouldBe PaymentHistoryMessages.paymentHeadingDescription
           row.selectNth("th", 3).text shouldBe PaymentHistoryMessages.paymentHeadingAmount
         }
+        s"has table headings for amount column right aligned" in new PaymentHistorySetup(paymentEntriesMFA) {
+          val row: Element = layoutContent.selectHead("div").selectNth("div", 2).selectHead("table").selectHead("thead").selectHead("tr")
+          row.selectNth("th", 3).hasClass("govuk-table__header--numeric")
+        }
       }
 
       s"have the information  ${PaymentHistoryMessages.info}" in new PaymentHistorySetup(paymentEntriesMFA) {
@@ -159,6 +163,13 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
         tbody.selectNth("tr", 2).selectNth("td", 2).text() shouldBe "Refund 000000003135 Item 2"
         tbody.selectNth("tr", 2).select("a").attr("href") shouldBe "refund-to-taxpayer/000000003135"
         tbody.selectNth("tr", 2).selectNth("td", 3).text() shouldBe "£300.00"
+      }
+      s"should have a amount column right aligned" in new PaymentHistorySetup(groupedRepayments) {
+        val sectionContent = layoutContent.selectHead(s"#accordion-default-content-1")
+        val tbody = sectionContent.selectHead("table > tbody")
+
+        tbody.selectNth("tr", 1).selectNth("td", 3).hasClass("govuk-table__cell--numeric")
+        tbody.selectNth("tr", 2).selectNth("td", 3).hasClass("govuk-table__cell--numeric")
       }
     }
   }
