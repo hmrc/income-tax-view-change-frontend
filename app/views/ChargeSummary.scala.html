@@ -245,11 +245,13 @@
             @if(isAgent) {
                 @messages("chargeSummary.whatYouOwe.textOne-agent")
                 @link(link = whatYouOweUrl, messageKey = "chargeSummary.whatYouOwe.linkText-agent")
+                @messages("chargeSummary.interestLocks.text-agent")
             } else {
                 @messages("chargeSummary.whatYouOwe.textOne")
                 @link(link = whatYouOweUrl, messageKey = "chargeSummary.whatYouOwe.linkText")
+                @messages("chargeSummary.interestLocks.text")
             }
-            @messages("chargeSummary.interestLocks.text")
+
         }
     } else {
         @p(){
