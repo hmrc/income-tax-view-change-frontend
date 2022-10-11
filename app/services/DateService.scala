@@ -16,18 +16,27 @@
 
 package services
 
+import config.FrontendAppConfig
+
 import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
 
 @Singleton
-class DateService @Inject()() {
+class DateService @Inject()(implicit frontendAppConfig: FrontendAppConfig) extends DateServiceInterface {
 
   def getCurrentDate: LocalDate = {
-    LocalDate.now()
+    frontendAppConfig
+      .timeMachineAddYears.map(LocalDate.now().plusYears(_))
+      .getOrElse(LocalDate.now())
   }
 
   def getCurrentTaxYearEnd(currentDate: LocalDate): Int = {
     if (currentDate.isBefore(LocalDate.of(currentDate.getYear, 4, 6))) currentDate.getYear
     else currentDate.getYear + 1
   }
+}
+
+trait DateServiceInterface {
+  def getCurrentDate: LocalDate
+  def getCurrentTaxYearEnd(currentDate: LocalDate): Int
 }

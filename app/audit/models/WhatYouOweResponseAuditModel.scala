@@ -22,13 +22,15 @@ import enums.WhatYouOweResponse
 import models.financialDetails.{DocumentDetail, DocumentDetailWithDueDate, WhatYouOweChargesList}
 import models.outstandingCharges.OutstandingChargesModel
 import play.api.libs.json._
+import services.DateServiceInterface
 import utils.Utilities.JsonUtil
 
 case class WhatYouOweResponseAuditModel(user: MtdItUser[_],
                                         whatYouOweChargesList: WhatYouOweChargesList,
-                                        R7bTxmEvents: Boolean) extends ExtendedAuditModel {
+                                        R7bTxmEvents: Boolean, dateService: DateServiceInterface) extends ExtendedAuditModel {
 
-  val currentTaxYear = user.incomeSources.getCurrentTaxEndYear
+  val currentTaxYear = user.incomeSources.getCurrentTaxEndYear(dateService)
+
   override val transactionName: String = "what-you-owe-response"
   override val auditType: String = WhatYouOweResponse
 
