@@ -27,7 +27,7 @@ import mocks.services.MockIncomeSourceDetailsService
 import models.chargeHistory.{ChargeHistoryResponseModel, ChargesHistoryErrorModel, ChargesHistoryModel}
 import models.financialDetails.{FinancialDetail, FinancialDetailsResponseModel}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{mock, when}
 import play.api.http.Status
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers._
@@ -56,8 +56,8 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
   class Setup(financialDetails: FinancialDetailsResponseModel,
               chargeHistory: ChargeHistoryResponseModel = testChargeHistoryModel(),
               isAgent: Boolean = false) {
-    val financialDetailsService: FinancialDetailsService = mock[FinancialDetailsService]
-    val incomeTaxViewChangeConnector: IncomeTaxViewChangeConnector = mock[IncomeTaxViewChangeConnector]
+    val financialDetailsService: FinancialDetailsService = mock(classOf[FinancialDetailsService])
+    val incomeTaxViewChangeConnector: IncomeTaxViewChangeConnector = mock(classOf[IncomeTaxViewChangeConnector])
 
     when(financialDetailsService.getAllFinancialDetails(any(), any(), any()))
       .thenReturn(Future.successful(List((2018, financialDetails))))

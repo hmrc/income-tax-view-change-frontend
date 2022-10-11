@@ -19,15 +19,15 @@ package mocks.services
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.{reset, when}
 import org.scalatest.BeforeAndAfterEach
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.Mockito.mock
 import play.api.cache.AsyncCacheApi
 import testUtils.UnitSpec
 
 import scala.concurrent.Future
 
-trait MockAsyncCacheApi extends UnitSpec with MockitoSugar with BeforeAndAfterEach {
+trait MockAsyncCacheApi extends UnitSpec with BeforeAndAfterEach {
 
-  val mockAsyncCacheApi: AsyncCacheApi = mock[AsyncCacheApi]
+  val mockAsyncCacheApi: AsyncCacheApi = mock(classOf[AsyncCacheApi])
 
   override def beforeEach(): Unit = {
     super.beforeEach()

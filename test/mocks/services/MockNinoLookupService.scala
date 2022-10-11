@@ -20,15 +20,15 @@ import models.core.NinoResponse
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.Mockito.mock
 import services.NinoLookupService
 import testUtils.UnitSpec
 
 import scala.concurrent.Future
 
-trait MockNinoLookupService extends UnitSpec with MockitoSugar with BeforeAndAfterEach {
+trait MockNinoLookupService extends UnitSpec with BeforeAndAfterEach {
 
-  val mockNinoLookupService: NinoLookupService = mock[NinoLookupService]
+  val mockNinoLookupService: NinoLookupService = mock(classOf[NinoLookupService])
 
   override def beforeEach(): Unit = {
     super.beforeEach()

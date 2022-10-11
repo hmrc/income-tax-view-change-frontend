@@ -23,17 +23,17 @@ import org.mockito.Mockito.when
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.MustMatchers.convertToAnyMustWrapper
 import org.scalatest.concurrent.ScalaFutures
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.Mockito.mock
 import testUtils.{TestSupport, UnitSpec}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class NavBarEnumFsPartialConnectorSpec extends UnitSpec with MockitoSugar with BeforeAndAfterEach with ScalaFutures {
+class NavBarEnumFsPartialConnectorSpec extends UnitSpec with BeforeAndAfterEach with ScalaFutures {
 
-  val mockHttpGet: HttpClient = mock[HttpClient]
-  val frontendAppConfig = mock[FrontendAppConfig]
+  val mockHttpGet: HttpClient = mock(classOf[HttpClient])
+  val frontendAppConfig = mock(classOf[FrontendAppConfig])
 
   object TestBtaNavBarPartialConnector extends BtaNavBarPartialConnector(mockHttpGet, frontendAppConfig)
 

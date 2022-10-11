@@ -28,15 +28,15 @@ import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.{any, anyString, eq => matches}
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.Mockito.mock
 import testUtils.UnitSpec
 
 import java.time.LocalDate
 import scala.concurrent.Future
 
-trait MockIncomeTaxViewChangeConnector extends UnitSpec with MockitoSugar with BeforeAndAfterEach {
+trait MockIncomeTaxViewChangeConnector extends UnitSpec with BeforeAndAfterEach {
 
-  val mockIncomeTaxViewChangeConnector: IncomeTaxViewChangeConnector = mock[IncomeTaxViewChangeConnector]
+  val mockIncomeTaxViewChangeConnector: IncomeTaxViewChangeConnector = mock(classOf[IncomeTaxViewChangeConnector])
 
   val testFromDate = LocalDate.of(2018, 4, 6)
   val testToDate = LocalDate.of(2018, 4, 5)

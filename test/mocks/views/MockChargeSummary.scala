@@ -19,14 +19,14 @@ package mocks.views
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import org.scalatest.{BeforeAndAfterEach, Suite}
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.Mockito.mock
 import play.twirl.api.Html
 import views.html.ChargeSummary
 
-trait MockChargeSummary extends BeforeAndAfterEach with MockitoSugar {
+trait MockChargeSummary extends BeforeAndAfterEach {
   self: Suite =>
 
-  val chargeSummary: ChargeSummary = mock[ChargeSummary]
+  val chargeSummary: ChargeSummary = mock(classOf[ChargeSummary])
 
   override def beforeEach(): Unit = {
     super.beforeEach()

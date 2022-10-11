@@ -20,14 +20,14 @@ import models.paymentAllocationCharges.PaymentAllocationViewModel
 import org.mockito.ArgumentMatchers.{any, eq => matches}
 import org.mockito.Mockito.{reset, when}
 import org.scalatest.{BeforeAndAfterEach, Suite}
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.Mockito.mock
 import play.twirl.api.Html
 import views.html.PaymentAllocation
 
-trait MockPaymentAllocationView extends BeforeAndAfterEach with MockitoSugar {
+trait MockPaymentAllocationView extends BeforeAndAfterEach {
   self: Suite =>
 
-  val paymentAllocationView: PaymentAllocation = mock[PaymentAllocation]
+  val paymentAllocationView: PaymentAllocation = mock(classOf[PaymentAllocation])
 
 
   override def beforeEach(): Unit = {

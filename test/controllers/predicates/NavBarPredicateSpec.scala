@@ -22,7 +22,7 @@ import config.featureswitch.{FeatureSwitching, NavBarFs}
 import controllers.bta.BtaNavBarController
 import mocks.services.MockAsyncCacheApi
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{mock, when}
 import play.api.http.Status
 import play.api.mvc.Results.InternalServerError
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
@@ -36,9 +36,9 @@ import scala.concurrent.Future
 
 class NavBarPredicateSpec extends TestSupport with MockAsyncCacheApi with FeatureSwitching {
 
-  val mockBtaNavBarController = mock[BtaNavBarController]
-  val mockItvcErrorHandler = mock[ItvcErrorHandler]
-  val mockPtaPartial = mock[PtaPartial]
+  val mockBtaNavBarController = mock(classOf[BtaNavBarController])
+  val mockItvcErrorHandler = mock(classOf[ItvcErrorHandler])
+  val mockPtaPartial = mock(classOf[PtaPartial])
 
   object NavBarPredicate extends NavBarPredicate(mockBtaNavBarController, mockPtaPartial, mockItvcErrorHandler)(appConfig, ec, messagesApi)
 

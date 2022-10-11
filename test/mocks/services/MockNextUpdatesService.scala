@@ -21,7 +21,7 @@ import models.nextUpdates.{NextUpdatesErrorModel, NextUpdatesResponseModel}
 import org.mockito.ArgumentMatchers.{any, eq => matches}
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.Mockito.mock
 import play.api.http.Status
 import services.NextUpdatesService
 import testConstants.IncomeSourcesWithDeadlinesTestConstants._
@@ -31,9 +31,9 @@ import java.time.LocalDate
 import scala.concurrent.Future
 
 
-trait MockNextUpdatesService extends UnitSpec with MockitoSugar with BeforeAndAfterEach with ImplicitDateFormatter {
+trait MockNextUpdatesService extends UnitSpec with BeforeAndAfterEach with ImplicitDateFormatter {
 
-  val mockNextUpdatesService: NextUpdatesService = mock[NextUpdatesService]
+  val mockNextUpdatesService: NextUpdatesService = mock(classOf[NextUpdatesService])
 
   override def beforeEach(): Unit = {
     super.beforeEach()

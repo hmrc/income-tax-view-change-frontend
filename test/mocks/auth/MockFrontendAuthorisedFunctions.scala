@@ -22,7 +22,7 @@ import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
 import org.scalatest.{BeforeAndAfterEach, Suite}
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.Mockito.mock
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.authorise.EmptyPredicate
 import uk.gov.hmrc.auth.core.retrieve._
@@ -30,10 +30,10 @@ import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait MockFrontendAuthorisedFunctions extends BeforeAndAfterEach with MockitoSugar {
+trait MockFrontendAuthorisedFunctions extends BeforeAndAfterEach {
   self: Suite =>
 
-  val mockAuthService = mock[FrontendAuthorisedFunctions]
+  val mockAuthService = mock(classOf[FrontendAuthorisedFunctions])
 
   override def beforeEach(): Unit = {
     super.beforeEach()

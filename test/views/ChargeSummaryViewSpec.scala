@@ -22,6 +22,7 @@ import models.financialDetails._
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
+import org.mockito.Mockito.mock
 import org.scalatest.Assertion
 import play.twirl.api.Html
 import testConstants.BusinessDetailsTestConstants.getCurrentTaxYearEnd
@@ -545,7 +546,7 @@ class ChargeSummaryViewSpec extends ViewSpec {
       }
 
       "display the charge creation item when history is found and allocations are disabled" in new Setup(documentDetailModel(outstandingAmount = Some(0)),
-        chargeHistory = List(amendedChargeHistoryModel), paymentAllocationEnabled = false, paymentAllocations = List(mock[PaymentsWithChargeType])) {
+        chargeHistory = List(amendedChargeHistoryModel), paymentAllocationEnabled = false, paymentAllocations = List(mock(classOf[PaymentsWithChargeType]))) {
         document.select("tbody tr").size() shouldBe 2
         document.select("tbody tr:nth-child(1) td:nth-child(1)").text() shouldBe "29 Mar 2018"
         document.select("tbody tr:nth-child(1) td:nth-child(2)").text() shouldBe paymentOnAccountCreated(1)

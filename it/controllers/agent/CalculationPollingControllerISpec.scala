@@ -25,7 +25,6 @@ import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsMode
 import models.liabilitycalculation.LiabilityCalculationError
 import play.api.http.HeaderNames
 import play.api.http.Status._
-import repositories.MongoLockRepositoryImpl
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.NewCalcBreakdownItTestConstants._
 
@@ -34,7 +33,6 @@ import scala.concurrent.ExecutionContext
 
 class CalculationPollingControllerISpec extends ComponentSpecBase {
 
-  val mongoDbConnection: MongoLockRepositoryImpl = app.injector.instanceOf[MongoLockRepositoryImpl]
   implicit val ec: ExecutionContext = app.injector.instanceOf[ExecutionContext]
 
   val (taxYear, month, dayOfMonth) = (2018, 5, 6)

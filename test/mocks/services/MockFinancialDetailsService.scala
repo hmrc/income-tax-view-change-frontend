@@ -22,7 +22,7 @@ import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.Mockito.mock
 import services.FinancialDetailsService
 import testConstants.BaseTestConstants.{testNino, testTaxYear}
 import testConstants.FinancialDetailsTestConstants._
@@ -30,9 +30,9 @@ import testUtils.UnitSpec
 
 import scala.concurrent.Future
 
-trait MockFinancialDetailsService extends UnitSpec with MockitoSugar with BeforeAndAfterEach {
+trait MockFinancialDetailsService extends UnitSpec with BeforeAndAfterEach {
 
-  val mockFinancialDetailsService: FinancialDetailsService = mock[FinancialDetailsService]
+  val mockFinancialDetailsService: FinancialDetailsService = mock(classOf[FinancialDetailsService])
 
 
   override def beforeEach(): Unit = {

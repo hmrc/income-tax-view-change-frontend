@@ -21,7 +21,7 @@ import org.mockito.ArgumentMatchers.matches
 import org.mockito.Mockito._
 import org.mockito.stubbing.OngoingStubbing
 import org.scalatest.BeforeAndAfterEach
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.Mockito.mock
 import play.api.libs.json.JsValue
 import testUtils.UnitSpec
 import uk.gov.hmrc.http.HttpResponse
@@ -31,9 +31,9 @@ import uk.gov.hmrc.play.partials.HtmlPartial
 import scala.concurrent.{ExecutionContext, Future}
 
 
-trait MockHttp extends UnitSpec with MockitoSugar with BeforeAndAfterEach {
+trait MockHttp extends UnitSpec with BeforeAndAfterEach {
 
-  val mockHttpGet: HttpClient = mock[HttpClient]
+  val mockHttpGet: HttpClient = mock(classOf[HttpClient])
 
   override def beforeEach(): Unit = {
     super.beforeEach()

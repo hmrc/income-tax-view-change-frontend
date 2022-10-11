@@ -28,7 +28,7 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.junit.Assert.assertThat
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{mock, when}
 import play.api.http.Status
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{status, _}
@@ -47,7 +47,7 @@ class CreditAndRefundControllerSpec extends MockAuthenticationPredicate with Moc
 
   trait Setup {
 
-    val mockCreditService: CreditService = mock[CreditService]
+    val mockCreditService: CreditService = mock(classOf[CreditService])
 
     val controller = new CreditAndRefundController(
       authorisedFunctions = mockAuthService,

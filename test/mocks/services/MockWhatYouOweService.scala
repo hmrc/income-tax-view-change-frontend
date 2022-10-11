@@ -21,16 +21,16 @@ import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.Mockito.mock
 import services.WhatYouOweService
 import testUtils.UnitSpec
 
 import java.time.LocalDate
 import scala.concurrent.Future
 
-trait MockWhatYouOweService extends UnitSpec with MockitoSugar with BeforeAndAfterEach {
+trait MockWhatYouOweService extends UnitSpec with BeforeAndAfterEach {
 
-  val mockWhatYouOweService: WhatYouOweService = mock[WhatYouOweService]
+  val mockWhatYouOweService: WhatYouOweService = mock(classOf[WhatYouOweService])
 
   val emptyWhatYouOweChargesList: WhatYouOweChargesList = WhatYouOweChargesList(BalanceDetails(0.0, 0.0, 0.0, None, None, None, None))
 
