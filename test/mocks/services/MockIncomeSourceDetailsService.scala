@@ -20,18 +20,18 @@ import testConstants.BaseTestConstants.{testErrorMessage, testErrorStatus}
 import testConstants.IncomeSourceDetailsTestConstants._
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsResponse}
 import org.mockito.ArgumentMatchers
-import org.mockito.Mockito.{reset, when}
+import org.mockito.Mockito.{mock, reset, when}
 import org.scalatest.{BeforeAndAfterEach, Suite}
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.Mockito.mock
 import services.IncomeSourceDetailsService
 
 import scala.concurrent.Future
 
 
-trait MockIncomeSourceDetailsService extends BeforeAndAfterEach with MockitoSugar {
+trait MockIncomeSourceDetailsService extends BeforeAndAfterEach {
   self: Suite =>
 
-  val mockIncomeSourceDetailsService: IncomeSourceDetailsService = mock[IncomeSourceDetailsService]
+  val mockIncomeSourceDetailsService: IncomeSourceDetailsService = mock(classOf[IncomeSourceDetailsService])
 
   override def beforeEach(): Unit = {
     super.beforeEach()

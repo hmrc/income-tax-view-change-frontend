@@ -18,15 +18,13 @@ package services
 
 import config.FrontendAppConfig
 import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse}
-import org.joda.time.Duration
 import play.api.Logger
 import play.api.http.Status
-import repositories.MongoLockRepository
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.PollCalculationLockKeeper
+import uk.gov.hmrc.mongo.lock.{LockService, MongoLockRepository}
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.duration.DurationInt
+import scala.concurrent.duration.{Duration, DurationInt, MILLISECONDS}
 import scala.concurrent.{Await, ExecutionContext, Future, blocking}
 
 
@@ -36,39 +34,29 @@ class CalculationPollingService @Inject()(val frontendAppConfig: FrontendAppConf
                                           val calculationService: CalculationService)
                                          (implicit ec: ExecutionContext) {
 
+  lazy val lockService = LockService(mongoLockRepository, lockId = "calc-poller", ttl = Duration.create(frontendAppConfig.calcPollSchedulerTimeout, MILLISECONDS))
   private lazy val retryableStatusCodes: List[Int] = List(Status.BAD_GATEWAY, Status.NOT_FOUND)
 
   def initiateCalculationPollingSchedulerWithMongoLock(calcId: String, nino: String, mtditid: String)
-                                                      (implicit headerCarrier: HeaderCarrier): Future[Int] = {
+                                                      (implicit headerCarrier: HeaderCarrier): Future[Any] = {
 
 
-    lazy val lockKeeper: PollCalculationLockKeeper = new PollCalculationLockKeeper {
-      override val lockId = calcId
-      override val forceLockReleaseAfter: Duration = Duration.millis(frontendAppConfig.calcPollSchedulerTimeout)
-      override lazy val repo = mongoLockRepository.repo
-    }
 
     val endTimeInMillis: Long = System.currentTimeMillis() + frontendAppConfig.calcPollSchedulerTimeout
-
-    //Create MongoLock and call Calculation service
-    lockKeeper.tryLock().flatMap {
-      isLocked =>
-        if (isLocked) {
-          //to avoid wait time for first call, calling getCalculationResponse with end time as current time
-          getCalculationResponse(System.currentTimeMillis(), endTimeInMillis, calcId, nino, mtditid).flatMap {
-            case statusCode if !retryableStatusCodes.contains(statusCode) => {
-              lockKeeper.releaseLock
-              Future.successful(statusCode)
-            }
-            case _ => pollCalcInIntervals(calcId, nino, mtditid, lockKeeper, endTimeInMillis)
-          }
-        } else {
-          Future.successful(Status.INTERNAL_SERVER_ERROR)
-        }
+    //Acquire Mongo lock and call Calculation service
+    //To avoid wait time for first call, calling getCalculationResponse with end time as current time
+    lockService.withLock(getCalculationResponse(System.currentTimeMillis(), endTimeInMillis, calcId, nino, mtditid)) flatMap {
+      case Some(statusCode) =>
+        Logger("application").debug(s"[CalculationPollingService] Response received from Calculation service")
+        if (!retryableStatusCodes.contains(statusCode)) Future.successful(statusCode)
+        else pollCalcInIntervals(calcId, nino, mtditid, endTimeInMillis)
+      case None =>
+        Logger("application").debug(s"[CalculationPollingService] Failed to acquire Mongo lock")
+        Future.successful(Status.INTERNAL_SERVER_ERROR)
     }
   }
 
-  //Waits for polling interval time to complete and responds with response code from calculation service.
+  //Waits for polling interval time to complete and responds with response code from calculation service
   private def getCalculationResponse(endTimeForEachInterval: Long,
                                      endTimeInMillis: Long,
                                      calcId: String,
@@ -92,7 +80,6 @@ class CalculationPollingService @Inject()(val frontendAppConfig: FrontendAppConf
   }
 
   private def pollCalcInIntervals(calcId: String, nino: String, mtditid: String,
-                                  lockKeeper: PollCalculationLockKeeper,
                                   endTimeInMillis: Long)
                                  (implicit hc: HeaderCarrier): Future[Int] = {
     blocking {
@@ -102,10 +89,9 @@ class CalculationPollingService @Inject()(val frontendAppConfig: FrontendAppConf
           endTimeInMillis,
           calcId, nino, mtditid
         ), frontendAppConfig.calcPollSchedulerTimeout.millis))) {
-        //polling calc service until non retryable response code is received
+        //Polling calc service until non-retryable response code is received
       }
 
-      lockKeeper.releaseLock
       getCalculationResponse(System.currentTimeMillis(), endTimeInMillis, calcId, nino, mtditid)
     }
   }

@@ -19,16 +19,16 @@ package mocks.views.agent
 import org.mockito.ArgumentMatchers.{any, eq => matches}
 import org.mockito.Mockito.{reset, when}
 import org.scalatest.{BeforeAndAfterEach, Suite}
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.Mockito.mock
 import play.twirl.api.Html
 import views.html.Home
 
 import java.time.LocalDate
 
-trait MockHome extends BeforeAndAfterEach with MockitoSugar {
+trait MockHome extends BeforeAndAfterEach {
   self: Suite =>
 
-  val home: Home = mock[Home]
+  val home: Home = mock(classOf[Home])
 
   override def beforeEach(): Unit = {
     super.beforeEach()

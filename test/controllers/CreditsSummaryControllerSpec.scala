@@ -25,7 +25,7 @@ import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSour
 import mocks.services.{MockCalculationService, MockCreditHistoryService, MockFinancialDetailsService, MockNextUpdatesService}
 import models.financialDetails.{BalanceDetails, DocumentDetail}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, when}
+import org.mockito.Mockito.{mock, reset, when}
 import play.api.http.Status
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers._
@@ -36,6 +36,7 @@ import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.BearerTokenExpired
 import uk.gov.hmrc.http.InternalServerException
 import views.html.CreditsSummary
+
 import scala.concurrent.Future
 
 
@@ -55,7 +56,7 @@ class CreditsSummaryControllerSpec extends TestSupport with MockCalculationServi
   }
 
   val creditsSummaryView: CreditsSummary = app.injector.instanceOf[CreditsSummary]
-  val mockCreditService: CreditService = mock[CreditService]
+  val mockCreditService: CreditService = mock(classOf[CreditService])
 
   object TestCreditsSummaryController extends CreditsSummaryController(
     creditsSummaryView,

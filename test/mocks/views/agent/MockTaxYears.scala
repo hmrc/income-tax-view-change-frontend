@@ -19,14 +19,14 @@ package mocks.views.agent
 import org.mockito.ArgumentMatchers.{any, eq => matches}
 import org.mockito.Mockito.{reset, when}
 import org.scalatest.{BeforeAndAfterEach, Suite}
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.Mockito.mock
 import play.twirl.api.Html
 import views.html.TaxYears
 
-trait MockTaxYears extends BeforeAndAfterEach with MockitoSugar {
+trait MockTaxYears extends BeforeAndAfterEach {
   self: Suite =>
 
-  val taxYears: TaxYears = mock[TaxYears]
+  val taxYears: TaxYears = mock(classOf[TaxYears])
 
   override def beforeEach(): Unit = {
     super.beforeEach()

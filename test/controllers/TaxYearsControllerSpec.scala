@@ -17,7 +17,7 @@
 package controllers
 
 import config.featureswitch.FeatureSwitching
-import config.{FrontendAppConfig}
+import config.FrontendAppConfig
 import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
 import implicits.ImplicitDateFormatter
 import mocks.MockItvcErrorHandler
@@ -25,6 +25,7 @@ import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import mocks.services.MockIncomeSourceDetailsService
 import mocks.views.agent.MockTaxYears
+import org.mockito.Mockito.mock
 import play.api.http.Status
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.mvc.{MessagesControllerComponents, Result}
@@ -44,7 +45,7 @@ class TaxYearsControllerSpec extends MockAuthenticationPredicate
   with MockIncomeSourceDetailsPredicate with MockIncomeSourceDetailsService
   with MockFrontendAuthorisedFunctions with MockItvcErrorHandler with MockTaxYears with ImplicitDateFormatter with TestSupport with FeatureSwitching {
 
-  val calculationService: CalculationService = mock[CalculationService]
+  val calculationService: CalculationService = mock(classOf[CalculationService])
 
   object TestTaxYearsController extends TaxYearsController(
     app.injector.instanceOf[TaxYears],

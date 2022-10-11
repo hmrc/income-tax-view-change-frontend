@@ -21,15 +21,15 @@ import models.paymentAllocationCharges.{PaymentAllocationError, PaymentAllocatio
 import org.mockito.ArgumentMatchers.{any, eq => matches}
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.Mockito.mock
 import services.PaymentAllocationsService
 import testUtils.UnitSpec
 
 import scala.concurrent.Future
 
-trait MockPaymentAllocationsService extends UnitSpec with MockitoSugar with BeforeAndAfterEach {
+trait MockPaymentAllocationsService extends UnitSpec with BeforeAndAfterEach {
 
-  val mockPaymentAllocationsService: PaymentAllocationsService = mock[PaymentAllocationsService]
+  val mockPaymentAllocationsService: PaymentAllocationsService = mock(classOf[PaymentAllocationsService])
 
   override def beforeEach(): Unit = {
     super.beforeEach()

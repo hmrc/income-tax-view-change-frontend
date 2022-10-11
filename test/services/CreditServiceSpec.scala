@@ -19,7 +19,7 @@ package services
 import auth.MtdItUser
 import models.financialDetails._
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{mock, when}
 import play.api.test.FakeRequest
 import services.CreditService.maybeBalanceDetails
 import testConstants.BaseTestConstants.{testMtditid, testNino, testRetrievedUserName}
@@ -43,7 +43,7 @@ class CreditServiceSpec extends TestSupport {
     None
   )(FakeRequest())
 
-  val mockFinancialDetailsService: FinancialDetailsService = mock[FinancialDetailsService]
+  val mockFinancialDetailsService: FinancialDetailsService = mock(classOf[FinancialDetailsService])
 
   object service extends CreditService(mockFinancialDetailsService)
 

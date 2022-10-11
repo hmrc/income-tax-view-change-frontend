@@ -26,7 +26,7 @@ import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import mocks.services.MockIncomeSourceDetailsService
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{mock, when}
 import play.api.http.Status
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.mvc.{MessagesControllerComponents, Result}
@@ -45,10 +45,10 @@ class FeedbackControllerSpec extends MockAuthenticationPredicate
   with MockIncomeSourceDetailsPredicate with MockIncomeSourceDetailsService
   with MockFrontendAuthorisedFunctions with MockItvcErrorHandler with ImplicitDateFormatter with TestSupport with FeatureSwitching {
 
-  val mockErrorHandler: ItvcErrorHandler = mock[ItvcErrorHandler]
-  val mockFeedbackView: Feedback = mock[Feedback]
-  val mockThankYouView: FeedbackThankYou = mock[FeedbackThankYou]
-  val mockHttpClient: HttpClient = mock[HttpClient]
+  val mockErrorHandler: ItvcErrorHandler = mock(classOf[ItvcErrorHandler])
+  val mockFeedbackView: Feedback = mock(classOf[Feedback])
+  val mockThankYouView: FeedbackThankYou = mock(classOf[FeedbackThankYou])
+  val mockHttpClient: HttpClient = mock(classOf[HttpClient])
 
   object TestFeedbackController extends FeedbackController()(
     app.injector.instanceOf[FrontendAppConfig],

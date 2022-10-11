@@ -20,7 +20,7 @@ import auth.MtdItUser
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
 import mocks.services.MockAsyncCacheApi
-import org.scalatestplus.selenium.WebBrowser.Query
+import org.mockito.Mockito.mock
 import play.api.http.HeaderNames
 import play.api.http.Status.SEE_OTHER
 import play.api.i18n.MessagesApi
@@ -52,9 +52,9 @@ class SaveOriginAndRedirectSpec extends TestSupport with MockAsyncCacheApi with 
       None, Some("testUtr"), Some("testCredId"), Some("Individual"), None)(fakeRequestQueryStringAndOriginWithoutSession("INVALID"))
 
   val obj: SaveOriginAndRedirect = new SaveOriginAndRedirect() {
-    override def messagesApi: MessagesApi = mock[MessagesApi]
+    override def messagesApi: MessagesApi = mock(classOf[MessagesApi])
 
-    override val appConfig: FrontendAppConfig = mock[FrontendAppConfig]
+    override val appConfig: FrontendAppConfig = mock(classOf[FrontendAppConfig])
   }
 
   def fakeRequestQueryStringAndOrigin(origin: String, session: String): FakeRequest[AnyContentAsEmpty.type] = fakeRequestWithQueryString(origin).withSession(
