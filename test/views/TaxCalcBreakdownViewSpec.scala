@@ -27,6 +27,7 @@ import org.scalatest.prop.TableFor3
 import play.twirl.api.Html
 import testConstants.NewCalcBreakdownUnitTestConstants._
 import testUtils.ViewSpec
+import views.helpers.HtmlTitle.messageTitle
 import views.html.TaxCalcBreakdown
 
 class TaxCalcBreakdownViewSpec extends TaxCalcBreakdownViewBehaviour {
@@ -36,7 +37,7 @@ class TaxCalcBreakdownViewSpec extends TaxCalcBreakdownViewBehaviour {
   override def taxCalcBreakdown(taxDueSummaryViewModel: TaxDueSummaryViewModel, taxYear: Int, backUrl: String, class4UpliftEnabled: Boolean = false): Html =
     app.injector.instanceOf[TaxCalcBreakdown].apply(taxDueSummaryViewModel, taxYear, backUrl, class4UpliftEnabled = class4UpliftEnabled)
 
-  override val expectedPageTitle: String = messages("titlePattern.serviceName.govUk", messages("taxCal_breakdown.heading"))
+  override val expectedPageTitle: String = messageTitle("titlePattern.serviceName.govUk", messages("taxCal_breakdown.heading"))
 
   override val pageContentSelector = "#main-content"
 

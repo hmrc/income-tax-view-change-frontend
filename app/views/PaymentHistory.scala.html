@@ -99,7 +99,7 @@ btaNavPartial: Option[Html] = None, origin: Option[String] = None)(implicit requ
 }
 
 @mainTemplate(
-    pageTitle = messages("paymentHistory.heading"),
+    pageTitle = messages(if(paymentHistoryAndRefundsEnabled) "paymentHistory.paymentAndRefundHistory.heading" else "paymentHistory.heading"),
     backUrl = Some(backUrl),
     isAgent = isAgent,
     btaNavPartial = btaNavPartial,

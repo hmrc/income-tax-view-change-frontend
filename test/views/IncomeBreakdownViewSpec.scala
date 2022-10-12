@@ -19,6 +19,7 @@ package views
 import models.liabilitycalculation.viewmodels.IncomeBreakdownViewModel
 import org.jsoup.nodes.Element
 import testUtils.ViewSpec
+import views.helpers.HtmlTitle.messageTitle
 import views.html.IncomeBreakdown
 
 class IncomeBreakdownViewSpec extends ViewSpec {
@@ -90,7 +91,7 @@ class IncomeBreakdownViewSpec extends ViewSpec {
       lazy val view = incomeBreakdown(emptyIncomeBreakdownViewModel, taxYear, backUrl)
 
       "have the correct title" in new Setup(view) {
-        document title() shouldBe messages("titlePattern.serviceName.govUk", messages("income_breakdown.heading"))
+        document title() shouldBe messageTitle("titlePattern.serviceName.govUk", messages("income_breakdown.heading"))
       }
 
       "have a fallback backlink" in new Setup(view) {
@@ -136,7 +137,7 @@ class IncomeBreakdownViewSpec extends ViewSpec {
       lazy val view = incomeBreakdown(fullIncomeBreakdownViewModel, taxYear, backUrl)
 
       "have the correct title" in new Setup(view) {
-        document title() shouldBe messages("titlePattern.serviceName.govUk", messages("income_breakdown.heading"))
+        document title() shouldBe messageTitle("titlePattern.serviceName.govUk", messages("income_breakdown.heading"))
       }
 
       "have the correct heading" in new Setup(view) {

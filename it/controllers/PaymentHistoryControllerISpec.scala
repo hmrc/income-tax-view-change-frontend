@@ -121,7 +121,7 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase {
       Then("The Payment History page is returned to the user")
       result should have(
         httpStatus(OK),
-        pageTitleIndividual("paymentHistory.heading"),
+        pageTitleIndividual("paymentHistory.paymentAndRefundHistory.heading"),
         elementTextBySelector("h1")(paymentAndRefundHistoryHeading.paymentHistoryHeading)
       )
 

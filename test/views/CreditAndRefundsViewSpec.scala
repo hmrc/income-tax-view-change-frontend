@@ -29,6 +29,7 @@ import testConstants.CreditAndRefundConstants.{balanceDetailsModel, documentDeta
 import testUtils.{TestSupport, ViewSpec}
 import utils.CreditAndRefundUtils.UnallocatedCreditType
 import utils.CreditAndRefundUtils.UnallocatedCreditType.{UnallocatedCreditFromOnePayment, UnallocatedCreditFromSingleCreditItem}
+import views.helpers.HtmlTitle.messageTitle
 import views.html.CreditAndRefunds
 
 import java.time.LocalDate
@@ -48,8 +49,8 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
   val paymentText: String = messages("credit-and-refund.payment")
   val claimBtn: String = messages("credit-and-refund.claim-refund-btn")
   val checkBtn: String = messages("credit-and-refund.check-refund-btn")
-  val creditAndRefundHeadingWithTitleServiceNameGovUk: String = messages("titlePattern.serviceName.govUk", creditAndRefundHeading)
-  val creditAndRefundHeadingAgentWithTitleServiceNameGovUkAgent: String = messages("htmlTitle.agent", creditAndRefundHeading)
+  val creditAndRefundHeadingWithTitleServiceNameGovUk: String = messageTitle("titlePattern.serviceName.govUk", creditAndRefundHeading)
+  val creditAndRefundHeadingAgentWithTitleServiceNameGovUkAgent: String = messageTitle("htmlTitle.agent", creditAndRefundHeading)
   val creditAndRefundFromHMRCTitlePart1: String = messages("credit-and-refund.credit-from-hmrc-title-prt-1")
   val creditAndRefundFromHMRCTitlePart2: String = messages("credit-and-refund.credit-from-hmrc-title-prt-2")
   val creditAndRefundPaymentFromEarlierYearLinkText: String = messages("paymentHistory.paymentFromEarlierYear")

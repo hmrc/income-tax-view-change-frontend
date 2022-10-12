@@ -29,6 +29,7 @@ import play.twirl.api.HtmlFormat
 import testConstants.BaseTestConstants.testMtditid
 import testConstants.FinancialDetailsTestConstants._
 import testUtils.{TestSupport, ViewSpec}
+import views.helpers.HtmlTitle.messageTitle
 import views.html.CreditsSummary
 
 import java.net.URL
@@ -45,8 +46,8 @@ class CreditsSummaryViewSpec extends TestSupport with FeatureSwitching with Impl
   val testMaybeBalanceDetails: Option[BigDecimal] = financialDetailCreditCharge.balanceDetails.availableCredit
 
   val creditsSummaryHeading: String = messages("credits.heading", s"$testCalendarYear")
-  val creditsSummaryTitle: String = messages("titlePattern.serviceName.govUk", creditsSummaryHeading)
-  val creditsSummaryTitleAgent: String = messages("htmlTitle.agent", creditsSummaryHeading)
+  val creditsSummaryTitle: String = messageTitle("titlePattern.serviceName.govUk", creditsSummaryHeading)
+  val creditsSummaryTitleAgent: String = messageTitle("htmlTitle.agent", creditsSummaryHeading)
   val creditsTableHeadDateText: String = messages("credits.tableHead.date")
   val creditsTableHeadTypeText: String = messages("credits.tableHead.type")
   val creditsTableHeadStatusText: String = messages("credits.tableHead.status")

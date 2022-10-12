@@ -45,6 +45,7 @@ import testConstants.FinancialDetailsTestConstants.financialDetailsModel
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.BearerTokenExpired
 import uk.gov.hmrc.http.InternalServerException
+import views.helpers.HtmlTitle.messageTitle
 
 import java.time.{LocalDate, Month}
 import scala.concurrent.Future
@@ -65,8 +66,8 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
     emptyWhatYouOweChargesListIndividual.copy(
       outstandingChargesModel = Some(OutstandingChargesModel(List(OutstandingChargeModel("BCD", Some("2019-01-31"), 1.67, 2345))))
     )
-  val homePageTitle = s"${messages("titlePattern.serviceName.govUk", messages("home.heading"))}"
-  val agentTitle = s"${messages("htmlTitle.agent", messages("home.agent.heading"))}"
+  val homePageTitle = s"${messageTitle("titlePattern.serviceName.govUk", messages("home.heading"))}"
+  val agentTitle = s"${messageTitle("htmlTitle.agent", messages("home.agent.heading"))}"
 
   trait Setup {
     val mockDateService: DateService = mock(classOf[DateService])
