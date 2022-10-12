@@ -642,11 +642,11 @@ chargeSummary.hmrcAdjustment.text                               = Addasiad CThEM
 chargeSummary.paymentAmount                                     = Swm y taliad
 chargeSummary.paidToDate                                        = wedi'i dalu hyd yma
 chargeSummary.remainingDue                                      = Yn weddill i dalu
-chargeSummary.whatYouOwe.textOne                                = Gweld
+chargeSummary.whatYouOwe.textOne                                = Bwriwch olwg dros
 chargeSummary.whatYouOwe.textTwo                                = i wirio a oes gennych unrhyw daliadau eraill sy'n ddyledus.
-chargeSummary.whatYouOwe.textOne-agent                          = Bwrw golwg dros
+chargeSummary.whatYouOwe.textOne-agent                          = Bwriwch olwg dros
 chargeSummary.whatYouOwe.textTwo-agent							= i wirio a oes ganddo unrhyw daliadau eraill sy’n ddyledus.
-chargeSummary.whatYouOwe.linkText                               = yr hyn sy'n ddyledus gennych
+chargeSummary.whatYouOwe.linkText                               = yr hyn sydd arnoch
 chargeSummary.whatYouOwe.linkText-agent							= yr hyn sydd ar eich cleient
 chargeSummary.overdue                                           = YN HWYR
 
@@ -675,7 +675,8 @@ chargeSummary.paymentBreakdown.interestLocks.notCharging           = Nid ydym yn
 chargeSummary.paymentBreakdown.interestLocks.charging              = Rydym yn codi llog arnoch ar y taliad hwn
 chargeSummary.paymentBreakdown.interestLocks.previouslyCharged     = Rydym wedi codi llog arnoch ar y taliad hwn yn flaenorol
 
-chargeSummary.interestLocks.text                                   = i wirio a oes gennych unrhyw log ar y taliad hwn
+chargeSummary.interestLocks.text                                   = i wirio a oes gennych unrhyw log ar y taliad hwn.
+chargeSummary.interestLocks.text-agent                             = i wirio a oes ganddo unrhyw log ar y taliad hwn.
 chargeSummary.interestLocks.linkText                               = Bwrw golwg dros yr hyn sydd arnoch
 chargeSummary.dunning.locks.banner.title						   = Pwysig
 chargeSummary.dunning.locks.banner.linkText						   = Mae’r penderfyniad treth hwn yn cael ei adolygu
