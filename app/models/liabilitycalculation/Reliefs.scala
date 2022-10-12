@@ -20,7 +20,7 @@ import play.api.libs.json._
 
 case class Reliefs(
                     residentialFinanceCosts: Option[ResidentialFinanceCosts],
-                    reliefsClaimed: Seq[ReliefsClaimed] = Seq(),
+                    reliefsClaimed: Option[Seq[ReliefsClaimed]],
                     foreignTaxCreditRelief: Option[ForeignTaxCreditRelief],
                     topSlicingRelief: Option[TopSlicingRelief]
                   )
