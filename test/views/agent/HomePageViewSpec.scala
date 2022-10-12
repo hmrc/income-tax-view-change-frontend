@@ -29,6 +29,7 @@ import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import testConstants.BaseTestConstants._
 import testUtils.{TestSupport, ViewSpec}
+import views.helpers.HtmlTitle.messageTitle
 import views.html.Home
 
 import java.time.{LocalDate, Month}
@@ -115,7 +116,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
       }
 
       s"have the title ${messages("htmlTitle.agent", messages("home.agent.heading"))}" in new Setup() {
-        document.title() shouldBe messages("htmlTitle.agent", messages("home.agent.heading"))
+        document.title() shouldBe messageTitle("htmlTitle.agent", messages("home.agent.heading"))
       }
 
       s"have the page heading ${messages("home.agent.heading")}" in new Setup {
