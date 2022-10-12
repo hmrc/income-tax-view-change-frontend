@@ -28,6 +28,7 @@ import testConstants.BaseTestConstants.{testMtditid, testNino, testRetrievedUser
 import testConstants.IncomeSourceDetailsTestConstants.businessAndPropertyAligned
 import testConstants.PaymentAllocationsTestConstants._
 import testUtils.ViewSpec
+import views.helpers.HtmlTitle.messageTitle
 import views.html.PaymentAllocation
 
 import java.time.LocalDate
@@ -248,7 +249,7 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
 
   "Payment Allocation Page" should {
     s"have the title: ${messages("titlePattern.serviceName.govUk", messages("paymentAllocation.heading"))}" in new PaymentAllocationSetup {
-      document.title() shouldBe messages("titlePattern.serviceName.govUk", messages("paymentAllocation.heading"))
+      document.title() shouldBe messageTitle("titlePattern.serviceName.govUk", messages("paymentAllocation.heading"))
     }
 
     s"have the heading: $heading" in new PaymentAllocationSetup {

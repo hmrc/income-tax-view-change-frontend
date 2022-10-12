@@ -29,6 +29,7 @@ import play.api.test.Helpers.{charset, contentType, defaultAwaitTimeout, status}
 import services.IncomeSourceDetailsService
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testMtditid, testMtditidAgent, testTaxYear}
 import testUtils.TestSupport
+import views.helpers.HtmlTitle.messageTitle
 import views.html.ForecastTaxCalcSummary
 
 class ForecastTaxCalcSummaryControllerSpec extends TestSupport with MockCalculationService with MockFrontendAuthorisedFunctions
@@ -103,7 +104,7 @@ class ForecastTaxCalcSummaryControllerSpec extends TestSupport with MockCalculat
         }
 
         "render the forecast tax calc summary page" in {
-          document.title() shouldBe messages("titlePattern.serviceName.govUk", messages("forecast_taxCalc.heading"))
+          document.title() shouldBe messageTitle("titlePattern.serviceName.govUk", messages("forecast_taxCalc.heading"))
         }
       }
 
@@ -188,7 +189,7 @@ class ForecastTaxCalcSummaryControllerSpec extends TestSupport with MockCalculat
         }
 
         "return the forecast tax calc summary page" in {
-          document.title() shouldBe messages("htmlTitle.agent", messages("forecast_taxCalc.heading"))
+          document.title() shouldBe messageTitle("htmlTitle.agent", messages("forecast_taxCalc.heading"))
         }
       }
 

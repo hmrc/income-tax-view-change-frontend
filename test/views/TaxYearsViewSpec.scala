@@ -24,6 +24,7 @@ import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import testConstants.BaseTestConstants._
 import testUtils.ViewSpec
+import views.helpers.HtmlTitle.messageTitle
 import views.html.TaxYears
 
 class TaxYearsViewSpec extends ViewSpec {
@@ -49,7 +50,7 @@ class TaxYearsViewSpec extends ViewSpec {
     "The TaxYears view with itsaSubmissionFeatureSwitch FS disabled" when {
       "the view is displayed" should {
         s"have the title '${messages("titlePattern.serviceName.govUk", messages("taxYears.heading"))}'" in new Setup(List(testYearPlusOne, testTaxYear)) {
-          document.title() shouldBe messages("titlePattern.serviceName.govUk", messages("taxYears.heading"))
+          document.title() shouldBe messageTitle("titlePattern.serviceName.govUk", messages("taxYears.heading"))
         }
 
         "have a header" in new Setup(List(testYearPlusOne, testTaxYear)) {

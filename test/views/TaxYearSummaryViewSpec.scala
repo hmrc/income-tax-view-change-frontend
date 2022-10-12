@@ -28,6 +28,7 @@ import play.twirl.api.Html
 import testConstants.FinancialDetailsTestConstants.{MFADebitsDocumentDetailsWithDueDates, fullDocumentDetailModel, fullDocumentDetailWithDueDateModel}
 import testConstants.NextUpdatesTestConstants._
 import testUtils.ViewSpec
+import views.helpers.HtmlTitle.messageTitle
 import views.html.TaxYearSummary
 
 import java.time.LocalDate
@@ -181,8 +182,8 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
 
   object TaxYearSummaryMessages {
     val heading: String = messages("tax-year-summary.heading")
-    val title: String = messages("titlePattern.serviceName.govUk", heading)
-    val agentTitle: String = messages("htmlTitle.agent", heading)
+    val title: String = messageTitle("titlePattern.serviceName.govUk", heading)
+    val agentTitle: String = messageTitle("htmlTitle.agent", heading)
     val secondaryHeading: String = messages("tax-year-summary.heading-secondary", s"${testYear - 1}", s"$testYear")
     val calculationDate: String = messages("tax-year-summary.calculation-date")
     val calcDate: String = "1 January 2020"

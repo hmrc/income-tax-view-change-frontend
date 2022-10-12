@@ -818,7 +818,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         if (isEnabled(MFACreditsAndDebits)) {
           result should have(
             httpStatus(OK),
-            pageTitleAgent("htmlTitle.agent"),
+            pageTitleAgent("tax-year-summary.heading"),
             elementTextBySelector("#calculation-date")("15 February 2019"),
             elementTextBySelectorList("#payments-table", "tbody", "tr:nth-of-type(1)", "th")(s"$hmrcAdjustment"),
             elementTextBySelectorList("#payments-table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("22 Apr 2021"),
@@ -831,7 +831,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         } else {
           result should have(
             httpStatus(OK),
-            pageTitleAgent("htmlTitle.agent"),
+            pageTitleAgent("whatYouOwe.tableHead.tax-year-summary"),
             elementTextBySelector("#calculation-date")("15 February 2019"),
             elementCountBySelector("#payments-table", "tbody", "tr")(0))
         }

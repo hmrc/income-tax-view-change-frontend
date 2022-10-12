@@ -21,6 +21,7 @@ import org.jsoup.Jsoup
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import testUtils.TestSupport
+import views.helpers.HtmlTitle.messageTitle
 import views.html.timeout.Timeout
 
 class SessionTimeoutViewSpec extends TestSupport {
@@ -34,7 +35,7 @@ class SessionTimeoutViewSpec extends TestSupport {
   "The Session timeout view" should {
 
     s"have the title ${messages("titlePattern.serviceName.govUk", messages("timeout.heading"))}" in {
-      document.title() shouldBe messages("titlePattern.serviceName.govUk", messages("timeout.heading"))
+      document.title() shouldBe messageTitle("titlePattern.serviceName.govUk", messages("timeout.heading"))
     }
 
     s"have the H1 ${messages("timeout.heading")}" in {

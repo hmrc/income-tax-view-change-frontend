@@ -20,6 +20,7 @@ import models.liabilitycalculation.{EndOfYearEstimate, IncomeSource}
 import org.jsoup.nodes.Element
 import testUtils.ViewSpec
 import org.scalatest.prop.TableDrivenPropertyChecks._
+import views.helpers.HtmlTitle.messageTitle
 import views.html.ForecastIncomeSummary
 
 class ForecastIncomeBreakdownViewSpec extends ViewSpec {
@@ -162,7 +163,7 @@ class ForecastIncomeBreakdownViewSpec extends ViewSpec {
       lazy val view = forecastIncomeTemplate(viewModelFull, taxYear, backUrl)
 
       "have the correct title" in new Setup(view) {
-        document title() shouldBe  messages("titlePattern.serviceName.govUk", messages("forecast_income.heading"))
+        document title() shouldBe  messageTitle("titlePattern.serviceName.govUk", messages("forecast_income.heading"))
       }
 
       "have the correct heading" in new Setup(view) {
