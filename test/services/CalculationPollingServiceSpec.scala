@@ -69,50 +69,50 @@ class CalculationPollingServiceSpec extends TestSupport with MockCalculationServ
   "The CalculationPollingService.initiateCalculationPollingSchedulerWithMongoLock method" when {
     "when MongoLock is acquired and success response is received from calculation service" should {
       "return a success response back" in {
-        setupMockGetLatestCalculation(testMtditid, testNino, testCalcId)(liabilityCalculationSuccessResponse)
+        setupMockGetLatestCalculation(testMtditid, testNino, testCalcId, testTaxYear)(liabilityCalculationSuccessResponse)
 
         TestCalculationPollingService
-          .initiateCalculationPollingSchedulerWithMongoLock(testCalcId, testNino, testMtditid).futureValue shouldBe Status.OK
+          .initiateCalculationPollingSchedulerWithMongoLock(testCalcId, testNino, testTaxYear, testMtditid).futureValue shouldBe Status.OK
       }
     }
 
     "when MongoLock is acquired and non-retryable response is received from calculation service" should {
       "return a non-retryable(500) response back" in {
-        setupMockGetLatestCalculation(testMtditid, testNino, testCalcId)(liabilityCalculationErrorResponse)
+        setupMockGetLatestCalculation(testMtditid, testNino, testCalcId, testTaxYear)(liabilityCalculationErrorResponse)
 
         TestCalculationPollingService
-          .initiateCalculationPollingSchedulerWithMongoLock(testCalcId, testNino, testMtditid).futureValue shouldBe Status.INTERNAL_SERVER_ERROR
+          .initiateCalculationPollingSchedulerWithMongoLock(testCalcId, testNino, testTaxYear, testMtditid).futureValue shouldBe Status.INTERNAL_SERVER_ERROR
       }
     }
 
     "when MongoLock is acquired and retryable response(502) is received from calculation service for all retries" should {
       "return a retryable(502) response back" in {
 
-        setupMockGetLatestCalculation(testMtditid, testNino, testCalcId)(LiabilityCalculationError(Status.BAD_GATEWAY, "bad gateway"))
+        setupMockGetLatestCalculation(testMtditid, testNino, testCalcId, testTaxYear)(LiabilityCalculationError(Status.BAD_GATEWAY, "bad gateway"))
 
         TestCalculationPollingService
-          .initiateCalculationPollingSchedulerWithMongoLock(testCalcId, testNino, testMtditid).futureValue shouldBe Status.INTERNAL_SERVER_ERROR
+          .initiateCalculationPollingSchedulerWithMongoLock(testCalcId, testNino, testTaxYear, testMtditid).futureValue shouldBe Status.INTERNAL_SERVER_ERROR
       }
     }
 
     "when MongoLock is acquired and retryable response(404) is received from calculation service for all retries" should {
       "return a retryable(404) response back" in {
-        setupMockGetLatestCalculation(testMtditid, testNino, testCalcId)(liabilityCalculationNotFoundResponse)
+        setupMockGetLatestCalculation(testMtditid, testNino, testCalcId, testTaxYear)(liabilityCalculationNotFoundResponse)
 
         TestCalculationPollingService
-          .initiateCalculationPollingSchedulerWithMongoLock(testCalcId, testNino, testMtditid).futureValue shouldBe Status.INTERNAL_SERVER_ERROR
+          .initiateCalculationPollingSchedulerWithMongoLock(testCalcId, testNino, testTaxYear, testMtditid).futureValue shouldBe Status.INTERNAL_SERVER_ERROR
       }
     }
 
     "when MongoLock is acquired and retryable response(404) is received initially from calculation service and 200 after few seconds" should {
       "return a retryable(404) response back" in {
-        setupMockGetLatestCalculation(testMtditid, testNino, testCalcId)(liabilityCalculationNotFoundResponse)
+        setupMockGetLatestCalculation(testMtditid, testNino, testCalcId, testTaxYear)(liabilityCalculationNotFoundResponse)
 
         val result = TestCalculationPollingService
-          .initiateCalculationPollingSchedulerWithMongoLock(testCalcId, testNino, testMtditid)
+          .initiateCalculationPollingSchedulerWithMongoLock(testCalcId, testNino, testTaxYear, testMtditid)
 
         Thread.sleep(1000)
-        setupMockGetLatestCalculation(testMtditid, testNino, testCalcId)(liabilityCalculationSuccessResponse)
+        setupMockGetLatestCalculation(testMtditid, testNino, testCalcId, testTaxYear)(liabilityCalculationSuccessResponse)
 
         result.futureValue shouldBe Status.OK
       }
@@ -120,13 +120,13 @@ class CalculationPollingServiceSpec extends TestSupport with MockCalculationServ
 
     "when MongoLock is acquired and retryable response(502) is received initially from calculation service and 504 after few seconds" should {
       "return a retryable(404) response back" in {
-        setupMockGetLatestCalculation(testMtditid, testNino, testCalcId)(LiabilityCalculationError(Status.BAD_GATEWAY, "Bad gateway found"))
+        setupMockGetLatestCalculation(testMtditid, testNino, testCalcId, testTaxYear)(LiabilityCalculationError(Status.BAD_GATEWAY, "Bad gateway found"))
 
         val result = TestCalculationPollingService
-          .initiateCalculationPollingSchedulerWithMongoLock(testCalcId, testNino, testMtditid)
+          .initiateCalculationPollingSchedulerWithMongoLock(testCalcId, testNino, testTaxYear, testMtditid)
 
         Thread.sleep(1000)
-        setupMockGetLatestCalculation(testMtditid, testNino, testCalcId)(LiabilityCalculationError(Status.GATEWAY_TIMEOUT, "Gateway timeout"))
+        setupMockGetLatestCalculation(testMtditid, testNino, testCalcId, testTaxYear)(LiabilityCalculationError(Status.GATEWAY_TIMEOUT, "Gateway timeout"))
 
         result.futureValue shouldBe Status.GATEWAY_TIMEOUT
       }
@@ -142,7 +142,7 @@ class CalculationPollingServiceSpec extends TestSupport with MockCalculationServ
           override lazy val lockService: LockService =
             new LockServiceDidNotAcquireMongoLock
         }
-        val result = TestCalculationPollingServiceWithFailedMongoLock.initiateCalculationPollingSchedulerWithMongoLock(testCalcId, testNino, testMtditid)
+        val result = TestCalculationPollingServiceWithFailedMongoLock.initiateCalculationPollingSchedulerWithMongoLock(testCalcId, testNino, testTaxYear, testMtditid)
         result.futureValue shouldBe Status.INTERNAL_SERVER_ERROR
       }
     }
