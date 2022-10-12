@@ -30,6 +30,7 @@ import services.IncomeSourceDetailsService
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testMtditid, testMtditidAgent, testTaxYear}
 import testConstants.NewCalcBreakdownUnitTestConstants.liabilityCalculationModelSuccessful
 import testUtils.TestSupport
+import views.helpers.HtmlTitle.messageTitle
 import views.html.ForecastIncomeSummary
 
 class ForecastIncomeSummaryControllerSpec extends TestSupport with MockCalculationService with MockFrontendAuthorisedFunctions
@@ -112,7 +113,7 @@ class ForecastIncomeSummaryControllerSpec extends TestSupport with MockCalculati
         }
 
         "render the IncomeBreakdown page" in {
-          document.title() shouldBe messages("titlePattern.serviceName.govUk", messages("forecast_income.heading"))
+          document.title() shouldBe messageTitle("titlePattern.serviceName.govUk", messages("forecast_income.heading"))
           contentAsString(result) shouldBe expectedContent
         }
       }
@@ -206,7 +207,7 @@ class ForecastIncomeSummaryControllerSpec extends TestSupport with MockCalculati
         }
 
         "render the IncomeBreakdown page" in {
-          document.title() shouldBe messages("htmlTitle.agent", messages("forecast_income.heading"))
+          document.title() shouldBe messageTitle("htmlTitle.agent", messages("forecast_income.heading"))
           contentAsString(result) shouldBe expectedContent
         }
       }

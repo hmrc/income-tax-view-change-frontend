@@ -35,6 +35,7 @@ import testConstants.IncomeSourceDetailsTestConstants.businessIncome2018and2019
 import testConstants.NewCalcBreakdownUnitTestConstants.liabilityCalculationModelSuccessful
 import testUtils.TestSupport
 import uk.gov.hmrc.http.InternalServerException
+import views.helpers.HtmlTitle.messageTitle
 import views.html.IncomeBreakdown
 
 import scala.concurrent.Future
@@ -88,7 +89,7 @@ class IncomeSummaryControllerSpec extends TestSupport with MockCalculationServic
       }
 
       "render the IncomeBreakdown page" in {
-        document.title() shouldBe messages("titlePattern.serviceName.govUk", messages("income_breakdown.heading"))
+        document.title() shouldBe messageTitle("titlePattern.serviceName.govUk", messages("income_breakdown.heading"))
       }
     }
     "given a tax year which can not be found in ETMP" should {

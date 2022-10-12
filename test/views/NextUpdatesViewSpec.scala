@@ -24,6 +24,7 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.Helpers._
 import testUtils.TestSupport
+import views.helpers.HtmlTitle.messageTitle
 import views.html.NextUpdates
 
 class NextUpdatesViewSpec extends TestSupport {
@@ -37,7 +38,7 @@ class NextUpdatesViewSpec extends TestSupport {
 
   object obligationsMessages {
     val heading: String = messages("nextUpdates.heading")
-    val title: String = messages("titlePattern.serviceName.govUk", heading)
+    val title: String = messageTitle("titlePattern.serviceName.govUk", heading)
     val summary: String = messages("nextUpdates.dropdown.info")
     val summaryQuarterly: String = messages("obligations.quarterlyUpdates")
     val quarterlyLine1: String = messages("nextUpdates.dropdown.quarterlyReturn.text")

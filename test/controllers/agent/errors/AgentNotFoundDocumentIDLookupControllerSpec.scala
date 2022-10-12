@@ -23,6 +23,7 @@ import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers._
 import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
 import testUtils.TestSupport
+import views.helpers.HtmlTitle.messageTitle
 import views.html.errorPages.CustomNotFoundError
 
 class AgentNotFoundDocumentIDLookupControllerSpec extends TestSupport
@@ -57,7 +58,7 @@ class AgentNotFoundDocumentIDLookupControllerSpec extends TestSupport
 
     s"have the title ${messages("titlePattern.serviceName.govUk", messages("base.error_summary.heading"))}" in {
       setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
-      document.title() shouldBe messages("htmlTitle.agent", messages("error.custom.heading"))
+      document.title() shouldBe messageTitle("htmlTitle.agent", messages("error.custom.heading"))
     }
   }
 }

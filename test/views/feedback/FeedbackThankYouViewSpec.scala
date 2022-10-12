@@ -22,6 +22,7 @@ import org.jsoup.select.Elements
 import play.api.i18n.{Lang, MessagesApi}
 import play.twirl.api.Html
 import testUtils.TestSupport
+import views.helpers.HtmlTitle.messageTitle
 import views.html.feedback.FeedbackThankYou
 
 class FeedbackThankYouViewSpec extends TestSupport {
@@ -40,7 +41,7 @@ class FeedbackThankYouViewSpec extends TestSupport {
   "The Feedback Thank You page" when {
     "an individual loads the page" should {
       "have the correct title" in new Setup() {
-        document.title shouldBe msgs("titlePattern.serviceName.govUk", msgs("feedback.thankYou"))
+        document.title shouldBe messageTitle("titlePattern.serviceName.govUk", msgs("feedback.thankYou"))
       }
 
       "have the correct para informing that the feedback has been received" in new Setup() {
@@ -56,7 +57,7 @@ class FeedbackThankYouViewSpec extends TestSupport {
 
     "an agent loads the page" should {
       "have the correct title" in new Setup(isAgent = true) {
-        document.title shouldBe msgs("htmlTitle.agent", msgs("feedback.thankYou"))
+        document.title shouldBe messageTitle("htmlTitle.agent", msgs("feedback.thankYou"))
       }
     }
 

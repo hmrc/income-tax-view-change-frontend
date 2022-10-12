@@ -22,6 +22,7 @@ import play.api.http.Status
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers._
 import testUtils.TestSupport
+import views.helpers.HtmlTitle.messageTitle
 
 class SessionTimeoutControllerSpec extends TestSupport {
 
@@ -46,7 +47,7 @@ class SessionTimeoutControllerSpec extends TestSupport {
     }
 
     s"have the title ${messages("titlePattern.serviceName.govUk", messages("timeout.heading"))}" in {
-      document.title() shouldBe messages("titlePattern.serviceName.govUk", messages("timeout.heading"))
+      document.title() shouldBe messageTitle("titlePattern.serviceName.govUk", messages("timeout.heading"))
     }
   }
 
