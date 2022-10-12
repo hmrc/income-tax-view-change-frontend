@@ -27,6 +27,7 @@ import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import testConstants.BaseTestConstants._
 import testUtils.TestSupport
+import views.helpers.HtmlTitle.messageTitle
 import views.html.Home
 
 import java.time.LocalDate
@@ -138,7 +139,7 @@ class HomePageViewSpec extends TestSupport {
     }
 
     s"have the title ${messages("titlePattern.serviceName.govUk", messages("home.heading"))}" in new Setup {
-      document.title() shouldBe s"${messages("titlePattern.serviceName.govUk", messages("home.heading"))}"
+      document.title() shouldBe s"${messageTitle("titlePattern.serviceName.govUk", messages("home.heading"))}"
     }
 
     s"have the page heading '${messages("home.heading")}'" in new Setup {

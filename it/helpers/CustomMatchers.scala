@@ -79,7 +79,7 @@ trait CustomMatchers extends UnitSpec with GivenWhenThen {
         val expectedTitle = (isInvalidInput, isErrorPage) match {
           case (false, true) => messagesAPI("htmlTitle.errorPage", messagesAPI(messageKey))
           case (true, false) => messagesAPI("htmlTitle.invalidInput", messagesAPI(messageKey))
-          case (_, _) => messagesAPI("titlePattern.serviceName.govUk")
+          case (_, _) => messageTitle("titlePattern.serviceName.govUk", messagesAPI(messageKey))
         }
 
         Then(s"the page title should be '$expectedTitle'")
@@ -100,7 +100,7 @@ trait CustomMatchers extends UnitSpec with GivenWhenThen {
         val expectedTitle = (isInvalidInput, isErrorPage) match {
           case (false, true) => messagesAPI("htmlTitle.errorPage", messagesAPI(messageKey))
           case (true, false) => messagesAPI("htmlTitle.invalidInput", messagesAPI(messageKey))
-          case (_, _) => messagesAPI("htmlTitle.agent")
+          case (_, _) => messageTitle("htmlTitle.agent", messagesAPI(messageKey))
         }
 
         Then(s"the page title should be '$expectedTitle'")
@@ -285,5 +285,9 @@ trait CustomMatchers extends UnitSpec with GivenWhenThen {
         body.toString.contains(id)
       )
     }
+  }
+
+  def messageTitle(serviceName: String, pageTitle: String): String = {
+    pageTitle + " - " + messagesAPI(serviceName) + " - " + messagesAPI("base.govUk")
   }
 }

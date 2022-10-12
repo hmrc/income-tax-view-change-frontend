@@ -23,6 +23,7 @@ import org.jsoup.select.Elements
 import play.api.i18n.{Lang, MessagesApi}
 import play.twirl.api.Html
 import testUtils.{TestSupport, ViewSpec}
+import views.helpers.HtmlTitle.messageTitle
 import views.html.feedback.Feedback
 
 class FeedbackViewSpec extends ViewSpec {
@@ -39,7 +40,7 @@ class FeedbackViewSpec extends ViewSpec {
   "The Feedback page" when {
     "an individual loads the page" should {
       "have the correct title" in new Setup() {
-        document.title shouldBe msgs("titlePattern.serviceName.govUk", msgs("feedback.heading"))
+        document.title shouldBe messageTitle("titlePattern.serviceName.govUk", msgs("feedback.heading"))
       }
 
       "have the correct heading" in new Setup() {
@@ -82,7 +83,7 @@ class FeedbackViewSpec extends ViewSpec {
 
     "an agent loads the page" should {
       "have the correct title" in new Setup(isAgent = true) {
-        document.title shouldBe msgs("htmlTitle.agent", msgs("feedback.heading"))
+        document.title shouldBe messageTitle("htmlTitle.agent", msgs("feedback.heading"))
       }
     }
   }

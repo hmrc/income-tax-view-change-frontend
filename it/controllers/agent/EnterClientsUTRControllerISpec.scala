@@ -313,7 +313,7 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
 
         result should have(
           httpStatus(OK),
-          pageTitleAgent("agent.enter_clients_utr.heading")
+          pageTitleAgent("agent.confirmClient.heading")
         )
       }
     }

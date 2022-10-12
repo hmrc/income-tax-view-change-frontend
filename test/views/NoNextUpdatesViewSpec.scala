@@ -23,6 +23,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
 import testUtils.TestSupport
+import views.helpers.HtmlTitle.messageTitle
 import views.html.NoNextUpdates
 
 class NoNextUpdatesViewSpec extends TestSupport {
@@ -39,7 +40,7 @@ class NoNextUpdatesViewSpec extends TestSupport {
     lazy val document: Document = Jsoup.parse(contentAsString(page))
 
     s"have the title ${messages("titlePattern.serviceName.govUk", heading)}" in {
-      document.title() shouldBe messages("titlePattern.serviceName.govUk", heading)
+      document.title() shouldBe messageTitle("titlePattern.serviceName.govUk", heading)
     }
 
     s"have the heading $heading" in {

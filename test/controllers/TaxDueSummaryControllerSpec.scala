@@ -31,6 +31,7 @@ import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testTaxYe
 import testConstants.IncomeSourceDetailsTestConstants.businessIncome2018and2019
 import testUtils.TestSupport
 import uk.gov.hmrc.http.InternalServerException
+import views.helpers.HtmlTitle.messageTitle
 import views.html.TaxCalcBreakdown
 
 class TaxDueSummaryControllerSpec extends TestSupport with MockCalculationService
@@ -75,7 +76,7 @@ class TaxDueSummaryControllerSpec extends TestSupport with MockCalculationServic
       }
 
       "render the Tax Due page" in {
-        document.title() shouldBe messages("titlePattern.serviceName.govUk", messages("taxCal_breakdown.heading"))
+        document.title() shouldBe messageTitle("titlePattern.serviceName.govUk", messages("taxCal_breakdown.heading"))
       }
     }
 

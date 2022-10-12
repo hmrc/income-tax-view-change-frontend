@@ -22,6 +22,7 @@ import org.scalatest.prop.TableDrivenPropertyChecks._
 import play.twirl.api.HtmlFormat
 import testConstants.BaseTestConstants.{testNavHtml, testTaxYear}
 import testUtils.ViewSpec
+import views.helpers.HtmlTitle.messageTitle
 import views.html.ForecastTaxCalcSummary
 
 class ForecastTaxCalcSummaryViewSpec extends ViewSpec {
@@ -61,8 +62,8 @@ class ForecastTaxCalcSummaryViewSpec extends ViewSpec {
 
     "provided with a full endOfYearEstimateModel" should {
       "have the correct title" in new Setup(view) {
-        document.title() shouldBe messages("titlePattern.serviceName.govUk", messages("forecast_taxCalc.heading"))
-        document.title() shouldBe messages("titlePattern.serviceName.govUk", messages("forecast_taxCalc.heading"))
+        document.title() shouldBe messageTitle("titlePattern.serviceName.govUk", messages("forecast_taxCalc.heading"))
+        document.title() shouldBe messageTitle("titlePattern.serviceName.govUk", messages("forecast_taxCalc.heading"))
       }
 
       "have the correct heading" in new Setup(view) {

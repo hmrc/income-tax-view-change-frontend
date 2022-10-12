@@ -38,6 +38,7 @@ import services.NextUpdatesService
 import testConstants.BaseTestConstants
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testAgentAuthRetrievalSuccessNoEnrolment}
 import uk.gov.hmrc.auth.core.BearerTokenExpired
+import views.helpers.HtmlTitle.messageTitle
 import views.html.{NextUpdates, NoNextUpdates}
 
 import java.time.LocalDate
@@ -47,7 +48,7 @@ class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockInc
   with MockNextUpdatesService with MockNextUpdates with MockItvcErrorHandler with MockFrontendAuthorisedFunctions
   with MockIncomeSourceDetailsService {
 
-  val nextTitle: String = messages("titlePattern.serviceName.govUk", messages("nextUpdates.heading"))
+  val nextTitle: String = messageTitle("titlePattern.serviceName.govUk", messages("nextUpdates.heading"))
 
   trait AgentTestsSetup {
     val controller = new controllers.NextUpdatesController(
@@ -278,7 +279,7 @@ class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockInc
           }
 
           "render the NoNextUpdates page" in {
-            document.title shouldBe messages("titlePattern.serviceName.govUk", messages("obligations.heading"))
+            document.title shouldBe messageTitle("titlePattern.serviceName.govUk", messages("obligations.heading"))
           }
 
           s"have the heading ${messages("obligations.heading")}" in {

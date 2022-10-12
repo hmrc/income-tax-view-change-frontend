@@ -31,6 +31,7 @@ import testConstants.BaseTestConstants.{taxYear, testArn, testCredId, testMtditi
 import testConstants.FinancialDetailsTestConstants._
 import testUtils.{TestSupport, ViewSpec}
 import uk.gov.hmrc.auth.core.retrieve.Name
+import views.helpers.HtmlTitle.messageTitle
 import views.html.WhatYouOwe
 
 import java.time.LocalDate
@@ -39,7 +40,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
   val whatYouOweView: WhatYouOwe = app.injector.instanceOf[WhatYouOwe]
 
-  val whatYouOweTitle: String = messages("titlePattern.serviceName.govUk", messages("whatYouOwe.heading"))
+  val whatYouOweTitle: String = messageTitle("titlePattern.serviceName.govUk", messages("whatYouOwe.heading"))
   val whatYouOweHeading: String = messages("whatYouOwe.heading")
   val whatYouOweAgentHeading: String = messages("whatYouOwe.heading-agent")
   val noPaymentsDue: String = messages("whatYouOwe.no-payments-due")
@@ -1112,7 +1113,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       s"have the title '${
         messages("htmlTitle.agent", messages("whatYouOwe.heading"))
       }'" in new AgentSetup(charges = whatYouOweDataWithDataDueIn30Days()) {
-        pageDocument.title() shouldBe messages("htmlTitle.agent", messages("whatYouOwe.heading"))
+        pageDocument.title() shouldBe messageTitle("htmlTitle.agent", messages("whatYouOwe.heading"))
         pageDocument.getElementById("due-0-link").attr("href") shouldBe controllers.routes.ChargeSummaryController.showAgent(
           LocalDate.now().getYear, "1040000124").url
         pageDocument.getElementById("taxYearSummary-link-0").attr("href") shouldBe controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(
@@ -1151,7 +1152,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
     "the user has no charges" should {
       s"have the title ${messages("agent.header.serviceName", messages("whatYouOwe.heading"))} and page header and notes" in new AgentSetup(charges = noChargesModel) {
-        pageDocument.title() shouldBe messages("agent.header.serviceName", messages("whatYouOwe.heading"))
+        pageDocument.title() shouldBe messageTitle("agent.header.serviceName", messages("whatYouOwe.heading"))
         pageDocument.selectFirst("h1").text shouldBe whatYouOweAgentHeading
         pageDocument.getElementById("no-payments-due").text shouldBe noPaymentsAgentDue
         pageDocument.getElementById("payments-due-note").selectFirst("a").text.contains(saNote)

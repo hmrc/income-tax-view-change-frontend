@@ -20,13 +20,14 @@ import forms.agent.ClientsUTRForm
 import org.jsoup.nodes.Element
 import play.twirl.api.Html
 import testUtils.ViewSpec
+import views.helpers.HtmlTitle.messageTitle
 import views.html.agent.EnterClientsUTR
 
 class EnterClientsUTRViewSpec extends ViewSpec {
 
   object EnterClientsUTRMessages {
     val heading: String =  messages("agent.enter_clients_utr.heading")
-    val title: String = messages("htmlTitle.agent", heading)
+    val title: String = messageTitle("htmlTitle.agent", heading)
     val titleWithInputError: String = s"${messages("htmlTitle.invalidInput", heading)}"
     val info: String = messages{"agent.enter_clients_utr.info"}
     val errorEmptyUTR: String =  messages("agent.error.enter_clients_utr.empty")
