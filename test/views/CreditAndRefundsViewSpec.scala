@@ -43,6 +43,8 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
   val subHeadingWithCreditsPart2: String = messages("credit-and-refund.subHeading.has-credits-2")
   val subHeadingWithUnallocatedCreditsOnePayment: String = s"${messages("credit-and-refund.subHeading.unallocated-credits-one-payment-1")} £500.00 ${messages("credit-and-refund.subHeading.unallocated-credits-one-payment-2")}"
   val subHeadingWithUnallocatedCreditsSingleCredit: String = s"${messages("credit-and-refund.subHeading.unallocated-credits-single-credit-1")} £500.00 ${messages("credit-and-refund.subHeading.unallocated-credits-single-credit-2")}"
+  val subHeadingWithUnallocatedCreditsOnePaymentAgent: String = s"${messages("credit-and-refund.subHeading.unallocated-credits-one-payment-1")} £500.00 ${messages("credit-and-refund.agent.unallocated-credits-one-payment-2")}"
+  val subHeadingWithUnallocatedCreditsSingleCreditAgent: String = s"${messages("credit-and-refund.subHeading.unallocated-credits-single-credit-1")} £500.00 ${messages("credit-and-refund.agent.unallocated-credits-single-credit-2")}"
   val paymentText: String = messages("credit-and-refund.payment")
   val claimBtn: String = messages("credit-and-refund.claim-refund-btn")
   val checkBtn: String = messages("credit-and-refund.check-refund-btn")
@@ -310,6 +312,89 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
 
         document.getElementsByClass("govuk-body").first().text() shouldBe creditAndRefundAgentNoCredit
       }
+
+      "a client has an unallocated credits from exactly one payment" in
+        new Setup(isAgent = true, creditCharges = List(
+          documentDetailWithDueDateFinancialDetailListModel(Some(-500.00), dueDate = Some(LocalDate.of(2022, 1, 12)), originalAmount = Some(-1000))),
+          balance = Some(
+            balanceDetailsModel(
+              availableCredit = Some(500.00),
+              firstPendingAmountRequested = None,
+              secondPendingAmountRequested = None,
+              unallocatedCredit = Some(500.00)
+            )
+          ),
+          creditAndRefundType = Some(UnallocatedCreditFromOnePayment)
+        ) {
+
+          document.select("h2").first().select("span").first().text() shouldBe subHeadingWithUnallocatedCreditsOnePaymentAgent
+          document.select("h2").first().select("span").next().text() shouldBe "12 January 2022."
+          document.select("h2").first().select("span").next().select("a").text() shouldBe "12 January 2022"
+          document.select("dt").eachText().contains("Total") shouldBe false
+          document.select("govuk-list govuk-list--bullet").isEmpty shouldBe true
+          document.getElementsByClass("govuk-button").first().text() shouldBe claimBtn
+          document.getElementsByClass("govuk-button govuk-button--secondary").text() shouldBe checkBtn
+        }
+
+      "a client has an unallocated credits from exactly a single credit item" in
+        new Setup(isAgent = true, creditCharges = List(
+          documentDetailWithDueDateFinancialDetailListModel(
+            Some(-500.00),
+            dueDate = Some(LocalDate.of(2022, 1, 12)),
+            originalAmount = Some(-1000),
+            mainType = "ITSA Overpayment Relief"
+          )
+        ),
+          balance = Some(
+            balanceDetailsModel(
+              availableCredit = Some(500.00),
+              firstPendingAmountRequested = None,
+              secondPendingAmountRequested = None,
+              unallocatedCredit = Some(12.00)
+            )
+          ),
+          creditAndRefundType = Some(UnallocatedCreditFromSingleCreditItem)
+        ) {
+
+          document.select("h2").first().select("span").first().text() shouldBe subHeadingWithUnallocatedCreditsSingleCreditAgent
+          document.select("h2").first().select("span").next().text() shouldBe s"$creditAndRefundFromHMRCTitlePart2."
+          document.select("h2").first().select("span").next().select("a").text() shouldBe creditAndRefundFromHMRCTitlePart2
+          document.select("dt").eachText().contains("Total") shouldBe false
+          document.select("govuk-list govuk-list--bullet").isEmpty shouldBe true
+
+          document.getElementsByClass("govuk-button").first().text() shouldBe claimBtn
+          document.getElementsByClass("govuk-button govuk-button--secondary").text() shouldBe checkBtn
+        }
+
+      "a client has an unallocated credits from exactly a single credit item as a cut over credit" in
+        new Setup(isAgent = true, creditCharges = List(
+          documentDetailWithDueDateFinancialDetailListModel(
+            Some(-500.00),
+            dueDate = Some(LocalDate.of(2022, 1, 12)),
+            originalAmount = Some(-1000),
+            mainType = "ITSA Cutover Credits"
+          )
+        ),
+          balance = Some(
+            balanceDetailsModel(
+              availableCredit = Some(500.00),
+              firstPendingAmountRequested = None,
+              secondPendingAmountRequested = None,
+              unallocatedCredit = Some(12.00)
+            )
+          ),
+          creditAndRefundType = Some(UnallocatedCreditFromSingleCreditItem)
+        ) {
+
+          document.select("h2").first().select("span").first().text() shouldBe subHeadingWithUnallocatedCreditsSingleCreditAgent
+          document.select("h2").first().select("span").next().text() shouldBe s"$creditAndRefundPaymentFromEarlierYearLinkText."
+          document.select("h2").first().select("span").next().select("a").text() shouldBe creditAndRefundPaymentFromEarlierYearLinkText
+          document.select("dt").eachText().contains("Total") shouldBe false
+          document.select("govuk-list govuk-list--bullet").isEmpty shouldBe true
+
+          document.getElementsByClass("govuk-button").first().text() shouldBe claimBtn
+          document.getElementsByClass("govuk-button govuk-button--secondary").text() shouldBe checkBtn
+        }
     }
   }
 }

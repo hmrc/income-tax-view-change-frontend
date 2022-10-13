@@ -104,7 +104,7 @@ balance.getOrElse(throw MissingFieldException("Balance"))
                     <span class="govuk-body">
                         @messages("credit-and-refund.subHeading.unallocated-credits-one-payment-1")
                         <strong class="govuk-body govuk-!-font-weight-bold">@maybeAvailableCredit.toCurrencyString</strong>
-                        @messages("credit-and-refund.subHeading.unallocated-credits-one-payment-2")
+                        @messages(if(isAgent) "credit-and-refund.agent.unallocated-credits-one-payment-2" else "credit-and-refund.subHeading.unallocated-credits-one-payment-2")
                     </span>
                     <span class="govuk-body">
                         @link(
@@ -121,7 +121,7 @@ balance.getOrElse(throw MissingFieldException("Balance"))
                     <span class="govuk-body">
                         @messages("credit-and-refund.subHeading.unallocated-credits-single-credit-1")
                         <strong class="govuk-body govuk-!-font-weight-bold">@maybeAvailableCredit.toCurrencyString</strong>
-                            @messages("credit-and-refund.subHeading.unallocated-credits-single-credit-2")
+                            @messages(if(isAgent) "credit-and-refund.agent.unallocated-credits-single-credit-2" else "credit-and-refund.subHeading.unallocated-credits-single-credit-2")
                         </span>
                     <span class="govuk-body">
                         @if(MfaCreditUtils.validMFACreditType((maybeCreditChargesHead._2.mainType))) {
