@@ -42,8 +42,6 @@ class DateService @Inject()(implicit val frontendAppConfig: FrontendAppConfig) e
     if (currentDate.isBefore(LocalDate.of(currentDate.getYear, APRIL, 6))) currentDate.getYear
     else currentDate.plusYears(1).getYear
   }
-
-
 }
 
 trait DateServiceInterface {
