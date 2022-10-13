@@ -17,26 +17,37 @@
 package services
 
 import config.FrontendAppConfig
+import config.featureswitch.{FeatureSwitching, TimeMachineAddYear}
 
 import java.time.LocalDate
+import java.time.Month.APRIL
 import javax.inject.{Inject, Singleton}
 
 @Singleton
-class DateService @Inject()(implicit frontendAppConfig: FrontendAppConfig) extends DateServiceInterface {
+class DateService @Inject()(implicit val frontendAppConfig: FrontendAppConfig) extends DateServiceInterface with FeatureSwitching {
+
+  override lazy val appConfig: FrontendAppConfig = implicitly
 
   def getCurrentDate: LocalDate = {
-    frontendAppConfig
-      .timeMachineAddYears.map(LocalDate.now().plusYears(_))
-      .getOrElse(LocalDate.now())
+    if (isEnabled(TimeMachineAddYear)) {
+      frontendAppConfig
+        .timeMachineAddYears.map(LocalDate.now().plusYears(_))
+        .getOrElse(LocalDate.now())
+    } else {
+      LocalDate.now()
+    }
   }
 
   def getCurrentTaxYearEnd(currentDate: LocalDate): Int = {
-    if (currentDate.isBefore(LocalDate.of(currentDate.getYear, 4, 6))) currentDate.getYear
-    else currentDate.getYear + 1
+    if (currentDate.isBefore(LocalDate.of(currentDate.getYear, APRIL, 6))) currentDate.getYear
+    else currentDate.plusYears(1).getYear
   }
+
+
 }
 
 trait DateServiceInterface {
   def getCurrentDate: LocalDate
+
   def getCurrentTaxYearEnd(currentDate: LocalDate): Int
 }
