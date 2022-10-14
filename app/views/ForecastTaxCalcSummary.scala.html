@@ -43,6 +43,7 @@
     </h1>
 
     @dataItem("totalEstimatedIncome", endOfYearEstimateModel.totalEstimatedIncome.map(tei => BigDecimal(tei)))
+    @dataItem("totalAllowancesAndDeductions", Some(endOfYearEstimateModel.totalAllowancesAndDeductions.getOrElse(BigDecimal(0)) * -1))
     @dataItem("totalTaxableIncome", endOfYearEstimateModel.totalTaxableIncome.map(tti => BigDecimal(tti)))
     @dataItem("totalIncomeTax", endOfYearEstimateModel.incomeTaxAmount)
 
