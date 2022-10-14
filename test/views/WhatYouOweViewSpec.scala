@@ -1113,7 +1113,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       s"have the title '${
         messages("htmlTitle.agent", messages("whatYouOwe.heading"))
       }'" in new AgentSetup(charges = whatYouOweDataWithDataDueIn30Days()) {
-        pageDocument.title() shouldBe messageTitle("htmlTitle.agent", messages("whatYouOwe.heading"))
+        pageDocument.title() shouldBe messageTitle("htmlTitle.agent", messages("whatYouOwe.heading-agent"))
         pageDocument.getElementById("due-0-link").attr("href") shouldBe controllers.routes.ChargeSummaryController.showAgent(
           LocalDate.now().getYear, "1040000124").url
         pageDocument.getElementById("taxYearSummary-link-0").attr("href") shouldBe controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(
@@ -1152,7 +1152,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
     "the user has no charges" should {
       s"have the title ${messages("agent.header.serviceName", messages("whatYouOwe.heading"))} and page header and notes" in new AgentSetup(charges = noChargesModel) {
-        pageDocument.title() shouldBe messageTitle("agent.header.serviceName", messages("whatYouOwe.heading"))
+        pageDocument.title() shouldBe messageTitle("agent.header.serviceName", messages("whatYouOwe.heading-agent"))
         pageDocument.selectFirst("h1").text shouldBe whatYouOweAgentHeading
         pageDocument.getElementById("no-payments-due").text shouldBe noPaymentsAgentDue
         pageDocument.getElementById("payments-due-note").selectFirst("a").text.contains(saNote)
