@@ -50,7 +50,7 @@
                 <span>@financialDetail.originalAmount.getOrElse(throw MissingFieldException("Original Amount")).toCurrency</span>
                 @if(financialDetail.dunningLockExists) {
                     <span class="govuk-body-s half-light govuk-!-margin-bottom-0" style="display:block">
-                    @messages("chargeSummary.paymentBreakdown.dunningLocks.underReview")
+                    <@messages("chargeSummary.paymentBreakdown.dunningLocks.underReview")>
                     </span>
                 }
                 @if(latePaymentInterestCharge && documentDetail.hasLpiWithDunningBlock) {
