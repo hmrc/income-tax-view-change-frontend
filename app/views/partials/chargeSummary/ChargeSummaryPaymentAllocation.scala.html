@@ -68,6 +68,6 @@
                 }
             }
         </td>
-        <td class="govuk-table__cell numeric">@payment.amount.getOrElse(throw MissingFieldException("Payment Amount")).abs.toCurrency</td>
+        <td class="govuk-table__cell govuk-!-text-align-right">@payment.amount.getOrElse(throw MissingFieldException("Payment Amount")).abs.toCurrency</td>
     </tr>
 }

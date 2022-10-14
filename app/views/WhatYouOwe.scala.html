@@ -169,7 +169,7 @@
             <th scope="col" class="govuk-table__header">@getMessage("tableHead.due-date")</th>
             <th scope="col" class="govuk-table__header">@getMessage("tableHead.payment-type")</th>
             <th scope="col" class="govuk-table__header">@getMessage("tableHead.tax-year-summary")</th>
-            <th scope="col" class="govuk-table__header">@getMessage("tableHead.amount-due")</th>
+            <th scope="col" class="govuk-table__header govuk-!-text-align-right">@getMessage("tableHead.amount-due")</th>
         </tr>
     </thead>
 }
@@ -255,7 +255,7 @@
             }
         </td>
         <td class="govuk-table__cell numeric govuk-!-width-one-quarter"> @taxYearSummaryLink(documentDetailWithDueDate.documentDetail.taxYear.toInt, index, id)</td>
-        <td class="govuk-table__cell numeric govuk-!-width-one-quarter">@{
+        <td class="govuk-table__cell numeric govuk-!-width-one-quarter govuk-table__cell--numeric">@{
             if(isOverduePayment && documentDetailWithDueDate.documentDetail.isLatePaymentInterest) {
                 documentDetailWithDueDate.documentDetail.interestRemainingToPay.toCurrency
             } else {
@@ -365,7 +365,7 @@
                                             <td class="govuk-table__cell numeric govuk-!-width-one-quarter">
                                             @taxYearSummaryLink(charge.documentDetail.taxYear.toInt, index, "taxYearSummary-accuring-interest-link")
                                             </td>
-                                            <td class="govuk-table__cell numeric govuk-!-width-one-quarter">@{
+                                            <td class="govuk-table__cell numeric govuk-!-width-one-quarter govuk-table__cell--numeric">@{
                                                 charge.documentDetail.interestOutstandingAmount.getOrElse(throw MissingFieldException("Overdue Payment Interest Outstanding Amount")).toCurrency
                                             }</td>
                                         </tr>

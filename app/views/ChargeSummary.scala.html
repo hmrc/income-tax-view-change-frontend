@@ -292,7 +292,7 @@
             <tr class="govuk-table__row">
                 <th scope="col" class="govuk-table__header">@messages("chargeSummary.chargeHistory.date")</th>
                 <th scope="col" class="govuk-table__header">@messages("chargeSummary.chargeHistory.description")</th>
-                <th scope="col" class="govuk-table__header">@messages("chargeSummary.chargeHistory.amount")</th>
+                <th scope="col" class="govuk-table__header govuk-!-text-align-right">@messages("chargeSummary.chargeHistory.amount")</th>
             </tr>
             </thead>
 
@@ -308,7 +308,7 @@
                                 messages(s"chargeSummary.chargeHistory.created.${documentDetail.getChargeTypeKey(codingOutEnabled)}")
                         }
                         </td>
-                        <td class="govuk-table__cell numeric">@{
+                        <td class="govuk-table__cell numeric govuk-!-text-align-right">@{
                             documentDetail.originalAmount.getOrElse(throw MissingFieldException("Original Amount")).toCurrency
                         }</td>
                     </tr>
@@ -318,7 +318,7 @@
                     <tr>
                         <td class="govuk-table__cell govuk-!-width-one-quarter">@{documentDetail.interestEndDate.getOrElse(throw MissingFieldException("Interest End Date")).toLongDateShort}</td>
                         <td class="govuk-table__cell">@messages(s"chargeSummary.lpi.chargeHistory.created.${documentDetail.getChargeTypeKey()}")</td>
-                        <td class="govuk-table__cell numeric">@{documentDetail.latePaymentInterestAmount.getOrElse(throw MissingFieldException("Late Payment Interest Amount")).toCurrency}</td>
+                        <td class="govuk-table__cell numeric govuk-!-text-align-right">@{documentDetail.latePaymentInterestAmount.getOrElse(throw MissingFieldException("Late Payment Interest Amount")).toCurrency}</td>
                     </tr>
                 }
 
