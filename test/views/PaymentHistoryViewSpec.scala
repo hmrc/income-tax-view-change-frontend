@@ -39,7 +39,7 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
     val heading: String = messages("paymentHistory.heading")
     val paymentHistoryRefundHeading = "Payment and refund history"
     val title: String = messageTitle("titlePattern.serviceName.govUk", heading)
-    val titleWhenAgentView: String = messageTitle("htmlTitle.agent", heading)
+    val agentTitle: String = messageTitle("htmlTitle.agent", heading)
     val titlePaymentRefundEnabled: String = messageTitle("titlePattern.serviceName.govUk", messages("paymentHistory.paymentAndRefundHistory.heading"))
 
     val info: String = s"${messages("PaymentHistory.classicSA")} ${messages("taxYears.oldSa.content.link")}${messages("pagehelp.opensInNewTabText")}."
@@ -208,8 +208,8 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
 
   "The payments history view with payment response model" should {
     "when the user has payment history for a single Year" should {
-      s"have the title '${PaymentHistoryMessages.titleWhenAgentView}'" in new PaymentHistorySetupWhenAgentView(paymentEntriesMFA) {
-        document.title() shouldBe PaymentHistoryMessages.titleWhenAgentView
+      s"have the title '${PaymentHistoryMessages.agentTitle}'" in new PaymentHistorySetupWhenAgentView(paymentEntriesMFA) {
+        document.title() shouldBe PaymentHistoryMessages.agentTitle
       }
     }
   }
