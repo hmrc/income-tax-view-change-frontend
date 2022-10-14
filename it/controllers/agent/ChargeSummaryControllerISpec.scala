@@ -598,7 +598,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
       Then("the result should have a HTTP status of OK (200) and load the correct page")
       res should have(
         httpStatus(OK),
-        pageTitleAgent("tax-year-summary.payments.balancingCharge.text"),
+        pageTitleAgent("chargeSummary.hmrcAdjustment.text"),
         elementTextBySelector(".govuk-summary-list")(summaryListText),
         elementCountBySelector(s"#payment-link-$testTaxYear")(0),
         elementCountBySelector("#payment-history-table tr")(2),
@@ -635,7 +635,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
       Then("the result should have a HTTP status of OK (200) and load the correct page")
       res should have(
         httpStatus(OK),
-        pageTitleAgent("tax-year-summary.payments.balancingCharge.text"),
+        pageTitleAgent("chargeSummary.hmrcAdjustment.text"),
         elementTextBySelector(".govuk-summary-list")(summaryListText),
         elementCountBySelector(s"#payment-link-$testTaxYear")(0),
         elementCountBySelector("#payment-history-table tr")(3),
