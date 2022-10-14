@@ -40,10 +40,10 @@ class DateService @Inject()(implicit val frontendAppConfig: FrontendAppConfig) e
 
   def getCurrentTaxYearEnd(currentDate: LocalDate): Int = {
     (frontendAppConfig.timeMachineAddYears, currentDate.isBefore(LocalDate.of(currentDate.getYear, APRIL, 6)), isEnabled(TimeMachineAddYear)) match {
-      case (Some(addYear), true, true) => currentDate.plusYears(addYear).getYear
-      case (Some(addYear), false, true) => currentDate.plusYears(addYear + 1).getYear
+      case (Some(addYear), true, true) => currentDate.getYear + addYear
+      case (Some(addYear), false, true) => currentDate.getYear + addYear + 1
       case (Some(_), true, false) => currentDate.getYear
-      case _ => currentDate.plusYears(1).getYear
+      case _ => currentDate.getYear + 1
     }
   }
 }
