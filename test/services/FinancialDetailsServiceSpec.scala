@@ -86,7 +86,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
     None
   )(FakeRequest())
 
-  object TestFinancialDetailsService extends FinancialDetailsService(mockIncomeTaxViewChangeConnector)
+  object TestFinancialDetailsService extends FinancialDetailsService(mockIncomeTaxViewChangeConnector, dateService)
 
   val testUserWithRecentYears: MtdItUser[_] = MtdItUser(testMtditid, testNino, None, IncomeSourceDetailsModel(
     mtdbsa = testMtditid,

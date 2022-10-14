@@ -50,7 +50,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
                                implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                val incomeSourceDetailsService: IncomeSourceDetailsService,
                                val financialDetailsService: FinancialDetailsService,
-                               val dateService: DateService,
+                               implicit val dateService: DateService,
                                val whatYouOweService: WhatYouOweService,
                                val retrieveBtaNavBar: NavBarPredicate,
                                auditingService: AuditingService)

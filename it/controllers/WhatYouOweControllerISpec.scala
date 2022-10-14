@@ -70,7 +70,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
         When("I call GET /report-quarterly/income-and-expenses/view/payments-owed")
         val res = IncomeTaxViewChangeFrontend.getPaymentsDue
 
-        AuditStub.verifyAuditContainsDetail(WhatYouOweResponseAuditModel(testUser, whatYouOweFinancialDetailsEmptyBCDCharge, false).detail)
+        AuditStub.verifyAuditContainsDetail(WhatYouOweResponseAuditModel(testUser, whatYouOweFinancialDetailsEmptyBCDCharge, false, dateService).detail)
 
         verifyIncomeSourceDetailsCall(testMtditid)
         IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05", 2)
@@ -100,7 +100,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
           When("I call GET /report-quarterly/income-and-expenses/view/payments-owed")
           val res = IncomeTaxViewChangeFrontend.getPaymentsDue
 
-          AuditStub.verifyAuditContainsDetail(WhatYouOweResponseAuditModel(testUser, whatYouOweDataWithDataDueIn30Days, false).detail)
+          AuditStub.verifyAuditContainsDetail(WhatYouOweResponseAuditModel(testUser, whatYouOweDataWithDataDueIn30Days, false, dateService).detail)
 
           verifyIncomeSourceDetailsCall(testMtditid)
           IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05", 2)
@@ -152,7 +152,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
               chargesList = financialDetailsModel.copy(documentDetails = documentDetailsForTestTaxYear).getAllDocumentDetailsWithDueDates()
             )
           }
-          AuditStub.verifyAuditEvent(WhatYouOweResponseAuditModel(testUser, whatYouOweChargesList, false))
+          AuditStub.verifyAuditEvent(WhatYouOweResponseAuditModel(testUser, whatYouOweChargesList, false, dateService))
 
           verifyIncomeSourceDetailsCall(testMtditid)
           IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05", 2)
@@ -207,7 +207,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
           When("I call GET /report-quarterly/income-and-expenses/view/payments-owed")
           val res = IncomeTaxViewChangeFrontend.getPaymentsDue
 
-          AuditStub.verifyAuditContainsDetail(WhatYouOweResponseAuditModel(testUser, whatYouOweWithAZeroOutstandingAmount, false).detail)
+          AuditStub.verifyAuditContainsDetail(WhatYouOweResponseAuditModel(testUser, whatYouOweWithAZeroOutstandingAmount, false, dateService).detail)
 
           verifyIncomeSourceDetailsCall(testMtditid)
           IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05", 2)
@@ -256,7 +256,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
               chargesList = financialDetailsModel.copy(documentDetails = documentDetailsForTestTaxYear).getAllDocumentDetailsWithDueDates()
             )
           }
-          AuditStub.verifyAuditEvent(WhatYouOweResponseAuditModel(testUser, whatYouOweChargesList, false))
+          AuditStub.verifyAuditEvent(WhatYouOweResponseAuditModel(testUser, whatYouOweChargesList, false, dateService))
 
           verifyIncomeSourceDetailsCall(testMtditid)
           IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05", 2)
@@ -295,7 +295,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
               chargesList = financialDetailsModel.copy(documentDetails = documentDetailsForTestTaxYear).getAllDocumentDetailsWithDueDates()
             )
           }
-          AuditStub.verifyAuditEvent(WhatYouOweResponseAuditModel(testUser, whatYouOweChargesList, false))
+          AuditStub.verifyAuditEvent(WhatYouOweResponseAuditModel(testUser, whatYouOweChargesList, false, dateService))
 
           verifyIncomeSourceDetailsCall(testMtditid)
           IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05", 2)
@@ -334,7 +334,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
               chargesList = financialDetailsModel.copy(documentDetails = documentDetailsForTestTaxYear).getAllDocumentDetailsWithDueDates()
             )
           }
-          AuditStub.verifyAuditEvent(WhatYouOweResponseAuditModel(testUser, whatYouOweChargesList, false))
+          AuditStub.verifyAuditEvent(WhatYouOweResponseAuditModel(testUser, whatYouOweChargesList, false, dateService))
 
           verifyIncomeSourceDetailsCall(testMtditid)
           IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05", 2)
@@ -444,7 +444,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
           When("I call GET /report-quarterly/income-and-expenses/view/payments-owed")
           val res = IncomeTaxViewChangeFrontend.getPaymentsDue
 
-          AuditStub.verifyAuditContainsDetail(WhatYouOweResponseAuditModel(testUser, whatYouOweNoChargeList, false).detail)
+          AuditStub.verifyAuditContainsDetail(WhatYouOweResponseAuditModel(testUser, whatYouOweNoChargeList, false, dateService).detail)
 
           verifyIncomeSourceDetailsCall(testMtditid)
 
@@ -483,7 +483,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
           When("I call GET /report-quarterly/income-and-expenses/view/payments-owed")
           val res = IncomeTaxViewChangeFrontend.getPaymentsDue
 
-          AuditStub.verifyAuditContainsDetail(WhatYouOweResponseAuditModel(testUser, whatYouOweNoChargeList, false).detail)
+          AuditStub.verifyAuditContainsDetail(WhatYouOweResponseAuditModel(testUser, whatYouOweNoChargeList, false, dateService).detail)
 
           verifyIncomeSourceDetailsCall(testMtditid)
 
@@ -542,7 +542,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
           IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05", 2)
           IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear - 1).toString)
 
-          AuditStub.verifyAuditContainsDetail(WhatYouOweResponseAuditModel(testUser, whatYouOweNoChargeList, false).detail)
+          AuditStub.verifyAuditContainsDetail(WhatYouOweResponseAuditModel(testUser, whatYouOweNoChargeList, false, dateService).detail)
 
           Then("the result should have a HTTP status of OK (200) and the payments due page")
           res should have(
@@ -593,7 +593,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
           When("I call GET /report-quarterly/income-and-expenses/view/payments-owed")
           val res = IncomeTaxViewChangeFrontend.getPaymentsDue
 
-          AuditStub.verifyAuditContainsDetail(WhatYouOweResponseAuditModel(testUser, whatYouOweOutstandingChargesOnly, false).detail)
+          AuditStub.verifyAuditContainsDetail(WhatYouOweResponseAuditModel(testUser, whatYouOweOutstandingChargesOnly, false, dateService).detail)
 
           verifyIncomeSourceDetailsCall(testMtditid)
           IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05", 2)
@@ -636,7 +636,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
           When("I call GET /report-quarterly/income-and-expenses/view/payments-owed")
           val res = IncomeTaxViewChangeFrontend.getPaymentsDue
 
-          AuditStub.verifyAuditContainsDetail(WhatYouOweResponseAuditModel(testUser, whatYouOweFinancialDetailsEmptyBCDCharge, false).detail)
+          AuditStub.verifyAuditContainsDetail(WhatYouOweResponseAuditModel(testUser, whatYouOweFinancialDetailsEmptyBCDCharge, false, dateService).detail)
 
           verifyIncomeSourceDetailsCall(testMtditid)
           IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05", 2)

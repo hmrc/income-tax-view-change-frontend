@@ -23,6 +23,7 @@ import play.api.mvc.Call
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 import javax.inject.Singleton
+import scala.util.Try
 
 @Singleton
 class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config: Configuration) {
@@ -160,4 +161,5 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   //Auth variables
   lazy val requiredConfidenceLevel: Int = servicesConfig.getInt("auth.confidenceLevel")
 
+  lazy val timeMachineAddYears: Option[Int] = Try { servicesConfig.getInt("time-machine.add-years") }.toOption
 }

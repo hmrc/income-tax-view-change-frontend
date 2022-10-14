@@ -36,13 +36,14 @@ import services.WhatYouOweService
 import testConstants.BaseTestConstants
 import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
 import testConstants.FinancialDetailsTestConstants._
+import testUtils.TestSupport
 import views.html.WhatYouOwe
 
 import java.time.LocalDate
 import scala.concurrent.Future
 
 class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate with MockNavBarEnumFsPredicate
-  with MockFrontendAuthorisedFunctions with FeatureSwitching{
+  with MockFrontendAuthorisedFunctions with TestSupport with FeatureSwitching{
 
   trait Setup {
 
@@ -59,6 +60,7 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockInco
       MockNavBarPredicate,
       mockAuthService,
       mockAuditingService,
+      dateService,
       mockIncomeSourceDetailsService,
       app.injector.instanceOf[FrontendAppConfig],
       app.injector.instanceOf[MessagesControllerComponents],

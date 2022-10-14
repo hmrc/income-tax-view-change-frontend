@@ -16,30 +16,58 @@
 
 package services
 
+import config.featureswitch.{FeatureSwitching, TimeMachineAddYear}
 import testUtils.TestSupport
 
 import java.time.LocalDate
 
-class DateServiceSpec extends TestSupport {
+class DateServiceSpec extends TestSupport with FeatureSwitching {
 
   object TestDateService extends DateService()
   object MockedTestDateService extends DateService() {
     override def getCurrentDate: LocalDate = LocalDate.parse("2018-03-29")
   }
-  "The DateService.getCurrentDate method" should {
-    "return the current date" in {
-      TestDateService.getCurrentDate should equal(LocalDate.now)
+
+  "The getCurrentDate method when TimeMachineAddYear FS is on" should {
+    "return the next year date if the timeMachineAddYears 1" in {
+      enable(TimeMachineAddYear)
+      TestDateService.getCurrentDate should equal(LocalDate.now.plusYears(1))
     }
     "return the mocked current date" in {
+      enable(TimeMachineAddYear)
       MockedTestDateService.getCurrentDate should equal(LocalDate.parse("2018-03-29"))
     }
   }
 
-  "The DateService.getCurrentTaxYearEnd method" should {
+  "The getCurrentDate method when TimeMachineAddYear FS is off" should {
+    "return the current date" in {
+      disable(TimeMachineAddYear)
+      TestDateService.getCurrentDate should equal(LocalDate.now)
+    }
+    "return the mocked current date" in {
+      disable(TimeMachineAddYear)
+      MockedTestDateService.getCurrentDate should equal(LocalDate.parse("2018-03-29"))
+    }
+  }
+
+  "The getCurrentTaxYearEnd method when TimeMachineAddYear FS is on" should {
+    "return the next year if the current date is before april 6 and the timeMachineAddYears 1" in {
+      enable(TimeMachineAddYear)
+      TestDateService.getCurrentTaxYearEnd(LocalDate.parse("2018-03-29")) shouldBe 2019
+    }
+    "return the following year if current date is on or after april 6 and the timeMachineAddYears 1" in {
+      enable(TimeMachineAddYear)
+      TestDateService.getCurrentTaxYearEnd(LocalDate.parse("2018-04-06")) shouldBe 2020
+    }
+  }
+
+  "The getCurrentTaxYearEnd method when TimeMachineAddYear FS is off" should {
     "return the current year if the current date is before april 6" in {
+      disable(TimeMachineAddYear)
       TestDateService.getCurrentTaxYearEnd(LocalDate.parse("2018-03-29")) shouldBe 2018
     }
     "return the next year if current date is on or after april 6" in {
+      disable(TimeMachineAddYear)
       TestDateService.getCurrentTaxYearEnd(LocalDate.parse("2018-04-06")) shouldBe 2019
     }
   }

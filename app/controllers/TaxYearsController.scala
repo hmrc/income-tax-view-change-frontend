@@ -21,10 +21,11 @@ import config.featureswitch.{FeatureSwitching, ITSASubmissionIntegration}
 import config.{AgentItvcErrorHandler, FrontendAppConfig}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
+
 import javax.inject.Inject
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import services.IncomeSourceDetailsService
+import services.{DateService, IncomeSourceDetailsService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
 import views.html.TaxYears
@@ -33,7 +34,8 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class TaxYearsController @Inject()(taxYearsView: TaxYears,
                                    val authorisedFunctions: AuthorisedFunctions,
-                                   incomeSourceDetailsService: IncomeSourceDetailsService)
+                                   incomeSourceDetailsService: IncomeSourceDetailsService,
+                                   implicit val dateService: DateService)
                                   (implicit val appConfig: FrontendAppConfig,
                                    mcc: MessagesControllerComponents,
                                    implicit val ec: ExecutionContext,
