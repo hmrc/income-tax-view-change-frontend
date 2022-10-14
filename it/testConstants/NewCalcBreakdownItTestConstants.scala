@@ -86,13 +86,13 @@ object NewCalcBreakdownItTestConstants {
         totalEeaFhlProfit = Some(12500)
       )),
       marriageAllowanceTransferredIn = Some(MarriageAllowanceTransferredIn(amount = Some(5000.99))),
-      reliefs = Some(Reliefs(reliefsClaimed = Seq(ReliefsClaimed(
+      reliefs = Some(Reliefs(reliefsClaimed = Some(Seq(ReliefsClaimed(
         `type` = "vctSubscriptions",
         amountUsed = Some(5000.99)),
         ReliefsClaimed(
           `type` = "vctSubscriptions2",
           amountUsed = Some(5000.99)),
-      ),
+      )),
         residentialFinanceCosts = Some(ResidentialFinanceCosts(totalResidentialFinanceCostsRelief = 5000.99)),
         foreignTaxCreditRelief = Some(ForeignTaxCreditRelief(totalForeignTaxCreditRelief = 5000.99)),
         topSlicingRelief = Some(TopSlicingRelief(amount = Some(5000.99))))),
@@ -110,56 +110,56 @@ object NewCalcBreakdownItTestConstants {
           totalAllowancesAndDeductions = 12500,
           totalTaxableIncome = 12500,
           payPensionsProfit = Some(PayPensionsProfit(
-            taxBands = Seq(TaxBands(
+            taxBands = Some(Seq(TaxBands(
               name = "SSR",
               rate = 20,
               bandLimit = 12500,
               apportionedBandLimit = 12500,
               income = 12500,
               taxAmount = 5000.99
-            ))
+            )))
           )),
           savingsAndGains = Some(SavingsAndGains(
             taxableIncome = 12500,
-            taxBands = Seq(TaxBands(
+            taxBands = Some(Seq(TaxBands(
               name = "SSR",
               rate = 20,
               bandLimit = 12500,
               apportionedBandLimit = 12500,
               income = 12500,
               taxAmount = 5000.99
-            ))
+            )))
           )),
           dividends = Some(Dividends(
             taxableIncome = 12500,
-            taxBands = Seq(TaxBands(
+            taxBands = Some(Seq(TaxBands(
               name = "SSR",
               rate = 20,
               bandLimit = 12500,
               apportionedBandLimit = 12500,
               income = 12500,
               taxAmount = 5000.99
-            ))
+            )))
           )),
           lumpSums = Some(LumpSums(
-            taxBands = Seq(TaxBands(
+            taxBands = Some(Seq(TaxBands(
               name = "SSR",
               rate = 20,
               bandLimit = 12500,
               apportionedBandLimit = 12500,
               income = 12500,
               taxAmount = 5000.99
-            ))
+            )))
           )),
           gainsOnLifePolicies = Some(GainsOnLifePolicies(
-            taxBands = Seq(TaxBands(
+            taxBands = Some(Seq(TaxBands(
               name = "SSR",
               rate = 20,
               bandLimit = 12500,
               apportionedBandLimit = 12500,
               income = 12500,
               taxAmount = 5000.99
-            ))
+            )))
           )),
           totalReliefs = Some(5000.99),
           totalNotionalTax = Some(5000.99),
@@ -185,7 +185,7 @@ object NewCalcBreakdownItTestConstants {
           capitalGainsTaxDue = 5000.99,
           capitalGainsOverpaid = Some(5000.99),
           residentialPropertyAndCarriedInterest = Some(ResidentialPropertyAndCarriedInterest(
-            cgtTaxBands = Seq(CgtTaxBands(
+            cgtTaxBands = Some(Seq(CgtTaxBands(
               name = "lowerRate",
               rate = 20,
               income = 5000.99,
@@ -196,10 +196,10 @@ object NewCalcBreakdownItTestConstants {
                 rate = 21,
                 income = 5000.99,
                 taxAmount = 5000.99
-              ))
+              )))
           )),
           otherGains = Some(OtherGains(
-            cgtTaxBands = Seq(CgtTaxBands(
+            cgtTaxBands = Some(Seq(CgtTaxBands(
               name = "lowerRate",
               rate = 20,
               income = 5000.99,
@@ -210,7 +210,7 @@ object NewCalcBreakdownItTestConstants {
                 rate = 21,
                 income = 5000.99,
                 taxAmount = 5000.99
-              ))
+              )))
           )),
           businessAssetsDisposalsAndInvestorsRel = Some(BusinessAssetsDisposalsAndInvestorsRel(
             taxableGains = Some(5000.99),

@@ -47,11 +47,12 @@ trait MockCalculationService extends UnitSpec with BeforeAndAfterEach {
       .thenReturn(Future.successful(response))
   }
 
-  def setupMockGetLatestCalculation(mtditid: String, nino: String, calcId: String)(response: LiabilityCalculationResponseModel): Unit = {
+  def setupMockGetLatestCalculation(mtditid: String, nino: String, calcId: String, taxYear: Int)(response: LiabilityCalculationResponseModel): Unit = {
     when(mockCalculationService.getLatestCalculation(
       ArgumentMatchers.eq(mtditid),
       ArgumentMatchers.eq(nino),
-      ArgumentMatchers.eq(calcId)
+      ArgumentMatchers.eq(calcId),
+      ArgumentMatchers.eq(taxYear)
     )(ArgumentMatchers.any())) thenReturn Future.successful(response)
   }
 

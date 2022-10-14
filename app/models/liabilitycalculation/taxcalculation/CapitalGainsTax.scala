@@ -35,7 +35,7 @@ object CapitalGainsTax {
 }
 
 case class ResidentialPropertyAndCarriedInterest(
-                                                  cgtTaxBands: Seq[CgtTaxBands] = Seq()
+                                                  cgtTaxBands: Option[Seq[CgtTaxBands]]
                                                 )
 
 object ResidentialPropertyAndCarriedInterest {
@@ -43,7 +43,7 @@ object ResidentialPropertyAndCarriedInterest {
 }
 
 case class OtherGains(
-                       cgtTaxBands: Seq[CgtTaxBands] = Seq()
+                       cgtTaxBands: Option[Seq[CgtTaxBands]]
                      )
 
 object OtherGains {

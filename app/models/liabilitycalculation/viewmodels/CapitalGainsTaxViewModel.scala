@@ -41,9 +41,9 @@ object CapitalGainsTaxViewModel {
         capitalGainsTaxDue = Some(cgt.capitalGainsTaxDue),
         capitalGainsOverpaid = cgt.capitalGainsOverpaid,
         propertyAndInterestTaxBands = cgt.residentialPropertyAndCarriedInterest.map(rpc =>
-          rpc.cgtTaxBands),
+          rpc.cgtTaxBands.getOrElse(Seq())),
         otherGainsTaxBands = cgt.otherGains.map(rpc =>
-          rpc.cgtTaxBands),
+          rpc.cgtTaxBands.getOrElse(Seq())),
         businessAssetsDisposalsAndInvestorsRel = cgt.businessAssetsDisposalsAndInvestorsRel
       )
       case None => CapitalGainsTaxViewModel()

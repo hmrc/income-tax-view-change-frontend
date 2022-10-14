@@ -154,6 +154,7 @@ class ChargeSummaryViewSpec extends ViewSpec {
     val interestLinkText: String = messages("chargeSummary.whatYouOwe.linkText")
     val interestLinkTextAgent: String = messages("chargeSummary.whatYouOwe.linkText-agent")
     val interestLinkFullText: String = messages("chargeSummary.interestLocks.text")
+    val interestLinkFullTextAgent: String = messages("chargeSummary.interestLocks.text-agent")
     val cancelledPAYESelfAssessment: String = messages("whatYouOwe.cancelled-paye-sa.heading")
 
     def dunningLockBannerText(formattedAmount: String, date: String) =
@@ -772,13 +773,13 @@ class ChargeSummaryViewSpec extends ViewSpec {
       "have a interest lock payment link when the interest is accruing" in new Setup(documentDetailModel(lpiWithDunningBlock = None), paymentBreakdown = paymentBreakdownWhenInterestAccrues, isAgent = true) {
         document.select("#main-content p a").text() shouldBe interestLinkTextAgent
         document.select("#main-content p a").attr("href") shouldBe whatYouOweAgentUrl
-        document.select("#p-interest-locks-msg").text() shouldBe s"${interestLinkFirstWordAgent} ${interestLinkTextAgent} ${interestLinkFullText}"
+        document.select("#p-interest-locks-msg").text() shouldBe s"${interestLinkFirstWordAgent} ${interestLinkTextAgent} ${interestLinkFullTextAgent}"
       }
 
       "have a interest lock payment link when the interest has previously" in new Setup(documentDetailModel(lpiWithDunningBlock = None), paymentBreakdown = paymentBreakdownWithPreviouslyAccruedInterest, isAgent = true) {
         document.select("#main-content p a").text() shouldBe interestLinkTextAgent
         document.select("#main-content p a").attr("href") shouldBe whatYouOweAgentUrl
-        document.select("#p-interest-locks-msg").text() shouldBe s"${interestLinkFirstWordAgent} ${interestLinkTextAgent} ${interestLinkFullText}"
+        document.select("#p-interest-locks-msg").text() shouldBe s"${interestLinkFirstWordAgent} ${interestLinkTextAgent} ${interestLinkFullTextAgent}"
       }
 
       "have no interest lock payment link when there is no accrued interest" in new Setup(documentDetailModel(lpiWithDunningBlock = None), paymentBreakdown = paymentBreakdownWithOnlyAccruedInterest, isAgent = true) {

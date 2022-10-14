@@ -21,7 +21,7 @@ import models.liabilitycalculation.taxcalculation.TaxBands
 import models.liabilitycalculation.viewmodels.TaxDueSummaryViewModel
 import play.api.http.Status
 import play.api.libs.json._
-import testConstants.NewCalcBreakdownUnitTestConstants.liabilityCalculationModelSuccessful
+import testConstants.NewCalcBreakdownUnitTestConstants._
 import testUtils.UnitSpec
 
 import scala.io.Source
@@ -59,6 +59,19 @@ class LiabilityCalculationResponseModelSpec extends UnitSpec with LiabilityCalcu
       "should convert from json to model" in {
         val calcResponse = Json.fromJson[LiabilityCalculationResponse](Json.parse(expectedJson))
         Json.toJson(calcResponse.get) shouldBe Json.parse(expectedJson)
+      }
+    }
+
+    "successful with zero length or null arrays" should {
+      val source = Source.fromURL(getClass.getResource("/liabilityResponseArrayTest.json"))
+      val arraysTestJson = try source.mkString finally source.close()
+
+      "be translated to Json correctly" in {
+        Json.toJson(arrayTestFull) shouldBe Json.parse(arraysTestJson)
+      }
+      "should convert from json to model" in {
+        val calcModel = Json.fromJson[LiabilityCalculationResponse](Json.parse(arraysTestJson))
+        Json.toJson(calcModel.get) shouldBe Json.parse( arraysTestJson)
       }
     }
 
