@@ -35,6 +35,8 @@ agent.header.serviceName                                       = Rheoli diweddar
 titlePattern.serviceName.govUk                                  = Rheoli’ch diweddariadau Treth Incwm
 htmlTitle.agent                                                 = Rheoli diweddariadau Treth Incwm eich cleient
 htmlTitle.inputError                                            = Gwall: {0} - GOV.UK
+pageTitle                                                       = {0} - Rheoli’ch diweddariadau Treth Incwm - GOV.UK
+pageTitle.agent                                                 = {0} - Rheoli diweddariadau Treth Incwm eich cleient - GOV.UK
 
 
 ## Agent - UTR Error
