@@ -56,16 +56,16 @@ class ChargeSummaryViewSpec extends ViewSpec {
       latePaymentInterestCharge, codingOutEnabled, isAgent, isMFADebit = isMFADebit)
     val document: Document = Jsoup.parse(view.toString())
 
-    def verifySummaryListRow(rowNumber: Int, expectedKeyText: String, expectedValueText: String): Assertion = {
+    def verifySummaryListRowNumeric(rowNumber: Int, expectedKeyText: String, expectedValueText: String): Assertion = {
       val summaryListRow = document.select(s".govuk-summary-list:nth-of-type(1) .govuk-summary-list__row:nth-of-type($rowNumber)")
       summaryListRow.select(".govuk-summary-list__key").text() shouldBe expectedKeyText
-      summaryListRow.select(".govuk-summary-list__value").text() shouldBe expectedValueText
+      summaryListRow.select(".govuk-summary-list__value--numeric").text() shouldBe expectedValueText
     }
 
-    def verifyPaymentBreakdownRow(rowNumber: Int, expectedKeyText: String, expectedValueText: String): Assertion = {
+    def verifyPaymentBreakdownRowNumeric(rowNumber: Int, expectedKeyText: String, expectedValueText: String): Assertion = {
       val paymentBreakdownRow = document.select(s".govuk-summary-list:nth-of-type(2) .govuk-summary-list__row:nth-of-type($rowNumber)")
       paymentBreakdownRow.select(".govuk-summary-list__key").text() shouldBe expectedKeyText
-      paymentBreakdownRow.select(".govuk-summary-list__value").text() shouldBe expectedValueText
+      paymentBreakdownRow.select(".govuk-summary-list__value--numeric").text() shouldBe expectedValueText
     }
 
     def verifyPaymentHistoryContent(rows: String*): Assertion = {
@@ -280,9 +280,9 @@ class ChargeSummaryViewSpec extends ViewSpec {
       }
 
       "display a due date, payment amount and remaining to pay for cancelled PAYE self assessment" in new Setup(documentDetailModel(documentDescription = Some("TRM New Charge"), documentText = Some(messages("whatYouOwe.cancelled-paye-sa.heading"))), codingOutEnabled = true) {
-        verifySummaryListRow(1, dueDate, "OVERDUE 15 May 2019")
-        verifySummaryListRow(2, paymentAmount, "£1,400.00")
-        verifySummaryListRow(3, remainingToPay, "£1,400.00")
+        verifySummaryListRowNumeric(1, dueDate, "OVERDUE 15 May 2019")
+        verifySummaryListRowNumeric(2, paymentAmount, "£1,400.00")
+        verifySummaryListRowNumeric(3, remainingToPay, "£1,400.00")
       }
 
       "have a paragraph explaining how many days a payment can take to process for cancelled PAYE self assessment" in new Setup(documentDetailModel(documentDescription = Some("TRM New Charge"), documentText = Some(messages("whatYouOwe.cancelled-paye-sa.heading"))), codingOutEnabled = true) {
@@ -369,39 +369,39 @@ class ChargeSummaryViewSpec extends ViewSpec {
       }
 
       "display a due date" in new Setup(documentDetailModel()) {
-        verifySummaryListRow(1, dueDate, "OVERDUE 15 May 2019")
+        verifySummaryListRowNumeric(1, dueDate, "OVERDUE 15 May 2019")
       }
 
       "display the correct due date for an interest charge" in new Setup(documentDetailModel(), latePaymentInterestCharge = true) {
-        verifySummaryListRow(1, dueDate, "OVERDUE 15 June 2018")
+        verifySummaryListRowNumeric(1, dueDate, "OVERDUE 15 June 2018")
       }
 
       "display an interest period for a late interest charge" in new Setup(documentDetailModel(originalAmount = Some(1500)), latePaymentInterestCharge = true) {
-        verifySummaryListRow(2, interestPeriod, "29 Mar 2018 to 15 Jun 2018")
+        verifySummaryListRowNumeric(2, interestPeriod, "29 Mar 2018 to 15 Jun 2018")
       }
 
       "display a charge amount" in new Setup(documentDetailModel(originalAmount = Some(1500))) {
-        verifySummaryListRow(2, fullPaymentAmount, "£1,500.00")
+        verifySummaryListRowNumeric(2, fullPaymentAmount, "£1,500.00")
       }
 
       "display a charge amount for a late interest charge" in new Setup(documentDetailModel(originalAmount = Some(1500)), latePaymentInterestCharge = true) {
-        verifySummaryListRow(3, fullPaymentAmount, "£100.00")
+        verifySummaryListRowNumeric(3, fullPaymentAmount, "£100.00")
       }
 
       "display a remaining amount" in new Setup(documentDetailModel(outstandingAmount = Some(1600))) {
-        verifySummaryListRow(3, remainingToPay, "£1,600.00")
+        verifySummaryListRowNumeric(3, remainingToPay, "£1,600.00")
       }
 
       "display a remaining amount for a late interest charge" in new Setup(documentDetailModel(outstandingAmount = Some(1600)), latePaymentInterestCharge = true) {
-        verifySummaryListRow(4, remainingToPay, "£80.00")
+        verifySummaryListRowNumeric(4, remainingToPay, "£80.00")
       }
 
       "display a remaining amount of 0 if a cleared amount equal to the original amount is present but an outstanding amount is not" in new Setup(documentDetailModel(outstandingAmount = Some(0))) {
-        verifySummaryListRow(3, remainingToPay, "£0.00")
+        verifySummaryListRowNumeric(3, remainingToPay, "£0.00")
       }
 
       "display the original amount if no cleared or outstanding amount is present" in new Setup(documentDetailModel(outstandingAmount = None, originalAmount = Some(1700))) {
-        verifySummaryListRow(3, remainingToPay, "£1,700.00")
+        verifySummaryListRowNumeric(3, remainingToPay, "£1,700.00")
       }
 
       "not display the Payment breakdown list when payments breakdown is empty" in new Setup(documentDetailModel(lpiWithDunningBlock = None), paymentBreakdown = Nil) {
@@ -415,45 +415,45 @@ class ChargeSummaryViewSpec extends ViewSpec {
         }
 
         "has payment rows with charge types and original amounts" in new Setup(documentDetailModel(), paymentBreakdown = paymentBreakdown) {
-          verifyPaymentBreakdownRow(1, "Income Tax", "£123.45")
-          verifyPaymentBreakdownRow(2, paymentBreakdownNic2, "£2,345.67")
-          verifyPaymentBreakdownRow(3, "Voluntary Class 2 National Insurance", "£3,456.78")
-          verifyPaymentBreakdownRow(4, "Class 4 National Insurance", "£5,678.90")
-          verifyPaymentBreakdownRow(5, "Capital Gains Tax", "£9,876.54")
-          verifyPaymentBreakdownRow(6, "Student Loans", "£543.21")
+          verifyPaymentBreakdownRowNumeric(1, "Income Tax", "£123.45")
+          verifyPaymentBreakdownRowNumeric(2, paymentBreakdownNic2, "£2,345.67")
+          verifyPaymentBreakdownRowNumeric(3, "Voluntary Class 2 National Insurance", "£3,456.78")
+          verifyPaymentBreakdownRowNumeric(4, "Class 4 National Insurance", "£5,678.90")
+          verifyPaymentBreakdownRowNumeric(5, "Capital Gains Tax", "£9,876.54")
+          verifyPaymentBreakdownRowNumeric(6, "Student Loans", "£543.21")
         }
 
         "has payment rows with Under review note when there are dunning locks on a payment" in new Setup(documentDetailModel(), paymentBreakdown = paymentBreakdownWithDunningLocks) {
-          verifyPaymentBreakdownRow(1, "Income Tax", "£123.45")
-          verifyPaymentBreakdownRow(2, paymentBreakdownNic2, "£2,345.67 Under review")
-          verifyPaymentBreakdownRow(3, "Capital Gains Tax", "£9,876.54 Under review")
-          verifyPaymentBreakdownRow(4, "Student Loans", "£543.21")
+          verifyPaymentBreakdownRowNumeric(1, "Income Tax", "£123.45")
+          verifyPaymentBreakdownRowNumeric(2, paymentBreakdownNic2, "£2,345.67 Under review")
+          verifyPaymentBreakdownRowNumeric(3, "Capital Gains Tax", "£9,876.54 Under review")
+          verifyPaymentBreakdownRowNumeric(4, "Student Loans", "£543.21")
         }
 
         "has a payment row with Under review note when there is a dunning lock on a lpi charge" in new Setup(documentDetailModel(documentDescription = Some("ITSA- POA 1")), latePaymentInterestCharge = true) {
-          verifyPaymentBreakdownRow(1, "Late payment interest", "£100.00 Under review")
-          verifyPaymentBreakdownRow(2, "", "")
+          verifyPaymentBreakdownRowNumeric(1, "Late payment interest", "£100.00 Under review")
+          verifyPaymentBreakdownRowNumeric(2, "", "")
         }
 
         "has at least one record with an interest lock" which {
 
           "has payment rows with Under review note when there are dunning locks on a payment" in new Setup(documentDetailModel(), paymentBreakdown = paymentBreakdownWithMixedLocks) {
-            verifyPaymentBreakdownRow(1, "Income Tax", s"£123.45 $paymentBreakdownInterestLocksCharging")
-            verifyPaymentBreakdownRow(2, paymentBreakdownNic2, s"£2,345.67 ${messages("chargeSummary.paymentBreakdown.dunningLocks.underReview")} ${messages("chargeSummary.paymentBreakdown.interestLocks.notCharging")}")
+            verifyPaymentBreakdownRowNumeric(1, "Income Tax", s"£123.45 $paymentBreakdownInterestLocksCharging")
+            verifyPaymentBreakdownRowNumeric(2, paymentBreakdownNic2, s"£2,345.67 ${messages("chargeSummary.paymentBreakdown.dunningLocks.underReview")} ${messages("chargeSummary.paymentBreakdown.interestLocks.notCharging")}")
           }
 
           "has payment rows with appropriate messages for each row" in new Setup(documentDetailModel(), paymentBreakdown = paymentBreakdownWithInterestLocks) {
-            verifyPaymentBreakdownRow(1, "Income Tax", s"£123.45 $paymentBreakdownInterestLocksCharging")
-            verifyPaymentBreakdownRow(2, paymentBreakdownNic2, s"£2,345.67 ${messages("chargeSummary.paymentBreakdown.interestLocks.notCharging")}")
-            verifyPaymentBreakdownRow(3, "Capital Gains Tax", s"£9,876.54 ${messages("chargeSummary.paymentBreakdown.interestLocks.previouslyCharged")}")
-            verifyPaymentBreakdownRow(4, "Student Loans", s"£543.21 $paymentBreakdownInterestLocksCharging")
+            verifyPaymentBreakdownRowNumeric(1, "Income Tax", s"£123.45 $paymentBreakdownInterestLocksCharging")
+            verifyPaymentBreakdownRowNumeric(2, paymentBreakdownNic2, s"£2,345.67 ${messages("chargeSummary.paymentBreakdown.interestLocks.notCharging")}")
+            verifyPaymentBreakdownRowNumeric(3, "Capital Gains Tax", s"£9,876.54 ${messages("chargeSummary.paymentBreakdown.interestLocks.previouslyCharged")}")
+            verifyPaymentBreakdownRowNumeric(4, "Student Loans", s"£543.21 $paymentBreakdownInterestLocksCharging")
           }
 
         }
         "has no records that have an interest lock applied" should {
           "has payment rows but no interest lock message when there are no interest locks but there's accrued interest on a payment" in new Setup(documentDetailModel(), paymentBreakdown = paymentBreakdownWithOnlyAccruedInterest) {
-            verifyPaymentBreakdownRow(1, "Income Tax", "£123.45")
-            verifyPaymentBreakdownRow(2, paymentBreakdownNic2, "£2,345.67")
+            verifyPaymentBreakdownRowNumeric(1, "Income Tax", "£123.45")
+            verifyPaymentBreakdownRowNumeric(2, paymentBreakdownNic2, "£2,345.67")
           }
         }
       }
@@ -684,9 +684,9 @@ class ChargeSummaryViewSpec extends ViewSpec {
         }
         "Coding Out is Disabled" in new Setup(documentDetailModel(taxYear = 2019, documentDescription = Some("TRM New Charge")), codingOutEnabled = false) {
           document.select("h1").text() shouldBe s"$taxYearHeading 6 April 2018 to 5 April 2019 $balancingCharge"
-          verifySummaryListRow(1, dueDate, "OVERDUE 15 May 2019")
-          verifySummaryListRow(2, fullPaymentAmount, "£1,400.00")
-          verifySummaryListRow(3, remainingToPay, "£1,400.00")
+          verifySummaryListRowNumeric(1, dueDate, "OVERDUE 15 May 2019")
+          verifySummaryListRowNumeric(2, fullPaymentAmount, "£1,400.00")
+          verifySummaryListRowNumeric(3, remainingToPay, "£1,400.00")
           document.select("#coding-out-notice").text() shouldBe ""
           document.select("#coding-out-message").text() shouldBe ""
           document.select("#coding-out-notice-link").attr("href") shouldBe ""

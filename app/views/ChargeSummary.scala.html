@@ -318,7 +318,7 @@
                     <tr>
                         <td class="govuk-table__cell govuk-!-width-one-quarter">@{documentDetail.interestEndDate.getOrElse(throw MissingFieldException("Interest End Date")).toLongDateShort}</td>
                         <td class="govuk-table__cell">@messages(s"chargeSummary.lpi.chargeHistory.created.${documentDetail.getChargeTypeKey()}")</td>
-                        <td class="govuk-table__cell numeric govuk-!-text-align-right">@{documentDetail.latePaymentInterestAmount.getOrElse(throw MissingFieldException("Late Payment Interest Amount")).toCurrency}</td>
+                        <td class="govuk-table__cell govuk-!-text-align-right">@{documentDetail.latePaymentInterestAmount.getOrElse(throw MissingFieldException("Late Payment Interest Amount")).toCurrency}</td>
                     </tr>
                 }
 
@@ -326,7 +326,7 @@
                     <tr>
                         <td class="govuk-table__cell govuk-!-width-one-quarter">@{documentDetail.documentDate.toLongDateShort}</td>
                         <td class="govuk-table__cell">@messages("chargeSummary.codingOutPayHistoryAmount", taxYearFromCodingOut, taxYearToCodingOut)</td>
-                        <td class="govuk-table__cell numeric">@{documentDetail.originalAmount.getOrElse(throw MissingFieldException("Original Amount")).toCurrency}</td>
+                        <td class="govuk-table__cell">@{documentDetail.originalAmount.getOrElse(throw MissingFieldException("Original Amount")).toCurrency}</td>
                     </tr>
                 }
 
@@ -334,7 +334,7 @@
                     <tr>
                         <td class="govuk-table__cell govuk-!-width-one-quarter">@{charge.reversalDate.toLongDateShort}</td>
                         <td class="govuk-table__cell">@messages(s"chargeSummary.chargeHistory.${charge.reasonCode}.${documentDetail.getChargeTypeKey()}")</td>
-                        <td class="govuk-table__cell numeric">@{charge.totalAmount.toCurrency}</td>
+                        <td class="govuk-table__cell">@{charge.totalAmount.toCurrency}</td>
                     </tr>
                 }
             }
