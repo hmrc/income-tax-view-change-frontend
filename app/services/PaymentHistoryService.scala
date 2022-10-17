@@ -29,7 +29,9 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 
-class PaymentHistoryService @Inject()(incomeTaxViewChangeConnector: IncomeTaxViewChangeConnector, val appConfig: FrontendAppConfig)
+class PaymentHistoryService @Inject()(incomeTaxViewChangeConnector: IncomeTaxViewChangeConnector,
+                                      implicit val dateService: DateService,
+                                      val appConfig: FrontendAppConfig)
                                      (implicit ec: ExecutionContext) {
 
   def getPaymentHistory(implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[PaymentHistoryError.type, List[Payment]]] = {

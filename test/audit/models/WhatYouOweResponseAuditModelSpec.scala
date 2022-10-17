@@ -16,16 +16,17 @@
 
 package audit.models
 
-import java.time.LocalDate
-import testConstants.BaseTestConstants.{testArn, testCredId, testMtditid, testNino, testSaUtr}
-import testConstants.FinancialDetailsTestConstants.{balanceDetails, dueDateOverdue, whatYouOwePartialChargesList}
 import auth.MtdItUser
 import models.core.AccountingPeriodModel
 import models.financialDetails.{BalanceDetails, WhatYouOweChargesList}
 import models.incomeSourceDetails.IncomeSourceDetailsModel
-import play.api.libs.json.{JsDefined, JsValue, Json}
+import play.api.libs.json.{JsValue, Json}
+import testConstants.BaseTestConstants.{testArn, testCredId, testMtditid, testNino, testSaUtr}
+import testConstants.FinancialDetailsTestConstants.{dueDateOverdue, whatYouOwePartialChargesList}
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.retrieve.Name
+
+import java.time.LocalDate
 
 class WhatYouOweResponseAuditModelSpec extends TestSupport {
 
@@ -57,7 +58,8 @@ class WhatYouOweResponseAuditModelSpec extends TestSupport {
       arn = if (userType.contains("Agent")) Some(testArn) else None
     ),
     whatYouOweChargesList = chargesList,
-    auditFeatureSwitch
+    auditFeatureSwitch,
+    dateService
   )
 
   "The WhatYouOweResponseAuditModel" should {

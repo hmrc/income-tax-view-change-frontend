@@ -41,7 +41,8 @@ object FeatureSwitch {
     R7bTxmEvents,
     NewStateBenefitIncome,
     MFACreditsAndDebits,
-    PaymentHistoryRefunds
+    PaymentHistoryRefunds,
+    TimeMachineAddYear
   )
 
   def apply(str: String): FeatureSwitch =
@@ -127,6 +128,11 @@ case object MFACreditsAndDebits extends FeatureSwitch {
 case object PaymentHistoryRefunds extends FeatureSwitch {
   override val name = s"$prefix.enable-payment-history-refunds"
   override val displayText = "Payment History Refunds"
+}
+
+case object TimeMachineAddYear extends FeatureSwitch {
+  override val name = s"$prefix.enable-time-machine-add-year"
+  override val displayText = "Time Machine Add Year"
 }
 
 

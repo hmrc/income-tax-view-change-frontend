@@ -36,6 +36,7 @@ import play.api.libs.ws.WSResponse
 import play.api.{Application, Environment, Mode}
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
 import play.api.inject.bind
+import services.DateService
 import testConstants.IncomeSourceIntegrationTestConstants.{multipleBusinessesAndPropertyResponse, testChargeHistoryJson, testValidFinancialDetailsModelJson, twoDunningLocks, twoInterestLocks}
 
 import scala.concurrent.Future
@@ -53,6 +54,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
   implicit val lang: Lang = Lang("GB")
   val messagesAPI: MessagesApi = app.injector.instanceOf[MessagesApi]
+  implicit val dateService: DateService = app.injector.instanceOf[DateService]
 
   def config: Map[String, String] = Map(
     "play.filters.csrf.header.bypassHeaders.Csrf-Token" -> "nocheck",

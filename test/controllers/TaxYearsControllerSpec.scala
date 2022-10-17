@@ -50,7 +50,8 @@ class TaxYearsControllerSpec extends MockAuthenticationPredicate
   object TestTaxYearsController extends TaxYearsController(
     app.injector.instanceOf[TaxYears],
     mockAuthService,
-    mockIncomeSourceDetailsService
+    mockIncomeSourceDetailsService,
+    dateService
   )(
     app.injector.instanceOf[FrontendAppConfig],
     app.injector.instanceOf[MessagesControllerComponents],

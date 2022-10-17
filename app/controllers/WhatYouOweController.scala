@@ -27,7 +27,7 @@ import forms.utils.SessionKeys.gatewayPage
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import services.{IncomeSourceDetailsService, WhatYouOweService}
+import services.{DateService, IncomeSourceDetailsService, WhatYouOweService}
 import uk.gov.hmrc.http.HeaderCarrier
 import views.html.WhatYouOwe
 
@@ -45,6 +45,7 @@ class WhatYouOweController @Inject()(val checkSessionTimeout: SessionTimeoutPred
                                      val retrieveBtaNavBar: NavBarPredicate,
                                      val authorisedFunctions: FrontendAuthorisedFunctions,
                                      val auditingService: AuditingService,
+                                     val dataService: DateService,
                                      val incomeSourceDetailsService: IncomeSourceDetailsService,
                                      implicit val appConfig: FrontendAppConfig,
                                      implicit override val mcc: MessagesControllerComponents,
@@ -59,7 +60,7 @@ class WhatYouOweController @Inject()(val checkSessionTimeout: SessionTimeoutPred
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
     whatYouOweService.getWhatYouOweChargesList() flatMap {
       whatYouOweChargesList =>
-        auditingService.extendedAudit(WhatYouOweResponseAuditModel(user, whatYouOweChargesList, isEnabled(R7bTxmEvents)))
+        auditingService.extendedAudit(WhatYouOweResponseAuditModel(user, whatYouOweChargesList, isEnabled(R7bTxmEvents), dataService))
 
         val codingOutEnabled = isEnabled(CodingOut)
 
@@ -69,7 +70,7 @@ class WhatYouOweController @Inject()(val checkSessionTimeout: SessionTimeoutPred
             Ok(whatYouOwe(
               creditCharges,
               whatYouOweChargesList = whatYouOweChargesList, hasLpiWithDunningBlock = whatYouOweChargesList.hasLpiWithDunningBlock,
-              currentTaxYear = user.incomeSources.getCurrentTaxEndYear, backUrl = backUrl, utr = user.saUtr,
+              currentTaxYear = user.incomeSources.getCurrentTaxEndYear(dataService), backUrl = backUrl, utr = user.saUtr,
               btaNavPartial = user.btaNavPartial,
               dunningLock = whatYouOweChargesList.hasDunningLock,
               codingOutEnabled = codingOutEnabled,

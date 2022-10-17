@@ -22,8 +22,8 @@ import controllers.agent.utils
 import implicits.ImplicitDateFormatterImpl
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import org.scalatest.{BeforeAndAfterEach, Suite}
 import org.mockito.Mockito.mock
+import org.scalatest.{BeforeAndAfterEach, Suite}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.HeaderNames
 import play.api.i18n.{Messages, MessagesApi}
@@ -31,6 +31,7 @@ import play.api.mvc.{AnyContentAsEmpty, Result}
 import play.api.test.Helpers._
 import play.api.test.{FakeRequest, Injecting}
 import play.api.{Configuration, Environment}
+import services.DateService
 import testConstants.BaseTestConstants._
 import testConstants.IncomeSourceDetailsTestConstants._
 import uk.gov.hmrc.auth.core.retrieve.Name
@@ -50,7 +51,7 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterE
   implicit val htmlEq =
     new Equality[Html] {
       def areEqual(a: Html, b: Any): Boolean = {
-        Jsoup.parse(a.toString()).text() == Jsoup.parse(b.toString()).text()
+        Jsoup.parse(a.toString()).text() == Jsoup.parse(b.toString).text()
       }
     }
 
@@ -74,6 +75,7 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterE
   implicit val conf: Configuration = app.configuration
   implicit val environment: Environment = app.injector.instanceOf[Environment]
   implicit val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
+  implicit val dateService: DateService = app.injector.instanceOf[DateService]
 
   implicit val individualUser: MtdItUser[_] = MtdItUser(
     mtditid = testMtditid,

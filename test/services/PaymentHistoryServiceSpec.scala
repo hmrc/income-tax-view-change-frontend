@@ -57,7 +57,7 @@ class PaymentHistoryServiceSpec extends TestSupport with MockIncomeTaxViewChange
   )(FakeRequest())
 
 
-  object TestPaymentHistoryService extends PaymentHistoryService(mockIncomeTaxViewChangeConnector, appConfig)
+  object TestPaymentHistoryService extends PaymentHistoryService(mockIncomeTaxViewChangeConnector, dateService, appConfig)
 
   "getPaymentHistory" when {
     "An error is returned from the connector" should {
