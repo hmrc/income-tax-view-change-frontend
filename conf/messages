@@ -387,7 +387,6 @@ taxCal_breakdown.message.C22215                                 = Due to the lev
 taxCal_breakdown.message.C22216                                 = Due to the level of your income, you are no longer eligible for Marriage Allowance and your claim will be cancelled.
 taxCal_breakdown.message.C22217                                 = There are one or more underpayments, debts or adjustments that have not been included in the calculation as they do not relate to data that HMRC holds.
 taxCal_breakdown.message.C22218                                 = The Capital Gains Tax has been included in the estimated annual liability calculation only, the actual amount of Capital Gains Tax will be in the final declaration calculation.
-taxCal_breakdown.message.C22219                                 = 1.25 percentage point uplift in National Insurance contributions funds NHS, health and social care.
 
 ## Forecast Tax Calc Summary ##
 forecast_taxCalc.heading                                        = Forecast tax calculation
@@ -408,7 +407,6 @@ forecast_taxCalc.totalTaxDeducted                               = Total tax dedu
 forecast_taxCalc.incomeTaxAndNicsDue                            = Income Tax and National Insurance contributions due:
 forecast_taxCalc.capitalGainsTax                                = Capital Gains Tax:
 forecast_taxCalc.incomeTaxNicsCgtDue                            = Income Tax, National Insurance contributions and Capital Gains Tax due:
-
 forecast_taxCalc.noForecast.heading                             = No forecast yet
 forecast_taxCalc.noForecast.text                                = You will be able to see your forecast for the whole year once you have sent an update.
 

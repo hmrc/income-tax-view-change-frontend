@@ -33,8 +33,8 @@ class TaxCalcBreakdownViewSpec extends TaxCalcBreakdownViewBehaviour {
 
   override val backUrl = "testUrl"
 
-  override def taxCalcBreakdown(taxDueSummaryViewModel: TaxDueSummaryViewModel, taxYear: Int, backUrl: String, class4UpliftEnabled: Boolean = false): Html =
-    app.injector.instanceOf[TaxCalcBreakdown].apply(taxDueSummaryViewModel, taxYear, backUrl, class4UpliftEnabled = class4UpliftEnabled)
+  override def taxCalcBreakdown(taxDueSummaryViewModel: TaxDueSummaryViewModel, taxYear: Int, backUrl: String): Html =
+    app.injector.instanceOf[TaxCalcBreakdown].apply(taxDueSummaryViewModel, taxYear, backUrl)
 
   override val expectedPageTitle: String = messages("titlePattern.serviceName.govUk", messages("taxCal_breakdown.heading"))
 
@@ -66,7 +66,7 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
 
   def backUrl: String
 
-  def taxCalcBreakdown(taxDueSummaryViewModel: TaxDueSummaryViewModel, taxYear: Int, backUrl: String, class4UpliftEnabled: Boolean = false): Html
+  def taxCalcBreakdown(taxDueSummaryViewModel: TaxDueSummaryViewModel, taxYear: Int, backUrl: String): Html
 
   def expectedPageTitle: String
 
@@ -279,7 +279,6 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
       val taxYear = 2018
 
       lazy val view = taxCalcBreakdown(taxDueSummaryViewModelStandard, taxYear, backUrl)
-      lazy val viewWithClass4UpliftEnabled = taxCalcBreakdown(taxDueSummaryViewModelStandard, taxYear, backUrl, class4UpliftEnabled = true)
       lazy val viewNone = taxCalcBreakdown(TaxDueSummaryViewModel(), taxYear, backUrl)
       lazy val viewNic2 = taxCalcBreakdown(taxDueSummaryViewModelNic2, taxYear, backUrl)
       lazy val viewVoluntaryNic2 = taxCalcBreakdown(taxDueSummaryViewModelVoluntaryNic2, taxYear, backUrl)

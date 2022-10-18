@@ -19,7 +19,7 @@ package controllers
 import audit.AuditingService
 import audit.models._
 import auth.MtdItUser
-import config.featureswitch.{Class4UpliftEnabled, FeatureSwitching}
+import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
@@ -72,8 +72,7 @@ class TaxDueSummaryController @Inject()(val authorisedFunctions: AuthorisedFunct
         auditingService.extendedAudit(TaxDueResponseAuditModel(user, viewModel, taxYear))
         val fallbackBackUrl = getFallbackUrl(user.session.get(calcPagesBackPage),
           isAgent, liabilityCalc.metadata.crystallised.getOrElse(false), taxYear, origin)
-        Ok(taxCalcBreakdown(viewModel, taxYear, backUrl = fallbackBackUrl, isAgent = isAgent, btaNavPartial = user.btaNavPartial,
-          isEnabled(Class4UpliftEnabled)))
+        Ok(taxCalcBreakdown(viewModel, taxYear, backUrl = fallbackBackUrl, isAgent = isAgent, btaNavPartial = user.btaNavPartial))
       case calcErrorResponse: LiabilityCalculationError if calcErrorResponse.status == NOT_FOUND =>
         Logger("application").info("[TaxDueController][showTaxDueSummary] No calculation data returned from downstream. Not Found.")
         itvcErrorHandler.showInternalServerError()

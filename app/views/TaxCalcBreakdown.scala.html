@@ -29,7 +29,7 @@
     capitalGainsTaxTable: CapitalGainsTaxTableNew,
     govukInsetText: GovukInsetText
 )
-@(viewModel: TaxDueSummaryViewModel, taxYear: Int, backUrl: String, isAgent: Boolean = false, btaNavPartial: Option[Html] = None, class4UpliftEnabled: Boolean)(implicit request: Request[_], messages: Messages)
+@(viewModel: TaxDueSummaryViewModel, taxYear: Int, backUrl: String, isAgent: Boolean = false, btaNavPartial: Option[Html] = None)(implicit request: Request[_], messages: Messages)
 
 @taxBandTableRow(band: TaxBands, scottishRegime: Boolean = false) = {
     <tr class="govuk-table__row">

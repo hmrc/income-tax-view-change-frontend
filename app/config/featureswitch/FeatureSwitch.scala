@@ -33,7 +33,6 @@ object FeatureSwitch {
     PaymentAllocation,
     CodingOut,
     NavBarFs,
-    Class4UpliftEnabled,
     ForecastCalculation,
     CutOverCredits,
     CreditsRefundsRepay,
@@ -83,11 +82,6 @@ case object CodingOut extends FeatureSwitch {
 case object NavBarFs extends FeatureSwitch {
   override val name = s"$prefix.enable-nav-bar"
   override val displayText = "Nav Bar"
-}
-
-case object Class4UpliftEnabled extends FeatureSwitch {
-  override val name = s"$prefix.class4-uplift-enabled"
-  override val displayText = "Class4 Uplift Enabled"
 }
 
 case object ForecastCalculation extends FeatureSwitch {
