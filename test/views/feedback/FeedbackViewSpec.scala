@@ -39,7 +39,7 @@ class FeedbackViewSpec extends ViewSpec {
   "The Feedback page" when {
     "an individual loads the page" should {
       "have the correct title" in new Setup() {
-        document.title shouldBe msgs("titlePattern.serviceName.govUk", msgs("feedback.heading"))
+        document.title shouldBe msgs("htmlTitle", msgs("feedback.heading"))
       }
 
       "have the correct heading" in new Setup() {

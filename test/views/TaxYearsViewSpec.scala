@@ -49,7 +49,7 @@ class TaxYearsViewSpec extends ViewSpec {
     "The TaxYears view with itsaSubmissionFeatureSwitch FS disabled" when {
       "the view is displayed" should {
         s"have the title '${messages("titlePattern.serviceName.govUk", messages("taxYears.heading"))}'" in new Setup(List(testYearPlusOne, testTaxYear)) {
-          document.title() shouldBe messages("titlePattern.serviceName.govUk", messages("taxYears.heading"))
+          document.title() shouldBe messages("htmlTitle", messages("taxYears.heading"))
         }
 
         "have a header" in new Setup(List(testYearPlusOne, testTaxYear)) {

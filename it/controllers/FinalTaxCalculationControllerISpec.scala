@@ -87,7 +87,7 @@ class FinalTaxCalculationControllerISpec extends ComponentSpecBase {
   }
 
   object ExpectedValues {
-    val title = messages(s"titlePattern.serviceName.govUk")
+    val title = messages(s"htmlTitle", messages("final-tax-overview.individual.heading"))
     val caption = "6 April 2017 to 5 April 2018"
 
     val insetTextFull = "If you think this information is incorrect, you can check your Income Tax Return."
@@ -115,7 +115,7 @@ class FinalTaxCalculationControllerISpec extends ComponentSpecBase {
   }
 
   object ExpectedValuesWelsh {
-    val title = toMessages("CY")(s"titlePattern.serviceName.govUk")
+    val title = toMessages("CY")(s"final-tax-overview.individual.heading") + " - " + toMessages("CY")(s"titlePattern.serviceName.govUk") + " - " + messages("base.govUk")
     val caption = "6 Ebrill 2017 i 5 Ebrill 2018"
 
     val insetTextFull = "Os ydych o’r farn bod yr wybodaeth hon yn anghywir gallwch wirio eich Ffurflen Dreth Incwm."

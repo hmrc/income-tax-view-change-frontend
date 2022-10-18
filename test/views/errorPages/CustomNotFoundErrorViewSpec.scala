@@ -27,7 +27,7 @@ class CustomNotFoundErrorViewSpec extends ViewSpec {
   "The Agent Error page" should {
 
     s"have the title: ${messages("titlePattern.serviceName.govUk", messages("base.error_summary.heading"))}" in new Setup(customNotFoundErrorView) {
-      document.title shouldBe messages("titlePattern.serviceName.govUk", messages("base.error_summary.heading"))
+      document.title shouldBe messages("htmlTitle", messages("base.error_summary.heading"))
     }
 
     s"have the heading: ${messages("error.custom.heading")}" in new Setup(customNotFoundErrorView) {

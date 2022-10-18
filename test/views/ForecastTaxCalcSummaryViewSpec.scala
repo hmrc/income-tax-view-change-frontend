@@ -61,8 +61,7 @@ class ForecastTaxCalcSummaryViewSpec extends ViewSpec {
 
     "provided with a full endOfYearEstimateModel" should {
       "have the correct title" in new Setup(view) {
-        document.title() shouldBe messages("titlePattern.serviceName.govUk", messages("forecast_taxCalc.heading"))
-        document.title() shouldBe messages("titlePattern.serviceName.govUk", messages("forecast_taxCalc.heading"))
+        document.title() shouldBe messages("htmlTitle", messages("forecast_taxCalc.heading"))
       }
 
       "have the correct heading" in new Setup(view) {

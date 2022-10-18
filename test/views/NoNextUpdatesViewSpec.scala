@@ -39,7 +39,7 @@ class NoNextUpdatesViewSpec extends TestSupport {
     lazy val document: Document = Jsoup.parse(contentAsString(page))
 
     s"have the title ${messages("titlePattern.serviceName.govUk", heading)}" in {
-      document.title() shouldBe messages("titlePattern.serviceName.govUk", heading)
+      document.title() shouldBe messages("htmlTitle", heading)
     }
 
     s"have the heading $heading" in {

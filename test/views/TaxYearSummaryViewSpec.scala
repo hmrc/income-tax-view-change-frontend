@@ -181,7 +181,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
 
   object TaxYearSummaryMessages {
     val heading: String = messages("tax-year-summary.heading")
-    val title: String = messages("titlePattern.serviceName.govUk", heading)
+    val title: String = messages("htmlTitle", heading)
     val agentTitle: String = messages("htmlTitle.agent", heading)
     val secondaryHeading: String = messages("tax-year-summary.heading-secondary", s"${testYear - 1}", s"$testYear")
     val calculationDate: String = messages("tax-year-summary.calculation-date")

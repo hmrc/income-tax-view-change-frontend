@@ -263,7 +263,7 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
 
   "Payment Allocation Page" should {
     s"have the title: ${messages("titlePattern.serviceName.govUk", messages("paymentAllocation.heading"))}" in new PaymentAllocationSetup {
-      document.title() shouldBe messages("titlePattern.serviceName.govUk", messages("paymentAllocation.heading"))
+      document.title() shouldBe messages("htmlTitle", messages("paymentAllocation.heading"))
     }
 
     s"have the heading: $heading" in new PaymentAllocationSetup {

@@ -138,7 +138,7 @@ class HomePageViewSpec extends TestSupport {
     }
 
     s"have the title ${messages("titlePattern.serviceName.govUk", messages("home.heading"))}" in new Setup {
-      document.title() shouldBe s"${messages("titlePattern.serviceName.govUk", messages("home.heading"))}"
+      document.title() shouldBe s"${messages("htmlTitle", messages("home.heading"))}"
     }
 
     s"have the page heading '${messages("home.heading")}'" in new Setup {

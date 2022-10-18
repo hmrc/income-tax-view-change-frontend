@@ -35,7 +35,7 @@ class DeductionsSummaryControllerSpec extends TestSupport with MockCalculationSe
   with MockAuthenticationPredicate with FeatureSwitching with MockAuditingService with MockItvcErrorHandler {
 
   val testYear: Int = 2020
-  val allowancesAndDeductionsServiceNameIndividual: String = messages("titlePattern.serviceName.govUk", messages("deduction_breakdown.heading"))
+  val allowancesAndDeductionsServiceNameIndividual: String = messages("htmlTitle", messages("deduction_breakdown.heading"))
   val allowancesAndDeductionsServiceNameAgent: String = messages("htmlTitle.agent", messages("deduction_breakdown.heading"))
 
   object TestDeductionsSummaryController extends DeductionsSummaryController(

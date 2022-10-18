@@ -36,7 +36,7 @@ class TaxCalcBreakdownViewSpec extends TaxCalcBreakdownViewBehaviour {
   override def taxCalcBreakdown(taxDueSummaryViewModel: TaxDueSummaryViewModel, taxYear: Int, backUrl: String, class4UpliftEnabled: Boolean = false): Html =
     app.injector.instanceOf[TaxCalcBreakdown].apply(taxDueSummaryViewModel, taxYear, backUrl, class4UpliftEnabled = class4UpliftEnabled)
 
-  override val expectedPageTitle: String = messages("titlePattern.serviceName.govUk", messages("taxCal_breakdown.heading"))
+  override val expectedPageTitle: String = messages("htmlTitle", messages("taxCal_breakdown.heading"))
 
   override val pageContentSelector = "#main-content"
 

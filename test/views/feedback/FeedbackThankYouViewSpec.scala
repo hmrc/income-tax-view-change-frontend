@@ -40,7 +40,7 @@ class FeedbackThankYouViewSpec extends TestSupport {
   "The Feedback Thank You page" when {
     "an individual loads the page" should {
       "have the correct title" in new Setup() {
-        document.title shouldBe msgs("titlePattern.serviceName.govUk", msgs("feedback.thankYou"))
+        document.title shouldBe msgs("htmlTitle", msgs("feedback.thankYou"))
       }
 
       "have the correct para informing that the feedback has been received" in new Setup() {

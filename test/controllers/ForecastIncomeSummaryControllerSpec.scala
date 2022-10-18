@@ -112,7 +112,7 @@ class ForecastIncomeSummaryControllerSpec extends TestSupport with MockCalculati
         }
 
         "render the IncomeBreakdown page" in {
-          document.title() shouldBe messages("titlePattern.serviceName.govUk", messages("forecast_income.heading"))
+          document.title() shouldBe messages("htmlTitle", messages("forecast_income.heading"))
           contentAsString(result) shouldBe expectedContent
         }
       }
