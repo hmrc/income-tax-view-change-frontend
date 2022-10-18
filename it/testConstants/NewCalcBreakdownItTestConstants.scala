@@ -237,6 +237,7 @@ object NewCalcBreakdownItTestConstants {
           ))),
         totalEstimatedIncome = Some(12500),
         totalTaxableIncome = Some(12500),
+        totalAllowancesAndDeductions = Some(4200.00),
         incomeTaxAmount = Some(5000.99),
         nic2 = Some(5000.99),
         nic4 = Some(5000.99),

@@ -395,6 +395,7 @@ forecast_taxCalc.heading                                        = Forecast tax c
 forecast_taxCalc.dates                                          = 6 April {0} to 5 April {1}
 forecast_taxCalc.totalEstimatedIncome                           = Total estimated income:
 forecast_taxCalc.totalTaxableIncome                             = Total taxable income of
+forecast_taxCalc.totalAllowancesAndDeductions                   = Total allowances and deductions:
 forecast_taxCalc.totalIncomeTax                                 = Total Income Tax:
 forecast_taxCalc.class4Nic                                      = Class 4 National Insurance:
 forecast_taxCalc.class2Nic                                      = Class 2 National Insurance:

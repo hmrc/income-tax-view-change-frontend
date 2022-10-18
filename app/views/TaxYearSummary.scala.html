@@ -222,12 +222,17 @@
 @forecastContentTable = @{
     val forecastIncome = modelOpt.flatMap(model => model.forecastIncome).getOrElse(0).toCurrencyString
     val forecastIncomeAndNics = modelOpt.flatMap(model => model.forecastIncomeTaxAndNics).getOrElse(BigDecimal(0)).toCurrencyString
+    val forecastDeductions = modelOpt.flatMap(model => model.forecastAllowancesAndDeductions).getOrElse(BigDecimal(0)).toNegativeCurrency
     govukTable(Table(
         rows = Seq(
             Seq(
                 TableRow(content = HtmlContent(link(link=getForecastSummaryHref(taxYear, isAgent),
                     messageKey="tax-year-summary.income"))),
                 TableRow(content = Text(forecastIncome), format = Some("numeric")),
+            ),
+            Seq(
+                TableRow(content = Text(messages("tax-year-summary.deductions")), classes="govuk-!-font-weight-regular"),
+                TableRow(content = HtmlContent(s"<span>$forecastDeductions</span>"), classes="govuk-!-font-weight-regular", format = Some("numeric"))
             ),
             Seq(
                 TableRow(content = Text(messages("tax-year-summary.taxable-income"))),

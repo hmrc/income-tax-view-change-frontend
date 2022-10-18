@@ -22,6 +22,7 @@ case class EndOfYearEstimate(
                               incomeSource: Option[List[IncomeSource]],
                               totalEstimatedIncome: Option[Int] = None,
                               totalTaxableIncome: Option[Int] = None,
+                              totalAllowancesAndDeductions: Option[BigDecimal] = None,
                               incomeTaxAmount: Option[BigDecimal] = None,
                               nic2: Option[BigDecimal] = None,
                               nic4: Option[BigDecimal] = None,
