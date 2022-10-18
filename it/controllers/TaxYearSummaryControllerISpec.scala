@@ -418,7 +418,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         )
 
         And("The expected result is returned")
-        val tableText = if (featureSwitchEnabled) "Forecast Section Amount Income £12,500.00 Total income on which tax is due £12,500.00 Income " +
+        val tableText = if (featureSwitchEnabled) "Forecast Section Amount Income £12,500.00 Allowances and deductions −£4,200.00 Total income on which tax is due £12,500.00 Income " +
           "Tax and National Insurance contributions due £5,000.99" else ""
         val forecastTabHeader = if (featureSwitchEnabled) messagesAPI("tax-year-summary.forecast") else ""
         val forecastTotal = if (featureSwitchEnabled) s"${

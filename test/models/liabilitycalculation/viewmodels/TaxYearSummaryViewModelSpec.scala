@@ -36,6 +36,7 @@ class TaxYearSummaryViewModelSpec extends UnitSpec {
           totalTaxableIncome = 0,
           forecastIncome = None,
           forecastIncomeTaxAndNics = None,
+          forecastAllowancesAndDeductions = None,
           periodFrom = None,
           periodTo = None
         )
@@ -54,6 +55,7 @@ class TaxYearSummaryViewModelSpec extends UnitSpec {
           totalTaxableIncome = 12500,
           forecastIncome = Some(12500),
           forecastIncomeTaxAndNics = Some(5000.99),
+          forecastAllowancesAndDeductions = Some(4200.00),
           periodFrom = Some(LocalDate.of(2018,1,1)),
           periodTo = Some(LocalDate.of(2019,1,1))
         )
