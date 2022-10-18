@@ -73,13 +73,11 @@ class AuditingService @Inject()(appConfig: FrontendAppConfig, auditConnector: Au
   }
 
   private def handleAuditResult(auditResult: Future[AuditResult])(implicit ec: ExecutionContext): Unit = auditResult.map {
-    //$COVERAGE-OFF$ Disabling scoverage as returns Unit, only used for Debug messages
     case Success =>
       Logger("application").debug("Splunk Audit Successful")
     case Failure(err, _) =>
       Logger("application").debug(s"Splunk Audit Error, message: $err")
     case Disabled =>
       Logger("application").debug(s"Auditing Disabled")
-    //$COVERAGE-ON$
   }
 }
