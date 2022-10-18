@@ -33,7 +33,7 @@ class SessionTimeoutViewSpec extends TestSupport {
 
   "The Session timeout view" should {
 
-    s"have the title ${messages("titlePattern.serviceName.govUk", messages("timeout.heading"))}" in {
+    s"have the title ${messages("htmlTitle", messages("timeout.heading"))}" in {
       document.title() shouldBe messages("htmlTitle", messages("timeout.heading"))
     }
 

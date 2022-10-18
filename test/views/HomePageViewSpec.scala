@@ -137,7 +137,7 @@ class HomePageViewSpec extends TestSupport {
       document.getElementsByClass("govuk-header__link").attr("href") shouldBe "https://www.gov.uk"
     }
 
-    s"have the title ${messages("titlePattern.serviceName.govUk", messages("home.heading"))}" in new Setup {
+    s"have the title ${messages("htmlTitle", messages("home.heading"))}" in new Setup {
       document.title() shouldBe s"${messages("htmlTitle", messages("home.heading"))}"
     }
 

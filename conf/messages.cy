@@ -32,7 +32,6 @@ header.serviceName                                             = Rheoli’ch diw
 agent.header.serviceName                                       = Rheoli diweddariadau Treth Incwm eich cleient
 
 # HTML Titles
-titlePattern.serviceName.govUk                                  = Rheoli’ch diweddariadau Treth Incwm
 htmlTitle                                                       = {0} - Rheoli’ch diweddariadau Treth Incwm - GOV.UK
 htmlTitle.agent                                                 = {0} - Rheoli diweddariadau Treth Incwm eich cleient - GOV.UK
 htmlTitle.inputError                                            = Gwall: {0} - GOV.UK

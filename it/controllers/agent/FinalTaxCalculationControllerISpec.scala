@@ -116,7 +116,6 @@ class FinalTaxCalculationControllerISpec extends ComponentSpecBase with SessionC
   }
 
   object ExpectedValuesWelsh {
-    val title = toMessages("CY")(s"agent.header.serviceName") + " - " + toMessages("CY")("base.govUk")
     val caption = "6 Ebrill 2017 i 5 Ebrill 2018"
 
     val insetTextFull = "Os ydych o’r farn bod yr wybodaeth hon yn anghywir gallwch wirio Ffurflen Dreth Incwm eich cleient."
@@ -315,7 +314,8 @@ class FinalTaxCalculationControllerISpec extends ComponentSpecBase with SessionC
       }
 
       "have the correct title" in {
-        document.title() shouldBe document.getElementsByTag("h1").text() + " - " + ExpectedValuesWelsh.title
+        val title = toMessages("CY")(s"htmlTitle.agent", document.getElementsByTag("h1").text())
+        document.title() shouldBe title
       }
 
       "have the correct caption" in {

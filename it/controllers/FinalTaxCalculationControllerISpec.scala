@@ -115,7 +115,8 @@ class FinalTaxCalculationControllerISpec extends ComponentSpecBase {
   }
 
   object ExpectedValuesWelsh {
-    val title = toMessages("CY")(s"final-tax-overview.individual.heading") + " - " + toMessages("CY")(s"titlePattern.serviceName.govUk") + " - " + messages("base.govUk")
+    val heading = toMessages("CY")(s"final-tax-overview.individual.heading")
+    val title = toMessages("CY")(s"htmlTitle", heading)
     val caption = "6 Ebrill 2017 i 5 Ebrill 2018"
 
     val insetTextFull = "Os ydych o’r farn bod yr wybodaeth hon yn anghywir gallwch wirio eich Ffurflen Dreth Incwm."
