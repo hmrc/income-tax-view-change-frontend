@@ -264,18 +264,18 @@ forecast_income.source_types.98                                = Gift Aid and Pa
 
 ## Deduction Breakdown Page ##
 deduction_breakdown.heading                                            = Allowances and deductions
-deduction_breakdown.table.header                                       = Allowance or deduction type
+deduction_breakdown.table.header                                       = Type of allowance or deduction
 deduction_breakdown.table.header.amount                                = Amount
 deduction_breakdown.dates                                              = 6 April {0} to 5 April {1}
 deduction_breakdown.guidance_software                                  = Check your record-keeping software for more details.
 deduction_breakdown.table.personal_allowance                           = Personal Allowance
 deduction_breakdown.table.marriage_allowance_transfer                  = Marriage Allowance Transfer
-deduction_breakdown.table.pension_contributions                        = Pensions contributions
+deduction_breakdown.table.pension_contributions                        = Pension contributions
 deduction_breakdown.table.loss_relief                                  = Loss relief
 deduction_breakdown.table.gift_of_investments_and_property_to_charity  = Gift of investments and property to charity
 deduction_breakdown.table.annual_payments                              = Annual Payments
 deduction_breakdown.table.qualifying_loan_interest                     = Qualifying loan interest
-deduction_breakdown.table.post_cessasation_trade_receipts              = Post cessasation trade reciepts
+deduction_breakdown.table.post_cessasation_trade_receipts              = Post-cessasation trade reciepts
 deduction_breakdown.table.trade_union_payments                         = Trade Union payments
 deduction_breakdown.total                                              = Total allowances and deductions
 
