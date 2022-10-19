@@ -262,7 +262,7 @@ deduction_breakdown.table.post_cessasation_trade_receipts              = Derbyne
 deduction_breakdown.table.trade_union_payments                         = Taliadau Undeb Llafur
 deduction_breakdown.total                                              = Cyfanswm lwfansau a didyniadau
 deduction_breakdown.table.header.amount                                = Swm
-deduction_breakdown.table.header                                       = Math o lwfans neu ddidyniad
+deduction_breakdown.table.header                                       = Y math o lwfans neu ddidyniad
 
 ## Tax Calculation Breakdown Page ##
 taxCal_breakdown.heading                                            = Cyfrifiad Treth
@@ -374,6 +374,7 @@ forecast_taxCalc.heading                                        = Rhagolwg cyfri
 forecast_taxCalc.dates                                          = 6 Ebrill {0} hyd at 5 Ebrill {1}
 forecast_taxCalc.totalEstimatedIncome                           = Cyfanswm incwm amcangyfrifedig:
 forecast_taxCalc.totalTaxableIncome                             = Cyfanswm eich incwm trethadwy
+forecast_taxCalc.totalAllowancesAndDeductions                   = Cyfanswm lwfansau a didyniadau:
 forecast_taxCalc.totalIncomeTax                                 = Cyfanswm treth incwm:
 forecast_taxCalc.class4Nic                                      = Yswiriant Gwladol Dosbarth 4:
 forecast_taxCalc.class2Nic                                      = Yswiriant Gwladol Dosbarth 2:

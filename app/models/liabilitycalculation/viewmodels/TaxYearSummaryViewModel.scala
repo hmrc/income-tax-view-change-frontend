@@ -29,8 +29,9 @@ case class TaxYearSummaryViewModel(timestamp: Option[String],
                                    totalTaxableIncome: Int,
                                    forecastIncome: Option[Int] = None,
                                    forecastIncomeTaxAndNics: Option[BigDecimal] = None,
-                                   periodFrom:Option[LocalDate] = None,
-                                   periodTo:Option[LocalDate] = None)
+                                   forecastAllowancesAndDeductions: Option[BigDecimal] = None,
+                                   periodFrom: Option[LocalDate] = None,
+                                   periodTo: Option[LocalDate] = None)
 
 object TaxYearSummaryViewModel {
   def isUnattendedCalc(calculationReason: Option[String]): Boolean = calculationReason match {
@@ -49,6 +50,7 @@ object TaxYearSummaryViewModel {
       totalTaxableIncome = calc.calculation.flatMap(c => c.taxCalculation.map(_.incomeTax.totalTaxableIncome)).getOrElse(0),
       forecastIncome = calc.calculation.flatMap(c => c.endOfYearEstimate.flatMap(_.totalEstimatedIncome)),
       forecastIncomeTaxAndNics = calc.calculation.flatMap(c => c.endOfYearEstimate.flatMap(_.incomeTaxNicAndCgtAmount)),
+      forecastAllowancesAndDeductions = calc.calculation.flatMap(c => c.endOfYearEstimate.flatMap(_.totalAllowancesAndDeductions)),
       periodFrom = calc.metadata.periodFrom,
       periodTo = calc.metadata.periodTo
     )

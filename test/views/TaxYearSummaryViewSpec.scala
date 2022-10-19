@@ -53,6 +53,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
     unattendedCalc = unattendedCalc,
     forecastIncome = Some(12500),
     forecastIncomeTaxAndNics = Some(5000.99),
+    forecastAllowancesAndDeductions = Some(4200.00),
     periodFrom = Some(LocalDate.of(testYear-1,1,1)),
     periodTo = Some(LocalDate.of(testYear,1,1))
   )
@@ -266,12 +267,13 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
         val incomeForecastUrl = "/report-quarterly/income-and-expenses/view/2018/forecast-income"
         val taxDueForecastUrl = "/report-quarterly/income-and-expenses/view/2018/forecast-tax-calculation"
 
-        document.select(".forecast_table tbody tr").size() shouldBe 3
+        document.select(".forecast_table tbody tr").size() shouldBe 4
         document.select(".forecast_table tbody tr:nth-child(1) th:nth-child(1) a").attr("href") shouldBe incomeForecastUrl
         document.select(".forecast_table tbody tr:nth-child(1) td:nth-child(2)").text() shouldBe "£12,500.00"
-        document.select(".forecast_table tbody tr:nth-child(2) td:nth-child(2)").text() shouldBe "£12,500.00"
-        document.select(".forecast_table tbody tr:nth-child(3) th:nth-child(1) a").attr("href") shouldBe taxDueForecastUrl
-        document.select(".forecast_table tbody tr:nth-child(3) td:nth-child(2)").text() shouldBe "£5,000.99"
+        document.select(".forecast_table tbody tr:nth-child(2) td:nth-child(2)").text() shouldBe "−£4,200.00"
+        document.select(".forecast_table tbody tr:nth-child(3) td:nth-child(2)").text() shouldBe "£12,500.00"
+        document.select(".forecast_table tbody tr:nth-child(4) th:nth-child(1) a").attr("href") shouldBe taxDueForecastUrl
+        document.select(".forecast_table tbody tr:nth-child(4) td:nth-child(2)").text() shouldBe "£5,000.99"
         document.select("#inset_forecast").text() shouldBe messagesLookUp("tax-year-summary.forecast_tab.insetText", testYear.toString)
       }
 
@@ -636,12 +638,13 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
         val incomeForecastUrl = "/report-quarterly/income-and-expenses/view/agents/2018/forecast-income"
         val taxDueForecastUrl = "/report-quarterly/income-and-expenses/view/agents/2018/forecast-tax-calculation"
 
-        document.select(".forecast_table tbody tr").size() shouldBe 3
+        document.select(".forecast_table tbody tr").size() shouldBe 4
         document.select(".forecast_table tbody tr:nth-child(1) th:nth-child(1) a").attr("href") shouldBe incomeForecastUrl
         document.select(".forecast_table tbody tr:nth-child(1) td:nth-child(2)").text() shouldBe "£12,500.00"
-        document.select(".forecast_table tbody tr:nth-child(2) td:nth-child(2)").text() shouldBe "£12,500.00"
-        document.select(".forecast_table tbody tr:nth-child(3) th:nth-child(1) a").attr("href") shouldBe taxDueForecastUrl
-        document.select(".forecast_table tbody tr:nth-child(3) td:nth-child(2)").text() shouldBe "£5,000.99"
+        document.select(".forecast_table tbody tr:nth-child(2) td:nth-child(2)").text() shouldBe "−£4,200.00"
+        document.select(".forecast_table tbody tr:nth-child(3) td:nth-child(2)").text() shouldBe "£12,500.00"
+        document.select(".forecast_table tbody tr:nth-child(4) th:nth-child(1) a").attr("href") shouldBe taxDueForecastUrl
+        document.select(".forecast_table tbody tr:nth-child(4) td:nth-child(2)").text() shouldBe "£5,000.99"
         document.select("#inset_forecast").text() shouldBe messagesLookUp("tax-year-summary.forecast_tab.insetText", testYear.toString)
       }
 
