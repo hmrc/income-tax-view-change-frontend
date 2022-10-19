@@ -225,6 +225,7 @@ class ChargeSummaryViewSpec extends ViewSpec {
   }
 
   "individual" when {
+
     "The charge summary view" should {
 
       "have a fallback link" in new Setup(documentDetailModel(documentDescription = Some("ITSA- POA 1"))) {
