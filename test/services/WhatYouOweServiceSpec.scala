@@ -229,7 +229,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
             interestOutstandingAmount = None, interestRate = None,
             latePaymentInterestId = None, interestFromDate = Some(LocalDate.parse("2019-05-25")),
             interestEndDate = Some(LocalDate.parse("2019-06-25")), latePaymentInterestAmount = None)
-          val dd3 = dd1.copy(transactionId = id1040000126, documentText = Some("PAYE Self Assessment"))
+          val dd3 = dd1.copy(transactionId = id1040000126, documentText = Some("PAYE Self Assessment"), amountCodedOut = Some(2500.00))
           val cd1 = CodingDetails(taxYearReturn = "2021", amountCodedOut = 999.99, taxYearCoding = "2020")
           val cd2 = CodingDetails(taxYearReturn = "2020", amountCodedOut = 99.99, taxYearCoding = "2019")
           when(mockIncomeTaxViewChangeConnector.getOutstandingCharges(any(), any(), any())(any()))
@@ -254,7 +254,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
             chargesList = List(DocumentDetailWithDueDate(documentDetail = dd1, dueDate = Some(LocalDate.parse("2021-08-24")), codingOutEnabled = true),
               DocumentDetailWithDueDate(documentDetail = dd2, dueDate = Some(LocalDate.parse("2021-08-25")), codingOutEnabled = true)),
             outstandingChargesModel = None,
-            codedOutDocumentDetail = Some(DocumentDetailWithCodingDetails(dd3, cd1))
+            codedOutDocumentDetail = Some(dd3)
           )
         }
       }

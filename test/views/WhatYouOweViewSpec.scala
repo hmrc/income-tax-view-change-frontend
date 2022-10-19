@@ -260,7 +260,8 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     originalAmount = Some(43.21), documentDate = LocalDate.of(2018, 3, 29),
     interestOutstandingAmount = None, interestRate = None,
     latePaymentInterestId = None, interestFromDate = Some(LocalDate.parse("2019-05-25")),
-    interestEndDate = Some(LocalDate.parse("2019-06-25")), latePaymentInterestAmount = None)
+    interestEndDate = Some(LocalDate.parse("2019-06-25")), latePaymentInterestAmount = None,
+    amountCodedOut = Some(43.21))
 
   val codedOutDocumentDetailPayeSA: DocumentDetail = DocumentDetail(taxYear = "2021", transactionId = "CODINGOUT02", documentDescription = Some("TRM New Charge"),
     documentText = Some("PAYE Self Assessment"), outstandingAmount = Some(0.00),
@@ -289,8 +290,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
     chargesList = List(testFinancialDetailsModelWithCodingOut().getAllDocumentDetailsWithDueDates().head),
     outstandingChargesModel = None,
-    codedOutDocumentDetail = Some(DocumentDetailWithCodingDetails(codedOutDocumentDetail,
-      CodingDetails(taxYearReturn = "2021", amountCodedOut = codingOutAmount, taxYearCoding = "2020")))
+    codedOutDocumentDetail = Some(codedOutDocumentDetail)
   )
 
   val whatYouOweDataWithMFADebits: WhatYouOweChargesList = WhatYouOweChargesList(
@@ -304,8 +304,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
     chargesList = List(testFinancialDetailsModelWithCodingOut().getAllDocumentDetailsWithDueDates().head),
     outstandingChargesModel = None,
-    codedOutDocumentDetail = Some(DocumentDetailWithCodingDetails(codedOutDocumentDetail,
-      CodingDetails(taxYearReturn = "2021", amountCodedOut = codingOutAmount, taxYearCoding = "2020")))
+    codedOutDocumentDetail = Some(codedOutDocumentDetail)
   )
 
   val whatYouOweDataCodingOutWithoutAmountCodingOut: WhatYouOweChargesList = whatYouOweDataWithCodingOut.copy(codedOutDocumentDetail = None)
@@ -322,8 +321,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
   val whatYouOweDataWithPayeSA: WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(0.00, 0.00, 0.00, None, None, None, None),
     chargesList = List(),
-    codedOutDocumentDetail = Some(DocumentDetailWithCodingDetails(codedOutDocumentDetailPayeSA,
-      CodingDetails(taxYearReturn = "2021", amountCodedOut = codingOutAmount, taxYearCoding = "2020")))
+    codedOutDocumentDetail = Some(codedOutDocumentDetailPayeSA)
   )
 
   val noUtrModel: WhatYouOweChargesList = WhatYouOweChargesList(balanceDetails = BalanceDetails(0.00, 0.00, 0.00, None, None, None, None))

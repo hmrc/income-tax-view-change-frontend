@@ -153,39 +153,6 @@ class FinancialDetailsResponseModelSpec extends UnitSpec with Matchers {
     }
   }
 
-  "getDocumentDetailWithCodingDetails" should {
-    val documentDetail1 = DocumentDetail(taxYear = "2017",
-      transactionId = "transid1",
-      documentDescription = Some("ITSA- POA 1"),
-      documentText = Some("documentText"),
-      outstandingAmount = None,
-      originalAmount = None,
-      documentDate = LocalDate.parse("2018-03-21"))
-
-    val documentDetail2 = DocumentDetail(taxYear = "2022",
-      transactionId = "transid1",
-      documentDescription = Some("ITSA- POA 1"),
-      documentText = Some("documentText"),
-      outstandingAmount = None,
-      originalAmount = None,
-      documentDate = LocalDate.parse("2022-03-21"))
-
-    val codingDetailsList = List(CodingDetails("2018", BigDecimal("100.00"), "2019"), CodingDetails("2017", BigDecimal("100.00"), "2018"))
-
-    val fdm: FinancialDetailsModel = FinancialDetailsModel(BalanceDetails(1, 2, 3, None, None, None, None), Some(codingDetailsList), List(documentDetail1), List())
-    val fdmWithEmptyCodingDetail: FinancialDetailsModel = FinancialDetailsModel(BalanceDetails(1, 2, 3, None, None, None, None), None, List(documentDetail1), List())
-
-    "return the right DocumentDetailWithCodingDetails model matching tax year" in {
-      fdm.getDocumentDetailWithCodingDetails(documentDetail1).get shouldBe DocumentDetailWithCodingDetails(
-        documentDetail1, CodingDetails("2017", BigDecimal("100.00"), "2018"))
-    }
-    "return None when no matching tax year record is found in coding details" in {
-      fdm.getDocumentDetailWithCodingDetails(documentDetail2) shouldBe None
-    }
-    "return None when coding out details is empty" in {
-      fdmWithEmptyCodingDetail.getDocumentDetailWithCodingDetails(documentDetail1) shouldBe None
-    }
-  }
   "isMFADebit" should {
     def testIsMFADebit(documentId: String, financialDetailsModel: FinancialDetailsModel): Boolean = {
       val fdm: FinancialDetailsModel = financialDetailsModel
