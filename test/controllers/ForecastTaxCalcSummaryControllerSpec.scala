@@ -103,7 +103,7 @@ class ForecastTaxCalcSummaryControllerSpec extends TestSupport with MockCalculat
         }
 
         "render the forecast tax calc summary page" in {
-          document.title() shouldBe messages("titlePattern.serviceName.govUk", messages("forecast_taxCalc.heading"))
+          document.title() shouldBe messages("htmlTitle", messages("forecast_taxCalc.heading"))
         }
       }
 

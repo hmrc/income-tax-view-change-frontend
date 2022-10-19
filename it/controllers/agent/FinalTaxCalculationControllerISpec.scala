@@ -88,7 +88,7 @@ class FinalTaxCalculationControllerISpec extends ComponentSpecBase with SessionC
   }
 
   object ExpectedValues {
-    val title = messages("htmlTitle.agent")
+    val title = messages("htmlTitle.agent", messages("final-tax-overview.agent.heading"))
     val caption = "6 April 2017 to 5 April 2018"
 
     val insetTextFull = "If you think this information is incorrect, you can check your client’s Income Tax Return."
@@ -116,7 +116,6 @@ class FinalTaxCalculationControllerISpec extends ComponentSpecBase with SessionC
   }
 
   object ExpectedValuesWelsh {
-    val title = toMessages("CY")(s"htmlTitle.agent")
     val caption = "6 Ebrill 2017 i 5 Ebrill 2018"
 
     val insetTextFull = "Os ydych o’r farn bod yr wybodaeth hon yn anghywir gallwch wirio Ffurflen Dreth Incwm eich cleient."
@@ -315,7 +314,8 @@ class FinalTaxCalculationControllerISpec extends ComponentSpecBase with SessionC
       }
 
       "have the correct title" in {
-        document.title() shouldBe ExpectedValuesWelsh.title
+        val title = toMessages("CY")(s"htmlTitle.agent", document.getElementsByTag("h1").text())
+        document.title() shouldBe title
       }
 
       "have the correct caption" in {

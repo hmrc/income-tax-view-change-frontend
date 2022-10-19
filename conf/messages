@@ -27,8 +27,8 @@ header.serviceName                                  = Manage your Income Tax upd
 agent.header.serviceName                            = Manage your client’s Income Tax updates
 
 # HTML Titles
-titlePattern.serviceName.govUk                      = Manage your Income Tax updates
-htmlTitle.agent                                     = Manage your client’s Income Tax updates
+htmlTitle                                           = {0} - Manage your Income Tax updates - GOV.UK
+htmlTitle.agent                                     = {0} - Manage your client’s Income Tax updates - GOV.UK
 htmlTitle.errorPage                                 = {0} - GOV.UK
 htmlTitle.invalidInput                              = Error: {0} - GOV.UK
 

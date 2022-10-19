@@ -85,8 +85,12 @@
 @taxYearFromCodingOut = @{(documentDetail.taxYear.toInt + 1).toString}
 @taxYearToCodingOut = @{(documentDetail.taxYear.toInt + 2).toString}
 @pageTitle = @{
-    if (latePaymentInterestCharge) messages(s"chargeSummary.lpi.${documentDetail.getChargeTypeKey()}")
-    else messages(s"chargeSummary.${documentDetail.getChargeTypeKey(codingOutEnabled)}")
+    val key = (latePaymentInterestCharge, isMFADebit) match {
+        case (true, _) => s"chargeSummary.lpi.${documentDetail.getChargeTypeKey()}"
+        case (_, true) => s"chargeSummary.hmrcAdjustment.text"
+        case (_, _) => s"chargeSummary.${documentDetail.getChargeTypeKey(codingOutEnabled)}"
+    }
+    messages(key)
 }
 
 @checkPayeCodePara = {

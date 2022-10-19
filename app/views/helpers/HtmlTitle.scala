@@ -27,8 +27,8 @@ object HtmlTitle {
     (isInvalidInput, isErrorPage, isAgent) match {
       case (false, true, _) => messages("htmlTitle.errorPage", h1Text)
       case (true, false, _) => messages("htmlTitle.invalidInput", h1Text)
-      case (_, _, true) => messages("htmlTitle.agent")
-      case (_, _, _) => messages("titlePattern.serviceName.govUk", h1Text)
+      case (_, _, true) => messages("htmlTitle.agent", h1Text)
+      case (_, _, _) => messages("htmlTitle", h1Text)
     }
   }
 }

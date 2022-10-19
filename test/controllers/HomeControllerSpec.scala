@@ -65,7 +65,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
     emptyWhatYouOweChargesListIndividual.copy(
       outstandingChargesModel = Some(OutstandingChargesModel(List(OutstandingChargeModel("BCD", Some("2019-01-31"), 1.67, 2345))))
     )
-  val homePageTitle = s"${messages("titlePattern.serviceName.govUk", messages("home.heading"))}"
+  val homePageTitle = s"${messages("htmlTitle", messages("home.heading"))}"
   val agentTitle = s"${messages("htmlTitle.agent", messages("home.agent.heading"))}"
 
   trait Setup {

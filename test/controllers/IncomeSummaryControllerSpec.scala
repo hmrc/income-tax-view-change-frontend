@@ -88,7 +88,7 @@ class IncomeSummaryControllerSpec extends TestSupport with MockCalculationServic
       }
 
       "render the IncomeBreakdown page" in {
-        document.title() shouldBe messages("titlePattern.serviceName.govUk", messages("income_breakdown.heading"))
+        document.title() shouldBe messages("htmlTitle", messages("income_breakdown.heading"))
       }
     }
     "given a tax year which can not be found in ETMP" should {

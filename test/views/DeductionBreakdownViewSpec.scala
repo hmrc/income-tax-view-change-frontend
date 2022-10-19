@@ -52,7 +52,7 @@ class DeductionBreakdownViewSpec extends ViewSpec {
       lazy val view = deductionBreakdownView(AllowancesAndDeductionsViewModel(), taxYear, backUrl)
 
       "have the correct title" in new Setup(view) {
-        document title() shouldBe messages("titlePattern.serviceName.govUk", messages("deduction_breakdown.heading"))
+        document title() shouldBe messages("htmlTitle", messages("deduction_breakdown.heading"))
       }
 
       "have a fallback backlink" in new Setup(view) {
@@ -114,7 +114,7 @@ class DeductionBreakdownViewSpec extends ViewSpec {
       lazy val view = deductionBreakdownView(deductions, taxYear, backUrl)
 
       "have the correct title" in new Setup(view) {
-        document title() shouldBe messages("titlePattern.serviceName.govUk", messages("deduction_breakdown.heading"))
+        document title() shouldBe messages("htmlTitle", messages("deduction_breakdown.heading"))
       }
 
       "have the correct heading" in new Setup(view) {

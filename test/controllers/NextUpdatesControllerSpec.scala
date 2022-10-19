@@ -47,7 +47,7 @@ class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockInc
   with MockNextUpdatesService with MockNextUpdates with MockItvcErrorHandler with MockFrontendAuthorisedFunctions
   with MockIncomeSourceDetailsService {
 
-  val nextTitle: String = messages("titlePattern.serviceName.govUk", messages("nextUpdates.heading"))
+  val nextTitle: String = messages("htmlTitle", messages("nextUpdates.heading"))
 
   trait AgentTestsSetup {
     val controller = new controllers.NextUpdatesController(
@@ -278,7 +278,7 @@ class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockInc
           }
 
           "render the NoNextUpdates page" in {
-            document.title shouldBe messages("titlePattern.serviceName.govUk", messages("obligations.heading"))
+            document.title shouldBe messages("htmlTitle", messages("obligations.heading"))
           }
 
           s"have the heading ${messages("obligations.heading")}" in {
