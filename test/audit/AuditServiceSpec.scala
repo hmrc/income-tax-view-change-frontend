@@ -19,13 +19,17 @@ package audit
 import audit.models.ExtendedAuditModel
 import config.FrontendAppConfig
 import org.mockito.Mockito.mock
+import org.scalatest.PrivateMethodTester
 import play.api.libs.json.{JsValue, Json}
 import testUtils.TestSupport
-import uk.gov.hmrc.play.audit.http.connector.AuditConnector
+import uk.gov.hmrc.play.audit.http.connector.{AuditConnector, AuditResult}
 
-class AuditServiceSpec extends TestSupport {
+import scala.concurrent.Future
+
+class AuditServiceSpec extends TestSupport with PrivateMethodTester {
 
   "The AuditService" should {
+
     val appConfig: FrontendAppConfig = mock(classOf[FrontendAppConfig])
     val auditConnector: AuditConnector = mock(classOf[AuditConnector])
 
@@ -40,6 +44,22 @@ class AuditServiceSpec extends TestSupport {
 
       result.auditSource shouldBe "appName"
       result.auditType shouldBe "auditType"
+    }
+
+    "call private handleAuditResult method" in {
+      // TODO: ideally we should find way to mock Logger, but this is not supported by Mockito
+      // as the moment as this is singleton
+
+      val privateMethodDecorator = PrivateMethod[Future[AuditResult]]('handleAuditResult)
+
+      val successRes = obj invokePrivate privateMethodDecorator(Future.successful(AuditResult.Success), ec)
+      Option(successRes) shouldBe None
+
+      val failureRes = obj invokePrivate privateMethodDecorator(Future.successful(AuditResult.Failure("Error", None)), ec)
+      Option(failureRes) shouldBe None
+
+      val disabledRes = obj invokePrivate privateMethodDecorator(Future.successful(AuditResult.Disabled), ec)
+      Option(disabledRes) shouldBe None
     }
   }
 
