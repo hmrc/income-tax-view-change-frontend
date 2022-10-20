@@ -142,7 +142,7 @@ class DeductionBreakdownViewSpec extends ViewSpec {
           (5, messages("deduction_breakdown.table.gift_of_investments_and_property_to_charity"), "£10,000.00"),
           (6, messages("deduction_breakdown.table.annual_payments"), "£1,000.00"),
           (7, messages("deduction_breakdown.table.qualifying_loan_interest"), "£1,001.00"),
-          (8, messages("deduction_breakdown.table.post_cessasation_trade_receipts"), "£1,002.00"),
+          (8, messages("deduction_breakdown.table.post_cessation_trade_receipts"), "£1,002.00"),
           (9, messages("deduction_breakdown.table.trade_union_payments"), "£1,003.00"),
           (10, messages("deduction_breakdown.total"), "£47,500.00")
         )
