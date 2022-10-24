@@ -17,16 +17,14 @@
 package controllers
 
 import config.featureswitch.FeatureSwitch.switches
-import config.featureswitch.{ChargeHistory, Class4UpliftEnabled, CodingOut, CreditsRefundsRepay, CutOverCredits, FeatureSwitching, ForecastCalculation, ITSASubmissionIntegration, IvUplift, MFACreditsAndDebits, NavBarFs, NewStateBenefitIncome, PaymentAllocation, PaymentHistoryRefunds, R7bTxmEvents, WhatYouOweCreditAmount}
+import config.featureswitch.{CreditsRefundsRepay, FeatureSwitching, MFACreditsAndDebits}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
 import models.financialDetails.FinancialDetailsModel
-import org.hamcrest.core.Is.is
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import org.junit.Assert.assertThat
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import play.api.http.Status
@@ -36,8 +34,8 @@ import services.CreditService
 import testConstants.BaseTestConstants
 import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
 import testConstants.FinancialDetailsTestConstants._
-import views.html.errorPages.CustomNotFoundError
 import views.html.CreditAndRefunds
+import views.html.errorPages.CustomNotFoundError
 
 import scala.concurrent.Future
 

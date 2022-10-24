@@ -55,7 +55,7 @@ class AgentNotFoundDocumentIDLookupControllerSpec extends TestSupport
       charset(result) shouldBe Some("utf-8")
     }
 
-    s"have the title ${messages("titlePattern.serviceName.govUk", messages("base.error_summary.heading"))}" in {
+    s"have the title ${messages("htmlTitle.agent", messages("base.error_summary.heading"))}" in {
       setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
       document.title() shouldBe messages("htmlTitle.agent", messages("error.custom.heading"))
     }

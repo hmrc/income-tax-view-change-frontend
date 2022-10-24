@@ -45,8 +45,8 @@ class SessionTimeoutControllerSpec extends TestSupport {
       charset(result) shouldBe Some("utf-8")
     }
 
-    s"have the title ${messages("titlePattern.serviceName.govUk", messages("timeout.heading"))}" in {
-      document.title() shouldBe messages("titlePattern.serviceName.govUk", messages("timeout.heading"))
+    s"have the title ${messages("htmlTitle", messages("timeout.heading"))}" in {
+      document.title() shouldBe messages("htmlTitle", messages("timeout.heading"))
     }
   }
 

@@ -33,10 +33,10 @@ class TaxCalcBreakdownViewSpec extends TaxCalcBreakdownViewBehaviour {
 
   override val backUrl = "testUrl"
 
-  override def taxCalcBreakdown(taxDueSummaryViewModel: TaxDueSummaryViewModel, taxYear: Int, backUrl: String, class4UpliftEnabled: Boolean = false): Html =
-    app.injector.instanceOf[TaxCalcBreakdown].apply(taxDueSummaryViewModel, taxYear, backUrl, class4UpliftEnabled = class4UpliftEnabled)
+  override def taxCalcBreakdown(taxDueSummaryViewModel: TaxDueSummaryViewModel, taxYear: Int, backUrl: String): Html =
+    app.injector.instanceOf[TaxCalcBreakdown].apply(taxDueSummaryViewModel, taxYear, backUrl)
 
-  override val expectedPageTitle: String = messages("titlePattern.serviceName.govUk", messages("taxCal_breakdown.heading"))
+  override val expectedPageTitle: String = messages("htmlTitle", messages("taxCal_breakdown.heading"))
 
   override val pageContentSelector = "#main-content"
 
@@ -66,7 +66,7 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
 
   def backUrl: String
 
-  def taxCalcBreakdown(taxDueSummaryViewModel: TaxDueSummaryViewModel, taxYear: Int, backUrl: String, class4UpliftEnabled: Boolean = false): Html
+  def taxCalcBreakdown(taxDueSummaryViewModel: TaxDueSummaryViewModel, taxYear: Int, backUrl: String): Html
 
   def expectedPageTitle: String
 
@@ -95,7 +95,7 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
     forAll(expectedTableRows) { (rowIndex: Int, firstColumnText: String, secondColumnText: String) =>
       if (rowIndex == 0) {
 
-        s"has a table headers: [$firstColumnText, $secondColumnText]" in new Setup(view) {
+        s"has the table headers: [$firstColumnText, $secondColumnText]" in new Setup(view) {
           val row: Element = pageContent(pageContentSelector).table(tableNumber).select("tr").get(0)
           row.select("th").first().text() shouldBe firstColumnText
           row.select("th").last().text() shouldBe secondColumnText
@@ -279,7 +279,6 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
       val taxYear = 2018
 
       lazy val view = taxCalcBreakdown(taxDueSummaryViewModelStandard, taxYear, backUrl)
-      lazy val viewWithClass4UpliftEnabled = taxCalcBreakdown(taxDueSummaryViewModelStandard, taxYear, backUrl, class4UpliftEnabled = true)
       lazy val viewNone = taxCalcBreakdown(TaxDueSummaryViewModel(), taxYear, backUrl)
       lazy val viewNic2 = taxCalcBreakdown(taxDueSummaryViewModelNic2, taxYear, backUrl)
       lazy val viewVoluntaryNic2 = taxCalcBreakdown(taxDueSummaryViewModelVoluntaryNic2, taxYear, backUrl)
@@ -539,21 +538,6 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
         )
       }
 
-      "have a National Insurance contributions table with Uplift message when Class4Uplift is enabled" which {
-        shouldHaveACorrectTableContent(viewWithClass4UpliftEnabled)(
-          tableNumber = 8,
-          expectedCaption = sectionHeadingNationalInsuranceContributionsChar,
-          expectedTableRows = Table(
-            ("row index", "column 1", "column 2"),
-            (0, nationalInsuranceTypeTableHeader, amountTableHeader),
-            (1, Nic4New_ZRT, "£100.00"),
-            (2, s"$Nic4New_BRT ${messages("taxCal_breakdown.table.uplift")}", "£200.00"),
-            (3, s"$Nic4New_HRT ${messages("taxCal_breakdown.table.uplift")}", "£300.00"),
-            (4, voluntaryNic2, "£10,000.00")
-          )
-        )
-      }
-
       "have a Nics table showing Class 2 Nics when the voluntaryClass2Contributions flag is false" which {
         shouldHaveACorrectTableContent(viewNic2)(
           tableNumber = 1,
@@ -674,7 +658,7 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
 
       val document: Document = Jsoup.parse(view.body)
 
-      document.select(messageContentSelector).size shouldBe 14
+      document.select(messageContentSelector).size shouldBe 13
       document.select(messageContentSelector).get(0).text shouldBe messages("taxCal_breakdown.message.C22202")
       document.select(messageContentSelector).get(1).text shouldBe messages("taxCal_breakdown.message.C22203")
       document.select(messageContentSelector).get(2).text shouldBe messages("taxCal_breakdown.message.C22206")
@@ -688,7 +672,6 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
       document.select(messageContentSelector).get(10).text shouldBe messages("taxCal_breakdown.message.C22216")
       document.select(messageContentSelector).get(11).text shouldBe messages("taxCal_breakdown.message.C22217")
       document.select(messageContentSelector).get(12).text shouldBe messages("taxCal_breakdown.message.C22218")
-      document.select(messageContentSelector).get(13).text shouldBe messages("taxCal_breakdown.message.C22219")
     }
 
     "provided with message C22201" in {

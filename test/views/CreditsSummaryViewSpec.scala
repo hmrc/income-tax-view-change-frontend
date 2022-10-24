@@ -45,7 +45,7 @@ class CreditsSummaryViewSpec extends TestSupport with FeatureSwitching with Impl
   val testMaybeBalanceDetails: Option[BigDecimal] = financialDetailCreditCharge.balanceDetails.availableCredit
 
   val creditsSummaryHeading: String = messages("credits.heading", s"$testCalendarYear")
-  val creditsSummaryTitle: String = messages("titlePattern.serviceName.govUk", creditsSummaryHeading)
+  val creditsSummaryTitle: String = messages("htmlTitle", creditsSummaryHeading)
   val creditsSummaryTitleAgent: String = messages("htmlTitle.agent", creditsSummaryHeading)
   val creditsTableHeadDateText: String = messages("credits.tableHead.date")
   val creditsTableHeadTypeText: String = messages("credits.tableHead.type")

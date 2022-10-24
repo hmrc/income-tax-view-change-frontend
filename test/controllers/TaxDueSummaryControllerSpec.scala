@@ -75,7 +75,7 @@ class TaxDueSummaryControllerSpec extends TestSupport with MockCalculationServic
       }
 
       "render the Tax Due page" in {
-        document.title() shouldBe messages("titlePattern.serviceName.govUk", messages("taxCal_breakdown.heading"))
+        document.title() shouldBe messages("htmlTitle", messages("taxCal_breakdown.heading"))
       }
     }
 
