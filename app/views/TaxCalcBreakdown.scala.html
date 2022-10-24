@@ -29,7 +29,7 @@
     capitalGainsTaxTable: CapitalGainsTaxTableNew,
     govukInsetText: GovukInsetText
 )
-@(viewModel: TaxDueSummaryViewModel, taxYear: Int, backUrl: String, isAgent: Boolean = false, btaNavPartial: Option[Html] = None, class4UpliftEnabled: Boolean)(implicit request: Request[_], messages: Messages)
+@(viewModel: TaxDueSummaryViewModel, taxYear: Int, backUrl: String, isAgent: Boolean = false, btaNavPartial: Option[Html] = None)(implicit request: Request[_], messages: Messages)
 
 @taxBandTableRow(band: TaxBands, scottishRegime: Boolean = false) = {
     <tr class="govuk-table__row">
@@ -320,13 +320,6 @@
                                     BigDecimal(band.income).toCurrencyString,
                                     s"${band.rate}"
                                 )
-                                @if(class4UpliftEnabled && band.name != "ZRT") {
-                                    <div>
-                                        <span class="govuk-body-s uplift">
-                                            @messages("taxCal_breakdown.table.uplift")
-                                        </span>
-                                    </div>
-                                }
                             </td>
                             <td class="govuk-table__cell govuk-table__cell--numeric">@{
                                 band.amount.toCurrency
