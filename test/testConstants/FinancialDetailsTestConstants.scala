@@ -568,7 +568,7 @@ object FinancialDetailsTestConstants {
       )
     )
 
-  def testFinancialDetailsModelWithCodingOut(): FinancialDetailsModel =
+  def testFinancialDetailsModelWithCodingOutNics2(): FinancialDetailsModel =
     FinancialDetailsModel(
       balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
       codingDetails = Some(List(CodingDetails(taxYearReturn = "2021", amountCodedOut = 0, taxYearCoding = "2020"))),
@@ -614,7 +614,7 @@ object FinancialDetailsTestConstants {
           originalAmount = Some(43.21), documentDate = LocalDate.of(2018, 3, 29),
           interestOutstandingAmount = None, interestRate = None,
           latePaymentInterestId = None, interestFromDate = None,
-          interestEndDate = None, latePaymentInterestAmount = None)
+          interestEndDate = None, latePaymentInterestAmount = None, amountCodedOut = Some(0))
       ),
       financialDetails = List(
         FinancialDetail("2021", Some("SA Balancing Charge"), Some("CODINGOUT01"), Some(LocalDate.parse("2022-08-16")), Some("type"), Some(100), Some(100),
