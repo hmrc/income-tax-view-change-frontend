@@ -243,7 +243,7 @@ object NewCalcBreakdownUnitTestConstants {
             taxableIncome = 12500
           ))),
         totalEstimatedIncome = Some(12500),
-        totalTaxableIncome = Some(12500),
+        totalTaxableIncome = Some(8300),
         totalAllowancesAndDeductions = Some(4200.00),
         incomeTaxAmount = Some(5000.99),
         nic2 = Some(5000.99),
