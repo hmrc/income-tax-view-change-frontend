@@ -24,7 +24,6 @@ import java.time.LocalDate
 sealed trait FinancialDetailsResponseModel
 
 case class FinancialDetailsModel(balanceDetails: BalanceDetails,
-                                 codingDetails: Option[List[CodingDetails]],
                                  documentDetails: List[DocumentDetail],
                                  financialDetails: List[FinancialDetail]) extends FinancialDetailsResponseModel {
 
@@ -129,7 +128,6 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
 
     FinancialDetailsModel(
       balanceDetails,
-      codingDetails,
       filteredDocuments,
       financialDetails.filter(financial => filteredDocuments.map(_.transactionId).contains(financial.transactionId.get))
     )
@@ -139,7 +137,6 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
     val filteredDocuments = documentDetails.filter(document => document.paymentLot.isDefined && document.paymentLotItem.isDefined)
     FinancialDetailsModel(
       balanceDetails,
-      codingDetails,
       filteredDocuments,
       financialDetails.filter(financial => filteredDocuments.map(_.transactionId).contains(financial.transactionId.get))
     )
@@ -150,7 +147,7 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
   }
 
   def mergeLists(financialDetailsModel: FinancialDetailsModel): FinancialDetailsModel = {
-    FinancialDetailsModel(balanceDetails, codingDetails, documentDetails ++ financialDetailsModel.documentDetails,
+    FinancialDetailsModel(balanceDetails, documentDetails ++ financialDetailsModel.documentDetails,
       financialDetails ++ financialDetailsModel.financialDetails)
   }
 
@@ -166,5 +163,3 @@ case class FinancialDetailsErrorModel(code: Int, message: String) extends Financ
 object FinancialDetailsErrorModel {
   implicit val format: Format[FinancialDetailsErrorModel] = Json.format[FinancialDetailsErrorModel]
 }
-
-case class DocumentDetailWithCodingDetails(documentDetail: DocumentDetail, codingDetails: CodingDetails)

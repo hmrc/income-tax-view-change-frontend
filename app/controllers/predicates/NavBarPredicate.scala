@@ -47,7 +47,6 @@ class NavBarPredicate @Inject()(val btaNavBarController: BtaNavBarController,
 
     val header: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
     implicit val hc: HeaderCarrier = header.copy(extraHeaders = header.headers(Seq(play.api.http.HeaderNames.COOKIE)))
-
     if (isDisabled(NavBarFs)) {
       Future.successful(Right(request))
     } else {
@@ -58,6 +57,7 @@ class NavBarPredicate @Inject()(val btaNavBarController: BtaNavBarController,
   }
 
   def retrieveCacheAndHandleNavBar[A](request: MtdItUser[A])(implicit hc: HeaderCarrier): Future[Either[Result, MtdItUser[A]]] = {
+    println("getting origin")
     request.session.get(SessionKeys.origin) match {
       case Some(origin) if OriginEnum(origin) == Some(PTA) =>
         Future.successful(Right(returnMtdItUserWithNavbar(request, ptaPartial()(request, request.messages, appConfig))))

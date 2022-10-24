@@ -42,8 +42,10 @@ class IncomeSourceDetailsPredicate @Inject()(val incomeSourceDetailsService: Inc
 
     val sessionId = request.headers.get(HeaderNames.xSessionId).getOrElse("")
     val cacheKey = s"${sessionId + request.nino}-incomeSources"
+    println("getting income sources")
     incomeSourceDetailsService.getIncomeSourceDetails(Some(cacheKey)) map {
       case sources: IncomeSourceDetailsModel =>
+        println("got" + sources)
         Right(MtdItUser(request.mtditid, request.nino, request.userName, sources, None, request.saUtr, request.credId, request.userType, request.arn))
       case _ => Left(itvcErrorHandler.showInternalServerError)
     }

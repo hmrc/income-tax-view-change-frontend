@@ -93,6 +93,7 @@ class WhatYouOweController @Inject()(val checkSessionTimeout: SessionTimeoutPred
   def show(origin: Option[String] = None): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
+      Logger("application").error("IN SHOW METHOD!!!!!!!!!")
       handleRequest(
         backUrl = controllers.routes.HomeController.show(origin).url,
         itvcErrorHandler = itvcErrorHandler,
@@ -104,6 +105,8 @@ class WhatYouOweController @Inject()(val checkSessionTimeout: SessionTimeoutPred
   def showAgent: Action[AnyContent] = Authenticated.async {
     implicit request =>
       implicit user =>
+
+        Logger("application").error("IN SHOW METHOD!!!!!!!!!")
         getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true).flatMap {
           implicit mtdItUser =>
             handleRequest(

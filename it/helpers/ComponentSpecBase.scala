@@ -186,7 +186,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
     def getHome: WSResponse = get("/")
 
-    def getPaymentsDue: WSResponse = get("/what-you-owe")
+    def getPaymentsDue: WSResponse = get("/what-you-owe?origin=PTA")
 
     def getChargeSummary(taxYear: String, id: String): WSResponse = get(s"/tax-years/$taxYear/charge?id=$id")
 

@@ -53,10 +53,9 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
   }
 
   private def getFinancialDetailSuccess(taxYear: Int,
-                                        codingDetails: Option[List[CodingDetails]] = None,
                                         documentDetails: List[DocumentDetail] = List(fullDocumentDetailModel),
                                         financialDetails: List[FinancialDetail] = List(fullFinancialDetailModel)): FinancialDetailsModel = {
-    FinancialDetailsModel(balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None), codingDetails = codingDetails, documentDetails = documentDetails, financialDetails = financialDetails)
+    FinancialDetailsModel(balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None), documentDetails = documentDetails, financialDetails = financialDetails)
   }
 
   private def mtdUser(numYears: Int): MtdItUser[_] = MtdItUser(
@@ -123,7 +122,6 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
         "there is only one overdue date" in {
           val financialDetailsCurrentYear: FinancialDetailsModel = FinancialDetailsModel(
             balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
-            codingDetails = None,
             documentDetails = List(
               DocumentDetail("testYear1", "testTransactionId1", Some("ITSA- POA 1"), Some("documentText"), Some(100.00), None, LocalDate.of(2018, 3, 29)),
               DocumentDetail("testYear1", "testTransactionId2", Some("ITSA - POA 2"), Some("documentText"), Some(200.00), None, LocalDate.of(2018, 3, 29))
@@ -136,7 +134,6 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
 
           val financialDetailsLastYear: FinancialDetailsModel = FinancialDetailsModel(
             balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
-            codingDetails = None,
             documentDetails = List(
               DocumentDetail("testYear2", "testTransactionId1", None, None, Some(100.00), None, LocalDate.of(2018, 3, 29)),
               DocumentDetail("testYear2", "testTransactionId2", None, None, None, None, LocalDate.of(2018, 3, 29))
@@ -158,7 +155,6 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
         "there are no overdue dates, but there are dates upcoming" in {
           val financialDetailsCurrentYear: FinancialDetailsModel = FinancialDetailsModel(
             balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
-            codingDetails = None,
             documentDetails = List(
               DocumentDetail("testYear1", "testTransactionId1", None, None, Some(100.00), None, LocalDate.of(2018, 3, 29)),
               DocumentDetail("testYear1", "testTransactionId2", None, None, Some(100.00), None, LocalDate.of(2018, 3, 29))
@@ -171,7 +167,6 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
 
           val financialDetailsLastYear: FinancialDetailsModel = FinancialDetailsModel(
             balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
-            codingDetails = None,
             documentDetails = List(
               DocumentDetail("testYear2", "testTransactionId1", None, None, None, None, LocalDate.of(2018, 3, 29)),
               DocumentDetail("testYear2", "testTransactionId2", Some("ITSA- POA 1"), Some("documentText"), Some(100.00), None, LocalDate.of(2018, 3, 29))
@@ -193,7 +188,6 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
         "there are more than one overdue dates" in {
           val financialDetailsCurrentYear: FinancialDetailsModel = FinancialDetailsModel(
             balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
-            codingDetails = None,
             documentDetails = List(
               DocumentDetail("testYear1", "testTransactionId1", Some("ITSA- POA 1"), Some("documentText"), Some(100.00), Some(0.00), LocalDate.of(2018, 3, 29)),
               DocumentDetail("testYear1", "testTransactionId2", Some("ITSA - POA 2"), Some("documentText"), Some(100.00), Some(0.00), LocalDate.of(2018, 3, 29))
@@ -206,7 +200,6 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
 
           val financialDetailsLastYear: FinancialDetailsModel = FinancialDetailsModel(
             balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
-            codingDetails = None,
             documentDetails = List(
               DocumentDetail("testYear2", "testTransactionId1", Some("ITSA- POA 1"), Some("documentText"), Some(100.00), Some(0.00), LocalDate.of(2018, 3, 29)),
               DocumentDetail("testYear2", "testTransactionId2", Some("ITSA - POA 2"), Some("documentText"), Some(100.00), Some(0.00), LocalDate.of(2018, 3, 29))
@@ -226,9 +219,9 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
       }
       "return none" when {
         "there are no upcoming or overdue dates" in {
-          val financialDetailsCurrentYear: FinancialDetailsModel = FinancialDetailsModel(BalanceDetails(1.00, 2.00, 3.00, None, None, None, None), None, List(), List())
+          val financialDetailsCurrentYear: FinancialDetailsModel = FinancialDetailsModel(BalanceDetails(1.00, 2.00, 3.00, None, None, None, None), List(), List())
 
-          val financialDetailsLastYear: FinancialDetailsModel = FinancialDetailsModel(BalanceDetails(1.00, 2.00, 3.00, None, None, None, None), None, List(), List())
+          val financialDetailsLastYear: FinancialDetailsModel = FinancialDetailsModel(BalanceDetails(1.00, 2.00, 3.00, None, None, None, None), List(), List())
 
           val result: Option[Either[(LocalDate, Boolean), Int]] = {
             TestFinancialDetailsService.getChargeDueDates(List(financialDetailsCurrentYear, financialDetailsLastYear))
@@ -538,7 +531,6 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
         enable(CodingOut)
         val financialDetailCodingOut = getFinancialDetailSuccess(
           taxYear = getTaxEndYear(LocalDate.now.minusYears(1)),
-          codingDetails = Some(List(CodingDetails(taxYearReturn = "2021", amountCodedOut = 2500, taxYearCoding = "2020"))),
           documentDetails = List(
             documentDetailModel(transactionId = "transid1", outstandingAmount = Some(200.00)).copy(
               interestOutstandingAmount = Some(0), documentDescription = Some("TRM New Charge"), documentText = Some("Class 2 National Insurance")),
@@ -591,8 +583,6 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
             interestOutstandingAmount = Some(0), documentDescription = Some("TRM New Charge"), documentText = Some("Cancelled PAYE Self Assessment"))
           val financialDetailCodingOut = getFinancialDetailSuccess(
             taxYear = getTaxEndYear(LocalDate.now.minusYears(1)),
-            codingDetails = Some(List(CodingDetails(
-              taxYearReturn = getTaxEndYear(LocalDate.now.minusYears(1)).toString, amountCodedOut = 2500, taxYearCoding = getTaxEndYear(LocalDate.now).toString))),
             documentDetails = List(ddNics, ddCodedOut, ddCancelledCodedOut),
             financialDetails = List(
               fullFinancialDetailModel,
