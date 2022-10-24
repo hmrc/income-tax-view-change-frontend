@@ -27,8 +27,8 @@ header.serviceName                                  = Manage your Income Tax upd
 agent.header.serviceName                            = Manage your client’s Income Tax updates
 
 # HTML Titles
-titlePattern.serviceName.govUk                      = Manage your Income Tax updates
-htmlTitle.agent                                     = Manage your client’s Income Tax updates
+htmlTitle                                           = {0} - Manage your Income Tax updates - GOV.UK
+htmlTitle.agent                                     = {0} - Manage your client’s Income Tax updates - GOV.UK
 htmlTitle.errorPage                                 = {0} - GOV.UK
 htmlTitle.invalidInput                              = Error: {0} - GOV.UK
 
@@ -264,18 +264,18 @@ forecast_income.source_types.98                                = Gift Aid and Pa
 
 ## Deduction Breakdown Page ##
 deduction_breakdown.heading                                            = Allowances and deductions
-deduction_breakdown.table.header                                       = Allowance or deduction type
+deduction_breakdown.table.header                                       = Type of allowance or deduction
 deduction_breakdown.table.header.amount                                = Amount
 deduction_breakdown.dates                                              = 6 April {0} to 5 April {1}
 deduction_breakdown.guidance_software                                  = Check your record-keeping software for more details.
 deduction_breakdown.table.personal_allowance                           = Personal Allowance
 deduction_breakdown.table.marriage_allowance_transfer                  = Marriage Allowance Transfer
-deduction_breakdown.table.pension_contributions                        = Pensions contributions
+deduction_breakdown.table.pension_contributions                        = Pension contributions
 deduction_breakdown.table.loss_relief                                  = Loss relief
 deduction_breakdown.table.gift_of_investments_and_property_to_charity  = Gift of investments and property to charity
 deduction_breakdown.table.annual_payments                              = Annual Payments
 deduction_breakdown.table.qualifying_loan_interest                     = Qualifying loan interest
-deduction_breakdown.table.post_cessasation_trade_receipts              = Post cessasation trade reciepts
+deduction_breakdown.table.post_cessation_trade_receipts                = Post-cessation trade receipts
 deduction_breakdown.table.trade_union_payments                         = Trade Union payments
 deduction_breakdown.total                                              = Total allowances and deductions
 
@@ -305,7 +305,6 @@ taxCal_breakdown.table.ZRTHR                                        = Higher rat
 taxCal_breakdown.table.ZRTAR                                        = Additional rate band at nil rate ({0} at {1}%)
 taxCal_breakdown.table.totalIncomeTaxAndNicsDue                     = Income Tax and National Insurance contributions due
 taxCal_breakdown.table.nic4                                         = Class 4 National Insurance ({0} at {1}%)
-taxCal_breakdown.table.uplift                                       = 1.25 percentage point uplift in National Insurance contributions funds NHS, health and social care
 taxCal_breakdown.national_insurance_contributions                   = National Insurance contributions
 
 taxCal_breakdown.table.nic2.false                                   = Class 2 National Insurance
@@ -388,7 +387,6 @@ taxCal_breakdown.message.C22215                                 = Due to the lev
 taxCal_breakdown.message.C22216                                 = Due to the level of your income, you are no longer eligible for Marriage Allowance and your claim will be cancelled.
 taxCal_breakdown.message.C22217                                 = There are one or more underpayments, debts or adjustments that have not been included in the calculation as they do not relate to data that HMRC holds.
 taxCal_breakdown.message.C22218                                 = The Capital Gains Tax has been included in the estimated annual liability calculation only, the actual amount of Capital Gains Tax will be in the final declaration calculation.
-taxCal_breakdown.message.C22219                                 = 1.25 percentage point uplift in National Insurance contributions funds NHS, health and social care.
 
 ## Forecast Tax Calc Summary ##
 forecast_taxCalc.heading                                        = Forecast tax calculation
@@ -409,7 +407,6 @@ forecast_taxCalc.totalTaxDeducted                               = Total tax dedu
 forecast_taxCalc.incomeTaxAndNicsDue                            = Income Tax and National Insurance contributions due:
 forecast_taxCalc.capitalGainsTax                                = Capital Gains Tax:
 forecast_taxCalc.incomeTaxNicsCgtDue                            = Income Tax, National Insurance contributions and Capital Gains Tax due:
-
 forecast_taxCalc.noForecast.heading                             = No forecast yet
 forecast_taxCalc.noForecast.text                                = You will be able to see your forecast for the whole year once you have sent an update.
 

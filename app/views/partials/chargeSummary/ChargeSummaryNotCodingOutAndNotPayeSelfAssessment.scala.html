@@ -39,7 +39,7 @@
 
 <div class="govuk-summary-list__row">
     <dt class="govuk-summary-list__key">@messages("chargeSummary.dueDate")</dt>
-    <dd class="govuk-summary-list__value">
+    <dd class="govuk-summary-list__value--numeric govuk-!-text-align-right">
         @if(documentDetailWithDueDate.isOverdue && !documentDetail.checkIsPaid(latePaymentInterestCharge)) {
             <span class="govuk-tag govuk-tag--red">@messages("chargeSummary.overdue")</span>
         }
@@ -53,7 +53,7 @@
 @if(latePaymentInterestCharge) {
     <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">@messages("chargeSummary.lpi.interestPeriod")</dt>
-        <dd class="govuk-summary-list__value">
+        <dd class="govuk-summary-list__value--numeric govuk-!-text-align-right">
         @messages("chargeSummary.lpi.interestPeriod.dates",
             documentDetail.interestFromDate.getOrElse(throw MissingFieldException("Interest From Date")).toLongDateShort,
             documentDetail.interestEndDate.getOrElse(throw MissingFieldException("Interest End Date")).toLongDateShort)</dd>
@@ -67,7 +67,7 @@
         } else messages("chargeSummary.paymentAmount")
     }
     </dt>
-    <dd class="govuk-summary-list__value">
+    <dd class="govuk-summary-list__value--numeric govuk-!-text-align-right">
         <span>
         @{
             if (latePaymentInterestCharge) documentDetail.latePaymentInterestAmount.getOrElse(throw MissingFieldException("Late Payment Interest Amount")).toCurrency
@@ -78,7 +78,7 @@
 </div>
 <div class="govuk-summary-list__row">
     <dt class="govuk-summary-list__key">@messages("chargeSummary.remainingDue")</dt>
-    <dd class="govuk-summary-list__value">
+    <dd class="govuk-summary-list__value--numeric govuk-!-text-align-right">
     @{
         if (codingOutEnabled && documentDetail.isPayeSelfAssessment) {
             messages("chargeSummary.codingOutRemainingToPay", taxYearFromCodingOut, taxYearToCodingOut)

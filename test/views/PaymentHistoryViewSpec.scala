@@ -37,8 +37,9 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
   object PaymentHistoryMessages {
     val heading: String = messages("paymentHistory.heading")
     val paymentHistoryRefundHeading = "Payment and refund history"
-    val title: String = messages("titlePattern.serviceName.govUk", heading)
-    val titleWhenAgentView: String = messages("htmlTitle.agent", heading)
+    val title: String = messages("htmlTitle", heading)
+    val agentTitle: String = messages("htmlTitle.agent", heading)
+    val titlePaymentRefundEnabled: String = messages("htmlTitle", messages("paymentHistory.paymentAndRefundHistory.heading"))
 
     val info: String = s"${messages("PaymentHistory.classicSA")} ${messages("taxYears.oldSa.content.link")}${messages("pagehelp.opensInNewTabText")}."
 
@@ -102,7 +103,7 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
   "The payments history view with payment response model" should {
     "when the user has payment history for a single Year" should {
       s"have the title '${PaymentHistoryMessages.title}'" in new PaymentHistorySetup(paymentEntriesMFA) {
-        document.title() shouldBe PaymentHistoryMessages.title
+        document.title() shouldBe PaymentHistoryMessages.titlePaymentRefundEnabled
         layoutContent.selectHead("h1").text shouldBe PaymentHistoryMessages.paymentHistoryRefundHeading
         layoutContent.selectHead("h2").text.contains(PaymentHistoryMessages.partialH2Heading)
       }
@@ -206,8 +207,8 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
 
   "The payments history view with payment response model" should {
     "when the user has payment history for a single Year" should {
-      s"have the title '${PaymentHistoryMessages.titleWhenAgentView}'" in new PaymentHistorySetupWhenAgentView(paymentEntriesMFA) {
-        document.title() shouldBe PaymentHistoryMessages.titleWhenAgentView
+      s"have the title '${PaymentHistoryMessages.agentTitle}'" in new PaymentHistorySetupWhenAgentView(paymentEntriesMFA) {
+        document.title() shouldBe PaymentHistoryMessages.agentTitle
       }
     }
   }

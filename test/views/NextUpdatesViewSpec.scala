@@ -37,7 +37,7 @@ class NextUpdatesViewSpec extends TestSupport {
 
   object obligationsMessages {
     val heading: String = messages("nextUpdates.heading")
-    val title: String = messages("titlePattern.serviceName.govUk", heading)
+    val title: String = messages("htmlTitle", heading)
     val summary: String = messages("nextUpdates.dropdown.info")
     val summaryQuarterly: String = messages("obligations.quarterlyUpdates")
     val quarterlyLine1: String = messages("nextUpdates.dropdown.quarterlyReturn.text")

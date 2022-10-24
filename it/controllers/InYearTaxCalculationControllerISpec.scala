@@ -98,7 +98,6 @@ class InYearTaxCalculationControllerISpec extends ComponentSpecBase {
   }
 
   object ExpectedValues {
-    val title = messages(s"titlePattern.serviceName.govUk")
     val caption = s"6 April ${taxYear-1} to 5 April $taxYear"
 
     val insetTextFull = s"This calculation is only based on your completed updates for this tax year up to $timeStampEN. It is not your final tax bill for the year. It is a year to date calculation based on the information that has been entered so far."
@@ -122,7 +121,6 @@ class InYearTaxCalculationControllerISpec extends ComponentSpecBase {
     val continueButtonText = "Go to Income Tax Account"
   }
   object ExpectedValuesWelsh {
-    val title = toMessages("CY")(s"titlePattern.serviceName.govUk")
     val caption = s"6 Ebrill ${taxYear-1} i 5 Ebrill $taxYear"
 
     val insetTextFull = s"Mae’r cyfrifiad hwn yn seiliedig ar eich diweddariadau gorffenedig ar gyfer y flwyddyn dreth hon hyd at $timeStampCY yn unig. Nid dyma’ch bil treth terfynol ar gyfer y flwyddyn. Cyfrifiad o’r flwyddyn hyd yma yw hwn ar sail yr wybodaeth sydd wedi cael ei nodi hyd yma."
@@ -167,7 +165,8 @@ class InYearTaxCalculationControllerISpec extends ComponentSpecBase {
       }
 
       "have the correct title" in {
-        document.title() shouldBe ExpectedValues.title
+        val title = messages(s"htmlTitle", document.getElementsByTag("h1").text())
+        document.title() shouldBe title
       }
 
       "have the correct caption" in {
@@ -263,7 +262,8 @@ class InYearTaxCalculationControllerISpec extends ComponentSpecBase {
       }
 
       "have the correct title" in {
-        document.title() shouldBe ExpectedValuesWelsh.title
+        val title = toMessages("CY")(s"htmlTitle", document.getElementsByTag("h1").text())
+        document.title() shouldBe title
       }
 
       "have the correct caption" in {
