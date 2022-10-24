@@ -30,6 +30,7 @@ case class TaxYearSummaryViewModel(timestamp: Option[String],
                                    forecastIncome: Option[Int] = None,
                                    forecastIncomeTaxAndNics: Option[BigDecimal] = None,
                                    forecastAllowancesAndDeductions: Option[BigDecimal] = None,
+                                   forecastTotalTaxableIncome:Option[Int] = None,
                                    periodFrom: Option[LocalDate] = None,
                                    periodTo: Option[LocalDate] = None)
 
@@ -51,6 +52,7 @@ object TaxYearSummaryViewModel {
       forecastIncome = calc.calculation.flatMap(c => c.endOfYearEstimate.flatMap(_.totalEstimatedIncome)),
       forecastIncomeTaxAndNics = calc.calculation.flatMap(c => c.endOfYearEstimate.flatMap(_.incomeTaxNicAndCgtAmount)),
       forecastAllowancesAndDeductions = calc.calculation.flatMap(c => c.endOfYearEstimate.flatMap(_.totalAllowancesAndDeductions)),
+      forecastTotalTaxableIncome = calc.calculation.flatMap(c => c.endOfYearEstimate.flatMap(_.totalTaxableIncome)),
       periodFrom = calc.metadata.periodFrom,
       periodTo = calc.metadata.periodTo
     )
