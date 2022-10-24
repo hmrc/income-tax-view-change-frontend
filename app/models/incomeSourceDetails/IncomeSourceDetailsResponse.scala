@@ -18,7 +18,7 @@ package models.incomeSourceDetails
 
 import java.time.LocalDate
 import play.api.libs.json.{Format, JsValue, Json}
-import services.DateServiceInterface
+import services.{DateService, DateServiceInterface}
 
 sealed trait IncomeSourceDetailsResponse {
   def toJson: JsValue
@@ -42,22 +42,18 @@ case class IncomeSourceDetailsModel(mtdbsa: String,
     .map(_.getYear).sortWith(_ < _).headOption.getOrElse(throw new RuntimeException("User missing first accounting period information"))
 
   def orderedTaxYearsByAccountingPeriods(implicit dateService: DateServiceInterface): List[Int] = {
-    (startingTaxYear to getCurrentTaxEndYear).toList
+    (startingTaxYear to currentTaxYearEnd(dateService)).toList
   }
 
   def orderedTaxYearsByYearOfMigration(implicit dateService: DateServiceInterface): List[Int] = {
-    yearOfMigration.map(year => (year.toInt to getCurrentTaxEndYear).toList).getOrElse(List.empty[Int])
+    yearOfMigration.map(year => (year.toInt to currentTaxYearEnd(dateService)).toList).getOrElse(List.empty[Int])
   }
 
   val hasPropertyIncome: Boolean = property.nonEmpty
   val hasBusinessIncome: Boolean = businesses.nonEmpty
 
-  def getCurrentTaxEndYear(implicit dateService: DateServiceInterface) : Int = {
-    val currentDate = dateService.getCurrentDate
-    if (currentDate.isBefore(LocalDate.of(currentDate.getYear, 4, 6))) currentDate.getYear
-    else currentDate.getYear + 1
-  }
-
+  val currentTaxYearEnd: DateServiceInterface => Int =
+    implicit dateService => dateService.getCurrentTaxEndYear
 }
 
 case class IncomeSourceDetailsError(status: Int, reason: String) extends IncomeSourceDetailsResponse {

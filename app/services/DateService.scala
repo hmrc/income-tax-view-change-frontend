@@ -46,10 +46,19 @@ class DateService @Inject()(implicit val frontendAppConfig: FrontendAppConfig) e
       case _ => currentDate.getYear + 1
     }
   }
+
+  def getCurrentTaxEndYear: Int = {
+    val currentDate = getCurrentDate
+    if (currentDate.isBefore(LocalDate.of(currentDate.getYear, 4, 6))) currentDate.getYear
+    else currentDate.getYear + 1
+  }
+
 }
 
 trait DateServiceInterface {
   def getCurrentDate: LocalDate
 
   def getCurrentTaxYearEnd(currentDate: LocalDate): Int
+
+  def getCurrentTaxEndYear : Int
 }
