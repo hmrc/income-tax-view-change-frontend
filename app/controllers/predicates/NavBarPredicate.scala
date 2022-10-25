@@ -57,7 +57,6 @@ class NavBarPredicate @Inject()(val btaNavBarController: BtaNavBarController,
   }
 
   def retrieveCacheAndHandleNavBar[A](request: MtdItUser[A])(implicit hc: HeaderCarrier): Future[Either[Result, MtdItUser[A]]] = {
-    println("getting origin")
     request.session.get(SessionKeys.origin) match {
       case Some(origin) if OriginEnum(origin) == Some(PTA) =>
         Future.successful(Right(returnMtdItUserWithNavbar(request, ptaPartial()(request, request.messages, appConfig))))
