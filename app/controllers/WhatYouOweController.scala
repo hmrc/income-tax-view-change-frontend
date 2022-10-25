@@ -45,7 +45,7 @@ class WhatYouOweController @Inject()(val checkSessionTimeout: SessionTimeoutPred
                                      val retrieveBtaNavBar: NavBarPredicate,
                                      val authorisedFunctions: FrontendAuthorisedFunctions,
                                      val auditingService: AuditingService,
-                                     val dataService: DateService,
+                                     val dateService: DateService,
                                      val incomeSourceDetailsService: IncomeSourceDetailsService,
                                      implicit val appConfig: FrontendAppConfig,
                                      implicit override val mcc: MessagesControllerComponents,
@@ -60,7 +60,7 @@ class WhatYouOweController @Inject()(val checkSessionTimeout: SessionTimeoutPred
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
     whatYouOweService.getWhatYouOweChargesList() flatMap {
       whatYouOweChargesList =>
-        auditingService.extendedAudit(WhatYouOweResponseAuditModel(user, whatYouOweChargesList, isEnabled(R7bTxmEvents), dataService))
+        auditingService.extendedAudit(WhatYouOweResponseAuditModel(user, whatYouOweChargesList, isEnabled(R7bTxmEvents), dateService))
 
         val codingOutEnabled = isEnabled(CodingOut)
 
@@ -70,7 +70,7 @@ class WhatYouOweController @Inject()(val checkSessionTimeout: SessionTimeoutPred
             Ok(whatYouOwe(
               creditCharges,
               whatYouOweChargesList = whatYouOweChargesList, hasLpiWithDunningBlock = whatYouOweChargesList.hasLpiWithDunningBlock,
-              currentTaxYear = user.incomeSources.currentTaxYearEnd(dataService), backUrl = backUrl, utr = user.saUtr,
+              currentTaxYear = dateService.getCurrentTaxYearEnd(dateService.getCurrentDate), backUrl = backUrl, utr = user.saUtr,
               btaNavPartial = user.btaNavPartial,
               dunningLock = whatYouOweChargesList.hasDunningLock,
               codingOutEnabled = codingOutEnabled,

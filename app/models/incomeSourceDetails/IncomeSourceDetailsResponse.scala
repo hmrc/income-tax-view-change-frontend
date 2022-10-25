@@ -16,9 +16,8 @@
 
 package models.incomeSourceDetails
 
-import java.time.LocalDate
 import play.api.libs.json.{Format, JsValue, Json}
-import services.{DateService, DateServiceInterface}
+import services.DateServiceInterface
 
 sealed trait IncomeSourceDetailsResponse {
   def toJson: JsValue
@@ -30,6 +29,9 @@ case class IncomeSourceDetailsModel(mtdbsa: String,
                                     property: Option[PropertyDetailsModel]
                                    ) extends IncomeSourceDetailsResponse {
 
+  val hasPropertyIncome: Boolean = property.nonEmpty
+  val hasBusinessIncome: Boolean = businesses.nonEmpty
+
   override def toJson: JsValue = Json.toJson(this)
 
   def sanitise: IncomeSourceDetailsModel = {
@@ -38,22 +40,16 @@ case class IncomeSourceDetailsModel(mtdbsa: String,
     this.copy(property = property2, businesses = businesses2)
   }
 
+  def orderedTaxYearsByAccountingPeriods(implicit dateService: DateServiceInterface): List[Int] = {
+    (startingTaxYear to dateService.getCurrentTaxYearEnd(dateService.getCurrentDate)).toList
+  }
+
   def startingTaxYear: Int = (businesses.flatMap(_.firstAccountingPeriodEndDate) ++ property.flatMap(_.firstAccountingPeriodEndDate))
     .map(_.getYear).sortWith(_ < _).headOption.getOrElse(throw new RuntimeException("User missing first accounting period information"))
 
-  def orderedTaxYearsByAccountingPeriods(implicit dateService: DateServiceInterface): List[Int] = {
-    (startingTaxYear to currentTaxYearEnd(dateService)).toList
-  }
-
   def orderedTaxYearsByYearOfMigration(implicit dateService: DateServiceInterface): List[Int] = {
-    yearOfMigration.map(year => (year.toInt to currentTaxYearEnd(dateService)).toList).getOrElse(List.empty[Int])
+    yearOfMigration.map(year => (year.toInt to dateService.getCurrentTaxYearEnd(dateService.getCurrentDate)).toList).getOrElse(List.empty[Int])
   }
-
-  val hasPropertyIncome: Boolean = property.nonEmpty
-  val hasBusinessIncome: Boolean = businesses.nonEmpty
-
-  val currentTaxYearEnd: DateServiceInterface => Int =
-    implicit dateService => dateService.getCurrentTaxEndYear
 }
 
 case class IncomeSourceDetailsError(status: Int, reason: String) extends IncomeSourceDetailsResponse {
