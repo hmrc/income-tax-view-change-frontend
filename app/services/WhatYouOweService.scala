@@ -64,7 +64,7 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
         val codedOutDocumentDetail: Option[DocumentDetailWithCodingDetails] = if (isEnabled(CodingOut)) {
           financialDetailsModelList.flatMap(fdm =>
             fdm.documentDetails.find(dd => dd.isPayeSelfAssessment
-              && dd.taxYear.toInt == (dateService.getCurrentTaxYearEnd(dateService.getCurrentDate) - 1)) flatMap fdm.getDocumentDetailWithCodingDetails
+              && dd.taxYear.toInt == (dateService.getCurrentTaxYearEnd - 1)) flatMap fdm.getDocumentDetailWithCodingDetails
           ).headOption
         } else None
 
@@ -73,7 +73,7 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
           chargesList = getFilteredChargesList(financialDetailsModelList),
           codedOutDocumentDetail = codedOutDocumentDetail)
 
-        callOutstandingCharges(mtdUser.saUtr, mtdUser.incomeSources.yearOfMigration, dateService.getCurrentTaxYearEnd(dateService.getCurrentDate)).map {
+        callOutstandingCharges(mtdUser.saUtr, mtdUser.incomeSources.yearOfMigration, dateService.getCurrentTaxYearEnd).map {
           case Some(outstandingChargesModel) => whatYouOweChargesList.copy(outstandingChargesModel = Some(outstandingChargesModel))
           case _ => whatYouOweChargesList
         }
