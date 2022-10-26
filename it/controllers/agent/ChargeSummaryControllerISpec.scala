@@ -389,8 +389,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
             items = Some(Seq(SubItem(Some(LocalDate.now), paymentLotItem = Some("000001"), paymentLot = Some("paymentLot"),
               amount = Some(9000), clearingDate = Some(LocalDate.parse("2019-08-13")), dunningLock = Some("dunning lock"), interestLock = Some("Manual RPI Signal"))))
           )
-        ),
-        codingDetails = None
+        )
       ))
     )
   }
@@ -425,8 +424,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
             items = Some(Seq(SubItem(Some(LocalDate.now),
               amount = Some(10000), clearingDate = Some(LocalDate.parse("2019-08-13")))))
           )
-        ),
-        codingDetails = Some(List(CodingDetails(taxYearReturn = "2021", amountCodedOut = 2500, taxYearCoding = "2020")))
+        )
       ))
     )
   }

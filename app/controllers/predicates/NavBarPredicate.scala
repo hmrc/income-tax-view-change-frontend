@@ -47,7 +47,6 @@ class NavBarPredicate @Inject()(val btaNavBarController: BtaNavBarController,
 
     val header: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
     implicit val hc: HeaderCarrier = header.copy(extraHeaders = header.headers(Seq(play.api.http.HeaderNames.COOKIE)))
-
     if (isDisabled(NavBarFs)) {
       Future.successful(Right(request))
     } else {

@@ -61,10 +61,10 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
         val financialDetailsModelList = financialDetails.asInstanceOf[List[FinancialDetailsModel]]
         val balanceDetails = financialDetailsModelList.headOption
           .map(_.balanceDetails).getOrElse(BalanceDetails(0.00, 0.00, 0.00, None, None, None, None))
-        val codedOutDocumentDetail: Option[DocumentDetailWithCodingDetails] = if (isEnabled(CodingOut)) {
+        val codedOutDocumentDetail = if (isEnabled(CodingOut)) {
           financialDetailsModelList.flatMap(fdm =>
             fdm.documentDetails.find(dd => dd.isPayeSelfAssessment
-              && dd.taxYear.toInt == (dateService.getCurrentTaxYearEnd(dateService.getCurrentDate) - 1)) flatMap fdm.getDocumentDetailWithCodingDetails
+              && dd.taxYear.toInt == (dateService.getCurrentTaxYearEnd(dateService.getCurrentDate) - 1))
           ).headOption
         } else None
 
