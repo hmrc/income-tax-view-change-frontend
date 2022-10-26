@@ -61,7 +61,6 @@ trait CreditHistoryDataHelper {
 
   val taxYearFinancialDetails = FinancialDetailsModel(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
-    codingDetails = None,
     documentDetails = List(
       documentDetailsWhichIsCutOverCredit,
       DocumentDetail("testYear2", "testTransactionId2", None, None, None, None, LocalDate.of(taxYear, 3, 29))
@@ -83,7 +82,6 @@ trait CreditHistoryDataHelper {
 
   val taxYearFinancialDetails_PlusOneYear = FinancialDetailsModel(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
-    codingDetails = None,
     documentDetails = List(
       documentDetailsWhichIsMfaCredit,
       DocumentDetail(taxYear = "testYear2", transactionId = "testTransactionId2", documentDescription = None,

@@ -229,15 +229,12 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
             interestOutstandingAmount = None, interestRate = None,
             latePaymentInterestId = None, interestFromDate = Some(LocalDate.parse("2019-05-25")),
             interestEndDate = Some(LocalDate.parse("2019-06-25")), latePaymentInterestAmount = None)
-          val dd3 = dd1.copy(transactionId = id1040000126, documentText = Some("PAYE Self Assessment"))
-          val cd1 = CodingDetails(taxYearReturn = "2021", amountCodedOut = 999.99, taxYearCoding = "2020")
-          val cd2 = CodingDetails(taxYearReturn = "2020", amountCodedOut = 99.99, taxYearCoding = "2019")
+          val dd3 = dd1.copy(transactionId = id1040000126, documentText = Some("PAYE Self Assessment"), amountCodedOut = Some(2500.00))
           when(mockIncomeTaxViewChangeConnector.getOutstandingCharges(any(), any(), any())(any()))
             .thenReturn(Future.successful(OutstandingChargesErrorModel(404, "NOT_FOUND")))
           when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any(), any(), any()))
             .thenReturn(Future.successful(List(FinancialDetailsModel(
               balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
-              codingDetails = Some(List(cd1, cd2)),
               documentDetails = List(dd1, dd2, dd3),
               financialDetails = List(
                 FinancialDetail("2021", Some("SA Balancing Charge"), Some(id1040000124), None, Some("type"), Some(100), Some(100),
@@ -254,7 +251,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
             chargesList = List(DocumentDetailWithDueDate(documentDetail = dd1, dueDate = Some(LocalDate.parse("2021-08-24")), codingOutEnabled = true),
               DocumentDetailWithDueDate(documentDetail = dd2, dueDate = Some(LocalDate.parse("2021-08-25")), codingOutEnabled = true)),
             outstandingChargesModel = None,
-            codedOutDocumentDetail = Some(DocumentDetailWithCodingDetails(dd3, cd1))
+            codedOutDocumentDetail = Some(dd3)
           )
         }
       }
@@ -275,13 +272,11 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
             latePaymentInterestId = None, interestFromDate = Some(LocalDate.parse("2019-05-25")),
             interestEndDate = Some(LocalDate.parse("2019-06-25")), latePaymentInterestAmount = None)
           val dd3 = dd1.copy(transactionId = id1040000126, documentText = Some("PAYE Self Assessment"))
-          val cd1 = CodingDetails(taxYearReturn = "2021", amountCodedOut = 999.99, taxYearCoding = "2020")
           when(mockIncomeTaxViewChangeConnector.getOutstandingCharges(any(), any(), any())(any()))
             .thenReturn(Future.successful(OutstandingChargesErrorModel(404, "NOT_FOUND")))
           when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any(), any(), any()))
             .thenReturn(Future.successful(List(FinancialDetailsModel(
               balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
-              codingDetails = Some(List(cd1)),
               documentDetails = List(dd1, dd2, dd3),
               financialDetails = List(
                 FinancialDetail("2021", Some("SA Balancing Charge"), Some(id1040000124), None, Some("type"), Some(100), Some(100),
@@ -330,7 +325,6 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
         when(mockFinancialDetailsService.getAllCreditFinancialDetails(any(), any(), any()))
           .thenReturn(Future.successful(List(FinancialDetailsModel(
             balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
-            codingDetails = None,
             documentDetails = creditDocumentDetailList,
             financialDetails = List(
               FinancialDetail("2021", Some("SA Balancing Charge"), Some(id1040000124), None, Some("type"), Some(100), Some(100),

@@ -45,8 +45,8 @@ class ClientDetailsService @Inject()(citizenDetailsConnector: CitizenDetailsConn
         }
       case CitizenDetailsModel(_, _, None) => Future.successful(Left(CitizenDetailsNotFound))
       case CitizenDetailsErrorModel(code, _) if code == 404 => Future.successful(Left(CitizenDetailsNotFound))
-      case _ =>
-        Logger("application").error(s"[ClientDetailsService][checkClientDetails] - Unexpected response retrieving Citizen Details")
+      case err =>
+        Logger("application").error(s"[ClientDetailsService][checkClientDetails] - Unexpected response retrieving Citizen Details" + err)
         Future.successful(Left(UnexpectedResponse))
     }
 }

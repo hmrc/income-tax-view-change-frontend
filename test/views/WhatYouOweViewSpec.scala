@@ -114,7 +114,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     )(FakeRequest())
 
     val html: HtmlFormat.Appendable = whatYouOweView(creditCharges, charges, hasLpiWithDunningBlock, currentTaxYear, "testBackURL",
-      Some("1234567890"), None, dunningLock, codingOutEnabled, MFADebitsEnabled, whatYouOweCreditAmountEnabled,creditAndRefundEnabled = true)(FakeRequest(), individualUser, implicitly)
+      Some("1234567890"), None, dunningLock, codingOutEnabled, MFADebitsEnabled, whatYouOweCreditAmountEnabled, creditAndRefundEnabled = true)(FakeRequest(), individualUser, implicitly)
     val pageDocument: Document = Jsoup.parse(contentAsString(html))
 
     def verifySelfAssessmentLink(): Unit = {
@@ -253,21 +253,39 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
   val codingOutAmount = 444.23
   val codingOutHeader: String = messages("whatYouOwe.codingOutHeading")
-  val codingOutNotice = s"${messages("whatYouOwe.codingOut-1a")} £444.23 ${messages("whatYouOwe.codingOut-1b")} ${messages("whatYouOwe.codingOut-2", "2020", "2021")} ${messages("whatYouOwe.codingOut-3")}"
+  val codingOutNotice = s"${messages("whatYouOwe.codingOut-1a")} £43.21 ${messages("whatYouOwe.codingOut-1b")} ${messages("whatYouOwe.codingOut-2", "2020", "2021")} ${messages("whatYouOwe.codingOut-3")}"
+  val codingOutNoticeFullyCollected = s"${messages("whatYouOwe.codingOut-1a")} £0.00 ${messages("whatYouOwe.codingOut-1b")} ${messages("whatYouOwe.codingOut-2", "2020", "2021")} ${messages("whatYouOwe.codingOut-3")}"
 
-  val codedOutDocumentDetail: DocumentDetail = DocumentDetail(taxYear = "2021", transactionId = "CODINGOUT02", documentDescription = Some("TRM New Charge"),
+  val codedOutDocumentDetailNICs: DocumentDetail = DocumentDetail(taxYear = "2021", transactionId = "CODINGOUT02", documentDescription = Some("TRM New Charge"),
     documentText = Some("Class 2 National Insurance"), outstandingAmount = Some(12.34),
     originalAmount = Some(43.21), documentDate = LocalDate.of(2018, 3, 29),
     interestOutstandingAmount = None, interestRate = None,
     latePaymentInterestId = None, interestFromDate = Some(LocalDate.parse("2019-05-25")),
     interestEndDate = Some(LocalDate.parse("2019-06-25")), latePaymentInterestAmount = None)
 
+  val codedOutDocumentDetail: DocumentDetail = DocumentDetail(taxYear = "2021", transactionId = "CODINGOUT02", documentDescription = Some("TRM New Charge"),
+    documentText = Some("Class 2 National Insurance"), outstandingAmount = Some(12.34),
+    originalAmount = Some(43.21), documentDate = LocalDate.of(2018, 3, 29),
+    interestOutstandingAmount = None, interestRate = None,
+    latePaymentInterestId = None, interestFromDate = Some(LocalDate.parse("2019-05-25")),
+    interestEndDate = Some(LocalDate.parse("2019-06-25")), latePaymentInterestAmount = None,
+    amountCodedOut = Some(43.21))
+
+  val codedOutDocumentDetailFullyCollected: DocumentDetail = DocumentDetail(taxYear = "2021", transactionId = "CODINGOUT02", documentDescription = Some("TRM New Charge"),
+    documentText = Some("Class 2 National Insurance"), outstandingAmount = Some(12.34),
+    originalAmount = Some(43.21), documentDate = LocalDate.of(2018, 3, 29),
+    interestOutstandingAmount = None, interestRate = None,
+    latePaymentInterestId = None, interestFromDate = Some(LocalDate.parse("2019-05-25")),
+    interestEndDate = Some(LocalDate.parse("2019-06-25")), latePaymentInterestAmount = None,
+    amountCodedOut = Some(0))
+
   val codedOutDocumentDetailPayeSA: DocumentDetail = DocumentDetail(taxYear = "2021", transactionId = "CODINGOUT02", documentDescription = Some("TRM New Charge"),
     documentText = Some("PAYE Self Assessment"), outstandingAmount = Some(0.00),
     originalAmount = Some(43.21), documentDate = LocalDate.of(2018, 3, 29),
     interestOutstandingAmount = None, interestRate = None,
     latePaymentInterestId = None, interestFromDate = Some(LocalDate.parse("2019-05-25")),
-    interestEndDate = Some(LocalDate.parse("2019-06-25")), latePaymentInterestAmount = None)
+    interestEndDate = Some(LocalDate.parse("2019-06-25")), latePaymentInterestAmount = None,
+    amountCodedOut = Some(43.21))
 
   val outstandingChargesWithAciValueZeroAndOverdue: OutstandingChargesModel = outstandingChargesModel(LocalDate.now().minusDays(15).toString, 0.00)
 
@@ -285,12 +303,25 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     outstandingChargesModel = Some(outstandingChargesWithAciValueZeroAndOverdue)
   )
 
-  val whatYouOweDataWithCodingOut: WhatYouOweChargesList = WhatYouOweChargesList(
+  val whatYouOweDataWithCodingOutNics2: WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
-    chargesList = List(testFinancialDetailsModelWithCodingOut().getAllDocumentDetailsWithDueDates().head),
+    chargesList = List(testFinancialDetailsModelWithCodingOutNics2().getAllDocumentDetailsWithDueDates().head),
     outstandingChargesModel = None,
-    codedOutDocumentDetail = Some(DocumentDetailWithCodingDetails(codedOutDocumentDetail,
-      CodingDetails(taxYearReturn = "2021", amountCodedOut = codingOutAmount, taxYearCoding = "2020")))
+    codedOutDocumentDetail = Some(codedOutDocumentDetail)
+  )
+
+  val whatYouOweDataNoCharges: WhatYouOweChargesList = WhatYouOweChargesList(
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
+    chargesList = List(),
+    outstandingChargesModel = None,
+    codedOutDocumentDetail = None
+  )
+
+  val whatYouOweDataWithCodingOutFullyCollected: WhatYouOweChargesList = WhatYouOweChargesList(
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
+    chargesList = List(testFinancialDetailsModelWithCodingOutNics2().getAllDocumentDetailsWithDueDates().head),
+    outstandingChargesModel = None,
+    codedOutDocumentDetail = Some(codedOutDocumentDetailFullyCollected)
   )
 
   val whatYouOweDataWithMFADebits: WhatYouOweChargesList = WhatYouOweChargesList(
@@ -302,13 +333,12 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
   val whatYouOweDataWithCodingOutFuture: WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
-    chargesList = List(testFinancialDetailsModelWithCodingOut().getAllDocumentDetailsWithDueDates().head),
+    chargesList = List(testFinancialDetailsModelWithCodingOutNics2().getAllDocumentDetailsWithDueDates().head),
     outstandingChargesModel = None,
-    codedOutDocumentDetail = Some(DocumentDetailWithCodingDetails(codedOutDocumentDetail,
-      CodingDetails(taxYearReturn = "2021", amountCodedOut = codingOutAmount, taxYearCoding = "2020")))
+    codedOutDocumentDetail = Some(codedOutDocumentDetail)
   )
 
-  val whatYouOweDataCodingOutWithoutAmountCodingOut: WhatYouOweChargesList = whatYouOweDataWithCodingOut.copy(codedOutDocumentDetail = None)
+  val whatYouOweDataCodingOutWithoutAmountCodingOut: WhatYouOweChargesList = whatYouOweDataWithCodingOutNics2.copy(codedOutDocumentDetail = None)
 
   val whatYouOweDataWithCancelledPayeSa: WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
@@ -321,9 +351,8 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
   val whatYouOweDataWithPayeSA: WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(0.00, 0.00, 0.00, None, None, None, None),
-    chargesList = List(),
-    codedOutDocumentDetail = Some(DocumentDetailWithCodingDetails(codedOutDocumentDetailPayeSA,
-      CodingDetails(taxYearReturn = "2021", amountCodedOut = codingOutAmount, taxYearCoding = "2020")))
+    chargesList = List(testFinancialDetailsModelWithCodingOutNics2().getAllDocumentDetailsWithDueDates().head),
+    codedOutDocumentDetail = Some(codedOutDocumentDetailPayeSA)
   )
 
   val noUtrModel: WhatYouOweChargesList = WhatYouOweChargesList(balanceDetails = BalanceDetails(0.00, 0.00, 0.00, None, None, None, None))
@@ -486,7 +515,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           pageDocument.getElementById("due-1-overdue") shouldBe null
         }
 
-        "have payment details and should not contain future payments and overdue payment headers" in new Setup(charges =whatYouOweDataWithDataDueIn30Days()) {
+        "have payment details and should not contain future payments and overdue payment headers" in new Setup(charges = whatYouOweDataWithDataDueIn30Days()) {
           pageDocument.getElementById("payment-button").text shouldBe payNow
 
           pageDocument.getElementById("payment-button-link").attr("href") shouldBe controllers.routes.PaymentController.paymentHandoff(5000).url
@@ -590,7 +619,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           interestTable.select("td").first().text() shouldBe ""
           interestTable.select("td").get(1).text() shouldBe messages("whatYouOwe.balancingCharge.interest.line1.text") + " " +
             messages("whatYouOwe.balancingCharge.interest.line2.text",
-                      LocalDate.now().minusDays(30).toLongDateShort, LocalDate.now().toLongDateShort)
+              LocalDate.now().minusDays(30).toLongDateShort, LocalDate.now().toLongDateShort)
           interestTable.select("td").get(2).text() shouldBe preMtdPayments(
             (LocalDate.now().getYear - 2).toString, (LocalDate.now().getYear - 1).toString)
           interestTable.select("td").last().text() shouldBe "£12.67"
@@ -1003,19 +1032,19 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     }
 
     "codingOut is enabled" should {
-      "have coding out message displayed at the bottom of the page" in new Setup(charges = whatYouOweDataWithCodingOut, codingOutEnabled = true) {
+      "have coding out message displayed at the bottom of the page" in new Setup(charges = whatYouOweDataWithCodingOutNics2, codingOutEnabled = true) {
         pageDocument.getElementById("coding-out-summary-link") should not be null
         pageDocument.getElementById("coding-out-summary-link").attr("href") shouldBe
           "/report-quarterly/income-and-expenses/view/tax-years/2021/charge?id=CODINGOUT02"
         pageDocument.getElementById("coding-out-notice").text().contains(codingOutAmount.toString)
       }
-      "have a class 2 Nics overdue entry" in new Setup(charges = whatYouOweDataWithCodingOut, codingOutEnabled = true) {
+      "have a class 2 Nics overdue entry" in new Setup(charges = whatYouOweDataWithCodingOutNics2, codingOutEnabled = true) {
         pageDocument.getElementById("due-0") should not be null
         pageDocument.getElementById("due-0").text().contains("Class 2 National Insurance") shouldBe true
         pageDocument.select("#payments-due-table tbody > tr").size() shouldBe 1
       }
 
-      "should have payment processing bullets when there is coding out" in new Setup(charges = whatYouOweDataWithCodingOut) {
+      "should have payment processing bullets when there is coding out" in new Setup(charges = whatYouOweDataWithCodingOutNics2) {
 
         pageDocument.getElementById("payments-made").text shouldBe paymentsMade
         val paymentProcessingBullet: Element = pageDocument.getElementById("payments-made-bullets")
@@ -1035,25 +1064,27 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     }
 
     "codingOut is disabled" should {
-      "have no coding out message displayed" in new Setup(charges = whatYouOweDataWithCodingOut, codingOutEnabled = false) {
+      "have no coding out message displayed" in new Setup(charges = whatYouOweDataWithCodingOutNics2, codingOutEnabled = false) {
         pageDocument.getElementById("coding-out-notice") shouldBe null
       }
-      "have a balancing charge overdue entry" in new Setup(charges = whatYouOweDataWithCodingOut, codingOutEnabled = false) {
+      "have a balancing charge overdue entry" in new Setup(charges = whatYouOweDataWithCodingOutNics2, codingOutEnabled = false) {
         pageDocument.select("#due-0 a").get(0).text() shouldBe "Balancing payment 2021"
         pageDocument.select("#payments-due-table tbody > tr").size() shouldBe 1
       }
 
-      "have a cancelled paye self assessment entry" in new Setup(charges = whatYouOweDataWithCancelledPayeSa, codingOutEnabled = true) {
+      "have a cancelled paye self assessment entry" in new Setup(charges = whatYouOweDataWithCancelledPayeSa, codingOutEnabled = false) {
         pageDocument.getElementById("coding-out-notice") shouldBe null
         pageDocument.getElementById("due-0") should not be null
-        pageDocument.getElementById("due-0").text().contains(cancelledPayeSelfAssessment) shouldBe true
+        //        pageDocument.getElementById("due-0").text().contains(cancelledPayeSelfAssessment) shouldBe true
+        pageDocument.getElementById("due-0").text() shouldBe "25 Aug 2021 OVERDUE Balancing payment 2021 2020 to 2021 Tax year £12.34"
         pageDocument.select("#payments-due-table tbody > tr").size() shouldBe 1
         pageDocument.getElementById("coding-out-summary-link") shouldBe null
       }
-      "show only PAYE SA, SA note and payment bullet points" in new Setup(charges = whatYouOweDataWithPayeSA, codingOutEnabled = true) {
+
+      "show only SA note and payment bullet points" in new Setup(charges = whatYouOweDataWithPayeSA, codingOutEnabled = false) {
         pageDocument.title() shouldBe whatYouOweTitle
         pageDocument.selectFirst("h1").text shouldBe whatYouOweHeading
-        pageDocument.getElementById("coding-out-notice").text() shouldBe codingOutNotice
+        pageDocument.getElementById("coding-out-notice") shouldBe null
         pageDocument.getElementById("sa-note-migrated").text shouldBe saNote
         pageDocument.getElementById("outstanding-charges-note-migrated").text shouldBe osChargesNote
         pageDocument.getElementById("payments-made").text shouldBe paymentsMade
@@ -1063,7 +1094,8 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
       }
 
-      "should have payment processing bullets" in new Setup(charges = whatYouOweDataWithCodingOut, codingOutEnabled = false) {
+
+      "should have payment processing bullets" in new Setup(charges = whatYouOweDataWithCodingOutNics2, codingOutEnabled = false) {
 
         pageDocument.getElementById("payments-made").text shouldBe paymentsMade
         val paymentProcessingBullet: Element = pageDocument.getElementById("payments-made-bullets")
@@ -1076,8 +1108,8 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     }
 
     "When codingOut is enabled - At crystallization, the user has the coding out requested amount fully collected" should {
-      "only show coding out content under header" in new Setup(charges = whatYouOweDataWithCodingOut, codingOutEnabled = true) {
-        pageDocument.getElementById("coding-out-notice").text() shouldBe codingOutNotice
+      "only show coding out content under header" in new Setup(charges = whatYouOweDataWithCodingOutFullyCollected, codingOutEnabled = true) {
+        pageDocument.getElementById("coding-out-notice").text() shouldBe codingOutNoticeFullyCollected
         pageDocument.getElementById("coding-out-summary-link").attr("href") shouldBe
           "/report-quarterly/income-and-expenses/view/tax-years/2021/charge?id=CODINGOUT02"
         pageDocument.getElementById("coding-out-notice").text().contains(codingOutAmount.toString)
@@ -1165,23 +1197,23 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     val unallocatedCreditMsg = "You have £100.00 in your account. We’ll use this to pay the amount due on the next due date."
     "show unallocated credits" when {
       "user is an individual with the feature switch on" in new Setup(creditCharges = creditDocumentDetailList,
-        charges = whatYouOweDataWithDataDueInMoreThan30Days(), whatYouOweCreditAmountEnabled = true){
+        charges = whatYouOweDataWithDataDueInMoreThan30Days(), whatYouOweCreditAmountEnabled = true) {
         pageDocument.getElementById("unallocated-credit-note").text() shouldBe unallocatedCreditMsg
       }
 
-      "user is an agent with the feature switch on" in new AgentSetup(creditCharges =  creditDocumentDetailList,
-        charges = whatYouOweDataWithDataDueInMoreThan30Days(), whatYouOweCreditAmountEnabled = true){
+      "user is an agent with the feature switch on" in new AgentSetup(creditCharges = creditDocumentDetailList,
+        charges = whatYouOweDataWithDataDueInMoreThan30Days(), whatYouOweCreditAmountEnabled = true) {
         pageDocument.getElementById("unallocated-credit-note").text() shouldBe unallocatedCreditMsg
       }
     }
 
     "not show unallocated credits" when {
-      "user is an individual with the feature switch off" in new Setup(creditCharges= creditDocumentDetailList,
-        charges = whatYouOweDataWithDataDueInMoreThan30Days()){
+      "user is an individual with the feature switch off" in new Setup(creditCharges = creditDocumentDetailList,
+        charges = whatYouOweDataWithDataDueInMoreThan30Days()) {
         pageDocument.getElementById("unallocated-credit-note") shouldBe null
       }
 
-      "user is an agent with the feature switch on" in new AgentSetup(creditCharges= creditDocumentDetailList,
+      "user is an agent with the feature switch on" in new AgentSetup(creditCharges = creditDocumentDetailList,
         charges = whatYouOweDataWithDataDueInMoreThan30Days()) {
         pageDocument.getElementById("unallocated-credit-note") shouldBe null
       }

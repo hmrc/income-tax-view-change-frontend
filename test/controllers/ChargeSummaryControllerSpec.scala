@@ -114,7 +114,7 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
 
     "redirect a user back to the custom error page" when {
 
-      "coding out exists but FS is disabled" in new Setup(testFinancialDetailsModelWithCodingOut()) {
+      "coding out exists but FS is disabled" in new Setup(testFinancialDetailsModelWithCodingOutNics2()) {
         disable(CodingOut)
         val result: Future[Result] = controller.show(testTaxYear, "1040000123")(fakeRequestWithActiveSession)
 
@@ -145,7 +145,7 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
           redirectLocation(result) shouldBe Some(controllers.errors.routes.NotFoundDocumentIDLookupController.show().url)
         }
 
-        "class 2 Nics exists but FS is disabled" in new Setup(testFinancialDetailsModelWithCodingOut()) {
+        "class 2 Nics exists but FS is disabled" in new Setup(testFinancialDetailsModelWithCodingOutNics2()) {
           disable(CodingOut)
           val result: Future[Result] = controller.show(testTaxYear, "CODINGOUT01")(fakeRequestWithActiveSession)
 
@@ -297,7 +297,7 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
 
     "redirect a user back to the custom error page" when {
 
-      "coding out exists but FS is disabled" in new Setup(testFinancialDetailsModelWithCodingOut(), isAgent = true) {
+      "coding out exists but FS is disabled" in new Setup(testFinancialDetailsModelWithCodingOutNics2(), isAgent = true) {
         disable(CodingOut)
         val result: Future[Result] = controller.showAgent(testTaxYear, "1040000123")(fakeRequestConfirmedClient("AB123456C"))
 
@@ -339,7 +339,7 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
           redirectLocation(result) shouldBe Some(controllers.agent.errors.routes.AgentNotFoundDocumentIDLookupController.show().url)
         }
 
-        "class 2 Nics exists but FS is disabled" in new Setup(testFinancialDetailsModelWithCodingOut(), isAgent = true) {
+        "class 2 Nics exists but FS is disabled" in new Setup(testFinancialDetailsModelWithCodingOutNics2(), isAgent = true) {
           disable(CodingOut)
           val result: Future[Result] = controller.showAgent(testTaxYear, "CODINGOUT01")(fakeRequestConfirmedClient("AB123456C"))
 

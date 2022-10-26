@@ -35,7 +35,8 @@ case class DocumentDetail(taxYear: String,
                           latePaymentInterestAmount: Option[BigDecimal] = None,
                           lpiWithDunningBlock: Option[BigDecimal] = None,
                           paymentLotItem: Option[String] = None,
-                          paymentLot: Option[String] = None
+                          paymentLot: Option[String] = None,
+                          amountCodedOut: Option[BigDecimal] = None
                          ) {
 
   def credit: Option[BigDecimal] = originalAmount match {

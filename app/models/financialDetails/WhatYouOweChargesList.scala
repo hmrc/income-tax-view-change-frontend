@@ -22,7 +22,7 @@ import java.time.LocalDate
 
 case class WhatYouOweChargesList(balanceDetails: BalanceDetails, chargesList: List[DocumentDetailWithDueDate] = List(),
                                  outstandingChargesModel: Option[OutstandingChargesModel] = None,
-                                 codedOutDocumentDetail: Option[DocumentDetailWithCodingDetails] = None) {
+                                 codedOutDocumentDetail: Option[DocumentDetail] = None) {
 
   lazy val overdueChargeList: List[DocumentDetailWithDueDate] = chargesList.filter(_.isOverdue)
 

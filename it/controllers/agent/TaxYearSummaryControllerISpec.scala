@@ -89,12 +89,10 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         transactionId = Some("testTransactionId"),
         items = Some(Seq(SubItem(Some(LocalDate.now))))
       )
-    ),
-    codingDetails = None
+    )
   )
   val financialDetailsDunningLockSuccess: FinancialDetailsModel = FinancialDetailsModel(
     BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
-    None,
     List(
       DocumentDetail(
         taxYear = getCurrentTaxYearEnd.getYear.toString,
@@ -137,7 +135,6 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
 
   val financialDetailsMFADebits: FinancialDetailsModel = FinancialDetailsModel(
     BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
-    None,
     List(
       DocumentDetail(
         taxYear = getCurrentTaxYearEnd.getYear.toString,

@@ -428,13 +428,6 @@ object IncomeSourceIntegrationTestConstants {
                                                   latePaymentInterestAmount: BigDecimal = 0,
                                                   payeSaTaxYear: String = "2018", amountCodedOut: BigDecimal = 0): JsValue = Json.obj(
     "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "totalBalance" -> 3.00),
-    "codingDetails" -> Json.arr(
-      Json.obj(
-        "taxYearReturn" -> payeSaTaxYear,
-        "taxYearCoding" -> (payeSaTaxYear.toInt - 1).toString,
-        "amountCodedOut" -> amountCodedOut
-      )
-    ),
     "documentDetails" -> Json.arr(
       Json.obj(
         "taxYear" -> taxYear,
@@ -452,7 +445,8 @@ object IncomeSourceIntegrationTestConstants {
         "documentText" -> "PAYE Self Assessment",
         "outstandingAmount" -> outstandingAmount,
         "originalAmount" -> originalAmount,
-        "documentDate" -> "2018-03-29"
+        "documentDate" -> "2018-03-29",
+        "amountCodedOut" -> amountCodedOut
       ),
       Json.obj(
         "taxYear" -> taxYear,
