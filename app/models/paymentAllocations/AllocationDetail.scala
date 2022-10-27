@@ -47,6 +47,10 @@ case class AllocationDetail(transactionId: Option[String],
     AccountingPeriodModel.determineTaxYearFromPeriodEnd(
       to.getOrElse(throw new Exception("Missing tax period end date")))
   }
+
+  def getTaxYearOpt(implicit implicitDateFormatter: ImplicitDateFormatter): Option[Int] = {
+    to.map(AccountingPeriodModel.determineTaxYearFromPeriodEnd)
+  }
 }
 
 object AllocationDetail {
