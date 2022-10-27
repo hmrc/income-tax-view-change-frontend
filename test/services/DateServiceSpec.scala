@@ -52,8 +52,13 @@ class DateServiceSpec extends TestSupport with FeatureSwitching {
   }
 
   "The getCurrentTaxYearEnd" should {
-    "return the current tax year" in {
+    "return the current tax year" in{
+      disable(TimeMachineAddYear)
       TestDateService.getCurrentTaxYearEnd shouldBe 2023
+    }
+    "return next tax year when time machine is enabled" in {
+      enable(TimeMachineAddYear)
+      TestDateService.getCurrentTaxYearEnd shouldBe 2024
     }
 
   }
