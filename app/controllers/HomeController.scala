@@ -140,7 +140,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
       handleShowRequest(
         itvcErrorHandler = itvcErrorHandler,
         isAgent = false,
-        dateService.getCurrentTaxYearEnd(dateService.getCurrentDate),
+        dateService.getCurrentTaxYearEnd,
         origin = origin
       )
   }
@@ -153,7 +153,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
             handleShowRequest(
               itvcErrorHandler = itvcErrorHandlerAgent,
               isAgent = true,
-              dateService.getCurrentTaxYearEnd(dateService.getCurrentDate)
+              dateService.getCurrentTaxYearEnd
             )
         }
   }

@@ -70,7 +70,7 @@ class WhatYouOweController @Inject()(val checkSessionTimeout: SessionTimeoutPred
             Ok(whatYouOwe(
               creditCharges,
               whatYouOweChargesList = whatYouOweChargesList, hasLpiWithDunningBlock = whatYouOweChargesList.hasLpiWithDunningBlock,
-              currentTaxYear = dateService.getCurrentTaxYearEnd(dateService.getCurrentDate), backUrl = backUrl, utr = user.saUtr,
+              currentTaxYear = dateService.getCurrentTaxYearEnd, backUrl = backUrl, utr = user.saUtr,
               btaNavPartial = user.btaNavPartial,
               dunningLock = whatYouOweChargesList.hasDunningLock,
               codingOutEnabled = codingOutEnabled,
