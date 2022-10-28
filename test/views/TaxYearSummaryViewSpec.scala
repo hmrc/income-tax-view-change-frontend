@@ -271,7 +271,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
         document.select(".forecast_table tbody tr").size() shouldBe 4
         document.select(".forecast_table tbody tr:nth-child(1) th:nth-child(1) a").attr("href") shouldBe incomeForecastUrl
         document.select(".forecast_table tbody tr:nth-child(1) td:nth-child(2)").text() shouldBe "£12,500.00"
-        document.select(".forecast_table tbody tr:nth-child(2) td:nth-child(2)").text() shouldBe "−£4,200.00"
+        document.select(".forecast_table tbody tr:nth-child(2) td:nth-child(2)").text() shouldBe "£4,200.00"
         document.select(".forecast_table tbody tr:nth-child(3) td:nth-child(2)").text() shouldBe "£8,300.00"
         document.select(".forecast_table tbody tr:nth-child(4) th:nth-child(1) a").attr("href") shouldBe taxDueForecastUrl
         document.select(".forecast_table tbody tr:nth-child(4) td:nth-child(2)").text() shouldBe "£5,000.99"
@@ -380,7 +380,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
         val allowancesLink: Element = layoutContent.selectHead(" #income-deductions-contributions-table tr:nth-child(2) th:nth-child(1) a")
         allowancesLink.text shouldBe allowancesAndDeductions
         allowancesLink.attr("href") shouldBe controllers.routes.DeductionsSummaryController.showDeductionsSummary(testYear).url
-        layoutContent.selectHead("#income-deductions-contributions-table tr:nth-child(2) td:nth-child(2)").text shouldBe "−£2.02"
+        layoutContent.selectHead("#income-deductions-contributions-table tr:nth-child(2) td:nth-child(2)").text shouldBe "£2.02"
       }
 
       "display the Total income on which tax is due row in the Tax Calculation tab" in new Setup(estimateView()) {
@@ -642,7 +642,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
         document.select(".forecast_table tbody tr").size() shouldBe 4
         document.select(".forecast_table tbody tr:nth-child(1) th:nth-child(1) a").attr("href") shouldBe incomeForecastUrl
         document.select(".forecast_table tbody tr:nth-child(1) td:nth-child(2)").text() shouldBe "£12,500.00"
-        document.select(".forecast_table tbody tr:nth-child(2) td:nth-child(2)").text() shouldBe "−£4,200.00"
+        document.select(".forecast_table tbody tr:nth-child(2) td:nth-child(2)").text() shouldBe "£4,200.00"
         document.select(".forecast_table tbody tr:nth-child(3) td:nth-child(2)").text() shouldBe "£8,300.00"
         document.select(".forecast_table tbody tr:nth-child(4) th:nth-child(1) a").attr("href") shouldBe taxDueForecastUrl
         document.select(".forecast_table tbody tr:nth-child(4) td:nth-child(2)").text() shouldBe "£5,000.99"
@@ -678,7 +678,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
         val allowancesLink: Element = layoutContent.selectHead(" #income-deductions-contributions-table tr:nth-child(2) th:nth-child(1) a")
         allowancesLink.text shouldBe allowancesAndDeductions
         allowancesLink.attr("href") shouldBe controllers.routes.DeductionsSummaryController.showDeductionsSummaryAgent(testYear).url
-        layoutContent.selectHead("#income-deductions-contributions-table tr:nth-child(2) td:nth-child(2)").text shouldBe "−£2.02"
+        layoutContent.selectHead("#income-deductions-contributions-table tr:nth-child(2) td:nth-child(2)").text shouldBe "£2.02"
       }
 
       "display the Income Tax and National Insurance Contributions Due row in the Tax Calculation tab" in new Setup(estimateView(isAgent = true)) {
