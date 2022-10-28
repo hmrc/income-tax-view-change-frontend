@@ -22,6 +22,7 @@ import enums.PaymentAllocations
 import models.core.AccountingPeriodModel
 import models.paymentAllocationCharges.{AllocationDetailWithClearingDate, PaymentAllocationViewModel}
 import models.paymentAllocations.AllocationDetail
+import play.api.Logger
 import play.api.libs.json.{JsObject, JsValue, Json}
 import utils.Utilities.JsonUtil
 
@@ -66,6 +67,9 @@ case class PaymentAllocationsResponseAuditModel(mtdItUser: MtdItUserBase[_],
     case "paymentOnAccount1.text" => "Late payment interest for payment on account 1 of 2"
     case "paymentOnAccount2.text" => "Late payment interest for payment on account 2 of 2"
     case "balancingCharge.text" => "Late payment interest for remaining balance"
+    case other =>
+      Logger("application").warn(s"[PaymentAllocationsResponseAuditModel][getAllocationDescriptionFromKey] key not found: " + other)
+      "allocation"
   }
 
   private def paymentAllocationDetail(): JsObject = Json.obj() ++
