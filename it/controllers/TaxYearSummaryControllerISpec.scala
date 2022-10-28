@@ -412,7 +412,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         )
 
         And("The expected result is returned")
-        val tableText = if (featureSwitchEnabled) "Forecast Section Amount Income £12,500.00 Allowances and deductions −£4,200.00 Total income on which tax is due £12,500.00 Income " +
+        val tableText = if (featureSwitchEnabled) "Forecast Section Amount Income £12,500.00 Allowances and deductions £4,200.00 Total income on which tax is due £12,500.00 Income " +
           "Tax and National Insurance contributions due £5,000.99" else ""
         val forecastTabHeader = if (featureSwitchEnabled) messagesAPI("tax-year-summary.forecast") else ""
         val forecastTotal = if (featureSwitchEnabled) s"${
@@ -495,7 +495,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
           pageTitleIndividual("tax-year-summary.heading"),
           elementTextBySelector("#calculation-date")("15 February 2019"),
           elementTextBySelector("#income-deductions-contributions-table tr:nth-child(1) td[class=govuk-table__cell govuk-table__cell--numeric]")("£12,500.00"),
-          elementTextBySelector("#income-deductions-contributions-table tr:nth-child(2) td[class=govuk-table__cell govuk-table__cell--numeric]")("−£17,500.99"),
+          elementTextBySelector("#income-deductions-contributions-table tr:nth-child(2) td[class=govuk-table__cell govuk-table__cell--numeric]")("£17,500.99"),
           elementTextBySelectorList("#income-deductions-contributions-table", "tbody", "tr:nth-child(4)", "td:nth-of-type(1)")("£90,500.99"),
           elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "th")(s"$overdue $poa1"),
           elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("23 Apr 2021"),
@@ -568,7 +568,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
           pageTitleIndividual("tax-year-summary.heading"),
           elementTextBySelector("#calculation-date")("15 February 2019"),
           elementTextBySelector("#income-deductions-contributions-table tr:nth-child(1) td[class=govuk-table__cell govuk-table__cell--numeric]")("£12,500.00"),
-          elementTextBySelector("#income-deductions-contributions-table tr:nth-child(2) td[class=govuk-table__cell govuk-table__cell--numeric]")("−£17,500.99"),
+          elementTextBySelector("#income-deductions-contributions-table tr:nth-child(2) td[class=govuk-table__cell govuk-table__cell--numeric]")("£17,500.99"),
           elementTextBySelectorList("#income-deductions-contributions-table", "tbody", "tr:nth-child(4)", "td:nth-of-type(1)")("£90,500.99"),
           elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "th")(s"$overdue $poa1 $underReview"),
           elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("23 Apr 2021"),
