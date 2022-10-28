@@ -223,7 +223,7 @@
     val forecastIncome = modelOpt.flatMap(model => model.forecastIncome).getOrElse(0).toCurrencyString
     val forecastTotalTaxableIncome = modelOpt.flatMap(model => model.forecastTotalTaxableIncome).getOrElse(0).toCurrencyString
     val forecastIncomeAndNics = modelOpt.flatMap(model => model.forecastIncomeTaxAndNics).getOrElse(BigDecimal(0)).toCurrencyString
-    val forecastDeductions = modelOpt.flatMap(model => model.forecastAllowancesAndDeductions).getOrElse(BigDecimal(0)).toNegativeCurrency
+    val forecastDeductions = modelOpt.flatMap(model => model.forecastAllowancesAndDeductions).getOrElse(BigDecimal(0)).toCurrencyString
     govukTable(Table(
         rows = Seq(
             Seq(
