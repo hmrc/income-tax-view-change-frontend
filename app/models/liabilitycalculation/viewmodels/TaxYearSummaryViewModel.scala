@@ -16,11 +16,12 @@
 
 package models.liabilitycalculation.viewmodels
 
+import implicits.ImplicitDateParser
 import models.liabilitycalculation.LiabilityCalculationResponse
 
 import java.time.LocalDate
 
-case class TaxYearSummaryViewModel(timestamp: Option[String],
+case class TaxYearSummaryViewModel(timestamp: Option[LocalDate],
                                    crystallised: Option[Boolean],
                                    unattendedCalc: Boolean,
                                    taxDue: BigDecimal,
@@ -34,7 +35,7 @@ case class TaxYearSummaryViewModel(timestamp: Option[String],
                                    periodFrom: Option[LocalDate] = None,
                                    periodTo: Option[LocalDate] = None)
 
-object TaxYearSummaryViewModel {
+object TaxYearSummaryViewModel extends ImplicitDateParser {
   def isUnattendedCalc(calculationReason: Option[String]): Boolean = calculationReason match {
     case Some("unattendedCalculation") => true
     case _ => false
@@ -42,7 +43,7 @@ object TaxYearSummaryViewModel {
 
   def apply(calc: LiabilityCalculationResponse): TaxYearSummaryViewModel = {
     TaxYearSummaryViewModel(
-      timestamp = calc.metadata.calculationTimestamp,
+      timestamp = calc.metadata.calculationTimestamp.map(_.toZonedDateTime.toLocalDate),
       crystallised = calc.metadata.crystallised,
       unattendedCalc = isUnattendedCalc(calc.metadata.calculationReason),
       taxDue = calc.calculation.flatMap(c => c.taxCalculation.map(_.totalIncomeTaxAndNicsDue)).getOrElse(0.00),

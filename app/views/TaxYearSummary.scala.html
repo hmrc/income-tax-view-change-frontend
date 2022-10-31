@@ -268,7 +268,7 @@
             @govukInsetText(InsetText(content = HtmlContent(
                 p(id=Some("calc-date-info"))(content = Html(
                     messages(if(isAgent) "tax-year-summary.agent.calc-from-last-time" else "tax-year-summary.calc-from-last-time",
-                    model.timestamp.map(_.toZonedDateTime.toLocalDate.toLongDate).getOrElse(throw MissingFieldException("Calculation timestamp"))))
+                    model.timestamp.map(_.toLongDate).getOrElse(throw MissingFieldException("Calculation timestamp"))))
                 )
             )))
         }
@@ -280,7 +280,7 @@
                 <dd class="govuk-summary-list__value">
                     <p id="calculation-date">
                         <span>@{
-                            model.timestamp.map(_.toZonedDateTime.toLocalDate.toLongDate)
+                            model.timestamp.map(_.toLongDate)
                         }</span>
                     </p>
                 </dd>

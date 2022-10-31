@@ -39,13 +39,13 @@ case class TaxYearSummaryResponseAuditModel(mtdItUser: MtdItUser[_],
   private val taxYearSummaryJson = {
     if (R7bTxmEvents) {
       Json.obj() ++
-        ("calculationDate", taxYearSummaryViewModel.map(_.timestamp.map(_.toZonedDateTime.toLocalDate))) ++
+        ("calculationDate", taxYearSummaryViewModel.map(_.timestamp)) ++
         ("calculationAmount", taxYearSummaryViewModel.map(_.taxDue)) ++
         ("isCrystallised", taxYearSummaryViewModel.map(_.crystallised)) ++
         ("forecastAmount", taxYearSummaryViewModel.map(_.forecastIncome))
     } else {
       Json.obj() ++
-        ("calculationDate", taxYearSummaryViewModel.map(_.timestamp.map(_.toZonedDateTime.toLocalDate))) ++
+        ("calculationDate", taxYearSummaryViewModel.map(_.timestamp)) ++
         ("totalDue", taxYearSummaryViewModel.map(_.taxDue))
     }
   }
