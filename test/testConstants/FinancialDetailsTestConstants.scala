@@ -1172,12 +1172,16 @@ object CreditAndRefundConstants {
   )
 
   def documentDetailWithDueDateFinancialDetailListModel(outstandingAmount: Option[BigDecimal] = Some(-1400.0),
-                                                        dueDate: Option[LocalDate] = Some(LocalDate.of(2019, 5, 15)),
+                                                        dueDate: Option[LocalDate] = Some(LocalDate.of(2019,5,15)),
                                                         originalAmount: Option[BigDecimal] = Some(1400.00),
-                                                        mainType: String = "SA Payment on Account 1"):
+                                                        mainType: String = "SA Payment on Account 1",
+                                                        paymentLot: Option[String] = None,
+                                                        paymentLotItem: Option[String] = None,
+                                                       ):
   (DocumentDetailWithDueDate, FinancialDetail) = {
     (documentDetailWithDueDateModel(
-      paymentLot = None,
+      paymentLot = paymentLot,
+      paymentLotItem = paymentLotItem,
       outstandingAmount = outstandingAmount,
       dueDate = dueDate,
       originalAmount = originalAmount),

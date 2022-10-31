@@ -53,7 +53,7 @@ class CreditAndRefundUtilsSpec extends TestSupport {
     "maybeUnallocatedCreditType method called with proper values for unallocated credit from one payment" should {
       "return Option[UnallocatedCreditFromOnePayment]" in {
         val unallocatedCreditType = maybeUnallocatedCreditType(
-          List(documentDetailWithDueDateFinancialDetailListModel()),
+          List(documentDetailWithDueDateFinancialDetailListModel(paymentLot = Some("paymentLot"), paymentLotItem = Some("paymentLot"))),
           Some(balanceDetailsModel(
             firstPendingAmountRequested = None,
             secondPendingAmountRequested = None,
