@@ -44,7 +44,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
   import TaxYearSummaryMessages._
 
   def modelComplete(crystallised: Option[Boolean], unattendedCalc: Boolean = false): TaxYearSummaryViewModel = TaxYearSummaryViewModel(
-    timestamp = Some("2020-01-01T00:35:34.185Z"),
+    timestamp = Some("2020-01-01T00:35:34.185Z".toZonedDateTime.toLocalDate),
     income = 1,
     deductions = 2.02,
     totalTaxableIncome = 3,

@@ -17,6 +17,7 @@
 package audit.models
 
 import auth.MtdItUser
+import implicits.ImplicitDateParser
 import models.core.AccountingPeriodModel
 import models.financialDetails.{DocumentDetail, DocumentDetailWithDueDate}
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
@@ -31,7 +32,7 @@ import uk.gov.hmrc.auth.core.retrieve.Name
 
 import java.time.LocalDate
 
-class TaxYearSummaryResponseAuditModelSpec extends WordSpecLike with TestSupport {
+class TaxYearSummaryResponseAuditModelSpec extends WordSpecLike with TestSupport with ImplicitDateParser {
 
   val transactionName: String = "tax-year-overview-response"
   val auditType: String = "TaxYearOverviewResponse"
@@ -41,7 +42,7 @@ class TaxYearSummaryResponseAuditModelSpec extends WordSpecLike with TestSupport
 
   def taxYearSummaryViewModel(forecastIncome: Option[Int] = None,
                               forecastIncomeTaxAndNics: Option[BigDecimal] = None): TaxYearSummaryViewModel = TaxYearSummaryViewModel(
-    timestamp = Some("2017-07-06T12:34:56.789Z"),
+    timestamp = Some("2017-07-06T12:34:56.789Z".toZonedDateTime.toLocalDate),
     crystallised = Some(false),
     unattendedCalc = false,
     taxDue = 2010.00,
@@ -54,7 +55,7 @@ class TaxYearSummaryResponseAuditModelSpec extends WordSpecLike with TestSupport
 
   def taxYearSummaryViewModelUnattendedCalc(forecastIncome: Option[Int] = None,
                               forecastIncomeTaxAndNics: Option[BigDecimal] = None): TaxYearSummaryViewModel = TaxYearSummaryViewModel(
-    timestamp = Some("2017-07-06T12:34:56.789Z"),
+    timestamp = Some("2017-07-06T12:34:56.789Z".toZonedDateTime.toLocalDate),
     crystallised = Some(false),
     unattendedCalc = true,
     taxDue = 2010.00,

@@ -16,12 +16,13 @@
 
 package models.liabilitycalculation.viewmodels
 
+import implicits.ImplicitDateParser
 import testConstants.NewCalcBreakdownUnitTestConstants._
 import testUtils.UnitSpec
 
 import java.time.LocalDate
 
-class TaxYearSummaryViewModelSpec extends UnitSpec {
+class TaxYearSummaryViewModelSpec extends UnitSpec with ImplicitDateParser {
 
   "TaxYearSummaryViewModel model" when {
     "create a minimal TaxYearSummaryViewModel when there is a minimal Calculation response" in {
@@ -46,7 +47,7 @@ class TaxYearSummaryViewModelSpec extends UnitSpec {
 
       "create a full TaxYearSummaryViewModel when there is a full Calculation" in {
         val expectedTaxYearSummaryViewModel = TaxYearSummaryViewModel(
-          timestamp = Some("2019-02-15T09:35:15.094Z"),
+          timestamp = Some("2019-02-15T09:35:15.094Z".toZonedDateTime.toLocalDate),
           crystallised = Some(true),
           unattendedCalc = false,
           taxDue = 5000.99,
