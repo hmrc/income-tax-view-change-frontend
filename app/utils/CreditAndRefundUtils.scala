@@ -33,8 +33,8 @@ object CreditAndRefundUtils {
         case (List((_, financialDetails)), Some(BalanceDetails(_, _, _, Some(availableCredit), _, _, Some(_))), 1)
           if availableCredit != 0 && (validMFACreditType(financialDetails.mainType) || financialDetails.validCutoverCreditType()) =>
           Some(UnallocatedCreditFromSingleCreditItem)
-        case (List((_, financialDetails)), Some(BalanceDetails(_, _, _, Some(availableCredit), _, _, Some(_))), 1)
-          if availableCredit != 0 && financialDetails.mainType.filter(_.contains("Payment on Account")).isDefined =>
+        case (List((documentDetailWithDueDate, _)), Some(BalanceDetails(_, _, _, Some(availableCredit), _, _, Some(_))), 1)
+          if availableCredit != 0 && documentDetailWithDueDate.documentDetail.paymentLot.isDefined && documentDetailWithDueDate.documentDetail.paymentLotItem.isDefined =>
           Some(UnallocatedCreditFromOnePayment)
         case _ => None
       }
