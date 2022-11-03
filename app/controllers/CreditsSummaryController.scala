@@ -17,11 +17,11 @@
 package controllers
 
 import auth.MtdItUser
-import config.featureswitch.{FeatureSwitching, MFACreditsAndDebits}
+import config.featureswitch.{CutOverCredits, FeatureSwitching, MFACreditsAndDebits}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
-import models.financialDetails.BalanceDetails
+import models.creditDetailModel.{CreditDetailModel, CutOverCreditType, MfaCreditType}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
@@ -86,12 +86,26 @@ class CreditsSummaryController @Inject()(creditsView: CreditsSummary,
                     isAgent: Boolean,
                     origin: Option[String] = None)
                    (implicit user: MtdItUser[AnyContent], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] = {
-    if (isEnabled(MFACreditsAndDebits)) {
+    if (isDisabled(MFACreditsAndDebits) && isDisabled(CutOverCredits)) {
+      Future.successful(Ok(creditsView(
+        calendarYear = calendarYear,
+        backUrl = if (isAgent) getAgentBackURL(user.headers.get(REFERER), calendarYear) else getBackURL(user.headers.get(REFERER), origin, calendarYear),
+        isAgent = isAgent,
+        utr = user.saUtr,
+        btaNavPartial = user.btaNavPartial,
+        charges = List.empty,
+        maybeAvailableCredit = None,
+        origin = origin))
+      )
+    } else {
       creditService.getCreditCharges().flatMap { financialDetailsModels =>
         creditHistoryService.getCreditsHistory(calendarYear, user.nino).flatMap {
           case Right(credits) =>
-            val charges = credits
-              .sortBy(_.date.toEpochDay)
+            val charges: List[CreditDetailModel] = ((isEnabled(MFACreditsAndDebits), isEnabled(CutOverCredits)) match {
+              case (true, false) => credits.filter(_.creditType == MfaCreditType)
+              case (false, true) => credits.filter(_.creditType == CutOverCreditType)
+              case _ => credits
+            }).sortBy(_.date.toEpochDay)
 
             val maybeAvailableCredit: Option[BigDecimal] = CreditService
               .maybeBalanceDetails(financialDetailsModels)
@@ -103,7 +117,6 @@ class CreditsSummaryController @Inject()(creditsView: CreditsSummary,
               isAgent = isAgent,
               utr = user.saUtr,
               btaNavPartial = user.btaNavPartial,
-              enableMfaCreditsAndDebits = isEnabled(MFACreditsAndDebits),
               charges = charges,
               maybeAvailableCredit = maybeAvailableCredit,
               origin = origin)))
@@ -119,7 +132,7 @@ class CreditsSummaryController @Inject()(creditsView: CreditsSummary,
           }
         }
       }
-    } else Future.successful(Redirect(controllers.routes.HomeController.show().url))
+    }
   }
 
   def showCreditsSummary(calendarYear: Int, origin: Option[String] = None): Action[AnyContent] = {

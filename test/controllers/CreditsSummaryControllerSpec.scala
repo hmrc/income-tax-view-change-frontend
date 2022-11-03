@@ -17,7 +17,7 @@
 package controllers
 
 import config.featureswitch.FeatureSwitch.switches
-import config.featureswitch.{FeatureSwitching, MFACreditsAndDebits}
+import config.featureswitch.{CutOverCredits, FeatureSwitching, MFACreditsAndDebits}
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
 import mocks.MockItvcErrorHandler
@@ -106,7 +106,6 @@ class CreditsSummaryControllerSpec extends TestSupport with MockCalculationServi
         val expectedContent: String = creditsSummaryView(
           backUrl = paymentRefundHistoryBackLink,
           utr = Some(testSaUtrId),
-          enableMfaCreditsAndDebits = true,
           charges = chargesList,
           maybeAvailableCredit = financialDetailCreditCharge.balanceDetails.availableCredit,
           calendarYear = calendarYear2018
@@ -134,7 +133,6 @@ class CreditsSummaryControllerSpec extends TestSupport with MockCalculationServi
         val expectedContent: String = creditsSummaryView(
           backUrl = paymentRefundHistoryBackLink,
           utr = Some(testSaUtrId),
-          enableMfaCreditsAndDebits = true,
           charges = chargesList,
           maybeAvailableCredit = None,
           calendarYear = calendarYear2018
@@ -164,7 +162,6 @@ class CreditsSummaryControllerSpec extends TestSupport with MockCalculationServi
         val expectedContent: String = creditsSummaryView(
           backUrl = creditAndRefundUrl,
           utr = Some(testSaUtrId),
-          enableMfaCreditsAndDebits = true,
           charges = chargesList,
           maybeAvailableCredit = financialDetailCreditCharge.balanceDetails.availableCredit,
           calendarYear = calendarYear2018
@@ -194,7 +191,6 @@ class CreditsSummaryControllerSpec extends TestSupport with MockCalculationServi
         val expectedContent: String = creditsSummaryView(
           backUrl = defaultCreditsSummaryUrl,
           utr = Some(testSaUtrId),
-          enableMfaCreditsAndDebits = true,
           charges = chargesList,
           maybeAvailableCredit = financialDetailCreditCharge.balanceDetails.availableCredit,
           calendarYear = calendarYear2018
@@ -224,7 +220,6 @@ class CreditsSummaryControllerSpec extends TestSupport with MockCalculationServi
         val expectedContent: String = creditsSummaryView(
           backUrl = paymentRefundHistoryBackLink,
           utr = Some(testSaUtrId),
-          enableMfaCreditsAndDebits = true,
           charges = chargesList,
           maybeAvailableCredit = financialDetailCreditCharge.balanceDetails.availableCredit,
           calendarYear = calendarYear2018
@@ -277,17 +272,27 @@ class CreditsSummaryControllerSpec extends TestSupport with MockCalculationServi
     }
   }
 
-  "MFACreditsAndDebits feature switch is disabled" should {
-    "all calls are returned correctly and Referer was a Payment Refund History page" should {
-      "redirect to the Home page" in {
-        disable(MFACreditsAndDebits)
-        mockSingleBusinessIncomeSource()
+  "MFACreditsAndDebits and CutOverCredits feature switches are disabled" should {
+    "show an empty Credits Summary Page and back link should be to the Payment Refund History page" in {
+      disable(MFACreditsAndDebits)
+      disable(CutOverCredits)
+      mockSingleBusinessIncomeSource()
+      setupMockAuthRetrievalSuccess(testAuthSuccessWithSaUtrResponse())
 
-        val result = TestCreditsSummaryController.showCreditsSummary(calendarYear2018)(fakeRequestWithActiveSession)
+      val expectedContent: String = creditsSummaryView(
+        backUrl = paymentRefundHistoryBackLink,
+        utr = Some(testSaUtrId),
+        charges = List.empty,
+        maybeAvailableCredit = None,
+        calendarYear = calendarYear2018
+      ).toString
 
-        status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.routes.HomeController.show().url)
-      }
+      val result = TestCreditsSummaryController.showCreditsSummary(calendarYear2018)(fakeRequestWithActiveSessionWithReferer(referer = paymentRefundHistoryBackLink))
+
+      status(result) shouldBe Status.OK
+
+      contentAsString(result) shouldBe expectedContent
+      contentType(result) shouldBe Some(HTML)
     }
   }
 
