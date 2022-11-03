@@ -78,7 +78,7 @@ class TaxYearsController @Inject()(taxYearsView: TaxYears,
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true) flatMap { implicit mtdItUser =>
           handleRequest(
-            backUrl = controllers.routes.HomeController.showAgent().url,
+            backUrl = controllers.routes.HomeController.showAgent.url,
             isAgent = true
           )
         }

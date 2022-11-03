@@ -25,7 +25,7 @@ import play.api.i18n.{Messages, MessagesApi}
 import play.api.mvc.Call
 import play.twirl.api.Html
 
-import scala.collection.JavaConversions._
+import scala.jdk.CollectionConverters._
 
 trait ViewSpec extends TestSupport {
 

@@ -18,11 +18,13 @@ package models.financialDetails
 
 import models.financialDetails.MfaCreditUtilsSpec.property
 import models.financialDetails.MfaDebitUtils.{filterMFADebits, isMFADebitMainType}
+import org.junit.Ignore
 import org.scalacheck.Gen
 import org.scalacheck.Prop.forAll
 import testConstants.FinancialDetailsTestConstants.MFADebitsDocumentDetailsWithDueDates
 import testUtils.UnitSpec
 
+@Ignore
 class MfaDebitUtilsSpec extends UnitSpec {
 
   val MFADebitType: Gen[String] = Gen.oneOf("ITSA PAYE Charge", "ITSA Calc Error Correction", "ITSA Manual Penalty Pre CY-4", "ITSA Misc Charge")

@@ -503,7 +503,7 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
         val result: Future[Result] = TestTaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear = testYearPlusTwo)(fakeRequestWithActiveSession)
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn().url)
+        redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn.url)
       }
     }
     "the user has timed out" should {
@@ -513,7 +513,7 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
         val result: Future[Result] = TestTaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear = testYearPlusTwo)(fakeRequestWithClientDetails)
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout().url)
+        redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout.url)
       }
     }
     "the user does not have an agent reference number" should {

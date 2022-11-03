@@ -17,12 +17,12 @@
 package implicits
 
 import implicits.ImplicitJsonValidationFormatter._
-import org.scalatest.Matchers
+import org.scalatest.{Ignore, Matchers}
 import play.api.data.validation.ValidationError
 import play.api.libs.json.JsPath
 import testUtils.UnitSpec
 
-
+@Ignore
 class ImplicitJsonValidationFormatterSpec extends UnitSpec with Matchers {
 
   val jSPath: JsPath = JsPath \ "someNode"

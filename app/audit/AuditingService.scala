@@ -30,15 +30,21 @@ import uk.gov.hmrc.play.audit.model.{DataEvent, ExtendedDataEvent}
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
+
+
+
 @Singleton
 class AuditingService @Inject()(appConfig: FrontendAppConfig, auditConnector: AuditConnector) {
 
-  implicit val dataEventWrites: Writes[DataEvent] = Json.writes[DataEvent]
-  implicit val extendedDataEventWrites: Writes[ExtendedDataEvent] = Json.writes[ExtendedDataEvent]
+//  import implicits.ImplicitDataEventFormatter.dataEventWrites
+  //import implicits.ImplicitExtendedDataEvent.extendedDataEventWrites
+
+//  implicit val dataEventWrites: Writes[DataEvent] = Json.writes[DataEvent]
+//  implicit val extendedDataEventWrites: Writes[ExtendedDataEvent] = Json.writes[ExtendedDataEvent]
 
   def audit(auditModel: AuditModel, path: Option[String] = None)(implicit hc: HeaderCarrier, request: Request[_], ec: ExecutionContext): Unit = {
     val dataEvent = toDataEvent(appConfig.appName, auditModel, path.fold(request.path)(x => x))
-    Logger("application").debug(s"Splunk Audit Event:\n\n${Json.toJson(dataEvent)}")
+    //Logger("application").debug(s"Splunk Audit Event:\n\n${Json.toJson(dataEvent)}")
     handleAuditResult(auditConnector.sendEvent(dataEvent))
   }
 
@@ -55,7 +61,7 @@ class AuditingService @Inject()(appConfig: FrontendAppConfig, auditConnector: Au
                                                                                  request: Request[_],
                                                                                  ec: ExecutionContext): Unit = {
     val extendedDataEvent = toExtendedDataEvent(appConfig.appName, auditModel, path.fold(request.path)(x => x))
-    Logger("application").debug(s"Splunk Audit Event:\n\n${Json.toJson(extendedDataEvent)}")
+    //Logger("application").debug(s"Splunk Audit Event:\n\n${Json.toJson(extendedDataEvent)}")
     handleAuditResult(auditConnector.sendExtendedEvent(extendedDataEvent))
   }
 

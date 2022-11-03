@@ -77,13 +77,13 @@ class AuthenticationPredicate @Inject()(implicit val ec: ExecutionContext,
     } recover {
       case _: InsufficientEnrolments =>
         Logger("application").info("[AuthenticationPredicate][async] No HMRC-MTD-IT Enrolment and/or No NINO.")
-        Redirect(controllers.errors.routes.NotEnrolledController.show())
+        Redirect(controllers.errors.routes.NotEnrolledController.show)
       case _: BearerTokenExpired =>
         Logger("application").info("[AuthenticationPredicate][async] Bearer Token Timed Out.")
-        Redirect(controllers.timeout.routes.SessionTimeoutController.timeout())
+        Redirect(controllers.timeout.routes.SessionTimeoutController.timeout)
       case _: AuthorisationException =>
         Logger("application").info("[AuthenticationPredicate][async] Unauthorised request. Redirect to Sign In.")
-        Redirect(controllers.routes.SignInController.signIn())
+        Redirect(controllers.routes.SignInController.signIn)
       case s =>
         Logger("application").error(s"[AuthenticationPredicate][async] Unexpected Error Caught. Show ISE.\n$s\n", s)
         itvcErrorHandler.showInternalServerError
@@ -104,6 +104,6 @@ class AuthenticationPredicate @Inject()(implicit val ec: ExecutionContext,
   }
 
   val ivUpliftRedirectUrl: String = s"$personalIVUrl?origin=ITVC&confidenceLevel=$requiredConfidenceLevel&" +
-    s"completionURL=${appConfig.itvcFrontendEnvironment + "/" + appConfig.baseUrl + controllers.routes.UpliftSuccessController.success().url}&" +
-    s"failureURL=${appConfig.itvcFrontendEnvironment + "/" + appConfig.baseUrl + controllers.errors.routes.UpliftFailedController.show().url}"
+    s"completionURL=${appConfig.itvcFrontendEnvironment + "/" + appConfig.baseUrl + controllers.routes.UpliftSuccessController.success.url}&" +
+    s"failureURL=${appConfig.itvcFrontendEnvironment + "/" + appConfig.baseUrl + controllers.errors.routes.UpliftFailedController.show.url}"
 }

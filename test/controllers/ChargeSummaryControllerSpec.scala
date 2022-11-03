@@ -108,7 +108,7 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
         val result: Future[Result] = controller.show(testTaxYear, "fakeId")(fakeRequestWithActiveSession)
 
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.errors.routes.NotFoundDocumentIDLookupController.show().url)
+        redirectLocation(result) shouldBe Some(controllers.errors.routes.NotFoundDocumentIDLookupController.show.url)
       }
     }
 
@@ -119,7 +119,7 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
         val result: Future[Result] = controller.show(testTaxYear, "1040000123")(fakeRequestWithActiveSession)
 
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.errors.routes.NotFoundDocumentIDLookupController.show().url)
+        redirectLocation(result) shouldBe Some(controllers.errors.routes.NotFoundDocumentIDLookupController.show.url)
       }
     }
 
@@ -142,7 +142,7 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
           val result: Future[Result] = controller.show(testTaxYear, "CODINGOUT01")(fakeRequestWithActiveSession)
 
           status(result) shouldBe Status.SEE_OTHER
-          redirectLocation(result) shouldBe Some(controllers.errors.routes.NotFoundDocumentIDLookupController.show().url)
+          redirectLocation(result) shouldBe Some(controllers.errors.routes.NotFoundDocumentIDLookupController.show.url)
         }
 
         "class 2 Nics exists but FS is disabled" in new Setup(testFinancialDetailsModelWithCodingOutNics2()) {
@@ -150,14 +150,14 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
           val result: Future[Result] = controller.show(testTaxYear, "CODINGOUT01")(fakeRequestWithActiveSession)
 
           status(result) shouldBe Status.SEE_OTHER
-          redirectLocation(result) shouldBe Some(controllers.errors.routes.NotFoundDocumentIDLookupController.show().url)
+          redirectLocation(result) shouldBe Some(controllers.errors.routes.NotFoundDocumentIDLookupController.show.url)
         }
         "cancelled PAYE exists but FS is disabled" in new Setup(testFinancialDetailsModelWithCancelledPayeSa()) {
           disable(CodingOut)
           val result: Future[Result] = controller.show(testTaxYear, "CODINGOUT01")(fakeRequestWithActiveSession)
 
           status(result) shouldBe Status.SEE_OTHER
-          redirectLocation(result) shouldBe Some(controllers.errors.routes.NotFoundDocumentIDLookupController.show().url)
+          redirectLocation(result) shouldBe Some(controllers.errors.routes.NotFoundDocumentIDLookupController.show.url)
         }
       }
 
@@ -291,7 +291,7 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
         val result: Future[Result] = controller.showAgent(testTaxYear, "fakeId")(fakeRequestConfirmedClient("AB123456C"))
 
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.agent.errors.routes.AgentNotFoundDocumentIDLookupController.show().url)
+        redirectLocation(result) shouldBe Some(controllers.agent.errors.routes.AgentNotFoundDocumentIDLookupController.show.url)
       }
     }
 
@@ -302,7 +302,7 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
         val result: Future[Result] = controller.showAgent(testTaxYear, "1040000123")(fakeRequestConfirmedClient("AB123456C"))
 
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.agent.errors.routes.AgentNotFoundDocumentIDLookupController.show().url)
+        redirectLocation(result) shouldBe Some(controllers.agent.errors.routes.AgentNotFoundDocumentIDLookupController.show.url)
       }
 
       "display any payments you make with contents for agent" in new Setup(
@@ -336,7 +336,7 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
           val result: Future[Result] = controller.showAgent(testTaxYear, "CODINGOUT01")(fakeRequestConfirmedClient("AB123456C"))
 
           status(result) shouldBe Status.SEE_OTHER
-          redirectLocation(result) shouldBe Some(controllers.agent.errors.routes.AgentNotFoundDocumentIDLookupController.show().url)
+          redirectLocation(result) shouldBe Some(controllers.agent.errors.routes.AgentNotFoundDocumentIDLookupController.show.url)
         }
 
         "class 2 Nics exists but FS is disabled" in new Setup(testFinancialDetailsModelWithCodingOutNics2(), isAgent = true) {
@@ -344,14 +344,14 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
           val result: Future[Result] = controller.showAgent(testTaxYear, "CODINGOUT01")(fakeRequestConfirmedClient("AB123456C"))
 
           status(result) shouldBe Status.SEE_OTHER
-          redirectLocation(result) shouldBe Some(controllers.agent.errors.routes.AgentNotFoundDocumentIDLookupController.show().url)
+          redirectLocation(result) shouldBe Some(controllers.agent.errors.routes.AgentNotFoundDocumentIDLookupController.show.url)
         }
         "cancelled PAYE exists but FS is disabled" in new Setup(testFinancialDetailsModelWithCancelledPayeSa(), isAgent = true) {
           disable(CodingOut)
           val result: Future[Result] = controller.showAgent(testTaxYear, "CODINGOUT01")(fakeRequestConfirmedClient("AB123456C"))
 
           status(result) shouldBe Status.SEE_OTHER
-          redirectLocation(result) shouldBe Some(controllers.agent.errors.routes.AgentNotFoundDocumentIDLookupController.show().url)
+          redirectLocation(result) shouldBe Some(controllers.agent.errors.routes.AgentNotFoundDocumentIDLookupController.show.url)
         }
       }
 

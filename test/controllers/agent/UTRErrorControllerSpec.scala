@@ -55,7 +55,7 @@ class UTRErrorControllerSpec extends TestSupport
         val result = TestUTRErrorController.show()(fakeRequestWithActiveSession)
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn().url)
+        redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn.url)
       }
     }
 
@@ -66,7 +66,7 @@ class UTRErrorControllerSpec extends TestSupport
         val result = TestUTRErrorController.show()(fakeRequestWithTimeoutSession)
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout().url)
+        redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout.url)
       }
     }
 
@@ -89,7 +89,7 @@ class UTRErrorControllerSpec extends TestSupport
       val result = TestUTRErrorController.show()(fakeRequestWithActiveSession)
 
       status(result) shouldBe SEE_OTHER
-      redirectLocation(result) shouldBe Some(controllers.agent.routes.EnterClientsUTRController.show().url)
+      redirectLocation(result) shouldBe Some(controllers.agent.routes.EnterClientsUTRController.show.url)
     }
 
     "return OK and display the UTR Error page" in {
@@ -113,7 +113,7 @@ class UTRErrorControllerSpec extends TestSupport
         val result = TestUTRErrorController.submit()(fakeRequestWithActiveSession)
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn().url)
+        redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn.url)
       }
     }
 
@@ -124,7 +124,7 @@ class UTRErrorControllerSpec extends TestSupport
         val result = TestUTRErrorController.submit()(fakeRequestWithActiveSession)
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout().url)
+        redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout.url)
       }
     }
 
@@ -146,7 +146,7 @@ class UTRErrorControllerSpec extends TestSupport
       val result = TestUTRErrorController.submit()(fakeRequestWithClientUTR)
 
       status(result) shouldBe SEE_OTHER
-      redirectLocation(result) shouldBe Some(controllers.agent.routes.EnterClientsUTRController.show().url)
+      redirectLocation(result) shouldBe Some(controllers.agent.routes.EnterClientsUTRController.show.url)
       result.futureValue.session(fakeRequestWithClientUTR).get(SessionKeys.clientUTR) shouldBe None
       verify(mockAuthService, times(1)).authorised(ArgumentMatchers.eq(EmptyPredicate))
       verify(mockAuthService, times(0)).authorised(ArgumentMatchers.any(Enrolment.apply("").getClass))

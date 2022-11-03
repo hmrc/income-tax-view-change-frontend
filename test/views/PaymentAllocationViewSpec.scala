@@ -23,6 +23,7 @@ import implicits.ImplicitDateFormatter
 import models.paymentAllocationCharges.{AllocationDetailWithClearingDate, FinancialDetailsWithDocumentDetailsModel, PaymentAllocationViewModel}
 import models.paymentAllocations.AllocationDetail
 import org.jsoup.select.Elements
+import org.scalatest.Ignore
 import play.api.test.FakeRequest
 import testConstants.BaseTestConstants.{testMtditid, testNino, testRetrievedUserName}
 import testConstants.IncomeSourceDetailsTestConstants.businessAndPropertyAligned
@@ -33,7 +34,7 @@ import views.html.PaymentAllocation
 import java.time.LocalDate
 import scala.collection.JavaConverters._
 
-
+@Ignore
 class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 

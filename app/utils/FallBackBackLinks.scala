@@ -25,27 +25,27 @@ trait FallBackBackLinks {
       if (isAgent) controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear).url + "#payments"
       else controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(taxYear, origin).url + "#payments"
     case (Some(TaxYearSummaryPage), None) =>
-      if (isAgent) controllers.routes.HomeController.showAgent().url
+      if (isAgent) controllers.routes.HomeController.showAgent.url
       else controllers.routes.HomeController.show(origin).url
     case (Some(WhatYouOwePage), _) =>
-      if (isAgent) controllers.routes.WhatYouOweController.showAgent().url
+      if (isAgent) controllers.routes.WhatYouOweController.showAgent.url
       else controllers.routes.WhatYouOweController.show(origin).url
     case (Some(PaymentHistoryPage), _) =>
-      if (isAgent) controllers.routes.PaymentHistoryController.showAgent().url
+      if (isAgent) controllers.routes.PaymentHistoryController.showAgent.url
       else controllers.routes.PaymentHistoryController.show(origin).url
     case _ =>
-      if (isAgent) controllers.routes.HomeController.showAgent().url
+      if (isAgent) controllers.routes.HomeController.showAgent.url
       else controllers.routes.HomeController.show(origin).url
   }
 
   def getChargeSummaryBackUrl(gatewayPageOpt: Option[GatewayPage], taxYear: Int, origin: Option[String], isAgent: Boolean): String = gatewayPageOpt match {
     case Some(TaxYearSummaryPage) => if (isAgent) controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear).url + "#payments"
     else controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(taxYear, origin).url + "#payments"
-    case Some(WhatYouOwePage) => if (isAgent) controllers.routes.WhatYouOweController.showAgent().url
+    case Some(WhatYouOwePage) => if (isAgent) controllers.routes.WhatYouOweController.showAgent.url
     else controllers.routes.WhatYouOweController.show(origin).url
-    case Some(PaymentHistoryPage) => if (isAgent) controllers.routes.PaymentHistoryController.showAgent().url
+    case Some(PaymentHistoryPage) => if (isAgent) controllers.routes.PaymentHistoryController.showAgent.url
     else controllers.routes.PaymentHistoryController.show(origin).url
-    case _ => if (isAgent) controllers.routes.HomeController.showAgent().url
+    case _ => if (isAgent) controllers.routes.HomeController.showAgent.url
     else controllers.routes.HomeController.show(origin).url
   }
 

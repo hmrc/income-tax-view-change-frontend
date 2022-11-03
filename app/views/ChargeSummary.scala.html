@@ -65,7 +65,7 @@
 }
 
 @whatYouOweUrl = @{
-    if(isAgent) controllers.routes.WhatYouOweController.showAgent().url
+    if(isAgent) controllers.routes.WhatYouOweController.showAgent.url
     else controllers.routes.WhatYouOweController.show(origin).url
 }
 

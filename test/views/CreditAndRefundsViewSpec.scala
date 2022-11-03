@@ -22,6 +22,7 @@ import implicits.ImplicitDateFormatter
 import models.financialDetails.{BalanceDetails, DocumentDetailWithDueDate, FinancialDetail}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
+import org.scalatest.Ignore
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
@@ -33,7 +34,7 @@ import views.html.CreditAndRefunds
 
 import java.time.LocalDate
 
-
+@Ignore
 class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with ImplicitDateFormatter with ViewSpec {
 
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]

@@ -44,16 +44,16 @@ abstract class BaseFrontendController(implicit val mcc: MessagesControllerCompon
   private def handleExceptions(request: Request[_]): PartialFunction[Throwable, Result] = {
     case _: BearerTokenExpired =>
       Logger("application").info("[BaseFrontendController][handleExceptions] - User's bearer token expired, redirecting to timeout page")
-      Redirect(controllers.timeout.routes.SessionTimeoutController.timeout())
+      Redirect(controllers.timeout.routes.SessionTimeoutController.timeout)
     case ex: MissingAgentReferenceNumber =>
       Logger("application").warn(s"[BaseFrontendController][handleExceptions] - ${ex.reason}")
       itvcErrorHandler.showOkTechnicalDifficulties()(request)
     case ex: InsufficientEnrolments =>
       Logger("application").warn(s"[BaseFrontendController][handleExceptions] - ${ex.reason}")
-      Redirect(controllers.agent.routes.ClientRelationshipFailureController.show())
+      Redirect(controllers.agent.routes.ClientRelationshipFailureController.show)
     case ex: AuthorisationException =>
       Logger("application").warn(s"[BaseFrontendController][handleExceptions] - AuthorisationException occurred - ${ex.reason}")
-      Redirect(controllers.routes.SignInController.signIn())
+      Redirect(controllers.routes.SignInController.signIn)
     case _: NotFoundException =>
       NotFound(itvcErrorHandler.notFoundTemplate(request))
     case ex => throw ex
@@ -86,7 +86,7 @@ abstract class BaseFrontendController(implicit val mcc: MessagesControllerCompon
             implicit val user: User = userApply(enrolments, affinity, confidence, credentials)
             predicate.apply(request)(user) match {
               case Right(AuthPredicateSuccess) if requireClientSelected && clientMtd.isEmpty =>
-                Future.successful(Redirect(controllers.agent.routes.EnterClientsUTRController.show()))
+                Future.successful(Redirect(controllers.agent.routes.EnterClientsUTRController.show))
               case Right(AuthPredicateSuccess) =>
                 action(request.withHeaders(updatedHeaders))(user)
               case Left(failureResult) => failureResult

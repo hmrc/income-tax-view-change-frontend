@@ -50,7 +50,7 @@ class RemoveClientDetailsSessionsControllerSpec extends TestSupport
         val result = TestRemoveClientDetailsSessionsController.show()(fakeRequestConfirmedClient())
 
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn().url)
+        redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn.url)
       }
     }
 
@@ -61,7 +61,7 @@ class RemoveClientDetailsSessionsControllerSpec extends TestSupport
         val result = TestRemoveClientDetailsSessionsController.show()(fakeRequestConfirmedClient())
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout().url)
+        redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout.url)
       }
     }
 
