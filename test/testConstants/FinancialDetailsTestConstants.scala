@@ -958,9 +958,6 @@ object FinancialDetailsTestConstants {
     )
   }
 
-//  FinancialDetail("2018", Some("ITSA Cutover Credits"), Some("MFADEBIT04"), totalAmount = Some(200), originalAmount = Some(200), outstandingAmount = Some(200), items = Some(Seq(SubItem(Some(LocalDate.of(2019, 5, 15))))))
-//  FinancialDetail("2018", Some("ITSA Cutover Credits"), Some("MFADEBIT05"), totalAmount = Some(2000), originalAmount = Some(2000), outstandingAmount = Some(2000), items = Some(Seq(SubItem(Some(LocalDate.of(2019, 5, 15))))))
-
 
   val creditAndRefundDocumentDetailMFA = documentDetailModel(documentDescription = Some("ITSA Overpayment Relief"), outstandingAmount = Some(BigDecimal(-1400.00)), paymentLotItem = None, paymentLot = None)
 
