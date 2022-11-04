@@ -1,10 +1,10 @@
 
 package controllers
 
-import config.featureswitch.MFACreditsAndDebits
+import config.featureswitch.{CutOverCredits, MFACreditsAndDebits}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import play.api.http.Status.{OK, SEE_OTHER}
+import play.api.http.Status.OK
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino, testTaxYear}
@@ -21,6 +21,7 @@ class CreditsSummaryControllerISpec extends ComponentSpecBase {
     "display the credit summary page" when {
       "a valid response is received" in {
         enable(MFACreditsAndDebits)
+        enable(CutOverCredits)
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK,
           propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
@@ -49,9 +50,10 @@ class CreditsSummaryControllerISpec extends ComponentSpecBase {
       }
     }
 
-    "redirect to Home page" when {
-      "the feature switch is off" in {
+    "display an empty credit summary page" when {
+      "MFACreditsAndDebits and CutOverCredits feature switches are off" in {
         disable(MFACreditsAndDebits)
+        disable(CutOverCredits)
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
           OK,
@@ -65,8 +67,8 @@ class CreditsSummaryControllerISpec extends ComponentSpecBase {
         verifyIncomeSourceDetailsCall(testMtditid)
 
         res should have(
-          httpStatus(SEE_OTHER),
-          redirectURI(controllers.routes.HomeController.show().url)
+          httpStatus(OK),
+          pageTitleIndividual(messages("credits.heading", s"$calendarYear"))
         )
       }
     }
