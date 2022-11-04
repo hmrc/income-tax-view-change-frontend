@@ -98,6 +98,7 @@ class CreditsSummaryController @Inject()(creditsView: CreditsSummary,
         origin = origin))
       )
     } else {
+      // TODO remove this redundant call and provide available credit
       creditService.getCreditCharges().flatMap { financialDetailsModels =>
         creditHistoryService.getCreditsHistory(calendarYear, user.nino).flatMap {
           case Right(credits) =>

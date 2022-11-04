@@ -16,7 +16,7 @@
 
 package testConstants
 
-import models.creditDetailModel.{CreditDetailModel, MfaCreditType}
+import models.creditDetailModel.{CreditDetailModel, CutOverCreditType, MfaCreditType}
 
 import java.time.LocalDate
 import testConstants.BaseTestConstants.{testErrorMessage, testErrorNotFoundStatus, testErrorStatus, testTaxYear}
@@ -943,6 +943,23 @@ object FinancialDetailsTestConstants {
       CreditDetailModel(documentDetail2.documentDate, documentDetail2, MfaCreditType)
     )
   }
+
+  val creditAndRefundCreditDetailListMFAWithCutoverCredits = {
+    val documentDetailMFA1 = documentDetailModel(documentDescription = Some("ITSA Overpayment Relief"), outstandingAmount = Some(BigDecimal(-1400.00)), paymentLotItem = None, paymentLot = None)
+    val documentDetailMFA2 = documentDetailModel(documentDescription = Some("ITSA Standalone Claim"), outstandingAmount = Some(BigDecimal(-500.00)), paymentLotItem = None, paymentLot = None)
+    val documentDetailCutoverCredit1 = documentDetailModel(documentDescription = Some("ITSA Cutover Credits"), outstandingAmount = Some(BigDecimal(200.00)), paymentLotItem = None, paymentLot = None, originalAmount = Some(200))
+    val documentDetailCutoverCredit2 = documentDetailModel(documentDescription = Some("ITSA Cutover Credits"), outstandingAmount = Some(BigDecimal(1200.00)), paymentLotItem = None, paymentLot = None, originalAmount = Some(2000))
+
+    List(
+      CreditDetailModel(documentDetailMFA1.documentDate, documentDetailMFA1, MfaCreditType),
+      CreditDetailModel(documentDetailMFA2.documentDate, documentDetailMFA2, MfaCreditType),
+      CreditDetailModel(documentDetailCutoverCredit1.documentDate, documentDetailCutoverCredit1, CutOverCreditType),
+      CreditDetailModel(documentDetailCutoverCredit2.documentDate, documentDetailCutoverCredit2, CutOverCreditType),
+    )
+  }
+
+//  FinancialDetail("2018", Some("ITSA Cutover Credits"), Some("MFADEBIT04"), totalAmount = Some(200), originalAmount = Some(200), outstandingAmount = Some(200), items = Some(Seq(SubItem(Some(LocalDate.of(2019, 5, 15))))))
+//  FinancialDetail("2018", Some("ITSA Cutover Credits"), Some("MFADEBIT05"), totalAmount = Some(2000), originalAmount = Some(2000), outstandingAmount = Some(2000), items = Some(Seq(SubItem(Some(LocalDate.of(2019, 5, 15))))))
 
 
   val creditAndRefundDocumentDetailMFA = documentDetailModel(documentDescription = Some("ITSA Overpayment Relief"), outstandingAmount = Some(BigDecimal(-1400.00)), paymentLotItem = None, paymentLot = None)
