@@ -22,7 +22,7 @@ import testUtils.TestSupport
 class FallBackBackLinkSpec extends TestSupport with FallBackBackLinks {
 
   val whatYouOweUrl = controllers.routes.WhatYouOweController.show(None).url
-  val whatYouOweAgentUrl = controllers.routes.WhatYouOweController.showAgent().url
+  val whatYouOweAgentUrl = controllers.routes.WhatYouOweController.showAgent.url
 
   "FallBackBacklinks trait" when {
 

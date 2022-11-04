@@ -219,7 +219,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
         Then("the http response for an unauthorised user is returned")
         res should have(
           httpStatus(SEE_OTHER),
-          redirectURI(controllers.routes.SignInController.signIn().url)
+          redirectURI(controllers.routes.SignInController.signIn.url)
         )
       }
     }
@@ -239,6 +239,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     callback()
     if (resetCacheAfterFirstCall) cache.removeAll()
     callback()
+
     verifyIncomeSourceDetailsCall(testMtditid, noOfCalls)
   }
 }

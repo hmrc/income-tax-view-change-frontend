@@ -79,42 +79,42 @@ class RefundToTaxPayerControllerISpec extends ComponentSpecBase {
     None, Some("1234567890"), Some("12345-credId"), Some("Individual"), None
   )(FakeRequest())
 
-  s"GET ${controllers.routes.RefundToTaxPayerController.show(repaymentRequestNumber).url}" should {
-    s"redirect ($SEE_OTHER) to ${controllers.routes.SignInController.signIn().url}" when {
-      "the user is not authenticated" in {
-        isAuthorisedUser(authorised = false)
-        stubUserDetails()
-        enable(PaymentHistoryRefunds)
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, paymentHistoryBusinessAndPropertyResponse)
-
-        val result: WSResponse = IncomeTaxViewChangeFrontend.getPaymentHistory
-
-        Then(s"The user is redirected to ${controllers.routes.SignInController.signIn().url}")
-        result should have(
-          httpStatus(SEE_OTHER),
-          redirectURI(controllers.routes.SignInController.signIn().url)
-        )
-      }
-    }
-  }
-
-  s"return $OK with the refund to tax payer page" when {
-    "the payment history refunds feature switch is enabled" in {
-      isAuthorisedUser(authorised = true)
-      stubUserDetails()
-      enable(PaymentHistoryRefunds)
-      IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, paymentHistoryBusinessAndPropertyResponse)
-      IncomeTaxViewChangeStub.stubGetRepaymentHistoryByRepaymentId(Nino(testNino), repaymentRequestNumber)(OK, testRepaymentHistoryModel)
-
-      val result: WSResponse = IncomeTaxViewChangeFrontend.getRefundToTaxPayer(repaymentRequestNumber)
-
-      Then("The Refund to tax payer page is returned to the user")
-      result should have(
-        httpStatus(OK),
-        pageTitleIndividual("refund-to-taxpayer.heading")
-      )
-    }
-  }
+//  s"GET ${controllers.routes.RefundToTaxPayerController.show(repaymentRequestNumber).url}" should {
+//    s"redirect ($SEE_OTHER) to ${controllers.routes.SignInController.signIn().url}" when {
+//      "the user is not authenticated" in {
+//        isAuthorisedUser(authorised = false)
+//        stubUserDetails()
+//        enable(PaymentHistoryRefunds)
+//        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, paymentHistoryBusinessAndPropertyResponse)
+//
+//        val result: WSResponse = IncomeTaxViewChangeFrontend.getPaymentHistory
+//
+//        Then(s"The user is redirected to ${controllers.routes.SignInController.signIn().url}")
+//        result should have(
+//          httpStatus(SEE_OTHER),
+//          redirectURI(controllers.routes.SignInController.signIn().url)
+//        )
+//      }
+//    }
+//  }
+//
+//  s"return $OK with the refund to tax payer page" when {
+//    "the payment history refunds feature switch is enabled" in {
+//      isAuthorisedUser(authorised = true)
+//      stubUserDetails()
+//      enable(PaymentHistoryRefunds)
+//      IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, paymentHistoryBusinessAndPropertyResponse)
+//      IncomeTaxViewChangeStub.stubGetRepaymentHistoryByRepaymentId(Nino(testNino), repaymentRequestNumber)(OK, testRepaymentHistoryModel)
+//
+//      val result: WSResponse = IncomeTaxViewChangeFrontend.getRefundToTaxPayer(repaymentRequestNumber)
+//
+//      Then("The Refund to tax payer page is returned to the user")
+//      result should have(
+//        httpStatus(OK),
+//        pageTitleIndividual("refund-to-taxpayer.heading")
+//      )
+//    }
+//  }
 
   "API#1171 IncomeSourceDetails Caching" when {
     "caching should be ENABLED" in {

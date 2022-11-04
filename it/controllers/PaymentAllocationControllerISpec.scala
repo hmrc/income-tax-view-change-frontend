@@ -38,7 +38,7 @@ class PaymentAllocationControllerISpec extends ComponentSpecBase with FeatureSwi
 
 
   s"GET ${controllers.routes.PaymentAllocationsController.viewPaymentAllocation(docNumber).url}" should {
-    s"redirect ($SEE_OTHER) to ${controllers.routes.SignInController.signIn().url}" when {
+    s"redirect ($SEE_OTHER) to ${controllers.routes.SignInController.signIn.url}" when {
       "the user is not authenticated" in {
         isAuthorisedUser(authorised = false)
         stubUserDetails()
@@ -48,10 +48,10 @@ class PaymentAllocationControllerISpec extends ComponentSpecBase with FeatureSwi
 
         val result: WSResponse = IncomeTaxViewChangeFrontend.getPaymentAllocationCharges(docNumber)
 
-        Then(s"The user is redirected to ${controllers.routes.SignInController.signIn().url}")
+        Then(s"The user is redirected to ${controllers.routes.SignInController.signIn.url}")
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(controllers.routes.SignInController.signIn().url)
+          redirectURI(controllers.routes.SignInController.signIn.url)
         )
       }
     }
@@ -71,7 +71,7 @@ class PaymentAllocationControllerISpec extends ComponentSpecBase with FeatureSwi
         Then(s"The custom not found page is returned to the user")
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(controllers.errors.routes.NotFoundDocumentIDLookupController.show().url)
+          redirectURI(controllers.errors.routes.NotFoundDocumentIDLookupController.show.url)
         )
       }
     }

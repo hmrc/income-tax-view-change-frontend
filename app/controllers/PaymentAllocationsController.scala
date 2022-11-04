@@ -61,8 +61,8 @@ class PaymentAllocationsController @Inject()(val paymentAllocationView: PaymentA
                                              val appConfig: FrontendAppConfig) extends ClientConfirmedController
   with I18nSupport with FeatureSwitching with FallBackBackLinks {
 
-  private lazy val redirectUrlIndividual: String = controllers.errors.routes.NotFoundDocumentIDLookupController.show().url
-  private lazy val redirectUrlAgent: String = controllers.agent.errors.routes.AgentNotFoundDocumentIDLookupController.show().url
+  private lazy val redirectUrlIndividual: String = controllers.errors.routes.NotFoundDocumentIDLookupController.show.url
+  private lazy val redirectUrlAgent: String = controllers.agent.errors.routes.AgentNotFoundDocumentIDLookupController.show.url
 
   def viewPaymentAllocation(documentNumber: String, origin: Option[String] = None): Action[AnyContent] =
     (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
@@ -92,7 +92,7 @@ class PaymentAllocationsController @Inject()(val paymentAllocationView: PaymentA
         val backUrl = getPaymentAllocationBackUrl(sessionGatewayPage, taxYearOpt, origin, isAgent)
         if (!isEnabled(CutOverCredits) && paymentAllocations.paymentAllocationChargeModel.documentDetails.exists(_.credit.isDefined)) {
           Logger("application").warn(s"[PaymentAllocationsController][handleRequest] CutOverCredits is disabled and redirected to not found page")
-          Redirect(controllers.errors.routes.NotFoundDocumentIDLookupController.show().url)
+          Redirect(controllers.errors.routes.NotFoundDocumentIDLookupController.show.url)
         } else {
           auditingService.extendedAudit(PaymentAllocationsResponseAuditModel(user, paymentAllocations, isEnabled(R7bTxmEvents)))
           val dueDate: Option[LocalDate] = paymentAllocations.paymentAllocationChargeModel.financialDetails.headOption

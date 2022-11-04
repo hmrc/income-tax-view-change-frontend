@@ -23,17 +23,17 @@ import play.api.libs.ws.WSResponse
 
 class ClientDetailsFailureControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
-  s"GET ${controllers.agent.routes.ClientRelationshipFailureController.show().url}" should {
-    s"redirect ($SEE_OTHER) to ${controllers.routes.SignInController.signIn().url}" when {
+  s"GET ${controllers.agent.routes.ClientRelationshipFailureController.show.url}" should {
+    s"redirect ($SEE_OTHER) to ${controllers.routes.SignInController.signIn.url}" when {
       "the user is not authenticated" in {
         stubAuthorisedAgentUser(authorised = false)
 
         val result: WSResponse = IncomeTaxViewChangeFrontend.getClientRelationshipFailure
 
-        Then(s"The user is redirected to ${controllers.routes.SignInController.signIn().url}")
+        Then(s"The user is redirected to ${controllers.routes.SignInController.signIn.url}")
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(controllers.routes.SignInController.signIn().url)
+          redirectURI(controllers.routes.SignInController.signIn.url)
         )
       }
     }

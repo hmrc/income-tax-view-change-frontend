@@ -15,17 +15,17 @@ import testConstants.BaseIntegrationTestConstants.clientDetailsWithoutConfirmati
 class ConfirmClientUTRControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
 
-  s"GET ${controllers.agent.routes.ConfirmClientUTRController.show().url}" should {
-    s"redirect ($SEE_OTHER) to ${controllers.routes.SignInController.signIn().url}" when {
+  s"GET ${controllers.agent.routes.ConfirmClientUTRController.show.url}" should {
+    s"redirect ($SEE_OTHER) to ${controllers.routes.SignInController.signIn.url}" when {
       "the user is not authenticated" in {
         stubAuthorisedAgentUser(authorised = false)
 
         val result: WSResponse = IncomeTaxViewChangeFrontend.getConfirmClientUTR()
 
-        Then(s"The user is redirected to ${controllers.routes.SignInController.signIn().url}")
+        Then(s"The user is redirected to ${controllers.routes.SignInController.signIn.url}")
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(controllers.routes.SignInController.signIn().url)
+          redirectURI(controllers.routes.SignInController.signIn.url)
         )
       }
     }
@@ -44,7 +44,7 @@ class ConfirmClientUTRControllerISpec extends ComponentSpecBase with FeatureSwit
       }
     }
 
-    s"redirect ($SEE_OTHER) to ${controllers.agent.routes.EnterClientsUTRController.show().url}" when {
+    s"redirect ($SEE_OTHER) to ${controllers.agent.routes.EnterClientsUTRController.show.url}" when {
       "the client's name and UTR are not in session" in {
         stubAuthorisedAgentUser(authorised = true)
 
@@ -53,7 +53,7 @@ class ConfirmClientUTRControllerISpec extends ComponentSpecBase with FeatureSwit
         Then("The enter client's utr page is returned to the user")
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(controllers.agent.routes.EnterClientsUTRController.show().url)
+          redirectURI(controllers.agent.routes.EnterClientsUTRController.show.url)
         )
       }
     }
@@ -87,17 +87,17 @@ class ConfirmClientUTRControllerISpec extends ComponentSpecBase with FeatureSwit
     }
   }
 
-  s"POST ${controllers.agent.routes.ConfirmClientUTRController.submit().url}" should {
-    s"redirect ($SEE_OTHER) to ${controllers.routes.SignInController.signIn().url}" when {
+  s"POST ${controllers.agent.routes.ConfirmClientUTRController.submit.url}" should {
+    s"redirect ($SEE_OTHER) to ${controllers.routes.SignInController.signIn.url}" when {
       "the user is not authenticated" in {
         stubAuthorisedAgentUser(authorised = false)
 
         val result: WSResponse = IncomeTaxViewChangeFrontend.postConfirmClientUTR()
 
-        Then(s"The user is redirected to ${controllers.routes.SignInController.signIn().url}")
+        Then(s"The user is redirected to ${controllers.routes.SignInController.signIn.url}")
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(controllers.routes.SignInController.signIn().url)
+          redirectURI(controllers.routes.SignInController.signIn.url)
         )
       }
     }
@@ -124,7 +124,7 @@ class ConfirmClientUTRControllerISpec extends ComponentSpecBase with FeatureSwit
       Then("The user is redirected to the next page")
       result should have(
         httpStatus(SEE_OTHER),
-        redirectURI(controllers.routes.HomeController.showAgent().url)
+        redirectURI(controllers.routes.HomeController.showAgent.url)
       )
     }
   }

@@ -63,7 +63,7 @@ object IncomeTaxViewChangeStub { // scalastyle:off number.of.methods
   def stubGetIncomeSourceDetailsResponse(mtditid: String)(status: Int, response: IncomeSourceDetailsResponse): Unit =
     WiremockHelper.stubGet(incomeSourceDetailsUrl(mtditid), status, response.toJson.toString)
 
-  def verifyGetIncomeSourceDetails(mtditid: String, noOfCalls: Int = 1): Unit = {
+  def verifyGetIncomeSourceDetails(mtditid: String, noOfCalls: Int = 2): Unit = {
     WiremockHelper.verifyGet(incomeSourceDetailsUrl(mtditid), noOfCalls)
   }
 

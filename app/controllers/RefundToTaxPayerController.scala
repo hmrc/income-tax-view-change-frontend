@@ -101,7 +101,7 @@ class RefundToTaxPayerController @Inject()(val refundToTaxPayerView: RefundToTax
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true) flatMap { implicit mtdItUser =>
           handleRequest(
-            backUrl = controllers.routes.PaymentHistoryController.showAgent().url,
+            backUrl = controllers.routes.PaymentHistoryController.showAgent.url,
             isAgent = true,
             itvcErrorHandler = itvcErrorHandlerAgent,
             repaymentRequestNumber = repaymentRequestNumber

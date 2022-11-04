@@ -61,7 +61,7 @@ class EnterClientsUTRControllerSpec extends TestSupport
         val result = TestEnterClientsUTRController.show()(fakeRequestWithActiveSession)
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn().url)
+        redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn.url)
       }
     }
     "the user has timed out" should {
@@ -71,7 +71,7 @@ class EnterClientsUTRControllerSpec extends TestSupport
         val result = TestEnterClientsUTRController.show()(fakeRequestWithTimeoutSession)
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout().url)
+        redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout.url)
       }
     }
     "the user does not have an agent reference number" should {
@@ -82,7 +82,7 @@ class EnterClientsUTRControllerSpec extends TestSupport
         val result = TestEnterClientsUTRController.show()(fakeRequestWithActiveSession)
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.agent.errors.routes.AgentErrorController.show().url)
+        redirectLocation(result) shouldBe Some(controllers.agent.errors.routes.AgentErrorController.show.url)
       }
     }
     "return Ok and display the page to the user without checking client relationship information" in {
@@ -107,7 +107,7 @@ class EnterClientsUTRControllerSpec extends TestSupport
         val result = TestEnterClientsUTRController.submit()(fakeRequestWithActiveSession)
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn().url)
+        redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn.url)
       }
       "the user has timed out" should {
         "redirect to the session timeout page" in {
@@ -116,7 +116,7 @@ class EnterClientsUTRControllerSpec extends TestSupport
           val result = TestEnterClientsUTRController.submit()(fakeRequestWithTimeoutSession)
 
           status(result) shouldBe SEE_OTHER
-          redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout().url)
+          redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout.url)
         }
       }
       "the user does not have an agent reference number" should {
@@ -144,7 +144,7 @@ class EnterClientsUTRControllerSpec extends TestSupport
           ))
 
           status(result) shouldBe SEE_OTHER
-          redirectLocation(result) shouldBe Some(routes.ConfirmClientUTRController.show().url)
+          redirectLocation(result) shouldBe Some(routes.ConfirmClientUTRController.show.url)
 
           result.futureValue.session.get(SessionKeys.clientFirstName) shouldBe Some("John")
           result.futureValue.session.get(SessionKeys.clientLastName) shouldBe Some("Doe")
@@ -168,7 +168,7 @@ class EnterClientsUTRControllerSpec extends TestSupport
           ))
 
           status(result) shouldBe SEE_OTHER
-          redirectLocation(result) shouldBe Some(routes.ConfirmClientUTRController.show().url)
+          redirectLocation(result) shouldBe Some(routes.ConfirmClientUTRController.show.url)
 
           result.futureValue.session.get(SessionKeys.clientFirstName) shouldBe Some("John")
           result.futureValue.session.get(SessionKeys.clientLastName) shouldBe Some("Doe")
@@ -208,7 +208,7 @@ class EnterClientsUTRControllerSpec extends TestSupport
           ))
 
           status(result) shouldBe SEE_OTHER
-          redirectLocation(result) shouldBe Some(controllers.agent.routes.UTRErrorController.show().url)
+          redirectLocation(result) shouldBe Some(controllers.agent.routes.UTRErrorController.show.url)
         }
 
         "a business details not found error is returned from the client lookup" in {
@@ -224,7 +224,7 @@ class EnterClientsUTRControllerSpec extends TestSupport
           ))
 
           status(result) shouldBe SEE_OTHER
-          redirectLocation(result) shouldBe Some(controllers.agent.routes.UTRErrorController.show().url)
+          redirectLocation(result) shouldBe Some(controllers.agent.routes.UTRErrorController.show.url)
         }
       }
 

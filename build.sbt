@@ -13,7 +13,7 @@ val appName = "income-tax-view-change-frontend"
 val bootstrapPlayVersion = "5.21.0"
 val govTemplateVersion = "5.78.0-play-28"
 val playPartialsVersion = "8.3.0-play-28"
-val playUiVersion = "9.11.0-play-28" //"9.11.0-play-28"
+val playUiVersion = "9.11.0-play-28"
 val playFrontendHMRCVersion = "3.15.0-play-28" //3.32.0-play-28"
 val playLanguageVersion = "5.2.0-play-28" //"5.3.0-play-28"
 val catsVersion = "2.8.0"
@@ -22,7 +22,7 @@ val scalaTestPlusVersion = "5.0.0"
 val pegdownVersion = "1.6.0"
 val jsoupVersion = "1.11.3"
 val mockitoVersion = "3.12.4"
-val scalaMockVersion = "5.0.0"
+val scalaMockVersion = "5.2.0"
 val wiremockVersion = "2.26.1"
 val hmrcMongoVersion = "0.73.0"
 val currentScalaVersion = "2.13.8"
@@ -46,6 +46,7 @@ val compile = Seq(
 def test(scope: String = "test"): Seq[ModuleID] = Seq(
   "org.scalatestplus.play" %% "scalatestplus-play" % scalaTestPlusVersion % scope,
   "org.scalamock" %% "scalamock" % scalaMockVersion % scope,
+
   "org.pegdown" % "pegdown" % pegdownVersion % scope,
   "org.jsoup" % "jsoup" % jsoupVersion % scope,
   "com.typesafe.play" %% "play-test" % PlayVersion.current % scope,

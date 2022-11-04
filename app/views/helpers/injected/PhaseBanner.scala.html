@@ -18,8 +18,8 @@
 @(phaseId: String, isAgent: Boolean = false)
 
 @feedbackUrl = @{
-    if(isAgent) controllers.feedback.routes.FeedbackController.showAgent()
-    else controllers.feedback.routes.FeedbackController.show()
+    if(isAgent) controllers.feedback.routes.FeedbackController.showAgent
+    else controllers.feedback.routes.FeedbackController.show
 }
 
 <div class="@{phaseId.toLowerCase}-banner">

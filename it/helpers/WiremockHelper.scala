@@ -17,10 +17,12 @@
 package helpers
 
 import com.github.tomakehurst.wiremock.WireMockServer
+
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration._
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
+import com.github.tomakehurst.wiremock.common.ConsoleNotifier
 import org.scalatest.concurrent.{Eventually, IntegrationPatience}
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
 import play.api.libs.json.JsValue
@@ -141,7 +143,8 @@ trait WiremockHelper {
 
   lazy val ws = app.injector.instanceOf[WSClient]
 
-  lazy val wmConfig = wireMockConfig().port(wiremockPort)
+  lazy val wmConfig = wireMockConfig().port(wiremockPort).notifier(new ConsoleNotifier(true))
+
   lazy val wireMockServer = new WireMockServer(wmConfig)
 
   def startWiremock() = {

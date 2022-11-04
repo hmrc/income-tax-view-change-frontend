@@ -66,14 +66,14 @@ class FeedbackController @Inject()(implicit val config: FrontendAppConfig,
   }
 
   lazy val notAnAgentPredicate = {
-    val redirectNotAnAgent = Future.successful(Redirect(controllers.agent.errors.routes.AgentErrorController.show()))
+    val redirectNotAnAgent = Future.successful(Redirect(controllers.agent.errors.routes.AgentErrorController.show))
     defaultAgentPredicates(onMissingARN = redirectNotAnAgent)
   }
 
   def showAgent: Action[AnyContent] = Authenticated.asyncWithoutClientAuth(notAnAgentPredicate) {
     implicit request =>
       implicit user =>
-        val feedback = feedbackView(FeedbackForm.form, postAction = routes.FeedbackController.submitAgent(), isAgent = true)
+        val feedback = feedbackView(FeedbackForm.form, postAction = routes.FeedbackController.submitAgent, isAgent = true)
         request.headers.get(REFERER) match {
           case Some(ref) => Future.successful(Ok(feedback).withSession(request.session + (REFERER -> ref)))
           case _ => Future.successful(Ok(feedback))
