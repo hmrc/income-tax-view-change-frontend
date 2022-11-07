@@ -17,18 +17,21 @@
 package views.helpers
 
 import play.api.i18n.Messages
+import views.html.agent.EnterClientsUTR
 
 
 object HtmlTitle {
 
-  def apply(isAgent: Boolean = false, isErrorPage: Boolean = false, isInvalidInput: Boolean = false, h1Text: String)
+  def apply(isAgent: Boolean = false, isErrorPage: Boolean = false, isInvalidInput: Boolean = false, h1Text: String, showServiceName: Boolean = true)
            (implicit messages: Messages): String = {
 
-    (isInvalidInput, isErrorPage, isAgent) match {
-      case (false, true, _) => messages("htmlTitle.errorPage", h1Text)
-      case (true, false, _) => messages("htmlTitle.invalidInput", h1Text)
-      case (_, _, true) => messages("htmlTitle.agent", h1Text)
-      case (_, _, _) => messages("htmlTitle", h1Text)
+    (isInvalidInput, isErrorPage, isAgent, showServiceName) match {
+      case (false, true, _, _) => messages("htmlTitle.errorPage", h1Text)
+      case (true, false, _, _) => messages("htmlTitle.invalidInput", h1Text)
+      case (_, _, true, true) => messages("htmlTitle.agent", h1Text)
+      case(_, _, true, false) => messages("htmlTitle.confirmClient", h1Text)
+      case (_, _, _, _) => messages("htmlTitle", h1Text)
+
     }
   }
 }

@@ -40,7 +40,7 @@ class ConfirmClientViewSpec extends ViewSpec {
 
   object confirmClientMessages {
     val heading: String = messages("agent.confirmClient.heading")
-    val title: String = messages("htmlTitle.agent", heading)
+    val title: String = messages("htmlTitle.confirmClient", heading)
     val backLink: String = messages("base.back")
     val clientNameHeading: String = messages("agent.confirmClient.clientName")
     val clientUTRHeading: String = messages("agent.confirmClient.clientUtr")
