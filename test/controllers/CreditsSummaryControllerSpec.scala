@@ -102,8 +102,8 @@ class CreditsSummaryControllerSpec extends TestSupport with MockCalculationServi
         mockCreditHistoryService(chargesList)
         setupMockAuthRetrievalSuccess(testAuthSuccessWithSaUtrResponse())
 
-        when(mockCreditService.getCreditCharges()(any(), any()))
-          .thenReturn(Future.successful(List(financialDetailCreditAndRefundCharge)))
+       /* when(mockCreditService.getCreditCharges()(any(), any()))
+          .thenReturn(Future.successful(List(financialDetailCreditAndRefundCharge)))*/
 
         val expectedContent: String = creditsSummaryView(
           backUrl = paymentRefundHistoryBackLink,
@@ -122,15 +122,16 @@ class CreditsSummaryControllerSpec extends TestSupport with MockCalculationServi
       }
 
       "show the Credits Summary Page and back link should be to the Payment Refund History page and the money Money in your account section should not be available when available credit is Some(0.00)" in {
-        val chargesList = creditAndRefundCreditDetailListMFA
+        val emptyBalanceDetails = BalanceDetails(0.00, 0.00, 0.00, Some(0.0), None, None, None)
+        val chargesList = creditAndRefundCreditDetailListMFA.map(_.copy(balanceDetails = Some(emptyBalanceDetails)))
 
         enable(MFACreditsAndDebits)
         mockSingleBusinessIncomeSource()
         mockCreditHistoryService(chargesList)
         setupMockAuthRetrievalSuccess(testAuthSuccessWithSaUtrResponse())
 
-        when(mockCreditService.getCreditCharges()(any(), any()))
-          .thenReturn(Future.successful(List(financialDetailCreditAndRefundCharge.copy(balanceDetails = BalanceDetails(0.00, 0.00, 0.00, Some(0.0), None, None, None)))))
+       /* when(mockCreditService.getCreditCharges()(any(), any()))
+          .thenReturn(Future.successful(List(financialDetailCreditAndRefundCharge.copy(balanceDetails = emptyBalanceDetails))))*/
 
         val expectedContent: String = creditsSummaryView(
           backUrl = paymentRefundHistoryBackLink,
@@ -158,8 +159,8 @@ class CreditsSummaryControllerSpec extends TestSupport with MockCalculationServi
         mockCreditHistoryService(chargesList)
         setupMockAuthRetrievalSuccess(testAuthSuccessWithSaUtrResponse())
 
-        when(mockCreditService.getCreditCharges()(any(), any()))
-          .thenReturn(Future.successful(List(financialDetailCreditAndRefundCharge)))
+        /*when(mockCreditService.getCreditCharges()(any(), any()))
+          .thenReturn(Future.successful(List(financialDetailCreditAndRefundCharge)))*/
 
         val expectedContent: String = creditsSummaryView(
           backUrl = creditAndRefundUrl,
@@ -187,8 +188,8 @@ class CreditsSummaryControllerSpec extends TestSupport with MockCalculationServi
         mockCreditHistoryService(chargesList)
         setupMockAuthRetrievalSuccess(testAuthSuccessWithSaUtrResponse())
 
-        when(mockCreditService.getCreditCharges()(any(), any()))
-          .thenReturn(Future.successful(List(financialDetailCreditAndRefundCharge)))
+       /* when(mockCreditService.getCreditCharges()(any(), any()))
+          .thenReturn(Future.successful(List(financialDetailCreditAndRefundCharge)))*/
 
         val expectedContent: String = creditsSummaryView(
           backUrl = defaultCreditsSummaryUrl,
@@ -216,8 +217,8 @@ class CreditsSummaryControllerSpec extends TestSupport with MockCalculationServi
         mockCreditHistoryService(chargesList)
         setupMockAuthRetrievalSuccess(testAuthSuccessWithSaUtrResponse())
 
-        when(mockCreditService.getCreditCharges()(any(), any()))
-          .thenReturn(Future.successful(List(financialDetailCreditAndRefundCharge)))
+       /* when(mockCreditService.getCreditCharges()(any(), any()))
+          .thenReturn(Future.successful(List(financialDetailCreditAndRefundCharge)))*/
 
         val expectedContent: String = creditsSummaryView(
           backUrl = paymentRefundHistoryBackLink,
@@ -308,8 +309,8 @@ class CreditsSummaryControllerSpec extends TestSupport with MockCalculationServi
       mockCreditHistoryService(chargesList)
       setupMockAuthRetrievalSuccess(testAuthSuccessWithSaUtrResponse())
 
-      when(mockCreditService.getCreditCharges()(any(), any()))
-        .thenReturn(Future.successful(List(financialDetailCreditAndRefundCharge)))
+      /*when(mockCreditService.getCreditCharges()(any(), any()))
+        .thenReturn(Future.successful(List(financialDetailCreditAndRefundCharge)))*/
 
       val expectedContent: String = creditsSummaryView(
         backUrl = paymentRefundHistoryBackLink,
@@ -338,8 +339,8 @@ class CreditsSummaryControllerSpec extends TestSupport with MockCalculationServi
       mockCreditHistoryService(chargesList)
       setupMockAuthRetrievalSuccess(testAuthSuccessWithSaUtrResponse())
 
-      when(mockCreditService.getCreditCharges()(any(), any()))
-        .thenReturn(Future.successful(List(financialDetailCreditAndRefundCharge)))
+    /*  when(mockCreditService.getCreditCharges()(any(), any()))
+        .thenReturn(Future.successful(List(financialDetailCreditAndRefundCharge)))*/
 
       val expectedContent: String = creditsSummaryView(
         backUrl = paymentRefundHistoryBackLink,
@@ -409,8 +410,8 @@ class CreditsSummaryControllerSpec extends TestSupport with MockCalculationServi
         mockBothIncomeSources()
         setupMockGetFinancialDetailsWithTaxYearAndNino(testYearPlusTwo, "AA111111A")(testFinancialDetailsErrorModel)
 
-        when(mockCreditService.getCreditCharges()(any(), any()))
-          .thenReturn(Future.successful(List(financialDetailCreditAndRefundCharge)))
+       /* when(mockCreditService.getCreditCharges()(any(), any()))
+          .thenReturn(Future.successful(List(financialDetailCreditAndRefundCharge)))*/
 
         mockCreditHistoryFailed()
 
