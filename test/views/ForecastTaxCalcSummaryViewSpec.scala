@@ -75,7 +75,7 @@ class ForecastTaxCalcSummaryViewSpec extends ViewSpec {
         val expectedDataItems = Table(
           ("p:nth-child", "dataItem", "Amount"),
           (2, messages("forecast_taxCalc.totalEstimatedIncome"), "£10.00"),
-          (3, messages("forecast_taxCalc.totalAllowancesAndDeductions"), "−£40.00"),
+          (3, messages("forecast_taxCalc.totalAllowancesAndDeductions"), "£40.00"),
           (4, messages("forecast_taxCalc.totalTaxableIncome"), "£20.00"),
           (5, messages("forecast_taxCalc.totalIncomeTax"), "£30.00"),
           (7, messages("forecast_taxCalc.class4Nic"), "£50.00"),

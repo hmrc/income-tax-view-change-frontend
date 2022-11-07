@@ -386,7 +386,7 @@ forecast_taxCalc.royaltyPayments                                = Treth sy’n d
 forecast_taxCalc.totalTaxDeducted                               = Cyfanswm y dreth a ddidynnwyd:
 forecast_taxCalc.incomeTaxAndNicsDue                            = Treth Incwm a chyfraniadau Yswiriant Gwladol sy’n ddyledus:
 forecast_taxCalc.capitalGainsTax                                = Treth Enillion Cyfalaf:
-forecast_taxCalc.incomeTaxNicsCgtDue                            = Treth Incwm, Yswiriant Gwladol a Threth Enillion Cyfalaf sy’n ddyledus:
+forecast_taxCalc.incomeTaxNicsCgtDue                            = Rhagolwg o swm y dreth Hunanasesiad:
 forecast_taxCalc.noForecast.heading                             = Dim rhagolwg eto
 forecast_taxCalc.noForecast.text                                = Byddwch yn gallu gweld eich rhagolwg ar gyfer y flwyddyn gyfan unwaith y byddwch wedi anfon diweddariad.
 
