@@ -28,7 +28,7 @@ import uk.gov.hmrc.auth.core.AffinityGroup.{Individual, Organisation}
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals._
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, Name, ~}
-import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.{Authorization, HeaderCarrier}
 import uk.gov.hmrc.play.bootstrap.config.AuthRedirects
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
@@ -55,11 +55,18 @@ class AuthenticationPredicate @Inject()(implicit val ec: ExecutionContext,
 
   override def invokeBlock[A](request: Request[A], f: MtdItUserOptionNino[A] => Future[Result]): Future[Result] = {
 
-    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
+    // TODO: move these in the scope of ITs
+    implicit val hc: HeaderCarrier = {
+      val headers = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
+      headers.copy(authorization = Some(Authorization("Bearer 123")) )
+      //implicit val hc = HeaderCarrier(authorization = Some(Authorization("Bearer 123")))
+    }
+
     implicit val req: Request[A] = request
 
     authorisedFunctions.authorised(Enrolment(appConfig.mtdItEnrolmentKey)).retrieve(allEnrolments and name and credentials and affinityGroup and confidenceLevel) {
       case enrolments ~ userName ~ credentials ~ affinityGroup ~ confidenceLevel => {
+        Logger("application").info(s"[AuthenticationPredicate][async] In ...")
         if (confidenceLevel.level < requiredConfidenceLevel && isEnabled(IvUplift)) {
           affinityGroup match {
             case Some(Organisation) => {
@@ -81,8 +88,8 @@ class AuthenticationPredicate @Inject()(implicit val ec: ExecutionContext,
       case _: BearerTokenExpired =>
         Logger("application").info("[AuthenticationPredicate][async] Bearer Token Timed Out.")
         Redirect(controllers.timeout.routes.SessionTimeoutController.timeout)
-      case _: AuthorisationException =>
-        Logger("application").info("[AuthenticationPredicate][async] Unauthorised request. Redirect to Sign In.")
+      case ex: AuthorisationException =>
+        Logger("application").info(s"[AuthenticationPredicate][async] Unauthorised request. Redirect to Sign In.: ${ex}")
         Redirect(controllers.routes.SignInController.signIn)
       case s =>
         Logger("application").error(s"[AuthenticationPredicate][async] Unexpected Error Caught. Show ISE.\n$s\n", s)

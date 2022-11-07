@@ -10,7 +10,7 @@ import play.sbt.routes.RoutesKeys
 
 val appName = "income-tax-view-change-frontend"
 
-val bootstrapPlayVersion = "5.21.0"
+val bootstrapPlayVersion = "5.21.0" // "7.11.0" in the next iteration / this causing number of unit tests to fail
 val govTemplateVersion = "5.78.0-play-28"
 val playPartialsVersion = "8.3.0-play-28"
 val playUiVersion = "9.11.0-play-28"
@@ -23,7 +23,7 @@ val pegdownVersion = "1.6.0"
 val jsoupVersion = "1.11.3"
 val mockitoVersion = "3.12.4"
 val scalaMockVersion = "5.2.0"
-val wiremockVersion = "2.26.1"
+val wiremockVersion = "2.26.3"
 val hmrcMongoVersion = "0.73.0"
 val currentScalaVersion = "2.13.8"
 
@@ -107,7 +107,7 @@ lazy val microservice = Project(appName, file("."))
   .configs(IntegrationTest)
   .settings(inConfig(IntegrationTest)(Defaults.itSettings): _*)
   .settings(
-    Test / Keys.fork := true,
+    Test / Keys.fork := false,
     scalaVersion := currentScalaVersion,
     scalacOptions += "-Wconf:src=routes/.*:s",
     Test / javaOptions += "-Dlogger.resource=logback-test.xml")
