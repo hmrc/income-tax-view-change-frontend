@@ -25,7 +25,7 @@ import models.creditDetailModel.{CreditDetailModel, CutOverCreditType, MfaCredit
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import services.{CreditHistoryService, CreditService, IncomeSourceDetailsService}
+import services.{CreditHistoryService, IncomeSourceDetailsService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
 import views.html.CreditsSummary
@@ -38,7 +38,6 @@ class CreditsSummaryController @Inject()(creditsView: CreditsSummary,
                                          val authorisedFunctions: AuthorisedFunctions,
                                          incomeSourceDetailsService: IncomeSourceDetailsService,
                                          creditHistoryService: CreditHistoryService,
-                                         creditService: CreditService,
                                          itvcErrorHandler: ItvcErrorHandler,
                                          checkSessionTimeout: SessionTimeoutPredicate,
                                          retrieveBtaNavBar: NavBarPredicate,

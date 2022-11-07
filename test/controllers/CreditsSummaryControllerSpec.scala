@@ -25,12 +25,9 @@ import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSour
 import mocks.services.{MockCalculationService, MockCreditHistoryService, MockFinancialDetailsService, MockNextUpdatesService}
 import models.creditDetailModel.{CutOverCreditType, MfaCreditType}
 import models.financialDetails.{BalanceDetails, DocumentDetail}
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{mock, reset, when}
 import play.api.http.Status
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers._
-import services.CreditService
 import testConstants.BaseTestConstants.{calendarYear2018, testAgentAuthRetrievalSuccess, testAgentAuthRetrievalSuccessNoEnrolment, testAuthSuccessWithSaUtrResponse, testSaUtrId, testYearPlusTwo}
 import testConstants.FinancialDetailsTestConstants._
 import testUtils.TestSupport
@@ -38,33 +35,28 @@ import uk.gov.hmrc.auth.core.BearerTokenExpired
 import uk.gov.hmrc.http.InternalServerException
 import views.html.CreditsSummary
 
-import scala.concurrent.Future
-
 
 class CreditsSummaryControllerSpec extends TestSupport with MockCalculationService
   with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicateNoCache
   with MockFinancialDetailsService with FeatureSwitching with MockItvcErrorHandler
   with MockNextUpdatesService with MockIncomeSourceDetailsPredicate with MockCreditHistoryService {
 
-  def disableAllSwitches() : Unit = {
+  def disableAllSwitches(): Unit = {
     switches.foreach(switch => disable(switch))
   }
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    reset(mockCreditService)
     disableAllSwitches()
   }
 
   val creditsSummaryView: CreditsSummary = app.injector.instanceOf[CreditsSummary]
-  val mockCreditService: CreditService = mock(classOf[CreditService])
 
   object TestCreditsSummaryController extends CreditsSummaryController(
     creditsSummaryView,
     mockAuthService,
     mockIncomeSourceDetailsService,
     mockCreditHistoryService,
-    mockCreditService,
     app.injector.instanceOf[ItvcErrorHandler],
     app.injector.instanceOf[SessionTimeoutPredicate],
     app.injector.instanceOf[NavBarPredicate],
@@ -102,9 +94,6 @@ class CreditsSummaryControllerSpec extends TestSupport with MockCalculationServi
         mockCreditHistoryService(chargesList)
         setupMockAuthRetrievalSuccess(testAuthSuccessWithSaUtrResponse())
 
-       /* when(mockCreditService.getCreditCharges()(any(), any()))
-          .thenReturn(Future.successful(List(financialDetailCreditAndRefundCharge)))*/
-
         val expectedContent: String = creditsSummaryView(
           backUrl = paymentRefundHistoryBackLink,
           utr = Some(testSaUtrId),
@@ -129,9 +118,6 @@ class CreditsSummaryControllerSpec extends TestSupport with MockCalculationServi
         mockSingleBusinessIncomeSource()
         mockCreditHistoryService(chargesList)
         setupMockAuthRetrievalSuccess(testAuthSuccessWithSaUtrResponse())
-
-       /* when(mockCreditService.getCreditCharges()(any(), any()))
-          .thenReturn(Future.successful(List(financialDetailCreditAndRefundCharge.copy(balanceDetails = emptyBalanceDetails))))*/
 
         val expectedContent: String = creditsSummaryView(
           backUrl = paymentRefundHistoryBackLink,
@@ -159,9 +145,6 @@ class CreditsSummaryControllerSpec extends TestSupport with MockCalculationServi
         mockCreditHistoryService(chargesList)
         setupMockAuthRetrievalSuccess(testAuthSuccessWithSaUtrResponse())
 
-        /*when(mockCreditService.getCreditCharges()(any(), any()))
-          .thenReturn(Future.successful(List(financialDetailCreditAndRefundCharge)))*/
-
         val expectedContent: String = creditsSummaryView(
           backUrl = creditAndRefundUrl,
           utr = Some(testSaUtrId),
@@ -188,9 +171,6 @@ class CreditsSummaryControllerSpec extends TestSupport with MockCalculationServi
         mockCreditHistoryService(chargesList)
         setupMockAuthRetrievalSuccess(testAuthSuccessWithSaUtrResponse())
 
-       /* when(mockCreditService.getCreditCharges()(any(), any()))
-          .thenReturn(Future.successful(List(financialDetailCreditAndRefundCharge)))*/
-
         val expectedContent: String = creditsSummaryView(
           backUrl = defaultCreditsSummaryUrl,
           utr = Some(testSaUtrId),
@@ -216,9 +196,6 @@ class CreditsSummaryControllerSpec extends TestSupport with MockCalculationServi
         mockSingleBusinessIncomeSource()
         mockCreditHistoryService(chargesList)
         setupMockAuthRetrievalSuccess(testAuthSuccessWithSaUtrResponse())
-
-       /* when(mockCreditService.getCreditCharges()(any(), any()))
-          .thenReturn(Future.successful(List(financialDetailCreditAndRefundCharge)))*/
 
         val expectedContent: String = creditsSummaryView(
           backUrl = paymentRefundHistoryBackLink,
@@ -309,9 +286,6 @@ class CreditsSummaryControllerSpec extends TestSupport with MockCalculationServi
       mockCreditHistoryService(chargesList)
       setupMockAuthRetrievalSuccess(testAuthSuccessWithSaUtrResponse())
 
-      /*when(mockCreditService.getCreditCharges()(any(), any()))
-        .thenReturn(Future.successful(List(financialDetailCreditAndRefundCharge)))*/
-
       val expectedContent: String = creditsSummaryView(
         backUrl = paymentRefundHistoryBackLink,
         utr = Some(testSaUtrId),
@@ -338,9 +312,6 @@ class CreditsSummaryControllerSpec extends TestSupport with MockCalculationServi
       mockSingleBusinessIncomeSource()
       mockCreditHistoryService(chargesList)
       setupMockAuthRetrievalSuccess(testAuthSuccessWithSaUtrResponse())
-
-    /*  when(mockCreditService.getCreditCharges()(any(), any()))
-        .thenReturn(Future.successful(List(financialDetailCreditAndRefundCharge)))*/
 
       val expectedContent: String = creditsSummaryView(
         backUrl = paymentRefundHistoryBackLink,
@@ -409,9 +380,6 @@ class CreditsSummaryControllerSpec extends TestSupport with MockCalculationServi
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         mockBothIncomeSources()
         setupMockGetFinancialDetailsWithTaxYearAndNino(testYearPlusTwo, "AA111111A")(testFinancialDetailsErrorModel)
-
-       /* when(mockCreditService.getCreditCharges()(any(), any()))
-          .thenReturn(Future.successful(List(financialDetailCreditAndRefundCharge)))*/
 
         mockCreditHistoryFailed()
 
