@@ -169,7 +169,6 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
   object IncomeTaxViewChangeFrontend {
     def get(uri: String): WSResponse = buildClient(uri)
-      .withHttpHeaders("Authorization" -> "Bearer123")
       .get().futureValue
 
     def getCreditAndRefunds(): WSResponse = get("/claim-refund")
