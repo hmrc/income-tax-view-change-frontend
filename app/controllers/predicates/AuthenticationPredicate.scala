@@ -63,7 +63,6 @@ class AuthenticationPredicate @Inject()(implicit val ec: ExecutionContext,
 
     authorisedFunctions.authorised(Enrolment(appConfig.mtdItEnrolmentKey)).retrieve(allEnrolments and name and credentials and affinityGroup and confidenceLevel) {
       case enrolments ~ userName ~ credentials ~ affinityGroup ~ confidenceLevel => {
-        Logger("application").info(s"[AuthenticationPredicate][async] In ...")
         if (confidenceLevel.level < requiredConfidenceLevel && isEnabled(IvUplift)) {
           affinityGroup match {
             case Some(Organisation) => {
@@ -85,8 +84,8 @@ class AuthenticationPredicate @Inject()(implicit val ec: ExecutionContext,
       case _: BearerTokenExpired =>
         Logger("application").info("[AuthenticationPredicate][async] Bearer Token Timed Out.")
         Redirect(controllers.timeout.routes.SessionTimeoutController.timeout)
-      case ex: AuthorisationException =>
-        Logger("application").info(s"[AuthenticationPredicate][async] Unauthorised request. Redirect to Sign In.: ${ex}")
+      case _: AuthorisationException =>
+        Logger("application").info("[AuthenticationPredicate][async] Unauthorised request. Redirect to Sign In.")
         Redirect(controllers.routes.SignInController.signIn)
       case s =>
         Logger("application").error(s"[AuthenticationPredicate][async] Unexpected Error Caught. Show ISE.\n$s\n", s)
