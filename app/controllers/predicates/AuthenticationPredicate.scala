@@ -34,16 +34,18 @@ import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
+import auth._
 
 @Singleton
 class AuthenticationPredicate @Inject()(implicit val ec: ExecutionContext,
-                                        val authorisedFunctions: FrontendAuthorisedFunctions,
+                                        implicit val authorisedFunctions: FrontendAuthorisedFunctions,
                                         val appConfig: FrontendAppConfig,
                                         override val config: Configuration,
                                         override val env: Environment,
                                         val itvcErrorHandler: ItvcErrorHandler,
                                         mcc: MessagesControllerComponents,
-                                        val auditingService: AuditingService
+                                        val auditingService: AuditingService,
+                                        val headerExtractor : HeaderExtractor
                                        )
   extends BaseController with AuthRedirects with ActionBuilder[MtdItUserOptionNino, AnyContent]
     with ActionFunction[Request, MtdItUserOptionNino] with FeatureSwitching {
@@ -55,12 +57,7 @@ class AuthenticationPredicate @Inject()(implicit val ec: ExecutionContext,
 
   override def invokeBlock[A](request: Request[A], f: MtdItUserOptionNino[A] => Future[Result]): Future[Result] = {
 
-    // TODO: move these in the scope of ITs
-    implicit val hc: HeaderCarrier = {
-      val headers = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
-      headers.copy(authorization = Some(Authorization("Bearer 123")) )
-      //implicit val hc = HeaderCarrier(authorization = Some(Authorization("Bearer 123")))
-    }
+    implicit val hc: HeaderCarrier = headerExtractor.extractHeader(request, request.session)
 
     implicit val req: Request[A] = request
 

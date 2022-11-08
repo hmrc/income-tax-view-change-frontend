@@ -17,6 +17,7 @@
 package controllers.predicates
 
 import audit.mocks.MockAuditingService
+import auth.FrontEndHeaderExtractor
 import config.featureswitch.{FeatureSwitching, IvUplift}
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
@@ -48,7 +49,8 @@ class AuthenticationPredicateSpec extends TestSupport with MockAuthenticationPre
         app.injector.instanceOf[Environment],
         app.injector.instanceOf[ItvcErrorHandler],
         app.injector.instanceOf[MessagesControllerComponents],
-        mockAuditingService
+        mockAuditingService,
+        app.injector.instanceOf[FrontEndHeaderExtractor]
       ).async {
         implicit request =>
           Future.successful(Ok(testMtditid + " " + testNino))
