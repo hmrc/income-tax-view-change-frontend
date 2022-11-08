@@ -48,7 +48,7 @@ class ConfirmClientViewSpec extends ViewSpec {
     val confirmContinue: String = messages("agent.confirmClient.confirmContinue")
   }
 
-  "The Confirm Client page" should {
+  "the Confirm Client page" should {
 
     s"have the title ${confirmClientMessages.title}" in new Setup(confirmClientView) {
       document.title shouldBe confirmClientMessages.title
