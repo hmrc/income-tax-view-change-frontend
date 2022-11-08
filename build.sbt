@@ -14,8 +14,8 @@ val bootstrapPlayVersion = "5.21.0" // "7.11.0" in the next iteration / this cau
 val govTemplateVersion = "5.78.0-play-28"
 val playPartialsVersion = "8.3.0-play-28"
 val playUiVersion = "9.11.0-play-28"
-val playFrontendHMRCVersion = "3.15.0-play-28" //3.32.0-play-28"
-val playLanguageVersion = "5.2.0-play-28" //"5.3.0-play-28"
+val playFrontendHMRCVersion = "3.15.0-play-28"
+val playLanguageVersion = "5.2.0-play-28"
 val catsVersion = "2.8.0"
 
 val scalaTestPlusVersion = "5.0.0"

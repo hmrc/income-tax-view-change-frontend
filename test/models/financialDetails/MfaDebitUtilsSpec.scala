@@ -29,36 +29,36 @@
 // * See the License for the specific language governing permissions and
 // * limitations under the License.
 // */
-//
-//package models.financialDetails
-//
-//import models.financialDetails.MfaCreditUtilsSpec.property
-//import models.financialDetails.MfaDebitUtils.{filterMFADebits, isMFADebitMainType}
-//import org.scalacheck.Gen
-//import org.scalacheck.Prop.forAll
-//import testConstants.FinancialDetailsTestConstants.MFADebitsDocumentDetailsWithDueDates
-//import testUtils.UnitSpec
-//
-//class MfaDebitUtilsSpec extends UnitSpec {
-//
-//  val MFADebitType: Gen[String] = Gen.oneOf("ITSA PAYE Charge", "ITSA Calc Error Correction", "ITSA Manual Penalty Pre CY-4", "ITSA Misc Charge")
-//
-//  "MFADebitsUtils" when {
-//    "isMFADebitMainType" should {
-//      "validate MFA Debits by mainType" in {
-//        property("validMFADebitMainType") = forAll(MFADebitType) { mainType => isMFADebitMainType(Some(mainType)) }
-//      }
-//      "not validate other strings" in {
-//        isMFADebitMainType(Some("ITSA Dummy Charge")) shouldBe false
-//      }
-//    }
-//    "filterMFADebits" should {
-//      "return MFA Debits with FS enabled" in {
-//        filterMFADebits(MFADebitsEnabled = true, MFADebitsDocumentDetailsWithDueDates.head) shouldBe true
-//      }
-//      "not return MFA Debits with FS disabled" in {
-//        filterMFADebits(MFADebitsEnabled = false, MFADebitsDocumentDetailsWithDueDates.head) shouldBe false
-//      }
-//    }
-//  }
-//}
+
+package models.financialDetails
+
+import models.financialDetails.MfaCreditUtilsSpec.property
+import models.financialDetails.MfaDebitUtils.{filterMFADebits, isMFADebitMainType}
+import org.scalacheck.Gen
+import org.scalacheck.Prop.forAll
+import testConstants.FinancialDetailsTestConstants.MFADebitsDocumentDetailsWithDueDates
+import testUtils.UnitSpec
+
+class MfaDebitUtilsSpec extends UnitSpec {
+
+  val MFADebitType: Gen[String] = Gen.oneOf("ITSA PAYE Charge", "ITSA Calc Error Correction", "ITSA Manual Penalty Pre CY-4", "ITSA Misc Charge")
+
+  "MFADebitsUtils" when {
+    "isMFADebitMainType" should {
+      "validate MFA Debits by mainType" in {
+        property("validMFADebitMainType") = forAll(MFADebitType) { mainType => isMFADebitMainType(Some(mainType)) }
+      }
+      "not validate other strings" in {
+        isMFADebitMainType(Some("ITSA Dummy Charge")) shouldBe false
+      }
+    }
+    "filterMFADebits" should {
+      "return MFA Debits with FS enabled" in {
+        filterMFADebits(MFADebitsEnabled = true, MFADebitsDocumentDetailsWithDueDates.head) shouldBe true
+      }
+      "not return MFA Debits with FS disabled" in {
+        filterMFADebits(MFADebitsEnabled = false, MFADebitsDocumentDetailsWithDueDates.head) shouldBe false
+      }
+    }
+  }
+}
