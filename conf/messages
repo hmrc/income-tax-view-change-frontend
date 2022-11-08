@@ -180,7 +180,7 @@ tax-year-summary.updates                                           = Updates
 tax-year-summary.income                                            = Income
 tax-year-summary.deductions                                        = Allowances and deductions
 tax-year-summary.taxable-income                                    = Total income on which tax is due
-tax-year-summary.tax-due                                           = Income Tax and National Insurance contributions due
+tax-year-summary.tax-due                                           = Self Assessment tax amount
 tax-year-summary.payments.payment-type                             = Payment type
 tax-year-summary.payments.due-date                                 = Due date
 tax-year-summary.payments.amount                                   = Amount
@@ -203,6 +203,7 @@ tax-year-summary.na                                                = N/A
 tax-year-summary.paye-tax-code                                     = PAYE tax code
 tax-year-summary.forecast_tab.insetText                            = This is an estimate of your tax bill for the whole year to 5 April {0}. It will be updated throughout the year as more information is provided.
 tax-year-summary.forecast_total_title                              = 6 April {0} to 5 April {1} forecast
+tax-year-summary.forecast.tax-due                                  = Forecast Self Assessment tax amount
 
 
 ## Income Breakdown Page ##
@@ -406,7 +407,7 @@ forecast_taxCalc.royaltyPayments                                = Tax due on roy
 forecast_taxCalc.totalTaxDeducted                               = Total tax deducted:
 forecast_taxCalc.incomeTaxAndNicsDue                            = Income Tax and National Insurance contributions due:
 forecast_taxCalc.capitalGainsTax                                = Capital Gains Tax:
-forecast_taxCalc.incomeTaxNicsCgtDue                            = Income Tax, National Insurance contributions and Capital Gains Tax due:
+forecast_taxCalc.incomeTaxNicsCgtDue                            = Forecast Self Assessment tax amount:
 forecast_taxCalc.noForecast.heading                             = No forecast yet
 forecast_taxCalc.noForecast.text                                = You will be able to see your forecast for the whole year once you have sent an update.
 

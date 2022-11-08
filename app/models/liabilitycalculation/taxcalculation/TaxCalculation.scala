@@ -25,7 +25,8 @@ case class TaxCalculation(
                            totalStudentLoansRepaymentAmount: Option[BigDecimal] = None,
                            saUnderpaymentsCodedOut: Option[BigDecimal] = None,
                            totalIncomeTaxAndNicsDue: BigDecimal,
-                           totalTaxDeducted: Option[BigDecimal] = None
+                           totalTaxDeducted: Option[BigDecimal] = None,
+                           totalIncomeTaxAndNicsAndCgt:Option[BigDecimal] = None
                          )
 
 object TaxCalculation {
