@@ -589,7 +589,7 @@ whatYouOwe.late-payment-interest.line1                          = Dyma’r llog 
 whatYouOwe.class2-nic.heading                                   = Yswiriant Gwladol Dosbarth 2
 whatYouOwe.class2-nic.line1                                     = Mae hwn yn daliad penodol ar gyfer cyfraniadau Yswiriant Gwladol Dosbarth 2 eich cleient.
 whatYouOwe.cancelled-paye-sa.heading                            = Hunanasesiad TWE wedi’i ganslo
-whatYouOwe.cancelled-paye-sa.line1                              = Gwnaethoch gytuno i dalu peth o’ch treth Hunanasesiad drwy eich cod treth TWE. Nid ydym wedi gallu casglu’r holl daliadau hyn, felly dyma’r dreth sydd yn weddill y mae angen i chi ei dalu.
+whatYouOwe.cancelled-paye-sa.line1                              = Cytunodd eich cleient i dalu peth o’i dreth Hunanasesiad drwy ei god treth TWE. Nid ydym wedi gallu casglu’r holl daliadau hyn, felly dyma’r dreth sydd yn weddill y mae angen i’ch cleient ei dalu.
 whatYouOwe.payments-due                                         = Taliadau treth incwm
 whatYouOwe.payments-made                                        = Ynglŷn ag unrhyw daliadau a wnaed gennych:
 whatYouOwe.payments-made-agent                                  = O ran unrhyw daliadau a wneir gan eich cleient:
@@ -733,9 +733,9 @@ chargeSummary.codingOutPayHistoryAmount                            = Amount coll
 chargeSummary.check-paye-tax-code-1                                = Check if your
 chargeSummary.check-paye-tax-code-2                                = PAYE tax code
 chargeSummary.check-paye-tax-code-3                                = has changed for the {0} to {1} tax year.
-chargeSummary.cancelledPayeInset-1                                 = Cytunodd eich cleient i dalu peth o’i dreth Hunanasesiad
-chargeSummary.cancelledPayeInset-2                                 = drwy ei god treth TWE.
-chargeSummary.cancelledPayeInset-3                                 = Nid ydym wedi gallu casglu’r holl daliadau hyn, felly dyma’r dreth sydd yn weddill y mae angen i’ch cleient ei dalu.
+chargeSummary.cancelledPayeInset-1                                 = You have previously agreed to pay some of your Self Assessment bill
+chargeSummary.cancelledPayeInset-2                                 = through your PAYE tax code (opens in new tab).
+chargeSummary.cancelledPayeInset-3                                 = HMRC has been unable to collect all of these payments from you, so this is the remaining tax you need to pay.
 
 ## Regimes
 regimes.UK = Y DU
