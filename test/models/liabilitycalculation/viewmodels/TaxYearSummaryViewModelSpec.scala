@@ -64,6 +64,35 @@ class TaxYearSummaryViewModelSpec extends UnitSpec with ImplicitDateParser {
 
         TaxYearSummaryViewModel(liabilityCalculationModelSuccessful) shouldBe expectedTaxYearSummaryViewModel
       }
+
+      "create a full TaxYearSummaryViewModel with taxDue as totalIncomeTaxAndNicsAndCgt" when {
+          "the 'totalIncomeTaxAndNicsAndCgt' is available" in {
+            val taxDue = 6000
+            val expectedTaxYearSummaryViewModel = TaxYearSummaryViewModel(
+              timestamp = Some("2019-02-15T09:35:15.094Z".toZonedDateTime.toLocalDate),
+              crystallised = Some(true),
+              unattendedCalc = false,
+              taxDue = taxDue,
+              income = 12500,
+              deductions = 17500.99,
+              totalTaxableIncome = 12500,
+              forecastIncome = Some(12500),
+              forecastIncomeTaxAndNics = Some(5000.99),
+              forecastAllowancesAndDeductions = Some(4200.00),
+              forecastTotalTaxableIncome = Some(8300),
+              periodFrom = Some(LocalDate.of(2018, 1, 1)),
+              periodTo = Some(LocalDate.of(2019, 1, 1))
+            )
+
+            val liabilityCalculationModel = liabilityCalculationModelSuccessful.copy(
+              calculation = Some(liabilityCalculationModelSuccessful.calculation.get.copy(
+                taxCalculation = Some(liabilityCalculationModelSuccessful.calculation.get.taxCalculation.get.copy(
+                  totalIncomeTaxAndNicsAndCgt = Some(taxDue))))))
+
+            TaxYearSummaryViewModel(liabilityCalculationModel) shouldBe expectedTaxYearSummaryViewModel
+          }
+        }
+      }
     }
 
     "return unattendedCalc as true when calculationReason is 'unattendedCalculation'" in {
