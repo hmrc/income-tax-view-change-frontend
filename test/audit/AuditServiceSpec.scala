@@ -48,11 +48,10 @@ class AuditServiceSpec extends TestSupport with PrivateMethodTester {
       result.auditType shouldBe "auditType"
     }
 
-// TODO: fix this broken test
+// TODO: for some reason after upgrade to scala 2.13.8 this test stop working => FIX
 //    "call private handleAuditResult method" in {
-//      // TODO: ideally we should find way to mock Logger, but this is not supported by Mockito
-//      // as the moment as this is singleton
-//
+//       TODO: ideally we should find way to mock Logger, but this is not supported by Mockito
+//       as the moment as this is singleton
 //      val privateMethodDecorator = PrivateMethod[Future[AuditResult]]('handleAuditResult)
 //
 //      val successRes = obj invokePrivate privateMethodDecorator(Future.successful(AuditResult.Success), ec)
