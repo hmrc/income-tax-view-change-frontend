@@ -166,7 +166,7 @@ tax-year-summary.updates                                       = Diweddariadau
 tax-year-summary.income                                        = Incwm
 tax-year-summary.deductions                                    = Lwfansau a didyniadau
 tax-year-summary.taxable-income                                = Cyfanswm yr incwm y mae treth yn ddyledus arno
-tax-year-summary.tax-due                                       = Treth Incwm a chyfraniadau Yswiriant Gwladol sy’n ddyledus
+tax-year-summary.tax-due                                       = Swm y dreth Hunanasesiad
 tax-year-summary.payments.payment-type                         = Math o daliad
 tax-year-summary.payments.due-date                             = Dyddiad dyledus
 tax-year-summary.payments.amount                               = Swm
@@ -182,6 +182,7 @@ tax-year-summary.payments.overdue                              = Yn hwyr
 tax-year-summary.payments.no-payments                          = Dim taliadau’n ddyledus ar hyn o bryd.
 tax-year-summary.forecast_tab.insetText                        = Amcangyfrif yw hwn o’ch bil treth ar gyfer y flwyddyn gyfan hyd at 5 Ebrill {0}. Bydd hyn yn cael ei ddiweddaru drwy gydol y flwyddyn wrth i ni gael rhagor o wybodaeth.
 tax-year-summary.forecast_total_title                          = Rhagolwg 6 Ebrill {0} i 5 Ebrill {1}
+tax-year-summary.forecast.tax-due                              = Rhagolwg o swm y dreth Hunanasesiad
 
 ## Tax Year Summary Page new ##
 tax-year-summary.tax-calculation.no-calc                       = Dim cyfrifiad eto
