@@ -119,10 +119,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
   override implicit lazy val app: Application = new GuiceApplicationBuilder()
     .in(Environment.simple(mode = Mode.Dev))
-    .overrides(bind[HeaderExtractor].to[TestHeaderExtractor])
-    //.bindings( classOf[HeaderExtractor])
-    //.bind(classOf[Hello]).to(classOf[GermanHello])
-      //.annotatedWith(Names.named("de"))
+    .overrides(bind[HeaderExtractor].to[TestHeaderExtractor]) // adding dumy Authorization header in order for it:tests to pass
     .configure(config)
     .build
 
