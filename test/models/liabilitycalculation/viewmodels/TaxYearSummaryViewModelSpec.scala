@@ -66,7 +66,7 @@ class TaxYearSummaryViewModelSpec extends UnitSpec with ImplicitDateParser {
       }
 
       "create a full TaxYearSummaryViewModel with taxDue as totalIncomeTaxAndNicsAndCgt" when {
-          "the 'totalIncomeTaxAndNicsAndCgt' is available" in {
+          "the 'totalIncomeTaxAndNicsAndCgt' field is available" in {
             val taxDue = 6000
             val expectedTaxYearSummaryViewModel = TaxYearSummaryViewModel(
               timestamp = Some("2019-02-15T09:35:15.094Z".toZonedDateTime.toLocalDate),
