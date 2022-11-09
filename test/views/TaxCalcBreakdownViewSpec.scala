@@ -906,4 +906,12 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
     }
   }
 
+  "The taxCalc breakdown view with Self Assessment tax amount" when {
+    lazy val view = taxCalcBreakdown(taxDueSummaryViewModelStandard, 2018, backUrl)
+
+    "have the correct Self Assessment tax amount" in new Setup(view) {
+      pageContent(pageContentSelector).getElementsByClass("govuk-table").get(11).text() shouldBe "Self Assessment tax amount £0.00"
+    }
+  }
+
 }
