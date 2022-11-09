@@ -31,6 +31,7 @@ htmlTitle                                           = {0} - Manage your Income T
 htmlTitle.agent                                     = {0} - Manage your client’s Income Tax updates - GOV.UK
 htmlTitle.errorPage                                 = {0} - GOV.UK
 htmlTitle.invalidInput                              = Error: {0} - GOV.UK
+htmlTitle.confirmClient                             = {0} - GOV.UK
 
 # Agent - Enter clients details
 agent.enter_clients_utr.heading                                 = What is your client’s UTR?
