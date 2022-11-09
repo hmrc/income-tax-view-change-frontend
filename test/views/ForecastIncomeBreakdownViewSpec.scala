@@ -162,7 +162,7 @@ class ForecastIncomeBreakdownViewSpec extends ViewSpec {
       lazy val view = forecastIncomeTemplate(viewModelFull, taxYear, backUrl)
 
       "have the correct title" in new Setup(view) {
-        document title() shouldBe  messages("htmlTitle", messages("forecast_income.heading"))
+        document.title() shouldBe  messages("htmlTitle", messages("forecast_income.heading"))
       }
 
       "have the correct heading" in new Setup(view) {

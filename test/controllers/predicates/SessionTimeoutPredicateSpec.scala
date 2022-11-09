@@ -63,7 +63,7 @@ class SessionTimeoutPredicateSpec extends TestSupport {
       }
 
       "redirect to the session timeout page" in {
-        redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout().url)
+        redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout.url)
       }
     }
 

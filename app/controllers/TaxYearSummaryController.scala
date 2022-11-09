@@ -253,7 +253,7 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
   def homeUrl(origin: Option[String]): String = controllers.routes.HomeController.show(origin).url
 
   // Agent back urls
-  lazy val agentTaxYearsUrl: String = controllers.routes.TaxYearsController.showAgentTaxYears().url
-  lazy val agentHomeUrl: String = controllers.routes.HomeController.showAgent().url
-  lazy val agentWhatYouOweUrl: String = controllers.routes.WhatYouOweController.showAgent().url
+  lazy val agentTaxYearsUrl: String = controllers.routes.TaxYearsController.showAgentTaxYears.url
+  lazy val agentHomeUrl: String = controllers.routes.HomeController.showAgent.url
+  lazy val agentWhatYouOweUrl: String = controllers.routes.WhatYouOweController.showAgent.url
 }

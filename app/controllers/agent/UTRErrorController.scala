@@ -44,16 +44,16 @@ class UTRErrorController @Inject()(utrError: UTRError,
         case Some(clientUtr) =>
           Future.successful(Ok(utrError(
             clientUtr = clientUtr,
-            postAction = controllers.agent.routes.UTRErrorController.submit()
+            postAction = controllers.agent.routes.UTRErrorController.submit
           )))
-        case None => Future.successful(Redirect(routes.EnterClientsUTRController.show()))
+        case None => Future.successful(Redirect(routes.EnterClientsUTRController.show))
       }
   }
 
   def submit: Action[AnyContent] = Authenticated.asyncWithoutClientAuth() { implicit request =>
     implicit user =>
       Future.successful(
-        Redirect(routes.EnterClientsUTRController.show().url).removingFromSession(SessionKeys.clientUTR)
+        Redirect(routes.EnterClientsUTRController.show.url).removingFromSession(SessionKeys.clientUTR)
       )
   }
 }

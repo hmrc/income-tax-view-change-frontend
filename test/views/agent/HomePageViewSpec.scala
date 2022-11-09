@@ -36,7 +36,7 @@ import scala.util.Try
 
 class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
 
-  lazy val backUrl: String = controllers.agent.routes.ConfirmClientUTRController.show().url
+  lazy val backUrl: String = controllers.agent.routes.ConfirmClientUTRController.show.url
 
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
@@ -231,7 +231,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
         }
         "has a link to the tax years page" in new Setup {
           val link: Option[Element] = getElementById("returns-tile").map(_.select("a").last)
-          link.map(_.attr("href")) shouldBe Some(controllers.routes.TaxYearsController.showAgentTaxYears().url)
+          link.map(_.attr("href")) shouldBe Some(controllers.routes.TaxYearsController.showAgentTaxYears.url)
           link.map(_.text) shouldBe Some(messages("home.tax-years.view"))
         }
       }
@@ -247,13 +247,13 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
 
         "has a link to the Payment and refund history page when payment history feature switch is enabled" in new Setup {
           val link: Option[Element] = getElementById("payment-history-tile").map(_.select("a").first)
-          link.map(_.attr("href")) shouldBe Some(controllers.routes.PaymentHistoryController.showAgent().url)
+          link.map(_.attr("href")) shouldBe Some(controllers.routes.PaymentHistoryController.showAgent.url)
           link.map(_.text) shouldBe Some(messages("home.paymentHistoryRefund.view"))
         }
 
         "has a link to the payment history page when payment history feature switch is disabled" in new Setup(paymentHistoryEnabled = false) {
           val link: Option[Element] = getElementById("payment-history-tile").map(_.select("a").first)
-          link.map(_.attr("href")) shouldBe Some(controllers.routes.PaymentHistoryController.showAgent().url)
+          link.map(_.attr("href")) shouldBe Some(controllers.routes.PaymentHistoryController.showAgent.url)
           link.map(_.text) shouldBe Some(messages("home.paymentHistory.view"))
         }
 

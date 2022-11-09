@@ -107,7 +107,7 @@ class WhatYouOweController @Inject()(val checkSessionTimeout: SessionTimeoutPred
         getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true).flatMap {
           implicit mtdItUser =>
             handleRequest(
-              backUrl = controllers.routes.HomeController.showAgent().url,
+              backUrl = controllers.routes.HomeController.showAgent.url,
               itvcErrorHandler = itvcErrorHandlerAgent,
               isAgent = true
             )

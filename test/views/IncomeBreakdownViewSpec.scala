@@ -90,11 +90,11 @@ class IncomeBreakdownViewSpec extends ViewSpec {
       lazy val view = incomeBreakdown(emptyIncomeBreakdownViewModel, taxYear, backUrl)
 
       "have the correct title" in new Setup(view) {
-        document title() shouldBe messages("htmlTitle", messages("income_breakdown.heading"))
+        document.title() shouldBe messages("htmlTitle", messages("income_breakdown.heading"))
       }
 
       "have a fallback backlink" in new Setup(view) {
-        document hasFallbackBacklink()
+        document.hasFallbackBacklink()
       }
 
       "have the correct heading" in new Setup(view) {
@@ -136,7 +136,7 @@ class IncomeBreakdownViewSpec extends ViewSpec {
       lazy val view = incomeBreakdown(fullIncomeBreakdownViewModel, taxYear, backUrl)
 
       "have the correct title" in new Setup(view) {
-        document title() shouldBe messages("htmlTitle", messages("income_breakdown.heading"))
+        document.title() shouldBe messages("htmlTitle", messages("income_breakdown.heading"))
       }
 
       "have the correct heading" in new Setup(view) {

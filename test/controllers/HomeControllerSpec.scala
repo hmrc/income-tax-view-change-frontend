@@ -354,7 +354,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
         val result: Future[Result] = TestHomeController.showAgent()(fakeRequestWithActiveSession)
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn().url)
+        redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn.url)
       }
     }
 
@@ -365,7 +365,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
         val result: Future[Result] = TestHomeController.showAgent()(fakeRequestWithClientDetails)
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout().url)
+        redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout.url)
       }
     }
 

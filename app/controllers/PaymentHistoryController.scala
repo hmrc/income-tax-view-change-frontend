@@ -120,7 +120,7 @@ class PaymentHistoryController @Inject()(val paymentHistoryView: PaymentHistory,
               handleRequest(
                 itvcErrorHandler = itvcErrorHandlerAgent,
                 isAgent = true,
-                backUrl = controllers.routes.HomeController.showAgent().url
+                backUrl = controllers.routes.HomeController.showAgent.url
               )
           }
     }

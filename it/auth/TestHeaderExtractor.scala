@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,19 +12,21 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@this()
-@(phaseId: String, isAgent: Boolean = false)
+package auth
 
-@feedbackUrl = @{
-    if(isAgent) controllers.feedback.routes.FeedbackController.showAgent
-    else controllers.feedback.routes.FeedbackController.show
+import uk.gov.hmrc.http.{Authorization, HeaderCarrier}
+import uk.gov.hmrc.play.http.HeaderCarrierConverter
+import javax.inject.Singleton
+
+@Singleton
+class TestHeaderExtractor extends HeaderExtractor {
+
+  override def extractHeader(request: play.api.mvc.Request[_], session: play.api.mvc.Session): HeaderCarrier = {
+    HeaderCarrierConverter
+      .fromRequestAndSession(request, request.session)
+      .copy(authorization = Some(Authorization("Bearer")))
+  }
+  
 }
-
-<div class="@{phaseId.toLowerCase}-banner">
-    <p>
-        <strong id="phase" class="phase-tag">@phaseId</strong>
-        <span>This is a new service – your <a href="@feedbackUrl">feedback</a> will help us to improve it.</span>
-    </p>
-</div>

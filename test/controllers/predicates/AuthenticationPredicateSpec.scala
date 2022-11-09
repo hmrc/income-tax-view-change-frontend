@@ -17,6 +17,7 @@
 package controllers.predicates
 
 import audit.mocks.MockAuditingService
+import auth.FrontEndHeaderExtractor
 import config.featureswitch.{FeatureSwitching, IvUplift}
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
@@ -34,8 +35,8 @@ import scala.concurrent.Future
 class AuthenticationPredicateSpec extends TestSupport with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate with MockAuditingService with FeatureSwitching {
 
   val ivUpliftRedirectUrl: String = s"/mdtp/uplift?origin=ITVC&confidenceLevel=200&" +
-    s"completionURL=${appConfig.itvcFrontendEnvironment + "/" + appConfig.baseUrl + controllers.routes.UpliftSuccessController.success().url}&" +
-    s"failureURL=${appConfig.itvcFrontendEnvironment + "/" + appConfig.baseUrl + controllers.errors.routes.UpliftFailedController.show().url}"
+    s"completionURL=${appConfig.itvcFrontendEnvironment + "/" + appConfig.baseUrl + controllers.routes.UpliftSuccessController.success.url}&" +
+    s"failureURL=${appConfig.itvcFrontendEnvironment + "/" + appConfig.baseUrl + controllers.errors.routes.UpliftFailedController.show.url}"
 
   "The AuthenticationPredicate" when {
 
@@ -48,7 +49,8 @@ class AuthenticationPredicateSpec extends TestSupport with MockAuthenticationPre
         app.injector.instanceOf[Environment],
         app.injector.instanceOf[ItvcErrorHandler],
         app.injector.instanceOf[MessagesControllerComponents],
-        mockAuditingService
+        mockAuditingService,
+        app.injector.instanceOf[FrontEndHeaderExtractor]
       ).async {
         implicit request =>
           Future.successful(Ok(testMtditid + " " + testNino))
@@ -75,7 +77,7 @@ class AuthenticationPredicateSpec extends TestSupport with MockAuthenticationPre
 
         "redirect to the Not Enrolled page" in {
           setupMockAuthorisationException(new InsufficientEnrolments)
-          redirectLocation(result) shouldBe Some(controllers.errors.routes.NotEnrolledController.show().url)
+          redirectLocation(result) shouldBe Some(controllers.errors.routes.NotEnrolledController.show.url)
         }
       }
       "there is a HMRC-MTD-IT enrolment but a user details error from auth" should {
@@ -96,7 +98,7 @@ class AuthenticationPredicateSpec extends TestSupport with MockAuthenticationPre
 
       "should redirect to GG Sign In" in {
         setupMockAuthorisationException(new BearerTokenExpired)
-        redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout().url)
+        redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout.url)
       }
     }
 
@@ -110,7 +112,7 @@ class AuthenticationPredicateSpec extends TestSupport with MockAuthenticationPre
       }
 
       "redirect to GG Sign In" in {
-        redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn().url)
+        redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn.url)
       }
     }
 
