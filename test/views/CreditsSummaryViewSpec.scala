@@ -84,7 +84,6 @@ class CreditsSummaryViewSpec extends TestSupport with FeatureSwitching with Impl
         backUrl = backUrl,
         utr = utr,
         btaNavPartial = None,
-        enableMfaCreditsAndDebits = true,
         charges = creditCharges,
         maybeAvailableCredit = maybeAvailableCredit,
         isAgent = isAgent
