@@ -16,12 +16,10 @@
 
 package models.financialDetails
 
-import models.financialDetails.MfaCreditUtilsSpec.property
 import models.financialDetails.MfaDebitUtils.{filterMFADebits, isMFADebitMainType}
-import org.scalacheck.Gen
 import org.scalacheck.Prop.forAll
-import testConstants.FinancialDetailsTestConstants.MFADebitsDocumentDetailsWithDueDates
 import org.scalacheck._
+import testConstants.FinancialDetailsTestConstants.MFADebitsDocumentDetailsWithDueDates
 
 
 object MfaDebitUtilsSpec extends Properties("MFADebitType"){

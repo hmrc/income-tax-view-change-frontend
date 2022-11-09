@@ -18,7 +18,7 @@ package controllers.predicates
 
 import audit.AuditingService
 import audit.models.IvUpliftRequiredAuditModel
-import auth.{FrontendAuthorisedFunctions, MtdItUserOptionNino}
+import auth._
 import config.featureswitch.{FeatureSwitching, IvUplift}
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.BaseController
@@ -28,13 +28,10 @@ import uk.gov.hmrc.auth.core.AffinityGroup.{Individual, Organisation}
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals._
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, Name, ~}
-import uk.gov.hmrc.http.{Authorization, HeaderCarrier}
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.config.AuthRedirects
-import uk.gov.hmrc.play.http.HeaderCarrierConverter
-
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
-import auth._
 
 @Singleton
 class AuthenticationPredicate @Inject()(implicit val ec: ExecutionContext,
