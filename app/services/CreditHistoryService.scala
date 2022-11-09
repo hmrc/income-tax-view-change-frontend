@@ -44,11 +44,11 @@ class CreditHistoryService @Inject()(incomeTaxViewChangeConnector: IncomeTaxView
           case (document: DocumentDetail, financialDetail: FinancialDetail) => {
             (financialDetail.validMFACreditType(), document.credit.isDefined) match {
               case (true, true) =>
-                Some(CreditDetailModel(date = document.documentDate, document, MfaCreditType))
+                Some(CreditDetailModel(date = document.documentDate, document, MfaCreditType, Some(financialDetailsModel.balanceDetails)))
               case (false, true) =>
                 // if we didn't find CutOverCredit dueDate then we "lost" this document
                 financialDetailsModel.getDueDateForFinancialDetail(financialDetail)
-                  .map(dueDate => CreditDetailModel(date = dueDate, document, CutOverCreditType))
+                  .map(dueDate => CreditDetailModel(date = dueDate, document, CutOverCreditType, Some(financialDetailsModel.balanceDetails)))
               case (_, _) => None
             }
           }

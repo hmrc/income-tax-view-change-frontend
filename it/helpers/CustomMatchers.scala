@@ -92,7 +92,34 @@ trait CustomMatchers extends UnitSpec with GivenWhenThen {
       }
     }
 
-  def pageTitleAgent(messageKey: String, isInvalidInput: Boolean = false, isErrorPage: Boolean = false): HavePropertyMatcher[WSResponse, String] =
+  def pageTitleAgent(messageKey: String,
+                     isInvalidInput: Boolean = false,
+                     isErrorPage: Boolean = false,
+                     showServiceName: Boolean = true): HavePropertyMatcher[WSResponse, String] =
+    new HavePropertyMatcher[WSResponse, String] {
+
+      def apply(response: WSResponse): HavePropertyMatchResult[String] = {
+        val body = Jsoup.parse(response.body)
+        val expectedTitle = (isInvalidInput, isErrorPage, showServiceName) match {
+          case (false, true, _) => messagesAPI("htmlTitle.errorPage", messagesAPI(messageKey))
+          case (true, false, _) => messagesAPI("htmlTitle.invalidInput", messagesAPI(messageKey))
+          case (_, _, false) => messagesAPI("html.confirmClient", messagesAPI(messageKey))
+          case (_, _, true) => messagesAPI("htmlTitle.agent", messagesAPI(messageKey))
+        }
+
+        Then(s"the page title should be '$expectedTitle'")
+        HavePropertyMatchResult(
+          body.title == expectedTitle,
+          "pageTitle",
+          expectedTitle,
+          body.title
+        )
+      }
+    }
+
+  def pageTitleAgentLogin(messageKey: String,
+                     isInvalidInput: Boolean = false,
+                     isErrorPage: Boolean = false): HavePropertyMatcher[WSResponse, String] =
     new HavePropertyMatcher[WSResponse, String] {
 
       def apply(response: WSResponse): HavePropertyMatchResult[String] = {
@@ -100,7 +127,8 @@ trait CustomMatchers extends UnitSpec with GivenWhenThen {
         val expectedTitle = (isInvalidInput, isErrorPage) match {
           case (false, true) => messagesAPI("htmlTitle.errorPage", messagesAPI(messageKey))
           case (true, false) => messagesAPI("htmlTitle.invalidInput", messagesAPI(messageKey))
-          case (_, _) => messagesAPI("htmlTitle.agent", messagesAPI(messageKey))
+          case (_, _) => messagesAPI("htmlTitle.confirmClient", messagesAPI(messageKey))
+
         }
 
         Then(s"the page title should be '$expectedTitle'")

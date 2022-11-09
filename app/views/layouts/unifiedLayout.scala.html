@@ -129,7 +129,7 @@
 
 @if(mainClass.isDefined){
     @govukLayout(
-        pageTitle = Some(HtmlTitle(isAgent, isErrorPage, form.exists(_.hasErrors), pageTitle)),
+        pageTitle = Some(HtmlTitle(isAgent, isErrorPage, form.exists(_.hasErrors), pageTitle, showServiceName)),
         headBlock = Some(head),
         beforeContentBlock = Some(beforeContentBlock),
         bodyEndBlock = None,
@@ -140,7 +140,7 @@
     )(content)
 } else {
     @govukLayout(
-        pageTitle = Some(HtmlTitle(isAgent, isErrorPage, form.exists(_.hasErrors), pageTitle)),
+        pageTitle = Some(HtmlTitle(isAgent, isErrorPage, form.exists(_.hasErrors), pageTitle, showServiceName)),
         headBlock = Some(head),
         beforeContentBlock = Some(beforeContentBlock),
         bodyEndBlock = None,

@@ -66,7 +66,7 @@ class ConfirmClientUTRControllerISpec extends ComponentSpecBase with FeatureSwit
       Then("The confirm client's utr page is returned to the user")
       result should have(
         httpStatus(OK),
-        pageTitleAgent("agent.confirmClient.heading")
+        pageTitleAgentLogin("agent.confirmClient.heading")
       )
     }
 
@@ -82,7 +82,7 @@ class ConfirmClientUTRControllerISpec extends ComponentSpecBase with FeatureSwit
 
       result should have(
         httpStatus(OK),
-        pageTitleAgent("agent.confirmClient.heading")
+        pageTitleAgentLogin("agent.confirmClient.heading")
       )
     }
   }

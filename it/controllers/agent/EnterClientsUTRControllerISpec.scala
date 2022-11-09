@@ -67,7 +67,7 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
       Then("The enter client's utr page is returned to the user")
       result should have(
         httpStatus(OK),
-        pageTitleAgent("agent.enter_clients_utr.heading")
+        pageTitleAgentLogin("agent.enter_clients_utr.heading")
       )
     }
   }
@@ -313,7 +313,7 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
 
         result should have(
           httpStatus(OK),
-          pageTitleAgent("agent.confirmClient.heading")
+          pageTitleAgentLogin("agent.confirmClient.heading")
         )
       }
     }

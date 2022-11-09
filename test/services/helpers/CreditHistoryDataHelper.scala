@@ -77,8 +77,20 @@ trait CreditHistoryDataHelper {
     )
   )
 
-  val creditDetailModelasCutOver = CreditDetailModel(date = LocalDate.parse("2022-08-25"), documentDetail = documentDetailsWhichIsCutOverCredit, CutOverCreditType)
-  val creditDetailModelasMfa = CreditDetailModel(date = LocalDate.parse("2022-03-29"), documentDetail = documentDetailsWhichIsMfaCredit, MfaCreditType)
+  val expectedBalancedDetails = BalanceDetails(1.0,2.0,3.0,None,None,None,None)
+
+  val creditDetailModelasCutOver = CreditDetailModel(
+    date = LocalDate.parse("2022-08-25"),
+    documentDetail = documentDetailsWhichIsCutOverCredit,
+    CutOverCreditType,
+    balanceDetails = Some(expectedBalancedDetails)
+  )
+  val creditDetailModelasMfa = CreditDetailModel(
+    date = LocalDate.parse("2022-03-29"),
+    documentDetail = documentDetailsWhichIsMfaCredit,
+    MfaCreditType,
+    balanceDetails = Some(expectedBalancedDetails)
+  )
 
   val taxYearFinancialDetails_PlusOneYear = FinancialDetailsModel(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
