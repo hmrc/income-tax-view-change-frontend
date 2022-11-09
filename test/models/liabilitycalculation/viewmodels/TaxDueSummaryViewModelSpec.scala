@@ -41,7 +41,8 @@ class TaxDueSummaryViewModelSpec extends UnitSpec {
           totalPensionSavingsTaxCharges = None, statePensionLumpSumCharges = None,
           payeUnderpaymentsCodedOut = None, nic4Bands = None, class2NicsAmount = None,
           capitalGainsTax = CapitalGainsTaxViewModel(None, None, None, None, None, None, None, None, None),
-          totalStudentLoansRepaymentAmount = None, saUnderpaymentsCodedOut = None, totalIncomeTaxAndNicsDue = None,
+          totalStudentLoansRepaymentAmount = None, saUnderpaymentsCodedOut = None,
+          totalIncomeTaxAndNicsDue = Some(0),
           totalTaxDeducted = None,
           taxDeductedAtSource = TaxDeductedAtSourceViewModel(None, None, None, None, None, None, None, None, None)
         )
