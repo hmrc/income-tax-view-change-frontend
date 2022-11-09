@@ -887,4 +887,3 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
     }
   }
 }
-

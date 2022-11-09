@@ -53,7 +53,7 @@ class ConfirmClientUTRControllerSpec extends TestSupport
         val result = TestConfirmClientUTRController.show()(fakeRequestWithClientDetails)
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn().url)
+        redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn.url)
       }
     }
 
@@ -64,7 +64,7 @@ class ConfirmClientUTRControllerSpec extends TestSupport
         val result = TestConfirmClientUTRController.show()(fakeRequestWithTimeoutSession)
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout().url)
+        redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout.url)
       }
     }
 
@@ -87,7 +87,7 @@ class ConfirmClientUTRControllerSpec extends TestSupport
         val result = TestConfirmClientUTRController.show()(fakeRequestWithActiveSession)
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.agent.routes.EnterClientsUTRController.show().url)
+        redirectLocation(result) shouldBe Some(controllers.agent.routes.EnterClientsUTRController.show.url)
       }
     }
 
@@ -98,7 +98,7 @@ class ConfirmClientUTRControllerSpec extends TestSupport
         val result = TestConfirmClientUTRController.show()(fakeRequestWithClientDetails)
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.agent.routes.ClientRelationshipFailureController.show().url)
+        redirectLocation(result) shouldBe Some(controllers.agent.routes.ClientRelationshipFailureController.show.url)
       }
     }
 
@@ -121,7 +121,7 @@ class ConfirmClientUTRControllerSpec extends TestSupport
         val result = TestConfirmClientUTRController.submit()(fakeRequestWithClientDetails)
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn().url)
+        redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn.url)
       }
     }
 
@@ -132,7 +132,7 @@ class ConfirmClientUTRControllerSpec extends TestSupport
         val result = TestConfirmClientUTRController.submit()(fakeRequestWithTimeoutSession)
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout().url)
+        redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout.url)
       }
     }
 
@@ -155,7 +155,7 @@ class ConfirmClientUTRControllerSpec extends TestSupport
         val result = TestConfirmClientUTRController.submit()(fakeRequestWithActiveSession)
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.agent.routes.EnterClientsUTRController.show().url)
+        redirectLocation(result) shouldBe Some(controllers.agent.routes.EnterClientsUTRController.show.url)
       }
     }
 
@@ -167,7 +167,7 @@ class ConfirmClientUTRControllerSpec extends TestSupport
       val result = TestConfirmClientUTRController.submit()(fakeRequestWithClientDetails)
 
       status(result) shouldBe SEE_OTHER
-      redirectLocation(result) shouldBe Some(controllers.routes.HomeController.showAgent().url)
+      redirectLocation(result) shouldBe Some(controllers.routes.HomeController.showAgent.url)
       result.futureValue.session(request).get(SessionKeys.confirmedClient) shouldBe Some("true")
     }
   }

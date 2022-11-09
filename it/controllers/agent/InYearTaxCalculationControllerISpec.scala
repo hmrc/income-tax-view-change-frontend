@@ -58,7 +58,7 @@ class InYearTaxCalculationControllerISpec extends ComponentSpecBase {
   val timeStampCY: String = longDate(LocalDate.now)(toMessages("CY")).toLongDate
 
 
-  val url: String = s"http://localhost:$port" + controllers.routes.InYearTaxCalculationController.showAgent().url
+  val url: String = s"http://localhost:$port" + controllers.routes.InYearTaxCalculationController.showAgent.url
 
   def calculationStub(): Unit = {
     IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, taxYear.toString)(
@@ -163,7 +163,7 @@ class InYearTaxCalculationControllerISpec extends ComponentSpecBase {
   }
 
 
-  s"calling GET ${controllers.routes.InYearTaxCalculationController.showAgent().url}" should {
+  s"calling GET ${controllers.routes.InYearTaxCalculationController.showAgent.url}" should {
     "display the new calc page in english" which {
       lazy val result = {
         stubAuthorisedAgentUser(authorised = true)

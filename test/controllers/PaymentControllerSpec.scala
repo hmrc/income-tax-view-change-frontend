@@ -144,7 +144,7 @@ class PaymentControllerSpec extends TestSupport with MockAuthenticationPredicate
       val result: Future[Result] = testController.agentPaymentHandoff(testAmountInPence)(
         fakeRequestWithActiveSession.withSession(utils.SessionKeys.clientMTDID -> "XAIT00000000015"))
       status(result) shouldBe SEE_OTHER
-      redirectLocation(result) shouldBe Some(controllers.agent.routes.EnterClientsUTRController.show().url)
+      redirectLocation(result) shouldBe Some(controllers.agent.routes.EnterClientsUTRController.show.url)
     }
 
     "return an error" when {

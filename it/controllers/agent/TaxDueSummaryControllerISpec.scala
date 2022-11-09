@@ -76,16 +76,16 @@ class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
   }
 
   "Calling the TaxDueSummaryController.showIncomeSummary(taxYear)" when {
-    s"redirect ($SEE_OTHER) to ${controllers.routes.SignInController.signIn().url}" when {
+    s"redirect ($SEE_OTHER) to ${controllers.routes.SignInController.signIn.url}" when {
       "the user is not authenticated" in {
         stubAuthorisedAgentUser(authorised = false)
 
         val result: WSResponse = IncomeTaxViewChangeFrontend.getTaxCalcBreakdown(getCurrentTaxYearEnd.getYear)()
 
-        Then(s"The user is redirected to ${controllers.routes.SignInController.signIn().url}")
+        Then(s"The user is redirected to ${controllers.routes.SignInController.signIn.url}")
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(controllers.routes.SignInController.signIn().url)
+          redirectURI(controllers.routes.SignInController.signIn.url)
         )
       }
     }
@@ -110,7 +110,7 @@ class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
 
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(routes.EnterClientsUTRController.show().url)
+          redirectURI(routes.EnterClientsUTRController.show.url)
         )
       }
       "the agent has client details in session but no confirmation flag" in {
@@ -120,7 +120,7 @@ class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
 
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(routes.EnterClientsUTRController.show().url)
+          redirectURI(routes.EnterClientsUTRController.show.url)
         )
       }
     }

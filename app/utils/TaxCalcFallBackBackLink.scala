@@ -26,7 +26,7 @@ trait TaxCalcFallBackBackLink {
         } else controllers.routes.FinalTaxCalculationController.show(taxYear, origin).url
       } else {
         if (isAgent) {
-          controllers.routes.InYearTaxCalculationController.showAgent().url
+          controllers.routes.InYearTaxCalculationController.showAgent.url
         } else controllers.routes.InYearTaxCalculationController.show(origin).url
       }
     } else {

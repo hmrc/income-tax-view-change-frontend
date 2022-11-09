@@ -331,7 +331,7 @@ class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockInc
         val result: Future[Result] = controller.getNextUpdatesAgent()(fakeRequestWithActiveSession)
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn().url)
+        redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn.url)
       }
     }
     "the user has timed out" should {
@@ -341,7 +341,7 @@ class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockInc
         val result: Future[Result] = controller.getNextUpdatesAgent()(fakeRequestWithClientDetails)
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout().url)
+        redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout.url)
       }
     }
     "the user does not have an agent reference number" should {
@@ -362,7 +362,7 @@ class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockInc
         mockSingleBusinessIncomeSourceWithDeadlines
         mockSingleBusinessIncomeSource()
         mockObligations
-        mockNextUpdates(obligationsModel, controllers.routes.HomeController.showAgent().url, true)(HtmlFormat.empty)
+        mockNextUpdates(obligationsModel, controllers.routes.HomeController.showAgent.url, true)(HtmlFormat.empty)
 
         val result: Future[Result] = controller.getNextUpdatesAgent()(fakeRequestConfirmedClient())
 

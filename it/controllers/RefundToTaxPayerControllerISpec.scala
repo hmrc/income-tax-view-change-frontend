@@ -80,7 +80,7 @@ class RefundToTaxPayerControllerISpec extends ComponentSpecBase {
   )(FakeRequest())
 
   s"GET ${controllers.routes.RefundToTaxPayerController.show(repaymentRequestNumber).url}" should {
-    s"redirect ($SEE_OTHER) to ${controllers.routes.SignInController.signIn().url}" when {
+    s"redirect ($SEE_OTHER) to ${controllers.routes.SignInController.signIn.url}" when {
       "the user is not authenticated" in {
         isAuthorisedUser(authorised = false)
         stubUserDetails()
@@ -89,10 +89,10 @@ class RefundToTaxPayerControllerISpec extends ComponentSpecBase {
 
         val result: WSResponse = IncomeTaxViewChangeFrontend.getPaymentHistory
 
-        Then(s"The user is redirected to ${controllers.routes.SignInController.signIn().url}")
+        Then(s"The user is redirected to ${controllers.routes.SignInController.signIn.url}")
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(controllers.routes.SignInController.signIn().url)
+          redirectURI(controllers.routes.SignInController.signIn.url)
         )
       }
     }

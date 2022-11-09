@@ -68,6 +68,6 @@ class StubUsersController @Inject()(stubUsersView: StubUsersView)
   }
 
   def view(form: Form[UserModel], result: Option[String] = None)(implicit request: Request[AnyContent]): HtmlFormat.Appendable = {
-    stubUsersView(form, testOnly.controllers.routes.StubUsersController.submit(), result)
+    stubUsersView(form, testOnly.controllers.routes.StubUsersController.submit, result)
   }
 }

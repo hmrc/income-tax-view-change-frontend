@@ -58,7 +58,7 @@
 @import implicitDateFormatter.longDate
 
     @whatYouOweControllerURL = @{
-        if(isAgent) { controllers.routes.WhatYouOweController.showAgent().url
+        if(isAgent) { controllers.routes.WhatYouOweController.showAgent.url
         } else {
             controllers.routes.WhatYouOweController.show(origin).url
         }
@@ -82,7 +82,7 @@
 
     @taxYearsControllerURL = @{
         if(isAgent) {
-            controllers.routes.TaxYearsController.showAgentTaxYears().url
+            controllers.routes.TaxYearsController.showAgentTaxYears.url
         } else {
             controllers.routes.TaxYearsController.showTaxYears(origin).url
         }
@@ -90,7 +90,7 @@
 
     @paymentHistoryControllerURL = @{
         if(isAgent) {
-            controllers.routes.PaymentHistoryController.showAgent().url
+            controllers.routes.PaymentHistoryController.showAgent.url
         } else {
             controllers.routes.PaymentHistoryController.show(origin).url
         }
@@ -145,7 +145,7 @@
                 }
 
                 @p(classes = "govuk-body margin-bottom-sixty", id = Some("changeClientLink")) {
-                    @link(controllers.agent.routes.RemoveClientDetailsSessionsController.show().url, "govuk-link--no-visited-state", "home.agent.changeClientLink"
+                    @link(controllers.agent.routes.RemoveClientDetailsSessionsController.show.url, "govuk-link--no-visited-state", "home.agent.changeClientLink"
                 )
                 }
 
