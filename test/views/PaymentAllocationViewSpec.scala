@@ -382,7 +382,7 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
         allocationDetail("bcd_2", "2018-04-05", BAL_CHARGE, NIC4_WALES, 2345.67) -> "2019-06-28",
         allocationDetail("bcd_3", "2018-04-06", BAL_CHARGE, NIC2_GB, 3456.78) -> "2019-06-29",
         allocationDetail("bcd_4", "2019-01-01", BAL_CHARGE, CGT, 9876.54) -> "2019-08-27",
-        allocationDetail("bcd_5", "2019-04-05", BAL_CHARGE, "SL", 8765.43) -> "2019-08-28",
+        allocationDetail("bcd_5", "2019-04-05", BAL_CHARGE, SL, 8765.43) -> "2019-08-28",
         allocationDetail("bcd_6", "2019-04-06", BAL_CHARGE, VOLUNTARY_NIC2_NI, 7654.32) -> "2019-08-29")) {
 
         val expectedLinkUrls = Seq(

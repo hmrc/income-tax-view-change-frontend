@@ -65,11 +65,23 @@ object ChargeType {
     override val name: String = "NIC2-GB"
   }
 
+  case object NIC2_WALES extends ChargeType {
+    override val name: String = "NIC2 Wales"
+  }
+
+  case object VOLUNTARY_NIC2_GB extends ChargeType {
+    override val name: String = "Voluntary NIC2-GB"
+  }
+
   case object VOLUNTARY_NIC2_NI extends ChargeType {
     override val name: String = "Voluntary NIC2-NI"
   }
 
   case object CGT extends ChargeType {
     override val name: String = "CGT"
+  }
+
+  case object SL extends ChargeType {
+    override val name: String = "SL"
   }
 }

@@ -1,12 +1,12 @@
 package testConstants
 
-import enums.ChargeType.{ITSA_ENGLAND_AND_NI, NIC4_WALES}
-
-import java.time.LocalDate
+import enums.ChargeType.{ITSA_ENGLAND_AND_NI, ITSA_NIC4_INTEREST_GB, NIC4_WALES}
 import models.financialDetails.{DocumentDetail, FinancialDetail, SubItem}
 import models.paymentAllocationCharges.{AllocationDetailWithClearingDate, FinancialDetailsWithDocumentDetailsModel, LatePaymentInterestPaymentAllocationDetails, PaymentAllocationViewModel}
 import models.paymentAllocations.{AllocationDetail, PaymentAllocations}
 import play.api.libs.json.{JsValue, Json}
+
+import java.time.LocalDate
 
 object PaymentAllocationIntegrationTestConstants {
 

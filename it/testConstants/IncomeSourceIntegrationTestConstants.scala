@@ -19,7 +19,7 @@ package testConstants
 import BusinessDetailsIntegrationTestConstants._
 import PaymentHistoryTestConstraints.oldBusiness1
 import PropertyDetailsIntegrationTestConstants._
-import enums.ChargeType.ITSA_NI
+import enums.ChargeType.{ITSA_NI, NIC4_SCOTLAND}
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel, IncomeSourceDetailsResponse}
 import play.api.libs.json.{JsValue, Json}
 import testConstants.BaseIntegrationTestConstants.getCurrentTaxYearEnd

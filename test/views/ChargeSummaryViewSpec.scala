@@ -16,7 +16,7 @@
 
 package views
 
-import enums.ChargeType.{CGT, ITSA_ENGLAND_AND_NI, ITSA_NI, ITSA_WALES, NIC2_GB, NIC4_GB, NIC4_NI, NIC4_SCOTLAND, NIC4_WALES, VOLUNTARY_NIC2_NI}
+import enums.ChargeType._
 import exceptions.MissingFieldException
 import models.chargeHistory.ChargeHistoryModel
 import models.financialDetails._
@@ -171,21 +171,21 @@ class ChargeSummaryViewSpec extends ViewSpec {
     financialDetail(originalAmount = 3456.78, chargeType = VOLUNTARY_NIC2_NI),
     financialDetail(originalAmount = 5678.9, chargeType = NIC4_WALES),
     financialDetail(originalAmount = 9876.54, chargeType = CGT),
-    financialDetail(originalAmount = 543.21, chargeType = "SL")
+    financialDetail(originalAmount = 543.21, chargeType = SL)
   )
 
   val paymentBreakdownWithDunningLocks: List[FinancialDetail] = List(
     financialDetail(originalAmount = 123.45, chargeType = ITSA_ENGLAND_AND_NI),
     financialDetail(originalAmount = 2345.67, chargeType = NIC2_GB, dunningLock = Some("Stand over order")),
     financialDetail(originalAmount = 9876.54, chargeType = CGT, dunningLock = Some("Stand over order")),
-    financialDetail(originalAmount = 543.21, chargeType = "SL")
+    financialDetail(originalAmount = 543.21, chargeType = SL)
   )
 
   val paymentBreakdownWithInterestLocks: List[FinancialDetail] = List(
     financialDetail(originalAmount = 123.45, chargeType = ITSA_ENGLAND_AND_NI, accruedInterest = Some(30)),
     financialDetail(originalAmount = 2345.67, chargeType = NIC2_GB, interestLock = Some("Clerical Interest Signal")),
     financialDetail(originalAmount = 9876.54, chargeType = CGT, interestLock = Some("Manual RPI Signal"), accruedInterest = Some(35)),
-    financialDetail(originalAmount = 543.21, chargeType = "SL")
+    financialDetail(originalAmount = 543.21, chargeType = SL)
   )
 
   val paymentBreakdownWhenInterestAccrues: List[FinancialDetail] = List(
@@ -600,10 +600,10 @@ class ChargeSummaryViewSpec extends ViewSpec {
 
             paymentsForCharge(typeBalCharge, ITSA_ENGLAND_AND_NI, "2019-12-10", 3400.0),
             paymentsForCharge(typeBalCharge, NIC4_NI, "2019-12-11", 3500.0),
-            paymentsForCharge(typeBalCharge, "NIC2 Wales", "2019-12-12", 3600.0),
+            paymentsForCharge(typeBalCharge, NIC2_WALES, "2019-12-12", 3600.0),
             paymentsForCharge(typeBalCharge, CGT, "2019-12-13", 3700.0),
-            paymentsForCharge(typeBalCharge, "SL", "2019-12-14", 3800.0),
-            paymentsForCharge(typeBalCharge, "Voluntary NIC2-GB", "2019-12-15", 3900.0),
+            paymentsForCharge(typeBalCharge, SL, "2019-12-14", 3800.0),
+            paymentsForCharge(typeBalCharge, VOLUNTARY_NIC2_GB, "2019-12-15", 3900.0),
           )
 
           val expectedPaymentAllocationRows = List(
