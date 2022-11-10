@@ -110,7 +110,7 @@ object TaxDueSummaryViewModel {
         capitalGainsTax = CapitalGainsTaxViewModel(calc.taxCalculation.flatMap(tc => tc.capitalGainsTax)),
         totalStudentLoansRepaymentAmount = calc.taxCalculation.flatMap(tc => tc.totalStudentLoansRepaymentAmount),
         saUnderpaymentsCodedOut = calc.taxCalculation.flatMap(tc => tc.saUnderpaymentsCodedOut),
-        totalIncomeTaxAndNicsDue = Option(getTaxDue(calcResponse)),
+        totalIncomeTaxAndNicsDue = Some(getTaxDue(calcResponse)),
         totalTaxDeducted = calc.taxCalculation.flatMap(tc => tc.totalTaxDeducted),
         taxDeductedAtSource = TaxDeductedAtSourceViewModel(calc.taxDeductedAtSource)
       )
