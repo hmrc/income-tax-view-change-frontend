@@ -58,7 +58,7 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
   }
 
   def getWhatYouOweChargesList(unpaidCharges:Future[List[FinancialDetailsResponseModel]])
-                              (implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[WhatYouOweChargesList] ={
+                              (implicit mtdUser: MtdItUser[_]): Future[WhatYouOweChargesList] ={
 
     unpaidCharges flatMap {
       case financialDetails if financialDetails.exists(_.isInstanceOf[FinancialDetailsErrorModel]) =>
