@@ -54,7 +54,13 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
   }
 
   def getWhatYouOweChargesList()(implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[WhatYouOweChargesList] = {
-    financialDetailsService.getAllUnpaidFinancialDetails flatMap {
+      getWhatYouOweChargesList(financialDetailsService.getAllUnpaidFinancialDetails)
+  }
+
+  def getWhatYouOweChargesList(unpaidCharges:Future[List[FinancialDetailsResponseModel]])
+                              (implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[WhatYouOweChargesList] ={
+
+    unpaidCharges flatMap {
       case financialDetails if financialDetails.exists(_.isInstanceOf[FinancialDetailsErrorModel]) =>
         throw new Exception("[WhatYouOweService][getWhatYouOweChargesList] Error response while getting Unpaid financial details")
       case financialDetails =>
