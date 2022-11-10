@@ -1,5 +1,7 @@
 package testConstants
 
+import enums.ChargeType.{ITSA_ENGLAND_AND_NI, NIC4_WALES}
+
 import java.time.LocalDate
 import models.financialDetails.{DocumentDetail, FinancialDetail, SubItem}
 import models.paymentAllocationCharges.{AllocationDetailWithClearingDate, FinancialDetailsWithDocumentDetailsModel, LatePaymentInterestPaymentAllocationDetails, PaymentAllocationViewModel}
@@ -54,7 +56,7 @@ object PaymentAllocationIntegrationTestConstants {
     originalAmount = Some(BigDecimal(500.00)),
     outstandingAmount = Some(BigDecimal("500.00")),
     clearedAmount = Some(BigDecimal(500.00)),
-    chargeType = Some("NIC4 Wales"),
+    chargeType = Some(NIC4_WALES),
     mainType = Some("SA Payment on Account 1"),
     items = Some(Seq(
       SubItem(
@@ -96,7 +98,7 @@ object PaymentAllocationIntegrationTestConstants {
     originalAmount = Some(BigDecimal(500.00)),
     outstandingAmount = Some(BigDecimal("200.00")),
     clearedAmount = Some(BigDecimal(500.00)),
-    chargeType = Some("NIC4 Wales"),
+    chargeType = Some(NIC4_WALES),
     mainType = Some("SA Payment on Account 1"),
     items = Some(Seq(
       SubItem(
@@ -124,7 +126,7 @@ object PaymentAllocationIntegrationTestConstants {
     originalAmount = Some(BigDecimal(800.00)),
     outstandingAmount = Some(BigDecimal("00.00")),
     clearedAmount = Some(BigDecimal(800.00)),
-    chargeType = Some("ITSA England & NI"),
+    chargeType = Some(ITSA_ENGLAND_AND_NI),
     mainType = Some("ITSA Misc Charge"),
     items = Some(Seq(
       SubItem(
@@ -244,7 +246,7 @@ object PaymentAllocationIntegrationTestConstants {
         "transactionId" -> "1040000872",
         "from" -> "2019-06-27",
         "to" -> "2019-08-27",
-        "chargeType" -> "NIC4 Wales",
+        "chargeType" -> NIC4_WALES,
         "mainType" -> "SA Payment on Account 1",
         "amount" -> 10.10,
         "clearedAmount" -> 5.50
@@ -253,7 +255,7 @@ object PaymentAllocationIntegrationTestConstants {
         "transactionId" -> "1040000873",
         "from" -> "2019-07-28",
         "to" -> "2019-09-28",
-        "chargeType" -> "NIC4 Wales",
+        "chargeType" -> NIC4_WALES,
         "mainType" -> "SA Payment on Account 1",
         "amount" -> 10.90,
         "clearedAmount" -> 5.90
@@ -264,15 +266,15 @@ object PaymentAllocationIntegrationTestConstants {
   val testValidPaymentAllocationsModel: PaymentAllocations = PaymentAllocations(
     Some(110.10), Some("Payment by Card"), Some(LocalDate.parse("2019-05-27")), Some("reference"),
     Seq(
-      AllocationDetail(Some("1040000872"), Some(LocalDate.parse("2019-06-27")), Some(LocalDate.parse("2019-08-27")), Some("NIC4 Wales"), Some("SA Payment on Account 1"), Some(10.10), Some(5.50), Some("chargeReference1")),
-      AllocationDetail(Some("1040000873"), Some(LocalDate.parse("2019-07-28")), Some(LocalDate.parse("2019-09-28")), Some("NIC4 Wales"), Some("SA Payment on Account 1"), Some(10.90), Some(5.90), Some("chargeReference2"))
+      AllocationDetail(Some("1040000872"), Some(LocalDate.parse("2019-06-27")), Some(LocalDate.parse("2019-08-27")), Some(NIC4_WALES), Some("SA Payment on Account 1"), Some(10.10), Some(5.50), Some("chargeReference1")),
+      AllocationDetail(Some("1040000873"), Some(LocalDate.parse("2019-07-28")), Some(LocalDate.parse("2019-09-28")), Some(NIC4_WALES), Some("SA Payment on Account 1"), Some(10.90), Some(5.90), Some("chargeReference2"))
     )
   )
 
   val testValidLpiPaymentAllocationsModel: PaymentAllocations = PaymentAllocations(
     Some(110.10), Some("Payment by Card"), Some( LocalDate.parse("2019-05-27") ), Some("reference"),
     Seq(
-      AllocationDetail(Some("1040000872"), Some(LocalDate.parse("2019-06-27")), Some(LocalDate.parse("2019-08-27")), Some("ITSA NIC4 Interest GB"), Some("SA Late Payment Interest"), Some(10.10), Some(5.50), Some("latePaymentInterestId")),
+      AllocationDetail(Some("1040000872"), Some(LocalDate.parse("2019-06-27")), Some(LocalDate.parse("2019-08-27")), Some(ITSA_NIC4_INTEREST_GB), Some("SA Late Payment Interest"), Some(10.10), Some(5.50), Some("latePaymentInterestId")),
       AllocationDetail(Some("1040000873"), Some(LocalDate.parse("2019-07-28")), Some(LocalDate.parse("2019-09-28")), Some("ITSA NIC2 Interest GB"), Some("SA Late Payment Interest"), Some(10.90), Some(5.90), Some("latePaymentInterestId"))
     )
   )
@@ -283,23 +285,23 @@ object PaymentAllocationIntegrationTestConstants {
       AllocationDetail(Some("MA999991A202202"),
         Some(LocalDate.parse("2021-04-06")),
         Some(LocalDate.parse("2022-04-05")),
-        Some("ITSA England & NI"), Some("ITSA Misc Charge"),
+        Some(ITSA_ENGLAND_AND_NI), Some("ITSA Misc Charge"),
         Some(800.00), Some(800.00),
         Some("MA999991A202202")))
   )
 
   val paymentAllocationViewModel: PaymentAllocationViewModel = PaymentAllocationViewModel(paymentAllocationChargesModel,
     Seq(
-      AllocationDetailWithClearingDate(Some(AllocationDetail(Some("1040000872"), Some(LocalDate.parse("2019-06-27")), Some(LocalDate.parse("2019-08-27")), Some("NIC4 Wales"), Some("SA Payment on Account 1"), Some(10.10), Some(5.50), Some("chargeReference1"))),
+      AllocationDetailWithClearingDate(Some(AllocationDetail(Some("1040000872"), Some(LocalDate.parse("2019-06-27")), Some(LocalDate.parse("2019-08-27")), Some(NIC4_WALES), Some("SA Payment on Account 1"), Some(10.10), Some(5.50), Some("chargeReference1"))),
         Some(LocalDate.parse("2021-01-31"))),
-      AllocationDetailWithClearingDate(Some(AllocationDetail(Some("1040000873"), Some(LocalDate.parse("2019-07-28")), Some(LocalDate.parse("2019-09-28")), Some("NIC4 Wales"), Some("SA Payment on Account 1"), Some(10.90), Some(5.90), Some("chargeReference2"))),
+      AllocationDetailWithClearingDate(Some(AllocationDetail(Some("1040000873"), Some(LocalDate.parse("2019-07-28")), Some(LocalDate.parse("2019-09-28")), Some(NIC4_WALES), Some("SA Payment on Account 1"), Some(10.90), Some(5.90), Some("chargeReference2"))),
         Some(LocalDate.parse("2021-01-31")))
     ))
 
   val paymentAllocationViewModelHmrcAdjustment: PaymentAllocationViewModel = PaymentAllocationViewModel(financialDetailsHmrcAdjustment,
     Seq(
       AllocationDetailWithClearingDate(
-        Some(AllocationDetail(Some("MA999991A202202"), Some(LocalDate.parse("2021-04-06")), Some(LocalDate.parse("2022-04-05")), Some("ITSA England & NI"), Some("ITSA Misc Charge"), Some(800.00), Some(800.00), Some("XM002610011594"))),
+        Some(AllocationDetail(Some("MA999991A202202"), Some(LocalDate.parse("2021-04-06")), Some(LocalDate.parse("2022-04-05")), Some(ITSA_ENGLAND_AND_NI), Some("ITSA Misc Charge"), Some(800.00), Some(800.00), Some("XM002610011594"))),
         Some(LocalDate.parse("2021-01-28")))
     ))
 

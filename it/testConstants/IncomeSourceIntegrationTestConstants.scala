@@ -19,6 +19,7 @@ package testConstants
 import BusinessDetailsIntegrationTestConstants._
 import PaymentHistoryTestConstraints.oldBusiness1
 import PropertyDetailsIntegrationTestConstants._
+import enums.ChargeType.ITSA_NI
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel, IncomeSourceDetailsResponse}
 import play.api.libs.json.{JsValue, Json}
 import testConstants.BaseIntegrationTestConstants.getCurrentTaxYearEnd
@@ -213,7 +214,7 @@ object IncomeSourceIntegrationTestConstants {
         "taxYear" -> taxYear,
         "mainType" -> "SA Balancing Charge",
         "transactionId" -> "1040000123",
-        "chargeType" -> "ITSA NI",
+        "chargeType" -> ITSA_NI,
         "originalAmount" -> originalAmount,
         "items" -> Json.arr(
           Json.obj("amount" -> 10000,
@@ -226,7 +227,7 @@ object IncomeSourceIntegrationTestConstants {
         "taxYear" -> taxYear,
         "mainType" -> "SA Payment on Account 1",
         "transactionId" -> "1040000124",
-        "chargeType" -> "ITSA NI",
+        "chargeType" -> ITSA_NI,
         "originalAmount" -> originalAmount,
         "items" -> Json.arr(
           Json.obj("amount" -> 9000,
@@ -243,7 +244,7 @@ object IncomeSourceIntegrationTestConstants {
         "taxYear" -> taxYear,
         "mainType" -> "SA Payment on Account 2",
         "transactionId" -> "1040000125",
-        "chargeType" -> "ITSA NI",
+        "chargeType" -> ITSA_NI,
         "originalAmount" -> originalAmount,
         "items" -> Json.arr(
           Json.obj("amount" -> 8000,
@@ -600,7 +601,7 @@ object IncomeSourceIntegrationTestConstants {
         "taxYear" -> taxYear,
         "mainType" -> "SA Balancing Charge",
         "transactionId" -> "1040000123",
-        "chargeType" -> "ITSA NI",
+        "chargeType" -> ITSA_NI,
         "originalAmount" -> originalAmount,
         "totalAmount" -> totalAmount,
         "items" -> Json.arr(
@@ -614,7 +615,7 @@ object IncomeSourceIntegrationTestConstants {
         "taxYear" -> taxYear,
         "mainType" -> "SA Payment on Account 1",
         "transactionId" -> "1040000123",
-        "chargeType" -> "NIC4 Scotland",
+        "chargeType" -> NIC4_SCOTLAND,
         "originalAmount" -> originalAmount,
         "totalAmount" -> totalAmount,
         "items" -> Json.arr(
@@ -632,7 +633,7 @@ object IncomeSourceIntegrationTestConstants {
         "taxYear" -> taxYear,
         "mainType" -> "SA Payment on Account 2",
         "transactionId" -> "1040000123",
-        "chargeType" -> "NIC4 Scotland",
+        "chargeType" -> NIC4_SCOTLAND,
         "originalAmount" -> originalAmount,
         "totalAmount" -> totalAmount,
         "items" -> Json.arr(
@@ -719,7 +720,7 @@ object IncomeSourceIntegrationTestConstants {
         "taxYear" -> taxYear,
         "mainType" -> "ITSA Cutover Credits",
         "transactionId" -> "1040000123",
-        "chargeType" -> "ITSA NI",
+        "chargeType" -> ITSA_NI,
         "originalAmount" -> originalAmount,
         "items" -> Json.arr(
           Json.obj("amount" -> 10000,
@@ -732,7 +733,7 @@ object IncomeSourceIntegrationTestConstants {
         "taxYear" -> taxYear,
         "mainType" -> "ITSA Cutover Credits",
         "transactionId" -> "1040000124",
-        "chargeType" -> "ITSA NI",
+        "chargeType" -> ITSA_NI,
         "originalAmount" -> originalAmount,
         "items" -> Json.arr(
           Json.obj("amount" -> 9000,
@@ -749,7 +750,7 @@ object IncomeSourceIntegrationTestConstants {
         "taxYear" -> taxYear,
         "mainType" -> "ITSA Cutover Credits",
         "transactionId" -> "1040000125",
-        "chargeType" -> "ITSA NI",
+        "chargeType" -> ITSA_NI,
         "originalAmount" -> originalAmount,
         "items" -> Json.arr(
           Json.obj("amount" -> 8000,
@@ -814,7 +815,7 @@ object IncomeSourceIntegrationTestConstants {
         "taxYear" -> taxYear,
         "mainType" -> "ITSA PAYE Charge",
         "transactionId" -> "1040000123",
-        "chargeType" -> "ITSA NI",
+        "chargeType" -> ITSA_NI,
         "originalAmount" -> originalAmount,
         "items" -> Json.arr(
           Json.obj("amount" -> 10000,
@@ -827,7 +828,7 @@ object IncomeSourceIntegrationTestConstants {
         "taxYear" -> taxYear,
         "mainType" -> "ITSA Calc Error Correction",
         "transactionId" -> "1040000124",
-        "chargeType" -> "ITSA NI",
+        "chargeType" -> ITSA_NI,
         "originalAmount" -> originalAmount,
         "items" -> Json.arr(
           Json.obj("amount" -> 9000,
@@ -841,7 +842,7 @@ object IncomeSourceIntegrationTestConstants {
         "taxYear" -> taxYear,
         "mainType" -> "ITSA Manual Penalty Pre CY-4",
         "transactionId" -> "1040000125",
-        "chargeType" -> "ITSA NI",
+        "chargeType" -> ITSA_NI,
         "originalAmount" -> originalAmount,
         "items" -> Json.arr(
           Json.obj("amount" -> 8000,
@@ -855,7 +856,7 @@ object IncomeSourceIntegrationTestConstants {
         "taxYear" -> taxYear,
         "mainType" -> "ITSA Misc Charge",
         "transactionId" -> "1040000126",
-        "chargeType" -> "ITSA NI",
+        "chargeType" -> ITSA_NI,
         "originalAmount" -> originalAmount,
         "items" -> Json.arr(
           Json.obj("amount" -> 8000,

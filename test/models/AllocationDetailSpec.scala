@@ -16,6 +16,7 @@
 
 package models
 
+import enums.ChargeType.CGT
 import models.paymentAllocations.AllocationDetail
 import org.scalatest.Matchers
 import testUtils.TestSupport
@@ -54,7 +55,7 @@ class AllocationDetailSpec extends TestSupport with Matchers {
           allocationDetails("SA Balancing Charge", "Voluntary NIC2", localToDateOpt).getPaymentAllocationKeyInPaymentAllocations shouldBe "paymentAllocation.paymentAllocations.bcd.vcnic2"
           allocationDetails("SA Balancing Charge", "NIC2", localToDateOpt).getPaymentAllocationKeyInPaymentAllocations shouldBe "paymentAllocation.paymentAllocations.bcd.nic2"
           allocationDetails("SA Balancing Charge", "SL", localToDateOpt).getPaymentAllocationKeyInPaymentAllocations shouldBe "paymentAllocation.paymentAllocations.bcd.sl"
-          allocationDetails("SA Balancing Charge", "CGT", localToDateOpt).getPaymentAllocationKeyInPaymentAllocations shouldBe "paymentAllocation.paymentAllocations.bcd.cgt"
+          allocationDetails("SA Balancing Charge", CGT, localToDateOpt).getPaymentAllocationKeyInPaymentAllocations shouldBe "paymentAllocation.paymentAllocations.bcd.cgt"
 
         }
 
