@@ -26,7 +26,7 @@ agent.base.service_name                             = Your client’s Income Tax
 header.serviceName                                  = Manage your Income Tax updates
 agent.header.serviceName                            = Manage your client’s Income Tax updates
 
-# HTML Titles
+# HTML Titles                                       //notify submission team regarding title changes to htmlTitle.confirmClient in HtmlTitle.scala
 htmlTitle                                           = {0} - Manage your Income Tax updates - GOV.UK
 htmlTitle.agent                                     = {0} - Manage your client’s Income Tax updates - GOV.UK
 htmlTitle.errorPage                                 = {0} - GOV.UK
