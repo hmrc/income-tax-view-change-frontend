@@ -65,7 +65,7 @@ class NextUpdatesController @Inject()(NoNextUpdatesView: NoNextUpdates,
           if (nextUpdates.obligations.nonEmpty) {
             Ok(view(nextUpdates, backUrl = controllers.routes.HomeController.show(origin).url, isAgent = false, origin = origin)(user))
           } else {
-            itvcErrorHandler.showInternalServerError
+            itvcErrorHandler.showInternalServerError()
           }
         }
       } else {
