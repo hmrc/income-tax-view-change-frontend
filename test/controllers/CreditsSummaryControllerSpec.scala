@@ -17,19 +17,17 @@
 package controllers
 
 import config.featureswitch.FeatureSwitch.switches
-import config.featureswitch.{FeatureSwitching, MFACreditsAndDebits}
+import config.featureswitch.{CutOverCredits, FeatureSwitching, MFACreditsAndDebits}
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
 import mocks.MockItvcErrorHandler
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockIncomeSourceDetailsPredicateNoCache}
 import mocks.services.{MockCalculationService, MockCreditHistoryService, MockFinancialDetailsService, MockNextUpdatesService}
+import models.creditDetailModel.{CutOverCreditType, MfaCreditType}
 import models.financialDetails.{BalanceDetails, DocumentDetail}
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{mock, reset, when}
 import play.api.http.Status
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers._
-import services.CreditService
 import testConstants.BaseTestConstants.{calendarYear2018, testAgentAuthRetrievalSuccess, testAgentAuthRetrievalSuccessNoEnrolment, testAuthSuccessWithSaUtrResponse, testSaUtrId, testYearPlusTwo}
 import testConstants.FinancialDetailsTestConstants._
 import testUtils.TestSupport
@@ -37,33 +35,28 @@ import uk.gov.hmrc.auth.core.BearerTokenExpired
 import uk.gov.hmrc.http.InternalServerException
 import views.html.CreditsSummary
 
-import scala.concurrent.Future
-
 
 class CreditsSummaryControllerSpec extends TestSupport with MockCalculationService
   with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicateNoCache
   with MockFinancialDetailsService with FeatureSwitching with MockItvcErrorHandler
   with MockNextUpdatesService with MockIncomeSourceDetailsPredicate with MockCreditHistoryService {
 
-  def disableAllSwitches() : Unit = {
+  def disableAllSwitches(): Unit = {
     switches.foreach(switch => disable(switch))
   }
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    reset(mockCreditService)
     disableAllSwitches()
   }
 
   val creditsSummaryView: CreditsSummary = app.injector.instanceOf[CreditsSummary]
-  val mockCreditService: CreditService = mock(classOf[CreditService])
 
   object TestCreditsSummaryController extends CreditsSummaryController(
     creditsSummaryView,
     mockAuthService,
     mockIncomeSourceDetailsService,
     mockCreditHistoryService,
-    mockCreditService,
     app.injector.instanceOf[ItvcErrorHandler],
     app.injector.instanceOf[SessionTimeoutPredicate],
     app.injector.instanceOf[NavBarPredicate],
@@ -90,23 +83,20 @@ class CreditsSummaryControllerSpec extends TestSupport with MockCalculationServi
   lazy val creditAndRefundUrl: String = controllers.routes.CreditAndRefundController.show().url
   lazy val defaultCreditsSummaryUrl: String = controllers.routes.CreditsSummaryController.showCreditsSummary(2018, None).url
 
-  "MFACreditsAndDebits feature switch is enabled" should {
+  "MFACreditsAndDebits and CutOverCredits feature switches are enabled" should {
     "all calls are returned correctly and Referer was a Payment Refund History page" should {
-      "show the Credits Summary Page and back link should be to the Payment Refund History page" in {
-        val chargesList = creditAndRefundCreditDetailListMFA
+      "show the Credits Summary Page with MFA and CutOver credits and back link should be to the Payment Refund History page" in {
+        val chargesList = creditAndRefundCreditDetailListMFAWithCutoverCredits
 
         enable(MFACreditsAndDebits)
+        enable(CutOverCredits)
         mockSingleBusinessIncomeSource()
         mockCreditHistoryService(chargesList)
         setupMockAuthRetrievalSuccess(testAuthSuccessWithSaUtrResponse())
 
-        when(mockCreditService.getCreditCharges()(any(), any()))
-          .thenReturn(Future.successful(List(financialDetailCreditAndRefundCharge)))
-
         val expectedContent: String = creditsSummaryView(
           backUrl = paymentRefundHistoryBackLink,
           utr = Some(testSaUtrId),
-          enableMfaCreditsAndDebits = true,
           charges = chargesList,
           maybeAvailableCredit = financialDetailCreditCharge.balanceDetails.availableCredit,
           calendarYear = calendarYear2018
@@ -121,20 +111,17 @@ class CreditsSummaryControllerSpec extends TestSupport with MockCalculationServi
       }
 
       "show the Credits Summary Page and back link should be to the Payment Refund History page and the money Money in your account section should not be available when available credit is Some(0.00)" in {
-        val chargesList = creditAndRefundCreditDetailListMFA
+        val emptyBalanceDetails = BalanceDetails(0.00, 0.00, 0.00, Some(0.0), None, None, None)
+        val chargesList = creditAndRefundCreditDetailListMFA.map(_.copy(balanceDetails = Some(emptyBalanceDetails)))
 
         enable(MFACreditsAndDebits)
         mockSingleBusinessIncomeSource()
         mockCreditHistoryService(chargesList)
         setupMockAuthRetrievalSuccess(testAuthSuccessWithSaUtrResponse())
 
-        when(mockCreditService.getCreditCharges()(any(), any()))
-          .thenReturn(Future.successful(List(financialDetailCreditAndRefundCharge.copy(balanceDetails = BalanceDetails(0.00, 0.00, 0.00, Some(0.0), None, None, None)))))
-
         val expectedContent: String = creditsSummaryView(
           backUrl = paymentRefundHistoryBackLink,
           utr = Some(testSaUtrId),
-          enableMfaCreditsAndDebits = true,
           charges = chargesList,
           maybeAvailableCredit = None,
           calendarYear = calendarYear2018
@@ -158,13 +145,9 @@ class CreditsSummaryControllerSpec extends TestSupport with MockCalculationServi
         mockCreditHistoryService(chargesList)
         setupMockAuthRetrievalSuccess(testAuthSuccessWithSaUtrResponse())
 
-        when(mockCreditService.getCreditCharges()(any(), any()))
-          .thenReturn(Future.successful(List(financialDetailCreditAndRefundCharge)))
-
         val expectedContent: String = creditsSummaryView(
           backUrl = creditAndRefundUrl,
           utr = Some(testSaUtrId),
-          enableMfaCreditsAndDebits = true,
           charges = chargesList,
           maybeAvailableCredit = financialDetailCreditCharge.balanceDetails.availableCredit,
           calendarYear = calendarYear2018
@@ -188,13 +171,9 @@ class CreditsSummaryControllerSpec extends TestSupport with MockCalculationServi
         mockCreditHistoryService(chargesList)
         setupMockAuthRetrievalSuccess(testAuthSuccessWithSaUtrResponse())
 
-        when(mockCreditService.getCreditCharges()(any(), any()))
-          .thenReturn(Future.successful(List(financialDetailCreditAndRefundCharge)))
-
         val expectedContent: String = creditsSummaryView(
           backUrl = defaultCreditsSummaryUrl,
           utr = Some(testSaUtrId),
-          enableMfaCreditsAndDebits = true,
           charges = chargesList,
           maybeAvailableCredit = financialDetailCreditCharge.balanceDetails.availableCredit,
           calendarYear = calendarYear2018
@@ -218,13 +197,9 @@ class CreditsSummaryControllerSpec extends TestSupport with MockCalculationServi
         mockCreditHistoryService(chargesList)
         setupMockAuthRetrievalSuccess(testAuthSuccessWithSaUtrResponse())
 
-        when(mockCreditService.getCreditCharges()(any(), any()))
-          .thenReturn(Future.successful(List(financialDetailCreditAndRefundCharge)))
-
         val expectedContent: String = creditsSummaryView(
           backUrl = paymentRefundHistoryBackLink,
           utr = Some(testSaUtrId),
-          enableMfaCreditsAndDebits = true,
           charges = chargesList,
           maybeAvailableCredit = financialDetailCreditCharge.balanceDetails.availableCredit,
           calendarYear = calendarYear2018
@@ -277,17 +252,81 @@ class CreditsSummaryControllerSpec extends TestSupport with MockCalculationServi
     }
   }
 
-  "MFACreditsAndDebits feature switch is disabled" should {
-    "all calls are returned correctly and Referer was a Payment Refund History page" should {
-      "redirect to the Home page" in {
-        disable(MFACreditsAndDebits)
-        mockSingleBusinessIncomeSource()
+  "MFACreditsAndDebits and CutOverCredits feature switches are disabled" should {
+    "show an empty Credits Summary Page and back link should be to the Payment Refund History page" in {
+      disable(MFACreditsAndDebits)
+      disable(CutOverCredits)
+      mockSingleBusinessIncomeSource()
+      setupMockAuthRetrievalSuccess(testAuthSuccessWithSaUtrResponse())
 
-        val result = TestCreditsSummaryController.showCreditsSummary(calendarYear2018)(fakeRequestWithActiveSession)
+      val expectedContent: String = creditsSummaryView(
+        backUrl = paymentRefundHistoryBackLink,
+        utr = Some(testSaUtrId),
+        charges = List.empty,
+        maybeAvailableCredit = None,
+        calendarYear = calendarYear2018
+      ).toString
 
-        status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.routes.HomeController.show().url)
-      }
+      val result = TestCreditsSummaryController.showCreditsSummary(calendarYear2018)(fakeRequestWithActiveSessionWithReferer(referer = paymentRefundHistoryBackLink))
+
+      status(result) shouldBe Status.OK
+
+      contentAsString(result) shouldBe expectedContent
+      contentType(result) shouldBe Some(HTML)
+    }
+  }
+
+  "MFACreditsAndDebits is enabled and CutOverCredits is disabled" should {
+    "show the Credits Summary Page with only MFA credits only and back link should be to the Payment Refund History page" in {
+      val chargesList = creditAndRefundCreditDetailListMFAWithCutoverCredits
+
+      enable(MFACreditsAndDebits)
+      disable(CutOverCredits)
+      mockSingleBusinessIncomeSource()
+      mockCreditHistoryService(chargesList)
+      setupMockAuthRetrievalSuccess(testAuthSuccessWithSaUtrResponse())
+
+      val expectedContent: String = creditsSummaryView(
+        backUrl = paymentRefundHistoryBackLink,
+        utr = Some(testSaUtrId),
+        charges = chargesList.filter(_.creditType == MfaCreditType),
+        maybeAvailableCredit = financialDetailCreditCharge.balanceDetails.availableCredit,
+        calendarYear = calendarYear2018
+      ).toString
+
+      val result = TestCreditsSummaryController.showCreditsSummary(calendarYear2018)(fakeRequestWithActiveSessionWithReferer(referer = paymentRefundHistoryBackLink))
+
+      status(result) shouldBe Status.OK
+
+      contentAsString(result) shouldBe expectedContent
+      contentType(result) shouldBe Some(HTML)
+    }
+  }
+
+  "MFACreditsAndDebits is disabled and CutOverCredits is enabled" should {
+    "show the Credits Summary Page with only CutOver credits only and back link should be to the Payment Refund History page" in {
+      val chargesList = creditAndRefundCreditDetailListMFAWithCutoverCredits
+
+      disable(MFACreditsAndDebits)
+      enable(CutOverCredits)
+      mockSingleBusinessIncomeSource()
+      mockCreditHistoryService(chargesList)
+      setupMockAuthRetrievalSuccess(testAuthSuccessWithSaUtrResponse())
+
+      val expectedContent: String = creditsSummaryView(
+        backUrl = paymentRefundHistoryBackLink,
+        utr = Some(testSaUtrId),
+        charges = chargesList.filter(_.creditType == CutOverCreditType),
+        maybeAvailableCredit = financialDetailCreditCharge.balanceDetails.availableCredit,
+        calendarYear = calendarYear2018
+      ).toString
+
+      val result = TestCreditsSummaryController.showCreditsSummary(calendarYear2018)(fakeRequestWithActiveSessionWithReferer(referer = paymentRefundHistoryBackLink))
+
+      status(result) shouldBe Status.OK
+
+      contentAsString(result) shouldBe expectedContent
+      contentType(result) shouldBe Some(HTML)
     }
   }
 
@@ -301,7 +340,7 @@ class CreditsSummaryControllerSpec extends TestSupport with MockCalculationServi
         val result = TestCreditsSummaryController.showAgentCreditsSummary(calendarYear2018)(fakeRequestWithActiveSession)
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn().url)
+        redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn.url)
       }
     }
     "the user has timed out" should {
@@ -311,7 +350,7 @@ class CreditsSummaryControllerSpec extends TestSupport with MockCalculationServi
         val result = TestCreditsSummaryController.showAgentCreditsSummary(calendarYear2018)(fakeRequestWithClientDetails)
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout().url)
+        redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout.url)
       }
     }
     "the user does not have an agent reference number" should {
@@ -341,9 +380,6 @@ class CreditsSummaryControllerSpec extends TestSupport with MockCalculationServi
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         mockBothIncomeSources()
         setupMockGetFinancialDetailsWithTaxYearAndNino(testYearPlusTwo, "AA111111A")(testFinancialDetailsErrorModel)
-
-        when(mockCreditService.getCreditCharges()(any(), any()))
-          .thenReturn(Future.successful(List(financialDetailCreditAndRefundCharge)))
 
         mockCreditHistoryFailed()
 

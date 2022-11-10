@@ -14,22 +14,19 @@
  * limitations under the License.
  */
 
-package models.creditDetailModel
+package auth
 
-import models.financialDetails.{BalanceDetails, DocumentDetail}
+import uk.gov.hmrc.http.{Authorization, HeaderCarrier}
+import uk.gov.hmrc.play.http.HeaderCarrierConverter
+import javax.inject.Singleton
 
-import java.time.LocalDate
+@Singleton
+class TestHeaderExtractor extends HeaderExtractor {
 
-case class CreditDetailModel(date: LocalDate , documentDetail: DocumentDetail, creditType: CreditType, balanceDetails: Option[BalanceDetails] = None)
-
-sealed trait CreditType {
-  val key: String
-}
-
-case object MfaCreditType extends CreditType {
-  override val key = "paymentHistory.mfaCredit"
-}
-
-case object CutOverCreditType extends CreditType {
-  override val key = "paymentHistory.paymentFromEarlierYear"
+  override def extractHeader(request: play.api.mvc.Request[_], session: play.api.mvc.Session): HeaderCarrier = {
+    HeaderCarrierConverter
+      .fromRequestAndSession(request, request.session)
+      .copy(authorization = Some(Authorization("Bearer")))
+  }
+  
 }

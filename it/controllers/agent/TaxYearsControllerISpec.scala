@@ -75,17 +75,17 @@ class TaxYearsControllerISpec extends ComponentSpecBase with FeatureSwitching {
     )
   )
 
-  s"GET ${controllers.routes.TaxYearsController.showAgentTaxYears().url}" should {
-    s"redirect ($SEE_OTHER) to ${controllers.routes.SignInController.signIn().url}" when {
+  s"GET ${controllers.routes.TaxYearsController.showAgentTaxYears.url}" should {
+    s"redirect ($SEE_OTHER) to ${controllers.routes.SignInController.signIn.url}" when {
       "the user is not authenticated" in {
         stubAuthorisedAgentUser(authorised = false)
 
         val result: WSResponse = IncomeTaxViewChangeFrontend.getTaxYears()
 
-        Then(s"The user is redirected to ${controllers.routes.SignInController.signIn().url}")
+        Then(s"The user is redirected to ${controllers.routes.SignInController.signIn.url}")
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(controllers.routes.SignInController.signIn().url)
+          redirectURI(controllers.routes.SignInController.signIn.url)
         )
       }
     }
@@ -110,7 +110,7 @@ class TaxYearsControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(routes.EnterClientsUTRController.show().url)
+          redirectURI(routes.EnterClientsUTRController.show.url)
         )
       }
       "the agent has client details in session but no confirmation flag" in {
@@ -120,13 +120,13 @@ class TaxYearsControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(routes.EnterClientsUTRController.show().url)
+          redirectURI(routes.EnterClientsUTRController.show.url)
         )
       }
     }
   }
 
-  s"GET ${controllers.routes.TaxYearsController.showAgentTaxYears().url}" should {
+  s"GET ${controllers.routes.TaxYearsController.showAgentTaxYears.url}" should {
     "return the tax years page" when {
       "all calls were successful and has accounting period end date" in {
         enable(ITSASubmissionIntegration)

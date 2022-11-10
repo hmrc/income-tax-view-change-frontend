@@ -259,7 +259,7 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
       lazy val view = taxCalcBreakdown(taxDueSummaryViewModel, taxYear2017, backUrl)
 
       "have the correct title" in new Setup(view) {
-        document title() shouldBe expectedPageTitle
+        document.title() shouldBe expectedPageTitle
       }
 
       "have the correct heading" in new Setup(view) {
@@ -290,11 +290,11 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
       lazy val zeroIncome = taxCalcBreakdown(taxDueSummaryViewModelZeroIncome, taxYear, backUrl)
 
       "have the correct title" in new Setup(view) {
-        document title() shouldBe expectedPageTitle
+        document.title() shouldBe expectedPageTitle
       }
 
       "have a fallback backlink" in new Setup(view) {
-        document hasFallbackBacklink()
+        document.hasFallbackBacklink()
       }
 
       "have the correct heading" in new Setup(view) {

@@ -42,7 +42,7 @@ class ConfirmClientUTRController @Inject()(confirmClient: confirmClient,
       Future.successful(Ok(confirmClient(
         clientName = fetchClientName,
         clientUtr = fetchClientUTR,
-        postAction = routes.ConfirmClientUTRController.submit(),
+        postAction = routes.ConfirmClientUTRController.submit,
         backUrl = backUrl
       )))
   }
@@ -50,13 +50,13 @@ class ConfirmClientUTRController @Inject()(confirmClient: confirmClient,
   def submit: Action[AnyContent] = Authenticated.async { implicit request =>
     implicit user =>
       Future.successful(
-        Redirect(controllers.routes.HomeController.showAgent().url).addingToSession(
+        Redirect(controllers.routes.HomeController.showAgent.url).addingToSession(
           SessionKeys.confirmedClient -> "true"
         )
       )
   }
 
-  lazy val backUrl: String = controllers.agent.routes.EnterClientsUTRController.show().url
+  lazy val backUrl: String = controllers.agent.routes.EnterClientsUTRController.show.url
 
 
 }

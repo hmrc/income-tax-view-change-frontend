@@ -18,7 +18,7 @@ package controllers.predicates
 
 import audit.AuditingService
 import audit.models.IvUpliftRequiredAuditModel
-import auth.{FrontendAuthorisedFunctions, MtdItUserOptionNino}
+import auth._
 import config.featureswitch.{FeatureSwitching, IvUplift}
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.BaseController
@@ -30,20 +30,19 @@ import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals._
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, Name, ~}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.config.AuthRedirects
-import uk.gov.hmrc.play.http.HeaderCarrierConverter
-
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class AuthenticationPredicate @Inject()(implicit val ec: ExecutionContext,
-                                        val authorisedFunctions: FrontendAuthorisedFunctions,
+                                        implicit val authorisedFunctions: FrontendAuthorisedFunctions,
                                         val appConfig: FrontendAppConfig,
                                         override val config: Configuration,
                                         override val env: Environment,
                                         val itvcErrorHandler: ItvcErrorHandler,
                                         mcc: MessagesControllerComponents,
-                                        val auditingService: AuditingService
+                                        val auditingService: AuditingService,
+                                        val headerExtractor : HeaderExtractor
                                        )
   extends BaseController with AuthRedirects with ActionBuilder[MtdItUserOptionNino, AnyContent]
     with ActionFunction[Request, MtdItUserOptionNino] with FeatureSwitching {
@@ -55,7 +54,8 @@ class AuthenticationPredicate @Inject()(implicit val ec: ExecutionContext,
 
   override def invokeBlock[A](request: Request[A], f: MtdItUserOptionNino[A] => Future[Result]): Future[Result] = {
 
-    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
+    implicit val hc: HeaderCarrier = headerExtractor.extractHeader(request, request.session)
+
     implicit val req: Request[A] = request
 
     authorisedFunctions.authorised(Enrolment(appConfig.mtdItEnrolmentKey)).retrieve(allEnrolments and name and credentials and affinityGroup and confidenceLevel) {
@@ -77,13 +77,13 @@ class AuthenticationPredicate @Inject()(implicit val ec: ExecutionContext,
     } recover {
       case _: InsufficientEnrolments =>
         Logger("application").info("[AuthenticationPredicate][async] No HMRC-MTD-IT Enrolment and/or No NINO.")
-        Redirect(controllers.errors.routes.NotEnrolledController.show())
+        Redirect(controllers.errors.routes.NotEnrolledController.show)
       case _: BearerTokenExpired =>
         Logger("application").info("[AuthenticationPredicate][async] Bearer Token Timed Out.")
-        Redirect(controllers.timeout.routes.SessionTimeoutController.timeout())
+        Redirect(controllers.timeout.routes.SessionTimeoutController.timeout)
       case _: AuthorisationException =>
         Logger("application").info("[AuthenticationPredicate][async] Unauthorised request. Redirect to Sign In.")
-        Redirect(controllers.routes.SignInController.signIn())
+        Redirect(controllers.routes.SignInController.signIn)
       case s =>
         Logger("application").error(s"[AuthenticationPredicate][async] Unexpected Error Caught. Show ISE.\n$s\n", s)
         itvcErrorHandler.showInternalServerError
@@ -104,6 +104,6 @@ class AuthenticationPredicate @Inject()(implicit val ec: ExecutionContext,
   }
 
   val ivUpliftRedirectUrl: String = s"$personalIVUrl?origin=ITVC&confidenceLevel=$requiredConfidenceLevel&" +
-    s"completionURL=${appConfig.itvcFrontendEnvironment + "/" + appConfig.baseUrl + controllers.routes.UpliftSuccessController.success().url}&" +
-    s"failureURL=${appConfig.itvcFrontendEnvironment + "/" + appConfig.baseUrl + controllers.errors.routes.UpliftFailedController.show().url}"
+    s"completionURL=${appConfig.itvcFrontendEnvironment + "/" + appConfig.baseUrl + controllers.routes.UpliftSuccessController.success.url}&" +
+    s"failureURL=${appConfig.itvcFrontendEnvironment + "/" + appConfig.baseUrl + controllers.errors.routes.UpliftFailedController.show.url}"
 }

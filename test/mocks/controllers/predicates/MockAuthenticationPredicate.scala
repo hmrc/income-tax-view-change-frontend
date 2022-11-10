@@ -17,6 +17,7 @@
 package mocks.controllers.predicates
 
 import audit.mocks.MockAuditingService
+import auth.FrontEndHeaderExtractor
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.AuthenticationPredicate
 import mocks.auth._
@@ -35,7 +36,8 @@ trait MockAuthenticationPredicate extends TestSupport with MockFrontendAuthorise
     app.injector.instanceOf[Environment],
     app.injector.instanceOf[ItvcErrorHandler],
     app.injector.instanceOf[MessagesControllerComponents],
-    mockAuditingService
+    mockAuditingService,
+    app.injector.instanceOf[FrontEndHeaderExtractor]
   )
 
 

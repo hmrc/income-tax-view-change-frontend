@@ -69,7 +69,7 @@ class ChargeSummaryViewSpec extends ViewSpec {
     }
 
     def verifyPaymentHistoryContent(rows: String*): Assertion = {
-      document select Selectors.table text() shouldBe
+      document.select(Selectors.table).text() shouldBe
         s"""
            |Date Description Amount
            |${rows.mkString("\n")}

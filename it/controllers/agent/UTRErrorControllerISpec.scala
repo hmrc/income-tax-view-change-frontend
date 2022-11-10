@@ -18,17 +18,17 @@ class UTRErrorControllerISpec extends ComponentSpecBase with FeatureSwitching {
     SessionKeys.clientUTR -> "1234567890"
   )
 
-  s"GET ${controllers.agent.routes.UTRErrorController.show().url}" should {
-    s"redirect ($SEE_OTHER) to ${controllers.routes.SignInController.signIn().url}" when {
+  s"GET ${controllers.agent.routes.UTRErrorController.show.url}" should {
+    s"redirect ($SEE_OTHER) to ${controllers.routes.SignInController.signIn.url}" when {
       "the user is not authenticated" in {
         stubAuthorisedAgentUser(authorised = false)
 
         val result: WSResponse = IncomeTaxViewChangeFrontend.getUTRError()
 
-        Then(s"The user is redirected to ${controllers.routes.SignInController.signIn().url}")
+        Then(s"The user is redirected to ${controllers.routes.SignInController.signIn.url}")
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(controllers.routes.SignInController.signIn().url)
+          redirectURI(controllers.routes.SignInController.signIn.url)
         )
       }
     }
@@ -47,7 +47,7 @@ class UTRErrorControllerISpec extends ComponentSpecBase with FeatureSwitching {
       }
     }
 
-    s"redirect ($SEE_OTHER) to ${controllers.agent.routes.EnterClientsUTRController.show().url}" when {
+    s"redirect ($SEE_OTHER) to ${controllers.agent.routes.EnterClientsUTRController.show.url}" when {
       "the client's UTR is not in session" in {
         stubAuthorisedAgentUser(authorised = true)
 
@@ -56,7 +56,7 @@ class UTRErrorControllerISpec extends ComponentSpecBase with FeatureSwitching {
         Then("The enter client's utr page is returned to the user")
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(controllers.agent.routes.EnterClientsUTRController.show().url)
+          redirectURI(controllers.agent.routes.EnterClientsUTRController.show.url)
         )
       }
     }
@@ -76,17 +76,17 @@ class UTRErrorControllerISpec extends ComponentSpecBase with FeatureSwitching {
     }
   }
 
-  s"POST ${controllers.agent.routes.UTRErrorController.submit().url}" should {
-    s"redirect ($SEE_OTHER) to ${controllers.routes.SignInController.signIn().url}" when {
+  s"POST ${controllers.agent.routes.UTRErrorController.submit.url}" should {
+    s"redirect ($SEE_OTHER) to ${controllers.routes.SignInController.signIn.url}" when {
       "the user is not authenticated" in {
         stubAuthorisedAgentUser(authorised = false)
 
         val result: WSResponse = IncomeTaxViewChangeFrontend.postUTRError
 
-        Then(s"The user is redirected to ${controllers.routes.SignInController.signIn().url}")
+        Then(s"The user is redirected to ${controllers.routes.SignInController.signIn.url}")
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(controllers.routes.SignInController.signIn().url)
+          redirectURI(controllers.routes.SignInController.signIn.url)
         )
       }
     }
@@ -105,15 +105,15 @@ class UTRErrorControllerISpec extends ComponentSpecBase with FeatureSwitching {
       }
     }
 
-    s"redirect ($SEE_OTHER) to ${controllers.agent.routes.EnterClientsUTRController.show().url}" in {
+    s"redirect ($SEE_OTHER) to ${controllers.agent.routes.EnterClientsUTRController.show.url}" in {
       stubAuthorisedAgentUser(authorised = true)
 
       val result: WSResponse = IncomeTaxViewChangeFrontend.postUTRError
 
-      Then(s"The user is redirected to ${controllers.agent.routes.EnterClientsUTRController.show().url}")
+      Then(s"The user is redirected to ${controllers.agent.routes.EnterClientsUTRController.show.url}")
       result should have(
         httpStatus(SEE_OTHER),
-        redirectURI(controllers.agent.routes.EnterClientsUTRController.show().url)
+        redirectURI(controllers.agent.routes.EnterClientsUTRController.show.url)
       )
     }
   }

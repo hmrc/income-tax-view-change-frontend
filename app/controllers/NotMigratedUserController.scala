@@ -86,7 +86,7 @@ class NotMigratedUserController @Inject()(val notMigrated: NotMigratedUser,
           implicit user =>
             handleShowRequest(errorHandler = itvcErrorHandlerAgent,
               isAgent = true,
-              backUrl = controllers.routes.HomeController.showAgent().url)
+              backUrl = controllers.routes.HomeController.showAgent.url)
         }
   }
 

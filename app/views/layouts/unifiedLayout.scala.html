@@ -68,7 +68,7 @@
     val serviceName = if (isAgent) Some(messages("agent.header.serviceName"))
         else Some(messages("header.serviceName"))
 
-    val serviceUrl = if (isAgent) controllers.routes.HomeController.showAgent().url
+    val serviceUrl = if (isAgent) controllers.routes.HomeController.showAgent.url
         else controllers.routes.HomeController.show().url
 
     hmrcHeader(HmrcHeaderArgs(
@@ -92,7 +92,7 @@
         language = Some(CurrentLanguage().code),
         timeout = Option(900),
         countdown = Option(120),
-        keepAliveUrl = Some(controllers.timeout.routes.SessionTimeoutController.keepAlive().url),
+        keepAliveUrl = Some(controllers.timeout.routes.SessionTimeoutController.keepAlive.url),
         signOutUrl = Some(controllers.routes.SignOutController.signOut.url),
         keepAliveButtonText = Some(messages("button.continue"))
         ))
@@ -129,7 +129,7 @@
 
 @if(mainClass.isDefined){
     @govukLayout(
-        pageTitle = Some(HtmlTitle(isAgent, isErrorPage, form.exists(_.hasErrors), pageTitle)),
+        pageTitle = Some(HtmlTitle(isAgent, isErrorPage, form.exists(_.hasErrors), pageTitle, showServiceName)),
         headBlock = Some(head),
         beforeContentBlock = Some(beforeContentBlock),
         bodyEndBlock = None,
@@ -140,7 +140,7 @@
     )(content)
 } else {
     @govukLayout(
-        pageTitle = Some(HtmlTitle(isAgent, isErrorPage, form.exists(_.hasErrors), pageTitle)),
+        pageTitle = Some(HtmlTitle(isAgent, isErrorPage, form.exists(_.hasErrors), pageTitle, showServiceName)),
         headBlock = Some(head),
         beforeContentBlock = Some(beforeContentBlock),
         bodyEndBlock = None,

@@ -61,16 +61,16 @@ class PaymentAllocationsControllerISpec extends ComponentSpecBase with FeatureSw
 
 
   s"GET ${controllers.routes.PaymentAllocationsController.viewPaymentAllocationAgent(docNumber).url}" should {
-    s"redirect ($SEE_OTHER) to ${controllers.routes.SignInController.signIn().url}" when {
+    s"redirect ($SEE_OTHER) to ${controllers.routes.SignInController.signIn.url}" when {
       "the user is not authenticated" in {
         stubAuthorisedAgentUser(authorised = false)
 
         val result: WSResponse = IncomeTaxViewChangeFrontend.getPaymentAllocation(docNumber)
 
-        Then(s"The user is redirected to ${controllers.routes.SignInController.signIn().url}")
+        Then(s"The user is redirected to ${controllers.routes.SignInController.signIn.url}")
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(controllers.routes.SignInController.signIn().url)
+          redirectURI(controllers.routes.SignInController.signIn.url)
         )
       }
     }
@@ -97,7 +97,7 @@ class PaymentAllocationsControllerISpec extends ComponentSpecBase with FeatureSw
 
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(routes.EnterClientsUTRController.show().url)
+          redirectURI(routes.EnterClientsUTRController.show.url)
         )
       }
 
@@ -108,7 +108,7 @@ class PaymentAllocationsControllerISpec extends ComponentSpecBase with FeatureSw
 
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(routes.EnterClientsUTRController.show().url)
+          redirectURI(routes.EnterClientsUTRController.show.url)
         )
       }
     }
@@ -120,7 +120,7 @@ class PaymentAllocationsControllerISpec extends ComponentSpecBase with FeatureSw
 
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(controllers.agent.errors.routes.AgentNotFoundDocumentIDLookupController.show().url)
+          redirectURI(controllers.agent.errors.routes.AgentNotFoundDocumentIDLookupController.show.url)
         )
       }
     }

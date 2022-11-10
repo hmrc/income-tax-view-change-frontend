@@ -35,6 +35,7 @@ agent.header.serviceName                                       = Rheoli diweddar
 htmlTitle                                                       = {0} - Rheoli’ch diweddariadau Treth Incwm - GOV.UK
 htmlTitle.agent                                                 = {0} - Rheoli diweddariadau Treth Incwm eich cleient - GOV.UK
 htmlTitle.inputError                                            = Gwall: {0} - GOV.UK
+htmlTitle.confirmClient                                         = {0} - GOV.UK
 
 
 ## Agent - UTR Error
@@ -580,17 +581,17 @@ whatYouOwe.paymentOnAccount2.text							    = Taliad ar gyfrif 2 o 2
 whatYouOwe.hmrcAdjustment.text                                  = Addasiad CThEM
 whatYouOwe.balancingCharge.text  							    = Taliad mantoli
 whatYouOwe.remaining-balance.heading                            = Taliad mantoli
-whatYouOwe.remaining-balance.line1                              = Y balans sy’n weddill yw’r dreth sydd dal gennych i’w thalu ar gyfer blwyddyn dreth.
+whatYouOwe.remaining-balance.line1                              = Y taliad mantoli yw’r dreth sydd dal gan eich cleient i’w dalu ar gyfer blwyddyn dreth.
 whatYouOwe.payment-on-account.heading                           = Taliad ar gyfrif
-whatYouOwe.payment-on-account.line1                             = Mae hwn yn daliad tuag at y bil treth ar gyfer y flwyddyn nesaf. Mae swm pob taliad yn hanner eich bil treth ar gyfer y flwyddyn flaenorol.
+whatYouOwe.payment-on-account.line1                             = Mae hwn yn daliad tuag at y bil treth ar gyfer y flwyddyn nesaf. Mae swm pob taliad yn hanner bil treth eich cleient ar gyfer y flwyddyn flaenorol.
 whatYouOwe.hmrcAdjustment.heading                               = Addasiad CThEM
 whatYouOwe.hmrcAdjustment.line1                                 = Mae’r taliad hwn wedi’i greu gan CThEM.
 whatYouOwe.late-payment-interest.heading                        = Llog am dalu’n hwyr
-whatYouOwe.late-payment-interest.line1                          = Dyma log sydd arnoch am dalu’n hwyr.
+whatYouOwe.late-payment-interest.line1                          = Dyma’r llog sydd ar eich cleient oherwydd taliad hwyr.
 whatYouOwe.class2-nic.heading                                   = Yswiriant Gwladol Dosbarth 2
-whatYouOwe.class2-nic.line1                                     = Mae hwn yn daliad penodol ar gyfer eich cyfraniadau Yswiriant Gwladol Dosbarth 2.
+whatYouOwe.class2-nic.line1                                     = Mae hwn yn daliad penodol ar gyfer cyfraniadau Yswiriant Gwladol Dosbarth 2 eich cleient.
 whatYouOwe.cancelled-paye-sa.heading                            = Hunanasesiad TWE wedi’i ganslo
-whatYouOwe.cancelled-paye-sa.line1                              = Gwnaethoch gytuno i dalu peth o’ch treth Hunanasesiad drwy eich cod treth TWE. Nid ydym wedi gallu casglu’r holl daliadau hyn, felly dyma’r dreth sydd yn weddill y mae angen i chi ei dalu.
+whatYouOwe.cancelled-paye-sa.line1                              = Cytunodd eich cleient i dalu peth o’i dreth Hunanasesiad drwy ei god treth TWE. Nid ydym wedi gallu casglu’r holl daliadau hyn, felly dyma’r dreth sydd yn weddill y mae angen i’ch cleient ei dalu.
 whatYouOwe.payments-due                                         = Taliadau treth incwm
 whatYouOwe.payments-made                                        = Ynglŷn ag unrhyw daliadau a wnaed gennych:
 whatYouOwe.payments-made-agent                                  = O ran unrhyw daliadau a wneir gan eich cleient:
@@ -628,6 +629,12 @@ whatYouOwe.moneyOnAccount-2                                     = yn eich cyfrif
 whatYouOwe.moneyOnAccount-3                                     = hawlio ad-daliad
 whatYouOwe.moneyOnAccount-agent                                 = Arian yng nghyfrif eich cleient
 whatYouOwe.moneyOnAccount-agent-2                               = yng nghyfrif eich cleient. Gallwch adael yr arian yno i dalu bil nesaf eich cleient neu gallwch
+whatYouOwe.codingOut-1a                                         = Mae gan eich cleient
+whatYouOwe.codingOut-1b                                         = o dreth ar gyfer y flwyddyn dreth
+whatYouOwe.codingOut-2                                          = {0} i {1}
+whatYouOwe.codingOut-3                                          = yn cael ei thalu drwy ei god treth TWE. Nid yw’r swm hwn yn rhan o gyfanswm ei daliadau sy’n ddyledus oherwydd ein bod yn eu casglu’n awtomatig.
+
+
 
 ## Charge Summary ##
 chargeSummary.paymentOnAccount1.text                            = Taliad ar gyfrif 1 o 2

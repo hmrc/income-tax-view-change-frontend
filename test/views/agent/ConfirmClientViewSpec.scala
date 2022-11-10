@@ -23,8 +23,8 @@ import views.html.agent.confirmClient
 
 class ConfirmClientViewSpec extends ViewSpec {
 
-  lazy val postAction: Call = controllers.agent.routes.ConfirmClientUTRController.submit()
-  lazy val backUrl: String = controllers.agent.routes.EnterClientsUTRController.show().url
+  lazy val postAction: Call = controllers.agent.routes.ConfirmClientUTRController.submit
+  lazy val backUrl: String = controllers.agent.routes.EnterClientsUTRController.show.url
   lazy val testClientName: Option[String] = Some("Test Name")
   lazy val testClientUTR: Option[String] = Some("1234567890")
 
@@ -40,7 +40,7 @@ class ConfirmClientViewSpec extends ViewSpec {
 
   object confirmClientMessages {
     val heading: String = messages("agent.confirmClient.heading")
-    val title: String = messages("htmlTitle.agent", heading)
+    val title: String = messages("htmlTitle.confirmClient", heading)
     val backLink: String = messages("base.back")
     val clientNameHeading: String = messages("agent.confirmClient.clientName")
     val clientUTRHeading: String = messages("agent.confirmClient.clientUtr")
@@ -48,7 +48,7 @@ class ConfirmClientViewSpec extends ViewSpec {
     val confirmContinue: String = messages("agent.confirmClient.confirmContinue")
   }
 
-  "The Confirm Client page" should {
+  "the Confirm Client page" should {
 
     s"have the title ${confirmClientMessages.title}" in new Setup(confirmClientView) {
       document.title shouldBe confirmClientMessages.title
@@ -79,7 +79,7 @@ class ConfirmClientViewSpec extends ViewSpec {
     }
 
     s"have a ${confirmClientMessages.changeClient} link" in new Setup(confirmClientView) {
-      layoutContent.hasCorrectHref(controllers.agent.routes.EnterClientsUTRController.show().url)
+      layoutContent.hasCorrectHref(controllers.agent.routes.EnterClientsUTRController.show.url)
     }
 
     s"have a ${confirmClientMessages.confirmContinue} button" in new Setup(confirmClientView) {

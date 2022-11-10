@@ -14,22 +14,22 @@
  * limitations under the License.
  */
 
-package models.creditDetailModel
+package auth
 
-import models.financialDetails.{BalanceDetails, DocumentDetail}
+import com.google.inject.ImplementedBy
+import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.http.HeaderCarrierConverter
+import javax.inject.Singleton
 
-import java.time.LocalDate
+@ImplementedBy(classOf[FrontEndHeaderExtractor])
+trait HeaderExtractor {
 
-case class CreditDetailModel(date: LocalDate , documentDetail: DocumentDetail, creditType: CreditType, balanceDetails: Option[BalanceDetails] = None)
+  def extractHeader(request: play.api.mvc.Request[_], session: play.api.mvc.Session): HeaderCarrier = {
+    HeaderCarrierConverter
+      .fromRequestAndSession(request, request.session)
+  }
 
-sealed trait CreditType {
-  val key: String
 }
 
-case object MfaCreditType extends CreditType {
-  override val key = "paymentHistory.mfaCredit"
-}
-
-case object CutOverCreditType extends CreditType {
-  override val key = "paymentHistory.paymentFromEarlierYear"
-}
+@Singleton
+class FrontEndHeaderExtractor extends HeaderExtractor

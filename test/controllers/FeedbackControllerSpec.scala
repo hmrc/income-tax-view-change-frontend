@@ -122,7 +122,7 @@ class FeedbackControllerSpec extends MockAuthenticationPredicate
         lazy val result = TestFeedbackController.submit()(fakeRequestWithActiveSession.withFormUrlEncodedBody(fields.toSeq: _*))
 
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.feedback.routes.FeedbackController.thankYou().url)
+        redirectLocation(result) shouldBe Some(controllers.feedback.routes.FeedbackController.thankYou.url)
       }
     }
 
@@ -138,7 +138,7 @@ class FeedbackControllerSpec extends MockAuthenticationPredicate
         lazy val result = TestFeedbackController.submitAgent()(fakeRequestConfirmedClient().withFormUrlEncodedBody(fields.toSeq: _*))
 
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.feedback.routes.FeedbackController.thankYouAgent().url)
+        redirectLocation(result) shouldBe Some(controllers.feedback.routes.FeedbackController.thankYouAgent.url)
       }
     }
   }
@@ -151,7 +151,7 @@ class FeedbackControllerSpec extends MockAuthenticationPredicate
         val result: Future[Result] = TestFeedbackController.showAgent()(fakeRequestWithActiveSession)
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn().url)
+        redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn.url)
       }
     }
     "the user has timed out" should {
@@ -161,7 +161,7 @@ class FeedbackControllerSpec extends MockAuthenticationPredicate
         val result: Future[Result] = TestFeedbackController.showAgent()(fakeRequestWithClientDetails)
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout().url)
+        redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout.url)
       }
     }
     "the user does not have an agent reference number" should {
@@ -171,7 +171,7 @@ class FeedbackControllerSpec extends MockAuthenticationPredicate
         val result: Future[Result] = TestFeedbackController.showAgent()(fakeRequestWithActiveSession)
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.agent.errors.routes.AgentErrorController.show().url)
+        redirectLocation(result) shouldBe Some(controllers.agent.errors.routes.AgentErrorController.show.url)
       }
     }
     "all data is returned successfully" should {

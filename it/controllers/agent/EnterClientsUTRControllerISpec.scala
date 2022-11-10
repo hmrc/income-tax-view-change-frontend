@@ -32,30 +32,30 @@ import testConstants.IncomeSourceIntegrationTestConstants._
 
 class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
-  s"GET ${controllers.agent.routes.EnterClientsUTRController.show().url}" should {
-    s"redirect ($SEE_OTHER) to ${controllers.routes.SignInController.signIn().url}" when {
+  s"GET ${controllers.agent.routes.EnterClientsUTRController.show.url}" should {
+    s"redirect ($SEE_OTHER) to ${controllers.routes.SignInController.signIn.url}" when {
       "the user is not authenticated" in {
         stubAuthorisedAgentUser(authorised = false)
 
         val result: WSResponse = IncomeTaxViewChangeFrontend.getEnterClientsUTR
 
-        Then(s"The user is redirected to ${controllers.routes.SignInController.signIn().url}")
+        Then(s"The user is redirected to ${controllers.routes.SignInController.signIn.url}")
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(controllers.routes.SignInController.signIn().url)
+          redirectURI(controllers.routes.SignInController.signIn.url)
         )
       }
     }
-    s"redirect ($SEE_OTHER) to ${controllers.agent.errors.routes.AgentErrorController.show().url}" when {
+    s"redirect ($SEE_OTHER) to ${controllers.agent.errors.routes.AgentErrorController.show.url}" when {
       "the user is authenticated but doesn't have the agent enrolment" in {
         stubAuthorisedAgentUser(authorised = true, hasAgentEnrolment = false)
 
         val result: WSResponse = IncomeTaxViewChangeFrontend.getEnterClientsUTR
 
-        Then(s"The user is redirected to ${controllers.agent.errors.routes.AgentErrorController.show().url}")
+        Then(s"The user is redirected to ${controllers.agent.errors.routes.AgentErrorController.show.url}")
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(controllers.agent.errors.routes.AgentErrorController.show().url)
+          redirectURI(controllers.agent.errors.routes.AgentErrorController.show.url)
         )
       }
     }
@@ -67,22 +67,22 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
       Then("The enter client's utr page is returned to the user")
       result should have(
         httpStatus(OK),
-        pageTitleAgent("agent.enter_clients_utr.heading")
+        pageTitleAgentLogin("agent.enter_clients_utr.heading")
       )
     }
   }
 
-  s"POST ${controllers.agent.routes.EnterClientsUTRController.submit().url}" should {
-    s"redirect ($SEE_OTHER) to ${controllers.routes.SignInController.signIn().url}" when {
+  s"POST ${controllers.agent.routes.EnterClientsUTRController.submit.url}" should {
+    s"redirect ($SEE_OTHER) to ${controllers.routes.SignInController.signIn.url}" when {
       "the user is not authenticated" in {
         stubAuthorisedAgentUser(authorised = false)
 
         val result: WSResponse = IncomeTaxViewChangeFrontend.postEnterClientsUTR(None)
 
-        Then(s"The user is redirected to ${controllers.routes.SignInController.signIn().url}")
+        Then(s"The user is redirected to ${controllers.routes.SignInController.signIn.url}")
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(controllers.routes.SignInController.signIn().url)
+          redirectURI(controllers.routes.SignInController.signIn.url)
         )
       }
     }
@@ -178,7 +178,7 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
         Then("The enter clients utr page is returned with an error")
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(controllers.agent.routes.ConfirmClientUTRController.show().url)
+          redirectURI(controllers.agent.routes.ConfirmClientUTRController.show.url)
         )
       }
 
@@ -205,7 +205,7 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
           Then("The enter clients utr page is returned with an error")
           result should have(
             httpStatus(SEE_OTHER),
-            redirectURI(controllers.agent.routes.ConfirmClientUTRController.show().url)
+            redirectURI(controllers.agent.routes.ConfirmClientUTRController.show.url)
           )
         }
       }
@@ -226,7 +226,7 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
         Then(s"Technical difficulties are shown with status $INTERNAL_SERVER_ERROR")
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(controllers.agent.routes.UTRErrorController.show().url)
+          redirectURI(controllers.agent.routes.UTRErrorController.show.url)
         )
       }
 
@@ -252,7 +252,7 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
         Then(s"Technical difficulties are shown with status $INTERNAL_SERVER_ERROR")
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(controllers.agent.routes.UTRErrorController.show().url)
+          redirectURI(controllers.agent.routes.UTRErrorController.show.url)
         )
       }
     }
@@ -313,7 +313,7 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
 
         result should have(
           httpStatus(OK),
-          pageTitleAgent("agent.confirmClient.heading")
+          pageTitleAgentLogin("agent.confirmClient.heading")
         )
       }
     }

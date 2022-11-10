@@ -16,6 +16,8 @@
 
 package helpers
 
+import auth.HeaderExtractor
+
 import java.time.LocalDate
 import com.github.tomakehurst.wiremock.client.WireMock
 import config.FrontendAppConfig
@@ -37,9 +39,24 @@ import play.api.{Application, Environment, Mode}
 import services.DateService
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
 import testConstants.IncomeSourceIntegrationTestConstants._
+import uk.gov.hmrc.http.{Authorization, HeaderCarrier}
+import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import uk.gov.hmrc.play.language.LanguageUtils
 
+import javax.inject.Singleton
 import scala.concurrent.Future
+import play.api.inject.bind
+
+@Singleton
+class TestHeaderExtractor extends HeaderExtractor {
+
+  override def extractHeader(request: play.api.mvc.Request[_], session: play.api.mvc.Session): HeaderCarrier = {
+    HeaderCarrierConverter
+      .fromRequestAndSession(request, request.session)
+      .copy(authorization = Some(Authorization("Bearer")))
+  }
+
+}
 
 trait ComponentSpecBase extends TestSuite with CustomMatchers
   with GuiceOneServerPerSuite with ScalaFutures with IntegrationPatience with Matchers
@@ -99,8 +116,10 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     else LocalDate.of(currentDate.getYear + 1, 4, 5)
   }
 
+
   override implicit lazy val app: Application = new GuiceApplicationBuilder()
     .in(Environment.simple(mode = Mode.Dev))
+    .overrides(bind[HeaderExtractor].to[TestHeaderExtractor]) // adding dumy Authorization header in order for it:tests to pass
     .configure(config)
     .build
 
@@ -149,7 +168,8 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
   }
 
   object IncomeTaxViewChangeFrontend {
-    def get(uri: String): WSResponse = buildClient(uri).get().futureValue
+    def get(uri: String): WSResponse = buildClient(uri)
+      .get().futureValue
 
     def getCreditAndRefunds(): WSResponse = get("/claim-refund")
 
@@ -217,7 +237,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
         Then("the http response for an unauthorised user is returned")
         res should have(
           httpStatus(SEE_OTHER),
-          redirectURI(controllers.routes.SignInController.signIn().url)
+          redirectURI(controllers.routes.SignInController.signIn.url)
         )
       }
     }
@@ -237,6 +257,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     callback()
     if (resetCacheAfterFirstCall) cache.removeAll()
     callback()
+
     verifyIncomeSourceDetailsCall(testMtditid, noOfCalls)
   }
 }

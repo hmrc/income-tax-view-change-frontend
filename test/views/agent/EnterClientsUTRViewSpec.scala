@@ -26,7 +26,7 @@ class EnterClientsUTRViewSpec extends ViewSpec {
 
   object EnterClientsUTRMessages {
     val heading: String =  messages("agent.enter_clients_utr.heading")
-    val title: String = messages("htmlTitle.agent", heading)
+    val title: String = messages("htmlTitle.confirmClient", heading)
     val titleWithInputError: String = s"${messages("htmlTitle.invalidInput", heading)}"
     val info: String = messages{"agent.enter_clients_utr.info"}
     val errorEmptyUTR: String =  messages("agent.error.enter_clients_utr.empty")
