@@ -112,6 +112,75 @@ class TaxDueSummaryViewModelSpec extends UnitSpec {
 
         TaxDueSummaryViewModel(liabilityCalculationModelSuccessful) shouldBe expectedTaxDueSummaryViewModel
       }
+
+      "create a full TaxDueSummaryViewModel when there is a full Calculation for Income tax and CGT " in {
+        val taxDue = 6000
+        val expectedTaxDueSummaryViewModel = TaxDueSummaryViewModel(
+          taxRegime = "UK",
+          class2VoluntaryContributions = true,
+          messages = Some(Messages(
+            Some(List(Message("C22211", "info msg text1"))),
+            Some(List(Message("C22214", "warn msg text1"))),
+            Some(List(Message("C22216", "error msg text1"))))
+          ),
+          lossesAppliedToGeneralIncome = Some(12500),
+          grossGiftAidPayments = Some(12500),
+          giftAidTax = Some(5000.99),
+          marriageAllowanceTransferredInAmount = Some(5000.99),
+          reliefsClaimed = Some(List(ReliefsClaimed("vctSubscriptions", Some(5000.99)),
+            ReliefsClaimed("deficiencyRelief", Some(5000.99)))),
+          totalResidentialFinanceCostsRelief = Some(5000.99),
+          totalForeignTaxCreditRelief = Some(5000.99),
+          topSlicingReliefAmount = Some(5000.99),
+          totalTaxableIncome = Some(12500),
+          payPensionsProfitBands = Some(List(TaxBands("BRT", 20, 12500, 12500, 12500, 5000.99))),
+          savingsAndGainsBands = Some(List(TaxBands("ZRT", 0, 12500, 12500, 12500, 0))),
+          lumpSumsBands = Some(List(TaxBands("SSR", 20, 12500, 12500, 12500, 5000.99))),
+          dividendsBands = Some(List(TaxBands("SSR", 20, 12500, 12500, 12500, 5000.99))),
+          gainsOnLifePoliciesBands = Some(List(TaxBands("SSR", 20, 12500, 12500, 12500, 5000.99))),
+          totalNotionalTax = Some(5000.99),
+          incomeTaxDueAfterTaxReductions = Some(5000.99),
+          totalPensionSavingsTaxCharges = Some(5000.99),
+          statePensionLumpSumCharges = Some(5000.99),
+          payeUnderpaymentsCodedOut = Some(5000.99),
+          nic4Bands = Some(List(Nic4Bands("ZRT", 12500, 20, 5000.99))),
+          class2NicsAmount = Some(5000.99),
+          capitalGainsTax = CapitalGainsTaxViewModel(
+            totalTaxableGains = Some(5000.99),
+            adjustments = Some(-2500.99),
+            foreignTaxCreditRelief = Some(5000.99),
+            taxOnGainsAlreadyPaid = Some(5000.99),
+            capitalGainsTaxDue = Some(5000.99),
+            capitalGainsOverpaid = Some(5000.99),
+            propertyAndInterestTaxBands = Some(List(CgtTaxBands("lowerRate", 20, 5000.99, 5000.99),
+              CgtTaxBands("lowerRate2", 21, 5000.99, 5000.99))),
+            otherGainsTaxBands = Some(List(CgtTaxBands("lowerRate", 20, 5000.99, 5000.99),
+              CgtTaxBands("lowerRate2", 21, 5000.99, 5000.99))),
+            businessAssetsDisposalsAndInvestorsRel = Some(BusinessAssetsDisposalsAndInvestorsRel(Some(5000.99),
+              Some(20), Some(5000.99)))),
+          totalStudentLoansRepaymentAmount = Some(5000.99),
+          saUnderpaymentsCodedOut = Some(-2500.99),
+          totalIncomeTaxAndNicsDue = Some(6000),
+          totalTaxDeducted = Some(50000.99),
+          taxDeductedAtSource = TaxDeductedAtSourceViewModel(
+            payeEmployments = Some(5000.99),
+            ukPensions = Some(5000.99),
+            stateBenefits = Some(5000.99),
+            cis = Some(5000.99),
+            ukLandAndProperty = Some(5000.99),
+            specialWithholdingTax = Some(5000.99),
+            voidISAs = Some(5000.99),
+            savings = Some(5000.99),
+            inYearAdjustmentCodedInLaterTaxYear = Some(5000.99))
+        )
+
+        val liabilityCalculationModel = liabilityCalculationModelSuccessful.copy(
+          calculation = Some(liabilityCalculationModelSuccessful.calculation.get.copy(
+            taxCalculation = Some(liabilityCalculationModelSuccessful.calculation.get.taxCalculation.get.copy(
+              totalIncomeTaxAndNicsAndCgt = Some(taxDue))))))
+
+        TaxDueSummaryViewModel(liabilityCalculationModel) shouldBe expectedTaxDueSummaryViewModel
+      }
     }
   }
 }
