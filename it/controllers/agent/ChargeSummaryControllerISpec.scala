@@ -19,7 +19,7 @@ package controllers.agent
 import audit.models.ChargeSummaryAudit
 import auth.MtdItUser
 import config.featureswitch._
-import enums.ChargeType.{ITSA_NI, NIC4_SCOTLAND}
+import enums.ChargeType.{ITSA_ENGLAND_AND_NI, ITSA_NI, NIC4_SCOTLAND}
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.AuthStub.titleInternalServer
 import helpers.servicemocks.DocumentDetailsStub.docDateDetailWithInterest
@@ -33,7 +33,7 @@ import testConstants.BaseIntegrationTestConstants._
 import testConstants.FinancialDetailsIntegrationTestConstants.financialDetailModelPartial
 import testConstants.IncomeSourceIntegrationTestConstants._
 import testConstants.messages.ChargeSummaryMessages
-import testConstants.messages.ChargeSummaryMessages.{codingOutInsetPara, codingOutMessage, notCurrentlyChargingInterest, paymentBreakdownHeading, underReview}
+import testConstants.messages.ChargeSummaryMessages._
 
 import java.time.LocalDate
 
@@ -56,7 +56,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
     "ITSA- POA 1", 123456789012345.67, LocalDate.of(2020, 2, 24), "amended return"))
 
   val paymentBreakdown: List[FinancialDetail] = List(
-    financialDetailModelPartial(originalAmount = 123.45, chargeType = "ITSA England & NI", dunningLock = Some("Stand over order"), interestLock = Some("Breathing Space Moratorium Act")),
+    financialDetailModelPartial(originalAmount = 123.45, chargeType = ITSA_ENGLAND_AND_NI, dunningLock = Some("Stand over order"), interestLock = Some("Breathing Space Moratorium Act")),
     financialDetailModelPartial(originalAmount = 123.45, chargeType = NIC4_SCOTLAND, mainType = "SA Payment on Account 2", dunningLock = Some("Dunning Lock"), interestLock = Some("Manual RPI Signal")))
 
   

@@ -734,7 +734,7 @@ object FinancialDetailsTestConstants {
           Some("latePaymentInterestId"), Some(LocalDate.of(2018, 3, 29)), Some(LocalDate.of(2018, 3, 29)), None, Some(100), Some("paymentLotItem"), Some("paymentLot"))
       ),
       financialDetails = List(
-        FinancialDetail(taxYear, mainType, Some(id1040000124), Some(LocalDate.parse("2022-08-16")), Some("type"), Some(100), Some(100), Some(100), Some(100), Some("NIC4 Wales"), Some(100), Some(Seq(SubItem(dueDate))))
+        FinancialDetail(taxYear, mainType, Some(id1040000124), Some(LocalDate.parse("2022-08-16")), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate))))
       )
     )
 
@@ -935,11 +935,11 @@ object FinancialDetailsTestConstants {
     documentDetails = creditDocumentDetailList,
     financialDetails = List(
       FinancialDetail("2021", Some("SA Balancing Charge"), Some(id1040000124), Some(LocalDate.parse("2022-08-16")), Some("type"), Some(100), Some(100),
-        Some(100), Some(100), Some("NIC4 Wales"), Some(100), Some(Seq(SubItem(dueDate = Some(LocalDate.parse("2021-08-24")))))),
+        Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate = Some(LocalDate.parse("2021-08-24")))))),
       FinancialDetail("2021", Some("SA Balancing Charge"), Some(id1040000125), Some(LocalDate.parse("2022-08-16")), Some("type"), Some(100), Some(100),
-        Some(100), Some(100), Some("NIC4 Wales"), Some(100), Some(Seq(SubItem(dueDate = Some(LocalDate.parse("2021-08-25")), dunningLock = Some("Coding out"))))),
+        Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate = Some(LocalDate.parse("2021-08-25")), dunningLock = Some("Coding out"))))),
       FinancialDetail("2021", Some("SA Balancing Charge"), Some(id1040000126), Some(LocalDate.parse("2022-08-16")), Some("type"), Some(100), Some(100),
-        Some(100), Some(100), Some("NIC4 Wales"), Some(100), Some(Seq(SubItem(dueDate = Some(LocalDate.parse("2021-08-25")), dunningLock = Some("Coding out"))))),
+        Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate = Some(LocalDate.parse("2021-08-25")), dunningLock = Some("Coding out"))))),
     )
   )
 
@@ -948,11 +948,11 @@ object FinancialDetailsTestConstants {
     documentDetails = creditAndRefundDocumentDetailList,
     financialDetails = List(
       FinancialDetail("2021", Some("SA Balancing Charge"), Some(id1040000124), Some(LocalDate.parse("2022-08-16")), Some("type"), Some(100), Some(100),
-        Some(100), Some(100), Some("NIC4 Wales"), Some(100), Some(Seq(SubItem(dueDate = Some(LocalDate.parse("2021-08-24")))))),
+        Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate = Some(LocalDate.parse("2021-08-24")))))),
       FinancialDetail("2021", Some("SA Balancing Charge"), Some(id1040000125), Some(LocalDate.parse("2022-08-16")), Some("type"), Some(100), Some(100),
-        Some(100), Some(100), Some("NIC4 Wales"), Some(100), Some(Seq(SubItem(dueDate = Some(LocalDate.parse("2021-08-25")), dunningLock = Some("Coding out"))))),
+        Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate = Some(LocalDate.parse("2021-08-25")), dunningLock = Some("Coding out"))))),
       FinancialDetail("2021", Some("SA Balancing Charge"), Some(id1040000126), Some(LocalDate.parse("2022-08-16")), Some("type"), Some(100), Some(100),
-        Some(100), Some(100), Some("NIC4 Wales"), Some(100), Some(Seq(SubItem(dueDate = Some(LocalDate.parse("2021-08-25")), dunningLock = Some("Coding out"))))),
+        Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate = Some(LocalDate.parse("2021-08-25")), dunningLock = Some("Coding out"))))),
     )
   )
 
@@ -966,11 +966,11 @@ object FinancialDetailsTestConstants {
     documentDetails = creditAndRefundDocumentDetailListMFA,
     financialDetails = List(
       FinancialDetail("2021", Some("SA Balancing Charge"), Some(id1040000124), Some(LocalDate.parse("2022-08-16")), Some("type"), Some(100), Some(100),
-        Some(100), Some(100), Some("NIC4 Wales"), Some(100), Some(Seq(SubItem(dueDate = Some(LocalDate.parse("2021-08-24")))))),
+        Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate = Some(LocalDate.parse("2021-08-24")))))),
       FinancialDetail("2021", Some("SA Balancing Charge"), Some(id1040000125), Some(LocalDate.parse("2022-08-16")), Some("type"), Some(100), Some(100),
-        Some(100), Some(100), Some("NIC4 Wales"), Some(100), Some(Seq(SubItem(dueDate = Some(LocalDate.parse("2021-08-25")), dunningLock = Some("Coding out"))))),
+        Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate = Some(LocalDate.parse("2021-08-25")), dunningLock = Some("Coding out"))))),
       FinancialDetail("2021", Some("SA Balancing Charge"), Some(id1040000126), Some(LocalDate.parse("2022-08-16")), Some("type"), Some(100), Some(100),
-        Some(100), Some(100), Some("NIC4 Wales"), Some(100), Some(Seq(SubItem(dueDate = Some(LocalDate.parse("2021-08-25")), dunningLock = Some("Coding out"))))),
+        Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate = Some(LocalDate.parse("2021-08-25")), dunningLock = Some("Coding out"))))),
     )
   )
 
@@ -990,9 +990,9 @@ object FinancialDetailsTestConstants {
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, Some(6.00), Some(2.00), Some(4.00), None),
     documentDetails = creditAndRefundDocumentDetailAllCreditTypesList,
     financialDetails = List(
-      FinancialDetail("2021", Some("Payment on Account"), Some(id1040000124), Some(LocalDate.parse("2022-08-16")), Some("type"), Some(100), Some(100), Some(100), Some(100), Some("NIC4 Wales"), Some(100), Some(Seq(SubItem(dueDate = Some(LocalDate.parse("2021-08-24")))))),
-      FinancialDetail("2021", Some("Payment on Account"), Some(id1040000125), Some(LocalDate.parse("2022-08-16")), Some("type"), Some(500), Some(500), Some(500), Some(500), Some("NIC4 Wales"), Some(500), Some(Seq(SubItem(dueDate = Some(LocalDate.parse("2021-08-25")), dunningLock = Some("Coding out"))))),
-      FinancialDetail("2021", Some("Payment on Account"), Some(id1040000126), Some(LocalDate.parse("2022-08-16")), Some("type"), Some(300), Some(300), Some(300), Some(300), Some("NIC4 Wales"), Some(300), Some(Seq(SubItem(dueDate = Some(LocalDate.parse("2021-08-25")), dunningLock = Some("Coding out"))))),
+      FinancialDetail("2021", Some("Payment on Account"), Some(id1040000124), Some(LocalDate.parse("2022-08-16")), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate = Some(LocalDate.parse("2021-08-24")))))),
+      FinancialDetail("2021", Some("Payment on Account"), Some(id1040000125), Some(LocalDate.parse("2022-08-16")), Some("type"), Some(500), Some(500), Some(500), Some(500), Some(NIC4_WALES), Some(500), Some(Seq(SubItem(dueDate = Some(LocalDate.parse("2021-08-25")), dunningLock = Some("Coding out"))))),
+      FinancialDetail("2021", Some("Payment on Account"), Some(id1040000126), Some(LocalDate.parse("2022-08-16")), Some("type"), Some(300), Some(300), Some(300), Some(300), Some(NIC4_WALES), Some(300), Some(Seq(SubItem(dueDate = Some(LocalDate.parse("2021-08-25")), dunningLock = Some("Coding out"))))),
       FinancialDetail("2018", Some("ITSA Overpayment Relief"), Some("MFADEBIT01"), totalAmount = Some(100), originalAmount = Some(100), outstandingAmount = Some(100), items = Some(Seq(SubItem(Some(LocalDate.of(2019, 5, 15)))))),
       FinancialDetail("2018", Some("ITSA Overpayment Relief"), Some("MFADEBIT02"), totalAmount = Some(1000), originalAmount = Some(1000), outstandingAmount = Some(1000), items = Some(Seq(SubItem(Some(LocalDate.of(2019, 5, 15)))))),
       FinancialDetail("2018", Some("ITSA PAYE in year Repayment"), Some("MFADEBIT03"), totalAmount = Some(800), originalAmount = Some(800), outstandingAmount = Some(800), items = Some(Seq(SubItem(Some(LocalDate.of(2019, 5, 15)))))),
