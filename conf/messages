@@ -26,7 +26,7 @@ agent.base.service_name                             = Your client’s Income Tax
 header.serviceName                                  = Manage your Income Tax updates
 agent.header.serviceName                            = Manage your client’s Income Tax updates
 
-# HTML Titles
+# HTML Titles                                       //notify submission team regarding title changes to htmlTitle.confirmClient in HtmlTitle.scala
 htmlTitle                                           = {0} - Manage your Income Tax updates - GOV.UK
 htmlTitle.agent                                     = {0} - Manage your client’s Income Tax updates - GOV.UK
 htmlTitle.errorPage                                 = {0} - GOV.UK
@@ -305,7 +305,7 @@ taxCal_breakdown.table.ART_scottish                                 = Top rate (
 taxCal_breakdown.table.ZRTBR                                        = Basic rate band at nil rate ({0} at {1}%)
 taxCal_breakdown.table.ZRTHR                                        = Higher rate band at nil rate ({0} at {1}%)
 taxCal_breakdown.table.ZRTAR                                        = Additional rate band at nil rate ({0} at {1}%)
-taxCal_breakdown.table.totalIncomeTaxAndNicsDue                     = Income Tax and National Insurance contributions due
+taxCal_breakdown.table.totalIncomeTaxAndNicsDue                     = Self Assessment tax amount
 taxCal_breakdown.table.nic4                                         = Class 4 National Insurance ({0} at {1}%)
 taxCal_breakdown.national_insurance_contributions                   = National Insurance contributions
 
