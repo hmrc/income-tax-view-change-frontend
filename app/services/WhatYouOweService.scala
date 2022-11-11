@@ -54,11 +54,11 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
   }
 
   def getWhatYouOweChargesList()(implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[WhatYouOweChargesList] = {
-      getWhatYouOweChargesList(financialDetailsService.getAllUnpaidFinancialDetails)
+    getWhatYouOweChargesList(financialDetailsService.getAllUnpaidFinancialDetails)
   }
 
-  def getWhatYouOweChargesList(unpaidCharges:Future[List[FinancialDetailsResponseModel]])
-                              (implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[WhatYouOweChargesList] ={
+  def getWhatYouOweChargesList(unpaidCharges: Future[List[FinancialDetailsResponseModel]])
+                              (implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[WhatYouOweChargesList] = {
 
     unpaidCharges flatMap {
       case financialDetails if financialDetails.exists(_.isInstanceOf[FinancialDetailsErrorModel]) =>
@@ -100,14 +100,6 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
     }
   }
 
-  private def whatYouOwePageDataExists(documentDetailWithDueDate: DocumentDetailWithDueDate): Boolean = {
-    documentDetailWithDueDate.documentDetail.documentDescription.isDefined && documentDetailWithDueDate.dueDate.isDefined
-  }
-
-  private def filterMFADebits(documentDetailsWithDueDate: List[DocumentDetailWithDueDate]): List[DocumentDetailWithDueDate] = {
-    documentDetailsWithDueDate.filterNot(documentDetailWithDueDate => documentDetailWithDueDate.isMFADebit)
-  }
-
   private def getFilteredChargesList(financialDetailsList: List[FinancialDetailsModel]): List[DocumentDetailWithDueDate] = {
     val documentDetailsWithDueDates = financialDetailsList.flatMap(financialDetails =>
       financialDetails.getAllDocumentDetailsWithDueDates(isEnabled(CodingOut)))
@@ -117,5 +109,13 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
         && documentDetailWithDueDate.documentDetail.checkIfEitherChargeOrLpiHasRemainingToPay)
       .sortBy(_.dueDate.get)
     if (isDisabled(MFACreditsAndDebits)) filterMFADebits(documentDetailsWithDueDates) else documentDetailsWithDueDates
+  }
+
+  private def whatYouOwePageDataExists(documentDetailWithDueDate: DocumentDetailWithDueDate): Boolean = {
+    documentDetailWithDueDate.documentDetail.documentDescription.isDefined && documentDetailWithDueDate.dueDate.isDefined
+  }
+
+  private def filterMFADebits(documentDetailsWithDueDate: List[DocumentDetailWithDueDate]): List[DocumentDetailWithDueDate] = {
+    documentDetailsWithDueDate.filterNot(documentDetailWithDueDate => documentDetailWithDueDate.isMFADebit)
   }
 }
