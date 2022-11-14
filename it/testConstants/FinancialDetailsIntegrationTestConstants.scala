@@ -19,6 +19,7 @@ package testConstants
 import java.time.LocalDate
 import BaseIntegrationTestConstants.{testErrorMessage, testErrorNotFoundStatus, testErrorStatus}
 import IncomeSourceIntegrationTestConstants.{id1040000123, noDunningLock, noInterestLock}
+import enums.ChargeType.NIC4_WALES
 import models.financialDetails.{BalanceDetails, DocumentDetail, DocumentDetailWithDueDate, FinancialDetail, FinancialDetailsErrorModel, FinancialDetailsModel, SubItem, WhatYouOweChargesList}
 import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
 import play.api.libs.json.{JsValue, Json}
@@ -56,7 +57,7 @@ object FinancialDetailsIntegrationTestConstants {
     originalAmount = Some(100),
     outstandingAmount = Some(100),
     clearedAmount = Some(100),
-    chargeType = Some("NIC4 Wales"),
+    chargeType = Some(NIC4_WALES),
     items =
       Some(Seq(
         SubItem(
@@ -98,7 +99,7 @@ object FinancialDetailsIntegrationTestConstants {
 
   def financialDetailModelPartial(taxYear: Int = 2018,
                                   mainType: String = "SA Payment on Account 1",
-                                  chargeType: String = "NIC4 Wales",
+                                  chargeType: String = NIC4_WALES,
                                   originalAmount: BigDecimal = 100,
                                   dunningLock: Option[String] = None,
                                   interestLock: Option[String] = None,
@@ -165,8 +166,8 @@ object FinancialDetailsIntegrationTestConstants {
           Some(LocalDate.of(2018, 3, 29)), Some(LocalDate.of(2018, 3, 29)), latePaymentInterestAmount(1), Some(100), Some("paymentLotItem"), Some("paymentLot"))
       ),
       financialDetails = List(
-        FinancialDetail(taxYear, mainType.head, transactionIds(0), Some(LocalDate.parse("2020-08-16")), Some("type"), Some(100), Some(100), Some(100), Some(100), Some("NIC4 Wales"), Some(100), Some(Seq(SubItem(dueDate.head, dunningLock = Some(dunningLock.head), interestLock = Some(interestLock.head))))),
-        FinancialDetail(taxYear, mainType(1), transactionIds(1), Some(LocalDate.parse("2020-08-16")), Some("type"), Some(100), Some(100), Some(100), Some(100), Some("NIC4 Wales"), Some(100), Some(Seq(SubItem(dueDate(1), dunningLock = Some(dunningLock(1)), interestLock = Some(interestLock(1))))))
+        FinancialDetail(taxYear, mainType.head, transactionIds(0), Some(LocalDate.parse("2020-08-16")), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate.head, dunningLock = Some(dunningLock.head), interestLock = Some(interestLock.head))))),
+        FinancialDetail(taxYear, mainType(1), transactionIds(1), Some(LocalDate.parse("2020-08-16")), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate(1), dunningLock = Some(dunningLock(1)), interestLock = Some(interestLock(1))))))
       )
     )
 
@@ -203,8 +204,8 @@ object FinancialDetailsIntegrationTestConstants {
           Some(LocalDate.of(2018, 3, 29)), Some(LocalDate.of(2018, 3, 29)), Some(100), Some(100), Some("paymentLotItem"), Some("paymentLot"))
       ),
       financialDetails = List(
-        FinancialDetail(taxYear, mainType.head, transactionIds(0), Some(LocalDate.parse("2020-08-16")), Some("type"), Some(100), Some(100), Some(100), Some(100), Some("NIC4 Wales"), Some(100), Some(Seq(SubItem(dueDate.head)))),
-        FinancialDetail(taxYear, mainType(1), transactionIds(1), Some(LocalDate.parse("2020-08-16")), Some("type"), Some(100), Some(100), Some(100), Some(100), Some("NIC4 Wales"), Some(100), Some(Seq(SubItem(dueDate(1)))))
+        FinancialDetail(taxYear, mainType.head, transactionIds(0), Some(LocalDate.parse("2020-08-16")), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate.head)))),
+        FinancialDetail(taxYear, mainType(1), transactionIds(1), Some(LocalDate.parse("2020-08-16")), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate(1)))))
       )
     )
 
@@ -231,7 +232,7 @@ object FinancialDetailsIntegrationTestConstants {
     totalAmount = Some(100),
     originalAmount = Some(100),
     clearedAmount = Some(100),
-    chargeType = Some("NIC4 Wales"),
+    chargeType = Some(NIC4_WALES),
     dueDate = List(Some(LocalDate.now().plusDays(45)), Some(LocalDate.now().plusDays(50))),
     noDunningLock,
     noInterestLock,
@@ -259,7 +260,7 @@ object FinancialDetailsIntegrationTestConstants {
     totalAmount = Some(100),
     originalAmount = Some(100),
     clearedAmount = Some(100),
-    chargeType = Some("NIC4 Wales"),
+    chargeType = Some(NIC4_WALES),
     dueDate = List(Some(LocalDate.now()), Some(LocalDate.now())),
     noDunningLock,
     noInterestLock,
@@ -288,7 +289,7 @@ object FinancialDetailsIntegrationTestConstants {
     totalAmount = Some(100),
     originalAmount = Some(100),
     clearedAmount = Some(100),
-    chargeType = Some("NIC4 Wales"),
+    chargeType = Some(NIC4_WALES),
     dueDate = List(Some(LocalDate.now().minusDays(15)), Some(LocalDate.now().minusDays(15))),
     dunningLock,
     interestLock,
@@ -316,7 +317,7 @@ object FinancialDetailsIntegrationTestConstants {
     totalAmount = Some(100),
     originalAmount = Some(100),
     clearedAmount = Some(100),
-    chargeType = Some("NIC4 Wales"),
+    chargeType = Some(NIC4_WALES),
     dueDate = List(Some(LocalDate.now().plusDays(35)), Some(LocalDate.now().minusDays(1))),
     subItemId = Some("1"),
     amount = Some(100),
@@ -342,7 +343,7 @@ object FinancialDetailsIntegrationTestConstants {
     totalAmount = Some(100),
     originalAmount = Some(100),
     clearedAmount = Some(100),
-    chargeType = Some("NIC4 Wales"),
+    chargeType = Some(NIC4_WALES),
     dueDate = List(Some(LocalDate.now().plusDays(30)), Some(LocalDate.now().minusDays(1))),
     subItemId = Some("1"),
     amount = Some(100),
@@ -368,7 +369,7 @@ object FinancialDetailsIntegrationTestConstants {
     totalAmount = Some(100),
     originalAmount = Some(100),
     clearedAmount = Some(100),
-    chargeType = Some("NIC4 Wales"),
+    chargeType = Some(NIC4_WALES),
     dueDate = List(Some(LocalDate.now().plusDays(1)), Some(LocalDate.now())),
     noDunningLock,
     noInterestLock,

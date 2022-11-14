@@ -18,6 +18,7 @@ package views
 
 import auth.MtdItUser
 import config.FrontendAppConfig
+import enums.ChargeType._
 import exceptions.MissingFieldException
 import implicits.ImplicitDateFormatter
 import models.paymentAllocationCharges.{AllocationDetailWithClearingDate, FinancialDetailsWithDocumentDetailsModel, PaymentAllocationViewModel}
@@ -295,14 +296,14 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
       val BAL_CHARGE = "SA Balancing Charge"
 
       "a payment on account 1 of 2" in new PaymentAllocationSetup(viewModel(
-        allocationDetail("poa1_1", "2018-03-15", POA1, "ITSA England & NI", 1234.56) -> "2019-06-27",
-        allocationDetail("poa1_2", "2018-04-05", POA1, "ITSA NI", 2345.67) -> "2019-06-28",
-        allocationDetail("poa1_3", "2018-04-06", POA1, "ITSA Scotland", 3456.78) -> "2019-06-29",
-        allocationDetail("poa1_4", "2018-06-23", POA1, "ITSA Wales", 4567.89) -> "2019-06-30",
-        allocationDetail("poa1_5", "2018-12-31", POA1, "NIC4-GB", 9876.54) -> "2019-08-27",
-        allocationDetail("poa1_6", "2019-01-01", POA1, "NIC4 Scotland", 8765.43) -> "2019-08-28",
-        allocationDetail("poa1_7", "2019-04-05", POA1, "NIC4 Wales", 7654.32) -> "2019-08-29",
-        allocationDetail("poa1_8", "2019-04-06", POA1, "NIC4-NI", 6543.21) -> "2019-08-30")) {
+        allocationDetail("poa1_1", "2018-03-15", POA1, ITSA_ENGLAND_AND_NI, 1234.56) -> "2019-06-27",
+        allocationDetail("poa1_2", "2018-04-05", POA1, ITSA_NI, 2345.67) -> "2019-06-28",
+        allocationDetail("poa1_3", "2018-04-06", POA1, ITSA_SCOTLAND, 3456.78) -> "2019-06-29",
+        allocationDetail("poa1_4", "2018-06-23", POA1, ITSA_WALES, 4567.89) -> "2019-06-30",
+        allocationDetail("poa1_5", "2018-12-31", POA1, NIC4_GB, 9876.54) -> "2019-08-27",
+        allocationDetail("poa1_6", "2019-01-01", POA1, NIC4_SCOTLAND, 8765.43) -> "2019-08-28",
+        allocationDetail("poa1_7", "2019-04-05", POA1, NIC4_WALES, 7654.32) -> "2019-08-29",
+        allocationDetail("poa1_8", "2019-04-06", POA1, NIC4_NI, 6543.21) -> "2019-08-30")) {
 
         val expectedLinkUrls = Seq(
           controllers.routes.ChargeSummaryController.show(2018, "poa1_1").url,
@@ -336,14 +337,14 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
       }
 
       "a payment on account 2 of 2" in new PaymentAllocationSetup(viewModel(
-        allocationDetail("poa2_1", "2018-03-15", POA2, "ITSA England & NI", 1234.56) -> "2019-06-27",
-        allocationDetail("poa2_2", "2018-04-05", POA2, "ITSA NI", 2345.67) -> "2019-06-28",
-        allocationDetail("poa2_3", "2018-04-06", POA2, "ITSA Scotland", 3456.78) -> "2019-06-29",
-        allocationDetail("poa2_4", "2018-06-23", POA2, "ITSA Wales", 4567.89) -> "2019-06-30",
-        allocationDetail("poa2_5", "2018-12-31", POA2, "NIC4-GB", 9876.54) -> "2019-08-27",
-        allocationDetail("poa2_6", "2019-01-01", POA2, "NIC4 Scotland", 8765.43) -> "2019-08-28",
-        allocationDetail("poa2_7", "2019-04-05", POA2, "NIC4 Wales", 7654.32) -> "2019-08-29",
-        allocationDetail("poa2_8", "2019-04-06", POA2, "NIC4-NI", 6543.21) -> "2019-08-30")) {
+        allocationDetail("poa2_1", "2018-03-15", POA2, ITSA_ENGLAND_AND_NI, 1234.56) -> "2019-06-27",
+        allocationDetail("poa2_2", "2018-04-05", POA2, ITSA_NI, 2345.67) -> "2019-06-28",
+        allocationDetail("poa2_3", "2018-04-06", POA2, ITSA_SCOTLAND, 3456.78) -> "2019-06-29",
+        allocationDetail("poa2_4", "2018-06-23", POA2, ITSA_WALES, 4567.89) -> "2019-06-30",
+        allocationDetail("poa2_5", "2018-12-31", POA2, NIC4_GB, 9876.54) -> "2019-08-27",
+        allocationDetail("poa2_6", "2019-01-01", POA2, NIC4_SCOTLAND, 8765.43) -> "2019-08-28",
+        allocationDetail("poa2_7", "2019-04-05", POA2, NIC4_WALES, 7654.32) -> "2019-08-29",
+        allocationDetail("poa2_8", "2019-04-06", POA2, NIC4_NI, 6543.21) -> "2019-08-30")) {
 
         val expectedLinkUrls = Seq(
           controllers.routes.ChargeSummaryController.show(2018, "poa2_1").url,
@@ -377,12 +378,12 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
       }
 
       "a balancing charge" in new PaymentAllocationSetup(viewModel(
-        allocationDetail("bcd_1", "2018-03-15", BAL_CHARGE, "ITSA Scotland", 1234.56) -> "2019-06-27",
-        allocationDetail("bcd_2", "2018-04-05", BAL_CHARGE, "NIC4 Wales", 2345.67) -> "2019-06-28",
-        allocationDetail("bcd_3", "2018-04-06", BAL_CHARGE, "NIC2-GB", 3456.78) -> "2019-06-29",
-        allocationDetail("bcd_4", "2019-01-01", BAL_CHARGE, "CGT", 9876.54) -> "2019-08-27",
-        allocationDetail("bcd_5", "2019-04-05", BAL_CHARGE, "SL", 8765.43) -> "2019-08-28",
-        allocationDetail("bcd_6", "2019-04-06", BAL_CHARGE, "Voluntary NIC2-NI", 7654.32) -> "2019-08-29")) {
+        allocationDetail("bcd_1", "2018-03-15", BAL_CHARGE, ITSA_SCOTLAND, 1234.56) -> "2019-06-27",
+        allocationDetail("bcd_2", "2018-04-05", BAL_CHARGE, NIC4_WALES, 2345.67) -> "2019-06-28",
+        allocationDetail("bcd_3", "2018-04-06", BAL_CHARGE, NIC2_GB, 3456.78) -> "2019-06-29",
+        allocationDetail("bcd_4", "2019-01-01", BAL_CHARGE, CGT, 9876.54) -> "2019-08-27",
+        allocationDetail("bcd_5", "2019-04-05", BAL_CHARGE, SL, 8765.43) -> "2019-08-28",
+        allocationDetail("bcd_6", "2019-04-06", BAL_CHARGE, VOLUNTARY_NIC2_NI, 7654.32) -> "2019-08-29")) {
 
         val expectedLinkUrls = Seq(
           controllers.routes.ChargeSummaryController.show(2018, "bcd_1").url,

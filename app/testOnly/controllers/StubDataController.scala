@@ -49,7 +49,7 @@ class StubDataController @Inject()(stubDataView: StubDataView)
 
   val submit: Action[AnyContent] = Action.async {
     implicit request =>
-      StubDataForm.stubDataForm.bindFromRequest.fold(
+      StubDataForm.stubDataForm.bindFromRequest().fold(
         formWithErrors => Future.successful(BadRequest(view(formWithErrors))),
         schema => {
           dynamicStubConnector.addData(schema).map(

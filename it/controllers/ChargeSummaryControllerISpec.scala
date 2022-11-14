@@ -19,18 +19,19 @@ package controllers
 import audit.models.ChargeSummaryAudit
 import auth.MtdItUser
 import config.featureswitch._
+import enums.ChargeType.{ITSA_ENGLAND_AND_NI, ITSA_NI, NIC4_SCOTLAND}
 import helpers.ComponentSpecBase
-import helpers.servicemocks.DocumentDetailsStub.{docDateDetail, docDateDetailWithInterest, docDetail}
+import helpers.servicemocks.DocumentDetailsStub.{docDateDetail, docDateDetailWithInterest}
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import models.chargeHistory.ChargeHistoryModel
-import models.financialDetails.{DocumentDetail, DocumentDetailWithDueDate, FinancialDetail, Payment, PaymentsWithChargeType}
+import models.financialDetails._
 import play.api.http.Status._
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino, testTaxYear}
 import testConstants.FinancialDetailsIntegrationTestConstants.financialDetailModelPartial
 import testConstants.IncomeSourceIntegrationTestConstants._
-import testConstants.messages.ChargeSummaryMessages.{codingOutInsetPara, codingOutMessage, lpiCreated, notCurrentlyChargingInterest, paymentBreakdownHeading, paymentprocessingbullet1, underReview}
+import testConstants.messages.ChargeSummaryMessages._
 
 import java.time.LocalDate
 
@@ -43,17 +44,17 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
       mainType = Some(mainType), chargeType = Some(chargeType))
 
   val paymentAllocation: List[PaymentsWithChargeType] = List(
-    paymentsWithCharge("SA Balancing Charge", "ITSA NI", "2019-08-13", -10000.0, lotItem = "000001"),
-    paymentsWithCharge("SA Payment on Account 1", "NIC4 Scotland", "2019-08-13", -9000.0, lotItem = "000001"),
-    paymentsWithCharge("SA Payment on Account 2", "NIC4 Scotland", "2019-08-13", -8000.0, lotItem = "000001")
+    paymentsWithCharge("SA Balancing Charge", ITSA_NI, "2019-08-13", -10000.0, lotItem = "000001"),
+    paymentsWithCharge("SA Payment on Account 1", NIC4_SCOTLAND, "2019-08-13", -9000.0, lotItem = "000001"),
+    paymentsWithCharge("SA Payment on Account 2", NIC4_SCOTLAND, "2019-08-13", -8000.0, lotItem = "000001")
   )
 
   val chargeHistories: List[ChargeHistoryModel] = List(ChargeHistoryModel("2019", "1040000124", LocalDate.of(2018, 2, 14), "ITSA- POA 1", 2500, LocalDate.of(2019, 2, 14), "Customer Request"))
 
   val paymentBreakdown: List[FinancialDetail] = List(
-    financialDetailModelPartial(originalAmount = 123.45, chargeType = "ITSA England & NI", mainType = "SA Balancing Charge", dunningLock = Some("Dunning Lock"), interestLock = Some("Interest Lock")),
-    financialDetailModelPartial(originalAmount = 123.45, chargeType = "NIC4 Scotland", dunningLock = Some("Stand over order"), interestLock = Some("Breathing Space Moratorium Act")),
-    financialDetailModelPartial(originalAmount = 123.45, chargeType = "NIC4 Scotland", mainType = "SA Payment on Account 2", dunningLock = Some("Dunning Lock"), interestLock = Some("Manual RPI Signal")))
+    financialDetailModelPartial(originalAmount = 123.45, chargeType = ITSA_ENGLAND_AND_NI, mainType = "SA Balancing Charge", dunningLock = Some("Dunning Lock"), interestLock = Some("Interest Lock")),
+    financialDetailModelPartial(originalAmount = 123.45, chargeType = NIC4_SCOTLAND, dunningLock = Some("Stand over order"), interestLock = Some("Breathing Space Moratorium Act")),
+    financialDetailModelPartial(originalAmount = 123.45, chargeType = NIC4_SCOTLAND, mainType = "SA Payment on Account 2", dunningLock = Some("Dunning Lock"), interestLock = Some("Manual RPI Signal")))
 
   val importantPaymentBreakdown: String = s"${messagesAPI("chargeSummary.dunning.locks.banner.title")} ${messagesAPI("chargeSummary.paymentBreakdown.heading")}"
   val paymentHistory: String = messagesAPI("chargeSummary.chargeHistory.heading")
@@ -94,7 +95,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
           Some("12345-credId"), Some("Individual"), None
         )(FakeRequest()),
         docDateDetail("2018-02-14", "ITSA- POA 1"),
-        paymentBreakdown = List(financialDetailModelPartial(chargeType = "ITSA England & NI", originalAmount = 10.34, dunningLock = Some("Stand over order"), interestLock = Some("Breathing Space Moratorium Act"))),
+        paymentBreakdown = List(financialDetailModelPartial(chargeType = ITSA_ENGLAND_AND_NI, originalAmount = 10.34, dunningLock = Some("Stand over order"), interestLock = Some("Breathing Space Moratorium Act"))),
         chargeHistories = List.empty,
         paymentAllocations = List.empty,
         isLatePaymentCharge = false
@@ -460,7 +461,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
           "taxYear" -> s"$testTaxYear",
           "mainType" -> "ITSA Manual Penalty Pre CY-4",
           "transactionId" -> "1040000123",
-          "chargeType" -> "ITSA NI",
+          "chargeType" -> ITSA_NI,
           "originalAmount" -> 1200.00,
           "items" -> Json.arr(
             Json.obj("subItem" -> "001",
@@ -505,7 +506,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
           "taxYear" -> s"$testTaxYear",
           "mainType" -> "ITSA Manual Penalty Pre CY-4",
           "transactionId" -> "1",
-          "chargeType" -> "ITSA NI",
+          "chargeType" -> ITSA_NI,
           "originalAmount" -> 1200.00,
           "items" -> Json.arr(
             Json.obj("subItem" -> "001",
@@ -528,7 +529,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
           "taxYear" -> s"$testTaxYear",
           "mainType" -> "Payment on Account",
           "transactionId" -> "2",
-          "chargeType" -> "ITSA NI",
+          "chargeType" -> ITSA_NI,
           "originalAmount" -> 1200.00,
           "items" -> Json.arr(
             Json.obj("subItem" -> "001",
