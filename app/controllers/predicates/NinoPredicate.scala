@@ -63,7 +63,7 @@ class NinoPredicate @Inject()(val ninoLookupService: NinoLookupService,
           case error: NinoResponseError =>
             Logger("application").error(s"[NinoPredicate][buildMtdUserWithNino] NINO could not be retrieved from NinoLookupService")
             auditNinoLookupError(error, request.mtditid)
-            Left(itvcErrorHandler.showInternalServerError)
+            Left(itvcErrorHandler.showInternalServerError())
         }
     }
   }
