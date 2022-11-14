@@ -57,6 +57,10 @@ object ChargeType {
     override val name: String = "NIC4-NI"
   }
 
+  case object ITSA_NIC2_INTEREST_GB extends ChargeType {
+    override val name: String = "ITSA NIC2 Interest GB"
+  }
+
   case object ITSA_NIC4_INTEREST_GB extends ChargeType {
     override val name: String = "ITSA NIC4 Interest GB"
   }

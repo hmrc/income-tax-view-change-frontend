@@ -1,6 +1,6 @@
 package testConstants
 
-import enums.ChargeType.{ITSA_ENGLAND_AND_NI, ITSA_NIC4_INTEREST_GB, NIC4_WALES}
+import enums.ChargeType.{ITSA_ENGLAND_AND_NI, ITSA_NIC2_INTEREST_GB, ITSA_NIC4_INTEREST_GB, NIC4_WALES}
 import models.financialDetails.{DocumentDetail, FinancialDetail, SubItem}
 import models.paymentAllocationCharges.{AllocationDetailWithClearingDate, FinancialDetailsWithDocumentDetailsModel, LatePaymentInterestPaymentAllocationDetails, PaymentAllocationViewModel}
 import models.paymentAllocations.{AllocationDetail, PaymentAllocations}
@@ -275,7 +275,7 @@ object PaymentAllocationIntegrationTestConstants {
     Some(110.10), Some("Payment by Card"), Some( LocalDate.parse("2019-05-27") ), Some("reference"),
     Seq(
       AllocationDetail(Some("1040000872"), Some(LocalDate.parse("2019-06-27")), Some(LocalDate.parse("2019-08-27")), Some(ITSA_NIC4_INTEREST_GB), Some("SA Late Payment Interest"), Some(10.10), Some(5.50), Some("latePaymentInterestId")),
-      AllocationDetail(Some("1040000873"), Some(LocalDate.parse("2019-07-28")), Some(LocalDate.parse("2019-09-28")), Some("ITSA NIC2 Interest GB"), Some("SA Late Payment Interest"), Some(10.90), Some(5.90), Some("latePaymentInterestId"))
+      AllocationDetail(Some("1040000873"), Some(LocalDate.parse("2019-07-28")), Some(LocalDate.parse("2019-09-28")), Some(ITSA_NIC2_INTEREST_GB), Some("SA Late Payment Interest"), Some(10.90), Some(5.90), Some("latePaymentInterestId"))
     )
   )
 
