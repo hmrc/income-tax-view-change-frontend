@@ -23,6 +23,7 @@
 @import views.html.components._
 @import exceptions.MissingFieldException
 @import uk.gov.hmrc.govukfrontend.views.html.components._
+@import services.DateService
 
 @import java.time.LocalDate
 @import views.html.partials.chargeSummary._
@@ -31,6 +32,7 @@
 @import enums.GatewayPage._
 
 @this(
+    dateService: DateService,
     mainTemplate: unifiedLayout,
     appConfig: config.FrontendAppConfig,
     implicitDateFormatter: ImplicitDateFormatterImpl,
@@ -57,7 +59,7 @@
 
 @dueDate = @{documentDetailWithDueDate.dueDate}
 
-@currentDate = @{LocalDate.now}
+@currentDate = @{dateService.getCurrentDate}
 
 @currentTaxYearEnd = @{
     if (currentDate.isBefore(LocalDate.of(currentDate.getYear, 4, 6))) currentDate.getYear

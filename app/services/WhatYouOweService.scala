@@ -53,12 +53,12 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
     }
   }
 
-  def getWhatYouOweChargesList()(implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[WhatYouOweChargesList] = {
+  def getWhatYouOweChargesList()(implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_], dateService: DateService): Future[WhatYouOweChargesList] = {
     getWhatYouOweChargesList(financialDetailsService.getAllUnpaidFinancialDetails)
   }
 
   def getWhatYouOweChargesList(unpaidCharges: Future[List[FinancialDetailsResponseModel]])
-                              (implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[WhatYouOweChargesList] = {
+                              (implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_], dateService: DateService): Future[WhatYouOweChargesList] = {
 
     unpaidCharges flatMap {
       case financialDetails if financialDetails.exists(_.isInstanceOf[FinancialDetailsErrorModel]) =>
@@ -100,7 +100,7 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
     }
   }
 
-  private def getFilteredChargesList(financialDetailsList: List[FinancialDetailsModel]): List[DocumentDetailWithDueDate] = {
+  private def getFilteredChargesList(financialDetailsList: List[FinancialDetailsModel])(implicit dateService: DateService): List[DocumentDetailWithDueDate] = {
     val documentDetailsWithDueDates = financialDetailsList.flatMap(financialDetails =>
       financialDetails.getAllDocumentDetailsWithDueDates(isEnabled(CodingOut)))
       .filter(documentDetailWithDueDate => whatYouOwePageDataExists(documentDetailWithDueDate)

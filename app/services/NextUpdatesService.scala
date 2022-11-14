@@ -28,7 +28,9 @@ import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class NextUpdatesService @Inject()(val incomeTaxViewChangeConnector: IncomeTaxViewChangeConnector)(implicit ec: ExecutionContext) {
+class NextUpdatesService @Inject()(val incomeTaxViewChangeConnector: IncomeTaxViewChangeConnector,
+                                   dateService: DateService,
+                                  )(implicit ec: ExecutionContext) {
 
 
   def getNextDeadlineDueDateAndOverDueObligations()
@@ -36,7 +38,7 @@ class NextUpdatesService @Inject()(val incomeTaxViewChangeConnector: IncomeTaxVi
     getNextUpdates().map {
       case deadlines: ObligationsModel if !deadlines.obligations.forall(_.obligations.isEmpty) =>
         val latestDeadline = deadlines.obligations.flatMap(_.obligations.map(_.due)).sortWith(_ isBefore _).head
-        val overdueObligations = deadlines.obligations.flatMap(_.obligations.map(_.due)).filter(_.isBefore(LocalDate.now()))
+        val overdueObligations = deadlines.obligations.flatMap(_.obligations.map(_.due)).filter(_.isBefore(dateService.getCurrentDate))
         (latestDeadline, overdueObligations)
       case error: NextUpdatesErrorModel => throw new Exception(s"${error.message}")
       case _ =>
@@ -51,7 +53,7 @@ class NextUpdatesService @Inject()(val incomeTaxViewChangeConnector: IncomeTaxVi
 
       case deadlines: ObligationsModel if deadlines.obligations.forall(_.obligations.nonEmpty) => {
         val dueDates = deadlines.obligations.flatMap(_.obligations.map(_.due)).sortWith(_ isBefore _)
-        val overdueDates = dueDates.filter(_ isBefore LocalDate.now)
+        val overdueDates = dueDates.filter(_ isBefore dateService.getCurrentDate)
         val nextDueDates = dueDates.diff(overdueDates)
         val overdueDatesCount = overdueDates.size
 
