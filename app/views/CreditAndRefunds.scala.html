@@ -145,16 +145,26 @@ balance.getOrElse(throw MissingFieldException("Balance"))
             case None => {
                 @if(maybeAvailableCredit != 0) {
                     <h2 class="govuk-heading-s">
-                        <span class="govuk-body"> @messages("credit-and-refund.subHeading.has-credits-1") </span>
+                        <span class="govuk-body">@messages("credit-and-refund.subHeading.has-credits-1") </span>
                             @maybeAvailableCredit.toCurrency
-                        <span class="govuk-body"> @messages(if(isAgent) "credit-and-refund.agent.subHeading.has-credits-2" else "credit-and-refund.subHeading.has-credits-2")</span>
+                        <span class="govuk-body">@messages(if(isAgent) "credit-and-refund.agent.subHeading.has-credits-2" else "credit-and-refund.subHeading.has-credits-2")</span>
                     </h2>
                 } else {
-                    <h2 class="govuk-heading-s">@{
-                        balance.get.firstPendingAmountRequested.getOrElse(throw MissingFieldException("First Pending Amount")).toCurrency
+                    @if(messages.lang.code == "en") {
+                        <h2 class="govuk-heading-s">@{
+                            balance.get.firstPendingAmountRequested.getOrElse(throw MissingFieldException("First Pending Amount")).toCurrency
+                            }
+                            <span class="govuk-body"> @messages("credit-and-refund.subHeading.has-no-credits")</span>
+                        </h2>
+                    } else {
+                        <h2 class="govuk-heading-s">
+                            <span class="govuk-body">@messages("credit-and-refund.subHeading.has-no-credits-1")</span>
+                            @{
+                            balance.get.firstPendingAmountRequested.getOrElse(throw MissingFieldException("First Pending Amount")).toCurrency
+                            }
+                            <span class="govuk-body"> @messages("credit-and-refund.subHeading.has-no-credits-2")</span>
+                        </h2>
                     }
-                        <span class="govuk-body"> @messages("credit-and-refund.subHeading.has-no-credits")</span>
-                    </h2>
                 }
 
                 <ul class="govuk-list govuk-list--bullet" id="credits-list">

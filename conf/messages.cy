@@ -34,9 +34,8 @@ agent.header.serviceName                                       = Rheoli diweddar
 # HTML Titles
 htmlTitle                                                       = {0} - Rheoli’ch diweddariadau Treth Incwm - GOV.UK
 htmlTitle.agent                                                 = {0} - Rheoli diweddariadau Treth Incwm eich cleient - GOV.UK
-htmlTitle.inputError                                            = Gwall: {0} - GOV.UK
-htmlTitle.confirmClient                                         = {0} - GOV.UK
-
+htmlTitle.invalidInput                                          = Gwall: {0} - GOV.UK
+htmlTitle.confirmClient                                          = {0} - GOV.UK
 
 ## Agent - UTR Error
 agent.utr_error.heading                                         = Ni allwch fwrw golwg dros y cleient hwn
@@ -174,16 +173,19 @@ tax-year-summary.payments.amount                               = Swm
 tax-year-summary.payments.paymentOnAccount1.text               = Taliad ar gyfrif 1 o 2
 tax-year-summary.payments.paymentOnAccount2.text               = Taliad ar gyfrif 2 o 2
 tax-year-summary.payments.balancingCharge.text                 = Taliad mantoli
+tax-year-summary.payments.class2Nic.text                       = Yswiriant Gwladol Dosbarth 2
+tax-year-summary.payments.codingOut.text                       = Taliad mantoli a gesglir drwy’r cod treth TWE
 tax-year-summary.payments.lpi.paymentOnAccount1.text           = Llog am dalu’n hwyr ar gyfer taliad ar gyfrif 1 o 2
 tax-year-summary.payments.lpi.paymentOnAccount2.text           = Llog am dalu’n hwyr ar gyfer taliad ar gyfrif 2 o 2
 tax-year-summary.payments.lpi.balancingCharge.text             = Llog am dalu’n hwyr ar gyfer y Taliad Mantoli
-tax-year-summary.payments.cancelledPayeSelfAssessment.text     = Cancelled Self Assessment payment (through your PAYE tax code)
+tax-year-summary.payments.cancelledPayeSelfAssessment.text     = Hunanasesiad TWE wedi’i ganslo (trwy eich cod treth TWE)
 tax-year-summary.payments.hmrcAdjustment.text                  = Addasiad CThEM
 tax-year-summary.payments.overdue                              = Yn hwyr
 tax-year-summary.payments.no-payments                          = Dim taliadau’n ddyledus ar hyn o bryd.
 tax-year-summary.forecast_tab.insetText                        = Amcangyfrif yw hwn o’ch bil treth ar gyfer y flwyddyn gyfan hyd at 5 Ebrill {0}. Bydd hyn yn cael ei ddiweddaru drwy gydol y flwyddyn wrth i ni gael rhagor o wybodaeth.
 tax-year-summary.forecast_total_title                          = Rhagolwg 6 Ebrill {0} i 5 Ebrill {1}
 tax-year-summary.forecast.tax-due                              = Rhagolwg o swm y dreth Hunanasesiad
+tax-year-summary.na                                            = Amh
 
 ## Tax Year Summary Page new ##
 tax-year-summary.tax-calculation.no-calc                       = Dim cyfrifiad eto
@@ -633,8 +635,8 @@ whatYouOwe.codingOut-1a                                         = Mae gan eich c
 whatYouOwe.codingOut-1b                                         = o dreth ar gyfer y flwyddyn dreth
 whatYouOwe.codingOut-2                                          = {0} i {1}
 whatYouOwe.codingOut-3                                          = yn cael ei thalu drwy ei god treth TWE. Nid yw’r swm hwn yn rhan o gyfanswm ei daliadau sy’n ddyledus oherwydd ein bod yn eu casglu’n awtomatig.
-
-
+whatYouOwe.class2Nic.text                                       = Yswiriant Gwladol Dosbarth 2
+whatYouOwe.cancelledPayeSelfAssessment.text                     = Hunanasesiad TWE wedi’i ganslo (trwy eich cod treth TWE)
 
 ## Charge Summary ##
 chargeSummary.paymentOnAccount1.text                            = Taliad ar gyfrif 1 o 2
@@ -643,9 +645,11 @@ chargeSummary.balancingCharge.text                              = Taliad mantoli
 chargeSummary.dueDate                                           = Dyddiad dyledus
 chargeSummary.class2Nic.text                                    = Class 2 National Insurance
 chargeSummary.codingOut.text                                    = Balancing payment collected through PAYE tax code
-chargeSummary.cancelledPayeSelfAssessment.text                  = Cancelled Self Assessment payment (through your PAYE tax code)
+chargeSummary.cancelledPayeSelfAssessment.text                  = Hunanasesiad TWE wedi’i ganslo (trwy eich cod treth TWE)
 chargeSummary.hmrcAdjustment.text                               = Addasiad CThEM
-chargeSummary.paymentAmount                                     = Swm y taliad
+chargeSummary.paymentAmount                                     = Swm llawn y taliad
+chargeSummary.paymentAmountCodingOut                            = Swm y taliad
+
 chargeSummary.paidToDate                                        = wedi'i dalu hyd yma
 chargeSummary.remainingDue                                      = Yn weddill i dalu
 chargeSummary.whatYouOwe.textOne                                = Bwriwch olwg dros
@@ -680,6 +684,7 @@ chargeSummary.paymentBreakdown.dunningLocks.underReview            = Dan adolygi
 chargeSummary.paymentBreakdown.interestLocks.notCharging           = Nid ydym yn codi llog ar y taliad hwn ar hyn o bryd
 chargeSummary.paymentBreakdown.interestLocks.charging              = Rydym yn codi llog arnoch ar y taliad hwn
 chargeSummary.paymentBreakdown.interestLocks.previouslyCharged     = Rydym wedi codi llog arnoch ar y taliad hwn yn flaenorol
+chargeSummary.paymentBreakdown.lpiWithDunning.text                 = Llog am dalu’n hwyr
 
 chargeSummary.interestLocks.text                                   = i wirio a oes gennych unrhyw log ar y taliad hwn.
 chargeSummary.interestLocks.text-agent                             = i wirio a oes ganddo unrhyw log ar y taliad hwn.
@@ -703,7 +708,7 @@ chargeSummary.chargeHistory.created.paymentOnAccount2.text		        = Taliad ar 
 chargeSummary.chargeHistory.created.balancingCharge.text		        = Taliad Mantoli wedi’i greu
 chargeSummary.chargeHistory.created.class2Nic.text                      = Class 2 National Insurance created
 chargeSummary.chargeHistory.created.codingOut.text                      = PAYE self assessment created
-chargeSummary.chargeHistory.created.cancelledPayeSelfAssessment.text	= Cancelled Self Assessment payment (through your PAYE tax code) created
+chargeSummary.chargeHistory.created.cancelledPayeSelfAssessment.text	= Hunanasesiad TWE wedi’i ganslo (trwy eich cod treth TWE)
 
 chargeSummary.chargeHistory.request.paymentOnAccount1.text	   	        = Taliad ar gyfrif 1 o 2 wedi’i ostwng oherwydd cais gan y trethdalwr
 chargeSummary.chargeHistory.request.paymentOnAccount2.text	   	        = Taliad ar gyfrif 2 o 2 wedi’i ostwng oherwydd cais gan y trethdalwr
@@ -851,6 +856,7 @@ paymentAllocation.paymentAllocations.paymentOnAccount1.text     = Llog am dalu�
 paymentAllocation.paymentAllocations.paymentOnAccount2.text     = Llog am dalu’n hwyr ar gyfer taliad ar gyfrif 2 o 2 wedi’i greu
 paymentAllocation.paymentAllocations.balancingCharge.text       = Llog am dalu’n hwyr ar gyfer y Taliad Mantoli
 paymentAllocation.paymentAllocations.hmrcAdjustment.text        = Addasiad CThEM
+paymentAllocation.sa.info                                       = Dyma arian a daloch i mewn i’ch cyfrif cyn i chi gofrestru ar gyfer y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm. Ewch i'ch
 
 ## Final Tax Overview (Individual/Common Content)
 final-tax-overview.individual.heading                            = Eich trosolwg treth terfynol
@@ -881,6 +887,8 @@ inYear-tax-overview.agent.inset                                  = Mae’r cyfri
 ## credits and refunds
 credit-and-refund.subHeading.has-credits-1                        = Mae cyfanswm o
 credit-and-refund.subHeading.has-credits-2                        = yn eich cyfrif:
+credit-and-refund.subHeading.has-no-credits-1                     = Cafwyd cais am ad-daliad o
+credit-and-refund.subHeading.has-no-credits-2                     = ac mae ar y gweill.
 credit-and-refund.agent.subHeading.has-credits-2                  = yng nghyfrif eich cleient:
 credit-and-refund.subHeading.unallocated-credits-one-payment-1    = Mae cyfanswm o
 credit-and-refund.subHeading.unallocated-credits-one-payment-2    = yn eich cyfrif yn sgil taliad a wnaed ar
