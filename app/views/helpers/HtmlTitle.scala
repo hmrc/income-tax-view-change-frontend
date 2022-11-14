@@ -29,7 +29,7 @@ object HtmlTitle {
       case (false, true, _, _) => messages("htmlTitle.errorPage", h1Text)
       case (true, false, _, _) => messages("htmlTitle.invalidInput", h1Text)
       case (_, _, true, true) => messages("htmlTitle.agent", h1Text)
-      case(_, _, true, false) => messages("htmlTitle.confirmClient", h1Text)
+      case(_, _, true, false) => messages("htmlTitle.confirmClient", h1Text) //showServiceName used to identify enterClientUtr and confirmClient utr pages
       case (_, _, _, _) => messages("htmlTitle", h1Text)
 
     }

@@ -61,7 +61,7 @@ case class TaxYearSummaryResponseAuditModel(mtdItUser: MtdItUser[_],
   private val calculationDetails = {
     if (R7bTxmEvents) {
       Json.obj() ++
-        unattendedCalcReason ++
+        unattendedCalcReason() ++
         ("income", taxYearSummaryViewModel.map(_.income)) ++
         ("allowancesAndDeductions", taxYearSummaryViewModel.map(_.deductions)) ++
         ("taxableIncome", taxYearSummaryViewModel.map(_.totalTaxableIncome)) ++

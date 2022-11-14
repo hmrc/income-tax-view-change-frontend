@@ -17,6 +17,7 @@
 package models.liabilitycalculation.viewmodels
 
 import models.liabilitycalculation.taxcalculation.{CapitalGainsTax, Nic4Bands, TaxBands}
+import models.liabilitycalculation.viewmodels.TaxYearSummaryViewModel.getTaxDue
 import models.liabilitycalculation.{LiabilityCalculationResponse, Messages, ReliefsClaimed}
 
 case class TaxDueSummaryViewModel(
@@ -109,7 +110,7 @@ object TaxDueSummaryViewModel {
         capitalGainsTax = CapitalGainsTaxViewModel(calc.taxCalculation.flatMap(tc => tc.capitalGainsTax)),
         totalStudentLoansRepaymentAmount = calc.taxCalculation.flatMap(tc => tc.totalStudentLoansRepaymentAmount),
         saUnderpaymentsCodedOut = calc.taxCalculation.flatMap(tc => tc.saUnderpaymentsCodedOut),
-        totalIncomeTaxAndNicsDue = calc.taxCalculation.map(tc => tc.totalIncomeTaxAndNicsDue),
+        totalIncomeTaxAndNicsDue = Some(getTaxDue(calcResponse)),
         totalTaxDeducted = calc.taxCalculation.flatMap(tc => tc.totalTaxDeducted),
         taxDeductedAtSource = TaxDeductedAtSourceViewModel(calc.taxDeductedAtSource)
       )

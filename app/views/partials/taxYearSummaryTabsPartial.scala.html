@@ -62,21 +62,21 @@
 @tableTabItems() = @{
     if(showForecastData) {
         Seq(
-            taxCalculationTabItem,
-            forecastTabItem,
-            paymentsTabItem,
-            updatesTabItem
+            taxCalculationTabItem(),
+            forecastTabItem(),
+            paymentsTabItem(),
+            updatesTabItem()
         )
     } else {
         Seq(
-            taxCalculationTabItem,
-            paymentsTabItem,
-            updatesTabItem
+            taxCalculationTabItem(),
+            paymentsTabItem(),
+            updatesTabItem()
         )
     }
 }
 
 @govukTabs(Tabs(
-    items = tableTabItems,
+    items = tableTabItems(),
     classes = "govuk-tabs-upper-padding"
 ))

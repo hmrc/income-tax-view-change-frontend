@@ -71,7 +71,8 @@ class TaxCalculationDetailsResponseAuditModelSpec extends WordSpecLike with Must
     "saUtr" -> "saUtr",
     "nationalInsuranceNumber" -> "nino",
     "credId" -> "credId",
-    "mtditid" -> testMtditid
+    "mtditid" -> testMtditid,
+    "incomeTaxAndNationalInsuranceContributionsDue" -> 0
   )
 
   val taxCalcDetailsResponseAuditModelDetailJsonMinimalAgent: JsObject = Json.obj(
@@ -80,7 +81,8 @@ class TaxCalculationDetailsResponseAuditModelSpec extends WordSpecLike with Must
     "nationalInsuranceNumber" -> "nino",
     "credId" -> "credId",
     "mtditid" -> testMtditid,
-    "agentReferenceNumber" -> "1"
+    "agentReferenceNumber" -> "1",
+    "incomeTaxAndNationalInsuranceContributionsDue" -> 0
   )
 
   val taxCalcDetailsResponseAuditModelDetailJsonFull: JsObject = Json.obj(
