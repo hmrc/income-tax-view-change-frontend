@@ -156,7 +156,7 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
       "has a payment within the table" in new PaymentAllocationSetup() {
         val allTableData = document.selectHead("tbody").selectHead("tr")
         allTableData.selectNth("td", 1).text() shouldBe s"${messages("paymentAllocation.paymentAllocations.poa1.nic4")} 2020 ${messages("paymentAllocation.taxYear", "2019", "2020")}"
-        allTableData.selectNth("td", 2).text() shouldBe "31 Jan 2021"
+        allTableData.selectNth("td", 2).text() shouldBe "27 May 2019"
         allTableData.selectNth("td", 3).text() shouldBe "£10.10"
       }
 
