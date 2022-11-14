@@ -551,7 +551,7 @@ paymentDue.description                                          = Os ydych wedi 
 paymentDue.viewBill                                             = Bwrw golwg dros y bil
 paymentDue.no-bills                                             = Dim taliadau’n ddyledus
 paymentDue.payNow                                               = Gwneud taliad
-paymentDue.pay-now-aria                                         = Talwch nawr ar gyfer Blwyddyn Dreth {0} i {1}
+paymentDue.pay-now-hidden                                       = Talwch nawr ar gyfer Blwyddyn Dreth {0} i {1}
 paymentDue.tax-year                                             = Blwyddyn dreth {0} i {1}
 paymentDue.due                                                  = ddyledus
 
