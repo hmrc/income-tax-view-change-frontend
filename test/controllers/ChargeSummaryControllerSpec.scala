@@ -31,7 +31,7 @@ import org.mockito.Mockito.{mock, when}
 import play.api.http.Status
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers._
-import services.{FinancialDetailsService, IncomeSourceDetailsService}
+import services.{DateService, FinancialDetailsService, IncomeSourceDetailsService}
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testTaxYear}
 import testConstants.FinancialDetailsTestConstants._
 import testUtils.TestSupport
@@ -81,6 +81,7 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
       app.injector.instanceOf[NavBarPredicate],
       mockIncomeSourceDetailsService,
       mockAuthService,
+      app.injector.instanceOf[DateService],
       app.injector.instanceOf[views.html.errorPages.CustomNotFoundError],
     )(
       app.injector.instanceOf[FrontendAppConfig],

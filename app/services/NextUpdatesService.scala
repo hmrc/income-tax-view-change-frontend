@@ -28,9 +28,7 @@ import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class NextUpdatesService @Inject()(val incomeTaxViewChangeConnector: IncomeTaxViewChangeConnector,
-                                   dateService: DateService,
-                                  )(implicit ec: ExecutionContext) {
+class NextUpdatesService @Inject()(val incomeTaxViewChangeConnector: IncomeTaxViewChangeConnector)(implicit ec: ExecutionContext, dateService: DateService) {
 
 
   def getNextDeadlineDueDateAndOverDueObligations()

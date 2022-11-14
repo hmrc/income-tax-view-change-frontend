@@ -18,6 +18,7 @@ package testConstants
 
 import models.nextUpdates.{NextUpdateModel, NextUpdatesErrorModel, NextUpdatesModel, ObligationsModel}
 import play.api.libs.json.{JsValue, Json}
+import services.DateService
 import testConstants.BaseTestConstants.{testErrorMessage, testErrorStatus, testMtditid, testNino, testPropertyIncomeId, testSelfEmploymentId, testSelfEmploymentId2}
 
 import java.time.LocalDate
@@ -27,7 +28,7 @@ object NextUpdatesTestConstants {
   val mockedCurrentTime20171031: LocalDate = LocalDate.of(2017, 10, 31)
 
   def fakeNextUpdatesModel(m: NextUpdateModel): NextUpdateModel = new NextUpdateModel(m.start, m.end, m.due, m.obligationType, m.dateReceived, m.periodKey) {
-    override def currentTime(): LocalDate = mockedCurrentTime20171031
+    override def currentTime(implicit dateService: DateService): LocalDate = mockedCurrentTime20171031
   }
 
   val testStartDate = LocalDate.of(2017, 7, 1)

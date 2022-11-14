@@ -33,7 +33,7 @@ case class FinancialDetail(taxYear: String,
                            clearedAmount: Option[BigDecimal] = None,
                            chargeType: Option[String] = None,
                            accruedInterest: Option[BigDecimal] = None,
-                           items: Option[Seq[SubItem]],
+                           items: Option[Seq[SubItem]]
                           ) {
 
   lazy val messageKeyByTypes: Option[String] = FinancialDetail.getMessageKeyByTypes(mainType, chargeType)

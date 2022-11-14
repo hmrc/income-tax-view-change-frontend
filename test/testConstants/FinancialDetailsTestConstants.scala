@@ -19,15 +19,18 @@ package testConstants
 import models.creditDetailModel.{CreditDetailModel, CutOverCreditType, MfaCreditType}
 
 import java.time.LocalDate
-import testConstants.BaseTestConstants.{testErrorMessage, testErrorNotFoundStatus, testErrorStatus, testTaxYear}
+import testConstants.BaseTestConstants.{app, testErrorMessage, testErrorNotFoundStatus, testErrorStatus, testTaxYear}
 import models.financialDetails._
 import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
 import play.api.libs.json.{JsValue, Json}
+import services.DateService
 import testConstants.FinancialDetailsTestConstants.{documentDetailWithDueDateModel, financialDetail}
 
 import scala.math.BigDecimal
 
 object FinancialDetailsTestConstants {
+
+  implicit val dateService: DateService = app.injector.instanceOf[DateService]
 
   val id1040000123 = "1040000123"
   val id1040000124 = "1040000124"
@@ -853,7 +856,7 @@ object FinancialDetailsTestConstants {
   val whatYouOweDataWithMixedData1: WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
     chargesList = List(financialDetailsWithMixedData1.getAllDocumentDetailsWithDueDates().head,
-      financialDetailsWithMixedData1.getAllDocumentDetailsWithDueDates()(1)),
+      financialDetailsWithMixedData1.getAllDocumentDetailsWithDueDates()(dateService)(1)),
     outstandingChargesModel = Some(OutstandingChargesModel(List()))
   )
 
@@ -879,7 +882,7 @@ object FinancialDetailsTestConstants {
   val whatYouOweDataWithMixedData2: WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
     chargesList = List(financialDetailsWithMixedData2.getAllDocumentDetailsWithDueDates().head,
-      financialDetailsWithMixedData2.getAllDocumentDetailsWithDueDates()(1)),
+      financialDetailsWithMixedData2.getAllDocumentDetailsWithDueDates()(dateService)(1)),
     outstandingChargesModel = Some(OutstandingChargesModel(List()))
   )
 

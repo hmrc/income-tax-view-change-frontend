@@ -35,6 +35,7 @@ import play.api.http.Status
 import play.api.http.Status.INTERNAL_SERVER_ERROR
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers._
+import services.DateService
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testAgentAuthRetrievalSuccessNoEnrolment, testMtditid, testTaxYear, testYearPlusOne, testYearPlusTwo}
 import testConstants.FinancialDetailsTestConstants._
 import testConstants.NewCalcBreakdownUnitTestConstants.{liabilityCalculationModelSuccessful, liabilityCalculationModelSuccessfulNotCrystallised}
@@ -68,6 +69,7 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
     app.injector.instanceOf[NavBarPredicate],
     mockAuditingService
   )(appConfig,
+    app.injector.instanceOf[DateService],
     app.injector.instanceOf[AgentItvcErrorHandler],
     app.injector.instanceOf[MessagesControllerComponents],
     ec)
