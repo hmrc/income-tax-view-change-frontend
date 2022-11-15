@@ -96,6 +96,8 @@ lazy val microservice = Project(appName, file("."))
   .settings(scoverageSettings: _*)
   .settings(defaultSettings(): _*)
   .settings(majorVersion := 1)
+  .settings(scalacOptions += "-Wconf:cat=lint-multiarg-infix:silent")
+  //.settings(scalacOptions += "-Xfatal-warnings") => https://jira.tools.tax.service.gov.uk/browse/MISUV-4437
   .settings(
     Keys.fork in Test := true,
     javaOptions in Test += "-Dlogger.resource=logback-test.xml"

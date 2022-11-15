@@ -19,6 +19,7 @@ package controllers.agent
 import audit.models.ChargeSummaryAudit
 import auth.MtdItUser
 import config.featureswitch._
+import enums.ChargeType.{ITSA_ENGLAND_AND_NI, ITSA_NI, NIC4_SCOTLAND}
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.AuthStub.titleInternalServer
 import helpers.servicemocks.DocumentDetailsStub.docDateDetailWithInterest
@@ -32,7 +33,7 @@ import testConstants.BaseIntegrationTestConstants._
 import testConstants.FinancialDetailsIntegrationTestConstants.financialDetailModelPartial
 import testConstants.IncomeSourceIntegrationTestConstants._
 import testConstants.messages.ChargeSummaryMessages
-import testConstants.messages.ChargeSummaryMessages.{codingOutInsetPara, codingOutMessage, notCurrentlyChargingInterest, paymentBreakdownHeading, underReview}
+import testConstants.messages.ChargeSummaryMessages._
 
 import java.time.LocalDate
 
@@ -47,16 +48,16 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
       mainType = Some(mainType), chargeType = Some(chargeType))
 
   val paymentAllocation: List[PaymentsWithChargeType] = List(
-    paymentsWithCharge("SA Payment on Account 1", "ITSA NI", "2019-08-13", -10000.0, lotItem = "000001"),
-    paymentsWithCharge("SA Payment on Account 2", "NIC4 Scotland", "2019-08-13", -9000.0, lotItem = "000001")
+    paymentsWithCharge("SA Payment on Account 1", ITSA_NI, "2019-08-13", -10000.0, lotItem = "000001"),
+    paymentsWithCharge("SA Payment on Account 2", NIC4_SCOTLAND, "2019-08-13", -9000.0, lotItem = "000001")
   )
 
   val chargeHistories: List[ChargeHistoryModel] = List(ChargeHistoryModel("2019", "1040000124", LocalDate.of(2018, 3, 29),
     "ITSA- POA 1", 123456789012345.67, LocalDate.of(2020, 2, 24), "amended return"))
 
   val paymentBreakdown: List[FinancialDetail] = List(
-    financialDetailModelPartial(originalAmount = 123.45, chargeType = "ITSA England & NI", dunningLock = Some("Stand over order"), interestLock = Some("Breathing Space Moratorium Act")),
-    financialDetailModelPartial(originalAmount = 123.45, chargeType = "NIC4 Scotland", mainType = "SA Payment on Account 2", dunningLock = Some("Dunning Lock"), interestLock = Some("Manual RPI Signal")))
+    financialDetailModelPartial(originalAmount = 123.45, chargeType = ITSA_ENGLAND_AND_NI, dunningLock = Some("Stand over order"), interestLock = Some("Breathing Space Moratorium Act")),
+    financialDetailModelPartial(originalAmount = 123.45, chargeType = NIC4_SCOTLAND, mainType = "SA Payment on Account 2", dunningLock = Some("Dunning Lock"), interestLock = Some("Manual RPI Signal")))
 
   
 
@@ -99,7 +100,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
 
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-      stubGetFinancialDetailsSuccess(Some("ITSA NI"), Some("NIC4 Scotland"))
+      stubGetFinancialDetailsSuccess(Some(ITSA_NI), Some(NIC4_SCOTLAND))
 
       val result = IncomeTaxViewChangeFrontend.getChargeSummary(
         getCurrentTaxYearEnd.getYear.toString, "testId", clientDetailsWithConfirmation
@@ -132,7 +133,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
 
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-      stubGetFinancialDetailsSuccess(Some("ITSA NI"), Some("NIC4 Scotland"))
+      stubGetFinancialDetailsSuccess(Some(ITSA_NI), Some(NIC4_SCOTLAND))
 
       val result = IncomeTaxViewChangeFrontend.getChargeSummary(
         getCurrentTaxYearEnd.getYear.toString, "testId", clientDetailsWithConfirmation
@@ -162,7 +163,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
       enable(PaymentAllocation)
       stubAuthorisedAgentUser(authorised = true)
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
-      stubGetFinancialDetailsSuccess(Some("ITSA NI"), Some("NIC4 Scotland"))
+      stubGetFinancialDetailsSuccess(Some(ITSA_NI), Some(NIC4_SCOTLAND))
       stubChargeHistorySuccess()
 
       val result = IncomeTaxViewChangeFrontend.getChargeSummary(
@@ -345,8 +346,8 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
     }
   }
 
-  private def stubGetFinancialDetailsSuccess(chargeType1: Option[String] = Some("ITSA NI"),
-                                             chargeType2: Option[String] = Some("ITSA NI"), isLatePaymentInterest: Boolean = false): Unit = {
+  private def stubGetFinancialDetailsSuccess(chargeType1: Option[String] = Some(ITSA_NI),
+                                             chargeType2: Option[String] = Some(ITSA_NI), isLatePaymentInterest: Boolean = false): Unit = {
     IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
       nino = testNino,
       from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
@@ -419,7 +420,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
             taxYear = getCurrentTaxYearEnd.getYear.toString,
             transactionId = Some("CODINGOUT01"),
             mainType = Some("SA Payment on Account 1"),
-            chargeType = Some("ITSA NI"),
+            chargeType = Some(ITSA_NI),
             originalAmount = Some(123.45),
             items = Some(Seq(SubItem(Some(LocalDate.now),
               amount = Some(10000), clearingDate = Some(LocalDate.parse("2019-08-13")))))
@@ -468,7 +469,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
           "taxYear" -> s"$testTaxYear",
           "mainType" -> "ITSA Manual Penalty Pre CY-4",
           "transactionId" -> "1040000123",
-          "chargeType" -> "ITSA NI",
+          "chargeType" -> ITSA_NI,
           "originalAmount" -> 1200.00,
           "items" -> Json.arr(
             Json.obj("subItem" -> "001",
@@ -513,7 +514,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
           "taxYear" -> s"$testTaxYear",
           "mainType" -> "ITSA Manual Penalty Pre CY-4",
           "transactionId" -> "1",
-          "chargeType" -> "ITSA NI",
+          "chargeType" -> ITSA_NI,
           "originalAmount" -> 1200.00,
           "items" -> Json.arr(
             Json.obj("subItem" -> "001",
@@ -536,7 +537,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
           "taxYear" -> s"$testTaxYear",
           "mainType" -> "Payment on Account",
           "transactionId" -> "2",
-          "chargeType" -> "ITSA NI",
+          "chargeType" -> ITSA_NI,
           "originalAmount" -> 1200.00,
           "items" -> Json.arr(
             Json.obj("subItem" -> "001",

@@ -17,9 +17,11 @@
 package services.helpers
 
 
+import enums.ChargeType.NIC4_WALES
 import models.financialDetails._
 import models.paymentAllocationCharges.FinancialDetailsWithDocumentDetailsModel
 import models.creditDetailModel._
+
 import java.time.LocalDate
 
 trait CreditHistoryDataHelper {
@@ -118,7 +120,7 @@ trait CreditHistoryDataHelper {
     originalAmount = Some(BigDecimal(500.00)),
     outstandingAmount = Some(BigDecimal("500.00")),
     clearedAmount = Some(BigDecimal(500.00)),
-    chargeType = Some("NIC4 Wales"),
+    chargeType = Some(NIC4_WALES),
     mainType = Some("SA Payment on Account 1"),
     items = Some(Seq(
       SubItem(

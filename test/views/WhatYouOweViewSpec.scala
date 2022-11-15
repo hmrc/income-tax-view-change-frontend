@@ -82,7 +82,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
   val hmrcAdjustmentLine1: String = messages("whatYouOwe.hmrcAdjustment.line1")
   val itsaPOA1: String = "ITSA- POA 1"
   val itsaPOA2: String = "ITSA - POA 2"
-  val cancelledPayeSelfAssessment: String = "Cancelled Self Assessment payment (through your PAYE tax code)"
+  val cancelledPayeSelfAssessment: String = messages("whatYouOwe.cancelledPayeSelfAssessment.text")
 
   def interestFromToDate(from: String, to: String, rate: String) =
     s"${messages("whatYouOwe.over-due.interest.line1")} ${messages("whatYouOwe.over-due.interest.line2", from, to, rate)}"
