@@ -18,15 +18,13 @@ package testConstants
 
 import enums.ChargeType.NIC4_WALES
 import models.creditDetailModel.{CreditDetailModel, CutOverCreditType, MfaCreditType}
-
-import java.time.LocalDate
-import testConstants.BaseTestConstants.{testErrorMessage, testErrorNotFoundStatus, testErrorStatus, testTaxYear}
 import models.financialDetails._
 import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
 import play.api.libs.json.{JsValue, Json}
+import testConstants.BaseTestConstants.{testErrorMessage, testErrorNotFoundStatus, testErrorStatus, testTaxYear}
 import testConstants.FinancialDetailsTestConstants.{documentDetailWithDueDateModel, financialDetail}
 
-import scala.math.BigDecimal
+import java.time.LocalDate
 
 object FinancialDetailsTestConstants {
 
@@ -1186,7 +1184,7 @@ object CreditAndRefundConstants {
   )
 
   def documentDetailWithDueDateFinancialDetailListModel(outstandingAmount: Option[BigDecimal] = Some(-1400.0),
-                                                        dueDate: Option[LocalDate] = Some(LocalDate.of(2019,5,15)),
+                                                        dueDate: Option[LocalDate] = Some(LocalDate.of(2019, 5, 15)),
                                                         originalAmount: Option[BigDecimal] = Some(1400.00),
                                                         mainType: String = "SA Payment on Account 1",
                                                         paymentLot: Option[String] = None,
@@ -1202,9 +1200,10 @@ object CreditAndRefundConstants {
       financialDetail(mainType = mainType))
   }
 
-  def documentDetailWithDueDateFinancialDetailListModelMFA(outstandingAmount: Option[BigDecimal] = Some(BigDecimal(-1400.0))):
+  def documentDetailWithDueDateFinancialDetailListModelMFA(taxYear: Int = 2018, outstandingAmount: Option[BigDecimal] = Some(BigDecimal(-1400.0))):
   (DocumentDetailWithDueDate, FinancialDetail) = {
     (documentDetailWithDueDateModel(
+      taxYear = taxYear,
       paymentLot = None,
       paymentLotItem = None,
       documentDescription = Some("TRM New Charge"),

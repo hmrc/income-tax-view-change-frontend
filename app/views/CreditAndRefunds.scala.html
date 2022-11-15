@@ -52,9 +52,9 @@
 
 @getCreditsSummaryControllerHref(credit: DocumentDetail, isAgent: Boolean) = @{
     if(isAgent) {
-        controllers.routes.CreditsSummaryController.showAgentCreditsSummary(credit.documentDate.getYear)
+        controllers.routes.CreditsSummaryController.showAgentCreditsSummary(credit.taxYear.toInt)
     } else {
-        controllers.routes.CreditsSummaryController.showCreditsSummary(credit.documentDate.getYear)
+        controllers.routes.CreditsSummaryController.showCreditsSummary(credit.taxYear.toInt)
     }
 }
 
