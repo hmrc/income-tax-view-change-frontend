@@ -26,13 +26,13 @@ import uk.gov.hmrc.http.HeaderCarrier
 
 import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.duration.DurationInt
+import scala.concurrent.{Await, ExecutionContext, Future}
 
 @Singleton
 class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsService,
-                                  val incomeTaxViewChangeConnector: IncomeTaxViewChangeConnector,
-                                  dateService: DateService)
-                                 (implicit ec: ExecutionContext, implicit val appConfig: FrontendAppConfig) extends FeatureSwitching {
+                                  val incomeTaxViewChangeConnector: IncomeTaxViewChangeConnector)
+                                 (implicit ec: ExecutionContext, implicit val appConfig: FrontendAppConfig, implicit val dateService: DateService) extends FeatureSwitching {
 
   implicit lazy val localDateOrdering: Ordering[LocalDate] = Ordering.by(_.toEpochDay)
 
@@ -53,12 +53,12 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
     }
   }
 
-  def getWhatYouOweChargesList()(implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_], dateService: DateService): Future[WhatYouOweChargesList] = {
+  def getWhatYouOweChargesList()(implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[WhatYouOweChargesList] = {
     getWhatYouOweChargesList(financialDetailsService.getAllUnpaidFinancialDetails)
   }
 
   def getWhatYouOweChargesList(unpaidCharges: Future[List[FinancialDetailsResponseModel]])
-                              (implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_], dateService: DateService): Future[WhatYouOweChargesList] = {
+                              (implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[WhatYouOweChargesList] = {
 
     unpaidCharges flatMap {
       case financialDetails if financialDetails.exists(_.isInstanceOf[FinancialDetailsErrorModel]) =>
@@ -100,7 +100,7 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
     }
   }
 
-  private def getFilteredChargesList(financialDetailsList: List[FinancialDetailsModel])(implicit dateService: DateService): List[DocumentDetailWithDueDate] = {
+  private def getFilteredChargesList(financialDetailsList: List[FinancialDetailsModel]): List[DocumentDetailWithDueDate] = {
     val documentDetailsWithDueDates = financialDetailsList.flatMap(financialDetails =>
       financialDetails.getAllDocumentDetailsWithDueDates(isEnabled(CodingOut)))
       .filter(documentDetailWithDueDate => whatYouOwePageDataExists(documentDetailWithDueDate)
