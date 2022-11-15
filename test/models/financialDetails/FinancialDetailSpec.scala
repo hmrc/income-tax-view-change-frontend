@@ -16,8 +16,9 @@
 
 package models.financialDetails
 
-import testConstants.FinancialDetailsTestConstants.financialDetail
+import enums.ChargeType._
 import models.financialDetails.FinancialDetail.{getMessageKeyByTypes, getMessageKeyForChargeType, getMessageKeyForMainType}
+import testConstants.FinancialDetailsTestConstants.financialDetail
 import testUtils.UnitSpec
 
 class FinancialDetailSpec extends UnitSpec {
@@ -128,28 +129,28 @@ class FinancialDetailSpec extends UnitSpec {
 
     "calling .getMessageKeyForChargeType with an optional value of a chargeType" should {
       "return Some correct message key for a known chargeType" in {
-        getMessageKeyForChargeType(Some("ITSA England & NI")) shouldBe Some("incomeTax")
-        getMessageKeyForChargeType(Some("ITSA NI")) shouldBe Some("incomeTax")
-        getMessageKeyForChargeType(Some("ITSA Scotland")) shouldBe Some("incomeTax")
-        getMessageKeyForChargeType(Some("ITSA Wales")) shouldBe Some("incomeTax")
+        getMessageKeyForChargeType(Some(ITSA_ENGLAND_AND_NI)) shouldBe Some("incomeTax")
+        getMessageKeyForChargeType(Some(ITSA_NI)) shouldBe Some("incomeTax")
+        getMessageKeyForChargeType(Some(ITSA_SCOTLAND)) shouldBe Some("incomeTax")
+        getMessageKeyForChargeType(Some(ITSA_WALES)) shouldBe Some("incomeTax")
 
-        getMessageKeyForChargeType(Some("NIC4-GB")) shouldBe Some("nic4")
-        getMessageKeyForChargeType(Some("NIC4 Scotland")) shouldBe Some("nic4")
-        getMessageKeyForChargeType(Some("NIC4 Wales")) shouldBe Some("nic4")
-        getMessageKeyForChargeType(Some("NIC4-NI")) shouldBe Some("nic4")
+        getMessageKeyForChargeType(Some(NIC4_GB)) shouldBe Some("nic4")
+        getMessageKeyForChargeType(Some(NIC4_SCOTLAND)) shouldBe Some("nic4")
+        getMessageKeyForChargeType(Some(NIC4_WALES)) shouldBe Some("nic4")
+        getMessageKeyForChargeType(Some(NIC4_NI)) shouldBe Some("nic4")
 
         getMessageKeyForChargeType(Some("NIC2 Scotland")) shouldBe Some("nic2")
-        getMessageKeyForChargeType(Some("NIC2 Wales")) shouldBe Some("nic2")
-        getMessageKeyForChargeType(Some("NIC2-GB")) shouldBe Some("nic2")
-        getMessageKeyForChargeType(Some("NIC2-NI")) shouldBe Some("nic2")
+        getMessageKeyForChargeType(Some(NIC2_WALES)) shouldBe Some("nic2")
+        getMessageKeyForChargeType(Some(NIC2_GB)) shouldBe Some("nic2")
+        getMessageKeyForChargeType(Some(NIC2_GB)) shouldBe Some("nic2")
 
-        getMessageKeyForChargeType(Some("Voluntary NIC2-GB")) shouldBe Some("vcnic2")
-        getMessageKeyForChargeType(Some("Voluntary NIC2-NI")) shouldBe Some("vcnic2")
+        getMessageKeyForChargeType(Some(VOLUNTARY_NIC2_GB)) shouldBe Some("vcnic2")
+        getMessageKeyForChargeType(Some(VOLUNTARY_NIC2_NI)) shouldBe Some("vcnic2")
         getMessageKeyForChargeType(Some("Voluntary NIC2-Scotland")) shouldBe Some("vcnic2")
         getMessageKeyForChargeType(Some("Voluntary NIC2-Wales")) shouldBe Some("vcnic2")
 
-        getMessageKeyForChargeType(Some("CGT")) shouldBe Some("cgt")
-        getMessageKeyForChargeType(Some("SL")) shouldBe Some("sl")
+        getMessageKeyForChargeType(Some(CGT)) shouldBe Some("cgt")
+        getMessageKeyForChargeType(Some(SL)) shouldBe Some("sl")
       }
 
       "return None for an unknown or absent chargeType" in {
@@ -160,18 +161,18 @@ class FinancialDetailSpec extends UnitSpec {
 
     "calling .getMessageKeyByTypes with optional values of mainType and chargeType" should {
       "return Some correct message key for a supported combination of mainType and chargeType" in {
-        getMessageKeyByTypes(Some("SA Payment on Account 1"), Some("ITSA England & NI")) shouldBe Some("poa1.incomeTax")
-        getMessageKeyByTypes(Some("SA Payment on Account 1"), Some("NIC4 Wales")) shouldBe Some("poa1.nic4")
+        getMessageKeyByTypes(Some("SA Payment on Account 1"), Some(ITSA_ENGLAND_AND_NI)) shouldBe Some("poa1.incomeTax")
+        getMessageKeyByTypes(Some("SA Payment on Account 1"), Some(NIC4_WALES)) shouldBe Some("poa1.nic4")
 
-        getMessageKeyByTypes(Some("SA Payment on Account 2"), Some("ITSA NI")) shouldBe Some("poa2.incomeTax")
-        getMessageKeyByTypes(Some("SA Payment on Account 2"), Some("NIC4-GB")) shouldBe Some("poa2.nic4")
+        getMessageKeyByTypes(Some("SA Payment on Account 2"), Some(ITSA_NI)) shouldBe Some("poa2.incomeTax")
+        getMessageKeyByTypes(Some("SA Payment on Account 2"), Some(NIC4_GB)) shouldBe Some("poa2.nic4")
 
-        getMessageKeyByTypes(Some("SA Balancing Charge"), Some("ITSA Scotland")) shouldBe Some("bcd.incomeTax")
-        getMessageKeyByTypes(Some("SA Balancing Charge"), Some("NIC4-NI")) shouldBe Some("bcd.nic4")
-        getMessageKeyByTypes(Some("SA Balancing Charge"), Some("NIC2-GB")) shouldBe Some("bcd.nic2")
-        getMessageKeyByTypes(Some("SA Balancing Charge"), Some("Voluntary NIC2-GB")) shouldBe Some("bcd.vcnic2")
-        getMessageKeyByTypes(Some("SA Balancing Charge"), Some("CGT")) shouldBe Some("bcd.cgt")
-        getMessageKeyByTypes(Some("SA Balancing Charge"), Some("SL")) shouldBe Some("bcd.sl")
+        getMessageKeyByTypes(Some("SA Balancing Charge"), Some(ITSA_SCOTLAND)) shouldBe Some("bcd.incomeTax")
+        getMessageKeyByTypes(Some("SA Balancing Charge"), Some(NIC4_NI)) shouldBe Some("bcd.nic4")
+        getMessageKeyByTypes(Some("SA Balancing Charge"), Some(NIC2_GB)) shouldBe Some("bcd.nic2")
+        getMessageKeyByTypes(Some("SA Balancing Charge"), Some(VOLUNTARY_NIC2_GB)) shouldBe Some("bcd.vcnic2")
+        getMessageKeyByTypes(Some("SA Balancing Charge"), Some(CGT)) shouldBe Some("bcd.cgt")
+        getMessageKeyByTypes(Some("SA Balancing Charge"), Some(SL)) shouldBe Some("bcd.sl")
         getMessageKeyByTypes(Some("ITSA PAYE Charge"), Some("test")) shouldBe Some("hmrcAdjustment.text")
         getMessageKeyByTypes(Some("ITSA Calc Error Correction"), Some("test")) shouldBe Some("hmrcAdjustment.text")
         getMessageKeyByTypes(Some("ITSA Manual Penalty Pre CY-4"), Some("test")) shouldBe Some("hmrcAdjustment.text")
@@ -180,15 +181,15 @@ class FinancialDetailSpec extends UnitSpec {
 
 
       "return None for a combination of unsupported or absent mainType and chargeType" in {
-        getMessageKeyByTypes(Some("SA Payment on Account 1"), Some("NIC2-GB")) shouldBe None
-        getMessageKeyByTypes(Some("SA Payment on Account 1"), Some("Voluntary NIC2-GB")) shouldBe None
-        getMessageKeyByTypes(Some("SA Payment on Account 1"), Some("CGT")) shouldBe None
-        getMessageKeyByTypes(Some("SA Payment on Account 1"), Some("SL")) shouldBe None
+        getMessageKeyByTypes(Some("SA Payment on Account 1"), Some(NIC2_GB)) shouldBe None
+        getMessageKeyByTypes(Some("SA Payment on Account 1"), Some(VOLUNTARY_NIC2_GB)) shouldBe None
+        getMessageKeyByTypes(Some("SA Payment on Account 1"), Some(CGT)) shouldBe None
+        getMessageKeyByTypes(Some("SA Payment on Account 1"), Some(SL)) shouldBe None
 
-        getMessageKeyByTypes(Some("SA Payment on Account 2"), Some("NIC2-GB")) shouldBe None
-        getMessageKeyByTypes(Some("SA Payment on Account 2"), Some("Voluntary NIC2-GB")) shouldBe None
-        getMessageKeyByTypes(Some("SA Payment on Account 2"), Some("CGT")) shouldBe None
-        getMessageKeyByTypes(Some("SA Payment on Account 2"), Some("SL")) shouldBe None
+        getMessageKeyByTypes(Some("SA Payment on Account 2"), Some(NIC2_GB)) shouldBe None
+        getMessageKeyByTypes(Some("SA Payment on Account 2"), Some(VOLUNTARY_NIC2_GB)) shouldBe None
+        getMessageKeyByTypes(Some("SA Payment on Account 2"), Some(CGT)) shouldBe None
+        getMessageKeyByTypes(Some("SA Payment on Account 2"), Some(SL)) shouldBe None
 
         getMessageKeyByTypes(Some("SA Payment on Account 1"), Some("rubbish")) shouldBe None
         getMessageKeyByTypes(Some("SA Payment on Account 2"), Some("rubbish")) shouldBe None
@@ -198,8 +199,8 @@ class FinancialDetailSpec extends UnitSpec {
         getMessageKeyByTypes(Some("SA Payment on Account 2"), None) shouldBe None
         getMessageKeyByTypes(Some("SA Balancing Charge"), None) shouldBe None
 
-        getMessageKeyByTypes(Some("rubbish"), Some("ITSA England & NI")) shouldBe None
-        getMessageKeyByTypes(None, Some("NIC4 Wales")) shouldBe None
+        getMessageKeyByTypes(Some("rubbish"), Some(ITSA_ENGLAND_AND_NI)) shouldBe None
+        getMessageKeyByTypes(None, Some(NIC4_WALES)) shouldBe None
 
         getMessageKeyByTypes(None, None) shouldBe None
       }

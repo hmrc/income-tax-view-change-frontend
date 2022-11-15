@@ -67,7 +67,7 @@ class EnterClientsUTRController @Inject()(enterClientsUTR: EnterClientsUTR,
 
   def submit: Action[AnyContent] = Authenticated.asyncWithoutClientAuth() { implicit request =>
     implicit user =>
-      ClientsUTRForm.form.bindFromRequest.fold(
+      ClientsUTRForm.form.bindFromRequest().fold(
         hasErrors => Future.successful(BadRequest(enterClientsUTR(
           clientUTRForm = hasErrors,
           postAction = routes.EnterClientsUTRController.submit

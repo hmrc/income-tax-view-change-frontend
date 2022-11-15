@@ -22,6 +22,7 @@ import testConstants.ChargeHistoryTestConstants.{testChargeHistoryErrorModel, te
 import testConstants.FinancialDetailsTestConstants.{documentDetailModel, _}
 import auth.MtdItUser
 import config.featureswitch.{CodingOut, FeatureSwitching}
+import enums.ChargeType.NIC4_WALES
 import mocks.connectors.MockIncomeTaxViewChangeConnector
 import models.core.AccountingPeriodModel
 import models.financialDetails._
@@ -127,8 +128,8 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
               DocumentDetail("testYear1", "testTransactionId2", Some("ITSA - POA 2"), Some("documentText"), Some(200.00), None, LocalDate.of(2018, 3, 29))
             ),
             financialDetails = List(
-              FinancialDetail("testYear1", Some("SA Payment on Account 1"), Some("testTransactionId1"), Some(LocalDate.now()), Some("type"), Some(100), Some(100), Some(100), Some(100), Some("NIC4 Wales"), Some(100), Some(Seq(SubItem(Some(LocalDate.now.minusDays(1)))))),
-              FinancialDetail("testYear1", Some("SA Payment on Account 2"), Some("testTransactionId2"), Some(LocalDate.now()), Some("type"), Some(100), Some(100), Some(100), Some(100), Some("NIC4 Wales"), Some(100), Some(Seq(SubItem(Some(LocalDate.now.plusDays(1))))))
+              FinancialDetail("testYear1", Some("SA Payment on Account 1"), Some("testTransactionId1"), Some(LocalDate.now()), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(Some(LocalDate.now.minusDays(1)))))),
+              FinancialDetail("testYear1", Some("SA Payment on Account 2"), Some("testTransactionId2"), Some(LocalDate.now()), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(Some(LocalDate.now.plusDays(1))))))
             )
           )
 
@@ -172,8 +173,8 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
               DocumentDetail("testYear2", "testTransactionId2", Some("ITSA- POA 1"), Some("documentText"), Some(100.00), None, LocalDate.of(2018, 3, 29))
             ),
             financialDetails = List(
-              FinancialDetail("testYear2", Some("SA Payment on Account 1"), Some("testTransactionId1"), Some(LocalDate.now()), Some("type"), Some(100), Some(100), Some(100), Some(100), Some("NIC4 Wales"), Some(100), Some(Seq(SubItem(Some(LocalDate.now.plusDays(3)))))),
-              FinancialDetail("testYear2", Some("SA Payment on Account 2"), Some("testTransactionId2"), Some(LocalDate.now()), Some("type"), Some(100), Some(100), Some(100), Some(100), Some("NIC4 Wales"), Some(100), Some(Seq(SubItem(Some(LocalDate.now.plusDays(5))))))
+              FinancialDetail("testYear2", Some("SA Payment on Account 1"), Some("testTransactionId1"), Some(LocalDate.now()), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(Some(LocalDate.now.plusDays(3)))))),
+              FinancialDetail("testYear2", Some("SA Payment on Account 2"), Some("testTransactionId2"), Some(LocalDate.now()), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(Some(LocalDate.now.plusDays(5))))))
             )
           )
 
@@ -193,8 +194,8 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
               DocumentDetail("testYear1", "testTransactionId2", Some("ITSA - POA 2"), Some("documentText"), Some(100.00), Some(0.00), LocalDate.of(2018, 3, 29))
             ),
             financialDetails = List(
-              FinancialDetail("testYear1", Some("SA Payment on Account 1"), Some("testTransactionId1"), Some(LocalDate.now()), Some("type"), Some(100), Some(100), Some(100), Some(100), Some("NIC4 Wales"), Some(100), Some(Seq(SubItem(Some(LocalDate.now.minusDays(1)))))),
-              FinancialDetail("testYear1", Some("SA Payment on Account 2"), Some("testTransactionId2"), Some(LocalDate.now()), Some("type"), Some(100), Some(100), Some(100), Some(100), Some("NIC4 Wales"), Some(100), Some(Seq(SubItem(Some(LocalDate.now.plusDays(1))))))
+              FinancialDetail("testYear1", Some("SA Payment on Account 1"), Some("testTransactionId1"), Some(LocalDate.now()), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(Some(LocalDate.now.minusDays(1)))))),
+              FinancialDetail("testYear1", Some("SA Payment on Account 2"), Some("testTransactionId2"), Some(LocalDate.now()), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(Some(LocalDate.now.plusDays(1))))))
             )
           )
 
@@ -205,8 +206,8 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
               DocumentDetail("testYear2", "testTransactionId2", Some("ITSA - POA 2"), Some("documentText"), Some(100.00), Some(0.00), LocalDate.of(2018, 3, 29))
             ),
             financialDetails = List(
-              FinancialDetail("testYear2", Some("SA Payment on Account 1"), Some("testTransactionId1"), Some(LocalDate.now()), Some("type"), Some(100), Some(100), Some(100), Some(100), Some("NIC4 Wales"), Some(100), Some(Seq(SubItem(Some(LocalDate.now.plusDays(3)))))),
-              FinancialDetail("testYear2", Some("SA Payment on Account 2"), Some("testTransactionId2"), Some(LocalDate.now()), Some("type"), Some(100), Some(100), Some(100), Some(100), Some("NIC4 Wales"), Some(100), Some(Seq(SubItem(Some(LocalDate.now.minusDays(2))))))
+              FinancialDetail("testYear2", Some("SA Payment on Account 1"), Some("testTransactionId1"), Some(LocalDate.now()), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(Some(LocalDate.now.plusDays(3)))))),
+              FinancialDetail("testYear2", Some("SA Payment on Account 2"), Some("testTransactionId2"), Some(LocalDate.now()), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(Some(LocalDate.now.minusDays(2))))))
             )
           )
 
