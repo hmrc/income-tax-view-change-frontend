@@ -20,6 +20,7 @@ import java.time.LocalDate
 import models.paymentAllocations.{AllocationDetail, PaymentAllocations, PaymentAllocationsError}
 import play.api.libs.json.{JsValue, Json}
 import BaseTestConstants._
+import enums.ChargeType.{ITSA_NIC4_INTEREST_GB, NIC4_WALES}
 import models.financialDetails.{BalanceDetails, DocumentDetail, FinancialDetail, FinancialDetailsModel, SubItem}
 import models.paymentAllocationCharges.{AllocationDetailWithClearingDate, FinancialDetailsWithDocumentDetailsModel, LatePaymentInterestPaymentAllocationDetails, PaymentAllocationViewModel}
 
@@ -102,7 +103,7 @@ object PaymentAllocationsTestConstants {
     originalAmount = Some(BigDecimal(500.00)),
     outstandingAmount = Some(BigDecimal("500.00")),
     clearedAmount = Some(BigDecimal(500.00)),
-    chargeType = Some("NIC4 Wales"),
+    chargeType = Some(NIC4_WALES),
     mainType = Some("SA Payment on Account 1"),
     items = Some(Seq(
       SubItem(
@@ -144,7 +145,7 @@ object PaymentAllocationsTestConstants {
     originalAmount = Some(BigDecimal(500.00)),
     outstandingAmount = Some(BigDecimal("500.00")),
     clearedAmount = Some(BigDecimal(500.00)),
-    chargeType = Some("NIC4 Wales"),
+    chargeType = Some(NIC4_WALES),
     mainType = Some("SA Payment on Account 1"),
     items = Some(Seq(
       SubItem(
@@ -181,7 +182,7 @@ object PaymentAllocationsTestConstants {
     originalAmount = Some(BigDecimal(-500.00)),
     outstandingAmount = Some(BigDecimal("0.00")),
     clearedAmount = Some(BigDecimal(500.00)),
-    chargeType = Some("NIC4 Wales"),
+    chargeType = Some(NIC4_WALES),
     mainType = Some("SA Payment on Account 1"),
     items = Some(Seq(
       SubItem(
@@ -218,7 +219,7 @@ object PaymentAllocationsTestConstants {
     originalAmount = Some(BigDecimal(500.00)),
     outstandingAmount = Some(BigDecimal("200.00")),
     clearedAmount = Some(BigDecimal(500.00)),
-    chargeType = Some("NIC4 Wales"),
+    chargeType = Some(NIC4_WALES),
     mainType = Some("SA Payment on Account 1"),
     items = Some(Seq(
       SubItem(
@@ -275,7 +276,7 @@ object PaymentAllocationsTestConstants {
         "transactionId" -> "1040000872",
         "from" -> "2019-06-27",
         "to" -> "2019-08-27",
-        "chargeType" -> "NIC4 Wales",
+        "chargeType" -> NIC4_WALES,
         "mainType" -> "SA Payment on Account 1",
         "amount" -> 10.10,
         "clearedAmount" -> 5.50,
@@ -285,7 +286,7 @@ object PaymentAllocationsTestConstants {
         "transactionId" -> "1040000873",
         "from" -> "2019-07-28",
         "to" -> "2019-09-28",
-        "chargeType" -> "NIC4 Wales",
+        "chargeType" -> NIC4_WALES,
         "mainType" -> "SA Payment on Account 1",
         "amount" -> 10.90,
         "clearedAmount" -> 5.90,
@@ -297,16 +298,16 @@ object PaymentAllocationsTestConstants {
   val testValidPaymentAllocationsModel: PaymentAllocations = PaymentAllocations(
     Some(110.10), Some("Payment by Card"), Some(LocalDate.parse("2019-05-27")), Some("reference"),
     Seq(
-      AllocationDetail(Some("1040000872"), Some(LocalDate.parse("2019-06-27")), Some(LocalDate.parse("2019-08-27")), Some("NIC4 Wales"), Some("SA Payment on Account 1"), Some(10.10), Some(5.50), Some("chargeReference1")),
-      AllocationDetail(Some("1040000873"), Some(LocalDate.parse("2019-07-28")), Some(LocalDate.parse("2019-09-28")), Some("NIC4 Wales"), Some("SA Payment on Account 1"), Some(10.90), Some(5.90), Some("chargeReference2"))
+      AllocationDetail(Some("1040000872"), Some(LocalDate.parse("2019-06-27")), Some(LocalDate.parse("2019-08-27")), Some(NIC4_WALES), Some("SA Payment on Account 1"), Some(10.10), Some(5.50), Some("chargeReference1")),
+      AllocationDetail(Some("1040000873"), Some(LocalDate.parse("2019-07-28")), Some(LocalDate.parse("2019-09-28")), Some(NIC4_WALES), Some("SA Payment on Account 1"), Some(10.90), Some(5.90), Some("chargeReference2"))
     )
   )
 
   val testValidLpiPaymentAllocationsModel: PaymentAllocations = PaymentAllocations(
     Some(110.10), Some("Payment by Card"), Some(LocalDate.parse("2019-05-27")), Some("reference"),
     Seq(
-      AllocationDetail(Some("1040000872"), Some(LocalDate.parse("2019-06-27")), Some(LocalDate.parse("2019-08-27")), Some("ITSA NIC4 Interest GB"), Some("SA Late Payment Interest"), Some(10.10), Some(5.50), Some("latePaymentInterestId")),
-      AllocationDetail(Some("1040000873"), Some(LocalDate.parse("2019-07-28")), Some(LocalDate.parse("2019-09-28")), Some("ITSA NIC4 Interest GB"), Some("SA Late Payment Interest"), Some(10.90), Some(5.90), Some("latePaymentInterestId"))
+      AllocationDetail(Some("1040000872"), Some(LocalDate.parse("2019-06-27")), Some(LocalDate.parse("2019-08-27")), Some(ITSA_NIC4_INTEREST_GB), Some("SA Late Payment Interest"), Some(10.10), Some(5.50), Some("latePaymentInterestId")),
+      AllocationDetail(Some("1040000873"), Some(LocalDate.parse("2019-07-28")), Some(LocalDate.parse("2019-09-28")), Some(ITSA_NIC4_INTEREST_GB), Some("SA Late Payment Interest"), Some(10.90), Some(5.90), Some("latePaymentInterestId"))
     )
   )
 
@@ -333,10 +334,10 @@ object PaymentAllocationsTestConstants {
     Seq(
       AllocationDetailWithClearingDate(
         Some(AllocationDetail(Some("1040000872"), Some(LocalDate.parse("2019-06-27")), Some(LocalDate.parse("2019-08-27")), Some("NIC4 Wales"), Some("SA Payment on Account 1"), Some(10.10), Some(5.50), Some("chargeReference1"))),
-        Some(LocalDate.parse("2021-01-31"))),
+        Some(LocalDate.parse("2019-05-27"))),
       AllocationDetailWithClearingDate(
         Some(AllocationDetail(Some("1040000873"), Some(LocalDate.parse("2019-07-28")), Some(LocalDate.parse("2019-09-28")), Some("NIC4 Wales"), Some("SA Payment on Account 1"), Some(10.90), Some(5.90), Some("chargeReference2"))),
-        Some(LocalDate.parse("2021-01-31"))
+        Some(LocalDate.parse("2019-05-27"))
       )
     ))
 
@@ -361,10 +362,10 @@ object PaymentAllocationsTestConstants {
   val paymentAllocationViewModelWithNoOriginalAmount: PaymentAllocationViewModel = PaymentAllocationViewModel(financialDetailsWithNoOriginalAmount,
     Seq(
       AllocationDetailWithClearingDate(
-        Some(AllocationDetail(Some("1040000872"), Some(LocalDate.parse("2019-06-27")), Some(LocalDate.parse("2019-08-27")), Some("NIC4 Wales"), Some("SA Payment on Account 1"), Some(10.10), Some(5.50), Some("chargeReference1"))),
+        Some(AllocationDetail(Some("1040000872"), Some(LocalDate.parse("2019-06-27")), Some(LocalDate.parse("2019-08-27")), Some(NIC4_WALES), Some("SA Payment on Account 1"), Some(10.10), Some(5.50), Some("chargeReference1"))),
         Some(LocalDate.parse("2021-01-31"))),
       AllocationDetailWithClearingDate(
-        Some(AllocationDetail(Some("1040000873"), Some(LocalDate.parse("2019-07-28")), Some(LocalDate.parse("2019-09-28")), Some("NIC4 Wales"), Some("SA Payment on Account 1"), Some(10.90), Some(5.90), Some("chargeReference2"))),
+        Some(AllocationDetail(Some("1040000873"), Some(LocalDate.parse("2019-07-28")), Some(LocalDate.parse("2019-09-28")), Some(NIC4_WALES), Some("SA Payment on Account 1"), Some(10.90), Some(5.90), Some("chargeReference2"))),
         Some(LocalDate.parse("2021-01-31"))
       )
     ))
@@ -372,10 +373,10 @@ object PaymentAllocationsTestConstants {
   val paymentAllocationViewModelWithCreditZeroOutstanding: PaymentAllocationViewModel = PaymentAllocationViewModel(financialDetailsWithCreditZeroOutstanding,
     Seq(
       AllocationDetailWithClearingDate(
-        Some(AllocationDetail(Some("1040000872"), Some(LocalDate.parse("2019-06-27")), Some(LocalDate.parse("2019-08-27")), Some("NIC4 Wales"), Some("SA Payment on Account 1"), Some(10.10), Some(5.50), Some("chargeReference1"))),
+        Some(AllocationDetail(Some("1040000872"), Some(LocalDate.parse("2019-06-27")), Some(LocalDate.parse("2019-08-27")), Some(NIC4_WALES), Some("SA Payment on Account 1"), Some(10.10), Some(5.50), Some("chargeReference1"))),
         Some(LocalDate.parse("2021-01-31"))),
       AllocationDetailWithClearingDate(
-        Some(AllocationDetail(Some("1040000873"), Some(LocalDate.parse("2019-07-28")), Some(LocalDate.parse("2019-09-28")), Some("NIC4 Wales"), Some("SA Payment on Account 1"), Some(10.90), Some(5.90), Some("chargeReference2"))),
+        Some(AllocationDetail(Some("1040000873"), Some(LocalDate.parse("2019-07-28")), Some(LocalDate.parse("2019-09-28")), Some(NIC4_WALES), Some("SA Payment on Account 1"), Some(10.90), Some(5.90), Some("chargeReference2"))),
         Some(LocalDate.parse("2021-01-31"))
       )
     ))
@@ -383,7 +384,7 @@ object PaymentAllocationsTestConstants {
   val paymentAllocationViewModelWithNoClearingAmount: PaymentAllocationViewModel = PaymentAllocationViewModel(paymentAllocationChargesModel,
     Seq(
       AllocationDetailWithClearingDate(
-        Some(AllocationDetail(Some("1040000872"), Some(LocalDate.parse("2019-06-27")), Some(LocalDate.parse("2019-08-27")), Some("NIC4 Wales"), Some("SA Payment on Account 1"), Some(10.10), Some(5.50), Some("chargeReference1"))),
+        Some(AllocationDetail(Some("1040000872"), Some(LocalDate.parse("2019-06-27")), Some(LocalDate.parse("2019-08-27")), Some(NIC4_WALES), Some("SA Payment on Account 1"), Some(10.10), Some(5.50), Some("chargeReference1"))),
         None)
     ))
 

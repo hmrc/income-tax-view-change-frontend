@@ -3,7 +3,7 @@ package controllers
 
 import audit.models.PaymentAllocationsResponseAuditModel
 import auth.MtdItUser
-import config.featureswitch.{FeatureSwitching, PaymentAllocation, R7bTxmEvents}
+import config.featureswitch.{FeatureSwitching, NavBarFs, PaymentAllocation, R7bTxmEvents}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
 import helpers.servicemocks.IncomeTaxViewChangeStub
@@ -60,6 +60,7 @@ class PaymentAllocationControllerISpec extends ComponentSpecBase with FeatureSwi
     s"return $NOT_FOUND" when {
       "the payment allocation feature switch is disabled" in {
         disable(PaymentAllocation)
+        disable(NavBarFs)
         isAuthorisedUser(authorised = true)
         stubUserDetails()
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, paymentHistoryBusinessAndPropertyResponse)
@@ -79,14 +80,13 @@ class PaymentAllocationControllerISpec extends ComponentSpecBase with FeatureSwi
     s"return $OK with the payment allocation page for non LPI" when {
       "the payment allocation feature switch is enabled" in {
         enable(PaymentAllocation)
+        disable(NavBarFs)
         isAuthorisedUser(authorised = true)
         stubUserDetails()
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, paymentHistoryBusinessAndPropertyResponse)
 
         IncomeTaxViewChangeStub.stubGetFinancialsByDocumentId(testNino, docNumber)(OK, validPaymentAllocationChargesJson)
         IncomeTaxViewChangeStub.stubGetPaymentAllocationResponse(testNino, "paymentLot", "paymentLotItem")(OK, Json.toJson(testValidPaymentAllocationsModel))
-        IncomeTaxViewChangeStub.stubGetFinancialsByDocumentId(testNino, "1040000872")(OK, validPaymentAllocationChargesJson)
-        IncomeTaxViewChangeStub.stubGetFinancialsByDocumentId(testNino, "1040000873")(OK, validPaymentAllocationChargesJson)
 
         val result: WSResponse = IncomeTaxViewChangeFrontend.getPaymentAllocationCharges(docNumber)
 
@@ -101,6 +101,7 @@ class PaymentAllocationControllerISpec extends ComponentSpecBase with FeatureSwi
 
       "payment allocation for HMRC adjustment is shown" in {
         enable(PaymentAllocation)
+        disable(NavBarFs)
         isAuthorisedUser(authorised = true)
         stubUserDetails()
         val docNumber = "MA999991A202202"
@@ -114,7 +115,7 @@ class PaymentAllocationControllerISpec extends ComponentSpecBase with FeatureSwi
         result should have(
           httpStatus(OK),
           pageTitleIndividual("paymentAllocation.heading"),
-          elementTextBySelector("tbody")("HMRC adjustment 2022 Tax year 2021 to 2022 28 Jan 2021 £800.00"),
+          elementTextBySelector("tbody")("HMRC adjustment 2022 Tax year 2021 to 2022 31 Jan 2021 £800.00"),
         )
 
         verifyAuditContainsDetail(PaymentAllocationsResponseAuditModel(testUser, paymentAllocationViewModelHmrcAdjustment, false).detail)
@@ -124,6 +125,7 @@ class PaymentAllocationControllerISpec extends ComponentSpecBase with FeatureSwi
     s"return $OK with the payment allocation page for LPI" when {
       "the payment allocation feature switch is enabled" in {
         enable(PaymentAllocation)
+        disable(NavBarFs)
         isAuthorisedUser(authorised = true)
         stubUserDetails()
 

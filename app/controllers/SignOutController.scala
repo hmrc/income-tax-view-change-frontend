@@ -35,7 +35,7 @@ class SignOutController @Inject()(config: FrontendAppConfig,
   implicit val ec: ExecutionContext = mcc.executionContext
 
   val signOut: Action[AnyContent] = Action.async { implicit request =>
-    enrolmentsAuthService.authorised.retrieve(Retrievals.affinityGroup) {
+    enrolmentsAuthService.authorised().retrieve(Retrievals.affinityGroup) {
       case Some(AffinityGroup.Agent) => Future.successful(s"${config.contactFormServiceIdentifier}A")
       case _ => Future.successful(config.contactFormServiceIdentifier)
     }

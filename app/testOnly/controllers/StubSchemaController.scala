@@ -48,7 +48,7 @@ class StubSchemaController @Inject()(stubSchemaView: StubSchemaView)
 
   val submit: Action[AnyContent] = Action.async {
     implicit request =>
-      StubSchemaForm.stubSchemaForm.bindFromRequest.fold(
+      StubSchemaForm.stubSchemaForm.bindFromRequest().fold(
         formWithErrors => Future.successful(BadRequest(view(formWithErrors))),
         schema => {
           dynamicStubConnector.addSchema(schema).map(

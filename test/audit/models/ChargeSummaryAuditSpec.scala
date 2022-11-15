@@ -16,12 +16,10 @@
 
 package audit.models
 
-import java.time.LocalDate
-import testConstants.BaseTestConstants._
-import testConstants.FinancialDetailsTestConstants.financialDetail
 import auth.MtdItUser
+import enums.ChargeType._
 import models.chargeHistory.ChargeHistoryModel
-import models.financialDetails.{DocumentDetail, DocumentDetailWithDueDate, FinancialDetail, Payment, PaymentsWithChargeType}
+import models.financialDetails._
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import org.scalatest.{MustMatchers, WordSpecLike}
 import play.api.Logger
@@ -29,7 +27,11 @@ import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import services.DateService
+import testConstants.BaseTestConstants._
+import testConstants.FinancialDetailsTestConstants.financialDetail
 import uk.gov.hmrc.auth.core.retrieve.Name
+
+import java.time.LocalDate
 
 class ChargeSummaryAuditSpec extends WordSpecLike with MustMatchers {
 
@@ -71,8 +73,8 @@ class ChargeSummaryAuditSpec extends WordSpecLike with MustMatchers {
       mainType = Some(mainType), chargeType = Some(chargeType))
 
   val paymentAllocation: List[PaymentsWithChargeType] = List(
-    paymentsWithCharge("SA Payment on Account 1", "ITSA NI", "2018-03-30", -1500.0),
-    paymentsWithCharge("SA Payment on Account 1", "NIC4 Scotland", "2018-03-31", -1600.0)
+    paymentsWithCharge("SA Payment on Account 1", ITSA_NI, "2018-03-30", -1500.0),
+    paymentsWithCharge("SA Payment on Account 1", NIC4_SCOTLAND, "2018-03-31", -1600.0)
   )
 
   val chargeHistoryModel: ChargeHistoryModel = ChargeHistoryModel("2019", "1040000124", LocalDate.of(2018, 7, 6), "documentDescription", 1500, LocalDate.of(2018, 7, 6), "amended return")
@@ -83,10 +85,10 @@ class ChargeSummaryAuditSpec extends WordSpecLike with MustMatchers {
     chargeHistoryModel2)
 
   val paymentBreakdowns: List[FinancialDetail] = List(
-    financialDetail(originalAmount = 123.45, chargeType = "ITSA England & NI", dunningLock = Some("Stand over order"), interestLock = Some("Manual RPI Signal")),
-    financialDetail(originalAmount = 2345.67, chargeType = "NIC2-GB", interestLock = Some("Breathing Space Moratorium Act")),
-    financialDetail(originalAmount = 3456.78, chargeType = "Voluntary NIC2-NI", dunningLock = Some("Stand over order")),
-    financialDetail(originalAmount = 9876.54, chargeType = "CGT"))
+    financialDetail(originalAmount = 123.45, chargeType = ITSA_ENGLAND_AND_NI, dunningLock = Some("Stand over order"), interestLock = Some("Manual RPI Signal")),
+    financialDetail(originalAmount = 2345.67, chargeType = NIC2_GB, interestLock = Some("Breathing Space Moratorium Act")),
+    financialDetail(originalAmount = 3456.78, chargeType = VOLUNTARY_NIC2_NI, dunningLock = Some("Stand over order")),
+    financialDetail(originalAmount = 9876.54, chargeType = CGT))
 
   val docDateDetail: DocumentDetailWithDueDate = DocumentDetailWithDueDate(
     documentDetail = docDetail,

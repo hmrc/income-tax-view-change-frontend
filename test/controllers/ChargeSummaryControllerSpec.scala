@@ -17,10 +17,11 @@
 package controllers
 
 import audit.mocks.MockAuditingService
-import config.featureswitch.{ChargeHistory, CodingOut, FeatureSwitching, MFACreditsAndDebits, PaymentAllocation}
+import config.featureswitch._
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import connectors.IncomeTaxViewChangeConnector
 import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
+import enums.ChargeType.{ITSA_ENGLAND_AND_NI, NIC4_WALES}
 import implicits.ImplicitDateFormatter
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import mocks.services.MockIncomeSourceDetailsService
@@ -31,6 +32,7 @@ import org.mockito.Mockito.{mock, when}
 import play.api.http.Status
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers._
+import services.FinancialDetailsService
 import services.{DateService, FinancialDetailsService, IncomeSourceDetailsService}
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testTaxYear}
 import testConstants.FinancialDetailsTestConstants._
@@ -47,8 +49,8 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
   with TestSupport {
 
   def financialDetailsWithLocks(taxYear: Int): List[FinancialDetail] = List(
-    financialDetail(taxYear = taxYear, chargeType = "ITSA England & NI"),
-    financialDetail(taxYear = taxYear, chargeType = "NIC4 Wales", dunningLock = Some("Stand over order"))
+    financialDetail(taxYear = taxYear, chargeType = ITSA_ENGLAND_AND_NI),
+    financialDetail(taxYear = taxYear, chargeType = NIC4_WALES, dunningLock = Some("Stand over order"))
   )
 
   def testChargeHistoryModel(): ChargesHistoryModel = ChargesHistoryModel("MTDBSA", "XAIT000000000", "ITSA", None)
