@@ -32,7 +32,7 @@ import scala.concurrent.{Await, ExecutionContext, Future}
 @Singleton
 class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsService,
                                   val incomeTaxViewChangeConnector: IncomeTaxViewChangeConnector,
-                                  dateService: DateService)
+                                  val dateService: DateService)
                                  (implicit ec: ExecutionContext, implicit val appConfig: FrontendAppConfig) extends FeatureSwitching {
 
   implicit lazy val localDateOrdering: Ordering[LocalDate] = Ordering.by(_.toEpochDay)
@@ -54,7 +54,7 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
     }
   }
 
-  def getWhatYouOweChargesList()(implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_], dateService: DateService): Future[WhatYouOweChargesList] = {
+  def getWhatYouOweChargesList()(implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[WhatYouOweChargesList] = {
     getWhatYouOweChargesList(financialDetailsService.getAllUnpaidFinancialDetails)
   }
 

@@ -58,7 +58,7 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
                                          val retrieveBtaNavBar: NavBarPredicate,
                                          val auditingService: AuditingService)
                                         (implicit val appConfig: FrontendAppConfig,
-                                         val dateService: DateService,
+                                         dateService: DateService,
                                          val agentItvcErrorHandler: AgentItvcErrorHandler,
                                          mcc: MessagesControllerComponents,
                                          val ec: ExecutionContext)

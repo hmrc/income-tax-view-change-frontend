@@ -45,7 +45,7 @@ class WhatYouOweController @Inject()(val checkSessionTimeout: SessionTimeoutPred
                                      val retrieveBtaNavBar: NavBarPredicate,
                                      val authorisedFunctions: FrontendAuthorisedFunctions,
                                      val auditingService: AuditingService,
-                                     implicit val dateService: DateService,
+                                     val dateService: DateService,
                                      val incomeSourceDetailsService: IncomeSourceDetailsService,
                                      implicit val appConfig: FrontendAppConfig,
                                      implicit override val mcc: MessagesControllerComponents,

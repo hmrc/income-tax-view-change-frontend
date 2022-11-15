@@ -83,10 +83,10 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
       app.injector.instanceOf[NavBarPredicate],
       mockIncomeSourceDetailsService,
       mockAuthService,
-      app.injector.instanceOf[DateService],
-      app.injector.instanceOf[views.html.errorPages.CustomNotFoundError],
+      app.injector.instanceOf[views.html.errorPages.CustomNotFoundError]
     )(
       app.injector.instanceOf[FrontendAppConfig],
+      app.injector.instanceOf[DateService],
       languageUtils,
       app.injector.instanceOf[MessagesControllerComponents],
       ec,

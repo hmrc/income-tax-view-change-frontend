@@ -53,9 +53,9 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
                                         val retrievebtaNavPartial: NavBarPredicate,
                                         val incomeSourceDetailsService: IncomeSourceDetailsService,
                                         val authorisedFunctions: FrontendAuthorisedFunctions,
-                                        implicit val dateService: DateService,
                                         val customNotFoundErrorView: CustomNotFoundError)
                                        (implicit val appConfig: FrontendAppConfig,
+                                        dateService: DateService,
                                         val languageUtils: LanguageUtils,
                                         mcc: MessagesControllerComponents,
                                         val ec: ExecutionContext,
@@ -126,7 +126,7 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
                                   chargeDetails: FinancialDetailsModel, payments: FinancialDetailsModel,
                                   isAgent: Boolean, origin: Option[String],
                                   isMFADebit: Boolean)
-                                 (implicit user: MtdItUser[_]): Future[Result] = {
+                                 (implicit user: MtdItUser[_], dateService: DateService): Future[Result] = {
     val sessionGatewayPage = user.session.get(gatewayPage).map(GatewayPage(_))
     val documentDetailWithDueDate: DocumentDetailWithDueDate = chargeDetails.findDocumentDetailByIdWithDueDate(id).get
     val financialDetails = chargeDetails.financialDetails.filter(_.transactionId.contains(id))

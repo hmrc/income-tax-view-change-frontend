@@ -73,7 +73,7 @@ case class NextUpdateModel(start: LocalDate,
                            periodKey: String) extends NextUpdatesResponseModel {
 
   def currentTime(implicit dateService: DateService): LocalDate = dateService.getCurrentDate
-  def getNextUpdateStatus(implicit dateService: DateService): NextUpdateStatus = if (!currentTime.isAfter(due)) Open(due) else Overdue(due)
+  def getNextUpdateStatus(implicit dateService: DateService): NextUpdateStatus = if (!currentTime(dateService).isAfter(due)) Open(due) else Overdue(due)
 }
 
 case class NextUpdateModelWithIncomeType(incomeType: String, obligation: NextUpdateModel)
