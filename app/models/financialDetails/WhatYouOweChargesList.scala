@@ -17,6 +17,7 @@
 package models.financialDetails
 
 import models.outstandingCharges.OutstandingChargesModel
+import services.DateService
 
 import java.time.LocalDate
 
@@ -24,7 +25,7 @@ case class WhatYouOweChargesList(balanceDetails: BalanceDetails, chargesList: Li
                                  outstandingChargesModel: Option[OutstandingChargesModel] = None,
                                  codedOutDocumentDetail: Option[DocumentDetail] = None) {
 
-  lazy val overdueChargeList: List[DocumentDetailWithDueDate] = chargesList.filter(_.isOverdue)
+  def overdueChargeList(implicit dateService: DateService): List[DocumentDetailWithDueDate] = chargesList.filter(_.isOverdue)
 
   def sortedChargesList: List[DocumentDetailWithDueDate] = chargesList.sortWith((charge1, charge2) =>
     charge1.dueDate.exists(date1 => charge2.dueDate.exists(_.isAfter(date1))))
@@ -38,13 +39,13 @@ case class WhatYouOweChargesList(balanceDetails: BalanceDetails, chargesList: Li
 
   def hasDunningLock: Boolean = chargesList.exists(charge => charge.dunningLock)
 
-  def hasLpiWithDunningBlock: Boolean =
+  def hasLpiWithDunningBlock(implicit dateService: DateService): Boolean =
     if (overdueChargeList.exists(_.documentDetail.lpiWithDunningBlock.isDefined)
       && overdueChargeList.exists(_.documentDetail.lpiWithDunningBlock.getOrElse[BigDecimal](0) > 0)) true
     else false
 
 
-  def interestOnOverdueCharges: Boolean =
+  def interestOnOverdueCharges(implicit dateService: DateService): Boolean =
     if (overdueChargeList.exists(_.documentDetail.interestOutstandingAmount.isDefined)
       && overdueChargeList.exists(_.documentDetail.latePaymentInterestAmount.getOrElse[BigDecimal](0) <= 0)) true
     else false

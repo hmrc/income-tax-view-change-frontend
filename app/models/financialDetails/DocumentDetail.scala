@@ -171,8 +171,8 @@ case class DocumentDetail(taxYear: String,
 
 case class DocumentDetailWithDueDate(documentDetail: DocumentDetail, dueDate: Option[LocalDate],
                                      isLatePaymentInterest: Boolean = false, dunningLock: Boolean = false,
-                                     codingOutEnabled: Boolean = false, isMFADebit: Boolean = false)(implicit val dateService: DateService) {
-  val isOverdue: Boolean = dueDate.exists(_ isBefore dateService.getCurrentDate)
+                                     codingOutEnabled: Boolean = false, isMFADebit: Boolean = false) {
+  def isOverdue(implicit dateService: DateService): Boolean = dueDate.exists(_ isBefore dateService.getCurrentDate)
 }
 
 object DocumentDetail {
