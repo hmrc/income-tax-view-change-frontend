@@ -50,7 +50,7 @@
     }else if(!value.isDefined && value2.isDefined){
         @if(bold){<p class="govuk-body-l govuk-!-font-weight-bold">} else {<p class="govuk-body-l">}
             @{messages(s"forecast_taxCalc.$message")}
-            <strong class="bold no-wrap">@{value.get.toCurrency}</strong>
+            <strong class="bold no-wrap">@{value2.get.toCurrency}</strong>
         </p>
     }else if(!value.isDefined && !value2.isDefined){
         @{value.getOrElse(throw MissingFieldException("MissingFieldException"))}

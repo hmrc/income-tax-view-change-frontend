@@ -16,6 +16,7 @@
 
 package views
 
+import exceptions.MissingFieldException
 import models.liabilitycalculation.EndOfYearEstimate
 import org.jsoup.select.Elements
 import org.scalatest.prop.TableDrivenPropertyChecks._
@@ -49,9 +50,30 @@ class ForecastTaxCalcSummaryViewSpec extends ViewSpec {
     incomeTaxNicAndCgtAmount = Some(150)
   )
 
+  val endOfYearEstimateModel2: EndOfYearEstimate = EndOfYearEstimate(
+    incomeSource = None,
+    totalEstimatedIncome = Some(10),
+    totalTaxableIncome = Some(20),
+    totalAllowancesAndDeductions = Some(BigDecimal(40.00)),
+    incomeTaxAmount = Some(30),
+    nic2 = Some(40),
+    nic4 = Some(50),
+    totalNicAmount = Some(60),
+    totalTaxDeductedBeforeCodingOut = Some(70),
+    saUnderpaymentsCodedOut = Some(80),
+    totalStudentLoansRepaymentAmount = Some(90),
+    totalAnnuityPaymentsTaxCharged = Some(100),
+    totalRoyaltyPaymentsTaxCharged = Some(110),
+    totalTaxDeducted = Some(120),
+    incomeTaxNicAmount = Some(130),
+    cgtAmount = Some(140),
+    incomeTaxNicAndCgtAmount = None
+  )
+
   lazy val forecastTaxCalcView: ForecastTaxCalcSummary = app.injector.instanceOf[ForecastTaxCalcSummary]
 
   val view: HtmlFormat.Appendable = forecastTaxCalcView(endOfYearEstimateModel, testTaxYear, backUrl, btaNavPartial = testNavHtml)
+  val viewModel2: HtmlFormat.Appendable = forecastTaxCalcView(endOfYearEstimateModel2, testTaxYear, backUrl, btaNavPartial = testNavHtml)
 
   "The Forecast Tax Calc Summary View" when {
     "provided with a btaNavPartial" should {
@@ -95,6 +117,35 @@ class ForecastTaxCalcSummaryViewSpec extends ViewSpec {
         forAll(expectedDataItems) { (paraNo: Int, dataItem: String, formattedAmount: String) =>
 
           s"has the dataItem: '$dataItem' with the correct amount value: $formattedAmount" in new Setup(view) {
+            val para: Elements = layoutContent.select(s"#main-content p:nth-child($paraNo)")
+            para.text shouldBe s"$dataItem $formattedAmount"
+          }
+        }
+      }
+
+      "have the correct Forecast Self Assessment tax amount when incomeTaxNicAndCgtAmount = None" which {
+        val expectedDataItems2 = Table(
+          ("p:nth-child", "dataItem", "Amount"),
+          (2, messages("forecast_taxCalc.totalEstimatedIncome"), "£10.00"),
+          (3, messages("forecast_taxCalc.totalAllowancesAndDeductions"), "£40.00"),
+          (4, messages("forecast_taxCalc.totalTaxableIncome"), "£20.00"),
+          (5, messages("forecast_taxCalc.totalIncomeTax"), "£30.00"),
+          (7, messages("forecast_taxCalc.class4Nic"), "£50.00"),
+          (8, messages("forecast_taxCalc.class2Nic"), "£40.00"),
+          (9, messages("forecast_taxCalc.totalNics"), "£60.00"),
+          (11, messages("forecast_taxCalc.totalDeductedBeforeCodingOut"), "£70.00"),
+          (12, messages("forecast_taxCalc.collectedThroughPAYE"), "£80.00"),
+          (13, messages("forecast_taxCalc.studentLoanRepayments"), "£90.00"),
+          (14, messages("forecast_taxCalc.annuityPayments"), "£100.00"),
+          (15, messages("forecast_taxCalc.royaltyPayments"), "£110.00"),
+          (17, messages("forecast_taxCalc.totalTaxDeducted"), "£120.00"),
+          (18, messages("forecast_taxCalc.incomeTaxAndNicsDue"), "£130.00"),
+          (19, messages("forecast_taxCalc.capitalGainsTax"), "£140.00"),
+          (20, messages("forecast_taxCalc.incomeTaxNicsCgtDue"), "£130.00")
+        )
+        forAll(expectedDataItems2) { (paraNo: Int, dataItem: String, formattedAmount: String) =>
+
+          s"has the dataItem: '$dataItem' with the correct amount value: $formattedAmount" in new Setup(viewModel2) {
             val para: Elements = layoutContent.select(s"#main-content p:nth-child($paraNo)")
             para.text shouldBe s"$dataItem $formattedAmount"
           }
