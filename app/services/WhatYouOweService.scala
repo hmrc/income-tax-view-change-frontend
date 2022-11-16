@@ -32,7 +32,7 @@ import scala.concurrent.{Await, ExecutionContext, Future}
 @Singleton
 class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsService,
                                   val incomeTaxViewChangeConnector: IncomeTaxViewChangeConnector,
-                                  val dateService: DateService)
+                                  implicit val dateService: DateService)
                                  (implicit ec: ExecutionContext, implicit val appConfig: FrontendAppConfig) extends FeatureSwitching {
 
   implicit lazy val localDateOrdering: Ordering[LocalDate] = Ordering.by(_.toEpochDay)
@@ -77,7 +77,7 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
 
         val whatYouOweChargesList = WhatYouOweChargesList(
           balanceDetails = balanceDetails,
-          chargesList = getFilteredChargesList(financialDetailsModelList)(dateService),
+          chargesList = getFilteredChargesList(financialDetailsModelList),
           codedOutDocumentDetail = codedOutDocumentDetail)
 
         callOutstandingCharges(mtdUser.saUtr, mtdUser.incomeSources.yearOfMigration, dateService.getCurrentTaxYearEnd).map {
@@ -101,7 +101,7 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
     }
   }
 
-  private def getFilteredChargesList(financialDetailsList: List[FinancialDetailsModel])(implicit dateService: DateService): List[DocumentDetailWithDueDate] = {
+  private def getFilteredChargesList(financialDetailsList: List[FinancialDetailsModel]): List[DocumentDetailWithDueDate] = {
     val documentDetailsWithDueDates = financialDetailsList.flatMap(financialDetails =>
       financialDetails.getAllDocumentDetailsWithDueDates(isEnabled(CodingOut)))
       .filter(documentDetailWithDueDate => whatYouOwePageDataExists(documentDetailWithDueDate)

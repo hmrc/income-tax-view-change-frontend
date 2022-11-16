@@ -24,10 +24,9 @@
 @import views.html.components._
 @import exceptions.MissingFieldException
 @import uk.gov.hmrc.govukfrontend.views.html.components._
-@import services.DateService
+@import java.time.LocalDate
 
 @this(
-    dateService: DateService,
     mainTemplate: unifiedLayout,
     implicitDateFormatter: ImplicitDateFormatterImpl,
     appConfig: config.FrontendAppConfig,
@@ -39,7 +38,8 @@
     govukInsetText : GovukInsetText
 )
 
-@(creditCharges: List[DocumentDetail],
+@(currentDate: LocalDate,
+    creditCharges: List[DocumentDetail],
     whatYouOweChargesList: WhatYouOweChargesList,
     hasLpiWithDunningBlock: Boolean,
     currentTaxYear: Int,
@@ -311,7 +311,7 @@
                                         whatYouOweChargesList.outstandingChargesModel.get.bcdChargeType.get.relevantDueDate.getOrElse(throw MissingFieldException("Outstanding Charge Relevant Due Date")).toLongDateShort
                                     }</td>
                                     <td class="govuk-table__cell govuk-!-width-one-half">
-                                        @if(whatYouOweChargesList.outstandingChargesModel.get.bcdChargeType.get.relevantDueDate.getOrElse(throw MissingFieldException("Outstanding Charge Relevant Due Date")).isBefore(dateService.getCurrentDate)) {
+                                        @if(whatYouOweChargesList.outstandingChargesModel.get.bcdChargeType.get.relevantDueDate.getOrElse(throw MissingFieldException("Outstanding Charge Relevant Due Date")).isBefore(currentDate)) {
                                             <span id="balancing-charge-type-overdue" class="govuk-tag govuk-tag--red">@getMessage("over-due")</span>
                                         }
                                         @p(id = Some("balancing-charge"))(Html(getMessage("balancingCharge.text")))
@@ -325,7 +325,7 @@
                                     }</td>
                                 </tr>
                                 @if(whatYouOweChargesList.outstandingChargesModel.get.getAciChargeWithTieBreaker.isDefined
-                                        && whatYouOweChargesList.outstandingChargesModel.get.bcdChargeType.get.relevantDueDate.getOrElse(throw MissingFieldException("Outstanding Charge Relevant Due Date")).isBefore(dateService.getCurrentDate)) {
+                                        && whatYouOweChargesList.outstandingChargesModel.get.bcdChargeType.get.relevantDueDate.getOrElse(throw MissingFieldException("Outstanding Charge Relevant Due Date")).isBefore(currentDate)) {
                                     <tr class="govuk-table__row" id="balancing-charge-type-1">
                                         <td class="govuk-table__cell govuk-!-width-one-quarter"></td>
                                         <td class="govuk-table__cell govuk-!-width-one-half">
@@ -333,7 +333,7 @@
                                             <div>
                                             @getMessage("balancingCharge.interest.line2.text",
                                                 whatYouOweChargesList.outstandingChargesModel.get.bcdChargeType.get.relevantDueDate.getOrElse(throw MissingFieldException("Outstanding Charge Relevant Due Date")).toLongDateShort,
-                                                dateService.getCurrentDate.toLongDateShort
+                                                currentDate.toLongDateShort
                                             )
                                             </div>
                                         </td>

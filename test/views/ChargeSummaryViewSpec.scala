@@ -52,7 +52,7 @@ class ChargeSummaryViewSpec extends ViewSpec {
               codingOutEnabled: Boolean = false,
               isAgent: Boolean = false,
               isMFADebit: Boolean = false) {
-    val view: Html = chargeSummary(DocumentDetailWithDueDate(documentDetail, dueDate), "testBackURL",
+    val view: Html = chargeSummary(dateService.getCurrentDate, DocumentDetailWithDueDate(documentDetail, dueDate), "testBackURL",
       paymentBreakdown, chargeHistory, paymentAllocations, payments, chargeHistoryEnabled, paymentAllocationEnabled,
       latePaymentInterestCharge, codingOutEnabled, isAgent, isMFADebit = isMFADebit)
     val document: Document = Jsoup.parse(view.toString())
@@ -753,7 +753,7 @@ class ChargeSummaryViewSpec extends ViewSpec {
   "The charge summary view when missing mandatory expected fields" should {
     "throw a MissingFieldException" in {
       val thrownException = intercept[MissingFieldException] {
-        chargeSummary(DocumentDetailWithDueDate(documentDetailModel(), None), "testBackURL",
+        chargeSummary(dateService.getCurrentDate, DocumentDetailWithDueDate(documentDetailModel(), None), "testBackURL",
           paymentBreakdown, List(), List(), payments, true, false, false, false, false, isMFADebit = false)
       }
       thrownException.getMessage shouldBe "Missing Mandatory Expected Field: Due Date"

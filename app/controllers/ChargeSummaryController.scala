@@ -152,6 +152,7 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
           auditChargeSummary(documentDetailWithDueDate, paymentBreakdown, chargeHistory, paymentAllocations,
             isLatePaymentCharge, isMFADebit)
           Ok(chargeSummaryView(
+            currentDate = dateService.getCurrentDate,
             documentDetailWithDueDate = documentDetailWithDueDate,
             backUrl = getChargeSummaryBackUrl(sessionGatewayPage, taxYear, origin, isAgent),
             gatewayPage = sessionGatewayPage,
