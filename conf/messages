@@ -367,7 +367,7 @@ taxCal_breakdown.table.taxDeductedAtSource.cis				        = CIS and trading inco
 taxCal_breakdown.table.taxDeductedAtSource.ukLandAndProperty		= UK land and property
 taxCal_breakdown.table.taxDeductedAtSource.specialWithholdingTax    = Special withholding tax
 taxCal_breakdown.table.taxDeductedAtSource.voidISAs                 = Void ISAs
-taxCal_breakdown.table.taxDeductedAtSource.total					= Income Tax due after deductions
+taxCal_breakdown.table.taxDeductedAtSource.total					= Total tax deducted
 taxCal_breakdown.table.amount                                       = Amount
 
 taxCal_breakdown.message.C22201                                 = Your Basic Rate limit has been increased by {0} to {1} for Gift Aid payments
