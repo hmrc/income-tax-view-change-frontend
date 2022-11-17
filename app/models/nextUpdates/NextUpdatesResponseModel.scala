@@ -17,9 +17,9 @@
 package models.nextUpdates
 
 import java.time.LocalDate
-
 import auth.MtdItUser
 import play.api.libs.json._
+import services.DateService
 
 
 sealed trait NextUpdatesResponseModel
@@ -70,12 +70,7 @@ case class NextUpdateModel(start: LocalDate,
                            due: LocalDate,
                            obligationType: String,
                            dateReceived: Option[LocalDate],
-                           periodKey: String) extends NextUpdatesResponseModel {
-
-  def currentTime(): LocalDate = LocalDate.now()
-
-  def getNextUpdateStatus: NextUpdateStatus = if (!currentTime().isAfter(due)) Open(due) else Overdue(due)
-}
+                           periodKey: String) extends NextUpdatesResponseModel
 
 case class NextUpdateModelWithIncomeType(incomeType: String, obligation: NextUpdateModel)
 

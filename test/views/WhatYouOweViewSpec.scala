@@ -113,7 +113,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       arn = None
     )(FakeRequest())
 
-    val html: HtmlFormat.Appendable = whatYouOweView(creditCharges, charges, hasLpiWithDunningBlock, currentTaxYear, "testBackURL",
+    val html: HtmlFormat.Appendable = whatYouOweView(dateService.getCurrentDate, creditCharges, charges, hasLpiWithDunningBlock, currentTaxYear, "testBackURL",
       Some("1234567890"), None, dunningLock, codingOutEnabled, MFADebitsEnabled, whatYouOweCreditAmountEnabled, creditAndRefundEnabled = true)(FakeRequest(), individualUser, implicitly)
     val pageDocument: Document = Jsoup.parse(contentAsString(html))
 
@@ -150,6 +150,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     val whatYouOweView: WhatYouOwe = app.injector.instanceOf[WhatYouOwe]
 
     val html: HtmlFormat.Appendable = whatYouOweView(
+      dateService.getCurrentDate,
       creditCharges = creditCharges,
       whatYouOweChargesList = charges,
       hasLpiWithDunningBlock = hasLpiWithDunningBlock,
@@ -239,14 +240,14 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
   def whatYouOweDataWithOverdueMixedData2(latePaymentInterest: List[Option[BigDecimal]]): WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
-    chargesList = List(financialDetailsOverdueWithLpi(latePaymentInterest, noDunningLocks).getAllDocumentDetailsWithDueDates()(1))
+    chargesList = List(financialDetailsOverdueWithLpi(latePaymentInterest, noDunningLocks).getAllDocumentDetailsWithDueDates()(dateService)(1))
       ++ List(financialDetailsWithMixedData3.getAllDocumentDetailsWithDueDates().head),
 
   )
 
   def whatYouOweDataTestActiveWithMixedData2(latePaymentInterest: List[Option[BigDecimal]]): WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
-    chargesList = List(financialDetailsOverdueWithLpi(latePaymentInterest, noDunningLocks).getAllDocumentDetailsWithDueDates()(1))
+    chargesList = List(financialDetailsOverdueWithLpi(latePaymentInterest, noDunningLocks).getAllDocumentDetailsWithDueDates()(dateService)(1))
       ++ List(financialDetailsWithMixedData3.getAllDocumentDetailsWithDueDates().head),
     outstandingChargesModel = Some(outstandingChargesWithAciValueZeroAndOverdue)
   )
@@ -291,14 +292,14 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
   val whatYouOweDataWithWithAciValueZeroAndOverdue: WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
-    chargesList = List(financialDetailsWithMixedData3.getAllDocumentDetailsWithDueDates()(1))
+    chargesList = List(financialDetailsWithMixedData3.getAllDocumentDetailsWithDueDates()(dateService)(1))
       ++ List(financialDetailsWithMixedData3.getAllDocumentDetailsWithDueDates().head),
     outstandingChargesModel = Some(outstandingChargesWithAciValueZeroAndOverdue)
   )
 
   val whatYouOweDataWithWithAciValueZeroAndFuturePayments: WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
-    chargesList = List(financialDetailsWithMixedData1.getAllDocumentDetailsWithDueDates()(1))
+    chargesList = List(financialDetailsWithMixedData1.getAllDocumentDetailsWithDueDates()(dateService)(1))
       ++ List(financialDetailsWithMixedData1.getAllDocumentDetailsWithDueDates().head),
     outstandingChargesModel = Some(outstandingChargesWithAciValueZeroAndOverdue)
   )

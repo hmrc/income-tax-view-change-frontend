@@ -26,9 +26,7 @@ object NextUpdatesTestConstants {
 
   val mockedCurrentTime20171031: LocalDate = LocalDate.of(2017, 10, 31)
 
-  def fakeNextUpdatesModel(m: NextUpdateModel): NextUpdateModel = new NextUpdateModel(m.start, m.end, m.due, m.obligationType, m.dateReceived, m.periodKey) {
-    override def currentTime(): LocalDate = mockedCurrentTime20171031
-  }
+  def fakeNextUpdatesModel(m: NextUpdateModel): NextUpdateModel = new NextUpdateModel(m.start, m.end, m.due, m.obligationType, m.dateReceived, m.periodKey)
 
   val testStartDate = LocalDate.of(2017, 7, 1)
 

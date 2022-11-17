@@ -68,6 +68,7 @@ class WhatYouOweController @Inject()(val checkSessionTimeout: SessionTimeoutPred
           creditCharges =>
 
             Ok(whatYouOwe(
+              currentDate = dateService.getCurrentDate,
               creditCharges,
               whatYouOweChargesList = whatYouOweChargesList, hasLpiWithDunningBlock = whatYouOweChargesList.hasLpiWithDunningBlock,
               currentTaxYear = dateService.getCurrentTaxYearEnd, backUrl = backUrl, utr = user.saUtr,

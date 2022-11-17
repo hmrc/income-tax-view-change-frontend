@@ -26,6 +26,7 @@ import play.api.Logger
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
+import services.DateService
 import testConstants.BaseTestConstants._
 import testConstants.FinancialDetailsTestConstants.financialDetail
 import uk.gov.hmrc.auth.core.retrieve.Name
@@ -33,6 +34,8 @@ import uk.gov.hmrc.auth.core.retrieve.Name
 import java.time.LocalDate
 
 class ChargeSummaryAuditSpec extends WordSpecLike with MustMatchers {
+
+  implicit val dateService: DateService = app.injector.instanceOf[DateService]
 
   implicit val messages: Messages = app.injector.instanceOf[MessagesApi].preferred(FakeRequest())
 

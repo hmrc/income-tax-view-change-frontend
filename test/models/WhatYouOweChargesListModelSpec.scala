@@ -20,11 +20,15 @@ import testConstants.FinancialDetailsTestConstants._
 import models.financialDetails.{BalanceDetails, WhatYouOweChargesList}
 import models.outstandingCharges.OutstandingChargesModel
 import org.scalatest.Matchers
+import services.DateService
+import testConstants.BaseTestConstants.app
 import testUtils.UnitSpec
 
 import java.time.LocalDate
 
 class WhatYouOweChargesListModelSpec extends UnitSpec with Matchers {
+
+  implicit val dateService: DateService = app.injector.instanceOf[DateService]
 
   val outstandingCharges: OutstandingChargesModel = outstandingChargesModel(LocalDate.now().minusMonths(13))
 
