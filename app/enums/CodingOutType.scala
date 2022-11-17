@@ -26,7 +26,7 @@ sealed trait CodingOutType {
 
 object CodingOutType {
   case object CODING_OUT_ACCEPTED extends CodingOutType {
-    override val name: String = "PAYE Self Assessment"
+    override val name: String = "Balancing payment collected through PAYE tax code"
   }
 
   case object CODING_OUT_CANCELLED extends CodingOutType {
