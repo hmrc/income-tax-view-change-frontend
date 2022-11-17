@@ -18,6 +18,7 @@ package views
 
 import config.featureswitch.FeatureSwitching
 import exceptions.MissingFieldException
+import enums.CodingOutType._
 import implicits.ImplicitCurrencyFormatter.{CurrencyFormatter, CurrencyFormatterInt}
 import implicits.ImplicitDateFormatterImpl
 import models.financialDetails.DocumentDetailWithDueDate
@@ -81,7 +82,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
 
   val payeChargeList: List[DocumentDetailWithDueDate] = List(fullDocumentDetailWithDueDateModel.copy(
     documentDetail = fullDocumentDetailModel.copy(
-      documentDescription = Some("TRM New Charge"), documentText = Some("PAYE Self Assessment")), codingOutEnabled = true))
+      documentDescription = Some("TRM New Charge"), documentText = Some(CODING_OUT_ACCEPTED)), codingOutEnabled = true))
 
 
   val immediatelyRejectedByNps: List[DocumentDetailWithDueDate] = List(fullDocumentDetailWithDueDateModel.copy(
@@ -97,7 +98,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
       documentDescription = Some("TRM New Charge"), documentText = Some(taxYearSummaryClass2Nic)), codingOutEnabled = true),
     fullDocumentDetailWithDueDateModel.copy(
       documentDetail = fullDocumentDetailModel.copy
-      (documentDescription = Some("TRM New Charge"), documentText = Some("Cancelled PAYE Self Assessment")), codingOutEnabled = true)
+      (documentDescription = Some("TRM New Charge"), documentText = Some(CODING_OUT_CANCELLED)), codingOutEnabled = true)
   )
 
   val codingOutPartiallyCollected: List[DocumentDetailWithDueDate] = List(fullDocumentDetailWithDueDateModel.copy(

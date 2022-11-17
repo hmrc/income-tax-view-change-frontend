@@ -20,6 +20,7 @@ import audit.models.ChargeSummaryAudit
 import auth.MtdItUser
 import config.featureswitch._
 import enums.ChargeType.{ITSA_ENGLAND_AND_NI, ITSA_NI, NIC4_SCOTLAND}
+import enums.CodingOutType._
 import helpers.ComponentSpecBase
 import helpers.servicemocks.DocumentDetailsStub.{docDateDetail, docDateDetailWithInterest}
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
@@ -323,7 +324,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
           Json.obj("taxYear" -> "2018",
             "transactionId" -> "CODINGOUT01",
             "documentDescription" -> "TRM New Charge",
-            "documentText" -> "PAYE Self Assessment",
+            "documentText" -> CODING_OUT_ACCEPTED,
             "outstandingAmount" -> 2500.00,
             "originalAmount" -> 2500.00,
             "documentDate" -> "2018-03-29"
