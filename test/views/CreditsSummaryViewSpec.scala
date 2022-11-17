@@ -40,7 +40,7 @@ class CreditsSummaryViewSpec extends TestSupport with FeatureSwitching with Impl
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
   val testCalendarYear: Int = 2018
-  val expectedDate: String = "29 Mar 2018"
+  val expectedDate: String = "2018"
   val utr: Option[String] = Some(testMtditid)
   val testMaybeBalanceDetails: Option[BigDecimal] = financialDetailCreditCharge.balanceDetails.availableCredit
 
@@ -103,12 +103,12 @@ class CreditsSummaryViewSpec extends TestSupport with FeatureSwitching with Impl
       document.select("th:nth-child(3)").text() shouldBe creditsTableHeadStatusText
       document.select("th:nth-child(4)").text() shouldBe creditsTableHeadAmountText
 
-      document.selectById("balancing-charge-type-0").select("td:nth-child(1)").first().text() shouldBe "16 Apr 2018"
+      document.selectById("balancing-charge-type-0").select("td:nth-child(1)").first().text() shouldBe "2018"
       document.selectById("balancing-charge-type-0").select("td:nth-child(2)").first().text() shouldBe creditsTableHeadTypeValue
       document.selectById("balancing-charge-type-0").select("td:nth-child(3)").first().text() shouldBe creditsTableStatusPartiallyAllocatedValue
       document.selectById("balancing-charge-type-0").select("td:nth-child(4)").first().text() shouldBe "£800.00"
 
-      document.selectById("balancing-charge-type-1").select("td:nth-child(1)").first().text() shouldBe "30 Jul 2018"
+      document.selectById("balancing-charge-type-1").select("td:nth-child(1)").first().text() shouldBe "2018"
       document.selectById("balancing-charge-type-1").select("td:nth-child(2)").first().text() shouldBe creditsTableHeadTypeValue
       document.selectById("balancing-charge-type-1").select("td:nth-child(3)").first().text() shouldBe creditsTableStatusNotYetAllocatedValue
       document.selectById("balancing-charge-type-1").select("td:nth-child(4)").first().text() shouldBe "£1,400.00"
@@ -201,12 +201,12 @@ class CreditsSummaryViewSpec extends TestSupport with FeatureSwitching with Impl
         document.select("th:nth-child(3)").text() shouldBe creditsTableHeadStatusText
         document.select("th:nth-child(4)").text() shouldBe creditsTableHeadAmountText
 
-        document.selectById("balancing-charge-type-0").select("td:nth-child(1)").first().text() shouldBe "16 Apr 2018"
+        document.selectById("balancing-charge-type-0").select("td:nth-child(1)").first().text() shouldBe "2018"
         document.selectById("balancing-charge-type-0").select("td:nth-child(2)").first().text() shouldBe creditsTableHeadTypeValue
         document.selectById("balancing-charge-type-0").select("td:nth-child(3)").first().text() shouldBe creditsTableStatusPartiallyAllocatedValue
         document.selectById("balancing-charge-type-0").select("td:nth-child(4)").first().text() shouldBe "£800.00"
 
-        document.selectById("balancing-charge-type-1").select("td:nth-child(1)").first().text() shouldBe "30 Jul 2018"
+        document.selectById("balancing-charge-type-1").select("td:nth-child(1)").first().text() shouldBe "2018"
         document.selectById("balancing-charge-type-1").select("td:nth-child(2)").first().text() shouldBe creditsTableHeadTypeValue
         document.selectById("balancing-charge-type-1").select("td:nth-child(3)").first().text() shouldBe creditsTableStatusNotYetAllocatedValue
         document.selectById("balancing-charge-type-1").select("td:nth-child(4)").first().text() shouldBe "£1,400.00"
