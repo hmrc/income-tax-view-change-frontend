@@ -50,11 +50,15 @@
     }
 }
 
-@getCreditsSummaryControllerHref(credit: DocumentDetail, isAgent: Boolean) = @{
+@maybeDueDate = @{
+    maybeCreditChargesHead._1.dueDate.getOrElse(throw MissingFieldException("Due Date")).getYear
+}
+
+@getCreditsSummaryControllerHref = @{
     if(isAgent) {
-        controllers.routes.CreditsSummaryController.showAgentCreditsSummary(credit.taxYear.toInt)
+        controllers.routes.CreditsSummaryController.showAgentCreditsSummary(maybeDueDate)
     } else {
-        controllers.routes.CreditsSummaryController.showCreditsSummary(credit.taxYear.toInt)
+        controllers.routes.CreditsSummaryController.showCreditsSummary(maybeDueDate)
     }
 }
 
@@ -126,14 +130,14 @@ balance.getOrElse(throw MissingFieldException("Balance"))
                     <span class="govuk-body">
                         @if(MfaCreditUtils.validMFACreditType((maybeCreditChargesHead._2.mainType))) {
                             @link(
-                                link = s"${getCreditsSummaryControllerHref(maybeCreditChargesHead._1.documentDetail, isAgent)}",
+                                link = s"$getCreditsSummaryControllerHref",
                                 outerMessage = ".",
                                 messageKey = messages("credit-and-refund.credit-from-hmrc-title-prt-2"),
                                 classes = "govuk-body govuk-!-font-weight-bold govuk-link--no-visited-state"
                             )
                         } else {
                             @link(
-                                link = s"${getCreditsSummaryControllerHref(maybeCreditChargesHead._1.documentDetail, isAgent)}",
+                                link = s"$getCreditsSummaryControllerHref",
                                 outerMessage = ".",
                                 messageKey = messages("paymentHistory.paymentFromEarlierYear"),
                                 classes = "govuk-body govuk-!-font-weight-bold govuk-link--no-visited-state"
@@ -176,7 +180,7 @@ balance.getOrElse(throw MissingFieldException("Balance"))
                                         @charge._1.documentDetail.paymentOrChargeCredit.getOrElse(throw MissingFieldException("Payment Or Charge Credit")).toCurrencyString
                                         <span class="govuk-body">
                                             @messages("credit-and-refund.credit-from-hmrc-title-prt-1")
-                                            <a id="credit-and-refund-@index" href="@getCreditsSummaryControllerHref(charge._1.documentDetail, isAgent)" class="govuk-link">
+                                            <a id="credit-and-refund-@index" href="@getCreditsSummaryControllerHref" class="govuk-link">
                                                 @messages("credit-and-refund.credit-from-hmrc-title-prt-2")
                                                 <span class="govuk-visually-hidden"> @index</span>
                                             </a>
@@ -190,7 +194,7 @@ balance.getOrElse(throw MissingFieldException("Balance"))
                                     <p class="govuk-heading-s">
                                         @charge._1.documentDetail.paymentOrChargeCredit.getOrElse(throw MissingFieldException("Payment Or Charge Credit")).toCurrencyString
                                         <span class="govuk-body"> @messages("credit-and-refund.credit-from-hmrc-title-prt-1")
-                                            <a id="credit-and-refund-@index" href="@getCreditsSummaryControllerHref(charge._1.documentDetail, isAgent)"
+                                            <a id="credit-and-refund-@index" href="@getCreditsSummaryControllerHref"
                                             class="govuk-link">@messages("paymentHistory.paymentFromEarlierYear")
                                                 <span class="govuk-visually-hidden"> @index</span>
                                             </a>
