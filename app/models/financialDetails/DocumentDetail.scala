@@ -18,6 +18,8 @@ package models.financialDetails
 
 import play.api.Logger
 import play.api.libs.json.{Format, Json}
+import services.DateService
+
 import java.time.LocalDate
 
 case class DocumentDetail(taxYear: String,
@@ -169,8 +171,8 @@ case class DocumentDetail(taxYear: String,
 
 case class DocumentDetailWithDueDate(documentDetail: DocumentDetail, dueDate: Option[LocalDate],
                                      isLatePaymentInterest: Boolean = false, dunningLock: Boolean = false,
-                                     codingOutEnabled: Boolean = false, isMFADebit: Boolean = false) {
-  val isOverdue: Boolean = dueDate.exists(_ isBefore LocalDate.now)
+                                     codingOutEnabled: Boolean = false, isMFADebit: Boolean = false)(implicit val dateService: DateService) {
+  val isOverdue: Boolean = dueDate.exists(_ isBefore dateService.getCurrentDate)
 }
 
 object DocumentDetail {

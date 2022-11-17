@@ -26,12 +26,13 @@ import uk.gov.hmrc.http.HeaderCarrier
 
 import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.duration.DurationInt
+import scala.concurrent.{Await, ExecutionContext, Future}
 
 @Singleton
 class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsService,
                                   val incomeTaxViewChangeConnector: IncomeTaxViewChangeConnector,
-                                  dateService: DateService)
+                                  implicit val dateService: DateService)
                                  (implicit ec: ExecutionContext, implicit val appConfig: FrontendAppConfig) extends FeatureSwitching {
 
   implicit lazy val localDateOrdering: Ordering[LocalDate] = Ordering.by(_.toEpochDay)

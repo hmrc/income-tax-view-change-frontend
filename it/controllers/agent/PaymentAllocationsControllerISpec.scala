@@ -134,8 +134,6 @@ class PaymentAllocationsControllerISpec extends ComponentSpecBase with FeatureSw
       IncomeTaxViewChangeStub.stubGetPaymentAllocationResponse(testNino,
         paymentAllocationChargesModel.documentDetails.head.paymentLot.get,
         paymentAllocationChargesModel.documentDetails.head.paymentLotItem.get)(OK, testValidPaymentAllocationsModelJson)
-      IncomeTaxViewChangeStub.stubGetFinancialsByDocumentId(testNino, "1040000872")(OK, validPaymentAllocationChargesJson)
-      IncomeTaxViewChangeStub.stubGetFinancialsByDocumentId(testNino, "1040000873")(OK, validPaymentAllocationChargesJson)
 
       val result: WSResponse = IncomeTaxViewChangeFrontend.getPaymentAllocation(docNumber, clientDetailsWithConfirmation)
 

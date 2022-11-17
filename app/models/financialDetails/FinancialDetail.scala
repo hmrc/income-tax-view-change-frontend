@@ -18,6 +18,8 @@ package models.financialDetails
 
 import models.financialDetails.FinancialDetail.Types._
 import play.api.libs.json.{Format, Json}
+import services.DateService
+
 import java.time.LocalDate
 
 case class FinancialDetail(taxYear: String,
@@ -63,22 +65,22 @@ case class FinancialDetail(taxYear: String,
     }
   }
 
-  lazy val payments: Seq[Payment] = items match {
+  def payments(implicit dateService: DateService): Seq[Payment] = items match {
     case Some(subItems) => subItems.map { subItem =>
       Payment(reference = subItem.paymentReference, amount = subItem.paymentAmount, outstandingAmount = None,
         method = subItem.paymentMethod, documentDescription = None, lot = subItem.paymentLot, lotItem = subItem.paymentLotItem,
-        dueDate = subItem.clearingDate, documentDate = LocalDate.now, transactionId = subItem.transactionId)
+        dueDate = subItem.clearingDate, documentDate = dateService.getCurrentDate, transactionId = subItem.transactionId)
     }.filter(_.reference.isDefined)
     case None => Seq.empty[Payment]
   }
 
-  lazy val allocation: Option[PaymentsWithChargeType] = items
+  def allocation(implicit dateService: DateService): Option[PaymentsWithChargeType] = items
     .map { subItems =>
       subItems.collect {
         case subItem if subItem.paymentLot.isDefined && subItem.paymentLotItem.isDefined =>
           Payment(reference = subItem.paymentReference, amount = subItem.amount, outstandingAmount = None,
             method = subItem.paymentMethod, documentDescription = None, lot = subItem.paymentLot, lotItem = subItem.paymentLotItem,
-            dueDate = subItem.clearingDate, documentDate = LocalDate.now(), transactionId = subItem.transactionId)
+            dueDate = subItem.clearingDate, documentDate = dateService.getCurrentDate, transactionId = subItem.transactionId)
       }
     }
     .collect {

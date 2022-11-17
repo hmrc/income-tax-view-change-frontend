@@ -28,6 +28,13 @@ import testUtils.TestSupport
 
 class NextUpdatesResponseModelSpec extends TestSupport with Matchers with ImplicitDateFormatter {
 
+  def getNextUpdateStatus(obligation: NextUpdateModel): NextUpdateStatus = {
+
+    val dueDate = obligation.due
+
+    if (!mockedCurrentTime20171031.isAfter(dueDate)) Open(dueDate)
+    else Overdue(dueDate)
+  }
 
   "The NextUpdatesModel" should {
 
@@ -52,7 +59,7 @@ class NextUpdatesResponseModelSpec extends TestSupport with Matchers with Implic
       }
 
       "return 'Overdue' with getObligationStatus" in {
-        obligation.getNextUpdateStatus shouldBe Overdue("2017-10-30")
+        getNextUpdateStatus(obligation) shouldBe Overdue("2017-10-30")
       }
 
       "have the obligation type 'Quarterly'" in {
@@ -81,7 +88,7 @@ class NextUpdatesResponseModelSpec extends TestSupport with Matchers with Implic
       }
 
       "return 'Open' with getObligationStatus" in {
-        obligation.getNextUpdateStatus shouldBe Open("2017-10-31")
+        getNextUpdateStatus(obligation) shouldBe Open("2017-10-31")
       }
 
       "have the obligation type 'Quarterly'" in {
@@ -110,7 +117,7 @@ class NextUpdatesResponseModelSpec extends TestSupport with Matchers with Implic
       }
 
       "return 'Open' with getObligationStatus" in {
-        obligation.getNextUpdateStatus shouldBe Overdue("2017-10-1")
+        getNextUpdateStatus(obligation) shouldBe Overdue("2017-10-1")
       }
 
       "have the obligation type 'Eops'" in {
@@ -139,7 +146,7 @@ class NextUpdatesResponseModelSpec extends TestSupport with Matchers with Implic
       }
 
       "return 'Open' with getObligationStatus" in {
-        obligation.getNextUpdateStatus shouldBe Open("2017-10-31")
+        getNextUpdateStatus(obligation) shouldBe Open("2017-10-31")
       }
 
       "have the obligation type 'Eops'" in {

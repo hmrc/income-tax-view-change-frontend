@@ -18,15 +18,20 @@ package testConstants
 
 import enums.ChargeType.NIC4_WALES
 import models.creditDetailModel.{CreditDetailModel, CutOverCreditType, MfaCreditType}
+
+import java.time.LocalDate
+import testConstants.BaseTestConstants.{app, testErrorMessage, testErrorNotFoundStatus, testErrorStatus, testTaxYear}
 import models.financialDetails._
 import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
 import play.api.libs.json.{JsValue, Json}
-import testConstants.BaseTestConstants.{testErrorMessage, testErrorNotFoundStatus, testErrorStatus, testTaxYear}
+import services.DateService
 import testConstants.FinancialDetailsTestConstants.{documentDetailWithDueDateModel, financialDetail}
 
 import java.time.LocalDate
 
 object FinancialDetailsTestConstants {
+
+  implicit val dateService: DateService = app.injector.instanceOf[DateService]
 
   val id1040000123 = "1040000123"
   val id1040000124 = "1040000124"
@@ -852,7 +857,7 @@ object FinancialDetailsTestConstants {
   val whatYouOweDataWithMixedData1: WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
     chargesList = List(financialDetailsWithMixedData1.getAllDocumentDetailsWithDueDates().head,
-      financialDetailsWithMixedData1.getAllDocumentDetailsWithDueDates()(1)),
+      financialDetailsWithMixedData1.getAllDocumentDetailsWithDueDates()(dateService)(1)),
     outstandingChargesModel = Some(OutstandingChargesModel(List()))
   )
 
@@ -878,7 +883,7 @@ object FinancialDetailsTestConstants {
   val whatYouOweDataWithMixedData2: WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
     chargesList = List(financialDetailsWithMixedData2.getAllDocumentDetailsWithDueDates().head,
-      financialDetailsWithMixedData2.getAllDocumentDetailsWithDueDates()(1)),
+      financialDetailsWithMixedData2.getAllDocumentDetailsWithDueDates()(dateService)(1)),
     outstandingChargesModel = Some(OutstandingChargesModel(List()))
   )
 
@@ -1184,7 +1189,7 @@ object CreditAndRefundConstants {
   )
 
   def documentDetailWithDueDateFinancialDetailListModel(outstandingAmount: Option[BigDecimal] = Some(-1400.0),
-                                                        dueDate: Option[LocalDate] = Some(LocalDate.of(2019, 5, 15)),
+                                                        dueDate: Option[LocalDate] = Some(LocalDate.of(2019,5,15)),
                                                         originalAmount: Option[BigDecimal] = Some(1400.00),
                                                         mainType: String = "SA Payment on Account 1",
                                                         paymentLot: Option[String] = None,

@@ -3,6 +3,7 @@ package helpers.servicemocks
 
 import testConstants.BaseIntegrationTestConstants.taxYear
 import models.financialDetails.{DocumentDetail, DocumentDetailWithDueDate}
+import services.DateService
 
 import java.time.LocalDate
 
@@ -17,7 +18,7 @@ object DocumentDetailsStub {
     documentDate = LocalDate.of(2018, 3, 29)
   )
 
-  def docDateDetail(dueDate: String, chargeType: String): DocumentDetailWithDueDate = DocumentDetailWithDueDate(
+  def docDateDetail(dueDate: String, chargeType: String)(implicit dateService: DateService): DocumentDetailWithDueDate = DocumentDetailWithDueDate(
     documentDetail = docDetail(chargeType),
     dueDate = Some(LocalDate.parse(dueDate))
   )
@@ -37,7 +38,7 @@ object DocumentDetailsStub {
     interestEndDate = Some(LocalDate.of(2019, 1, 1))
   )
 
-  def docDateDetailWithInterest(dueDate: String, chargeType: String): DocumentDetailWithDueDate = DocumentDetailWithDueDate(
+  def docDateDetailWithInterest(dueDate: String, chargeType: String)(implicit dateService: DateService): DocumentDetailWithDueDate = DocumentDetailWithDueDate(
     documentDetail = docDetailWithInterest(chargeType),
     dueDate = Some(LocalDate.parse(dueDate))
   )
