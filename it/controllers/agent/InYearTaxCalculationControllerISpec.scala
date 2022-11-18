@@ -130,7 +130,7 @@ class InYearTaxCalculationControllerISpec extends ComponentSpecBase {
     val incomeLink = s"/report-quarterly/income-and-expenses/view/agents/$taxYear/income"
 
     val allowanceText = "Allowances and deductions"
-    val allowanceAmount = "£17,500.99"
+    val allowanceAmount = "£12,500.00"
     val allowanceLink = s"/report-quarterly/income-and-expenses/view/agents/$taxYear/allowances-and-deductions"
 
     val taxableIncome = "Total income on which tax is due"
