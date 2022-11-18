@@ -21,6 +21,7 @@ import config.featureswitch.FeatureSwitch.switches
 import config.featureswitch.{CodingOut, FeatureSwitching, MFACreditsAndDebits}
 import connectors.IncomeTaxViewChangeConnector
 import enums.ChargeType.NIC4_WALES
+import enums.CodingOutType._
 import models.financialDetails._
 import models.outstandingCharges.{OutstandingChargesErrorModel, OutstandingChargesModel}
 import org.mockito.ArgumentMatchers.any
@@ -219,18 +220,18 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
         "return the codedout documentDetail, cancelled coding out and the class2 nics charge" in {
           enable(CodingOut)
           val dd1 = DocumentDetail(taxYear = "2021", transactionId = id1040000124, documentDescription = Some("TRM New Charge"),
-            documentText = Some("Class 2 National Insurance"), outstandingAmount = Some(43.21),
+            documentText = Some(CODING_OUT_CLASS2_NICS), outstandingAmount = Some(43.21),
             originalAmount = Some(43.21), documentDate = LocalDate.of(2018, 3, 29),
             interestOutstandingAmount = None, interestRate = None,
             latePaymentInterestId = None, interestFromDate = Some(LocalDate.parse("2019-05-25")),
             interestEndDate = Some(LocalDate.parse("2019-06-25")), latePaymentInterestAmount = None)
           val dd2 = DocumentDetail(taxYear = "2021", transactionId = id1040000125, documentDescription = Some("TRM New Charge"),
-            documentText = Some("Cancelled PAYE Self Assessment"), outstandingAmount = Some(43.21),
+            documentText = Some(CODING_OUT_CANCELLED), outstandingAmount = Some(43.21),
             originalAmount = Some(43.21), documentDate = LocalDate.of(2018, 3, 29),
             interestOutstandingAmount = None, interestRate = None,
             latePaymentInterestId = None, interestFromDate = Some(LocalDate.parse("2019-05-25")),
             interestEndDate = Some(LocalDate.parse("2019-06-25")), latePaymentInterestAmount = None)
-          val dd3 = dd1.copy(transactionId = id1040000126, documentText = Some("PAYE Self Assessment"), amountCodedOut = Some(2500.00))
+          val dd3 = dd1.copy(transactionId = id1040000126, documentText = Some(CODING_OUT_ACCEPTED), amountCodedOut = Some(2500.00))
           when(mockIncomeTaxViewChangeConnector.getOutstandingCharges(any(), any(), any())(any()))
             .thenReturn(Future.successful(OutstandingChargesErrorModel(404, "NOT_FOUND")))
           when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any(), any(), any()))
@@ -260,18 +261,18 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
         "not return any coding out details" in {
           disable(CodingOut)
           val dd1 = DocumentDetail(taxYear = "2021", transactionId = id1040000124, documentDescription = Some("TRM New Charge"),
-            documentText = Some("Class 2 National Insurance"), outstandingAmount = Some(43.21),
+            documentText = Some(CODING_OUT_CLASS2_NICS), outstandingAmount = Some(43.21),
             originalAmount = Some(43.21), documentDate = LocalDate.of(2018, 3, 29),
             interestOutstandingAmount = None, interestRate = None,
             latePaymentInterestId = None, interestFromDate = Some(LocalDate.parse("2019-05-25")),
             interestEndDate = Some(LocalDate.parse("2019-06-25")), latePaymentInterestAmount = None)
           val dd2 = DocumentDetail(taxYear = "2021", transactionId = id1040000125, documentDescription = Some("TRM New Charge"),
-            documentText = Some("Cancelled PAYE Self Assessment"), outstandingAmount = Some(43.21),
+            documentText = Some(CODING_OUT_CANCELLED), outstandingAmount = Some(43.21),
             originalAmount = Some(43.21), documentDate = LocalDate.of(2018, 3, 29),
             interestOutstandingAmount = None, interestRate = None,
             latePaymentInterestId = None, interestFromDate = Some(LocalDate.parse("2019-05-25")),
             interestEndDate = Some(LocalDate.parse("2019-06-25")), latePaymentInterestAmount = None)
-          val dd3 = dd1.copy(transactionId = id1040000126, documentText = Some("PAYE Self Assessment"))
+          val dd3 = dd1.copy(transactionId = id1040000126, documentText = Some(CODING_OUT_ACCEPTED))
           when(mockIncomeTaxViewChangeConnector.getOutstandingCharges(any(), any(), any())(any()))
             .thenReturn(Future.successful(OutstandingChargesErrorModel(404, "NOT_FOUND")))
           when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any(), any(), any()))

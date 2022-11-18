@@ -18,6 +18,7 @@ package controllers
 
 import audit.models.{NextUpdatesResponseAuditModel, TaxYearSummaryResponseAuditModel}
 import auth.MtdItUser
+import enums.CodingOutType._
 import config.featureswitch._
 import helpers.ComponentSpecBase
 import helpers.servicemocks.AuditStub.{verifyAuditContainsDetail, verifyAuditEvent}
@@ -78,7 +79,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         taxYear = getCurrentTaxYearEnd.getYear.toString,
         transactionId = "testTransactionId",
         documentDescription = Some("TRM New Charge"),
-        documentText = Some("Class 2 National Insurance"),
+        documentText = Some(CODING_OUT_CLASS2_NICS),
         documentDate = LocalDate.of(2021, 8, 13),
         originalAmount = Some(1000.00),
         outstandingAmount = Some(500.00),
@@ -119,7 +120,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         taxYear = getCurrentTaxYearEnd.getYear.toString,
         transactionId = "testTransactionId",
         documentDescription = Some("TRM New Charge"),
-        documentText = Some("Class 2 National Insurance"),
+        documentText = Some(CODING_OUT_CLASS2_NICS),
         documentDate = LocalDate.of(2021, 1, 31),
         originalAmount = Some(1000.00),
         outstandingAmount = Some(500.00),
@@ -131,7 +132,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         taxYear = getCurrentTaxYearEnd.getYear.toString,
         transactionId = "testTransactionId",
         documentDescription = Some("TRM New Charge"),
-        documentText = Some("Cancelled PAYE Self Assessment"),
+        documentText = Some(CODING_OUT_CANCELLED),
         documentDate = LocalDate.of(2021, 8, 31),
         originalAmount = Some(1000.00),
         outstandingAmount = Some(1000.00),
@@ -162,7 +163,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         taxYear = getCurrentTaxYearEnd.getYear.toString,
         transactionId = "testTransactionId",
         documentDescription = Some("TRM New Charge"),
-        documentText = Some("Class 2 National Insurance"),
+        documentText = Some(CODING_OUT_CLASS2_NICS),
         documentDate = LocalDate.of(2021, 9, 13),
         originalAmount = Some(1000.00),
         outstandingAmount = Some(0),
@@ -182,7 +183,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         taxYear = getCurrentTaxYearEnd.getYear.toString,
         transactionId = "testTransactionId",
         documentDescription = Some("TRM New Charge"),
-        documentText = Some("Cancelled PAYE Self Assessment"),
+        documentText = Some(CODING_OUT_CANCELLED),
         documentDate = LocalDate.of(2022, 1, 31),
         originalAmount = Some(1000.00),
         outstandingAmount = Some(0),
