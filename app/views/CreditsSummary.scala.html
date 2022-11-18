@@ -21,9 +21,7 @@
 @import views.html.layouts.unifiedLayout
 @import views.html.components._
 @import exceptions.MissingFieldException
-@import models.creditDetailModel.{CreditDetailModel, MfaCreditType}
-@import java.time.LocalDate
-@import java.time.format.DateTimeFormatter
+@import models.creditDetailModel.CreditDetailModel
 
 @this(
         mainTemplate: unifiedLayout,
@@ -151,9 +149,9 @@
                 @if(charges.nonEmpty) {
                     @tableHead("over-due-payments-table-head")
                     <tbody class="govuk-table__body">
-                        @for((documentDetail, creditType, date, index) <- charges.zipWithIndex.map(x => (x._1.documentDetail, x._1.creditType, if(x._1.creditType == MfaCreditType) LocalDate.parse(s"07-05-${x._1.documentDetail.taxYear}", DateTimeFormatter.ofPattern("d-MM-yyyy")) else x._1.date, x._2))) {
+                        @for((documentDetail, creditType, date, index) <- charges.zipWithIndex.map(x => (x._1.documentDetail, x._1.creditType, x._1.date, x._2))) {
                             <tr class="govuk-table__row " id="@getIndex(index)">
-                                <td class="govuk-table__cell govuk-!-width-one-quarter">@if(creditType == MfaCreditType) {@date.getYear} else {@date.toLongDateShort}</td>
+                                <td class="govuk-table__cell govuk-!-width-one-quarter">@date.toLongDateShort</td>
                                 <td class="govuk-table__cell govuk-!-width-one-half">@messages(creditType.key)</td>
                                 <td class="govuk-table__cell numeric govuk-!-width-one-quarter">@getStatus(documentDetail)</td>
                                 <td class="govuk-table__cell numeric govuk-!-width-one-quarter govuk-!-text-align-right">@documentDetail.originalAmount.map(_.abs).getOrElse(throw MissingFieldException("Original Amount")).toCurrencyString</td>
