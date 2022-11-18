@@ -52,18 +52,46 @@ class TaxYearSummaryViewModelSpec extends UnitSpec with ImplicitDateParser {
           unattendedCalc = false,
           taxDue = 5000.99,
           income = 12500,
-          deductions = 17500.99,
+          deductions = 12500,
           totalTaxableIncome = 12500,
           forecastIncome = Some(12500),
           forecastIncomeTaxAndNics = Some(5000.99),
           forecastAllowancesAndDeductions = Some(4200.00),
           forecastTotalTaxableIncome = Some(8300),
-          periodFrom = Some(LocalDate.of(2018,1,1)),
-          periodTo = Some(LocalDate.of(2019,1,1))
+          periodFrom = Some(LocalDate.of(2018, 1, 1)),
+          periodTo = Some(LocalDate.of(2019, 1, 1))
         )
 
         TaxYearSummaryViewModel(liabilityCalculationModelSuccessful) shouldBe expectedTaxYearSummaryViewModel
       }
+
+      "create a full TaxYearSummaryViewModel with forecast calculation" when {
+        "incomeTaxNicAndCgtAmount is not available then take incomeTaxNicAmount as forecastIncomeTaxAndNics" in {
+          val expectedTaxYearSummaryViewModel = TaxYearSummaryViewModel(
+            timestamp = Some("2019-02-15T09:35:15.094Z".toZonedDateTime.toLocalDate),
+            crystallised = Some(true),
+            unattendedCalc = false,
+            taxDue = 5000.99,
+            income = 12500,
+            deductions = 12500,
+            totalTaxableIncome = 12500,
+            forecastIncome = Some(12500),
+            forecastIncomeTaxAndNics = Some(6000.99),
+            forecastAllowancesAndDeductions = Some(4200.00),
+            forecastTotalTaxableIncome = Some(8300),
+            periodFrom = Some(LocalDate.of(2018, 1, 1)),
+            periodTo = Some(LocalDate.of(2019, 1, 1))
+          )
+
+          val liabilityCalculationModel = liabilityCalculationModelSuccessful.copy(
+            calculation = Some(liabilityCalculationModelSuccessful.calculation.get.copy(
+              endOfYearEstimate = Some(liabilityCalculationModelSuccessful.calculation.get.endOfYearEstimate.get.copy(
+                incomeTaxNicAndCgtAmount = None,incomeTaxNicAmount = Some(6000.99) )))))
+
+          TaxYearSummaryViewModel(liabilityCalculationModel) shouldBe expectedTaxYearSummaryViewModel
+        }
+      }
+
 
       "create a full TaxYearSummaryViewModel with taxDue as totalIncomeTaxAndNicsAndCgt" when {
         "the 'totalIncomeTaxAndNicsAndCgt' field is available" in {
@@ -74,7 +102,7 @@ class TaxYearSummaryViewModelSpec extends UnitSpec with ImplicitDateParser {
             unattendedCalc = false,
             taxDue = taxDue,
             income = 12500,
-            deductions = 17500.99,
+            deductions = 12500,
             totalTaxableIncome = 12500,
             forecastIncome = Some(12500),
             forecastIncomeTaxAndNics = Some(5000.99),
