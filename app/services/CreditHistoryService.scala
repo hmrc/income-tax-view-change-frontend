@@ -34,7 +34,7 @@ class CreditHistoryService @Inject()(incomeTaxViewChangeConnector: IncomeTaxView
 
   // This logic is based on the findings in => RepaymentHistoryUtils.combinePaymentHistoryData method
   // Problem: we need to get list of credits (MFA + CutOver) and filter it out by calendar year
-  // MFA credits are driven by documentDate
+  // MFA credits are driven by taxYear
   // CutOver credit by dueDate found in financialDetails related to the corresponding documentDetail (see getDueDateFor)
   private def getCreditsByTaxYear(taxYear: Int, nino: String)
                                  (implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[CreditHistoryError.type, List[CreditDetailModel]]] = {
@@ -70,11 +70,11 @@ class CreditHistoryService @Inject()(incomeTaxViewChangeConnector: IncomeTaxView
       creditModelForTaxYearPlusOne <- getCreditsByTaxYear(calendarYear + 1, nino)
     } yield (creditModelForTaxYear, creditModelForTaxYearPlusOne) match {
       case (Right(creditModelTY), Right(creditModelTYandOne)) =>
-        Right((creditModelTY ++ creditModelTYandOne).filter(_.date.getYear == calendarYear))
+        Right((creditModelTY ++ creditModelTYandOne).filter(_.documentDetail.taxYear == calendarYear.toString))
       case (Right(creditModelTY), Left(_)) =>
-        Right(creditModelTY.filter(_.date.getYear == calendarYear))
+        Right(creditModelTY.filter(_.documentDetail.taxYear == calendarYear.toString))
       case (Left(_), Right(creditModelTYandOne)) =>
-        Right(creditModelTYandOne.filter(_.date.getYear == calendarYear))
+        Right(creditModelTYandOne.filter(_.documentDetail.taxYear == calendarYear.toString))
       case (_, _) =>
         Left(CreditHistoryError)
     }

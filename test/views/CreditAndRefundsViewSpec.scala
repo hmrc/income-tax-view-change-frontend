@@ -61,7 +61,9 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
 
   val link = "/report-quarterly/income-and-expenses/view/payment-made-to-hmrc?documentNumber=1040000123"
   val linkCreditsSummaryPage = "/report-quarterly/income-and-expenses/view/credits-from-hmrc/2018"
+  val linkCreditsSummaryPageMFAPreviousYear = "/report-quarterly/income-and-expenses/view/credits-from-hmrc/2017"
   val linkPaymentMadeToHmrc = "/report-quarterly/income-and-expenses/view/agents/payment-made-to-hmrc?documentNumber=1040000123"
+
   class Setup(creditCharges: List[(DocumentDetailWithDueDate, FinancialDetail)] = List(documentDetailWithDueDateFinancialDetailListModel()),
               balance: Option[BalanceDetails] = Some(balanceDetailsModel()),
               creditAndRefundType: Option[UnallocatedCreditType] = None,
@@ -156,9 +158,30 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
           document.getElementsByClass("govuk-button").first().text() shouldBe checkBtn
         }
 
+      "a user has a Credit from HMRC adjustment for the previous taxYear" in
+        new Setup(creditCharges = List(documentDetailWithDueDateFinancialDetailListModelMFA(2017)),
+          balance = Some(balanceDetailsModel(
+            firstPendingAmountRequested = Some(4.50),
+            secondPendingAmountRequested = None,
+            availableCredit = Some(0))),
+          isMFACreditsAndDebitsEnabled = true
+        ) {
+
+          document.title() shouldBe creditAndRefundHeadingWithTitleServiceNameGovUk
+          layoutContent.selectHead("h1").text shouldBe creditAndRefundHeading
+          document.select("h2").first().select("span").text().contains(subHeadingWithCreditsPart1 + subHeadingWithCreditsPart2) shouldBe false
+          document.select("p").get(2).select("p:nth-child(1)").first().text() shouldBe
+            s"£1,400.00 $creditAndRefundFromHMRCTitlePart1 $creditAndRefundFromHMRCTitlePart2 0"
+          document.select("p").get(2).select("a").attr("href") shouldBe linkCreditsSummaryPageMFAPreviousYear
+          document.select("p").eachText().contains("Total") shouldBe false
+          document.select("govuk-list govuk-list--bullet").isEmpty shouldBe true
+
+          document.getElementsByClass("govuk-button").first().text() shouldBe checkBtn
+        }
+
       "a user has a Multiple Credit from HMRC adjustment sorted in descending of credit" in
         new Setup(creditCharges = List(documentDetailWithDueDateFinancialDetailListModelMFA(),
-          documentDetailWithDueDateFinancialDetailListModelMFA(Some(-1000.0))),
+          documentDetailWithDueDateFinancialDetailListModelMFA(outstandingAmount = Some(-1000.0))),
           balance = Some(balanceDetailsModel(
             firstPendingAmountRequested = Some(4.50),
             secondPendingAmountRequested = None,
@@ -211,7 +234,7 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
               unallocatedCredit = Some(500.00)
             )
           ),
-          creditAndRefundType =  Some(UnallocatedCreditFromOnePayment)
+          creditAndRefundType = Some(UnallocatedCreditFromOnePayment)
         ) {
 
           document.title() shouldBe creditAndRefundHeadingWithTitleServiceNameGovUk
@@ -243,7 +266,7 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
               unallocatedCredit = Some(12.00)
             )
           ),
-          creditAndRefundType =  Some(UnallocatedCreditFromSingleCreditItem)
+          creditAndRefundType = Some(UnallocatedCreditFromSingleCreditItem)
         ) {
 
           document.title() shouldBe creditAndRefundHeadingWithTitleServiceNameGovUk
@@ -276,7 +299,7 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
               unallocatedCredit = Some(12.00)
             )
           ),
-          creditAndRefundType =  Some(UnallocatedCreditFromSingleCreditItem)
+          creditAndRefundType = Some(UnallocatedCreditFromSingleCreditItem)
         ) {
 
           document.title() shouldBe creditAndRefundHeadingWithTitleServiceNameGovUk

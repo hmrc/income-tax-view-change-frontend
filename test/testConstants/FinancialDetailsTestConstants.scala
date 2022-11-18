@@ -27,7 +27,7 @@ import play.api.libs.json.{JsValue, Json}
 import services.DateService
 import testConstants.FinancialDetailsTestConstants.{documentDetailWithDueDateModel, financialDetail}
 
-import scala.math.BigDecimal
+import java.time.LocalDate
 
 object FinancialDetailsTestConstants {
 
@@ -1205,9 +1205,10 @@ object CreditAndRefundConstants {
       financialDetail(mainType = mainType))
   }
 
-  def documentDetailWithDueDateFinancialDetailListModelMFA(outstandingAmount: Option[BigDecimal] = Some(BigDecimal(-1400.0))):
+  def documentDetailWithDueDateFinancialDetailListModelMFA(taxYear: Int = 2018, outstandingAmount: Option[BigDecimal] = Some(BigDecimal(-1400.0))):
   (DocumentDetailWithDueDate, FinancialDetail) = {
     (documentDetailWithDueDateModel(
+      taxYear = taxYear,
       paymentLot = None,
       paymentLotItem = None,
       documentDescription = Some("TRM New Charge"),
