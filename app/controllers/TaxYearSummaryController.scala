@@ -69,7 +69,7 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
 
   private def showForecast(modelOpt: Option[TaxYearSummaryViewModel]): Boolean = {
     val isCrystalised = modelOpt.flatMap(_.crystallised).contains(true)
-    val forecastDataPresent = modelOpt.flatMap(_.forecastIncome).isDefined && modelOpt.flatMap(_.forecastIncomeTaxAndNics).isDefined
+    val forecastDataPresent = modelOpt.flatMap(_.forecastIncome).isDefined
     isEnabled(ForecastCalculation) && modelOpt.isDefined && !isCrystalised && forecastDataPresent
   }
 
