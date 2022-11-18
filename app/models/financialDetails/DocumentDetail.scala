@@ -36,22 +36,27 @@ case class DocumentDetail(taxYear: String,
                           lpiWithDunningBlock: Option[BigDecimal] = None,
                           paymentLotItem: Option[String] = None,
                           paymentLot: Option[String] = None,
-                          amountCodedOut: Option[BigDecimal] = None
+                          amountCodedOut: Option[BigDecimal] = None,
+                          accruingInterestAmount: Option[BigDecimal] = None
                          ) {
 
   def credit: Option[BigDecimal] = originalAmount match {
-    case None => None
     case _ if (paymentLotItem.isDefined && paymentLot.isDefined) => None
-    case Some(_) if (originalAmount.get == 0) => None
-    case Some(_) if (originalAmount.get > 0) => None
-    case Some(credit) => Some(credit * -1)
+    case Some(_) if (originalAmount.get >= 0 ) => None
+    case Some(credit) => Some(credit.abs)
+    case _ => None
   }
 
   def paymentOrChargeCredit: Option[BigDecimal] = outstandingAmount match {
-    case None => None
-    case Some(_) if (outstandingAmount.get == 0) => None
-    case Some(_) if (outstandingAmount.get > 0) => None
-    case Some(credit) => Some(credit * -1)
+    case Some(_) if (outstandingAmount.get >= 0) => None
+    case Some(credit) => Some(credit.abs)
+    case _ => None
+  }
+
+  def accruingInterestCredit: Option[BigDecimal] = accruingInterestAmount match {
+    case Some(_) if (outstandingAmount.get >= 0) => None
+    case Some(credit) => Some(credit.abs)
+    case _ => None
   }
 
   def outstandingAmountZero: Boolean =

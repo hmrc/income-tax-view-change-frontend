@@ -29,7 +29,6 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.{CreditService, IncomeSourceDetailsService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.language.LanguageUtils
-import utils.CreditAndRefundUtils
 import utils.CreditAndRefundUtils.UnallocatedCreditType
 import utils.CreditAndRefundUtils.UnallocatedCreditType.maybeUnallocatedCreditType
 import views.html.CreditAndRefunds
@@ -56,10 +55,6 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
                                           val customNotFoundErrorView: CustomNotFoundError)
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
-  private val creditsFromHMRC = "HMRC"
-  private val cutOverCredits = "CutOver"
-  private val payment = "Payment"
-
   def handleRequest(isAgent: Boolean, itvcErrorHandler: ShowInternalServerError, backUrl: String)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
     creditService.getCreditCharges()(implicitly, user) map {
@@ -69,7 +64,7 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
         val balance: Option[BalanceDetails] = financialDetailsModel.headOption.map(balance => balance.balanceDetails)
 
         val credits: List[(DocumentDetailWithDueDate, FinancialDetail)] = financialDetailsModel.flatMap(
-          financialDetailsModel => sortCreditsGroupedPaymentTypes(financialDetailsModel.getAllDocumentDetailsWithDueDatesAndFinancialDetails())
+          financialDetailsModel => sortCredits(financialDetailsModel.getAllDocumentDetailsWithDueDatesAndFinancialDetails())
         )
 
         val creditAndRefundType: Option[UnallocatedCreditType] = maybeUnallocatedCreditType(credits, balance)
@@ -107,45 +102,19 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
     }
   }
 
-  def sortCreditsGroupedPaymentTypes(credits: List[(DocumentDetailWithDueDate, FinancialDetail)])
+  def sortCredits(credits: List[(DocumentDetailWithDueDate, FinancialDetail)])
   : List[(DocumentDetailWithDueDate, FinancialDetail)] = {
-
-    val sortingOrderCreditType = Map(
-      creditsFromHMRC -> 0,
-      cutOverCredits -> 1,
-      payment -> 2
-    )
-
-    def sortCredits(credits: List[(DocumentDetailWithDueDate, FinancialDetail)])
-    : List[(DocumentDetailWithDueDate, FinancialDetail)] = {
-      credits
-        .sortBy(_._1.documentDetail.paymentOrChargeCredit).reverse
-    }
-
-    val creditsGroupedPaymentTypes = credits
-      .groupBy[String] {
-        credits => {
-          getCreditTypeGroupKey(credits)
-        }
-      }
-      .toList.sortWith((p1, p2) => sortingOrderCreditType(p1._1) < sortingOrderCreditType(p2._1))
-      .map {
-        case (documentId, credits) => (documentId, sortCredits(credits))
-      }.flatMap {
-      case (_, credits) => credits
-    }
-    creditsGroupedPaymentTypes
+    credits.sortBy(credit => getCreditSortIndex(credit))
   }
 
-  def getCreditTypeGroupKey(credits: (DocumentDetailWithDueDate, FinancialDetail)): String = {
-    val isMFA: Boolean = credits._2.validMFACreditType()
-    val isCutOverCredit: Boolean = credits._2.validCutoverCreditType()
-    val isPayment: Boolean = credits._1.documentDetail.paymentLot.isDefined
-    (isMFA, isCutOverCredit, isPayment) match {
-      case (true, false, false) => creditsFromHMRC
-      case (false, true, false) => cutOverCredits
-      case (false, false, true) => payment
-      case (_, _, _) => throw new Exception("Credit Type Not Found")
+  def getCreditSortIndex(credit: (DocumentDetailWithDueDate, FinancialDetail)): Int = {
+    val isMFACredit: Boolean = credit._2.validMFACreditType()
+    val isCutOverCredit: Boolean = credit._2.validCutoverCreditType()
+    val isPayment: Boolean = credit._1.documentDetail.paymentLot.isDefined
+    (isMFACredit, isCutOverCredit, isPayment) match {
+      case (true, false, false) => 1
+      case (false, true, false) => 2
+      case (false, false, true) => 3
     }
   }
 }
