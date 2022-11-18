@@ -33,7 +33,6 @@ case class AllowancesAndDeductionsViewModel(
                                              totalAllowancesAndDeductions: Option[BigDecimal] = None,
                                              totalReliefs: Option[BigDecimal] = None
                                            ) {
-  val totalAllowancesDeductionsReliefs: Option[BigDecimal] = totalAllowancesAndDeductions
 
   val personalAllowanceDisplayValue: Option[BigDecimal] =
     personalAllowanceBeforeTransferOut.fold(reducedPersonalAllowance.fold(personalAllowance)(Some(_)))(Some(_))
