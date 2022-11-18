@@ -19,6 +19,7 @@ package services
 import auth.MtdItUser
 import config.FrontendAppConfig
 import connectors.IncomeTaxViewChangeConnector
+import exceptions.MissingFieldException
 import models.financialDetails.{DocumentDetail, FinancialDetail}
 import models.creditDetailModel._
 import models.financialDetails.FinancialDetailsModel
@@ -27,6 +28,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.{Failure, Success, Try}
 
 class CreditHistoryService @Inject()(incomeTaxViewChangeConnector: IncomeTaxViewChangeConnector,
                                      val appConfig: FrontendAppConfig)
@@ -63,6 +65,12 @@ class CreditHistoryService @Inject()(incomeTaxViewChangeConnector: IncomeTaxView
     }
   }
 
+  def getTaxYearAsInt(taxYear: String): Int =
+    Try(taxYear.toInt) match {
+      case Success(taxYearValue) => taxYearValue
+      case Failure(_) => throw MissingFieldException("Tax Year field should be a numeric value in a format of YYYY")
+    }
+
   def getCreditsHistory(calendarYear: Int, nino: String)
                        (implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[CreditHistoryError.type, List[CreditDetailModel]]] = {
     for {
@@ -70,11 +78,11 @@ class CreditHistoryService @Inject()(incomeTaxViewChangeConnector: IncomeTaxView
       creditModelForTaxYearPlusOne <- getCreditsByTaxYear(calendarYear + 1, nino)
     } yield (creditModelForTaxYear, creditModelForTaxYearPlusOne) match {
       case (Right(creditModelTY), Right(creditModelTYandOne)) =>
-        Right((creditModelTY ++ creditModelTYandOne).filter(_.documentDetail.taxYear == calendarYear.toString))
+        Right((creditModelTY ++ creditModelTYandOne).filter(creditDetailModel => getTaxYearAsInt(creditDetailModel.documentDetail.taxYear) == calendarYear))
       case (Right(creditModelTY), Left(_)) =>
-        Right(creditModelTY.filter(_.documentDetail.taxYear == calendarYear.toString))
+        Right(creditModelTY.filter(creditDetailModel => getTaxYearAsInt(creditDetailModel.documentDetail.taxYear) == calendarYear))
       case (Left(_), Right(creditModelTYandOne)) =>
-        Right(creditModelTYandOne.filter(_.documentDetail.taxYear == calendarYear.toString))
+        Right(creditModelTYandOne.filter(creditDetailModel => getTaxYearAsInt(creditDetailModel.documentDetail.taxYear) == calendarYear))
       case (_, _) =>
         Left(CreditHistoryError)
     }
