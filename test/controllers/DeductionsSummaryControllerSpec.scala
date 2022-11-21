@@ -71,7 +71,7 @@ class DeductionsSummaryControllerSpec extends TestSupport with MockCalculationSe
         mockCalculationSuccessfulNew(testMtditid)
         status(result) shouldBe Status.OK
         document.title() shouldBe allowancesAndDeductionsServiceNameIndividual
-        document.getElementById("total-value").text() shouldBe "£17,500.99"
+        document.getElementById("total-value").text() shouldBe "£12,500.00"
       }
     }
 
@@ -108,7 +108,7 @@ class DeductionsSummaryControllerSpec extends TestSupport with MockCalculationSe
 
       status(result) shouldBe Status.OK
       document.title() shouldBe allowancesAndDeductionsServiceNameAgent
-      document.getElementById("total-value").text() shouldBe "£17,500.99"
+      document.getElementById("total-value").text() shouldBe "£12,500.00"
     }
 
     "render the Allowances and Deductions page with no calc data" in {
