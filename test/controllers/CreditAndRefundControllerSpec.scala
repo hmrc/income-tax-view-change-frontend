@@ -30,7 +30,7 @@ import org.mockito.Mockito.{mock, when}
 import play.api.http.Status
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{status, _}
-import services.CreditService
+import services.{CreditService, DateService}
 import testConstants.BaseTestConstants
 import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
 import testConstants.FinancialDetailsTestConstants._
@@ -59,6 +59,7 @@ class CreditAndRefundControllerSpec extends MockAuthenticationPredicate with Moc
       creditService = mockCreditService
     )(
       appConfig = app.injector.instanceOf[FrontendAppConfig],
+      dateService = app.injector.instanceOf[DateService],
       languageUtils = languageUtils,
       mcc = app.injector.instanceOf[MessagesControllerComponents],
       ec = ec,

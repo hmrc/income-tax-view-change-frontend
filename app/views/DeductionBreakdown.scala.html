@@ -67,7 +67,7 @@
                 @tableRow("trade_union_payments", viewModel.paymentsToTradeUnionsForDeathBenefits)
                 <tr class="govuk-table__row">
                     <td class="govuk-table__header total-section">@messages("deduction_breakdown.total")</td>
-                    <td id="total-value" class="govuk-table__header govuk-table__header--numeric total-section">@viewModel.totalAllowancesDeductionsReliefs.getOrElse(BigDecimal(0)).toCurrency</td>
+                    <td id="total-value" class="govuk-table__header govuk-table__header--numeric total-section">@viewModel.totalAllowancesAndDeductions.getOrElse(BigDecimal(0)).toCurrency</td>
                 </tr>
             </tbody>
         </table>

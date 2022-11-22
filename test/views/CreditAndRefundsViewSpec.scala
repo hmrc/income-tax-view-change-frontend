@@ -65,6 +65,7 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
 
   val link = "/report-quarterly/income-and-expenses/view/payment-made-to-hmrc?documentNumber=1040000123"
   val linkCreditsSummaryPage = "/report-quarterly/income-and-expenses/view/credits-from-hmrc/2018"
+  val linkCreditsSummaryPageMFAPreviousYear = "/report-quarterly/income-and-expenses/view/credits-from-hmrc/2017"
   val linkPaymentMadeToHmrc = "/report-quarterly/income-and-expenses/view/agents/payment-made-to-hmrc?documentNumber=1040000123"
 
   class Setup(creditCharges: List[(DocumentDetailWithDueDate, FinancialDetail)] = List(documentDetailWithDueDateFinancialDetailListModel()),
@@ -147,14 +148,14 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
           document.select("h2").first().select("span").text().contains(subHeadingWithCreditsPart1 + subHeadingWithCreditsPart2) shouldBe false
           document.getElementById("credits-list").select("li:nth-child(1)").text() shouldBe
             s"£1,400.00 $creditFromHMRCAdjustmentPart1 $creditFromHMRCAdjustmentPart2 0"
-          document.getElementById("credits-list").select("li:nth-child(1) a:nth-child(1)").attr("href") shouldBe linkCreditsSummaryPage
+          document.getElementById("credits-list").select("li:nth-child(1) a:nth-child(1)").attr("href") shouldBe linkCreditsSummaryPageMFAPreviousYear
           document.select("p").eachText().contains("Total") shouldBe false
           document.select("govuk-list govuk-list--bullet").isEmpty shouldBe true
           document.getElementsByClass("govuk-button").first().text() shouldBe checkBtn
         }
 
         "display a single Credit from HMRC adjustment" in
-          new Setup(List(documentDetailWithDueDateFinancialDetailListModelMFA()),
+          new Setup(List(documentDetailWithDueDateFinancialDetailListModelMFA(2017)),
             balance = Some(balanceDetailsModel(
               firstPendingAmountRequested = Some(4.50),
               secondPendingAmountRequested = None,

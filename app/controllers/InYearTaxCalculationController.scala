@@ -30,7 +30,7 @@ import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculat
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import services.{CalculationService, IncomeSourceDetailsService}
+import services.{CalculationService, DateService, IncomeSourceDetailsService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.language.LanguageUtils
 import views.html.InYearTaxCalculationView
@@ -48,6 +48,7 @@ class InYearTaxCalculationController @Inject()(
                                                 retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                                 val incomeSourceDetailsService: IncomeSourceDetailsService,
                                                 calcService: CalculationService,
+                                                dateService: DateService,
                                                 auditingService: AuditingService,
                                                 itvcErrorHandler: ItvcErrorHandler,
                                                 implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
@@ -97,7 +98,7 @@ class InYearTaxCalculationController @Inject()(
   def show(origin: Option[String]): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
-      val currentDate = LocalDate.now()
+      val currentDate = dateService.getCurrentDate
       handleRequest(
         isAgent = false,
         currentDate,
@@ -111,7 +112,7 @@ class InYearTaxCalculationController @Inject()(
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true).flatMap {
           implicit mtdItUser =>
-            val currentDate = LocalDate.now()
+            val currentDate = dateService.getCurrentDate
             handleRequest(
               isAgent = true,
               currentDate,

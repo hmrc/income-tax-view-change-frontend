@@ -16,8 +16,11 @@
 
 package models.financialDetails
 
+import enums.CodingOutType._
 import play.api.Logger
 import play.api.libs.json.{Format, Json}
+import services.DateService
+
 import java.time.LocalDate
 
 case class DocumentDetail(taxYear: String,
@@ -142,17 +145,17 @@ case class DocumentDetail(taxYear: String,
   def isNotCodingOutDocumentDetail: Boolean = !isClass2Nic && !isPayeSelfAssessment && !isCancelledPayeSelfAssessment
 
   def isClass2Nic: Boolean = documentText match {
-    case Some(documentText) if documentText == "Class 2 National Insurance" => true
+    case Some(documentText) if documentText == CODING_OUT_CLASS2_NICS.name => true
     case _ => false
   }
 
   def isPayeSelfAssessment: Boolean = (documentDescription, documentText) match {
-    case (Some("TRM New Charge") | Some("TRM Amend Charge"), Some("PAYE Self Assessment")) => true
+    case (Some("TRM New Charge") | Some("TRM Amend Charge"), Some(CODING_OUT_ACCEPTED.name)) => true
     case _ => false
   }
 
   def isCancelledPayeSelfAssessment: Boolean = (documentDescription, documentText) match {
-    case ((Some("TRM New Charge") | Some("TRM Amend Charge")), Some("Cancelled PAYE Self Assessment")) => true
+    case ((Some("TRM New Charge") | Some("TRM Amend Charge")), Some(CODING_OUT_CANCELLED.name)) => true
     case _ => false
   }
 
@@ -174,8 +177,8 @@ case class DocumentDetail(taxYear: String,
 
 case class DocumentDetailWithDueDate(documentDetail: DocumentDetail, dueDate: Option[LocalDate],
                                      isLatePaymentInterest: Boolean = false, dunningLock: Boolean = false,
-                                     codingOutEnabled: Boolean = false, isMFADebit: Boolean = false) {
-  val isOverdue: Boolean = dueDate.exists(_ isBefore LocalDate.now)
+                                     codingOutEnabled: Boolean = false, isMFADebit: Boolean = false)(implicit val dateService: DateService) {
+  val isOverdue: Boolean = dueDate.exists(_ isBefore dateService.getCurrentDate)
 }
 
 object DocumentDetail {

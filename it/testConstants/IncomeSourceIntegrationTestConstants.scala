@@ -20,6 +20,7 @@ import BusinessDetailsIntegrationTestConstants._
 import PaymentHistoryTestConstraints.oldBusiness1
 import PropertyDetailsIntegrationTestConstants._
 import enums.ChargeType.{ITSA_NI, NIC4_SCOTLAND}
+import enums.CodingOutType._
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel, IncomeSourceDetailsResponse}
 import play.api.libs.json.{JsValue, Json}
 import testConstants.BaseIntegrationTestConstants.getCurrentTaxYearEnd
@@ -434,7 +435,7 @@ object IncomeSourceIntegrationTestConstants {
         "taxYear" -> taxYear,
         "transactionId" -> "1040000123",
         "documentDescription" -> "TRM New Charge",
-        "documentText" -> "Class 2 National Insurance",
+        "documentText" -> CODING_OUT_CLASS2_NICS,
         "outstandingAmount" -> outstandingAmount,
         "originalAmount" -> originalAmount,
         "documentDate" -> "2018-03-29"
@@ -443,7 +444,7 @@ object IncomeSourceIntegrationTestConstants {
         "taxYear" -> payeSaTaxYear,
         "transactionId" -> "1040000124",
         "documentDescription" -> "TRM New Charge",
-        "documentText" -> "PAYE Self Assessment",
+        "documentText" -> CODING_OUT_ACCEPTED,
         "outstandingAmount" -> outstandingAmount,
         "originalAmount" -> originalAmount,
         "documentDate" -> "2018-03-29",
@@ -453,7 +454,7 @@ object IncomeSourceIntegrationTestConstants {
         "taxYear" -> taxYear,
         "transactionId" -> "1040000125",
         "documentDescription" -> "TRM Amend Charge",
-        "documentText" -> "Cancelled PAYE Self Assessment",
+        "documentText" -> CODING_OUT_CANCELLED,
         "outstandingAmount" -> outstandingAmount,
         "originalAmount" -> originalAmount,
         "documentDate" -> "2018-03-29"

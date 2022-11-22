@@ -23,7 +23,6 @@
 @import views.html.components._
 @import exceptions.MissingFieldException
 @import uk.gov.hmrc.govukfrontend.views.html.components._
-
 @import java.time.LocalDate
 @import views.html.partials.chargeSummary._
 @import models.chargeHistory.ChargeHistoryModel
@@ -44,7 +43,8 @@
     chargeSummaryNotCodingOutAndNotPayeSelfAssessment: ChargeSummaryNotCodingOutAndNotPayeSelfAssessment,
     govukInsetText : GovukInsetText
 )
-@(documentDetailWithDueDate: DocumentDetailWithDueDate, backUrl: String,
+@(currentDate: LocalDate,
+    documentDetailWithDueDate: DocumentDetailWithDueDate, backUrl: String,
     paymentBreakdown: List[FinancialDetail], chargeHistory: List[ChargeHistoryModel], paymentAllocations: List[PaymentsWithChargeType],
     payments: FinancialDetailsModel, chargeHistoryEnabled: Boolean, paymentAllocationEnabled: Boolean,
     latePaymentInterestCharge: Boolean, codingOutEnabled: Boolean, isAgent: Boolean = false, btaNavPartial: Option[Html] = None,
@@ -56,8 +56,6 @@
 @documentDetail = @{documentDetailWithDueDate.documentDetail}
 
 @dueDate = @{documentDetailWithDueDate.dueDate}
-
-@currentDate = @{LocalDate.now}
 
 @currentTaxYearEnd = @{
     if (currentDate.isBefore(LocalDate.of(currentDate.getYear, 4, 6))) currentDate.getYear

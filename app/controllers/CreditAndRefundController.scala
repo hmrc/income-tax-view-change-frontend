@@ -26,7 +26,7 @@ import models.financialDetails.{BalanceDetails, DocumentDetailWithDueDate, Finan
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import services.{CreditService, IncomeSourceDetailsService}
+import services.{CreditService, DateService, IncomeSourceDetailsService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.language.LanguageUtils
 import utils.CreditAndRefundUtils.UnallocatedCreditType
@@ -47,6 +47,7 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
                                           val itvcErrorHandler: ItvcErrorHandler,
                                           val incomeSourceDetailsService: IncomeSourceDetailsService)
                                          (implicit val appConfig: FrontendAppConfig,
+                                          dateService: DateService,
                                           val languageUtils: LanguageUtils,
                                           mcc: MessagesControllerComponents,
                                           val ec: ExecutionContext,
