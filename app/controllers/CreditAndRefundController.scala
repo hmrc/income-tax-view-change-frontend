@@ -104,7 +104,8 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
 
   def sortCredits(credits: List[(DocumentDetailWithDueDate, FinancialDetail)])
   : List[(DocumentDetailWithDueDate, FinancialDetail)] = {
-    credits.sortBy(credit => getCreditSortIndex(credit))
+    credits.sortWith(_._1.documentDetail.paymentOrChargeCredit > _._1.documentDetail.paymentOrChargeCredit)
+      .sortBy(credit => getCreditSortIndex(credit))
   }
 
   def getCreditSortIndex(credit: (DocumentDetailWithDueDate, FinancialDetail)): Int = {
@@ -112,9 +113,9 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
     val isCutOverCredit: Boolean = credit._2.validCutoverCreditType()
     val isPayment: Boolean = credit._1.documentDetail.paymentLot.isDefined
     (isMFACredit, isCutOverCredit, isPayment) match {
-      case (true, false, false) => 1
-      case (false, true, false) => 2
-      case (false, false, true) => 3
+      case (true, false, false) => -1
+      case (false, true, false) => 0
+      case (false, false, true) => +1
     }
   }
 }

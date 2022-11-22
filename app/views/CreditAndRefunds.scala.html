@@ -151,9 +151,9 @@ balance.getOrElse(throw MissingFieldException("Balance"))
                 <p class="govuk-heading-s">
                     @credit._1.documentDetail.accruingInterestCredit.getOrElse(throw MissingFieldException("Credit Interest Accrued")).toCurrencyString
                     <span class="govuk-body"> @messages("credit-and-refund.credit-interest-accrued-prt-1")
-                                <a id="credit-and-refund-@index" href="@getCreditsSummaryControllerHref(credit._1.documentDetail, isAgent)"
+                                <a id="credit-and-refund-@{index}a" href="@getCreditsSummaryControllerHref(credit._1.documentDetail, isAgent)"
                                    class="govuk-link">@messages("credit-and-refund.credit-interest-accrued-prt-2")
-                                    <span class="govuk-visually-hidden"> @index</span>
+                                    <span class="govuk-visually-hidden"> @{index}a</span>
                                 </a>
                     </span>
                 </p>

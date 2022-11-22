@@ -22,10 +22,12 @@ import implicits.ImplicitDateFormatter
 import models.financialDetails.{BalanceDetails, DocumentDetailWithDueDate, FinancialDetail}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
+import org.scalatest
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
-import testConstants.CreditAndRefundConstants.{balanceDetailsModel, documentDetailWithDueDateFinancialDetailListModel, documentDetailWithDueDateFinancialDetailListModelMFA}
+import testConstants.CreditAndRefundConstants.{balanceDetailsModel, documentDetailWithDueDateFinancialDetailAllCreditTypes, documentDetailWithDueDateFinancialDetailListModel, documentDetailWithDueDateFinancialDetailListModelMFA}
+import testConstants.FinancialDetailsTestConstants.{creditAndRefundDocumentDetailAllCreditTypesList, creditAndRefundDocumentDetailsWithDueDatesAllCreditTypes, documentDetailWithDueDateModel, financialDetailCreditAndRefundChargeAllCreditTypes}
 import testUtils.{TestSupport, ViewSpec}
 import utils.CreditAndRefundUtils.UnallocatedCreditType
 import utils.CreditAndRefundUtils.UnallocatedCreditType.{UnallocatedCreditFromOnePayment, UnallocatedCreditFromSingleCreditItem}
@@ -50,8 +52,10 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
   val checkBtn: String = messages("credit-and-refund.check-refund-btn")
   val creditAndRefundHeadingWithTitleServiceNameGovUk: String = messages("htmlTitle", creditAndRefundHeading)
   val creditAndRefundHeadingAgentWithTitleServiceNameGovUkAgent: String = messages("htmlTitle.agent", creditAndRefundHeading)
-  val creditAndRefundFromHMRCTitlePart1: String = messages("credit-and-refund.credit-from-hmrc-title-prt-1")
-  val creditAndRefundFromHMRCTitlePart2: String = messages("credit-and-refund.credit-from-hmrc-title-prt-2")
+  val creditFromHMRCAdjustmentPart1: String = messages("credit-and-refund.credit-from-hmrc-title-prt-1")
+  val creditFromHMRCAdjustmentPart2: String = messages("credit-and-refund.credit-from-hmrc-title-prt-2")
+  val creditFromInterestAccruedPart1: String = messages("credit-and-refund.credit-interest-accrued-prt-1")
+  val creditFromInterestAccruedPart2: String = messages("credit-and-refund.credit-interest-accrued-prt-2")
   val creditAndRefundPaymentFromEarlierYearLinkText: String = messages("paymentHistory.paymentFromEarlierYear")
   val creditAndRefundAgentNoCredit: String = messages("credit-and-refund.agent.no-credit")
   val creditAndRefundAgentHasCreditBullet1Prt1: String = messages("credit-and-refund.agent.bullet-one-prt-1")
@@ -62,6 +66,7 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
   val link = "/report-quarterly/income-and-expenses/view/payment-made-to-hmrc?documentNumber=1040000123"
   val linkCreditsSummaryPage = "/report-quarterly/income-and-expenses/view/credits-from-hmrc/2018"
   val linkPaymentMadeToHmrc = "/report-quarterly/income-and-expenses/view/agents/payment-made-to-hmrc?documentNumber=1040000123"
+
   class Setup(creditCharges: List[(DocumentDetailWithDueDate, FinancialDetail)] = List(documentDetailWithDueDateFinancialDetailListModel()),
               balance: Option[BalanceDetails] = Some(balanceDetailsModel()),
               creditAndRefundType: Option[UnallocatedCreditType] = None,
@@ -135,52 +140,63 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
           document.getElementsByClass("govuk-button").first().text() shouldBe checkBtn
         }
 
-      "a user has a Credit from HMRC adjustment" in
-        new Setup(creditCharges = List(documentDetailWithDueDateFinancialDetailListModelMFA()),
-          balance = Some(balanceDetailsModel(
-            firstPendingAmountRequested = Some(4.50),
-            secondPendingAmountRequested = None,
-            availableCredit = Some(0))),
-          isMFACreditsAndDebitsEnabled = true
-        ) {
-
+      "MFA Credits" should {
+        def expectedSingleMFACreditResult(document: Document): scalatest.Assertion = {
           document.title() shouldBe creditAndRefundHeadingWithTitleServiceNameGovUk
-          layoutContent.selectHead("h1").text shouldBe creditAndRefundHeading
+          document.select("h1").text shouldBe creditAndRefundHeading
           document.select("h2").first().select("span").text().contains(subHeadingWithCreditsPart1 + subHeadingWithCreditsPart2) shouldBe false
-          document.select("p").get(2).select("p:nth-child(1)").first().text() shouldBe
-            s"£1,400.00 $creditAndRefundFromHMRCTitlePart1 $creditAndRefundFromHMRCTitlePart2 0"
-          document.select("p").get(2).select("a").attr("href") shouldBe linkCreditsSummaryPage
+          document.getElementById("credits-list").select("li:nth-child(1)").text() shouldBe
+            s"£1,400.00 $creditFromHMRCAdjustmentPart1 $creditFromHMRCAdjustmentPart2 0"
+          document.getElementById("credits-list").select("li:nth-child(1) a:nth-child(1)").attr("href") shouldBe linkCreditsSummaryPage
           document.select("p").eachText().contains("Total") shouldBe false
           document.select("govuk-list govuk-list--bullet").isEmpty shouldBe true
-
           document.getElementsByClass("govuk-button").first().text() shouldBe checkBtn
         }
 
-      "a user has a Multiple Credit from HMRC adjustment sorted in descending of credit" in
-        new Setup(creditCharges = List(documentDetailWithDueDateFinancialDetailListModelMFA(),
-          documentDetailWithDueDateFinancialDetailListModelMFA(Some(-1000.0))),
-          balance = Some(balanceDetailsModel(
-            firstPendingAmountRequested = Some(4.50),
-            secondPendingAmountRequested = None,
-            availableCredit = Some(0))),
-          isMFACreditsAndDebitsEnabled = true
-        ) {
+        "display a single Credit from HMRC adjustment" in
+          new Setup(List(documentDetailWithDueDateFinancialDetailListModelMFA()),
+            balance = Some(balanceDetailsModel(
+              firstPendingAmountRequested = Some(4.50),
+              secondPendingAmountRequested = None,
+              availableCredit = Some(0))),
+            isMFACreditsAndDebitsEnabled = true) {
+            expectedSingleMFACreditResult(document)
+          }
 
-          document.title() shouldBe creditAndRefundHeadingWithTitleServiceNameGovUk
-          layoutContent.selectHead("h1").text shouldBe creditAndRefundHeading
-          document.select("h2").first().select("span").text().contains(subHeadingWithCreditsPart1 + subHeadingWithCreditsPart2) shouldBe false
-          document.select("ul#credits-list li:nth-child(1)").text() shouldBe
-            s"£1,400.00 $creditAndRefundFromHMRCTitlePart1 $creditAndRefundFromHMRCTitlePart2 0"
-          document.select("ul#credits-list li:nth-child(2)").text() shouldBe
-            s"£1,000.00 $creditAndRefundFromHMRCTitlePart1 $creditAndRefundFromHMRCTitlePart2 1"
-          document.select("p").get(2).select("a").attr("href") shouldBe linkCreditsSummaryPage
-          document.select("p").eachText().contains("Total") shouldBe false
-          document.select("govuk-list govuk-list--bullet").isEmpty shouldBe true
+        "display a single Credit from HMRC adjustment with Credit interest accrued" in
+          new Setup(List(documentDetailWithDueDateFinancialDetailListModelMFA(accruingInterestAmount = Some(-1.78))),
+            balance = Some(balanceDetailsModel(
+              firstPendingAmountRequested = Some(4.50),
+              secondPendingAmountRequested = None,
+              availableCredit = Some(0))),
+            isMFACreditsAndDebitsEnabled = true) {
+            expectedSingleMFACreditResult(document)
+            document.getElementById("credits-list").select("li:nth-child(2)").text() shouldBe
+              s"£1.78 $creditFromInterestAccruedPart1 $creditFromInterestAccruedPart2 0a"
+            document.getElementById("credits-list").select("li:nth-child(2) a:nth-child(1)").attr("href") shouldBe linkCreditsSummaryPage
+          }
 
-          document.getElementsByClass("govuk-button").first().text() shouldBe checkBtn
-        }
+        "display multiple Credits from HMRC adjustments" in
+          new Setup(creditCharges = List(documentDetailWithDueDateFinancialDetailListModelMFA(),
+            documentDetailWithDueDateFinancialDetailListModelMFA(Some(-1000.00)),
+            documentDetailWithDueDateFinancialDetailListModelMFA(Some(-500.00))),
+            balance = Some(balanceDetailsModel(
+              firstPendingAmountRequested = Some(4.50),
+              secondPendingAmountRequested = None,
+              availableCredit = Some(0))),
+            isMFACreditsAndDebitsEnabled = true
+          ) {
+            expectedSingleMFACreditResult(document)
+            document.select("ul#credits-list li:nth-child(2)").text() shouldBe
+              s"£1,000.00 $creditFromHMRCAdjustmentPart1 $creditFromHMRCAdjustmentPart2 1"
+            document.getElementById("credits-list").select("li:nth-child(2) a:nth-child(1)").attr("href") shouldBe linkCreditsSummaryPage
+            document.select("ul#credits-list li:nth-child(3)").text() shouldBe
+              s"£500.00 $creditFromHMRCAdjustmentPart1 $creditFromHMRCAdjustmentPart2 2"
+            document.getElementById("credits-list").select("li:nth-child(3) a:nth-child(1)").attr("href") shouldBe linkCreditsSummaryPage
+          }
+      }
 
-      "a user has a multiple Refund claimed for full amount show sorted in descending of amount" in
+      "a user has multiple refunds claimed for full amount sorted (by descending amount)" in
         new Setup(creditCharges = List(documentDetailWithDueDateFinancialDetailListModel(),
           documentDetailWithDueDateFinancialDetailListModel(Some(-1000.0))),
           balance = Some(balanceDetailsModel(availableCredit = Some(0)))
@@ -211,7 +227,7 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
               unallocatedCredit = Some(500.00)
             )
           ),
-          creditAndRefundType =  Some(UnallocatedCreditFromOnePayment)
+          creditAndRefundType = Some(UnallocatedCreditFromOnePayment)
         ) {
 
           document.title() shouldBe creditAndRefundHeadingWithTitleServiceNameGovUk
@@ -243,14 +259,14 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
               unallocatedCredit = Some(12.00)
             )
           ),
-          creditAndRefundType =  Some(UnallocatedCreditFromSingleCreditItem)
+          creditAndRefundType = Some(UnallocatedCreditFromSingleCreditItem)
         ) {
 
           document.title() shouldBe creditAndRefundHeadingWithTitleServiceNameGovUk
           layoutContent.selectHead("h1").text shouldBe creditAndRefundHeading
           document.select("h2").first().select("span").first().text() shouldBe subHeadingWithUnallocatedCreditsSingleCredit
-          document.select("h2").first().select("span").next().text() shouldBe s"$creditAndRefundFromHMRCTitlePart2."
-          document.select("h2").first().select("span").next().select("a").text() shouldBe creditAndRefundFromHMRCTitlePart2
+          document.select("h2").first().select("span").next().text() shouldBe s"$creditFromHMRCAdjustmentPart2."
+          document.select("h2").first().select("span").next().select("a").text() shouldBe creditFromHMRCAdjustmentPart2
           document.select("h2").first().select("span").next().select("a").attr("href") shouldBe linkCreditsSummaryPage
           document.select("dt").eachText().contains("Total") shouldBe false
           document.select("govuk-list govuk-list--bullet").isEmpty shouldBe true
@@ -276,7 +292,7 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
               unallocatedCredit = Some(12.00)
             )
           ),
-          creditAndRefundType =  Some(UnallocatedCreditFromSingleCreditItem)
+          creditAndRefundType = Some(UnallocatedCreditFromSingleCreditItem)
         ) {
 
           document.title() shouldBe creditAndRefundHeadingWithTitleServiceNameGovUk
@@ -357,8 +373,8 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
         ) {
 
           document.select("h2").first().select("span").first().text() shouldBe subHeadingWithUnallocatedCreditsSingleCreditAgent
-          document.select("h2").first().select("span").next().text() shouldBe s"$creditAndRefundFromHMRCTitlePart2."
-          document.select("h2").first().select("span").next().select("a").text() shouldBe creditAndRefundFromHMRCTitlePart2
+          document.select("h2").first().select("span").next().text() shouldBe s"$creditFromHMRCAdjustmentPart2."
+          document.select("h2").first().select("span").next().select("a").text() shouldBe creditFromHMRCAdjustmentPart2
           document.select("dt").eachText().contains("Total") shouldBe false
           document.select("govuk-list govuk-list--bullet").isEmpty shouldBe true
 

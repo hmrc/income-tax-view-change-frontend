@@ -675,7 +675,8 @@ object IncomeSourceIntegrationTestConstants {
   def testValidFinancialDetailsModelCreditAndRefundsJson(originalAmount: BigDecimal, outstandingAmount: BigDecimal, taxYear: String = "2018",
                                                          dueDate: String = "2018-02-14", dunningLock: List[String] = noDunningLock,
                                                          interestLocks: List[String] = noInterestLock,
-                                                         latePaymentInterestAmount: Option[BigDecimal] = Some(100)
+                                                         latePaymentInterestAmount: Option[BigDecimal] = Some(100),
+                                                         accruingInterestAmount: Option[BigDecimal] = None
                                                         ): JsValue = Json.obj(
     "balanceDetails" -> Json.obj(
       "balanceDueWithin30Days" -> 1.00,
@@ -713,7 +714,16 @@ object IncomeSourceIntegrationTestConstants {
         "outstandingAmount" -> outstandingAmount,
         "originalAmount" -> originalAmount,
         "documentDate" -> "2018-03-29"
-      )
+      ),
+      Json.obj(
+        "taxYear" -> taxYear,
+        "transactionId" -> "1040000126",
+        "documentDescription" -> "TRM New Charge",
+        "outstandingAmount" -> outstandingAmount,
+        "originalAmount" -> originalAmount,
+        "documentDate" -> "2018-03-29",
+        "accruingInterestAmount" -> accruingInterestAmount
+      ),
     ),
     "financialDetails" -> Json.arr(
       Json.obj(
@@ -762,7 +772,20 @@ object IncomeSourceIntegrationTestConstants {
             "interestLock" -> interestLocks(1),
             "dunningLock" -> dunningLock(1)
           ))
-      )
+      ),
+      Json.obj(
+        "taxYear" -> taxYear,
+        "mainType" -> "ITSA Overpayment Relief",
+        "transactionId" -> "1040000126",
+        "chargeType" -> ITSA_NI,
+        "originalAmount" -> originalAmount,
+        "items" -> Json.arr(
+          Json.obj("amount" -> 10000,
+            "clearingDate" -> "2019-08-13",
+            "dueDate" -> dueDate,
+            "paymentLot" -> "081203010024",
+            "paymentLotItem" -> "000001"))
+      ),
     )
   )
 
