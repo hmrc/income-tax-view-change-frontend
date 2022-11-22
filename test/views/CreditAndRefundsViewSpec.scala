@@ -178,8 +178,8 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
 
         "display multiple Credits from HMRC adjustments" in
           new Setup(creditCharges = List(documentDetailWithDueDateFinancialDetailListModelMFA(),
-            documentDetailWithDueDateFinancialDetailListModelMFA(Some(-1000.00)),
-            documentDetailWithDueDateFinancialDetailListModelMFA(Some(-500.00))),
+            documentDetailWithDueDateFinancialDetailListModelMFA(outstandingAmount = Some(-1000.00)),
+            documentDetailWithDueDateFinancialDetailListModelMFA(outstandingAmount = Some(-500.00))),
             balance = Some(balanceDetailsModel(
               firstPendingAmountRequested = Some(4.50),
               secondPendingAmountRequested = None,

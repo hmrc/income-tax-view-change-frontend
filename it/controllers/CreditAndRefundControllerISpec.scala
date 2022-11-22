@@ -50,25 +50,25 @@ class CreditAndRefundControllerISpec extends ComponentSpecBase {
           elementTextBySelectorList("#main-content", "li:nth-child(1)", "p")(expectedValue = "£2,000.00 " +
             messagesAPI("credit-and-refund.credit-from-hmrc-title-prt-1") + " " +
             messagesAPI("credit-and-refund.credit-from-hmrc-title-prt-2") + " 0"),
-          elementAttributeBySelector("#credit-and-refund-1", "href")("/report-quarterly/income-and-expenses/view/agents/credits-from-hmrc/2018"),
+          elementAttributeBySelector("#credit-and-refund-1", "href")("/report-quarterly/income-and-expenses/view/credits-from-hmrc/2018"),
 
           elementTextBySelectorList("#main-content", "li:nth-child(2)", "p")(expectedValue = "£2.37 " + messagesAPI("credit-and-refund.credit-interest-accrued-prt-1") + " " + messagesAPI("credit-and-refund.credit-interest-accrued-prt-2") + " 0a"),
-          elementAttributeBySelector("#credit-and-refund-2", "href")("/report-quarterly/income-and-expenses/view/agents/credits-from-hmrc/2018"),
+          elementAttributeBySelector("#credit-and-refund-2", "href")("/report-quarterly/income-and-expenses/view/credits-from-hmrc/2018"),
 
           elementTextBySelectorList("#main-content", "li:nth-child(3)", "p")(expectedValue = "£2,000.00 " +
             messagesAPI("credit-and-refund.credit-from-hmrc-title-prt-1") + " " +
             messagesAPI("credits.drop-down-list.credit-from-an-earlier-tax-year") + " 1"),
-          elementAttributeBySelector("#credit-and-refund-0", "href")("/report-quarterly/income-and-expenses/view/agents/credits-from-hmrc/2018"),
+          elementAttributeBySelector("#credit-and-refund-0", "href")("/report-quarterly/income-and-expenses/view/credits-from-hmrc/2018"),
 
           elementTextBySelectorList("#main-content", "li:nth-child(4)", "p")(expectedValue = "£2,000.00 " +
             messagesAPI("credit-and-refund.credit-from-hmrc-title-prt-1") + " " +
             messagesAPI("credits.drop-down-list.credit-from-an-earlier-tax-year") + " 2"),
-          elementAttributeBySelector("#credit-and-refund-3", "href")("/report-quarterly/income-and-expenses/view/agents/credits-from-hmrc/2018"),
+          elementAttributeBySelector("#credit-and-refund-3", "href")("/report-quarterly/income-and-expenses/view/credits-from-hmrc/2018"),
 
           elementTextBySelectorList("#main-content", "li:nth-child(5)", "p")(expectedValue = "£2,000.00 " +
             messagesAPI("credit-and-refund.credit-from-hmrc-title-prt-1") + " " +
             messagesAPI("credits.drop-down-list.credit-from-an-earlier-tax-year") + " 3"),
-          elementAttributeBySelector("#credit-and-refund-3", "href")("/report-quarterly/income-and-expenses/view/agents/credits-from-hmrc/2018"),
+          elementAttributeBySelector("#credit-and-refund-3", "href")("/report-quarterly/income-and-expenses/view/credits-from-hmrc/2018"),
 
           elementTextBySelectorList("#main-content", "li:nth-child(6)", "p")(expectedValue = "£3.00 "
             + messagesAPI("credit-and-refund.refundProgress-prt-2")),
