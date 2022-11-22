@@ -25,6 +25,8 @@ object AuthStub extends ComponentSpecBase {
 
   val postAuthoriseUrl = "/auth/authorise"
 
+  val requiredConfidenceLevel = appConfig.requiredConfidenceLevel
+
   def stubAuthorised(): Unit = {
     WiremockHelper.stubPost(postAuthoriseUrl, Status.OK,
       Json.parse(
@@ -48,7 +50,7 @@ object AuthStub extends ComponentSpecBase {
            |  "providerId": "12345-credId",
            |  "providerType": "GovernmentGateway"
            | },
-           | "confidenceLevel": 200
+           | "confidenceLevel": $requiredConfidenceLevel
            |}""".stripMargin).toString())
   }
 
@@ -79,7 +81,7 @@ object AuthStub extends ComponentSpecBase {
            |  "name": "John",
            |  "lastName": "Doe"
            | },
-           | "confidenceLevel": 200
+           | "confidenceLevel": $requiredConfidenceLevel
            |}""".stripMargin).toString())
   }
 
@@ -153,7 +155,7 @@ object AuthStub extends ComponentSpecBase {
           )
         ),
         "affinityGroup" -> "Agent",
-        "confidenceLevel" -> 200
+        "confidenceLevel" -> requiredConfidenceLevel
       ))
     )
   }
@@ -165,7 +167,7 @@ object AuthStub extends ComponentSpecBase {
       responseBody = Json.stringify(Json.obj(
         "allEnrolments" -> Json.arr(),
         "affinityGroup" -> "Agent",
-        "confidenceLevel" -> 200
+        "confidenceLevel" -> requiredConfidenceLevel
       ))
     )
   }
