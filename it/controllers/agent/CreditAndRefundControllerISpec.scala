@@ -22,7 +22,7 @@ class CreditAndRefundControllerISpec extends ComponentSpecBase {
     val testTaxYear: Int = getCurrentTaxYearEnd.getYear
     val testPreviousTaxYear: Int = (getCurrentTaxYearEnd.getYear - 1)
     val financialDetailsJson: JsValue = testValidFinancialDetailsModelCreditAndRefundsJson(-2000, -2000,
-      testPreviousTaxYear, testTaxYear, accruingInterestAmount = Some(2.37))
+      testPreviousTaxYear.toString, testTaxYear.toString, accruingInterestAmount = Some(2.37))
 
     def setupCreditAndRefundControllerITests(financialDetailsJson: JsValue = financialDetailsJson): WSResponse = {
       stubAuthorisedAgentUser(authorised = true)
@@ -110,7 +110,7 @@ class CreditAndRefundControllerISpec extends ComponentSpecBase {
 
         IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"$testPreviousTaxYear-04-06", s"$testTaxYear-04-05")(OK,
           testValidFinancialDetailsModelJson(
-            -2000, -2000, testTaxYear, LocalDate.now().toString))
+            -2000, -2000, testTaxYear.toString, LocalDate.now().plusYears(1).toString))
         IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
           "utr", testSaUtr.toLong, testTaxYear.toString)(OK, validOutStandingChargeResponseJsonWithAciAndBcdCharges)
 

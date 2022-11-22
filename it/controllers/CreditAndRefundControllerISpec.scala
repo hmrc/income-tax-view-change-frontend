@@ -7,29 +7,32 @@ import helpers.servicemocks.IncomeTaxViewChangeStub
 import play.api.http.Status.OK
 import play.api.libs.json.JsValue
 import play.api.libs.ws.WSResponse
-import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino, testTaxYear}
+import testConstants.BaseIntegrationTestConstants.{getCurrentTaxYearEnd, testMtditid, testNino, testTaxYear}
 import testConstants.IncomeSourceIntegrationTestConstants.{propertyOnlyResponseWithMigrationData, testValidFinancialDetailsModelCreditAndRefundsJson}
+
 import java.time.LocalDate
 
 class CreditAndRefundControllerISpec extends ComponentSpecBase {
 
   "Navigating to /report-quarterly/income-and-expenses/view/credit-and-refunds" should {
 
+    val testTaxYear: Int = getCurrentTaxYearEnd.getYear
+    val testPreviousTaxYear: Int = (getCurrentTaxYearEnd.getYear - 1)
     val financialDetailsJson: JsValue = testValidFinancialDetailsModelCreditAndRefundsJson(-2000, -2000,
-      testTaxYear.toString, LocalDate.now().plusYears(1).toString, accruingInterestAmount = Some(2.37))
+      testPreviousTaxYear.toString, testTaxYear.toString, accruingInterestAmount = Some(2.37))
 
     def setupCreditAndRefundControllerITests(financialDetailsJson: JsValue = financialDetailsJson): WSResponse = {
 
       Given("a success response from getIncomeSourceDetails API")
-      IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
+      IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testPreviousTaxYear, Some(testTaxYear.toString)))
 
       And("a success response from getFinancialDetails API")
-      IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK, financialDetailsJson)
+      IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"$testPreviousTaxYear-04-06", s"$testTaxYear-04-05")(OK, financialDetailsJson)
 
       val res = IncomeTaxViewChangeFrontend.getCreditAndRefunds()
 
       verifyIncomeSourceDetailsCall(testMtditid)
-      IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
+      IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"$testPreviousTaxYear-04-06", s"$testTaxYear-04-05")
 
       res
     }
@@ -50,25 +53,25 @@ class CreditAndRefundControllerISpec extends ComponentSpecBase {
           elementTextBySelectorList("#main-content", "li:nth-child(1)", "p")(expectedValue = "£2,000.00 " +
             messagesAPI("credit-and-refund.credit-from-hmrc-title-prt-1") + " " +
             messagesAPI("credit-and-refund.credit-from-hmrc-title-prt-2") + " 0"),
-          elementAttributeBySelector("#credit-and-refund-1", "href")("/report-quarterly/income-and-expenses/view/credits-from-hmrc/2018"),
+          elementAttributeBySelector("#credit-and-refund-1", "href")("/report-quarterly/income-and-expenses/view/credits-from-hmrc/2023"),
 
           elementTextBySelectorList("#main-content", "li:nth-child(2)", "p")(expectedValue = "£2.37 " + messagesAPI("credit-and-refund.credit-interest-accrued-prt-1") + " " + messagesAPI("credit-and-refund.credit-interest-accrued-prt-2") + " 0a"),
-          elementAttributeBySelector("#credit-and-refund-2", "href")("/report-quarterly/income-and-expenses/view/credits-from-hmrc/2018"),
+          elementAttributeBySelector("#credit-and-refund-2", "href")("/report-quarterly/income-and-expenses/view/credits-from-hmrc/2023"),
 
           elementTextBySelectorList("#main-content", "li:nth-child(3)", "p")(expectedValue = "£2,000.00 " +
             messagesAPI("credit-and-refund.credit-from-hmrc-title-prt-1") + " " +
             messagesAPI("credits.drop-down-list.credit-from-an-earlier-tax-year") + " 1"),
-          elementAttributeBySelector("#credit-and-refund-0", "href")("/report-quarterly/income-and-expenses/view/credits-from-hmrc/2018"),
+          elementAttributeBySelector("#credit-and-refund-0", "href")("/report-quarterly/income-and-expenses/view/credits-from-hmrc/2023"),
 
           elementTextBySelectorList("#main-content", "li:nth-child(4)", "p")(expectedValue = "£2,000.00 " +
             messagesAPI("credit-and-refund.credit-from-hmrc-title-prt-1") + " " +
             messagesAPI("credits.drop-down-list.credit-from-an-earlier-tax-year") + " 2"),
-          elementAttributeBySelector("#credit-and-refund-3", "href")("/report-quarterly/income-and-expenses/view/credits-from-hmrc/2018"),
+          elementAttributeBySelector("#credit-and-refund-3", "href")("/report-quarterly/income-and-expenses/view/credits-from-hmrc/2023"),
 
           elementTextBySelectorList("#main-content", "li:nth-child(5)", "p")(expectedValue = "£2,000.00 " +
             messagesAPI("credit-and-refund.credit-from-hmrc-title-prt-1") + " " +
             messagesAPI("credits.drop-down-list.credit-from-an-earlier-tax-year") + " 3"),
-          elementAttributeBySelector("#credit-and-refund-3", "href")("/report-quarterly/income-and-expenses/view/credits-from-hmrc/2018"),
+          elementAttributeBySelector("#credit-and-refund-3", "href")("/report-quarterly/income-and-expenses/view/credits-from-hmrc/2023"),
 
           elementTextBySelectorList("#main-content", "li:nth-child(6)", "p")(expectedValue = "£3.00 "
             + messagesAPI("credit-and-refund.refundProgress-prt-2")),

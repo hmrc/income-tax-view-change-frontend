@@ -27,7 +27,6 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import testConstants.CreditAndRefundConstants.{balanceDetailsModel, documentDetailWithDueDateFinancialDetailAllCreditTypes, documentDetailWithDueDateFinancialDetailListModel, documentDetailWithDueDateFinancialDetailListModelMFA}
-import testConstants.FinancialDetailsTestConstants.{creditAndRefundDocumentDetailAllCreditTypesList, creditAndRefundDocumentDetailsWithDueDatesAllCreditTypes, documentDetailWithDueDateModel, financialDetailCreditAndRefundChargeAllCreditTypes}
 import testUtils.{TestSupport, ViewSpec}
 import utils.CreditAndRefundUtils.UnallocatedCreditType
 import utils.CreditAndRefundUtils.UnallocatedCreditType.{UnallocatedCreditFromOnePayment, UnallocatedCreditFromSingleCreditItem}
@@ -165,7 +164,7 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
           }
 
         "display a single Credit from HMRC adjustment with Credit interest accrued" in
-          new Setup(List(documentDetailWithDueDateFinancialDetailListModelMFA(accruingInterestAmount = Some(-1.78))),
+          new Setup(List(documentDetailWithDueDateFinancialDetailListModelMFA(2017, accruingInterestAmount = Some(-1.78))),
             balance = Some(balanceDetailsModel(
               firstPendingAmountRequested = Some(4.50),
               secondPendingAmountRequested = None,
@@ -174,13 +173,13 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
             expectedSingleMFACreditResult(document)
             document.getElementById("credits-list").select("li:nth-child(2)").text() shouldBe
               s"£1.78 $creditFromInterestAccruedPart1 $creditFromInterestAccruedPart2 0a"
-            document.getElementById("credits-list").select("li:nth-child(2) a:nth-child(1)").attr("href") shouldBe linkCreditsSummaryPage
+            document.getElementById("credits-list").select("li:nth-child(2) a:nth-child(1)").attr("href") shouldBe linkCreditsSummaryPageMFAPreviousYear
           }
 
         "display multiple Credits from HMRC adjustments" in
-          new Setup(creditCharges = List(documentDetailWithDueDateFinancialDetailListModelMFA(),
-            documentDetailWithDueDateFinancialDetailListModelMFA(outstandingAmount = Some(-1000.00)),
-            documentDetailWithDueDateFinancialDetailListModelMFA(outstandingAmount = Some(-500.00))),
+          new Setup(creditCharges = List(documentDetailWithDueDateFinancialDetailListModelMFA(2017),
+            documentDetailWithDueDateFinancialDetailListModelMFA(2017, outstandingAmount = Some(-1000.00)),
+            documentDetailWithDueDateFinancialDetailListModelMFA(2017, outstandingAmount = Some(-500.00))),
             balance = Some(balanceDetailsModel(
               firstPendingAmountRequested = Some(4.50),
               secondPendingAmountRequested = None,
@@ -190,10 +189,10 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
             expectedSingleMFACreditResult(document)
             document.select("ul#credits-list li:nth-child(2)").text() shouldBe
               s"£1,000.00 $creditFromHMRCAdjustmentPart1 $creditFromHMRCAdjustmentPart2 1"
-            document.getElementById("credits-list").select("li:nth-child(2) a:nth-child(1)").attr("href") shouldBe linkCreditsSummaryPage
+            document.getElementById("credits-list").select("li:nth-child(2) a:nth-child(1)").attr("href") shouldBe linkCreditsSummaryPageMFAPreviousYear
             document.select("ul#credits-list li:nth-child(3)").text() shouldBe
               s"£500.00 $creditFromHMRCAdjustmentPart1 $creditFromHMRCAdjustmentPart2 2"
-            document.getElementById("credits-list").select("li:nth-child(3) a:nth-child(1)").attr("href") shouldBe linkCreditsSummaryPage
+            document.getElementById("credits-list").select("li:nth-child(3) a:nth-child(1)").attr("href") shouldBe linkCreditsSummaryPageMFAPreviousYear
           }
       }
 
