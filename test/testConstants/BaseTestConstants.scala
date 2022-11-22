@@ -106,17 +106,17 @@ object BaseTestConstants extends UnitSpec with GuiceOneAppPerSuite {
     ListLinks("testEnHelp", "testUrl")
   )
 
-  def testAuthSuccessResponse(confidenceLevel: ConfidenceLevel = ConfidenceLevel.L200,
+  def testAuthSuccessResponse(confidenceLevel: ConfidenceLevel = testConfidenceLevel,
                               affinityGroup: AffinityGroup = AffinityGroup.Individual) = new ~(new ~(new ~(new ~(Enrolments(Set(
     Enrolment("HMRC-MTD-IT", Seq(EnrolmentIdentifier("MTDITID", testMtditid)), "activated"),
     Enrolment("HMRC-NI", Seq(EnrolmentIdentifier("NINO", testNino)), "activated")
   )), Option(testRetrievedUserName)), Some(Credentials(testCredId, ""))), Some(affinityGroup)), confidenceLevel)
 
-  def testAuthSuccessResponseOrgNoNino(confidenceLevel: ConfidenceLevel = ConfidenceLevel.L200) = new ~(new ~(new ~(new ~(Enrolments(Set(
+  def testAuthSuccessResponseOrgNoNino(confidenceLevel: ConfidenceLevel = testConfidenceLevel) = new ~(new ~(new ~(new ~(Enrolments(Set(
     Enrolment("HMRC-MTD-IT", Seq(EnrolmentIdentifier("MTDITID", testMtditid)), "activated")
   )), Option(testRetrievedUserName)), Some(Credentials(testCredId, ""))), Some(AffinityGroup.Organisation)), confidenceLevel)
 
-  def testAuthSuccessWithSaUtrResponse(confidenceLevel: ConfidenceLevel = ConfidenceLevel.L200,
+  def testAuthSuccessWithSaUtrResponse(confidenceLevel: ConfidenceLevel = testConfidenceLevel,
                                        affinityGroup: AffinityGroup = AffinityGroup.Individual) = new ~(new ~(new ~(new ~(Enrolments(Set(
     Enrolment("HMRC-MTD-IT", Seq(EnrolmentIdentifier("MTDITID", testMtditid)), "activated"),
     Enrolment("HMRC-NI", Seq(EnrolmentIdentifier("NINO", testNino)), "activated"),
@@ -129,7 +129,12 @@ object BaseTestConstants extends UnitSpec with GuiceOneAppPerSuite {
     "Activated"
   )
 
-  val testConfidenceLevel: ConfidenceLevel = ConfidenceLevel.L200
+  val testConfidenceLevel: ConfidenceLevel = appConfig.requiredConfidenceLevel match {
+    case 200 => ConfidenceLevel.L200
+    case 250 => ConfidenceLevel.L250
+    case ex => throw new NoSuchElementException(s"Invalid confidence level: $ex")
+  }
+
   val testCredentials: Option[Credentials] = Some(Credentials(testCredId, ""))
 
   val testAgentAuthRetrievalSuccess = new ~(new ~(new ~(Enrolments(Set(arnEnrolment)), Some(AffinityGroup.Agent)), testConfidenceLevel), testCredentials)
