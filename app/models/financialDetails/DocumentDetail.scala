@@ -16,6 +16,7 @@
 
 package models.financialDetails
 
+import enums.CodingOutType._
 import play.api.Logger
 import play.api.libs.json.{Format, Json}
 import services.DateService
@@ -139,17 +140,17 @@ case class DocumentDetail(taxYear: String,
   def isNotCodingOutDocumentDetail: Boolean = !isClass2Nic && !isPayeSelfAssessment && !isCancelledPayeSelfAssessment
 
   def isClass2Nic: Boolean = documentText match {
-    case Some(documentText) if documentText == "Class 2 National Insurance" => true
+    case Some(documentText) if documentText == CODING_OUT_CLASS2_NICS.name => true
     case _ => false
   }
 
   def isPayeSelfAssessment: Boolean = (documentDescription, documentText) match {
-    case (Some("TRM New Charge") | Some("TRM Amend Charge"), Some("PAYE Self Assessment")) => true
+    case (Some("TRM New Charge") | Some("TRM Amend Charge"), Some(CODING_OUT_ACCEPTED.name)) => true
     case _ => false
   }
 
   def isCancelledPayeSelfAssessment: Boolean = (documentDescription, documentText) match {
-    case ((Some("TRM New Charge") | Some("TRM Amend Charge")), Some("Cancelled PAYE Self Assessment")) => true
+    case ((Some("TRM New Charge") | Some("TRM Amend Charge")), Some(CODING_OUT_CANCELLED.name)) => true
     case _ => false
   }
 

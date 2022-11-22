@@ -23,6 +23,7 @@ import testConstants.FinancialDetailsTestConstants.{documentDetailModel, _}
 import auth.MtdItUser
 import config.featureswitch.{CodingOut, FeatureSwitching}
 import enums.ChargeType.NIC4_WALES
+import enums.CodingOutType._
 import mocks.connectors.MockIncomeTaxViewChangeConnector
 import models.core.AccountingPeriodModel
 import models.financialDetails._
@@ -534,11 +535,11 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
           taxYear = getTaxEndYear(LocalDate.now.minusYears(1)),
           documentDetails = List(
             documentDetailModel(transactionId = "transid1", outstandingAmount = Some(200.00)).copy(
-              interestOutstandingAmount = Some(0), documentDescription = Some("TRM New Charge"), documentText = Some("Class 2 National Insurance")),
+              interestOutstandingAmount = Some(0), documentDescription = Some("TRM New Charge"), documentText = Some(CODING_OUT_CLASS2_NICS)),
             documentDetailModel(taxYear = 2021, transactionId = "transid2", outstandingAmount = Some(0)).copy(
-              interestOutstandingAmount = Some(0), documentDescription = Some("TRM New Charge"), documentText = Some("PAYE Self Assessment")),
+              interestOutstandingAmount = Some(0), documentDescription = Some("TRM New Charge"), documentText = Some(CODING_OUT_ACCEPTED)),
             documentDetailModel(transactionId = "transid3", outstandingAmount = Some(0)).copy(
-              interestOutstandingAmount = Some(0), documentDescription = Some("TRM Amend Charge"), documentText = Some("Cancelled PAYE Self Assessment")),
+              interestOutstandingAmount = Some(0), documentDescription = Some("TRM Amend Charge"), documentText = Some(CODING_OUT_CANCELLED)),
           ),
           financialDetails = List(
             fullFinancialDetailModel,
@@ -574,14 +575,14 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
         "class 2 nics exists" in {
           disable(CodingOut)
           val ddNics = documentDetailModel(
-            transactionId = "transid1", outstandingAmount = Some(200.00), latePaymentInterestAmount = None).copy(interestOutstandingAmount = Some(0), documentDescription = Some("TRM New Charge"), documentText = Some("Class 2 National Insurance"))
+            transactionId = "transid1", outstandingAmount = Some(200.00), latePaymentInterestAmount = None).copy(interestOutstandingAmount = Some(0), documentDescription = Some("TRM New Charge"), documentText = Some(CODING_OUT_CLASS2_NICS))
           val ddCodedOut = documentDetailModel(
             taxYear = getTaxEndYear(LocalDate.now.minusYears(1)), transactionId = "transid2", outstandingAmount = Some(2500.00),
             latePaymentInterestAmount = None).copy(interestOutstandingAmount = Some(0), documentDescription = Some("TRM Amend Charge"),
-            documentText = Some("PAYE Self Assessment"))
+            documentText = Some(CODING_OUT_ACCEPTED))
           val ddCancelledCodedOut = documentDetailModel(
             transactionId = "transid3", outstandingAmount = Some(2500.00), latePaymentInterestAmount = None).copy(
-            interestOutstandingAmount = Some(0), documentDescription = Some("TRM New Charge"), documentText = Some("Cancelled PAYE Self Assessment"))
+            interestOutstandingAmount = Some(0), documentDescription = Some("TRM New Charge"), documentText = Some(CODING_OUT_CANCELLED))
           val financialDetailCodingOut = getFinancialDetailSuccess(
             taxYear = getTaxEndYear(LocalDate.now.minusYears(1)),
             documentDetails = List(ddNics, ddCodedOut, ddCancelledCodedOut),

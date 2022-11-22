@@ -18,7 +18,8 @@ package controllers
 
 import audit.models.{NextUpdatesResponseAuditModel, TaxYearSummaryResponseAuditModel}
 import auth.MtdItUser
-import config.featureswitch.{CodingOut, FeatureSwitching, ForecastCalculation, MFACreditsAndDebits, R7bTxmEvents}
+import enums.CodingOutType._
+import config.featureswitch._
 import helpers.ComponentSpecBase
 import helpers.servicemocks.AuditStub.{verifyAuditContainsDetail, verifyAuditEvent}
 import helpers.servicemocks._
@@ -36,7 +37,6 @@ import testConstants.NewCalcBreakdownItTestConstants.{liabilityCalculationModelS
 import testConstants.messages.TaxYearSummaryMessages._
 
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 
 class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
@@ -79,7 +79,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         taxYear = getCurrentTaxYearEnd.getYear.toString,
         transactionId = "testTransactionId",
         documentDescription = Some("TRM New Charge"),
-        documentText = Some("Class 2 National Insurance"),
+        documentText = Some(CODING_OUT_CLASS2_NICS),
         documentDate = LocalDate.of(2021, 8, 13),
         originalAmount = Some(1000.00),
         outstandingAmount = Some(500.00),
@@ -120,7 +120,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         taxYear = getCurrentTaxYearEnd.getYear.toString,
         transactionId = "testTransactionId",
         documentDescription = Some("TRM New Charge"),
-        documentText = Some("Class 2 National Insurance"),
+        documentText = Some(CODING_OUT_CLASS2_NICS),
         documentDate = LocalDate.of(2021, 1, 31),
         originalAmount = Some(1000.00),
         outstandingAmount = Some(500.00),
@@ -132,7 +132,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         taxYear = getCurrentTaxYearEnd.getYear.toString,
         transactionId = "testTransactionId",
         documentDescription = Some("TRM New Charge"),
-        documentText = Some("Cancelled PAYE Self Assessment"),
+        documentText = Some(CODING_OUT_CANCELLED),
         documentDate = LocalDate.of(2021, 8, 31),
         originalAmount = Some(1000.00),
         outstandingAmount = Some(1000.00),
@@ -163,7 +163,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         taxYear = getCurrentTaxYearEnd.getYear.toString,
         transactionId = "testTransactionId",
         documentDescription = Some("TRM New Charge"),
-        documentText = Some("Class 2 National Insurance"),
+        documentText = Some(CODING_OUT_CLASS2_NICS),
         documentDate = LocalDate.of(2021, 9, 13),
         originalAmount = Some(1000.00),
         outstandingAmount = Some(0),
@@ -183,7 +183,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         taxYear = getCurrentTaxYearEnd.getYear.toString,
         transactionId = "testTransactionId",
         documentDescription = Some("TRM New Charge"),
-        documentText = Some("Cancelled PAYE Self Assessment"),
+        documentText = Some(CODING_OUT_CANCELLED),
         documentDate = LocalDate.of(2022, 1, 31),
         originalAmount = Some(1000.00),
         outstandingAmount = Some(0),
@@ -488,8 +488,6 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "ABC123456789", currentObligationsSuccess.obligations.flatMap(_.obligations)).detail)
 
         And("The expected result is returned")
-        val fromDate = LocalDate.of(getCurrentTaxYearEnd.getYear - 1, 4, 6).format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
-        val toDate = LocalDate.of(getCurrentTaxYearEnd.getYear, 4, 5).format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
         res should have(
           httpStatus(OK),
           pageTitleIndividual("tax-year-summary.heading"),
@@ -561,8 +559,6 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "ABC123456789", currentObligationsSuccess.obligations.flatMap(_.obligations)).detail)
 
         And("The expected result is returned")
-        val fromDate = LocalDate.of(getCurrentTaxYearEnd.getYear - 1, 4, 6).format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
-        val toDate = LocalDate.of(getCurrentTaxYearEnd.getYear, 4, 5).format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
         res should have(
           httpStatus(OK),
           pageTitleIndividual("tax-year-summary.heading"),
@@ -917,8 +913,6 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         IncomeTaxCalculationStub.verifyGetCalculationResponse(testNino, "2018")
 
         And("The expected result with right headers are returned")
-        val fromDate = LocalDate.of(2017, 4, 6).format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
-        val toDate = LocalDate.of(2018, 4, 5).format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
         res should have(
           httpStatus(OK),
           pageTitleIndividual("tax-year-summary.heading"),

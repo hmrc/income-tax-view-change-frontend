@@ -20,6 +20,7 @@ import audit.models.ChargeSummaryAudit
 import auth.MtdItUser
 import config.featureswitch._
 import enums.ChargeType.{ITSA_ENGLAND_AND_NI, ITSA_NI, NIC4_SCOTLAND}
+import enums.CodingOutType._
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.AuthStub.titleInternalServer
 import helpers.servicemocks.DocumentDetailsStub.docDateDetailWithInterest
@@ -408,7 +409,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
             taxYear = getCurrentTaxYearEnd.getYear.toString,
             transactionId = "CODINGOUT01",
             documentDescription = Some("TRM New Charge"),
-            documentText = Some("PAYE Self Assessment"),
+            documentText = Some(CODING_OUT_ACCEPTED),
             outstandingAmount = Some(2500.00),
             originalAmount = Some(2500.00),
             documentDate = LocalDate.of(2018, 3, 29),
