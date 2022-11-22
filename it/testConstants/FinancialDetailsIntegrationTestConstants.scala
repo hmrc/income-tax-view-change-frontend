@@ -23,6 +23,7 @@ import enums.ChargeType.NIC4_WALES
 import models.financialDetails.{BalanceDetails, DocumentDetail, DocumentDetailWithDueDate, FinancialDetail, FinancialDetailsErrorModel, FinancialDetailsModel, SubItem, WhatYouOweChargesList}
 import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
 import play.api.libs.json.{JsValue, Json}
+import services.DateService
 
 object FinancialDetailsIntegrationTestConstants {
 
@@ -82,13 +83,13 @@ object FinancialDetailsIntegrationTestConstants {
                                      documentDescription: Option[String] = Some("ITSA- POA 1"),
                                      outstandingAmount: Option[BigDecimal] = Some(1400.00),
                                      originalAmount: Option[BigDecimal] = Some(1400.00),
-                                     dueDate: Option[LocalDate] = Some(LocalDate.of(2019, 5, 15))): DocumentDetailWithDueDate =
+                                     dueDate: Option[LocalDate] = Some(LocalDate.of(2019, 5, 15)))(implicit dateService: DateService): DocumentDetailWithDueDate =
     DocumentDetailWithDueDate(documentDetailModel(taxYear, documentDescription, outstandingAmount, originalAmount), dueDate)
 
   val fullDocumentDetailModel: DocumentDetail = documentDetailModel()
   val fullFinancialDetailModel: FinancialDetail = financialDetail()
 
-  val fullDocumentDetailWithDueDateModel: DocumentDetailWithDueDate = DocumentDetailWithDueDate(fullDocumentDetailModel, Some(LocalDate.of(2019, 5, 15)))
+  def fullDocumentDetailWithDueDateModel(implicit dateService: DateService): DocumentDetailWithDueDate = DocumentDetailWithDueDate(fullDocumentDetailModel, Some(LocalDate.of(2019, 5, 15)))
 
   def financialDetailsModel(taxYear: Int = 2018, outstandingAmount: Option[BigDecimal] = Some(1400.0)): FinancialDetailsModel =
     FinancialDetailsModel(
@@ -429,7 +430,7 @@ object FinancialDetailsIntegrationTestConstants {
     )
   )
 
-  val whatYouOweDataWithDataDueIn30Days: WhatYouOweChargesList = WhatYouOweChargesList(
+  def whatYouOweDataWithDataDueIn30Days(implicit dateService: DateService): WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
     chargesList = List(DocumentDetailWithDueDate(DocumentDetail("2021", "1040000123",
       Some("TRM New Charge"), None, Some(2000), Some(2000), LocalDate.parse("2018-03-29"), Some(80), None, None, Some(LocalDate.parse("2018-03-29")),
@@ -442,50 +443,50 @@ object FinancialDetailsIntegrationTestConstants {
     outstandingChargesModel = Some(outstandingChargesOverdueData)
   )
 
-  val whatYouOweDataWithDataDueInMoreThan30Days: WhatYouOweChargesList = WhatYouOweChargesList(
+  def whatYouOweDataWithDataDueInMoreThan30Days(implicit dateService: DateService): WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
     chargesList = financialDetailsDueInMoreThan30Days.getAllDocumentDetailsWithDueDates(),
     outstandingChargesModel = Some(outstandingChargesDueInMoreThan30Days)
   )
 
-  val whatYouOweDataWithOverdueData: WhatYouOweChargesList = WhatYouOweChargesList(
+  def whatYouOweDataWithOverdueData(implicit dateService: DateService): WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
     chargesList = financialDetailsOverdueData().getAllDocumentDetailsWithDueDates(),
     outstandingChargesModel = Some(outstandingChargesOverdueData)
   )
 
-  val whatYouOweDataFullData: WhatYouOweChargesList = WhatYouOweChargesList(
+  def whatYouOweDataFullData(implicit dateService: DateService): WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
     chargesList = financialDetailsOverdueData().getAllDocumentDetailsWithDueDates(),
     outstandingChargesModel = Some(outstandingChargesOverdueData)
   )
 
-  def whatYouOweDataFullDataWithoutOutstandingCharges(overduePaymentsDunningLocks: List[String] = noDunningLock): WhatYouOweChargesList = WhatYouOweChargesList(
+  def whatYouOweDataFullDataWithoutOutstandingCharges(overduePaymentsDunningLocks: List[String] = noDunningLock)(implicit dateService: DateService): WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
     chargesList = financialDetailsOverdueData(overduePaymentsDunningLocks).getAllDocumentDetailsWithDueDates()
   )
 
-  val whatYouOweDataWithMixedData1: WhatYouOweChargesList = WhatYouOweChargesList(
+  def whatYouOweDataWithMixedData1(implicit dateService: DateService): WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
-    chargesList = List(financialDetailsWithMixedData1.getAllDocumentDetailsWithDueDates()(1))
+    chargesList = List(financialDetailsWithMixedData1.getAllDocumentDetailsWithDueDates()(dateService)(1))
       ++ List(financialDetailsWithMixedData1.getAllDocumentDetailsWithDueDates().head),
     outstandingChargesModel = Some(OutstandingChargesModel(List()))
   )
 
-  val whatYouOweDataWithMixedData2: WhatYouOweChargesList = WhatYouOweChargesList(
+  def whatYouOweDataWithMixedData2(implicit dateService: DateService): WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
-    chargesList = List(financialDetailsWithMixedData2.getAllDocumentDetailsWithDueDates()(1))
-      ++ List(financialDetailsWithMixedData2.getAllDocumentDetailsWithDueDates().head),
+    chargesList = List(financialDetailsWithMixedData2.getAllDocumentDetailsWithDueDates()(dateService)(1))
+      ++ List(financialDetailsWithMixedData2.getAllDocumentDetailsWithDueDates()(dateService).head),
     outstandingChargesModel = Some(OutstandingChargesModel(List()))
   )
 
-  val whatYouOweDataWithMFADebitsData: WhatYouOweChargesList = WhatYouOweChargesList(
+  def whatYouOweDataWithMFADebitsData(implicit dateService: DateService): WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
     chargesList = financialDetailsWithMFADebits.getAllDocumentDetailsWithDueDates(),
     outstandingChargesModel = Some(OutstandingChargesModel(List()))
   )
 
-  val whatYouOweWithAZeroOutstandingAmount: WhatYouOweChargesList = WhatYouOweChargesList(
+  def whatYouOweWithAZeroOutstandingAmount(implicit dateService: DateService): WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
     chargesList = List(DocumentDetailWithDueDate(DocumentDetail("2021", "transId1", Some("ITSA- POA 1"), None, Some(1000), Some(3400),
       LocalDate.parse("2018-03-29"), None, None, None, None, None, None, None, None, None), Some(LocalDate.parse("2018-02-14")), false, false, false),

@@ -293,16 +293,16 @@ object PaymentAllocationIntegrationTestConstants {
   val paymentAllocationViewModel: PaymentAllocationViewModel = PaymentAllocationViewModel(paymentAllocationChargesModel,
     Seq(
       AllocationDetailWithClearingDate(Some(AllocationDetail(Some("1040000872"), Some(LocalDate.parse("2019-06-27")), Some(LocalDate.parse("2019-08-27")), Some(NIC4_WALES), Some("SA Payment on Account 1"), Some(10.10), Some(5.50), Some("chargeReference1"))),
-        Some(LocalDate.parse("2021-01-31"))),
+        Some(LocalDate.parse("2019-05-27"))),
       AllocationDetailWithClearingDate(Some(AllocationDetail(Some("1040000873"), Some(LocalDate.parse("2019-07-28")), Some(LocalDate.parse("2019-09-28")), Some(NIC4_WALES), Some("SA Payment on Account 1"), Some(10.90), Some(5.90), Some("chargeReference2"))),
-        Some(LocalDate.parse("2021-01-31")))
+        Some(LocalDate.parse("2019-05-27")))
     ))
 
   val paymentAllocationViewModelHmrcAdjustment: PaymentAllocationViewModel = PaymentAllocationViewModel(financialDetailsHmrcAdjustment,
     Seq(
       AllocationDetailWithClearingDate(
         Some(AllocationDetail(Some("MA999991A202202"), Some(LocalDate.parse("2021-04-06")), Some(LocalDate.parse("2022-04-05")), Some(ITSA_ENGLAND_AND_NI), Some("ITSA Misc Charge"), Some(800.00), Some(800.00), Some("XM002610011594"))),
-        Some(LocalDate.parse("2021-01-28")))
+        Some(LocalDate.parse("2021-01-31")))
     ))
 
   val lpiDocumentDetail = DocumentDetail(

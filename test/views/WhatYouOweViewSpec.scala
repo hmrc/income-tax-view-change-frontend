@@ -18,6 +18,7 @@ package views
 
 import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
+import enums.CodingOutType._
 import implicits.ImplicitDateFormatter
 import models.financialDetails._
 import models.incomeSourceDetails.IncomeSourceDetailsModel
@@ -113,7 +114,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       arn = None
     )(FakeRequest())
 
-    val html: HtmlFormat.Appendable = whatYouOweView(creditCharges, charges, hasLpiWithDunningBlock, currentTaxYear, "testBackURL",
+    val html: HtmlFormat.Appendable = whatYouOweView(dateService.getCurrentDate, creditCharges, charges, hasLpiWithDunningBlock, currentTaxYear, "testBackURL",
       Some("1234567890"), None, dunningLock, codingOutEnabled, MFADebitsEnabled, whatYouOweCreditAmountEnabled, creditAndRefundEnabled = true)(FakeRequest(), individualUser, implicitly)
     val pageDocument: Document = Jsoup.parse(contentAsString(html))
 
@@ -150,6 +151,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     val whatYouOweView: WhatYouOwe = app.injector.instanceOf[WhatYouOwe]
 
     val html: HtmlFormat.Appendable = whatYouOweView(
+      dateService.getCurrentDate,
       creditCharges = creditCharges,
       whatYouOweChargesList = charges,
       hasLpiWithDunningBlock = hasLpiWithDunningBlock,
@@ -239,14 +241,14 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
   def whatYouOweDataWithOverdueMixedData2(latePaymentInterest: List[Option[BigDecimal]]): WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
-    chargesList = List(financialDetailsOverdueWithLpi(latePaymentInterest, noDunningLocks).getAllDocumentDetailsWithDueDates()(1))
+    chargesList = List(financialDetailsOverdueWithLpi(latePaymentInterest, noDunningLocks).getAllDocumentDetailsWithDueDates()(dateService)(1))
       ++ List(financialDetailsWithMixedData3.getAllDocumentDetailsWithDueDates().head),
 
   )
 
   def whatYouOweDataTestActiveWithMixedData2(latePaymentInterest: List[Option[BigDecimal]]): WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
-    chargesList = List(financialDetailsOverdueWithLpi(latePaymentInterest, noDunningLocks).getAllDocumentDetailsWithDueDates()(1))
+    chargesList = List(financialDetailsOverdueWithLpi(latePaymentInterest, noDunningLocks).getAllDocumentDetailsWithDueDates()(dateService)(1))
       ++ List(financialDetailsWithMixedData3.getAllDocumentDetailsWithDueDates().head),
     outstandingChargesModel = Some(outstandingChargesWithAciValueZeroAndOverdue)
   )
@@ -257,14 +259,14 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
   val codingOutNoticeFullyCollected = s"${messages("whatYouOwe.codingOut-1a")} £0.00 ${messages("whatYouOwe.codingOut-1b")} ${messages("whatYouOwe.codingOut-2", "2020", "2021")} ${messages("whatYouOwe.codingOut-3")}"
 
   val codedOutDocumentDetailNICs: DocumentDetail = DocumentDetail(taxYear = "2021", transactionId = "CODINGOUT02", documentDescription = Some("TRM New Charge"),
-    documentText = Some("Class 2 National Insurance"), outstandingAmount = Some(12.34),
+    documentText = Some(CODING_OUT_CLASS2_NICS), outstandingAmount = Some(12.34),
     originalAmount = Some(43.21), documentDate = LocalDate.of(2018, 3, 29),
     interestOutstandingAmount = None, interestRate = None,
     latePaymentInterestId = None, interestFromDate = Some(LocalDate.parse("2019-05-25")),
     interestEndDate = Some(LocalDate.parse("2019-06-25")), latePaymentInterestAmount = None)
 
   val codedOutDocumentDetail: DocumentDetail = DocumentDetail(taxYear = "2021", transactionId = "CODINGOUT02", documentDescription = Some("TRM New Charge"),
-    documentText = Some("Class 2 National Insurance"), outstandingAmount = Some(12.34),
+    documentText = Some(CODING_OUT_CLASS2_NICS), outstandingAmount = Some(12.34),
     originalAmount = Some(43.21), documentDate = LocalDate.of(2018, 3, 29),
     interestOutstandingAmount = None, interestRate = None,
     latePaymentInterestId = None, interestFromDate = Some(LocalDate.parse("2019-05-25")),
@@ -272,7 +274,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     amountCodedOut = Some(43.21))
 
   val codedOutDocumentDetailFullyCollected: DocumentDetail = DocumentDetail(taxYear = "2021", transactionId = "CODINGOUT02", documentDescription = Some("TRM New Charge"),
-    documentText = Some("Class 2 National Insurance"), outstandingAmount = Some(12.34),
+    documentText = Some(CODING_OUT_CLASS2_NICS), outstandingAmount = Some(12.34),
     originalAmount = Some(43.21), documentDate = LocalDate.of(2018, 3, 29),
     interestOutstandingAmount = None, interestRate = None,
     latePaymentInterestId = None, interestFromDate = Some(LocalDate.parse("2019-05-25")),
@@ -280,7 +282,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     amountCodedOut = Some(0))
 
   val codedOutDocumentDetailPayeSA: DocumentDetail = DocumentDetail(taxYear = "2021", transactionId = "CODINGOUT02", documentDescription = Some("TRM New Charge"),
-    documentText = Some("PAYE Self Assessment"), outstandingAmount = Some(0.00),
+    documentText = Some(CODING_OUT_ACCEPTED), outstandingAmount = Some(0.00),
     originalAmount = Some(43.21), documentDate = LocalDate.of(2018, 3, 29),
     interestOutstandingAmount = None, interestRate = None,
     latePaymentInterestId = None, interestFromDate = Some(LocalDate.parse("2019-05-25")),
@@ -291,14 +293,14 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
   val whatYouOweDataWithWithAciValueZeroAndOverdue: WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
-    chargesList = List(financialDetailsWithMixedData3.getAllDocumentDetailsWithDueDates()(1))
+    chargesList = List(financialDetailsWithMixedData3.getAllDocumentDetailsWithDueDates()(dateService)(1))
       ++ List(financialDetailsWithMixedData3.getAllDocumentDetailsWithDueDates().head),
     outstandingChargesModel = Some(outstandingChargesWithAciValueZeroAndOverdue)
   )
 
   val whatYouOweDataWithWithAciValueZeroAndFuturePayments: WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
-    chargesList = List(financialDetailsWithMixedData1.getAllDocumentDetailsWithDueDates()(1))
+    chargesList = List(financialDetailsWithMixedData1.getAllDocumentDetailsWithDueDates()(dateService)(1))
       ++ List(financialDetailsWithMixedData1.getAllDocumentDetailsWithDueDates().head),
     outstandingChargesModel = Some(outstandingChargesWithAciValueZeroAndOverdue)
   )
@@ -1040,7 +1042,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       }
       "have a class 2 Nics overdue entry" in new Setup(charges = whatYouOweDataWithCodingOutNics2, codingOutEnabled = true) {
         pageDocument.getElementById("due-0") should not be null
-        pageDocument.getElementById("due-0").text().contains("Class 2 National Insurance") shouldBe true
+        pageDocument.getElementById("due-0").text().contains(CODING_OUT_CLASS2_NICS) shouldBe true
         pageDocument.select("#payments-due-table tbody > tr").size() shouldBe 1
       }
 

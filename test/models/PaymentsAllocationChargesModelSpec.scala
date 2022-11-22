@@ -20,9 +20,13 @@ import testConstants.PaymentAllocationsTestConstants._
 import models.paymentAllocationCharges.FinancialDetailsWithDocumentDetailsModel
 import org.scalatest.Matchers
 import play.api.libs.json.{JsSuccess, Json}
+import services.DateService
+import testConstants.BaseTestConstants.app
 import testUtils.UnitSpec
 
 class PaymentsAllocationChargesModelSpec extends UnitSpec with Matchers {
+
+  implicit val dateService: DateService = app.injector.instanceOf[DateService]
 
   "PaymentDetails" should {
 

@@ -33,8 +33,6 @@ class PaymentAllocationsServiceSpec extends TestSupport with MockIncomeTaxViewCh
       "all fields are present" in {
         setupGetPaymentAllocationCharges(testNino, docNumber)(paymentAllocationChargesModel)
         setupGetPaymentAllocation(testNino, "paymentLot", "paymentLotItem")(testValidPaymentAllocationsModel)
-        setupGetPaymentAllocationCharges(testNino, "1040000872")(paymentAllocationChargesModel)
-        setupGetPaymentAllocationCharges(testNino, "1040000873")(paymentAllocationChargesModel)
 
         val result = TestPaymentAllocationsService.getPaymentAllocation(testUserNino, docNumber).futureValue
 
@@ -42,8 +40,6 @@ class PaymentAllocationsServiceSpec extends TestSupport with MockIncomeTaxViewCh
       }
         "paymentLot and LotItem is missing" in {
           setupGetPaymentAllocationCharges(testNino, docNumber)(paymentAllocationChargesModelNoPayment)
-          setupGetPaymentAllocationCharges(testNino, "1040000872")(paymentAllocationChargesModelNoPayment)
-          setupGetPaymentAllocationCharges(testNino, "1040000873")(paymentAllocationChargesModelNoPayment)
 
           val result = TestPaymentAllocationsService.getPaymentAllocation(testUserNino, docNumber).futureValue
 
@@ -56,8 +52,6 @@ class PaymentAllocationsServiceSpec extends TestSupport with MockIncomeTaxViewCh
       "all fields are present" in {
         setupGetPaymentAllocationCharges(testNino, docNumber)(lpiPaymentAllocationParentChargesModel)
         setupGetPaymentAllocation(testNino, "paymentLot", "paymentLotItem")(testValidLpiPaymentAllocationsModel)
-        setupGetPaymentAllocationCharges(testNino, "1040000872")(lpiPaymentAllocationParentChargesModel)
-        setupGetPaymentAllocationCharges(testNino, "1040000873")(lpiPaymentAllocationParentChargesModel)
         mockGetAllFinancialDetails(List((2020, lpiFinancialDetailsModel)))
 
         val result = TestPaymentAllocationsService.getPaymentAllocation(testUserNino, docNumber).futureValue
@@ -83,16 +77,6 @@ class PaymentAllocationsServiceSpec extends TestSupport with MockIncomeTaxViewCh
       "all calls succeed except the call to payment Allocation which returns an error" in {
         setupGetPaymentAllocationCharges(testNino, docNumber)(paymentAllocationChargesModel)
         setupGetPaymentAllocation(testNino, "paymentLot", "paymentLotItem")(PaymentAllocationsError(404, "NOT FOUND"))
-
-        TestPaymentAllocationsService.getPaymentAllocation(testUserNino, docNumber).futureValue shouldBe Left(PaymentAllocationError())
-      }
-
-      "all calls succeed except the call to financial details with a payments SAP document number which returns an error" in {
-        setupGetPaymentAllocationCharges(testNino, docNumber)(paymentAllocationChargesModel)
-        setupGetPaymentAllocation(testNino, "paymentLot", "paymentLotItem")(testValidPaymentAllocationsModel)
-        setupGetPaymentAllocationCharges(testNino, "1040000872")(FinancialDetailsWithDocumentDetailsErrorModel(404, "NOT FOUND"))
-        setupGetPaymentAllocationCharges(testNino, "1040000873")(paymentAllocationChargesModel)
-
 
         TestPaymentAllocationsService.getPaymentAllocation(testUserNino, docNumber).futureValue shouldBe Left(PaymentAllocationError())
       }

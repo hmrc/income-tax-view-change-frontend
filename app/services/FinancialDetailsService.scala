@@ -45,7 +45,7 @@ class FinancialDetailsService @Inject()(val incomeTaxViewChangeConnector: Income
       case _ => List.empty[LocalDate]
     }.sortWith(_ isBefore _)
 
-    val overdueDates: List[LocalDate] = chargeDueDates.filter(_ isBefore LocalDate.now)
+    val overdueDates: List[LocalDate] = chargeDueDates.filter(_ isBefore dateService.getCurrentDate)
     val nextDueDates: List[LocalDate] = chargeDueDates.diff(overdueDates)
 
     (overdueDates, nextDueDates) match {
