@@ -134,7 +134,7 @@ class CreditAndRefundControllerISpec extends ComponentSpecBase {
 
           elementTextBySelectorList("#main-content", "li:nth-child(7)", "p")(expectedValue = "£2.00 "
             + messagesAPI("credit-and-refund.refundProgress-prt-2")),
-          pageTitleAgent("credit-and-refund.heading")
+          pageTitleIndividual("credit-and-refund.heading")
         )
       }
     }
