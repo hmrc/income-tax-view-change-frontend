@@ -99,7 +99,7 @@ class FinalTaxCalculationControllerISpec extends ComponentSpecBase {
     val incomeLink = "/report-quarterly/income-and-expenses/view/2018/income"
 
     val allowanceText = "Allowances and deductions"
-    val allowanceAmount = "£17,500.99"
+    val allowanceAmount = "£12,500.00"
     val allowanceLink = "/report-quarterly/income-and-expenses/view/2018/allowances-and-deductions"
 
     val taxIsDueText = "Total taxable income"

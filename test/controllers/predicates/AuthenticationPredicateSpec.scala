@@ -34,7 +34,7 @@ import scala.concurrent.Future
 
 class AuthenticationPredicateSpec extends TestSupport with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate with MockAuditingService with FeatureSwitching {
 
-  val ivUpliftRedirectUrl: String = s"/mdtp/uplift?origin=ITVC&confidenceLevel=200&" +
+  val ivUpliftRedirectUrl: String = s"/mdtp/uplift?origin=ITVC&confidenceLevel=${appConfig.requiredConfidenceLevel}&" +
     s"completionURL=${appConfig.itvcFrontendEnvironment + "/" + appConfig.baseUrl + controllers.routes.UpliftSuccessController.success.url}&" +
     s"failureURL=${appConfig.itvcFrontendEnvironment + "/" + appConfig.baseUrl + controllers.errors.routes.UpliftFailedController.show.url}"
 

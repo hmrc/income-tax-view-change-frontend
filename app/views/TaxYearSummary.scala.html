@@ -211,18 +211,20 @@
 }
 
 @forecastContent = {
-    @if(modelOpt.isEmpty){
-        @noForecastContent
-    } else {
+    @if(showForecastData && modelOpt.isDefined){
         @forecastContentTable
         @govukInsetText(InsetText(content = Text(messages("tax-year-summary.forecast_tab.insetText", taxYear.toString)), id=Some("inset_forecast")))
+    } else {
+        @noForecastContent
     }
 }
 
 @forecastContentTable = @{
     val forecastIncome = modelOpt.flatMap(model => model.forecastIncome).getOrElse(0).toCurrencyString
     val forecastTotalTaxableIncome = modelOpt.flatMap(model => model.forecastTotalTaxableIncome).getOrElse(0).toCurrencyString
-    val forecastIncomeAndNics = modelOpt.flatMap(model => model.forecastIncomeTaxAndNics).getOrElse(BigDecimal(0)).toCurrencyString
+    val forecastIncomeAndNics = modelOpt.flatMap(model => model.forecastIncomeTaxAndNics)
+                                        .getOrElse(throw MissingFieldException("Forecast Tax Due"))
+                                        .toCurrencyString
     val forecastDeductions = modelOpt.flatMap(model => model.forecastAllowancesAndDeductions).getOrElse(BigDecimal(0)).toCurrencyString
     govukTable(Table(
         rows = Seq(
@@ -309,7 +311,7 @@
                         @messages("tax-year-summary.forecast_total_title", s"${taxYear - 1}", s"$taxYear")
                     </dt>
                     <dd class="govuk-summary-list__value">
-                        @model.forecastIncomeTaxAndNics.get.toCurrencyString
+                        @model.forecastIncomeTaxAndNics.getOrElse(throw MissingFieldException("Forecast Tax Due")).toCurrencyString
                     </dd>
                 </div>
             }

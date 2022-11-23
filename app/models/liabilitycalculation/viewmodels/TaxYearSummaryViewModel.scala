@@ -16,6 +16,7 @@
 
 package models.liabilitycalculation.viewmodels
 
+import exceptions.MissingFieldException
 import implicits.ImplicitDateParser
 import models.liabilitycalculation.LiabilityCalculationResponse
 
@@ -31,7 +32,7 @@ case class TaxYearSummaryViewModel(timestamp: Option[LocalDate],
                                    forecastIncome: Option[Int] = None,
                                    forecastIncomeTaxAndNics: Option[BigDecimal] = None,
                                    forecastAllowancesAndDeductions: Option[BigDecimal] = None,
-                                   forecastTotalTaxableIncome:Option[Int] = None,
+                                   forecastTotalTaxableIncome: Option[Int] = None,
                                    periodFrom: Option[LocalDate] = None,
                                    periodTo: Option[LocalDate] = None)
 
@@ -41,13 +42,19 @@ object TaxYearSummaryViewModel extends ImplicitDateParser {
     case _ => false
   }
 
-  def getTaxDue(calc:LiabilityCalculationResponse): BigDecimal = {
-// totalIncomeTaxAndNicsAndCgt shall be used as tax due, in-case the values is none totalIncomeTaxAndNicsDue shall be used
+  def getTaxDue(calc: LiabilityCalculationResponse): BigDecimal = {
     val totalIncomeTaxAndNicsDue = calc.calculation.flatMap(c => c.taxCalculation.map(_.totalIncomeTaxAndNicsDue))
     val totalIncomeTaxAndNicsAndCgt = calc.calculation.flatMap(c => c.taxCalculation.flatMap(_.totalIncomeTaxAndNicsAndCgt))
-
     totalIncomeTaxAndNicsAndCgt.getOrElse(totalIncomeTaxAndNicsDue.getOrElse(BigDecimal(0)))
+  }
 
+  private def getEstimatedTotalTax(calc: LiabilityCalculationResponse): Option[BigDecimal] = {
+    val incomeTaxNicAndCgtAmount:Option[BigDecimal] = calc.calculation.flatMap(c => c.endOfYearEstimate.flatMap(_.incomeTaxNicAndCgtAmount))
+    val incomeTaxNicAmount:Option[BigDecimal] = calc.calculation.flatMap(c => c.endOfYearEstimate.flatMap(_.incomeTaxNicAmount))
+    incomeTaxNicAndCgtAmount match {
+      case Some(x) => Some(x)
+      case None => incomeTaxNicAmount
+    }
   }
 
   def apply(calc: LiabilityCalculationResponse): TaxYearSummaryViewModel = {
@@ -58,10 +65,10 @@ object TaxYearSummaryViewModel extends ImplicitDateParser {
       unattendedCalc = isUnattendedCalc(calc.metadata.calculationReason),
       taxDue = getTaxDue(calc),
       income = calc.calculation.flatMap(c => c.taxCalculation.map(_.incomeTax.totalIncomeReceivedFromAllSources)).getOrElse(0),
-      deductions = calc.calculation.flatMap(c => c.taxCalculation.map(tc => tc.incomeTax.totalAllowancesDeductionsReliefs)).getOrElse(0.00),
+      deductions = calc.calculation.flatMap(c => c.taxCalculation.map(tc => tc.incomeTax.totalAllowancesAndDeductions)).getOrElse[Int](0),
       totalTaxableIncome = calc.calculation.flatMap(c => c.taxCalculation.map(_.incomeTax.totalTaxableIncome)).getOrElse(0),
       forecastIncome = calc.calculation.flatMap(c => c.endOfYearEstimate.flatMap(_.totalEstimatedIncome)),
-      forecastIncomeTaxAndNics = calc.calculation.flatMap(c => c.endOfYearEstimate.flatMap(_.incomeTaxNicAndCgtAmount)),
+      forecastIncomeTaxAndNics = getEstimatedTotalTax(calc),
       forecastAllowancesAndDeductions = calc.calculation.flatMap(c => c.endOfYearEstimate.flatMap(_.totalAllowancesAndDeductions)),
       forecastTotalTaxableIncome = calc.calculation.flatMap(c => c.endOfYearEstimate.flatMap(_.totalTaxableIncome)),
       periodFrom = calc.metadata.periodFrom,
