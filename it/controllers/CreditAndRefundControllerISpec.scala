@@ -108,7 +108,7 @@ class CreditAndRefundControllerISpec extends ComponentSpecBase {
         res should have(
           httpStatus(OK),
           elementTextBySelectorList("#main-content", "h2:nth-of-type(1)")(expectedValue = messagesAPI("credit-and-refund.subHeading.has-credits-1") + " £5.00 "
-            + messagesAPI("credit-and-refund.agent.subHeading.has-credits-2")),
+            + messagesAPI("credit-and-refund.subHeading.has-credits-2")),
 
           elementTextBySelectorList("#main-content", "li:nth-child(1)", "p")(expectedValue = "£2,000.00 " +
             messagesAPI("credit-and-refund.credit-from-hmrc-title-prt-1") + " " + messagesAPI("credit-and-refund.credit-from-hmrc-title-prt-2") + " 0"),
