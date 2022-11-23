@@ -5,9 +5,8 @@ import config.featureswitch.{CreditsRefundsRepay, CutOverCredits, MFACreditsAndD
 import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import play.api.http.Status.OK
-import play.api.libs.json.JsValue
 import play.api.libs.ws.WSResponse
-import testConstants.BaseIntegrationTestConstants.{getCurrentTaxYearEnd, testMtditid, testNino, testTaxYear}
+import testConstants.BaseIntegrationTestConstants.{getCurrentTaxYearEnd, testMtditid, testNino}
 import testConstants.IncomeSourceIntegrationTestConstants.{propertyOnlyResponseWithMigrationData, testValidFinancialDetailsModelCreditAndRefundsJson}
 
 import java.time.LocalDate
@@ -37,7 +36,6 @@ class CreditAndRefundControllerISpec extends ComponentSpecBase {
     }
 
     def setupCreditAndRefundControllerITestsPreviousYear(): WSResponse = {
-      stubAuthorisedAgentUser(authorised = true)
 
       Given("a success response from getIncomeSourceDetails API")
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testPreviousTaxYear, Some((testPreviousTaxYear - 1).toString)))
