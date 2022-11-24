@@ -172,7 +172,6 @@ class ForecastTaxCalcSummaryViewSpec extends ViewSpec {
           }
         }
       }
-
     }
 
     "have the correct Forecast Self Assessment tax amount but any incomeTaxNic~ is empty" should {
