@@ -95,7 +95,6 @@ class ForecastTaxCalcSummaryViewSpec extends ViewSpec {
   val view: HtmlFormat.Appendable = forecastTaxCalcView(endOfYearEstimateModel, testTaxYear, backUrl, btaNavPartial = testNavHtml)
   val viewModel2: HtmlFormat.Appendable = forecastTaxCalcView(endOfYearEstimateModel2, testTaxYear, backUrl, btaNavPartial = testNavHtml)
 
-
   "The Forecast Tax Calc Summary View" when {
     "provided with a btaNavPartial" should {
       "render the BA Nav bar" in new Setup(view) {
