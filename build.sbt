@@ -11,9 +11,7 @@ import play.sbt.routes.RoutesKeys
 val appName = "income-tax-view-change-frontend"
 
 val bootstrapPlayVersion = "5.21.0" // "7.11.0" in the next iteration / this causing number of unit tests to fail
-val govTemplateVersion = "5.78.0-play-28"
 val playPartialsVersion = "8.3.0-play-28"
-val playUiVersion = "9.11.0-play-28"
 val playFrontendHMRCVersion = "3.15.0-play-28"
 val playLanguageVersion = "5.2.0-play-28"
 val catsVersion = "2.8.0"
@@ -30,8 +28,6 @@ val currentScalaVersion = "2.13.8"
 val compile = Seq(
   ws,
   "uk.gov.hmrc" %% "bootstrap-frontend-play-28" % bootstrapPlayVersion,
-  "uk.gov.hmrc" %% "govuk-template" % govTemplateVersion,
-  "uk.gov.hmrc" %% "play-ui" % playUiVersion,
   "uk.gov.hmrc" %% "play-partials" % playPartialsVersion,
   "org.typelevel" %% "cats-core" % catsVersion,
   "uk.gov.hmrc" %% "play-language" % playLanguageVersion,
