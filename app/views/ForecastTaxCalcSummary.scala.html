@@ -18,6 +18,8 @@
 @import models.liabilitycalculation.{EndOfYearEstimate, IncomeSource}
 @import views.html.layouts.unifiedLayout
 @import views.html.components._
+@import exceptions.MissingFieldException
+
 
 @this(mainTemplate: unifiedLayout,
     p: p
@@ -31,6 +33,27 @@
             @{messages(s"forecast_taxCalc.$message")}
             <strong class="bold no-wrap">@{value.get.toCurrency}</strong>
         </p>
+    }
+}
+
+@dataItem2(message: String, value: Option[BigDecimal], value2: Option[BigDecimal], bold: Boolean = false) = {
+    @if(value2.isDefined && value.isDefined){
+        @if(bold){<p class="govuk-body-l govuk-!-font-weight-bold">} else {<p class="govuk-body-l">}
+            @{messages(s"forecast_taxCalc.$message")}
+            <strong class="bold no-wrap">@{value.get.toCurrency}</strong>
+        </p>
+    }else if(value.isDefined && !value2.isDefined){
+        @if(bold){<p class="govuk-body-l govuk-!-font-weight-bold">} else {<p class="govuk-body-l">}
+            @{messages(s"forecast_taxCalc.$message")}
+            <strong class="bold no-wrap">@{value.get.toCurrency}</strong>
+        </p>
+    }else if(!value.isDefined && value2.isDefined){
+        @if(bold){<p class="govuk-body-l govuk-!-font-weight-bold">} else {<p class="govuk-body-l">}
+            @{messages(s"forecast_taxCalc.$message")}
+            <strong class="bold no-wrap">@{value2.get.toCurrency}</strong>
+        </p>
+    }else if(!value.isDefined && !value2.isDefined){
+        @{value.getOrElse(throw MissingFieldException("MissingFieldException"))}
     }
 }
 
@@ -72,6 +95,6 @@
     @dataItem("totalTaxDeducted", endOfYearEstimateModel.totalTaxDeducted, bold = true)
     @dataItem("incomeTaxAndNicsDue", endOfYearEstimateModel.incomeTaxNicAmount, bold = true)
     @dataItem("capitalGainsTax", endOfYearEstimateModel.cgtAmount)
-    @dataItem("incomeTaxNicsCgtDue", endOfYearEstimateModel.incomeTaxNicAndCgtAmount, bold = true)
+    @dataItem2("incomeTaxNicsCgtDue", endOfYearEstimateModel.incomeTaxNicAndCgtAmount, endOfYearEstimateModel.incomeTaxNicAmount, bold = true)
 
 }
