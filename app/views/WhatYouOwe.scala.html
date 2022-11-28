@@ -140,7 +140,12 @@
     </div>
     <div id="payment-details-content-4" >
         @h2(msg = "whatYouOwe.cancelled-paye-sa.heading", optId = Some("cancelled-paye-sa-heading"))
-        @p(id = Some("cancelled-paye-sa-line1"))(Html(messages("whatYouOwe.cancelled-paye-sa.line1")))
+        @if(isAgent) {
+        @p(id = Some("cancelled-paye-sa-line1"))(Html(messages("whatYouOwe.cancelled-paye-sa.line1.agent")))
+        }
+        else {
+            @p(id = Some("cancelled-paye-sa-line1"))(Html(messages("whatYouOwe.cancelled-paye-sa.line1")))
+        }
     </div>
     @if(MFADebitsEnabled) {
         <div id="payment-details-content-5" >
