@@ -98,6 +98,16 @@
     }
 }
 
+@getCancelPayeMessage = {
+@if(isAgent) {
+        @h2(msg = "whatYouOwe.cancelled-paye-sa.heading", optId = Some("cancelled-paye-sa-heading"))
+        @p(id = Some("cancelled-paye-sa-line1"))(Html(messages("whatYouOwe.cancelled-paye-sa.line1.agent")))
+    } else {
+        @h2(msg = "whatYouOwe.cancelled-paye-sa.heading", optId = Some("cancelled-paye-sa-heading"))
+        @p(id = Some("cancelled-paye-sa-line1"))(Html(messages("whatYouOwe.cancelled-paye-sa.line1")))
+    }
+}
+
 @unallocatedCreditParagraphContent(amount: String) = {
     @p(id = Some("unallocated-credit-note"))(Html(messages("whatYouOwe.credit-overpaid-prefix") + link(link = creditAndRefundUrl,
         outerMessage = messages("whatYouOwe.unallocated-credit-note"),
@@ -139,13 +149,7 @@
         @p(id = Some("class2-nic-line1"))(Html(messages("whatYouOwe.class2-nic.line1")))
     </div>
     <div id="payment-details-content-4" >
-        @h2(msg = "whatYouOwe.cancelled-paye-sa.heading", optId = Some("cancelled-paye-sa-heading"))
-        @if(isAgent) {
-        @p(id = Some("cancelled-paye-sa-line1"))(Html(messages("whatYouOwe.cancelled-paye-sa.line1.agent")))
-        }
-        else {
-            @p(id = Some("cancelled-paye-sa-line1"))(Html(messages("whatYouOwe.cancelled-paye-sa.line1")))
-        }
+        @getCancelPayeMessage
     </div>
     @if(MFADebitsEnabled) {
         <div id="payment-details-content-5" >
