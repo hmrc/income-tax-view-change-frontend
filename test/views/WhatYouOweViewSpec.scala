@@ -1158,6 +1158,9 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       "not have button Pay now with charges" in new AgentSetup(charges = whatYouOweDataWithDataDueIn30Days()) {
         Option(pageDocument.getElementById("payment-button")) shouldBe None
       }
+      "have payment type drop down details" in new AgentSetup(charges = whatYouOweDataWithDataDueIn30Days()) {
+        pageDocument.getElementById("payment-details-content-4").text shouldBe messages("whatYouOwe.cancelled-paye-sa.heading") + " " + messages("whatYouOwe.cancelled-paye-sa.line1.agent")
+      }
 
       "money in your account section with available credits" in new AgentSetup(charges = whatYouOweDataWithAvailableCredits()) {
         pageDocument.getElementById("money-in-your-account").text shouldBe messages("whatYouOwe.moneyOnAccount-agent") + " " +
