@@ -388,7 +388,6 @@ taxCal_breakdown.message.C22216                                 = Due to the lev
 taxCal_breakdown.message.C22217                                 = There are one or more underpayments, debts or adjustments that have not been included in the calculation as they do not relate to data that HMRC holds.
 taxCal_breakdown.message.C22218                                 = The Capital Gains Tax has been included in the estimated annual liability calculation only, the actual amount of Capital Gains Tax will be in the final declaration calculation.
 
-
 ## Forecast Tax Calc Summary ##
 forecast_taxCalc.heading                                        = Forecast tax calculation
 forecast_taxCalc.dates                                          = 6 April {0} to 5 April {1}
