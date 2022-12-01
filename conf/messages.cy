@@ -360,21 +360,21 @@ taxCal_breakdown.table.amount                                   = Swm
 taxCal_breakdown.table.head.rates.uk                            = Cyfradd y DU ar gyfer Lloegr a Gogledd Iwerddon
 taxCal_breakdown.table.head.national_insurance_type             = Math o Yswiriant Gwladol
 
-taxCal_breakdown.table.capital_gains_tax                        = Treth Enillion Cyfalaf
-taxCal_breakdown.table.head.cgt_type                            = Math o Dreth Enillion Cyfalaf
-taxCal_breakdown.table.cgt.taxable_capital_gains                = Enillion Cyfalaf trethadwy
-taxCal_breakdown.table.cgt.assets_or_investors_relief.band.single = Enillion Rhyddhad Gwaredu Ased Busnes neu Ryddhad Buddsoddwyr (neu’r ddau) ({0} at {1}%)
-taxCal_breakdown.table.cgt.property_and_interest.band.lowerRate   = Eiddo preswyl a llog ar y gyfradd sylfaenol wedi’i gario ({0} at {1}%)
-taxCal_breakdown.table.cgt.property_and_interest.band.higherRate  = Eiddo preswyl a llog ar y gyfradd uwch wedi’i gario ({0} am {1}%)
-taxCal_breakdown.table.cgt.other_gains.band.lowerRate             = Enillion eraill cyfradd sylfaenol ({0} at {1}%)
-taxCal_breakdown.table.cgt.other_gains.band.higherRate            = Enillion eraill cyfradd uwch ({0} at {1}%)
-taxCal_breakdown.table.cgt.adjustment                           = Addasiad ar gyfer Treth Enillion Cyfalaf
-taxCal_breakdown.table.cgt.foreign_tax_credit_relief            = Rhyddhad Credyd Treth Dramor ar enillion cyfalaf
-taxCal_breakdown.table.cgt.already_paid                         = Treth ar enillion a dalwyd yn barod
-taxCal_breakdown.table.cgt.due                                  = Treth Enillion Cyfalaf sy’n ddyledus
-taxCal_breakdown.table.cgt.overpaid                             = Treth Enillion Cyfalaf a gyfrifwyd fel gordaliad
-taxCal_breakdown.table.payeUnderpaymentsCodedOut                = Treth a dandalwyd ar gyfer blynyddoedd cynharach, sydd wedi’i chynnwys yn eich cod treth ar gyfer {0} i {1}
-taxCal_breakdown.table.saUnderpaymentsCodedOut                  = Treth a dandalwyd ar gyfer blynyddoedd cynharach, sydd wedi’i chynnwys yn eich Hunanasesiad ar gyfer {0}} i {1}
+taxCal_breakdown.table.capital_gains_tax                            = Treth Enillion Cyfalaf
+taxCal_breakdown.table.head.cgt_type                                = Math o Dreth Enillion Cyfalaf
+taxCal_breakdown.table.cgt.taxable_capital_gains                    = Enillion Cyfalaf trethadwy
+taxCal_breakdown.table.cgt.assets_or_investors_relief.band.single   = Enillion Rhyddhad Gwaredu Ased Busnes neu Ryddhad Buddsoddwyr (neu’r ddau) ({0} at {1}%)
+taxCal_breakdown.table.cgt.property_and_interest.band.lowerRate     = Eiddo preswyl a llog ar y gyfradd sylfaenol wedi’i gario ({0} at {1}%)
+taxCal_breakdown.table.cgt.property_and_interest.band.higherRate    = Eiddo preswyl a llog ar y gyfradd uwch wedi’i gario ({0} am {1}%)
+taxCal_breakdown.table.cgt.other_gains.band.lowerRate               = Enillion eraill cyfradd sylfaenol ({0} at {1}%)
+taxCal_breakdown.table.cgt.other_gains.band.higherRate              = Enillion eraill cyfradd uwch ({0} at {1}%)
+taxCal_breakdown.table.cgt.adjustment                               = Addasiad ar gyfer Treth Enillion Cyfalaf
+taxCal_breakdown.table.cgt.foreign_tax_credit_relief                = Rhyddhad Credyd Treth Dramor ar enillion cyfalaf
+taxCal_breakdown.table.cgt.already_paid                             = Treth ar enillion a dalwyd yn barod
+taxCal_breakdown.table.cgt.due                                      = Treth Enillion Cyfalaf sy’n ddyledus
+taxCal_breakdown.table.cgt.overpaid                                 = Treth Enillion Cyfalaf a gyfrifwyd fel gordaliad
+taxCal_breakdown.table.payeUnderpaymentsCodedOut                    = Treth a dandalwyd ar gyfer blynyddoedd cynharach, sydd wedi’i chynnwys yn eich cod treth ar gyfer {0} i {1}
+taxCal_breakdown.table.saUnderpaymentsCodedOut                      = Treth a dandalwyd ar gyfer blynyddoedd cynharach, sydd wedi’i chynnwys yn eich Hunanasesiad ar gyfer {0}} i {1}
 
 ## Forecast Tax Calc Summary ##
 forecast_taxCalc.heading                                        = Rhagolwg cyfrifiad treth
