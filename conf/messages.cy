@@ -238,17 +238,21 @@ forecast_income.source_types.04                                = Elw o lety gwyl
 forecast_income.source_types.05                                = Cyflog o {0}
 forecast_income.source_types.06                                = Incwm tramor
 forecast_income.source_types.07                                = Difidendau gan gwmnïau tramor
+forecast_income.source_types.08                                = Elw o ymddiriedolaethau ac ystadau
 forecast_income.source_types.09                                = Llog o fanciau, cymdeithasau adeiladu a gwarantau yn y DU
 forecast_income.source_types.10                                = Difidendau o gwmnïau yn y DU
 forecast_income.source_types.11                                = Incwm o fudd-daliadau’r Wladwriaeth
 forecast_income.source_types.12                                = Enillion ar bolisïau yswiriant bywyd
 forecast_income.source_types.13                                = Cynlluniau cyfranddaliadau
+forecast_income.source_types.14                                = Elw o bartneriaeth
 forecast_income.source_types.15                                = Elw o dir ac eiddo tramor
 forecast_income.source_types.16                                = Llog tramor
 forecast_income.source_types.17                                = Difidendau eraill
 forecast_income.source_types.18                                = Gwarantau’r DU
 forecast_income.source_types.19                                = Incwm arall
 forecast_income.source_types.20                                = Pensiwn tramor
+forecast_income.source_types.21                                = Incwm nad yw’n agored i TWE
+forecast_income.source_types.22                                = Enillion cyfalaf
 forecast_income.source_types.98                                = Rhodd Cymorth a Rhoi Trwy’r Gyflogres
 
 ## Deduction Breakdown Page ##
