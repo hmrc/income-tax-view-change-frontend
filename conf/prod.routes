@@ -2,6 +2,6 @@
 ->         /report-quarterly/income-and-expenses/view               app.Routes
 ->         /report-quarterly/income-and-expenses/view/agents        agent.Routes
 ->         /                                                        health.Routes
-->         /template                                                template.Routes
+->         /hmrc-frontend                                           hmrcfrontend.Routes
 
 GET        /admin/metrics                                           com.kenshoo.play.metrics.MetricsController.metrics
