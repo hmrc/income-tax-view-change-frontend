@@ -18,6 +18,8 @@ package models.financialDetails
 
 import play.api.libs.json.{Json, Reads, Writes}
 
+import scala.math.abs
+
 case class BalanceDetails(balanceDueWithin30Days: BigDecimal,
                           overDueAmount: BigDecimal,
                           totalBalance: BigDecimal,
@@ -30,6 +32,13 @@ case class BalanceDetails(balanceDueWithin30Days: BigDecimal,
   val refundInProgress: Boolean = firstPendingAmountRequested.isDefined || secondPendingAmountRequested.isDefined
   val total: Option[BigDecimal] = availableCredit.map{ total =>
     total - firstPendingAmountRequested.getOrElse(0) - secondPendingAmountRequested.getOrElse(0)
+  }
+
+  def getPositiveUnAllocatedCreditAmount: Option[BigDecimal] = {
+    unallocatedCredit.map {
+      case credit: BigDecimal if credit < 0 => credit * -1
+      case credit: BigDecimal if credit >= 0 => credit
+    }
   }
 }
 
