@@ -273,10 +273,10 @@ deduction_breakdown.table.marriage_allowance_transfer                  = Marriag
 deduction_breakdown.table.pension_contributions                        = Pension contributions
 deduction_breakdown.table.loss_relief                                  = Loss relief
 deduction_breakdown.table.gift_of_investments_and_property_to_charity  = Gift of investments and property to charity
-deduction_breakdown.table.annual_payments                              = Annual Payments
+deduction_breakdown.table.annual_payments                              = Annual payments
 deduction_breakdown.table.qualifying_loan_interest                     = Qualifying loan interest
 deduction_breakdown.table.post_cessation_trade_receipts                = Post-cessation trade receipts
-deduction_breakdown.table.trade_union_payments                         = Trade Union payments
+deduction_breakdown.table.trade_union_payments                         = Trade union payments
 deduction_breakdown.total                                              = Total allowances and deductions
 
 ## Tax Calculation Breakdown Page ##
