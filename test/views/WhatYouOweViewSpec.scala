@@ -66,11 +66,14 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
   val remainingBalance: String = messages("whatYouOwe.balancingCharge.text")
   val preMTDRemainingBalance: String = s"${messages("whatYouOwe.balancingCharge.text")} ${messages("whatYouOwe.pre-mtd-digital")}"
   val remainingBalanceLine1: String = messages("whatYouOwe.remaining-balance.line1")
+  val remainingBalanceLine1Agent: String = messages("whatYouOwe.remaining-balance.line1.agent")
   val paymentUnderReview: String = messages("whatYouOwe.paymentUnderReview")
   val poaHeading: String = messages("whatYouOwe.payment-on-account.heading")
   val poaLine1: String = messages("whatYouOwe.payment-on-account.line1")
+  val poaLine1Agent: String = messages("whatYouOwe.payment-on-account.line1.agent")
   val lpiHeading: String = messages("whatYouOwe.late-payment-interest.heading")
   val lpiLine1: String = messages("whatYouOwe.late-payment-interest.line1")
+  val lpiLine1Agent: String = messages("whatYouOwe.late-payment-interest.line1.agent")
   val overdueTag: String = messages("whatYouOwe.over-due")
   val poa1WithTaxYearAndUnderReview: String = s"$poa1Text $currentYear $paymentUnderReview"
   val poa1WithTaxYearOverdueAndUnderReview: String = s"$overdueTag $poa1Text $currentYear $paymentUnderReview"
@@ -1159,6 +1162,11 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         Option(pageDocument.getElementById("payment-button")) shouldBe None
       }
       "have payment type drop down details" in new AgentSetup(charges = whatYouOweDataWithDataDueIn30Days()) {
+        pageDocument.select(".govuk-details__summary-text").text shouldBe dropDownInfo
+        pageDocument.getElementById("payment-details-content-0").text shouldBe s"$remainingBalance $remainingBalanceLine1Agent"
+        pageDocument.getElementById("payment-details-content-1").text shouldBe s"$poaHeading $poaLine1Agent"
+        pageDocument.getElementById("payment-details-content-2").text shouldBe s"$lpiHeading $lpiLine1Agent"
+        pageDocument.getElementById("payment-details-content-3").text shouldBe messages("whatYouOwe.class2-nic.heading") + " " + messages("whatYouOwe.class2-nic.line1.agent")
         pageDocument.getElementById("payment-details-content-4").text shouldBe messages("whatYouOwe.cancelled-paye-sa.heading") + " " + messages("whatYouOwe.cancelled-paye-sa.line1.agent")
       }
 
