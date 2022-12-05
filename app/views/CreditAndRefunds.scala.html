@@ -39,7 +39,7 @@
     govukInsetText : GovukInsetText
 )
 @(creditCharges: List[(DocumentDetailWithDueDate, FinancialDetail)], balance: Option[BalanceDetails], creditAndRefundType: Option[UnallocatedCreditType],
-    isAgent: Boolean = false, backUrl: String, isMFACreditsAndDebitsEnabled: Boolean = false)(implicit request: Request[_], user: MtdItUser[_], messages: Messages)
+    isAgent: Boolean = false, backUrl: String, isMFACreditsAndDebitsEnabled: Boolean = false, isCutOverCreditEnabled: Boolean = false)(implicit request: Request[_], user: MtdItUser[_], messages: Messages)
 @import implicitDateFormatter.longDate
 
 @getControllerHref(credit: DocumentDetail, isAgent: Boolean) = @{
@@ -163,29 +163,31 @@ balance.getOrElse(throw MissingFieldException("Balance"))
 }
 
 @getValidCutOverCreditType(credit: (DocumentDetailWithDueDate, FinancialDetail), index: Int) = {
-    @if(credit._2.validCutoverCreditType()) {
-    <li>
-        <p class="govuk-heading-s">
-            @credit._1.documentDetail.paymentOrChargeCredit.getOrElse(throw MissingFieldException("Payment Or Charge Credit")).toCurrencyString
-            <span class="govuk-body"> @messages("credit-and-refund.credit-from-hmrc-title-prt-1")
-                <a id="credit-and-refund-@index" href="@getCreditsSummaryControllerHref(credit._1.documentDetail, isAgent)"
-                    class="govuk-link">@messages("paymentHistory.paymentFromEarlierYear")
-                    <span class="govuk-visually-hidden"> @index</span>
-                </a>
-            </span>
-        </p>
-    </li>
-    } else {
-    <li>
-        <p class="govuk-heading-s">
-            @credit._1.documentDetail.paymentOrChargeCredit.getOrElse(throw MissingFieldException("Payment Or Charge Credit")).toCurrencyString
-            <span class="govuk-body">@messages("credit-and-refund.payment")
-                <a href="@getControllerHref(credit._1.documentDetail, isAgent)"
-                   class="govuk-link">@credit._1.dueDate.getOrElse(throw MissingFieldException("Due Date")).toLongDate
-                </a>
-            </span>
-        </p>
-    </li>
+    @if(isCutOverCreditEnabled){
+        @if(credit._2.validCutoverCreditType()) {
+            <li>
+                <p class="govuk-heading-s">
+                    @credit._1.documentDetail.paymentOrChargeCredit.getOrElse(throw MissingFieldException("Payment Or Charge Credit")).toCurrencyString
+                    <span class="govuk-body"> @messages("credit-and-refund.credit-from-hmrc-title-prt-1")
+                        <a id="credit-and-refund-@index" href="@getCreditsSummaryControllerHref(credit._1.documentDetail, isAgent)"
+                            class="govuk-link">@messages("paymentHistory.paymentFromEarlierYear")
+                            <span class="govuk-visually-hidden"> @index</span>
+                        </a>
+                    </span>
+                </p>
+            </li>
+        } else {
+            <li>
+                <p class="govuk-heading-s">
+                    @credit._1.documentDetail.paymentOrChargeCredit.getOrElse(throw MissingFieldException("Payment Or Charge Credit")).toCurrencyString
+                    <span class="govuk-body">@messages("credit-and-refund.payment")
+                        <a href="@getControllerHref(credit._1.documentDetail, isAgent)"
+                           class="govuk-link">@credit._1.dueDate.getOrElse(throw MissingFieldException("Due Date")).toLongDate
+                        </a>
+                    </span>
+                </p>
+            </li>
+        }
     }
 }
 
@@ -199,6 +201,7 @@ balance.getOrElse(throw MissingFieldException("Balance"))
     @h1(msg = "credit-and-refund.heading")
 
     @if(balance.isDefined){
+
         @creditAndRefundType match {
             case Some(UnallocatedCreditFromOnePayment) => {
                 <h2 class="govuk-heading-s">
