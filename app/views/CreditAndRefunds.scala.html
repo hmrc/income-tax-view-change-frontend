@@ -308,12 +308,12 @@ balance.getOrElse(throw MissingFieldException("Balance"))
         <div class="govuk-button-group">
             @if(balance.isDefined){
                 @if(maybeAvailableCredit != 0){
-                    @link(link = "https://www.tax.service.gov.uk/self-assessment-repayment/repayment-amount",
+                    @link(link = "https://www.tax.service.gov.uk/self-assessment-refund-backend/start-refund",
                         messageKey = "credit-and-refund.claim-refund-btn", classes = "govuk-button", role=Some("button"))
                 }
             }
 
-            @link(link = "https://www.tax.service.gov.uk/self-assessment-repayment/repayment-status",
+            @link(link = "https://www.tax.service.gov.uk/self-assessment-refund-backend/view-history",
                 messageKey = "credit-and-refund.check-refund-btn", classes = "govuk-button govuk-button--secondary",
                 role=Some("button")
                 )
