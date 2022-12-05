@@ -72,7 +72,8 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
               creditAndRefundType: Option[UnallocatedCreditType] = None,
               isAgent: Boolean = false,
               backUrl: String = "testString",
-              isMFACreditsAndDebitsEnabled: Boolean = false) {
+              isMFACreditsAndDebitsEnabled: Boolean = false,
+              isCutOverCreditEnabled: Boolean = false) {
     lazy val page: HtmlFormat.Appendable =
       creditAndRefundView(
         creditCharges,
@@ -80,7 +81,8 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
         creditAndRefundType,
         isAgent = isAgent,
         backUrl,
-        isMFACreditsAndDebitsEnabled = isMFACreditsAndDebitsEnabled
+        isMFACreditsAndDebitsEnabled = isMFACreditsAndDebitsEnabled,
+        isCutOverCreditEnabled = isCutOverCreditEnabled
       )(FakeRequest(), implicitly, implicitly)
     lazy val document: Document = Jsoup.parse(contentAsString(page))
     lazy val layoutContent: Element = document.selectHead("#main-content")
@@ -88,7 +90,7 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
 
   "displaying individual credit and refund page" should {
     "display the page" when {
-      "a user has requested a refund" in new Setup() {
+      "a user has requested a refund" in new Setup(isCutOverCreditEnabled = true) {
 
         document.title() shouldBe creditAndRefundHeadingWithTitleServiceNameGovUk
         layoutContent.selectHead("h1").text shouldBe creditAndRefundHeading
@@ -101,7 +103,7 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
         document.getElementsByClass("govuk-button govuk-button--secondary").text() shouldBe checkBtn
       }
 
-      "a user has not requested a refund" in new Setup(balance = Some(balanceDetailsModel(None, None))) {
+      "a user has not requested a refund" in new Setup(balance = Some(balanceDetailsModel(None, None)), isCutOverCreditEnabled = true) {
 
         document.title() shouldBe creditAndRefundHeadingWithTitleServiceNameGovUk
         layoutContent.selectHead("h1").text shouldBe creditAndRefundHeading
@@ -116,7 +118,8 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
 
       "a user has a Refund claimed for full amount and claim is in a pending state" in
         new Setup(creditCharges = List(documentDetailWithDueDateFinancialDetailListModel(Some(-6.00))),
-          balance = Some(balanceDetailsModel(availableCredit = Some(0)))
+          balance = Some(balanceDetailsModel(availableCredit = Some(0))),
+          isCutOverCreditEnabled = true
         ) {
 
           document.title() shouldBe creditAndRefundHeadingWithTitleServiceNameGovUk
@@ -199,7 +202,8 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
       "a user has multiple refunds claimed for full amount sorted (by descending amount)" in
         new Setup(creditCharges = List(documentDetailWithDueDateFinancialDetailListModel(),
           documentDetailWithDueDateFinancialDetailListModel(Some(-1000.0))),
-          balance = Some(balanceDetailsModel(availableCredit = Some(0)))
+          balance = Some(balanceDetailsModel(availableCredit = Some(0))),
+          isCutOverCreditEnabled = true
         ) {
 
           document.title() shouldBe creditAndRefundHeadingWithTitleServiceNameGovUk
@@ -312,7 +316,7 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
 
   "displaying agent credit and refund page" should {
     "display the page" when {
-      "correct data is provided" in new Setup(isAgent = true) {
+      "correct data is provided" in new Setup(isAgent = true, isCutOverCreditEnabled = true) {
 
         document.title() shouldBe creditAndRefundHeadingAgentWithTitleServiceNameGovUkAgent
         layoutContent.selectHead("h1").text shouldBe creditAndRefundHeading

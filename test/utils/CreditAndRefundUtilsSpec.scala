@@ -16,6 +16,7 @@
 
 package utils
 
+import models.financialDetails.MfaCreditUtils
 import org.scalatest.prop.TableDrivenPropertyChecks._
 import org.scalatest.prop.TableFor1
 import testConstants.CreditAndRefundConstants.{balanceDetailsModel, documentDetailWithDueDateFinancialDetailListModel}
@@ -74,7 +75,7 @@ class CreditAndRefundUtilsSpec extends TestSupport {
               firstPendingAmountRequested = None,
               secondPendingAmountRequested = None,
               unallocatedCredit = Some(500.00))
-            )
+            ), isMFACreditsAndDebitsEnabled = true
           )
 
           unallocatedCreditType shouldBe Some(UnallocatedCreditFromSingleCreditItem)
@@ -90,16 +91,49 @@ class CreditAndRefundUtilsSpec extends TestSupport {
             firstPendingAmountRequested = None,
             secondPendingAmountRequested = None,
             unallocatedCredit = Some(500.00))
-          )
+          ), isCutOverCreditEnabled = true
         )
         unallocatedCreditType shouldBe Some(UnallocatedCreditFromSingleCreditItem)
+      }
+    }
+
+    "MFA Credit feature is disabled and maybeUnallocatedCreditType method called with proper values for unallocated credit from single credit item as a MFA Credit" should {
+      "return None" in {
+        val unallocatedCreditType = maybeUnallocatedCreditType(
+          List(documentDetailWithDueDateFinancialDetailListModel(mainType = "ITSA Misc Credit")),
+          Some(balanceDetailsModel(
+            firstPendingAmountRequested = None,
+            secondPendingAmountRequested = None,
+            unallocatedCredit = Some(500.00))
+          ),
+          isCutOverCreditEnabled = true
+        )
+        unallocatedCreditType shouldBe None
+      }
+    }
+
+    "Cut Over Credit feature is disabled and maybeUnallocatedCreditType method called with proper values for unallocated credit from single credit item as a Cutover Credits" should {
+      "return None" in {
+        val unallocatedCreditType = maybeUnallocatedCreditType(
+          List(documentDetailWithDueDateFinancialDetailListModel(mainType = "ITSA Cutover Credits")),
+          Some(balanceDetailsModel(
+            firstPendingAmountRequested = None,
+            secondPendingAmountRequested = None,
+            unallocatedCredit = Some(500.00))
+          ),
+          isMFACreditsAndDebitsEnabled = true
+        )
+        unallocatedCreditType shouldBe None
       }
     }
 
     "maybeUnallocatedCreditType method called with not matched values should return None" in {
       val unallocatedCreditType = maybeUnallocatedCreditType(
         List(documentDetailWithDueDateFinancialDetailListModel()),
-        Some(balanceDetailsModel()))
+        Some(balanceDetailsModel()),
+        isMFACreditsAndDebitsEnabled = true,
+        isCutOverCreditEnabled = true
+      )
       unallocatedCreditType shouldBe None
     }
   }
