@@ -76,6 +76,11 @@ class ForecastIncomeBreakdownViewSpec extends ViewSpec {
         taxableIncome = 12500
       ),
       IncomeSource(
+        incomeSourceType = "08",
+        incomeSourceName = None,
+        taxableIncome = 12500
+      ),
+      IncomeSource(
         incomeSourceType = "09",
         incomeSourceName = None,
         taxableIncome = 12500
@@ -97,6 +102,11 @@ class ForecastIncomeBreakdownViewSpec extends ViewSpec {
       ),
       IncomeSource(
         incomeSourceType = "13",
+        incomeSourceName = None,
+        taxableIncome = 12500
+      ),
+      IncomeSource(
+        incomeSourceType = "14",
         incomeSourceName = None,
         taxableIncome = 12500
       ),
@@ -127,6 +137,16 @@ class ForecastIncomeBreakdownViewSpec extends ViewSpec {
       ),
       IncomeSource(
         incomeSourceType = "20",
+        incomeSourceName = None,
+        taxableIncome = 12500
+      ),
+      IncomeSource(
+        incomeSourceType = "21",
+        incomeSourceName = None,
+        taxableIncome = 12500
+      ),
+      IncomeSource(
+        incomeSourceType = "22",
         incomeSourceName = None,
         taxableIncome = 12500
       ),
@@ -173,7 +193,7 @@ class ForecastIncomeBreakdownViewSpec extends ViewSpec {
         layoutContent.selectHead(" caption").text.contains(messages("forecast_income.heading"))
       }
 
-      "have a forecasted income table" which {
+      "have a forecast income table" which {
 
         val expectedTableDataRows = Table(
           ("row index", "Income type", "Amount"),
@@ -186,19 +206,23 @@ class ForecastIncomeBreakdownViewSpec extends ViewSpec {
           (7, messages("forecast_income.source_types.05", "employment2"), "£12,500.00"),
           (8, messages("forecast_income.source_types.06"), "£12,500.00"),
           (9, messages("forecast_income.source_types.07"), "£12,500.00"),
-          (10, messages("forecast_income.source_types.09"), "£12,500.00"),
-          (11, messages("forecast_income.source_types.10"), "£12,500.00"),
-          (12, messages("forecast_income.source_types.11"), "£12,500.00"),
-          (13, messages("forecast_income.source_types.12"), "£12,500.00"),
-          (14, messages("forecast_income.source_types.13"), "£12,500.00"),
-          (15, messages("forecast_income.source_types.15"), "£12,500.00"),
-          (16, messages("forecast_income.source_types.16"), "£12,500.00"),
-          (17, messages("forecast_income.source_types.17"), "£12,500.00"),
-          (18, messages("forecast_income.source_types.18"), "£12,500.00"),
-          (19, messages("forecast_income.source_types.19"), "£12,500.00"),
-          (20, messages("forecast_income.source_types.20"), "£12,500.00"),
-          (21, messages("forecast_income.source_types.98"), "£12,500.00"),
-          (22, messages("forecast_income.total"), "£12,500.00")
+          (10, messages("forecast_income.source_types.08"), "£12,500.00"),
+          (11, messages("forecast_income.source_types.09"), "£12,500.00"),
+          (12, messages("forecast_income.source_types.10"), "£12,500.00"),
+          (13, messages("forecast_income.source_types.11"), "£12,500.00"),
+          (14, messages("forecast_income.source_types.12"), "£12,500.00"),
+          (15, messages("forecast_income.source_types.13"), "£12,500.00"),
+          (16, messages("forecast_income.source_types.14"), "£12,500.00"),
+          (17, messages("forecast_income.source_types.15"), "£12,500.00"),
+          (18, messages("forecast_income.source_types.16"), "£12,500.00"),
+          (19, messages("forecast_income.source_types.17"), "£12,500.00"),
+          (20, messages("forecast_income.source_types.18"), "£12,500.00"),
+          (21, messages("forecast_income.source_types.19"), "£12,500.00"),
+          (22, messages("forecast_income.source_types.20"), "£12,500.00"),
+          (23, messages("forecast_income.source_types.21"), "£12,500.00"),
+          (24, messages("forecast_income.source_types.22"), "£12,500.00"),
+          (25, messages("forecast_income.source_types.98"), "£12,500.00"),
+          (26, messages("forecast_income.total"), "£12,500.00")
         )
         forAll(expectedTableDataRows) { (rowIndex: Int, deductionType: String, formattedAmount: String) =>
 
