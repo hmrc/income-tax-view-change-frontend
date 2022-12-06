@@ -1,6 +1,6 @@
 package controllers.agent
 
-import config.featureswitch.CreditsRefundsRepay
+import config.featureswitch.{CreditsRefundsRepay, CutOverCredits, MFACreditsAndDebits}
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.core.AccountingPeriodModel
@@ -9,6 +9,7 @@ import play.api.http.Status.{OK, SEE_OTHER}
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.IncomeSourceIntegrationTestConstants.{propertyOnlyResponseWithMigrationData, testValidFinancialDetailsModelCreditAndRefundsJson, testValidFinancialDetailsModelJson}
 import testConstants.OutstandingChargesIntegrationTestConstants.validOutStandingChargeResponseJsonWithAciAndBcdCharges
+
 import java.time.LocalDate
 
 class CreditAndRefundControllerISpec extends ComponentSpecBase {
@@ -21,6 +22,8 @@ class CreditAndRefundControllerISpec extends ComponentSpecBase {
     "display the credit and refund page" when {
       "a valid response is received" in {
         enable(CreditsRefundsRepay)
+        enable(MFACreditsAndDebits)
+        enable(CutOverCredits)
 
         stubAuthorisedAgentUser(authorised = true)
 
