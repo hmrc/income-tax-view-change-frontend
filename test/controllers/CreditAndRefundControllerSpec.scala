@@ -30,7 +30,7 @@ import org.mockito.Mockito.{mock, when}
 import play.api.http.Status
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{status, _}
-import services.{CreditService, DateService}
+import services.{CreditService, DateService, RepaymentService}
 import testConstants.BaseTestConstants
 import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
 import testConstants.FinancialDetailsTestConstants._
@@ -46,6 +46,7 @@ class CreditAndRefundControllerSpec extends MockAuthenticationPredicate with Moc
   trait Setup {
 
     val mockCreditService: CreditService = mock(classOf[CreditService])
+    val mockRepaymentService: RepaymentService = mock(classOf[RepaymentService])
 
     val controller = new CreditAndRefundController(
       authorisedFunctions = mockAuthService,
@@ -56,7 +57,8 @@ class CreditAndRefundControllerSpec extends MockAuthenticationPredicate with Moc
       retrieveIncomeSources = MockIncomeSourceDetailsPredicate,
       itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
       incomeSourceDetailsService = mockIncomeSourceDetailsService,
-      creditService = mockCreditService
+      creditService = mockCreditService,
+      repaymentService = mockRepaymentService
     )(
       appConfig = app.injector.instanceOf[FrontendAppConfig],
       dateService = app.injector.instanceOf[DateService],
