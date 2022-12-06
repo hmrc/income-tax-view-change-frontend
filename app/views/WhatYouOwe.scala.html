@@ -134,19 +134,43 @@
 @detailsContent= {
     <div id="payment-details-content-0">
         @h2(msg = "whatYouOwe.remaining-balance.heading", optId=Some("remaining-balance-heading"))
-        @p(id = Some("remaining-balance-line1"))(Html(messages("whatYouOwe.remaining-balance.line1")))
+        @p(id = Some("remaining-balance-line1")) {
+            @if(isAgent) {
+                @messages("whatYouOwe.remaining-balance.line1.agent")
+            } else {
+                @messages("whatYouOwe.remaining-balance.line1")
+            }
+        }
     </div>
     <div id="payment-details-content-1">
         @h2(msg = "whatYouOwe.payment-on-account.heading", optId = Some("payment-on-account-heading"))
-        @p(id = Some("payment-on-account-line1"))(Html(messages("whatYouOwe.payment-on-account.line1")))
+        @p(id = Some("payment-on-account-line1")) {
+            @if(isAgent) {
+                @messages("whatYouOwe.payment-on-account.line1.agent")
+            } else {
+                @messages("whatYouOwe.payment-on-account.line1")
+            }
+        }
     </div>
     <div id="payment-details-content-2" >
         @h2(msg = "whatYouOwe.late-payment-interest.heading", optId = Some("late-payment-interest-heading"))
-        @p(id = Some("late-payment-interest-line1"))(Html(messages("whatYouOwe.late-payment-interest.line1")))
+        @p(id = Some("late-payment-interest-line1")) {
+            @if(isAgent) {
+                @messages("whatYouOwe.late-payment-interest.line1.agent")
+            } else {
+                @messages("whatYouOwe.late-payment-interest.line1")
+            }
+        }
     </div>
     <div id="payment-details-content-3" >
         @h2(msg = "whatYouOwe.class2-nic.heading", optId = Some("class2-nic-heading"))
-        @p(id = Some("class2-nic-line1"))(Html(messages("whatYouOwe.class2-nic.line1")))
+        @p(id = Some("class2-nic-line1")) {
+            @if(isAgent) {
+                @messages("whatYouOwe.class2-nic.line1.agent")
+            } else {
+                @messages("whatYouOwe.class2-nic.line1")
+            }
+        }
     </div>
     <div id="payment-details-content-4" >
         @getCancelPayeMessage
