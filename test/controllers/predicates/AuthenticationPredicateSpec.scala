@@ -34,7 +34,7 @@ import scala.concurrent.Future
 
 class AuthenticationPredicateSpec extends TestSupport with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate with MockAuditingService with FeatureSwitching {
 
-  val ivUpliftRedirectUrl: String = s"/mdtp/uplift?origin=ITVC&confidenceLevel=${appConfig.requiredConfidenceLevel}&" +
+  val ivUpliftRedirectUrl: String = s"http://localhost:9948/iv-stub/uplift?origin=ITVC&confidenceLevel=${appConfig.requiredConfidenceLevel}&" +
     s"completionURL=${appConfig.itvcFrontendEnvironment + "/" + appConfig.baseUrl + controllers.routes.UpliftSuccessController.success.url}&" +
     s"failureURL=${appConfig.itvcFrontendEnvironment + "/" + appConfig.baseUrl + controllers.errors.routes.UpliftFailedController.show.url}"
 
@@ -116,13 +116,13 @@ class AuthenticationPredicateSpec extends TestSupport with MockAuthenticationPre
       }
     }
 
-    "called with a confidence level below 200" should {
+    "called with a confidence level below 250" should {
 
       "redirect to the IV Uplift Journey" when {
 
         "the feature switch is enabled for an individual" in {
           enable(IvUplift)
-          setupMockAuthRetrievalSuccess(testAuthSuccessResponse(ConfidenceLevel.L50))
+          setupMockAuthRetrievalSuccess(testAuthSuccessResponse(ConfidenceLevel.L200))
 
           def result: Future[Result] = setupResult()(fakeRequestWithActiveSession)
 
@@ -173,6 +173,17 @@ class AuthenticationPredicateSpec extends TestSupport with MockAuthenticationPre
         }
       }
 
+    }
+
+    "called with a confidence level of 250" should {
+      "return Ok (200)" in {
+        enable(IvUplift)
+        setupMockAuthRetrievalSuccess(testAuthSuccessResponse(ConfidenceLevel.L250))
+
+        def result: Future[Result] = setupResult()(fakeRequestWithActiveSession)
+
+        status(result) shouldBe Status.OK
+      }
     }
   }
 }
