@@ -132,7 +132,7 @@ balance.getOrElse(throw MissingFieldException("Balance"))
     }
 }
 
-@getMFACreditsAndDebitsContent(credit: (DocumentDetailWithDueDate, FinancialDetail), index: Int) = {
+@getMFACreditsAndDebitsContent(charge: (DocumentDetailWithDueDate, FinancialDetail), index: Int) = {
     @if(isMFACreditsAndDebitsEnabled) {
         <li>
             <p class="govuk-heading-s">
@@ -146,46 +146,33 @@ balance.getOrElse(throw MissingFieldException("Balance"))
                  </span>
             </p>
         </li>
-        @if(credit._1.documentDetail.accruingInterestAmount.isDefined) {
-            <li>
-                <p class="govuk-heading-s">
-                    @credit._1.documentDetail.accruingInterestCredit.getOrElse(throw MissingFieldException("Credit Interest Accrued")).toCurrencyString
-                    <span class="govuk-body"> @messages("credit-and-refund.credit-interest-accrued-prt-1")
-                                <a id="credit-and-refund-@{index}a" href="@getCreditsSummaryControllerHref(credit._1.documentDetail, isAgent)"
-                                   class="govuk-link">@messages("credit-and-refund.credit-interest-accrued-prt-2")
-                                    <span class="govuk-visually-hidden"> @{index}a</span>
-                                </a>
-                    </span>
-                </p>
-            </li>
-        }
     }
 }
 
-@getValidCutOverCreditType(credit: (DocumentDetailWithDueDate, FinancialDetail), index: Int) = {
-    @if(credit._2.validCutoverCreditType()) {
-    <li>
-        <p class="govuk-heading-s">
-            @credit._1.documentDetail.paymentOrChargeCredit.getOrElse(throw MissingFieldException("Payment Or Charge Credit")).toCurrencyString
-            <span class="govuk-body"> @messages("credit-and-refund.credit-from-hmrc-title-prt-1")
-                <a id="credit-and-refund-@index" href="@getCreditsSummaryControllerHref(credit._1.documentDetail, isAgent)"
-                    class="govuk-link">@messages("paymentHistory.paymentFromEarlierYear")
-                    <span class="govuk-visually-hidden"> @index</span>
-                </a>
-            </span>
-        </p>
-    </li>
+@getValidCutOverCreditType(charge: (DocumentDetailWithDueDate, FinancialDetail), index: Int) = {
+    @if(charge._2.validCutoverCreditType()) {
+        <li>
+            <p class="govuk-heading-s">
+                @charge._1.documentDetail.paymentOrChargeCredit.getOrElse(throw MissingFieldException("Payment Or Charge Credit")).toCurrencyString
+                <span class="govuk-body"> @messages("credit-and-refund.credit-from-hmrc-title-prt-1")
+                    <a id="credit-and-refund-@index" href="@getCreditsSummaryControllerHref(charge._1.documentDetail, isAgent)"
+                        class="govuk-link">@messages("paymentHistory.paymentFromEarlierYear")
+                        <span class="govuk-visually-hidden"> @index</span>
+                    </a>
+                </span>
+            </p>
+        </li>
     } else {
-    <li>
-        <p class="govuk-heading-s">
-            @credit._1.documentDetail.paymentOrChargeCredit.getOrElse(throw MissingFieldException("Payment Or Charge Credit")).toCurrencyString
-            <span class="govuk-body">@messages("credit-and-refund.payment")
-                <a href="@getControllerHref(credit._1.documentDetail, isAgent)"
-                   class="govuk-link">@credit._1.dueDate.getOrElse(throw MissingFieldException("Due Date")).toLongDate
-                </a>
-            </span>
-        </p>
-    </li>
+        <li>
+            <p class="govuk-heading-s">
+                @charge._1.documentDetail.paymentOrChargeCredit.getOrElse(throw MissingFieldException("Payment Or Charge Credit")).toCurrencyString
+                <span class="govuk-body">@messages("credit-and-refund.payment")
+                    <a href="@getControllerHref(charge._1.documentDetail, isAgent)"
+                       class="govuk-link">@charge._1.dueDate.getOrElse(throw MissingFieldException("Due Date")).toLongDate
+                    </a>
+                </span>
+            </p>
+        </li>
     }
 }
 
@@ -232,11 +219,11 @@ balance.getOrElse(throw MissingFieldException("Balance"))
             case None => {
               @getAvailableCreditContent
                 <ul class="govuk-list govuk-list--bullet" id="credits-list">
-                    @for((credit, index) <- creditCharges.zipWithIndex) {
-                        @if(credit._2.validMFACreditType()) {
-                           @getMFACreditsAndDebitsContent(credit, index)
+                    @for((charge, index) <- creditCharges.zipWithIndex) {
+                        @if(charge._2.validMFACreditType()) {
+                           @getMFACreditsAndDebitsContent(charge, index)
                         } else {
-                            @getValidCutOverCreditType(credit, index)
+                            @getValidCutOverCreditType(charge, index)
                         }
                     }
 
