@@ -804,7 +804,6 @@ paymentHistory.button                                           = {0} payments
 paymentHistory.paymentToHmrc                                    = Payment made to HMRC
 paymentHistory.paymentFromEarlierYear                           = Credit from an earlier tax year
 paymentHistory.mfaCredit                                        = Credit from HMRC adjustment
-paymentHistory.creditInterestAccrued                            = Credit interest accrued
 paymentsHistory.CardRef                                         = Payment made by debit card ref:
 paymentHistory.refund                                           = Refund
 paymentHistory.table.header.date                                = Date
@@ -915,8 +914,6 @@ credit-and-refund.claim-refund-btn                                = Claim a refu
 credit-and-refund.check-refund-btn                                = Check refund status
 credit-and-refund.credit-from-hmrc-title-prt-1                    = from a
 credit-and-refund.credit-from-hmrc-title-prt-2                    = Credit from HMRC adjustment
-credit-and-refund.credit-interest-accrued-prt-1                   = from
-credit-and-refund.credit-interest-accrued-prt-2                   = Credit interest accrued
 
 
 #Language Selector
