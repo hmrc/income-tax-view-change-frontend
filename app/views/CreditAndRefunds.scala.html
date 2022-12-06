@@ -134,18 +134,18 @@ balance.getOrElse(throw MissingFieldException("Balance"))
 
 @getMFACreditsAndDebitsContent(charge: (DocumentDetailWithDueDate, FinancialDetail), index: Int) = {
     @if(isMFACreditsAndDebitsEnabled) {
-        <li>
-            <p class="govuk-heading-s">
-                @charge._1.documentDetail.paymentOrChargeCredit.getOrElse(throw MissingFieldException("Payment Or Charge Credit")).toCurrencyString
-                <span class="govuk-body">
-                     @messages("credit-and-refund.credit-from-hmrc-title-prt-1")
-                     <a id="credit-and-refund-@index" href="@getCreditsSummaryControllerHref(charge._1.documentDetail, isAgent)" class="govuk-link">
-                        @messages("credit-and-refund.credit-from-hmrc-title-prt-2")
-                        <span class="govuk-visually-hidden"> @index</span>
-                     </a>
-                 </span>
-            </p>
-        </li>
+    <li>
+        <p class="govuk-heading-s">
+            @charge._1.documentDetail.paymentOrChargeCredit.getOrElse(throw MissingFieldException("Payment Or Charge Credit")).toCurrencyString
+            <span class="govuk-body">
+                 @messages("credit-and-refund.credit-from-hmrc-title-prt-1")
+                 <a id="credit-and-refund-@index" href="@getCreditsSummaryControllerHref(charge._1.documentDetail, isAgent)" class="govuk-link">
+                    @messages("credit-and-refund.credit-from-hmrc-title-prt-2")
+                    <span class="govuk-visually-hidden"> @index</span>
+                 </a>
+             </span>
+        </p>
+    </li>
     }
 }
 
@@ -295,12 +295,12 @@ balance.getOrElse(throw MissingFieldException("Balance"))
         <div class="govuk-button-group">
             @if(balance.isDefined){
                 @if(maybeAvailableCredit != 0){
-                    @link(link = "https://www.tax.service.gov.uk/self-assessment-refund-backend/start-refund",
+                    @link(link = "https://www.tax.service.gov.uk/self-assessment-repayment/repayment-amount",
                         messageKey = "credit-and-refund.claim-refund-btn", classes = "govuk-button", role=Some("button"))
                 }
             }
 
-            @link(link = "https://www.tax.service.gov.uk/self-assessment-refund-backend/view-history",
+            @link(link = "https://www.tax.service.gov.uk/self-assessment-repayment/repayment-status",
                 messageKey = "credit-and-refund.check-refund-btn", classes = "govuk-button govuk-button--secondary",
                 role=Some("button")
                 )

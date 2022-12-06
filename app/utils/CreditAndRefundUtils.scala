@@ -27,7 +27,6 @@ object CreditAndRefundUtils {
 
     case object UnallocatedCreditFromSingleCreditItem extends UnallocatedCreditType
 
-
     def maybeUnallocatedCreditType(creditCharges: List[(DocumentDetailWithDueDate, FinancialDetail)],
                                    balanceDetails: Option[BalanceDetails]): Option[UnallocatedCreditType] = {
       (creditCharges, balanceDetails, creditCharges.size) match {

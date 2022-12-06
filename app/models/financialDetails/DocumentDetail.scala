@@ -57,7 +57,6 @@ case class DocumentDetail(taxYear: String,
     case Some(credit) => Some(credit * -1)
   }
 
-
   def outstandingAmountZero: Boolean =
     outstandingAmount.getOrElse[BigDecimal](0) == 0
 

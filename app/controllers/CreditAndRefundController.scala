@@ -56,9 +56,11 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
                                           val view: CreditAndRefunds,
                                           val customNotFoundErrorView: CustomNotFoundError)
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {
+
   private val creditsFromHMRC = "HMRC"
   private val cutOverCredits = "CutOver"
   private val payment = "Payment"
+
   def handleRequest(isAgent: Boolean, itvcErrorHandler: ShowInternalServerError, backUrl: String)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
     creditService.getCreditCharges()(implicitly, user) map {
@@ -108,6 +110,7 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
 
   def sortCreditsGroupedPaymentTypes(credits: List[(DocumentDetailWithDueDate, FinancialDetail)])
   : List[(DocumentDetailWithDueDate, FinancialDetail)] = {
+
     val sortingOrderCreditType = Map(
       creditsFromHMRC -> 0,
       cutOverCredits -> 1,
