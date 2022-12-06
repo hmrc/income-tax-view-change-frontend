@@ -32,7 +32,7 @@ class RepaymentConnector @Inject()(val http: HttpClient,
                                    val config: FrontendAppConfig
                                   )(implicit ec: ExecutionContext) {
 
-  val url: String = s"${config.repaymentsUrl}/self-assessment-repayment-backend/start"
+  val url: String = s"${config.repaymentsUrl}/self-assessment-refund-backend/itsa-viewer/journey/start-refund"
 
   def start(nino: String, fullAmount: BigDecimal)(implicit headerCarrier: HeaderCarrier): Future[RepaymentJourneyResponseModel] = {
 
@@ -64,4 +64,6 @@ class RepaymentConnector @Inject()(val http: HttpClient,
         RepaymentJourneyErrorResponse(response.status, response.body)
     }
   }
+
+
 }

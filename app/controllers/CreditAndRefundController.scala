@@ -22,11 +22,12 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowI
 import config.featureswitch.{CreditsRefundsRepay, FeatureSwitching, MFACreditsAndDebits}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
+import models.core.RepaymentJourneyResponseModel.{RepaymentJourneyErrorResponse, RepaymentJourneyModel}
 import models.financialDetails.{BalanceDetails, DocumentDetailWithDueDate, FinancialDetail, FinancialDetailsModel}
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import services.{CreditService, DateService, IncomeSourceDetailsService}
+import services.{CreditService, DateService, IncomeSourceDetailsService, RepaymentService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.language.LanguageUtils
 import utils.CreditAndRefundUtils
@@ -46,7 +47,8 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
                                           val checkSessionTimeout: SessionTimeoutPredicate,
                                           val retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                           val itvcErrorHandler: ItvcErrorHandler,
-                                          val incomeSourceDetailsService: IncomeSourceDetailsService)
+                                          val incomeSourceDetailsService: IncomeSourceDetailsService,
+                                          val repaymentService: RepaymentService)
                                          (implicit val appConfig: FrontendAppConfig,
                                           dateService: DateService,
                                           val languageUtils: LanguageUtils,
@@ -59,6 +61,18 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
   private val creditsFromHMRC = "HMRC"
   private val cutOverCredits = "CutOver"
   private val payment = "Payment"
+
+  def show(origin: Option[String] = None): Action[AnyContent] =
+    (checkSessionTimeout andThen authenticate andThen retrieveNino
+      andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
+      implicit user =>
+        handleRequest(
+          backUrl = controllers.routes.HomeController.show(origin).url,
+          itvcErrorHandler = itvcErrorHandler,
+          isAgent = false
+        )
+    }
+
   def handleRequest(isAgent: Boolean, itvcErrorHandler: ShowInternalServerError, backUrl: String)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
     creditService.getCreditCharges()(implicitly, user) map {
@@ -77,32 +91,6 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
       case _ => Logger("application").error(
         s"${if (isAgent) "[Agent]"}[CreditAndRefundController][show] Invalid response from financial transactions")
         itvcErrorHandler.showInternalServerError()
-    }
-  }
-
-  def show(origin: Option[String] = None): Action[AnyContent] =
-    (checkSessionTimeout andThen authenticate andThen retrieveNino
-      andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
-      implicit user =>
-        handleRequest(
-          backUrl = controllers.routes.HomeController.show(origin).url,
-          itvcErrorHandler = itvcErrorHandler,
-          isAgent = false
-        )
-    }
-
-  def showAgent(): Action[AnyContent] = {
-    Authenticated.async {
-      implicit request =>
-        implicit user =>
-          getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true).flatMap {
-            implicit mtdItUser =>
-              handleRequest(
-                backUrl = controllers.routes.HomeController.showAgent.url,
-                itvcErrorHandler = itvcErrorHandlerAgent,
-                isAgent = true
-              )
-          }
     }
   }
 
@@ -146,4 +134,75 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
       case (_, _, _) => throw new Exception("Credit Type Not Found")
     }
   }
+
+  def showAgent(): Action[AnyContent] = {
+    Authenticated.async {
+      implicit request =>
+        implicit user =>
+          getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true).flatMap {
+            implicit mtdItUser =>
+              handleRequest(
+                backUrl = controllers.routes.HomeController.showAgent.url,
+                itvcErrorHandler = itvcErrorHandlerAgent,
+                isAgent = true
+              )
+          }
+    }
+  }
+
+  def startRefund(): Action[AnyContent] =
+    (checkSessionTimeout andThen authenticate andThen retrieveNino
+      andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
+      implicit user =>
+        handleRefundRequest(
+          backUrl = "", // TODO: do we need a backUrl
+          itvcErrorHandler = itvcErrorHandler,
+          isAgent = false
+        )
+    }
+
+  def refundStatus(): Action[AnyContent] =
+    (checkSessionTimeout andThen authenticate andThen retrieveNino
+      andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
+      implicit user =>
+        handleStatusRefundRequest(
+          backUrl = "", // TODO: do we need a backUrl
+          itvcErrorHandler = itvcErrorHandler,
+          isAgent = false
+        )
+    }
+
+  private def handleRefundRequest(isAgent: Boolean, itvcErrorHandler: ShowInternalServerError, backUrl: String)
+                                 (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
+    creditService.getCreditCharges()(implicitly, user) flatMap  {
+      case _ if isDisabled(CreditsRefundsRepay) =>
+        Future.successful(Ok(customNotFoundErrorView()(user, messages)))
+
+      case financialDetailsModel: List[FinancialDetailsModel] =>
+        val balance: Option[BalanceDetails] = financialDetailsModel.headOption.map(balance => balance.balanceDetails)
+        repaymentService.start(user.nino, balance.flatMap(_.availableCredit).getOrElse(BigDecimal(0))).flatMap { repayment =>
+          repayment match {
+            case RepaymentJourneyModel(nextUrl) =>
+              Future.successful(Redirect(nextUrl))
+            case RepaymentJourneyErrorResponse(status, message) =>
+              Logger("application")
+                .error(s"[CreditAndRefundController][handleRefundRequest] - failed RepaymentJourney: $status ")
+              Future.successful(itvcErrorHandler.showInternalServerError())
+          }
+        }
+      case _ => Logger("application").error("[CreditAndRefundController][handleRefundRequest]")
+        Future.successful(itvcErrorHandler.showInternalServerError())
+    }
+  }
+
+  private def handleStatusRefundRequest(isAgent: Boolean, itvcErrorHandler: ShowInternalServerError, backUrl: String)
+                                 (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
+    creditService.getCreditCharges()(implicitly, user) flatMap {
+      case _ =>
+        // Not Implemented
+        Future.successful(itvcErrorHandler.showInternalServerError())
+    }
+  }
+
+
 }
