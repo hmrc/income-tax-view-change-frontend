@@ -69,7 +69,7 @@ class CreditAndRefundControllerSpec extends MockAuthenticationPredicate with Moc
     )
   }
 
-  def disableAllSwitches(): Unit = {
+  def disableAllSwitches() : Unit = {
     switches.foreach(switch => disable(switch))
   }
 
@@ -117,7 +117,7 @@ class CreditAndRefundControllerSpec extends MockAuthenticationPredicate with Moc
 
       }
 
-      "MFACreditsAndDebits enabled: credit charges are returned (descending values) and sorted according to credit/refund/payment type" in new Setup {
+      "MFACreditsAndDebits enabled: credit charges are returned in sorted order of credits" in new Setup {
         enable(CreditsRefundsRepay)
         enable(MFACreditsAndDebits)
         enable(CutOverCredits)
@@ -146,26 +146,23 @@ class CreditAndRefundControllerSpec extends MockAuthenticationPredicate with Moc
           .select("p").first().text() shouldBe "£100.00 " + messages("credit-and-refund.credit-from-hmrc-title-prt-1") + " " +
           messages("credit-and-refund.credit-from-hmrc-title-prt-2") + " 2"
         doc.select("#main-content").select("li:nth-child(4)")
-          .select("p").first().text() shouldBe "£1.34 " + messages("credit-and-refund.credit-interest-accrued-prt-1") + " " +
-          messages("credit-and-refund.credit-interest-accrued-prt-2") + " 2a"
-        doc.select("#main-content").select("li:nth-child(5)")
           .select("p").first().text() shouldBe "£2,000.00 " + messages("credit-and-refund.credit-from-hmrc-title-prt-1") + " " +
           messages("credits.drop-down-list.credit-from-an-earlier-tax-year") + " 3"
-        doc.select("#main-content").select("li:nth-child(6)")
+        doc.select("#main-content").select("li:nth-child(5)")
           .select("p").first().text() shouldBe "£700.00 " + messages("credit-and-refund.credit-from-hmrc-title-prt-1") + " " +
           messages("credits.drop-down-list.credit-from-an-earlier-tax-year") + " 4"
-        doc.select("#main-content").select("li:nth-child(7)")
+        doc.select("#main-content").select("li:nth-child(6)")
           .select("p").first().text() shouldBe "£200.00 " + messages("credit-and-refund.credit-from-hmrc-title-prt-1") + " " +
           messages("credits.drop-down-list.credit-from-an-earlier-tax-year") + " 5"
-        doc.select("#main-content").select("li:nth-child(8)")
+        doc.select("#main-content").select("li:nth-child(7)")
           .select("p").first().text() shouldBe "£500.00 " + messages("credit-and-refund.payment") + " 15 June 2018"
-        doc.select("#main-content").select("li:nth-child(9)")
+        doc.select("#main-content").select("li:nth-child(8)")
           .select("p").first().text() shouldBe "£300.00 " + messages("credit-and-refund.payment") + " 15 June 2018"
-        doc.select("#main-content").select("li:nth-child(10)")
+        doc.select("#main-content").select("li:nth-child(9)")
           .select("p").first().text() shouldBe "£100.00 " + messages("credit-and-refund.payment") + " 15 June 2018"
-        doc.select("#main-content").select("li:nth-child(11)")
+        doc.select("#main-content").select("li:nth-child(10)")
           .select("p").first().text() shouldBe "£4.00 " + messages("credit-and-refund.refundProgress-prt-2")
-        doc.select("#main-content").select("li:nth-child(12)")
+        doc.select("#main-content").select("li:nth-child(11)")
           .select("p").first().text() shouldBe "£2.00 " + messages("credit-and-refund.refundProgress-prt-2")
       }
 
