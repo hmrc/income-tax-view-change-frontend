@@ -26,9 +26,17 @@ import scala.concurrent.Future
 
 @Singleton
 class RepaymentService @Inject()(val repaymentConnector: RepaymentConnector){
+
   def start(nino: String, fullAmount: BigDecimal)
            (implicit headerCarrier: HeaderCarrier): Future[RepaymentJourneyResponseModel] = {
     //TODO: add logging and error handling
     repaymentConnector.start(nino, fullAmount)
   }
+
+  def view(nino: String)
+           (implicit headerCarrier: HeaderCarrier): Future[RepaymentJourneyResponseModel] = {
+    //TODO: add logging and error handling
+    repaymentConnector.view(nino)
+  }
+
 }

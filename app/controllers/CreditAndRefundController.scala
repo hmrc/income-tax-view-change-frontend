@@ -197,12 +197,17 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
 
   private def handleStatusRefundRequest(isAgent: Boolean, itvcErrorHandler: ShowInternalServerError, backUrl: String)
                                  (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
-    creditService.getCreditCharges()(implicitly, user) flatMap {
-      case _ =>
-        // Not Implemented
-        Future.successful(itvcErrorHandler.showInternalServerError())
+    repaymentService.view(user.nino).flatMap { view =>
+      view match {
+        case RepaymentJourneyModel(nextUrl) =>
+          Future.successful(Redirect(nextUrl))
+        case RepaymentJourneyErrorResponse(status, message) =>
+          Logger("application")
+            .error(s"[CreditAndRefundController][handleStatusRefundRequest] - failed RepaymentJourney: $status ")
+          Future.successful(itvcErrorHandler.showInternalServerError())
+      }
     }
-  }
 
+  }
 
 }
