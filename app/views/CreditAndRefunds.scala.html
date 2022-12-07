@@ -208,7 +208,7 @@ balance.getOrElse(throw MissingFieldException("Balance"))
                 @getValidCutOverCreditType(charge, index)
             }
         }
-        @for(amount<-getRefundsInProgress){
+        @for(amount <- getRefundsInProgress){
             @creditAndRefundRefundProgressHtml(amount)
         }
     </ul>
