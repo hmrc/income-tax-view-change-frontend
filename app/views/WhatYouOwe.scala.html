@@ -430,7 +430,7 @@
             @saNoteParagraph
         }
         @if(whatYouOweCreditAmountEnabled) {
-            @whatYouOweChargesList.balanceDetails.unallocatedCredit.map { unallocatedCreditAmt =>
+            @whatYouOweChargesList.balanceDetails.getAbsoluteUnAllocatedCreditAmount.map { unallocatedCreditAmt =>
                 @unallocatedCreditParagraphContent(unallocatedCreditAmt.toCurrencyString)
             }
         }
