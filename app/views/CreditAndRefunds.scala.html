@@ -194,6 +194,11 @@ balance.getOrElse(throw MissingFieldException("Balance"))
         }
 }
 
+@getRefundsInProgress = @{
+    Array(balance.get.firstPendingAmountRequested,balance.get.secondPendingAmountRequested)
+    .flatten.sorted(Ordering.BigDecimal.reverse)
+}
+
 @getListOfCreditsAndRefunds = {
     <ul class="govuk-list govuk-list--bullet" id="credits-list">
         @for((charge, index) <- creditCharges.zipWithIndex) {
@@ -203,31 +208,8 @@ balance.getOrElse(throw MissingFieldException("Balance"))
                 @getValidCutOverCreditType(charge, index)
             }
         }
-
-        @{
-            if(balance.get.firstPendingAmountRequested > balance.get.secondPendingAmountRequested){
-                balance.get.firstPendingAmountRequested map { amount =>
-                    creditAndRefundRefundProgressHtml(amount)
-                }
-            }
-            else {
-                balance.get.secondPendingAmountRequested map { amount =>
-                    creditAndRefundRefundProgressHtml(amount)
-                }
-            }
-        }
-
-        @{
-            if(balance.get.firstPendingAmountRequested < balance.get.secondPendingAmountRequested){
-                balance.get.firstPendingAmountRequested map { amount =>
-                    creditAndRefundRefundProgressHtml(amount)
-                }
-            }
-            else {
-                balance.get.secondPendingAmountRequested map { amount =>
-                    creditAndRefundRefundProgressHtml(amount)
-                }
-            }
+        @for(amount<-getRefundsInProgress){
+            @creditAndRefundRefundProgressHtml(amount)
         }
     </ul>
 }
