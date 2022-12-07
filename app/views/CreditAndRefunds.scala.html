@@ -39,7 +39,7 @@
     govukInsetText : GovukInsetText
 )
 @(creditCharges: List[(DocumentDetailWithDueDate, FinancialDetail)], balance: Option[BalanceDetails], creditAndRefundType: Option[UnallocatedCreditType],
-    isAgent: Boolean = false, backUrl: String, isMFACreditsAndDebitsEnabled: Boolean = false, isCutOverCreditEnabled: Boolean = false)(implicit request: Request[_], user: MtdItUser[_], messages: Messages)
+    isAgent: Boolean = false, backUrl: String, isMFACreditsAndDebitsEnabled: Boolean = false, isCutOverCreditsEnabled: Boolean = false)(implicit request: Request[_], user: MtdItUser[_], messages: Messages)
 @import implicitDateFormatter.longDate
 
 @getControllerHref(credit: DocumentDetail, isAgent: Boolean) = @{
@@ -111,13 +111,22 @@ balance.getOrElse(throw MissingFieldException("Balance"))
         <h2 class="govuk-heading-s">
             <span class="govuk-body">@messages("credit-and-refund.subHeading.has-credits-1") </span>
             @maybeAvailableCredit.toCurrency
-        <!--Checks if there are any items in the list, depending on that ":" or "." message is used.-->
-        @if(getListOfCredits.body.contains("<li>")){
-            <span class="govuk-body">@messages(if(isAgent) "credit-and-refund.agent.subHeading.has-credits-2" else "credit-and-refund.subHeading.has-credits-2")</span>
-        }else{
-            <span class="govuk-body">@messages(if(isAgent) "credit-and-refund.agent.subHeading.has-credits-3" else "credit-and-refund.subHeading.has-credits-3")</span>
-        }
-
+            <!--Checks if there are any items in the list, depending on that ":" or "." message is used.-->
+            @{
+                val listSize = creditCharges.filter(x => {
+                        if(x._2.validMFACreditType())
+                            isMFACreditsAndDebitsEnabled
+                        else if(x._2.validCutoverCreditType())
+                            isCutOverCreditsEnabled
+                        else
+                            true
+                    }).size
+                if( listSize != 0 || balance.get.firstPendingAmountRequested != None || balance.get.secondPendingAmountRequested != None){
+                    <span class="govuk-body">{messages(if(isAgent) "credit-and-refund.agent.subHeading.has-credits-2" else "credit-and-refund.subHeading.has-credits-2")}</span>
+                }else{
+                    <span class="govuk-body">{messages(if(isAgent) "credit-and-refund.agent.subHeading.has-credits-3" else "credit-and-refund.subHeading.has-credits-3")}</span>
+                }
+            }
         </h2>
     } else {
         @if(messages.lang.code == "en") {
@@ -158,7 +167,7 @@ balance.getOrElse(throw MissingFieldException("Balance"))
 @getValidCutOverCreditType(charge: (DocumentDetailWithDueDate, FinancialDetail), index: Int) = {
 
         @if(charge._2.validCutoverCreditType()) {
-            @if(isCutOverCreditEnabled){
+            @if(isCutOverCreditsEnabled){
                 <li>
                     <p class="govuk-heading-s">
                         @charge._1.documentDetail.paymentOrChargeCredit.getOrElse(throw MissingFieldException("Payment Or Charge Credit")).toCurrencyString
@@ -183,50 +192,44 @@ balance.getOrElse(throw MissingFieldException("Balance"))
                 </p>
             </li>
         }
-    }
+}
 
-@getListOfCredits = {
-<ul class="govuk-list govuk-list--bullet" id="credits-list">
-    @for((charge, index) <- creditCharges.zipWithIndex) {
-        @if(charge._2.validMFACreditType()) {
-            @getMFACreditsAndDebitsContent(charge, index)
-        } else {
-            @getValidCutOverCreditType(charge, index)
-        }
-    }
-
-    @{
-        if(balance.get.firstPendingAmountRequested > balance.get.secondPendingAmountRequested){
-            balance.get.firstPendingAmountRequested map { amount =>
-                <li>
-                    <p class="govuk-heading-s">
-                        <span class="govuk-body">{messages("credit-and-refund.refundProgress-prt-1")}</span>
-                        {amount.toCurrencyString}
-                        <span class="govuk-body">{messages("credit-and-refund.refundProgress-prt-2")}</span>
-                    </p>
-                </li>
+@getListOfCreditsAndRefunds = {
+    <ul class="govuk-list govuk-list--bullet" id="credits-list">
+        @for((charge, index) <- creditCharges.zipWithIndex) {
+            @if(charge._2.validMFACreditType()) {
+                @getMFACreditsAndDebitsContent(charge, index)
+            } else {
+                @getValidCutOverCreditType(charge, index)
             }
         }
-        else {
+
+        @{
+            if(balance.get.firstPendingAmountRequested > balance.get.secondPendingAmountRequested){
+                balance.get.firstPendingAmountRequested map { amount =>
+                    creditAndRefundRefundProgressHtml(amount)
+                }
+            }
+            else {
                 balance.get.secondPendingAmountRequested map { amount =>
                     creditAndRefundRefundProgressHtml(amount)
                 }
+            }
         }
-    }
 
-    @{
-        if(balance.get.firstPendingAmountRequested < balance.get.secondPendingAmountRequested){
-            balance.get.firstPendingAmountRequested map { amount =>
-                creditAndRefundRefundProgressHtml(amount)
+        @{
+            if(balance.get.firstPendingAmountRequested < balance.get.secondPendingAmountRequested){
+                balance.get.firstPendingAmountRequested map { amount =>
+                    creditAndRefundRefundProgressHtml(amount)
+                }
+            }
+            else {
+                balance.get.secondPendingAmountRequested map { amount =>
+                    creditAndRefundRefundProgressHtml(amount)
+                }
             }
         }
-        else {
-            balance.get.secondPendingAmountRequested map { amount =>
-                creditAndRefundRefundProgressHtml(amount)
-            }
-        }
-    }
-</ul>
+    </ul>
 }
 
 
@@ -272,7 +275,7 @@ balance.getOrElse(throw MissingFieldException("Balance"))
             }
             case None => {
               @getAvailableCreditContent
-              @getListOfCredits
+              @getListOfCreditsAndRefunds
             }
         }
 
