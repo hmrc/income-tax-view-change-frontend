@@ -50,7 +50,7 @@ class RepaymentConnectorSpec extends TestSupport with MockHttp {
   object TestPayApiConnector extends RepaymentConnector(mockHttpGet, appConfig)
 
   "Calling .startRepayment" should {
-    val testUrl = s"$host:$port/self-assessment-repayment-backend/start"
+    val testUrl = s"$host:$port/self-assessment-refund-backend/itsa-viewer/journey/start-refund"
 
     val testBody = Json.parse(
       s"""

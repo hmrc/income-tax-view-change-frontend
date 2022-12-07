@@ -677,7 +677,6 @@ object IncomeSourceIntegrationTestConstants {
                                                          dueDate: String = "2018-02-14", dunningLock: List[String] = noDunningLock,
                                                          interestLocks: List[String] = noInterestLock,
                                                          latePaymentInterestAmount: Option[BigDecimal] = Some(100),
-                                                         accruingInterestAmount: Option[BigDecimal] = None
                                                         ): JsValue = Json.obj(
     "balanceDetails" -> Json.obj(
       "balanceDueWithin30Days" -> 1.00,
@@ -715,16 +714,7 @@ object IncomeSourceIntegrationTestConstants {
         "outstandingAmount" -> outstandingAmount,
         "originalAmount" -> originalAmount,
         "documentDate" -> "2018-03-29"
-      ),
-      Json.obj(
-        "taxYear" -> taxYear,
-        "transactionId" -> "1040000126",
-        "documentDescription" -> "TRM New Charge",
-        "outstandingAmount" -> outstandingAmount,
-        "originalAmount" -> originalAmount,
-        "documentDate" -> "2018-03-29",
-        "accruingInterestAmount" -> accruingInterestAmount
-      ),
+      )
     ),
     "financialDetails" -> Json.arr(
       Json.obj(

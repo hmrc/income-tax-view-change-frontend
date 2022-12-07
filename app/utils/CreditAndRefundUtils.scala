@@ -31,10 +31,7 @@ object CreditAndRefundUtils {
     def maybeUnallocatedCreditType(creditCharges: List[(DocumentDetailWithDueDate, FinancialDetail)],
                                    balanceDetails: Option[BalanceDetails]): Option[UnallocatedCreditType] = {
       (creditCharges, balanceDetails, creditCharges.size) match {
-        case (List((documentDetailWithDueDate, _)), Some(BalanceDetails(_, _, _, Some(availableCredit), _, _, Some(_))), _)
-          // Single MFA credit with accruing interest is displayed as multiple credits in view
-          if availableCredit != 0 && documentDetailWithDueDate.documentDetail.accruingInterestAmount.isDefined => None
-        case (List((documentDetailWithDueDate, financialDetails)), Some(BalanceDetails(_, _, _, Some(availableCredit), _, _, Some(_))), 1)
+        case (List((_, financialDetails)), Some(BalanceDetails(_, _, _, Some(availableCredit), _, _, Some(_))), 1)
           if availableCredit != 0 && (validMFACreditType(financialDetails.mainType) || financialDetails.validCutoverCreditType()) =>
           Some(UnallocatedCreditFromSingleCreditItem)
         case (List((documentDetailWithDueDate, _)), Some(BalanceDetails(_, _, _, Some(availableCredit), _, _, Some(_))), 1)

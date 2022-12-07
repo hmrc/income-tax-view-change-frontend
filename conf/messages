@@ -239,8 +239,8 @@ forecast_income.table.header                                   = Income type
 forecast_income.table.header.amount                            = Amount
 forecast_income.dates                                          = 6 April {0} to 5 April {1}
 forecast_income.total                                          = Total forecast income
-forecast_income.employment                                     = Employment
-forecast_income.self_employment                                = Self Employment
+forecast_income.employment                                     = employment
+forecast_income.self_employment                                = self-employment
 forecast_income.source_types.01                                = Profit from {0}
 forecast_income.source_types.02                                = Profit from UK land and property
 forecast_income.source_types.03                                = Profit from EEA holiday property lettings
@@ -248,17 +248,21 @@ forecast_income.source_types.04                                = Profit from UK 
 forecast_income.source_types.05                                = Pay from {0}
 forecast_income.source_types.06                                = Foreign income
 forecast_income.source_types.07                                = Dividends from foreign companies
+forecast_income.source_types.08                                = Profit from trusts and estates
 forecast_income.source_types.09                                = Interest from UK banks, building societies and securities
 forecast_income.source_types.10                                = Dividends from UK companies
 forecast_income.source_types.11                                = State benefit income
 forecast_income.source_types.12                                = Gains on life insurance policies
 forecast_income.source_types.13                                = Share schemes
+forecast_income.source_types.14                                = Profit from partnership
 forecast_income.source_types.15                                = Profit from foreign land and property
 forecast_income.source_types.16                                = Foreign interest
-forecast_income.source_types.17                                = Other Dividends
+forecast_income.source_types.17                                = Other dividends
 forecast_income.source_types.18                                = UK securities
-forecast_income.source_types.19                                = Other Income
+forecast_income.source_types.19                                = Other income
 forecast_income.source_types.20                                = Foreign pension
+forecast_income.source_types.21                                = Non-PAYE income
+forecast_income.source_types.22                                = Capital gains
 forecast_income.source_types.98                                = Gift Aid and Payroll Giving
 
 
@@ -273,10 +277,10 @@ deduction_breakdown.table.marriage_allowance_transfer                  = Marriag
 deduction_breakdown.table.pension_contributions                        = Pension contributions
 deduction_breakdown.table.loss_relief                                  = Loss relief
 deduction_breakdown.table.gift_of_investments_and_property_to_charity  = Gift of investments and property to charity
-deduction_breakdown.table.annual_payments                              = Annual Payments
+deduction_breakdown.table.annual_payments                              = Annual payments
 deduction_breakdown.table.qualifying_loan_interest                     = Qualifying loan interest
 deduction_breakdown.table.post_cessation_trade_receipts                = Post-cessation trade receipts
-deduction_breakdown.table.trade_union_payments                         = Trade Union payments
+deduction_breakdown.table.trade_union_payments                         = Trade union payments
 deduction_breakdown.total                                              = Total allowances and deductions
 
 ## Tax Calculation Breakdown Page ##
@@ -800,7 +804,6 @@ paymentHistory.button                                           = {0} payments
 paymentHistory.paymentToHmrc                                    = Payment made to HMRC
 paymentHistory.paymentFromEarlierYear                           = Credit from an earlier tax year
 paymentHistory.mfaCredit                                        = Credit from HMRC adjustment
-paymentHistory.creditInterestAccrued                            = Credit interest accrued
 paymentsHistory.CardRef                                         = Payment made by debit card ref:
 paymentHistory.refund                                           = Refund
 paymentHistory.table.header.date                                = Date
@@ -911,8 +914,7 @@ credit-and-refund.claim-refund-btn                                = Claim a refu
 credit-and-refund.check-refund-btn                                = Check refund status
 credit-and-refund.credit-from-hmrc-title-prt-1                    = from a
 credit-and-refund.credit-from-hmrc-title-prt-2                    = Credit from HMRC adjustment
-credit-and-refund.credit-interest-accrued-prt-1                   = from
-credit-and-refund.credit-interest-accrued-prt-2                   = Credit interest accrued
+
 
 
 #Language Selector
