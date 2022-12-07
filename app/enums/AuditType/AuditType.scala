@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package enums
+package enums.AuditType
 
 sealed trait AuditType {
   val name: String

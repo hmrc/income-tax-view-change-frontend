@@ -16,16 +16,14 @@
 
 package audit.models
 
-import enums.LowConfidenceLevelIvHandoff
-
 case class IvUpliftRequiredAuditModel(reasonForHandoff: String,
                                       currentConfidenceLevel: Int,
                                       minimumConfidenceLevelToProceed: Int) extends AuditModel {
-  override val transactionName: String = "low-confidence-level-IV-handoff"
+  override val transactionName: String = enums.TransactionName.LowConfidenceLevelIvHandoff
   override val detail: Seq[(String, String)] = Seq(
     "reasonForHandoff" -> reasonForHandoff,
     "currentConfidenceLevel" -> s"CL$currentConfidenceLevel",
     "minimumConfidenceLevelToProceed" -> s"CL$minimumConfidenceLevelToProceed"
   )
-  override val auditType: String = LowConfidenceLevelIvHandoff
+  override val auditType: String = enums.AuditType.LowConfidenceLevelIvHandoff
 }
