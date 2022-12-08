@@ -130,6 +130,9 @@ GET         /agents/:taxYear/forecast-tax-calculation                     contro
 #Credits and Refunds
 GET          /claim-refund                                                controllers.CreditAndRefundController.show(origin: Option[String] ?= None)
 GET          /agents/claim-refund                                         controllers.CreditAndRefundController.showAgent()
+GET          /start-refund                                                controllers.CreditAndRefundController.startRefund()
+GET          /refund-status                                                controllers.CreditAndRefundController.refundStatus()
+
 
 #Credits
 GET         /credits-from-hmrc/:calendarYear                              controllers.CreditsSummaryController.showCreditsSummary(calendarYear: Int, origin: Option[String] ?= None)
