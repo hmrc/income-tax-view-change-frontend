@@ -64,6 +64,13 @@ To generate aggregated scoverage report for the unit and integration tests in on
 sbt clean coverage test it:test coverageOff coverageReport
 ```
 
+## How to check for missing English/Welsh message keys
+
+```
+./check_messages.sh
+```
+
+
 ### License
 
 This code is open source software licensed under the [Apache 2.0 License]("http://www.apache.org/licenses/LICENSE-2.0.html")
