@@ -13,7 +13,7 @@ if [ -e "$messageDir/messages" ] && [ -e "$messageDir/messages.cy" ]; then
   # Store the keys from the messages files in arrays
   # A key must contain a full stop and must not contain // or #
   messageKeysEn=($(awk -F '=' '$1 ~ /[^#]*[.]/ && $1 !~ /[^#]*\/\// {print $1}' "$messageDir/messages"))
-  messageKeysCy=($(awk -F '=' '$1 ~ /[^#]*[.]/ && $1 !~ /[^#]*\/\// {print $1}' "$messageDir/messages"))
+  messageKeysCy=($(awk -F '=' '$1 ~ /[^#]*[.]/ && $1 !~ /[^#]*\/\// {print $1}' "$messageDir/messages.cy"))
 
   # Iterate over the keys in the English messages file
   for key in "${messageKeysEn[@]}"; do
