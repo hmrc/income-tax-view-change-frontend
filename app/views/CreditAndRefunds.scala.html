@@ -39,7 +39,7 @@
     govukInsetText : GovukInsetText
 )
 @(creditCharges: List[(DocumentDetailWithDueDate, FinancialDetail)], balance: Option[BalanceDetails], creditAndRefundType: Option[UnallocatedCreditType],
-    isAgent: Boolean = false, backUrl: String, isMFACreditsAndDebitsEnabled: Boolean = false)(implicit request: Request[_], user: MtdItUser[_], messages: Messages)
+    isAgent: Boolean = false, backUrl: String, isMFACreditsAndDebitsEnabled: Boolean = false, isCutOverCreditsEnabled: Boolean = false)(implicit request: Request[_], user: MtdItUser[_], messages: Messages)
 @import implicitDateFormatter.longDate
 
 @getControllerHref(credit: DocumentDetail, isAgent: Boolean) = @{
@@ -111,7 +111,22 @@ balance.getOrElse(throw MissingFieldException("Balance"))
         <h2 class="govuk-heading-s">
             <span class="govuk-body">@messages("credit-and-refund.subHeading.has-credits-1") </span>
             @maybeAvailableCredit.toCurrency
-            <span class="govuk-body">@messages(if(isAgent) "credit-and-refund.agent.subHeading.has-credits-2" else "credit-and-refund.subHeading.has-credits-2")</span>
+            <!--Checks if there are any items in the list, depending on that ":" or "." message is used.-->
+            @{
+                val listSize = creditCharges.filter(x => {
+                        if(x._2.validMFACreditType())
+                            isMFACreditsAndDebitsEnabled
+                        else if(x._2.validCutoverCreditType())
+                            isCutOverCreditsEnabled
+                        else
+                            true
+                    }).size
+                if( listSize != 0 || balance.get.firstPendingAmountRequested != None || balance.get.secondPendingAmountRequested != None){
+                    <span class="govuk-body">{messages(if(isAgent) "credit-and-refund.agent.subHeading.has-credits-2" else "credit-and-refund.subHeading.has-credits-2")}</span>
+                }else{
+                    <span class="govuk-body">{messages(if(isAgent) "credit-and-refund.agent.subHeading.has-credits-3" else "credit-and-refund.subHeading.has-credits-3")}</span>
+                }
+            }
         </h2>
     } else {
         @if(messages.lang.code == "en") {
@@ -150,31 +165,55 @@ balance.getOrElse(throw MissingFieldException("Balance"))
 }
 
 @getValidCutOverCreditType(charge: (DocumentDetailWithDueDate, FinancialDetail), index: Int) = {
-    @if(charge._2.validCutoverCreditType()) {
-    <li>
-        <p class="govuk-heading-s">
-            @charge._1.documentDetail.paymentOrChargeCredit.getOrElse(throw MissingFieldException("Payment Or Charge Credit")).toCurrencyString
-            <span class="govuk-body"> @messages("credit-and-refund.credit-from-hmrc-title-prt-1")
-                <a id="credit-and-refund-@index" href="@getCreditsSummaryControllerHref(charge._1.documentDetail, isAgent)"
-                    class="govuk-link">@messages("paymentHistory.paymentFromEarlierYear")
-                    <span class="govuk-visually-hidden"> @index</span>
-                </a>
-            </span>
-        </p>
-    </li>
-    } else {
-    <li>
-        <p class="govuk-heading-s">
-            @charge._1.documentDetail.paymentOrChargeCredit.getOrElse(throw MissingFieldException("Payment Or Charge Credit")).toCurrencyString
-            <span class="govuk-body">@messages("credit-and-refund.payment")
-                <a href="@getControllerHref(charge._1.documentDetail, isAgent)"
-                   class="govuk-link">@charge._1.dueDate.getOrElse(throw MissingFieldException("Due Date")).toLongDate
-                </a>
-            </span>
-        </p>
-    </li>
-    }
+
+        @if(charge._2.validCutoverCreditType()) {
+            @if(isCutOverCreditsEnabled){
+                <li>
+                    <p class="govuk-heading-s">
+                        @charge._1.documentDetail.paymentOrChargeCredit.getOrElse(throw MissingFieldException("Payment Or Charge Credit")).toCurrencyString
+                        <span class="govuk-body"> @messages("credit-and-refund.credit-from-hmrc-title-prt-1")
+                            <a id="credit-and-refund-@index" href="@getCreditsSummaryControllerHref(charge._1.documentDetail, isAgent)"
+                                class="govuk-link">@messages("paymentHistory.paymentFromEarlierYear")
+                                <span class="govuk-visually-hidden"> @index</span>
+                            </a>
+                        </span>
+                    </p>
+                </li>
+            }
+        } else {
+            <li>
+                <p class="govuk-heading-s">
+                    @charge._1.documentDetail.paymentOrChargeCredit.getOrElse(throw MissingFieldException("Payment Or Charge Credit")).toCurrencyString
+                    <span class="govuk-body">@messages("credit-and-refund.payment")
+                        <a href="@getControllerHref(charge._1.documentDetail, isAgent)"
+                           class="govuk-link">@charge._1.dueDate.getOrElse(throw MissingFieldException("Due Date")).toLongDate
+                        </a>
+                    </span>
+                </p>
+            </li>
+        }
 }
+
+@getRefundsInProgress = @{
+    Array(balance.get.firstPendingAmountRequested,balance.get.secondPendingAmountRequested)
+    .flatten.sorted(Ordering.BigDecimal.reverse)
+}
+
+@getListOfCreditsAndRefunds = {
+    <ul class="govuk-list govuk-list--bullet" id="credits-list">
+        @for((charge, index) <- creditCharges.zipWithIndex) {
+            @if(charge._2.validMFACreditType()) {
+                @getMFACreditsAndDebitsContent(charge, index)
+            } else {
+                @getValidCutOverCreditType(charge, index)
+            }
+        }
+        @for(amount <- getRefundsInProgress){
+            @creditAndRefundRefundProgressHtml(amount)
+        }
+    </ul>
+}
+
 
 @mainTemplate(
     pageTitle = messages("credit-and-refund.heading"),
@@ -218,47 +257,7 @@ balance.getOrElse(throw MissingFieldException("Balance"))
             }
             case None => {
               @getAvailableCreditContent
-                <ul class="govuk-list govuk-list--bullet" id="credits-list">
-                    @for((charge, index) <- creditCharges.zipWithIndex) {
-                        @if(charge._2.validMFACreditType()) {
-                           @getMFACreditsAndDebitsContent(charge, index)
-                        } else {
-                            @getValidCutOverCreditType(charge, index)
-                        }
-                    }
-
-                    @{
-                        if(balance.get.firstPendingAmountRequested > balance.get.secondPendingAmountRequested){
-                            balance.get.firstPendingAmountRequested map { amount =>
-                                <li>
-                                    <p class="govuk-heading-s">
-                                        <span class="govuk-body">{messages("credit-and-refund.refundProgress-prt-1")}</span>
-                                        {amount.toCurrencyString}
-                                        <span class="govuk-body">{messages("credit-and-refund.refundProgress-prt-2")}</span>
-                                    </p>
-                                </li>
-                            }
-                        }
-                        else {
-                            balance.get.secondPendingAmountRequested map { amount =>
-                                creditAndRefundRefundProgressHtml(amount)
-                            }
-                        }
-                    }
-
-                    @{
-                        if(balance.get.firstPendingAmountRequested < balance.get.secondPendingAmountRequested){
-                            balance.get.firstPendingAmountRequested map { amount =>
-                                creditAndRefundRefundProgressHtml(amount)
-                            }
-                        }
-                        else {
-                             balance.get.secondPendingAmountRequested map { amount =>
-                                creditAndRefundRefundProgressHtml(amount)
-                            }
-                        }
-                    }
-                </ul>
+              @getListOfCreditsAndRefunds
             }
         }
 
