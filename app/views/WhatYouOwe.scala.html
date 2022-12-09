@@ -451,10 +451,8 @@
     }
 
     @if(creditAndRefundEnabled){
-        @whatYouOweChargesList.balanceDetails.availableCredit.map { availableCredit =>
-            @if(availableCredit > 0) {
+        @whatYouOweChargesList.balanceDetails.getAbsoluteAvailableCreditAmount.map { availableCredit =>
                 @availableCreditInAccount(availableCredit.toCurrencyString)
-            }
         }
     }
 }
