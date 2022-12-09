@@ -95,5 +95,15 @@ class BalanceDetailsSpec extends UnitSpec {
         balanceDetailsModel().refundInProgress shouldBe false
       }
     }
+
+    "return absolute values" when {
+      "-ve available credit is passed" in {
+        balanceDetailsModel(availableCredit = Some(-2000.toDouble)).getAbsoluteAvailableCreditAmount shouldBe  Some(2000.toDouble)
+      }
+
+      "-ve unallocated credit is passed" in {
+        balanceDetailsModel(unallocatedCredit = Some(-1000.toDouble)).getAbsoluteUnAllocatedCreditAmount shouldBe  Some(1000.toDouble)
+      }
+    }
   }
 }
