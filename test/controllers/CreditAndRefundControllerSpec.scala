@@ -17,7 +17,7 @@
 package controllers
 
 import config.featureswitch.FeatureSwitch.switches
-import config.featureswitch.{CreditsRefundsRepay, FeatureSwitching, MFACreditsAndDebits}
+import config.featureswitch.{CreditsRefundsRepay, CutOverCredits, FeatureSwitching, MFACreditsAndDebits}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import mocks.auth.MockFrontendAuthorisedFunctions
@@ -122,6 +122,7 @@ class CreditAndRefundControllerSpec extends MockAuthenticationPredicate with Moc
       "MFACreditsAndDebits enabled: credit charges are returned in sorted order of credits" in new Setup {
         enable(CreditsRefundsRepay)
         enable(MFACreditsAndDebits)
+        enable(CutOverCredits)
 
         mockSingleBISWithCurrentYearAsMigrationYear()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)

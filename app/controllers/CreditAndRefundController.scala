@@ -19,7 +19,7 @@ package controllers
 
 import auth.{FrontendAuthorisedFunctions, MtdItUser}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
-import config.featureswitch.{CreditsRefundsRepay, FeatureSwitching, MFACreditsAndDebits}
+import config.featureswitch.{CreditsRefundsRepay, CutOverCredits, FeatureSwitching, MFACreditsAndDebits}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
 import models.core.RepaymentJourneyResponseModel.{RepaymentJourneyErrorResponse, RepaymentJourneyModel}
@@ -79,15 +79,17 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
       case _ if isDisabled(CreditsRefundsRepay) =>
         Ok(customNotFoundErrorView()(user, messages))
       case financialDetailsModel: List[FinancialDetailsModel] =>
+        val isMFACreditsAndDebitsEnabled: Boolean = isEnabled(MFACreditsAndDebits)
+        val isCutOverCreditsEnabled: Boolean = isEnabled(CutOverCredits)
         val balance: Option[BalanceDetails] = financialDetailsModel.headOption.map(balance => balance.balanceDetails)
 
         val credits: List[(DocumentDetailWithDueDate, FinancialDetail)] = financialDetailsModel.flatMap(
           financialDetailsModel => sortCreditsGroupedPaymentTypes(financialDetailsModel.getAllDocumentDetailsWithDueDatesAndFinancialDetails())
         )
 
-        val creditAndRefundType: Option[UnallocatedCreditType] = maybeUnallocatedCreditType(credits, balance)
+        val creditAndRefundType: Option[UnallocatedCreditType] = maybeUnallocatedCreditType(credits, balance, isMFACreditsAndDebitsEnabled, isCutOverCreditsEnabled)
 
-        Ok(view(credits, balance, creditAndRefundType, isAgent, backUrl, isEnabled(MFACreditsAndDebits))(user, user, messages))
+        Ok(view(credits, balance, creditAndRefundType, isAgent, backUrl, isMFACreditsAndDebitsEnabled, isCutOverCreditsEnabled)(user, user, messages))
       case _ => Logger("application").error(
         s"${if (isAgent) "[Agent]"}[CreditAndRefundController][show] Invalid response from financial transactions")
         itvcErrorHandler.showInternalServerError()

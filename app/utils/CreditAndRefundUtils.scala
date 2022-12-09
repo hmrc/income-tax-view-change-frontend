@@ -29,10 +29,12 @@ object CreditAndRefundUtils {
 
 
     def maybeUnallocatedCreditType(creditCharges: List[(DocumentDetailWithDueDate, FinancialDetail)],
-                                   balanceDetails: Option[BalanceDetails]): Option[UnallocatedCreditType] = {
+                                   balanceDetails: Option[BalanceDetails], isMFACreditsAndDebitsEnabled: Boolean = false,
+                                   isCutOverCreditEnabled: Boolean = false): Option[UnallocatedCreditType] = {
+
       (creditCharges, balanceDetails, creditCharges.size) match {
         case (List((_, financialDetails)), Some(BalanceDetails(_, _, _, Some(availableCredit), _, _, Some(_))), 1)
-          if availableCredit != 0 && (validMFACreditType(financialDetails.mainType) || financialDetails.validCutoverCreditType()) =>
+          if availableCredit != 0 && ((validMFACreditType(financialDetails.mainType) && isMFACreditsAndDebitsEnabled) || (financialDetails.validCutoverCreditType() && isCutOverCreditEnabled)) =>
           Some(UnallocatedCreditFromSingleCreditItem)
         case (List((documentDetailWithDueDate, _)), Some(BalanceDetails(_, _, _, Some(availableCredit), _, _, Some(_))), 1)
           if availableCredit != 0 && documentDetailWithDueDate.documentDetail.paymentLot.isDefined && documentDetailWithDueDate.documentDetail.paymentLotItem.isDefined =>

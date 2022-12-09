@@ -1,11 +1,12 @@
 package controllers
 
-import config.featureswitch.CreditsRefundsRepay
+import config.featureswitch.{CreditsRefundsRepay, CutOverCredits, MFACreditsAndDebits}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import play.api.http.Status.OK
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino, testTaxYear}
 import testConstants.IncomeSourceIntegrationTestConstants.{propertyOnlyResponseWithMigrationData, testValidFinancialDetailsModelCreditAndRefundsJson}
+
 import java.time.LocalDate
 
 class CreditAndRefundControllerISpec extends ComponentSpecBase {
@@ -14,6 +15,8 @@ class CreditAndRefundControllerISpec extends ComponentSpecBase {
     "display the credit and refund page" when {
       "a valid response is received" in {
         enable(CreditsRefundsRepay)
+        enable(MFACreditsAndDebits)
+        enable(CutOverCredits)
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK,
           propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
