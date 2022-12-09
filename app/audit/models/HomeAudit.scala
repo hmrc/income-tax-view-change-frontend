@@ -18,7 +18,6 @@ package audit.models
 
 import audit.Utilities._
 import auth.MtdItUser
-import enums.ItsaHomePage
 import play.api.libs.json.{JsObject, JsValue, Json}
 import utils.Utilities.JsonUtil
 
@@ -39,7 +38,7 @@ case class HomeAudit(mtdItUser: MtdItUser[_],
     case Left((date, _)) => Json.obj("nextUpdateDeadline" -> date.toString)
   }
 
-  override val transactionName: String = "itsa-home-page"
+  override val transactionName: String = enums.TransactionName.ItsaHomePage
 
   override val detail: JsValue = Json.obj(
     "mtditid" -> mtdItUser.mtditid,
@@ -49,7 +48,7 @@ case class HomeAudit(mtdItUser: MtdItUser[_],
     ("credId", mtdItUser.credId) ++
     ("agentReferenceNumber", mtdItUser.arn)
 
-  override val auditType: String = ItsaHomePage
+  override val auditType: String = enums.AuditType.ItsaHomePage
 
 }
 

@@ -18,7 +18,6 @@ package audit.models
 
 import audit.Utilities.userAuditDetails
 import auth.MtdItUserBase
-import enums.AllowancesDeductionsDetailsResponse
 import models.liabilitycalculation.viewmodels.AllowancesAndDeductionsViewModel
 import play.api.libs.json.JsValue
 import utils.Utilities._
@@ -26,8 +25,8 @@ import utils.Utilities._
 case class AllowanceAndDeductionsResponseAuditModel(mtdItUser: MtdItUserBase[_],
                                                     viewModel: AllowancesAndDeductionsViewModel) extends ExtendedAuditModel {
 
-  override val transactionName: String = "allowances-deductions-details-response"
-  override val auditType: String = AllowancesDeductionsDetailsResponse
+  override val transactionName: String = enums.TransactionName.AllowancesDeductionsDetailsResponse
+  override val auditType: String = enums.AuditType.AllowancesDeductionsDetailsResponse
 
   override val detail: JsValue = {
     userAuditDetails(mtdItUser) ++

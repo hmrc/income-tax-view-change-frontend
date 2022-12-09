@@ -26,8 +26,8 @@ import testUtils.TestSupport
 
 class NextUpdatesResponseAuditModelSpec extends TestSupport {
 
-  val transactionName = "view-obligations-response"
-  val auditEvent = "ViewObligationsResponse"
+  val transactionName: String = enums.TransactionName.ViewObligationsResponse
+  val auditEvent: String = enums.AuditType.ViewObligationsResponse
 
   "The NextUpdatesResponseAuditModel" when {
 

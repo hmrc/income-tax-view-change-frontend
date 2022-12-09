@@ -16,30 +16,26 @@
 
 package audit.models
 
-import enums.{NinoLookup, NinoLookupError}
 import models.core.{NinoResponseError, NinoResponseSuccess}
 
 object NinoLookupAuditing {
 
-  val ninoLookupTransactionName = "ITVCNinoLookup"
-  val ninoLookupAuditType: String = NinoLookup
-
   case class NinoLookupAuditModel(nino: NinoResponseSuccess, mtdRef: String) extends AuditModel {
-    override val transactionName: String = ninoLookupTransactionName
+    override val transactionName: String = enums.TransactionName.NinoLookup
     override val detail: Seq[(String, String)] = Seq(
       "mtdid" -> mtdRef,
       "nino" -> nino.nino
     )
-    override val auditType: String = ninoLookupAuditType
+    override val auditType: String = enums.AuditType.NinoLookup
   }
 
   case class NinoLookupErrorAuditModel(ninoError: NinoResponseError, mtdRef: String) extends AuditModel {
-    override val transactionName: String = "ITVCNinoLookupError"
+    override val transactionName: String = enums.TransactionName.NinoLookupError
     override val detail: Seq[(String, String)] = Seq(
       "mtdid" -> mtdRef,
       "status" -> ninoError.status.toString,
       "reason" -> ninoError.reason
     )
-    override val auditType: String = NinoLookupError
+    override val auditType: String = enums.AuditType.NinoLookupError
   }
 }

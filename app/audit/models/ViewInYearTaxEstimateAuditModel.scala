@@ -16,7 +16,6 @@
 
 package audit.models
 
-import enums.ViewInYearTaxEstimate
 import models.liabilitycalculation.viewmodels.TaxYearSummaryViewModel
 import play.api.libs.json.{Json, OWrites}
 
@@ -28,8 +27,8 @@ case class ViewInYearTaxEstimateAuditModel(
                                             body: ViewInYearTaxEstimateAuditBody
                                           ) extends AuditModel {
   
-  override val transactionName: String = "ViewInYearTaxEstimate"
-  override val auditType: String = ViewInYearTaxEstimate
+  override val transactionName: String = enums.TransactionName.ViewInYearTaxEstimate
+  override val auditType: String = enums.AuditType.ViewInYearTaxEstimate
   
   override val detail: Seq[(String, String)] = Seq(
     "nino" -> nino,
