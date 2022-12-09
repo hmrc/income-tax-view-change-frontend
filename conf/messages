@@ -373,6 +373,7 @@ taxCal_breakdown.table.taxDeductedAtSource.specialWithholdingTax    = Special wi
 taxCal_breakdown.table.taxDeductedAtSource.voidISAs                 = Void ISAs
 taxCal_breakdown.table.taxDeductedAtSource.total					= Total tax deducted
 taxCal_breakdown.table.amount                                       = Amount
+taxCal_breakdown.table.studentLoanRepaymentsPlanType0X              = Student loan repayments (plan {0})
 
 taxCal_breakdown.message.C22201                                 = Your Basic Rate limit has been increased by {0} to {1} for Gift Aid payments
 taxCal_breakdown.message.C22202                                 = Tax due on gift aid payments exceeds your income tax charged so you are liable for gift aid tax

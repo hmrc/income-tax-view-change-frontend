@@ -84,6 +84,17 @@
     "marriageAllowanceTransferredIn" : {
       "amount" : 5000.99
     },
+    "studentLoans": [
+      {
+        "planType": "01",
+        "studentLoanTotalIncomeAmount": 5000.99,
+        "studentLoanChargeableIncomeAmount": 5000.99,
+        "studentLoanRepaymentAmount": 5000.99,
+        "studentLoanRepaymentAmountNetOfDeductions": 5000.99,
+        "studentLoanApportionedIncomeThreshold": 12500,
+        "studentLoanRate": 20
+      }
+    ],
     "employmentAndPensionsIncome" : {
       "totalPayeEmploymentAndLumpSumIncome" : 5000.99,
       "totalOccupationalPensionIncome" : 5000.99,

@@ -259,10 +259,24 @@
                     id = "additional_charges" class="govuk-table__caption govuk-heading-l">@messages("taxCal_breakdown.additional_charges")
             </caption>
 
+
             <tr class="govuk-table__row">
                 <th scope="col" class="govuk-table__header bold">@messages("taxCal_breakdown.table.head.charge_type")</th>
                 <th scope="col" class="govuk-table__header govuk-table__header--numeric bold">@messages("taxCal_breakdown.table.amount")</th>
             </tr>
+
+            @* TODO @HERE ADD TWO FIELDS STUDENT LOAN PLAN TYPE & Postgrad loans; Write a helper or call logic on controller to find out which message should be rendered based on ticket requirements *@
+            <tbody class="govuk-table__body">
+            @viewModel.studentLoans.map { studentLoans =>
+            <tr>
+                <td class="govuk-table__cell">@messages("taxCal_breakdown.table.studentLoanRepaymentsPlanType0X", studentLoans.head.planType.getOrElse(throw MissingFieldException("Student Loan Type")))</td>
+                <td class="govuk-table__cell govuk-table__cell--numeric">@{
+                      //TODO - Put proper implementation here just for debugging
+                    studentLoans.head.studentLoanRepaymentAmount.getOrElse(throw MissingFieldException("Student Loan Repayment Amount"))
+                    }</td>
+            </tr>
+            }
+            </tbody>
 
             <tbody class="govuk-table__body">
             @viewModel.giftAidTax.map { amount =>
