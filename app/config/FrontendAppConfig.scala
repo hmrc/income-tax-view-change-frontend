@@ -163,5 +163,5 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
 
   lazy val timeMachineAddYears: Option[Int] = Try { servicesConfig.getInt("time-machine.add-years") }.toOption
 
-  lazy val personalIVUrl = servicesConfig.getString("iv.url")
+  lazy val ivUrl = servicesConfig.getString("Dev.external-url.identity-verification-frontend.host")
 }
