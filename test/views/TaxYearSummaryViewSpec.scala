@@ -233,7 +233,6 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
     val hmrcAdjustment: String = messages("tax-year-summary.payments.hmrcAdjustment.text")
     val cancelledPaye: String = messages("tax-year-summary.payments.cancelledPayeSelfAssessment.text")
     val na: String = messages("tax-year-summary.na")
-    val payeTaxCode: String = messages("tax-year-summary.paye-tax-code")
 
     def updateCaption(from: String, to: String): String = s"$from to $to"
 
