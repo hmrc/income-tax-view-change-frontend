@@ -60,6 +60,8 @@
 @mainTemplate(pageTitle = messages("taxCal_breakdown.heading"), backUrl = Some(backUrl), isAgent = isAgent,
     btaNavPartial = btaNavPartial, useFallbackBackLink = true) {
 
+
+<a>AA @(viewModel.totalStudentLoansRepaymentAmount) AA</a>
     <h1 class="govuk-heading-xl">
         <span class="govuk-caption-xl">@messages("taxCal_breakdown.dates", s"${taxYear - 1}", s"$taxYear")</span>
         @messages("taxCal_breakdown.heading")
@@ -279,6 +281,19 @@
             </tbody>
 
             <tbody class="govuk-table__body">
+            @viewModel.studentLoans.map { studentLoans =>
+            <tr>
+                <a> Just here to test, should be under other charges</a>
+                <td class="govuk-table__cell">@messages("taxCal_breakdown.table.studentLoanPostGraduatePlan", studentLoans.head.planType.getOrElse(throw MissingFieldException("Student Loan Type")))</td>
+                <td class="govuk-table__cell govuk-table__cell--numeric">@{
+                    //TODO - Put proper implementation here just for debugging
+                    studentLoans.head.studentLoanRepaymentAmount.getOrElse(throw MissingFieldException("Student Loan Repayment Amount"))
+                    }</td>
+            </tr>
+            }
+            </tbody>
+
+            <tbody class="govuk-table__body">
             @viewModel.giftAidTax.map { amount =>
                 <tr>
                     <td class="govuk-table__cell">@messages("taxCal_breakdown.table.giftAidTax")</td>
@@ -361,7 +376,8 @@
 
     @if(viewModel.totalStudentLoansRepaymentAmount.nonEmpty ||
         viewModel.payeUnderpaymentsCodedOut.nonEmpty ||
-        viewModel.saUnderpaymentsCodedOut.nonEmpty
+        viewModel.saUnderpaymentsCodedOut.nonEmpty ||
+        viewModel.studentLoans.nonEmpty
     ) {
         <table class="govuk-table" id="other-charges-table">
             <caption
@@ -398,6 +414,29 @@
                     }</td>
                 </tr>
             }
+
+            @viewModel.studentLoans.map { studentLoans =>
+            <tr>
+                <td class="govuk-table__cell">@messages("taxCal_breakdown.table.studentLoanRepaymentsPlanType0X", studentLoans.head.planType.getOrElse(throw MissingFieldException("Student Loan Type")))</td>
+                <td class="govuk-table__cell govuk-table__cell--numeric">@{
+                    //TODO - Put proper implementation here just for debugging
+                    studentLoans.head.studentLoanRepaymentAmount.getOrElse(throw MissingFieldException("Student Loan Repayment Amount"))
+                    }</td>
+            </tr>
+            }
+
+            @viewModel.studentLoans.map { studentLoans =>
+            @if(studentLoans.head.planType == "03"){
+                <tr>
+                    <td class="govuk-table__cell">@messages("taxCal_breakdown.table.studentLoanPostGraduatePlan", studentLoans.head.planType.getOrElse(throw MissingFieldException("Student Loan Type")))</td>
+                    <td class="govuk-table__cell govuk-table__cell--numeric">@{
+                        //TODO - Put proper implementation here just for debugging
+                        studentLoans.head.studentLoanRepaymentAmount.getOrElse(throw MissingFieldException("Student Loan Repayment Amount"))
+                        }</td>
+                </tr>
+                }
+            }
+
             </tbody>
         </table>
     }
