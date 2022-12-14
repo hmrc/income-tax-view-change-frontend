@@ -30,13 +30,10 @@ val compile = Seq(
   "uk.gov.hmrc" %% "bootstrap-frontend-play-28" % bootstrapPlayVersion,
   "uk.gov.hmrc" %% "play-partials" % playPartialsVersion,
   "org.typelevel" %% "cats-core" % catsVersion,
-  "uk.gov.hmrc" %% "play-language" % playLanguageVersion,
   "uk.gov.hmrc" %% "logback-json-logger" % "5.2.0",
   "com.typesafe.play" %% "play-json-joda" % "2.9.3",
   "uk.gov.hmrc.mongo" %% "hmrc-mongo-play-28" % hmrcMongoVersion,
-  "uk.gov.hmrc" %% "play-frontend-hmrc" % playFrontendHMRCVersion,
-
-  "uk.gov.hmrc" %% "play-auditing-play-28" % "7.11.0"
+  "uk.gov.hmrc" %% "play-frontend-hmrc" % playFrontendHMRCVersion
 )
 
 def test(scope: String = "test"): Seq[ModuleID] = Seq(
