@@ -7,7 +7,7 @@
 
     <logger name="uk.gov" level="WARN"/>
 
-    <logger name="application" level="${logger.application:-WARN}"/>
+    <logger name="application" level="WARN"/>
 
     <root level="${logger.root:-WARN}">
         <appender-ref ref="STDOUT"/>
