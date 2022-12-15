@@ -162,4 +162,6 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   lazy val requiredConfidenceLevel: Int = servicesConfig.getInt("auth.confidenceLevel")
 
   lazy val timeMachineAddYears: Option[Int] = Try { servicesConfig.getInt("time-machine.add-years") }.toOption
+
+  lazy val ivUrl = servicesConfig.getString("identity-verification-frontend.host")
 }

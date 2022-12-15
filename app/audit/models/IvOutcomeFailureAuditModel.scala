@@ -16,12 +16,10 @@
 
 package audit.models
 
-import enums.LowConfidenceLevelIvOutcomeFail
-
 case class IvOutcomeFailureAuditModel(journeyId: String) extends AuditModel() {
-  override val transactionName: String = "IV-uplift-failure-outcome"
+  override val transactionName: String = enums.TransactionName.LowConfidenceLevelIvOutcomeFail
   override val detail: Seq[(String, String)] = Seq(
     "ivJourneyId" -> journeyId
   )
-  override val auditType: String = LowConfidenceLevelIvOutcomeFail
+  override val auditType: String = enums.AuditType.LowConfidenceLevelIvOutcomeFail
 }

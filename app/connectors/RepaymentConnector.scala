@@ -32,7 +32,9 @@ class RepaymentConnector @Inject()(val http: HttpClient,
                                    val config: FrontendAppConfig
                                   )(implicit ec: ExecutionContext) {
 
-  val url: String = s"${config.repaymentsUrl}/self-assessment-repayment-backend/start"
+  private val startRefundUrl: String = s"${config.repaymentsUrl}/self-assessment-refund-backend/itsa-viewer/journey/start-refund"
+  private val viewRefundUrl: String = s"${config.repaymentsUrl}/self-assessment-refund-backend/itsa-viewer/journey/view-history"
+  //view-history
 
   def start(nino: String, fullAmount: BigDecimal)(implicit headerCarrier: HeaderCarrier): Future[RepaymentJourneyResponseModel] = {
 
@@ -45,7 +47,38 @@ class RepaymentConnector @Inject()(val http: HttpClient,
       """.stripMargin
     )
 
-    http.POST(url, body).map {
+    http.POST(startRefundUrl, body).map {
+      case response if response.status == ACCEPTED =>
+        response.json.validate[RepaymentJourneyModel].fold(
+          invalidJson => {
+            Logger("application").error(s"Invalid Json with $invalidJson")
+            RepaymentJourneyErrorResponse(response.status, "Invalid Json")
+          },
+          valid => valid
+        )
+
+      case response =>
+        if (response.status >= INTERNAL_SERVER_ERROR) {
+          Logger("application").error(s"Repayment journey start error with response code: ${response.status} and body: ${response.body}")
+        } else {
+          Logger("application").warn(s"Repayment journey start error with response code: ${response.status} and body: ${response.body}")
+        }
+        RepaymentJourneyErrorResponse(response.status, response.body)
+    }
+  }
+
+
+  def view(nino: String)(implicit headerCarrier: HeaderCarrier): Future[RepaymentJourneyResponseModel] = {
+
+    val body = Json.parse(
+      s"""
+         |{
+         | "nino": "$nino"
+         |}
+      """.stripMargin
+    )
+
+    http.POST(viewRefundUrl, body).map {
       case response if response.status == ACCEPTED =>
         response.json.validate[RepaymentJourneyModel].fold(
           invalidJson => {

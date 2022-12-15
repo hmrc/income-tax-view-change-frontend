@@ -188,32 +188,6 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockInco
 
       def whatYouOweWithZeroAvailableCredits: WhatYouOweChargesList = WhatYouOweChargesList(BalanceDetails(1.00, 2.00, 3.00, Option(0.00), None, None, None), List.empty)
 
-      "hide money in your account if the user has zero available credit in his account" in new Setup {
-        enable(CreditsRefundsRepay)
-        mockSingleBISWithCurrentYearAsMigrationYear()
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthSuccessWithSaUtrResponse())
-
-        when(whatYouOweService.getWhatYouOweChargesList()(any(), any()))
-          .thenReturn(Future.successful(whatYouOweWithZeroAvailableCredits))
-
-        when(whatYouOweService.getCreditCharges()(any(), any()))
-          .thenReturn(Future.successful(List()))
-
-        val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
-        val resultAgent: Future[Result] = controller.showAgent()(fakeRequestConfirmedClient())
-
-        status(result) shouldBe Status.OK
-        result.futureValue.session.get(gatewayPage) shouldBe Some("whatYouOwe")
-        val doc: Document = Jsoup.parse(contentAsString(result))
-        Option(doc.getElementById("money-in-your-account")).isDefined shouldBe (false)
-
-        status(resultAgent) shouldBe Status.OK
-        resultAgent.futureValue.session.get(gatewayPage) shouldBe Some("whatYouOwe")
-        val docAgent: Document = Jsoup.parse(contentAsString(resultAgent))
-        Option(docAgent.getElementById("money-in-your-account")).isDefined shouldBe (false)
-      }
-
       "hide money in your account if the credit and refund feature switch is disabled" in new Setup {
         disable(CreditsRefundsRepay)
         mockSingleBISWithCurrentYearAsMigrationYear()

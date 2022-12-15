@@ -17,7 +17,7 @@
 package audit.models
 
 import auth.MtdItUser
-import enums.ViewObligationsResponse
+import enums.AuditType.ViewObligationsResponse
 import models.nextUpdates.NextUpdateModel
 import play.api.libs.json._
 import utils.Utilities.JsonUtil
