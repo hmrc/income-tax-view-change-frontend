@@ -60,8 +60,6 @@
 @mainTemplate(pageTitle = messages("taxCal_breakdown.heading"), backUrl = Some(backUrl), isAgent = isAgent,
     btaNavPartial = btaNavPartial, useFallbackBackLink = true) {
 
-
-<a>AA @(viewModel.totalStudentLoansRepaymentAmount) AA</a>
     <h1 class="govuk-heading-xl">
         <span class="govuk-caption-xl">@messages("taxCal_breakdown.dates", s"${taxYear - 1}", s"$taxYear")</span>
         @messages("taxCal_breakdown.heading")
@@ -267,31 +265,6 @@
                 <th scope="col" class="govuk-table__header govuk-table__header--numeric bold">@messages("taxCal_breakdown.table.amount")</th>
             </tr>
 
-            @* TODO @HERE ADD TWO FIELDS STUDENT LOAN PLAN TYPE & Postgrad loans; Write a helper or call logic on controller to find out which message should be rendered based on ticket requirements *@
-            <tbody class="govuk-table__body">
-            @viewModel.studentLoans.map { studentLoans =>
-            <tr>
-                <td class="govuk-table__cell">@messages("taxCal_breakdown.table.studentLoanRepaymentsPlanType0X", studentLoans.head.planType.getOrElse(throw MissingFieldException("Student Loan Type")))</td>
-                <td class="govuk-table__cell govuk-table__cell--numeric">@{
-                      //TODO - Put proper implementation here just for debugging
-                    studentLoans.head.studentLoanRepaymentAmount.getOrElse(throw MissingFieldException("Student Loan Repayment Amount"))
-                    }</td>
-            </tr>
-            }
-            </tbody>
-
-            <tbody class="govuk-table__body">
-            @viewModel.studentLoans.map { studentLoans =>
-            <tr>
-                <a> Just here to test, should be under other charges</a>
-                <td class="govuk-table__cell">@messages("taxCal_breakdown.table.studentLoanPostGraduatePlan", studentLoans.head.planType.getOrElse(throw MissingFieldException("Student Loan Type")))</td>
-                <td class="govuk-table__cell govuk-table__cell--numeric">@{
-                    //TODO - Put proper implementation here just for debugging
-                    studentLoans.head.studentLoanRepaymentAmount.getOrElse(throw MissingFieldException("Student Loan Repayment Amount"))
-                    }</td>
-            </tr>
-            }
-            </tbody>
 
             <tbody class="govuk-table__body">
             @viewModel.giftAidTax.map { amount =>
@@ -415,27 +388,40 @@
                 </tr>
             }
 
-            @viewModel.studentLoans.map { studentLoans =>
-            <tr>
-                <td class="govuk-table__cell">@messages("taxCal_breakdown.table.studentLoanRepaymentsPlanType0X", studentLoans.head.planType.getOrElse(throw MissingFieldException("Student Loan Type")))</td>
-                <td class="govuk-table__cell govuk-table__cell--numeric">@{
-                    //TODO - Put proper implementation here just for debugging
-                    studentLoans.head.studentLoanRepaymentAmount.getOrElse(throw MissingFieldException("Student Loan Repayment Amount"))
-                    }</td>
-            </tr>
-            }
+           <!-- @viewModel.studentLoans.map { studentLoans =>
+            @if(studentLoans.head.planType.get == "01"){
+                    <tr>
+                        <td class="govuk-table__cell">@messages("taxCal_breakdown.table.studentLoanRepaymentsPlanType0X", studentLoans.head.planType.getOrElse(throw MissingFieldException("Student Loan Type")))</td>
+                        <td class="govuk-table__cell govuk-table__cell&#45;&#45;numeric">@{
+                            //TODO - Put proper implementation here just for debugging
+                            studentLoans.head.studentLoanRepaymentAmount.getOrElse(throw MissingFieldException("Student Loan Repayment Amount")).toCurrency
+                            }</td>
+                    </tr>
+                }
+            }-->
 
             @viewModel.studentLoans.map { studentLoans =>
-            @if(studentLoans.head.planType == "03"){
-                <tr>
-                    <td class="govuk-table__cell">@messages("taxCal_breakdown.table.studentLoanPostGraduatePlan", studentLoans.head.planType.getOrElse(throw MissingFieldException("Student Loan Type")))</td>
-                    <td class="govuk-table__cell govuk-table__cell--numeric">@{
-                        //TODO - Put proper implementation here just for debugging
-                        studentLoans.head.studentLoanRepaymentAmount.getOrElse(throw MissingFieldException("Student Loan Repayment Amount"))
-                        }</td>
-                </tr>
+                @for(studentLoan <- studentLoans){
+                    <tr>
+                        <td class="govuk-table__cell">@messages("taxCal_breakdown.table.studentLoanRepaymentsPlanType0X", studentLoans.head.planType.getOrElse(throw MissingFieldException("Student Loan Type")))</td>
+                        <td class="govuk-table__cell govuk-table__cell--numeric">@{
+                            //TODO - Put proper implementation here just for debugging
+                            studentLoans.head.studentLoanRepaymentAmount.getOrElse(throw MissingFieldException("Student Loan Repayment Amount")).toCurrency
+                            }</td>
+                    </tr>
+                    @if(studentLoans.head.planType.get == "03"){
+                        <tr>
+                            <td class="govuk-table__cell">@messages("taxCal_breakdown.table.studentLoanPostGraduatePlan", studentLoans.head.planType.getOrElse(throw MissingFieldException("Student Loan Type")))</td>
+                            <td class="govuk-table__cell govuk-table__cell--numeric">@{
+                                //TODO - Put proper implementation here just for debugging
+                                studentLoans.head.studentLoanRepaymentAmount.getOrElse(throw MissingFieldException("Student Loan Repayment Amount"))
+                                }</td>
+                        </tr>
+                    }
                 }
             }
+
+
 
             </tbody>
         </table>
