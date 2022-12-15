@@ -96,4 +96,7 @@ case object WhatYouOweResponse extends TransactionName {
   val name = "what-you-owe-response"
 }
 
+case object RefundToTaxPayer extends TransactionName{
+  val name = "refund-to-taxpayer"
+}
 

@@ -17,12 +17,14 @@
 package controllers
 
 import audit.AuditingService
+import audit.models.RefundToTaxPayerAuditModel
 import auth.MtdItUser
 import config.featureswitch.{FeatureSwitching, PaymentHistoryRefunds}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import connectors.IncomeTaxViewChangeConnector
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
+import implicits.ImplicitDateFormatterImpl
 import models.core.Nino
 import models.repaymentHistory.RepaymentHistoryModel
 import play.api.Logger
@@ -46,7 +48,9 @@ class RefundToTaxPayerController @Inject()(val refundToTaxPayerView: RefundToTax
                                            val incomeSourceDetailsService: IncomeSourceDetailsService,
                                            val authorisedFunctions: AuthorisedFunctions,
                                            retrieveBtaNavBar: NavBarPredicate,
-                                           itvcErrorHandler: ItvcErrorHandler)
+                                           itvcErrorHandler: ItvcErrorHandler,
+                                           auditingService: AuditingService,
+                                           implicitDateFormatter: ImplicitDateFormatterImpl)
                                           (implicit mcc: MessagesControllerComponents,
                                            val ec: ExecutionContext,
                                            val appConfig: FrontendAppConfig,
@@ -64,6 +68,8 @@ class RefundToTaxPayerController @Inject()(val refundToTaxPayerView: RefundToTax
           case repaymentHistoryModel: RepaymentHistoryModel => repaymentHistoryModel
         }
       } yield {
+        auditingService.extendedAudit(RefundToTaxPayerAuditModel(repaymentHistoryModel,implicitDateFormatter))
+
         Ok(
           refundToTaxPayerView(
             repaymentHistoryModel,
