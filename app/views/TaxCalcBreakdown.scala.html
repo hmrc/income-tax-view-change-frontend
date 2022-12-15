@@ -388,41 +388,27 @@
                 </tr>
             }
 
-           <!-- @viewModel.studentLoans.map { studentLoans =>
-            @if(studentLoans.head.planType.get == "01"){
-                    <tr>
-                        <td class="govuk-table__cell">@messages("taxCal_breakdown.table.studentLoanRepaymentsPlanType0X", studentLoans.head.planType.getOrElse(throw MissingFieldException("Student Loan Type")))</td>
-                        <td class="govuk-table__cell govuk-table__cell&#45;&#45;numeric">@{
-                            //TODO - Put proper implementation here just for debugging
-                            studentLoans.head.studentLoanRepaymentAmount.getOrElse(throw MissingFieldException("Student Loan Repayment Amount")).toCurrency
-                            }</td>
-                    </tr>
-                }
-            }-->
-
-            @viewModel.studentLoans.map { studentLoans =>
-                @for(studentLoan <- studentLoans){
-                    <tr>
-                        <td class="govuk-table__cell">@messages("taxCal_breakdown.table.studentLoanRepaymentsPlanType0X", studentLoans.head.planType.getOrElse(throw MissingFieldException("Student Loan Type")))</td>
-                        <td class="govuk-table__cell govuk-table__cell--numeric">@{
-                            //TODO - Put proper implementation here just for debugging
-                            studentLoans.head.studentLoanRepaymentAmount.getOrElse(throw MissingFieldException("Student Loan Repayment Amount")).toCurrency
-                            }</td>
-                    </tr>
-                    @if(studentLoans.head.planType.get == "03"){
+            @viewModel.studentLoans.map { studentLoanList =>
+                @studentLoanList.map { studentLoan =>
+                    @if(studentLoan.planType.get == "03"){
                         <tr>
-                            <td class="govuk-table__cell">@messages("taxCal_breakdown.table.studentLoanPostGraduatePlan", studentLoans.head.planType.getOrElse(throw MissingFieldException("Student Loan Type")))</td>
+                            <td class="govuk-table__cell">@messages("taxCal_breakdown.table.studentLoanPostGraduatePlan", studentLoan.planType.getOrElse(throw MissingFieldException("Student Loan Type")))</td>
                             <td class="govuk-table__cell govuk-table__cell--numeric">@{
-                                //TODO - Put proper implementation here just for debugging
-                                studentLoans.head.studentLoanRepaymentAmount.getOrElse(throw MissingFieldException("Student Loan Repayment Amount"))
-                                }</td>
+                                studentLoan.studentLoanRepaymentAmount.getOrElse(throw MissingFieldException("Student Loan Repayment Amount")).toCurrency
+                                }
+                            </td>
+                        </tr>
+                    } else {
+                        <tr>
+                            <td class="govuk-table__cell">@messages("taxCal_breakdown.table.studentLoanRepaymentsPlanType0X", studentLoan.planType.getOrElse(throw MissingFieldException("Student Loan Type")))</td>
+                            <td class="govuk-table__cell govuk-table__cell--numeric">@{
+                                studentLoan.studentLoanRepaymentAmount.getOrElse(throw MissingFieldException("Student Loan Repayment Amount")).toCurrency
+                                }
+                            </td>
                         </tr>
                     }
                 }
             }
-
-
-
             </tbody>
         </table>
     }
