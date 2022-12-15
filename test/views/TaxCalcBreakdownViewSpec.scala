@@ -435,7 +435,7 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
           expectedTableRows = Table(
             ("row index", "column 1", "column 2"),
             (0, reductionTableHeader, amountTableHeader),
-            (1, messages("deduction_breakdown.table.marriage_allowance_transfer"), "−£252.00"),
+            (1, messages("taxCal_breakdown.table.marriage_allowance_transfer"), "−£252.00"),
             (2, messages("taxCal_breakdown.table.deficiencyRelief"), "−£1,000.00"),
             (3, messages("taxCal_breakdown.table.top_slicing_relief"), "−£1,200.00"),
             (4, messages("taxCal_breakdown.table.vctSubscriptions"), "−£2,000.00"),
@@ -462,7 +462,7 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
           expectedTableRows = Table(
             ("row index", "column 1", "column 2"),
             (0, reductionTableHeader, amountTableHeader),
-            (1, messages("deduction_breakdown.table.marriage_allowance_transfer"), "−£1,234.00"),
+            (1, messages("taxCal_breakdown.table.marriage_allowance_transfer"), "−£1,234.00"),
           )
         )
       }
