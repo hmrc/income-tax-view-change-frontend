@@ -17,6 +17,8 @@
 package controllers
 
 
+import audit.AuditingService
+import audit.models.CreditsSummaryAuditing.{CreditDetails, CreditsSummaryModel}
 import auth.{FrontendAuthorisedFunctions, MtdItUser}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import config.featureswitch.{CreditsRefundsRepay, CutOverCredits, FeatureSwitching, MFACreditsAndDebits}
@@ -56,7 +58,8 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
                                           val ec: ExecutionContext,
                                           val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                           val view: CreditAndRefunds,
-                                          val customNotFoundErrorView: CustomNotFoundError)
+                                          val customNotFoundErrorView: CustomNotFoundError,
+                                          val auditingService: AuditingService)
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {
   private val creditsFromHMRC = "HMRC"
   private val cutOverCredits = "CutOver"
@@ -88,6 +91,10 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
         )
 
         val creditAndRefundType: Option[UnallocatedCreditType] = maybeUnallocatedCreditType(credits, balance, isMFACreditsAndDebitsEnabled, isCutOverCreditsEnabled)
+
+        // TODO: clarify field mapping
+        val userCreditDetails: Seq[CreditDetails] = Seq.empty
+        auditCreditSummary("creditId", "creditOnAccount", userCreditDetails)
 
         Ok(view(credits, balance, creditAndRefundType, isAgent, backUrl, isMFACreditsAndDebitsEnabled, isCutOverCreditsEnabled)(user, user, messages))
       case _ => Logger("application").error(
@@ -176,7 +183,7 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
 
   private def handleRefundRequest(isAgent: Boolean, itvcErrorHandler: ShowInternalServerError, backUrl: String)
                                  (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
-    creditService.getCreditCharges()(implicitly, user) flatMap  {
+    creditService.getCreditCharges()(implicitly, user) flatMap {
       case _ if isDisabled(CreditsRefundsRepay) =>
         Future.successful(Ok(customNotFoundErrorView()(user, messages)))
 
@@ -198,7 +205,7 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
   }
 
   private def handleStatusRefundRequest(isAgent: Boolean, itvcErrorHandler: ShowInternalServerError, backUrl: String)
-                                 (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
+                                       (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
     repaymentService.view(user.nino).flatMap { view =>
       view match {
         case RepaymentJourneyModel(nextUrl) =>
@@ -210,6 +217,29 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
       }
     }
 
+  }
+
+  private def auditCreditSummary(creditId: String, creditOnAccount: String, userCreditDetails: Seq[CreditDetails])
+                                (implicit hc: HeaderCarrier, user: MtdItUser[_]): Unit = {
+    // TODO: user required FS instead
+    // Assuming UTR and userType must be always provided
+    if (isEnabled(CreditsRefundsRepay)) {
+      for {
+        saUtr <- user.saUtr
+        userType <- user.userType
+      } yield
+        auditingService.extendedAudit(
+          CreditsSummaryModel(
+            saUTR = saUtr,
+            nino = user.nino,
+            userType = userType,
+            creditId = creditId,
+            mtdRef = user.mtditid,
+            creditOnAccount = creditOnAccount,
+            creditDetails = userCreditDetails
+          )
+        )
+    }
   }
 
 }
