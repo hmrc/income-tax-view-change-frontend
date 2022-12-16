@@ -375,7 +375,7 @@ taxCal_breakdown.table.taxDeductedAtSource.voidISAs                 = Void ISAs
 taxCal_breakdown.table.taxDeductedAtSource.total					= Total tax deducted
 taxCal_breakdown.table.amount                                       = Amount
 
-taxCal_breakdown.message.C22201                                 = Your Basic Rate limit has been increased by {0} to {1} for Gift Aid payments
+taxCal_breakdown.message.C22201                                 = Your Basic Rate limit has been increased by {0} to {1} for Gift Aid payments.
 taxCal_breakdown.message.C22202                                 = Tax due on Gift Aid payments exceeds your Income Tax charged so you are liable for Gift Aid tax.
 taxCal_breakdown.message.C22203                                 = Class 2 National Insurance has not been charged because your self-employed profits are under the Small Profit Threshold.
 taxCal_breakdown.message.C22205                                 = Total loss from all income sources was capped at {0}.
