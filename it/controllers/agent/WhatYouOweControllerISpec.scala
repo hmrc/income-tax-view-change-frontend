@@ -925,45 +925,4 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
       )
     )
   }
-
-  "should not render the money in clients account section when balance details has zero available credits" in {
-    stubAuthorisedAgentUser(authorised = true)
-    enable(CreditsRefundsRepay)
-
-    IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-      status = OK,
-      propertyOnlyResponseWithMigrationData(previousTaxYearEnd, Some(currentTaxYearEnd.toString)
-      )
-    )
-
-    val mixedJson = Json.obj(
-      "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "totalBalance" -> 3.00, "availableCredit" -> 0.00),
-      "documentDetails" -> Json.arr(
-        documentDetailJson(3400.00, 1000.00, currentTaxYearEnd.toString, "ITSA- POA 1", transactionId = "transId1"),
-        documentDetailJson(1000.00, 100.00, currentTaxYearEnd.toString, "ITSA- POA 1", transactionId = "transId2"),
-        documentDetailJson(1000.00, 0, currentTaxYearEnd.toString, "ITSA - POA 2", transactionId = "transId3")
-      ),
-      "financialDetails" -> Json.arr(
-        financialDetailJson(currentTaxYearEnd.toString, transactionId = "transId1"),
-        financialDetailJson(currentTaxYearEnd.toString, "SA Payment on Account 1", LocalDate.now().plusDays(1).toString, transactionId = "transId2"),
-        financialDetailJson(currentTaxYearEnd.toString, "SA Payment on Account 2", LocalDate.now().minusDays(1).toString, transactionId = "transId3")
-      ))
-
-    IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"$previousTaxYearEnd-04-06", s"$currentTaxYearEnd-04-05")(
-      OK, mixedJson)
-
-    IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
-      "utr", testSaUtr.toLong, (currentTaxYearEnd - 1).toString)(
-      OK, validOutStandingChargeResponseJsonWithAciAndBcdCharges)
-
-    val result = IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetailsWithConfirmation)
-
-    Then("The Payment Due what you owe page is returned to the user")
-    result should have(
-      httpStatus(OK),
-      pageTitleAgent("whatYouOwe.heading-agent"),
-      isElementVisibleById(s"money-in-your-account")(expectedValue = false)
-    )
-  }
-
 }
