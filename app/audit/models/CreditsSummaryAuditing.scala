@@ -26,7 +26,7 @@ object CreditsSummaryAuditing {
   case class CreditsSummaryModel(saUTR: String,
                                  nino: String,
                                  userType: String,
-                                 creditId: String,
+                                 credId: String,
                                  mtdRef: String,
                                  creditOnAccount: String,
                                  creditDetails: Seq[CreditDetails]) extends ExtendedAuditModel {
@@ -48,7 +48,7 @@ object CreditsSummaryAuditing {
       Json.obj("saUtr" -> saUTR,
         "nationalInsuranceNumber" -> nino,
         "userType" -> userType,
-        "credId" -> creditId,
+        "credId" -> credId,
         "mtditid" -> mtdRef,
         "creditOnAccount" -> creditOnAccount,
         "creditDetails" -> getCreditDetails

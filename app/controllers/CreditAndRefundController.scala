@@ -227,13 +227,14 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
       for {
         saUtr <- user.saUtr
         userType <- user.userType
+        credId <- user.credId
       } yield
         auditingService.extendedAudit(
           CreditsSummaryModel(
             saUTR = saUtr,
             nino = user.nino,
             userType = userType,
-            creditId = creditId,
+            credId = credId,
             mtdRef = user.mtditid,
             creditOnAccount = creditOnAccount,
             creditDetails = userCreditDetails
