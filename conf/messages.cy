@@ -335,7 +335,7 @@ taxCal_breakdown.table.nic2.false                                   = Yswiriant 
 taxCal_breakdown.table.nic2.true                                    = Yswiriant Gwladol Dosbarth 2 Gwirfoddol
 taxCal_breakdown.national_insurance_contributions                   = Cyfraniadau Yswiriant Gwladol
 
-taxCal_breakdown.message.C22201                                 = Cynyddwyd eich terfyn ar gyfer y Gyfradd Sylfaenol gan {0} i {1} ar gyfer taliadau Rhodd Cymorth
+taxCal_breakdown.message.C22201                                 = Cynyddwyd eich terfyn ar gyfer y Gyfradd Sylfaenol gan {0} i {1} ar gyfer taliadau Rhodd Cymorth.
 taxCal_breakdown.message.C22202                                 = Mae’r dreth sy’n ddyledus ar daliadau Rhodd Cymorth yn fwy na’r Dreth Incwm a godwyd arnoch, felly rydych yn agored i dalu treth Rhodd Cymorth.
 taxCal_breakdown.message.C22203                                 = Ni chodwyd Yswiriant Gwladol Dosbarth 2 oherwydd bod eich elw o hunangyflogaeth o dan y Trothwy Elw Bychan.
 taxCal_breakdown.message.C22205                                 = Cafodd cyfanswm y golled o’r holl ffynonellau incwm ei gyfyngu i uchafswm o {0}.
