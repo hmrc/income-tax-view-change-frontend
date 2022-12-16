@@ -66,7 +66,8 @@ class CreditsSummaryControllerSpec extends TestSupport with MockCalculationServi
   )(appConfig,
     app.injector.instanceOf[MessagesControllerComponents],
     ec,
-    app.injector.instanceOf[AgentItvcErrorHandler]
+    app.injector.instanceOf[AgentItvcErrorHandler],
+    mockAuditingService
   )
 
   val testCharges: List[DocumentDetail] = List(

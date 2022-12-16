@@ -16,8 +16,10 @@
 
 package controllers
 
+import audit.AuditingService
+import audit.models.CreditsSummaryAuditing.{CreditDetails, CreditsSummaryModel}
 import auth.MtdItUser
-import config.featureswitch.{CutOverCredits, FeatureSwitching, MFACreditsAndDebits}
+import config.featureswitch.{CutOverCredits, FeatureSwitching, MFACreditsAndDebits, R7cTxmEvents}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
@@ -47,7 +49,8 @@ class CreditsSummaryController @Inject()(creditsView: CreditsSummary,
                                         (implicit val appConfig: FrontendAppConfig,
                                          mcc: MessagesControllerComponents,
                                          val ec: ExecutionContext,
-                                         val agentItvcErrorHandler: AgentItvcErrorHandler
+                                         val agentItvcErrorHandler: AgentItvcErrorHandler,
+                                         val auditingService: AuditingService
                                         ) extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
   private def creditsSummaryUrl(calendarYear: Int, origin: Option[String]): String =
@@ -108,6 +111,11 @@ class CreditsSummaryController @Inject()(creditsView: CreditsSummary,
           val maybeAvailableCredit: Option[BigDecimal] =
             credits.flatMap(_.balanceDetails.flatMap(_.availableCredit.filter(_ > 0.00))).headOption
 
+          // TODO: clarify field mapping
+          val userCreditDetails: Seq[CreditDetails] = Seq.empty
+          auditCreditSummary("creditOnAccount", userCreditDetails)
+
+
           Future.successful(Ok(creditsView(
             calendarYear = calendarYear,
             backUrl = if (isAgent) getAgentBackURL(user.headers.get(REFERER), calendarYear) else getBackURL(user.headers.get(REFERER), origin, calendarYear),
@@ -151,6 +159,29 @@ class CreditsSummaryController @Inject()(creditsView: CreditsSummary,
             isAgent = true
           )
         }
+    }
+  }
+
+
+  private def auditCreditSummary(creditOnAccount: String, userCreditDetails: Seq[CreditDetails])
+                                (implicit hc: HeaderCarrier, user: MtdItUser[_]): Unit = {
+    if (isEnabled(R7cTxmEvents)) {
+      for {
+        saUtr <- user.saUtr
+        userType <- user.userType
+        credId <- user.credId
+      } yield
+        auditingService.extendedAudit(
+          CreditsSummaryModel(
+            saUTR = saUtr,
+            nino = user.nino,
+            userType = userType,
+            credId = credId,
+            mtdRef = user.mtditid,
+            creditOnAccount = creditOnAccount,
+            creditDetails = userCreditDetails
+          )
+        )
     }
   }
 }

@@ -67,8 +67,7 @@ class CreditAndRefundControllerSpec extends MockAuthenticationPredicate with Moc
       ec = ec,
       itvcErrorHandlerAgent = app.injector.instanceOf[AgentItvcErrorHandler],
       view = app.injector.instanceOf[CreditAndRefunds],
-      customNotFoundErrorView = app.injector.instanceOf[CustomNotFoundError],
-      mockAuditingService
+      customNotFoundErrorView = app.injector.instanceOf[CustomNotFoundError]
     )
   }
 

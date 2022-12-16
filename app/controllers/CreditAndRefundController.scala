@@ -58,8 +58,7 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
                                           val ec: ExecutionContext,
                                           val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                           val view: CreditAndRefunds,
-                                          val customNotFoundErrorView: CustomNotFoundError,
-                                          val auditingService: AuditingService)
+                                          val customNotFoundErrorView: CustomNotFoundError)
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {
   private val creditsFromHMRC = "HMRC"
   private val cutOverCredits = "CutOver"
@@ -91,10 +90,6 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
         )
 
         val creditAndRefundType: Option[UnallocatedCreditType] = maybeUnallocatedCreditType(credits, balance, isMFACreditsAndDebitsEnabled, isCutOverCreditsEnabled)
-
-        // TODO: clarify field mapping
-        val userCreditDetails: Seq[CreditDetails] = Seq.empty
-        auditCreditSummary("creditId", "creditOnAccount", userCreditDetails)
 
         Ok(view(credits, balance, creditAndRefundType, isAgent, backUrl, isMFACreditsAndDebitsEnabled, isCutOverCreditsEnabled)(user, user, messages))
       case _ => Logger("application").error(
@@ -217,30 +212,6 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
       }
     }
 
-  }
-
-  private def auditCreditSummary(creditId: String, creditOnAccount: String, userCreditDetails: Seq[CreditDetails])
-                                (implicit hc: HeaderCarrier, user: MtdItUser[_]): Unit = {
-    // TODO: user required FS instead
-    // Assuming UTR and userType must be always provided
-    if (isEnabled(CreditsRefundsRepay)) {
-      for {
-        saUtr <- user.saUtr
-        userType <- user.userType
-        credId <- user.credId
-      } yield
-        auditingService.extendedAudit(
-          CreditsSummaryModel(
-            saUTR = saUtr,
-            nino = user.nino,
-            userType = userType,
-            credId = credId,
-            mtdRef = user.mtditid,
-            creditOnAccount = creditOnAccount,
-            creditDetails = userCreditDetails
-          )
-        )
-    }
   }
 
 }
