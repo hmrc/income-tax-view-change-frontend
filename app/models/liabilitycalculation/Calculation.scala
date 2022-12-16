@@ -25,7 +25,6 @@ case class Calculation(
                         taxDeductedAtSource: Option[TaxDeductedAtSource] = None,
                         giftAid: Option[GiftAid] = None,
                         marriageAllowanceTransferredIn: Option[MarriageAllowanceTransferredIn] = None,
-                      //TODO - Check if studentLoans requires all fields
                         studentLoans: Option[Seq[StudentLoan]] = None,
                         employmentAndPensionsIncome: Option[EmploymentAndPensionsIncome] = None,
                         employmentExpenses: Option[EmploymentExpenses] = None,
@@ -136,8 +135,6 @@ object StateBenefitsIncome {
   implicit val format: OFormat[StateBenefitsIncome] = Json.format[StateBenefitsIncome]
 }
 
-//TODO - Check if studentLoans requires all fields, check if only need plantype and studentLoanRepaymentAmount amount
-//TODO - Should we create a Sum Type for the planType field (UGL) (PGL) ?
 case class StudentLoan(planType: Option[String] = None,
                        studentLoanTotalIncomeAmount: Option[BigDecimal] = None,
                        studentLoanChargeableIncomeAmount: Option[BigDecimal] = None,

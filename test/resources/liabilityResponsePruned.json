@@ -91,7 +91,7 @@
         "studentLoanChargeableIncomeAmount": 5000.99,
         "studentLoanRepaymentAmount": 5000.99,
         "studentLoanRepaymentAmountNetOfDeductions": 5000.99,
-        "studentLoanApportionedIncomeThreshold": 12500,
+        "studentLoanApportionedIncomeThreshold": 1500,
         "studentLoanRate": 20
       }
     ],

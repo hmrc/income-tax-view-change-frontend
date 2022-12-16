@@ -91,7 +91,6 @@ object TaxDueSummaryViewModel {
         grossGiftAidPayments = calc.giftAid.map(ga => ga.grossGiftAidPayments),
         giftAidTax = calc.giftAid.map(ga => ga.giftAidTax),
         marriageAllowanceTransferredInAmount = calc.marriageAllowanceTransferredIn.flatMap(mati => mati.amount),
-        //TODO - check if we need to put the two fields here ( planType & studentLoanRepaymentAmount)
         studentLoans = calc.studentLoans,
         reliefsClaimed = calc.reliefs.map(r => r.reliefsClaimed.getOrElse(Seq())),
         totalResidentialFinanceCostsRelief = calc.reliefs.flatMap(r => r.residentialFinanceCosts.map(rfc => rfc.totalResidentialFinanceCostsRelief)),
