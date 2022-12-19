@@ -30,7 +30,7 @@ class ClaimARefundAuditModelSpec extends AnyWordSpecLike {
   val balanceDetailsFull: BalanceDetails = BalanceDetails(balanceDueWithin30Days = 0, overDueAmount = 0, totalBalance = 0,
     availableCredit = Some(-7500.00), firstPendingAmountRequested = Some(-100.00), secondPendingAmountRequested = Some(-150.00), None)
   val balanceDetailsMin: BalanceDetails = BalanceDetails(balanceDueWithin30Days = 0, overDueAmount = 0, totalBalance = 0,
-    availableCredit = Some(0), firstPendingAmountRequested = None, secondPendingAmountRequested = None, None)
+    availableCredit = None, firstPendingAmountRequested = None, secondPendingAmountRequested = None, None)
 
   val creditDocuments: List[(DocumentDetailWithDueDate, FinancialDetail)] = List(
     documentDetailWithDueDateFinancialDetailListModel(outstandingAmount = Some(BigDecimal(-1000)), originalAmount = Some(BigDecimal(-1000)), mainType = "ITSA Infml Dschrg Cntrct Sett"),
