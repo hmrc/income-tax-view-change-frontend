@@ -17,9 +17,9 @@
 package controllers
 
 import audit.AuditingService
-import audit.models.RefundToTaxPayerAuditModel
+import audit.models.RefundToTaxPayerResponseAuditModel
 import auth.MtdItUser
-import config.featureswitch.{FeatureSwitching, PaymentHistoryRefunds}
+import config.featureswitch.{FeatureSwitching, PaymentHistoryRefunds, R7bTxmEvents}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import connectors.IncomeTaxViewChangeConnector
 import controllers.agent.predicates.ClientConfirmedController
@@ -50,7 +50,7 @@ class RefundToTaxPayerController @Inject()(val refundToTaxPayerView: RefundToTax
                                            retrieveBtaNavBar: NavBarPredicate,
                                            itvcErrorHandler: ItvcErrorHandler,
                                            auditingService: AuditingService,
-                                           implicitDateFormatter: ImplicitDateFormatterImpl)
+                                           val implicitDateFormatter: ImplicitDateFormatterImpl)
                                           (implicit mcc: MessagesControllerComponents,
                                            val ec: ExecutionContext,
                                            val appConfig: FrontendAppConfig,
@@ -68,8 +68,7 @@ class RefundToTaxPayerController @Inject()(val refundToTaxPayerView: RefundToTax
           case repaymentHistoryModel: RepaymentHistoryModel => repaymentHistoryModel
         }
       } yield {
-        auditingService.extendedAudit(RefundToTaxPayerAuditModel(repaymentHistoryModel,implicitDateFormatter))
-
+        if (isEnabled(R7bTxmEvents)) auditingService.extendedAudit(RefundToTaxPayerResponseAuditModel(repaymentHistoryModel, implicitDateFormatter))
         Ok(
           refundToTaxPayerView(
             repaymentHistoryModel,
