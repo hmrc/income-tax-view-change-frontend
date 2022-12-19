@@ -21,7 +21,6 @@ import audit.models.RefundToTaxPayerResponseAuditModel
 import config.featureswitch.{FeatureSwitching, PaymentHistoryRefunds, R7bTxmEvents}
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
-import implicits.ImplicitDateFormatterImpl
 import mocks.MockItvcErrorHandler
 import mocks.connectors.MockIncomeTaxViewChangeConnector
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}

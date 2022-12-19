@@ -16,10 +16,9 @@
 
 package audit.models
 
-import enums.TransactionName.RefundToTaxPayer
+
 import models.repaymentHistory.{RepaymentHistory, RepaymentHistoryModel, RepaymentItem, RepaymentSupplementItem}
 import testUtils.TestSupport
-import implicits.ImplicitDateFormatterImpl
 import play.api.libs.json.Json
 
 import java.time.LocalDate

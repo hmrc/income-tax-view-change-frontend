@@ -19,11 +19,8 @@ package audit.models
 import audit.Utilities.userAuditDetails
 import auth.MtdItUser
 import models.repaymentHistory.{RepaymentHistory, RepaymentHistoryModel, TotalInterest}
-import play.api.i18n.Messages
 import play.api.libs.json.{JsValue, Json}
-import implicits.ImplicitDateFormatterImpl
-
-import java.time.format.{DateTimeFormatter, FormatStyle}
+import java.time.format.DateTimeFormatter
 
 
 case class RefundToTaxPayerResponseAuditModel(repaymentHistory: RepaymentHistoryModel)
