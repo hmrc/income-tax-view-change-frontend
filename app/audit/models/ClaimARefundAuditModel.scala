@@ -22,7 +22,6 @@ import enums.TransactionName.ClaimARefund
 import models.financialDetails.{BalanceDetails, DocumentDetailWithDueDate, FinancialDetail}
 import play.api.Logger
 import play.api.libs.json.{JsObject, JsValue, Json}
-import utils.Utilities._
 
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -37,6 +36,13 @@ case class ClaimARefundAuditModel(mtdItUser: MtdItUser[_], balanceDetails: Optio
   }
 
   private def getFullDueDate(dueDate: LocalDate) = s"${dueDate.format(DateTimeFormatter.ofPattern("dd MMMM YYYY"))}" // returns "17 January 2021"
+
+  private def getAvailableCredit: Double = {
+    balanceDetails.flatMap(_.availableCredit) match {
+      case Some(_) => balanceDetails.get.availableCredit.get.toDouble.abs
+      case (_) => 0.00
+    }
+  }
 
   private def getCreditType(credit: (DocumentDetailWithDueDate, FinancialDetail)): String = {
     val isMFA: Boolean = credit._2.validMFACreditType()
@@ -87,7 +93,7 @@ case class ClaimARefundAuditModel(mtdItUser: MtdItUser[_], balanceDetails: Optio
       "agentReferenceNumber" -> mtdItUser.arn,
       "saUtr" -> mtdItUser.saUtr,
       "credId" -> mtdItUser.credId,
-      "creditOnAccount" -> balanceDetails.get.getAbsoluteAvailableCreditAmount,
+      "creditOnAccount" -> getAvailableCredit,
       "creditDocuments" -> creditDocumentsJson,
       "refundDocuments" -> refundsDocumentsJson)
   }
