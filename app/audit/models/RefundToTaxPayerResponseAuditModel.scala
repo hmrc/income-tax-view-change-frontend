@@ -23,11 +23,11 @@ import play.api.i18n.Messages
 import play.api.libs.json.{JsValue, Json}
 import implicits.ImplicitDateFormatterImpl
 
+import java.time.format.{DateTimeFormatter, FormatStyle}
 
-case class RefundToTaxPayerResponseAuditModel(repaymentHistory: RepaymentHistoryModel, implicitDateFormatter: ImplicitDateFormatterImpl)
-                                             (implicit user: MtdItUser[_], messages: Messages) extends ExtendedAuditModel {
 
-  import implicitDateFormatter.longDate
+case class RefundToTaxPayerResponseAuditModel(repaymentHistory: RepaymentHistoryModel)
+                                             (implicit user: MtdItUser[_]) extends ExtendedAuditModel {
 
   override val transactionName: String = enums.TransactionName.RefundToTaxPayer
   override val auditType: String = enums.AuditType.RefundToTaxPayerResponse
@@ -35,10 +35,10 @@ case class RefundToTaxPayerResponseAuditModel(repaymentHistory: RepaymentHistory
   val repaymentHistoryItem: Option[RepaymentHistory] = repaymentHistory.repaymentsViewerDetails.headOption
   val repaymentInterestContent: Option[TotalInterest] = repaymentHistoryItem.flatMap(_.aggregate)
   val interestDescription: String = {
-    val from = repaymentInterestContent.map(_.fromDate.toLongDate).getOrElse("")
-    val to = repaymentInterestContent.map(_.toDate.toLongDate).getOrElse("")
+    val from = repaymentInterestContent.map(_.fromDate.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG))).getOrElse("")
+    val to = repaymentInterestContent.map(_.toDate.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG))).getOrElse("")
     val rate = repaymentInterestContent.map(_.fromRate.toString()).getOrElse("")
-    messages("refund-to-taxpayer.tableHead.interest-value", from, to, rate)
+    s"${from} to ${to} at ${rate}%"
   }
 
   val repaymentHistoryDetail = Json.obj("estimatedDate" -> repaymentHistoryItem.map(_.estimatedRepaymentDate),

@@ -16,10 +16,11 @@
 
 package controllers
 
+import audit.models.RefundToTaxPayerResponseAuditModel
 import auth.MtdItUser
-import config.featureswitch.PaymentHistoryRefunds
+import config.featureswitch.{PaymentHistoryRefunds, R7bTxmEvents}
 import helpers.ComponentSpecBase
-import helpers.servicemocks.IncomeTaxViewChangeStub
+import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import models.core.Nino
 import models.repaymentHistory.{RepaymentHistory, RepaymentHistoryModel, RepaymentItem, RepaymentSupplementItem}
 import play.api.http.Status._
@@ -113,6 +114,26 @@ class RefundToTaxPayerControllerISpec extends ComponentSpecBase {
         httpStatus(OK),
         pageTitleIndividual("refund-to-taxpayer.heading")
       )
+    }
+
+    "the R7bTxmEvents feature switch is enabled" in {
+      isAuthorisedUser(authorised = true)
+      stubUserDetails()
+      enable(PaymentHistoryRefunds)
+      enable(R7bTxmEvents)
+      IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, paymentHistoryBusinessAndPropertyResponse)
+      IncomeTaxViewChangeStub.stubGetRepaymentHistoryByRepaymentId(Nino(testNino), repaymentRequestNumber)(OK, testRepaymentHistoryModel)
+
+      val result: WSResponse = IncomeTaxViewChangeFrontend.getRefundToTaxPayer(repaymentRequestNumber)
+
+      Then("The Refund to tax payer page is returned to the user")
+      result should have(
+        httpStatus(OK),
+        pageTitleIndividual("refund-to-taxpayer.heading")
+      )
+
+      Then("Audit event is raised")
+      AuditStub.verifyAuditEvent(RefundToTaxPayerResponseAuditModel(testRepaymentHistoryModel)(testUser))
     }
   }
 

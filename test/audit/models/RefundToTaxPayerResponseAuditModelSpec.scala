@@ -26,7 +26,6 @@ import java.time.LocalDate
 
 class RefundToTaxPayerResponseAuditModelSpec extends TestSupport {
 
-  val implicitDateFormatter = app.injector.instanceOf[ImplicitDateFormatterImpl]
   val testRepaymentHistory: RepaymentHistoryModel = RepaymentHistoryModel(
     List(RepaymentHistory(
       Some(705.2),
@@ -94,9 +93,9 @@ class RefundToTaxPayerResponseAuditModelSpec extends TestSupport {
     "interestAmount" -> 9.67,
     "interestDescription" -> "31 July 2021 to 30 November 2021 at 1.76%")
 
-  val refundToTaxPayerAuditModelIndividualFull = RefundToTaxPayerResponseAuditModel(testRepaymentHistory, implicitDateFormatter)
+  val refundToTaxPayerAuditModelIndividualFull = RefundToTaxPayerResponseAuditModel(testRepaymentHistory)
   val refundToTaxPayerAuditModelAgentFull = {
-    RefundToTaxPayerResponseAuditModel(testRepaymentHistory, implicitDateFormatter)(agentUserConfirmedClient(), messages)
+    RefundToTaxPayerResponseAuditModel(testRepaymentHistory)(agentUserConfirmedClient())
   }
   val transactionName = enums.TransactionName.RefundToTaxPayer.name
   val auditType = enums.AuditType.RefundToTaxPayerResponse.name

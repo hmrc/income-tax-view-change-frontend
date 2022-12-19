@@ -21,7 +21,7 @@ import audit.models.RefundToTaxPayerResponseAuditModel
 import config.featureswitch.{FeatureSwitching, PaymentHistoryRefunds, R7bTxmEvents}
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
-import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
+import implicits.ImplicitDateFormatterImpl
 import mocks.MockItvcErrorHandler
 import mocks.connectors.MockIncomeTaxViewChangeConnector
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
@@ -105,8 +105,7 @@ class RefundToTaxPayerControllerSpec extends MockAuthenticationPredicate
       mockAuthService,
       app.injector.instanceOf[NavBarPredicate],
       app.injector.instanceOf[ItvcErrorHandler],
-      mockAuditingService,
-      app.injector.instanceOf[ImplicitDateFormatterImpl]
+      mockAuditingService
     )(app.injector.instanceOf[MessagesControllerComponents],
       ec,
       app.injector.instanceOf[FrontendAppConfig],
@@ -157,7 +156,7 @@ class RefundToTaxPayerControllerSpec extends MockAuthenticationPredicate
         contentAsString(result) shouldBe expectedContent
         contentType(result) shouldBe Some(HTML)
 
-        verifyExtendedAudit(RefundToTaxPayerResponseAuditModel(testRepaymentHistoryModel, controller.implicitDateFormatter))
+        verifyExtendedAudit(RefundToTaxPayerResponseAuditModel(testRepaymentHistoryModel))
       }
 
 
@@ -258,7 +257,7 @@ class RefundToTaxPayerControllerSpec extends MockAuthenticationPredicate
         contentAsString(result) shouldBe expectedContent
         contentType(result) shouldBe Some(HTML)
 
-        verifyExtendedAudit(RefundToTaxPayerResponseAuditModel(testRepaymentHistoryModel, controller.implicitDateFormatter))
+        verifyExtendedAudit(RefundToTaxPayerResponseAuditModel(testRepaymentHistoryModel))
       }
 
     }

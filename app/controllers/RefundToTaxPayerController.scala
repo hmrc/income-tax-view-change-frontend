@@ -49,8 +49,7 @@ class RefundToTaxPayerController @Inject()(val refundToTaxPayerView: RefundToTax
                                            val authorisedFunctions: AuthorisedFunctions,
                                            retrieveBtaNavBar: NavBarPredicate,
                                            itvcErrorHandler: ItvcErrorHandler,
-                                           auditingService: AuditingService,
-                                           val implicitDateFormatter: ImplicitDateFormatterImpl)
+                                           auditingService: AuditingService)
                                           (implicit mcc: MessagesControllerComponents,
                                            val ec: ExecutionContext,
                                            val appConfig: FrontendAppConfig,
@@ -68,7 +67,7 @@ class RefundToTaxPayerController @Inject()(val refundToTaxPayerView: RefundToTax
           case repaymentHistoryModel: RepaymentHistoryModel => repaymentHistoryModel
         }
       } yield {
-        if (isEnabled(R7bTxmEvents)) auditingService.extendedAudit(RefundToTaxPayerResponseAuditModel(repaymentHistoryModel, implicitDateFormatter))
+        if (isEnabled(R7bTxmEvents)) auditingService.extendedAudit(RefundToTaxPayerResponseAuditModel(repaymentHistoryModel))
         Ok(
           refundToTaxPayerView(
             repaymentHistoryModel,
