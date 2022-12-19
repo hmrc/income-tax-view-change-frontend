@@ -27,7 +27,6 @@ class CreditsSummaryAuditingSpec extends TestSupport {
 
   import CreditsSummaryAuditing._
 
-
   val creditDetailsModelPaid = CreditDetailModel(
     date = LocalDate.of(2018, 1, 2),
     documentDetail = DocumentDetail(
@@ -50,8 +49,11 @@ class CreditsSummaryAuditingSpec extends TestSupport {
     )
 
   val creditDetailsModelUnPaid = creditDetailsModelPaid
-    .copy(documentDetail = creditDetailsModelPaid.documentDetail.copy(originalAmount =
-      creditDetailsModelPaid.documentDetail.outstandingAmount),
+    .copy(documentDetail = creditDetailsModelPaid.documentDetail
+      .copy(
+        originalAmount = Some(BigDecimal("1.5")),
+        outstandingAmount = Some(BigDecimal("1.5"))
+      ),
       creditType = CutOverCreditType,
       date = LocalDate.of(2021, 3, 7)
     )
@@ -71,6 +73,14 @@ class CreditsSummaryAuditingSpec extends TestSupport {
       creditSummaryDetails.description shouldBe "Credit from HMRC adjustment"
       creditSummaryDetails.status shouldBe "Partially allocated"
     }
+
+    "- unpaid credit" in {
+      val creditSummaryDetails: CreditSummaryDetails = creditDetailsModelUnPaid
+      creditSummaryDetails.date shouldBe "2021-03-07"
+      creditSummaryDetails.description shouldBe "Credit from an earlier tax year"
+      creditSummaryDetails.status shouldBe "Not allocated"
+    }
+
   }
 
 }
