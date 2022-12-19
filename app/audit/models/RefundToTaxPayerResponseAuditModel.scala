@@ -35,8 +35,9 @@ case class RefundToTaxPayerResponseAuditModel(repaymentHistory: RepaymentHistory
   val repaymentHistoryItem: Option[RepaymentHistory] = repaymentHistory.repaymentsViewerDetails.headOption
   val repaymentInterestContent: Option[TotalInterest] = repaymentHistoryItem.flatMap(_.aggregate)
   val interestDescription: String = {
-    val from = repaymentInterestContent.map(_.fromDate.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG))).getOrElse("")
-    val to = repaymentInterestContent.map(_.toDate.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG))).getOrElse("")
+    val pattern = DateTimeFormatter.ofPattern("dd MMMM YYYY")
+    val from = repaymentInterestContent.map(_.fromDate.format(pattern)).getOrElse("")
+    val to = repaymentInterestContent.map(_.toDate.format(pattern)).getOrElse("")
     val rate = repaymentInterestContent.map(_.fromRate.toString()).getOrElse("")
     s"${from} to ${to} at ${rate}%"
   }
