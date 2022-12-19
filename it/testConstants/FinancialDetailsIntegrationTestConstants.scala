@@ -20,12 +20,13 @@ import java.time.LocalDate
 import BaseIntegrationTestConstants.{testErrorMessage, testErrorNotFoundStatus, testErrorStatus}
 import IncomeSourceIntegrationTestConstants.{id1040000123, noDunningLock, noInterestLock}
 import enums.ChargeType.NIC4_WALES
+import helpers.servicemocks.AuthStub.dateService
 import models.financialDetails.{BalanceDetails, DocumentDetail, DocumentDetailWithDueDate, FinancialDetail, FinancialDetailsErrorModel, FinancialDetailsModel, SubItem, WhatYouOweChargesList}
 import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
 import play.api.libs.json.{JsValue, Json}
 import services.DateService
 
-object FinancialDetailsIntegrationTestConstants {
+object FinancialDetailsIntegrationTestConstants  {
 
   def documentDetailModel(taxYear: Int = 2018,
                           documentDescription: Option[String] = Some("ITSA- POA 1"),
@@ -48,9 +49,9 @@ object FinancialDetailsIntegrationTestConstants {
       paymentLot = Some("paymentLot")
     )
 
-  def financialDetail(taxYear: Int = 2018): FinancialDetail = FinancialDetail(
+  def financialDetail(taxYear: Int = 2018, mainType: Option[String] = Some("ITSA- POA 1")): FinancialDetail = FinancialDetail(
     taxYear = taxYear.toString,
-    mainType = Some("ITSA- POA 1"),
+    mainType = mainType,
     transactionId = Some("transactionId"),
     transactionDate = Some(LocalDate.parse("2020-08-16")),
     `type` = Some("type"),
@@ -83,7 +84,8 @@ object FinancialDetailsIntegrationTestConstants {
                                      documentDescription: Option[String] = Some("ITSA- POA 1"),
                                      outstandingAmount: Option[BigDecimal] = Some(1400.00),
                                      originalAmount: Option[BigDecimal] = Some(1400.00),
-                                     dueDate: Option[LocalDate] = Some(LocalDate.of(2019, 5, 15)))(implicit dateService: DateService): DocumentDetailWithDueDate =
+                                     dueDate: Option[LocalDate] = Some(LocalDate.of(2019, 5, 15)))
+                                    (implicit dateService: DateService): DocumentDetailWithDueDate =
     DocumentDetailWithDueDate(documentDetailModel(taxYear, documentDescription, outstandingAmount, originalAmount), dueDate)
 
   val fullDocumentDetailModel: DocumentDetail = documentDetailModel()
@@ -97,6 +99,19 @@ object FinancialDetailsIntegrationTestConstants {
       documentDetails = List(documentDetailModel(taxYear, outstandingAmount = outstandingAmount)),
       financialDetails = List(financialDetail(taxYear))
     )
+
+  def documentDetailWithDueDateFinancialDetailListModel(outstandingAmount: Option[BigDecimal] = Some(-1400.0),
+                                                        dueDate: Option[LocalDate] = Some(LocalDate.of(2019,5,15)),
+                                                        originalAmount: Option[BigDecimal] = Some(1400.00),
+                                                        mainType: Option[String] = Some("SA Payment on Account 1"),
+                                                       ):
+  (DocumentDetailWithDueDate, FinancialDetail) = {
+    (documentDetailWithDueDateModel(
+      outstandingAmount = outstandingAmount,
+      dueDate = dueDate,
+      originalAmount = originalAmount),
+      financialDetail(mainType = mainType))
+  }
 
   def financialDetailModelPartial(taxYear: Int = 2018,
                                   mainType: String = "SA Payment on Account 1",
