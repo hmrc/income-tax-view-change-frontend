@@ -27,6 +27,8 @@ class CreditsSummaryAuditingSpec extends TestSupport {
 
   import CreditsSummaryAuditing._
 
+  implicit val msgApi: MessagesApi = messagesApi
+
   val creditDetailsModelPaid = CreditDetailModel(
     date = LocalDate.of(2018, 1, 2),
     documentDetail = DocumentDetail(

@@ -17,37 +17,34 @@
 package audit.models
 
 import models.creditDetailModel.{CreditDetailModel, CreditType}
-import play.api.i18n.Messages
+import play.api.i18n.{Lang, MessagesApi}
 import play.api.libs.json.{JsObject, JsValue, Json}
 
 object CreditsSummaryAuditing {
 
   case class CreditSummaryDetails(date: String, description: String, status: String, amount: String)
 
-  private def toStatus(charge: CreditDetailModel) : String = charge.documentDetail.getChargePaidStatus match {
+  private def toStatus(charge: CreditDetailModel): String = charge.documentDetail.getChargePaidStatus match {
     case "paid" => "Fully allocated"
     case "part-paid" => "Partially allocated"
     case "unpaid" | _ => "Not allocated"
   }
 
   private def toDescription(creditType: CreditType)
-                           (implicit messages: Messages): String = {
-    // TODO: make sure we use English when switch to Welsh
-    messages(creditType.key)
-  }
-
+                           (implicit messages: MessagesApi): String = messages(creditType.key)(Lang("en"))
 
   implicit def creditDetailModelToCreditSummaryDetails(charge: CreditDetailModel)
-                                                      (implicit messages: Messages): CreditSummaryDetails = {
+                                                      (implicit messages: MessagesApi): CreditSummaryDetails = {
+    // we assume that we would never show amount equal to zero
     CreditSummaryDetails(
       date = charge.date.toString,
       description = toDescription(charge.creditType)(messages),
       status = toStatus(charge),
-      amount = charge.documentDetail.originalAmount.map(_.abs.toString()).getOrElse("TODO: raise error??"))
+      amount = charge.documentDetail.originalAmount.map(_.abs).getOrElse(BigDecimal(0.0)).toString())
   }
 
   implicit def toCreditSummaryDetailsSeq(charge: Seq[CreditDetailModel])
-                                                            (implicit messages: Messages): Seq[CreditSummaryDetails] = charge.map(creditDetailModelToCreditSummaryDetails)
+                                        (implicit messages: MessagesApi): Seq[CreditSummaryDetails] = charge.map(creditDetailModelToCreditSummaryDetails)
 
 
   case class CreditsSummaryModel(saUTR: String,

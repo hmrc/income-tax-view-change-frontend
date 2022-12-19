@@ -26,6 +26,7 @@ import mocks.services.{MockCalculationService, MockCreditHistoryService, MockFin
 import models.creditDetailModel.{CutOverCreditType, MfaCreditType}
 import models.financialDetails.{BalanceDetails, DocumentDetail}
 import play.api.http.Status
+import play.api.i18n.MessagesApi
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers._
 import testConstants.BaseTestConstants.{calendarYear2018, testAgentAuthRetrievalSuccess, testAgentAuthRetrievalSuccessNoEnrolment, testAuthSuccessWithSaUtrResponse, testSaUtrId, testYearPlusTwo}
@@ -65,6 +66,7 @@ class CreditsSummaryControllerSpec extends TestSupport with MockCalculationServi
     MockIncomeSourceDetailsPredicate
   )(appConfig,
     app.injector.instanceOf[MessagesControllerComponents],
+    app.injector.instanceOf[MessagesApi],
     ec,
     app.injector.instanceOf[AgentItvcErrorHandler],
     mockAuditingService

@@ -25,7 +25,7 @@ import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import models.creditDetailModel.{CreditDetailModel, CutOverCreditType, MfaCreditType}
 import play.api.Logger
-import play.api.i18n.{I18nSupport, Messages}
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.{CreditHistoryService, IncomeSourceDetailsService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
@@ -48,6 +48,7 @@ class CreditsSummaryController @Inject()(creditsView: CreditsSummary,
                                          retrieveIncomeSources: IncomeSourceDetailsPredicate)
                                         (implicit val appConfig: FrontendAppConfig,
                                          mcc: MessagesControllerComponents,
+                                         msgApi: MessagesApi,
                                          val ec: ExecutionContext,
                                          val agentItvcErrorHandler: AgentItvcErrorHandler,
                                          val auditingService: AuditingService
@@ -159,10 +160,10 @@ class CreditsSummaryController @Inject()(creditsView: CreditsSummary,
   }
 
   private def auditCreditSummary(creditOnAccount: Option[BigDecimal], charges: Seq[CreditDetailModel])
-                                (implicit hc: HeaderCarrier, user: MtdItUser[_], messages:Messages): Unit = {
+                                (implicit hc: HeaderCarrier, user: MtdItUser[_]): Unit = {
     import CreditsSummaryAuditing._
-
-    if (isEnabled(R7cTxmEvents)) {
+    // TODO: what need to be done in case any below is not provided???
+    if (isEnabled(R7cTxmEvents) && charges.nonEmpty) {
       for {
         saUtr <- user.saUtr
         userType <- user.userType
@@ -176,7 +177,7 @@ class CreditsSummaryController @Inject()(creditsView: CreditsSummary,
             credId = credId,
             mtdRef = user.mtditid,
             creditOnAccount = creditOnAccount.getOrElse(BigDecimal(0.0)).toString(),
-            creditDetails = toCreditSummaryDetailsSeq(charges)(messages)
+            creditDetails = toCreditSummaryDetailsSeq(charges)(msgApi)
           )
         )
     }
