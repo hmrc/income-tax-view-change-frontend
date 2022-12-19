@@ -392,6 +392,8 @@ taxCal_breakdown.message.C22215                                 = Due to the lev
 taxCal_breakdown.message.C22216                                 = Due to the level of your income, you are no longer eligible for Marriage Allowance and your claim will be cancelled.
 taxCal_breakdown.message.C22217                                 = There are one or more underpayments, debts or adjustments that have not been included in the calculation as they do not relate to data that HMRC holds.
 taxCal_breakdown.message.C22218                                 = The Capital Gains Tax has been included in the estimated annual liability calculation only, the actual amount of Capital Gains Tax will be in the Final declaration calculation.
+taxCal_breakdown.message.C22220                                 = If your taxable profits are between £6,725 and £11,908 you will not need to pay Class 2 National Insurance. Your entitlements to the State Pension, and certain benefits, will still apply. Your contributions are treated as having been paid.
+taxCal_breakdown.message.agent.C22220                           = If your client's taxable profits are between £6,725 and £11,908 your client will not need to pay Class 2 National Insurance. Your client's entitlements to the State Pension, and certain benefits, will still apply. Your client's contributions are treated as having been paid.
 
 ## Forecast Tax Calc Summary ##
 forecast_taxCalc.heading                                        = Forecast tax calculation
