@@ -16,12 +16,37 @@
 
 package audit.models
 
+import models.creditDetailModel.{CreditDetailModel, CreditType}
+import play.api.i18n.Messages
 import play.api.libs.json.{JsObject, JsValue, Json}
 
-// TODO: nested object examples in TaxYearSummaryResponseAuditModel
 object CreditsSummaryAuditing {
 
-  case class CreditDetails(date: String, descirption: String, status: String, amount: String)
+  case class CreditSummaryDetails(date: String, description: String, status: String, amount: String)
+
+  private def toStatus(charge: CreditDetailModel) : String = charge.documentDetail.getChargePaidStatus match {
+    case "paid" => "Fully allocated"
+    case "part-paid" => "Partially allocated"
+    case "unpaid" | _ => "Not allocated"
+  }
+
+  private def toDescription(creditType: CreditType)
+                           (implicit messages: Messages): String =
+    messages(creditType.key)
+
+
+  implicit def creditDetailModelToCreditSummaryDetails(charge: CreditDetailModel)
+                                                      (implicit messages: Messages): CreditSummaryDetails = {
+    CreditSummaryDetails(
+      date = charge.date.toString,
+      description = toDescription(charge.creditType)(messages),
+      status = toStatus(charge),
+      amount = charge.documentDetail.originalAmount.map(_.abs.toString()).getOrElse("TODO: raise error??"))
+  }
+
+  implicit def toCreditSummaryDetailsSeq(charge: Seq[CreditDetailModel])
+                                                            (implicit messages: Messages): Seq[CreditSummaryDetails] = charge.map(creditDetailModelToCreditSummaryDetails)
+
 
   case class CreditsSummaryModel(saUTR: String,
                                  nino: String,
@@ -29,15 +54,15 @@ object CreditsSummaryAuditing {
                                  credId: String,
                                  mtdRef: String,
                                  creditOnAccount: String,
-                                 creditDetails: Seq[CreditDetails]) extends ExtendedAuditModel {
+                                 creditDetails: Seq[CreditSummaryDetails]) extends ExtendedAuditModel {
 
     override val transactionName: String = enums.TransactionName.CreditsSummary
     override val auditType: String = enums.AuditType.CreditSummaryResponse
 
-    private def creditDetailToJson(credit: CreditDetails): JsObject = {
+    private def creditDetailToJson(credit: CreditSummaryDetails): JsObject = {
       Json.obj(
         "date" -> credit.date,
-        "description" -> credit.descirption,
+        "description" -> credit.description,
         "status" -> credit.status,
         "amount" -> credit.amount)
     }

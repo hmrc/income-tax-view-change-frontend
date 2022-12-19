@@ -17,7 +17,7 @@
 package controllers
 
 import audit.AuditingService
-import audit.models.CreditsSummaryAuditing.{CreditDetails, CreditsSummaryModel}
+import audit.models.CreditsSummaryAuditing
 import auth.MtdItUser
 import config.featureswitch.{CutOverCredits, FeatureSwitching, MFACreditsAndDebits, R7cTxmEvents}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
@@ -25,7 +25,7 @@ import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import models.creditDetailModel.{CreditDetailModel, CutOverCreditType, MfaCreditType}
 import play.api.Logger
-import play.api.i18n.I18nSupport
+import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.{CreditHistoryService, IncomeSourceDetailsService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
@@ -87,8 +87,10 @@ class CreditsSummaryController @Inject()(creditsView: CreditsSummary,
   def handleRequest(calendarYear: Int,
                     isAgent: Boolean,
                     origin: Option[String] = None)
-                   (implicit user: MtdItUser[AnyContent], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] = {
+                   (implicit user: MtdItUser[AnyContent],
+                    hc: HeaderCarrier, ec: ExecutionContext): Future[Result] = {
     if (isDisabled(MFACreditsAndDebits) && isDisabled(CutOverCredits)) {
+      auditCreditSummary(None, Seq.empty)
       Future.successful(Ok(creditsView(
         calendarYear = calendarYear,
         backUrl = if (isAgent) getAgentBackURL(user.headers.get(REFERER), calendarYear) else getBackURL(user.headers.get(REFERER), origin, calendarYear),
@@ -107,15 +109,9 @@ class CreditsSummaryController @Inject()(creditsView: CreditsSummary,
             case (false, true) => credits.filter(_.creditType == CutOverCreditType)
             case _ => credits
           }).sortBy(_.date.toEpochDay)
-
           val maybeAvailableCredit: Option[BigDecimal] =
             credits.flatMap(_.balanceDetails.flatMap(_.availableCredit.filter(_ > 0.00))).headOption
-
-          // TODO: clarify field mapping
-          val userCreditDetails: Seq[CreditDetails] = Seq.empty
-          auditCreditSummary("creditOnAccount", userCreditDetails)
-
-
+          auditCreditSummary(maybeAvailableCredit, charges)
           Future.successful(Ok(creditsView(
             calendarYear = calendarYear,
             backUrl = if (isAgent) getAgentBackURL(user.headers.get(REFERER), calendarYear) else getBackURL(user.headers.get(REFERER), origin, calendarYear),
@@ -162,9 +158,10 @@ class CreditsSummaryController @Inject()(creditsView: CreditsSummary,
     }
   }
 
+  private def auditCreditSummary(creditOnAccount: Option[BigDecimal], charges: Seq[CreditDetailModel])
+                                (implicit hc: HeaderCarrier, user: MtdItUser[_], messages:Messages): Unit = {
+    import CreditsSummaryAuditing._
 
-  private def auditCreditSummary(creditOnAccount: String, userCreditDetails: Seq[CreditDetails])
-                                (implicit hc: HeaderCarrier, user: MtdItUser[_]): Unit = {
     if (isEnabled(R7cTxmEvents)) {
       for {
         saUtr <- user.saUtr
@@ -178,8 +175,8 @@ class CreditsSummaryController @Inject()(creditsView: CreditsSummary,
             userType = userType,
             credId = credId,
             mtdRef = user.mtditid,
-            creditOnAccount = creditOnAccount,
-            creditDetails = userCreditDetails
+            creditOnAccount = creditOnAccount.getOrElse(BigDecimal(0.0)).toString(),
+            creditDetails = toCreditSummaryDetailsSeq(charges)(messages)
           )
         )
     }
