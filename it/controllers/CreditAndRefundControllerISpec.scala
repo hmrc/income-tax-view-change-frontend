@@ -38,7 +38,7 @@ class CreditAndRefundControllerISpec extends ComponentSpecBase {
     val testPreviousTaxYear: Int = getCurrentTaxYearEnd.getYear - 1
 
     "display the credit and refund page with all credits/refund types and audit event" when {
-      
+
       "a valid response is received and feature switches are enabled" in {
         enable(CreditsRefundsRepay)
         enable(CutOverCredits)
@@ -62,9 +62,11 @@ class CreditAndRefundControllerISpec extends ComponentSpecBase {
 
         Then("I verify the audit event was as expected")
         AuditStub.verifyAuditEvent(ClaimARefundAuditModel(
-          MtdItUser(testMtditid, testNino, None,
+          MtdItUser(
+            testMtditid, testNino, None,
             multipleBusinessesAndPropertyResponse, None, Some("1234567890"),
-            None, Some("Agent"), Some("1"))(FakeRequest()),
+            Some("12345-credId"), Some("Individual"), None
+          )(FakeRequest()),
           balanceDetails = Some(BalanceDetails(BigDecimal(1.00), BigDecimal(2.00), BigDecimal(3.00), Some(BigDecimal(5.00)), Some(BigDecimal(3.00)), Some(BigDecimal(2.00)), None)),
           creditDocuments = List(
             documentDetailWithDueDateFinancialDetailListModel(taxYear = testPreviousTaxYear, originalAmount = Some(-2000), outstandingAmount = Some(-2000), mainType = Some("ITSA Cutover Credits")),
@@ -114,7 +116,7 @@ class CreditAndRefundControllerISpec extends ComponentSpecBase {
 
         IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"$testPreviousTaxYear-04-06", s"$testTaxYear-04-05")(OK,
           testValidFinancialDetailsModelCreditAndRefundsJson(-2000, -2000, testTaxYear.toString, LocalDate.now().plusYears(1).toString))
-        
+
         val res = IncomeTaxViewChangeFrontend.getCreditAndRefunds()
 
         verifyIncomeSourceDetailsCall(testMtditid)
