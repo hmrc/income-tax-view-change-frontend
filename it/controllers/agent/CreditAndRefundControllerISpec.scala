@@ -28,7 +28,7 @@ import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.FinancialDetailsIntegrationTestConstants.documentDetailWithDueDateFinancialDetailListModel
-import testConstants.IncomeSourceIntegrationTestConstants.{multipleBusinessesAndPropertyResponse, propertyOnlyResponse, propertyOnlyResponseWithMigrationData, testValidFinancialDetailsModelCreditAndRefundsJson, testValidFinancialDetailsModelJson}
+import testConstants.IncomeSourceIntegrationTestConstants.{multipleBusinessesAndPropertyResponse, propertyOnlyResponseWithMigrationData, testValidFinancialDetailsModelCreditAndRefundsJson, testValidFinancialDetailsModelJson}
 import testConstants.OutstandingChargesIntegrationTestConstants.validOutStandingChargeResponseJsonWithAciAndBcdCharges
 
 import java.time.LocalDate
@@ -38,7 +38,7 @@ class CreditAndRefundControllerISpec extends ComponentSpecBase {
   "Navigating to /report-quarterly/income-and-expenses/view/agents/credit-and-refunds" should {
 
     val testTaxYear: Int = getCurrentTaxYearEnd.getYear
-    val testPreviousTaxYearAsString: String = (getCurrentTaxYearEnd.getYear - 1).toString
+    val testPreviousTaxYear: Int = getCurrentTaxYearEnd.getYear - 1
 
     "display the credit and refund page with all credits/refund types and audit event" when {
       "a valid response is received and feature switches are enabled" in {
@@ -52,72 +52,8 @@ class CreditAndRefundControllerISpec extends ComponentSpecBase {
         Given("I wiremock stub a successful Income Source Details response with a property")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
 
-
-        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK,
-          testValidFinancialDetailsModelCreditAndRefundsJson(-2000, -2000, testTaxYear.toString, LocalDate.now().plusYears(1).toString))
-
-        val res = IncomeTaxViewChangeFrontend.getCreditAndRefunds(clientDetailsWithConfirmation)
-
-        verifyIncomeSourceDetailsCall(testMtditid)
-        IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
-        AuditStub.verifyAuditEvent(ClaimARefundAuditModel(
-          MtdItUser(testMtditid, testNino, None,
-            multipleBusinessesAndPropertyResponse, None, Some("1234567890"),
-            None, Some("Agent"), Some("1"))(FakeRequest()),
-          balanceDetails = Some(BalanceDetails(BigDecimal(1.00), BigDecimal(2.00), BigDecimal(3.00), Some(BigDecimal(5.00)), Some(BigDecimal(3.00)), Some(BigDecimal(2.00)), None)),
-          creditDocuments = List(
-            documentDetailWithDueDateFinancialDetailListModel(originalAmount = Some(-2000), outstandingAmount = Some(-2000), mainType = Some("ITSA Cutover Credits")),
-            documentDetailWithDueDateFinancialDetailListModel(originalAmount = Some(-2000), outstandingAmount = Some(-2000), mainType = Some("ITSA Cutover Credits")),
-            documentDetailWithDueDateFinancialDetailListModel(originalAmount = Some(-2000), outstandingAmount = Some(-2000), mainType = Some("ITSA Cutover Credits")),
-            documentDetailWithDueDateFinancialDetailListModel(originalAmount = Some(-2000), outstandingAmount = Some(-2000), mainType = Some("ITSA Overpayment Relief"))
-          )))
-
-        res should have(
-          httpStatus(OK),
-          elementTextBySelectorList("#main-content", "li:nth-child(1)", "p")(expectedValue = "£2,000.00 " + messagesAPI("credit-and-refund.credit-from-hmrc-title-prt-1") + " " + messagesAPI("credits.drop-down-list.credit-from-hmrc-adjustment") + " 0"),
-          elementAttributeBySelector("#credit-and-refund-0", "href")("/report-quarterly/income-and-expenses/view/agents/credits-from-hmrc/2023"),
-
-          elementTextBySelectorList("#main-content", "li:nth-child(2)", "p")(expectedValue = "£2,000.00 " +
-            messagesAPI("credit-and-refund.credit-from-hmrc-title-prt-1") + " " +
-            messagesAPI("credits.drop-down-list.credit-from-an-earlier-tax-year") + " 1"),
-          elementAttributeBySelector("#credit-and-refund-2", "href")("/report-quarterly/income-and-expenses/view/agents/credits-from-hmrc/2023"),
-
-          elementTextBySelectorList("#main-content", "li:nth-child(3)", "p")(expectedValue = "£2,000.00 " +
-            messagesAPI("credit-and-refund.credit-from-hmrc-title-prt-1") + " " +
-            messagesAPI("credits.drop-down-list.credit-from-an-earlier-tax-year") + " 2"),
-          elementAttributeBySelector("#credit-and-refund-3", "href")("/report-quarterly/income-and-expenses/view/agents/credits-from-hmrc/2023"),
-
-          elementTextBySelectorList("#main-content", "li:nth-child(4)", "p")(expectedValue = "£2,000.00 " +
-            messagesAPI("credit-and-refund.credit-from-hmrc-title-prt-1") + " " +
-            messagesAPI("credits.drop-down-list.credit-from-an-earlier-tax-year") + " 3"),
-          elementAttributeBySelector("#credit-and-refund-3", "href")("/report-quarterly/income-and-expenses/view/agents/credits-from-hmrc/2023"),
-
-          elementTextBySelectorList("#main-content", "li:nth-child(5)", "p")(expectedValue = "£3.00 "
-            + messagesAPI("credit-and-refund.refundProgress-prt-2")),
-
-          elementTextBySelectorList("#main-content", "li:nth-child(6)", "p")(expectedValue = "£2.00 "
-            + messagesAPI("credit-and-refund.refundProgress-prt-2")),
-          pageTitleAgent("credit-and-refund.heading")
-
-        )
-      }
-    }
-
-    // TODO maybe make different tax year on this test
-    "display the credit and refund page with MFA credits in the previous tax year" when {
-      "a valid response is received" in {
-        enable(CreditsRefundsRepay)
-        enable(MFACreditsAndDebits)
-        enable(CutOverCredits)
-
-        stubAuthorisedAgentUser(authorised = true)
-
-        Given("I wiremock stub a successful Income Source Details response with a property")
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
-
-
-        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK,
-          testValidFinancialDetailsModelCreditAndRefundsJson(-2000, -2000, testPreviousTaxYearAsString, LocalDate.now().plusYears(1).toString))
+        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"$testPreviousTaxYear-04-06", s"$testTaxYear-04-05")(OK,
+          testValidFinancialDetailsModelCreditAndRefundsJson(-2000, -2000, testPreviousTaxYear.toString, LocalDate.now().plusYears(1).toString))
 
         val res = IncomeTaxViewChangeFrontend.getCreditAndRefunds(clientDetailsWithConfirmation)
 
@@ -129,32 +65,32 @@ class CreditAndRefundControllerISpec extends ComponentSpecBase {
             None, Some("Agent"), Some("1"))(FakeRequest()),
           balanceDetails = Some(BalanceDetails(BigDecimal(1.00), BigDecimal(2.00), BigDecimal(3.00), Some(BigDecimal(5.00)), Some(BigDecimal(3.00)), Some(BigDecimal(2.00)), None)),
           creditDocuments = List(
-            documentDetailWithDueDateFinancialDetailListModel(originalAmount = Some(-2000), outstandingAmount = Some(-2000), mainType = Some("ITSA Cutover Credits")),
-            documentDetailWithDueDateFinancialDetailListModel(originalAmount = Some(-2000), outstandingAmount = Some(-2000), mainType = Some("ITSA Cutover Credits")),
-            documentDetailWithDueDateFinancialDetailListModel(originalAmount = Some(-2000), outstandingAmount = Some(-2000), mainType = Some("ITSA Cutover Credits")),
-            documentDetailWithDueDateFinancialDetailListModel(originalAmount = Some(-2000), outstandingAmount = Some(-2000), mainType = Some("ITSA Overpayment Relief"))
+            documentDetailWithDueDateFinancialDetailListModel(taxYear = testPreviousTaxYear, originalAmount = Some(-2000), outstandingAmount = Some(-2000), mainType = Some("ITSA Cutover Credits")),
+            documentDetailWithDueDateFinancialDetailListModel(taxYear = testPreviousTaxYear, originalAmount = Some(-2000), outstandingAmount = Some(-2000), mainType = Some("ITSA Cutover Credits")),
+            documentDetailWithDueDateFinancialDetailListModel(taxYear = testPreviousTaxYear, originalAmount = Some(-2000), outstandingAmount = Some(-2000), mainType = Some("ITSA Cutover Credits")),
+            documentDetailWithDueDateFinancialDetailListModel(taxYear = testPreviousTaxYear, originalAmount = Some(-2000), outstandingAmount = Some(-2000), mainType = Some("ITSA Overpayment Relief"))
           )
         ))
 
         res should have(
           httpStatus(OK),
           elementTextBySelectorList("#main-content", "li:nth-child(1)", "p")(expectedValue = "£2,000.00 " + messagesAPI("credit-and-refund.credit-from-hmrc-title-prt-1") + " " + messagesAPI("credits.drop-down-list.credit-from-hmrc-adjustment") + " 0"),
-          elementAttributeBySelector("#credit-and-refund-0", "href")(s"/report-quarterly/income-and-expenses/view/agents/credits-from-hmrc/$testPreviousTaxYearAsString"),
+          elementAttributeBySelector("#credit-and-refund-0", "href")(s"/report-quarterly/income-and-expenses/view/agents/credits-from-hmrc/$testPreviousTaxYear"),
 
           elementTextBySelectorList("#main-content", "li:nth-child(2)", "p")(expectedValue = "£2,000.00 " +
             messagesAPI("credit-and-refund.credit-from-hmrc-title-prt-1") + " " +
             messagesAPI("credits.drop-down-list.credit-from-an-earlier-tax-year") + " 1"),
-          elementAttributeBySelector("#credit-and-refund-2", "href")(s"/report-quarterly/income-and-expenses/view/agents/credits-from-hmrc/$testPreviousTaxYearAsString"),
+          elementAttributeBySelector("#credit-and-refund-2", "href")(s"/report-quarterly/income-and-expenses/view/agents/credits-from-hmrc/$testPreviousTaxYear"),
 
           elementTextBySelectorList("#main-content", "li:nth-child(3)", "p")(expectedValue = "£2,000.00 " +
             messagesAPI("credit-and-refund.credit-from-hmrc-title-prt-1") + " " +
             messagesAPI("credits.drop-down-list.credit-from-an-earlier-tax-year") + " 2"),
-          elementAttributeBySelector("#credit-and-refund-3", "href")(s"/report-quarterly/income-and-expenses/view/agents/credits-from-hmrc/$testPreviousTaxYearAsString"),
+          elementAttributeBySelector("#credit-and-refund-3", "href")(s"/report-quarterly/income-and-expenses/view/agents/credits-from-hmrc/$testPreviousTaxYear"),
 
           elementTextBySelectorList("#main-content", "li:nth-child(4)", "p")(expectedValue = "£2,000.00 " +
             messagesAPI("credit-and-refund.credit-from-hmrc-title-prt-1") + " " +
             messagesAPI("credits.drop-down-list.credit-from-an-earlier-tax-year") + " 3"),
-          elementAttributeBySelector("#credit-and-refund-3", "href")(s"/report-quarterly/income-and-expenses/view/agents/credits-from-hmrc/$testPreviousTaxYearAsString"),
+          elementAttributeBySelector("#credit-and-refund-3", "href")(s"/report-quarterly/income-and-expenses/view/agents/credits-from-hmrc/$testPreviousTaxYear"),
 
           elementTextBySelectorList("#main-content", "li:nth-child(5)", "p")(expectedValue = "£3.00 "
             + messagesAPI("credit-and-refund.refundProgress-prt-2")),

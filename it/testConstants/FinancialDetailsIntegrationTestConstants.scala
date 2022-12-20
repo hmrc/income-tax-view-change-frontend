@@ -100,13 +100,15 @@ object FinancialDetailsIntegrationTestConstants  {
       financialDetails = List(financialDetail(taxYear))
     )
 
-  def documentDetailWithDueDateFinancialDetailListModel(outstandingAmount: Option[BigDecimal] = Some(-1400.0),
+  def documentDetailWithDueDateFinancialDetailListModel(taxYear: Int = 2018,
+                                                        outstandingAmount: Option[BigDecimal] = Some(-1400.0),
                                                         dueDate: Option[LocalDate] = Some(LocalDate.of(2019,5,15)),
                                                         originalAmount: Option[BigDecimal] = Some(1400.00),
                                                         mainType: Option[String] = Some("SA Payment on Account 1"),
                                                        ):
   (DocumentDetailWithDueDate, FinancialDetail) = {
     (documentDetailWithDueDateModel(
+      taxYear = taxYear,
       outstandingAmount = outstandingAmount,
       dueDate = dueDate,
       originalAmount = originalAmount),
