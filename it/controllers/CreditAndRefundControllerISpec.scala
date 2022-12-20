@@ -18,7 +18,7 @@ package controllers
 
 import audit.models.{ChargeSummaryAudit, ClaimARefundAuditModel}
 import auth.MtdItUser
-import config.featureswitch.{CreditsRefundsRepay, CutOverCredits, MFACreditsAndDebits}
+import config.featureswitch.{CreditsRefundsRepay, CutOverCredits, MFACreditsAndDebits, R7cTxmEvents}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import models.financialDetails.BalanceDetails
@@ -36,11 +36,12 @@ class CreditAndRefundControllerISpec extends ComponentSpecBase {
   val testPreviousTaxYearAsString: String = (getCurrentTaxYearEnd.getYear - 1).toString
 
   "Navigating to /report-quarterly/income-and-expenses/view/credit-and-refunds" should {
-    "display the credit and refund page" when {
-      "a valid response is received" in {
+    "display the credit and refund page with all credits/refund types and audit event" when {
+      "a valid response is received and feature switches are enabled" in {
         enable(CreditsRefundsRepay)
-        enable(MFACreditsAndDebits)
         enable(CutOverCredits)
+        enable(MFACreditsAndDebits)
+        enable(R7cTxmEvents)
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
 
@@ -71,16 +72,16 @@ class CreditAndRefundControllerISpec extends ComponentSpecBase {
         res should have(
           httpStatus(OK),
           elementTextBySelectorList("#main-content", "li:nth-child(1)", "p")(expectedValue = "£2,000.00 " + messagesAPI("credit-and-refund.credit-from-hmrc-title-prt-1") + " " + messagesAPI("credits.drop-down-list.credit-from-hmrc-adjustment") + " 0"),
-          elementAttributeBySelector("#credit-and-refund-0", "href")(s"/report-quarterly/income-and-expenses/view/credits-from-hmrc/2023"),
+          elementAttributeBySelector("#credit-and-refund-0", "href")("/report-quarterly/income-and-expenses/view/credits-from-hmrc/2023"),
 
           elementTextBySelectorList("#main-content", "li:nth-child(2)", "p")(expectedValue = "£2,000.00 " + messagesAPI("credit-and-refund.credit-from-hmrc-title-prt-1") + " " + messagesAPI("credits.drop-down-list.credit-from-an-earlier-tax-year") + " 1"),
-          elementAttributeBySelector("#credit-and-refund-1", "href")(s"/report-quarterly/income-and-expenses/view/credits-from-hmrc/2023"),
+          elementAttributeBySelector("#credit-and-refund-1", "href")("/report-quarterly/income-and-expenses/view/credits-from-hmrc/2023"),
 
           elementTextBySelectorList("#main-content", "li:nth-child(3)", "p")(expectedValue = "£2,000.00 " + messagesAPI("credit-and-refund.credit-from-hmrc-title-prt-1") + " " + messagesAPI("credits.drop-down-list.credit-from-an-earlier-tax-year") + " 2"),
-          elementAttributeBySelector("#credit-and-refund-2", "href")(s"/report-quarterly/income-and-expenses/view/credits-from-hmrc/2023"),
+          elementAttributeBySelector("#credit-and-refund-2", "href")("/report-quarterly/income-and-expenses/view/credits-from-hmrc/2023"),
 
           elementTextBySelectorList("#main-content", "li:nth-child(4)", "p")(expectedValue = "£2,000.00 " + messagesAPI("credit-and-refund.credit-from-hmrc-title-prt-1") + " " + messagesAPI("credits.drop-down-list.credit-from-an-earlier-tax-year") + " 3"),
-          elementAttributeBySelector("#credit-and-refund-3", "href")(s"/report-quarterly/income-and-expenses/view/credits-from-hmrc/2023"),
+          elementAttributeBySelector("#credit-and-refund-3", "href")("/report-quarterly/income-and-expenses/view/credits-from-hmrc/2023"),
 
           elementTextBySelectorList("#main-content", "li:nth-child(5)", "p")(expectedValue = "£3.00 " + messagesAPI("credit-and-refund.refundProgress-prt-2")),
 
