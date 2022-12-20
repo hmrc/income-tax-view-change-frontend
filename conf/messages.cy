@@ -353,6 +353,8 @@ taxCal_breakdown.message.C22215                                 = Oherwydd lefel
 taxCal_breakdown.message.C22216                                 = Oherwydd lefel eich incwm, nid ydych yn gymwys ar gyfer Lwfans Priodasol mwyach, ac felly caiff eich hawliad ei ganslo.
 taxCal_breakdown.message.C22217                                 = Mae un neu fwy o dandaliadau, dyledion neu addasiadau nad ydynt wedi’u cynnwys yn y cyfrifiad, gan nad ydynt yn gysylltiedig â data sydd gan CThEM.
 taxCal_breakdown.message.C22218                                 = Dim ond yn y cyfrifiad o’r rhwymedigaeth flynyddol amcangyfrifedig y mae Treth Enillion Cyfalaf wedi’i chynnwys. Bydd swm gwirioneddol y Dreth Enillion Cyfalaf wedi’i gynnwys yng nghyfrifiad y datganiad terfynol.
+taxCal_breakdown.message.C22220                                 = Os yw’ch elw trethadwy rhwng £6,725 ac £11,908 ni fydd angen i chi dalu Yswiriant Gwladol Dosbarth 2. Bydd eich hawl i Bensiwn y Wladwriaeth, ac i rai budd-daliadau penodol, yn dal i fod yn gymwys. Caiff eich cyfraniadau eu trin fel rhai sydd wedi’u talu.
+taxCal_breakdown.message.agent.C22220                           = Os yw elw trethadwy eich cleient rhwng £6,725 ac £11,908, ni fydd angen i’ch cleient dalu Yswiriant Gwladol Dosbarth 2. Bydd hawl eich cleient i Bensiwn y Wladwriaeth, ac i rai budd-daliadau penodol, yn dal i fod yn gymwys. Caiff cyfraniadau eich cleient eu trin fel rhai sydd wedi’u talu.
 
 
 taxCal_breakdown.table.head.rate_band                           = Haen cyfradd
