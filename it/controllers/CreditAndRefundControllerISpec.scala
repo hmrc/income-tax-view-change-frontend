@@ -45,18 +45,22 @@ class CreditAndRefundControllerISpec extends ComponentSpecBase {
         enable(MFACreditsAndDebits)
         enable(R7cTxmEvents)
 
-        stubAuthorisedAgentUser(authorised = true)
-
-        Given("I wiremock stub a successful Income Source Details response with a property")
+        Given("I wiremock stub a successful Income Source Details response with multiple business and a property")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
 
+        And("I wiremock stub a successful Financial Details response with credits and refunds")
         IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"$testPreviousTaxYear-04-06", s"$testTaxYear-04-05")(OK,
-          testValidFinancialDetailsModelCreditAndRefundsJson(-2000, -2000, testPreviousTaxYear.toString, LocalDate.now().plusYears(1).toString))
+          testValidFinancialDetailsModelCreditAndRefundsJson(-2000, -2000, testTaxYear.toString, LocalDate.now().plusYears(1).toString))
 
         val res = IncomeTaxViewChangeFrontend.getCreditAndRefunds()
 
+        Then("I verify Income Source Details was called")
         verifyIncomeSourceDetailsCall(testMtditid)
+
+        Then("I verify Financial Details was called")
         IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"$testPreviousTaxYear-04-06", s"$testTaxYear-04-05")
+
+        Then("I verify the audit event was as expected")
         AuditStub.verifyAuditEvent(ClaimARefundAuditModel(
           MtdItUser(testMtditid, testNino, None,
             multipleBusinessesAndPropertyResponse, None, Some("1234567890"),
@@ -106,7 +110,7 @@ class CreditAndRefundControllerISpec extends ComponentSpecBase {
         disable(CreditsRefundsRepay)
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK,
-          propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
+          propertyOnlyResponseWithMigrationData(testPreviousTaxYear, Some(testTaxYear.toString)))
 
         IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"$testPreviousTaxYear-04-06", s"$testTaxYear-04-05")(OK,
           testValidFinancialDetailsModelCreditAndRefundsJson(-2000, -2000, testTaxYear.toString, LocalDate.now().plusYears(1).toString))
