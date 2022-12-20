@@ -86,6 +86,12 @@ object NewCalcBreakdownItTestConstants {
         totalEeaFhlProfit = Some(12500)
       )),
       marriageAllowanceTransferredIn = Some(MarriageAllowanceTransferredIn(amount = Some(5000.99))),
+      studentLoans = Some(Seq(
+        StudentLoan(
+          planType = Option("01"),
+          studentLoanRepaymentAmount = Some(BigDecimal("500.99"))
+
+      ))),
       reliefs = Some(Reliefs(reliefsClaimed = Some(Seq(ReliefsClaimed(
         `type` = "vctSubscriptions",
         amountUsed = Some(5000.99)),

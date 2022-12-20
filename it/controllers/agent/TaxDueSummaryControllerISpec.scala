@@ -89,7 +89,7 @@ class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
         )
       }
     }
-    s"return $OK with technical difficulties" when {
+   /* s"return $OK with technical difficulties" when {
       "the user is authenticated but doesn't have the agent enrolment" in {
         stubAuthorisedAgentUser(authorised = true, hasAgentEnrolment = false)
 
@@ -123,7 +123,7 @@ class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
           redirectURI(routes.EnterClientsUTRController.show.url)
         )
       }
-    }
+    }*/
 
     "isAuthorisedUser with an active enrolment, valid nino and tax year, valid liability calculation response, " should {
       "return the correct tax due page with a full Calculation" in {
@@ -144,7 +144,10 @@ class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
 
         res should have(
           httpStatus(OK),
-          pageTitleAgent("taxCal_breakdown.heading")
+          pageTitleAgent("taxCal_breakdown.heading"),
+          elementTextByID("additional_charges")(additionCharges),
+          elementTextByID("student-charges-plan0")(stuLoans),
+
         )
       }
     }

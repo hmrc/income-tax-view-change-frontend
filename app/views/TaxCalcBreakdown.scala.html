@@ -400,7 +400,7 @@
                         </tr>
                     } else {
                         <tr>
-                            <td class="govuk-table__cell">@messages("taxCal_breakdown.table.studentLoanRepaymentsPlanType0X", studentLoan.planType.getOrElse(throw MissingFieldException("Student Loan Type")))</td>
+                            <td class="govuk-table__cell" id="student-charges-plan0">@messages("taxCal_breakdown.table.studentLoanRepaymentsPlanType0X", studentLoan.planType.getOrElse(throw MissingFieldException("Student Loan Type")))</td>
                             <td class="govuk-table__cell govuk-table__cell--numeric">@{
                                 studentLoan.studentLoanRepaymentAmount.getOrElse(throw MissingFieldException("Student Loan Repayment Amount")).toCurrency
                                 }

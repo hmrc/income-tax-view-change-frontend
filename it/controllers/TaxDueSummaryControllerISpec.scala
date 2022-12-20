@@ -192,6 +192,8 @@ class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
         httpStatus(OK),
         pageTitleIndividual("taxCal_breakdown.heading"),
         elementTextBySelector("#national-insurance-contributions-table tbody:nth-child(3) td:nth-child(1)")(nonVoluntaryClass2Nics)
+
+
       )
     }
 
