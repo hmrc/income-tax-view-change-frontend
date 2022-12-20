@@ -11,6 +11,7 @@ base.error_summary.heading                                      = Mae problem we
 base.error-prefix                                               = Gwall:
 base.backToHome                                                 = Yn ôl i hafan Treth Incwm
 base.continue                                                   = Yn eich blaen
+base.govUk                                                      = GOV.UK
 
 # Fallback Back Links
 back.whatYouOwe = Yn ôl i Yr hyn sydd arnoch
@@ -35,7 +36,8 @@ agent.header.serviceName                                       = Rheoli diweddar
 htmlTitle                                                       = {0} - Rheoli’ch diweddariadau Treth Incwm - GOV.UK
 htmlTitle.agent                                                 = {0} - Rheoli diweddariadau Treth Incwm eich cleient - GOV.UK
 htmlTitle.invalidInput                                          = Gwall: {0} - GOV.UK
-htmlTitle.confirmClient                                          = {0} - GOV.UK
+htmlTitle.confirmClient                                         = {0} - GOV.UK
+htmlTitle.errorPage                                             = {0} - GOV.UK
 
 ## Agent - UTR Error
 agent.utr_error.heading                                         = Ni allwch fwrw golwg dros y cleient hwn
@@ -105,7 +107,6 @@ home.overdue.date                                               = YN HWYR
 home.updates.heading                                            = Diweddariad nesaf i’w gyflwyno erbyn
 home.updates.view                                               = Bwrw golwg dros ddyddiadau cau diweddariadau
 home.tax-years.heading                                          = Ffurflenni Treth
-home.tax-years.description                                      = Gwirio statws pob blwyddyn dreth
 home.your-returns.agent.description                             = Defnyddiwch y gwasanaeth hwn i roi gwybod am incwm heb ei drethu ac unrhyw ryddhad treth yr ydych yn ei hawlio
 home.your-returns.description                                   = Defnyddiwch y gwasanaeth hwn i roi gwybod am incwm heb ei drethu ac unrhyw ryddhad treth yr ydych yn ei hawlio
 home.tax-years.view                                             = Bwrw golwg dros bob blwyddyn dreth
@@ -363,6 +364,7 @@ taxCal_breakdown.table.head.deduction                           = Math o ddidyni
 taxCal_breakdown.table.amount                                   = Swm
 taxCal_breakdown.table.head.rates.uk                            = Cyfradd y DU ar gyfer Lloegr a Gogledd Iwerddon
 taxCal_breakdown.table.head.national_insurance_type             = Math o Yswiriant Gwladol
+taxCal_breakdown.table.head.rates.scotland                      = Cyfradd ar gyfer yr Alban
 
 taxCal_breakdown.table.capital_gains_tax                            = Treth Enillion Cyfalaf
 taxCal_breakdown.table.head.cgt_type                                = Math o Dreth Enillion Cyfalaf
@@ -651,6 +653,9 @@ whatYouOwe.codingOut-2                                          = {0} i {1}
 whatYouOwe.codingOut-3                                          = yn cael ei thalu drwy ei god treth TWE. Nid yw’r swm hwn yn rhan o gyfanswm ei daliadau sy’n ddyledus oherwydd ein bod yn eu casglu’n awtomatig.
 whatYouOwe.class2Nic.text                                       = Yswiriant Gwladol Dosbarth 2
 whatYouOwe.cancelledPayeSelfAssessment.text                     = Hunanasesiad TWE wedi’i ganslo (trwy eich cod treth TWE)
+whatYouOwe.balancingCharge.interest.line2.text                  = {0} i {1}
+whatYouOwe.taxYear                                              = Blwyddyn dreth
+whatYouOwe.over-due.interest.line2                              = {0} i {1} ar {2}%
 
 ## Charge Summary ##
 chargeSummary.paymentOnAccount1.text                            = Taliad ar gyfrif 1 o 2
