@@ -116,7 +116,7 @@ class RefundToTaxPayerControllerISpec extends ComponentSpecBase {
       )
     }
 
-    "the R7bTxmEvents feature switch is enabled" in {
+    "the R7cTxmEvents feature switch is enabled" in {
       isAuthorisedUser(authorised = true)
       stubUserDetails()
       enable(PaymentHistoryRefunds)
