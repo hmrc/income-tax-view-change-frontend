@@ -18,7 +18,7 @@ package controllers
 
 import audit.mocks.MockAuditingService
 import audit.models.RefundToTaxPayerResponseAuditModel
-import config.featureswitch.{FeatureSwitching, PaymentHistoryRefunds, R7bTxmEvents}
+import config.featureswitch.{FeatureSwitching, PaymentHistoryRefunds, R7cTxmEvents}
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
 import mocks.MockItvcErrorHandler
@@ -137,7 +137,7 @@ class RefundToTaxPayerControllerSpec extends MockAuthenticationPredicate
 
       "raise an audit event and send the user to the refund to tax payer page with data" in new Test {
         enable(PaymentHistoryRefunds)
-        enable(R7bTxmEvents)
+        enable(R7cTxmEvents)
         mockSingleBusinessIncomeSource()
         setupGetRepaymentHistoryByRepaymentId(testNino, repaymentRequestNumber)(testRepaymentHistoryModel)
 
@@ -238,6 +238,7 @@ class RefundToTaxPayerControllerSpec extends MockAuthenticationPredicate
 
       "raise an audit event and send the user to the refund to tax payer page with data" in new Test {
         enable(PaymentHistoryRefunds)
+        enable(R7cTxmEvents)
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         mockSingleBusinessIncomeSource()
         setupGetRepaymentHistoryByRepaymentId(testNino, repaymentRequestNumber)(testRepaymentHistoryModel)
