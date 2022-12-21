@@ -1,6 +1,7 @@
 
 package controllers
 
+import audit.models.CreditSummaryAuditing.{CreditsSummaryModel, toCreditSummaryDetailsSeq}
 import audit.models.IncomeSourceDetailsResponseAuditModel
 import auth.MtdItUserWithNino
 import config.featureswitch.{CutOverCredits, MFACreditsAndDebits, R7cTxmEvents}
@@ -95,6 +96,7 @@ class CreditsSummaryControllerISpec extends ComponentSpecBase with CreditsSummar
       "MFACreditsAndDebits and CutOverCredits feature switches are off" in {
         disable(MFACreditsAndDebits)
         disable(CutOverCredits)
+        enable(R7cTxmEvents)
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
           OK,
@@ -111,6 +113,19 @@ class CreditsSummaryControllerISpec extends ComponentSpecBase with CreditsSummar
           httpStatus(OK),
           pageTitleIndividual(messages("credits.heading", s"$calendarYear"))
         )
+
+        AuditStub.verifyAuditDoesNotContainsDetail(
+          CreditsSummaryModel(
+            saUTR = testSaUtr,
+            nino = testNino,
+            userType = testUserTypeIndividual,
+            credId = credId,
+            mtdRef = testMtditid,
+            creditOnAccount = "5",
+            creditDetails = toCreditSummaryDetailsSeq(chargesList)(msgs)
+          ).detail
+        )
+
       }
     }
   }
