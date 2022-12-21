@@ -16,7 +16,7 @@
 
 package models.liabilitycalculation.viewmodels
 
-import models.liabilitycalculation.{Message, Messages, ReliefsClaimed}
+import models.liabilitycalculation.{Message, Messages, ReliefsClaimed, StudentLoan}
 import models.liabilitycalculation.taxcalculation.{BusinessAssetsDisposalsAndInvestorsRel, CgtTaxBands, Nic4Bands, TaxBands}
 import testConstants.NewCalcBreakdownUnitTestConstants._
 import testUtils.UnitSpec
@@ -63,6 +63,7 @@ class TaxDueSummaryViewModelSpec extends UnitSpec {
           grossGiftAidPayments = Some(12500),
           giftAidTax = Some(5000.99),
           marriageAllowanceTransferredInAmount = Some(5000.99),
+          studentLoans = Some(List(StudentLoan(Some("01"),Some(5000.99),Some(5000.99),Some(5000.99),Some(5000.99),Some(1500),Some(20)))),
           reliefsClaimed = Some(List(ReliefsClaimed("vctSubscriptions", Some(5000.99)),
             ReliefsClaimed("deficiencyRelief", Some(5000.99)))),
           totalResidentialFinanceCostsRelief = Some(5000.99),
@@ -127,6 +128,7 @@ class TaxDueSummaryViewModelSpec extends UnitSpec {
           grossGiftAidPayments = Some(12500),
           giftAidTax = Some(5000.99),
           marriageAllowanceTransferredInAmount = Some(5000.99),
+          studentLoans = Some(List(StudentLoan(Some("01"), Some(5000.99), Some(5000.99), Some(5000.99), Some(5000.99), Some(1500), Some(20)))),
           reliefsClaimed = Some(List(ReliefsClaimed("vctSubscriptions", Some(5000.99)),
             ReliefsClaimed("deficiencyRelief", Some(5000.99)))),
           totalResidentialFinanceCostsRelief = Some(5000.99),

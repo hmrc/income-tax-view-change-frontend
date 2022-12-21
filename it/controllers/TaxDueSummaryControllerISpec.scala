@@ -29,7 +29,7 @@ import testConstants.BaseIntegrationTestConstants._
 import testConstants.IncomeSourceIntegrationTestConstants._
 import testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessful
 import testConstants.NewCalcDataIntegrationTestConstants._
-import testConstants.messages.TaxDueSummaryMessages.{additionCharges, nonVoluntaryClass2Nics, voluntaryClass2Nics}
+import testConstants.messages.TaxDueSummaryMessages.{additionCharges, nonVoluntaryClass2Nics, postgraduatePlan, studentPlan, voluntaryClass2Nics}
 import testConstants.messages.{TaxDueSummaryMessages => messages}
 
 
@@ -68,7 +68,9 @@ class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
         res should have(
           httpStatus(OK),
           pageTitleIndividual("taxCal_breakdown.heading"),
-          elementTextByID("additional_charges")(additionCharges)
+          elementTextByID("additional_charges")(additionCharges),
+          elementTextByID("student-repayment-plan0X")(studentPlan),
+          elementTextByID("graduate-repayment-plan")(postgraduatePlan),
         )
       }
     }
@@ -192,6 +194,8 @@ class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
         httpStatus(OK),
         pageTitleIndividual("taxCal_breakdown.heading"),
         elementTextBySelector("#national-insurance-contributions-table tbody:nth-child(3) td:nth-child(1)")(nonVoluntaryClass2Nics)
+
+
       )
     }
 

@@ -37,6 +37,7 @@ import testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSu
 import testConstants.NewCalcDataIntegrationTestConstants._
 import testConstants.messages.TaxDueSummaryMessages._
 
+
 import java.time.LocalDate
 
 class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitching {
@@ -142,9 +143,14 @@ class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
 
         verifyAuditEvent(TaxDueResponseAuditModel(testUser, TaxDueSummaryViewModel(liabilityCalculationModelSuccessful), testYearInt))
 
+
         res should have(
           httpStatus(OK),
-          pageTitleAgent("taxCal_breakdown.heading")
+          pageTitleAgent("taxCal_breakdown.heading"),
+          elementTextByID("additional_charges")(additionCharges),
+          elementTextByID("student-repayment-plan0X")(studentPlan),
+          elementTextByID("graduate-repayment-plan")(postgraduatePlan),
+
         )
       }
     }
