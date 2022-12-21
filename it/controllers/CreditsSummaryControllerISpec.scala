@@ -2,17 +2,15 @@
 package controllers
 
 import audit.models.IncomeSourceDetailsResponseAuditModel
-import auth.{MtdItUser, MtdItUserWithNino}
+import auth.MtdItUserWithNino
 import config.featureswitch.{CutOverCredits, MFACreditsAndDebits, R7cTxmEvents}
-import helpers.{ComponentSpecBase, CreditsSummaryDataHelper}
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
-import models.creditDetailModel.{CreditDetailModel, MfaCreditType}
-import models.financialDetails.DocumentDetail
+import helpers.{ComponentSpecBase, CreditsSummaryDataHelper}
 import play.api.http.Status.OK
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.test.FakeRequest
-import testConstants.BaseIntegrationTestConstants.{taxYear, testMtditid, testNino, testTaxYear}
-import testConstants.IncomeSourceIntegrationTestConstants.{multipleBusinessesAndPropertyResponse, propertyOnlyResponseWithMigrationData, testValidFinancialDetailsModelCreditAndRefundsJson}
+import testConstants.BaseIntegrationTestConstants._
+import testConstants.IncomeSourceIntegrationTestConstants.{propertyOnlyResponseWithMigrationData, testValidFinancialDetailsModelCreditAndRefundsJson}
 
 import java.time.LocalDate
 
@@ -79,11 +77,11 @@ class CreditsSummaryControllerISpec extends ComponentSpecBase with CreditsSummar
 
         AuditStub.verifyAuditContainsDetail(
           CreditsSummaryModel(
-            saUTR = "1234567890",
-            nino = "AA123456A",
-            userType = "Individual",
-            credId = "12345-credId",
-            mtdRef = "XAITSA123456",
+            saUTR = testSaUtr,
+            nino = testNino,
+            userType = testUserTypeIndividual,
+            credId = credId,
+            mtdRef = testMtditid,
             creditOnAccount = "5",
             creditDetails = toCreditSummaryDetailsSeq(chargesList)(msgs)
           ).detail
