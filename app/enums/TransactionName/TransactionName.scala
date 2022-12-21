@@ -32,6 +32,10 @@ case object ChargeSummary extends TransactionName {
   val name = "charge-summary"
 }
 
+case object ClaimARefund extends TransactionName {
+  val name = "claim-a-refund"
+}
+
 case object ItsaHomePage extends TransactionName {
   val name = "itsa-home-page"
 }
@@ -96,4 +100,7 @@ case object WhatYouOweResponse extends TransactionName {
   val name = "what-you-owe-response"
 }
 
+case object RefundToTaxPayer extends TransactionName {
+  val name = "refund-to-taxpayer"
+}
 

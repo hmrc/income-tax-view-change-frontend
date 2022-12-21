@@ -18,7 +18,7 @@ package models.liabilitycalculation.viewmodels
 
 import models.liabilitycalculation.taxcalculation.{CapitalGainsTax, Nic4Bands, TaxBands}
 import models.liabilitycalculation.viewmodels.TaxYearSummaryViewModel.getTaxDue
-import models.liabilitycalculation.{LiabilityCalculationResponse, Messages, ReliefsClaimed}
+import models.liabilitycalculation.{LiabilityCalculationResponse, Messages, ReliefsClaimed, StudentLoan}
 
 case class TaxDueSummaryViewModel(
                                    taxRegime: String = "",
@@ -28,6 +28,7 @@ case class TaxDueSummaryViewModel(
                                    grossGiftAidPayments: Option[BigDecimal] = None,
                                    giftAidTax: Option[BigDecimal] = None,
                                    marriageAllowanceTransferredInAmount: Option[BigDecimal] = None,
+                                   studentLoans: Option[Seq[StudentLoan]] = None,
                                    reliefsClaimed: Option[Seq[ReliefsClaimed]] = None,
                                    totalResidentialFinanceCostsRelief: Option[BigDecimal] = None,
                                    totalForeignTaxCreditRelief: Option[BigDecimal] = None,
@@ -90,6 +91,7 @@ object TaxDueSummaryViewModel {
         grossGiftAidPayments = calc.giftAid.map(ga => ga.grossGiftAidPayments),
         giftAidTax = calc.giftAid.map(ga => ga.giftAidTax),
         marriageAllowanceTransferredInAmount = calc.marriageAllowanceTransferredIn.flatMap(mati => mati.amount),
+        studentLoans = calc.studentLoans,
         reliefsClaimed = calc.reliefs.map(r => r.reliefsClaimed.getOrElse(Seq())),
         totalResidentialFinanceCostsRelief = calc.reliefs.flatMap(r => r.residentialFinanceCosts.map(rfc => rfc.totalResidentialFinanceCostsRelief)),
         totalForeignTaxCreditRelief = calc.reliefs.flatMap(r => r.foreignTaxCreditRelief.map(rfc => rfc.totalForeignTaxCreditRelief)),

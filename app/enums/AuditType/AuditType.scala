@@ -32,6 +32,10 @@ case object ChargeSummary extends AuditType {
   val name = "ChargeSummary"
 }
 
+case object ClaimARefundResponse extends AuditType {
+  val name = "ClaimARefundResponse"
+}
+
 case object ItsaHomePage extends AuditType {
   val name = "ItsaHomePage"
 }
@@ -94,4 +98,8 @@ case object ViewInYearTaxEstimate extends AuditType {
 
 case object WhatYouOweResponse extends AuditType {
   val name = "WhatYouOweResponse"
+}
+
+case object RefundToTaxPayerResponse extends AuditType {
+  override val name: String = "RefundToTaxpayerResponse"
 }

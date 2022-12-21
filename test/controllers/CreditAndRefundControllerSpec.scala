@@ -58,7 +58,8 @@ class CreditAndRefundControllerSpec extends MockAuthenticationPredicate with Moc
       itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
       incomeSourceDetailsService = mockIncomeSourceDetailsService,
       creditService = mockCreditService,
-      repaymentService = mockRepaymentService
+      repaymentService = mockRepaymentService,
+      auditingService = mockAuditingService
     )(
       appConfig = app.injector.instanceOf[FrontendAppConfig],
       dateService = app.injector.instanceOf[DateService],

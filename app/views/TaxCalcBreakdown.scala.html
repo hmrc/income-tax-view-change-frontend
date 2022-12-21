@@ -265,10 +265,12 @@
                     id = "additional_charges" class="govuk-table__caption govuk-heading-l">@messages("taxCal_breakdown.additional_charges")
             </caption>
 
+
             <tr class="govuk-table__row">
                 <th scope="col" class="govuk-table__header bold">@messages("taxCal_breakdown.table.head.charge_type")</th>
                 <th scope="col" class="govuk-table__header govuk-table__header--numeric bold">@messages("taxCal_breakdown.table.amount")</th>
             </tr>
+
 
             <tbody class="govuk-table__body">
             @viewModel.giftAidTax.map { amount =>
@@ -353,7 +355,8 @@
 
     @if(viewModel.totalStudentLoansRepaymentAmount.nonEmpty ||
         viewModel.payeUnderpaymentsCodedOut.nonEmpty ||
-        viewModel.saUnderpaymentsCodedOut.nonEmpty
+        viewModel.saUnderpaymentsCodedOut.nonEmpty ||
+        viewModel.studentLoans.nonEmpty
     ) {
         <table class="govuk-table" id="other-charges-table">
             <caption
@@ -389,6 +392,28 @@
                         amount.toCurrency
                     }</td>
                 </tr>
+            }
+
+            @viewModel.studentLoans.map { studentLoanList =>
+                @studentLoanList.map { studentLoan =>
+                    @if(studentLoan.planType.get == "03"){
+                        <tr>
+                            <td class="govuk-table__cell" id="graduate-repayment-plan">@messages("taxCal_breakdown.table.studentLoanPostGraduatePlan", studentLoan.planType.getOrElse(throw MissingFieldException("Student Loan Type")))</td>
+                            <td class="govuk-table__cell govuk-table__cell--numeric">@{
+                                studentLoan.studentLoanRepaymentAmount.getOrElse(throw MissingFieldException("Student Loan Repayment Amount")).toCurrency
+                                }
+                            </td>
+                        </tr>
+                    } else {
+                        <tr>
+                            <td class="govuk-table__cell" id="student-repayment-plan0X">@messages("taxCal_breakdown.table.studentLoanRepaymentsPlanType0X", studentLoan.planType.getOrElse(throw MissingFieldException("Student Loan Type")))</td>
+                            <td class="govuk-table__cell govuk-table__cell--numeric" id="student-repayment-amount">@{
+                                studentLoan.studentLoanRepaymentAmount.getOrElse(throw MissingFieldException("Student Loan Repayment Amount")).toCurrency
+                                }
+                            </td>
+                        </tr>
+                    }
+                }
             }
             </tbody>
         </table>
