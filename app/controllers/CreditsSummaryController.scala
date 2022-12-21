@@ -84,7 +84,6 @@ class CreditsSummaryController @Inject()(creditsView: CreditsSummary,
       case _ => agentCreditsSummaryUrl(calendarYear)
     }
   }
-
   def handleRequest(calendarYear: Int,
                     isAgent: Boolean,
                     origin: Option[String] = None)
@@ -162,24 +161,18 @@ class CreditsSummaryController @Inject()(creditsView: CreditsSummary,
   private def auditCreditSummary(creditOnAccount: Option[BigDecimal], charges: Seq[CreditDetailModel])
                                 (implicit hc: HeaderCarrier, user: MtdItUser[_]): Unit = {
     import CreditSummaryAuditing._
-    // TODO: what need to be done in case any below is not provided???
     if (isEnabled(R7cTxmEvents) && charges.nonEmpty) {
-      for {
-        saUtr <- user.saUtr
-        userType <- user.userType
-        credId <- user.credId
-      } yield
-        auditingService.extendedAudit(
-          CreditsSummaryModel(
-            saUTR = saUtr,
-            nino = user.nino,
-            userType = userType,
-            credId = credId,
-            mtdRef = user.mtditid,
-            creditOnAccount = creditOnAccount.getOrElse(BigDecimal(0.0)).toString(),
-            creditDetails = toCreditSummaryDetailsSeq(charges)(msgApi)
-          )
+      auditingService.extendedAudit(
+        CreditsSummaryModel(
+          saUTR = user.saUtr.getOrElse(""),
+          nino = user.nino,
+          userType = user.userType.getOrElse(""),
+          credId = user.credId.getOrElse(""),
+          mtdRef = user.mtditid,
+          creditOnAccount = creditOnAccount.getOrElse(BigDecimal(0.0)).toString(),
+          creditDetails = toCreditSummaryDetailsSeq(charges)(msgApi)
         )
+      )
     }
   }
 }
