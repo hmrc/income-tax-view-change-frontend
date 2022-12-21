@@ -32,6 +32,10 @@ case object ChargeSummary extends AuditType {
   val name = "ChargeSummary"
 }
 
+case object ClaimARefundResponse extends AuditType {
+  val name = "ClaimARefundResponse"
+}
+
 case object ItsaHomePage extends AuditType {
   val name = "ItsaHomePage"
 }

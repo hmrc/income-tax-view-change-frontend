@@ -32,6 +32,10 @@ case object ChargeSummary extends TransactionName {
   val name = "charge-summary"
 }
 
+case object ClaimARefund extends TransactionName {
+  val name = "claim-a-refund"
+}
+
 case object ItsaHomePage extends TransactionName {
   val name = "itsa-home-page"
 }
