@@ -106,6 +106,12 @@
         )))
     }
 
+    @if(viewModel.messages.exists(_.allMessages.exists(_.id=="C22220"))){
+        @govukInsetText(InsetText(content = HtmlContent(
+            if(isAgent) messages(s"taxCal_breakdown.message.agent.C22220") else messages(s"taxCal_breakdown.message.C22220")
+        )))
+    }
+
     @if(viewModel.payPensionsProfitBands.getOrElse(Seq()).exists(_.income > 0)) {
         <table class="govuk-table" id="pay-pensions-profit-table">
             <caption

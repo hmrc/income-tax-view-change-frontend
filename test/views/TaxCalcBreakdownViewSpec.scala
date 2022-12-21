@@ -652,13 +652,14 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
           Message("C22216", "message16"),
           Message("C22217", "message17"),
           Message("C22218", "message18"),
-          Message("C22219", "message19")
+          Message("C22219", "message19"),
+          Message("C22220", "message20")
         ))))
       ), taxYear2017, backUrl)
 
       val document: Document = Jsoup.parse(view.body)
 
-      document.select(messageContentSelector).size shouldBe 13
+      document.select(messageContentSelector).size shouldBe 14
       document.select(messageContentSelector).get(0).text shouldBe messages("taxCal_breakdown.message.C22202")
       document.select(messageContentSelector).get(1).text shouldBe messages("taxCal_breakdown.message.C22203")
       document.select(messageContentSelector).get(2).text shouldBe messages("taxCal_breakdown.message.C22206")
@@ -672,6 +673,7 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
       document.select(messageContentSelector).get(10).text shouldBe messages("taxCal_breakdown.message.C22216")
       document.select(messageContentSelector).get(11).text shouldBe messages("taxCal_breakdown.message.C22217")
       document.select(messageContentSelector).get(12).text shouldBe messages("taxCal_breakdown.message.C22218")
+      document.select(messageContentSelector).get(13).text shouldBe messages("taxCal_breakdown.message.C22220")
     }
 
     "provided with message C22201" in {
