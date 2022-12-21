@@ -54,6 +54,7 @@ case class TaxDueResponseAuditModel(mtdItUser: MtdItUser[_],
       case "C22216" => "Due to the level of your income, you are no longer eligible for Marriage Allowance and your claim will be cancelled."
       case "C22217" => "There are one or more underpayments, debts or adjustments that have not been included in the calculation as they do not relate to data that HMRC holds."
       case "C22218" => "The Capital gains tax has been included in the estimated annual liability calculation only, the actual amount of capital gains tax will be in the final declaration viewModel."
+      case "C22220" => "If your taxable profits are between £6,725 and £11,908 you will not need to pay Class 2 National Insurance. Your entitlements to the State Pension, and certain benefits, will still apply. Your contributions are treated as having been paid."
     }
 
   private val allowedCalcMessages: Seq[String] = {

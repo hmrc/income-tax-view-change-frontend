@@ -16,10 +16,11 @@
 
 package controllers
 
-import config.featureswitch.{FeatureSwitching, PaymentHistoryRefunds}
+import audit.mocks.MockAuditingService
+import audit.models.RefundToTaxPayerResponseAuditModel
+import config.featureswitch.{FeatureSwitching, PaymentHistoryRefunds, R7cTxmEvents}
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
-import implicits.ImplicitDateFormatter
 import mocks.MockItvcErrorHandler
 import mocks.connectors.MockIncomeTaxViewChangeConnector
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
@@ -35,8 +36,8 @@ import java.time.LocalDate
 import scala.concurrent.Future
 
 class RefundToTaxPayerControllerSpec extends MockAuthenticationPredicate
-  with MockIncomeSourceDetailsPredicate with ImplicitDateFormatter with MockItvcErrorHandler
-  with MockIncomeTaxViewChangeConnector with FeatureSwitching {
+  with MockIncomeSourceDetailsPredicate with MockItvcErrorHandler
+  with MockIncomeTaxViewChangeConnector with FeatureSwitching with MockAuditingService {
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -102,7 +103,8 @@ class RefundToTaxPayerControllerSpec extends MockAuthenticationPredicate
       mockIncomeSourceDetailsService,
       mockAuthService,
       app.injector.instanceOf[NavBarPredicate],
-      app.injector.instanceOf[ItvcErrorHandler]
+      app.injector.instanceOf[ItvcErrorHandler],
+      mockAuditingService
     )(app.injector.instanceOf[MessagesControllerComponents],
       ec,
       app.injector.instanceOf[FrontendAppConfig],
@@ -132,6 +134,30 @@ class RefundToTaxPayerControllerSpec extends MockAuthenticationPredicate
         contentAsString(result) shouldBe expectedContent
         contentType(result) shouldBe Some(HTML)
       }
+
+      "raise an audit event and send the user to the refund to tax payer page with data" in new Test {
+        enable(PaymentHistoryRefunds)
+        enable(R7cTxmEvents)
+        mockSingleBusinessIncomeSource()
+        setupGetRepaymentHistoryByRepaymentId(testNino, repaymentRequestNumber)(testRepaymentHistoryModel)
+
+        val expectedContent: String = refundToTaxPayerView(
+          backUrl = paymentRefundHistoryBackLink,
+          repaymentHistoryModel = testRepaymentHistoryModel,
+          saUtr = Some(testMtditid),
+          paymentHistoryRefundsEnabled = true,
+          isAgent = false
+        ).toString
+
+        val result: Future[Result] = controller.show(repaymentRequestNumber)(fakeRequestWithActiveSession)
+
+        status(result) shouldBe Status.OK
+        contentAsString(result) shouldBe expectedContent
+        contentType(result) shouldBe Some(HTML)
+
+        verifyExtendedAudit(RefundToTaxPayerResponseAuditModel(testRepaymentHistoryModel))
+      }
+
 
     }
 
@@ -208,6 +234,30 @@ class RefundToTaxPayerControllerSpec extends MockAuthenticationPredicate
         status(result) shouldBe Status.OK
         contentAsString(result) shouldBe expectedContent
         contentType(result) shouldBe Some(HTML)
+      }
+
+      "raise an audit event and send the user to the refund to tax payer page with data" in new Test {
+        enable(PaymentHistoryRefunds)
+        enable(R7cTxmEvents)
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+        mockSingleBusinessIncomeSource()
+        setupGetRepaymentHistoryByRepaymentId(testNino, repaymentRequestNumber)(testRepaymentHistoryModel)
+
+        val expectedContent: String = refundToTaxPayerView(
+          backUrl = paymentRefundHistoryBackLinkAgent,
+          repaymentHistoryModel = testRepaymentHistoryModel,
+          saUtr = Some(testMtditid),
+          paymentHistoryRefundsEnabled = true,
+          isAgent = true
+        ).toString
+
+        val result = controller.showAgent(repaymentRequestNumber)(fakeRequestConfirmedClient(testNino))
+
+        status(result) shouldBe Status.OK
+        contentAsString(result) shouldBe expectedContent
+        contentType(result) shouldBe Some(HTML)
+
+        verifyExtendedAudit(RefundToTaxPayerResponseAuditModel(testRepaymentHistoryModel))
       }
 
     }

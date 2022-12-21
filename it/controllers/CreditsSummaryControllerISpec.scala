@@ -15,7 +15,7 @@ import testConstants.IncomeSourceIntegrationTestConstants.{propertyOnlyResponseW
 
 import java.time.LocalDate
 
-class CreditsSummaryControllerISpec extends ComponentSpecBase with CreditsSummaryDataHelper{
+class CreditsSummaryControllerISpec extends ComponentSpecBase with CreditsSummaryDataHelper {
 
   val calendarYear = "2018"
   implicit val messages: Messages = app.injector.instanceOf[MessagesApi].preferred(FakeRequest())

@@ -17,11 +17,13 @@
 package controllers
 
 
+import audit.AuditingService
+import audit.models.ClaimARefundAuditModel
 import auth.{FrontendAuthorisedFunctions, MtdItUser}
-import config.featureswitch.{CreditsRefundsRepay, CutOverCredits, FeatureSwitching, MFACreditsAndDebits}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
+import config.featureswitch.{CreditsRefundsRepay, CutOverCredits, FeatureSwitching, MFACreditsAndDebits, R7cTxmEvents}
 import controllers.agent.predicates.ClientConfirmedController
-import controllers.predicates._
+import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
 import models.core.RepaymentJourneyResponseModel.{RepaymentJourneyErrorResponse, RepaymentJourneyModel}
 import models.financialDetails.{BalanceDetails, DocumentDetailWithDueDate, FinancialDetail, FinancialDetailsModel}
 import play.api.Logger
@@ -47,7 +49,8 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
                                           val retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                           val itvcErrorHandler: ItvcErrorHandler,
                                           val incomeSourceDetailsService: IncomeSourceDetailsService,
-                                          val repaymentService: RepaymentService)
+                                          val repaymentService: RepaymentService,
+                                          val auditingService: AuditingService)
                                          (implicit val appConfig: FrontendAppConfig,
                                           dateService: DateService,
                                           val languageUtils: LanguageUtils,
@@ -87,6 +90,10 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
         )
 
         val creditAndRefundType: Option[UnallocatedCreditType] = maybeUnallocatedCreditType(credits, balance, isMFACreditsAndDebitsEnabled, isCutOverCreditsEnabled)
+
+        if (isEnabled(R7cTxmEvents)) {
+          auditClaimARefund(balance, credits)
+        }
 
         Ok(view(credits, balance, creditAndRefundType, isAgent, backUrl, isMFACreditsAndDebitsEnabled, isCutOverCreditsEnabled)(user, user, messages))
       case _ => Logger("application").error(
@@ -211,4 +218,12 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
 
   }
 
+  private def auditClaimARefund(balanceDetails: Option[BalanceDetails], creditDocuments: List[(DocumentDetailWithDueDate, FinancialDetail)])
+                               (implicit hc: HeaderCarrier, user: MtdItUser[_]): Unit = {
+
+    auditingService.extendedAudit(ClaimARefundAuditModel(
+      mtdItUser = user,
+      balanceDetails = balanceDetails,
+      creditDocuments = creditDocuments))
+  }
 }
