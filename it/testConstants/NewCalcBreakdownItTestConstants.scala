@@ -89,8 +89,12 @@ object NewCalcBreakdownItTestConstants {
       studentLoans = Some(Seq(
         StudentLoan(
           planType = Option("01"),
-          studentLoanRepaymentAmount = Some(BigDecimal("500.99"))
-
+          studentLoanRepaymentAmount = Some(BigDecimal(5000.99)),
+      ),
+        StudentLoan(
+            planType = Option("03"),
+            studentLoanRepaymentAmount = Some(BigDecimal(5000.99),
+        )
       ))),
       reliefs = Some(Reliefs(reliefsClaimed = Some(Seq(ReliefsClaimed(
         `type` = "vctSubscriptions",
