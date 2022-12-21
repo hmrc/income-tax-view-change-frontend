@@ -95,3 +95,7 @@ case object ViewInYearTaxEstimate extends AuditType {
 case object WhatYouOweResponse extends AuditType {
   val name = "WhatYouOweResponse"
 }
+
+case object RefundToTaxPayerResponse extends AuditType {
+  override val name: String = "RefundToTaxpayerResponse"
+}
