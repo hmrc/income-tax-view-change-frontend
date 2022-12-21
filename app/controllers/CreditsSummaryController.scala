@@ -161,7 +161,7 @@ class CreditsSummaryController @Inject()(creditsView: CreditsSummary,
   private def auditCreditSummary(creditOnAccount: Option[BigDecimal], charges: Seq[CreditDetailModel])
                                 (implicit hc: HeaderCarrier, user: MtdItUser[_]): Unit = {
     import CreditSummaryAuditing._
-    if (isEnabled(R7cTxmEvents) && charges.nonEmpty) {
+    if (isEnabled(R7cTxmEvents) ) {
       auditingService.extendedAudit(
         CreditsSummaryModel(
           saUTR = user.saUtr.getOrElse(""),

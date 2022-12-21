@@ -75,7 +75,6 @@ class CreditsSummaryControllerISpec extends ComponentSpecBase with CreditsSummar
           pageTitleIndividual(messages("credits.heading", s"$calendarYear"))
         )
 
-
         AuditStub.verifyAuditContainsDetail(
           CreditsSummaryModel(
             saUTR = testSaUtr,

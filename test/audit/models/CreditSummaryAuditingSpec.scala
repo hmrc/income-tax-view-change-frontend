@@ -83,6 +83,16 @@ class CreditSummaryAuditingSpec extends TestSupport {
       creditSummaryDetails.status shouldBe "Not allocated"
     }
 
+    "- convert list of charges" in {
+      val creditSummaryDetails: Seq[CreditSummaryDetails] = List(creditDetailsModelPaid, creditDetailsModelUnPaid, creditDetailsModelPartiallyPaid)
+      creditSummaryDetails.map(_.status) shouldBe Seq("Fully allocated", "Not allocated", "Partially allocated")
+    }
+
+    "- convert empty list of charges" in {
+      val creditSummaryDetails: Seq[CreditSummaryDetails] = List.empty
+      creditSummaryDetails.map(_.status) shouldBe Seq()
+    }
+
   }
 
 }
