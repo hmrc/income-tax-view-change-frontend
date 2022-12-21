@@ -17,7 +17,7 @@
 package controllers
 
 import audit.AuditingService
-import audit.models.CreditsSummaryAuditing
+import audit.models.CreditSummaryAuditing
 import auth.MtdItUser
 import config.featureswitch.{CutOverCredits, FeatureSwitching, MFACreditsAndDebits, R7cTxmEvents}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
@@ -161,7 +161,7 @@ class CreditsSummaryController @Inject()(creditsView: CreditsSummary,
 
   private def auditCreditSummary(creditOnAccount: Option[BigDecimal], charges: Seq[CreditDetailModel])
                                 (implicit hc: HeaderCarrier, user: MtdItUser[_]): Unit = {
-    import CreditsSummaryAuditing._
+    import CreditSummaryAuditing._
     // TODO: what need to be done in case any below is not provided???
     if (isEnabled(R7cTxmEvents) && charges.nonEmpty) {
       for {

@@ -20,7 +20,7 @@ import models.creditDetailModel.{CreditDetailModel, CreditType}
 import play.api.i18n.{Lang, MessagesApi}
 import play.api.libs.json.{JsObject, JsValue, Json}
 
-object CreditsSummaryAuditing {
+object CreditSummaryAuditing {
 
   case class CreditSummaryDetails(date: String, description: String, status: String, amount: String)
 

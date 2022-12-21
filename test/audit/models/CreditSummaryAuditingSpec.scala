@@ -23,9 +23,9 @@ import testUtils.TestSupport
 
 import java.time.LocalDate
 
-class CreditsSummaryAuditingSpec extends TestSupport {
+class CreditSummaryAuditingSpec extends TestSupport {
 
-  import CreditsSummaryAuditing._
+  import CreditSummaryAuditing._
 
   implicit val msgApi: MessagesApi = messagesApi
 
