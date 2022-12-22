@@ -80,7 +80,7 @@ class CreditAndRefundControllerSpec extends MockAuthenticationPredicate with Moc
   def testFinancialDetail(taxYear: Int): FinancialDetailsModel = financialDetailsModel(taxYear)
 
   "The CreditAndRefund Controller" should {
-   /* "show the credit and refund page" when {
+    "show the credit and refund page" when {
 
       "MFACreditsAndDebits disabled: credit charges are returned" in new Setup {
         disableAllSwitches()
@@ -198,7 +198,7 @@ class CreditAndRefundControllerSpec extends MockAuthenticationPredicate with Moc
 
         status(result) shouldBe Status.SEE_OTHER
       }
-    }*/
+    }
 
     "Controller should start refund process" when {
       "RepaymentJourneyModel is returned" in new Setup {
@@ -216,7 +216,7 @@ class CreditAndRefundControllerSpec extends MockAuthenticationPredicate with Moc
 
         val result: Future[Result] = controller.startRefund()(fakeRequestWithActiveSession)
 
-        status(result) shouldBe (303)
+        status(result) shouldBe Status.SEE_OTHER
       }
     }
 
@@ -232,11 +232,11 @@ class CreditAndRefundControllerSpec extends MockAuthenticationPredicate with Moc
         when(mockCreditService.getCreditCharges()(any(), any()))
           .thenReturn(Future.successful(List(financialDetailCreditAndRefundCharge)))
         when(mockRepaymentService.start(any(), any())(any()))
-          .thenReturn(Future.successful(RepaymentJourneyErrorResponse(401, "Token expired")))
+          .thenReturn(Future.successful(RepaymentJourneyErrorResponse(Status.UNAUTHORIZED, "Token expired")))
 
         val result: Future[Result] = controller.startRefund()(fakeRequestWithActiveSession)
 
-        status(result) shouldBe 500
+        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
       }
     }
 
@@ -254,7 +254,7 @@ class CreditAndRefundControllerSpec extends MockAuthenticationPredicate with Moc
 
         val result: Future[Result] = controller.refundStatus()(fakeRequestWithActiveSession)
 
-        status(result) shouldBe 303
+        status(result) shouldBe Status.SEE_OTHER
       }
     }
 
@@ -268,11 +268,11 @@ class CreditAndRefundControllerSpec extends MockAuthenticationPredicate with Moc
         setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthSuccessWithSaUtrResponse())
 
         when(mockRepaymentService.view(any())(any()))
-          .thenReturn(Future.successful(RepaymentJourneyErrorResponse(401, "Token expired")))
+          .thenReturn(Future.successful(RepaymentJourneyErrorResponse(Status.UNAUTHORIZED, "Token expired")))
 
         val result: Future[Result] = controller.refundStatus()(fakeRequestWithActiveSession)
 
-        status(result) shouldBe 500
+        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
       }
     }
   }
