@@ -18,8 +18,8 @@ package models.core
 
 import play.api.libs.json.{Format, Json}
 
-case class Nino(value: String) extends AnyVal
+case class RepaymentRefund(nino: String, fullAmount: BigDecimal)
 
-object Nino {
-  implicit val format: Format[Nino] = Json.format[Nino]
+object RepaymentRefund {
+  implicit val format: Format[RepaymentRefund] = Json.format[RepaymentRefund]
 }

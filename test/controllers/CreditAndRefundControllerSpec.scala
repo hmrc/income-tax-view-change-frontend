@@ -22,7 +22,8 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
-import models.financialDetails.FinancialDetailsModel
+import models.core.RepaymentJourneyResponseModel.{RepaymentJourneyErrorResponse, RepaymentJourneyModel}
+import models.financialDetails.{BalanceDetails, FinancialDetailsModel}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.mockito.ArgumentMatchers.any
@@ -196,6 +197,82 @@ class CreditAndRefundControllerSpec extends MockAuthenticationPredicate with Moc
         val result: Future[Result] = controller.showAgent()(fakeRequestWithActiveSession)
 
         status(result) shouldBe Status.SEE_OTHER
+      }
+    }
+
+    "Controller should start refund process" when {
+      "RepaymentJourneyModel is returned" in new Setup {
+        disableAllSwitches()
+        enable(CreditsRefundsRepay)
+
+        mockSingleBISWithCurrentYearAsMigrationYear()
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthSuccessWithSaUtrResponse())
+
+        when(mockCreditService.getCreditCharges()(any(), any()))
+          .thenReturn(Future.successful(List(financialDetailCreditAndRefundCharge)))
+        when(mockRepaymentService.start(any(), any())(any()))
+          .thenReturn(Future.successful(RepaymentJourneyModel("/test/url")))
+
+        val result: Future[Result] = controller.startRefund()(fakeRequestWithActiveSession)
+
+        status(result) shouldBe Status.SEE_OTHER
+      }
+    }
+
+    "Controller should not start refund process" when {
+      "RepaymentJourneyErrorResponse is returned" in  new Setup {
+        disableAllSwitches()
+        enable(CreditsRefundsRepay)
+
+        mockSingleBISWithCurrentYearAsMigrationYear()
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthSuccessWithSaUtrResponse())
+
+        when(mockCreditService.getCreditCharges()(any(), any()))
+          .thenReturn(Future.successful(List(financialDetailCreditAndRefundCharge)))
+        when(mockRepaymentService.start(any(), any())(any()))
+          .thenReturn(Future.successful(RepaymentJourneyErrorResponse(Status.UNAUTHORIZED, "Token expired")))
+
+        val result: Future[Result] = controller.startRefund()(fakeRequestWithActiveSession)
+
+        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+      }
+    }
+
+    "Controller should return the refund status" when {
+      "RepaymentJourneyModel is returned" in  new Setup {
+        disableAllSwitches()
+        enable(CreditsRefundsRepay)
+
+        mockSingleBISWithCurrentYearAsMigrationYear()
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthSuccessWithSaUtrResponse())
+
+        when(mockRepaymentService.view(any())(any()))
+          .thenReturn(Future.successful(RepaymentJourneyModel("/test/url")))
+
+        val result: Future[Result] = controller.refundStatus()(fakeRequestWithActiveSession)
+
+        status(result) shouldBe Status.SEE_OTHER
+      }
+    }
+
+    "Controller should not return the refund status" when {
+      "RepaymentJourneyErrorResponse is returned" in  new Setup {
+        disableAllSwitches()
+        enable(CreditsRefundsRepay)
+
+        mockSingleBISWithCurrentYearAsMigrationYear()
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthSuccessWithSaUtrResponse())
+
+        when(mockRepaymentService.view(any())(any()))
+          .thenReturn(Future.successful(RepaymentJourneyErrorResponse(Status.UNAUTHORIZED, "Token expired")))
+
+        val result: Future[Result] = controller.refundStatus()(fakeRequestWithActiveSession)
+
+        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
       }
     }
   }

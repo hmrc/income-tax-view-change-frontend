@@ -188,15 +188,13 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
 
       case financialDetailsModel: List[FinancialDetailsModel] =>
         val balance: Option[BalanceDetails] = financialDetailsModel.headOption.map(balance => balance.balanceDetails)
-        repaymentService.start(user.nino, balance.flatMap(_.availableCredit).getOrElse(BigDecimal(0))).flatMap { repayment =>
-          repayment match {
-            case RepaymentJourneyModel(nextUrl) =>
-              Future.successful(Redirect(nextUrl))
-            case RepaymentJourneyErrorResponse(status, message) =>
-              Logger("application")
-                .error(s"[CreditAndRefundController][handleRefundRequest] - failed RepaymentJourney: $status ")
-              Future.successful(itvcErrorHandler.showInternalServerError())
-          }
+        repaymentService.start(user.nino, balance.flatMap(_.getAbsoluteAvailableCreditAmount).getOrElse(BigDecimal(0))).flatMap {
+          case RepaymentJourneyModel(nextUrl) =>
+            Future.successful(Redirect(nextUrl))
+          case RepaymentJourneyErrorResponse(status, message) =>
+            Logger("application")
+              .error(s"[CreditAndRefundController][handleRefundRequest] - failed RepaymentJourney: $status ")
+            Future.successful(itvcErrorHandler.showInternalServerError())
         }
       case _ => Logger("application").error("[CreditAndRefundController][handleRefundRequest]")
         Future.successful(itvcErrorHandler.showInternalServerError())
@@ -204,16 +202,14 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
   }
 
   private def handleStatusRefundRequest(isAgent: Boolean, itvcErrorHandler: ShowInternalServerError, backUrl: String)
-                                       (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
-    repaymentService.view(user.nino).flatMap { view =>
-      view match {
-        case RepaymentJourneyModel(nextUrl) =>
-          Future.successful(Redirect(nextUrl))
-        case RepaymentJourneyErrorResponse(status, message) =>
-          Logger("application")
-            .error(s"[CreditAndRefundController][handleStatusRefundRequest] - failed RepaymentJourney: $status ")
-          Future.successful(itvcErrorHandler.showInternalServerError())
-      }
+                                 (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
+    repaymentService.view(user.nino).flatMap {
+      case RepaymentJourneyModel(nextUrl) =>
+        Future.successful(Redirect(nextUrl))
+      case RepaymentJourneyErrorResponse(status, message) =>
+        Logger("application")
+          .error(s"[CreditAndRefundController][handleStatusRefundRequest] - failed RepaymentJourney: $status ")
+        Future.successful(itvcErrorHandler.showInternalServerError())
     }
 
   }
