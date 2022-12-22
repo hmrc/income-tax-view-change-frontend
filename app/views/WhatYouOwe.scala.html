@@ -482,29 +482,23 @@
 }
 
 @codingOutInsetContent(codedOutDocumentDetail: DocumentDetail) = {
-    @if(isAgent) {
-        @p(id=Some("coding-out-notice"), classes="govuk-body coding-out-notice"){
-        @getMessage("codingOut-1a")
-        <a class="govuk-link" id="coding-out-summary-link" href="@getCodingOutHref(codedOutDocumentDetail.taxYear.toInt, codedOutDocumentDetail.transactionId)">
-            @codedOutDocumentDetail.amountCodedOut.getOrElse(throw new MissingFieldException("DocumentDetail.amountCodedOut")).toCurrency
-        </a>
-        @getMessage("codingOut-1b")
-        <b>@getMessage("codingOut-2", (codedOutDocumentDetail.taxYear.toInt - 1).toString(),
-            codedOutDocumentDetail.taxYear)</b>
-        @getMessage("codingOut-3")
-        }
-    } else {
-        @p(id=Some("coding-out-notice"), classes="govuk-body coding-out-notice"){
-        @getMessage("credit-overpaid-prefix")
-        <a class="govuk-link" id="coding-out-summary-customer-link" href="@getCodingOutHref(codedOutDocumentDetail.taxYear.toInt, codedOutDocumentDetail.transactionId)">
-            @codedOutDocumentDetail.amountCodedOut.getOrElse(throw new MissingFieldException("DocumentDetail.amountCodedOut")).toCurrency
-        </a>
-        @getMessage("codingOut-1b")
-        <b>@getMessage("codingOut-2", (codedOutDocumentDetail.taxYear.toInt - 1).toString(),
-            codedOutDocumentDetail.taxYear)</b>
-        @getMessage("codingOut-individual")
-        }
-    }
 
-
+        @p(id=Some("coding-out-notice"), classes="govuk-body coding-out-notice"){
+            @if(isAgent) {
+                @getMessage("codingOut-1a")
+            } else {
+                @getMessage("credit-overpaid-prefix")
+            }
+                <a class="govuk-link" id="coding-out-summary-link" href="@getCodingOutHref(codedOutDocumentDetail.taxYear.toInt, codedOutDocumentDetail.transactionId)">
+                    @codedOutDocumentDetail.amountCodedOut.getOrElse(throw new MissingFieldException("DocumentDetail.amountCodedOut")).toCurrency
+                </a>
+            @getMessage("codingOut-1b")
+                <b>@getMessage("codingOut-2", (codedOutDocumentDetail.taxYear.toInt - 1).toString(),
+                    codedOutDocumentDetail.taxYear)</b>
+            @if(isAgent) {
+                @getMessage("codingOut-3")
+            } else {
+                @getMessage("codingOut-individual")
+            }
+        }
 }
