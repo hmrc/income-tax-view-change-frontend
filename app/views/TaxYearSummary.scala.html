@@ -279,12 +279,10 @@
                 <dt class="govuk-summary-list__key dt-cell-width">
                     @messages("tax-year-summary.calculation-date")
                 </dt>
-                <dd class="govuk-summary-list__value govuk-table__cell--numeric">
-                    <p id="calculation-date">
-                        <span>@{
-                            model.timestamp.map(_.toLongDate)
-                        }</span>
-                    </p>
+                <dd class="govuk-summary-list__value--numeric govuk-!-text-align-right">
+                    <span id="calculation-date">@{
+                        model.timestamp.map(_.toLongDate)
+                    }</span>
                 </dd>
             </div>
             <div class="govuk-summary-list__row">
@@ -301,7 +299,7 @@
                     }
                 }
                 </dt>
-                <dd class="govuk-summary-list__value govuk-table__cell--numeric">
+                <dd class="govuk-summary-list__value--numeric govuk-!-text-align-right">
                     @{model.taxDue.toCurrencyString}
                 </dd>
             </div>
@@ -310,7 +308,7 @@
                     <dt class="govuk-summary-list__key dt-cell-width">
                         @messages("tax-year-summary.forecast_total_title", s"${taxYear - 1}", s"$taxYear")
                     </dt>
-                    <dd class="govuk-summary-list__value govuk-table__cell--numeric">
+                    <dd class="govuk-summary-list__value--numeric govuk-!-text-align-right">
                         @model.forecastIncomeTaxAndNics.getOrElse(throw MissingFieldException("Forecast Tax Due")).toCurrencyString
                     </dd>
                 </div>
