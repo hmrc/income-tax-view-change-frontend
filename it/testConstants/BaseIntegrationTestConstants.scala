@@ -37,6 +37,7 @@ object BaseIntegrationTestConstants {
   val testSaUtrEnrolmentKey = "IR-SA"
   val testSaUtrEnrolmentIdentifier = "UTR"
   val testSaUtr = "1234567890"
+  val credId = "12345-credId"
 
   val testNinoEnrolmentKey = "HMRC-NI"
   val testNinoEnrolmentIdentifier = "NINO"
