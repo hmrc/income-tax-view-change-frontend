@@ -353,6 +353,8 @@ taxCal_breakdown.message.C22215                                 = Oherwydd lefel
 taxCal_breakdown.message.C22216                                 = Oherwydd lefel eich incwm, nid ydych yn gymwys ar gyfer Lwfans Priodasol mwyach, ac felly caiff eich hawliad ei ganslo.
 taxCal_breakdown.message.C22217                                 = Mae un neu fwy o dandaliadau, dyledion neu addasiadau nad ydynt wedi’u cynnwys yn y cyfrifiad, gan nad ydynt yn gysylltiedig â data sydd gan CThEM.
 taxCal_breakdown.message.C22218                                 = Dim ond yn y cyfrifiad o’r rhwymedigaeth flynyddol amcangyfrifedig y mae Treth Enillion Cyfalaf wedi’i chynnwys. Bydd swm gwirioneddol y Dreth Enillion Cyfalaf wedi’i gynnwys yng nghyfrifiad y datganiad terfynol.
+taxCal_breakdown.message.C22220                                 = Os yw’ch elw trethadwy rhwng £6,725 ac £11,908 ni fydd angen i chi dalu Yswiriant Gwladol Dosbarth 2. Bydd eich hawl i Bensiwn y Wladwriaeth, ac i rai budd-daliadau penodol, yn dal i fod yn gymwys. Caiff eich cyfraniadau eu trin fel rhai sydd wedi’u talu.
+taxCal_breakdown.message.agent.C22220                           = Os yw elw trethadwy eich cleient rhwng £6,725 ac £11,908, ni fydd angen i’ch cleient dalu Yswiriant Gwladol Dosbarth 2. Bydd hawl eich cleient i Bensiwn y Wladwriaeth, ac i rai budd-daliadau penodol, yn dal i fod yn gymwys. Caiff cyfraniadau eich cleient eu trin fel rhai sydd wedi’u talu.
 
 
 taxCal_breakdown.table.head.rate_band                           = Haen cyfradd
@@ -381,6 +383,8 @@ taxCal_breakdown.table.cgt.due                                      = Treth Enil
 taxCal_breakdown.table.cgt.overpaid                                 = Treth Enillion Cyfalaf a gyfrifwyd fel gordaliad
 taxCal_breakdown.table.payeUnderpaymentsCodedOut                    = Treth a dandalwyd ar gyfer blynyddoedd cynharach, sydd wedi’i chynnwys yn eich cod treth ar gyfer {0} i {1}
 taxCal_breakdown.table.saUnderpaymentsCodedOut                      = Treth a dandalwyd ar gyfer blynyddoedd cynharach, sydd wedi’i chynnwys yn eich Hunanasesiad ar gyfer {0}} i {1}
+taxCal_breakdown.table.studentLoanRepaymentsPlanType0X              = Ad-daliadau Benthyciad Myfyriwr (cynllun {0})
+taxCal_breakdown.table.studentLoanPostGraduatePlan                  = Ad-daliadau Benthyciad Ôl-raddedig
 
 ## Forecast Tax Calc Summary ##
 forecast_taxCalc.heading                                        = Rhagolwg cyfrifiad treth
@@ -648,9 +652,10 @@ whatYouOwe.moneyOnAccount-3                                     = hawlio ad-dali
 whatYouOwe.moneyOnAccount-agent                                 = Arian yng nghyfrif eich cleient
 whatYouOwe.moneyOnAccount-agent-2                               = yng nghyfrif eich cleient. Gallwch adael yr arian yno i dalu bil nesaf eich cleient neu gallwch
 whatYouOwe.codingOut-1a                                         = Mae gan eich cleient
-whatYouOwe.codingOut-1b                                         = o dreth ar gyfer y flwyddyn dreth
-whatYouOwe.codingOut-2                                          = {0} i {1}
+whatYouOwe.codingOut-1b                                         = o dreth ar gyfer
+whatYouOwe.codingOut-2                                          = blwyddyn dreth {0} i {1}
 whatYouOwe.codingOut-3                                          = yn cael ei thalu drwy ei god treth TWE. Nid yw’r swm hwn yn rhan o gyfanswm ei daliadau sy’n ddyledus oherwydd ein bod yn eu casglu’n awtomatig.
+whatYouOwe.codingOut-individual                                 = sy’n cael ei thalu drwy’ch cod treth TWE. Nid yw’r swm hwn yn rhan o gyfanswm eich taliadau sy’n ddyledus oherwydd eu bod yn cael eu casglu’n awtomatig.
 whatYouOwe.class2Nic.text                                       = Yswiriant Gwladol Dosbarth 2
 whatYouOwe.cancelledPayeSelfAssessment.text                     = Hunanasesiad TWE wedi’i ganslo (trwy eich cod treth TWE)
 whatYouOwe.balancingCharge.interest.line2.text                  = {0} i {1}

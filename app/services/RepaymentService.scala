@@ -18,6 +18,7 @@ package services
 
 import connectors.RepaymentConnector
 import models.core.RepaymentJourneyResponseModel
+import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Singleton
@@ -29,13 +30,13 @@ class RepaymentService @Inject()(val repaymentConnector: RepaymentConnector){
 
   def start(nino: String, fullAmount: BigDecimal)
            (implicit headerCarrier: HeaderCarrier): Future[RepaymentJourneyResponseModel] = {
-    //TODO: add logging and error handling
+    Logger("application").debug(s"Repayment journey start with nino: $nino and fullAmount: $fullAmount ")
     repaymentConnector.start(nino, fullAmount)
   }
 
   def view(nino: String)
            (implicit headerCarrier: HeaderCarrier): Future[RepaymentJourneyResponseModel] = {
-    //TODO: add logging and error handling
+    Logger("application").debug(s"Repayment journey view with nino: $nino")
     repaymentConnector.view(nino)
   }
 

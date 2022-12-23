@@ -114,6 +114,7 @@ object NewCalcDataIntegrationTestConstants {
       |      },
       |      "totalIncomeTaxAndNicsDue": 12345
       |    }
+      |
       |  }
       |}
       |""".stripMargin)
