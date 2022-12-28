@@ -16,7 +16,7 @@ trait CreditsSummaryDataHelper {
         documentText = Some("text"),
         outstandingAmount = Some(BigDecimal("1400")),
         originalAmount = Some(BigDecimal("1400")),
-        documentDate = LocalDate.now()
+        documentDate = LocalDate.of(2023, 12, 23)
       ),
       creditType = MfaCreditType,
       balanceDetails = None
