@@ -8,7 +8,7 @@ import java.time.LocalDate
 trait CreditsSummaryDataHelper {
   val chargesList: Seq[CreditDetailModel] = Seq(
     CreditDetailModel(
-      date = LocalDate.now().plusYears(-4),
+      date = LocalDate.of(2018, 3, 29),
       documentDetail = DocumentDetail(
         taxYear = "2023",
         transactionId = "transId",
