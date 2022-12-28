@@ -420,7 +420,7 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
         mockFinancialDetailsNotFound()
         mockgetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
           toDate = LocalDate.of(testTaxYear, 4, 5))(
-          response = NextUpdatesErrorModel(500, "INTERNAL_SERVER_ERROR")
+          response = NextUpdatesErrorModel(Status.INTERNAL_SERVER_ERROR, "INTERNAL_SERVER_ERROR")
         )
 
         val result = TestTaxYearSummaryController.renderTaxYearSummaryPage(testTaxYear)(fakeRequestWithActiveSession)

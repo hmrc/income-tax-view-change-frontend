@@ -28,7 +28,6 @@ import play.api.libs.json.{JsValue, Json}
 import services.DateService
 import testConstants.FinancialDetailsTestConstants.{documentDetailWithDueDateModel, financialDetail}
 
-import java.time.LocalDate
 
 object FinancialDetailsTestConstants {
 

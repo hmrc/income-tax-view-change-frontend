@@ -16,14 +16,16 @@
 
 package controllers
 
+import audit.AuditingService
+import audit.models.CreditSummaryAuditing
 import auth.MtdItUser
-import config.featureswitch.{CutOverCredits, FeatureSwitching, MFACreditsAndDebits}
+import config.featureswitch.{CutOverCredits, FeatureSwitching, MFACreditsAndDebits, R7cTxmEvents}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import models.creditDetailModel.{CreditDetailModel, CutOverCreditType, MfaCreditType}
 import play.api.Logger
-import play.api.i18n.I18nSupport
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.{CreditHistoryService, IncomeSourceDetailsService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
@@ -46,8 +48,10 @@ class CreditsSummaryController @Inject()(creditsView: CreditsSummary,
                                          retrieveIncomeSources: IncomeSourceDetailsPredicate)
                                         (implicit val appConfig: FrontendAppConfig,
                                          mcc: MessagesControllerComponents,
+                                         msgApi: MessagesApi,
                                          val ec: ExecutionContext,
-                                         val agentItvcErrorHandler: AgentItvcErrorHandler
+                                         val agentItvcErrorHandler: AgentItvcErrorHandler,
+                                         val auditingService: AuditingService
                                         ) extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
   private def creditsSummaryUrl(calendarYear: Int, origin: Option[String]): String =
@@ -80,12 +84,13 @@ class CreditsSummaryController @Inject()(creditsView: CreditsSummary,
       case _ => agentCreditsSummaryUrl(calendarYear)
     }
   }
-
   def handleRequest(calendarYear: Int,
                     isAgent: Boolean,
                     origin: Option[String] = None)
-                   (implicit user: MtdItUser[AnyContent], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] = {
+                   (implicit user: MtdItUser[AnyContent],
+                    hc: HeaderCarrier, ec: ExecutionContext): Future[Result] = {
     if (isDisabled(MFACreditsAndDebits) && isDisabled(CutOverCredits)) {
+      auditCreditSummary(None, Seq.empty)
       Future.successful(Ok(creditsView(
         calendarYear = calendarYear,
         backUrl = if (isAgent) getAgentBackURL(user.headers.get(REFERER), calendarYear) else getBackURL(user.headers.get(REFERER), origin, calendarYear),
@@ -104,10 +109,9 @@ class CreditsSummaryController @Inject()(creditsView: CreditsSummary,
             case (false, true) => credits.filter(_.creditType == CutOverCreditType)
             case _ => credits
           }).sortBy(_.date.toEpochDay)
-
           val maybeAvailableCredit: Option[BigDecimal] =
             credits.flatMap(_.balanceDetails.flatMap(_.availableCredit.filter(_ > 0.00))).headOption
-
+          auditCreditSummary(maybeAvailableCredit, charges)
           Future.successful(Ok(creditsView(
             calendarYear = calendarYear,
             backUrl = if (isAgent) getAgentBackURL(user.headers.get(REFERER), calendarYear) else getBackURL(user.headers.get(REFERER), origin, calendarYear),
@@ -151,6 +155,24 @@ class CreditsSummaryController @Inject()(creditsView: CreditsSummary,
             isAgent = true
           )
         }
+    }
+  }
+
+  private def auditCreditSummary(creditOnAccount: Option[BigDecimal], charges: Seq[CreditDetailModel])
+                                (implicit hc: HeaderCarrier, user: MtdItUser[_]): Unit = {
+    import CreditSummaryAuditing._
+    if (isEnabled(R7cTxmEvents) ) {
+      auditingService.extendedAudit(
+        CreditsSummaryModel(
+          saUTR = user.saUtr.getOrElse(""),
+          nino = user.nino,
+          userType = user.userType.getOrElse(""),
+          credId = user.credId.getOrElse(""),
+          mtdRef = user.mtditid,
+          creditOnAccount = creditOnAccount.getOrElse(BigDecimal(0.0)).toString(),
+          creditDetails = toCreditSummaryDetailsSeq(charges)(msgApi)
+        )
+      )
     }
   }
 }

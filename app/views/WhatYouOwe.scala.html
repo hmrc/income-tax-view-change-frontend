@@ -483,13 +483,21 @@
 
 @codingOutInsetContent(codedOutDocumentDetail: DocumentDetail) = {
     @p(id=Some("coding-out-notice"), classes="govuk-body coding-out-notice"){
-        @getMessage("codingOut-1a")
+        @if(isAgent) {
+            @getMessage("codingOut-1a")
+        } else {
+            @getMessage("credit-overpaid-prefix")
+        }
         <a class="govuk-link" id="coding-out-summary-link" href="@getCodingOutHref(codedOutDocumentDetail.taxYear.toInt, codedOutDocumentDetail.transactionId)">
             @codedOutDocumentDetail.amountCodedOut.getOrElse(throw new MissingFieldException("DocumentDetail.amountCodedOut")).toCurrency
         </a>
         @getMessage("codingOut-1b")
         <b>@getMessage("codingOut-2", (codedOutDocumentDetail.taxYear.toInt - 1).toString(),
             codedOutDocumentDetail.taxYear)</b>
-        @getMessage("codingOut-3")
+        @if(isAgent) {
+            @getMessage("codingOut-3")
+        } else {
+          @getMessage("codingOut-individual")
+        }
     }
 }

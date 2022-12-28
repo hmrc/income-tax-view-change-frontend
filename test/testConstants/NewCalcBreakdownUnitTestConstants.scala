@@ -93,6 +93,15 @@ object NewCalcBreakdownUnitTestConstants {
         totalEeaFhlProfit = Some(12500)
       )),
       marriageAllowanceTransferredIn = Some(MarriageAllowanceTransferredIn(amount = Some(5000.99))),
+      studentLoans = Some(Seq(StudentLoan(
+        planType = Some("01"),
+        studentLoanTotalIncomeAmount = Some(BigDecimal(5000.99)),
+        studentLoanChargeableIncomeAmount = Some(BigDecimal(5000.99)),
+        studentLoanRepaymentAmount = Some(BigDecimal(5000.99)),
+        studentLoanRepaymentAmountNetOfDeductions = Some(BigDecimal(5000.99)),
+        studentLoanApportionedIncomeThreshold = Some(BigDecimal(1500)),
+        studentLoanRate = Some(BigDecimal(20)),
+      ))),
       reliefs = Some(Reliefs(reliefsClaimed = Some(Seq(ReliefsClaimed(
         `type` = "vctSubscriptions",
         amountUsed = Some(5000.99)),

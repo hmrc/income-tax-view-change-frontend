@@ -17,9 +17,11 @@
 package controllers
 
 
+import audit.AuditingService
+import audit.models.ClaimARefundAuditModel
 import auth.{FrontendAuthorisedFunctions, MtdItUser}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
-import config.featureswitch.{CreditsRefundsRepay, CutOverCredits, FeatureSwitching, MFACreditsAndDebits}
+import config.featureswitch.{CreditsRefundsRepay, CutOverCredits, FeatureSwitching, MFACreditsAndDebits, R7cTxmEvents}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
 import models.core.RepaymentJourneyResponseModel.{RepaymentJourneyErrorResponse, RepaymentJourneyModel}
@@ -30,7 +32,6 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.{CreditService, DateService, IncomeSourceDetailsService, RepaymentService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.language.LanguageUtils
-import utils.CreditAndRefundUtils
 import utils.CreditAndRefundUtils.UnallocatedCreditType
 import utils.CreditAndRefundUtils.UnallocatedCreditType.maybeUnallocatedCreditType
 import views.html.CreditAndRefunds
@@ -48,7 +49,8 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
                                           val retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                           val itvcErrorHandler: ItvcErrorHandler,
                                           val incomeSourceDetailsService: IncomeSourceDetailsService,
-                                          val repaymentService: RepaymentService)
+                                          val repaymentService: RepaymentService,
+                                          val auditingService: AuditingService)
                                          (implicit val appConfig: FrontendAppConfig,
                                           dateService: DateService,
                                           val languageUtils: LanguageUtils,
@@ -88,6 +90,10 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
         )
 
         val creditAndRefundType: Option[UnallocatedCreditType] = maybeUnallocatedCreditType(credits, balance, isMFACreditsAndDebitsEnabled, isCutOverCreditsEnabled)
+
+        if (isEnabled(R7cTxmEvents)) {
+          auditClaimARefund(balance, credits)
+        }
 
         Ok(view(credits, balance, creditAndRefundType, isAgent, backUrl, isMFACreditsAndDebitsEnabled, isCutOverCreditsEnabled)(user, user, messages))
       case _ => Logger("application").error(
@@ -176,21 +182,19 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
 
   private def handleRefundRequest(isAgent: Boolean, itvcErrorHandler: ShowInternalServerError, backUrl: String)
                                  (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
-    creditService.getCreditCharges()(implicitly, user) flatMap  {
+    creditService.getCreditCharges()(implicitly, user) flatMap {
       case _ if isDisabled(CreditsRefundsRepay) =>
         Future.successful(Ok(customNotFoundErrorView()(user, messages)))
 
       case financialDetailsModel: List[FinancialDetailsModel] =>
         val balance: Option[BalanceDetails] = financialDetailsModel.headOption.map(balance => balance.balanceDetails)
-        repaymentService.start(user.nino, balance.flatMap(_.availableCredit).getOrElse(BigDecimal(0))).flatMap { repayment =>
-          repayment match {
-            case RepaymentJourneyModel(nextUrl) =>
-              Future.successful(Redirect(nextUrl))
-            case RepaymentJourneyErrorResponse(status, message) =>
-              Logger("application")
-                .error(s"[CreditAndRefundController][handleRefundRequest] - failed RepaymentJourney: $status ")
-              Future.successful(itvcErrorHandler.showInternalServerError())
-          }
+        repaymentService.start(user.nino, balance.flatMap(_.getAbsoluteAvailableCreditAmount).getOrElse(BigDecimal(0))).flatMap {
+          case RepaymentJourneyModel(nextUrl) =>
+            Future.successful(Redirect(nextUrl))
+          case RepaymentJourneyErrorResponse(status, message) =>
+            Logger("application")
+              .error(s"[CreditAndRefundController][handleRefundRequest] - failed RepaymentJourney: $status ")
+            Future.successful(itvcErrorHandler.showInternalServerError())
         }
       case _ => Logger("application").error("[CreditAndRefundController][handleRefundRequest]")
         Future.successful(itvcErrorHandler.showInternalServerError())
@@ -199,17 +203,23 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
 
   private def handleStatusRefundRequest(isAgent: Boolean, itvcErrorHandler: ShowInternalServerError, backUrl: String)
                                  (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
-    repaymentService.view(user.nino).flatMap { view =>
-      view match {
-        case RepaymentJourneyModel(nextUrl) =>
-          Future.successful(Redirect(nextUrl))
-        case RepaymentJourneyErrorResponse(status, message) =>
-          Logger("application")
-            .error(s"[CreditAndRefundController][handleStatusRefundRequest] - failed RepaymentJourney: $status ")
-          Future.successful(itvcErrorHandler.showInternalServerError())
-      }
+    repaymentService.view(user.nino).flatMap {
+      case RepaymentJourneyModel(nextUrl) =>
+        Future.successful(Redirect(nextUrl))
+      case RepaymentJourneyErrorResponse(status, message) =>
+        Logger("application")
+          .error(s"[CreditAndRefundController][handleStatusRefundRequest] - failed RepaymentJourney: $status ")
+        Future.successful(itvcErrorHandler.showInternalServerError())
     }
 
   }
 
+  private def auditClaimARefund(balanceDetails: Option[BalanceDetails], creditDocuments: List[(DocumentDetailWithDueDate, FinancialDetail)])
+                               (implicit hc: HeaderCarrier, user: MtdItUser[_]): Unit = {
+
+    auditingService.extendedAudit(ClaimARefundAuditModel(
+      mtdItUser = user,
+      balanceDetails = balanceDetails,
+      creditDocuments = creditDocuments))
+  }
 }

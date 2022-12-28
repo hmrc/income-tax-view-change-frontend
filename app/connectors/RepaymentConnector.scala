@@ -17,16 +17,17 @@
 package connectors
 
 import config.FrontendAppConfig
-import models.core.RepaymentJourneyResponseModel
 import models.core.RepaymentJourneyResponseModel.{RepaymentJourneyErrorResponse, RepaymentJourneyModel}
+import models.core.{Nino, RepaymentJourneyResponseModel, RepaymentRefund}
 import play.api.Logger
-import play.api.http.Status.{ACCEPTED, INTERNAL_SERVER_ERROR}
+import play.api.http.Status.{ACCEPTED, INTERNAL_SERVER_ERROR, UNAUTHORIZED}
 import play.api.libs.json.Json
 import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+
 
 class RepaymentConnector @Inject()(val http: HttpClient,
                                    val config: FrontendAppConfig
@@ -38,14 +39,7 @@ class RepaymentConnector @Inject()(val http: HttpClient,
 
   def start(nino: String, fullAmount: BigDecimal)(implicit headerCarrier: HeaderCarrier): Future[RepaymentJourneyResponseModel] = {
 
-    val body = Json.parse(
-      s"""
-         |{
-         | "nino": "$nino",
-         | "fullAmount": $fullAmount
-         |}
-      """.stripMargin
-    )
+    val body = Json.toJson[RepaymentRefund](RepaymentRefund(nino, fullAmount))
 
     http.POST(startRefundUrl, body).map {
       case response if response.status == ACCEPTED =>
@@ -54,8 +48,12 @@ class RepaymentConnector @Inject()(val http: HttpClient,
             Logger("application").error(s"Invalid Json with $invalidJson")
             RepaymentJourneyErrorResponse(response.status, "Invalid Json")
           },
-          valid => valid
+          (valid: RepaymentJourneyModel) => valid
         )
+
+      case response if response.status == UNAUTHORIZED =>
+        Logger("application").error(s"Repayment journey start error with response code: ${response.status} and body: ${response.body}")
+        RepaymentJourneyErrorResponse(response.status, response.body)
 
       case response =>
         if (response.status >= INTERNAL_SERVER_ERROR) {
@@ -69,14 +67,7 @@ class RepaymentConnector @Inject()(val http: HttpClient,
 
 
   def view(nino: String)(implicit headerCarrier: HeaderCarrier): Future[RepaymentJourneyResponseModel] = {
-
-    val body = Json.parse(
-      s"""
-         |{
-         | "nino": "$nino"
-         |}
-      """.stripMargin
-    )
+    val body = Json.toJson[Nino](Nino(nino))
 
     http.POST(viewRefundUrl, body).map {
       case response if response.status == ACCEPTED =>
@@ -87,6 +78,10 @@ class RepaymentConnector @Inject()(val http: HttpClient,
           },
           valid => valid
         )
+
+      case response if response.status == UNAUTHORIZED =>
+        Logger("application").error(s"Repayment journey start error with response code: ${response.status} and body: ${response.body}")
+        RepaymentJourneyErrorResponse(response.status, response.body)
 
       case response =>
         if (response.status >= INTERNAL_SERVER_ERROR) {

@@ -18,6 +18,7 @@ package connectors
 
 import mocks.MockHttp
 import models.core.RepaymentJourneyResponseModel.{RepaymentJourneyErrorResponse, RepaymentJourneyModel}
+import models.core.{Nino, RepaymentJourneyResponseModel, RepaymentRefund}
 import play.api.http.Status.{ACCEPTED, UNAUTHORIZED}
 import play.api.libs.json.Json
 import play.mvc.Http.Status
@@ -50,21 +51,14 @@ class RepaymentConnectorSpec extends TestSupport with MockHttp {
   object TestPayApiConnector extends RepaymentConnector(mockHttpGet, appConfig)
 
   "Calling .startRepayment" should {
-    val testUrl = s"$host:$port/self-assessment-refund-backend/itsa-viewer/journey/start-refund"
+    val testStartUrl = s"$host:$port/self-assessment-refund-backend/itsa-viewer/journey/start-refund"
 
-    val testBody = Json.parse(
-      s"""
-         |{
-         | "nino": "$nino",
-         | "fullAmount": $fullAmount
-         |}
-      """.stripMargin
-    )
+    val testBody = Json.toJson[RepaymentRefund](RepaymentRefund(nino, fullAmount))
 
     "return a RepaymentResponse" when {
 
       "a 202 response is received with valid json" in {
-        setupMockHttpPost(testUrl, testBody)(successResponse)
+        setupMockHttpPost(testStartUrl, testBody)(successResponse)
         val result = TestPayApiConnector.start(nino, fullAmount).futureValue
         result shouldBe RepaymentJourneyModel(expectedNextUrl(fullAmount))
       }
@@ -73,14 +67,42 @@ class RepaymentConnectorSpec extends TestSupport with MockHttp {
     "return a RepaymentJourneyErrorResponse" when {
 
       "a non 202 response is received" in {
-        setupMockHttpPost(testUrl, testBody)(unauthorizedResponse)
+        setupMockHttpPost(testStartUrl, testBody)(unauthorizedResponse)
         val result = TestPayApiConnector.start(nino, fullAmount).futureValue
         result shouldBe RepaymentJourneyErrorResponse(UNAUTHORIZED, "Unauthorized Error Message")
       }
 
       "a 202 response with invalid json is received" in {
-        setupMockHttpPost(testUrl, testBody)(successResponseBadJson)
+        setupMockHttpPost(testStartUrl, testBody)(successResponseBadJson)
         val result = TestPayApiConnector.start(nino, fullAmount).futureValue
+        result shouldBe RepaymentJourneyErrorResponse(ACCEPTED, "Invalid Json")
+      }
+    }
+  }
+
+  "calling .view" should {
+    val testViewUrl = s"$host:$port/self-assessment-refund-backend/itsa-viewer/journey/view-history"
+    val body = Json.toJson[Nino](Nino(nino))
+    "return a RepaymentResponse" when {
+
+      "a 202 response is received with valid json" in {
+        setupMockHttpPost(testViewUrl, body)(successResponse)
+        val result = TestPayApiConnector.view(nino).futureValue
+        result shouldBe RepaymentJourneyModel(expectedNextUrl(fullAmount))
+      }
+    }
+
+    "return a RepaymentJourneyErrorResponse" when {
+
+      "a non 202 response is received" in {
+        setupMockHttpPost(testViewUrl, body)(unauthorizedResponse)
+        val result = TestPayApiConnector.view(nino).futureValue
+        result shouldBe RepaymentJourneyErrorResponse(UNAUTHORIZED, "Unauthorized Error Message")
+      }
+
+      "a 202 response with invalid json is received" in {
+        setupMockHttpPost(testViewUrl, body)(successResponseBadJson)
+        val result = TestPayApiConnector.view(nino).futureValue
         result shouldBe RepaymentJourneyErrorResponse(ACCEPTED, "Invalid Json")
       }
     }
