@@ -8,7 +8,7 @@ import java.time.LocalDate
 trait CreditsSummaryDataHelper {
   val chargesList: Seq[CreditDetailModel] = Seq(
     CreditDetailModel(
-      date = LocalDate.of(2018, 3, 29),
+      date = LocalDate.now().plusYears(1),
       documentDetail = DocumentDetail(
         taxYear = "2023",
         transactionId = "transId",
@@ -16,13 +16,13 @@ trait CreditsSummaryDataHelper {
         documentText = Some("text"),
         outstandingAmount = Some(BigDecimal("1400")),
         originalAmount = Some(BigDecimal("1400")),
-        documentDate = LocalDate.of(2023, 12, 23)
+        documentDate = LocalDate.now()
       ),
       creditType = MfaCreditType,
       balanceDetails = None
     ),
     CreditDetailModel(
-      date = LocalDate.of(2023, 12, 23),
+      date = LocalDate.now().plusYears(1),
       documentDetail = DocumentDetail(
         taxYear = "2023",
         transactionId = "transId",
@@ -36,7 +36,7 @@ trait CreditsSummaryDataHelper {
       balanceDetails = None
     ),
     CreditDetailModel(
-      date = LocalDate.of(2023, 12, 23),
+      date = LocalDate.now().plusYears(1),
       documentDetail = DocumentDetail(
         taxYear = "2023",
         transactionId = "transId",
@@ -50,7 +50,7 @@ trait CreditsSummaryDataHelper {
       balanceDetails = None
     ),
     CreditDetailModel(
-      date = LocalDate.of(2023, 12, 23),
+      date = LocalDate.now().plusYears(1),
       documentDetail = DocumentDetail(
         taxYear = "2023",
         transactionId = "transId",
