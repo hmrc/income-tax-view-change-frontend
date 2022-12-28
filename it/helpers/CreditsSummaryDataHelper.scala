@@ -22,7 +22,7 @@ trait CreditsSummaryDataHelper {
       balanceDetails = None
     ),
     CreditDetailModel(
-      date = LocalDate.of(2023, 12, 23),
+      date = LocalDate.now().plusYears(1),
       documentDetail = DocumentDetail(
         taxYear = "2023",
         transactionId = "transId",
@@ -36,7 +36,7 @@ trait CreditsSummaryDataHelper {
       balanceDetails = None
     ),
     CreditDetailModel(
-      date = LocalDate.of(2023, 12, 23),
+      date = LocalDate.now().plusYears(1),
       documentDetail = DocumentDetail(
         taxYear = "2023",
         transactionId = "transId",
@@ -50,7 +50,7 @@ trait CreditsSummaryDataHelper {
       balanceDetails = None
     ),
     CreditDetailModel(
-      date = LocalDate.of(2023, 12, 23),
+      date = LocalDate.now().plusYears(1),
       documentDetail = DocumentDetail(
         taxYear = "2023",
         transactionId = "transId",
