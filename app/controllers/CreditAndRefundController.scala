@@ -188,7 +188,7 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
 
       case financialDetailsModel: List[FinancialDetailsModel] =>
         val balance: Option[BalanceDetails] = financialDetailsModel.headOption.map(balance => balance.balanceDetails)
-        repaymentService.start(user.nino, balance.flatMap(_.getAbsoluteAvailableCreditAmount).getOrElse(BigDecimal(0))).flatMap {
+        repaymentService.start(user.nino, balance.flatMap(_.availableCredit)).flatMap {
           case Right(nextUrl) =>
             Future.successful(Redirect(nextUrl))
           case Left(_) =>

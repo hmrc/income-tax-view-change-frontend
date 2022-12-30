@@ -17,6 +17,7 @@
 package services
 
 import connectors.RepaymentConnector
+import exceptions.MissingFieldException
 import models.core.RepaymentJourneyResponseModel.{RepaymentJourneyErrorResponse, RepaymentJourneyModel}
 import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
@@ -28,16 +29,30 @@ import scala.concurrent.Future
 @Singleton
 class RepaymentService @Inject()(val repaymentConnector: RepaymentConnector) {
 
-  def start(nino: String, fullAmount: BigDecimal)
+  def start(nino: String, fullAmount: Option[BigDecimal])
            (implicit headerCarrier: HeaderCarrier): Future[Either[Throwable, String]] = {
-    Logger("application").debug(s"Repayment journey start with nino: $nino and fullAmount: $fullAmount ")
-    repaymentConnector.start(nino, fullAmount).map {
-      case RepaymentJourneyModel(nextUrl) =>
-        Right(nextUrl)
-      case RepaymentJourneyErrorResponse(status, message) =>
-        Logger("application").error(s"Repayment journey start error with response code: $status and message: $message}")
-        Left(new InternalError)
-    }.recover { case ex: Exception => Left(ex) }
+    Logger("application").debug(s"[RepaymentService][start]: " +
+      s"Repayment journey start with nino: $nino and fullAmount: $fullAmount ")
+    fullAmount match {
+      case Some(amt)=>
+        repaymentConnector.start(nino, math.abs(amt.toDouble)).map {
+          case RepaymentJourneyModel(nextUrl) =>
+            Right(nextUrl)
+          case RepaymentJourneyErrorResponse(status, message) =>
+            Logger("application").error(s"[RepaymentService][start]: " +
+              s"Repayment journey start error with response code: $status and message: $message")
+            Left(new InternalError)
+        }.recover { case ex: Exception =>
+          Logger("application").error(s"[RepaymentService][start]: " +
+            s"Repayment journey start error with exception: $ex")
+          Left(ex)
+        }
+      case None =>
+        Logger("application").error(s"[RepaymentService][start] " +
+          s"AvailableCredit not found")
+        Future.successful(Left(new MissingFieldException("availableCredit")))
+
+    }
   }
 
   def view(nino: String)
@@ -47,9 +62,15 @@ class RepaymentService @Inject()(val repaymentConnector: RepaymentConnector) {
       case RepaymentJourneyModel(nextUrl) =>
         Right(nextUrl)
       case RepaymentJourneyErrorResponse(status, message) =>
-        Logger("application").error(s"Repayment journey view error with response code: $status and message: $message}")
+        Logger("application").error(s" [RepaymentService][start]: " +
+          s" Repayment journey view error with response code: $status and message: $message")
         Left(new InternalError)
-    }.recover { case ex: Exception => Left(ex) }
+    }.recover { case ex: Exception =>
+      Logger("application").error(s"[RepaymentService][start]: " +
+        s"Repayment journey view error with exception: $ex")
+
+      Left(ex)
+    }
   }
 
 }
