@@ -18,7 +18,7 @@ package connectors
 
 import mocks.MockHttp
 import models.core.RepaymentJourneyResponseModel.{RepaymentJourneyErrorResponse, RepaymentJourneyModel}
-import models.core.{Nino, RepaymentJourneyResponseModel, RepaymentRefund}
+import models.core.{Nino, RepaymentRefund}
 import play.api.http.Status.{ACCEPTED, UNAUTHORIZED}
 import play.api.libs.json.Json
 import play.mvc.Http.Status
