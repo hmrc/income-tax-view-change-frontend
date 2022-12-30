@@ -17,27 +17,39 @@
 package services
 
 import connectors.RepaymentConnector
-import models.core.RepaymentJourneyResponseModel
+import models.core.RepaymentJourneyResponseModel.{RepaymentJourneyErrorResponse, RepaymentJourneyModel}
 import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
 
-import javax.inject.Singleton
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 @Singleton
-class RepaymentService @Inject()(val repaymentConnector: RepaymentConnector){
+class RepaymentService @Inject()(val repaymentConnector: RepaymentConnector) {
 
   def start(nino: String, fullAmount: BigDecimal)
-           (implicit headerCarrier: HeaderCarrier): Future[RepaymentJourneyResponseModel] = {
+           (implicit headerCarrier: HeaderCarrier): Future[Either[Throwable, String]] = {
     Logger("application").debug(s"Repayment journey start with nino: $nino and fullAmount: $fullAmount ")
-    repaymentConnector.start(nino, fullAmount)
+    repaymentConnector.start(nino, fullAmount).map {
+      case RepaymentJourneyModel(nextUrl) =>
+        Right(nextUrl)
+      case RepaymentJourneyErrorResponse(status, message) =>
+        Logger("application").error(s"Repayment journey start error with response code: $status and message: $message}")
+        Left(new InternalError)
+    }.recover { case ex: Exception => Left(ex) }
   }
 
   def view(nino: String)
-           (implicit headerCarrier: HeaderCarrier): Future[RepaymentJourneyResponseModel] = {
+          (implicit headerCarrier: HeaderCarrier): Future[Either[Throwable, String]] = {
     Logger("application").debug(s"Repayment journey view with nino: $nino")
-    repaymentConnector.view(nino)
+    repaymentConnector.view(nino).map {
+      case RepaymentJourneyModel(nextUrl) =>
+        Right(nextUrl)
+      case RepaymentJourneyErrorResponse(status, message) =>
+        Logger("application").error(s"Repayment journey view error with response code: $status and message: $message}")
+        Left(new InternalError)
+    }.recover { case ex: Exception => Left(ex) }
   }
 
 }
