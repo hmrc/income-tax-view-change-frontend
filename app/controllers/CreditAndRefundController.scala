@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -188,12 +188,10 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
 
       case financialDetailsModel: List[FinancialDetailsModel] =>
         val balance: Option[BalanceDetails] = financialDetailsModel.headOption.map(balance => balance.balanceDetails)
-        repaymentService.start(user.nino, balance.flatMap(_.getAbsoluteAvailableCreditAmount).getOrElse(BigDecimal(0))).flatMap {
-          case RepaymentJourneyModel(nextUrl) =>
+        repaymentService.start(user.nino, balance.flatMap(_.availableCredit)).flatMap {
+          case Right(nextUrl) =>
             Future.successful(Redirect(nextUrl))
-          case RepaymentJourneyErrorResponse(status, message) =>
-            Logger("application")
-              .error(s"[CreditAndRefundController][handleRefundRequest] - failed RepaymentJourney: $status ")
+          case Left(_) =>
             Future.successful(itvcErrorHandler.showInternalServerError())
         }
       case _ => Logger("application").error("[CreditAndRefundController][handleRefundRequest]")
@@ -204,11 +202,9 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
   private def handleStatusRefundRequest(isAgent: Boolean, itvcErrorHandler: ShowInternalServerError, backUrl: String)
                                  (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
     repaymentService.view(user.nino).flatMap {
-      case RepaymentJourneyModel(nextUrl) =>
+      case Right(nextUrl) =>
         Future.successful(Redirect(nextUrl))
-      case RepaymentJourneyErrorResponse(status, message) =>
-        Logger("application")
-          .error(s"[CreditAndRefundController][handleStatusRefundRequest] - failed RepaymentJourney: $status ")
+      case Left(_) =>
         Future.successful(itvcErrorHandler.showInternalServerError())
     }
 

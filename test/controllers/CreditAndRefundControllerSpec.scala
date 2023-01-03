@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,8 +22,7 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
-import models.core.RepaymentJourneyResponseModel.{RepaymentJourneyErrorResponse, RepaymentJourneyModel}
-import models.financialDetails.{BalanceDetails, FinancialDetailsModel}
+import models.financialDetails.FinancialDetailsModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.mockito.ArgumentMatchers.any
@@ -212,7 +211,7 @@ class CreditAndRefundControllerSpec extends MockAuthenticationPredicate with Moc
         when(mockCreditService.getCreditCharges()(any(), any()))
           .thenReturn(Future.successful(List(financialDetailCreditAndRefundCharge)))
         when(mockRepaymentService.start(any(), any())(any()))
-          .thenReturn(Future.successful(RepaymentJourneyModel("/test/url")))
+          .thenReturn(Future.successful(Right("/test/url")))
 
         val result: Future[Result] = controller.startRefund()(fakeRequestWithActiveSession)
 
@@ -232,7 +231,7 @@ class CreditAndRefundControllerSpec extends MockAuthenticationPredicate with Moc
         when(mockCreditService.getCreditCharges()(any(), any()))
           .thenReturn(Future.successful(List(financialDetailCreditAndRefundCharge)))
         when(mockRepaymentService.start(any(), any())(any()))
-          .thenReturn(Future.successful(RepaymentJourneyErrorResponse(Status.UNAUTHORIZED, "Token expired")))
+          .thenReturn(Future.successful(Left(new InternalError)))
 
         val result: Future[Result] = controller.startRefund()(fakeRequestWithActiveSession)
 
@@ -250,7 +249,7 @@ class CreditAndRefundControllerSpec extends MockAuthenticationPredicate with Moc
         setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthSuccessWithSaUtrResponse())
 
         when(mockRepaymentService.view(any())(any()))
-          .thenReturn(Future.successful(RepaymentJourneyModel("/test/url")))
+          .thenReturn(Future.successful(Right("/test/url")))
 
         val result: Future[Result] = controller.refundStatus()(fakeRequestWithActiveSession)
 
@@ -268,7 +267,7 @@ class CreditAndRefundControllerSpec extends MockAuthenticationPredicate with Moc
         setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthSuccessWithSaUtrResponse())
 
         when(mockRepaymentService.view(any())(any()))
-          .thenReturn(Future.successful(RepaymentJourneyErrorResponse(Status.UNAUTHORIZED, "Token expired")))
+          .thenReturn(Future.successful(Left(new InternalError)))
 
         val result: Future[Result] = controller.refundStatus()(fakeRequestWithActiveSession)
 
