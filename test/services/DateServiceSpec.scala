@@ -56,16 +56,16 @@ class DateServiceSpec extends TestSupport with FeatureSwitching {
       f.mockedTestDateService.isDayBeforeTaxYearLastDay shouldBe true
     }
 
-    "return mocked current date: 2018-04-29" in {
-      val f = fixture("2018-04-29")
+    "return mocked current date: 2018-04-06" in {
+      val f = fixture("2018-04-06")
       disable(TimeMachineAddYear)
       f.mockedTestDateService.isDayBeforeTaxYearLastDay shouldBe false
     }
 
     "return mocked current date: 2019-04-06" in {
-      val f = fixture("2019-04-06")
+      val f = fixture("2019-04-05")
       disable(TimeMachineAddYear)
-      f.mockedTestDateService.getCurrentDate should equal(LocalDate.parse("2019-04-06"))
+      f.mockedTestDateService.getCurrentDate should equal(LocalDate.parse("2019-04-05"))
       f.mockedTestDateService.isDayBeforeTaxYearLastDay shouldBe true
     }
 
