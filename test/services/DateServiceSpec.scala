@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package services
 
 import config.featureswitch.{FeatureSwitching, TimeMachineAddYear}
 import testUtils.TestSupport
+import java.time.Month.APRIL
 
 import java.time.LocalDate
 
@@ -52,13 +53,17 @@ class DateServiceSpec extends TestSupport with FeatureSwitching {
   }
 
   "The getCurrentTaxYearEnd" should {
-    "return the current tax year" in{
+    "return the current tax year" in {
       disable(TimeMachineAddYear)
-      TestDateService.getCurrentTaxYearEnd shouldBe LocalDate.now.plusYears(1).getYear
+      val expectedYear = if (TestDateService.beforeAril) LocalDate.now.getYear
+      else LocalDate.now.plusYears(1).getYear
+      TestDateService.getCurrentTaxYearEnd shouldBe expectedYear
     }
     "return next tax year when time machine is enabled" in {
       enable(TimeMachineAddYear)
-      TestDateService.getCurrentTaxYearEnd shouldBe LocalDate.now.plusYears(2).getYear
+      val expectedYear = if (TestDateService.beforeAril) LocalDate.now.plusYears(1).getYear
+      else LocalDate.now.plusYears(2).getYear
+      TestDateService.getCurrentTaxYearEnd shouldBe expectedYear
     }
 
   }

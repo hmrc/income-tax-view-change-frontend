@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,10 +38,14 @@ class DateService @Inject()(implicit val frontendAppConfig: FrontendAppConfig) e
     }
   }
 
+  def beforeAril: Boolean = {
+    val currentDate = getCurrentDate
+    currentDate.isBefore(LocalDate.of(currentDate.getYear, APRIL, 6))
+  }
+
   def getCurrentTaxYearEnd: Int = {
     val currentDate = getCurrentDate
-    if (currentDate.isBefore(LocalDate.of(currentDate.getYear, APRIL, 6))) currentDate.getYear
-    else currentDate.getYear + 1
+    if (beforeAril) currentDate.getYear else currentDate.getYear + 1
   }
 }
 
@@ -49,5 +53,4 @@ trait DateServiceInterface {
   def getCurrentDate: LocalDate
 
   def getCurrentTaxYearEnd: Int
-
 }
