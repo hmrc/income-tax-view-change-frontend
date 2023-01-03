@@ -38,14 +38,17 @@ class DateService @Inject()(implicit val frontendAppConfig: FrontendAppConfig) e
     }
   }
 
-  def beforeAril: Boolean = {
+  // with respect to the current calendar year
+  private def TAX_YEAR_LAST_DAY: LocalDate = LocalDate.of(getCurrentDate.getYear, APRIL, 6)
+
+  def isDayBeforeTaxYearLastDay: Boolean = {
     val currentDate = getCurrentDate
-    currentDate.isBefore(LocalDate.of(currentDate.getYear, APRIL, 6))
+    currentDate.isBefore(TAX_YEAR_LAST_DAY)
   }
 
   def getCurrentTaxYearEnd: Int = {
     val currentDate = getCurrentDate
-    if (beforeAril) currentDate.getYear else currentDate.getYear + 1
+    if (isDayBeforeTaxYearLastDay) currentDate.getYear else currentDate.getYear + 1
   }
 }
 
@@ -53,4 +56,6 @@ trait DateServiceInterface {
   def getCurrentDate: LocalDate
 
   def getCurrentTaxYearEnd: Int
+
+  def isDayBeforeTaxYearLastDay: Boolean
 }
