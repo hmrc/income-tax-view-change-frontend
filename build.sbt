@@ -30,7 +30,6 @@ val compile = Seq(
   "uk.gov.hmrc" %% "bootstrap-frontend-play-28" % bootstrapPlayVersion,
   "uk.gov.hmrc" %% "play-partials" % playPartialsVersion,
   "org.typelevel" %% "cats-core" % catsVersion,
-  "com.typesafe.play" %% "play-json-joda" % "2.9.3",
   "uk.gov.hmrc.mongo" %% "hmrc-mongo-play-28" % hmrcMongoVersion,
   "uk.gov.hmrc" %% "play-frontend-hmrc" % playFrontendHMRCVersion
 )
