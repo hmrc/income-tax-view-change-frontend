@@ -214,7 +214,6 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
                                (implicit hc: HeaderCarrier, user: MtdItUser[_]): Unit = {
 
     auditingService.extendedAudit(ClaimARefundAuditModel(
-      mtdItUser = user,
       balanceDetails = balanceDetails,
       creditDocuments = creditDocuments))
   }
