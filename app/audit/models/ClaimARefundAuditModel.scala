@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package audit.models
 
+import audit.Utilities.userAuditDetails
 import auth.MtdItUser
 import enums.AuditType.ClaimARefundResponse
 import enums.TransactionName.ClaimARefund
@@ -26,14 +27,11 @@ import play.api.libs.json.{JsObject, JsValue, Json}
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-case class ClaimARefundAuditModel(mtdItUser: MtdItUser[_], balanceDetails: Option[BalanceDetails],
-                                  creditDocuments: List[(DocumentDetailWithDueDate, FinancialDetail)]) extends ExtendedAuditModel {
+case class ClaimARefundAuditModel(balanceDetails: Option[BalanceDetails],
+                                  creditDocuments: List[(DocumentDetailWithDueDate, FinancialDetail)])(implicit user: MtdItUser[_]) extends ExtendedAuditModel {
 
-  private val userType: String = mtdItUser.userType match {
-    case Some("Agent") => "Agent"
-    case Some("Individual") => "Individual"
-    case None => "Unrecognised User Type"
-  }
+  override val auditType: String = ClaimARefundResponse
+  override val transactionName: String = ClaimARefund
 
   private def getFullDueDate(dueDate: LocalDate) = s"${dueDate.format(DateTimeFormatter.ofPattern("dd MMMM YYYY"))}" // returns "17 January 2021"
 
@@ -68,7 +66,7 @@ case class ClaimARefundAuditModel(mtdItUser: MtdItUser[_], balanceDetails: Optio
   private def getPendingRefundsJson(pendingRefund: Option[BigDecimal]): Seq[JsObject] = Seq(Json.obj() ++ Json.obj("description" -> "Refund in progress") ++
     Json.obj("amount" -> pendingRefund.get.abs))
 
-  private lazy val refundsDocumentsJson: Seq[JsObject] = {
+  private lazy val refundDocumentsJson: Seq[JsObject] = {
     val firstPendingRefundExists = balanceDetails.map(balanceDetails => balanceDetails.firstPendingAmountRequested.isDefined)
     val secondPendingRefundExists = balanceDetails.map(balanceDetails => balanceDetails.secondPendingAmountRequested.isDefined)
 
@@ -83,18 +81,11 @@ case class ClaimARefundAuditModel(mtdItUser: MtdItUser[_], balanceDetails: Optio
     }
   }
 
-  override val auditType: String = ClaimARefundResponse
-  override val transactionName: String = ClaimARefund
-  override val detail: JsValue = {
+  val claimARefundDetail: JsObject = {
     Json.obj(
-      "nationalInsuranceNumber" -> mtdItUser.nino,
-      "mtditid" -> mtdItUser.mtditid,
-      "userType" -> userType,
-      "agentReferenceNumber" -> mtdItUser.arn,
-      "saUtr" -> mtdItUser.saUtr,
-      "credId" -> mtdItUser.credId,
       "creditOnAccount" -> getAvailableCredit,
       "creditDocuments" -> creditDocumentsJson,
-      "refundDocuments" -> refundsDocumentsJson)
+      "refundDocuments" -> refundDocumentsJson)
   }
+  override val detail: JsValue = userAuditDetails(user) ++ claimARefundDetail
 }

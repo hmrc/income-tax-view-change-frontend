@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,13 +41,13 @@ class ClaimARefundAuditModelSpec extends AnyWordSpecLike {
     documentDetailWithDueDateFinancialDetailListModel(outstandingAmount = Some(BigDecimal(-1500)), originalAmount = Some(BigDecimal(-1500)), paymentLot = Some("paymentLot"))
   )
 
-  def claimARefundAuditFull(user: MtdItUser[_] = testMtdItUser): ClaimARefundAuditModel = ClaimARefundAuditModel(mtdItUser = user,
+  def claimARefundAuditFull(user: MtdItUser[_] = testMtdItUser): ClaimARefundAuditModel = ClaimARefundAuditModel(
     balanceDetails = Some(balanceDetailsFull),
-    creditDocuments = creditDocuments)
+    creditDocuments = creditDocuments)(user)
 
-  def claimARefundAuditMin(user: MtdItUser[_] = testMtdItUser): ClaimARefundAuditModel = ClaimARefundAuditModel(mtdItUser = user,
+  def claimARefundAuditMin(user: MtdItUser[_] = testMtdItUser): ClaimARefundAuditModel = ClaimARefundAuditModel(
     balanceDetails = Some(balanceDetailsMin),
-    creditDocuments = List.empty)
+    creditDocuments = List.empty)(user)
 
   "ClaimARefundAuditModel" should {
     s"have the correct transaction name of '$transactionName'" in {
@@ -60,10 +60,9 @@ class ClaimARefundAuditModelSpec extends AnyWordSpecLike {
       claimARefundAuditFull().detail shouldBe Json.obj(
         "nationalInsuranceNumber" -> testMtdItUser.nino,
         "mtditid" -> testMtdItUser.mtditid,
-        "userType" -> testMtdItUser.userType,
-        "agentReferenceNumber" -> testMtdItUser.arn,
         "saUtr" -> testMtdItUser.saUtr,
         "credId" -> testMtdItUser.credId,
+        "userType" -> testMtdItUser.userType,
         "creditOnAccount" -> 7500,
         "creditDocuments" ->
           Json.arr(
@@ -84,10 +83,9 @@ class ClaimARefundAuditModelSpec extends AnyWordSpecLike {
       claimARefundAuditMin().detail shouldBe Json.obj(
         "nationalInsuranceNumber" -> testMtdItUser.nino,
         "mtditid" -> testMtdItUser.mtditid,
-        "userType" -> testMtdItUser.userType,
-        "agentReferenceNumber" -> testMtdItUser.arn,
         "saUtr" -> testMtdItUser.saUtr,
         "credId" -> testMtdItUser.credId,
+        "userType" -> testMtdItUser.userType,
         "creditOnAccount" -> 0,
         "creditDocuments" ->
           Json.arr(),

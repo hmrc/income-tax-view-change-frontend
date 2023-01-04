@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -189,7 +189,7 @@ class WhatYouOweResponseAuditModelSpec extends TestSupport {
           "outstandingAmount" -> 42.5,
           "chargeType" -> lpiPaymentOnAccount1,
           "dueDate" -> "2019-06-25",
-          "endTaxYear" -> 2022
+          "endTaxYear" -> LocalDate.now().getYear
         )
       }
     }
