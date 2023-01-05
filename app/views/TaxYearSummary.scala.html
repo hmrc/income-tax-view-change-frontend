@@ -1,5 +1,5 @@
 @*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -58,17 +58,25 @@
 
 @taxCalculationOverview(model: TaxYearSummaryViewModel) = {
     @if(model.messages.exists(_.errorMessages.size > 1)) {
-        tharun
+        @errorMessageHeader(s"tax-year-summary.message.header")
+        <ul class="govuk-list govuk-list--bullet">
+            @for(message <- model.messages.map(_.errorMessages.sortBy(_.id)).getOrElse(Seq())) {
+                @multipleErrorMessage(s"tax-year-summary.message.${message.id}")
+            }
+        </ul>
+        @errorMessageAction(s"tax-year-summary.message.action")
     } else if(model.messages.exists(_.errorMessages.size == 1)) {
         @errorMessageHeader(s"tax-year-summary.message.header")
-        @singleErrorMessage(s"tax-year-summary.message.C15104")
+        @for(message <- model.messages.map(_.errorMessages.sortBy(_.id)).getOrElse(Seq())) {
+            @singleErrorMessage(s"tax-year-summary.message.${message.id}")
+        }
         @errorMessageAction(s"tax-year-summary.message.action")
     } else {
         @breakdownPartial(model, taxYear, isFinalCalc = false, isAgent)
         @if(!model.crystallised.contains(true)) {
-        @govukInsetText(InsetText(content = HtmlContent(
-        p(id=Some("calc-estimate-info"))(content = Html(messages("tax-year-summary.calc-estimate-info")))
-        )))
+            @govukInsetText(InsetText(content = HtmlContent(
+            p(id=Some("calc-estimate-info"))(content = Html(messages("tax-year-summary.calc-estimate-info")))
+            )))
         }
     }
 }
@@ -78,7 +86,13 @@
 }
 
 @singleErrorMessage(errorMessage: String) = {
-    @govukInsetText(InsetText(classes="govuk-insettext-zero-spacing", content = HtmlContent(Html(messages("tax-year-summary.message.C15104")))))
+    @govukInsetText(InsetText(classes="govuk-insettext-zero-spacing", content = HtmlContent(Html(messages(errorMessage)))))
+}
+
+@multipleErrorMessage(errorMessage: String) = {
+    <li>
+        @govukInsetText(InsetText(classes="govuk-insettext-zero-spacing", content = HtmlContent(Html(messages(errorMessage)))))
+    </li>
 }
 
 @errorMessageAction(action: String) = {
