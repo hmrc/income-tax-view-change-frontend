@@ -20,6 +20,7 @@ import play.api.libs.json._
 
 import java.time.LocalDate
 
+
 sealed trait LiabilityCalculationResponseModel
 
 case class LiabilityCalculationError(status: Int, message: String) extends LiabilityCalculationResponseModel
@@ -74,6 +75,8 @@ case class Messages(info: Option[Seq[Message]] = None, warnings: Option[Seq[Mess
   val allMessages: Seq[Message] = {
     info.getOrElse(Seq.empty) ++ warnings.getOrElse(Seq.empty) ++ errors.getOrElse(Seq.empty)
   }
+  val errorMessages: Seq[Message] = errors.getOrElse(Seq.empty)
+
   val genericMessages: Seq[Message] = allMessages.filter(message => acceptedMessages.contains(message.id))
 }
 
