@@ -199,6 +199,7 @@ tax-year-summary.amount                                            = Amount
 tax-year-summary.payments.class2Nic.text                           = Class 2 National Insurance
 tax-year-summary.payments.codingOut.text                           = Balancing payment collected through PAYE tax code
 tax-year-summary.na                                                = N/A
+tax-year-summary.paye-tax-code                                     = PAYE tax code
 tax-year-summary.forecast_tab.insetText                            = This is an estimate of your tax bill for the whole year to 5 April {0}. It will be updated throughout the year as more information is provided.
 tax-year-summary.forecast_total_title                              = 6 April {0} to 5 April {1} forecast
 tax-year-summary.forecast.tax-due                                  = Forecast Self Assessment tax amount
@@ -355,9 +356,7 @@ deduction_breakdown.total                                              = Total a
 taxCal_breakdown.heading                                            = Tax calculation
 taxCal_breakdown.dates                                              = 6 April {0} to 5 April {1}
 taxCal_breakdown.explanation                                        = This calculation is based on your taxable income of
-taxCal-breakdown.ukRate                                             = (UK rate for England, Wales and Northern Ireland)
-taxCal-breakdown.scotlandRate	                                    = (Scotland rate)
-taxCal_breakdown.pay_pensions_profit                                 = Pay, pensions and profit
+taxCal_breakdown.pay_pensions_profit                                = Pay, pensions and profit
 taxCal_breakdown.savings                                            = Savings
 taxCal_breakdown.dividends                                          = Dividends
 taxCal_breakdown.lumpSums                                           = Employment lump sums
@@ -691,7 +690,7 @@ whatYouOwe.lpi.paymentOnAccount2.text                              = Late paymen
 whatYouOwe.lpi.balancingCharge.text                                = Late payment interest for Balancing payment
 whatYouOwe.balancingCharge.text  							       = Balancing payment
 whatYouOwe.balancingCharge.interest.line1.text                     = Interest on Balancing payment
-whatYouOwe.balancingCharge.interest.line2.text                     = {0} to {1}
+whatYouOwe.balancingCharge.interest.line2.text                     = From {0} to {1}
 whatYouOwe.hmrcAdjustment.heading                                  = HMRC adjustment
 whatYouOwe.hmrcAdjustment.line1                                    = This payment has been created by HMRC.
 whatYouOwe.remaining-balance.heading                               = Balancing payment
@@ -728,6 +727,7 @@ whatYouOwe.dunningLock.link                                        = there is a 
 whatYouOwe.overdueAmount                                           = Overdue payments
 whatYouOwe.balanceDueWithin30Days                                  = Due within 30 days
 whatYouOwe.totalBalance                                            = Total payments
+whatYouOwe.codingOutHeading                                        = Collected through PAYE tax code
 whatYouOwe.codingOut-1a                                            = Your client has
 whatYouOwe.codingOut-1b                                            = of tax for the
 whatYouOwe.codingOut-2                                             = {0} to {1} tax year
@@ -859,12 +859,7 @@ timeoutDialog.minutes                                           = minutes
 timeoutDialog.minutes.two                                       = minutes
 timeoutDialog.minute                                            = minute
 timeoutDialog.message                                           = For your security, we will sign you out in
-timeoutDialog.title                                             = You're about to be signed out
 button.continue                                                 = Stay signed in
-
-## Not found
-notFound.heading =
-notFound.message =
 
 ## Uplift Failure
 upliftFailure.title = You cannot view this page
@@ -875,6 +870,7 @@ upliftFailure.bullet.2 = you have failed to answer enough questions correctly
 upliftFailure.bullet.3 = we could not match your details to our system
 
 ## Payment History Page ##
+
 paymentHistory.heading                                          = Payment history
 paymentHistory.info                                             = To view your client’s payment history from before they signed up to Making Tax Digital for Income Tax, you need to sign in to your
 paymentHistory.info.2                                           = This will be a different Government Gateway ID and password to your Agent Services account.
@@ -968,8 +964,6 @@ credit-and-refund.heading                                         = Claim a refu
 credit-and-refund.subHeading.has-credits-1                        = There is a total of
 credit-and-refund.subHeading.has-credits-2                        = in your account:
 credit-and-refund.subHeading.has-credits-3                        = in your account.
-credit-and-refund.subHeading.has-no-credits-1                     = has been requested
-credit-and-refund.subHeading.has-no-credits-2                     = as a refund and is in progress.
 credit-and-refund.agent.subHeading.has-credits-2                  = in your client’s account:
 credit-and-refund.agent.subHeading.has-credits-3                  = in your client’s account.
 credit-and-refund.subHeading.unallocated-credits-one-payment-1    = There is a total of
@@ -1010,19 +1004,6 @@ language-switcher.nav                                           = Language switc
 #technical helper
 getpagehelp.linkText                                            = Get help with this page
 pagehelp.opensInNewTabText                                      = ' (opens in new tab)'
-
-shortMonth.1                                                    = Jan
-shortMonth.2                                                    = Feb
-shortMonth.3                                                    = Mar
-shortMonth.4                                                    = Apr
-shortMonth.5                                                    = May
-shortMonth.6                                                    = Jun
-shortMonth.7                                                    = Jul
-shortMonth.8                                                    = Aug
-shortMonth.9                                                    = Sep
-shortMonth.10                                                   = Oct
-shortMonth.11                                                   = Nov
-shortMonth.12                                                   = Dec
 
 #Not migrated to ETMP
 notmigrated.user.heading                                        = How to claim a refund
