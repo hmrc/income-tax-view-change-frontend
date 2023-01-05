@@ -25,12 +25,12 @@ case class TotalInterest(fromDate: LocalDate, fromRate: BigDecimal,
                          total: BigDecimal)
 
 case class RepaymentHistory(amountApprovedforRepayment: Option[BigDecimal],
-                            amountRequested: BigDecimal,
-                            repaymentMethod: String,
-                            totalRepaymentAmount: BigDecimal,
-                            repaymentItems: Seq[RepaymentItem],
-                            estimatedRepaymentDate: LocalDate,
-                            creationDate: LocalDate,
+                            amountRequested: Option[BigDecimal],
+                            repaymentMethod: Option[String],
+                            totalRepaymentAmount: Option[BigDecimal],
+                            repaymentItems: Option[Seq[RepaymentItem]],
+                            estimatedRepaymentDate: Option[LocalDate],
+                            creationDate: Option[LocalDate],
                             repaymentRequestNumber: String
                            ) {
 
@@ -100,18 +100,20 @@ case class RepaymentHistory(amountApprovedforRepayment: Option[BigDecimal],
   }
 
   def aggregate: Option[TotalInterest] = {
-    for {
-      fromDate <- fromDateOpt(repaymentItems)
-      fromRate <- fromRateOpt(repaymentItems)
-      toDate <- toDateOpt(repaymentItems)
-      toRate <- toRateOpt(repaymentItems)
-      totalAmount <- totalOpt(repaymentItems)
-    } yield TotalInterest(
-      fromDate = fromDate,
-      fromRate = fromRate,
-      toDate = toDate,
-      toRate = toRate,
-      total = totalAmount)
+    repaymentItems.flatMap { repaymentItems =>
+      for {
+        fromDate <- fromDateOpt(repaymentItems)
+        fromRate <- fromRateOpt(repaymentItems)
+        toDate <- toDateOpt(repaymentItems)
+        toRate <- toRateOpt(repaymentItems)
+        totalAmount <- totalOpt(repaymentItems)
+      } yield TotalInterest(
+        fromDate = fromDate,
+        fromRate = fromRate,
+        toDate = toDate,
+        toRate = toRate,
+        total = totalAmount)
+    }
   }
 }
 

@@ -60,10 +60,10 @@ class RefundToTaxPayerViewSpec extends ViewSpec with ImplicitDateFormatter {
   val testRepaymentHistoryModel: RepaymentHistoryModel = RepaymentHistoryModel(
     List(RepaymentHistory(
       Some(705.2),
-      705.2,
-      RefundToTaxPayerMessages.tableValueMethodTypeBacs,
-      12345,
-      Vector(
+      Some(705.2),
+      Some(RefundToTaxPayerMessages.tableValueMethodTypeBacs),
+      Some(12345),
+      Some(Vector(
         RepaymentItem(
           Vector(
             RepaymentSupplementItem(
@@ -88,7 +88,7 @@ class RefundToTaxPayerViewSpec extends ViewSpec with ImplicitDateFormatter {
               Some(2.01))
           )
         )
-      ), LocalDate.of(2021, 7, 23), LocalDate.of(2021, 7, 21), "000000003135")
+      )), Some(LocalDate.of(2021, 7, 23)), Some(LocalDate.of(2021, 7, 21)), "000000003135")
     )
   )
 
@@ -97,9 +97,9 @@ class RefundToTaxPayerViewSpec extends ViewSpec with ImplicitDateFormatter {
       List(
         testRepaymentHistoryModel.repaymentsViewerDetails.map(_.copy(
           amountApprovedforRepayment = Some(800.12),
-          amountRequested = 345.5,
-          repaymentMethod = RefundToTaxPayerMessages.tableValueMethodTypeCard,
-          repaymentItems = Vector(
+          amountRequested = Some(345.5),
+          repaymentMethod = Some(RefundToTaxPayerMessages.tableValueMethodTypeCard),
+          repaymentItems = Some(Vector(
             RepaymentItem(
               Vector(
                 RepaymentSupplementItem(
@@ -112,7 +112,7 @@ class RefundToTaxPayerViewSpec extends ViewSpec with ImplicitDateFormatter {
               )
             )
           )
-        )
+        ))
         )
       ).flatten
     )
@@ -122,9 +122,9 @@ class RefundToTaxPayerViewSpec extends ViewSpec with ImplicitDateFormatter {
       List(
         testRepaymentHistoryModel.repaymentsViewerDetails.map(_.copy(
           amountApprovedforRepayment = Some(800.12),
-          amountRequested = 345.5,
-          repaymentMethod = RefundToTaxPayerMessages.tableValueMethodTypeCard,
-          repaymentItems = Vector.empty
+          amountRequested = Some(345.5),
+          repaymentMethod = Some(RefundToTaxPayerMessages.tableValueMethodTypeCard),
+          repaymentItems = Some(Vector.empty)
         )
         )
       ).flatten
@@ -135,8 +135,8 @@ class RefundToTaxPayerViewSpec extends ViewSpec with ImplicitDateFormatter {
       List(
         testRepaymentHistoryModel.repaymentsViewerDetails.map(_.copy(
           amountApprovedforRepayment = Some(800.12),
-          amountRequested = 345.5,
-          repaymentMethod = RefundToTaxPayerMessages.tableValueMethodTypeCard
+          amountRequested = Some(345.5),
+          repaymentMethod = Some(RefundToTaxPayerMessages.tableValueMethodTypeCard)
         )
         )
       ).flatten
@@ -147,8 +147,8 @@ class RefundToTaxPayerViewSpec extends ViewSpec with ImplicitDateFormatter {
       List(
         testRepaymentHistoryModel.repaymentsViewerDetails.headOption.map(_.copy(
           amountApprovedforRepayment = None,
-          amountRequested = 345.5,
-          repaymentMethod = RefundToTaxPayerMessages.tableValueMethodTypePostalOrder
+          amountRequested = Some(345.5),
+          repaymentMethod = Some(RefundToTaxPayerMessages.tableValueMethodTypePostalOrder)
         )
         )
       ).flatten

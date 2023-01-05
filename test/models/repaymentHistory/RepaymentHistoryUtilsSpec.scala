@@ -48,10 +48,10 @@ class RepaymentHistoryUtilsSpec extends TestSupport with Matchers {
   val repaymentHistory = List(
     RepaymentHistory(
       amountApprovedforRepayment = Some(100.0),
-      amountRequested = 200.0,
-      repaymentMethod = "BACD",
-      totalRepaymentAmount = 300.0,
-      repaymentItems = Seq[RepaymentItem](
+      amountRequested = Some(200.0),
+      repaymentMethod = Some("BACD"),
+      totalRepaymentAmount = Some(300.0),
+      repaymentItems = Some(Seq[RepaymentItem](
         RepaymentItem(repaymentSupplementItem =
           Seq(
             RepaymentSupplementItem(
@@ -63,17 +63,17 @@ class RepaymentHistoryUtilsSpec extends TestSupport with Matchers {
             )
           )
         )
-      ),
-      estimatedRepaymentDate = LocalDate.parse("2021-08-21"),
-      creationDate = LocalDate.parse("2021-07-21"),
+      )),
+      estimatedRepaymentDate = Some(LocalDate.parse("2021-08-21")),
+      creationDate = Some(LocalDate.parse("2021-07-21")),
       repaymentRequestNumber = repaymentRequestNumber
     ),
     RepaymentHistory(
       amountApprovedforRepayment = Some(100.0),
-      amountRequested = 200.0,
-      repaymentMethod = "BACD",
-      totalRepaymentAmount = 301.0,
-      repaymentItems = Seq[RepaymentItem](
+      amountRequested = Some(200.0),
+      repaymentMethod = Some("BACD"),
+      totalRepaymentAmount = Some(301.0),
+      repaymentItems = Some(Seq[RepaymentItem](
         RepaymentItem(repaymentSupplementItem =
           Seq(
             RepaymentSupplementItem(
@@ -85,9 +85,9 @@ class RepaymentHistoryUtilsSpec extends TestSupport with Matchers {
             )
           )
         )
-      ),
-      estimatedRepaymentDate = LocalDate.parse("2021-08-20"),
-      creationDate = LocalDate.parse("2021-07-21"),
+      )),
+      estimatedRepaymentDate = Some(LocalDate.parse("2021-08-20")),
+      creationDate = Some(LocalDate.parse("2021-07-21")),
       repaymentRequestNumber = repaymentRequestNumber
     ))
 

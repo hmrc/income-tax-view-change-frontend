@@ -59,10 +59,10 @@ class RefundToTaxPayerControllerSpec extends MockAuthenticationPredicate
   val testRepaymentHistoryModel: RepaymentHistoryModel = RepaymentHistoryModel(
     List(RepaymentHistory(
       Some(705.2),
-      705.2,
-      "BACS",
-      12345,
-      Vector(
+      Some(705.2),
+      Some("BACS"),
+      Some(12345),
+      Some(Vector(
         RepaymentItem(
           Vector(
             RepaymentSupplementItem(
@@ -87,7 +87,7 @@ class RefundToTaxPayerControllerSpec extends MockAuthenticationPredicate
               Some(2.01))
           )
         )
-      ), LocalDate.of(2021, 7, 23), LocalDate.of(2021, 7, 21), "000000003135")
+      )), Some(LocalDate.of(2021, 7, 23)), Some(LocalDate.of(2021, 7, 21)), "000000003135")
     )
   )
 

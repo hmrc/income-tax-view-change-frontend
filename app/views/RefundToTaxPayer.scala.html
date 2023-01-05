@@ -58,7 +58,7 @@
 }
 
 @getRepaymentSupplementItemSize(repaymentHistoryModel: RepaymentHistoryModel) = @{
-    getRepaymentHistoryData(repaymentHistoryModel).repaymentItems.headOption.getOrElse(throw MissingFieldException("Repayment Items")).repaymentSupplementItem.size
+    getRepaymentHistoryData(repaymentHistoryModel).repaymentItems.flatMap(_.headOption).getOrElse(throw MissingFieldException("Repayment Items")).repaymentSupplementItem.size
 }
 
 @mainTemplate(
@@ -75,21 +75,21 @@
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key dt-cell-width">@messages("refund-to-taxpayer.tableHead.estimated-date")</dt>
             <dd class="govuk-summary-list__value--numeric govuk-!-text-align-right">@{
-                getRepaymentHistoryData(repaymentHistoryModel).estimatedRepaymentDate.toLongDate
+                getRepaymentHistoryData(repaymentHistoryModel).estimatedRepaymentDate.getOrElse(throw MissingFieldException("Estimated Repayment Date")).toLongDate
             }</dd>
         </div>
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">@messages("refund-to-taxpayer.tableHead.method")</dt>
             <dd class="govuk-summary-list__value--numeric govuk-!-text-align-right">@{
                 messages(s"refund-to-taxpayer.method-type-${
-                    getRepaymentHistoryData(repaymentHistoryModel).repaymentMethod.replace(" ", "-").toLowerCase
+                    getRepaymentHistoryData(repaymentHistoryModel).repaymentMethod.getOrElse(throw MissingFieldException("Repayment Method")).replace(" ", "-").toLowerCase
                 }")
             }</dd>
         </div>
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">@messages("refund-to-taxpayer.tableHead.total-refund")</dt>
             <dd class="govuk-summary-list__value--numeric govuk-!-text-align-right">@{
-                getRepaymentHistoryData(repaymentHistoryModel).totalRepaymentAmount.toCurrencyString
+                getRepaymentHistoryData(repaymentHistoryModel).totalRepaymentAmount.getOrElse(throw MissingFieldException("Total Repayment Amount")).toCurrencyString
             }</dd>
         </div>
     </dl>
@@ -104,7 +104,7 @@
                 <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key dt-cell-width">@messages("refund-to-taxpayer.tableHead.requested-on")</dt>
                     <dd class="govuk-summary-list__value--numeric govuk-!-text-align-right">@{
-                        getRepaymentHistoryData(repaymentHistoryModel).creationDate.toLongDate
+                        getRepaymentHistoryData(repaymentHistoryModel).creationDate.getOrElse(throw MissingFieldException("Creation Date")).toLongDate
                     }</dd>
                 </div>
                 <div class="govuk-summary-list__row">
@@ -113,11 +113,11 @@
                         getRepaymentHistoryData(repaymentHistoryModel).repaymentRequestNumber
                     }</dd>
                 </div>
-                @if(getRepaymentHistoryData(repaymentHistoryModel).amountApprovedforRepayment.isEmpty || getRepaymentHistoryData(repaymentHistoryModel).amountRequested.toCurrencyString != getRepaymentHistoryData(repaymentHistoryModel).amountApprovedforRepayment.getOrElse(throw MissingFieldException("Requested Amount Item")).toCurrencyString) {
+                @if(getRepaymentHistoryData(repaymentHistoryModel).amountApprovedforRepayment.isEmpty || getRepaymentHistoryData(repaymentHistoryModel).amountRequested.getOrElse(throw MissingFieldException("Amount Requested")).toCurrencyString != getRepaymentHistoryData(repaymentHistoryModel).amountApprovedforRepayment.getOrElse(throw MissingFieldException("Requested Amount Item")).toCurrencyString) {
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">@messages("refund-to-taxpayer.tableHead.requested-amount")</dt>
                         <dd class="govuk-summary-list__value--numeric govuk-!-text-align-right">@{
-                            getRepaymentHistoryData(repaymentHistoryModel).amountRequested.toCurrencyString
+                            getRepaymentHistoryData(repaymentHistoryModel).amountRequested.getOrElse(throw MissingFieldException("Amount Requested")).toCurrencyString
                         }</dd>
                     </div>
                 }

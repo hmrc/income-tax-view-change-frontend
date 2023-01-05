@@ -26,10 +26,10 @@ class RepaymentHistorySpec extends UnitSpec with Matchers {
 
   val repaymentHistoryFull: RepaymentHistory = RepaymentHistory(
     amountApprovedforRepayment = Some(100.0),
-    amountRequested = 200.0,
-    repaymentMethod = "BACD",
-    totalRepaymentAmount = 300.0,
-    repaymentItems = Seq[RepaymentItem](
+    amountRequested = Some(200.0),
+    repaymentMethod = Some("BACD"),
+    totalRepaymentAmount = Some(300.0),
+    repaymentItems = Some(Seq[RepaymentItem](
       RepaymentItem(repaymentSupplementItem =
           Seq(
             RepaymentSupplementItem(
@@ -41,18 +41,18 @@ class RepaymentHistorySpec extends UnitSpec with Matchers {
             )
           )
       )
-    ),
-    estimatedRepaymentDate = LocalDate.parse("2021-08-21"),
-    creationDate = LocalDate.parse("2021-07-21"),
+    )),
+    estimatedRepaymentDate = Some(LocalDate.parse("2021-08-21")),
+    creationDate = Some(LocalDate.parse("2021-07-21")),
     repaymentRequestNumber = "000000003135"
   )
 
   val repaymentHistoryFullJson: JsValue = Json.obj(
     "amountApprovedforRepayment" -> Some(100.0),
-    "amountRequested" -> 200.0,
-    "repaymentMethod" -> "BACD",
-    "totalRepaymentAmount" -> 300.0,
-    "repaymentItems" -> Json.arr(
+    "amountRequested" -> Some(200.0),
+    "repaymentMethod" -> Some("BACD"),
+    "totalRepaymentAmount" -> Some(300.0),
+    "repaymentItems" -> Some(Json.arr(
       Json.obj(
         "repaymentSupplementItem" -> Json.arr(
           Json.obj(
@@ -64,9 +64,9 @@ class RepaymentHistorySpec extends UnitSpec with Matchers {
           )
         )
       )
-    ),
-    "estimatedRepaymentDate" -> LocalDate.parse("2021-08-21"),
-    "creationDate" -> LocalDate.parse("2021-07-21"),
+    )),
+    "estimatedRepaymentDate" -> Some(LocalDate.parse("2021-08-21")),
+    "creationDate" -> Some(LocalDate.parse("2021-07-21")),
     "repaymentRequestNumber" -> "000000003135"
   )
 
