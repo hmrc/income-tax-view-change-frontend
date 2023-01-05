@@ -187,20 +187,17 @@ tax-year-summary.forecast_tab.insetText                        = Amcangyfrif yw 
 tax-year-summary.forecast_total_title                          = Rhagolwg 6 Ebrill {0} i 5 Ebrill {1}
 tax-year-summary.forecast.tax-due                              = Rhagolwg o swm y dreth Hunanasesiad
 tax-year-summary.na                                            = Amh
+tax-year-summary.message.header                                = Ni allwn ddangos y cyfrifiad hwn:
+tax-year-summary.message.action                                = Mae angen i chi ddiwygio ac ailgyflwyno’ch Ffurflen Dreth.
 tax-year-summary.message.C15014                                = ni all diweddariad chwarterol ddod i ben ar ôl dyddiad dod i ben y cyfnod cyfrifyddu sef, {0}.
 tax-year-summary.message.C55014                                = ni all diweddariad chwarterol ddod i ben ar ôl dyddiad dod i ben y cyfnod cyfrifyddu sef, {0}.
 tax-year-summary.message.C15015                                = rydych wedi gwneud hawliad i gario colled ymlaen i wrthbwyso yn erbyn incwm cyffredinol y flwyddyn nesaf. Mae hefyd angen i chi wneud yr hawliad yn ystod yr un flwyddyn cododd y golled.
 tax-year-summary.message.C15016                                = rydych yn defnyddio system cyfrifyddu ar sail arian parod. Mae hyn yn golygu na allwch hawlio i osod colledion yn erbyn incwm trethadwy arall.
 tax-year-summary.message.C15102                                = mae cyfanswm y taliadau Rhodd Cymorth unigol yn fwy na chyfanswm y taliadau Rhodd Cymorth yr ydych wedi’u gwneud.
 tax-year-summary.message.C15103                                = mae’r taliadau Rhodd Cymorth a wnaed eleni sy’n cael eu trin fel pe baent wedi’u talu yn ystod y flwyddyn flaenorol yn fwy na chyfanswm y taliadau Rhodd Cymorth yr ydych wedi’u gwneud.
-tax-year-summary.message.C15104                                = mae gwerth y buddsoddiadau cymwys a roddwyd gennych i elusennau y tu allan i’r DU yn fwy na gwerth yr eitemau yr ydych wedi’u rhoi i elusennau:
-tax-year-summary.message.C15104.1                              = cyfrannau a gwarantau cymwys
-tax-year-summary.message.C15104.2                              = tir ac adeiladau cymwys
+tax-year-summary.message.C15104                                = mae gwerth y buddsoddiadau cymwys a roddwyd gennych i elusennau y tu allan i’r DU yn fwy na gwerth yr eitemau yr ydych wedi’u rhoi i elusennau:<br><ul class="govuk-list govuk-list--bullet"> <li> cyfrannau a gwarantau cymwys </li> <li> tir ac adeiladau cymwys </li> </ul>
 tax-year-summary.message.C15105                                = mae’r taliadau Rhodd Cymorth i elusennau nad ydynt yn y DU yn fwy na chyfanswm y taliadau Rhodd Cymorth yr ydych wedi’u gwneud.
-tax-year-summary.message.C15322                                = mae swm y Lwfans Incwm Masnachu yr ydych wedi ei hawlio yn fwy na chaniateir. Ni all swm a hawliwyd gennych fod yn uwch na chyfanswm y canlynol:
-tax-year-summary.message.C15322.1                              = eich trosiant
-tax-year-summary.message.C15322.2                              = incwm busnes arall nad yw wedi’i gynnwys yn y trosiant
-tax-year-summary.message.C15322.3                              = cost mantoli wrth werthu asedion neu wrth ddod â’r busnes i ben a nwyddau a gwasanaethau at eich defnydd eich hun
+tax-year-summary.message.C15322                                = mae swm y Lwfans Incwm Masnachu yr ydych wedi ei hawlio yn fwy na chaniateir. Ni all swm a hawliwyd gennych fod yn uwch na chyfanswm y canlynol:<br><ul class="govuk-list govuk-list--bullet"> <li> eich trosiant </li> <li> incwm busnes arall nad yw wedi’i gynnwys yn y trosiant </li> <li> cost mantoli wrth werthu asedion neu wrth ddod â’r busnes i ben a nwyddau a gwasanaethau at eich defnydd eich hun </li> </ul>
 tax-year-summary.message.C15323                                = mae swm y Lwfans Incwm Masnachu yr ydych wedi ei hawlio yn fwy na’r terfyn.
 tax-year-summary.message.C15325                                = rydych wedi hawlio treuliau cyfunol. Mae hyn yn golygu na allwch hawlio ar gyfer unrhyw dreuliau pellach.
 tax-year-summary.message.C15523                                = rydych wedi hawlio treuliau cyfunol. Mae hyn yn golygu na allwch hawlio ar gyfer unrhyw dreuliau pellach.
@@ -243,10 +240,7 @@ tax-year-summary.message.C159018                               = mae swm y rhydd
 tax-year-summary.message.C159019                               = mae’r swm a hawliwyd ar gyfer Rhyddhad Treth am Fuddsoddiad Cymdeithasol yn fwy na’r terfyn.
 tax-year-summary.message.C159026                               = mae swm y dreth a ddidynnwyd ar gyfer cyflogaeth yn fwy na’ch tâl trethadwy.
 tax-year-summary.message.C159027                               = rhoesoch wybod i ni fod y dreth a ddidynnwyd o’ch cyfandaliad wedi cael ei chofnodi o dan eich cyflogaeth. Mae’n rhaid i gyfanswm y dreth ar eich cyflogaeth hyd yn hyn fod yn fwy na sero.
-tax-year-summary.message.C159028                               = mae’n rhaid i gyfanswm treth eich cyflogaeth a ddidynnwyd fod yn llai na chyfanswm y cyflog trethadwy gan gynnwys:
-tax-year-summary.message.C159028.1                             = cildyrnau
-tax-year-summary.message.C159028.2                             = taliadau eraill
-tax-year-summary.message.C159028.3                             = cyfandaliadau
+tax-year-summary.message.C159028                               = mae’n rhaid i gyfanswm treth eich cyflogaeth a ddidynnwyd fod yn llai na chyfanswm y cyflog trethadwy gan gynnwys:<br><ul class="govuk-list govuk-list--bullet"> <li> cildyrnau </li> <li> taliadau eraill </li> <li> cyfandaliadau </li> </ul>
 tax-year-summary.message.C159030                               = mae cyfanswm eich iawndal diswyddo o gyflogaeth yn fwy na therfyn y cyfandaliad.
 tax-year-summary.message.C159102                               = mae swm y Lwfans Buddsoddiad Blynyddol yr hawliwyd gennych ar gyfer eich llety gwyliau wedi’i ddodrefnu yn yr AEE neu dramor yn fwy na’r terfyn.
 tax-year-summary.message.C159106                               = mae swm y Lwfans Eiddo rydych wedi’i hawlio ar gyfer eich eiddo tramor yn fwy na’r terfyn.
