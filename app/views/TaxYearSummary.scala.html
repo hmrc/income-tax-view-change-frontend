@@ -60,15 +60,15 @@
     @if(model.messages.exists(_.errorMessages.size > 1)) {
         @errorMessageHeader(s"tax-year-summary.message.header")
         <ul class="govuk-list govuk-list--bullet">
-            @for(message <- model.messages.map(_.errorMessages.sortBy(_.id)).getOrElse(Seq())) {
-                @multipleErrorMessage(s"tax-year-summary.message.${message.id}")
+            @for(message <- model.messages.map(_.errorMessages).getOrElse(Seq())) {
+                @multipleErrorMessage(s"tax-year-summary.message.${message.id}", message.text)
             }
         </ul>
         @errorMessageAction(s"tax-year-summary.message.action")
     } else if(model.messages.exists(_.errorMessages.size == 1)) {
         @errorMessageHeader(s"tax-year-summary.message.header")
-        @for(message <- model.messages.map(_.errorMessages.sortBy(_.id)).getOrElse(Seq())) {
-            @singleErrorMessage(s"tax-year-summary.message.${message.id}")
+        @for(message <- model.messages.map(_.errorMessages).getOrElse(Seq())) {
+            @singleErrorMessage(s"tax-year-summary.message.${message.id}", message.text)
         }
         @errorMessageAction(s"tax-year-summary.message.action")
     } else {
@@ -85,13 +85,13 @@
     <h2 class="govuk-heading-m">@messages(header)</h2>
 }
 
-@singleErrorMessage(errorMessage: String) = {
-    @govukInsetText(InsetText(classes="govuk-insettext-zero-spacing", content = HtmlContent(Html(messages(errorMessage)))))
+@singleErrorMessage(errorMessage: String, messageValue: String) = {
+    @govukInsetText(InsetText(classes="govuk-insettext-zero-spacing", content = HtmlContent(Html(messages(errorMessage, messageValue)))))
 }
 
-@multipleErrorMessage(errorMessage: String) = {
+@multipleErrorMessage(errorMessage: String, messageValue: String) = {
     <li>
-        @govukInsetText(InsetText(classes="govuk-insettext-zero-spacing", content = HtmlContent(Html(messages(errorMessage)))))
+        @govukInsetText(InsetText(classes="govuk-insettext-zero-spacing", content = HtmlContent(Html(messages(errorMessage, messageValue)))))
     </li>
 }
 

@@ -22,6 +22,7 @@ import config.featureswitch.{CodingOut, FeatureSwitching, ForecastCalculation, M
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
 import forms.utils.SessionKeys.{calcPagesBackPage, gatewayPage}
+import helpers.servicemocks.AuthStub.messagesAPI
 import mocks.MockItvcErrorHandler
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicateNoCache}
 import mocks.services.{MockCalculationService, MockFinancialDetailsService, MockNextUpdatesService}
@@ -65,6 +66,7 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
     MockIncomeSourceDetailsPredicateNoCache,
     app.injector.instanceOf[NinoPredicate],
     mockNextUpdatesService,
+    messagesAPI,
     mockAuthService,
     app.injector.instanceOf[NavBarPredicate],
     mockAuditingService

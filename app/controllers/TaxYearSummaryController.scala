@@ -31,7 +31,7 @@ import models.liabilitycalculation.viewmodels.TaxYearSummaryViewModel
 import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse, LiabilityCalculationResponseModel}
 import models.nextUpdates.ObligationsModel
 import play.api.Logger
-import play.api.i18n.{I18nSupport, Messages}
+import play.api.i18n.{I18nSupport, Lang, Messages, MessagesApi}
 import play.api.mvc._
 import services.{CalculationService, DateService, FinancialDetailsService, IncomeSourceDetailsService, NextUpdatesService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
@@ -54,6 +54,7 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
                                          retrieveIncomeSourcesNoCache: IncomeSourceDetailsPredicateNoCache,
                                          retrieveNino: NinoPredicate,
                                          nextUpdatesService: NextUpdatesService,
+                                         messages: MessagesApi,
                                          val authorisedFunctions: AuthorisedFunctions,
                                          val retrieveBtaNavBar: NavBarPredicate,
                                          val auditingService: AuditingService)
@@ -84,7 +85,7 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
                   )(implicit mtdItUser: MtdItUser[_]): Result = {
     liabilityCalc match {
       case liabilityCalc: LiabilityCalculationResponse =>
-        val taxYearSummaryViewModel: TaxYearSummaryViewModel = TaxYearSummaryViewModel(liabilityCalc)
+        val taxYearSummaryViewModel: TaxYearSummaryViewModel = TaxYearSummaryViewModel(formatErrorMessages(liabilityCalc, messages)(Lang("GB")))
         auditingService.extendedAudit(TaxYearSummaryResponseAuditModel(
           mtdItUser, documentDetailsWithDueDates, obligations, Some(taxYearSummaryViewModel), isEnabled(R7bTxmEvents)))
 
@@ -257,4 +258,12 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
   lazy val agentTaxYearsUrl: String = controllers.routes.TaxYearsController.showAgentTaxYears.url
   lazy val agentHomeUrl: String = controllers.routes.HomeController.showAgent.url
   lazy val agentWhatYouOweUrl: String = controllers.routes.WhatYouOweController.showAgent.url
+
+  private def formatErrorMessages(liabilityCalc: LiabilityCalculationResponse, messagesProperty: MessagesApi)(implicit lang: Lang): LiabilityCalculationResponse = {
+    for(errorMessages <- liabilityCalc.messages.get.errorMessages) {
+      val messageValue = errorMessages.text diff messagesProperty("tax-year-summary.message."+errorMessages.id)
+      errorMessages.text = messageValue
+    }
+    liabilityCalc
+  }
 }
