@@ -122,7 +122,7 @@ class TaxDueSummaryViewModelSpec extends UnitSpec {
           messages = Some(Messages(
             Some(List(Message("C22211", "info msg text1"))),
             Some(List(Message("C22214", "warn msg text1"))),
-            Some(List(Message("C22216", "error msg text1"))))
+            Some(List(Message("C22216", "Due to the level of your income, you are no longer eligible for Marriage Allowance and your claim will be cancelled."))))
           ),
           lossesAppliedToGeneralIncome = Some(12500),
           grossGiftAidPayments = Some(12500),

@@ -17,6 +17,7 @@
 package models.liabilitycalculation.viewmodels
 
 import implicits.ImplicitDateParser
+import models.liabilitycalculation.{Message, Messages}
 import testConstants.NewCalcBreakdownUnitTestConstants._
 import testUtils.UnitSpec
 
@@ -59,7 +60,12 @@ class TaxYearSummaryViewModelSpec extends UnitSpec with ImplicitDateParser {
           forecastAllowancesAndDeductions = Some(4200.00),
           forecastTotalTaxableIncome = Some(8300),
           periodFrom = Some(LocalDate.of(2018, 1, 1)),
-          periodTo = Some(LocalDate.of(2019, 1, 1))
+          periodTo = Some(LocalDate.of(2019, 1, 1)),
+          messages = Some(Messages(
+            info = Some(Seq(Message(id = "C22211", text = "info msg text1"))),
+            warnings = Some(Seq(Message(id = "C22214", text = "warn msg text1"))),
+            errors = Some(Seq(Message(id = "C22216", text = "Due to the level of your income, you are no longer eligible for Marriage Allowance and your claim will be cancelled.")))
+          ))
         )
 
         TaxYearSummaryViewModel(liabilityCalculationModelSuccessful) shouldBe expectedTaxYearSummaryViewModel
@@ -80,7 +86,12 @@ class TaxYearSummaryViewModelSpec extends UnitSpec with ImplicitDateParser {
             forecastAllowancesAndDeductions = Some(4200.00),
             forecastTotalTaxableIncome = Some(8300),
             periodFrom = Some(LocalDate.of(2018, 1, 1)),
-            periodTo = Some(LocalDate.of(2019, 1, 1))
+            periodTo = Some(LocalDate.of(2019, 1, 1)),
+            messages = Some(Messages(
+              info = Some(Seq(Message(id = "C22211", text = "info msg text1"))),
+              warnings = Some(Seq(Message(id = "C22214", text = "warn msg text1"))),
+              errors = Some(Seq(Message(id = "C22216", text = "Due to the level of your income, you are no longer eligible for Marriage Allowance and your claim will be cancelled.")))
+            ))
           )
 
           val liabilityCalculationModel = liabilityCalculationModelSuccessful.copy(
@@ -109,7 +120,12 @@ class TaxYearSummaryViewModelSpec extends UnitSpec with ImplicitDateParser {
             forecastAllowancesAndDeductions = Some(4200.00),
             forecastTotalTaxableIncome = Some(8300),
             periodFrom = Some(LocalDate.of(2018, 1, 1)),
-            periodTo = Some(LocalDate.of(2019, 1, 1))
+            periodTo = Some(LocalDate.of(2019, 1, 1)),
+            messages = Some(Messages(
+              info = Some(Seq(Message(id = "C22211", text = "info msg text1"))),
+              warnings = Some(Seq(Message(id = "C22214", text = "warn msg text1"))),
+              errors = Some(Seq(Message(id = "C22216", text = "Due to the level of your income, you are no longer eligible for Marriage Allowance and your claim will be cancelled.")))
+            ))
           )
 
           val liabilityCalculationModel = liabilityCalculationModelSuccessful.copy(

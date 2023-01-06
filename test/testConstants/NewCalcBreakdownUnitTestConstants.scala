@@ -49,7 +49,7 @@ object NewCalcBreakdownUnitTestConstants {
     messages = Some(Messages(
       info = Some(Seq(Message(id = "C22211", text = "info msg text1"))),
       warnings = Some(Seq(Message(id = "C22214", text = "warn msg text1"))),
-      errors = Some(Seq(Message(id = "C22216", text = "error msg text1")))
+      errors = Some(Seq(Message(id = "C22216", text = "Due to the level of your income, you are no longer eligible for Marriage Allowance and your claim will be cancelled.")))
     )),
     calculation = Some(Calculation(
       allowancesAndDeductions = Some(AllowancesAndDeductions(
