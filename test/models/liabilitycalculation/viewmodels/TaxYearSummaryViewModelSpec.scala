@@ -64,7 +64,7 @@ class TaxYearSummaryViewModelSpec extends UnitSpec with ImplicitDateParser {
           messages = Some(Messages(
             info = Some(Seq(Message(id = "C22211", text = "info msg text1"))),
             warnings = Some(Seq(Message(id = "C22214", text = "warn msg text1"))),
-            errors = Some(Seq(Message(id = "C22216", text = "Due to the level of your income, you are no longer eligible for Marriage Allowance and your claim will be cancelled.")))
+            errors = Some(Seq(Message(id = "C55009", text = "updates cannot include gaps.")))
           ))
         )
 
@@ -90,7 +90,7 @@ class TaxYearSummaryViewModelSpec extends UnitSpec with ImplicitDateParser {
             messages = Some(Messages(
               info = Some(Seq(Message(id = "C22211", text = "info msg text1"))),
               warnings = Some(Seq(Message(id = "C22214", text = "warn msg text1"))),
-              errors = Some(Seq(Message(id = "C22216", text = "Due to the level of your income, you are no longer eligible for Marriage Allowance and your claim will be cancelled.")))
+              errors = Some(Seq(Message(id = "C55009", text = "updates cannot include gaps.")))
             ))
           )
 
@@ -124,7 +124,7 @@ class TaxYearSummaryViewModelSpec extends UnitSpec with ImplicitDateParser {
             messages = Some(Messages(
               info = Some(Seq(Message(id = "C22211", text = "info msg text1"))),
               warnings = Some(Seq(Message(id = "C22214", text = "warn msg text1"))),
-              errors = Some(Seq(Message(id = "C22216", text = "Due to the level of your income, you are no longer eligible for Marriage Allowance and your claim will be cancelled.")))
+              errors = Some(Seq(Message(id = "C55009", text = "updates cannot include gaps.")))
             ))
           )
 
@@ -138,6 +138,32 @@ class TaxYearSummaryViewModelSpec extends UnitSpec with ImplicitDateParser {
       }
     }
 
+    "error in tax calculation" should {
+      "create a TaxYearSummaryViewModel with multiple error message" in {
+        TaxYearSummaryViewModel(liabilityCalculationModelErrorMessages) shouldBe
+          TaxYearSummaryViewModel(
+            timestamp = None,
+            crystallised = None,
+            unattendedCalc = false,
+            taxDue = 0.0,
+            income = 0,
+            deductions = 0.0,
+            totalTaxableIncome = 0,
+            forecastIncome = None,
+            forecastIncomeTaxAndNics = None,
+            forecastAllowancesAndDeductions = None,
+            periodFrom = None,
+            periodTo = None,
+            messages = Some(Messages(
+              errors = Some(List(
+                Message("C15015", "error msg text1"),
+                Message("C15016", "error msg text2"),
+                Message("C15102", "error msg text3"),
+              ))
+            ))
+          )
+      }
+    }
 
     "return unattendedCalc as true when calculationReason is 'unattendedCalculation'" in {
       TaxYearSummaryViewModel(liabilityCalculationModelDeductionsMinimal(calculationReason = Some("unattendedCalculation"))) shouldBe
