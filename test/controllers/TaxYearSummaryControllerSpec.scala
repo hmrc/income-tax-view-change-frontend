@@ -66,7 +66,7 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
     MockIncomeSourceDetailsPredicateNoCache,
     app.injector.instanceOf[NinoPredicate],
     mockNextUpdatesService,
-    messagesAPI,
+    messagesApi,
     mockAuthService,
     app.injector.instanceOf[NavBarPredicate],
     mockAuditingService
