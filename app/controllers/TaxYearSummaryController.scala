@@ -28,7 +28,7 @@ import forms.utils.SessionKeys.{calcPagesBackPage, gatewayPage}
 import models.financialDetails.MfaDebitUtils.filterMFADebits
 import models.financialDetails.{DocumentDetailWithDueDate, FinancialDetailsErrorModel, FinancialDetailsModel}
 import models.liabilitycalculation.viewmodels.TaxYearSummaryViewModel
-import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse, LiabilityCalculationResponseModel}
+import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse, LiabilityCalculationResponseModel, Message}
 import models.nextUpdates.ObligationsModel
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Lang, Messages, MessagesApi}
@@ -260,13 +260,14 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
   lazy val agentWhatYouOweUrl: String = controllers.routes.WhatYouOweController.showAgent.url
 
   def formatErrorMessages(liabilityCalc: LiabilityCalculationResponse, messagesProperty: MessagesApi)(implicit lang: Lang): LiabilityCalculationResponse = {
-    for (errorMessages <- liabilityCalc.messages.get.errorMessages) {
-      val key = "tax-year-summary.message." + errorMessages.id
+
+    val errMessages = liabilityCalc.messages.get.errorMessages.map(msg => {
+      val key = "tax-year-summary.message." + msg.id
+      val nMsg = Message(id = msg.id, text = "")
       if (messagesProperty.isDefinedAt(key))
-        errorMessages.text = errorMessages.text diff messagesProperty(key)
-      else
-        errorMessages.text = ""
-    }
-    liabilityCalc
+        nMsg.text = msg.text diff messagesProperty(key)
+      nMsg
+    })
+    liabilityCalc.copy(messages = Some(liabilityCalc.messages.get.copy(errors = Some(errMessages))))
   }
 }
