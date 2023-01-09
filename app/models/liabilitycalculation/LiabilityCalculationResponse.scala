@@ -62,10 +62,10 @@ object PersonalInformation {
   implicit val format: OFormat[PersonalInformation] = Json.format[PersonalInformation]
 }
 
-case class Message(id: String, var text: String)
+case class Message(id: String, text: String)
 
 object Message {
-  implicit var format: OFormat[Message] = Json.format[Message]
+  implicit val format: OFormat[Message] = Json.format[Message]
 }
 
 case class Messages(info: Option[Seq[Message]] = None, warnings: Option[Seq[Message]] = None, errors: Option[Seq[Message]] = None) {

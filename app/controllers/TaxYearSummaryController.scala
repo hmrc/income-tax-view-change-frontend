@@ -263,9 +263,10 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
 
     val errMessages = liabilityCalc.messages.get.errorMessages.map(msg => {
       val key = "tax-year-summary.message." + msg.id
-      val nMsg = Message(id = msg.id, text = "")
-      if (messagesProperty.isDefinedAt(key))
-        nMsg.text = msg.text diff messagesProperty(key)
+      var nMsg = Message(id = msg.id, text = "")
+      if (messagesProperty.isDefinedAt(key)) {
+        nMsg = Message(id = msg.id, text = msg.text diff messagesProperty(key))
+      }
       nMsg
     })
     liabilityCalc.copy(messages = Some(liabilityCalc.messages.get.copy(errors = Some(errMessages))))
