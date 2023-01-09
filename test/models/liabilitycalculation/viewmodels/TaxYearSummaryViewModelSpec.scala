@@ -64,7 +64,7 @@ class TaxYearSummaryViewModelSpec extends UnitSpec with ImplicitDateParser {
           messages = Some(Messages(
             info = Some(Seq(Message(id = "C22211", text = "info msg text1"))),
             warnings = Some(Seq(Message(id = "C22214", text = "warn msg text1"))),
-            errors = Some(Seq(Message(id = "C55009", text = "updates cannot include gaps.")))
+            errors = Some(Seq(Message(id = "C22216", text = "error msg text1")))
           ))
         )
 
@@ -90,7 +90,7 @@ class TaxYearSummaryViewModelSpec extends UnitSpec with ImplicitDateParser {
             messages = Some(Messages(
               info = Some(Seq(Message(id = "C22211", text = "info msg text1"))),
               warnings = Some(Seq(Message(id = "C22214", text = "warn msg text1"))),
-              errors = Some(Seq(Message(id = "C55009", text = "updates cannot include gaps.")))
+              errors = Some(Seq(Message(id = "C22216", text = "error msg text1")))
             ))
           )
 
@@ -124,7 +124,7 @@ class TaxYearSummaryViewModelSpec extends UnitSpec with ImplicitDateParser {
             messages = Some(Messages(
               info = Some(Seq(Message(id = "C22211", text = "info msg text1"))),
               warnings = Some(Seq(Message(id = "C22214", text = "warn msg text1"))),
-              errors = Some(Seq(Message(id = "C55009", text = "updates cannot include gaps.")))
+              errors = Some(Seq(Message(id = "C22216", text = "error msg text1")))
             ))
           )
 
@@ -156,9 +156,9 @@ class TaxYearSummaryViewModelSpec extends UnitSpec with ImplicitDateParser {
             periodTo = None,
             messages = Some(Messages(
               errors = Some(List(
-                Message("C15015", "error msg text1"),
-                Message("C15016", "error msg text2"),
-                Message("C15102", "error msg text3"),
+                Message("C55012", "the update must align to the accounting period end date of 5 January 2023."),
+                Message("C15507", "you’ve claimed £2000 in Property Income Allowance but this is more than turnover for your UK property."),
+                Message("C15510", "the Rent a Room relief claimed for a jointly let property cannot be more than 10% of the Rent a Room limit."),
               ))
             ))
           )

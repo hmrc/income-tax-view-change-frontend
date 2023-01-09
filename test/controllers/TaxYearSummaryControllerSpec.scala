@@ -18,7 +18,7 @@ package controllers
 
 import audit.mocks.MockAuditingService
 import config.featureswitch.FeatureSwitch.switches
-import config.featureswitch.{CodingOut, FeatureSwitching, ForecastCalculation, MFACreditsAndDebits}
+import config.featureswitch.{CodingOut, FeatureSwitching, ForecastCalculation, MFACreditsAndDebits, NavBarFs}
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
 import forms.utils.SessionKeys.{calcPagesBackPage, gatewayPage}
@@ -26,18 +26,20 @@ import mocks.MockItvcErrorHandler
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicateNoCache}
 import mocks.services.{MockCalculationService, MockFinancialDetailsService, MockNextUpdatesService}
 import models.financialDetails.DocumentDetailWithDueDate
+import models.liabilitycalculation.{Message, Messages}
 import models.liabilitycalculation.viewmodels.TaxYearSummaryViewModel
 import models.nextUpdates.{NextUpdatesErrorModel, ObligationsModel}
 import org.jsoup.Jsoup
 import org.scalatest.Assertion
 import play.api.http.Status
 import play.api.http.Status.INTERNAL_SERVER_ERROR
+import play.api.i18n.Lang
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers._
 import services.DateService
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testAgentAuthRetrievalSuccessNoEnrolment, testMtditid, testTaxYear, testYearPlusOne, testYearPlusTwo}
 import testConstants.FinancialDetailsTestConstants._
-import testConstants.NewCalcBreakdownUnitTestConstants.{liabilityCalculationModelSuccessful, liabilityCalculationModelSuccessfulNotCrystallised}
+import testConstants.NewCalcBreakdownUnitTestConstants.{liabilityCalculationModelErrorMessages, liabilityCalculationModelSuccessful, liabilityCalculationModelSuccessfulNotCrystallised}
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.BearerTokenExpired
 import uk.gov.hmrc.http.InternalServerException
@@ -370,7 +372,6 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
       }
     }
 
-
     s"getFinancialDetails returns a $NOT_FOUND" should {
       "show the Tax Year Summary Page" in {
         mockSingleBusinessIncomeSource()
@@ -493,6 +494,53 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
           contentType(result) shouldBe Some("text/html")
         }
       }
+    }
+
+    "liability Calculation has error messages" should {
+
+      "filter out the variable value from messages" in {
+        val actual = TestTaxYearSummaryController.formatErrorMessages(liabilityCalculationModelErrorMessages,messagesApi)(Lang("GB"))
+
+        actual shouldBe liabilityCalculationModelErrorMessages.copy(messages = Some(Messages(
+          errors = Some(List(
+            Message("C55012", "5 January 2023"),
+            Message("C15507", "£2000"),
+            Message("C15510", "10"),
+            Message("C55009", ""),
+          ))
+        )))
+      }
+
+      "show the Tax Year Summary Page with error messages" in {
+        disable(NavBarFs)
+        mockSingleBusinessIncomeSource()
+        mockCalculationWithErrorMessages(testMtditid)
+        mockFinancialDetailsSuccess()
+        mockgetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
+          toDate = LocalDate.of(testTaxYear, 4, 5))(
+          response = testObligtionsModel
+        )
+        val errorMessageVariableValues = TestTaxYearSummaryController.formatErrorMessages(liabilityCalculationModelErrorMessages,messagesApi)(Lang("GB"))
+        val calcOverview: TaxYearSummaryViewModel = TaxYearSummaryViewModel(errorMessageVariableValues)
+        val expectedContent: String = taxYearSummaryView(
+          testTaxYear,
+          Some(calcOverview),
+          testChargesList,
+          testObligtionsModel,
+          taxYearsBackLink,
+          codingOutEnabled = true
+        ).toString
+
+        val result = TestTaxYearSummaryController.renderTaxYearSummaryPage(testTaxYear)(fakeRequestWithActiveSessionWithReferer(referer = taxYearsBackLink))
+
+        status(result) shouldBe Status.OK
+        contentAsString(result) shouldBe expectedContent
+        contentType(result) shouldBe Some("text/html")
+        result.futureValue.session.get(gatewayPage) shouldBe Some("taxYearSummary")
+        result.futureValue.session.get(calcPagesBackPage) shouldBe Some("ITVC")
+      }
+
+
     }
   }
 

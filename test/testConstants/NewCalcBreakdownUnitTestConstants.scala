@@ -49,7 +49,7 @@ object NewCalcBreakdownUnitTestConstants {
     messages = Some(Messages(
       info = Some(Seq(Message(id = "C22211", text = "info msg text1"))),
       warnings = Some(Seq(Message(id = "C22214", text = "warn msg text1"))),
-      errors = Some(Seq(Message(id = "C22216", text = "Due to the level of your income, you are no longer eligible for Marriage Allowance and your claim will be cancelled.")))
+      errors = Some(Seq(Message(id = "C22216", text = "error msg text1")))
     )),
     calculation = Some(Calculation(
       allowancesAndDeductions = Some(AllowancesAndDeductions(
@@ -283,17 +283,26 @@ object NewCalcBreakdownUnitTestConstants {
       calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
       crystallised = Some(true),
       calculationReason = Some("customerRequest"),
-      periodFrom = Some(LocalDate.of(2018,1,1)),
-      periodTo = Some(LocalDate.of(2019,1,1))
+      periodFrom = Some(LocalDate.of(2018, 1, 1)),
+      periodTo = Some(LocalDate.of(2019, 1, 1))
     )
   )
+
+  val liabilityCalculationModelErrorMessages = liabilityCalculationModelDeductionsMinimal().copy(messages = Some(Messages(
+    errors = Some(List(
+      Message("C55012", "the update must align to the accounting period end date of 5 January 2023."),
+      Message("C15507", "you’ve claimed £2000 in Property Income Allowance but this is more than turnover for your UK property."),
+      Message("C15510", "the Rent a Room relief claimed for a jointly let property cannot be more than 10% of the Rent a Room limit."),
+      Message("C55009", "updates cannot include gaps.")
+    ))
+  )))
 
   val liabilityCalculationModelSuccessfulNotCrystallised = liabilityCalculationModelSuccessful.copy(metadata =
     Metadata(
       calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
       crystallised = Some(false),
-      periodFrom = Some(LocalDate.of(2018,1,1)),
-      periodTo = Some(LocalDate.of(2019,1,1))
+      periodFrom = Some(LocalDate.of(2018, 1, 1)),
+      periodTo = Some(LocalDate.of(2019, 1, 1))
     )
 
   )
