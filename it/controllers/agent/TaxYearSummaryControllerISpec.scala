@@ -336,7 +336,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         result should have(
           httpStatus(OK),
           pageTitleAgent("tax-year-summary.heading"),
-          elementTextBySelectorList("#main-content", "dl", "div:nth-of-type(1)", "dd:nth-of-type(1)")("15 February 2019"),
+          elementTextBySelectorList("#main-content", "dl", "div:nth-of-type(1)", "div:nth-child(2)")("15 February 2019"),
           elementTextBySelectorList("#main-content", "dl", "div:nth-of-type(2)", "dd:nth-of-type(1)")("£90,500.99"),
           elementTextBySelectorList("#income-deductions-contributions-table", "tbody", "tr:nth-child(1)", "td:nth-of-type(1)")("£12,500.00"),
           elementTextBySelectorList("#income-deductions-contributions-table", "tbody", "tr:nth-child(2)", "td:nth-of-type(1)")("£12,500.00"),
@@ -409,7 +409,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         result should have(
           httpStatus(OK),
           pageTitleAgent("tax-year-summary.heading"),
-          elementTextBySelectorList("#main-content", "dl", "div:nth-of-type(1)", "dd:nth-of-type(1)")("15 February 2019"),
+          elementTextBySelectorList("#main-content", "dl", "div:nth-of-type(1)", "div:nth-child(2)")("15 February 2019"),
           elementTextBySelectorList("#main-content", "dl", "div:nth-of-type(2)", "dd:nth-of-type(1)")("£90,500.99"),
           elementTextBySelectorList("#income-deductions-contributions-table", "tbody", "tr:nth-child(1)", "td:nth-of-type(1)")("£12,500.00"),
           elementTextBySelectorList("#income-deductions-contributions-table", "tbody", "tr:nth-child(2)", "td:nth-of-type(1)")("£12,500.00"),
@@ -528,7 +528,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         result should have(
           httpStatus(OK),
           pageTitleAgent("tax-year-summary.heading"),
-          elementTextBySelectorList("#main-content", "dl", "div:nth-of-type(1)", "dd:nth-of-type(1)")("15 February 2019"),
+          elementTextBySelectorList("#main-content", "dl", "div:nth-of-type(1)", "div:nth-child(2)")("15 February 2019"),
           elementTextBySelectorList("#main-content", "dl", "div:nth-of-type(2)", "dd:nth-of-type(1)")("£90,500.99"),
           elementTextBySelectorList("#income-deductions-contributions-table", "tbody", "tr:nth-child(1)", "td:nth-of-type(1)")("£12,500.00"),
           elementTextBySelectorList("#income-deductions-contributions-table", "tbody", "tr:nth-child(2)", "td:nth-of-type(1)")("£12,500.00"),
@@ -592,7 +592,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         result should have(
           httpStatus(OK),
           pageTitleAgent("tax-year-summary.heading"),
-          elementTextBySelectorList("#main-content", "dl", "div:nth-of-type(1)", "dd:nth-of-type(1)")("15 February 2019"),
+          elementTextBySelectorList("#main-content", "dl", "div:nth-of-type(1)", "div:nth-child(2)")("15 February 2019"),
           elementTextBySelectorList("#main-content", "dl", "div:nth-of-type(2)", "dd:nth-of-type(1)")("£90,500.99"),
           elementTextBySelectorList("#income-deductions-contributions-table", "tbody", "tr:nth-child(1)", "td:nth-of-type(1)")("£12,500.00"),
           elementTextBySelectorList("#income-deductions-contributions-table", "tbody", "tr:nth-child(2)", "td:nth-of-type(1)")("£12,500.00"),
