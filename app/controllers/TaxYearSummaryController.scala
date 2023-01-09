@@ -267,7 +267,7 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
   def formatErrorMessages(liabilityCalc: LiabilityCalculationResponse, messagesProperty: MessagesApi)
                          (implicit lang: Lang, messages: Messages): LiabilityCalculationResponse = {
     if(!liabilityCalc.messages.isEmpty){
-      val pattern = DateTimeFormatter.ofPattern("dd MMMM yyyy")
+      val pattern = DateTimeFormatter.ofPattern("d MMMM yyyy")
       val errorMessagesDateFormat: Seq[String] = Seq("tax-year-summary.message.C15014", "tax-year-summary.message.C55014", "tax-year-summary.message.C55008", "tax-year-summary.message.C55011", "tax-year-summary.message.C55012", "tax-year-summary.message.C55013")
       val errMessages = liabilityCalc.messages.get.errorMessages.map(msg => {
         val key = "tax-year-summary.message." + msg.id
