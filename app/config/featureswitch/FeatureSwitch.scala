@@ -38,7 +38,6 @@ object FeatureSwitch {
     CreditsRefundsRepay,
     WhatYouOweCreditAmount,
     R7bTxmEvents,
-    NewStateBenefitIncome,
     MFACreditsAndDebits,
     PaymentHistoryRefunds,
     TimeMachineAddYear,
@@ -108,11 +107,6 @@ case object WhatYouOweCreditAmount extends FeatureSwitch {
 case object R7bTxmEvents extends FeatureSwitch {
   override val name = s"$prefix.enable-R7b-Txm-Events"
   override val displayText = "R7b Viewer TXM Events"
-}
-
-case object NewStateBenefitIncome extends FeatureSwitch {
-  override val name = s"$prefix.enable-new-state-benefit-income"
-  override val displayText = "New State Benefit Income"
 }
 
 case object MFACreditsAndDebits extends FeatureSwitch {
