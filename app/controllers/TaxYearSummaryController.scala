@@ -25,6 +25,7 @@ import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import enums.GatewayPage.TaxYearSummaryPage
 import forms.utils.SessionKeys.{calcPagesBackPage, gatewayPage}
+import implicits.ImplicitDateFormatter
 import models.financialDetails.MfaDebitUtils.filterMFADebits
 import models.financialDetails.{DocumentDetailWithDueDate, FinancialDetailsErrorModel, FinancialDetailsModel}
 import models.liabilitycalculation.viewmodels.TaxYearSummaryViewModel
@@ -36,10 +37,12 @@ import play.api.mvc._
 import services.{CalculationService, DateService, FinancialDetailsService, IncomeSourceDetailsService, NextUpdatesService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.language.LanguageUtils
 import views.html.TaxYearSummary
 
 import java.net.URI
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -54,7 +57,8 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
                                          retrieveIncomeSourcesNoCache: IncomeSourceDetailsPredicateNoCache,
                                          retrieveNino: NinoPredicate,
                                          nextUpdatesService: NextUpdatesService,
-                                         messages: MessagesApi,
+                                         messagesApi: MessagesApi,
+                                         val languageUtils: LanguageUtils,
                                          val authorisedFunctions: AuthorisedFunctions,
                                          val retrieveBtaNavBar: NavBarPredicate,
                                          val auditingService: AuditingService)
@@ -63,7 +67,7 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
                                          val agentItvcErrorHandler: AgentItvcErrorHandler,
                                          mcc: MessagesControllerComponents,
                                          val ec: ExecutionContext)
-  extends ClientConfirmedController with FeatureSwitching with I18nSupport {
+  extends ClientConfirmedController with FeatureSwitching with I18nSupport with ImplicitDateFormatter{
 
   val action: ActionBuilder[MtdItUser, AnyContent] = checkSessionTimeout andThen authenticate andThen
     retrieveNino andThen retrieveIncomeSourcesNoCache andThen retrieveBtaNavBar
@@ -85,7 +89,8 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
                   )(implicit mtdItUser: MtdItUser[_]): Result = {
     liabilityCalc match {
       case liabilityCalc: LiabilityCalculationResponse =>
-        val taxYearSummaryViewModel: TaxYearSummaryViewModel = TaxYearSummaryViewModel(formatErrorMessages(liabilityCalc, messages)(Lang("GB")))
+        val lang: Seq[Lang] = Seq(languageUtils.getCurrentLang)
+        val taxYearSummaryViewModel: TaxYearSummaryViewModel = TaxYearSummaryViewModel(formatErrorMessages(liabilityCalc, messagesApi)(Lang("GB"), messagesApi.preferred(lang)))
         auditingService.extendedAudit(TaxYearSummaryResponseAuditModel(
           mtdItUser, documentDetailsWithDueDates, obligations, Some(taxYearSummaryViewModel), isEnabled(R7bTxmEvents)))
 
@@ -259,14 +264,21 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
   lazy val agentHomeUrl: String = controllers.routes.HomeController.showAgent.url
   lazy val agentWhatYouOweUrl: String = controllers.routes.WhatYouOweController.showAgent.url
 
-  def formatErrorMessages(liabilityCalc: LiabilityCalculationResponse, messagesProperty: MessagesApi)(implicit lang: Lang): LiabilityCalculationResponse = {
+  def formatErrorMessages(liabilityCalc: LiabilityCalculationResponse, messagesProperty: MessagesApi)
+                         (implicit lang: Lang, messages: Messages): LiabilityCalculationResponse = {
     if(!liabilityCalc.messages.isEmpty){
+      val pattern = DateTimeFormatter.ofPattern("dd MMMM yyyy")
+      val errorMessagesDateFormat: Seq[String] = Seq("tax-year-summary.message.C15014", "tax-year-summary.message.C55014", "tax-year-summary.message.C55008", "tax-year-summary.message.C55011", "tax-year-summary.message.C55012", "tax-year-summary.message.C55013")
       val errMessages = liabilityCalc.messages.get.errorMessages.map(msg => {
         val key = "tax-year-summary.message." + msg.id
         var nMsg = Message(id = msg.id, text = "")
         if (messagesProperty.isDefinedAt(key)) {
           val pattern = """\{([0-9}]+)}""".r
           nMsg = Message(id = msg.id, text = msg.text diff pattern.replaceAllIn(messagesProperty(key), "##"))
+        }
+        if(errorMessagesDateFormat.contains(key)) {
+          val dateText = LocalDate.parse(nMsg.text, pattern).toLongDate
+          nMsg = Message(id = msg.id, text = dateText)
         }
         nMsg
       })

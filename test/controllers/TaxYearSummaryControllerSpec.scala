@@ -67,6 +67,7 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
     app.injector.instanceOf[NinoPredicate],
     mockNextUpdatesService,
     messagesApi,
+    languageUtils,
     mockAuthService,
     app.injector.instanceOf[NavBarPredicate],
     mockAuditingService
@@ -499,7 +500,7 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
     "liability Calculation has error messages" should {
 
       "filter out the variable value from messages" in {
-        val actual = TestTaxYearSummaryController.formatErrorMessages(liabilityCalculationModelErrorMessages,messagesApi)(Lang("GB"))
+        val actual = TestTaxYearSummaryController.formatErrorMessages(liabilityCalculationModelErrorMessages, messagesApi)(Lang("GB"), messages)
 
         actual shouldBe liabilityCalculationModelErrorMessages.copy(messages = Some(Messages(
           errors = Some(List(
@@ -520,7 +521,7 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
           toDate = LocalDate.of(testTaxYear, 4, 5))(
           response = testObligtionsModel
         )
-        val errorMessageVariableValues = TestTaxYearSummaryController.formatErrorMessages(liabilityCalculationModelErrorMessages,messagesApi)(Lang("GB"))
+        val errorMessageVariableValues = TestTaxYearSummaryController.formatErrorMessages(liabilityCalculationModelErrorMessages,messagesApi)(Lang("GB"), messages)
         val calcOverview: TaxYearSummaryViewModel = TaxYearSummaryViewModel(errorMessageVariableValues)
         val expectedContent: String = taxYearSummaryView(
           testTaxYear,
