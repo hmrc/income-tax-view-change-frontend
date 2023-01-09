@@ -265,7 +265,8 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
       val key = "tax-year-summary.message." + msg.id
       var nMsg = Message(id = msg.id, text = "")
       if (messagesProperty.isDefinedAt(key)) {
-        nMsg = Message(id = msg.id, text = msg.text diff messagesProperty(key))
+        val pattern = """\{([0-9}]+)}""".r
+        nMsg = Message(id = msg.id, text = msg.text diff pattern.replaceAllIn(messagesProperty(key), "##"))
       }
       nMsg
     })
