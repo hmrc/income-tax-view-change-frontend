@@ -22,6 +22,7 @@ import controllers.predicates.NinoPredicate
 import mocks.controllers.predicates.MockAuthenticationPredicate
 import play.api.http.Status
 import play.api.mvc.MessagesControllerComponents
+import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation}
 import testConstants.BaseTestConstants.testNino
 import testUtils.TestSupport
 
@@ -49,6 +50,7 @@ class UpliftSuccessControllerSpec extends TestSupport with MockAuthenticationPre
       whenReady(result) { response =>
         verifyAudit(expectedIvOutcomeSuccessAuditModel)
         response.header.status shouldBe Status.SEE_OTHER
+        redirectLocation(result) shouldBe Some(controllers.routes.HomeController.show().url)
       }
     }
   }
