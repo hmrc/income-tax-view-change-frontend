@@ -260,19 +260,20 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
   lazy val agentWhatYouOweUrl: String = controllers.routes.WhatYouOweController.showAgent.url
 
   def formatErrorMessages(liabilityCalc: LiabilityCalculationResponse, messagesProperty: MessagesApi)(implicit lang: Lang): LiabilityCalculationResponse = {
-    if (!liabilityCalc.messages.isEmpty) {
+    if(!liabilityCalc.messages.isEmpty){
       val errMessages = liabilityCalc.messages.get.errorMessages.map(msg => {
         val key = "tax-year-summary.message." + msg.id
         var nMsg = Message(id = msg.id, text = "")
         if (messagesProperty.isDefinedAt(key)) {
-          nMsg = Message(id = msg.id, text = msg.text diff messagesProperty(key))
+          val pattern = """\{([0-9}]+)}""".r
+          nMsg = Message(id = msg.id, text = msg.text diff pattern.replaceAllIn(messagesProperty(key), "##"))
         }
         nMsg
       })
       liabilityCalc.copy(messages = Some(liabilityCalc.messages.get.copy(errors = Some(errMessages))))
-    } else {
+
+    }else{
       liabilityCalc
     }
-
   }
 }
