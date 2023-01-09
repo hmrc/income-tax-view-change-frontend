@@ -306,7 +306,7 @@
         @messages("tax-year-summary.heading")
     </h1>
     @modelOpt.map { model =>
-        @if(!model.crystallised.contains(true) && (model.messages == None || model.messages.exists(_.errorMessages.size == 0))) {
+        @if(!model.crystallised.contains(true) && (model.messages.isEmpty|| model.messages.exists(_.errorMessages.size == 0))) {
             @govukInsetText(InsetText(content = HtmlContent(
                 p(id=Some("calc-date-info"))(content = Html(
                     messages(if(isAgent) "tax-year-summary.agent.calc-from-last-time" else "tax-year-summary.calc-from-last-time",
@@ -314,7 +314,7 @@
                 )
             )))
         }
-        @if(model.messages == None || model.messages.exists(_.errorMessages.size == 0)) {
+        @if(model.messages.isEmpty || model.messages.exists(_.errorMessages.size == 0)) {
 
         <dl class="govuk-summary-list">
             <div class="govuk-summary-list__row">
