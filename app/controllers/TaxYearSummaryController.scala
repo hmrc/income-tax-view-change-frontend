@@ -268,7 +268,7 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
                          (implicit lang: Lang, messages: Messages): LiabilityCalculationResponse = {
     if(!liabilityCalc.messages.isEmpty){
       val pattern = DateTimeFormatter.ofPattern("d MMMM yyyy")
-      val errorMessagesDateFormat: Seq[String] = Seq("tax-year-summary.message.C15014", "tax-year-summary.message.C55014", "tax-year-summary.message.C55008", "tax-year-summary.message.C55011", "tax-year-summary.message.C55012", "tax-year-summary.message.C55013")
+      val errorMessagesDateFormat: Seq[String] = Seq("C15014", "C55014", "C55008", "C55011", "C55012", "C55013")
       val errMessages = liabilityCalc.messages.get.errorMessages.map(msg => {
         val key = "tax-year-summary.message." + msg.id
         var nMsg = Message(id = msg.id, text = "")
@@ -276,7 +276,7 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
           val pattern = """\{([0-9}]+)}""".r
           nMsg = Message(id = msg.id, text = msg.text diff pattern.replaceAllIn(messagesProperty(key), "##"))
         }
-        if(errorMessagesDateFormat.contains(key)) {
+        if(errorMessagesDateFormat.contains(msg.id)) {
           val dateText = LocalDate.parse(nMsg.text, pattern).toLongDate
           nMsg = Message(id = msg.id, text = dateText)
         }
