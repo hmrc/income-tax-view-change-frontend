@@ -24,6 +24,7 @@ To start all Service Manager services from the latest RELEASE version instead of
 sm --start ITVC_ALL --appendArgs '{"CITIZEN_DETAILS":["-Dmongodb.cid-sautr-cache.enabled=false"]}' -r
 ```
 
+some changes ...
 
 ### To run the application locally execute the following:
 
