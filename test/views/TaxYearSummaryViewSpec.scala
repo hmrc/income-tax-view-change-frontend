@@ -390,7 +390,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
         layoutContent.h2.selectFirst("h2").text().contains(taxCalculationHeading)
         println(layoutContent)
         layoutContent.selectHead("dl > div:nth-child(1) > dt:nth-child(1)").text shouldBe calculationDate
-        layoutContent.selectHead("dl > div:nth-child(1) > dd:nth-child(2)").text shouldBe calcDate
+        layoutContent.selectHead("dl > div:nth-child(1) > div:nth-child(2)").text shouldBe calcDate
       }
 
       "display the estimate due for an ongoing tax year" in new Setup(estimateView()) {
