@@ -25,7 +25,7 @@ case class TotalInterest(fromDate: LocalDate, fromRate: BigDecimal,
                          total: BigDecimal)
 
 case class RepaymentHistory(amountApprovedforRepayment: Option[BigDecimal],
-                            amountRequested: Option[BigDecimal],
+                            amountRequested: BigDecimal,
                             repaymentMethod: Option[String],
                             totalRepaymentAmount: Option[BigDecimal],
                             repaymentItems: Option[Seq[RepaymentItem]],

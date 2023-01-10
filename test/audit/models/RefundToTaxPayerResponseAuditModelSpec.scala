@@ -28,7 +28,7 @@ class RefundToTaxPayerResponseAuditModelSpec extends TestSupport {
   val testRepaymentHistory: RepaymentHistoryModel = RepaymentHistoryModel(
     List(RepaymentHistory(
       Some(705.2),
-      Some(705.2),
+      705.2,
       Some("BACS"),
       Some(12345),
       Some(Vector(

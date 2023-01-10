@@ -113,11 +113,11 @@
                         getRepaymentHistoryData(repaymentHistoryModel).repaymentRequestNumber
                     }</dd>
                 </div>
-                @if(getRepaymentHistoryData(repaymentHistoryModel).amountApprovedforRepayment.isEmpty || getRepaymentHistoryData(repaymentHistoryModel).amountRequested.getOrElse(throw MissingFieldException("Amount Requested")).toCurrencyString != getRepaymentHistoryData(repaymentHistoryModel).amountApprovedforRepayment.getOrElse(throw MissingFieldException("Requested Amount Item")).toCurrencyString) {
+                @if(getRepaymentHistoryData(repaymentHistoryModel).amountApprovedforRepayment.isEmpty || getRepaymentHistoryData(repaymentHistoryModel).amountRequested.toCurrencyString != getRepaymentHistoryData(repaymentHistoryModel).amountApprovedforRepayment.getOrElse(throw MissingFieldException("Requested Amount Item")).toCurrencyString) {
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">@messages("refund-to-taxpayer.tableHead.requested-amount")</dt>
                         <dd class="govuk-summary-list__value--numeric govuk-!-text-align-right">@{
-                            getRepaymentHistoryData(repaymentHistoryModel).amountRequested.getOrElse(throw MissingFieldException("Amount Requested")).toCurrencyString
+                            getRepaymentHistoryData(repaymentHistoryModel).amountRequested.toCurrencyString
                         }</dd>
                     </div>
                 }

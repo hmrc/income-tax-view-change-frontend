@@ -48,7 +48,7 @@ object RepaymentHistoryAggSpec extends Properties("RepaymentHistory_aggregate") 
     items <- Gen.listOf(repaymentSupplementItemGen)
   } yield RepaymentHistory(
     amountApprovedforRepayment = None,
-    amountRequested = Some(BigDecimal("120.05")),
+    amountRequested = BigDecimal("120.05"),
     repaymentMethod = Some(""),
     totalRepaymentAmount = Some(BigDecimal("20.05")),
     repaymentItems = Some(Seq(RepaymentItem(repaymentSupplementItem = items))),

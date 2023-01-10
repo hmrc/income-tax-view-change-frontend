@@ -19,23 +19,33 @@ package models
 import models.repaymentHistory.RepaymentHistoryModel
 import org.scalatest.Matchers
 import play.api.libs.json.Json
-import testConstants.RepaymentHistoryTestConstants.{repaymentHistoryFull, validRepaymentHistoryJson}
+import testConstants.RepaymentHistoryTestConstants.{repaymentHistoryOneRSI, repaymentHistoryTwoRSI, validRepaymentHistoryOneRSIJson, validRepaymentHistoryTwoRSIJson}
 import testUtils.UnitSpec
 
 class RepaymentHistoryResponseModelSpec extends UnitSpec with Matchers {
 
   "The RepaymentHistoryModel" should {
 
-    "be formatted to JSON correctly" in {
-      Json.toJson[RepaymentHistoryModel](RepaymentHistoryModel(List(repaymentHistoryFull))) shouldBe validRepaymentHistoryJson
+    "read from json" when {
+      "the response has one repayment supplement item" in {
+        Json.fromJson[RepaymentHistoryModel](validRepaymentHistoryOneRSIJson).fold(
+          invalid => invalid,
+          valid => valid) shouldBe RepaymentHistoryModel(List(repaymentHistoryOneRSI))
+      }
+      "the response has two repayment supplement items" in {
+        Json.fromJson[RepaymentHistoryModel](validRepaymentHistoryTwoRSIJson).fold(
+          invalid => invalid,
+          valid => valid) shouldBe RepaymentHistoryModel(List(repaymentHistoryTwoRSI))
+      }
     }
 
-    "be able to parse a JSON into the Model" in {
-      Json.fromJson[RepaymentHistoryModel](validRepaymentHistoryJson).fold(
-        invalid => invalid,
-        valid => valid) shouldBe RepaymentHistoryModel(List(repaymentHistoryFull))
+    "write to json" when {
+      "the model has one repayment supplement item" in {
+        Json.toJson[RepaymentHistoryModel](RepaymentHistoryModel(List(repaymentHistoryOneRSI))) shouldBe validRepaymentHistoryOneRSIJson
+      }
+      "the model has two repayment supplement items" in {
+        Json.toJson[RepaymentHistoryModel](RepaymentHistoryModel(List(repaymentHistoryTwoRSI))) shouldBe validRepaymentHistoryTwoRSIJson
+      }
     }
-
   }
-
 }
