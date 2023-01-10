@@ -16,9 +16,12 @@
 
 package models.liabilitycalculation
 
+import implicits.ImplicitDateFormatter
+import play.api.i18n.{Lang, MessagesApi}
 import play.api.libs.json._
 
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 
 sealed trait LiabilityCalculationResponseModel
@@ -78,8 +81,41 @@ case class Messages(info: Option[Seq[Message]] = None, warnings: Option[Seq[Mess
   val errorMessages: Seq[Message] = errors.getOrElse(Seq.empty)
 
   val genericMessages: Seq[Message] = allMessages.filter(message => acceptedMessages.contains(message.id))
+
+  def getErrorMessageVariables(messagesProperty: MessagesApi): Seq[Message] = {
+    val lang = Lang("GB")
+    val errMessages = errorMessages.map(msg => {
+      val key = "tax-year-summary.message." + msg.id
+      var nMsg = Message(id = msg.id, text = "")
+      if (messagesProperty.isDefinedAt(key)(lang)) {
+        val pattern = """\{([0-9}]+)}""".r
+        nMsg = Message(id = msg.id, text = msg.text diff pattern.replaceAllIn(messagesProperty(key)(lang), "##"))
+      }
+      nMsg
+    })
+    errMessages
+  }
+
 }
 
 object Messages {
   implicit val format: OFormat[Messages] = Json.format[Messages]
+
+  def translateMessageDateVariables(messages: Seq[Message])(implicit message: play.api.i18n.Messages, implicitDateFormatter: ImplicitDateFormatter): Seq[Message] = {
+
+    val pattern = DateTimeFormatter.ofPattern("d MMMM yyyy")
+    val errorMessagesDateFormat: Seq[String] = Seq("C15014", "C55014", "C55008", "C55011", "C55012", "C55013")
+    // lang conversion for date (GB,CY)
+    val errorMessages = messages.map(msg => {
+      var nMsg = Message(id = msg.id, text = msg.text)
+      if (errorMessagesDateFormat.contains(msg.id)) {
+        val date = LocalDate.parse(msg.text, pattern)
+        val dateText = implicitDateFormatter.longDate(date).toLongDate
+        nMsg = Message(id = msg.id, text = dateText)
+      }
+      nMsg
+    })
+
+    errorMessages
+  }
 }

@@ -264,26 +264,17 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
   lazy val agentHomeUrl: String = controllers.routes.HomeController.showAgent.url
   lazy val agentWhatYouOweUrl: String = controllers.routes.WhatYouOweController.showAgent.url
 
+
+
   def formatErrorMessages(liabilityCalc: LiabilityCalculationResponse, messagesProperty: MessagesApi)
                          (implicit lang: Lang, messages: Messages): LiabilityCalculationResponse = {
-    if(!liabilityCalc.messages.isEmpty){
-      val pattern = DateTimeFormatter.ofPattern("d MMMM yyyy")
-      val errorMessagesDateFormat: Seq[String] = Seq("C15014", "C55014", "C55008", "C55011", "C55012", "C55013")
-      val errMessages = liabilityCalc.messages.get.errorMessages.map(msg => {
-        val key = "tax-year-summary.message." + msg.id
-        var nMsg = Message(id = msg.id, text = "")
-        if (messagesProperty.isDefinedAt(key)) {
-          val pattern = """\{([0-9}]+)}""".r
-          nMsg = Message(id = msg.id, text = msg.text diff pattern.replaceAllIn(messagesProperty(key), "##"))
-        }
-        if(errorMessagesDateFormat.contains(msg.id)) {
-          val dateText = LocalDate.parse(nMsg.text, pattern).toLongDate
-          nMsg = Message(id = msg.id, text = dateText)
-        }
-        nMsg
-      })
-      liabilityCalc.copy(messages = Some(liabilityCalc.messages.get.copy(errors = Some(errMessages))))
 
+    if(!liabilityCalc.messages.isEmpty){
+      val errorMessages = liabilityCalc.messages.get.getErrorMessageVariables(messagesProperty)
+      val translatedDateMessages = {
+        models.liabilitycalculation.Messages.translateMessageDateVariables(errorMessages)(messages,this)
+      }
+      liabilityCalc.copy(messages = Some(liabilityCalc.messages.get.copy(errors = Some(translatedDateMessages))))
     }else{
       liabilityCalc
     }
