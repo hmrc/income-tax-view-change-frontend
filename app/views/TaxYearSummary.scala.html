@@ -57,7 +57,7 @@
 }
 
 @taxCalculationOverview(model: TaxYearSummaryViewModel) = {
-    @if(model.messages.exists(_.errorMessages.size > 1)) {
+    @if(model.messages.exists(_.errorMessages.size > 1) && !isAgent) {
         @errorMessageHeader(s"tax-year-summary.message.header")
         <ul class="govuk-list govuk-list--bullet">
             @for(message <- model.messages.map(_.errorMessages).getOrElse(Seq())) {
@@ -65,7 +65,7 @@
             }
         </ul>
         @errorMessageAction(s"tax-year-summary.message.action")
-    } else if(model.messages.exists(_.errorMessages.size == 1)) {
+    } else if(model.messages.exists(_.errorMessages.size == 1) && !isAgent) {
         @errorMessageHeader(s"tax-year-summary.message.header")
         @for(message <- model.messages.map(_.errorMessages).getOrElse(Seq())) {
             @singleErrorMessage(s"tax-year-summary.message.${message.id}", message.text)
@@ -306,7 +306,7 @@
         @messages("tax-year-summary.heading")
     </h1>
     @modelOpt.map { model =>
-        @if(!model.crystallised.contains(true) && (model.messages.isEmpty|| model.messages.exists(_.errorMessages.size == 0))) {
+        @if(!model.crystallised.contains(true) && (((!isAgent) && model.messages.isEmpty|| model.messages.exists(_.errorMessages.size == 0)))) {
             @govukInsetText(InsetText(content = HtmlContent(
                 p(id=Some("calc-date-info"))(content = Html(
                     messages(if(isAgent) "tax-year-summary.agent.calc-from-last-time" else "tax-year-summary.calc-from-last-time",
@@ -314,7 +314,7 @@
                 )
             )))
         }
-        @if(model.messages.isEmpty || model.messages.exists(_.errorMessages.size == 0)) {
+        @if(((!isAgent) && model.messages.isEmpty || model.messages.exists(_.errorMessages.size == 0))) {
 
         <dl class="govuk-summary-list">
             <div class="govuk-summary-list__row">
