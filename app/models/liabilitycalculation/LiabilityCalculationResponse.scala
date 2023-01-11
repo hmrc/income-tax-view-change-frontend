@@ -16,9 +16,13 @@
 
 package models.liabilitycalculation
 
+import implicits.ImplicitDateFormatter
+import play.api.i18n.{Lang, MessagesApi}
 import play.api.libs.json._
 
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+
 
 sealed trait LiabilityCalculationResponseModel
 
@@ -74,9 +78,46 @@ case class Messages(info: Option[Seq[Message]] = None, warnings: Option[Seq[Mess
   val allMessages: Seq[Message] = {
     info.getOrElse(Seq.empty) ++ warnings.getOrElse(Seq.empty) ++ errors.getOrElse(Seq.empty)
   }
+  val errorMessages: Seq[Message] = errors.getOrElse(Seq.empty)
+
   val genericMessages: Seq[Message] = allMessages.filter(message => acceptedMessages.contains(message.id))
+
+  def getErrorMessageVariables(messagesProperty: MessagesApi): Seq[Message] = {
+    val lang = Lang("GB")
+    val errMessages = errorMessages.map(msg => {
+      val key = "tax-year-summary.message." + msg.id
+      messagesProperty.isDefinedAt(key)(lang) match {
+        case true =>
+          val pattern = """\{([0-9}]+)}""".r
+          Message(id = msg.id, text = msg.text diff pattern.replaceAllIn(messagesProperty(key)(lang), "##"))
+        case false =>
+          Message(id = msg.id, text = "")
+      }
+    })
+    errMessages
+  }
+
 }
 
 object Messages {
   implicit val format: OFormat[Messages] = Json.format[Messages]
+
+  def translateMessageDateVariables(messages: Seq[Message])(implicit message: play.api.i18n.Messages, implicitDateFormatter: ImplicitDateFormatter): Seq[Message] = {
+
+    val pattern = DateTimeFormatter.ofPattern("d MMMM yyyy")
+    val errorMessagesDateFormat: Seq[String] = Seq("C15014", "C55014", "C55008", "C55011", "C55012", "C55013")
+    // lang conversion for date (GB,CY)
+    val errorMessages = messages.map(msg => {
+      errorMessagesDateFormat.contains(msg.id) match {
+        case true =>
+          val date = LocalDate.parse(msg.text, pattern)
+          val dateText = implicitDateFormatter.longDate(date).toLongDate
+          Message(id = msg.id, text = dateText)
+        case false =>
+          Message(id = msg.id, text = msg.text)
+      }
+    })
+
+    errorMessages
+  }
 }

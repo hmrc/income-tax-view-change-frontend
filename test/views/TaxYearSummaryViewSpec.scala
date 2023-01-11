@@ -22,8 +22,10 @@ import enums.CodingOutType._
 import implicits.ImplicitCurrencyFormatter.{CurrencyFormatter, CurrencyFormatterInt}
 import implicits.ImplicitDateFormatterImpl
 import models.financialDetails.DocumentDetailWithDueDate
+import models.liabilitycalculation.{Message, Messages}
 import models.liabilitycalculation.viewmodels.TaxYearSummaryViewModel
 import models.nextUpdates.{NextUpdateModelWithIncomeType, ObligationsModel}
+import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import play.twirl.api.Html
 import testConstants.FinancialDetailsTestConstants.{MFADebitsDocumentDetailsWithDueDates, fullDocumentDetailModel, fullDocumentDetailWithDueDateModel}
@@ -56,9 +58,87 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
     forecastIncomeTaxAndNics = Some(5000.99),
     forecastAllowancesAndDeductions = Some(4200.00),
     forecastTotalTaxableIncome = Some(8300),
-    periodFrom = Some(LocalDate.of(testYear-1,1,1)),
-    periodTo = Some(LocalDate.of(testYear,1,1))
+    periodFrom = Some(LocalDate.of(testYear - 1, 1, 1)),
+    periodTo = Some(LocalDate.of(testYear, 1, 1))
   )
+
+  val modelWithMultipleErrorMessages = modelComplete(Some(false)).copy(messages = Some(Messages(errors = Some(List(
+    Message("C15014", dateService.getCurrentDate.toLongDate),
+    Message("C55014", dateService.getCurrentDate.toLongDate),
+    Message("C15015", ""),
+    Message("C15016", ""),
+    Message("C15102", ""),
+    Message("C15103", ""),
+    Message("C15104", ""),
+    Message("C15105", ""),
+    Message("C15322", ""),
+    Message("C15323", ""),
+    Message("C15325", ""),
+    Message("C15523", ""),
+    Message("C15524", ""),
+    Message("C15506", ""),
+    Message("C15507", "1000"),
+    Message("C15510", "50"),
+    Message("C15518", ""),
+    Message("C15530", ""),
+    Message("C15319", ""),
+    Message("C15320", ""),
+    Message("C15522", ""),
+    Message("C15531", ""),
+    Message("C15324", ""),
+    Message("C55316", ""),
+    Message("C55317", ""),
+    Message("C55318", ""),
+    Message("C55501", ""),
+    Message("C55502", ""),
+    Message("C55503", ""),
+    Message("C55508", ""),
+    Message("C55008", dateService.getCurrentDate.toLongDate),
+    Message("C55011", dateService.getCurrentDate.toLongDate),
+    Message("C55009", ""),
+    Message("C55010", ""),
+    Message("C55012", dateService.getCurrentDate.toLongDate),
+    Message("C55013", dateService.getCurrentDate.toLongDate),
+    Message("C55009", ""),
+    Message("C55511", ""),
+    Message("C55519", ""),
+    Message("C55515", ""),
+    Message("C55516", ""),
+    Message("C55517", ""),
+    Message("C55520", ""),
+    Message("C95005", ""),
+    Message("C159014", ""),
+    Message("C159015", ""),
+    Message("C159016", ""),
+    Message("C159018", ""),
+    Message("C159019", ""),
+    Message("C159026", ""),
+    Message("C159027", ""),
+    Message("C159028", ""),
+    Message("C159030", ""),
+    Message("C159102", ""),
+    Message("C159106", ""),
+    Message("C159110", "50"),
+    Message("C159115", ""),
+    Message("C159500", ""),
+    Message("C559099", ""),
+    Message("C559100", ""),
+    Message("C559101", ""),
+    Message("C559103", ""),
+    Message("C559107", ""),
+    Message("C559104", ""),
+    Message("C559105", ""),
+    Message("C559113", ""),
+    Message("C559114", "")
+  ))
+  )))
+
+  val modelWithErrorMessages = modelComplete(Some(false))
+    .copy(messages = Some(Messages(
+      errors = Some(List(
+        Message("C15015", messages("tax-year-summary.message.C15015"))
+      ))
+    )))
 
   val testDunningLockChargesList: List[DocumentDetailWithDueDate] = List(
     fullDocumentDetailWithDueDateModel.copy(documentDetail = fullDocumentDetailModel.copy(documentDescription = Some("ITSA- POA 1")),
@@ -179,6 +259,11 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
     testYear, Some(modelComplete(Some(true))), MFADebitsDocumentDetailsWithDueDates, testObligationsModel, "testBackURL", isAgent, codingOutEnabled,
     showForecastData = false)
 
+  def calculationMultipleErrorView(isAgent: Boolean = false): Html = taxYearSummaryView(
+    testYear, Some(modelWithMultipleErrorMessages), testChargesList, testObligationsModel, "testBackURL", isAgent, false)
+
+  def calculationSingleErrorView(isAgent: Boolean = false): Html = taxYearSummaryView(
+    testYear, Some(modelWithErrorMessages), testChargesList, testObligationsModel, "testBackURL", isAgent, false)
 
   implicit val localDateOrdering: Ordering[LocalDate] = Ordering.by(_.toEpochDay)
 
@@ -192,11 +277,11 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
     val estimate: String = s"6 April ${testYear - 1} to 1 January 2020 estimate"
     val totalDue: String = messages("tax-year-summary.total-due")
     val taxDue: String = "£4.04"
-    val calDateFrom:String = implicitDateFormatter.longDate(LocalDate.of(testYear-1,1,1)).toLongDate
-    val calDateTo:String = implicitDateFormatter.longDate(LocalDate.of(testYear,1,1)).toLongDate
+    val calDateFrom: String = implicitDateFormatter.longDate(LocalDate.of(testYear - 1, 1, 1)).toLongDate
+    val calDateTo: String = implicitDateFormatter.longDate(LocalDate.of(testYear, 1, 1)).toLongDate
     val calcDateInfo: String = messages("tax-year-summary.calc-from-last-time")
     val calcEstimateInfo: String = messages("tax-year-summary.calc-estimate-info")
-    val taxCalculation: String = messages("tax-year-summary.tax-calculation.date",calDateFrom,calDateTo)
+    val taxCalculation: String = messages("tax-year-summary.tax-calculation.date", calDateFrom, calDateTo)
     val taxCalculationHeading: String = messages("tax-year-summary.tax-calculation")
     val taxCalculationTab: String = messages("tax-year-summary.tax-calculation")
     val taxCalculationNoData: String = messages("tax-year-summary.tax-calculation.no-calc")
@@ -205,7 +290,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
     val unattendedCalcPara: String = s"! ${messages("tax-year-summary.tax-calculation.unattended-calc")}"
     val taxCalculationNoDataNote: String = messages("tax-year-summary.tax-calculation.no-calc.note")
     val payments: String = messages("tax-year-summary.payments")
-    val updates: String =  messages("tax-year-summary.updates")
+    val updates: String = messages("tax-year-summary.updates")
     val income: String = messages("tax-year-summary.income")
     val section: String = messages("tax-year-summary.section")
     val allowancesAndDeductions: String = messages("tax-year-summary.deductions")
@@ -233,6 +318,10 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
     val hmrcAdjustment: String = messages("tax-year-summary.payments.hmrcAdjustment.text")
     val cancelledPaye: String = messages("tax-year-summary.payments.cancelledPayeSelfAssessment.text")
     val na: String = messages("tax-year-summary.na")
+    val messageHeader: String = messages("tax-year-summary.message.header")
+    val messageAction: String = "! Warning " + messages("tax-year-summary.message.action")
+    val messageError1: String = messages("tax-year-summary.message.C15015")
+    val messageError2: String = messages("tax-year-summary.message.C15016")
     val payeTaxCode: String = messages("tax-year-summary.paye-tax-code")
 
     def updateCaption(from: String, to: String): String = s"$from to $to"
@@ -299,6 +388,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
 
       "display the calculation date and title" in new Setup(estimateView()) {
         layoutContent.h2.selectFirst("h2").text().contains(taxCalculationHeading)
+        println(layoutContent)
         layoutContent.selectHead("dl > div:nth-child(1) > dt:nth-child(1)").text shouldBe calculationDate
         layoutContent.selectHead("dl > div:nth-child(1) > div:nth-child(2)").text shouldBe calcDate
       }
@@ -327,7 +417,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
 
       "show three tabs with the correct tab headings" in new Setup(estimateView()) {
         layoutContent.selectHead("""a[href$="#taxCalculation"]""").text shouldBe taxCalculationTab
-        layoutContent.selectHead( """a[href$="#payments"]""").text shouldBe payments
+        layoutContent.selectHead("""a[href$="#payments"]""").text shouldBe payments
         layoutContent.selectHead("""a[href$="#updates"]""").text shouldBe updates
       }
 
@@ -375,6 +465,89 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
 
       "when there is no calc data should display the correct notes in the Forecast tab" in new Setup(forecastWithNoCalcData()) {
         layoutContent.getElementById("no-forecast-data-note").text shouldBe forecastNoDataNote
+      }
+
+      "when there is a error message from calculation" in new Setup(calculationSingleErrorView()) {
+        val calculationContent = layoutContent.getElementById("taxCalculation")
+        calculationContent.child(0).text shouldBe messageHeader
+        calculationContent.child(1).text shouldBe messageError1
+        calculationContent.child(2).text shouldBe messageAction
+      }
+
+      "when there are multiple error messages from calculation" in new Setup(calculationMultipleErrorView()) {
+        val calculationContent = layoutContent.getElementById("taxCalculation")
+        val errorMessageList = calculationContent.child(1)
+        calculationContent.child(0).text shouldBe messageHeader
+        calculationContent.child(2).text shouldBe messageAction
+
+        errorMessageList.child(0).text shouldBe messages("tax-year-summary.message.C15014", dateService.getCurrentDate.toLongDate)
+        errorMessageList.child(1).text shouldBe messages("tax-year-summary.message.C55014", dateService.getCurrentDate.toLongDate)
+        errorMessageList.child(2).text shouldBe messages("tax-year-summary.message.C15015")
+        errorMessageList.child(3).text shouldBe messages("tax-year-summary.message.C15016")
+        errorMessageList.child(4).text shouldBe messages("tax-year-summary.message.C15102")
+        errorMessageList.child(5).text shouldBe messages("tax-year-summary.message.C15103")
+        errorMessageList.child(6).text shouldBe Jsoup.parse(messages("tax-year-summary.message.C15104")).text()
+        errorMessageList.child(7).text shouldBe messages("tax-year-summary.message.C15105")
+        errorMessageList.child(8).text shouldBe Jsoup.parse(messages("tax-year-summary.message.C15322")).text()
+        errorMessageList.child(9).text shouldBe messages("tax-year-summary.message.C15323")
+        errorMessageList.child(10).text shouldBe messages("tax-year-summary.message.C15325")
+        errorMessageList.child(11).text shouldBe messages("tax-year-summary.message.C15523")
+        errorMessageList.child(12).text shouldBe messages("tax-year-summary.message.C15524")
+        errorMessageList.child(13).text shouldBe messages("tax-year-summary.message.C15506")
+        errorMessageList.child(14).text shouldBe messages("tax-year-summary.message.C15507", "1000")
+        errorMessageList.child(15).text shouldBe messages("tax-year-summary.message.C15510", "50")
+        errorMessageList.child(16).text shouldBe messages("tax-year-summary.message.C15518")
+        errorMessageList.child(17).text shouldBe messages("tax-year-summary.message.C15530")
+        errorMessageList.child(18).text shouldBe messages("tax-year-summary.message.C15319")
+        errorMessageList.child(19).text shouldBe messages("tax-year-summary.message.C15320")
+        errorMessageList.child(20).text shouldBe messages("tax-year-summary.message.C15522")
+        errorMessageList.child(21).text shouldBe messages("tax-year-summary.message.C15531")
+        errorMessageList.child(22).text shouldBe messages("tax-year-summary.message.C15324")
+        errorMessageList.child(23).text shouldBe messages("tax-year-summary.message.C55316")
+        errorMessageList.child(24).text shouldBe messages("tax-year-summary.message.C55317")
+        errorMessageList.child(25).text shouldBe messages("tax-year-summary.message.C55318")
+        errorMessageList.child(26).text shouldBe messages("tax-year-summary.message.C55501")
+        errorMessageList.child(27).text shouldBe messages("tax-year-summary.message.C55502")
+        errorMessageList.child(28).text shouldBe messages("tax-year-summary.message.C55503")
+        errorMessageList.child(29).text shouldBe messages("tax-year-summary.message.C55508")
+        errorMessageList.child(30).text shouldBe messages("tax-year-summary.message.C55008", dateService.getCurrentDate.toLongDate)
+        errorMessageList.child(31).text shouldBe messages("tax-year-summary.message.C55011", dateService.getCurrentDate.toLongDate)
+        errorMessageList.child(32).text shouldBe messages("tax-year-summary.message.C55009")
+        errorMessageList.child(33).text shouldBe messages("tax-year-summary.message.C55010")
+        errorMessageList.child(34).text shouldBe messages("tax-year-summary.message.C55012", dateService.getCurrentDate.toLongDate)
+        errorMessageList.child(35).text shouldBe messages("tax-year-summary.message.C55013", dateService.getCurrentDate.toLongDate)
+        errorMessageList.child(36).text shouldBe messages("tax-year-summary.message.C55009")
+        errorMessageList.child(37).text shouldBe messages("tax-year-summary.message.C55511")
+        errorMessageList.child(38).text shouldBe messages("tax-year-summary.message.C55519")
+        errorMessageList.child(39).text shouldBe messages("tax-year-summary.message.C55515")
+        errorMessageList.child(40).text shouldBe messages("tax-year-summary.message.C55516")
+        errorMessageList.child(41).text shouldBe messages("tax-year-summary.message.C55517")
+        errorMessageList.child(42).text shouldBe messages("tax-year-summary.message.C55520")
+        errorMessageList.child(43).text shouldBe messages("tax-year-summary.message.C95005")
+        errorMessageList.child(44).text shouldBe messages("tax-year-summary.message.C159014")
+        errorMessageList.child(45).text shouldBe messages("tax-year-summary.message.C159015")
+        errorMessageList.child(46).text shouldBe messages("tax-year-summary.message.C159016")
+        errorMessageList.child(47).text shouldBe messages("tax-year-summary.message.C159018")
+        errorMessageList.child(48).text shouldBe messages("tax-year-summary.message.C159019")
+        errorMessageList.child(49).text shouldBe messages("tax-year-summary.message.C159026")
+        errorMessageList.child(50).text shouldBe messages("tax-year-summary.message.C159027")
+        errorMessageList.child(51).text shouldBe Jsoup.parse(messages("tax-year-summary.message.C159028")).text()
+        errorMessageList.child(52).text shouldBe messages("tax-year-summary.message.C159030")
+        errorMessageList.child(53).text shouldBe messages("tax-year-summary.message.C159102")
+        errorMessageList.child(54).text shouldBe messages("tax-year-summary.message.C159106")
+        errorMessageList.child(55).text shouldBe messages("tax-year-summary.message.C159110", "50")
+        errorMessageList.child(56).text shouldBe messages("tax-year-summary.message.C159115")
+        errorMessageList.child(57).text shouldBe messages("tax-year-summary.message.C159500")
+        errorMessageList.child(58).text shouldBe messages("tax-year-summary.message.C559099")
+        errorMessageList.child(59).text shouldBe messages("tax-year-summary.message.C559100")
+        errorMessageList.child(60).text shouldBe messages("tax-year-summary.message.C559101")
+        errorMessageList.child(61).text shouldBe messages("tax-year-summary.message.C559103")
+        errorMessageList.child(62).text shouldBe messages("tax-year-summary.message.C559107")
+        errorMessageList.child(63).text shouldBe messages("tax-year-summary.message.C559104")
+        errorMessageList.child(64).text shouldBe messages("tax-year-summary.message.C559105")
+        errorMessageList.child(65).text shouldBe messages("tax-year-summary.message.C559113")
+        errorMessageList.child(66).text shouldBe messages("tax-year-summary.message.C559114")
+
       }
 
       "display the Allowances and deductions row in the Tax Calculation tab" in new Setup(estimateView()) {
