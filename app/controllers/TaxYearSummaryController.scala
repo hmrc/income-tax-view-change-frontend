@@ -67,7 +67,7 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
                                          val agentItvcErrorHandler: AgentItvcErrorHandler,
                                          mcc: MessagesControllerComponents,
                                          val ec: ExecutionContext)
-  extends ClientConfirmedController with FeatureSwitching with I18nSupport with ImplicitDateFormatter{
+  extends ClientConfirmedController with FeatureSwitching with I18nSupport with ImplicitDateFormatter {
 
   val action: ActionBuilder[MtdItUser, AnyContent] = checkSessionTimeout andThen authenticate andThen
     retrieveNino andThen retrieveIncomeSourcesNoCache andThen retrieveBtaNavBar
@@ -265,17 +265,16 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
   lazy val agentWhatYouOweUrl: String = controllers.routes.WhatYouOweController.showAgent.url
 
 
-
   def formatErrorMessages(liabilityCalc: LiabilityCalculationResponse, messagesProperty: MessagesApi)
                          (implicit lang: Lang, messages: Messages): LiabilityCalculationResponse = {
 
-    if(!liabilityCalc.messages.isEmpty){
+    if (!liabilityCalc.messages.isEmpty) {
       val errorMessages = liabilityCalc.messages.get.getErrorMessageVariables(messagesProperty)
       val translatedDateMessages = {
-        models.liabilitycalculation.Messages.translateMessageDateVariables(errorMessages)(messages,this)
+        models.liabilitycalculation.Messages.translateMessageDateVariables(errorMessages)(messages, this)
       }
       liabilityCalc.copy(messages = Some(liabilityCalc.messages.get.copy(errors = Some(translatedDateMessages))))
-    }else{
+    } else {
       liabilityCalc
     }
   }

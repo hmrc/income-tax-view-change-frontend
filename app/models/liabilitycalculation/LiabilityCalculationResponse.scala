@@ -86,12 +86,13 @@ case class Messages(info: Option[Seq[Message]] = None, warnings: Option[Seq[Mess
     val lang = Lang("GB")
     val errMessages = errorMessages.map(msg => {
       val key = "tax-year-summary.message." + msg.id
-      var nMsg = Message(id = msg.id, text = "")
-      if (messagesProperty.isDefinedAt(key)(lang)) {
-        val pattern = """\{([0-9}]+)}""".r
-        nMsg = Message(id = msg.id, text = msg.text diff pattern.replaceAllIn(messagesProperty(key)(lang), "##"))
+      messagesProperty.isDefinedAt(key)(lang) match {
+        case true =>
+          val pattern = """\{([0-9}]+)}""".r
+          Message(id = msg.id, text = msg.text diff pattern.replaceAllIn(messagesProperty(key)(lang), "##"))
+        case false =>
+          Message(id = msg.id, text = "")
       }
-      nMsg
     })
     errMessages
   }
@@ -107,13 +108,14 @@ object Messages {
     val errorMessagesDateFormat: Seq[String] = Seq("C15014", "C55014", "C55008", "C55011", "C55012", "C55013")
     // lang conversion for date (GB,CY)
     val errorMessages = messages.map(msg => {
-      var nMsg = Message(id = msg.id, text = msg.text)
-      if (errorMessagesDateFormat.contains(msg.id)) {
-        val date = LocalDate.parse(msg.text, pattern)
-        val dateText = implicitDateFormatter.longDate(date).toLongDate
-        nMsg = Message(id = msg.id, text = dateText)
+      errorMessagesDateFormat.contains(msg.id) match {
+        case true =>
+          val date = LocalDate.parse(msg.text, pattern)
+          val dateText = implicitDateFormatter.longDate(date).toLongDate
+          Message(id = msg.id, text = dateText)
+        case false =>
+          Message(id = msg.id, text = msg.text)
       }
-      nMsg
     })
 
     errorMessages

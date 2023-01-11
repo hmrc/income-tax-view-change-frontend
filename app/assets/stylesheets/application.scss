@@ -55,8 +55,8 @@ $hmrc-assets-path: "/report-quarterly/income-and-expenses/view/assets/lib/hmrc-f
 }
 
 .govuk-insettext-zero-spacing {
-    margin-top: 0px;
-    border-left: 0px;
-    padding: 0px;
-    margin-bottom: 1.05263em;
+    margin-top: govuk-spacing(0);
+    border-left: govuk-spacing(0);
+    padding: govuk-spacing(0);
+    margin-bottom: govuk-spacing(3);
 }

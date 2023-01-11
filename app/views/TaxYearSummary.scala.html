@@ -57,20 +57,8 @@
 }
 
 @taxCalculationOverview(model: TaxYearSummaryViewModel) = {
-    @if(model.messages.exists(_.errorMessages.size > 1) && !isAgent) {
-        @errorMessageHeader(s"tax-year-summary.message.header")
-        <ul class="govuk-list govuk-list--bullet">
-            @for(message <- model.messages.map(_.errorMessages).getOrElse(Seq())) {
-                @multipleErrorMessage(s"tax-year-summary.message.${message.id}", message.text)
-            }
-        </ul>
-        @errorMessageAction(s"tax-year-summary.message.action")
-    } else if(model.messages.exists(_.errorMessages.size == 1) && !isAgent) {
-        @errorMessageHeader(s"tax-year-summary.message.header")
-        @for(message <- model.messages.map(_.errorMessages).getOrElse(Seq())) {
-            @singleErrorMessage(s"tax-year-summary.message.${message.id}", message.text)
-        }
-        @errorMessageAction(s"tax-year-summary.message.action")
+    @if(model.messages.exists(_.errorMessages.size > 0) && !isAgent) {
+        @errorMessage(model)
     } else {
         @breakdownPartial(model, taxYear, isFinalCalc = false, isAgent)
         @if(!model.crystallised.contains(true)) {
@@ -79,6 +67,26 @@
             )))
         }
     }
+}
+
+@errorPresent(model: TaxYearSummaryViewModel) = @{
+    (!model.messages.isEmpty && model.messages.exists(_.errorMessages.size > 0))
+}
+
+@errorMessage(model: TaxYearSummaryViewModel) = {
+    @errorMessageHeader(s"tax-year-summary.message.header")
+    @if(model.messages.exists(_.errorMessages.size > 1)){
+        <ul class="govuk-list govuk-list--bullet">
+            @for(message <- model.messages.map(_.errorMessages).getOrElse(Seq())) {
+                @multipleErrorMessage(s"tax-year-summary.message.${message.id}", message.text)
+            }
+        </ul>
+    } else {
+        @for(message <- model.messages.map(_.errorMessages).getOrElse(Seq())) {
+            @singleErrorMessage(s"tax-year-summary.message.${message.id}", message.text)
+        }
+    }
+    @errorMessageAction(s"tax-year-summary.message.action")
 }
 
 @errorMessageHeader(header: String) = {
@@ -306,7 +314,7 @@
         @messages("tax-year-summary.heading")
     </h1>
     @modelOpt.map { model =>
-        @if(!model.crystallised.contains(true) && (((!isAgent) && model.messages.isEmpty|| model.messages.exists(_.errorMessages.size == 0)))) {
+        @if(!model.crystallised.contains(true) && (isAgent || !errorPresent(model))) {
             @govukInsetText(InsetText(content = HtmlContent(
                 p(id=Some("calc-date-info"))(content = Html(
                     messages(if(isAgent) "tax-year-summary.agent.calc-from-last-time" else "tax-year-summary.calc-from-last-time",
@@ -314,48 +322,47 @@
                 )
             )))
         }
-        @if(((!isAgent) && model.messages.isEmpty || model.messages.exists(_.errorMessages.size == 0))) {
-
-        <dl class="govuk-summary-list">
-            <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key dt-cell-width">
-                    @messages("tax-year-summary.calculation-date")
-                </dt>
-                <div class="govuk-summary-list__value--numeric govuk-!-text-align-right">
-                    <span id="calculation-date">@{
-                        model.timestamp.map(_.toLongDate)
-                    }</span>
+        @if(isAgent || !errorPresent(model)) {
+            <dl class="govuk-summary-list">
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key dt-cell-width">
+                        @messages("tax-year-summary.calculation-date")
+                    </dt>
+                    <div class="govuk-summary-list__value--numeric govuk-!-text-align-right">
+                        <span id="calculation-date">@{
+                            model.timestamp.map(_.toLongDate)
+                        }</span>
+                    </div>
                 </div>
-            </div>
-            <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key dt-cell-width">
-                @if(model.crystallised.contains(true)) {
-                    @messages("tax-year-summary.total-due")
-                } else {
-                    @{
-                        if ( !model.periodFrom.isEmpty && !model.periodTo.isEmpty ){
-                            val calculationDateFrom = implicitDateFormatter.longDate(model.periodFrom.get).toLongDate
-                            val calculationDateTo = implicitDateFormatter.longDate(model.periodTo.get).toLongDate
-                            messages("tax-year-summary.tax-calculation.date", calculationDateFrom, calculationDateTo)
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key dt-cell-width">
+                    @if(model.crystallised.contains(true)) {
+                        @messages("tax-year-summary.total-due")
+                    } else {
+                        @{
+                            if ( !model.periodFrom.isEmpty && !model.periodTo.isEmpty ){
+                                val calculationDateFrom = implicitDateFormatter.longDate(model.periodFrom.get).toLongDate
+                                val calculationDateTo = implicitDateFormatter.longDate(model.periodTo.get).toLongDate
+                                messages("tax-year-summary.tax-calculation.date", calculationDateFrom, calculationDateTo)
+                            }
                         }
                     }
-                }
-                </dt>
-                <dd class="govuk-summary-list__value--numeric govuk-!-text-align-right">
-                    @{model.taxDue.toCurrencyString}
-                </dd>
-            </div>
-            @if(showForecastData && modelOpt.isDefined) {
-                <div id="forecast_total" class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key dt-cell-width">
-                        @messages("tax-year-summary.forecast_total_title", s"${taxYear - 1}", s"$taxYear")
                     </dt>
                     <dd class="govuk-summary-list__value--numeric govuk-!-text-align-right">
-                        @model.forecastIncomeTaxAndNics.getOrElse(throw MissingFieldException("Forecast Tax Due")).toCurrencyString
+                        @{model.taxDue.toCurrencyString}
                     </dd>
                 </div>
-            }
-        </dl>
+                @if(showForecastData && modelOpt.isDefined) {
+                    <div id="forecast_total" class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key dt-cell-width">
+                            @messages("tax-year-summary.forecast_total_title", s"${taxYear - 1}", s"$taxYear")
+                        </dt>
+                        <dd class="govuk-summary-list__value--numeric govuk-!-text-align-right">
+                            @model.forecastIncomeTaxAndNics.getOrElse(throw MissingFieldException("Forecast Tax Due")).toCurrencyString
+                        </dd>
+                    </div>
+                }
+            </dl>
         }
     }
 
