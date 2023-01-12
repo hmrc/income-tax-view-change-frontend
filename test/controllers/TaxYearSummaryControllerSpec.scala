@@ -504,7 +504,7 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
 
         actual shouldBe liabilityCalculationModelErrorMessages.copy(messages = Some(Messages(
           errors = Some(List(
-            Message("C55012", "5 January 2023"),
+            Message("C55012", "05/01/2023"),
             Message("C15507", "£2000"),
             Message("C15510", "10"),
             Message("C55009", ""),
