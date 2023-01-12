@@ -24,12 +24,12 @@ import java.time.LocalDate
 
 class RepaymentHistorySpec extends UnitSpec with Matchers {
 
-  val repaymentHistoryFull: RepaymentHistory = RepaymentHistory(
+  val repaymentHistoryOneRSI: RepaymentHistory = RepaymentHistory(
     amountApprovedforRepayment = Some(100.0),
     amountRequested = 200.0,
-    repaymentMethod = "BACD",
-    totalRepaymentAmount = 300.0,
-    repaymentItems = Seq[RepaymentItem](
+    repaymentMethod = Some("BACD"),
+    totalRepaymentAmount = Some(300.0),
+    repaymentItems = Some(Seq[RepaymentItem](
       RepaymentItem(repaymentSupplementItem =
           Seq(
             RepaymentSupplementItem(
@@ -37,22 +37,22 @@ class RepaymentHistorySpec extends UnitSpec with Matchers {
               amount = Some(400.0),
               fromDate = Some( LocalDate.parse("2021-07-23") ),
               toDate = Some( LocalDate.parse("2021-08-23") ),
-              rate = Some(500.0)
+              rate = Some(12.12)
             )
           )
       )
-    ),
-    estimatedRepaymentDate = LocalDate.parse("2021-08-21"),
-    creationDate = LocalDate.parse("2021-07-21"),
+    )),
+    estimatedRepaymentDate = Some(LocalDate.parse("2021-08-21")),
+    creationDate = Some(LocalDate.parse("2021-07-21")),
     repaymentRequestNumber = "000000003135"
   )
 
-  val repaymentHistoryFullJson: JsValue = Json.obj(
+  val repaymentHistoryOneRSIJson: JsValue = Json.obj(
     "amountApprovedforRepayment" -> Some(100.0),
-    "amountRequested" -> 200.0,
-    "repaymentMethod" -> "BACD",
-    "totalRepaymentAmount" -> 300.0,
-    "repaymentItems" -> Json.arr(
+    "amountRequested" -> Some(200.0),
+    "repaymentMethod" -> Some("BACD"),
+    "totalRepaymentAmount" -> Some(300.0),
+    "repaymentItems" -> Some(Json.arr(
       Json.obj(
         "repaymentSupplementItem" -> Json.arr(
           Json.obj(
@@ -60,24 +60,24 @@ class RepaymentHistorySpec extends UnitSpec with Matchers {
             "amount" -> Some(400.0),
             "fromDate" -> Some( LocalDate.parse("2021-07-23") ),
             "toDate" -> Some( LocalDate.parse("2021-08-23") ),
-            "rate" -> Some(500.0)
+            "rate" -> Some(12.12)
           )
         )
       )
-    ),
-    "estimatedRepaymentDate" -> LocalDate.parse("2021-08-21"),
-    "creationDate" -> LocalDate.parse("2021-07-21"),
+    )),
+    "estimatedRepaymentDate" -> Some(LocalDate.parse("2021-08-21")),
+    "creationDate" -> Some(LocalDate.parse("2021-07-21")),
     "repaymentRequestNumber" -> "000000003135"
   )
 
   "RepaymentHistory" should {
     "write to Json" when {
       "the model has all details" in {
-        Json.toJson(repaymentHistoryFull) shouldBe repaymentHistoryFullJson
+        Json.toJson(repaymentHistoryOneRSI) shouldBe repaymentHistoryOneRSIJson
       }
 
       "be able to parse a JSON into the Model" in {
-        Json.fromJson[RepaymentHistory](repaymentHistoryFullJson) shouldBe JsSuccess(repaymentHistoryFull)
+        Json.fromJson[RepaymentHistory](repaymentHistoryOneRSIJson) shouldBe JsSuccess(repaymentHistoryOneRSI)
       }
     }
   }

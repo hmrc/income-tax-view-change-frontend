@@ -49,9 +49,9 @@ class RepaymentHistoryUtilsSpec extends TestSupport with Matchers {
     RepaymentHistory(
       amountApprovedforRepayment = Some(100.0),
       amountRequested = 200.0,
-      repaymentMethod = "BACD",
-      totalRepaymentAmount = 300.0,
-      repaymentItems = Seq[RepaymentItem](
+      repaymentMethod = Some("BACD"),
+      totalRepaymentAmount = Some(300.0),
+      repaymentItems = Some(Seq[RepaymentItem](
         RepaymentItem(repaymentSupplementItem =
           Seq(
             RepaymentSupplementItem(
@@ -59,21 +59,21 @@ class RepaymentHistoryUtilsSpec extends TestSupport with Matchers {
               amount = Some(400.0),
               fromDate = Some(LocalDate.parse("2021-07-23")),
               toDate = Some(LocalDate.parse("2021-08-23")),
-              rate = Some(500.0)
+              rate = Some(12.12)
             )
           )
         )
-      ),
-      estimatedRepaymentDate = LocalDate.parse("2021-08-21"),
-      creationDate = LocalDate.parse("2021-07-21"),
+      )),
+      estimatedRepaymentDate = Some(LocalDate.parse("2021-08-21")),
+      creationDate = Some(LocalDate.parse("2021-07-21")),
       repaymentRequestNumber = repaymentRequestNumber
     ),
     RepaymentHistory(
       amountApprovedforRepayment = Some(100.0),
       amountRequested = 200.0,
-      repaymentMethod = "BACD",
-      totalRepaymentAmount = 301.0,
-      repaymentItems = Seq[RepaymentItem](
+      repaymentMethod = Some("BACD"),
+      totalRepaymentAmount = Some(301.0),
+      repaymentItems = Some(Seq[RepaymentItem](
         RepaymentItem(repaymentSupplementItem =
           Seq(
             RepaymentSupplementItem(
@@ -81,13 +81,13 @@ class RepaymentHistoryUtilsSpec extends TestSupport with Matchers {
               amount = Some(400.0),
               fromDate = Some(LocalDate.parse("2021-07-23")),
               toDate = Some(LocalDate.parse("2021-08-23")),
-              rate = Some(500.0)
+              rate = Some(12.12)
             )
           )
         )
-      ),
-      estimatedRepaymentDate = LocalDate.parse("2021-08-20"),
-      creationDate = LocalDate.parse("2021-07-21"),
+      )),
+      estimatedRepaymentDate = Some(LocalDate.parse("2021-08-20")),
+      creationDate = Some(LocalDate.parse("2021-07-21")),
       repaymentRequestNumber = repaymentRequestNumber
     ))
 

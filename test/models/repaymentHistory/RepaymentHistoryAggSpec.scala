@@ -49,48 +49,48 @@ object RepaymentHistoryAggSpec extends Properties("RepaymentHistory_aggregate") 
   } yield RepaymentHistory(
     amountApprovedforRepayment = None,
     amountRequested = BigDecimal("120.05"),
-    repaymentMethod = "",
-    totalRepaymentAmount = BigDecimal("20.05"),
-    repaymentItems = Seq(RepaymentItem(repaymentSupplementItem = items)),
-    estimatedRepaymentDate = estimatedDate,
-    creationDate = date,
+    repaymentMethod = Some(""),
+    totalRepaymentAmount = Some(BigDecimal("20.05")),
+    repaymentItems = Some(Seq(RepaymentItem(repaymentSupplementItem = items))),
+    estimatedRepaymentDate = Some(estimatedDate),
+    creationDate = Some(date),
     repaymentRequestNumber = "04005005659")
 
   property("aggregate") = forAll(repaymentHistoryGen) { repaymentHistoryRecord =>
     val agg = repaymentHistoryRecord.aggregate
     val minDateOpt = repaymentHistoryRecord
-      .repaymentItems.headOption.map(_.repaymentSupplementItem.map(_.fromDate)
+      .repaymentItems.get.headOption.map(_.repaymentSupplementItem.map(_.fromDate)
       .collect {
         case Some(date) => (date.toEpochDay, date)
       })
-      .map(ds => if (ds.nonEmpty) agg.map(rec => rec.fromDate == ds.minBy(_._1)._2).getOrElse(true) else true)
+      .map(ds => if (ds.nonEmpty) agg.forall(rec => rec.fromDate == ds.minBy(_._1)._2) else true)
 
     val maxDateOpt = repaymentHistoryRecord
-      .repaymentItems.headOption.map(_.repaymentSupplementItem.map(_.toDate)
+      .repaymentItems.get.headOption.map(_.repaymentSupplementItem.map(_.toDate)
       .collect {
         case Some(date) => (date.toEpochDay, date)
       })
-      .map(ds => if (ds.nonEmpty) agg.map(rec => rec.toDate == ds.maxBy(_._1)._2).getOrElse(true) else true)
+      .map(ds => if (ds.nonEmpty) agg.forall(rec => rec.toDate == ds.maxBy(_._1)._2) else true)
 
     val minRateOpt = repaymentHistoryRecord
-      .repaymentItems.headOption.map(_.repaymentSupplementItem.map(_.rate)
+      .repaymentItems.get.headOption.map(_.repaymentSupplementItem.map(_.rate)
       .collect {
         case Some(rate) => rate
       })
-      .map(rs => if (rs.nonEmpty) agg.map(_.fromRate == rs.min).getOrElse(true) else true)
+      .map(rs => if (rs.nonEmpty) agg.forall(_.fromRate == rs.min) else true)
 
     val maxRateOpt = repaymentHistoryRecord
-      .repaymentItems.headOption.map(_.repaymentSupplementItem.map(_.rate)
+      .repaymentItems.get.headOption.map(_.repaymentSupplementItem.map(_.rate)
       .collect {
         case Some(rate) => rate
       })
-      .map(rs => if (rs.nonEmpty) agg.map(_.toRate == rs.max).getOrElse(true) else true)
+      .map(rs => if (rs.nonEmpty) agg.forall(_.toRate == rs.max) else true)
 
     val totalOpt = repaymentHistoryRecord
-      .repaymentItems.headOption.map(_.repaymentSupplementItem.map(_.amount)
+      .repaymentItems.get.headOption.map(_.repaymentSupplementItem.map(_.amount)
       .collect {
         case Some(amount) => amount
-      }).map(ts => agg.map(_.total == ts.sum).getOrElse(true))
+      }).map(ts => agg.forall(_.total == ts.sum))
 
     {
       for {
