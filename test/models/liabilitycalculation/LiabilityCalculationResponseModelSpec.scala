@@ -151,7 +151,7 @@ class LiabilityCalculationResponseModelSpec extends LiabilityCalculationDataHelp
     "translate date variable values from messages" in {
       val values = Messages(errors = errorMessages).getErrorMessageVariables(messagesApi)
       Messages.translateMessageDateVariables(values)(messagesApi.preferred(Seq(Lang("cy"))),mockImplicitDateFormatter) shouldBe Seq(
-        Message("C55012", "05/01/2023"),
+        Message("C55012", "5 Ionawr 2023"),
         Message("C15507", "£2000"),
         Message("C15510", "10"),
         Message("C55009", "")
