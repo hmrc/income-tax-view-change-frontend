@@ -479,7 +479,7 @@ taxCal_breakdown.message.agent.C22212                           = Employment and
 taxCal_breakdown.message.agent.C22213                           = Due to your client’s employed earnings, paying Class 2 Voluntary may not be beneficial.
 taxCal_breakdown.message.agent.C22214                           = Your client’s Class 4 has been adjusted for Class 2 due and primary Class 1 contributions.
 taxCal_breakdown.message.agent.C22215                           = Due to the level of your client’s current income, your client may not be eligible for Marriage Allowance and therefore it has not been included in this calculation.
-taxCal_breakdown.message.agent.C22216                           = Due to the level of your client’s income,  your client is no longer eligible for Marriage Allowance and your client’s claim will be cancelled.
+taxCal_breakdown.message.agent.C22216                           = Due to the level of your client’s income, your client is no longer eligible for Marriage Allowance and your client’s claim will be cancelled.
 taxCal_breakdown.message.agent.C22217                           = There are one or more underpayments, debts or adjustments that have not been included in the calculation as they do not relate to data that HMRC holds.
 taxCal_breakdown.message.agent.C22218                           = The Capital Gains Tax has been included in the estimated annual liability calculation only, the actual amount of Capital Gains Tax will be in the Final declaration calculation.
 
