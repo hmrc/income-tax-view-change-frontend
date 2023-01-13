@@ -90,7 +90,9 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
     liabilityCalc match {
       case liabilityCalc: LiabilityCalculationResponse =>
         val lang: Seq[Lang] = Seq(languageUtils.getCurrentLang)
-        val taxYearSummaryViewModel: TaxYearSummaryViewModel = TaxYearSummaryViewModel(formatErrorMessages(liabilityCalc, messagesApi)(Lang("GB"), messagesApi.preferred(lang)))
+        val taxYearSummaryViewModel: TaxYearSummaryViewModel =
+          TaxYearSummaryViewModel(formatErrorMessages(liabilityCalc, messagesApi, isAgent)(Lang("GB"),
+            messagesApi.preferred(lang)))
         auditingService.extendedAudit(TaxYearSummaryResponseAuditModel(
           mtdItUser, documentDetailsWithDueDates, obligations, Some(taxYearSummaryViewModel), isEnabled(R7bTxmEvents)))
 
@@ -265,11 +267,11 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
   lazy val agentWhatYouOweUrl: String = controllers.routes.WhatYouOweController.showAgent.url
 
 
-  def formatErrorMessages(liabilityCalc: LiabilityCalculationResponse, messagesProperty: MessagesApi)
+  def formatErrorMessages(liabilityCalc: LiabilityCalculationResponse, messagesProperty: MessagesApi, isAgent: Boolean)
                          (implicit lang: Lang, messages: Messages): LiabilityCalculationResponse = {
 
-    if (!liabilityCalc.messages.isEmpty) {
-      val errorMessages = liabilityCalc.messages.get.getErrorMessageVariables(messagesProperty)
+    if (liabilityCalc.messages.isDefined) {
+      val errorMessages = liabilityCalc.messages.get.getErrorMessageVariables(messagesProperty, isAgent)
       val translatedDateMessages = {
         models.liabilitycalculation.Messages.translateMessageDateVariables(errorMessages)(messages, this)
       }

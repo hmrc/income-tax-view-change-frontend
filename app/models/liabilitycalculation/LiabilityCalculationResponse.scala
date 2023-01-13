@@ -82,7 +82,7 @@ case class Messages(info: Option[Seq[Message]] = None, warnings: Option[Seq[Mess
 
   val genericMessages: Seq[Message] = allMessages.filter(message => acceptedMessages.contains(message.id))
 
-  def getErrorMessageVariables(messagesProperty: MessagesApi): Seq[Message] = {
+  def getErrorMessageVariables(messagesProperty: MessagesApi, isAgent: Boolean): Seq[Message] = {
     val lang = Lang("GB")
     val errMessages = errorMessages.map(msg => {
       val key = "tax-year-summary.message." + msg.id

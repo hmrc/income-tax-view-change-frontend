@@ -57,12 +57,14 @@
 }
 
 @taxCalculationOverview(model: TaxYearSummaryViewModel) = {
-    @if(model.messages.exists(_.errorMessages.size > 0) && !isAgent) {
+    @if(model.messages.exists(_.errorMessages.size > 0)) {
         @errorMessage(model)
     } else {
         @breakdownPartial(model, taxYear, isFinalCalc = false, isAgent)
-        @if(!model.crystallised.contains(true) && model.messages.exists(_.errorMessages.size > 0) && !isAgent) {
-            @errorMessage(model)
+        @if(!model.crystallised.contains(true)) {
+            @govukInsetText(InsetText(content = HtmlContent(
+            p(id=Some("calc-estimate-info"))(content = Html(messages("tax-year-summary.calc-estimate-info")))
+            )))
         }
     }
 }
