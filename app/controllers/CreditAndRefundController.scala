@@ -20,11 +20,10 @@ package controllers
 import audit.AuditingService
 import audit.models.ClaimARefundAuditModel
 import auth.{FrontendAuthorisedFunctions, MtdItUser}
+import config.featureswitch._
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
-import config.featureswitch.{CreditsRefundsRepay, CutOverCredits, FeatureSwitching, MFACreditsAndDebits, R7cTxmEvents}
 import controllers.agent.predicates.ClientConfirmedController
-import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
-import models.core.RepaymentJourneyResponseModel.{RepaymentJourneyErrorResponse, RepaymentJourneyModel}
+import controllers.predicates._
 import models.financialDetails.{BalanceDetails, DocumentDetailWithDueDate, FinancialDetail, FinancialDetailsModel}
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages}
@@ -202,6 +201,8 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
   private def handleStatusRefundRequest(isAgent: Boolean, itvcErrorHandler: ShowInternalServerError, backUrl: String)
                                  (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
     repaymentService.view(user.nino).flatMap {
+      case _ if isDisabled(CreditsRefundsRepay) =>
+        Future.successful(Ok(customNotFoundErrorView()(user, messages)))
       case Right(nextUrl) =>
         Future.successful(Redirect(nextUrl))
       case Left(_) =>
