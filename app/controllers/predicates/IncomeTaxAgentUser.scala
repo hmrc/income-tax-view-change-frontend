@@ -33,6 +33,8 @@ case class IncomeTaxAgentUser(enrolments: Enrolments,
 
   lazy val agentReferenceNumber: Option[String] = getEnrolment(Constants.agentServiceEnrolmentName)
 
+  lazy val delegatedMtdEnrolments: Option[String] = getEnrolment("HMRC-MTD-IT")
+
   lazy val credId = credentials.map(credential => credential.providerId)
 
   private def getEnrolment(key: String): Option[String] = {

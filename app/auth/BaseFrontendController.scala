@@ -50,7 +50,7 @@ abstract class BaseFrontendController(implicit val mcc: MessagesControllerCompon
       itvcErrorHandler.showOkTechnicalDifficulties()(request)
     case ex: InsufficientEnrolments =>
       Logger("application").warn(s"[BaseFrontendController][handleExceptions] - ${ex.reason}")
-      Redirect(controllers.agent.routes.ClientRelationshipFailureController.show)
+      Redirect(controllers.agent.routes.UTRErrorController.show)
     case ex: AuthorisationException =>
       Logger("application").warn(s"[BaseFrontendController][handleExceptions] - AuthorisationException occurred - ${ex.reason}")
       Redirect(controllers.routes.SignInController.signIn)

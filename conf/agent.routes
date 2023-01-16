@@ -7,6 +7,7 @@ GET         /language/:lang                                                contr
 GET         /client-utr                                                    controllers.agent.EnterClientsUTRController.show
 POST        /client-utr                                                    controllers.agent.EnterClientsUTRController.submit
 GET         /client-utr/:utr                                               controllers.agent.EnterClientsUTRController.showWithUtr(utr: String)
+GET         /verify-utr                                                    controllers.agent.EnterClientsUTRController.redirect
 
 # Confirm Client
 GET         /confirm-client-details                                         controllers.agent.ConfirmClientUTRController.show

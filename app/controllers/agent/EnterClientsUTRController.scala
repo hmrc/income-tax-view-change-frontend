@@ -20,13 +20,19 @@ import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig}
 import controllers.agent.predicates.BaseAgentController
 import controllers.agent.utils.SessionKeys
-import controllers.predicates.agent.AgentAuthenticationPredicate.defaultAgentPredicates
+import controllers.predicates.AuthPredicate.{AuthPredicate, AuthPredicateSuccess}
+import controllers.predicates.IncomeTaxAgentUser
+import controllers.predicates.agent.AgentAuthenticationPredicate
+import controllers.predicates.agent.AgentAuthenticationPredicate.{clientDetailsPredicates, confirmedClientPredicates, defaultAgentPredicates, defaultPredicates}
 import forms.agent.ClientsUTRForm
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.agent.ClientDetailsService
-import services.agent.ClientDetailsService.{BusinessDetailsNotFound, CitizenDetailsNotFound, ClientDetails}
-import uk.gov.hmrc.auth.core.AuthorisedFunctions
+import services.agent.ClientDetailsService.{BusinessDetailsNotFound, CitizenDetailsNotFound, ClientDetails, ClientDetailsFailure}
+import uk.gov.hmrc.auth.core.authorise.{EmptyPredicate, Predicate}
+import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals.{affinityGroup, allEnrolments, confidenceLevel, credentials}
+import uk.gov.hmrc.auth.core.retrieve.{Credentials, ~}
+import uk.gov.hmrc.auth.core.{AffinityGroup, AuthorisedFunctions, ConfidenceLevel, Enrolment, Enrolments, User}
 import uk.gov.hmrc.http.InternalServerException
 import views.html.agent.EnterClientsUTR
 
@@ -43,7 +49,7 @@ class EnterClientsUTRController @Inject()(enterClientsUTR: EnterClientsUTR,
                                           val ec: ExecutionContext)
   extends BaseAgentController with I18nSupport with FeatureSwitching {
 
-  lazy val notAnAgentPredicate = {
+  lazy val notAnAgentPredicate: AuthPredicate[IncomeTaxAgentUser] = {
     val redirectNotAnAgent = Future.successful(Redirect(controllers.agent.errors.routes.AgentErrorController.show))
     defaultAgentPredicates(onMissingARN = redirectNotAnAgent)
   }
@@ -65,6 +71,11 @@ class EnterClientsUTRController @Inject()(enterClientsUTR: EnterClientsUTR,
       )))
   }
 
+  def redirect: Action[AnyContent] = Authenticated.async { implicit request =>
+    implicit agent =>
+      Future.successful(Redirect(routes.ConfirmClientUTRController.show))
+  }
+
   def submit: Action[AnyContent] = Authenticated.asyncWithoutClientAuth() { implicit request =>
     implicit user =>
       ClientsUTRForm.form.bindFromRequest().fold(
@@ -82,7 +93,7 @@ class EnterClientsUTRController @Inject()(enterClientsUTR: EnterClientsUTR,
                 SessionKeys.clientNino -> nino,
                 SessionKeys.clientUTR -> validUTR
               ) ++ firstName.map(SessionKeys.clientFirstName -> _) ++ lastName.map(SessionKeys.clientLastName -> _)
-              Redirect(routes.ConfirmClientUTRController.show).addingToSession(sessionValues: _*)
+              Redirect(routes.EnterClientsUTRController.redirect).addingToSession(sessionValues: _*)
             case Left(CitizenDetailsNotFound | BusinessDetailsNotFound) =>
               val sessionValue: Seq[(String, String)] = Seq(SessionKeys.clientUTR -> validUTR)
               Redirect(routes.UTRErrorController.show).addingToSession(sessionValue: _*)
