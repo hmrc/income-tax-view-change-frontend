@@ -161,22 +161,30 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
     (checkSessionTimeout andThen authenticate andThen retrieveNino
       andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
       implicit user =>
-        handleRefundRequest(
-          backUrl = "", // TODO: do we need a backUrl
-          itvcErrorHandler = itvcErrorHandler,
-          isAgent = false
-        )
+        if(isDisabled(CreditsRefundsRepay)){
+          Future.successful(Ok(customNotFoundErrorView()(user, user.messages)))
+        } else {
+          handleRefundRequest(
+            backUrl = "", // TODO: do we need a backUrl
+            itvcErrorHandler = itvcErrorHandler,
+            isAgent = false
+          )
+        }
     }
 
   def refundStatus(): Action[AnyContent] =
     (checkSessionTimeout andThen authenticate andThen retrieveNino
       andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
       implicit user =>
-        handleStatusRefundRequest(
-          backUrl = "", // TODO: do we need a backUrl
-          itvcErrorHandler = itvcErrorHandler,
-          isAgent = false
-        )
+        if(isDisabled(CreditsRefundsRepay)){
+          Future.successful(Ok(customNotFoundErrorView()(user, user.messages)))
+        } else {
+          handleStatusRefundRequest(
+            backUrl = "", // TODO: do we need a backUrl
+            itvcErrorHandler = itvcErrorHandler,
+            isAgent = false
+          )
+        }
     }
 
   private def handleRefundRequest(isAgent: Boolean, itvcErrorHandler: ShowInternalServerError, backUrl: String)
