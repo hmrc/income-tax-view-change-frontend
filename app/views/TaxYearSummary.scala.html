@@ -328,11 +328,11 @@
                     <dt class="govuk-summary-list__key dt-cell-width">
                         @messages("tax-year-summary.calculation-date")
                     </dt>
-                    <div class="govuk-summary-list__value--numeric govuk-!-text-align-right">
+                    <dd class="govuk-summary-list__value--numeric govuk-!-text-align-right govuk-!-margin-0">
                         <span id="calculation-date">@{
                             model.timestamp.map(_.toLongDate)
                         }</span>
-                    </div>
+                    </dd>
                 </div>
                 <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key dt-cell-width">
