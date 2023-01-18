@@ -19,7 +19,12 @@ package models.core
 import play.api.libs.json.{Format, Json}
 
 case class Nino(value: String) extends AnyVal
+case class ViewHistory(nino: String) extends AnyVal
 
 object Nino {
   implicit val format: Format[Nino] = Json.format[Nino]
+}
+
+object ViewHistory {
+  implicit val format: Format[ViewHistory] = Json.format[ViewHistory]
 }
