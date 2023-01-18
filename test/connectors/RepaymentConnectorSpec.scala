@@ -29,7 +29,7 @@ class RepaymentConnectorSpec extends TestSupport with MockHttp {
 
   val nino = "AA010101Q"
   val fullAmount = BigDecimal("303.00")
-  val port = 9171
+  val port = 9172
   val host = "http://localhost"
   val expectedNextUrl: BigDecimal => String = (amount: BigDecimal) => s"$host:$port/self-assessment-repayment-frontend/$amount/select-amount"
 
