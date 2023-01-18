@@ -18,7 +18,7 @@ package models.core
 
 import play.api.libs.json.{Format, Json}
 
-case class Nino(value: String) extends AnyVal
+case class Nino(nino: String) extends AnyVal
 
 object Nino {
   implicit val format: Format[Nino] = Json.format[Nino]

@@ -192,7 +192,7 @@ object IncomeTaxViewChangeStub { // scalastyle:off number.of.methods
 
   def stubGetRepaymentHistoryByRepaymentId(nino: Nino, repaymentId: String)
                                           (status: Int, response: RepaymentHistoryModel): StubMapping = {
-    WiremockHelper.stubGet(getRepaymentHistoryByIdUrl(nino.value, repaymentId), status, Json.toJson(response).toString())
+    WiremockHelper.stubGet(getRepaymentHistoryByIdUrl(nino.nino, repaymentId), status, Json.toJson(response).toString())
   }
 
 }

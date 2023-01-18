@@ -325,7 +325,7 @@ trait IncomeTaxViewChangeConnector extends RawResponseReads with FeatureSwitchin
   def getPaymentAllocations(nino: Nino, paymentLot: String, paymentLotItem: String)
                            (implicit headerCarrier: HeaderCarrier): Future[PaymentAllocationsResponse] = {
 
-    val url = getPaymentAllocationsUrl(nino.value, paymentLot, paymentLotItem)
+    val url = getPaymentAllocationsUrl(nino.nino, paymentLot, paymentLotItem)
     Logger("application").debug(s"[IncomeTaxViewChangeConnector][getPaymentAllocations] - GET $url")
 
     http.GET[HttpResponse](url)(httpReads, headerCarrier, implicitly) map { response =>
@@ -497,7 +497,7 @@ trait IncomeTaxViewChangeConnector extends RawResponseReads with FeatureSwitchin
   // CUTOVER_CREDITS
   def getFinancialDetailsByDocumentId(nino: Nino, documentNumber: String)
                                      (implicit headerCarrier: HeaderCarrier): Future[FinancialDetailsWithDocumentDetailsResponse] = {
-    http.GET[HttpResponse](getFinancialDetailsByDocumentIdUrl(nino.value, documentNumber))(
+    http.GET[HttpResponse](getFinancialDetailsByDocumentIdUrl(nino.nino, documentNumber))(
       httpReads,
       headerCarrier.withExtraHeaders("Accept" -> "application/vnd.hmrc.2.0+json"),
       ec
@@ -524,7 +524,7 @@ trait IncomeTaxViewChangeConnector extends RawResponseReads with FeatureSwitchin
 
   def getRepaymentHistoryByRepaymentId(nino: Nino, repaymentId: String)
                                      (implicit headerCarrier: HeaderCarrier): Future[RepaymentHistoryResponseModel] = {
-    http.GET[HttpResponse](getRepaymentHistoryByIdUrl(nino.value, repaymentId))(
+    http.GET[HttpResponse](getRepaymentHistoryByIdUrl(nino.nino, repaymentId))(
       httpReads,
       headerCarrier.withExtraHeaders("Accept" -> "application/vnd.hmrc.2.0+json"),
       ec
@@ -552,7 +552,7 @@ trait IncomeTaxViewChangeConnector extends RawResponseReads with FeatureSwitchin
   def getRepaymentHistoryByNino(nino: Nino)
                                (implicit headerCarrier: HeaderCarrier): Future[RepaymentHistoryResponseModel] = {
 
-    http.GET[HttpResponse](getAllRepaymentHistoryUrl(nino.value))(
+    http.GET[HttpResponse](getAllRepaymentHistoryUrl(nino.nino))(
       httpReads,
       headerCarrier.withExtraHeaders("Accept" -> "application/vnd.hmrc.2.0+json"),
       ec
