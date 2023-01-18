@@ -18,7 +18,7 @@ package connectors
 
 import config.FrontendAppConfig
 import models.core.RepaymentJourneyResponseModel.{RepaymentJourneyErrorResponse, RepaymentJourneyModel}
-import models.core.{Nino, RepaymentJourneyResponseModel, RepaymentRefund, ViewHistory}
+import models.core.{RepaymentJourneyResponseModel, RepaymentRefund, ViewHistory}
 import play.api.Logger
 import play.api.http.Status.{ACCEPTED, INTERNAL_SERVER_ERROR, UNAUTHORIZED}
 import play.api.libs.json.Json

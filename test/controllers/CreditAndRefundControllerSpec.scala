@@ -17,7 +17,7 @@
 package controllers
 
 import config.featureswitch.FeatureSwitch.switches
-import config.featureswitch.{CreditsRefundsRepay, CutOverCredits, FeatureSwitching, MFACreditsAndDebits}
+import config.featureswitch.{CreditsRefundsRepay, CutOverCredits, FeatureSwitch, FeatureSwitching, MFACreditsAndDebits}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import mocks.auth.MockFrontendAuthorisedFunctions
@@ -208,11 +208,11 @@ class CreditAndRefundControllerSpec extends MockAuthenticationPredicate with Moc
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthSuccessWithSaUtrResponse())
 
+
         when(mockCreditService.getCreditCharges()(any(), any()))
           .thenReturn(Future.successful(List(financialDetailCreditAndRefundCharge)))
         when(mockRepaymentService.start(any(), any())(any()))
           .thenReturn(Future.successful(Right("/test/url")))
-
         val result: Future[Result] = controller.startRefund()(fakeRequestWithActiveSession)
 
         status(result) shouldBe Status.SEE_OTHER
@@ -236,6 +236,20 @@ class CreditAndRefundControllerSpec extends MockAuthenticationPredicate with Moc
         val result: Future[Result] = controller.startRefund()(fakeRequestWithActiveSession)
 
         status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+      }
+    }
+
+    "Controller should not start refund process" when {
+      "start refund endpoint should not be called when FS is disabled" in  new Setup {
+        disableAllSwitches()
+
+        mockSingleBISWithCurrentYearAsMigrationYear()
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthSuccessWithSaUtrResponse())
+
+        val result: Future[Result] = controller.startRefund()(fakeRequestWithActiveSession)
+
+        status(result) shouldBe Status.OK
       }
     }
 
@@ -272,6 +286,19 @@ class CreditAndRefundControllerSpec extends MockAuthenticationPredicate with Moc
         val result: Future[Result] = controller.refundStatus()(fakeRequestWithActiveSession)
 
         status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+      }
+    }
+    "Controller should not return the refund status" when {
+      "refund status endpoint should not be called if FS is disabled" in  new Setup {
+        disableAllSwitches()
+
+        mockSingleBISWithCurrentYearAsMigrationYear()
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthSuccessWithSaUtrResponse())
+
+        val result: Future[Result] = controller.refundStatus()(fakeRequestWithActiveSession)
+
+        status(result) shouldBe Status.OK
       }
     }
   }
