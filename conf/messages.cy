@@ -425,6 +425,24 @@ taxCal_breakdown.message.C22217                                 = Mae un neu fwy
 taxCal_breakdown.message.C22218                                 = Dim ond yn y cyfrifiad o’r rhwymedigaeth flynyddol amcangyfrifedig y mae Treth Enillion Cyfalaf wedi’i chynnwys. Bydd swm gwirioneddol y Dreth Enillion Cyfalaf wedi’i gynnwys yng nghyfrifiad y datganiad terfynol.
 taxCal_breakdown.message.C22220                                 = Os yw’ch elw trethadwy rhwng £6,725 ac £11,908 ni fydd angen i chi dalu Yswiriant Gwladol Dosbarth 2. Bydd eich hawl i Bensiwn y Wladwriaeth, ac i rai budd-daliadau penodol, yn dal i fod yn gymwys. Caiff eich cyfraniadau eu trin fel rhai sydd wedi’u talu.
 taxCal_breakdown.message.agent.C22220                           = Os yw elw trethadwy eich cleient rhwng £6,725 ac £11,908, ni fydd angen i’ch cleient dalu Yswiriant Gwladol Dosbarth 2. Bydd hawl eich cleient i Bensiwn y Wladwriaeth, ac i rai budd-daliadau penodol, yn dal i fod yn gymwys. Caiff cyfraniadau eich cleient eu trin fel rhai sydd wedi’u talu.
+taxCal_breakdown.message.agent.C22201                           = Mae terfyn Cyfradd Sylfaenol eich cleient wedi’i gynyddu gan {0} i {1} ar gyfer taliadau Rhodd Cymorth.
+taxCal_breakdown.message.agent.C22202                           = Mae’r dreth sy’n ddyledus ar daliadau Rhodd Cymorth yn fwy na’r Dreth Incwm a godwyd ar eich cleient, felly mae’ch cleient yn agored i dalu treth ar y Rhodd Cymorth
+taxCal_breakdown.message.agent.C22203                           = Ni chodwyd Yswiriant Gwladol Dosbarth 2 oherwydd bod elw eich cleient o hunangyflogaeth o dan y trothwy elw bychan.
+taxCal_breakdown.message.agent.C22205                           = Cafodd cyfanswm y golled o’r holl ffynonellau incwm ei gyfyngu i uchafswm o {0}.
+taxCal_breakdown.message.agent.C22206                           = Ni ddefnyddiwyd un neu fwy o addasiadau blynyddol eich cleient oherwydd bod eich cleient wedi cyflwyno incwm neu dreuliau ychwanegol.
+taxCal_breakdown.message.agent.C22207                           = Mae’r swm y mae eich cleient yn ei roi drwy’r gyflogres wedi’i gynnwys yn ei incwm trethadwy sydd wedi’i addasu.
+taxCal_breakdown.message.agent.C22208                           = Mae terfyn Cyfradd Sylfaenol eich cleient wedi’i gynyddu gan {0} i {1} ar gyfer Cyfraniad Pensiwn.
+taxCal_breakdown.message.agent.C22209                           = Mae terfyn Cyfradd Sylfaenol eich cleient wedi’i gynyddu gan {0} i {1} ar gyfer Cyfraniad Pensiwn a thaliadau Rhodd Cymorth.
+taxCal_breakdown.message.agent.C22210                           = Caiff treuliau sy’n ymwneud â chyflogaeth eu cyfyngu i gyfanswm yr incwm o gyflogaeth.
+taxCal_breakdown.message.agent.C22211                           = Rhagolwg yw hwn o rwymedigaeth Treth Incwm blynyddol eich cleient, a hynny’n seiliedig ar yr wybodaeth a roddwyd ganddo hyd yma. Ni chaiff gordaliadau Treth Incwm eu had-dalu hyd nes i’ch cleient gyflwyno’i ddatganiad terfynol.
+taxCal_breakdown.message.agent.C22212                           = Mae treuliau cysylltiedig â chyflogaeth a didyniadau wedi’u cyfyngu i incwm o gyflogaeth.
+taxCal_breakdown.message.agent.C22213                           = Oherwydd enillion eich cleient o gyflogaeth, efallai na fydd talu cyfraniadau Dosbarth 2 gwirfoddol o fudd iddo.
+taxCal_breakdown.message.agent.C22214                           = Mae cyfraniadau Dosbarth 4 eich cleient wedi’u haddasu ar gyfer y cyfraniadau Dosbarth 2 sy’n ddyledus a phrif gyfraniadau Dosbarth 1.
+taxCal_breakdown.message.agent.C22215                           = Oherwydd lefel incwm presennol eich cleient, efallai na fydd eich cleient yn gymwys ar gyfer Lwfans Priodasol, ac felly nid yw wedi’i gynnwys yn y cyfrifiad hwn.
+taxCal_breakdown.message.agent.C22216                           = Oherwydd lefel incwm eich cleient, nid yw eich cleient yn gymwys ar gyfer Lwfans Priodasol mwyach, ac felly caiff ei hawliad ei ganslo.
+taxCal_breakdown.message.agent.C22217                           = Mae un neu fwy o dandaliadau, dyledion neu addasiadau nad ydynt wedi’u cynnwys yn y cyfrifiad, gan nad ydynt yn gysylltiedig â data sydd gan CThEM.
+taxCal_breakdown.message.agent.C22218                           = Dim ond yn y cyfrifiad o’r rhwymedigaeth flynyddol amcangyfrifedig y mae Treth Enillion Cyfalaf wedi’i chynnwys. Bydd swm gwirioneddol y Dreth Enillion Cyfalaf wedi’i gynnwys yng nghyfrifiad y datganiad terfynol.
+
 
 
 taxCal_breakdown.table.head.rate_band                           = Haen cyfradd
