@@ -18,15 +18,13 @@ package connectors
 
 import mocks.MockHttp
 import models.core.RepaymentJourneyResponseModel.{RepaymentJourneyErrorResponse, RepaymentJourneyModel}
-import models.core.{Nino, RepaymentRefund, ViewHistory}
-import org.junit.Ignore
+import models.core.{RepaymentRefund, ViewHistory}
 import play.api.http.Status.{ACCEPTED, UNAUTHORIZED}
 import play.api.libs.json.Json
 import play.mvc.Http.Status
 import testUtils.TestSupport
 import uk.gov.hmrc.http.HttpResponse
 
-@Ignore
 class RepaymentConnectorSpec extends TestSupport with MockHttp {
 
   val nino = "AA010101Q"
