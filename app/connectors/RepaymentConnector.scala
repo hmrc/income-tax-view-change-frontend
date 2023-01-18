@@ -18,7 +18,7 @@ package connectors
 
 import config.FrontendAppConfig
 import models.core.RepaymentJourneyResponseModel.{RepaymentJourneyErrorResponse, RepaymentJourneyModel}
-import models.core.{Nino, RepaymentJourneyResponseModel, RepaymentRefund}
+import models.core.{RepaymentJourneyResponseModel, RepaymentRefund, RepaymentRefundNino}
 import play.api.Logger
 import play.api.http.Status.{ACCEPTED, INTERNAL_SERVER_ERROR, UNAUTHORIZED}
 import play.api.libs.json.Json
@@ -67,7 +67,7 @@ class RepaymentConnector @Inject()(val http: HttpClient,
 
 
   def view(nino: String)(implicit headerCarrier: HeaderCarrier): Future[RepaymentJourneyResponseModel] = {
-    val body = Json.toJson[Nino](Nino(nino))
+    val body = Json.toJson[RepaymentRefundNino](RepaymentRefundNino(nino))
 
     http.POST(viewRefundUrl, body).map {
       case response if response.status == ACCEPTED =>
