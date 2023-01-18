@@ -23,3 +23,9 @@ case class RepaymentRefund(nino: String, fullAmount: BigDecimal)
 object RepaymentRefund {
   implicit val format: Format[RepaymentRefund] = Json.format[RepaymentRefund]
 }
+
+case class RepaymentRefundNino(nino: String) extends AnyVal
+
+object RepaymentRefundNino {
+  implicit val format: Format[RepaymentRefundNino] = Json.format[RepaymentRefundNino]
+}
