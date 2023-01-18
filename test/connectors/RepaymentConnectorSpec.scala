@@ -18,7 +18,7 @@ package connectors
 
 import mocks.MockHttp
 import models.core.RepaymentJourneyResponseModel.{RepaymentJourneyErrorResponse, RepaymentJourneyModel}
-import models.core.{Nino, RepaymentRefund}
+import models.core.{Nino, RepaymentRefund, ViewHistory}
 import org.junit.Ignore
 import play.api.http.Status.{ACCEPTED, UNAUTHORIZED}
 import play.api.libs.json.Json
@@ -84,7 +84,7 @@ class RepaymentConnectorSpec extends TestSupport with MockHttp {
 
   "calling .view" should {
     val testViewUrl = s"$host:$port/self-assessment-refund-backend/itsa-viewer/journey/view-history"
-    val body = Json.toJson[Nino](Nino(nino))
+    val body = Json.toJson[ViewHistory](ViewHistory(nino))
     "return a RepaymentResponse" when {
 
       "a 202 response is received with valid json" in {
