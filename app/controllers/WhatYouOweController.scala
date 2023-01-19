@@ -19,7 +19,7 @@ package controllers
 import audit.AuditingService
 import audit.models.WhatYouOweResponseAuditModel
 import auth.{FrontendAuthorisedFunctions, MtdItUser}
-import config.featureswitch.{CodingOut, CreditsRefundsRepay, CutOverCredits, FeatureSwitching, MFACreditsAndDebits, R7bTxmEvents, WhatYouOweCreditAmount}
+import config.featureswitch.{CodingOut, CreditsRefundsRepay, CutOverCredits, FeatureSwitching, MFACreditsAndDebits, WhatYouOweCreditAmount}
 import config._
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
@@ -60,7 +60,7 @@ class WhatYouOweController @Inject()(val checkSessionTimeout: SessionTimeoutPred
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
     whatYouOweService.getWhatYouOweChargesList() flatMap {
       whatYouOweChargesList =>
-        auditingService.extendedAudit(WhatYouOweResponseAuditModel(user, whatYouOweChargesList, isEnabled(R7bTxmEvents), dateService))
+        auditingService.extendedAudit(WhatYouOweResponseAuditModel(user, whatYouOweChargesList, dateService))
 
         val codingOutEnabled = isEnabled(CodingOut)
 
