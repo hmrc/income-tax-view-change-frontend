@@ -140,7 +140,7 @@ class LiabilityCalculationResponseModelSpec extends LiabilityCalculationDataHelp
 
   "Messages" when {
     "variable values from message" in {
-      Messages(errors = errorMessages).getErrorMessageVariables(messagesApi) shouldBe Seq(
+      Messages(errors = errorMessages).getErrorMessageVariables(messagesApi, false) shouldBe Seq(
         Message("C55012", "5 January 2023"),
         Message("C15507", "£2000"),
         Message("C15510", "10"),
@@ -149,7 +149,7 @@ class LiabilityCalculationResponseModelSpec extends LiabilityCalculationDataHelp
     }
 
     "translate date variable values from messages" in {
-      val values = Messages(errors = errorMessages).getErrorMessageVariables(messagesApi)
+      val values = Messages(errors = errorMessages).getErrorMessageVariables(messagesApi, false)
       Messages.translateMessageDateVariables(values)(messagesApi.preferred(Seq(Lang("cy"))),mockImplicitDateFormatter) shouldBe Seq(
         Message("C55012", "5 Ionawr 2023"),
         Message("C15507", "£2000"),

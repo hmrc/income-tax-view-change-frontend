@@ -314,7 +314,7 @@
         @messages("tax-year-summary.heading")
     </h1>
     @modelOpt.map { model =>
-        @if(!model.crystallised.contains(true) && (isAgent || !errorPresent(model))) {
+        @if(!model.crystallised.contains(true) && !model.messages.isDefined) {
             @govukInsetText(InsetText(content = HtmlContent(
                 p(id=Some("calc-date-info"))(content = Html(
                     messages(if(isAgent) "tax-year-summary.agent.calc-from-last-time" else "tax-year-summary.calc-from-last-time",
@@ -322,7 +322,6 @@
                 )
             )))
         }
-        @if(isAgent || !errorPresent(model)) {
             <dl class="govuk-summary-list">
                 <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key dt-cell-width">
@@ -363,7 +362,6 @@
                     </div>
                 }
             </dl>
-        }
     }
 
     @taxYearSummaryTabsPartial(showForecastData, taxCalculationContent, paymentsContent, forecastContent, updatesContent)
