@@ -877,10 +877,6 @@ timeoutDialog.minute                                            = minute
 timeoutDialog.message                                           = For your security, we will sign you out in
 button.continue                                                 = Stay signed in
 
-## Not found
-notFound.heading =
-notFound.message =
-
 
 ## Uplift Failure
 upliftFailure.title = You cannot view this page
@@ -985,8 +981,6 @@ credit-and-refund.heading                                         = Claim a refu
 credit-and-refund.subHeading.has-credits-1                        = There is a total of
 credit-and-refund.subHeading.has-credits-2                        = in your account:
 credit-and-refund.subHeading.has-credits-3                        = in your account.
-credit-and-refund.subHeading.has-no-credits-1                     = has been requested
-credit-and-refund.subHeading.has-no-credits-2                     = as a refund and is in progress.
 credit-and-refund.agent.subHeading.has-credits-2                  = in your client’s account:
 credit-and-refund.agent.subHeading.has-credits-3                  = in your client’s account.
 credit-and-refund.subHeading.unallocated-credits-one-payment-1    = There is a total of
@@ -1015,6 +1009,8 @@ credit-and-refund.check-refund-btn                                = Check refund
 credit-and-refund.credit-from-hmrc-title-prt-1                    = from a
 credit-and-refund.credit-from-hmrc-title-prt-2                    = Credit from HMRC adjustment
 
+#Following empty fields are not in Use
+#These fields are kept to match with Messages.cy
 shortMonth.1 =
 shortMonth.2 =
 shortMonth.3 =
@@ -1027,6 +1023,11 @@ shortMonth.9 =
 shortMonth.10 =
 shortMonth.11 =
 shortMonth.12 =
+notFound.heading =
+notFound.message =
+#Not in-use | These fields are kept to match with Messages.cy
+credit-and-refund.subHeading.has-no-credits-1                     = has been requested
+credit-and-refund.subHeading.has-no-credits-2                     = as a refund and is in progress.
 
 
 
