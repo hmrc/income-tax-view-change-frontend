@@ -322,7 +322,6 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
     val messageAction: String = "! Warning " + messages("tax-year-summary.message.action")
     val messageError1: String = messages("tax-year-summary.message.C15015")
     val messageError2: String = messages("tax-year-summary.message.C15016")
-    val payeTaxCode: String = messages("tax-year-summary.paye-tax-code")
 
     def updateCaption(from: String, to: String): String = s"$from to $to"
 
