@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -60,9 +60,9 @@ class RefundToTaxPayerControllerSpec extends MockAuthenticationPredicate
     List(RepaymentHistory(
       Some(705.2),
       705.2,
-      "BACS",
-      12345,
-      Vector(
+      Some("BACS"),
+      Some(12345),
+      Some(Vector(
         RepaymentItem(
           Vector(
             RepaymentSupplementItem(
@@ -87,7 +87,7 @@ class RefundToTaxPayerControllerSpec extends MockAuthenticationPredicate
               Some(2.01))
           )
         )
-      ), LocalDate.of(2021, 7, 23), LocalDate.of(2021, 7, 21), "000000003135")
+      )), Some(LocalDate.of(2021, 7, 23)), Some(LocalDate.of(2021, 7, 21)), "000000003135")
     )
   )
 

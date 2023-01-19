@@ -18,7 +18,7 @@ package models.liabilitycalculation.viewmodels
 
 import exceptions.MissingFieldException
 import implicits.ImplicitDateParser
-import models.liabilitycalculation.LiabilityCalculationResponse
+import models.liabilitycalculation.{LiabilityCalculationResponse, Messages}
 
 import java.time.LocalDate
 
@@ -34,7 +34,8 @@ case class TaxYearSummaryViewModel(timestamp: Option[LocalDate],
                                    forecastAllowancesAndDeductions: Option[BigDecimal] = None,
                                    forecastTotalTaxableIncome: Option[Int] = None,
                                    periodFrom: Option[LocalDate] = None,
-                                   periodTo: Option[LocalDate] = None)
+                                   periodTo: Option[LocalDate] = None,
+                                   messages: Option[Messages] = None)
 
 object TaxYearSummaryViewModel extends ImplicitDateParser {
   def isUnattendedCalc(calculationReason: Option[String]): Boolean = calculationReason match {
@@ -72,7 +73,8 @@ object TaxYearSummaryViewModel extends ImplicitDateParser {
       forecastAllowancesAndDeductions = calc.calculation.flatMap(c => c.endOfYearEstimate.flatMap(_.totalAllowancesAndDeductions)),
       forecastTotalTaxableIncome = calc.calculation.flatMap(c => c.endOfYearEstimate.flatMap(_.totalTaxableIncome)),
       periodFrom = calc.metadata.periodFrom,
-      periodTo = calc.metadata.periodTo
+      periodTo = calc.metadata.periodTo,
+      messages = calc.messages
     )
   }
 }

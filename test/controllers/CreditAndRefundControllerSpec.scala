@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,13 +17,12 @@
 package controllers
 
 import config.featureswitch.FeatureSwitch.switches
-import config.featureswitch.{CreditsRefundsRepay, CutOverCredits, FeatureSwitching, MFACreditsAndDebits}
+import config.featureswitch.{CreditsRefundsRepay, CutOverCredits, FeatureSwitch, FeatureSwitching, MFACreditsAndDebits}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
-import models.core.RepaymentJourneyResponseModel.{RepaymentJourneyErrorResponse, RepaymentJourneyModel}
-import models.financialDetails.{BalanceDetails, FinancialDetailsModel}
+import models.financialDetails.FinancialDetailsModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.mockito.ArgumentMatchers.any
@@ -209,11 +208,11 @@ class CreditAndRefundControllerSpec extends MockAuthenticationPredicate with Moc
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthSuccessWithSaUtrResponse())
 
+
         when(mockCreditService.getCreditCharges()(any(), any()))
           .thenReturn(Future.successful(List(financialDetailCreditAndRefundCharge)))
         when(mockRepaymentService.start(any(), any())(any()))
-          .thenReturn(Future.successful(RepaymentJourneyModel("/test/url")))
-
+          .thenReturn(Future.successful(Right("/test/url")))
         val result: Future[Result] = controller.startRefund()(fakeRequestWithActiveSession)
 
         status(result) shouldBe Status.SEE_OTHER
@@ -232,11 +231,25 @@ class CreditAndRefundControllerSpec extends MockAuthenticationPredicate with Moc
         when(mockCreditService.getCreditCharges()(any(), any()))
           .thenReturn(Future.successful(List(financialDetailCreditAndRefundCharge)))
         when(mockRepaymentService.start(any(), any())(any()))
-          .thenReturn(Future.successful(RepaymentJourneyErrorResponse(Status.UNAUTHORIZED, "Token expired")))
+          .thenReturn(Future.successful(Left(new InternalError)))
 
         val result: Future[Result] = controller.startRefund()(fakeRequestWithActiveSession)
 
         status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+      }
+    }
+
+    "Controller should not start refund process" when {
+      "start refund endpoint should not be called when FS is disabled" in  new Setup {
+        disableAllSwitches()
+
+        mockSingleBISWithCurrentYearAsMigrationYear()
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthSuccessWithSaUtrResponse())
+
+        val result: Future[Result] = controller.startRefund()(fakeRequestWithActiveSession)
+
+        status(result) shouldBe Status.OK
       }
     }
 
@@ -250,7 +263,7 @@ class CreditAndRefundControllerSpec extends MockAuthenticationPredicate with Moc
         setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthSuccessWithSaUtrResponse())
 
         when(mockRepaymentService.view(any())(any()))
-          .thenReturn(Future.successful(RepaymentJourneyModel("/test/url")))
+          .thenReturn(Future.successful(Right("/test/url")))
 
         val result: Future[Result] = controller.refundStatus()(fakeRequestWithActiveSession)
 
@@ -268,11 +281,24 @@ class CreditAndRefundControllerSpec extends MockAuthenticationPredicate with Moc
         setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthSuccessWithSaUtrResponse())
 
         when(mockRepaymentService.view(any())(any()))
-          .thenReturn(Future.successful(RepaymentJourneyErrorResponse(Status.UNAUTHORIZED, "Token expired")))
+          .thenReturn(Future.successful(Left(new InternalError)))
 
         val result: Future[Result] = controller.refundStatus()(fakeRequestWithActiveSession)
 
         status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+      }
+    }
+    "Controller should not return the refund status" when {
+      "refund status endpoint should not be called if FS is disabled" in  new Setup {
+        disableAllSwitches()
+
+        mockSingleBISWithCurrentYearAsMigrationYear()
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthSuccessWithSaUtrResponse())
+
+        val result: Future[Result] = controller.refundStatus()(fakeRequestWithActiveSession)
+
+        status(result) shouldBe Status.OK
       }
     }
   }

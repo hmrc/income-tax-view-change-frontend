@@ -20,11 +20,10 @@ package controllers
 import audit.AuditingService
 import audit.models.ClaimARefundAuditModel
 import auth.{FrontendAuthorisedFunctions, MtdItUser}
+import config.featureswitch._
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
-import config.featureswitch.{CreditsRefundsRepay, CutOverCredits, FeatureSwitching, MFACreditsAndDebits, R7cTxmEvents}
 import controllers.agent.predicates.ClientConfirmedController
-import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
-import models.core.RepaymentJourneyResponseModel.{RepaymentJourneyErrorResponse, RepaymentJourneyModel}
+import controllers.predicates._
 import models.financialDetails.{BalanceDetails, DocumentDetailWithDueDate, FinancialDetail, FinancialDetailsModel}
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages}
@@ -162,22 +161,30 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
     (checkSessionTimeout andThen authenticate andThen retrieveNino
       andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
       implicit user =>
-        handleRefundRequest(
-          backUrl = "", // TODO: do we need a backUrl
-          itvcErrorHandler = itvcErrorHandler,
-          isAgent = false
-        )
+        if(isDisabled(CreditsRefundsRepay)){
+          Future.successful(Ok(customNotFoundErrorView()(user, user.messages)))
+        } else {
+          handleRefundRequest(
+            backUrl = "", // TODO: do we need a backUrl
+            itvcErrorHandler = itvcErrorHandler,
+            isAgent = false
+          )
+        }
     }
 
   def refundStatus(): Action[AnyContent] =
     (checkSessionTimeout andThen authenticate andThen retrieveNino
       andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
       implicit user =>
-        handleStatusRefundRequest(
-          backUrl = "", // TODO: do we need a backUrl
-          itvcErrorHandler = itvcErrorHandler,
-          isAgent = false
-        )
+        if(isDisabled(CreditsRefundsRepay)){
+          Future.successful(Ok(customNotFoundErrorView()(user, user.messages)))
+        } else {
+          handleStatusRefundRequest(
+            backUrl = "", // TODO: do we need a backUrl
+            itvcErrorHandler = itvcErrorHandler,
+            isAgent = false
+          )
+        }
     }
 
   private def handleRefundRequest(isAgent: Boolean, itvcErrorHandler: ShowInternalServerError, backUrl: String)
@@ -188,12 +195,10 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
 
       case financialDetailsModel: List[FinancialDetailsModel] =>
         val balance: Option[BalanceDetails] = financialDetailsModel.headOption.map(balance => balance.balanceDetails)
-        repaymentService.start(user.nino, balance.flatMap(_.getAbsoluteAvailableCreditAmount).getOrElse(BigDecimal(0))).flatMap {
-          case RepaymentJourneyModel(nextUrl) =>
+        repaymentService.start(user.nino, balance.flatMap(_.availableCredit)).flatMap {
+          case Right(nextUrl) =>
             Future.successful(Redirect(nextUrl))
-          case RepaymentJourneyErrorResponse(status, message) =>
-            Logger("application")
-              .error(s"[CreditAndRefundController][handleRefundRequest] - failed RepaymentJourney: $status ")
+          case Left(_) =>
             Future.successful(itvcErrorHandler.showInternalServerError())
         }
       case _ => Logger("application").error("[CreditAndRefundController][handleRefundRequest]")
@@ -204,11 +209,11 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
   private def handleStatusRefundRequest(isAgent: Boolean, itvcErrorHandler: ShowInternalServerError, backUrl: String)
                                  (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
     repaymentService.view(user.nino).flatMap {
-      case RepaymentJourneyModel(nextUrl) =>
+      case _ if isDisabled(CreditsRefundsRepay) =>
+        Future.successful(Ok(customNotFoundErrorView()(user, messages)))
+      case Right(nextUrl) =>
         Future.successful(Redirect(nextUrl))
-      case RepaymentJourneyErrorResponse(status, message) =>
-        Logger("application")
-          .error(s"[CreditAndRefundController][handleStatusRefundRequest] - failed RepaymentJourney: $status ")
+      case Left(_) =>
         Future.successful(itvcErrorHandler.showInternalServerError())
     }
 
@@ -218,7 +223,6 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
                                (implicit hc: HeaderCarrier, user: MtdItUser[_]): Unit = {
 
     auditingService.extendedAudit(ClaimARefundAuditModel(
-      mtdItUser = user,
       balanceDetails = balanceDetails,
       creditDocuments = creditDocuments))
   }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ package connectors
 
 import mocks.MockHttp
 import models.core.RepaymentJourneyResponseModel.{RepaymentJourneyErrorResponse, RepaymentJourneyModel}
-import models.core.{Nino, RepaymentJourneyResponseModel, RepaymentRefund}
+import models.core.{RepaymentRefund, ViewHistory}
 import play.api.http.Status.{ACCEPTED, UNAUTHORIZED}
 import play.api.libs.json.Json
 import play.mvc.Http.Status
@@ -29,7 +29,7 @@ class RepaymentConnectorSpec extends TestSupport with MockHttp {
 
   val nino = "AA010101Q"
   val fullAmount = BigDecimal("303.00")
-  val port = 9171
+  val port = 9172
   val host = "http://localhost"
   val expectedNextUrl: BigDecimal => String = (amount: BigDecimal) => s"$host:$port/self-assessment-repayment-frontend/$amount/select-amount"
 
@@ -82,7 +82,7 @@ class RepaymentConnectorSpec extends TestSupport with MockHttp {
 
   "calling .view" should {
     val testViewUrl = s"$host:$port/self-assessment-refund-backend/itsa-viewer/journey/view-history"
-    val body = Json.toJson[Nino](Nino(nino))
+    val body = Json.toJson[ViewHistory](ViewHistory(nino))
     "return a RepaymentResponse" when {
 
       "a 202 response is received with valid json" in {

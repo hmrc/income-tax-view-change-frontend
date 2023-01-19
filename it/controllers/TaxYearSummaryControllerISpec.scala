@@ -33,7 +33,7 @@ import play.api.libs.ws.WSResponse
 import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.IncomeSourceIntegrationTestConstants._
-import testConstants.NewCalcBreakdownItTestConstants.{liabilityCalculationModelSuccessful, liabilityCalculationModelSuccessfulNotCrystallised}
+import testConstants.NewCalcBreakdownItTestConstants.{liabilityCalculationModelErrorMessages, liabilityCalculationModelErrorMessagesFormatted, liabilityCalculationModelSuccessful, liabilityCalculationModelSuccessfulNotCrystallised}
 import testConstants.messages.TaxYearSummaryMessages._
 
 import java.time.LocalDate
@@ -43,6 +43,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
   override def beforeEach(): Unit = {
     super.beforeEach()
     enable(R7bTxmEvents)
+    disable(NavBarFs)
   }
 
   val calculationTaxYear: String = s"${getCurrentTaxYearEnd.getYear - 1}-${getCurrentTaxYearEnd.getYear.toString.drop(2)}"
@@ -1041,6 +1042,72 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
           httpStatus(INTERNAL_SERVER_ERROR)
         )
       }
+
+      "calculation response contain error messages" in {
+
+          Given("Business details returns a successful response back")
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWoMigration)
+
+          And(s"A non crystallised calculation for $calculationTaxYear is returned")
+          And("Calculation could not be completed due to errors")
+          IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, getCurrentTaxYearEnd.getYear.toString)(
+            status = OK,
+            body = liabilityCalculationModelErrorMessages
+          )
+
+          And("A financial transaction call returns a success")
+          IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
+            nino = testNino,
+            from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
+            to = getCurrentTaxYearEnd.toString
+          )(
+            status = OK,
+            response = Json.toJson(financialDetailsSuccess)
+          )
+
+          And("previous obligations returns a success")
+          IncomeTaxViewChangeStub.stubGetPreviousObligations(
+            nino = testNino,
+            fromDate = getCurrentTaxYearEnd.minusYears(1).plusDays(1),
+            toDate = getCurrentTaxYearEnd,
+            deadlines = previousObligationsSuccess
+          )
+
+          And("current obligations returns a success")
+          IncomeTaxViewChangeStub.stubGetNextUpdates(
+            nino = testNino,
+            deadlines = currentObligationsSuccess
+          )
+
+          When(s"I call GET ${controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(getCurrentTaxYearEnd.getYear).url}")
+          val res = IncomeTaxViewChangeFrontend.getTaxYearSummary(getCurrentTaxYearEnd.getYear.toString)
+
+          Then("I check all calls expected were made")
+          verifyIncomeSourceDetailsCall(testMtditid)
+          IncomeTaxCalculationStub.verifyGetCalculationResponse(testNino, getCurrentTaxYearEnd.getYear.toString)
+          IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino,
+            from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
+            to = getCurrentTaxYearEnd.toString
+          )
+
+          verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "ABC123456789", previousObligationsSuccess.obligations.flatMap(_.obligations)).detail)
+          verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "ABC123456789", currentObligationsSuccess.obligations.flatMap(_.obligations)).detail)
+
+          And("The expected result is returned")
+          val errMessages = liabilityCalculationModelErrorMessagesFormatted.messages.get.errorMessages
+
+          res should have(
+            httpStatus(OK),
+            pageTitleIndividual("tax-year-summary.heading"),
+            elementTextBySelectorList("#taxCalculation", "div h2")(messagesAPI("tax-year-summary.message.header")),
+            elementTextBySelectorList("#taxCalculation", "div strong")("Warning " + messagesAPI("tax-year-summary.message.action")),
+            elementTextBySelectorList("#taxCalculation", "ul > li:nth-child(1)")(errMessages(0).text),
+            elementTextBySelectorList("#taxCalculation", "ul > li:nth-child(2)")(errMessages(1).text),
+            elementTextBySelectorList("#taxCalculation", "ul > li:nth-child(3)")(errMessages(2).text),
+            elementTextBySelectorList("#taxCalculation", "ul > li:nth-child(4)")(errMessages(3).text),
+          )
+
+        }
     }
 
     "retrieving a calculation failed" in {
@@ -1199,6 +1266,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         testMFADebits(false)
       }
     }
+
   }
 
   "API#1171 IncomeSourceDetails Caching" when {

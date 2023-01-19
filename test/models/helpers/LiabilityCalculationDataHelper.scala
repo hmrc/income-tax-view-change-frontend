@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -703,6 +703,13 @@ trait LiabilityCalculationDataHelper {
   val liabilityCalculationModelSuccessfulWithNoCalc = liabilityCalculationModelSuccessfulConversionPB.copy(
     calculation = None
   )
+
+  val errorMessages = Some(List(
+    Message("C55012", "the update must align to the accounting period end date of 05/01/2023."),
+    Message("C15507", "you’ve claimed £2000 in Property Income Allowance but this is more than turnover for your UK property."),
+    Message("C15510", "the Rent a Room relief claimed for a jointly let property cannot be more than 10% of the Rent a Room limit."),
+    Message("C55009", "updates cannot include gaps.")
+  ))
 
 
 }

@@ -108,9 +108,9 @@ object RepaymentHistoryUtils {
 
     val filteredRepayments = repayments.flatMap(repayment => {
       Some(PaymentHistoryEntry(
-        date = LocalDate.parse(languageUtils.Dates.shortDate(repayment.estimatedRepaymentDate)(messages)),
+        date = LocalDate.parse(languageUtils.Dates.shortDate(repayment.estimatedRepaymentDate.getOrElse(throw MissingFieldException("Estimated Repayment Date")))(messages)),
         description = "paymentHistory.refund",
-        amount = Some(repayment.totalRepaymentAmount),
+        amount = repayment.totalRepaymentAmount,
         linkUrl = s"refund-to-taxpayer/${repayment.repaymentRequestNumber}",
         visuallyHiddenText = s"${repayment.repaymentRequestNumber}"
       ))

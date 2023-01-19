@@ -66,9 +66,6 @@ class CreditAndRefundControllerISpec extends ComponentSpecBase {
 
         Then("I verify the audit event was as expected")
         AuditStub.verifyAuditEvent(ClaimARefundAuditModel(
-          MtdItUser(testMtditid, testNino, None,
-            multipleBusinessesAndPropertyResponse, None, Some("1234567890"),
-            None, Some("Agent"), Some("1"))(FakeRequest()),
           balanceDetails = Some(BalanceDetails(BigDecimal(1.00), BigDecimal(2.00), BigDecimal(3.00), Some(BigDecimal(5.00)), Some(BigDecimal(3.00)), Some(BigDecimal(2.00)), None)),
           creditDocuments = List(
             documentDetailWithDueDateFinancialDetailListModel(taxYear = testPreviousTaxYear, originalAmount = Some(-2000), outstandingAmount = Some(-2000), mainType = Some("ITSA Cutover Credits")),
@@ -76,7 +73,9 @@ class CreditAndRefundControllerISpec extends ComponentSpecBase {
             documentDetailWithDueDateFinancialDetailListModel(taxYear = testPreviousTaxYear, originalAmount = Some(-2000), outstandingAmount = Some(-2000), mainType = Some("ITSA Cutover Credits")),
             documentDetailWithDueDateFinancialDetailListModel(taxYear = testPreviousTaxYear, originalAmount = Some(-2000), outstandingAmount = Some(-2000), mainType = Some("ITSA Overpayment Relief"))
           )
-        ))
+        )(MtdItUser(testMtditid, testNino, None,
+          multipleBusinessesAndPropertyResponse, None, Some("1234567890"),
+          None, Some("Agent"), Some("1"))(FakeRequest())))
 
         res should have(
           httpStatus(OK),
