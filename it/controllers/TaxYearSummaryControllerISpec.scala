@@ -33,7 +33,7 @@ import play.api.libs.ws.WSResponse
 import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.IncomeSourceIntegrationTestConstants._
-import testConstants.NewCalcBreakdownItTestConstants.{liabilityCalculationModelSuccessful, liabilityCalculationModelSuccessfulNotCrystallised,liabilityCalculationModelErrorMessages}
+import testConstants.NewCalcBreakdownItTestConstants.{liabilityCalculationModelErrorMessages, liabilityCalculationModelErrorMessagesFormatted, liabilityCalculationModelSuccessful, liabilityCalculationModelSuccessfulNotCrystallised}
 import testConstants.messages.TaxYearSummaryMessages._
 
 import java.time.LocalDate
@@ -1094,7 +1094,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
           verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "ABC123456789", currentObligationsSuccess.obligations.flatMap(_.obligations)).detail)
 
           And("The expected result is returned")
-          val errMessages = liabilityCalculationModelErrorMessages.messages.get.errorMessages
+          val errMessages = liabilityCalculationModelErrorMessagesFormatted.messages.get.errorMessages
 
           res should have(
             httpStatus(OK),
