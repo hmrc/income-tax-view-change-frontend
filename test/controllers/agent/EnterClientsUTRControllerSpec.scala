@@ -15,8 +15,7 @@
  */
 
 package controllers.agent
-
-import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testAgentAuthRetrievalSuccessNoEnrolment, testMtditid, testNino}
+import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testAgentAuthRetrievalSuccessNoEnrolment, testAgentDelegatedEnrolment, testAuthSuccessResponse, testAuthSuccessResponseDelegatedAuth, testMtditid, testMtditidAgent, testNino, testSaUtr}
 import config.featureswitch.FeatureSwitching
 import controllers.agent.utils.SessionKeys
 import forms.agent.ClientsUTRForm
@@ -25,15 +24,20 @@ import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.services.MockClientDetailsService
 import mocks.views.agent.MockEnterClientsUTR
 import org.mockito.ArgumentMatchers
-import org.mockito.Mockito.{times, verify}
+import org.mockito.Mockito.{times, verify, when}
 import play.api.mvc.MessagesControllerComponents
+import play.api.mvc.Results.Redirect
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import services.agent.ClientDetailsService._
+import testConstants.BaseTestConstants
 import testUtils.TestSupport
-import uk.gov.hmrc.auth.core.authorise.EmptyPredicate
-import uk.gov.hmrc.auth.core.{BearerTokenExpired, Enrolment}
+import uk.gov.hmrc.auth.core.authorise.{EmptyPredicate, Predicate}
+import uk.gov.hmrc.auth.core.retrieve.EmptyRetrieval
+import uk.gov.hmrc.auth.core.{AffinityGroup, BearerTokenExpired, ConfidenceLevel, Enrolment, InsufficientEnrolments}
 import uk.gov.hmrc.http.InternalServerException
+
+import scala.concurrent.Future
 
 class EnterClientsUTRControllerSpec extends TestSupport
   with MockEnterClientsUTR
@@ -130,8 +134,8 @@ class EnterClientsUTRControllerSpec extends TestSupport
           contentType(result) shouldBe Some(HTML)
         }
       }
-      "redirect to the confirm client details page and add client details to session without checking the relationship" when {
-        "the utr entered is valid" in {
+      "redirect to the confirm client details page" when {
+        "the utr entered is valid and there is a client/agent relationship" in {
           val validUTR: String = "1234567890"
 
           setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
@@ -159,13 +163,12 @@ class EnterClientsUTRControllerSpec extends TestSupport
           val utrWithSpaces: String = " 1 2 3 4 5 6 7 8 9 0 "
 
           setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
-          mockClientDetails(validUTR)(
-            response = Right(ClientDetails(Some("John"), Some("Doe"), testNino, testMtditid))
-          )
 
           val result = TestEnterClientsUTRController.submit()(fakeRequestWithActiveSession.withFormUrlEncodedBody(
             ClientsUTRForm.utr -> utrWithSpaces
           ))
+
+          setupMockAgentAuthRetrievalSuccess(testAgentDelegatedEnrolment, withClientPredicate = false)
 
           status(result) shouldBe SEE_OTHER
           redirectLocation(result) shouldBe Some(routes.ConfirmClientUTRController.show.url)
@@ -175,8 +178,8 @@ class EnterClientsUTRControllerSpec extends TestSupport
           result.futureValue.session.get(SessionKeys.clientUTR) shouldBe Some(validUTR)
           result.futureValue.session.get(SessionKeys.clientNino) shouldBe Some(testNino)
           result.futureValue.session.get(SessionKeys.clientMTDID) shouldBe Some(testMtditid)
-          verify(mockAuthService, times(1)).authorised(ArgumentMatchers.eq(EmptyPredicate))
-          verify(mockAuthService, times(0)).authorised(ArgumentMatchers.any(Enrolment.apply("").getClass))
+          verify(mockAuthService, times(1)).authorised(Enrolment("HMRC-MTD-IT"))
+          verify(mockAuthService, times(1)).authorised(Enrolment("HMRC-MTD-IT").withIdentifier("MTDITID", testMtditid).withDelegatedAuthRule("mtd-it-auth"))
         }
       }
 
@@ -210,6 +213,22 @@ class EnterClientsUTRControllerSpec extends TestSupport
           status(result) shouldBe SEE_OTHER
           redirectLocation(result) shouldBe Some(controllers.agent.routes.UTRErrorController.show.url)
         }
+        "redirect to client relationship failure page" when {
+          "there is no client/agent relationship" in {
+            val validUTR: String = "1234567890"
+
+            setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
+
+            val result = TestEnterClientsUTRController.submit(fakeRequestWithActiveSession.withFormUrlEncodedBody(
+              ClientsUTRForm.utr -> validUTR
+            ))
+
+
+            status(result) shouldBe SEE_OTHER
+            redirectLocation(result) shouldBe Some(controllers.agent.routes.ClientRelationshipFailureController.show.url)
+          }
+        }
+
 
         "a business details not found error is returned from the client lookup" in {
           val validUTR: String = "1234567890"

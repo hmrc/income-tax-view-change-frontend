@@ -30,6 +30,7 @@ import testConstants.IncomeSourceDetailsTestConstants.businessesAndPropertyIncom
 import testConstants.PropertyDetailsTestConstants.propertyDetails
 import testUtils.UnitSpec
 import uk.gov.hmrc.auth.core._
+import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals.confidenceLevel
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, Name, ~}
 
 object BaseTestConstants extends UnitSpec with GuiceOneAppPerSuite {
@@ -112,6 +113,11 @@ object BaseTestConstants extends UnitSpec with GuiceOneAppPerSuite {
     Enrolment("HMRC-NI", Seq(EnrolmentIdentifier("NINO", testNino)), "activated")
   )), Option(testRetrievedUserName)), Some(Credentials(testCredId, ""))), Some(affinityGroup)), confidenceLevel)
 
+  def testAuthSuccessResponseDelegatedAuth(confidenceLevel: ConfidenceLevel = testConfidenceLevel) = new ~(new ~(new ~(new ~(Enrolments(Set(
+    Enrolment("HMRC-MTD-IT", Seq(EnrolmentIdentifier("MTDITID", testMtditidAgent)), "activated", Some("mtd-it-auth")),
+    Enrolment("HMRC-NI", Seq(EnrolmentIdentifier("NINO", testNino)), "activated")
+  )), Option(testRetrievedUserName)), Some(Credentials(testCredId, ""))), Some(AffinityGroup.Agent)), confidenceLevel)
+
   def testAuthSuccessResponseOrgNoNino(confidenceLevel: ConfidenceLevel = testConfidenceLevel) = new ~(new ~(new ~(new ~(Enrolments(Set(
     Enrolment("HMRC-MTD-IT", Seq(EnrolmentIdentifier("MTDITID", testMtditid)), "activated")
   )), Option(testRetrievedUserName)), Some(Credentials(testCredId, ""))), Some(AffinityGroup.Organisation)), confidenceLevel)
@@ -122,6 +128,8 @@ object BaseTestConstants extends UnitSpec with GuiceOneAppPerSuite {
     Enrolment("HMRC-NI", Seq(EnrolmentIdentifier("NINO", testNino)), "activated"),
     Enrolment("IR-SA", Seq(EnrolmentIdentifier("UTR", "1234567890")), "activated")
   )), Option(testRetrievedUserName)), Some(Credentials(testCredId, ""))), Some(affinityGroup)), confidenceLevel)
+
+
 
   val arnEnrolment: Enrolment = Enrolment(
     "HMRC-AS-AGENT",
@@ -139,6 +147,7 @@ object BaseTestConstants extends UnitSpec with GuiceOneAppPerSuite {
 
   val testAgentAuthRetrievalSuccess = new ~(new ~(new ~(Enrolments(Set(arnEnrolment)), Some(AffinityGroup.Agent)), testConfidenceLevel), testCredentials)
   val testAgentAuthRetrievalSuccessNoEnrolment = new ~(new ~(new ~(Enrolments(Set()), Some(AffinityGroup.Agent)), testConfidenceLevel), testCredentials)
+  val testAgentDelegatedEnrolment = new ~(new ~(new ~(Enrolments(Set(arnEnrolment, Enrolment("HMRC-MTD-IT", Seq(EnrolmentIdentifier("MTDITID", testMtditidAgent)), "activated", Some("mtd-it-auth")))), Some(AffinityGroup.Agent)), testConfidenceLevel), testCredentials)
 
   val testReferrerUrl = "/test/url"
 
