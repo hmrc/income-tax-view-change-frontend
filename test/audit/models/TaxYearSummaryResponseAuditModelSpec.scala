@@ -141,7 +141,6 @@ class TaxYearSummaryResponseAuditModelSpec extends WordSpecLike with TestSupport
         forecastIncome = forecastIncome,
         forecastIncomeTaxAndNics = forecastIncomeTaxAndNics)
       ),
-      R7bTxmEvents = featureSwitch7b
     )
 
   def taxYearOverviewResponseAuditUnattendedCalc(userType: Option[String] = Some("Agent"),
@@ -168,7 +167,6 @@ class TaxYearSummaryResponseAuditModelSpec extends WordSpecLike with TestSupport
         forecastIncome = forecastIncome,
         forecastIncomeTaxAndNics = forecastIncomeTaxAndNics)
       ),
-      R7bTxmEvents = featureSwitch7b
     )
 
   "TaxYearOverviewResponseAuditModel(mtdItUser, agentReferenceNumber, calculation, payments, updates)" should {
@@ -199,13 +197,21 @@ class TaxYearSummaryResponseAuditModelSpec extends WordSpecLike with TestSupport
           "agentReferenceNumber" -> "agentReferenceNumber",
           "taxYearOverview" -> Json.obj(
             "calculationDate" -> "2017-07-06",
-            "totalDue" -> 2010
+            "calculationAmount" -> 2010,
+            "isCrystallised" -> false,
+            "forecastAmount" -> null
+          ),
+          "forecast" -> Json.obj(
+            "income" -> null,
+            "taxableIncome" -> null,
+            "taxDue" -> null
           ),
           "calculation" -> Json.obj(
             "income" -> 199505,
             "allowancesAndDeductions" -> 500,
             "taxableIncome" -> 198500,
-            "taxDue" -> 2010
+            "taxDue" -> 2010,
+            "calculationReason" -> "customerRequest",
           ),
           "payments" -> Seq(Json.obj(
             "amount" -> 1400,
@@ -241,13 +247,19 @@ class TaxYearSummaryResponseAuditModelSpec extends WordSpecLike with TestSupport
           "userType" -> "Individual",
           "taxYearOverview" -> Json.obj(
             "calculationDate" -> "2017-07-06",
-            "totalDue" -> 2010
+            "calculationAmount" -> 2010
+          ),
+          "forecast" -> Json.obj(
+            "income" -> 1,
+            "taxableIncome" -> 2,
+            "taxDue" -> 3
           ),
           "calculation" -> Json.obj(
             "income" -> 199505,
             "allowancesAndDeductions" -> 500,
             "taxableIncome" -> 198500,
-            "taxDue" -> 2010
+            "taxDue" -> 2010,
+            "calculationReason" -> "customerRequest",
           ),
           "payments" -> Seq(Json.obj(
             "amount" -> 1400,
