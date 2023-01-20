@@ -39,7 +39,7 @@ import play.api.test.Helpers._
 import services.DateService
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testAgentAuthRetrievalSuccessNoEnrolment, testMtditid, testTaxYear, testYearPlusOne, testYearPlusTwo}
 import testConstants.FinancialDetailsTestConstants._
-import testConstants.NewCalcBreakdownUnitTestConstants.{liabilityCalculationModelErrorMessages, liabilityCalculationModelSuccessful, liabilityCalculationModelSuccessfulNotCrystallised}
+import testConstants.NewCalcBreakdownUnitTestConstants.{liabilityCalculationModelErrorMessagesForAgent, liabilityCalculationModelErrorMessagesForIndividual, liabilityCalculationModelSuccessful, liabilityCalculationModelSuccessfulNotCrystallised}
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.BearerTokenExpired
 import uk.gov.hmrc.http.InternalServerException
@@ -500,9 +500,9 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
     "liability Calculation has error messages" should {
 
       "filter out the variable value from messages for individuals" in {
-        val actual = TestTaxYearSummaryController.formatErrorMessages(liabilityCalculationModelErrorMessages, messagesApi, isAgent = false)(Lang("GB"), messages)
+        val actual = TestTaxYearSummaryController.formatErrorMessages(liabilityCalculationModelErrorMessagesForIndividual, messagesApi, isAgent = false)(Lang("GB"), messages)
 
-        actual shouldBe liabilityCalculationModelErrorMessages.copy(messages = Some(Messages(
+        actual shouldBe liabilityCalculationModelErrorMessagesForIndividual.copy(messages = Some(Messages(
           errors = Some(List(
             Message("C55012", "5 January 2023"),
             Message("C15507", "£2000"),
@@ -513,9 +513,9 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
       }
 
       "filter out the variable value from messages for agents" in {
-        val actual = TestTaxYearSummaryController.formatErrorMessages(liabilityCalculationModelErrorMessages, messagesApi, isAgent = true)(Lang("GB"), messages)
+        val actual = TestTaxYearSummaryController.formatErrorMessages(liabilityCalculationModelErrorMessagesForAgent, messagesApi, isAgent = true)(Lang("GB"), messages)
 
-        actual shouldBe liabilityCalculationModelErrorMessages.copy(messages = Some(Messages(
+        actual shouldBe liabilityCalculationModelErrorMessagesForIndividual.copy(messages = Some(Messages(
           errors = Some(List(
             Message("C55012", "5 January 2023"),
             Message("C15507", "£2000"),
@@ -534,7 +534,7 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
           toDate = LocalDate.of(testTaxYear, 4, 5))(
           response = testObligtionsModel
         )
-        val errorMessageVariableValues = TestTaxYearSummaryController.formatErrorMessages(liabilityCalculationModelErrorMessages,messagesApi, isAgent = false)(Lang("GB"), messages)
+        val errorMessageVariableValues = TestTaxYearSummaryController.formatErrorMessages(liabilityCalculationModelErrorMessagesForIndividual,messagesApi, isAgent = false)(Lang("GB"), messages)
         val calcOverview: TaxYearSummaryViewModel = TaxYearSummaryViewModel(errorMessageVariableValues)
 
         val expectedContent: String = taxYearSummaryView(
@@ -563,7 +563,7 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
           toDate = LocalDate.of(testTaxYear, 4, 5))(
           response = testObligtionsModel
         )
-        val errorMessageVariableValues = TestTaxYearSummaryController.formatErrorMessages(liabilityCalculationModelErrorMessages,messagesApi, isAgent = false)(Lang("GB"), messages)
+        val errorMessageVariableValues = TestTaxYearSummaryController.formatErrorMessages(liabilityCalculationModelErrorMessagesForIndividual,messagesApi, isAgent = false)(Lang("GB"), messages)
         val calcOverview: TaxYearSummaryViewModel = TaxYearSummaryViewModel(errorMessageVariableValues)
 
         val expectedContent: String = taxYearSummaryView(

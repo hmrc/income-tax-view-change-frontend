@@ -273,7 +273,7 @@ tax-year-summary.message.C559113                                   = for your fo
 tax-year-summary.message.C559114                                   = for your EEA furnished holiday lettings, you need to submit either consolidated or detailed expenses but not both.
 
 tax-year-summary.agent.message.header                              = We cannot show this calculation because:
-tax-year-summary.agent.message.action                              = You need to amend and resubmit your client's return
+tax-year-summary.agent.message.action                              = You need to amend and resubmit your client’s return
 tax-year-summary.agent.message.C15014                              = a quarterly update cannot end after the accounting period end date of {0}.
 tax-year-summary.agent.message.C55014                              = a quarterly update cannot end after the accounting period end date of {0}.
 tax-year-summary.agent.message.C15015                              = your client has claimed to carry forward a loss to set against general income of the next year. They also need to make the claim in the same year the loss arose.

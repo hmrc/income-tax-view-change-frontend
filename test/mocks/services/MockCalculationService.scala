@@ -72,5 +72,5 @@ trait MockCalculationService extends UnitSpec with BeforeAndAfterEach {
     setupMockGetCalculationNew(mtditid, nino, year)(LiabilityCalculationError(404, "not found"))
 
   def mockCalculationWithErrorMessages(mtditid: String = "XAIT00000000015", nino: String = testNino, taxYear: Int = testTaxYear): Unit =
-    setupMockGetCalculationNew(mtditid, nino, taxYear)(liabilityCalculationModelErrorMessages)
+    setupMockGetCalculationNew(mtditid, nino, taxYear)(liabilityCalculationModelErrorMessagesForIndividual)
 }

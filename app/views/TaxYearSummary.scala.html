@@ -48,7 +48,7 @@
 @import implicitDateFormatter._
 
 @taxCalculationContent = @{
-    modelOpt.fold(ifEmpty = taxCalculationNotPresent)(calcOverview => taxCalculationOverview(calcOverview))
+    modelOpt.fold(ifEmpty = taxCalculationNotPresent)(calcOverview => taxCalculationOverview(calcOverview, isAgent))
 }
 
 @taxCalculationNotPresent = {
@@ -56,9 +56,16 @@
     @p(id=Some("no-calc-data-note"))(Html(messages("tax-year-summary.tax-calculation.no-calc.note")))
 }
 
-@taxCalculationOverview(model: TaxYearSummaryViewModel) = {
+@getMessageKey(isAgent: Boolean) = {
+  @if(isAgent) {tax-year-summary.agent.message} else {tax-year-summary.message}
+}
+
+@taxCalculationOverview(model: TaxYearSummaryViewModel, isAgent: Boolean) = {
     @if(model.messages.exists(_.errorMessages.size > 0)) {
-        @errorMessage(model)
+       @{
+            val key = getMessageKey(isAgent)
+            errorMessage(model,s"${key}".trim())
+        }
     } else {
         @breakdownPartial(model, taxYear, isFinalCalc = false, isAgent)
         @if(!model.crystallised.contains(true)) {
@@ -73,20 +80,20 @@
     (!model.messages.isEmpty && model.messages.exists(_.errorMessages.size > 0))
 }
 
-@errorMessage(model: TaxYearSummaryViewModel) = {
-    @errorMessageHeader(s"tax-year-summary.message.header")
+@errorMessage(model: TaxYearSummaryViewModel, key: String) = {
+    @errorMessageHeader(key + ".header")
     @if(model.messages.exists(_.errorMessages.size > 1)){
         <ul class="govuk-list govuk-list--bullet">
             @for(message <- model.messages.map(_.errorMessages).getOrElse(Seq())) {
-                @multipleErrorMessage(s"tax-year-summary.message.${message.id}", message.text)
+                @multipleErrorMessage(key + s".${message.id}", message.text)
             }
         </ul>
     } else {
         @for(message <- model.messages.map(_.errorMessages).getOrElse(Seq())) {
-            @singleErrorMessage(s"tax-year-summary.message.${message.id}", message.text)
+            @singleErrorMessage(key + s".${message.id}", message.text)
         }
     }
-    @errorMessageAction(s"tax-year-summary.message.action")
+    @errorMessageAction(key + ".action")
 }
 
 @errorMessageHeader(header: String) = {
