@@ -60,7 +60,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
 
         And("I wiremock stub a financial details response with coded out documents")
         IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK,
-          testValidFinancialDetailsModelJsonCodingOut(2000, 2000, testTaxYear.toString, LocalDate.now().plusYears(1).toString))
+          testValidFinancialDetailsModelJsonCodingOut(2000, 2000, (testTaxYear - 1).toString, LocalDate.now().plusYears(1).toString))
 
         IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
           "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
@@ -91,7 +91,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
 
           And("I wiremock stub a multiple financial details and outstanding charges response")
           IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK,
-            testValidFinancialDetailsModelJson(2000, 2000, testTaxYear.toString, LocalDate.now().toString))
+            testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, LocalDate.now().toString))
           IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
             "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithAciAndBcdCharges)
 
@@ -187,14 +187,14 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
           val mixedJson = Json.obj(
             "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "totalBalance" -> 3.00),
             "documentDetails" -> Json.arr(
-              documentDetailJson(3400.00, 1000.00, testTaxYear.toString, "ITSA- POA 1", transactionId = "transId1"),
-              documentDetailJson(1000.00, 100.00, testTaxYear.toString, "ITSA- POA 1", transactionId = "transId2"),
-              documentDetailJson(1000.00, 0.00, testTaxYear.toString, "ITSA - POA 2", transactionId = "transId3")
+              documentDetailJson(3400.00, 1000.00, (testTaxYear - 1).toString, "ITSA- POA 1", transactionId = "transId1"),
+              documentDetailJson(1000.00, 100.00, (testTaxYear - 1).toString, "ITSA- POA 1", transactionId = "transId2"),
+              documentDetailJson(1000.00, 0.00, (testTaxYear - 1).toString, "ITSA - POA 2", transactionId = "transId3")
             ),
             "financialDetails" -> Json.arr(
-              financialDetailJson(testTaxYear.toString, transactionId = "transId1"),
-              financialDetailJson(testTaxYear.toString, "SA Payment on Account 1", LocalDate.now().plusDays(1).toString, "transId2"),
-              financialDetailJson(testTaxYear.toString, "SA Payment on Account 2", LocalDate.now().minusDays(1).toString, "transId3")
+              financialDetailJson((testTaxYear - 1).toString, transactionId = "transId1"),
+              financialDetailJson((testTaxYear - 1).toString, "SA Payment on Account 1", LocalDate.now().plusDays(1).toString, "transId2"),
+              financialDetailJson((testTaxYear - 1).toString, "SA Payment on Account 2", LocalDate.now().minusDays(1).toString, "transId3")
             )
           )
 
