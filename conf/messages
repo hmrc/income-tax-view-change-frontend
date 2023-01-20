@@ -199,7 +199,6 @@ tax-year-summary.amount                                            = Amount
 tax-year-summary.payments.class2Nic.text                           = Class 2 National Insurance
 tax-year-summary.payments.codingOut.text                           = Balancing payment collected through PAYE tax code
 tax-year-summary.na                                                = N/A
-tax-year-summary.paye-tax-code                                     = PAYE tax code
 tax-year-summary.forecast_tab.insetText                            = This is an estimate of your tax bill for the whole year to 5 April {0}. It will be updated throughout the year as more information is provided.
 tax-year-summary.forecast_total_title                              = 6 April {0} to 5 April {1} forecast
 tax-year-summary.forecast.tax-due                                  = Forecast Self Assessment tax amount
@@ -707,7 +706,7 @@ whatYouOwe.lpi.paymentOnAccount2.text                              = Late paymen
 whatYouOwe.lpi.balancingCharge.text                                = Late payment interest for Balancing payment
 whatYouOwe.balancingCharge.text  							       = Balancing payment
 whatYouOwe.balancingCharge.interest.line1.text                     = Interest on Balancing payment
-whatYouOwe.balancingCharge.interest.line2.text                     = From {0} to {1}
+whatYouOwe.balancingCharge.interest.line2.text                     = {0} to {1}
 whatYouOwe.hmrcAdjustment.heading                                  = HMRC adjustment
 whatYouOwe.hmrcAdjustment.line1                                    = This payment has been created by HMRC.
 whatYouOwe.remaining-balance.heading                               = Balancing payment
@@ -744,7 +743,6 @@ whatYouOwe.dunningLock.link                                        = there is a 
 whatYouOwe.overdueAmount                                           = Overdue payments
 whatYouOwe.balanceDueWithin30Days                                  = Due within 30 days
 whatYouOwe.totalBalance                                            = Total payments
-whatYouOwe.codingOutHeading                                        = Collected through PAYE tax code
 whatYouOwe.codingOut-1a                                            = Your client has
 whatYouOwe.codingOut-1b                                            = of tax for the
 whatYouOwe.codingOut-2                                             = {0} to {1} tax year
@@ -871,12 +869,14 @@ regimes.Scotland = Scotland
 regimes.Wales = Wales
 
 ## Timeout
+timeoutDialog.title                                             = You're about to be signed out
 timeoutDialog.seconds                                           = seconds
 timeoutDialog.minutes                                           = minutes
 timeoutDialog.minutes.two                                       = minutes
 timeoutDialog.minute                                            = minute
 timeoutDialog.message                                           = For your security, we will sign you out in
 button.continue                                                 = Stay signed in
+
 
 ## Uplift Failure
 upliftFailure.title = You cannot view this page
@@ -1008,6 +1008,26 @@ credit-and-refund.claim-refund-btn                                = Claim a refu
 credit-and-refund.check-refund-btn                                = Check refund status
 credit-and-refund.credit-from-hmrc-title-prt-1                    = from a
 credit-and-refund.credit-from-hmrc-title-prt-2                    = Credit from HMRC adjustment
+
+#Following empty fields are not in Use
+#These fields are kept to match with Messages.cy
+shortMonth.1 =
+shortMonth.2 =
+shortMonth.3 =
+shortMonth.4 =
+shortMonth.5 =
+shortMonth.6 =
+shortMonth.7 =
+shortMonth.8 =
+shortMonth.9 =
+shortMonth.10 =
+shortMonth.11 =
+shortMonth.12 =
+notFound.heading =
+notFound.message =
+#Not in-use | These fields are kept to match with Messages.cy
+credit-and-refund.subHeading.has-no-credits-1                     = has been requested
+credit-and-refund.subHeading.has-no-credits-2                     = as a refund and is in progress.
 
 
 
