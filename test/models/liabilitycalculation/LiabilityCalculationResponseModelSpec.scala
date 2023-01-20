@@ -139,17 +139,35 @@ class LiabilityCalculationResponseModelSpec extends LiabilityCalculationDataHelp
   }
 
   "Messages" when {
-    "variable values from message" in {
-      Messages(errors = errorMessages).getErrorMessageVariables(messagesApi, false) shouldBe Seq(
-        Message("C55012", "5 January 2023"),
+    "variable values from message for individual" in {
+      Messages(errors = errorMessages).getErrorMessageVariables(messagesApi, isAgent = false) shouldBe Seq(
+        Message("C55012", "05/01/2023"),
         Message("C15507", "£2000"),
         Message("C15510", "10"),
         Message("C55009", "")
       )
     }
 
-    "translate date variable values from messages" in {
-      val values = Messages(errors = errorMessages).getErrorMessageVariables(messagesApi, false)
+    "variable values from message for agent" in {
+      Messages(errors = errorMessages).getErrorMessageVariables(messagesApi, isAgent = true) shouldBe Seq(
+        Message("C55012", "05/01/2023"),
+        Message("C15507", "£2000"),
+        Message("C15510", "10"),
+        Message("C55009", "")
+      )
+    }
+
+    "translate date variable values from messages for individual" in {
+      val values = Messages(errors = errorMessages).getErrorMessageVariables(messagesApi, isAgent = false)
+      Messages.translateMessageDateVariables(values)(messagesApi.preferred(Seq(Lang("cy"))),mockImplicitDateFormatter) shouldBe Seq(
+        Message("C55012", "5 Ionawr 2023"),
+        Message("C15507", "£2000"),
+        Message("C15510", "10"),
+        Message("C55009", "")
+      )
+    }
+    "translate date variable values from messages for agent" in {
+      val values = Messages(errors = errorMessages).getErrorMessageVariables(messagesApi, isAgent = true)
       Messages.translateMessageDateVariables(values)(messagesApi.preferred(Seq(Lang("cy"))),mockImplicitDateFormatter) shouldBe Seq(
         Message("C55012", "5 Ionawr 2023"),
         Message("C15507", "£2000"),

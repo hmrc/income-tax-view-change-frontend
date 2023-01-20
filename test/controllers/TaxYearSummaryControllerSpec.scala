@@ -499,7 +499,7 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
 
     "liability Calculation has error messages" should {
 
-      "filter out the variable value from messages" in {
+      "filter out the variable value from messages for individuals" in {
         val actual = TestTaxYearSummaryController.formatErrorMessages(liabilityCalculationModelErrorMessages, messagesApi, isAgent = false)(Lang("GB"), messages)
 
         actual shouldBe liabilityCalculationModelErrorMessages.copy(messages = Some(Messages(
@@ -512,7 +512,20 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
         )))
       }
 
-      "show the Tax Year Summary Page with error messages" in {
+      "filter out the variable value from messages for agents" in {
+        val actual = TestTaxYearSummaryController.formatErrorMessages(liabilityCalculationModelErrorMessages, messagesApi, isAgent = true)(Lang("GB"), messages)
+
+        actual shouldBe liabilityCalculationModelErrorMessages.copy(messages = Some(Messages(
+          errors = Some(List(
+            Message("C55012", "5 January 2023"),
+            Message("C15507", "£2000"),
+            Message("C15510", "10"),
+            Message("C55009", ""),
+          ))
+        )))
+      }
+
+      "show the Tax Year Summary Page with error messages for individual" in {
         disable(NavBarFs)
         mockSingleBusinessIncomeSource()
         mockCalculationWithErrorMessages(testMtditid)
@@ -521,7 +534,36 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
           toDate = LocalDate.of(testTaxYear, 4, 5))(
           response = testObligtionsModel
         )
-        val errorMessageVariableValues = TestTaxYearSummaryController.formatErrorMessages(liabilityCalculationModelErrorMessages,messagesApi, false)(Lang("GB"), messages)
+        val errorMessageVariableValues = TestTaxYearSummaryController.formatErrorMessages(liabilityCalculationModelErrorMessages,messagesApi, isAgent = false)(Lang("GB"), messages)
+        val calcOverview: TaxYearSummaryViewModel = TaxYearSummaryViewModel(errorMessageVariableValues)
+
+        val expectedContent: String = taxYearSummaryView(
+          testTaxYear,
+          Some(calcOverview),
+          testChargesList,
+          testObligtionsModel,
+          taxYearsBackLink,
+          codingOutEnabled = true
+        ).toString
+
+        val result = TestTaxYearSummaryController.renderTaxYearSummaryPage(testTaxYear)(fakeRequestWithActiveSessionWithReferer(referer = taxYearsBackLink))
+
+        status(result) shouldBe Status.OK
+        contentAsString(result) shouldBe expectedContent
+        contentType(result) shouldBe Some("text/html")
+        result.futureValue.session.get(gatewayPage) shouldBe Some("taxYearSummary")
+        result.futureValue.session.get(calcPagesBackPage) shouldBe Some("ITVC")
+      }
+      "show the Tax Year Summary Page with error messages for agent" in {
+        disable(NavBarFs)
+        mockSingleBusinessIncomeSource()
+        mockCalculationWithErrorMessages(testMtditid)
+        mockFinancialDetailsSuccess()
+        mockgetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
+          toDate = LocalDate.of(testTaxYear, 4, 5))(
+          response = testObligtionsModel
+        )
+        val errorMessageVariableValues = TestTaxYearSummaryController.formatErrorMessages(liabilityCalculationModelErrorMessages,messagesApi, isAgent = false)(Lang("GB"), messages)
         val calcOverview: TaxYearSummaryViewModel = TaxYearSummaryViewModel(errorMessageVariableValues)
 
         val expectedContent: String = taxYearSummaryView(

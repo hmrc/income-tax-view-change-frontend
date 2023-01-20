@@ -85,10 +85,10 @@ case class Messages(info: Option[Seq[Message]] = None, warnings: Option[Seq[Mess
   def getErrorMessageVariables(messagesProperty: MessagesApi, isAgent: Boolean): Seq[Message] = {
     val lang = Lang("GB")
     val errMessages = errorMessages.map(msg => {
-      val key = "tax-year-summary.message." + msg.id
+      val key = if(isAgent) "tax-year-summary.agent.message." + msg.id else "tax-year-summary.message." + msg.id
       messagesProperty.isDefinedAt(key)(lang) match {
         case true =>
-          val pattern = """\{([0-9}]+)}""".r
+          val pattern = """\{([\d}]+)}""".r
           Message(id = msg.id, text = msg.text diff pattern.replaceAllIn(messagesProperty(key)(lang), "##"))
         case false =>
           Message(id = msg.id, text = "")
