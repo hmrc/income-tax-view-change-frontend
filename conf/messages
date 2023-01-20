@@ -274,13 +274,13 @@ tax-year-summary.message.C559113                                   = for your fo
 tax-year-summary.message.C559114                                   = for your EEA furnished holiday lettings, you need to submit either consolidated or detailed expenses but not both.
 
 tax-year-summary.agent.message.header                              = We cannot show this calculation because:
-tax-year-summary.agent.message.action                              = You need to amend and resubmit your return.
+tax-year-summary.agent.message.action                              = You need to amend and resubmit your client's return
 tax-year-summary.agent.message.C15014                              = a quarterly update cannot end after the accounting period end date of {0}.
 tax-year-summary.agent.message.C55014                              = a quarterly update cannot end after the accounting period end date of {0}.
-tax-year-summary.agent.message.C15015                              = you’ve claimed to carry forward a loss to set against general income of the next year. You also need to make the claim in the same year the loss arose.
-tax-year-summary.agent.message.C15016                              = you are using cash basis accounting. This means that you cannot claim to set losses against other taxable income.
-tax-year-summary.agent.message.C15102                              = the total amount of one-off Gift Aid payments is more than the total Gift Aid payments you’ve made.
-tax-year-summary.agent.message.C15103                              = gift Aid payments made this year treated as paid in the previous year are more than the total Gift Aid payments you’ve made.
+tax-year-summary.agent.message.C15015                              = your client has claimed to carry forward a loss to set against general income of the next year. They also need to make the claim in the same year the loss arose.
+tax-year-summary.agent.message.C15016                              = your client uses cash basis accounting. This means that they cannot claim to set losses against other taxable income.
+tax-year-summary.agent.message.C15102                              = the total amount of one-off Gift Aid payments is more than the total Gift Aid payments your client made.
+tax-year-summary.agent.message.C15103                              = Gift Aid payments made this year treated as paid in the previous year are more than the total Gift Aid payments your client made.
 tax-year-summary.agent.message.C15104                              = the value of qualifying investments you’ve gifted to non-UK charities are more than the value of these items you’ve gifted to charity:<br><ul class="govuk-list govuk-list--bullet"> <li> qualifying shares and securities </li> <li> qualifying land and buildings </li> </ul>
 tax-year-summary.agent.message.C15105                              = gift Aid payments to non-UK charities are more than the total Gift Aid payments you’ve made.
 tax-year-summary.agent.message.C15322                              = the amount of Trading Income Allowance you’ve claimed is more than allowed. The amount you claim cannot be more than the total of:<br><ul class="govuk-list govuk-list--bullet"> <li> your turnover </li> <li> other business income not included in turnover </li> <li> balancing charge on the sale of assets or cessation of business and goods and services for your own use </li> </ul>
