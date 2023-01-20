@@ -15,6 +15,7 @@
  */
 
 package controllers.agent
+
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testAgentAuthRetrievalSuccessNoEnrolment, testAgentDelegatedEnrolment, testAuthSuccessResponse, testAuthSuccessResponseDelegatedAuth, testMtditid, testMtditidAgent, testNino, testSaUtr}
 import config.featureswitch.FeatureSwitching
 import controllers.agent.utils.SessionKeys
@@ -137,19 +138,25 @@ class EnterClientsUTRControllerSpec extends TestSupport
       "redirect to the confirm client details page" when {
         "the utr entered is valid and there is a client/agent relationship" in {
           val validUTR: String = "1234567890"
-
           setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
+
           mockClientDetails(validUTR)(
             response = Right(ClientDetails(Some("John"), Some("Doe"), testNino, testMtditid))
           )
 
+          setupMockAgentDelegatedEnrolmentSuccess(Redirect(routes.ConfirmClientUTRController.show))
+
           val result = TestEnterClientsUTRController.submit()(fakeRequestWithActiveSession.withFormUrlEncodedBody(
             ClientsUTRForm.utr -> validUTR
           ))
+          println(session(result).get(SessionKeys.clientMTDID))
+          println(result)
+          println(result.futureValue)
+          println(result.futureValue.session)
+          whenReady(result) { test => println(test.session) }
 
           status(result) shouldBe SEE_OTHER
           redirectLocation(result) shouldBe Some(routes.ConfirmClientUTRController.show.url)
-
           result.futureValue.session.get(SessionKeys.clientFirstName) shouldBe Some("John")
           result.futureValue.session.get(SessionKeys.clientLastName) shouldBe Some("Doe")
           result.futureValue.session.get(SessionKeys.clientUTR) shouldBe Some(validUTR)
@@ -164,11 +171,16 @@ class EnterClientsUTRControllerSpec extends TestSupport
 
           setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
 
+          //          setupMockAgentAuthRetrievalDelegatedEnrolmentSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
+          //          setupMockAgentAuthRetrievalDelegatedEnrolmentSuccess(testAgentDelegatedEnrolment, withClientPredicate = false)
+          mockClientDetails(validUTR)(
+            response = Right(ClientDetails(Some("John"), Some("Doe"), testNino, testMtditid))
+          )
+
           val result = TestEnterClientsUTRController.submit()(fakeRequestWithActiveSession.withFormUrlEncodedBody(
             ClientsUTRForm.utr -> utrWithSpaces
           ))
 
-          setupMockAgentAuthRetrievalSuccess(testAgentDelegatedEnrolment, withClientPredicate = false)
 
           status(result) shouldBe SEE_OTHER
           redirectLocation(result) shouldBe Some(routes.ConfirmClientUTRController.show.url)
@@ -265,6 +277,5 @@ class EnterClientsUTRControllerSpec extends TestSupport
       }
     }
   }
-
 }
 
