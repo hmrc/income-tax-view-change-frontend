@@ -18,7 +18,7 @@ package controllers
 
 import audit.models.PaymentHistoryResponseAuditModel
 import auth.MtdItUser
-import config.featureswitch.{CutOverCredits, MFACreditsAndDebits, PaymentHistoryRefunds, R7bTxmEvents}
+import config.featureswitch.{CutOverCredits, MFACreditsAndDebits, PaymentHistoryRefunds}
 import helpers.{ComponentSpecBase, servicemocks}
 import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
 import helpers.servicemocks.IncomeTaxViewChangeStub
@@ -36,7 +36,6 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase {
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    enable(R7bTxmEvents)
   }
 
   val payments: List[Payment] = List(
@@ -88,7 +87,6 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase {
     "the payment history feature switch is enabled" in {
       isAuthorisedUser(authorised = true)
       stubUserDetails()
-      disable(R7bTxmEvents)
       disable(CutOverCredits)
       disable(MFACreditsAndDebits)
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, paymentHistoryBusinessAndPropertyResponse)
@@ -103,11 +101,10 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase {
       )
 
       verifyAuditContainsDetail(PaymentHistoryResponseAuditModel(testUser, payments, CutOverCreditsEnabled = false,
-        MFACreditsEnabled = false, R7bTxmEvents = false).detail)
+        MFACreditsEnabled = false).detail)
     }
 
     "return payment from earlier tax year description when CutOverCreditsEnabled and credit is defined" in {
-      enable(R7bTxmEvents)
       enable(CutOverCredits)
       enable(MFACreditsAndDebits)
       enable(PaymentHistoryRefunds)
@@ -127,14 +124,13 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase {
 
 
       verifyAuditContainsDetail(PaymentHistoryResponseAuditModel(testUser, payments, CutOverCreditsEnabled = true,
-        MFACreditsEnabled = true, R7bTxmEvents = true).detail)
+        MFACreditsEnabled = true).detail)
     }
 
 
     "Show the user the payments history page" when {
       "The feature switch is disabled" in {
         disable(PaymentHistoryRefunds)
-        enable(R7bTxmEvents)
         enable(CutOverCredits)
         enable(MFACreditsAndDebits)
         isAuthorisedUser(authorised = true)
