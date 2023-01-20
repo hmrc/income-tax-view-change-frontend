@@ -482,7 +482,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
           When("I call GET /report-quarterly/income-and-expenses/view/payments-owed")
           val res = IncomeTaxViewChangeFrontend.getPaymentsDue
 
-          AuditStub.verifyAuditContainsDetail(WhatYouOweResponseAuditModel(testUser, whatYouOweNoChargeList, false, dateService).detail)
+          AuditStub.verifyAuditContainsDetail(WhatYouOweResponseAuditModel(testUser, whatYouOweNoChargeList, dateService).detail)
 
           verifyIncomeSourceDetailsCall(testMtditid)
 
