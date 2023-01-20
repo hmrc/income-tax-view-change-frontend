@@ -48,7 +48,8 @@ trait ImplicitDateFormatter extends ImplicitDateParser {
       val shortDay = shortFormattedDate.split(" ").head
       val shortMonth = shortFormattedDate.split(" ")(1)
       val shortYear = shortFormattedDate.split(" ").last
-      val translatedShortMonth = messages.translate(s"shortMonth.${d.getMonthValue}", Seq.empty).getOrElse(shortMonth)
+      val translatedShortMonth = messages.translate(s"shortMonth.${d.getMonthValue}", Seq.empty)
+        .fold(ifEmpty = shortMonth)(x => {if (x.trim.isEmpty) shortMonth else x})
       s"$shortDay $translatedShortMonth $shortYear"
     }
 
