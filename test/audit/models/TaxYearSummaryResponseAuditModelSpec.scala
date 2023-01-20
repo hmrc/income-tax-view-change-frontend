@@ -120,7 +120,6 @@ class TaxYearSummaryResponseAuditModelSpec extends WordSpecLike with TestSupport
   def taxYearOverviewResponseAuditFull(userType: Option[String] = Some("Agent"),
                                        agentReferenceNumber: Option[String],
                                        paymentHasADunningLock: Boolean = false,
-                                       featureSwitch7b: Boolean = false,
                                        forecastIncome: Option[Int] = None,
                                        forecastIncomeTaxAndNics: Option[BigDecimal] = None): TaxYearSummaryResponseAuditModel =
     TaxYearSummaryResponseAuditModel(
@@ -146,7 +145,6 @@ class TaxYearSummaryResponseAuditModelSpec extends WordSpecLike with TestSupport
   def taxYearOverviewResponseAuditUnattendedCalc(userType: Option[String] = Some("Agent"),
                                        agentReferenceNumber: Option[String],
                                        paymentHasADunningLock: Boolean = false,
-                                       featureSwitch7b: Boolean = false,
                                        forecastIncome: Option[Int] = None,
                                        forecastIncomeTaxAndNics: Option[BigDecimal] = None): TaxYearSummaryResponseAuditModel =
     TaxYearSummaryResponseAuditModel(
@@ -289,10 +287,9 @@ class TaxYearSummaryResponseAuditModelSpec extends WordSpecLike with TestSupport
 
   "TaxYear audit model" should {
     "present a full audit model" when {
-      "the R7b feature switch is on" in {
+      "there's expected behaviour" in {
         val auditJson = taxYearOverviewResponseAuditFull(
           agentReferenceNumber = Some("1"),
-          featureSwitch7b = true,
           forecastIncome = Some(2000),
           forecastIncomeTaxAndNics = Some(120.0)
         )
@@ -312,10 +309,9 @@ class TaxYearSummaryResponseAuditModelSpec extends WordSpecLike with TestSupport
 
   "TaxYear audit model test" should {
     "present a full audit model test" when {
-      "the R7b feature switch is on test" in {
+      "audit is on test" in {
         val auditJson = taxYearOverviewResponseAuditFull(
           agentReferenceNumber = Some("1"),
-          featureSwitch7b = true,
           forecastIncome = Some(2000),
           forecastIncomeTaxAndNics = Some(120.0)
         )
@@ -328,10 +324,9 @@ class TaxYearSummaryResponseAuditModelSpec extends WordSpecLike with TestSupport
     }
 
     "present a full audit model test unattended" when {
-      "the R7b feature switch is on test" in {
+      "audit has expected test behaviour" in {
         val auditJson = taxYearOverviewResponseAuditUnattendedCalc(
           agentReferenceNumber = Some("1"),
-          featureSwitch7b = true,
           forecastIncome = Some(2000),
           forecastIncomeTaxAndNics = Some(120.0)
         )
