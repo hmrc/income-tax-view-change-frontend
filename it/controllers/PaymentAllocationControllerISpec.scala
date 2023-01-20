@@ -3,7 +3,7 @@ package controllers
 
 import audit.models.PaymentAllocationsResponseAuditModel
 import auth.MtdItUser
-import config.featureswitch.{FeatureSwitching, NavBarFs, PaymentAllocation, R7bTxmEvents}
+import config.featureswitch.{FeatureSwitching, NavBarFs, PaymentAllocation}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
 import helpers.servicemocks.IncomeTaxViewChangeStub
@@ -21,7 +21,6 @@ class PaymentAllocationControllerISpec extends ComponentSpecBase with FeatureSwi
   override def beforeEach(): Unit = {
     super.beforeEach()
     enable(PaymentAllocation)
-    enable(R7bTxmEvents)
   }
 
   val singleTestPaymentAllocationCharge: FinancialDetailsWithDocumentDetailsModel = FinancialDetailsWithDocumentDetailsModel(
@@ -96,7 +95,7 @@ class PaymentAllocationControllerISpec extends ComponentSpecBase with FeatureSwi
           pageTitleIndividual("paymentAllocation.heading"),
         )
 
-        verifyAuditContainsDetail(PaymentAllocationsResponseAuditModel(testUser, paymentAllocationViewModel, false).detail)
+        verifyAuditContainsDetail(PaymentAllocationsResponseAuditModel(testUser, paymentAllocationViewModel).detail)
       }
 
       "payment allocation for HMRC adjustment is shown" in {
@@ -118,7 +117,7 @@ class PaymentAllocationControllerISpec extends ComponentSpecBase with FeatureSwi
           elementTextBySelector("tbody")("HMRC adjustment 2022 Tax year 2021 to 2022 31 Jan 2021 £800.00"),
         )
 
-        verifyAuditContainsDetail(PaymentAllocationsResponseAuditModel(testUser, paymentAllocationViewModelHmrcAdjustment, false).detail)
+        verifyAuditContainsDetail(PaymentAllocationsResponseAuditModel(testUser, paymentAllocationViewModelHmrcAdjustment).detail)
       }
     }
 
@@ -150,7 +149,7 @@ class PaymentAllocationControllerISpec extends ComponentSpecBase with FeatureSwi
           elementTextBySelector("#payment-allocation-0 a")(s"${messagesAPI("paymentAllocation.paymentAllocations.balancingCharge.text")} 9999")
         )
 
-        verifyAuditContainsDetail(PaymentAllocationsResponseAuditModel(testUser, lpiPaymentAllocationViewModel, false).detail)
+        verifyAuditContainsDetail(PaymentAllocationsResponseAuditModel(testUser, lpiPaymentAllocationViewModel).detail)
       }
     }
   }

@@ -247,12 +247,14 @@ class TaxYearSummaryResponseAuditModelSpec extends WordSpecLike with TestSupport
           "userType" -> "Individual",
           "taxYearOverview" -> Json.obj(
             "calculationDate" -> "2017-07-06",
-            "calculationAmount" -> 2010
+            "calculationAmount" -> 2010,
+            "isCrystallised" -> false,
+            "forecastAmount" -> None
           ),
           "forecast" -> Json.obj(
-            "income" -> 1,
-            "taxableIncome" -> 2,
-            "taxDue" -> 3
+            "income" -> None,
+            "taxableIncome" -> None,
+            "taxDue" -> None
           ),
           "calculation" -> Json.obj(
             "income" -> 199505,
