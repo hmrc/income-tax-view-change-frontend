@@ -85,7 +85,7 @@ class EnterClientsUTRController @Inject()(enterClientsUTR: EnterClientsUTR,
               authorisedFunctions.authorised(Enrolment("HMRC-MTD-IT").withIdentifier("MTDITID", mtdItId).withDelegatedAuthRule("mtd-it-auth")) {
                 val sessionValues: Seq[(String, String)] = Seq(
                   SessionKeys.clientMTDID -> mtdItId,
-                  SessionKeys.clientNino -> nino
+                  SessionKeys.clientNino -> nino,
                   SessionKeys.clientUTR -> validUTR
                 ) ++ firstName.map(SessionKeys.clientFirstName -> _) ++ lastName.map(SessionKeys.clientLastName -> _)
                 Future.successful(Redirect(routes.ConfirmClientUTRController.show).addingToSession(sessionValues: _*))
