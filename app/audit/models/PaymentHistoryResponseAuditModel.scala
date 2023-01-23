@@ -25,7 +25,7 @@ import utils.Utilities.JsonUtil
 case class PaymentHistoryResponseAuditModel(mtdItUser: MtdItUser[_],
                                             payments: Seq[Payment],
                                             CutOverCreditsEnabled: Boolean,
-                                            MFACreditsEnabled: Boolean,
+                                            MFACreditsEnabled: Boolean
                                             ) extends ExtendedAuditModel {
 
   override val transactionName: String = enums.TransactionName.PaymentHistoryResponse

@@ -29,7 +29,7 @@ import java.time.LocalDate
 
 
 case class PaymentAllocationsResponseAuditModel(mtdItUser: MtdItUserBase[_],
-                                                paymentAllocations: PaymentAllocationViewModel,
+                                                paymentAllocations: PaymentAllocationViewModel
                                                 )
   extends ExtendedAuditModel {
 

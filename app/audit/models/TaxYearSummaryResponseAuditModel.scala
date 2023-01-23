@@ -28,7 +28,7 @@ import utils.Utilities._
 case class TaxYearSummaryResponseAuditModel(mtdItUser: MtdItUser[_],
                                             payments: List[DocumentDetailWithDueDate],
                                             updates: ObligationsModel,
-                                            taxYearSummaryViewModel: Option[TaxYearSummaryViewModel] = None,
+                                            taxYearSummaryViewModel: Option[TaxYearSummaryViewModel] = None
                                             ) extends ExtendedAuditModel with ImplicitDateParser {
 
 
