@@ -292,14 +292,14 @@ tax-year-summary.agent.message.C15507                              = your client
 tax-year-summary.agent.message.C15510                              = the Rent a Room relief claimed for a jointly let property cannot be more than {0}% of the Rent a Room limit.
 tax-year-summary.agent.message.C15518                              = the amount of Rent a Room relief your client claimed is more than the limit.
 tax-year-summary.agent.message.C15530                              = your client uses cash basis accounting. This means that they cannot claim to set losses against general income.
-tax-year-summary.agent.message.C15319                              = your client's non-allowable business entertainment costs must be the same as the allowable business entertainment costs.
+tax-year-summary.agent.message.C15319                              = your client’s non-allowable business entertainment costs must be the same as the allowable business entertainment costs.
 tax-year-summary.agent.message.C15320                              = your client claimed Trading Income Allowance. This means that they cannot claim any further expenses.
 tax-year-summary.agent.message.C15522                              = the amount of Annual Investment Allowance your client claimed for their UK property is more than the limit.
 tax-year-summary.agent.message.C15531                              = the amount of Annual Investment Allowance your client claimed for their foreign property is more than the limit.
 tax-year-summary.agent.message.C15324                              = the amount of Annual Investment Allowance your client claimed is more than the limit.
 tax-year-summary.agent.message.C55316                              = your client cannot submit details for combined expenses for self-employment. This is because their cumulative turnover is more than the limit.
 tax-year-summary.agent.message.C55317                              = a Class 4 exemption cannot be applied. This is because the individual is 16 or older on 6 April of the current tax year.
-tax-year-summary.agent.message.C55318                              = a Class 4 exemption cannot be applied. This is because the individual's age is less than their State Pension age on 6 April of the current tax year.
+tax-year-summary.agent.message.C55318                              = a Class 4 exemption cannot be applied. This is because the individual’s age is less than their State Pension age on 6 April of the current tax year.
 tax-year-summary.agent.message.C55501                              = the amount your client claimed for private use adjustment for their UK furnished holiday lettings is more than the total allowable expenses.
 tax-year-summary.agent.message.C55502                              = the amount your client claimed for private use adjustment for their UK unfurnished holiday lettings is more than the total allowable expenses.
 tax-year-summary.agent.message.C55503                              = your client cannot submit details for combined expenses for their UK property. This is because their cumulative turnover is more than the limit.
@@ -323,10 +323,10 @@ tax-year-summary.agent.message.C159015                             = the amount 
 tax-year-summary.agent.message.C159016                             = the amount of relief claimed for Subscriptions for shares under the Enterprise Investment Scheme where the companies are not knowledge intensive is more than the limit.
 tax-year-summary.agent.message.C159018                             = the amount of relief claimed for Subscriptions for shares under the Seed Enterprise Investment Scheme is more than the limit.
 tax-year-summary.agent.message.C159019                             = the amount claimed for Social Investment Tax Relief is more than the limit.
-tax-year-summary.agent.message.C159026                             = the total amount of tax taken off in employment is more than your client's taxable pay.
-tax-year-summary.agent.message.C159027                             = you told us that the tax taken off your client's lump sum payment has been reported within their employment. Total tax to date on their employment must be more than zero.
-tax-year-summary.agent.message.C159028                             = the total tax taken off your client's employment must be less than the total taxable pay including: <br><ul class="govuk-list govuk-list--bullet"> <li> tips </li> <li> other payments </li> <li> lump sums </li> </ul>
-tax-year-summary.agent.message.C159030                             = your client's total redundancy compensation amount from employment is more than the lump sum limit.
+tax-year-summary.agent.message.C159026                             = the total amount of tax taken off in employment is more than your client’s taxable pay.
+tax-year-summary.agent.message.C159027                             = you told us that the tax taken off your client’s lump sum payment has been reported within their employment. Total tax to date on their employment must be more than zero.
+tax-year-summary.agent.message.C159028                             = the total tax taken off your client’s employment must be less than the total taxable pay including: <br><ul class="govuk-list govuk-list--bullet"> <li> tips </li> <li> other payments </li> <li> lump sums </li> </ul>
+tax-year-summary.agent.message.C159030                             = your client’s total redundancy compensation amount from employment is more than the lump sum limit.
 tax-year-summary.agent.message.C159102                             = the amount of Annual Investment Allowance your client claimed for your EEA furnished holiday lettings or foreign property is more than the limit.
 tax-year-summary.agent.message.C159106                             = the amount of Property Allowance your client claimed for their foreign property is more than the limit.
 tax-year-summary.agent.message.C159110                             = the amount your client claimed for Tax taken off State Pension lump sum is more than {0}% of the amount entered for State Pension lump sum.
@@ -339,8 +339,8 @@ tax-year-summary.agent.message.C559103                             = your client
 tax-year-summary.agent.message.C559107                             = your client claimed Property Income Allowance. This means that they cannot claim any further expenses.
 tax-year-summary.agent.message.C559104                             = your client claimed Property Income Allowance for their foreign property. This means that they cannot claim for private use adjustment.
 tax-year-summary.agent.message.C559105                             = the amount your client claimed for private use adjustment for their foreign property is more than the total allowable expenses.
-tax-year-summary.agent.message.C559113                             = for your client's  foreign property, they need to submit either consolidated or detailed expenses but not both.
-tax-year-summary.agent.message.C559114                             = for your client's EEA furnished holiday lettings, they need to submit either consolidated or detailed expenses but not both.
+tax-year-summary.agent.message.C559113                             = for your client’s  foreign property, they need to submit either consolidated or detailed expenses but not both.
+tax-year-summary.agent.message.C559114                             = for your client’s EEA furnished holiday lettings, they need to submit either consolidated or detailed expenses but not both.
 
 
 ## Income Breakdown Page ##
