@@ -67,30 +67,11 @@ trait MockFrontendAuthorisedFunctions extends BeforeAndAfterEach {
         })
 
 
-
-  def setupMockAgentDelegatedEnrolmentSuccess(result: Result): Unit = {
-    when(mockAuthService.authorised(any))
-      .thenReturn(
-        new mockAuthService.AuthorisedFunction(EmptyPredicate) {
-          override def apply[A](body: => Future[A])(implicit hc: HeaderCarrier, executionContext: ExecutionContext) = Future.successful(result.asInstanceOf[A])
-          override def retrieve[A](retrieval: Retrieval[A]) = new mockAuthService.AuthorisedFunctionWithResult[A](EmptyPredicate, retrieval) {
-            override def apply[B](body: A => Future[B])(implicit hc: HeaderCarrier, executionContext: ExecutionContext): Future[B] = Future.successful(result.asInstanceOf[B])
-          }
-        })
-  }
-
-//    .thenReturn(
-//      new mockAuthService.AuthorisedFunction(EmptyPredicate) {
-//        override def apply[A](body: => Future[A])(implicit hc: HeaderCarrier, executionContext: ExecutionContext) = Future.successful(result.asInstanceOf[A])
-//        override def retrieve[A](retrieval: Retrieval[A]) = new mockAuthService.AuthorisedFunctionWithResult[A](EmptyPredicate, retrieval) {
-//          override def apply[B](body: A => Future[B])(implicit hc: HeaderCarrier, executionContext: ExecutionContext): Future[B] = Future.successful(result.asInstanceOf[B])
-//        }
-//      })
-
-
-    def setupMockAgentAuthRetrievalSuccess[X, Y](retrievalValue: X ~ Y, withClientPredicate: Boolean = true): Unit = {
+  def setupMockAgentAuthRetrievalSuccess[X, Y](retrievalValue: X ~ Y, withClientPredicate: Boolean = true): Unit = {
+    {
       if (withClientPredicate) when(mockAuthService.authorised(any(Enrolment.apply("").getClass)))
       else when(mockAuthService.authorised(any))
+    }
       .thenReturn(
         new mockAuthService.AuthorisedFunction(EmptyPredicate) {
           override def retrieve[A](retrieval: Retrieval[A]) = new mockAuthService.AuthorisedFunctionWithResult[A](EmptyPredicate, retrieval) {

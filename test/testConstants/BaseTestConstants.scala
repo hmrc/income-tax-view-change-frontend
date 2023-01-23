@@ -113,11 +113,6 @@ object BaseTestConstants extends UnitSpec with GuiceOneAppPerSuite {
     Enrolment("HMRC-NI", Seq(EnrolmentIdentifier("NINO", testNino)), "activated")
   )), Option(testRetrievedUserName)), Some(Credentials(testCredId, ""))), Some(affinityGroup)), confidenceLevel)
 
-  def testAuthSuccessResponseDelegatedAuth(confidenceLevel: ConfidenceLevel = testConfidenceLevel) = new ~(new ~(new ~(new ~(Enrolments(Set(
-    Enrolment("HMRC-MTD-IT", Seq(EnrolmentIdentifier("MTDITID", testMtditidAgent)), "activated", Some("mtd-it-auth")),
-    Enrolment("HMRC-NI", Seq(EnrolmentIdentifier("NINO", testNino)), "activated")
-  )), Option(testRetrievedUserName)), Some(Credentials(testCredId, ""))), Some(AffinityGroup.Agent)), confidenceLevel)
-
   def testAuthSuccessResponseOrgNoNino(confidenceLevel: ConfidenceLevel = testConfidenceLevel) = new ~(new ~(new ~(new ~(Enrolments(Set(
     Enrolment("HMRC-MTD-IT", Seq(EnrolmentIdentifier("MTDITID", testMtditid)), "activated")
   )), Option(testRetrievedUserName)), Some(Credentials(testCredId, ""))), Some(AffinityGroup.Organisation)), confidenceLevel)
@@ -147,7 +142,6 @@ object BaseTestConstants extends UnitSpec with GuiceOneAppPerSuite {
 
   val testAgentAuthRetrievalSuccess = new ~(new ~(new ~(Enrolments(Set(arnEnrolment)), Some(AffinityGroup.Agent)), testConfidenceLevel), testCredentials)
   val testAgentAuthRetrievalSuccessNoEnrolment = new ~(new ~(new ~(Enrolments(Set()), Some(AffinityGroup.Agent)), testConfidenceLevel), testCredentials)
-  val testAgentDelegatedEnrolment = new ~(new ~(new ~(Enrolments(Set(arnEnrolment, Enrolment("HMRC-MTD-IT", Seq(EnrolmentIdentifier("MTDITID", testMtditidAgent)), "activated", Some("mtd-it-auth")))), Some(AffinityGroup.Agent)), testConfidenceLevel), testCredentials)
 
   val testReferrerUrl = "/test/url"
 
