@@ -17,6 +17,7 @@
 package models.liabilitycalculation.viewmodels
 
 import implicits.ImplicitDateParser
+import models.liabilitycalculation.{Message, Messages}
 import testConstants.NewCalcBreakdownUnitTestConstants._
 import testUtils.UnitSpec
 
@@ -59,7 +60,12 @@ class TaxYearSummaryViewModelSpec extends UnitSpec with ImplicitDateParser {
           forecastAllowancesAndDeductions = Some(4200.00),
           forecastTotalTaxableIncome = Some(8300),
           periodFrom = Some(LocalDate.of(2018, 1, 1)),
-          periodTo = Some(LocalDate.of(2019, 1, 1))
+          periodTo = Some(LocalDate.of(2019, 1, 1)),
+          messages = Some(Messages(
+            info = Some(Seq(Message(id = "C22211", text = "info msg text1"))),
+            warnings = Some(Seq(Message(id = "C22214", text = "warn msg text1"))),
+            errors = Some(Seq(Message(id = "C22216", text = "error msg text1")))
+          ))
         )
 
         TaxYearSummaryViewModel(liabilityCalculationModelSuccessful) shouldBe expectedTaxYearSummaryViewModel
@@ -80,7 +86,12 @@ class TaxYearSummaryViewModelSpec extends UnitSpec with ImplicitDateParser {
             forecastAllowancesAndDeductions = Some(4200.00),
             forecastTotalTaxableIncome = Some(8300),
             periodFrom = Some(LocalDate.of(2018, 1, 1)),
-            periodTo = Some(LocalDate.of(2019, 1, 1))
+            periodTo = Some(LocalDate.of(2019, 1, 1)),
+            messages = Some(Messages(
+              info = Some(Seq(Message(id = "C22211", text = "info msg text1"))),
+              warnings = Some(Seq(Message(id = "C22214", text = "warn msg text1"))),
+              errors = Some(Seq(Message(id = "C22216", text = "error msg text1")))
+            ))
           )
 
           val liabilityCalculationModel = liabilityCalculationModelSuccessful.copy(
@@ -109,7 +120,12 @@ class TaxYearSummaryViewModelSpec extends UnitSpec with ImplicitDateParser {
             forecastAllowancesAndDeductions = Some(4200.00),
             forecastTotalTaxableIncome = Some(8300),
             periodFrom = Some(LocalDate.of(2018, 1, 1)),
-            periodTo = Some(LocalDate.of(2019, 1, 1))
+            periodTo = Some(LocalDate.of(2019, 1, 1)),
+            messages = Some(Messages(
+              info = Some(Seq(Message(id = "C22211", text = "info msg text1"))),
+              warnings = Some(Seq(Message(id = "C22214", text = "warn msg text1"))),
+              errors = Some(Seq(Message(id = "C22216", text = "error msg text1")))
+            ))
           )
 
           val liabilityCalculationModel = liabilityCalculationModelSuccessful.copy(
@@ -122,6 +138,33 @@ class TaxYearSummaryViewModelSpec extends UnitSpec with ImplicitDateParser {
       }
     }
 
+    "error in tax calculation" should {
+      "create a TaxYearSummaryViewModel with multiple error message" in {
+        TaxYearSummaryViewModel(liabilityCalculationModelErrorMessages) shouldBe
+          TaxYearSummaryViewModel(
+            timestamp = None,
+            crystallised = None,
+            unattendedCalc = false,
+            taxDue = 0.0,
+            income = 0,
+            deductions = 0.0,
+            totalTaxableIncome = 0,
+            forecastIncome = None,
+            forecastIncomeTaxAndNics = None,
+            forecastAllowancesAndDeductions = None,
+            periodFrom = None,
+            periodTo = None,
+            messages = Some(Messages(
+              errors = Some(List(
+                Message("C55012", "the update must align to the accounting period end date of 05/01/2023."),
+                Message("C15507", "you’ve claimed £2000 in Property Income Allowance but this is more than turnover for your UK property."),
+                Message("C15510", "the Rent a Room relief claimed for a jointly let property cannot be more than 10% of the Rent a Room limit."),
+                Message("C55009", "updates cannot include gaps.")
+              ))
+            ))
+          )
+      }
+    }
 
     "return unattendedCalc as true when calculationReason is 'unattendedCalculation'" in {
       TaxYearSummaryViewModel(liabilityCalculationModelDeductionsMinimal(calculationReason = Some("unattendedCalculation"))) shouldBe

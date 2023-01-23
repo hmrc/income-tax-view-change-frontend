@@ -20,7 +20,7 @@ import testConstants.BaseTestConstants._
 import testConstants.ChargeHistoryTestConstants._
 import testConstants.FinancialDetailsTestConstants._
 import testConstants.IncomeSourceDetailsTestConstants.{singleBusinessAndPropertyMigrat2019, singleBusinessIncome}
-import testConstants.NinoLookupTestConstants.{testNinoModelJson, _}
+import testConstants.NinoLookupTestConstants._
 import testConstants.OutstandingChargesTestConstants._
 import testConstants.PaymentAllocationsTestConstants._
 import testConstants.NextUpdatesTestConstants._
@@ -42,7 +42,7 @@ import models.repaymentHistory.{RepaymentHistoryErrorModel, RepaymentHistoryMode
 import org.mockito.Mockito.{mock, when}
 import play.api.libs.json.Json
 import play.mvc.Http.Status
-import testConstants.RepaymentHistoryTestConstants.{repaymentHistoryFull, validMultipleRepaymentHistoryJson, validRepaymentHistoryJson}
+import testConstants.RepaymentHistoryTestConstants.{repaymentHistoryOneRSI, validMultipleRepaymentHistoryJson, validRepaymentHistoryOneRSIJson}
 import testUtils.TestSupport
 import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.http.HttpClient
@@ -606,21 +606,21 @@ class IncomeTaxViewChangeConnectorSpec extends TestSupport with MockHttp with Mo
 
     "return a valid RepaymentHistoryModel" when {
 
-      val successResponse = HttpResponse(status = OK, json = validRepaymentHistoryJson, headers = Map.empty)
+      val successResponse = HttpResponse(status = OK, json = validRepaymentHistoryOneRSIJson, headers = Map.empty)
       val successResponseMultipleRepayments = HttpResponse(status = OK, json = validMultipleRepaymentHistoryJson, headers = Map.empty)
 
       "receiving an OK with only one valid data item" in new Setup {
         setupMockHttpGet(getRepaymentHistoryByIdUrl(testNino, repaymentId))(successResponse)
 
         val result: Future[RepaymentHistoryResponseModel] = getRepaymentHistoryByRepaymentId(testUserNino, repaymentId)
-        result.futureValue shouldBe RepaymentHistoryModel(List(repaymentHistoryFull))
+        result.futureValue shouldBe RepaymentHistoryModel(List(repaymentHistoryOneRSI))
       }
 
       "receiving an OK with multiple valid data items" in new Setup {
         setupMockHttpGet(getRepaymentHistoryByIdUrl(testNino, repaymentId))(successResponseMultipleRepayments)
 
         val result: Future[RepaymentHistoryResponseModel] = getRepaymentHistoryByRepaymentId(testUserNino, repaymentId)
-        result.futureValue shouldBe RepaymentHistoryModel(List(repaymentHistoryFull, repaymentHistoryFull))
+        result.futureValue shouldBe RepaymentHistoryModel(List(repaymentHistoryOneRSI, repaymentHistoryOneRSI))
       }
     }
 
@@ -660,21 +660,21 @@ class IncomeTaxViewChangeConnectorSpec extends TestSupport with MockHttp with Mo
 
     "return a valid RepaymentHistoryModel" when {
 
-      val successResponse = HttpResponse(status = OK, json = validRepaymentHistoryJson, headers = Map.empty)
+      val successResponse = HttpResponse(status = OK, json = validRepaymentHistoryOneRSIJson, headers = Map.empty)
       val successResponseMultipleRepayments = HttpResponse(status = OK, json = validMultipleRepaymentHistoryJson, headers = Map.empty)
 
       "receiving an OK with only one valid data item" in new Setup {
         setupMockHttpGet(getAllRepaymentHistoryUrl(testNino))(successResponse)
 
         val result: Future[RepaymentHistoryResponseModel] = getRepaymentHistoryByNino(testUserNino)
-        result.futureValue shouldBe RepaymentHistoryModel(List(repaymentHistoryFull))
+        result.futureValue shouldBe RepaymentHistoryModel(List(repaymentHistoryOneRSI))
       }
 
       "receiving an OK with multiple valid data items" in new Setup {
         setupMockHttpGet(getAllRepaymentHistoryUrl(testNino))(successResponseMultipleRepayments)
 
         val result: Future[RepaymentHistoryResponseModel] = getRepaymentHistoryByNino(testUserNino)
-        result.futureValue shouldBe RepaymentHistoryModel(List(repaymentHistoryFull, repaymentHistoryFull))
+        result.futureValue shouldBe RepaymentHistoryModel(List(repaymentHistoryOneRSI, repaymentHistoryOneRSI))
       }
     }
 

@@ -20,13 +20,14 @@ import models.helpers.LiabilityCalculationDataHelper
 import models.liabilitycalculation.taxcalculation.TaxBands
 import models.liabilitycalculation.viewmodels.TaxDueSummaryViewModel
 import play.api.http.Status
+import play.api.i18n.Lang
 import play.api.libs.json._
 import testConstants.NewCalcBreakdownUnitTestConstants._
-import testUtils.UnitSpec
+import testUtils.{TestSupport, UnitSpec}
 
 import scala.io.Source
 
-class LiabilityCalculationResponseModelSpec extends UnitSpec with LiabilityCalculationDataHelper {
+class LiabilityCalculationResponseModelSpec extends LiabilityCalculationDataHelper with TestSupport {
 
   "LastTaxCalculationResponseMode model" when {
 
@@ -137,4 +138,24 @@ class LiabilityCalculationResponseModelSpec extends UnitSpec with LiabilityCalcu
     }
   }
 
+  "Messages" when {
+    "variable values from message" in {
+      Messages(errors = errorMessages).getErrorMessageVariables(messagesApi) shouldBe Seq(
+        Message("C55012", "05/01/2023"),
+        Message("C15507", "£2000"),
+        Message("C15510", "10"),
+        Message("C55009", "")
+      )
+    }
+
+    "translate date variable values from messages" in {
+      val values = Messages(errors = errorMessages).getErrorMessageVariables(messagesApi)
+      Messages.translateMessageDateVariables(values)(messagesApi.preferred(Seq(Lang("cy"))),mockImplicitDateFormatter) shouldBe Seq(
+        Message("C55012", "5 Ionawr 2023"),
+        Message("C15507", "£2000"),
+        Message("C15510", "10"),
+        Message("C55009", "")
+      )
+    }
+  }
 }
