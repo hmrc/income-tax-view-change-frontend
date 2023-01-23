@@ -92,6 +92,9 @@ class EnterClientsUTRController @Inject()(enterClientsUTR: EnterClientsUTR,
                     SessionKeys.clientUTR -> validUTR
                   ) ++ firstName.map(SessionKeys.clientFirstName -> _) ++ lastName.map(SessionKeys.clientLastName -> _)
                   Future.successful(Redirect(routes.ConfirmClientUTRController.show).addingToSession(sessionValues: _*))
+              }.recover {
+                case any =>
+                  Redirect(controllers.agent.routes.UTRErrorController.show)
               }
 
             case Left(CitizenDetailsNotFound | BusinessDetailsNotFound)

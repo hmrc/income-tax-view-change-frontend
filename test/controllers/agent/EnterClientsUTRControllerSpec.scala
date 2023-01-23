@@ -32,7 +32,7 @@ import services.agent.ClientDetailsService._
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testAgentAuthRetrievalSuccessNoEnrolment, testMtditid, testNino}
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.authorise.EmptyPredicate
-import uk.gov.hmrc.auth.core.{BearerTokenExpired, Enrolment}
+import uk.gov.hmrc.auth.core.{BearerTokenExpired, Enrolment, InsufficientEnrolments}
 import uk.gov.hmrc.http.InternalServerException
 
 class EnterClientsUTRControllerSpec extends TestSupport
@@ -212,7 +212,6 @@ class EnterClientsUTRControllerSpec extends TestSupport
           redirectLocation(result) shouldBe Some(controllers.agent.routes.UTRErrorController.show.url)
         }
 
-
         "a business details not found error is returned from the client lookup" in {
           val validUTR: String = "1234567890"
 
@@ -220,6 +219,25 @@ class EnterClientsUTRControllerSpec extends TestSupport
           mockClientDetails(validUTR)(
             response = Left(BusinessDetailsNotFound)
           )
+
+          val result = TestEnterClientsUTRController.submit(fakeRequestWithActiveSession.withFormUrlEncodedBody(
+            ClientsUTRForm.utr -> validUTR
+          ))
+
+          status(result) shouldBe SEE_OTHER
+          redirectLocation(result) shouldBe Some(controllers.agent.routes.UTRErrorController.show.url)
+        }
+
+        "client details exist but there is no agent/client relationship" in {
+          val validUTR: String = "1234567890"
+
+          setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
+
+          mockClientDetails(validUTR)(
+            response = Right(ClientDetails(Some("John"), Some("Doe"), testNino, testMtditid))
+          )
+
+          setupMockAgentAuthorisationException(InsufficientEnrolments())
 
           val result = TestEnterClientsUTRController.submit(fakeRequestWithActiveSession.withFormUrlEncodedBody(
             ClientsUTRForm.utr -> validUTR
