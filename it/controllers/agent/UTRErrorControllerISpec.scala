@@ -47,25 +47,11 @@ class UTRErrorControllerISpec extends ComponentSpecBase with FeatureSwitching {
       }
     }
 
-    s"redirect ($SEE_OTHER) to ${controllers.agent.routes.EnterClientsUTRController.show.url}" when {
-      "the client's UTR is not in session" in {
+    s"return $OK with the UTR Error page" when {
+      "without checking whether the UTR is in session" in {
         stubAuthorisedAgentUser(authorised = true)
 
         val result: WSResponse = IncomeTaxViewChangeFrontend.getUTRError()
-
-        Then("The enter client's utr page is returned to the user")
-        result should have(
-          httpStatus(SEE_OTHER),
-          redirectURI(controllers.agent.routes.EnterClientsUTRController.show.url)
-        )
-      }
-    }
-
-    s"return $OK with the UTR Error page" when {
-      "the client's UTR is in session" in {
-        stubAuthorisedAgentUser(authorised = true)
-
-        val result: WSResponse = IncomeTaxViewChangeFrontend.getUTRError(clientUTR)
 
         Then("The UTR Error page is returned to the user")
         result should have(
@@ -103,18 +89,6 @@ class UTRErrorControllerISpec extends ComponentSpecBase with FeatureSwitching {
           pageTitleAgent("standardError.heading", isErrorPage = true)
         )
       }
-    }
-
-    s"redirect ($SEE_OTHER) to ${controllers.agent.routes.EnterClientsUTRController.show.url}" in {
-      stubAuthorisedAgentUser(authorised = true)
-
-      val result: WSResponse = IncomeTaxViewChangeFrontend.postUTRError
-
-      Then(s"The user is redirected to ${controllers.agent.routes.EnterClientsUTRController.show.url}")
-      result should have(
-        httpStatus(SEE_OTHER),
-        redirectURI(controllers.agent.routes.EnterClientsUTRController.show.url)
-      )
     }
   }
 
