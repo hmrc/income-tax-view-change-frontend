@@ -140,7 +140,7 @@ class TaxYearSummaryViewModelSpec extends UnitSpec with ImplicitDateParser {
 
     "error in tax calculation" should {
       "create a TaxYearSummaryViewModel with multiple error message" in {
-        TaxYearSummaryViewModel(liabilityCalculationModelErrorMessages) shouldBe
+        TaxYearSummaryViewModel(liabilityCalculationModelErrorMessagesForIndividual) shouldBe
           TaxYearSummaryViewModel(
             timestamp = None,
             crystallised = None,

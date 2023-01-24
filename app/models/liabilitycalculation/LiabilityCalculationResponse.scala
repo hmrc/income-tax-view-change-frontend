@@ -22,6 +22,7 @@ import play.api.libs.json._
 
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import scala.util.matching.Regex
 
 
 sealed trait LiabilityCalculationResponseModel
@@ -82,16 +83,16 @@ case class Messages(info: Option[Seq[Message]] = None, warnings: Option[Seq[Mess
 
   val genericMessages: Seq[Message] = allMessages.filter(message => acceptedMessages.contains(message.id))
 
-  def getErrorMessageVariables(messagesProperty: MessagesApi): Seq[Message] = {
+  def getErrorMessageVariables(messagesProperty: MessagesApi, isAgent: Boolean): Seq[Message] = {
     val lang = Lang("GB")
     val errMessages = errorMessages.map(msg => {
-      val key = "tax-year-summary.message." + msg.id
-      messagesProperty.isDefinedAt(key)(lang) match {
-        case true =>
-          val pattern = """\{([0-9}]+)}""".r
-          Message(id = msg.id, text = msg.text diff pattern.replaceAllIn(messagesProperty(key)(lang), "##"))
-        case false =>
-          Message(id = msg.id, text = "")
+      val key = if(isAgent) "tax-year-summary.agent.message." + msg.id else "tax-year-summary.message." + msg.id
+      if (messagesProperty.isDefinedAt(key)(lang)) {
+        val regex = "\\d{2}/\\d{2}/\\d{4}|£\\d+,\\d+|\\d+|£\\d+".r
+        val variable: String = regex.findFirstIn(msg.text).getOrElse("")
+        Message(id = msg.id, text = variable)
+      } else {
+        Message(id = msg.id, text = "")
       }
     })
     errMessages

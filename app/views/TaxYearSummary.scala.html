@@ -48,7 +48,7 @@
 @import implicitDateFormatter._
 
 @taxCalculationContent = @{
-    modelOpt.fold(ifEmpty = taxCalculationNotPresent)(calcOverview => taxCalculationOverview(calcOverview))
+    modelOpt.fold(ifEmpty = taxCalculationNotPresent)(calcOverview => taxCalculationOverview(calcOverview, isAgent))
 }
 
 @taxCalculationNotPresent = {
@@ -56,9 +56,12 @@
     @p(id=Some("no-calc-data-note"))(Html(messages("tax-year-summary.tax-calculation.no-calc.note")))
 }
 
-@taxCalculationOverview(model: TaxYearSummaryViewModel) = {
-    @if(model.messages.exists(_.errorMessages.size > 0) && !isAgent) {
-        @errorMessage(model)
+@taxCalculationOverview(model: TaxYearSummaryViewModel, isAgent: Boolean) = {
+    @if(model.messages.exists(_.errorMessages.size > 0)) {
+       @{
+            val key = if(isAgent) "tax-year-summary.agent.message" else "tax-year-summary.message"
+            errorMessage(model, key, isAgent)
+        }
     } else {
         @breakdownPartial(model, taxYear, isFinalCalc = false, isAgent)
         @if(!model.crystallised.contains(true)) {
@@ -73,20 +76,24 @@
     (!model.messages.isEmpty && model.messages.exists(_.errorMessages.size > 0))
 }
 
-@errorMessage(model: TaxYearSummaryViewModel) = {
-    @errorMessageHeader(s"tax-year-summary.message.header")
+@errorMessage(model: TaxYearSummaryViewModel, key: String, isAgent: Boolean) = {
+    @errorMessageHeader(key + ".header")
     @if(model.messages.exists(_.errorMessages.size > 1)){
         <ul class="govuk-list govuk-list--bullet">
             @for(message <- model.messages.map(_.errorMessages).getOrElse(Seq())) {
-                @multipleErrorMessage(s"tax-year-summary.message.${message.id}", message.text)
+                @multipleErrorMessage(key, message.text, message.id, isAgent)
             }
         </ul>
     } else {
         @for(message <- model.messages.map(_.errorMessages).getOrElse(Seq())) {
-            @singleErrorMessage(s"tax-year-summary.message.${message.id}", message.text)
+            @if(message.id == "C15104" && isAgent){
+                @multipleErrorMessageWithoutList(key, message.text,message.id, isAgent)
+            } else {
+                @singleErrorMessage(key + s".${message.id}", message.text)
+            }
         }
     }
-    @errorMessageAction(s"tax-year-summary.message.action")
+    @errorMessageAction(key + ".action")
 }
 
 @errorMessageHeader(header: String) = {
@@ -97,10 +104,49 @@
     @govukInsetText(InsetText(classes="govuk-insettext-zero-spacing", content = HtmlContent(Html(messages(errorMessage, messageValue)))))
 }
 
-@multipleErrorMessage(errorMessage: String, messageValue: String) = {
-    <li>
-        @govukInsetText(InsetText(classes="govuk-insettext-zero-spacing", content = HtmlContent(Html(messages(errorMessage, messageValue)))))
-    </li>
+@multipleErrorMessageWithoutList(errorMessage: String, messageValue: String, messageId: String, isAgent: Boolean) = {
+<div class="govuk-inset-text govuk-insettext-zero-spacing">
+    @messages(errorMessage + s".${messageId}.1", messageValue)
+    <br>
+        <ul class="govuk-list govuk-list--bullet">
+            <li>
+                @messages(errorMessage + s".${messageId}.2", messageValue)
+            </li>
+            <li>
+                @messages(errorMessage + s".${messageId}.3", messageValue)
+            </li>
+        </ul>
+</div>
+}
+
+
+@multipleErrorMessage(errorMessage: String, messageValue: String, messageId: String, isAgent: Boolean) = {
+    @if((messageId == "C15104" || messageId == "C15322" || messageId == "C159028") && isAgent) {
+        <li>
+            <div class="govuk-inset-text govuk-insettext-zero-spacing">
+                @messages(errorMessage + s".${messageId}.1", messageValue)
+            <br>
+                <ul class="govuk-list govuk-list--bullet">
+                    <li>
+                        @messages(errorMessage + s".${messageId}.2", messageValue)
+                    </li>
+                    <li>
+                        @messages(errorMessage + s".${messageId}.3", messageValue)
+                    </li>
+                    @if(messageId == "C15322" || messageId == "C159028") {
+                    <li>
+                        @messages(errorMessage + s".${messageId}.4", messageValue)
+                    </li>
+                    }
+                </ul>
+            </div>
+        </li>
+} else {
+        <li>
+            @govukInsetText(InsetText(classes="govuk-insettext-zero-spacing",
+            content = HtmlContent(Html(messages(errorMessage + s".$messageId", messageValue)))))
+        </li>
+    }
 }
 
 @errorMessageAction(action: String) = {
@@ -314,7 +360,7 @@
         @messages("tax-year-summary.heading")
     </h1>
     @modelOpt.map { model =>
-        @if(!model.crystallised.contains(true) && (isAgent || !errorPresent(model))) {
+        @if(!model.crystallised.contains(true) && !model.messages.isDefined) {
             @govukInsetText(InsetText(content = HtmlContent(
                 p(id=Some("calc-date-info"))(content = Html(
                     messages(if(isAgent) "tax-year-summary.agent.calc-from-last-time" else "tax-year-summary.calc-from-last-time",
@@ -322,7 +368,6 @@
                 )
             )))
         }
-        @if(isAgent || !errorPresent(model)) {
             <dl class="govuk-summary-list">
                 <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key dt-cell-width">
@@ -363,7 +408,6 @@
                     </div>
                 }
             </dl>
-        }
     }
 
     @taxYearSummaryTabsPartial(showForecastData, taxCalculationContent, paymentsContent, forecastContent, updatesContent)
