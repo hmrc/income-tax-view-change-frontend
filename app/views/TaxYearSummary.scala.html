@@ -368,6 +368,7 @@
                 )
             )))
         }
+        @if(!errorPresent(model)) {
             <dl class="govuk-summary-list">
                 <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key dt-cell-width">
@@ -408,6 +409,7 @@
                     </div>
                 }
             </dl>
+        }
     }
 
     @taxYearSummaryTabsPartial(showForecastData, taxCalculationContent, paymentsContent, forecastContent, updatesContent)
