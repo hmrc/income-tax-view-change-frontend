@@ -56,15 +56,11 @@
     @p(id=Some("no-calc-data-note"))(Html(messages("tax-year-summary.tax-calculation.no-calc.note")))
 }
 
-@getMessageKey(isAgent: Boolean) = {
-  @if(isAgent) {tax-year-summary.agent.message} else {tax-year-summary.message}
-}
-
 @taxCalculationOverview(model: TaxYearSummaryViewModel, isAgent: Boolean) = {
     @if(model.messages.exists(_.errorMessages.size > 0)) {
        @{
-            val key = getMessageKey(isAgent)
-            errorMessage(model,s"${key}".trim(), isAgent)
+            val key = if(isAgent) "tax-year-summary.agent.message" else "tax-year-summary.message"
+            errorMessage(model, key, isAgent)
         }
     } else {
         @breakdownPartial(model, taxYear, isFinalCalc = false, isAgent)
