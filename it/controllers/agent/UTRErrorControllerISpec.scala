@@ -14,10 +14,6 @@ class UTRErrorControllerISpec extends ComponentSpecBase with FeatureSwitching {
     super.beforeEach()
   }
 
-  val clientUTR = Map(
-    SessionKeys.clientUTR -> "1234567890"
-  )
-
   s"GET ${controllers.agent.routes.UTRErrorController.show.url}" should {
     s"redirect ($SEE_OTHER) to ${controllers.routes.SignInController.signIn.url}" when {
       "the user is not authenticated" in {
