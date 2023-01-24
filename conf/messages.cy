@@ -265,9 +265,14 @@ tax-year-summary.agent.message.C15015                          = mae’ch cleien
 tax-year-summary.agent.message.C15016                          = mae’ch cleient yn defnyddio system cyfrifyddu ar sail arian parod. Mae hyn yn golygu na all hawlio i osod colledion yn erbyn incwm trethadwy arall.
 tax-year-summary.agent.message.C15102                          = mae cyfanswm y taliadau Rhodd Cymorth unigol yn fwy na chyfanswm y taliadau Rhodd Cymorth a wnaed gan eich cleient.
 tax-year-summary.agent.message.C15103                          = mae’r taliadau Rhodd Cymorth a wnaed eleni sy’n cael eu trin fel pe baent wedi’u talu yn ystod y flwyddyn flaenorol yn fwy na chyfanswm y taliadau Rhodd Cymorth a wnaed gan eich cleient.
-tax-year-summary.agent.message.C15104                          = mae gwerth y buddsoddiadau cymwys a roddwyd gan eich cleient i elusennau y tu allan i’r DU yn fwy na gwerth yr eitemau a roddwyd i elusennau:<br><ul class="govuk-list govuk-list--bullet"> <li> cyfrannau a gwarantau cymwys </li> <li> tir ac adeiladau cymwys </li> </ul>
+tax-year-summary.agent.message.C15104.1                        = mae gwerth y buddsoddiadau cymwys a roddwyd gan eich cleient i elusennau y tu allan i’r DU yn fwy na gwerth yr eitemau a roddwyd i elusennau:
+tax-year-summary.agent.message.C15104.2                        = cyfrannau a gwarantau cymwys
+tax-year-summary.agent.message.C15104.3                        = tir ac adeiladau cymwys
 tax-year-summary.agent.message.C15105                          = mae’r taliadau Rhodd Cymorth i elusennau nad ydynt yn y DU yn fwy na chyfanswm y taliadau Rhodd Cymorth a wnaed gan eich cleient.
-tax-year-summary.agent.message.C15322                          = mae swm y Lwfans Incwm Masnachu sydd wedi’i hawlio gan eich cleient yn fwy na chaniateir. Ni all swm a hawliwyd gennych fod yn uwch na chyfanswm y canlynol:<br><ul class="govuk-list govuk-list--bullet"> <li> ei throsiant </li> <li> incwm busnes arall nad yw wedi’i gynnwys yn y trosiant </li> <li> cost mantoli wrth werthu asedion neu wrth ddod â’r busnes i ben a nwyddau a gwasanaethau at eich defnydd ei hun </li> </ul>
+tax-year-summary.agent.message.C15322.1                        = mae swm y Lwfans Incwm Masnachu sydd wedi’i hawlio gan eich cleient yn fwy na chaniateir. Ni all swm a hawliwyd gennych fod yn uwch na chyfanswm y canlynol:
+tax-year-summary.agent.message.C15322.2                        = ei throsiant
+tax-year-summary.agent.message.C15322.3                        = incwm busnes arall nad yw wedi’i gynnwys yn y trosiant
+tax-year-summary.agent.message.C15322.4                        = cost mantoli wrth werthu asedion neu wrth ddod â’r busnes i ben a nwyddau a gwasanaethau at eich defnydd ei hun
 tax-year-summary.agent.message.C15323                          = mae swm y Lwfans Incwm Masnachu sydd wedi’i hawlio gan eich cleient yn fwy na’r terfyn.
 tax-year-summary.agent.message.C15325                          = mae’ch cleient wedi hawlio treuliau cyfunol. Mae hyn yn golygu na all hawlio ar gyfer unrhyw dreuliau pellach.
 tax-year-summary.agent.message.C15523                          = mae’ch cleient wedi hawlio treuliau cyfunol. Mae hyn yn golygu na all hawlio ar gyfer unrhyw dreuliau pellach.
@@ -310,11 +315,14 @@ tax-year-summary.agent.message.C159018                         = mae swm y rhydd
 tax-year-summary.agent.message.C159019                         = mae’r swm a hawliwyd ar gyfer Rhyddhad Treth am Fuddsoddiad Cymdeithasol yn fwy na’r terfyn.
 tax-year-summary.agent.message.C159026                         = mae swm y dreth a ddidynnwyd ar gyfer cyflogaeth yn fwy na thâl trethadwy eich cleient.
 tax-year-summary.agent.message.C159027                         = rhoesoch wybod i ni fod y dreth a ddidynnwyd o gyfandaliad eich cleient wedi cael ei chofnodi o dan ei chyflogaeth. Mae’n rhaid i gyfanswm y dreth ar ei chyflogaeth hyd yn hyn fod yn fwy na sero.
-tax-year-summary.agent.message.C159028                         = mae’n rhaid i gyfanswm treth cyflogaeth eich cleient a ddidynnwyd fod yn llai na chyfanswm y cyflog trethadwy gan gynnwys:<br><ul class="govuk-list govuk-list--bullet"> <li> cildyrnau </li> <li> taliadau eraill </li> <li> cyfandaliadau </li> </ul>
+tax-year-summary.agent.message.C159028.1                       = mae’n rhaid i gyfanswm treth cyflogaeth eich cleient a ddidynnwyd fod yn llai na chyfanswm y cyflog trethadwy gan gynnwys:
+tax-year-summary.agent.message.C159028.2                       = cildyrnau
+tax-year-summary.agent.message.C159028.3                       = taliadau eraill
+tax-year-summary.agent.message.C159028.4                       = cyfandaliadau
 tax-year-summary.agent.message.C159030                         = mae cyfanswm iawndal diswyddo o gyflogaeth eich cleient yn fwy na therfyn y cyfandaliad.
 tax-year-summary.agent.message.C159102                         = mae swm y Lwfans Buddsoddiad Blynyddol yr hawliwyd gan eich cleient ar gyfer ei lety gwyliau wedi’i ddodrefnu yn yr AEE neu dramor yn fwy na’r terfyn.
 tax-year-summary.agent.message.C159106                         = mae swm y Lwfans Eiddo a hawliwyd gan eich cleient ar gyfer ei eiddo tramor yn fwy na’r terfyn.
-tax-year-summary.agent.message.C159110                         = mae’r swm a hawliwyd gennych ar gyfer Treth a ddidynnwyd o gyfandaliad Pensiwn y Wladwriaeth yn fwy na {0}% o’r swm a nodwyd ar gyfer Cyfandaliad Pensiwn y Wladwriaeth.
+tax-year-summary.agent.message.C159110                         = mae’r swm a hawliwyd gan eich cleient ar gyfer Treth a ddidynnwyd o gyfandaliad Pensiwn y Wladwriaeth yn fwy na {0}% o’r swm a nodwyd ar gyfer Cyfandaliad Pensiwn y Wladwriaeth.
 tax-year-summary.agent.message.C159115                         = rydych yn defnyddio system cyfrifyddu ar sail arian parod. Mae hyn yn golygu na allwch hawlio Lwfans Buddsoddi Blynyddol ar gyfer eich eiddo yn y DU.
 tax-year-summary.agent.message.C159500                         = ni all eich cleient gyflwyno manylion am dreuliau cyfunol ar gyfer ei lety gwyliau wedi’i ddodrefnu yn yr AEE a’ch llety tramor. Mae hyn oherwydd bod ei throsiant cronnus yn fwy na’r terfyn.
 tax-year-summary.agent.message.C559099                         = ni all eich cleient gyflwyno manylion am dreuliau cyfunol ar gyfer ei lety gwyliau wedi’i ddodrefnu yn yr AEE a’ch llety tramor. Mae hyn oherwydd bod ei throsiant cronnus yn fwy na’r terfyn.

@@ -22,6 +22,7 @@ import play.api.libs.json._
 
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import scala.util.matching.Regex
 
 
 sealed trait LiabilityCalculationResponseModel
@@ -86,12 +87,12 @@ case class Messages(info: Option[Seq[Message]] = None, warnings: Option[Seq[Mess
     val lang = Lang("GB")
     val errMessages = errorMessages.map(msg => {
       val key = if(isAgent) "tax-year-summary.agent.message." + msg.id else "tax-year-summary.message." + msg.id
-      messagesProperty.isDefinedAt(key)(lang) match {
-        case true =>
-          val pattern = """\{([\d}]+)}""".r
-          Message(id = msg.id, text = msg.text diff pattern.replaceAllIn(messagesProperty(key)(lang), "##"))
-        case false =>
-          Message(id = msg.id, text = "")
+      if (messagesProperty.isDefinedAt(key)(lang)) {
+        val regex = "\\d{2}/\\d{2}/\\d{4}|£\\d+,\\d+|\\d+|£\\d+".r
+        val variable: String = regex.findFirstIn(msg.text).getOrElse("")
+        Message(id = msg.id, text = variable)
+      } else {
+        Message(id = msg.id, text = "")
       }
     })
     errMessages

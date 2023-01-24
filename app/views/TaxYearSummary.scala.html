@@ -64,7 +64,7 @@
     @if(model.messages.exists(_.errorMessages.size > 0)) {
        @{
             val key = getMessageKey(isAgent)
-            errorMessage(model,s"${key}".trim())
+            errorMessage(model,s"${key}".trim(), isAgent)
         }
     } else {
         @breakdownPartial(model, taxYear, isFinalCalc = false, isAgent)
@@ -80,17 +80,21 @@
     (!model.messages.isEmpty && model.messages.exists(_.errorMessages.size > 0))
 }
 
-@errorMessage(model: TaxYearSummaryViewModel, key: String) = {
+@errorMessage(model: TaxYearSummaryViewModel, key: String, isAgent: Boolean) = {
     @errorMessageHeader(key + ".header")
     @if(model.messages.exists(_.errorMessages.size > 1)){
         <ul class="govuk-list govuk-list--bullet">
             @for(message <- model.messages.map(_.errorMessages).getOrElse(Seq())) {
-                @multipleErrorMessage(key + s".${message.id}", message.text)
+                @multipleErrorMessage(key, message.text, message.id, isAgent)
             }
         </ul>
     } else {
         @for(message <- model.messages.map(_.errorMessages).getOrElse(Seq())) {
-            @singleErrorMessage(key + s".${message.id}", message.text)
+            @if(message.id == "C15104"){
+                @multipleErrorMessageWithoutList(key, message.text,message.id, isAgent)
+            } else {
+                @singleErrorMessage(key + s".${message.id}", message.text)
+            }
         }
     }
     @errorMessageAction(key + ".action")
@@ -104,10 +108,49 @@
     @govukInsetText(InsetText(classes="govuk-insettext-zero-spacing", content = HtmlContent(Html(messages(errorMessage, messageValue)))))
 }
 
-@multipleErrorMessage(errorMessage: String, messageValue: String) = {
-    <li>
-        @govukInsetText(InsetText(classes="govuk-insettext-zero-spacing", content = HtmlContent(Html(messages(errorMessage, messageValue)))))
-    </li>
+@multipleErrorMessageWithoutList(errorMessage: String, messageValue: String, messageId: String, isAgent: Boolean) = {
+<div class="govuk-inset-text govuk-insettext-zero-spacing">
+    @messages(errorMessage + s".${messageId}.1", messageValue)
+    <br>
+        <ul class="govuk-list govuk-list--bullet">
+            <li>
+                @messages(errorMessage + s".${messageId}.2", messageValue)
+            </li>
+            <li>
+                @messages(errorMessage + s".${messageId}.3", messageValue)
+            </li>
+        </ul>
+</div>
+}
+
+
+@multipleErrorMessage(errorMessage: String, messageValue: String, messageId: String, isAgent: Boolean) = {
+    @if((messageId == "C15104" || messageId == "C15322" || messageId == "C159028") && isAgent) {
+        <li>
+            <div class="govuk-inset-text govuk-insettext-zero-spacing">
+                @messages(errorMessage + s".${messageId}.1", messageValue)
+            <br>
+                <ul class="govuk-list govuk-list--bullet">
+                    <li>
+                        @messages(errorMessage + s".${messageId}.2", messageValue)
+                    </li>
+                    <li>
+                        @messages(errorMessage + s".${messageId}.3", messageValue)
+                    </li>
+                    @if(messageId == "C15322" || messageId == "C159028") {
+                    <li>
+                        @messages(errorMessage + s".${messageId}.4", messageValue)
+                    </li>
+                    }
+                </ul>
+            </div>
+        </li>
+} else {
+        <li>
+            @govukInsetText(InsetText(classes="govuk-insettext-zero-spacing",
+            content = HtmlContent(Html(messages(errorMessage + s".$messageId", messageValue)))))
+        </li>
+    }
 }
 
 @errorMessageAction(action: String) = {
