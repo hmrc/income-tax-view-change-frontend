@@ -96,7 +96,6 @@ class EnterClientsUTRController @Inject()(enterClientsUTR: EnterClientsUTR,
                 case any =>
                   Redirect(controllers.agent.routes.UTRErrorController.show)
               }
-
             case Left(CitizenDetailsNotFound | BusinessDetailsNotFound)
             =>
               val sessionValue: Seq[(String, String)] = Seq(SessionKeys.clientUTR -> validUTR)

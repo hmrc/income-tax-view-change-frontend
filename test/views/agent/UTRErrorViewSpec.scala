@@ -30,7 +30,6 @@ class UTRErrorViewSpec extends ViewSpec {
   val utrError: UTRError = app.injector.instanceOf[UTRError]
 
   val utrErrorView: Html = utrError(
-    testClientUtr,
     postAction
   )
 
