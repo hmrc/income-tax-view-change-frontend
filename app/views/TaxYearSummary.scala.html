@@ -86,7 +86,7 @@
         </ul>
     } else {
         @for(message <- model.messages.map(_.errorMessages).getOrElse(Seq())) {
-            @if(message.id == "C15104"){
+            @if(message.id == "C15104" && isAgent){
                 @multipleErrorMessageWithoutList(key, message.text,message.id, isAgent)
             } else {
                 @singleErrorMessage(key + s".${message.id}", message.text)
