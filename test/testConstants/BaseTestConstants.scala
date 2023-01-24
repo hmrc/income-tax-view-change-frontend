@@ -30,7 +30,6 @@ import testConstants.IncomeSourceDetailsTestConstants.businessesAndPropertyIncom
 import testConstants.PropertyDetailsTestConstants.propertyDetails
 import testUtils.UnitSpec
 import uk.gov.hmrc.auth.core._
-import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals.confidenceLevel
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, Name, ~}
 
 object BaseTestConstants extends UnitSpec with GuiceOneAppPerSuite {
