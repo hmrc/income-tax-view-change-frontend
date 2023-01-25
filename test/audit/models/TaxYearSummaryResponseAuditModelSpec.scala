@@ -120,7 +120,6 @@ class TaxYearSummaryResponseAuditModelSpec extends WordSpecLike with TestSupport
   def taxYearOverviewResponseAuditFull(userType: Option[String] = Some("Agent"),
                                        agentReferenceNumber: Option[String],
                                        paymentHasADunningLock: Boolean = false,
-                                       featureSwitch7b: Boolean = false,
                                        forecastIncome: Option[Int] = None,
                                        forecastIncomeTaxAndNics: Option[BigDecimal] = None): TaxYearSummaryResponseAuditModel =
     TaxYearSummaryResponseAuditModel(
@@ -141,13 +140,11 @@ class TaxYearSummaryResponseAuditModelSpec extends WordSpecLike with TestSupport
         forecastIncome = forecastIncome,
         forecastIncomeTaxAndNics = forecastIncomeTaxAndNics)
       ),
-      R7bTxmEvents = featureSwitch7b
     )
 
   def taxYearOverviewResponseAuditUnattendedCalc(userType: Option[String] = Some("Agent"),
                                        agentReferenceNumber: Option[String],
                                        paymentHasADunningLock: Boolean = false,
-                                       featureSwitch7b: Boolean = false,
                                        forecastIncome: Option[Int] = None,
                                        forecastIncomeTaxAndNics: Option[BigDecimal] = None): TaxYearSummaryResponseAuditModel =
     TaxYearSummaryResponseAuditModel(
@@ -168,7 +165,6 @@ class TaxYearSummaryResponseAuditModelSpec extends WordSpecLike with TestSupport
         forecastIncome = forecastIncome,
         forecastIncomeTaxAndNics = forecastIncomeTaxAndNics)
       ),
-      R7bTxmEvents = featureSwitch7b
     )
 
   "TaxYearOverviewResponseAuditModel(mtdItUser, agentReferenceNumber, calculation, payments, updates)" should {
@@ -199,13 +195,21 @@ class TaxYearSummaryResponseAuditModelSpec extends WordSpecLike with TestSupport
           "agentReferenceNumber" -> "agentReferenceNumber",
           "taxYearOverview" -> Json.obj(
             "calculationDate" -> "2017-07-06",
-            "totalDue" -> 2010
+            "calculationAmount" -> 2010,
+            "isCrystallised" -> false,
+            "forecastAmount" -> null
+          ),
+          "forecast" -> Json.obj(
+            "income" -> null,
+            "taxableIncome" -> null,
+            "taxDue" -> null
           ),
           "calculation" -> Json.obj(
             "income" -> 199505,
             "allowancesAndDeductions" -> 500,
             "taxableIncome" -> 198500,
-            "taxDue" -> 2010
+            "taxDue" -> 2010,
+            "calculationReason" -> "customerRequest",
           ),
           "payments" -> Seq(Json.obj(
             "amount" -> 1400,
@@ -241,13 +245,21 @@ class TaxYearSummaryResponseAuditModelSpec extends WordSpecLike with TestSupport
           "userType" -> "Individual",
           "taxYearOverview" -> Json.obj(
             "calculationDate" -> "2017-07-06",
-            "totalDue" -> 2010
+            "calculationAmount" -> 2010,
+            "isCrystallised" -> false,
+            "forecastAmount" -> None
+          ),
+          "forecast" -> Json.obj(
+            "income" -> None,
+            "taxableIncome" -> None,
+            "taxDue" -> None
           ),
           "calculation" -> Json.obj(
             "income" -> 199505,
             "allowancesAndDeductions" -> 500,
             "taxableIncome" -> 198500,
-            "taxDue" -> 2010
+            "taxDue" -> 2010,
+            "calculationReason" -> "customerRequest",
           ),
           "payments" -> Seq(Json.obj(
             "amount" -> 1400,
@@ -275,10 +287,9 @@ class TaxYearSummaryResponseAuditModelSpec extends WordSpecLike with TestSupport
 
   "TaxYear audit model" should {
     "present a full audit model" when {
-      "the R7b feature switch is on" in {
+      "there's expected behaviour" in {
         val auditJson = taxYearOverviewResponseAuditFull(
           agentReferenceNumber = Some("1"),
-          featureSwitch7b = true,
           forecastIncome = Some(2000),
           forecastIncomeTaxAndNics = Some(120.0)
         )
@@ -298,10 +309,9 @@ class TaxYearSummaryResponseAuditModelSpec extends WordSpecLike with TestSupport
 
   "TaxYear audit model test" should {
     "present a full audit model test" when {
-      "the R7b feature switch is on test" in {
+      "audit is on test" in {
         val auditJson = taxYearOverviewResponseAuditFull(
           agentReferenceNumber = Some("1"),
-          featureSwitch7b = true,
           forecastIncome = Some(2000),
           forecastIncomeTaxAndNics = Some(120.0)
         )
@@ -314,10 +324,9 @@ class TaxYearSummaryResponseAuditModelSpec extends WordSpecLike with TestSupport
     }
 
     "present a full audit model test unattended" when {
-      "the R7b feature switch is on test" in {
+      "audit has expected test behaviour" in {
         val auditJson = taxYearOverviewResponseAuditUnattendedCalc(
           agentReferenceNumber = Some("1"),
-          featureSwitch7b = true,
           forecastIncome = Some(2000),
           forecastIncomeTaxAndNics = Some(120.0)
         )

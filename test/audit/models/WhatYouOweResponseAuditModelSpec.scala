@@ -44,7 +44,6 @@ class WhatYouOweResponseAuditModelSpec extends TestSupport {
   def testWhatYouOweResponseAuditModel(userType: Option[String] = Some("Agent"),
                                        yearOfMigration: Option[String] = Some("2015"),
                                        chargesList: WhatYouOweChargesList = whatYouOwePartialChargesList,
-                                       auditFeatureSwitch: Boolean =false,
                                       ): WhatYouOweResponseAuditModel = WhatYouOweResponseAuditModel(
     user = MtdItUser(
       mtditid = testMtditid,
@@ -58,7 +57,6 @@ class WhatYouOweResponseAuditModelSpec extends TestSupport {
       arn = if (userType.contains("Agent")) Some(testArn) else None
     ),
     whatYouOweChargesList = chargesList,
-    auditFeatureSwitch,
     dateService
   )
 
@@ -89,7 +87,8 @@ class WhatYouOweResponseAuditModelSpec extends TestSupport {
             "chargeType" -> lpiPaymentOnAccount1,
             "dueDate" -> Some(LocalDate.parse("2019-06-25")),
             "outstandingAmount" -> 42.5,
-            "chargeUnderReview" -> true
+            "chargeUnderReview" -> true,
+            "endTaxYear" -> 2023
           ),
           Json.obj(
             "chargeType" -> paymentOnAccount2,
@@ -99,7 +98,8 @@ class WhatYouOweResponseAuditModelSpec extends TestSupport {
             "interestRate" -> "6.2%",
             "interestFromDate" -> "2019-05-25",
             "interestEndDate" -> "2019-06-25",
-            "chargeUnderReview" -> false
+            "chargeUnderReview" -> false,
+            "endTaxYear" -> 2023
           ),
           Json.obj(
             "chargeType" -> paymentOnAccount2,
@@ -109,7 +109,8 @@ class WhatYouOweResponseAuditModelSpec extends TestSupport {
             "interestRate" -> "100%",
             "interestFromDate" -> "2018-03-29",
             "interestEndDate" -> "2018-03-29",
-            "chargeUnderReview" -> false
+            "chargeUnderReview" -> false,
+            "endTaxYear" -> 2023
           ),
           Json.obj(
             "chargeType" -> paymentOnAccount1,
@@ -119,7 +120,8 @@ class WhatYouOweResponseAuditModelSpec extends TestSupport {
             "interestRate" -> "100%",
             "interestFromDate" -> "2018-03-29",
             "interestEndDate" -> "2018-03-29",
-            "chargeUnderReview" -> false
+            "chargeUnderReview" -> false,
+            "endTaxYear" -> 2023
           ),
           Json.obj("accruingInterest" -> 12.67,
             "chargeType" -> "Remaining balance",
@@ -177,7 +179,7 @@ class WhatYouOweResponseAuditModelSpec extends TestSupport {
     "produce a full audit Json model" when {
       "the audit 7b feature switch is on" in {
         val auditJson = testWhatYouOweResponseAuditModel(
-          auditFeatureSwitch = true, chargesList = whatYouOwePartialChargesList.copy(
+          chargesList = whatYouOwePartialChargesList.copy(
             balanceDetails = BalanceDetails(
               balanceDueWithin30Days = 0, overDueAmount = 0, totalBalance = 3, None, None, None, Some(BigDecimal(-1000.0)))
           )

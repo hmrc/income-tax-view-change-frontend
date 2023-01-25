@@ -25,8 +25,8 @@ import utils.Utilities.JsonUtil
 case class PaymentHistoryResponseAuditModel(mtdItUser: MtdItUser[_],
                                             payments: Seq[Payment],
                                             CutOverCreditsEnabled: Boolean,
-                                            MFACreditsEnabled: Boolean,
-                                            R7bTxmEvents: Boolean) extends ExtendedAuditModel {
+                                            MFACreditsEnabled: Boolean
+                                            ) extends ExtendedAuditModel {
 
   override val transactionName: String = enums.TransactionName.PaymentHistoryResponse
   override val auditType: String = enums.AuditType.PaymentHistoryResponse
@@ -38,14 +38,12 @@ case class PaymentHistoryResponseAuditModel(mtdItUser: MtdItUser[_],
   private def paymentHistoryMapper(payment: Payment): Option[JsObject] = {
     val isCredit = payment.credit.isDefined
     val isMFA = payment.validMFACreditType()
-    (R7bTxmEvents, isCredit, isMFA) match {
-      case (false, _, _) =>
-        if (!isCredit) Some(getPayment(payment, "Payment Made to HMRC")) else None
-      case (true, true, true) =>
+    (isCredit, isMFA) match {
+      case (true, true) =>
         if (MFACreditsEnabled) Some(getPayment(payment, "Credit from HMRC adjustment")) else None
-      case (true, true, false) =>
+      case (true, false) =>
         if (CutOverCreditsEnabled) Some(getPayment(payment, "Credit from an earlier tax year")) else None
-      case (true, false, _) => Some(getPayment(payment, "Payment Made to HMRC"))
+      case (false, _) => Some(getPayment(payment, "Payment Made to HMRC"))
     }
   }
 

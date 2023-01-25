@@ -19,7 +19,7 @@ package controllers.agent
 import audit.models.PaymentHistoryResponseAuditModel
 import auth.MtdItUser
 import com.github.tomakehurst.wiremock.client.WireMock
-import config.featureswitch.{CutOverCredits, MFACreditsAndDebits, R7bTxmEvents}
+import config.featureswitch.{CutOverCredits, MFACreditsAndDebits}
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
 import helpers.servicemocks.IncomeTaxViewChangeStub
@@ -102,7 +102,6 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase {
 
   s"return $OK with the enter client utr page" when {
     s"return $OK" in {
-      disable(R7bTxmEvents)
       disable(CutOverCredits)
       disable(MFACreditsAndDebits)
       stubAuthorisedAgentUser(authorised = true)
@@ -123,11 +122,10 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase {
       )
 
       verifyAuditContainsDetail(PaymentHistoryResponseAuditModel(testUser, payments, CutOverCreditsEnabled = false,
-        MFACreditsEnabled = false, R7bTxmEvents = false).detail)
+        MFACreditsEnabled = false).detail)
     }
 
     s"return payment from earlier tax year description when CutOverCreditsEnabled and credit is defined $OK" in {
-      enable(R7bTxmEvents)
       enable(CutOverCredits)
       enable(MFACreditsAndDebits)
       stubAuthorisedAgentUser(authorised = true)
@@ -148,7 +146,7 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase {
       )
 
       verifyAuditContainsDetail(PaymentHistoryResponseAuditModel(testUser, payments, CutOverCreditsEnabled = true,
-        MFACreditsEnabled = true, R7bTxmEvents = true).detail)
+        MFACreditsEnabled = true).detail)
     }
 
   }

@@ -18,7 +18,7 @@ package audit.models
 
 import testConstants.BaseTestConstants.{testArn, testCredId, testMtditid, testNino, testSaUtr}
 import auth.MtdItUser
-import config.featureswitch.{CutOverCredits, R7bTxmEvents}
+import config.featureswitch.{CutOverCredits}
 import models.financialDetails.Payment
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import play.api.libs.json._
@@ -33,7 +33,7 @@ class PaymentHistoryResponseAuditModelSpec extends TestSupport {
   val auditEvent = "PaymentHistoryResponse"
   val paymentFromEarlierYear: String = messages("paymentHistory.paymentFromEarlierYear")
 
-  private def paymentHistoryAuditFullTxm(userType: Option[String] = Some("Individual"), R7bTxmEvents: Boolean = true, MFA: Boolean = true,
+  private def paymentHistoryAuditFullTxm(userType: Option[String] = Some("Individual"), MFA: Boolean = true,
                                  CutOver: Boolean = true) = PaymentHistoryResponseAuditModel(
     mtdItUser = MtdItUser(
       mtditid = testMtditid,
@@ -65,7 +65,6 @@ class PaymentHistoryResponseAuditModelSpec extends TestSupport {
     ),
     CutOverCreditsEnabled = CutOver,
     MFACreditsEnabled = MFA,
-    R7bTxmEvents = R7bTxmEvents
   )
 
   val paymentHistoryAuditMin: PaymentHistoryResponseAuditModel = PaymentHistoryResponseAuditModel(
@@ -82,7 +81,6 @@ class PaymentHistoryResponseAuditModelSpec extends TestSupport {
     payments = Seq.empty[Payment],
     CutOverCreditsEnabled = false,
     MFACreditsEnabled = false,
-    R7bTxmEvents = false
   )
 
   def getExpectedJson(MFA: Boolean = true, CutOver: Boolean = true): JsObject = {
@@ -138,7 +136,7 @@ class PaymentHistoryResponseAuditModelSpec extends TestSupport {
     }
 
     "Have the correct details for the audit event" when {
-      "R7bTxmEvents is Enabled" when {
+      "Audit expected behaviour" when {
         "CutOverCredits is enabled, MFACredits is enabled" in {
           paymentHistoryAuditFullTxm(MFA = true, CutOver = true).detail shouldBe getExpectedJson(true, true)
         }
@@ -162,29 +160,6 @@ class PaymentHistoryResponseAuditModelSpec extends TestSupport {
             "paymentHistory" -> Json.arr()
           )
         }
-      }
-    }
-
-    "R7bTxmEvents is disabled" when {
-      "only payments should be present" in {
-        paymentHistoryAuditFullTxm(userType = Some("Individual"), R7bTxmEvents = false).detail shouldBe getExpectedJson(false, false)
-      }
-      "user is an Agent" in {
-        paymentHistoryAuditFullTxm(userType = Some("Agent"), R7bTxmEvents = false).detail shouldBe Json.obj(
-          "mtditid" -> testMtditid,
-          "nationalInsuranceNumber" -> testNino,
-          "agentReferenceNumber" -> "XAIT0000123456",
-          "saUtr" -> testSaUtr,
-          "credId" -> testCredId,
-          "userType" -> "Agent",
-          "paymentHistory" -> Json.arr(
-            Json.obj(
-              "paymentDate" -> "2018-02-01",
-              "description" -> "Payment Made to HMRC",
-              "amount" -> 100.00
-            )
-          )
-        )
       }
     }
   }

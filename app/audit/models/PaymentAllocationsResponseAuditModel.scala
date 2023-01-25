@@ -29,8 +29,8 @@ import java.time.LocalDate
 
 
 case class PaymentAllocationsResponseAuditModel(mtdItUser: MtdItUserBase[_],
-                                                paymentAllocations: PaymentAllocationViewModel,
-                                                R7bTxmEvents: Boolean)
+                                                paymentAllocations: PaymentAllocationViewModel
+                                                )
   extends ExtendedAuditModel {
 
   override val transactionName: String = enums.TransactionName.PaymentAllocations
@@ -105,15 +105,12 @@ case class PaymentAllocationsResponseAuditModel(mtdItUser: MtdItUserBase[_],
     }
   }
   private def paymentAllocationType(): JsObject = {
-    if (R7bTxmEvents) {
-      if (paymentAllocations.paymentAllocationChargeModel.documentDetails.exists(_.credit.isDefined)) {
-        Json.obj("paymentType" -> "Payment made from earlier tax year")
-      }
-      else {
-        Json.obj("paymentType" -> "Payment made to HMRC")
-      }
+    if (paymentAllocations.paymentAllocationChargeModel.documentDetails.exists(_.credit.isDefined)) {
+      Json.obj("paymentType" -> "Payment made from earlier tax year")
     }
-    else Json.obj()
+    else {
+      Json.obj("paymentType" -> "Payment made to HMRC")
+    }
   }
 
   override val detail: JsValue = userAuditDetails(mtdItUser) ++ paymentAllocationDetail()

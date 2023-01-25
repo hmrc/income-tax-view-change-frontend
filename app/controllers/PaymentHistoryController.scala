@@ -19,7 +19,7 @@ package controllers
 import audit.AuditingService
 import audit.models.PaymentHistoryResponseAuditModel
 import auth.MtdItUser
-import config.featureswitch.{CutOverCredits, FeatureSwitching, MFACreditsAndDebits, PaymentHistoryRefunds, R7bTxmEvents}
+import config.featureswitch.{CutOverCredits, FeatureSwitching, MFACreditsAndDebits, PaymentHistoryRefunds}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
@@ -74,7 +74,7 @@ class PaymentHistoryController @Inject()(val paymentHistoryView: PaymentHistory,
         if (paymentHistoryAndRefundsEnabled) {
           paymentHistoryService.getRepaymentHistory.map {
             case Right(repayments) =>
-              auditingService.extendedAudit(PaymentHistoryResponseAuditModel(user, payments, R7bTxmEvents = isEnabled(R7bTxmEvents),
+              auditingService.extendedAudit(PaymentHistoryResponseAuditModel(user, payments,
                 CutOverCreditsEnabled = CutOverCreditsEnabled,
                 MFACreditsEnabled = MFACreditsEnabled))
               val paymentHistoryEntries = RepaymentHistoryUtils.getGroupedPaymentHistoryData(payments, repayments, isAgent,
@@ -85,7 +85,7 @@ class PaymentHistoryController @Inject()(val paymentHistoryView: PaymentHistory,
             case Left(_) => itvcErrorHandler.showInternalServerError()
           }
         } else {
-          auditingService.extendedAudit(PaymentHistoryResponseAuditModel(user, payments, R7bTxmEvents = isEnabled(R7bTxmEvents),
+          auditingService.extendedAudit(PaymentHistoryResponseAuditModel(user, payments,
             CutOverCreditsEnabled = CutOverCreditsEnabled,
             MFACreditsEnabled = MFACreditsEnabled))
           val paymentHistoryEntries = RepaymentHistoryUtils.getGroupedPaymentHistoryData(payments, List(), isAgent,

@@ -26,7 +26,7 @@ import utils.Utilities.JsonUtil
 
 case class WhatYouOweResponseAuditModel(user: MtdItUser[_],
                                         whatYouOweChargesList: WhatYouOweChargesList,
-                                        R7bTxmEvents: Boolean, dateService: DateServiceInterface) extends ExtendedAuditModel {
+                                        dateService: DateServiceInterface) extends ExtendedAuditModel {
 
   val currentTaxYear: Int = dateService.getCurrentTaxYearEnd
 
@@ -43,17 +43,12 @@ case class WhatYouOweResponseAuditModel(user: MtdItUser[_],
   private lazy val balanceDetailsJson: JsObject = {
     def onlyIfPositive(amount: BigDecimal): Option[BigDecimal] = Some(amount).filter(_ > 0)
 
-    val fields: JsObject = if(R7bTxmEvents) {
+    val fields: JsObject = {
       Json.obj() ++
         ("balanceDueWithin30Days", onlyIfPositive(whatYouOweChargesList.balanceDetails.balanceDueWithin30Days)) ++
         ("overDueAmount", onlyIfPositive(whatYouOweChargesList.balanceDetails.overDueAmount)) ++
         ("totalBalance", onlyIfPositive(whatYouOweChargesList.balanceDetails.totalBalance)) ++
         ("creditAmount", whatYouOweChargesList.balanceDetails.unallocatedCredit)
-    } else {
-      Json.obj() ++
-        ("balanceDueWithin30Days", onlyIfPositive(whatYouOweChargesList.balanceDetails.balanceDueWithin30Days)) ++
-        ("overDueAmount", onlyIfPositive(whatYouOweChargesList.balanceDetails.overDueAmount)) ++
-        ("totalBalance", onlyIfPositive(whatYouOweChargesList.balanceDetails.totalBalance))
     }
 
     val secondOrMoreYearOfMigration = user.incomeSources.yearOfMigration.exists(currentTaxYear > _.toInt)
@@ -67,7 +62,6 @@ case class WhatYouOweResponseAuditModel(user: MtdItUser[_],
   }
 
   private def documentDetails(docDateDetail: DocumentDetailWithDueDate): JsObject = {
-    if (R7bTxmEvents) {
       Json.obj(
         "chargeUnderReview" -> docDateDetail.dunningLock,
         "outstandingAmount" -> remainingToPay(docDateDetail.documentDetail)
@@ -76,15 +70,6 @@ case class WhatYouOweResponseAuditModel(user: MtdItUser[_],
         ("dueDate", docDateDetail.dueDate) ++
         accruingInterestJson(docDateDetail.documentDetail) ++
         Json.obj("endTaxYear" -> docDateDetail.documentDetail.taxYear.toInt)
-    } else {
-      Json.obj(
-        "chargeUnderReview" -> docDateDetail.dunningLock,
-        "outstandingAmount" -> remainingToPay(docDateDetail.documentDetail)
-      ) ++
-        ("chargeType", getChargeType(docDateDetail.documentDetail, docDateDetail.isLatePaymentInterest)) ++
-        ("dueDate", docDateDetail.dueDate) ++
-        accruingInterestJson(docDateDetail.documentDetail)
-    }
   }
 
   private def accruingInterestJson(documentDetail: DocumentDetail): JsObject = {

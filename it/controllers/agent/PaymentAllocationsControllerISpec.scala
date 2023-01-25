@@ -142,7 +142,7 @@ class PaymentAllocationsControllerISpec extends ComponentSpecBase with FeatureSw
         pageTitleAgent("paymentAllocation.heading")
       )
 
-      verifyAuditContainsDetail(PaymentAllocationsResponseAuditModel(testUser, paymentAllocationViewModel, false).detail)
+      verifyAuditContainsDetail(PaymentAllocationsResponseAuditModel(testUser, paymentAllocationViewModel).detail)
     }
 
     s"return $OK and display the Payment Allocations page and new LPI layout" in {
@@ -163,7 +163,7 @@ class PaymentAllocationsControllerISpec extends ComponentSpecBase with FeatureSw
         httpStatus(OK)
       )
 
-      verifyAuditContainsDetail(PaymentAllocationsResponseAuditModel(testUser, lpiPaymentAllocationViewModel, false).detail)
+      verifyAuditContainsDetail(PaymentAllocationsResponseAuditModel(testUser, lpiPaymentAllocationViewModel).detail)
     }
 
     s"return $INTERNAL_SERVER_ERROR when the payment allocations call fails" in {

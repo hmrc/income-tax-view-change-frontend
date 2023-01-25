@@ -94,7 +94,7 @@ class PaymentAllocationsController @Inject()(val paymentAllocationView: PaymentA
           Logger("application").warn(s"[PaymentAllocationsController][handleRequest] CutOverCredits is disabled and redirected to not found page")
           Redirect(controllers.errors.routes.NotFoundDocumentIDLookupController.show.url)
         } else {
-          auditingService.extendedAudit(PaymentAllocationsResponseAuditModel(user, paymentAllocations, isEnabled(R7bTxmEvents)))
+          auditingService.extendedAudit(PaymentAllocationsResponseAuditModel(user, paymentAllocations))
           val dueDate: Option[LocalDate] = paymentAllocations.paymentAllocationChargeModel.financialDetails.headOption
             .flatMap(_.items.flatMap(_.headOption.flatMap(_.dueDate)))
           val outstandingAmount = paymentAllocations.paymentAllocationChargeModel.documentDetails.headOption.flatMap(_.outstandingAmount)
