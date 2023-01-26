@@ -577,7 +577,7 @@ obligations.heading                                             = Dyddiadau cau 
 obligations.quarterly.to                                        = i
 obligations.eops                                                = Blwyddyn dreth gyfan (gwiriad olaf)
 obligations.noReports                                           = Nid oes unrhyw adroddiadau’n nesáu at eu dyddiad cau ar hyn o bryd. Bydd eich dyddiad cau nesaf yn dangos yma ar ddydd Llun cyntaf y mis nesaf.
-nextUpdates.quarterly                                           = Diweddariad chwarterol
+nextUpdates.quarterly                                           = Diweddariad bob chwarter
 nextUpdates.eops            									= Diweddariad blynyddol
 nextUpdates.crystallised            							= Datganiad terfynol
 nextUpdates.crystallisedAll            							= Pob ffynhonnell incwm
@@ -589,7 +589,7 @@ nextUpdates.business            							    = Incwm busnes
 previous-obligations.income-source.property-income              = Incwm o eiddo
 previous-obligations.no-previous-obligations                    = Dim diweddariadau wedi’u cyflwyno’n flaenorol
 previous-obligations.income-source.final-income                 = Blwyddyn dreth – Gwiriad olaf
-previous-obligations.obligation-type.quarterly                  = Diweddariad chwarterol
+previous-obligations.obligation-type.quarterly                  = Diweddariad bob chwarter
 previous-obligations.obligation-type.crystallised               = Datganiad
 previous-obligations.obligation-type.start-to-end               = {0} i {1}
 previous-obligation.obligation-type.was-due-on                  = Roedd yn ddyledus ar {0}
@@ -944,7 +944,7 @@ timeoutDialog.minutes.two                                       = funud
 timeoutDialog.message                                           = Er eich diogelwch, byddwn yn eich llofnodi allan mewn
 timeoutDialog.seconds                                           = eiliad
 timeoutDialog.title                                             = Rydych ar fin cael eich allgofnodi
-button.continue                                                 = Arhoswch wedi arwyddo i mewn
+button.continue                                                 = Arhoswch wedi'ch mewngofnodi
 
 ## Not found
 notFound.heading = Ni ellir dod o hyd i’r dudalen hon
@@ -1000,7 +1000,7 @@ updateTab.obligationType.business                               = Busnes
 updateTab.obligationType.crystallised                           = Pob ffynhonnell incwm
 updateTab.due                                                   = Yn ddyledus erbyn {0}
 updateTab.dateSubmitted                                         = Dyddiad cyflwyno
-updateTab.updateType.quarterly                                  = Diweddariad chwarterol
+updateTab.updateType.quarterly                                  = Diweddariad bob chwarter
 updateTab.updateType.eops                                       = Diweddariad blynyddol
 updateTab.updateType.crystallised                               = Datganiad terfynol
 
