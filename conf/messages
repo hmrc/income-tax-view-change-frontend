@@ -615,7 +615,7 @@ credits.money-in-your-account-section.claim-a-refund-link               = claim 
 
 ## Refund to taxpayer page ##
 refund-to-taxpayer.heading                                      = Refund to taxpayer
-refund-to-taxpayer.tableHead.estimated-date                     = Estimated date
+refund-to-taxpayer.tableHead.estimated-date                     = Estimated issue date
 refund-to-taxpayer.tableHead.method                             = Method
 refund-to-taxpayer.tableHead.total-refund                       = Total refund
 refund-to-taxpayer.tableHead.further-details                    = Further details

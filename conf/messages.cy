@@ -708,7 +708,7 @@ credits.money-in-your-account-section.claim-a-refund-link               = hawlio
 
 ## Refund to taxpayer page ##
 refund-to-taxpayer.heading                                      = Ad-daliad i’r trethdalwr
-refund-to-taxpayer.tableHead.estimated-date                     = Amcan o’r dyddiad
+refund-to-taxpayer.tableHead.estimated-date                     = Dyddiad cyhoeddi amcangyfrifedig
 refund-to-taxpayer.tableHead.method                             = Dull
 refund-to-taxpayer.tableHead.total-refund                       = Cyfanswm yr ad-daliad
 refund-to-taxpayer.tableHead.further-details                    = Manylion pellach
