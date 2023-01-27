@@ -506,7 +506,7 @@ taxCal_breakdown.table.property_finance_relief                      = Relief for
 taxCal_breakdown.table.total_notional_tax                           = Notional tax from gains on life policies etc.
 taxCal_breakdown.table.total_foreign_tax_credit_relief              = Foreign Tax Credit Relief
 taxCal_breakdown.table.qualifyingDistributionRedemptionOfSharesAndSecurities    = Relief claimed on a qualifying distribution
-taxCal_breakdown.table.nonDeductibleLoanInterest                    = Non deductible loan interest
+taxCal_breakdown.table.nonDeductableLoanInterest                    = Non deductible loan interest
 taxCal_breakdown.table.income_tax_due_after_tax_reductions          = Income Tax due after tax reductions
 taxCal_breakdown.table.taxDeductedAtSource.savings					= Interest received from UK banks and building societies
 taxCal_breakdown.table.taxDeductedAtSource.inYearAdjustment			= Outstanding debt collected through PAYE
@@ -521,7 +521,7 @@ taxCal_breakdown.table.taxDeductedAtSource.total					= Total tax deducted
 taxCal_breakdown.table.amount                                       = Amount
 taxCal_breakdown.table.studentLoanRepaymentsPlanType0X              = Student loan repayments (plan {0})
 taxCal_breakdown.table.studentLoanPostGraduatePlan                  = Postgraduate loan repayments
-
+taxCal_breakdown.table.totalPensionChargesDue                       = Total pension saving charges
 
 taxCal_breakdown.message.C22201                                 = Your Basic Rate limit has been increased by {0} to {1} for Gift Aid payments.
 taxCal_breakdown.message.C22202                                 = Tax due on Gift Aid payments exceeds your Income Tax charged so you are liable for Gift Aid tax.

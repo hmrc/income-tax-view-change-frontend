@@ -243,7 +243,7 @@
             @tableRow("total_notional_tax", viewModel.totalNotionalTax, isNegative = true)
             @tableRow("total_foreign_tax_credit_relief", viewModel.totalForeignTaxCreditRelief, isNegative = true)
             @taxReductionsTableRow("qualifyingDistributionRedemptionOfSharesAndSecurities")
-            @taxReductionsTableRow("nonDeductibleLoanInterest")
+            @taxReductionsTableRow("nonDeductableLoanInterest")
 
             @viewModel.incomeTaxDueAfterTaxReductions.map { incomeTaxDueAfterTaxReductions =>
                 <tr class="govuk-table__row">
@@ -258,7 +258,8 @@
 
     @if(viewModel.giftAidTax.isDefined ||
     viewModel.totalPensionSavingsTaxCharges.isDefined ||
-    viewModel.statePensionLumpSumCharges.isDefined
+    viewModel.statePensionLumpSumCharges.isDefined ||
+    viewModel.totalPensionChargesDue.isDefined
     ) {
         <table class="govuk-table" id="additional-charges-table">
             <caption
@@ -299,6 +300,16 @@
                     <td class="govuk-table__cell govuk-table__cell--numeric">@{
                         amount.toCurrency
                     }</td>
+                </tr>
+            }
+            </tbody>
+            <tbody class="govuk-table__body">
+            @viewModel.totalPensionChargesDue.map { amount =>
+                <tr class="govuk-table__row">
+                    <td class="govuk-table__cell">@messages("taxCal_breakdown.table.totalPensionChargesDue")</td>
+                    <td class="govuk-table__cell govuk-table__cell--numeric">@{
+                        amount.toCurrency
+                        }</td>
                 </tr>
             }
             </tbody>

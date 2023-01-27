@@ -25,4 +25,5 @@ object TaxDueSummaryMessages {
   val additionCharges: String = messagesAPI("taxCal_breakdown.additional_charges")
   val studentPlan: String = messagesAPI("taxCal_breakdown.table.studentLoanRepaymentsPlanType0X", "01")
   val postgraduatePlan: String = messagesAPI("taxCal_breakdown.table.studentLoanPostGraduatePlan")
+  val totalPensionChargesDue = messagesAPI("taxCal_breakdown.table.totalPensionChargesDue")
 }

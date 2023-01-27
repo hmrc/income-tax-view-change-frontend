@@ -119,6 +119,38 @@ object NewCalcDataIntegrationTestConstants {
       |}
       |""".stripMargin)
 
+  val liabilityCalculationPensionSavingsTaxCharges = getLiabilityCalcResponse(
+    """
+      |{
+      |  "inputs": {
+      |    "personalInformation": {
+      |      "taxRegime": "UK"
+      |    }
+      |  },
+      |  "metadata" : {
+      |    "calculationTimestamp" : "2019-02-15T09:35:15.094Z",
+      |    "crystallised" : true
+      |  },
+      |  "calculation": {
+      |    "taxCalculation": {
+      |      "incomeTax": {
+      |        "totalIncomeReceivedFromAllSources": 1234,
+      |        "totalAllowancesAndDeductions": 1234,
+      |        "totalTaxableIncome": 1234
+      |
+      |      },
+      |      "totalIncomeTaxAndNicsDue": 12345
+      |    },
+      |    "pensionSavingsTaxCharges": {
+      |      "totalPensionCharges": 5000.99,
+      |      "totalTaxPaid": 5000.99,
+      |      "totalPensionChargesDue": 5000.99
+      |    }
+      |
+      |  }
+      |}
+      |""".stripMargin)
+
   val liabilityCalculationVoluntaryClass2Nic = getLiabilityCalcResponse(
     """
       |{

@@ -465,7 +465,7 @@ taxCal_breakdown.table.property_finance_relief                      = Rhyddhad a
 taxCal_breakdown.table.total_notional_tax                           = Treth dybiannol o enillion ar bolisïau bywyd ac ati
 taxCal_breakdown.table.total_foreign_tax_credit_relief              = Rhyddhad Credyd Treth Dramor
 taxCal_breakdown.table.qualifyingDistributionRedemptionOfSharesAndSecurities    = Rhyddhad a hawliwyd ar ddosbarthiad cymhwysol
-taxCal_breakdown.table.nonDeductibleLoanInterest                    = Llog ar fenthyciad, na ellir ei ddidynnu
+taxCal_breakdown.table.nonDeductableLoanInterest                    = Llog ar fenthyciad, na ellir ei ddidynnu
 taxCal_breakdown.table.income_tax_due_after_tax_reductions          = Treth Incwm sy’n ddyledus ar ôl gostyngiadau treth
 taxCal_breakdown.taxDeductedAtSource								= Didyniadau treth
 taxCal_breakdown.table.taxDeductedAtSource.savings					= Llog a gafwyd o fanciau a chymdeithasau adeiladu yn y DU
@@ -549,6 +549,7 @@ taxCal_breakdown.table.payeUnderpaymentsCodedOut                    = Treth a da
 taxCal_breakdown.table.saUnderpaymentsCodedOut                      = Treth a dandalwyd ar gyfer blynyddoedd cynharach, sydd wedi’i chynnwys yn eich Hunanasesiad ar gyfer {0}} i {1}
 taxCal_breakdown.table.studentLoanRepaymentsPlanType0X              = Ad-daliadau Benthyciad Myfyriwr (cynllun {0})
 taxCal_breakdown.table.studentLoanPostGraduatePlan                  = Ad-daliadau Benthyciad Ôl-raddedig
+taxCal_breakdown.table.totalPensionChargesDue                       = Cyfanswm y taliadau a godir ar gynilion pensiwn
 
 ## Forecast Tax Calc Summary ##
 forecast_taxCalc.heading                                        = Rhagolwg cyfrifiad treth

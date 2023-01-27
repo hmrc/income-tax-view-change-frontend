@@ -36,7 +36,8 @@ case class Calculation(
                         dividendsIncome: Option[DividendsIncome] = None,
                         incomeSummaryTotals: Option[IncomeSummaryTotals] = None,
                         taxCalculation: Option[TaxCalculation] = None,
-                        endOfYearEstimate: Option[EndOfYearEstimate] = None
+                        endOfYearEstimate: Option[EndOfYearEstimate] = None,
+                        pensionSavingsTaxCharges: Option[PensionSavingsTaxCharges] = None
                       )
 
 object Calculation {
@@ -146,5 +147,13 @@ case class StudentLoan(planType: Option[String] = None,
 
 object StudentLoan {
   implicit val format: OFormat[StudentLoan] = Json.format[StudentLoan]
+}
+
+case class PensionSavingsTaxCharges(totalPensionCharges: Option[BigDecimal] = None,
+                                    totalTaxPaid: Option[BigDecimal] = None,
+                                    totalPensionChargesDue: Option[BigDecimal] = None)
+
+object PensionSavingsTaxCharges {
+  implicit val format: OFormat[PensionSavingsTaxCharges] = Json.format[PensionSavingsTaxCharges]
 }
 

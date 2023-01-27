@@ -51,7 +51,8 @@ case class TaxDueSummaryViewModel(
                                    saUnderpaymentsCodedOut: Option[BigDecimal] = None,
                                    totalIncomeTaxAndNicsDue: Option[BigDecimal] = None,
                                    totalTaxDeducted: Option[BigDecimal] = None,
-                                   taxDeductedAtSource: TaxDeductedAtSourceViewModel = TaxDeductedAtSourceViewModel()
+                                   taxDeductedAtSource: TaxDeductedAtSourceViewModel = TaxDeductedAtSourceViewModel(),
+                                   totalPensionChargesDue: Option[BigDecimal] = None
                                  ) {
 
   def getRateHeaderKey: String = {
@@ -114,7 +115,8 @@ object TaxDueSummaryViewModel {
         saUnderpaymentsCodedOut = calc.taxCalculation.flatMap(tc => tc.saUnderpaymentsCodedOut),
         totalIncomeTaxAndNicsDue = Some(getTaxDue(calcResponse)),
         totalTaxDeducted = calc.taxCalculation.flatMap(tc => tc.totalTaxDeducted),
-        taxDeductedAtSource = TaxDeductedAtSourceViewModel(calc.taxDeductedAtSource)
+        taxDeductedAtSource = TaxDeductedAtSourceViewModel(calc.taxDeductedAtSource),
+        totalPensionChargesDue = calc.pensionSavingsTaxCharges.flatMap(pst => pst.totalPensionChargesDue)
       )
       case None => TaxDueSummaryViewModel()
     }
