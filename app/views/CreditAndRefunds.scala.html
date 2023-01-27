@@ -292,6 +292,7 @@ balance.getOrElse(throw MissingFieldException("Balance"))
         }
     }
 
+    @if(!isAgent) {
         <div class="govuk-button-group">
             @if(balance.isDefined){
                 @if(maybeAvailableCredit != 0){
@@ -303,7 +304,7 @@ balance.getOrElse(throw MissingFieldException("Balance"))
             @link(link =  s"${controllers.routes.CreditAndRefundController.refundStatus().url}",
                 messageKey = "credit-and-refund.check-refund-btn", classes = "govuk-button govuk-button--secondary",
                 role=Some("button")
-                )
+            )
         </div>
-
     }
+}
