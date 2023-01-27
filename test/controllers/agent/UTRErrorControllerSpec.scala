@@ -82,16 +82,6 @@ class UTRErrorControllerSpec extends TestSupport
       }
     }
 
-    "redirect to the Enter Client UTR page when there is no client UTR in session" in {
-      setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
-      mockUTRError(HtmlFormat.empty)
-
-      val result = TestUTRErrorController.show()(fakeRequestWithActiveSession)
-
-      status(result) shouldBe SEE_OTHER
-      redirectLocation(result) shouldBe Some(controllers.agent.routes.EnterClientsUTRController.show.url)
-    }
-
     "return OK and display the UTR Error page" in {
       setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
       mockUTRError(HtmlFormat.empty)

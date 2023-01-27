@@ -123,6 +123,8 @@ object BaseTestConstants extends UnitSpec with GuiceOneAppPerSuite {
     Enrolment("IR-SA", Seq(EnrolmentIdentifier("UTR", "1234567890")), "activated")
   )), Option(testRetrievedUserName)), Some(Credentials(testCredId, ""))), Some(affinityGroup)), confidenceLevel)
 
+
+
   val arnEnrolment: Enrolment = Enrolment(
     "HMRC-AS-AGENT",
     Seq(EnrolmentIdentifier("ARN", testArn)),
