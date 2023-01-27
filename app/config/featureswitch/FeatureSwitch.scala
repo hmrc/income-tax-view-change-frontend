@@ -40,7 +40,8 @@ object FeatureSwitch {
     MFACreditsAndDebits,
     PaymentHistoryRefunds,
     TimeMachineAddYear,
-    R7cTxmEvents
+    R7cTxmEvents,
+    R7cViewerCodingOutTxmEvents
   )
 
   def apply(str: String): FeatureSwitch =
@@ -123,3 +124,7 @@ case object R7cTxmEvents extends FeatureSwitch {
   override val displayText = "R7C TXM Events"
 }
 
+case object R7cViewerCodingOutTxmEvents extends FeatureSwitch {
+  override val name = s"$prefix.enable-r7c-viewer-coding-out-txm-events"
+  override val displayText = "R7C Viewer Coding Out TXM Events"
+}
