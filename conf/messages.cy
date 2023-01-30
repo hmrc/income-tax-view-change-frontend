@@ -549,7 +549,6 @@ taxCal_breakdown.table.payeUnderpaymentsCodedOut                    = Treth a da
 taxCal_breakdown.table.saUnderpaymentsCodedOut                      = Treth a dandalwyd ar gyfer blynyddoedd cynharach, sydd wedi’i chynnwys yn eich Hunanasesiad ar gyfer {0}} i {1}
 taxCal_breakdown.table.studentLoanRepaymentsPlanType0X              = Ad-daliadau Benthyciad Myfyriwr (cynllun {0})
 taxCal_breakdown.table.studentLoanPostGraduatePlan                  = Ad-daliadau Benthyciad Ôl-raddedig
-taxCal_breakdown.table.totalPensionChargesDue                       = Cyfanswm y taliadau a godir ar gynilion pensiwn
 
 ## Forecast Tax Calc Summary ##
 forecast_taxCalc.heading                                        = Rhagolwg cyfrifiad treth

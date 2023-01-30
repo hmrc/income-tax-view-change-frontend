@@ -51,8 +51,7 @@ case class TaxDueSummaryViewModel(
                                    saUnderpaymentsCodedOut: Option[BigDecimal] = None,
                                    totalIncomeTaxAndNicsDue: Option[BigDecimal] = None,
                                    totalTaxDeducted: Option[BigDecimal] = None,
-                                   taxDeductedAtSource: TaxDeductedAtSourceViewModel = TaxDeductedAtSourceViewModel(),
-                                   totalPensionChargesDue: Option[BigDecimal] = None
+                                   taxDeductedAtSource: TaxDeductedAtSourceViewModel = TaxDeductedAtSourceViewModel()
                                  ) {
 
   def getRateHeaderKey: String = {
@@ -105,7 +104,7 @@ object TaxDueSummaryViewModel {
         gainsOnLifePoliciesBands = calc.taxCalculation.flatMap(tc => tc.incomeTax.gainsOnLifePolicies.map(ppp => ppp.taxBands.getOrElse(Seq()))),
         totalNotionalTax = calc.taxCalculation.flatMap(tc => tc.incomeTax.totalNotionalTax),
         incomeTaxDueAfterTaxReductions = calc.taxCalculation.flatMap(tc => tc.incomeTax.incomeTaxDueAfterTaxReductions),
-        totalPensionSavingsTaxCharges = calc.taxCalculation.flatMap(tc => tc.incomeTax.totalPensionSavingsTaxCharges),
+        totalPensionSavingsTaxCharges = calc.pensionSavingsTaxCharges.flatMap(pst => pst.totalPensionChargesDue),
         statePensionLumpSumCharges = calc.taxCalculation.flatMap(tc => tc.incomeTax.statePensionLumpSumCharges),
         payeUnderpaymentsCodedOut = calc.taxCalculation.flatMap(tc => tc.incomeTax.payeUnderpaymentsCodedOut),
         nic4Bands = calc.taxCalculation.flatMap(tc => tc.nics.flatMap(nics => nics.class4Nics.map(class4nics => class4nics.nic4Bands))),
@@ -115,8 +114,7 @@ object TaxDueSummaryViewModel {
         saUnderpaymentsCodedOut = calc.taxCalculation.flatMap(tc => tc.saUnderpaymentsCodedOut),
         totalIncomeTaxAndNicsDue = Some(getTaxDue(calcResponse)),
         totalTaxDeducted = calc.taxCalculation.flatMap(tc => tc.totalTaxDeducted),
-        taxDeductedAtSource = TaxDeductedAtSourceViewModel(calc.taxDeductedAtSource),
-        totalPensionChargesDue = calc.pensionSavingsTaxCharges.flatMap(pst => pst.totalPensionChargesDue)
+        taxDeductedAtSource = TaxDeductedAtSourceViewModel(calc.taxDeductedAtSource)
       )
       case None => TaxDueSummaryViewModel()
     }

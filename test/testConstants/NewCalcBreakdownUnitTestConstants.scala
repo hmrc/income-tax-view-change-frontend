@@ -729,8 +729,7 @@ object NewCalcBreakdownUnitTestConstants {
       savings = Some(800.0),
       inYearAdjustmentCodedInLaterTaxYear = Some(900.0)
     ),
-    totalTaxDeducted = Some(1000),
-    totalPensionChargesDue = Some(5000.99)
+    totalTaxDeducted = Some(1000)
   )
 
   val taxDueSummaryViewModelZeroIncome = TaxDueSummaryViewModel(
@@ -875,10 +874,6 @@ object NewCalcBreakdownUnitTestConstants {
 
   val taxDueSummaryViewModelPensionSavings = TaxDueSummaryViewModel(
     totalPensionSavingsTaxCharges = Some(5000)
-  )
-
-  val taxDueSummaryViewModelTotalPensionChargeDue = TaxDueSummaryViewModel(
-    totalPensionChargesDue = Some(5000.99)
   )
 
   val taxDueSummaryViewModelScottishBands = TaxDueSummaryViewModel(

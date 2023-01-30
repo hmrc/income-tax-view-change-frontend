@@ -29,7 +29,7 @@ import testConstants.BaseIntegrationTestConstants._
 import testConstants.IncomeSourceIntegrationTestConstants._
 import testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessful
 import testConstants.NewCalcDataIntegrationTestConstants._
-import testConstants.messages.TaxDueSummaryMessages.{additionCharges, nonVoluntaryClass2Nics, postgraduatePlan, studentPlan, totalPensionChargesDue, voluntaryClass2Nics}
+import testConstants.messages.TaxDueSummaryMessages.{additionCharges, nonVoluntaryClass2Nics, postgraduatePlan, studentPlan, voluntaryClass2Nics}
 import testConstants.messages.{TaxDueSummaryMessages => messages}
 
 
@@ -144,32 +144,6 @@ class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
         httpStatus(OK),
         pageTitleIndividual("taxCal_breakdown.heading"),
         elementTextByID("additional_charges")(additionCharges)
-      )
-    }
-
-    "return the correct tax due summary page with just Total Pension Charges Due" in {
-
-      And("I wiremock stub a successful TaxDue Details response with single Business and Property income")
-      IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
-
-      And("I stub a successful liability calculation response")
-      IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, testYear)(
-        status = OK,
-        body = liabilityCalculationPensionSavingsTaxCharges
-      )
-
-      When(s"I call GET /report-quarterly/income-and-expenses/view/calculation/$testYear/tax-due")
-      val res = IncomeTaxViewChangeFrontend.getTaxDueSummary(testYear)
-
-      verifyIncomeSourceDetailsCall(testMtditid)
-      IncomeTaxCalculationStub.verifyGetCalculationResponse(testNino, testYear)
-
-      res should have(
-        httpStatus(OK),
-        pageTitleIndividual("taxCal_breakdown.heading"),
-        elementTextByID("additional_charges")(additionCharges),
-        elementTextBySelector("#additional-charges-table tr td:nth-child(1)")(totalPensionChargesDue),
-        elementTextBySelector("#additional-charges-table tr td:nth-child(2)")("£5,000.99")
       )
     }
 

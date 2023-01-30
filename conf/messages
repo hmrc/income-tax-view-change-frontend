@@ -521,7 +521,6 @@ taxCal_breakdown.table.taxDeductedAtSource.total					= Total tax deducted
 taxCal_breakdown.table.amount                                       = Amount
 taxCal_breakdown.table.studentLoanRepaymentsPlanType0X              = Student loan repayments (plan {0})
 taxCal_breakdown.table.studentLoanPostGraduatePlan                  = Postgraduate loan repayments
-taxCal_breakdown.table.totalPensionChargesDue                       = Total pension saving charges
 
 taxCal_breakdown.message.C22201                                 = Your Basic Rate limit has been increased by {0} to {1} for Gift Aid payments.
 taxCal_breakdown.message.C22202                                 = Tax due on Gift Aid payments exceeds your Income Tax charged so you are liable for Gift Aid tax.

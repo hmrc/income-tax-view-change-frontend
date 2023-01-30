@@ -108,8 +108,7 @@ class TaxDueSummaryViewModelSpec extends UnitSpec {
             specialWithholdingTax = Some(5000.99),
             voidISAs = Some(5000.99),
             savings = Some(5000.99),
-            inYearAdjustmentCodedInLaterTaxYear = Some(5000.99)),
-          totalPensionChargesDue = Some(5000.99)
+            inYearAdjustmentCodedInLaterTaxYear = Some(5000.99))
         )
 
         TaxDueSummaryViewModel(liabilityCalculationModelSuccessful) shouldBe expectedTaxDueSummaryViewModel
@@ -174,8 +173,7 @@ class TaxDueSummaryViewModelSpec extends UnitSpec {
             specialWithholdingTax = Some(5000.99),
             voidISAs = Some(5000.99),
             savings = Some(5000.99),
-            inYearAdjustmentCodedInLaterTaxYear = Some(5000.99)),
-          totalPensionChargesDue = Some(5000.99)
+            inYearAdjustmentCodedInLaterTaxYear = Some(5000.99))
         )
 
         val liabilityCalculationModel = liabilityCalculationModelSuccessful.copy(

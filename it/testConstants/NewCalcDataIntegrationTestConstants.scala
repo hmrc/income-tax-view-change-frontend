@@ -113,6 +113,11 @@ object NewCalcDataIntegrationTestConstants {
       |        "totalPensionSavingsTaxCharges": 5000.99
       |      },
       |      "totalIncomeTaxAndNicsDue": 12345
+      |    },
+      |    "pensionSavingsTaxCharges": {
+      |      "totalPensionCharges": 5000.99,
+      |      "totalTaxPaid": 5000.99,
+      |      "totalPensionChargesDue": 5000.99
       |    }
       |
       |  }

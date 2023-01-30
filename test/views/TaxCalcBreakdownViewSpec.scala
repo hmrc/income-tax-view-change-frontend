@@ -287,7 +287,6 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
       lazy val viewAdChGiftAid = taxCalcBreakdown(taxDueSummaryViewModelGiftAid, taxYear, backUrl)
       lazy val viewAdChPensionLumpSum = taxCalcBreakdown(taxDueSummaryViewModelPensionLumpSum, taxYear, backUrl)
       lazy val viewAdChPensionSavings = taxCalcBreakdown(taxDueSummaryViewModelPensionSavings, taxYear, backUrl)
-      lazy val viewAdChTotalPensionChargeDue = taxCalcBreakdown(taxDueSummaryViewModelTotalPensionChargeDue, taxYear, backUrl)
       lazy val zeroIncome = taxCalcBreakdown(taxDueSummaryViewModelZeroIncome, taxYear, backUrl)
 
       "have the correct title" in new Setup(view) {
@@ -488,7 +487,7 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
         val tableNumber = 7
 
         "has all four table rows" in new Setup(view) {
-          pageContent(pageContentSelector) hasTableWithCorrectSize(tableNumber, 5)
+          pageContent(pageContentSelector) hasTableWithCorrectSize(tableNumber, 4)
         }
 
         "has the correct heading" in new Setup(view) {
@@ -520,13 +519,6 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
           val row: Element = pageContent(pageContentSelector).table().select("tr").get(1)
           row.select("td").first().text() shouldBe messages("taxCal_breakdown.table.statePensionLumpSumCharges")
           row.select("td").last().text() shouldBe "£5,000.00"
-        }
-
-        "has only a Total Pension Saving Charges line with the correct heading and table" in new Setup(viewAdChTotalPensionChargeDue) {
-          pageContent(pageContentSelector).selectById("additional_charges").text shouldBe sectionHeadingAdditionalChar
-          val row: Element = pageContent(pageContentSelector).table().select("tr").get(1)
-          row.select("td").first().text() shouldBe messages("taxCal_breakdown.table.totalPensionChargesDue")
-          row.select("td").last().text() shouldBe "£5,000.99"
         }
 
       }
