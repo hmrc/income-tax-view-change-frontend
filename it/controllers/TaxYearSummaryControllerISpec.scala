@@ -1098,6 +1098,11 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
           res should have(
             httpStatus(OK),
             pageTitleIndividual("tax-year-summary.heading"),
+            elementTextBySelector("dl")(""),
+            elementTextBySelector("#forecast_total")(""),
+            elementTextBySelector("#calculation-date")(""),
+            elementTextBySelector("""a[href$="#forecast"]""")(""),
+            elementTextBySelector(".forecast_table")(""),
             elementTextBySelectorList("#taxCalculation", "div h2")(messagesAPI("tax-year-summary.message.header")),
             elementTextBySelectorList("#taxCalculation", "div strong")("Warning " + messagesAPI("tax-year-summary.message.action")),
             elementTextBySelectorList("#taxCalculation", "ul > li:nth-child(1)")(errMessages(0).text),

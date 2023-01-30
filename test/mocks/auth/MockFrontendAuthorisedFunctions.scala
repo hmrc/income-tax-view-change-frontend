@@ -17,14 +17,18 @@
 package mocks.auth
 
 import testConstants.BaseTestConstants._
+import org.scalamock.scalatest.MockFactory
 import auth.FrontendAuthorisedFunctions
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
 import org.scalatest.{BeforeAndAfterEach, Suite}
 import org.mockito.Mockito.mock
+import org.scalacheck.Prop.exception
+import play.api.mvc.{Action, AnyContent, Result}
+import play.api.mvc.Results.Redirect
 import uk.gov.hmrc.auth.core._
-import uk.gov.hmrc.auth.core.authorise.EmptyPredicate
+import uk.gov.hmrc.auth.core.authorise.{EmptyPredicate, Predicate}
 import uk.gov.hmrc.auth.core.retrieve._
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -62,10 +66,11 @@ trait MockFrontendAuthorisedFunctions extends BeforeAndAfterEach {
           }
         })
 
+
   def setupMockAgentAuthRetrievalSuccess[X, Y](retrievalValue: X ~ Y, withClientPredicate: Boolean = true): Unit = {
     {
       if (withClientPredicate) when(mockAuthService.authorised(any(Enrolment.apply("").getClass)))
-      else when(mockAuthService.authorised(ArgumentMatchers.eq(EmptyPredicate)))
+      else when(mockAuthService.authorised(any))
     }
       .thenReturn(
         new mockAuthService.AuthorisedFunction(EmptyPredicate) {
