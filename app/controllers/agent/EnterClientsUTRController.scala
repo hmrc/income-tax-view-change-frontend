@@ -16,18 +16,24 @@
 
 package controllers.agent
 
+import auth.BaseFrontendController
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig}
 import controllers.agent.predicates.BaseAgentController
 import controllers.agent.utils.SessionKeys
+import controllers.predicates.AuthPredicate.{AuthPredicate, AuthPredicateSuccess}
+import controllers.predicates.IncomeTaxAgentUser
 import controllers.predicates.agent.AgentAuthenticationPredicate.defaultAgentPredicates
 import forms.agent.ClientsUTRForm
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.agent.ClientDetailsService
 import services.agent.ClientDetailsService.{BusinessDetailsNotFound, CitizenDetailsNotFound, ClientDetails}
-import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import uk.gov.hmrc.http.InternalServerException
+import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
+import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals.{affinityGroup, allEnrolments, confidenceLevel, credentials}
+import uk.gov.hmrc.auth.core.retrieve.~
+import uk.gov.hmrc.auth.core.{AuthorisedFunctions, Enrolment, InsufficientEnrolments}
+import uk.gov.hmrc.http.{InternalServerException, Request}
 import views.html.agent.EnterClientsUTR
 
 import javax.inject.{Inject, Singleton}
@@ -43,7 +49,7 @@ class EnterClientsUTRController @Inject()(enterClientsUTR: EnterClientsUTR,
                                           val ec: ExecutionContext)
   extends BaseAgentController with I18nSupport with FeatureSwitching {
 
-  lazy val notAnAgentPredicate = {
+  lazy val notAnAgentPredicate: AuthPredicate[IncomeTaxAgentUser] = {
     val redirectNotAnAgent = Future.successful(Redirect(controllers.agent.errors.routes.AgentErrorController.show))
     defaultAgentPredicates(onMissingARN = redirectNotAnAgent)
   }
@@ -65,6 +71,7 @@ class EnterClientsUTRController @Inject()(enterClientsUTR: EnterClientsUTR,
       )))
   }
 
+
   def submit: Action[AnyContent] = Authenticated.asyncWithoutClientAuth() { implicit request =>
     implicit user =>
       ClientsUTRForm.form.bindFromRequest().fold(
@@ -75,19 +82,27 @@ class EnterClientsUTRController @Inject()(enterClientsUTR: EnterClientsUTR,
         validUTR => {
           clientDetailsService.checkClientDetails(
             utr = validUTR
-          ) map {
+          ) flatMap {
             case Right(ClientDetails(firstName, lastName, nino, mtdItId)) =>
-              val sessionValues: Seq[(String, String)] = Seq(
-                SessionKeys.clientMTDID -> mtdItId,
-                SessionKeys.clientNino -> nino,
-                SessionKeys.clientUTR -> validUTR
-              ) ++ firstName.map(SessionKeys.clientFirstName -> _) ++ lastName.map(SessionKeys.clientLastName -> _)
-              Redirect(routes.ConfirmClientUTRController.show).addingToSession(sessionValues: _*)
-            case Left(CitizenDetailsNotFound | BusinessDetailsNotFound) =>
+              authorisedFunctions.authorised(Enrolment("HMRC-MTD-IT").withIdentifier("MTDITID", mtdItId).withDelegatedAuthRule("mtd-it-auth")).retrieve(allEnrolments and affinityGroup and confidenceLevel and credentials) {
+                case enrolments ~ affinity ~ confidence ~ credentials =>
+                  val sessionValues: Seq[(String, String)] = Seq(
+                    SessionKeys.clientMTDID -> mtdItId,
+                    SessionKeys.clientNino -> nino,
+                    SessionKeys.clientUTR -> validUTR
+                  ) ++ firstName.map(SessionKeys.clientFirstName -> _) ++ lastName.map(SessionKeys.clientLastName -> _)
+                  Future.successful(Redirect(routes.ConfirmClientUTRController.show).addingToSession(sessionValues: _*))
+              }.recover {
+                case any =>
+                  Redirect(controllers.agent.routes.UTRErrorController.show)
+              }
+            case Left(CitizenDetailsNotFound | BusinessDetailsNotFound)
+            =>
               val sessionValue: Seq[(String, String)] = Seq(SessionKeys.clientUTR -> validUTR)
-              Redirect(routes.UTRErrorController.show).addingToSession(sessionValue: _*)
-            case Left(error) =>
-              throw new InternalServerException("[EnterClientsUTRController][submit] - Unexpected response received")
+              Future.successful(Redirect(routes.UTRErrorController.show).addingToSession(sessionValue: _*))
+            case Left(error)
+            =>
+              throw new InternalServerException(s"[EnterClientsUTRController][submit] - Unexpected response received")
           }
         }
       )

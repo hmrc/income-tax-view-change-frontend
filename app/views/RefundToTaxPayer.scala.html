@@ -74,7 +74,7 @@
     <dl class="govuk-summary-list" id="refund-to-taxpayer-table">
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key dt-cell-width">@messages("refund-to-taxpayer.tableHead.estimated-date")</dt>
-            <dd class="govuk-summary-list__value--numeric govuk-!-text-align-right">@{
+            <dd class="govuk-summary-list__value--numeric govuk-!-text-align-right govuk-!-margin-0">@{
                 getRepaymentHistoryData(repaymentHistoryModel).estimatedRepaymentDate.getOrElse(throw MissingFieldException("Estimated Repayment Date")).toLongDate
             }</dd>
         </div>

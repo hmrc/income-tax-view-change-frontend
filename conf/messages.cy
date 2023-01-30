@@ -323,7 +323,7 @@ tax-year-summary.agent.message.C159030                         = mae cyfanswm ia
 tax-year-summary.agent.message.C159102                         = mae swm y Lwfans Buddsoddiad Blynyddol yr hawliwyd gan eich cleient ar gyfer ei lety gwyliau wedi’i ddodrefnu yn yr AEE neu dramor yn fwy na’r terfyn.
 tax-year-summary.agent.message.C159106                         = mae swm y Lwfans Eiddo a hawliwyd gan eich cleient ar gyfer ei eiddo tramor yn fwy na’r terfyn.
 tax-year-summary.agent.message.C159110                         = mae’r swm a hawliwyd gan eich cleient ar gyfer Treth a ddidynnwyd o gyfandaliad Pensiwn y Wladwriaeth yn fwy na {0}% o’r swm a nodwyd ar gyfer Cyfandaliad Pensiwn y Wladwriaeth.
-tax-year-summary.agent.message.C159115                         = mae’ch cleient yn defnyddio system cyfrifyddu ar sail arian parod. Mae hyn yn golygu na all hawlio Lwfans Buddsoddi Blynyddol ar gyfer eu eiddo yn y DU.
+tax-year-summary.agent.message.C159115                         = mae eich cleient yn defnyddio system cyfrifyddu ar sail arian parod. Mae hyn yn golygu na all eich cleient hawlio Lwfans Buddsoddi Blynyddol ar gyfer eu eiddo yn y DU.
 tax-year-summary.agent.message.C159500                         = mae eich cleient yn defnyddio system cyfrifyddu ar sail arian parod. Mae hyn yn golygu na all eich cleient hawlio Lwfans Buddsoddi Blynyddol ar gyfer ei hunangyflogaeth.
 tax-year-summary.agent.message.C559099                         = ni all eich cleient gyflwyno manylion am dreuliau cyfunol ar gyfer ei lety gwyliau wedi’i ddodrefnu yn yr AEE a’ch llety tramor. Mae hyn oherwydd bod ei throsiant cronnus yn fwy na’r terfyn.
 tax-year-summary.agent.message.C559100                         = mae’ch cleient wedi hawlio Lwfans Incwm o Eiddo ar gyfer ei lety gwyliau wedi’i ddodrefnu yn yr AEE. Mae hyn yn golygu na all hawlio am addasiad ar gyfer defnydd preifat.
@@ -710,7 +710,7 @@ credits.money-in-your-account-section.claim-a-refund-link               = hawlio
 
 ## Refund to taxpayer page ##
 refund-to-taxpayer.heading                                      = Ad-daliad i’r trethdalwr
-refund-to-taxpayer.tableHead.estimated-date                     = Amcan o’r dyddiad
+refund-to-taxpayer.tableHead.estimated-date                     = Dyddiad cyhoeddi amcangyfrifedig
 refund-to-taxpayer.tableHead.method                             = Dull
 refund-to-taxpayer.tableHead.total-refund                       = Cyfanswm yr ad-daliad
 refund-to-taxpayer.tableHead.further-details                    = Manylion pellach
