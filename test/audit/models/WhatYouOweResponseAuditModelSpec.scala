@@ -128,7 +128,9 @@ class WhatYouOweResponseAuditModelSpec extends TestSupport {
             "dueDate" -> outStandingCharges,
             "outstandingAmount" -> 123456.67
           )
-        )
+        ),
+        "codingOut" -> Json.obj( "amountCodedOut" -> 2500,
+          "endTaxYear" -> 2022)
       )
     }
 
