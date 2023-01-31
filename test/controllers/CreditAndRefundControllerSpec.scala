@@ -18,9 +18,8 @@ package controllers
 
 import auth.MtdItUser
 import config.featureswitch.FeatureSwitch.switches
-import config.featureswitch.{CreditsRefundsRepay, CutOverCredits, FeatureSwitch, FeatureSwitching, MFACreditsAndDebits}
+import config.featureswitch.{CreditsRefundsRepay, CutOverCredits, FeatureSwitching, MFACreditsAndDebits}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import controllers.agent.utils.SessionKeys.clientNino
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
@@ -30,15 +29,12 @@ import org.jsoup.nodes.Document
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import play.api.http.Status
-import play.api.libs.json.Json
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{status, _}
 import services.{CreditService, DateService, RepaymentService}
 import testConstants.BaseTestConstants
-import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testArn, testCredId, testMtditid, testNino, testRetrievedUserName, testUserTypeAgent}
+import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
 import testConstants.FinancialDetailsTestConstants._
-import testConstants.IncomeSourceDetailsTestConstants.{businessesAndPropertyIncome, singleBusinessIncome}
-import uk.gov.hmrc.auth.core.retrieve.Name
 import views.html.CreditAndRefunds
 import views.html.errorPages.CustomNotFoundError
 
