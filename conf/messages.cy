@@ -546,9 +546,11 @@ taxCal_breakdown.table.cgt.already_paid                             = Treth ar e
 taxCal_breakdown.table.cgt.due                                      = Treth Enillion Cyfalaf sy’n ddyledus
 taxCal_breakdown.table.cgt.overpaid                                 = Treth Enillion Cyfalaf a gyfrifwyd fel gordaliad
 taxCal_breakdown.table.payeUnderpaymentsCodedOut                    = Treth a dandalwyd ar gyfer blynyddoedd cynharach, sydd wedi’i chynnwys yn eich cod treth ar gyfer {0} i {1}
-taxCal_breakdown.table.saUnderpaymentsCodedOut                      = Treth a dandalwyd ar gyfer blynyddoedd cynharach, sydd wedi’i chynnwys yn eich Hunanasesiad ar gyfer {0}} i {1}
+taxCal_breakdown.table.saUnderpaymentsCodedOut                      = Treth a dandalwyd ar gyfer blynyddoedd cynharach, sydd wedi’i chynnwys yn eich Hunanasesiad ar gyfer {0} i {1}
 taxCal_breakdown.table.studentLoanRepaymentsPlanType0X              = Ad-daliadau Benthyciad Myfyriwr (cynllun {0})
 taxCal_breakdown.table.studentLoanPostGraduatePlan                  = Ad-daliadau Benthyciad Ôl-raddedig
+taxCal_breakdown.table.totalAnnuityPaymentsTaxCharged               = Treth sy’n ddyledus ar daliadau blwydd-daliadau
+taxCal_breakdown.table.totalRoyaltyPaymentsTaxCharged               = Treth sy’n ddyledus ar freindaliadau
 
 ## Forecast Tax Calc Summary ##
 forecast_taxCalc.heading                                        = Rhagolwg cyfrifiad treth
