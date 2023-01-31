@@ -292,7 +292,6 @@ balance.getOrElse(throw MissingFieldException("Balance"))
         }
     }
 
-    @if(!isAgent) {
         <div class="govuk-button-group">
             @if(balance.isDefined){
                 @if(maybeAvailableCredit != 0){
@@ -306,5 +305,4 @@ balance.getOrElse(throw MissingFieldException("Balance"))
                 role=Some("button")
             )
         </div>
-    }
 }

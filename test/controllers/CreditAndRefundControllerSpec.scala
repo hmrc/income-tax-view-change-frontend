@@ -16,9 +16,11 @@
 
 package controllers
 
+import auth.MtdItUser
 import config.featureswitch.FeatureSwitch.switches
 import config.featureswitch.{CreditsRefundsRepay, CutOverCredits, FeatureSwitch, FeatureSwitching, MFACreditsAndDebits}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import controllers.agent.utils.SessionKeys.clientNino
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
@@ -28,12 +30,15 @@ import org.jsoup.nodes.Document
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import play.api.http.Status
+import play.api.libs.json.Json
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{status, _}
 import services.{CreditService, DateService, RepaymentService}
 import testConstants.BaseTestConstants
-import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
+import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testArn, testCredId, testMtditid, testNino, testRetrievedUserName, testUserTypeAgent}
 import testConstants.FinancialDetailsTestConstants._
+import testConstants.IncomeSourceDetailsTestConstants.{businessesAndPropertyIncome, singleBusinessIncome}
+import uk.gov.hmrc.auth.core.retrieve.Name
 import views.html.CreditAndRefunds
 import views.html.errorPages.CustomNotFoundError
 
@@ -237,6 +242,23 @@ class CreditAndRefundControllerSpec extends MockAuthenticationPredicate with Moc
 
         status(result) shouldBe Status.INTERNAL_SERVER_ERROR
       }
+
+      "the user is an Agent" in new Setup {
+        disableAllSwitches()
+        enable(CreditsRefundsRepay)
+
+        mockSingleBISWithCurrentYearAsMigrationYear()
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthAgentSuccessWithSaUtrResponse())
+
+        when(mockCreditService.getCreditCharges()(any(), any()))
+          .thenReturn(Future.successful(List(financialDetailCreditAndRefundCharge)))
+        when(mockRepaymentService.start(any(), any())(any()))
+          .thenReturn(Future.successful(Right("/test/url")))
+
+        val result: Future[Result] = controller.startRefund()(fakeRequestWithActiveSession)
+
+        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+      }
     }
 
     "Controller should not start refund process" when {
@@ -268,6 +290,23 @@ class CreditAndRefundControllerSpec extends MockAuthenticationPredicate with Moc
         val result: Future[Result] = controller.refundStatus()(fakeRequestWithActiveSession)
 
         status(result) shouldBe Status.SEE_OTHER
+      }
+
+      "the user is an Agent" in new Setup {
+        disableAllSwitches()
+        enable(CreditsRefundsRepay)
+
+        mockSingleBISWithCurrentYearAsMigrationYear()
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthAgentSuccessWithSaUtrResponse())
+
+        when(mockCreditService.getCreditCharges()(any(), any()))
+          .thenReturn(Future.successful(List(financialDetailCreditAndRefundCharge)))
+        when(mockRepaymentService.start(any(), any())(any()))
+          .thenReturn(Future.successful(Right("/test/url")))
+
+        val result: Future[Result] = controller.refundStatus()(fakeRequestWithActiveSession)
+
+        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
       }
     }
 
