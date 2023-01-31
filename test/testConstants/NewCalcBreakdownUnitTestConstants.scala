@@ -278,6 +278,11 @@ object NewCalcBreakdownUnitTestConstants {
         stateBenefits = Some(5000.99),
         specialWithholdingTaxOrUkTaxPaid = Some(5000.99),
         inYearAdjustmentCodedInLaterTaxYear = Some(5000.99),
+      )),
+      pensionSavingsTaxCharges = Some(PensionSavingsTaxCharges(
+        totalPensionCharges = Some(5000.99),
+        totalTaxPaid = Some(5000.99),
+        totalPensionChargesDue = Some(5000.99)
       )))),
     metadata = Metadata(
       calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
@@ -672,7 +677,7 @@ object NewCalcBreakdownUnitTestConstants {
       ReliefsClaimed("communityInvestment", Some(5000)), ReliefsClaimed("socialEnterpriseInvestment", Some(6000)),
       ReliefsClaimed("maintenancePayments", Some(7000)),
       ReliefsClaimed("qualifyingDistributionRedemptionOfSharesAndSecurities", Some(8000)),
-      ReliefsClaimed("nonDeductibleLoanInterest", Some(9000))
+      ReliefsClaimed("nonDeductableLoanInterest", Some(9000))
     )),
     capitalGainsTax = CapitalGainsTaxViewModel(
       businessAssetsDisposalsAndInvestorsRel = Some(BusinessAssetsDisposalsAndInvestorsRel(
