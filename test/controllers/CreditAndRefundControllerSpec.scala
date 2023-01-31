@@ -199,8 +199,8 @@ class CreditAndRefundControllerSpec extends MockAuthenticationPredicate with Moc
       }
     }
 
-    "Controller should start refund process" when {
-      "RepaymentJourneyModel is returned" in new Setup {
+    "start refund process" when {
+      "RepaymentJourneyModel is returned for an Individual user" in new Setup {
         disableAllSwitches()
         enable(CreditsRefundsRepay)
 
@@ -218,7 +218,24 @@ class CreditAndRefundControllerSpec extends MockAuthenticationPredicate with Moc
       }
     }
 
-    "Controller should not start refund process" when {
+    "not start refund process" when {
+      "RepaymentJourneyModel is returned for an Agent user" in new Setup {
+        disableAllSwitches()
+        enable(CreditsRefundsRepay)
+
+        mockSingleBISWithCurrentYearAsMigrationYear()
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthAgentSuccessWithSaUtrResponse())
+
+        when(mockCreditService.getCreditCharges()(any(), any()))
+          .thenReturn(Future.successful(List(financialDetailCreditAndRefundCharge)))
+        when(mockRepaymentService.start(any(), any())(any()))
+          .thenReturn(Future.successful(Right("/test/url")))
+
+        val result: Future[Result] = controller.startRefund()(fakeRequestWithActiveSession)
+
+        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+      }
+
       "RepaymentJourneyErrorResponse is returned" in  new Setup {
         disableAllSwitches()
         enable(CreditsRefundsRepay)
@@ -236,26 +253,7 @@ class CreditAndRefundControllerSpec extends MockAuthenticationPredicate with Moc
         status(result) shouldBe Status.INTERNAL_SERVER_ERROR
       }
 
-      "the user is an Agent" in new Setup {
-        disableAllSwitches()
-        enable(CreditsRefundsRepay)
-
-        mockSingleBISWithCurrentYearAsMigrationYear()
-        setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthAgentSuccessWithSaUtrResponse())
-
-        when(mockCreditService.getCreditCharges()(any(), any()))
-          .thenReturn(Future.successful(List(financialDetailCreditAndRefundCharge)))
-        when(mockRepaymentService.start(any(), any())(any()))
-          .thenReturn(Future.successful(Right("/test/url")))
-
-        val result: Future[Result] = controller.startRefund()(fakeRequestWithActiveSession)
-
-        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-      }
-    }
-
-    "Controller should not start refund process" when {
-      "start refund endpoint should not be called when FS is disabled" in  new Setup {
+      "CreditsRefundsRepay FS is disabled" in new Setup {
         disableAllSwitches()
 
         mockSingleBISWithCurrentYearAsMigrationYear()
@@ -268,7 +266,7 @@ class CreditAndRefundControllerSpec extends MockAuthenticationPredicate with Moc
     }
 
     "return the refund status" when {
-      "the user is an Individual and a RepaymentJourneyModel is returned" in  new Setup {
+      "RepaymentJourneyModel is returned for an Individual user" in new Setup {
         disableAllSwitches()
         enable(CreditsRefundsRepay)
 
@@ -285,7 +283,7 @@ class CreditAndRefundControllerSpec extends MockAuthenticationPredicate with Moc
     }
 
     "not return the refund status" when {
-      "the user is an Agent" in new Setup {
+      "RepaymentJourneyModel is returned for an Agent user" in new Setup {
         disableAllSwitches()
         enable(CreditsRefundsRepay)
 
@@ -302,7 +300,7 @@ class CreditAndRefundControllerSpec extends MockAuthenticationPredicate with Moc
         status(result) shouldBe Status.INTERNAL_SERVER_ERROR
       }
 
-      "RepaymentJourneyErrorResponse is returned" in  new Setup {
+      "RepaymentJourneyErrorResponse is returned" in new Setup {
         disableAllSwitches()
         enable(CreditsRefundsRepay)
 
@@ -317,7 +315,7 @@ class CreditAndRefundControllerSpec extends MockAuthenticationPredicate with Moc
         status(result) shouldBe Status.INTERNAL_SERVER_ERROR
       }
 
-      "refund status endpoint should not be called if FS is disabled" in new Setup {
+      "CreditsRefundsRepay FS is disabled" in new Setup {
         disableAllSwitches()
 
         mockSingleBISWithCurrentYearAsMigrationYear()
