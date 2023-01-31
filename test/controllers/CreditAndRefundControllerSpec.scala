@@ -86,6 +86,7 @@ class CreditAndRefundControllerSpec extends MockAuthenticationPredicate with Moc
         enable(CreditsRefundsRepay)
 
         mockSingleBISWithCurrentYearAsMigrationYear()
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthSuccessWithSaUtrResponse())
 
         when(mockCreditService.getCreditCharges()(any(), any()))
@@ -105,6 +106,7 @@ class CreditAndRefundControllerSpec extends MockAuthenticationPredicate with Moc
         enable(MFACreditsAndDebits)
 
         mockSingleBISWithCurrentYearAsMigrationYear()
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthSuccessWithSaUtrResponse())
 
         when(mockCreditService.getCreditCharges()(any(), any()))
@@ -124,6 +126,7 @@ class CreditAndRefundControllerSpec extends MockAuthenticationPredicate with Moc
         enable(CutOverCredits)
 
         mockSingleBISWithCurrentYearAsMigrationYear()
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthSuccessWithSaUtrResponse())
 
         when(mockCreditService.getCreditCharges()(any(), any()))
@@ -171,6 +174,7 @@ class CreditAndRefundControllerSpec extends MockAuthenticationPredicate with Moc
         enable(MFACreditsAndDebits)
 
         mockSingleBISWithCurrentYearAsMigrationYear()
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthSuccessWithSaUtrResponse())
 
         val expectedContent: String = controller.customNotFoundErrorView().toString()
@@ -263,8 +267,8 @@ class CreditAndRefundControllerSpec extends MockAuthenticationPredicate with Moc
       }
     }
 
-    "Controller should return the refund status" when {
-      "RepaymentJourneyModel is returned" in  new Setup {
+    "return the refund status" when {
+      "the user is an Individual and a RepaymentJourneyModel is returned" in  new Setup {
         disableAllSwitches()
         enable(CreditsRefundsRepay)
 
@@ -280,22 +284,7 @@ class CreditAndRefundControllerSpec extends MockAuthenticationPredicate with Moc
       }
     }
 
-    "Controller should not return the refund status" when {
-      "RepaymentJourneyErrorResponse is returned" in  new Setup {
-        disableAllSwitches()
-        enable(CreditsRefundsRepay)
-
-        mockSingleBISWithCurrentYearAsMigrationYear()
-        setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthSuccessWithSaUtrResponse())
-
-        when(mockRepaymentService.view(any())(any()))
-          .thenReturn(Future.successful(Left(new InternalError)))
-
-        val result: Future[Result] = controller.refundStatus()(fakeRequestWithActiveSession)
-
-        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-      }
-
+    "not return the refund status" when {
       "the user is an Agent" in new Setup {
         disableAllSwitches()
         enable(CreditsRefundsRepay)
@@ -312,10 +301,23 @@ class CreditAndRefundControllerSpec extends MockAuthenticationPredicate with Moc
 
         status(result) shouldBe Status.INTERNAL_SERVER_ERROR
       }
-    }
 
-    "Controller should not return the refund status" when {
-      "refund status endpoint should not be called if FS is disabled" in  new Setup {
+      "RepaymentJourneyErrorResponse is returned" in  new Setup {
+        disableAllSwitches()
+        enable(CreditsRefundsRepay)
+
+        mockSingleBISWithCurrentYearAsMigrationYear()
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthSuccessWithSaUtrResponse())
+
+        when(mockRepaymentService.view(any())(any()))
+          .thenReturn(Future.successful(Left(new InternalError)))
+
+        val result: Future[Result] = controller.refundStatus()(fakeRequestWithActiveSession)
+
+        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+      }
+
+      "refund status endpoint should not be called if FS is disabled" in new Setup {
         disableAllSwitches()
 
         mockSingleBISWithCurrentYearAsMigrationYear()
