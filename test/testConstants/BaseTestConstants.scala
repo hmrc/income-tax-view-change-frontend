@@ -116,8 +116,8 @@ object BaseTestConstants extends UnitSpec with GuiceOneAppPerSuite {
     Enrolment("HMRC-MTD-IT", Seq(EnrolmentIdentifier("MTDITID", testMtditid)), "activated")
   )), Option(testRetrievedUserName)), Some(Credentials(testCredId, ""))), Some(AffinityGroup.Organisation)), confidenceLevel)
 
-  def testAuthSuccessWithSaUtrResponse(confidenceLevel: ConfidenceLevel = testConfidenceLevel,
-                                       affinityGroup: AffinityGroup = AffinityGroup.Individual) = new ~(new ~(new ~(new ~(Enrolments(Set(
+  def testIndividualAuthSuccessWithSaUtrResponse(confidenceLevel: ConfidenceLevel = testConfidenceLevel,
+                                                 affinityGroup: AffinityGroup = AffinityGroup.Individual) = new ~(new ~(new ~(new ~(Enrolments(Set(
     Enrolment("HMRC-MTD-IT", Seq(EnrolmentIdentifier("MTDITID", testMtditid)), "activated"),
     Enrolment("HMRC-NI", Seq(EnrolmentIdentifier("NINO", testNino)), "activated"),
     Enrolment("IR-SA", Seq(EnrolmentIdentifier("UTR", "1234567890")), "activated")

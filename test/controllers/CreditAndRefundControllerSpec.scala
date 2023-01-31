@@ -87,7 +87,7 @@ class CreditAndRefundControllerSpec extends MockAuthenticationPredicate with Moc
 
         mockSingleBISWithCurrentYearAsMigrationYear()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthSuccessWithSaUtrResponse())
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
         when(mockCreditService.getCreditCharges()(any(), any()))
           .thenReturn(Future.successful(List(financialDetailCreditAndRefundCharge)))
@@ -107,7 +107,7 @@ class CreditAndRefundControllerSpec extends MockAuthenticationPredicate with Moc
 
         mockSingleBISWithCurrentYearAsMigrationYear()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthSuccessWithSaUtrResponse())
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
         when(mockCreditService.getCreditCharges()(any(), any()))
           .thenReturn(Future.successful(List(financialDetailCreditAndRefundCharge)))
@@ -127,7 +127,7 @@ class CreditAndRefundControllerSpec extends MockAuthenticationPredicate with Moc
 
         mockSingleBISWithCurrentYearAsMigrationYear()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthSuccessWithSaUtrResponse())
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
         when(mockCreditService.getCreditCharges()(any(), any()))
           .thenReturn(Future.successful(List(financialDetailCreditAndRefundChargeAllCreditTypes)))
@@ -175,7 +175,7 @@ class CreditAndRefundControllerSpec extends MockAuthenticationPredicate with Moc
 
         mockSingleBISWithCurrentYearAsMigrationYear()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthSuccessWithSaUtrResponse())
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
         val expectedContent: String = controller.customNotFoundErrorView().toString()
 
@@ -205,7 +205,7 @@ class CreditAndRefundControllerSpec extends MockAuthenticationPredicate with Moc
         enable(CreditsRefundsRepay)
 
         mockSingleBISWithCurrentYearAsMigrationYear()
-        setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthSuccessWithSaUtrResponse())
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
 
         when(mockCreditService.getCreditCharges()(any(), any()))
@@ -241,7 +241,7 @@ class CreditAndRefundControllerSpec extends MockAuthenticationPredicate with Moc
         enable(CreditsRefundsRepay)
 
         mockSingleBISWithCurrentYearAsMigrationYear()
-        setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthSuccessWithSaUtrResponse())
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
         when(mockCreditService.getCreditCharges()(any(), any()))
           .thenReturn(Future.successful(List(financialDetailCreditAndRefundCharge)))
@@ -257,7 +257,7 @@ class CreditAndRefundControllerSpec extends MockAuthenticationPredicate with Moc
         disableAllSwitches()
 
         mockSingleBISWithCurrentYearAsMigrationYear()
-        setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthSuccessWithSaUtrResponse())
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
         val result: Future[Result] = controller.startRefund()(fakeRequestWithActiveSession)
 
@@ -271,7 +271,7 @@ class CreditAndRefundControllerSpec extends MockAuthenticationPredicate with Moc
         enable(CreditsRefundsRepay)
 
         mockSingleBISWithCurrentYearAsMigrationYear()
-        setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthSuccessWithSaUtrResponse())
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
         when(mockRepaymentService.view(any())(any()))
           .thenReturn(Future.successful(Right("/test/url")))
@@ -305,7 +305,7 @@ class CreditAndRefundControllerSpec extends MockAuthenticationPredicate with Moc
         enable(CreditsRefundsRepay)
 
         mockSingleBISWithCurrentYearAsMigrationYear()
-        setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthSuccessWithSaUtrResponse())
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
         when(mockRepaymentService.view(any())(any()))
           .thenReturn(Future.successful(Left(new InternalError)))
@@ -319,7 +319,7 @@ class CreditAndRefundControllerSpec extends MockAuthenticationPredicate with Moc
         disableAllSwitches()
 
         mockSingleBISWithCurrentYearAsMigrationYear()
-        setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthSuccessWithSaUtrResponse())
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
         val result: Future[Result] = controller.refundStatus()(fakeRequestWithActiveSession)
 
