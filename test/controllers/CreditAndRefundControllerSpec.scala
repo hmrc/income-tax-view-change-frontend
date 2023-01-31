@@ -291,6 +291,24 @@ class CreditAndRefundControllerSpec extends MockAuthenticationPredicate with Moc
 
         status(result) shouldBe Status.SEE_OTHER
       }
+    }
+
+    "Controller should not return the refund status" when {
+      "RepaymentJourneyErrorResponse is returned" in  new Setup {
+        disableAllSwitches()
+        enable(CreditsRefundsRepay)
+
+        mockSingleBISWithCurrentYearAsMigrationYear()
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthSuccessWithSaUtrResponse())
+
+        when(mockRepaymentService.view(any())(any()))
+          .thenReturn(Future.successful(Left(new InternalError)))
+
+        val result: Future[Result] = controller.refundStatus()(fakeRequestWithActiveSession)
+
+        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+      }
 
       "the user is an Agent" in new Setup {
         disableAllSwitches()
@@ -310,23 +328,6 @@ class CreditAndRefundControllerSpec extends MockAuthenticationPredicate with Moc
       }
     }
 
-    "Controller should not return the refund status" when {
-      "RepaymentJourneyErrorResponse is returned" in  new Setup {
-        disableAllSwitches()
-        enable(CreditsRefundsRepay)
-
-        mockSingleBISWithCurrentYearAsMigrationYear()
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthSuccessWithSaUtrResponse())
-
-        when(mockRepaymentService.view(any())(any()))
-          .thenReturn(Future.successful(Left(new InternalError)))
-
-        val result: Future[Result] = controller.refundStatus()(fakeRequestWithActiveSession)
-
-        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-      }
-    }
     "Controller should not return the refund status" when {
       "refund status endpoint should not be called if FS is disabled" in  new Setup {
         disableAllSwitches()

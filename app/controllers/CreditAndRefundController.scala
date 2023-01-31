@@ -166,7 +166,7 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
             Future.successful(Ok(customNotFoundErrorView()(user, user.messages)))
           case Some("Agent") =>
             Future.successful(itvcErrorHandlerAgent.showInternalServerError())
-          case Some("Individual") =>
+          case _ =>
             handleRefundRequest(
               backUrl = "", // TODO: do we need a backUrl
               itvcErrorHandler = itvcErrorHandler,
