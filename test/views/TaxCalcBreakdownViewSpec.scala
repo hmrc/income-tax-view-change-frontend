@@ -448,7 +448,7 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
             (11, messages("taxCal_breakdown.table.total_notional_tax"), "−£7,000.00"),
             (12, messages("taxCal_breakdown.table.total_foreign_tax_credit_relief"), "−£6,000.00"),
             (13, messages("taxCal_breakdown.table.qualifyingDistributionRedemptionOfSharesAndSecurities"), "−£8,000.00"),
-            (14, messages("taxCal_breakdown.table.nonDeductibleLoanInterest"), "−£9,000.00"),
+            (14, messages("taxCal_breakdown.table.nonDeductableLoanInterest"), "−£9,000.00"),
             (15, messages("taxCal_breakdown.table.income_tax_due_after_tax_reductions"), "£2,000.00")
           )
         )

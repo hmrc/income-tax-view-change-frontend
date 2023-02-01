@@ -106,7 +106,7 @@ object TaxDueSummaryViewModel {
         gainsOnLifePoliciesBands = calc.taxCalculation.flatMap(tc => tc.incomeTax.gainsOnLifePolicies.map(ppp => ppp.taxBands.getOrElse(Seq()))),
         totalNotionalTax = calc.taxCalculation.flatMap(tc => tc.incomeTax.totalNotionalTax),
         incomeTaxDueAfterTaxReductions = calc.taxCalculation.flatMap(tc => tc.incomeTax.incomeTaxDueAfterTaxReductions),
-        totalPensionSavingsTaxCharges = calc.taxCalculation.flatMap(tc => tc.incomeTax.totalPensionSavingsTaxCharges),
+        totalPensionSavingsTaxCharges = calc.pensionSavingsTaxCharges.flatMap(pst => pst.totalPensionChargesDue),
         statePensionLumpSumCharges = calc.taxCalculation.flatMap(tc => tc.incomeTax.statePensionLumpSumCharges),
         payeUnderpaymentsCodedOut = calc.taxCalculation.flatMap(tc => tc.incomeTax.payeUnderpaymentsCodedOut),
         nic4Bands = calc.taxCalculation.flatMap(tc => tc.nics.flatMap(nics => nics.class4Nics.map(class4nics => class4nics.nic4Bands))),
