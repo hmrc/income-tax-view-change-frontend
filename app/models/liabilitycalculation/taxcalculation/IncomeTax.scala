@@ -33,7 +33,7 @@ case class IncomeTax(
                       totalPensionSavingsTaxCharges: Option[BigDecimal] = None,
                       statePensionLumpSumCharges: Option[BigDecimal] = None,
                       payeUnderpaymentsCodedOut: Option[BigDecimal] = None,
-                      totalAnnuityPaymentsTaxCharged: Option[Int] = None,
+                      totalAnnuityPaymentsTaxCharged: Option[BigDecimal] = None,
                       totalRoyaltyPaymentsTaxCharged: Option[BigDecimal] = None
                     ) {
   val totalAllowancesDeductionsReliefs: BigDecimal = BigDecimal.valueOf(totalAllowancesAndDeductions) + totalReliefs.getOrElse(0.00)

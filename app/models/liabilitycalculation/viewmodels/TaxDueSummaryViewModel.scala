@@ -52,7 +52,7 @@ case class TaxDueSummaryViewModel(
                                    totalIncomeTaxAndNicsDue: Option[BigDecimal] = None,
                                    totalTaxDeducted: Option[BigDecimal] = None,
                                    taxDeductedAtSource: TaxDeductedAtSourceViewModel = TaxDeductedAtSourceViewModel(),
-                                   totalAnnuityPaymentsTaxCharged: Option[Int] = None,
+                                   totalAnnuityPaymentsTaxCharged: Option[BigDecimal] = None,
                                    totalRoyaltyPaymentsTaxCharged: Option[BigDecimal] = None
                                  ) {
 
