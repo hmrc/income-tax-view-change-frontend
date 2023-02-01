@@ -92,7 +92,7 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockInco
       "send the user to the paymentsOwe page with full data of charges" in new Setup {
         mockSingleBISWithCurrentYearAsMigrationYear()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthSuccessWithSaUtrResponse())
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
         when(whatYouOweService.getWhatYouOweChargesList()(any(), any()))
           .thenReturn(Future.successful(whatYouOweChargesListFull))
@@ -113,7 +113,7 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockInco
       "return success page with empty data in WhatYouOwe model" in new Setup {
         mockSingleBISWithCurrentYearAsMigrationYear()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthSuccessWithSaUtrResponse())
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
         when(whatYouOweService.getWhatYouOweChargesList()(any(), any()))
           .thenReturn(Future.successful(whatYouOweChargesListEmpty))
@@ -134,7 +134,7 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockInco
       "send the user to the Internal error page with PaymentsDueService returning exception in case of error" in new Setup {
         mockSingleBISWithCurrentYearAsMigrationYear()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthSuccessWithSaUtrResponse())
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
         when(whatYouOweService.getWhatYouOweChargesList()(any(), any()))
           .thenReturn(Future.failed(new Exception("failed to retrieve data")))
@@ -161,7 +161,7 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockInco
         enable(CreditsRefundsRepay)
         mockSingleBISWithCurrentYearAsMigrationYear()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthSuccessWithSaUtrResponse())
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
 
         when(whatYouOweService.getWhatYouOweChargesList()(any(), any()))
@@ -192,7 +192,7 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockInco
         disable(CreditsRefundsRepay)
         mockSingleBISWithCurrentYearAsMigrationYear()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthSuccessWithSaUtrResponse())
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
         when(whatYouOweService.getWhatYouOweChargesList()(any(), any()))
           .thenReturn(Future.successful(whatYouOweWithZeroAvailableCredits))

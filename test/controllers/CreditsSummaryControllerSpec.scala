@@ -29,7 +29,7 @@ import play.api.http.Status
 import play.api.i18n.MessagesApi
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers._
-import testConstants.BaseTestConstants.{calendarYear2018, testAgentAuthRetrievalSuccess, testAgentAuthRetrievalSuccessNoEnrolment, testAuthSuccessWithSaUtrResponse, testSaUtrId, testYearPlusTwo}
+import testConstants.BaseTestConstants.{calendarYear2018, testAgentAuthRetrievalSuccess, testAgentAuthRetrievalSuccessNoEnrolment, testIndividualAuthSuccessWithSaUtrResponse, testSaUtrId, testYearPlusTwo}
 import testConstants.FinancialDetailsTestConstants._
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.BearerTokenExpired
@@ -95,7 +95,7 @@ class CreditsSummaryControllerSpec extends TestSupport with MockCalculationServi
         enable(CutOverCredits)
         mockSingleBusinessIncomeSource()
         mockCreditHistoryService(chargesList)
-        setupMockAuthRetrievalSuccess(testAuthSuccessWithSaUtrResponse())
+        setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
 
         val expectedContent: String = creditsSummaryView(
           backUrl = paymentRefundHistoryBackLink,
@@ -120,7 +120,7 @@ class CreditsSummaryControllerSpec extends TestSupport with MockCalculationServi
         enable(MFACreditsAndDebits)
         mockSingleBusinessIncomeSource()
         mockCreditHistoryService(chargesList)
-        setupMockAuthRetrievalSuccess(testAuthSuccessWithSaUtrResponse())
+        setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
 
         val expectedContent: String = creditsSummaryView(
           backUrl = paymentRefundHistoryBackLink,
@@ -146,7 +146,7 @@ class CreditsSummaryControllerSpec extends TestSupport with MockCalculationServi
         enable(MFACreditsAndDebits)
         mockSingleBusinessIncomeSource()
         mockCreditHistoryService(chargesList)
-        setupMockAuthRetrievalSuccess(testAuthSuccessWithSaUtrResponse())
+        setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
 
         val expectedContent: String = creditsSummaryView(
           backUrl = creditAndRefundUrl,
@@ -172,7 +172,7 @@ class CreditsSummaryControllerSpec extends TestSupport with MockCalculationServi
         enable(MFACreditsAndDebits)
         mockSingleBusinessIncomeSource()
         mockCreditHistoryService(chargesList)
-        setupMockAuthRetrievalSuccess(testAuthSuccessWithSaUtrResponse())
+        setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
 
         val expectedContent: String = creditsSummaryView(
           backUrl = defaultCreditsSummaryUrl,
@@ -198,7 +198,7 @@ class CreditsSummaryControllerSpec extends TestSupport with MockCalculationServi
         enable(MFACreditsAndDebits)
         mockSingleBusinessIncomeSource()
         mockCreditHistoryService(chargesList)
-        setupMockAuthRetrievalSuccess(testAuthSuccessWithSaUtrResponse())
+        setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
 
         val expectedContent: String = creditsSummaryView(
           backUrl = paymentRefundHistoryBackLink,
@@ -260,7 +260,7 @@ class CreditsSummaryControllerSpec extends TestSupport with MockCalculationServi
       disable(MFACreditsAndDebits)
       disable(CutOverCredits)
       mockSingleBusinessIncomeSource()
-      setupMockAuthRetrievalSuccess(testAuthSuccessWithSaUtrResponse())
+      setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
 
       val expectedContent: String = creditsSummaryView(
         backUrl = paymentRefundHistoryBackLink,
@@ -287,7 +287,7 @@ class CreditsSummaryControllerSpec extends TestSupport with MockCalculationServi
       disable(CutOverCredits)
       mockSingleBusinessIncomeSource()
       mockCreditHistoryService(chargesList)
-      setupMockAuthRetrievalSuccess(testAuthSuccessWithSaUtrResponse())
+      setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
 
       val expectedContent: String = creditsSummaryView(
         backUrl = paymentRefundHistoryBackLink,
@@ -314,7 +314,7 @@ class CreditsSummaryControllerSpec extends TestSupport with MockCalculationServi
       enable(CutOverCredits)
       mockSingleBusinessIncomeSource()
       mockCreditHistoryService(chargesList)
-      setupMockAuthRetrievalSuccess(testAuthSuccessWithSaUtrResponse())
+      setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
 
       val expectedContent: String = creditsSummaryView(
         backUrl = paymentRefundHistoryBackLink,
