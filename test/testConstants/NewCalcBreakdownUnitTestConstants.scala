@@ -670,6 +670,8 @@ object NewCalcBreakdownUnitTestConstants {
     incomeTaxDueAfterTaxReductions = Some(2000),
     payeUnderpaymentsCodedOut = Some(254),
     saUnderpaymentsCodedOut = Some(400),
+    totalAnnuityPaymentsTaxCharged = Some(367.21),
+    totalRoyaltyPaymentsTaxCharged = Some(240.35),
     reliefsClaimed = Some(Seq(ReliefsClaimed("deficiencyRelief", Some(1000)), ReliefsClaimed("vctSubscriptions", Some(2000)),
       ReliefsClaimed("eisSubscriptions", Some(3000)), ReliefsClaimed("seedEnterpriseInvestment", Some(4000)),
       ReliefsClaimed("communityInvestment", Some(5000)), ReliefsClaimed("socialEnterpriseInvestment", Some(6000)),
