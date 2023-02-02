@@ -43,7 +43,7 @@ object Utilities {
     case "ITSA- POA 1" => if (latePaymentCharge) "Late payment interest for payment on account 1 of 2" else "Payment on account 1 of 2"
     case "ITSA - POA 2" => if (latePaymentCharge) "Late payment interest for payment on account 2 of 2" else "Payment on account 2 of 2"
 /*
-    case "Class 2 Nics"  => if (docDetail.documentText =)"Class 2 National Insurance" else "Cancelled PAYE Self Assessment (through your PAYE tax code)"
+    case "Class 2 National Insurance"  => if (docDetail.documentText =)"Class 2 National Insurance" else "Cancelled PAYE Self Assessment (through your PAYE tax code)"
 */
     case "TRM New Charge" | "TRM Amend Charge" => if (latePaymentCharge) "Late payment interest for remaining balance" else "Remaining balance"
     case other => other
