@@ -42,6 +42,7 @@ import java.time.LocalDate
 class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
 
+
   def paymentsWithCharge(mainType: String, chargeType: String, date: String, amount: BigDecimal, lotItem: String): PaymentsWithChargeType =
     PaymentsWithChargeType(
       payments = List(Payment(reference = Some("reference"), amount = Some(amount), outstandingAmount = None, method = Some("method"),
@@ -116,7 +117,8 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
         paymentBreakdown = paymentBreakdown,
         chargeHistories = List.empty,
         paymentAllocations = List.empty,
-        isLatePaymentCharge = false
+        isLatePaymentCharge = false,
+        dateService = dateService
       ))
 
       result should have(
@@ -149,7 +151,8 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
         paymentBreakdown = paymentBreakdown,
         chargeHistories = List.empty,
         paymentAllocations = paymentAllocation,
-        isLatePaymentCharge = false
+        isLatePaymentCharge = false,
+        dateService = dateService
       ))
 
       result should have(
@@ -187,7 +190,8 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
         paymentBreakdown = paymentBreakdown,
         chargeHistories = chargeHistories,
         paymentAllocations = paymentAllocation,
-        isLatePaymentCharge = false
+        isLatePaymentCharge = false,
+        dateService =  dateService
       ))
     }
 
@@ -211,7 +215,8 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
         paymentBreakdown = List.empty,
         chargeHistories = List.empty,
         paymentAllocations = paymentAllocation,
-        isLatePaymentCharge = true
+        isLatePaymentCharge = true,
+        dateService = dateService
       ))
 
       result should have(

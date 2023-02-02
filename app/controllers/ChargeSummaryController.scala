@@ -67,6 +67,7 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
 
   def onError(message: String, isAgent: Boolean, showInternalServerError: Boolean)(implicit request: Request[_]): Result = {
     val errorPrefix: String = s"[ChargeSummaryController]${if (isAgent) "[Agent]" else ""}[showChargeSummary]"
+    println("blahhhhhhhhh" + message)
     Logger("application").error(s"$errorPrefix $message")
     if (showInternalServerError) {
       if (isAgent) itvcErrorHandlerAgent.showInternalServerError()
@@ -83,6 +84,7 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
 
   def handleRequest(taxYear: Int, id: String, isLatePaymentCharge: Boolean = false, isAgent: Boolean, origin: Option[String] = None)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] = {
+    println("in hereeeeeeeeeeee")
     financialDetailsService.getAllFinancialDetails(user, implicitly, implicitly).flatMap { financialResponses =>
       val payments = financialResponses.collect {
         case (_, model: FinancialDetailsModel) => model.filterPayments()
@@ -149,6 +151,7 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
           documentDetailWithDueDate.documentDetail.isCancelledPayeSelfAssessment)) {
           onError("Coding Out is disabled and redirected to not found page", isAgent, showInternalServerError = false)
         } else {
+          println("AAAAAAAA")
           auditChargeSummary(documentDetailWithDueDate, paymentBreakdown, chargeHistory, paymentAllocations,
             isLatePaymentCharge, isMFADebit)
           Ok(chargeSummaryView(
@@ -191,7 +194,6 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
                                  paymentAllocations: List[PaymentsWithChargeType], isLatePaymentCharge: Boolean,
                                  isMFADebit: Boolean)
                                 (implicit hc: HeaderCarrier, user: MtdItUser[_]): Unit = {
-
     auditingService.extendedAudit(ChargeSummaryAudit(
       mtdItUser = user,
       docDateDetail = documentDetailWithDueDate,
@@ -199,7 +201,8 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
       chargeHistories = chargeHistories,
       paymentAllocations = paymentAllocations,
       isLatePaymentCharge = isLatePaymentCharge,
-      isMFADebit = isMFADebit
+      isMFADebit = isMFADebit,
+      dateService = dateService
     ))
   }
 }

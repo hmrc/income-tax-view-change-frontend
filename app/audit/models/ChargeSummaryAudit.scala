@@ -18,18 +18,20 @@ package audit.models
 
 import auth.MtdItUser
 import enums.AuditType.ChargeSummary
+import enums.CodingOutType.{CODING_OUT_ACCEPTED, CODING_OUT_CANCELLED}
 import implicits.ImplicitCurrencyFormatter.CurrencyFormatter
 import models.chargeHistory.ChargeHistoryModel
 import models.financialDetails.{DocumentDetailWithDueDate, FinancialDetail, PaymentsWithChargeType}
 import play.api.Logger
 import play.api.libs.json.{JsObject, JsValue, Json}
+import services.DateService
 import utils.Utilities._
 
 
 case class ChargeSummaryAudit(mtdItUser: MtdItUser[_], docDateDetail: DocumentDetailWithDueDate,
                               paymentBreakdown: List[FinancialDetail], chargeHistories: List[ChargeHistoryModel],
                               paymentAllocations: List[PaymentsWithChargeType], isLatePaymentCharge: Boolean,
-                              isMFADebit: Boolean = false) extends ExtendedAuditModel {
+                              isMFADebit: Boolean = false, dateService: DateService) extends ExtendedAuditModel {
 
   private val userType: JsObject = mtdItUser.userType match {
     case Some("Agent") => Json.obj("userType" -> "Agent")
@@ -49,22 +51,27 @@ case class ChargeSummaryAudit(mtdItUser: MtdItUser[_], docDateDetail: DocumentDe
     }
   }
 
-  private def getAllocationDescriptionFromKey(key: Option[String]): String = key match {
-    case Some("chargeSummary.paymentAllocations.mfaDebit") => "Payment put towards HMRC adjustment"
-    case Some("chargeSummary.paymentAllocations.poa1.incomeTax") => "Income Tax for payment on account 1 of 2"
-    case Some("chargeSummary.paymentAllocations.poa1.nic4") => "Class 4 National Insurance for payment on account 1 of 2"
-    case Some("chargeSummary.paymentAllocations.poa2.incomeTax") => "Income Tax for payment on account 2 of 2"
-    case Some("chargeSummary.paymentAllocations.poa2.nic4") => "Class 4 National Insurance for payment on account 2 of 2"
-    case Some("chargeSummary.paymentAllocations.bcd.incomeTax") => "Income Tax for remaining balance"
-    case Some("chargeSummary.paymentAllocations.bcd.nic2") => "Class 2 National Insurance for remaining balance"
-    case Some("chargeSummary.paymentAllocations.bcd.vcnic2") => "Voluntary Class 2 National Insurance for remaining balance"
-    case Some("chargeSummary.paymentAllocations.bcd.nic4") => "Class 4 National Insurance for remaining balance"
-    case Some("chargeSummary.paymentAllocations.bcd.sl") => "Student Loans for remaining balance"
-    case Some("chargeSummary.paymentAllocations.bcd.cgt") => "Capital Gains Tax for remaining balance"
-    case Some("paymentOnAccount1.text") => "Late payment interest for payment on account 1 of 2"
-    case Some("paymentOnAccount2.text") => "Late payment interest for payment on account 2 of 2"
-    case Some("balancingCharge.text") => "Late payment interest for remaining balance"
-    case _ => s"Some unexpected message key: $key"
+  private def getAllocationDescriptionFromKey(key: Option[String]): String = {
+    key match {
+      case Some("chargeSummary.paymentAllocations.mfaDebit") => "Payment put towards HMRC adjustment"
+      case Some("chargeSummary.paymentAllocations.poa1.incomeTax") => "Income Tax for payment on account 1 of 2"
+      case Some("chargeSummary.paymentAllocations.poa1.nic4") => "Class 4 National Insurance for payment on account 1 of 2"
+      case Some("chargeSummary.paymentAllocations.poa2.incomeTax") => "Income Tax for payment on account 2 of 2"
+      case Some("chargeSummary.paymentAllocations.poa2.nic4") => "Class 4 National Insurance for payment on account 2 of 2"
+      case Some("chargeSummary.paymentAllocations.bcd.incomeTax") => "Income Tax for remaining balance"
+      case Some("chargeSummary.paymentAllocations.bcd.nic2") => "Class 2 National Insurance for remaining balance"
+      case Some("chargeSummary.paymentAllocations.bcd.vcnic2") => "Voluntary Class 2 National Insurance for remaining balance"
+      case Some("chargeSummary.paymentAllocations.bcd.nic4") => "Class 4 National Insurance for remaining balance"
+      case Some("chargeSummary.paymentAllocations.bcd.sl") => "Student Loans for remaining balance"
+      case Some("chargeSummary.paymentAllocations.bcd.cgt") => "Capital Gains Tax for remaining balance"
+      case Some("paymentOnAccount1.text") => "Late payment interest for payment on account 1 of 2"
+      case Some("paymentOnAccount2.text") => "Late payment interest for payment on account 2 of 2"
+      case Some("balancingCharge.text") => "Late payment interest for remaining balance"
+      case Some("codingOut.cancelled") => "Cancelled PAYE Self Assessment (through your PAYE tax code)"
+      case Some("codingOut.accepted") =>
+        s"""Amount collected through your PAYE tax code for ${dateService.getCurrentTaxYearEnd} to ${dateService.getCurrentTaxYearEnd + 1} tax year""".stripMargin
+      case _ => s"Some unexpected message key: $key"
+    }
   }
 
   private def getBreakdownTypeFromKey(key: Option[String]): String = key match {
@@ -95,6 +102,8 @@ case class ChargeSummaryAudit(mtdItUser: MtdItUser[_], docDateDetail: DocumentDe
     case _ => None
   }
 
+  //private val charge
+
   private val chargeHistory: Seq[JsObject] = chargeHistories.map(chargeHistoryJson)
 
   private def chargeHistoryJson(chargeHistory: ChargeHistoryModel): JsObject = Json.obj(
@@ -103,16 +112,26 @@ case class ChargeSummaryAudit(mtdItUser: MtdItUser[_], docDateDetail: DocumentDe
     "amount" -> chargeHistory.totalAmount
   )
 
-  private val paymentAllocationsChargeHistory: Seq[JsObject] =
+  private val paymentAllocationsChargeHistory: Seq[JsObject] = {
     if (!isLatePaymentCharge) paymentAllocations.flatMap(paymentAllocationsChargeHistoryJSon)
     else Seq.empty
+  }
 
-  private def paymentAllocationsChargeHistoryJSon(paymentAllocation: PaymentsWithChargeType): Seq[JsObject] =
+  private def paymentAllocationsChargeHistoryJSon(paymentAllocation: PaymentsWithChargeType): Seq[JsObject] = {
+   val description = if(docDateDetail.documentDetail.isPayeSelfAssessment){
+     Some(getAllocationDescriptionFromKey(Some("codingOut.accepted")))
+   } else if (docDateDetail.documentDetail.isCancelledPayeSelfAssessment) {
+     Some(getAllocationDescriptionFromKey(Some("codingOut.cancelled")))
+   } else {
+     Some(getAllocationDescriptionFromKey(paymentAllocation.getPaymentAllocationTextInChargeSummary))
+   }
+
     paymentAllocation.payments.map(payment => Json.obj() ++
       ("date", payment.dueDate) ++
-      ("description", Some(getAllocationDescriptionFromKey(paymentAllocation.getPaymentAllocationTextInChargeSummary))) ++
+      ("description", description) ++
       ("amount", payment.amount.map(_.abs))
     )
+  }
 
   private val paymentBreakdowns: Seq[JsObject] = paymentBreakdown.map(paymentBreakdownsJson)
 
@@ -135,6 +154,8 @@ case class ChargeSummaryAudit(mtdItUser: MtdItUser[_], docDateDetail: DocumentDe
     ("interestPeriod", interestPeriod) ++
     ("dueDate", dueDate) ++
     ("fullPaymentAmount", fullPaymentAmount) ++
+    Json.obj( "endTaxYear" -> docDateDetail.documentDetail.taxYear) ++
+    Json.obj("overdue"-> docDateDetail.isOverdue) ++
     Json.obj("remainingToPay" -> remainingToPay)
 
   def release6Update: JsObject = {
@@ -142,6 +163,7 @@ case class ChargeSummaryAudit(mtdItUser: MtdItUser[_], docDateDetail: DocumentDe
       Json.obj("chargeHistory" -> chargeHistory) ++
       Json.obj("paymentAllocationsChargeHistory" -> paymentAllocationsChargeHistory)
   }
+
 
   override val transactionName: String = enums.TransactionName.ChargeSummary
   override val detail: JsValue = {

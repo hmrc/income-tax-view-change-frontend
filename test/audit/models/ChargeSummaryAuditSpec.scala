@@ -77,6 +77,8 @@ class ChargeSummaryAuditSpec extends WordSpecLike with MustMatchers {
     paymentsWithCharge("SA Payment on Account 1", NIC4_SCOTLAND, "2018-03-31", -1600.0)
   )
 
+  paymentAllocation.map(_.getPaymentAllocationTextInChargeSummary)
+
   val chargeHistoryModel: ChargeHistoryModel = ChargeHistoryModel("2019", "1040000124", LocalDate.of(2018, 7, 6), "documentDescription", 1500, LocalDate.of(2018, 7, 6), "amended return")
   val chargeHistoryModel2: ChargeHistoryModel = ChargeHistoryModel("2019", "1040000124", LocalDate.of(2018, 7, 6), "documentDescription", 1500, LocalDate.of(2018, 7, 6), "Customer Request")
 
@@ -129,7 +131,8 @@ class ChargeSummaryAuditSpec extends WordSpecLike with MustMatchers {
     paymentBreakdown = if (!isLateInterestCharge) paymentBreakdowns else List.empty,
     chargeHistories = if (!isLateInterestCharge) chargeHistory else List.empty,
     paymentAllocations = paymentAllocation,
-    isLatePaymentCharge = isLateInterestCharge
+    isLatePaymentCharge = isLateInterestCharge,
+    dateService = dateService
   )
 
   val chargeSummaryAuditMin: ChargeSummaryAudit = ChargeSummaryAudit(
@@ -148,7 +151,8 @@ class ChargeSummaryAuditSpec extends WordSpecLike with MustMatchers {
     paymentBreakdown = List.empty,
     chargeHistories = List.empty,
     paymentAllocations = List.empty,
-    isLatePaymentCharge = false
+    isLatePaymentCharge = false,
+    dateService = dateService
   )
 
   "ChargeSummaryAudit(mtdItUser, charge, agentReferenceNumber)" should {
@@ -190,7 +194,9 @@ class ChargeSummaryAuditSpec extends WordSpecLike with MustMatchers {
               "fullPaymentAmount" -> docDetailWithInterest.originalAmount,
               "dueDate" -> docDateDetail.dueDate,
               "chargeType" -> getChargeType(false),
-              "interestPeriod" -> "2021-10-06 to 2022-01-06"
+              "interestPeriod" -> "2021-10-06 to 2022-01-06",
+              "endTaxYear" -> docDateDetail.documentDetail.taxYear,
+              "overdue" -> docDateDetail.isOverdue
             ),
             "saUtr" -> "saUtr",
             "nationalInsuranceNumber" -> "nino",
@@ -265,7 +271,9 @@ class ChargeSummaryAuditSpec extends WordSpecLike with MustMatchers {
               "fullPaymentAmount" -> docDetailWithInterest.latePaymentInterestAmount,
               "dueDate" -> docDetailWithInterest.interestEndDate,
               "chargeType" -> getChargeType(true),
-              "interestPeriod" -> "2021-10-06 to 2022-01-06"
+              "interestPeriod" -> "2021-10-06 to 2022-01-06",
+              "endTaxYear" -> docDateDetail.documentDetail.taxYear,
+              "overdue" -> docDateDetail.isOverdue
             ),
             "saUtr" -> "saUtr",
             "nationalInsuranceNumber" -> "nino",
@@ -286,7 +294,9 @@ class ChargeSummaryAuditSpec extends WordSpecLike with MustMatchers {
               "remainingToPay" -> docDetail.remainingToPay,
               "fullPaymentAmount" -> docDetail.originalAmount,
               "dueDate" -> docDateDetail.dueDate,
-              "chargeType" -> getChargeType(false)),
+              "chargeType" -> getChargeType(false),
+              "endTaxYear" -> docDateDetail.documentDetail.taxYear,
+              "overdue" -> docDateDetail.isOverdue),
             "nationalInsuranceNumber" -> "nino",
             "paymentBreakdown" -> Json.arr(),
             "paymentAllocationsChargeHistory" -> Json.arr(),
