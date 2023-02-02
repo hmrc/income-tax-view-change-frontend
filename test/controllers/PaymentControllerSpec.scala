@@ -81,7 +81,7 @@ class PaymentControllerSpec extends TestSupport with MockAuthenticationPredicate
 
       "a successful payments journey is started with audit events" in new SetupTestPaymentController(isAgent = false, Future.successful(
         PaymentJourneyModel("id", "redirect-url"))) {
-        setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthSuccessWithSaUtrResponse())
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         val result: Future[Result] = testController.paymentHandoff(testAmountInPence)(fakeRequestWithActiveSession)
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some("redirect-url")
@@ -100,13 +100,13 @@ class PaymentControllerSpec extends TestSupport with MockAuthenticationPredicate
 
       "an error response is returned by the connector" in new SetupTestPaymentController(isAgent = false, Future.successful(
         PaymentJourneyErrorResponse(INTERNAL_SERVER_ERROR, "Error Message"))) {
-        setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthSuccessWithSaUtrResponse())
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         val result: Future[Result] = testController.paymentHandoff(testAmountInPence)(fakeRequestWithActiveSession)
         status(result) shouldBe INTERNAL_SERVER_ERROR
       }
 
       "an exception is returned by the connector" in new SetupTestPaymentController(isAgent = false, Future.failed(new Exception("Exception Message"))) {
-        setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthSuccessWithSaUtrResponse())
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         val result: Future[Result] = testController.paymentHandoff(testAmountInPence)(fakeRequestWithActiveSession)
         status(result) shouldBe INTERNAL_SERVER_ERROR
       }

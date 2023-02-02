@@ -330,8 +330,8 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
         document.select("p").get(2).text() shouldBe s"£1,400.00 $paymentText 15 May 2019"
         document.select("p").get(2).select("a").attr("href") shouldBe linkPaymentMadeToHmrc
 
-        document.getElementsByClass("govuk-button").first().text() shouldBe claimBtn
-        document.getElementsByClass("govuk-button govuk-button--secondary").text() shouldBe checkBtn
+        document.getElementsByClass("govuk-button").isEmpty shouldBe true
+        document.getElementsByClass("govuk-button govuk-button--secondary").isEmpty shouldBe true
         document.getElementsByClass("govuk-heading-s").first().text() should include(messages("credit-and-refund.agent.subHeading.has-credits-2"))
         document.select("p").get(7).text() shouldBe (creditAndRefundAgentHasCreditBullet1Prt1 + " " + creditAndRefundAgentHasCreditBullet1Link + " " + creditAndRefundAgentHasCreditBullet1Prt2)
       }
@@ -359,8 +359,8 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
           document.select("h2").first().select("span").next().select("a").text() shouldBe "12 January 2022"
           document.select("dt").eachText().contains("Total") shouldBe false
           document.select("govuk-list govuk-list--bullet").isEmpty shouldBe true
-          document.getElementsByClass("govuk-button").first().text() shouldBe claimBtn
-          document.getElementsByClass("govuk-button govuk-button--secondary").text() shouldBe checkBtn
+          document.getElementsByClass("govuk-button").isEmpty shouldBe true
+          document.getElementsByClass("govuk-button govuk-button--secondary").isEmpty shouldBe true
         }
 
       "a client has an unallocated credits from exactly a single credit item" in
@@ -389,8 +389,8 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
           document.select("dt").eachText().contains("Total") shouldBe false
           document.select("govuk-list govuk-list--bullet").isEmpty shouldBe true
 
-          document.getElementsByClass("govuk-button").first().text() shouldBe claimBtn
-          document.getElementsByClass("govuk-button govuk-button--secondary").text() shouldBe checkBtn
+          document.getElementsByClass("govuk-button").isEmpty shouldBe true
+          document.getElementsByClass("govuk-button govuk-button--secondary").isEmpty shouldBe true
         }
 
       "a client has an unallocated credits from exactly a single credit item as a cut over credit" in
@@ -419,8 +419,8 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
           document.select("dt").eachText().contains("Total") shouldBe false
           document.select("govuk-list govuk-list--bullet").isEmpty shouldBe true
 
-          document.getElementsByClass("govuk-button").first().text() shouldBe claimBtn
-          document.getElementsByClass("govuk-button govuk-button--secondary").text() shouldBe checkBtn
+          document.getElementsByClass("govuk-button").isEmpty shouldBe true
+          document.getElementsByClass("govuk-button govuk-button--secondary").isEmpty shouldBe true
         }
     }
   }

@@ -604,7 +604,9 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
             (0, messages("taxCal_breakdown.table.head.charge_type"), amountTableHeader),
             (1, messages("taxCal_breakdown.table.totalStudentLoansRepaymentAmount"), "£5,000.00"),
             (2, messages("taxCal_breakdown.table.payeUnderpaymentsCodedOut", "2017", "2018"), "£254.00"),
-            (3, messages("taxCal_breakdown.table.saUnderpaymentsCodedOut", "2017", "2018"), "£400.00")
+            (3, messages("taxCal_breakdown.table.saUnderpaymentsCodedOut", "2017", "2018"), "£400.00"),
+            (4, messages("taxCal_breakdown.table.totalAnnuityPaymentsTaxCharged"), "£367.21"),
+            (5, messages("taxCal_breakdown.table.totalRoyaltyPaymentsTaxCharged"), "£240.35")
           )
         )
       }
