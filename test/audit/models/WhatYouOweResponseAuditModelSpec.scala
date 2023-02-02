@@ -177,7 +177,7 @@ class WhatYouOweResponseAuditModelSpec extends TestSupport {
     }
 
     "produce a full audit Json model" when {
-      "the audit 7b feature switch is on" in {
+      "there is expected audit behaviour" in {
         val auditJson = testWhatYouOweResponseAuditModel(
           chargesList = whatYouOwePartialChargesList.copy(
             balanceDetails = BalanceDetails(
