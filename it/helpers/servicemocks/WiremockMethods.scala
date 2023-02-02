@@ -121,6 +121,7 @@ trait WiremockMethods {
 
   private def verifyInternalContainsJson(method: HTTPMethod, uri: String, bodyPart: Option[JsValue]): Unit = method match {
     case POST => WiremockHelper.verifyPostContainingJson(uri, bodyPart)
+    println("bodyPARTTT" + bodyPart)
     case _ => verifyInternalContains(method, uri, bodyPart.map(_.toString))
   }
 

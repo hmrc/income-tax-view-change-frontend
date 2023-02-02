@@ -67,7 +67,6 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
 
   def onError(message: String, isAgent: Boolean, showInternalServerError: Boolean)(implicit request: Request[_]): Result = {
     val errorPrefix: String = s"[ChargeSummaryController]${if (isAgent) "[Agent]" else ""}[showChargeSummary]"
-    println("blahhhhhhhhh" + message)
     Logger("application").error(s"$errorPrefix $message")
     if (showInternalServerError) {
       if (isAgent) itvcErrorHandlerAgent.showInternalServerError()

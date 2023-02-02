@@ -55,6 +55,8 @@ object AuditStub extends WiremockMethods {
       "auditType" -> auditEvent.auditType,
       "tags" -> Json.obj("transactionName" -> auditEvent.transactionName),
       "detail" -> auditEvent.detail)
+
+    println("expectedddd" + expectedAuditJson)
     verifyContainsJson(method = POST, uri = "/write/audit", expectedAuditJson)
   }
 }

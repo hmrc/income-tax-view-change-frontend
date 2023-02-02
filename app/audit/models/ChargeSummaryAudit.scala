@@ -154,7 +154,7 @@ case class ChargeSummaryAudit(mtdItUser: MtdItUser[_], docDateDetail: DocumentDe
     ("interestPeriod", interestPeriod) ++
     ("dueDate", dueDate) ++
     ("fullPaymentAmount", fullPaymentAmount) ++
-    Json.obj( "endTaxYear" -> docDateDetail.documentDetail.taxYear) ++
+    Json.obj( "endTaxYear" -> dateService.getCurrentTaxYearEnd) ++
     Json.obj("overdue"-> docDateDetail.isOverdue) ++
     Json.obj("remainingToPay" -> remainingToPay)
 
