@@ -37,13 +37,16 @@ case class WhatYouOweResponseAuditModel(user: MtdItUser[_],
     whatYouOweChargesList.chargesList.map(documentDetails) ++ whatYouOweChargesList.outstandingChargesModel.map(outstandingChargeDetails)
 
   override val detail: JsValue = {
-    val x = codingOut(whatYouOweChargesList.codedOutDocumentDetail.get) /*TODO Ensure handle none cases*/
-
-
-    userAuditDetails(user) ++
-    balanceDetailsJson ++
-    Json.obj("charges" -> docDetailsListJson) ++
-    Json.obj("codingOut" -> x)
+    (whatYouOweChargesList.codedOutDocumentDetail.map(y => Json.obj("codingOut" -> codingOut(y)))) match {
+      case Some (codingOutJson) => userAuditDetails(user) ++
+        balanceDetailsJson ++
+        Json.obj("charges" -> docDetailsListJson) ++
+        codingOutJson
+      case _ =>
+        userAuditDetails (user) ++
+        balanceDetailsJson ++
+        Json.obj ("charges" -> docDetailsListJson)
+    }
   }
 
   private lazy val balanceDetailsJson: JsObject = {

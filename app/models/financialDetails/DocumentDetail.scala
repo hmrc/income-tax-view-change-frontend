@@ -158,6 +158,7 @@ case class DocumentDetail(taxYear: String,
   def getChargeTypeKey(codedOutEnabled: Boolean = false): String = documentDescription match {
     case Some("ITSA- POA 1") => "paymentOnAccount1.text"
     case Some("ITSA - POA 2") => "paymentOnAccount2.text"
+    /*case Some ("Class 2 NICs") => "class2Nic.text"*/
     case Some("TRM New Charge") | Some("TRM Amend Charge") => (codedOutEnabled, isClass2Nic, isPayeSelfAssessment, isCancelledPayeSelfAssessment) match {
       case (true, true, false, false) => "class2Nic.text"
       case (true, false, true, false) => "codingOut.text"
