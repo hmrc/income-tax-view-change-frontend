@@ -17,9 +17,10 @@ package controllers
 
 import audit.models.{HomeAudit, NextUpdatesResponseAuditModel}
 import auth.MtdItUser
+import config.featureswitch.NavBarFs
 import helpers.ComponentSpecBase
 import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
-import helpers.servicemocks.{AuthStub,  IncomeTaxViewChangeStub}
+import helpers.servicemocks.{AuthStub, IncomeTaxViewChangeStub}
 import models.nextUpdates.ObligationsModel
 import play.api.http.Status._
 import play.api.test.FakeRequest
@@ -38,6 +39,7 @@ class HomeControllerISpec extends ComponentSpecBase {
   "Navigating to /report-quarterly/income-and-expenses/view" when {
     "Authorised" should {
       "render the home page with the payment due date" in {
+        disable(NavBarFs)
         Given("I wiremock stub a successful Income Source Details response with multiple business and property")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
 
