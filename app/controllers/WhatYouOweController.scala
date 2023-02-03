@@ -65,7 +65,6 @@ class WhatYouOweController @Inject()(val checkSessionTimeout: SessionTimeoutPred
         val codingOutEnabled = isEnabled(CodingOut)
 
         println("Loook here")
-        println(WhatYouOweResponseAuditModel(user, whatYouOweChargesList, dateService))
         println(WhatYouOweResponseAuditModel(user, whatYouOweChargesList, dateService).detail.toString())
 
         whatYouOweService.getCreditCharges().map {
