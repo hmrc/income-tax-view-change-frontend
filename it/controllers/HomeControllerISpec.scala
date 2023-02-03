@@ -17,7 +17,7 @@ package controllers
 
 import audit.models.{HomeAudit, NextUpdatesResponseAuditModel}
 import auth.MtdItUser
-import config.featureswitch.NavBarFs
+import config.featureswitch.{IvUplift, NavBarFs}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
 import helpers.servicemocks.{AuthStub, IncomeTaxViewChangeStub}
@@ -82,6 +82,7 @@ class HomeControllerISpec extends ComponentSpecBase {
       }
 
       "render the ISE page when receive an error from the backend" in {
+        disable(NavBarFs)
         Given("I wiremock stub a successful Income Source Details response with multiple business and property")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
 
@@ -103,6 +104,7 @@ class HomeControllerISpec extends ComponentSpecBase {
     }
     "low confidence level user" should {
       "redirect to ivuplift service" in {
+        enable(IvUplift)
         AuthStub.stubAuthorised(Some(50))
 
         When(s"I call GET /report-quarterly/income-and-expenses/view")
