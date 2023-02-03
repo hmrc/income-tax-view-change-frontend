@@ -17,14 +17,11 @@ package controllers
 
 import audit.models.{HomeAudit, NextUpdatesResponseAuditModel}
 import auth.MtdItUser
-import config.featureswitch.NavBarFs
 import helpers.ComponentSpecBase
-import helpers.servicemocks.AuditStub.{verifyAuditContainsDetail, verifyAuditDoesNotContainsDetail}
-import helpers.servicemocks.BtaNavBarPartialConnectorStub.{testNavLinkJson, verifyBtaNavPartialResponse}
-import helpers.servicemocks.{BtaNavBarPartialConnectorStub, IncomeTaxViewChangeStub}
+import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
+import helpers.servicemocks.{AuthStub,  IncomeTaxViewChangeStub}
 import models.nextUpdates.ObligationsModel
 import play.api.http.Status._
-import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.IncomeSourceIntegrationTestConstants.{multipleBusinessesAndPropertyResponse, testValidFinancialDetailsModelJson}
@@ -99,6 +96,20 @@ class HomeControllerISpec extends ComponentSpecBase {
         Then("the result should have a HTTP status of ISE (500) and the Income Tax home page")
         res should have(
           httpStatus(INTERNAL_SERVER_ERROR)
+        )
+      }
+    }
+    "low confidence level user" should {
+      "redirect to ivuplift service" in {
+        AuthStub.stubAuthorised(Some(50))
+
+        When(s"I call GET /report-quarterly/income-and-expenses/view")
+        val res = IncomeTaxViewChangeFrontend.get("/")
+        val expectedRedirectUrl = "http://localhost:9948/iv-stub/uplift?origin=ITVC&confidenceLevel=250&completionURL=/report-quarterly/income-and-expenses/view/uplift-success&failureURL=/report-quarterly/income-and-expenses/view/cannot-view-page"
+        Then("the http response for an unauthorised user is returned")
+        res should have(
+          httpStatus(SEE_OTHER),
+          redirectURI(expectedRedirectUrl)
         )
       }
     }
