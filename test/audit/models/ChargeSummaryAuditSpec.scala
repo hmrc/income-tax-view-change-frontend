@@ -281,7 +281,7 @@ class ChargeSummaryAuditSpec extends WordSpecLike with MustMatchers {
 
         "there are charge details with coding out accepted" in {
           chargeSummaryAuditFull(
-            userType = Some("Agent"),
+            userType = Some(Agent),
             docDateDetailWithCodingOutAccepted,
             paymentBreakdown = paymentBreakdowns,
             chargeHistories = chargeHistory,
@@ -356,7 +356,7 @@ class ChargeSummaryAuditSpec extends WordSpecLike with MustMatchers {
 
         "there are charge details with coding out rejected" in {
           chargeSummaryAuditFull(
-            userType = Some("Agent"),
+            userType = Some(Agent),
             docDateDetailWithCodingOutRejected,
             paymentBreakdown = paymentBreakdowns,
             chargeHistories = chargeHistory,
