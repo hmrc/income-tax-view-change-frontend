@@ -34,6 +34,7 @@ import play.api.http.Status
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import testUtils.TestSupport
+import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 
 import java.time.LocalDate
@@ -83,7 +84,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
     btaNavPartial = None,
     Some("testUtr"),
     Some("testCredId"),
-    Some("Individual"),
+    Some(Individual),
     None
   )(FakeRequest())
 

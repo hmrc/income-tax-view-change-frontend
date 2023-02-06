@@ -35,6 +35,7 @@ import testConstants.FinancialDetailsIntegrationTestConstants.financialDetailMod
 import testConstants.IncomeSourceIntegrationTestConstants._
 import testConstants.messages.ChargeSummaryMessages
 import testConstants.messages.ChargeSummaryMessages._
+import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 
 import java.time.LocalDate
 
@@ -110,7 +111,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
       AuditStub.verifyAuditEvent(ChargeSummaryAudit(
         MtdItUser(
           testMtditid, testNino, None, multipleBusinessesAndPropertyResponse,
-          None, Some("1234567890"), None, Some("Agent"), Some(testArn)
+          None, Some("1234567890"), None, Some(Agent), Some(testArn)
         )(FakeRequest()),
         docDateDetailWithInterest(LocalDate.of(2019, 1, 1).toString, "ITSA- POA 1"),
         paymentBreakdown = paymentBreakdown,
@@ -143,7 +144,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
       AuditStub.verifyAuditEvent(ChargeSummaryAudit(
         MtdItUser(
           testMtditid, testNino, None, multipleBusinessesAndPropertyResponse,
-          None, Some("1234567890"), None, Some("Agent"), Some(testArn)
+          None, Some("1234567890"), None, Some(Agent), Some(testArn)
         )(FakeRequest()),
         docDateDetailWithInterest(LocalDate.of(2019, 1, 1).toString, "ITSA- POA 1"),
         paymentBreakdown = paymentBreakdown,
@@ -181,7 +182,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
       AuditStub.verifyAuditEvent(ChargeSummaryAudit(
         MtdItUser(
           testMtditid, testNino, None, multipleBusinessesAndPropertyResponse,
-          None, Some("1234567890"), None, Some("Agent"), Some(testArn)
+          None, Some("1234567890"), None, Some(Agent), Some(testArn)
         )(FakeRequest()),
         docDateDetailWithInterest(LocalDate.of(2019, 1, 1).toString, "ITSA- POA 1"),
         paymentBreakdown = paymentBreakdown,
@@ -205,7 +206,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
       AuditStub.verifyAuditEvent(ChargeSummaryAudit(
         MtdItUser(
           testMtditid, testNino, None, multipleBusinessesAndPropertyResponse,
-          None, Some("1234567890"), None, Some("Agent"), Some(testArn)
+          None, Some("1234567890"), None, Some(Agent), Some(testArn)
         )(FakeRequest()),
         docDateDetailWithInterest(LocalDate.of(2019, 1, 1).toString, "ITSA- POA 1"),
         paymentBreakdown = List.empty,

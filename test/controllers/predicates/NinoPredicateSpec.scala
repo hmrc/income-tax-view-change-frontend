@@ -27,6 +27,7 @@ import org.mockito.Mockito.mock
 import play.api.http.Status
 import play.api.test.Helpers._
 import testUtils.TestSupport
+import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 
 import scala.concurrent.Future
 
@@ -35,13 +36,13 @@ class NinoPredicateSpec extends TestSupport with MockNinoLookupService with Eith
   "The NinoPredicate" when {
 
     lazy val userNoNino = MtdItUserOptionNino(testMtditid, None, Some(testRetrievedUserName),
-      Some("testUtr"), Some("testCredId"), Some("Individual"))(fakeRequestWithActiveSession)
+      Some("testUtr"), Some("testCredId"), Some(Individual))(fakeRequestWithActiveSession)
     lazy val userNinoInSession = MtdItUserOptionNino(testMtditid, None, Some(testRetrievedUserName),
-      Some("testUtr"), Some("testCredId"), Some("Individual"))(fakeRequestWithNino)
+      Some("testUtr"), Some("testCredId"), Some(Individual))(fakeRequestWithNino)
     lazy val userWithNino = MtdItUserOptionNino(testMtditid, Some(testNino), Some(testRetrievedUserName),
-      Some("testUtr"), Some("testCredId"), Some("Individual"))(fakeRequestWithActiveSession)
+      Some("testUtr"), Some("testCredId"), Some(Individual))(fakeRequestWithActiveSession)
     lazy val successResponse = MtdItUserWithNino(testMtditid, testNino, Some(testRetrievedUserName),
-      btaNavPartial = None, Some("testUtr"), Some("testCredId"), Some("Individual"), None)
+      btaNavPartial = None, Some("testUtr"), Some("testCredId"), Some(Individual), None)
 
     lazy val ninoServiceSuccess = NinoResponseSuccess(testNino)
     lazy val ninoServiceError = NinoResponseError(testErrorStatus, testErrorMessage)

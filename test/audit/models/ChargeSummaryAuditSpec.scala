@@ -29,6 +29,8 @@ import play.api.test.FakeRequest
 import services.DateService
 import testConstants.BaseTestConstants._
 import testConstants.FinancialDetailsTestConstants.financialDetail
+import uk.gov.hmrc.auth.core.AffinityGroup
+import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.auth.core.retrieve.Name
 
 import java.time.LocalDate
@@ -110,7 +112,7 @@ class ChargeSummaryAuditSpec extends WordSpecLike with MustMatchers {
       "unknownCharge"
   }
 
-  def chargeSummaryAuditFull(userType: Option[String] = Some("Agent"),
+  def chargeSummaryAuditFull(userType: Option[AffinityGroup] = Some(Agent),
                              docDateDetails: DocumentDetailWithDueDate, paymentBreakdown: List[FinancialDetail],
                              chargeHistories: List[ChargeHistoryModel], paymentAllocations: List[PaymentsWithChargeType],
                              agentReferenceNumber: Option[String] = Some("agentReferenceNumber"), isLateInterestCharge: Boolean = true): ChargeSummaryAudit = ChargeSummaryAudit(
@@ -177,7 +179,7 @@ class ChargeSummaryAuditSpec extends WordSpecLike with MustMatchers {
       "the charge summary audit has all detail" when {
         "there are charge details" in {
           chargeSummaryAuditFull(
-            userType = Some("Agent"),
+            userType = Some(Agent),
             docDateDetail,
             paymentBreakdown = paymentBreakdowns,
             chargeHistories = chargeHistory,
@@ -252,7 +254,7 @@ class ChargeSummaryAuditSpec extends WordSpecLike with MustMatchers {
         "there are late payment charge details" in {
 
           chargeSummaryAuditFull(
-            userType = Some("Agent"),
+            userType = Some(Agent),
             docDateDetailWithInterest,
             paymentBreakdown = paymentBreakdowns,
             chargeHistories = chargeHistory,

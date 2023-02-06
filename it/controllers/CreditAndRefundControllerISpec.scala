@@ -27,6 +27,7 @@ import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
 import testConstants.FinancialDetailsIntegrationTestConstants.documentDetailWithDueDateFinancialDetailListModel
 import testConstants.IncomeSourceIntegrationTestConstants.{multipleBusinessesAndPropertyResponse, propertyOnlyResponseWithMigrationData, testValidFinancialDetailsModelCreditAndRefundsJson}
+import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 
 import java.time.LocalDate
 
@@ -72,7 +73,7 @@ class CreditAndRefundControllerISpec extends ComponentSpecBase {
         )(MtdItUser(
           testMtditid, testNino, None,
           multipleBusinessesAndPropertyResponse, None, Some("1234567890"),
-          Some("12345-credId"), Some("Individual"), None
+          Some("12345-credId"), Some(Individual), None
         )(FakeRequest())))
 
         res should have(

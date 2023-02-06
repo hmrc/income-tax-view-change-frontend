@@ -19,6 +19,8 @@ package auth
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import play.api.mvc.{Request, WrappedRequest}
 import play.twirl.api.Html
+import uk.gov.hmrc.auth.core.AffinityGroup
+import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
 import uk.gov.hmrc.auth.core.retrieve.Name
 
 abstract class MtdItUserBase[A](implicit request: Request[A]) extends WrappedRequest[A](request) {
@@ -32,7 +34,7 @@ abstract class MtdItUserBase[A](implicit request: Request[A]) extends WrappedReq
 
   def credId: Option[String]
 
-  def userType: Option[String]
+  def userType: Option[AffinityGroup]
 
   def arn: Option[String]
 }
@@ -42,7 +44,7 @@ case class MtdItUserOptionNino[A](mtditid: String,
                                   userName: Option[Name],
                                   saUtr: Option[String],
                                   credId: Option[String],
-                                  userType: Option[String])(implicit request: Request[A]) extends WrappedRequest[A](request)
+                                  userType: Option[AffinityGroup])(implicit request: Request[A]) extends WrappedRequest[A](request)
 
 case class MtdItUserWithNino[A](mtditid: String,
                                 nino: String,
@@ -50,7 +52,7 @@ case class MtdItUserWithNino[A](mtditid: String,
                                 btaNavPartial: Option[Html] = None,
                                 saUtr: Option[String],
                                 credId: Option[String],
-                                userType: Option[String],
+                                userType: Option[AffinityGroup],
                                 arn: Option[String])(implicit request: Request[A]) extends MtdItUserBase[A]
 
 case class MtdItUser[A](mtditid: String,
@@ -60,5 +62,5 @@ case class MtdItUser[A](mtditid: String,
                         btaNavPartial: Option[Html] = None,
                         saUtr: Option[String],
                         credId: Option[String],
-                        userType: Option[String],
+                        userType: Option[AffinityGroup],
                         arn: Option[String])(implicit request: Request[A]) extends MtdItUserBase[A]

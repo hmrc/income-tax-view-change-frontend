@@ -30,6 +30,7 @@ import testConstants.BaseIntegrationTestConstants._
 import testConstants.FinancialDetailsIntegrationTestConstants.documentDetailWithDueDateFinancialDetailListModel
 import testConstants.IncomeSourceIntegrationTestConstants.{multipleBusinessesAndPropertyResponse, propertyOnlyResponseWithMigrationData, testValidFinancialDetailsModelCreditAndRefundsJson, testValidFinancialDetailsModelJson}
 import testConstants.OutstandingChargesIntegrationTestConstants.validOutStandingChargeResponseJsonWithAciAndBcdCharges
+import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 
 import java.time.LocalDate
 
@@ -75,7 +76,7 @@ class CreditAndRefundControllerISpec extends ComponentSpecBase {
           )
         )(MtdItUser(testMtditid, testNino, None,
           multipleBusinessesAndPropertyResponse, None, Some("1234567890"),
-          None, Some("Agent"), Some("1"))(FakeRequest())))
+          None, Some(Agent), Some("1"))(FakeRequest())))
 
         res should have(
           httpStatus(OK),

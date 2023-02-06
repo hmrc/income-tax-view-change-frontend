@@ -15,6 +15,7 @@ import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
 import testConstants.IncomeSourceIntegrationTestConstants._
 import testConstants.PaymentAllocationIntegrationTestConstants._
+import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 
 class PaymentAllocationControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
@@ -32,7 +33,7 @@ class PaymentAllocationControllerISpec extends ComponentSpecBase with FeatureSwi
 
   val testUser: MtdItUser[_] = MtdItUser(
     testMtditid, testNino, None, paymentHistoryBusinessAndPropertyResponse,
-    None, Some("1234567890"), Some("12345-credId"), Some("Individual"), None
+    None, Some("1234567890"), Some("12345-credId"), Some(Individual), None
   )(FakeRequest())
 
 

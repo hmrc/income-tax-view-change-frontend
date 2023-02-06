@@ -23,6 +23,7 @@ import models.chargeHistory.ChargeHistoryModel
 import models.financialDetails.{DocumentDetailWithDueDate, FinancialDetail, PaymentsWithChargeType}
 import play.api.Logger
 import play.api.libs.json.{JsObject, JsValue, Json}
+import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import utils.Utilities._
 
 
@@ -32,7 +33,7 @@ case class ChargeSummaryAudit(mtdItUser: MtdItUser[_], docDateDetail: DocumentDe
                               isMFADebit: Boolean = false) extends ExtendedAuditModel {
 
   private val userType: JsObject = mtdItUser.userType match {
-    case Some("Agent") => Json.obj("userType" -> "Agent")
+    case Some(Agent) => Json.obj("userType" -> "Agent")
     case Some(_) => Json.obj("userType" -> "Individual")
     case None => Json.obj()
   }

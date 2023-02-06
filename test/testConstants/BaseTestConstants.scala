@@ -52,9 +52,9 @@ object BaseTestConstants extends UnitSpec with GuiceOneAppPerSuite {
   val docNumber: String = "XM0026100122"
   val testArn = "XAIT0000123456"
   val testCredId = "testCredId"
-  val testUserTypeIndividual = "Individual"
-  val testUserTypeAgent = "Agent"
-  val testUserType: String = testUserTypeIndividual
+  val testUserTypeIndividual = AffinityGroup.Individual
+  val testUserTypeAgent = AffinityGroup.Agent
+  val testUserType: AffinityGroup = testUserTypeIndividual
   val testTaxYear = 2018
   val calendarYear2018 = 2018
   val testYearPlusOne = 2019

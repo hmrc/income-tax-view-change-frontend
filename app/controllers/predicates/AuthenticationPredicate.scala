@@ -99,7 +99,7 @@ class AuthenticationPredicate @Inject()(implicit val ec: ExecutionContext,
       userName,
       saUtr = enrolments.getEnrolment(appConfig.saEnrolmentKey).flatMap(_.getIdentifier(appConfig.saIdentifierKey)).map(_.value),
       credId = credentials.map(credential => credential.providerId),
-      userType = affinityGroup.map(ag => (ag.toJson \ "affinityGroup").as[String])
+      userType = affinityGroup.map(ag => (ag.toJson \ "affinityGroup").as[AffinityGroup])
     )
   }
 

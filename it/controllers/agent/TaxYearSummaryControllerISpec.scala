@@ -38,6 +38,7 @@ import testConstants.BaseIntegrationTestConstants._
 import testConstants.IncomeSourceIntegrationTestConstants.{singleBusinessResponse, singleBusinessResponseWoMigration}
 import testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessful
 import testConstants.messages.TaxYearSummaryMessages._
+import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.auth.core.retrieve.Name
 
 import java.time.LocalDate
@@ -240,7 +241,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
 
   val testUser: MtdItUser[_] = MtdItUser(
     testMtditid, testNino, Some(Name(Some("Test"), Some("User"))), incomeSourceDetailsSuccess,
-    None, Some("1234567890"), None, Some("Agent"), arn = Some("1")
+    None, Some("1234567890"), None, Some(Agent), arn = Some("1")
   )(FakeRequest())
 
   s"[IT-AGENT-TEST-1] GET ${controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(getCurrentTaxYearEnd.getYear).url}" should {
