@@ -18,6 +18,7 @@ package audit.models
 
 import auth.MtdItUser
 import enums.ChargeType._
+import enums.CodingOutType.{CODING_OUT_ACCEPTED, CODING_OUT_CANCELLED}
 import models.chargeHistory.ChargeHistoryModel
 import models.financialDetails._
 import models.incomeSourceDetails.IncomeSourceDetailsModel
@@ -52,6 +53,26 @@ class ChargeSummaryAuditSpec extends WordSpecLike with MustMatchers {
     documentDate = LocalDate.of(2018, 3, 29)
   )
 
+  val docDetailWithCodingOutAccepted: DocumentDetail = DocumentDetail(
+    taxYear = taxYear,
+    transactionId = "1040000124",
+    documentDescription = Some("TRM Amend Charge"),
+    documentText = Some(CODING_OUT_ACCEPTED.name),
+    originalAmount = Some(10.34),
+    outstandingAmount = Some(0),
+    documentDate = LocalDate.of(2018, 3, 29)
+  )
+
+  val docDetailWithCodingOutRejected: DocumentDetail = DocumentDetail(
+    taxYear = taxYear,
+    transactionId = "1040000124",
+    documentDescription = Some("TRM Amend Charge"),
+    documentText = Some(CODING_OUT_CANCELLED.name),
+    originalAmount = Some(10.34),
+    outstandingAmount = Some(0),
+    documentDate = LocalDate.of(2018, 3, 29)
+  )
+
   val docDetailWithInterest: DocumentDetail = DocumentDetail(
     taxYear = taxYear,
     transactionId = "1040000124",
@@ -65,42 +86,65 @@ class ChargeSummaryAuditSpec extends WordSpecLike with MustMatchers {
     interestFromDate = Some(LocalDate.of(2021, 10, 6)),
     interestEndDate = Some(LocalDate.of(2022, 1, 6))
   )
-
-  def paymentsWithCharge(mainType: String, chargeType: String, date: String, amount: BigDecimal): PaymentsWithChargeType =
-    PaymentsWithChargeType(
-      payments = List(Payment(reference = Some("reference"), amount = Some(amount), outstandingAmount = None, method = Some("method"),
-        documentDescription = None, lot = Some("lot"), lotItem = Some("lotItem"), dueDate = Some(LocalDate.parse(date)), documentDate = LocalDate.parse(date),transactionId = None)),
-      mainType = Some(mainType), chargeType = Some(chargeType))
-
   val paymentAllocation: List[PaymentsWithChargeType] = List(
     paymentsWithCharge("SA Payment on Account 1", ITSA_NI, "2018-03-30", -1500.0),
     paymentsWithCharge("SA Payment on Account 1", NIC4_SCOTLAND, "2018-03-31", -1600.0)
   )
-
   val chargeHistoryModel: ChargeHistoryModel = ChargeHistoryModel("2019", "1040000124", LocalDate.of(2018, 7, 6), "documentDescription", 1500, LocalDate.of(2018, 7, 6), "amended return")
-  val chargeHistoryModel2: ChargeHistoryModel = ChargeHistoryModel("2019", "1040000124", LocalDate.of(2018, 7, 6), "documentDescription", 1500, LocalDate.of(2018, 7, 6), "Customer Request")
 
+  paymentAllocation.map(_.getPaymentAllocationTextInChargeSummary)
+  val chargeHistoryModel2: ChargeHistoryModel = ChargeHistoryModel("2019", "1040000124", LocalDate.of(2018, 7, 6), "documentDescription", 1500, LocalDate.of(2018, 7, 6), "Customer Request")
   val chargeHistory: List[ChargeHistoryModel] = List(
     chargeHistoryModel,
     chargeHistoryModel2)
-
   val paymentBreakdowns: List[FinancialDetail] = List(
     financialDetail(originalAmount = 123.45, chargeType = ITSA_ENGLAND_AND_NI, dunningLock = Some("Stand over order"), interestLock = Some("Manual RPI Signal")),
     financialDetail(originalAmount = 2345.67, chargeType = NIC2_GB, interestLock = Some("Breathing Space Moratorium Act")),
     financialDetail(originalAmount = 3456.78, chargeType = VOLUNTARY_NIC2_NI, dunningLock = Some("Stand over order")),
     financialDetail(originalAmount = 9876.54, chargeType = CGT))
-
   val docDateDetail: DocumentDetailWithDueDate = DocumentDetailWithDueDate(
     documentDetail = docDetail,
     dueDate = Some(LocalDate.now())
   )
-
+  val docDateDetailWithCodingOutAccepted: DocumentDetailWithDueDate = DocumentDetailWithDueDate(
+    documentDetail = docDetailWithCodingOutAccepted,
+    dueDate = Some(LocalDate.now())
+  )
+  val docDateDetailWithCodingOutRejected: DocumentDetailWithDueDate = DocumentDetailWithDueDate(
+    documentDetail = docDetailWithCodingOutRejected,
+    dueDate = Some(LocalDate.now())
+  )
   val docDateDetailWithInterest: DocumentDetailWithDueDate = DocumentDetailWithDueDate(
     documentDetail = docDetailWithInterest,
     dueDate = Some(LocalDate.now())
   )
+  val chargeSummaryAuditMin: ChargeSummaryAudit = ChargeSummaryAudit(
+    mtdItUser = MtdItUser(
+      mtditid = "mtditid",
+      nino = "nino",
+      userName = None,
+      incomeSources = IncomeSourceDetailsModel("mtditid", None, List.empty, None),
+      btaNavPartial = None,
+      saUtr = None,
+      credId = None,
+      userType = None,
+      arn = None
+    ),
+    docDateDetail = docDateDetail,
+    paymentBreakdown = List.empty,
+    chargeHistories = List.empty,
+    paymentAllocations = List.empty,
+    isLatePaymentCharge = false,
+    taxYear = taxYearInt
+  )
 
-  def getChargeType(latePayment: Boolean): String = docDetail.documentDescription match {
+  def paymentsWithCharge(mainType: String, chargeType: String, date: String, amount: BigDecimal): PaymentsWithChargeType =
+    PaymentsWithChargeType(
+      payments = List(Payment(reference = Some("reference"), amount = Some(amount), outstandingAmount = None, method = Some("method"),
+        documentDescription = None, lot = Some("lot"), lotItem = Some("lotItem"), dueDate = Some(LocalDate.parse(date)), documentDate = LocalDate.parse(date), transactionId = None)),
+      mainType = Some(mainType), chargeType = Some(chargeType))
+
+  def getChargeType(latePayment: Boolean, documentDetail: DocumentDetail): String = documentDetail.documentDescription match {
     case Some("ITSA- POA 1") => if (latePayment) "Late Payment Interest on payment on account 1 of 2" else "Payment on account 1 of 2"
     case Some("ITSA - POA 2") => if (latePayment) "Late Payment Interest on payment on account 2 of 2" else "Payment on account 2 of 2"
     case Some("TRM New Charge") | Some("TRM Amend Charge") =>
@@ -125,37 +169,19 @@ class ChargeSummaryAuditSpec extends WordSpecLike with MustMatchers {
       userType = userType,
       arn = agentReferenceNumber
     ),
-    docDateDetail = docDateDetailWithInterest,
+    docDateDetail = docDateDetails,
     paymentBreakdown = if (!isLateInterestCharge) paymentBreakdowns else List.empty,
     chargeHistories = if (!isLateInterestCharge) chargeHistory else List.empty,
     paymentAllocations = paymentAllocation,
-    isLatePaymentCharge = isLateInterestCharge
-  )
-
-  val chargeSummaryAuditMin: ChargeSummaryAudit = ChargeSummaryAudit(
-    mtdItUser = MtdItUser(
-      mtditid = "mtditid",
-      nino = "nino",
-      userName = None,
-      incomeSources = IncomeSourceDetailsModel("mtditid", None, List.empty, None),
-      btaNavPartial = None,
-      saUtr = None,
-      credId = None,
-      userType = None,
-      arn = None
-    ),
-    docDateDetail = docDateDetail,
-    paymentBreakdown = List.empty,
-    chargeHistories = List.empty,
-    paymentAllocations = List.empty,
-    isLatePaymentCharge = false
+    isLatePaymentCharge = isLateInterestCharge,
+    taxYear = taxYearInt
   )
 
   "ChargeSummaryAudit(mtdItUser, charge, agentReferenceNumber)" should {
 
     s"have the correct transaction name of '$transactionName'" in {
       chargeSummaryAuditFull(None,
-        docDateDetail,
+        docDateDetailWithInterest,
         paymentBreakdown = paymentBreakdowns,
         chargeHistories = chargeHistory,
         paymentAllocations = paymentAllocation,
@@ -165,7 +191,7 @@ class ChargeSummaryAuditSpec extends WordSpecLike with MustMatchers {
 
     s"have the correct audit event type of '$auditType'" in {
       chargeSummaryAuditFull(None,
-        docDateDetail,
+        docDateDetailWithInterest,
         paymentBreakdown = paymentBreakdowns,
         chargeHistories = chargeHistory,
         paymentAllocations = paymentAllocation,
@@ -178,7 +204,7 @@ class ChargeSummaryAuditSpec extends WordSpecLike with MustMatchers {
         "there are charge details" in {
           chargeSummaryAuditFull(
             userType = Some("Agent"),
-            docDateDetail,
+            docDateDetailWithInterest,
             paymentBreakdown = paymentBreakdowns,
             chargeHistories = chargeHistory,
             paymentAllocations = paymentAllocation,
@@ -189,8 +215,10 @@ class ChargeSummaryAuditSpec extends WordSpecLike with MustMatchers {
               "remainingToPay" -> docDetailWithInterest.remainingToPay,
               "fullPaymentAmount" -> docDetailWithInterest.originalAmount,
               "dueDate" -> docDateDetail.dueDate,
-              "chargeType" -> getChargeType(false),
-              "interestPeriod" -> "2021-10-06 to 2022-01-06"
+              "chargeType" -> getChargeType(false, docDetailWithInterest),
+              "interestPeriod" -> "2021-10-06 to 2022-01-06",
+              "endTaxYear" -> taxYearInt,
+              "overdue" -> docDateDetail.isOverdue
             ),
             "saUtr" -> "saUtr",
             "nationalInsuranceNumber" -> "nino",
@@ -249,6 +277,156 @@ class ChargeSummaryAuditSpec extends WordSpecLike with MustMatchers {
           )
         }
 
+        "there are charge details with coding out accepted" in {
+          chargeSummaryAuditFull(
+            userType = Some("Agent"),
+            docDateDetailWithCodingOutAccepted,
+            paymentBreakdown = paymentBreakdowns,
+            chargeHistories = chargeHistory,
+            paymentAllocations = paymentAllocation,
+            agentReferenceNumber = Some("agentReferenceNumber"),
+            isLateInterestCharge = false
+          ).detail mustBe Json.obj(
+            "charge" -> Json.obj(
+              "remainingToPay" -> docDetailWithCodingOutAccepted.remainingToPay,
+              "fullPaymentAmount" -> docDetailWithCodingOutRejected.originalAmount,
+              "dueDate" -> docDateDetailWithCodingOutAccepted.dueDate,
+              "chargeType" -> getChargeType(latePayment = false, docDetailWithCodingOutAccepted),
+              "endTaxYear" -> taxYearInt,
+              "overdue" -> docDateDetailWithCodingOutAccepted.isOverdue
+            ),
+            "saUtr" -> "saUtr",
+            "nationalInsuranceNumber" -> "nino",
+            "paymentBreakdown" -> Json.arr(
+              Json.obj(
+                "breakdownType" -> messages("chargeSummary.paymentBreakdown.incomeTax"),
+                "total" -> 123.45,
+                "chargeUnderReview" -> true,
+                "interestLock" -> true
+              ),
+              Json.obj(
+                "breakdownType" -> messages("chargeSummary.paymentBreakdown.nic2"),
+                "total" -> 2345.67,
+                "chargeUnderReview" -> false,
+                "interestLock" -> true
+              ),
+              Json.obj(
+                "breakdownType" -> messages("chargeSummary.paymentBreakdown.vcnic2"),
+                "total" -> 3456.78,
+                "chargeUnderReview" -> true,
+                "interestLock" -> false
+              ),
+              Json.obj(
+                "breakdownType" -> messages("chargeSummary.paymentBreakdown.cgt"),
+                "total" -> 9876.54,
+                "chargeUnderReview" -> false,
+                "interestLock" -> false
+              )
+            ),
+            "paymentAllocationsChargeHistory" -> Json.arr(
+              Json.obj(
+                "amount" -> 1500,
+                "date" -> "2018-03-30",
+                "description" -> s"Amount collected through your PAYE tax code for $taxYearInt to ${taxYearInt + 1} tax year"),
+              Json.obj(
+                "amount" -> 1600,
+                "date" -> "2018-03-31",
+                "description" -> s"Amount collected through your PAYE tax code for $taxYearInt to ${taxYearInt+ 1} tax year")
+            ),
+            "agentReferenceNumber" -> "agentReferenceNumber",
+            "chargeHistory" -> Json.arr(
+              Json.obj(
+                "date" -> "2018-07-06",
+                "description" -> "Remaining balance reduced due to amended return",
+                "amount" -> 1500
+              ),
+              Json.obj(
+                "date" -> "2018-07-06",
+                "description" -> "Remaining balance reduced by taxpayer request",
+                "amount" -> 1500
+              )
+            ),
+            "userType" -> "Agent",
+            "credId" -> "credId",
+            "mtditid" -> "mtditid"
+          )
+        }
+
+        "there are charge details with coding out rejected" in {
+          chargeSummaryAuditFull(
+            userType = Some("Agent"),
+            docDateDetailWithCodingOutRejected,
+            paymentBreakdown = paymentBreakdowns,
+            chargeHistories = chargeHistory,
+            paymentAllocations = paymentAllocation,
+            agentReferenceNumber = Some("agentReferenceNumber"),
+            isLateInterestCharge = false
+          ).detail mustBe Json.obj(
+            "charge" -> Json.obj(
+              "remainingToPay" -> docDetailWithCodingOutRejected.remainingToPay,
+              "fullPaymentAmount" -> docDetailWithCodingOutRejected.originalAmount,
+              "dueDate" -> docDateDetailWithCodingOutRejected.dueDate,
+              "chargeType" -> getChargeType(latePayment = false, docDetailWithCodingOutRejected),
+              "endTaxYear" -> taxYearInt,
+              "overdue" -> docDateDetailWithCodingOutRejected.isOverdue
+            ),
+            "saUtr" -> "saUtr",
+            "nationalInsuranceNumber" -> "nino",
+            "paymentBreakdown" -> Json.arr(
+              Json.obj(
+                "breakdownType" -> messages("chargeSummary.paymentBreakdown.incomeTax"),
+                "total" -> 123.45,
+                "chargeUnderReview" -> true,
+                "interestLock" -> true
+              ),
+              Json.obj(
+                "breakdownType" -> messages("chargeSummary.paymentBreakdown.nic2"),
+                "total" -> 2345.67,
+                "chargeUnderReview" -> false,
+                "interestLock" -> true
+              ),
+              Json.obj(
+                "breakdownType" -> messages("chargeSummary.paymentBreakdown.vcnic2"),
+                "total" -> 3456.78,
+                "chargeUnderReview" -> true,
+                "interestLock" -> false
+              ),
+              Json.obj(
+                "breakdownType" -> messages("chargeSummary.paymentBreakdown.cgt"),
+                "total" -> 9876.54,
+                "chargeUnderReview" -> false,
+                "interestLock" -> false
+              )
+            ),
+            "paymentAllocationsChargeHistory" -> Json.arr(
+              Json.obj(
+                "amount" -> 1500,
+                "date" -> "2018-03-30",
+                "description" -> "Cancelled PAYE Self Assessment (through your PAYE tax code)"),
+              Json.obj(
+                "amount" -> 1600,
+                "date" -> "2018-03-31",
+                "description" -> "Cancelled PAYE Self Assessment (through your PAYE tax code)")
+            ),
+            "agentReferenceNumber" -> "agentReferenceNumber",
+            "chargeHistory" -> Json.arr(
+              Json.obj(
+                "date" -> "2018-07-06",
+                "description" -> "Remaining balance reduced due to amended return",
+                "amount" -> 1500
+              ),
+              Json.obj(
+                "date" -> "2018-07-06",
+                "description" -> "Remaining balance reduced by taxpayer request",
+                "amount" -> 1500
+              )
+            ),
+            "userType" -> "Agent",
+            "credId" -> "credId",
+            "mtditid" -> "mtditid"
+          )
+        }
+
         "there are late payment charge details" in {
 
           chargeSummaryAuditFull(
@@ -264,8 +442,10 @@ class ChargeSummaryAuditSpec extends WordSpecLike with MustMatchers {
               "remainingToPay" -> docDetailWithInterest.interestRemainingToPay,
               "fullPaymentAmount" -> docDetailWithInterest.latePaymentInterestAmount,
               "dueDate" -> docDetailWithInterest.interestEndDate,
-              "chargeType" -> getChargeType(true),
-              "interestPeriod" -> "2021-10-06 to 2022-01-06"
+              "chargeType" -> getChargeType(latePayment = true, docDetailWithInterest),
+              "interestPeriod" -> "2021-10-06 to 2022-01-06",
+              "endTaxYear" -> taxYearInt,
+              "overdue" -> docDateDetail.isOverdue
             ),
             "saUtr" -> "saUtr",
             "nationalInsuranceNumber" -> "nino",
@@ -286,7 +466,9 @@ class ChargeSummaryAuditSpec extends WordSpecLike with MustMatchers {
               "remainingToPay" -> docDetail.remainingToPay,
               "fullPaymentAmount" -> docDetail.originalAmount,
               "dueDate" -> docDateDetail.dueDate,
-              "chargeType" -> getChargeType(false)),
+              "chargeType" -> getChargeType(latePayment = false, docDetail),
+              "endTaxYear" -> taxYearInt,
+              "overdue" -> docDateDetail.isOverdue),
             "nationalInsuranceNumber" -> "nino",
             "paymentBreakdown" -> Json.arr(),
             "paymentAllocationsChargeHistory" -> Json.arr(),
