@@ -904,6 +904,7 @@ object FinancialDetailsTestConstants {
           mainType = Some("SA Payment on Account 2"),
           dueDate = Some(LocalDate.now().plusDays(1)),
           outstandingAmount = Some(100),
+          //TODO - remove localDate.now
           taxYear = LocalDate.now().getYear.toString).getAllDocumentDetailsWithDueDates() ++
         testFinancialDetailsModelOneItemInList(documentDescription = Some("ITSA- POA 1"),
           mainType = Some("SA Payment on Account 1"),

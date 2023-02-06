@@ -38,14 +38,14 @@ case class WhatYouOweResponseAuditModel(user: MtdItUser[_],
 
   override val detail: JsValue = {
     (whatYouOweChargesList.codedOutDocumentDetail.map(y => Json.obj("codingOut" -> codingOut(y)))) match {
-      case Some (codingOutJson) => userAuditDetails(user) ++
+      case Some(codingOutJson) => userAuditDetails(user) ++
         balanceDetailsJson ++
         Json.obj("charges" -> docDetailsListJson) ++
         codingOutJson
       case _ =>
-        userAuditDetails (user) ++
-        balanceDetailsJson ++
-        Json.obj ("charges" -> docDetailsListJson)
+        userAuditDetails(user) ++
+          balanceDetailsJson ++
+          Json.obj("charges" -> docDetailsListJson)
     }
   }
 
@@ -67,19 +67,19 @@ case class WhatYouOweResponseAuditModel(user: MtdItUser[_],
   }
 
   private def remainingToPay(documentDetail: DocumentDetail): BigDecimal = {
-    if(documentDetail.isLatePaymentInterest) documentDetail.interestRemainingToPay else documentDetail.remainingToPay
+    if (documentDetail.isLatePaymentInterest) documentDetail.interestRemainingToPay else documentDetail.remainingToPay
   }
 
   private def documentDetails(docDateDetail: DocumentDetailWithDueDate): JsObject = {
-      Json.obj(
-        "chargeUnderReview" -> docDateDetail.dunningLock,
-        "outstandingAmount" -> remainingToPay(docDateDetail.documentDetail)
-      ) ++
-        ("chargeType", getChargeType(docDateDetail.documentDetail, docDateDetail.isLatePaymentInterest)) ++
-        ("dueDate", docDateDetail.dueDate) ++
-        accruingInterestJson(docDateDetail.documentDetail) ++
-        Json.obj("endTaxYear" -> docDateDetail.documentDetail.taxYear.toInt) ++
-        Json.obj("overDue" -> docDateDetail.isOverdue)
+    Json.obj(
+      "chargeUnderReview" -> docDateDetail.dunningLock,
+      "outstandingAmount" -> remainingToPay(docDateDetail.documentDetail)
+    ) ++
+      ("chargeType", getChargeType(docDateDetail.documentDetail, docDateDetail.isLatePaymentInterest)) ++
+      ("dueDate", docDateDetail.dueDate) ++
+      accruingInterestJson(docDateDetail.documentDetail) ++
+      Json.obj("endTaxYear" -> docDateDetail.documentDetail.taxYear.toInt) ++
+      Json.obj("overDue" -> docDateDetail.isOverdue)
   }
 
   private def accruingInterestJson(documentDetail: DocumentDetail): JsObject = {
@@ -102,11 +102,11 @@ case class WhatYouOweResponseAuditModel(user: MtdItUser[_],
     ("accruingInterest", outstandingCharge.aciChargeType.map(_.chargeAmount))
 
   private def codingOut(documentDetail: DocumentDetail): JsObject = {
-    Json.obj(
-      "amountCodedOut" -> documentDetail.amountCodedOut,
-      "endTaxYear" -> documentDetail.taxYear.toString
+      Json.obj(
+        "amountCodedOut" -> documentDetail.amountCodedOut,
+        "endTaxYear" -> documentDetail.taxYear.toString
       )
-    }
+  }
 
 
 }

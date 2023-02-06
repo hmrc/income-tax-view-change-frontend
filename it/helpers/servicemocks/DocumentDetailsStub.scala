@@ -12,10 +12,11 @@ object DocumentDetailsStub {
     taxYear = taxYear,
     transactionId = "1040000124",
     documentDescription = Some(documentDescription),
-    documentText = Some("documentText"),
+    documentText = Some("Class 2 National Insurance"),
     originalAmount = Some(10.34),
     outstandingAmount = Some(1.2),
-    documentDate = LocalDate.of(2018, 3, 29)
+    documentDate = LocalDate.of(2018, 3, 29),
+    amountCodedOut = Some(2500),
   )
 
   def docDateDetail(dueDate: String, chargeType: String)(implicit dateService: DateService): DocumentDetailWithDueDate = DocumentDetailWithDueDate(
@@ -35,7 +36,8 @@ object DocumentDetailsStub {
     latePaymentInterestAmount = Some(54.32),
     interestOutstandingAmount = Some(42.50),
     interestFromDate = Some(LocalDate.of(2018, 4, 14)),
-    interestEndDate = Some(LocalDate.of(2019, 1, 1))
+    interestEndDate = Some(LocalDate.of(2019, 1, 1)),
+    amountCodedOut = Some(2500),
   )
 
   def docDateDetailWithInterest(dueDate: String, chargeType: String)(implicit dateService: DateService): DocumentDetailWithDueDate = DocumentDetailWithDueDate(

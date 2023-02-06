@@ -58,7 +58,8 @@ class WhatYouOweResponseAuditModelSpec extends TestSupport {
       arn = if (userType.contains("Agent")) Some(testArn) else None
     ),
     whatYouOweChargesList = chargesList,
-    dateService
+    dateService,
+
   )
 
   "The WhatYouOweResponseAuditModel" should {
@@ -190,7 +191,6 @@ class WhatYouOweResponseAuditModelSpec extends TestSupport {
             balanceDetails = BalanceDetails(
               balanceDueWithin30Days = 0, overDueAmount = 0, totalBalance = 3, None, None, None, Some(BigDecimal(-1000.0)))
           )
-
         )
 
         (auditJson.detail \ "balanceDetails" \ "creditAmount").toString() shouldBe "JsDefined(-1000)"
