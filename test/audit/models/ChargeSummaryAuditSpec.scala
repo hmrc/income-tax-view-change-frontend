@@ -481,6 +481,5 @@ class ChargeSummaryAuditSpec extends WordSpecLike with MustMatchers {
         }
       }
     }
-
   }
 }
