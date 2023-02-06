@@ -946,7 +946,7 @@ timeoutDialog.minutes.two                                       = funud
 timeoutDialog.message                                           = Er eich diogelwch, byddwn yn eich llofnodi allan mewn
 timeoutDialog.seconds                                           = eiliad
 timeoutDialog.title                                             = Rydych ar fin cael eich allgofnodi
-button.continue                                                 = Arhoswch wedi'ch mewngofnodi
+button.continue                                                 = Arhoswch wedi''ch mewngofnodi
 
 ## Not found
 notFound.heading = Ni ellir dod o hyd i’r dudalen hon
