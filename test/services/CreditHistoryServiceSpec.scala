@@ -28,6 +28,7 @@ import services.helpers.CreditHistoryDataHelper
 import testConstants.BaseTestConstants.{testMtditid, testNino, testRetrievedUserName}
 import testConstants.IncomeSourceDetailsTestConstants.oldUserDetails
 import testUtils.TestSupport
+import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 
 class CreditHistoryServiceSpec extends TestSupport with MockIncomeTaxViewChangeConnector
   with FeatureSwitching with CreditHistoryDataHelper {
@@ -40,7 +41,7 @@ class CreditHistoryServiceSpec extends TestSupport with MockIncomeTaxViewChangeC
     btaNavPartial = None,
     saUtr = Some("saUtr"),
     credId = Some("credId"),
-    userType = Some("Individual"),
+    userType = Some(Individual),
     None
   )(FakeRequest())
 

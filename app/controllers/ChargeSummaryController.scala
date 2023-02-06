@@ -150,7 +150,7 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
           onError("Coding Out is disabled and redirected to not found page", isAgent, showInternalServerError = false)
         } else {
           auditChargeSummary(documentDetailWithDueDate, paymentBreakdown, chargeHistory, paymentAllocations,
-            isLatePaymentCharge, isMFADebit)
+            isLatePaymentCharge, isMFADebit, taxYear)
           Ok(chargeSummaryView(
             currentDate = dateService.getCurrentDate,
             documentDetailWithDueDate = documentDetailWithDueDate,
@@ -189,9 +189,8 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
   private def auditChargeSummary(documentDetailWithDueDate: DocumentDetailWithDueDate,
                                  paymentBreakdown: List[FinancialDetail], chargeHistories: List[ChargeHistoryModel],
                                  paymentAllocations: List[PaymentsWithChargeType], isLatePaymentCharge: Boolean,
-                                 isMFADebit: Boolean)
+                                 isMFADebit: Boolean, taxYear: Int)
                                 (implicit hc: HeaderCarrier, user: MtdItUser[_]): Unit = {
-
     auditingService.extendedAudit(ChargeSummaryAudit(
       mtdItUser = user,
       docDateDetail = documentDetailWithDueDate,
@@ -199,7 +198,8 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
       chargeHistories = chargeHistories,
       paymentAllocations = paymentAllocations,
       isLatePaymentCharge = isLatePaymentCharge,
-      isMFADebit = isMFADebit
+      isMFADebit = isMFADebit,
+      taxYear = taxYear
     ))
   }
 }

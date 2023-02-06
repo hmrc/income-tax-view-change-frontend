@@ -166,7 +166,7 @@ class CreditsSummaryController @Inject()(creditsView: CreditsSummary,
         CreditsSummaryModel(
           saUTR = user.saUtr.getOrElse(""),
           nino = user.nino,
-          userType = user.userType.getOrElse(""),
+          userType = user.userType.fold("")(_.toString),
           credId = user.credId.getOrElse(""),
           mtdRef = user.mtditid,
           creditOnAccount = creditOnAccount.getOrElse(BigDecimal(0.0)).toString(),

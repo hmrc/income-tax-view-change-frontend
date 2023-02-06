@@ -28,6 +28,8 @@ import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import testConstants.BaseTestConstants.taxYear
 import testUtils.TestSupport
+import uk.gov.hmrc.auth.core.AffinityGroup
+import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
 import uk.gov.hmrc.auth.core.retrieve.Name
 
 import java.time.LocalDate
@@ -117,7 +119,7 @@ class TaxYearSummaryResponseAuditModelSpec extends WordSpecLike with TestSupport
     Some(getCurrentTaxYearEnd)
   ))
 
-  def taxYearOverviewResponseAuditFull(userType: Option[String] = Some("Agent"),
+  def taxYearOverviewResponseAuditFull(userType: Option[AffinityGroup] = Some(Agent),
                                        agentReferenceNumber: Option[String],
                                        paymentHasADunningLock: Boolean = false,
                                        forecastIncome: Option[Int] = None,
@@ -142,11 +144,11 @@ class TaxYearSummaryResponseAuditModelSpec extends WordSpecLike with TestSupport
       ),
     )
 
-  def taxYearOverviewResponseAuditUnattendedCalc(userType: Option[String] = Some("Agent"),
-                                       agentReferenceNumber: Option[String],
-                                       paymentHasADunningLock: Boolean = false,
-                                       forecastIncome: Option[Int] = None,
-                                       forecastIncomeTaxAndNics: Option[BigDecimal] = None): TaxYearSummaryResponseAuditModel =
+  def taxYearOverviewResponseAuditUnattendedCalc(userType: Option[AffinityGroup] = Some(Agent),
+                                                 agentReferenceNumber: Option[String],
+                                                 paymentHasADunningLock: Boolean = false,
+                                                 forecastIncome: Option[Int] = None,
+                                                 forecastIncomeTaxAndNics: Option[BigDecimal] = None): TaxYearSummaryResponseAuditModel =
     TaxYearSummaryResponseAuditModel(
       mtdItUser = MtdItUser(
         mtditid = "mtditid",
@@ -184,7 +186,7 @@ class TaxYearSummaryResponseAuditModelSpec extends WordSpecLike with TestSupport
     "have the correct details for the audit event" when {
       "the user type is Agent" in {
         taxYearOverviewResponseAuditFull(
-          userType = Some("Agent"),
+          userType = Some(Agent),
           agentReferenceNumber = Some("agentReferenceNumber"),
         ).detail shouldBe Json.obj(
           "nationalInsuranceNumber" -> "nino",
@@ -234,7 +236,7 @@ class TaxYearSummaryResponseAuditModelSpec extends WordSpecLike with TestSupport
 
       "the user type is Individual" in {
         taxYearOverviewResponseAuditFull(
-          userType = Some("Individual"),
+          userType = Some(Individual),
           agentReferenceNumber = None,
           paymentHasADunningLock = true
         ).detail shouldBe Json.obj(

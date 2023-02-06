@@ -36,7 +36,7 @@ import testConstants.IncomeSourceIntegrationTestConstants._
 import testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessful
 import testConstants.NewCalcDataIntegrationTestConstants._
 import testConstants.messages.TaxDueSummaryMessages._
-
+import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 
 import java.time.LocalDate
 
@@ -44,7 +44,7 @@ class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
 
   val testUser: MtdItUser[_] = MtdItUser(
     testMtditid, testNino, None, multipleBusinessesAndPropertyResponse,
-    None, Some("1234567890"), None, Some("Agent"), Some("1")
+    None, Some("1234567890"), None, Some(Agent), Some("1")
   )(FakeRequest())
 
   val implicitDateFormatter: ImplicitDateFormatter = app.injector.instanceOf[ImplicitDateFormatterImpl]

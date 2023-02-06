@@ -24,6 +24,8 @@ import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import testConstants.BaseTestConstants.{testMtditid, testTaxYear}
 import testConstants.NewCalcBreakdownUnitTestConstants.{liabilityCalculationModelDeductionsMinimal, liabilityCalculationModelSuccessful}
+import uk.gov.hmrc.auth.core.AffinityGroup
+import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
 import uk.gov.hmrc.auth.core.retrieve.Name
 
 class TaxCalculationDetailsResponseAuditModelSpec extends WordSpecLike with MustMatchers {
@@ -41,14 +43,14 @@ class TaxCalculationDetailsResponseAuditModelSpec extends WordSpecLike with Must
         btaNavPartial = None,
         saUtr = Some("saUtr"),
         credId = Some("credId"),
-        userType = Some("Individual"),
+        userType = Some(Individual),
         arn = None
       )(FakeRequest()),
       viewModel = TaxDueSummaryViewModel(liabilityCalculationModelSuccessful),
       taxYear = testTaxYear
     )
 
-  def taxCalculationDetailsResponseAuditModelMinimal(userType: Option[String] = Some("Individual"),
+  def taxCalculationDetailsResponseAuditModelMinimal(userType: Option[AffinityGroup] = Some(Individual),
                                                      arn: Option[String] = None): TaxDueResponseAuditModel =
     TaxDueResponseAuditModel(
       mtdItUser = MtdItUser(
@@ -286,7 +288,7 @@ class TaxCalculationDetailsResponseAuditModelSpec extends WordSpecLike with Must
 
       "the user is an agent" in {
         taxCalculationDetailsResponseAuditModelMinimal(
-          userType = Some("Agent"), arn = Some("1")
+          userType = Some(Agent), arn = Some("1")
         ).detail mustBe taxCalcDetailsResponseAuditModelDetailJsonMinimalAgent
       }
 

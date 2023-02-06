@@ -29,6 +29,7 @@ import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.IncomeSourceIntegrationTestConstants._
 import testConstants.messages.{TaxYearSummaryMessages, paymentAndRefundHistoryHeading}
+import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 
 import java.time.LocalDate
 
@@ -59,7 +60,7 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase {
 
   val testUser: MtdItUser[_] = MtdItUser(
     testMtditid, testNino, None, paymentHistoryBusinessAndPropertyResponse,
-    None, Some("1234567890"), Some("12345-credId"), Some("Individual"), None
+    None, Some("1234567890"), Some("12345-credId"), Some(Individual), None
   )(FakeRequest())
 
   s"GET ${controllers.routes.PaymentHistoryController.show().url}" should {

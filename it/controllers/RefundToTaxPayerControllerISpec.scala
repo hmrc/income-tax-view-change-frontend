@@ -28,6 +28,7 @@ import play.api.libs.ws.WSResponse
 import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants.testMtditid
 import testConstants.IncomeSourceIntegrationTestConstants.paymentHistoryBusinessAndPropertyResponse
+import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 
 import java.time.LocalDate
 
@@ -77,7 +78,7 @@ class RefundToTaxPayerControllerISpec extends ComponentSpecBase {
 
   val testUser: MtdItUser[_] = MtdItUser(
     testMtditid, testNino, None, paymentHistoryBusinessAndPropertyResponse,
-    None, Some("1234567890"), Some("12345-credId"), Some("Individual"), None
+    None, Some("1234567890"), Some("12345-credId"), Some(Individual), None
   )(FakeRequest())
 
   s"GET ${controllers.routes.RefundToTaxPayerController.show(repaymentRequestNumber).url}" should {

@@ -99,11 +99,11 @@ class AuthenticationPredicate @Inject()(implicit val ec: ExecutionContext,
       userName,
       saUtr = enrolments.getEnrolment(appConfig.saEnrolmentKey).flatMap(_.getIdentifier(appConfig.saIdentifierKey)).map(_.value),
       credId = credentials.map(credential => credential.providerId),
-      userType = affinityGroup.map(ag => (ag.toJson \ "affinityGroup").as[String])
+      userType = affinityGroup.map(ag => (ag.toJson \ "affinityGroup").as[AffinityGroup])
     )
   }
 
   val ivUpliftRedirectUrl: String = s"${appConfig.ivUrl}/uplift?origin=ITVC&confidenceLevel=$requiredConfidenceLevel&" +
-    s"completionURL=${appConfig.itvcFrontendEnvironment + "/" + appConfig.baseUrl + controllers.routes.UpliftSuccessController.success.url}&" +
-    s"failureURL=${appConfig.itvcFrontendEnvironment + "/" + appConfig.baseUrl + controllers.errors.routes.UpliftFailedController.show.url}"
+    s"completionURL=/${appConfig.baseUrl + controllers.routes.UpliftSuccessController.success.url}&" +
+    s"failureURL=/${appConfig.baseUrl + controllers.errors.routes.UpliftFailedController.show.url}"
 }

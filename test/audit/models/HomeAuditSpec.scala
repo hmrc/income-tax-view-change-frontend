@@ -21,6 +21,8 @@ import auth.MtdItUser
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import org.scalatest.{MustMatchers, WordSpecLike}
 import play.api.libs.json.Json
+import uk.gov.hmrc.auth.core.AffinityGroup
+import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
 import uk.gov.hmrc.auth.core.retrieve.Name
 
 import java.time.LocalDate
@@ -30,7 +32,7 @@ class HomeAuditSpec extends WordSpecLike with MustMatchers {
   val transactionName: String = "itsa-home-page"
   val auditType: String = "ItsaHomePage"
 
-  def homeAuditFull(userType: Option[String] = Some("Agent"), agentReferenceNumber: Option[String] = Some("agentReferenceNumber"),
+  def homeAuditFull(userType: Option[AffinityGroup] = Some(Agent), agentReferenceNumber: Option[String] = Some("agentReferenceNumber"),
                     nextPaymentOrOverdue: Either[(LocalDate, Boolean), Int],
                     nextUpdateOrOverdue: Either[(LocalDate, Boolean), Int]): HomeAudit = HomeAudit(
     mtdItUser = MtdItUser(
@@ -84,7 +86,7 @@ class HomeAuditSpec extends WordSpecLike with MustMatchers {
       "the home audit has all detail" when {
         "there are multiple overdue payments and updates" in {
           homeAuditFull(
-            userType = Some("Agent"),
+            userType = Some(Agent),
             nextPaymentOrOverdue = Right(2),
             nextUpdateOrOverdue = Right(2)
           ).detail mustBe Json.obj(
@@ -101,7 +103,7 @@ class HomeAuditSpec extends WordSpecLike with MustMatchers {
         }
         "there is are payments and updates due which are not overdue" in {
           homeAuditFull(
-            userType = Some("Individual"),
+            userType = Some(Individual),
             nextPaymentOrOverdue = Left(LocalDate.now -> false),
             nextUpdateOrOverdue = Left(LocalDate.now -> false)
           ).detail mustBe Json.obj(

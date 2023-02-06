@@ -325,7 +325,6 @@ class RefundToTaxPayerViewSpec extends ViewSpec with ImplicitDateFormatter {
         allTableData.get(0).text() shouldBe RefundToTaxPayerMessages.tableHeadEstimatedDate
         allTableData.get(1).text() shouldBe RefundToTaxPayerMessages.tableHeadMethod
         allTableData.get(2).text() shouldBe RefundToTaxPayerMessages.tableHeadTotalRefund
-        println(document)
 
         layoutContent.select(".govuk-details__summary").select("span").first().text shouldBe RefundToTaxPayerMessages.tableHeadFurtherDetails
 

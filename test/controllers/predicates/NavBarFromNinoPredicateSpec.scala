@@ -29,6 +29,7 @@ import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
 import play.twirl.api.Html
 import testConstants.BaseTestConstants.{testListLink, testMtditid, testNino, testRetrievedUserName}
 import testUtils.TestSupport
+import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 import views.html.navBar.{BtaNavBar, PtaPartial}
 
 import scala.concurrent.Future
@@ -45,16 +46,16 @@ class NavBarFromNinoPredicateSpec extends TestSupport with MockAsyncCacheApi wit
   val testView: BtaNavBar = app.injector.instanceOf[BtaNavBar]
 
   lazy val userWithNinoAndWithoutOrigin: MtdItUserWithNino[Any] = MtdItUserWithNino(testMtditid, testNino, Some(testRetrievedUserName),
-    None, Some("testUtr"), Some("testCredId"), Some("Individual"), None)
+    None, Some("testUtr"), Some("testCredId"), Some(Individual), None)
 
   lazy val userWithNinoAndOriginBta: MtdItUserWithNino[Any] = MtdItUserWithNino(testMtditid, testNino, Some(testRetrievedUserName),
-    Some(testView.apply(testListLink)), Some("testUtr"), Some("testCredId"), Some("Individual"), None)(fakeRequestWithNinoAndOrigin("bta"))
+    Some(testView.apply(testListLink)), Some("testUtr"), Some("testCredId"), Some(Individual), None)(fakeRequestWithNinoAndOrigin("bta"))
 
   lazy val userWithNinoAndOriginPta: MtdItUserWithNino[Any] = MtdItUserWithNino(testMtditid, testNino, Some(testRetrievedUserName),
-    Some(Html("")), Some("testUtr"), Some("testCredId"), Some("Individual"), None)(fakeRequestWithNinoAndOrigin("pta"))
+    Some(Html("")), Some("testUtr"), Some("testCredId"), Some(Individual), None)(fakeRequestWithNinoAndOrigin("pta"))
 
   lazy val noAddedPartial: MtdItUserWithNino[Any] = MtdItUserWithNino(testMtditid, testNino, Some(testRetrievedUserName),
-    None, Some("testUtr"), Some("testCredId"), Some("Individual"), None)(fakeRequestWithNinoAndOrigin("BTA"))
+    None, Some("testUtr"), Some("testCredId"), Some(Individual), None)(fakeRequestWithNinoAndOrigin("BTA"))
 
   "The NavBarFromNinoPredicate" when {
 

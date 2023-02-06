@@ -22,6 +22,7 @@ import play.api.http.Status.OK
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import testUtils.TestSupport
+import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.auth.core.retrieve.Name
 
 class IncomeSourceDetailsResponseAuditModelSpec extends TestSupport {
@@ -74,7 +75,7 @@ class IncomeSourceDetailsResponseAuditModelSpec extends TestSupport {
             nino = testNino,
             mtditid = testMtditidAgent,
             arn = Some("arn"),
-            userType = Some("Agent"),
+            userType = Some(Agent),
             credId = Some(testCredId),
             userName = Some(Name(Some("firstName"), Some("lastName")))
           )(FakeRequest()),

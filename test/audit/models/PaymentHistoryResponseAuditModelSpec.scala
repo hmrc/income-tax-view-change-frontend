@@ -18,11 +18,13 @@ package audit.models
 
 import testConstants.BaseTestConstants.{testArn, testCredId, testMtditid, testNino, testSaUtr}
 import auth.MtdItUser
-import config.featureswitch.{CutOverCredits}
+import config.featureswitch.CutOverCredits
 import models.financialDetails.Payment
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import play.api.libs.json._
 import testUtils.TestSupport
+import uk.gov.hmrc.auth.core.AffinityGroup
+import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 import uk.gov.hmrc.auth.core.retrieve.Name
 
 import java.time.LocalDate
@@ -33,8 +35,8 @@ class PaymentHistoryResponseAuditModelSpec extends TestSupport {
   val auditEvent = "PaymentHistoryResponse"
   val paymentFromEarlierYear: String = messages("paymentHistory.paymentFromEarlierYear")
 
-  private def paymentHistoryAuditFullTxm(userType: Option[String] = Some("Individual"), MFA: Boolean = true,
-                                 CutOver: Boolean = true) = PaymentHistoryResponseAuditModel(
+  private def paymentHistoryAuditFullTxm(userType: Option[AffinityGroup] = Some(Individual), MFA: Boolean = true,
+                                         CutOver: Boolean = true) = PaymentHistoryResponseAuditModel(
     mtdItUser = MtdItUser(
       mtditid = testMtditid,
       nino = testNino,

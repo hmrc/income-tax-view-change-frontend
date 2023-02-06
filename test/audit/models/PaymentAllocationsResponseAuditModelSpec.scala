@@ -24,6 +24,8 @@ import models.paymentAllocationCharges.{AllocationDetailWithClearingDate, Financ
 import models.paymentAllocations.{AllocationDetail, PaymentAllocations}
 import play.api.libs.json.Json
 import testUtils.TestSupport
+import uk.gov.hmrc.auth.core.AffinityGroup
+import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
 import uk.gov.hmrc.auth.core.retrieve.Name
 
 import java.time.LocalDate
@@ -80,7 +82,7 @@ class PaymentAllocationsResponseAuditModelSpec extends TestSupport {
     Seq(AllocationDetailWithClearingDate(Some(allocationDetailCredit), Some(LocalDate.parse("2017-03-21"))))
 
 
-  def paymentAllocationsAuditFull(userType: Option[String] = Some("Agent")): PaymentAllocationsResponseAuditModel = {
+  def paymentAllocationsAuditFull(userType: Option[AffinityGroup] = Some(Agent)): PaymentAllocationsResponseAuditModel = {
     PaymentAllocationsResponseAuditModel(
       mtdItUser = MtdItUser(
         mtditid = testMtditid,
@@ -91,13 +93,13 @@ class PaymentAllocationsResponseAuditModelSpec extends TestSupport {
         saUtr = Some(testSaUtr),
         credId = Some(testCredId),
         userType = userType,
-        arn = if (userType.contains("Agent")) Some(testArn) else None
+        arn = if (userType.contains(Agent)) Some(testArn) else None
       ),
       paymentAllocations = PaymentAllocationViewModel(paymentAllocationChargeModel, originalPaymentAllocationWithClearingDate)
     )
   }
 
-  def paymentAllocationsAuditFullCredit(userType: Option[String] = Some("Agent")): PaymentAllocationsResponseAuditModel = {
+  def paymentAllocationsAuditFullCredit(userType: Option[AffinityGroup] = Some(Agent)): PaymentAllocationsResponseAuditModel = {
     PaymentAllocationsResponseAuditModel(
       mtdItUser = MtdItUser(
         mtditid = testMtditid,
@@ -108,7 +110,7 @@ class PaymentAllocationsResponseAuditModelSpec extends TestSupport {
         saUtr = Some(testSaUtr),
         credId = Some(testCredId),
         userType = userType,
-        arn = if (userType.contains("Agent")) Some(testArn) else None
+        arn = if (userType.contains(Agent)) Some(testArn) else None
       ),
       paymentAllocations = PaymentAllocationViewModel(paymentAllocationChargeModelCredit, originalPaymentAllocationWithClearingDateCredit)
     )
@@ -127,7 +129,7 @@ class PaymentAllocationsResponseAuditModelSpec extends TestSupport {
     "Have the correct details for the audit event with Credit" when {
       "the audit is full" when {
         "the user is an individual" in {
-          paymentAllocationsAuditFullCredit(userType = Some("Individual")).detail shouldBe Json.obj(
+          paymentAllocationsAuditFullCredit(userType = Some(Individual)).detail shouldBe Json.obj(
             "mtditid" -> testMtditid,
             "nationalInsuranceNumber" -> testNino,
             "saUtr" -> testSaUtr,
@@ -148,7 +150,7 @@ class PaymentAllocationsResponseAuditModelSpec extends TestSupport {
           )
         }
         "the user is an agent" in {
-          paymentAllocationsAuditFullCredit(userType = Some("Agent")).detail shouldBe Json.obj(
+          paymentAllocationsAuditFullCredit(userType = Some(Agent)).detail shouldBe Json.obj(
             "mtditid" -> testMtditid,
             "nationalInsuranceNumber" -> testNino,
             "saUtr" -> testSaUtr,
@@ -186,7 +188,7 @@ class PaymentAllocationsResponseAuditModelSpec extends TestSupport {
     "Have the correct details for the audit event" when {
       "the audit is full" when {
         "the user is an individual" in {
-          paymentAllocationsAuditFull(userType = Some("Individual")).detail shouldBe Json.obj(
+          paymentAllocationsAuditFull(userType = Some(Individual)).detail shouldBe Json.obj(
             "mtditid" -> testMtditid,
             "nationalInsuranceNumber" -> testNino,
             "saUtr" -> testSaUtr,
@@ -207,7 +209,7 @@ class PaymentAllocationsResponseAuditModelSpec extends TestSupport {
           )
         }
         "the user is an agent" in {
-          paymentAllocationsAuditFull(userType = Some("Agent")).detail shouldBe Json.obj(
+          paymentAllocationsAuditFull(userType = Some(Agent)).detail shouldBe Json.obj(
             "mtditid" -> testMtditid,
             "nationalInsuranceNumber" -> testNino,
             "saUtr" -> testSaUtr,
@@ -245,7 +247,7 @@ class PaymentAllocationsResponseAuditModelSpec extends TestSupport {
     "Have the correct details for the audit event with Credit" when {
       "the audit is full" when {
         "the user is an individual" in {
-          paymentAllocationsAuditFullCredit(userType = Some("Individual")).detail shouldBe Json.obj(
+          paymentAllocationsAuditFullCredit(userType = Some(Individual)).detail shouldBe Json.obj(
             "mtditid" -> testMtditid,
             "nationalInsuranceNumber" -> testNino,
             "saUtr" -> testSaUtr,
@@ -266,7 +268,7 @@ class PaymentAllocationsResponseAuditModelSpec extends TestSupport {
           )
         }
         "the user is an agent" in {
-          paymentAllocationsAuditFullCredit(userType = Some("Agent")).detail shouldBe Json.obj(
+          paymentAllocationsAuditFullCredit(userType = Some(Agent)).detail shouldBe Json.obj(
             "mtditid" -> testMtditid,
             "nationalInsuranceNumber" -> testNino,
             "saUtr" -> testSaUtr,

@@ -25,6 +25,7 @@ import play.api.http.Status
 import play.api.test.Helpers._
 import play.api.mvc.MessagesControllerComponents
 import testUtils.TestSupport
+import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 
 import scala.concurrent.Future
 
@@ -37,9 +38,9 @@ class IncomeSourceDetailsPredicateSpec extends TestSupport with MockIncomeSource
   )
 
   lazy val userWithNino: MtdItUserWithNino[Any] = MtdItUserWithNino(testMtditid, testNino, Some(testRetrievedUserName),
-    None, Some("testUtr"), Some("testCredId"), Some("Individual"), None)
+    None, Some("testUtr"), Some("testCredId"), Some(Individual), None)
   lazy val successResponse: MtdItUser[Any] = MtdItUser(testMtditid, testNino, Some(testRetrievedUserName), singleBusinessIncome,
-    None, Some("testUtr"), Some("testCredId"), Some("Individual"), None)
+    None, Some("testUtr"), Some("testCredId"), Some(Individual), None)
 
   "The IncomeSourceDetailsPredicate" when {
 
