@@ -31,6 +31,7 @@ import testConstants.BaseTestConstants.{testMtditid, testNino, testRetrievedUser
 import testConstants.FinancialDetailsTestConstants._
 import testConstants.IncomeSourceDetailsTestConstants.singleBusinessIncomeWithCurrentYear
 import testUtils.TestSupport
+import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 
 import java.time.LocalDate
 import scala.concurrent.Future
@@ -45,7 +46,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
     btaNavPartial = None,
     saUtr = Some("1234567890"),
     credId = Some("credId"),
-    userType = Some("Individual"),
+    userType = Some(Individual),
     None
   )(FakeRequest())
 

@@ -28,12 +28,13 @@ import testConstants.BaseIntegrationTestConstants._
 import testConstants.IncomeSourceIntegrationTestConstants.{multipleBusinessesAndPropertyResponse, testValidFinancialDetailsModelJson}
 import testConstants.NextUpdatesIntegrationTestConstants._
 import testConstants.messages.HomeMessages._
+import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 
 class HomeControllerISpec extends ComponentSpecBase {
 
   val testUser: MtdItUser[_] = MtdItUser(
     testMtditid, testNino, None, multipleBusinessesAndPropertyResponse, None,
-    Some("1234567890"), Some("12345-credId"), Some("Individual"), None
+    Some("1234567890"), Some("12345-credId"), Some(Individual), None
   )(FakeRequest())
 
   "Navigating to /report-quarterly/income-and-expenses/view" when {

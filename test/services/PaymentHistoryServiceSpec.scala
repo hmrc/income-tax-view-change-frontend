@@ -25,6 +25,7 @@ import models.financialDetails.{Payment, Payments, PaymentsError}
 import play.api.test.FakeRequest
 import services.PaymentHistoryService.PaymentHistoryError
 import testUtils.TestSupport
+import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 
 import java.time.LocalDate
 
@@ -52,7 +53,7 @@ class PaymentHistoryServiceSpec extends TestSupport with MockIncomeTaxViewChange
     btaNavPartial = None,
     saUtr = Some("saUtr"),
     credId = Some("credId"),
-    userType = Some("Individual"),
+    userType = Some(Individual),
     None
   )(FakeRequest())
 

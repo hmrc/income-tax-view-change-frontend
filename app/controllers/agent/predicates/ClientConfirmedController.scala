@@ -24,6 +24,7 @@ import controllers.predicates.agent.AgentAuthenticationPredicate
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import play.api.mvc.{AnyContent, MessagesControllerComponents, Request}
 import services.IncomeSourceDetailsService
+import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.auth.core.retrieve.Name
 import uk.gov.hmrc.http.{HeaderCarrier, HeaderNames, InternalServerException}
@@ -65,14 +66,14 @@ trait ClientConfirmedController extends BaseAgentController {
     implicit user: IncomeTaxAgentUser, request: Request[AnyContent], hc: HeaderCarrier): MtdItUserWithNino[AnyContent] = {
     MtdItUserWithNino(
       mtditid = getClientMtditid, nino = getClientNino, userName = getClientName,
-      saUtr = getClientUtr, credId = user.credId, userType = Some("Agent"), arn = user.agentReferenceNumber
+      saUtr = getClientUtr, credId = user.credId, userType = Some(Agent), arn = user.agentReferenceNumber
     )
   }
 
   def getMtdItUserWithIncomeSources(incomeSourceDetailsService: IncomeSourceDetailsService, useCache: Boolean)(
     implicit user: IncomeTaxAgentUser, request: Request[AnyContent], hc: HeaderCarrier): Future[MtdItUser[AnyContent]] = {
     val userWithNino: MtdItUserWithNino[_] = MtdItUserWithNino(
-      getClientMtditid, getClientNino, getClientName, None, getClientUtr, user.credId, Some("Agent"), user.agentReferenceNumber
+      getClientMtditid, getClientNino, getClientName, None, getClientUtr, user.credId, Some(Agent), user.agentReferenceNumber
     )
 
     val cacheKey = if (useCache) {

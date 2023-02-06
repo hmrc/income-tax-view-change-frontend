@@ -30,6 +30,7 @@ import play.twirl.api.Html
 import testConstants.BaseTestConstants.{testListLink, testMtditid, testNino, testRetrievedUserName}
 import testConstants.IncomeSourceDetailsTestConstants.singleBusinessIncome
 import testUtils.TestSupport
+import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 import views.html.navBar.{BtaNavBar, PtaPartial}
 
 import scala.concurrent.Future
@@ -45,16 +46,16 @@ class NavBarPredicateSpec extends TestSupport with MockAsyncCacheApi with Featur
   val testView: BtaNavBar = app.injector.instanceOf[BtaNavBar]
 
   lazy val successResponseWithoutOrigin: MtdItUser[Any] = MtdItUser(testMtditid, testNino, Some(testRetrievedUserName), singleBusinessIncome,
-    None, Some("testUtr"), Some("testCredId"), Some("Individual"), None)
+    None, Some("testUtr"), Some("testCredId"), Some(Individual), None)
 
   lazy val successResponseWithBtaOrigin: MtdItUser[Any] = MtdItUser(testMtditid, testNino, Some(testRetrievedUserName), singleBusinessIncome,
-    Some(testView.apply(testListLink)), Some("testUtr"), Some("testCredId"), Some("Individual"), None)(fakeRequestWithNinoAndOrigin("BTA"))
+    Some(testView.apply(testListLink)), Some("testUtr"), Some("testCredId"), Some(Individual), None)(fakeRequestWithNinoAndOrigin("BTA"))
 
   lazy val successResponseWithPtaOrigin: MtdItUser[Any] = MtdItUser(testMtditid, testNino, Some(testRetrievedUserName), singleBusinessIncome,
-    Some(Html("")), Some("testUtr"), Some("testCredId"), Some("Individual"), None)(fakeRequestWithNinoAndOrigin("PTA"))
+    Some(Html("")), Some("testUtr"), Some("testCredId"), Some(Individual), None)(fakeRequestWithNinoAndOrigin("PTA"))
 
   lazy val noAddedPartial: MtdItUser[Any] = MtdItUser(testMtditid, testNino, Some(testRetrievedUserName), singleBusinessIncome,
-    None, Some("testUtr"), Some("testCredId"), Some("Individual"), None)
+    None, Some("testUtr"), Some("testCredId"), Some(Individual), None)
 
   "The NavBarPredicate" when {
 

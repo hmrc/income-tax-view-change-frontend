@@ -21,13 +21,14 @@ import play.api.http.Status
 
 import java.time.LocalDate
 import models.btaNavBar.{NavContent, NavLinks}
+import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
 
 object BaseIntegrationTestConstants {
 
   val testDate: LocalDate = LocalDate.of(2018, 5, 5)
 
-  val testUserTypeIndividual = "Individual"
-  val testUserTypeAgent = "Agent"
+  val testUserTypeIndividual = Individual
+  val testUserTypeAgent = Agent
 
   val testMtditidEnrolmentKey = "HMRC-MTD-IT"
   val testMtditidEnrolmentIdentifier = "MTDITID"

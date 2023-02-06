@@ -29,6 +29,7 @@ import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.{CreditService, DateService, IncomeSourceDetailsService, RepaymentService}
+import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.language.LanguageUtils
 import utils.CreditAndRefundUtils.UnallocatedCreditType
@@ -164,7 +165,7 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
         user.userType match {
           case _ if isDisabled(CreditsRefundsRepay) =>
             Future.successful(Ok(customNotFoundErrorView()(user, user.messages)))
-          case Some("Agent") =>
+          case Some(Agent) =>
             Future.successful(itvcErrorHandlerAgent.showInternalServerError())
           case _ =>
             handleRefundRequest(
@@ -182,7 +183,7 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
         user.userType match {
           case _ if isDisabled(CreditsRefundsRepay) =>
             Future.successful(Ok(customNotFoundErrorView()(user, user.messages)))
-          case Some("Agent") => Future.successful(itvcErrorHandlerAgent.showInternalServerError())
+          case Some(Agent) => Future.successful(itvcErrorHandlerAgent.showInternalServerError())
           case _ =>
             handleStatusRefundRequest(
               backUrl = "", // TODO: do we need a backUrl

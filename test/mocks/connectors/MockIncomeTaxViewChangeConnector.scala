@@ -30,6 +30,7 @@ import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import org.mockito.Mockito.mock
 import testUtils.UnitSpec
+import uk.gov.hmrc.auth.core.AffinityGroup
 
 import java.time.LocalDate
 import scala.concurrent.Future
@@ -48,7 +49,7 @@ trait MockIncomeTaxViewChangeConnector extends UnitSpec with BeforeAndAfterEach 
 
   def setupMockIncomeSourceDetailsResponse(mtditid: String, nino: String,
                                            saUtr: Option[String], credId: Option[String],
-                                           userType: Option[String])(response: IncomeSourceDetailsResponse): Unit =
+                                           userType: Option[AffinityGroup])(response: IncomeSourceDetailsResponse): Unit =
     when(mockIncomeTaxViewChangeConnector.getIncomeSources()(ArgumentMatchers.any(), ArgumentMatchers.any()))
       .thenReturn(Future.successful(response))
 

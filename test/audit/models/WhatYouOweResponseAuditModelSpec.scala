@@ -24,6 +24,8 @@ import play.api.libs.json.{JsValue, Json}
 import testConstants.BaseTestConstants.{testArn, testCredId, testMtditid, testNino, testSaUtr}
 import testConstants.FinancialDetailsTestConstants.{dueDateOverdue, whatYouOwePartialChargesList}
 import testUtils.TestSupport
+import uk.gov.hmrc.auth.core.AffinityGroup
+import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
 import uk.gov.hmrc.auth.core.retrieve.Name
 
 import java.time.LocalDate
@@ -41,7 +43,7 @@ class WhatYouOweResponseAuditModelSpec extends TestSupport {
 
   val outStandingCharges: String = LocalDate.now().minusDays(30).toString
 
-  def testWhatYouOweResponseAuditModel(userType: Option[String] = Some("Agent"),
+  def testWhatYouOweResponseAuditModel(userType: Option[AffinityGroup] = Some(Agent),
                                        yearOfMigration: Option[String] = Some("2015"),
                                        chargesList: WhatYouOweChargesList = whatYouOwePartialChargesList,
                                       ): WhatYouOweResponseAuditModel = WhatYouOweResponseAuditModel(
@@ -54,7 +56,7 @@ class WhatYouOweResponseAuditModelSpec extends TestSupport {
       saUtr = Some(testSaUtr),
       credId = Some(testCredId),
       userType = userType,
-      arn = if (userType.contains("Agent")) Some(testArn) else None
+      arn = if (userType.contains(Agent)) Some(testArn) else None
     ),
     whatYouOweChargesList = chargesList,
     dateService
@@ -71,7 +73,7 @@ class WhatYouOweResponseAuditModelSpec extends TestSupport {
     }
 
     "Have the correct details for the audit event" in {
-      testWhatYouOweResponseAuditModel(Some("Individual")).detail shouldBe Json.obj(
+      testWhatYouOweResponseAuditModel(Some(Individual)).detail shouldBe Json.obj(
         "userType" -> "Individual",
         "saUtr" -> testSaUtr,
         "nationalInsuranceNumber" -> testNino,
@@ -133,7 +135,7 @@ class WhatYouOweResponseAuditModelSpec extends TestSupport {
     }
 
     "Have the agent details for the audit event" in {
-      val agentJson = testWhatYouOweResponseAuditModel(Some("Agent")).detail
+      val agentJson = testWhatYouOweResponseAuditModel(Some(Agent)).detail
 
       (agentJson \ "userType").as[String] shouldBe "Agent"
       (agentJson \ "agentReferenceNumber").as[String] shouldBe testArn

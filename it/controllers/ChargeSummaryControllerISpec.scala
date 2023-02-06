@@ -33,6 +33,7 @@ import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino, testTa
 import testConstants.FinancialDetailsIntegrationTestConstants.financialDetailModelPartial
 import testConstants.IncomeSourceIntegrationTestConstants._
 import testConstants.messages.ChargeSummaryMessages._
+import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 
 import java.time.LocalDate
 
@@ -87,7 +88,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
         MtdItUser(
           testMtditid, testNino, None,
           multipleBusinessesAndPropertyResponse, None, Some("1234567890"),
-          Some("12345-credId"), Some("Individual"), None
+          Some("12345-credId"), Some(Individual), None
         )(FakeRequest()),
         docDateDetail("2018-02-14", "ITSA- POA 1"),
         paymentBreakdown = List(financialDetailModelPartial(chargeType = ITSA_ENGLAND_AND_NI, originalAmount = 10.34, dunningLock = Some("Stand over order"), interestLock = Some("Breathing Space Moratorium Act"))),
@@ -121,7 +122,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
         MtdItUser(
           testMtditid, testNino, None,
           multipleBusinessesAndPropertyResponse, None, Some("1234567890"),
-          Some("12345-credId"), Some("Individual"), None
+          Some("12345-credId"), Some(Individual), None
         )(FakeRequest()),
         docDateDetailWithInterest("2018-04-14", "TRM New Charge"),
         paymentBreakdown = paymentBreakdown,
@@ -162,7 +163,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
         MtdItUser(
           testMtditid, testNino, None,
           multipleBusinessesAndPropertyResponse, None, Some("1234567890"),
-          Some("12345-credId"), Some("Individual"), None
+          Some("12345-credId"), Some(Individual), None
         )(FakeRequest()),
         docDateDetailWithInterest("2018-04-14", "TRM New Charge"),
         paymentBreakdown = paymentBreakdown,
@@ -200,7 +201,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
         MtdItUser(
           testMtditid, testNino, None,
           multipleBusinessesAndPropertyResponse, None, Some("1234567890"),
-          Some("12345-credId"), Some("Individual"), None
+          Some("12345-credId"), Some(Individual), None
         )(FakeRequest()),
         docDateDetailWithInterest("2018-02-14", "TRM New Charge"),
         paymentBreakdown = List.empty,
@@ -598,7 +599,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
         MtdItUser(
           testMtditid, testNino, None,
           multipleBusinessesAndPropertyResponse, None, Some("1234567890"),
-          Some("12345-credId"), Some("Individual"), None
+          Some("12345-credId"), Some(Individual), None
         )(FakeRequest()),
         DocumentDetailWithDueDate(
           documentDetail = docDetailUnpaid,
@@ -653,7 +654,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
         MtdItUser(
           testMtditid, testNino, None,
           multipleBusinessesAndPropertyResponse, None, Some("1234567890"),
-          Some("12345-credId"), Some("Individual"), None
+          Some("12345-credId"), Some(Individual), None
         )(FakeRequest()),
         DocumentDetailWithDueDate(
           documentDetail = docDetailPaid,

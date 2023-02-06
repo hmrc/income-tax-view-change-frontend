@@ -30,6 +30,7 @@ import testConstants.FinancialDetailsIntegrationTestConstants._
 import testConstants.IncomeSourceIntegrationTestConstants._
 import testConstants.OutstandingChargesIntegrationTestConstants._
 import testConstants.messages.WhatYouOweMessages.{hmrcAdjustment, hmrcAdjustmentHeading, hmrcAdjustmentLine1}
+import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 
 import java.time.LocalDate
 
@@ -41,7 +42,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
 
   val testUser: MtdItUser[_] = MtdItUser(
     testMtditid, testNino, None, paymentHistoryBusinessAndPropertyResponse,
-    None, Some("1234567890"), Some("12345-credId"), Some("Individual"), None
+    None, Some("1234567890"), Some("12345-credId"), Some(Individual), None
   )(FakeRequest())
 
   val testTaxYear: Int = getCurrentTaxYearEnd.getYear - 1

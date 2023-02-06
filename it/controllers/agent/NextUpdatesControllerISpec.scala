@@ -29,6 +29,7 @@ import play.api.http.Status._
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants._
+import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.auth.core.retrieve.Name
 
 import java.time.LocalDate
@@ -49,7 +50,7 @@ class NextUpdatesControllerISpec extends ComponentSpecBase with FeatureSwitching
 
   val testUser: MtdItUser[_] = MtdItUser(
     testMtditid, testNino, Some(Name(Some("Test"), Some("User"))), incomeSourceDetails,
-    None, Some("1234567890"), None, Some("Agent"), Some("1")
+    None, Some("1234567890"), None, Some(Agent), Some("1")
   )(FakeRequest())
 
   val implicitDateFormatter: ImplicitDateFormatter = app.injector.instanceOf[ImplicitDateFormatterImpl]

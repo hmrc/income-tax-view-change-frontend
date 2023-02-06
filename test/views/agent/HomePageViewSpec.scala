@@ -29,6 +29,7 @@ import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import testConstants.BaseTestConstants._
 import testUtils.{TestSupport, ViewSpec}
+import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import views.html.Home
 
 import java.time.{LocalDate, Month}
@@ -54,7 +55,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
     btaNavPartial = None,
     Some(testSaUtr),
     Some(testCredId),
-    Some("agent"),
+    Some(Agent),
     Some(testArn)
   )(FakeRequest())
 

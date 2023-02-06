@@ -35,6 +35,7 @@ import testConstants.BaseIntegrationTestConstants._
 import testConstants.IncomeSourceIntegrationTestConstants._
 import testConstants.NewCalcBreakdownItTestConstants.{liabilityCalculationModelErrorMessages, liabilityCalculationModelErrorMessagesFormatted, liabilityCalculationModelSuccessful, liabilityCalculationModelSuccessfulNotCrystallised}
 import testConstants.messages.TaxYearSummaryMessages._
+import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 
 import java.time.LocalDate
 
@@ -358,7 +359,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
 
   val testUser: MtdItUser[_] = MtdItUser(
     testMtditid, testNino, None, multipleBusinessesAndPropertyResponse,
-    None, Some("1234567890"), Some("12345-credId"), Some("Individual"), None
+    None, Some("1234567890"), Some("12345-credId"), Some(Individual), None
   )(FakeRequest())
 
   s"GET ${controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(testYearInt).url}" when {
@@ -588,7 +589,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
 
         AuditStub.verifyAuditEvent(TaxYearSummaryResponseAuditModel(
           MtdItUser(testMtditid, testNino, None, singleBusinessResponse,
-            None, Some("1234567890"), Some("12345-credId"), Some("Individual"), None
+            None, Some("1234567890"), Some("12345-credId"), Some(Individual), None
           )(FakeRequest()), financialDetailsDunningLockSuccess.getAllDocumentDetailsWithDueDates(),
           allObligations, Some(TaxYearSummaryViewModel(liabilityCalculationModelSuccessful))))
       }
@@ -830,7 +831,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
 
         AuditStub.verifyAuditEvent(TaxYearSummaryResponseAuditModel(
           MtdItUser(testMtditid, testNino, None, multipleBusinessesAndPropertyResponse,
-            None, Some("1234567890"), Some("12345-credId"), Some("Individual"), None
+            None, Some("1234567890"), Some("12345-credId"), Some(Individual), None
           )(FakeRequest()), emptyPaymentsList, allObligations, Some(TaxYearSummaryViewModel(liabilityCalculationModelSuccessful))))
       }
 
@@ -1235,7 +1236,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         )
         verifyAuditEvent(TaxYearSummaryResponseAuditModel(
           MtdItUser(testMtditid, testNino, None, singleBusinessResponse,
-            None, Some("1234567890"), Some("12345-credId"), Some("Individual"), None
+            None, Some("1234567890"), Some("12345-credId"), Some(Individual), None
           )(FakeRequest()), auditDD,
           allObligations, Some(TaxYearSummaryViewModel(liabilityCalculationModelSuccessful))))
         verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "ABC123456789", previousObligationsSuccess.obligations.flatMap(_.obligations)).detail)

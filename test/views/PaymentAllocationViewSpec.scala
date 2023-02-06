@@ -29,6 +29,7 @@ import testConstants.BaseTestConstants.{testMtditid, testNino, testRetrievedUser
 import testConstants.IncomeSourceDetailsTestConstants.businessAndPropertyAligned
 import testConstants.PaymentAllocationsTestConstants._
 import testUtils.ViewSpec
+import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 import views.html.PaymentAllocation
 
 import java.time.LocalDate
@@ -43,7 +44,7 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
   lazy val backUrl: String = controllers.routes.PaymentHistoryController.show().url
 
   val testMtdItUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testRetrievedUserName), businessAndPropertyAligned,
-    btaNavPartial = None, Some("testUtr"), Some("testCredId"), Some("Individual"), None)(FakeRequest())
+    btaNavPartial = None, Some("testUtr"), Some("testCredId"), Some(Individual), None)(FakeRequest())
 
   val singleTestPaymentAllocationChargeWithOutstandingAmountZero: FinancialDetailsWithDocumentDetailsModel = FinancialDetailsWithDocumentDetailsModel(
     List(documentDetail.copy(outstandingAmount = Some(0))),

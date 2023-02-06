@@ -35,6 +35,7 @@ import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.OutstandingChargesIntegrationTestConstants._
 import testConstants.messages.HomeMessages.{noPaymentsDue, overdue, overduePayments, overdueUpdates}
+import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.auth.core.retrieve.Name
 
 import java.time.LocalDate
@@ -63,7 +64,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
   val testUser: MtdItUser[_] = MtdItUser(
     testMtditid, testNino, Some(Name(Some("Test"), Some("User"))), incomeSourceDetailsModel,
-    None, Some("1234567890"), None, Some("Agent"), Some(testArn)
+    None, Some("1234567890"), None, Some(Agent), Some(testArn)
   )(FakeRequest())
 
 
