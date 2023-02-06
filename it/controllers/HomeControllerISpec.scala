@@ -17,14 +17,12 @@ package controllers
 
 import audit.models.{HomeAudit, NextUpdatesResponseAuditModel}
 import auth.MtdItUser
-import config.featureswitch.NavBarFs
+import config.featureswitch.{IvUplift, NavBarFs}
 import helpers.ComponentSpecBase
-import helpers.servicemocks.AuditStub.{verifyAuditContainsDetail, verifyAuditDoesNotContainsDetail}
-import helpers.servicemocks.BtaNavBarPartialConnectorStub.{testNavLinkJson, verifyBtaNavPartialResponse}
-import helpers.servicemocks.{BtaNavBarPartialConnectorStub, IncomeTaxViewChangeStub}
+import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
+import helpers.servicemocks.{AuthStub, IncomeTaxViewChangeStub}
 import models.nextUpdates.ObligationsModel
 import play.api.http.Status._
-import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.IncomeSourceIntegrationTestConstants.{multipleBusinessesAndPropertyResponse, testValidFinancialDetailsModelJson}
@@ -42,6 +40,7 @@ class HomeControllerISpec extends ComponentSpecBase {
   "Navigating to /report-quarterly/income-and-expenses/view" when {
     "Authorised" should {
       "render the home page with the payment due date" in {
+        disable(NavBarFs)
         Given("I wiremock stub a successful Income Source Details response with multiple business and property")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
 
@@ -84,6 +83,7 @@ class HomeControllerISpec extends ComponentSpecBase {
       }
 
       "render the ISE page when receive an error from the backend" in {
+        disable(NavBarFs)
         Given("I wiremock stub a successful Income Source Details response with multiple business and property")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
 
@@ -103,6 +103,23 @@ class HomeControllerISpec extends ComponentSpecBase {
         )
       }
     }
+// Test unstable due to lazy router eval behaving differently in different environments
+// eg sometimes the reverse route url has the route prefix (but in prod, it does not)
+//    "low confidence level user" should {
+//      "redirect to ivuplift service" in {
+//        enable(IvUplift)
+//        AuthStub.stubAuthorised(Some(50))
+//
+//        When(s"I call GET /report-quarterly/income-and-expenses/view")
+//        val res = IncomeTaxViewChangeFrontend.get("/")
+//        val expectedRedirectUrl = "http://localhost:9948/iv-stub/uplift?origin=ITVC&confidenceLevel=250&completionURL=/report-quarterly/income-and-expenses/view/uplift-success&failureURL=/report-quarterly/income-and-expenses/view/cannot-view-page"
+//        Then("the http response for an unauthorised user is returned")
+//        res should have(
+//          httpStatus(SEE_OTHER),
+//          redirectURI(expectedRedirectUrl)
+//        )
+//      }
+//    }
     unauthorisedTest("")
   }
 
