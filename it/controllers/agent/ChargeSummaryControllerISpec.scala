@@ -34,7 +34,7 @@ import testConstants.BaseIntegrationTestConstants._
 import testConstants.FinancialDetailsIntegrationTestConstants.financialDetailModelPartial
 import testConstants.IncomeSourceIntegrationTestConstants._
 import testConstants.messages.ChargeSummaryMessages
-import testConstants.messages.ChargeSummaryMessages._
+import testConstants.messages.ChargeSummaryMessages.{codingOutInsetPara, codingOutMessage, notCurrentlyChargingInterest, paymentBreakdownHeading, underReview}
 
 import java.time.LocalDate
 
@@ -42,31 +42,27 @@ import java.time.LocalDate
 class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
 
+  val paymentAllocation: List[PaymentsWithChargeType] = List(
+    paymentsWithCharge("SA Payment on Account 1", ITSA_NI, "2019-08-13", -10000.0, lotItem = "000001"),
+    paymentsWithCharge("SA Payment on Account 2", NIC4_SCOTLAND, "2019-08-13", -9000.0, lotItem = "000001")
+  )
+  val chargeHistories: List[ChargeHistoryModel] = List(ChargeHistoryModel("2019", "1040000124", LocalDate.of(2018, 3, 29),
+    "ITSA- POA 1", 123456789012345.67, LocalDate.of(2020, 2, 24), "amended return"))
+  val paymentBreakdown: List[FinancialDetail] = List(
+    financialDetailModelPartial(originalAmount = 123.45, chargeType = ITSA_ENGLAND_AND_NI, dunningLock = Some("Stand over order"), interestLock = Some("Breathing Space Moratorium Act")),
+    financialDetailModelPartial(originalAmount = 123.45, chargeType = NIC4_SCOTLAND, mainType = "SA Payment on Account 2", dunningLock = Some("Dunning Lock"), interestLock = Some("Manual RPI Signal")))
+  val currentYear: Int = LocalDate.now().getYear
+  val testArn: String = "1"
+  val importantPaymentBreakdown: String = s"${messagesAPI("chargeSummary.dunning.locks.banner.title")} ${messagesAPI("chargeSummary.paymentBreakdown.heading")}"
+  val paymentHistory: String = messagesAPI("chargeSummary.chargeHistory.heading")
+  val taxYear: Int = getCurrentTaxYearEnd.getYear
+
   def paymentsWithCharge(mainType: String, chargeType: String, date: String, amount: BigDecimal, lotItem: String): PaymentsWithChargeType =
     PaymentsWithChargeType(
       payments = List(Payment(reference = Some("reference"), amount = Some(amount), outstandingAmount = None, method = Some("method"),
         documentDescription = None, lot = Some("lot"), lotItem = Some(lotItem), dueDate = Some(LocalDate.parse(date)), documentDate = LocalDate.parse(date), transactionId = None)),
       mainType = Some(mainType), chargeType = Some(chargeType))
 
-  val paymentAllocation: List[PaymentsWithChargeType] = List(
-    paymentsWithCharge("SA Payment on Account 1", ITSA_NI, "2019-08-13", -10000.0, lotItem = "000001"),
-    paymentsWithCharge("SA Payment on Account 2", NIC4_SCOTLAND, "2019-08-13", -9000.0, lotItem = "000001")
-  )
-
-  val chargeHistories: List[ChargeHistoryModel] = List(ChargeHistoryModel("2019", "1040000124", LocalDate.of(2018, 3, 29),
-    "ITSA- POA 1", 123456789012345.67, LocalDate.of(2020, 2, 24), "amended return"))
-
-  val paymentBreakdown: List[FinancialDetail] = List(
-    financialDetailModelPartial(originalAmount = 123.45, chargeType = ITSA_ENGLAND_AND_NI, dunningLock = Some("Stand over order"), interestLock = Some("Breathing Space Moratorium Act")),
-    financialDetailModelPartial(originalAmount = 123.45, chargeType = NIC4_SCOTLAND, mainType = "SA Payment on Account 2", dunningLock = Some("Dunning Lock"), interestLock = Some("Manual RPI Signal")))
-
-  
-
-  val currentYear: Int = LocalDate.now().getYear
-  val testArn: String = "1"
-
-  val importantPaymentBreakdown: String = s"${messagesAPI("chargeSummary.dunning.locks.banner.title")} ${messagesAPI("chargeSummary.paymentBreakdown.heading")}"
-  val paymentHistory: String = messagesAPI("chargeSummary.chargeHistory.heading")
 
   s"GET ok" should {
     "load the page with right data for Payments Breakdown" in {
@@ -104,7 +100,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
       stubGetFinancialDetailsSuccess(Some(ITSA_NI), Some(NIC4_SCOTLAND))
 
       val result = IncomeTaxViewChangeFrontend.getChargeSummary(
-        getCurrentTaxYearEnd.getYear.toString, "testId", clientDetailsWithConfirmation
+        taxYear = taxYear.toString, "testId", clientDetailsWithConfirmation
       )
 
       AuditStub.verifyAuditEvent(ChargeSummaryAudit(
@@ -116,7 +112,8 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
         paymentBreakdown = paymentBreakdown,
         chargeHistories = List.empty,
         paymentAllocations = List.empty,
-        isLatePaymentCharge = false
+        isLatePaymentCharge = false,
+        taxYear = taxYear
       ))
 
       result should have(
@@ -137,7 +134,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
       stubGetFinancialDetailsSuccess(Some(ITSA_NI), Some(NIC4_SCOTLAND))
 
       val result = IncomeTaxViewChangeFrontend.getChargeSummary(
-        getCurrentTaxYearEnd.getYear.toString, "testId", clientDetailsWithConfirmation
+        taxYear.toString, "testId", clientDetailsWithConfirmation
       )
 
       AuditStub.verifyAuditEvent(ChargeSummaryAudit(
@@ -149,7 +146,8 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
         paymentBreakdown = paymentBreakdown,
         chargeHistories = List.empty,
         paymentAllocations = paymentAllocation,
-        isLatePaymentCharge = false
+        isLatePaymentCharge = false,
+        taxYear = taxYear
       ))
 
       result should have(
@@ -168,7 +166,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
       stubChargeHistorySuccess()
 
       val result = IncomeTaxViewChangeFrontend.getChargeSummary(
-        getCurrentTaxYearEnd.getYear.toString, "testId", clientDetailsWithConfirmation
+       taxYear.toString, "testId", clientDetailsWithConfirmation
       )
 
       result should have(
@@ -187,7 +185,8 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
         paymentBreakdown = paymentBreakdown,
         chargeHistories = chargeHistories,
         paymentAllocations = paymentAllocation,
-        isLatePaymentCharge = false
+        isLatePaymentCharge = false,
+        taxYear = taxYear
       ))
     }
 
@@ -199,7 +198,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
       stubGetFinancialDetailsSuccess()
 
       val result = IncomeTaxViewChangeFrontend.getChargeSummaryLatePayment(
-        getCurrentTaxYearEnd.getYear.toString, "testId", clientDetailsWithConfirmation
+        taxYear.toString, "testId", clientDetailsWithConfirmation
       )
 
       AuditStub.verifyAuditEvent(ChargeSummaryAudit(
@@ -211,7 +210,8 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
         paymentBreakdown = List.empty,
         chargeHistories = List.empty,
         paymentAllocations = paymentAllocation,
-        isLatePaymentCharge = true
+        isLatePaymentCharge = true,
+        taxYear = taxYear
       ))
 
       result should have(
@@ -645,6 +645,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
 
     }
   }
+
 
   "API#1171 IncomeSourceDetails Caching" when {
     "caching should be ENABLED" in {
