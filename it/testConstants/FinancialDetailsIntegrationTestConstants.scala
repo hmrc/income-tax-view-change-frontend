@@ -26,7 +26,7 @@ import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesMode
 import play.api.libs.json.{JsValue, Json}
 import services.DateService
 
-object FinancialDetailsIntegrationTestConstants  {
+object FinancialDetailsIntegrationTestConstants {
 
   def documentDetailModel(taxYear: Int = 2018,
                           documentDescription: Option[String] = Some("ITSA- POA 1"),
@@ -102,7 +102,7 @@ object FinancialDetailsIntegrationTestConstants  {
 
   def documentDetailWithDueDateFinancialDetailListModel(taxYear: Int = 2018,
                                                         outstandingAmount: Option[BigDecimal] = Some(-1400.0),
-                                                        dueDate: Option[LocalDate] = Some(LocalDate.of(2019,5,15)),
+                                                        dueDate: Option[LocalDate] = Some(LocalDate.of(2019, 5, 15)),
                                                         originalAmount: Option[BigDecimal] = Some(1400.00),
                                                         mainType: Option[String] = Some("SA Payment on Account 1"),
                                                        ):
@@ -460,6 +460,28 @@ object FinancialDetailsIntegrationTestConstants  {
     outstandingChargesModel = Some(outstandingChargesOverdueData)
   )
 
+  def whatYouOweDataWithDataDueInSomeDays(implicit dateService: DateService): WhatYouOweChargesList = {
+    val inScopeChargeList = List(
+      DocumentDetailWithDueDate(
+        DocumentDetail("2021", "1040000123",
+          Some("TRM New Charge"), Some("Class 2 National Insurance"), Some(2000), Some(2000), LocalDate.parse("2018-03-29"), Some(80), None, None, Some(LocalDate.parse("2018-03-29")),
+          Some(LocalDate.parse("2018-03-29")), Some(100), None, None, None), Some(LocalDate.parse("2018-03-29")), true, false, false),
+      DocumentDetailWithDueDate(
+        DocumentDetail("2021", "1040000124", Some("ITSA- POA 1"), None, Some(2000), Some(2000), LocalDate.parse("2018-03-29"),
+        None, None, None, None, None, None, None, None, None), Some(LocalDate.now()), false, false, false),
+      DocumentDetailWithDueDate(
+        DocumentDetail("2021", "1040000125", Some("ITSA - POA 2"), None, Some(2000), Some(2000), LocalDate.parse("2018-03-29"),
+        None, None, None, None, None, None, None, None, None), Some(LocalDate.now()), false, false, false)
+    )
+
+
+    WhatYouOweChargesList(
+      balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
+      chargesList = inScopeChargeList,
+      outstandingChargesModel = Some(outstandingChargesOverdueData)
+    )
+  }
+
   def whatYouOweDataWithDataDueInMoreThan30Days(implicit dateService: DateService): WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
     chargesList = financialDetailsDueInMoreThan30Days.getAllDocumentDetailsWithDueDates(),
@@ -522,14 +544,6 @@ object FinancialDetailsIntegrationTestConstants  {
     outstandingChargesModel = Some(outstandingChargesEmptyBCDModel))
 
   val whatYouOweFinancialDetailsCodingOut: WhatYouOweChargesList = WhatYouOweChargesList(balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None))
-
-  /*chargesList = List(DocumentDetailWithDueDate(DocumentDetail("2021", "1040000123",
-    Some("TRM New Charge"), None, Some(2000), Some(2000), LocalDate.parse("2018-03-29"), Some(80), None, None, Some(LocalDate.parse("2018-03-29")),
-    Some(LocalDate.parse("2018-03-29")), Some(100), None, None, None), Some(LocalDate.parse("2018-03-29")), true, false, false),
-    DocumentDetailWithDueDate(DocumentDetail("2021", "1040000124", Some("ITSA- POA 1"), None, Some(2000), Some(2000), LocalDate.parse("2018-03-29"),
-      None, None, None, None, None, None, None, None, None), Some(LocalDate.now()), false, false, false),
-    DocumentDetailWithDueDate(DocumentDetail("2021", "1040000125", Some("ITSA - POA 2"), None, Some(2000), Some(2000), LocalDate.parse("2018-03-29"),
-      None, None, None, None, None, None, None, None, None), Some(LocalDate.now()), false, false, false))*/
 
   val testInvalidFinancialDetailsJson: JsValue = Json.obj(
     "amount" -> "invalidAmount",

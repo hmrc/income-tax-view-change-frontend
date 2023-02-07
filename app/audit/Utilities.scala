@@ -41,7 +41,7 @@ object Utilities {
 
   def getChargeType(docDetail: DocumentDetail, latePaymentCharge: Boolean = false): Option[String] =
     (docDetail.documentDescription, docDetail.documentText) match {
-    case (_, Some(documentDescription)) if (documentDescription.contains("Class 2 National Insurance")) => Some("Class 2 National Insurance")
+    case (_, Some(documentText)) if (documentText.contains("Class 2 National Insurance")) => Some("Class 2 National Insurance")
     case(_, Some(documentDescription)) if (documentDescription.contains("Cancelled PAYE Self Assessment")) => Some("Cancelled PAYE Self Assessment (through your PAYE tax code)")
     case (Some("ITSA- POA 1"), _) => if (latePaymentCharge) Some("Late payment interest for payment on account 1 of 2") else Some("Payment on account 1 of 2")
     case (Some("ITSA - POA 2"),_) => if (latePaymentCharge) Some("Late payment interest for payment on account 2 of 2") else Some("Payment on account 2 of 2")
