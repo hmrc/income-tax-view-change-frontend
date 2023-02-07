@@ -42,7 +42,6 @@ object AuditStub extends WiremockMethods {
 
   def verifyAuditContainsDetail(body: JsValue): Unit = {
     verifyContainsJson(method = POST, uri = "/write/audit", Json.obj("detail" -> body))
-    println("LOOK HERE")
   }
 
   def verifyAuditDoesNotContainsDetail(body: JsValue): Unit = {
