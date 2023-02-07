@@ -37,7 +37,7 @@ case class WhatYouOweResponseAuditModel(user: MtdItUser[_],
     whatYouOweChargesList.chargesList.map(documentDetails) ++ whatYouOweChargesList.outstandingChargesModel.map(outstandingChargeDetails)
 
   override val detail: JsValue = {
-    (whatYouOweChargesList.codedOutDocumentDetail.map(y => Json.obj("codingOut" -> codingOut(y)))) match {
+    (whatYouOweChargesList.codedOutDocumentDetail.map(docDetail => Json.obj("codingOut" -> codingOut(docDetail)))) match {
       case Some(codingOutJson) => userAuditDetails(user) ++
         balanceDetailsJson ++
         Json.obj("charges" -> docDetailsListJson) ++

@@ -428,14 +428,14 @@ object IncomeSourceIntegrationTestConstants {
   def testValidFinancialDetailsModelJsonCodingOut(originalAmount: BigDecimal, outstandingAmount: BigDecimal,
                                                   taxYear: String = "2018", dueDate: String = "2018-04-14",
                                                   latePaymentInterestAmount: BigDecimal = 0,
-                                                  payeSaTaxYear: String = "2018", amountCodedOut: BigDecimal = 0): JsValue = Json.obj(
+                                                  payeSaTaxYear: String = "2018", amountCodedOut: BigDecimal = 0, isClass2Nics: Boolean = false): JsValue = Json.obj(
     "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "totalBalance" -> 3.00),
     "documentDetails" -> Json.arr(
       Json.obj(
         "taxYear" -> taxYear,
         "transactionId" -> "1040000123",
         "documentDescription" -> "TRM New Charge",
-        "documentText" -> CODING_OUT_CLASS2_NICS,
+        "documentText" -> {if(isClass2Nics) {"Class 2 National Insurance"} else {CODING_OUT_CLASS2_NICS}},
         "outstandingAmount" -> outstandingAmount,
         "originalAmount" -> originalAmount,
         "documentDate" -> "2018-03-29"

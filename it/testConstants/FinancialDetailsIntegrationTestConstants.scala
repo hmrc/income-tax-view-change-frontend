@@ -521,6 +521,16 @@ object FinancialDetailsIntegrationTestConstants  {
   val whatYouOweFinancialDetailsEmptyBCDCharge: WhatYouOweChargesList = WhatYouOweChargesList(balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
     outstandingChargesModel = Some(outstandingChargesEmptyBCDModel))
 
+  val whatYouOweFinancialDetailsCodingOut: WhatYouOweChargesList = WhatYouOweChargesList(balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None))
+
+  /*chargesList = List(DocumentDetailWithDueDate(DocumentDetail("2021", "1040000123",
+    Some("TRM New Charge"), None, Some(2000), Some(2000), LocalDate.parse("2018-03-29"), Some(80), None, None, Some(LocalDate.parse("2018-03-29")),
+    Some(LocalDate.parse("2018-03-29")), Some(100), None, None, None), Some(LocalDate.parse("2018-03-29")), true, false, false),
+    DocumentDetailWithDueDate(DocumentDetail("2021", "1040000124", Some("ITSA- POA 1"), None, Some(2000), Some(2000), LocalDate.parse("2018-03-29"),
+      None, None, None, None, None, None, None, None, None), Some(LocalDate.now()), false, false, false),
+    DocumentDetailWithDueDate(DocumentDetail("2021", "1040000125", Some("ITSA - POA 2"), None, Some(2000), Some(2000), LocalDate.parse("2018-03-29"),
+      None, None, None, None, None, None, None, None, None), Some(LocalDate.now()), false, false, false))*/
+
   val testInvalidFinancialDetailsJson: JsValue = Json.obj(
     "amount" -> "invalidAmount",
     "payMethod" -> "Payment by Card",

@@ -702,7 +702,55 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
             isElementVisibleById(s"sa-tax-bill")(expectedValue = true)
           )
         }
+
+
+        "render the payments owed with a Coding out banner with TxM event" in {
+          Given("Coding Out feature is enabled")
+          enable(CodingOut)
+
+          And("I wiremock stub a successful Income Source Details response with multiple business and property without year of migration")
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK,
+            propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
+
+
+          And("I wiremock stub a financial details response with coded out documents")
+          IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK,
+            testValidFinancialDetailsModelJsonCodingOut(2000, 2000, testTaxYear.toString,
+              LocalDate.now().toString, 0, (getCurrentTaxYearEnd.getYear - 1).toString, 2500, true))
+
+          IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
+            "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
+
+
+          When("I call GET /report-quarterly/income-and-expenses/view/payments-owed")
+          val res = IncomeTaxViewChangeFrontend.getPaymentsDue
+
+          AuditStub.verifyAuditContainsDetail(WhatYouOweResponseAuditModel(testUser, whatYouOweFinancialDetailsCodingOut, dateService).detail)
+
+          verifyIncomeSourceDetailsCall(testMtditid)
+          IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05", 2)
+          IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear - 1).toString)
+
+          Then("the result should have a HTTP status of OK (200) and the payments due page")
+          res should have(
+            httpStatus(OK),
+            pageTitleIndividual("whatYouOwe.heading"),
+            isElementVisibleById("balancing-charge-type-0")(expectedValue = false),
+            isElementVisibleById("balancing-charge-type-1")(expectedValue = false),
+            isElementVisibleById("payment-details-content-0")(expectedValue = true),
+            isElementVisibleById("payment-details-content-1")(expectedValue = true),
+            isElementVisibleById(s"payment-button")(expectedValue = true),
+            isElementVisibleById(s"no-payments-due")(expectedValue = false),
+            isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
+            isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true),
+            isElementVisibleById("coding-out-notice")(expectedValue = true),
+            isElementVisibleById(s"payments-made-bullets")(expectedValue = true),
+            isElementVisibleById(s"sa-tax-bill")(expectedValue = true)
+          )
+        }
+
       }
+
 
       "CodingOut FS is disabled" when {
         "render the payments owed without a Coding out banner" in {
