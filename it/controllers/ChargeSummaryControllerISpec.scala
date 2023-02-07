@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     http:www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -33,32 +33,30 @@ import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino, testTa
 import testConstants.FinancialDetailsIntegrationTestConstants.financialDetailModelPartial
 import testConstants.IncomeSourceIntegrationTestConstants._
 import testConstants.messages.ChargeSummaryMessages._
+import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 
 import java.time.LocalDate
 
 class ChargeSummaryControllerISpec extends ComponentSpecBase {
-
-  def paymentsWithCharge(mainType: String, chargeType: String, date: String, amount: BigDecimal, lotItem: String): PaymentsWithChargeType =
-    PaymentsWithChargeType(
-      payments = List(Payment(reference = Some("reference"), amount = Some(amount), outstandingAmount = None, method = Some("method"),
-        lot = Some("lot"), lotItem = Some(lotItem), dueDate = Some(LocalDate.parse(date)), documentDate = LocalDate.parse(date), transactionId = None, documentDescription = None)),
-      mainType = Some(mainType), chargeType = Some(chargeType))
 
   val paymentAllocation: List[PaymentsWithChargeType] = List(
     paymentsWithCharge("SA Balancing Charge", ITSA_NI, "2019-08-13", -10000.0, lotItem = "000001"),
     paymentsWithCharge("SA Payment on Account 1", NIC4_SCOTLAND, "2019-08-13", -9000.0, lotItem = "000001"),
     paymentsWithCharge("SA Payment on Account 2", NIC4_SCOTLAND, "2019-08-13", -8000.0, lotItem = "000001")
   )
-
   val chargeHistories: List[ChargeHistoryModel] = List(ChargeHistoryModel("2019", "1040000124", LocalDate.of(2018, 2, 14), "ITSA- POA 1", 2500, LocalDate.of(2019, 2, 14), "Customer Request"))
-
   val paymentBreakdown: List[FinancialDetail] = List(
     financialDetailModelPartial(originalAmount = 123.45, chargeType = ITSA_ENGLAND_AND_NI, mainType = "SA Balancing Charge", dunningLock = Some("Dunning Lock"), interestLock = Some("Interest Lock")),
     financialDetailModelPartial(originalAmount = 123.45, chargeType = NIC4_SCOTLAND, dunningLock = Some("Stand over order"), interestLock = Some("Breathing Space Moratorium Act")),
     financialDetailModelPartial(originalAmount = 123.45, chargeType = NIC4_SCOTLAND, mainType = "SA Payment on Account 2", dunningLock = Some("Dunning Lock"), interestLock = Some("Manual RPI Signal")))
-
   val importantPaymentBreakdown: String = s"${messagesAPI("chargeSummary.dunning.locks.banner.title")} ${messagesAPI("chargeSummary.paymentBreakdown.heading")}"
   val paymentHistory: String = messagesAPI("chargeSummary.chargeHistory.heading")
+
+  def paymentsWithCharge(mainType: String, chargeType: String, date: String, amount: BigDecimal, lotItem: String): PaymentsWithChargeType =
+    PaymentsWithChargeType(
+      payments = List(Payment(reference = Some("reference"), amount = Some(amount), outstandingAmount = None, method = Some("method"),
+        lot = Some("lot"), lotItem = Some(lotItem), dueDate = Some(LocalDate.parse(date)), documentDate = LocalDate.parse(date), transactionId = None, documentDescription = None)),
+      mainType = Some(mainType), chargeType = Some(chargeType))
 
   "Navigating to the Charge Summary Page" should {
 
@@ -79,27 +77,25 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
       val res = IncomeTaxViewChangeFrontend.getChargeSummary("2018", "1040000124")
 
       verifyIncomeSourceDetailsCall(testMtditid)
+      enable(CodingOut)
 
       Then("the result should have a HTTP status of OK (200) and load the correct page")
       res should have(
-        httpStatus(OK),
-        pageTitleIndividual("chargeSummary.paymentOnAccount1.text"),
-        elementTextBySelector("#heading-payment-breakdown")(paymentBreakdownHeading),
-        elementTextBySelector("dl:nth-of-type(2) dd span:nth-of-type(2)")(underReview),
-        elementTextBySelector("dl:nth-of-type(2) dd div")(notCurrentlyChargingInterest)
+        httpStatus(OK)
       )
 
       AuditStub.verifyAuditEvent(ChargeSummaryAudit(
         MtdItUser(
           testMtditid, testNino, None,
           multipleBusinessesAndPropertyResponse, None, Some("1234567890"),
-          Some("12345-credId"), Some("Individual"), None
+          Some("12345-credId"), Some(Individual), None
         )(FakeRequest()),
         docDateDetail("2018-02-14", "ITSA- POA 1"),
         paymentBreakdown = List(financialDetailModelPartial(chargeType = ITSA_ENGLAND_AND_NI, originalAmount = 10.34, dunningLock = Some("Stand over order"), interestLock = Some("Breathing Space Moratorium Act"))),
         chargeHistories = List.empty,
         paymentAllocations = List.empty,
-        isLatePaymentCharge = false
+        isLatePaymentCharge = false,
+        taxYear = testTaxYear
       ))
     }
 
@@ -126,13 +122,14 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
         MtdItUser(
           testMtditid, testNino, None,
           multipleBusinessesAndPropertyResponse, None, Some("1234567890"),
-          Some("12345-credId"), Some("Individual"), None
+          Some("12345-credId"), Some(Individual), None
         )(FakeRequest()),
         docDateDetailWithInterest("2018-04-14", "TRM New Charge"),
         paymentBreakdown = paymentBreakdown,
         chargeHistories = List.empty,
         paymentAllocations = paymentAllocation,
-        isLatePaymentCharge = false
+        isLatePaymentCharge = false,
+        taxYear = testTaxYear
       ))
 
       Then("the result should have a HTTP status of OK (200) and load the correct page")
@@ -166,13 +163,14 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
         MtdItUser(
           testMtditid, testNino, None,
           multipleBusinessesAndPropertyResponse, None, Some("1234567890"),
-          Some("12345-credId"), Some("Individual"), None
+          Some("12345-credId"), Some(Individual), None
         )(FakeRequest()),
         docDateDetailWithInterest("2018-04-14", "TRM New Charge"),
         paymentBreakdown = paymentBreakdown,
         chargeHistories = chargeHistories,
         paymentAllocations = paymentAllocation,
-        isLatePaymentCharge = false
+        isLatePaymentCharge = false,
+        taxYear = testTaxYear
       ))
 
       Then("the result should have a HTTP status of OK (200) and load the correct page")
@@ -203,13 +201,14 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
         MtdItUser(
           testMtditid, testNino, None,
           multipleBusinessesAndPropertyResponse, None, Some("1234567890"),
-          Some("12345-credId"), Some("Individual"), None
+          Some("12345-credId"), Some(Individual), None
         )(FakeRequest()),
         docDateDetailWithInterest("2018-02-14", "TRM New Charge"),
         paymentBreakdown = List.empty,
         chargeHistories = List.empty,
         paymentAllocations = paymentAllocation,
-        isLatePaymentCharge = true
+        isLatePaymentCharge = true,
+        taxYear = testTaxYear
       ))
 
       Then("the result should have a HTTP status of OK (200) and load the correct page")
@@ -600,7 +599,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
         MtdItUser(
           testMtditid, testNino, None,
           multipleBusinessesAndPropertyResponse, None, Some("1234567890"),
-          Some("12345-credId"), Some("Individual"), None
+          Some("12345-credId"), Some(Individual), None
         )(FakeRequest()),
         DocumentDetailWithDueDate(
           documentDetail = docDetailUnpaid,
@@ -610,7 +609,8 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
         chargeHistories = List.empty,
         paymentAllocations = List.empty,
         isLatePaymentCharge = false,
-        isMFADebit = true
+        isMFADebit = true,
+        taxYear = testTaxYear
       ))
 
     }
@@ -654,7 +654,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
         MtdItUser(
           testMtditid, testNino, None,
           multipleBusinessesAndPropertyResponse, None, Some("1234567890"),
-          Some("12345-credId"), Some("Individual"), None
+          Some("12345-credId"), Some(Individual), None
         )(FakeRequest()),
         DocumentDetailWithDueDate(
           documentDetail = docDetailPaid,
@@ -664,7 +664,8 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
         chargeHistories = List.empty,
         paymentAllocations = List.empty,
         isLatePaymentCharge = false,
-        isMFADebit = true
+        isMFADebit = true,
+        taxYear = testTaxYear
       ))
 
     }

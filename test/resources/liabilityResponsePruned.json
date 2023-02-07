@@ -302,6 +302,11 @@
       "incomeTaxNicAmount": -99999999999.99,
       "cgtAmount": 5000.99,
       "incomeTaxNicAndCgtAmount": 5000.99
+    },
+    "pensionSavingsTaxCharges": {
+      "totalPensionCharges": 5000.99,
+      "totalTaxPaid": 5000.99,
+      "totalPensionChargesDue": 5000.99
     }
   }
 }

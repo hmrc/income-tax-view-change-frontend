@@ -31,6 +31,7 @@ import services.BtaNavBarService
 import testConstants.BaseTestConstants.{testMtditid, testNino, testRetrievedUserName}
 import testConstants.IncomeSourceDetailsTestConstants.singleBusinessIncome
 import testUtils.{TestSupport, UnitSpec}
+import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 import uk.gov.hmrc.http.HeaderCarrier
 import views.html.navBar.BtaNavBar
 
@@ -49,9 +50,9 @@ class NavBarEnumFsControllerSpec extends MockAuthenticationPredicate with MockIn
   val testController = new BtaNavBarController(mockBtaNavBarPartialConnector, testView, mockMcc, mockNavBarService)
 
   lazy val userWithNino: MtdItUserWithNino[Any] = MtdItUserWithNino(testMtditid, testNino, Some(testRetrievedUserName),
-    None, Some("testUtr"), Some("testCredId"), Some("Individual"), None)
+    None, Some("testUtr"), Some("testCredId"), Some(Individual), None)
   lazy val successResponse: MtdItUser[Any] = MtdItUser(testMtditid, testNino, Some(testRetrievedUserName), singleBusinessIncome,
-    None, Some("testUtr"), Some("testCredId"), Some("Individual"), None)
+    None, Some("testUtr"), Some("testCredId"), Some(Individual), None)
 
   "ServiceInfoController" should {
     "retrieve the correct Model and return HTML" in {

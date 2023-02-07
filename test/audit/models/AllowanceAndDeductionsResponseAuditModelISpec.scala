@@ -58,7 +58,7 @@ class AllowanceAndDeductionsResponseAuditModelISpec extends TestSupport {
           "nationalInsuranceNumber" -> testNino,
           "saUtr" -> testSaUtr,
           "credId" -> testCredId,
-          "userType" -> testUserTypeAgent,
+          "userType" -> testUserTypeAgent.toString,
           "agentReferenceNumber" -> testArn,
           "personalAllowance" -> 123.12,
           "pensionContributions" -> 456.78,

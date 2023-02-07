@@ -46,15 +46,16 @@ object BaseTestConstants extends UnitSpec with GuiceOneAppPerSuite {
   val testSaUtr = "testSaUtr"
   val taxYear: String = "2020-04-05"
   val taxYear2020: String = "2020"
+  val taxYearInt = 2020
   val idNumber = "1234567890"
   val idType: String = "utr"
   val ninoIdType: String = "NINO"
   val docNumber: String = "XM0026100122"
   val testArn = "XAIT0000123456"
   val testCredId = "testCredId"
-  val testUserTypeIndividual = "Individual"
-  val testUserTypeAgent = "Agent"
-  val testUserType: String = testUserTypeIndividual
+  val testUserTypeIndividual = AffinityGroup.Individual
+  val testUserTypeAgent = AffinityGroup.Agent
+  val testUserType: AffinityGroup = testUserTypeIndividual
   val testTaxYear = 2018
   val calendarYear2018 = 2018
   val testYearPlusOne = 2019
@@ -116,13 +117,19 @@ object BaseTestConstants extends UnitSpec with GuiceOneAppPerSuite {
     Enrolment("HMRC-MTD-IT", Seq(EnrolmentIdentifier("MTDITID", testMtditid)), "activated")
   )), Option(testRetrievedUserName)), Some(Credentials(testCredId, ""))), Some(AffinityGroup.Organisation)), confidenceLevel)
 
-  def testAuthSuccessWithSaUtrResponse(confidenceLevel: ConfidenceLevel = testConfidenceLevel,
-                                       affinityGroup: AffinityGroup = AffinityGroup.Individual) = new ~(new ~(new ~(new ~(Enrolments(Set(
+  def testIndividualAuthSuccessWithSaUtrResponse(confidenceLevel: ConfidenceLevel = testConfidenceLevel,
+                                                 affinityGroup: AffinityGroup = AffinityGroup.Individual) = new ~(new ~(new ~(new ~(Enrolments(Set(
     Enrolment("HMRC-MTD-IT", Seq(EnrolmentIdentifier("MTDITID", testMtditid)), "activated"),
     Enrolment("HMRC-NI", Seq(EnrolmentIdentifier("NINO", testNino)), "activated"),
     Enrolment("IR-SA", Seq(EnrolmentIdentifier("UTR", "1234567890")), "activated")
   )), Option(testRetrievedUserName)), Some(Credentials(testCredId, ""))), Some(affinityGroup)), confidenceLevel)
 
+  def testAuthAgentSuccessWithSaUtrResponse(confidenceLevel: ConfidenceLevel = testConfidenceLevel,
+                                       affinityGroup: AffinityGroup = AffinityGroup.Agent) = new ~(new ~(new ~(new ~(Enrolments(Set(
+    Enrolment("HMRC-MTD-IT", Seq(EnrolmentIdentifier("MTDITID", testMtditid)), "activated"),
+    Enrolment("HMRC-NI", Seq(EnrolmentIdentifier("NINO", testNino)), "activated"),
+    Enrolment("IR-SA", Seq(EnrolmentIdentifier("UTR", "1234567890")), "activated")
+  )), Option(testRetrievedUserName)), Some(Credentials(testCredId, ""))), Some(affinityGroup)), confidenceLevel)
 
 
   val arnEnrolment: Enrolment = Enrolment(

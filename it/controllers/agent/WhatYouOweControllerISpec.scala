@@ -17,6 +17,7 @@ import testConstants.FinancialDetailsIntegrationTestConstants._
 import testConstants.IncomeSourceIntegrationTestConstants._
 import testConstants.OutstandingChargesIntegrationTestConstants._
 import testConstants.messages.WhatYouOweMessages.underReview
+import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.auth.core.retrieve.Name
 
 import java.time.LocalDate
@@ -45,7 +46,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
 
   val testUser: MtdItUser[_] = MtdItUser(
     testMtditid, testNino, Some(Name(Some("Test"), Some("User"))), incomeSourceDetailsModel,
-    None, Some("1234567890"), None, Some("Agent"), Some(testArn)
+    None, Some("1234567890"), None, Some(Agent), Some(testArn)
   )(FakeRequest())
 
   s"GET ${controllers.routes.WhatYouOweController.showAgent.url}" should {

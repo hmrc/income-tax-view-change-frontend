@@ -12,6 +12,7 @@ import play.api.i18n.{Messages, MessagesApi}
 import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.IncomeSourceIntegrationTestConstants.{propertyOnlyResponseWithMigrationData, testValidFinancialDetailsModelCreditAndRefundsJson}
+import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 
 import java.time.LocalDate
 
@@ -28,7 +29,7 @@ class CreditsSummaryControllerISpec extends ComponentSpecBase with CreditsSummar
     btaNavPartial = None,
     saUtr = None,
     credId = Some("12345-credId"),
-    userType = Some("Individual"),
+    userType = Some(Individual),
     arn = None
   )(FakeRequest())
 
@@ -79,7 +80,7 @@ class CreditsSummaryControllerISpec extends ComponentSpecBase with CreditsSummar
           CreditsSummaryModel(
             saUTR = testSaUtr,
             nino = testNino,
-            userType = testUserTypeIndividual,
+            userType = testUserTypeIndividual.toString,
             credId = credId,
             mtdRef = testMtditid,
             creditOnAccount = "5",
@@ -117,7 +118,7 @@ class CreditsSummaryControllerISpec extends ComponentSpecBase with CreditsSummar
           CreditsSummaryModel(
             saUTR = testSaUtr,
             nino = testNino,
-            userType = testUserTypeIndividual,
+            userType = testUserTypeIndividual.toString,
             credId = credId,
             mtdRef = testMtditid,
             creditOnAccount = "5",

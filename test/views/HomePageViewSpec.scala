@@ -27,6 +27,7 @@ import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import testConstants.BaseTestConstants._
 import testUtils.TestSupport
+import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 import views.html.Home
 
 import java.time.LocalDate
@@ -57,7 +58,7 @@ class HomePageViewSpec extends TestSupport {
       testNavHtml,
       saUtr,
       Some("testCredId"),
-      Some("Individual"),
+      Some(Individual),
       None
     )(FakeRequest())
   }
@@ -70,7 +71,7 @@ class HomePageViewSpec extends TestSupport {
     testNavHtml,
     saUtr,
     Some("testCredId"),
-    Some("Individual"),
+    Some(Individual),
     None
   )(FakeRequest())
 
@@ -82,7 +83,7 @@ class HomePageViewSpec extends TestSupport {
     testNavHtml,
     saUtr,
     Some("testCredId"),
-    Some("Individual"),
+    Some(Individual),
     None
   )(FakeRequest())
 

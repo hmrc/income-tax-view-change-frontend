@@ -26,6 +26,8 @@ import controllers.predicates.{AuthenticationPredicate, SessionTimeoutPredicate}
 import models.core.{PaymentJourneyErrorResponse, PaymentJourneyModel}
 import play.api.Logger
 import play.api.mvc._
+import uk.gov.hmrc.auth.core.AffinityGroup
+import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -44,7 +46,7 @@ class PaymentController @Inject()(val checkSessionTimeout: SessionTimeoutPredica
   val action: ActionBuilder[MtdItUserOptionNino, AnyContent] = checkSessionTimeout andThen authenticate
 
   def handleHandoff(mtditid: String, nino: Option[String], saUtr: Option[String], credId: Option[String],
-                    userType: Option[String], paymentAmountInPence: Long, isAgent: Boolean,
+                    userType: Option[AffinityGroup], paymentAmountInPence: Long, isAgent: Boolean,
                     origin: Option[String] = None)
                    (implicit request: Request[_], ec: ExecutionContext): Future[Result] = {
     auditingService.extendedAudit(
@@ -70,6 +72,6 @@ class PaymentController @Inject()(val checkSessionTimeout: SessionTimeoutPredica
   val agentPaymentHandoff: Long => Action[AnyContent] = paymentAmountInPence => Authenticated.async {
     implicit request =>
       implicit user =>
-        handleHandoff(getClientMtditid, Some(getClientNino), getClientUtr, user.credId, Some("Agent"), paymentAmountInPence, isAgent = true)
+        handleHandoff(getClientMtditid, Some(getClientNino), getClientUtr, user.credId, Some(Agent), paymentAmountInPence, isAgent = true)
   }
 }

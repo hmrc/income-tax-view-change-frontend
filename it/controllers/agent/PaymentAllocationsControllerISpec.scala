@@ -18,6 +18,7 @@ import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.IncomeSourceIntegrationTestConstants._
 import testConstants.PaymentAllocationIntegrationTestConstants._
+import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 
 import java.time.LocalDate
 
@@ -37,7 +38,7 @@ class PaymentAllocationsControllerISpec extends ComponentSpecBase with FeatureSw
 
   val testUser: MtdItUser[_] = MtdItUser(
     testMtditid, testNino, None, paymentHistoryBusinessAndPropertyResponse,
-    None, Some("1234567890"), None, Some("Agent"), Some("1")
+    None, Some("1234567890"), None, Some(Agent), Some("1")
   )(FakeRequest())
 
 

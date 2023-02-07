@@ -31,13 +31,14 @@ import testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSu
 import testConstants.NewCalcDataIntegrationTestConstants._
 import testConstants.messages.TaxDueSummaryMessages.{additionCharges, nonVoluntaryClass2Nics, postgraduatePlan, studentPlan, voluntaryClass2Nics}
 import testConstants.messages.{TaxDueSummaryMessages => messages}
+import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 
 
 class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
   val testUser: MtdItUser[_] = MtdItUser(
     testMtditid, testNino, None, multipleBusinessesAndPropertyResponse,
-    None, Some("1234567890"), Some("12345-credId"), Some("Individual"), None
+    None, Some("1234567890"), Some("12345-credId"), Some(Individual), None
   )(FakeRequest())
 
 

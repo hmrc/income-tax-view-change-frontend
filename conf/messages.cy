@@ -463,9 +463,9 @@ taxCal_breakdown.table.socialEnterpriseInvestment                   = Rhyddhad T
 taxCal_breakdown.table.maintenancePayments                          = Cynhaliaeth ac alimoni a dalwyd
 taxCal_breakdown.table.property_finance_relief                      = Rhyddhad am gostau ariannol
 taxCal_breakdown.table.total_notional_tax                           = Treth dybiannol o enillion ar bolisïau bywyd ac ati
-taxCal_breakdown.table.total_foreign_tax_credit_relief              = Rhyddhad Credyd Treth Dramor
+taxCal_breakdown.table.total_foreign_tax_credit_relief              = Rhyddhad Credyd Treth Tramor
 taxCal_breakdown.table.qualifyingDistributionRedemptionOfSharesAndSecurities    = Rhyddhad a hawliwyd ar ddosbarthiad cymhwysol
-taxCal_breakdown.table.nonDeductibleLoanInterest                    = Llog ar fenthyciad, na ellir ei ddidynnu
+taxCal_breakdown.table.nonDeductableLoanInterest                    = Llog ar fenthyciad na ellir ei ddidynnu
 taxCal_breakdown.table.income_tax_due_after_tax_reductions          = Treth Incwm sy’n ddyledus ar ôl gostyngiadau treth
 taxCal_breakdown.taxDeductedAtSource								= Didyniadau treth
 taxCal_breakdown.table.taxDeductedAtSource.savings					= Llog a gafwyd o fanciau a chymdeithasau adeiladu yn y DU
@@ -546,9 +546,11 @@ taxCal_breakdown.table.cgt.already_paid                             = Treth ar e
 taxCal_breakdown.table.cgt.due                                      = Treth Enillion Cyfalaf sy’n ddyledus
 taxCal_breakdown.table.cgt.overpaid                                 = Treth Enillion Cyfalaf a gyfrifwyd fel gordaliad
 taxCal_breakdown.table.payeUnderpaymentsCodedOut                    = Treth a dandalwyd ar gyfer blynyddoedd cynharach, sydd wedi’i chynnwys yn eich cod treth ar gyfer {0} i {1}
-taxCal_breakdown.table.saUnderpaymentsCodedOut                      = Treth a dandalwyd ar gyfer blynyddoedd cynharach, sydd wedi’i chynnwys yn eich Hunanasesiad ar gyfer {0}} i {1}
+taxCal_breakdown.table.saUnderpaymentsCodedOut                      = Treth a dandalwyd ar gyfer blynyddoedd cynharach, sydd wedi’i chynnwys yn eich Hunanasesiad ar gyfer {0} i {1}
 taxCal_breakdown.table.studentLoanRepaymentsPlanType0X              = Ad-daliadau Benthyciad Myfyriwr (cynllun {0})
 taxCal_breakdown.table.studentLoanPostGraduatePlan                  = Ad-daliadau Benthyciad Ôl-raddedig
+taxCal_breakdown.table.totalAnnuityPaymentsTaxCharged               = Treth sy’n ddyledus ar daliadau blwydd-daliadau
+taxCal_breakdown.table.totalRoyaltyPaymentsTaxCharged               = Treth sy’n ddyledus ar freindaliadau
 
 ## Forecast Tax Calc Summary ##
 forecast_taxCalc.heading                                        = Rhagolwg cyfrifiad treth
@@ -577,7 +579,7 @@ obligations.heading                                             = Dyddiadau cau 
 obligations.quarterly.to                                        = i
 obligations.eops                                                = Blwyddyn dreth gyfan (gwiriad olaf)
 obligations.noReports                                           = Nid oes unrhyw adroddiadau’n nesáu at eu dyddiad cau ar hyn o bryd. Bydd eich dyddiad cau nesaf yn dangos yma ar ddydd Llun cyntaf y mis nesaf.
-nextUpdates.quarterly                                           = Diweddariad chwarterol
+nextUpdates.quarterly                                           = Diweddariad bob chwarter
 nextUpdates.eops            									= Diweddariad blynyddol
 nextUpdates.crystallised            							= Datganiad terfynol
 nextUpdates.crystallisedAll            							= Pob ffynhonnell incwm
@@ -589,7 +591,7 @@ nextUpdates.business            							    = Incwm busnes
 previous-obligations.income-source.property-income              = Incwm o eiddo
 previous-obligations.no-previous-obligations                    = Dim diweddariadau wedi’u cyflwyno’n flaenorol
 previous-obligations.income-source.final-income                 = Blwyddyn dreth – Gwiriad olaf
-previous-obligations.obligation-type.quarterly                  = Diweddariad chwarterol
+previous-obligations.obligation-type.quarterly                  = Diweddariad bob chwarter
 previous-obligations.obligation-type.crystallised               = Datganiad
 previous-obligations.obligation-type.start-to-end               = {0} i {1}
 previous-obligation.obligation-type.was-due-on                  = Roedd yn ddyledus ar {0}
@@ -884,7 +886,7 @@ chargeSummary.dunning.locks.banner.note							   = Mae dal angen i chi dalu’r 
 chargeSummary.lpi.chargeHistory.created.paymentOnAccount1.text          = Llog am dalu’n hwyr ar gyfer taliad ar gyfrif 1 o2 wedi’i greu
 chargeSummary.lpi.chargeHistory.created.paymentOnAccount2.text          = Llog am dalu’n hwyr ar gyfer taliad ar gyfrif 2 o2 wedi’i greu
 chargeSummary.lpi.chargeHistory.created.balancingCharge.text            = Llog am dalu’n hwyr ar gyfer y Taliad Mantoli wedi’i greu
-                                                                        
+
 chargeSummary.nic2TaxYear                                               = This is the Class 2 National Insurance payment for the {0} to {1} tax year.
 
 chargeSummary.chargeHistory.heading								        = Hanes taliadau
@@ -944,7 +946,7 @@ timeoutDialog.minutes.two                                       = funud
 timeoutDialog.message                                           = Er eich diogelwch, byddwn yn eich llofnodi allan mewn
 timeoutDialog.seconds                                           = eiliad
 timeoutDialog.title                                             = Rydych ar fin cael eich allgofnodi
-button.continue                                                 = Arhoswch wedi arwyddo i mewn
+button.continue                                                 = Arhoswch wedi’ch mewngofnodi
 
 ## Not found
 notFound.heading = Ni ellir dod o hyd i’r dudalen hon
@@ -1000,7 +1002,7 @@ updateTab.obligationType.business                               = Busnes
 updateTab.obligationType.crystallised                           = Pob ffynhonnell incwm
 updateTab.due                                                   = Yn ddyledus erbyn {0}
 updateTab.dateSubmitted                                         = Dyddiad cyflwyno
-updateTab.updateType.quarterly                                  = Diweddariad chwarterol
+updateTab.updateType.quarterly                                  = Diweddariad bob chwarter
 updateTab.updateType.eops                                       = Diweddariad blynyddol
 updateTab.updateType.crystallised                               = Datganiad terfynol
 

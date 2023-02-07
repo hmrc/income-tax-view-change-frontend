@@ -36,6 +36,7 @@ import play.api.http.Status
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers._
 import testUtils.TestSupport
+import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.Future
@@ -81,11 +82,11 @@ class PaymentControllerSpec extends TestSupport with MockAuthenticationPredicate
 
       "a successful payments journey is started with audit events" in new SetupTestPaymentController(isAgent = false, Future.successful(
         PaymentJourneyModel("id", "redirect-url"))) {
-        setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthSuccessWithSaUtrResponse())
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         val result: Future[Result] = testController.paymentHandoff(testAmountInPence)(fakeRequestWithActiveSession)
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some("redirect-url")
-        verifyExtendedAudit(InitiatePayNowAuditModel(testMtditid, Some(testNino), Some(testSaUtrId), Some(testCredId), Some("Individual")))
+        verifyExtendedAudit(InitiatePayNowAuditModel(testMtditid, Some(testNino), Some(testSaUtrId), Some(testCredId), Some(Individual)))
       }
     }
 
@@ -100,13 +101,13 @@ class PaymentControllerSpec extends TestSupport with MockAuthenticationPredicate
 
       "an error response is returned by the connector" in new SetupTestPaymentController(isAgent = false, Future.successful(
         PaymentJourneyErrorResponse(INTERNAL_SERVER_ERROR, "Error Message"))) {
-        setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthSuccessWithSaUtrResponse())
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         val result: Future[Result] = testController.paymentHandoff(testAmountInPence)(fakeRequestWithActiveSession)
         status(result) shouldBe INTERNAL_SERVER_ERROR
       }
 
       "an exception is returned by the connector" in new SetupTestPaymentController(isAgent = false, Future.failed(new Exception("Exception Message"))) {
-        setupMockAuthRetrievalSuccess(BaseTestConstants.testAuthSuccessWithSaUtrResponse())
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         val result: Future[Result] = testController.paymentHandoff(testAmountInPence)(fakeRequestWithActiveSession)
         status(result) shouldBe INTERNAL_SERVER_ERROR
       }

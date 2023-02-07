@@ -19,6 +19,8 @@ package audit
 import _root_.models.financialDetails.DocumentDetail
 import auth.MtdItUserBase
 import play.api.libs.json.{JsObject, Json}
+import uk.gov.hmrc.auth.core.AffinityGroup
+import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import utils.Utilities.JsonUtil
 
 
@@ -33,8 +35,8 @@ object Utilities {
     ("credId", user.credId) ++
     userType(user.userType)
 
-  def userType(userType: Option[String]): JsObject = userType match {
-    case Some("Agent") => Json.obj("userType" -> "Agent")
+  def userType(userType: Option[AffinityGroup]): JsObject = userType match {
+    case Some(Agent) => Json.obj("userType" -> "Agent")
     case Some(_) => Json.obj("userType" -> "Individual")
     case None => Json.obj()
   }
