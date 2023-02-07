@@ -39,7 +39,7 @@ class ImplicitJsonValidationFormatterSpec extends UnitSpec with Matchers {
 
     "calling asString" should {
 
-      "return a properly formatted string"
+      "return a properly formatted string" in {
         testValidationErrors.asString shouldBe s", path: /someNode and errors: ValidationError(List($someValidationError1, $someValidationError2),ArraySeq(List($someArg1, $someArg2)))"
       }
       "return a properly formatted a strings when ValidationErrors are empty" in {
