@@ -41,11 +41,14 @@ object Utilities {
     case None => Json.obj()
   }
 
-  def getChargeType(docDetail: DocumentDetail, latePaymentCharge: Boolean = false): Option[String] = docDetail.documentDescription map {
-    case "ITSA- POA 1" => if (latePaymentCharge) "Late payment interest for payment on account 1 of 2" else "Payment on account 1 of 2"
-    case "ITSA - POA 2" => if (latePaymentCharge) "Late payment interest for payment on account 2 of 2" else "Payment on account 2 of 2"
-    case "TRM New Charge" | "TRM Amend Charge" => if (latePaymentCharge) "Late payment interest for remaining balance" else "Remaining balance"
-    case other => other
+  def getChargeType(docDetail: DocumentDetail, latePaymentCharge: Boolean = false): Option[String] =
+    (docDetail.documentDescription, docDetail.documentText) match {
+    case (_, Some(documentText)) if (documentText.contains("Class 2 National Insurance")) => Some("Class 2 National Insurance")
+    case(_, Some(documentDescription)) if (documentDescription.contains("Cancelled PAYE Self Assessment")) => Some("Cancelled PAYE Self Assessment (through your PAYE tax code)")
+    case (Some("ITSA- POA 1"), _) => if (latePaymentCharge) Some("Late payment interest for payment on account 1 of 2") else Some("Payment on account 1 of 2")
+    case (Some("ITSA - POA 2"),_) => if (latePaymentCharge) Some("Late payment interest for payment on account 2 of 2") else Some("Payment on account 2 of 2")
+    case (Some("TRM New Charge") | Some("TRM Amend Charge"),_ ) => if (latePaymentCharge) Some("Late payment interest for remaining balance") else Some("Remaining balance")
+    case (other, _) => other
   }
 
   def ratePctString(rate: BigDecimal): String = s"$rate%"
