@@ -37,6 +37,7 @@ class WhatYouOweResponseAuditModelSpec extends TestSupport {
   val lpiPaymentOnAccount1: String = messages("whatYouOwe.lpi.paymentOnAccount1.text")
   val paymentOnAccount1: String = messages("whatYouOwe.paymentOnAccount1.text")
   val paymentOnAccount2: String = messages("whatYouOwe.paymentOnAccount2.text")
+  val class2Nic: String = messages("whatYouOwe.class2Nic.text")
 
   val dueDateInFuture: String = LocalDate.now().plusDays(45).toString
   val dueDateIsSoon: String = LocalDate.now().plusDays(1).toString
@@ -59,7 +60,8 @@ class WhatYouOweResponseAuditModelSpec extends TestSupport {
       arn = if (userType.contains(Agent)) Some(testArn) else None
     ),
     whatYouOweChargesList = chargesList,
-    dateService
+    dateService,
+
   )
 
   "The WhatYouOweResponseAuditModel" should {
@@ -90,7 +92,8 @@ class WhatYouOweResponseAuditModelSpec extends TestSupport {
             "dueDate" -> Some(LocalDate.parse("2019-06-25")),
             "outstandingAmount" -> 42.5,
             "chargeUnderReview" -> true,
-            "endTaxYear" -> 2023
+            "endTaxYear" -> 2023,
+            "overDue" -> true
           ),
           Json.obj(
             "chargeType" -> paymentOnAccount2,
@@ -101,7 +104,8 @@ class WhatYouOweResponseAuditModelSpec extends TestSupport {
             "interestFromDate" -> "2019-05-25",
             "interestEndDate" -> "2019-06-25",
             "chargeUnderReview" -> false,
-            "endTaxYear" -> 2023
+            "endTaxYear" -> 2023,
+            "overDue" -> true
           ),
           Json.obj(
             "chargeType" -> paymentOnAccount2,
@@ -112,7 +116,8 @@ class WhatYouOweResponseAuditModelSpec extends TestSupport {
             "interestFromDate" -> "2018-03-29",
             "interestEndDate" -> "2018-03-29",
             "chargeUnderReview" -> false,
-            "endTaxYear" -> 2023
+            "endTaxYear" -> 2023,
+            "overDue" -> false
           ),
           Json.obj(
             "chargeType" -> paymentOnAccount1,
@@ -123,14 +128,17 @@ class WhatYouOweResponseAuditModelSpec extends TestSupport {
             "interestFromDate" -> "2018-03-29",
             "interestEndDate" -> "2018-03-29",
             "chargeUnderReview" -> false,
-            "endTaxYear" -> 2023
+            "endTaxYear" -> 2023,
+            "overDue" -> false
           ),
           Json.obj("accruingInterest" -> 12.67,
             "chargeType" -> "Remaining balance",
             "dueDate" -> outStandingCharges,
             "outstandingAmount" -> 123456.67
           )
-        )
+        ),
+        "codingOut" -> Json.obj( "amountCodedOut" -> 2500,
+          "endTaxYear" -> "2022")
       )
     }
 
@@ -193,7 +201,8 @@ class WhatYouOweResponseAuditModelSpec extends TestSupport {
           "outstandingAmount" -> 42.5,
           "chargeType" -> lpiPaymentOnAccount1,
           "dueDate" -> "2019-06-25",
-          "endTaxYear" -> LocalDate.now().getYear
+          "endTaxYear" -> LocalDate.now().getYear,
+          "overDue" -> true
         )
       }
     }

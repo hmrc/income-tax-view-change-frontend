@@ -50,6 +50,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
   "Navigating to /report-quarterly/income-and-expenses/view/payments-owed" when {
 
     "Authorised" when {
+
       "render the payments due totals" in {
         disable(NavBarFs)
         Given("Display Totals feature is enabled")
@@ -65,7 +66,6 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
 
         IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
           "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
-
 
         When("I call GET /report-quarterly/income-and-expenses/view/payments-owed")
         val res = IncomeTaxViewChangeFrontend.getPaymentsDue
@@ -178,6 +178,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
           )
 
         }
+
         "render the payments due page with multiple charges and one charge equals zero" in {
 
           Given("I wiremock stub a successful Income Source Details response with multiple business and property")
@@ -374,6 +375,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
           )
 
         }
+
         "redirect to an internal server error page when financial connector return internal server error" in {
 
           Given("I wiremock stub a successful Income Source Details response with multiple business and property")
@@ -569,7 +571,6 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK,
             propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
 
-
           And("I wiremock stub a mixed financial details response")
           val mixedJson = Json.obj(
             "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "totalBalance" -> 3.00),
@@ -617,6 +618,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
 
         }
       }
+
       "YearOfMigration exists with valid financial details charges and invalid outstanding charges" when {
         "render the payments due page with empty BCD charge" in {
 
@@ -660,7 +662,9 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
 
         }
       }
+
       "CodingOut FS is enabled" when {
+
         "render the payments owed with a Coding out banner" in {
           Given("Coding Out feature is enabled")
           enable(CodingOut)
@@ -702,6 +706,47 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
             isElementVisibleById(s"payments-made-bullets")(expectedValue = true),
             isElementVisibleById(s"sa-tax-bill")(expectedValue = true)
           )
+        }
+
+        "render the payments due page with a multiple charges ~ TxM extension" in {
+          Given("I wiremock stub a successful Income Source Details response with multiple business and property")
+          enable(CodingOut)
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
+
+          And("I wiremock stub a multiple financial details and outstanding charges response")
+          IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK,
+            testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, LocalDate.now().toString, isClass2Nic = true))
+
+          IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
+            "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithAciAndBcdCharges)
+
+          When("I call GET /report-quarterly/income-and-expenses/view/payments-owed")
+          val res = IncomeTaxViewChangeFrontend.getPaymentsDue
+
+          AuditStub.verifyAuditContainsDetail(WhatYouOweResponseAuditModel(testUser, whatYouOweDataWithDataDueInSomeDays, dateService).detail)
+
+          verifyIncomeSourceDetailsCall(testMtditid)
+          IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05", 2)
+          IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear - 1).toString)
+
+          Then("the result should have a HTTP status of OK (200) and the payments due page")
+
+          res should have(
+            httpStatus(OK),
+            pageTitleIndividual("whatYouOwe.heading"),
+            isElementVisibleById("balancing-charge-type-0")(expectedValue = true),
+            isElementVisibleById("balancing-charge-type-1")(expectedValue = true),
+            isElementVisibleById("payment-details-content-0")(expectedValue = true),
+            isElementVisibleById("payment-details-content-1")(expectedValue = true),
+            isElementVisibleById("due-0")(expectedValue = true),
+            isElementVisibleById("due-1")(expectedValue = true),
+            isElementVisibleById("payment-button")(expectedValue = true),
+            isElementVisibleById("sa-note-migrated")(expectedValue = true),
+            isElementVisibleById("outstanding-charges-note-migrated")(expectedValue = true),
+            isElementVisibleById(s"payments-made-bullets")(expectedValue = true),
+            isElementVisibleById(s"sa-tax-bill")(expectedValue = true)
+          )
+
         }
       }
 

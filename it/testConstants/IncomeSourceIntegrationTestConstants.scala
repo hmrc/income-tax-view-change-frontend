@@ -159,10 +159,12 @@ object IncomeSourceIntegrationTestConstants {
 
   val id1040000123 = "1040000123"
 
+  val documentText = (isClass2Nic: Boolean, otherwise:String) =>{ if (isClass2Nic) { CODING_OUT_CLASS2_NICS.name } else { otherwise } }
   def testValidFinancialDetailsModelJson(originalAmount: BigDecimal, outstandingAmount: BigDecimal, taxYear: String = "2018",
                                          dueDate: String = "2018-02-14", dunningLock: List[String] = noDunningLock,
                                          interestLocks: List[String] = noInterestLock,
-                                         latePaymentInterestAmount: Option[BigDecimal] = Some(100)
+                                         latePaymentInterestAmount: Option[BigDecimal] = Some(100),
+                                         isClass2Nic : Boolean = false
                                         ): JsValue = Json.obj(
     "balanceDetails" -> Json.obj(
       "balanceDueWithin30Days" -> 1.00,
@@ -174,6 +176,7 @@ object IncomeSourceIntegrationTestConstants {
         "taxYear" -> taxYear,
         "transactionId" -> "1040000123",
         "documentDescription" -> "TRM New Charge",
+        "documentText" -> documentText(isClass2Nic, "TRM New Charge"),
         "outstandingAmount" -> outstandingAmount,
         "originalAmount" -> originalAmount,
         "documentDate" -> "2018-03-29",
