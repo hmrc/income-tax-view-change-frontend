@@ -461,6 +461,7 @@ taxCal_breakdown.table.nic2.false                                   = Class 2 Na
 taxCal_breakdown.table.nic2.true                                    = Voluntary Class 2 National Insurance
 
 taxCal_breakdown.table.banks_and_building_societies                 = Interest received from UK banks and building societies
+taxCal_breakdown.table.taxTakenOffTradingIncome                     = Tax deducted on trading income
 
 
 taxCal_breakdown.table.head.deduction                               = Deduction type
@@ -509,6 +510,7 @@ taxCal_breakdown.table.qualifyingDistributionRedemptionOfSharesAndSecurities    
 taxCal_breakdown.table.nonDeductableLoanInterest                    = Non-deductible loan interest
 taxCal_breakdown.table.income_tax_due_after_tax_reductions          = Income Tax due after tax reductions
 taxCal_breakdown.table.taxDeductedAtSource.savings					= Interest received from UK banks and building societies
+taxCal_breakdown.table.taxDeductedAtSource.taxTakenOffTradingIncome	= Tax deducted on trading income
 taxCal_breakdown.table.taxDeductedAtSource.inYearAdjustment			= Outstanding debt collected through PAYE
 taxCal_breakdown.table.taxDeductedAtSource.payeEmployments          = All employments
 taxCal_breakdown.table.taxDeductedAtSource.ukPensions	            = UK pensions

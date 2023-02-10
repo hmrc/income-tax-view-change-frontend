@@ -628,7 +628,8 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
             (7, messages("taxCal_breakdown.table.taxDeductedAtSource.specialWithholdingTax"), "−£600.00"),
             (8, messages("taxCal_breakdown.table.taxDeductedAtSource.voidISAs"), "−£700.00"),
             (9, messages("taxCal_breakdown.table.banks_and_building_societies"), "−£800.00"),
-            (10, messages("taxCal_breakdown.table.taxDeductedAtSource.total"), "£1,000.00")
+            (10, messages("taxCal_breakdown.table.taxTakenOffTradingIncome"), "−£563.12"),
+            (11, messages("taxCal_breakdown.table.taxDeductedAtSource.total"), "£1,000.00")
           )
         )
 

@@ -27,7 +27,8 @@ case class TaxDeductedAtSourceViewModel(
                                          specialWithholdingTax: Option[BigDecimal] = None,
                                          voidISAs: Option[BigDecimal] = None,
                                          savings: Option[BigDecimal] = None,
-                                         inYearAdjustmentCodedInLaterTaxYear: Option[BigDecimal] = None
+                                         inYearAdjustmentCodedInLaterTaxYear: Option[BigDecimal] = None,
+                                         taxTakenOffTradingIncome: Option[BigDecimal] = None
                                        ) {
   val allFields: Seq[(String, BigDecimal)] = Seq(
     "inYearAdjustment" -> inYearAdjustmentCodedInLaterTaxYear,
@@ -38,7 +39,8 @@ case class TaxDeductedAtSourceViewModel(
     "ukLandAndProperty" -> ukLandAndProperty,
     "specialWithholdingTax" -> specialWithholdingTax,
     "voidISAs" -> voidISAs,
-    "savings" -> savings
+    "savings" -> savings,
+    "taxTakenOffTradingIncome" -> taxTakenOffTradingIncome
   ).collect {
     case (key, Some(amount)) => key -> amount
   }
@@ -58,7 +60,8 @@ object TaxDeductedAtSourceViewModel {
           stateBenefits = tds.stateBenefits,
           specialWithholdingTax = tds.specialWithholdingTaxOrUkTaxPaid,
           inYearAdjustmentCodedInLaterTaxYear = tds.inYearAdjustmentCodedInLaterTaxYear,
-          savings = tds.bbsi
+          savings = tds.bbsi,
+          taxTakenOffTradingIncome = tds.taxTakenOffTradingIncome
         )
       case None => TaxDeductedAtSourceViewModel()
     }
