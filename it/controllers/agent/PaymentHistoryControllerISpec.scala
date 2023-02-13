@@ -115,10 +115,11 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase {
       IncomeTaxViewChangeStub.stubGetPaymentsResponse(testNino, s"$previousTaxYearEnd-04-06", s"$currentTaxYearEnd-04-05")(OK, payments)
 
       val result = IncomeTaxViewChangeFrontend.getPaymentHistory(clientDetailsWithConfirmation)
+
       Then("The Payment History page is returned to the user")
       result should have(
         httpStatus(OK),
-        pageTitleAgent("paymentHistory.paymentAndRefundHistory.heading")
+        pageTitleAgent("paymentHistory.heading")
       )
 
       verifyAuditContainsDetail(PaymentHistoryResponseAuditModel(testUser, payments, CutOverCreditsEnabled = false,
@@ -142,7 +143,7 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase {
       Then("The Payment History page is returned to the user")
       result should have(
         httpStatus(OK),
-        pageTitleAgent("paymentHistory.paymentAndRefundHistory.heading")
+        pageTitleAgent("paymentHistory.heading")
       )
 
       verifyAuditContainsDetail(PaymentHistoryResponseAuditModel(testUser, payments, CutOverCreditsEnabled = true,
