@@ -60,9 +60,6 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
                                           val view: CreditAndRefunds,
                                           val customNotFoundErrorView: CustomNotFoundError)
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {
-  private val creditsFromHMRC = "HMRC"
-  private val cutOverCredits = "CutOver"
-  private val payment = "Payment"
 
   def show(origin: Option[String] = None): Action[AnyContent] =
     (checkSessionTimeout andThen authenticate andThen retrieveNino
@@ -86,7 +83,7 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
         val balance: Option[BalanceDetails] = financialDetailsModel.headOption.map(balance => balance.balanceDetails)
 
         val credits: List[(DocumentDetailWithDueDate, FinancialDetail)] = financialDetailsModel.flatMap(
-          financialDetailsModel => sortCreditsGroupedPaymentTypes(financialDetailsModel.getAllDocumentDetailsWithDueDatesAndFinancialDetails())
+          financialDetailsModel => sortCreditsByTypeAndMonetaryValue(financialDetailsModel.getAllDocumentDetailsWithDueDatesAndFinancialDetails())
         )
 
         val creditAndRefundType: Option[UnallocatedCreditType] = maybeUnallocatedCreditType(credits, balance, isMFACreditsAndDebitsEnabled, isCutOverCreditsEnabled)
@@ -95,6 +92,7 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
           auditClaimARefund(balance, credits)
         }
 
+
         Ok(view(credits, balance, creditAndRefundType, isAgent, backUrl, isMFACreditsAndDebitsEnabled, isCutOverCreditsEnabled)(user, user, messages))
       case _ => Logger("application").error(
         s"${if (isAgent) "[Agent]"}[CreditAndRefundController][show] Invalid response from financial transactions")
@@ -102,45 +100,52 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
     }
   }
 
-  def sortCreditsGroupedPaymentTypes(credits: List[(DocumentDetailWithDueDate, FinancialDetail)])
+  private val balancingChargeCredit = "BCC"
+  private val mfaCredit = "MFA"
+  private val cutOverCredit = "CutOver"
+  private val payment = "Payment"
+
+  private val sortingOrderCreditType = Map(
+    balancingChargeCredit -> 1,
+    mfaCredit -> 2,
+    cutOverCredit -> 3,
+    payment -> 4
+  )
+
+  def sortCreditsByTypeAndMonetaryValue(credits: List[(DocumentDetailWithDueDate, FinancialDetail)])
   : List[(DocumentDetailWithDueDate, FinancialDetail)] = {
-    val sortingOrderCreditType = Map(
-      creditsFromHMRC -> 0,
-      cutOverCredits -> 1,
-      payment -> 2
-    )
-
-    def sortCredits(credits: List[(DocumentDetailWithDueDate, FinancialDetail)])
-    : List[(DocumentDetailWithDueDate, FinancialDetail)] = {
-      credits
-        .sortBy(_._1.documentDetail.paymentOrChargeCredit).reverse
-    }
-
-    val creditsGroupedPaymentTypes = credits
-      .groupBy[String] {
-        credits => {
-          getCreditTypeGroupKey(credits)
-        }
+    val sortedCredits = credits.groupBy[String] {
+      credits => {
+        getCreditType(credits)
       }
-      .toList.sortWith((p1, p2) => sortingOrderCreditType(p1._1) < sortingOrderCreditType(p2._1))
+    }.toList.sortWith((p1, p2) => sortingOrderCreditType(p1._1) < sortingOrderCreditType(p2._1))
       .map {
-        case (documentId, credits) => (documentId, sortCredits(credits))
+        case (documentDetailWithDueDate, financialDetail) => (documentDetailWithDueDate, sortCreditsByMonetaryValue(financialDetail))
       }.flatMap {
       case (_, credits) => credits
     }
-    creditsGroupedPaymentTypes
+    sortedCredits
   }
 
-  def getCreditTypeGroupKey(credits: (DocumentDetailWithDueDate, FinancialDetail)): String = {
-    val isMFA: Boolean = credits._2.validMFACreditType()
-    val isCutOverCredit: Boolean = credits._2.validCutoverCreditType()
-    val isPayment: Boolean = credits._1.documentDetail.paymentLot.isDefined
-    (isMFA, isCutOverCredit, isPayment) match {
-      case (true, false, false) => creditsFromHMRC
-      case (false, true, false) => cutOverCredits
-      case (false, false, true) => payment
-      case (_, _, _) => throw new Exception("Credit Type Not Found")
+  def getCreditType(credit: (DocumentDetailWithDueDate, FinancialDetail)): String = {
+    val isBCC: Boolean = credit._2.isBalancingChargeCredit
+    val isMFA: Boolean = credit._2.isMFACredit
+    val isCutOverCredit: Boolean = credit._2.isCutOverCredit
+    val isPayment: Boolean = credit._1.documentDetail.paymentLot.isDefined
+
+    (isBCC, isMFA, isCutOverCredit, isPayment) match {
+      case (true, false, false, false) => balancingChargeCredit
+      case (false, true, false, false) => mfaCredit
+      case (false, false, true, false) => cutOverCredit
+      case (false, false, false, true) => payment
+      case (_, _, _, _) => throw new Exception("Credit Type Not Found")
     }
+  }
+
+  def sortCreditsByMonetaryValue(credits: List[(DocumentDetailWithDueDate, FinancialDetail)])
+  : List[(DocumentDetailWithDueDate, FinancialDetail)] = {
+    credits
+      .sortBy(_._1.documentDetail.paymentOrChargeCredit).reverse
   }
 
   def showAgent(): Action[AnyContent] = {
@@ -213,7 +218,7 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
   }
 
   private def handleStatusRefundRequest(isAgent: Boolean, itvcErrorHandler: ShowInternalServerError, backUrl: String)
-                                 (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
+                                       (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
     repaymentService.view(user.nino).flatMap {
       case _ if isDisabled(CreditsRefundsRepay) =>
         Future.successful(Ok(customNotFoundErrorView()(user, messages)))

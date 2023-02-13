@@ -1087,6 +1087,8 @@ credit-and-refund.claim-refund-btn                                = Claim a refu
 credit-and-refund.check-refund-btn                                = Check refund status
 credit-and-refund.credit-from-hmrc-title-prt-1                    = from a
 credit-and-refund.credit-from-hmrc-title-prt-2                    = Credit from HMRC adjustment
+credit-and-refund.credit-from-balancing-charge-prt-1              = from a
+credit-and-refund.credit-from-balancing-charge-prt-2              = balancing charge credit
 
 #Following empty fields are not in Use
 #These fields are kept to match with Messages.cy

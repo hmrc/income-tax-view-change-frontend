@@ -32,12 +32,12 @@ case class PaymentHistoryResponseAuditModel(mtdItUser: MtdItUser[_],
   override val auditType: String = enums.AuditType.PaymentHistoryResponse
 
   private def getPayment(payment: Payment, desc: String): JsObject = Json.obj("description" -> desc) ++
-    ("paymentDate", if (payment.validMFACreditType()) Some(payment.documentDate) else payment.dueDate) ++
+    ("paymentDate", if (payment.isMFACredit) Some(payment.documentDate) else payment.dueDate) ++
     ("amount", payment.amount)
 
   private def paymentHistoryMapper(payment: Payment): Option[JsObject] = {
     val isCredit = payment.credit.isDefined
-    val isMFA = payment.validMFACreditType()
+    val isMFA = payment.isMFACredit
     (isCredit, isMFA) match {
       case (true, true) =>
         if (MFACreditsEnabled) Some(getPayment(payment, "Credit from HMRC adjustment")) else None

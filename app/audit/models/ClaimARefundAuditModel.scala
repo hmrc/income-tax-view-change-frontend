@@ -43,8 +43,8 @@ case class ClaimARefundAuditModel(balanceDetails: Option[BalanceDetails],
   }
 
   private def getCreditType(credit: (DocumentDetailWithDueDate, FinancialDetail)): String = {
-    val isMFA: Boolean = credit._2.validMFACreditType()
-    val isCutOverCredit: Boolean = credit._2.validCutoverCreditType()
+    val isMFA: Boolean = credit._2.isMFACredit
+    val isCutOverCredit: Boolean = credit._2.isCutOverCredit
     val isPayment: Boolean = credit._1.documentDetail.paymentLot.isDefined
 
     (isMFA, isCutOverCredit, isPayment) match {

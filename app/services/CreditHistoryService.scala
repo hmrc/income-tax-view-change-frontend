@@ -44,7 +44,7 @@ class CreditHistoryService @Inject()(incomeTaxViewChangeConnector: IncomeTaxView
       case financialDetailsModel: FinancialDetailsModel =>
         val fdRes = financialDetailsModel.getPairedDocumentDetails().flatMap {
           case (document: DocumentDetail, financialDetail: FinancialDetail) => {
-            (financialDetail.validMFACreditType(), document.credit.isDefined) match {
+            (financialDetail.isMFACredit, document.credit.isDefined) match {
               case (true, true) =>
                 Some(CreditDetailModel(date = document.documentDate, document, MfaCreditType, Some(financialDetailsModel.balanceDetails)))
               case (false, true) =>

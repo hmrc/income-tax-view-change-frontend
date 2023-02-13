@@ -52,6 +52,8 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
   val creditAndRefundHeadingAgentWithTitleServiceNameGovUkAgent: String = messages("htmlTitle.agent", creditAndRefundHeading)
   val creditAndRefundFromHMRCTitlePart1: String = messages("credit-and-refund.credit-from-hmrc-title-prt-1")
   val creditAndRefundFromHMRCTitlePart2: String = messages("credit-and-refund.credit-from-hmrc-title-prt-2")
+  val creditAndRefundFromBalancingChargePart1: String = messages("credit-and-refund.credit-from-balancing-charge-prt-1")
+  val creditAndRefundFromBalancingChargePart2: String = messages("credit-and-refund.credit-from-balancing-charge-prt-2")
   val creditAndRefundPaymentFromEarlierYearLinkText: String = messages("paymentHistory.paymentFromEarlierYear")
   val creditAndRefundAgentNoCredit: String = messages("credit-and-refund.agent.no-credit")
   val creditAndRefundAgentHasCreditBullet1Prt1: String = messages("credit-and-refund.agent.bullet-one-prt-1")
@@ -253,7 +255,7 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
           document.getElementsByClass("govuk-button govuk-button--secondary").text() shouldBe checkBtn
         }
 
-      "a user has an unallocated credits from exactly a single credit item" in
+      "a user has an unallocated credits from exactly a single credit item (MFA Credit)" in
         new Setup(creditCharges = List(
           documentDetailWithDueDateFinancialDetailListModel(
             Some(-500.00),
@@ -286,7 +288,7 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
           document.getElementsByClass("govuk-button govuk-button--secondary").text() shouldBe checkBtn
         }
 
-      "a user has an unallocated credits from exactly a single credit item as a cut over credit" in
+      "a user has an unallocated credits from exactly a single credit item (cut over credit)" in
         new Setup(creditCharges = List(
           documentDetailWithDueDateFinancialDetailListModel(
             Some(-500.00),
@@ -311,6 +313,38 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
           document.select("h2").first().select("span").first().text() shouldBe subHeadingWithUnallocatedCreditsSingleCredit
           document.select("h2").first().select("span").next().text() shouldBe s"$creditAndRefundPaymentFromEarlierYearLinkText."
           document.select("h2").first().select("span").next().select("a").text() shouldBe creditAndRefundPaymentFromEarlierYearLinkText
+          document.select("h2").first().select("span").next().select("a").attr("href") shouldBe linkCreditsSummaryPage
+          document.select("dt").eachText().contains("Total") shouldBe false
+          document.select("govuk-list govuk-list--bullet").isEmpty shouldBe true
+
+          document.getElementsByClass("govuk-button").first().text() shouldBe claimBtn
+          document.getElementsByClass("govuk-button govuk-button--secondary").text() shouldBe checkBtn
+        }
+      "a user has an unallocated credits from exactly a single credit item (Balancing Charge Credit)" in
+        new Setup(creditCharges = List(
+          documentDetailWithDueDateFinancialDetailListModel(
+            Some(-500.00),
+            dueDate = Some(LocalDate.of(2022, 1, 12)),
+            originalAmount = Some(-1000),
+            mainType = "SA Balancing Charge Credit"
+          )
+        ),
+          balance = Some(
+            balanceDetailsModel(
+              availableCredit = Some(500.00),
+              firstPendingAmountRequested = None,
+              secondPendingAmountRequested = None,
+              unallocatedCredit = Some(12.00)
+            )
+          ),
+          creditAndRefundType = Some(UnallocatedCreditFromSingleCreditItem)
+        ) {
+
+          document.title() shouldBe creditAndRefundHeadingWithTitleServiceNameGovUk
+          layoutContent.selectHead("h1").text shouldBe creditAndRefundHeading
+          document.select("h2").first().select("span").first().text() shouldBe subHeadingWithUnallocatedCreditsSingleCredit
+          document.select("h2").first().select("span").next().text() shouldBe s"$creditAndRefundFromBalancingChargePart2."
+          document.select("h2").first().select("span").next().select("a").text() shouldBe creditAndRefundFromBalancingChargePart2
           document.select("h2").first().select("span").next().select("a").attr("href") shouldBe linkCreditsSummaryPage
           document.select("dt").eachText().contains("Total") shouldBe false
           document.select("govuk-list govuk-list--bullet").isEmpty shouldBe true
@@ -363,7 +397,7 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
           document.getElementsByClass("govuk-button govuk-button--secondary").isEmpty shouldBe true
         }
 
-      "a client has an unallocated credits from exactly a single credit item" in
+      "a client has an unallocated credits from exactly a single credit item (MFA Credit)" in
         new Setup(isAgent = true, creditCharges = List(
           documentDetailWithDueDateFinancialDetailListModel(
             Some(-500.00),
@@ -393,7 +427,7 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
           document.getElementsByClass("govuk-button govuk-button--secondary").isEmpty shouldBe true
         }
 
-      "a client has an unallocated credits from exactly a single credit item as a cut over credit" in
+      "a client has an unallocated credits from a single credit item (cut over credit)" in
         new Setup(isAgent = true, creditCharges = List(
           documentDetailWithDueDateFinancialDetailListModel(
             Some(-500.00),
@@ -416,6 +450,35 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
           document.select("h2").first().select("span").first().text() shouldBe subHeadingWithUnallocatedCreditsSingleCreditAgent
           document.select("h2").first().select("span").next().text() shouldBe s"$creditAndRefundPaymentFromEarlierYearLinkText."
           document.select("h2").first().select("span").next().select("a").text() shouldBe creditAndRefundPaymentFromEarlierYearLinkText
+          document.select("dt").eachText().contains("Total") shouldBe false
+          document.select("govuk-list govuk-list--bullet").isEmpty shouldBe true
+
+          document.getElementsByClass("govuk-button").isEmpty shouldBe true
+          document.getElementsByClass("govuk-button govuk-button--secondary").isEmpty shouldBe true
+        }
+      "a client has an unallocated credits from a single credit item (balancing charge credit)" in
+        new Setup(isAgent = true, creditCharges = List(
+          documentDetailWithDueDateFinancialDetailListModel(
+            Some(-500.00),
+            dueDate = Some(LocalDate.of(2022, 1, 12)),
+            originalAmount = Some(-1000),
+            mainType = "SA Balancing Charge Credit"
+          )
+        ),
+          balance = Some(
+            balanceDetailsModel(
+              availableCredit = Some(500.00),
+              firstPendingAmountRequested = None,
+              secondPendingAmountRequested = None,
+              unallocatedCredit = Some(12.00)
+            )
+          ),
+          creditAndRefundType = Some(UnallocatedCreditFromSingleCreditItem)
+        ) {
+
+          document.select("h2").first().select("span").first().text() shouldBe subHeadingWithUnallocatedCreditsSingleCreditAgent
+          document.select("h2").first().select("span").next().text() shouldBe s"$creditAndRefundFromBalancingChargePart2."
+          document.select("h2").first().select("span").next().select("a").text() shouldBe creditAndRefundFromBalancingChargePart2
           document.select("dt").eachText().contains("Total") shouldBe false
           document.select("govuk-list govuk-list--bullet").isEmpty shouldBe true
 

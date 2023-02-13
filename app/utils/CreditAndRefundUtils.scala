@@ -28,16 +28,20 @@ object CreditAndRefundUtils {
     case object UnallocatedCreditFromSingleCreditItem extends UnallocatedCreditType
 
 
+
     def maybeUnallocatedCreditType(creditCharges: List[(DocumentDetailWithDueDate, FinancialDetail)],
                                    balanceDetails: Option[BalanceDetails], isMFACreditsAndDebitsEnabled: Boolean = false,
                                    isCutOverCreditEnabled: Boolean = false): Option[UnallocatedCreditType] = {
 
+      def validCredit(financialDetails: FinancialDetail): Boolean = (validMFACreditType(financialDetails.mainType) && isMFACreditsAndDebitsEnabled) || (financialDetails.isCutOverCredit && isCutOverCreditEnabled) || financialDetails.isBalancingChargeCredit
+      def validPayment(documentDetailWithDueDate: DocumentDetailWithDueDate): Boolean = documentDetailWithDueDate.documentDetail.paymentLot.isDefined && documentDetailWithDueDate.documentDetail.paymentLotItem.isDefined
+
       (creditCharges, balanceDetails, creditCharges.size) match {
         case (List((_, financialDetails)), Some(BalanceDetails(_, _, _, Some(availableCredit), _, _, Some(_))), 1)
-          if availableCredit != 0 && ((validMFACreditType(financialDetails.mainType) && isMFACreditsAndDebitsEnabled) || (financialDetails.validCutoverCreditType() && isCutOverCreditEnabled)) =>
+          if availableCredit != 0 && validCredit(financialDetails) =>
           Some(UnallocatedCreditFromSingleCreditItem)
         case (List((documentDetailWithDueDate, _)), Some(BalanceDetails(_, _, _, Some(availableCredit), _, _, Some(_))), 1)
-          if availableCredit != 0 && documentDetailWithDueDate.documentDetail.paymentLot.isDefined && documentDetailWithDueDate.documentDetail.paymentLotItem.isDefined =>
+          if availableCredit != 0 && validPayment(documentDetailWithDueDate) =>
           Some(UnallocatedCreditFromOnePayment)
         case _ => None
       }
