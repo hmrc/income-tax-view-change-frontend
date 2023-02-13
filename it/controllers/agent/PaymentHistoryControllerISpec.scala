@@ -19,7 +19,7 @@ package controllers.agent
 import audit.models.PaymentHistoryResponseAuditModel
 import auth.MtdItUser
 import com.github.tomakehurst.wiremock.client.WireMock
-import config.featureswitch.{CutOverCredits, MFACreditsAndDebits}
+import config.featureswitch.{CutOverCredits, MFACreditsAndDebits, PaymentHistoryRefunds}
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
 import helpers.servicemocks.IncomeTaxViewChangeStub
@@ -106,7 +106,7 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase {
       disable(CutOverCredits)
       disable(MFACreditsAndDebits)
       stubAuthorisedAgentUser(authorised = true)
-
+      disable(PaymentHistoryRefunds)
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
         status = OK,
         response = incomeSourceDetailsModel
@@ -130,7 +130,7 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase {
       enable(CutOverCredits)
       enable(MFACreditsAndDebits)
       stubAuthorisedAgentUser(authorised = true)
-
+      disable(PaymentHistoryRefunds)
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
         status = OK,
         response = incomeSourceDetailsModel
