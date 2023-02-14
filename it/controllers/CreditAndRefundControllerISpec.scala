@@ -124,8 +124,8 @@ class CreditAndRefundControllerISpec extends ComponentSpecBase {
 
         val res = IncomeTaxViewChangeFrontend.getCreditAndRefunds()
 
-//        verifyIncomeSourceDetailsCall(testMtditid)
-//        IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"$testPreviousTaxYear-04-06", s"$testTaxYear-04-05")
+        verifyIncomeSourceDetailsCall(testMtditid)
+        IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"$testPreviousTaxYear-04-06", s"$testTaxYear-04-05")
 
         res should have(
           httpStatus(OK),

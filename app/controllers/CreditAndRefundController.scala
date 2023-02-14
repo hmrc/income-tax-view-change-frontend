@@ -138,7 +138,9 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
       case (false, true, false, false) => mfaCredit
       case (false, false, true, false) => cutOverCredit
       case (false, false, false, true) => payment
-      case (_, _, _, _) => throw new Exception("Credit Type Not Found")
+      case (_, _, _, _) =>
+        Logger("application").warn(s"[CreditAndRefundController][getCreditType] - Unknown credit")
+        "unknownCredit"
     }
   }
 

@@ -33,7 +33,7 @@ object CreditAndRefundUtils {
                                    balanceDetails: Option[BalanceDetails], isMFACreditsAndDebitsEnabled: Boolean = false,
                                    isCutOverCreditEnabled: Boolean = false): Option[UnallocatedCreditType] = {
 
-      def validCredit(financialDetails: FinancialDetail): Boolean = (validMFACreditType(financialDetails.mainType) && isMFACreditsAndDebitsEnabled) || (financialDetails.isCutOverCredit && isCutOverCreditEnabled) || financialDetails.isBalancingChargeCredit
+      def validCredit(financialDetails: FinancialDetail): Boolean = (financialDetails.isMFACredit && isMFACreditsAndDebitsEnabled) || (financialDetails.isCutOverCredit && isCutOverCreditEnabled) || financialDetails.isBalancingChargeCredit
       def validPayment(documentDetailWithDueDate: DocumentDetailWithDueDate): Boolean = documentDetailWithDueDate.documentDetail.paymentLot.isDefined && documentDetailWithDueDate.documentDetail.paymentLotItem.isDefined
 
       (creditCharges, balanceDetails, creditCharges.size) match {
