@@ -278,6 +278,7 @@ object NewCalcBreakdownUnitTestConstants {
         stateBenefits = Some(5000.99),
         specialWithholdingTaxOrUkTaxPaid = Some(5000.99),
         inYearAdjustmentCodedInLaterTaxYear = Some(5000.99),
+        taxTakenOffTradingIncome = Some(563.12)
       )),
       pensionSavingsTaxCharges = Some(PensionSavingsTaxCharges(
         totalPensionCharges = Some(5000.99),
@@ -729,7 +730,8 @@ object NewCalcBreakdownUnitTestConstants {
       specialWithholdingTax = Some(600.0),
       voidISAs = Some(700.0),
       savings = Some(800.0),
-      inYearAdjustmentCodedInLaterTaxYear = Some(900.0)
+      inYearAdjustmentCodedInLaterTaxYear = Some(900.0),
+      taxTakenOffTradingIncome = Some(563.12)
     ),
     totalTaxDeducted = Some(1000)
   )

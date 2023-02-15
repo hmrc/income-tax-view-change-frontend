@@ -230,6 +230,7 @@ case class TaxDueResponseAuditModel(mtdItUser: MtdItUser[_],
       case "specialWithholdingTax" => "Special withholding tax"
       case "voidISAs" => "Void ISAs"
       case "savings" => "Interest received from UK banks and building societies"
+      case "taxTakenOffTradingIncome" => "Tax deducted on trading income"
       case _ => deduction
     }
 

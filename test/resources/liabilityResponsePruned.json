@@ -75,7 +75,8 @@
       "occupationalPensions" : 5000.99,
       "stateBenefits" : 5000.99,
       "specialWithholdingTaxOrUkTaxPaid" : 5000.99,
-      "inYearAdjustmentCodedInLaterTaxYear" : 5000.99
+      "inYearAdjustmentCodedInLaterTaxYear" : 5000.99,
+      "taxTakenOffTradingIncome" : 563.12
     },
     "giftAid" : {
       "grossGiftAidPayments" : 12500,

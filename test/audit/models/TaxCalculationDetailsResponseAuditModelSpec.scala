@@ -171,6 +171,10 @@ class TaxCalculationDetailsResponseAuditModelSpec extends WordSpecLike with Must
         "amount" -> 5000.99
       ),
       Json.obj(
+        "deductionType" -> "Tax deducted on trading income",
+        "amount" -> 563.12
+      ),
+      Json.obj(
         "deductionType" -> "Income Tax due after deductions",
         "amount" -> 50000.99
       )
