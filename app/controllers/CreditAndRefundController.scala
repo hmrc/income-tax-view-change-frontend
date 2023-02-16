@@ -105,20 +105,21 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
   private val cutOverCredit = "CutOver"
   private val payment = "Payment"
 
-  private val sortingOrderCreditType = Map(
-    balancingChargeCredit -> 1,
-    mfaCredit -> 2,
-    cutOverCredit -> 3,
-    payment -> 4
-  )
-
   def sortCreditsByTypeAndMonetaryValue(credits: List[(DocumentDetailWithDueDate, FinancialDetail)])
   : List[(DocumentDetailWithDueDate, FinancialDetail)] = {
+
+    val creditTypeSortingOrder = Map(
+      balancingChargeCredit -> 1,
+      mfaCredit -> 2,
+      cutOverCredit -> 3,
+      payment -> 4
+    )
+
     val sortedCredits = credits.groupBy[String] {
       credits => {
         getCreditType(credits)
       }
-    }.toList.sortWith((p1, p2) => sortingOrderCreditType(p1._1) < sortingOrderCreditType(p2._1))
+    }.toList.sortWith((p1, p2) => creditTypeSortingOrder(p1._1) < creditTypeSortingOrder(p2._1))
       .map {
         case (documentDetailWithDueDate, financialDetail) => (documentDetailWithDueDate, sortCreditsByMonetaryValue(financialDetail))
       }.flatMap {
