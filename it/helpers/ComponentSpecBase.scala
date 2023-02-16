@@ -135,6 +135,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     stubUserDetails()
     AuditStub.stubAuditing()
     cache.removeAll()
+    FeatureSwitch.switches foreach disable
   }
 
   override def afterAll(): Unit = {
