@@ -1107,8 +1107,8 @@ shortMonth.12 =
 notFound.heading =
 notFound.message =
 #Not in-use | These fields are kept to match with Messages.cy
-credit-and-refund.subHeading.has-no-credits-1                     = has been requested
-credit-and-refund.subHeading.has-no-credits-2                     = as a refund and is in progress.
+credit-and-refund.subHeading.has-no-credits-1                     =
+credit-and-refund.subHeading.has-no-credits-2                     = has been requested as a refund and is in progress.
 
 
 
