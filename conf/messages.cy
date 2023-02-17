@@ -1108,7 +1108,7 @@ credit-and-refund.agent.bullet-two-prt-2                          = yn ôl. Os b
 credit-and-refund.no-credit                                       = Nid oes gennych arian yn eich cyfrif.
 credit-and-refund.agent.no-credit                                 = Nid oes gan eich cleient arian yn ei gyfrif.
 credit-and-refund.credit-from-balancing-charge-prt-1              = yn sgil
-credit-and-refund.credit-from-balancing-charge-prt-2              = credyd tâl mantoli
+credit-and-refund.credit-from-balancing-charge-prt-2              = Credyd tâl mantoli
 
 
 shortMonth.1 = Ion

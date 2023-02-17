@@ -67,7 +67,7 @@ class ClaimARefundAuditModelSpec extends AnyWordSpecLike {
         "creditOnAccount" -> 7600,
         "creditDocuments" ->
           Json.arr(
-            Json.obj("description" -> "balancing charge credit", "amount" -> 100),
+            Json.obj("description" -> "Balancing charge credit", "amount" -> 100),
             Json.obj("description" -> "Credit from HMRC adjustment", "amount" -> 1000),
             Json.obj("description" -> "Credit from HMRC adjustment", "amount" -> 1100),
             Json.obj("description" -> "Credit from an earlier tax year", "amount" -> 1200),
@@ -105,7 +105,7 @@ class ClaimARefundAuditModelSpec extends AnyWordSpecLike {
         "creditOnAccount" -> 7600,
         "creditDocuments" ->
           Json.arr(
-            Json.obj("description" -> "balancing charge credit", "amount" -> 100),
+            Json.obj("description" -> "Balancing charge credit", "amount" -> 100),
             Json.obj("description" -> "Credit from HMRC adjustment", "amount" -> 1000),
             Json.obj("description" -> "Credit from HMRC adjustment", "amount" -> 1100),
             Json.obj("description" -> "Credit from an earlier tax year", "amount" -> 1200),

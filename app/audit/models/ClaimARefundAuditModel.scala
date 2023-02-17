@@ -51,7 +51,7 @@ case class ClaimARefundAuditModel(balanceDetails: Option[BalanceDetails],
     (isMFA, isCutOverCredit, isBalancingCreditCharge, isPayment) match {
       case (true, _, _, _) => "Credit from HMRC adjustment"
       case (_, true, _, _) => "Credit from an earlier tax year"
-      case (_, _, true, _) => "balancing charge credit"
+      case (_, _, true, _) => "Balancing charge credit"
       case (_, _, _, true) => s"Payment made on ${getFullDueDate(credit._1.dueDate.get)}"
 
       case error =>

@@ -456,7 +456,7 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
           document.getElementsByClass("govuk-button").isEmpty shouldBe true
           document.getElementsByClass("govuk-button govuk-button--secondary").isEmpty shouldBe true
         }
-      "a client has an unallocated credits from a single credit item (balancing charge credit)" in
+      "a client has an unallocated credits from a single credit item (Balancing charge credit)" in
         new Setup(isAgent = true, creditCharges = List(
           documentDetailWithDueDateFinancialDetailListModel(
             Some(-500.00),
