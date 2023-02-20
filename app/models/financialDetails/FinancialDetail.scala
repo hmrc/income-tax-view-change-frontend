@@ -128,6 +128,8 @@ object FinancialDetail {
     case ct if ct.startsWith(CTypePartNIC2) => "nic2"
     case ct if ct.startsWith(CTypeCGT) => "cgt"
     case ct if ct.startsWith(CTypeSL) => "sl"
+    case ct if ct.startsWith(CTypeAccepted) => "accepted"
+    case ct if ct.startsWith(CTypeCancelled) => "cancelled"
   }
 
   object Types {
@@ -141,9 +143,12 @@ object FinancialDetail {
     val CTypePartNIC2 = "NIC2"
     val CTypeSL = "SL"
     val CTypeCGT = "CGT"
+    val CTypeCancelled = "Cancelled"
+    val CTypeAccepted = "Balancing"
 
     val supportedPOA1CTypeParts, supportedPOA2CTypeParts = Set(CTypePartITSA, CTypePartNIC4)
-    val supportedBCDCTypeParts = Set(CTypePartITSA, CTypePartNIC4, CTypePartNIC2, CTypePartVoluntaryNIC2, CTypeCGT, CTypeSL)
+    val supportedBCDCTypeParts = Set(CTypePartITSA, CTypePartNIC4, CTypePartNIC2, CTypePartVoluntaryNIC2, CTypeCGT,
+      CTypeSL, CTypeCancelled, CTypeAccepted)
 
     val supportedCTypePartsByMainType = Map(
       MTypePOA1 -> supportedPOA1CTypeParts,

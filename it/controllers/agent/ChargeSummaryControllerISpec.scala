@@ -613,6 +613,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
       Given("the MFADebitsAndCredits feature switch is enabled")
       enable(MFACreditsAndDebits)
       enable(ChargeHistory)
+      disable(CodingOut)
       enable(PaymentAllocation)
       stubAuthorisedAgentUser(authorised = true)
 
