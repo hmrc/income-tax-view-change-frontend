@@ -143,17 +143,26 @@ class ChargeSummaryAuditSpec extends WordSpecLike with MustMatchers {
   def paymentsWithCharge(mainType: String, chargeType: String, date: String, amount: BigDecimal): PaymentsWithChargeType =
     PaymentsWithChargeType(
       payments = List(Payment(reference = Some("reference"), amount = Some(amount), outstandingAmount = None, method = Some("method"),
-        documentDescription = None, lot = Some("lot"), lotItem = Some("lotItem"), dueDate = Some(LocalDate.parse(date)), documentDate = LocalDate.parse(date), transactionId = None)),
-      mainType = Some(mainType), chargeType = Some(chargeType))
+        documentDescription = None, lot = Some("lot"), lotItem = Some("lotItem"), dueDate = Some(LocalDate.parse(date)),
+        documentDate = LocalDate.parse(date), transactionId = None)), mainType = Some(mainType), chargeType = Some(chargeType))
 
-  def getChargeType(latePayment: Boolean, documentDetail: DocumentDetail): String = documentDetail.documentDescription match {
-    case Some("ITSA- POA 1") => if (latePayment) "Late Payment Interest on payment on account 1 of 2" else "Payment on account 1 of 2"
-    case Some("ITSA - POA 2") => if (latePayment) "Late Payment Interest on payment on account 2 of 2" else "Payment on account 2 of 2"
-    case Some("TRM New Charge") | Some("TRM Amend Charge") =>
+  def getChargeType(latePayment: Boolean, documentDetail: DocumentDetail): String =
+    (documentDetail.documentDescription, documentDetail.documentText) match {
+    case (_, Some(text)) if text.contains("Cancelled PAYE Self Assessment") =>
+      "Cancelled PAYE Self Assessment (through your PAYE tax code)"
+    case (_, Some(text)) if text.contains("Balancing payment collected through PAYE tax code") =>
+      "Balancing payment collected through PAYE tax code"
+    case (Some("ITSA- POA 1"), _) =>
+      if (latePayment) "Late Payment Interest on payment on account 1 of 2" else "Payment on account 1 of 2"
+    case (Some("ITSA - POA 2"), _) =>
+      if (latePayment) "Late Payment Interest on payment on account 2 of 2" else "Payment on account 2 of 2"
+    case (Some("TRM New Charge"), _) | (Some("TRM Amend Charge"), _) =>
       if (latePayment) "Late Payment Interest on remaining balance" else "Remaining balance"
-    case error =>
-      Logger("application").error(s"[Charge][getChargeTypeKey] Missing or non-matching charge type: $error found")
+    case error => {
+      Logger("application")
+        .error(s"[Charge][getChargeTypeKey] Missing or non-matching charge type: $error found")
       "unknownCharge"
+    }
   }
 
   def chargeSummaryAuditFull(userType: Option[AffinityGroup] = Some(Agent),
