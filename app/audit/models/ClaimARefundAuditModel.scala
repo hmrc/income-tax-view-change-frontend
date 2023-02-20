@@ -43,14 +43,17 @@ case class ClaimARefundAuditModel(balanceDetails: Option[BalanceDetails],
   }
 
   private def getCreditType(credit: (DocumentDetailWithDueDate, FinancialDetail)): String = {
-    val isMFA: Boolean = credit._2.validMFACreditType()
-    val isCutOverCredit: Boolean = credit._2.validCutoverCreditType()
+    val isMFA: Boolean = credit._2.isMFACredit
+    val isCutOverCredit: Boolean = credit._2.isCutOverCredit
     val isPayment: Boolean = credit._1.documentDetail.paymentLot.isDefined
+    val isBalancingCreditCharge: Boolean = credit._2.isBalancingChargeCredit
 
-    (isMFA, isCutOverCredit, isPayment) match {
-      case (true, _, _) => "Credit from HMRC adjustment"
-      case (_, true, _) => "Credit from an earlier tax year"
-      case (_, _, true) => s"Payment made on ${getFullDueDate(credit._1.dueDate.get)}"
+    (isMFA, isCutOverCredit, isBalancingCreditCharge, isPayment) match {
+      case (true, _, _, _) => "Credit from HMRC adjustment"
+      case (_, true, _, _) => "Credit from an earlier tax year"
+      case (_, _, true, _) => "Balancing charge credit"
+      case (_, _, _, true) => s"Payment made on ${getFullDueDate(credit._1.dueDate.get)}"
+
       case error =>
         Logger("application").error(s"[ClaimARefundAuditModel][getCreditType] Missing or non-matching credit: $error found")
         "unknownCredit"

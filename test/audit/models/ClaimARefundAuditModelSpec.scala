@@ -28,11 +28,12 @@ class ClaimARefundAuditModelSpec extends AnyWordSpecLike {
   val transactionName: String = "claim-a-refund"
   val auditType: String = "ClaimARefundResponse"
   val balanceDetailsFull: BalanceDetails = BalanceDetails(balanceDueWithin30Days = 0, overDueAmount = 0, totalBalance = 0,
-    availableCredit = Some(-7500.00), firstPendingAmountRequested = Some(-100.00), secondPendingAmountRequested = Some(-150.00), None)
+    availableCredit = Some(-7600.00), firstPendingAmountRequested = Some(-100.00), secondPendingAmountRequested = Some(-150.00), None)
   val balanceDetailsMin: BalanceDetails = BalanceDetails(balanceDueWithin30Days = 0, overDueAmount = 0, totalBalance = 0,
     availableCredit = None, firstPendingAmountRequested = None, secondPendingAmountRequested = None, None)
 
   val creditDocuments: List[(DocumentDetailWithDueDate, FinancialDetail)] = List(
+    documentDetailWithDueDateFinancialDetailListModel(outstandingAmount = Some(BigDecimal(-100)), originalAmount = Some(BigDecimal(-100)), mainType = "SA Balancing Charge Credit"),
     documentDetailWithDueDateFinancialDetailListModel(outstandingAmount = Some(BigDecimal(-1000)), originalAmount = Some(BigDecimal(-1000)), mainType = "ITSA Infml Dschrg Cntrct Sett"),
     documentDetailWithDueDateFinancialDetailListModel(outstandingAmount = Some(BigDecimal(-1100)), originalAmount = Some(BigDecimal(-1100)), mainType = "ITSA NPS Overpayment"),
     documentDetailWithDueDateFinancialDetailListModel(outstandingAmount = Some(BigDecimal(-1200)), originalAmount = Some(BigDecimal(-1200)), mainType = "ITSA Cutover Credits"),
@@ -56,16 +57,17 @@ class ClaimARefundAuditModelSpec extends AnyWordSpecLike {
     s"have the correct audit event type of '$auditType'" in {
       claimARefundAuditFull().auditType shouldBe auditType
     }
-    s"return a full audit event correctly with MFA Credits, Cutover Credits, Payments and Refunds" in {
+    s"return a full audit event correctly with MFA Credits, Cutover Credits, Payments and Refunds, Balancing Charge Credit" in {
       claimARefundAuditFull().detail shouldBe Json.obj(
         "nationalInsuranceNumber" -> testMtdItUser.nino,
         "mtditid" -> testMtdItUser.mtditid,
         "saUtr" -> testMtdItUser.saUtr,
         "credId" -> testMtdItUser.credId,
         "userType" -> testMtdItUser.userType,
-        "creditOnAccount" -> 7500,
+        "creditOnAccount" -> 7600,
         "creditDocuments" ->
           Json.arr(
+            Json.obj("description" -> "Balancing charge credit", "amount" -> 100),
             Json.obj("description" -> "Credit from HMRC adjustment", "amount" -> 1000),
             Json.obj("description" -> "Credit from HMRC adjustment", "amount" -> 1100),
             Json.obj("description" -> "Credit from an earlier tax year", "amount" -> 1200),
@@ -100,9 +102,10 @@ class ClaimARefundAuditModelSpec extends AnyWordSpecLike {
         "agentReferenceNumber" -> testMtdItAgentUser.arn,
         "saUtr" -> testMtdItAgentUser.saUtr,
         "credId" -> testMtdItAgentUser.credId,
-        "creditOnAccount" -> 7500,
+        "creditOnAccount" -> 7600,
         "creditDocuments" ->
           Json.arr(
+            Json.obj("description" -> "Balancing charge credit", "amount" -> 100),
             Json.obj("description" -> "Credit from HMRC adjustment", "amount" -> 1000),
             Json.obj("description" -> "Credit from HMRC adjustment", "amount" -> 1100),
             Json.obj("description" -> "Credit from an earlier tax year", "amount" -> 1200),

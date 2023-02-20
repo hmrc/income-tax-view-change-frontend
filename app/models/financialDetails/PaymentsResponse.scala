@@ -53,7 +53,7 @@ case class Payment(reference: Option[String],
     case Some(credit) => Some(credit)
   }
 
-  def validMFACreditType() : Boolean = MfaCreditUtils.validMFACreditType(mainType)
+  def isMFACredit : Boolean = MfaCreditUtils.validMFACreditType(mainType)
 
   def allocationStatus() : Option[PaymentAllocationStatus] = (outstandingAmount, amount) match {
     case (Some(outstandingAmountValue), _) if outstandingAmountValue.equals(BigDecimal(0.0)) =>
