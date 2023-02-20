@@ -343,7 +343,7 @@
                 }
             }
 
-            @if(paymentAllocationEnabled && !latePaymentInterestCharge && !codingOutEnabled) {
+            @if(paymentAllocationEnabled && !latePaymentInterestCharge) {
                 @chargeSummaryPaymentAllocation(paymentAllocations, payments, documentDetailWithDueDate, isAgent, isMFADebit)
             }
             </tbody>
