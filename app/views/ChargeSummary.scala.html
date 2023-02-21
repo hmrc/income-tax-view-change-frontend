@@ -344,7 +344,7 @@
             }
 
             @if(paymentAllocationEnabled && !latePaymentInterestCharge) {
-                @chargeSummaryPaymentAllocation(paymentAllocations, payments, documentDetailWithDueDate, isAgent, isMFADebit)
+                @chargeSummaryPaymentAllocation(paymentAllocations, payments, documentDetailWithDueDate, isAgent, isMFADebit, None, taxYearFromCodingOut, taxYearToCodingOut)
             }
             </tbody>
         </table>

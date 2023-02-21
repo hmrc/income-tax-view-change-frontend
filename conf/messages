@@ -929,6 +929,8 @@ chargeSummary.paymentAllocations.bcd.nic4                          = Payment all
 chargeSummary.paymentAllocations.bcd.sl                            = Payment allocated to Student Loans for Balancing payment
 chargeSummary.paymentAllocations.bcd.cgt                           = Payment allocated to Capital Gains Tax for Balancing payment
 chargeSummary.paymentAllocations.mfaDebit                          = Payment put towards HMRC adjustment
+chargeSummary.paymentAllocations.bcd.cancelled                     = Cancelled PAYE Self Assessment (through your PAYE tax code)
+chargeSummary.paymentAllocations.bcd.accepted                      = Amount collected through your PAYE tax code for {0} to {1} tax year
 
 chargeSummary.codingOutHeader                                      = Self Assessment payment (through your PAYE tax code)
 chargeSummary.codingOutMessage                                     = This is the remaining tax you owe for the {0} to {1} tax year.
