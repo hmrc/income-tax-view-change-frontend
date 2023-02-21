@@ -69,7 +69,7 @@ case class ChargeSummaryAudit(mtdItUser: MtdItUser[_], docDateDetail: DocumentDe
       case Some("balancingCharge.text") => "Late payment interest for remaining balance"
       case Some("codingOut.cancelled") => "Cancelled PAYE Self Assessment (through your PAYE tax code)"
       case Some("codingOut.accepted") =>
-        s"Amount collected through your PAYE tax code for $taxYear to ${taxYear + 1} tax year"
+        s"Amount collected through your PAYE tax code for ${taxYear + 1} to ${taxYear + 2} tax year"
       case _ => s"Some unexpected message key: $key"
     }
   }

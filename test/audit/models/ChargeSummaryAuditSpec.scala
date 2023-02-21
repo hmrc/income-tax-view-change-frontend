@@ -338,11 +338,11 @@ class ChargeSummaryAuditSpec extends WordSpecLike with MustMatchers {
               Json.obj(
                 "amount" -> 1500,
                 "date" -> "2018-03-30",
-                "description" -> s"Amount collected through your PAYE tax code for $taxYearInt to ${taxYearInt + 1} tax year"),
+                "description" -> s"Amount collected through your PAYE tax code for ${taxYearInt + 1} to ${taxYearInt + 2} tax year"),
               Json.obj(
                 "amount" -> 1600,
                 "date" -> "2018-03-31",
-                "description" -> s"Amount collected through your PAYE tax code for $taxYearInt to ${taxYearInt+ 1} tax year")
+                "description" -> s"Amount collected through your PAYE tax code for ${taxYearInt + 1} to ${taxYearInt+ 2} tax year")
             ),
             "agentReferenceNumber" -> "agentReferenceNumber",
             "chargeHistory" -> Json.arr(
