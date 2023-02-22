@@ -66,7 +66,7 @@ object CreditSummaryAuditing {
         "amount" -> credit.amount)
     }
 
-    private def getCreditDetails: Seq[JsObject] = creditDetails.map(creditDetailToJson)
+    def getCreditDetails: Seq[JsObject] = creditDetails.map(creditDetailToJson)
 
     override val detail: JsValue =
       Json.obj("saUtr" -> saUTR,
