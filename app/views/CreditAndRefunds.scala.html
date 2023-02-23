@@ -187,7 +187,7 @@ balance.getOrElse(throw MissingFieldException("Balance"))
                     @credit._1.documentDetail.paymentOrChargeCredit.getOrElse(throw MissingFieldException("Payment Or Charge Credit")).toCurrencyString
                     <span class="govuk-body"> @messages("credit-and-refund.credit-from-hmrc-title-prt-1")
                         <a id="credit-and-refund-@index" href="@getCreditsSummaryControllerHref(credit._1.documentDetail, isAgent)"
-                            class="govuk-link">@messages("paymentHistory.paymentFromEarlierYear")
+                            class="govuk-link">@messages("credit-and-refund.credit-from-earlier-tax-year")
                             <span class="govuk-visually-hidden"> @index</span>
                         </a>
                     </span>
