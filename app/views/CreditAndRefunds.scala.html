@@ -100,7 +100,7 @@ balance.getOrElse(throw MissingFieldException("Balance"))
         @link(
             link = s"${getCreditsSummaryControllerHref(maybeCreditChargesHead._1.documentDetail, isAgent)}",
             outerMessage = ".",
-            messageKey = messages("paymentHistory.paymentFromEarlierYear"),
+            messageKey = messages("credit-and-refund.credit-from-earlier-tax-year"),
             classes = "govuk-body govuk-!-font-weight-bold govuk-link--no-visited-state"
         )
     } else if(maybeCreditChargesHead._2.isBalancingChargeCredit) {
