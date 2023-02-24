@@ -25,7 +25,7 @@ import controllers.predicates._
 import forms.utils.SessionKeys
 import forms.utils.SessionKeys.{calcPagesBackPage, summaryData}
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 import models.finalTaxCalculation.TaxReturnRequestModel
 import models.liabilitycalculation.viewmodels.TaxYearSummaryViewModel
 import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse}
@@ -37,7 +37,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import views.html.FinalTaxCalculationView
 
 import scala.concurrent.{ExecutionContext, Future}
-
+@Singleton
 class FinalTaxCalculationController @Inject()(implicit val cc: MessagesControllerComponents,
                                               val ec: ExecutionContext,
                                               view: FinalTaxCalculationView,
@@ -140,7 +140,7 @@ class FinalTaxCalculationController @Inject()(implicit val cc: MessagesControlle
               summaryData -> submissionOverview.asJsonString
             )
           case _ =>
-            Logger("application").error("[Agent][FinalTaxCalculationController][submit] Name or UTR missing.")
+            Logger("application").error("[Agent][FinalTaxCalculationController][submit] UTR missing.")
             itvcErrorHandler.showInternalServerError()
         }
       case calcError: LiabilityCalculationError if calcError.status == NOT_FOUND =>

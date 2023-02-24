@@ -17,17 +17,20 @@
 package controllers
 
 import helpers.ComponentSpecBase
+import helpers.servicemocks.AuthStub.requiredConfidenceLevel
 import helpers.servicemocks.{AuthStub, IncomeTaxCalculationStub, IncomeTaxViewChangeStub}
 import models.liabilitycalculation.LiabilityCalculationError
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import play.api.Logger
 import play.api.http.HeaderNames
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND, OK, SEE_OTHER}
 import play.api.i18n.{Lang, Messages, MessagesApi}
+import play.api.libs.json.Json
 import play.api.libs.ws.WSResponse
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.FakeRequest
-import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
+import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino, testNinoEnrolmentKey}
 import testConstants.IncomeSourceIntegrationTestConstants.{multipleBusinessesAndPropertyResponse, multipleBusinessesAndPropertyResponseWoMigration}
 import testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessful
 
@@ -463,4 +466,57 @@ class FinalTaxCalculationControllerISpec extends ComponentSpecBase {
       }
     }
   }
+
+  /*s"calling POST ${controllers.routes.FinalTaxCalculationController.agentSubmit(taxYear)}" should {
+    "show an error page" when {
+      "there is no UTR provided in the auth" in {
+        val authorisedAgentWithNino: String = Json.stringify(Json.obj(
+          "allEnrolments" -> Json.arr(
+            Json.obj(
+              "key" -> "HMRC-AS-AGENT",
+              "identifiers" -> Json.arr(
+                Json.obj(
+                  "key" -> "AgentReferenceNumber",
+                  "value" -> "1"
+                )
+              )
+            ),
+            Json.obj(
+              "key" -> "HMRC-MTD-IT",
+              "identifiers" -> Json.arr(
+                Json.obj(
+                  "key" -> "MTDITID",
+                  "value" -> "mtdbsaId"
+                )
+              ),
+              "delegatedAuthRule" -> "mtd-it-auth"
+            ),
+            Json.obj(
+              "key" -> "$testNinoEnrolmentKey",
+              "identifiers" -> Json.arr(
+                Json.obj(
+                  "key" -> "$testNinoEnrolmentIdentifier",
+                  "value" -> "$testNino"
+                )
+              )
+            )
+          ),
+          "affinityGroup" -> "Agent",
+          "confidenceLevel" -> requiredConfidenceLevel
+        ))
+        lazy val result = {
+          AuthStub.stubAuthorisedAgent(overrideResponseBody = Some(authorisedAgentWithNino))
+          calculationStub()
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
+
+          ws.url(url)
+            .withFollowRedirects(false)
+            .post("{}")
+        }.futureValue
+
+        //Logger("test").info("searchstring " + result.statusText)
+        result.status shouldBe INTERNAL_SERVER_ERROR
+      }
+    }
+  }*/
 }
