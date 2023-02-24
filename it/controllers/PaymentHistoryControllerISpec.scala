@@ -55,7 +55,7 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase {
     Payment(reference = Some("bcc"), amount = Some(-10000.00), outstandingAmount = None, method = Some("method"),
       documentDescription = None, lot = None, lotItem = None, dueDate = Some(LocalDate.parse("2018-04-25")), documentDate = LocalDate.parse("2018-04-25"),
       transactionId = Some("AY777777202203"),
-      mainType = Some("SA Balancing Charge Credit")),
+      mainType = Some("SA Balancing Charge Credit"))
   )
 
   val currentTaxYearEnd: Int = getCurrentTaxYearEnd.getYear
