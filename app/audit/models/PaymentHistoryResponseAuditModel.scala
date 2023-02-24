@@ -26,7 +26,7 @@ case class PaymentHistoryResponseAuditModel(mtdItUser: MtdItUser[_],
                                             payments: Seq[Payment],
                                             CutOverCreditsEnabled: Boolean,
                                             MFACreditsEnabled: Boolean
-                                            ) extends ExtendedAuditModel {
+                                           ) extends ExtendedAuditModel {
 
   override val transactionName: String = enums.TransactionName.PaymentHistoryResponse
   override val auditType: String = enums.AuditType.PaymentHistoryResponse
@@ -36,14 +36,19 @@ case class PaymentHistoryResponseAuditModel(mtdItUser: MtdItUser[_],
     ("amount", payment.amount)
 
   private def paymentHistoryMapper(payment: Payment): Option[JsObject] = {
-    val isCredit = payment.credit.isDefined
+    val isCutOver = payment.isCutOverCredit
     val isMFA = payment.isMFACredit
-    (isCredit, isMFA) match {
-      case (true, true) =>
-        if (MFACreditsEnabled) Some(getPayment(payment, "Credit from HMRC adjustment")) else None
-      case (true, false) =>
+    val isBCC = payment.isBalancingChargeCredit
+    val isPayment = payment.isPaymentToHMRC
+
+    (isCutOver, isMFA, isBCC, isPayment) match {
+      case (true, false, false, false) =>
         if (CutOverCreditsEnabled) Some(getPayment(payment, "Credit from an earlier tax year")) else None
-      case (false, _) => Some(getPayment(payment, "Payment Made to HMRC"))
+      case (false, true, false, false) =>
+        if (MFACreditsEnabled) Some(getPayment(payment, "Credit from HMRC adjustment")) else None
+      case (false, false, true, false) =>
+        Some(getPayment(payment, "Balancing charge credit"))
+      case (false, false, false, true) => Some(getPayment(payment, "Payment Made to HMRC"))
     }
   }
 
