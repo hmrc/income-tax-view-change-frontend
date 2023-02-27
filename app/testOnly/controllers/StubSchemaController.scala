@@ -18,9 +18,10 @@ package testOnly.controllers
 
 import config.FrontendAppConfig
 import controllers.BaseController
+
 import javax.inject.{Inject, Singleton}
 import play.api.data.Form
-import play.api.i18n.{I18nSupport}
+import play.api.i18n.I18nSupport
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc._
 import play.api.{Configuration, Environment}
@@ -29,6 +30,7 @@ import testOnly.forms.StubSchemaForm
 import testOnly.models.SchemaModel
 import uk.gov.hmrc.play.bootstrap.config.AuthRedirects
 import testOnly.views.html.StubSchemaView
+import utils.{AuthExchange, SessionBuilder}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -88,4 +90,54 @@ class StubSchemaController @Inject()(stubSchemaView: StubSchemaView)
       showSuccess,
       errorMessage
     )
+
+  // Logging page functionality
+  val createLogin: Action[AnyContent] = Action.async { implicit request =>
+    dynamicStubConnector.showLogin("login").map(
+      response => response.status match {
+        case OK => {
+          val alteredBody = response.body.replace("/login", "/report-quarterly/income-and-expenses/view/test-only/submitLogin")
+          Ok(alteredBody).as("text/html")
+        }
+        case _ => InternalServerError(response.body)
+      }
+    )
+  }
+
+  val postLogin: Action[AnyContent] = Action.async { implicit request =>
+    //TODO: read isAgent + redirect to staging in correct fashion
+    val nino = request.body.asFormUrlEncoded.map(m => m("nino") ).getOrElse( Seq.empty ).mkString(" ")
+    //val isAgent = Try{ request.body.asFormUrlEncoded.map(m => m("Agent") ).getOrElse("") }.toOption.getOrElse("")
+//    Ok(s"Nino: $nino => IsAgent: $isAgent")
+    dynamicStubConnector.postLogin("login", nino).map(
+      response => response.status match {
+        case OK =>
+          val homePage = s"${appConfig.itvcFrontendEnvironment}/report-quarterly/income-and-expenses/view?origin=BTA"
+          val (bearer, auth) = {
+            val arr = response.body.split(";")
+            (arr(0), arr(1))
+          }
+          println(s"Result is OK: $bearer $auth")
+          Redirect(homePage)
+            .withSession(
+              SessionBuilder.buildGGSession( AuthExchange(bearerToken = bearer,
+                sessionAuthorityUri = auth) ))
+//          Ok(response.body).as("text/html")
+        case code =>
+          println("Result is ERROR")
+          Ok(response.body).as("text/html")
+          //InternalServerError(response.body + code.toString)
+      }
+    )
+  }
+
+  val showCss: Action[AnyContent] = Action.async { implicit request =>
+    dynamicStubConnector.showLogin("hmrc-frontend/assets/hmrc-frontend-5.19.0.min.css").map(
+      response => response.status match {
+        case OK => Ok(response.body).as("text/css")
+        case _ => InternalServerError(response.body)
+      }
+    )
+  }
+
 }
