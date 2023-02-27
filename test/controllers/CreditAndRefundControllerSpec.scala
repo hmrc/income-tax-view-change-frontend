@@ -156,13 +156,13 @@ class CreditAndRefundControllerSpec extends MockAuthenticationPredicate with Moc
           messages("credit-and-refund.credit-from-hmrc-title-prt-2") + " 4"
         doc.select("#main-content").select("li:nth-child(6)")
           .select("p").first().text() shouldBe "£2,000.00 " + messages("credit-and-refund.credit-from-hmrc-title-prt-1") + " " +
-          messages("credits.drop-down-list.credit-from-an-earlier-tax-year") + " 5"
+          messages("credit-and-refund.credit-from-earlier-tax-year") + " 5"
         doc.select("#main-content").select("li:nth-child(7)")
           .select("p").first().text() shouldBe "£700.00 " + messages("credit-and-refund.credit-from-hmrc-title-prt-1") + " " +
-          messages("credits.drop-down-list.credit-from-an-earlier-tax-year") + " 6"
+          messages("credit-and-refund.credit-from-earlier-tax-year") + " 6"
         doc.select("#main-content").select("li:nth-child(8)")
           .select("p").first().text() shouldBe "£200.00 " + messages("credit-and-refund.credit-from-hmrc-title-prt-1") + " " +
-          messages("credits.drop-down-list.credit-from-an-earlier-tax-year") + " 7"
+          messages("credit-and-refund.credit-from-earlier-tax-year") + " 7"
         doc.select("#main-content").select("li:nth-child(9)")
           .select("p").first().text() shouldBe "£500.00 " + messages("credit-and-refund.payment") + " 15 June 2018"
         doc.select("#main-content").select("li:nth-child(10)")

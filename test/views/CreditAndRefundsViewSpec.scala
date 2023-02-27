@@ -54,7 +54,7 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
   val creditAndRefundFromHMRCTitlePart2: String = messages("credit-and-refund.credit-from-hmrc-title-prt-2")
   val creditAndRefundFromBalancingChargePart1: String = messages("credit-and-refund.credit-from-balancing-charge-prt-1")
   val creditAndRefundFromBalancingChargePart2: String = messages("credit-and-refund.credit-from-balancing-charge-prt-2")
-  val creditAndRefundPaymentFromEarlierYearLinkText: String = messages("paymentHistory.paymentFromEarlierYear")
+  val creditAndRefundPaymentFromEarlierYearLinkText: String = messages("credit-and-refund.credit-from-earlier-tax-year")
   val creditAndRefundAgentNoCredit: String = messages("credit-and-refund.agent.no-credit")
   val creditAndRefundAgentHasCreditBullet1Prt1: String = messages("credit-and-refund.agent.bullet-one-prt-1")
   val creditAndRefundAgentHasCreditBullet1Link: String = messages("credit-and-refund.agent.bullet-one-link")
