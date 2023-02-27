@@ -120,7 +120,7 @@ class FinalTaxCalculationController @Inject()(implicit val cc: MessagesControlle
   }
 
 
-  private def agentFinalDeclarationSubmit(taxYear: Int, fullName: String)
+  def agentFinalDeclarationSubmit(taxYear: Int, fullName: String)
                                          (implicit user: MtdItUser[AnyContent], hc: HeaderCarrier): Future[Result] = {
     calcService.getLiabilityCalculationDetail(user.mtditid, user.nino, taxYear).map {
       case calcResponse: LiabilityCalculationResponse =>
@@ -152,7 +152,7 @@ class FinalTaxCalculationController @Inject()(implicit val cc: MessagesControlle
     }
   }
 
-  private def finalDeclarationSubmit(taxYear: Int, fullNameOptional: Option[String])
+  def finalDeclarationSubmit(taxYear: Int, fullNameOptional: Option[String])
                                     (implicit user: MtdItUser[AnyContent], hc: HeaderCarrier): Future[Result] = {
     calcService.getLiabilityCalculationDetail(user.mtditid, user.nino, taxYear).map {
       case calcResponse: LiabilityCalculationResponse =>

@@ -16,28 +16,28 @@
 
 package controllers
 
-import auth.FrontendAuthorisedFunctions
+import auth.{FrontendAuthorisedFunctions, MtdItUser}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import config.featureswitch.FeatureSwitching
-import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
+import controllers.predicates.{IncomeTaxAgentUser, NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
 import implicits.ImplicitDateFormatter
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import mocks.services.MockIncomeSourceDetailsService
 import mocks.views.agent.MockTaxYears
-import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse}
+import models.liabilitycalculation.{Inputs, LiabilityCalculationError, LiabilityCalculationResponse, Metadata, PersonalInformation}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
-import org.scalatest.time.Millisecond
-import play.api.Logger
 import play.api.http.Status
 import play.api.mvc.Results.InternalServerError
-import play.api.mvc.{DefaultMessagesControllerComponents, MessagesControllerComponents, Result}
+import play.api.mvc.{Action, AnyContent, DefaultMessagesControllerComponents, MessagesControllerComponents, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{defaultAwaitTimeout, status}
 import play.twirl.api.HtmlFormat
 import services.{CalculationService, IncomeSourceDetailsService}
+import testConstants.BaseTestConstants.{testCredId, testMtditid, testNino, testRetrievedUserName, testSaUtr, testUserTypeIndividual}
+import testConstants.IncomeSourceDetailsTestConstants.businessAndPropertyAligned
 import testUtils.TestSupport
 import views.html.FinalTaxCalculationView
 
@@ -66,28 +66,91 @@ class FinalTaxCalculationControllerSpec extends MockAuthenticationPredicate
     app.injector.instanceOf[FrontendAppConfig]
   )
 
-  val testCalcError = new LiabilityCalculationError(Status.OK, "Test message")
-  when(mockCalculationService.getLiabilityCalculationDetail(any(), any(), any())(any()))
-    .thenReturn(Future.successful(testCalcError))
+  val testCalcError: LiabilityCalculationError = LiabilityCalculationError(Status.OK, "Test message")
+  val testCalcResponse: LiabilityCalculationResponse = LiabilityCalculationResponse(
+    inputs = Inputs(personalInformation = PersonalInformation(taxRegime = "UK", class2VoluntaryContributions = None)),
+    messages = None,
+    calculation = None,
+    metadata = Metadata(None))
   when(mockErrorHandler.showInternalServerError()(any()))
     .thenReturn(InternalServerError(HtmlFormat.empty))
   val taxYear = 2018
+  val user: MtdItUser[AnyContent] = MtdItUser(
+    mtditid = testMtditid,
+    nino = testNino,
+    userName = Some(testRetrievedUserName),
+    incomeSources = businessAndPropertyAligned,
+    btaNavPartial = None,
+    saUtr = None,
+    credId = Some(testCredId),
+    userType = Some(testUserTypeIndividual),
+    arn = None
+  )(FakeRequest())
+
+  val noNameUser: MtdItUser[AnyContent] = MtdItUser(
+    mtditid = testMtditid,
+    nino = testNino,
+    userName = None,
+    incomeSources = businessAndPropertyAligned,
+    btaNavPartial = None,
+    saUtr = None,
+    credId = Some(testCredId),
+    userType = Some(testUserTypeIndividual),
+    arn = None
+  )(FakeRequest())
 
   "handle show request" should(
     "return unknown error" when (
       "an unconventional error occurs" in {
+        when(mockCalculationService.getLiabilityCalculationDetail(any(), any(), any())(any()))
+          .thenReturn(Future.successful(testCalcError))
         val result: Future[Result] = testFinalTaxCalculationController.handleShowRequest(taxYear, mockErrorHandler, false)
         status(result) shouldBe Status.INTERNAL_SERVER_ERROR
       }
     )
   )
 
-  "agent submit" should(
-    "return unknown error" when(
+  "agent submit" should (
+    "use blank first name" when {
+      "client has no provided first name" in {
+        //when(testFinalTaxCalculationController.getMtdItUserWithIncomeSources(any(), any())(any(), any(), any()))
+          //.thenReturn(Future.successful(noNameUser))
+        //when(testFinalTaxCalculationController.agentFinalDeclarationSubmit(any(), any()))
+          //.thenReturn(Future(InternalServerError(HtmlFormat.empty)))
+        val result: Future[Result] = testFinalTaxCalculationController.agentSubmit(taxYear)(noNameUser)
+        status(result) shouldBe Status.SEE_OTHER
+      }
+    }
+  )
+
+  "agent final declaration submit" should{
+    "return unknown error" when {
       "an unconventional error occurs" in {
-        val result: Future[Result] = testFinalTaxCalculationController.agentSubmit(taxYear)(fakeRequestConfirmedClientWithCalculationId())
+        when(mockCalculationService.getLiabilityCalculationDetail(any(), any(), any())(any()))
+          .thenReturn(Future.successful(testCalcError))
+        val result: Future[Result] = testFinalTaxCalculationController.agentFinalDeclarationSubmit(taxYear, "Test Name")(user, headerCarrier)
         status(result) shouldBe Status.INTERNAL_SERVER_ERROR
       }
+    }
+
+    "return UTR missing error" when{
+      "supplied a user with no UTR" in {
+        when(mockCalculationService.getLiabilityCalculationDetail(any(), any(), any())(any()))
+          .thenReturn(Future.successful(testCalcResponse))
+        val result: Future[Result] = testFinalTaxCalculationController.agentFinalDeclarationSubmit(taxYear, "Test Name")(user, headerCarrier)
+        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+      }
+    }
+  }
+
+  "final declaration submit" should (
+    "return unknown error" when (
+      "an unconventional error occurs" in {
+        when(mockCalculationService.getLiabilityCalculationDetail(any(), any(), any())(any()))
+          .thenReturn(Future.successful(testCalcError))
+        val result: Future[Result] = testFinalTaxCalculationController.finalDeclarationSubmit(taxYear, Some("Test Name"))(user, headerCarrier)
+        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+      }
+      )
     )
-  )
 }
