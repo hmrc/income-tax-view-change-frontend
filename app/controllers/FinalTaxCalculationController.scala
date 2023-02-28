@@ -113,8 +113,10 @@ class FinalTaxCalculationController @Inject()(implicit val cc: MessagesControlle
 
   def agentSubmit(taxYear: Int): Action[AnyContent] = Authenticated.async { implicit request =>
     implicit agent =>
+      println(s"\n AAAAAAAAAA \n")
       getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true).flatMap { user =>
         val fullName = user.session.get(clientFirstName).getOrElse("") + " " + user.session.get(clientLastName).getOrElse("")
+        println(s"\n AAAAAAAAAA ${user.session.get(clientFirstName)}\n")
         agentFinalDeclarationSubmit(taxYear, fullName)(user, hc)
       }
   }

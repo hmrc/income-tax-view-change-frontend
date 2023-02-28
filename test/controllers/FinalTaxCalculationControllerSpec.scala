@@ -19,6 +19,7 @@ package controllers
 import auth.{FrontendAuthorisedFunctions, MtdItUser}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import config.featureswitch.FeatureSwitching
+import controllers.agent.utils
 import controllers.predicates.{IncomeTaxAgentUser, NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
 import implicits.ImplicitDateFormatter
 import mocks.MockItvcErrorHandler
@@ -31,7 +32,7 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import play.api.http.Status
 import play.api.mvc.Results.InternalServerError
-import play.api.mvc.{Action, AnyContent, DefaultMessagesControllerComponents, MessagesControllerComponents, Result}
+import play.api.mvc.{Action, AnyContent, AnyContentAsEmpty, DefaultMessagesControllerComponents, MessagesControllerComponents, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{defaultAwaitTimeout, status}
 import play.twirl.api.HtmlFormat
@@ -97,7 +98,18 @@ class FinalTaxCalculationControllerSpec extends MockAuthenticationPredicate
     credId = Some(testCredId),
     userType = Some(testUserTypeIndividual),
     arn = None
-  )(FakeRequest())
+  )(fakeRequestWithClientDetails)
+
+  def testFakeRequest(clientNino: String = "AA111111A"): FakeRequest[AnyContentAsEmpty.type] =
+    fakeRequestWithActiveSession.withSession(
+      utils.SessionKeys.clientFirstName -> "",
+      utils.SessionKeys.clientLastName -> "",
+      utils.SessionKeys.clientUTR -> "1234567890",
+      utils.SessionKeys.clientMTDID -> testMtditid,
+      utils.SessionKeys.clientNino -> clientNino,
+      utils.SessionKeys.confirmedClient -> "true",
+      forms.utils.SessionKeys.calculationId -> "1234567890"
+    )
 
   "handle show request" should(
     "return unknown error" when (
@@ -113,10 +125,6 @@ class FinalTaxCalculationControllerSpec extends MockAuthenticationPredicate
   "agent submit" should (
     "use blank first name" when {
       "client has no provided first name" in {
-        //when(testFinalTaxCalculationController.getMtdItUserWithIncomeSources(any(), any())(any(), any(), any()))
-          //.thenReturn(Future.successful(noNameUser))
-        //when(testFinalTaxCalculationController.agentFinalDeclarationSubmit(any(), any()))
-          //.thenReturn(Future(InternalServerError(HtmlFormat.empty)))
         val result: Future[Result] = testFinalTaxCalculationController.agentSubmit(taxYear)(noNameUser)
         status(result) shouldBe Status.SEE_OTHER
       }
