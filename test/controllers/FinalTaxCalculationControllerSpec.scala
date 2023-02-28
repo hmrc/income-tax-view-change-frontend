@@ -155,4 +155,5 @@ class FinalTaxCalculationControllerSpec extends MockAuthenticationPredicate
       }
       )
     )
+
 }
