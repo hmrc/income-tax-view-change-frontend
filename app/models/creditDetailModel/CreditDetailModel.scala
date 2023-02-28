@@ -33,3 +33,7 @@ case object MfaCreditType extends CreditType {
 case object CutOverCreditType extends CreditType {
   override val key = "paymentHistory.paymentFromEarlierYear"
 }
+
+case object BalancingChargeCreditType extends CreditType {
+  override val key = "paymentHistory.balancingChargeCredit"
+}
