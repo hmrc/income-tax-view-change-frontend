@@ -30,7 +30,9 @@
     documentDetailWithDueDate: DocumentDetailWithDueDate,
     isAgent: Boolean = false,
     isMFADebit: Boolean,
-    origin: Option[String] = None)(implicit messages: Messages)
+    origin: Option[String] = None,
+    codingOutFrom: String,
+    codingOutTo: String)(implicit messages: Messages)
 
 @import implicitDateFormatter.longDate
 
@@ -59,12 +61,12 @@
                         controllers.routes.PaymentAllocationsController.viewPaymentAllocation(matchingPayment.get.transactionId, origin).url
                     }
                     val linkText = if (isMFADebit) messages("chargeSummary.paymentAllocations.mfaDebit") else
-                        allocation.getPaymentAllocationTextInChargeSummary.map(messages(_)).getOrElse(
+                        allocation.getPaymentAllocationTextInChargeSummary.map(msg => messages(msg, codingOutFrom, codingOutTo)).getOrElse(
                             throw MissingFieldException("Allocation link text missing")
                         )
                     allocationLinkHTML(link, linkText)
                 } else {
-                    allocation.getPaymentAllocationTextInChargeSummary.map(messages(_))
+                    allocation.getPaymentAllocationTextInChargeSummary.map(msg => messages(msg, codingOutFrom, codingOutTo))
                 }
             }
         </td>

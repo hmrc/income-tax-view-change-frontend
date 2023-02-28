@@ -37,11 +37,13 @@ case class ChargeSummaryAudit(mtdItUser: MtdItUser[_], docDateDetail: DocumentDe
     case None => Json.obj()
   }
 
-  val getChargeType: String = docDateDetail.documentDetail.documentDescription match {
+  val getChargeType: String = (docDateDetail.documentDetail.documentDescription, docDateDetail.documentDetail.documentText) match {
     case _ if isMFADebit => "MFADebit"
-    case Some("ITSA- POA 1") => if (isLatePaymentCharge) "Late Payment Interest on payment on account 1 of 2" else "Payment on account 1 of 2"
-    case Some("ITSA - POA 2") => if (isLatePaymentCharge) "Late Payment Interest on payment on account 2 of 2" else "Payment on account 2 of 2"
-    case Some("TRM New Charge") | Some("TRM Amend Charge") =>
+    case (_, Some(text)) if text.contains("Cancelled PAYE Self Assessment") => "Cancelled PAYE Self Assessment (through your PAYE tax code)"
+    case (_, Some(text)) if text.contains("Balancing payment collected through PAYE tax code") => "Balancing payment collected through PAYE tax code"
+    case (Some("ITSA- POA 1"), _) => if (isLatePaymentCharge) "Late Payment Interest on payment on account 1 of 2" else "Payment on account 1 of 2"
+    case (Some("ITSA - POA 2"), _) => if (isLatePaymentCharge) "Late Payment Interest on payment on account 2 of 2" else "Payment on account 2 of 2"
+    case (Some("TRM New Charge"), _) | (Some("TRM Amend Charge"), _) =>
       if (isLatePaymentCharge) "Late Payment Interest on remaining balance" else "Remaining balance"
     case error => {
       Logger("application").error(s"[Charge][getChargeTypeKey] Missing or non-matching charge type: $error found")
@@ -67,7 +69,7 @@ case class ChargeSummaryAudit(mtdItUser: MtdItUser[_], docDateDetail: DocumentDe
       case Some("balancingCharge.text") => "Late payment interest for remaining balance"
       case Some("codingOut.cancelled") => "Cancelled PAYE Self Assessment (through your PAYE tax code)"
       case Some("codingOut.accepted") =>
-        s"Amount collected through your PAYE tax code for $taxYear to ${taxYear + 1} tax year"
+        s"Amount collected through your PAYE tax code for ${taxYear + 1} to ${taxYear + 2} tax year"
       case _ => s"Some unexpected message key: $key"
     }
   }

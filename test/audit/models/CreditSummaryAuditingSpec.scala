@@ -19,6 +19,8 @@ package audit.models
 import models.creditDetailModel.{CreditDetailModel, CutOverCreditType, MfaCreditType}
 import models.financialDetails.DocumentDetail
 import play.api.i18n.MessagesApi
+import play.api.libs.json.Json
+import testConstants.BaseTestConstants.{testCredId, testMtditid, testNino, testSaUtr, testUserType, testUserTypeIndividual}
 import testUtils.TestSupport
 
 import java.time.LocalDate
@@ -93,6 +95,44 @@ class CreditSummaryAuditingSpec extends TestSupport {
       creditSummaryDetails.map(_.status) shouldBe Seq()
     }
 
+    "- return json object" in {
+      val chargesList: Seq[CreditDetailModel] = Seq(
+        CreditDetailModel(
+          date = LocalDate.of(2018, 3, 29),
+          documentDetail = DocumentDetail(
+            taxYear = "2023",
+            transactionId = "transId",
+            documentDescription = Some("docId"),
+            documentText = Some("text"),
+            outstandingAmount = Some(BigDecimal("1400")),
+            originalAmount = Some(BigDecimal("1400")),
+            documentDate = LocalDate.of(2023, 12, 23)
+          ),
+          creditType = MfaCreditType,
+          balanceDetails = None
+        )
+      )
+
+      val testCreditSummaryModel = CreditsSummaryModel(
+        saUTR = testSaUtr,
+        nino = testNino,
+        userType = testUserTypeIndividual.toString,
+        credId = testCredId,
+        mtdRef = testMtditid,
+        creditOnAccount = "5",
+        creditDetails = toCreditSummaryDetailsSeq(chargesList)(msgApi)
+      )
+
+      testCreditSummaryModel.detail shouldBe Json.obj(
+        "saUtr" -> testSaUtr,
+          "nationalInsuranceNumber" -> testNino,
+          "userType" -> testUserTypeIndividual.toString,
+          "credId" -> testCredId,
+          "mtditid" -> testMtditid,
+          "creditOnAccount" -> "5",
+          "creditDetails" -> testCreditSummaryModel.getCreditDetails
+        )
+    }
   }
 
 }

@@ -85,22 +85,22 @@ class CreditAndRefundControllerISpec extends ComponentSpecBase {
           elementTextBySelectorList("#main-content", "li:nth-child(1)", "p")(expectedValue = "£2,000.00 " + messagesAPI("credit-and-refund.credit-from-balancing-charge-prt-1") + " " + messagesAPI("credit-and-refund.credit-from-balancing-charge-prt-2") + " 0"),
           elementAttributeBySelector("#credit-and-refund-0", "href")(s"/report-quarterly/income-and-expenses/view/agents/credits-from-hmrc/$testPreviousTaxYear"),
 
-          elementTextBySelectorList("#main-content", "li:nth-child(2)", "p")(expectedValue = "£2,000.00 " + messagesAPI("credit-and-refund.credit-from-hmrc-title-prt-1") + " " + messagesAPI("credits.drop-down-list.credit-from-hmrc-adjustment") + " 1"),
+          elementTextBySelectorList("#main-content", "li:nth-child(2)", "p")(expectedValue = "£2,000.00 " + messagesAPI("credit-and-refund.credit-from-hmrc-title-prt-1") + " " + messagesAPI("credit-and-refund.credit-from-hmrc-title-prt-2") + " 1"),
           elementAttributeBySelector("#credit-and-refund-1", "href")(s"/report-quarterly/income-and-expenses/view/agents/credits-from-hmrc/$testPreviousTaxYear"),
 
           elementTextBySelectorList("#main-content", "li:nth-child(3)", "p")(expectedValue = "£2,000.00 " +
             messagesAPI("credit-and-refund.credit-from-hmrc-title-prt-1") + " " +
-            messagesAPI("credits.drop-down-list.credit-from-an-earlier-tax-year") + " 2"),
+            messagesAPI("credit-and-refund.credit-from-earlier-tax-year") + " 2"),
           elementAttributeBySelector("#credit-and-refund-2", "href")(s"/report-quarterly/income-and-expenses/view/agents/credits-from-hmrc/$testPreviousTaxYear"),
 
           elementTextBySelectorList("#main-content", "li:nth-child(4)", "p")(expectedValue = "£2,000.00 " +
             messagesAPI("credit-and-refund.credit-from-hmrc-title-prt-1") + " " +
-            messagesAPI("credits.drop-down-list.credit-from-an-earlier-tax-year") + " 3"),
+            messagesAPI("credit-and-refund.credit-from-earlier-tax-year") + " 3"),
           elementAttributeBySelector("#credit-and-refund-3", "href")(s"/report-quarterly/income-and-expenses/view/agents/credits-from-hmrc/$testPreviousTaxYear"),
 
           elementTextBySelectorList("#main-content", "li:nth-child(5)", "p")(expectedValue = "£2,000.00 " +
             messagesAPI("credit-and-refund.credit-from-hmrc-title-prt-1") + " " +
-            messagesAPI("credits.drop-down-list.credit-from-an-earlier-tax-year") + " 4"),
+            messagesAPI("credit-and-refund.credit-from-earlier-tax-year") + " 4"),
           elementAttributeBySelector("#credit-and-refund-4", "href")(s"/report-quarterly/income-and-expenses/view/agents/credits-from-hmrc/$testPreviousTaxYear"),
 
           elementTextBySelectorList("#main-content", "li:nth-child(6)", "p")(expectedValue = "£3.00 "
