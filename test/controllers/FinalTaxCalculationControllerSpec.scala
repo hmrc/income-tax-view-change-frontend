@@ -116,6 +116,7 @@ class FinalTaxCalculationControllerSpec extends MockAuthenticationPredicate
     )
   )
 
+
   "agent submit" should (
     "use blank first name" when {
       "client has no provided first name" in {
