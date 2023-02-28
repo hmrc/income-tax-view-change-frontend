@@ -1099,7 +1099,7 @@ credit-and-refund.payment                                         = yn sgil tali
 credit-and-refund.refundProgress-prt-1                            = mae ad-daliad o
 credit-and-refund.refundProgress-prt-2                            = wrthi’n cael ei brosesu
 credit-and-refund.credit-from-hmrc-title-prt-1                    = yn sgil
-credit-and-refund.credit-from-hmrc-title-prt-2                    = Credyd o addasiad gan CThEM
+credit-and-refund.credit-from-hmrc-title-prt-2                    = credyd o addasiad gan CThEM
 credit-and-refund.bullet-one-prt-1                                = Os gadewch  yr arian hwn yn eich cyfrif, caiff ei ddefnyddio i dalu’r
 credit-and-refund.agent.bullet-one-prt-1                          = Os gadewch yr arian hwn yng nghyfrif eich cleient, caiff ei ddefnyddio i dalu’r
 credit-and-refund.bullet-one-link                                 = hyn sydd arnoch
@@ -1111,7 +1111,8 @@ credit-and-refund.agent.bullet-two-prt-2                          = yn ôl. Os b
 credit-and-refund.no-credit                                       = Nid oes gennych arian yn eich cyfrif.
 credit-and-refund.agent.no-credit                                 = Nid oes gan eich cleient arian yn ei gyfrif.
 credit-and-refund.credit-from-balancing-charge-prt-1              = yn sgil
-credit-and-refund.credit-from-balancing-charge-prt-2              = Credyd tâl mantoli
+credit-and-refund.credit-from-balancing-charge-prt-2              = credyd tâl mantoli
+credit-and-refund.credit-from-earlier-tax-year                    = credyd o flwyddyn dreth gynharach
 
 
 shortMonth.1 = Ion
