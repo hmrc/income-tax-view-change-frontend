@@ -136,14 +136,14 @@ object AuthStub extends ComponentSpecBase {
       responseBody = Json.stringify(Json.obj(
         "allEnrolments" -> Json.arr(
           Json.obj(
-          "key" -> "HMRC-AS-AGENT",
-          "identifiers" -> Json.arr(
-            Json.obj(
-              "key" -> "AgentReferenceNumber",
-              "value" -> "1"
+            "key" -> "HMRC-AS-AGENT",
+            "identifiers" -> Json.arr(
+              Json.obj(
+                "key" -> "AgentReferenceNumber",
+                "value" -> "1"
+              )
             )
-          )
-        ),
+          ),
           Json.obj(
             "key" -> "HMRC-MTD-IT",
             "identifiers" -> Json.arr(
@@ -152,13 +152,14 @@ object AuthStub extends ComponentSpecBase {
                 "value" -> mtdId
               )
             ),
-            "delegatedAuthRule" -> "mtd-it-auth")
+            "delegatedAuthRule" -> "mtd-it-auth"
+          )
         ),
         "affinityGroup" -> "Agent",
         "confidenceLevel" -> requiredConfidenceLevel
       ))
-     )
-    }
+    )
+  }
 
   def stubAuthorisedAgentNoARN(): Unit = {
     WiremockHelper.stubPost(
