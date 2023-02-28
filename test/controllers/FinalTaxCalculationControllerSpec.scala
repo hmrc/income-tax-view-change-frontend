@@ -20,6 +20,7 @@ import auth.{FrontendAuthorisedFunctions, MtdItUser}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import config.featureswitch.FeatureSwitching
 import controllers.agent.utils
+import controllers.agent.utils.SessionKeys.clientNino
 import controllers.predicates.{IncomeTaxAgentUser, NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
 import implicits.ImplicitDateFormatter
 import mocks.MockItvcErrorHandler
@@ -98,12 +99,21 @@ class FinalTaxCalculationControllerSpec extends MockAuthenticationPredicate
     credId = Some(testCredId),
     userType = Some(testUserTypeIndividual),
     arn = None
-  )(fakeRequestWithClientDetails)
+  )(FakeRequest().withSession(utils.SessionKeys.clientUTR -> "1234567890",
+    utils.SessionKeys.clientMTDID -> testMtditid,
+    utils.SessionKeys.clientNino -> clientNino,
+    utils.SessionKeys.confirmedClient -> "true",
+    forms.utils.SessionKeys.calculationId -> "1234567890"))
 
+  /*FakeRequest().withSession(utils.SessionKeys.clientUTR -> "1234567890",
+      utils.SessionKeys.clientMTDID -> testMtditid,
+      utils.SessionKeys.clientNino -> clientNino,
+      utils.SessionKeys.confirmedClient -> "true",
+      forms.utils.SessionKeys.calculationId -> "1234567890"))
+
+   */
   def testFakeRequest(clientNino: String = "AA111111A"): FakeRequest[AnyContentAsEmpty.type] =
     fakeRequestWithActiveSession.withSession(
-      utils.SessionKeys.clientFirstName -> "",
-      utils.SessionKeys.clientLastName -> "",
       utils.SessionKeys.clientUTR -> "1234567890",
       utils.SessionKeys.clientMTDID -> testMtditid,
       utils.SessionKeys.clientNino -> clientNino,

@@ -25,7 +25,7 @@ import controllers.predicates._
 import forms.utils.SessionKeys
 import forms.utils.SessionKeys.{calcPagesBackPage, summaryData}
 
-import javax.inject.{Inject, Singleton}
+import javax.inject.Inject
 import models.finalTaxCalculation.TaxReturnRequestModel
 import models.liabilitycalculation.viewmodels.TaxYearSummaryViewModel
 import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse}
@@ -37,7 +37,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import views.html.FinalTaxCalculationView
 
 import scala.concurrent.{ExecutionContext, Future}
-@Singleton
+
 class FinalTaxCalculationController @Inject()(implicit val cc: MessagesControllerComponents,
                                               val ec: ExecutionContext,
                                               view: FinalTaxCalculationView,
@@ -113,10 +113,8 @@ class FinalTaxCalculationController @Inject()(implicit val cc: MessagesControlle
 
   def agentSubmit(taxYear: Int): Action[AnyContent] = Authenticated.async { implicit request =>
     implicit agent =>
-      println(s"\n AAAAAAAAAA \n")
       getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true).flatMap { user =>
         val fullName = user.session.get(clientFirstName).getOrElse("") + " " + user.session.get(clientLastName).getOrElse("")
-        println(s"\n AAAAAAAAAA ${user.session.get(clientFirstName)}\n")
         agentFinalDeclarationSubmit(taxYear, fullName)(user, hc)
       }
   }

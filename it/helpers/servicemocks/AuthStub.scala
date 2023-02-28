@@ -128,44 +128,37 @@ object AuthStub extends ComponentSpecBase {
            |}""".stripMargin).toString())
   }
 
-  private def defaultResponseBody(mtdId: String): String = Json.stringify(Json.obj(
-    "allEnrolments" -> Json.arr(
-      Json.obj(
-        "key" -> "HMRC-AS-AGENT",
-        "identifiers" -> Json.arr(
-          Json.obj(
-            "key" -> "AgentReferenceNumber",
-            "value" -> "1"
-          )
-        )
-      ),
-      Json.obj(
-        "key" -> "HMRC-MTD-IT",
-        "identifiers" -> Json.arr(
-          Json.obj(
-            "key" -> "MTDITID",
-            "value" -> mtdId
-          )
-        ),
-        "delegatedAuthRule" -> "mtd-it-auth"
-      )
-    ),
-    "affinityGroup" -> "Agent",
-    "confidenceLevel" -> requiredConfidenceLevel
-  ))
 
-  def stubAuthorisedAgent(mtdId: String = "mtdbsaId", overrideResponseBody: Option[String] = None): Unit = {
-    overrideResponseBody match {
-      case Some(value) => WiremockHelper.stubPost(
+  def stubAuthorisedAgent(mtdId: String = "mtdbsaId"): Unit = {
+     WiremockHelper.stubPost(
         url = postAuthoriseUrl,
         status = Status.OK,
-        responseBody = value)
-      case None => WiremockHelper.stubPost(
-        url = postAuthoriseUrl,
-        status = Status.OK,
-        responseBody = defaultResponseBody(mtdId))
+        responseBody = Json.stringify(Json.obj(
+          "allEnrolments" -> Json.arr(
+            Json.obj(
+            "key" -> "HMRC-AS-AGENT",
+            "identifiers" -> Json.arr(
+              Json.obj(
+                "key" -> "AgentReferenceNumber",
+                "value" -> "1"
+              )
+            )
+          ),
+            Json.obj(
+              "key" -> "HMRC-MTD-IT",
+              "identifiers" -> Json.arr(
+                Json.obj(
+                  "key" -> "MTDITID",
+                  "value" -> mtdId
+                )
+              ),
+              "delegatedAuthRule" -> "mtd-it-auth")
+          ),
+          "affinityGroup" -> "Agent",
+          "confidenceLevel" -> requiredConfidenceLevel
+        ))
+     )
     }
-  }
 
   def stubAuthorisedAgentNoARN(): Unit = {
     WiremockHelper.stubPost(
