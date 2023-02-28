@@ -89,7 +89,6 @@ class FinalTaxCalculationControllerSpec extends MockAuthenticationPredicate
     arn = None
   )(FakeRequest())
 
-
   val noNameUser: MtdItUser[AnyContent] = MtdItUser(
     mtditid = testMtditid,
     nino = testNino,
