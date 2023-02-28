@@ -43,7 +43,7 @@ class UpliftSuccessControllerSpec extends TestSupport with MockAuthenticationPre
 
     "audit IV-uplift-success-outcome when nino is defined" in {
 
-      lazy val result = TestUpliftSuccessController.success(fakeRequestWithNino)
+      lazy val result = TestUpliftSuccessController.success("PTA")(fakeRequestWithNino)
 
       val expectedIvOutcomeSuccessAuditModel = IvOutcomeSuccessAuditModel(testNino)
 

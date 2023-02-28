@@ -32,11 +32,18 @@ import uk.gov.hmrc.auth.core._
 
 import scala.concurrent.Future
 
-class AuthenticationPredicateSpec extends TestSupport with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate with MockAuditingService with FeatureSwitching {
+class AuthenticationPredicateSpec extends TestSupport with MockAuthenticationPredicate
+  with MockIncomeSourceDetailsPredicate with MockAuditingService with FeatureSwitching {
 
-  val ivUpliftRedirectUrl: String = s"${appConfig.ivUrl}/uplift?origin=ITVC&confidenceLevel=${appConfig.requiredConfidenceLevel}&" +
-    s"completionURL=${"/" + appConfig.baseUrl + controllers.routes.UpliftSuccessController.success.url}&" +
-    s"failureURL=${"/" + appConfig.baseUrl + controllers.errors.routes.UpliftFailedController.show.url}"
+  val ivUpliftRedirectUrl: String = {
+    val completionUrl: String = s"${appConfig.itvcFrontendEnvironment}/${appConfig.baseUrl}" +
+      s"${controllers.routes.UpliftSuccessController.success("PTA").url}"
+    val failureUrl: String = s"${appConfig.itvcFrontendEnvironment}/${appConfig.baseUrl}" +
+      s"${controllers.errors.routes.UpliftFailedController.show.url}"
+
+    s"${appConfig.ivUrl}/uplift?origin=ITVC&confidenceLevel=${appConfig.requiredConfidenceLevel}" +
+      s"&completionURL=$completionUrl" + s"&failureURL=$failureUrl"
+  }
 
   "The AuthenticationPredicate" when {
 
@@ -137,7 +144,6 @@ class AuthenticationPredicateSpec extends TestSupport with MockAuthenticationPre
 
           redirectLocation(result) shouldBe Some(ivUpliftRedirectUrl)
         }
-
 
 
         "the feature switch is enabled for an organisation without a nino" in {
