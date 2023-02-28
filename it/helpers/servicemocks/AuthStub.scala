@@ -128,7 +128,6 @@ object AuthStub extends ComponentSpecBase {
            |}""".stripMargin).toString())
   }
 
-
   def stubAuthorisedAgent(mtdId: String = "mtdbsaId"): Unit = {
     WiremockHelper.stubPost(
       url = postAuthoriseUrl,
