@@ -21,7 +21,7 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import config.featureswitch.FeatureSwitching
 import controllers.agent.utils
 import controllers.agent.utils.SessionKeys.clientNino
-import controllers.predicates.{IncomeTaxAgentUser, NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
+import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
 import implicits.ImplicitDateFormatter
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
@@ -33,12 +33,12 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import play.api.http.Status
 import play.api.mvc.Results.InternalServerError
-import play.api.mvc.{Action, AnyContent, AnyContentAsEmpty, DefaultMessagesControllerComponents, MessagesControllerComponents, Result}
+import play.api.mvc.{AnyContent, MessagesControllerComponents, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{defaultAwaitTimeout, status}
 import play.twirl.api.HtmlFormat
 import services.{CalculationService, IncomeSourceDetailsService}
-import testConstants.BaseTestConstants.{testCredId, testMtditid, testNino, testRetrievedUserName, testSaUtr, testUserTypeIndividual}
+import testConstants.BaseTestConstants.{testCredId, testMtditid, testNino, testRetrievedUserName, testUserTypeIndividual}
 import testConstants.IncomeSourceDetailsTestConstants.businessAndPropertyAligned
 import testUtils.TestSupport
 import views.html.FinalTaxCalculationView
@@ -105,28 +105,12 @@ class FinalTaxCalculationControllerSpec extends MockAuthenticationPredicate
     utils.SessionKeys.confirmedClient -> "true",
     forms.utils.SessionKeys.calculationId -> "1234567890"))
 
-  /*FakeRequest().withSession(utils.SessionKeys.clientUTR -> "1234567890",
-      utils.SessionKeys.clientMTDID -> testMtditid,
-      utils.SessionKeys.clientNino -> clientNino,
-      utils.SessionKeys.confirmedClient -> "true",
-      forms.utils.SessionKeys.calculationId -> "1234567890"))
-
-   */
-  def testFakeRequest(clientNino: String = "AA111111A"): FakeRequest[AnyContentAsEmpty.type] =
-    fakeRequestWithActiveSession.withSession(
-      utils.SessionKeys.clientUTR -> "1234567890",
-      utils.SessionKeys.clientMTDID -> testMtditid,
-      utils.SessionKeys.clientNino -> clientNino,
-      utils.SessionKeys.confirmedClient -> "true",
-      forms.utils.SessionKeys.calculationId -> "1234567890"
-    )
-
   "handle show request" should(
     "return unknown error" when (
       "an unconventional error occurs" in {
         when(mockCalculationService.getLiabilityCalculationDetail(any(), any(), any())(any()))
           .thenReturn(Future.successful(testCalcError))
-        val result: Future[Result] = testFinalTaxCalculationController.handleShowRequest(taxYear, mockErrorHandler, false)
+        val result: Future[Result] = testFinalTaxCalculationController.handleShowRequest(taxYear, mockErrorHandler, isAgent = false)
         status(result) shouldBe Status.INTERNAL_SERVER_ERROR
       }
     )
