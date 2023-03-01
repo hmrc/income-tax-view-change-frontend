@@ -22,6 +22,7 @@
 @import views.html.components._
 @import exceptions.MissingFieldException
 @import models.creditDetailModel.CreditDetailModel
+@import models.creditDetailModel.BalancingChargeCreditType
 
 @this(
         mainTemplate: unifiedLayout,
@@ -152,16 +153,23 @@
                     @tableHead("over-due-payments-table-head")
                     <tbody class="govuk-table__body">
                         @for((documentDetail, creditType, date, financialDetail, index) <- charges.zipWithIndex.map(x => (x._1.documentDetail, x._1.creditType, x._1.date, x._1.financialDetail, x._2))) {
-                            <a>documentDetail: @documentDetail, creditType: @creditType, date: @date, index: @index</a>
+                            <a>documentDetail: @documentDetail, financialDetail: @financialDetail, creditType: @creditType, date: @date, index: @index</a>
+                            <a>financialDetail: financialDetail</a>
+                            <a>creditType: @creditType</a>
+                            <a>date: @date</a>
+                            <a>index: @index</a>
                             <tr class="govuk-table__row " id="@getIndex(index)">
                                 <td class="govuk-table__cell govuk-!-width-one-quarter">@date.toLongDateShort</td>
                                 <td class="govuk-table__cell govuk-!-width-one-half">@messages(creditType.key)</td>
                                 <td class="govuk-table__cell numeric govuk-!-width-one-quarter">@getStatus(documentDetail)</td>
                                 <td class="govuk-table__cell numeric govuk-!-width-one-quarter govuk-!-text-align-right">
-                                    @if(!creditType.toString.contains("SA Balancing Charge Credit")) {
+                                    @if(creditType != BalancingChargeCreditType) {
                                         @documentDetail.originalAmount.map(_.abs).getOrElse(throw MissingFieldException("Original Amount")).toCurrencyString
                                     } else {
-                                        @financialDetail.flatMap(_.outstandingAmount).getOrElse(throw MissingFieldException("Outstanding Amount")).toCurrencyString
+                                        @println("\nATTEMPT TO BCC\n")
+                                        @println(s"\nfinancialDetail: ${financialDetail}\n")
+                                        @println(s"\nfinancialDetail Outstanding: ${financialDetail.flatMap(_.outstandingAmount)}\n")
+                                        @financialDetail.flatMap(_.outstandingAmount).getOrElse("ERROR")
                                     }
                                 </td>
                             </tr>

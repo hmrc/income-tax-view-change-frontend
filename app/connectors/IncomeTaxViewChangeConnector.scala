@@ -374,7 +374,10 @@ trait IncomeTaxViewChangeConnector extends RawResponseReads with FeatureSwitchin
               Logger("application").error(s"[IncomeTaxViewChangeConnector][getFinancialDetails] - Json Validation Error: $invalid")
               FinancialDetailsErrorModel(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing FinancialDetails Data Response")
             },
-            valid => valid
+            valid => {
+              println(s"\nFROM CONNECTOR: $valid\n")
+              valid
+            }
           )
         case status =>
           if (status >= 500) {

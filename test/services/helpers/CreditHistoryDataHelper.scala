@@ -65,10 +65,15 @@ trait CreditHistoryDataHelper {
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
     documentDetails = List(
       documentDetailsWhichIsCutOverCredit,
-      DocumentDetail("2022", "testTransactionId2", None, None, None, None, LocalDate.of(taxYear, 3, 29))
+      DocumentDetail("2022", "testTransactionId2", None, None, None, None, LocalDate.of(taxYear, 3, 29)),
+      DocumentDetail("2022", "testTransactionId3", None, None, None, None, LocalDate.of(taxYear, 3, 29))
     ),
     financialDetails = List(
       FinancialDetail(taxYear = "2022", mainType = None, transactionId = Some("testTransactionId1"),
+        transactionDate = None, `type` = None, totalAmount = None, originalAmount = None, outstandingAmount = None,
+        clearedAmount = None, chargeType = None, accruedInterest = None,
+        items = Some(Seq(SubItem(Some(LocalDate.parse("2022-08-25")))))),
+      FinancialDetail(taxYear = "2022", mainType = None, transactionId = Some("testTransactionId3"),
         transactionDate = None, `type` = None, totalAmount = None, originalAmount = None, outstandingAmount = None,
         clearedAmount = None, chargeType = None, accruedInterest = None,
         items = Some(Seq(SubItem(Some(LocalDate.parse("2022-08-25")))))),

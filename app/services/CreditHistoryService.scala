@@ -42,6 +42,7 @@ class CreditHistoryService @Inject()(incomeTaxViewChangeConnector: IncomeTaxView
                                  (implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[CreditHistoryError.type, List[CreditDetailModel]]] = {
     incomeTaxViewChangeConnector.getFinancialDetails(taxYear, nino).flatMap {
       case financialDetailsModel: FinancialDetailsModel =>
+        println(s"\nfinancialDetailsModel: ${financialDetailsModel}\n")
         val fdRes = financialDetailsModel.getPairedDocumentDetails().flatMap {
           case (document: DocumentDetail, financialDetail: FinancialDetail) => {
             (financialDetail.isMFACredit, document.credit.isDefined, financialDetail.isBalancingChargeCredit) match {
