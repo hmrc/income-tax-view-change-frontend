@@ -21,7 +21,6 @@ import play.api.libs.json.{Format, Json}
 import java.time.LocalDate
 
 
-
 sealed trait PaymentsResponse
 
 case class Payments(payments: Seq[Payment]) extends PaymentsResponse
@@ -31,7 +30,9 @@ case class PaymentsError(status: Int, error: String) extends PaymentsResponse
 sealed trait PaymentAllocationStatus
 
 case object FullyAllocatedPaymentStatus extends PaymentAllocationStatus
+
 case object NotYetAllocatedPaymentStatus extends PaymentAllocationStatus
+
 case object PartiallyAllocatedPaymentStatus extends PaymentAllocationStatus
 
 case class Payment(reference: Option[String],
@@ -48,14 +49,20 @@ case class Payment(reference: Option[String],
 
   def credit: Option[BigDecimal] = amount match {
     case None => None
-    case _ if(lotItem.isDefined && lot.isDefined) => None
-    case Some(_) if(amount.get > 0.00) => None
+    case _ if (lotItem.isDefined && lot.isDefined) => None
+    case Some(_) if (amount.get > 0.00) => None
     case Some(credit) => Some(credit)
   }
 
-  def isMFACredit : Boolean = MfaCreditUtils.validMFACreditType(mainType)
+  def isCutOverCredit: Boolean = mainType.contains("ITSA Cutover Credits") && credit.isDefined
 
-  def allocationStatus() : Option[PaymentAllocationStatus] = (outstandingAmount, amount) match {
+  def isBalancingChargeCredit: Boolean = mainType.contains("SA Balancing Charge Credit") && credit.isDefined
+
+  def isMFACredit: Boolean = MfaCreditUtils.validMFACreditType(mainType) && credit.isDefined
+
+  def isPaymentToHMRC: Boolean = credit.isEmpty && lotItem.isDefined && lot.isDefined
+
+  def allocationStatus(): Option[PaymentAllocationStatus] = (outstandingAmount, amount) match {
     case (Some(outstandingAmountValue), _) if outstandingAmountValue.equals(BigDecimal(0.0)) =>
       Some(FullyAllocatedPaymentStatus)
     case (Some(outstandingAmountValue), Some(originalAmountValue)) if outstandingAmountValue.equals(originalAmountValue) =>
@@ -66,7 +73,6 @@ case class Payment(reference: Option[String],
   }
 
 }
-
 
 
 object Payment {
