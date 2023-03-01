@@ -16,11 +16,11 @@
 
 package models.creditDetailModel
 
-import models.financialDetails.{BalanceDetails, DocumentDetail}
+import models.financialDetails.{BalanceDetails, DocumentDetail, FinancialDetail}
 
 import java.time.LocalDate
 
-case class CreditDetailModel(date: LocalDate , documentDetail: DocumentDetail, creditType: CreditType, balanceDetails: Option[BalanceDetails] = None)
+case class CreditDetailModel(date: LocalDate , documentDetail: DocumentDetail, creditType: CreditType, balanceDetails: Option[BalanceDetails] = None, financialDetail: Option[FinancialDetail] = None)
 
 sealed trait CreditType {
   val key: String
