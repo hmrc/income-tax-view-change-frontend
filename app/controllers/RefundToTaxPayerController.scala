@@ -19,7 +19,7 @@ package controllers
 import audit.AuditingService
 import audit.models.RefundToTaxPayerResponseAuditModel
 import auth.MtdItUser
-import config.featureswitch.{FeatureSwitching, PaymentHistoryRefunds, R7cTxmEvents}
+import config.featureswitch.{FeatureSwitching, PaymentHistoryRefunds}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import connectors.IncomeTaxViewChangeConnector
 import controllers.agent.predicates.ClientConfirmedController
@@ -66,7 +66,8 @@ class RefundToTaxPayerController @Inject()(val refundToTaxPayerView: RefundToTax
           case repaymentHistoryModel: RepaymentHistoryModel => repaymentHistoryModel
         }
       } yield {
-        if (isEnabled(R7cTxmEvents)) auditingService.extendedAudit(RefundToTaxPayerResponseAuditModel(repaymentHistoryModel))
+        auditingService.extendedAudit(RefundToTaxPayerResponseAuditModel(repaymentHistoryModel))
+
         Ok(
           refundToTaxPayerView(
             repaymentHistoryModel,
