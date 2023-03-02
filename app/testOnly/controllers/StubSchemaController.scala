@@ -18,8 +18,6 @@ package testOnly.controllers
 
 import config.FrontendAppConfig
 import controllers.BaseController
-
-import javax.inject.{Inject, Singleton}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.{JsValue, Json}
@@ -28,10 +26,11 @@ import play.api.{Configuration, Environment}
 import testOnly.connectors.DynamicStubConnector
 import testOnly.forms.StubSchemaForm
 import testOnly.models.SchemaModel
-import uk.gov.hmrc.play.bootstrap.config.AuthRedirects
 import testOnly.views.html.StubSchemaView
+import uk.gov.hmrc.play.bootstrap.config.AuthRedirects
 import utils.{AuthExchange, SessionBuilder}
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -82,15 +81,6 @@ class StubSchemaController @Inject()(stubSchemaView: StubSchemaView)
       }
     )
   }
-
-  private def view(form: Form[SchemaModel], showSuccess: Boolean = false, errorMessage: Option[String] = None)(implicit request: Request[AnyContent]) =
-    stubSchemaView(
-      form,
-      testOnly.controllers.routes.StubSchemaController.submit,
-      showSuccess,
-      errorMessage
-    )
-
   // Logging page functionality
   val createLogin: Action[AnyContent] = Action.async { implicit request =>
     dynamicStubConnector.showLogin("login").map(
@@ -103,16 +93,20 @@ class StubSchemaController @Inject()(stubSchemaView: StubSchemaView)
       }
     )
   }
-
   val postLogin: Action[AnyContent] = Action.async { implicit request =>
     //TODO: read isAgent + redirect to staging in correct fashion
-    val nino = request.body.asFormUrlEncoded.map(m => m("nino") ).getOrElse( Seq.empty ).mkString(" ")
-    //val isAgent = Try{ request.body.asFormUrlEncoded.map(m => m("Agent") ).getOrElse("") }.toOption.getOrElse("")
-//    Ok(s"Nino: $nino => IsAgent: $isAgent")
-    dynamicStubConnector.postLogin("login", nino).map(
+    val nino = request.body.asFormUrlEncoded.map(m => m("nino")).getOrElse(Seq.empty).mkString(" ")
+    val isAgent: Option[String] = request.body.asFormUrlEncoded.map(m => m.getOrElse("Agent", Nil)).getOrElse(Seq.empty).headOption
+    val redirectURL =
+      if (isAgent.contains("true"))
+        "report-quarterly/income-and-expenses/view/agents?origin=BTA"
+      else
+        "report-quarterly/income-and-expenses/view?origin=BTA"
+
+    dynamicStubConnector.postLogin("login", nino, isAgent.getOrElse("false")).map(
       response => response.status match {
         case OK =>
-          val homePage = s"${appConfig.itvcFrontendEnvironment}/report-quarterly/income-and-expenses/view?origin=BTA"
+          val homePage = s"${appConfig.itvcFrontendEnvironment}/$redirectURL"
           val (bearer, auth) = {
             val arr = response.body.split(";")
             (arr(0), arr(1))
@@ -120,17 +114,14 @@ class StubSchemaController @Inject()(stubSchemaView: StubSchemaView)
           println(s"Result is OK: $bearer $auth")
           Redirect(homePage)
             .withSession(
-              SessionBuilder.buildGGSession( AuthExchange(bearerToken = bearer,
-                sessionAuthorityUri = auth) ))
-//          Ok(response.body).as("text/html")
+              SessionBuilder.buildGGSession(AuthExchange(bearerToken = bearer,
+                sessionAuthorityUri = auth)))
         case code =>
           println("Result is ERROR")
           Ok(response.body).as("text/html")
-          //InternalServerError(response.body + code.toString)
       }
     )
   }
-
   val showCss: Action[AnyContent] = Action.async { implicit request =>
     dynamicStubConnector.showLogin("hmrc-frontend/assets/hmrc-frontend-5.19.0.min.css").map(
       response => response.status match {
@@ -139,5 +130,13 @@ class StubSchemaController @Inject()(stubSchemaView: StubSchemaView)
       }
     )
   }
+
+  private def view(form: Form[SchemaModel], showSuccess: Boolean = false, errorMessage: Option[String] = None)(implicit request: Request[AnyContent]) =
+    stubSchemaView(
+      form,
+      testOnly.controllers.routes.StubSchemaController.submit,
+      showSuccess,
+      errorMessage
+    )
 
 }
