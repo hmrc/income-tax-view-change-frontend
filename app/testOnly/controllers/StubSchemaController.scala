@@ -111,13 +111,11 @@ class StubSchemaController @Inject()(stubSchemaView: StubSchemaView)
             val arr = response.body.split(";")
             (arr(0), arr(1))
           }
-          println(s"Result is OK: $bearer $auth")
           Redirect(homePage)
             .withSession(
               SessionBuilder.buildGGSession(AuthExchange(bearerToken = bearer,
                 sessionAuthorityUri = auth)))
         case code =>
-          println("Result is ERROR")
           Ok(response.body).as("text/html")
       }
     )
