@@ -123,9 +123,10 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
         document.select("h1").text() shouldBe messages("home.agent.heading")
       }
 
-      s"have the hint with the users name '$testUserName' and utr '$testSaUtr' " in new Setup {
+      // Commented the test case as the property in view is also commented
+      /*s"have the hint with the users name '$testUserName' and utr '$testSaUtr' " in new Setup {
         getHintNth() shouldBe Some(s"Unique Taxpayer Reference (UTR): $testSaUtr Client’s name $testUserName")
-      }
+      }*/
 
       "have an next payment due tile" which {
         "has a heading" in new Setup {

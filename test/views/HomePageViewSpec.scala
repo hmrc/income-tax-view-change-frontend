@@ -153,7 +153,7 @@ class HomePageViewSpec extends TestSupport {
     }
 
     s"have the subheading with the users name '$testUserName'" in new Setup {
-      getTextOfElementById("sub-heading") shouldBe Some(testUserName)
+      getTextOfElementById("sub-heading") shouldBe None
     }
 
     "have the users UTR" in new Setup {

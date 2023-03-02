@@ -94,7 +94,6 @@ class StubSchemaController @Inject()(stubSchemaView: StubSchemaView)
     )
   }
   val postLogin: Action[AnyContent] = Action.async { implicit request =>
-    //TODO: read isAgent + redirect to staging in correct fashion
     val nino = request.body.asFormUrlEncoded.map(m => m("nino")).getOrElse(Seq.empty).mkString(" ")
     val isAgent: Option[String] = request.body.asFormUrlEncoded.map(m => m.getOrElse("Agent", Nil)).getOrElse(Seq.empty).headOption
     val redirectURL =
