@@ -141,10 +141,7 @@
                         </span>
                     }
                     <span class="govuk-visually-hidden">@messages("home.agent.visualHidden.clientsName")</span>
-                @*
-                    TODO need clarification if it needs to be removed or not
                     @user.userName.map(_.name) @user.userName.map(_.lastName)
-                *@
                 }
 
                 @p(classes = "govuk-body margin-bottom-sixty", id = Some("changeClientLink")) {
@@ -170,6 +167,7 @@
             <div class="column-full">
 
                 <h1 class="govuk-heading-xl @if(user.saUtr.isDefined) { margin-bottom-zero }">
+                    <span id="sub-heading" class="govuk-caption-xl">@user.userName.map(_.name)</span>
                     <span id="income-tax-heading">@messages("home.heading")</span>
                 </h1>
 
