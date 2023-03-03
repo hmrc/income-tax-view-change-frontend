@@ -39,10 +39,9 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
   val creditAndRefundView: CreditAndRefunds = app.injector.instanceOf[CreditAndRefunds]
   val creditAndRefundHeading: String = messages("credit-and-refund.heading")
-  val subHeadingWithCreditsPart1Agent: String = messages("credit-and-refund.agent.subHeading.has-credits-1")
-  val subHeadingWithCreditsPart2Agent: String = messages("credit-and-refund.agent.subHeading.has-credits-2")
   val subHeadingWithCreditsPart1: String = messages("credit-and-refund.subHeading.has-credits-1")
   val subHeadingWithCreditsPart2: String = messages("credit-and-refund.subHeading.has-credits-2")
+  val subHeadingWithCreditsPart2Agent: String = messages("credit-and-refund.agent.subHeading.has-credits-2")
   val subHeadingWithUnallocatedCreditsOnePayment: String = s"${messages("credit-and-refund.subHeading.unallocated-credits-one-payment-1")} £500.00 ${messages("credit-and-refund.subHeading.unallocated-credits-one-payment-2")}"
   val subHeadingWithUnallocatedCreditsSingleCredit: String = s"${messages("credit-and-refund.subHeading.unallocated-credits-single-credit-1")} £500.00 ${messages("credit-and-refund.subHeading.unallocated-credits-single-credit-2")}"
   val subHeadingWithUnallocatedCreditsOnePaymentAgent: String = s"${messages("credit-and-refund.subHeading.unallocated-credits-one-payment-1")} £500.00 ${messages("credit-and-refund.agent.unallocated-credits-one-payment-2")}"
