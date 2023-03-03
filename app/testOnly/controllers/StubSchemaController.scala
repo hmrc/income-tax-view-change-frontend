@@ -98,22 +98,34 @@ class StubSchemaController @Inject()(stubSchemaView: StubSchemaView)
     val isAgent: Option[String] = request.body.asFormUrlEncoded.map(m => m.getOrElse("Agent", Nil)).getOrElse(Seq.empty).headOption
     val redirectURL =
       if (isAgent.contains("true"))
-        "report-quarterly/income-and-expenses/view/agents?origin=BTA"
+        s"report-quarterly/income-and-expenses/view/test-only/stub-client/nino/${nino}/utr/"
       else
         "report-quarterly/income-and-expenses/view?origin=BTA"
 
     dynamicStubConnector.postLogin("login", nino, isAgent.getOrElse("false")).map(
       response => response.status match {
         case OK =>
-          val homePage = s"${appConfig.itvcFrontendEnvironment}/$redirectURL"
-          val (bearer, auth) = {
-            val arr = response.body.split(";")
-            (arr(0), arr(1))
+          if (isAgent.contains("true")) {
+            val homePage = s"${appConfig.itvcFrontendEnvironment}/$redirectURL"
+            val (bearer, auth, utr) = {
+              val arr = response.body.split(";")
+              (arr(0), arr(1), arr(2))
+            }
+            Redirect(homePage + utr)
+              .withSession(
+                SessionBuilder.buildGGSession(AuthExchange(bearerToken = bearer,
+                  sessionAuthorityUri = auth)))
+          } else {
+            val homePage = s"${appConfig.itvcFrontendEnvironment}/$redirectURL"
+            val (bearer, auth) = {
+              val arr = response.body.split(";")
+              (arr(0), arr(1))
+            }
+            Redirect(homePage)
+              .withSession(
+                SessionBuilder.buildGGSession(AuthExchange(bearerToken = bearer,
+                  sessionAuthorityUri = auth)))
           }
-          Redirect(homePage)
-            .withSession(
-              SessionBuilder.buildGGSession(AuthExchange(bearerToken = bearer,
-                sessionAuthorityUri = auth)))
         case code =>
           Ok(response.body).as("text/html")
       }
