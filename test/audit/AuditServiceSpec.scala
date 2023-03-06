@@ -20,6 +20,7 @@ import audit.models.ExtendedAuditModel
 import config.FrontendAppConfig
 import org.junit.Ignore
 import org.mockito.Mockito.mock
+import org.mockito.invocation.Invocation
 import org.scalatest.PrivateMethodTester
 import play.api.libs.json.{JsValue, Json}
 import testUtils.TestSupport
@@ -47,22 +48,6 @@ class AuditServiceSpec extends TestSupport with PrivateMethodTester {
       result.auditSource shouldBe "appName"
       result.auditType shouldBe "auditType"
     }
-
-// TODO: for some reason after upgrade to scala 2.13.8 this test stop working => FIX
-//    "call private handleAuditResult method" in {
-//       TODO: ideally we should find way to mock Logger, but this is not supported by Mockito
-//       as the moment as this is singleton
-//      val privateMethodDecorator = PrivateMethod[Future[AuditResult]]('handleAuditResult)
-//
-//      val successRes = obj invokePrivate privateMethodDecorator(Future.successful(AuditResult.Success), ec)
-//      Option(successRes) shouldBe None
-//
-//      val failureRes = obj invokePrivate privateMethodDecorator(Future.successful(AuditResult.Failure("Error", None)), ec)
-//      Option(failureRes) shouldBe None
-//
-//      val disabledRes = obj invokePrivate privateMethodDecorator(Future.successful(AuditResult.Disabled), ec)
-//      Option(disabledRes) shouldBe None
-//    }
   }
 
 }
