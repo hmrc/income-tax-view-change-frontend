@@ -16,7 +16,7 @@
 
 package models.creditDetailModel
 
-import models.financialDetails.{BalanceDetails, DocumentDetail, FinancialDetail}
+import models.financialDetails.{BalanceDetails, DocumentDetail}
 
 import java.time.LocalDate
 
