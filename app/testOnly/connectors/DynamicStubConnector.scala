@@ -17,6 +17,7 @@
 package testOnly.connectors
 
 import connectors.RawResponseReads
+
 import javax.inject.{Inject, Singleton}
 import testOnly.TestOnlyAppConfig
 import testOnly.models.{DataModel, SchemaModel}
@@ -49,4 +50,15 @@ class DynamicStubConnector @Inject()(val appConfig: TestOnlyAppConfig,
     lazy val url = s"${appConfig.dynamicStubUrl}/setup/all-schemas"
     http.DELETE[HttpResponse](url)
   }
+
+  def showLogin(resourceUrl: String)(implicit headerCarrier: HeaderCarrier): Future[HttpResponse] = {
+    lazy val url = s"${appConfig.dynamicStubUrl}/$resourceUrl"
+    http.GET[HttpResponse](url)
+  }
+
+  def postLogin(resourceUrl: String, nino: String, isAgent: String)(implicit headerCarrier: HeaderCarrier): Future[HttpResponse] = {
+    lazy val url = s"${appConfig.dynamicStubUrl}/$resourceUrl"
+    http.POSTForm(url, Map("nino" -> Seq(nino), "isAgent" -> Seq(isAgent)))
+  }
+
 }

@@ -28,7 +28,7 @@ class RepaymentHistoryUtilsSpec extends TestSupport with Matchers {
 
   val repaymentRequestNumber: String = "000000003135"
 
-  val paymentsWithMFA: List[Payment] = List(
+  val payments: List[Payment] = List(
     Payment(reference = Some("mfa1"), amount = Some(-10000.00), Some(-150.00), method = Some("method"),
       documentDescription = Some("mfa1"), lot = None, lotItem = None, dueDate = None,
       documentDate = LocalDate.parse("2020-04-13"), Some("AY777777202201"), mainType = Some("ITSA Overpayment Relief")),
@@ -42,7 +42,10 @@ class RepaymentHistoryUtilsSpec extends TestSupport with Matchers {
       Some(LocalDate.parse("2019-12-26")), LocalDate.parse("2019-12-25"), Some("DOCID01"),
       mainType = Some("SA Balancing Charge")),
     Payment(Some("payment2"), Some(10000), None, Some("Payment"), None, Some("lot"), Some("lotitem"), Some(LocalDate.parse("2019-12-25")),
-      LocalDate.parse("2019-12-25"), Some("DOCID02"), mainType = Some("SA Balancing Charge"))
+      LocalDate.parse("2019-12-25"), Some("DOCID02"), mainType = Some("SA Balancing Charge")),
+    Payment(reference = Some("bcc1"), amount = Some(-12000.00), Some(-150.00), method = Some("method"),
+      documentDescription = Some("bcc1"), lot = None, lotItem = None, dueDate = Some(LocalDate.parse("2019-12-24")),
+      documentDate = LocalDate.parse("2019-04-24"), Some("AY777777202203"), mainType = Some("SA Balancing Charge Credit")),
   )
 
   val repaymentHistory = List(
@@ -97,6 +100,8 @@ class RepaymentHistoryUtilsSpec extends TestSupport with Matchers {
   )
 
   private def groupedPayments(cutoverEnabled: Boolean = true, mfaEnabled: Boolean = true, isAgent: Boolean = false) = {
+    val bcc = List(PaymentHistoryEntry(LocalDate.parse("2019-12-24"), "paymentHistory.balancingChargeCredit", Some(-12000.0), None,
+      s"/report-quarterly/income-and-expenses/view/${if (isAgent) "agents/" else ""}credits-from-hmrc/2019", "AY777777202203"))
     val cutover = if (cutoverEnabled) List(PaymentHistoryEntry(LocalDate.parse("2019-12-25"), "paymentHistory.paymentFromEarlierYear", Some(-11000.0), None,
       s"/report-quarterly/income-and-expenses/view/${if (isAgent) "agents/" else ""}credits-from-hmrc/2019", "AY777777202202")) else Nil
     val standardPayments = List(
@@ -106,19 +111,19 @@ class RepaymentHistoryUtilsSpec extends TestSupport with Matchers {
     val mfa = if (mfaEnabled) List((2020, List(PaymentHistoryEntry(LocalDate.parse("2020-04-12"), "paymentHistory.mfaCredit", Some(-11000.0), None, s"/report-quarterly/income-and-expenses/view/${if (isAgent) "agents/" else ""}credits-from-hmrc/2020", "AY777777202210"),
       PaymentHistoryEntry(LocalDate.parse("2020-04-13"), "paymentHistory.mfaCredit", Some(-10000.0), None, s"/report-quarterly/income-and-expenses/view/${if (isAgent) "agents/" else ""}credits-from-hmrc/2020", "AY777777202201")))) else List()
 
-    mfa ++ List((2019, cutover ++ standardPayments))
+    mfa ++ List((2019, bcc ++ cutover ++ standardPayments))
   }
 
   "RepaymentHistoryUtils" should {
     "getGroupedPaymentHistoryData should combine payments and repayments and group by year" when {
       "both payments and repayments are present" in {
-        getGroupedPaymentHistoryData(paymentsWithMFA, repaymentHistory, isAgent = false,
+        getGroupedPaymentHistoryData(payments, repaymentHistory, isAgent = false,
           MFACreditsEnabled = true, CutOverCreditsEnabled = true, languageUtils
         )(messages) shouldBe groupedRepayments() ++ groupedPayments()
       }
 
       "only payments are present" in {
-        getGroupedPaymentHistoryData(paymentsWithMFA, List(), isAgent = false,
+        getGroupedPaymentHistoryData(payments, List(), isAgent = false,
           MFACreditsEnabled = true, CutOverCreditsEnabled = true, languageUtils
         )(messages) shouldBe groupedPayments()
       }
@@ -129,14 +134,14 @@ class RepaymentHistoryUtilsSpec extends TestSupport with Matchers {
         )(messages) shouldBe groupedRepayments()
       }
 
-      "cutovercredits are NOT present when switch is OFF" in {
-        getGroupedPaymentHistoryData(paymentsWithMFA, List(), isAgent = false,
+      "cutover credits are NOT present when switch is OFF" in {
+        getGroupedPaymentHistoryData(payments, List(), isAgent = false,
           MFACreditsEnabled = true, CutOverCreditsEnabled = false, languageUtils
         )(messages) shouldBe groupedPayments(false, true)
       }
 
       "mfa credits are NOT present when switch is OFF" in {
-        getGroupedPaymentHistoryData(paymentsWithMFA, List(), isAgent = false,
+        getGroupedPaymentHistoryData(payments, List(), isAgent = false,
           MFACreditsEnabled = false, CutOverCreditsEnabled = true, languageUtils
         )(messages) shouldBe groupedPayments(true, false)
       }

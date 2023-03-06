@@ -22,6 +22,16 @@ class ItvcLanguageControllerISpec extends ComponentSpecBase {
       )
     }
 
+    "update the PLAY_LANG cookie to en and return the user where they were when a REFERER is in the headers" in {
+      lazy val resultCy: WSResponse = getWithHeaders("/switch-to-english", "REFERER" -> testRefererRoute)
+      resultCy.headers.isDefinedAt("Set-Cookie") shouldBe true
+      resultCy.headers.toString.contains("PLAY_LANG=en;") shouldBe true
+      resultCy should have(
+        httpStatus(SEE_OTHER),
+        redirectURI(testRefererRoute)
+      )
+    }
+
     "preserve the fragment in the redirect url" in {
       lazy val resultCy: WSResponse = getWithHeaders("/switch-to-welsh?fragment=fragment", "REFERER" -> testRefererRoute)
       resultCy.headers.isDefinedAt("Set-Cookie") shouldBe true
@@ -63,5 +73,7 @@ class ItvcLanguageControllerISpec extends ComponentSpecBase {
         redirectURI(controllers.routes.HomeController.show().url)
       )
     }
+
+
   }
 }
