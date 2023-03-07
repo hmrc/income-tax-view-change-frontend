@@ -20,6 +20,8 @@ import exceptions.MissingFieldException
 import models.financialDetails.Payment
 import play.api.i18n.Messages
 import implicits.ImplicitCurrencyFormatter.CurrencyFormatter
+import play.api.Logger
+import play.api.libs.json.Json
 import uk.gov.hmrc.play.language.LanguageUtils
 
 import java.time.LocalDate
@@ -34,7 +36,7 @@ object RepaymentHistoryUtils {
     }
   }
 
-  private def getMFAandCutoverCreditsLink(date: LocalDate, isAgent: Boolean) = {
+  private def getCreditsLinkUrl(date: LocalDate, isAgent: Boolean) = {
     val year = date.getYear
     if (isAgent) {
       controllers.routes.CreditsSummaryController.showAgentCreditsSummary(year).url
@@ -67,55 +69,90 @@ object RepaymentHistoryUtils {
     groupedPayments(combinedPayments)
   }
 
-  private def combinePaymentHistoryData(payments: List[Payment], repayments: List[RepaymentHistory], isAgent: Boolean,
-                                        MFACreditsEnabled: Boolean, CutOverCreditsEnabled: Boolean, languageUtils: LanguageUtils
+  private def combinePaymentHistoryData(payments: List[Payment],
+                                        repayments: List[RepaymentHistory],
+                                        isAgent: Boolean,
+                                        MFACreditsEnabled: Boolean,
+                                        CutOverCreditsEnabled: Boolean,
+                                        languageUtils: LanguageUtils
                                        )(implicit messages: Messages): List[PaymentHistoryEntry] = {
-    val filteredPayments = payments.flatMap(payment => {
-      if (payment.credit.isEmpty) {
-        Some(PaymentHistoryEntry(
-          date = payment.dueDate.getOrElse(throw MissingFieldException("Payment Due Date")),
-          description = "paymentHistory.paymentToHmrc",
-          transactionId = payment.transactionId,
-          amount = payment.amount,
-          linkUrl = getControllerHref(payment.transactionId, isAgent),
-          visuallyHiddenText = s"${payment.dueDate.get} ${payment.amount.getOrElse(throw MissingFieldException("Amount")).abs.toCurrency}"
-        ))
-      } else {
-        if (payment.isMFACredit) {
-          if (MFACreditsEnabled) {
-            Some(PaymentHistoryEntry(
-              date = payment.documentDate,
-              description = "paymentHistory.mfaCredit",
-              amount = payment.amount,
-              linkUrl = getMFAandCutoverCreditsLink(payment.documentDate, isAgent),
-              visuallyHiddenText = s"${payment.transactionId.getOrElse(throw MissingFieldException("Transaction ID"))}"
-            ))
-          } else None
-        } else {
-          if (CutOverCreditsEnabled) {
-            val paymentDueDate = payment.dueDate.getOrElse(throw MissingFieldException("Payment Due Date Cutover credit"))
-            Some(PaymentHistoryEntry(
-              date = paymentDueDate,
-              description = "paymentHistory.paymentFromEarlierYear",
-              amount = payment.amount,
-              linkUrl = getMFAandCutoverCreditsLink(paymentDueDate, isAgent),
-              visuallyHiddenText = s"${payment.transactionId.getOrElse(throw MissingFieldException("Document ID"))}"
-            ))
-          } else None
-        }
-      }
-    })
 
-    val filteredRepayments = repayments.flatMap(repayment => {
-      Some(PaymentHistoryEntry(
-        date = LocalDate.parse(languageUtils.Dates.shortDate(repayment.estimatedRepaymentDate.getOrElse(throw MissingFieldException("Estimated Repayment Date")))(messages)),
-        description = "paymentHistory.refund",
-        amount = repayment.totalRepaymentAmount,
-        linkUrl = s"refund-to-taxpayer/${repayment.repaymentRequestNumber}",
-        visuallyHiddenText = s"${repayment.repaymentRequestNumber}"
-      ))
-    })
+    val filteredPayments = payments.flatMap(payment => filterPayment(payment, isAgent, MFACreditsEnabled, CutOverCreditsEnabled))
+
+    val filteredRepayments = repayments.map(repayment => filterRepayment(repayment)(messages, languageUtils))
+
     filteredPayments ++ filteredRepayments
+  }
+
+  private def filterPayment(payment: Payment,
+                            isAgent: Boolean,
+                            MFACreditsEnabled: Boolean,
+                            CutOverCreditsEnabled: Boolean
+                           )(implicit messages: Messages): Option[PaymentHistoryEntry] = {
+    val isBCC = payment.isBalancingChargeCredit
+    val isCutover = payment.isCutOverCredit
+    val isMFA = payment.isMFACredit
+    val isPayment = payment.isPaymentToHMRC
+
+    (isBCC, isCutover, isMFA, isPayment) match {
+      case (true, false, false, false) => Some(balancingChargeCreditEntry(payment, isAgent))
+      case (false, true, false, false) => if (CutOverCreditsEnabled) Some(cutOverCreditEntry(payment, isAgent)) else None
+      case (false, false, true, false) => if (MFACreditsEnabled) Some(mfaCreditEntry(payment, isAgent)) else None
+      case (false, false, false, true) => Some(paymentToHMRCEntry(payment, isAgent))
+    }
+
+  }
+
+  private def paymentToHMRCEntry(payment: Payment, isAgent: Boolean)(implicit messages: Messages): PaymentHistoryEntry = {
+    Logger("application").info(s"[RepaymentHistoryUtils][combinePaymentHistoryData][paymentToHMRCEntry], json:" + Json.prettyPrint(Json.toJson(payment)))
+    PaymentHistoryEntry(
+      date = payment.dueDate.getOrElse(throw MissingFieldException("Payment Due Date")),
+      description = "paymentHistory.paymentToHmrc",
+      transactionId = payment.transactionId,
+      amount = payment.amount,
+      linkUrl = getControllerHref(payment.transactionId, isAgent),
+      visuallyHiddenText = s"${payment.dueDate.get} ${payment.amount.getOrElse(throw MissingFieldException("Amount")).abs.toCurrency}"
+    )
+  }
+
+  private def mfaCreditEntry(payment: Payment, isAgent: Boolean)(implicit messages: Messages): PaymentHistoryEntry = {
+    PaymentHistoryEntry(
+      date = payment.documentDate,
+      description = "paymentHistory.mfaCredit",
+      amount = payment.amount,
+      linkUrl = getCreditsLinkUrl(payment.documentDate, isAgent),
+      visuallyHiddenText = s"${payment.transactionId.getOrElse(throw MissingFieldException("Transaction ID"))}"
+    )
+  }
+
+  private def cutOverCreditEntry(payment: Payment, isAgent: Boolean)(implicit messages: Messages): PaymentHistoryEntry = {
+    PaymentHistoryEntry(
+      date = payment.dueDate.getOrElse(throw MissingFieldException("Payment Due Date - Cutover credit")),
+      description = "paymentHistory.paymentFromEarlierYear",
+      amount = payment.amount,
+      linkUrl = getCreditsLinkUrl(payment.dueDate.get, isAgent),
+      visuallyHiddenText = s"${payment.transactionId.getOrElse(throw MissingFieldException("Document ID"))}"
+    )
+  }
+
+  private def balancingChargeCreditEntry(payment: Payment, isAgent: Boolean)(implicit messages: Messages): PaymentHistoryEntry = {
+    PaymentHistoryEntry(
+      date = payment.dueDate.getOrElse(throw MissingFieldException("Payment Due Date - Balancing Charge credit")),
+      description = "paymentHistory.balancingChargeCredit",
+      amount = payment.amount,
+      linkUrl = getCreditsLinkUrl(payment.dueDate.get, isAgent),
+      visuallyHiddenText = s"${payment.transactionId.getOrElse(throw MissingFieldException("Document ID"))}"
+    )
+  }
+
+  private def filterRepayment(repayment: RepaymentHistory)(implicit messages: Messages, languageUtils: LanguageUtils): PaymentHistoryEntry = {
+    PaymentHistoryEntry(
+      date = LocalDate.parse(languageUtils.Dates.shortDate(repayment.estimatedRepaymentDate.getOrElse(throw MissingFieldException("Estimated Repayment Date")))(messages)),
+      description = "paymentHistory.refund",
+      amount = repayment.totalRepaymentAmount,
+      linkUrl = s"refund-to-taxpayer/${repayment.repaymentRequestNumber}",
+      visuallyHiddenText = s"${repayment.repaymentRequestNumber}"
+    )
   }
 
 }

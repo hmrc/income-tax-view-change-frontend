@@ -39,7 +39,14 @@ class AuditingService @Inject()(appConfig: FrontendAppConfig, auditConnector: Au
   def audit(auditModel: AuditModel, path: Option[String] = None)(implicit hc: HeaderCarrier, request: Request[_], ec: ExecutionContext): Unit = {
     val dataEvent = toDataEvent(appConfig.appName, auditModel, path.fold(request.path)(x => x))
     Logger("application").debug(s"Splunk Audit Event:\n\n${Json.toJson(dataEvent)}")
-    handleAuditResult(auditConnector.sendEvent(dataEvent))
+    auditConnector.sendEvent(dataEvent).map {
+      case Success =>
+        Logger("application").debug("[AuditingService][audit] - Splunk Audit Successful")
+      case Failure(err, _) =>
+        Logger("application").debug(s"[AuditingService][audit] - Splunk Audit Error, message: $err")
+      case Disabled =>
+        Logger("application").debug(s"[AuditingService][audit] - Auditing Disabled")
+    }
   }
 
   def toDataEvent(appName: String, auditModel: AuditModel, path: String)(implicit hc: HeaderCarrier): DataEvent =
@@ -56,7 +63,14 @@ class AuditingService @Inject()(appConfig: FrontendAppConfig, auditConnector: Au
                                                                                  ec: ExecutionContext): Unit = {
     val extendedDataEvent = toExtendedDataEvent(appConfig.appName, auditModel, path.fold(request.path)(x => x))
     Logger("application").debug(s"Splunk Audit Event:\n\n${Json.toJson(extendedDataEvent)}")
-    handleAuditResult(auditConnector.sendExtendedEvent(extendedDataEvent))
+    auditConnector.sendExtendedEvent(extendedDataEvent).map {
+      case Success =>
+        Logger("application").debug("[AuditingService][extendedAudit] - Splunk Audit Successful")
+      case Failure(err, _) =>
+        Logger("application").debug(s"[AuditingService][extendedAudit] - Splunk Audit Error, message: $err")
+      case Disabled =>
+        Logger("application").debug(s"[AuditingService][extendedAudit] - Auditing Disabled")
+    }
   }
 
   def toExtendedDataEvent(appName: String, auditModel: ExtendedAuditModel, path: String)(implicit hc: HeaderCarrier): ExtendedDataEvent = {
@@ -70,14 +84,5 @@ class AuditingService @Inject()(appConfig: FrontendAppConfig, auditConnector: Au
       tags = AuditExtensions.auditHeaderCarrier(hc).toAuditTags(auditModel.transactionName, path),
       detail = details
     )
-  }
-
-  private def handleAuditResult(auditResult: Future[AuditResult])(implicit ec: ExecutionContext): Unit = auditResult.map {
-    case Success =>
-      Logger("application").debug("Splunk Audit Successful")
-    case Failure(err, _) =>
-      Logger("application").debug(s"Splunk Audit Error, message: $err")
-    case Disabled =>
-      Logger("application").debug(s"Auditing Disabled")
   }
 }

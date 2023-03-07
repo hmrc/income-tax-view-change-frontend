@@ -20,7 +20,7 @@ import models.financialDetails.{BalanceDetails, DocumentDetail}
 
 import java.time.LocalDate
 
-case class CreditDetailModel(date: LocalDate , documentDetail: DocumentDetail, creditType: CreditType, balanceDetails: Option[BalanceDetails] = None)
+case class CreditDetailModel(date: LocalDate, documentDetail: DocumentDetail, creditType: CreditType, balanceDetails: Option[BalanceDetails] = None)
 
 sealed trait CreditType {
   val key: String

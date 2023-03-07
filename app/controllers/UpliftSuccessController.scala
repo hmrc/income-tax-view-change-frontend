@@ -33,9 +33,9 @@ class UpliftSuccessController @Inject()(implicit val appConfig: FrontendAppConfi
                                         val authenticate: AuthenticationPredicate,
                                         val retrieveNino: NinoPredicate) extends BaseController()(mcc) with FeatureSwitching {
 
-  val success: Action[AnyContent] = (authenticate andThen retrieveNino).async {
+  def success(origin: String): Action[AnyContent] = (authenticate andThen retrieveNino).async {
     implicit user =>
       auditingService.audit(IvOutcomeSuccessAuditModel(user.nino))
-      Future.successful(Redirect(controllers.routes.HomeController.show().url))
+      Future.successful(Redirect(controllers.routes.HomeController.show().url).addingToSession("origin" -> origin))
   }
 }
