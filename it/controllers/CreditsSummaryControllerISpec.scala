@@ -4,7 +4,7 @@ package controllers
 import audit.models.CreditSummaryAuditing.{CreditsSummaryModel, toCreditSummaryDetailsSeq}
 import audit.models.IncomeSourceDetailsResponseAuditModel
 import auth.MtdItUserWithNino
-import config.featureswitch.{CutOverCredits, MFACreditsAndDebits, R7cTxmEvents}
+import config.featureswitch.{CutOverCredits, MFACreditsAndDebits}
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import helpers.{ComponentSpecBase, CreditsSummaryDataHelper}
 import play.api.http.Status.OK
@@ -40,7 +40,6 @@ class CreditsSummaryControllerISpec extends ComponentSpecBase with CreditsSummar
 
         enable(MFACreditsAndDebits)
         enable(CutOverCredits)
-        enable(R7cTxmEvents)
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK,
           propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
@@ -96,7 +95,6 @@ class CreditsSummaryControllerISpec extends ComponentSpecBase with CreditsSummar
       "MFACreditsAndDebits and CutOverCredits feature switches are off" in {
         disable(MFACreditsAndDebits)
         disable(CutOverCredits)
-        enable(R7cTxmEvents)
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
           OK,

@@ -19,7 +19,7 @@ package controllers
 import audit.AuditingService
 import audit.models.CreditSummaryAuditing
 import auth.MtdItUser
-import config.featureswitch.{CutOverCredits, FeatureSwitching, MFACreditsAndDebits, R7cTxmEvents}
+import config.featureswitch.{CutOverCredits, FeatureSwitching, MFACreditsAndDebits}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
@@ -84,6 +84,7 @@ class CreditsSummaryController @Inject()(creditsView: CreditsSummary,
       case _ => agentCreditsSummaryUrl(calendarYear)
     }
   }
+
   def handleRequest(calendarYear: Int,
                     isAgent: Boolean,
                     origin: Option[String] = None)
@@ -161,18 +162,16 @@ class CreditsSummaryController @Inject()(creditsView: CreditsSummary,
   private def auditCreditSummary(creditOnAccount: Option[BigDecimal], charges: Seq[CreditDetailModel])
                                 (implicit hc: HeaderCarrier, user: MtdItUser[_]): Unit = {
     import CreditSummaryAuditing._
-    if (isEnabled(R7cTxmEvents) ) {
-      auditingService.extendedAudit(
-        CreditsSummaryModel(
-          saUTR = user.saUtr.getOrElse(""),
-          nino = user.nino,
-          userType = user.userType.fold("")(_.toString),
-          credId = user.credId.getOrElse(""),
-          mtdRef = user.mtditid,
-          creditOnAccount = creditOnAccount.getOrElse(BigDecimal(0.0)).toString(),
-          creditDetails = toCreditSummaryDetailsSeq(charges)(msgApi)
-        )
+    auditingService.extendedAudit(
+      CreditsSummaryModel(
+        saUTR = user.saUtr.getOrElse(""),
+        nino = user.nino,
+        userType = user.userType.fold("")(_.toString),
+        credId = user.credId.getOrElse(""),
+        mtdRef = user.mtditid,
+        creditOnAccount = creditOnAccount.getOrElse(BigDecimal(0.0)).toString(),
+        creditDetails = toCreditSummaryDetailsSeq(charges)(msgApi)
       )
-    }
+    )
   }
 }
