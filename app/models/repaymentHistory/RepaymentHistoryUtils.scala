@@ -20,6 +20,8 @@ import exceptions.MissingFieldException
 import models.financialDetails.Payment
 import play.api.i18n.Messages
 import implicits.ImplicitCurrencyFormatter.CurrencyFormatter
+import play.api.Logger
+import play.api.libs.json.Json
 import uk.gov.hmrc.play.language.LanguageUtils
 
 import java.time.LocalDate
@@ -102,6 +104,7 @@ object RepaymentHistoryUtils {
   }
 
   private def paymentToHMRCEntry(payment: Payment, isAgent: Boolean)(implicit messages: Messages): PaymentHistoryEntry = {
+    Logger("application").info(s"[RepaymentHistoryUtils][combinePaymentHistoryData][paymentToHMRCEntry], json:" + Json.prettyPrint(Json.toJson(payment)))
     PaymentHistoryEntry(
       date = payment.dueDate.getOrElse(throw MissingFieldException("Payment Due Date")),
       description = "paymentHistory.paymentToHmrc",
