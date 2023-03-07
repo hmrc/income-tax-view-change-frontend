@@ -18,7 +18,7 @@ package controllers.agent
 
 import audit.models.ClaimARefundAuditModel
 import auth.MtdItUser
-import config.featureswitch.{CreditsRefundsRepay, CutOverCredits, MFACreditsAndDebits, R7cTxmEvents}
+import config.featureswitch.{CreditsRefundsRepay, CutOverCredits, MFACreditsAndDebits}
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import models.core.AccountingPeriodModel
@@ -46,7 +46,6 @@ class CreditAndRefundControllerISpec extends ComponentSpecBase {
         enable(CreditsRefundsRepay)
         enable(CutOverCredits)
         enable(MFACreditsAndDebits)
-        enable(R7cTxmEvents)
 
         stubAuthorisedAgentUser(authorised = true)
 
