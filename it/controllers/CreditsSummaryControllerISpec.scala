@@ -11,7 +11,7 @@ import play.api.http.Status.OK
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants._
-import testConstants.IncomeSourceIntegrationTestConstants.{propertyOnlyResponseWithMigrationData, testValidFinancialDetailsModelCreditAndRefundsJson}
+import testConstants.IncomeSourceIntegrationTestConstants.{propertyOnlyResponseWithMigrationData, testValidFinancialDetailsModelCreditAndRefundsJson, testValidFinancialDetailsModelCreditAndRefundsJsonV2}
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 
 import java.time.LocalDate
@@ -85,6 +85,62 @@ class CreditsSummaryControllerISpec extends ComponentSpecBase with CreditsSummar
             mtdRef = testMtditid,
             creditOnAccount = "5",
             creditDetails = toCreditSummaryDetailsSeq(chargesList)(msgs)
+          ).detail
+        )
+
+
+      }
+
+      "a valid response is received _v2" in {
+        import audit.models.CreditSummaryAuditing._
+
+        enable(MFACreditsAndDebits)
+        enable(CutOverCredits)
+        enable(R7cTxmEvents)
+
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK,
+          propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
+
+        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
+          testNino,
+          s"${testTaxYear - 1}-04-06",
+          s"$testTaxYear-04-05")(
+          OK,
+          testValidFinancialDetailsModelCreditAndRefundsJsonV2(
+            -1400,
+            -1400,
+            testTaxYear.toString,
+            LocalDate.now().plusYears(1).toString)
+        )
+
+        val res = IncomeTaxViewChangeFrontend.getCreditsSummary(calendarYear)
+
+        verifyIncomeSourceDetailsCall(testMtditid, 1)
+        IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
+
+        AuditStub.verifyAuditContainsDetail(
+          IncomeSourceDetailsResponseAuditModel(
+            mtdItUser = testUser,
+            selfEmploymentIds = List.empty,
+            propertyIncomeId = None,
+            yearOfMigration = None
+          ).detail
+        )
+
+        res should have(
+          httpStatus(OK),
+          pageTitleIndividual(messages("credits.heading", s"$calendarYear"))
+        )
+
+        AuditStub.verifyAuditContainsDetail(
+          CreditsSummaryModel(
+            saUTR = testSaUtr,
+            nino = testNino,
+            userType = testUserTypeIndividual.toString,
+            credId = credId,
+            mtdRef = testMtditid,
+            creditOnAccount = "5",
+            creditDetails = toCreditSummaryDetailsSeq(chargesListV2)(msgs)
           ).detail
         )
 
