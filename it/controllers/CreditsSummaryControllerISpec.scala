@@ -87,11 +87,47 @@ class CreditsSummaryControllerISpec extends ComponentSpecBase with CreditsSummar
             creditDetails = toCreditSummaryDetailsSeq(chargesList)(msgs)
           ).detail
         )
-
-
       }
+    }
 
-      "a valid response is received _v2" in {
+    "display an empty credit summary page" when {
+      "MFACreditsAndDebits and CutOverCredits feature switches are off" in {
+        disable(MFACreditsAndDebits)
+        disable(CutOverCredits)
+        enable(R7cTxmEvents)
+
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+          OK,
+          propertyOnlyResponseWithMigrationData(
+            testTaxYear - 1,
+            Some(testTaxYear.toString))
+        )
+
+        val res = IncomeTaxViewChangeFrontend.getCreditsSummary(calendarYear)
+
+        verifyIncomeSourceDetailsCall(testMtditid)
+
+        res should have(
+          httpStatus(OK),
+          pageTitleIndividual(messages("credits.heading", s"$calendarYear"))
+        )
+
+        AuditStub.verifyAuditDoesNotContainsDetail(
+          CreditsSummaryModel(
+            saUTR = testSaUtr,
+            nino = testNino,
+            userType = testUserTypeIndividual.toString,
+            credId = credId,
+            mtdRef = testMtditid,
+            creditOnAccount = "5",
+            creditDetails = toCreditSummaryDetailsSeq(chargesList)(msgs)
+          ).detail
+        )
+      }
+    }
+
+    "correctly audit a list of credits" when {
+      "the list contains Balancing Charge Credits" in {
         import audit.models.CreditSummaryAuditing._
 
         enable(MFACreditsAndDebits)
@@ -143,45 +179,6 @@ class CreditsSummaryControllerISpec extends ComponentSpecBase with CreditsSummar
             creditDetails = toCreditSummaryDetailsSeq(chargesListV2)(msgs)
           ).detail
         )
-
-
-      }
-    }
-
-    "display an empty credit summary page" when {
-      "MFACreditsAndDebits and CutOverCredits feature switches are off" in {
-        disable(MFACreditsAndDebits)
-        disable(CutOverCredits)
-        enable(R7cTxmEvents)
-
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-          OK,
-          propertyOnlyResponseWithMigrationData(
-            testTaxYear - 1,
-            Some(testTaxYear.toString))
-        )
-
-        val res = IncomeTaxViewChangeFrontend.getCreditsSummary(calendarYear)
-
-        verifyIncomeSourceDetailsCall(testMtditid)
-
-        res should have(
-          httpStatus(OK),
-          pageTitleIndividual(messages("credits.heading", s"$calendarYear"))
-        )
-
-        AuditStub.verifyAuditDoesNotContainsDetail(
-          CreditsSummaryModel(
-            saUTR = testSaUtr,
-            nino = testNino,
-            userType = testUserTypeIndividual.toString,
-            credId = credId,
-            mtdRef = testMtditid,
-            creditOnAccount = "5",
-            creditDetails = toCreditSummaryDetailsSeq(chargesList)(msgs)
-          ).detail
-        )
-
       }
     }
   }
