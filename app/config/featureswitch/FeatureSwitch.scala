@@ -39,7 +39,7 @@ object FeatureSwitch {
     WhatYouOweCreditAmount,
     MFACreditsAndDebits,
     PaymentHistoryRefunds,
-    TimeMachineAddYear,
+    TimeMachineAddYear
   )
 
   def apply(str: String): FeatureSwitch =
