@@ -88,9 +88,7 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
 
         val creditAndRefundType: Option[UnallocatedCreditType] = maybeUnallocatedCreditType(credits, balance, isMFACreditsAndDebitsEnabled, isCutOverCreditsEnabled)
 
-        if (isEnabled(R7cTxmEvents)) {
-          auditClaimARefund(balance, credits)
-        }
+        auditClaimARefund(balance, credits)
 
 
         Ok(view(credits, balance, creditAndRefundType, isAgent, backUrl, isMFACreditsAndDebitsEnabled, isCutOverCreditsEnabled)(user, user, messages))

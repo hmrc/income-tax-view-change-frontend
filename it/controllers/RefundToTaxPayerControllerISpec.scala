@@ -18,7 +18,7 @@ package controllers
 
 import audit.models.RefundToTaxPayerResponseAuditModel
 import auth.MtdItUser
-import config.featureswitch.{PaymentHistoryRefunds, R7cTxmEvents}
+import config.featureswitch.{PaymentHistoryRefunds}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import models.core.Nino
@@ -117,11 +117,10 @@ class RefundToTaxPayerControllerISpec extends ComponentSpecBase {
       )
     }
 
-    "the R7cTxmEvents feature switch is enabled" in {
+    "the audit event is running as expected" in {
       isAuthorisedUser(authorised = true)
       stubUserDetails()
       enable(PaymentHistoryRefunds)
-      enable(R7cTxmEvents)
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, paymentHistoryBusinessAndPropertyResponse)
       IncomeTaxViewChangeStub.stubGetRepaymentHistoryByRepaymentId(Nino(testNino), repaymentRequestNumber)(OK, testRepaymentHistoryModel)
 

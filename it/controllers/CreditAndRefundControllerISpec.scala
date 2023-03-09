@@ -18,7 +18,7 @@ package controllers
 
 import audit.models.ClaimARefundAuditModel
 import auth.MtdItUser
-import config.featureswitch.{CreditsRefundsRepay, CutOverCredits, MFACreditsAndDebits, R7cTxmEvents}
+import config.featureswitch.{CreditsRefundsRepay, CutOverCredits, MFACreditsAndDebits}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import models.financialDetails.BalanceDetails
@@ -44,7 +44,6 @@ class CreditAndRefundControllerISpec extends ComponentSpecBase {
         enable(CreditsRefundsRepay)
         enable(CutOverCredits)
         enable(MFACreditsAndDebits)
-        enable(R7cTxmEvents)
 
         Given("I wiremock stub a successful Income Source Details response with multiple business and a property")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
