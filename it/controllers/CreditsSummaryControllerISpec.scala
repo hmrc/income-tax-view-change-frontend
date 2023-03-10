@@ -130,7 +130,6 @@ class CreditsSummaryControllerISpec extends ComponentSpecBase with CreditsSummar
 
         enable(MFACreditsAndDebits)
         enable(CutOverCredits)
-        enable(R7cTxmEvents)
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK,
           propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
