@@ -98,7 +98,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
 
       IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"$previousTaxYearEnd-04-06", s"$currentTaxYearEnd-04-05")(OK,
         testValidFinancialDetailsModelJson(
-          2000, 2000, (currentTaxYearEnd - 2).toString, LocalDate.now().toString))
+          2000, 2000, (currentTaxYearEnd - 2).toString, LocalDate.parse("2022-01-01").toString))
 
       IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
         "utr", testSaUtr.toLong, (currentTaxYearEnd - 1).toString)(OK, validOutStandingChargeResponseJsonWithAciAndBcdCharges)

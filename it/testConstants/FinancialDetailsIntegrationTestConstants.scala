@@ -17,7 +17,7 @@
 package testConstants
 
 import java.time.LocalDate
-import BaseIntegrationTestConstants.{testErrorMessage, testErrorNotFoundStatus, testErrorStatus}
+import BaseIntegrationTestConstants.{testDate, testErrorMessage, testErrorNotFoundStatus, testErrorStatus}
 import IncomeSourceIntegrationTestConstants.{id1040000123, noDunningLock, noInterestLock}
 import enums.ChargeType.NIC4_WALES
 import helpers.servicemocks.AuthStub.dateService
@@ -447,15 +447,76 @@ object FinancialDetailsIntegrationTestConstants {
     )
   )
 
-  def whatYouOweDataWithDataDueIn30Days(implicit dateService: DateService): WhatYouOweChargesList = WhatYouOweChargesList(
-    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
-    chargesList = List(DocumentDetailWithDueDate(DocumentDetail("2021", "1040000123",
-      Some("TRM New Charge"), None, Some(2000), Some(2000), LocalDate.parse("2018-03-29"), Some(80), None, None, Some(LocalDate.parse("2018-03-29")),
-      Some(LocalDate.parse("2018-03-29")), Some(100), None, None, None), Some(LocalDate.parse("2018-03-29")), true, false, false),
-      DocumentDetailWithDueDate(DocumentDetail("2021", "1040000124", Some("ITSA- POA 1"), None, Some(2000), Some(2000), LocalDate.parse("2018-03-29"),
-        None, None, None, None, None, None, None, None, None), Some(LocalDate.now()), false, false, false),
-      DocumentDetailWithDueDate(DocumentDetail("2021", "1040000125", Some("ITSA - POA 2"), None, Some(2000), Some(2000), LocalDate.parse("2018-03-29"),
-        None, None, None, None, None, None, None, None, None), Some(LocalDate.now()), false, false, false))
+  def whatYouOweDataWithDataDueIn30Days(implicit dateService: DateService): WhatYouOweChargesList =
+    WhatYouOweChargesList(
+      balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
+      chargesList = List(
+        DocumentDetailWithDueDate(
+          DocumentDetail(
+            taxYear = "2021",
+            transactionId = "1040000123",
+            documentDescription = Some("TRM New Charge"),
+            documentText = None,
+            outstandingAmount = Some(2000),
+            originalAmount = Some(2000),
+            documentDate = LocalDate.parse("2018-03-29"),
+            interestOutstandingAmount = Some(80),
+            interestRate = None,
+            latePaymentInterestId = None,
+            interestFromDate = Some(LocalDate.parse("2018-03-29")),
+            interestEndDate = Some(LocalDate.parse("2018-03-29")),
+            latePaymentInterestAmount = Some(100), lpiWithDunningBlock = None, paymentLotItem = None, paymentLot = None),
+          dueDate = Some(LocalDate.parse("2018-03-29")),
+          isLatePaymentInterest = true,
+          dunningLock = false,
+          codingOutEnabled = false
+        ),
+        DocumentDetailWithDueDate(
+          DocumentDetail(
+            taxYear = "2021",
+            transactionId = "1040000124",
+            documentDescription = Some("ITSA- POA 1"),
+            documentText = None,
+            outstandingAmount = Some(2000),
+            originalAmount = Some(2000),
+            documentDate = LocalDate.parse("2018-03-29"),
+            interestOutstandingAmount = None,
+            interestRate = None,
+            latePaymentInterestId = None,
+            interestFromDate = None,
+            interestEndDate = None,
+            latePaymentInterestAmount = None,
+            lpiWithDunningBlock = None,
+            paymentLotItem = None,
+            paymentLot = None),
+          dueDate = Some(LocalDate.parse("2022-01-01")),
+          isLatePaymentInterest = false,
+          dunningLock = false,
+          codingOutEnabled = false),
+      DocumentDetailWithDueDate(
+        DocumentDetail(
+          taxYear = "2021",
+          transactionId = "1040000125",
+          documentDescription = Some("ITSA - POA 2"),
+          documentText = None,
+          outstandingAmount = Some(2000),
+          originalAmount = Some(2000),
+          documentDate = LocalDate.parse("2018-03-29"),
+          interestOutstandingAmount = None,
+          interestRate = None,
+          latePaymentInterestId = None,
+          interestFromDate = None,
+          interestEndDate = None,
+          latePaymentInterestAmount = None,
+          lpiWithDunningBlock = None,
+          paymentLotItem = None,
+          paymentLot = None
+        ),
+        dueDate = Some(LocalDate.parse("2022-01-01")),
+        isLatePaymentInterest = false,
+        dunningLock = false,
+        codingOutEnabled = false)
+      )
     ,
     outstandingChargesModel = Some(outstandingChargesOverdueData)
   )
@@ -530,7 +591,7 @@ object FinancialDetailsIntegrationTestConstants {
     chargesList = List(DocumentDetailWithDueDate(DocumentDetail("2021", "transId1", Some("ITSA- POA 1"), None, Some(1000), Some(3400),
       LocalDate.parse("2018-03-29"), None, None, None, None, None, None, None, None, None), Some(LocalDate.parse("2018-02-14")), false, false, false),
       DocumentDetailWithDueDate(DocumentDetail("2021", "transId2", Some("ITSA- POA 1"), None, Some(100), Some(1000), LocalDate.parse("2018-03-29"),
-        None, None, None, None, None, None, None, None, None), Some(LocalDate.now().plusDays(1)), false, false, false)),
+        None, None, None, None, None, None, None, None, None), Some(LocalDate.parse("2022-01-01").plusDays(1)), false, false, false)),
     outstandingChargesModel = Some(outstandingChargesOverdueData)
   )
 
