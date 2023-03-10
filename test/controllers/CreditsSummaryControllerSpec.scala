@@ -88,8 +88,8 @@ class CreditsSummaryControllerSpec extends TestSupport with MockCalculationServi
 
   "MFACreditsAndDebits and CutOverCredits feature switches are enabled" should {
     "all calls are returned correctly and Referer was a Payment Refund History page" should {
-      "show the Credits Summary Page with MFA and CutOver credits and back link should be to the Payment Refund History page" in {
-        val chargesList = creditAndRefundCreditDetailListMFAWithCutoverCredits
+      "show the Credits Summary Page with MFA, CutOver and BC credits and back link should be to the Payment Refund History page" in {
+        val chargesList = creditAndRefundCreditDetailListMFAWithCutoverAndBCC
 
         enable(MFACreditsAndDebits)
         enable(CutOverCredits)
@@ -256,17 +256,20 @@ class CreditsSummaryControllerSpec extends TestSupport with MockCalculationServi
   }
 
   "MFACreditsAndDebits and CutOverCredits feature switches are disabled" should {
-    "show an empty Credits Summary Page and back link should be to the Payment Refund History page" in {
+    "show the Credits Summary Page with BC credits only and back link should be to the Payment Refund History page" in {
+      val chargesList = creditAndRefundCreditDetailListMFAWithCutoverAndBCC
+
       disable(MFACreditsAndDebits)
       disable(CutOverCredits)
       mockSingleBusinessIncomeSource()
+      mockCreditHistoryService(chargesList)
       setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
 
       val expectedContent: String = creditsSummaryView(
         backUrl = paymentRefundHistoryBackLink,
         utr = Some(testSaUtrId),
-        charges = List.empty,
-        maybeAvailableCredit = None,
+        charges = chargesList.filterNot(c => c.creditType == CutOverCreditType || c.creditType == MfaCreditType),
+        maybeAvailableCredit = financialDetailCreditCharge.balanceDetails.availableCredit,
         calendarYear = calendarYear2018
       ).toString
 
@@ -280,8 +283,8 @@ class CreditsSummaryControllerSpec extends TestSupport with MockCalculationServi
   }
 
   "MFACreditsAndDebits is enabled and CutOverCredits is disabled" should {
-    "show the Credits Summary Page with only MFA credits only and back link should be to the Payment Refund History page" in {
-      val chargesList = creditAndRefundCreditDetailListMFAWithCutoverCredits
+    "show the Credits Summary Page with only MFA/BC credits only and back link should be to the Payment Refund History page" in {
+      val chargesList = creditAndRefundCreditDetailListMFAWithCutoverAndBCC
 
       enable(MFACreditsAndDebits)
       disable(CutOverCredits)
@@ -292,7 +295,7 @@ class CreditsSummaryControllerSpec extends TestSupport with MockCalculationServi
       val expectedContent: String = creditsSummaryView(
         backUrl = paymentRefundHistoryBackLink,
         utr = Some(testSaUtrId),
-        charges = chargesList.filter(_.creditType == MfaCreditType),
+        charges = chargesList.filterNot(_.creditType == CutOverCreditType),
         maybeAvailableCredit = financialDetailCreditCharge.balanceDetails.availableCredit,
         calendarYear = calendarYear2018
       ).toString
@@ -307,8 +310,8 @@ class CreditsSummaryControllerSpec extends TestSupport with MockCalculationServi
   }
 
   "MFACreditsAndDebits is disabled and CutOverCredits is enabled" should {
-    "show the Credits Summary Page with only CutOver credits only and back link should be to the Payment Refund History page" in {
-      val chargesList = creditAndRefundCreditDetailListMFAWithCutoverCredits
+    "show the Credits Summary Page with only CutOver/BC credits only and back link should be to the Payment Refund History page" in {
+      val chargesList = creditAndRefundCreditDetailListMFAWithCutoverAndBCC
 
       disable(MFACreditsAndDebits)
       enable(CutOverCredits)
@@ -319,7 +322,7 @@ class CreditsSummaryControllerSpec extends TestSupport with MockCalculationServi
       val expectedContent: String = creditsSummaryView(
         backUrl = paymentRefundHistoryBackLink,
         utr = Some(testSaUtrId),
-        charges = chargesList.filter(_.creditType == CutOverCreditType),
+        charges = chargesList.filterNot(_.creditType == MfaCreditType),
         maybeAvailableCredit = financialDetailCreditCharge.balanceDetails.availableCredit,
         calendarYear = calendarYear2018
       ).toString

@@ -17,7 +17,7 @@
 package testConstants
 
 import enums.ChargeType.NIC4_WALES
-import models.creditDetailModel.{CreditDetailModel, CutOverCreditType, MfaCreditType}
+import models.creditDetailModel.{BalancingChargeCreditType, CreditDetailModel, CutOverCreditType, MfaCreditType}
 
 import java.time.LocalDate
 import testConstants.BaseTestConstants.{app, testErrorMessage, testErrorNotFoundStatus, testErrorStatus, testTaxYear}
@@ -1026,17 +1026,21 @@ object FinancialDetailsTestConstants {
     )
   }
 
-  val creditAndRefundCreditDetailListMFAWithCutoverCredits = {
+  val creditAndRefundCreditDetailListMFAWithCutoverAndBCC = {
     val documentDetailMFA1 = documentDetailModel(documentDescription = Some("ITSA Overpayment Relief"), outstandingAmount = Some(BigDecimal(-1400.00)), paymentLotItem = None, paymentLot = None)
     val documentDetailMFA2 = documentDetailModel(documentDescription = Some("ITSA Standalone Claim"), outstandingAmount = Some(BigDecimal(-500.00)), paymentLotItem = None, paymentLot = None)
     val documentDetailCutoverCredit1 = documentDetailModel(documentDescription = Some("ITSA Cutover Credits"), outstandingAmount = Some(BigDecimal(200.00)), paymentLotItem = None, paymentLot = None, originalAmount = Some(200))
     val documentDetailCutoverCredit2 = documentDetailModel(documentDescription = Some("ITSA Cutover Credits"), outstandingAmount = Some(BigDecimal(1200.00)), paymentLotItem = None, paymentLot = None, originalAmount = Some(2000))
+    val documentDetailBCC1 = documentDetailModel(documentDescription = Some("ITSA- Bal Charge"), outstandingAmount = Some(BigDecimal(1200.00)), paymentLotItem = None, paymentLot = None, originalAmount = Some(2000))
+    val documentDetailBCC2 = documentDetailModel(documentDescription = Some("ITSA- Bal Charge"), outstandingAmount = Some(BigDecimal(1400.00)), paymentLotItem = None, paymentLot = None, originalAmount = Some(200))
 
     List(
       CreditDetailModel(documentDetailMFA1.documentDate, documentDetailMFA1, MfaCreditType, Some(financialDetailCreditCharge.balanceDetails)),
       CreditDetailModel(documentDetailMFA2.documentDate, documentDetailMFA2, MfaCreditType, Some(financialDetailCreditCharge.balanceDetails)),
       CreditDetailModel(documentDetailCutoverCredit1.documentDate, documentDetailCutoverCredit1, CutOverCreditType, Some(financialDetailCreditCharge.balanceDetails)),
       CreditDetailModel(documentDetailCutoverCredit2.documentDate, documentDetailCutoverCredit2, CutOverCreditType, Some(financialDetailCreditCharge.balanceDetails)),
+      CreditDetailModel(documentDetailCutoverCredit2.documentDate, documentDetailBCC1, BalancingChargeCreditType, Some(financialDetailCreditCharge.balanceDetails)),
+      CreditDetailModel(documentDetailCutoverCredit2.documentDate, documentDetailBCC2, BalancingChargeCreditType, Some(financialDetailCreditCharge.balanceDetails)),
     )
   }
 
