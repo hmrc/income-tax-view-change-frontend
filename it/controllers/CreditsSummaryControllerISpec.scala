@@ -123,7 +123,6 @@ class CreditsSummaryControllerISpec extends ComponentSpecBase with CreditsSummar
             creditDetails = toCreditSummaryDetailsSeq(chargesList)(msgs)
           ).detail
         )
-
       }
     }
   }
