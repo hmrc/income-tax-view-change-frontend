@@ -22,6 +22,7 @@
 @import views.html.components._
 @import exceptions.MissingFieldException
 @import models.creditDetailModel.CreditDetailModel
+@import models.creditDetailModel.BalancingChargeCreditType
 
 @this(
         mainTemplate: unifiedLayout,
@@ -110,6 +111,8 @@
             }
         }
     }
+    @h2(msg = "credits.drop-down-list.balancing-charge-credit", classes = "govuk-heading-s", optId = Some("h2-credit-from-hmrc-adjustment"))
+    @p(id = Some("p-credit-from-hmrc-adjustment")){@messages("credits.drop-down-list.balancing-charge-credit.value")}
 }
 
 @moneyInYourAccount(isAgent: Boolean) = {
@@ -154,7 +157,13 @@
                                 <td class="govuk-table__cell govuk-!-width-one-quarter">@date.toLongDateShort</td>
                                 <td class="govuk-table__cell govuk-!-width-one-half">@messages(creditType.key)</td>
                                 <td class="govuk-table__cell numeric govuk-!-width-one-quarter">@getStatus(documentDetail)</td>
-                                <td class="govuk-table__cell numeric govuk-!-width-one-quarter govuk-!-text-align-right">@documentDetail.originalAmount.map(_.abs).getOrElse(throw MissingFieldException("Original Amount")).toCurrencyString</td>
+                                <td class="govuk-table__cell numeric govuk-!-width-one-quarter govuk-!-text-align-right">
+                                    @if(creditType == BalancingChargeCreditType) {
+                                        @documentDetail.outstandingAmount.map(_.abs).getOrElse(throw MissingFieldException("Outstanding Amount")).toCurrencyString
+                                    } else {
+                                        @documentDetail.originalAmount.map(_.abs).getOrElse(throw MissingFieldException("Original Amount")).toCurrencyString
+                                    }
+                                </td>
                             </tr>
                         }
                     </tbody>
