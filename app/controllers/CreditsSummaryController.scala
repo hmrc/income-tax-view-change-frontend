@@ -19,11 +19,11 @@ package controllers
 import audit.AuditingService
 import audit.models.CreditSummaryAuditing
 import auth.MtdItUser
-import config.featureswitch.{CutOverCredits, FeatureSwitching, MFACreditsAndDebits}
+import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
-import models.creditDetailModel.{CreditDetailModel, CutOverCreditType, MfaCreditType}
+import models.creditDetailModel.CreditDetailModel
 import play.api.Logger
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
@@ -92,12 +92,7 @@ class CreditsSummaryController @Inject()(creditsView: CreditsSummary,
                     hc: HeaderCarrier, ec: ExecutionContext): Future[Result] = {
     creditHistoryService.getCreditsHistory(calendarYear, user.nino).flatMap {
       case Right(credits) =>
-        val charges: List[CreditDetailModel] = ((isEnabled(MFACreditsAndDebits), isEnabled(CutOverCredits)) match {
-          case (true, false) => credits.filterNot(_.creditType == CutOverCreditType)
-          case (false, true) => credits.filterNot(_.creditType == MfaCreditType)
-          case (false, false) => credits.filterNot(c => c.creditType == MfaCreditType || c.creditType == CutOverCreditType)
-          case _ => credits
-        }).sortBy(_.date.toEpochDay)
+        val charges: List[CreditDetailModel] = credits.sortBy(_.date.toEpochDay)
         val maybeAvailableCredit: Option[BigDecimal] =
           credits.flatMap(_.balanceDetails.flatMap(_.availableCredit.filter(_ > 0.00))).headOption
         auditCreditSummary(maybeAvailableCredit, charges)
