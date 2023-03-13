@@ -75,6 +75,7 @@ class CreditHistoryService @Inject()(incomeTaxViewChangeConnector: IncomeTaxView
 
   def getCreditsHistory(calendarYear: Int, nino: String)
                        (implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[CreditHistoryError.type, List[CreditDetailModel]]] = {
+
     for {
       creditModelForTaxYear <- getCreditsByTaxYear(calendarYear, nino)
       creditModelForTaxYearPlusOne <- getCreditsByTaxYear(calendarYear + 1, nino)
@@ -82,13 +83,22 @@ class CreditHistoryService @Inject()(incomeTaxViewChangeConnector: IncomeTaxView
       case (Right(creditModelTY), Right(creditModelTYandOne)) =>
         val creditsForTaxYearAndPlusOne =
           (creditModelTY ++ creditModelTYandOne).filter(creditDetailModel => getTaxYearAsInt(creditDetailModel.documentDetail.taxYear) == calendarYear)
+        println(s"\n(isEnabled(MFACreditsAndDebits) = ${isEnabled(MFACreditsAndDebits)}, isEnabled(CutOverCredits) = ${isEnabled(CutOverCredits)}}\n")
+        println(s"UNFILTERED CREDITS: $creditsForTaxYearAndPlusOne")
+        println(s"FILTERED CREDITS: ${filterExcludedCredits(creditsForTaxYearAndPlusOne)}\n")
         Right(filterExcludedCredits(creditsForTaxYearAndPlusOne))
       case (Right(creditModelTY), Left(_)) =>
         val creditsForTaxYear = creditModelTY.filter(creditDetailModel => getTaxYearAsInt(creditDetailModel.documentDetail.taxYear) == calendarYear)
+        println(s"\n(isEnabled(MFACreditsAndDebits) = ${isEnabled(MFACreditsAndDebits)}, isEnabled(CutOverCredits) = ${isEnabled(CutOverCredits)}}")
+        println(s"UNFILTERED CREDITS: $creditsForTaxYear")
+        println(s"FILTERED CREDITS: ${filterExcludedCredits(creditsForTaxYear)}\n")
         Right(filterExcludedCredits(creditsForTaxYear))
       case (Left(_), Right(creditModelTYandOne)) =>
         val creditsForTaxYearPlusOne =
           creditModelTYandOne.filter(creditDetailModel => getTaxYearAsInt(creditDetailModel.documentDetail.taxYear) == calendarYear)
+        println(s"\n(isEnabled(MFACreditsAndDebits) = ${isEnabled(MFACreditsAndDebits)}, isEnabled(CutOverCredits) = ${isEnabled(CutOverCredits)}}")
+          println(s"UNFILTERED CREDITS: $creditsForTaxYearPlusOne")
+          println(s"FILTERED CREDITS: ${filterExcludedCredits(creditsForTaxYearPlusOne)}\n")
         Right(filterExcludedCredits(creditsForTaxYearPlusOne))
       case (_, _) =>
         Left(CreditHistoryError)

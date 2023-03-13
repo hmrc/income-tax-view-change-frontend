@@ -19,7 +19,6 @@ package controllers
 import audit.AuditingService
 import audit.models.CreditSummaryAuditing
 import auth.MtdItUser
-import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
@@ -52,7 +51,7 @@ class CreditsSummaryController @Inject()(creditsView: CreditsSummary,
                                          val ec: ExecutionContext,
                                          val agentItvcErrorHandler: AgentItvcErrorHandler,
                                          val auditingService: AuditingService
-                                        ) extends ClientConfirmedController with FeatureSwitching with I18nSupport {
+                                        ) extends ClientConfirmedController with I18nSupport {
 
   private def creditsSummaryUrl(calendarYear: Int, origin: Option[String]): String =
     controllers.routes.CreditsSummaryController.showCreditsSummary(calendarYear, origin).url
