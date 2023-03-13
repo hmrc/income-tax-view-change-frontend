@@ -97,7 +97,7 @@ class CreditHistoryServiceSpec extends TestSupport with MockIncomeTaxViewChangeC
           }
         }
       }
-      "feature switches of both MFACreditsAndDebits are disabled" should {
+      "feature switches of both MFACreditsAndDebits and CutOverCredits are disabled" should {
         "return a list of BC credits" in {
           disable(MFACreditsAndDebits)
           disable(CutOverCredits)
