@@ -16,115 +16,18 @@
 
 package config.featureswitch
 
-import config.featureswitch.FeatureSwitch.prefix
 
-sealed trait FeatureSwitch {
-  val name: String
-  val displayText: String
-}
 
-object FeatureSwitch {
-  val prefix = "feature-switch"
 
-  val switches: Set[FeatureSwitch] = Set(
-    ITSASubmissionIntegration,
-    IvUplift,
-    ChargeHistory,
-    PaymentAllocation,
-    CodingOut,
-    NavBarFs,
-    ForecastCalculation,
-    CutOverCredits,
-    CreditsRefundsRepay,
-    WhatYouOweCreditAmount,
-    MFACreditsAndDebits,
-    PaymentHistoryRefunds,
-    TimeMachineAddYear,
-    R7cTxmEvents,
-    R7cViewerCodingOutTxmEvents
-  )
 
-  def apply(str: String): FeatureSwitch =
-    switches find (_.name == str) match {
-      case Some(switch) => switch
-      case None => throw new IllegalArgumentException("Invalid feature switch: " + str)
-    }
 
-  def get(str: String): Option[FeatureSwitch] = switches find (_.name == str)
 
-}
 
-case object ITSASubmissionIntegration extends FeatureSwitch {
-  override val name = s"$prefix.enable-itsa-submission-integration"
-  override val displayText = "ITSA Submission Integration"
-}
 
-case object IvUplift extends FeatureSwitch {
-  override val name = s"$prefix.enable-iv-uplift"
-  override val displayText = "IV Uplift"
-}
 
-case object ChargeHistory extends FeatureSwitch {
-  override val name: String = s"$prefix.enable-charge-history"
-  override val displayText: String = "Charge History"
-}
 
-case object PaymentAllocation extends FeatureSwitch {
-  override val name: String = s"$prefix.enable-payment-allocation"
-  override val displayText: String = "Payment Allocation"
-}
 
-case object CodingOut extends FeatureSwitch {
-  override val name: String = s"$prefix.enable-coding-out"
-  override val displayText: String = "Coding Out"
-}
 
-case object NavBarFs extends FeatureSwitch {
-  override val name = s"$prefix.enable-nav-bar"
-  override val displayText = "Nav Bar"
-}
 
-case object ForecastCalculation extends FeatureSwitch {
-  override val name = s"$prefix.enable-forecast-calculation"
-  override val displayText = "Forecast Calculation"
-}
 
-case object CutOverCredits extends FeatureSwitch {
-  override val name = s"$prefix.enable-cut-over-credit"
-  override val displayText = "Cut-Over Credit (CESA to ETMP)"
-}
 
-case object CreditsRefundsRepay extends FeatureSwitch {
-  override val name = s"$prefix.enable-credits-refunds-repay"
-  override val displayText = "Credits/Refunds Repayment"
-}
-
-case object WhatYouOweCreditAmount extends FeatureSwitch {
-  override val name = s"$prefix.enable-what-you-owe-credit-amount"
-  override val displayText = "What You Owe Credit Amount"
-}
-
-case object MFACreditsAndDebits extends FeatureSwitch {
-  override val name = s"$prefix.enable-mfa-credits-and-debits"
-  override val displayText = "MFA Credits and Debits"
-}
-
-case object PaymentHistoryRefunds extends FeatureSwitch {
-  override val name = s"$prefix.enable-payment-history-refunds"
-  override val displayText = "Payment History Refunds"
-}
-
-case object TimeMachineAddYear extends FeatureSwitch {
-  override val name = s"$prefix.enable-time-machine-add-year"
-  override val displayText = "Time Machine Add Year"
-}
-
-case object R7cTxmEvents extends FeatureSwitch {
-  override val name = s"$prefix.enable-r7c-txm-events"
-  override val displayText = "R7C TXM Events"
-}
-
-case object R7cViewerCodingOutTxmEvents extends FeatureSwitch {
-  override val name = s"$prefix.enable-r7c-viewer-coding-out-txm-events"
-  override val displayText = "R7C Viewer Coding Out TXM Events"
-}

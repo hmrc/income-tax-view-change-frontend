@@ -19,11 +19,12 @@ package controllers
 import java.time.LocalDate
 import audit.AuditingService
 import audit.models.HomeAudit
-import auth.{MtdItUser}
+import auth.MtdItUser
 import config.featureswitch._
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
-import controllers.predicates.{AuthenticationPredicate, NavBarPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
+import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
+import models.admin.{CreditsRefundsRepay, ITSASubmissionIntegration, PaymentHistoryRefunds}
 
 import javax.inject.{Inject, Singleton}
 import models.financialDetails.{FinancialDetailsModel, FinancialDetailsResponseModel}
@@ -32,7 +33,8 @@ import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc._
 import play.twirl.api.Html
-import services.{FinancialDetailsService, IncomeSourceDetailsService, NextUpdatesService, WhatYouOweService, DateService}
+import services.admin.FeatureSwitchService
+import services.{DateService, FinancialDetailsService, IncomeSourceDetailsService, NextUpdatesService, WhatYouOweService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -53,6 +55,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
                                implicit val dateService: DateService,
                                val whatYouOweService: WhatYouOweService,
                                val retrieveBtaNavBar: NavBarPredicate,
+                               val featureSwitchService: FeatureSwitchService,
                                auditingService: AuditingService)
                               (implicit val ec: ExecutionContext,
                                mcc: MessagesControllerComponents,
@@ -78,6 +81,8 @@ class HomeController @Inject()(val homeView: views.html.Home,
       isUserMigrated = user.incomeSources.yearOfMigration.isDefined
     )
   }
+
+  //TODO: fix import
 
   def handleShowRequest(itvcErrorHandler: ShowInternalServerError, isAgent: Boolean, incomeSourceCurrentTaxYear: Int, origin: Option[String] = None)
                        (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {

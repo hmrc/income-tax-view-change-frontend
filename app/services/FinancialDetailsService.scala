@@ -18,8 +18,9 @@ package services
 
 import auth.MtdItUser
 import config.FrontendAppConfig
-import config.featureswitch.{CodingOut, FeatureSwitching}
+import config.featureswitch.FeatureSwitching
 import connectors.IncomeTaxViewChangeConnector
+import models.admin.CodingOut
 import models.chargeHistory.{ChargeHistoryModel, ChargesHistoryErrorModel, ChargesHistoryModel}
 import models.financialDetails.{DocumentDetail, FinancialDetailsErrorModel, FinancialDetailsModel, FinancialDetailsResponseModel}
 import play.api.Logger

@@ -26,8 +26,10 @@ import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import enums.GatewayPage.{GatewayPage, PaymentHistoryPage, TaxYearSummaryPage, WhatYouOwePage}
 import forms.utils.SessionKeys.gatewayPage
+import models.admin.{ChargeHistory, CodingOut, MFACreditsAndDebits, PaymentAllocation}
 import models.chargeHistory.{ChargeHistoryModel, ChargeHistoryResponseModel, ChargesHistoryModel}
 import models.financialDetails._
+import models.paymentAllocations.PaymentAllocations
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
@@ -121,7 +123,6 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
           }
     }
 
-
   private def doShowChargeSummary(taxYear: Int, id: String, isLatePaymentCharge: Boolean,
                                   chargeDetails: FinancialDetailsModel, payments: FinancialDetailsModel,
                                   isAgent: Boolean, origin: Option[String],
@@ -202,4 +203,4 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
       taxYear = taxYear
     ))
   }
-}
+  }

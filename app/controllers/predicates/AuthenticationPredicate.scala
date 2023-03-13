@@ -19,9 +19,11 @@ package controllers.predicates
 import audit.AuditingService
 import audit.models.IvUpliftRequiredAuditModel
 import auth._
-import config.featureswitch.{FeatureSwitching, IvUplift}
+import config.featureswitch.FeatureSwitching
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.BaseController
+import models.OriginEnum
+import models.admin.IvUplift
 import play.api.mvc._
 import play.api.{Configuration, Environment, Logger}
 import uk.gov.hmrc.auth.core.AffinityGroup.{Individual, Organisation}
@@ -30,6 +32,7 @@ import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals._
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, Name, ~}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.config.AuthRedirects
+
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -42,7 +45,7 @@ class AuthenticationPredicate @Inject()(implicit val ec: ExecutionContext,
                                         val itvcErrorHandler: ItvcErrorHandler,
                                         mcc: MessagesControllerComponents,
                                         val auditingService: AuditingService,
-                                        val headerExtractor : HeaderExtractor
+                                        val headerExtractor: HeaderExtractor
                                        )
   extends BaseController with AuthRedirects with ActionBuilder[MtdItUserOptionNino, AnyContent]
     with ActionFunction[Request, MtdItUserOptionNino] with FeatureSwitching {
@@ -103,7 +106,11 @@ class AuthenticationPredicate @Inject()(implicit val ec: ExecutionContext,
     )
   }
 
-  val ivUpliftRedirectUrl: String = s"${appConfig.ivUrl}/uplift?origin=ITVC&confidenceLevel=$requiredConfidenceLevel&" +
-    s"completionURL=/${appConfig.baseUrl + controllers.routes.UpliftSuccessController.success.url}&" +
-    s"failureURL=/${appConfig.baseUrl + controllers.errors.routes.UpliftFailedController.show.url}"
+  val ivUpliftRedirectUrl: String = {
+    val completionUrl: String = s"${appConfig.itvcFrontendEnvironment}/${appConfig.baseUrl}" +
+      s"${controllers.routes.UpliftSuccessController.success(OriginEnum.PTA.toString).url}"
+    val failureUrl: String = s"${appConfig.itvcFrontendEnvironment}/${appConfig.baseUrl}" +
+      s"${controllers.errors.routes.UpliftFailedController.show.url}"
+    s"${appConfig.ivUrl}/uplift?origin=ITVC&confidenceLevel=$requiredConfidenceLevel&completionURL=$completionUrl&failureURL=$failureUrl"
+  }
 }

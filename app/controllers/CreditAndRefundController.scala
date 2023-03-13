@@ -24,6 +24,7 @@ import config.featureswitch._
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
+import models.admin.{CreditsRefundsRepay, CutOverCredits, MFACreditsAndDebits, R7cTxmEvents}
 import models.financialDetails.{BalanceDetails, DocumentDetailWithDueDate, FinancialDetail, FinancialDetailsModel}
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages}
@@ -74,6 +75,7 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
 
   def handleRequest(isAgent: Boolean, itvcErrorHandler: ShowInternalServerError, backUrl: String)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
+
     creditService.getCreditCharges()(implicitly, user) map {
       case _ if isDisabled(CreditsRefundsRepay) =>
         Ok(customNotFoundErrorView()(user, messages))
@@ -91,11 +93,10 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
         if (isEnabled(R7cTxmEvents)) {
           auditClaimARefund(balance, credits)
         }
-
-
         Ok(view(credits, balance, creditAndRefundType, isAgent, backUrl, isMFACreditsAndDebitsEnabled, isCutOverCreditsEnabled)(user, user, messages))
-      case _ => Logger("application").error(
-        s"${if (isAgent) "[Agent]"}[CreditAndRefundController][show] Invalid response from financial transactions")
+      case _ =>
+        Logger("application").error(
+          s"${if (isAgent) "[Agent]"}[CreditAndRefundController][show] Invalid response from financial transactions")
         itvcErrorHandler.showInternalServerError()
     }
   }

@@ -14,62 +14,32 @@
  * limitations under the License.
  */
 
-package testOnly.controllers
+package controllers.testOnly
 
-import config.FrontendAppConfig
-import config.featureswitch.FeatureSwitch.switches
-import config.featureswitch.{FeatureSwitch, FeatureSwitching}
-
-import javax.inject.Inject
-import play.api.i18n.{I18nSupport}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request}
-import play.twirl.api.Html
-import testOnly.views.html.FeatureSwitchView
+import models.admin._
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import services.admin.FeatureSwitchService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
-import scala.collection.immutable.ListMap
+import javax.inject.{Inject, Singleton}
+import scala.concurrent.ExecutionContext
 
-class FeatureSwitchController @Inject()(featureSwitchView: FeatureSwitchView)
-                                       (implicit mcc: MessagesControllerComponents,
-                                        val appConfig: FrontendAppConfig)
-  extends FrontendController(mcc) with FeatureSwitching with I18nSupport {
+@Singleton()
+class FeatureSwitchController @Inject() (
+                                         mcc: MessagesControllerComponents,
+                                         featureSwitchService: FeatureSwitchService
+                                       )(implicit ec: ExecutionContext)
+  extends FrontendController(mcc) {
 
-  val ENABLE_ALL_FEATURES: String = "feature-switch.enable-all-switches"
-  val DISABLE_ALL_FEATURES: String = "feature-switch.disable-all-switches"
-
-  private def view(switchNames: Map[FeatureSwitch, Boolean])(implicit request: Request[_]): Html = {
-    featureSwitchView(
-      switchNames = switchNames,
-      testOnly.controllers.routes.FeatureSwitchController.submit
-    )
-  }
-
-  lazy val show: Action[AnyContent] = Action { implicit req =>
-    val featureSwitches = ListMap(switches.toSeq sortBy (_.displayText) map (switch => switch -> isEnabled(switch)): _*)
-    Ok(view(featureSwitches))
-  }
-
-  lazy val submit: Action[AnyContent] = Action { implicit req =>
-
-    val submittedData: Set[String] = req.body.asFormUrlEncoded match {
-      case None => Set.empty
-      case Some(data) => data.keySet
+  def setSwitch(featureSwitchName: FeatureSwitchName, isEnabled: Boolean): Action[AnyContent] = Action.async {
+    featureSwitchService.set(featureSwitchName, isEnabled).map {
+      case true  => Ok(s"Switch $featureSwitchName set to $isEnabled")
+      case false => InternalServerError(s"Error while setting flag $featureSwitchName to $isEnabled")
     }
-
-    val featureSwitches = submittedData flatMap FeatureSwitch.get
-
-    switches.foreach(fs =>
-      if (submittedData.contains(ENABLE_ALL_FEATURES))
-        enable(fs)
-      else if(submittedData.contains(DISABLE_ALL_FEATURES))
-        disable(fs)
-      else if(featureSwitches.contains(fs))
-        enable(fs)
-      else
-        disable(fs)
-    )
-
-    Redirect(testOnly.controllers.routes.FeatureSwitchController.show)
   }
 
+  def setDefaults: Action[AnyContent] = Action {
+    featureSwitchService.setAll(Map(MFACreditsAndDebits -> false, CutOverCredits -> false))
+    Ok("Default switches set")
+  }
 }

@@ -17,10 +17,11 @@
 package controllers
 
 import auth.MtdItUser
-import config.featureswitch.{FeatureSwitching, ITSASubmissionIntegration}
+import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
+import models.admin.ITSASubmissionIntegration
 
 import javax.inject.Inject
 import play.api.i18n.I18nSupport

@@ -19,7 +19,7 @@ package controllers
 import audit.AuditingService
 import audit.models.WhatYouOweResponseAuditModel
 import auth.{FrontendAuthorisedFunctions, MtdItUser}
-import config.featureswitch.{CodingOut, CreditsRefundsRepay, CutOverCredits, FeatureSwitching, MFACreditsAndDebits, WhatYouOweCreditAmount}
+import config.featureswitch.FeatureSwitching
 import config._
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
@@ -34,6 +34,7 @@ import views.html.WhatYouOwe
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 import enums.GatewayPage.WhatYouOwePage
+import models.admin.{CodingOut, CreditsRefundsRepay, MFACreditsAndDebits, WhatYouOweCreditAmount}
 
 class WhatYouOweController @Inject()(val checkSessionTimeout: SessionTimeoutPredicate,
                                      val authenticate: AuthenticationPredicate,

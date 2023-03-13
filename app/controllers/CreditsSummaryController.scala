@@ -19,10 +19,11 @@ package controllers
 import audit.AuditingService
 import audit.models.CreditSummaryAuditing
 import auth.MtdItUser
-import config.featureswitch.{CutOverCredits, FeatureSwitching, MFACreditsAndDebits, R7cTxmEvents}
+import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
+import models.admin.{CutOverCredits, MFACreditsAndDebits, R7cTxmEvents}
 import models.creditDetailModel.{CreditDetailModel, CutOverCreditType, MfaCreditType}
 import play.api.Logger
 import play.api.i18n.{I18nSupport, MessagesApi}

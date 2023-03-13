@@ -17,7 +17,8 @@
 package services
 
 import config.FrontendAppConfig
-import config.featureswitch.{FeatureSwitching, TimeMachineAddYear}
+import config.featureswitch.FeatureSwitching
+import models.admin.TimeMachineAddYear
 
 import java.time.LocalDate
 import java.time.Month.APRIL

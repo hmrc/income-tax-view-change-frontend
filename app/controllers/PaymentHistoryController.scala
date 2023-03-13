@@ -19,7 +19,7 @@ package controllers
 import audit.AuditingService
 import audit.models.PaymentHistoryResponseAuditModel
 import auth.MtdItUser
-import config.featureswitch.{CutOverCredits, FeatureSwitching, MFACreditsAndDebits, PaymentHistoryRefunds}
+import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
@@ -35,6 +35,7 @@ import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 import enums.GatewayPage.PaymentHistoryPage
+import models.admin.{CutOverCredits, MFACreditsAndDebits, PaymentHistoryRefunds}
 import models.repaymentHistory.{PaymentHistoryEntry, RepaymentHistory, RepaymentHistoryUtils}
 import uk.gov.hmrc.play.language.LanguageUtils
 
