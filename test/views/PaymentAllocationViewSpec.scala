@@ -134,7 +134,7 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
 
     "check that the second section information is present" when {
       "has a main heading" in new PaymentAllocationSetup() {
-        document.getElementsByTag("h2").eq(0).text() shouldBe paymentAllocationHeading
+        document.getElementsByTag("h2").eq(1).text() shouldBe paymentAllocationHeading
       }
 
       "check that the heading section is not present when credit is defined but outstandingAmount is 0" in
@@ -237,7 +237,7 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
 
     "check that the second section information is present" when {
       "has a main heading" in new PaymentAllocationSetup(paymentAllocationViewModelLpi) {
-        document.getElementsByTag("h2").eq(0).text() shouldBe paymentAllocationHeading
+        document.getElementsByTag("h2").eq(1).text() shouldBe paymentAllocationHeading
       }
 
       "has table headers" in new PaymentAllocationSetup(paymentAllocationViewModelLpi) {

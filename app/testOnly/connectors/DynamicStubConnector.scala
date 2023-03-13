@@ -56,9 +56,9 @@ class DynamicStubConnector @Inject()(val appConfig: TestOnlyAppConfig,
     http.GET[HttpResponse](url)
   }
 
-  def postLogin(resourceUrl: String, nino: String)(implicit headerCarrier: HeaderCarrier): Future[HttpResponse] = {
+  def postLogin(resourceUrl: String, nino: String, isAgent: String)(implicit headerCarrier: HeaderCarrier): Future[HttpResponse] = {
     lazy val url = s"${appConfig.dynamicStubUrl}/$resourceUrl"
-    http.POSTForm(url, Map("nino" -> Seq(nino)))
+    http.POSTForm(url, Map("nino" -> Seq(nino), "isAgent" -> Seq(isAgent)))
   }
 
 }

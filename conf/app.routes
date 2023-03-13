@@ -82,7 +82,7 @@ GET         /cannot-access-service                                        contro
 GET         /cannot-view-page                                             controllers.errors.UpliftFailedController.show
 
 #Uplift Success
-GET         /uplift-success                                               controllers.UpliftSuccessController.success
+GET         /uplift-success                                               controllers.UpliftSuccessController.success(origin: String)
 
 #BTA Partial
 GET         /partial                                                      controllers.bta.BTAPartialController.setupPartial
