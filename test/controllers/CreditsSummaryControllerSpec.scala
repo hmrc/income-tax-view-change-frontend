@@ -39,17 +39,8 @@ import views.html.CreditsSummary
 
 class CreditsSummaryControllerSpec extends TestSupport with MockCalculationService
   with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicateNoCache
-  with MockFinancialDetailsService with FeatureSwitching with MockItvcErrorHandler
+  with MockFinancialDetailsService with MockItvcErrorHandler
   with MockNextUpdatesService with MockIncomeSourceDetailsPredicate with MockCreditHistoryService {
-
-  def disableAllSwitches(): Unit = {
-    switches.foreach(switch => disable(switch))
-  }
-
-  override def beforeEach(): Unit = {
-    super.beforeEach()
-    disableAllSwitches()
-  }
 
   val creditsSummaryView: CreditsSummary = app.injector.instanceOf[CreditsSummary]
 
@@ -88,7 +79,7 @@ class CreditsSummaryControllerSpec extends TestSupport with MockCalculationServi
 
   "CreditsSummaryController.handleRequest" should {
     "all calls are returned correctly and Referer was a Payment Refund History page" should {
-      "show the Credits Summary Page with a list of MFA, CutOver and BC credits" in {
+      "show the Credits Summary Page with a list of MF/CutOver/BC credits and back link should be to the Payment Refund History page" in {
         val chargesList = creditAndRefundCreditDetailListMFAWithCutoverAndBCC
 
         mockSingleBusinessIncomeSource()
