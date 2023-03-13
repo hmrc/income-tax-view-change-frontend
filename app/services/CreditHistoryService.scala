@@ -83,29 +83,21 @@ class CreditHistoryService @Inject()(incomeTaxViewChangeConnector: IncomeTaxView
       case (Right(creditModelTY), Right(creditModelTYandOne)) =>
         val creditsForTaxYearAndPlusOne =
           (creditModelTY ++ creditModelTYandOne).filter(creditDetailModel => getTaxYearAsInt(creditDetailModel.documentDetail.taxYear) == calendarYear)
-        println(s"\n(isEnabled(MFACreditsAndDebits) = ${isEnabled(MFACreditsAndDebits)}, isEnabled(CutOverCredits) = ${isEnabled(CutOverCredits)}}\n")
-        println(s"UNFILTERED CREDITS: $creditsForTaxYearAndPlusOne")
-        println(s"FILTERED CREDITS: ${filterExcludedCredits(creditsForTaxYearAndPlusOne)}\n")
         Right(filterExcludedCredits(creditsForTaxYearAndPlusOne))
       case (Right(creditModelTY), Left(_)) =>
-        val creditsForTaxYear = creditModelTY.filter(creditDetailModel => getTaxYearAsInt(creditDetailModel.documentDetail.taxYear) == calendarYear)
-        println(s"\n(isEnabled(MFACreditsAndDebits) = ${isEnabled(MFACreditsAndDebits)}, isEnabled(CutOverCredits) = ${isEnabled(CutOverCredits)}}")
-        println(s"UNFILTERED CREDITS: $creditsForTaxYear")
-        println(s"FILTERED CREDITS: ${filterExcludedCredits(creditsForTaxYear)}\n")
+        val creditsForTaxYear =
+          creditModelTY.filter(creditDetailModel => getTaxYearAsInt(creditDetailModel.documentDetail.taxYear) == calendarYear)
         Right(filterExcludedCredits(creditsForTaxYear))
       case (Left(_), Right(creditModelTYandOne)) =>
         val creditsForTaxYearPlusOne =
           creditModelTYandOne.filter(creditDetailModel => getTaxYearAsInt(creditDetailModel.documentDetail.taxYear) == calendarYear)
-        println(s"\n(isEnabled(MFACreditsAndDebits) = ${isEnabled(MFACreditsAndDebits)}, isEnabled(CutOverCredits) = ${isEnabled(CutOverCredits)}}")
-          println(s"UNFILTERED CREDITS: $creditsForTaxYearPlusOne")
-          println(s"FILTERED CREDITS: ${filterExcludedCredits(creditsForTaxYearPlusOne)}\n")
         Right(filterExcludedCredits(creditsForTaxYearPlusOne))
       case (_, _) =>
         Left(CreditHistoryError)
     }
   }
 
-  def filterExcludedCredits(credits: List[CreditDetailModel]): List[CreditDetailModel] = {
+  private def filterExcludedCredits(credits: List[CreditDetailModel]): List[CreditDetailModel] = {
     (isEnabled(MFACreditsAndDebits), isEnabled(CutOverCredits)) match {
       case (true, false) => credits.filterNot(_.creditType == CutOverCreditType)
       case (false, true) => credits.filterNot(_.creditType == MfaCreditType)

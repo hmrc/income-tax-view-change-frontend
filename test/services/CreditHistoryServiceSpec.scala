@@ -61,7 +61,7 @@ class CreditHistoryServiceSpec extends TestSupport with MockIncomeTaxViewChangeC
     }
 
     "a successful response returned from the connector" when {
-      "feature switches of both MFACreditsAndDebits and CutOverCredits are enabled" should {
+      "feature switches of both MFACreditsAndDebits and CutOverCredits are enabled" when {
         "return a list of MFA/BC/CutOver credits" in {
           enable(MFACreditsAndDebits)
           enable(CutOverCredits)
@@ -72,7 +72,7 @@ class CreditHistoryServiceSpec extends TestSupport with MockIncomeTaxViewChangeC
             result shouldBe Right(List(creditDetailModelasCutOver, creditDetailModelasMfa, creditDetailModelasBCC))
           }
         }
-        "feature switch of MFACreditsAndDebits is enabled and CutOverCredits is disabled" should {
+        "feature switch of MFACreditsAndDebits is enabled and CutOverCredits is disabled" when {
           "return a list of MFA and BC credits" in {
             enable(MFACreditsAndDebits)
             disable(CutOverCredits)
@@ -83,7 +83,7 @@ class CreditHistoryServiceSpec extends TestSupport with MockIncomeTaxViewChangeC
               result shouldBe Right(List(creditDetailModelasMfa, creditDetailModelasBCC))
             }
           }
-          "feature switch of MFACreditsAndDebits is disabled and CutOverCredits is enabled" should {
+          "feature switch of MFACreditsAndDebits is disabled and CutOverCredits is enabled" when {
             "return a list of Cutover and BC credits" in {
               disable(MFACreditsAndDebits)
               enable(CutOverCredits)
@@ -94,7 +94,7 @@ class CreditHistoryServiceSpec extends TestSupport with MockIncomeTaxViewChangeC
                 result shouldBe Right(List(creditDetailModelasCutOver, creditDetailModelasBCC))
               }
             }
-            "feature switches of both MFACreditsAndDebits are disabled" should {
+            "feature switches of both MFACreditsAndDebits are disabled" when {
               "return a list of BC credits" in {
                 disable(MFACreditsAndDebits)
                 disable(CutOverCredits)
