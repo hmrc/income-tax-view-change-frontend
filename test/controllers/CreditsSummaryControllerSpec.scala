@@ -79,7 +79,7 @@ class CreditsSummaryControllerSpec extends TestSupport with MockCalculationServi
 
   "CreditsSummaryController.handleRequest" should {
     "all calls are returned correctly and Referer was a Payment Refund History page" should {
-      "show the Credits Summary Page with a list of MF/CutOver/BC credits and back link should be to the Payment Refund History page" in {
+      "show the Credits Summary Page with a list of MFA/CutOver/BC credits and back link should be to the Payment Refund History page" in {
         val chargesList = creditAndRefundCreditDetailListMFAWithCutoverAndBCC
 
         mockSingleBusinessIncomeSource()
