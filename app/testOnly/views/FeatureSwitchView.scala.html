@@ -15,12 +15,12 @@
  *@
 
 @import helper._
-@import config.featureswitch.FeatureSwitch
+@import models.admin.FeatureSwitchName
 @import views.html.layouts.unifiedLayout
 
 @this( unifiedLayout: unifiedLayout)
 
-@(switchNames: Map[FeatureSwitch, Boolean],action: Call)(implicit request: Request[_], messages: Messages)
+@(switchNames: Map[FeatureSwitchName, Boolean], action: Call)(implicit request: Request[_], messages: Messages)
 
 @unifiedLayout(pageTitle = Messages("Feature switch")) {
     <form class="govuk-form-group" method="@action.method" action="@action.url">
@@ -37,7 +37,7 @@
                     <div class="govuk-checkboxes__item">
                         <input class="govuk-checkboxes__input" type="checkbox" id="@switch.name" name="@switch.name"
                                value="true" @{if(state){"Checked"}}>
-                        <label class="govuk-label govuk-checkboxes__label" for="@switch.name">@switch.displayText</label>
+                        <label class="govuk-label govuk-checkboxes__label" for="@switch.name">@switch.toString</label>
                     </div>
                 }
             </div>

@@ -1,6 +1,6 @@
 GET         /metrics                                                       com.kenshoo.play.metrics.MetricsController.metrics
 +nocsrf
-PUT        /featureSwitches/:flagName                                       controllers.admin.FeatureSwitchSwitchController.put(flagName: FeatureFlagName)
-GET        /featureSwitches                                                controllers.admin.FeatureSwitchController.get
+PUT        /featureSwitches/:featureSwitchName                             controllers.admin.FeatureSwitchesAdminController.put(featureSwitchName: FeatureSwitchName)
+GET        /featureSwitches                                                controllers.admin.FeatureSwitchesAdminController.get
 +nocsrf
-PUT        /featureSwitches                                                controllers.admin.FeatureSwitchAdminController.putAll
+PUT        /featureSwitches                                                controllers.admin.FeatureSwitchesAdminController.putAll

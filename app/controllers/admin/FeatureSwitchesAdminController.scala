@@ -16,7 +16,6 @@
 
 package controllers.admin
 
-
 import models.admin.{FeatureSwitch, FeatureSwitchName}
 import play.api.libs.json.{JsBoolean, Json}
 import play.api.mvc.{AbstractController, Action, AnyContent, ControllerComponents}
@@ -36,11 +35,11 @@ class FeatureSwitchesAdminController @Inject() (
       .map(switches => Ok(Json.toJson(switches)))
   }
 
-  def put(switchName: FeatureSwitchName): Action[AnyContent] = Action.async { request =>
+  def put(featureSwitchName: FeatureSwitchName): Action[AnyContent] = Action.async { request =>
     request.body.asJson match {
       case Some(JsBoolean(enabled)) =>
         featureSwitchService
-          .set(switchName, enabled)
+          .set(featureSwitchName, enabled)
           .map(_ => NoContent)
       case _                        =>
         Future.successful(BadRequest)
