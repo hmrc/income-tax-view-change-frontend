@@ -27,6 +27,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
   val testArn: String = "1"
 
   val testDate: LocalDate = LocalDate.parse("2022-01-01")
+
   val incomeSourceDetailsModel: IncomeSourceDetailsModel = IncomeSourceDetailsModel(
     mtdbsa = testMtditid,
     yearOfMigration = None,
