@@ -10,7 +10,7 @@ import models.core.AccountingPeriodModel
 import models.financialDetails.{BalanceDetails, FinancialDetailsModel, WhatYouOweChargesList}
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
-import play.api.libs.json.Json
+import play.api.libs.json.{JsValue, Json}
 import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.FinancialDetailsIntegrationTestConstants._
@@ -38,6 +38,25 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
     )),
     property = None
   )
+
+  val testValidOutStandingChargeResponseJsonWithAciAndBcdCharges: JsValue = Json.parse(
+    s"""
+       |{
+       |  "outstandingCharges": [{
+       |         "chargeName": "BCD",
+       |         "relevantDueDate": "$testDate",
+       |         "chargeAmount": 123456789012345.67,
+       |         "tieBreaker": 1234
+       |       },
+       |       {
+       |         "chargeName": "ACI",
+       |         "relevantDueDate": "$testDate",
+       |         "chargeAmount": 12.67,
+       |         "tieBreaker": 1234
+       |       }
+       |  ]
+       |}
+       |""".stripMargin)
 
   val currentTaxYearEnd: Int = getCurrentTaxYearEnd.getYear
   val previousTaxYearEnd: Int = currentTaxYearEnd - 1
@@ -206,7 +225,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
 
       IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
         "utr", testSaUtr.toLong, (currentTaxYearEnd - 1).toString)(
-        OK, validOutStandingChargeResponseJsonWithAciAndBcdCharges)
+        OK, testValidOutStandingChargeResponseJsonWithAciAndBcdCharges)
 
       val result = IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetailsWithConfirmation)
 
