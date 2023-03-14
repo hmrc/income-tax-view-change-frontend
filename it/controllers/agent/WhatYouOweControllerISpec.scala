@@ -742,7 +742,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
       }
     }
 
-    "YearOfMigration exists with valid financial details charges and invalid outstanding charges dm" when {
+    "YearOfMigration exists with valid financial details charges and invalid outstanding charges" when {
       "only BCD charge" in {
         stubAuthorisedAgentUser(authorised = true)
 
