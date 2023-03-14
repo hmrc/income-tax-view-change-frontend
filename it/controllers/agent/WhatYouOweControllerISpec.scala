@@ -26,12 +26,13 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
 
   val testArn: String = "1"
 
+  val testDate: LocalDate = LocalDate.parse("2022-01-01")
   val incomeSourceDetailsModel: IncomeSourceDetailsModel = IncomeSourceDetailsModel(
     mtdbsa = testMtditid,
     yearOfMigration = None,
     businesses = List(BusinessDetailsModel(
       Some("testId"),
-      Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
+      Some(AccountingPeriodModel(testDate, testDate.plusYears(1))),
       None,
       Some(getCurrentTaxYearEnd)
     )),
@@ -61,7 +62,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
             yearOfMigration = None,
             businesses = List(BusinessDetailsModel(
               Some("testId"),
-              Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
+              Some(AccountingPeriodModel(testDate, testDate.plusYears(1))),
               None,
               Some(getCurrentTaxYearEnd)
             )),
@@ -71,7 +72,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
 
         IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"$currentTaxYearEnd - 1-04-06", s"$currentTaxYearEnd-04-05")(OK,
           testValidFinancialDetailsModelJson(
-            2000, 2000, currentTaxYearEnd.toString, LocalDate.now().toString))
+            2000, 2000, currentTaxYearEnd.toString, testDate.toString))
         IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
           "utr", testSaUtr.toLong, currentTaxYearEnd.toString)(OK, validOutStandingChargeResponseJsonWithAciAndBcdCharges)
 
@@ -136,7 +137,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
         OK, propertyOnlyResponseWithMigrationData(previousTaxYearEnd, Some(currentTaxYearEnd.toString)))
 
-      val financialDetailsResponseJson = testValidFinancialDetailsModelJson(2000, 2000, currentTaxYearEnd.toString, LocalDate.now().minusDays(15).toString)
+      val financialDetailsResponseJson = testValidFinancialDetailsModelJson(2000, 2000, currentTaxYearEnd.toString, testDate.minusDays(15).toString)
       val financialDetailsModel = financialDetailsResponseJson.as[FinancialDetailsModel]
 
       IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"$previousTaxYearEnd-04-06", s"$currentTaxYearEnd-04-05"
@@ -196,8 +197,8 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
         ),
         "financialDetails" -> Json.arr(
           financialDetailJson((currentTaxYearEnd - 2).toString, transactionId = "transId1"),
-          financialDetailJson((currentTaxYearEnd - 2).toString, "SA Payment on Account 1", LocalDate.now().plusDays(1).toString, transactionId = "transId2"),
-          financialDetailJson((currentTaxYearEnd - 2).toString, "SA Payment on Account 2", LocalDate.now().minusDays(1).toString, transactionId = "transId3")
+          financialDetailJson((currentTaxYearEnd - 2).toString, "SA Payment on Account 1", testDate.plusDays(1).toString, transactionId = "transId2"),
+          financialDetailJson((currentTaxYearEnd - 2).toString, "SA Payment on Account 2", testDate.minusDays(1).toString, transactionId = "transId3")
         ))
 
       IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"$previousTaxYearEnd-04-06", s"$currentTaxYearEnd-04-05")(
@@ -303,7 +304,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
       IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
         testNino, s"$previousTaxYearEnd-04-06", s"$currentTaxYearEnd-04-05")(
         OK, testValidFinancialDetailsModelJson(
-          2000, 2000, currentTaxYearEnd.toString, LocalDate.now().toString))
+          2000, 2000, currentTaxYearEnd.toString, testDate.toString))
 
       IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
         "utr", testSaUtr.toLong, (currentTaxYearEnd - 1).toString)(
@@ -332,7 +333,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
 
     And("I wiremock stub a multiple financial details response")
     IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK,
-      testValidFinancialDetailsModelJsonAccruingInterest(2000, 2000, testTaxYear.toString, LocalDate.now().minusDays(15).toString))
+      testValidFinancialDetailsModelJsonAccruingInterest(2000, 2000, testTaxYear.toString, testDate.minusDays(15).toString))
     IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
       "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
 
@@ -377,7 +378,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
 
     And("I wiremock stub a multiple financial details response")
     IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK,
-      testValidFinancialDetailsModelJsonAccruingInterest(2000, 2000, testTaxYear.toString, LocalDate.now().minusDays(15).toString, Some(55.50)))
+      testValidFinancialDetailsModelJsonAccruingInterest(2000, 2000, testTaxYear.toString, testDate.minusDays(15).toString, Some(55.50)))
     IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
       "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
 
@@ -422,7 +423,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
 
       And("I wiremock stub a multiple financial details response")
-      val financialDetailsResponseJson = testValidFinancialDetailsModelJson(2000, 2000, testTaxYear.toString, LocalDate.now().minusDays(15).toString, dunningLock = noDunningLock)
+      val financialDetailsResponseJson = testValidFinancialDetailsModelJson(2000, 2000, testTaxYear.toString, testDate.minusDays(15).toString, dunningLock = noDunningLock)
       val financialDetailsModel = financialDetailsResponseJson.as[FinancialDetailsModel]
 
       IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK,
@@ -460,7 +461,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
 
 
       And("I wiremock stub a multiple financial details response with dunning lock present")
-      val financialDetailsResponseJson = testValidFinancialDetailsModelJson(2000, 2000, testTaxYear.toString, LocalDate.now().minusDays(15).toString, dunningLock = oneDunningLock)
+      val financialDetailsResponseJson = testValidFinancialDetailsModelJson(2000, 2000, testTaxYear.toString, testDate.minusDays(15).toString, dunningLock = oneDunningLock)
       val financialDetailsModel = financialDetailsResponseJson.as[FinancialDetailsModel]
 
       IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK,
@@ -499,7 +500,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
 
 
       And("I wiremock stub a multiple financial details response with dunning locks present")
-      val financialDetailsResponseJson = testValidFinancialDetailsModelJson(2000, 2000, testTaxYear.toString, LocalDate.now().minusDays(15).toString, dunningLock = twoDunningLocks)
+      val financialDetailsResponseJson = testValidFinancialDetailsModelJson(2000, 2000, testTaxYear.toString, testDate.minusDays(15).toString, dunningLock = twoDunningLocks)
       val financialDetailsModel = financialDetailsResponseJson.as[FinancialDetailsModel]
 
       IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK,
@@ -721,7 +722,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
       }
     }
 
-    "YearOfMigration exists with valid financial details charges and invalid outstanding charges" when {
+    "YearOfMigration exists with valid financial details charges and invalid outstanding charges dm" when {
       "only BCD charge" in {
         stubAuthorisedAgentUser(authorised = true)
 
@@ -730,7 +731,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
 
         IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"$previousTaxYearEnd-04-06", s"$currentTaxYearEnd-04-05"
         )(OK, testValidFinancialDetailsModelJson(
-          2000, 2000, currentTaxYearEnd.toString, LocalDate.now().plusYears(1).toString))
+          2000, 2000, currentTaxYearEnd.toString, testDate.plusYears(1).toString))
 
         IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
           "utr", testSaUtr.toLong, previousTaxYearEnd.toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
@@ -774,7 +775,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
 
       And("I wiremock stub a multiple financial details response")
       IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK,
-        testValidFinancialDetailsModelJsonAccruingInterest(2000, 2000, testTaxYear.toString, LocalDate.now().minusDays(15).toString))
+        testValidFinancialDetailsModelJsonAccruingInterest(2000, 2000, testTaxYear.toString, testDate.minusDays(15).toString))
       IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
         "utr", testSaUtr.toLong, twoPreviousTaxYearEnd.toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
 
@@ -806,7 +807,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
         propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
 
       IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05"
-      )(OK, testValidFinancialDetailsModelJsonCodingOut(2000, 2000, testTaxYear.toString, LocalDate.now().plusYears(1).toString))
+      )(OK, testValidFinancialDetailsModelJsonCodingOut(2000, 2000, testTaxYear.toString, testDate.plusYears(1).toString))
 
       IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
         "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
@@ -843,7 +844,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
         propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
 
       IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05"
-      )(OK, testValidFinancialDetailsModelJsonCodingOut(2000, 2000, testTaxYear.toString, LocalDate.now().plusYears(1).toString))
+      )(OK, testValidFinancialDetailsModelJsonCodingOut(2000, 2000, testTaxYear.toString, testDate.plusYears(1).toString))
 
       IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
         "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
@@ -900,8 +901,8 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
       ),
       "financialDetails" -> Json.arr(
         financialDetailJson(currentTaxYearEnd.toString, transactionId = "transId1"),
-        financialDetailJson(currentTaxYearEnd.toString, "SA Payment on Account 1", LocalDate.now().plusDays(1).toString, transactionId = "transId2"),
-        financialDetailJson(currentTaxYearEnd.toString, "SA Payment on Account 2", LocalDate.now().minusDays(1).toString, transactionId = "transId3")
+        financialDetailJson(currentTaxYearEnd.toString, "SA Payment on Account 1", testDate.plusDays(1).toString, transactionId = "transId2"),
+        financialDetailJson(currentTaxYearEnd.toString, "SA Payment on Account 2", testDate.minusDays(1).toString, transactionId = "transId3")
       ))
 
     IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"$previousTaxYearEnd-04-06", s"$currentTaxYearEnd-04-05")(

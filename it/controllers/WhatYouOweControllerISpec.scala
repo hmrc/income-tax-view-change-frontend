@@ -52,7 +52,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
 
     "Authorised" when {
 
-      "render the payments due totals dm" in {
+      "render the payments due totals" in {
         disable(NavBarFs)
         Given("Display Totals feature is enabled")
 
@@ -134,7 +134,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
 
 
           And("I wiremock stub a multiple financial details response")
-          val financialDetailsResponseJson = testValidFinancialDetailsModelJson(2000, 2000, testTaxYear.toString, testDate.toString)
+          val financialDetailsResponseJson = testValidFinancialDetailsModelJson(2000, 2000, testTaxYear.toString, testDate.minusDays(15).toString)
           val financialDetailsModel = financialDetailsResponseJson.as[FinancialDetailsModel]
 
           IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK,
@@ -716,7 +716,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
 
           And("I wiremock stub a multiple financial details and outstanding charges response")
           IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK,
-            testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, LocalDate.now().toString, isClass2Nic = true))
+            testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString, isClass2Nic = true))
 
           IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
             "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithAciAndBcdCharges)
@@ -868,8 +868,8 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
         ),
         "financialDetails" -> Json.arr(
           financialDetailJson(testTaxYear.toString, transactionId = "transId1"),
-          financialDetailJson(testTaxYear.toString, "SA Payment on Account 1", LocalDate.now().plusDays(1).toString/*testDate.plusDays(1).toString*/, "transId2"),
-          financialDetailJson(testTaxYear.toString, "SA Payment on Account 2", LocalDate.now().minusDays(1).toString/*testDate.minusDays(1).toString*/, "transId3")
+          financialDetailJson(testTaxYear.toString, "SA Payment on Account 1", testDate.plusDays(1).toString/*testDate.plusDays(1).toString*/, "transId2"),
+          financialDetailJson(testTaxYear.toString, "SA Payment on Account 2", testDate.minusDays(1).toString/*testDate.minusDays(1).toString*/, "transId3")
         )
       )
 
