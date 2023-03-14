@@ -18,6 +18,7 @@ package services
 
 import auth.MtdItUser
 import config.FrontendAppConfig
+import config.featureswitch.{CutOverCredits, FeatureSwitching, MFACreditsAndDebits}
 import connectors.IncomeTaxViewChangeConnector
 import exceptions.MissingFieldException
 import models.financialDetails.{DocumentDetail, FinancialDetail}
@@ -32,7 +33,7 @@ import scala.util.{Failure, Success, Try}
 
 class CreditHistoryService @Inject()(incomeTaxViewChangeConnector: IncomeTaxViewChangeConnector,
                                      val appConfig: FrontendAppConfig)
-                                    (implicit ec: ExecutionContext) {
+                                    (implicit ec: ExecutionContext) extends FeatureSwitching {
 
   // This logic is based on the findings in => RepaymentHistoryUtils.combinePaymentHistoryData method
   // Problem: we need to get list of credits (MFA + CutOver) and filter it out by calendar year
@@ -74,18 +75,34 @@ class CreditHistoryService @Inject()(incomeTaxViewChangeConnector: IncomeTaxView
 
   def getCreditsHistory(calendarYear: Int, nino: String)
                        (implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[CreditHistoryError.type, List[CreditDetailModel]]] = {
+
     for {
       creditModelForTaxYear <- getCreditsByTaxYear(calendarYear, nino)
       creditModelForTaxYearPlusOne <- getCreditsByTaxYear(calendarYear + 1, nino)
     } yield (creditModelForTaxYear, creditModelForTaxYearPlusOne) match {
       case (Right(creditModelTY), Right(creditModelTYandOne)) =>
-        Right((creditModelTY ++ creditModelTYandOne).filter(creditDetailModel => getTaxYearAsInt(creditDetailModel.documentDetail.taxYear) == calendarYear))
+        val creditsForTaxYearAndPlusOne =
+          (creditModelTY ++ creditModelTYandOne).filter(creditDetailModel => getTaxYearAsInt(creditDetailModel.documentDetail.taxYear) == calendarYear)
+        Right(filterExcludedCredits(creditsForTaxYearAndPlusOne))
       case (Right(creditModelTY), Left(_)) =>
-        Right(creditModelTY.filter(creditDetailModel => getTaxYearAsInt(creditDetailModel.documentDetail.taxYear) == calendarYear))
+        val creditsForTaxYear =
+          creditModelTY.filter(creditDetailModel => getTaxYearAsInt(creditDetailModel.documentDetail.taxYear) == calendarYear)
+        Right(filterExcludedCredits(creditsForTaxYear))
       case (Left(_), Right(creditModelTYandOne)) =>
-        Right(creditModelTYandOne.filter(creditDetailModel => getTaxYearAsInt(creditDetailModel.documentDetail.taxYear) == calendarYear))
+        val creditsForTaxYearPlusOne =
+          creditModelTYandOne.filter(creditDetailModel => getTaxYearAsInt(creditDetailModel.documentDetail.taxYear) == calendarYear)
+        Right(filterExcludedCredits(creditsForTaxYearPlusOne))
       case (_, _) =>
         Left(CreditHistoryError)
+    }
+  }
+
+  private def filterExcludedCredits(credits: List[CreditDetailModel]): List[CreditDetailModel] = {
+    (isEnabled(MFACreditsAndDebits), isEnabled(CutOverCredits)) match {
+      case (true, false) => credits.filterNot(_.creditType == CutOverCreditType)
+      case (false, true) => credits.filterNot(_.creditType == MfaCreditType)
+      case (false, false) => credits.filterNot(c => c.creditType == MfaCreditType || c.creditType == CutOverCreditType)
+      case _ => credits
     }
   }
 }

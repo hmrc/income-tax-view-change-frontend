@@ -89,7 +89,7 @@ class CreditsSummaryControllerISpec extends ComponentSpecBase with CreditsSummar
       }
     }
 
-    "display an empty credit summary page" when {
+    "display the credit summary page" when {
       "MFACreditsAndDebits and CutOverCredits feature switches are off" in {
         disable(MFACreditsAndDebits)
         disable(CutOverCredits)
@@ -101,9 +101,22 @@ class CreditsSummaryControllerISpec extends ComponentSpecBase with CreditsSummar
             Some(testTaxYear.toString))
         )
 
+        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
+          testNino,
+          s"${testTaxYear - 1}-04-06",
+          s"$testTaxYear-04-05")(
+          OK,
+          testValidFinancialDetailsModelCreditAndRefundsJson(
+            -1400,
+            -1400,
+            testTaxYear.toString,
+            LocalDate.now().plusYears(1).toString)
+        )
+
         val res = IncomeTaxViewChangeFrontend.getCreditsSummary(calendarYear)
 
         verifyIncomeSourceDetailsCall(testMtditid)
+        IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
 
         res should have(
           httpStatus(OK),
