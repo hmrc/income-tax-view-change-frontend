@@ -31,6 +31,7 @@ import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.IncomeSourceDetailsService
+import services.admin.FeatureSwitchService
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
 import views.html.RefundToTaxPayer
@@ -47,6 +48,7 @@ class RefundToTaxPayerController @Inject()(val refundToTaxPayerView: RefundToTax
                                            val retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                            val incomeSourceDetailsService: IncomeSourceDetailsService,
                                            val authorisedFunctions: AuthorisedFunctions,
+                                           val featureSwitchService: FeatureSwitchService,
                                            retrieveBtaNavBar: NavBarPredicate,
                                            itvcErrorHandler: ItvcErrorHandler,
                                            auditingService: AuditingService)
@@ -61,30 +63,34 @@ class RefundToTaxPayerController @Inject()(val refundToTaxPayerView: RefundToTax
                     itvcErrorHandler: ShowInternalServerError,
                     repaymentRequestNumber: String)
                    (implicit user: MtdItUser[AnyContent], hc: HeaderCarrier): Future[Result] = {
-    if (isEnabled(PaymentHistoryRefunds)) {
-      (for {
-        repaymentHistoryModel <- incomeTaxViewChangeConnector.getRepaymentHistoryByRepaymentId(Nino(user.nino), repaymentRequestNumber).collect {
-          case repaymentHistoryModel: RepaymentHistoryModel => repaymentHistoryModel
+    featureSwitchService.get(PaymentHistoryRefunds).flatMap { switch =>
+      if (switch.isEnabled) {
+
+        (for {
+          repaymentHistoryModel <- incomeTaxViewChangeConnector.getRepaymentHistoryByRepaymentId(Nino(user.nino), repaymentRequestNumber).collect {
+            case repaymentHistoryModel: RepaymentHistoryModel => repaymentHistoryModel
+          }
+        } yield {
+          if (isEnabled(R7cTxmEvents)) auditingService.extendedAudit(RefundToTaxPayerResponseAuditModel(repaymentHistoryModel))
+          Ok(
+            refundToTaxPayerView(
+              repaymentHistoryModel,
+              paymentHistoryRefundsEnabled = isEnabled(PaymentHistoryRefunds),
+              backUrl, user.saUtr,
+              btaNavPartial = user.btaNavPartial,
+              isAgent = isAgent))
+        }).recover {
+          case _ if isAgent =>
+            Logger("application").error(s"[RefundToTaxPayerController][withTaxYearFinancials] - Could not retrieve repayment history for repaymentRequestNumber: $repaymentRequestNumber")
+            itvcErrorHandlerAgent.showInternalServerError()
+          case _ =>
+            Logger("application").error(s"[Agent][RefundToTaxPayerController][withTaxYearFinancials] - Could not retrieve repayment history for repaymentRequestNumber: $repaymentRequestNumber")
+            itvcErrorHandler.showInternalServerError()
         }
-      } yield {
-        if (isEnabled(R7cTxmEvents)) auditingService.extendedAudit(RefundToTaxPayerResponseAuditModel(repaymentHistoryModel))
-        Ok(
-          refundToTaxPayerView(
-            repaymentHistoryModel,
-            paymentHistoryRefundsEnabled = isEnabled(PaymentHistoryRefunds),
-            backUrl, user.saUtr,
-            btaNavPartial = user.btaNavPartial,
-            isAgent = isAgent))
-      }).recover {
-        case _ if isAgent =>
-          Logger("application").error(s"[RefundToTaxPayerController][withTaxYearFinancials] - Could not retrieve repayment history for repaymentRequestNumber: $repaymentRequestNumber")
-          itvcErrorHandlerAgent.showInternalServerError()
-        case _ =>
-          Logger("application").error(s"[Agent][RefundToTaxPayerController][withTaxYearFinancials] - Could not retrieve repayment history for repaymentRequestNumber: $repaymentRequestNumber")
-          itvcErrorHandler.showInternalServerError()
       }
-    } else {
-      Future.successful(Redirect(controllers.routes.HomeController.show().url))
+      else {
+        Future.successful(Redirect(controllers.routes.HomeController.show().url))
+      }
     }
   }
 

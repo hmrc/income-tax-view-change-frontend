@@ -52,7 +52,7 @@ class FeatureSwitchRepository @Inject()(val mongoComponent: MongoComponent,
 
   def getFeatureSwitch(name: FeatureSwitchName): Future[Option[FeatureSwitch]] =
     collection
-      .find(equal("name", name.toString))
+      .find(equal("name", name.name))
       .headOption()
 
   def getFeatureSwitches: Future[List[FeatureSwitch]] =

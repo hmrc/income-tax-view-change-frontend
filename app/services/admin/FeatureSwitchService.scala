@@ -33,7 +33,7 @@ class FeatureSwitchService @Inject()(featureSwitchRepository: FeatureSwitchRepos
   private val allFeatureSwitchesCacheKey = "*$*$allFeatureSwitches*$*$"
 
   def get(featureSwitchName: FeatureSwitchName): Future[FeatureSwitch] =
-    cache.getOrElseUpdate(featureSwitchName.toString, cacheValidFor) {
+    cache.getOrElseUpdate(featureSwitchName.name, cacheValidFor) {
       featureSwitchRepository
         .getFeatureSwitch(featureSwitchName)
         .map(_.getOrElse(FeatureSwitch(featureSwitchName, false)))
@@ -55,22 +55,22 @@ class FeatureSwitchService @Inject()(featureSwitchRepository: FeatureSwitchRepos
 
   def set(featureSwitchName: FeatureSwitchName, enabled: Boolean): Future[Boolean] =
     for {
-      _ <- cache.remove(featureSwitchName.toString)
+      _ <- cache.remove(featureSwitchName.name)
       _ <- cache.remove(allFeatureSwitchesCacheKey)
       result <- featureSwitchRepository.setFeatureSwitch(featureSwitchName, enabled)
-      //blocking thread to let time to other containers to update their cache
+      //blocking thread to allow other containers to update their cache
       _ <- Future.successful(Thread.sleep(5000))
     } yield result
 
   def setAll(featureSwitches: Map[FeatureSwitchName, Boolean]): Future[Unit] =
     Future
-      .sequence(featureSwitches.keys.map(featureSwitch => cache.remove(featureSwitch.toString)))
+      .sequence(featureSwitches.keys.map(featureSwitch => cache.remove(featureSwitch.name)))
       .flatMap { _ =>
         cache.remove(allFeatureSwitchesCacheKey)
         featureSwitchRepository.setFeatureSwitches(featureSwitches)
       }
       .map { _ =>
-        //blocking thread to let time to other containers to update their cache
+        //blocking thread to allow other containers to update their cache
         Thread.sleep(5000)
         ()
       }

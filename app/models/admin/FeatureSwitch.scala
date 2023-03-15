@@ -32,38 +32,38 @@ sealed trait FeatureSwitchName {
 }
 
 object FeatureSwitchName {
-  implicit val writes: Writes[FeatureSwitchName] = (o: FeatureSwitchName) => JsString(o.toString)
+  implicit val writes: Writes[FeatureSwitchName] = (o: FeatureSwitchName) => JsString(o.name)
 
   implicit val reads: Reads[FeatureSwitchName] = {
-    case name if name == JsString(ITSASubmissionIntegration.toString) =>
+    case name if name == JsString(ITSASubmissionIntegration.name) =>
       JsSuccess(ITSASubmissionIntegration)
-    case name if name == JsString(IvUplift.toString) =>
+    case name if name == JsString(IvUplift.name) =>
       JsSuccess(IvUplift)
-    case name if name == JsString(ChargeHistory.toString) =>
+    case name if name == JsString(ChargeHistory.name) =>
       JsSuccess(ChargeHistory)
-    case name if name == JsString(PaymentAllocation.toString) =>
+    case name if name == JsString(PaymentAllocation.name) =>
       JsSuccess(PaymentAllocation)
-    case name if name == JsString(CodingOut.toString) =>
+    case name if name == JsString(CodingOut.name) =>
       JsSuccess(CodingOut)
-    case name if name == JsString(NavBarFs.toString) =>
+    case name if name == JsString(NavBarFs.name) =>
       JsSuccess(NavBarFs)
-    case name if name == JsString(ForecastCalculation.toString) =>
+    case name if name == JsString(ForecastCalculation.name) =>
       JsSuccess(ForecastCalculation)
-    case name if name == JsString(CutOverCredits.toString) =>
+    case name if name == JsString(CutOverCredits.name) =>
       JsSuccess(CutOverCredits)
-    case name if name == JsString(CreditsRefundsRepay.toString) =>
+    case name if name == JsString(CreditsRefundsRepay.name) =>
       JsSuccess(CreditsRefundsRepay)
-    case name if name == JsString(WhatYouOweCreditAmount.toString) =>
+    case name if name == JsString(WhatYouOweCreditAmount.name) =>
       JsSuccess(WhatYouOweCreditAmount)
-    case name if name == JsString(MFACreditsAndDebits.toString) =>
+    case name if name == JsString(MFACreditsAndDebits.name) =>
       JsSuccess(MFACreditsAndDebits)
-    case name if name == JsString(PaymentHistoryRefunds.toString) =>
+    case name if name == JsString(PaymentHistoryRefunds.name) =>
       JsSuccess(PaymentHistoryRefunds)
-    case name if name == JsString(TimeMachineAddYear.toString) =>
+    case name if name == JsString(TimeMachineAddYear.name) =>
       JsSuccess(TimeMachineAddYear)
-    case name if name == JsString(R7cTxmEvents.toString) =>
+    case name if name == JsString(R7cTxmEvents.name) =>
       JsSuccess(R7cTxmEvents)
-    case name if name == JsString(R7cViewerCodingOutTxmEvents.toString) =>
+    case name if name == JsString(R7cViewerCodingOutTxmEvents.name) =>
       JsSuccess(R7cViewerCodingOutTxmEvents)
     case _ => JsError("Invalid feature switch name")
   }
@@ -83,7 +83,7 @@ object FeatureSwitchName {
       }
 
     override def unbind(key: String, value: FeatureSwitchName): String =
-      value.toString
+      value.name
   }
 
   val allFeatureSwitches: immutable.Set[FeatureSwitchName] =

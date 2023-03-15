@@ -18,10 +18,12 @@ package config.featureswitch
 
 import config.FrontendAppConfig
 import models.admin.FeatureSwitchName
+import play.mvc.Action
 import services.admin.FeatureSwitchService
 
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.util.{Failure, Success}
 
 
 trait FeatureSwitching {

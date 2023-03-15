@@ -25,14 +25,14 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowI
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
 import models.admin.{CreditsRefundsRepay, ITSASubmissionIntegration, MFACreditsAndDebits, PaymentHistoryRefunds}
-
+import play.api.http.Writeable._
 import javax.inject.{Inject, Singleton}
 import models.financialDetails.{FinancialDetailsModel, FinancialDetailsResponseModel}
 import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc._
-import play.twirl.api.Html
+import play.twirl.api.{Html, HtmlFormat}
 import services.admin.FeatureSwitchService
 import services.{DateService, FinancialDetailsService, IncomeSourceDetailsService, NextUpdatesService, WhatYouOweService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
@@ -85,13 +85,6 @@ class HomeController @Inject()(val homeView: views.html.Home,
 
   def handleShowRequest(itvcErrorHandler: ShowInternalServerError, isAgent: Boolean, incomeSourceCurrentTaxYear: Int, origin: Option[String] = None)
                        (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
-
-  featureSwitchService.get(MFACreditsAndDebits).map(switch =>
-  if(switch.isEnabled) {
-    println(Console.GREEN + "FS ENABLED" + Console.WHITE)
-  } else {
-    println(Console.RED + "FS DISABLED" + Console.WHITE)
-  })
 
     nextUpdatesService.getNextDeadlineDueDateAndOverDueObligations().flatMap { latestDeadlineDate =>
 
