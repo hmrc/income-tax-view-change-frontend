@@ -21,10 +21,12 @@ import auth.MtdItUser
 import config.featureswitch.{CodingOut, CreditsRefundsRepay, MFACreditsAndDebits, NavBarFs}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
-import models.financialDetails.{BalanceDetails, FinancialDetailsModel, WhatYouOweChargesList}
+import models.financialDetails.{BalanceDetails, DocumentDetail, DocumentDetailWithDueDate, FinancialDetailsModel, WhatYouOweChargesList}
+import models.outstandingCharges.OutstandingChargesModel
 import play.api.http.Status._
-import play.api.libs.json.Json
+import play.api.libs.json.{JsValue, Json}
 import play.api.test.FakeRequest
+import services.DateService
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino, testSaUtr}
 import testConstants.FinancialDetailsIntegrationTestConstants._
 import testConstants.IncomeSourceIntegrationTestConstants._
@@ -46,6 +48,26 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
   )(FakeRequest())
 
   val testTaxYear: Int = getCurrentTaxYearEnd.getYear - 1
+  val testDate: LocalDate = LocalDate.parse("2022-01-01")
+
+  val testValidOutStandingChargeResponseJsonWithAciAndBcdCharges: JsValue = Json.parse(
+    s"""
+       |{
+       |  "outstandingCharges": [{
+       |         "chargeName": "BCD",
+       |         "relevantDueDate": "$testDate",
+       |         "chargeAmount": 123456789012345.67,
+       |         "tieBreaker": 1234
+       |       },
+       |       {
+       |         "chargeName": "ACI",
+       |         "relevantDueDate": "$testDate",
+       |         "chargeAmount": 12.67,
+       |         "tieBreaker": 1234
+       |       }
+       |  ]
+       |}
+       |""".stripMargin)
 
   "Navigating to /report-quarterly/income-and-expenses/view/payments-owed" when {
 
@@ -62,7 +84,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
 
         And("I wiremock stub a financial details response with coded out documents")
         IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK,
-          testValidFinancialDetailsModelJsonCodingOut(2000, 2000, (testTaxYear - 1).toString, LocalDate.now().plusYears(1).toString))
+          testValidFinancialDetailsModelJsonCodingOut(2000, 2000, (testTaxYear - 1).toString, testDate.plusYears(1).toString))
 
         IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
           "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
@@ -92,7 +114,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
 
           And("I wiremock stub a multiple financial details and outstanding charges response")
           IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK,
-            testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, LocalDate.now().toString))
+            testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString))
           IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
             "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithAciAndBcdCharges)
 
@@ -133,7 +155,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
 
 
           And("I wiremock stub a multiple financial details response")
-          val financialDetailsResponseJson = testValidFinancialDetailsModelJson(2000, 2000, testTaxYear.toString, LocalDate.now().minusDays(15).toString)
+          val financialDetailsResponseJson = testValidFinancialDetailsModelJson(2000, 2000, testTaxYear.toString, testDate.minusDays(15).toString)
           val financialDetailsModel = financialDetailsResponseJson.as[FinancialDetailsModel]
 
           IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK,
@@ -195,14 +217,14 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
             ),
             "financialDetails" -> Json.arr(
               financialDetailJson((testTaxYear - 1).toString, transactionId = "transId1"),
-              financialDetailJson((testTaxYear - 1).toString, "SA Payment on Account 1", LocalDate.now().plusDays(1).toString, "transId2"),
-              financialDetailJson((testTaxYear - 1).toString, "SA Payment on Account 2", LocalDate.now().minusDays(1).toString, "transId3")
+              financialDetailJson((testTaxYear - 1).toString, "SA Payment on Account 1", testDate.plusDays(1).toString, "transId2"),
+              financialDetailJson((testTaxYear - 1).toString, "SA Payment on Account 2", testDate.minusDays(1).toString, "transId3")
             )
           )
 
           IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK, mixedJson)
           IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
-            "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithAciAndBcdCharges)
+            "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, testValidOutStandingChargeResponseJsonWithAciAndBcdCharges)
 
 
           When("I call GET /report-quarterly/income-and-expenses/view/payments-owed")
@@ -239,7 +261,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
 
 
           And("I wiremock stub a multiple financial details response")
-          val financialDetailsResponseJson = testValidFinancialDetailsModelJson(2000, 2000, testTaxYear.toString, LocalDate.now().minusDays(15).toString, dunningLock = noDunningLock)
+          val financialDetailsResponseJson = testValidFinancialDetailsModelJson(2000, 2000, testTaxYear.toString, testDate.minusDays(15).toString, dunningLock = noDunningLock)
           val financialDetailsModel = financialDetailsResponseJson.as[FinancialDetailsModel]
 
           IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK,
@@ -278,7 +300,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
 
 
           And("I wiremock stub a multiple financial details response")
-          val financialDetailsResponseJson = testValidFinancialDetailsModelJson(2000, 2000, testTaxYear.toString, LocalDate.now().minusDays(15).toString, dunningLock = oneDunningLock)
+          val financialDetailsResponseJson = testValidFinancialDetailsModelJson(2000, 2000, testTaxYear.toString, testDate.minusDays(15).toString, dunningLock = oneDunningLock)
           val financialDetailsModel = financialDetailsResponseJson.as[FinancialDetailsModel]
 
           IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK,
@@ -317,7 +339,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
 
 
           And("I wiremock stub a multiple financial details response")
-          val financialDetailsResponseJson = testValidFinancialDetailsModelJson(2000, 2000, testTaxYear.toString, LocalDate.now().minusDays(15).toString, dunningLock = twoDunningLocks)
+          val financialDetailsResponseJson = testValidFinancialDetailsModelJson(2000, 2000, testTaxYear.toString, testDate.minusDays(15).toString, dunningLock = twoDunningLocks)
           val financialDetailsModel = financialDetailsResponseJson.as[FinancialDetailsModel]
 
           IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK,
@@ -412,7 +434,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
 
           And("I wiremock stub a single financial details response")
           IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK,
-            testValidFinancialDetailsModelJson(2000, 2000, testTaxYear.toString, LocalDate.now().toString))
+            testValidFinancialDetailsModelJson(2000, 2000, testTaxYear.toString, testDate.toString))
           IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
             "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(INTERNAL_SERVER_ERROR, testOutstandingChargesErrorModelJson)
 
@@ -629,7 +651,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
 
           And("I wiremock stub a mixed financial details response")
           IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK,
-            testValidFinancialDetailsModelJson(2000, 2000, testTaxYear.toString, LocalDate.now().plusYears(1).toString))
+            testValidFinancialDetailsModelJson(2000, 2000, testTaxYear.toString, testDate.plusYears(1).toString))
 
           IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
             "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
@@ -677,7 +699,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
           And("I wiremock stub a financial details response with coded out documents")
           IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK,
             testValidFinancialDetailsModelJsonCodingOut(2000, 2000, testTaxYear.toString,
-              LocalDate.now().toString, 0, (getCurrentTaxYearEnd.getYear - 1).toString, 2000))
+              testDate.toString, 0, (getCurrentTaxYearEnd.getYear - 1).toString, 2000))
 
           IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
             "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
@@ -715,7 +737,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
 
           And("I wiremock stub a multiple financial details and outstanding charges response")
           IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK,
-            testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, LocalDate.now().toString, isClass2Nic = true))
+            testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString, isClass2Nic = true))
 
           IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
             "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithAciAndBcdCharges)
@@ -763,7 +785,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
 
           And("I wiremock stub a financial details response with coded out documents")
           IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK,
-            testValidFinancialDetailsModelJsonCodingOut(2000, 2000, testTaxYear.toString, LocalDate.now().plusYears(1).toString))
+            testValidFinancialDetailsModelJsonCodingOut(2000, 2000, testTaxYear.toString, testDate.plusYears(1).toString))
 
           IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
             "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
@@ -806,7 +828,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
 
             And("I wiremock stub a multiple financial details response")
             IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK,
-              testValidFinancialDetailsModelMFADebitsJson(2000, 2000, testTaxYear.toString, LocalDate.now().plusYears(1).toString))
+              testValidFinancialDetailsModelMFADebitsJson(2000, 2000, testTaxYear.toString, testDate.plusYears(1).toString))
             IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
               "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
 
@@ -846,7 +868,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
 
     "API#1171 IncomeSourceDetails Caching" when {
       "caching should be ENABLED" in {
-        testIncomeSourceDetailsCaching(false, 1,
+        testIncomeSourceDetailsCaching(resetCacheAfterFirstCall = false, 1,
           () => IncomeTaxViewChangeFrontend.getPaymentsDue)
       }
     }
@@ -867,8 +889,8 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
         ),
         "financialDetails" -> Json.arr(
           financialDetailJson(testTaxYear.toString, transactionId = "transId1"),
-          financialDetailJson(testTaxYear.toString, "SA Payment on Account 1", LocalDate.now().plusDays(1).toString, "transId2"),
-          financialDetailJson(testTaxYear.toString, "SA Payment on Account 2", LocalDate.now().minusDays(1).toString, "transId3")
+          financialDetailJson(testTaxYear.toString, "SA Payment on Account 1", testDate.plusDays(1).toString, "transId2"),
+          financialDetailJson(testTaxYear.toString, "SA Payment on Account 2", testDate.minusDays(1).toString, "transId3")
         )
       )
 
