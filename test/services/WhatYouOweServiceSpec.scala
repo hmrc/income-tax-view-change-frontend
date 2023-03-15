@@ -358,7 +358,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
       assertResult(expected = expectedResult)(actual = documentDescriptions.forall(dd => TestWhatYouOweService.validChargeTypeCondition(dd)))
     }
 
-    "validate a list of document description strings" in {
+    "validate a list of documents with valid descriptions" in {
       val documentDescriptions: List[DocumentDetail] = List(documentDetailModel(documentDescription = Some("ITSA- POA 1"))
         , documentDetailModel(documentDescription = Some("ITSA - POA 2"))
         , documentDetailModel(documentDescription = Some("TRM New Charge"))
@@ -366,13 +366,16 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
       )
       testValidChargeType(documentDescriptions, expectedResult = true)
     }
-    "not validate a list of other strings" in {
+    "not validate a list of documents with other descriptions" in {
       val otherStrings: List[DocumentDetail] = List(documentDetailModel(documentDescription = Some("lorem"))
         , documentDetailModel(documentDescription = Some("ipsum"))
         , documentDetailModel(documentDescription = Some("dolor"))
         , documentDetailModel(documentDescription = Some("sit"))
       )
       testValidChargeType(otherStrings, expectedResult = false)
+    }
+    "valid a document containing valid text" in {
+      testValidChargeType(List(documentDetailModel(documentText = Some("Lorem ips Class 2 National Insurance um dolor"))), expectedResult = true)
     }
   }
 }
