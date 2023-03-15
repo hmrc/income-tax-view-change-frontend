@@ -115,17 +115,18 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
 
   def isAllInterestPaid()(implicit user: MtdItUser[_]): Boolean = documentDetails.forall(_.interestIsPaid)
 
-  def validChargeTypeCondition: String => Boolean = documentDescription => {
-    documentDescription == "ITSA- POA 1" ||
-      documentDescription == "ITSA - POA 2" ||
-      documentDescription == "TRM New Charge" ||
-      documentDescription == "TRM Amend Charge"
+  def validChargeTypeCondition: DocumentDetail => Boolean = documentDetail => {
+    (documentDetail.documentText, documentDetail.documentDescription) match {
+      case (Some(documentText), _) if documentText.contains("Class 2 National Insurance") => true
+      case (_, Some("ITSA- POA 1") | Some("ITSA - POA 2") | Some("TRM New Charge") | Some("TRM Amend Charge")) => true
+      case (_, _) => false
+    }
   }
 
   def validChargesWithRemainingToPay: FinancialDetailsModel = {
     val filteredDocuments = documentDetails.filterNot(document => document.paymentLot.isDefined && document.paymentLotItem.isDefined)
       .filter(documentDetail => documentDetail.documentDescription.isDefined && documentDetail.checkIfEitherChargeOrLpiHasRemainingToPay
-        && validChargeTypeCondition(documentDetail.documentDescription.get)).filterNot(_.isPayeSelfAssessment)
+        && validChargeTypeCondition(documentDetail)).filterNot(_.isPayeSelfAssessment)
 
     FinancialDetailsModel(
       balanceDetails,
