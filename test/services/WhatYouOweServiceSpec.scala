@@ -354,16 +354,24 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
     }
   }
   "WhatYouOweService.validChargeType val" should {
-    def testValidChargeType(documentDescriptions: List[String], expectedResult: Boolean): Unit = {
+    def testValidChargeType(documentDescriptions: List[DocumentDetail], expectedResult: Boolean): Unit = {
       assertResult(expected = expectedResult)(actual = documentDescriptions.forall(dd => TestWhatYouOweService.validChargeTypeCondition(dd)))
     }
 
     "validate a list of document description strings" in {
-      val documentDescriptions = List("ITSA- POA 1", "ITSA - POA 2", "TRM New Charge", "TRM Amend Charge")
+      val documentDescriptions: List[DocumentDetail] = List(documentDetailModel(documentDescription = Some("ITSA- POA 1"))
+        , documentDetailModel(documentDescription = Some("ITSA - POA 2"))
+        , documentDetailModel(documentDescription = Some("TRM New Charge"))
+        , documentDetailModel(documentDescription = Some("TRM Amend Charge"))
+      )
       testValidChargeType(documentDescriptions, expectedResult = true)
     }
     "not validate a list of other strings" in {
-      val otherStrings = List("Lorem", "ipsum", "dolor", "sit")
+      val otherStrings: List[DocumentDetail] = List(documentDetailModel(documentDescription = Some("lorem"))
+        , documentDetailModel(documentDescription = Some("ipsum"))
+        , documentDetailModel(documentDescription = Some("dolor"))
+        , documentDetailModel(documentDescription = Some("sit"))
+      )
       testValidChargeType(otherStrings, expectedResult = false)
     }
   }
