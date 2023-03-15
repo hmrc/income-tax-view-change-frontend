@@ -22,7 +22,6 @@
 @import views.html.components._
 @import exceptions.MissingFieldException
 @import models.creditDetailModel.CreditDetailModel
-@import models.creditDetailModel.BalancingChargeCreditType
 
 @this(
         mainTemplate: unifiedLayout,
@@ -158,11 +157,7 @@
                                 <td class="govuk-table__cell govuk-!-width-one-half">@messages(creditType.key)</td>
                                 <td class="govuk-table__cell numeric govuk-!-width-one-quarter">@getStatus(documentDetail)</td>
                                 <td class="govuk-table__cell numeric govuk-!-width-one-quarter govuk-!-text-align-right">
-                                    @if(creditType == BalancingChargeCreditType) {
-                                        @documentDetail.outstandingAmount.map(_.abs).getOrElse(throw MissingFieldException("Outstanding Amount")).toCurrencyString
-                                    } else {
-                                        @documentDetail.originalAmount.map(_.abs).getOrElse(throw MissingFieldException("Original Amount")).toCurrencyString
-                                    }
+                                    @documentDetail.originalAmount.map(_.abs).getOrElse(throw MissingFieldException("Original Amount")).toCurrencyString
                                 </td>
                             </tr>
                         }
