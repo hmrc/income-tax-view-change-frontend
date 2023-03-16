@@ -37,11 +37,12 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
 
   implicit lazy val localDateOrdering: Ordering[LocalDate] = Ordering.by(_.toEpochDay)
 
-  val validChargeTypeCondition: String => Boolean = documentDescription => {
-    documentDescription == "ITSA- POA 1" ||
-      documentDescription == "ITSA - POA 2" ||
-      documentDescription == "TRM New Charge" ||
-      documentDescription == "TRM Amend Charge"
+  val validChargeTypeCondition: DocumentDetail => Boolean = documentDetail => {
+    (documentDetail.documentText, documentDetail.documentDescription) match {
+      case (Some(documentText), _) if documentText.contains("Class 2 National Insurance") => true
+      case (_, Some("ITSA- POA 1") | Some("ITSA - POA 2") | Some("TRM New Charge") | Some("TRM Amend Charge")) => true
+      case (_, _) => false
+    }
   }
 
   def getCreditCharges()(implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[List[DocumentDetail]] = {
@@ -105,7 +106,7 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
     val documentDetailsWithDueDates = financialDetailsList.flatMap(financialDetails =>
       financialDetails.getAllDocumentDetailsWithDueDates(isEnabled(CodingOut)))
       .filter(documentDetailWithDueDate => whatYouOwePageDataExists(documentDetailWithDueDate)
-        && validChargeTypeCondition(documentDetailWithDueDate.documentDetail.documentDescription.get)
+        && validChargeTypeCondition(documentDetailWithDueDate.documentDetail)
         && !documentDetailWithDueDate.documentDetail.isPayeSelfAssessment
         && documentDetailWithDueDate.documentDetail.checkIfEitherChargeOrLpiHasRemainingToPay)
       .sortBy(_.dueDate.get)

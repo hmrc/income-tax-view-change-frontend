@@ -153,6 +153,34 @@ class FinancialDetailsResponseModelSpec extends UnitSpec with Matchers {
     }
   }
 
+  "WhatYouOweService.validChargeType val" should {
+    val fdm: FinancialDetailsModel = financialDetailsModel()
+
+    def testValidChargeType(documentDescriptions: List[DocumentDetail], expectedResult: Boolean): Unit = {
+      assertResult(expected = expectedResult)(actual = documentDescriptions.forall(dd => fdm.validChargeTypeCondition(dd)))
+    }
+
+    "validate a list of documents with valid descriptions" in {
+      val documentDescriptions: List[DocumentDetail] = List(documentDetailModel(documentDescription = Some("ITSA- POA 1"))
+        , documentDetailModel(documentDescription = Some("ITSA - POA 2"))
+        , documentDetailModel(documentDescription = Some("TRM New Charge"))
+        , documentDetailModel(documentDescription = Some("TRM Amend Charge"))
+      )
+      testValidChargeType(documentDescriptions, expectedResult = true)
+    }
+    "not validate a list of documents with other descriptions" in {
+      val otherStrings: List[DocumentDetail] = List(documentDetailModel(documentDescription = Some("lorem"))
+        , documentDetailModel(documentDescription = Some("ipsum"))
+        , documentDetailModel(documentDescription = Some("dolor"))
+        , documentDetailModel(documentDescription = Some("sit"))
+      )
+      testValidChargeType(otherStrings, expectedResult = false)
+    }
+    "valid a document containing valid text" in {
+      testValidChargeType(List(documentDetailModel(documentText = Some("Lorem ips Class 2 National Insurance um dolor"))), expectedResult = true)
+    }
+  }
+
   "isMFADebit" should {
     def testIsMFADebit(documentId: String, financialDetailsModel: FinancialDetailsModel): Boolean = {
       val fdm: FinancialDetailsModel = financialDetailsModel
