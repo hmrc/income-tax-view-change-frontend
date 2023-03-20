@@ -46,9 +46,9 @@ class CreditHistoryService @Inject()(incomeTaxViewChangeConnector: IncomeTaxView
         val fdRes = financialDetailsModel.getPairedDocumentDetails().flatMap {
           case (document: DocumentDetail, financialDetail: FinancialDetail) =>
             (financialDetail.getCreditType, document.credit.isDefined) match {
-              case (Some("MFA Credit"), true) =>
+              case (Some(MfaCreditType), true) =>
                 Some(CreditDetailModel(date = document.documentDate, document, MfaCreditType, Some(financialDetailsModel.balanceDetails)))
-              case (Some("Balancing Charge Credit"), true) =>
+              case (Some(BalancingChargeCreditType), true) =>
                 Some(CreditDetailModel(date = document.documentDate, document, BalancingChargeCreditType, Some(financialDetailsModel.balanceDetails)))
               case (_, true) =>
                 // if we didn't find CutOverCredit dueDate then we "lost" this document

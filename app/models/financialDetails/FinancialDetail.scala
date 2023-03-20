@@ -16,11 +16,13 @@
 
 package models.financialDetails
 
+import models.creditDetailModel.{BalancingChargeCreditType, CreditType, CutOverCreditType, MfaCreditType}
 import models.financialDetails.FinancialDetail.Types._
 import play.api.libs.json.{Format, Json}
 import services.DateService
 
 import java.time.LocalDate
+
 
 case class FinancialDetail(taxYear: String,
                            mainType: Option[String] = None,
@@ -88,14 +90,14 @@ case class FinancialDetail(taxYear: String,
     }
     .filter(_.getPaymentAllocationTextInChargeSummary.isDefined)
 
-  def getCreditType: Option[String] = {
-    if (MfaCreditUtils.validMFACreditType(mainType)) Some("MFA Credit") else {
-      mainType match {
-        case Some(credit) => if (credit.contains("ITSA Cutover Credits")) Some("Cutover Credit") else {
-          if (credit.contains("SA Balancing Charge Credit")) Some("Balancing Charge Credit") else None
-        }
-        case None => None
+  def getCreditType: Option[CreditType] = {
+    val validMFA = MfaCreditUtils.validMFACreditType(mainType)
+    (validMFA, mainType) match {
+      case (true, _) => Some(MfaCreditType)
+      case (_, Some(credit)) => if (credit.contains("ITSA Cutover Credits")) Some(CutOverCreditType) else {
+        if (credit.contains("SA Balancing Charge Credit")) Some(BalancingChargeCreditType) else None
       }
+      case (_,_) => None
     }
   }
 }

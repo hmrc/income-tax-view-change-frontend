@@ -20,6 +20,7 @@ import audit.Utilities.userAuditDetails
 import auth.MtdItUser
 import enums.AuditType.ClaimARefundResponse
 import enums.TransactionName.ClaimARefund
+import models.creditDetailModel.{BalancingChargeCreditType, CreditType, CutOverCreditType, MfaCreditType}
 import models.financialDetails.{BalanceDetails, DocumentDetailWithDueDate, FinancialDetail}
 import play.api.Logger
 import play.api.libs.json.{JsObject, JsValue, Json}
@@ -43,14 +44,14 @@ case class ClaimARefundAuditModel(balanceDetails: Option[BalanceDetails],
   }
 
   private def getCreditType(credit: (DocumentDetailWithDueDate, FinancialDetail)): String = {
-    val creditType: Option[String] = credit._2.getCreditType
+    val creditType: Option[CreditType] = credit._2.getCreditType
     val isPayment: Boolean = credit._1.documentDetail.paymentLot.isDefined
-    (creditType, isPayment) match {
-      case (Some("MFA Credit"), _) => "Credit from HMRC adjustment"
-      case (Some("Cutover Credit"), _) => "Credit from an earlier tax year"
-      case (Some("Balancing Charge Credit"), _) => "Balancing charge credit"
-      case (_, true) => s"Payment made on ${getFullDueDate(credit._1.dueDate.get)}"
-      case (None, _) =>
+    creditType match {
+      case Some(MfaCreditType) => "Credit from HMRC adjustment"
+      case Some(CutOverCreditType) => "Credit from an earlier tax year"
+      case Some(BalancingChargeCreditType) => "Balancing charge credit"
+      case _ if isPayment => s"Payment made on ${getFullDueDate(credit._1.dueDate.get)}"
+      case None =>
         Logger("application").error(s"[ClaimARefundAuditModel][getCreditType] Missing or non-matching credit: not a valid credit type")
         "unknownCredit"
       case error =>

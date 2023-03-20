@@ -16,6 +16,7 @@
 
 @import _root_.implicits.ImplicitDateFormatterImpl
 @import _root_.implicits.ImplicitCurrencyFormatter._
+@import models.creditDetailModel.{BalancingChargeCreditType, CutOverCreditType, MfaCreditType}
 @import models.financialDetails.DocumentDetailWithDueDate
 @import models.financialDetails._
 @import _root_.utils.CreditAndRefundUtils._
@@ -89,21 +90,21 @@ balance.getOrElse(throw MissingFieldException("Balance"))
 }
 
 @getCreditsSummaryLink = {
-    @if(maybeCreditChargesHead._2.getCreditType == Some("MFA Credit")) {
+    @if(maybeCreditChargesHead._2.getCreditType == Some(MfaCreditType)) {
         @link(
             link = s"${getCreditsSummaryControllerHref(maybeCreditChargesHead._1.documentDetail, isAgent)}",
             outerMessage = ".",
             messageKey = messages("credit-and-refund.credit-from-hmrc-title-prt-2"),
             classes = "govuk-body govuk-!-font-weight-bold govuk-link--no-visited-state"
         )
-    } else if(maybeCreditChargesHead._2.getCreditType == Some("Cutover Credit")) {
+    } else if(maybeCreditChargesHead._2.getCreditType == Some(CutOverCreditType)) {
         @link(
             link = s"${getCreditsSummaryControllerHref(maybeCreditChargesHead._1.documentDetail, isAgent)}",
             outerMessage = ".",
             messageKey = messages("credit-and-refund.credit-from-earlier-tax-year"),
             classes = "govuk-body govuk-!-font-weight-bold govuk-link--no-visited-state"
         )
-    } else if(maybeCreditChargesHead._2.getCreditType == Some("Balancing Charge Credit")) {
+    } else if(maybeCreditChargesHead._2.getCreditType == Some(BalancingChargeCreditType)) {
         @link(
             link = s"${getCreditsSummaryControllerHref(maybeCreditChargesHead._1.documentDetail, isAgent)}",
             outerMessage = ".",
@@ -123,9 +124,9 @@ balance.getOrElse(throw MissingFieldException("Balance"))
             <!--Checks if there are any items in the list, depending on that ":" or "." message is used.-->
             @{
                 val listSize = creditCharges.filter(x => {
-                        if(x._2.getCreditType == Some("MFA Credit"))
+                        if(x._2.getCreditType == Some(MfaCreditType))
                             isMFACreditsAndDebitsEnabled
-                        else if(x._2.getCreditType == Some("Cutover Credit"))
+                        else if(x._2.getCreditType == Some(CutOverCreditType))
                             isCutOverCreditsEnabled
                         else
                             true
@@ -181,7 +182,7 @@ balance.getOrElse(throw MissingFieldException("Balance"))
 }
 
 @getCutOverCreditContent(credit: (DocumentDetailWithDueDate, FinancialDetail), index: Int) = {
-    @if(credit._2.getCreditType == Some("Cutover Credit") && isCutOverCreditsEnabled) {
+    @if(credit._2.getCreditType == Some(CutOverCreditType) && isCutOverCreditsEnabled) {
             <li>
                 <p class="govuk-heading-s">
                     @credit._1.documentDetail.paymentOrChargeCredit.getOrElse(throw MissingFieldException("Payment Or Charge Credit")).toCurrencyString
@@ -218,11 +219,11 @@ balance.getOrElse(throw MissingFieldException("Balance"))
 @getListOfCreditsAndRefunds = {
     <ul class="govuk-list govuk-list--bullet" id="credits-list">
         @for((credit, index) <- creditCharges.zipWithIndex) {
-            @if(credit._2.getCreditType == Some("Balancing Charge Credit")) {
+            @if(credit._2.getCreditType == Some(BalancingChargeCreditType)) {
                 @getBalancingChargeCreditContent(credit, index)
-            } else if(credit._2.getCreditType == Some("MFA Credit")) {
+            } else if(credit._2.getCreditType == Some(MfaCreditType)) {
                 @getMFACreditContent(credit, index)
-            } else if(credit._2.getCreditType == Some("Cutover Credit")) {
+            } else if(credit._2.getCreditType == Some(CutOverCreditType)) {
                 @getCutOverCreditContent(credit, index)
             } else {
                 @getPaymentContent(credit)
