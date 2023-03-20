@@ -88,12 +88,6 @@ case class FinancialDetail(taxYear: String,
     }
     .filter(_.getPaymentAllocationTextInChargeSummary.isDefined)
 
-  def isMFACredit: Boolean = MfaCreditUtils.validMFACreditType(mainType)
-
-  def isCutOverCredit: Boolean = mainType.contains("ITSA Cutover Credits")
-
-  def isBalancingChargeCredit: Boolean = mainType.contains("SA Balancing Charge Credit")
-
   def getCreditType: Option[String] = {
     if (MfaCreditUtils.validMFACreditType(mainType)) Some("MFA Credit") else {
       mainType match {
@@ -104,7 +98,6 @@ case class FinancialDetail(taxYear: String,
       }
     }
   }
-
 }
 
 

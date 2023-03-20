@@ -119,10 +119,8 @@ class FinancialDetailSpec extends UnitSpec {
 
         val emptyMainTypeDetail =  FinancialDetail.apply(taxYear = "2022", mainType = None, items = None)
         emptyMainTypeDetail.getCreditType shouldBe None
-
       }
     }
-
   }
 
   "FinancialDetail.Types" when {
