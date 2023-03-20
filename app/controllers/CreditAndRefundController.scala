@@ -127,7 +127,7 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
   }
 
   def getCreditType(credit: (DocumentDetailWithDueDate, FinancialDetail)): String = {
-    val isBCC: Boolean = credit._2.isBalancingChargeCredit
+    /*val isBCC: Boolean = credit._2.isBalancingChargeCredit
     val isMFA: Boolean = credit._2.isMFACredit
     val isCutOverCredit: Boolean = credit._2.isCutOverCredit
     val isPayment: Boolean = credit._1.documentDetail.paymentLot.isDefined
@@ -138,6 +138,19 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
       case (false, false, true, false) => cutOverCredit
       case (false, false, false, true) => payment
       case (_, _, _, _) =>
+        Logger("application").warn(s"[CreditAndRefundController][getCreditType] - Unknown credit")
+        "unknownCredit"
+    }*/
+
+    val creditType: Option[String] = credit._2.getCreditType
+    val isPayment: Boolean = credit._1.documentDetail.paymentLot.isDefined
+
+    (creditType, isPayment) match {
+      case (Some("Balancing Charge Credit"), false) => balancingChargeCredit
+      case (Some("MFA Credit"), false) => mfaCredit
+      case (Some("Cutover Credit"), false) => cutOverCredit
+      case (None, true) => payment
+      case (_,_) =>
         Logger("application").warn(s"[CreditAndRefundController][getCreditType] - Unknown credit")
         "unknownCredit"
     }

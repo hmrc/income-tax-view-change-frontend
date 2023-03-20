@@ -110,6 +110,19 @@ class FinancialDetailSpec extends UnitSpec {
       }
     }
 
+    "checking credit types" should {
+      "return correct credit type" in {
+        financialDetail(mainType = "ITSA Misc Credit").getCreditType shouldBe Some("MFA Credit")
+        financialDetail(mainType = "These are ITSA Cutover Credits").getCreditType shouldBe Some("Cutover Credit")
+        financialDetail(mainType = "lorem ipsum SA Balancing Charge Credit dolor sit").getCreditType shouldBe Some("Balancing Charge Credit")
+        financialDetail(mainType = "Not a valid type").getCreditType shouldBe None
+
+        val emptyMainTypeDetail =  FinancialDetail.apply(taxYear = "2022", mainType = None, items = None)
+        emptyMainTypeDetail.getCreditType shouldBe None
+
+      }
+    }
+
   }
 
   "FinancialDetail.Types" when {
