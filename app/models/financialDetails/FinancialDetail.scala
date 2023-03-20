@@ -23,7 +23,6 @@ import services.DateService
 
 import java.time.LocalDate
 
-
 case class FinancialDetail(taxYear: String,
                            mainType: Option[String] = None,
                            transactionId: Option[String] = None,
