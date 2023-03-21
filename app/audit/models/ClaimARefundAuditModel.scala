@@ -50,7 +50,7 @@ case class ClaimARefundAuditModel(balanceDetails: Option[BalanceDetails],
       case Some(MfaCreditType) => "Credit from HMRC adjustment"
       case Some(CutOverCreditType) => "Credit from an earlier tax year"
       case Some(BalancingChargeCreditType) => "Balancing charge credit"
-      case _ if isPayment => s"Payment made on ${getFullDueDate(credit._1.dueDate.getOrElse(LocalDate.MIN))}"
+      case _ if isPayment => s"Payment made on ${getFullDueDate(credit._1.dueDate.getOrElse(LocalDate.parse("0000-00-00")))}"
       case None =>
         Logger("application").error(s"[ClaimARefundAuditModel][getCreditType] Missing or non-matching credit: not a valid credit type")
         "unknownCredit"
