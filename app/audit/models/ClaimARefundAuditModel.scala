@@ -25,6 +25,7 @@ import models.financialDetails.{BalanceDetails, DocumentDetailWithDueDate, Finan
 import play.api.Logger
 import play.api.libs.json.{JsObject, JsValue, Json}
 
+import java.time
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -46,12 +47,15 @@ case class ClaimARefundAuditModel(balanceDetails: Option[BalanceDetails],
   private def getCreditType(credit: (DocumentDetailWithDueDate, FinancialDetail)): String = {
     val creditType: Option[CreditType] = credit._2.getCreditType
     val isPayment: Boolean = credit._1.documentDetail.paymentLot.isDefined
-    creditType match {
-      case Some(MfaCreditType) => "Credit from HMRC adjustment"
-      case Some(CutOverCreditType) => "Credit from an earlier tax year"
-      case Some(BalancingChargeCreditType) => "Balancing charge credit"
-      case _ if isPayment => s"Payment made on ${getFullDueDate(credit._1.dueDate.getOrElse(LocalDate.parse("0000-00-00")))}"
-      case None =>
+    (creditType, credit._1.dueDate) match {
+      case (Some(MfaCreditType), _) => "Credit from HMRC adjustment"
+      case (Some(CutOverCreditType), _) => "Credit from an earlier tax year"
+      case (Some(BalancingChargeCreditType), _) => "Balancing charge credit"
+      case (_, Some(date)) if isPayment => s"Payment made on ${getFullDueDate(date)}"
+      case (_, None) if isPayment =>
+        Logger("application").error(s"[ClaimARefundAuditModel][getCreditType] Missing or non-matching credit: not a valid payment date")
+        "unknownDate"
+      case (_, _) =>
         Logger("application").error(s"[ClaimARefundAuditModel][getCreditType] Missing or non-matching credit: not a valid credit type")
         "unknownCredit"
     }
