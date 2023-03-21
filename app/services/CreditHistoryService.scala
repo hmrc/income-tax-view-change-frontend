@@ -50,7 +50,7 @@ class CreditHistoryService @Inject()(incomeTaxViewChangeConnector: IncomeTaxView
                 Some(CreditDetailModel(date = document.documentDate, document, MfaCreditType, Some(financialDetailsModel.balanceDetails)))
               case (Some(BalancingChargeCreditType), true) =>
                 Some(CreditDetailModel(date = document.documentDate, document, BalancingChargeCreditType, Some(financialDetailsModel.balanceDetails)))
-              case (_, true) =>
+              case (Some(CutOverCreditType), true) =>
                 // if we didn't find CutOverCredit dueDate then we "lost" this document
                 financialDetailsModel.getDueDateForFinancialDetail(financialDetail)
                   .map(dueDate => CreditDetailModel(date = dueDate, document, CutOverCreditType, Some(financialDetailsModel.balanceDetails)))
