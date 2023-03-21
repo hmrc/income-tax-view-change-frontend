@@ -93,9 +93,8 @@ case class FinancialDetail(taxYear: String,
     val validMFA = MfaCreditUtils.validMFACreditType(mainType)
     (validMFA, mainType) match {
       case (true, _) => Some(MfaCreditType)
-      case (_, Some(credit)) => if (credit.contains("ITSA Cutover Credits")) Some(CutOverCreditType) else {
-        if (credit.contains("SA Balancing Charge Credit")) Some(BalancingChargeCreditType) else None
-      }
+      case (_, Some("ITSA Cutover Credits")) => Some(CutOverCreditType)
+      case (_, Some("SA Balancing Charge Credit")) => Some(BalancingChargeCreditType)
       case (_,_) => None
     }
   }

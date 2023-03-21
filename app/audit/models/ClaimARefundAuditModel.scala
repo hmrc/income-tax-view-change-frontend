@@ -54,9 +54,6 @@ case class ClaimARefundAuditModel(balanceDetails: Option[BalanceDetails],
       case None =>
         Logger("application").error(s"[ClaimARefundAuditModel][getCreditType] Missing or non-matching credit: not a valid credit type")
         "unknownCredit"
-      case error =>
-        Logger("application").error(s"[ClaimARefundAuditModel][getCreditType] Missing or non-matching credit: $error found")
-        "unknownCredit"
     }
   }
 
