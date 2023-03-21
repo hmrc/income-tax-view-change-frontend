@@ -20,10 +20,12 @@ import audit.Utilities.userAuditDetails
 import auth.MtdItUser
 import enums.AuditType.ClaimARefundResponse
 import enums.TransactionName.ClaimARefund
+import models.creditDetailModel.{BalancingChargeCreditType, CreditType, CutOverCreditType, MfaCreditType}
 import models.financialDetails.{BalanceDetails, DocumentDetailWithDueDate, FinancialDetail}
 import play.api.Logger
 import play.api.libs.json.{JsObject, JsValue, Json}
 
+import java.time
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -43,19 +45,18 @@ case class ClaimARefundAuditModel(balanceDetails: Option[BalanceDetails],
   }
 
   private def getCreditType(credit: (DocumentDetailWithDueDate, FinancialDetail)): String = {
-    val isMFA: Boolean = credit._2.isMFACredit
-    val isCutOverCredit: Boolean = credit._2.isCutOverCredit
+    val creditType: Option[CreditType] = credit._2.getCreditType
     val isPayment: Boolean = credit._1.documentDetail.paymentLot.isDefined
-    val isBalancingCreditCharge: Boolean = credit._2.isBalancingChargeCredit
-
-    (isMFA, isCutOverCredit, isBalancingCreditCharge, isPayment) match {
-      case (true, _, _, _) => "Credit from HMRC adjustment"
-      case (_, true, _, _) => "Credit from an earlier tax year"
-      case (_, _, true, _) => "Balancing charge credit"
-      case (_, _, _, true) => s"Payment made on ${getFullDueDate(credit._1.dueDate.get)}"
-
-      case error =>
-        Logger("application").error(s"[ClaimARefundAuditModel][getCreditType] Missing or non-matching credit: $error found")
+    (creditType, credit._1.dueDate) match {
+      case (Some(MfaCreditType), _) => "Credit from HMRC adjustment"
+      case (Some(CutOverCreditType), _) => "Credit from an earlier tax year"
+      case (Some(BalancingChargeCreditType), _) => "Balancing charge credit"
+      case (_, Some(date)) if isPayment => s"Payment made on ${getFullDueDate(date)}"
+      case (_, None) if isPayment =>
+        Logger("application").error(s"[ClaimARefundAuditModel][getCreditType] Missing or non-matching credit: not a valid payment date")
+        "unknownDate"
+      case (_, _) =>
+        Logger("application").error(s"[ClaimARefundAuditModel][getCreditType] Missing or non-matching credit: not a valid credit type")
         "unknownCredit"
     }
   }

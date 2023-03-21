@@ -16,6 +16,7 @@
 
 package utils
 
+import models.creditDetailModel.{BalancingChargeCreditType, CutOverCreditType, MfaCreditType}
 import models.financialDetails.MfaCreditUtils.validMFACreditType
 import models.financialDetails.{BalanceDetails, DocumentDetailWithDueDate, FinancialDetail}
 
@@ -33,7 +34,12 @@ object CreditAndRefundUtils {
                                    balanceDetails: Option[BalanceDetails], isMFACreditsAndDebitsEnabled: Boolean = false,
                                    isCutOverCreditEnabled: Boolean = false): Option[UnallocatedCreditType] = {
 
-      def validCredit(financialDetails: FinancialDetail): Boolean = (financialDetails.isMFACredit && isMFACreditsAndDebitsEnabled) || (financialDetails.isCutOverCredit && isCutOverCreditEnabled) || financialDetails.isBalancingChargeCredit
+      def validCredit(detail: FinancialDetail): Boolean = detail.getCreditType match{
+        case Some(MfaCreditType) => isMFACreditsAndDebitsEnabled
+        case Some(CutOverCreditType) => isCutOverCreditEnabled
+        case Some(BalancingChargeCreditType) => true
+        case _ => false
+      }
       def validPayment(documentDetailWithDueDate: DocumentDetailWithDueDate): Boolean = documentDetailWithDueDate.documentDetail.paymentLot.isDefined && documentDetailWithDueDate.documentDetail.paymentLotItem.isDefined
 
       (creditCharges, balanceDetails, creditCharges.size) match {

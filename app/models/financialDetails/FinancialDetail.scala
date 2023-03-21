@@ -16,6 +16,7 @@
 
 package models.financialDetails
 
+import models.creditDetailModel.{BalancingChargeCreditType, CreditType, CutOverCreditType, MfaCreditType}
 import models.financialDetails.FinancialDetail.Types._
 import play.api.libs.json.{Format, Json}
 import services.DateService
@@ -88,11 +89,15 @@ case class FinancialDetail(taxYear: String,
     }
     .filter(_.getPaymentAllocationTextInChargeSummary.isDefined)
 
-  def isMFACredit: Boolean = MfaCreditUtils.validMFACreditType(mainType)
-
-  def isCutOverCredit: Boolean = mainType.contains("ITSA Cutover Credits")
-
-  def isBalancingChargeCredit: Boolean = mainType.contains("SA Balancing Charge Credit")
+  def getCreditType: Option[CreditType] = {
+    val validMFA = MfaCreditUtils.validMFACreditType(mainType)
+    (validMFA, mainType) match {
+      case (true, _) => Some(MfaCreditType)
+      case (_, Some("ITSA Cutover Credits")) => Some(CutOverCreditType)
+      case (_, Some("SA Balancing Charge Credit")) => Some(BalancingChargeCreditType)
+      case (_,_) => None
+    }
+  }
 }
 
 
