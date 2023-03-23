@@ -77,7 +77,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
       "return a success response back" in {
         when(mockIncomeTaxViewChangeConnector.getOutstandingCharges(any(), any(), any())(any()))
           .thenReturn(Future.successful(outstandingChargesDueInMoreThan30Days))
-        when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(isEnabled(CodingOut))(any(), any(), any()))
+        when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
           .thenReturn(Future.successful(List(financialDetailsDueInMoreThan30Days())))
 
         TestWhatYouOweService.getWhatYouOweChargesList(isEnabled(CodingOut), isEnabled(MFACreditsAndDebits))(headerCarrier, mtdItUser).futureValue shouldBe whatYouOweDataWithDataDueInMoreThan30Days()
