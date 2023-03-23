@@ -58,7 +58,7 @@ class WhatYouOweController @Inject()(val checkSessionTimeout: SessionTimeoutPred
                     isAgent: Boolean,
                     origin: Option[String] = None)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
-    whatYouOweService.getWhatYouOweChargesList() flatMap {
+    whatYouOweService.getWhatYouOweChargesList(isEnabled(CodingOut), isEnabled(MFACreditsAndDebits)) flatMap {
       whatYouOweChargesList =>
         auditingService.extendedAudit(WhatYouOweResponseAuditModel(user, whatYouOweChargesList, dateService))
 

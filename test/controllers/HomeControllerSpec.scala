@@ -150,7 +150,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
         disableAllSwitches()
         when(NextUpdatesService.getNextDeadlineDueDateAndOverDueObligations()(any(), any(), any())) thenReturn Future.successful(updateDateAndOverdueObligations)
         mockSingleBusinessIncomeSource()
-        when(financialDetailsService.getAllUnpaidFinancialDetails(any(), any(), any()))
+        when(financialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
           .thenReturn(Future.successful(List(FinancialDetailsModel(
             balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
             documentDetails = List(DocumentDetail(nextPaymentYear, "testId", Some("ITSA- POA 1"), Some("documentText"), Some(1000.00), None, LocalDate.of(2018, 3, 29))),
@@ -158,7 +158,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
               transactionId = Some("testId"),
               items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate.toString))))))
           ))))
-        when(whatYouOweService.getWhatYouOweChargesList(any())(any(), any()))
+        when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
           .thenReturn(Future.successful(emptyWhatYouOweChargesListIndividual))
 
         val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
@@ -173,9 +173,9 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
         disableAllSwitches()
         when(NextUpdatesService.getNextDeadlineDueDateAndOverDueObligations()(any(), any(), any())) thenReturn Future.successful(updateDateAndOverdueObligations)
         mockSingleBusinessIncomeSource()
-        when(financialDetailsService.getAllUnpaidFinancialDetails(any(), any(), any()))
+        when(financialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
           .thenReturn(Future.successful(List(FinancialDetailsErrorModel(1, "testString"))))
-        when(whatYouOweService.getWhatYouOweChargesList(any())(any(), any()))
+        when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
           .thenReturn(Future.successful(oneOverdueBCDPaymentInWhatYouOweChargesListIndividual))
 
         val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
@@ -191,7 +191,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
         when(NextUpdatesService.getNextDeadlineDueDateAndOverDueObligations()(any(), any(), any())) thenReturn Future.successful(updateDateAndOverdueObligations)
         mockSingleBusinessIncomeSource()
 
-        when(financialDetailsService.getAllUnpaidFinancialDetails(any(), any(), any()))
+        when(financialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
           .thenReturn(Future.successful(List(
             FinancialDetailsModel(
               balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
@@ -210,7 +210,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
                 transactionId = Some("testId3"),
                 items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate.toString)))))))
           )))
-        when(whatYouOweService.getWhatYouOweChargesList(any())(any(), any()))
+        when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
           .thenReturn(Future.successful(emptyWhatYouOweChargesListIndividual))
 
         val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
@@ -226,7 +226,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
         when(NextUpdatesService.getNextDeadlineDueDateAndOverDueObligations()(any(), any(), any())) thenReturn Future.successful(updateDateAndOverdueObligations)
         mockSingleBusinessIncomeSource()
 
-        when(financialDetailsService.getAllUnpaidFinancialDetails(any(), any(), any()))
+        when(financialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
           .thenReturn(Future.successful(List(
             FinancialDetailsModel(
               balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
@@ -252,7 +252,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
                 transactionId = Some("testId3"),
                 items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate.toString)))))))
           )))
-        when(whatYouOweService.getWhatYouOweChargesList(any())(any(), any()))
+        when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
           .thenReturn(Future.successful(emptyWhatYouOweChargesListIndividual))
 
         val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
@@ -268,9 +268,9 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
         "there is a problem getting financial details" in new Setup {
           when(NextUpdatesService.getNextDeadlineDueDateAndOverDueObligations()(any(), any(), any())) thenReturn Future.successful(updateDateAndOverdueObligations)
           mockSingleBusinessIncomeSource()
-          when(financialDetailsService.getAllUnpaidFinancialDetails(any(), any(), any()))
+          when(financialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
             .thenReturn(Future.successful(List(FinancialDetailsErrorModel(1, "testString"))))
-          when(whatYouOweService.getWhatYouOweChargesList(any())(any(), any()))
+          when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
             .thenReturn(Future.successful(emptyWhatYouOweChargesListIndividual))
 
           val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
@@ -285,9 +285,9 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
         "There are no financial detail" in new Setup {
           when(NextUpdatesService.getNextDeadlineDueDateAndOverDueObligations()(any(), any(), any())) thenReturn Future.successful(updateDateAndOverdueObligations)
           mockSingleBusinessIncomeSource()
-          when(financialDetailsService.getAllUnpaidFinancialDetails(any(), any(), any()))
+          when(financialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
             .thenReturn(Future.successful(List(FinancialDetailsModel(BalanceDetails(1.00, 2.00, 3.00, None, None, None, None), List(), List()))))
-          when(whatYouOweService.getWhatYouOweChargesList(any())(any(), any()))
+          when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
             .thenReturn(Future.successful(emptyWhatYouOweChargesListIndividual))
 
           val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
@@ -302,14 +302,14 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
         "All financial detail bill are paid" in new Setup {
           when(NextUpdatesService.getNextDeadlineDueDateAndOverDueObligations()(any(), any(), any())) thenReturn Future.successful(updateDateAndOverdueObligations)
           mockSingleBusinessIncomeSource()
-          when(financialDetailsService.getAllUnpaidFinancialDetails(any(), any(), any()))
+          when(financialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
             .thenReturn(Future.successful(List(FinancialDetailsModel(
               balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
               documentDetails = List(DocumentDetail(nextPaymentYear, "testId", None, None, Some(0), None, LocalDate.of(2018, 3, 29))),
               financialDetails = List(FinancialDetail(nextPaymentYear, transactionId = Some("testId"),
                 items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate.toString))))))
             ))))
-          when(whatYouOweService.getWhatYouOweChargesList(any())(any(), any()))
+          when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
             .thenReturn(Future.successful(emptyWhatYouOweChargesListIndividual))
 
           val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
@@ -326,14 +326,14 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
       "there is a update date to display" in new Setup {
         when(NextUpdatesService.getNextDeadlineDueDateAndOverDueObligations()(any(), any(), any())) thenReturn Future.successful(updateDateAndOverdueObligations)
         mockSingleBusinessIncomeSource()
-        when(financialDetailsService.getAllUnpaidFinancialDetails(any(), any(), any()))
+        when(financialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
           .thenReturn(Future.successful(List(FinancialDetailsModel(
             balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
             documentDetails = List(DocumentDetail(nextPaymentYear, "testId", None, None, Some(1000.00), None, LocalDate.of(2018, 3, 29))),
             financialDetails = List(FinancialDetail(nextPaymentYear, transactionId = Some("testId"),
               items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate.toString))))))
           ))))
-        when(whatYouOweService.getWhatYouOweChargesList(any())(any(), any()))
+        when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
           .thenReturn(Future.successful(emptyWhatYouOweChargesListIndividual))
 
         val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
@@ -418,7 +418,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
             when(mockDateService.getCurrentDate).thenReturn(LocalDate.now())
             mockSingleBusinessIncomeSource()
             mockNextDeadlineDueDateAndOverDueObligations()(updateDateAndOverdueObligationsLPI)
-            when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any(), any(), any())) thenReturn Future.failed(new InternalServerException("obligation test exception"))
+            when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any())) thenReturn Future.failed(new InternalServerException("obligation test exception"))
             setupMockGetWhatYouOweChargesListEmpty()
 
             val result: Future[Result] = TestHomeController.showAgent()(fakeRequestConfirmedClient())
@@ -433,7 +433,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
             mockSingleBusinessIncomeSource()
             when(mockDateService.getCurrentDate).thenReturn(LocalDate.now())
             mockNextDeadlineDueDateAndOverDueObligations()(updateDateAndOverdueObligationsLPI)
-            when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any(), any(), any()))
+            when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
               .thenReturn(Future.successful(List(financialDetailsModel(dueDateValue = Some(LocalDate.of(2021, 5, 15).toString)))))
             setupMockGetWhatYouOweChargesListEmptyFromFinancialDetails()
 
@@ -452,7 +452,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
             mockSingleBusinessIncomeSource()
             when(mockDateService.getCurrentDate).thenReturn(LocalDate.now())
             mockNextDeadlineDueDateAndOverDueObligations()(updateDateAndOverdueObligationsLPI)
-            when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any(), any(), any()))
+            when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
               .thenReturn(Future.successful(List(financialDetailsModel(testTaxYear, dueDateValue = None))))
             setupMockGetWhatYouOweChargesListWithOneFromFinancialDetails()
 
@@ -470,7 +470,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
             when(mockDateService.getCurrentDate).thenReturn(LocalDate.now())
             mockSingleBusinessIncomeSource()
             mockNextDeadlineDueDateAndOverDueObligations()(updateDateAndOverdueObligationsLPI)
-            when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any(), any(), any()))
+            when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
               .thenReturn(Future.successful(List(financialDetailsModel(testTaxYear, dunningLock = Some("Stand over order")))))
             setupMockGetWhatYouOweChargesListWithOneFromFinancialDetails()
 
@@ -489,7 +489,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
             when(mockDateService.getCurrentDate).thenReturn(LocalDate.now())
             mockSingleBusinessIncomeSource()
             mockNextDeadlineDueDateAndOverDueObligations()(updateDateAndOverdueObligationsLPI)
-            when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any(), any(), any()))
+            when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
               .thenReturn(Future.successful(List(financialDetailsModel(testTaxYear, dunningLock = Some("Stand over order")),
                 financialDetailsModel(testTaxYear))))
             setupMockGetWhatYouOweChargesListWithOneFromFinancialDetails()
@@ -509,7 +509,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
             when(mockDateService.getCurrentDate).thenReturn(LocalDate.now())
             mockSingleBusinessIncomeSource()
             mockNextDeadlineDueDateAndOverDueObligations()(updateDateAndOverdueObligationsLPI)
-            when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any(), any(), any()))
+            when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
               .thenReturn(Future.successful(List(financialDetailsModel(testTaxYear, dunningLock = Some("Stand over order"), dueDateValue = None))))
             setupMockGetWhatYouOweChargesListWithOneFromFinancialDetails()
 
@@ -528,7 +528,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
             when(mockDateService.getCurrentDate).thenReturn(LocalDate.now())
             mockSingleBusinessIncomeSource()
             mockNextDeadlineDueDateAndOverDueObligations()(updateDateAndOverdueObligationsLPI)
-            when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any(), any(), any()))
+            when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
               .thenReturn(Future.successful(List(financialDetailsModel(testTaxYear, dunningLock = None, dueDateValue = None))))
             setupMockGetWhatYouOweChargesListWithOneFromFinancialDetails()
 
