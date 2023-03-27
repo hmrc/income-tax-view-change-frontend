@@ -39,7 +39,7 @@ class IncomeTaxCalculationConnector @Inject()(http: HttpClient,
                             (implicit headerCarrier: HeaderCarrier,
                              ec: ExecutionContext): Future[LiabilityCalculationResponseModel] = {
     http.GET[HttpResponse](getCalculationResponseUrl(nino), Seq(("taxYear", taxYear)))(httpReads,
-      headerCarrier.withExtraHeaders("mtditid" -> mtditid), ec) map { response =>
+      headerCarrier.withExtraHeaders("mtditid" -> mtditid, "env" -> config.itvcFrontendEnvironment), ec) map { response =>
       response.status match {
         case OK =>
           response.json.validate[LiabilityCalculationResponse].fold(
