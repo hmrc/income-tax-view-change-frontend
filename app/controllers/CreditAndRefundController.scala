@@ -24,6 +24,7 @@ import config.featureswitch._
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
+import models.creditDetailModel.{BalancingChargeCreditType, CreditType, CutOverCreditType, MfaCreditType}
 import models.financialDetails.{BalanceDetails, DocumentDetailWithDueDate, FinancialDetail, FinancialDetailsModel}
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages}
@@ -127,17 +128,15 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
   }
 
   def getCreditType(credit: (DocumentDetailWithDueDate, FinancialDetail)): String = {
-    val isBCC: Boolean = credit._2.isBalancingChargeCredit
-    val isMFA: Boolean = credit._2.isMFACredit
-    val isCutOverCredit: Boolean = credit._2.isCutOverCredit
+    val creditType: Option[CreditType] = credit._2.getCreditType
     val isPayment: Boolean = credit._1.documentDetail.paymentLot.isDefined
 
-    (isBCC, isMFA, isCutOverCredit, isPayment) match {
-      case (true, false, false, false) => balancingChargeCredit
-      case (false, true, false, false) => mfaCredit
-      case (false, false, true, false) => cutOverCredit
-      case (false, false, false, true) => payment
-      case (_, _, _, _) =>
+    (creditType, isPayment) match {
+      case (Some(BalancingChargeCreditType), false) => balancingChargeCredit
+      case (Some(MfaCreditType), false) => mfaCredit
+      case (Some(CutOverCreditType), false) => cutOverCredit
+      case (None, true) => payment
+      case (_,_) =>
         Logger("application").warn(s"[CreditAndRefundController][getCreditType] - Unknown credit")
         "unknownCredit"
     }

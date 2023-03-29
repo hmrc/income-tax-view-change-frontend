@@ -17,6 +17,7 @@
 package models.financialDetails
 
 import enums.ChargeType._
+import models.creditDetailModel.{BalancingChargeCreditType, CutOverCreditType, MfaCreditType}
 import models.financialDetails.FinancialDetail.{getMessageKeyByTypes, getMessageKeyForChargeType, getMessageKeyForMainType}
 import testConstants.FinancialDetailsTestConstants.financialDetail
 import testUtils.UnitSpec
@@ -110,6 +111,17 @@ class FinancialDetailSpec extends UnitSpec {
       }
     }
 
+    "checking credit types" should {
+      "return correct credit type" in {
+        financialDetail(mainType = "ITSA Misc Credit").getCreditType shouldBe Some(MfaCreditType)
+        financialDetail(mainType = "ITSA Cutover Credits").getCreditType shouldBe Some(CutOverCreditType)
+        financialDetail(mainType = "SA Balancing Charge Credit").getCreditType shouldBe Some(BalancingChargeCreditType)
+        financialDetail(mainType = "Not a valid type").getCreditType shouldBe None
+
+        val emptyMainTypeDetail =  FinancialDetail.apply(taxYear = "2022", mainType = None, items = None)
+        emptyMainTypeDetail.getCreditType shouldBe None
+      }
+    }
   }
 
   "FinancialDetail.Types" when {
