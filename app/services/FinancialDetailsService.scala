@@ -18,7 +18,6 @@ package services
 
 import auth.MtdItUser
 import config.FrontendAppConfig
-import config.featureswitch.{CodingOut, FeatureSwitching}
 import connectors.IncomeTaxViewChangeConnector
 import models.chargeHistory.{ChargeHistoryModel, ChargesHistoryErrorModel, ChargesHistoryModel}
 import models.financialDetails.{DocumentDetail, FinancialDetailsErrorModel, FinancialDetailsModel, FinancialDetailsResponseModel}
@@ -33,7 +32,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class FinancialDetailsService @Inject()(val incomeTaxViewChangeConnector: IncomeTaxViewChangeConnector,
                                         implicit val dateService: DateService)
-                                       (implicit val appConfig: FrontendAppConfig, ec: ExecutionContext) extends FeatureSwitching {
+                                       (implicit val appConfig: FrontendAppConfig, ec: ExecutionContext) {
 
   def getFinancialDetails(taxYear: Int, nino: String)(implicit hc: HeaderCarrier): Future[FinancialDetailsResponseModel] = {
     incomeTaxViewChangeConnector.getFinancialDetails(taxYear, nino)
