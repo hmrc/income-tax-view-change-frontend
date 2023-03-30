@@ -18,7 +18,6 @@ package services
 
 import auth.MtdItUser
 import config.FrontendAppConfig
-import config.featureswitch.{CodingOut, FeatureSwitching}
 import connectors.IncomeTaxViewChangeConnector
 import models.chargeHistory.{ChargeHistoryModel, ChargesHistoryErrorModel, ChargesHistoryModel}
 import models.financialDetails.{DocumentDetail, FinancialDetailsErrorModel, FinancialDetailsModel, FinancialDetailsResponseModel}
@@ -33,7 +32,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class FinancialDetailsService @Inject()(val incomeTaxViewChangeConnector: IncomeTaxViewChangeConnector,
                                         implicit val dateService: DateService)
-                                       (implicit val appConfig: FrontendAppConfig, ec: ExecutionContext) extends FeatureSwitching {
+                                       (implicit val appConfig: FrontendAppConfig, ec: ExecutionContext) {
 
   def getFinancialDetails(taxYear: Int, nino: String)(implicit hc: HeaderCarrier): Future[FinancialDetailsResponseModel] = {
     incomeTaxViewChangeConnector.getFinancialDetails(taxYear, nino)
@@ -105,20 +104,20 @@ class FinancialDetailsService @Inject()(val incomeTaxViewChangeConnector: Income
     }
   }
 
-  def getAllUnpaidFinancialDetails(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[List[FinancialDetailsResponseModel]] = {
+  def getAllUnpaidFinancialDetails(isCodingOutEnabled: Boolean)(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[List[FinancialDetailsResponseModel]] = {
     getAllFinancialDetails.map { chargesWithYears =>
       chargesWithYears.flatMap {
         case (_, errorModel: FinancialDetailsErrorModel) => Some(errorModel)
         case (_, financialDetails: FinancialDetailsModel) =>
-          val unpaidDocDetails: List[DocumentDetail] = unpaidDocumentDetails(financialDetails)
+          val unpaidDocDetails: List[DocumentDetail] = unpaidDocumentDetails(financialDetails, isCodingOutEnabled)
           if (unpaidDocDetails.nonEmpty) Some(financialDetails.copy(documentDetails = unpaidDocDetails)) else None
       }
     }
   }
 
-  private def unpaidDocumentDetails(financialDetailsModel: FinancialDetailsModel): List[DocumentDetail] = {
+  private def unpaidDocumentDetails(financialDetailsModel: FinancialDetailsModel,isCodingOutEnabled: Boolean): List[DocumentDetail] = {
     financialDetailsModel.documentDetails.collect {
-      case documentDetail: DocumentDetail if documentDetail.isCodingOutDocumentDetail(isEnabled(CodingOut)) => documentDetail
+      case documentDetail: DocumentDetail if documentDetail.isCodingOutDocumentDetail(isCodingOutEnabled) => documentDetail
       case documentDetail: DocumentDetail if documentDetail.latePaymentInterestAmount.isDefined && !documentDetail.interestIsPaid => documentDetail
       case documentDetail: DocumentDetail if documentDetail.isNotCodingOutDocumentDetail && !documentDetail.isPaid => documentDetail
     }

@@ -56,7 +56,7 @@ class CreditHistoryServiceSpec extends TestSupport with MockIncomeTaxViewChangeC
       "return a credit history error (~getFinancialDetails failed)" in {
         setupMockGetFinancialDetails(taxYear, nino)(FinancialDetailsErrorModel(500, "ERROR"))
         setupMockGetFinancialDetails(taxYear + 1, nino)(FinancialDetailsErrorModel(500, "ERROR"))
-        TestCreditHistoryService.getCreditsHistory(taxYear, nino).futureValue shouldBe Left(CreditHistoryError)
+        TestCreditHistoryService.getCreditsHistory(taxYear, nino, false, false).futureValue shouldBe Left(CreditHistoryError)
       }
     }
 
@@ -67,7 +67,7 @@ class CreditHistoryServiceSpec extends TestSupport with MockIncomeTaxViewChangeC
           enable(CutOverCredits)
           setupMockGetFinancialDetails(taxYear, nino)(taxYearFinancialDetails)
           setupMockGetFinancialDetails(taxYear + 1, nino)(taxYearFinancialDetails_PlusOneYear)
-          val futureResult = TestCreditHistoryService.getCreditsHistory(taxYear, nino)
+          val futureResult = TestCreditHistoryService.getCreditsHistory(taxYear, nino, true, true)
           whenReady(futureResult) { result =>
             result shouldBe Right(List(creditDetailModelasCutOver, creditDetailModelasMfa, creditDetailModelasBCC))
           }
@@ -79,7 +79,7 @@ class CreditHistoryServiceSpec extends TestSupport with MockIncomeTaxViewChangeC
           disable(CutOverCredits)
           setupMockGetFinancialDetails(taxYear, nino)(taxYearFinancialDetails)
           setupMockGetFinancialDetails(taxYear + 1, nino)(taxYearFinancialDetails_PlusOneYear)
-          val futureResult = TestCreditHistoryService.getCreditsHistory(taxYear, nino)
+          val futureResult = TestCreditHistoryService.getCreditsHistory(taxYear, nino, true, false)
           whenReady(futureResult) { result =>
             result shouldBe Right(List(creditDetailModelasMfa, creditDetailModelasBCC))
           }
@@ -91,7 +91,7 @@ class CreditHistoryServiceSpec extends TestSupport with MockIncomeTaxViewChangeC
           enable(CutOverCredits)
           setupMockGetFinancialDetails(taxYear, nino)(taxYearFinancialDetails)
           setupMockGetFinancialDetails(taxYear + 1, nino)(taxYearFinancialDetails_PlusOneYear)
-          val futureResult = TestCreditHistoryService.getCreditsHistory(taxYear, nino)
+          val futureResult = TestCreditHistoryService.getCreditsHistory(taxYear, nino, false, true)
           whenReady(futureResult) { result =>
             result shouldBe Right(List(creditDetailModelasCutOver, creditDetailModelasBCC))
           }
@@ -103,7 +103,7 @@ class CreditHistoryServiceSpec extends TestSupport with MockIncomeTaxViewChangeC
           disable(CutOverCredits)
           setupMockGetFinancialDetails(taxYear, nino)(taxYearFinancialDetails)
           setupMockGetFinancialDetails(taxYear + 1, nino)(taxYearFinancialDetails_PlusOneYear)
-          val futureResult = TestCreditHistoryService.getCreditsHistory(taxYear, nino)
+          val futureResult = TestCreditHistoryService.getCreditsHistory(taxYear, nino, false, false)
           whenReady(futureResult) { result =>
             result shouldBe Right(List(creditDetailModelasBCC))
           }

@@ -411,7 +411,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
         setupMockGetFinancialDetails(getTaxEndYear(LocalDate.now.minusYears(1)), testNino)(financialDetailLastYear)
         setupMockGetFinancialDetails(getTaxEndYear(LocalDate.now), testNino)(financialDetail)
 
-        val result = TestFinancialDetailsService.getAllUnpaidFinancialDetails(mtdUser(2), headerCarrier, ec)
+        val result = TestFinancialDetailsService.getAllUnpaidFinancialDetails(isEnabled(CodingOut))(mtdUser(2), headerCarrier, ec)
 
         result.futureValue shouldBe expectedResult
       }
@@ -463,7 +463,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
           )
         ))
 
-        val result = TestFinancialDetailsService.getAllUnpaidFinancialDetails(mtdUser(2), headerCarrier, ec)
+        val result = TestFinancialDetailsService.getAllUnpaidFinancialDetails(isEnabled(CodingOut))(mtdUser(2), headerCarrier, ec)
 
         result.futureValue shouldBe expectedResult
       }
@@ -492,7 +492,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
           )
         ))
 
-        val result = TestFinancialDetailsService.getAllUnpaidFinancialDetails(mtdUser(2), headerCarrier, ec)
+        val result = TestFinancialDetailsService.getAllUnpaidFinancialDetails(isEnabled(CodingOut))(mtdUser(2), headerCarrier, ec)
 
         result.futureValue shouldBe List.empty[FinancialDetailsResponseModel]
       }
@@ -524,7 +524,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
         ))
         setupMockGetFinancialDetails(getTaxEndYear(LocalDate.now), testNino)(financialDetailError)
 
-        val result = TestFinancialDetailsService.getAllUnpaidFinancialDetails(mtdUser(2), headerCarrier, ec)
+        val result = TestFinancialDetailsService.getAllUnpaidFinancialDetails(isEnabled(CodingOut))(mtdUser(2), headerCarrier, ec)
 
         result.futureValue shouldBe expectedResult
       }
@@ -562,7 +562,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
         setupMockGetFinancialDetails(getTaxEndYear(LocalDate.now.minusYears(1)), testNino)(financialDetailCodingOut)
         setupMockGetFinancialDetails(getTaxEndYear(LocalDate.now), testNino)(financialDetail)
 
-        val result = TestFinancialDetailsService.getAllUnpaidFinancialDetails(mtdUser(2), headerCarrier, ec)
+        val result = TestFinancialDetailsService.getAllUnpaidFinancialDetails(isEnabled(CodingOut))(mtdUser(2), headerCarrier, ec)
 
         result.futureValue shouldBe List(
           financialDetailCodingOut,
@@ -608,7 +608,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
           setupMockGetFinancialDetails(getTaxEndYear(LocalDate.now.minusYears(1)), testNino)(financialDetailCodingOut)
           setupMockGetFinancialDetails(getTaxEndYear(LocalDate.now), testNino)(financialDetail)
 
-          val result = TestFinancialDetailsService.getAllUnpaidFinancialDetails(mtdUser(2), headerCarrier, ec)
+          val result = TestFinancialDetailsService.getAllUnpaidFinancialDetails(isEnabled(CodingOut))(mtdUser(2), headerCarrier, ec)
 
           result.futureValue shouldBe List(
             financialDetail
