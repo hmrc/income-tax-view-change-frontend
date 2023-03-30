@@ -72,7 +72,7 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
         val codedOutDocumentDetail = if (isEnabled(CodingOut)) {
           financialDetailsModelList.flatMap(fdm =>
             fdm.documentDetails.find(dd => dd.isPayeSelfAssessment
-              && dd.taxYear.toInt == (dateService.getCurrentTaxYearEnd - 1))
+              && dd.taxYear == (dateService.getCurrentTaxYearEnd - 1))
           ).headOption
         } else None
 

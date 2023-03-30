@@ -137,7 +137,7 @@ class ChargeSummaryAuditSpec extends WordSpecLike with MustMatchers {
     chargeHistories = List.empty,
     paymentAllocations = List.empty,
     isLatePaymentCharge = false,
-    taxYear = taxYearInt
+    taxYear = taxYear
   )
 
   def paymentsWithCharge(mainType: String, chargeType: String, date: String, amount: BigDecimal): PaymentsWithChargeType =
@@ -185,7 +185,7 @@ class ChargeSummaryAuditSpec extends WordSpecLike with MustMatchers {
     chargeHistories = if (!isLateInterestCharge) chargeHistory else List.empty,
     paymentAllocations = paymentAllocation,
     isLatePaymentCharge = isLateInterestCharge,
-    taxYear = taxYearInt
+    taxYear = taxYear
   )
 
   "ChargeSummaryAudit(mtdItUser, charge, agentReferenceNumber)" should {
@@ -228,7 +228,7 @@ class ChargeSummaryAuditSpec extends WordSpecLike with MustMatchers {
               "dueDate" -> docDateDetail.dueDate,
               "chargeType" -> getChargeType(false, docDetailWithInterest),
               "interestPeriod" -> "2021-10-06 to 2022-01-06",
-              "endTaxYear" -> taxYearInt,
+              "endTaxYear" -> taxYear,
               "overdue" -> docDateDetail.isOverdue
             ),
             "saUtr" -> "saUtr",
@@ -303,7 +303,7 @@ class ChargeSummaryAuditSpec extends WordSpecLike with MustMatchers {
               "fullPaymentAmount" -> docDetailWithCodingOutRejected.originalAmount,
               "dueDate" -> docDateDetailWithCodingOutAccepted.dueDate,
               "chargeType" -> getChargeType(latePayment = false, docDetailWithCodingOutAccepted),
-              "endTaxYear" -> taxYearInt,
+              "endTaxYear" -> taxYear,
               "overdue" -> docDateDetailWithCodingOutAccepted.isOverdue
             ),
             "saUtr" -> "saUtr",
@@ -338,11 +338,11 @@ class ChargeSummaryAuditSpec extends WordSpecLike with MustMatchers {
               Json.obj(
                 "amount" -> 1500,
                 "date" -> "2018-03-30",
-                "description" -> s"Amount collected through your PAYE tax code for ${taxYearInt + 1} to ${taxYearInt + 2} tax year"),
+                "description" -> s"Amount collected through your PAYE tax code for ${taxYear + 1} to ${taxYear + 2} tax year"),
               Json.obj(
                 "amount" -> 1600,
                 "date" -> "2018-03-31",
-                "description" -> s"Amount collected through your PAYE tax code for ${taxYearInt + 1} to ${taxYearInt+ 2} tax year")
+                "description" -> s"Amount collected through your PAYE tax code for ${taxYear + 1} to ${taxYear+ 2} tax year")
             ),
             "agentReferenceNumber" -> "agentReferenceNumber",
             "chargeHistory" -> Json.arr(
@@ -378,7 +378,7 @@ class ChargeSummaryAuditSpec extends WordSpecLike with MustMatchers {
               "fullPaymentAmount" -> docDetailWithCodingOutRejected.originalAmount,
               "dueDate" -> docDateDetailWithCodingOutRejected.dueDate,
               "chargeType" -> getChargeType(latePayment = false, docDetailWithCodingOutRejected),
-              "endTaxYear" -> taxYearInt,
+              "endTaxYear" -> taxYear,
               "overdue" -> docDateDetailWithCodingOutRejected.isOverdue
             ),
             "saUtr" -> "saUtr",
@@ -455,7 +455,7 @@ class ChargeSummaryAuditSpec extends WordSpecLike with MustMatchers {
               "dueDate" -> docDetailWithInterest.interestEndDate,
               "chargeType" -> getChargeType(latePayment = true, docDetailWithInterest),
               "interestPeriod" -> "2021-10-06 to 2022-01-06",
-              "endTaxYear" -> taxYearInt,
+              "endTaxYear" -> taxYear,
               "overdue" -> docDateDetail.isOverdue
             ),
             "saUtr" -> "saUtr",
@@ -478,7 +478,7 @@ class ChargeSummaryAuditSpec extends WordSpecLike with MustMatchers {
               "fullPaymentAmount" -> docDetail.originalAmount,
               "dueDate" -> docDateDetail.dueDate,
               "chargeType" -> getChargeType(latePayment = false, docDetail),
-              "endTaxYear" -> taxYearInt,
+              "endTaxYear" -> taxYear,
               "overdue" -> docDateDetail.isOverdue),
             "nationalInsuranceNumber" -> "nino",
             "paymentBreakdown" -> Json.arr(),

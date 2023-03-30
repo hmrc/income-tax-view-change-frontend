@@ -18,12 +18,13 @@ package models.financialDetails
 
 import enums.CodingOutType._
 import play.api.Logger
-import play.api.libs.json.{Format, Json}
+import play.api.libs.functional.syntax.toFunctionalBuilderOps
+import play.api.libs.json.{Format, Json, Reads, Writes, __}
 import services.DateService
 
 import java.time.LocalDate
 
-case class DocumentDetail(taxYear: String,
+case class DocumentDetail(taxYear: Int,
                           transactionId: String,
                           documentDescription: Option[String],
                           documentText: Option[String],
@@ -178,6 +179,24 @@ case class DocumentDetailWithDueDate(documentDetail: DocumentDetail, dueDate: Op
 }
 
 object DocumentDetail {
-  implicit val format: Format[DocumentDetail] = Json.format[DocumentDetail]
-
+  implicit val writes: Writes[DocumentDetail] = Json.writes[DocumentDetail]
+  implicit val reads: Reads[DocumentDetail] = (
+    (__ \ "taxYear").read[String].map[Int](_.toInt) and
+      (__ \ "transactionId").read[String] and
+      (__ \ "documentDescription").readNullable[String] and
+      (__ \ "documentText").readNullable[String] and
+      (__ \ "outstandingAmount").readNullable[BigDecimal] and
+      (__ \ "originalAmount").readNullable[BigDecimal] and
+      (__ \ "documentDate").read[LocalDate] and
+      (__ \ "interestOutstandingAmount").readNullable[BigDecimal] and
+      (__ \ "interestRate").readNullable[BigDecimal] and
+      (__ \ "latePaymentInterestId").readNullable[String] and
+      (__ \ "interestFromDate").readNullable[LocalDate] and
+      (__ \ "interestEndDate").readNullable[LocalDate] and
+      (__ \ "latePaymentInterestAmount").readNullable[BigDecimal] and
+      (__ \ "lpiWithDunningBlock").readNullable[BigDecimal] and
+      (__ \ "paymentLotItem").readNullable[String] and
+      (__ \ "paymentLot").readNullable[String] and
+      (__ \ "amountCodedOut").readNullable[BigDecimal]
+    ) (DocumentDetail.apply _)
 }

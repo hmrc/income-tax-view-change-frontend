@@ -69,7 +69,7 @@ class TaxYearSummaryResponseAuditModelSpec extends WordSpecLike with TestSupport
   )
 
   def payments(hasDunningLock: Boolean): List[DocumentDetailWithDueDate] = {
-    List(DocumentDetailWithDueDate(DocumentDetail("2020", "1040000123", Some("ITSA- POA 1"), Some("documentText"), Some(1400.0), Some(1400.0), LocalDate.parse("2018-03-29"),
+    List(DocumentDetailWithDueDate(DocumentDetail(2020, "1040000123", Some("ITSA- POA 1"), Some("documentText"), Some(1400.0), Some(1400.0), LocalDate.parse("2018-03-29"),
       Some(80), Some(100), None, Some(LocalDate.parse("2018-03-29")), Some(LocalDate.parse("2018-06-15")),
       Some(100), Some(100), None, None), Some(LocalDate.parse("2019-05-15")), true, hasDunningLock))
   }

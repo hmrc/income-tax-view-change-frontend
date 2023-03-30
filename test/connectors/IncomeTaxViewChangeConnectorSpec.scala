@@ -364,7 +364,7 @@ class IncomeTaxViewChangeConnectorSpec extends TestSupport with MockHttp with Mo
 
   "getFinancialDetails" should {
 
-    val successResponse = HttpResponse(status = Status.OK, json = testValidFinancialDetailsModelJson, headers = Map.empty)
+    val successResponse = HttpResponse(status = Status.OK, json = testValidFinancialDetailsModelJsonReads, headers = Map.empty)
     val successResponseBadJson = HttpResponse(status = Status.OK, json = testInvalidFinancialDetailsJson, headers = Map.empty)
     val badResponse = HttpResponse(status = Status.BAD_REQUEST, body = "Error Message")
 

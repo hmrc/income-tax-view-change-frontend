@@ -27,7 +27,7 @@ import models.paymentAllocationCharges.{AllocationDetailWithClearingDate, Financ
 object PaymentAllocationsTestConstants {
 
   val documentDetail: DocumentDetail = DocumentDetail(
-    taxYear = "2018",
+    taxYear = 2018,
     transactionId = "id",
     documentDescription = Some("documentDescription"),
     documentText = Some("documentText"),
@@ -39,7 +39,7 @@ object PaymentAllocationsTestConstants {
   )
 
   val documentDetailWithCredit: DocumentDetail = DocumentDetail(
-    taxYear = "2018",
+    taxYear = 2018,
     transactionId = "id",
     documentDescription = Some("documentDescription"),
     documentText = Some("documentText"),
@@ -51,7 +51,7 @@ object PaymentAllocationsTestConstants {
   )
 
   val documentDetailNoPayment: DocumentDetail = DocumentDetail(
-    taxYear = "2018",
+    taxYear = 2018,
     transactionId = "id",
     documentDescription = Some("documentDescription"),
     documentText = Some("documentText"),
@@ -61,7 +61,7 @@ object PaymentAllocationsTestConstants {
   )
 
   val documentDetailNoPaymentCredit: DocumentDetail = DocumentDetail(
-    taxYear = "2018",
+    taxYear = 2018,
     transactionId = "id",
     documentDescription = Some("documentDescription"),
     documentText = Some("documentText"),
@@ -71,7 +71,7 @@ object PaymentAllocationsTestConstants {
   )
 
   val documentDetail2: DocumentDetail = DocumentDetail(
-    taxYear = "2019",
+    taxYear = 2019,
     transactionId = "id2",
     documentDescription = Some("documentDescription2"),
     documentText = Some("documentText2"),
@@ -83,7 +83,7 @@ object PaymentAllocationsTestConstants {
   )
 
   val documentDetail3: DocumentDetail = DocumentDetail(
-    taxYear = "2022",
+    taxYear = 2022,
     transactionId = "chargeReference3",
     documentDescription = Some("documentDescription2"),
     documentText = Some("documentText2"),
@@ -396,7 +396,7 @@ object PaymentAllocationsTestConstants {
     ))
 
   val lpiParentChargeDocumentDetail = DocumentDetail(
-    taxYear = "2020",
+    taxYear = 2020,
     transactionId = "transactionId",
     documentDescription = Some("TRM New Charge"),
     documentText = Some("documentText"),
@@ -412,7 +412,7 @@ object PaymentAllocationsTestConstants {
   )
 
   val lpiPaymentsDocumentDetail = DocumentDetail(
-    taxYear = "2020",
+    taxYear = 2020,
     transactionId = "transactionId",
     documentDescription = Some("TRM New Charge"),
     documentText = Some("documentText"),
@@ -452,7 +452,7 @@ object PaymentAllocationsTestConstants {
 			|            "documentText": "documentText",
 			|            "originalAmount": -300.0,
 			|            "outstandingAmount": -200.0,
-			|            "taxYear": "2018",
+			|            "taxYear": 2018,
 			|            "transactionId": "id",
 			|            "paymentLot": "paymentLot",
 			|            "paymentLotItem": "paymentLotItem"

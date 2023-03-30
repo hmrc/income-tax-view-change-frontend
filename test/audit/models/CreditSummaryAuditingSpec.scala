@@ -34,7 +34,7 @@ class CreditSummaryAuditingSpec extends TestSupport {
   val creditDetailsModelPaid = CreditDetailModel(
     date = LocalDate.of(2018, 1, 2),
     documentDetail = DocumentDetail(
-      taxYear = "2018",
+      taxYear = 2018,
       transactionId = "1001",
       documentDescription = None,
       documentText = None,
@@ -100,7 +100,7 @@ class CreditSummaryAuditingSpec extends TestSupport {
         CreditDetailModel(
           date = LocalDate.of(2018, 3, 29),
           documentDetail = DocumentDetail(
-            taxYear = "2023",
+            taxYear = 2023,
             transactionId = "transId",
             documentDescription = Some("docId"),
             documentText = Some("text"),

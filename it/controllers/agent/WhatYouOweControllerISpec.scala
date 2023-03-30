@@ -455,7 +455,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
       val result = IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetailsWithConfirmation)
 
       val whatYouOweChargesList = {
-        val documentDetailsForTestTaxYear = financialDetailsModel.documentDetails.filter(_.taxYear == testTaxYear.toString)
+        val documentDetailsForTestTaxYear = financialDetailsModel.documentDetails.filter(_.taxYear == testTaxYear)
         WhatYouOweChargesList(
           balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
           chargesList = financialDetailsModel.copy(documentDetails = documentDetailsForTestTaxYear).getAllDocumentDetailsWithDueDates()
@@ -493,7 +493,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
       val result = IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetailsWithConfirmation)
 
       val whatYouOweChargesList = {
-        val documentDetailsForTestTaxYear = financialDetailsModel.documentDetails.filter(_.taxYear == testTaxYear.toString)
+        val documentDetailsForTestTaxYear = financialDetailsModel.documentDetails.filter(_.taxYear == testTaxYear)
         WhatYouOweChargesList(
           balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
           chargesList = financialDetailsModel.copy(documentDetails = documentDetailsForTestTaxYear).getAllDocumentDetailsWithDueDates()
@@ -532,7 +532,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
       val result = IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetailsWithConfirmation)
 
       val whatYouOweChargesList = {
-        val documentDetailsForTestTaxYear = financialDetailsModel.documentDetails.filter(_.taxYear == testTaxYear.toString)
+        val documentDetailsForTestTaxYear = financialDetailsModel.documentDetails.filter(_.taxYear == testTaxYear)
         WhatYouOweChargesList(
           balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
           chargesList = financialDetailsModel.copy(documentDetails = documentDetailsForTestTaxYear).getAllDocumentDetailsWithDueDates()

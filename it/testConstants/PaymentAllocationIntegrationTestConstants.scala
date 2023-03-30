@@ -12,7 +12,7 @@ object PaymentAllocationIntegrationTestConstants {
 
 
   val documentDetail: DocumentDetail = DocumentDetail(
-    taxYear = "2018",
+    taxYear = 2018,
     transactionId = "id",
     documentDescription = Some("documentDescription"),
     documentText = Some("documentText"),
@@ -24,7 +24,7 @@ object PaymentAllocationIntegrationTestConstants {
   )
 
   val documentDetail2: DocumentDetail = DocumentDetail(
-    taxYear = "2019",
+    taxYear = 2019,
     transactionId = "id2",
     documentDescription = Some("documentDescription2"),
     documentText = Some("documentText2"),
@@ -36,7 +36,7 @@ object PaymentAllocationIntegrationTestConstants {
   )
 
   val documentDetail3: DocumentDetail = DocumentDetail(
-    taxYear = "2022",
+    taxYear = 2022,
     transactionId = "MA999991A202202",
     documentDescription = Some("Payment"),
     documentText = Some("documentText"),
@@ -306,7 +306,7 @@ object PaymentAllocationIntegrationTestConstants {
     ))
 
   val lpiDocumentDetail = DocumentDetail(
-    taxYear = "9999",
+    taxYear = 9999,
     transactionId = "1040000125",
     documentDescription = Some("TRM Amend Charge"),
     documentText = Some("documentText"),

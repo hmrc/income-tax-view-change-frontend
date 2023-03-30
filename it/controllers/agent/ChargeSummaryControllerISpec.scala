@@ -168,7 +168,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
       stubChargeHistorySuccess()
 
       val result = IncomeTaxViewChangeFrontend.getChargeSummary(
-       taxYear.toString, "testId", clientDetailsWithConfirmation
+        taxYear.toString, "testId", clientDetailsWithConfirmation
       )
 
       result should have(
@@ -361,7 +361,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
         balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
         documentDetails = List(
           DocumentDetail(
-            taxYear = getCurrentTaxYearEnd.getYear.toString,
+            taxYear = getCurrentTaxYearEnd.getYear,
             transactionId = "testId",
             documentDescription = Some("ITSA- POA 1"),
             documentText = Some("documentText"),
@@ -408,7 +408,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
         balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
         documentDetails = List(
           DocumentDetail(
-            taxYear = getCurrentTaxYearEnd.getYear.toString,
+            taxYear = getCurrentTaxYearEnd.getYear,
             transactionId = "CODINGOUT01",
             documentDescription = Some("TRM New Charge"),
             documentText = Some(CODING_OUT_ACCEPTED),
@@ -563,7 +563,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
     )
 
     val docDetailUnpaid = DocumentDetail(
-      taxYear = "2018",
+      taxYear = 2018,
       transactionId = "1040000124",
       documentDescription = Some("TRM New Charge"),
       documentText = Some("documentText"),

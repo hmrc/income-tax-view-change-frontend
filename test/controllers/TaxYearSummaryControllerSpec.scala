@@ -88,7 +88,7 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
   val homeBackLink: String = "/report-quarterly/income-and-expenses/view"
   val agentHomeBackLink: String = "/report-quarterly/income-and-expenses/view/agents/client-income-tax"
 
-  def disableAllSwitches() : Unit = {
+  def disableAllSwitches(): Unit = {
     switches.foreach(switch => disable(switch))
   }
 
@@ -131,7 +131,7 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
 
     "ForecastCalculation feature switch is enabled" should {
       "show the Forecast tab before crystallisation" in {
-          runForecastTest(crystallised = false, forecastCalcFeatureSwitchEnabled = true, shouldShowForecastData = true)
+        runForecastTest(crystallised = false, forecastCalcFeatureSwitchEnabled = true, shouldShowForecastData = true)
       }
       "NOT show the Forecast tab after crystallisation" in {
         runForecastTest(crystallised = true, forecastCalcFeatureSwitchEnabled = true, shouldShowForecastData = false)
@@ -534,7 +534,7 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
           toDate = LocalDate.of(testTaxYear, 4, 5))(
           response = testObligtionsModel
         )
-        val errorMessageVariableValues = TestTaxYearSummaryController.formatErrorMessages(liabilityCalculationModelErrorMessagesForIndividual,messagesApi, isAgent = false)(Lang("GB"), messages)
+        val errorMessageVariableValues = TestTaxYearSummaryController.formatErrorMessages(liabilityCalculationModelErrorMessagesForIndividual, messagesApi, isAgent = false)(Lang("GB"), messages)
         val calcOverview: TaxYearSummaryViewModel = TaxYearSummaryViewModel(errorMessageVariableValues)
 
         val expectedContent: String = taxYearSummaryView(
@@ -563,7 +563,7 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
           toDate = LocalDate.of(testTaxYear, 4, 5))(
           response = testObligtionsModel
         )
-        val errorMessageVariableValues = TestTaxYearSummaryController.formatErrorMessages(liabilityCalculationModelErrorMessagesForIndividual,messagesApi, isAgent = false)(Lang("GB"), messages)
+        val errorMessageVariableValues = TestTaxYearSummaryController.formatErrorMessages(liabilityCalculationModelErrorMessagesForIndividual, messagesApi, isAgent = false)(Lang("GB"), messages)
         val calcOverview: TaxYearSummaryViewModel = TaxYearSummaryViewModel(errorMessageVariableValues)
 
         val expectedContent: String = taxYearSummaryView(

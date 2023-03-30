@@ -168,7 +168,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
           val res = IncomeTaxViewChangeFrontend.getPaymentsDue
 
           val whatYouOweChargesList = {
-            val documentDetailsForTestTaxYear = financialDetailsModel.documentDetails.filter(_.taxYear == testTaxYear.toString)
+            val documentDetailsForTestTaxYear = financialDetailsModel.documentDetails.filter(_.taxYear == testTaxYear)
             WhatYouOweChargesList(
               balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
               chargesList = financialDetailsModel.copy(documentDetails = documentDetailsForTestTaxYear).getAllDocumentDetailsWithDueDates()
@@ -273,7 +273,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
           val res = IncomeTaxViewChangeFrontend.getPaymentsDue
 
           val whatYouOweChargesList = {
-            val documentDetailsForTestTaxYear = financialDetailsModel.documentDetails.filter(_.taxYear == testTaxYear.toString)
+            val documentDetailsForTestTaxYear = financialDetailsModel.documentDetails.filter(_.taxYear == testTaxYear)
             WhatYouOweChargesList(
               balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
               chargesList = financialDetailsModel.copy(documentDetails = documentDetailsForTestTaxYear).getAllDocumentDetailsWithDueDates()
@@ -312,7 +312,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
           val res = IncomeTaxViewChangeFrontend.getPaymentsDue
 
           val whatYouOweChargesList = {
-            val documentDetailsForTestTaxYear = financialDetailsModel.documentDetails.filter(_.taxYear == testTaxYear.toString)
+            val documentDetailsForTestTaxYear = financialDetailsModel.documentDetails.filter(_.taxYear == testTaxYear)
             WhatYouOweChargesList(
               balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
               chargesList = financialDetailsModel.copy(documentDetails = documentDetailsForTestTaxYear).getAllDocumentDetailsWithDueDates()
@@ -351,7 +351,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
           val res = IncomeTaxViewChangeFrontend.getPaymentsDue
 
           val whatYouOweChargesList = {
-            val documentDetailsForTestTaxYear = financialDetailsModel.documentDetails.filter(_.taxYear == testTaxYear.toString)
+            val documentDetailsForTestTaxYear = financialDetailsModel.documentDetails.filter(_.taxYear == testTaxYear)
             WhatYouOweChargesList(
               balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
               chargesList = financialDetailsModel.copy(documentDetails = documentDetailsForTestTaxYear).getAllDocumentDetailsWithDueDates()
