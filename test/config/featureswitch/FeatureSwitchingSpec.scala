@@ -36,7 +36,7 @@ class FeatureSwitchingSpec extends TestSupport with FeatureSwitching {
         var hasBeenCalled = false
 
         def expectedBranch(): Int = {
-          hasBeenCalled = true
+          hasBeenCalled = true1
           aValue
         }
 
