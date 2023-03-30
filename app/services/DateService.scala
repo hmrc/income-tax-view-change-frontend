@@ -24,12 +24,13 @@ import java.time.Month.APRIL
 import javax.inject.{Inject, Singleton}
 
 @Singleton
-class DateService @Inject()(implicit val frontendAppConfig: FrontendAppConfig) extends DateServiceInterface with FeatureSwitching {
+class DateService @Inject()(implicit val frontendAppConfig: FrontendAppConfig) extends DateServiceInterface{
 
-  override lazy val appConfig: FrontendAppConfig = implicitly
+  //override lazy val appConfig: FrontendAppConfig = implicitly
 
-  def getCurrentDate: LocalDate = {
-    if (isEnabled(TimeMachineAddYear)) {
+  def getCurrentDate(isTimeMachineEnabled: Boolean): LocalDate = {
+    // isEnabled(TimeMachineAddYear)
+    if (isTimeMachineEnabled) {
       frontendAppConfig
         .timeMachineAddYears.map(LocalDate.now().plusYears(_))
         .getOrElse(LocalDate.now())
@@ -39,23 +40,23 @@ class DateService @Inject()(implicit val frontendAppConfig: FrontendAppConfig) e
   }
 
   // with respect to the current calendar year
-  private def TAX_YEAR_LAST_DAY: LocalDate = LocalDate.of(getCurrentDate.getYear, APRIL, 6)
+  private def TAX_YEAR_LAST_DAY(isTimeMachineEnabled: Boolean): LocalDate = LocalDate.of(getCurrentDate(isTimeMachineEnabled).getYear, APRIL, 6)
 
-  def isDayBeforeTaxYearLastDay: Boolean = {
-    val currentDate = getCurrentDate
-    currentDate.isBefore(TAX_YEAR_LAST_DAY)
+  def isDayBeforeTaxYearLastDay(isTimeMachineEnabled: Boolean) : Boolean = {
+    val currentDate = getCurrentDate(isTimeMachineEnabled)
+    currentDate.isBefore(TAX_YEAR_LAST_DAY(isTimeMachineEnabled))
   }
 
-  def getCurrentTaxYearEnd: Int = {
-    val currentDate = getCurrentDate
-    if (isDayBeforeTaxYearLastDay) currentDate.getYear else currentDate.getYear + 1
+  def getCurrentTaxYearEnd(isTimeMachineEnabled: Boolean): Int = {
+    val currentDate = getCurrentDate(isTimeMachineEnabled)
+    if (isDayBeforeTaxYearLastDay(isTimeMachineEnabled)) currentDate.getYear else currentDate.getYear + 1
   }
 }
 
 trait DateServiceInterface {
-  def getCurrentDate: LocalDate
+  def getCurrentDate(isTimeMachineEnabled: Boolean): LocalDate
 
-  def getCurrentTaxYearEnd: Int
+  def getCurrentTaxYearEnd(isTimeMachineEnabled: Boolean): Int
 
-  def isDayBeforeTaxYearLastDay: Boolean
+  def isDayBeforeTaxYearLastDay(isTimeMachineEnabled: Boolean): Boolean
 }

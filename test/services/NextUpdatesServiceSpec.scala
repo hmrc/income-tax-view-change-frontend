@@ -16,8 +16,9 @@
 
 package services
 
-import java.time.LocalDate
+import config.featureswitch.{FeatureSwitching, TimeMachineAddYear}
 
+import java.time.LocalDate
 import testConstants.BusinessDetailsTestConstants.{obligationsDataSuccessModel => _}
 import testConstants.IncomeSourceDetailsTestConstants.{businessAndPropertyAligned, noIncomeDetails, propertyIncomeOnly}
 import testConstants.NextUpdatesTestConstants._
@@ -29,7 +30,7 @@ import uk.gov.hmrc.http.InternalServerException
 
 import scala.concurrent.Future
 
-class NextUpdatesServiceSpec extends TestSupport with MockIncomeTaxViewChangeConnector {
+class NextUpdatesServiceSpec extends TestSupport with MockIncomeTaxViewChangeConnector with FeatureSwitching {
 
   object TestNextUpdatesService extends NextUpdatesService(mockIncomeTaxViewChangeConnector)
 
@@ -43,8 +44,8 @@ class NextUpdatesServiceSpec extends TestSupport with MockIncomeTaxViewChangeCon
     "return an internal server exception when an error model is returned from the connector" in new Setup {
       setupMockNextUpdates(obligationsDataErrorModel)
 
-      getObligationDueDates().failed.futureValue shouldBe an[InternalServerException]
-      getObligationDueDates().failed.futureValue.getMessage shouldBe "Unexpected Exception getting obligation due dates"
+      getObligationDueDates(isEnabled(TimeMachineAddYear)).failed.futureValue shouldBe an[InternalServerException]
+      getObligationDueDates(isEnabled(TimeMachineAddYear)).failed.futureValue.getMessage shouldBe "Unexpected Exception getting obligation due dates"
     }
     "return a single overdue date" when {
       "the connector returns obligations with a single overdue date" in new Setup {
@@ -60,7 +61,7 @@ class NextUpdatesServiceSpec extends TestSupport with MockIncomeTaxViewChangeCon
         ))
         setupMockNextUpdates(obligationsWithSingleOverdue)
 
-        val result: Future[Either[(LocalDate, Boolean), Int]] = getObligationDueDates()
+        val result: Future[Either[(LocalDate, Boolean), Int]] = getObligationDueDates(isEnabled(TimeMachineAddYear))
 
         result.futureValue shouldBe Left(LocalDate.now.minusDays(1) -> true)
       }
@@ -80,7 +81,7 @@ class NextUpdatesServiceSpec extends TestSupport with MockIncomeTaxViewChangeCon
         ))
         setupMockNextUpdates(obligationsWithMultipleOverdue)
 
-        val result: Future[Either[(LocalDate, Boolean), Int]] = getObligationDueDates()
+        val result: Future[Either[(LocalDate, Boolean), Int]] = getObligationDueDates(isEnabled(TimeMachineAddYear))
 
         result.futureValue shouldBe Right(2)
       }
@@ -98,7 +99,7 @@ class NextUpdatesServiceSpec extends TestSupport with MockIncomeTaxViewChangeCon
         ))
         setupMockNextUpdates(obligationsWithSingleOverdue)
 
-        val result: Future[Either[(LocalDate, Boolean), Int]] = getObligationDueDates()
+        val result: Future[Either[(LocalDate, Boolean), Int]] = getObligationDueDates(isEnabled(TimeMachineAddYear))
 
         result.futureValue shouldBe Left(LocalDate.now -> false)
       }
@@ -109,27 +110,27 @@ class NextUpdatesServiceSpec extends TestSupport with MockIncomeTaxViewChangeCon
     "return the next report deadline due date" when {
       "there are income sources from property, business with crystallisation" in new Setup {
         setupMockNextUpdates(obligationsAllDeadlinesSuccessModel)
-        getNextDeadlineDueDateAndOverDueObligations().futureValue._1 shouldBe LocalDate.of(2017, 10, 1)
+        getNextDeadlineDueDateAndOverDueObligations(isEnabled(TimeMachineAddYear)).futureValue._1 shouldBe LocalDate.of(2017, 10, 1)
       }
       "there is just one report deadline from an income source" in new Setup {
         setupMockNextUpdates(obligationsPropertyOnlySuccessModel)
-        getNextDeadlineDueDateAndOverDueObligations().futureValue._1 shouldBe LocalDate.of(2017, 10, 1)
+        getNextDeadlineDueDateAndOverDueObligations(isEnabled(TimeMachineAddYear)).futureValue._1 shouldBe LocalDate.of(2017, 10, 1)
       }
       "there is just a crystallisation deadline" in new Setup {
         setupMockNextUpdates(obligationsCrystallisedOnlySuccessModel)
-        getNextDeadlineDueDateAndOverDueObligations().futureValue._1 shouldBe LocalDate.of(2017, 10, 31)
+        getNextDeadlineDueDateAndOverDueObligations(isEnabled(TimeMachineAddYear)).futureValue._1 shouldBe LocalDate.of(2017, 10, 31)
       }
 
       "there are no deadlines available" in new Setup {
         setupMockNextUpdates(emptyObligationsSuccessModel)
-        val result = getNextDeadlineDueDateAndOverDueObligations().failed.futureValue
+        val result = getNextDeadlineDueDateAndOverDueObligations(isEnabled(TimeMachineAddYear)).failed.futureValue
         result shouldBe an[Exception]
         result.getMessage shouldBe "Unexpected Exception getting next deadline due and Overdue Obligations"
       }
 
       "the Next Updates returned back an error model" in new Setup {
         setupMockNextUpdates(obligationsDataErrorModel)
-        val result = getNextDeadlineDueDateAndOverDueObligations().failed.futureValue
+        val result = getNextDeadlineDueDateAndOverDueObligations(isEnabled(TimeMachineAddYear)).failed.futureValue
         result shouldBe an[Exception]
         result.getMessage shouldBe "Dummy Error Message"
       }

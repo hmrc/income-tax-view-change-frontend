@@ -38,13 +38,13 @@ class FinancialDetailsService @Inject()(val incomeTaxViewChangeConnector: Income
     incomeTaxViewChangeConnector.getFinancialDetails(taxYear, nino)
   }
 
-  def getChargeDueDates(financialDetails: List[FinancialDetailsResponseModel]): Option[Either[(LocalDate, Boolean), Int]] = {
+  def getChargeDueDates(financialDetails: List[FinancialDetailsResponseModel], isTimeMachineEnabled: Boolean): Option[Either[(LocalDate, Boolean), Int]] = {
     val chargeDueDates: List[LocalDate] = financialDetails.flatMap {
       case fdm: FinancialDetailsModel => fdm.validChargesWithRemainingToPay.getAllDueDates
       case _ => List.empty[LocalDate]
     }.sortWith(_ isBefore _)
 
-    val overdueDates: List[LocalDate] = chargeDueDates.filter(_ isBefore dateService.getCurrentDate)
+    val overdueDates: List[LocalDate] = chargeDueDates.filter(_ isBefore dateService.getCurrentDate(isTimeMachineEnabled))
     val nextDueDates: List[LocalDate] = chargeDueDates.diff(overdueDates)
 
     (overdueDates, nextDueDates) match {

@@ -18,6 +18,7 @@ package services
 
 import auth.MtdItUser
 import config.FrontendAppConfig
+import config.featureswitch.TimeMachineAddYear
 import connectors.IncomeTaxViewChangeConnector
 import models.financialDetails._
 import models.outstandingCharges.{OutstandingChargesErrorModel, OutstandingChargesModel}
@@ -54,11 +55,11 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
     }
   }
 
-  def getWhatYouOweChargesList(isCodingOutEnabled: Boolean, isMFACreditsEnabled: Boolean)(implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[WhatYouOweChargesList] = {
-    getWhatYouOweChargesList(financialDetailsService.getAllUnpaidFinancialDetails(isCodingOutEnabled), isCodingOutEnabled, isMFACreditsEnabled)
+  def getWhatYouOweChargesList(isCodingOutEnabled: Boolean, isMFACreditsEnabled: Boolean, isTimeMachineEnabled: Boolean)(implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[WhatYouOweChargesList] = {
+    getWhatYouOweChargesList(financialDetailsService.getAllUnpaidFinancialDetails(isCodingOutEnabled), isCodingOutEnabled, isMFACreditsEnabled, isTimeMachineEnabled)
   }
 
-  def getWhatYouOweChargesList(unpaidCharges: Future[List[FinancialDetailsResponseModel]], isCodingOutEnabled: Boolean, isMFACreditsEnabled: Boolean)
+  def getWhatYouOweChargesList(unpaidCharges: Future[List[FinancialDetailsResponseModel]], isCodingOutEnabled: Boolean, isMFACreditsEnabled: Boolean, isTimeMachineEnabled: Boolean)
                               (implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[WhatYouOweChargesList] = {
 
     unpaidCharges flatMap {
@@ -71,7 +72,7 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
         val codedOutDocumentDetail = if (isCodingOutEnabled) {
           financialDetailsModelList.flatMap(fdm =>
             fdm.documentDetails.find(dd => dd.isPayeSelfAssessment
-              && dd.taxYear.toInt == (dateService.getCurrentTaxYearEnd - 1))
+              && dd.taxYear.toInt == (dateService.getCurrentTaxYearEnd(isTimeMachineEnabled) - 1))
           ).headOption
         } else None
 
@@ -80,7 +81,7 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
           chargesList = getFilteredChargesList(financialDetailsModelList, isMFACreditsEnabled, isCodingOutEnabled),
           codedOutDocumentDetail = codedOutDocumentDetail)
 
-        callOutstandingCharges(mtdUser.saUtr, mtdUser.incomeSources.yearOfMigration, dateService.getCurrentTaxYearEnd).map {
+        callOutstandingCharges(mtdUser.saUtr, mtdUser.incomeSources.yearOfMigration, dateService.getCurrentTaxYearEnd(isTimeMachineEnabled)).map {
           case Some(outstandingChargesModel) => whatYouOweChargesList.copy(outstandingChargesModel = Some(outstandingChargesModel))
           case _ => whatYouOweChargesList
         }

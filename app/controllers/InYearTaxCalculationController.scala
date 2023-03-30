@@ -19,7 +19,7 @@ package controllers
 import audit.AuditingService
 import audit.models.{ViewInYearTaxEstimateAuditBody, ViewInYearTaxEstimateAuditModel}
 import auth.{FrontendAuthorisedFunctions, MtdItUser}
-import config.featureswitch.FeatureSwitching
+import config.featureswitch.{FeatureSwitching, TimeMachineAddYear}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
@@ -98,7 +98,7 @@ class InYearTaxCalculationController @Inject()(
   def show(origin: Option[String]): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
-      val currentDate = dateService.getCurrentDate
+      val currentDate = dateService.getCurrentDate(isEnabled(TimeMachineAddYear))
       handleRequest(
         isAgent = false,
         currentDate,
@@ -112,7 +112,7 @@ class InYearTaxCalculationController @Inject()(
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true).flatMap {
           implicit mtdItUser =>
-            val currentDate = dateService.getCurrentDate
+            val currentDate = dateService.getCurrentDate(isEnabled(TimeMachineAddYear))
             handleRequest(
               isAgent = true,
               currentDate,
