@@ -34,39 +34,39 @@ class DateServiceSpec extends TestSupport with FeatureSwitching {
   "The getCurrentDate method when TimeMachineAddYear FS is on" should {
     "return the next year date if the timeMachineAddYears 1" in {
       enable(TimeMachineAddYear)
-      TestDateService.getCurrentDate should equal(LocalDate.now.plusYears(1))
+      TestDateService.getCurrentDate(isEnabled(TimeMachineAddYear)) should equal(LocalDate.now.plusYears(1))
     }
     "return the mocked current date" in {
       val f = fixture()
       enable(TimeMachineAddYear)
-      f.mockedTestDateService.getCurrentDate should equal(LocalDate.parse("2018-03-29"))
+      f.mockedTestDateService.getCurrentDate(isEnabled(TimeMachineAddYear)) should equal(LocalDate.parse("2018-03-29"))
     }
   }
 
   "The getCurrentDate method when TimeMachineAddYear FS is off" should {
     "return the current date" in {
       disable(TimeMachineAddYear)
-      TestDateService.getCurrentDate should equal(LocalDate.now)
+      TestDateService.getCurrentDate(isEnabled(TimeMachineAddYear)) should equal(LocalDate.now)
     }
 
     "return mocked current date: 2018-03-29" in {
       val f = fixture()
       disable(TimeMachineAddYear)
-      f.mockedTestDateService.getCurrentDate should equal(LocalDate.parse("2018-03-29"))
-      f.mockedTestDateService.isDayBeforeTaxYearLastDay shouldBe true
+      f.mockedTestDateService.getCurrentDate(isEnabled(TimeMachineAddYear)) should equal(LocalDate.parse("2018-03-29"))
+      f.mockedTestDateService.isDayBeforeTaxYearLastDay(isEnabled(TimeMachineAddYear)) shouldBe true
     }
 
     "return mocked current date: 2018-04-06" in {
       val f = fixture("2018-04-06")
       disable(TimeMachineAddYear)
-      f.mockedTestDateService.isDayBeforeTaxYearLastDay shouldBe false
+      f.mockedTestDateService.isDayBeforeTaxYearLastDay(isEnabled(TimeMachineAddYear)) shouldBe false
     }
 
     "return mocked current date: 2019-04-05" in {
       val f = fixture("2019-04-05")
       disable(TimeMachineAddYear)
-      f.mockedTestDateService.getCurrentDate should equal(LocalDate.parse("2019-04-05"))
-      f.mockedTestDateService.isDayBeforeTaxYearLastDay shouldBe true
+      f.mockedTestDateService.getCurrentDate(isEnabled(TimeMachineAddYear)) should equal(LocalDate.parse("2019-04-05"))
+      f.mockedTestDateService.isDayBeforeTaxYearLastDay(isEnabled(TimeMachineAddYear)) shouldBe true
     }
 
   }
@@ -76,14 +76,14 @@ class DateServiceSpec extends TestSupport with FeatureSwitching {
       disable(TimeMachineAddYear)
       val expectedYear = if (TestDateService.isDayBeforeTaxYearLastDay(isEnabled(TimeMachineAddYear))) LocalDate.now.getYear
       else LocalDate.now.plusYears(1).getYear
-      TestDateService.getCurrentTaxYearEnd shouldBe expectedYear
+      TestDateService.getCurrentTaxYearEnd(isEnabled(TimeMachineAddYear)) shouldBe expectedYear
     }
 
     "return next tax year when time machine is enabled" in {
       enable(TimeMachineAddYear)
       val expectedYear = if (TestDateService.isDayBeforeTaxYearLastDay(isEnabled(TimeMachineAddYear))) LocalDate.now.plusYears(1).getYear
       else LocalDate.now.plusYears(2).getYear
-      TestDateService.getCurrentTaxYearEnd shouldBe expectedYear
+      TestDateService.getCurrentTaxYearEnd(isEnabled(TimeMachineAddYear)) shouldBe expectedYear
     }
 
   }
