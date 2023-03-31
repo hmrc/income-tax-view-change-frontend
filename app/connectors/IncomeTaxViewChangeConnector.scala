@@ -368,6 +368,7 @@ trait IncomeTaxViewChangeConnector extends RawResponseReads with FeatureSwitchin
     http.GET[HttpResponse](url)(httpReads, headerCarrier, implicitly) map { response =>
       response.status match {
         case OK =>
+          println(Console.GREEN + response.json + Console.WHITE)
           Logger("application").debug(s"[IncomeTaxViewChangeConnector][getFinancialDetails] - Status: ${response.status}, json: ${response.json}")
           response.json.validate[FinancialDetailsModel].fold(
             invalid => {

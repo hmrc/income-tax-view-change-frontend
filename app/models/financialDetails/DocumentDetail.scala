@@ -181,7 +181,7 @@ case class DocumentDetailWithDueDate(documentDetail: DocumentDetail, dueDate: Op
 object DocumentDetail {
   implicit val writes: Writes[DocumentDetail] = Json.writes[DocumentDetail]
   implicit val reads: Reads[DocumentDetail] = (
-    (__ \ "taxYear").read[String].map[Int](_.toInt) and
+    (__ \ "taxYear").read[String].map(_.toInt).orElse((__ \ "taxYear").read[Int]) and
       (__ \ "transactionId").read[String] and
       (__ \ "documentDescription").readNullable[String] and
       (__ \ "documentText").readNullable[String] and
