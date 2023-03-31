@@ -178,7 +178,7 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
 
       "should not have Credit on account row within payment details" in new PaymentAllocationSetup(outstandingAmount =
         paymentAllocationViewModelWithCreditZeroOutstandingOutstandingAmount) {
-        document.getElementById("money-on-account") shouldBe null
+        Option(document.getElementById("money-on-account")).isDefined shouldBe false
       }
 
       "checking the earlier tax year page when the cutOverCredit FS enabled with no payment items" in
@@ -423,7 +423,7 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
 
     "not have Credit on account row within payment details" in new PaymentAllocationSetup(outstandingAmount =
       paymentAllocationViewModelWithCreditZeroOutstandingOutstandingAmount) {
-      document.getElementById("money-on-account") shouldBe null
+      Option(document.getElementById("money-on-account")).isDefined shouldBe false
     }
 
     "The payments allocation view has NO payment allocation amount" should {
