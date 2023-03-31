@@ -70,7 +70,7 @@ class CreditHistoryService @Inject()(incomeTaxViewChangeConnector: IncomeTaxView
     Try(taxYear.toInt) match {
       case Success(taxYearValue) => taxYearValue
       case Failure(_) => throw MissingFieldException("Tax Year field should be a numeric value in a format of YYYY")
-    } //TODO: see if tax year is optional
+    }
 
   def getCreditsHistory(calendarYear: Int, nino: String, isMFACreditsEnabled: Boolean, isCutoverCreditsEnabled: Boolean)
                        (implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[CreditHistoryError.type, List[CreditDetailModel]]] = {
