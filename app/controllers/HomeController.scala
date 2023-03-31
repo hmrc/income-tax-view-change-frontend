@@ -84,7 +84,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
 
     nextUpdatesService.getNextDeadlineDueDateAndOverDueObligations().flatMap { latestDeadlineDate =>
 
-      val unpaidCharges: Future[List[FinancialDetailsResponseModel]] = financialDetailsService.getAllUnpaidFinancialDetails
+      val unpaidCharges: Future[List[FinancialDetailsResponseModel]] = financialDetailsService.getAllUnpaidFinancialDetails(isEnabled(CodingOut))
 
       val dueDates: Future[List[LocalDate]] = unpaidCharges.map {
         _.flatMap {
@@ -96,7 +96,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
       for {
         paymentsDue <- dueDates.map(_.sortBy(_.toEpochDay()))
         dunningLockExistsValue <- unpaidCharges.map(_.collectFirst { case fdm: FinancialDetailsModel if fdm.dunningLockExists => true })
-        outstandingChargesModel <- whatYouOweService.getWhatYouOweChargesList(unpaidCharges).map(_.outstandingChargesModel match {
+        outstandingChargesModel <- whatYouOweService.getWhatYouOweChargesList(unpaidCharges, isEnabled(CodingOut), isEnabled(MFACreditsAndDebits)).map(_.outstandingChargesModel match {
           case Some(OutstandingChargesModel(locm)) => locm.filter(ocm => ocm.relevantDueDate.isDefined && ocm.chargeName == "BCD")
           case _ => Nil
         })

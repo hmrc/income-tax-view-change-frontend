@@ -209,7 +209,7 @@
 }
 
 @paymentTypeEntry(documentDetail: DocumentDetail, rowId: String, isLatePaymentInterest: Boolean,
-    isMFADebit: Boolean, showTaxYear: Boolean = true, linkSuffix: String) = @{
+    isMFADebit: Boolean, showTaxYear: Boolean = true, linkSuffix: String, index: Int) = @{
 
     val chargeTypeKey = if(isMFADebit) "hmrcAdjustment.text" else documentDetail.getChargeTypeKey(codingOutEnabled)
     val lpi = if (isLatePaymentInterest) "lpi." else ""
@@ -222,19 +222,18 @@
         controllers.routes.ChargeSummaryController.show(taxYear.toInt,
             documentDetail.transactionId, isLatePaymentInterest, origin)
     }
-    paymentTypeEntryHTML(showTaxYear = showTaxYear, linkText = linkText, linkHref = linkHref, taxYear = taxYear, rowId = rowId,
-        linkSuffix: String)
+    paymentTypeEntryHTML(showTaxYear = showTaxYear, linkText = linkText, linkHref = linkHref, taxYear: Int, rowId = rowId,
+        linkSuffix: String, index+1)
 }
 
-@paymentTypeEntryHTML(showTaxYear: Boolean, linkText: String, linkHref:Call, taxYear: Int, rowId: String, linkSuffix: String) = {
+@paymentTypeEntryHTML(showTaxYear: Boolean, linkText: String, linkHref:Call, taxYear: Int, rowId: String, linkSuffix: String, index: Int) = {
     <a class="govuk-link" id="@rowId-@linkSuffix" href="@linkHref">
         @linkText
-        <span class="govuk-visually-hidden">@taxYear</span>
+        <span class="govuk-visually-hidden">@index</span>
     </a>
-
 }
 
-@getPaymentTypeEntry(documentDetail: DocumentDetail, rowId: String, isOverduePayment: Boolean, isMFADebit: Boolean) = @{
+@getPaymentTypeEntry(documentDetail: DocumentDetail, rowId: String, isOverduePayment: Boolean, isMFADebit: Boolean, index: Int) = @{
     val isLatePaymentInterest = isOverduePayment && documentDetail.isLatePaymentInterest
     def getLinkSuffix() : String = {
         if(!isOverduePayment) {
@@ -248,7 +247,7 @@
         }
     }
     paymentTypeEntry(documentDetail, rowId, isLatePaymentInterest = isLatePaymentInterest,
-    linkSuffix = getLinkSuffix(), isMFADebit = isMFADebit)
+    linkSuffix = getLinkSuffix(), isMFADebit = isMFADebit, index = index)
 }
 
 @getReturnHref(year: Int) = @{
@@ -279,7 +278,7 @@
                 </div>
             }
             @getPaymentTypeEntry(documentDetail = documentDetailWithDueDate.documentDetail, isOverduePayment = isOverduePayment,
-                rowId = rowId2, isMFADebit = documentDetailWithDueDate.isMFADebit)
+                rowId = rowId2, isMFADebit = documentDetailWithDueDate.isMFADebit, index = index)
 
             @if(documentDetailWithDueDate.dunningLock){
                 <div class="form-hint govuk-body-s"> @getMessage("paymentUnderReview") </div>

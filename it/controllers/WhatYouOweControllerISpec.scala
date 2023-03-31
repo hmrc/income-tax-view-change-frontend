@@ -842,10 +842,10 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
               res should have(
                 httpStatus(OK),
                 pageTitleIndividual("whatYouOwe.heading"),
-                elementTextBySelectorList("#payments-due-table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)", "a:nth-of-type(1)")(s"$hmrcAdjustment $testTaxYear"),
-                elementTextBySelectorList("#payments-due-table", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(2)", "a:nth-of-type(1)")(s"$hmrcAdjustment $testTaxYear"),
-                elementTextBySelectorList("#payments-due-table", "tbody", "tr:nth-of-type(3)", "td:nth-of-type(2)", "a:nth-of-type(1)")(s"$hmrcAdjustment $testTaxYear"),
-                elementTextBySelectorList("#payments-due-table", "tbody", "tr:nth-of-type(4)", "td:nth-of-type(2)", "a:nth-of-type(1)")(s"$hmrcAdjustment $testTaxYear"),
+                elementTextBySelectorList("#payments-due-table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)", "a:nth-of-type(1)")(s"$hmrcAdjustment 1"),
+                elementTextBySelectorList("#payments-due-table", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(2)", "a:nth-of-type(1)")(s"$hmrcAdjustment 2"),
+                elementTextBySelectorList("#payments-due-table", "tbody", "tr:nth-of-type(3)", "td:nth-of-type(2)", "a:nth-of-type(1)")(s"$hmrcAdjustment 3"),
+                elementTextBySelectorList("#payments-due-table", "tbody", "tr:nth-of-type(4)", "td:nth-of-type(2)", "a:nth-of-type(1)")(s"$hmrcAdjustment 4"),
                 elementTextBySelectorList("#payment-details-content-5")(s"$hmrcAdjustmentHeading $hmrcAdjustmentLine1"))
             } else {
               res should have(
