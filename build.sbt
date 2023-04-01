@@ -10,7 +10,7 @@ import play.sbt.routes.RoutesKeys
 
 val appName = "income-tax-view-change-frontend"
 
-val bootstrapPlayVersion = "5.21.0" // "7.11.0" in the next iteration / this causing number of unit tests to fail
+val bootstrapPlayVersion = "7.15.0" // "7.11.0" in the next iteration / this causing number of unit tests to fail
 val playPartialsVersion = "8.3.0-play-28"
 val playFrontendHMRCVersion = "5.0.0-play-28"
 val playLanguageVersion = "5.2.0-play-28"
