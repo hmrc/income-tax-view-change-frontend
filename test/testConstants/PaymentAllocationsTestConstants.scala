@@ -508,7 +508,7 @@ object PaymentAllocationsTestConstants {
 			|            "documentText": "documentText",
 			|            "originalAmount": -300.0,
 			|            "outstandingAmount": -200.0,
-			|            "taxYear": "2018",
+			|            "taxYear": 2018,
 			|            "transactionId": "id",
 			|            "paymentLot": "paymentLot",
 			|            "paymentLotItem": "paymentLotItem"
@@ -649,7 +649,7 @@ object PaymentAllocationsTestConstants {
 			|            "documentText": "documentText",
 			|            "originalAmount": -300.0,
 			|            "outstandingAmount": -200.0,
-			|            "taxYear": "2018",
+			|            "taxYear": 2018,
 			|            "transactionId": "id",
 			|            "paymentLot": "paymentLot",
 			|            "paymentLotItem": "paymentLotItem"
@@ -660,7 +660,7 @@ object PaymentAllocationsTestConstants {
 			|            "documentText": "documentText2",
 			|            "originalAmount": -100.0,
 			|            "outstandingAmount": -50.0,
-			|            "taxYear": "2019",
+			|            "taxYear": 2019,
 			|            "transactionId": "id2",
 			|            "paymentLot": "paymentLot2",
 			|            "paymentLotItem": "paymentLotItem2"

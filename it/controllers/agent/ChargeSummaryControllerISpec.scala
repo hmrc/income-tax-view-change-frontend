@@ -23,7 +23,7 @@ import enums.ChargeType.{ITSA_ENGLAND_AND_NI, ITSA_NI, NIC4_SCOTLAND}
 import enums.CodingOutType._
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.AuthStub.titleInternalServer
-import helpers.servicemocks.DocumentDetailsStub.docDateDetailWithInterest
+import helpers.servicemocks.FinancialDetailsStub.{docDateDetailWithInterest, financialDetailsModelWrites}
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import models.chargeHistory.ChargeHistoryModel
 import models.financialDetails._
@@ -36,7 +36,6 @@ import testConstants.IncomeSourceIntegrationTestConstants._
 import testConstants.messages.ChargeSummaryMessages
 import testConstants.messages.ChargeSummaryMessages.{codingOutInsetPara, codingOutMessage, notCurrentlyChargingInterest, paymentBreakdownHeading, underReview}
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
-
 
 import java.time.LocalDate
 
@@ -459,7 +458,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
       ),
       "documentDetails" -> Json.arr(
         Json.obj(
-          "taxYear" -> s"$testTaxYear",
+          "taxYear" -> testTaxYear,
           "transactionId" -> "1040000123",
           "documentDescription" -> "TRM New Charge",
           "outstandingAmount" -> 1200.00,
@@ -490,7 +489,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
       ),
       "documentDetails" -> Json.arr(
         Json.obj(
-          "taxYear" -> s"$testTaxYear",
+          "taxYear" -> testTaxYear,
           "transactionId" -> "1",
           "documentDescription" -> "TRM New Charge",
           "outstandingAmount" -> 0,
@@ -498,7 +497,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
           "documentDate" -> "2018-03-29"
         ),
         Json.obj(
-          "taxYear" -> s"$testTaxYear",
+          "taxYear" -> testTaxYear,
           "transactionId" -> "2",
           "documentDate" -> "2022-04-06",
           "documentDescription" -> "TRM New Charge",

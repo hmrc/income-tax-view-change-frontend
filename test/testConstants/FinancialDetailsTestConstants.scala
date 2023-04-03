@@ -153,7 +153,7 @@ object FinancialDetailsTestConstants {
     ),
     "documentDetails" -> Json.arr(
       Json.obj(
-        "taxYear" -> "2019",
+        "taxYear" -> 2019,
         "transactionId" -> id1040000123,
         "documentDescription" -> "TRM New Charge",
         "documentText" -> "documentText",
@@ -171,7 +171,7 @@ object FinancialDetailsTestConstants {
         "paymentLot" -> "paymentLot"
       ),
       Json.obj(
-        "taxYear" -> "2020",
+        "taxYear" -> 2020,
         "transactionId" -> id1040000124,
         "documentDescription" -> "TRM New Charge",
         "documentText" -> "documentText",

@@ -22,7 +22,7 @@ import config.featureswitch._
 import enums.ChargeType.{ITSA_ENGLAND_AND_NI, ITSA_NI, NIC4_SCOTLAND}
 import enums.CodingOutType._
 import helpers.ComponentSpecBase
-import helpers.servicemocks.DocumentDetailsStub.{docDateDetail, docDateDetailWithInterest}
+import helpers.servicemocks.FinancialDetailsStub.{docDateDetail, docDateDetailWithInterest}
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import models.chargeHistory.ChargeHistoryModel
 import models.financialDetails._
@@ -274,7 +274,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
       IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(OK, Json.obj(
         "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "totalBalance" -> 3.00),
         "documentDetails" -> Json.arr(
-          Json.obj("taxYear" -> "2018",
+          Json.obj("taxYear" -> 2018,
             "transactionId" -> "1040001234",
             "documentDescription" -> "ITSA - POA 2",
             "outstandingAmount" -> 1.2,
@@ -315,7 +315,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
       IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(OK, Json.obj(
         "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "totalBalance" -> 3.00),
         "documentDetails" -> Json.arr(
-          Json.obj("taxYear" -> "2018",
+          Json.obj("taxYear" -> 2018,
             "transactionId" -> "CODINGOUT01",
             "documentDescription" -> "TRM New Charge",
             "documentText" -> CODING_OUT_ACCEPTED,
@@ -443,7 +443,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
       ),
       "documentDetails" -> Json.arr(
         Json.obj(
-          "taxYear" -> s"$testTaxYear",
+          "taxYear" -> testTaxYear,
           "transactionId" -> "1040000123",
           "documentDescription" -> "TRM New Charge",
           "outstandingAmount" -> 1200.00,
@@ -474,7 +474,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
       ),
       "documentDetails" -> Json.arr(
         Json.obj(
-          "taxYear" -> s"$testTaxYear",
+          "taxYear" -> testTaxYear,
           "transactionId" -> "1",
           "documentDescription" -> "TRM New Charge",
           "outstandingAmount" -> 0,
@@ -482,7 +482,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
           "documentDate" -> "2018-03-29"
         ),
         Json.obj(
-          "taxYear" -> s"$testTaxYear",
+          "taxYear" -> testTaxYear,
           "transactionId" -> "2",
           "documentDate" -> "2022-04-06",
           "documentDescription" -> "TRM New Charge",
