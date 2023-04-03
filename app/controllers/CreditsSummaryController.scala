@@ -20,6 +20,7 @@ import audit.AuditingService
 import audit.models.CreditSummaryAuditing
 import auth.MtdItUser
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import config.featureswitch.{CutOverCredits, FeatureSwitching, MFACreditsAndDebits}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import models.creditDetailModel.CreditDetailModel
@@ -51,7 +52,7 @@ class CreditsSummaryController @Inject()(creditsView: CreditsSummary,
                                          val ec: ExecutionContext,
                                          val agentItvcErrorHandler: AgentItvcErrorHandler,
                                          val auditingService: AuditingService
-                                        ) extends ClientConfirmedController with I18nSupport {
+                                        ) extends ClientConfirmedController with FeatureSwitching with I18nSupport{
 
   private def creditsSummaryUrl(calendarYear: Int, origin: Option[String]): String =
     controllers.routes.CreditsSummaryController.showCreditsSummary(calendarYear, origin).url
@@ -89,7 +90,7 @@ class CreditsSummaryController @Inject()(creditsView: CreditsSummary,
                     origin: Option[String] = None)
                    (implicit user: MtdItUser[AnyContent],
                     hc: HeaderCarrier, ec: ExecutionContext): Future[Result] = {
-    creditHistoryService.getCreditsHistory(calendarYear, user.nino).flatMap {
+    creditHistoryService.getCreditsHistory(calendarYear, user.nino, isEnabled(MFACreditsAndDebits), isEnabled(CutOverCredits)).flatMap {
       case Right(credits) =>
         val charges: List[CreditDetailModel] = credits.sortBy(_.date.toEpochDay)
         val maybeAvailableCredit: Option[BigDecimal] =
