@@ -19,7 +19,7 @@ package controllers
 import java.time.LocalDate
 import audit.AuditingService
 import audit.models.HomeAudit
-import auth.{MtdItUser}
+import auth.MtdItUser
 import config.featureswitch._
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
