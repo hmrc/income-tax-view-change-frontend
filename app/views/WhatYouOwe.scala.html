@@ -222,7 +222,7 @@
         controllers.routes.ChargeSummaryController.show(taxYear.toInt,
             documentDetail.transactionId, isLatePaymentInterest, origin)
     }
-    paymentTypeEntryHTML(linkText = linkText, linkHref = linkHref, taxYear: String, rowId = rowId,
+    paymentTypeEntryHTML(linkText = linkText, linkHref = linkHref, taxYear = taxYear, rowId = rowId,
         linkSuffix: String, index+1)
 }
 

@@ -22,7 +22,7 @@ import config.featureswitch._
 import enums.ChargeType.{ITSA_ENGLAND_AND_NI, ITSA_NI, NIC4_SCOTLAND}
 import enums.CodingOutType._
 import helpers.ComponentSpecBase
-import helpers.servicemocks.FinancialDetailsStub.{docDateDetail, docDateDetailWithInterest}
+import helpers.servicemocks.DocumentDetailsStub.{docDateDetail, docDateDetailWithInterest}
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import models.chargeHistory.ChargeHistoryModel
 import models.financialDetails._

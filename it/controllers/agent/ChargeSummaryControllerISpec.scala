@@ -23,7 +23,7 @@ import enums.ChargeType.{ITSA_ENGLAND_AND_NI, ITSA_NI, NIC4_SCOTLAND}
 import enums.CodingOutType._
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.AuthStub.titleInternalServer
-import helpers.servicemocks.FinancialDetailsStub.{docDateDetailWithInterest, financialDetailsModelWrites}
+import helpers.servicemocks.DocumentDetailsStub.docDateDetailWithInterest
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import models.chargeHistory.ChargeHistoryModel
 import models.financialDetails._
@@ -570,7 +570,6 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
       outstandingAmount = Some(1200),
       documentDate = LocalDate.of(2018, 3, 29)
     )
-    val docDetailPaid = docDetailUnpaid.copy(outstandingAmount = Some(0))
 
     "load the charge summary page with an UNPAID MFADebit" in {
       Given("the MFADebitsAndCredits feature switch is enabled")
