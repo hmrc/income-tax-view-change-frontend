@@ -209,7 +209,7 @@
 }
 
 @paymentTypeEntry(documentDetail: DocumentDetail, rowId: String, isLatePaymentInterest: Boolean,
-    isMFADebit: Boolean, showTaxYear: Boolean = true, linkSuffix: String, index: Int) = @{
+    isMFADebit: Boolean, linkSuffix: String, index: Int) = @{
 
     val chargeTypeKey = if(isMFADebit) "hmrcAdjustment.text" else documentDetail.getChargeTypeKey(codingOutEnabled)
     val lpi = if (isLatePaymentInterest) "lpi." else ""
@@ -222,21 +222,16 @@
         controllers.routes.ChargeSummaryController.show(taxYear.toInt,
             documentDetail.transactionId, isLatePaymentInterest, origin)
     }
-    paymentTypeEntryHTML(showTaxYear = showTaxYear, linkText = linkText, linkHref = linkHref, taxYear: String, rowId = rowId,
-    linkSuffix: String, index+1)
-}
-
-@paymentTypeEntryHTML(linkText: String, linkHref:Call, taxYear: Int, rowId: String, linkSuffix: String) = {
-    paymentTypeEntryHTML(linkText = linkText, linkHref = linkHref, rowId = rowId,
+    paymentTypeEntryHTML(linkText = linkText, linkHref = linkHref, taxYear: String, rowId = rowId,
         linkSuffix: String, index+1)
 }
 
-@paymentTypeEntryHTML(showTaxYear: Boolean, linkText: String, linkHref:Call, taxYear: String, rowId: String, linkSuffix: String, index: Int) = {
+
+@paymentTypeEntryHTML(linkText: String, linkHref:Call, taxYear: Int, rowId: String, linkSuffix: String, index: Int) = {
     <a class="govuk-link" id="@rowId-@linkSuffix" href="@linkHref">
         @linkText
         <span class="govuk-visually-hidden">@index</span>
     </a>
-
 }
 
 @getPaymentTypeEntry(documentDetail: DocumentDetail, rowId: String, isOverduePayment: Boolean, isMFADebit: Boolean, index: Int) = @{
