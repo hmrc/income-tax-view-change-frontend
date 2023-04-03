@@ -16,9 +16,9 @@
 
 package views.helpers
 
-class RadioOption(val optionName: String, val message: String, val classes: Option[String])
+class RadioOption(val optionName: Option[String], val message: Option[String], val classes: Option[String])
 
 object RadioOption {
-  def apply(optionName: String, message: String, classes: Option[String] = None): RadioOption =
+  def apply(optionName: Option[String] = None, message: Option[String] = None, classes: Option[String] = None): RadioOption =
     new RadioOption(optionName, message, classes)
 }

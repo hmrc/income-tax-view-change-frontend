@@ -86,7 +86,7 @@ class RenderServiceInfoHelperSpec extends TestSupport {
       lazy val document = Jsoup.parse(html(None).body)
 
       "Not render the service-info-user-name" in {
-        document.getElementById("service-info-user-name") shouldBe null
+        Option(document.getElementById("service-info-user-name")).isDefined shouldBe false
       }
     }
   }

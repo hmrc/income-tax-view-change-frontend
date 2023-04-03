@@ -16,22 +16,22 @@
 
 package views.helpers
 
-import org.scalatest.{Matchers, WordSpecLike}
-
-class RadioOptionSpec extends WordSpecLike with Matchers {
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpecLike
+class RadioOptionSpec extends AnyWordSpecLike with Matchers {
 
   "call apply method" when {
 
     "expected parameter provided" should {
       "create class instance" in {
-        RadioOption("someOption", "someMessage", None).isInstanceOf[RadioOption] shouldBe true
+        RadioOption(Some("someOption"), Some("someMessage"), None).isInstanceOf[RadioOption] shouldBe true
       }
     }
     "unexpected parameter provided" should {
       "create class instance" in {
-        RadioOption(null, "someMessage", None).isInstanceOf[RadioOption] shouldBe true
-        RadioOption("someOption", null, None).isInstanceOf[RadioOption] shouldBe true
-        RadioOption(null, null, None).isInstanceOf[RadioOption] shouldBe true
+        RadioOption(None, Some("someMessage"), None).isInstanceOf[RadioOption] shouldBe true
+        RadioOption(Some("someOption"), None, None).isInstanceOf[RadioOption] shouldBe true
+        RadioOption(None, None, None).isInstanceOf[RadioOption] shouldBe true
       }
     }
   }
