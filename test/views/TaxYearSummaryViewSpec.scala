@@ -484,9 +484,9 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
         errorMessageList.child(3).text shouldBe messages("tax-year-summary.message.C15016")
         errorMessageList.child(4).text shouldBe messages("tax-year-summary.message.C15102")
         errorMessageList.child(5).text shouldBe messages("tax-year-summary.message.C15103")
-        errorMessageList.child(6).text shouldBe Jsoup.parse(messages("tax-year-summary.message.C15104")).text()
+        errorMessageList.child(6).text shouldBe s"${messages("tax-year-summary.message.C15104.1")} ${messages("tax-year-summary.message.C15104.2")} ${messages("tax-year-summary.message.C15104.3")}"
         errorMessageList.child(7).text shouldBe messages("tax-year-summary.message.C15105")
-        errorMessageList.child(8).text shouldBe Jsoup.parse(messages("tax-year-summary.message.C15322")).text()
+        errorMessageList.child(8).text shouldBe s"${messages("tax-year-summary.message.C15322.1")} ${messages("tax-year-summary.message.C15322.2")} ${messages("tax-year-summary.message.C15322.3")} ${messages("tax-year-summary.message.C15322.4")}"
         errorMessageList.child(9).text shouldBe messages("tax-year-summary.message.C15323")
         errorMessageList.child(10).text shouldBe messages("tax-year-summary.message.C15325")
         errorMessageList.child(11).text shouldBe messages("tax-year-summary.message.C15523")
@@ -529,7 +529,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
         errorMessageList.child(48).text shouldBe messages("tax-year-summary.message.C159019")
         errorMessageList.child(49).text shouldBe messages("tax-year-summary.message.C159026")
         errorMessageList.child(50).text shouldBe messages("tax-year-summary.message.C159027")
-        errorMessageList.child(51).text shouldBe Jsoup.parse(messages("tax-year-summary.message.C159028")).text()
+        errorMessageList.child(51).text shouldBe s"${messages("tax-year-summary.message.C159028.1")} ${messages("tax-year-summary.message.C159028.2")} ${messages("tax-year-summary.message.C159028.3")} ${messages("tax-year-summary.message.C159028.4")}"
         errorMessageList.child(52).text shouldBe messages("tax-year-summary.message.C159030")
         errorMessageList.child(53).text shouldBe messages("tax-year-summary.message.C159102")
         errorMessageList.child(54).text shouldBe messages("tax-year-summary.message.C159106")

@@ -81,13 +81,13 @@
     @if(model.messages.exists(_.errorMessages.size > 1)){
         <ul class="govuk-list govuk-list--bullet">
             @for(message <- model.messages.map(_.errorMessages).getOrElse(Seq())) {
-                @multipleErrorMessage(key, message.text, message.id, isAgent)
+                @multipleErrorMessageList(key, message.text, message.id)
             }
         </ul>
     } else {
         @for(message <- model.messages.map(_.errorMessages).getOrElse(Seq())) {
-            @if(message.id == "C15104" && isAgent){
-                @multipleErrorMessageWithoutList(key, message.text,message.id, isAgent)
+            @if(isMultiLineErrorMessage(message.id)){
+                @multipleErrorMessage(key, message.text,message.id)
             } else {
                 @singleErrorMessage(key + s".${message.id}", message.text)
             }
@@ -104,10 +104,11 @@
     @govukInsetText(InsetText(classes="govuk-insettext-zero-spacing", content = HtmlContent(Html(messages(errorMessage, messageValue)))))
 }
 
-@multipleErrorMessageWithoutList(errorMessage: String, messageValue: String, messageId: String, isAgent: Boolean) = {
-<div class="govuk-inset-text govuk-insettext-zero-spacing">
-    @messages(errorMessage + s".${messageId}.1", messageValue)
-    <br>
+
+@multipleErrorMessage(errorMessage: String, messageValue: String, messageId: String) = {
+    <div class="govuk-inset-text govuk-insettext-zero-spacing">
+        @messages(errorMessage + s".${messageId}.1", messageValue)
+        <br>
         <ul class="govuk-list govuk-list--bullet">
             <li>
                 @messages(errorMessage + s".${messageId}.2", messageValue)
@@ -115,33 +116,23 @@
             <li>
                 @messages(errorMessage + s".${messageId}.3", messageValue)
             </li>
+            @if(messageId == "C15322" || messageId == "C159028") {
+            <li>
+                @messages(errorMessage + s".${messageId}.4", messageValue)
+            </li>
+            }
         </ul>
-</div>
+    </div>
 }
 
+@isMultiLineErrorMessage(messageId: String) = @{(messageId == "C15104" || messageId == "C15322" || messageId == "C159028")}
 
-@multipleErrorMessage(errorMessage: String, messageValue: String, messageId: String, isAgent: Boolean) = {
-    @if((messageId == "C15104" || messageId == "C15322" || messageId == "C159028") && isAgent) {
+@multipleErrorMessageList(errorMessage: String, messageValue: String, messageId: String) = {
+    @if(isMultiLineErrorMessage(messageId)) {
         <li>
-            <div class="govuk-inset-text govuk-insettext-zero-spacing">
-                @messages(errorMessage + s".${messageId}.1", messageValue)
-            <br>
-                <ul class="govuk-list govuk-list--bullet">
-                    <li>
-                        @messages(errorMessage + s".${messageId}.2", messageValue)
-                    </li>
-                    <li>
-                        @messages(errorMessage + s".${messageId}.3", messageValue)
-                    </li>
-                    @if(messageId == "C15322" || messageId == "C159028") {
-                    <li>
-                        @messages(errorMessage + s".${messageId}.4", messageValue)
-                    </li>
-                    }
-                </ul>
-            </div>
+            @multipleErrorMessage(errorMessage,messageValue,messageId)
         </li>
-} else {
+    } else {
         <li>
             @govukInsetText(InsetText(classes="govuk-insettext-zero-spacing",
             content = HtmlContent(Html(messages(errorMessage + s".$messageId", messageValue)))))
