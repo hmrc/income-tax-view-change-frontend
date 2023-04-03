@@ -94,7 +94,7 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
           TaxYearSummaryViewModel(formatErrorMessages(liabilityCalc, messagesApi, isAgent)(Lang("GB"),
             messagesApi.preferred(lang)))
         auditingService.extendedAudit(TaxYearSummaryResponseAuditModel(
-          mtdItUser, documentDetailsWithDueDates, obligations, Some(taxYearSummaryViewModel)))
+          mtdItUser, documentDetailsWithDueDates, obligations, messagesApi, Some(taxYearSummaryViewModel), liabilityCalc.messages))
 
         Logger("application").info(
           s"[TaxYearSummaryController][view][$taxYear]] Rendered Tax year summary page with Calc data")
@@ -112,7 +112,7 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
         ))
       case error: LiabilityCalculationError if error.status == NOT_FOUND =>
         auditingService.extendedAudit(TaxYearSummaryResponseAuditModel(
-          mtdItUser, documentDetailsWithDueDates, obligations, None))
+          mtdItUser, documentDetailsWithDueDates, obligations, messagesApi))
 
         Logger("application").info(
           s"[TaxYearSummaryController][view][$taxYear]] Rendered Tax year summary page with No Calc data")
