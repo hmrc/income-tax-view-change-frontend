@@ -209,7 +209,7 @@
 }
 
 @paymentTypeEntry(documentDetail: DocumentDetail, rowId: String, isLatePaymentInterest: Boolean,
-    isMFADebit: Boolean, showTaxYear: Boolean = true, linkSuffix: String, index: Int) = @{
+    isMFADebit: Boolean, linkSuffix: String, index: Int) = @{
 
     val chargeTypeKey = if(isMFADebit) "hmrcAdjustment.text" else documentDetail.getChargeTypeKey(codingOutEnabled)
     val lpi = if (isLatePaymentInterest) "lpi." else ""
@@ -222,16 +222,16 @@
         controllers.routes.ChargeSummaryController.show(taxYear.toInt,
             documentDetail.transactionId, isLatePaymentInterest, origin)
     }
-    paymentTypeEntryHTML(showTaxYear = showTaxYear, linkText = linkText, linkHref = linkHref, taxYear: String, rowId = rowId,
+    paymentTypeEntryHTML(linkText = linkText, linkHref = linkHref, taxYear = taxYear, rowId = rowId,
         linkSuffix: String, index+1)
 }
 
-@paymentTypeEntryHTML(showTaxYear: Boolean, linkText: String, linkHref:Call, taxYear: String, rowId: String, linkSuffix: String, index: Int) = {
+
+@paymentTypeEntryHTML(linkText: String, linkHref:Call, taxYear: Int, rowId: String, linkSuffix: String, index: Int) = {
     <a class="govuk-link" id="@rowId-@linkSuffix" href="@linkHref">
         @linkText
         <span class="govuk-visually-hidden">@index</span>
     </a>
-
 }
 
 @getPaymentTypeEntry(documentDetail: DocumentDetail, rowId: String, isOverduePayment: Boolean, isMFADebit: Boolean, index: Int) = @{
@@ -488,12 +488,12 @@
         } else {
             @getMessage("credit-overpaid-prefix")
         }
-        <a class="govuk-link" id="coding-out-summary-link" href="@getCodingOutHref(codedOutDocumentDetail.taxYear.toInt, codedOutDocumentDetail.transactionId)">
+        <a class="govuk-link" id="coding-out-summary-link" href="@getCodingOutHref(codedOutDocumentDetail.taxYear, codedOutDocumentDetail.transactionId)">
             @codedOutDocumentDetail.amountCodedOut.getOrElse(throw new MissingFieldException("DocumentDetail.amountCodedOut")).toCurrency
         </a>
         @getMessage("codingOut-1b")
-        <b>@getMessage("codingOut-2", (codedOutDocumentDetail.taxYear.toInt - 1).toString(),
-            codedOutDocumentDetail.taxYear)</b>
+        <b>@getMessage("codingOut-2", (codedOutDocumentDetail.taxYear - 1).toString(),
+            codedOutDocumentDetail.taxYear.toString())</b>
         @if(isAgent) {
             @getMessage("codingOut-3")
         } else {

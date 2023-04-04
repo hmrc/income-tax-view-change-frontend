@@ -169,7 +169,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
       val result = IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetailsWithConfirmation)
 
       val whatYouOweChargesList = {
-        val documentDetailsForTestTaxYear = financialDetailsModel.documentDetails.filter(_.taxYear == currentTaxYearEnd.toString)
+        val documentDetailsForTestTaxYear = financialDetailsModel.documentDetails.filter(_.taxYear == currentTaxYearEnd)
         WhatYouOweChargesList(
           balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
           chargesList = financialDetailsModel.copy(documentDetails = documentDetailsForTestTaxYear).getAllDocumentDetailsWithDueDates()
@@ -211,9 +211,9 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
       val mixedJson = Json.obj(
         "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "totalBalance" -> 3.00),
         "documentDetails" -> Json.arr(
-          documentDetailJson(3400.00, 1000.00, (currentTaxYearEnd - 2).toString, "ITSA- POA 1", transactionId = "transId1"),
-          documentDetailJson(1000.00, 100.00, (currentTaxYearEnd - 2).toString, "ITSA- POA 1", transactionId = "transId2"),
-          documentDetailJson(1000.00, 0, (currentTaxYearEnd - 2).toString, "ITSA - POA 2", transactionId = "transId3")
+          documentDetailJson(3400.00, 1000.00, (currentTaxYearEnd - 2), "ITSA- POA 1", transactionId = "transId1"),
+          documentDetailJson(1000.00, 100.00, (currentTaxYearEnd - 2), "ITSA- POA 1", transactionId = "transId2"),
+          documentDetailJson(1000.00, 0, (currentTaxYearEnd - 2), "ITSA - POA 2", transactionId = "transId3")
         ),
         "financialDetails" -> Json.arr(
           financialDetailJson((currentTaxYearEnd - 2).toString, transactionId = "transId1"),
@@ -455,7 +455,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
       val result = IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetailsWithConfirmation)
 
       val whatYouOweChargesList = {
-        val documentDetailsForTestTaxYear = financialDetailsModel.documentDetails.filter(_.taxYear == testTaxYear.toString)
+        val documentDetailsForTestTaxYear = financialDetailsModel.documentDetails.filter(_.taxYear == testTaxYear)
         WhatYouOweChargesList(
           balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
           chargesList = financialDetailsModel.copy(documentDetails = documentDetailsForTestTaxYear).getAllDocumentDetailsWithDueDates()
@@ -493,7 +493,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
       val result = IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetailsWithConfirmation)
 
       val whatYouOweChargesList = {
-        val documentDetailsForTestTaxYear = financialDetailsModel.documentDetails.filter(_.taxYear == testTaxYear.toString)
+        val documentDetailsForTestTaxYear = financialDetailsModel.documentDetails.filter(_.taxYear == testTaxYear)
         WhatYouOweChargesList(
           balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
           chargesList = financialDetailsModel.copy(documentDetails = documentDetailsForTestTaxYear).getAllDocumentDetailsWithDueDates()
@@ -532,7 +532,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
       val result = IncomeTaxViewChangeFrontend.getPaymentsDue(clientDetailsWithConfirmation)
 
       val whatYouOweChargesList = {
-        val documentDetailsForTestTaxYear = financialDetailsModel.documentDetails.filter(_.taxYear == testTaxYear.toString)
+        val documentDetailsForTestTaxYear = financialDetailsModel.documentDetails.filter(_.taxYear == testTaxYear)
         WhatYouOweChargesList(
           balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
           chargesList = financialDetailsModel.copy(documentDetails = documentDetailsForTestTaxYear).getAllDocumentDetailsWithDueDates()
@@ -644,9 +644,9 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
         val mixedJson = Json.obj(
           "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "totalBalance" -> 3.00),
           "documentDetails" -> Json.arr(
-            documentDetailJson(3400.00, 1000.00, currentTaxYearEnd.toString, transactionId = "transId1"),
-            documentDetailJson(1000.00, 0.00, currentTaxYearEnd.toString, transactionId = "transId2"),
-            documentDetailJson(1000.00, 3000.00, currentTaxYearEnd.toString, transactionId = "transId3")
+            documentDetailJson(3400.00, 1000.00, currentTaxYearEnd, transactionId = "transId1"),
+            documentDetailJson(1000.00, 0.00, currentTaxYearEnd, transactionId = "transId2"),
+            documentDetailJson(1000.00, 3000.00, currentTaxYearEnd, transactionId = "transId3")
           ),
           "financialDetails" -> Json.arr(
             financialDetailJson(currentTaxYearEnd.toString, transactionId = "transId4"),
@@ -698,9 +698,9 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
         val mixedJson = Json.obj(
           "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "totalBalance" -> 3.00),
           "documentDetails" -> Json.arr(
-            documentDetailJson(3400.00, 1000.00, currentTaxYearEnd.toString, transactionId = "transId1"),
-            documentDetailJson(1000.00, 0.00, currentTaxYearEnd.toString, transactionId = "transId2"),
-            documentDetailJson(1000.00, 3000.00, currentTaxYearEnd.toString, transactionId = "transId3")
+            documentDetailJson(3400.00, 1000.00, currentTaxYearEnd, transactionId = "transId1"),
+            documentDetailJson(1000.00, 0.00, currentTaxYearEnd, transactionId = "transId2"),
+            documentDetailJson(1000.00, 3000.00, currentTaxYearEnd, transactionId = "transId3")
           ),
           "financialDetails" -> Json.arr(
             financialDetailJson(currentTaxYearEnd.toString, transactionId = "transId4"),
@@ -915,9 +915,9 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
     val mixedJson = Json.obj(
       "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "totalBalance" -> 3.00, "availableCredit" -> 300.00),
       "documentDetails" -> Json.arr(
-        documentDetailJson(3400.00, 1000.00, currentTaxYearEnd.toString, "ITSA- POA 1", transactionId = "transId1"),
-        documentDetailJson(1000.00, 100.00, currentTaxYearEnd.toString, "ITSA- POA 1", transactionId = "transId2"),
-        documentDetailJson(1000.00, 0, currentTaxYearEnd.toString, "ITSA - POA 2", transactionId = "transId3")
+        documentDetailJson(3400.00, 1000.00, currentTaxYearEnd, "ITSA- POA 1", transactionId = "transId1"),
+        documentDetailJson(1000.00, 100.00, currentTaxYearEnd, "ITSA- POA 1", transactionId = "transId2"),
+        documentDetailJson(1000.00, 0, currentTaxYearEnd, "ITSA - POA 2", transactionId = "transId3")
       ),
       "financialDetails" -> Json.arr(
         financialDetailJson(currentTaxYearEnd.toString, transactionId = "transId1"),

@@ -49,8 +49,8 @@ class InYearTaxCalculationControllerISpec extends ComponentSpecBase {
     ))
   }
 
-  val (taxYear, month, dayOfMonth) = (if (LocalDate.now().isAfter(toTaxYearEndDate(LocalDate.now().getYear.toString))){
-    LocalDate.now().getYear+1
+  val (taxYear, month, dayOfMonth) = (if (LocalDate.now().isAfter(toTaxYearEndDate(LocalDate.now().getYear))) {
+    LocalDate.now().getYear + 1
   }
   else LocalDate.now().getYear, LocalDate.now.getMonthValue, LocalDate.now.getDayOfMonth)
   val timeStampEN: String = longDate(LocalDate.now)(toMessages("EN")).toLongDate
@@ -98,7 +98,7 @@ class InYearTaxCalculationControllerISpec extends ComponentSpecBase {
   }
 
   object ExpectedValues {
-    val caption = s"6 April ${taxYear-1} to 5 April $taxYear"
+    val caption = s"6 April ${taxYear - 1} to 5 April $taxYear"
 
     val insetTextFull = s"This calculation is only based on your completed updates for this tax year up to $timeStampEN. It is not your final tax bill for the year. It is a year to date calculation based on the information that has been entered so far."
 
@@ -120,8 +120,9 @@ class InYearTaxCalculationControllerISpec extends ComponentSpecBase {
 
     val continueButtonText = "Go to Income Tax Account"
   }
+
   object ExpectedValuesWelsh {
-    val caption = s"6 Ebrill ${taxYear-1} i 5 Ebrill $taxYear"
+    val caption = s"6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
 
     val insetTextFull = s"Mae’r cyfrifiad hwn yn seiliedig ar eich diweddariadau gorffenedig ar gyfer y flwyddyn dreth hon hyd at $timeStampCY yn unig. Nid dyma’ch bil treth terfynol ar gyfer y flwyddyn. Cyfrifiad o’r flwyddyn hyd yma yw hwn ar sail yr wybodaeth sydd wedi cael ei nodi hyd yma."
 
@@ -159,7 +160,7 @@ class InYearTaxCalculationControllerISpec extends ComponentSpecBase {
         result
         AuditStub.verifyAudit()
       }
-      
+
       "have a status of OK (200)" in {
         result.status shouldBe OK
       }
@@ -334,7 +335,7 @@ class InYearTaxCalculationControllerISpec extends ComponentSpecBase {
         }
       }
     }
-    
+
     "show an error page" when {
       "there is no calc data model" which {
         lazy val result = {

@@ -37,7 +37,6 @@ import testConstants.messages.ChargeSummaryMessages
 import testConstants.messages.ChargeSummaryMessages.{codingOutInsetPara, codingOutMessage, notCurrentlyChargingInterest, paymentBreakdownHeading, underReview}
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 
-
 import java.time.LocalDate
 
 
@@ -168,7 +167,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
       stubChargeHistorySuccess()
 
       val result = IncomeTaxViewChangeFrontend.getChargeSummary(
-       taxYear.toString, "testId", clientDetailsWithConfirmation
+        taxYear.toString, "testId", clientDetailsWithConfirmation
       )
 
       result should have(
@@ -361,7 +360,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
         balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
         documentDetails = List(
           DocumentDetail(
-            taxYear = getCurrentTaxYearEnd.getYear.toString,
+            taxYear = getCurrentTaxYearEnd.getYear,
             transactionId = "testId",
             documentDescription = Some("ITSA- POA 1"),
             documentText = Some("documentText"),
@@ -408,7 +407,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
         balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
         documentDetails = List(
           DocumentDetail(
-            taxYear = getCurrentTaxYearEnd.getYear.toString,
+            taxYear = getCurrentTaxYearEnd.getYear,
             transactionId = "CODINGOUT01",
             documentDescription = Some("TRM New Charge"),
             documentText = Some(CODING_OUT_ACCEPTED),
@@ -459,7 +458,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
       ),
       "documentDetails" -> Json.arr(
         Json.obj(
-          "taxYear" -> s"$testTaxYear",
+          "taxYear" -> testTaxYear,
           "transactionId" -> "1040000123",
           "documentDescription" -> "TRM New Charge",
           "outstandingAmount" -> 1200.00,
@@ -490,7 +489,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
       ),
       "documentDetails" -> Json.arr(
         Json.obj(
-          "taxYear" -> s"$testTaxYear",
+          "taxYear" -> testTaxYear,
           "transactionId" -> "1",
           "documentDescription" -> "TRM New Charge",
           "outstandingAmount" -> 0,
@@ -498,7 +497,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
           "documentDate" -> "2018-03-29"
         ),
         Json.obj(
-          "taxYear" -> s"$testTaxYear",
+          "taxYear" -> testTaxYear,
           "transactionId" -> "2",
           "documentDate" -> "2022-04-06",
           "documentDescription" -> "TRM New Charge",
@@ -563,7 +562,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
     )
 
     val docDetailUnpaid = DocumentDetail(
-      taxYear = "2018",
+      taxYear = 2018,
       transactionId = "1040000124",
       documentDescription = Some("TRM New Charge"),
       documentText = Some("documentText"),
@@ -571,7 +570,6 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
       outstandingAmount = Some(1200),
       documentDate = LocalDate.of(2018, 3, 29)
     )
-    val docDetailPaid = docDetailUnpaid.copy(outstandingAmount = Some(0))
 
     "load the charge summary page with an UNPAID MFADebit" in {
       Given("the MFADebitsAndCredits feature switch is enabled")

@@ -12,7 +12,7 @@ object PaymentAllocationIntegrationTestConstants {
 
 
   val documentDetail: DocumentDetail = DocumentDetail(
-    taxYear = "2018",
+    taxYear = 2018,
     transactionId = "id",
     documentDescription = Some("documentDescription"),
     documentText = Some("documentText"),
@@ -24,7 +24,7 @@ object PaymentAllocationIntegrationTestConstants {
   )
 
   val documentDetail2: DocumentDetail = DocumentDetail(
-    taxYear = "2019",
+    taxYear = 2019,
     transactionId = "id2",
     documentDescription = Some("documentDescription2"),
     documentText = Some("documentText2"),
@@ -36,7 +36,7 @@ object PaymentAllocationIntegrationTestConstants {
   )
 
   val documentDetail3: DocumentDetail = DocumentDetail(
-    taxYear = "2022",
+    taxYear = 2022,
     transactionId = "MA999991A202202",
     documentDescription = Some("Payment"),
     documentText = Some("documentText"),
@@ -272,7 +272,7 @@ object PaymentAllocationIntegrationTestConstants {
   )
 
   val testValidLpiPaymentAllocationsModel: PaymentAllocations = PaymentAllocations(
-    Some(110.10), Some("Payment by Card"), Some( LocalDate.parse("2019-05-27") ), Some("reference"),
+    Some(110.10), Some("Payment by Card"), Some(LocalDate.parse("2019-05-27")), Some("reference"),
     Seq(
       AllocationDetail(Some("1040000872"), Some(LocalDate.parse("2019-06-27")), Some(LocalDate.parse("2019-08-27")), Some(ITSA_NIC4_INTEREST_GB), Some("SA Late Payment Interest"), Some(10.10), Some(5.50), Some("latePaymentInterestId")),
       AllocationDetail(Some("1040000873"), Some(LocalDate.parse("2019-07-28")), Some(LocalDate.parse("2019-09-28")), Some(ITSA_NIC2_INTEREST_GB), Some("SA Late Payment Interest"), Some(10.90), Some(5.90), Some("latePaymentInterestId"))
@@ -280,7 +280,7 @@ object PaymentAllocationIntegrationTestConstants {
   )
 
   val testValidNoLpiPaymentAllocationHmrcAdjustment: PaymentAllocations = PaymentAllocations(
-    amount = Some(-800.00), method = Some("Payment"), transactionDate = Some( LocalDate.parse("2021-01-31") ), reference = Some("GF235688"),
+    amount = Some(-800.00), method = Some("Payment"), transactionDate = Some(LocalDate.parse("2021-01-31")), reference = Some("GF235688"),
     allocations = Seq(
       AllocationDetail(Some("MA999991A202202"),
         Some(LocalDate.parse("2021-04-06")),
@@ -306,7 +306,7 @@ object PaymentAllocationIntegrationTestConstants {
     ))
 
   val lpiDocumentDetail = DocumentDetail(
-    taxYear = "9999",
+    taxYear = 9999,
     transactionId = "1040000125",
     documentDescription = Some("TRM Amend Charge"),
     documentText = Some("documentText"),
@@ -331,7 +331,7 @@ object PaymentAllocationIntegrationTestConstants {
 			|            "documentDescription": "documentDescription",
 			|            "originalAmount": -300.0,
 			|            "outstandingAmount": -200.0,
-			|            "taxYear": "2018",
+			|            "taxYear": 2018,
 			|            "transactionId": "id",
 			|            "paymentLot": "paymentLot",
 			|            "paymentLotItem": "paymentLotItem",
@@ -387,7 +387,7 @@ object PaymentAllocationIntegrationTestConstants {
       |				"transactionId":"MA999991A202202",
       |				"outstandingAmount": 0,
       |				"originalAmount": 800,
-      |				"taxYear": "2022",
+      |				"taxYear": 2022,
       |				"documentId": "MA999991A202202",
       |				"documentDate": "2022-04-06",
       |				"documentDescription": "Payment",

@@ -66,12 +66,6 @@ class CreditHistoryService @Inject()(incomeTaxViewChangeConnector: IncomeTaxView
     }
   }
 
-  def getTaxYearAsInt(taxYear: String): Int =
-    Try(taxYear.toInt) match {
-      case Success(taxYearValue) => taxYearValue
-      case Failure(_) => throw MissingFieldException("Tax Year field should be a numeric value in a format of YYYY")
-    }
-
   def getCreditsHistory(calendarYear: Int, nino: String, isMFACreditsEnabled: Boolean, isCutoverCreditsEnabled: Boolean)
                        (implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[CreditHistoryError.type, List[CreditDetailModel]]] = {
 
@@ -81,15 +75,15 @@ class CreditHistoryService @Inject()(incomeTaxViewChangeConnector: IncomeTaxView
     } yield (creditModelForTaxYear, creditModelForTaxYearPlusOne) match {
       case (Right(creditModelTY), Right(creditModelTYandOne)) =>
         val creditsForTaxYearAndPlusOne =
-          (creditModelTY ++ creditModelTYandOne).filter(creditDetailModel => getTaxYearAsInt(creditDetailModel.documentDetail.taxYear) == calendarYear)
+          (creditModelTY ++ creditModelTYandOne).filter(creditDetailModel => creditDetailModel.documentDetail.taxYear == calendarYear)
         Right(filterExcludedCredits(creditsForTaxYearAndPlusOne, isMFACreditsEnabled, isCutoverCreditsEnabled))
       case (Right(creditModelTY), Left(_)) =>
         val creditsForTaxYear =
-          creditModelTY.filter(creditDetailModel => getTaxYearAsInt(creditDetailModel.documentDetail.taxYear) == calendarYear)
+          creditModelTY.filter(creditDetailModel => creditDetailModel.documentDetail.taxYear == calendarYear)
         Right(filterExcludedCredits(creditsForTaxYear, isMFACreditsEnabled, isCutoverCreditsEnabled))
       case (Left(_), Right(creditModelTYandOne)) =>
         val creditsForTaxYearPlusOne =
-          creditModelTYandOne.filter(creditDetailModel => getTaxYearAsInt(creditDetailModel.documentDetail.taxYear) == calendarYear)
+          creditModelTYandOne.filter(creditDetailModel => creditDetailModel.documentDetail.taxYear == calendarYear)
         Right(filterExcludedCredits(creditsForTaxYearPlusOne, isMFACreditsEnabled, isCutoverCreditsEnabled))
       case (_, _) =>
         Left(CreditHistoryError)

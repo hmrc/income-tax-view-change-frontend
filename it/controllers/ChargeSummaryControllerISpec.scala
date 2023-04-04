@@ -274,7 +274,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
       IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(OK, Json.obj(
         "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "totalBalance" -> 3.00),
         "documentDetails" -> Json.arr(
-          Json.obj("taxYear" -> "2018",
+          Json.obj("taxYear" -> 2018,
             "transactionId" -> "1040001234",
             "documentDescription" -> "ITSA - POA 2",
             "outstandingAmount" -> 1.2,
@@ -303,11 +303,6 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
     }
 
     "load the page with coding out details when coding out is enable and a coded out documentDetail id is passed" in {
-      val header = "Tax year 6 April 2017 to 5 April 2018 Balancing payment collected through PAYE tax code"
-      val insetPara = "If this tax cannot be collected through your PAYE tax code (opens in new tab) for any reason, you will need to pay the remaining amount. You will have 42 days to make this payment before you may charged interest and penalties."
-      val summaryMessage = "This is the remaining tax you owe for the 2017 to 2018 tax year."
-      val payHistoryLine1 = "29 Mar 2018 Amount collected through your PAYE tax code for 2019 to 2020 tax year £2,500.00"
-
       Given("the CodingOut feature switch is enabled")
       enable(CodingOut)
       enable(ChargeHistory)
@@ -320,7 +315,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
       IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(OK, Json.obj(
         "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "totalBalance" -> 3.00),
         "documentDetails" -> Json.arr(
-          Json.obj("taxYear" -> "2018",
+          Json.obj("taxYear" -> 2018,
             "transactionId" -> "CODINGOUT01",
             "documentDescription" -> "TRM New Charge",
             "documentText" -> CODING_OUT_ACCEPTED,
@@ -448,7 +443,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
       ),
       "documentDetails" -> Json.arr(
         Json.obj(
-          "taxYear" -> s"$testTaxYear",
+          "taxYear" -> testTaxYear,
           "transactionId" -> "1040000123",
           "documentDescription" -> "TRM New Charge",
           "outstandingAmount" -> 1200.00,
@@ -479,7 +474,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
       ),
       "documentDetails" -> Json.arr(
         Json.obj(
-          "taxYear" -> s"$testTaxYear",
+          "taxYear" -> testTaxYear,
           "transactionId" -> "1",
           "documentDescription" -> "TRM New Charge",
           "outstandingAmount" -> 0,
@@ -487,7 +482,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
           "documentDate" -> "2018-03-29"
         ),
         Json.obj(
-          "taxYear" -> s"$testTaxYear",
+          "taxYear" -> testTaxYear,
           "transactionId" -> "2",
           "documentDate" -> "2022-04-06",
           "documentDescription" -> "TRM New Charge",
@@ -552,7 +547,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
     )
 
     val docDetailUnpaid = DocumentDetail(
-      taxYear = "2018",
+      taxYear = 2018,
       transactionId = "1040000124",
       documentDescription = Some("TRM New Charge"),
       documentText = Some("documentText"),
