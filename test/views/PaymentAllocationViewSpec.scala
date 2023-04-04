@@ -194,7 +194,7 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
       "has a payment within the table for HMRC Adjustments with link back to charge view" in new PaymentAllocationSetup(viewModel = paymentAllocationViewModelHmrcAdjustment) {
         val allTableData = document.selectHead("tbody").selectHead("tr")
         val chargePageLink = document.selectHead("tbody").link.attr("href")
-        val taxYear = "2022"
+        val taxYear = 2022
         val chargePageLinkTrue = s"/report-quarterly/income-and-expenses/view/tax-years/$taxYear/charge?id=chargeReference3"
 
         allTableData.selectNth("td", 1).text() shouldBe s"$paymentAllocationsHmrcAdjustment $taxYear $paymentAllocationTaxYearFrom2021to2022"
@@ -250,7 +250,7 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
 
       "has a payment within the table" in new PaymentAllocationSetup(paymentAllocationViewModelLpi) {
         val allTableData = document.selectHead("tbody").selectHead("tr")
-        allTableData.selectNth("td", 1).text() shouldBe s"${messages("paymentAllocation.paymentAllocations.balancingCharge.text")} 2020 ${messages("paymentAllocation.taxYear", "2019", "2020")}"
+        allTableData.selectNth("td", 1).text() shouldBe s"${messages("paymentAllocation.paymentAllocations.balancingCharge.text")} 2020 ${messages("paymentAllocation.taxYear", "2019", 2020)}"
         allTableData.selectNth("td", 2).text() shouldBe messages("paymentAllocation.na")
         allTableData.selectNth("td", 3).text() shouldBe "£300.00"
 

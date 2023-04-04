@@ -159,12 +159,19 @@ object IncomeSourceIntegrationTestConstants {
 
   val id1040000123 = "1040000123"
 
-  val documentText = (isClass2Nic: Boolean, otherwise:String) =>{ if (isClass2Nic) { CODING_OUT_CLASS2_NICS.name } else { otherwise } }
+  val documentText = (isClass2Nic: Boolean, otherwise: String) => {
+    if (isClass2Nic) {
+      CODING_OUT_CLASS2_NICS.name
+    } else {
+      otherwise
+    }
+  }
+
   def testValidFinancialDetailsModelJson(originalAmount: BigDecimal, outstandingAmount: BigDecimal, taxYear: String = "2018",
                                          dueDate: String = "2018-02-14", dunningLock: List[String] = noDunningLock,
                                          interestLocks: List[String] = noInterestLock,
                                          latePaymentInterestAmount: Option[BigDecimal] = Some(100),
-                                         isClass2Nic : Boolean = false
+                                         isClass2Nic: Boolean = false
                                         ): JsValue = Json.obj(
     "balanceDetails" -> Json.obj(
       "balanceDueWithin30Days" -> 1.00,
@@ -173,7 +180,7 @@ object IncomeSourceIntegrationTestConstants {
     ),
     "documentDetails" -> Json.arr(
       Json.obj(
-        "taxYear" -> taxYear,
+        "taxYear" -> taxYear.toInt,
         "transactionId" -> "1040000123",
         "documentDescription" -> "TRM New Charge",
         "documentText" -> documentText(isClass2Nic, "TRM New Charge"),
@@ -186,7 +193,7 @@ object IncomeSourceIntegrationTestConstants {
         "interestOutstandingAmount" -> 80.0
       ),
       Json.obj(
-        "taxYear" -> taxYear,
+        "taxYear" -> taxYear.toInt,
         "transactionId" -> "1040000124",
         "documentDescription" -> "ITSA- POA 1",
         "outstandingAmount" -> outstandingAmount,
@@ -194,7 +201,7 @@ object IncomeSourceIntegrationTestConstants {
         "documentDate" -> "2018-03-29"
       ),
       Json.obj(
-        "taxYear" -> taxYear,
+        "taxYear" -> taxYear.toInt,
         "transactionId" -> "1040000125",
         "documentDescription" -> "ITSA - POA 2",
         "outstandingAmount" -> outstandingAmount,
@@ -202,7 +209,7 @@ object IncomeSourceIntegrationTestConstants {
         "documentDate" -> "2018-03-29"
       ),
       Json.obj(
-        "taxYear" -> "9999",
+        "taxYear" -> 9999,
         "transactionId" -> "PAYID01",
         "documentDescription" -> "TRM Amend Charge",
         "outstandingAmount" -> -outstandingAmount,
@@ -270,7 +277,7 @@ object IncomeSourceIntegrationTestConstants {
     "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "totalBalance" -> 3.00),
     "documentDetails" -> Json.arr(
       Json.obj(
-        "taxYear" -> taxYear,
+        "taxYear" -> taxYear.toInt,
         "transactionId" -> "1040000123",
         "documentDescription" -> "TRM New Charge",
         "outstandingAmount" -> outstandingAmount,
@@ -283,7 +290,7 @@ object IncomeSourceIntegrationTestConstants {
         "latePaymentInterestAmount" -> latePaymentInterestAmount
       ),
       Json.obj(
-        "taxYear" -> taxYear,
+        "taxYear" -> taxYear.toInt,
         "transactionId" -> "1040000124",
         "documentDescription" -> "ITSA- POA 1",
         "outstandingAmount" -> outstandingAmount,
@@ -296,7 +303,7 @@ object IncomeSourceIntegrationTestConstants {
         "latePaymentInterestAmount" -> latePaymentInterestAmount
       ),
       Json.obj(
-        "taxYear" -> taxYear,
+        "taxYear" -> taxYear.toInt,
         "transactionId" -> "1040000125",
         "documentDescription" -> "ITSA - POA 2",
         "outstandingAmount" -> outstandingAmount,
@@ -352,7 +359,7 @@ object IncomeSourceIntegrationTestConstants {
     "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "totalBalance" -> 3.00),
     "documentDetails" -> Json.arr(
       Json.obj(
-        "taxYear" -> taxYear,
+        "taxYear" -> taxYear.toInt,
         "transactionId" -> "1040000123",
         "documentDescription" -> "TRM New Charge",
         "outstandingAmount" -> outstandingAmount,
@@ -365,7 +372,7 @@ object IncomeSourceIntegrationTestConstants {
         "latePaymentInterestAmount" -> latePaymentInterestAmount
       ),
       Json.obj(
-        "taxYear" -> taxYear,
+        "taxYear" -> taxYear.toInt,
         "transactionId" -> "1040000124",
         "documentDescription" -> "ITSA- POA 1",
         "outstandingAmount" -> outstandingAmount,
@@ -378,7 +385,7 @@ object IncomeSourceIntegrationTestConstants {
         "latePaymentInterestAmount" -> latePaymentInterestAmount
       ),
       Json.obj(
-        "taxYear" -> taxYear,
+        "taxYear" -> taxYear.toInt,
         "transactionId" -> "1040000125",
         "documentDescription" -> "ITSA - POA 2",
         "outstandingAmount" -> outstandingAmount,
@@ -435,7 +442,7 @@ object IncomeSourceIntegrationTestConstants {
     "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "totalBalance" -> 3.00),
     "documentDetails" -> Json.arr(
       Json.obj(
-        "taxYear" -> taxYear,
+        "taxYear" -> taxYear.toInt,
         "transactionId" -> "1040000123",
         "documentDescription" -> "TRM New Charge",
         "documentText" -> CODING_OUT_CLASS2_NICS,
@@ -444,7 +451,7 @@ object IncomeSourceIntegrationTestConstants {
         "documentDate" -> "2018-03-29"
       ),
       Json.obj(
-        "taxYear" -> payeSaTaxYear,
+        "taxYear" -> payeSaTaxYear.toInt,
         "transactionId" -> "1040000124",
         "documentDescription" -> "TRM New Charge",
         "documentText" -> CODING_OUT_ACCEPTED,
@@ -454,7 +461,7 @@ object IncomeSourceIntegrationTestConstants {
         "amountCodedOut" -> amountCodedOut
       ),
       Json.obj(
-        "taxYear" -> taxYear,
+        "taxYear" -> taxYear.toInt,
         "transactionId" -> "1040000125",
         "documentDescription" -> "TRM Amend Charge",
         "documentText" -> CODING_OUT_CANCELLED,
@@ -463,7 +470,7 @@ object IncomeSourceIntegrationTestConstants {
         "documentDate" -> "2018-03-29"
       ),
       Json.obj(
-        "taxYear" -> taxYear,
+        "taxYear" -> taxYear.toInt,
         "transactionId" -> "1040000126",
         "documentDescription" -> "ITSA - POA 2",
         "outstandingAmount" -> outstandingAmount,
@@ -528,7 +535,7 @@ object IncomeSourceIntegrationTestConstants {
 
   def documentDetailJson(originalAmount: BigDecimal,
                          outstandingAmount: BigDecimal,
-                         taxYear: String = "2018",
+                         taxYear: Int = 2018,
                          documentDescription: String = "TRM New Charge",
                          transactionId: String = "1040000123"): JsValue = Json.obj(
     "taxYear" -> taxYear,
@@ -562,7 +569,7 @@ object IncomeSourceIntegrationTestConstants {
     ),
     "documentDetails" -> Json.arr(
       Json.obj(
-        "taxYear" -> taxYear,
+        "taxYear" -> taxYear.toInt,
         "transactionId" -> "1040000123",
         "documentDescription" -> "TRM New Charge",
         "outstandingAmount" -> outstandingAmount,
@@ -574,7 +581,7 @@ object IncomeSourceIntegrationTestConstants {
         "interestOutstandingAmount" -> 80.0
       ),
       Json.obj(
-        "taxYear" -> taxYear,
+        "taxYear" -> taxYear.toInt,
         "transactionId" -> "1040000124",
         "documentDescription" -> "ITSA- POA 1",
         "outstandingAmount" -> outstandingAmount,
@@ -582,7 +589,7 @@ object IncomeSourceIntegrationTestConstants {
         "documentDate" -> "2018-03-29"
       ),
       Json.obj(
-        "taxYear" -> taxYear,
+        "taxYear" -> taxYear.toInt,
         "transactionId" -> "1040000125",
         "documentDescription" -> "ITSA - POA 2",
         "outstandingAmount" -> outstandingAmount,
@@ -590,7 +597,7 @@ object IncomeSourceIntegrationTestConstants {
         "documentDate" -> "2018-03-29"
       ),
       Json.obj(
-        "taxYear" -> "9999",
+        "taxYear" -> 9999,
         "transactionId" -> "PAYID01",
         "documentDescription" -> "Payment On Account",
         "outstandingAmount" -> -outstandingAmount,
@@ -691,7 +698,7 @@ object IncomeSourceIntegrationTestConstants {
     ),
     "documentDetails" -> Json.arr(
       Json.obj(
-        "taxYear" -> taxYear,
+        "taxYear" -> taxYear.toInt,
         "transactionId" -> "1040000123",
         "documentDescription" -> "TRM New Charge",
         "outstandingAmount" -> outstandingAmount,
@@ -703,7 +710,7 @@ object IncomeSourceIntegrationTestConstants {
         "interestOutstandingAmount" -> 80.0
       ),
       Json.obj(
-        "taxYear" -> taxYear,
+        "taxYear" -> taxYear.toInt,
         "transactionId" -> "1040000124",
         "documentDescription" -> "ITSA- POA 1",
         "outstandingAmount" -> outstandingAmount,
@@ -711,7 +718,7 @@ object IncomeSourceIntegrationTestConstants {
         "documentDate" -> "2018-03-29"
       ),
       Json.obj(
-        "taxYear" -> taxYear,
+        "taxYear" -> taxYear.toInt,
         "transactionId" -> "1040000125",
         "documentDescription" -> "ITSA - POA 2",
         "outstandingAmount" -> outstandingAmount,
@@ -719,7 +726,7 @@ object IncomeSourceIntegrationTestConstants {
         "documentDate" -> "2018-03-29"
       ),
       Json.obj(
-        "taxYear" -> taxYear,
+        "taxYear" -> taxYear.toInt,
         "transactionId" -> "1040000126",
         "documentDescription" -> "TRM New Charge",
         "outstandingAmount" -> outstandingAmount,
@@ -727,7 +734,7 @@ object IncomeSourceIntegrationTestConstants {
         "documentDate" -> "2018-03-29"
       ),
       Json.obj(
-        "taxYear" -> taxYear,
+        "taxYear" -> taxYear.toInt,
         "transactionId" -> "1040000127",
         "documentDescription" -> "TRM New Charge",
         "outstandingAmount" -> outstandingAmount,
@@ -812,10 +819,10 @@ object IncomeSourceIntegrationTestConstants {
   )
 
   def testValidFinancialDetailsModelCreditAndRefundsJsonV2(originalAmount: BigDecimal, outstandingAmount: BigDecimal, taxYear: String = "2018",
-                                                         dueDate: String = "2018-02-14", dunningLock: List[String] = noDunningLock,
-                                                         interestLocks: List[String] = noInterestLock,
-                                                         latePaymentInterestAmount: Option[BigDecimal] = Some(100),
-                                                        ): JsValue = Json.obj(
+                                                           dueDate: String = "2018-02-14", dunningLock: List[String] = noDunningLock,
+                                                           interestLocks: List[String] = noInterestLock,
+                                                           latePaymentInterestAmount: Option[BigDecimal] = Some(100),
+                                                          ): JsValue = Json.obj(
     "balanceDetails" -> Json.obj(
       "balanceDueWithin30Days" -> 1.00,
       "overDueAmount" -> 2.00,
@@ -826,7 +833,7 @@ object IncomeSourceIntegrationTestConstants {
     ),
     "documentDetails" -> Json.arr(
       Json.obj(
-        "taxYear" -> taxYear,
+        "taxYear" -> taxYear.toInt,
         "transactionId" -> "1040000123",
         "documentDescription" -> "TRM New Charge",
         "outstandingAmount" -> outstandingAmount,
@@ -838,7 +845,7 @@ object IncomeSourceIntegrationTestConstants {
         "interestOutstandingAmount" -> 80.0
       ),
       Json.obj(
-        "taxYear" -> taxYear,
+        "taxYear" -> taxYear.toInt,
         "transactionId" -> "1040000124",
         "documentDescription" -> "ITSA- POA 1",
         "outstandingAmount" -> outstandingAmount,
@@ -846,7 +853,7 @@ object IncomeSourceIntegrationTestConstants {
         "documentDate" -> "2018-03-29"
       ),
       Json.obj(
-        "taxYear" -> taxYear,
+        "taxYear" -> taxYear.toInt,
         "transactionId" -> "1040000125",
         "documentDescription" -> "ITSA - POA 2",
         "outstandingAmount" -> outstandingAmount,
@@ -854,7 +861,7 @@ object IncomeSourceIntegrationTestConstants {
         "documentDate" -> "2018-03-29"
       ),
       Json.obj(
-        "taxYear" -> taxYear,
+        "taxYear" -> taxYear.toInt,
         "transactionId" -> "1040000126",
         "documentDescription" -> "TRM New Charge",
         "outstandingAmount" -> outstandingAmount,
@@ -862,7 +869,7 @@ object IncomeSourceIntegrationTestConstants {
         "documentDate" -> "2018-03-29"
       ),
       Json.obj(
-        "taxYear" -> taxYear,
+        "taxYear" -> taxYear.toInt,
         "transactionId" -> "1040000127",
         "documentDescription" -> "TRM New Charge",
         "outstandingAmount" -> outstandingAmount,
@@ -958,7 +965,7 @@ object IncomeSourceIntegrationTestConstants {
     ),
     "documentDetails" -> Json.arr(
       Json.obj(
-        "taxYear" -> taxYear,
+        "taxYear" -> taxYear.toInt,
         "transactionId" -> "1040000123",
         "documentDescription" -> "TRM New Charge",
         "outstandingAmount" -> outstandingAmount,
@@ -966,7 +973,7 @@ object IncomeSourceIntegrationTestConstants {
         "documentDate" -> "2018-03-29",
       ),
       Json.obj(
-        "taxYear" -> taxYear,
+        "taxYear" -> taxYear.toInt,
         "transactionId" -> "1040000124",
         "documentDescription" -> "TRM New Charge",
         "outstandingAmount" -> outstandingAmount,
@@ -974,7 +981,7 @@ object IncomeSourceIntegrationTestConstants {
         "documentDate" -> "2018-03-29"
       ),
       Json.obj(
-        "taxYear" -> taxYear,
+        "taxYear" -> taxYear.toInt,
         "transactionId" -> "1040000125",
         "documentDescription" -> "TRM New Charge",
         "outstandingAmount" -> outstandingAmount,
@@ -982,7 +989,7 @@ object IncomeSourceIntegrationTestConstants {
         "documentDate" -> "2018-03-29"
       ),
       Json.obj(
-        "taxYear" -> taxYear,
+        "taxYear" -> taxYear.toInt,
         "transactionId" -> "1040000126",
         "documentDescription" -> "TRM New Charge",
         "outstandingAmount" -> outstandingAmount,

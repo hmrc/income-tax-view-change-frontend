@@ -71,7 +71,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
     documentDetails = List(
       DocumentDetail(
-        taxYear = getCurrentTaxYearEnd.getYear.toString,
+        taxYear = getCurrentTaxYearEnd.getYear,
         transactionId = "testTransactionId",
         documentDescription = Some("ITSA- POA 1"),
         documentText = Some("documentText"),
@@ -96,7 +96,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
     BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
     List(
       DocumentDetail(
-        taxYear = getCurrentTaxYearEnd.getYear.toString,
+        taxYear = getCurrentTaxYearEnd.getYear,
         transactionId = "testDunningTransactionId",
         documentDescription = Some("ITSA- POA 1"),
         documentText = Some("documentText"),
@@ -108,7 +108,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         latePaymentInterestAmount = Some(100.00)
       ),
       DocumentDetail(
-        taxYear = getCurrentTaxYearEnd.getYear.toString,
+        taxYear = getCurrentTaxYearEnd.getYear,
         transactionId = "testDunningTransactionId2",
         documentDescription = Some("ITSA - POA 2"),
         documentText = Some("documentText"),
@@ -138,7 +138,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
     BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
     List(
       DocumentDetail(
-        taxYear = getCurrentTaxYearEnd.getYear.toString,
+        taxYear = getCurrentTaxYearEnd.getYear,
         transactionId = "testMFA1",
         documentDescription = Some("TRM New Charge"),
         documentText = Some("documentText"),
@@ -149,7 +149,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         interestEndDate = None
       ),
       DocumentDetail(
-        taxYear = getCurrentTaxYearEnd.getYear.toString,
+        taxYear = getCurrentTaxYearEnd.getYear,
         transactionId = "testMFA2",
         documentDescription = Some("TRM New Charge"),
         documentText = Some("documentText"),
@@ -366,7 +366,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         )
 
         verifyAuditEvent(TaxYearSummaryResponseAuditModel(testUser, financialDetailsSuccess.getAllDocumentDetailsWithDueDates(),
-          allObligations, Some(TaxYearSummaryViewModel(liabilityCalculationModelSuccessful))))
+          allObligations, messagesAPI, Some(TaxYearSummaryViewModel(liabilityCalculationModelSuccessful))))
         verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligationsSuccess.obligations.flatMap(_.obligations)).detail)
         verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId2", previousObligationsSuccess.obligations.flatMap(_.obligations)).detail)
 
@@ -439,7 +439,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         )
 
         verifyAuditEvent(TaxYearSummaryResponseAuditModel(testUser, financialDetailsDunningLockSuccess.getAllDocumentDetailsWithDueDates(),
-          allObligations, Some(TaxYearSummaryViewModel(liabilityCalculationModelSuccessful))))
+          allObligations, messagesAPI, Some(TaxYearSummaryViewModel(liabilityCalculationModelSuccessful))))
         verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligationsSuccess.obligations.flatMap(_.obligations)).detail)
         verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId2", previousObligationsSuccess.obligations.flatMap(_.obligations)).detail)
 
@@ -617,7 +617,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         )
 
         verifyAuditEvent(TaxYearSummaryResponseAuditModel(testUser, financialDetailsSuccess.getAllDocumentDetailsWithDueDates(),
-          currentObligationsSuccess, Some(TaxYearSummaryViewModel(liabilityCalculationModelSuccessful))))
+          currentObligationsSuccess, messagesAPI, Some(TaxYearSummaryViewModel(liabilityCalculationModelSuccessful))))
         verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligationsSuccess.obligations.flatMap(_.obligations)).detail)
       }
     }
@@ -808,7 +808,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
           from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
           to = getCurrentTaxYearEnd.toString
         )
-        verifyAuditEvent(TaxYearSummaryResponseAuditModel(testUser, auditDD, allObligations,
+        verifyAuditEvent(TaxYearSummaryResponseAuditModel(testUser, auditDD, allObligations, messagesAPI,
           Some(TaxYearSummaryViewModel(liabilityCalculationModelSuccessful))))
         verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligationsSuccess.obligations.flatMap(_.obligations)).detail)
         verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId2", previousObligationsSuccess.obligations.flatMap(_.obligations)).detail)

@@ -260,14 +260,14 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
   val codingOutNotice = s"${messages("whatYouOwe.codingOut-1a")} £43.21 ${messages("whatYouOwe.codingOut-1b")} ${messages("whatYouOwe.codingOut-2", "2020", "2021")} ${messages("whatYouOwe.codingOut-3")}"
   val codingOutNoticeFullyCollected = s"${messages("whatYouOwe.credit-overpaid-prefix")} £0.00 ${messages("whatYouOwe.codingOut-1b")} ${messages("whatYouOwe.codingOut-2", "2020", "2021")} ${messages("whatYouOwe.codingOut-individual")}"
 
-  val codedOutDocumentDetailNICs: DocumentDetail = DocumentDetail(taxYear = "2021", transactionId = "CODINGOUT02", documentDescription = Some("TRM New Charge"),
+  val codedOutDocumentDetailNICs: DocumentDetail = DocumentDetail(taxYear = 2021, transactionId = "CODINGOUT02", documentDescription = Some("TRM New Charge"),
     documentText = Some(CODING_OUT_CLASS2_NICS), outstandingAmount = Some(12.34),
     originalAmount = Some(43.21), documentDate = LocalDate.of(2018, 3, 29),
     interestOutstandingAmount = None, interestRate = None,
     latePaymentInterestId = None, interestFromDate = Some(LocalDate.parse("2019-05-25")),
     interestEndDate = Some(LocalDate.parse("2019-06-25")), latePaymentInterestAmount = None)
 
-  val codedOutDocumentDetail: DocumentDetail = DocumentDetail(taxYear = "2021", transactionId = "CODINGOUT02", documentDescription = Some("TRM New Charge"),
+  val codedOutDocumentDetail: DocumentDetail = DocumentDetail(taxYear = 2021, transactionId = "CODINGOUT02", documentDescription = Some("TRM New Charge"),
     documentText = Some(CODING_OUT_CLASS2_NICS), outstandingAmount = Some(12.34),
     originalAmount = Some(43.21), documentDate = LocalDate.of(2018, 3, 29),
     interestOutstandingAmount = None, interestRate = None,
@@ -275,7 +275,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     interestEndDate = Some(LocalDate.parse("2019-06-25")), latePaymentInterestAmount = None,
     amountCodedOut = Some(43.21))
 
-  val codedOutDocumentDetailFullyCollected: DocumentDetail = DocumentDetail(taxYear = "2021", transactionId = "CODINGOUT02", documentDescription = Some("TRM New Charge"),
+  val codedOutDocumentDetailFullyCollected: DocumentDetail = DocumentDetail(taxYear = 2021, transactionId = "CODINGOUT02", documentDescription = Some("TRM New Charge"),
     documentText = Some(CODING_OUT_CLASS2_NICS), outstandingAmount = Some(12.34),
     originalAmount = Some(43.21), documentDate = LocalDate.of(2018, 3, 29),
     interestOutstandingAmount = None, interestRate = None,
@@ -283,7 +283,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     interestEndDate = Some(LocalDate.parse("2019-06-25")), latePaymentInterestAmount = None,
     amountCodedOut = Some(0))
 
-  val codedOutDocumentDetailPayeSA: DocumentDetail = DocumentDetail(taxYear = "2021", transactionId = "CODINGOUT02", documentDescription = Some("TRM New Charge"),
+  val codedOutDocumentDetailPayeSA: DocumentDetail = DocumentDetail(taxYear = 2021, transactionId = "CODINGOUT02", documentDescription = Some("TRM New Charge"),
     documentText = Some(CODING_OUT_ACCEPTED), outstandingAmount = Some(0.00),
     originalAmount = Some(43.21), documentDate = LocalDate.of(2018, 3, 29),
     interestOutstandingAmount = None, interestRate = None,
