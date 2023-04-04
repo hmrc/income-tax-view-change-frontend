@@ -73,31 +73,3 @@
         </ul>
     </nav>
 }
-
-<script>
-        function getFragmentParam() {
-            if (window.location.hash) {
-                return "?fragment=" + window.location.hash.replace('#', '')
-            } else {
-                return ""
-            }
-        }
-
-        function switchTo(url) {
-            window.location = url + getFragmentParam()
-        }
-
-        function test() {
-            alert('test')
-        }
-
-        function switchToWelsh() {
-            alert('welsh')
-            history.replaceState({}, 'Title', @controllers.routes.ItvcLanguageController.switchToWelsh(None));
-        }
-
-        function switchToEnglish() {
-            alert("english")
-            history.replaceState({}, 'Title', @controllers.routes.ItvcLanguageController.switchToEnglish(None));
-        }
-</script>
