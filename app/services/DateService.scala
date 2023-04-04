@@ -25,8 +25,6 @@ import javax.inject.{Inject, Singleton}
 @Singleton
 class DateService @Inject()(implicit val frontendAppConfig: FrontendAppConfig) extends DateServiceInterface{
 
-  //override lazy val appConfig: FrontendAppConfig = implicitly
-
   def getCurrentDate(isTimeMachineEnabled: Boolean): LocalDate = {
     if (isTimeMachineEnabled) {
       frontendAppConfig
