@@ -38,7 +38,7 @@ class FinancialDetailsService @Inject()(val incomeTaxViewChangeConnector: Income
     incomeTaxViewChangeConnector.getFinancialDetails(taxYear, nino)
   }
 
-  def getChargeDueDates(financialDetails: List[FinancialDetailsResponseModel], isTimeMachineEnabled: Boolean): Option[Either[(LocalDate, Boolean), Int]] = {
+  def getChargeDueDates(financialDetails: List[FinancialDetailsResponseModel])(implicit isTimeMachineEnabled: Boolean): Option[Either[(LocalDate, Boolean), Int]] = {
     val chargeDueDates: List[LocalDate] = financialDetails.flatMap {
       case fdm: FinancialDetailsModel => fdm.validChargesWithRemainingToPay.getAllDueDates
       case _ => List.empty[LocalDate]

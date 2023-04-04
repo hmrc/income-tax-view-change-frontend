@@ -82,8 +82,8 @@ class HomeController @Inject()(val homeView: views.html.Home,
   def handleShowRequest(itvcErrorHandler: ShowInternalServerError, isAgent: Boolean, incomeSourceCurrentTaxYear: Int, origin: Option[String] = None)
                        (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
 
-    val isTimeMachineEnabled = isEnabled(TimeMachineAddYear)
-    nextUpdatesService.getNextDeadlineDueDateAndOverDueObligations(isTimeMachineEnabled).flatMap { latestDeadlineDate =>
+    implicit val isTimeMachineEnabled: Boolean = isEnabled(TimeMachineAddYear)
+    nextUpdatesService.getNextDeadlineDueDateAndOverDueObligations.flatMap { latestDeadlineDate =>
 
       val unpaidCharges: Future[List[FinancialDetailsResponseModel]] = financialDetailsService.getAllUnpaidFinancialDetails(isEnabled(CodingOut))
 
@@ -97,7 +97,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
       for {
         paymentsDue <- dueDates.map(_.sortBy(_.toEpochDay()))
         dunningLockExistsValue <- unpaidCharges.map(_.collectFirst { case fdm: FinancialDetailsModel if fdm.dunningLockExists => true })
-        outstandingChargesModel <- whatYouOweService.getWhatYouOweChargesList(unpaidCharges, isEnabled(CodingOut), isEnabled(MFACreditsAndDebits), isTimeMachineEnabled).map(_.outstandingChargesModel match {
+        outstandingChargesModel <- whatYouOweService.getWhatYouOweChargesList(unpaidCharges, isEnabled(CodingOut), isEnabled(MFACreditsAndDebits)).map(_.outstandingChargesModel match {
           case Some(OutstandingChargesModel(locm)) => locm.filter(ocm => ocm.relevantDueDate.isDefined && ocm.chargeName == "BCD")
           case _ => Nil
         })

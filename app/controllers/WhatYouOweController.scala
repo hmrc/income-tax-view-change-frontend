@@ -58,8 +58,8 @@ class WhatYouOweController @Inject()(val checkSessionTimeout: SessionTimeoutPred
                     isAgent: Boolean,
                     origin: Option[String] = None)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
-    val isTimeMachineEnabled = isEnabled(TimeMachineAddYear)
-    whatYouOweService.getWhatYouOweChargesList(isEnabled(CodingOut), isEnabled(MFACreditsAndDebits), isTimeMachineEnabled) flatMap {
+    implicit val isTimeMachineEnabled: Boolean = isEnabled(TimeMachineAddYear)
+    whatYouOweService.getWhatYouOweChargesList(isEnabled(CodingOut), isEnabled(MFACreditsAndDebits)) flatMap {
       whatYouOweChargesList =>
         auditingService.extendedAudit(WhatYouOweResponseAuditModel(user, whatYouOweChargesList, dateService))
 

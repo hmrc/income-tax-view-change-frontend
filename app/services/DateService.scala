@@ -17,7 +17,6 @@
 package services
 
 import config.FrontendAppConfig
-import config.featureswitch.{FeatureSwitching, TimeMachineAddYear}
 
 import java.time.LocalDate
 import java.time.Month.APRIL
@@ -29,7 +28,6 @@ class DateService @Inject()(implicit val frontendAppConfig: FrontendAppConfig) e
   //override lazy val appConfig: FrontendAppConfig = implicitly
 
   def getCurrentDate(isTimeMachineEnabled: Boolean): LocalDate = {
-    // isEnabled(TimeMachineAddYear)
     if (isTimeMachineEnabled) {
       frontendAppConfig
         .timeMachineAddYears.map(LocalDate.now().plusYears(_))
