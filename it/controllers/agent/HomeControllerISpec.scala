@@ -156,7 +156,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
                   balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
                   documentDetails = List(
                     DocumentDetail(
-                      taxYear = getCurrentTaxYearEnd.getYear.toString,
+                      taxYear = getCurrentTaxYearEnd.getYear,
                       transactionId = "testTransactionId",
                       documentDescription = Some("ITSA- POA 1"),
                       documentText = Some("documentText"),
@@ -225,7 +225,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
                   balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
                   documentDetails = List(
                     DocumentDetail(
-                      taxYear = getCurrentTaxYearEnd.getYear.toString,
+                      taxYear = getCurrentTaxYearEnd.getYear,
                       transactionId = "testTransactionId",
                       documentDescription = Some("ITSA- POA 1"),
                       documentText = Some("documentText"),
@@ -293,7 +293,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
                     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
                     documentDetails = List(
                       DocumentDetail(
-                        taxYear = getCurrentTaxYearEnd.getYear.toString,
+                        taxYear = getCurrentTaxYearEnd.getYear,
                         transactionId = "testTransactionId",
                         documentDescription = Some("ITSA- POA 1"),
                         documentText = Some("documentText"),
@@ -360,7 +360,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
                     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
                     documentDetails = List(
                       DocumentDetail(
-                        taxYear = getCurrentTaxYearEnd.getYear.toString,
+                        taxYear = getCurrentTaxYearEnd.getYear,
                         transactionId = "testTransactionId",
                         documentDescription = Some("ITSA- POA 1"),
                         documentText = Some("documentText"),
@@ -431,7 +431,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
                   balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
                   documentDetails = List(
                     DocumentDetail(
-                      taxYear = getCurrentTaxYearEnd.getYear.toString,
+                      taxYear = getCurrentTaxYearEnd.getYear,
                       transactionId = "testTransactionId1",
                       documentText = Some("documentText"),
                       documentDescription = Some("ITSA- POA 1"),
@@ -440,7 +440,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
                       documentDate = LocalDate.of(2018, 3, 29)
                     ),
                     DocumentDetail(
-                      taxYear = getCurrentTaxYearEnd.getYear.toString,
+                      taxYear = getCurrentTaxYearEnd.getYear,
                       transactionId = "testTransactionId2",
                       documentText = Some("documentText"),
                       documentDescription = Some("ITSA - POA 2"),

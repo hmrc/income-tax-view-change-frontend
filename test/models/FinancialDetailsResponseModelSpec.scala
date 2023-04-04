@@ -29,15 +29,14 @@ class FinancialDetailsResponseModelSpec extends UnitSpec with Matchers {
   "The ChargesModel" should {
 
     "be formatted to JSON correctly" in {
-      Json.toJson[FinancialDetailsModel](testValidFinancialDetailsModel) shouldBe testValidFinancialDetailsModelJson
+      Json.toJson[FinancialDetailsModel](testValidFinancialDetailsModel) shouldBe testValidFinancialDetailsModelJsonWrites
     }
 
     "be able to parse a JSON into the Model" in {
-      Json.fromJson[FinancialDetailsModel](testValidFinancialDetailsModelJson).fold(
+      Json.fromJson[FinancialDetailsModel](testValidFinancialDetailsModelJsonReads).fold(
         invalid => invalid,
         valid => valid) shouldBe testValidFinancialDetailsModel
     }
-
   }
 
   "The ChargesErrorModel" should {
@@ -87,7 +86,7 @@ class FinancialDetailsResponseModelSpec extends UnitSpec with Matchers {
       transactionId = Some("transid2"),
       items = Some(Seq(SubItem(Some(LocalDate.parse("2021-12-01"))), SubItem(Some(LocalDate.parse("2021-12-01")))))
     )
-    val dd1 = DocumentDetail(taxYear = "2017",
+    val dd1 = DocumentDetail(taxYear = 2017,
       transactionId = "transid2",
       documentDescription = Some("ITSA- POA 1"),
       documentText = Some("documentText"),
@@ -130,7 +129,7 @@ class FinancialDetailsResponseModelSpec extends UnitSpec with Matchers {
       items = Some(Seq(SubItem(Some(LocalDate.parse("2021-12-01"))), SubItem(Some(LocalDate.parse("2021-12-01")))))
     )
 
-    val dd1 = DocumentDetail(taxYear = "2017",
+    val dd1 = DocumentDetail(taxYear = 2017,
       transactionId = "transid1",
       documentDescription = Some("ITSA- POA 1"),
       documentText = Some("documentText"),
@@ -138,7 +137,7 @@ class FinancialDetailsResponseModelSpec extends UnitSpec with Matchers {
       originalAmount = None,
       documentDate = LocalDate.parse("2018-03-21"))
 
-    val dd2 = DocumentDetail(taxYear = "2018",
+    val dd2 = DocumentDetail(taxYear = 2018,
       transactionId = "transid2",
       documentDescription = Some("ITSA - POA 2"),
       documentText = Some("documentText2"),
@@ -186,6 +185,7 @@ class FinancialDetailsResponseModelSpec extends UnitSpec with Matchers {
       val fdm: FinancialDetailsModel = financialDetailsModel
       fdm.isMFADebit(documentId)
     }
+
     "return true for MFA debits" in {
       testIsMFADebit(id1040000123, financialDetailsMFADebits) shouldBe true
     }

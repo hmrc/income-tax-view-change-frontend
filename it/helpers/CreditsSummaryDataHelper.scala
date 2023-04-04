@@ -10,7 +10,7 @@ trait CreditsSummaryDataHelper {
     CreditDetailModel(
       date = LocalDate.of(2018, 3, 29),
       documentDetail = DocumentDetail(
-        taxYear = "2023",
+        taxYear = 2023,
         transactionId = "transId",
         documentDescription = Some("docId"),
         documentText = Some("text"),
@@ -24,7 +24,7 @@ trait CreditsSummaryDataHelper {
     CreditDetailModel(
       date = LocalDate.now().plusYears(1),
       documentDetail = DocumentDetail(
-        taxYear = "2023",
+        taxYear = 2023,
         transactionId = "transId",
         documentDescription = Some("docId"),
         documentText = Some("text"),
@@ -38,7 +38,7 @@ trait CreditsSummaryDataHelper {
     CreditDetailModel(
       date = LocalDate.now().plusYears(1),
       documentDetail = DocumentDetail(
-        taxYear = "2023",
+        taxYear = 2023,
         transactionId = "transId",
         documentDescription = Some("docId"),
         documentText = Some("text"),
@@ -52,7 +52,7 @@ trait CreditsSummaryDataHelper {
     CreditDetailModel(
       date = LocalDate.now().plusYears(1),
       documentDetail = DocumentDetail(
-        taxYear = "2023",
+        taxYear = 2023,
         transactionId = "transId",
         documentDescription = Some("docId"),
         documentText = Some("text"),
@@ -69,7 +69,7 @@ trait CreditsSummaryDataHelper {
     CreditDetailModel(
       date = LocalDate.of(2018, 3, 29),
       documentDetail = DocumentDetail(
-        taxYear = "2023",
+        taxYear = 2023,
         transactionId = "transId",
         documentDescription = Some("docId"),
         documentText = Some("text"),
@@ -83,7 +83,7 @@ trait CreditsSummaryDataHelper {
     CreditDetailModel(
       date = LocalDate.of(2018, 3, 29),
       documentDetail = DocumentDetail(
-        taxYear = "2023",
+        taxYear = 2023,
         transactionId = "transId",
         documentDescription = Some("docId"),
         documentText = Some("text"),
@@ -97,7 +97,7 @@ trait CreditsSummaryDataHelper {
     CreditDetailModel(
       date = LocalDate.now().plusYears(1),
       documentDetail = DocumentDetail(
-        taxYear = "2023",
+        taxYear = 2023,
         transactionId = "transId",
         documentDescription = Some("docId"),
         documentText = Some("text"),
@@ -111,7 +111,7 @@ trait CreditsSummaryDataHelper {
     CreditDetailModel(
       date = LocalDate.now().plusYears(1),
       documentDetail = DocumentDetail(
-        taxYear = "2023",
+        taxYear = 2023,
         transactionId = "transId",
         documentDescription = Some("docId"),
         documentText = Some("text"),
@@ -125,7 +125,7 @@ trait CreditsSummaryDataHelper {
     CreditDetailModel(
       date = LocalDate.now().plusYears(1),
       documentDetail = DocumentDetail(
-        taxYear = "2023",
+        taxYear = 2023,
         transactionId = "transId",
         documentDescription = Some("docId"),
         documentText = Some("text"),

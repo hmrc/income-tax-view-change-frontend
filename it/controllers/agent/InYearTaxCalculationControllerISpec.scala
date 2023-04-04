@@ -50,7 +50,7 @@ class InYearTaxCalculationControllerISpec extends ComponentSpecBase {
     ))
   }
 
-  val (taxYear, month, dayOfMonth) = (if (LocalDate.now().isAfter(toTaxYearEndDate(LocalDate.now().getYear.toString))){
+  val (taxYear, month, dayOfMonth) = (if (LocalDate.now().isAfter(toTaxYearEndDate(LocalDate.now().getYear))){
     LocalDate.now().getYear+1
   }
   else LocalDate.now().getYear, LocalDate.now.getMonthValue, LocalDate.now.getDayOfMonth)

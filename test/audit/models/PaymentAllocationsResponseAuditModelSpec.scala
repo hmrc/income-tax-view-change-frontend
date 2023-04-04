@@ -51,7 +51,7 @@ class PaymentAllocationsResponseAuditModelSpec extends TestSupport {
     items = Some(Seq(SubItem(Some(LocalDate.parse("2017-02-28"))), SubItem(Some(LocalDate.parse("2018-02-28")))))
   )
 
-  private val dd1 = DocumentDetail(taxYear = "2017",
+  private val dd1 = DocumentDetail(taxYear = 2017,
     transactionId = "transid2",
     documentDescription = Some("ITSA- POA 1"),
     documentText = Some("documentText"),
@@ -59,7 +59,7 @@ class PaymentAllocationsResponseAuditModelSpec extends TestSupport {
     originalAmount = Some(23456.78),
     documentDate = LocalDate.parse("2018-03-21"))
 
-  private val dd2 = DocumentDetail(taxYear = "2017",
+  private val dd2 = DocumentDetail(taxYear = 2017,
     transactionId = "transid2",
     documentDescription = Some("New Charge"),
     documentText = Some("documentText"),

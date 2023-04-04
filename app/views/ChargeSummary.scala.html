@@ -77,7 +77,7 @@
     documentDetail.hasLpiWithDunningBlock || (paymentBreakdown.nonEmpty && hasDunningLocks) || (paymentBreakdown.nonEmpty && hasInterestLocks)
 }
 
-@taxYearFrom = @{(documentDetail.taxYear.toInt - 1).toString}
+@taxYearFrom = @{(documentDetail.taxYear - 1)}
 @taxYearTo = @{documentDetail.taxYear}
 
 @taxYearFromCodingOut = @{(documentDetail.taxYear.toInt + 1).toString}
