@@ -388,7 +388,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
           remainingBalanceTable.select("td").last().text() shouldBe "£123,456.67"
 
-          findElementById("balancing-charge-type-overdue") shouldBe false
+          findElementById("balancing-charge-type-overdue") shouldBe None
         }
         "have POA data in same table" in new Setup(charges = whatYouOweDataWithDataDueInMoreThan30Days()) {
 
@@ -1044,13 +1044,15 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
     "codingOut is enabled" should {
       "have coding out message displayed at the bottom of the page" in new Setup(charges = whatYouOweDataWithCodingOutNics2, codingOutEnabled = true) {
-        findElementById("coding-out-summary-link") shouldBe Some
+        Option(pageDocument.getElementById("coding-out-summary-link")).isDefined shouldBe true
+        //findElementById("coding-out-summary-link") shouldBe Some
         pageDocument.getElementById("coding-out-summary-link").attr("href") shouldBe
           "/report-quarterly/income-and-expenses/view/tax-years/2021/charge?id=CODINGOUT02"
         pageDocument.getElementById("coding-out-notice").text().contains(codingOutAmount.toString)
       }
       "have a class 2 Nics overdue entry" in new Setup(charges = whatYouOweDataWithCodingOutNics2, codingOutEnabled = true) {
-        findElementById("due-0") shouldBe Some
+        Option(pageDocument.getElementById("due-0")).isDefined shouldBe true
+        //findElementById("due-0") shouldBe Some
         pageDocument.getElementById("due-0").text().contains(CODING_OUT_CLASS2_NICS) shouldBe true
         pageDocument.select("#payments-due-table tbody > tr").size() shouldBe 1
       }
@@ -1084,8 +1086,8 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       }
 
       "have a cancelled paye self assessment entry" in new Setup(charges = whatYouOweDataWithCancelledPayeSa, codingOutEnabled = false) {
-        findElementById("coding-out-notice") shouldBe None
-        findElementById("due-0") shouldBe Some
+        Option(pageDocument.getElementById("coding-out-notice")).isDefined shouldBe false
+        Option(pageDocument.getElementById("due-0")).isDefined shouldBe true
         //        pageDocument.getElementById("due-0").text().contains(cancelledPayeSelfAssessment) shouldBe true
         pageDocument.getElementById("due-0").text() shouldBe "25 Aug 2021 OVERDUE Balancing payment 1 2020 to 2021 Tax year £12.34"
         pageDocument.select("#payments-due-table tbody > tr").size() shouldBe 1
