@@ -1086,6 +1086,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       "have a cancelled paye self assessment entry" in new Setup(charges = whatYouOweDataWithCancelledPayeSa, codingOutEnabled = false) {
         Option(pageDocument.getElementById("coding-out-notice")).isDefined shouldBe false
         Option(pageDocument.getElementById("due-0")).isDefined shouldBe true
+        //        pageDocument.getElementById("due-0").text().contains(cancelledPayeSelfAssessment) shouldBe true
         pageDocument.getElementById("due-0").text() shouldBe "25 Aug 2021 OVERDUE Balancing payment 1 2020 to 2021 Tax year £12.34"
         pageDocument.select("#payments-due-table tbody > tr").size() shouldBe 1
         findElementById("coding-out-summary-link") shouldBe None
