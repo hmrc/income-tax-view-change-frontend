@@ -1045,14 +1045,12 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     "codingOut is enabled" should {
       "have coding out message displayed at the bottom of the page" in new Setup(charges = whatYouOweDataWithCodingOutNics2, codingOutEnabled = true) {
         Option(pageDocument.getElementById("coding-out-summary-link")).isDefined shouldBe true
-        //findElementById("coding-out-summary-link") shouldBe Some
         pageDocument.getElementById("coding-out-summary-link").attr("href") shouldBe
           "/report-quarterly/income-and-expenses/view/tax-years/2021/charge?id=CODINGOUT02"
         pageDocument.getElementById("coding-out-notice").text().contains(codingOutAmount.toString)
       }
       "have a class 2 Nics overdue entry" in new Setup(charges = whatYouOweDataWithCodingOutNics2, codingOutEnabled = true) {
         Option(pageDocument.getElementById("due-0")).isDefined shouldBe true
-        //findElementById("due-0") shouldBe Some
         pageDocument.getElementById("due-0").text().contains(CODING_OUT_CLASS2_NICS) shouldBe true
         pageDocument.select("#payments-due-table tbody > tr").size() shouldBe 1
       }
