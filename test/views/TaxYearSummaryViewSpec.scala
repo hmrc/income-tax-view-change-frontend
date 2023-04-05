@@ -62,9 +62,11 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
     periodTo = Some(LocalDate.of(testYear, 1, 1))
   )
 
+  val date: String = dateService.getCurrentDate(isEnabled(TimeMachineAddYear)).toLongDate
+
   val modelWithMultipleErrorMessages = modelComplete(Some(false)).copy(messages = Some(Messages(errors = Some(List(
-    Message("C15014", dateService.getCurrentDate(isEnabled(TimeMachineAddYear)).toLongDate),
-    Message("C55014", dateService.getCurrentDate(isEnabled(TimeMachineAddYear)).toLongDate),
+    Message("C15014", date),
+    Message("C55014", date),
     Message("C15015", ""),
     Message("C15016", ""),
     Message("C15102", ""),
@@ -93,12 +95,12 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
     Message("C55502", ""),
     Message("C55503", ""),
     Message("C55508", ""),
-    Message("C55008", dateService.getCurrentDate(isEnabled(TimeMachineAddYear)).toLongDate),
-    Message("C55011", dateService.getCurrentDate(isEnabled(TimeMachineAddYear)).toLongDate),
+    Message("C55008", date),
+    Message("C55011", date),
     Message("C55009", ""),
     Message("C55010", ""),
-    Message("C55012", dateService.getCurrentDate(isEnabled(TimeMachineAddYear)).toLongDate),
-    Message("C55013", dateService.getCurrentDate(isEnabled(TimeMachineAddYear)).toLongDate),
+    Message("C55012", date),
+    Message("C55013", date),
     Message("C55009", ""),
     Message("C55511", ""),
     Message("C55519", ""),
