@@ -987,6 +987,12 @@ object FinancialDetailsTestConstants {
     outstandingChargesModel = Some(outstandingChargesDueInMoreThan30Days)
   )
 
+  def whatYouOweDataWithZeroMoneyInAccount(dunningLocks: List[Option[String]] = noDunningLocks): WhatYouOweChargesList = WhatYouOweChargesList(
+    balanceDetails = BalanceDetails(0.00, 2.00, 2.00, None, None, None, Some(BigDecimal(0.00))),
+    chargesList = financialDetailsDueInMoreThan30Days(dunningLocks).getAllDocumentDetailsWithDueDates(),
+    outstandingChargesModel = Some(outstandingChargesDueInMoreThan30Days)
+  )
+
   val whatYouOweDataWithMixedData2: WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
     chargesList = List(financialDetailsWithMixedData2.getAllDocumentDetailsWithDueDates().head,
