@@ -38,6 +38,10 @@ trait ViewSpec extends TestSupport {
     lazy val layoutContent: Element = document.selectHead("#main-content")
 
     def pageContent(pageContentSelector: String) = document.selectHead(pageContentSelector)
+
+    def findElementById(id: String): Option[Element] = {
+      Option(document.getElementById(id))
+    }
   }
 
   object Selectors {

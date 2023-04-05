@@ -27,10 +27,10 @@ class AllocationDetailSpec extends TestSupport with Matchers {
 
   private val localToDateOpt = Some(LocalDate.parse("2019-01-04"))
 
-  def allocationDetails(mainType: String, chargeType: String, to: Option[LocalDate]): AllocationDetail = {
+  def allocationDetails(mainType: Option[String], chargeType: Option[String], to: Option[LocalDate]): AllocationDetail = {
     AllocationDetail(Some("id"),
       localToDateOpt,
-      to, Option(chargeType), Option(mainType), Some(10000.0), Some(5000.0), Some("chargeReference1"))
+      to, chargeType, mainType, Some(10000.0), Some(5000.0), Some("chargeReference1"))
   }
 
   "AllocationDetail" when {
@@ -40,22 +40,22 @@ class AllocationDetailSpec extends TestSupport with Matchers {
       "return a valid message" when {
 
         "provided with all subcharge types for POA1" in {
-          allocationDetails("SA Payment on Account 1", "NIC4", localToDateOpt).getPaymentAllocationKeyInPaymentAllocations shouldBe "paymentAllocation.paymentAllocations.poa1.nic4"
-          allocationDetails("SA Payment on Account 1", "ITSA", localToDateOpt).getPaymentAllocationKeyInPaymentAllocations shouldBe "paymentAllocation.paymentAllocations.poa1.incomeTax"
+          allocationDetails(Some("SA Payment on Account 1"), Some("NIC4"), localToDateOpt).getPaymentAllocationKeyInPaymentAllocations shouldBe "paymentAllocation.paymentAllocations.poa1.nic4"
+          allocationDetails(Some("SA Payment on Account 1"), Some("ITSA"), localToDateOpt).getPaymentAllocationKeyInPaymentAllocations shouldBe "paymentAllocation.paymentAllocations.poa1.incomeTax"
         }
 
         "provided with all subcharge types for POA2" in {
-          allocationDetails("SA Payment on Account 2", "NIC4", localToDateOpt).getPaymentAllocationKeyInPaymentAllocations shouldBe "paymentAllocation.paymentAllocations.poa2.nic4"
-          allocationDetails("SA Payment on Account 2", "ITSA", localToDateOpt).getPaymentAllocationKeyInPaymentAllocations shouldBe "paymentAllocation.paymentAllocations.poa2.incomeTax"
+          allocationDetails(Some("SA Payment on Account 2"), Some("NIC4"), localToDateOpt).getPaymentAllocationKeyInPaymentAllocations shouldBe "paymentAllocation.paymentAllocations.poa2.nic4"
+          allocationDetails(Some("SA Payment on Account 2"), Some("ITSA"), localToDateOpt).getPaymentAllocationKeyInPaymentAllocations shouldBe "paymentAllocation.paymentAllocations.poa2.incomeTax"
         }
 
         "provided with all subcharge types for a balancing charge" in {
-          allocationDetails("SA Balancing Charge", "ITSA", localToDateOpt).getPaymentAllocationKeyInPaymentAllocations shouldBe "paymentAllocation.paymentAllocations.bcd.incomeTax"
-          allocationDetails("SA Balancing Charge", "NIC4", localToDateOpt).getPaymentAllocationKeyInPaymentAllocations shouldBe "paymentAllocation.paymentAllocations.bcd.nic4"
-          allocationDetails("SA Balancing Charge", "Voluntary NIC2", localToDateOpt).getPaymentAllocationKeyInPaymentAllocations shouldBe "paymentAllocation.paymentAllocations.bcd.vcnic2"
-          allocationDetails("SA Balancing Charge", "NIC2", localToDateOpt).getPaymentAllocationKeyInPaymentAllocations shouldBe "paymentAllocation.paymentAllocations.bcd.nic2"
-          allocationDetails("SA Balancing Charge", SL, localToDateOpt).getPaymentAllocationKeyInPaymentAllocations shouldBe "paymentAllocation.paymentAllocations.bcd.sl"
-          allocationDetails("SA Balancing Charge", CGT, localToDateOpt).getPaymentAllocationKeyInPaymentAllocations shouldBe "paymentAllocation.paymentAllocations.bcd.cgt"
+          allocationDetails(Some("SA Balancing Charge"), Some("ITSA"), localToDateOpt).getPaymentAllocationKeyInPaymentAllocations shouldBe "paymentAllocation.paymentAllocations.bcd.incomeTax"
+          allocationDetails(Some("SA Balancing Charge"), Some("NIC4"), localToDateOpt).getPaymentAllocationKeyInPaymentAllocations shouldBe "paymentAllocation.paymentAllocations.bcd.nic4"
+          allocationDetails(Some("SA Balancing Charge"), Some("Voluntary NIC2"), localToDateOpt).getPaymentAllocationKeyInPaymentAllocations shouldBe "paymentAllocation.paymentAllocations.bcd.vcnic2"
+          allocationDetails(Some("SA Balancing Charge"), Some("NIC2"), localToDateOpt).getPaymentAllocationKeyInPaymentAllocations shouldBe "paymentAllocation.paymentAllocations.bcd.nic2"
+          allocationDetails(Some("SA Balancing Charge"), Some(SL), localToDateOpt).getPaymentAllocationKeyInPaymentAllocations shouldBe "paymentAllocation.paymentAllocations.bcd.sl"
+          allocationDetails(Some("SA Balancing Charge"), Some(CGT), localToDateOpt).getPaymentAllocationKeyInPaymentAllocations shouldBe "paymentAllocation.paymentAllocations.bcd.cgt"
 
         }
 
@@ -63,9 +63,9 @@ class AllocationDetailSpec extends TestSupport with Matchers {
 
       "return an empty message" when {
         "mainType and/or chargeType is None" in {
-          allocationDetails(null, "NIC4", localToDateOpt).getPaymentAllocationKeyInPaymentAllocations shouldBe ""
-          allocationDetails("SA Payment on Account 1", null, localToDateOpt).getPaymentAllocationKeyInPaymentAllocations shouldBe ""
-          allocationDetails(null, null, localToDateOpt).getPaymentAllocationKeyInPaymentAllocations shouldBe ""
+          allocationDetails(None, Some("NIC4"), localToDateOpt).getPaymentAllocationKeyInPaymentAllocations shouldBe ""
+          allocationDetails(Some("SA Payment on Account 1"), None, localToDateOpt).getPaymentAllocationKeyInPaymentAllocations shouldBe ""
+          allocationDetails(None, None, localToDateOpt).getPaymentAllocationKeyInPaymentAllocations shouldBe ""
         }
       }
 
@@ -93,7 +93,7 @@ class AllocationDetailSpec extends TestSupport with Matchers {
       "throw Exception" when {
         "periodEndDate is None" in {
           intercept[Exception] {
-            allocationDetails("SA Payment on Account 1", "NIC4", None).getTaxYear
+            allocationDetails(Some("SA Payment on Account 1"), Some("NIC4"), None).getTaxYear
           }
         }
       }

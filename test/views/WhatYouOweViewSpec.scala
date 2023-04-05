@@ -121,6 +121,10 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       Some("1234567890"), None, dunningLock, codingOutEnabled, MFADebitsEnabled, whatYouOweCreditAmountEnabled, creditAndRefundEnabled = true)(FakeRequest(), individualUser, implicitly)
     val pageDocument: Document = Jsoup.parse(contentAsString(html))
 
+    def findElementById(id: String): Option[Element] = {
+      Option(pageDocument.getElementById(id))
+    }
+
     def verifySelfAssessmentLink(): Unit = {
       val anchor: Element = pageDocument.getElementById("payments-due-note").selectFirst("a")
       anchor.text shouldBe saLink
@@ -150,7 +154,9 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       userType = Some(testUserTypeAgent),
       arn = Some(testArn)
     )(FakeRequest())
-
+    def findAgentElementById(id: String): Option[Element] = {
+      Option(pageDocument.getElementById(id))
+    }
     val whatYouOweView: WhatYouOwe = app.injector.instanceOf[WhatYouOwe]
 
     val html: HtmlFormat.Appendable = whatYouOweView(
@@ -382,7 +388,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
           remainingBalanceTable.select("td").last().text() shouldBe "£123,456.67"
 
-          pageDocument.getElementById("balancing-charge-type-overdue") shouldBe null
+          findElementById("balancing-charge-type-overdue") shouldBe None
         }
         "have POA data in same table" in new Setup(charges = whatYouOweDataWithDataDueInMoreThan30Days()) {
 
@@ -437,7 +443,8 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
         "display bullets and not display the paragraph about payments under review when there are no dunningLock" in new Setup(
           charges = whatYouOweDataWithDataDueInMoreThan30Days(twoDunningLocks)) {
-          pageDocument.getElementById("payment-under-review-info") shouldBe null
+          findElementById("payment-under-review-info") shouldBe None
+
 
           pageDocument.getElementById("payments-made").text shouldBe paymentsMade
           val paymentProcessingBullet: Element = pageDocument.getElementById("payments-made-bullets")
@@ -454,7 +461,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         }
 
         "money in your account section with zero available credits" in new Setup(charges = whatYouOweDataWithDataDueIn30Days()) {
-          pageDocument.getElementById("money-in-your-account") shouldBe null
+          findElementById("money-in-your-account") shouldBe None
         }
 
       }
@@ -501,14 +508,14 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           pageDocument.getElementById("payment-details-content-4").text shouldBe messages("whatYouOwe.cancelled-paye-sa.heading") + " " + messages("whatYouOwe.cancelled-paye-sa.line1")
 
 
-          pageDocument.getElementById("balancing-charge-type-overdue") shouldBe null
+          findElementById("balancing-charge-type-overdue") shouldBe None
         }
 
         "have Data for due within 30 days" in new Setup(charges = whatYouOweDataWithDataDueIn30Days()) {
 
           pageDocument.getElementById("due-0-link").attr("href") shouldBe controllers.routes.ChargeSummaryController.show(
             LocalDate.now().getYear, "1040000124").url
-          pageDocument.getElementById("due-0-overdue") shouldBe null
+          findElementById("due-0-overdue") shouldBe None
           pageDocument.getElementById("taxYearSummary-link-0").attr("href") shouldBe controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(
             LocalDate.now().getYear).url
         }
@@ -516,7 +523,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
           pageDocument.getElementById("due-1-link").attr("href") shouldBe controllers.routes.ChargeSummaryController.show(
             LocalDate.now().getYear, "1040000125").url
-          pageDocument.getElementById("due-1-overdue") shouldBe null
+          findElementById("due-1-overdue") shouldBe None
         }
 
         "have payment details and should not contain future payments and overdue payment headers" in new Setup(charges = whatYouOweDataWithDataDueIn30Days()) {
@@ -547,7 +554,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         }
         "not display the paragraph about payments under review when there are no dunningLock" in new Setup(
           charges = whatYouOweDataWithDataDueIn30Days(twoDunningLocks)) {
-          pageDocument.getElementById("payment-under-review-info") shouldBe null
+          findElementById("payment-under-review-info") shouldBe None
         }
         "should have payment processing bullets when there is no dunningLock" in new Setup(
           charges = whatYouOweDataWithDataDueIn30Days(twoDunningLocks)) {
@@ -824,14 +831,14 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         "only show interest for POA when there is no late Payment Interest" in new Setup(charges = whatYouOweDataWithOverdueInterestData(List(Some(34.56), None))) {
           def overduePaymentsInterestTableRow(index: String): Element = pageDocument.getElementById(s"charge-interest-$index")
 
-          overduePaymentsInterestTableRow("0") shouldBe null
+          Option(overduePaymentsInterestTableRow("0")).isDefined shouldBe false
 
           overduePaymentsInterestTableRow("1").select("td").get(1).text() shouldBe interestFromToDate("25 May 2019", "25 Jun 2019", "6.2")
           overduePaymentsInterestTableRow("1").select("td").last().text() shouldBe "£24.05"
         }
 
         "not have a paragraph explaining interest rates when there is no accruing interest" in new Setup(charges = whatYouOweDataWithOverdueData()) {
-          pageDocument.select(".interest-rate").first() shouldBe null
+          findElementById(".interest-rate") shouldBe None
         }
 
         "have payments data with button" in new Setup(charges = whatYouOweDataWithOverdueData()) {
@@ -852,7 +859,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
         "not display the paragraph about payments under review when there are no dunningLock" in new Setup(
           charges = whatYouOweDataWithOverdueData(twoDunningLocks)) {
-          pageDocument.getElementById("payment-under-review-info") shouldBe null
+          findElementById("payment-under-review-info") shouldBe None
         }
 
         s"display $paymentUnderReview when there is a dunningLock against a single charge" in new Setup(
@@ -879,7 +886,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           pageDocument.title() shouldBe whatYouOweTitle
         }
         s"not have MTD payments heading" in new Setup(charges = whatYouOweDataWithMixedData1) {
-          pageDocument.getElementById("pre-mtd-payments-heading") shouldBe null
+          findElementById("pre-mtd-payments-heading") shouldBe None
         }
 
         "should have payment processing bullets when there is mixed dates" in new Setup(charges = whatYouOweDataWithMixedData1) {
@@ -920,7 +927,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
           pageDocument.getElementById("due-1-link").attr("href") shouldBe controllers.routes.ChargeSummaryController.show(
             LocalDate.now().getYear, "1040000123").url
-          pageDocument.getElementById("due-1-overdue") shouldBe null
+          findElementById("due-1-overdue") shouldBe None
           pageDocument.getElementById("taxYearSummary-link-1").attr("href") shouldBe controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(
             LocalDate.now().getYear).url
 
@@ -938,7 +945,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
         pageDocument.getElementById("payment-button-link").attr("href") shouldBe controllers.routes.PaymentController.paymentHandoff(10000).url
 
-        pageDocument.getElementById("pre-mtd-payments-heading") shouldBe null
+        findElementById("pre-mtd-payments-heading") shouldBe None
       }
     }
 
@@ -987,7 +994,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
         pageDocument.getElementById("due-1-link").attr("href") shouldBe controllers.routes.ChargeSummaryController.show(
           LocalDate.now().getYear, "1040000123").url
-        pageDocument.getElementById("due-1-overdue") shouldBe null
+        findElementById("due-1-overdue") shouldBe None
         pageDocument.getElementById("taxYearSummary-link-1").attr("href") shouldBe controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(
           LocalDate.now().getYear).url
 
@@ -1024,12 +1031,12 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       }
 
       "not have button Pay now" in new Setup(charges = noChargesModel) {
-        Option(pageDocument.getElementById("payment-button")) shouldBe None
+        findElementById("payment-button") shouldBe None
       }
       "not have payment processing bullets" in new Setup(charges = noChargesModel) {
-        Option(pageDocument.getElementById("payments-made")) shouldBe None
-        Option(pageDocument.getElementById("payments-made-bullets")) shouldBe None
-        Option(pageDocument.getElementById("sa-tax-bill")) shouldBe None
+        findElementById("payments-made") shouldBe None
+        findElementById("payments-made-bullets") shouldBe None
+        findElementById("sa-tax-bill") shouldBe None
         pageDocument.getElementById("sa-note-migrated").text shouldBe saNote
 
       }
@@ -1037,13 +1044,13 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
     "codingOut is enabled" should {
       "have coding out message displayed at the bottom of the page" in new Setup(charges = whatYouOweDataWithCodingOutNics2, codingOutEnabled = true) {
-        pageDocument.getElementById("coding-out-summary-link") should not be null
+        Option(pageDocument.getElementById("coding-out-summary-link")).isDefined shouldBe true
         pageDocument.getElementById("coding-out-summary-link").attr("href") shouldBe
           "/report-quarterly/income-and-expenses/view/tax-years/2021/charge?id=CODINGOUT02"
         pageDocument.getElementById("coding-out-notice").text().contains(codingOutAmount.toString)
       }
       "have a class 2 Nics overdue entry" in new Setup(charges = whatYouOweDataWithCodingOutNics2, codingOutEnabled = true) {
-        pageDocument.getElementById("due-0") should not be null
+        Option(pageDocument.getElementById("due-0")).isDefined shouldBe true
         pageDocument.getElementById("due-0").text().contains(CODING_OUT_CLASS2_NICS) shouldBe true
         pageDocument.select("#payments-due-table tbody > tr").size() shouldBe 1
       }
@@ -1060,16 +1067,16 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       }
 
       "have a cancelled paye self assessment entry" in new Setup(charges = whatYouOweDataWithCancelledPayeSa, codingOutEnabled = true) {
-        pageDocument.getElementById("coding-out-notice") shouldBe null
+        findElementById("coding-out-notice") shouldBe None
         pageDocument.getElementById("due-0").text().contains(cancelledPayeSelfAssessment) shouldBe true
         pageDocument.select("#payments-due-table tbody > tr").size() shouldBe 1
-        pageDocument.getElementById("coding-out-summary-link") shouldBe null
+        findElementById("coding-out-summary-link") shouldBe None
       }
     }
 
     "codingOut is disabled" should {
       "have no coding out message displayed" in new Setup(charges = whatYouOweDataWithCodingOutNics2, codingOutEnabled = false) {
-        pageDocument.getElementById("coding-out-notice") shouldBe null
+        findElementById("coding-out-notice") shouldBe None
       }
       "have a balancing charge overdue entry" in new Setup(charges = whatYouOweDataWithCodingOutNics2, codingOutEnabled = false) {
         pageDocument.select("#due-0 a").get(0).text() shouldBe "Balancing payment 1"
@@ -1077,18 +1084,18 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       }
 
       "have a cancelled paye self assessment entry" in new Setup(charges = whatYouOweDataWithCancelledPayeSa, codingOutEnabled = false) {
-        pageDocument.getElementById("coding-out-notice") shouldBe null
-        pageDocument.getElementById("due-0") should not be null
+        Option(pageDocument.getElementById("coding-out-notice")).isDefined shouldBe false
+        Option(pageDocument.getElementById("due-0")).isDefined shouldBe true
         //        pageDocument.getElementById("due-0").text().contains(cancelledPayeSelfAssessment) shouldBe true
         pageDocument.getElementById("due-0").text() shouldBe "25 Aug 2021 OVERDUE Balancing payment 1 2020 to 2021 Tax year £12.34"
         pageDocument.select("#payments-due-table tbody > tr").size() shouldBe 1
-        pageDocument.getElementById("coding-out-summary-link") shouldBe null
+        findElementById("coding-out-summary-link") shouldBe None
       }
 
       "show only SA note and payment bullet points" in new Setup(charges = whatYouOweDataWithPayeSA, codingOutEnabled = false) {
         pageDocument.title() shouldBe whatYouOweTitle
         pageDocument.selectFirst("h1").text shouldBe whatYouOweHeading
-        pageDocument.getElementById("coding-out-notice") shouldBe null
+        findElementById("coding-out-notice") shouldBe None
         pageDocument.getElementById("sa-note-migrated").text shouldBe saNote
         pageDocument.getElementById("outstanding-charges-note-migrated").text shouldBe osChargesNote
         pageDocument.getElementById("payments-made").text shouldBe paymentsMade
@@ -1155,10 +1162,10 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           LocalDate.now().getYear).url
       }
       "not have button Pay now with no chagres" in new AgentSetup(charges = noChargesModel) {
-        Option(pageDocument.getElementById("payment-button")) shouldBe None
+        findAgentElementById("payment-button") shouldBe None
       }
       "not have button Pay now with charges" in new AgentSetup(charges = whatYouOweDataWithDataDueIn30Days()) {
-        Option(pageDocument.getElementById("payment-button")) shouldBe None
+        findAgentElementById("payment-button") shouldBe None
       }
       "have payment type drop down details" in new AgentSetup(charges = whatYouOweDataWithDataDueIn30Days()) {
         pageDocument.select(".govuk-details__summary-text").text shouldBe dropDownInfo
@@ -1177,7 +1184,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       }
 
       "money in your account section with zero available credits" in new AgentSetup(charges = whatYouOweDataWithDataDueIn30Days()) {
-        pageDocument.getElementById("money-in-your-account") shouldBe null
+        findAgentElementById("money-in-your-account") shouldBe None
       }
     }
 
@@ -1222,12 +1229,12 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     "not show unallocated credits" when {
       "user is an individual with the feature switch off" in new Setup(creditCharges = creditDocumentDetailList,
         charges = whatYouOweDataWithDataDueInMoreThan30Days()) {
-        pageDocument.getElementById("unallocated-credit-note") shouldBe null
+        findElementById("unallocated-credit-note") shouldBe None
       }
 
       "user is an agent with the feature switch on" in new AgentSetup(creditCharges = creditDocumentDetailList,
         charges = whatYouOweDataWithDataDueInMoreThan30Days()) {
-        pageDocument.getElementById("unallocated-credit-note") shouldBe null
+        findAgentElementById("unallocated-credit-note") shouldBe None
       }
     }
   }
