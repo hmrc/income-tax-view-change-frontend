@@ -25,7 +25,7 @@ import javax.inject.{Inject, Singleton}
 @Singleton
 class DateService @Inject()(implicit val frontendAppConfig: FrontendAppConfig) extends DateServiceInterface{
 
-  def getCurrentDate(isTimeMachineEnabled: Boolean): LocalDate = {
+  def getCurrentDate(isTimeMachineEnabled: Boolean = false): LocalDate = {
     if (isTimeMachineEnabled) {
       frontendAppConfig
         .timeMachineAddYears.map(LocalDate.now().plusYears(_))
