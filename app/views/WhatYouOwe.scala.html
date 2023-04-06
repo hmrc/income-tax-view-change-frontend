@@ -431,7 +431,9 @@
         }
         @if(whatYouOweCreditAmountEnabled) {
             @whatYouOweChargesList.balanceDetails.getAbsoluteUnAllocatedCreditAmount.map { unallocatedCreditAmt =>
-                @unallocatedCreditParagraphContent(unallocatedCreditAmt.toCurrencyString)
+                @if(unallocatedCreditAmt > 0) {
+                    @unallocatedCreditParagraphContent(unallocatedCreditAmt.toCurrencyString)
+                }
             }
         }
         @if(utr.isDefined && !isAgent && whatYouOweChargesList.getEarliestTaxYearAndAmountByDueDate.isDefined) {
