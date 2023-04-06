@@ -39,6 +39,7 @@ import java.time.LocalDate
 import java.util.Locale
 
 class InYearTaxCalculationControllerISpec extends ComponentSpecBase {
+  val currentDate = LocalDate.of(2023, 4, 5)
   val implicitDateFormatter: ImplicitDateFormatter = app.injector.instanceOf[ImplicitDateFormatterImpl]
 
   implicit val messages: Messages = app.injector.instanceOf[MessagesApi].preferred(FakeRequest())
@@ -50,12 +51,12 @@ class InYearTaxCalculationControllerISpec extends ComponentSpecBase {
     ))
   }
 
-  val (taxYear, month, dayOfMonth) = (if (LocalDate.now().isAfter(toTaxYearEndDate(LocalDate.now().getYear))){
-    LocalDate.now().getYear+1
+  val (taxYear, month, dayOfMonth) = (if (currentDate.isAfter(toTaxYearEndDate(currentDate.getYear))){
+    currentDate.getYear+1
   }
-  else LocalDate.now().getYear, LocalDate.now.getMonthValue, LocalDate.now.getDayOfMonth)
-  val timeStampEN: String = longDate(LocalDate.now)(toMessages("EN")).toLongDate
-  val timeStampCY: String = longDate(LocalDate.now)(toMessages("CY")).toLongDate
+  else currentDate.getYear, currentDate.getMonthValue, currentDate.getDayOfMonth)
+  val timeStampEN: String = longDate( currentDate)(toMessages("EN")).toLongDate
+  val timeStampCY: String = longDate(currentDate)(toMessages("CY")).toLongDate
 
 
   val url: String = s"http://localhost:$port" + controllers.routes.InYearTaxCalculationController.showAgent.url
@@ -87,14 +88,14 @@ class InYearTaxCalculationControllerISpec extends ComponentSpecBase {
     yearOfMigration = None,
     businesses = List(BusinessDetailsModel(
       Some("testId"),
-      Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
+      Some(AccountingPeriodModel(currentDate, currentDate.plusYears(1))),
       Some("Test Trading Name"),
       Some(LocalDate.of(taxYear, month, dayOfMonth))
     )),
     property = Some(
       PropertyDetailsModel(
         Some("testId2"),
-        Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
+        Some(AccountingPeriodModel(currentDate, currentDate.plusYears(1))),
         Some(LocalDate.of(taxYear, month, dayOfMonth))
       )
     )

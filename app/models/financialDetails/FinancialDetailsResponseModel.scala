@@ -18,7 +18,7 @@ package models.financialDetails
 
 import auth.MtdItUser
 import play.api.libs.json.{Format, Json}
-import services.DateService
+import services.{DateServiceInterface}
 
 import java.time.LocalDate
 
@@ -75,25 +75,25 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
     } flatMap (_.items.flatMap(_.headOption.flatMap(_.dueDate)))
   }
 
-  def findDocumentDetailForYearWithDueDate(taxYear: Int)(implicit dateService: DateService): Option[DocumentDetailWithDueDate] = {
+  def findDocumentDetailForYearWithDueDate(taxYear: Int)(implicit dateService: DateServiceInterface): Option[DocumentDetailWithDueDate] = {
     findDocumentDetailForTaxYear(taxYear)
       .map(documentDetail => DocumentDetailWithDueDate(documentDetail, getDueDateFor(documentDetail)))
   }
 
-  def findDocumentDetailByIdWithDueDate(id: String)(implicit dateService: DateService): Option[DocumentDetailWithDueDate] = {
+  def findDocumentDetailByIdWithDueDate(id: String)(implicit dateService: DateServiceInterface): Option[DocumentDetailWithDueDate] = {
     documentDetails.find(_.transactionId == id)
       .map(documentDetail => DocumentDetailWithDueDate(
         documentDetail, getDueDateFor(documentDetail), dunningLock = dunningLockExists(documentDetail.transactionId)))
   }
 
-  def getAllDocumentDetailsWithDueDates(codingOutEnabled: Boolean = false)(implicit dateService: DateService): List[DocumentDetailWithDueDate] = {
+  def getAllDocumentDetailsWithDueDates(codingOutEnabled: Boolean = false)(implicit dateService: DateServiceInterface): List[DocumentDetailWithDueDate] = {
     documentDetails.map(documentDetail =>
       DocumentDetailWithDueDate(documentDetail, getDueDateFor(documentDetail),
         documentDetail.isLatePaymentInterest, dunningLockExists(documentDetail.transactionId),
         codingOutEnabled = codingOutEnabled, isMFADebit = isMFADebit(documentDetail.transactionId)))
   }
 
-  def getAllDocumentDetailsWithDueDatesAndFinancialDetails(codingOutEnabled: Boolean = false)(implicit dateService: DateService): List[(DocumentDetailWithDueDate, FinancialDetail)] = {
+  def getAllDocumentDetailsWithDueDatesAndFinancialDetails(codingOutEnabled: Boolean = false)(implicit dateService: DateServiceInterface): List[(DocumentDetailWithDueDate, FinancialDetail)] = {
     documentDetails.map(documentDetail =>
       (DocumentDetailWithDueDate(documentDetail, getDueDateFor(documentDetail),
         documentDetail.isLatePaymentInterest, dunningLockExists(documentDetail.transactionId),

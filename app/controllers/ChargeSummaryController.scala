@@ -31,7 +31,7 @@ import models.financialDetails._
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.{DateService, FinancialDetailsService, IncomeSourceDetailsService}
+import services.{DateServiceInterface, FinancialDetailsService, IncomeSourceDetailsService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.language.LanguageUtils
 import utils.FallBackBackLinks
@@ -55,7 +55,7 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
                                         val authorisedFunctions: FrontendAuthorisedFunctions,
                                         val customNotFoundErrorView: CustomNotFoundError)
                                        (implicit val appConfig: FrontendAppConfig,
-                                        dateService: DateService,
+                                        dateService: DateServiceInterface,
                                         val languageUtils: LanguageUtils,
                                         mcc: MessagesControllerComponents,
                                         val ec: ExecutionContext,
@@ -126,7 +126,7 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
                                   chargeDetails: FinancialDetailsModel, payments: FinancialDetailsModel,
                                   isAgent: Boolean, origin: Option[String],
                                   isMFADebit: Boolean)
-                                 (implicit user: MtdItUser[_], dateService: DateService): Future[Result] = {
+                                 (implicit user: MtdItUser[_], dateService: DateServiceInterface): Future[Result] = {
     val sessionGatewayPage = user.session.get(gatewayPage).map(GatewayPage(_))
     val documentDetailWithDueDate: DocumentDetailWithDueDate = chargeDetails.findDocumentDetailByIdWithDueDate(id).get
     val financialDetails = chargeDetails.financialDetails.filter(_.transactionId.contains(id))

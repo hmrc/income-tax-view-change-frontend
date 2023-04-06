@@ -33,6 +33,8 @@ object NextUpdatesIntegrationTestConstants {
     "reason" -> reason
   )
 
+  val currentDate =  LocalDate.of(2023, 4, 5)
+
   val deadlineStart1 = LocalDate.of(2017, 1, 1)
   val deadlineEnd1 = LocalDate.of(2017, 3, 31)
   val deadlineStart2 = LocalDate.of(2017, 4, 1)
@@ -52,42 +54,42 @@ object NextUpdatesIntegrationTestConstants {
     NextUpdateModel(
       start = deadlineStart1,
       end = deadlineEnd1,
-      due = LocalDate.now().minusDays(128),
+      due = currentDate.minusDays(128),
       obligationType = "Quarterly",
       dateReceived = None,
       periodKey = "periodKey"
     ), NextUpdateModel(
       start = deadlineStart2,
       end = deadlineEnd2,
-      due = LocalDate.now().minusDays(36),
+      due = currentDate.minusDays(36),
       obligationType = "Quarterly",
       dateReceived = None,
       periodKey = "periodKey"
     ), NextUpdateModel(
       start = deadlineStart3,
       end = deadlineEnd3,
-      due = LocalDate.now().minusDays(36),
+      due = currentDate.minusDays(36),
       obligationType = "EOPS",
       dateReceived = None,
       periodKey = "periodKey"
     ), NextUpdateModel(
       start = deadlineStart4,
       end = deadlineEnd4,
-      due = LocalDate.now().plusDays(30),
+      due = currentDate.plusDays(30),
       obligationType = "Quarterly",
       dateReceived = None,
       periodKey = "periodKey"
     ), NextUpdateModel(
       start = deadlineStart5,
       end = deadlineEnd5,
-      due = LocalDate.now().plusDays(146),
+      due = currentDate.plusDays(146),
       obligationType = "Quarterly",
       dateReceived = None,
       periodKey = "periodKey"
     ), NextUpdateModel(
       start = deadlineStart6,
       end = deadlineEnd6,
-      due = LocalDate.now().plusDays(174),
+      due = currentDate.plusDays(174),
       obligationType = "Quarterly",
       dateReceived = None,
       periodKey = "periodKey"
@@ -99,7 +101,7 @@ object NextUpdatesIntegrationTestConstants {
   val singleObligationEnd = LocalDate.of(2017, 7, 5)
   val singleObligationDue = LocalDate.of(2018, 1, 1)
 
-  val overdueDate: LocalDate = LocalDate.now().minusDays(1)
+  val overdueDate: LocalDate = currentDate.minusDays(1)
 
   def singleObligationQuarterlyReturnModel(incomeId: String): NextUpdatesModel = NextUpdatesModel(incomeId, List(
     NextUpdateModel(
@@ -171,7 +173,7 @@ object NextUpdatesIntegrationTestConstants {
     NextUpdateModel(
       start = LocalDate.of(2017, 4, 6),
       end = LocalDate.of(2017, 7, 5),
-      due = LocalDate.now().plusYears(1),
+      due = currentDate.plusYears(1),
       obligationType = "Quarterly",
       dateReceived = None,
       periodKey = "periodKey"

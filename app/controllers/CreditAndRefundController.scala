@@ -29,7 +29,7 @@ import models.financialDetails.{BalanceDetails, DocumentDetailWithDueDate, Finan
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import services.{CreditService, DateService, IncomeSourceDetailsService, RepaymentService}
+import services.{CreditService, DateServiceInterface, IncomeSourceDetailsService, RepaymentService}
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.language.LanguageUtils
@@ -53,7 +53,7 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
                                           val repaymentService: RepaymentService,
                                           val auditingService: AuditingService)
                                          (implicit val appConfig: FrontendAppConfig,
-                                          dateService: DateService,
+                                          dateService: DateServiceInterface,
                                           val languageUtils: LanguageUtils,
                                           mcc: MessagesControllerComponents,
                                           val ec: ExecutionContext,

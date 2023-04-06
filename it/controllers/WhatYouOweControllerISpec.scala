@@ -21,19 +21,17 @@ import auth.MtdItUser
 import config.featureswitch.{CodingOut, CreditsRefundsRepay, MFACreditsAndDebits, NavBarFs}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
-import models.financialDetails.{BalanceDetails, DocumentDetail, DocumentDetailWithDueDate, FinancialDetailsModel, WhatYouOweChargesList}
-import models.outstandingCharges.OutstandingChargesModel
+import models.financialDetails.{BalanceDetails, FinancialDetailsModel, WhatYouOweChargesList}
 import play.api.http.Status._
 import play.api.libs.json.{JsValue, Json}
 import play.api.test.FakeRequest
-import services.DateService
+import services.DateServiceInterface
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino, testSaUtr}
 import testConstants.FinancialDetailsIntegrationTestConstants._
 import testConstants.IncomeSourceIntegrationTestConstants._
 import testConstants.OutstandingChargesIntegrationTestConstants._
 import testConstants.messages.WhatYouOweMessages.{hmrcAdjustment, hmrcAdjustmentHeading, hmrcAdjustmentLine1}
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
-
 import java.time.LocalDate
 
 class WhatYouOweControllerISpec extends ComponentSpecBase {
@@ -69,6 +67,14 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
        |}
        |""".stripMargin)
 
+  val testDateService = new DateServiceInterface {
+    override def getCurrentDate: LocalDate = LocalDate.of(2023, 4, 5 )
+
+    override def getCurrentTaxYearEnd: Int = 2022
+
+    override def isDayBeforeTaxYearLastDay: Boolean = false
+  }
+
   "Navigating to /report-quarterly/income-and-expenses/view/payments-owed" when {
 
     "Authorised" when {
@@ -92,7 +98,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
         When("I call GET /report-quarterly/income-and-expenses/view/payments-owed")
         val res = IncomeTaxViewChangeFrontend.getPaymentsDue
 
-        AuditStub.verifyAuditContainsDetail(WhatYouOweResponseAuditModel(testUser, whatYouOweFinancialDetailsEmptyBCDCharge, dateService).detail)
+        AuditStub.verifyAuditContainsDetail(WhatYouOweResponseAuditModel(testUser, whatYouOweFinancialDetailsEmptyBCDCharge, testDateService).detail)
 
         verifyIncomeSourceDetailsCall(testMtditid)
         IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05", 2)
