@@ -65,9 +65,7 @@ class TestDateService  extends DateServiceInterface  {
   def isDayBeforeTaxYearLastDay: Boolean = false
 
   def getCurrentTaxYearEnd: Int = 2023
-//    val currentDate = getCurrentDate
-//    if (isDayBeforeTaxYearLastDay) currentDate.getYear else currentDate.getYear + 1
-//  }
+
 }
 
 trait ComponentSpecBase extends TestSuite with CustomMatchers
