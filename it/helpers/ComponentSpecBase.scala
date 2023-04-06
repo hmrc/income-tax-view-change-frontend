@@ -62,7 +62,7 @@ class TestHeaderExtractor extends HeaderExtractor {
 class TestDateService  extends DateServiceInterface  {
 
   def getCurrentDate: LocalDate = LocalDate.of(2023, 4, 5)
-  def isDayBeforeTaxYearLastDay: Boolean = false
+  def isDayBeforeTaxYearLastDay: Boolean = true
 
   def getCurrentTaxYearEnd: Int = 2023
 

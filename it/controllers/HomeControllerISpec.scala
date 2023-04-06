@@ -73,11 +73,11 @@ class HomeControllerISpec extends ComponentSpecBase {
         res should have(
           httpStatus(OK),
           pageTitleIndividual("home.heading"),
-          elementTextBySelector("#updates-tile p:nth-child(2)")(overdueUpdates("3")),
+          elementTextBySelector("#updates-tile p:nth-child(2)")(overdueUpdates("4")),
           elementTextBySelector("#payments-tile p:nth-child(2)")(overduePayments("6"))
         )
 
-        verifyAuditContainsDetail(HomeAudit(testUser, Some(Right(6)), Right(3)).detail)
+        verifyAuditContainsDetail(HomeAudit(testUser, Some(Right(6)), Right(4)).detail)
         verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, testSelfEmploymentId, singleObligationQuarterlyReturnModel(testSelfEmploymentId).obligations).detail)
         verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, otherTestSelfEmploymentId, singleObligationQuarterlyReturnModel(otherTestSelfEmploymentId).obligations).detail)
         verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, testPropertyId, singleObligationOverdueModel(testPropertyId).obligations).detail)
