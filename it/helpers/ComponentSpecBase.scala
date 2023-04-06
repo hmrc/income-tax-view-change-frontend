@@ -36,7 +36,7 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.crypto.DefaultCookieSigner
 import play.api.libs.ws.WSResponse
 import play.api.{Application, Environment, Mode}
-import services.DateService
+import services.{DateService, DateServiceInterface}
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
 import testConstants.IncomeSourceIntegrationTestConstants._
 import uk.gov.hmrc.http.{Authorization, HeaderCarrier}
@@ -56,6 +56,18 @@ class TestHeaderExtractor extends HeaderExtractor {
       .copy(authorization = Some(Authorization("Bearer")))
   }
 
+}
+
+@Singleton
+class TestDateService  extends DateServiceInterface  {
+
+  def getCurrentDate: LocalDate = LocalDate.of(2023, 4, 5)
+  def isDayBeforeTaxYearLastDay: Boolean = false
+
+  def getCurrentTaxYearEnd: Int = 2023
+//    val currentDate = getCurrentDate
+//    if (isDayBeforeTaxYearLastDay) currentDate.getYear else currentDate.getYear + 1
+//  }
 }
 
 trait ComponentSpecBase extends TestSuite with CustomMatchers
@@ -78,9 +90,8 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
   implicit val dateService: DateService = new DateService(){
     override def getCurrentDate: LocalDate = LocalDate.of(2023, 4, 5)
 
-    override def getCurrentTaxYearEnd: Int = 2022
+    override def getCurrentTaxYearEnd: Int = 2023
   }
-
 
   override lazy val cookieSigner: DefaultCookieSigner = app.injector.instanceOf[DefaultCookieSigner]
 
@@ -118,7 +129,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
   val testUserDetailsWiremockUrl: String = mockUrl + userDetailsUrl
 
   val getCurrentTaxYearEnd: LocalDate = {
-    val currentDate: LocalDate = LocalDate.of(2023, 4, 5)
+    val currentDate: LocalDate = LocalDate.of(2023, 4, 4)
     if (currentDate.isBefore(LocalDate.of(currentDate.getYear, 4, 6))) LocalDate.of(currentDate.getYear, 4, 5)
     else LocalDate.of(currentDate.getYear + 1, 4, 5)
   }
@@ -127,6 +138,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
   override implicit lazy val app: Application = new GuiceApplicationBuilder()
     .in(Environment.simple(mode = Mode.Dev))
     .overrides(bind[HeaderExtractor].to[TestHeaderExtractor]) // adding dumy Authorization header in order for it:tests to pass
+    .overrides(bind[DateServiceInterface].to[TestDateService])
     .configure(config)
     .build
 

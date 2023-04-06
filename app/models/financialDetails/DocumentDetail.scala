@@ -20,7 +20,7 @@ import enums.CodingOutType._
 import play.api.Logger
 import play.api.libs.functional.syntax.toFunctionalBuilderOps
 import play.api.libs.json.{Json, Reads, Writes, __}
-import services.DateService
+import services.{DateService, DateServiceInterface}
 
 import java.time.LocalDate
 
@@ -174,7 +174,7 @@ case class DocumentDetail(taxYear: Int,
 
 case class DocumentDetailWithDueDate(documentDetail: DocumentDetail, dueDate: Option[LocalDate],
                                      isLatePaymentInterest: Boolean = false, dunningLock: Boolean = false,
-                                     codingOutEnabled: Boolean = false, isMFADebit: Boolean = false)(implicit val dateService: DateService) {
+                                     codingOutEnabled: Boolean = false, isMFADebit: Boolean = false)(implicit val dateService: DateServiceInterface) {
   val isOverdue: Boolean = dueDate.exists(_ isBefore dateService.getCurrentDate)
 }
 

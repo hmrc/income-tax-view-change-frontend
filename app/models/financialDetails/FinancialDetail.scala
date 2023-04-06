@@ -19,7 +19,7 @@ package models.financialDetails
 import models.creditDetailModel.{BalancingChargeCreditType, CreditType, CutOverCreditType, MfaCreditType}
 import models.financialDetails.FinancialDetail.Types._
 import play.api.libs.json.{Format, Json}
-import services.DateService
+import services.{ DateServiceInterface}
 
 import java.time.LocalDate
 
@@ -66,7 +66,7 @@ case class FinancialDetail(taxYear: String,
     }
   }
 
-  def payments(implicit dateService: DateService): Seq[Payment] = items match {
+  def payments(implicit dateService: DateServiceInterface): Seq[Payment] = items match {
     case Some(subItems) => subItems.map { subItem =>
       Payment(reference = subItem.paymentReference, amount = subItem.paymentAmount, outstandingAmount = None,
         method = subItem.paymentMethod, documentDescription = None, lot = subItem.paymentLot, lotItem = subItem.paymentLotItem,
@@ -75,7 +75,7 @@ case class FinancialDetail(taxYear: String,
     case None => Seq.empty[Payment]
   }
 
-  def allocation(implicit dateService: DateService): Option[PaymentsWithChargeType] = items
+  def allocation(implicit dateService: DateServiceInterface): Option[PaymentsWithChargeType] = items
     .map { subItems =>
       subItems.collect {
         case subItem if subItem.paymentLot.isDefined && subItem.paymentLotItem.isDefined =>

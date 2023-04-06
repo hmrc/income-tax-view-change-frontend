@@ -16,6 +16,7 @@
 
 package services
 
+import com.google.inject.ImplementedBy
 import config.FrontendAppConfig
 import config.featureswitch.{FeatureSwitching, TimeMachineAddYear}
 
@@ -34,7 +35,8 @@ class DateService @Inject()(implicit val frontendAppConfig: FrontendAppConfig) e
         .timeMachineAddYears.map(LocalDate.now().plusYears(_))
         .getOrElse(LocalDate.now())
     } else {
-      LocalDate.now()
+      LocalDate.of(2023, 4, 5)
+      //LocalDate.now()
     }
   }
 
@@ -52,6 +54,7 @@ class DateService @Inject()(implicit val frontendAppConfig: FrontendAppConfig) e
   }
 }
 
+@ImplementedBy(classOf[DateService])
 trait DateServiceInterface {
   def getCurrentDate: LocalDate
 

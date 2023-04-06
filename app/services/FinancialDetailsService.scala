@@ -31,7 +31,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class FinancialDetailsService @Inject()(val incomeTaxViewChangeConnector: IncomeTaxViewChangeConnector,
-                                        implicit val dateService: DateService)
+                                        implicit val dateService: DateServiceInterface)
                                        (implicit val appConfig: FrontendAppConfig, ec: ExecutionContext) {
 
   def getFinancialDetails(taxYear: Int, nino: String)(implicit hc: HeaderCarrier): Future[FinancialDetailsResponseModel] = {
