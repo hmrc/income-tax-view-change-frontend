@@ -73,7 +73,14 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
   val messagesAPI: MessagesApi = app.injector.instanceOf[MessagesApi]
   val mockLanguageUtils: LanguageUtils = app.injector.instanceOf[LanguageUtils]
   implicit val mockImplicitDateFormatter: ImplicitDateFormatterImpl = new ImplicitDateFormatterImpl(mockLanguageUtils)
-  implicit val dateService: DateService = app.injector.instanceOf[DateService]
+
+  implicit val testAppConfig: FrontendAppConfig = appConfig
+  implicit val dateService: DateService = new DateService(){
+    override def getCurrentDate: LocalDate = LocalDate.of(2023, 4, 5)
+
+    override def getCurrentTaxYearEnd: Int = 2022
+  }
+
 
   override lazy val cookieSigner: DefaultCookieSigner = app.injector.instanceOf[DefaultCookieSigner]
 
@@ -111,7 +118,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
   val testUserDetailsWiremockUrl: String = mockUrl + userDetailsUrl
 
   val getCurrentTaxYearEnd: LocalDate = {
-    val currentDate: LocalDate = LocalDate.now
+    val currentDate: LocalDate = LocalDate.of(2023, 4, 5)
     if (currentDate.isBefore(LocalDate.of(currentDate.getYear, 4, 6))) LocalDate.of(currentDate.getYear, 4, 5)
     else LocalDate.of(currentDate.getYear + 1, 4, 5)
   }
