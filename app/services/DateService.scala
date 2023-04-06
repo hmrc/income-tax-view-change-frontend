@@ -36,7 +36,6 @@ class DateService @Inject()(implicit val frontendAppConfig: FrontendAppConfig) e
         .getOrElse(LocalDate.now())
     } else {
       LocalDate.of(2023, 4, 5)
-      //LocalDate.now()
     }
   }
 
