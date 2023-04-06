@@ -69,7 +69,6 @@ class HomeControllerISpec extends ComponentSpecBase {
 
         Then("the result should have a HTTP status of OK (200) and the Income Tax home page")
 
-        //TODO: fix test / it overdue update were 4 fixed after we change it to 3
         res should have(
           httpStatus(OK),
           pageTitleIndividual("home.heading"),
