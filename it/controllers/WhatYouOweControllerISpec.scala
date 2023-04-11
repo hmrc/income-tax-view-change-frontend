@@ -67,12 +67,12 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
        |}
        |""".stripMargin)
 
-  val testDateService = new DateServiceInterface {
-    override def getCurrentDate: LocalDate = LocalDate.of(2023, 4, 5 )
+  val testDateService: DateServiceInterface = new DateServiceInterface {
+    override def getCurrentDate(isTimeMachineEnabled: Boolean = false): LocalDate = LocalDate.of(2023, 4, 5 )
 
-    override def getCurrentTaxYearEnd: Int = 2022
+    override def getCurrentTaxYearEnd(isTimeMachineEnabled: Boolean = false): Int = 2022
 
-    override def isDayBeforeTaxYearLastDay: Boolean = false
+    override def isDayBeforeTaxYearLastDay(isTimeMachineEnabled: Boolean): Boolean = false
   }
 
   "Navigating to /report-quarterly/income-and-expenses/view/payments-owed" when {

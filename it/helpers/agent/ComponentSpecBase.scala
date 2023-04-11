@@ -28,7 +28,7 @@ import org.scalatest.concurrent.{Eventually, IntegrationPatience, ScalaFutures}
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
 import play.api.cache.AsyncCacheApi
 import play.api.http.HeaderNames
-import play.api.http.Status.{OK, SEE_OTHER}
+import play.api.http.Status.{OK, SEE_OTHER, isRedirect}
 import play.api.i18n.{Lang, MessagesApi}
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.crypto.DefaultCookieSigner
@@ -46,12 +46,12 @@ import scala.concurrent.Future
 @Singleton
 class TestDateService  extends DateServiceInterface  {
 
-  def getCurrentDate: LocalDate = LocalDate.of(2023, 4, 5)
-  def isDayBeforeTaxYearLastDay: Boolean = true
+  override def getCurrentDate(isTimeMachineEnabled: Boolean = false): LocalDate = LocalDate.of(2023, 4, 5)
+  override def isDayBeforeTaxYearLastDay(isTimeMachineEnabled: Boolean = false): Boolean = true
 
-  def getCurrentTaxYearEnd: Int = {
-    val currentDate = getCurrentDate
-    if (isDayBeforeTaxYearLastDay) currentDate.getYear else currentDate.getYear + 1
+  override def getCurrentTaxYearEnd(isTimeMachineEnabled: Boolean): Int = {
+    val currentDate = getCurrentDate(isTimeMachineEnabled)
+    if (isDayBeforeTaxYearLastDay(isTimeMachineEnabled)) currentDate.getYear else currentDate.getYear + 1
   }
 }
 trait ComponentSpecBase extends TestSuite with CustomMatchers
@@ -70,9 +70,9 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
   implicit val testAppConfig: FrontendAppConfig = appConfig
 
   implicit val dateService: DateService = new DateService() {
-    override def getCurrentDate: LocalDate = LocalDate.of(2023, 4, 5)
+    override def getCurrentDate(isTimeMachineEnabled: Boolean = false): LocalDate = LocalDate.of(2023, 4, 5)
 
-    override def getCurrentTaxYearEnd: Int = 2022
+    override def getCurrentTaxYearEnd(isTimeMachineEnabled: Boolean = false): Int = 2022
   }
 
   def config: Map[String, String] = Map(
