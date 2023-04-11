@@ -16,6 +16,7 @@
 
 package controllers
 
+import audit.mocks.MockAuditingService
 import config.featureswitch.FeatureSwitch.switches
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import config.featureswitch.{FeatureSwitching, ForecastCalculation}
@@ -32,13 +33,14 @@ import testUtils.TestSupport
 import views.html.ForecastTaxCalcSummary
 
 class ForecastTaxCalcSummaryControllerSpec extends TestSupport with MockCalculationService with MockFrontendAuthorisedFunctions
-  with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate with FeatureSwitching {
+  with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate with MockAuditingService with FeatureSwitching {
 
   object TestForecastTaxCalcSummaryController extends ForecastTaxCalcSummaryController(
     app.injector.instanceOf[ForecastTaxCalcSummary],
     app.injector.instanceOf[SessionTimeoutPredicate],
     MockAuthenticationPredicate,
     app.injector.instanceOf[NinoPredicate],
+    mockAuditingService,
     mockCalculationService,
     app.injector.instanceOf[NavBarFromNinoPredicate],
     app.injector.instanceOf[ItvcErrorHandler],

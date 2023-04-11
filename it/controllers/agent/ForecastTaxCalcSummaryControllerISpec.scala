@@ -1,18 +1,76 @@
 
 package controllers.agent
 
+import audit.models.ForecastTaxCalculationAuditModel
+import auth.MtdItUser
 import config.featureswitch.ForecastCalculation
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.AuthStub.titleInternalServer
-import helpers.servicemocks.IncomeTaxCalculationStub
+import helpers.servicemocks.{AuditStub, IncomeTaxCalculationStub}
 import models.core.AccountingPeriodModel
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, PropertyDetailsModel}
+import models.liabilitycalculation.{EndOfYearEstimate, IncomeSource}
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
+import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants._
+import testConstants.IncomeSourceIntegrationTestConstants.multipleBusinessesAndPropertyResponse
 import testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessful
+import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 
 import java.time.LocalDate
+
+object ForecastTaxSummaryAgentControllerTestConstants {
+  val mtdItUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, None, multipleBusinessesAndPropertyResponse, None, Some("1234567890"),
+    Some("12345-credId"), Some(Agent), None)(FakeRequest())
+
+  val taxableIncome = 12500
+
+  val endOfYearEstimate: EndOfYearEstimate = EndOfYearEstimate(
+    incomeSource = Some(List(
+      IncomeSource("01", Some("self-employment1"), taxableIncome),
+      IncomeSource("01", Some("self-employment2"), taxableIncome),
+      IncomeSource("02", None, taxableIncome),
+      IncomeSource("03", None, taxableIncome),
+      IncomeSource("04", None, taxableIncome),
+      IncomeSource("05", Some("employment1"), taxableIncome),
+      IncomeSource("05", Some("employment2"), taxableIncome),
+      IncomeSource("06", None, taxableIncome),
+      IncomeSource("07", None, taxableIncome),
+      IncomeSource("08", None, taxableIncome),
+      IncomeSource("09", None, taxableIncome),
+      IncomeSource("10", None, taxableIncome),
+      IncomeSource("11", None, taxableIncome),
+      IncomeSource("12", None, taxableIncome),
+      IncomeSource("13", None, taxableIncome),
+      IncomeSource("14", None, taxableIncome),
+      IncomeSource("15", None, taxableIncome),
+      IncomeSource("16", None, taxableIncome),
+      IncomeSource("17", None, taxableIncome),
+      IncomeSource("18", None, taxableIncome),
+      IncomeSource("19", None, taxableIncome),
+      IncomeSource("20", None, taxableIncome),
+      IncomeSource("21", None, taxableIncome),
+      IncomeSource("22", None, taxableIncome),
+      IncomeSource("98", None, taxableIncome)
+    )),
+    totalEstimatedIncome = Some(taxableIncome),
+    totalTaxableIncome = Some(taxableIncome),
+    incomeTaxAmount = Some(5000.99),
+    nic2 = Some(5000.99),
+    nic4 = Some(5000.99),
+    totalNicAmount = Some(5000.99),
+    totalTaxDeductedBeforeCodingOut = Some(5000.99),
+    saUnderpaymentsCodedOut = Some(5000.99),
+    totalStudentLoansRepaymentAmount = Some(5000.99),
+    totalAnnuityPaymentsTaxCharged = Some(5000.99),
+    totalRoyaltyPaymentsTaxCharged = Some(5000.99),
+    totalTaxDeducted = Some(-99999999999.99),
+    incomeTaxNicAmount = Some(-99999999999.99),
+    cgtAmount = Some(5000.99),
+    incomeTaxNicAndCgtAmount = Some(5000.99)
+  )
+}
 
 class ForecastTaxCalcSummaryControllerISpec extends ComponentSpecBase {
 
@@ -100,6 +158,9 @@ class ForecastTaxCalcSummaryControllerISpec extends ComponentSpecBase {
         val result: WSResponse = IncomeTaxViewChangeFrontend.getForecastTaxCalcSummary(getCurrentTaxYearEnd.getYear)(clientDetailsWithConfirmation)
 
         IncomeTaxCalculationStub.verifyGetCalculationResponse(testNino, getCurrentTaxYearEnd.getYear.toString)
+
+        AuditStub.verifyAuditEvent(ForecastTaxCalculationAuditModel(ForecastTaxSummaryAgentControllerTestConstants.mtdItUser,
+          ForecastTaxSummaryAgentControllerTestConstants.endOfYearEstimate))
 
         result should have(
           httpStatus(OK),
