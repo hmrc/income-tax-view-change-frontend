@@ -30,12 +30,15 @@ class DateService @Inject()(implicit val frontendAppConfig: FrontendAppConfig) e
   override lazy val appConfig: FrontendAppConfig = implicitly
 
   def getCurrentDate: LocalDate = {
+    val currentDateTime = LocalDate.now()
     if (isEnabled(TimeMachineAddYear)) {
       frontendAppConfig
-        .timeMachineAddYears.map(LocalDate.now().plusYears(_))
-        .getOrElse(LocalDate.now())
+        .timeMachineAddYears match {
+        case Some(years) if years != 0 => currentDateTime.plusYears(years)
+        case _ => LocalDate.of(2023, 4, 5)
+      }
     } else {
-      LocalDate.now()
+      currentDateTime
     }
   }
 
