@@ -23,7 +23,7 @@ import auth.MtdItUser
 import config.featureswitch._
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
-import controllers.predicates.{AuthenticationPredicate, NavBarPredicate, IncomeSourceDetailsPredicate, NinoPredicate, SessionTimeoutPredicate}
+import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
 
 import javax.inject.{Inject, Singleton}
 import models.financialDetails.{FinancialDetailsModel, FinancialDetailsResponseModel}
@@ -32,7 +32,7 @@ import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc._
 import play.twirl.api.Html
-import services.{FinancialDetailsService, IncomeSourceDetailsService, NextUpdatesService, WhatYouOweService, DateService}
+import services.{DateServiceInterface, FinancialDetailsService, IncomeSourceDetailsService, NextUpdatesService, WhatYouOweService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -50,7 +50,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
                                implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                val incomeSourceDetailsService: IncomeSourceDetailsService,
                                val financialDetailsService: FinancialDetailsService,
-                               implicit val dateService: DateService,
+                               implicit val dateService: DateServiceInterface,
                                val whatYouOweService: WhatYouOweService,
                                val retrieveBtaNavBar: NavBarPredicate,
                                auditingService: AuditingService)

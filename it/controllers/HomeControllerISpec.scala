@@ -68,6 +68,7 @@ class HomeControllerISpec extends ComponentSpecBase {
         verifyNextUpdatesCall(testNino)
 
         Then("the result should have a HTTP status of OK (200) and the Income Tax home page")
+
         res should have(
           httpStatus(OK),
           pageTitleIndividual("home.heading"),

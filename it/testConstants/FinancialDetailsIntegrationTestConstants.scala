@@ -28,6 +28,8 @@ import services.DateService
 
 object FinancialDetailsIntegrationTestConstants {
 
+  val currentDate: LocalDate = LocalDate.of(2023, 4, 5)
+
   def documentDetailModel(taxYear: Int = 2018,
                           documentDescription: Option[String] = Some("ITSA- POA 1"),
                           outstandingAmount: Option[BigDecimal] = Some(1400.00),
@@ -233,13 +235,13 @@ object FinancialDetailsIntegrationTestConstants {
   def outstandingChargesEmptyBCDModel(dueDate: LocalDate): OutstandingChargesModel = OutstandingChargesModel(
     List(OutstandingChargeModel("LATE", Some(dueDate), 123456789012345.67, 1234)))
 
-  val outstandingChargesEmptyBCDModel: OutstandingChargesModel = outstandingChargesEmptyBCDModel(LocalDate.now().plusDays(30))
+  val outstandingChargesEmptyBCDModel: OutstandingChargesModel = outstandingChargesEmptyBCDModel(currentDate.plusDays(30))
 
-  val outstandingChargesDueInMoreThan30Days: OutstandingChargesModel = outstandingChargesModel(LocalDate.now().plusDays(35))
+  val outstandingChargesDueInMoreThan30Days: OutstandingChargesModel = outstandingChargesModel(currentDate.plusDays(35))
 
-  val outstandingChargesOverdueData: OutstandingChargesModel = outstandingChargesModel(LocalDate.now().minusYears(1).minusMonths(1))
+  val outstandingChargesOverdueData: OutstandingChargesModel = outstandingChargesModel(currentDate.minusYears(1).minusMonths(1))
 
-  val outstandingChargesDueIn30Days: OutstandingChargesModel = outstandingChargesModel(LocalDate.now().plusDays(30))
+  val outstandingChargesDueIn30Days: OutstandingChargesModel = outstandingChargesModel(currentDate.plusDays(30))
 
   val financialDetailsDueInMoreThan30Days: FinancialDetailsModel = testFinancialDetailsModel(
     documentDescription = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
@@ -251,7 +253,7 @@ object FinancialDetailsIntegrationTestConstants {
     originalAmount = Some(100),
     clearedAmount = Some(100),
     chargeType = Some(NIC4_WALES),
-    dueDate = List(Some(LocalDate.now().plusDays(45)), Some(LocalDate.now().plusDays(50))),
+    dueDate = List(Some(currentDate.plusDays(45)), Some(currentDate.plusDays(50))),
     noDunningLock,
     noInterestLock,
     subItemId = Some("1"),
@@ -266,7 +268,7 @@ object FinancialDetailsIntegrationTestConstants {
     paymentLotItem = Some("paymentLotItem"),
     paymentId = Some("paymentId"),
     outstandingAmount = List(Some(50), Some(75)),
-    taxYear = LocalDate.now().getYear.toString
+    taxYear = currentDate.getYear.toString
   )
 
   val financialDetailsDueIn30Days: FinancialDetailsModel = testFinancialDetailsModel(
@@ -279,7 +281,7 @@ object FinancialDetailsIntegrationTestConstants {
     originalAmount = Some(100),
     clearedAmount = Some(100),
     chargeType = Some(NIC4_WALES),
-    dueDate = List(Some(LocalDate.now()), Some(LocalDate.now())),
+    dueDate = List(Some(currentDate), Some(currentDate)),
     noDunningLock,
     noInterestLock,
     subItemId = Some("1"),
@@ -294,7 +296,7 @@ object FinancialDetailsIntegrationTestConstants {
     paymentLotItem = Some("paymentLotItem"),
     paymentId = Some("paymentId"),
     outstandingAmount = List(Some(2000), Some(2000)),
-    taxYear = LocalDate.now().getYear.toString,
+    taxYear = currentDate.getYear.toString,
     latePaymentInterestAmount = List(None, None)
   )
 
@@ -308,7 +310,7 @@ object FinancialDetailsIntegrationTestConstants {
     originalAmount = Some(100),
     clearedAmount = Some(100),
     chargeType = Some(NIC4_WALES),
-    dueDate = List(Some(LocalDate.now().minusDays(15)), Some(LocalDate.now().minusDays(15))),
+    dueDate = List(Some(currentDate.minusDays(15)), Some(currentDate.minusDays(15))),
     dunningLock,
     interestLock,
     subItemId = Some("1"),
@@ -323,7 +325,7 @@ object FinancialDetailsIntegrationTestConstants {
     paymentLotItem = Some("paymentLotItem"),
     paymentId = Some("paymentId"),
     outstandingAmount = List(Some(2000), Some(2000)),
-    taxYear = LocalDate.now().getYear.toString
+    taxYear = currentDate.getYear.toString
   )
 
   val financialDetailsWithMixedData1: FinancialDetailsModel = testFinancialDetailsModelWithChargesOfSameType(
@@ -336,7 +338,7 @@ object FinancialDetailsIntegrationTestConstants {
     originalAmount = Some(100),
     clearedAmount = Some(100),
     chargeType = Some(NIC4_WALES),
-    dueDate = List(Some(LocalDate.now().plusDays(35)), Some(LocalDate.now().minusDays(1))),
+    dueDate = List(Some(currentDate.plusDays(35)), Some(currentDate.minusDays(1))),
     subItemId = Some("1"),
     amount = Some(100),
     clearingDate = Some(LocalDate.parse("2020-08-16")),
@@ -349,7 +351,7 @@ object FinancialDetailsIntegrationTestConstants {
     paymentLotItem = Some("paymentLotItem"),
     paymentId = Some("paymentId"),
     outstandingAmount = List(Some(50), Some(75)),
-    taxYear = LocalDate.now().getYear.toString
+    taxYear = currentDate.getYear.toString
   )
 
   val financialDetailsWithMixedData2: FinancialDetailsModel = testFinancialDetailsModelWithChargesOfSameType(
@@ -362,7 +364,7 @@ object FinancialDetailsIntegrationTestConstants {
     originalAmount = Some(100),
     clearedAmount = Some(100),
     chargeType = Some(NIC4_WALES),
-    dueDate = List(Some(LocalDate.now().plusDays(30)), Some(LocalDate.now().minusDays(1))),
+    dueDate = List(Some(currentDate.plusDays(30)), Some(currentDate.minusDays(1))),
     subItemId = Some("1"),
     amount = Some(100),
     clearingDate = Some(LocalDate.parse("2020-08-16")),
@@ -375,7 +377,7 @@ object FinancialDetailsIntegrationTestConstants {
     paymentLotItem = Some("paymentLotItem"),
     paymentId = Some("paymentId"),
     outstandingAmount = List(Some(25), Some(50)),
-    taxYear = LocalDate.now().getYear.toString
+    taxYear = currentDate.getYear.toString
   )
 
   val financialDetailsDueIn30DaysWithAZeroOutstandingAmount: FinancialDetailsModel = testFinancialDetailsModel(
@@ -388,7 +390,7 @@ object FinancialDetailsIntegrationTestConstants {
     originalAmount = Some(100),
     clearedAmount = Some(100),
     chargeType = Some(NIC4_WALES),
-    dueDate = List(Some(LocalDate.now().plusDays(1)), Some(LocalDate.now())),
+    dueDate = List(Some(currentDate.plusDays(1)), Some(currentDate)),
     noDunningLock,
     noInterestLock,
     subItemId = Some("1"),
@@ -403,14 +405,14 @@ object FinancialDetailsIntegrationTestConstants {
     paymentLotItem = Some("paymentLotItem"),
     paymentId = Some("paymentId"),
     outstandingAmount = List(Some(100), Some(0)),
-    taxYear = LocalDate.now().getYear.toString
+    taxYear = currentDate.getYear.toString
   )
 
   val financialDetailsWithMFADebits: FinancialDetailsModel = FinancialDetailsModel(
     BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
     List(
       DocumentDetail(
-        taxYear = LocalDate.now.getYear,
+        taxYear = currentDate.getYear,
         transactionId = "testMFA1",
         documentDescription = Some("ITSA PAYE Charge"),
         documentText = Some("documentText"),
@@ -421,7 +423,7 @@ object FinancialDetailsIntegrationTestConstants {
         interestEndDate = None
       ),
       DocumentDetail(
-        taxYear = LocalDate.now.getYear,
+        taxYear = currentDate.getYear,
         transactionId = "testMFA2",
         documentDescription = Some("ITSA Calc Error Correction"),
         documentText = Some("documentText"),
@@ -433,13 +435,13 @@ object FinancialDetailsIntegrationTestConstants {
       )),
     List(
       FinancialDetail(
-        taxYear = LocalDate.now.getYear.toString,
+        taxYear = currentDate.getYear.toString,
         transactionId = Some("testMFA1"),
         mainType = Some("ITSA PAYE Charge"),
         items = Some(Seq(SubItem(Some(LocalDate.of(2021, 4, 23)), amount = Some(12), transactionId = Some("testMFA1"))))
       ),
       FinancialDetail(
-        taxYear = LocalDate.now.getYear.toString,
+        taxYear = currentDate.getYear.toString,
         transactionId = Some("testMFA2"),
         mainType = Some("ITSA Calc Error Correction"),
         items = Some(Seq(SubItem(Some(LocalDate.of(2021, 4, 22)), amount = Some(12), transactionId = Some("testMFA2"))))

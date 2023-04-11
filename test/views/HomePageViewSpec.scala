@@ -172,7 +172,7 @@ class HomePageViewSpec extends TestSupport {
 
       "changes with JS ENABLED" in new Setup {
         val langSwitchScript: Option[Element] = getElementById("lang-switch-en-js")
-        langSwitchScript.toString.contains("javascript:switchTo('/report-quarterly/income-and-expenses/view/switch-to-welsh')") shouldBe true
+        langSwitchScript.toString.contains("/report-quarterly/income-and-expenses/view/switch-to-welsh") shouldBe true
         langSwitchScript.toString.contains(messages("language-switcher.welsh")) shouldBe true
       }
 

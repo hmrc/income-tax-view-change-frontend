@@ -30,7 +30,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsService,
                                   val incomeTaxViewChangeConnector: IncomeTaxViewChangeConnector,
-                                  implicit val dateService: DateService)
+                                  implicit val dateService: DateServiceInterface)
                                  (implicit ec: ExecutionContext, implicit val appConfig: FrontendAppConfig){
 
   implicit lazy val localDateOrdering: Ordering[LocalDate] = Ordering.by(_.toEpochDay)

@@ -16,6 +16,7 @@
 
 package services
 
+import com.google.inject.ImplementedBy
 import config.FrontendAppConfig
 
 import java.time.LocalDate
@@ -49,6 +50,7 @@ class DateService @Inject()(implicit val frontendAppConfig: FrontendAppConfig) e
   }
 }
 
+@ImplementedBy(classOf[DateService])
 trait DateServiceInterface {
   def getCurrentDate(isTimeMachineEnabled: Boolean = false): LocalDate
 

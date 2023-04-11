@@ -27,7 +27,7 @@ import forms.utils.SessionKeys.gatewayPage
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import services.{DateService, IncomeSourceDetailsService, WhatYouOweService}
+import services.{DateService, DateServiceInterface, IncomeSourceDetailsService, WhatYouOweService}
 import uk.gov.hmrc.http.HeaderCarrier
 import views.html.WhatYouOwe
 
@@ -45,7 +45,7 @@ class WhatYouOweController @Inject()(val checkSessionTimeout: SessionTimeoutPred
                                      val retrieveBtaNavBar: NavBarPredicate,
                                      val authorisedFunctions: FrontendAuthorisedFunctions,
                                      val auditingService: AuditingService,
-                                     val dateService: DateService,
+                                     val dateService: DateServiceInterface,
                                      val incomeSourceDetailsService: IncomeSourceDetailsService,
                                      implicit val appConfig: FrontendAppConfig,
                                      implicit override val mcc: MessagesControllerComponents,

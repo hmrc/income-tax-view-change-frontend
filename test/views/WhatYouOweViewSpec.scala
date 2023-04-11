@@ -1236,6 +1236,11 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         charges = whatYouOweDataWithDataDueInMoreThan30Days()) {
         findAgentElementById("unallocated-credit-note") shouldBe None
       }
+
+      "user has no money in his account" in new Setup(creditCharges = creditDocumentDetailList,
+        charges = whatYouOweDataWithZeroMoneyInAccount(), whatYouOweCreditAmountEnabled = true) {
+        findElementById("unallocated-credit-note") shouldBe None
+      }
     }
   }
 }
