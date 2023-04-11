@@ -50,7 +50,7 @@ class DateService @Inject()(implicit val frontendAppConfig: FrontendAppConfig) e
 }
 
 trait DateServiceInterface {
-  def getCurrentDate(isTimeMachineEnabled: Boolean): LocalDate
+  def getCurrentDate(isTimeMachineEnabled: Boolean = false): LocalDate
 
   def getCurrentTaxYearEnd(isTimeMachineEnabled: Boolean = false): Int
 
