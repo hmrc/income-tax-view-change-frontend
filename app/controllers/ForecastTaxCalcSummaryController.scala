@@ -18,7 +18,7 @@ package controllers
 
 import audit.AuditingService
 import audit.models.ForecastTaxCalculationAuditModel
-import auth.{FrontendAuthorisedFunctions, MtdItUser, MtdItUserWithNino}
+import auth.{FrontendAuthorisedFunctions, MtdItUserWithNino}
 import config.featureswitch.{FeatureSwitching, ForecastCalculation}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
@@ -28,7 +28,6 @@ import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculat
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import play.twirl.api.Html
 import services.{CalculationService, IncomeSourceDetailsService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.language.LanguageUtils
@@ -55,6 +54,8 @@ class ForecastTaxCalcSummaryController @Inject()(val forecastTaxCalcSummaryView:
                                                  implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler)
   extends ClientConfirmedController with ImplicitDateFormatter with FeatureSwitching with I18nSupport {
 
+  val action: ActionBuilder[MtdItUserWithNino, AnyContent] = checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveBtaNavBar
+
   def onError(message: String, isAgent: Boolean, taxYear: Int)(implicit request: Request[_]): Result = {
     val errorPrefix: String = s"[ForecastTaxCalcSummaryController]${if (isAgent) "[Agent]" else ""}[showForecastTaxCalcSummary[$taxYear]]"
     Logger("application").error(s"$errorPrefix $message")
@@ -62,7 +63,7 @@ class ForecastTaxCalcSummaryController @Inject()(val forecastTaxCalcSummaryView:
   }
 
   def handleRequest(taxYear: Int, isAgent: Boolean, origin: Option[String] = None)
-                   (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] = {
+                   (implicit user: MtdItUserWithNino[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] = {
     if (isDisabled(ForecastCalculation)) {
       val errorTemplate = if (isAgent) itvcErrorHandlerAgent.notFoundTemplate else itvcErrorHandler.notFoundTemplate
       Future.successful(NotFound(errorTemplate))
@@ -72,7 +73,7 @@ class ForecastTaxCalcSummaryController @Inject()(val forecastTaxCalcSummaryView:
           val viewModel = liabilityCalc.calculation.flatMap(calc => calc.endOfYearEstimate)
           viewModel match {
             case Some(model) =>
-              auditingService.extendedAudit(ForecastTaxCalculationAuditModel(user, viewModel.get)) //TODO: tidy up
+              auditingService.extendedAudit(ForecastTaxCalculationAuditModel(user, model))
               Ok(forecastTaxCalcSummaryView(model, taxYear, backUrl(isAgent, taxYear, origin), isAgent, user.btaNavPartial))
             case _ => onError(s"No tax calculation data could be retrieved. Not found", isAgent, taxYear)
           }
@@ -84,22 +85,15 @@ class ForecastTaxCalcSummaryController @Inject()(val forecastTaxCalcSummaryView:
     }
   }
 
-  def show(taxYear: Int, origin: Option[String] = None): Action[AnyContent] = Authenticated.async {
-    implicit request =>
-      implicit user =>
-        getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true).flatMap {
-          implicit mtdItUser =>
-            handleRequest(taxYear, isAgent = false, origin)
-        }
+  def show(taxYear: Int, origin: Option[String] = None): Action[AnyContent] = action.async {
+    implicit user =>
+      handleRequest(taxYear, isAgent = false, origin)
   }
 
   def showAgent(taxYear: Int): Action[AnyContent] = Authenticated.async {
     implicit request =>
       implicit agent =>
-        getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true).flatMap {
-          implicit mtdItUser =>
-            handleRequest(taxYear, isAgent = true)
-        }
+        handleRequest(taxYear, isAgent = true)(getMtdItUserWithNino()(agent, request, implicitly), implicitly, implicitly)
   }
 
   def backUrl(isAgent: Boolean, taxYear: Int, origin: Option[String]): String =

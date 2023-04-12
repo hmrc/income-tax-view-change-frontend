@@ -2,7 +2,7 @@
 package controllers.agent
 
 import audit.models.ForecastTaxCalculationAuditModel
-import auth.MtdItUser
+import auth.MtdItUserWithNino
 import config.featureswitch.ForecastCalculation
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.AuthStub.titleInternalServer
@@ -14,15 +14,14 @@ import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
 import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants._
-import testConstants.IncomeSourceIntegrationTestConstants.multipleBusinessesAndPropertyResponse
 import testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessful
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 
 import java.time.LocalDate
 
 object ForecastTaxSummaryAgentControllerTestConstants {
-  val mtdItUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, None, multipleBusinessesAndPropertyResponse, None, Some("1234567890"),
-    Some("12345-credId"), Some(Agent), None)(FakeRequest())
+  val mtdItUser: MtdItUserWithNino[_] = MtdItUserWithNino(testMtditid, testNino, None, None, Some("1234567890"),
+    None, Some(Agent), Some("1"))(FakeRequest())
 
   val taxableIncome = 12500
 
@@ -56,6 +55,7 @@ object ForecastTaxSummaryAgentControllerTestConstants {
     )),
     totalEstimatedIncome = Some(taxableIncome),
     totalTaxableIncome = Some(taxableIncome),
+    totalAllowancesAndDeductions = Some(4200.00),
     incomeTaxAmount = Some(5000.99),
     nic2 = Some(5000.99),
     nic4 = Some(5000.99),
@@ -126,7 +126,7 @@ class ForecastTaxCalcSummaryControllerISpec extends ComponentSpecBase {
 
         val result: WSResponse = IncomeTaxViewChangeFrontend.getForecastTaxCalcSummary(getCurrentTaxYearEnd.getYear)()
 
-        result should have (
+        result should have(
           httpStatus(SEE_OTHER),
           redirectURI(routes.EnterClientsUTRController.show.url)
         )

@@ -2,7 +2,7 @@
 package controllers
 
 import audit.models.ForecastTaxCalculationAuditModel
-import auth.MtdItUser
+import auth.MtdItUserWithNino
 import config.featureswitch.ForecastCalculation
 import helpers.ComponentSpecBase
 import helpers.servicemocks.{AuditStub, IncomeTaxCalculationStub}
@@ -10,12 +10,11 @@ import models.liabilitycalculation.{EndOfYearEstimate, IncomeSource}
 import play.api.http.Status.{NOT_FOUND, OK}
 import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino, testYear}
-import testConstants.IncomeSourceIntegrationTestConstants.multipleBusinessesAndPropertyResponse
 import testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessful
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 
 object ForecastTaxSummaryControllerTestConstants {
-  val mtdItUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, None, multipleBusinessesAndPropertyResponse, None, Some("1234567890"),
+  val mtdItUser: MtdItUserWithNino[_] = MtdItUserWithNino(testMtditid, testNino, None, None, Some("1234567890"),
     Some("12345-credId"), Some(Individual), None)(FakeRequest())
 
   val taxableIncome = 12500

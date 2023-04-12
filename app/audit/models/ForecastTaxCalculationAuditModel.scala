@@ -16,55 +16,57 @@
 
 package audit.models
 
-
 import audit.Utilities.userAuditDetails
-import auth.MtdItUser
+import auth.MtdItUserWithNino
 import implicits.ImplicitDateParser
 import models.liabilitycalculation.EndOfYearEstimate
-import play.api.libs.json.JsValue
+import play.api.libs.json.{JsObject, JsValue, Json}
 import utils.Utilities._
 
 
-case class ForecastTaxCalculationAuditModel(user: MtdItUser[_], endOfYearEstimate: EndOfYearEstimate)
+case class ForecastTaxCalculationAuditModel(user: MtdItUserWithNino[_], endOfYearEstimate: EndOfYearEstimate)
   extends ExtendedAuditModel with ImplicitDateParser {
 
   override val transactionName: String = enums.TransactionName.ForecastTaxCalculation
-  override val auditType: String = enums.AuditType.TaxYearOverviewResponse
+  override val auditType: String = enums.AuditType.ForecastTaxCalculation
 
-  val totalEstimatedIncome: Option[Int] = endOfYearEstimate.totalEstimatedIncome
-  val totalTaxableIncome: Option[Int] = endOfYearEstimate.totalTaxableIncome
-  val totalAllowancesAndDeductions: Option[BigDecimal] = endOfYearEstimate.totalAllowancesAndDeductions
-  val totalIncomeTax: Option[BigDecimal] = endOfYearEstimate.incomeTaxAmount
-  val class4NationalInsurance: Option[BigDecimal] = endOfYearEstimate.nic2
-  val class2NationalInsurance: Option[BigDecimal] = endOfYearEstimate.nic4
-  val totalNationalInsuranceContributions: Option[BigDecimal] = endOfYearEstimate.totalNicAmount
-  val totalTaxDeductedBeforeBalancingPayment: Option[BigDecimal] = endOfYearEstimate.totalTaxDeductedBeforeCodingOut
-  val balancingPaymentCollectedThroughPAYE: Option[BigDecimal] = endOfYearEstimate.saUnderpaymentsCodedOut
-  val studentLoanRepayments: Option[BigDecimal] = endOfYearEstimate.totalStudentLoansRepaymentAmount
-  val taxDueOnAnnuityPayments: Option[BigDecimal] = endOfYearEstimate.totalAnnuityPaymentsTaxCharged
-  val totalTaxDeducted: Option[BigDecimal] = endOfYearEstimate.totalTaxDeducted
-  val incomeTaxAndNationalInsuranceContributionsDue: Option[BigDecimal] = endOfYearEstimate.incomeTaxNicAmount
-  val capitalGainsTax: Option[BigDecimal] = endOfYearEstimate.cgtAmount
-  val forecastSelfAssessmentTaxAmount: Option[BigDecimal] = endOfYearEstimate.incomeTaxNicAndCgtAmount
+  private val totalEstimatedIncome: Option[Int] = endOfYearEstimate.totalEstimatedIncome
+  private val totalTaxableIncome: Option[Int] = endOfYearEstimate.totalTaxableIncome
+  private val totalAllowancesAndDeductions: Option[BigDecimal] = endOfYearEstimate.totalAllowancesAndDeductions
+  private val totalIncomeTax: Option[BigDecimal] = endOfYearEstimate.incomeTaxAmount
+  private val class4NationalInsurance: Option[BigDecimal] = endOfYearEstimate.nic2
+  private val class2NationalInsurance: Option[BigDecimal] = endOfYearEstimate.nic4
+  private val totalNationalInsuranceContributions: Option[BigDecimal] = endOfYearEstimate.totalNicAmount
+  private val totalTaxDeductedBeforeBalancingPayment: Option[BigDecimal] = endOfYearEstimate.totalTaxDeductedBeforeCodingOut
+  private val balancingPaymentCollectedThroughPAYE: Option[BigDecimal] = endOfYearEstimate.saUnderpaymentsCodedOut
+  private val studentLoanRepayments: Option[BigDecimal] = endOfYearEstimate.totalStudentLoansRepaymentAmount
+  private val taxDueOnAnnuityPayments: Option[BigDecimal] = endOfYearEstimate.totalAnnuityPaymentsTaxCharged
+  private val totalTaxDeducted: Option[BigDecimal] = endOfYearEstimate.totalTaxDeducted
+  private val incomeTaxAndNationalInsuranceContributionsDue: Option[BigDecimal] = endOfYearEstimate.incomeTaxNicAmount
+  private val capitalGainsTax: Option[BigDecimal] = endOfYearEstimate.cgtAmount
+  private val forecastSelfAssessmentTaxAmount: Option[BigDecimal] = endOfYearEstimate.incomeTaxNicAndCgtAmount
+
+  private val forecastDetailJson: JsObject = Json.obj() ++
+    ("totalEstimatedIncome", totalEstimatedIncome) ++
+    ("totalTaxableIncome", totalTaxableIncome) ++
+    ("totalAllowancesAndDeductions", totalAllowancesAndDeductions) ++
+    ("totalIncomeTax", totalIncomeTax) ++
+    ("class4NationalInsurance", class4NationalInsurance) ++
+    ("class2NationalInsurance", class2NationalInsurance) ++
+    ("totalNationalInsuranceContributions", totalNationalInsuranceContributions) ++
+    ("totalTaxDeductedBeforeBalancingPayment", totalTaxDeductedBeforeBalancingPayment) ++
+    ("balancingPaymentCollectedThroughPAYE", balancingPaymentCollectedThroughPAYE) ++
+    ("studentLoanRepayments", studentLoanRepayments) ++
+    ("taxDueOnAnnuityPayments", taxDueOnAnnuityPayments) ++
+    ("totalTaxDeducted", totalTaxDeducted) ++
+    ("incomeTaxAndNationalInsuranceContributionsDue", incomeTaxAndNationalInsuranceContributionsDue) ++
+    ("capitalGainsTax", capitalGainsTax) ++
+    ("forecastSelfAssessmentTaxAmount", forecastSelfAssessmentTaxAmount)
 
 
   override val detail: JsValue = {
     userAuditDetails(user) ++
-      ("totalEstimatedIncome", totalEstimatedIncome) ++
-      ("totalTaxableIncome", totalTaxableIncome) ++
-      ("totalAllowancesAndDeductions", totalAllowancesAndDeductions) ++
-      ("totalIncomeTax", totalIncomeTax) ++
-      ("class4NationalInsurance", class4NationalInsurance) ++
-      ("class2NationalInsurance", class2NationalInsurance) ++
-      ("totalNationalInsuranceContributions", totalNationalInsuranceContributions) ++
-      ("totalTaxDeductedBeforeBalancingPayment", totalTaxDeductedBeforeBalancingPayment) ++
-      ("balancingPaymentCollectedThroughPAYE", balancingPaymentCollectedThroughPAYE) ++
-      ("studentLoanRepayments", studentLoanRepayments) ++
-      ("taxDueOnAnnuityPayments", taxDueOnAnnuityPayments) ++
-      ("totalTaxDeducted", totalTaxDeducted) ++
-      ("incomeTaxAndNationalInsuranceContributionsDue", incomeTaxAndNationalInsuranceContributionsDue) ++
-      ("capitalGainsTax", capitalGainsTax) ++
-      ("forecastSelfAssessmentTaxAmount", forecastSelfAssessmentTaxAmount)
+      Json.obj("forecastDetail" -> forecastDetailJson)
   }
 }
 
