@@ -28,7 +28,7 @@ case class WhatYouOweResponseAuditModel(user: MtdItUser[_],
                                         whatYouOweChargesList: WhatYouOweChargesList,
                                         dateService: DateServiceInterface) extends ExtendedAuditModel {
 
-  val currentTaxYear: Int = dateService.getCurrentTaxYearEnd
+  val currentTaxYear: Int = dateService.getCurrentTaxYearEnd()
 
   override val transactionName: String = enums.TransactionName.WhatYouOweResponse
   override val auditType: String = enums.AuditType.WhatYouOweResponse

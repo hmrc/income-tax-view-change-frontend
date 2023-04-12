@@ -16,6 +16,7 @@
 
 package models.financialDetails
 
+import config.featureswitch.FeatureSwitching
 import enums.CodingOutType._
 import play.api.Logger
 import play.api.libs.functional.syntax.toFunctionalBuilderOps
@@ -175,7 +176,8 @@ case class DocumentDetail(taxYear: Int,
 case class DocumentDetailWithDueDate(documentDetail: DocumentDetail, dueDate: Option[LocalDate],
                                      isLatePaymentInterest: Boolean = false, dunningLock: Boolean = false,
                                      codingOutEnabled: Boolean = false, isMFADebit: Boolean = false)(implicit val dateService: DateServiceInterface) {
-  val isOverdue: Boolean = dueDate.exists(_ isBefore dateService.getCurrentDate)
+
+  val isOverdue: Boolean = dueDate.exists(_ isBefore dateService.getCurrentDate())
 }
 
 object DocumentDetail {
