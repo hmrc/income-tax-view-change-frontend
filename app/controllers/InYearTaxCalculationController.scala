@@ -30,7 +30,7 @@ import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculat
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import services.{CalculationService, DateService, IncomeSourceDetailsService}
+import services.{CalculationService, DateService, DateServiceInterface, IncomeSourceDetailsService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.language.LanguageUtils
 import views.html.InYearTaxCalculationView
@@ -48,7 +48,7 @@ class InYearTaxCalculationController @Inject()(
                                                 retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                                 val incomeSourceDetailsService: IncomeSourceDetailsService,
                                                 calcService: CalculationService,
-                                                dateService: DateService,
+                                                dateService: DateServiceInterface,
                                                 auditingService: AuditingService,
                                                 itvcErrorHandler: ItvcErrorHandler,
                                                 implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,

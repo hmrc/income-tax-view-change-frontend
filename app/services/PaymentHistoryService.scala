@@ -30,7 +30,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 
 class PaymentHistoryService @Inject()(incomeTaxViewChangeConnector: IncomeTaxViewChangeConnector,
-                                      implicit val dateService: DateService,
+                                      implicit val dateService: DateServiceInterface,
                                       val appConfig: FrontendAppConfig)
                                      (implicit ec: ExecutionContext) {
 

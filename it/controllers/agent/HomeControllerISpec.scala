@@ -41,7 +41,7 @@ import uk.gov.hmrc.auth.core.retrieve.Name
 import java.time.LocalDate
 
 class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
-
+  val currentDate = LocalDate.of(2023, 4, 5)
   val implicitDateFormatter: ImplicitDateFormatter = app.injector.instanceOf[ImplicitDateFormatterImpl]
 
   implicit val messages: Messages = app.injector.instanceOf[MessagesApi].preferred(FakeRequest())
@@ -55,7 +55,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
     yearOfMigration = Some(getCurrentTaxYearEnd.getYear.toString),
     businesses = List(BusinessDetailsModel(
       Some("testId"),
-      Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
+      Some(AccountingPeriodModel(currentDate, currentDate.plusYears(1))),
       None,
       Some(getCurrentTaxYearEnd)
     )),
@@ -137,7 +137,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
                 NextUpdatesModel(
                   identification = "testId",
                   obligations = List(
-                    NextUpdateModel(LocalDate.now, LocalDate.now.plusDays(1), LocalDate.now, "Quarterly", None, "testPeriodKey")
+                    NextUpdateModel(currentDate, currentDate.plusDays(1), currentDate, "Quarterly", None, "testPeriodKey")
                   ))
               ))
 
@@ -170,7 +170,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
                       taxYear = getCurrentTaxYearEnd.getYear.toString,
                       mainType = Some("SA Payment on Account 1"),
                       transactionId = Some("testTransactionId"),
-                      items = Some(Seq(SubItem(Some(LocalDate.now))))
+                      items = Some(Seq(SubItem(Some(currentDate))))
                     )
                   )
                 ))
@@ -184,11 +184,11 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
               result should have(
                 httpStatus(OK),
                 pageTitleAgent("home.agent.heading"),
-                elementTextBySelector("#updates-tile p:nth-child(2)")(LocalDate.now.toLongDate),
-                elementTextBySelector("#payments-tile p:nth-child(2)")(LocalDate.now.toLongDate)
+                elementTextBySelector("#updates-tile p:nth-child(2)")(currentDate.toLongDate),
+                elementTextBySelector("#payments-tile p:nth-child(2)")(currentDate.toLongDate)
               )
 
-              verifyAuditContainsDetail(HomeAudit(testUser, Some(Left(LocalDate.now -> false)), Left(LocalDate.now -> false)).detail)
+              verifyAuditContainsDetail(HomeAudit(testUser, Some(Left(currentDate -> false)), Left(currentDate -> false)).detail)
               verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
             }
           }
@@ -206,7 +206,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
                 NextUpdatesModel(
                   identification = "testId",
                   obligations = List(
-                    NextUpdateModel(LocalDate.now, LocalDate.now.plusDays(1), LocalDate.now, "Quarterly", None, "testPeriodKey")
+                    NextUpdateModel(currentDate, currentDate.plusDays(1), currentDate, "Quarterly", None, "testPeriodKey")
                   ))
               ))
 
@@ -239,7 +239,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
                       taxYear = getCurrentTaxYearEnd.getYear.toString,
                       mainType = Some("SA Payment on Account 1"),
                       transactionId = Some("testTransactionId"),
-                      items = Some(Seq(SubItem(Some(LocalDate.now))))
+                      items = Some(Seq(SubItem(Some(currentDate))))
                     )
                   )
                 ))
@@ -253,11 +253,11 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
               result should have(
                 httpStatus(OK),
                 pageTitleAgent("home.agent.heading"),
-                elementTextBySelector("#updates-tile p:nth-child(2)")(LocalDate.now.toLongDate),
+                elementTextBySelector("#updates-tile p:nth-child(2)")(currentDate.toLongDate),
                 elementTextBySelector("#payments-tile p:nth-child(2)")(noPaymentsDue)
               )
 
-              verifyAuditContainsDetail(HomeAudit(testUser, None, Left(LocalDate.now -> false)).detail)
+              verifyAuditContainsDetail(HomeAudit(testUser, None, Left(currentDate -> false)).detail)
               verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
             }
             "display the page with an overdue payment and an overdue obligation" when {
@@ -274,7 +274,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
                   NextUpdatesModel(
                     identification = "testId",
                     obligations = List(
-                      NextUpdateModel(LocalDate.now, LocalDate.now.plusDays(1), LocalDate.now.minusDays(1), "Quarterly", None, "testPeriodKey")
+                      NextUpdateModel(currentDate, currentDate.plusDays(1), currentDate.minusDays(1), "Quarterly", None, "testPeriodKey")
                     ))
                 ))
 
@@ -307,7 +307,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
                         taxYear = getCurrentTaxYearEnd.getYear.toString,
                         mainType = Some("SA Payment on Account 1"),
                         transactionId = Some("testTransactionId"),
-                        items = Some(Seq(SubItem(Some(LocalDate.now.minusDays(1)))))
+                        items = Some(Seq(SubItem(Some(currentDate.minusDays(1)))))
                       )
                     )
                   ))
@@ -321,11 +321,11 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
                 result should have(
                   httpStatus(OK),
                   pageTitleAgent("home.agent.heading"),
-                  elementTextBySelector("#updates-tile p:nth-child(2)")(s"$overdue ${LocalDate.now.minusDays(1).toLongDate}"),
-                  elementTextBySelector("#payments-tile p:nth-child(2)")(s"$overdue ${LocalDate.now.minusDays(1).toLongDate}")
+                  elementTextBySelector("#updates-tile p:nth-child(2)")(s"$overdue ${currentDate.minusDays(1).toLongDate}"),
+                  elementTextBySelector("#payments-tile p:nth-child(2)")(s"$overdue ${currentDate.minusDays(1).toLongDate}")
                 )
 
-                verifyAuditContainsDetail(HomeAudit(testUser, Some(Left(LocalDate.now.minusDays(1) -> true)), Left(LocalDate.now.minusDays(1) -> true)).detail)
+                verifyAuditContainsDetail(HomeAudit(testUser, Some(Left(currentDate.minusDays(1) -> true)), Left(currentDate.minusDays(1) -> true)).detail)
                 verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
               }
               "there is a single payment overdue and a single obligation overdue and one overdue CESA " in {
@@ -341,7 +341,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
                   NextUpdatesModel(
                     identification = "testId",
                     obligations = List(
-                      NextUpdateModel(LocalDate.now, LocalDate.now.plusDays(1), LocalDate.now.minusDays(1), "Quarterly", None, "testPeriodKey")
+                      NextUpdateModel(currentDate, currentDate.plusDays(1), currentDate.minusDays(1), "Quarterly", None, "testPeriodKey")
                     ))
                 ))
 
@@ -374,7 +374,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
                         taxYear = getCurrentTaxYearEnd.getYear.toString,
                         mainType = Some("SA Payment on Account 1"),
                         transactionId = Some("testTransactionId"),
-                        items = Some(Seq(SubItem(Some(LocalDate.now.minusDays(1)))))
+                        items = Some(Seq(SubItem(Some(currentDate.minusDays(1)))))
                       )
                     )
                   ))
@@ -388,11 +388,11 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
                 result should have(
                   httpStatus(OK),
                   pageTitleAgent("home.agent.heading"),
-                  elementTextBySelector("#updates-tile p:nth-child(2)")(s"$overdue ${LocalDate.now.minusDays(1).toLongDate}"),
+                  elementTextBySelector("#updates-tile p:nth-child(2)")(s"$overdue ${currentDate.minusDays(1).toLongDate}"),
                   elementTextBySelector("#payments-tile p:nth-child(2)")(overduePayments(numberOverdue = "2"))
                 )
 
-                verifyAuditContainsDetail(HomeAudit(testUser, Some(Right(2)), Left(LocalDate.now.minusDays(1) -> true)).detail)
+                verifyAuditContainsDetail(HomeAudit(testUser, Some(Right(2)), Left(currentDate.minusDays(1) -> true)).detail)
                 verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
               }
             }
@@ -411,8 +411,8 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
                 NextUpdatesModel(
                   identification = "testId",
                   obligations = List(
-                    NextUpdateModel(LocalDate.now, LocalDate.now.plusDays(1), LocalDate.now.minusDays(1), "Quarterly", None, "testPeriodKey"),
-                    NextUpdateModel(LocalDate.now, LocalDate.now.plusDays(1), LocalDate.now.minusDays(2), "Quarterly", None, "testPeriodKey")
+                    NextUpdateModel(currentDate, currentDate.plusDays(1), currentDate.minusDays(1), "Quarterly", None, "testPeriodKey"),
+                    NextUpdateModel(currentDate, currentDate.plusDays(1), currentDate.minusDays(2), "Quarterly", None, "testPeriodKey")
                   ))
               ))
 
@@ -454,13 +454,13 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
                       taxYear = getCurrentTaxYearEnd.getYear.toString,
                       mainType = Some("SA Payment on Account 1"),
                       transactionId = Some("testTransactionId1"),
-                      items = Some(Seq(SubItem(Some(LocalDate.now.minusDays(1)))))
+                      items = Some(Seq(SubItem(Some(currentDate.minusDays(1)))))
                     ),
                     FinancialDetail(
                       taxYear = getCurrentTaxYearEnd.getYear.toString,
                       mainType = Some("SA Payment on Account 2"),
                       transactionId = Some("testTransactionId2"),
-                      items = Some(Seq(SubItem(Some(LocalDate.now.minusDays(2)))))
+                      items = Some(Seq(SubItem(Some(currentDate.minusDays(2)))))
                     )
                   )
                 ))
@@ -496,7 +496,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
             NextUpdatesModel(
               identification = "testId",
               obligations = List(
-                NextUpdateModel(LocalDate.now, LocalDate.now.plusDays(1), LocalDate.now, "Quarterly", None, "testPeriodKey")
+                NextUpdateModel(currentDate, currentDate.plusDays(1), currentDate, "Quarterly", None, "testPeriodKey")
               ))
           ))
 
@@ -554,7 +554,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
           yearOfMigration = None,
           businesses = List(BusinessDetailsModel(
             Some("testId"),
-            Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
+            Some(AccountingPeriodModel(currentDate, currentDate.plusYears(1))),
             None,
             Some(getCurrentTaxYearEnd)
           )),
