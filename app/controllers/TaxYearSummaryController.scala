@@ -34,7 +34,7 @@ import models.nextUpdates.ObligationsModel
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Lang, Messages, MessagesApi}
 import play.api.mvc._
-import services.{CalculationService, DateService, FinancialDetailsService, IncomeSourceDetailsService, NextUpdatesService}
+import services.{CalculationService, DateService, DateServiceInterface, FinancialDetailsService, IncomeSourceDetailsService, NextUpdatesService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.language.LanguageUtils
@@ -63,7 +63,7 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
                                          val retrieveBtaNavBar: NavBarPredicate,
                                          val auditingService: AuditingService)
                                         (implicit val appConfig: FrontendAppConfig,
-                                         dateService: DateService,
+                                         dateService: DateServiceInterface,
                                          val agentItvcErrorHandler: AgentItvcErrorHandler,
                                          mcc: MessagesControllerComponents,
                                          val ec: ExecutionContext)

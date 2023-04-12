@@ -20,19 +20,6 @@
 @this()
 @()(implicit messages: Messages)
 
-<script>
-        function getFragmentParam() {
-            if (window.location.hash) {
-                return "?fragment=" + window.location.hash.replace('#', '')
-            } else {
-                return ""
-            }
-        }
-        function switchTo(url) {
-            window.location = url + getFragmentParam()
-        }
-</script>
-
 @if(messages.lang.code === "en") {
     <nav class="hmrc-language-select" id="lang-switch-en" aria-label="Language switcher">
         <ul class="hmrc-language-select__list">
@@ -42,11 +29,12 @@
             <li class="hmrc-language-select__list-item">
                 <script id="lang-switch-en-js">
                     document.currentScript.insertAdjacentHTML('beforebegin',
-                        `<a href="javascript:switchTo('@controllers.routes.ItvcLanguageController.switchToWelsh(None)')"
+                        `<a href="@controllers.routes.ItvcLanguageController.switchToWelsh(None)"
+                            onclick="event.preventDefault(); window.location.replace(this.href, true);"
                             hreflang="cy" lang="cy" rel="alternate" class="govuk-link">
-                         <span class="govuk-visually-hidden">Newid yr iaith ir Gymraeg</span>
-                         <span aria-hidden="true">Cymraeg</span>
-                         </a>`)
+                            <span class="govuk-visually-hidden">Newid yr iaith ir Gymraeg</span>
+                            <span aria-hidden="true">Cymraeg</span>
+                        </a>`)
                 </script>
                 <noscript id="lang-switch-en-no-js">
                     <a href="@controllers.routes.ItvcLanguageController.switchToWelsh(None)"
@@ -64,11 +52,12 @@
             <li class="hmrc-language-select__list-item">
                 <script id="lang-switch-cy-js">
                     document.currentScript.insertAdjacentHTML('beforebegin',
-                        `<a href="javascript:switchTo('@controllers.routes.ItvcLanguageController.switchToEnglish(None)')"
+                        `<a href="@controllers.routes.ItvcLanguageController.switchToEnglish(None)"
+                            onclick="event.preventDefault(); window.location.replace(this.href, true);"
                             hreflang="en" lang="en" rel="alternate" class="govuk-link">
-                         <span class="govuk-visually-hidden">Change the language to English</span>
-                         <span aria-hidden="true">English</span>
-                         </a>`)
+                            <span class="govuk-visually-hidden">Change the language to English</span>
+                            <span aria-hidden="true">English</span>
+                        </a>`)
                 </script>
                 <noscript id="lang-switch-cy-no-js">
                     <a href="@controllers.routes.ItvcLanguageController.switchToEnglish(None)"

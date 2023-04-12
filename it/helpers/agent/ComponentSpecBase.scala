@@ -36,11 +36,24 @@ import play.api.libs.ws.WSResponse
 import play.api.{Application, Environment, Mode}
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
 import play.api.inject.bind
-import services.DateService
+import services.{DateService, DateServiceInterface}
 import testConstants.IncomeSourceIntegrationTestConstants.{multipleBusinessesAndPropertyResponse, testChargeHistoryJson, testValidFinancialDetailsModelJson, twoDunningLocks, twoInterestLocks}
 
+import java.time.LocalDate
+import javax.inject.Singleton
 import scala.concurrent.Future
 
+@Singleton
+class TestDateService  extends DateServiceInterface  {
+
+  def getCurrentDate: LocalDate = LocalDate.of(2023, 4, 5)
+  def isDayBeforeTaxYearLastDay: Boolean = true
+
+  def getCurrentTaxYearEnd: Int = {
+    val currentDate = getCurrentDate
+    if (isDayBeforeTaxYearLastDay) currentDate.getYear else currentDate.getYear + 1
+  }
+}
 trait ComponentSpecBase extends TestSuite with CustomMatchers
   with GuiceOneServerPerSuite with ScalaFutures with IntegrationPatience with Matchers
   with WiremockHelper with BeforeAndAfterEach with BeforeAndAfterAll with Eventually
@@ -54,7 +67,13 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
   implicit val lang: Lang = Lang("GB")
   val messagesAPI: MessagesApi = app.injector.instanceOf[MessagesApi]
-  implicit val dateService: DateService = app.injector.instanceOf[DateService]
+  implicit val testAppConfig: FrontendAppConfig = appConfig
+
+  implicit val dateService: DateService = new DateService() {
+    override def getCurrentDate: LocalDate = LocalDate.of(2023, 4, 5)
+
+    override def getCurrentTaxYearEnd: Int = 2022
+  }
 
   def config: Map[String, String] = Map(
     "play.filters.csrf.header.bypassHeaders.Csrf-Token" -> "nocheck",
@@ -85,6 +104,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
   override implicit lazy val app: Application = new GuiceApplicationBuilder()
     .in(Environment.simple(mode = Mode.Dev))
+    .overrides(bind[DateServiceInterface].to[TestDateService])
     .configure(config)
     .build
 
