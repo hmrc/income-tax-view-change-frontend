@@ -44,7 +44,8 @@ class TaxYearSummaryResponseAuditModelSpec extends WordSpecLike with TestSupport
   val updateTypeEops: String = messages("updateTab.updateType.eops")
 
   def taxYearSummaryViewModel(forecastIncome: Option[Int] = None,
-                              forecastIncomeTaxAndNics: Option[BigDecimal] = None): TaxYearSummaryViewModel = TaxYearSummaryViewModel(
+                              forecastIncomeTaxAndNics: Option[BigDecimal] = None,
+                              forecastAllowancesAndDeductions: Option[BigDecimal] = None): TaxYearSummaryViewModel = TaxYearSummaryViewModel(
     timestamp = Some("2017-07-06T12:34:56.789Z".toZonedDateTime.toLocalDate),
     crystallised = Some(false),
     unattendedCalc = false,
@@ -53,11 +54,13 @@ class TaxYearSummaryResponseAuditModelSpec extends WordSpecLike with TestSupport
     deductions = 500.00,
     totalTaxableIncome = 198500,
     forecastIncome = forecastIncome,
-    forecastIncomeTaxAndNics = forecastIncomeTaxAndNics
+    forecastIncomeTaxAndNics = forecastIncomeTaxAndNics,
+    forecastAllowancesAndDeductions = forecastAllowancesAndDeductions
   )
 
   def taxYearSummaryViewModelUnattendedCalc(forecastIncome: Option[Int] = None,
-                                            forecastIncomeTaxAndNics: Option[BigDecimal] = None): TaxYearSummaryViewModel = TaxYearSummaryViewModel(
+                                            forecastIncomeTaxAndNics: Option[BigDecimal] = None,
+                                            forecastAllowancesAndDeductions: Option[BigDecimal] = None): TaxYearSummaryViewModel = TaxYearSummaryViewModel(
     timestamp = Some("2017-07-06T12:34:56.789Z".toZonedDateTime.toLocalDate),
     crystallised = Some(false),
     unattendedCalc = true,
@@ -66,7 +69,8 @@ class TaxYearSummaryResponseAuditModelSpec extends WordSpecLike with TestSupport
     deductions = 500.00,
     totalTaxableIncome = 198500,
     forecastIncome = forecastIncome,
-    forecastIncomeTaxAndNics = forecastIncomeTaxAndNics
+    forecastIncomeTaxAndNics = forecastIncomeTaxAndNics,
+    forecastAllowancesAndDeductions = forecastAllowancesAndDeductions
   )
 
   def payments(hasDunningLock: Boolean): List[DocumentDetailWithDueDate] = {
@@ -161,7 +165,8 @@ class TaxYearSummaryResponseAuditModelSpec extends WordSpecLike with TestSupport
     "forecast" -> Json.obj(
       "income" -> null,
       "taxableIncome" -> null,
-      "taxDue" -> null
+      "taxDue" -> null,
+      "forecastAllowancesAndDeductions" -> null
     ),
     "calculation" -> Json.obj(
       "income" -> 199505,
@@ -205,8 +210,9 @@ class TaxYearSummaryResponseAuditModelSpec extends WordSpecLike with TestSupport
     "forecast" -> Json.obj(
       "income" -> None,
       "taxableIncome" -> None,
-      "taxDue" -> None
-    ),
+      "taxDue" -> None,
+      "forecastAllowancesAndDeductions" -> None
+  ),
     "calculation" -> Json.obj(
       "income" -> 199505,
       "allowancesAndDeductions" -> 500,
@@ -239,6 +245,7 @@ class TaxYearSummaryResponseAuditModelSpec extends WordSpecLike with TestSupport
                                        paymentHasADunningLock: Boolean = false,
                                        forecastIncome: Option[Int] = None,
                                        forecastIncomeTaxAndNics: Option[BigDecimal] = None,
+                                       forecastAllowancesAndDeductions: Option[BigDecimal] = None,
                                        messages: Option[Messages] = None): TaxYearSummaryResponseAuditModel =
     TaxYearSummaryResponseAuditModel(
       mtdItUser = MtdItUser(
@@ -257,7 +264,8 @@ class TaxYearSummaryResponseAuditModelSpec extends WordSpecLike with TestSupport
       messagesApi = messagesApi,
       taxYearSummaryViewModel = Some(taxYearSummaryViewModel(
         forecastIncome = forecastIncome,
-        forecastIncomeTaxAndNics = forecastIncomeTaxAndNics)
+        forecastIncomeTaxAndNics = forecastIncomeTaxAndNics,
+        forecastAllowancesAndDeductions = forecastAllowancesAndDeductions)
       ),
       messages
     )
@@ -266,7 +274,8 @@ class TaxYearSummaryResponseAuditModelSpec extends WordSpecLike with TestSupport
                                                  agentReferenceNumber: Option[String],
                                                  paymentHasADunningLock: Boolean = false,
                                                  forecastIncome: Option[Int] = None,
-                                                 forecastIncomeTaxAndNics: Option[BigDecimal] = None): TaxYearSummaryResponseAuditModel =
+                                                 forecastIncomeTaxAndNics: Option[BigDecimal] = None,
+                                                 forecastAllowancesAndDeductions: Option[BigDecimal] = None): TaxYearSummaryResponseAuditModel =
     TaxYearSummaryResponseAuditModel(
       mtdItUser = MtdItUser(
         mtditid = "mtditid",
@@ -284,7 +293,8 @@ class TaxYearSummaryResponseAuditModelSpec extends WordSpecLike with TestSupport
       messagesApi = messagesApi,
       taxYearSummaryViewModel = Some(taxYearSummaryViewModelUnattendedCalc(
         forecastIncome = forecastIncome,
-        forecastIncomeTaxAndNics = forecastIncomeTaxAndNics)
+        forecastIncomeTaxAndNics = forecastIncomeTaxAndNics,
+        forecastAllowancesAndDeductions = forecastAllowancesAndDeductions)
       ),
     )
 
@@ -384,7 +394,8 @@ class TaxYearSummaryResponseAuditModelSpec extends WordSpecLike with TestSupport
         val auditJson = taxYearOverviewResponseAuditFull(
           agentReferenceNumber = Some("1"),
           forecastIncome = Some(2000),
-          forecastIncomeTaxAndNics = Some(120.0)
+          forecastIncomeTaxAndNics = Some(120.0),
+          forecastAllowancesAndDeductions = Some(100)
         )
 
         (auditJson.detail \ "taxYearOverview" \ "calculationAmount").toString() shouldBe "JsDefined(2010)"
@@ -394,7 +405,8 @@ class TaxYearSummaryResponseAuditModelSpec extends WordSpecLike with TestSupport
           Json.obj(
             "income" -> 2000,
             "taxableIncome" -> 2000,
-            "taxDue" -> 120
+            "taxDue" -> 120,
+            "forecastAllowancesAndDeductions" -> 100
           )
       }
     }
@@ -406,7 +418,8 @@ class TaxYearSummaryResponseAuditModelSpec extends WordSpecLike with TestSupport
         val auditJson = taxYearOverviewResponseAuditFull(
           agentReferenceNumber = Some("1"),
           forecastIncome = Some(2000),
-          forecastIncomeTaxAndNics = Some(120.0)
+          forecastIncomeTaxAndNics = Some(120.0),
+          forecastAllowancesAndDeductions = Some(100)
         )
         (auditJson.detail \ "calculation" \ "calculationReason").toString contains "customerRequest"
         (auditJson.detail \ "calculation" \ "income").toString() shouldBe "JsDefined(199505)"
@@ -421,7 +434,8 @@ class TaxYearSummaryResponseAuditModelSpec extends WordSpecLike with TestSupport
         val auditJson = taxYearOverviewResponseAuditUnattendedCalc(
           agentReferenceNumber = Some("1"),
           forecastIncome = Some(2000),
-          forecastIncomeTaxAndNics = Some(120.0)
+          forecastIncomeTaxAndNics = Some(120.0),
+          forecastAllowancesAndDeductions = Some(100)
         )
         (auditJson.detail \ "calculation" \ "calculationReason").toString contains "Unattended Calculation"
         (auditJson.detail \ "calculation" \ "income").toString() shouldBe "JsDefined(199505)"
