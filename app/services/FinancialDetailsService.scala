@@ -20,7 +20,10 @@ import auth.MtdItUser
 import config.FrontendAppConfig
 import connectors.IncomeTaxViewChangeConnector
 import models.chargeHistory.{ChargeHistoryModel, ChargesHistoryErrorModel, ChargesHistoryModel}
+import models.core.Nino
 import models.financialDetails.{DocumentDetail, FinancialDetailsErrorModel, FinancialDetailsModel, FinancialDetailsResponseModel}
+import models.paymentAllocationCharges.{FinancialDetailsWithDocumentDetailsErrorModel, FinancialDetailsWithDocumentDetailsModel, FinancialDetailsWithDocumentDetailsResponse, PaymentAllocationError, PaymentAllocationViewModel}
+import models.paymentAllocations.PaymentAllocations
 import play.api.Logger
 import play.api.http.Status.NOT_FOUND
 import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
@@ -115,11 +118,16 @@ class FinancialDetailsService @Inject()(val incomeTaxViewChangeConnector: Income
     }
   }
 
-  private def unpaidDocumentDetails(financialDetailsModel: FinancialDetailsModel,isCodingOutEnabled: Boolean): List[DocumentDetail] = {
+  private def unpaidDocumentDetails(financialDetailsModel: FinancialDetailsModel, isCodingOutEnabled: Boolean): List[DocumentDetail] = {
     financialDetailsModel.documentDetails.collect {
       case documentDetail: DocumentDetail if documentDetail.isCodingOutDocumentDetail(isCodingOutEnabled) => documentDetail
       case documentDetail: DocumentDetail if documentDetail.latePaymentInterestAmount.isDefined && !documentDetail.interestIsPaid => documentDetail
       case documentDetail: DocumentDetail if documentDetail.isNotCodingOutDocumentDetail && !documentDetail.isPaid => documentDetail
     }
+  }
+
+  def getFinancialDetailByTransactionId(nino: String, transactionId: String)
+                                       (implicit hc: HeaderCarrier): Future[FinancialDetailsWithDocumentDetailsResponse] = {
+    incomeTaxViewChangeConnector.getFinancialDetailsByDocumentId(Nino(nino), transactionId)
   }
 }

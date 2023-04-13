@@ -28,6 +28,7 @@ import enums.GatewayPage.{GatewayPage, PaymentHistoryPage, TaxYearSummaryPage, W
 import forms.utils.SessionKeys.gatewayPage
 import models.chargeHistory.{ChargeHistoryModel, ChargeHistoryResponseModel, ChargesHistoryModel}
 import models.financialDetails._
+import models.paymentAllocationCharges.FinancialDetailsWithDocumentDetailsModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
@@ -83,25 +84,35 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
 
   def handleRequest(taxYear: Int, id: String, isLatePaymentCharge: Boolean = false, isAgent: Boolean, origin: Option[String] = None)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] = {
-    financialDetailsService.getAllFinancialDetails(user, implicitly, implicitly).flatMap { financialResponses =>
-      val payments = financialResponses.collect {
-        case (_, model: FinancialDetailsModel) => model.filterPayments()
-      }.foldLeft(FinancialDetailsModel(BalanceDetails(0.00, 0.00, 0.00, None, None, None, None), List(), List()))((merged, next) => merged.mergeLists(next))
+    financialDetailsService.getFinancialDetailByTransactionId(user.nino, id).flatMap {
+      case fddm: FinancialDetailsWithDocumentDetailsModel =>
+        val payments = FinancialDetailsModel(BalanceDetails(0.00, 0.00, 0.00, None, None, None, None),
+//          fddm.documentDetails.filter { dd =>
+//            dd.paymentLot == fddm.financialDetails.head.items.get.head.paymentLot &&
+//              dd.paymentLotItem == fddm.financialDetails.head.items.get.head.paymentLotItem && dd.taxYear == taxYear
+//          },
+//          fddm.financialDetails.filter {
+//            fd => fd.taxYear == taxYear.toString
+//          }
+          fddm.documentDetails,
+          fddm.financialDetails
+        )
 
-      val matchingYear = financialResponses.collect {
-        case (year, response) if year == taxYear => response
-      }
+        println(Console.GREEN + payments + Console.WHITE)
 
-      matchingYear.headOption match {
-        case Some(fdm: FinancialDetailsModel) if (isDisabled(MFACreditsAndDebits) && isMFADebit(fdm, id)) =>
+        val fdm = FinancialDetailsModel(BalanceDetails(0.00, 0.00, 0.00, None, None, None, None), fddm.documentDetails, fddm.financialDetails)
+
+
+        println(Console.CYAN + fdm + Console.WHITE)
+        if (isDisabled(MFACreditsAndDebits) && isMFADebit(fdm, id)) {
           Future.successful(Ok(customNotFoundErrorView()))
-        case Some(fdm: FinancialDetailsModel) if fdm.documentDetails.exists(_.transactionId == id) =>
+        } else if (fdm.documentDetails.exists(_.transactionId == id)) {
           doShowChargeSummary(taxYear, id, isLatePaymentCharge, fdm, payments, isAgent, origin, isMFADebit(fdm, id))
-        case Some(_: FinancialDetailsModel) =>
+        } else {
           Future.successful(onError(s"Transaction id not found for tax year $taxYear", isAgent, showInternalServerError = false))
-        case _ =>
-          Future.successful(onError("Invalid response from financial transactions", isAgent, showInternalServerError = true))
-      }
+        }
+      case _ =>
+        Future.successful(onError("Invalid response from financial transactions", isAgent, showInternalServerError = true))
     }
   }
 
@@ -130,7 +141,8 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
     val sessionGatewayPage = user.session.get(gatewayPage).map(GatewayPage(_))
     val documentDetailWithDueDate: DocumentDetailWithDueDate = chargeDetails.findDocumentDetailByIdWithDueDate(id).get
     val financialDetails = chargeDetails.financialDetails.filter(_.transactionId.contains(id))
-
+    println(Console.YELLOW + documentDetailWithDueDate.documentDetail + Console.WHITE)
+    println(Console.YELLOW + chargeDetails + Console.WHITE)
     val paymentBreakdown: List[FinancialDetail] =
       if (!isLatePaymentCharge) {
         financialDetails.filter(_.messageKeyByTypes.isDefined)

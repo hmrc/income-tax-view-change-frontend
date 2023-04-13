@@ -17,7 +17,7 @@
 package models.paymentAllocationCharges
 
 import models.financialDetails.{DocumentDetail, FinancialDetail}
-import models.{readNullableList}
+import models.readNullableList
 import play.api.libs.json.{Json, OWrites, Reads, __}
 import play.api.libs.functional.syntax._
 
@@ -27,7 +27,7 @@ sealed trait FinancialDetailsWithDocumentDetailsResponse
 case class FinancialDetailsWithDocumentDetailsModel(documentDetails: List[DocumentDetail],
                                                     financialDetails: List[FinancialDetail]) extends FinancialDetailsWithDocumentDetailsResponse {
 
-  val filteredDocumentDetails = documentDetails.filter(_.paymentLot == financialDetails.head.items.get.head.paymentLot)
+  val filteredDocumentDetails: Seq[DocumentDetail] = documentDetails.filter(_.paymentLot == financialDetails.head.items.get.head.paymentLot)
     .filter(_.paymentLotItem == financialDetails.head.items.get.head.paymentLotItem)
 
 }
