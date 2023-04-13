@@ -52,9 +52,9 @@ class InYearTaxCalculationControllerISpec extends ComponentSpecBase {
   val (taxYear, month, dayOfMonth) = (if (currentDate.isAfter(toTaxYearEndDate(currentDate.getYear))) {
     currentDate.getYear + 1
   }
-  else currentDate.getYear, LocalDate.now.getMonthValue, LocalDate.now.getDayOfMonth)
-  val timeStampEN: String = longDate(LocalDate.now)(toMessages("EN")).toLongDate
-  val timeStampCY: String = longDate(LocalDate.now)(toMessages("CY")).toLongDate
+  else currentDate.getYear, currentDate.getMonthValue, currentDate.getDayOfMonth)
+  val timeStampEN: String = longDate(currentDate)(toMessages("EN")).toLongDate
+  val timeStampCY: String = longDate(currentDate)(toMessages("CY")).toLongDate
 
   val url: String = s"http://localhost:$port" + controllers.routes.InYearTaxCalculationController.show().url
 
@@ -177,8 +177,7 @@ class InYearTaxCalculationControllerISpec extends ComponentSpecBase {
       "the inset text" should {
 
         "have the correct full text" in {
-          // TODO: fix this test
-          //document.select(Selectors.insetText).text() shouldBe ExpectedValues.insetTextFull
+          document.select(Selectors.insetText).text() shouldBe ExpectedValues.insetTextFull
         }
 
       }
@@ -275,8 +274,7 @@ class InYearTaxCalculationControllerISpec extends ComponentSpecBase {
       "the inset text" should {
 
         "have the correct full text" in {
-          // TODO: fix test
-          //document.select(Selectors.insetText).text() shouldBe ExpectedValuesWelsh.insetTextFull
+          document.select(Selectors.insetText).text() shouldBe ExpectedValuesWelsh.insetTextFull
         }
 
       }
