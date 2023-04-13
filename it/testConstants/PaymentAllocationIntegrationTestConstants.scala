@@ -398,7 +398,7 @@ object PaymentAllocationIntegrationTestConstants {
       |				"documentOutstandingAmount": 0,
       |				"paymentLot": "MA999991A",
       |				"paymentLotItem": "5",
-      |       "effectiveDateOfPayment": "2021-01-31",
+      |				"effectiveDateOfPayment": "2021-01-31",
       |				"statisticalFlag": false
       |			}
       |		],
