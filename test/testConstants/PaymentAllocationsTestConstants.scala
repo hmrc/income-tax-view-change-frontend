@@ -461,7 +461,7 @@ object PaymentAllocationsTestConstants {
 			|            "taxYear": 2018,
 			|            "transactionId": "id",
 			|            "paymentLot": "paymentLot",
-      |            "effectiveDateOfPayment": "2021-01-31",
+			|            "effectiveDateOfPayment": "2021-01-31",
 			|            "paymentLotItem": "paymentLotItem"
 			|        }
 			|    ],
@@ -518,7 +518,7 @@ object PaymentAllocationsTestConstants {
 			|            "taxYear": 2018,
 			|            "transactionId": "id",
 			|            "paymentLot": "paymentLot",
-      |            "effectiveDateOfPayment": "2021-01-31",
+			|            "effectiveDateOfPayment": "2021-01-31",
 			|            "paymentLotItem": "paymentLotItem"
 			|        }
 			|    ],
@@ -660,7 +660,7 @@ object PaymentAllocationsTestConstants {
 			|            "taxYear": 2018,
 			|            "transactionId": "id",
 			|            "paymentLot": "paymentLot",
-      |            "effectiveDateOfPayment": "2021-01-31",
+			|            "effectiveDateOfPayment": "2021-01-31",
 			|            "paymentLotItem": "paymentLotItem"
 			|        },
 			|        {
@@ -672,7 +672,7 @@ object PaymentAllocationsTestConstants {
 			|            "taxYear": 2019,
 			|            "transactionId": "id2",
 			|            "paymentLot": "paymentLot2",
-      |            "effectiveDateOfPayment": "2021-01-31",
+			|            "effectiveDateOfPayment": "2021-01-31",
 			|            "paymentLotItem": "paymentLotItem2"
 			|        }
 			|    ],

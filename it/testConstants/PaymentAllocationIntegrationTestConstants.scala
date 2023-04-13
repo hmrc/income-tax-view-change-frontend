@@ -335,7 +335,7 @@ object PaymentAllocationIntegrationTestConstants {
 			|            "transactionId": "id",
 			|            "paymentLot": "paymentLot",
 			|            "paymentLotItem": "paymentLotItem",
-      |            "effectiveDateOfPayment": "2021-01-31",
+			|            "effectiveDateOfPayment": "2021-01-31",
 			|            "totalAmount": 100.00
 			|        }
 			|    ],
