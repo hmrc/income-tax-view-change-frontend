@@ -156,5 +156,4 @@ case class TaxYearSummaryResponseAuditModel(mtdItUser: MtdItUser[_],
         "payments" -> paymentsDetails,
         "updates" -> updatesDetail)
   }
-  println(detail)
 }
