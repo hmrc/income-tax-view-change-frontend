@@ -16,6 +16,7 @@
 
 package views
 
+import config.featureswitch.{FeatureSwitching, TimeMachineAddYear}
 import enums.ChargeType._
 import exceptions.MissingFieldException
 import models.chargeHistory.ChargeHistoryModel
@@ -34,7 +35,7 @@ import views.html.ChargeSummary
 
 import java.time.LocalDate
 
-class ChargeSummaryViewSpec extends ViewSpec {
+class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching{
 
   lazy val chargeSummary: ChargeSummary = app.injector.instanceOf[ChargeSummary]
   val whatYouOweAgentUrl = controllers.routes.WhatYouOweController.showAgent.url
@@ -53,7 +54,7 @@ class ChargeSummaryViewSpec extends ViewSpec {
               codingOutEnabled: Boolean = false,
               isAgent: Boolean = false,
               isMFADebit: Boolean = false) {
-    val view: Html = chargeSummary(dateService.getCurrentDate, DocumentDetailWithDueDate(documentDetail, dueDate), "testBackURL",
+    val view: Html = chargeSummary(dateService.getCurrentDate(isEnabled(TimeMachineAddYear)), DocumentDetailWithDueDate(documentDetail, dueDate), "testBackURL",
       paymentBreakdown, chargeHistory, paymentAllocations, payments, chargeHistoryEnabled, paymentAllocationEnabled,
       latePaymentInterestCharge, codingOutEnabled, isAgent, isMFADebit = isMFADebit)
     val document: Document = Jsoup.parse(view.toString())
@@ -754,7 +755,7 @@ class ChargeSummaryViewSpec extends ViewSpec {
   "The charge summary view when missing mandatory expected fields" should {
     "throw a MissingFieldException" in {
       val thrownException = intercept[MissingFieldException] {
-        chargeSummary(dateService.getCurrentDate, DocumentDetailWithDueDate(documentDetailModel(), None), "testBackURL",
+        chargeSummary(dateService.getCurrentDate(isEnabled(TimeMachineAddYear)), DocumentDetailWithDueDate(documentDetailModel(), None), "testBackURL",
           paymentBreakdown, List(), List(), payments, true, false, false, false, false, isMFADebit = false)
       }
       thrownException.getMessage shouldBe "Missing Mandatory Expected Field: Due Date"

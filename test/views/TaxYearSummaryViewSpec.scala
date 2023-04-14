@@ -16,7 +16,7 @@
 
 package views
 
-import config.featureswitch.FeatureSwitching
+import config.featureswitch.{FeatureSwitching, TimeMachineAddYear}
 import exceptions.MissingFieldException
 import enums.CodingOutType._
 import implicits.ImplicitCurrencyFormatter.{CurrencyFormatter, CurrencyFormatterInt}
@@ -62,9 +62,11 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
     periodTo = Some(LocalDate.of(testYear, 1, 1))
   )
 
+  val date: String = dateService.getCurrentDate(isEnabled(TimeMachineAddYear)).toLongDate
+
   val modelWithMultipleErrorMessages = modelComplete(Some(false)).copy(messages = Some(Messages(errors = Some(List(
-    Message("C15014", dateService.getCurrentDate.toLongDate),
-    Message("C55014", dateService.getCurrentDate.toLongDate),
+    Message("C15014", date),
+    Message("C55014", date),
     Message("C15015", ""),
     Message("C15016", ""),
     Message("C15102", ""),
@@ -93,12 +95,12 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
     Message("C55502", ""),
     Message("C55503", ""),
     Message("C55508", ""),
-    Message("C55008", dateService.getCurrentDate.toLongDate),
-    Message("C55011", dateService.getCurrentDate.toLongDate),
+    Message("C55008", date),
+    Message("C55011", date),
     Message("C55009", ""),
     Message("C55010", ""),
-    Message("C55012", dateService.getCurrentDate.toLongDate),
-    Message("C55013", dateService.getCurrentDate.toLongDate),
+    Message("C55012", date),
+    Message("C55013", date),
     Message("C55009", ""),
     Message("C55511", ""),
     Message("C55519", ""),
@@ -478,8 +480,8 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
         calculationContent.child(0).text shouldBe messageHeader
         calculationContent.child(2).text shouldBe messageAction
 
-        errorMessageList.child(0).text shouldBe messages("tax-year-summary.message.C15014", dateService.getCurrentDate.toLongDate)
-        errorMessageList.child(1).text shouldBe messages("tax-year-summary.message.C55014", dateService.getCurrentDate.toLongDate)
+        errorMessageList.child(0).text shouldBe messages("tax-year-summary.message.C15014", dateService.getCurrentDate(isEnabled(TimeMachineAddYear)).toLongDate)
+        errorMessageList.child(1).text shouldBe messages("tax-year-summary.message.C55014", dateService.getCurrentDate(isEnabled(TimeMachineAddYear)).toLongDate)
         errorMessageList.child(2).text shouldBe messages("tax-year-summary.message.C15015")
         errorMessageList.child(3).text shouldBe messages("tax-year-summary.message.C15016")
         errorMessageList.child(4).text shouldBe messages("tax-year-summary.message.C15102")
@@ -508,12 +510,12 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
         errorMessageList.child(27).text shouldBe messages("tax-year-summary.message.C55502")
         errorMessageList.child(28).text shouldBe messages("tax-year-summary.message.C55503")
         errorMessageList.child(29).text shouldBe messages("tax-year-summary.message.C55508")
-        errorMessageList.child(30).text shouldBe messages("tax-year-summary.message.C55008", dateService.getCurrentDate.toLongDate)
-        errorMessageList.child(31).text shouldBe messages("tax-year-summary.message.C55011", dateService.getCurrentDate.toLongDate)
+        errorMessageList.child(30).text shouldBe messages("tax-year-summary.message.C55008", dateService.getCurrentDate(isEnabled(TimeMachineAddYear)).toLongDate)
+        errorMessageList.child(31).text shouldBe messages("tax-year-summary.message.C55011", dateService.getCurrentDate(isEnabled(TimeMachineAddYear)).toLongDate)
         errorMessageList.child(32).text shouldBe messages("tax-year-summary.message.C55009")
         errorMessageList.child(33).text shouldBe messages("tax-year-summary.message.C55010")
-        errorMessageList.child(34).text shouldBe messages("tax-year-summary.message.C55012", dateService.getCurrentDate.toLongDate)
-        errorMessageList.child(35).text shouldBe messages("tax-year-summary.message.C55013", dateService.getCurrentDate.toLongDate)
+        errorMessageList.child(34).text shouldBe messages("tax-year-summary.message.C55012", dateService.getCurrentDate(isEnabled(TimeMachineAddYear)).toLongDate)
+        errorMessageList.child(35).text shouldBe messages("tax-year-summary.message.C55013", dateService.getCurrentDate(isEnabled(TimeMachineAddYear)).toLongDate)
         errorMessageList.child(36).text shouldBe messages("tax-year-summary.message.C55009")
         errorMessageList.child(37).text shouldBe messages("tax-year-summary.message.C55511")
         errorMessageList.child(38).text shouldBe messages("tax-year-summary.message.C55519")

@@ -82,7 +82,8 @@ class HomeController @Inject()(val homeView: views.html.Home,
   def handleShowRequest(itvcErrorHandler: ShowInternalServerError, isAgent: Boolean, incomeSourceCurrentTaxYear: Int, origin: Option[String] = None)
                        (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
 
-    nextUpdatesService.getNextDeadlineDueDateAndOverDueObligations().flatMap { latestDeadlineDate =>
+    implicit val isTimeMachineEnabled: Boolean = isEnabled(TimeMachineAddYear)
+    nextUpdatesService.getNextDeadlineDueDateAndOverDueObligations.flatMap { latestDeadlineDate =>
 
       val unpaidCharges: Future[List[FinancialDetailsResponseModel]] = financialDetailsService.getAllUnpaidFinancialDetails(isEnabled(CodingOut))
 
@@ -104,7 +105,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
           case OutstandingChargeModel(_, Some(relevantDate), _, _) => List(relevantDate)
           case _ => Nil
         }
-        overDuePaymentsCount = paymentsDue.count(_.isBefore(dateService.getCurrentDate)) + outstandingChargesModel.length
+        overDuePaymentsCount = paymentsDue.count(_.isBefore(dateService.getCurrentDate(isTimeMachineEnabled))) + outstandingChargesModel.length
         overDueUpdatesCount = latestDeadlineDate._2.size
         paymentsDueMerged = (paymentsDue ::: outstandingChargesDueDate).sortWith(_ isBefore _).headOption
       } yield {
@@ -140,7 +141,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
       handleShowRequest(
         itvcErrorHandler = itvcErrorHandler,
         isAgent = false,
-        dateService.getCurrentTaxYearEnd,
+        dateService.getCurrentTaxYearEnd(isEnabled(TimeMachineAddYear)),
         origin = origin
       )
   }
@@ -153,7 +154,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
             handleShowRequest(
               itvcErrorHandler = itvcErrorHandlerAgent,
               isAgent = true,
-              dateService.getCurrentTaxYearEnd
+              dateService.getCurrentTaxYearEnd(isEnabled(TimeMachineAddYear))
             )
         }
   }

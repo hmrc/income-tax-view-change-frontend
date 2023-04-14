@@ -94,7 +94,7 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockInco
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
-        when(whatYouOweService.getWhatYouOweChargesList(any(),any())(any(), any()))
+        when(whatYouOweService.getWhatYouOweChargesList(any(),any())(any(), any(),any()))
           .thenReturn(Future.successful(whatYouOweChargesListFull))
 
         when(whatYouOweService.getCreditCharges()(any(), any()))
@@ -115,7 +115,7 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockInco
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
-        when(whatYouOweService.getWhatYouOweChargesList(any(),any())(any(), any()))
+        when(whatYouOweService.getWhatYouOweChargesList(any(),any())(any(), any(),any()))
           .thenReturn(Future.successful(whatYouOweChargesListEmpty))
 
         when(whatYouOweService.getCreditCharges()(any(), any()))
@@ -136,7 +136,7 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockInco
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
-        when(whatYouOweService.getWhatYouOweChargesList(any(),any())(any(), any()))
+        when(whatYouOweService.getWhatYouOweChargesList(any(),any())(any(), any(),any()))
           .thenReturn(Future.failed(new Exception("failed to retrieve data")))
 
         val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
@@ -164,7 +164,7 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockInco
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
 
-        when(whatYouOweService.getWhatYouOweChargesList(any(),any())(any(), any()))
+        when(whatYouOweService.getWhatYouOweChargesList(any(),any())(any(), any(),any()))
           .thenReturn(Future.successful(whatYouOweWithAvailableCredits))
 
         when(whatYouOweService.getCreditCharges()(any(), any()))
@@ -194,7 +194,7 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockInco
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
-        when(whatYouOweService.getWhatYouOweChargesList(any(),any())(any(), any()))
+        when(whatYouOweService.getWhatYouOweChargesList(any(),any())(any(), any(),any()))
           .thenReturn(Future.successful(whatYouOweWithZeroAvailableCredits))
 
         when(whatYouOweService.getCreditCharges()(any(), any()))

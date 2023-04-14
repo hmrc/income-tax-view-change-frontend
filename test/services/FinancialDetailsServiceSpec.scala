@@ -21,7 +21,7 @@ import testConstants.BusinessDetailsTestConstants.getCurrentTaxYearEnd
 import testConstants.ChargeHistoryTestConstants.{testChargeHistoryErrorModel, testValidChargeHistoryModel}
 import testConstants.FinancialDetailsTestConstants.{documentDetailModel, _}
 import auth.MtdItUser
-import config.featureswitch.{CodingOut, FeatureSwitching}
+import config.featureswitch.{CodingOut, FeatureSwitching, TimeMachineAddYear}
 import enums.ChargeType.NIC4_WALES
 import enums.CodingOutType._
 import mocks.connectors.MockIncomeTaxViewChangeConnector
@@ -148,7 +148,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
           )
 
           val result: Option[Either[(LocalDate, Boolean), Int]] = {
-            TestFinancialDetailsService.getChargeDueDates(List(financialDetailsCurrentYear, financialDetailsLastYear))
+            TestFinancialDetailsService.getChargeDueDates(List(financialDetailsCurrentYear, financialDetailsLastYear))(isEnabled(TimeMachineAddYear))
           }
 
           result shouldBe Some(Left(LocalDate.now.minusDays(1) -> true))
@@ -181,7 +181,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
           )
 
           val result: Option[Either[(LocalDate, Boolean), Int]] = {
-            TestFinancialDetailsService.getChargeDueDates(List(financialDetailsCurrentYear, financialDetailsLastYear))
+            TestFinancialDetailsService.getChargeDueDates(List(financialDetailsCurrentYear, financialDetailsLastYear))( isEnabled(TimeMachineAddYear))
           }
 
           result shouldBe Some(Left(LocalDate.now.plusDays(5) -> false))
@@ -214,7 +214,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
           )
 
           val result: Option[Either[(LocalDate, Boolean), Int]] = {
-            TestFinancialDetailsService.getChargeDueDates(List(financialDetailsCurrentYear, financialDetailsLastYear))
+            TestFinancialDetailsService.getChargeDueDates(List(financialDetailsCurrentYear, financialDetailsLastYear))( isEnabled(TimeMachineAddYear))
           }
 
           result shouldBe Some(Right(2))
@@ -227,7 +227,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
           val financialDetailsLastYear: FinancialDetailsModel = FinancialDetailsModel(BalanceDetails(1.00, 2.00, 3.00, None, None, None, None), List(), List())
 
           val result: Option[Either[(LocalDate, Boolean), Int]] = {
-            TestFinancialDetailsService.getChargeDueDates(List(financialDetailsCurrentYear, financialDetailsLastYear))
+            TestFinancialDetailsService.getChargeDueDates(List(financialDetailsCurrentYear, financialDetailsLastYear))( isEnabled(TimeMachineAddYear))
           }
 
           result shouldBe None

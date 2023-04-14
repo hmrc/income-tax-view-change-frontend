@@ -61,10 +61,10 @@ class TestHeaderExtractor extends HeaderExtractor {
 @Singleton
 class TestDateService  extends DateServiceInterface  {
 
-  def getCurrentDate: LocalDate = LocalDate.of(2023, 4, 5)
-  def isDayBeforeTaxYearLastDay: Boolean = true
+  override def getCurrentDate(isTimeMachineEnabled: Boolean = false): LocalDate = LocalDate.of(2023, 4, 5)
+  override def isDayBeforeTaxYearLastDay(isTimeMachineEnabled: Boolean = false): Boolean = true
 
-  def getCurrentTaxYearEnd: Int = 2023
+  override def getCurrentTaxYearEnd(isTimeMachineEnabled: Boolean): Int = 2023
 
 }
 
@@ -86,9 +86,9 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
   implicit val testAppConfig: FrontendAppConfig = appConfig
   implicit val dateService: DateService = new DateService(){
-    override def getCurrentDate: LocalDate = LocalDate.of(2023, 4, 5)
+    override def getCurrentDate(isTimeMachineEnabled: Boolean = false): LocalDate = LocalDate.of(2023, 4, 5)
 
-    override def getCurrentTaxYearEnd: Int = 2023
+    override def getCurrentTaxYearEnd(isTimeMachineEnabled: Boolean = false): Int = 2023
   }
 
   override lazy val cookieSigner: DefaultCookieSigner = app.injector.instanceOf[DefaultCookieSigner]
