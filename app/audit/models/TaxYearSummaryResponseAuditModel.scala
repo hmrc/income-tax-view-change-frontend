@@ -109,7 +109,7 @@ case class TaxYearSummaryResponseAuditModel(mtdItUser: MtdItUser[_],
     ("income", taxYearSummaryViewModel.map(_.forecastIncome)) ++
     ("taxableIncome", taxYearSummaryViewModel.map(_.forecastIncome)) ++
     ("taxDue", taxYearSummaryViewModel.map(_.forecastIncomeTaxAndNics)) ++
-    ("forecastAllowancesAndDeductions", taxYearSummaryViewModel.map(_.forecastAllowancesAndDeductions))
+    ("totalAllowancesAndDeductions", taxYearSummaryViewModel.map(_.forecastAllowancesAndDeductions))
 
   private def paymentsJsonLPI(docDateDetail: DocumentDetailWithDueDate): JsObject = {
     Json.obj("paymentType" -> getChargeType(docDateDetail.documentDetail, latePaymentCharge = true),
@@ -156,4 +156,5 @@ case class TaxYearSummaryResponseAuditModel(mtdItUser: MtdItUser[_],
         "payments" -> paymentsDetails,
         "updates" -> updatesDetail)
   }
+  println(detail)
 }

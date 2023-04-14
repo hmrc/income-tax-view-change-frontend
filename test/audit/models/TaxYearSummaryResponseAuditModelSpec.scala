@@ -166,7 +166,7 @@ class TaxYearSummaryResponseAuditModelSpec extends WordSpecLike with TestSupport
       "income" -> null,
       "taxableIncome" -> null,
       "taxDue" -> null,
-      "forecastAllowancesAndDeductions" -> null
+      "totalAllowancesAndDeductions" -> null
     ),
     "calculation" -> Json.obj(
       "income" -> 199505,
@@ -211,7 +211,7 @@ class TaxYearSummaryResponseAuditModelSpec extends WordSpecLike with TestSupport
       "income" -> None,
       "taxableIncome" -> None,
       "taxDue" -> None,
-      "forecastAllowancesAndDeductions" -> None
+      "totalAllowancesAndDeductions" -> None
   ),
     "calculation" -> Json.obj(
       "income" -> 199505,
@@ -406,7 +406,7 @@ class TaxYearSummaryResponseAuditModelSpec extends WordSpecLike with TestSupport
             "income" -> 2000,
             "taxableIncome" -> 2000,
             "taxDue" -> 120,
-            "forecastAllowancesAndDeductions" -> 100
+            "totalAllowancesAndDeductions" -> 100
           )
       }
     }
