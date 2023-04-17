@@ -41,6 +41,7 @@ case class DocumentDetail(taxYear: Int,
                           lpiWithDunningBlock: Option[BigDecimal] = None,
                           paymentLotItem: Option[String] = None,
                           paymentLot: Option[String] = None,
+                          effectiveDateOfPayment: Option[LocalDate] = None,
                           amountCodedOut: Option[BigDecimal] = None
                          ) {
 
@@ -199,6 +200,7 @@ object DocumentDetail {
       (__ \ "lpiWithDunningBlock").readNullable[BigDecimal] and
       (__ \ "paymentLotItem").readNullable[String] and
       (__ \ "paymentLot").readNullable[String] and
+      (__ \ "effectiveDateOfPayment").readNullable[LocalDate] and
       (__ \ "amountCodedOut").readNullable[BigDecimal]
     ) (DocumentDetail.apply _)
 }

@@ -335,6 +335,7 @@ object PaymentAllocationIntegrationTestConstants {
 			|            "transactionId": "id",
 			|            "paymentLot": "paymentLot",
 			|            "paymentLotItem": "paymentLotItem",
+			|            "effectiveDateOfPayment": "2021-01-31",
 			|            "totalAmount": 100.00
 			|        }
 			|    ],
@@ -397,6 +398,7 @@ object PaymentAllocationIntegrationTestConstants {
       |				"documentOutstandingAmount": 0,
       |				"paymentLot": "MA999991A",
       |				"paymentLotItem": "5",
+      |				"effectiveDateOfPayment": "2021-01-31",
       |				"statisticalFlag": false
       |			}
       |		],
