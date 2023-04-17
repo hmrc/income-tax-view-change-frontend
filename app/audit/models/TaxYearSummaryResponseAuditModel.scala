@@ -108,7 +108,8 @@ case class TaxYearSummaryResponseAuditModel(mtdItUser: MtdItUser[_],
   private val forecastJson: JsObject = Json.obj() ++
     ("income", taxYearSummaryViewModel.map(_.forecastIncome)) ++
     ("taxableIncome", taxYearSummaryViewModel.map(_.forecastIncome)) ++
-    ("taxDue", taxYearSummaryViewModel.map(_.forecastIncomeTaxAndNics))
+    ("taxDue", taxYearSummaryViewModel.map(_.forecastIncomeTaxAndNics)) ++
+    ("totalAllowancesAndDeductions", taxYearSummaryViewModel.map(_.forecastAllowancesAndDeductions))
 
   private def paymentsJsonLPI(docDateDetail: DocumentDetailWithDueDate): JsObject = {
     Json.obj("paymentType" -> getChargeType(docDateDetail.documentDetail, latePaymentCharge = true),
