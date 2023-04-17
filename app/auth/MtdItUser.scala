@@ -44,7 +44,8 @@ case class MtdItUserOptionNino[A](mtditid: String,
                                   userName: Option[Name],
                                   saUtr: Option[String],
                                   credId: Option[String],
-                                  userType: Option[AffinityGroup])(implicit request: Request[A]) extends WrappedRequest[A](request)
+                                  userType: Option[AffinityGroup]
+                                 )(implicit request: Request[A]) extends WrappedRequest[A](request)
 
 case class MtdItUserWithNino[A](mtditid: String,
                                 nino: String,
