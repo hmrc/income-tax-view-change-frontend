@@ -36,6 +36,10 @@ case object ClaimARefundResponse extends AuditType {
   val name = "ClaimARefundResponse"
 }
 
+case object ForecastTaxCalculation extends AuditType {
+  val name = "ForecastTaxCalculation"
+}
+
 case object ItsaHomePage extends AuditType {
   val name = "ItsaHomePage"
 }
