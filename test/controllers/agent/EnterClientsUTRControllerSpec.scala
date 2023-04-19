@@ -141,7 +141,7 @@ class EnterClientsUTRControllerSpec extends TestSupport
 
           val result = TestEnterClientsUTRController.submit()(fakeRequestWithActiveSession.withFormUrlEncodedBody(
             ClientsUTRForm.utr -> validUTR
-          ))
+          ).withMethod("POST"))
 
           status(result) shouldBe SEE_OTHER
           redirectLocation(result) shouldBe Some(routes.ConfirmClientUTRController.show.url)
@@ -165,7 +165,7 @@ class EnterClientsUTRControllerSpec extends TestSupport
 
           val result = TestEnterClientsUTRController.submit()(fakeRequestWithActiveSession.withFormUrlEncodedBody(
             ClientsUTRForm.utr -> utrWithSpaces
-          ))
+          ).withMethod("POST"))
 
 
           status(result) shouldBe SEE_OTHER
@@ -206,7 +206,7 @@ class EnterClientsUTRControllerSpec extends TestSupport
 
           val result = TestEnterClientsUTRController.submit(fakeRequestWithActiveSession.withFormUrlEncodedBody(
             ClientsUTRForm.utr -> validUTR
-          ))
+          ).withMethod("POST"))
 
           status(result) shouldBe SEE_OTHER
           redirectLocation(result) shouldBe Some(controllers.agent.routes.UTRErrorController.show.url)
@@ -222,7 +222,7 @@ class EnterClientsUTRControllerSpec extends TestSupport
 
           val result = TestEnterClientsUTRController.submit(fakeRequestWithActiveSession.withFormUrlEncodedBody(
             ClientsUTRForm.utr -> validUTR
-          ))
+          ).withMethod("POST"))
 
           status(result) shouldBe SEE_OTHER
           redirectLocation(result) shouldBe Some(controllers.agent.routes.UTRErrorController.show.url)
@@ -241,7 +241,7 @@ class EnterClientsUTRControllerSpec extends TestSupport
 
           val result = TestEnterClientsUTRController.submit(fakeRequestWithActiveSession.withFormUrlEncodedBody(
             ClientsUTRForm.utr -> validUTR
-          ))
+          ).withMethod("POST"))
 
           status(result) shouldBe SEE_OTHER
           redirectLocation(result) shouldBe Some(controllers.agent.routes.UTRErrorController.show.url)
@@ -259,7 +259,7 @@ class EnterClientsUTRControllerSpec extends TestSupport
 
           val result = TestEnterClientsUTRController.submit(fakeRequestWithActiveSession.withFormUrlEncodedBody(
             ClientsUTRForm.utr -> validUTR
-          ))
+          ).withMethod("POST"))
           result.failed.futureValue shouldBe an[InternalServerException]
           result.failed.futureValue.getMessage shouldBe "[EnterClientsUTRController][submit] - Unexpected response received"
         }
