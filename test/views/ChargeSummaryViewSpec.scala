@@ -145,7 +145,6 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching{
     def payeTaxCodeText(year: Int) = s"${messages("chargeSummary.check-paye-tax-code-1")} ${messages("chargeSummary.check-paye-tax-code-2")} ${messages("chargeSummary.check-paye-tax-code-3", year - 1, year)}"
     def payeTaxCodeTextWithStringMessage(year: Int) = s"${messages("chargeSummary.check-paye-tax-code-1")} ${messages("chargeSummary.check-paye-tax-code-2")} ${messages("chargeSummary.check-paye-tax-code-3", (year - 1).toString, year.toString)}"
 
-
     val payeTaxCodeLink = s"https://www.tax.service.gov.uk/check-income-tax/tax-codes/${getCurrentTaxYearEnd.getYear}"
     val cancelledPayeTaxCodeInsetText = s"${messages("chargeSummary.cancelledPayeInset-1")} ${messages("chargeSummary.cancelledPayeInset-2")}${messages("pagehelp.opensInNewTabText")}. ${messages("chargeSummary.cancelledPayeInset-3")}"
     val cancellledPayeTaxCodeInsetLink = "https://www.gov.uk/pay-self-assessment-tax-bill/through-your-tax-code"
