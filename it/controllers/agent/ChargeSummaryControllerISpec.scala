@@ -40,7 +40,7 @@ import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import java.time.LocalDate
 
 
-class ITChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitching {
+class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
 
   val paymentAllocation: List[PaymentsWithChargeType] = List(
