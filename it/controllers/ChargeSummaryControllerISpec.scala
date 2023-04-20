@@ -335,7 +335,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
         httpStatus(OK),
         pageTitleIndividual("tax-year-summary.payments.codingOut.text"),
         elementTextBySelector("#coding-out-notice")(codingOutInsetPara),
-        elementTextBySelector("#coding-out-message")(codingOutMessage(2017, 2018))
+        elementTextBySelector("#coding-out-message")(codingOutMessageWithStringMessagesArgument(2017, 2018))
       )
     }
 
