@@ -138,6 +138,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching{
     def paymentOnAccountRequest(number: Int) = s"Payment on account $number of 2 reduced by taxpayer request"
 
     def class2NicTaxYear(year: Int) = messages("chargeSummary.nic2TaxYear", year - 1, year)
+    def class2NicTaxYearWithStringMessagesInput(year: Int) = messages("chargeSummary.nic2TaxYear", (year - 1).toString, year.toString)
 
     val class2NicChargeCreated: String = messages("chargeSummary.chargeHistory.created.class2Nic.text")
     val cancelledSaPayeCreated: String = messages("chargeSummary.chargeHistory.created.cancelledPayeSelfAssessment.text")
@@ -269,7 +270,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching{
       }
 
       "have a paragraph explaining which tax year the Class 2 NIC is for" in new Setup(documentDetailModel(documentDescription = Some("TRM New Charge"), documentText = Some(paymentBreakdownNic2), lpiWithDunningBlock = None), codingOutEnabled = true) {
-        document.select("#main-content p:nth-child(2)").text() shouldBe class2NicTaxYear(2018)
+        document.select("#main-content p:nth-child(2)").text() shouldBe class2NicTaxYearWithStringMessagesInput(2018)
       }
 
       s"have the correct heading for a Cancelled PAYE Self Assessment" in new Setup(documentDetailModel(documentDescription = Some("TRM New Charge"), documentText = Some(messages("whatYouOwe.cancelled-paye-sa.heading"))), codingOutEnabled = true) {
