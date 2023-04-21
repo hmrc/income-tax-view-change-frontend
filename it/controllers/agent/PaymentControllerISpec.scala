@@ -58,6 +58,7 @@ class PaymentControllerISpec extends ComponentSpecBase {
               Some("testId"),
               Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
               None,
+              None,
               Some(getCurrentTaxYearEnd)
             )),
             property = None
@@ -87,6 +88,7 @@ class PaymentControllerISpec extends ComponentSpecBase {
             businesses = List(BusinessDetailsModel(
               Some("testId"),
               Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
+              None,
               None,
               Some(getCurrentTaxYearEnd)
             )),

@@ -19,6 +19,7 @@ package views.agent
 import auth.MtdItUser
 import config.FrontendAppConfig
 import config.featureswitch._
+import controllers.routes
 import exceptions.MissingFieldException
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import org.jsoup.Jsoup
@@ -28,6 +29,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import testConstants.BaseTestConstants._
+import testConstants.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 import testUtils.{TestSupport, ViewSpec}
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import views.html.Home
@@ -47,11 +49,23 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
     else currentDate.getYear + 1
   }
 
-  val testMtdItUser: MtdItUser[_] = MtdItUser(
+  val testMtdItUserNotMigrated: MtdItUser[_] = MtdItUser(
     testMtditid,
     testNino,
     Some(testRetrievedUserName),
     IncomeSourceDetailsModel(testMtditid, None, Nil, None),
+    btaNavPartial = None,
+    Some(testSaUtr),
+    Some(testCredId),
+    Some(Agent),
+    Some(testArn)
+  )(FakeRequest())
+
+  val testMtdItUserMigrated: MtdItUser[_] = MtdItUser(
+    testMtditid,
+    testNino,
+    Some(testRetrievedUserName),
+    IncomeSourceDetailsModel(testMtditid, Some("2018"), Nil, None),
     btaNavPartial = None,
     Some(testSaUtr),
     Some(testCredId),
@@ -76,7 +90,10 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
               ITSASubmissionIntegrationEnabled: Boolean = true,
               dunningLockExists: Boolean = false,
               currentTaxYear: Int = currentTaxYear,
-              isAgent: Boolean = true
+              isAgent: Boolean = true,
+              displayCeaseAnIncome: Boolean = false,
+              incomeSourcesEnabled: Boolean = false,
+              user: MtdItUser[_] = testMtdItUserNotMigrated
              ) {
 
     val agentHome: Home = app.injector.instanceOf[Home]
@@ -90,10 +107,13 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
       ITSASubmissionIntegrationEnabled,
       dunningLockExists,
       currentTaxYear,
+      displayCeaseAnIncome = displayCeaseAnIncome,
       isAgent,
       creditAndRefundEnabled = false,
-      paymentHistoryEnabled = paymentHistoryEnabled
-    )(FakeRequest(), implicitly, testMtdItUser, mockAppConfig)
+      paymentHistoryEnabled = paymentHistoryEnabled,
+      isUserMigrated = user.incomeSources.yearOfMigration.isDefined,
+      incomeSourcesEnabled = incomeSourcesEnabled
+    )(FakeRequest(), implicitly, user, mockAppConfig)
 
     lazy val document: Document = Jsoup.parse(contentAsString(view))
 
@@ -275,9 +295,12 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
       "not have a link to previous payments in the tax years tile" in new Setup(ITSASubmissionIntegrationEnabled = false) {
         document.getOptionalSelector("tax-years-tile").flatMap(_.getOptionalSelector("a:nth-of-type(2)")) shouldBe None
       }
+      "not have an Income Sources tile" in new Setup(incomeSourcesEnabled = false) {
+        getElementById("income-sources-tile") shouldBe None
+      }
     }
 
-    "the feature switch enabled" should {
+    "the feature switches are enabled" should {
       "not have a link to the saViewLandPTile when isAgent" in new Setup(ITSASubmissionIntegrationEnabled = true) {
         val link: Option[Elements] = getElementById("saViewLandPTile").map(_.select("a"))
         link.map(_.attr("href")) shouldBe None
@@ -287,13 +310,26 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
         getElementById("saViewLandPTile") shouldBe None
       }
 
-      "not have a link to the saViewLandPTile when isAgent and UTR is present" in new Setup(ITSASubmissionIntegrationEnabled = true, utr = Some(testSaUtr)) {
+      "not have a link to the saViewLandPTile when isAgent and UTR is present" in new Setup(ITSASubmissionIntegrationEnabled = true) {
         val link: Option[Elements] = getElementById("saViewLandPTile").map(_.select("a"))
         link.map(_.attr("href")) shouldBe None
       }
 
-      "dont display the saViewLandPTile when isAgent is true and UTR is present" in new Setup(ITSASubmissionIntegrationEnabled = true, utr = Some(testSaUtr)) {
+      "dont display the saViewLandPTile when isAgent is true and UTR is present" in new Setup(ITSASubmissionIntegrationEnabled = true) {
         getElementById("saViewLandPTile") shouldBe None
+      }
+      "have an Income Sources tile" which {
+        "has a heading" in new Setup(user = testMtdItUserMigrated, incomeSourcesEnabled = true) {
+          getElementById("income-sources-tile").map(_.select("h2").first().text()) shouldBe Some(messages("home.incomeSources.heading"))
+        }
+        "has a link to AddIncomeSourceController.showAgent()" in new Setup(user = testMtdItUserMigrated, incomeSourcesEnabled = true) {
+          getElementById("income-sources-tile").map(_.select("div > p:nth-child(2) > a").text()) shouldBe Some(messages("home.incomeSources.addIncomeSource.view"))
+          getElementById("income-sources-tile").map(_.select("div > p:nth-child(2) > a").attr("href")) shouldBe Some(routes.AddIncomeSourceController.showAgent().url)
+        }
+        "has a link to ManageIncomeSourceController.showAgent()" in new Setup(user = testMtdItUserMigrated, incomeSourcesEnabled = true) {
+          getElementById("income-sources-tile").map(_.select("div > p:nth-child(3) > a").text()) shouldBe Some(messages("home.incomeSources.changeReportingPeriod.view"))
+          getElementById("income-sources-tile").map(_.select("div > p:nth-child(3) > a").attr("href")) shouldBe Some(routes.ManageIncomeSourceController.showAgent().url)
+        }
       }
     }
 
@@ -307,6 +343,11 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
       }
     }
 
+    "the user is not migrated" should {
+      "not have an Income Sources tile" in new Setup(user = testMtdItUserNotMigrated, incomeSourcesEnabled = true) {
+        getElementById("income-sources-tile") shouldBe None
+      }
+    }
   }
 
 }

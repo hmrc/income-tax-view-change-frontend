@@ -129,6 +129,10 @@ home.returns.viewLink                                           = View your curr
 home.self-assessment.description                                = Use this service to view your earlier tax year information before you signed up for Making Tax Digital for Income Tax.
 home.credAndRefund.view                                         = Claim a refund
 home.credAndRefund_howToClaim.view                              = How to claim a refund
+home.incomeSources.heading                                      = Income Sources
+home.incomeSources.addIncomeSource.view                         = Add a new income source
+home.incomeSources.changeReportingPeriod.view                   = Change your reporting period
+home.incomeSources.ceaseIncomeSource.view                       = Cease an income source
 
 home.agent.overdue.message.dunningLock.true                     = Your client has overdue payments and one or more of their tax decisions are being reviewed. They may be charged interest on these until they are paid in full.
 home.agent.overdue.message.dunningLock.false                    = Your client has overdue payments. They may be charged interest on these until they are paid in full.

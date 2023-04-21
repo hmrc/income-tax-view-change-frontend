@@ -43,6 +43,7 @@ class NextUpdatesControllerISpec extends ComponentSpecBase with FeatureSwitching
       Some("testId"),
       Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
       None,
+      None,
       Some(getCurrentTaxYearEnd)
     )),
     property = None

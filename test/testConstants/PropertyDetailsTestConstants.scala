@@ -32,13 +32,15 @@ object PropertyDetailsTestConstants {
   val propertyDetails = PropertyDetailsModel(
     incomeSourceId = Some(testPropertyIncomeId),
     accountingPeriod = Some(testPropertyAccountingPeriod),
-    firstAccountingPeriodEndDate = None
+    firstAccountingPeriodEndDate = None,
+    cessation = None
   )
 
   val ceasedPropertyDetails = PropertyDetailsModel(
     incomeSourceId = Some(testPropertyIncomeId),
     accountingPeriod = Some(testPropertyAccountingPeriod),
-    firstAccountingPeriodEndDate = None
+    firstAccountingPeriodEndDate = None,
+    cessation = Some(testCessation)
   )
 
   val openCrystallised: NextUpdateModel = fakeNextUpdatesModel(NextUpdateModel(

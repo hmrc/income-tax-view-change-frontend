@@ -121,6 +121,7 @@ class TaxYearSummaryResponseAuditModelSpec extends WordSpecLike with TestSupport
     Some("testId"),
     Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
     Some("Test Trading Name"),
+    None,
     Some(getCurrentTaxYearEnd)
   ))
 

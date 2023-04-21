@@ -147,12 +147,14 @@ class FinalTaxCalculationControllerISpec extends ComponentSpecBase with SessionC
       Some("testId"),
       Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
       Some("Test Trading Name"),
+      None,
       Some(LocalDate.of(2018, 1, 1))
     )),
     property = Some(
       PropertyDetailsModel(
         Some("testId2"),
         Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
+        None,
         Some(LocalDate.of(2018, 1, 1))
       )
     )

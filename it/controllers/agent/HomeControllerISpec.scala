@@ -57,6 +57,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
       Some("testId"),
       Some(AccountingPeriodModel(currentDate, currentDate.plusYears(1))),
       None,
+      None,
       Some(getCurrentTaxYearEnd)
     )),
     property = None
@@ -555,6 +556,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
           businesses = List(BusinessDetailsModel(
             Some("testId"),
             Some(AccountingPeriodModel(currentDate, currentDate.plusYears(1))),
+            None,
             None,
             Some(getCurrentTaxYearEnd)
           )),

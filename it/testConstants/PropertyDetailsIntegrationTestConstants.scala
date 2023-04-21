@@ -42,6 +42,7 @@ object PropertyDetailsIntegrationTestConstants {
       start = propertyAccountingStartLocalDate,
       end = propertyAccounringEndLocalDate
     )),
+    None,
     firstAccountingPeriodEndDate = Some(propertyAccounringEndLocalDate)
   )
 
@@ -51,6 +52,7 @@ object PropertyDetailsIntegrationTestConstants {
       start = propertyAccountingStartLocalDate,
       end = propertyAccounringEndLocalDate
     )),
+    None,
     firstAccountingPeriodEndDate = Some(getCurrentTaxYearEnd.minusYears(1))
   )
 
@@ -60,6 +62,7 @@ object PropertyDetailsIntegrationTestConstants {
       start = propertyAccountingStartLocalDateOfCurrentYear(endYear),
       end = propertyAccounringEndLocalDateOfCurrentYear(endYear)
     )),
+    None,
     firstAccountingPeriodEndDate = Some(propertyAccounringEndLocalDateOfCurrentYear(endYear))
   )
 

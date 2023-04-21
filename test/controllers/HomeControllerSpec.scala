@@ -18,7 +18,7 @@ package controllers
 
 import audit.mocks.MockAuditingService
 import config.featureswitch.FeatureSwitch.switches
-import config.featureswitch.FeatureSwitching
+import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
 import mocks.MockItvcErrorHandler
@@ -42,6 +42,7 @@ import play.i18n.MessagesApi
 import services.{DateService, FinancialDetailsService, NextUpdatesService, WhatYouOweService}
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testAgentAuthRetrievalSuccessNoEnrolment, testTaxYear}
 import testConstants.FinancialDetailsTestConstants.financialDetailsModel
+import testConstants.IncomeSourceDetailsTestConstants.{businessesAndPropertyIncome, businessesAndPropertyIncomeCeased}
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.BearerTokenExpired
 import uk.gov.hmrc.http.InternalServerException
@@ -60,7 +61,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
   val updateDateAndOverdueObligations: (LocalDate, Seq[LocalDate]) = (LocalDate.of(updateYear.toInt, Month.JANUARY, 1), Seq.empty[LocalDate])
   val nextPaymentDate: LocalDate = LocalDate.of(nextPaymentYear.toInt, Month.JANUARY, 31)
   val nextPaymentDate2: LocalDate = LocalDate.of(nextPaymentYear2.toInt, Month.JANUARY, 31)
-  val emptyWhatYouOweChargesListIndividual: WhatYouOweChargesList = WhatYouOweChargesList(BalanceDetails(0.0, 0.0, 0.0, None, None, None,None))
+  val emptyWhatYouOweChargesListIndividual: WhatYouOweChargesList = WhatYouOweChargesList(BalanceDetails(0.0, 0.0, 0.0, None, None, None, None))
   val oneOverdueBCDPaymentInWhatYouOweChargesListIndividual: WhatYouOweChargesList =
     emptyWhatYouOweChargesListIndividual.copy(
       outstandingChargesModel = Some(OutstandingChargesModel(List(OutstandingChargeModel("BCD", Some("2019-01-31"), 1.67, 2345))))
@@ -133,9 +134,10 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
     app.injector.instanceOf[MessagesControllerComponents],
     app.injector.instanceOf[FrontendAppConfig]
   )
+
   when(mockDateService.getCurrentDate(any())) thenReturn LocalDate.now()
 
-  def disableAllSwitches() : Unit = {
+  def disableAllSwitches(): Unit = {
     switches.foreach(switch => disable(switch))
   }
 
@@ -145,10 +147,10 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
   }
 
   "navigating to the home page" should {
-    "return ok (200)" which {
+    "return ok (200)" when {
       "there is a next payment due date to display" in new Setup {
         disableAllSwitches()
-        when(NextUpdatesService.getNextDeadlineDueDateAndOverDueObligations(any(), any(), any(),any())) thenReturn Future.successful(updateDateAndOverdueObligations)
+        when(NextUpdatesService.getNextDeadlineDueDateAndOverDueObligations(any(), any(), any(), any())) thenReturn Future.successful(updateDateAndOverdueObligations)
         mockSingleBusinessIncomeSource()
         when(financialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
           .thenReturn(Future.successful(List(FinancialDetailsModel(
@@ -171,7 +173,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
 
       "there is a next payment due date to display when getWhatYouOweChargesList contains overdue payment" in new Setup {
         disableAllSwitches()
-        when(NextUpdatesService.getNextDeadlineDueDateAndOverDueObligations(any(), any(), any(),any())) thenReturn Future.successful(updateDateAndOverdueObligations)
+        when(NextUpdatesService.getNextDeadlineDueDateAndOverDueObligations(any(), any(), any(), any())) thenReturn Future.successful(updateDateAndOverdueObligations)
         mockSingleBusinessIncomeSource()
         when(financialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
           .thenReturn(Future.successful(List(FinancialDetailsErrorModel(1, "testString"))))
@@ -188,7 +190,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
 
       "display number of payments due when there are multiple payment due and dunning locks" in new Setup {
         disableAllSwitches()
-        when(NextUpdatesService.getNextDeadlineDueDateAndOverDueObligations(any(), any(), any(),any())) thenReturn Future.successful(updateDateAndOverdueObligations)
+        when(NextUpdatesService.getNextDeadlineDueDateAndOverDueObligations(any(), any(), any(), any())) thenReturn Future.successful(updateDateAndOverdueObligations)
         mockSingleBusinessIncomeSource()
 
         when(financialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
@@ -223,7 +225,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
       }
 
       "display number of payments due when there are multiple payment due without dunning lock and filter out payments" in new Setup {
-        when(NextUpdatesService.getNextDeadlineDueDateAndOverDueObligations(any(), any(), any(),any())) thenReturn Future.successful(updateDateAndOverdueObligations)
+        when(NextUpdatesService.getNextDeadlineDueDateAndOverDueObligations(any(), any(), any(), any())) thenReturn Future.successful(updateDateAndOverdueObligations)
         mockSingleBusinessIncomeSource()
 
         when(financialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
@@ -266,7 +268,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
 
       "Not display the next payment due date" when {
         "there is a problem getting financial details" in new Setup {
-          when(NextUpdatesService.getNextDeadlineDueDateAndOverDueObligations(any(), any(), any(),any())) thenReturn Future.successful(updateDateAndOverdueObligations)
+          when(NextUpdatesService.getNextDeadlineDueDateAndOverDueObligations(any(), any(), any(), any())) thenReturn Future.successful(updateDateAndOverdueObligations)
           mockSingleBusinessIncomeSource()
           when(financialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
             .thenReturn(Future.successful(List(FinancialDetailsErrorModel(1, "testString"))))
@@ -283,7 +285,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
         }
 
         "There are no financial detail" in new Setup {
-          when(NextUpdatesService.getNextDeadlineDueDateAndOverDueObligations(any(), any(), any(),any())) thenReturn Future.successful(updateDateAndOverdueObligations)
+          when(NextUpdatesService.getNextDeadlineDueDateAndOverDueObligations(any(), any(), any(), any())) thenReturn Future.successful(updateDateAndOverdueObligations)
           mockSingleBusinessIncomeSource()
           when(financialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
             .thenReturn(Future.successful(List(FinancialDetailsModel(BalanceDetails(1.00, 2.00, 3.00, None, None, None, None), List(), List()))))
@@ -300,7 +302,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
         }
 
         "All financial detail bill are paid" in new Setup {
-          when(NextUpdatesService.getNextDeadlineDueDateAndOverDueObligations(any(), any(), any(),any())) thenReturn Future.successful(updateDateAndOverdueObligations)
+          when(NextUpdatesService.getNextDeadlineDueDateAndOverDueObligations(any(), any(), any(), any())) thenReturn Future.successful(updateDateAndOverdueObligations)
           mockSingleBusinessIncomeSource()
           when(financialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
             .thenReturn(Future.successful(List(FinancialDetailsModel(
@@ -322,27 +324,75 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
         }
       }
     }
-    "return OK (200)" when {
-      "there is a update date to display" in new Setup {
-        when(NextUpdatesService.getNextDeadlineDueDateAndOverDueObligations(any(), any(), any(), any())) thenReturn Future.successful(updateDateAndOverdueObligations)
-        mockSingleBusinessIncomeSource()
-        when(financialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
-          .thenReturn(Future.successful(List(FinancialDetailsModel(
-            balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
-            documentDetails = List(DocumentDetail(nextPaymentYear.toInt, "testId", None, None, Some(1000.00), None, LocalDate.of(2018, 3, 29))),
-            financialDetails = List(FinancialDetail(nextPaymentYear, transactionId = Some("testId"),
-              items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate.toString))))))
-          ))))
-        when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any(), any()))
-          .thenReturn(Future.successful(emptyWhatYouOweChargesListIndividual))
+    "there is a update date to display" in new Setup {
+      when(NextUpdatesService.getNextDeadlineDueDateAndOverDueObligations(any(), any(), any(), any())) thenReturn Future.successful(updateDateAndOverdueObligations)
+      mockSingleBusinessIncomeSource()
+      when(financialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
+        .thenReturn(Future.successful(List(FinancialDetailsModel(
+          balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
+          documentDetails = List(DocumentDetail(nextPaymentYear.toInt, "testId", None, None, Some(1000.00), None, LocalDate.of(2018, 3, 29))),
+          financialDetails = List(FinancialDetail(nextPaymentYear, transactionId = Some("testId"),
+            items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate.toString))))))
+        ))))
+      when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any(), any()))
+        .thenReturn(Future.successful(emptyWhatYouOweChargesListIndividual))
 
-        val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
+      val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
 
-        status(result) shouldBe Status.OK
-        val document: Document = Jsoup.parse(contentAsString(result))
-        document.title shouldBe homePageTitle
-        document.select("#updates-tile p:nth-child(2)").text() shouldBe "1 January 2018"
-      }
+      status(result) shouldBe Status.OK
+      val document: Document = Jsoup.parse(contentAsString(result))
+      document.title shouldBe homePageTitle
+      document.select("#updates-tile p:nth-child(2)").text() shouldBe "1 January 2018"
+    }
+    "display the Income Sources tile with `Cease an income source` when user has non-ceased businesses or property" in new Setup {
+      enable(IncomeSources)
+      when(NextUpdatesService.getNextDeadlineDueDateAndOverDueObligations(any(), any(), any(), any())) thenReturn Future.successful(updateDateAndOverdueObligations)
+      setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+      when(financialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
+        .thenReturn(Future.successful(List(FinancialDetailsModel(
+          balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
+          documentDetails = List(DocumentDetail(nextPaymentYear.toInt, "testId", None, None, Some(1000.00), None, LocalDate.of(2018, 3, 29))),
+          financialDetails = List(FinancialDetail(nextPaymentYear, transactionId = Some("testId"),
+            items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate.toString))))))
+        ))))
+      when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any(), any()))
+        .thenReturn(Future.successful(emptyWhatYouOweChargesListIndividual))
+      val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
+      status(result) shouldBe Status.OK
+      val document: Document = Jsoup.parse(contentAsString(result))
+      document.title shouldBe homePageTitle
+      document.select("#income-sources-tile h2:nth-child(1)").text() shouldBe messages("home.incomeSources.heading")
+      document.select("#income-sources-tile > div > p:nth-child(2) > a").text() shouldBe messages("home.incomeSources.addIncomeSource.view")
+      document.select("#income-sources-tile > div > p:nth-child(2) > a").attr("href") shouldBe routes.AddIncomeSourceController.show().url
+      document.select("#income-sources-tile > div > p:nth-child(3) > a").text() shouldBe messages("home.incomeSources.changeReportingPeriod.view")
+      document.select("#income-sources-tile > div > p:nth-child(3) > a").attr("href") shouldBe routes.ManageIncomeSourceController.show().url
+      document.select("#income-sources-tile > div > p:nth-child(4) > a").text() shouldBe messages("home.incomeSources.ceaseIncomeSource.view")
+      document.select("#income-sources-tile > div > p:nth-child(4) > a").attr("href") shouldBe routes.CeaseIncomeSourceController.show().url
+    }
+    "display the Income Sources tile without `Cease an income source` when user has ceased businesses or property" in new Setup {
+      enable(IncomeSources)
+      when(NextUpdatesService.getNextDeadlineDueDateAndOverDueObligations(any(), any(), any(), any())) thenReturn Future.successful(updateDateAndOverdueObligations)
+      setupMockGetIncomeSourceDetails()(businessesAndPropertyIncomeCeased)
+      when(financialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
+        .thenReturn(Future.successful(List(FinancialDetailsModel(
+          balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
+          documentDetails = List(DocumentDetail(nextPaymentYear.toInt, "testId", None, None, Some(1000.00), None, LocalDate.of(2018, 3, 29))),
+          financialDetails = List(FinancialDetail(nextPaymentYear, transactionId = Some("testId"),
+            items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate.toString))))))
+        ))))
+      when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any(), any()))
+        .thenReturn(Future.successful(emptyWhatYouOweChargesListIndividual))
+      val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
+      status(result) shouldBe Status.OK
+      val document: Document = Jsoup.parse(contentAsString(result))
+      document.title shouldBe homePageTitle
+      document.select("#income-sources-tile h2:nth-child(1)").text() shouldBe messages("home.incomeSources.heading")
+      document.select("#income-sources-tile > div > p:nth-child(2) > a").text() shouldBe messages("home.incomeSources.addIncomeSource.view")
+      document.select("#income-sources-tile > div > p:nth-child(2) > a").attr("href") shouldBe routes.AddIncomeSourceController.show().url
+      document.select("#income-sources-tile > div > p:nth-child(3) > a").text() shouldBe messages("home.incomeSources.changeReportingPeriod.view")
+      document.select("#income-sources-tile > div > p:nth-child(3) > a").attr("href") shouldBe routes.ManageIncomeSourceController.show().url
+      document.select("#income-sources-tile > div > p:nth-child(4) > a").text() should not be messages("home.incomeSources.ceaseIncomeSource.view")
+      document.select("#income-sources-tile > div > p:nth-child(4) > a").attr("href") should not be routes.CeaseIncomeSourceController.show().url
     }
   }
 

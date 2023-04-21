@@ -67,12 +67,14 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
       Some("testId"),
       Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
       Some("Test Trading Name"),
+      cessation = None,
       Some(LocalDate.of(2018,1,1))
     )),
     property = Some(
       PropertyDetailsModel(
         Some("testId2"),
         Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
+        cessation = None,
         Some(LocalDate.of(2018,1,1))
       )
     )

@@ -17,11 +17,12 @@
 package models.incomeSourceDetails
 
 import java.time.LocalDate
-import models.core.AccountingPeriodModel
+import models.core.{AccountingPeriodModel, CessationModel}
 import play.api.libs.json.{Json, OFormat}
 
 case class PropertyDetailsModel(incomeSourceId: Option[String],
                                 accountingPeriod: Option[AccountingPeriodModel],
+                                cessation: Option[CessationModel],
                                 firstAccountingPeriodEndDate: Option[LocalDate])
 
 object PropertyDetailsModel {
