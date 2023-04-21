@@ -137,7 +137,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching{
 
     def paymentOnAccountRequest(number: Int) = s"Payment on account $number of 2 reduced by taxpayer request"
 
-    def class2NicTaxYear(year: Int) = messages("chargeSummary.nic2TaxYear", year - 1, year)
+    def class2NicTaxYear(year: Int) = messages("chargeSummary.nic2TaxYear", (year - 1).toString, year.toString)
 
     val class2NicChargeCreated: String = messages("chargeSummary.chargeHistory.created.class2Nic.text")
     val cancelledSaPayeCreated: String = messages("chargeSummary.chargeHistory.created.cancelledPayeSelfAssessment.text")
@@ -306,7 +306,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching{
       }
 
       "have payment link for cancelled PAYE self assessment" in new Setup(documentDetailModel(documentDescription = Some("TRM New Charge"), documentText = Some(CODING_OUT_CANCELLED)), codingOutEnabled = true) {
-        document.select("div#payment-link-2018").text() shouldBe s"${messages("paymentDue.payNow")} ${messages("paymentDue.pay-now-hidden", 2017, 2018)}"
+        document.select("div#payment-link-2018").text() shouldBe s"${messages("paymentDue.payNow")} ${messages("paymentDue.pay-now-hidden", "2017", "2018")}"
       }
 
       "display a payment history" in new Setup(documentDetailModel(documentDescription = Some("TRM New Charge"),
@@ -465,7 +465,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching{
       }
 
       "have a payment link when an outstanding amount is to be paid" in new Setup(documentDetailModel()) {
-        document.select("div#payment-link-2018").text() shouldBe s"${messages("paymentDue.payNow")} ${messages("paymentDue.pay-now-hidden", 2017, 2018)}"
+        document.select("div#payment-link-2018").text() shouldBe s"${messages("paymentDue.payNow")} ${messages("paymentDue.pay-now-hidden", "2017", "2018")}"
       }
 
       "have a payment processing information section" in new Setup(documentDetailModel(lpiWithDunningBlock = None), isAgent = true) {
@@ -495,7 +495,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching{
       }
 
       "does not have any payment lock notes or link when there is no interest locks on the page " in new Setup(documentDetailModel(), paymentBreakdown = paymentBreakdown) {
-        document.select("div#payment-link-2018").text() shouldBe s"${messages("paymentDue.payNow")} ${messages("paymentDue.pay-now-hidden", 2017, 2018)}"
+        document.select("div#payment-link-2018").text() shouldBe s"${messages("paymentDue.payNow")} ${messages("paymentDue.pay-now-hidden", "2017", "2018")}"
       }
 
       "not have a payment link when there is an outstanding amount of 0" in new Setup(documentDetailModel(outstandingAmount = Some(0))) {
