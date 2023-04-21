@@ -95,6 +95,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching{
     val balancingCharge: String = messages("chargeSummary.balancingCharge.text")
     val paymentBreakdownNic2: String = messages("chargeSummary.paymentBreakdown.nic2")
     val codingOutMessage2017To2018: String = messages("chargeSummary.codingOutMessage", 2017, 2018)
+    val codingOutMessage2017To2018WithStringMessagesArgument: String = messages("chargeSummary.codingOutMessage", "2017", "2018")
     val chargeSummaryCodingOutHeading2017To2018: String = s"$taxYearHeading 6 April 2017 to 5 April 2018 ${messages("chargeSummary.codingOut.text")}"
     val insetPara: String = s"${messages("chargeSummary.codingOutInset-1")} ${messages("chargeSummary.codingOutInset-2")}${messages("pagehelp.opensInNewTabText")} ${messages("chargeSummary.codingOutInset-3")}"
     val paymentBreakdownInterestLocksCharging: String = messages("chargeSummary.paymentBreakdown.interestLocks.charging")
@@ -136,12 +137,13 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching{
 
     def paymentOnAccountRequest(number: Int) = s"Payment on account $number of 2 reduced by taxpayer request"
 
-    def class2NicTaxYear(year: Int) = messages("chargeSummary.nic2TaxYear", year - 1, year)
+    def class2NicTaxYear(year: Int) = messages("chargeSummary.nic2TaxYear", (year - 1).toString, year.toString)
 
     val class2NicChargeCreated: String = messages("chargeSummary.chargeHistory.created.class2Nic.text")
     val cancelledSaPayeCreated: String = messages("chargeSummary.chargeHistory.created.cancelledPayeSelfAssessment.text")
 
     def payeTaxCodeText(year: Int) = s"${messages("chargeSummary.check-paye-tax-code-1")} ${messages("chargeSummary.check-paye-tax-code-2")} ${messages("chargeSummary.check-paye-tax-code-3", year - 1, year)}"
+    def payeTaxCodeTextWithStringMessage(year: Int) = s"${messages("chargeSummary.check-paye-tax-code-1")} ${messages("chargeSummary.check-paye-tax-code-2")} ${messages("chargeSummary.check-paye-tax-code-3", (year - 1).toString, year.toString)}"
 
     val payeTaxCodeLink = s"https://www.tax.service.gov.uk/check-income-tax/tax-codes/${getCurrentTaxYearEnd.getYear}"
     val cancelledPayeTaxCodeInsetText = s"${messages("chargeSummary.cancelledPayeInset-1")} ${messages("chargeSummary.cancelledPayeInset-2")}${messages("pagehelp.opensInNewTabText")}. ${messages("chargeSummary.cancelledPayeInset-3")}"
@@ -276,7 +278,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching{
 
       "have a paragraphs explaining Cancelled PAYE self assessment" in new Setup(documentDetailModel(documentDescription = Some("TRM New Charge"),
         documentText = Some(messages("whatYouOwe.cancelled-paye-sa.heading")), lpiWithDunningBlock = None), codingOutEnabled = true) {
-        document.select("#check-paye-para").text() shouldBe payeTaxCodeText(2018)
+        document.select("#check-paye-para").text() shouldBe payeTaxCodeTextWithStringMessage(2018)
         document.select("#paye-tax-code-link").attr("href") shouldBe payeTaxCodeLink
         document.select("#cancelled-coding-out-notice").text() shouldBe cancelledPayeTaxCodeInsetText
         document.select("#cancelled-coding-out-notice a").attr("href") shouldBe cancellledPayeTaxCodeInsetLink
@@ -304,7 +306,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching{
       }
 
       "have payment link for cancelled PAYE self assessment" in new Setup(documentDetailModel(documentDescription = Some("TRM New Charge"), documentText = Some(CODING_OUT_CANCELLED)), codingOutEnabled = true) {
-        document.select("div#payment-link-2018").text() shouldBe s"${messages("paymentDue.payNow")} ${messages("paymentDue.pay-now-hidden", 2017, 2018)}"
+        document.select("div#payment-link-2018").text() shouldBe s"${messages("paymentDue.payNow")} ${messages("paymentDue.pay-now-hidden", "2017", "2018")}"
       }
 
       "display a payment history" in new Setup(documentDetailModel(documentDescription = Some("TRM New Charge"),
@@ -463,7 +465,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching{
       }
 
       "have a payment link when an outstanding amount is to be paid" in new Setup(documentDetailModel()) {
-        document.select("div#payment-link-2018").text() shouldBe s"${messages("paymentDue.payNow")} ${messages("paymentDue.pay-now-hidden", 2017, 2018)}"
+        document.select("div#payment-link-2018").text() shouldBe s"${messages("paymentDue.payNow")} ${messages("paymentDue.pay-now-hidden", "2017", "2018")}"
       }
 
       "have a payment processing information section" in new Setup(documentDetailModel(lpiWithDunningBlock = None), isAgent = true) {
@@ -493,7 +495,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching{
       }
 
       "does not have any payment lock notes or link when there is no interest locks on the page " in new Setup(documentDetailModel(), paymentBreakdown = paymentBreakdown) {
-        document.select("div#payment-link-2018").text() shouldBe s"${messages("paymentDue.payNow")} ${messages("paymentDue.pay-now-hidden", 2017, 2018)}"
+        document.select("div#payment-link-2018").text() shouldBe s"${messages("paymentDue.payNow")} ${messages("paymentDue.pay-now-hidden", "2017", "2018")}"
       }
 
       "not have a payment link when there is an outstanding amount of 0" in new Setup(documentDetailModel(outstandingAmount = Some(0))) {
@@ -660,10 +662,10 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching{
 
         "Coding Out is Enabled" in new Setup(documentDetailCodingOut, codingOutEnabled = true) {
           document.select("h1").text() shouldBe chargeSummaryCodingOutHeading2017To2018
-          document.select("#check-paye-para").text() shouldBe payeTaxCodeText(2018)
+          document.select("#check-paye-para").text() shouldBe payeTaxCodeTextWithStringMessage(2018)
           document.select("#paye-tax-code-link").attr("href") shouldBe payeTaxCodeLink
           document.select("#coding-out-notice").text() shouldBe insetPara
-          document.select("#coding-out-message").text() shouldBe codingOutMessage2017To2018
+          document.select("#coding-out-message").text() shouldBe codingOutMessage2017To2018WithStringMessagesArgument
           document.select("#coding-out-notice-link").attr("href") shouldBe cancellledPayeTaxCodeInsetLink
           document.select("a.govuk-button").size() shouldBe 0
           document.select(".govuk-table tbody tr").size() shouldBe 1
@@ -679,7 +681,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching{
         "Coding Out is Enabled" in new Setup(documentDetailCodingOut, codingOutEnabled = true) {
           document.select("h1").text() shouldBe chargeSummaryCodingOutHeading2017To2018
           document.select("#coding-out-notice").text() shouldBe insetPara
-          document.select("#coding-out-message").text() shouldBe codingOutMessage2017To2018
+          document.select("#coding-out-message").text() shouldBe codingOutMessage2017To2018WithStringMessagesArgument
           document.select("#coding-out-notice-link").attr("href") shouldBe cancellledPayeTaxCodeInsetLink
           document.selectById("paymentAmount").text() shouldBe "Payment amount £2,500.00"
           document.selectById("codingOutRemainingToPay").text() shouldBe messages("chargeSummary.codingOutRemainingToPay", "2019", "2020")

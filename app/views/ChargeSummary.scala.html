@@ -96,7 +96,7 @@
         @messages("chargeSummary.check-paye-tax-code-1")
         <a class="govuk-link" id="paye-tax-code-link" href="https://www.tax.service.gov.uk/check-income-tax/tax-codes/@currentTaxYearEnd">
             @messages("chargeSummary.check-paye-tax-code-2")</a>
-        @messages("chargeSummary.check-paye-tax-code-3", taxYearFrom, taxYearTo)
+        @messages("chargeSummary.check-paye-tax-code-3", taxYearFrom.toString, taxYearTo.toString)
     }
 }
 
@@ -125,7 +125,7 @@
 
 @codingOutMessage = {
     @p(id=Some("coding-out-message")){
-        @messages("chargeSummary.codingOutMessage", taxYearFrom, taxYearTo)
+        @messages("chargeSummary.codingOutMessage", taxYearFrom.toString, taxYearTo.toString)
     }
 }
 
@@ -201,7 +201,7 @@
 
     @if(codingOutEnabled && documentDetail.isClass2Nic && !documentDetail.isPayeSelfAssessment){
         @p(){
-            @messages("chargeSummary.nic2TaxYear", taxYearFrom, taxYearTo)
+            @messages("chargeSummary.nic2TaxYear", taxYearFrom.toString, taxYearTo.toString)
         }
     }
 
@@ -273,7 +273,7 @@
         <div id="payment-link-@{taxYearTo}">
             <a class="govuk-button" role="button" data-module="govuk-button" href="@controllers.routes.PaymentController.paymentHandoff(documentDetail.remainingToPay.toPence, origin)">
                 @messages("paymentDue.payNow")
-                <span class="govuk-visually-hidden">@messages("paymentDue.pay-now-hidden", taxYearFrom, taxYearTo)</span>
+                <span class="govuk-visually-hidden">@messages("paymentDue.pay-now-hidden", taxYearFrom.toString, taxYearTo.toString)</span>
             </a>
         </div>
         @paymentProcessingInfo
