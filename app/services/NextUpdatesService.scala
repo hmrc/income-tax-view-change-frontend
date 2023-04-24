@@ -31,12 +31,11 @@ import scala.concurrent.{ExecutionContext, Future}
 class NextUpdatesService @Inject()(val incomeTaxViewChangeConnector: IncomeTaxViewChangeConnector)(implicit ec: ExecutionContext, val dateService: DateServiceInterface) {
 
 
-  def getNextDeadlineDueDateAndOverDueObligations()
-                                                 (implicit hc: HeaderCarrier, ec: ExecutionContext, mtdItUser: MtdItUser[_]): Future[(LocalDate, Seq[LocalDate])] = {
+  def getNextDeadlineDueDateAndOverDueObligations(implicit hc: HeaderCarrier, ec: ExecutionContext, mtdItUser: MtdItUser[_], isTimeMachineEnabled: Boolean): Future[(LocalDate, Seq[LocalDate])] = {
     getNextUpdates().map {
       case deadlines: ObligationsModel if !deadlines.obligations.forall(_.obligations.isEmpty) =>
         val latestDeadline = deadlines.obligations.flatMap(_.obligations.map(_.due)).sortWith(_ isBefore _).head
-        val overdueObligations = deadlines.obligations.flatMap(_.obligations.map(_.due)).filter(_.isBefore(dateService.getCurrentDate))
+        val overdueObligations = deadlines.obligations.flatMap(_.obligations.map(_.due)).filter(_.isBefore(dateService.getCurrentDate(isTimeMachineEnabled)))
         (latestDeadline, overdueObligations)
       case error: NextUpdatesErrorModel => throw new Exception(s"${error.message}")
       case _ =>
@@ -45,13 +44,12 @@ class NextUpdatesService @Inject()(val incomeTaxViewChangeConnector: IncomeTaxVi
     }
   }
 
-  def getObligationDueDates()
-                           (implicit hc: HeaderCarrier, ec: ExecutionContext, mtdItUser: MtdItUser[_]): Future[Either[(LocalDate, Boolean), Int]] = {
+  def getObligationDueDates(implicit hc: HeaderCarrier, ec: ExecutionContext, mtdItUser: MtdItUser[_], isTimeMachineEnabled: Boolean): Future[Either[(LocalDate, Boolean), Int]] = {
     getNextUpdates().map {
 
       case deadlines: ObligationsModel if deadlines.obligations.forall(_.obligations.nonEmpty) => {
         val dueDates = deadlines.obligations.flatMap(_.obligations.map(_.due)).sortWith(_ isBefore _)
-        val overdueDates = dueDates.filter(_ isBefore dateService.getCurrentDate)
+        val overdueDates = dueDates.filter(_ isBefore dateService.getCurrentDate(isTimeMachineEnabled))
         val nextDueDates = dueDates.diff(overdueDates)
         val overdueDatesCount = overdueDates.size
 

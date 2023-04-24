@@ -71,11 +71,3 @@ case class ForecastTaxCalculationAuditModel(user: MtdItUserWithNino[_], endOfYea
       Json.obj("forecastDetail" -> forecastDetailJson)
   }
 }
-
-
-
-
-
-
-
-

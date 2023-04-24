@@ -25,8 +25,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 
 import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.duration.DurationInt
-import scala.concurrent.{Await, ExecutionContext, Future}
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsService,
@@ -54,12 +53,12 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
     }
   }
 
-  def getWhatYouOweChargesList(isCodingOutEnabled: Boolean, isMFACreditsEnabled: Boolean)(implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[WhatYouOweChargesList] = {
+  def getWhatYouOweChargesList(isCodingOutEnabled: Boolean, isMFACreditsEnabled: Boolean)(implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_], isTimeMachineEnabled: Boolean): Future[WhatYouOweChargesList] = {
     getWhatYouOweChargesList(financialDetailsService.getAllUnpaidFinancialDetails(isCodingOutEnabled), isCodingOutEnabled, isMFACreditsEnabled)
   }
 
   def getWhatYouOweChargesList(unpaidCharges: Future[List[FinancialDetailsResponseModel]], isCodingOutEnabled: Boolean, isMFACreditsEnabled: Boolean)
-                              (implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[WhatYouOweChargesList] = {
+                              (implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_], isTimeMachineEnabled: Boolean): Future[WhatYouOweChargesList] = {
 
     unpaidCharges flatMap {
       case financialDetails if financialDetails.exists(_.isInstanceOf[FinancialDetailsErrorModel]) =>
@@ -71,7 +70,7 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
         val codedOutDocumentDetail = if (isCodingOutEnabled) {
           financialDetailsModelList.flatMap(fdm =>
             fdm.documentDetails.find(dd => dd.isPayeSelfAssessment
-              && dd.taxYear == (dateService.getCurrentTaxYearEnd - 1))
+              && dd.taxYear == (dateService.getCurrentTaxYearEnd(isTimeMachineEnabled) - 1))
           ).headOption
         } else None
 
@@ -80,7 +79,7 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
           chargesList = getFilteredChargesList(financialDetailsModelList, isMFACreditsEnabled, isCodingOutEnabled),
           codedOutDocumentDetail = codedOutDocumentDetail)
 
-        callOutstandingCharges(mtdUser.saUtr, mtdUser.incomeSources.yearOfMigration, dateService.getCurrentTaxYearEnd).map {
+        callOutstandingCharges(mtdUser.saUtr, mtdUser.incomeSources.yearOfMigration, dateService.getCurrentTaxYearEnd(isTimeMachineEnabled)).map {
           case Some(outstandingChargesModel) => whatYouOweChargesList.copy(outstandingChargesModel = Some(outstandingChargesModel))
           case _ => whatYouOweChargesList
         }

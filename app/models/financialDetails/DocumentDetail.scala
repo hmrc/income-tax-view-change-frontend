@@ -16,6 +16,7 @@
 
 package models.financialDetails
 
+import config.featureswitch.FeatureSwitching
 import enums.CodingOutType._
 import play.api.Logger
 import play.api.libs.functional.syntax.toFunctionalBuilderOps
@@ -40,6 +41,7 @@ case class DocumentDetail(taxYear: Int,
                           lpiWithDunningBlock: Option[BigDecimal] = None,
                           paymentLotItem: Option[String] = None,
                           paymentLot: Option[String] = None,
+                          effectiveDateOfPayment: Option[LocalDate] = None,
                           amountCodedOut: Option[BigDecimal] = None
                          ) {
 
@@ -175,7 +177,8 @@ case class DocumentDetail(taxYear: Int,
 case class DocumentDetailWithDueDate(documentDetail: DocumentDetail, dueDate: Option[LocalDate],
                                      isLatePaymentInterest: Boolean = false, dunningLock: Boolean = false,
                                      codingOutEnabled: Boolean = false, isMFADebit: Boolean = false)(implicit val dateService: DateServiceInterface) {
-  val isOverdue: Boolean = dueDate.exists(_ isBefore dateService.getCurrentDate)
+
+  val isOverdue: Boolean = dueDate.exists(_ isBefore dateService.getCurrentDate())
 }
 
 object DocumentDetail {
@@ -197,6 +200,7 @@ object DocumentDetail {
       (__ \ "lpiWithDunningBlock").readNullable[BigDecimal] and
       (__ \ "paymentLotItem").readNullable[String] and
       (__ \ "paymentLot").readNullable[String] and
+      (__ \ "effectiveDateOfPayment").readNullable[LocalDate] and
       (__ \ "amountCodedOut").readNullable[BigDecimal]
     ) (DocumentDetail.apply _)
 }

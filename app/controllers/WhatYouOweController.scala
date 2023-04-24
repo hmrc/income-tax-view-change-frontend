@@ -19,7 +19,7 @@ package controllers
 import audit.AuditingService
 import audit.models.WhatYouOweResponseAuditModel
 import auth.{FrontendAuthorisedFunctions, MtdItUser}
-import config.featureswitch.{CodingOut, CreditsRefundsRepay, CutOverCredits, FeatureSwitching, MFACreditsAndDebits, WhatYouOweCreditAmount}
+import config.featureswitch.{CodingOut, CreditsRefundsRepay, CutOverCredits, FeatureSwitching, MFACreditsAndDebits, TimeMachineAddYear, WhatYouOweCreditAmount}
 import config._
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
@@ -58,6 +58,7 @@ class WhatYouOweController @Inject()(val checkSessionTimeout: SessionTimeoutPred
                     isAgent: Boolean,
                     origin: Option[String] = None)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
+    implicit val isTimeMachineEnabled: Boolean = isEnabled(TimeMachineAddYear)
     whatYouOweService.getWhatYouOweChargesList(isEnabled(CodingOut), isEnabled(MFACreditsAndDebits)) flatMap {
       whatYouOweChargesList =>
         auditingService.extendedAudit(WhatYouOweResponseAuditModel(user, whatYouOweChargesList, dateService))
@@ -68,10 +69,10 @@ class WhatYouOweController @Inject()(val checkSessionTimeout: SessionTimeoutPred
           creditCharges =>
 
             Ok(whatYouOwe(
-              currentDate = dateService.getCurrentDate,
+              currentDate = dateService.getCurrentDate(isTimeMachineEnabled),
               creditCharges,
               whatYouOweChargesList = whatYouOweChargesList, hasLpiWithDunningBlock = whatYouOweChargesList.hasLpiWithDunningBlock,
-              currentTaxYear = dateService.getCurrentTaxYearEnd, backUrl = backUrl, utr = user.saUtr,
+              currentTaxYear = dateService.getCurrentTaxYearEnd(isTimeMachineEnabled), backUrl = backUrl, utr = user.saUtr,
               btaNavPartial = user.btaNavPartial,
               dunningLock = whatYouOweChargesList.hasDunningLock,
               codingOutEnabled = codingOutEnabled,

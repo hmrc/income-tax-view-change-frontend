@@ -33,7 +33,7 @@ import play.api.libs.ws.WSResponse
 import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.IncomeSourceIntegrationTestConstants._
-import testConstants.NewCalcBreakdownItTestConstants.{liabilityCalculationModelErrorMessages, liabilityCalculationModelErrorMessagesFormatted, liabilityCalculationModelSuccessful, liabilityCalculationModelSuccessfulNotCrystallised}
+import testConstants.NewCalcBreakdownItTestConstants.{liabilityCalculationModelErrorMessages, liabilityCalculationModelErrorMessagesFormatted, liabilityCalculationModelSuccessful, liabilityCalculationModelSuccessfulExpected, liabilityCalculationModelSuccessfulNotCrystallised}
 import testConstants.messages.TaxYearSummaryMessages._
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 
@@ -591,7 +591,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
           MtdItUser(testMtditid, testNino, None, singleBusinessResponse,
             None, Some("1234567890"), Some("12345-credId"), Some(Individual), None
           )(FakeRequest()), financialDetailsDunningLockSuccess.getAllDocumentDetailsWithDueDates(),
-          allObligations, messagesAPI, Some(TaxYearSummaryViewModel(liabilityCalculationModelSuccessful))))
+          allObligations, messagesAPI, Some(TaxYearSummaryViewModel(liabilityCalculationModelSuccessfulExpected))))
       }
 
 

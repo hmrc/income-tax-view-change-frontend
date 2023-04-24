@@ -35,6 +35,7 @@ object PaymentAllocationsTestConstants {
     outstandingAmount = Some(-200.00),
     documentDate = LocalDate.of(2018, 3, 29),
     paymentLot = Some("paymentLot"),
+    effectiveDateOfPayment = Some(LocalDate.of(2021, 1, 31)),
     paymentLotItem = Some("paymentLotItem")
   )
 
@@ -57,6 +58,7 @@ object PaymentAllocationsTestConstants {
     documentText = Some("documentText"),
     originalAmount = Some(-300.00),
     outstandingAmount = Some(-200.00),
+    effectiveDateOfPayment = Some(LocalDate.of(2021, 1, 31)),
     documentDate = LocalDate.of(2018, 3, 29)
   )
 
@@ -67,6 +69,7 @@ object PaymentAllocationsTestConstants {
     documentText = Some("documentText"),
     originalAmount = Some(-300.00),
     outstandingAmount = Some(0),
+    effectiveDateOfPayment = Some(LocalDate.of(2021, 1, 31)),
     documentDate = LocalDate.of(2018, 3, 29)
   )
 
@@ -79,6 +82,7 @@ object PaymentAllocationsTestConstants {
     outstandingAmount = Some(-50.00),
     documentDate = LocalDate.of(2018, 3, 29),
     paymentLot = Some("paymentLot2"),
+    effectiveDateOfPayment = Some(LocalDate.of(2021, 1, 31)),
     paymentLotItem = Some("paymentLotItem2")
   )
 
@@ -91,6 +95,7 @@ object PaymentAllocationsTestConstants {
     outstandingAmount = Some(0.00),
     documentDate = LocalDate.of(2022, 4, 6),
     paymentLot = Some("paymentLot3"),
+    effectiveDateOfPayment = Some(LocalDate.of(2021, 1, 31)),
     paymentLotItem = Some("paymentLotItem3")
   )
 
@@ -420,6 +425,7 @@ object PaymentAllocationsTestConstants {
     originalAmount = Some(-300.00),
     documentDate = LocalDate.of(2018, 3, 29),
     paymentLotItem = Some("paymentLotItem"),
+    effectiveDateOfPayment = Some(LocalDate.of(2021, 1, 31)),
     paymentLot = Some("paymentLot")
   )
 
@@ -455,6 +461,7 @@ object PaymentAllocationsTestConstants {
 			|            "taxYear": 2018,
 			|            "transactionId": "id",
 			|            "paymentLot": "paymentLot",
+			|            "effectiveDateOfPayment": "2021-01-31",
 			|            "paymentLotItem": "paymentLotItem"
 			|        }
 			|    ],
@@ -511,6 +518,7 @@ object PaymentAllocationsTestConstants {
 			|            "taxYear": 2018,
 			|            "transactionId": "id",
 			|            "paymentLot": "paymentLot",
+			|            "effectiveDateOfPayment": "2021-01-31",
 			|            "paymentLotItem": "paymentLotItem"
 			|        }
 			|    ],
@@ -652,6 +660,7 @@ object PaymentAllocationsTestConstants {
 			|            "taxYear": 2018,
 			|            "transactionId": "id",
 			|            "paymentLot": "paymentLot",
+			|            "effectiveDateOfPayment": "2021-01-31",
 			|            "paymentLotItem": "paymentLotItem"
 			|        },
 			|        {
@@ -663,6 +672,7 @@ object PaymentAllocationsTestConstants {
 			|            "taxYear": 2019,
 			|            "transactionId": "id2",
 			|            "paymentLot": "paymentLot2",
+			|            "effectiveDateOfPayment": "2021-01-31",
 			|            "paymentLotItem": "paymentLotItem2"
 			|        }
 			|    ],

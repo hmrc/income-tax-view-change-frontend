@@ -34,7 +34,7 @@ import testConstants.BaseIntegrationTestConstants._
 import testConstants.FinancialDetailsIntegrationTestConstants.financialDetailModelPartial
 import testConstants.IncomeSourceIntegrationTestConstants._
 import testConstants.messages.ChargeSummaryMessages
-import testConstants.messages.ChargeSummaryMessages.{codingOutInsetPara, codingOutMessage, notCurrentlyChargingInterest, paymentBreakdownHeading, underReview}
+import testConstants.messages.ChargeSummaryMessages.{codingOutInsetPara, codingOutMessage, codingOutMessageWithStringMessagesArgument, notCurrentlyChargingInterest, paymentBreakdownHeading, underReview}
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 
 import java.time.LocalDate
@@ -242,7 +242,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
         httpStatus(OK),
         pageTitleAgent("tax-year-summary.payments.codingOut.text"),
         elementTextBySelector("#coding-out-notice")(codingOutInsetPara),
-        elementTextBySelector("#coding-out-message")(codingOutMessage(getCurrentTaxYearEnd.getYear - 1, getCurrentTaxYearEnd.getYear))
+        elementTextBySelector("#coding-out-message")(codingOutMessageWithStringMessagesArgument(getCurrentTaxYearEnd.getYear - 1, getCurrentTaxYearEnd.getYear))
       )
     }
 
