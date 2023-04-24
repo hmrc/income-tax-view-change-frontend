@@ -41,6 +41,7 @@ case class ForecastTaxCalculationAuditModel(user: MtdItUserWithNino[_], endOfYea
   private val balancingPaymentCollectedThroughPAYE: Option[BigDecimal] = endOfYearEstimate.saUnderpaymentsCodedOut
   private val studentLoanRepayments: Option[BigDecimal] = endOfYearEstimate.totalStudentLoansRepaymentAmount
   private val taxDueOnAnnuityPayments: Option[BigDecimal] = endOfYearEstimate.totalAnnuityPaymentsTaxCharged
+  private val taxDueOnRoyaltyPayments: Option[BigDecimal] = endOfYearEstimate.totalRoyaltyPaymentsTaxCharged
   private val totalTaxDeducted: Option[BigDecimal] = endOfYearEstimate.totalTaxDeducted
   private val incomeTaxAndNationalInsuranceContributionsDue: Option[BigDecimal] = endOfYearEstimate.incomeTaxNicAmount
   private val capitalGainsTax: Option[BigDecimal] = endOfYearEstimate.cgtAmount
@@ -58,6 +59,7 @@ case class ForecastTaxCalculationAuditModel(user: MtdItUserWithNino[_], endOfYea
     ("balancingPaymentCollectedThroughPAYE", balancingPaymentCollectedThroughPAYE) ++
     ("studentLoanRepayments", studentLoanRepayments) ++
     ("taxDueOnAnnuityPayments", taxDueOnAnnuityPayments) ++
+    ("taxDueOnRoyaltyPayments", taxDueOnRoyaltyPayments) ++
     ("totalTaxDeducted", totalTaxDeducted) ++
     ("incomeTaxAndNationalInsuranceContributionsDue", incomeTaxAndNationalInsuranceContributionsDue) ++
     ("capitalGainsTax", capitalGainsTax) ++
