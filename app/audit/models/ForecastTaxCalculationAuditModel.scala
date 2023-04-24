@@ -48,8 +48,8 @@ case class ForecastTaxCalculationAuditModel(user: MtdItUserWithNino[_], endOfYea
 
   private val forecastDetailJson: JsObject = Json.obj() ++
     ("totalEstimatedIncome", totalEstimatedIncome) ++
-    ("totalTaxableIncome", totalTaxableIncome) ++
     ("totalAllowancesAndDeductions", totalAllowancesAndDeductions) ++
+    ("totalTaxableIncome", totalTaxableIncome) ++
     ("totalIncomeTax", totalIncomeTax) ++
     ("class4NationalInsurance", class4NationalInsurance) ++
     ("class2NationalInsurance", class2NationalInsurance) ++
