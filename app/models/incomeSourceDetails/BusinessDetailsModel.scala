@@ -23,6 +23,8 @@ import play.api.libs.json.{Format, Json}
 case class BusinessDetailsModel(incomeSourceId: Option[String],
                                 accountingPeriod: Option[AccountingPeriodModel],
                                 tradingName: Option[String],
+                                tradingStartDate: Option[String],
+                                cessation: Option[CessationModel],
                                 firstAccountingPeriodEndDate: Option[LocalDate])
 
 object BusinessDetailsModel {
