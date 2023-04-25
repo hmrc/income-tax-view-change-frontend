@@ -1,0 +1,175 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import _root_.implicits.ImplicitDateFormatterImpl
+@import _root_.implicits.ImplicitCurrencyFormatter._
+@import models.financialDetails.WhatYouOweChargesList
+@import models.financialDetails.DocumentDetailWithDueDate
+@import models.financialDetails._
+@import auth.MtdItUser
+@import views.html.layouts.unifiedLayout
+@import views.html.components._
+@import exceptions.MissingFieldException
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import java.time.LocalDate
+@import models.incomeSourceDetails.IncomeSourceDetailsModel
+@import models.incomeSourceDetails.BusinessDetailsModel
+@import models.incomeSourceDetails.PropertyDetailsModel
+
+@this(
+    mainTemplate: unifiedLayout,
+    implicitDateFormatter: ImplicitDateFormatterImpl,
+    appConfig: config.FrontendAppConfig,
+    h1: h1,
+    h2: h2,
+    p: p,
+    link: link,
+    detailsDropdown: detailsDropdown,
+    govukInsetText : GovukInsetText,
+    govukTable: GovukTable
+)
+
+@(incomeSourceDetails: IncomeSourceDetailsModel)(implicit messages: Messages,
+    user: auth.MtdItUser[_])
+
+@import implicitDateFormatter.longDate
+
+@ukPropertyExists = @{
+    incomeSourceDetails.property.map(_.incomeSourceType.contains("uk-property"))
+}
+
+@foreignPropertyExists = @{
+    incomeSourceDetails.property.map(_.incomeSourceType.contains("foreign-property"))
+}
+
+@getMessage(key: String, args: String*) = @{
+    messages(s"checkIncomeSources.$key", args: _*)
+}
+
+@selfEmploymentTableRow(id: String, business: BusinessDetailsModel) = {
+    <tr class="govuk-table__row" id="">
+        <td class="govuk-table__cell govuk-!-width-one-quarter" >
+            @business.tradingName.getOrElse(throw MissingFieldException("Business Name"))
+        </td>
+        <td class="govuk-table__cell govuk-!-width-one-quarter" >
+            @business.accountingPeriod.getOrElse(throw MissingFieldException("Accounting Period")).start.toLongDate
+        </td>
+    </tr>
+}
+
+@foreignPropertyTableRow(id: String, property: Option[PropertyDetailsModel]) = {
+    <tr class="govuk-table__row" id="">
+        <td class="govuk-table__cell govuk-!-width-one-quarter" > <!--INCORRECT DATE! - DEPENDENCY HERE-->
+            @property.flatMap(_.tradingStartDate)
+        </td>
+    </tr>
+}
+
+
+@selfEmploymentTableHead(headId: String) = {
+    <thead class="govuk-table__head" id="@headId">
+        <tr class="govuk-table__row">
+            <th scope="col" class="govuk-table__header">Business name</th> <!--create message key-values and wrap in getMessage for table headers-->
+            <th scope="col" class="govuk-table__header">Date started</th> <!--create message key-values and wrap in getMessage for table headers-->
+        </tr>
+    </thead>
+}
+
+@foreignPropertyTableHead(headId: String) = {
+    <thead class="govuk-table__head" id="@headId">
+        <tr class="govuk-table__row">
+            <th scope="col" class="govuk-table__header">Date started</th>
+        </tr>
+    </thead>
+}
+
+@mainTemplate(pageTitle = messages("notmigrated.user.heading"),
+    backUrl = None,
+    isAgent = false,
+btaNavPartial = user.btaNavPartial) {
+
+<!--ADD BACK LINK !!-->
+
+    @h1("Self-employment and property income")
+    @p() { @messages("You do not need to tell us about a business we already know about") }
+    @h2("Self-employment (sole trader)")
+    @govukTable(Table(
+        head = Some(List(
+            HeadCell(content = Text("Business name")),
+            HeadCell(content = Text("Date started"))
+        )),
+        rows = incomeSourceDetails.businesses.map { business => Seq(
+            TableRow(Text(business.tradingName.getOrElse(throw MissingFieldException("Trading Name")))),
+            TableRow(Text(business.tradingStartDate.getOrElse(throw MissingFieldException("Trading Start Date")).toLongDate))
+        )}
+    ))
+    @link(link = "", messageKey = "Add a sole trader income source") <!--FIX REDIRECT LINK!-->
+
+    @h2("UK Property")
+    @p() { @messages("You only need to tell us you have UK property income once") }
+    @govukTable(Table(
+        head = Some(List(
+            HeadCell(content = Text("Date started"))
+        )),
+        rows = incomeSourceDetails.property.filter(_.incomeSourceType.contains("uk-property")).map { ukProperty => Seq(Seq(
+            TableRow(Text(ukProperty.tradingStartDate.getOrElse(throw MissingFieldException("Trading Start Date")).toLongDate))
+        ))}.get
+    )) <!--REMOVE USE OF .get!!!!!-->
+
+    @link(link = "report-quarterly/income-and-expenses/view/income-sources/add/uk-property-business-start-date",
+    messageKey = "Add income from UK property"
+    )
+
+    @h2("Foreign property")
+
+    <table class="govuk-table">
+        @if(incomeSourceDetails.property.nonEmpty && foreignPropertyExists) {
+            <a>if</a>
+            @(incomeSourceDetails.property.nonEmpty && foreignPropertyExists)
+            @foreignPropertyTableHead("foreign-property-table-head")
+
+            @foreignPropertyTableRow("foreign-property-table-row", incomeSourceDetails.property.filter(_.incomeSourceType.contains("foreign-property")))
+        } else {
+            @link(link = "report-quarterly/income-and-expenses/view/income-sources/add/foreign-property-business-start-date",
+                messageKey = "Add income from foreign property"
+            )
+        }
+
+    </table>
+    @govukTable(
+    Table(
+    head = Some(
+    List(
+    HeadCell(content = Text("Collection")),
+    HeadCell(content = Text("Inserted")),
+    HeadCell(content = Text("Failed")),
+    HeadCell(content = Text("Total")),
+    HeadCell(content = Text("Status"))
+    )
+    ),
+    rows = Seq(
+        Seq(
+        TableRow(Text("collection")),
+        TableRow(Text("status.inserted.toString")),
+        TableRow(Text("status.failed.toString")),
+        TableRow(Text("status.total.toString")),
+        TableRow(Text("status.status"))
+        )
+    )
+    )
+    )
+
+}
