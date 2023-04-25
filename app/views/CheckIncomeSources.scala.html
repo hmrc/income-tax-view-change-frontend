@@ -60,7 +60,7 @@
 @ceasedBusinessExists = @{ incomeSourceDetails.businesses.exists(_.cessationDate.nonEmpty) }
 
 @getMessage(key: String, args: String*) = @{
-    messages(s"checkIncomeSources.$key", args: _*)
+    messages(s"check-income-sources.$key", args: _*)
 }
 
 @mainTemplate(pageTitle = getMessage("title"),
