@@ -83,7 +83,8 @@
             TableRow(Text(business.tradingStartDate.getOrElse(throw MissingFieldException("Trading Start Date")).toLongDate))
         )}
     ))
-    @link(link = "", messageKey = getMessage("self-employment.link")) <!--FIX REDIRECT LINK!-->
+<!--FIX REDIRECT LINK!-->
+    @link(link = "", messageKey = getMessage("self-employment.link"))
     <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
 
     @h2(getMessage("uk-property.h2"))
@@ -99,6 +100,7 @@
         )) <!--REMOVE USE OF .get!!!!!-->
     } else {
         <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+<!--            FIX REDIRECT BELOW !!!!-->
         @link(link = "report-quarterly/income-and-expenses/view/income-sources/add/uk-property-business-start-date",
             messageKey = getMessage("uk-property.link"))
         <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
@@ -113,9 +115,11 @@
             rows = incomeSourceDetails.property.filter(_.incomeSourceType.contains("foreign-property")).map { foreignProperty => Seq(Seq(
                 TableRow(Text(foreignProperty.tradingStartDate.getOrElse(throw MissingFieldException("Trading Start Date")).toLongDate))
             ))}.get
+<!--            REMOVE USE OF .get above !!!!-->
         ))
     } else {
         <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+<!--            FIX REDIRECT BELOW !!!!-->
         @link(link = "report-quarterly/income-and-expenses/view/income-sources/add/foreign-property-business-start-date",
             messageKey = getMessage("foreign-property.link"))
         <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
