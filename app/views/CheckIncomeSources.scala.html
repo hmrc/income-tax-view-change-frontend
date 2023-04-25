@@ -47,15 +47,17 @@
 
 @import implicitDateFormatter.longDate
 
-@ukPropertyExists = @{incomeSourceDetails.property match {
+@ukPropertyExists = @{ incomeSourceDetails.property match {
     case Some(p) if p.incomeSourceType.contains("uk-property") => true
     case _ => false
 }}
 
-@foreignPropertyExists = @{incomeSourceDetails.property match {
+@foreignPropertyExists = @{ incomeSourceDetails.property match {
     case Some(p) if p.incomeSourceType.contains("foreign-property") => true
     case _ => false
 }}
+
+@ceasedBusinessExists = @{ incomeSourceDetails.businesses.exists(_.cessationDate.nonEmpty) }
 
 @getMessage(key: String, args: String*) = @{
     messages(s"checkIncomeSources.$key", args: _*)
@@ -117,5 +119,21 @@
         @link(link = "report-quarterly/income-and-expenses/view/income-sources/add/foreign-property-business-start-date",
             messageKey = "Add income from foreign property")
         <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+    }
+
+    @if(ceasedBusinessExists) {
+        @h2("Businesses that have ceased")
+        @govukTable(Table(
+            head = Some(List(
+                HeadCell(content = Text("Business name")),
+                HeadCell(content = Text("Date started")),
+                HeadCell(content = Text("Date ended"))
+            )),
+            rows = incomeSourceDetails.businesses.filter(_.cessationDate.nonEmpty).map { ceasedBusiness => Seq(
+                TableRow(Text(ceasedBusiness.tradingName.getOrElse(throw MissingFieldException("Trading Name")))),
+                TableRow(Text(ceasedBusiness.tradingStartDate.getOrElse(throw MissingFieldException("Trading Start Date")).toLongDate)),
+                TableRow(Text(ceasedBusiness.cessationDate.getOrElse(throw MissingFieldException("Cessation Date")).toLongDate))
+            )}
+        ))
     }
 }
