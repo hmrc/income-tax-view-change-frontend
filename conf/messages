@@ -1117,7 +1117,6 @@ check-income-sources.uk-property.h2           = UK Property
 check-income-sources.uk-property.p1           = You only need to tell us you have UK property income once
 check-income-sources.uk-property.link         = Add income from UK property
 check-income-sources.foreign-property.h2      = Foreign Property
-check-income-sources.foreign-property.p1      = You only need to tell us you have UK property income once
 check-income-sources.foreign-property.link    = Add income from foreign property
 check-income-sources.ceased-businesses.h2     = Businesses that have ceased
 check-income-sources.table-head.business-name = Business name
