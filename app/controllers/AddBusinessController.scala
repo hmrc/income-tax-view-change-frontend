@@ -38,6 +38,7 @@ class AddBusinessController @Inject()(authenticate: AuthenticationPredicate,
                                              val retrieveBtaNavBar: NavBarPredicate,
                                              val itvcErrorHandler: ItvcErrorHandler)
                                             (implicit val appConfig: FrontendAppConfig,
+                                             implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                              implicit override val mcc: MessagesControllerComponents,
                                              val ec: ExecutionContext)
   extends ClientConfirmedController with I18nSupport with FeatureSwitching {
