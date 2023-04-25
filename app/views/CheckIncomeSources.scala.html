@@ -63,35 +63,35 @@
     messages(s"checkIncomeSources.$key", args: _*)
 }
 
-@mainTemplate(pageTitle = messages("Self-employment and property income"),
+@mainTemplate(pageTitle = getMessage("title"),
     backUrl = None,
     isAgent = false,
     btaNavPartial = user.btaNavPartial) {
 
 <!--ADD BACK LINK !!-->
 
-    @h1("Self-employment and property income")
-    @p() { @messages("You do not need to tell us about a business we already know about") }
-    @h2("Self-employment (sole trader)")
+    @h1(getMessage("heading"))
+    @p() { @getMessage("self-employment.p1") }
+    @h2(getMessage("self-employment.h2"))
     @govukTable(Table(
         head = Some(List(
-            HeadCell(content = Text("Business name")),
-            HeadCell(content = Text("Date started"))
+            HeadCell(content = Text(getMessage("table-head.business-name"))),
+            HeadCell(content = Text(getMessage("table-head.date-started")))
         )),
         rows = incomeSourceDetails.businesses.map { business => Seq(
             TableRow(Text(business.tradingName.getOrElse(throw MissingFieldException("Trading Name")))),
             TableRow(Text(business.tradingStartDate.getOrElse(throw MissingFieldException("Trading Start Date")).toLongDate))
         )}
     ))
-    @link(link = "", messageKey = "Add a sole trader income source") <!--FIX REDIRECT LINK!-->
+    @link(link = "", messageKey = getMessage("self-employment.link")) <!--FIX REDIRECT LINK!-->
     <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
 
-    @h2("UK Property")
-    @p() { @messages("You only need to tell us you have UK property income once") }
+    @h2(getMessage("uk-property.h2"))
+    @p() { @getMessage("uk-property.p1") }
     @if(ukPropertyExists) {
         @govukTable(Table(
             head = Some(List(
-                HeadCell(content = Text("Date started"))
+                HeadCell(content = Text(getMessage("table-head.date-started")))
             )),
             rows = incomeSourceDetails.property.filter(_.incomeSourceType.contains("uk-property")).map { ukProperty => Seq(Seq(
                 TableRow(Text(ukProperty.tradingStartDate.getOrElse(throw MissingFieldException("Trading Start Date")).toLongDate))
@@ -100,15 +100,15 @@
     } else {
         <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
         @link(link = "report-quarterly/income-and-expenses/view/income-sources/add/uk-property-business-start-date",
-            messageKey = "Add income from UK property")
+            messageKey = getMessage("uk-property.link"))
         <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
     }
 
-    @h2("Foreign property")
+    @h2(getMessage("foreign-property.h2"))
     @if(foreignPropertyExists) {
         @govukTable(Table(
             head = Some(List(
-                HeadCell(content = Text("Date started"))
+                HeadCell(content = Text(getMessage("table-head.date-started")))
             )),
             rows = incomeSourceDetails.property.filter(_.incomeSourceType.contains("foreign-property")).map { foreignProperty => Seq(Seq(
                 TableRow(Text(foreignProperty.tradingStartDate.getOrElse(throw MissingFieldException("Trading Start Date")).toLongDate))
@@ -117,16 +117,16 @@
     } else {
         <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
         @link(link = "report-quarterly/income-and-expenses/view/income-sources/add/foreign-property-business-start-date",
-            messageKey = "Add income from foreign property")
+            messageKey = getMessage("foreign-property.link"))
         <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
     }
 
     @if(ceasedBusinessExists) {
-        @h2("Businesses that have ceased")
+        @h2(getMessage("ceased-businesses.h2"))
         @govukTable(Table(
             head = Some(List(
-                HeadCell(content = Text("Business name")),
-                HeadCell(content = Text("Date started")),
+                HeadCell(content = Text(getMessage("table-head.business-name"))),
+                HeadCell(content = Text(getMessage("table-head.date-started"))),
                 HeadCell(content = Text("Date ended"))
             )),
             rows = incomeSourceDetails.businesses.filter(_.cessationDate.nonEmpty).map { ceasedBusiness => Seq(
