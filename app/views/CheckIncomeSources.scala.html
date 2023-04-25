@@ -47,59 +47,24 @@
 
 @import implicitDateFormatter.longDate
 
-@ukPropertyExists = @{
-    incomeSourceDetails.property.map(_.incomeSourceType.contains("uk-property"))
-}
+@ukPropertyExists = @{incomeSourceDetails.property match {
+    case Some(p) if p.incomeSourceType.contains("uk-property") => true
+    case _ => false
+}}
 
-@foreignPropertyExists = @{
-    incomeSourceDetails.property.map(_.incomeSourceType.contains("foreign-property"))
-}
+@foreignPropertyExists = @{incomeSourceDetails.property match {
+    case Some(p) if p.incomeSourceType.contains("foreign-property") => true
+    case _ => false
+}}
 
 @getMessage(key: String, args: String*) = @{
     messages(s"checkIncomeSources.$key", args: _*)
 }
 
-@selfEmploymentTableRow(id: String, business: BusinessDetailsModel) = {
-    <tr class="govuk-table__row" id="">
-        <td class="govuk-table__cell govuk-!-width-one-quarter" >
-            @business.tradingName.getOrElse(throw MissingFieldException("Business Name"))
-        </td>
-        <td class="govuk-table__cell govuk-!-width-one-quarter" >
-            @business.accountingPeriod.getOrElse(throw MissingFieldException("Accounting Period")).start.toLongDate
-        </td>
-    </tr>
-}
-
-@foreignPropertyTableRow(id: String, property: Option[PropertyDetailsModel]) = {
-    <tr class="govuk-table__row" id="">
-        <td class="govuk-table__cell govuk-!-width-one-quarter" > <!--INCORRECT DATE! - DEPENDENCY HERE-->
-            @property.flatMap(_.tradingStartDate)
-        </td>
-    </tr>
-}
-
-
-@selfEmploymentTableHead(headId: String) = {
-    <thead class="govuk-table__head" id="@headId">
-        <tr class="govuk-table__row">
-            <th scope="col" class="govuk-table__header">Business name</th> <!--create message key-values and wrap in getMessage for table headers-->
-            <th scope="col" class="govuk-table__header">Date started</th> <!--create message key-values and wrap in getMessage for table headers-->
-        </tr>
-    </thead>
-}
-
-@foreignPropertyTableHead(headId: String) = {
-    <thead class="govuk-table__head" id="@headId">
-        <tr class="govuk-table__row">
-            <th scope="col" class="govuk-table__header">Date started</th>
-        </tr>
-    </thead>
-}
-
-@mainTemplate(pageTitle = messages("notmigrated.user.heading"),
+@mainTemplate(pageTitle = messages("Self-employment and property income"),
     backUrl = None,
     isAgent = false,
-btaNavPartial = user.btaNavPartial) {
+    btaNavPartial = user.btaNavPartial) {
 
 <!--ADD BACK LINK !!-->
 
@@ -117,59 +82,40 @@ btaNavPartial = user.btaNavPartial) {
         )}
     ))
     @link(link = "", messageKey = "Add a sole trader income source") <!--FIX REDIRECT LINK!-->
+    <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
 
     @h2("UK Property")
     @p() { @messages("You only need to tell us you have UK property income once") }
-    @govukTable(Table(
-        head = Some(List(
-            HeadCell(content = Text("Date started"))
-        )),
-        rows = incomeSourceDetails.property.filter(_.incomeSourceType.contains("uk-property")).map { ukProperty => Seq(Seq(
-            TableRow(Text(ukProperty.tradingStartDate.getOrElse(throw MissingFieldException("Trading Start Date")).toLongDate))
-        ))}.get
-    )) <!--REMOVE USE OF .get!!!!!-->
-
-    @link(link = "report-quarterly/income-and-expenses/view/income-sources/add/uk-property-business-start-date",
-    messageKey = "Add income from UK property"
-    )
+    @if(ukPropertyExists) {
+        @govukTable(Table(
+            head = Some(List(
+                HeadCell(content = Text("Date started"))
+            )),
+            rows = incomeSourceDetails.property.filter(_.incomeSourceType.contains("uk-property")).map { ukProperty => Seq(Seq(
+                TableRow(Text(ukProperty.tradingStartDate.getOrElse(throw MissingFieldException("Trading Start Date")).toLongDate))
+            ))}.get
+        )) <!--REMOVE USE OF .get!!!!!-->
+    } else {
+        <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+        @link(link = "report-quarterly/income-and-expenses/view/income-sources/add/uk-property-business-start-date",
+            messageKey = "Add income from UK property")
+        <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+    }
 
     @h2("Foreign property")
-
-    <table class="govuk-table">
-        @if(incomeSourceDetails.property.nonEmpty && foreignPropertyExists) {
-            <a>if</a>
-            @(incomeSourceDetails.property.nonEmpty && foreignPropertyExists)
-            @foreignPropertyTableHead("foreign-property-table-head")
-
-            @foreignPropertyTableRow("foreign-property-table-row", incomeSourceDetails.property.filter(_.incomeSourceType.contains("foreign-property")))
-        } else {
-            @link(link = "report-quarterly/income-and-expenses/view/income-sources/add/foreign-property-business-start-date",
-                messageKey = "Add income from foreign property"
-            )
-        }
-
-    </table>
-    @govukTable(
-    Table(
-    head = Some(
-    List(
-    HeadCell(content = Text("Collection")),
-    HeadCell(content = Text("Inserted")),
-    HeadCell(content = Text("Failed")),
-    HeadCell(content = Text("Total")),
-    HeadCell(content = Text("Status"))
-    )
-    ),
-    rows = Seq(
-        Seq(
-        TableRow(Text("collection")),
-        TableRow(Text("status.inserted.toString")),
-        TableRow(Text("status.failed.toString")),
-        TableRow(Text("status.total.toString")),
-        TableRow(Text("status.status"))
-        )
-    )
-    )
-    )
-
+    @if(foreignPropertyExists) {
+        @govukTable(Table(
+            head = Some(List(
+                HeadCell(content = Text("Date started"))
+            )),
+            rows = incomeSourceDetails.property.filter(_.incomeSourceType.contains("foreign-property")).map { foreignProperty => Seq(Seq(
+                TableRow(Text(foreignProperty.tradingStartDate.getOrElse(throw MissingFieldException("Trading Start Date")).toLongDate))
+            ))}.get
+        ))
+    } else {
+        <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+        @link(link = "report-quarterly/income-and-expenses/view/income-sources/add/foreign-property-business-start-date",
+            messageKey = "Add income from foreign property")
+        <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+    }
 }
