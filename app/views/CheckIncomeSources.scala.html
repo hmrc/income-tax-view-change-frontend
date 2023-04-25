@@ -115,8 +115,9 @@
             rows = incomeSourceDetails.property.filter(_.incomeSourceType.contains("foreign-property")).map { foreignProperty => Seq(Seq(
                 TableRow(Text(foreignProperty.tradingStartDate.getOrElse(throw MissingFieldException("Trading Start Date")).toLongDate))
             ))}.get
-<!--            REMOVE USE OF .get above !!!!-->
         ))
+<!--            REMOVE USE OF .get above !!!!-->
+
     } else {
         <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
 <!--            FIX REDIRECT BELOW !!!!-->
