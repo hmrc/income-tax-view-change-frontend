@@ -57,7 +57,7 @@
     case _ => false
 }}
 
-@ceasedBusinessExists = @{ incomeSourceDetails.businesses.exists(_.cessationDate.nonEmpty) }
+@ceasedBusinessExists = @{ incomeSourceDetails.businesses.exists(_.cessation.nonEmpty) }
 
 @getMessage(key: String, args: String*) = @{
     messages(s"check-income-sources.$key", args: _*)
@@ -134,10 +134,10 @@
                 HeadCell(content = Text(getMessage("table-head.date-started"))),
                 HeadCell(content = Text("Date ended"))
             )),
-            rows = incomeSourceDetails.businesses.filter(_.cessationDate.nonEmpty).map { ceasedBusiness => Seq(
+            rows = incomeSourceDetails.businesses.filter(_.cessation.nonEmpty).map { ceasedBusiness => Seq(
                 TableRow(Text(ceasedBusiness.tradingName.getOrElse(throw MissingFieldException("Trading Name")))),
                 TableRow(Text(ceasedBusiness.tradingStartDate.getOrElse(throw MissingFieldException("Trading Start Date")).toLongDate)),
-                TableRow(Text(ceasedBusiness.cessationDate.getOrElse(throw MissingFieldException("Cessation Date")).toLongDate))
+                TableRow(Text(ceasedBusiness.cessation.getOrElse(throw MissingFieldException("Cessation Date")).toLongDate))
             )}
         ))
     }

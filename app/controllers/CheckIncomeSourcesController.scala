@@ -72,7 +72,7 @@ class CheckIncomeSourcesController @Inject()(val checkIncomeSources: CheckIncome
     tradingName = Some("Big Company Ltd"),
     firstAccountingPeriodEndDate = Some(LocalDate.of(2018, Month.APRIL, 5)),
     tradingStartDate = Some(LocalDate.of(2018, 4, 5)),
-    cessationDate = Some(LocalDate.of(2022, 1, 2))
+    cessation = Some(LocalDate.of(2022, 1, 2))
   )
 
   val business2 = BusinessDetailsModel(
@@ -81,7 +81,7 @@ class CheckIncomeSourcesController @Inject()(val checkIncomeSources: CheckIncome
     tradingName = Some("Small Company Ltd"),
     firstAccountingPeriodEndDate = None,
     tradingStartDate = Some(LocalDate.of(2020, 4, 5)),
-    cessationDate = None
+    cessation = None
   )
 
   val propertyDetails = PropertyDetailsModel(
@@ -98,9 +98,4 @@ class CheckIncomeSourcesController @Inject()(val checkIncomeSources: CheckIncome
     businesses = List(business1, business2),
     property = Some(propertyDetails)
   )
-
-
-  val x = businessesAndPropertyIncome.businesses.filter(_.cessationDate.nonEmpty)
-
 }
-

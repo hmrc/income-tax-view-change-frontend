@@ -35,8 +35,10 @@ case class IncomeSourceDetailsModel(mtdbsa: String,
   override def toJson: JsValue = Json.toJson(this)
 
   def sanitise: IncomeSourceDetailsModel = {
-    val property2 = property.map(p => p.copy(incomeSourceId = None, accountingPeriod = None))
-    val businesses2 = businesses.map(b => b.copy(incomeSourceId = None, accountingPeriod = None, tradingName = None))
+    val property2 = property.map(p => p.copy(incomeSourceId = None, accountingPeriod = None,
+      incomeSourceType = None, tradingStartDate = None))
+    val businesses2 = businesses.map(b => b.copy(incomeSourceId = None, accountingPeriod = None,
+      tradingName = None, tradingStartDate = None, cessation = None))
     this.copy(property = property2, businesses = businesses2)
   }
 

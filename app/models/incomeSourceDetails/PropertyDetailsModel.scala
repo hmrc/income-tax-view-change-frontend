@@ -22,9 +22,9 @@ import play.api.libs.json.{Json, OFormat}
 
 case class PropertyDetailsModel(incomeSourceId: Option[String],
                                 accountingPeriod: Option[AccountingPeriodModel],
+                                firstAccountingPeriodEndDate: Option[LocalDate],
                                 incomeSourceType: Option[String],
-                                tradingStartDate: Option[LocalDate],
-                                firstAccountingPeriodEndDate: Option[LocalDate])
+                                tradingStartDate: Option[LocalDate])
 
 object PropertyDetailsModel {
   implicit val format: OFormat[PropertyDetailsModel] = Json.format[PropertyDetailsModel]
