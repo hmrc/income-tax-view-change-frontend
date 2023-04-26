@@ -31,7 +31,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsService,
                                   val incomeTaxViewChangeConnector: IncomeTaxViewChangeConnector,
                                   implicit val dateService: DateServiceInterface)
-                                 (implicit ec: ExecutionContext, implicit val appConfig: FrontendAppConfig){
+                                 (implicit ec: ExecutionContext, implicit val appConfig: FrontendAppConfig) {
 
   implicit lazy val localDateOrdering: Ordering[LocalDate] = Ordering.by(_.toEpochDay)
 
@@ -54,14 +54,18 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
   }
 
   def getWhatYouOweChargesList(isCodingOutEnabled: Boolean, isMFACreditsEnabled: Boolean)(implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_], isTimeMachineEnabled: Boolean): Future[WhatYouOweChargesList] = {
-    getWhatYouOweChargesList(financialDetailsService.getAllUnpaidFinancialDetails(isCodingOutEnabled), isCodingOutEnabled, isMFACreditsEnabled)
+    {
+      for {
+        unpaidChanges <- financialDetailsService.getAllUnpaidFinancialDetails(isCodingOutEnabled)
+      } yield getWhatYouOweChargesList(unpaidChanges, isCodingOutEnabled, isMFACreditsEnabled)
+    }.flatten
   }
 
-  def getWhatYouOweChargesList(unpaidCharges: Future[List[FinancialDetailsResponseModel]], isCodingOutEnabled: Boolean, isMFACreditsEnabled: Boolean)
+  def getWhatYouOweChargesList(unpaidCharges: List[FinancialDetailsResponseModel], isCodingOutEnabled: Boolean, isMFACreditsEnabled: Boolean)
                               (implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_], isTimeMachineEnabled: Boolean): Future[WhatYouOweChargesList] = {
 
-    unpaidCharges flatMap {
-      case financialDetails if financialDetails.exists(_.isInstanceOf[FinancialDetailsErrorModel]) =>
+    unpaidCharges match {
+      case financialDetails: List[FinancialDetailsResponseModel] if financialDetails.exists(_.isInstanceOf[FinancialDetailsErrorModel]) =>
         throw new Exception("[WhatYouOweService][getWhatYouOweChargesList] Error response while getting Unpaid financial details")
       case financialDetails =>
         val financialDetailsModelList = financialDetails.asInstanceOf[List[FinancialDetailsModel]]
