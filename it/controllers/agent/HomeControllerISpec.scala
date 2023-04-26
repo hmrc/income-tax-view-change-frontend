@@ -162,7 +162,8 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
                       documentText = Some("documentText"),
                       outstandingAmount = Some(500.00),
                       originalAmount = Some(1000.00),
-                      documentDate = LocalDate.of(2018, 3, 29)
+                      documentDate = LocalDate.of(2018, 3, 29),
+                      effectiveDateOfPayment = Some(currentDate)
                     )
                   ),
                   financialDetails = List(
@@ -299,7 +300,8 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
                         documentText = Some("documentText"),
                         outstandingAmount = Some(500.00),
                         originalAmount = Some(1000.00),
-                        documentDate = LocalDate.of(2018, 3, 29)
+                        documentDate = LocalDate.of(2018, 3, 29),
+                        effectiveDateOfPayment = Some(currentDate.minusDays(1))
                       )
                     ),
                     financialDetails = List(
@@ -366,7 +368,8 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
                         documentText = Some("documentText"),
                         outstandingAmount = Some(500.00),
                         originalAmount = Some(1000.00),
-                        documentDate = LocalDate.of(2018, 3, 29)
+                        documentDate = LocalDate.of(2018, 3, 29),
+                        effectiveDateOfPayment = Some(currentDate.minusDays(1))
                       )
                     ),
                     financialDetails = List(
@@ -437,7 +440,8 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
                       documentDescription = Some("ITSA- POA 1"),
                       outstandingAmount = Some(500.00),
                       originalAmount = Some(1000.00),
-                      documentDate = LocalDate.of(2018, 3, 29)
+                      documentDate = LocalDate.of(2018, 3, 29),
+                      effectiveDateOfPayment = Some(currentDate.minusDays(1))
                     ),
                     DocumentDetail(
                       taxYear = getCurrentTaxYearEnd.getYear,
@@ -446,7 +450,8 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
                       documentDescription = Some("ITSA - POA 2"),
                       outstandingAmount = Some(500.00),
                       originalAmount = Some(1000.00),
-                      documentDate = LocalDate.of(2018, 3, 29)
+                      documentDate = LocalDate.of(2018, 3, 29),
+                      effectiveDateOfPayment = Some(currentDate.minusDays(1))
                     )
                   ),
                   financialDetails = List(

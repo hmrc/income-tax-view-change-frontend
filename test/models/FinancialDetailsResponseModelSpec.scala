@@ -92,7 +92,8 @@ class FinancialDetailsResponseModelSpec extends UnitSpec with Matchers {
       documentText = Some("documentText"),
       outstandingAmount = None,
       originalAmount = None,
-      documentDate = LocalDate.parse("2018-03-21"))
+      documentDate = LocalDate.parse("2018-03-21"),
+      effectiveDateOfPayment = Some(LocalDate.parse("2021-12-01")))
 
     val fdm: FinancialDetailsModel = FinancialDetailsModel(BalanceDetails(1, 2, 3, None, None, None, None), List.empty, List(fd1, fd2))
 
@@ -135,7 +136,8 @@ class FinancialDetailsResponseModelSpec extends UnitSpec with Matchers {
       documentText = Some("documentText"),
       outstandingAmount = None,
       originalAmount = None,
-      documentDate = LocalDate.parse("2018-03-21"))
+      documentDate = LocalDate.parse("2018-03-21"),
+      effectiveDateOfPayment = Some(LocalDate.parse("2017-01-31")))
 
     val dd2 = DocumentDetail(taxYear = 2018,
       transactionId = "transid2",
@@ -143,7 +145,8 @@ class FinancialDetailsResponseModelSpec extends UnitSpec with Matchers {
       documentText = Some("documentText2"),
       outstandingAmount = None,
       originalAmount = None,
-      documentDate = LocalDate.parse("2018-03-21"))
+      documentDate = LocalDate.parse("2018-03-21"),
+      effectiveDateOfPayment = Some(LocalDate.parse("2021-12-01")))
 
     val fdm: FinancialDetailsModel = FinancialDetailsModel(BalanceDetails(1, 2, 3, None, None, None, None), List(dd1, dd2), List(fd1, fd2, fd3, fd4))
 

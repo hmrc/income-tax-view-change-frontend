@@ -60,7 +60,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
   val updateDateAndOverdueObligations: (LocalDate, Seq[LocalDate]) = (LocalDate.of(updateYear.toInt, Month.JANUARY, 1), Seq.empty[LocalDate])
   val nextPaymentDate: LocalDate = LocalDate.of(nextPaymentYear.toInt, Month.JANUARY, 31)
   val nextPaymentDate2: LocalDate = LocalDate.of(nextPaymentYear2.toInt, Month.JANUARY, 31)
-  val emptyWhatYouOweChargesListIndividual: WhatYouOweChargesList = WhatYouOweChargesList(BalanceDetails(0.0, 0.0, 0.0, None, None, None,None))
+  val emptyWhatYouOweChargesListIndividual: WhatYouOweChargesList = WhatYouOweChargesList(BalanceDetails(0.0, 0.0, 0.0, None, None, None, None))
   val oneOverdueBCDPaymentInWhatYouOweChargesListIndividual: WhatYouOweChargesList =
     emptyWhatYouOweChargesListIndividual.copy(
       outstandingChargesModel = Some(OutstandingChargesModel(List(OutstandingChargeModel("BCD", Some("2019-01-31"), 1.67, 2345))))
@@ -133,9 +133,10 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
     app.injector.instanceOf[MessagesControllerComponents],
     app.injector.instanceOf[FrontendAppConfig]
   )
+
   when(mockDateService.getCurrentDate(any())) thenReturn LocalDate.now()
 
-  def disableAllSwitches() : Unit = {
+  def disableAllSwitches(): Unit = {
     switches.foreach(switch => disable(switch))
   }
 
@@ -148,12 +149,13 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
     "return ok (200)" which {
       "there is a next payment due date to display" in new Setup {
         disableAllSwitches()
-        when(NextUpdatesService.getNextDeadlineDueDateAndOverDueObligations(any(), any(), any(),any())) thenReturn Future.successful(updateDateAndOverdueObligations)
+        when(NextUpdatesService.getNextDeadlineDueDateAndOverDueObligations(any(), any(), any(), any())) thenReturn Future.successful(updateDateAndOverdueObligations)
         mockSingleBusinessIncomeSource()
         when(financialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
           .thenReturn(Future.successful(List(FinancialDetailsModel(
             balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
-            documentDetails = List(DocumentDetail(nextPaymentYear.toInt, "testId", Some("ITSA- POA 1"), Some("documentText"), Some(1000.00), None, LocalDate.of(2018, 3, 29))),
+            documentDetails = List(DocumentDetail(nextPaymentYear.toInt, "testId", Some("ITSA- POA 1"), Some("documentText"), Some(1000.00), None, LocalDate.of(2018, 3, 29),
+              effectiveDateOfPayment = Some(LocalDate.of(2019, 1, 31)))),
             financialDetails = List(FinancialDetail(taxYear = nextPaymentYear, mainType = Some("SA Payment on Account 1"),
               transactionId = Some("testId"),
               items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate.toString))))))
@@ -171,7 +173,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
 
       "there is a next payment due date to display when getWhatYouOweChargesList contains overdue payment" in new Setup {
         disableAllSwitches()
-        when(NextUpdatesService.getNextDeadlineDueDateAndOverDueObligations(any(), any(), any(),any())) thenReturn Future.successful(updateDateAndOverdueObligations)
+        when(NextUpdatesService.getNextDeadlineDueDateAndOverDueObligations(any(), any(), any(), any())) thenReturn Future.successful(updateDateAndOverdueObligations)
         mockSingleBusinessIncomeSource()
         when(financialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
           .thenReturn(Future.successful(List(FinancialDetailsErrorModel(1, "testString"))))
@@ -188,24 +190,27 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
 
       "display number of payments due when there are multiple payment due and dunning locks" in new Setup {
         disableAllSwitches()
-        when(NextUpdatesService.getNextDeadlineDueDateAndOverDueObligations(any(), any(), any(),any())) thenReturn Future.successful(updateDateAndOverdueObligations)
+        when(NextUpdatesService.getNextDeadlineDueDateAndOverDueObligations(any(), any(), any(), any())) thenReturn Future.successful(updateDateAndOverdueObligations)
         mockSingleBusinessIncomeSource()
 
         when(financialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
           .thenReturn(Future.successful(List(
             FinancialDetailsModel(
               balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
-              documentDetails = List(DocumentDetail(nextPaymentYear2.toInt, "testId1", None, None, Some(1000.00), None, LocalDate.of(2018, 3, 29))),
+              documentDetails = List(DocumentDetail(nextPaymentYear2.toInt, "testId1", None, None, Some(1000.00), None, LocalDate.of(2018, 3, 29),
+                effectiveDateOfPayment = Some(LocalDate.of(2019, 1, 31)))),
               financialDetails = List(FinancialDetail(taxYear = nextPaymentYear2, transactionId = Some("testId1"),
                 items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate2.toString))))))),
             FinancialDetailsModel(
               balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
-              documentDetails = List(DocumentDetail(nextPaymentYear2.toInt, "testId2", Some("ITSA- POA 1"), Some("documentText"), Some(1000.00), None, LocalDate.of(2018, 3, 29))),
+              documentDetails = List(DocumentDetail(nextPaymentYear2.toInt, "testId2", Some("ITSA- POA 1"), Some("documentText"), Some(1000.00), None, LocalDate.of(2018, 3, 29),
+                effectiveDateOfPayment = Some(LocalDate.of(2019, 1, 31)))),
               financialDetails = List(FinancialDetail(taxYear = nextPaymentYear2, mainType = Some("SA Payment on Account 1"), transactionId = Some("testId2"),
                 items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate2.toString), dunningLock = Some("Stand over order"))))))),
             FinancialDetailsModel(
               balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
-              documentDetails = List(DocumentDetail(nextPaymentYear.toInt, "testId3", Some("ITSA - POA 2"), Some("documentText"), Some(1000.00), None, LocalDate.of(2018, 3, 29))),
+              documentDetails = List(DocumentDetail(nextPaymentYear.toInt, "testId3", Some("ITSA - POA 2"), Some("documentText"), Some(1000.00), None, LocalDate.of(2018, 3, 29),
+                effectiveDateOfPayment = Some(LocalDate.of(2019, 1, 31)))),
               financialDetails = List(FinancialDetail(nextPaymentYear, mainType = Some("SA Payment on Account 2"),
                 transactionId = Some("testId3"),
                 items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate.toString)))))))
@@ -223,31 +228,33 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
       }
 
       "display number of payments due when there are multiple payment due without dunning lock and filter out payments" in new Setup {
-        when(NextUpdatesService.getNextDeadlineDueDateAndOverDueObligations(any(), any(), any(),any())) thenReturn Future.successful(updateDateAndOverdueObligations)
+        when(NextUpdatesService.getNextDeadlineDueDateAndOverDueObligations(any(), any(), any(), any())) thenReturn Future.successful(updateDateAndOverdueObligations)
         mockSingleBusinessIncomeSource()
 
         when(financialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
           .thenReturn(Future.successful(List(
             FinancialDetailsModel(
               balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
-              documentDetails = List(DocumentDetail(nextPaymentYear2.toInt, "testId1", None, None, Some(1000.00), None, LocalDate.of(2018, 3, 29))),
+              documentDetails = List(DocumentDetail(nextPaymentYear2.toInt, "testId1", None, None, Some(1000.00), None, LocalDate.of(2018, 3, 29),
+                effectiveDateOfPayment = Some(LocalDate.of(2019, 1, 31)))),
               financialDetails = List(FinancialDetail(taxYear = nextPaymentYear2, transactionId = Some("testId1"),
                 items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate2.toString))))))),
             FinancialDetailsModel(
               balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
               documentDetails = List(DocumentDetail(nextPaymentYear2.toInt, "testId1", None, None, Some(1000.00), None, LocalDate.of(2018, 3, 29),
-                paymentLotItem = Some("123"), paymentLot = Some("456")
-              )),
+                paymentLotItem = Some("123"), paymentLot = Some("456"), effectiveDateOfPayment = Some(LocalDate.of(2019, 1, 31)))),
               financialDetails = List(FinancialDetail(taxYear = nextPaymentYear2, transactionId = Some("testId1"),
                 items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate2.toString))))))),
             FinancialDetailsModel(
               balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
-              documentDetails = List(DocumentDetail(nextPaymentYear2.toInt, "testId2", Some("ITSA- POA 1"), Some("documentText"), Some(1000.00), None, LocalDate.of(2018, 3, 29))),
+              documentDetails = List(DocumentDetail(nextPaymentYear2.toInt, "testId2", Some("ITSA- POA 1"), Some("documentText"), Some(1000.00), None, LocalDate.of(2018, 3, 29),
+                effectiveDateOfPayment = Some(LocalDate.of(2019, 1, 31)))),
               financialDetails = List(FinancialDetail(taxYear = nextPaymentYear2, mainType = Some("SA Payment on Account 1"), transactionId = Some("testId2"),
                 items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate2.toString))))))),
             FinancialDetailsModel(
               balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
-              documentDetails = List(DocumentDetail(nextPaymentYear.toInt, "testId3", Some("ITSA - POA 2"), Some("documentText"), Some(1000.00), None, LocalDate.of(2018, 3, 29))),
+              documentDetails = List(DocumentDetail(nextPaymentYear.toInt, "testId3", Some("ITSA - POA 2"), Some("documentText"), Some(1000.00), None, LocalDate.of(2018, 3, 29),
+                effectiveDateOfPayment = Some(LocalDate.of(2019, 1, 31)))),
               financialDetails = List(FinancialDetail(nextPaymentYear, mainType = Some("SA Payment on Account 2"),
                 transactionId = Some("testId3"),
                 items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate.toString)))))))
@@ -266,7 +273,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
 
       "Not display the next payment due date" when {
         "there is a problem getting financial details" in new Setup {
-          when(NextUpdatesService.getNextDeadlineDueDateAndOverDueObligations(any(), any(), any(),any())) thenReturn Future.successful(updateDateAndOverdueObligations)
+          when(NextUpdatesService.getNextDeadlineDueDateAndOverDueObligations(any(), any(), any(), any())) thenReturn Future.successful(updateDateAndOverdueObligations)
           mockSingleBusinessIncomeSource()
           when(financialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
             .thenReturn(Future.successful(List(FinancialDetailsErrorModel(1, "testString"))))
@@ -283,7 +290,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
         }
 
         "There are no financial detail" in new Setup {
-          when(NextUpdatesService.getNextDeadlineDueDateAndOverDueObligations(any(), any(), any(),any())) thenReturn Future.successful(updateDateAndOverdueObligations)
+          when(NextUpdatesService.getNextDeadlineDueDateAndOverDueObligations(any(), any(), any(), any())) thenReturn Future.successful(updateDateAndOverdueObligations)
           mockSingleBusinessIncomeSource()
           when(financialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
             .thenReturn(Future.successful(List(FinancialDetailsModel(BalanceDetails(1.00, 2.00, 3.00, None, None, None, None), List(), List()))))
@@ -300,7 +307,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
         }
 
         "All financial detail bill are paid" in new Setup {
-          when(NextUpdatesService.getNextDeadlineDueDateAndOverDueObligations(any(), any(), any(),any())) thenReturn Future.successful(updateDateAndOverdueObligations)
+          when(NextUpdatesService.getNextDeadlineDueDateAndOverDueObligations(any(), any(), any(), any())) thenReturn Future.successful(updateDateAndOverdueObligations)
           mockSingleBusinessIncomeSource()
           when(financialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
             .thenReturn(Future.successful(List(FinancialDetailsModel(
