@@ -23,7 +23,7 @@ import helpers.servicemocks.AuditStub.{verifyAuditContainsDetail, verifyAuditEve
 import helpers.servicemocks.AuthStub.{titleInternalServer, titleTechError}
 import helpers.servicemocks.{AuditStub, IncomeTaxCalculationStub, IncomeTaxViewChangeStub}
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
-import models.core.AccountingPeriodModel
+import models.core.{AccountingPeriodModel, CessationModel}
 import models.financialDetails._
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, PropertyDetailsModel}
 import models.liabilitycalculation.LiabilityCalculationError
@@ -35,8 +35,10 @@ import play.api.libs.json.Json
 import play.api.libs.ws.WSResponse
 import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants._
+import testConstants.BusinessDetailsIntegrationTestConstants.{b2CessationDate, b2CessationReason, b2TradingStart}
 import testConstants.IncomeSourceIntegrationTestConstants.{singleBusinessResponse, singleBusinessResponseWoMigration}
 import testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessful
+import testConstants.PropertyDetailsIntegrationTestConstants.{propertyIncomeType, propertyTradingStartDate}
 import testConstants.messages.TaxYearSummaryMessages._
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.auth.core.retrieve.Name
@@ -53,13 +55,17 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
       Some("testId"),
       Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
       Some("Test Trading Name"),
-      Some(getCurrentTaxYearEnd)
+      Some(getCurrentTaxYearEnd),
+      Some(b2TradingStart),
+      Some(CessationModel(Some(b2CessationDate), Some(b2CessationReason)))
     )),
     property = Some(
       PropertyDetailsModel(
         Some("testId2"),
         Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
-        Some(getCurrentTaxYearEnd)
+        Some(getCurrentTaxYearEnd),
+        propertyIncomeType,
+        propertyTradingStartDate
       )
     )
   )

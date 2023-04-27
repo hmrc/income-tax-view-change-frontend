@@ -21,12 +21,13 @@ import auth.MtdItUser
 import config.featureswitch.{CreditsRefundsRepay, CutOverCredits, MFACreditsAndDebits}
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
-import models.core.AccountingPeriodModel
+import models.core.{AccountingPeriodModel, CessationModel}
 import models.financialDetails.BalanceDetails
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants._
+import testConstants.BusinessDetailsIntegrationTestConstants.{b2CessationDate, b2CessationReason, b2TradingStart}
 import testConstants.FinancialDetailsIntegrationTestConstants.documentDetailWithDueDateFinancialDetailListModel
 import testConstants.IncomeSourceIntegrationTestConstants.{multipleBusinessesAndPropertyResponse, propertyOnlyResponseWithMigrationData, testValidFinancialDetailsModelCreditAndRefundsJson, testValidFinancialDetailsModelJson}
 import testConstants.OutstandingChargesIntegrationTestConstants.validOutStandingChargeResponseJsonWithAciAndBcdCharges
@@ -154,7 +155,9 @@ class CreditAndRefundControllerISpec extends ComponentSpecBase {
               Some("testId"),
               Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
               None,
-              Some(getCurrentTaxYearEnd)
+              Some(getCurrentTaxYearEnd),
+              tradingStartDate = Some(b2TradingStart),
+              cessation = Some(CessationModel(Some(b2CessationDate), Some(b2CessationReason)))
             )),
             property = None
           )
