@@ -24,8 +24,8 @@ case class BusinessDetailsModel(incomeSourceId: Option[String],
                                 accountingPeriod: Option[AccountingPeriodModel],
                                 tradingName: Option[String],
                                 firstAccountingPeriodEndDate: Option[LocalDate],
-                                tradingStartDate: Option[String] = None,
-                                cessation: Option[CessationModel] = None)
+                                tradingStartDate: Option[String],
+                                cessation: Option[CessationModel])
 
 object BusinessDetailsModel {
   implicit val format: Format[BusinessDetailsModel] = Json.format[BusinessDetailsModel]
