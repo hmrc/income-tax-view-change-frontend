@@ -16,7 +16,11 @@ $hmrc-assets-path: "/report-quarterly/income-and-expenses/view/assets/lib/hmrc-f
 
 .hmrc-account-menu {
   border-top: 1px solid #b1b4b6;
-  font-size: 1rem
+  font-size: 16px
+}
+
+.hmrc-account-menu_link {
+  font-size: 1rem;
 }
 
 .nav-bar-wrapper {
