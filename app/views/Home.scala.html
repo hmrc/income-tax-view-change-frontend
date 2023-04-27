@@ -318,13 +318,13 @@
 }
 
 @incomeSourcesTile = {
-    @if(incomeSourcesEnabled && isUserMigrated) {
+    @if(incomeSourcesEnabled) {
         @home_tile("income-sources-tile", messages("home.incomeSources.heading")) {
             @p(classes = "govuk-!-margin-bottom-4") {
                 @link(link = addIncomeSourceControllerURL, messageKey = "home.incomeSources.addIncomeSource.view")
             }
             @p(classes = "govuk-!-margin-bottom-4") {
-                @link(link = manageIncomeSourceControllerURL, messageKey = "home.incomeSources.changeReportingPeriod.view")
+                @link(link = manageIncomeSourceControllerURL, messageKey = "home.incomeSources.manageIncomeSource.view")
             }
             @if(displayCeaseAnIncome) {
                 @p(classes = "govuk-!-margin-bottom-4") {

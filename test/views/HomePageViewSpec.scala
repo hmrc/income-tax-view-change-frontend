@@ -303,7 +303,7 @@ class HomePageViewSpec extends TestSupport {
 
     }
 
-    "have an Income Sources tile with feature switch enabled for migrated user" which {
+    "have an Income Sources tile with feature switch enabled" which {
       "has a heading" in new Setup(user = testMtdItUserMigrated(), incomeSourcesEnabled = true) {
         getElementById("income-sources-tile").map(_.select("h2").first().text()) shouldBe Some(messages("home.incomeSources.heading"))
       }
@@ -312,14 +312,11 @@ class HomePageViewSpec extends TestSupport {
         getElementById("income-sources-tile").map(_.select("div > p:nth-child(2) > a").attr("href")) shouldBe Some(routes.AddIncomeSourceController.show().url)
       }
       "has a link to ManageIncomeSourceController.show()" in new Setup(user = testMtdItUserMigrated(), incomeSourcesEnabled = true) {
-        getElementById("income-sources-tile").map(_.select("div > p:nth-child(3) > a").text()) shouldBe Some(messages("home.incomeSources.changeReportingPeriod.view"))
+        getElementById("income-sources-tile").map(_.select("div > p:nth-child(3) > a").text()) shouldBe Some(messages("home.incomeSources.manageIncomeSource.view"))
         getElementById("income-sources-tile").map(_.select("div > p:nth-child(3) > a").attr("href")) shouldBe Some(routes.ManageIncomeSourceController.show().url)
       }
     }
     "not have an Income Sources tile" when {
-      "user is not migrated" in new Setup(user = testMtdItUserNotMigrated(), incomeSourcesEnabled = true) {
-        getElementById("income-sources-tile") shouldBe None
-      }
       "feature switch is disabled" in new Setup(user = testMtdItUserMigrated(), incomeSourcesEnabled = false) {
         getElementById("income-sources-tile") shouldBe None
       }

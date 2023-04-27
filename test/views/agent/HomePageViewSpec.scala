@@ -327,7 +327,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
           getElementById("income-sources-tile").map(_.select("div > p:nth-child(2) > a").attr("href")) shouldBe Some(routes.AddIncomeSourceController.showAgent().url)
         }
         "has a link to ManageIncomeSourceController.showAgent()" in new Setup(user = testMtdItUserMigrated, incomeSourcesEnabled = true) {
-          getElementById("income-sources-tile").map(_.select("div > p:nth-child(3) > a").text()) shouldBe Some(messages("home.incomeSources.changeReportingPeriod.view"))
+          getElementById("income-sources-tile").map(_.select("div > p:nth-child(3) > a").text()) shouldBe Some(messages("home.incomeSources.manageIncomeSource.view"))
           getElementById("income-sources-tile").map(_.select("div > p:nth-child(3) > a").attr("href")) shouldBe Some(routes.ManageIncomeSourceController.showAgent().url)
         }
       }
@@ -340,12 +340,6 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
         }
 
         expectedException.getMessage shouldBe "Missing Mandatory Expected Field: Next Payment Due Date"
-      }
-    }
-
-    "the user is not migrated" should {
-      "not have an Income Sources tile" in new Setup(user = testMtdItUserNotMigrated, incomeSourcesEnabled = true) {
-        getElementById("income-sources-tile") shouldBe None
       }
     }
   }
