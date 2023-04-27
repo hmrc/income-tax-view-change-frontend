@@ -50,7 +50,7 @@ object BusinessDetailsTestConstants {
   val testContactDetails = ContactDetailsModel(Some("123456789"), Some("0123456789"), Some("8008135"), Some("google@chuckNorris.com"))
   val testCessation = CessationModel(Some(LocalDate.of(year2018, Month.JANUARY, 1)), Some("It was a stupid idea anyway"))
   val testMtdItId = "XIAT0000000000A"
-  val testStartDate = "2022-01-01"
+  val testStartDate = LocalDate.parse("2022-01-01")
   val business1 = BusinessDetailsModel(
     incomeSourceId = Some(testSelfEmploymentId),
     accountingPeriod = Some(testBusinessAccountingPeriod),

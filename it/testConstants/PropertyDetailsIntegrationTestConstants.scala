@@ -31,7 +31,7 @@ object PropertyDetailsIntegrationTestConstants {
   val propertyAccountingEnd = startYear.toString + "-12-31"
   val propertyAccounringEndLocalDate = LocalDate.of(startYear, 12, 31)
   val propertyIncomeType = Some("property-unspecified")
-  val propertyTradingStartDate = Some((startYear - 1).toString + "-01-01")
+  val propertyTradingStartDate = Some(LocalDate.parse((startYear - 1).toString + "-01-01"))
 
   def propertyAccountingStartLocalDateOfCurrentYear(year: Int) = LocalDate.of(year, 1, 1)
 

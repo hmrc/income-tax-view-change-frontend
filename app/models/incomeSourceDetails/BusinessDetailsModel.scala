@@ -24,7 +24,7 @@ case class BusinessDetailsModel(incomeSourceId: Option[String],
                                 accountingPeriod: Option[AccountingPeriodModel],
                                 tradingName: Option[String],
                                 firstAccountingPeriodEndDate: Option[LocalDate],
-                                tradingStartDate: Option[String],
+                                tradingStartDate: Option[LocalDate],
                                 cessation: Option[CessationModel])
 
 object BusinessDetailsModel {
