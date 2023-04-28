@@ -46,15 +46,18 @@ class TaxYearsControllerISpec extends ComponentSpecBase with FeatureSwitching {
       Some("testId"),
       Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
       Some("Test Trading Name"),
+      Some(getCurrentTaxYearEnd),
       None,
-      Some(getCurrentTaxYearEnd)
+      None
     )),
     property = Some(
       PropertyDetailsModel(
         Some("testId2"),
         Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
         None,
-        Some(getCurrentTaxYearEnd)
+        None,
+        Some(getCurrentTaxYearEnd),
+        None
       )
     )
   )
@@ -67,12 +70,15 @@ class TaxYearsControllerISpec extends ComponentSpecBase with FeatureSwitching {
       Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
       Some("Test Trading Name"),
       None,
+      None,
       None
     )),
     property = Some(
       PropertyDetailsModel(
         Some("testId2"),
         Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
+        None,
+        None,
         None,
         None
       )

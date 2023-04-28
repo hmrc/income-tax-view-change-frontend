@@ -87,9 +87,9 @@ class HomeController @Inject()(val homeView: views.html.Home,
     implicit val isTimeMachineEnabled: Boolean = isEnabled(TimeMachineAddYear)
     nextUpdatesService.getNextDeadlineDueDateAndOverDueObligations.flatMap { latestDeadlineDate =>
 
-      val unpaidCharges: Future[List[FinancialDetailsResponseModel]] = financialDetailsService.getAllUnpaidFinancialDetails(isEnabled(CodingOut))
+      val unpaidChargesFuture: Future[List[FinancialDetailsResponseModel]] = financialDetailsService.getAllUnpaidFinancialDetails(isEnabled(CodingOut))
 
-      val dueDates: Future[List[LocalDate]] = unpaidCharges.map {
+      val dueDates: Future[List[LocalDate]] = unpaidChargesFuture.map {
         _.flatMap {
           case fdm: FinancialDetailsModel => fdm.validChargesWithRemainingToPay.getAllDueDates
           case _ => List.empty[LocalDate]
@@ -98,7 +98,8 @@ class HomeController @Inject()(val homeView: views.html.Home,
 
       for {
         paymentsDue <- dueDates.map(_.sortBy(_.toEpochDay()))
-        dunningLockExistsValue <- unpaidCharges.map(_.collectFirst { case fdm: FinancialDetailsModel if fdm.dunningLockExists => true })
+        unpaidCharges <- unpaidChargesFuture
+        dunningLockExistsValue = unpaidCharges.collectFirst { case fdm: FinancialDetailsModel if fdm.dunningLockExists => true }.getOrElse(false)
         outstandingChargesModel <- whatYouOweService.getWhatYouOweChargesList(unpaidCharges, isEnabled(CodingOut), isEnabled(MFACreditsAndDebits)).map(_.outstandingChargesModel match {
           case Some(OutstandingChargesModel(locm)) => locm.filter(ocm => ocm.relevantDueDate.isDefined && ocm.chargeName == "BCD")
           case _ => Nil
@@ -124,7 +125,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
             latestDeadlineDate._1,
             Some(overDuePaymentsCount),
             Some(overDueUpdatesCount),
-            dunningLockExistsValue.isDefined,
+            dunningLockExistsValue,
             incomeSourceCurrentTaxYear,
             displayCeaseAnIncome,
             isAgent = isAgent

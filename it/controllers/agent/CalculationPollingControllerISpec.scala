@@ -26,7 +26,9 @@ import models.liabilitycalculation.LiabilityCalculationError
 import play.api.http.HeaderNames
 import play.api.http.Status._
 import testConstants.BaseIntegrationTestConstants._
+import testConstants.BusinessDetailsIntegrationTestConstants.b2TradingStart
 import testConstants.NewCalcBreakdownItTestConstants._
+import testConstants.PropertyDetailsIntegrationTestConstants.{propertyIncomeType, propertyTradingStartDate}
 
 import java.time.LocalDate
 import scala.concurrent.ExecutionContext
@@ -67,15 +69,18 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
       Some("testId"),
       Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
       Some("Test Trading Name"),
-      cessation = None,
-      Some(LocalDate.of(2018,1,1))
-    )),
+      Some(LocalDate.of(2018,1,1)),
+      Some(b2TradingStart),
+      None)
+    ),
     property = Some(
       PropertyDetailsModel(
         Some("testId2"),
         Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
-        cessation = None,
-        Some(LocalDate.of(2018,1,1))
+        Some(LocalDate.of(2018,1,1)),
+        propertyIncomeType,
+        propertyTradingStartDate,
+        None
       )
     )
   )

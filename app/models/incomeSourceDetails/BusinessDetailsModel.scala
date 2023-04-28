@@ -23,8 +23,9 @@ import play.api.libs.json.{Format, Json}
 case class BusinessDetailsModel(incomeSourceId: Option[String],
                                 accountingPeriod: Option[AccountingPeriodModel],
                                 tradingName: Option[String],
-                                cessation: Option[CessationModel],
-                                firstAccountingPeriodEndDate: Option[LocalDate])
+                                firstAccountingPeriodEndDate: Option[LocalDate],
+                                tradingStartDate: Option[LocalDate],
+                                cessation: Option[CessationModel])
 
 object BusinessDetailsModel {
   implicit val format: Format[BusinessDetailsModel] = Json.format[BusinessDetailsModel]

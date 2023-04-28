@@ -76,8 +76,9 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
             end = LocalDate.of(getTaxEndYear(LocalDate.now.minusYears(count - 1)), april, fifth)
           )),
           None,
-          None,
-          firstAccountingPeriodEndDate = Some(LocalDate.of(getTaxEndYear(LocalDate.now.minusYears(count - 1)), april, fifth))
+          firstAccountingPeriodEndDate = Some(LocalDate.of(getTaxEndYear(LocalDate.now.minusYears(count - 1)), april, fifth)),
+          tradingStartDate = None,
+          cessation = None
         )
       },
       property = None
@@ -99,8 +100,9 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
         Some("testId"),
         Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
         None,
-        None,
-        Some(getCurrentTaxYearEnd.minusYears(1))
+        Some(getCurrentTaxYearEnd.minusYears(1)),
+        tradingStartDate = None,
+        cessation = None
       )
     ),
     property = None

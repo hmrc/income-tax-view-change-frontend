@@ -50,11 +50,13 @@ object BusinessDetailsTestConstants {
   val testContactDetails = ContactDetailsModel(Some("123456789"), Some("0123456789"), Some("8008135"), Some("google@chuckNorris.com"))
   val testCessation = CessationModel(Some(LocalDate.of(year2018, Month.JANUARY, 1)), Some("It was a stupid idea anyway"))
   val testMtdItId = "XIAT0000000000A"
+  val testStartDate = LocalDate.parse("2022-01-01")
   val business1 = BusinessDetailsModel(
     incomeSourceId = Some(testSelfEmploymentId),
     accountingPeriod = Some(testBusinessAccountingPeriod),
     tradingName = Some(testTradeName),
     firstAccountingPeriodEndDate = Some(LocalDate.of(year2018, Month.APRIL, 5)),
+    tradingStartDate = Some(testStartDate),
     cessation = None
   )
 
@@ -64,7 +66,8 @@ object BusinessDetailsTestConstants {
     accountingPeriod = Some(testBusinessAccountingPeriod),
     tradingName = Some(testTradeName),
     firstAccountingPeriodEndDate = None,
-    cessation = None
+    cessation = None,
+    tradingStartDate = Some(testStartDate)
   )
 
   val business2018 = BusinessDetailsModel(
@@ -72,6 +75,7 @@ object BusinessDetailsTestConstants {
     accountingPeriod = Some(test2018BusinessAccountingPeriod),
     tradingName = Some(testTradeName),
     firstAccountingPeriodEndDate = None,
+    tradingStartDate = Some(testStartDate),
     cessation = None
   )
 
@@ -80,7 +84,8 @@ object BusinessDetailsTestConstants {
     accountingPeriod = Some(test2019BusinessAccountingPeriod),
     tradingName = Some(testTradeName),
     firstAccountingPeriodEndDate = None,
-    cessation = None
+    cessation = None,
+    tradingStartDate = Some(testStartDate)
   )
 
   val businessNotValidObligationType = fakeNextUpdatesModel(NextUpdateModel(
@@ -96,6 +101,7 @@ object BusinessDetailsTestConstants {
     incomeSourceId = Some(testSelfEmploymentId),
     accountingPeriod = Some(AccountingPeriodModel(start = LocalDate.of(year2017, Month.APRIL, 6), end = LocalDate.of(year2018, Month.APRIL, 5))),
     tradingName = Some(testTradeName),
+    tradingStartDate = Some(testStartDate),
     firstAccountingPeriodEndDate = Some(getCurrentTaxYearEnd.minusYears(1)),
     cessation = None
   )
@@ -105,6 +111,7 @@ object BusinessDetailsTestConstants {
     accountingPeriod = Some(testBusinessAccountingPeriod),
     tradingName = Some(testTradeName),
     firstAccountingPeriodEndDate = None,
+    tradingStartDate = Some(testStartDate),
     cessation = Some(testCessation)
   )
 
@@ -113,6 +120,7 @@ object BusinessDetailsTestConstants {
     accountingPeriod = Some(AccountingPeriodModel(start = LocalDate.of(year2017, Month.APRIL, 6), end = LocalDate.of(year2018, Month.APRIL, 5))),
     tradingName = Some(testTradeName),
     firstAccountingPeriodEndDate = Some(getCurrentTaxYearEnd.minusYears(1)),
+    tradingStartDate = Some(testStartDate),
     cessation = None
   )
 

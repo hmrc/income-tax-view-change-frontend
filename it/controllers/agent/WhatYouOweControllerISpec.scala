@@ -36,7 +36,8 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
       Some(AccountingPeriodModel(testDate, testDate.plusYears(1))),
       None,
       None,
-      Some(getCurrentTaxYearEnd)
+      Some(getCurrentTaxYearEnd),
+      None
     )),
     property = None
   )
@@ -86,7 +87,8 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
               Some(AccountingPeriodModel(testDate, testDate.plusYears(1))),
               None,
               None,
-              Some(getCurrentTaxYearEnd)
+              Some(getCurrentTaxYearEnd),
+              None
             )),
             property = None
           )

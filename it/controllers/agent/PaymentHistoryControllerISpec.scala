@@ -74,7 +74,8 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase {
       Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
       None,
       None,
-      Some(getCurrentTaxYearEnd)
+      Some(getCurrentTaxYearEnd),
+      None
     )),
     property = None
   )
