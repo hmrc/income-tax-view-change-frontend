@@ -17,8 +17,9 @@
 @import auth.MtdItUser
 @import views.html.layouts.unifiedLayout
 @import views.html.components._
-@import exceptions.MissingFieldException
 @import uk.gov.hmrc.govukfrontend.views.html.components._
+@import exceptions.MissingFieldException
+@import models.incomeSourceDetails.BusinessNameForm
 
 @this(
 mainTemplate: unifiedLayout,
@@ -27,6 +28,32 @@ h1: h1,
 h2: h2,
 p: p,
 link: link,
-govukInsetText : GovukInsetText
+govukInsetText : GovukInsetText,
+govukButton : GovukButton
 )
 
+@(form: Form[BusinessNameForm])(implicit messages: Messages, user: auth.MtdItUser[_])
+
+@getMessage(key: String, args: String*) = @{
+messages(s"add-business-name.$key", args: _*)
+}
+
+@mainTemplate(pageTitle = messages(""),
+backUrl = None,
+isAgent = false,
+btaNavPartial = user.btaNavPartial) {
+
+@h1(getMessage("heading"))
+
+@p() { @getMessage("p1") }
+@p() { @getMessage("p2") }
+
+
+<input class="govuk-input" id="event-name" name="event-name" type="text">
+
+@govukButton(Button(
+content = Text("Continue")
+))
+
+
+}

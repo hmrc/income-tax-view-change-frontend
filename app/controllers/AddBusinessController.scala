@@ -16,15 +16,20 @@
 
 package controllers
 
-
+import java.time.{LocalDate, Month}
 import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
-import config.{FrontendAppConfig, ItvcErrorHandler, AgentItvcErrorHandler}
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
+import play.api.data._
+import play.api.data.Forms._
+import play.api.data.validation.Constraints._
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
+import views.html.AddBusiness
+import models.incomeSourceDetails.BusinessNameForm
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -34,6 +39,7 @@ class AddBusinessController @Inject()(authenticate: AuthenticationPredicate,
                                              val authorisedFunctions: AuthorisedFunctions,
                                              checkSessionTimeout: SessionTimeoutPredicate,
                                              retrieveNino: NinoPredicate,
+                                             val addBusinessView: AddBusiness,
                                              val retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                              val retrieveBtaNavBar: NavBarPredicate,
                                              val itvcErrorHandler: ItvcErrorHandler)
@@ -43,6 +49,7 @@ class AddBusinessController @Inject()(authenticate: AuthenticationPredicate,
                                              val ec: ExecutionContext)
   extends ClientConfirmedController with I18nSupport with FeatureSwitching {
 
+  //TODO add fs
   def show(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
@@ -51,7 +58,12 @@ class AddBusinessController @Inject()(authenticate: AuthenticationPredicate,
 
   def handleRequest()(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
     Future {
-      Ok("test view")
+      Ok(addBusinessView(BusinessNameForm.form))
     }
   }
+
+
+
+
+
 }
