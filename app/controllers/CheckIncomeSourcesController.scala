@@ -25,8 +25,10 @@ import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
+import exceptions.MissingFieldException
+import implicits.ImplicitDateFormatter
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
-import play.api.i18n.I18nSupport
+import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc._
 import services.IncomeSourceDetailsService
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
@@ -35,6 +37,7 @@ import views.html.notMigrated.NotMigratedUser
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
+import implicits.ImplicitDateFormatter
 
 @Singleton
 class CheckIncomeSourcesController @Inject()(val checkIncomeSources: CheckIncomeSources,
@@ -49,7 +52,7 @@ class CheckIncomeSourcesController @Inject()(val checkIncomeSources: CheckIncome
                                              val incomeSourceDetailsService: IncomeSourceDetailsService,
                                              val retrieveBtaNavBar: NavBarPredicate)
                                             (implicit val ec: ExecutionContext,
-                                             mcc: MessagesControllerComponents,
+                                             implicit override val mcc: MessagesControllerComponents,
                                              val appConfig: FrontendAppConfig) extends ClientConfirmedController with I18nSupport with FeatureSwitching {
 
   //TODO: Tie controller to FS
@@ -57,14 +60,47 @@ class CheckIncomeSourcesController @Inject()(val checkIncomeSources: CheckIncome
   def show(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
-      handleRequest()
+      handleRequest(dummyBusinessesAndPropertyIncome)
   }
 
-  def handleRequest()(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
+
+  def handleRequest(incomeSourceDetails: IncomeSourceDetailsModel)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
     Future {
-      Ok(checkIncomeSources(businessesAndPropertyIncome))
+      Ok(checkIncomeSources(
+        soleTraderBusinesses = incomeSourceDetails.businesses,
+        ukProperty = incomeSourceDetails.property.find(_.incomeSourceType.contains("uk-property")),
+        foreignProperty = incomeSourceDetails.property.find(_.incomeSourceType.contains("foreign-property")),
+        ceasedBusinesses = incomeSourceDetails.businesses.filter(_.cessation.map(_.date).nonEmpty),
+        isAgent = false))
     }
   }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   val business1 = BusinessDetailsModel(
     incomeSourceId = Some("XA00001234"),
@@ -92,10 +128,14 @@ class CheckIncomeSourcesController @Inject()(val checkIncomeSources: CheckIncome
     tradingStartDate = Some(LocalDate.of(2020, 1, 5))
   )
 
-  val businessesAndPropertyIncome: IncomeSourceDetailsModel = IncomeSourceDetailsModel(
+  val dummyBusinessesAndPropertyIncome: IncomeSourceDetailsModel = IncomeSourceDetailsModel(
     mtdbsa = "XIAT0000000000A",
     yearOfMigration = Some("2018"),
     businesses = List(business1, business2),
     property = Some(propertyDetails)
   )
+
+
 }
+
+

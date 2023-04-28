@@ -32,32 +32,27 @@
 @this(
     mainTemplate: unifiedLayout,
     implicitDateFormatter: ImplicitDateFormatterImpl,
-    appConfig: config.FrontendAppConfig,
     h1: h1,
     h2: h2,
     p: p,
     link: link,
-    detailsDropdown: detailsDropdown,
-    govukInsetText : GovukInsetText,
+    hr: hr,
     govukTable: GovukTable
 )
 
-@(incomeSourceDetails: IncomeSourceDetailsModel)(implicit messages: Messages,
-    user: auth.MtdItUser[_])
+@(
+    soleTraderBusinesses: List[BusinessDetailsModel],
+    ukProperty: Option[PropertyDetailsModel],
+    foreignProperty: Option[PropertyDetailsModel],
+    ceasedBusinesses: List[BusinessDetailsModel],
+    isAgent: Boolean
+)(implicit messages: Messages, user: auth.MtdItUser[_])
+
+<!--            FIX REDIRECTS !!!!-->
+<!--            ADD BACK LINK !!!!-->
+<!--            ADD AGENT FNLTY !!!!-->
 
 @import implicitDateFormatter.longDate
-
-@ukPropertyExists = @{ incomeSourceDetails.property match {
-    case Some(p) if p.incomeSourceType.contains("uk-property") => true
-    case _ => false
-}}
-
-@foreignPropertyExists = @{ incomeSourceDetails.property match {
-    case Some(p) if p.incomeSourceType.contains("foreign-property") => true
-    case _ => false
-}}
-
-@ceasedBusinessExists = @{ incomeSourceDetails.businesses.exists(_.cessation.map(_.date.nonEmpty)) }
 
 @getMessage(key: String, args: String*) = @{
     messages(s"check-income-sources.$key", args: _*)
@@ -65,12 +60,11 @@
 
 @mainTemplate(pageTitle = getMessage("title"),
     backUrl = None,
-    isAgent = false,
+    isAgent = isAgent,
     btaNavPartial = user.btaNavPartial) {
 
-<!--ADD BACK LINK !!-->
-
     @h1(getMessage("heading"))
+
     @p() { @getMessage("self-employment.p1") }
     @h2(getMessage("self-employment.h2"))
     @govukTable(Table(
@@ -78,55 +72,49 @@
             HeadCell(content = Text(getMessage("table-head.business-name"))),
             HeadCell(content = Text(getMessage("table-head.date-started")))
         )),
-        rows = incomeSourceDetails.businesses.map { business => Seq(
-            TableRow(Text(business.tradingName.getOrElse(throw MissingFieldException("Trading Name")))),
-            TableRow(Text(business.tradingStartDate.getOrElse(throw MissingFieldException("Trading Start Date")).toLongDate))
+        rows = soleTraderBusinesses.map { b => Seq(
+            TableRow(Text(b.tradingName.getOrElse(throw MissingFieldException("Trading Name")))),
+            TableRow(Text(b.tradingStartDate.getOrElse(throw MissingFieldException("Trading Start Date")).toLongDate))
         )}
     ))
-<!--FIX REDIRECT LINK!-->
     @link(link = "", messageKey = getMessage("self-employment.link"))
-    <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+    @hr()
 
     @h2(getMessage("uk-property.h2"))
     @p() { @getMessage("uk-property.p1") }
-    @if(ukPropertyExists) {
+    @if(ukProperty.nonEmpty) {
         @govukTable(Table(
             head = Some(List(
                 HeadCell(content = Text(getMessage("table-head.date-started")))
             )),
-            rows = incomeSourceDetails.property.filter(_.incomeSourceType.contains("uk-property")).map { ukProperty => Seq(Seq(
-                TableRow(Text(ukProperty.tradingStartDate.getOrElse(throw MissingFieldException("Trading Start Date")).toLongDate))
-            ))}.get
-        )) <!--REMOVE USE OF .get!!!!!-->
+            rows = Seq(Seq(
+                TableRow(Text(ukProperty.flatMap(_.tradingStartDate).getOrElse(throw MissingFieldException("Trading Start Date")).toLongDate))
+            ))
+        ))
     } else {
-        <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
-<!--            FIX REDIRECT BELOW !!!!-->
-        @link(link = "report-quarterly/income-and-expenses/view/income-sources/add/uk-property-business-start-date",
-            messageKey = getMessage("uk-property.link"))
-        <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+        @hr()
+        @link(link = "report-quarterly/income-and-expenses/view/income-sources/add/uk-property-business-start-date", messageKey = getMessage("uk-property.link"))
+        @hr()
     }
 
     @h2(getMessage("foreign-property.h2"))
-    @if(foreignPropertyExists) {
+
+    @if(foreignProperty.nonEmpty) {
         @govukTable(Table(
             head = Some(List(
                 HeadCell(content = Text(getMessage("table-head.date-started")))
             )),
-            rows = incomeSourceDetails.property.filter(_.incomeSourceType.contains("foreign-property")).map { foreignProperty => Seq(Seq(
-                TableRow(Text(foreignProperty.tradingStartDate.getOrElse(throw MissingFieldException("Trading Start Date")).toLongDate))
-            ))}.get
+            rows = Seq(Seq(
+                TableRow(Text(foreignProperty.flatMap(_.tradingStartDate).getOrElse(throw MissingFieldException("Trading Start Date")).toLongDate))
+            ))
         ))
-<!--            REMOVE USE OF .get above !!!!-->
-
     } else {
-        <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
-<!--            FIX REDIRECT BELOW !!!!-->
-        @link(link = "report-quarterly/income-and-expenses/view/income-sources/add/foreign-property-business-start-date",
-            messageKey = getMessage("foreign-property.link"))
-        <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+        @hr()
+        @link(link = "report-quarterly/income-and-expenses/view/income-sources/add/foreign-property-business-start-date", messageKey = getMessage("foreign-property.link"))
+        @hr()
     }
 
-    @if(ceasedBusinessExists) {
+    @if(ceasedBusinesses.nonEmpty) {
         @h2(getMessage("ceased-businesses.h2"))
         @govukTable(Table(
             head = Some(List(
@@ -134,7 +122,7 @@
                 HeadCell(content = Text(getMessage("table-head.date-started"))),
                 HeadCell(content = Text("Date ended"))
             )),
-            rows = incomeSourceDetails.businesses.filter(_.cessation.map(_.date).nonEmpty).map { ceasedBusiness => Seq(
+            rows = ceasedBusinesses.map { ceasedBusiness => Seq(
                 TableRow(Text(ceasedBusiness.tradingName.getOrElse(throw MissingFieldException("Trading Name")))),
                 TableRow(Text(ceasedBusiness.tradingStartDate.getOrElse(throw MissingFieldException("Trading Start Date")).toLongDate)),
                 TableRow(Text(ceasedBusiness.cessation.flatMap(_.date).getOrElse(throw MissingFieldException("Cessation Date")).toLongDate))
