@@ -16,7 +16,7 @@
 
 package controllers
 
-import models.core.AccountingPeriodModel
+import models.core.{AccountingPeriodModel, CessationModel}
 import models.incomeSourceDetails.PropertyDetailsModel
 
 import java.time.{LocalDate, Month}
@@ -72,7 +72,7 @@ class CheckIncomeSourcesController @Inject()(val checkIncomeSources: CheckIncome
     tradingName = Some("Big Company Ltd"),
     firstAccountingPeriodEndDate = Some(LocalDate.of(2018, Month.APRIL, 5)),
     tradingStartDate = Some(LocalDate.of(2018, 4, 5)),
-    cessation = Some(LocalDate.of(2022, 1, 2))
+    cessation = Some(CessationModel(Some(LocalDate.of(2022, 1, 2)), None))
   )
 
   val business2 = BusinessDetailsModel(
