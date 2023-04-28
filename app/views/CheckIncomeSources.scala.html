@@ -78,7 +78,7 @@
         )}
     ))
     @link(link = "", messageKey = getMessage("self-employment.link"))
-    @hr()
+    @hr
 
     @h2(getMessage("uk-property.h2"))
     @p() { @getMessage("uk-property.p1") }
@@ -92,9 +92,9 @@
             ))
         ))
     } else {
-        @hr()
+        @hr
         @link(link = "report-quarterly/income-and-expenses/view/income-sources/add/uk-property-business-start-date", messageKey = getMessage("uk-property.link"))
-        @hr()
+        @hr
     }
 
     @h2(getMessage("foreign-property.h2"))
@@ -109,9 +109,9 @@
             ))
         ))
     } else {
-        @hr()
+        @hr
         @link(link = "report-quarterly/income-and-expenses/view/income-sources/add/foreign-property-business-start-date", messageKey = getMessage("foreign-property.link"))
-        @hr()
+        @hr
     }
 
     @if(ceasedBusinesses.nonEmpty) {
