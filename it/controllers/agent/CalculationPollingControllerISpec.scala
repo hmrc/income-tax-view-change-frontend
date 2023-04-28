@@ -20,13 +20,15 @@ import controllers.agent.utils.SessionKeys._
 import forms.utils.SessionKeys
 import helpers.ComponentSpecBase
 import helpers.servicemocks._
-import models.core.AccountingPeriodModel
+import models.core.{AccountingPeriodModel, CessationModel}
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, PropertyDetailsModel}
 import models.liabilitycalculation.LiabilityCalculationError
 import play.api.http.HeaderNames
 import play.api.http.Status._
 import testConstants.BaseIntegrationTestConstants._
+import testConstants.BusinessDetailsIntegrationTestConstants.{b1TradingStart, b2CessationDate, b2CessationReason, b2TradingStart}
 import testConstants.NewCalcBreakdownItTestConstants._
+import testConstants.PropertyDetailsIntegrationTestConstants.{propertyIncomeType, propertyTradingStartDate}
 
 import java.time.LocalDate
 import scala.concurrent.ExecutionContext
@@ -67,13 +69,17 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
       Some("testId"),
       Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
       Some("Test Trading Name"),
-      Some(LocalDate.of(2018,1,1))
+      Some(LocalDate.of(2018,1,1)),
+      Some(b2TradingStart),
+      Some(CessationModel(Some(b2CessationDate), Some(b2CessationReason)))
     )),
     property = Some(
       PropertyDetailsModel(
         Some("testId2"),
         Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
-        Some(LocalDate.of(2018,1,1))
+        Some(LocalDate.of(2018,1,1)),
+        propertyIncomeType,
+        propertyTradingStartDate
       )
     )
   )

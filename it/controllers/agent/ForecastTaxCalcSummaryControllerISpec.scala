@@ -7,14 +7,16 @@ import config.featureswitch.ForecastCalculation
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.AuthStub.titleInternalServer
 import helpers.servicemocks.{AuditStub, IncomeTaxCalculationStub}
-import models.core.AccountingPeriodModel
+import models.core.{AccountingPeriodModel, CessationModel}
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, PropertyDetailsModel}
 import models.liabilitycalculation.{EndOfYearEstimate, IncomeSource}
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
 import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants._
+import testConstants.BusinessDetailsIntegrationTestConstants.{b2CessationDate, b2CessationReason, b2TradingStart}
 import testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessful
+import testConstants.PropertyDetailsIntegrationTestConstants.{propertyIncomeType, propertyTradingStartDate}
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 
 import java.time.LocalDate
@@ -81,13 +83,17 @@ class ForecastTaxCalcSummaryControllerISpec extends ComponentSpecBase {
       Some("testId"),
       Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
       Some("Test Trading Name"),
-      Some(getCurrentTaxYearEnd)
+      Some(getCurrentTaxYearEnd),
+      Some(b2TradingStart),
+      Some(CessationModel(Some(b2CessationDate), Some(b2CessationReason)))
     )),
     property = Some(
       PropertyDetailsModel(
         Some("testId2"),
         Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
-        Some(getCurrentTaxYearEnd)
+        Some(getCurrentTaxYearEnd),
+        propertyIncomeType,
+        propertyTradingStartDate
       )
     )
   )

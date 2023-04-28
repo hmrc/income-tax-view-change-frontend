@@ -41,39 +41,31 @@ case class ForecastTaxCalculationAuditModel(user: MtdItUserWithNino[_], endOfYea
   private val balancingPaymentCollectedThroughPAYE: Option[BigDecimal] = endOfYearEstimate.saUnderpaymentsCodedOut
   private val studentLoanRepayments: Option[BigDecimal] = endOfYearEstimate.totalStudentLoansRepaymentAmount
   private val taxDueOnAnnuityPayments: Option[BigDecimal] = endOfYearEstimate.totalAnnuityPaymentsTaxCharged
+  private val taxDueOnRoyaltyPayments: Option[BigDecimal] = endOfYearEstimate.totalRoyaltyPaymentsTaxCharged
   private val totalTaxDeducted: Option[BigDecimal] = endOfYearEstimate.totalTaxDeducted
   private val incomeTaxAndNationalInsuranceContributionsDue: Option[BigDecimal] = endOfYearEstimate.incomeTaxNicAmount
   private val capitalGainsTax: Option[BigDecimal] = endOfYearEstimate.cgtAmount
   private val forecastSelfAssessmentTaxAmount: Option[BigDecimal] = endOfYearEstimate.incomeTaxNicAndCgtAmount
 
-  private val forecastDetailJson: JsObject = Json.obj() ++
-    ("totalEstimatedIncome", totalEstimatedIncome) ++
-    ("totalTaxableIncome", totalTaxableIncome) ++
-    ("totalAllowancesAndDeductions", totalAllowancesAndDeductions) ++
-    ("totalIncomeTax", totalIncomeTax) ++
-    ("class4NationalInsurance", class4NationalInsurance) ++
-    ("class2NationalInsurance", class2NationalInsurance) ++
-    ("totalNationalInsuranceContributions", totalNationalInsuranceContributions) ++
-    ("totalTaxDeductedBeforeBalancingPayment", totalTaxDeductedBeforeBalancingPayment) ++
-    ("balancingPaymentCollectedThroughPAYE", balancingPaymentCollectedThroughPAYE) ++
-    ("studentLoanRepayments", studentLoanRepayments) ++
-    ("taxDueOnAnnuityPayments", taxDueOnAnnuityPayments) ++
-    ("totalTaxDeducted", totalTaxDeducted) ++
-    ("incomeTaxAndNationalInsuranceContributionsDue", incomeTaxAndNationalInsuranceContributionsDue) ++
-    ("capitalGainsTax", capitalGainsTax) ++
-    ("forecastSelfAssessmentTaxAmount", forecastSelfAssessmentTaxAmount)
-
 
   override val detail: JsValue = {
     userAuditDetails(user) ++
-      Json.obj("forecastDetail" -> forecastDetailJson)
+      Json.obj() ++
+      ("totalEstimatedIncome", totalEstimatedIncome) ++
+      ("totalAllowancesAndDeductions", totalAllowancesAndDeductions) ++
+      ("totalTaxableIncome", totalTaxableIncome) ++
+      ("totalIncomeTax", totalIncomeTax) ++
+      ("class4NationalInsurance", class4NationalInsurance) ++
+      ("class2NationalInsurance", class2NationalInsurance) ++
+      ("totalNationalInsuranceContributions", totalNationalInsuranceContributions) ++
+      ("totalTaxDeductedBeforeBalancingPayment", totalTaxDeductedBeforeBalancingPayment) ++
+      ("balancingPaymentCollectedThroughPAYE", balancingPaymentCollectedThroughPAYE) ++
+      ("studentLoanRepayments", studentLoanRepayments) ++
+      ("taxDueOnAnnuityPayments", taxDueOnAnnuityPayments) ++
+      ("taxDueOnRoyaltyPayments", taxDueOnRoyaltyPayments) ++
+      ("totalTaxDeducted", totalTaxDeducted) ++
+      ("incomeTaxAndNationalInsuranceContributionsDue", incomeTaxAndNationalInsuranceContributionsDue) ++
+      ("capitalGainsTax", capitalGainsTax) ++
+      ("forecastSelfAssessmentTaxAmount", forecastSelfAssessmentTaxAmount)
   }
 }
-
-
-
-
-
-
-
-

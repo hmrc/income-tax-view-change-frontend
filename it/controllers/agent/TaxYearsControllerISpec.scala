@@ -19,13 +19,15 @@ import config.featureswitch._
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.AuthStub.{titleInternalServer, titleTechError}
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.core.AccountingPeriodModel
+import models.core.{AccountingPeriodModel, CessationModel}
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, PropertyDetailsModel}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.ws.WSResponse
 import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants._
+import testConstants.BusinessDetailsIntegrationTestConstants.{b2CessationDate, b2CessationReason, b2TradingStart}
+import testConstants.PropertyDetailsIntegrationTestConstants.{propertyIncomeType, propertyTradingStartDate}
 import testConstants.messages.TaxYearsMessages.{taxYearMessage, updateReturn, viewSummary}
 
 import java.time.LocalDate
@@ -46,13 +48,17 @@ class TaxYearsControllerISpec extends ComponentSpecBase with FeatureSwitching {
       Some("testId"),
       Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
       Some("Test Trading Name"),
-      Some(getCurrentTaxYearEnd)
+      Some(getCurrentTaxYearEnd),
+      Some(b2TradingStart),
+      Some(CessationModel(Some(b2CessationDate), Some(b2CessationReason)))
     )),
     property = Some(
       PropertyDetailsModel(
         Some("testId2"),
         Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
-        Some(getCurrentTaxYearEnd)
+        Some(getCurrentTaxYearEnd),
+        propertyIncomeType,
+        propertyTradingStartDate
       )
     )
   )
@@ -64,13 +70,17 @@ class TaxYearsControllerISpec extends ComponentSpecBase with FeatureSwitching {
       Some("testId"),
       Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
       Some("Test Trading Name"),
-      None
+      None,
+      None,
+      Some(CessationModel(Some(b2CessationDate), Some(b2CessationReason)))
     )),
     property = Some(
       PropertyDetailsModel(
         Some("testId2"),
         Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
-        None
+        None,
+        propertyIncomeType,
+        propertyTradingStartDate
       )
     )
   )
