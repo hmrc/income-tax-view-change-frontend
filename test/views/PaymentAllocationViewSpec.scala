@@ -156,7 +156,7 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
 
       "has a payment within the table" in new PaymentAllocationSetup() {
         val allTableData = document.selectHead("tbody").selectHead("tr")
-        allTableData.selectNth("td", 1).text() shouldBe s"${messages("paymentAllocation.paymentAllocations.poa1.nic4")} 2020 ${messages("paymentAllocation.taxYear", "2019", "2020")}"
+        allTableData.selectNth("td", 1).text() shouldBe s"${messages("paymentAllocation.paymentAllocations.poa1.nic4")} ${messages("paymentAllocation.taxYear", "2019", "2020")} ${messages("paymentAllocation.taxYear", "2019", "2020")}"
         allTableData.selectNth("td", 2).text() shouldBe "27 May 2019"
         allTableData.selectNth("td", 3).text() shouldBe "£10.10"
       }
@@ -197,7 +197,7 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
         val taxYear = 2022
         val chargePageLinkTrue = s"/report-quarterly/income-and-expenses/view/tax-years/$taxYear/charge?id=chargeReference3"
 
-        allTableData.selectNth("td", 1).text() shouldBe s"$paymentAllocationsHmrcAdjustment $taxYear $paymentAllocationTaxYearFrom2021to2022"
+        allTableData.selectNth("td", 1).text() shouldBe s"$paymentAllocationsHmrcAdjustment ${messages("paymentAllocation.taxYear", "2021", "2022")} $paymentAllocationTaxYearFrom2021to2022"
         allTableData.selectNth("td", 2).text() shouldBe "31 Jan 2021"
         allTableData.selectNth("td", 3).text() shouldBe amount
         chargePageLink shouldBe chargePageLinkTrue
@@ -322,14 +322,14 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
         layoutContent.selectById("payment-allocation-table").text() shouldBe
           s"""
              |$allocationsTableHeadersText
-             |$paymentAllocationsPoa1IncomeTax 2018 $paymentAllocationTaxYearFrom2017to2018 27 Jun 2019 £1,234.56
-             |$paymentAllocationsPoa1IncomeTax 2018 $paymentAllocationTaxYearFrom2017to2018 28 Jun 2019 £2,345.67
-             |$paymentAllocationsPoa1IncomeTax 2019 $paymentAllocationTaxYearFrom2018to2019 29 Jun 2019 £3,456.78
-             |$paymentAllocationsPoa1IncomeTax 2019 $paymentAllocationTaxYearFrom2018to2019 30 Jun 2019 £4,567.89
-             |$paymentAllocationsPoa1Nic4 2019 $paymentAllocationTaxYearFrom2018to2019 27 Aug 2019 £9,876.54
-             |$paymentAllocationsPoa1Nic4 2019 $paymentAllocationTaxYearFrom2018to2019 28 Aug 2019 £8,765.43
-             |$paymentAllocationsPoa1Nic4 2019 $paymentAllocationTaxYearFrom2018to2019 29 Aug 2019 £7,654.32
-             |$paymentAllocationsPoa1Nic4 2020 $paymentAllocationTaxYearFrom2019to2020 30 Aug 2019 £6,543.21
+             |$paymentAllocationsPoa1IncomeTax $paymentAllocationTaxYearFrom2017to2018 $paymentAllocationTaxYearFrom2017to2018 27 Jun 2019 £1,234.56
+             |$paymentAllocationsPoa1IncomeTax $paymentAllocationTaxYearFrom2017to2018 $paymentAllocationTaxYearFrom2017to2018 28 Jun 2019 £2,345.67
+             |$paymentAllocationsPoa1IncomeTax $paymentAllocationTaxYearFrom2018to2019 $paymentAllocationTaxYearFrom2018to2019 29 Jun 2019 £3,456.78
+             |$paymentAllocationsPoa1IncomeTax $paymentAllocationTaxYearFrom2018to2019 $paymentAllocationTaxYearFrom2018to2019 30 Jun 2019 £4,567.89
+             |$paymentAllocationsPoa1Nic4 $paymentAllocationTaxYearFrom2018to2019 $paymentAllocationTaxYearFrom2018to2019 27 Aug 2019 £9,876.54
+             |$paymentAllocationsPoa1Nic4 $paymentAllocationTaxYearFrom2018to2019 $paymentAllocationTaxYearFrom2018to2019 28 Aug 2019 £8,765.43
+             |$paymentAllocationsPoa1Nic4 $paymentAllocationTaxYearFrom2018to2019 $paymentAllocationTaxYearFrom2018to2019 29 Aug 2019 £7,654.32
+             |$paymentAllocationsPoa1Nic4 $paymentAllocationTaxYearFrom2019to2020 $paymentAllocationTaxYearFrom2019to2020 30 Aug 2019 £6,543.21
              |$moneyOnAccountMessage $dueDate £200.00
              |""".stripMargin.trim.linesIterator.mkString(" ")
 
@@ -363,14 +363,14 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
         layoutContent.selectById("payment-allocation-table").text() shouldBe
           s"""
              |$allocationsTableHeadersText
-             |$paymentAllocationsPoa2IncomeTax 2018 $paymentAllocationTaxYearFrom2017to2018 27 Jun 2019 £1,234.56
-             |$paymentAllocationsPoa2IncomeTax 2018 $paymentAllocationTaxYearFrom2017to2018 28 Jun 2019 £2,345.67
-             |$paymentAllocationsPoa2IncomeTax 2019 $paymentAllocationTaxYearFrom2018to2019 29 Jun 2019 £3,456.78
-             |$paymentAllocationsPoa2IncomeTax 2019 $paymentAllocationTaxYearFrom2018to2019 30 Jun 2019 £4,567.89
-             |$paymentAllocationsPoa2Nic4 2019 $paymentAllocationTaxYearFrom2018to2019 27 Aug 2019 £9,876.54
-             |$paymentAllocationsPoa2Nic4 2019 $paymentAllocationTaxYearFrom2018to2019 28 Aug 2019 £8,765.43
-             |$paymentAllocationsPoa2Nic4 2019 $paymentAllocationTaxYearFrom2018to2019 29 Aug 2019 £7,654.32
-             |$paymentAllocationsPoa2Nic4 2020 $paymentAllocationTaxYearFrom2019to2020 30 Aug 2019 £6,543.21
+             |$paymentAllocationsPoa2IncomeTax $paymentAllocationTaxYearFrom2017to2018 $paymentAllocationTaxYearFrom2017to2018 27 Jun 2019 £1,234.56
+             |$paymentAllocationsPoa2IncomeTax $paymentAllocationTaxYearFrom2017to2018 $paymentAllocationTaxYearFrom2017to2018 28 Jun 2019 £2,345.67
+             |$paymentAllocationsPoa2IncomeTax $paymentAllocationTaxYearFrom2018to2019 $paymentAllocationTaxYearFrom2018to2019 29 Jun 2019 £3,456.78
+             |$paymentAllocationsPoa2IncomeTax $paymentAllocationTaxYearFrom2018to2019 $paymentAllocationTaxYearFrom2018to2019 30 Jun 2019 £4,567.89
+             |$paymentAllocationsPoa2Nic4 $paymentAllocationTaxYearFrom2018to2019 $paymentAllocationTaxYearFrom2018to2019 27 Aug 2019 £9,876.54
+             |$paymentAllocationsPoa2Nic4 $paymentAllocationTaxYearFrom2018to2019 $paymentAllocationTaxYearFrom2018to2019 28 Aug 2019 £8,765.43
+             |$paymentAllocationsPoa2Nic4 $paymentAllocationTaxYearFrom2018to2019 $paymentAllocationTaxYearFrom2018to2019 29 Aug 2019 £7,654.32
+             |$paymentAllocationsPoa2Nic4 $paymentAllocationTaxYearFrom2019to2020 $paymentAllocationTaxYearFrom2019to2020 30 Aug 2019 £6,543.21
              |$moneyOnAccountMessage $dueDate £200.00
              |""".stripMargin.trim.linesIterator.mkString(" ")
 
@@ -400,12 +400,12 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
         layoutContent.selectById("payment-allocation-table").text() shouldBe
           s"""
              |$allocationsTableHeadersText
-             |${messages("paymentAllocation.paymentAllocations.bcd.incomeTax")} 2018 $paymentAllocationTaxYearFrom2017to2018 27 Jun 2019 £1,234.56
-             |${messages("paymentAllocation.paymentAllocations.bcd.nic4")} 2018 $paymentAllocationTaxYearFrom2017to2018 28 Jun 2019 £2,345.67
-             |${messages("paymentAllocation.paymentAllocations.bcd.nic2")} 2019 $paymentAllocationTaxYearFrom2018to2019 29 Jun 2019 £3,456.78
-             |${messages("paymentAllocation.paymentAllocations.bcd.cgt")} 2019 $paymentAllocationTaxYearFrom2018to2019 27 Aug 2019 £9,876.54
-             |${messages("paymentAllocation.paymentAllocations.bcd.sl")} 2019 $paymentAllocationTaxYearFrom2018to2019 28 Aug 2019 £8,765.43
-             |${messages("paymentAllocation.paymentAllocations.bcd.vcnic2")} 2020 $paymentAllocationTaxYearFrom2019to2020 29 Aug 2019 £7,654.32
+             |${messages("paymentAllocation.paymentAllocations.bcd.incomeTax")} $paymentAllocationTaxYearFrom2017to2018 $paymentAllocationTaxYearFrom2017to2018 27 Jun 2019 £1,234.56
+             |${messages("paymentAllocation.paymentAllocations.bcd.nic4")} $paymentAllocationTaxYearFrom2017to2018 $paymentAllocationTaxYearFrom2017to2018 28 Jun 2019 £2,345.67
+             |${messages("paymentAllocation.paymentAllocations.bcd.nic2")} $paymentAllocationTaxYearFrom2018to2019 $paymentAllocationTaxYearFrom2018to2019 29 Jun 2019 £3,456.78
+             |${messages("paymentAllocation.paymentAllocations.bcd.cgt")} $paymentAllocationTaxYearFrom2018to2019 $paymentAllocationTaxYearFrom2018to2019 27 Aug 2019 £9,876.54
+             |${messages("paymentAllocation.paymentAllocations.bcd.sl")} $paymentAllocationTaxYearFrom2018to2019 $paymentAllocationTaxYearFrom2018to2019 28 Aug 2019 £8,765.43
+             |${messages("paymentAllocation.paymentAllocations.bcd.vcnic2")} $paymentAllocationTaxYearFrom2019to2020 $paymentAllocationTaxYearFrom2019to2020 29 Aug 2019 £7,654.32
              |$moneyOnAccountMessage $dueDate £200.00
              |""".stripMargin.trim.linesIterator.mkString(" ")
 
