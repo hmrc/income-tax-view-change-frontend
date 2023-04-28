@@ -30,6 +30,7 @@ import play.api.mvc._
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import views.html.AddBusiness
 import models.incomeSourceDetails.BusinessNameForm
+import play.api.Logger
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -58,11 +59,20 @@ class AddBusinessController @Inject()(authenticate: AuthenticationPredicate,
 
   def handleRequest()(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
     Future {
-      Ok(addBusinessView(BusinessNameForm.form))
+      Ok(addBusinessView(BusinessNameForm.form, routes.AddBusinessController.submit))
     }
   }
 
-
+  def submit: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+    andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
+    implicit request =>
+      BusinessNameForm.form.bindFromRequest().fold(
+        formWithErrors => { Future {Ok(addBusinessView(formWithErrors, routes.AddBusinessController.submit))}},
+        formData => {
+          Future{Redirect("/home").withSession(request.session + ("name" -> formData.name))}
+        }
+      )
+  }
 
 
 

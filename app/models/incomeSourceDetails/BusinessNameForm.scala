@@ -21,8 +21,12 @@ import play.api.data.Forms.{mapping, text}
 
 case class BusinessNameForm(name: String)
 
+
 object BusinessNameForm {
   val form: Form[BusinessNameForm] = Form(mapping(
-    "name" -> text.verifying("nameform.error.invalidNameFormat", _.matches("^^[A-Za-z0-9 ,.&'\\\\/-]{1,105}$\""))
+    "name" -> text
+      .verifying("form.error.required", _.nonEmpty)
+      .verifying("form.error.maxLength", _.length <= 105)
+      .verifying("form.error.invalidNameFormat", _.matches("^[A-Za-z0-9 ,.&'\\\\/-]{1,105}$"))
   )(BusinessNameForm.apply)(BusinessNameForm.unapply))
 }

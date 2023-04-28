@@ -32,7 +32,7 @@ govukInsetText : GovukInsetText,
 govukButton : GovukButton
 )
 
-@(form: Form[BusinessNameForm])(implicit messages: Messages, user: auth.MtdItUser[_])
+@(form: Form[BusinessNameForm], postAction: Call)(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @getMessage(key: String, args: String*) = @{
 messages(s"add-business-name.$key", args: _*)
@@ -48,12 +48,15 @@ btaNavPartial = user.btaNavPartial) {
 @p() { @getMessage("p1") }
 @p() { @getMessage("p2") }
 
-
-<input class="govuk-input" id="event-name" name="event-name" type="text">
-
+@helper.form(action = routes.AddBusinessController.submit) {
+@helper.input(form("name")) { (id, name, value, args) =>
+<input type="text" name="@name" id="@id" class="govuk-input">
+}
 @govukButton(Button(
 content = Text("Continue")
 ))
+}
+
 
 
 }
