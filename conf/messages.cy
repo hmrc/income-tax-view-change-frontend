@@ -1126,20 +1126,19 @@ credit-and-refund.credit-from-balancing-charge-prt-2              = credyd tâl 
 credit-and-refund.credit-from-earlier-tax-year                    = credyd o flwyddyn dreth gynharach
 
 ## check income sources
-check-income-sources.title                    = Check your income sources //TODO: Assumption this is the page title, welsh required here
-check-income-sources.heading                  = Incwm o hunangyflogaeth ac eiddo
-check-income-sources.self-employment.h2       = Hunangyflogaeth (unig fasnachwr)
-check-income-sources.self-employment.p1       = Nid oes angen i chi roi gwybod i ni am fusnes y gwyddwn amdano eisoes.
-check-income-sources.self-employment.link     = Ychwanegu ffynhonnell incwm gan unig fasnachwr
-check-income-sources.uk-property.h2           = Eiddo yn y DU
-check-income-sources.uk-property.p1           = vDim ond unwaith y mae angen i chi roi gwybod i ni fod gennych incwm o eiddo yn y DU
-check-income-sources.uk-property.link         = Ychwanegu incwm o eiddo yn y DU
-check-income-sources.foreign-property.h2      = Eiddo tramor
-check-income-sources.foreign-property.link    = Ychwanegu incwm o eiddo tramor
-check-income-sources.ceased-businesses.h2     = Busnesau sydd wedi dod i ben
-check-income-sources.table-head.business-name = Enw’r busnes
-check-income-sources.table-head.date-started  = Dyddiad cychwyn
-check-income-sources.table-head.date-ended    = Y dyddiad dod i ben
+new-income-sources.heading                  = WELSH PENDING
+new-income-sources.self-employment.h2       = WELSH PENDING
+new-income-sources.self-employment.p1       = Nid oes angen i chi roi gwybod i ni am fusnes y gwyddwn amdano eisoes.
+new-income-sources.self-employment.link     = Ychwanegu ffynhonnell incwm gan unig fasnachwr
+new-income-sources.uk-property.h2           = Eiddo yn y DU
+new-income-sources.uk-property.p1           = vDim ond unwaith y mae angen i chi roi gwybod i ni fod gennych incwm o eiddo yn y DU.
+new-income-sources.uk-property.link         = Ychwanegu incwm o eiddo yn y DU
+new-income-sources.foreign-property.h2      = Eiddo tramor
+new-income-sources.foreign-property.link    = Ychwanegu incwm o eiddo tramor
+new-income-sources.ceased-businesses.h2     = Busnesau sydd wedi dod i ben
+new-income-sources.table-head.business-name = Enw’r busnes
+new-income-sources.table-head.date-started  = Dyddiad cychwyn
+new-income-sources.table-head.date-ended    = Y dyddiad dod i ben
 
 shortMonth.1 = Ion
 shortMonth.2 = Chwe

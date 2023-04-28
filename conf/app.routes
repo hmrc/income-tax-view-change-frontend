@@ -149,4 +149,4 @@ GET          /agents/how-to-claim-refund                                  contro
 GET          /how-to-claim-refund-external                                controllers.NotMigratedUserController.redirect()
 GET          /agents/how-to-claim-refund-external                         controllers.NotMigratedUserController.redirectAgent()
 
-GET         /income-sources/add/check-income-sources                      controllers.CheckIncomeSourcesController.show()
+GET         /income-sources/add/new-income-sources                        controllers.CheckIncomeSourcesController.show()

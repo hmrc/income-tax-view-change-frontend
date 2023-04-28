@@ -1108,20 +1108,19 @@ credit-and-refund.credit-from-balancing-charge-prt-2              = balancing ch
 credit-and-refund.credit-from-earlier-tax-year                    = credit from an earlier tax year
 
 ## check income sources
-check-income-sources.title                    = Check your income sources
-check-income-sources.heading                  = Self-employment and property income
-check-income-sources.self-employment.h2       = Self-employment (sole trader)
-check-income-sources.self-employment.p1       = You do not need to tell us about a business we already know about
-check-income-sources.self-employment.link     = Add a sole trader income source
-check-income-sources.uk-property.h2           = UK Property
-check-income-sources.uk-property.p1           = You only need to tell us you have UK property income once
-check-income-sources.uk-property.link         = Add income from UK property
-check-income-sources.foreign-property.h2      = Foreign Property
-check-income-sources.foreign-property.link    = Add income from foreign property
-check-income-sources.ceased-businesses.h2     = Businesses that have ceased
-check-income-sources.table-head.business-name = Business name
-check-income-sources.table-head.date-started  = Date started
-check-income-sources.table-head.date-ended    = Date ended
+new-income-sources.heading                  = Add a new sole trader or property income source
+new-income-sources.self-employment.h2       = Sole trader businesses
+new-income-sources.self-employment.p1       = You do not need to tell us about a business we already know about.
+new-income-sources.self-employment.link     = Add a sole trader income source
+new-income-sources.uk-property.h2           = UK Property
+new-income-sources.uk-property.p1           = You only need to tell us you have UK property income once.
+new-income-sources.uk-property.link         = Add income from UK property
+new-income-sources.foreign-property.h2      = Foreign Property
+new-income-sources.foreign-property.link    = Add income from foreign property
+new-income-sources.ceased-businesses.h2     = Businesses that have ceased
+new-income-sources.table-head.business-name = Business name
+new-income-sources.table-head.date-started  = Date started
+new-income-sources.table-head.date-ended    = Date ended
 
 #Following empty fields are not in Use
 #These fields are kept to match with Messages.cy
