@@ -46,7 +46,8 @@ class NewIncomeSourcesController @Inject()(val newIncomeSources: NewIncomeSource
                                            val retrieveBtaNavBar: NavBarPredicate)
                                           (implicit val ec: ExecutionContext,
                                            implicit override val mcc: MessagesControllerComponents,
-                                           val appConfig: FrontendAppConfig) extends ClientConfirmedController with I18nSupport with FeatureSwitching {
+                                           val appConfig: FrontendAppConfig) extends ClientConfirmedController
+  with I18nSupport with FeatureSwitching {
 
   def show(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
@@ -71,7 +72,8 @@ class NewIncomeSourcesController @Inject()(val newIncomeSources: NewIncomeSource
         }
   }
 
-  def handleRequest(incomeSourceDetails: IncomeSourceDetailsModel, isAgent: Boolean, backUrl: String)(implicit user: MtdItUser[_]): Future[Result] = {
+  def handleRequest(incomeSourceDetails: IncomeSourceDetailsModel, isAgent: Boolean, backUrl: String)
+                   (implicit user: MtdItUser[_]): Future[Result] = {
     Future.successful(
       if (isDisabled(IncomeSources)) {
         Redirect(controllers.routes.HomeController.show())

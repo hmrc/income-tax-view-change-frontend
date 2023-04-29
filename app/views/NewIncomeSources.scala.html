@@ -42,8 +42,8 @@
     backUrl: String
 )(implicit messages: Messages, user: auth.MtdItUser[_])
 
-<!--            FIX REDIRECTS !!!! -  cannot implement: no controller routes-->
-<!--            ADD IDs !!!!-->
+<!--            FIX REDIRECTS - cannot implement: no controller routes-->
+<!--            ADD IDs -->
 
 @import implicitDateFormatter.longDate
 
@@ -65,8 +65,10 @@
             HeadCell(content = Text(getMessage("table-head.date-started")))
         )),
         rows = soleTraderBusinesses.map { b => Seq(
-            TableRow(Text(b.tradingName.getOrElse(throw MissingFieldException("Trading Name")))),
-            TableRow(Text(b.tradingStartDate.getOrElse(throw MissingFieldException("Trading Start Date")).toLongDate))
+            TableRow(Text(b.tradingName
+                    .getOrElse(throw MissingFieldException("Trading Name")))),
+            TableRow(Text(b.tradingStartDate
+                    .getOrElse(throw MissingFieldException("Trading Start Date")).toLongDate))
         )}
     ))
     @link(link = "", messageKey = getMessage("self-employment.link"))
