@@ -44,13 +44,12 @@
     soleTraderBusinesses: List[BusinessDetailsModel],
     ukProperty: Option[PropertyDetailsModel],
     foreignProperty: Option[PropertyDetailsModel],
-    ceasedBusinesses: List[BusinessDetailsModel],
-    isAgent: Boolean
+    ceasedBusinesses: List[BusinessDetailsModel]
 )(implicit messages: Messages, user: auth.MtdItUser[_])
 
 <!--            FIX REDIRECTS !!!!-->
 <!--            ADD BACK LINK !!!!-->
-<!--            ADD AGENT FNLTY !!!!-->
+<!--            ADD IDs !!!!-->
 
 @import implicitDateFormatter.longDate
 
@@ -60,7 +59,6 @@
 
 @mainTemplate(pageTitle = getMessage("heading"),
     backUrl = None,
-    isAgent = isAgent,
     btaNavPartial = user.btaNavPartial) {
 
     @h1(getMessage("heading"))
