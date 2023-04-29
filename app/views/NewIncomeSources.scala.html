@@ -42,7 +42,7 @@
     backUrl: String
 )(implicit messages: Messages, user: auth.MtdItUser[_])
 
-<!--            FIX REDIRECTS !!!!-->
+<!--            FIX REDIRECTS !!!! -  cannot implement: no controller routes-->
 <!--            ADD IDs !!!!-->
 
 @import implicitDateFormatter.longDate
@@ -80,12 +80,13 @@
                 HeadCell(content = Text(getMessage("table-head.date-started")))
             )),
             rows = Seq(Seq(
-                TableRow(Text(ukProperty.flatMap(_.tradingStartDate).getOrElse(throw MissingFieldException("Trading Start Date")).toLongDate))
+                TableRow(Text(ukProperty.flatMap(_.tradingStartDate)
+                        .getOrElse(throw MissingFieldException("Trading Start Date")).toLongDate))
             ))
         ))
     } else {
         @hr()
-        @link(link = "report-quarterly/income-and-expenses/view/income-sources/add/uk-property-business-start-date", messageKey = getMessage("uk-property.link"))
+        @link(link = "", messageKey = getMessage("uk-property.link"))
         @hr()
     }
 
@@ -97,12 +98,13 @@
                 HeadCell(content = Text(getMessage("table-head.date-started")))
             )),
             rows = Seq(Seq(
-                TableRow(Text(foreignProperty.flatMap(_.tradingStartDate).getOrElse(throw MissingFieldException("Trading Start Date")).toLongDate))
+                TableRow(Text(foreignProperty.flatMap(_.tradingStartDate)
+                        .getOrElse(throw MissingFieldException("Trading Start Date")).toLongDate))
             ))
         ))
     } else {
         @hr()
-        @link(link = "report-quarterly/income-and-expenses/view/income-sources/add/foreign-property-business-start-date", messageKey = getMessage("foreign-property.link"))
+        @link(link = "", messageKey = getMessage("foreign-property.link"))
         @hr()
     }
 
@@ -115,9 +117,12 @@
                 HeadCell(content = Text("Date ended"))
             )),
             rows = ceasedBusinesses.map { ceasedBusiness => Seq(
-                TableRow(Text(ceasedBusiness.tradingName.getOrElse(throw MissingFieldException("Trading Name")))),
-                TableRow(Text(ceasedBusiness.tradingStartDate.getOrElse(throw MissingFieldException("Trading Start Date")).toLongDate)),
-                TableRow(Text(ceasedBusiness.cessation.flatMap(_.date).getOrElse(throw MissingFieldException("Cessation Date")).toLongDate))
+                TableRow(Text(ceasedBusiness.tradingName
+                        .getOrElse(throw MissingFieldException("Trading Name")))),
+                TableRow(Text(ceasedBusiness.tradingStartDate
+                        .getOrElse(throw MissingFieldException("Trading Start Date")).toLongDate)),
+                TableRow(Text(ceasedBusiness.cessation.flatMap(_.date)
+                        .getOrElse(throw MissingFieldException("Cessation Date")).toLongDate))
             )}
         ))
     }
