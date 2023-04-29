@@ -15,17 +15,10 @@
  *@
 
 @import _root_.implicits.ImplicitDateFormatterImpl
-@import _root_.implicits.ImplicitCurrencyFormatter._
-@import models.financialDetails.WhatYouOweChargesList
-@import models.financialDetails.DocumentDetailWithDueDate
-@import models.financialDetails._
-@import auth.MtdItUser
 @import views.html.layouts.unifiedLayout
 @import views.html.components._
 @import exceptions.MissingFieldException
 @import uk.gov.hmrc.govukfrontend.views.html.components._
-@import java.time.LocalDate
-@import models.incomeSourceDetails.IncomeSourceDetailsModel
 @import models.incomeSourceDetails.BusinessDetailsModel
 @import models.incomeSourceDetails.PropertyDetailsModel
 
@@ -44,11 +37,12 @@
     soleTraderBusinesses: List[BusinessDetailsModel],
     ukProperty: Option[PropertyDetailsModel],
     foreignProperty: Option[PropertyDetailsModel],
-    ceasedBusinesses: List[BusinessDetailsModel]
+    ceasedBusinesses: List[BusinessDetailsModel],
+    isAgent: Boolean,
+    backUrl: String
 )(implicit messages: Messages, user: auth.MtdItUser[_])
 
 <!--            FIX REDIRECTS !!!!-->
-<!--            ADD BACK LINK !!!!-->
 <!--            ADD IDs !!!!-->
 
 @import implicitDateFormatter.longDate
@@ -58,7 +52,7 @@
 }
 
 @mainTemplate(pageTitle = getMessage("heading"),
-    backUrl = None,
+    backUrl = Some(backUrl),
     btaNavPartial = user.btaNavPartial) {
 
     @h1(getMessage("heading"))
