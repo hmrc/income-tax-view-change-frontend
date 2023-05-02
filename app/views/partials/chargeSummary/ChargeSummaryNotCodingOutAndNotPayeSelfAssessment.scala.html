@@ -27,7 +27,6 @@
 @(
     documentDetailWithDueDate: DocumentDetailWithDueDate,
     documentDetail: DocumentDetail,
-    dueDate: Option[LocalDate],
     latePaymentInterestCharge: Boolean,
     codingOutEnabled: Boolean,
     taxYearFromCodingOut: String,
@@ -38,14 +37,14 @@
 @import implicitDateFormatter.longDate
 
 <div class="govuk-summary-list__row">
-    <dt class="govuk-summary-list__key">@messages("chargeSummary.dueDate")</dt>
+    <dt class="govuk-summary-list__key">QQQQQQQQ@messages("chargeSummary.dueDate")</dt>
     <dd class="govuk-summary-list__value--numeric govuk-!-text-align-right">
         @if(documentDetailWithDueDate.isOverdue && !documentDetail.checkIsPaid(latePaymentInterestCharge)) {
-            <span class="govuk-tag govuk-tag--red">@messages("chargeSummary.overdue")</span>
+            <span class="govuk-tag govuk-tag--red">PPPPPPPPPP@messages("chargeSummary.overdue")</span>
         }
         @{
             if(latePaymentInterestCharge) documentDetail.interestEndDate.getOrElse(throw MissingFieldException("Interest End Date")).toLongDate
-            else dueDate.getOrElse(throw MissingFieldException("Due Date")).toLongDate
+            else documentDetail.effectiveDateOfPayment.getOrElse(throw MissingFieldException("Due Date")).toLongDate
         }
     </dd>
 </div>
