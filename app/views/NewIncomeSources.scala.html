@@ -38,9 +38,6 @@
     backUrl: String
 )(implicit messages: Messages, user: auth.MtdItUser[_])
 
-<!--            FIX REDIRECTS - cannot implement: no controller routes-->
-<!--            ADD IDs -->
-
 @import implicitDateFormatter.longDate
 
 @getMessage(key: String, args: String*) = @{
@@ -52,81 +49,136 @@
 @ceasedBusinesses = @{ sources.ceasedBusinesses }
 @soleTraderBusinesses = @{ sources.soleTraderBusinesses.filterNot(_.isCeased) }
 
+@addBusinessNameURL = @{
+    if(isAgent) controllers.routes.AddBusinessNameController.showAgent().url
+    else controllers.routes.AddBusinessNameController.show().url
+}
+
+@addUkPropertyBusinessStartDateURL = @{
+    if(isAgent) controllers.routes.AddUkPropertyBusinessStartDate.showAgent().url
+    else controllers.routes.AddUkPropertyBusinessStartDate.show().url
+}
+
+@addForeignPropertyBusinessStartDateURL = @{
+    if(isAgent) controllers.routes.AddForeignPropertyBusinessStartDate.showAgent().url
+    else controllers.routes.AddForeignPropertyBusinessStartDate.show().url
+}
+
 
 @mainTemplate(pageTitle = getMessage("heading"),
     backUrl = Some(backUrl),
     btaNavPartial = user.btaNavPartial) {
 
-    @h1(getMessage("heading"))
+    @h1(getMessage("heading"), id = Some("new-income-sources-h1"))
 
-    @p() { @getMessage("self-employment.p1") }
-    @h2(getMessage("self-employment.h2"))
+    @p(id = Some("self-employment-p1")) { @getMessage("self-employment.p1") }
+
+    @h2(getMessage("self-employment.h2"), optId = Some("self-employment-h2"))
+
     @govukTable(Table(
         head = Some(List(
-            HeadCell(content = Text(getMessage("table-head.business-name"))),
-            HeadCell(content = Text(getMessage("table-head.date-started")))
+            HeadCell(
+                content = Text(getMessage("table-head.business-name")),
+                attributes = Map("id" -> "table-head-business-name")),
+            HeadCell(
+                content = Text(getMessage("table-head.date-started")),
+                attributes = Map("id" -> "table-head-date-started"))
         )),
-        rows = soleTraderBusinesses.map { b => Seq(
-            TableRow(Text(b.tradingName
-                    .getOrElse(throw MissingFieldException("Trading Name")))),
-            TableRow(Text(b.tradingStartDate
-                    .getOrElse(throw MissingFieldException("Trading Start Date")).toLongDate))
+        rows = soleTraderBusinesses.zipWithIndex.map { case (b, index) => Seq(
+            TableRow(
+                content = Text(b.tradingName.getOrElse(throw MissingFieldException("Trading Name"))),
+                attributes = Map("id" -> s"table-row-trading-name-$index")),
+
+            TableRow(
+                content = Text(b.tradingStartDate
+                        .getOrElse(throw MissingFieldException("Trading Start Date")).toLongDate),
+                attributes = Map("id" -> s"table-row-trading-start-date-$index"))
         )}
     ))
-    @link(link = "", messageKey = getMessage("self-employment.link"))
+    @link(link = addBusinessNameURL,
+        messageKey = getMessage("self-employment.link"),
+        id = Some("self-employment-link"))
     @hr()
 
-    @h2(getMessage("uk-property.h2"))
-    @p() { @getMessage("uk-property.p1") }
+    @h2(getMessage("uk-property.h2"), optId = Some("uk-property-h2"))
+
+    @p(id = Some("uk-property-h2")) { @getMessage("uk-property.p1") }
+
     @if(ukProperty.nonEmpty) {
         @govukTable(Table(
             head = Some(List(
-                HeadCell(content = Text(getMessage("table-head.date-started")))
+                HeadCell(
+                    content = Text(getMessage("table-head.date-started")),
+                    attributes = Map("id" -> "table-head-date-started-uk"))
             )),
             rows = Seq(Seq(
-                TableRow(Text(ukProperty.flatMap(_.tradingStartDate)
-                        .getOrElse(throw MissingFieldException("Trading Start Date")).toLongDate))
+                TableRow(
+                    content = Text(ukProperty.flatMap(_.tradingStartDate)
+                        .getOrElse(throw MissingFieldException("Trading Start Date")).toLongDate),
+                    attributes = Map("id" -> "table-row-trading-start-date-uk")
+                )
             ))
         ))
     } else {
         @hr()
-        @link(link = "", messageKey = getMessage("uk-property.link"))
+        @link(link = addUkPropertyBusinessStartDateURL,
+            messageKey = getMessage("uk-property.link"),
+            id = Some("uk-property-link"))
         @hr()
     }
 
-    @h2(getMessage("foreign-property.h2"))
+    @h2(getMessage("foreign-property.h2"), optId = Some("foreign-property-h2"))
 
     @if(foreignProperty.nonEmpty) {
         @govukTable(Table(
             head = Some(List(
-                HeadCell(content = Text(getMessage("table-head.date-started")))
+                HeadCell(
+                    content = Text(getMessage("table-head.date-started")),
+                    attributes = Map("id" -> "table-head-date-started-foreign"))
             )),
             rows = Seq(Seq(
-                TableRow(Text(foreignProperty.flatMap(_.tradingStartDate)
-                        .getOrElse(throw MissingFieldException("Trading Start Date")).toLongDate))
+                TableRow(
+                    content = Text(foreignProperty.flatMap(_.tradingStartDate)
+                        .getOrElse(throw MissingFieldException("Trading Start Date")).toLongDate),
+                    attributes = Map("id" -> "table-row-trading-start-date-foreign"))
             ))
         ))
     } else {
         @hr()
-        @link(link = "", messageKey = getMessage("foreign-property.link"))
+        @link(link = addForeignPropertyBusinessStartDateURL,
+            messageKey = getMessage("foreign-property.link"),
+            id = Some("foreign-property-link"))
         @hr()
     }
 
     @if(ceasedBusinesses.nonEmpty) {
-        @h2(getMessage("ceased-businesses.h2"))
+        @h2(getMessage("ceased-businesses.h2"), optId = Some("ceased-businesses-h2"))
+
         @govukTable(Table(
             head = Some(List(
-                HeadCell(content = Text(getMessage("table-head.business-name"))),
-                HeadCell(content = Text(getMessage("table-head.date-started"))),
-                HeadCell(content = Text("Date ended"))
+                HeadCell(
+                    content = Text(getMessage("table-head.business-name")),
+                    attributes = Map("id" -> "table-head-business-start-name-ceased")),
+                HeadCell(
+                    content = Text(getMessage("table-head.date-started")),
+                    attributes = Map("id" -> "table-head-date-started-ceased")),
+                HeadCell(
+                    content = Text(getMessage("table-head.date-ended")),
+                    attributes = Map("id" -> "table-head-date-ended-ceased"))
             )),
-            rows = ceasedBusinesses.map { ceasedBusiness => Seq(
-                TableRow(Text(ceasedBusiness.tradingName
-                        .getOrElse(throw MissingFieldException("Trading Name")))),
-                TableRow(Text(ceasedBusiness.tradingStartDate
-                        .getOrElse(throw MissingFieldException("Trading Start Date")).toLongDate)),
-                TableRow(Text(ceasedBusiness.cessation.flatMap(_.date)
-                        .getOrElse(throw MissingFieldException("Cessation Date")).toLongDate))
+            rows = ceasedBusinesses.zipWithIndex.map { case (b, index) => Seq(
+                TableRow(
+                    content = Text(b.tradingName
+                        .getOrElse(throw MissingFieldException("Trading Name"))),
+                    attributes = Map("id" -> "table-row-trading-name-ceased")),
+                TableRow(
+                    content = Text(b.tradingStartDate
+                        .getOrElse(throw MissingFieldException("Trading Start Date")).toLongDate),
+                    attributes = Map("id" -> "table-row-trading-start-date-ceased")),
+                TableRow(
+                    content = Text(b.cessation.flatMap(_.date)
+                        .getOrElse(throw MissingFieldException("Cessation Date")).toLongDate),
+                    attributes = Map("id" -> "table-row-cessation-date")),
             )}
         ))
     }
