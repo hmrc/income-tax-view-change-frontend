@@ -18,6 +18,7 @@ package services
 
 import auth.MtdItUserWithNino
 import connectors.IncomeTaxViewChangeConnector
+import models.incomeSourceDetails.viewmodels.IncomeSourcesViewModel
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, IncomeSourceDetailsResponse}
 import play.api.Logger
 import play.api.cache.AsyncCacheApi
@@ -68,5 +69,14 @@ class IncomeSourceDetailsService @Inject()(val incomeTaxViewChangeConnector: Inc
     } else {
       incomeTaxViewChangeConnector.getIncomeSources()
     }
+  }
+
+  def incomeSourcesAsViewModel(sources: IncomeSourceDetailsModel): IncomeSourcesViewModel = {
+    IncomeSourcesViewModel(
+      soleTraderBusinesses = sources.businesses,
+      ukProperty = sources.property.find(_.isUkProperty),
+      foreignProperty = sources.property.find(_.isForeignProperty),
+      ceasedBusinesses = sources.businesses.filter(_.isCeased)
+    )
   }
 }

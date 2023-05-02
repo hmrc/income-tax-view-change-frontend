@@ -66,7 +66,7 @@
             HeadCell(content = Text(getMessage("table-head.business-name"))),
             HeadCell(content = Text(getMessage("table-head.date-started")))
         )),
-        rows = soleTraderBusinesses.map { b => Seq(
+        rows = soleTraderBusinesses.filterNot(_.isCeased).map { b => Seq(
             TableRow(Text(b.tradingName
                     .getOrElse(throw MissingFieldException("Trading Name")))),
             TableRow(Text(b.tradingStartDate

@@ -77,12 +77,7 @@ class AddIncomeSourceController @Inject()(val newIncomeSources: NewIncomeSources
         Redirect(controllers.routes.HomeController.show())
       } else {
         Ok(newIncomeSources(
-          IncomeSourcesViewModel(
-            soleTraderBusinesses = sources.businesses,
-            ukProperty = sources.property.find(_.incomeSourceType.contains("uk-property")),
-            foreignProperty = sources.property.find(_.incomeSourceType.contains("foreign-property")),
-            ceasedBusinesses = sources.businesses.filter(_.cessation.map(_.date).nonEmpty)
-          ),
+          incomeSourceDetailsService.incomeSourcesAsViewModel(sources),
           isAgent = isAgent,
           backUrl = backUrl
         ))
