@@ -50,7 +50,7 @@
 @ukProperty = @{ sources.ukProperty }
 @foreignProperty = @{ sources.foreignProperty }
 @ceasedBusinesses = @{ sources.ceasedBusinesses }
-@soleTraderBusinesses = @{ sources.soleTraderBusinesses }
+@soleTraderBusinesses = @{ sources.soleTraderBusinesses.filterNot(_.isCeased) }
 
 
 @mainTemplate(pageTitle = getMessage("heading"),
@@ -66,7 +66,7 @@
             HeadCell(content = Text(getMessage("table-head.business-name"))),
             HeadCell(content = Text(getMessage("table-head.date-started")))
         )),
-        rows = soleTraderBusinesses.filter(b => !b.isCeased).map { b => Seq(
+        rows = soleTraderBusinesses.map { b => Seq(
             TableRow(Text(b.tradingName
                     .getOrElse(throw MissingFieldException("Trading Name")))),
             TableRow(Text(b.tradingStartDate
