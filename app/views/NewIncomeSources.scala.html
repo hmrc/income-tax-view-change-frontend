@@ -19,8 +19,7 @@
 @import views.html.components._
 @import exceptions.MissingFieldException
 @import uk.gov.hmrc.govukfrontend.views.html.components._
-@import models.incomeSourceDetails.BusinessDetailsModel
-@import models.incomeSourceDetails.PropertyDetailsModel
+@import models.incomeSourceDetails.viewmodels.IncomeSourcesViewModel
 
 @this(
     mainTemplate: unifiedLayout,
@@ -34,10 +33,7 @@
 )
 
 @(
-    soleTraderBusinesses: List[BusinessDetailsModel],
-    ukProperty: Option[PropertyDetailsModel],
-    foreignProperty: Option[PropertyDetailsModel],
-    ceasedBusinesses: List[BusinessDetailsModel],
+    sources: IncomeSourcesViewModel,
     isAgent: Boolean,
     backUrl: String
 )(implicit messages: Messages, user: auth.MtdItUser[_])
@@ -50,6 +46,12 @@
 @getMessage(key: String, args: String*) = @{
     messages(s"new-income-sources.$key", args: _*)
 }
+
+@ukProperty = @{ sources.ukProperty }
+@foreignProperty = @{ sources.foreignProperty }
+@ceasedBusinesses = @{ sources.ceasedBusinesses }
+@soleTraderBusinesses = @{ sources.soleTraderBusinesses }
+
 
 @mainTemplate(pageTitle = getMessage("heading"),
     backUrl = Some(backUrl),
@@ -118,7 +120,7 @@
                 HeadCell(content = Text(getMessage("table-head.date-started"))),
                 HeadCell(content = Text("Date ended"))
             )),
-            rows = ceasedBusinesses.map { ceasedBusiness => Seq(
+            rows = sources.ceasedBusinesses.map { ceasedBusiness => Seq(
                 TableRow(Text(ceasedBusiness.tradingName
                         .getOrElse(throw MissingFieldException("Trading Name")))),
                 TableRow(Text(ceasedBusiness.tradingStartDate

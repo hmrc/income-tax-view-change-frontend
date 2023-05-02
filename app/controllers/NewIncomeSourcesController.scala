@@ -27,7 +27,7 @@ import play.api.mvc._
 import services.IncomeSourceDetailsService
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import views.html.NewIncomeSources
-
+import models.incomeSourceDetails.viewmodels.IncomeSourcesViewModel
 import java.time.{LocalDate, Month}
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -79,10 +79,12 @@ class NewIncomeSourcesController @Inject()(val newIncomeSources: NewIncomeSource
         Redirect(controllers.routes.HomeController.show())
       } else {
         Ok(newIncomeSources(
-          soleTraderBusinesses = sources.businesses,
-          ukProperty = sources.property.find(_.incomeSourceType.contains("uk-property")),
-          foreignProperty = sources.property.find(_.incomeSourceType.contains("foreign-property")),
-          ceasedBusinesses = sources.businesses.filter(_.cessation.map(_.date).nonEmpty),
+          IncomeSourcesViewModel(
+            soleTraderBusinesses = sources.businesses,
+            ukProperty = sources.property.find(_.incomeSourceType.contains("uk-property")),
+            foreignProperty = sources.property.find(_.incomeSourceType.contains("foreign-property")),
+            ceasedBusinesses = sources.businesses.filter(_.cessation.map(_.date).nonEmpty)
+          ),
           isAgent = isAgent,
           backUrl = backUrl
         ))
