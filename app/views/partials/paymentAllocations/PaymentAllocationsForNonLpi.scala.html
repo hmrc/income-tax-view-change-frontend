@@ -39,9 +39,9 @@
             <td class="govuk-table__cell" id="payment-allocation-@index">
                 <a class="govuk-link" style="display:block" href="@paymentAllocationHref(paymentAllocation, isAgent)">
                     @messages(paymentAllocation.allocationDetail.getOrElse(throw MissingFieldException("Payment Allocation Detail")).getPaymentAllocationKeyInPaymentAllocations)
-                    <span class="govuk-visually-hidden"> @paymentAllocation.allocationDetail.getOrElse(throw MissingFieldException("Payment Allocation Detail")).getTaxYear(implicitDateFormatter)</span>
+                    <span class="govuk-visually-hidden">@messages("paymentAllocation.taxYear", (paymentAllocation.allocationDetail.getOrElse(throw MissingFieldException("Payment Allocation Detail")).getTaxYear(implicitDateFormatter) - 1).toString, paymentAllocation.allocationDetail.get.getTaxYear(implicitDateFormatter).toString)</span>
                 </a>
-                <span class="govuk-body-s">@messages("paymentAllocation.taxYear", (paymentAllocation.allocationDetail.getOrElse(throw MissingFieldException("Payment Allocation Detail")).getTaxYear(implicitDateFormatter) - 1).toString, paymentAllocation.allocationDetail.get.getTaxYear(implicitDateFormatter).toString)</span>
+                <span class="govuk-body-s" aria-hidden="true">@messages("paymentAllocation.taxYear", (paymentAllocation.allocationDetail.getOrElse(throw MissingFieldException("Payment Allocation Detail")).getTaxYear(implicitDateFormatter) - 1).toString, paymentAllocation.allocationDetail.get.getTaxYear(implicitDateFormatter).toString)</span>
             </td>
             <td class="govuk-table__cell">@paymentAllocation.clearingDate.getOrElse(throw MissingFieldException("Payment Clearing Date")).toLongDateShort</td>
             <td class="govuk-table__cell govuk-table__cell--numeric">@paymentAllocation.allocationDetail.getOrElse(throw MissingFieldException("Payment Allocation Detail")).amount.getOrElse(throw MissingFieldException("Payment Amount")).toCurrencyString</td>

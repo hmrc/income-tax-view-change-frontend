@@ -59,8 +59,8 @@ class HomeController @Inject()(val homeView: views.html.Home,
                                val appConfig: FrontendAppConfig) extends ClientConfirmedController with I18nSupport with FeatureSwitching {
 
   private def view(nextPaymentDueDate: Option[LocalDate], nextUpdate: LocalDate, overDuePaymentsCount: Option[Int],
-                   overDueUpdatesCount: Option[Int], dunningLockExists: Boolean, currentTaxYear: Int, isAgent: Boolean,
-                   origin: Option[String] = None)
+                   overDueUpdatesCount: Option[Int], dunningLockExists: Boolean, currentTaxYear: Int,
+                   displayCeaseAnIncome: Boolean, isAgent: Boolean, origin: Option[String] = None)
                   (implicit user: MtdItUser[_]): Html = {
     homeView(
       nextPaymentDueDate = nextPaymentDueDate,
@@ -71,10 +71,12 @@ class HomeController @Inject()(val homeView: views.html.Home,
       ITSASubmissionIntegrationEnabled = isEnabled(ITSASubmissionIntegration),
       dunningLockExists = dunningLockExists,
       currentTaxYear = currentTaxYear,
+      displayCeaseAnIncome = displayCeaseAnIncome,
       isAgent = isAgent,
       origin = origin,
       creditAndRefundEnabled = isEnabled(CreditsRefundsRepay),
       paymentHistoryEnabled = isEnabled(PaymentHistoryRefunds),
+      incomeSourcesEnabled = isEnabled(IncomeSources),
       isUserMigrated = user.incomeSources.yearOfMigration.isDefined
     )
   }
@@ -109,6 +111,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
         overDuePaymentsCount = paymentsDue.count(_.isBefore(dateService.getCurrentDate(isTimeMachineEnabled))) + outstandingChargesModel.length
         overDueUpdatesCount = latestDeadlineDate._2.size
         paymentsDueMerged = (paymentsDue ::: outstandingChargesDueDate).sortWith(_ isBefore _).headOption
+        displayCeaseAnIncome = user.incomeSources.hasOngoingBusinessOrPropertyIncome
       } yield {
         auditingService.extendedAudit(HomeAudit(
           mtdItUser = user,
@@ -124,6 +127,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
             Some(overDueUpdatesCount),
             dunningLockExistsValue,
             incomeSourceCurrentTaxYear,
+            displayCeaseAnIncome,
             isAgent = isAgent
           )
         )

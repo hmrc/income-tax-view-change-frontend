@@ -20,7 +20,7 @@ import helpers.ComponentSpecBase
 import helpers.servicemocks.AuthStub.mockImplicitDateFormatter.{longDate, toTaxYearEndDate}
 import helpers.servicemocks.{IncomeTaxCalculationStub, IncomeTaxViewChangeStub}
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
-import models.core.{AccountingPeriodModel, CessationModel}
+import models.core.AccountingPeriodModel
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, PropertyDetailsModel}
 import models.liabilitycalculation.LiabilityCalculationError
 import org.jsoup.Jsoup
@@ -32,10 +32,8 @@ import play.api.libs.ws.WSResponse
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testMtditid, testNino}
-import testConstants.BusinessDetailsIntegrationTestConstants.{b2CessationDate, b2CessationReason, b2TradingStart}
 import testConstants.IncomeSourceIntegrationTestConstants.multipleBusinessesAndPropertyResponseWoMigration
 import testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessful
-import testConstants.PropertyDetailsIntegrationTestConstants.{propertyIncomeType, propertyTradingStartDate}
 
 import java.time.LocalDate
 import java.util.Locale
@@ -92,17 +90,18 @@ class InYearTaxCalculationControllerISpec extends ComponentSpecBase {
       Some("testId"),
       Some(AccountingPeriodModel(currentDate, currentDate.plusYears(1))),
       Some("Test Trading Name"),
+      None,
       Some(LocalDate.of(taxYear, month, dayOfMonth)),
-      Some(b2TradingStart),
-      Some(CessationModel(Some(b2CessationDate), Some(b2CessationReason)))
+      None
     )),
     property = Some(
       PropertyDetailsModel(
         Some("testId2"),
         Some(AccountingPeriodModel(currentDate, currentDate.plusYears(1))),
+        None,
+        None,
         Some(LocalDate.of(taxYear, month, dayOfMonth)),
-        propertyIncomeType,
-        propertyTradingStartDate
+        None
       )
     )
   )

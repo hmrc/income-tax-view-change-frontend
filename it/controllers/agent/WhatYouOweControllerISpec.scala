@@ -6,14 +6,13 @@ import auth.MtdItUser
 import config.featureswitch.{CodingOut, CreditsRefundsRepay, FeatureSwitching}
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
-import models.core.{AccountingPeriodModel, CessationModel}
+import models.core.AccountingPeriodModel
 import models.financialDetails.{BalanceDetails, FinancialDetailsModel, WhatYouOweChargesList}
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.libs.json.{JsValue, Json}
 import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants._
-import testConstants.BusinessDetailsIntegrationTestConstants.{b2CessationDate, b2CessationReason, b2TradingStart}
 import testConstants.FinancialDetailsIntegrationTestConstants._
 import testConstants.IncomeSourceIntegrationTestConstants._
 import testConstants.OutstandingChargesIntegrationTestConstants._
@@ -36,9 +35,9 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
       Some("testId"),
       Some(AccountingPeriodModel(testDate, testDate.plusYears(1))),
       None,
+      None,
       Some(getCurrentTaxYearEnd),
-      tradingStartDate = Some(b2TradingStart),
-      cessation = Some(CessationModel(Some(b2CessationDate), Some(b2CessationReason)))
+      None
     )),
     property = None
   )
@@ -87,9 +86,9 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
               Some("testId"),
               Some(AccountingPeriodModel(testDate, testDate.plusYears(1))),
               None,
+              None,
               Some(getCurrentTaxYearEnd),
-              tradingStartDate = Some(b2TradingStart),
-              cessation = Some(CessationModel(Some(b2CessationDate), Some(b2CessationReason)))
+              None
             )),
             property = None
           )

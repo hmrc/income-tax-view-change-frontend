@@ -10,7 +10,7 @@ object PaymentHistoryTestConstraints {
 
   val b1CessationDate = LocalDate.of(2017, 12, 31)
   val b1CessationReason = "It really, really was a bad idea"
-  val b1TradingStart = LocalDate.parse("2017-01-01")
+  val b1TradingStart = "2017-01-01"
   val b1TradingName = "business"
   val b1AccountingStart = LocalDate.of(2017, 1, 1)
   val b1AccountingEnd = LocalDate.of(2017, 12, 31)
@@ -22,7 +22,7 @@ object PaymentHistoryTestConstraints {
   val b1CountryCode = "UK"
   val b2CessationDate = LocalDate.of(2018, 12, 31)
   val b2CessationReason = "It really, really was a bad idea"
-  val b2TradingStart = LocalDate.parse("2018-01-01")
+  val b2TradingStart = "2018-01-01"
   val b2TradingName = "secondBusiness"
   val b2AccountingStart = LocalDate.of(2018, 1, 1)
   val b2AccountingEnd = LocalDate.of(2018, 12, 31)
@@ -42,8 +42,8 @@ object PaymentHistoryTestConstraints {
     )),
     tradingName = Some(b1TradingName),
     firstAccountingPeriodEndDate = Some(getCurrentTaxYearEnd.minusYears(1)),
-    tradingStartDate = Some(b1TradingStart),
-    cessation = Some(CessationModel(Some(b1CessationDate),Some(b1CessationReason)))
+    None,
+    None
   )
 
   val business2 = BusinessDetailsModel(
@@ -54,8 +54,8 @@ object PaymentHistoryTestConstraints {
     )),
     tradingName = Some(b2TradingName),
     firstAccountingPeriodEndDate = Some(b2AccountingEnd),
-    tradingStartDate = Some(b2TradingStart),
-    cessation = Some(CessationModel(Some(b2CessationDate), Some(b2CessationReason)))
+    None,
+    None
   )
 
 }
