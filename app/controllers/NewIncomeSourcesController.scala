@@ -18,42 +18,41 @@ package controllers
 
 import auth.MtdItUser
 import config.featureswitch.{FeatureSwitching, IncomeSources}
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import config.{AgentItvcErrorHandler, FrontendAppConfig}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
-import models.incomeSourceDetails.IncomeSourceDetailsModel
-import play.api.i18n.I18nSupport
+import models.core.{AccountingPeriodModel, CessationModel}
+import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, PropertyDetailsModel}
 import play.api.mvc._
 import services.IncomeSourceDetailsService
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import views.html.NewIncomeSources
-import views.html.notMigrated.NotMigratedUser
 
+import java.time.{LocalDate, Month}
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class NewIncomeSourcesController @Inject()(val newIncomeSources: NewIncomeSources,
-                                           val notMigrated: NotMigratedUser,
                                            val checkSessionTimeout: SessionTimeoutPredicate,
                                            val authenticate: AuthenticationPredicate,
                                            val authorisedFunctions: AuthorisedFunctions,
                                            val retrieveNino: NinoPredicate,
                                            val retrieveIncomeSources: IncomeSourceDetailsPredicate,
-                                           val itvcErrorHandler: ItvcErrorHandler,
                                            implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                            val incomeSourceDetailsService: IncomeSourceDetailsService,
                                            val retrieveBtaNavBar: NavBarPredicate)
                                           (implicit val ec: ExecutionContext,
                                            implicit override val mcc: MessagesControllerComponents,
                                            val appConfig: FrontendAppConfig) extends ClientConfirmedController
-  with I18nSupport with FeatureSwitching {
+  with FeatureSwitching {
 
   def show(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
       handleRequest(
-        incomeSourceDetails = user.incomeSources,
+//        sources = dummyBusinessesAndPropertyIncome,
+        sources = user.incomeSources,
         isAgent = false,
         backUrl = controllers.routes.HomeController.show().url
       )
@@ -65,24 +64,25 @@ class NewIncomeSourcesController @Inject()(val newIncomeSources: NewIncomeSource
         getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true) flatMap {
           implicit mtdItUser =>
             handleRequest(
-              incomeSourceDetails = mtdItUser.incomeSources,
+//              sources = dummyBusinessesAndPropertyIncome,
+              sources = mtdItUser.incomeSources,
               isAgent = true,
               backUrl = controllers.routes.HomeController.showAgent.url
             )
         }
   }
 
-  def handleRequest(incomeSourceDetails: IncomeSourceDetailsModel, isAgent: Boolean, backUrl: String)
+  def handleRequest(sources: IncomeSourceDetailsModel, isAgent: Boolean, backUrl: String)
                    (implicit user: MtdItUser[_]): Future[Result] = {
     Future.successful(
       if (isDisabled(IncomeSources)) {
         Redirect(controllers.routes.HomeController.show())
       } else {
         Ok(newIncomeSources(
-          soleTraderBusinesses = incomeSourceDetails.businesses,
-          ukProperty = incomeSourceDetails.property.find(_.incomeSourceType.contains("uk-property")),
-          foreignProperty = incomeSourceDetails.property.find(_.incomeSourceType.contains("foreign-property")),
-          ceasedBusinesses = incomeSourceDetails.businesses.filter(_.cessation.map(_.date).nonEmpty),
+          soleTraderBusinesses = sources.businesses,
+          ukProperty = sources.property.find(_.incomeSourceType.contains("uk-property")),
+          foreignProperty = sources.property.find(_.incomeSourceType.contains("foreign-property")),
+          ceasedBusinesses = sources.businesses.filter(_.cessation.map(_.date).nonEmpty),
           isAgent = isAgent,
           backUrl = backUrl
         ))
