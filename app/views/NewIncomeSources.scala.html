@@ -120,7 +120,7 @@
                 HeadCell(content = Text(getMessage("table-head.date-started"))),
                 HeadCell(content = Text("Date ended"))
             )),
-            rows = sources.ceasedBusinesses.map { ceasedBusiness => Seq(
+            rows = ceasedBusinesses.map { ceasedBusiness => Seq(
                 TableRow(Text(ceasedBusiness.tradingName
                         .getOrElse(throw MissingFieldException("Trading Name")))),
                 TableRow(Text(ceasedBusiness.tradingStartDate
