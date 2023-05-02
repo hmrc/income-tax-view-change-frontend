@@ -47,7 +47,7 @@
 @ukProperty = @{ sources.ukProperty }
 @foreignProperty = @{ sources.foreignProperty }
 @ceasedBusinesses = @{ sources.ceasedBusinesses }
-@soleTraderBusinesses = @{ sources.soleTraderBusinesses.filterNot(_.isCeased) }
+@soleTraderBusinesses = @{ sources.soleTraderBusinesses }
 
 @addBusinessNameURL = @{
     if(isAgent) controllers.routes.AddBusinessNameController.showAgent().url
