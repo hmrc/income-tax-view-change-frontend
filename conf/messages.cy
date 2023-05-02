@@ -1131,7 +1131,7 @@ credit-and-refund.credit-from-earlier-tax-year                    = credyd o flw
 
 ## check income sources
 new-income-sources.heading                  = WELSH PENDING
-new-income-sources.self-employment.h2       = WELSH PENDING
+new-income-sources.self-employment.h2       = Busnesau unig fasnachwr
 new-income-sources.self-employment.p1       = Nid oes angen i chi roi gwybod i ni am fusnes y gwyddwn amdano eisoes.
 new-income-sources.self-employment.link     = Ychwanegu ffynhonnell incwm gan unig fasnachwr
 new-income-sources.uk-property.h2           = Eiddo yn y DU
