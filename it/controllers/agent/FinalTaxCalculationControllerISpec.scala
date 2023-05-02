@@ -18,7 +18,7 @@ package controllers.agent
 
 import helpers.agent.{ComponentSpecBase, SessionCookieBaker}
 import helpers.servicemocks.{IncomeTaxCalculationStub, IncomeTaxViewChangeStub}
-import models.core.{AccountingPeriodModel, CessationModel}
+import models.core.AccountingPeriodModel
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, PropertyDetailsModel}
 import models.liabilitycalculation.LiabilityCalculationError
 import org.jsoup.Jsoup
@@ -29,9 +29,7 @@ import play.api.i18n.{Lang, Messages, MessagesApi}
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testMtditid, testNino}
-import testConstants.BusinessDetailsIntegrationTestConstants.{b2CessationDate, b2CessationReason, b2TradingStart}
 import testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessful
-import testConstants.PropertyDetailsIntegrationTestConstants.{propertyIncomeType, propertyTradingStartDate}
 
 import java.time.LocalDate
 import java.util.Locale
@@ -149,17 +147,18 @@ class FinalTaxCalculationControllerISpec extends ComponentSpecBase with SessionC
       Some("testId"),
       Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
       Some("Test Trading Name"),
+      None,
       Some(LocalDate.of(2018, 1, 1)),
-      Some(b2TradingStart),
-      Some(CessationModel(Some(b2CessationDate), Some(b2CessationReason)))
+      None
     )),
     property = Some(
       PropertyDetailsModel(
         Some("testId2"),
         Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
+        None,
+        None,
         Some(LocalDate.of(2018, 1, 1)),
-        propertyIncomeType,
-        propertyTradingStartDate
+        None
       )
     )
   )

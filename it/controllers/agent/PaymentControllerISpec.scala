@@ -18,12 +18,11 @@ package controllers.agent
 
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.core.{AccountingPeriodModel, CessationModel, PaymentJourneyModel}
+import models.core.{AccountingPeriodModel, PaymentJourneyModel}
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
 import play.api.http.Status.OK
 import play.api.libs.json.{JsValue, Json}
 import testConstants.BaseIntegrationTestConstants._
-import testConstants.BusinessDetailsIntegrationTestConstants.{b2CessationDate, b2CessationReason, b2TradingStart}
 
 import java.time.LocalDate
 
@@ -59,9 +58,9 @@ class PaymentControllerISpec extends ComponentSpecBase {
               Some("testId"),
               Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
               None,
+              None,
               Some(getCurrentTaxYearEnd),
-              Some(b2TradingStart),
-              Some(CessationModel(Some(b2CessationDate), Some(b2CessationReason)))
+              None
             )),
             property = None
           )
@@ -91,9 +90,9 @@ class PaymentControllerISpec extends ComponentSpecBase {
               Some("testId"),
               Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
               None,
+              None,
               Some(getCurrentTaxYearEnd),
-              Some(b2TradingStart),
-              Some(CessationModel(Some(b2CessationDate), Some(b2CessationReason)))
+              None
             )),
             property = None
           )

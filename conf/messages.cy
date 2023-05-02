@@ -125,6 +125,10 @@ home.updates.overdue.updates                                    = {0} YN HWYR Di
 home.self-assessment.description                                = Defnyddiwch y gwasanaeth hwn i fwrw golwg dros eich gwybodaeth am flynyddoedd treth cynharach cyn i chi gofrestru ar gyfer y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm.
 home.credAndRefund.view                                         = Hawlio ad-daliad
 home.credAndRefund_howToClaim.view                              = Sut i hawlio ad-daliad
+home.incomeSources.heading                                      = Ffynonellau incwm
+home.incomeSources.addIncomeSource.view                         = Ychwanegu unig fasnachwr neu incwm o eiddo newydd
+home.incomeSources.manageIncomeSource.view                      = Bwrw golwg dros eich ffynonellau incwm a’u rheoli
+home.incomeSources.ceaseIncomeSource.view                       = Dod â ffynhonnell incwm i ben
 
 
 ## Recruitment Banner ##

@@ -100,7 +100,7 @@ class IncomeSourceDetailsModelSpec extends UnitSpec with Matchers {
             BusinessDetailsModel(None, None, None, None, None, None),
             BusinessDetailsModel(None, None, None, Some(LocalDate.of(getCurrentTaxEndYear(LocalDate.now) - 1, Month.APRIL, 5)), None, None)
           ),
-          Some(PropertyDetailsModel(None, None, None, None, None))
+          Some(PropertyDetailsModel(None, None, None, None, None, None))
         )
         preSanitised.sanitise shouldBe expected
       }
