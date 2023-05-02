@@ -20,6 +20,8 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import exceptions.MissingFieldException
 @import models.incomeSourceDetails.BusinessNameForm
+@import helper._
+
 
 @this(
 mainTemplate: unifiedLayout,
@@ -49,8 +51,9 @@ btaNavPartial = user.btaNavPartial) {
 @p() { @getMessage("p2") }
 
 @helper.form(action = routes.AddBusinessController.submit) {
+ @CSRF.formField
 @helper.input(form("name")) { (id, name, value, args) =>
-<input type="text" name="@name" id="@id" class="govuk-input">
+  <input type="text" name="@name" id="@id" class="govuk-input">
 }
 @govukButton(Button(
 content = Text("Continue")

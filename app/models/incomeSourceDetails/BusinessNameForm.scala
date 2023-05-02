@@ -19,14 +19,37 @@ package models.incomeSourceDetails
 import play.api.data.Form
 import play.api.data.Forms.{mapping, text}
 
+import scala.util.matching.Regex
+
 case class BusinessNameForm(name: String)
 
 
 object BusinessNameForm {
+
+  private val validBusinessName: Regex = "^[A-Za-z0-9 ,.&'\\\\/-]{1,105}$".r
+
+  def validation(name: String): Option[BusinessNameForm] = {
+    if (name.nonEmpty && name.length <= 105)
+    {
+      validBusinessName.findFirstMatchIn(name) match {
+        case Some(_) => Option(BusinessNameForm(name))
+        case _ => None
+      }
+    } else None
+  }
+
   val form: Form[BusinessNameForm] = Form(mapping(
     "name" -> text
-      .verifying("form.error.required", _.nonEmpty)
-      .verifying("form.error.maxLength", _.length <= 105)
-      .verifying("form.error.invalidNameFormat", _.matches("^[A-Za-z0-9 ,.&'\\\\/-]{1,105}$"))
-  )(BusinessNameForm.apply)(BusinessNameForm.unapply))
+    //      .verifying("form.error.required", _.nonEmpty)
+    //      .verifying("form.error.maxLength", _.length <= 105)
+    //      .verifying("form.error.invalidNameFormat", _.matches("^[A-Za-z0-9 ,.&'\\\\/-]{1,105}$"))
+  )(BusinessNameForm.apply)(BusinessNameForm.unapply).verifying(
+    "Failed form constraints!",
+    fields => fields match {
+      case businessName => validation(businessName.name).isDefined
+    }
+  )
+  )
+
+
 }
