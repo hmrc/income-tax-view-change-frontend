@@ -86,7 +86,8 @@
         )),
         rows = soleTraderBusinesses.zipWithIndex.map { case (b, index) => Seq(
             TableRow(
-                content = Text(b.tradingName.getOrElse(throw MissingFieldException("Trading Name"))),
+                content = Text(b.tradingName
+                        .getOrElse(throw MissingFieldException("Trading Name"))),
                 attributes = Map("id" -> s"table-row-trading-name-$index")),
 
             TableRow(
@@ -170,15 +171,15 @@
                 TableRow(
                     content = Text(b.tradingName
                         .getOrElse(throw MissingFieldException("Trading Name"))),
-                    attributes = Map("id" -> "table-row-trading-name-ceased")),
+                    attributes = Map("id" -> s"table-row-trading-name-ceased-$index")),
                 TableRow(
                     content = Text(b.tradingStartDate
                         .getOrElse(throw MissingFieldException("Trading Start Date")).toLongDate),
-                    attributes = Map("id" -> "table-row-trading-start-date-ceased")),
+                    attributes = Map("id" -> s"table-row-trading-start-date-ceased-$index")),
                 TableRow(
                     content = Text(b.cessation.flatMap(_.date)
                         .getOrElse(throw MissingFieldException("Cessation Date")).toLongDate),
-                    attributes = Map("id" -> "table-row-cessation-date")),
+                    attributes = Map("id" -> s"table-row-cessation-date-$index")),
             )}
         ))
     }
