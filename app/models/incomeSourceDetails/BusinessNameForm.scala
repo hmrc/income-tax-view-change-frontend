@@ -28,13 +28,13 @@ case class BusinessNameForm(name: String)
 
 object BusinessNameForm {
 
-  private val validBusinessName: Regex = "^[A-Za-z0-9 ,.&'\\\\/-]{1,105}$".r
+  private val validBusinessName: Regex = "^[A-Za-z0-9 ,.&'\\\\/-]+$".r
 
   val businessNameLength: Int = 105
 
-  val businessNameEmptyError: String = "form.error.boo"
-  val businessNameLengthIncorrect: String = "form.error.maxLength"
-  val businessNameInvalidChar: String = "form.error.invalidNameFormat"
+  val businessNameEmptyError: String = "add-business-name.form.error.required"
+  val businessNameLengthIncorrect: String = "add-business-name.form.error.maxLength"
+  val businessNameInvalidChar: String = "add-business-name.form.error.invalidNameFormat"
 
   val containsValidChar: Constraint[String] = Constraint(value =>
     if (validBusinessName.pattern.matcher(value).matches()) {
@@ -57,7 +57,7 @@ object BusinessNameForm {
   )
 
   val form: Form[BusinessNameForm] = Form(mapping(
-    "name" -> text.verifying(containsValidChar andThen isValidNameLength)
+    "name" -> text.verifying(nonEmptyBusinessName andThen containsValidChar andThen isValidNameLength)
   )(BusinessNameForm.apply)(BusinessNameForm.unapply)
   )
 }

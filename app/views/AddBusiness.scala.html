@@ -50,19 +50,21 @@ backUrl = None,
 isAgent = false,
 btaNavPartial = user.btaNavPartial) {
 
-@h1(getMessage("heading"))
-
-@p() { @getMessage("p1") }
-@p() { @getMessage("p2") }
-
-@helper.form(action = routes.AddBusinessController.submit) {
+@form(action = postAction) {
 @CSRF.formField
-@helper.inputText(businessNameForm("name"), Symbol("class") -> "govuk-input")
+@inputHelper(
+field = businessNameForm("name"),
+label = getMessage("heading"),
+isPageHeading = true,
+formHint = Some(getMessage("p1") + "<p>" + getMessage("p2"))
+)
 
 @govukButton(Button(
 content = Text("Continue")
 ))
+
 }
+
 
 }
 
