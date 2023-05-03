@@ -19,7 +19,7 @@ package controllers
 import audit.models.PaymentHistoryResponseAuditModel
 import auth.MtdItUser
 import config.featureswitch.{CutOverCredits, MFACreditsAndDebits, PaymentHistoryRefunds}
-import helpers.{ComponentSpecBase, servicemocks}
+import helpers.{ComponentSpecBase, TestDateService, servicemocks}
 import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.financialDetails.Payment
@@ -35,9 +35,13 @@ import java.time.LocalDate
 
 class PaymentHistoryControllerISpec extends ComponentSpecBase {
 
-  override def beforeEach(): Unit = {
-    super.beforeEach()
-  }
+  val currentDate = LocalDate.of(2024, 5, 5)
+//  val testDateService = app.injector.instanceOf[TestDateService]
+//
+//  override def beforeEach(): Unit = {
+//    testDateService.currentTime = Some(currentDate)
+//    super.beforeEach()
+//  }
 
   val payments: List[Payment] = List(
     Payment(reference = Some("payment1"), amount = Some(100.00), outstandingAmount = None, method = Some("method"),
