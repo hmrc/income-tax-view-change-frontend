@@ -61,7 +61,7 @@ class TestHeaderExtractor extends HeaderExtractor {
 @Singleton
 class TestDateService  extends DateServiceInterface  {
 
-  var currentTime: Option[LocalDate] = None //LocalDate.of(2023, 4, 5)
+  var currentTime: Option[LocalDate] = Some(LocalDate.of(2023, 4, 5))
   override def getCurrentDate(isTimeMachineEnabled: Boolean = false): LocalDate = currentTime.get
   override def isDayBeforeTaxYearLastDay(isTimeMachineEnabled: Boolean = false): Boolean = true
 

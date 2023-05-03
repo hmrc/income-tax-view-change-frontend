@@ -35,13 +35,10 @@ import java.time.LocalDate
 
 class PaymentHistoryControllerISpec extends ComponentSpecBase {
 
-  val currentDate = LocalDate.of(2024, 5, 5)
-//  val testDateService = app.injector.instanceOf[TestDateService]
-//
-//  override def beforeEach(): Unit = {
-//    testDateService.currentTime = Some(currentDate)
-//    super.beforeEach()
-//  }
+
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+  }
 
   val payments: List[Payment] = List(
     Payment(reference = Some("payment1"), amount = Some(100.00), outstandingAmount = None, method = Some("method"),
