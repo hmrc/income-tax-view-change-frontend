@@ -56,8 +56,8 @@ object BusinessDetailsTestConstants {
     accountingPeriod = Some(testBusinessAccountingPeriod),
     tradingName = Some(testTradeName),
     firstAccountingPeriodEndDate = Some(LocalDate.of(year2018, Month.APRIL, 5)),
-    cessation = Some(testCessation),
-    tradingStartDate = Some(testStartDate)
+    tradingStartDate = Some(testStartDate),
+    cessation = None
   )
 
 
@@ -66,7 +66,7 @@ object BusinessDetailsTestConstants {
     accountingPeriod = Some(testBusinessAccountingPeriod),
     tradingName = Some(testTradeName),
     firstAccountingPeriodEndDate = None,
-    cessation = Some(testCessation),
+    cessation = None,
     tradingStartDate = Some(testStartDate)
   )
 
@@ -75,8 +75,8 @@ object BusinessDetailsTestConstants {
     accountingPeriod = Some(test2018BusinessAccountingPeriod),
     tradingName = Some(testTradeName),
     firstAccountingPeriodEndDate = None,
-    cessation = Some(testCessation),
-    tradingStartDate = Some(testStartDate)
+    tradingStartDate = Some(testStartDate),
+    cessation = None
   )
 
   val business2019 = BusinessDetailsModel(
@@ -84,7 +84,7 @@ object BusinessDetailsTestConstants {
     accountingPeriod = Some(test2019BusinessAccountingPeriod),
     tradingName = Some(testTradeName),
     firstAccountingPeriodEndDate = None,
-    cessation = Some(testCessation),
+    cessation = None,
     tradingStartDate = Some(testStartDate)
   )
 
@@ -101,9 +101,9 @@ object BusinessDetailsTestConstants {
     incomeSourceId = Some(testSelfEmploymentId),
     accountingPeriod = Some(AccountingPeriodModel(start = LocalDate.of(year2017, Month.APRIL, 6), end = LocalDate.of(year2018, Month.APRIL, 5))),
     tradingName = Some(testTradeName),
+    tradingStartDate = Some(testStartDate),
     firstAccountingPeriodEndDate = Some(getCurrentTaxYearEnd.minusYears(1)),
-    cessation = Some(testCessation),
-    tradingStartDate = Some(testStartDate)
+    cessation = None
   )
 
   val ceasedBusiness = BusinessDetailsModel(
@@ -111,8 +111,8 @@ object BusinessDetailsTestConstants {
     accountingPeriod = Some(testBusinessAccountingPeriod),
     tradingName = Some(testTradeName),
     firstAccountingPeriodEndDate = None,
-    cessation = Some(testCessation),
-    tradingStartDate = Some(testStartDate)
+    tradingStartDate = Some(testStartDate),
+    cessation = Some(testCessation)
   )
 
   val oldUseralignedBusiness = BusinessDetailsModel(
@@ -120,8 +120,8 @@ object BusinessDetailsTestConstants {
     accountingPeriod = Some(AccountingPeriodModel(start = LocalDate.of(year2017, Month.APRIL, 6), end = LocalDate.of(year2018, Month.APRIL, 5))),
     tradingName = Some(testTradeName),
     firstAccountingPeriodEndDate = Some(getCurrentTaxYearEnd.minusYears(1)),
-    cessation = Some(testCessation),
-    tradingStartDate = Some(testStartDate)
+    tradingStartDate = Some(testStartDate),
+    cessation = None
   )
 
   val businessErrorModel = ErrorModel(testErrorStatus, testErrorMessage)

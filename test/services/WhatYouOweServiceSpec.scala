@@ -52,7 +52,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
   )(FakeRequest())
 
 
-  def disableAllSwitches() : Unit = {
+  def disableAllSwitches(): Unit = {
     switches.foreach(switch => disable(switch))
   }
 
@@ -215,7 +215,8 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
             chargesList = List(DocumentDetailWithDueDate(
               DocumentDetail(currentYear.toInt, "1040000124", Some("ITSA - POA 2"), Some("documentText"), Some(0), Some(12.34), LocalDate.of(2018, 3, 29), Some(10), Some(100),
                 Some("latePaymentInterestId"), Some(LocalDate.of(2018, 3, 29)),
-                Some(LocalDate.of(2018, 3, 29)), Some(10), Some(100), Some("paymentLotItem"), Some("paymentLot")),
+                Some(LocalDate.of(2018, 3, 29)), Some(10), Some(100), Some("paymentLotItem"), Some("paymentLot"),
+                effectiveDateOfPayment = Some(LocalDate.now().minusDays(1))),
               Some(LocalDate.of(2018, 3, 29)), isLatePaymentInterest = true)))
         }
       }
@@ -228,13 +229,15 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
             originalAmount = Some(43.21), documentDate = LocalDate.of(2018, 3, 29),
             interestOutstandingAmount = None, interestRate = None,
             latePaymentInterestId = None, interestFromDate = Some(LocalDate.parse("2019-05-25")),
-            interestEndDate = Some(LocalDate.parse("2019-06-25")), latePaymentInterestAmount = None)
+            interestEndDate = Some(LocalDate.parse("2019-06-25")), latePaymentInterestAmount = None,
+            effectiveDateOfPayment = Some(LocalDate.parse("2021-08-24")))
           val dd2 = DocumentDetail(taxYear = 2021, transactionId = id1040000125, documentDescription = Some("TRM New Charge"),
             documentText = Some(CODING_OUT_CANCELLED), outstandingAmount = Some(43.21),
             originalAmount = Some(43.21), documentDate = LocalDate.of(2018, 3, 29),
             interestOutstandingAmount = None, interestRate = None,
             latePaymentInterestId = None, interestFromDate = Some(LocalDate.parse("2019-05-25")),
-            interestEndDate = Some(LocalDate.parse("2019-06-25")), latePaymentInterestAmount = None)
+            interestEndDate = Some(LocalDate.parse("2019-06-25")), latePaymentInterestAmount = None,
+            effectiveDateOfPayment = Some(LocalDate.parse("2021-08-25")))
           val dd3 = dd1.copy(transactionId = id1040000126, documentText = Some(CODING_OUT_ACCEPTED), amountCodedOut = Some(2500.00))
           when(mockIncomeTaxViewChangeConnector.getOutstandingCharges(any(), any(), any())(any()))
             .thenReturn(Future.successful(OutstandingChargesErrorModel(404, "NOT_FOUND")))
@@ -247,7 +250,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
                   Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate = Some(LocalDate.parse("2021-08-24")))))),
                 FinancialDetail("2021", Some("SA Balancing Charge"), Some(id1040000125), None, Some("type"), Some(100), Some(100),
                   Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate = Some(LocalDate.parse("2021-08-25")), dunningLock = Some("Coding out"))))),
-                FinancialDetail("2021", Some("SA Balancing Charge"), Some(id1040000126),None, Some("type"), Some(100), Some(100),
+                FinancialDetail("2021", Some("SA Balancing Charge"), Some(id1040000126), None, Some("type"), Some(100), Some(100),
                   Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate = Some(LocalDate.parse("2021-08-25")), dunningLock = Some("Coding out")))))
               )
             ))))
@@ -267,15 +270,15 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
           val dd1 = DocumentDetail(taxYear = 2021, transactionId = id1040000124, documentDescription = Some("TRM New Charge"),
             documentText = Some(CODING_OUT_CLASS2_NICS), outstandingAmount = Some(43.21),
             originalAmount = Some(43.21), documentDate = LocalDate.of(2018, 3, 29),
-            interestOutstandingAmount = None, interestRate = None,
-            latePaymentInterestId = None, interestFromDate = Some(LocalDate.parse("2019-05-25")),
-            interestEndDate = Some(LocalDate.parse("2019-06-25")), latePaymentInterestAmount = None)
+            interestOutstandingAmount = None, interestRate = None, latePaymentInterestId = None,
+            interestFromDate = Some(LocalDate.parse("2019-05-25")), interestEndDate = Some(LocalDate.parse("2019-06-25")),
+            latePaymentInterestAmount = None, effectiveDateOfPayment = Some(LocalDate.parse("2021-08-24")))
           val dd2 = DocumentDetail(taxYear = 2021, transactionId = id1040000125, documentDescription = Some("TRM New Charge"),
             documentText = Some(CODING_OUT_CANCELLED), outstandingAmount = Some(43.21),
             originalAmount = Some(43.21), documentDate = LocalDate.of(2018, 3, 29),
-            interestOutstandingAmount = None, interestRate = None,
-            latePaymentInterestId = None, interestFromDate = Some(LocalDate.parse("2019-05-25")),
-            interestEndDate = Some(LocalDate.parse("2019-06-25")), latePaymentInterestAmount = None)
+            interestOutstandingAmount = None, interestRate = None, latePaymentInterestId = None,
+            interestFromDate = Some(LocalDate.parse("2019-05-25")), interestEndDate = Some(LocalDate.parse("2019-06-25")),
+            latePaymentInterestAmount = None, effectiveDateOfPayment = Some(LocalDate.parse("2021-08-25")))
           val dd3 = dd1.copy(transactionId = id1040000126, documentText = Some(CODING_OUT_ACCEPTED))
           when(mockIncomeTaxViewChangeConnector.getOutstandingCharges(any(), any(), any())(any()))
             .thenReturn(Future.successful(OutstandingChargesErrorModel(404, "NOT_FOUND")))

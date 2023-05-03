@@ -19,15 +19,13 @@ import config.featureswitch._
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.AuthStub.{titleInternalServer, titleTechError}
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.core.{AccountingPeriodModel, CessationModel}
+import models.core.AccountingPeriodModel
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, PropertyDetailsModel}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.ws.WSResponse
 import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants._
-import testConstants.BusinessDetailsIntegrationTestConstants.{b2CessationDate, b2CessationReason, b2TradingStart}
-import testConstants.PropertyDetailsIntegrationTestConstants.{propertyIncomeType, propertyTradingStartDate}
 import testConstants.messages.TaxYearsMessages.{taxYearMessage, updateReturn, viewSummary}
 
 import java.time.LocalDate
@@ -49,13 +47,15 @@ class TaxYearsControllerISpec extends ComponentSpecBase with FeatureSwitching {
       Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
       Some("Test Trading Name"),
       Some(getCurrentTaxYearEnd),
-      Some(b2TradingStart),
-      Some(CessationModel(Some(b2CessationDate), Some(b2CessationReason)))
+      None,
+      None
     )),
     property = Some(
       PropertyDetailsModel(
         Some("testId2"),
         Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
+        None,
+        None,
         Some(getCurrentTaxYearEnd),
         propertyIncomeType,
         propertyTradingStartDate,
@@ -73,7 +73,7 @@ class TaxYearsControllerISpec extends ComponentSpecBase with FeatureSwitching {
       Some("Test Trading Name"),
       None,
       None,
-      Some(CessationModel(Some(b2CessationDate), Some(b2CessationReason)))
+      None
     )),
     property = Some(
       PropertyDetailsModel(
@@ -82,6 +82,8 @@ class TaxYearsControllerISpec extends ComponentSpecBase with FeatureSwitching {
         None,
         propertyIncomeType,
         propertyTradingStartDate,
+        None,
+        None,
         None
       )
     )

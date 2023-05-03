@@ -17,8 +17,9 @@
 package models.financialDetails
 
 import auth.MtdItUser
+import exceptions.MissingFieldException
 import play.api.libs.json.{Format, Json}
-import services.{DateServiceInterface}
+import services.DateServiceInterface
 
 import java.time.LocalDate
 
@@ -35,7 +36,7 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
       financialDetails.find { fd =>
         fd.transactionId.contains(documentDetail.transactionId) &&
           fd.taxYear.toInt == documentDetail.taxYear
-      } flatMap (_.items.flatMap(_.headOption.flatMap(_.dueDate)))
+      }.flatMap(_ => documentDetail.effectiveDateOfPayment)
     }
   }
 

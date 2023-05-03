@@ -148,3 +148,11 @@ GET          /agents/how-to-claim-refund                                  contro
 
 GET          /how-to-claim-refund-external                                controllers.NotMigratedUserController.redirect()
 GET          /agents/how-to-claim-refund-external                         controllers.NotMigratedUserController.redirectAgent()
+
+# Income Sources
+GET          /income-sources/manage/choose-income-sources                 controllers.ManageIncomeSourceController.show()
+GET          /agents/income-sources/manage/choose-income-sources          controllers.ManageIncomeSourceController.showAgent()
+GET          /income-sources/add/new-income-sources                       controllers.AddIncomeSourceController.show()
+GET          /agents/income-sources/add/new-income-sources                controllers.AddIncomeSourceController.showAgent()
+GET          /income-sources/cease/cease-an-income-source                 controllers.CeaseIncomeSourceController.show()
+GET          /agents/income-sources/cease/cease-an-income-source          controllers.CeaseIncomeSourceController.showAgent()

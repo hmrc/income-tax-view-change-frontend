@@ -22,16 +22,14 @@ import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.AuthStub.titleInternalServer
 import helpers.servicemocks._
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
-import models.core.{AccountingPeriodModel, CessationModel}
+import models.core.AccountingPeriodModel
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, PropertyDetailsModel}
 import play.api.http.Status._
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.ws.WSResponse
 import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants._
-import testConstants.BusinessDetailsIntegrationTestConstants.{b2CessationDate, b2CessationReason, b2TradingStart}
 import testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessful
-import testConstants.PropertyDetailsIntegrationTestConstants.{propertyIncomeType, propertyTradingStartDate}
 
 import java.time.LocalDate
 
@@ -70,14 +68,16 @@ class ForecastIncomeSummaryControllerISpec extends ComponentSpecBase with Featur
       Some("testId"),
       Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
       Some("Test Trading Name"),
+      None,
       Some(getCurrentTaxYearEnd),
-      Some(b2TradingStart),
-      Some(CessationModel(Some(b2CessationDate), Some(b2CessationReason)))
+      None
     )),
     property = Some(
       PropertyDetailsModel(
         Some("testId2"),
         Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
+        None,
+        None,
         Some(getCurrentTaxYearEnd),
         propertyIncomeType,
         propertyTradingStartDate,

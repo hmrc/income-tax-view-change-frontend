@@ -24,7 +24,7 @@ import helpers.servicemocks.AuditStub.verifyAuditEvent
 import helpers.servicemocks.AuthStub.titleInternalServer
 import helpers.servicemocks._
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
-import models.core.{AccountingPeriodModel, CessationModel}
+import models.core.AccountingPeriodModel
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, PropertyDetailsModel}
 import models.liabilitycalculation.viewmodels.TaxDueSummaryViewModel
 import play.api.http.Status._
@@ -32,11 +32,9 @@ import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.ws.WSResponse
 import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants._
-import testConstants.BusinessDetailsIntegrationTestConstants.{b2CessationDate, b2CessationReason, b2TradingStart}
 import testConstants.IncomeSourceIntegrationTestConstants._
 import testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessful
 import testConstants.NewCalcDataIntegrationTestConstants._
-import testConstants.PropertyDetailsIntegrationTestConstants.{propertyIncomeType, propertyTradingStartDate}
 import testConstants.messages.TaxDueSummaryMessages._
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 
@@ -58,14 +56,16 @@ class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
       Some("testId"),
       Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
       Some("Test Trading Name"),
+      None,
       Some(getCurrentTaxYearEnd),
-      Some(b2TradingStart),
-      Some(CessationModel(Some(b2CessationDate), Some(b2CessationReason)))
+      None
     )),
     property = Some(
       PropertyDetailsModel(
         Some("testId2"),
         Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
+        None,
+        None,
         Some(getCurrentTaxYearEnd),
         propertyIncomeType,
         propertyTradingStartDate,

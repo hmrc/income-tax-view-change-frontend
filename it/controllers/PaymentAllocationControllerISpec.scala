@@ -115,7 +115,7 @@ class PaymentAllocationControllerISpec extends ComponentSpecBase with FeatureSwi
         result should have(
           httpStatus(OK),
           pageTitleIndividual("paymentAllocation.heading"),
-          elementTextBySelector("tbody")("HMRC adjustment 2022 Tax year 2021 to 2022 31 Jan 2021 £800.00"),
+          elementTextBySelector("tbody")("HMRC adjustment Tax year 2021 to 2022 Tax year 2021 to 2022 31 Jan 2021 £800.00"),
         )
 
         verifyAuditContainsDetail(PaymentAllocationsResponseAuditModel(testUser, paymentAllocationViewModelHmrcAdjustment).detail)

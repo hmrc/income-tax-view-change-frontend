@@ -18,13 +18,14 @@ package testConstants
 
 import testConstants.BaseTestConstants.{testErrorMessage, testErrorStatus, testMigrationYear2019}
 import testConstants.BusinessDetailsTestConstants._
-import testConstants.PropertyDetailsTestConstants.propertyDetails
+import testConstants.PropertyDetailsTestConstants.{ceasedPropertyDetails, propertyDetails}
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel}
 
 import java.time.LocalDate
 
 object IncomeSourceDetailsTestConstants {
   val businessesAndPropertyIncome = IncomeSourceDetailsModel(testMtdItId, Some("2018"), List(business1, business2), Some(propertyDetails))
+  val businessesAndPropertyIncomeCeased = IncomeSourceDetailsModel(testMtdItId, Some("2018"), List(ceasedBusiness), Some(ceasedPropertyDetails))
   val singleBusinessIncome = IncomeSourceDetailsModel(testMtdItId, Some("2017"), List(business1), None)
   val singleBusinessIncomeNotMigrated = IncomeSourceDetailsModel(testMtdItId, None, List(business1), None)
   val singleBusinessIncomeWithCurrentYear = IncomeSourceDetailsModel(testMtdItId, Some(LocalDate.now().getYear.toString), List(business1), None)

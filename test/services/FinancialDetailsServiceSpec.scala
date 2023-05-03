@@ -77,8 +77,8 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
           )),
           None,
           firstAccountingPeriodEndDate = Some(LocalDate.of(getTaxEndYear(LocalDate.now.minusYears(count - 1)), april, fifth)),
-          None,
-          None
+          tradingStartDate = None,
+          cessation = None
         )
       },
       property = None
@@ -101,8 +101,8 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
         Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
         None,
         Some(getCurrentTaxYearEnd.minusYears(1)),
-        None,
-        None
+        tradingStartDate = None,
+        cessation = None
       )
     ),
     property = None
@@ -130,8 +130,8 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
           val financialDetailsCurrentYear: FinancialDetailsModel = FinancialDetailsModel(
             balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
             documentDetails = List(
-              DocumentDetail(2018, "testTransactionId1", Some("ITSA- POA 1"), Some("documentText"), Some(100.00), None, LocalDate.of(2018, 3, 29)),
-              DocumentDetail(2018, "testTransactionId2", Some("ITSA - POA 2"), Some("documentText"), Some(200.00), None, LocalDate.of(2018, 3, 29))
+              DocumentDetail(2018, "testTransactionId1", Some("ITSA- POA 1"), Some("documentText"), Some(100.00), None, LocalDate.of(2018, 3, 29), effectiveDateOfPayment = Some(LocalDate.now.minusDays(1))),
+              DocumentDetail(2018, "testTransactionId2", Some("ITSA - POA 2"), Some("documentText"), Some(200.00), None, LocalDate.of(2018, 3, 29), effectiveDateOfPayment = Some(LocalDate.now.plusDays(1)))
             ),
             financialDetails = List(
               FinancialDetail("2018", Some("SA Payment on Account 1"), Some("testTransactionId1"), Some(LocalDate.now()), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(Some(LocalDate.now.minusDays(1)))))),
@@ -163,8 +163,8 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
           val financialDetailsCurrentYear: FinancialDetailsModel = FinancialDetailsModel(
             balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
             documentDetails = List(
-              DocumentDetail(2018, "testTransactionId1", None, None, Some(100.00), None, LocalDate.of(2018, 3, 29)),
-              DocumentDetail(2018, "testTransactionId2", None, None, Some(100.00), None, LocalDate.of(2018, 3, 29))
+              DocumentDetail(2018, "testTransactionId1", None, None, Some(100.00), None, LocalDate.of(2018, 3, 29), effectiveDateOfPayment = Some(LocalDate.now.plusDays(7))),
+              DocumentDetail(2018, "testTransactionId2", None, None, Some(100.00), None, LocalDate.of(2018, 3, 29), effectiveDateOfPayment = Some(LocalDate.now.plusDays(1)))
             ),
             financialDetails = List(
               FinancialDetail("2018", None, Some("testTransactionId1"), None, None, None, None, None, None, None, None, Some(Seq(SubItem(Some(LocalDate.now.plusDays(7)))))),
@@ -175,8 +175,8 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
           val financialDetailsLastYear: FinancialDetailsModel = FinancialDetailsModel(
             balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
             documentDetails = List(
-              DocumentDetail(2018, "testTransactionId1", None, None, None, None, LocalDate.of(2018, 3, 29)),
-              DocumentDetail(2018, "testTransactionId2", Some("ITSA- POA 1"), Some("documentText"), Some(100.00), None, LocalDate.of(2018, 3, 29))
+              DocumentDetail(2018, "testTransactionId1", None, None, None, None, LocalDate.of(2018, 3, 29), effectiveDateOfPayment = Some(LocalDate.now.plusDays(3))),
+              DocumentDetail(2018, "testTransactionId2", Some("ITSA- POA 1"), Some("documentText"), Some(100.00), None, LocalDate.of(2018, 3, 29), effectiveDateOfPayment = Some(LocalDate.now.plusDays(5)))
             ),
             financialDetails = List(
               FinancialDetail("2018", Some("SA Payment on Account 1"), Some("testTransactionId1"), Some(LocalDate.now()), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(Some(LocalDate.now.plusDays(3)))))),
@@ -185,7 +185,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
           )
 
           val result: Option[Either[(LocalDate, Boolean), Int]] = {
-            TestFinancialDetailsService.getChargeDueDates(List(financialDetailsCurrentYear, financialDetailsLastYear))( isEnabled(TimeMachineAddYear))
+            TestFinancialDetailsService.getChargeDueDates(List(financialDetailsCurrentYear, financialDetailsLastYear))(isEnabled(TimeMachineAddYear))
           }
 
           result shouldBe Some(Left(LocalDate.now.plusDays(5) -> false))
@@ -196,8 +196,8 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
           val financialDetailsCurrentYear: FinancialDetailsModel = FinancialDetailsModel(
             balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
             documentDetails = List(
-              DocumentDetail(2018, "testTransactionId1", Some("ITSA- POA 1"), Some("documentText"), Some(100.00), Some(0.00), LocalDate.of(2018, 3, 29)),
-              DocumentDetail(2018, "testTransactionId2", Some("ITSA - POA 2"), Some("documentText"), Some(100.00), Some(0.00), LocalDate.of(2018, 3, 29))
+              DocumentDetail(2018, "testTransactionId1", Some("ITSA- POA 1"), Some("documentText"), Some(100.00), Some(0.00), LocalDate.of(2018, 3, 29), effectiveDateOfPayment = Some(LocalDate.now.minusDays(1))),
+              DocumentDetail(2018, "testTransactionId2", Some("ITSA - POA 2"), Some("documentText"), Some(100.00), Some(0.00), LocalDate.of(2018, 3, 29), effectiveDateOfPayment = Some(LocalDate.now.plusDays(1)))
             ),
             financialDetails = List(
               FinancialDetail("2018", Some("SA Payment on Account 1"), Some("testTransactionId1"), Some(LocalDate.now()), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(Some(LocalDate.now.minusDays(1)))))),
@@ -208,8 +208,8 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
           val financialDetailsLastYear: FinancialDetailsModel = FinancialDetailsModel(
             balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
             documentDetails = List(
-              DocumentDetail(2018, "testTransactionId1", Some("ITSA- POA 1"), Some("documentText"), Some(100.00), Some(0.00), LocalDate.of(2018, 3, 29)),
-              DocumentDetail(2018, "testTransactionId2", Some("ITSA - POA 2"), Some("documentText"), Some(100.00), Some(0.00), LocalDate.of(2018, 3, 29))
+              DocumentDetail(2018, "testTransactionId1", Some("ITSA- POA 1"), Some("documentText"), Some(100.00), Some(0.00), LocalDate.of(2018, 3, 29), effectiveDateOfPayment = Some(LocalDate.now.plusDays(1))),
+              DocumentDetail(2018, "testTransactionId2", Some("ITSA - POA 2"), Some("documentText"), Some(100.00), Some(0.00), LocalDate.of(2018, 3, 29), effectiveDateOfPayment = Some(LocalDate.now.minusDays(1)))
             ),
             financialDetails = List(
               FinancialDetail("2018", Some("SA Payment on Account 1"), Some("testTransactionId1"), Some(LocalDate.now()), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(Some(LocalDate.now.plusDays(3)))))),
@@ -218,7 +218,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
           )
 
           val result: Option[Either[(LocalDate, Boolean), Int]] = {
-            TestFinancialDetailsService.getChargeDueDates(List(financialDetailsCurrentYear, financialDetailsLastYear))( isEnabled(TimeMachineAddYear))
+            TestFinancialDetailsService.getChargeDueDates(List(financialDetailsCurrentYear, financialDetailsLastYear))(isEnabled(TimeMachineAddYear))
           }
 
           result shouldBe Some(Right(2))
@@ -231,7 +231,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
           val financialDetailsLastYear: FinancialDetailsModel = FinancialDetailsModel(BalanceDetails(1.00, 2.00, 3.00, None, None, None, None), List(), List())
 
           val result: Option[Either[(LocalDate, Boolean), Int]] = {
-            TestFinancialDetailsService.getChargeDueDates(List(financialDetailsCurrentYear, financialDetailsLastYear))( isEnabled(TimeMachineAddYear))
+            TestFinancialDetailsService.getChargeDueDates(List(financialDetailsCurrentYear, financialDetailsLastYear))(isEnabled(TimeMachineAddYear))
           }
 
           result shouldBe None
