@@ -16,21 +16,16 @@
 
 package controllers
 
-import java.time.{LocalDate, Month}
 import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
-import play.api.data._
-import play.api.data.Forms._
-import play.api.data.validation.Constraints._
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import views.html.AddBusiness
 import models.incomeSourceDetails.BusinessNameForm
-import play.api.Logger
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}

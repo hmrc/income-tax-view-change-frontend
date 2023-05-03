@@ -20,6 +20,11 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import exceptions.MissingFieldException
 @import models.incomeSourceDetails.BusinessNameForm
+@import helper._
+@import views.html.helpers.injected.ErrorSummary
+@import views.html.helpers.injected.InputHelper
+
+
 
 @this(
 mainTemplate: unifiedLayout,
@@ -29,10 +34,12 @@ h2: h2,
 p: p,
 link: link,
 govukInsetText : GovukInsetText,
-govukButton : GovukButton
+govukButton : GovukButton,
+inputHelper: InputHelper,
+errorSummary: ErrorSummary
 )
 
-@(form: Form[BusinessNameForm], postAction: Call)(implicit messages: Messages, user: auth.MtdItUser[_])
+@(businessNameForm: Form[BusinessNameForm], postAction: Call)(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @getMessage(key: String, args: String*) = @{
 messages(s"add-business-name.$key", args: _*)
@@ -49,14 +56,16 @@ btaNavPartial = user.btaNavPartial) {
 @p() { @getMessage("p2") }
 
 @helper.form(action = routes.AddBusinessController.submit) {
-@helper.input(form("name")) { (id, name, value, args) =>
-<input type="text" name="@name" id="@id" class="govuk-input">
-}
+@CSRF.formField
+@helper.inputText(businessNameForm("name"), Symbol("class") -> "govuk-input")
+
 @govukButton(Button(
 content = Text("Continue")
 ))
 }
 
-
-
 }
+
+
+
+

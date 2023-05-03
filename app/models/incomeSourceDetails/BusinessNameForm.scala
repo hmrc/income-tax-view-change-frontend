@@ -16,17 +16,83 @@
 
 package models.incomeSourceDetails
 
+import forms.utils.ConstraintUtil.ConstraintUtil
 import play.api.data.Form
-import play.api.data.Forms.{mapping, text}
+import play.api.data.Forms.{default, mapping, single, text}
+import play.api.data.validation.Constraints.nonEmpty
+import play.api.data.validation._
+
+import scala.util.matching.Regex
 
 case class BusinessNameForm(name: String)
 
-
 object BusinessNameForm {
+
+  private val validBusinessName: Regex = "^[A-Za-z0-9 ,.&'\\\\/-]{1,105}$".r
+
+  val businessNameLength: Int = 105
+
+  val businessNameEmptyError: String = "form.error.boo"
+  val businessNameLengthIncorrect: String = "form.error.maxLength"
+  val businessNameInvalidChar: String = "form.error.invalidNameFormat"
+
+  val containsValidChar: Constraint[String] = Constraint(value =>
+    if (validBusinessName.pattern.matcher(value).matches()) {
+      Valid
+    } else {
+      Invalid(businessNameInvalidChar)
+    }
+  )
+
+  val isValidNameLength: Constraint[String] = Constraint(value =>
+    if (value.length <= businessNameLength) {
+      Valid
+    } else {
+      Invalid(businessNameLengthIncorrect)
+    }
+  )
+
+  val nonEmptyBusinessName: Constraint[String] = Constraint( value =>
+    if (value.isEmpty) Invalid(businessNameEmptyError) else Valid
+  )
+
   val form: Form[BusinessNameForm] = Form(mapping(
-    "name" -> text
-      .verifying("form.error.required", _.nonEmpty)
-      .verifying("form.error.maxLength", _.length <= 105)
-      .verifying("form.error.invalidNameFormat", _.matches("^[A-Za-z0-9 ,.&'\\\\/-]{1,105}$"))
-  )(BusinessNameForm.apply)(BusinessNameForm.unapply))
+    "name" -> text.verifying(containsValidChar andThen isValidNameLength)
+  )(BusinessNameForm.apply)(BusinessNameForm.unapply)
+  )
 }
+  //
+  //  val businessNameCheckConstraint: Constraint[String] = Constraint("constraints.namecheck")({ plainText =>
+  //    val errors = plainText match {
+  //      case nameRequired if nameRequired.isEmpty => Seq(ValidationError("Business name cannot be empty"))
+  //      case nameLength if nameLength.length > 105 => Seq(ValidationError("Business name is too long (maximum 105 characters)"))
+  //      case nameCharacters if !validBusinessName.pattern.matcher(nameCharacters).matches => Seq(ValidationError("Business name contains invalid characters"))
+  //      case _ => Nil
+  //    }
+  //    if (errors.isEmpty) {
+  //      Valid
+  //    } else {
+  //      Invalid(errors)
+  //    }
+  //  })
+
+
+  //  val form: Form[String] = Form[String](
+//    single(
+//      value -> default(text, "")
+//        .transform[String](_.replaceAll("\\s", ""), identity)
+//        .verifying(
+//          nonEmptyBusinessName andThen containsOnlyNumbers andThen isValidUTRLength
+//        )
+//    )
+//  )
+  //  def validation(name: String): Option[BusinessNameForm] = {
+  //    if (name.nonEmpty && name.length <= 105)
+  //    {
+  //      validBusinessName.findFirstMatchIn(name) match {
+  //        case Some(_) => Option(BusinessNameForm(name))
+  //        case _ => None
+  //      }
+  //    } else None
+  //  }
+
