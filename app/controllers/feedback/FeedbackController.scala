@@ -33,6 +33,7 @@ import views.html.feedback.{Feedback, FeedbackThankYou}
 
 import java.net.URLEncoder
 import javax.inject.{Inject, Singleton}
+import scala.annotation.unused
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -153,6 +154,7 @@ class FeedbackController @Inject()(implicit val config: FrontendAppConfig,
     itvcHeaderCarrierForPartialsConverter.headerCarrierForPartialsToHeaderCarrier(hc)
   }
 
+  @unused
   private def handleSubmit(isAgent: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
     FeedbackForm.form.bindFromRequest().fold(
       hasErrors => Future.successful(BadRequest(feedbackView(feedbackForm = hasErrors,
