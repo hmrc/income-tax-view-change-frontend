@@ -69,11 +69,17 @@
     backUrl = Some(backUrl),
     btaNavPartial = user.btaNavPartial) {
 
-    @h1(getMessage("heading"), id = Some("new-income-sources-h1"))
+    @h1(msg = getMessage("heading"),
+        id = Some("new-income-sources-h1")
+    )
 
-    @p(id = Some("self-employment-p1")) { @getMessage("self-employment.p1") }
+    @p(id = Some("self-employment-p1")) {
+        @getMessage("self-employment.p1")
+    }
 
-    @h2(getMessage("self-employment.h2"), optId = Some("self-employment-h2"))
+    @h2(msg = getMessage("self-employment.h2"),
+        optId = Some("self-employment-h2")
+    )
 
     @govukTable(Table(
         head = Some(List(
@@ -96,14 +102,21 @@
                 attributes = Map("id" -> s"table-row-trading-start-date-$index"))
         )}
     ))
+
     @link(link = addBusinessNameURL,
         messageKey = getMessage("self-employment.link"),
-        id = Some("self-employment-link"))
+        id = Some("self-employment-link")
+    )
+
     @hr()
 
-    @h2(getMessage("uk-property.h2"), optId = Some("uk-property-h2"))
+    @h2(msg = getMessage("uk-property.h2"),
+        optId = Some("uk-property-h2")
+    )
 
-    @p(id = Some("uk-property-h2")) { @getMessage("uk-property.p1") }
+    @p(id = Some("uk-property-h2")) {
+        @getMessage("uk-property.p1")
+    }
 
     @if(ukProperty.nonEmpty) {
         @govukTable(Table(
@@ -122,13 +135,18 @@
         ))
     } else {
         @hr()
+
         @link(link = addUkPropertyBusinessStartDateURL,
             messageKey = getMessage("uk-property.link"),
-            id = Some("uk-property-link"))
+            id = Some("uk-property-link")
+        )
+
         @hr()
     }
 
-    @h2(getMessage("foreign-property.h2"), optId = Some("foreign-property-h2"))
+    @h2(msg = getMessage("foreign-property.h2"),
+        optId = Some("foreign-property-h2")
+    )
 
     @if(foreignProperty.nonEmpty) {
         @govukTable(Table(
@@ -146,14 +164,19 @@
         ))
     } else {
         @hr()
+
         @link(link = addForeignPropertyBusinessStartDateURL,
             messageKey = getMessage("foreign-property.link"),
-            id = Some("foreign-property-link"))
+            id = Some("foreign-property-link")
+        )
+
         @hr()
     }
 
     @if(ceasedBusinesses.nonEmpty) {
-        @h2(getMessage("ceased-businesses.h2"), optId = Some("ceased-businesses-h2"))
+        @h2(msg = getMessage("ceased-businesses.h2"),
+            optId = Some("ceased-businesses-h2")
+        )
 
         @govukTable(Table(
             head = Some(List(
