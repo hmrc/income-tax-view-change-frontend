@@ -61,7 +61,8 @@ class PaymentAllocationsControllerISpec extends ComponentSpecBase with FeatureSw
         Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
         Some(getCurrentTaxYearEnd),
         propertyIncomeType,
-        propertyTradingStartDate
+        propertyTradingStartDate,
+        None
       )
     )
   )

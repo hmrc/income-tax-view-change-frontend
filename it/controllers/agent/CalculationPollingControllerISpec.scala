@@ -79,7 +79,8 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
         Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
         Some(LocalDate.of(2018,1,1)),
         propertyIncomeType,
-        propertyTradingStartDate
+        propertyTradingStartDate,
+        None
       )
     )
   )

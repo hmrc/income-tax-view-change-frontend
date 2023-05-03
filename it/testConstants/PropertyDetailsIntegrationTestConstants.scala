@@ -46,7 +46,8 @@ object PropertyDetailsIntegrationTestConstants {
     )),
     firstAccountingPeriodEndDate = Some(propertyAccounringEndLocalDate),
     propertyIncomeType,
-    propertyTradingStartDate
+    propertyTradingStartDate,
+    None
   )
 
   val oldProperty: PropertyDetailsModel = PropertyDetailsModel(
@@ -57,7 +58,8 @@ object PropertyDetailsIntegrationTestConstants {
     )),
     firstAccountingPeriodEndDate = Some(getCurrentTaxYearEnd.minusYears(1)),
     propertyIncomeType,
-    propertyTradingStartDate
+    propertyTradingStartDate,
+    None
   )
 
   def propertyWithCurrentYear(endYear: Int): PropertyDetailsModel = PropertyDetailsModel(
@@ -68,7 +70,8 @@ object PropertyDetailsIntegrationTestConstants {
     )),
     firstAccountingPeriodEndDate = Some(propertyAccounringEndLocalDateOfCurrentYear(endYear)),
     propertyIncomeType,
-    propertyTradingStartDate
+    propertyTradingStartDate,
+    None
   )
 
   val propertySuccessResponse: JsValue = Json.obj(

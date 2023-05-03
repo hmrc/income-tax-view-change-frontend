@@ -37,7 +37,8 @@ object PropertyDetailsTestConstants {
     accountingPeriod = Some(testPropertyAccountingPeriod),
     firstAccountingPeriodEndDate = None,
     incomeSourceType = Some(testIncomeType),
-    tradingStartDate = Some(testStartDate)
+    tradingStartDate = Some(testStartDate),
+    cessation = None
   )
 
   val ceasedPropertyDetails = PropertyDetailsModel(
@@ -45,7 +46,8 @@ object PropertyDetailsTestConstants {
     accountingPeriod = Some(testPropertyAccountingPeriod),
     firstAccountingPeriodEndDate = None,
     incomeSourceType = Some(testIncomeType),
-    tradingStartDate = Some(testStartDate)
+    tradingStartDate = Some(testStartDate),
+    cessation = Some(testCessation)
   )
 
   val openCrystallised: NextUpdateModel = fakeNextUpdatesModel(NextUpdateModel(

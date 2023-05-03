@@ -68,7 +68,8 @@ class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
         Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
         Some(getCurrentTaxYearEnd),
         propertyIncomeType,
-        propertyTradingStartDate
+        propertyTradingStartDate,
+        None
       )
     )
   )
