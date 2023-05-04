@@ -18,7 +18,7 @@ package services
 
 import auth.MtdItUserWithNino
 import connectors.IncomeTaxViewChangeConnector
-import models.incomeSourceDetails.viewmodels.IncomeSourcesViewModel
+import models.incomeSourceDetails.viewmodels.{BusinessDetailsViewModel, CeasedBusinessDetailsViewModel, IncomeSourcesViewModel, PropertyDetailsViewModel}
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, IncomeSourceDetailsResponse}
 import play.api.Logger
 import play.api.cache.AsyncCacheApi
@@ -26,8 +26,8 @@ import play.api.libs.json.{JsPath, JsSuccess, JsValue, Json}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.duration.Duration
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.duration.{Duration, DurationInt}
+import scala.concurrent.{Await, ExecutionContext, Future}
 
 @Singleton
 class IncomeSourceDetailsService @Inject()(val incomeTaxViewChangeConnector: IncomeTaxViewChangeConnector,
@@ -51,32 +51,44 @@ class IncomeSourceDetailsService @Inject()(val incomeTaxViewChangeConnector: Inc
 
   def getIncomeSourceDetails(cacheKey: Option[String] = None)(implicit hc: HeaderCarrier,
                                                               mtdUser: MtdItUserWithNino[_]): Future[IncomeSourceDetailsResponse] = {
-    if (cacheKey.isDefined) {
-      getCachedIncomeSources(cacheKey.get).flatMap {
-        case Some(sources: IncomeSourceDetailsModel) =>
-          Logger("application").info(s"incomeSourceDetails cache HIT with ${cacheKey.get}")
-          Future.successful(sources)
-        case None =>
-          Logger("application").info(s"incomeSourceDetails cache MISS with ${cacheKey.get}")
-          incomeTaxViewChangeConnector.getIncomeSources().flatMap {
-            case incomeSourceDetailsModel: IncomeSourceDetailsModel =>
-              cache.set(cacheKey.get, incomeSourceDetailsModel.sanitise.toJson, cacheExpiry).map(
-                _ => incomeSourceDetailsModel
-              )
-            case error: IncomeSourceDetailsResponse => Future.successful(error)
-          }
-      }
-    } else {
+//    if (cacheKey.isDefined) {
+//      getCachedIncomeSources(cacheKey.get).flatMap {
+//        case Some(sources: IncomeSourceDetailsModel) =>
+//          Logger("application").info(s"incomeSourceDetails cache HIT with ${cacheKey.get}")
+//          Future.successful(sources)
+//        case None =>
+//          Logger("application").info(s"incomeSourceDetails cache MISS with ${cacheKey.get}")
+//          incomeTaxViewChangeConnector.getIncomeSources().flatMap {
+//            case incomeSourceDetailsModel: IncomeSourceDetailsModel =>
+//              cache.set(cacheKey.get, incomeSourceDetailsModel.sanitise.toJson, cacheExpiry).map(
+//                _ => incomeSourceDetailsModel
+//              )
+//            case error: IncomeSourceDetailsResponse => Future.successful(error)
+//          }
+//      }
+//    } else {
       incomeTaxViewChangeConnector.getIncomeSources()
-    }
+//    }
   }
 
   def incomeSourcesAsViewModel(sources: IncomeSourceDetailsModel): IncomeSourcesViewModel = {
     IncomeSourcesViewModel(
-      soleTraderBusinesses = sources.businesses.filterNot(_.isCeased),
-      ukProperty = sources.property.find(_.isUkProperty),
-      foreignProperty = sources.property.find(_.isForeignProperty),
-      ceasedBusinesses = sources.businesses.filter(_.isCeased)
+      soleTraderBusinesses = sources.businesses.filterNot(_.isCeased).map {
+        case b if b.tradingName.nonEmpty && b.tradingStartDate.nonEmpty =>
+          BusinessDetailsViewModel(b.tradingName, b.tradingStartDate)
+      },
+      ukProperty = sources.property.find(_.isUkProperty).map {
+        case p if p.tradingStartDate.nonEmpty =>
+          PropertyDetailsViewModel(p.tradingStartDate)
+      },
+      foreignProperty = sources.property.find(_.isForeignProperty).map {
+        case p if p.tradingStartDate.nonEmpty =>
+          PropertyDetailsViewModel(p.tradingStartDate)
+      },
+      ceasedBusinesses = sources.businesses.filter(_.isCeased).map {
+        case b if b.tradingName.nonEmpty && b.tradingStartDate.nonEmpty && b.cessation.flatMap(_.date).nonEmpty =>
+          CeasedBusinessDetailsViewModel(b.tradingName, b.tradingStartDate, b.cessation.flatMap(_.date))
+      }
     )
   }
 }

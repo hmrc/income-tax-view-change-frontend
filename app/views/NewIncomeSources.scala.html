@@ -89,13 +89,11 @@
         )),
         rows = soleTraderBusinesses.zipWithIndex.map { case (b, index) => Seq(
             TableRow(
-                content = Text(b.tradingName
-                        .getOrElse(throw MissingFieldException("Trading Name"))),
+                content = Text(b.tradingName.get),
                 attributes = Map("id" -> s"table-row-trading-name-$index")),
 
             TableRow(
-                content = Text(b.tradingStartDate
-                        .getOrElse(throw MissingFieldException("Trading Start Date")).toLongDate),
+                content = Text(b.tradingStartDate.get.toLongDate),
                 attributes = Map("id" -> s"table-row-trading-start-date-$index"))
         )}
     ))
@@ -121,8 +119,7 @@
             )),
             rows = Seq(Seq(
                 TableRow(
-                    content = Text(ukProperty.flatMap(_.tradingStartDate)
-                        .getOrElse(throw MissingFieldException("Trading Start Date")).toLongDate),
+                    content = Text(ukProperty.flatMap(_.tradingStartDate).get.toLongDate),
                     attributes = Map("id" -> "table-row-trading-start-date-uk")
                 )
             ))
@@ -149,8 +146,7 @@
             )),
             rows = Seq(Seq(
                 TableRow(
-                    content = Text(foreignProperty.flatMap(_.tradingStartDate)
-                        .getOrElse(throw MissingFieldException("Trading Start Date")).toLongDate),
+                    content = Text(foreignProperty.flatMap(_.tradingStartDate).get.toLongDate),
                     attributes = Map("id" -> "table-row-trading-start-date-foreign"))
             ))
         ))
@@ -182,16 +178,13 @@
             )),
             rows = ceasedBusinesses.zipWithIndex.map { case (b, index) => Seq(
                 TableRow(
-                    content = Text(b.tradingName
-                        .getOrElse(throw MissingFieldException("Trading Name"))),
+                    content = Text(b.tradingName.get),
                     attributes = Map("id" -> s"table-row-trading-name-ceased-$index")),
                 TableRow(
-                    content = Text(b.tradingStartDate
-                        .getOrElse(throw MissingFieldException("Trading Start Date")).toLongDate),
+                    content = Text(b.tradingStartDate.get.toLongDate),
                     attributes = Map("id" -> s"table-row-trading-start-date-ceased-$index")),
                 TableRow(
-                    content = Text(b.cessation.flatMap(_.date)
-                        .getOrElse(throw MissingFieldException("Cessation Date")).toLongDate),
+                    content = Text(b.cessationDate.get.toLongDate),
                     attributes = Map("id" -> s"table-row-cessation-date-$index")),
             )}
         ))
