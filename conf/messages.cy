@@ -1130,7 +1130,7 @@ credit-and-refund.credit-from-balancing-charge-prt-2              = credyd tâl 
 credit-and-refund.credit-from-earlier-tax-year                    = credyd o flwyddyn dreth gynharach
 
 ## check income sources
-new-income-sources.heading                  = WELSH PENDING
+new-income-sources.heading                  = Unig fasnachwr a incwm o eiddo
 new-income-sources.self-employment.h2       = Busnesau unig fasnachwr
 new-income-sources.self-employment.p1       = Nid oes angen i chi roi gwybod i ni am fusnes y gwyddwn amdano eisoes.
 new-income-sources.self-employment.link     = Ychwanegu ffynhonnell incwm gan unig fasnachwr
