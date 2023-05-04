@@ -18,7 +18,7 @@ package services
 
 import auth.MtdItUserWithNino
 import connectors.IncomeTaxViewChangeConnector
-import models.incomeSourceDetails.viewmodels.{BusinessDetailsViewModel, CeasedBusinessDetailsViewModel, IncomeSourcesViewModel, PropertyDetailsViewModel}
+import models.incomeSourceDetails.viewmodels.{BusinessDetailsViewModel, CeasedBusinessDetailsViewModel, AddIncomeSourcesViewModel, PropertyDetailsViewModel}
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, IncomeSourceDetailsResponse}
 import play.api.Logger
 import play.api.cache.AsyncCacheApi
@@ -71,8 +71,8 @@ class IncomeSourceDetailsService @Inject()(val incomeTaxViewChangeConnector: Inc
     }
   }
 
-  def incomeSourcesAsViewModel(sources: IncomeSourceDetailsModel): IncomeSourcesViewModel = {
-    IncomeSourcesViewModel(
+  def incomeSourcesAsViewModel(sources: IncomeSourceDetailsModel): AddIncomeSourcesViewModel = {
+    AddIncomeSourcesViewModel(
       soleTraderBusinesses = sources.businesses.filterNot(_.isCeased).map {
         case maybeSoleTraderBusiness if maybeSoleTraderBusiness.tradingName.nonEmpty
           && maybeSoleTraderBusiness.tradingStartDate.nonEmpty =>
