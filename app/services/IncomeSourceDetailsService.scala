@@ -36,7 +36,6 @@ class IncomeSourceDetailsService @Inject()(val incomeTaxViewChangeConnector: Inc
   val cacheExpiry: Duration = Duration(1, "day")
 
   def getCachedIncomeSources(cacheKey: String): Future[Option[IncomeSourceDetailsModel]] = {
-    println(s"\n[cache.get(cacheKey)]: ${Await.ready(cache.get(cacheKey), Duration.fromNanos(1000000))}\n")
     cache.get(cacheKey).map((incomeSources: Option[JsValue]) => {
       incomeSources match {
         case Some(jsonSources) =>
@@ -52,24 +51,24 @@ class IncomeSourceDetailsService @Inject()(val incomeTaxViewChangeConnector: Inc
 
   def getIncomeSourceDetails(cacheKey: Option[String] = None)(implicit hc: HeaderCarrier,
                                                               mtdUser: MtdItUserWithNino[_]): Future[IncomeSourceDetailsResponse] = {
-//    if (cacheKey.isDefined) {
-//      getCachedIncomeSources(cacheKey.get).flatMap {
-//        case Some(sources: IncomeSourceDetailsModel) =>
-//          Logger("application").info(s"incomeSourceDetails cache HIT with ${cacheKey.get}")
-//          Future.successful(sources)
-//        case None =>
-//          Logger("application").info(s"incomeSourceDetails cache MISS with ${cacheKey.get}")
-//          incomeTaxViewChangeConnector.getIncomeSources().flatMap {
-//            case incomeSourceDetailsModel: IncomeSourceDetailsModel =>
-//              cache.set(cacheKey.get, incomeSourceDetailsModel.sanitise.toJson, cacheExpiry).map(
-//                _ => incomeSourceDetailsModel
-//              )
-//            case error: IncomeSourceDetailsResponse => Future.successful(error)
-//          }
-//      }
-//    } else {
+    if (cacheKey.isDefined) {
+      getCachedIncomeSources(cacheKey.get).flatMap {
+        case Some(sources: IncomeSourceDetailsModel) =>
+          Logger("application").info(s"incomeSourceDetails cache HIT with ${cacheKey.get}")
+          Future.successful(sources)
+        case None =>
+          Logger("application").info(s"incomeSourceDetails cache MISS with ${cacheKey.get}")
+          incomeTaxViewChangeConnector.getIncomeSources().flatMap {
+            case incomeSourceDetailsModel: IncomeSourceDetailsModel =>
+              cache.set(cacheKey.get, incomeSourceDetailsModel.sanitise.toJson, cacheExpiry).map(
+                _ =>  incomeSourceDetailsModel
+              )
+            case error: IncomeSourceDetailsResponse => Future.successful(error)
+          }
+      }
+    } else {
       incomeTaxViewChangeConnector.getIncomeSources()
-//    }
+    }
   }
 
   def incomeSourcesAsViewModel(sources: IncomeSourceDetailsModel): IncomeSourcesViewModel = {
