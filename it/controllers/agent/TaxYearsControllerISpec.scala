@@ -26,6 +26,7 @@ import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.ws.WSResponse
 import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants._
+import testConstants.PropertyDetailsIntegrationTestConstants.{propertyIncomeType, propertyTradingStartDate}
 import testConstants.messages.TaxYearsMessages.{taxYearMessage, updateReturn, viewSummary}
 
 import java.time.LocalDate
@@ -54,8 +55,6 @@ class TaxYearsControllerISpec extends ComponentSpecBase with FeatureSwitching {
       PropertyDetailsModel(
         Some("testId2"),
         Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
-        None,
-        None,
         Some(getCurrentTaxYearEnd),
         propertyIncomeType,
         propertyTradingStartDate,
@@ -82,8 +81,6 @@ class TaxYearsControllerISpec extends ComponentSpecBase with FeatureSwitching {
         None,
         propertyIncomeType,
         propertyTradingStartDate,
-        None,
-        None,
         None
       )
     )

@@ -34,6 +34,7 @@ import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testMtditid, testNino}
 import testConstants.IncomeSourceIntegrationTestConstants.multipleBusinessesAndPropertyResponseWoMigration
 import testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessful
+import testConstants.PropertyDetailsIntegrationTestConstants.{propertyIncomeType, propertyTradingStartDate}
 
 import java.time.LocalDate
 import java.util.Locale
@@ -98,8 +99,6 @@ class InYearTaxCalculationControllerISpec extends ComponentSpecBase {
       PropertyDetailsModel(
         Some("testId2"),
         Some(AccountingPeriodModel(currentDate, currentDate.plusYears(1))),
-        None,
-        None,
         Some(LocalDate.of(taxYear, month, dayOfMonth)),
         propertyIncomeType,
         propertyTradingStartDate,

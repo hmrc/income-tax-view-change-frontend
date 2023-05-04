@@ -37,6 +37,7 @@ import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.IncomeSourceIntegrationTestConstants.{singleBusinessResponse, singleBusinessResponseWoMigration}
 import testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessful
+import testConstants.PropertyDetailsIntegrationTestConstants.{propertyIncomeType, propertyTradingStartDate}
 import testConstants.messages.TaxYearSummaryMessages._
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.auth.core.retrieve.Name
@@ -64,8 +65,6 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         None,
         None,
         Some(getCurrentTaxYearEnd),
-        propertyIncomeType,
-        propertyTradingStartDate,
         None
       )
     )
