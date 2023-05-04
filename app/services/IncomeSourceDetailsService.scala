@@ -89,13 +89,13 @@ class IncomeSourceDetailsService @Inject()(val incomeTaxViewChangeConnector: Inc
           PropertyDetailsViewModel(maybeForeignProperty.tradingStartDate)
       },
       ceasedBusinesses = sources.businesses.filter(_.isCeased).map {
-        case maybeCeasedBusinesses if maybeCeasedBusinesses.tradingName.nonEmpty
-          && maybeCeasedBusinesses.tradingStartDate.nonEmpty
-          && maybeCeasedBusinesses.cessation.flatMap(_.date).nonEmpty =>
+        case maybeCeasedBusiness if maybeCeasedBusiness.tradingName.nonEmpty
+          && maybeCeasedBusiness.tradingStartDate.nonEmpty
+          && maybeCeasedBusiness.cessation.flatMap(_.date).nonEmpty =>
             CeasedBusinessDetailsViewModel(
-              maybeCeasedBusinesses.tradingName,
-              maybeCeasedBusinesses.tradingStartDate,
-              maybeCeasedBusinesses.cessation.flatMap(_.date)
+              maybeCeasedBusiness.tradingName,
+              maybeCeasedBusiness.tradingStartDate,
+              maybeCeasedBusiness.cessation.flatMap(_.date)
             )
       }
     )
