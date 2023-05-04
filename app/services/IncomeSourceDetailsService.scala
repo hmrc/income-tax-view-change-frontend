@@ -36,6 +36,7 @@ class IncomeSourceDetailsService @Inject()(val incomeTaxViewChangeConnector: Inc
   val cacheExpiry: Duration = Duration(1, "day")
 
   def getCachedIncomeSources(cacheKey: String): Future[Option[IncomeSourceDetailsModel]] = {
+    println(s"\n[cache.get(cacheKey)]: ${Await.ready(cache.get(cacheKey), Duration.fromNanos(1000000))}\n")
     cache.get(cacheKey).map((incomeSources: Option[JsValue]) => {
       incomeSources match {
         case Some(jsonSources) =>
@@ -74,20 +75,28 @@ class IncomeSourceDetailsService @Inject()(val incomeTaxViewChangeConnector: Inc
   def incomeSourcesAsViewModel(sources: IncomeSourceDetailsModel): IncomeSourcesViewModel = {
     IncomeSourcesViewModel(
       soleTraderBusinesses = sources.businesses.filterNot(_.isCeased).map {
-        case b if b.tradingName.nonEmpty && b.tradingStartDate.nonEmpty =>
-          BusinessDetailsViewModel(b.tradingName, b.tradingStartDate)
+        case maybeSoleTraderBusiness if maybeSoleTraderBusiness.tradingName.nonEmpty
+          && maybeSoleTraderBusiness.tradingStartDate.nonEmpty =>
+            BusinessDetailsViewModel(maybeSoleTraderBusiness.tradingName,
+              maybeSoleTraderBusiness.tradingStartDate)
       },
       ukProperty = sources.property.find(_.isUkProperty).map {
-        case p if p.tradingStartDate.nonEmpty =>
-          PropertyDetailsViewModel(p.tradingStartDate)
+        case maybeUkProperty if maybeUkProperty.tradingStartDate.nonEmpty =>
+          PropertyDetailsViewModel(maybeUkProperty.tradingStartDate)
       },
       foreignProperty = sources.property.find(_.isForeignProperty).map {
-        case p if p.tradingStartDate.nonEmpty =>
-          PropertyDetailsViewModel(p.tradingStartDate)
+        case maybeForeignProperty if maybeForeignProperty.tradingStartDate.nonEmpty =>
+          PropertyDetailsViewModel(maybeForeignProperty.tradingStartDate)
       },
       ceasedBusinesses = sources.businesses.filter(_.isCeased).map {
-        case b if b.tradingName.nonEmpty && b.tradingStartDate.nonEmpty && b.cessation.flatMap(_.date).nonEmpty =>
-          CeasedBusinessDetailsViewModel(b.tradingName, b.tradingStartDate, b.cessation.flatMap(_.date))
+        case maybeCeasedBusinesses if maybeCeasedBusinesses.tradingName.nonEmpty
+          && maybeCeasedBusinesses.tradingStartDate.nonEmpty
+          && maybeCeasedBusinesses.cessation.flatMap(_.date).nonEmpty =>
+            CeasedBusinessDetailsViewModel(
+              maybeCeasedBusinesses.tradingName,
+              maybeCeasedBusinesses.tradingStartDate,
+              maybeCeasedBusinesses.cessation.flatMap(_.date)
+            )
       }
     )
   }
