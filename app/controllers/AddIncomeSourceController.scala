@@ -26,14 +26,14 @@ import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsMode
 import play.api.mvc._
 import services.IncomeSourceDetailsService
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import views.html.NewIncomeSources
-import models.incomeSourceDetails.viewmodels.IncomeSourcesViewModel
+import views.html.AddIncomeSources
+import models.incomeSourceDetails.viewmodels.AddIncomeSourcesViewModel
 import java.time.{LocalDate, Month}
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class AddIncomeSourceController @Inject()(val newIncomeSources: NewIncomeSources,
+class AddIncomeSourceController @Inject()(val addIncomeSources: AddIncomeSources,
                                           val checkSessionTimeout: SessionTimeoutPredicate,
                                           val authenticate: AuthenticationPredicate,
                                           val authorisedFunctions: AuthorisedFunctions,
@@ -76,7 +76,7 @@ class AddIncomeSourceController @Inject()(val newIncomeSources: NewIncomeSources
       if (isDisabled(IncomeSources)) {
         Redirect(controllers.routes.HomeController.show())
       } else {
-        Ok(newIncomeSources(
+        Ok(addIncomeSources(
           incomeSourceDetailsService.incomeSourcesAsViewModel(sources),
           isAgent = isAgent,
           backUrl = backUrl
