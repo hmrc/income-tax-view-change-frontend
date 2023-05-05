@@ -174,7 +174,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         outstandingAmount = Some(0),
         interestOutstandingAmount = Some(0.00),
         latePaymentInterestAmount = Some(0),
-        effectiveDateOfPayment = Some(LocalDate.of(2021, 4, 23))
+        effectiveDateOfPayment = Some(LocalDate.of(2021, 8, 23))
       ),
       DocumentDetail(
         taxYear = getCurrentTaxYearEnd.getYear,
@@ -184,7 +184,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         documentDate = LocalDate.of(2021, 8, 31),
         originalAmount = Some(250),
         outstandingAmount = Some(100),
-        effectiveDateOfPayment = Some(LocalDate.of(2021, 8, 31))
+        effectiveDateOfPayment = Some(LocalDate.of(2021, 4, 30))
       ),
       DocumentDetail(
         taxYear = getCurrentTaxYearEnd.getYear,
