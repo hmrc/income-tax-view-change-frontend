@@ -95,25 +95,25 @@ class IncomeSourceDetailsModelSpec extends UnitSpec with Matchers {
       "remove all unnecessary fields" in {
         val expected = IncomeSourceDetailsModel(
           "XIAT0000000000A",
-          Some((LocalDate.now.getYear - 1).toString),
-          List(
-            BusinessDetailsModel(
-              incomeSourceId = None,
-              accountingPeriod = None,
-              tradingName = Some("nextUpdates.business"),
-              firstAccountingPeriodEndDate = None,
-              tradingStartDate = Some(LocalDate.parse("2022-01-01")),
-              cessation = None
+          Some("2022"),
+            List(
+              BusinessDetailsModel(
+                incomeSourceId = None,
+                accountingPeriod = None,
+                tradingName = Some("nextUpdates.business"),
+                firstAccountingPeriodEndDate = None,
+                tradingStartDate = Some(LocalDate.parse("2022-01-01")),
+                cessation = None
+              ),
+              BusinessDetailsModel(
+                incomeSourceId = None,
+                accountingPeriod = None,
+                tradingName = Some("nextUpdates.business"),
+                tradingStartDate = Some(LocalDate.parse("2022-01-01")),
+                firstAccountingPeriodEndDate = Some(getCurrentTaxYearEnd.minusYears(1)),
+                cessation = None
+              )
             ),
-            BusinessDetailsModel(
-              incomeSourceId = None,
-              accountingPeriod = None,
-              tradingName = Some("nextUpdates.business"),
-              tradingStartDate = Some(LocalDate.parse("2022-01-01")),
-              firstAccountingPeriodEndDate = Some(getCurrentTaxYearEnd.minusYears(1)),
-              cessation = None
-            )
-          ),
           Some(PropertyDetailsModel(
               incomeSourceId = None,
               accountingPeriod = None,

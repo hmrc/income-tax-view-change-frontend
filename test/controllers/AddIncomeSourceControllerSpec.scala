@@ -124,7 +124,7 @@ class AddIncomeSourceControllerSpec extends MockAuthenticationPredicate
           disableAllSwitches()
           enable(IncomeSources)
           mockBothIncomeSources()
-          setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
+          setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
           when(mockIncomeSourceDetailsService.incomeSourcesAsViewModel(any()))
             .thenReturn(AddIncomeSourcesViewModel(
@@ -132,7 +132,7 @@ class AddIncomeSourceControllerSpec extends MockAuthenticationPredicate
               ukProperty = Some(ukPropertyDetailsViewModel), foreignProperty = None, ceasedBusinesses = Nil
             ))
 
-          val result = controller.showAgent()(fakeRequestWithActiveSession)
+          val result = controller.showAgent()(fakeRequestConfirmedClient("AB123456C"))
           status(result) shouldBe Status.OK
         }
       }
