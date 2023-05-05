@@ -66,7 +66,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
 
 
   s"GET ok" should {
-    "load the page with right data for Payments Breakdown" in {
+    "load the page with the right data for Payments Breakdown" in {
       Given("I wiremock stub a successful Income Source Details response with property only")
       stubAuthorisedAgentUser(authorised = true)
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
