@@ -17,7 +17,7 @@
 package controllers
 
 import auth.MtdItUser
-import config.featureswitch.FeatureSwitching
+import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
@@ -45,7 +45,6 @@ class AddBusinessController @Inject()(authenticate: AuthenticationPredicate,
                                              val ec: ExecutionContext)
   extends ClientConfirmedController with I18nSupport with FeatureSwitching {
 
-  //TODO add fs
   def show(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
@@ -54,7 +53,11 @@ class AddBusinessController @Inject()(authenticate: AuthenticationPredicate,
 
   def handleRequest()(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
     Future {
-      Ok(addBusinessView(BusinessNameForm.form, routes.AddBusinessController.submit))
+      if (isDisabled(IncomeSources)) {
+        Redirect(controllers.routes.HomeController.show())
+      } else {
+        Ok(addBusinessView(BusinessNameForm.form, routes.AddBusinessController.submit))
+      }
     }
   }
 
@@ -68,7 +71,4 @@ class AddBusinessController @Inject()(authenticate: AuthenticationPredicate,
         }
       )
   }
-
-
-
 }
