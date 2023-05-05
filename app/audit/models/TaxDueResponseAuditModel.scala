@@ -286,7 +286,7 @@ case class TaxDueResponseAuditModel(mtdItUser: MtdItUser[_],
   override val detail: JsValue =
     userAuditDetails(mtdItUser) ++
       ("calculationOnTaxableIncome", viewModel.totalTaxableIncome) ++
-      ("incomeTaxAndNationalInsuranceContributionsDue", viewModel.totalIncomeTaxAndNicsDue) ++
+      ("selfAssessmentTaxAmount", viewModel.totalIncomeTaxAndNicsDue) ++
       ("taxCalculationMessage", calculationMessagesDetail) ++
       ("payPensionsProfit", payPensionsProfitDetail) ++
       ("savings", savingsDetail) ++

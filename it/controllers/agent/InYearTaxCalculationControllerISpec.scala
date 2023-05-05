@@ -90,13 +90,18 @@ class InYearTaxCalculationControllerISpec extends ComponentSpecBase {
       Some("testId"),
       Some(AccountingPeriodModel(currentDate, currentDate.plusYears(1))),
       Some("Test Trading Name"),
-      Some(LocalDate.of(taxYear, month, dayOfMonth))
+      None,
+      Some(LocalDate.of(taxYear, month, dayOfMonth)),
+      None
     )),
     property = Some(
       PropertyDetailsModel(
         Some("testId2"),
         Some(AccountingPeriodModel(currentDate, currentDate.plusYears(1))),
-        Some(LocalDate.of(taxYear, month, dayOfMonth))
+        None,
+        None,
+        Some(LocalDate.of(taxYear, month, dayOfMonth)),
+        None
       )
     )
   )

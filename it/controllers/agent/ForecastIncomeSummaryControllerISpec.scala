@@ -68,13 +68,18 @@ class ForecastIncomeSummaryControllerISpec extends ComponentSpecBase with Featur
       Some("testId"),
       Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
       Some("Test Trading Name"),
-      Some(getCurrentTaxYearEnd)
+      None,
+      Some(getCurrentTaxYearEnd),
+      None
     )),
     property = Some(
       PropertyDetailsModel(
         Some("testId2"),
         Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
-        Some(getCurrentTaxYearEnd)
+        None,
+        None,
+        Some(getCurrentTaxYearEnd),
+        None
       )
     )
   )

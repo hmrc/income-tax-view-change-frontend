@@ -59,8 +59,8 @@ class HomeController @Inject()(val homeView: views.html.Home,
                                val appConfig: FrontendAppConfig) extends ClientConfirmedController with I18nSupport with FeatureSwitching {
 
   private def view(nextPaymentDueDate: Option[LocalDate], nextUpdate: LocalDate, overDuePaymentsCount: Option[Int],
-                   overDueUpdatesCount: Option[Int], dunningLockExists: Boolean, currentTaxYear: Int, isAgent: Boolean,
-                   origin: Option[String] = None)
+                   overDueUpdatesCount: Option[Int], dunningLockExists: Boolean, currentTaxYear: Int,
+                   displayCeaseAnIncome: Boolean, isAgent: Boolean, origin: Option[String] = None)
                   (implicit user: MtdItUser[_]): Html = {
     homeView(
       nextPaymentDueDate = nextPaymentDueDate,
@@ -71,10 +71,12 @@ class HomeController @Inject()(val homeView: views.html.Home,
       ITSASubmissionIntegrationEnabled = isEnabled(ITSASubmissionIntegration),
       dunningLockExists = dunningLockExists,
       currentTaxYear = currentTaxYear,
+      displayCeaseAnIncome = displayCeaseAnIncome,
       isAgent = isAgent,
       origin = origin,
       creditAndRefundEnabled = isEnabled(CreditsRefundsRepay),
       paymentHistoryEnabled = isEnabled(PaymentHistoryRefunds),
+      incomeSourcesEnabled = isEnabled(IncomeSources),
       isUserMigrated = user.incomeSources.yearOfMigration.isDefined
     )
   }
@@ -85,9 +87,9 @@ class HomeController @Inject()(val homeView: views.html.Home,
     implicit val isTimeMachineEnabled: Boolean = isEnabled(TimeMachineAddYear)
     nextUpdatesService.getNextDeadlineDueDateAndOverDueObligations.flatMap { latestDeadlineDate =>
 
-      val unpaidCharges: Future[List[FinancialDetailsResponseModel]] = financialDetailsService.getAllUnpaidFinancialDetails(isEnabled(CodingOut))
+      val unpaidChargesFuture: Future[List[FinancialDetailsResponseModel]] = financialDetailsService.getAllUnpaidFinancialDetails(isEnabled(CodingOut))
 
-      val dueDates: Future[List[LocalDate]] = unpaidCharges.map {
+      val dueDates: Future[List[LocalDate]] = unpaidChargesFuture.map {
         _.flatMap {
           case fdm: FinancialDetailsModel => fdm.validChargesWithRemainingToPay.getAllDueDates
           case _ => List.empty[LocalDate]
@@ -96,7 +98,8 @@ class HomeController @Inject()(val homeView: views.html.Home,
 
       for {
         paymentsDue <- dueDates.map(_.sortBy(_.toEpochDay()))
-        dunningLockExistsValue <- unpaidCharges.map(_.collectFirst { case fdm: FinancialDetailsModel if fdm.dunningLockExists => true })
+        unpaidCharges <- unpaidChargesFuture
+        dunningLockExistsValue = unpaidCharges.collectFirst { case fdm: FinancialDetailsModel if fdm.dunningLockExists => true }.getOrElse(false)
         outstandingChargesModel <- whatYouOweService.getWhatYouOweChargesList(unpaidCharges, isEnabled(CodingOut), isEnabled(MFACreditsAndDebits)).map(_.outstandingChargesModel match {
           case Some(OutstandingChargesModel(locm)) => locm.filter(ocm => ocm.relevantDueDate.isDefined && ocm.chargeName == "BCD")
           case _ => Nil
@@ -108,6 +111,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
         overDuePaymentsCount = paymentsDue.count(_.isBefore(dateService.getCurrentDate(isTimeMachineEnabled))) + outstandingChargesModel.length
         overDueUpdatesCount = latestDeadlineDate._2.size
         paymentsDueMerged = (paymentsDue ::: outstandingChargesDueDate).sortWith(_ isBefore _).headOption
+        displayCeaseAnIncome = user.incomeSources.hasOngoingBusinessOrPropertyIncome
       } yield {
         auditingService.extendedAudit(HomeAudit(
           mtdItUser = user,
@@ -121,8 +125,9 @@ class HomeController @Inject()(val homeView: views.html.Home,
             latestDeadlineDate._1,
             Some(overDuePaymentsCount),
             Some(overDueUpdatesCount),
-            dunningLockExistsValue.isDefined,
+            dunningLockExistsValue,
             incomeSourceCurrentTaxYear,
+            displayCeaseAnIncome,
             isAgent = isAgent
           )
         )

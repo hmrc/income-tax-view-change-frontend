@@ -448,7 +448,8 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
           "documentDescription" -> "TRM New Charge",
           "outstandingAmount" -> 1200.00,
           "originalAmount" -> 1200.00,
-          "documentDate" -> "2018-03-29"
+          "documentDate" -> "2018-03-29",
+          "effectiveDateOfPayment" -> "2018-03-30"
         )
       ),
       "financialDetails" -> Json.arr(
@@ -479,7 +480,8 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
           "documentDescription" -> "TRM New Charge",
           "outstandingAmount" -> 0,
           "originalAmount" -> 1200.00,
-          "documentDate" -> "2018-03-29"
+          "documentDate" -> "2018-03-29",
+          "effectiveDateOfPayment" -> "2018-03-30"
         ),
         Json.obj(
           "taxYear" -> testTaxYear,
@@ -493,7 +495,8 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
           "documentOutstandingAmount" -> 1200,
           "statisticalFlag" -> false,
           "paymentLot" -> "MA999991A",
-          "paymentLotItem" -> "5"
+          "paymentLotItem" -> "5",
+          "effectiveDateOfPayment" -> "2018-03-30"
         )
       ),
       "financialDetails" -> Json.arr(

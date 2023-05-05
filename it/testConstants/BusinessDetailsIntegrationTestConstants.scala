@@ -17,9 +17,8 @@
 package testConstants
 
 import java.time.LocalDate
-
 import BaseIntegrationTestConstants.{otherTestSelfEmploymentId, testSelfEmploymentId}
-import models.core.AccountingPeriodModel
+import models.core.{AccountingPeriodModel, CessationModel}
 import models.incomeSourceDetails.BusinessDetailsModel
 import testConstants.BaseIntegrationTestConstants.getCurrentTaxYearEnd
 
@@ -28,7 +27,7 @@ object BusinessDetailsIntegrationTestConstants {
   val endYear = getCurrentTaxYearEnd.getYear - 4
   val b1CessationDate = LocalDate.of(startYear, 12, 31)
   val b1CessationReason = "It really, really was a bad idea"
-  val b1TradingStart = "2017-01-01"
+  val b1TradingStart = LocalDate.parse("2017-01-01")
   val b1TradingName = "business"
   val b1AccountingStart = LocalDate.of(startYear, 1, 1)
   val b1AccountingEnd = LocalDate.of(startYear, 12, 31)
@@ -41,7 +40,7 @@ object BusinessDetailsIntegrationTestConstants {
 
   val b2CessationDate = LocalDate.of(endYear, 12, 31)
   val b2CessationReason = "It really, really was a bad idea"
-  val b2TradingStart = "2018-01-01"
+  val b2TradingStart = LocalDate.parse("2018-01-01")
   val b2TradingName = "secondBusiness"
   val b2AccountingStart = LocalDate.of(endYear, 1, 1)
   val b2AccountingEnd = LocalDate.of(endYear, 12, 31)
@@ -60,7 +59,9 @@ object BusinessDetailsIntegrationTestConstants {
       end = b1AccountingEnd
     )),
     tradingName = Some(b1TradingName),
-    firstAccountingPeriodEndDate = Some(b1AccountingEnd)
+    firstAccountingPeriodEndDate = Some(b1AccountingEnd),
+    tradingStartDate = Some(b1TradingStart),
+    cessation = None
   )
 
   val business2 = BusinessDetailsModel(
@@ -70,7 +71,9 @@ object BusinessDetailsIntegrationTestConstants {
       end = b2AccountingEnd
     )),
     tradingName = Some(b2TradingName),
-    firstAccountingPeriodEndDate = Some(b2AccountingEnd)
+    firstAccountingPeriodEndDate = Some(b2AccountingEnd),
+    tradingStartDate = Some(b2TradingStart),
+    cessation = None
   )
 
 }

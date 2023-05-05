@@ -48,7 +48,9 @@ class DeductionsSummaryControllerISpec extends ComponentSpecBase with FeatureSwi
       Some("testId"),
       Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
       None,
-      Some(getCurrentTaxYearEnd)
+      None,
+      Some(getCurrentTaxYearEnd),
+      None
     )),
     property = None
   )

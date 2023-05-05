@@ -115,7 +115,7 @@ class PaymentAllocationControllerISpec extends ComponentSpecBase with FeatureSwi
         result should have(
           httpStatus(OK),
           pageTitleIndividual("paymentAllocation.heading"),
-          elementTextBySelector("tbody")("HMRC adjustment 2022 Tax year 2021 to 2022 31 Jan 2021 £800.00"),
+          elementTextBySelector("tbody")("HMRC adjustment Tax year 2021 to 2022 Tax year 2021 to 2022 31 Jan 2021 £800.00"),
         )
 
         verifyAuditContainsDetail(PaymentAllocationsResponseAuditModel(testUser, paymentAllocationViewModelHmrcAdjustment).detail)
@@ -147,7 +147,7 @@ class PaymentAllocationControllerISpec extends ComponentSpecBase with FeatureSwi
           pageTitleIndividual("paymentAllocation.heading"),
           elementAttributeBySelector("#payment-allocation-0 a", "href")(
             "/report-quarterly/income-and-expenses/view/tax-years/9999/charge?id=PAYID01&latePaymentCharge=true"),
-          elementTextBySelector("#payment-allocation-0 a")(s"${messagesAPI("paymentAllocation.paymentAllocations.balancingCharge.text")} 9999")
+          elementTextBySelector("#payment-allocation-0 a")(s"${messagesAPI("paymentAllocation.paymentAllocations.balancingCharge.text")} ${messagesAPI("paymentAllocation.taxYear", "9998", "9999")}")
         )
 
         verifyAuditContainsDetail(PaymentAllocationsResponseAuditModel(testUser, lpiPaymentAllocationViewModel).detail)

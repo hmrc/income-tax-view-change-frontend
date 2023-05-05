@@ -18,6 +18,7 @@ package views
 
 import auth.MtdItUser
 import config.FrontendAppConfig
+import controllers.routes
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
@@ -100,7 +101,8 @@ class HomePageViewSpec extends TestSupport {
 
   class Setup(paymentDueDate: Option[LocalDate] = Some(nextPaymentDueDate), overDuePaymentsCount: Option[Int] = Some(0),
               overDueUpdatesCount: Option[Int] = Some(0), utr: Option[String] = Some("1234567890"), paymentHistoryEnabled: Boolean = true, ITSASubmissionIntegrationEnabled: Boolean = true,
-              user: MtdItUser[_] = testMtdItUser(), dunningLockExists: Boolean = false, isAgent: Boolean = false, creditAndRefundEnabled: Boolean = false) {
+              user: MtdItUser[_] = testMtdItUser(), dunningLockExists: Boolean = false, isAgent: Boolean = false, creditAndRefundEnabled: Boolean = false, displayCeaseAnIncome: Boolean = false,
+              incomeSourcesEnabled: Boolean = false) {
 
     val home: Home = app.injector.instanceOf[Home]
     lazy val page: HtmlFormat.Appendable = home(
@@ -111,6 +113,8 @@ class HomePageViewSpec extends TestSupport {
       Some("1234567890"),
       ITSASubmissionIntegrationEnabled = ITSASubmissionIntegrationEnabled,
       dunningLockExists = dunningLockExists,
+      displayCeaseAnIncome = displayCeaseAnIncome,
+      incomeSourcesEnabled = incomeSourcesEnabled,
       currentTaxYear = currentTaxYear,
       isAgent = isAgent,
       creditAndRefundEnabled = creditAndRefundEnabled,
@@ -297,6 +301,25 @@ class HomePageViewSpec extends TestSupport {
         link.map(_.text) shouldBe Some(messages("home.paymentHistoryRefund.view"))
       }
 
+    }
+
+    "have an Income Sources tile with feature switch enabled" which {
+      "has a heading" in new Setup(user = testMtdItUserMigrated(), incomeSourcesEnabled = true) {
+        getElementById("income-sources-tile").map(_.select("h2").first().text()) shouldBe Some(messages("home.incomeSources.heading"))
+      }
+      "has a link to AddIncomeSourceController.show()" in new Setup(user = testMtdItUserMigrated(), incomeSourcesEnabled = true) {
+        getElementById("income-sources-tile").map(_.select("div > p:nth-child(2) > a").text()) shouldBe Some(messages("home.incomeSources.addIncomeSource.view"))
+        getElementById("income-sources-tile").map(_.select("div > p:nth-child(2) > a").attr("href")) shouldBe Some(routes.AddIncomeSourceController.show().url)
+      }
+      "has a link to ManageIncomeSourceController.show()" in new Setup(user = testMtdItUserMigrated(), incomeSourcesEnabled = true) {
+        getElementById("income-sources-tile").map(_.select("div > p:nth-child(3) > a").text()) shouldBe Some(messages("home.incomeSources.manageIncomeSource.view"))
+        getElementById("income-sources-tile").map(_.select("div > p:nth-child(3) > a").attr("href")) shouldBe Some(routes.ManageIncomeSourceController.show().url)
+      }
+    }
+    "not have an Income Sources tile" when {
+      "feature switch is disabled" in new Setup(user = testMtdItUserMigrated(), incomeSourcesEnabled = false) {
+        getElementById("income-sources-tile") shouldBe None
+      }
     }
 
     "show the 'Claim refund' link for migrated user" when {

@@ -74,7 +74,7 @@ class TaxCalculationDetailsResponseAuditModelSpec extends WordSpecLike with Must
     "nationalInsuranceNumber" -> "nino",
     "credId" -> "credId",
     "mtditid" -> testMtditid,
-    "incomeTaxAndNationalInsuranceContributionsDue" -> 0
+    "selfAssessmentTaxAmount" -> 0
   )
 
   val taxCalcDetailsResponseAuditModelDetailJsonMinimalAgent: JsObject = Json.obj(
@@ -84,7 +84,7 @@ class TaxCalculationDetailsResponseAuditModelSpec extends WordSpecLike with Must
     "credId" -> "credId",
     "mtditid" -> testMtditid,
     "agentReferenceNumber" -> "1",
-    "incomeTaxAndNationalInsuranceContributionsDue" -> 0
+    "selfAssessmentTaxAmount" -> 0
   )
 
   val taxCalcDetailsResponseAuditModelDetailJsonFull: JsObject = Json.obj(
@@ -94,7 +94,7 @@ class TaxCalculationDetailsResponseAuditModelSpec extends WordSpecLike with Must
     "credId" -> "credId",
     "mtditid" -> testMtditid,
     "calculationOnTaxableIncome" -> 12500,
-    "incomeTaxAndNationalInsuranceContributionsDue" -> 5000.99,
+    "selfAssessmentTaxAmount" -> 5000.99,
     "class4NationalInsurance" -> Json.arr(
       Json.obj(
         "rateBand" -> "Zero rate (£12,500.00 at 20%)",
