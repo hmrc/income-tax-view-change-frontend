@@ -22,6 +22,7 @@ import controllers.predicates.AuthPredicate.AuthPredicate
 import controllers.predicates.IncomeTaxAgentUser
 import controllers.predicates.agent.AgentAuthenticationPredicate
 import models.incomeSourceDetails.IncomeSourceDetailsModel
+import play.api.Logger
 import play.api.mvc.{AnyContent, MessagesControllerComponents, Request}
 import services.IncomeSourceDetailsService
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
@@ -84,7 +85,9 @@ trait ClientConfirmedController extends BaseAgentController {
       case model@IncomeSourceDetailsModel(_, _, _, _) => MtdItUser(
         userWithNino.mtditid, userWithNino.nino, userWithNino.userName, model, None, userWithNino.saUtr,
         userWithNino.credId, userWithNino.userType, userWithNino.arn)
-      case _ => throw new InternalServerException("[ClientConfirmedController][getMtdItUserWithIncomeSources] IncomeSourceDetailsModel not created")
+      case _ =>
+        Logger("application").error(s"[IncomeTaxViewChangeConnector][getIncomeSources] - Failed to retrieve income sources for agent")
+        throw new InternalServerException("[ClientConfirmedController][getMtdItUserWithIncomeSources] IncomeSourceDetailsModel not created")
     }
   }
 }

@@ -20,11 +20,13 @@ import auth.{MtdItUser, MtdItUserWithNino}
 import config.ItvcErrorHandler
 import controllers.BaseController
 import models.incomeSourceDetails.IncomeSourceDetailsModel
+import play.api.Logger
 import play.api.mvc.{ActionRefiner, MessagesControllerComponents, Result}
 import services.IncomeSourceDetailsService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import uk.gov.hmrc.http.HeaderNames
+
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -45,7 +47,9 @@ class IncomeSourceDetailsPredicate @Inject()(val incomeSourceDetailsService: Inc
     incomeSourceDetailsService.getIncomeSourceDetails(Some(cacheKey)) map {
       case sources: IncomeSourceDetailsModel =>
         Right(MtdItUser(request.mtditid, request.nino, request.userName, sources, None, request.saUtr, request.credId, request.userType, request.arn))
-      case _ => Left(itvcErrorHandler.showInternalServerError())
+      case _ =>
+        Logger("application").error(s"[IncomeTaxViewChangeConnector][getIncomeSources] - Failed to retrieve income sources for individual")
+        Left(itvcErrorHandler.showInternalServerError())
     }
 
   }
