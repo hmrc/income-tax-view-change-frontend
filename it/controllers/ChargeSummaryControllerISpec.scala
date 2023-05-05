@@ -556,7 +556,8 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
       documentText = Some("documentText"),
       originalAmount = Some(1200),
       outstandingAmount = Some(1200),
-      documentDate = LocalDate.of(2018, 3, 29)
+      documentDate = LocalDate.of(2018, 3, 29),
+      effectiveDateOfPayment = Some(LocalDate.parse("2018-03-30"))
     )
     val docDetailPaid = docDetailUnpaid.copy(outstandingAmount = Some(0))
 
