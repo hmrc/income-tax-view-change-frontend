@@ -17,6 +17,7 @@
 package controllers
 
 import audit.mocks.MockAuditingService
+import config.featureswitch.FeatureSwitch.switches
 import config.featureswitch._
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import connectors.IncomeTaxViewChangeConnector
@@ -29,7 +30,7 @@ import mocks.services.MockIncomeSourceDetailsService
 import models.chargeHistory.{ChargeHistoryResponseModel, ChargesHistoryErrorModel, ChargesHistoryModel}
 import models.core.{AccountingPeriodModel, CessationModel}
 import models.financialDetails.{FinancialDetail, FinancialDetailsResponseModel}
-import models.incomeSourceDetails.viewmodels.IncomeSourcesViewModel
+import models.incomeSourceDetails.viewmodels.{AddIncomeSourcesViewModel, BusinessDetailsViewModel}
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, PropertyDetailsModel}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
@@ -38,9 +39,10 @@ import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers._
 import services.{DateService, FinancialDetailsService}
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testIndividualAuthSuccessWithSaUtrResponse, testTaxYear}
-import testConstants.BusinessDetailsTestConstants.business1
+import testConstants.BusinessDetailsTestConstants.{business1, business2, businessDetailsViewModel, businessDetailsViewModel2, testStartDate, testStartDate2, testTradeName, testTradeName2}
 import testConstants.FinancialDetailsTestConstants._
 import testConstants.IncomeSourceDetailsTestConstants.singleBusinessIncomeWithCurrentYear
+import testConstants.PropertyDetailsTestConstants.{propertyDetails, ukPropertyDetailsViewModel}
 import testUtils.TestSupport
 
 import java.time.{LocalDate, Month}
@@ -56,7 +58,7 @@ class AddIncomeSourceControllerSpec extends MockAuthenticationPredicate
   with TestSupport {
 
   val controller = new AddIncomeSourceController(
-    app.injector.instanceOf[views.html.NewIncomeSources],
+    app.injector.instanceOf[views.html.AddIncomeSources],
     app.injector.instanceOf[SessionTimeoutPredicate],
     MockAuthenticationPredicate,
     mockAuthService,
@@ -71,23 +73,27 @@ class AddIncomeSourceControllerSpec extends MockAuthenticationPredicate
     app.injector.instanceOf[FrontendAppConfig]
   )
 
+  def disableAllSwitches(): Unit = {
+    switches.foreach(switch => disable(switch))
+  }
 
-  "The NewIncomeSourcesController" should {
+
+  "The AddIncomeSourcesController" should {
 
     "redirect a user back to the home page" when {
-
       "the IncomeSources FS is disabled" in {
+        disableAllSwitches()
         isDisabled(IncomeSources)
         mockSingleBISWithCurrentYearAsMigrationYear()
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
 
         val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.routes.AddIncomeSourceController.show().url)
+        redirectLocation(result) shouldBe Some(controllers.routes.HomeController.show().url)
       }
       "redirect an agent back to the home page" when {
-
         "the IncomeSources FS is disabled" in {
+          disableAllSwitches()
           isDisabled(IncomeSources)
           mockSingleBISWithCurrentYearAsMigrationYear()
           setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
@@ -96,54 +102,23 @@ class AddIncomeSourceControllerSpec extends MockAuthenticationPredicate
           status(result) shouldBe Status.SEE_OTHER
         }
       }
-    }
-    "redirect a user to the new income sources page" when {
+      "redirect to the add income source page" when {
+        "user has a Sole Trader Businesses and a UK property" in {
+          disableAllSwitches()
+          enable(IncomeSources)
+          mockBothIncomeSources()
+          setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
 
-      "the IncomeSources FS is enabled" in {
-        isEnabled(IncomeSources)
-        mockSingleBISWithCurrentYearAsMigrationYear()
-        setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
+          when(mockIncomeSourceDetailsService.incomeSourcesAsViewModel(any()))
+            .thenReturn(AddIncomeSourcesViewModel(
+              soleTraderBusinesses = List(businessDetailsViewModel, businessDetailsViewModel2),
+              ukProperty = Some(ukPropertyDetailsViewModel), foreignProperty = None, ceasedBusinesses = Nil
+            ))
 
-        when(mockIncomeSourceDetailsService.incomeSourcesAsViewModel(any()))
-          .thenReturn(IncomeSourcesViewModel(
-            soleTraderBusinesses = List(business1), None, None, Nil))
-
-        val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
-        status(result) shouldBe Status.OK
+          val result = controller.show()(fakeRequestWithActiveSession)
+          status(result) shouldBe Status.OK
+        }
       }
     }
   }
-
-
-
-  //  val business1 = BusinessDetailsModel(
-  //    incomeSourceId = Some("XA00001234"),
-  //    accountingPeriod = Some(AccountingPeriodModel(start = LocalDate.of(2017, Month.JUNE, 1), end = LocalDate.of(2018, Month.MAY, 30))),
-  //    tradingName = Some("Big Company Ltd"),
-  //    firstAccountingPeriodEndDate = Some(LocalDate.of(2018, Month.APRIL, 5)),
-  //    tradingStartDate = Some(LocalDate.of(2018, 4, 5)),
-  //    cessation = Some(CessationModel(Some(LocalDate.of(2022, 1, 2)), None))
-  //  )
-  //  val business2 = BusinessDetailsModel(
-  //    incomeSourceId = Some("XA00001235"),
-  //    accountingPeriod = Some(AccountingPeriodModel(start = LocalDate.of(2019, Month.MAY, 1), end = LocalDate.of(2018, Month.MAY, 30))),
-  //    tradingName = Some("Small Company Ltd"),
-  //    firstAccountingPeriodEndDate = None,
-  //    tradingStartDate = Some(LocalDate.of(2020, 4, 5)),
-  //    cessation = None
-  //  )
-  //  val propertyDetails = PropertyDetailsModel(
-  //    incomeSourceId = Some("1234"),
-  //    accountingPeriod = Some(AccountingPeriodModel(LocalDate.of(2017, 4, 6), LocalDate.of(2018, 4, 5))),
-  //    firstAccountingPeriodEndDate = None,
-  //    incomeSourceType = Some("uk-property"),
-  //    tradingStartDate = Some(LocalDate.of(2020, 1, 5))
-  //  )
-  //  val dummyBusinessesAndPropertyIncome: IncomeSourceDetailsModel = IncomeSourceDetailsModel(
-  //    mtdbsa = "XIAT0000000000A",
-  //    yearOfMigration = Some("2018"),
-  //    businesses = List(business1, business2),
-  //    property = Some(propertyDetails)
-  //  )
-
 }

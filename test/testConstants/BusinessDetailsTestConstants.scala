@@ -21,6 +21,7 @@ import testConstants.BaseTestConstants._
 import testConstants.NextUpdatesTestConstants.{fakeNextUpdatesModel, openObligation, overdueObligation}
 import models.core._
 import models.incomeSourceDetails.BusinessDetailsModel
+import models.incomeSourceDetails.viewmodels.BusinessDetailsViewModel
 import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, ObligationsModel}
 
 object BusinessDetailsTestConstants {
@@ -39,6 +40,7 @@ object BusinessDetailsTestConstants {
   val test2019BusinessAccountingPeriod = AccountingPeriodModel(start = LocalDate.of(year2018, Month.MARCH, 5), end = LocalDate.of(year2019, Month.MARCH, 6))
   val test2018BusinessAccountingPeriod = AccountingPeriodModel(start = LocalDate.of(year2019, Month.MARCH, 6), end = LocalDate.of(year2018, Month.MARCH, 6))
   val testTradeName = "nextUpdates.business"
+  val testTradeName2 = "nextUpdates.business2"
   val testBizAddress = AddressModel(
     addressLine1 = "64 Zoo Lane",
     addressLine2 = Some("Happy Place"),
@@ -51,6 +53,8 @@ object BusinessDetailsTestConstants {
   val testCessation = CessationModel(Some(LocalDate.of(year2018, Month.JANUARY, 1)), Some("It was a stupid idea anyway"))
   val testMtdItId = "XIAT0000000000A"
   val testStartDate = LocalDate.parse("2022-01-01")
+  val testStartDate2 = LocalDate.parse("2021-01-01")
+
   val business1 = BusinessDetailsModel(
     incomeSourceId = Some(testSelfEmploymentId),
     accountingPeriod = Some(testBusinessAccountingPeriod),
@@ -60,14 +64,23 @@ object BusinessDetailsTestConstants {
     cessation = None
   )
 
+  val businessDetailsViewModel = BusinessDetailsViewModel(
+    tradingName = testTradeName,
+    tradingStartDate = testStartDate
+  )
+
+  val businessDetailsViewModel2 = BusinessDetailsViewModel(
+    tradingName = testTradeName2,
+    tradingStartDate = testStartDate2
+  )
 
   val business2 = BusinessDetailsModel(
     incomeSourceId = Some(testSelfEmploymentId2),
     accountingPeriod = Some(testBusinessAccountingPeriod),
-    tradingName = Some(testTradeName),
+    tradingName = Some(testTradeName2),
     firstAccountingPeriodEndDate = None,
     cessation = None,
-    tradingStartDate = Some(testStartDate)
+    tradingStartDate = Some(testStartDate2)
   )
 
   val business2018 = BusinessDetailsModel(
