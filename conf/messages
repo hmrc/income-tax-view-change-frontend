@@ -1120,6 +1120,7 @@ new-income-sources.uk-property.h2           = UK Property
 new-income-sources.uk-property.p1           = You only need to tell us you have UK property income once.
 new-income-sources.uk-property.link         = Add income from UK property
 new-income-sources.foreign-property.h2      = Foreign Property
+new-income-sources.foreign-property.p1      = You only need to tell us you have foreign property income once.
 new-income-sources.foreign-property.link    = Add income from foreign property
 new-income-sources.ceased-businesses.h2     = Businesses that have ceased
 new-income-sources.table-head.business-name = Business name

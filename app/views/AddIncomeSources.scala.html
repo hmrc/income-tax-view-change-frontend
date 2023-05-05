@@ -72,11 +72,11 @@
     @h1(msg = getMessage("heading"),
         id = Some("new-income-sources-h1"))
 
-    @p(id = Some("self-employment-p1")) {
-        @getMessage("self-employment.p1") }
-
     @h2(msg = getMessage("self-employment.h2"),
         optId = Some("self-employment-h2"))
+
+    @p(id = Some("self-employment-p1")) {
+        @getMessage("self-employment.p1") }
 
     @govukTable(Table(
         head = Some(List(
@@ -136,6 +136,9 @@
 
     @h2(msg = getMessage("foreign-property.h2"),
         optId = Some("foreign-property-h2"))
+
+    @p(id = Some("foreign-property-h2")) {
+        @getMessage("foreign-property.p1") }
 
     @if(foreignProperty.nonEmpty) {
         @govukTable(Table(
