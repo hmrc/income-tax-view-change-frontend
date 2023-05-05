@@ -51,11 +51,21 @@ object BusinessDetailsTestConstants {
   )
   val testContactDetails = ContactDetailsModel(Some("123456789"), Some("0123456789"), Some("8008135"), Some("google@chuckNorris.com"))
   val testCessation = CessationModel(Some(LocalDate.of(year2018, Month.JANUARY, 1)), Some("It was a stupid idea anyway"))
+  val testCessation2 = CessationModel(Some(LocalDate.of(year2019, Month.JANUARY, 1)), Some("It was a stupid idea anyway"))
   val testMtdItId = "XIAT0000000000A"
   val testStartDate = LocalDate.parse("2022-01-01")
   val testStartDate2 = LocalDate.parse("2021-01-01")
 
   val business1 = BusinessDetailsModel(
+    incomeSourceId = Some(testSelfEmploymentId),
+    accountingPeriod = Some(testBusinessAccountingPeriod),
+    tradingName = Some(testTradeName),
+    firstAccountingPeriodEndDate = Some(LocalDate.of(year2018, Month.APRIL, 5)),
+    tradingStartDate = Some(testStartDate),
+    cessation = None
+  )
+
+  val soleTraderBusiness = BusinessDetailsModel(
     incomeSourceId = Some(testSelfEmploymentId),
     accountingPeriod = Some(testBusinessAccountingPeriod),
     tradingName = Some(testTradeName),
@@ -126,6 +136,15 @@ object BusinessDetailsTestConstants {
     firstAccountingPeriodEndDate = None,
     tradingStartDate = Some(testStartDate),
     cessation = Some(testCessation)
+  )
+
+  val ceasedBusiness2 = BusinessDetailsModel(
+    incomeSourceId = Some(testSelfEmploymentId),
+    accountingPeriod = Some(testBusinessAccountingPeriod),
+    tradingName = Some(testTradeName2),
+    firstAccountingPeriodEndDate = None,
+    tradingStartDate = Some(testStartDate2),
+    cessation = Some(testCessation2)
   )
 
   val oldUseralignedBusiness = BusinessDetailsModel(

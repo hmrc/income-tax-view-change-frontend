@@ -18,7 +18,7 @@ package testConstants
 
 import testConstants.BaseTestConstants.{testErrorMessage, testErrorStatus, testMigrationYear2019}
 import testConstants.BusinessDetailsTestConstants._
-import testConstants.PropertyDetailsTestConstants.{ceasedPropertyDetails, propertyDetails}
+import testConstants.PropertyDetailsTestConstants.{ceasedPropertyDetails, foreignPropertyDetails, propertyDetails, ukPropertyDetails}
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel}
 
 import java.time.LocalDate
@@ -40,6 +40,11 @@ object IncomeSourceDetailsTestConstants {
   val oldUserDetails = IncomeSourceDetailsModel(testMtdItId, Some(getCurrentTaxYearEnd.minusYears(1).getYear.toString),
     List(oldUseralignedBusiness), Some(propertyDetails))
   val preSanitised = IncomeSourceDetailsModel(testMtdItId, Some((LocalDate.now.getYear - 1).toString), List(business2018, alignedBusiness), Some(propertyDetails))
+  val ukPropertyAndSoleTraderBusinessIncome = IncomeSourceDetailsModel(testMtdItId, Some("2018"), List(soleTraderBusiness), Some(ukPropertyDetails))
+  val foreignPropertyAndCeasedBusinessIncome = IncomeSourceDetailsModel(testMtdItId, Some("2018"), List(ceasedBusiness, ceasedBusiness2), Some(foreignPropertyDetails))
+  val foreignPropertyIncome = IncomeSourceDetailsModel(testMtdItId, Some("2018"), Nil, Some(foreignPropertyDetails))
+
+
 
   def getCurrentTaxEndYear(currentDate: LocalDate): Int = {
     if (currentDate.isBefore(LocalDate.of(currentDate.getYear, 4, 6))) currentDate.getYear

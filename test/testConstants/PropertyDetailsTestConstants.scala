@@ -64,7 +64,7 @@ object PropertyDetailsTestConstants {
     accountingPeriod = None,
     firstAccountingPeriodEndDate = None,
     incomeSourceType = Some(foreignIncomeType),
-    tradingStartDate = Some(testStartDate2),
+    tradingStartDate = Some(testStartDate),
     None
   )
 
