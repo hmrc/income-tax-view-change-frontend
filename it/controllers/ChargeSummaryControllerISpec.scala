@@ -22,7 +22,7 @@ import config.featureswitch._
 import enums.ChargeType.{ITSA_ENGLAND_AND_NI, ITSA_NI, NIC4_SCOTLAND}
 import enums.CodingOutType._
 import helpers.ComponentSpecBase
-import helpers.servicemocks.DocumentDetailsStub.{docDateDetail, docDateDetailWithInterest}
+import helpers.servicemocks.DocumentDetailsStub.{docDateDetail, docDateDetailWithInterestAndOverdue}
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import models.chargeHistory.ChargeHistoryModel
 import models.financialDetails._
@@ -124,7 +124,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
           multipleBusinessesAndPropertyResponse, None, Some("1234567890"),
           Some("12345-credId"), Some(Individual), None
         )(FakeRequest()),
-        docDateDetailWithInterest("2018-04-14", "TRM New Charge"),
+        docDateDetailWithInterestAndOverdue("2018-04-14", "TRM New Charge"),
         paymentBreakdown = paymentBreakdown,
         chargeHistories = List.empty,
         paymentAllocations = paymentAllocation,
@@ -165,7 +165,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
           multipleBusinessesAndPropertyResponse, None, Some("1234567890"),
           Some("12345-credId"), Some(Individual), None
         )(FakeRequest()),
-        docDateDetailWithInterest("2018-04-14", "TRM New Charge"),
+        docDateDetailWithInterestAndOverdue("2018-04-14", "TRM New Charge"),
         paymentBreakdown = paymentBreakdown,
         chargeHistories = chargeHistories,
         paymentAllocations = paymentAllocation,
@@ -203,7 +203,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
           multipleBusinessesAndPropertyResponse, None, Some("1234567890"),
           Some("12345-credId"), Some(Individual), None
         )(FakeRequest()),
-        docDateDetailWithInterest("2018-02-14", "TRM New Charge"),
+        docDateDetailWithInterestAndOverdue("2018-02-14", "TRM New Charge"),
         paymentBreakdown = List.empty,
         chargeHistories = List.empty,
         paymentAllocations = paymentAllocation,
