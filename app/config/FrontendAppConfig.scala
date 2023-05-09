@@ -164,4 +164,5 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   lazy val timeMachineAddYears: Option[Int] = Try { servicesConfig.getInt("time-machine.add-years") }.toOption
 
   lazy val ivUrl = servicesConfig.getString("identity-verification-frontend.host")
+  lazy val relativeIVUpliftParams = servicesConfig.getBoolean("identity-verification-frontend.use-relative-params")
 }
