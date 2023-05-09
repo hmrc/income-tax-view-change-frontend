@@ -151,7 +151,7 @@ class FinalTaxCalculationControllerISpec extends ComponentSpecBase with SessionC
       Some(LocalDate.of(2018, 1, 1)),
       None
     )),
-    property = Some(
+    properties = List(
       PropertyDetailsModel(
         Some("testId2"),
         Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),

@@ -39,7 +39,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
       Some(getCurrentTaxYearEnd),
       None
     )),
-    property = None
+    properties = Nil
   )
 
   val testValidOutStandingChargeResponseJsonWithAciAndBcdCharges: JsValue = Json.parse(
@@ -90,7 +90,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
               Some(getCurrentTaxYearEnd),
               None
             )),
-            property = None
+            properties = Nil
           )
         )
 

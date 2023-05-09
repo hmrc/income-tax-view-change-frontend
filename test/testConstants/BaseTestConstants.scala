@@ -73,10 +73,11 @@ object BaseTestConstants extends UnitSpec with GuiceOneAppPerSuite {
   lazy val testMtdItUserMinimal: MtdItUser[_] = MtdItUser(testMtditid, testNino, userName = None,
     incomeSources = businessesAndPropertyIncome, btaNavPartial = None, saUtr = None, credId = None, userType = None, arn = None)(FakeRequest())
   lazy val testMtdItUserNoIncomeSource: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testRetrievedUserName),
-    IncomeSourceDetailsModel("", Some("2018"), List(business1.copy(None, None, None, None)), Some(propertyDetails.copy(None, None, None))), btaNavPartial = None, Some(testSaUtr), Some(testCredId), Some(testUserTypeIndividual), None)(FakeRequest())
+    IncomeSourceDetailsModel("", Some("2018"), List(business1.copy(None, None, None, None)), List(propertyDetails.copy(None, None, None))), btaNavPartial = None, Some(testSaUtr), Some(testCredId), Some(testUserTypeIndividual), None)(FakeRequest())
   val testSelfEmploymentId = "XA00001234"
   val testSelfEmploymentId2 = "XA00001235"
   val testPropertyIncomeId = "1234"
+  val testPropertyIncomeId2 = "1235"
   val testTaxCalculationId = "CALCID"
   val testTimeStampString = "2017-07-06T12:34:56.789Z"
   val testYear2017 = 2017
