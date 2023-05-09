@@ -39,7 +39,7 @@ object DocumentDetailsStub {
     interestFromDate = Some(LocalDate.of(2018, 4, 14)),
     interestEndDate = Some(LocalDate.of(2019, 1, 1)),
     amountCodedOut = Some(2500),
-    effectiveDateOfPayment = Some(LocalDate.of(2019, 1, 1))
+    effectiveDateOfPayment = Some(LocalDate.of(2023, 7, 1))
   )
 
   def docDateDetailWithInterest(dueDate: String, chargeType: String)(implicit dateService: DateService): DocumentDetailWithDueDate = DocumentDetailWithDueDate(
