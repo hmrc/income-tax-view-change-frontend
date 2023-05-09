@@ -18,7 +18,7 @@ package models
 
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, PropertyDetailsModel}
 import testConstants.BaseTestConstants._
-import testConstants.BusinessDetailsTestConstants._
+import testConstants.BusinessDetailsTestConstants.{testStartDate, _}
 import testConstants.IncomeSourceDetailsTestConstants._
 import testConstants.PropertyDetailsTestConstants._
 import org.scalatest.Matchers
@@ -97,11 +97,32 @@ class IncomeSourceDetailsModelSpec extends UnitSpec with Matchers {
           "XIAT0000000000A",
           Some((LocalDate.now.getYear - 1).toString),
           List(
-            BusinessDetailsModel(None, None, None, None, None, None),
-            BusinessDetailsModel(None, None, None, Some(LocalDate.of(getCurrentTaxEndYear(LocalDate.now) - 1, Month.APRIL, 5)), None, None)
+            BusinessDetailsModel(
+              incomeSourceId = None,
+              accountingPeriod = None,
+              tradingName = Some("nextUpdates.business"),
+              firstAccountingPeriodEndDate = None,
+              tradingStartDate = Some(LocalDate.parse("2022-01-01")),
+              cessation = None
+            ),
+            BusinessDetailsModel(
+              incomeSourceId = None,
+              accountingPeriod = None,
+              tradingName = Some("nextUpdates.business"),
+              tradingStartDate = Some(LocalDate.parse("2022-01-01")),
+              firstAccountingPeriodEndDate = Some(getCurrentTaxYearEnd.minusYears(1)),
+              cessation = None
+            )
           ),
-          Some(PropertyDetailsModel(None, None, None, None, None, None))
-        )
+          Some(PropertyDetailsModel(
+              incomeSourceId = None,
+              accountingPeriod = None,
+              firstAccountingPeriodEndDate = None,
+              incomeSourceType = Some("property-unspecified"),
+              tradingStartDate = Some(LocalDate.parse("2022-01-01")),
+              None
+            )
+          ))
         preSanitised.sanitise shouldBe expected
       }
     }
