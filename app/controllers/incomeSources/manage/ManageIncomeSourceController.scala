@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.incomeSources.manage
 
 import auth.FrontendAuthorisedFunctions
-import config.{AgentItvcErrorHandler, FrontendAppConfig}
 import config.featureswitch.FeatureSwitching
+import config.{AgentItvcErrorHandler, FrontendAppConfig}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates.{AuthenticationPredicate, SessionTimeoutPredicate}
 import play.api.i18n.I18nSupport
