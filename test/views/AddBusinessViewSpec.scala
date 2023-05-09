@@ -16,13 +16,12 @@
 
 package views.agent
 
-import forms.agent.ClientsUTRForm
 import models.incomeSourceDetails.BusinessNameForm
 import org.jsoup.nodes.Element
 import play.twirl.api.Html
 import testUtils.ViewSpec
 import views.html.AddBusiness
-import views.html.agent.EnterClientsUTR
+
 
 class AddBusinessViewSpec extends ViewSpec {
 
@@ -59,15 +58,14 @@ class AddBusinessViewSpec extends ViewSpec {
         val input: Element = form.selectHead("input")
 
         label.text shouldBe AddBusinessNameMessages.heading
-        hint.text shouldBe AddBusinessNameMessages.paragraph1
+        hint.text shouldBe AddBusinessNameMessages.paragraph1 + AddBusinessNameMessages.paragraph2
 
 
         label.attr("for") shouldBe input.attr("id")
         input.attr("id") shouldBe "name"
         input.attr("name") shouldBe "name"
         input.attr("type") shouldBe "text"
-        input.attr("aria-describedby") shouldBe hint.attr("id")
-        hint.attr("id") shouldBe s"${BusinessNameForm.bnf}-hint"
+        input.attr("aria-describedby") shouldBe hint.attr("name-hint")
       }
       "have a continue button" in new Setup(pageWithoutError) {
         val button: Element = layoutContent.selectHead("form").selectHead("button")
@@ -95,7 +93,7 @@ class AddBusinessViewSpec extends ViewSpec {
             errorPrefix.attr("class") shouldBe "govuk-visually-hidden"
             errorPrefix.text shouldBe AddBusinessNameMessages.errorPrefix
 
-            input.attr("aria-describedby") shouldBe s"${BusinessNameForm.bnf}-hint ${BusinessNameForm.bnf}-error"
+            input.attr("aria-describedby") shouldBe s"${BusinessNameForm}-hint ${BusinessNameForm.bnf}-error"
           }
         }
       }

@@ -157,4 +157,5 @@ GET          /agents/income-sources/add/new-income-sources                contro
 GET          /income-sources/cease/cease-an-income-source                 controllers.CeaseIncomeSourceController.show()
 GET          /agents/income-sources/cease/cease-an-income-source          controllers.CeaseIncomeSourceController.showAgent()
 GET          /income-sources/add/business-name                            controllers.AddBusinessController.show()
+GET          /agents/income-sources/add/business-name                     controllers.AddBusinessController.showAgent()
 POST         /income-sources/add/business-name                            controllers.AddBusinessController.submit()

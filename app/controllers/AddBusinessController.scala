@@ -26,7 +26,7 @@ import play.api.mvc._
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import views.html.AddBusiness
 import models.incomeSourceDetails.BusinessNameForm
-
+import services.IncomeSourceDetailsService
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -38,7 +38,8 @@ class AddBusinessController @Inject()(authenticate: AuthenticationPredicate,
                                              val addBusinessView: AddBusiness,
                                              val retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                              val retrieveBtaNavBar: NavBarPredicate,
-                                             val itvcErrorHandler: ItvcErrorHandler)
+                                             val itvcErrorHandler: ItvcErrorHandler,
+                                             incomeSourceDetailsService: IncomeSourceDetailsService)
                                             (implicit val appConfig: FrontendAppConfig,
                                              implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                              implicit override val mcc: MessagesControllerComponents,
@@ -48,10 +49,20 @@ class AddBusinessController @Inject()(authenticate: AuthenticationPredicate,
   def show(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
-      handleRequest()
+      handleRequest(isAgent = false)
   }
 
-  def handleRequest()(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
+  def showAgent(): Action[AnyContent] =
+    Authenticated.async {
+      implicit request =>
+        implicit user =>
+          getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true) flatMap {
+            implicit mtdItUser =>
+              handleRequest(isAgent = true)
+          }
+    }
+
+  def handleRequest(isAgent: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
     Future {
       if (isDisabled(IncomeSources)) {
         Redirect(controllers.routes.HomeController.show())
