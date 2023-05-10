@@ -21,11 +21,11 @@ import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
+import forms.BusinessNameForm
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import views.html.AddBusiness
-import models.incomeSourceDetails.BusinessNameForm
 import services.IncomeSourceDetailsService
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}

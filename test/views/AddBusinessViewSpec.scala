@@ -16,7 +16,7 @@
 
 package views.agent
 
-import models.incomeSourceDetails.BusinessNameForm
+import forms.BusinessNameForm
 import org.jsoup.nodes.Element
 import play.twirl.api.Html
 import testUtils.ViewSpec
