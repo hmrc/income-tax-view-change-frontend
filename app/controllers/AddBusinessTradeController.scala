@@ -79,7 +79,7 @@ class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate
       BusinessTradeForm.form.bindFromRequest().fold(
         formWithErrors => {
           Future {
-            Ok(addBusinessTradeView(formWithErrors, routes.AddBusinessTradeController.submit))
+            Ok(addBusinessTradeView(formWithErrors, routes.AddBusinessTradeController.submit()))
           }
         },
         formData => {
