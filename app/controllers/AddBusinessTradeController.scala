@@ -53,7 +53,15 @@ class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate
       handleRequest(isAgent = false)
   }
 
-  def showAgent: Action[AnyContent] = ???
+  def showAgent: Action[AnyContent] =
+    Authenticated.async {
+      implicit request =>
+        implicit user =>
+          getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true) flatMap {
+            implicit mtdItUser =>
+              handleRequest(isAgent = true)
+          }
+    }
 
   def handleRequest(isAgent: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
     Future {

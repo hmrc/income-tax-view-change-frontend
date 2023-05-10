@@ -63,6 +63,24 @@ btaNavPartial = user.btaNavPartial) {
 
 <div class="govuk-form-group form-field-group  @if(fieldError.isDefined) {govuk-form-group--error}">
 
+    <div class="govuk-error-summary" data-module="govuk-error-summary">
+        <div role="alert">
+            <h2 class="govuk-error-summary__title">
+                There is a problem
+            </h2>
+            <div class="govuk-error-summary__body">
+                <ul class="govuk-list govuk-error-summary__list">
+                    @fieldError.map { error =>
+                    <span id="@field.name-error" class="govuk-error-message">
+                            <span class="govuk-visually-hidden">@messages("base.error-prefix")</span>
+                            @messages(s"${error.message}", error.args:_*)
+                        </span>
+                    }
+                </ul>
+            </div>
+        </div>
+    </div>
+
     <h1 class="govuk-label-wrapper">
         <label class="govuk-label govuk-label--l" for="@field.name">
             @getMessage("heading")
@@ -97,8 +115,8 @@ btaNavPartial = user.btaNavPartial) {
     >
 </div>
 
-@govukButton(Button(
-content = Text("Continue")
-))
+<button class="govuk-button" data-module="govuk-button">
+    Continue
+</button>
 }
 }
