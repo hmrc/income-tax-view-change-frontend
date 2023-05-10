@@ -77,7 +77,7 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase {
       Some(getCurrentTaxYearEnd),
       None
     )),
-    property = None
+    properties = Nil
   )
 
   val testUser: MtdItUser[_] = MtdItUser(

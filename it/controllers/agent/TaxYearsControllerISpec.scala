@@ -50,7 +50,7 @@ class TaxYearsControllerISpec extends ComponentSpecBase with FeatureSwitching {
       None,
       None
     )),
-    property = Some(
+    properties = List(
       PropertyDetailsModel(
         Some("testId2"),
         Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
@@ -73,7 +73,7 @@ class TaxYearsControllerISpec extends ComponentSpecBase with FeatureSwitching {
       None,
       None
     )),
-    property = Some(
+    properties = List(
       PropertyDetailsModel(
         Some("testId2"),
         Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),

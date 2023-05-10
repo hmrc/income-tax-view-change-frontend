@@ -85,7 +85,7 @@ class ForecastTaxCalcSummaryControllerISpec extends ComponentSpecBase {
       Some(getCurrentTaxYearEnd),
       None
     )),
-    property = Some(
+    properties = List(
       PropertyDetailsModel(
         Some("testId2"),
         Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),

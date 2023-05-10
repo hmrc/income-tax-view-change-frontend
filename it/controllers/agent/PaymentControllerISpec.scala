@@ -62,7 +62,7 @@ class PaymentControllerISpec extends ComponentSpecBase {
               Some(getCurrentTaxYearEnd),
               None
             )),
-            property = None
+            properties = Nil
           )
         )
 
@@ -94,7 +94,7 @@ class PaymentControllerISpec extends ComponentSpecBase {
               Some(getCurrentTaxYearEnd),
               None
             )),
-            property = None
+            properties = Nil
           )
         )
 

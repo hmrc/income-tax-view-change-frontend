@@ -26,6 +26,7 @@ object NextUpdatesAuditing {
   case class NextUpdatesAuditModel[A](user: MtdItUser[A]) extends AuditModel {
     override val transactionName: String = nextUpdateTransactionName
     val business = user.incomeSources.businesses.headOption
+    val property = user.incomeSources.properties.headOption
     override val detail: Seq[(String, String)] = Seq(
       "mtdid" -> user.mtditid,
       "nino" -> user.nino,
@@ -33,8 +34,8 @@ object NextUpdatesAuditing {
       "hasProperty" -> user.incomeSources.hasPropertyIncome.toString,
       "bizAccPeriodStart" -> business.fold("-")(x => s"${x.accountingPeriod.map(ac => ac.start)}"),
       "bizAccPeriodEnd" -> business.fold("-")(x => s"${x.accountingPeriod.map(ac => ac.end)}"),
-      "propAccPeriodStart" -> user.incomeSources.property.fold("-")(x => s"${x.accountingPeriod.map(ac => ac.start)}"),
-      "propAccPeriodEnd" -> user.incomeSources.property.fold("-")(x => s"${x.accountingPeriod.map(ac => ac.end)}")
+      "propAccPeriodStart" -> property.fold("-")(x => s"${x.accountingPeriod.map(ac => ac.start)}"),
+      "propAccPeriodEnd" -> property.fold("-")(x => s"${x.accountingPeriod.map(ac => ac.end)}")
     )
     override val auditType: String = nextUpdateAuditType
   }

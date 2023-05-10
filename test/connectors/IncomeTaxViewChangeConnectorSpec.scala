@@ -171,7 +171,7 @@ class IncomeTaxViewChangeConnectorSpec extends TestSupport with MockHttp with Mo
       val result: Future[IncomeSourceDetailsResponse] = getIncomeSources()
       result.futureValue shouldBe singleBusinessAndPropertyMigrat2019
 
-      verifyExtendedAudit(IncomeSourceDetailsResponseAuditModel(testMtdUserNino, List(testSelfEmploymentId), Some(testPropertyIncomeId), Some(testMigrationYear2019)))
+      verifyExtendedAudit(IncomeSourceDetailsResponseAuditModel(testMtdUserNino, List(testSelfEmploymentId), List(testPropertyIncomeId), Some(testMigrationYear2019)))
     }
 
     "return IncomeSourceDetailsError in case of bad/malformed JSON response" in new Setup {
