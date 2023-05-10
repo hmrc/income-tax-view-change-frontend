@@ -62,7 +62,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
       Some(b2TradingStart),
       Some(CessationModel(Some(b2CessationDate), Some(b2CessationReason)))
     )),
-    property = None
+    properties = Nil
   )
 
   val testUser: MtdItUser[_] = MtdItUser(
@@ -568,7 +568,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
             Some(b2TradingStart),
             Some(CessationModel(Some(b2CessationDate), Some(b2CessationReason)))
           )),
-          property = None
+          properties = Nil
         )
       )
 

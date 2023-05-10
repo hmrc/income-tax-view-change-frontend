@@ -30,21 +30,21 @@ object IncomeSourceIntegrationTestConstants {
   val singleBusinessResponse: IncomeSourceDetailsModel = IncomeSourceDetailsModel(
     testMtdItId,
     businesses = List(business1),
-    property = None,
+    properties = Nil,
     yearOfMigration = Some("2018")
   )
 
   val singleBusinessResponseWoMigration: IncomeSourceDetailsModel = IncomeSourceDetailsModel(
     testMtdItId,
     businesses = List(business1),
-    property = None,
+    properties = Nil,
     yearOfMigration = None
   )
 
   val misalignedBusinessWithPropertyResponse: IncomeSourceDetailsResponse = IncomeSourceDetailsModel(
     testMtdItId,
     businesses = List(business2),
-    property = Some(property),
+    properties = List(property),
     yearOfMigration = Some("2018")
   )
 
@@ -54,21 +54,31 @@ object IncomeSourceIntegrationTestConstants {
       business1,
       business2
     ),
-    property = None,
+    properties = Nil,
+    yearOfMigration = Some("2019")
+  )
+
+  val multiplePropertiesResponse: IncomeSourceDetailsResponse = IncomeSourceDetailsModel(
+    testMtdItId,
+    businesses = Nil,
+    properties = List(
+      property,
+      oldProperty
+    ),
     yearOfMigration = Some("2019")
   )
 
   val businessAndPropertyResponse: IncomeSourceDetailsResponse = IncomeSourceDetailsModel(
     testMtdItId,
     businesses = List(business1),
-    property = Some(property),
+    properties = List(property),
     yearOfMigration = Some("2018")
   )
 
   val businessAndPropertyResponseWoMigration: IncomeSourceDetailsResponse = IncomeSourceDetailsModel(
     testMtdItId,
     businesses = List(business1),
-    property = Some(property),
+    properties = List(property),
     yearOfMigration = None
   )
 
@@ -76,7 +86,7 @@ object IncomeSourceIntegrationTestConstants {
     testMtdItId,
     Some(getCurrentTaxYearEnd.minusYears(1).getYear.toString),
     businesses = List(oldBusiness1),
-    property = Some(oldProperty)
+    properties = List(oldProperty)
   )
 
   val multipleBusinessesAndPropertyResponse: IncomeSourceDetailsModel = IncomeSourceDetailsModel(
@@ -85,7 +95,7 @@ object IncomeSourceIntegrationTestConstants {
       business1,
       business2
     ),
-    property = Some(property),
+    properties = List(property),
     yearOfMigration = Some("2018")
   )
 
@@ -95,20 +105,20 @@ object IncomeSourceIntegrationTestConstants {
       business1,
       business2
     ),
-    property = Some(property),
+    properties = List(property),
     yearOfMigration = None
   )
 
   val propertyOnlyResponse: IncomeSourceDetailsResponse = IncomeSourceDetailsModel(
     testMtdItId,
     businesses = List(),
-    property = Some(property),
+    properties = List(property),
     yearOfMigration = Some("2018")
   )
 
   val noPropertyOrBusinessResponse: IncomeSourceDetailsResponse = IncomeSourceDetailsModel(
     testMtdItId, None,
-    List(), None
+    List(), Nil
   )
   val errorResponse: IncomeSourceDetailsError = IncomeSourceDetailsError(500, "ISE")
   val testEmptyFinancialDetailsModelJson: JsValue = Json.obj("balanceDetails" -> Json.obj(
@@ -121,7 +131,7 @@ object IncomeSourceIntegrationTestConstants {
                                             yearOfMigration: Option[String]): IncomeSourceDetailsResponse = IncomeSourceDetailsModel(
     testMtdItId,
     businesses = List(),
-    property = Some(propertyWithCurrentYear(year)),
+    properties = List(propertyWithCurrentYear(year)),
     yearOfMigration = yearOfMigration
   )
 

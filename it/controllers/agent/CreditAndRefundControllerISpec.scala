@@ -158,7 +158,7 @@ class CreditAndRefundControllerISpec extends ComponentSpecBase {
               Some(getCurrentTaxYearEnd),
               None
             )),
-            property = None
+            properties = Nil
           )
         )
 

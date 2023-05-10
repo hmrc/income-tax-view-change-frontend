@@ -47,10 +47,10 @@ class IncomeSourceDetailsModelSpec extends UnitSpec with Matchers {
       }
       //Test Property details
       s"have the property accounting period start date of ${testPropertyAccountingPeriod.start}" in {
-        businessesAndPropertyIncome.property.get.accountingPeriod.get.start shouldBe testPropertyAccountingPeriod.start
+        businessesAndPropertyIncome.properties.head.accountingPeriod.get.start shouldBe testPropertyAccountingPeriod.start
       }
       s"have the property accounting period end date of ${testPropertyAccountingPeriod.end}" in {
-        businessesAndPropertyIncome.property.get.accountingPeriod.get.end shouldBe testPropertyAccountingPeriod.end
+        businessesAndPropertyIncome.properties.head.accountingPeriod.get.end shouldBe testPropertyAccountingPeriod.end
       }
     }
 
@@ -69,16 +69,16 @@ class IncomeSourceDetailsModelSpec extends UnitSpec with Matchers {
       }
       //Test Property details
       s"should not have property details" in {
-        singleBusinessIncome.property shouldBe None
+        singleBusinessIncome.properties shouldBe Nil
       }
     }
     "the user has just a property income source" should {
       //Test Property details
       s"have the property accounting period start date of ${testPropertyAccountingPeriod.start}" in {
-        propertyIncomeOnly.property.get.accountingPeriod.get.start shouldBe testPropertyAccountingPeriod.start
+        propertyIncomeOnly.properties.head.accountingPeriod.get.start shouldBe testPropertyAccountingPeriod.start
       }
       s"have the property accounting period end date of ${testPropertyAccountingPeriod.end}" in {
-        propertyIncomeOnly.property.get.accountingPeriod.get.end shouldBe testPropertyAccountingPeriod.end
+        propertyIncomeOnly.properties.head.accountingPeriod.get.end shouldBe testPropertyAccountingPeriod.end
       }
       //Test Business Details
       "should not have business details" in {
@@ -87,7 +87,7 @@ class IncomeSourceDetailsModelSpec extends UnitSpec with Matchers {
     }
     "the user has no income source" should {
       "return None for both business and property sources" in {
-        noIncomeDetails.property shouldBe None
+        noIncomeDetails.properties shouldBe List.empty
         noIncomeDetails.businesses shouldBe List.empty
       }
     }
@@ -114,7 +114,7 @@ class IncomeSourceDetailsModelSpec extends UnitSpec with Matchers {
               cessation = None
             )
           ),
-          Some(PropertyDetailsModel(
+          List(PropertyDetailsModel(
               incomeSourceId = None,
               accountingPeriod = None,
               firstAccountingPeriodEndDate = None,
