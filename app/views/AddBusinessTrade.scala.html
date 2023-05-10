@@ -61,10 +61,11 @@ btaNavPartial = user.btaNavPartial) {
 @form(action = postAction) {
 @CSRF.formField
 
+@if(fieldError.isDefined){
 <div class="govuk-error-summary" data-module="govuk-error-summary">
     <div role="alert">
         <h2 class="govuk-error-summary__title">
-            There is a problem
+            @messages("base.error_summary.heading")
         </h2>
         <div class="govuk-error-summary__body">
             <ul class="govuk-list govuk-error-summary__list">
@@ -75,6 +76,7 @@ btaNavPartial = user.btaNavPartial) {
         </div>
     </div>
 </div>
+}
 
 <div class="govuk-form-group form-field-group  @if(fieldError.isDefined) {govuk-form-group--error}">
 
