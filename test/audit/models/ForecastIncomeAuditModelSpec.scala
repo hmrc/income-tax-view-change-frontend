@@ -20,7 +20,7 @@ import auth.MtdItUserWithNino
 import models.liabilitycalculation.{EndOfYearEstimate, IncomeSource}
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
-import testConstants.BaseTestConstants.{testArn, testCredId, testMtditid, testNino, testSaUtr}
+import testConstants.BaseTestConstants.{testCredId, testMtditid, testNino, testSaUtr}
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
 
