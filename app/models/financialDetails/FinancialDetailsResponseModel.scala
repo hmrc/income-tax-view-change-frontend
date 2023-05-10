@@ -73,7 +73,7 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
     financialDetails.find { fd =>
       fd.transactionId.contains(documentDetail.transactionId) &&
         fd.taxYear.toInt == documentDetail.taxYear
-    } flatMap (_.items.flatMap(_.headOption.flatMap(_.dueDate)))
+    } flatMap (_ => documentDetail.effectiveDateOfPayment)
   }
 
   def findDocumentDetailForYearWithDueDate(taxYear: Int)(implicit dateService: DateServiceInterface): Option[DocumentDetailWithDueDate] = {

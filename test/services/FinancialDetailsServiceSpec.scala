@@ -81,7 +81,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
           cessation = None
         )
       },
-      property = None
+      properties = Nil
     ),
     btaNavPartial = None,
     Some("testUtr"),
@@ -105,7 +105,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
         cessation = None
       )
     ),
-    property = None
+    properties = Nil
   ), btaNavPartial = None, None, None, None, None)(FakeRequest())
 
   "getFinancialDetails" when {

@@ -47,7 +47,7 @@ class NextUpdatesControllerISpec extends ComponentSpecBase with FeatureSwitching
       Some(getCurrentTaxYearEnd),
       None
     )),
-    property = None
+    properties = Nil
   )
 
   val testUser: MtdItUser[_] = MtdItUser(

@@ -73,7 +73,7 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
       Some(b2TradingStart),
       None)
     ),
-    property = Some(
+    properties = List(
       PropertyDetailsModel(
         Some("testId2"),
         Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),

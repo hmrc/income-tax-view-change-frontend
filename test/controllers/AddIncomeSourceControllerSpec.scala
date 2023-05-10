@@ -42,7 +42,7 @@ import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testIndiv
 import testConstants.BusinessDetailsTestConstants.{business1, business2, businessDetailsViewModel, businessDetailsViewModel2, testStartDate, testStartDate2, testTradeName, testTradeName2}
 import testConstants.FinancialDetailsTestConstants._
 import testConstants.IncomeSourceDetailsTestConstants.singleBusinessIncomeWithCurrentYear
-import testConstants.PropertyDetailsTestConstants.{propertyDetails, ukPropertyDetailsViewModel}
+import testConstants.PropertyDetailsTestConstants.{foreignPropertyDetailsViewModel, propertyDetails, ukPropertyDetailsViewModel}
 import testUtils.TestSupport
 
 import java.time.{LocalDate, Month}
@@ -80,7 +80,7 @@ class AddIncomeSourceControllerSpec extends MockAuthenticationPredicate
 
   "The AddIncomeSourcesController" should {
 
-    "redirect a user back to the home page" when {
+    "redirect an individual back to the home page" when {
       "the IncomeSources FS is disabled" in {
         disableAllSwitches()
         isDisabled(IncomeSources)
@@ -102,7 +102,7 @@ class AddIncomeSourceControllerSpec extends MockAuthenticationPredicate
           status(result) shouldBe Status.SEE_OTHER
         }
       }
-      "redirect to the add income source page" when {
+      "redirect an individual to the add income source page" when {
         "user has a Sole Trader Businesses and a UK property" in {
           disableAllSwitches()
           enable(IncomeSources)
@@ -112,10 +112,29 @@ class AddIncomeSourceControllerSpec extends MockAuthenticationPredicate
           when(mockIncomeSourceDetailsService.incomeSourcesAsViewModel(any()))
             .thenReturn(AddIncomeSourcesViewModel(
               soleTraderBusinesses = List(businessDetailsViewModel, businessDetailsViewModel2),
-              ukProperty = Some(ukPropertyDetailsViewModel), foreignProperty = None, ceasedBusinesses = Nil
-            ))
+              ukProperty = Some(ukPropertyDetailsViewModel),
+              foreignProperty = None,
+              ceasedBusinesses = Nil))
 
           val result = controller.show()(fakeRequestWithActiveSession)
+          status(result) shouldBe Status.OK
+        }
+      }
+      "redirect an agent to the add income source page" when {
+        "user has a Sole Trader Businesses, a UK property and a Foreign Property" in {
+          disableAllSwitches()
+          enable(IncomeSources)
+          mockBothIncomeSources()
+          setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+
+          when(mockIncomeSourceDetailsService.incomeSourcesAsViewModel(any()))
+            .thenReturn(AddIncomeSourcesViewModel(
+              soleTraderBusinesses = List(businessDetailsViewModel, businessDetailsViewModel2),
+              ukProperty = Some(ukPropertyDetailsViewModel),
+              foreignProperty = Some(foreignPropertyDetailsViewModel),
+              ceasedBusinesses = Nil))
+
+          val result = controller.showAgent()(fakeRequestConfirmedClient("AB123456C"))
           status(result) shouldBe Status.OK
         }
       }
