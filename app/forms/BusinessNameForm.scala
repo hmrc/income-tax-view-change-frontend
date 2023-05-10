@@ -29,6 +29,7 @@ object BusinessNameForm {
 
   private val validBusinessName: Regex = "^[A-Za-z0-9 ,.&'\\\\/-]+$".r
   val businessNameLength: Int = 105
+  val bnf = "bnf"
 
   val validName: String = "Test Business"
 

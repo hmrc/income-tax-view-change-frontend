@@ -16,23 +16,18 @@
 
 package controllers
 
-import auth.MtdItUser
-import config.featureswitch.{FeatureSwitching, IncomeSources}
+import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
-import forms.BusinessNameForm
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
 import mocks.services.MockClientDetailsService
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
-import play.api.http.Status.SEE_OTHER
 import play.api.mvc.{MessagesControllerComponents, Result}
-import play.api.mvc.Results.Ok
-import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation}
-import play.mvc.Action
-import testOnly.forms.StubDataForm.status
+import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
+import play.mvc.Http.Status
+import testConstants.BaseTestConstants
+import testConstants.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 import testUtils.TestSupport
 import views.html.AddBusiness
 
@@ -78,7 +73,30 @@ class AddBusinessControllerSpec extends TestSupport
          // status(result) shouldBe SEE_OTHER
           redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn.url)
         }
+
+        "the user is  authenticated" in {
+          setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
+          setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+
+          //val user: MtdItUser[_] = MtdItUser("1234567890", "test", Some("test"), incomeSources = mockIncomeSourceDetailsService, Some("test"), Some("test"), None, None, false, false)
+
+          val result: Future[Result] = TestAddBusinessNameController.show()(fakeRequestWithActiveSession)
+
+          status(result) shouldBe Status.OK
+
+          //        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
+          //       mockEnterClientsUTR(HtmlFormat.empty)
+
+          //        val result = TestEnterClientsUTRController.show()(fakeRequestWithActiveSession)
+
+
+          //        contentType(result) shouldBe Some(HTML)
+          //        verify(mockAuthService, times(1)).authorised(ArgumentMatchers.eq(EmptyPredicate))
+          //        verify(mockAuthService, times(0)).authorised(ArgumentMatchers.any(Enrolment.apply("").getClass))
+        }
       }
+
+
 
       //    "return a redirect to the business date page when form is submitted successfully" in {
       //      val user: MtdItUser[_] = MtdItUser("1234567890", "test", Some("test"), incomeSources = mockIncomeSourceDetailsService, Some("test"), Some("test"), None, None, false, false)
