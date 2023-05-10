@@ -37,10 +37,10 @@ class ManageIncomeSourceController @Inject()(val authenticate: AuthenticationPre
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
   def show(): Action[AnyContent] = Action {
-    NotImplemented
+    Ok("")
   }
 
   def showAgent(): Action[AnyContent] = Action {
-    NotImplemented
+    Ok("")
   }
 }

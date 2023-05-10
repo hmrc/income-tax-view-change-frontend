@@ -18,7 +18,7 @@ package models
 
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, PropertyDetailsModel}
 import testConstants.BaseTestConstants._
-import testConstants.BusinessDetailsTestConstants._
+import testConstants.BusinessDetailsTestConstants.{testStartDate, _}
 import testConstants.IncomeSourceDetailsTestConstants._
 import testConstants.PropertyDetailsTestConstants._
 import org.scalatest.Matchers
@@ -47,10 +47,10 @@ class IncomeSourceDetailsModelSpec extends UnitSpec with Matchers {
       }
       //Test Property details
       s"have the property accounting period start date of ${testPropertyAccountingPeriod.start}" in {
-        businessesAndPropertyIncome.property.get.accountingPeriod.get.start shouldBe testPropertyAccountingPeriod.start
+        businessesAndPropertyIncome.properties.head.accountingPeriod.get.start shouldBe testPropertyAccountingPeriod.start
       }
       s"have the property accounting period end date of ${testPropertyAccountingPeriod.end}" in {
-        businessesAndPropertyIncome.property.get.accountingPeriod.get.end shouldBe testPropertyAccountingPeriod.end
+        businessesAndPropertyIncome.properties.head.accountingPeriod.get.end shouldBe testPropertyAccountingPeriod.end
       }
     }
 
@@ -69,16 +69,16 @@ class IncomeSourceDetailsModelSpec extends UnitSpec with Matchers {
       }
       //Test Property details
       s"should not have property details" in {
-        singleBusinessIncome.property shouldBe None
+        singleBusinessIncome.properties shouldBe Nil
       }
     }
     "the user has just a property income source" should {
       //Test Property details
       s"have the property accounting period start date of ${testPropertyAccountingPeriod.start}" in {
-        propertyIncomeOnly.property.get.accountingPeriod.get.start shouldBe testPropertyAccountingPeriod.start
+        propertyIncomeOnly.properties.head.accountingPeriod.get.start shouldBe testPropertyAccountingPeriod.start
       }
       s"have the property accounting period end date of ${testPropertyAccountingPeriod.end}" in {
-        propertyIncomeOnly.property.get.accountingPeriod.get.end shouldBe testPropertyAccountingPeriod.end
+        propertyIncomeOnly.properties.head.accountingPeriod.get.end shouldBe testPropertyAccountingPeriod.end
       }
       //Test Business Details
       "should not have business details" in {
@@ -87,7 +87,7 @@ class IncomeSourceDetailsModelSpec extends UnitSpec with Matchers {
     }
     "the user has no income source" should {
       "return None for both business and property sources" in {
-        noIncomeDetails.property shouldBe None
+        noIncomeDetails.properties shouldBe List.empty
         noIncomeDetails.businesses shouldBe List.empty
       }
     }
@@ -97,11 +97,32 @@ class IncomeSourceDetailsModelSpec extends UnitSpec with Matchers {
           "XIAT0000000000A",
           Some((LocalDate.now.getYear - 1).toString),
           List(
-            BusinessDetailsModel(None, None, None, None, None, None),
-            BusinessDetailsModel(None, None, None, Some(LocalDate.of(getCurrentTaxEndYear(LocalDate.now) - 1, Month.APRIL, 5)), None, None)
+            BusinessDetailsModel(
+              incomeSourceId = None,
+              accountingPeriod = None,
+              tradingName = Some("nextUpdates.business"),
+              firstAccountingPeriodEndDate = None,
+              tradingStartDate = Some(LocalDate.parse("2022-01-01")),
+              cessation = None
+            ),
+            BusinessDetailsModel(
+              incomeSourceId = None,
+              accountingPeriod = None,
+              tradingName = Some("nextUpdates.business"),
+              tradingStartDate = Some(LocalDate.parse("2022-01-01")),
+              firstAccountingPeriodEndDate = Some(getCurrentTaxYearEnd.minusYears(1)),
+              cessation = None
+            )
           ),
-          Some(PropertyDetailsModel(None, None, None, None, None, None))
-        )
+          List(PropertyDetailsModel(
+              incomeSourceId = None,
+              accountingPeriod = None,
+              firstAccountingPeriodEndDate = None,
+              incomeSourceType = Some("property-unspecified"),
+              tradingStartDate = Some(LocalDate.parse("2022-01-01")),
+              None
+            )
+          ))
         preSanitised.sanitise shouldBe expected
       }
     }

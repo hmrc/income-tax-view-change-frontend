@@ -52,7 +52,7 @@ class DeductionsSummaryControllerISpec extends ComponentSpecBase with FeatureSwi
       Some(getCurrentTaxYearEnd),
       None
     )),
-    property = None
+    properties = Nil
   )
 
   "Calling the DeductionsSummaryController.showDeductionsSummary(taxYear)" should {

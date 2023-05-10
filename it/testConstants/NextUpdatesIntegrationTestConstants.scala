@@ -154,6 +154,17 @@ object NextUpdatesIntegrationTestConstants {
     )
   ))
 
+  val multipleObligationPropertyModel = NextUpdatesModel(testPropertyId, List(
+    NextUpdateModel(
+      singleObligationStartEOPs,
+      singleObligationEndEOPs,
+      singleObligationDueEOPs,
+      "EOPS",
+      dateReceived = None,
+      "EOPS"
+    )
+  ))
+
   def noObligationsModel(incomeId: String): NextUpdatesModel = NextUpdatesModel(incomeId, List(
 
   ))

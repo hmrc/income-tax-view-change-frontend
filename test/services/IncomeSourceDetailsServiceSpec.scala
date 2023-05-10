@@ -21,8 +21,11 @@ import testConstants.IncomeSourceDetailsTestConstants._
 import audit.mocks.MockAuditingService
 import mocks.connectors.MockIncomeTaxViewChangeConnector
 import mocks.services.{MockAsyncCacheApi, MockNextUpdatesService}
+import models.incomeSourceDetails.IncomeSourceDetailsModel
+import models.incomeSourceDetails.viewmodels.{AddIncomeSourcesViewModel, BusinessDetailsViewModel, CeasedBusinessDetailsViewModel, PropertyDetailsViewModel}
 import testUtils.TestSupport
 import play.api.cache.AsyncCacheApi
+import testConstants.BusinessDetailsTestConstants.{testCessation, testCessation2, testStartDate, testStartDate2, testTradeName, testTradeName2}
 
 //scalastyle:off
 class IncomeSourceDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChangeConnector with MockNextUpdatesService
@@ -86,6 +89,37 @@ class IncomeSourceDetailsServiceSpec extends TestSupport with MockIncomeTaxViewC
         TestIncomeSourceDetailsService.getIncomeSourceDetails(Some("key2")).futureValue shouldBe noIncomeDetails
         TestIncomeSourceDetailsService.getIncomeSourceDetails(Some("someotherkey")).futureValue shouldBe noIncomeDetails
         verifyMockIncomeSourceDetailsResponse(2)
+      }
+    }
+  }
+  "The IncomeSourceDetailsService.incomeSourcesAsViewModel method" when {
+    "a user has a uk property and a sole trader business" should {
+      "return an AddIncomeSourcesViewModel with a sole trader business and uk property" in {
+
+        val result = TestIncomeSourceDetailsService.incomeSourcesAsViewModel(ukPropertyAndSoleTraderBusinessIncome)
+
+        result shouldBe AddIncomeSourcesViewModel(
+          soleTraderBusinesses = List(BusinessDetailsViewModel(testTradeName, testStartDate)),
+          ukProperty = Some(PropertyDetailsViewModel(testStartDate)),
+          foreignProperty = None,
+          ceasedBusinesses = Nil
+        )
+      }
+    }
+    "a user has a foreign property and a ceased businesses" should {
+      "return an AddIncomeSourcesViewModel with a foreign property and ceased businesses" in {
+
+        val result = TestIncomeSourceDetailsService.incomeSourcesAsViewModel(foreignPropertyAndCeasedBusinessIncome)
+
+        result shouldBe AddIncomeSourcesViewModel(
+          soleTraderBusinesses = Nil,
+          ukProperty = None,
+          foreignProperty = Some(PropertyDetailsViewModel(testStartDate)),
+          ceasedBusinesses = List(
+            CeasedBusinessDetailsViewModel(testTradeName, testStartDate, testCessation.date.get),
+            CeasedBusinessDetailsViewModel(testTradeName2, testStartDate2, testCessation2.date.get)
+          )
+        )
       }
     }
   }

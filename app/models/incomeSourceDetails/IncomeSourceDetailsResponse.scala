@@ -26,27 +26,27 @@ sealed trait IncomeSourceDetailsResponse {
 case class IncomeSourceDetailsModel(mtdbsa: String,
                                     yearOfMigration: Option[String],
                                     businesses: List[BusinessDetailsModel],
-                                    property: Option[PropertyDetailsModel]
+                                    properties: List[PropertyDetailsModel]
                                    ) extends IncomeSourceDetailsResponse {
 
-  val hasPropertyIncome: Boolean = property.nonEmpty
+  val hasPropertyIncome: Boolean = properties.nonEmpty
   val hasBusinessIncome: Boolean = businesses.nonEmpty
   val hasOngoingBusinessOrPropertyIncome: Boolean = businesses.exists(b => b.cessation.forall(_.date.isEmpty)) ||
-    property.exists(p => p.cessation.forall(_.date.isEmpty))
+    properties.exists(p => p.cessation.forall(_.date.isEmpty))
 
   override def toJson: JsValue = Json.toJson(this)
 
   def sanitise: IncomeSourceDetailsModel = {
-    val property2 = property.map(p => p.copy(incomeSourceId = None, accountingPeriod = None, incomeSourceType = None, tradingStartDate = None))
-    val businesses2 = businesses.map(b => b.copy(incomeSourceId = None, accountingPeriod = None, tradingName = None, tradingStartDate = None, cessation = None))
-    this.copy(property = property2, businesses = businesses2)
+    val property2 = properties.map(p => p.copy(incomeSourceId = None, accountingPeriod = None))
+    val businesses2 = businesses.map(b => b.copy(incomeSourceId = None, accountingPeriod = None))
+    this.copy(properties = property2, businesses = businesses2)
   }
 
   def orderedTaxYearsByAccountingPeriods(implicit dateService: DateServiceInterface): List[Int] = {
     (startingTaxYear to dateService.getCurrentTaxYearEnd()).toList
   }
 
-  def startingTaxYear: Int = (businesses.flatMap(_.firstAccountingPeriodEndDate) ++ property.flatMap(_.firstAccountingPeriodEndDate))
+  def startingTaxYear: Int = (businesses.flatMap(_.firstAccountingPeriodEndDate) ++ properties.flatMap(_.firstAccountingPeriodEndDate))
     .map(_.getYear).sortWith(_ < _).headOption.getOrElse(throw new RuntimeException("User missing first accounting period information"))
 
   def orderedTaxYearsByYearOfMigration(implicit dateService: DateServiceInterface): List[Int] = {

@@ -27,7 +27,7 @@ sealed trait NextUpdatesResponseModel
 case class ObligationsModel(obligations: Seq[NextUpdatesModel]) extends NextUpdatesResponseModel {
   def allDeadlinesWithSource(previous: Boolean = false)(implicit mtdItUser: MtdItUser[_]): Seq[NextUpdateModelWithIncomeType] = {
     val deadlines = obligations.flatMap { deadlinesModel =>
-      if (mtdItUser.incomeSources.property.exists(_.incomeSourceId.getOrElse("") == deadlinesModel.identification)) deadlinesModel.obligations.map {
+      if (mtdItUser.incomeSources.properties.exists(_.incomeSourceId.getOrElse("") == deadlinesModel.identification)) deadlinesModel.obligations.map {
         deadline => Some(NextUpdateModelWithIncomeType("nextUpdates.propertyIncome", deadline))
       } else if (mtdItUser.incomeSources.businesses.exists(_.incomeSourceId.getOrElse("") == deadlinesModel.identification)) deadlinesModel.obligations.map {
         deadline =>
