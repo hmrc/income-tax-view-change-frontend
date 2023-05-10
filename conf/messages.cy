@@ -1129,6 +1129,13 @@ credit-and-refund.credit-from-balancing-charge-prt-1              = yn sgil
 credit-and-refund.credit-from-balancing-charge-prt-2              = credyd tâl mantoli
 credit-and-refund.credit-from-earlier-tax-year                    = credyd o flwyddyn dreth gynharach
 
+## Add business name page
+add-business-trade.form.error.empty         = Nodwch fasnach eich busnes
+add-business-trade.form.error.short         = Mae’n rhaid i fasnach y busnes gynnwys o leiaf dwy lythyren
+add-business-trade.form.error.long          = Mae’n rhaid i fasnach y busnes fod yn 35 o gymeriadau neu lai
+add-business-trade.form.error.invalid       = Ni all masnach y busnes gynnwys !, "" , * na ?
+add-business-trade.form.error.same-name     = Ni allwch nodi’r un peth ar gyfer masnach busnes ac enw’r busnes
+
 ## check income sources
 new-income-sources.heading                  = Unig fasnachwr a incwm o eiddo
 new-income-sources.self-employment.h2       = Busnesau unig fasnachwr

@@ -1127,6 +1127,7 @@ new-income-sources.table-head.business-name = Business name
 new-income-sources.table-head.date-started  = Date started
 new-income-sources.table-head.date-ended    = Date ended
 
+## Add business name page
 add-business-trade.form.error.empty         = Enter the trade of your business
 add-business-trade.form.error.short         = Business trade must have at least two letters
 add-business-trade.form.error.long          = Business trade must be 35 characters or fewer

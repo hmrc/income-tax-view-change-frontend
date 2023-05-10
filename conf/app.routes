@@ -152,6 +152,10 @@ GET          /agents/how-to-claim-refund-external                         contro
 # Income Sources
 GET          /income-sources/add/new-income-sources                                                     controllers.AddIncomeSourceController.show()
 GET          /agents/income-sources/add/new-income-sources                                              controllers.AddIncomeSourceController.showAgent()
+GET          /income-sources/add/business-trade                                                         controllers.AddBusinessTradeController.show()
+GET          /agents/income-sources/add/business-trade                                                  controllers.AddBusinessTradeController.showAgent()
+POST         /income-sources/add/business-trade                                                         controllers.AddBusinessTradeController.submit()
+
 
 # Income Sources - TO BE IMPLEMENTED
 GET          /income-sources/manage/choose-income-sources                                               controllers.ManageIncomeSourceController.show()
