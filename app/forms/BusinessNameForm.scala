@@ -30,7 +30,7 @@ object BusinessNameForm {
   private val validBusinessName: Regex = "^[A-Za-z0-9 ,.&'\\\\/-]+$".r
   val businessNameLength: Int = 105
 
-  val bnf: String = "test"
+  val validName: String = "Test Business"
 
   val businessNameEmptyError: String = "add-business-name.form.error.required"
   val businessNameLengthIncorrect: String = "add-business-name.form.error.maxLength"
