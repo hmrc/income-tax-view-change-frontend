@@ -37,10 +37,10 @@ class DateUKPropertyCeasedController @Inject()(val authenticate: AuthenticationP
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
   def show(origin: Option[String] = None): Action[AnyContent] = Action {
-    NotImplemented
+    Ok("")
   }
 
   def showAgent(): Action[AnyContent] = Action {
-    NotImplemented
+    Ok("")
   }
 }

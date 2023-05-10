@@ -15,5 +15,13 @@
  *@
 
 @import play.api.mvc.Results.NotImplemented
+@import views.html.layouts.unifiedLayout
+@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 
-@NotImplemented
+@this(mainTemplate: unifiedLayout)
+
+@(isAgent: Boolean = false, backUrl: String, origin: Option[String] = None)(implicit request: Request[_], messages: Messages)
+
+@mainTemplate(pageTitle = "notImplemented", isAgent = isAgent, backUrl = Some(backUrl)) {
+ <h1>Not implemented</h1>
+}

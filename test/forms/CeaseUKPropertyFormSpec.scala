@@ -24,21 +24,21 @@ import scala.language.postfixOps
 
 class CeaseUKPropertyFormSpec extends AnyWordSpec with Matchers{
 
-  def testCeaseUKPropertyForm(declaration: String, csrfToken: String): CeaseUKPropertyForm = CeaseUKPropertyForm(declaration, csrfToken)
+  def testCeaseUKPropertyForm(declaration: Option[String], csrfToken: String): CeaseUKPropertyForm = CeaseUKPropertyForm(declaration, csrfToken)
 
   def form(optValue: Option[CeaseUKPropertyForm]): Form[CeaseUKPropertyForm] = CeaseUKPropertyForm.form.bind(
     optValue.fold[Map[String, String]](Map.empty)(
       value => Map(
-        CeaseUKPropertyForm.declaration -> value.declaration,
+        CeaseUKPropertyForm.declaration -> value.declaration.getOrElse("invalid"),
         CeaseUKPropertyForm.ceaseCsrfToken -> value.csrfToken)))
 
   "CeaseUKProperty form" should {
     "bind with a valid declaration" in {
-      form(Some(testCeaseUKPropertyForm("cease-uk-property-declaration", "12345"))).value
-        .get.declaration shouldBe Some(testCeaseUKPropertyForm("declaration", "12345")).value.declaration
+      form(Some(testCeaseUKPropertyForm(Some("declaration"), "12345"))).value
+        .get.declaration shouldBe Some(testCeaseUKPropertyForm(Some("declaration"), "12345")).value.declaration
     }
     "bind with an invalid declaration" in {
-      form(Some(testCeaseUKPropertyForm("", "12345"))).errors shouldBe
+      form(Some(testCeaseUKPropertyForm(None, "12345"))).errors shouldBe
         Seq(FormError("cease-uk-property-declaration", Seq("incomeSources.ceaseUKProperty.radioError")))
     }
   }

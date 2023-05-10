@@ -191,6 +191,22 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterE
     "Gov-Test-Scenario" -> "data"
   )
 
+  lazy val fakeRequestCeaseUKPropertyDeclarationComplete: FakeRequest[AnyContentAsEmpty.type] = fakeRequestWithNinoAndOrigin("pta").withSession(
+    forms.utils.SessionKeys.ceaseUKPropertyDeclare -> "true"
+  )
+
+  lazy val fakeRequestCeaseUKPropertyDeclarationCompleteAgent: FakeRequest[AnyContentAsEmpty.type] = fakeRequestConfirmedClient().withSession(
+    forms.utils.SessionKeys.ceaseUKPropertyDeclare -> "true"
+  )
+
+  lazy val fakeRequestCeaseUKPropertyDeclarationIncomplete: FakeRequest[AnyContentAsEmpty.type] = fakeRequestWithNinoAndOrigin("pta").withSession(
+    forms.utils.SessionKeys.ceaseUKPropertyDeclare -> "false"
+  )
+
+  lazy val fakeRequestCeaseUKPropertyDeclarationIncompleteAgent: FakeRequest[AnyContentAsEmpty.type] = fakeRequestConfirmedClient().withSession(
+    forms.utils.SessionKeys.ceaseUKPropertyDeclare -> "false"
+  )
+
   implicit class FakeRequestUtil[C](fakeRequest: FakeRequest[C]) {
     def addingToSession(newSessions: (String, String)*): FakeRequest[C] = {
       fakeRequest.withSession(fakeRequest.session.data ++: newSessions: _*)

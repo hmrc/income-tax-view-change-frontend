@@ -22,7 +22,9 @@
 @import views.helpers.RadioOption
 @import views.html.helpers.injected.InputHelper
 @import uk.gov.hmrc.govukfrontend.views.html.components.FormWithCSRF
-@import uk.gov.hmrc.govukfrontend.views.html.components.{Radios, GovukRadios, Fieldset, Legend, Text, RadioItem}
+@import uk.gov.hmrc.govukfrontend.views.html.components.{GovukCheckboxes, Radios, GovukRadios, Fieldset, Legend, Text, RadioItem}
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.checkboxes.CheckboxItem
+@import uk.gov.hmrc.govukfrontend.views.Aliases.Checkboxes
 @import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 @import views.html.layouts.unifiedLayout
 @import views.html.components._
@@ -36,10 +38,11 @@
     errorSummary: ErrorSummary,
     radioHelper: RadioHelper,
     govukRadios: GovukRadios,
-    inputRadios: input_radios
+    inputRadios: input_radios,
+    govukCheckboxes: GovukCheckboxes,
 )
 
-@(ceaseUKPropertyForm: Form[CeaseUKPropertyForm], postAction: Call, isAgent: Boolean = false, backUrl: String, origin: Option[String] = None)(implicit request : Request[_], messages: Messages)
+@(ceaseUKPropertyForm: Form[CeaseUKPropertyForm], postAction: Call, isAgent: Boolean = false, backUrl: String, origin: Option[String] = None)(implicit request: Request[_], messages: Messages)
 
 @mainTemplate(pageTitle = messages("incomeSources.ceaseUKProperty.heading"), form = Some(ceaseUKPropertyForm), isAgent = isAgent, backUrl = Some(backUrl)) {
 
@@ -50,32 +53,23 @@
 
     @formWithCSRF(action = postAction, 'id -> "cease-uk-property-form") {
 
-        @govukRadios(Radios(
-            name = "cease-uk-property-declaration",
-            fieldset = Some(Fieldset(
-                legend = Some(Legend(
-                    content = Text(messages("incomeSources.ceaseUKProperty.heading")),
-                    classes = "govuk-fieldset__legend--l",
-                    isPageHeading = true))
-                )
-            ),
+        @checkboxes(
+            govukCheckboxes,
+            ceaseUKPropertyForm,
+            "cease-uk-property-declaration",
+            messages("incomeSources.ceaseUKProperty.heading"),
+            "govuk-fieldset__legend--l",
             items = Seq(
-                RadioItem(
+                CheckboxItem(
                     content = Text(messages("incomeSources.ceaseUKProperty.radioLabel")),
-                    value = Some("declaration")
-                ),
-                RadioItem(
-                    content = Text(messages("incomeSources.ceaseUKProperty.radioLabel")),
-                    value = Some("declaration2")
+                    value = "declaration"
                 )
-            ),
-            errorMessage = ceaseUKPropertyForm.errors.asTextErrorMessageForField("cease-uk-property-declaration")
-        ).withFormField(ceaseUKPropertyForm("cease-uk-property-declaration")))
+            )
+        )
 
         <p>@ceaseUKPropertyForm.errors</p>
 
-        <div class="govuk-!-padding-top-4">
-            @continueButton()
-        </div>
+        @continueButton()
+
     }
 }

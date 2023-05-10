@@ -26,32 +26,23 @@ object CeaseUKPropertyForm {
   val declaration: String = "cease-uk-property-declaration"
   val declarationUnselectedError: String = "incomeSources.ceaseUKProperty.radioError"
   val ceaseCsrfToken: String = "csrfToken"
-  val emailInvalidError: String = "feedback.email.error"
 
-  val declarationSelected: Constraint[String] = Constraint(value =>
-    if(value == "declaration") {
-      Valid
-    } else {
-      Invalid(declarationUnselectedError)
-    }
-  )
 
   val form: Form[CeaseUKPropertyForm] = Form[CeaseUKPropertyForm](
     mapping(
-      declaration -> text
-        .verifying(declarationSelected),
+      declaration -> optional(text)
+        .verifying(declarationUnselectedError, declaration => declaration.isDefined && declaration.contains("declaration") && declaration.get.trim.nonEmpty),
       ceaseCsrfToken -> text
     )(CeaseUKPropertyForm.apply)(CeaseUKPropertyForm.unapply)
   )
 }
 
 
-case class CeaseUKPropertyForm(
-                                declaration: String,
-                                csrfToken: String
-                              ) {
+case class CeaseUKPropertyForm(declaration: Option[String],
+                               csrfToken: String) {
+
   def toFormMap: Map[String, Seq[String]] =
-    Map(CeaseUKPropertyForm.declaration -> Seq(declaration),
+    Map(CeaseUKPropertyForm.declaration -> Seq(declaration.getOrElse("invalid")),
       CeaseUKPropertyForm.ceaseCsrfToken -> Seq(csrfToken)
     )
 }
