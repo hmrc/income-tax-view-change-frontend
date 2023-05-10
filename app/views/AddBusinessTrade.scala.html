@@ -33,6 +33,7 @@ h1: h1,
 h2: h2,
 p: p,
 link: link,
+form: FormWithCSRF,
 govukInsetText : GovukInsetText,
 govukButton : GovukButton,
 inputHelper: InputHelper,
@@ -71,7 +72,6 @@ btaNavPartial = user.btaNavPartial) {
 
     <div class="govuk-hint govuk-label" id="@field.name-hint">
         <p class="govuk-hint"> @getMessage("p1") </p>
-        <p class="govuk-hint"> @getMessage("p2") </p>
     </div>
 
     @fieldError.map { error =>

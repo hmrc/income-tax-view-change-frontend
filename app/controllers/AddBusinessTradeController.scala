@@ -47,9 +47,38 @@ class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate
                                              val ec: ExecutionContext)
   extends ClientConfirmedController with I18nSupport with FeatureSwitching{
 
-  def show: Action[AnyContent] = ???
+  def show: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+    andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
+    implicit user =>
+      handleRequest(isAgent = false)
+  }
 
   def showAgent: Action[AnyContent] = ???
 
-  def submit: Action[AnyContent] = ???
+  def handleRequest(isAgent: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
+    Future {
+      if (isDisabled(IncomeSources)) {
+        Redirect(controllers.routes.HomeController.show())
+      } else {
+        Ok(addBusinessTradeView(BusinessTradeForm.form, routes.AddBusinessTradeController.submit()))
+      }
+    }
+  }
+
+  def submit: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+    andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
+    implicit request =>
+      BusinessTradeForm.form.bindFromRequest().fold(
+        formWithErrors => {
+          Future {
+            Ok(addBusinessTradeView(formWithErrors, routes.AddBusinessTradeController.submit))
+          }
+        },
+        formData => {
+          Future {
+            Redirect("/home").withSession(request.session + ("trade" -> formData.trade))
+          }
+        }
+      )
+  }
 }

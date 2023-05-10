@@ -51,7 +51,7 @@ object BusinessTradeForm {
     else Invalid(tradeInvalidCharError)
   )
 
-  val isDifferentName: Constraint[String] = ???
+  val isDifferentName: Constraint[String] = Constraint(value => Valid)
 
   val form: Form[BusinessTradeForm] = Form(
     mapping(
