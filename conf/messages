@@ -1127,6 +1127,12 @@ new-income-sources.table-head.business-name = Business name
 new-income-sources.table-head.date-started  = Date started
 new-income-sources.table-head.date-ended    = Date ended
 
+add-business-trade.form.error.empty         = Enter the trade of your business
+add-business-trade.form.error.short         = Business trade must have at least two letters
+add-business-trade.form.error.long          = Business trade must be 35 characters or fewer
+add-business-trade.form.error.invalid       = Business trade cannot include !, "", * or ?
+add-business-trade.form.error.same-name     = You cannot enter the same trade and same business name
+
 #Following empty fields are not in Use
 #These fields are kept to match with Messages.cy
 shortMonth.1 =

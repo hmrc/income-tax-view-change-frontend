@@ -1,0 +1,104 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import auth.MtdItUser
+@import views.html.layouts.unifiedLayout
+@import views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import exceptions.MissingFieldException
+@import models.incomeSourceDetails.BusinessTradeForm
+@import helper._
+@import views.html.helpers.injected.ErrorSummary
+@import views.html.helpers.injected.InputHelper
+
+
+
+@this(
+mainTemplate: unifiedLayout,
+appConfig: config.FrontendAppConfig,
+h1: h1,
+h2: h2,
+p: p,
+link: link,
+govukInsetText : GovukInsetText,
+govukButton : GovukButton,
+inputHelper: InputHelper,
+errorSummary: ErrorSummary
+)
+
+@(businessTradeForm: Form[BusinessTradeForm], postAction: Call)(implicit messages: Messages, user: auth.MtdItUser[_])
+
+@getMessage(key: String, args: String*) = @{
+messages(s"add-business-trade.$key", args: _*)
+}
+@field = @{
+businessTradeForm("trade")
+}
+@fieldError = @{
+field.error
+}
+
+@mainTemplate(pageTitle = messages(""),
+backUrl = None,
+isAgent = false,
+btaNavPartial = user.btaNavPartial) {
+
+
+@form(action = postAction) {
+@CSRF.formField
+
+<div class="govuk-form-group form-field-group  @if(fieldError.isDefined) {govuk-form-group--error}">
+
+    <h1 class="govuk-label-wrapper">
+        <label class="govuk-label govuk-label--l" for="@field.name">
+            @getMessage("heading")
+        </label>
+    </h1>
+
+
+    <div class="govuk-hint govuk-label" id="@field.name-hint">
+        <p class="govuk-hint"> @getMessage("p1") </p>
+        <p class="govuk-hint"> @getMessage("p2") </p>
+    </div>
+
+    @fieldError.map { error =>
+    <span id="@field.name-error" class="govuk-error-message">
+            <span class="govuk-visually-hidden">@messages("base.error-prefix")</span>
+            @messages(s"${error.message}", error.args:_*)
+        </span>
+    }
+
+    <input
+            name="@field.name"
+            class="govuk-input govuk-input--width-20"
+            id="@field.name"
+            type="text"
+            @if(fieldError.isDefined) {
+            aria-describedby="@field.name-hint @field.name-error"
+            } else {
+            aria-describedby="@field.name-hint"
+            }
+            @if(field.value.isDefined){
+            value ="@field.value.get"
+            }
+    >
+</div>
+
+@govukButton(Button(
+content = Text("Continue")
+))
+}
+}
