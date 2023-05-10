@@ -37,12 +37,12 @@ case class ForecastIncomeAuditModel(user: MtdItUserWithNino[_], endOfYearEstimat
   private var profitFromIncomeType: List[JsObject] = List()
   private var payFromIncomeType: List[JsObject] = List()
 
-  val incomeTypeValues = Map(
+  private val incomeTypeValues = Map(
     "02" -> "profitFromUKLandandProperty",
-    "03" -> "profitfromEEAholidayPropertyLettings",
+    "03" -> "profitFromEEAholidayPropertyLettings",
     "04" -> "profitFromUKFurnishedHolidayLettings",
     "06" -> "foreignIncome",
-    "07" -> "dividentsFromForeignCompanies",
+    "07" -> "dividendsFromForeignCompanies",
     "08" -> "profitsFromTrustsAndEstates",
     "09" -> "interestFromBanks",
     "10" -> "dividendsFromUKCompanies",
@@ -79,7 +79,7 @@ case class ForecastIncomeAuditModel(user: MtdItUserWithNino[_], endOfYearEstimat
   override val detail: JsValue = {
     userAuditDetails(user) ++
       Json.obj() ++
-      ("totalEstimatedIncome", totalEstimatedIncome) ++
+      ("totalForecastIncome", totalEstimatedIncome) ++
       Json.obj("profitFrom" -> profitFromIncomeType) ++
       Json.obj("payFrom" -> payFromIncomeType) ++
       allOtherIncomeType
