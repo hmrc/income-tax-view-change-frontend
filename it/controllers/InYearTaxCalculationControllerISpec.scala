@@ -16,7 +16,7 @@
 
 package controllers
 
-import helpers.ComponentSpecBase
+import helpers.{ComponentSpecBase, TestDateService}
 import helpers.servicemocks.AuthStub.mockImplicitDateFormatter.{longDate, toTaxYearEndDate}
 import helpers.servicemocks.{AuditStub, IncomeTaxCalculationStub, IncomeTaxViewChangeStub}
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
@@ -37,8 +37,19 @@ import java.time.LocalDate
 import java.util.Locale
 
 class InYearTaxCalculationControllerISpec extends ComponentSpecBase {
-  val currentDate = LocalDate.of(2023, 4, 5)
+
+  val currentDate = LocalDate.of(2024, 5, 5)
+  val testDateService = app.injector.instanceOf[TestDateService]
+
+  override def beforeEach(): Unit = {
+    testDateService.currentTime = Some(currentDate)
+    super.beforeEach()
+  }
+
+
   val implicitDateFormatter: ImplicitDateFormatter = app.injector.instanceOf[ImplicitDateFormatterImpl]
+
+
 
   implicit val messages: Messages = app.injector.instanceOf[MessagesApi].preferred(FakeRequest())
   lazy val mcc: MessagesControllerComponents = app.injector.instanceOf[MessagesControllerComponents]
