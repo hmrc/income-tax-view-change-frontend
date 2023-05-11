@@ -152,12 +152,12 @@ GET          /agents/how-to-claim-refund-external                         contro
 # Income Sources
 GET          /income-sources/add/new-income-sources                                                     controllers.AddIncomeSourceController.show()
 GET          /agents/income-sources/add/new-income-sources                                              controllers.AddIncomeSourceController.showAgent()
+GET          /income-sources/cease/cease-an-income-source                                               controllers.CeaseIncomeSourceController.show()
+GET          /agents/income-sources/cease/cease-an-income-source                                        controllers.CeaseIncomeSourceController.showAgent()
 
 # Income Sources - TO BE IMPLEMENTED
 GET          /income-sources/manage/choose-income-sources                                               controllers.ManageIncomeSourceController.show()
 GET          /agents/income-sources/manage/choose-income-sources                                        controllers.ManageIncomeSourceController.showAgent()
-GET          /income-sources/cease/cease-an-income-source                                               controllers.CeaseIncomeSourceController.show()
-GET          /agents/income-sources/cease/cease-an-income-source                                        controllers.CeaseIncomeSourceController.showAgent()
 GET          /income-sources/add/business-name                                                          controllers.AddBusinessNameController.show()
 GET          /agents/income-sources/add/business-name                                                   controllers.AddBusinessNameController.showAgent()
 GET          /income-sources/add/uk-property-business-start-date                                        controllers.AddUkPropertyBusinessStartDate.show()
