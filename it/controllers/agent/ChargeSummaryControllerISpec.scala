@@ -52,11 +52,13 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
   val paymentBreakdown: List[FinancialDetail] = List(
     financialDetailModelPartial(originalAmount = 123.45, chargeType = ITSA_ENGLAND_AND_NI, dunningLock = Some("Stand over order"), interestLock = Some("Breathing Space Moratorium Act")),
     financialDetailModelPartial(originalAmount = 123.45, chargeType = NIC4_SCOTLAND, mainType = "SA Payment on Account 2", dunningLock = Some("Dunning Lock"), interestLock = Some("Manual RPI Signal")))
-  val currentYear: Int = LocalDate.now().getYear
+  val currentDate: LocalDate = LocalDate.of(2023, 4, 5)
+  val currentYear: Int = currentDate.getYear
   val testArn: String = "1"
   val importantPaymentBreakdown: String = s"${messagesAPI("chargeSummary.dunning.locks.banner.title")} ${messagesAPI("chargeSummary.paymentBreakdown.heading")}"
   val paymentHistory: String = messagesAPI("chargeSummary.chargeHistory.heading")
   val taxYear: Int = getCurrentTaxYearEnd.getYear
+
 
   def paymentsWithCharge(mainType: String, chargeType: String, date: String, amount: BigDecimal, lotItem: String): PaymentsWithChargeType =
     PaymentsWithChargeType(
@@ -66,7 +68,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
 
 
   s"GET ok" should {
-    "load the page with right data for Payments Breakdown" in {
+    "load the page with the right data for Payments Breakdown" in {
       Given("I wiremock stub a successful Income Source Details response with property only")
       stubAuthorisedAgentUser(authorised = true)
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
@@ -112,7 +114,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
         docDateDetailWithInterest(LocalDate.of(2019, 1, 1).toString, "ITSA- POA 1"),
         paymentBreakdown = paymentBreakdown,
         chargeHistories = List.empty,
-        paymentAllocations = List.empty,
+        paymentAllocations = paymentAllocation,
         isLatePaymentCharge = false,
         taxYear = taxYear
       ))
@@ -370,7 +372,8 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
             interestFromDate = Some(LocalDate.of(2018, 4, 14)),
             interestEndDate = Some(LocalDate.of(2019, 1, 1)),
             latePaymentInterestAmount = Some(54.32),
-            interestOutstandingAmount = Some(42.5)
+            interestOutstandingAmount = Some(42.5),
+            effectiveDateOfPayment = Some(LocalDate.of(2023, 7, 1))
           )
         ),
         financialDetails = List(
@@ -389,7 +392,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
             mainType = Some("SA Payment on Account 2"),
             chargeType = chargeType2,
             originalAmount = Some(123.45),
-            items = Some(Seq(SubItem(Some(LocalDate.now), paymentLotItem = Some("000001"), paymentLot = Some("paymentLot"),
+            items = Some(Seq(SubItem(Some(currentDate), paymentLotItem = Some("000001"), paymentLot = Some("paymentLot"),
               amount = Some(9000), clearingDate = Some(LocalDate.parse("2019-08-13")), dunningLock = Some("dunning lock"), interestLock = Some("Manual RPI Signal"))))
           )
         )
@@ -424,7 +427,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
             mainType = Some("SA Payment on Account 1"),
             chargeType = Some(ITSA_NI),
             originalAmount = Some(123.45),
-            items = Some(Seq(SubItem(Some(LocalDate.now),
+            items = Some(Seq(SubItem(Some(currentDate),
               amount = Some(10000), clearingDate = Some(LocalDate.parse("2019-08-13")))))
           )
         )

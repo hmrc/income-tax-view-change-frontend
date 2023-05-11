@@ -23,7 +23,7 @@ import utils.Utilities._
 
 case class IncomeSourceDetailsResponseAuditModel(mtdItUser: MtdItUserWithNino[_],
                                                  selfEmploymentIds: List[String],
-                                                 propertyIncomeId: Option[String],
+                                                 propertyIncomeIds: List[String],
                                                  yearOfMigration: Option[String]) extends ExtendedAuditModel {
 
   override val transactionName: String = enums.TransactionName.IncomeSourceDetailsResponse
@@ -32,12 +32,12 @@ case class IncomeSourceDetailsResponseAuditModel(mtdItUser: MtdItUserWithNino[_]
   override val detail: JsValue = {
       Json.obj("mtditid" -> mtdItUser.mtditid,
         "nationalInsuranceNumber" -> mtdItUser.nino,
-        "selfEmploymentIncomeSourceIds" -> selfEmploymentIds) ++
+        "selfEmploymentIncomeSourceIds" -> selfEmploymentIds,
+        "propertyIncomeSourceIds" -> propertyIncomeIds) ++
         ("agentReferenceNumber", mtdItUser.arn) ++
         ("saUtr", mtdItUser.saUtr) ++
         userType(mtdItUser.userType) ++
         ("credId", mtdItUser.credId) ++
-        ("propertyIncomeSourceId", propertyIncomeId) ++
         ("dateOfMigration", yearOfMigration)
   }
 }

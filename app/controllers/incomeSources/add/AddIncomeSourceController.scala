@@ -16,31 +16,69 @@
 
 package controllers.incomeSources.add
 
-import auth.FrontendAuthorisedFunctions
-import config.featureswitch.FeatureSwitching
+import auth.MtdItUser
+import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig}
 import controllers.agent.predicates.ClientConfirmedController
-import controllers.predicates.{AuthenticationPredicate, SessionTimeoutPredicate}
-import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
+import models.incomeSourceDetails.IncomeSourceDetailsModel
+import play.api.mvc._
+import services.IncomeSourceDetailsService
+import uk.gov.hmrc.auth.core.AuthorisedFunctions
+import views.html.incomeSources.add.AddIncomeSources
+import javax.inject.{Inject, Singleton}
+import scala.concurrent.{ExecutionContext, Future}
 
-import javax.inject.Inject
-import scala.concurrent.ExecutionContext
+@Singleton
+class AddIncomeSourceController @Inject()(val addIncomeSources: AddIncomeSources,
+                                          val checkSessionTimeout: SessionTimeoutPredicate,
+                                          val authenticate: AuthenticationPredicate,
+                                          val authorisedFunctions: AuthorisedFunctions,
+                                          val retrieveNino: NinoPredicate,
+                                          val retrieveIncomeSources: IncomeSourceDetailsPredicate,
+                                          implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
+                                          val incomeSourceDetailsService: IncomeSourceDetailsService,
+                                          val retrieveBtaNavBar: NavBarPredicate)
+                                         (implicit val ec: ExecutionContext,
+                                          implicit override val mcc: MessagesControllerComponents,
+                                          val appConfig: FrontendAppConfig) extends ClientConfirmedController
+  with FeatureSwitching {
 
-class AddIncomeSourceController @Inject()(val authenticate: AuthenticationPredicate,
-                                          val authorisedFunctions: FrontendAuthorisedFunctions,
-                                          val checkSessionTimeout: SessionTimeoutPredicate)
-                                         (implicit val appConfig: FrontendAppConfig,
-                                          mcc: MessagesControllerComponents,
-                                          val ec: ExecutionContext,
-                                          val itvcErrorHandlerAgent: AgentItvcErrorHandler)
-  extends ClientConfirmedController with FeatureSwitching with I18nSupport {
-
-  def show(): Action[AnyContent] = Action {
-    NotImplemented
+  def show(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+    andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
+    implicit user =>
+      handleRequest(
+        sources = user.incomeSources,
+        isAgent = false,
+        backUrl = controllers.routes.HomeController.show().url
+      )
   }
 
-  def showAgent(): Action[AnyContent] = Action {
-    NotImplemented
+  def showAgent(): Action[AnyContent] = Authenticated.async {
+    implicit request =>
+      implicit user =>
+        getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true) flatMap {
+          implicit mtdItUser =>
+            handleRequest(
+              sources = mtdItUser.incomeSources,
+              isAgent = true,
+              backUrl = controllers.routes.HomeController.showAgent.url
+            )
+        }
+  }
+
+  def handleRequest(sources: IncomeSourceDetailsModel, isAgent: Boolean, backUrl: String)
+                   (implicit user: MtdItUser[_]): Future[Result] = {
+    Future.successful(
+      if (isDisabled(IncomeSources)) {
+        Redirect(controllers.routes.HomeController.show())
+      } else {
+        Ok(addIncomeSources(
+          incomeSourceDetailsService.incomeSourcesAsViewModel(sources),
+          isAgent = isAgent,
+          backUrl = backUrl
+        ))
+      }
+    )
   }
 }

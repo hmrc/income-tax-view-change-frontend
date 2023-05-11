@@ -106,9 +106,10 @@ class AuthenticationPredicate @Inject()(implicit val ec: ExecutionContext,
   }
 
   val ivUpliftRedirectUrl: String = {
-    val completionUrl: String = s"${appConfig.itvcFrontendEnvironment}/${appConfig.baseUrl}" +
+    val host = if (appConfig.relativeIVUpliftParams) "" else appConfig.itvcFrontendEnvironment
+    val completionUrl: String = s"$host/${appConfig.baseUrl}" +
       s"${controllers.routes.UpliftSuccessController.success(OriginEnum.PTA.toString).url}"
-    val failureUrl: String = s"${appConfig.itvcFrontendEnvironment}/${appConfig.baseUrl}" +
+    val failureUrl: String = s"$host/${appConfig.baseUrl}" +
       s"${controllers.errors.routes.UpliftFailedController.show.url}"
     s"${appConfig.ivUrl}/uplift?origin=ITVC&confidenceLevel=$requiredConfidenceLevel&completionURL=$completionUrl&failureURL=$failureUrl"
   }

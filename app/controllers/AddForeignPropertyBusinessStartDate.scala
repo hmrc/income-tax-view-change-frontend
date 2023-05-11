@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.incomeSources.manage
+package controllers
 
 import auth.FrontendAuthorisedFunctions
 import config.featureswitch.FeatureSwitching
@@ -27,13 +27,13 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
-class ManageIncomeSourceController @Inject()(val authenticate: AuthenticationPredicate,
-                                             val authorisedFunctions: FrontendAuthorisedFunctions,
-                                             val checkSessionTimeout: SessionTimeoutPredicate)
-                                            (implicit val appConfig: FrontendAppConfig,
-                                             mcc: MessagesControllerComponents,
-                                             val ec: ExecutionContext,
-                                             val itvcErrorHandlerAgent: AgentItvcErrorHandler)
+class AddForeignPropertyBusinessStartDate @Inject()(val authenticate: AuthenticationPredicate,
+                                                    val authorisedFunctions: FrontendAuthorisedFunctions,
+                                                    val checkSessionTimeout: SessionTimeoutPredicate)
+                                                   (implicit val appConfig: FrontendAppConfig,
+                                                    mcc: MessagesControllerComponents,
+                                                    val ec: ExecutionContext,
+                                                    val itvcErrorHandlerAgent: AgentItvcErrorHandler)
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
   def show(): Action[AnyContent] = Action {

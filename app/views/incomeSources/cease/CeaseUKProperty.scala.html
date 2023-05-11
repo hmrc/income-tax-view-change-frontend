@@ -51,7 +51,7 @@
         form = ceaseUKPropertyForm
     )
 
-    @formWithCSRF(action = postAction, 'id -> "cease-uk-property-form") {
+    @formWithCSRF(action = postAction, Symbol("id") -> "cease-uk-property-form") {
 
         @checkboxes(
             govukCheckboxes,

@@ -19,8 +19,10 @@ package testConstants
 import testConstants.BaseTestConstants.testPropertyIncomeId
 import testConstants.NextUpdatesTestConstants.fakeNextUpdatesModel
 import models.core.{AccountingPeriodModel, CessationModel}
+import models.incomeSourceDetails.viewmodels.PropertyDetailsViewModel
 import models.incomeSourceDetails.{PropertiesRentedModel, PropertyDetailsModel}
 import models.nextUpdates.NextUpdateModel
+
 import java.time.LocalDate
 
 object PropertyDetailsTestConstants {
@@ -30,7 +32,10 @@ object PropertyDetailsTestConstants {
   val testCessation = CessationModel(Some(LocalDate.of(2018, 1, 1)), Some("It was a stupid idea anyway"))
 
   val testStartDate = LocalDate.parse("2022-01-01")
+  val testStartDate2 = LocalDate.parse("2021-01-01")
   val testIncomeType = "property-unspecified"
+  val ukIncomeType = "uk-property"
+  val foreignIncomeType = "foreign-property"
 
   val propertyDetails = PropertyDetailsModel(
     incomeSourceId = Some(testPropertyIncomeId),
@@ -39,6 +44,32 @@ object PropertyDetailsTestConstants {
     incomeSourceType = Some(testIncomeType),
     tradingStartDate = Some(testStartDate),
     None
+  )
+
+  val ukPropertyDetails = PropertyDetailsModel(
+    incomeSourceId = Some(testPropertyIncomeId),
+    accountingPeriod = Some(testPropertyAccountingPeriod),
+    firstAccountingPeriodEndDate = None,
+    incomeSourceType = Some(ukIncomeType),
+    tradingStartDate = Some(testStartDate),
+    None
+  )
+
+  val ukPropertyDetailsViewModel = PropertyDetailsViewModel(
+    tradingStartDate = testStartDate
+  )
+
+  val foreignPropertyDetails = PropertyDetailsModel(
+    incomeSourceId = Some(testPropertyIncomeId),
+    accountingPeriod = None,
+    firstAccountingPeriodEndDate = None,
+    incomeSourceType = Some(foreignIncomeType),
+    tradingStartDate = Some(testStartDate),
+    None
+  )
+
+  val foreignPropertyDetailsViewModel = PropertyDetailsViewModel(
+    tradingStartDate = testStartDate2
   )
 
   val ceasedPropertyDetails = PropertyDetailsModel(

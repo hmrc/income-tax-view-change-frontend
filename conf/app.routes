@@ -166,3 +166,11 @@ POST         /agents/income-sources/cease/uk-property-declare             contro
 
 GET         /income-sources/cease/uk-property-end-date                    controllers.incomeSources.cease.DateUKPropertyCeasedController.show(origin: Option[String] ?= None)
 GET         /agents/income-sources/cease/uk-property-end-date             controllers.incomeSources.cease.DateUKPropertyCeasedController.showAgent()
+
+# Income Sources - TO BE IMPLEMENTED
+GET          /income-sources/add/business-name                                                          controllers.AddBusinessNameController.show()
+GET          /agents/income-sources/add/business-name                                                   controllers.AddBusinessNameController.showAgent()
+GET          /income-sources/add/uk-property-business-start-date                                        controllers.AddUkPropertyBusinessStartDate.show()
+GET          /agents/income-sources/add/uk-property-business-start-date                                 controllers.AddUkPropertyBusinessStartDate.showAgent()
+GET          /income-sources/add/foreign-property-business-start-date                                   controllers.AddForeignPropertyBusinessStartDate.show()
+GET          /agents/income-sources/add/foreign-property-business-start-date                            controllers.AddForeignPropertyBusinessStartDate.showAgent()

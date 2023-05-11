@@ -1111,6 +1111,22 @@ credit-and-refund.credit-from-balancing-charge-prt-1              = from a
 credit-and-refund.credit-from-balancing-charge-prt-2              = balancing charge credit
 credit-and-refund.credit-from-earlier-tax-year                    = credit from an earlier tax year
 
+## check income sources
+new-income-sources.heading                  = Add a new sole trader or property income source
+new-income-sources.self-employment.h2       = Sole trader businesses
+new-income-sources.self-employment.p1       = You do not need to tell us about a business we already know about.
+new-income-sources.self-employment.link     = Add a sole trader income source
+new-income-sources.uk-property.h2           = UK Property
+new-income-sources.uk-property.p1           = You only need to tell us you have UK property income once.
+new-income-sources.uk-property.link         = Add income from UK property
+new-income-sources.foreign-property.h2      = Foreign Property
+new-income-sources.foreign-property.p1      = You only need to tell us you have foreign property income once.
+new-income-sources.foreign-property.link    = Add income from foreign property
+new-income-sources.ceased-businesses.h2     = Businesses that have ceased
+new-income-sources.table-head.business-name = Business name
+new-income-sources.table-head.date-started  = Date started
+new-income-sources.table-head.date-ended    = Date ended
+
 #Following empty fields are not in Use
 #These fields are kept to match with Messages.cy
 shortMonth.1 =

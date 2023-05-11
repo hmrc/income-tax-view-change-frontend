@@ -51,7 +51,7 @@ class IncomeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
       Some(b2TradingStart),
       Some(CessationModel(Some(b2CessationDate), Some(b2CessationReason)))
     )),
-    property = Some(
+    properties = List(
       PropertyDetailsModel(
         Some("testId2"),
         Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
