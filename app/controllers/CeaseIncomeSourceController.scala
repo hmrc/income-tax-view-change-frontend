@@ -21,13 +21,18 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig}
 import config.featureswitch.FeatureSwitching
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
+import models.core.AccountingPeriodModel
+import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, PropertyDetailsModel}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import views.html.incomeSources.cease.CeaseIncomeSources
 
+import java.time.{LocalDate, Month}
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class CeaseIncomeSourceController @Inject()(val authenticate: AuthenticationPredicate,
+class CeaseIncomeSourceController @Inject()(val ceaseIncomeSources: CeaseIncomeSources,
+                                            val authenticate: AuthenticationPredicate,
                                             val authorisedFunctions: FrontendAuthorisedFunctions,
                                             val retrieveNino: NinoPredicate,
                                             val retrieveBtaNavBar: NavBarPredicate,
@@ -51,7 +56,41 @@ class CeaseIncomeSourceController @Inject()(val authenticate: AuthenticationPred
 
   def handleRequest()(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
     Future {
-      Ok("Hello World")
+      Ok(ceaseIncomeSources(businessesAndPropertyIncome))
     }
   }
+
+  val business1 = BusinessDetailsModel(
+    incomeSourceId = Some("XA00001234"),
+    accountingPeriod = Some(AccountingPeriodModel(start = LocalDate.of(2017, Month.JUNE, 1), end = LocalDate.of(2018, Month.MAY, 30))),
+    tradingName = Some("Big Company Ltd"),
+    firstAccountingPeriodEndDate = Some(LocalDate.of(2018, Month.APRIL, 5)),
+    tradingStartDate = Some(LocalDate.of(2018, 4, 5)),
+    cessation = None
+  )
+
+  val business2 = BusinessDetailsModel(
+    incomeSourceId = Some("XA00001235"),
+    accountingPeriod = Some(AccountingPeriodModel(start = LocalDate.of(2019, Month.MAY, 1), end = LocalDate.of(2018, Month.MAY, 30))),
+    tradingName = Some("Small Company Ltd"),
+    firstAccountingPeriodEndDate = None,
+    tradingStartDate = Some(LocalDate.of(2020, 4, 5)),
+    cessation = None
+  )
+
+  val propertyDetails = PropertyDetailsModel(
+    incomeSourceId = Some("1234"),
+    accountingPeriod = Some(AccountingPeriodModel(LocalDate.of(2017, 4, 6), LocalDate.of(2018, 4, 5))),
+    firstAccountingPeriodEndDate = None,
+    incomeSourceType = Some("uk-property"),
+    tradingStartDate = Some(LocalDate.of(2020, 1, 5)),
+    cessation = None
+  )
+
+  val businessesAndPropertyIncome: IncomeSourceDetailsModel = IncomeSourceDetailsModel(
+    mtdbsa = "XIAT0000000000A",
+    yearOfMigration = Some("2018"),
+    businesses = List(business1, business2),
+    properties = List(propertyDetails)
+  )
 }
