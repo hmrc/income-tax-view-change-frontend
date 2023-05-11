@@ -64,6 +64,7 @@ class AddIncomeSourceControllerSpec extends MockAuthenticationPredicate
     mockAuthService,
     app.injector.instanceOf[NinoPredicate],
     MockIncomeSourceDetailsPredicate,
+    app.injector.instanceOf[ItvcErrorHandler],
     app.injector.instanceOf[AgentItvcErrorHandler],
     mockIncomeSourceDetailsService,
     app.injector.instanceOf[NavBarPredicate]
@@ -109,12 +110,12 @@ class AddIncomeSourceControllerSpec extends MockAuthenticationPredicate
           mockBothIncomeSources()
           setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
 
-          when(mockIncomeSourceDetailsService.incomeSourcesAsViewModel(any()))
-            .thenReturn(AddIncomeSourcesViewModel(
+          when(mockIncomeSourceDetailsService.getAddIncomeSourceViewModel(any()))
+            .thenReturn( Right(AddIncomeSourcesViewModel(
               soleTraderBusinesses = List(businessDetailsViewModel, businessDetailsViewModel2),
               ukProperty = Some(ukPropertyDetailsViewModel),
               foreignProperty = None,
-              ceasedBusinesses = Nil))
+              ceasedBusinesses = Nil)))
 
           val result = controller.show()(fakeRequestWithActiveSession)
           status(result) shouldBe Status.OK
@@ -127,12 +128,12 @@ class AddIncomeSourceControllerSpec extends MockAuthenticationPredicate
           mockBothIncomeSources()
           setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
-          when(mockIncomeSourceDetailsService.incomeSourcesAsViewModel(any()))
-            .thenReturn(AddIncomeSourcesViewModel(
+          when(mockIncomeSourceDetailsService.getAddIncomeSourceViewModel(any()))
+            .thenReturn(Right(AddIncomeSourcesViewModel(
               soleTraderBusinesses = List(businessDetailsViewModel, businessDetailsViewModel2),
               ukProperty = Some(ukPropertyDetailsViewModel),
               foreignProperty = Some(foreignPropertyDetailsViewModel),
-              ceasedBusinesses = Nil))
+              ceasedBusinesses = Nil)))
 
           val result = controller.showAgent()(fakeRequestConfirmedClient("AB123456C"))
           status(result) shouldBe Status.OK
