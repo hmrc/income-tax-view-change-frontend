@@ -72,6 +72,7 @@ class AddBusinessViewSpec extends ViewSpec {
         button.text shouldBe AddBusinessNameMessages.continue
       }
     }
+
     "there is an input error on the page" should {
       List(
         BusinessNameForm.businessNameEmptyError -> AddBusinessNameMessages.errorBusinessNameEmpty,
@@ -82,7 +83,7 @@ class AddBusinessViewSpec extends ViewSpec {
 
           "have the error message display with the input described by it" in new Setup(pageWithError(errorKey)) {
             val form: Element = layoutContent.selectHead("form")
-            form.selectHead("div").attr("class").contains("govuk-form-group--error") shouldBe true
+            form.selectHead("div").attr("class").contains("govuk-error-summary") shouldBe true
 
             val error: Element = form.selectHead("span")
             val input: Element = form.selectHead("input")

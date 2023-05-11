@@ -159,3 +159,7 @@ GET          /agents/income-sources/cease/cease-an-income-source          contro
 GET          /income-sources/add/business-name                            controllers.AddBusinessController.show()
 GET          /agents/income-sources/add/business-name                     controllers.AddBusinessController.showAgent()
 POST         /income-sources/add/business-name                            controllers.AddBusinessController.submit()
+POST         /agents/income-sources/add/business-name                     controllers.AddBusinessController.submitAgent()
+GET          /income-sources/add/business-start-date                      controllers.AddBusinessStartDate.show()
+GET          /agents/income-sources/add/business-start-date               controllers.AddBusinessStartDate.showAgent()
+

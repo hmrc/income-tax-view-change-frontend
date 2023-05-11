@@ -17,6 +17,7 @@
 package forms
 
 import forms.utils.ConstraintUtil.ConstraintUtil
+import forms.utils.SessionKeys
 import play.api.data.Form
 import play.api.data.Forms.{mapping, text}
 import play.api.data.validation._
@@ -58,7 +59,7 @@ object BusinessNameForm {
   )
 
   val form: Form[BusinessNameForm] = Form(mapping(
-    "name" -> text.verifying(nonEmptyBusinessName andThen containsValidChar andThen isValidNameLength)
+    SessionKeys.businessName -> text.verifying(nonEmptyBusinessName andThen containsValidChar andThen isValidNameLength)
   )(BusinessNameForm.apply)(BusinessNameForm.unapply)
   )
 }

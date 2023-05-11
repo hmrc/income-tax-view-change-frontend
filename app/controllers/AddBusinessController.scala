@@ -22,11 +22,13 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
 import forms.BusinessNameForm
+import forms.utils.SessionKeys
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import views.html.AddBusiness
 import services.IncomeSourceDetailsService
+
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -76,10 +78,40 @@ class AddBusinessController @Inject()(authenticate: AuthenticationPredicate,
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit request =>
       BusinessNameForm.form.bindFromRequest().fold(
-        formWithErrors => { Future {Ok(addBusinessView(formWithErrors, routes.AddBusinessController.submit))}},
+        formWithErrors => {
+          println("\n[HAS ERRORS SS]\n")
+          Future {
+            Ok(addBusinessView(formWithErrors, routes.AddBusinessController.submit()))
+          }
+        },
         formData => {
-          Future{Redirect("/home").withSession(request.session + ("name" -> formData.name))}
+          println("\n[NO ERRORS]\n")
+          Future {
+            Redirect(routes.AddBusinessStartDate.show())
+              .withSession(request.session + (SessionKeys.businessName -> formData.name))
+          }
         }
       )
+  }
+
+  def submitAgent: Action[AnyContent] = Authenticated.async {
+    implicit request =>
+      implicit user =>
+        getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true) flatMap {
+          implicit mtdItUser =>
+            BusinessNameForm.form.bindFromRequest().fold(
+              formWithErrors => {
+                Future {
+                  Ok(addBusinessView(formWithErrors, routes.AddBusinessController.submitAgent()))
+                }
+              },
+              formData => {
+                Future {
+                  Redirect(routes.AddBusinessStartDate.showAgent())
+                    .withSession(request.session + (SessionKeys.businessName -> formData.name))
+                }
+              }
+            )
+        }
   }
 }

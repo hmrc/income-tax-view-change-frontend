@@ -46,19 +46,19 @@ messages(s"add-business-name.$key", args: _*)
 }
 
 @field = @{
-businessNameForm("name")
+    businessNameForm(SessionKeys.businessName)
 }
 @fieldError = @{
-field.error
+    field.error
 }
 
-@mainTemplate(pageTitle = messages(""),
-backUrl = None,
-isAgent = false,
-btaNavPartial = user.btaNavPartial) {
+@mainTemplate(
+    pageTitle = messages("heading"),
+    backUrl = None,
+    btaNavPartial = user.btaNavPartial) {
 
 @errorSummary(
-form = businessNameForm
+    form = businessNameForm
 )
 
 @form(action = postAction) {
@@ -67,7 +67,7 @@ form = businessNameForm
 
         <h1 class="govuk-label-wrapper">
             <label class="govuk-label govuk-label--l" for="@field.name">
-                @getMessage("heading")
+            @getMessage("heading")
             </label>
         </h1>
 
@@ -78,31 +78,31 @@ form = businessNameForm
 
 
         @fieldError.map { error =>
-        <span id="@field.name-error" class="govuk-error-message">
+            <span id="@field.name-error" class="govuk-error-message">
                 <span class="govuk-visually-hidden">@messages("base.error-prefix")</span>
                 @messages(s"${error.message}", error.args:_*)
             </span>
         }
 
         <input
-                name="@field.name"
-                class="govuk-input govuk-input--width-20"
-                id="@field.name"
-                type="text"
-                @if(fieldError.isDefined) {
+        name="@field.name"
+        class="govuk-input govuk-input--width-20"
+        id="@field.name"
+        type="text"
+            @if(fieldError.isDefined) {
                 aria-describedby="@field.name-hint @field.name-error"
-                } else {
+            } else {
                 aria-describedby="@field.name-hint"
-                }
-                @if(field.value.isDefined){
+            }
+            @if(field.value.isDefined){
                 value="@field.value.get"
                 }
         >
     </div>
 
- @govukButton(Button(
- content = Text("Continue")
- ))
+    @govukButton(Button(
+        content = Text("Continue")
+    ))
  }
 }
 
