@@ -31,7 +31,7 @@ object CeaseUKPropertyForm {
   val form: Form[CeaseUKPropertyForm] = Form[CeaseUKPropertyForm](
     mapping(
       declaration -> optional(text)
-        .verifying(declarationUnselectedError, declaration => declaration.isDefined && declaration.contains("declaration") && declaration.get.trim.nonEmpty),
+        .verifying(declarationUnselectedError, declaration => declaration.isDefined && declaration.contains("true") && declaration.get.trim.nonEmpty),
       ceaseCsrfToken -> text
     )(CeaseUKPropertyForm.apply)(CeaseUKPropertyForm.unapply)
   )
@@ -42,7 +42,7 @@ case class CeaseUKPropertyForm(declaration: Option[String],
                                csrfToken: String) {
 
   def toFormMap: Map[String, Seq[String]] =
-    Map(CeaseUKPropertyForm.declaration -> Seq(declaration.getOrElse("invalid")),
+    Map(CeaseUKPropertyForm.declaration -> Seq(declaration.getOrElse("false")),
       CeaseUKPropertyForm.ceaseCsrfToken -> Seq(csrfToken)
     )
 }

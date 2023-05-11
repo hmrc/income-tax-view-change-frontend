@@ -34,8 +34,8 @@ class CeaseUKPropertyFormSpec extends AnyWordSpec with Matchers{
 
   "CeaseUKProperty form" should {
     "bind with a valid declaration" in {
-      form(Some(testCeaseUKPropertyForm(Some("declaration"), "12345"))).value
-        .get.declaration shouldBe Some(testCeaseUKPropertyForm(Some("declaration"), "12345")).value.declaration
+      form(Some(testCeaseUKPropertyForm(Some("true"), "12345"))).value
+        .get.declaration shouldBe Some(testCeaseUKPropertyForm(Some("true"), "12345")).value.declaration
     }
     "bind with an invalid declaration" in {
       form(Some(testCeaseUKPropertyForm(None, "12345"))).errors shouldBe

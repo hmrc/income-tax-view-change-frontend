@@ -19,6 +19,8 @@ package helpers.agent
 import com.github.tomakehurst.wiremock.client.WireMock
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
+import forms.CeaseUKPropertyForm
+import forms.CeaseUKPropertyForm.declaration
 import forms.agent.ClientsUTRForm
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import helpers.servicemocks.AuthStub.getWithClientDetailsInSession
@@ -162,20 +164,29 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
         .get().futureValue
     }
 
+//    def post(uri: String, additionalCookies: Map[String, String] = Map.empty)(body: Map[String, Seq[String]]): WSResponse = {
+//      When(s"I call POST /report-quarterly/income-and-expenses/view/agents" + uri)
+//      buildClient("/agents" + uri)
+//        .withHttpHeaders(HeaderNames.COOKIE -> bakeSessionCookie(Map.empty ++ additionalCookies), "Csrf-Token" -> "nocheck")
+//        .post(body).futureValue
+//    }
+
     def post(uri: String, additionalCookies: Map[String, String] = Map.empty)(body: Map[String, Seq[String]]): WSResponse = {
-      When(s"I call POST /report-quarterly/income-and-expenses/view/agents" + uri)
-      buildClient("/agents" + uri)
+      When(s"I call POST /report-quarterly/income-and-expenses/view/" + uri)
+      buildClient(uri)
         .withHttpHeaders(HeaderNames.COOKIE -> bakeSessionCookie(Map.empty ++ additionalCookies), "Csrf-Token" -> "nocheck")
         .post(body).futureValue
     }
 
     def getEnterClientsUTR: WSResponse = get("/client-utr")
 
-    def postEnterClientsUTR(answer: Option[String]): WSResponse = post("/client-utr")(
+    def postEnterClientsUTR(answer: Option[String]): WSResponse = post("/income-sources/cease/uk-property-declare")(
       answer.fold(Map.empty[String, Seq[String]])(
         utr => ClientsUTRForm.form.fill(utr).data.map { case (k, v) => (k, Seq(v)) }
       )
     )
+
+
 
     def getConfirmClientUTR(clientDetails: Map[String, String] = Map.empty): WSResponse = get("/confirm-client-details", clientDetails)
 

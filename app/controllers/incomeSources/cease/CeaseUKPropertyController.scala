@@ -24,7 +24,7 @@ import controllers.predicates._
 import forms.CeaseUKPropertyForm
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents, Result}
 import services.IncomeSourceDetailsService
 import uk.gov.hmrc.http.HeaderCarrier
 import views.html.incomeSources.cease.CeaseUKProperty
@@ -50,12 +50,15 @@ class CeaseUKPropertyController @Inject()(val authenticate: AuthenticationPredic
                                          )
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
-  def handleRequest(isAgent: Boolean, itvcErrorHandler: ShowInternalServerError, backUrl: String, postAction: String, origin: Option[String] = None)
+  def handleRequest(isAgent: Boolean, origin: Option[String] = None)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
 
     val incomeSourcesEnabled: Boolean = isEnabled(IncomeSources)
-    val postAction = if (isAgent) controllers.incomeSources.cease.routes.CeaseUKPropertyController.submitAgent else
+    val backUrl: String = if (isAgent) controllers.incomeSources.cease.routes.CeaseIncomeSourceController.showAgent().url else
+      controllers.incomeSources.cease.routes.CeaseIncomeSourceController.show(origin).url
+    val postAction: Call = if (isAgent) controllers.incomeSources.cease.routes.CeaseUKPropertyController.submitAgent else
       controllers.incomeSources.cease.routes.CeaseUKPropertyController.submit
+    val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
     if (incomeSourcesEnabled) {
       Future.successful(Ok(view(
@@ -70,7 +73,7 @@ class CeaseUKPropertyController @Inject()(val authenticate: AuthenticationPredic
       case ex: Exception =>
         Logger("application").error(s"${if (isAgent) "[Agent]"}" +
           s"Error getting CeaseUKProperty page: ${ex.getMessage}")
-        itvcErrorHandler.showInternalServerError()
+        errorHandler.showInternalServerError()
     }
   }
 
@@ -80,9 +83,6 @@ class CeaseUKPropertyController @Inject()(val authenticate: AuthenticationPredic
       implicit user =>
         handleRequest(
           isAgent = false,
-          itvcErrorHandler = itvcErrorHandler,
-          backUrl = controllers.incomeSources.cease.routes.CeaseIncomeSourceController.show(origin).url,
-          postAction = controllers.incomeSources.cease.routes.CeaseUKPropertyController.submit.url,
           origin
         )
     }
@@ -93,10 +93,7 @@ class CeaseUKPropertyController @Inject()(val authenticate: AuthenticationPredic
         getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true).flatMap {
           implicit mtdItUser =>
             handleRequest(
-              isAgent = true,
-              itvcErrorHandler = itvcErrorHandlerAgent,
-              backUrl = controllers.incomeSources.cease.routes.CeaseIncomeSourceController.showAgent().url,
-              postAction = controllers.incomeSources.cease.routes.CeaseUKPropertyController.submitAgent.url
+              isAgent = true
             )
         }
   }

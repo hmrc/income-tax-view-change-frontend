@@ -104,12 +104,12 @@ class CeaseUKPropertyControllerSpec extends TestSupport with MockAuthenticationP
         mockPropertyIncomeSource()
 
         when(mockHttpClient.POSTForm[HttpResponse](any(), any(), any())(any(), any(), any()))
-          .thenReturn(Future.successful(HttpResponse(OK, "declaration")))
+          .thenReturn(Future.successful(HttpResponse(OK, "true")))
         when(mockDateUKPropertyCeased(any(), any(), any())(any(), any())).thenReturn(HtmlFormat.empty)
 
         lazy val result: Future[Result] = {
           TestCeaseUKPropertyController.submit()(fakeRequestCeaseUKPropertyDeclarationComplete
-            .withFormUrlEncodedBody(CeaseUKPropertyForm.declaration -> "declaration", CeaseUKPropertyForm.ceaseCsrfToken -> "12345"))
+            .withFormUrlEncodedBody(CeaseUKPropertyForm.declaration -> "true", CeaseUKPropertyForm.ceaseCsrfToken -> "12345"))
         }
         result.futureValue.session(fakeRequestCeaseUKPropertyDeclarationComplete).get("ceaseUKPropertyDeclare") shouldBe Some("true")
         status(result) shouldBe Status.SEE_OTHER
@@ -188,12 +188,12 @@ class CeaseUKPropertyControllerSpec extends TestSupport with MockAuthenticationP
         mockPropertyIncomeSource()
 
         when(mockHttpClient.POSTForm[HttpResponse](any(), any(), any())(any(), any(), any()))
-          .thenReturn(Future.successful(HttpResponse(OK, "declaration")))
+          .thenReturn(Future.successful(HttpResponse(OK, "true")))
         when(mockDateUKPropertyCeased(any(), any(), any())(any(), any())).thenReturn(HtmlFormat.empty)
 
         lazy val result: Future[Result] = {
           TestCeaseUKPropertyController.submitAgent()(fakeRequestCeaseUKPropertyDeclarationCompleteAgent
-            .withFormUrlEncodedBody(CeaseUKPropertyForm.declaration -> "declaration", CeaseUKPropertyForm.ceaseCsrfToken -> "12345"))
+            .withFormUrlEncodedBody(CeaseUKPropertyForm.declaration -> "true", CeaseUKPropertyForm.ceaseCsrfToken -> "12345"))
         }
         result.futureValue.session(fakeRequestCeaseUKPropertyDeclarationComplete).get("ceaseUKPropertyDeclare") shouldBe Some("true")
         status(result) shouldBe Status.SEE_OTHER
@@ -219,7 +219,7 @@ class CeaseUKPropertyControllerSpec extends TestSupport with MockAuthenticationP
 
         lazy val result: Future[Result] = {
           TestCeaseUKPropertyController.submitAgent()(fakeRequestCeaseUKPropertyDeclarationIncompleteAgent
-            .withFormUrlEncodedBody(CeaseUKPropertyForm.declaration -> "invalid", CeaseUKPropertyForm.ceaseCsrfToken -> "12345"))
+            .withFormUrlEncodedBody(CeaseUKPropertyForm.declaration -> "false", CeaseUKPropertyForm.ceaseCsrfToken -> "12345"))
         }
 
         result.futureValue.session(fakeRequestCeaseUKPropertyDeclarationIncomplete).get("ceaseUKPropertyDeclare") shouldBe Some("false")
