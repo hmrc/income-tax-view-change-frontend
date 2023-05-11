@@ -99,19 +99,19 @@ class IncomeSourceDetailsService @Inject()(val incomeTaxViewChangeConnector: Inc
         } else Nil,
         ukProperty = if (ukPropertyExists) {
           Some(PropertyDetailsViewModel(
-            maybeUkProperty.flatMap(_.tradingStartDate).getOrElse(throw MissingFieldException("Trading Start Date"))
+            maybeUkProperty.flatMap(_.tradingStartDate).getOrElse(throw MissingFieldException("UkProperty: Trading Start Date"))
           ))
         } else None,
         foreignProperty = if (foreignPropertyExists) {
           Some(PropertyDetailsViewModel(
-            maybeForeignProperty.flatMap(_.tradingStartDate).getOrElse(throw MissingFieldException("Trading Start Date"))
+            maybeForeignProperty.flatMap(_.tradingStartDate).getOrElse(throw MissingFieldException("ForeignProperty: Trading Start Date"))
           ))
         } else None,
         ceasedBusinesses = if (ceasedBusinessExists) {
           maybeCeasedBusinesses.map { business =>
             CeasedBusinessDetailsViewModel(
-              tradingName = business.tradingName.getOrElse(throw MissingFieldException("Trading Name")),
-              tradingStartDate = business.tradingStartDate.getOrElse(throw MissingFieldException("Trading Start Date")),
+              tradingName = business.tradingName.getOrElse(throw MissingFieldException("CeasedBusiness: Trading Name")),
+              tradingStartDate = business.tradingStartDate.getOrElse(throw MissingFieldException("CeasedBusiness: Trading Start Date")),
               cessationDate = business.cessation.flatMap(_.date).getOrElse(throw MissingFieldException("Cessation Date"))
             )
           }
