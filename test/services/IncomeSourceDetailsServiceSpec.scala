@@ -24,6 +24,7 @@ import mocks.connectors.MockIncomeTaxViewChangeConnector
 import mocks.services.{MockAsyncCacheApi, MockNextUpdatesService}
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import models.incomeSourceDetails.viewmodels.{AddIncomeSourcesViewModel, BusinessDetailsViewModel, CeasedBusinessDetailsViewModel, PropertyDetailsViewModel}
+import org.scalacheck.Gen
 import org.scalacheck.Prop.True
 import testUtils.TestSupport
 import play.api.cache.AsyncCacheApi
@@ -128,10 +129,12 @@ class IncomeSourceDetailsServiceSpec extends TestSupport with MockIncomeTaxViewC
       }
     }
 
-    "invalid data: soleTrader with no business name" should {
+    "invalid data provided" should {
       "return failure" in {
-
-        val result = TestIncomeSourceDetailsService.getAddIncomeSourceViewModel(ukPropertyAndSoleTraderBusinessIncomeInvalid)
+        // Simulate dynamic data generation from one of the invalid data
+        // TODO: eventually need to be move under tests data generation section
+        val generatedFailedData = Gen.oneOf( Seq(ukPropertyAndSoleTraderBusinessIncomeNoTradingName, ukPropertyAndSoleTraderBusinessIncomeNoTradingStartDate) ).sample.get
+        val result = TestIncomeSourceDetailsService.getAddIncomeSourceViewModel(generatedFailedData)
         result.isLeft should be (true)
       }
     }
