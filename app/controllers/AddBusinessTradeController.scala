@@ -68,7 +68,8 @@ class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate
       if (isDisabled(IncomeSources)) {
         Redirect(controllers.routes.HomeController.show())
       } else {
-        Ok(addBusinessTradeView(BusinessTradeForm.form, routes.AddBusinessTradeController.submit()))
+        if(!isAgent) Ok(addBusinessTradeView(BusinessTradeForm.form, routes.AddBusinessTradeController.submit(), isAgent))
+        else Ok(addBusinessTradeView(BusinessTradeForm.form, routes.AddBusinessTradeController.agentSubmit(), isAgent))
       }
     }
   }
@@ -79,12 +80,31 @@ class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate
       BusinessTradeForm.form.bindFromRequest().fold(
         formWithErrors => {
           Future {
-            Ok(addBusinessTradeView(formWithErrors, routes.AddBusinessTradeController.submit()))
+            Ok(addBusinessTradeView(formWithErrors, routes.AddBusinessTradeController.submit(), false))
           }
         },
         formData => {
+          //if (formData.trade == request.session.get("addBusinessName").get)
           Future {
-            Redirect("/home").withSession(request.session + ("trade" -> formData.trade))
+            Redirect("/report-quarterly/income-and-expenses/view/income-sources/add/business-address").withSession(request.session + ("addBusinessTrade" -> formData.trade))
+          }
+        }
+      )
+    }
+
+  def agentSubmit: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+    andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
+    implicit request =>
+      BusinessTradeForm.form.bindFromRequest().fold(
+        formWithErrors => {
+          Future {
+            Ok(addBusinessTradeView(formWithErrors, routes.AddBusinessTradeController.agentSubmit(), true))
+          }
+        },
+        formData => {
+          //if (formData.trade == request.session.get("addBusinessName").get)
+          Future {
+            Redirect("/report-quarterly/income-and-expenses/view/agents/income-sources/add/business-address").withSession(request.session + ("addBusinessTrade" -> formData.trade))
           }
         }
       )

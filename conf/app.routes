@@ -155,6 +155,7 @@ GET          /agents/income-sources/add/new-income-sources                      
 GET          /income-sources/add/business-trade                                                         controllers.AddBusinessTradeController.show()
 GET          /agents/income-sources/add/business-trade                                                  controllers.AddBusinessTradeController.showAgent()
 POST         /income-sources/add/business-trade                                                         controllers.AddBusinessTradeController.submit()
+POST         /agents/income-sources/add/business-trade                                                  controllers.AddBusinessTradeController.agentSubmit()
 
 
 # Income Sources - TO BE IMPLEMENTED

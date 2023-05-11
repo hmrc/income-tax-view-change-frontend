@@ -40,7 +40,7 @@ inputHelper: InputHelper,
 errorSummary: ErrorSummary
 )
 
-@(businessTradeForm: Form[BusinessTradeForm], postAction: Call)(implicit messages: Messages, user: auth.MtdItUser[_])
+@(businessTradeForm: Form[BusinessTradeForm], postAction: Call, isUserAgent: Boolean)(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @getMessage(key: String, args: String*) = @{
 messages(s"add-business-trade.$key", args: _*)
@@ -52,9 +52,10 @@ businessTradeForm("trade")
 field.error
 }
 
+
 @mainTemplate(pageTitle = messages(""),
-backUrl = None,
-isAgent = false,
+backUrl = if(!isUserAgent){Some("/report-quarterly/income-and-expenses/view/income-sources/add/business-start-date")}else{Some("/report-quarterly/income-and-expenses/view/income-sources/add/business-start-date")},
+isAgent = isUserAgent,
 btaNavPartial = user.btaNavPartial) {
 
 
@@ -115,7 +116,7 @@ btaNavPartial = user.btaNavPartial) {
 </div>
 
 <button class="govuk-button" data-module="govuk-button">
-    Continue
+    @messages("base.continue")
 </button>
 }
 }
