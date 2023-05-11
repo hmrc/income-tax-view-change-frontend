@@ -16,19 +16,16 @@
 
 package services
 
-import testConstants.BaseTestConstants._
-import testConstants.IncomeSourceDetailsTestConstants._
 import audit.mocks.MockAuditingService
-import exceptions.MissingFieldException
 import mocks.connectors.MockIncomeTaxViewChangeConnector
 import mocks.services.{MockAsyncCacheApi, MockNextUpdatesService}
-import models.incomeSourceDetails.IncomeSourceDetailsModel
 import models.incomeSourceDetails.viewmodels.{AddIncomeSourcesViewModel, BusinessDetailsViewModel, CeasedBusinessDetailsViewModel, PropertyDetailsViewModel}
 import org.scalacheck.Gen
-import org.scalacheck.Prop.True
-import testUtils.TestSupport
 import play.api.cache.AsyncCacheApi
-import testConstants.BusinessDetailsTestConstants.{testCessation, testCessation2, testStartDate, testStartDate2, testTradeName, testTradeName2}
+import testConstants.BaseTestConstants._
+import testConstants.BusinessDetailsTestConstants._
+import testConstants.IncomeSourceDetailsTestConstants._
+import testUtils.TestSupport
 
 //scalastyle:off
 class IncomeSourceDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChangeConnector with MockNextUpdatesService
@@ -133,7 +130,7 @@ class IncomeSourceDetailsServiceSpec extends TestSupport with MockIncomeTaxViewC
       "return failure" in {
         // Simulate dynamic data generation from one of the invalid data
         // TODO: eventually need to be move under tests data generation section
-        val generatedFailedData = Gen.oneOf( Seq(ukPropertyAndSoleTraderBusinessIncomeNoTradingName, ukPropertyAndSoleTraderBusinessIncomeNoTradingStartDate) ).sample.get
+        val generatedFailedData = Gen.oneOf( Seq(ukPropertyAndSoleTraderBusinessIncomeNoTradingName, ukPropertyAndSoleTraderBusinessIncomeNoTradingStartDate, foreignPropertyAndCeasedBusinessIncomeNoStartDate) ).sample.get
         val result = TestIncomeSourceDetailsService.getAddIncomeSourceViewModel(generatedFailedData)
         result.isLeft should be (true)
       }

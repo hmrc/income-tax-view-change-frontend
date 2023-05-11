@@ -18,7 +18,7 @@ package testConstants
 
 import testConstants.BaseTestConstants.{testErrorMessage, testErrorStatus, testMigrationYear2019}
 import testConstants.BusinessDetailsTestConstants._
-import testConstants.PropertyDetailsTestConstants.{ceasedPropertyDetails, foreignPropertyDetails, propertyDetails, ukPropertyDetails}
+import testConstants.PropertyDetailsTestConstants.{ceasedPropertyDetails, foreignPropertyDetails, foreignPropertyDetailsNoStartDate, propertyDetails, ukPropertyDetails}
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel}
 
 import java.time.LocalDate
@@ -48,6 +48,9 @@ object IncomeSourceDetailsTestConstants {
 
 
   val foreignPropertyAndCeasedBusinessIncome = IncomeSourceDetailsModel(testMtdItId, Some("2018"), List(ceasedBusiness, ceasedBusiness2), List(foreignPropertyDetails))
+  val foreignPropertyAndCeasedBusinessIncomeNoStartDate = IncomeSourceDetailsModel(testMtdItId, Some("2018"), List(ceasedBusiness, ceasedBusiness2), List(foreignPropertyDetailsNoStartDate))
+
+
   val foreignPropertyIncome = IncomeSourceDetailsModel(testMtdItId, Some("2018"), Nil, List(foreignPropertyDetails))
 
 
