@@ -156,6 +156,11 @@ GET          /income-sources/add/business-trade                                 
 GET          /agents/income-sources/add/business-trade                                                  controllers.AddBusinessTradeController.showAgent()
 POST         /income-sources/add/business-trade                                                         controllers.AddBusinessTradeController.submit()
 POST         /agents/income-sources/add/business-trade                                                  controllers.AddBusinessTradeController.agentSubmit()
+GET          /income-sources/add/business-address                                                       controllers.AddBusinessAddressController.show()
+GET          /agents/income-sources/add/business-address                                                controllers.AddBusinessAddressController.showAgent()
+GET          /income-sources/add/business-start-date                                                    controllers.AddBusinessStartDateController.show()
+GET          /agents/income-sources/add/business-start-date                                             controllers.AddBusinessStartDateController.showAgent()
+
 
 
 # Income Sources - TO BE IMPLEMENTED
