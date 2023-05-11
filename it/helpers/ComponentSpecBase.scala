@@ -17,11 +17,10 @@
 package helpers
 
 import auth.HeaderExtractor
-
-import java.time.LocalDate
 import com.github.tomakehurst.wiremock.client.WireMock
 import config.FrontendAppConfig
 import config.featureswitch.{FeatureSwitch, FeatureSwitching}
+import forms.CeaseUKPropertyForm
 import helpers.agent.SessionCookieBaker
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import implicits.ImplicitDateFormatterImpl
@@ -32,6 +31,7 @@ import play.api.cache.AsyncCacheApi
 import play.api.http.HeaderNames
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.i18n.{Lang, MessagesApi}
+import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.crypto.DefaultCookieSigner
 import play.api.libs.ws.WSResponse
@@ -43,9 +43,9 @@ import uk.gov.hmrc.http.{Authorization, HeaderCarrier}
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import uk.gov.hmrc.play.language.LanguageUtils
 
+import java.time.LocalDate
 import javax.inject.Singleton
 import scala.concurrent.Future
-import play.api.inject.bind
 
 @Singleton
 class TestHeaderExtractor extends HeaderExtractor {
@@ -59,9 +59,10 @@ class TestHeaderExtractor extends HeaderExtractor {
 }
 
 @Singleton
-class TestDateService  extends DateServiceInterface  {
+class TestDateService extends DateServiceInterface {
 
   override def getCurrentDate(isTimeMachineEnabled: Boolean = false): LocalDate = LocalDate.of(2023, 4, 5)
+
   override def isDayBeforeTaxYearLastDay(isTimeMachineEnabled: Boolean = false): Boolean = true
 
   override def getCurrentTaxYearEnd(isTimeMachineEnabled: Boolean): Int = 2023
@@ -85,7 +86,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
   implicit val mockImplicitDateFormatter: ImplicitDateFormatterImpl = new ImplicitDateFormatterImpl(mockLanguageUtils)
 
   implicit val testAppConfig: FrontendAppConfig = appConfig
-  implicit val dateService: DateService = new DateService(){
+  implicit val dateService: DateService = new DateService() {
     override def getCurrentDate(isTimeMachineEnabled: Boolean = false): LocalDate = LocalDate.of(2023, 4, 5)
 
     override def getCurrentTaxYearEnd(isTimeMachineEnabled: Boolean = false): Int = 2023
@@ -189,6 +190,14 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     def get(uri: String): WSResponse = buildClient(uri)
       .get().futureValue
 
+    def post(uri: String)(body: Map[String, Seq[String]]): WSResponse = {
+      When(s"I call POST /report-quarterly/income-and-expenses/view" + uri)
+      buildClient(uri)
+        .withFollowRedirects(false)
+        .withHttpHeaders("Csrf-Token" -> "nocheck")
+        .post(body).futureValue
+    }
+
     def getCreditAndRefunds(): WSResponse = get("/claim-refund")
 
     def getTaxYears: WSResponse = get("/tax-years")
@@ -240,6 +249,13 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
     def getRefundToTaxPayer(repaymentRequestNumber: String): WSResponse = get(s"/refund-to-taxpayer/$repaymentRequestNumber ")
 
+    def getCeaseUKProperty: WSResponse = get("/income-sources/cease/uk-property-declare")
+
+    def postCeaseUKProperty(answer: Option[String]): WSResponse = post("/income-sources/cease/uk-property-declare")(
+      answer.fold(Map.empty[String, Seq[String]])(
+        declaration => CeaseUKPropertyForm.form.fill(CeaseUKPropertyForm(Some(declaration), "csrfToken")).data.map { case (k, v) => (k, Seq(v)) }
+      )
+    )
   }
 
   def unauthorisedTest(uri: String): Unit = {
