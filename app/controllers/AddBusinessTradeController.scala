@@ -86,27 +86,29 @@ class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate
         formData => {
           //if (formData.trade == request.session.get("addBusinessName").get)
           Future {
-            Redirect("/report-quarterly/income-and-expenses/view/income-sources/add/business-address").withSession(request.session + ("addBusinessTrade" -> formData.trade))
+            Redirect("/report-quarterly/income-and-expenses/view").withSession(request.session + ("addBusinessTrade" -> formData.trade))
+            //Redirect("/report-quarterly/income-and-expenses/view/income-sources/add/business-address").withSession(request.session + ("addBusinessTrade" -> formData.trade))
           }
         }
       )
     }
 
-  def agentSubmit: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
-    andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
+  def agentSubmit: Action[AnyContent] = Authenticated.async {
     implicit request =>
-      BusinessTradeForm.form.bindFromRequest().fold(
-        formWithErrors => {
-          Future {
-            Ok(addBusinessTradeView(formWithErrors, routes.AddBusinessTradeController.agentSubmit(), true))
+      implicit user =>
+        BusinessTradeForm.form.bindFromRequest().fold(
+          formWithErrors => {
+            Future {
+              Ok(addBusinessTradeView(formWithErrors, routes.AddBusinessTradeController.agentSubmit(), true))
+            }
+          },
+          formData => {
+            //if (formData.trade == request.session.get("addBusinessName").get)
+            Future {
+              Redirect("/report-quarterly/income-and-expenses/view").withSession(request.session + ("addBusinessTrade" -> formData.trade))
+              //Redirect("/report-quarterly/income-and-expenses/view/agents/income-sources/add/business-address").withSession(request.session + ("addBusinessTrade" -> formData.trade))
+            }
           }
-        },
-        formData => {
-          //if (formData.trade == request.session.get("addBusinessName").get)
-          Future {
-            Redirect("/report-quarterly/income-and-expenses/view/agents/income-sources/add/business-address").withSession(request.session + ("addBusinessTrade" -> formData.trade))
-          }
-        }
       )
   }
 }
