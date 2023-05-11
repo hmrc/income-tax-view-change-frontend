@@ -11,6 +11,8 @@ class CeaseUKPropertyControllerISpec extends ComponentSpecBase {
   val showDateUKPropertyCeasedControllerUrl = controllers.incomeSources.cease.routes.DateUKPropertyCeasedController.show().url
   val showCeaseUKPropertyControllerUrl = controllers.incomeSources.cease.routes.CeaseUKPropertyController.show().url
   val radioErrorMessage = messagesAPI("incomeSources.ceaseUKProperty.radioError")
+  val radioLabelMessage = messagesAPI("incomeSources.ceaseUKProperty.radioLabel")
+  val buttonLabel = messagesAPI("base.continue")
   val pageTitleMsgKey = "incomeSources.ceaseUKProperty.heading"
 
   s"calling GET ${showCeaseUKPropertyControllerUrl}" should {
@@ -26,7 +28,8 @@ class CeaseUKPropertyControllerISpec extends ComponentSpecBase {
         res should have(
           httpStatus(OK),
           pageTitleIndividual(pageTitleMsgKey),
-          elementTextByID("cease-uk-property-form")("Cease UK property I declare that I no longer get an income from any property in the UK. Continue")
+          elementTextBySelector("label")(radioLabelMessage),
+          elementTextByID("continue-button")(buttonLabel)
         )
       }
     }
@@ -50,7 +53,7 @@ class CeaseUKPropertyControllerISpec extends ComponentSpecBase {
         val result = IncomeTaxViewChangeFrontend.postCeaseUKProperty(None)
         result should have(
           httpStatus(BAD_REQUEST),
-          elementTextByID("cease-uk-property-declaration-error")("Error: " + radioErrorMessage)
+          elementTextByID("cease-uk-property-declaration-error")(messagesAPI("base.error-prefix") + " " + radioErrorMessage)
         )
       }
     }

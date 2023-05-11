@@ -13,6 +13,9 @@ class CeaseUKPropertyControllerISpec extends ComponentSpecBase with FeatureSwitc
   val showDateUKPropertyCeasedControllerUrl = controllers.incomeSources.cease.routes.DateUKPropertyCeasedController.showAgent().url
   val showCeaseUKPropertyControllerUrl = controllers.incomeSources.cease.routes.CeaseUKPropertyController.showAgent().url
   val radioErrorMessage = messagesAPI("incomeSources.ceaseUKProperty.radioError")
+  val radioLabelMessage = messagesAPI("incomeSources.ceaseUKProperty.radioLabel")
+  val buttonLabel = messagesAPI("base.continue")
+  val pageTitleMsgKey = "incomeSources.ceaseUKProperty.heading"
 
   s"calling GET ${showCeaseUKPropertyControllerUrl}" should {
     "render the Cease UK Property Page" when {
@@ -30,7 +33,8 @@ class CeaseUKPropertyControllerISpec extends ComponentSpecBase with FeatureSwitc
         res should have(
           httpStatus(OK),
           pageTitleAgent("incomeSources.ceaseUKProperty.heading"),
-          elementTextByID("cease-uk-property-form")("Cease UK property I declare that I no longer get an income from any property in the UK. Continue")
+          elementTextBySelector("label")(radioLabelMessage),
+          elementTextByID("continue-button")(buttonLabel)
         )
       }
     }
@@ -57,7 +61,7 @@ class CeaseUKPropertyControllerISpec extends ComponentSpecBase with FeatureSwitc
         verifyIncomeSourceDetailsCall(testMtditid)
         result should have(
           httpStatus(BAD_REQUEST),
-          elementTextByID("cease-uk-property-declaration-error")("Error: " + radioErrorMessage)
+          elementTextByID("cease-uk-property-declaration-error")(messagesAPI("base.error-prefix") + " " + radioErrorMessage)
         )
       }
     }
