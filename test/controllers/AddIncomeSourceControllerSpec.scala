@@ -18,7 +18,7 @@ package controllers
 
 import config.featureswitch.FeatureSwitch.switches
 import config.featureswitch._
-import config.{AgentItvcErrorHandler, FrontendAppConfig}
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.incomeSources.add.AddIncomeSourceController
 import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
 import implicits.ImplicitDateFormatter
