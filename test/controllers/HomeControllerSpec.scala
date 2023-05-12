@@ -369,11 +369,11 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
       document.title shouldBe homePageTitle
       document.select("#income-sources-tile h2:nth-child(1)").text() shouldBe messages("home.incomeSources.heading")
       document.select("#income-sources-tile > div > p:nth-child(2) > a").text() shouldBe messages("home.incomeSources.addIncomeSource.view")
-      document.select("#income-sources-tile > div > p:nth-child(2) > a").attr("href") shouldBe routes.AddIncomeSourceController.show().url
+      document.select("#income-sources-tile > div > p:nth-child(2) > a").attr("href") shouldBe controllers.incomeSources.add.routes.AddIncomeSourceController.show().url
       document.select("#income-sources-tile > div > p:nth-child(3) > a").text() shouldBe messages("home.incomeSources.manageIncomeSource.view")
-      document.select("#income-sources-tile > div > p:nth-child(3) > a").attr("href") shouldBe routes.ManageIncomeSourceController.show().url
+      document.select("#income-sources-tile > div > p:nth-child(3) > a").attr("href") shouldBe controllers.incomeSources.manage.routes.ManageIncomeSourceController.show().url
       document.select("#income-sources-tile > div > p:nth-child(4) > a").text() shouldBe messages("home.incomeSources.ceaseIncomeSource.view")
-      document.select("#income-sources-tile > div > p:nth-child(4) > a").attr("href") shouldBe routes.CeaseIncomeSourceController.show().url
+      document.select("#income-sources-tile > div > p:nth-child(4) > a").attr("href") shouldBe controllers.incomeSources.cease.routes.CeaseIncomeSourceController.show().url
     }
     "display the Income Sources tile without `Cease an income source` when user has ceased businesses or property" in new Setup {
       enable(IncomeSources)
@@ -394,11 +394,11 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
       document.title shouldBe homePageTitle
       document.select("#income-sources-tile h2:nth-child(1)").text() shouldBe messages("home.incomeSources.heading")
       document.select("#income-sources-tile > div > p:nth-child(2) > a").text() shouldBe messages("home.incomeSources.addIncomeSource.view")
-      document.select("#income-sources-tile > div > p:nth-child(2) > a").attr("href") shouldBe routes.AddIncomeSourceController.show().url
+      document.select("#income-sources-tile > div > p:nth-child(2) > a").attr("href") shouldBe controllers.incomeSources.add.routes.AddIncomeSourceController.show().url
       document.select("#income-sources-tile > div > p:nth-child(3) > a").text() shouldBe messages("home.incomeSources.manageIncomeSource.view")
-      document.select("#income-sources-tile > div > p:nth-child(3) > a").attr("href") shouldBe routes.ManageIncomeSourceController.show().url
+      document.select("#income-sources-tile > div > p:nth-child(3) > a").attr("href") shouldBe controllers.incomeSources.manage.routes.ManageIncomeSourceController.show().url
       document.select("#income-sources-tile > div > p:nth-child(4) > a").text() should not be messages("home.incomeSources.ceaseIncomeSource.view")
-      document.select("#income-sources-tile > div > p:nth-child(4) > a").attr("href") should not be routes.CeaseIncomeSourceController.show().url
+      document.select("#income-sources-tile > div > p:nth-child(4) > a").attr("href") should not be controllers.incomeSources.cease.routes.CeaseIncomeSourceController.show().url
     }
   }
 
