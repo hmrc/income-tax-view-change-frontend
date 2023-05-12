@@ -1166,5 +1166,10 @@ notmigrated.agent.content_extra                                 = Bydd hyn yn Dd
 notmigrated.user.link_title                                     = cyfrif Hunanasesiad ar-lein
 notmigrated.agent.link_title                                    = cyfrif Hunanasesiad ar gyfer Asiantau
 
+
+
+incomeSources.ceaseUKProperty.heading                           = Dod ag eiddo yn y DU i ben
+incomeSources.ceaseUKProperty.radioLabel                        = Rwy’n datgan nad wyf bellach yn cael incwm o unrhyw eiddo yn y DU.
+incomeSources.ceaseUKProperty.radioError                        = Mae’n rhaid i chi ddatgan nad ydych chi bellach yn cael incwm o unrhyw eiddo yn y DU
 incomeSources.cease.dateUKPropertyCeased.heading                = Y dyddiad pan wnaeth eich busnes eiddo yn y DU stopio
 incomeSources.cease.dateUKPropertyCeased.hint                   = Er enghraifft, 27 3 2020

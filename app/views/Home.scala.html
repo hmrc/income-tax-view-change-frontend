@@ -337,25 +337,25 @@
 
 @addIncomeSourceControllerURL = @{
     if(isAgent) {
-        controllers.routes.AddIncomeSourceController.showAgent().url
+        controllers.incomeSources.add.routes.AddIncomeSourceController.showAgent().url
     } else {
-        controllers.routes.AddIncomeSourceController.show().url
+        controllers.incomeSources.add.routes.AddIncomeSourceController.show().url
     }
 }
 
 @ceaseIncomeSourceControllerURL = @{
     if(isAgent) {
-        controllers.routes.CeaseIncomeSourceController.showAgent().url
+        controllers.incomeSources.cease.routes.CeaseIncomeSourceController.showAgent().url
     } else {
-        controllers.routes.CeaseIncomeSourceController.show().url
+        controllers.incomeSources.cease.routes.CeaseIncomeSourceController.show().url
     }
 }
 
 @manageIncomeSourceControllerURL = @{
     if(isAgent) {
-        controllers.routes.ManageIncomeSourceController.showAgent().url
+        controllers.incomeSources.manage.routes.ManageIncomeSourceController.showAgent().url
     } else {
-        controllers.routes.ManageIncomeSourceController.show().url
+        controllers.incomeSources.manage.routes.ManageIncomeSourceController.show().url
     }
 }
 
