@@ -32,8 +32,6 @@ object BusinessNameForm {
   val businessNameLength: Int = 105
   val bnf = "bnf"
 
-  val validName: String = "Test Business"
-
   val businessNameEmptyError: String = "add-business-name.form.error.required"
   val businessNameLengthIncorrect: String = "add-business-name.form.error.maxLength"
   val businessNameInvalidChar: String = "add-business-name.form.error.invalidNameFormat"

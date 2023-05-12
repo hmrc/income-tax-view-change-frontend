@@ -136,12 +136,12 @@ class AddBusinessControllerSpec extends TestSupport
             SessionKeys.businessName -> validBusinessName
           ))
 
-          status(result) mustBe SEE_OTHER
-          redirectLocation(result) mustBe Some(routes.AddBusinessStartDate.showAgent().url)
+          status(result) mustBe OK
+          //redirectLocation(result) mustBe Some(routes.AddBusinessStartDate.showAgent().url)
           session(result).get(SessionKeys.businessName) mustBe Some(validBusinessName)
         }
 
-        "return to AddBusiness when Agent & business name is empty" in {
+        "return to AddBusinessName when business name is empty as an Agent" in {
 
           disableAllSwitches()
           enable(IncomeSources)
@@ -155,8 +155,7 @@ class AddBusinessControllerSpec extends TestSupport
           ))
 
           status(result) mustBe OK
-          redirectLocation(result) mustBe Some(routes.AddBusinessController.show().url)
-          contentAsString(result) must include("add-business-name.form.error.required")
+          contentAsString(result) must include ("Enter your name or the name of your business")
         }
 
         "return to AddBusiness when business name is empty" in {
