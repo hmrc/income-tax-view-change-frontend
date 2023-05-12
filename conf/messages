@@ -1167,3 +1167,7 @@ notmigrated.agent.content                                       = To claim money
 notmigrated.agent.content_extra                                 = This will be a different Government Gateway ID and password to your Agent Services account.
 notmigrated.user.link_title                                     = Self Assessment online account
 notmigrated.agent.link_title                                    = Self Assessment for Agents Account
+
+incomeSources.ceaseUKProperty.heading                           = Cease UK property
+incomeSources.ceaseUKProperty.radioLabel                        = I declare that I no longer get an income from any property in the UK.
+incomeSources.ceaseUKProperty.radioError                        = You must declare that you no longer get an income from any property in the UK
