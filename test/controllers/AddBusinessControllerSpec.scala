@@ -130,14 +130,15 @@ class AddBusinessControllerSpec extends TestSupport
 
           val validBusinessName: String = "Test Business"
           setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
+          setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
           setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
-          val result: Future[Result] = TestAddBusinessNameController.submit()(fakeRequestWithActiveSession.withFormUrlEncodedBody(
+          val result: Future[Result] = TestAddBusinessNameController.submitAgent()(fakeRequestWithActiveSession.withFormUrlEncodedBody(
             SessionKeys.businessName -> validBusinessName
           ))
 
-          status(result) mustBe OK
-          //redirectLocation(result) mustBe Some(routes.AddBusinessStartDate.showAgent().url)
+          status(result) mustBe SEE_OTHER
+          redirectLocation(result) mustBe Some(routes.AddBusinessStartDate.showAgent().url)
           session(result).get(SessionKeys.businessName) mustBe Some(validBusinessName)
         }
 
@@ -148,9 +149,10 @@ class AddBusinessControllerSpec extends TestSupport
 
           val invalidBusinessNameEmpty: String = ""
           setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
+          setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
           setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
-          val result: Future[Result] = TestAddBusinessNameController.submit()(fakeRequestWithActiveSession.withFormUrlEncodedBody(
+          val result: Future[Result] = TestAddBusinessNameController.submitAgent()(fakeRequestWithActiveSession.withFormUrlEncodedBody(
             SessionKeys.businessName -> invalidBusinessNameEmpty
           ))
 
@@ -172,7 +174,6 @@ class AddBusinessControllerSpec extends TestSupport
           ))
 
           status(result) mustBe OK
-          println(result)
           contentAsString(result) must include("Enter your name or the name of your business")
         }
 

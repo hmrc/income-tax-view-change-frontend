@@ -17,6 +17,7 @@
 package views
 
 import forms.BusinessNameForm
+import forms.utils.SessionKeys
 import org.jsoup.nodes.Element
 import play.twirl.api.Html
 import testUtils.ViewSpec
@@ -62,8 +63,8 @@ class AddBusinessViewSpec extends ViewSpec {
 
 
         label.attr("for") shouldBe input.attr("id")
-        input.attr("id") shouldBe "name"
-        input.attr("name") shouldBe "name"
+        input.attr("id") shouldBe SessionKeys.businessName
+        input.attr("name") shouldBe SessionKeys.businessName
         input.attr("type") shouldBe "text"
         input.attr("aria-describedby") shouldBe hint.attr("name-hint")
       }
