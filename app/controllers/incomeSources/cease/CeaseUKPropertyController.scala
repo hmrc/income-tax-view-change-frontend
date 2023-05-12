@@ -46,7 +46,7 @@ class CeaseUKPropertyController @Inject()(val authenticate: AuthenticationPredic
                                           mcc: MessagesControllerComponents,
                                           val ec: ExecutionContext,
                                           val itvcErrorHandler: ItvcErrorHandler,
-                                          val itvcErrorHandlerAgent: AgentItvcErrorHandler,
+                                          val itvcErrorHandlerAgent: AgentItvcErrorHandler
                                          )
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
