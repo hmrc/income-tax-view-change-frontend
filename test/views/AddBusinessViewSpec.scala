@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package views.agent
+package views
 
 import forms.BusinessNameForm
 import org.jsoup.nodes.Element
