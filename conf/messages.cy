@@ -1165,3 +1165,6 @@ notmigrated.agent.content                                       = I hawlio arian
 notmigrated.agent.content_extra                                 = Bydd hyn yn Ddynodydd Defnyddiwr (ID) a chyfrinair ar gyfer Porth y Llywodraeth sy’n wahanol i’ch cyfrif Gwasanaethau Asiant.
 notmigrated.user.link_title                                     = cyfrif Hunanasesiad ar-lein
 notmigrated.agent.link_title                                    = cyfrif Hunanasesiad ar gyfer Asiantau
+
+incomeSources.cease.dateUKPropertyCeased.heading                = Y dyddiad pan wnaeth eich busnes eiddo yn y DU stopio
+incomeSources.cease.dateUKPropertyCeased.hint                   = Er enghraifft, 27 3 2020
