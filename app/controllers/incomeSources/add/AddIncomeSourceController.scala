@@ -18,10 +18,11 @@ package controllers.incomeSources.add
 
 import auth.MtdItUser
 import config.featureswitch.{FeatureSwitching, IncomeSources}
-import config.{AgentItvcErrorHandler, FrontendAppConfig}
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
 import models.incomeSourceDetails.IncomeSourceDetailsModel
+import play.api.Logger
 import play.api.mvc._
 import services.IncomeSourceDetailsService
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
@@ -36,6 +37,7 @@ class AddIncomeSourceController @Inject()(val addIncomeSources: AddIncomeSources
                                           val authorisedFunctions: AuthorisedFunctions,
                                           val retrieveNino: NinoPredicate,
                                           val retrieveIncomeSources: IncomeSourceDetailsPredicate,
+                                          val itvcErrorHandler: ItvcErrorHandler,
                                           implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                           val incomeSourceDetailsService: IncomeSourceDetailsService,
                                           val retrieveBtaNavBar: NavBarPredicate)
@@ -73,11 +75,24 @@ class AddIncomeSourceController @Inject()(val addIncomeSources: AddIncomeSources
       if (isDisabled(IncomeSources)) {
         Redirect(controllers.routes.HomeController.show())
       } else {
-        Ok(addIncomeSources(
-          incomeSourceDetailsService.incomeSourcesAsViewModel(sources),
-          isAgent = isAgent,
-          backUrl = backUrl
-        ))
+        incomeSourceDetailsService.getAddIncomeSourceViewModel(sources) match {
+          case Right(viewModel) =>
+            Ok(addIncomeSources(
+              viewModel,
+              isAgent = isAgent,
+              backUrl = backUrl
+            ))
+          case Left(ex) =>
+            if (isAgent) {
+              Logger("application").error(
+                s"[Agent][AddIncomeSourceController][handleRequest] - Error: ${ex.getMessage}")
+              itvcErrorHandlerAgent.showInternalServerError()
+            } else {
+              Logger("application").error(
+                s"[AddIncomeSourceController][handleRequest] - Error: ${ex.getMessage}")
+              itvcErrorHandler.showInternalServerError()
+            }
+        }
       }
     )
   }
