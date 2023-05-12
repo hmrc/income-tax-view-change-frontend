@@ -45,6 +45,8 @@ errorSummary: ErrorSummary
 messages(s"add-business-name.$key", args: _*)
 }
 
+@import forms.utils.SessionKeys
+
 @field = @{
     businessNameForm(SessionKeys.businessName)
 }
