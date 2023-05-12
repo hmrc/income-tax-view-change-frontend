@@ -15,23 +15,98 @@
  *@
 
 @import _root_.implicits.ImplicitDateFormatterImpl
+@import _root_.implicits.ImplicitCurrencyFormatter._
+@import models.financialDetails.WhatYouOweChargesList
+@import models.financialDetails.DocumentDetailWithDueDate
+@import models.financialDetails._
+@import auth.MtdItUser
 @import views.html.layouts.unifiedLayout
 @import views.html.components._
 @import exceptions.MissingFieldException
 @import uk.gov.hmrc.govukfrontend.views.html.components._
+@import java.time.LocalDate
 @import models.incomeSourceDetails.IncomeSourceDetailsModel
+@import models.incomeSourceDetails.BusinessDetailsModel
+@import models.incomeSourceDetails.PropertyDetailsModel
 
 @this(
     mainTemplate: unifiedLayout,
     implicitDateFormatter: ImplicitDateFormatterImpl,
+    appConfig: config.FrontendAppConfig,
     h1: h1,
     h2: h2,
     p: p,
     link: link,
-    hr: hr,
+    detailsDropdown: detailsDropdown,
+    govukInsetText : GovukInsetText,
     govukTable: GovukTable
 )
 
-@(
-    sources: IncomeSourceDetailsModel
-    )(implicit messages: Messages, user: auth.MtdItUser[_])
+@(incomeSourceDetails: IncomeSourceDetailsModel)(implicit messages: Messages,
+    user: auth.MtdItUser[_])
+
+@import implicitDateFormatter.longDate
+
+@ukPropertyExists = @{
+    incomeSourceDetails.properties.map(_.incomeSourceType.contains("uk-property"))
+}
+
+@foreignPropertyExists = @{
+    incomeSourceDetails.properties.map(_.incomeSourceType.contains("foreign-property"))
+}
+
+@getMessage(key: String, args: String*) = @{
+    messages(s"checkIncomeSources.$key", args: _*)
+}
+
+@selfEmploymentTableRow(id: String, business: BusinessDetailsModel) = {
+    <tr class="govuk-table__row" id="">
+        <td class="govuk-table__cell govuk-!-width-one-quarter" >
+            @business.tradingName.getOrElse(throw MissingFieldException("Business Name"))
+        </td>
+        <td class="govuk-table__cell govuk-!-width-one-quarter" >
+            @business.accountingPeriod.getOrElse(throw MissingFieldException("Accounting Period")).start.toLongDate
+        </td>
+    </tr>
+}
+
+@foreignPropertyTableRow(id: String, property: Option[PropertyDetailsModel]) = {
+    <tr class="govuk-table__row" id="">
+        <td class="govuk-table__cell govuk-!-width-one-quarter" > <!--INCORRECT DATE! - DEPENDENCY HERE-->
+            @property.flatMap(_.tradingStartDate)
+        </td>
+    </tr>
+}
+
+
+@selfEmploymentTableHead(headId: String) = {
+    <thead class="govuk-table__head" id="@headId">
+        <tr class="govuk-table__row">
+            <th scope="col" class="govuk-table__header">Business name</th> <!--create message key-values and wrap in getMessage for table headers-->
+            <th scope="col" class="govuk-table__header">Date started</th> <!--create message key-values and wrap in getMessage for table headers-->
+        </tr>
+    </thead>
+}
+
+@foreignPropertyTableHead(headId: String) = {
+    <thead class="govuk-table__head" id="@headId">
+        <tr class="govuk-table__row">
+            <th scope="col" class="govuk-table__header">Date started</th>
+        </tr>
+    </thead>
+}
+
+@mainTemplate(pageTitle = messages("notmigrated.user.heading"),
+    backUrl = None,
+    isAgent = false,
+    btaNavPartial = user.btaNavPartial) {
+
+    <!--ADD BACK LINK !!-->
+
+    @h1("Self-employment and property income")
+    @p() { @messages("You do not need to tell us about a business we already know about") }
+    @h2("Self-employment (sole trader)")
+
+    @h1(incomeSourceDetails.properties.toString())
+    @h1(incomeSourceDetails.businesses.toString())
+}
