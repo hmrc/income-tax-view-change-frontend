@@ -1145,6 +1145,18 @@ new-income-sources.table-head.business-name = Enw’r busnes
 new-income-sources.table-head.date-started  = Dyddiad cychwyn
 new-income-sources.table-head.date-ended    = Y dyddiad dod i ben
 
+## cease income sources
+cease-income-sources.heading                  = Dod â ffynhonnell incwm i ben
+cease-income-sources.self-employment.h1       = Hunangyflogaeth (unig fasnachwr)
+cease-income-sources.table-head.business-name = Enw’r busnes
+cease-income-sources.table-head.date-started  = Dyddiad cychwyn
+cease-income-sources.cease                    = Dod i ben
+cease-income-sources.uk-property.h1           = Eiddo yn y DU
+cease-income-sources.uk-property-paragraph    = Bydd dim ond angen i chi ddod â’ch incwm o eiddo i ben pan na fydd gennych incwm o eiddo i’w ddatgan.
+cease-income-sources.foreign-property.h1      = Eiddo tramor
+cease-income-sources.heading                  = Busnesau sydd wedi dod i ben
+cease-income-sources.table-head.date-ended    = Y dyddiad dod i ben
+
 shortMonth.1 = Ion
 shortMonth.2 = Chwe
 shortMonth.3 = Maw

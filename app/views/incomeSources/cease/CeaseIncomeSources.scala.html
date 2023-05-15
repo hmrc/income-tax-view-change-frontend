@@ -28,85 +28,175 @@
 @import models.incomeSourceDetails.IncomeSourceDetailsModel
 @import models.incomeSourceDetails.BusinessDetailsModel
 @import models.incomeSourceDetails.PropertyDetailsModel
+@import models.incomeSourceDetails.viewmodels.AddIncomeSourcesViewModel
 
 @this(
-    mainTemplate: unifiedLayout,
-    implicitDateFormatter: ImplicitDateFormatterImpl,
-    appConfig: config.FrontendAppConfig,
-    h1: h1,
-    h2: h2,
-    p: p,
-    link: link,
-    detailsDropdown: detailsDropdown,
-    govukInsetText : GovukInsetText,
-    govukTable: GovukTable
+        mainTemplate: unifiedLayout,
+        implicitDateFormatter: ImplicitDateFormatterImpl,
+        h1: h1,
+        h2: h2,
+        p: p,
+        link: link,
+        hr: hr,
+        govukTable: GovukTable
 )
 
-@(incomeSourceDetails: IncomeSourceDetailsModel)(implicit messages: Messages,
+@(sources: AddIncomeSourcesViewModel,
+        isAgent: Boolean,
+        backUrl: String
+)(implicit messages: Messages,
     user: auth.MtdItUser[_])
 
 @import implicitDateFormatter.longDate
 
-@ukPropertyExists = @{
-    incomeSourceDetails.properties.map(_.incomeSourceType.contains("uk-property"))
-}
-
-@foreignPropertyExists = @{
-    incomeSourceDetails.properties.map(_.incomeSourceType.contains("foreign-property"))
-}
-
 @getMessage(key: String, args: String*) = @{
-    messages(s"checkIncomeSources.$key", args: _*)
+    messages(s"cease-income-sources.$key", args: _*)
 }
 
-@selfEmploymentTableRow(id: String, business: BusinessDetailsModel) = {
-    <tr class="govuk-table__row" id="">
-        <td class="govuk-table__cell govuk-!-width-one-quarter" >
-            @business.tradingName.getOrElse(throw MissingFieldException("Business Name"))
-        </td>
-        <td class="govuk-table__cell govuk-!-width-one-quarter" >
-            @business.accountingPeriod.getOrElse(throw MissingFieldException("Accounting Period")).start.toLongDate
-        </td>
-    </tr>
+@soleTraderBusinesses = @{ sources.soleTraderBusinesses }
+@ukProperty = @{ sources.ukProperty }
+@foreignProperty = @{ sources.foreignProperty }
+@ceasedBusinesses = @{ sources.ceasedBusinesses }
+
+@ceaseSoleTraderBusinessURL = @{
+    if(isAgent) controllers.routes.CeaseIncomeSourceController.showAgent().url // all placeholder routes
+    else controllers.routes.CeaseIncomeSourceController.show().url
 }
 
-@foreignPropertyTableRow(id: String, property: Option[PropertyDetailsModel]) = {
-    <tr class="govuk-table__row" id="">
-        <td class="govuk-table__cell govuk-!-width-one-quarter" > <!--INCORRECT DATE! - DEPENDENCY HERE-->
-            @property.flatMap(_.tradingStartDate)
-        </td>
-    </tr>
+@ceaseUkPropertyURL = @{
+    if(isAgent) controllers.routes.CeaseIncomeSourceController.showAgent().url
+    else controllers.routes.CeaseIncomeSourceController.show().url
 }
 
-
-@selfEmploymentTableHead(headId: String) = {
-    <thead class="govuk-table__head" id="@headId">
-        <tr class="govuk-table__row">
-            <th scope="col" class="govuk-table__header">Business name</th> <!--create message key-values and wrap in getMessage for table headers-->
-            <th scope="col" class="govuk-table__header">Date started</th> <!--create message key-values and wrap in getMessage for table headers-->
-        </tr>
-    </thead>
+@ceasePropertyPropertyURL = @{
+    if(isAgent) controllers.routes.CeaseIncomeSourceController.showAgent().url
+    else controllers.routes.CeaseIncomeSourceController.show().url
 }
 
-@foreignPropertyTableHead(headId: String) = {
-    <thead class="govuk-table__head" id="@headId">
-        <tr class="govuk-table__row">
-            <th scope="col" class="govuk-table__header">Date started</th>
-        </tr>
-    </thead>
-}
-
-@mainTemplate(pageTitle = messages("notmigrated.user.heading"),
-    backUrl = None,
-    isAgent = false,
+@mainTemplate(pageTitle = getMessage("heading"),
+    backUrl = Some(backUrl),
     btaNavPartial = user.btaNavPartial) {
 
-    <!--ADD BACK LINK !!-->
+    @h1(msg = getMessage("heading"),
+        id = Some("???"))
 
-    @h1("Self-employment and property income")
-    @p() { @messages("You do not need to tell us about a business we already know about") }
-    @h2("Self-employment (sole trader)")
+    @h2(msg = getMessage("self-employment.h1"),
+        optId = Some("self-employment-h1"))
 
-    @h1(incomeSourceDetails.properties.toString())
-    @h1(incomeSourceDetails.businesses.toString())
+    @if(soleTraderBusinesses.nonEmpty) {
+        @govukTable(Table(
+            head = Some(List(
+                HeadCell(
+                    content = Text(getMessage("table-head.business-name")),
+                    attributes = Map("id" -> "table-head-business-name")),
+                HeadCell(
+                    content = Text(getMessage("table-head.date-started")),
+                    attributes = Map("id" -> "table-head-date-started")),
+                HeadCell(
+                    content = Text(getMessage("empty")),
+                    attributes = Map("id" -> "empty1"))
+            )),
+            rows = soleTraderBusinesses.zipWithIndex.map { case (b, index) => Seq(
+                TableRow(
+                    content = Text(b.tradingName),
+                    attributes = Map("id" -> s"table-row-trading-name-$index")),
+
+                TableRow(
+                    content = Text(b.tradingStartDate.toLongDate),
+                    attributes = Map("id" -> s"table-row-trading-start-date-$index")),
+
+                TableRow(
+                    content = Text(getMessage("cease")),
+                    attributes = Map("id" -> "cease"))
+            )}
+        ))
+    }
+
+    @h2(msg = getMessage("uk-property.h1"),
+        optId = Some("uk-property-h1"))
+
+    @p(id = Some("property-p1")) {
+        @getMessage("property.p1") }
+
+    @if(ukProperty.nonEmpty) {
+        @govukTable(Table(
+            head = Some(List(
+                HeadCell(
+                    content = Text(getMessage("table-head.date-started")),
+                    attributes = Map("id" -> "table-head-date-started-uk")),
+                HeadCell(
+                    content = Text(getMessage("empty")),
+                    attributes = Map("id" -> "empty2"))
+            )),
+
+            rows = Seq(Seq(
+                TableRow(
+                    content = Text(ukProperty.map(_.tradingStartDate.toLongDate).get),
+                    attributes = Map("id" -> "table-row-trading-start-date-uk")),
+                TableRow(
+                    content = Text(getMessage("cease")),
+                    attributes = Map("id" -> "cease"))
+            ))
+        ))
+    }
+
+    @h2(msg = getMessage("foreign-property.h1"),
+        optId = Some("foreign-property-h1"))
+
+    @p(id = Some("property-p1")) {
+        @getMessage("property.p1") }
+
+    @if(foreignProperty.nonEmpty) {
+        @govukTable(Table(
+            head = Some(List(
+                HeadCell(
+                    content = Text(getMessage("table-head.date-started")),
+                    attributes = Map("id" -> "table-head-date-started-foreign")),
+                HeadCell(
+                    content = Text(getMessage("empty")),
+                    attributes = Map("id" -> "empty3"))
+            )),
+            rows = Seq(Seq(
+                TableRow(
+                    content = Text(foreignProperty.map(_.tradingStartDate.toLongDate).get),
+                    attributes = Map("id" -> "table-row-trading-start-date-foreign")),
+                TableRow(
+                    content = Text(getMessage("cease")),
+                    attributes = Map("id" -> "cease"))
+            ))
+        ))
+    }
+
+    @if(ceasedBusinesses.nonEmpty) {
+        @h2(msg = getMessage("ceased-businesses.h1"),
+            optId = Some("ceased-businesses-h1"))
+
+        @govukTable(Table(
+            head = Some(List(
+                HeadCell(
+                    content = Text(getMessage("table-head.business-name")),
+                    attributes = Map("id" -> "table-head-business-start-name-ceased")),
+                HeadCell(
+                    content = Text(getMessage("table-head.date-started")),
+                    attributes = Map("id" -> "table-head-date-started-ceased")),
+                HeadCell(
+                    content = Text(getMessage("table-head.date-ended")),
+                    attributes = Map("id" -> "table-head-date-ended-ceased"))
+            )),
+            rows = ceasedBusinesses.zipWithIndex.map { case (b, index) => Seq(
+                TableRow(
+                    content = Text(b.tradingName),
+                    attributes = Map("id" -> s"table-row-trading-name-ceased-$index")),
+                TableRow(
+                    content = Text(b.tradingStartDate.toLongDate),
+                    attributes = Map("id" -> s"table-row-trading-start-date-ceased-$index")),
+                TableRow(
+                    content = Text(b.cessationDate.toLongDate),
+                    attributes = Map("id" -> s"table-row-cessation-date-$index")),
+            )}
+        ))
+    }
+
+    <div>QQQQQQQQQQ HELLO WORLD TEST123 QQQQQQQQQQQQ</div>
+
 }

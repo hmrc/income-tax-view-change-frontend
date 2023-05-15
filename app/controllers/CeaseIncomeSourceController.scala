@@ -18,13 +18,15 @@ package controllers
 
 import auth.{FrontendAuthorisedFunctions, MtdItUser}
 import config.{AgentItvcErrorHandler, FrontendAppConfig}
-import config.featureswitch.FeatureSwitching
+import config.featureswitch.{FeatureSwitching, IncomeSources}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
 import models.core.AccountingPeriodModel
+import models.incomeSourceDetails.viewmodels.{AddIncomeSourcesViewModel, BusinessDetailsViewModel, CeasedBusinessDetailsViewModel, PropertyDetailsViewModel}
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, PropertyDetailsModel}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import services.IncomeSourceDetailsService
 import views.html.incomeSources.cease.CeaseIncomeSources
 
 import java.time.{LocalDate, Month}
@@ -37,6 +39,7 @@ class CeaseIncomeSourceController @Inject()(val ceaseIncomeSources: CeaseIncomeS
                                             val retrieveNino: NinoPredicate,
                                             val retrieveBtaNavBar: NavBarPredicate,
                                             val retrieveIncomeSources: IncomeSourceDetailsPredicate,
+                                            val incomeSourceDetailsService: IncomeSourceDetailsService,
                                             val checkSessionTimeout: SessionTimeoutPredicate)
                                            (implicit val appConfig: FrontendAppConfig,
                                             mcc: MessagesControllerComponents,
@@ -47,50 +50,51 @@ class CeaseIncomeSourceController @Inject()(val ceaseIncomeSources: CeaseIncomeS
   def show(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
-      handleRequest()
+      handleRequest(
+        sources = user.incomeSources,
+        isAgent = false,
+        backUrl = controllers.routes.HomeController.show().url
+    )
   }
 
-  def showAgent(): Action[AnyContent] = Action {
-    Ok("")
+  def showAgent(): Action[AnyContent] = Authenticated.async {
+    implicit request =>
+      implicit user =>
+        getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true) flatMap {
+          implicit mtdItUser =>
+            handleRequest(
+              sources = mtdItUser.incomeSources,
+              isAgent = true,
+              backUrl = controllers.routes.HomeController.showAgent.url
+            )
+        }
   }
 
-  def handleRequest()(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
-    Future {
-      Ok(ceaseIncomeSources(businessesAndPropertyIncome))
-    }
+  def handleRequest(sources: IncomeSourceDetailsModel, isAgent: Boolean, backUrl: String)
+                   (implicit user: MtdItUser[_]): Future[Result] = {
+    Future.successful(
+      if (isDisabled(IncomeSources)) {
+        Redirect(controllers.routes.HomeController.show())
+      } else {
+        Ok(
+          ceaseIncomeSources(
+            sourcesTest,
+            isAgent,
+            backUrl
+          )
+        )
+      }
+    )
   }
 
-  val business1 = BusinessDetailsModel(
-    incomeSourceId = Some("XA00001234"),
-    accountingPeriod = Some(AccountingPeriodModel(start = LocalDate.of(2017, Month.JUNE, 1), end = LocalDate.of(2018, Month.MAY, 30))),
-    tradingName = Some("Big Company Ltd"),
-    firstAccountingPeriodEndDate = Some(LocalDate.of(2018, Month.APRIL, 5)),
-    tradingStartDate = Some(LocalDate.of(2018, 4, 5)),
-    cessation = None
-  )
+  val soleTrader: BusinessDetailsViewModel = BusinessDetailsViewModel(tradingName = "TESLA", tradingStartDate = LocalDate.of(2020, 1, 5))
 
-  val business2 = BusinessDetailsModel(
-    incomeSourceId = Some("XA00001235"),
-    accountingPeriod = Some(AccountingPeriodModel(start = LocalDate.of(2019, Month.MAY, 1), end = LocalDate.of(2018, Month.MAY, 30))),
-    tradingName = Some("Small Company Ltd"),
-    firstAccountingPeriodEndDate = None,
-    tradingStartDate = Some(LocalDate.of(2020, 4, 5)),
-    cessation = None
-  )
+  val ukProperty: PropertyDetailsViewModel = PropertyDetailsViewModel(tradingStartDate = LocalDate.of(2020, 1, 5))
 
-  val propertyDetails = PropertyDetailsModel(
-    incomeSourceId = Some("1234"),
-    accountingPeriod = Some(AccountingPeriodModel(LocalDate.of(2017, 4, 6), LocalDate.of(2018, 4, 5))),
-    firstAccountingPeriodEndDate = None,
-    incomeSourceType = Some("uk-property"),
-    tradingStartDate = Some(LocalDate.of(2020, 1, 5)),
-    cessation = None
-  )
+  val foreignProperty: PropertyDetailsViewModel = PropertyDetailsViewModel(tradingStartDate = LocalDate.of(2099, 1, 5))
 
-  val businessesAndPropertyIncome: IncomeSourceDetailsModel = IncomeSourceDetailsModel(
-    mtdbsa = "XIAT0000000000A",
-    yearOfMigration = Some("2018"),
-    businesses = List(business1, business2),
-    properties = List(propertyDetails)
-  )
+  val ceasedBusiness: CeasedBusinessDetailsViewModel = CeasedBusinessDetailsViewModel(tradingName = "Phoenix", tradingStartDate = LocalDate.of(2019, 1, 5), cessationDate = LocalDate.of(2021, 1, 5))
+
+  val sourcesTest: AddIncomeSourcesViewModel = AddIncomeSourcesViewModel(soleTraderBusinesses = List(soleTrader), ukProperty = Some(ukProperty), foreignProperty = Some(foreignProperty), ceasedBusinesses = List(ceasedBusiness))
+
 }

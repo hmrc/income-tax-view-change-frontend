@@ -1127,6 +1127,19 @@ new-income-sources.table-head.business-name = Business name
 new-income-sources.table-head.date-started  = Date started
 new-income-sources.table-head.date-ended    = Date ended
 
+## cease income sources
+cease-income-sources.heading                  = Cease an income source
+cease-income-sources.self-employment.h1       = Self employment (sole trader)
+cease-income-sources.table-head.business-name = Business name
+cease-income-sources.table-head.date-started  = Date started
+cease-income-sources.cease                    = Cease
+cease-income-sources.uk-property.h1           = UK property
+cease-income-sources.property.p1              = You only need to cease your property income once you have no property income to declare.
+cease-income-sources.foreign-property.h1      = Foreign property
+cease-income-sources.ceased-businesses.h1     = Businesses that have ceased
+cease-income-sources.table-head.date-ended    = Date ended
+cease-income-sources.empty                    =
+
 #Following empty fields are not in Use
 #These fields are kept to match with Messages.cy
 shortMonth.1 =
