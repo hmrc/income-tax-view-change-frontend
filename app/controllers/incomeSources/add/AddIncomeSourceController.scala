@@ -77,7 +77,6 @@ class AddIncomeSourceController @Inject()(val addIncomeSources: AddIncomeSources
       } else {
         incomeSourceDetailsService.getAddIncomeSourceViewModel(sources) match {
           case Right(viewModel) =>
-            println(s"\n[sources]: $sources\n")
             Ok(addIncomeSources(
               viewModel,
               isAgent = isAgent,
