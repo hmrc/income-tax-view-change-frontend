@@ -29,4 +29,6 @@ object SessionKeys {
   val origin: String = "origin"
 
   val ceaseUKPropertyDeclare: String = "ceaseUKPropertyDeclare"
+
+  val businessName: String = "addBusinessName"
 }
