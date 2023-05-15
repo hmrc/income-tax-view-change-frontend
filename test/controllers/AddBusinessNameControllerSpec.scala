@@ -131,9 +131,6 @@ class AddBusinessNameControllerSpec extends TestSupport
           setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
           setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
-//          val result: Future[Result] = TestAddBusinessNameNameController$.submitAgent()(fakeRequestWithActiveSession.withFormUrlEncodedBody(
-//            SessionKeys.businessName -> validBusinessName
-//          ))
           val result: Future[Result] = TestAddBusinessNameNameController$.submitAgent()(fakeRequestConfirmedClient().withFormUrlEncodedBody(
             SessionKeys.businessName -> validBusinessName
           ))
