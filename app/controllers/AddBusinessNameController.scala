@@ -28,7 +28,7 @@ import play.api.mvc._
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import views.html.AddBusiness
 import services.IncomeSourceDetailsService
-
+import controllers.incomeSources.add.AddIncomeSourceController
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -48,10 +48,16 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
                                              val ec: ExecutionContext)
   extends ClientConfirmedController with I18nSupport with FeatureSwitching {
 
+  lazy val backUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceController.show.url
+  lazy val backUrlAgent: String = controllers.incomeSources.add.routes.AddIncomeSourceController.showAgent.url
+
   def show(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
-      handleRequest(isAgent = false)
+      handleRequest(
+        isAgent = false,
+        backUrl = backUrl
+        )
   }
 
   def showAgent(): Action[AnyContent] =
@@ -60,19 +66,21 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
         implicit user =>
           getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true) flatMap {
             implicit mtdItUser =>
-              handleRequest(isAgent = true)
+              handleRequest(
+                isAgent = true,
+                backUrl = backUrlAgent)
           }
     }
 
-  def handleRequest(isAgent: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
+  def handleRequest(isAgent: Boolean, backUrl: String)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
     Future {
       if (isDisabled(IncomeSources)) {
         Redirect(controllers.routes.HomeController.show())
       } else {
         if (isAgent) {
-          Ok(addBusinessView(BusinessNameForm.form, routes.AddBusinessNameController.submitAgent()))
+          Ok(addBusinessView(BusinessNameForm.form, routes.AddBusinessNameController.submitAgent(), backUrl))
         } else {
-          Ok(addBusinessView(BusinessNameForm.form, routes.AddBusinessNameController.submit))
+          Ok(addBusinessView(BusinessNameForm.form, routes.AddBusinessNameController.submit(), backUrl))
         }
       }
     }
@@ -84,7 +92,7 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
       BusinessNameForm.form.bindFromRequest().fold(
         formWithErrors => {
           Future {
-            Ok(addBusinessView(formWithErrors, routes.AddBusinessNameController.submit()))
+            Ok(addBusinessView(formWithErrors, routes.AddBusinessNameController.submit(), backUrl))
           }
         },
         formData => {
@@ -104,7 +112,7 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
             BusinessNameForm.form.bindFromRequest().fold(
               formWithErrors => {
                 Future {
-                  Ok(addBusinessView(formWithErrors, routes.AddBusinessNameController.submitAgent()))
+                  Ok(addBusinessView(formWithErrors, routes.AddBusinessNameController.submitAgent(), backUrl))
                 }
               },
               formData => {

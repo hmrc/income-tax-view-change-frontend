@@ -39,7 +39,7 @@ inputHelper: InputHelper,
 errorSummary: ErrorSummary
 )
 
-@(businessNameForm: Form[BusinessNameForm], postAction: Call)(implicit messages: Messages, user: auth.MtdItUser[_])
+@(businessNameForm: Form[BusinessNameForm], postAction: Call, backUrl: String)(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @getMessage(key: String, args: String*) = @{
 messages(s"add-business-name.$key", args: _*)
@@ -56,7 +56,7 @@ messages(s"add-business-name.$key", args: _*)
 
 @mainTemplate(
     pageTitle = messages("add-business-name.heading"),
-    backUrl = None,
+    backUrl = Some(backUrl),
     btaNavPartial = user.btaNavPartial) {
 
 @errorSummary(
