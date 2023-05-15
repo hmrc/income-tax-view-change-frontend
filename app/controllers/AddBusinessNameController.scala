@@ -16,31 +16,100 @@
 
 package controllers
 
-import auth.FrontendAuthorisedFunctions
-import config.featureswitch.FeatureSwitching
-import config.{AgentItvcErrorHandler, FrontendAppConfig}
+import auth.MtdItUser
+import config.featureswitch.{FeatureSwitching, IncomeSources}
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
-import controllers.predicates.{AuthenticationPredicate, SessionTimeoutPredicate}
+import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
+import forms.BusinessNameForm
+import forms.utils.SessionKeys
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc._
+import uk.gov.hmrc.auth.core.AuthorisedFunctions
+import views.html.AddBusiness
+import services.IncomeSourceDetailsService
 
-import javax.inject.Inject
-import scala.concurrent.ExecutionContext
+import javax.inject.{Inject, Singleton}
+import scala.concurrent.{ExecutionContext, Future}
 
-class AddBusinessNameController @Inject()(val authenticate: AuthenticationPredicate,
-                                          val authorisedFunctions: FrontendAuthorisedFunctions,
-                                          val checkSessionTimeout: SessionTimeoutPredicate)
+@Singleton
+class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
+                                          val authorisedFunctions: AuthorisedFunctions,
+                                          checkSessionTimeout: SessionTimeoutPredicate,
+                                          retrieveNino: NinoPredicate,
+                                          val addBusinessView: AddBusiness,
+                                          val retrieveIncomeSources: IncomeSourceDetailsPredicate,
+                                          val retrieveBtaNavBar: NavBarPredicate,
+                                          val itvcErrorHandler: ItvcErrorHandler,
+                                          incomeSourceDetailsService: IncomeSourceDetailsService)
                                          (implicit val appConfig: FrontendAppConfig,
-                                          mcc: MessagesControllerComponents,
-                                          val ec: ExecutionContext,
-                                          val itvcErrorHandlerAgent: AgentItvcErrorHandler)
-  extends ClientConfirmedController with FeatureSwitching with I18nSupport {
+                                             implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
+                                             implicit override val mcc: MessagesControllerComponents,
+                                             val ec: ExecutionContext)
+  extends ClientConfirmedController with I18nSupport with FeatureSwitching {
 
-  def show(): Action[AnyContent] = Action {
-    Ok("")
+  def show(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+    andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
+    implicit user =>
+      handleRequest(isAgent = false)
   }
 
-  def showAgent(): Action[AnyContent] = Action {
-    Ok("")
+  def showAgent(): Action[AnyContent] =
+    Authenticated.async {
+      implicit request =>
+        implicit user =>
+          getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true) flatMap {
+            implicit mtdItUser =>
+              handleRequest(isAgent = true)
+          }
+    }
+
+  def handleRequest(isAgent: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
+    Future {
+      if (isDisabled(IncomeSources)) {
+        Redirect(controllers.routes.HomeController.show())
+      } else {
+        Ok(addBusinessView(BusinessNameForm.form, routes.AddBusinessNameController.submit))
+      }
+    }
+  }
+
+  def submit: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+    andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
+    implicit request =>
+      BusinessNameForm.form.bindFromRequest().fold(
+        formWithErrors => {
+          Future {
+            Ok(addBusinessView(formWithErrors, routes.AddBusinessNameController.submit()))
+          }
+        },
+        formData => {
+          Future {
+            Redirect(routes.AddBusinessStartDate.show())
+              .withSession(request.session + (SessionKeys.businessName -> formData.name))
+          }
+        }
+      )
+  }
+
+  def submitAgent: Action[AnyContent] = Authenticated.async {
+    implicit request =>
+      implicit user =>
+        getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true) flatMap {
+          implicit mtdItUser =>
+            BusinessNameForm.form.bindFromRequest().fold(
+              formWithErrors => {
+                Future {
+                  Ok(addBusinessView(formWithErrors, routes.AddBusinessNameController.submitAgent()))
+                }
+              },
+              formData => {
+                Future {
+                  Redirect(routes.AddBusinessStartDate.showAgent())
+                    .withSession(request.session + (SessionKeys.businessName -> formData.name))
+                }
+              }
+            )
+        }
   }
 }

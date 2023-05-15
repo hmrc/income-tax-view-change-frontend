@@ -43,7 +43,7 @@ import views.html.AddBusiness
 import scala.concurrent.Future
 
 
-class AddBusinessControllerSpec extends TestSupport
+class AddBusinessNameControllerSpec extends TestSupport
   with MockFrontendAuthorisedFunctions
   with MockIncomeSourceDetailsPredicate
   with MockAuthenticationPredicate
@@ -56,14 +56,14 @@ class AddBusinessControllerSpec extends TestSupport
   val mockBusinessNameForm: BusinessNameForm = mock(classOf[BusinessNameForm])
   val incomeSourceDetailsService: IncomeSourceDetailsService = mock(classOf[IncomeSourceDetailsService])
 
-  val postAction: Call = controllers.routes.AddBusinessController.submit()
+  val postAction: Call = controllers.routes.AddBusinessNameController.submit()
 
   def disableAllSwitches(): Unit = {
     switches.foreach(switch => disable(switch))
   }
 
-  object TestAddBusinessNameController
-    extends AddBusinessController(
+  object TestAddBusinessNameNameController$
+    extends AddBusinessNameController(
       MockAuthenticationPredicate,
       authorisedFunctions = mockAuthService,
       checkSessionTimeout = app.injector.instanceOf[SessionTimeoutPredicate],
@@ -80,12 +80,12 @@ class AddBusinessControllerSpec extends TestSupport
       ec = ec
     )
 
-  "AddBusinessController" should {
+  "AddBusinessNameController" should {
     "redirect a user back to the custom error page" when {
       "the user is not authenticated" should {
         "redirect them to sign in" in {
           setupMockAuthorisationException()
-          val result = TestAddBusinessNameController.show()(fakeRequestWithActiveSession)
+          val result = TestAddBusinessNameNameController$.show()(fakeRequestWithActiveSession)
           status(result) shouldBe SEE_OTHER
           redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn.url)
         }
@@ -95,7 +95,7 @@ class AddBusinessControllerSpec extends TestSupport
       "redirect to the session timeout page" in {
         setupMockAuthorisationException()
 
-        val result = TestAddBusinessNameController.submit()(fakeRequestWithTimeoutSession)
+        val result = TestAddBusinessNameNameController$.submit()(fakeRequestWithTimeoutSession)
 
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout.url)
@@ -113,7 +113,7 @@ class AddBusinessControllerSpec extends TestSupport
           setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
           setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
-          val result: Future[Result] = TestAddBusinessNameController.submit()(fakeRequestWithActiveSession.withFormUrlEncodedBody(
+          val result: Future[Result] = TestAddBusinessNameNameController$.submit()(fakeRequestWithActiveSession.withFormUrlEncodedBody(
             SessionKeys.businessName -> validBusinessName
           ))
 
@@ -131,10 +131,10 @@ class AddBusinessControllerSpec extends TestSupport
           setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
           setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
-//          val result: Future[Result] = TestAddBusinessNameController.submitAgent()(fakeRequestWithActiveSession.withFormUrlEncodedBody(
+//          val result: Future[Result] = TestAddBusinessNameNameController$.submitAgent()(fakeRequestWithActiveSession.withFormUrlEncodedBody(
 //            SessionKeys.businessName -> validBusinessName
 //          ))
-          val result: Future[Result] = TestAddBusinessNameController.submitAgent()(fakeRequestConfirmedClient().withFormUrlEncodedBody(
+          val result: Future[Result] = TestAddBusinessNameNameController$.submitAgent()(fakeRequestConfirmedClient().withFormUrlEncodedBody(
             SessionKeys.businessName -> validBusinessName
           ))
 
@@ -152,7 +152,7 @@ class AddBusinessControllerSpec extends TestSupport
           setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
           setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
-          val result: Future[Result] = TestAddBusinessNameController.submitAgent()(fakeRequestConfirmedClient().withFormUrlEncodedBody(
+          val result: Future[Result] = TestAddBusinessNameNameController$.submitAgent()(fakeRequestConfirmedClient().withFormUrlEncodedBody(
             SessionKeys.businessName -> invalidBusinessNameEmpty
           ))
 
@@ -169,7 +169,7 @@ class AddBusinessControllerSpec extends TestSupport
           setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
           setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
-          val result: Future[Result] = TestAddBusinessNameController.submit()(fakeRequestWithActiveSession.withFormUrlEncodedBody(
+          val result: Future[Result] = TestAddBusinessNameNameController$.submit()(fakeRequestWithActiveSession.withFormUrlEncodedBody(
             SessionKeys.businessName -> invalidBusinessNameEmpty
           ))
 
@@ -185,7 +185,7 @@ class AddBusinessControllerSpec extends TestSupport
           setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
           setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
-          val result: Future[Result] = TestAddBusinessNameController.submit()(fakeRequestWithActiveSession.withFormUrlEncodedBody(
+          val result: Future[Result] = TestAddBusinessNameNameController$.submit()(fakeRequestWithActiveSession.withFormUrlEncodedBody(
             SessionKeys.businessName -> invalidBusinessNameLength
           ))
 
@@ -201,7 +201,7 @@ class AddBusinessControllerSpec extends TestSupport
           setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
           setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
-          val result: Future[Result] = TestAddBusinessNameController.submit()(fakeRequestWithActiveSession.withFormUrlEncodedBody(
+          val result: Future[Result] = TestAddBusinessNameNameController$.submit()(fakeRequestWithActiveSession.withFormUrlEncodedBody(
             SessionKeys.businessName -> invalidBusinessNameEmpty
           ))
 
@@ -216,7 +216,7 @@ class AddBusinessControllerSpec extends TestSupport
       setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
       setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
-      val result: Future[Result] = TestAddBusinessNameController.show()(fakeRequestWithActiveSession)
+      val result: Future[Result] = TestAddBusinessNameNameController$.show()(fakeRequestWithActiveSession)
       status(result) shouldBe SEE_OTHER
       redirectLocation(result) mustBe Some(routes.HomeController.show().url)
 

@@ -61,14 +61,14 @@ class AddBusinessStartDate @Inject()(authenticate: AuthenticationPredicate,
               handleRequest(isAgent = true)
           }
     }
-
+//TODO Start date page to be implemented
   def handleRequest(isAgent: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
     Future {
       if (isDisabled(IncomeSources)) {
         Redirect(controllers.routes.HomeController.show())
       } else {
         Ok(addBusinessView(BusinessNameForm.form,
-          routes.AddBusinessController.show()))
+          routes.AddBusinessNameController.show()))
       }
     }
   }
