@@ -16,13 +16,14 @@
 
 package forms
 
+import forms.utils.SessionKeys
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.data.{Form, FormError}
 
 class BusinessNameFormSpec extends AnyWordSpec with Matchers {
 
-  def form(value: String): Form[BusinessNameForm] = BusinessNameForm.form.bind(Map("name" -> value))
+  def form(value: String): Form[BusinessNameForm] = BusinessNameForm.form.bind(Map(SessionKeys.businessName -> value))
 
   "BusinessNameForm" must {
 
@@ -36,18 +37,18 @@ class BusinessNameFormSpec extends AnyWordSpec with Matchers {
     "return an error" when {
       "the business name is empty" in {
         val result = form("").errors
-        result mustBe Seq(FormError("name", BusinessNameForm.businessNameEmptyError))
+        result mustBe Seq(FormError(SessionKeys.businessName, BusinessNameForm.businessNameEmptyError))
       }
 
       "the business name is too long" in {
         val result = form("Lorem ipsum dolor sit amet consectetur adipiscing elit " +
           "Phasellus vel ante ut tellus interdum fermentum Suspendisse potenti").errors
-        result mustBe Seq(FormError("name", BusinessNameForm.businessNameLengthIncorrect))
+        result mustBe Seq(FormError(SessionKeys.businessName, BusinessNameForm.businessNameLengthIncorrect))
       }
 
       "the business name contains invalid characters" in {
         val result = form("Test Business *").errors
-        result mustBe Seq(FormError("name", BusinessNameForm.businessNameInvalidChar))
+        result mustBe Seq(FormError(SessionKeys.businessName, BusinessNameForm.businessNameInvalidChar))
       }
     }
   }
