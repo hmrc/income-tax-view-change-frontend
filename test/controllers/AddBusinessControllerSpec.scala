@@ -102,7 +102,6 @@ class AddBusinessControllerSpec extends TestSupport
       }
     }
 
-      //TODO - 200 != 303 result
     ".submit business" when {
       "redirect to the add business start date" when {
         "the individual is authenticated and the business name entered is valid" in {
@@ -130,10 +129,12 @@ class AddBusinessControllerSpec extends TestSupport
 
           val validBusinessName: String = "Test Business"
           setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
-          setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
           setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
-          val result: Future[Result] = TestAddBusinessNameController.submitAgent()(fakeRequestWithActiveSession.withFormUrlEncodedBody(
+//          val result: Future[Result] = TestAddBusinessNameController.submitAgent()(fakeRequestWithActiveSession.withFormUrlEncodedBody(
+//            SessionKeys.businessName -> validBusinessName
+//          ))
+          val result: Future[Result] = TestAddBusinessNameController.submitAgent()(fakeRequestConfirmedClient().withFormUrlEncodedBody(
             SessionKeys.businessName -> validBusinessName
           ))
 
@@ -149,10 +150,9 @@ class AddBusinessControllerSpec extends TestSupport
 
           val invalidBusinessNameEmpty: String = ""
           setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
-          setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
           setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
-          val result: Future[Result] = TestAddBusinessNameController.submitAgent()(fakeRequestWithActiveSession.withFormUrlEncodedBody(
+          val result: Future[Result] = TestAddBusinessNameController.submitAgent()(fakeRequestConfirmedClient().withFormUrlEncodedBody(
             SessionKeys.businessName -> invalidBusinessNameEmpty
           ))
 

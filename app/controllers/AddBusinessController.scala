@@ -108,7 +108,7 @@ class AddBusinessController @Inject()(authenticate: AuthenticationPredicate,
               },
               formData => {
                 println("\n[HAS no ERRORS SS]\n")
-                Future {
+                Future.successful {
                   Redirect(routes.AddBusinessStartDate.showAgent())
                     .withSession(request.session + (SessionKeys.businessName -> formData.name))
                 }

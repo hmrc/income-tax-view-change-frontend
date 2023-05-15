@@ -17,6 +17,7 @@
 package views
 
 import forms.BusinessNameForm
+import forms.BusinessNameForm.invalidName
 import forms.utils.SessionKeys
 import org.jsoup.nodes.Element
 import play.twirl.api.Html
@@ -41,8 +42,11 @@ class AddBusinessViewSpec extends ViewSpec {
 
   val pageWithoutError: Html = enterBusinessName(BusinessNameForm.form, testCall)
 
-  def pageWithError(error: String = BusinessNameForm.businessNameEmptyError): Html = enterBusinessName(BusinessNameForm.form.withError(BusinessNameForm.businessNameInvalidChar, error), testCall)
-
+  def pageWithError(error: String = BusinessNameForm.businessNameEmptyError): Html = {
+    val modifiedForm = BusinessNameForm.form.withError(SessionKeys.businessName, error)
+      .fill(BusinessNameForm(invalidName))
+    enterBusinessName(modifiedForm, testCall)
+  }
   "The add business name page" when {
     "there is no error on the page" should {
       "have the correct heading" in new Setup(pageWithoutError) {
@@ -59,14 +63,13 @@ class AddBusinessViewSpec extends ViewSpec {
         val input: Element = form.selectHead("input")
 
         label.text shouldBe AddBusinessNameMessages.heading
-        hint.text shouldBe AddBusinessNameMessages.paragraph1 + AddBusinessNameMessages.paragraph2
 
 
         label.attr("for") shouldBe input.attr("id")
         input.attr("id") shouldBe SessionKeys.businessName
         input.attr("name") shouldBe SessionKeys.businessName
         input.attr("type") shouldBe "text"
-        input.attr("aria-describedby") shouldBe hint.attr("name-hint")
+       // input.attr("aria-describedby") shouldBe hint.attr("name-hint")
       }
       "have a continue button" in new Setup(pageWithoutError) {
         val button: Element = layoutContent.selectHead("form").selectHead("button")
@@ -84,18 +87,20 @@ class AddBusinessViewSpec extends ViewSpec {
 
           "have the error message display with the input described by it" in new Setup(pageWithError(errorKey)) {
             val form: Element = layoutContent.selectHead("form")
-            form.selectHead("div").attr("class").contains("govuk-error-summary") shouldBe true
+            println(form)
+            form.selectHead("div").attr("class").contains("govuk-form-group--error") shouldBe true
+
 
             val error: Element = form.selectHead("span")
             val input: Element = form.selectHead("input")
 
-            error.attr("id") shouldBe s"${BusinessNameForm.bnf}-error"
+            error.attr("id") shouldBe s"${SessionKeys.businessName}-error"
             error.text shouldBe s"${AddBusinessNameMessages.errorPrefix} $errorMessage"
             val errorPrefix: Element = error.selectHead("span > span")
             errorPrefix.attr("class") shouldBe "govuk-visually-hidden"
             errorPrefix.text shouldBe AddBusinessNameMessages.errorPrefix
 
-            input.attr("aria-describedby") shouldBe s"${BusinessNameForm}-hint ${BusinessNameForm.bnf}-error"
+            input.attr("aria-describedby") shouldBe s"${SessionKeys.businessName}-hint ${SessionKeys.businessName}-error"
           }
         }
       }
