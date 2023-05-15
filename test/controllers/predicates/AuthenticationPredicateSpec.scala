@@ -35,16 +35,6 @@ import scala.concurrent.Future
 class AuthenticationPredicateSpec extends TestSupport with MockAuthenticationPredicate
   with MockIncomeSourceDetailsPredicate with MockAuditingService with FeatureSwitching {
 
-  val ivUpliftRedirectUrl: String = {
-    val completionUrl: String = s"${appConfig.itvcFrontendEnvironment}/${appConfig.baseUrl}" +
-      s"${controllers.routes.UpliftSuccessController.success("PTA").url}"
-    val failureUrl: String = s"${appConfig.itvcFrontendEnvironment}/${appConfig.baseUrl}" +
-      s"${controllers.errors.routes.UpliftFailedController.show.url}"
-
-    s"${appConfig.ivUrl}/uplift?origin=ITVC&confidenceLevel=${appConfig.requiredConfidenceLevel}" +
-      s"&completionURL=$completionUrl" + s"&failureURL=$failureUrl"
-  }
-
   "The AuthenticationPredicate" when {
 
     def setupResult(): Action[AnyContent] =
@@ -126,6 +116,7 @@ class AuthenticationPredicateSpec extends TestSupport with MockAuthenticationPre
     "called with a confidence level below 250" should {
 
       "redirect to the IV Uplift Journey" when {
+        val ivuplifturl = "http://localhost:9948/iv-stub/uplift?origin=ITVC&confidenceLevel=250&completionURL=http://localhost:9081/report-quarterly/income-and-expenses/view/report-quarterly/income-and-expenses/view/uplift-success?origin=PTA&failureURL=http://localhost:9081/report-quarterly/income-and-expenses/view/report-quarterly/income-and-expenses/view/cannot-view-page"
 
         "the feature switch is enabled for an individual" in {
           enable(IvUplift)
@@ -133,7 +124,7 @@ class AuthenticationPredicateSpec extends TestSupport with MockAuthenticationPre
 
           def result: Future[Result] = setupResult()(fakeRequestWithActiveSession)
 
-          redirectLocation(result) shouldBe Some(ivUpliftRedirectUrl)
+          redirectLocation(result) shouldBe Some(ivuplifturl)
         }
 
         "the feature switch is enabled for an organisation with a nino" in {
@@ -142,7 +133,7 @@ class AuthenticationPredicateSpec extends TestSupport with MockAuthenticationPre
 
           def result: Future[Result] = setupResult()(fakeRequestWithActiveSession)
 
-          redirectLocation(result) shouldBe Some(ivUpliftRedirectUrl)
+          redirectLocation(result) shouldBe Some(ivuplifturl)
         }
 
 
@@ -152,7 +143,7 @@ class AuthenticationPredicateSpec extends TestSupport with MockAuthenticationPre
 
           def result: Future[Result] = setupResult()(fakeRequestWithActiveSession)
 
-          redirectLocation(result) shouldBe Some(ivUpliftRedirectUrl)
+          redirectLocation(result) shouldBe Some(ivuplifturl)
         }
       }
 

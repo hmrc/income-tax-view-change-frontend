@@ -65,7 +65,7 @@ class CreditsSummaryControllerISpec extends ComponentSpecBase with CreditsSummar
           IncomeSourceDetailsResponseAuditModel(
             mtdItUser = testUser,
             selfEmploymentIds = List.empty,
-            propertyIncomeId = None,
+            propertyIncomeIds = Nil,
             yearOfMigration = None
           ).detail
         )
@@ -168,7 +168,7 @@ class CreditsSummaryControllerISpec extends ComponentSpecBase with CreditsSummar
           IncomeSourceDetailsResponseAuditModel(
             mtdItUser = testUser,
             selfEmploymentIds = List.empty,
-            propertyIncomeId = None,
+            propertyIncomeIds = Nil,
             yearOfMigration = None
           ).detail
         )

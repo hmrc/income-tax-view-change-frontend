@@ -1129,6 +1129,22 @@ credit-and-refund.credit-from-balancing-charge-prt-1              = yn sgil
 credit-and-refund.credit-from-balancing-charge-prt-2              = credyd tâl mantoli
 credit-and-refund.credit-from-earlier-tax-year                    = credyd o flwyddyn dreth gynharach
 
+## check income sources
+new-income-sources.heading                  = Unig fasnachwr a incwm o eiddo
+new-income-sources.self-employment.h2       = Busnesau unig fasnachwr
+new-income-sources.self-employment.p1       = Nid oes angen i chi roi gwybod i ni am fusnes y gwyddwn amdano eisoes.
+new-income-sources.self-employment.link     = Ychwanegu ffynhonnell incwm gan unig fasnachwr
+new-income-sources.uk-property.h2           = Eiddo yn y DU
+new-income-sources.uk-property.p1           = Dim ond unwaith y mae angen i chi roi gwybod i ni fod gennych incwm o eiddo yn y DU.
+new-income-sources.uk-property.link         = Ychwanegu incwm o eiddo yn y DU
+new-income-sources.foreign-property.h2      = Eiddo tramor
+new-income-sources.foreign-property.p1      = Dim ond unwaith y mae angen i chi roi gwybod i ni fod gennych incwm o eiddo tramor.
+new-income-sources.foreign-property.link    = Ychwanegu incwm o eiddo tramor
+new-income-sources.ceased-businesses.h2     = Busnesau sydd wedi dod i ben
+new-income-sources.table-head.business-name = Enw’r busnes
+new-income-sources.table-head.date-started  = Dyddiad cychwyn
+new-income-sources.table-head.date-ended    = Y dyddiad dod i ben
+
 # add Business page
 add-business-name.heading                                         = Beth yw enw’ch busnes?
 add-business-name.p1                                              = Dyma enw’r busnes a ddefnyddioch i gofrestru ar gyfer Hunanasesiad. Os nad oes enw gwahanol ar eich busnes unig fasnachwr, nodwch eich enw cyntaf ac enw olaf.
@@ -1136,7 +1152,6 @@ add-business-name.p2                                              = Gall enw’r
 add-business-name.form.error.required                             = Nodwch eich enw neu enw’ch busnes
 add-business-name.form.error.maxLength                            = Mae’n rhaid i enw’r busnes fod yn 105 o gymeriadau neu lai
 add-business-name.form.error.invalidNameFormat                    = Ni all enw’r busnes gynnwys !, "", * neu ?
-
 
 shortMonth.1 = Ion
 shortMonth.2 = Chwe
@@ -1158,3 +1173,7 @@ notmigrated.agent.content                                       = I hawlio arian
 notmigrated.agent.content_extra                                 = Bydd hyn yn Ddynodydd Defnyddiwr (ID) a chyfrinair ar gyfer Porth y Llywodraeth sy’n wahanol i’ch cyfrif Gwasanaethau Asiant.
 notmigrated.user.link_title                                     = cyfrif Hunanasesiad ar-lein
 notmigrated.agent.link_title                                    = cyfrif Hunanasesiad ar gyfer Asiantau
+
+incomeSources.ceaseUKProperty.heading                           = Dod ag eiddo yn y DU i ben
+incomeSources.ceaseUKProperty.radioLabel                        = Rwy’n datgan nad wyf bellach yn cael incwm o unrhyw eiddo yn y DU.
+incomeSources.ceaseUKProperty.radioError                        = Mae’n rhaid i chi ddatgan nad ydych chi bellach yn cael incwm o unrhyw eiddo yn y DU

@@ -16,6 +16,8 @@
 
 package controllers.agent
 
+import audit.models.ForecastIncomeAuditModel
+import auth.MtdItUserWithNino
 import config.featureswitch.{FeatureSwitching, ForecastCalculation}
 import controllers.agent.utils.SessionKeys
 import helpers.agent.ComponentSpecBase
@@ -24,14 +26,54 @@ import helpers.servicemocks._
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
 import models.core.AccountingPeriodModel
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, PropertyDetailsModel}
+import models.liabilitycalculation.{EndOfYearEstimate, IncomeSource}
 import play.api.http.Status._
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.ws.WSResponse
 import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessful
+import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 
 import java.time.LocalDate
+
+object ForecastIncomeSummaryControllerTestConstants {
+  val mtdItUser: MtdItUserWithNino[_] = MtdItUserWithNino(testMtditid, testNino, None, None, Some("1234567890"),
+    None, Some(Agent), Some("1"))(FakeRequest())
+
+  val taxableIncome = 12500
+
+  val endOfYearEstimate: EndOfYearEstimate = EndOfYearEstimate(
+    incomeSource = Some(List(
+      IncomeSource("01", Some("self-employment1"), taxableIncome),
+      IncomeSource("01", Some("self-employment2"), taxableIncome),
+      IncomeSource("02", None, taxableIncome),
+      IncomeSource("03", None, taxableIncome),
+      IncomeSource("04", None, taxableIncome),
+      IncomeSource("05", Some("employment1"), taxableIncome),
+      IncomeSource("05", Some("employment2"), taxableIncome),
+      IncomeSource("06", None, taxableIncome),
+      IncomeSource("07", None, taxableIncome),
+      IncomeSource("08", None, taxableIncome),
+      IncomeSource("09", None, taxableIncome),
+      IncomeSource("10", None, taxableIncome),
+      IncomeSource("11", None, taxableIncome),
+      IncomeSource("12", None, taxableIncome),
+      IncomeSource("13", None, taxableIncome),
+      IncomeSource("14", None, taxableIncome),
+      IncomeSource("15", None, taxableIncome),
+      IncomeSource("16", None, taxableIncome),
+      IncomeSource("17", None, taxableIncome),
+      IncomeSource("18", None, taxableIncome),
+      IncomeSource("19", None, taxableIncome),
+      IncomeSource("20", None, taxableIncome),
+      IncomeSource("21", None, taxableIncome),
+      IncomeSource("22", None, taxableIncome),
+      IncomeSource("98", None, taxableIncome)
+    )),
+    totalEstimatedIncome = Some(taxableIncome),
+  )
+}
 
 class ForecastIncomeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
@@ -72,7 +114,7 @@ class ForecastIncomeSummaryControllerISpec extends ComponentSpecBase with Featur
       Some(getCurrentTaxYearEnd),
       None
     )),
-    property = Some(
+    properties = List(
       PropertyDetailsModel(
         Some("testId2"),
         Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
@@ -134,7 +176,7 @@ class ForecastIncomeSummaryControllerISpec extends ComponentSpecBase with Featur
       }
     }
     "isAuthorisedUser with an active enrolment, valid nino and tax year, valid Liability Calc response" should {
-      "return the correct income summary page" in {
+      "return the correct income summary page and audit event" in {
         Given("I enable forecast calculation display feature switch")
         enable(ForecastCalculation)
         stubAuthorisedAgentUser(authorised = true)
@@ -146,6 +188,9 @@ class ForecastIncomeSummaryControllerISpec extends ComponentSpecBase with Featur
 
         When(s"I call GET /report-quarterly/income-and-expenses/view/calculation/$testYear/income/forecast")
         val res = IncomeTaxViewChangeFrontend.getForecastIncomeSummaryAgent(getCurrentTaxYearEnd.getYear)(clientDetailsWithConfirmation)
+
+        AuditStub.verifyAuditEvent(ForecastIncomeAuditModel(ForecastIncomeSummaryControllerTestConstants.mtdItUser,
+          ForecastIncomeSummaryControllerTestConstants.endOfYearEstimate))
 
         res should have(
           httpStatus(OK),

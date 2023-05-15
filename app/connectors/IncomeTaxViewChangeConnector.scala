@@ -159,7 +159,7 @@ trait IncomeTaxViewChangeConnector extends RawResponseReads with FeatureSwitchin
               auditingService.extendedAudit(IncomeSourceDetailsResponseAuditModel(
                 mtdItUser,
                 valid.businesses.flatMap(_.incomeSourceId),
-                valid.property.flatMap(_.incomeSourceId),
+                valid.properties.flatMap(_.incomeSourceId),
                 valid.yearOfMigration
               ))
               valid

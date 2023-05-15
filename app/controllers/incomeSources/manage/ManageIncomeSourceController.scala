@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.incomeSources.manage
 
 import auth.FrontendAuthorisedFunctions
-import config.{AgentItvcErrorHandler, FrontendAppConfig}
 import config.featureswitch.FeatureSwitching
+import config.{AgentItvcErrorHandler, FrontendAppConfig}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates.{AuthenticationPredicate, SessionTimeoutPredicate}
 import play.api.i18n.I18nSupport
@@ -37,10 +37,10 @@ class ManageIncomeSourceController @Inject()(val authenticate: AuthenticationPre
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
   def show(): Action[AnyContent] = Action {
-    NotImplemented
+    Ok("")
   }
 
   def showAgent(): Action[AnyContent] = Action {
-    NotImplemented
+    Ok("")
   }
 }

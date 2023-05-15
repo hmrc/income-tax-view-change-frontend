@@ -27,7 +27,6 @@
 @(
     documentDetailWithDueDate: DocumentDetailWithDueDate,
     documentDetail: DocumentDetail,
-    dueDate: Option[LocalDate],
     latePaymentInterestCharge: Boolean,
     codingOutEnabled: Boolean,
     taxYearFromCodingOut: String,
@@ -45,7 +44,7 @@
         }
         @{
             if(latePaymentInterestCharge) documentDetail.interestEndDate.getOrElse(throw MissingFieldException("Interest End Date")).toLongDate
-            else dueDate.getOrElse(throw MissingFieldException("Due Date")).toLongDate
+            else documentDetail.effectiveDateOfPayment.getOrElse(throw MissingFieldException("Due Date")).toLongDate
         }
     </dd>
 </div>

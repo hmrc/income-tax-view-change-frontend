@@ -55,7 +55,7 @@ class HomePageViewSpec extends TestSupport {
       testMtditid,
       testNino,
       Some(testRetrievedUserName),
-      IncomeSourceDetailsModel(mtdbsa = testMtditid, yearOfMigration = yearOfMigrationOpt, businesses = Nil, property = None),
+      IncomeSourceDetailsModel(mtdbsa = testMtditid, yearOfMigration = yearOfMigrationOpt, businesses = Nil, properties = Nil),
       testNavHtml,
       saUtr,
       Some("testCredId"),
@@ -68,7 +68,7 @@ class HomePageViewSpec extends TestSupport {
     testMtditid,
     testNino,
     Some(testRetrievedUserName),
-    IncomeSourceDetailsModel(mtdbsa = testMtditid, yearOfMigration = Some("2018"), businesses = Nil, property = None),
+    IncomeSourceDetailsModel(mtdbsa = testMtditid, yearOfMigration = Some("2018"), businesses = Nil, properties = Nil),
     testNavHtml,
     saUtr,
     Some("testCredId"),
@@ -80,7 +80,7 @@ class HomePageViewSpec extends TestSupport {
     testMtditid,
     testNino,
     Some(testRetrievedUserName),
-    IncomeSourceDetailsModel(mtdbsa = testMtditid, yearOfMigration = None, businesses = Nil, property = None),
+    IncomeSourceDetailsModel(mtdbsa = testMtditid, yearOfMigration = None, businesses = Nil, properties = Nil),
     testNavHtml,
     saUtr,
     Some("testCredId"),
@@ -309,11 +309,11 @@ class HomePageViewSpec extends TestSupport {
       }
       "has a link to AddIncomeSourceController.show()" in new Setup(user = testMtdItUserMigrated(), incomeSourcesEnabled = true) {
         getElementById("income-sources-tile").map(_.select("div > p:nth-child(2) > a").text()) shouldBe Some(messages("home.incomeSources.addIncomeSource.view"))
-        getElementById("income-sources-tile").map(_.select("div > p:nth-child(2) > a").attr("href")) shouldBe Some(routes.AddIncomeSourceController.show().url)
+        getElementById("income-sources-tile").map(_.select("div > p:nth-child(2) > a").attr("href")) shouldBe Some(controllers.incomeSources.add.routes.AddIncomeSourceController.show().url)
       }
       "has a link to ManageIncomeSourceController.show()" in new Setup(user = testMtdItUserMigrated(), incomeSourcesEnabled = true) {
         getElementById("income-sources-tile").map(_.select("div > p:nth-child(3) > a").text()) shouldBe Some(messages("home.incomeSources.manageIncomeSource.view"))
-        getElementById("income-sources-tile").map(_.select("div > p:nth-child(3) > a").attr("href")) shouldBe Some(routes.ManageIncomeSourceController.show().url)
+        getElementById("income-sources-tile").map(_.select("div > p:nth-child(3) > a").attr("href")) shouldBe Some(controllers.incomeSources.manage.routes.ManageIncomeSourceController.show().url)
       }
     }
     "not have an Income Sources tile" when {
