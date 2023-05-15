@@ -20,6 +20,7 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import exceptions.MissingFieldException
 @import models.incomeSourceDetails.BusinessTradeForm
+@import forms.utils.SessionKeys
 @import helper._
 @import views.html.helpers.injected.ErrorSummary
 @import views.html.helpers.injected.InputHelper
@@ -46,7 +47,7 @@ errorSummary: ErrorSummary
 messages(s"add-business-trade.$key", args: _*)
 }
 @field = @{
-businessTradeForm("trade")
+businessTradeForm(SessionKeys.businessTrade)
 }
 @fieldError = @{
 field.error

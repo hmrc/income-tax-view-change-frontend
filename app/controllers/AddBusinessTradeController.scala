@@ -21,12 +21,14 @@ import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
+import forms.utils.SessionKeys
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import views.html.AddBusinessTrade
 import models.incomeSourceDetails.BusinessTradeForm
 import services.IncomeSourceDetailsService
+
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -86,7 +88,7 @@ class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate
         formData => {
           //if (formData.trade == request.session.get("addBusinessName").get)
           Future {
-            Redirect("/report-quarterly/income-and-expenses/view/income-sources/add/business-address").withSession(request.session + ("addBusinessTrade" -> formData.trade))
+            Redirect(routes.AddBusinessAddressController.show().url).withSession(request.session + (SessionKeys.businessTrade -> formData.trade))
           }
         }
       )
@@ -105,8 +107,8 @@ class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate
               },
               formData => {
                 //if (formData.trade == request.session.get("addBusinessName").get)
-                Future {
-                  Redirect("/report-quarterly/income-and-expenses/view/agents/income-sources/add/business-address").withSession(request.session + ("addBusinessTrade" -> formData.trade))
+                Future.successful {
+                  Redirect(routes.AddBusinessAddressController.showAgent().url).withSession(request.session + (SessionKeys.businessTrade -> formData.trade))
                 }
               }
             )

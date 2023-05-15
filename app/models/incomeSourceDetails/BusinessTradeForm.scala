@@ -17,6 +17,7 @@
 package models.incomeSourceDetails
 
 import forms.utils.ConstraintUtil.ConstraintUtil
+import forms.utils.SessionKeys
 import play.api.data._
 import play.api.data.Forms._
 import play.api.data.validation._
@@ -55,7 +56,7 @@ object BusinessTradeForm {
 
   val form: Form[BusinessTradeForm] = Form(
     mapping(
-      "trade" -> text.verifying(isValidLength andThen isValidChars andThen isDifferentName)
+      SessionKeys.businessTrade -> text.verifying(isValidLength andThen isValidChars andThen isDifferentName)
     )(BusinessTradeForm.apply)(BusinessTradeForm.unapply)
   )
 
