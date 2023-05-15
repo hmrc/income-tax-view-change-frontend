@@ -64,7 +64,6 @@
     else controllers.routes.AddForeignPropertyBusinessStartDate.show().url
 }
 
-
 @mainTemplate(pageTitle = getMessage("heading"),
     backUrl = Some(backUrl),
     btaNavPartial = user.btaNavPartial) {
@@ -89,15 +88,16 @@
                     content = Text(getMessage("table-head.date-started")),
                     attributes = Map("id" -> "table-head-date-started"))
             )),
-            rows = soleTraderBusinesses.zipWithIndex.map { case (b, index) => Seq(
+            rows = soleTraderBusinesses.zipWithIndex.map { case (business, index) => Seq(
                 TableRow(
-                    content = Text(b.tradingName),
+                    content = Text(business.tradingName),
                     attributes = Map("id" -> s"table-row-trading-name-$index")),
 
                 TableRow(
-                    content = Text(b.tradingStartDate.toLongDate),
+                    content = Text(business.tradingStartDate.toLongDate),
                     attributes = Map("id" -> s"table-row-trading-start-date-$index"))
-            )}
+            )},
+            attributes = Map("id" -> "sole-trader-businesses-table")
         ))
     } else {
         @hr()
@@ -128,7 +128,8 @@
                     content = Text(ukProperty.map(_.tradingStartDate.toLongDate).get),
                     attributes = Map("id" -> "table-row-trading-start-date-uk")
                 )
-            ))
+            )),
+            attributes = Map("id" -> "uk-property-table")
         ))
     } else {
         @hr()
@@ -158,7 +159,8 @@
                 TableRow(
                     content = Text(foreignProperty.map(_.tradingStartDate.toLongDate).get),
                     attributes = Map("id" -> "table-row-trading-start-date-foreign"))
-            ))
+            )),
+            attributes = Map("id" -> "foreign-property-table")
         ))
     } else {
         @hr()
@@ -186,17 +188,18 @@
                     content = Text(getMessage("table-head.date-ended")),
                     attributes = Map("id" -> "table-head-date-ended-ceased"))
             )),
-            rows = ceasedBusinesses.zipWithIndex.map { case (b, index) => Seq(
+            rows = ceasedBusinesses.zipWithIndex.map { case (business, index) => Seq(
                 TableRow(
-                    content = Text(b.tradingName),
+                    content = Text(business.tradingName),
                     attributes = Map("id" -> s"table-row-trading-name-ceased-$index")),
                 TableRow(
-                    content = Text(b.tradingStartDate.toLongDate),
+                    content = Text(business.tradingStartDate.toLongDate),
                     attributes = Map("id" -> s"table-row-trading-start-date-ceased-$index")),
                 TableRow(
-                    content = Text(b.cessationDate.toLongDate),
+                    content = Text(business.cessationDate.toLongDate),
                     attributes = Map("id" -> s"table-row-cessation-date-$index")),
-            )}
+            )},
+            attributes = Map("id" -> "ceased-businesses-table")
         ))
     }
 }
