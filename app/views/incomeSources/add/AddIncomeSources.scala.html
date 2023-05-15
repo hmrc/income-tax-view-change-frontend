@@ -78,25 +78,30 @@
     @h2(msg = getMessage("self-employment.h2"),
         optId = Some("self-employment-h2"))
 
-    @govukTable(Table(
-        head = Some(List(
-            HeadCell(
-                content = Text(getMessage("table-head.business-name")),
-                attributes = Map("id" -> "table-head-business-name")),
-            HeadCell(
-                content = Text(getMessage("table-head.date-started")),
-                attributes = Map("id" -> "table-head-date-started"))
-        )),
-        rows = soleTraderBusinesses.zipWithIndex.map { case (b, index) => Seq(
-            TableRow(
-                content = Text(b.tradingName),
-                attributes = Map("id" -> s"table-row-trading-name-$index")),
+    @if(soleTraderBusinesses.nonEmpty) {
 
-            TableRow(
-                content = Text(b.tradingStartDate.toLongDate),
-                attributes = Map("id" -> s"table-row-trading-start-date-$index"))
-        )}
-    ))
+        @govukTable(Table(
+            head = Some(List(
+                HeadCell(
+                    content = Text(getMessage("table-head.business-name")),
+                    attributes = Map("id" -> "table-head-business-name")),
+                HeadCell(
+                    content = Text(getMessage("table-head.date-started")),
+                    attributes = Map("id" -> "table-head-date-started"))
+            )),
+            rows = soleTraderBusinesses.zipWithIndex.map { case (b, index) => Seq(
+                TableRow(
+                    content = Text(b.tradingName),
+                    attributes = Map("id" -> s"table-row-trading-name-$index")),
+
+                TableRow(
+                    content = Text(b.tradingStartDate.toLongDate),
+                    attributes = Map("id" -> s"table-row-trading-start-date-$index"))
+            )}
+        ))
+    } else {
+        @hr()
+    }
 
     @link(link = addBusinessNameURL,
         messageKey = getMessage("self-employment.link"),
@@ -107,10 +112,11 @@
     @h2(msg = getMessage("uk-property.h2"),
         optId = Some("uk-property-h2"))
 
-    @p(id = Some("uk-property-p1")) {
-        @getMessage("uk-property.p1") }
-
     @if(ukProperty.nonEmpty) {
+
+        @p(id = Some("uk-property-p1")) {
+            @getMessage("uk-property.p1") }
+
         @govukTable(Table(
             head = Some(List(
                 HeadCell(
@@ -137,10 +143,11 @@
     @h2(msg = getMessage("foreign-property.h2"),
         optId = Some("foreign-property-h2"))
 
-    @p(id = Some("foreign-property-p1")) {
-        @getMessage("foreign-property.p1") }
-
     @if(foreignProperty.nonEmpty) {
+
+        @p(id = Some("foreign-property-p1")) {
+            @getMessage("foreign-property.p1") }
+
         @govukTable(Table(
             head = Some(List(
                 HeadCell(
