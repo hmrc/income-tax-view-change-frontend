@@ -79,13 +79,11 @@ class AddBusinessController @Inject()(authenticate: AuthenticationPredicate,
     implicit request =>
       BusinessNameForm.form.bindFromRequest().fold(
         formWithErrors => {
-          println("\n[HAS ERRORS SS]\n")
           Future {
             Ok(addBusinessView(formWithErrors, routes.AddBusinessController.submit()))
           }
         },
         formData => {
-          println("\n[NO ERRORS]\n")
           Future {
             Redirect(routes.AddBusinessStartDate.show())
               .withSession(request.session + (SessionKeys.businessName -> formData.name))
@@ -101,13 +99,11 @@ class AddBusinessController @Inject()(authenticate: AuthenticationPredicate,
           implicit mtdItUser =>
             BusinessNameForm.form.bindFromRequest().fold(
               formWithErrors => {
-                println("\n[HAS ERRORS SS]\n")
                 Future {
                   Ok(addBusinessView(formWithErrors, routes.AddBusinessController.submitAgent()))
                 }
               },
               formData => {
-                println("\n[HAS no ERRORS SS]\n")
                 Future.successful {
                   Redirect(routes.AddBusinessStartDate.showAgent())
                     .withSession(request.session + (SessionKeys.businessName -> formData.name))

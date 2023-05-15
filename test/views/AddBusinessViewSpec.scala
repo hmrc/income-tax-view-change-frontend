@@ -69,8 +69,7 @@ class AddBusinessViewSpec extends ViewSpec {
         input.attr("id") shouldBe SessionKeys.businessName
         input.attr("name") shouldBe SessionKeys.businessName
         input.attr("type") shouldBe "text"
-       // input.attr("aria-describedby") shouldBe hint.attr("name-hint")
-      }
+        input.attr("aria-describedby") shouldBe s"${SessionKeys.businessName}-hint"}
       "have a continue button" in new Setup(pageWithoutError) {
         val button: Element = layoutContent.selectHead("form").selectHead("button")
         button.text shouldBe AddBusinessNameMessages.continue
@@ -87,7 +86,6 @@ class AddBusinessViewSpec extends ViewSpec {
 
           "have the error message display with the input described by it" in new Setup(pageWithError(errorKey)) {
             val form: Element = layoutContent.selectHead("form")
-            println(form)
             form.selectHead("div").attr("class").contains("govuk-form-group--error") shouldBe true
 
 

@@ -190,7 +190,6 @@ class AddBusinessControllerSpec extends TestSupport
           ))
 
           status(result) mustBe OK
-          println(result)
           contentAsString(result) must include("Business name must be 105 characters or fewer")
         }
 
@@ -207,7 +206,6 @@ class AddBusinessControllerSpec extends TestSupport
           ))
 
           status(result) mustBe OK
-          println(result)
           contentAsString(result) must include("Business name cannot include !, &quot;&quot;, * or ?")
         }
       }
