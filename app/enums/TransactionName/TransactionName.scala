@@ -40,6 +40,10 @@ case object ForecastTaxCalculation extends TransactionName {
   val name = "forecast-tax-calculation"
 }
 
+case object ForecastIncome extends TransactionName {
+  val name = "forecast-income"
+}
+
 case object ItsaHomePage extends TransactionName {
   val name = "itsa-home-page"
 }

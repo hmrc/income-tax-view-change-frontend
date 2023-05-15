@@ -178,7 +178,7 @@ case class DocumentDetailWithDueDate(documentDetail: DocumentDetail, dueDate: Op
                                      isLatePaymentInterest: Boolean = false, dunningLock: Boolean = false,
                                      codingOutEnabled: Boolean = false, isMFADebit: Boolean = false)(implicit val dateService: DateServiceInterface) {
 
-  val isOverdue: Boolean = dueDate.exists(_ isBefore dateService.getCurrentDate())
+  val isOverdue: Boolean = documentDetail.effectiveDateOfPayment.exists(_ isBefore dateService.getCurrentDate())
 }
 
 object DocumentDetail {
