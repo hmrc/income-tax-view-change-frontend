@@ -41,7 +41,7 @@ inputHelper: InputHelper,
 errorSummary: ErrorSummary
 )
 
-@(businessTradeForm: Form[BusinessTradeForm], postAction: Call, isUserAgent: Boolean)(implicit messages: Messages, user: auth.MtdItUser[_])
+@(businessTradeForm: Form[BusinessTradeForm], postAction: Call, isUserAgent: Boolean, backURL: String, agentBackURL: String)(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @getMessage(key: String, args: String*) = @{
 messages(s"add-business-trade.$key", args: _*)
@@ -55,7 +55,8 @@ field.error
 
 
 @mainTemplate(pageTitle = messages(""),
-backUrl = if(!isUserAgent){Some("/report-quarterly/income-and-expenses/view/income-sources/add/business-start-date")}else{Some("/report-quarterly/income-and-expenses/view/agents/income-sources/add/business-start-date")},
+form = Some(businessTradeForm),
+backUrl = if(!isUserAgent){Some(backURL)}else{Some(agentBackURL)},
 isAgent = isUserAgent,
 btaNavPartial = user.btaNavPartial) {
 
@@ -63,22 +64,9 @@ btaNavPartial = user.btaNavPartial) {
 @form(action = postAction) {
 @CSRF.formField
 
-@if(fieldError.isDefined){
-<div class="govuk-error-summary" data-module="govuk-error-summary">
-    <div role="alert">
-        <h2 class="govuk-error-summary__title">
-            @messages("base.error_summary.heading")
-        </h2>
-        <div class="govuk-error-summary__body">
-            <ul class="govuk-list govuk-error-summary__list">
-                <li>
-                    <a href="#">@fieldError.map { error => @messages(s"${error.message}", error.args:_*)  }</a>
-                </li>
-            </ul>
-        </div>
-    </div>
-</div>
-}
+@errorSummary(
+form = businessTradeForm
+)
 
 <div class="govuk-form-group form-field-group  @if(fieldError.isDefined) {govuk-form-group--error}">
 

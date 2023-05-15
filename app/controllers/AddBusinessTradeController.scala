@@ -49,6 +49,8 @@ class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate
                                              val ec: ExecutionContext)
   extends ClientConfirmedController with I18nSupport with FeatureSwitching{
 
+  val backURL: String = "/report-quarterly/income-and-expenses/view/income-sources/add/business-start-date"
+  val agentBackURL: String = "/report-quarterly/income-and-expenses/view/agents/income-sources/add/business-start-date"
   def show: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
@@ -70,8 +72,8 @@ class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate
       if (isDisabled(IncomeSources)) {
         Redirect(controllers.routes.HomeController.show())
       } else {
-        if(!isAgent) Ok(addBusinessTradeView(BusinessTradeForm.form, routes.AddBusinessTradeController.submit(), isAgent))
-        else Ok(addBusinessTradeView(BusinessTradeForm.form, routes.AddBusinessTradeController.agentSubmit(), isAgent))
+        if(!isAgent) Ok(addBusinessTradeView(BusinessTradeForm.form, routes.AddBusinessTradeController.submit(), isAgent, backURL, agentBackURL))
+        else Ok(addBusinessTradeView(BusinessTradeForm.form, routes.AddBusinessTradeController.agentSubmit(), isAgent, backURL, agentBackURL))
       }
     }
   }
@@ -82,7 +84,7 @@ class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate
       BusinessTradeForm.form.bindFromRequest().fold(
         formWithErrors => {
           Future {
-            Ok(addBusinessTradeView(formWithErrors, routes.AddBusinessTradeController.submit(), false))
+            Ok(addBusinessTradeView(formWithErrors, routes.AddBusinessTradeController.submit(), false, backURL, agentBackURL))
           }
         },
         formData => {
@@ -102,7 +104,7 @@ class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate
             BusinessTradeForm.form.bindFromRequest().fold(
               formWithErrors => {
                 Future {
-                  Ok(addBusinessTradeView(formWithErrors, routes.AddBusinessTradeController.agentSubmit(), true))
+                  Ok(addBusinessTradeView(formWithErrors, routes.AddBusinessTradeController.agentSubmit(), true, backURL, agentBackURL))
                 }
               },
               formData => {
