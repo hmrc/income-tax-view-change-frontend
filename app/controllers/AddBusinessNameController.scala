@@ -69,7 +69,11 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
       if (isDisabled(IncomeSources)) {
         Redirect(controllers.routes.HomeController.show())
       } else {
-        Ok(addBusinessView(BusinessNameForm.form, routes.AddBusinessNameController.submit))
+        if (isAgent) {
+          Ok(addBusinessView(BusinessNameForm.form, routes.AddBusinessNameController.submitAgent()))
+        } else {
+          Ok(addBusinessView(BusinessNameForm.form, routes.AddBusinessNameController.submit))
+        }
       }
     }
   }

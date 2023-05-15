@@ -67,8 +67,7 @@ class AddBusinessStartDate @Inject()(authenticate: AuthenticationPredicate,
       if (isDisabled(IncomeSources)) {
         Redirect(controllers.routes.HomeController.show())
       } else {
-        Ok(addBusinessView(BusinessNameForm.form,
-          routes.AddBusinessNameController.show()))
+        Ok("PAGE IN DEVELOPMENT")
       }
     }
   }
