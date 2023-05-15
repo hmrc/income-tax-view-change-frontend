@@ -24,7 +24,6 @@ import play.twirl.api.Html
 import testUtils.ViewSpec
 import views.html.AddBusiness
 
-
 class AddBusinessViewSpec extends ViewSpec {
 
   object AddBusinessNameMessages {
@@ -38,14 +37,17 @@ class AddBusinessViewSpec extends ViewSpec {
     val errorPrefix: String = messages("base.error-prefix")
   }
 
+  lazy val backUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceController.show.url
+  lazy val backUrlAgent: String = controllers.incomeSources.add.routes.AddIncomeSourceController.showAgent.url
+
   val enterBusinessName: AddBusiness = app.injector.instanceOf[AddBusiness]
 
-  val pageWithoutError: Html = enterBusinessName(BusinessNameForm.form, testCall)
+  val pageWithoutError: Html = enterBusinessName(BusinessNameForm.form, testCall, backUrl)
 
   def pageWithError(error: String = BusinessNameForm.businessNameEmptyError): Html = {
     val modifiedForm = BusinessNameForm.form.withError(SessionKeys.businessName, error)
       .fill(BusinessNameForm(invalidName))
-    enterBusinessName(modifiedForm, testCall)
+    enterBusinessName(modifiedForm, testCall, backUrl)
   }
   "The add business name page" when {
     "there is no error on the page" should {
