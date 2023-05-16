@@ -110,7 +110,7 @@ class InYearTaxCalculationController @Inject()(
   def showAgent: Action[AnyContent] = Authenticated.async {
     implicit request =>
       implicit user =>
-        getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true).flatMap {
+        getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
           implicit mtdItUser =>
             val currentDate = dateService.getCurrentDate(isEnabled(TimeMachineAddYear))
             handleRequest(

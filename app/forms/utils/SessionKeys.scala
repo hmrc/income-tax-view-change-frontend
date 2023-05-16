@@ -27,4 +27,8 @@ object SessionKeys {
   val calcPagesBackPage: String = "calcPagesBackPage"
 
   val origin: String = "origin"
+
+  val ceaseUKPropertyDeclare: String = "ceaseUKPropertyDeclare"
+
+  val businessName: String = "addBusinessName"
 }

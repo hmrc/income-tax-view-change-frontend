@@ -68,6 +68,15 @@ object PropertyDetailsTestConstants {
     None
   )
 
+  val foreignPropertyDetailsNoStartDate = PropertyDetailsModel(
+    incomeSourceId = Some(testPropertyIncomeId),
+    accountingPeriod = None,
+    firstAccountingPeriodEndDate = None,
+    incomeSourceType = Some(foreignIncomeType),
+    tradingStartDate = None,
+    None
+  )
+
   val foreignPropertyDetailsViewModel = PropertyDetailsViewModel(
     tradingStartDate = testStartDate2
   )

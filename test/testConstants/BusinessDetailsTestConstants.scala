@@ -21,7 +21,7 @@ import testConstants.BaseTestConstants._
 import testConstants.NextUpdatesTestConstants.{fakeNextUpdatesModel, openObligation, overdueObligation}
 import models.core._
 import models.incomeSourceDetails.BusinessDetailsModel
-import models.incomeSourceDetails.viewmodels.BusinessDetailsViewModel
+import models.incomeSourceDetails.viewmodels.{BusinessDetailsViewModel, CeasedBusinessDetailsViewModel}
 import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, ObligationsModel}
 
 object BusinessDetailsTestConstants {
@@ -55,6 +55,8 @@ object BusinessDetailsTestConstants {
   val testMtdItId = "XIAT0000000000A"
   val testStartDate = LocalDate.parse("2022-01-01")
   val testStartDate2 = LocalDate.parse("2021-01-01")
+  val testEndDate = LocalDate.parse("2023-01-01")
+
 
   val business1 = BusinessDetailsModel(
     incomeSourceId = Some(testSelfEmploymentId),
@@ -74,6 +76,24 @@ object BusinessDetailsTestConstants {
     cessation = None
   )
 
+  val soleTraderBusinessNoTradingName = BusinessDetailsModel(
+    incomeSourceId = Some(testSelfEmploymentId),
+    accountingPeriod = Some(testBusinessAccountingPeriod),
+    tradingName = None,
+    firstAccountingPeriodEndDate = Some(LocalDate.of(year2018, Month.APRIL, 5)),
+    tradingStartDate = Some(testStartDate),
+    cessation = None
+  )
+
+  val soleTraderBusinessNoTradingStartDate = BusinessDetailsModel(
+    incomeSourceId = Some(testSelfEmploymentId),
+    accountingPeriod = Some(testBusinessAccountingPeriod),
+    tradingName = Some(testTradeName),
+    firstAccountingPeriodEndDate = Some(LocalDate.of(year2018, Month.APRIL, 5)),
+    tradingStartDate = None,
+    cessation = None
+  )
+
   val businessDetailsViewModel = BusinessDetailsViewModel(
     tradingName = testTradeName,
     tradingStartDate = testStartDate
@@ -82,6 +102,12 @@ object BusinessDetailsTestConstants {
   val businessDetailsViewModel2 = BusinessDetailsViewModel(
     tradingName = testTradeName2,
     tradingStartDate = testStartDate2
+  )
+
+  val ceasedBusinessDetailsViewModel = CeasedBusinessDetailsViewModel(
+    tradingName = testTradeName,
+    tradingStartDate = testStartDate,
+    cessationDate = testEndDate
   )
 
   val business2 = BusinessDetailsModel(

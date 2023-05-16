@@ -18,7 +18,7 @@ package testConstants
 
 import testConstants.BaseTestConstants.{testErrorMessage, testErrorStatus, testMigrationYear2019}
 import testConstants.BusinessDetailsTestConstants._
-import testConstants.PropertyDetailsTestConstants.{ceasedPropertyDetails, foreignPropertyDetails, propertyDetails, ukPropertyDetails}
+import testConstants.PropertyDetailsTestConstants.{ceasedPropertyDetails, foreignPropertyDetails, foreignPropertyDetailsNoStartDate, propertyDetails, ukPropertyDetails}
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel}
 
 import java.time.LocalDate
@@ -40,8 +40,20 @@ object IncomeSourceDetailsTestConstants {
   val oldUserDetails = IncomeSourceDetailsModel(testMtdItId, Some(getCurrentTaxYearEnd.minusYears(1).getYear.toString),
     List(oldUseralignedBusiness), List(propertyDetails))
   val preSanitised = IncomeSourceDetailsModel(testMtdItId, Some((LocalDate.now.getYear - 1).toString), List(business2018, alignedBusiness), List(propertyDetails))
+
+  val ukPropertyWithSoleTraderBusiness = IncomeSourceDetailsModel(testMtdItId, None, List(business2018), List(ukPropertyDetails))
+  val ukPlusForeignPropertyWithSoleTraderIncomeSource = IncomeSourceDetailsModel(testMtdItId, Some("2018"), List(soleTraderBusiness), List(ukPropertyDetails, foreignPropertyDetails))
   val ukPropertyAndSoleTraderBusinessIncome = IncomeSourceDetailsModel(testMtdItId, Some("2018"), List(soleTraderBusiness), List(ukPropertyDetails))
+  val ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome = IncomeSourceDetailsModel(testMtdItId, Some("2018"), List(soleTraderBusiness, ceasedBusiness), List(ukPropertyDetails, foreignPropertyDetails))
+  val ukPropertyAndSoleTraderBusinessIncomeNoTradingName = IncomeSourceDetailsModel(testMtdItId, Some("2018"), List(soleTraderBusinessNoTradingName), List(ukPropertyDetails))
+  val ukPropertyAndSoleTraderBusinessIncomeNoTradingStartDate = IncomeSourceDetailsModel(testMtdItId, Some("2018"), List(soleTraderBusinessNoTradingStartDate), List(ukPropertyDetails))
+
+
+
   val foreignPropertyAndCeasedBusinessIncome = IncomeSourceDetailsModel(testMtdItId, Some("2018"), List(ceasedBusiness, ceasedBusiness2), List(foreignPropertyDetails))
+  val foreignPropertyAndCeasedBusinessIncomeNoStartDate = IncomeSourceDetailsModel(testMtdItId, Some("2018"), List(ceasedBusiness, ceasedBusiness2), List(foreignPropertyDetailsNoStartDate))
+
+
   val foreignPropertyIncome = IncomeSourceDetailsModel(testMtdItId, Some("2018"), Nil, List(foreignPropertyDetails))
 
 
