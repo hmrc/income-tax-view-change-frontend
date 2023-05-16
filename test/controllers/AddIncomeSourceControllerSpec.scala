@@ -30,7 +30,7 @@ import mocks.services.MockIncomeSourceDetailsService
 import models.chargeHistory.{ChargeHistoryResponseModel, ChargesHistoryErrorModel, ChargesHistoryModel}
 import models.core.{AccountingPeriodModel, CessationModel}
 import models.financialDetails.{FinancialDetail, FinancialDetailsResponseModel}
-import models.incomeSourceDetails.viewmodels.{AddIncomeSourcesViewModel, BusinessDetailsViewModel}
+import models.incomeSourceDetails.viewmodels.{IncomeSourcesViewModel, BusinessDetailsViewModel}
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, PropertyDetailsModel}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
@@ -110,7 +110,7 @@ class AddIncomeSourceControllerSpec extends MockAuthenticationPredicate
           setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
 
           when(mockIncomeSourceDetailsService.incomeSourcesAsViewModel(any()))
-            .thenReturn(AddIncomeSourcesViewModel(
+            .thenReturn(IncomeSourcesViewModel(
               soleTraderBusinesses = List(businessDetailsViewModel, businessDetailsViewModel2),
               ukProperty = Some(ukPropertyDetailsViewModel),
               foreignProperty = None,
@@ -128,7 +128,7 @@ class AddIncomeSourceControllerSpec extends MockAuthenticationPredicate
           setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
           when(mockIncomeSourceDetailsService.incomeSourcesAsViewModel(any()))
-            .thenReturn(AddIncomeSourcesViewModel(
+            .thenReturn(IncomeSourcesViewModel(
               soleTraderBusinesses = List(businessDetailsViewModel, businessDetailsViewModel2),
               ukProperty = Some(ukPropertyDetailsViewModel),
               foreignProperty = Some(foreignPropertyDetailsViewModel),

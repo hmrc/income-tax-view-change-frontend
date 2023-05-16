@@ -20,10 +20,10 @@ import models.incomeSourceDetails.{BusinessDetailsModel, PropertyDetailsModel}
 
 import java.time.LocalDate
 
-case class AddIncomeSourcesViewModel(soleTraderBusinesses: List[BusinessDetailsViewModel],
-                                     ukProperty: Option[PropertyDetailsViewModel],
-                                     foreignProperty: Option[PropertyDetailsViewModel],
-                                     ceasedBusinesses: List[CeasedBusinessDetailsViewModel])
+case class IncomeSourcesViewModel(soleTraderBusinesses: List[BusinessDetailsViewModel],
+                                  ukProperty: Option[PropertyDetailsViewModel],
+                                  foreignProperty: Option[PropertyDetailsViewModel],
+                                  ceasedBusinesses: List[CeasedBusinessDetailsViewModel])
 
 case class BusinessDetailsViewModel(tradingName: String, tradingStartDate: LocalDate)
 

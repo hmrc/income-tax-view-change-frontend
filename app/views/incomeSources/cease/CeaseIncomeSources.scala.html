@@ -18,7 +18,7 @@
 @import views.html.layouts.unifiedLayout
 @import views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components._
-@import models.incomeSourceDetails.viewmodels.AddIncomeSourcesViewModel
+@import models.incomeSourceDetails.viewmodels.IncomeSourcesViewModel
 
 @this(
         mainTemplate: unifiedLayout,
@@ -31,7 +31,7 @@
         govukTable: GovukTable
 )
 
-@(sources: AddIncomeSourcesViewModel,
+@(sources: IncomeSourcesViewModel,
         isAgent: Boolean,
         backUrl: String
 )(implicit messages: Messages,

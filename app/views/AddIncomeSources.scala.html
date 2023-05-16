@@ -19,7 +19,7 @@
 @import views.html.components._
 @import exceptions.MissingFieldException
 @import uk.gov.hmrc.govukfrontend.views.html.components._
-@import models.incomeSourceDetails.viewmodels.AddIncomeSourcesViewModel
+@import models.incomeSourceDetails.viewmodels.IncomeSourcesViewModel
 
 @this(
     mainTemplate: unifiedLayout,
@@ -33,7 +33,7 @@
 )
 
 @(
-    sources: AddIncomeSourcesViewModel,
+    sources: IncomeSourcesViewModel,
     isAgent: Boolean,
     backUrl: String
 )(implicit messages: Messages, user: auth.MtdItUser[_])

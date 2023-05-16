@@ -19,7 +19,7 @@ package services
 import auth.MtdItUserWithNino
 import connectors.IncomeTaxViewChangeConnector
 import exceptions.MissingFieldException
-import models.incomeSourceDetails.viewmodels.{AddIncomeSourcesViewModel, BusinessDetailsViewModel, CeasedBusinessDetailsViewModel, PropertyDetailsViewModel}
+import models.incomeSourceDetails.viewmodels.{IncomeSourcesViewModel, BusinessDetailsViewModel, CeasedBusinessDetailsViewModel, PropertyDetailsViewModel}
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, IncomeSourceDetailsResponse}
 import play.api.Logger
 import play.api.cache.AsyncCacheApi
@@ -73,7 +73,7 @@ class IncomeSourceDetailsService @Inject()(val incomeTaxViewChangeConnector: Inc
     }
   }
 
-  def incomeSourcesAsViewModel(sources: IncomeSourceDetailsModel): AddIncomeSourcesViewModel = {
+  def incomeSourcesAsViewModel(sources: IncomeSourceDetailsModel): IncomeSourcesViewModel = {
 
     val maybeSoleTraderBusinesses = sources.businesses.filterNot(_.isCeased)
     val soleTraderBusinessesExists = maybeSoleTraderBusinesses.nonEmpty
@@ -87,7 +87,7 @@ class IncomeSourceDetailsService @Inject()(val incomeTaxViewChangeConnector: Inc
     val maybeCeasedBusinesses = sources.businesses.filter(_.isCeased)
     val ceasedBusinessExists = maybeCeasedBusinesses.nonEmpty
 
-    AddIncomeSourcesViewModel(
+    IncomeSourcesViewModel(
       soleTraderBusinesses = if (soleTraderBusinessesExists) {
         maybeSoleTraderBusinesses.map { business =>
           BusinessDetailsViewModel(
