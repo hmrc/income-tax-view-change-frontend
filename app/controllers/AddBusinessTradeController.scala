@@ -27,7 +27,6 @@ import play.api.mvc._
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import views.html.AddBusinessTrade
 import models.incomeSourceDetails.BusinessTradeForm
-import play.api.data.Form
 import services.IncomeSourceDetailsService
 
 import javax.inject.{Inject, Singleton}
@@ -73,8 +72,8 @@ class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate
       if (isDisabled(IncomeSources)) {
         Redirect(controllers.routes.HomeController.show())
       } else {
-        if(!isAgent) Ok(addBusinessTradeView(BusinessTradeForm.form, routes.AddBusinessTradeController.submit(), isAgent, backURL, agentBackURL))
-        else Ok(addBusinessTradeView(BusinessTradeForm.form, routes.AddBusinessTradeController.agentSubmit(), isAgent, backURL, agentBackURL))
+        if(!isAgent) Ok(addBusinessTradeView(BusinessTradeForm.form, routes.AddBusinessTradeController.submit(), isAgent, backURL, agentBackURL, false))
+        else Ok(addBusinessTradeView(BusinessTradeForm.form, routes.AddBusinessTradeController.agentSubmit(), isAgent, backURL, agentBackURL, false))
       }
     }
   }
@@ -85,20 +84,20 @@ class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate
       BusinessTradeForm.form.bindFromRequest().fold(
         formWithErrors => {
           Future {
-            Ok(addBusinessTradeView(formWithErrors, routes.AddBusinessTradeController.submit(), false, backURL, agentBackURL))
+            Ok(addBusinessTradeView(formWithErrors, routes.AddBusinessTradeController.submit(), false, backURL, agentBackURL, false))
           }
         },
         formData => {
-//          if (formData.trade == request.session.get("addBusinessName").get){
-//            Future {
-//              Ok(addBusinessTradeView(BusinessTradeForm("add-business-trade.form.error.same-name"), routes.AddBusinessTradeController.submit(), false, backURL, agentBackURL))
-//            }
-//          }
-//          else {
+          if (formData.trade == request.session.get("addBusinessName").get){
             Future {
+              Ok(addBusinessTradeView(BusinessTradeForm.form, routes.AddBusinessTradeController.submit(), false, backURL, agentBackURL, true))
+            }
+          }
+          else {
+            Future.successful {
               Redirect(routes.AddBusinessAddressController.show().url).withSession(request.session + (SessionKeys.businessTrade -> formData.trade))
             }
-         // }
+          }
         }
       )
     }
@@ -111,13 +110,19 @@ class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate
             BusinessTradeForm.form.bindFromRequest().fold(
               formWithErrors => {
                 Future {
-                  Ok(addBusinessTradeView(formWithErrors, routes.AddBusinessTradeController.agentSubmit(), true, backURL, agentBackURL))
+                  Ok(addBusinessTradeView(formWithErrors, routes.AddBusinessTradeController.agentSubmit(), true, backURL, agentBackURL, false))
                 }
               },
               formData => {
-                //if (formData.trade == request.session.get("addBusinessName").get)
-                Future.successful {
-                  Redirect(routes.AddBusinessAddressController.showAgent().url).withSession(request.session + (SessionKeys.businessTrade -> formData.trade))
+                if (formData.trade == request.session.get("addBusinessName").get) {
+                  Future {
+                    Ok(addBusinessTradeView(BusinessTradeForm.form, routes.AddBusinessTradeController.agentSubmit(), false, backURL, agentBackURL, true))
+                  }
+                }
+                else {
+                  Future.successful {
+                    Redirect(routes.AddBusinessAddressController.showAgent().url).withSession(request.session + (SessionKeys.businessTrade -> formData.trade))
+                  }
                 }
               }
             )

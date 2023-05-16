@@ -41,7 +41,7 @@ inputHelper: InputHelper,
 errorSummary: ErrorSummary
 )
 
-@(businessTradeForm: Form[BusinessTradeForm], postAction: Call, isUserAgent: Boolean, backURL: String, agentBackURL: String)(implicit messages: Messages, user: auth.MtdItUser[_])
+@(businessTradeForm: Form[BusinessTradeForm], postAction: Call, isUserAgent: Boolean, backURL: String, agentBackURL: String, sameNameError: Boolean)(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @getMessage(key: String, args: String*) = @{
 messages(s"add-business-trade.$key", args: _*)
@@ -64,11 +64,26 @@ btaNavPartial = user.btaNavPartial) {
 @form(action = postAction) {
 @CSRF.formField
 
-@errorSummary(
-form = businessTradeForm
-)
+@if(sameNameError) {
+<div class="govuk-error-summary" data-module="govuk-error-summary">
+    <div role="alert">
+        <h2 class="govuk-error-summary__title">
+            There is a problem
+        </h2>
+        <div class="govuk-error-summary__body">
+            <ul class="govuk-list govuk-error-summary__list">
+                <li>
+                    <a href="#">@getMessage("form.error.same-name")</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+}
 
-<div class="govuk-form-group form-field-group  @if(fieldError.isDefined) {govuk-form-group--error}">
+@errorSummary(form = businessTradeForm)
+
+<div class="govuk-form-group form-field-group  @if(fieldError.isDefined || sameNameError) {govuk-form-group--error}">
 
     <h1 class="govuk-label-wrapper">
         <label class="govuk-label govuk-label--l" for="@field.name">
@@ -80,6 +95,13 @@ form = businessTradeForm
     <div class="govuk-hint govuk-label" id="@field.name-hint">
         <p class="govuk-hint"> @getMessage("p1") </p>
     </div>
+
+    @if(sameNameError){
+    <span id="@field.name-error-3" class="govuk-error-message">
+            <span class="govuk-visually-hidden">@messages("base.error-prefix")</span>
+            @getMessage("form.error.same-name")
+        </span>
+    }
 
     @fieldError.map { error =>
     <span id="@field.name-error-2" class="govuk-error-message">
@@ -93,7 +115,7 @@ form = businessTradeForm
             class="govuk-input govuk-input--width-20"
             id="@field.name"
             type="text"
-            @if(fieldError.isDefined) {
+            @if(fieldError.isDefined || sameNameError) {
             aria-describedby="@field.name-hint @field.name-error"
             } else {
             aria-describedby="@field.name-hint"
