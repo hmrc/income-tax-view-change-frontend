@@ -115,7 +115,7 @@ class PaymentAllocationsController @Inject()(val paymentAllocationView: PaymentA
     Authenticated.async { implicit request =>
       implicit agent =>
         if (isEnabled(PaymentAllocation)) {
-          getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true) flatMap { implicit mtdItUser =>
+          getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap { implicit mtdItUser =>
             handleRequest(
               itvcErrorHandler = itvcErrorHandlerAgent,
               documentNumber = documentNumber,
