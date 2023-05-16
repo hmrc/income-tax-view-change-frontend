@@ -152,7 +152,7 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
     Authenticated.async {
       implicit request =>
         implicit user =>
-          getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true).flatMap {
+          getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
             implicit mtdItUser =>
               handleRequest(
                 backUrl = controllers.routes.HomeController.showAgent.url,

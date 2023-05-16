@@ -92,7 +92,7 @@ class FinalTaxCalculationController @Inject()(implicit val cc: MessagesControlle
   def showAgent(taxYear: Int): Action[AnyContent] = Authenticated.async {
     implicit request =>
       implicit agent =>
-        getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true).flatMap {
+        getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
           implicit mtdItUser =>
             handleShowRequest(
               itvcErrorHandler = itvcErrorHandlerAgent,
@@ -113,7 +113,7 @@ class FinalTaxCalculationController @Inject()(implicit val cc: MessagesControlle
 
   def agentSubmit(taxYear: Int): Action[AnyContent] = Authenticated.async { implicit request =>
     implicit agent =>
-      getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true).flatMap { user =>
+      getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap { user =>
         val fullName = user.session.get(clientFirstName).getOrElse("") + " " + user.session.get(clientLastName).getOrElse("")
         agentFinalDeclarationSubmit(taxYear, fullName)(user, hc)
       }
