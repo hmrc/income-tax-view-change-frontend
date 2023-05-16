@@ -16,7 +16,6 @@
 
 package controllers.incomeSources.cease
 
-<<<<<<< HEAD
 import auth.{FrontendAuthorisedFunctions, MtdItUser}
 import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
@@ -24,7 +23,6 @@ import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
 import forms.incomeSources.cease.DateUKPropertyCeasedForm
 import play.api.Logger
-import play.api.data.Form
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents, Result}
 import services.IncomeSourceDetailsService
@@ -38,6 +36,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class DateUKPropertyCeasedController @Inject()(val authenticate: AuthenticationPredicate,
                                                val authorisedFunctions: FrontendAuthorisedFunctions,
                                                val checkSessionTimeout: SessionTimeoutPredicate,
+                                               val formProvider: DateUKPropertyCeasedForm,
                                                val incomeSourceDetailsService: IncomeSourceDetailsService,
                                                val retrieveBtaNavBar: NavBarPredicate,
                                                val retrieveIncomeSources: IncomeSourceDetailsPredicate,
@@ -55,16 +54,15 @@ class DateUKPropertyCeasedController @Inject()(val authenticate: AuthenticationP
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
 
     val incomeSourcesEnabled: Boolean = isEnabled(IncomeSources)
-    //    val backUrl: String = if (isAgent) controllers.incomeSources.cease.routes.CeaseIncomeSourceController.showAgent().url else
-    //      controllers.incomeSources.cease.routes.CeaseIncomeSourceController.show(origin).url
-    val backUrl: String = if (isAgent) "" else ""
+    val backUrl: String = if (isAgent) controllers.incomeSources.cease.routes.CeaseUKPropertyController.showAgent().url else
+      controllers.incomeSources.cease.routes.CeaseUKPropertyController.show().url
     val postAction: Call = if (isAgent) controllers.incomeSources.cease.routes.DateUKPropertyCeasedController.submitAgent() else
       controllers.incomeSources.cease.routes.DateUKPropertyCeasedController.submit()
     val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
     if (incomeSourcesEnabled) {
       Future.successful(Ok(view(
-        dateUKPropertyCeasedForm = DateUKPropertyCeasedForm.form,
+        dateUKPropertyCeasedForm = formProvider.apply,
         postAction = postAction,
         isAgent = isAgent,
         backUrl = backUrl,
@@ -92,7 +90,7 @@ class DateUKPropertyCeasedController @Inject()(val authenticate: AuthenticationP
   def showAgent(): Action[AnyContent] = Authenticated.async {
     implicit request =>
       implicit user =>
-        getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true).flatMap {
+        getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = false).flatMap {
           implicit mtdItUser =>
             handleRequest(
               isAgent = true
@@ -103,11 +101,11 @@ class DateUKPropertyCeasedController @Inject()(val authenticate: AuthenticationP
   def submit: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit request =>
-      DateUKPropertyCeasedForm.form.bindFromRequest().fold(
+      formProvider.apply.bindFromRequest().fold(
         hasErrors => Future.successful(BadRequest(view(
           dateUKPropertyCeasedForm = hasErrors,
           postAction = controllers.incomeSources.cease.routes.DateUKPropertyCeasedController.submit(),
-          backUrl = controllers.incomeSources.cease.routes.CeaseIncomeSourceController.show().url,
+          backUrl = controllers.incomeSources.cease.routes.CeaseUKPropertyController.show().url,
           isAgent = false
         )).addingToSession("ceaseUKPropertyDeclare" -> "false")),
         _ =>
@@ -119,9 +117,19 @@ class DateUKPropertyCeasedController @Inject()(val authenticate: AuthenticationP
   def submitAgent: Action[AnyContent] = Authenticated.async {
     implicit request =>
       implicit user =>
-        getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true).flatMap {
+        getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = false).flatMap {
           implicit mtdItUser =>
-            ???
+            formProvider.apply.bindFromRequest().fold(
+              hasErrors => Future.successful(BadRequest(view(
+                dateUKPropertyCeasedForm = hasErrors,
+                postAction = controllers.incomeSources.cease.routes.DateUKPropertyCeasedController.submitAgent(),
+                backUrl = controllers.incomeSources.cease.routes.CeaseUKPropertyController.showAgent().url,
+                isAgent = true
+              )).addingToSession("ceaseUKPropertyDeclare" -> "false")),
+              _ =>
+                Future.successful(Redirect(controllers.incomeSources.cease.routes.DateUKPropertyCeasedController.showAgent())
+                  .addingToSession("ceaseUKPropertyDeclare" -> "true"))
+            )
         }
   }
 

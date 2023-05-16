@@ -14,8 +14,6 @@
  * limitations under the License.
  *@
 
-<<<<<<< HEAD
-@import forms.incomeSources.cease.DateUKPropertyCeasedForm
 @import views.html.layouts.unifiedLayout
 @import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 @import uk.gov.hmrc.hmrcfrontend.views.Implicits.RichDateInput
@@ -27,7 +25,7 @@
 
 @this(mainTemplate: unifiedLayout, dateInput: dateInput, continueButton: ContinueButton, formWithCSRF: FormWithCSRF, errorSummary: ErrorSummary)
 
-@(dateUKPropertyCeasedForm: Form[DateUKPropertyCeasedForm], postAction: Call, isAgent: Boolean = false, backUrl: String, origin: Option[String] = None)(implicit request: Request[_], messages: Messages)
+@(dateUKPropertyCeasedForm: Form[_], postAction: Call, isAgent: Boolean = false, backUrl: String, origin: Option[String] = None)(implicit request: Request[_], messages: Messages)
 
 @mainTemplate(pageTitle = messages("incomeSources.cease.dateUKPropertyCeased.heading"), isAgent = isAgent, backUrl = Some(backUrl)) {
 
@@ -39,7 +37,7 @@
 
   @dateInput(
    content = messages("incomeSources.cease.dateUKPropertyCeased.heading"),
-   field = dateUKPropertyCeasedForm("day"),
+   field = dateUKPropertyCeasedForm("date-uk-property-stopped"),
    hintContent = Some(messages("incomeSources.cease.dateUKPropertyCeased.hint")),
    pageHeading = true
   )
