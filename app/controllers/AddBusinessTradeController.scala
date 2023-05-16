@@ -27,6 +27,7 @@ import play.api.mvc._
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import views.html.AddBusinessTrade
 import models.incomeSourceDetails.BusinessTradeForm
+import play.api.data.Form
 import services.IncomeSourceDetailsService
 
 import javax.inject.{Inject, Singleton}
@@ -49,8 +50,8 @@ class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate
                                              val ec: ExecutionContext)
   extends ClientConfirmedController with I18nSupport with FeatureSwitching{
 
-  val backURL: String = "/report-quarterly/income-and-expenses/view/income-sources/add/business-start-date"
-  val agentBackURL: String = "/report-quarterly/income-and-expenses/view/agents/income-sources/add/business-start-date"
+  val backURL: String = "/report-quarterly/income-and-expenses/view/income-sources/add/business-start-date-check"
+  val agentBackURL: String = "/report-quarterly/income-and-expenses/view/agents/income-sources/add/business-start-date-check"
   def show: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
@@ -88,10 +89,16 @@ class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate
           }
         },
         formData => {
-          //if (formData.trade == request.session.get("addBusinessName").get)
-          Future {
-            Redirect(routes.AddBusinessAddressController.show().url).withSession(request.session + (SessionKeys.businessTrade -> formData.trade))
-          }
+//          if (formData.trade == request.session.get("addBusinessName").get){
+//            Future {
+//              Ok(addBusinessTradeView(BusinessTradeForm("add-business-trade.form.error.same-name"), routes.AddBusinessTradeController.submit(), false, backURL, agentBackURL))
+//            }
+//          }
+//          else {
+            Future {
+              Redirect(routes.AddBusinessAddressController.show().url).withSession(request.session + (SessionKeys.businessTrade -> formData.trade))
+            }
+         // }
         }
       )
     }

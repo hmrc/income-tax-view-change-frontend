@@ -52,11 +52,11 @@ object BusinessTradeForm {
     else Invalid(tradeInvalidCharError)
   )
 
-  val isDifferentName: Constraint[String] = Constraint(value => Valid)
+  //val isDifferentName: Constraint[String] = Constraint(value => Valid)
 
   val form: Form[BusinessTradeForm] = Form(
     mapping(
-      SessionKeys.businessTrade -> text.verifying(isValidLength andThen isValidChars andThen isDifferentName)
+      SessionKeys.businessTrade -> text.verifying(isValidLength andThen isValidChars)
     )(BusinessTradeForm.apply)(BusinessTradeForm.unapply)
   )
 
