@@ -89,12 +89,16 @@ class CeaseIncomeSourceController @Inject()(val ceaseIncomeSources: CeaseIncomeS
 
   val soleTrader: BusinessDetailsViewModel = BusinessDetailsViewModel(tradingName = "TESLA", tradingStartDate = LocalDate.of(2020, 1, 5))
 
+  val soleTrader2: BusinessDetailsViewModel = BusinessDetailsViewModel(tradingName = "TESLA2", tradingStartDate = LocalDate.of(2020, 1, 5))
+
   val ukProperty: PropertyDetailsViewModel = PropertyDetailsViewModel(tradingStartDate = LocalDate.of(2020, 1, 5))
 
   val foreignProperty: PropertyDetailsViewModel = PropertyDetailsViewModel(tradingStartDate = LocalDate.of(2099, 1, 5))
 
   val ceasedBusiness: CeasedBusinessDetailsViewModel = CeasedBusinessDetailsViewModel(tradingName = "Phoenix", tradingStartDate = LocalDate.of(2019, 1, 5), cessationDate = LocalDate.of(2021, 1, 5))
 
-  val sourcesTest: AddIncomeSourcesViewModel = AddIncomeSourcesViewModel(soleTraderBusinesses = List(soleTrader), ukProperty = Some(ukProperty), foreignProperty = Some(foreignProperty), ceasedBusinesses = List(ceasedBusiness))
+  val ceasedBusiness2: CeasedBusinessDetailsViewModel = CeasedBusinessDetailsViewModel(tradingName = "Phoenix2", tradingStartDate = LocalDate.of(2019, 1, 5), cessationDate = LocalDate.of(2021, 1, 5))
+
+  val sourcesTest: AddIncomeSourcesViewModel = AddIncomeSourcesViewModel(soleTraderBusinesses = List(), ukProperty = None, foreignProperty = None, ceasedBusinesses = List())
 
 }

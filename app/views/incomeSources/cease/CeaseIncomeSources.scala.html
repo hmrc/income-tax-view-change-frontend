@@ -15,19 +15,9 @@
  *@
 
 @import _root_.implicits.ImplicitDateFormatterImpl
-@import _root_.implicits.ImplicitCurrencyFormatter._
-@import models.financialDetails.WhatYouOweChargesList
-@import models.financialDetails.DocumentDetailWithDueDate
-@import models.financialDetails._
-@import auth.MtdItUser
 @import views.html.layouts.unifiedLayout
 @import views.html.components._
-@import exceptions.MissingFieldException
 @import uk.gov.hmrc.govukfrontend.views.html.components._
-@import java.time.LocalDate
-@import models.incomeSourceDetails.IncomeSourceDetailsModel
-@import models.incomeSourceDetails.BusinessDetailsModel
-@import models.incomeSourceDetails.PropertyDetailsModel
 @import models.incomeSourceDetails.viewmodels.AddIncomeSourcesViewModel
 
 @this(
@@ -68,7 +58,7 @@
     else controllers.routes.CeaseIncomeSourceController.show().url
 }
 
-@ceasePropertyPropertyURL = @{
+@ceaseForeignPropertyURL = @{
     if(isAgent) controllers.routes.CeaseIncomeSourceController.showAgent().url
     else controllers.routes.CeaseIncomeSourceController.show().url
 }
@@ -80,10 +70,11 @@
     @h1(msg = getMessage("heading"),
         id = Some("???"))
 
-    @h2(msg = getMessage("self-employment.h1"),
-        optId = Some("self-employment-h1"))
-
     @if(soleTraderBusinesses.nonEmpty) {
+
+        @h2(msg = getMessage("self-employment.h1"),
+            optId = Some("self-employment-h1"))
+
         @govukTable(Table(
             head = Some(List(
                 HeadCell(
@@ -93,8 +84,7 @@
                     content = Text(getMessage("table-head.date-started")),
                     attributes = Map("id" -> "table-head-date-started")),
                 HeadCell(
-                    content = Text(getMessage("empty")),
-                    attributes = Map("id" -> "empty1"))
+                    content = Empty)
             )),
             rows = soleTraderBusinesses.zipWithIndex.map { case (b, index) => Seq(
                 TableRow(
@@ -106,27 +96,33 @@
                     attributes = Map("id" -> s"table-row-trading-start-date-$index")),
 
                 TableRow(
-                    content = Text(getMessage("cease")),
-                    attributes = Map("id" -> "cease"))
+                    content = HtmlContent(
+                        s"""<dd class="govuk-summary-list__actions">
+                                <a class="govuk-link" href='$ceaseSoleTraderBusinessURL'>
+                                    Cease<span class="govuk-visually-hidden">cease</span>
+                                </a>
+                            </dd>"""
+                    )
+                )
             )}
         ))
     }
 
-    @h2(msg = getMessage("uk-property.h1"),
-        optId = Some("uk-property-h1"))
-
-    @p(id = Some("property-p1")) {
-        @getMessage("property.p1") }
-
     @if(ukProperty.nonEmpty) {
+
+        @h2(msg = getMessage("uk-property.h1"),
+            optId = Some("uk-property-h1"))
+
+        @p(id = Some("property-p1")) {
+            @getMessage("property.p1") }
+
         @govukTable(Table(
             head = Some(List(
                 HeadCell(
                     content = Text(getMessage("table-head.date-started")),
                     attributes = Map("id" -> "table-head-date-started-uk")),
                 HeadCell(
-                    content = Text(getMessage("empty")),
-                    attributes = Map("id" -> "empty2"))
+                    content = Empty)
             )),
 
             rows = Seq(Seq(
@@ -134,35 +130,47 @@
                     content = Text(ukProperty.map(_.tradingStartDate.toLongDate).get),
                     attributes = Map("id" -> "table-row-trading-start-date-uk")),
                 TableRow(
-                    content = Text(getMessage("cease")),
-                    attributes = Map("id" -> "cease"))
+                    content = HtmlContent(
+                        s"""<dd class="govuk-summary-list__actions">
+                                <a class="govuk-link" href='$ceaseUkPropertyURL'>
+                                    Cease<span class="govuk-visually-hidden">cease</span>
+                                </a>
+                            </dd>"""
+                    )
+                )
             ))
         ))
     }
 
-    @h2(msg = getMessage("foreign-property.h1"),
-        optId = Some("foreign-property-h1"))
-
-    @p(id = Some("property-p1")) {
-        @getMessage("property.p1") }
-
     @if(foreignProperty.nonEmpty) {
+
+        @h2(msg = getMessage("foreign-property.h1"),
+            optId = Some("foreign-property-h1"))
+
+        @p(id = Some("property-p1")) {
+            @getMessage("property.p1") }
+
         @govukTable(Table(
             head = Some(List(
                 HeadCell(
                     content = Text(getMessage("table-head.date-started")),
                     attributes = Map("id" -> "table-head-date-started-foreign")),
                 HeadCell(
-                    content = Text(getMessage("empty")),
-                    attributes = Map("id" -> "empty3"))
+                    content = Empty)
             )),
             rows = Seq(Seq(
                 TableRow(
                     content = Text(foreignProperty.map(_.tradingStartDate.toLongDate).get),
                     attributes = Map("id" -> "table-row-trading-start-date-foreign")),
                 TableRow(
-                    content = Text(getMessage("cease")),
-                    attributes = Map("id" -> "cease"))
+                    content = HtmlContent(
+                        s"""<dd class="govuk-summary-list__actions">
+                                <a class="govuk-link" href='$ceaseForeignPropertyURL'>
+                                    Cease<span class="govuk-visually-hidden">cease</span>
+                                </a>
+                            </dd>"""
+                    )
+                )
             ))
         ))
     }
@@ -196,7 +204,4 @@
             )}
         ))
     }
-
-    <div>QQQQQQQQQQ HELLO WORLD TEST123 QQQQQQQQQQQQ</div>
-
 }
