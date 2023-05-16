@@ -22,7 +22,7 @@ import audit.mocks.MockAuditingService
 import mocks.connectors.MockIncomeTaxViewChangeConnector
 import mocks.services.{MockAsyncCacheApi, MockNextUpdatesService}
 import models.incomeSourceDetails.IncomeSourceDetailsModel
-import models.incomeSourceDetails.viewmodels.{IncomeSourcesViewModel, BusinessDetailsViewModel, CeasedBusinessDetailsViewModel, PropertyDetailsViewModel}
+import models.incomeSourceDetails.viewmodels.{AddIncomeSourcesViewModel, BusinessDetailsViewModel, CeasedBusinessDetailsViewModel, PropertyDetailsViewModel}
 import testUtils.TestSupport
 import play.api.cache.AsyncCacheApi
 import testConstants.BusinessDetailsTestConstants.{testCessation, testCessation2, testStartDate, testStartDate2, testTradeName, testTradeName2}
@@ -98,7 +98,7 @@ class IncomeSourceDetailsServiceSpec extends TestSupport with MockIncomeTaxViewC
 
         val result = TestIncomeSourceDetailsService.incomeSourcesAsViewModel(ukPropertyAndSoleTraderBusinessIncome)
 
-        result shouldBe IncomeSourcesViewModel(
+        result shouldBe AddIncomeSourcesViewModel(
           soleTraderBusinesses = List(BusinessDetailsViewModel(testTradeName, testStartDate)),
           ukProperty = Some(PropertyDetailsViewModel(testStartDate)),
           foreignProperty = None,
@@ -111,7 +111,7 @@ class IncomeSourceDetailsServiceSpec extends TestSupport with MockIncomeTaxViewC
 
         val result = TestIncomeSourceDetailsService.incomeSourcesAsViewModel(foreignPropertyAndCeasedBusinessIncome)
 
-        result shouldBe IncomeSourcesViewModel(
+        result shouldBe AddIncomeSourcesViewModel(
           soleTraderBusinesses = Nil,
           ukProperty = None,
           foreignProperty = Some(PropertyDetailsViewModel(testStartDate)),
