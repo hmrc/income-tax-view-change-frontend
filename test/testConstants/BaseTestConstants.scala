@@ -66,12 +66,16 @@ object BaseTestConstants extends UnitSpec with GuiceOneAppPerSuite {
   val testPaymentRedirectUrl = "http://localhost:9081/report-quarterly/income-and-expenses/view"
   lazy val testMtdUserNoNino: MtdItUserOptionNino[_] = MtdItUserOptionNino(testMtditid, None, None, Some(testSaUtr), Some(testCredId), Some(testUserTypeIndividual))(FakeRequest())
   lazy implicit val testMtdUserNino: MtdItUserWithNino[_] = MtdItUserWithNino(testMtditid, testNino, Some(testRetrievedUserName), btaNavPartial = None, Some(testSaUtr), Some(testCredId), userType = Some(testUserTypeIndividual), arn = None)(FakeRequest())
+
   lazy val testMtdItUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testRetrievedUserName),
     businessesAndPropertyIncome, btaNavPartial = None, Some(testSaUtr), Some(testCredId), Some(testUserTypeIndividual), None)(FakeRequest())
+
   lazy val testMtdItAgentUser: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testRetrievedUserName),
     businessesAndPropertyIncome, btaNavPartial = None, Some(testSaUtr), Some(testCredId), Some(testUserTypeAgent), Some(testArn))(FakeRequest())
+
   lazy val testMtdItUserMinimal: MtdItUser[_] = MtdItUser(testMtditid, testNino, userName = None,
     incomeSources = businessesAndPropertyIncome, btaNavPartial = None, saUtr = None, credId = None, userType = None, arn = None)(FakeRequest())
+
   lazy val testMtdItUserNoIncomeSource: MtdItUser[_] = MtdItUser(testMtditid, testNino, Some(testRetrievedUserName),
     IncomeSourceDetailsModel("", Some("2018"), List(business1.copy(None, None, None, None)), List(propertyDetails.copy(None, None, None))), btaNavPartial = None, Some(testSaUtr), Some(testCredId), Some(testUserTypeIndividual), None)(FakeRequest())
   val testSelfEmploymentId = "XA00001234"
