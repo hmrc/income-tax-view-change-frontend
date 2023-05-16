@@ -16,7 +16,8 @@
 
 package testOnly.models
 
-import utils.{DelegatedEnrolmentValues, EnrolmentValues}
+import testOnly.utils.{DelegatedEnrolmentValues, EnrolmentValues}
+import utils.DelegatedEnrolmentValues
 
 import scala.util.Random
 

@@ -29,8 +29,8 @@ import scala.collection.Seq
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import testOnly.models.Nino
-import utils.FileUtil._
-import utils.LoginUtil._
+import testOnly.utils.FileUtil._
+import testOnly.utils.LoginUtil._
 case class EnrolmentData(name: String, state: String, taxIdentifier: scala.Seq[TaxIdentifierData])
 
 case class TaxIdentifierData(key: String, value: String)
