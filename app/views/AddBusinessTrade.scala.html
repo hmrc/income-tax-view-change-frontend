@@ -54,7 +54,7 @@ field.error
 }
 
 
-@mainTemplate(pageTitle = @getMessage("heading"),
+@mainTemplate(pageTitle = getMessage("heading"),
 form = Some(businessTradeForm),
 backUrl = if(!isUserAgent){Some(backURL)}else{Some(agentBackURL)},
 isAgent = isUserAgent,
