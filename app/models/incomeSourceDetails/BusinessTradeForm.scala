@@ -36,7 +36,6 @@ object BusinessTradeForm {
   val tradeShortError = "add-business-trade.form.error.short"
   val tradeLongError = "add-business-trade.form.error.long"
   val tradeInvalidCharError = "add-business-trade.form.error.invalid"
-  val tradeSameNameError = "add-business-trade.form.error.same-name"
 
   val isValidLength: Constraint[String] = Constraint(value =>
     value.length match {
@@ -51,8 +50,6 @@ object BusinessTradeForm {
     if (validTrade.pattern.matcher(value).matches()) Valid
     else Invalid(tradeInvalidCharError)
   )
-
-  //val isDifferentName: Constraint[String] = Constraint(value => Valid)
 
   val form: Form[BusinessTradeForm] = Form(
     mapping(
