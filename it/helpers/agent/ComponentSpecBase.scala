@@ -19,34 +19,35 @@ package helpers.agent
 import com.github.tomakehurst.wiremock.client.WireMock
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
+import forms.CeaseUKPropertyForm
 import forms.agent.ClientsUTRForm
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
-import helpers.servicemocks.AuthStub.getWithClientDetailsInSession
 import helpers.{CustomMatchers, GenericStubMethods, WiremockHelper}
 import org.scalatest._
 import org.scalatest.concurrent.{Eventually, IntegrationPatience, ScalaFutures}
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
 import play.api.cache.AsyncCacheApi
 import play.api.http.HeaderNames
-import play.api.http.Status.{OK, SEE_OTHER, isRedirect}
+import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.i18n.{Lang, MessagesApi}
+import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.crypto.DefaultCookieSigner
 import play.api.libs.ws.WSResponse
 import play.api.{Application, Environment, Mode}
-import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
-import play.api.inject.bind
 import services.{DateService, DateServiceInterface}
-import testConstants.IncomeSourceIntegrationTestConstants.{multipleBusinessesAndPropertyResponse, testChargeHistoryJson, testValidFinancialDetailsModelJson, twoDunningLocks, twoInterestLocks}
+import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
+import testConstants.IncomeSourceIntegrationTestConstants._
 
 import java.time.LocalDate
 import javax.inject.Singleton
 import scala.concurrent.Future
 
 @Singleton
-class TestDateService  extends DateServiceInterface  {
+class TestDateService extends DateServiceInterface {
 
   override def getCurrentDate(isTimeMachineEnabled: Boolean = false): LocalDate = LocalDate.of(2023, 4, 5)
+
   override def isDayBeforeTaxYearLastDay(isTimeMachineEnabled: Boolean = false): Boolean = true
 
   override def getCurrentTaxYearEnd(isTimeMachineEnabled: Boolean): Int = {
@@ -54,6 +55,7 @@ class TestDateService  extends DateServiceInterface  {
     if (isDayBeforeTaxYearLastDay(isTimeMachineEnabled)) currentDate.getYear else currentDate.getYear + 1
   }
 }
+
 trait ComponentSpecBase extends TestSuite with CustomMatchers
   with GuiceOneServerPerSuite with ScalaFutures with IntegrationPatience with Matchers
   with WiremockHelper with BeforeAndAfterEach with BeforeAndAfterAll with Eventually
@@ -239,6 +241,16 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     def getTaxYears(additionalCookies: Map[String, String] = Map.empty): WSResponse =
       getWithClientDetailsInSession("/agents/tax-years", additionalCookies)
 
+    def getCeaseUKProperty(additionalCookies: Map[String, String] = Map.empty): WSResponse =
+      getWithClientDetailsInSession("/agents/income-sources/cease/uk-property-declare", additionalCookies)
+
+    def postCeaseUKProperty(answer: Option[String], additionalCookies: Map[String, String] = Map.empty): WSResponse =
+      post(uri = "/income-sources/cease/uk-property-declare", additionalCookies = additionalCookies)(
+        answer.fold(Map.empty[String, Seq[String]])(
+          declaration => CeaseUKPropertyForm.form.fill(CeaseUKPropertyForm(Some(declaration), "csrfToken")).data.map { case (k, v) => (k, Seq(v)) }
+        )
+      )
+
   }
 
   def unauthorisedTest(uri: String): Unit = {
@@ -261,21 +273,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
   }
 
   def testIncomeSourceDetailsCaching(resetCacheAfterFirstCall: Boolean, noOfCalls: Int, callback: () => Unit): Unit = {
-    stubAuthorisedAgentUser(authorised = true)
-    Given("I wiremock stub a successful Income Source Details response with property only")
-    IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
-
-    And("I wiremock stub a single financial transaction response")
-    IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(OK, testValidFinancialDetailsModelJson(10.34, 1.2,
-      dunningLock = twoDunningLocks, interestLocks = twoInterestLocks))
-
-    And("I wiremock stub a charge history response")
-    IncomeTaxViewChangeStub.stubChargeHistoryResponse(testMtditid, "1040000124")(OK, testChargeHistoryJson(testMtditid, "1040000124", 2500))
-
-    callback()
-    if (resetCacheAfterFirstCall) cache.removeAll()
-    callback()
-    verifyIncomeSourceDetailsCall(testMtditid, noOfCalls)
+    // tests to be reimplemented after hmrc-mongo caching
   }
 }
 

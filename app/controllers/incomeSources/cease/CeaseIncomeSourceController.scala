@@ -14,18 +14,20 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.incomeSources.cease
 
 import auth.{FrontendAuthorisedFunctions, MtdItUser}
-import config.{AgentItvcErrorHandler, FrontendAppConfig}
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import config.featureswitch.{FeatureSwitching, IncomeSources}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
 import models.incomeSourceDetails.IncomeSourceDetailsModel
+import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.IncomeSourceDetailsService
 import views.html.incomeSources.cease.CeaseIncomeSources
+
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -40,7 +42,9 @@ class CeaseIncomeSourceController @Inject()(val ceaseIncomeSources: CeaseIncomeS
                                            (implicit val appConfig: FrontendAppConfig,
                                             mcc: MessagesControllerComponents,
                                             val ec: ExecutionContext,
-                                            val itvcErrorHandlerAgent: AgentItvcErrorHandler)
+                                            val itvcErrorHandlerAgent: AgentItvcErrorHandler,
+                                            val itvcErrorHandler: ItvcErrorHandler
+                                           )
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
   def show(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
@@ -56,7 +60,7 @@ class CeaseIncomeSourceController @Inject()(val ceaseIncomeSources: CeaseIncomeS
   def showAgent(): Action[AnyContent] = Authenticated.async {
     implicit request =>
       implicit user =>
-        getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true) flatMap {
+        getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
           implicit mtdItUser =>
             handleRequest(
               sources = mtdItUser.incomeSources,
@@ -72,13 +76,24 @@ class CeaseIncomeSourceController @Inject()(val ceaseIncomeSources: CeaseIncomeS
       if (isDisabled(IncomeSources)) {
         Redirect(controllers.routes.HomeController.show())
       } else {
-        Ok(
-          ceaseIncomeSources(
-            incomeSourceDetailsService.incomeSourcesAsViewModel(sources),
-            isAgent,
-            backUrl
-          )
-        )
+        incomeSourceDetailsService.getAddIncomeSourceViewModel(sources) match {
+          case Right(viewModel) =>
+            Ok(ceaseIncomeSources(
+              viewModel,
+              isAgent = isAgent,
+              backUrl = backUrl
+            ))
+          case Left(ex) =>
+            if (isAgent) {
+              Logger("application").error(
+                s"[Agent][AddIncomeSourceController][handleRequest] - Error: ${ex.getMessage}")
+              itvcErrorHandlerAgent.showInternalServerError()
+            } else {
+              Logger("application").error(
+                s"[AddIncomeSourceController][handleRequest] - Error: ${ex.getMessage}")
+              itvcErrorHandler.showInternalServerError()
+            }
+        }
       }
     )
   }

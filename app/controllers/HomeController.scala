@@ -154,7 +154,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
   def showAgent(): Action[AnyContent] = Authenticated.async {
     implicit request =>
       implicit agent =>
-        getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true).flatMap {
+        getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
           implicit mtdItUser =>
             handleShowRequest(
               itvcErrorHandler = itvcErrorHandlerAgent,

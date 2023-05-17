@@ -132,7 +132,7 @@ class CreditsSummaryController @Inject()(creditsView: CreditsSummary,
   def showAgentCreditsSummary(calendarYear: Int): Action[AnyContent] = {
     Authenticated.async { implicit request =>
       implicit user =>
-        getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true) flatMap { implicit mtdItUser =>
+        getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap { implicit mtdItUser =>
           handleRequest(
             calendarYear = calendarYear,
             isAgent = true

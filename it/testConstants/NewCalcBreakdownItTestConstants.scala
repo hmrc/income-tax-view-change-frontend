@@ -15,6 +15,7 @@
  */
 package testConstants
 
+import controllers.ForecastIncomeSummaryControllerTestConstants.taxableIncome
 import models.liabilitycalculation.taxcalculation._
 import models.liabilitycalculation._
 
@@ -234,16 +235,32 @@ object NewCalcBreakdownItTestConstants {
       )),
       endOfYearEstimate = Some(EndOfYearEstimate(
         incomeSource = Some(List(
-          IncomeSource(
-            incomeSourceType = "01",
-            incomeSourceName = Some("source1"),
-            taxableIncome = 12500
-          ),
-          IncomeSource(
-            incomeSourceType = "02",
-            incomeSourceName = Some("source2"),
-            taxableIncome = 12500
-          ))),
+          IncomeSource("01", Some("self-employment1"), taxableIncome),
+          IncomeSource("01", Some("self-employment2"), taxableIncome),
+          IncomeSource("02", None, taxableIncome),
+          IncomeSource("03", None, taxableIncome),
+          IncomeSource("04", None, taxableIncome),
+          IncomeSource("05", Some("employment1"), taxableIncome),
+          IncomeSource("05", Some("employment2"), taxableIncome),
+          IncomeSource("06", None, taxableIncome),
+          IncomeSource("07", None, taxableIncome),
+          IncomeSource("08", None, taxableIncome),
+          IncomeSource("09", None, taxableIncome),
+          IncomeSource("10", None, taxableIncome),
+          IncomeSource("11", None, taxableIncome),
+          IncomeSource("12", None, taxableIncome),
+          IncomeSource("13", None, taxableIncome),
+          IncomeSource("14", None, taxableIncome),
+          IncomeSource("15", None, taxableIncome),
+          IncomeSource("16", None, taxableIncome),
+          IncomeSource("17", None, taxableIncome),
+          IncomeSource("18", None, taxableIncome),
+          IncomeSource("19", None, taxableIncome),
+          IncomeSource("20", None, taxableIncome),
+          IncomeSource("21", None, taxableIncome),
+          IncomeSource("22", None, taxableIncome),
+          IncomeSource("98", None, taxableIncome)
+        )),
         totalEstimatedIncome = Some(12500),
         totalTaxableIncome = Some(12500),
         totalAllowancesAndDeductions = Some(4200.00),

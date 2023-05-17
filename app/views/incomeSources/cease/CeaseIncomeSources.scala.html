@@ -49,18 +49,18 @@
 @ceasedBusinesses = @{ sources.ceasedBusinesses }
 
 @ceaseSoleTraderBusinessURL = @{
-    if(isAgent) controllers.routes.CeaseIncomeSourceController.showAgent().url // all placeholder routes
-    else controllers.routes.CeaseIncomeSourceController.show().url
+    if(isAgent) controllers.incomeSources.cease.routes.CeaseIncomeSourceController.showAgent().url // all placeholder routes
+    else controllers.incomeSources.cease.routes.CeaseIncomeSourceController.show().url
 }
 
 @ceaseUkPropertyURL = @{
-    if(isAgent) controllers.routes.CeaseIncomeSourceController.showAgent().url
-    else controllers.routes.CeaseIncomeSourceController.show().url
+    if(isAgent) controllers.incomeSources.cease.routes.CeaseIncomeSourceController.showAgent().url
+    else controllers.incomeSources.cease.routes.CeaseIncomeSourceController.show().url
 }
 
 @ceaseForeignPropertyURL = @{
-    if(isAgent) controllers.routes.CeaseIncomeSourceController.showAgent().url
-    else controllers.routes.CeaseIncomeSourceController.show().url
+    if(isAgent) controllers.incomeSources.cease.routes.CeaseIncomeSourceController.showAgent().url
+    else controllers.incomeSources.cease.routes.CeaseIncomeSourceController.show().url
 }
 
 @mainTemplate(pageTitle = getMessage("heading"),

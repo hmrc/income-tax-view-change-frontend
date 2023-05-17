@@ -17,6 +17,7 @@
 package controllers
 
 import audit.AuditingService
+import audit.models.ForecastIncomeAuditModel
 import auth.MtdItUserWithNino
 import config.featureswitch.{FeatureSwitching, ForecastCalculation}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
@@ -64,19 +65,21 @@ class ForecastIncomeSummaryController @Inject()(val forecastIncomeSummaryView: F
     if (isAgent) itvcErrorHandlerAgent.showInternalServerError() else itvcErrorHandler.showInternalServerError()
   }
 
-  def handleRequest(mtditid: String, nino: String, taxYear: Int, btaNavPartial: Option[Html], isAgent: Boolean, origin: Option[String] = None)
-                   (implicit request: Request[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] = {
+  def handleRequest(taxYear: Int, isAgent: Boolean, origin: Option[String] = None)
+                   (implicit user: MtdItUserWithNino[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] = {
 
     if (isDisabled(ForecastCalculation)) {
       val errorTemplate = if (isAgent) itvcErrorHandlerAgent.notFoundTemplate else itvcErrorHandler.notFoundTemplate
       Future.successful(NotFound(errorTemplate))
     } else {
-      calculationService.getLiabilityCalculationDetail(mtditid, nino, taxYear).map {
+      calculationService.getLiabilityCalculationDetail(user.mtditid, user.nino, taxYear).map {
         case liabilityCalc: LiabilityCalculationResponse =>
           val viewModel = liabilityCalc.calculation.flatMap(calc => calc.endOfYearEstimate)
           viewModel match {
-            case Some(model) => Ok(forecastIncomeSummaryView(model, taxYear, backUrl(taxYear, origin, isAgent), isAgent,
-              btaNavPartial = btaNavPartial))
+            case Some(model) =>
+              auditingService.extendedAudit(ForecastIncomeAuditModel(user, model))
+              Ok(forecastIncomeSummaryView(model, taxYear, backUrl(taxYear, origin, isAgent), isAgent,
+                user.btaNavPartial))
             case _ =>
               onError(s"No income data could be retrieved. Not found", isAgent, taxYear)
           }
@@ -91,15 +94,14 @@ class ForecastIncomeSummaryController @Inject()(val forecastIncomeSummaryView: F
   def show(taxYear: Int, origin: Option[String] = None): Action[AnyContent] =
     action.async {
       implicit user =>
-        handleRequest(user.mtditid, user.nino, taxYear, user.btaNavPartial, isAgent = false, origin)
+        handleRequest(taxYear, isAgent = false, origin)
     }
 
-  def showAgent(taxYear: Int): Action[AnyContent] =
-    Authenticated.async {
-      implicit request =>
-        implicit user =>
-          handleRequest(getClientMtditid, getClientNino, taxYear, None, isAgent = true)
-    }
+  def showAgent(taxYear: Int): Action[AnyContent] = Authenticated.async {
+    implicit request =>
+      implicit agent =>
+        handleRequest(taxYear, isAgent = true)(getMtdItUserWithNino()(agent, request, implicitly), implicitly, implicitly)
+  }
 
   def backUrl(taxYear: Int, origin: Option[String], isAgent: Boolean): String =
     if (isAgent) controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear).url

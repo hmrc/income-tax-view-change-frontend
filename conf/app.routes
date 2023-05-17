@@ -150,17 +150,32 @@ GET          /how-to-claim-refund-external                                contro
 GET          /agents/how-to-claim-refund-external                         controllers.NotMigratedUserController.redirectAgent()
 
 # Income Sources
-GET          /income-sources/add/new-income-sources                                                     controllers.AddIncomeSourceController.show()
-GET          /agents/income-sources/add/new-income-sources                                              controllers.AddIncomeSourceController.showAgent()
-GET          /income-sources/cease/cease-an-income-source                                               controllers.CeaseIncomeSourceController.show()
-GET          /agents/income-sources/cease/cease-an-income-source                                        controllers.CeaseIncomeSourceController.showAgent()
+GET          /income-sources/manage/choose-income-sources                 controllers.incomeSources.manage.ManageIncomeSourceController.show()
+GET          /agents/income-sources/manage/choose-income-sources          controllers.incomeSources.manage.ManageIncomeSourceController.showAgent()
+
+GET          /income-sources/add/new-income-sources                       controllers.incomeSources.add.AddIncomeSourceController.show()
+GET          /agents/income-sources/add/new-income-sources                controllers.incomeSources.add.AddIncomeSourceController.showAgent()
+
+GET          /income-sources/cease/cease-an-income-source                 controllers.incomeSources.cease.CeaseIncomeSourceController.show()
+GET          /agents/income-sources/cease/cease-an-income-source          controllers.incomeSources.cease.CeaseIncomeSourceController.showAgent()
+
+GET          /income-sources/cease/uk-property-declare                    controllers.incomeSources.cease.CeaseUKPropertyController.show(origin: Option[String] ?= None)
+GET          /agents/income-sources/cease/uk-property-declare             controllers.incomeSources.cease.CeaseUKPropertyController.showAgent()
+POST         /income-sources/cease/uk-property-declare                    controllers.incomeSources.cease.CeaseUKPropertyController.submit
+POST         /agents/income-sources/cease/uk-property-declare             controllers.incomeSources.cease.CeaseUKPropertyController.submitAgent
+
+GET         /income-sources/cease/uk-property-end-date                    controllers.incomeSources.cease.DateUKPropertyCeasedController.show(origin: Option[String] ?= None)
+GET         /agents/income-sources/cease/uk-property-end-date             controllers.incomeSources.cease.DateUKPropertyCeasedController.showAgent()
+
+GET          /income-sources/add/business-name                            controllers.AddBusinessNameController.show()
+GET          /agents/income-sources/add/business-name                     controllers.AddBusinessNameController.showAgent()
+POST         /income-sources/add/business-name                            controllers.AddBusinessNameController.submit()
+POST         /agents/income-sources/add/business-name                     controllers.AddBusinessNameController.submitAgent()
 
 # Income Sources - TO BE IMPLEMENTED
-GET          /income-sources/manage/choose-income-sources                                               controllers.ManageIncomeSourceController.show()
-GET          /agents/income-sources/manage/choose-income-sources                                        controllers.ManageIncomeSourceController.showAgent()
-GET          /income-sources/add/business-name                                                          controllers.AddBusinessNameController.show()
-GET          /agents/income-sources/add/business-name                                                   controllers.AddBusinessNameController.showAgent()
 GET          /income-sources/add/uk-property-business-start-date                                        controllers.AddUkPropertyBusinessStartDate.show()
 GET          /agents/income-sources/add/uk-property-business-start-date                                 controllers.AddUkPropertyBusinessStartDate.showAgent()
 GET          /income-sources/add/foreign-property-business-start-date                                   controllers.AddForeignPropertyBusinessStartDate.show()
 GET          /agents/income-sources/add/foreign-property-business-start-date                            controllers.AddForeignPropertyBusinessStartDate.showAgent()
+GET          /income-sources/add/business-start-date                                                    controllers.AddBusinessStartDate.show()
+GET          /agents/income-sources/add/business-start-date                                             controllers.AddBusinessStartDate.showAgent()
