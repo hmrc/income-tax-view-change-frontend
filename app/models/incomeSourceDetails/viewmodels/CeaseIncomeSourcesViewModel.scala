@@ -18,15 +18,15 @@ package models.incomeSourceDetails.viewmodels
 
 import java.time.LocalDate
 
-case class CeaseIncomeSourcesViewModel(soleTraderBusinesses: List[BusinessDetailsViewModel],
-                                     ukProperty: Option[PropertyDetailsViewModel],
-                                     foreignProperty: Option[PropertyDetailsViewModel],
-                                     ceasedBusinesses: List[CeasedBusinessDetailsViewModel])
+case class CeaseIncomeSourcesViewModel(soleTraderBusinesses: List[CeaseBusinessDetailsViewModel],
+                                     ukProperty: Option[CeasePropertyDetailsViewModel],
+                                     foreignProperty: Option[CeasePropertyDetailsViewModel],
+                                     ceasedBusinesses: List[CeaseCeasedBusinessDetailsViewModel])
 
-case class BusinessDetailsViewModel(tradingName: String, tradingStartDate: LocalDate)
+case class CeaseBusinessDetailsViewModel(tradingName: String, tradingStartDate: LocalDate)
 
-case class PropertyDetailsViewModel(tradingStartDate: LocalDate)
+case class CeasePropertyDetailsViewModel(tradingStartDate: LocalDate)
 
-case class CeasedBusinessDetailsViewModel(tradingName: String,
+case class CeaseCeasedBusinessDetailsViewModel(tradingName: String,
                                           tradingStartDate: LocalDate,
                                           cessationDate: LocalDate)
