@@ -16,10 +16,71 @@
 
 package controllers.incomeSources.cease
 
+import config.featureswitch.FeatureSwitch.switches
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import config.featureswitch.FeatureSwitching
-import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
+import controllers.incomeSources.add.AddIncomeSourceController
+import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
+import implicits.ImplicitDateFormatter
+import mocks.auth.MockFrontendAuthorisedFunctions
+import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
+import mocks.services.MockIncomeSourceDetailsService
+import play.api.mvc.MessagesControllerComponents
 import testUtils.TestSupport
 
-class CeaseIncomeSourceControllerSpec extends TestSupport with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate with FeatureSwitching{
+class CeaseIncomeSourceControllerSpec extends MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate with ImplicitDateFormatter
+  with MockIncomeSourceDetailsService with MockNavBarEnumFsPredicate with MockFrontendAuthorisedFunctions with FeatureSwitching with TestSupport {
 
+  val controller = new CeaseIncomeSourceController(
+    app.injector.instanceOf[views.html.incomeSources.cease.CeaseIncomeSources],
+    app.injector.instanceOf[SessionTimeoutPredicate],
+    MockAuthenticationPredicate,
+    mockAuthService,
+    app.injector.instanceOf[NinoPredicate],
+    MockIncomeSourceDetailsPredicate,
+    app.injector.instanceOf[ItvcErrorHandler],
+    app.injector.instanceOf[AgentItvcErrorHandler],
+    mockIncomeSourceDetailsService,
+    app.injector.instanceOf[NavBarPredicate]
+  )(
+    ec,
+    app.injector.instanceOf[MessagesControllerComponents],
+    app.injector.instanceOf[FrontendAppConfig]
+  )
+
+  def disableAllSwitches(): Unit = {
+    switches.foreach(switch => disable(switch))
+  }
+
+  "The CeaseIncomeSourcesController" should {
+
+    "redirect an individual back to the home page" when {
+
+      "the IncomeSources FS is disabled" in {
+
+      }
+
+    }
+
+    "redirect an agent back to the home page" when {
+
+      "the IncomeSources FS is disabled" in {
+
+      }
+
+    }
+
+    "redirect an individual to the cease a sole trader page" when {
+      "user has a Sole Trader Businesses and a UK property" in {
+
+      }
+    }
+
+    "redirect an agent to the add income source page" when {
+      "agent has a Sole Trader Businesses and a UK property" in {
+
+      }
+    }
+
+  }
 }

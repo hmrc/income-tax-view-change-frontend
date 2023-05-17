@@ -26,25 +26,25 @@ import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.IncomeSourceDetailsService
+import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import views.html.incomeSources.cease.CeaseIncomeSources
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class CeaseIncomeSourceController @Inject()(val ceaseIncomeSources: CeaseIncomeSources,
+                                            val checkSessionTimeout: SessionTimeoutPredicate,
                                             val authenticate: AuthenticationPredicate,
-                                            val authorisedFunctions: FrontendAuthorisedFunctions,
+                                            val authorisedFunctions: AuthorisedFunctions,
                                             val retrieveNino: NinoPredicate,
-                                            val retrieveBtaNavBar: NavBarPredicate,
                                             val retrieveIncomeSources: IncomeSourceDetailsPredicate,
+                                            val itvcErrorHandler: ItvcErrorHandler,
+                                            implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                             val incomeSourceDetailsService: IncomeSourceDetailsService,
-                                            val checkSessionTimeout: SessionTimeoutPredicate)
-                                           (implicit val appConfig: FrontendAppConfig,
-                                            mcc: MessagesControllerComponents,
-                                            val ec: ExecutionContext,
-                                            val itvcErrorHandlerAgent: AgentItvcErrorHandler,
-                                            val itvcErrorHandler: ItvcErrorHandler
-                                           )
+                                            val retrieveBtaNavBar: NavBarPredicate)
+                                           (implicit val ec: ExecutionContext,
+                                            implicit override val mcc: MessagesControllerComponents,
+                                            val appConfig: FrontendAppConfig)
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
   def show(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
@@ -76,7 +76,7 @@ class CeaseIncomeSourceController @Inject()(val ceaseIncomeSources: CeaseIncomeS
       if (isDisabled(IncomeSources)) {
         Redirect(controllers.routes.HomeController.show())
       } else {
-        incomeSourceDetailsService.getAddIncomeSourceViewModel(sources) match {
+        incomeSourceDetailsService.getCeaseIncomeSourceViewModel(sources) match {
           case Right(viewModel) =>
             Ok(ceaseIncomeSources(
               viewModel,
@@ -86,11 +86,11 @@ class CeaseIncomeSourceController @Inject()(val ceaseIncomeSources: CeaseIncomeS
           case Left(ex) =>
             if (isAgent) {
               Logger("application").error(
-                s"[Agent][AddIncomeSourceController][handleRequest] - Error: ${ex.getMessage}")
+                s"[Agent][CeaseIncomeSourceController][handleRequest] - Error: ${ex.getMessage}")
               itvcErrorHandlerAgent.showInternalServerError()
             } else {
               Logger("application").error(
-                s"[AddIncomeSourceController][handleRequest] - Error: ${ex.getMessage}")
+                s"[CeaseIncomeSourceController][handleRequest] - Error: ${ex.getMessage}")
               itvcErrorHandler.showInternalServerError()
             }
         }
