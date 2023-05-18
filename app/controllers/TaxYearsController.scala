@@ -76,7 +76,7 @@ class TaxYearsController @Inject()(taxYearsView: TaxYears,
   def showAgentTaxYears: Action[AnyContent] = {
     Authenticated.async { implicit request =>
       implicit user =>
-        getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true) flatMap { implicit mtdItUser =>
+        getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap { implicit mtdItUser =>
           handleRequest(
             backUrl = controllers.routes.HomeController.showAgent.url,
             isAgent = true

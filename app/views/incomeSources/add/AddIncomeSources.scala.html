@@ -64,7 +64,6 @@
     else controllers.routes.AddForeignPropertyBusinessStartDate.show().url
 }
 
-
 @mainTemplate(pageTitle = getMessage("heading"),
     backUrl = Some(backUrl),
     btaNavPartial = user.btaNavPartial) {
@@ -78,25 +77,31 @@
     @h2(msg = getMessage("self-employment.h2"),
         optId = Some("self-employment-h2"))
 
-    @govukTable(Table(
-        head = Some(List(
-            HeadCell(
-                content = Text(getMessage("table-head.business-name")),
-                attributes = Map("id" -> "table-head-business-name")),
-            HeadCell(
-                content = Text(getMessage("table-head.date-started")),
-                attributes = Map("id" -> "table-head-date-started"))
-        )),
-        rows = soleTraderBusinesses.zipWithIndex.map { case (b, index) => Seq(
-            TableRow(
-                content = Text(b.tradingName),
-                attributes = Map("id" -> s"table-row-trading-name-$index")),
+    @if(soleTraderBusinesses.nonEmpty) {
 
-            TableRow(
-                content = Text(b.tradingStartDate.toLongDate),
-                attributes = Map("id" -> s"table-row-trading-start-date-$index"))
-        )}
-    ))
+        @govukTable(Table(
+            head = Some(List(
+                HeadCell(
+                    content = Text(getMessage("table-head.business-name")),
+                    attributes = Map("id" -> "table-head-business-name")),
+                HeadCell(
+                    content = Text(getMessage("table-head.date-started")),
+                    attributes = Map("id" -> "table-head-date-started"))
+            )),
+            rows = soleTraderBusinesses.zipWithIndex.map { case (business, index) => Seq(
+                TableRow(
+                    content = Text(business.tradingName),
+                    attributes = Map("id" -> s"table-row-trading-name-$index")),
+
+                TableRow(
+                    content = Text(business.tradingStartDate.toLongDate),
+                    attributes = Map("id" -> s"table-row-trading-start-date-$index"))
+            )},
+            attributes = Map("id" -> "sole-trader-businesses-table")
+        ))
+    } else {
+        @hr()
+    }
 
     @link(link = addBusinessNameURL,
         messageKey = getMessage("self-employment.link"),
@@ -107,10 +112,11 @@
     @h2(msg = getMessage("uk-property.h2"),
         optId = Some("uk-property-h2"))
 
-    @p(id = Some("uk-property-h2")) {
-        @getMessage("uk-property.p1") }
-
     @if(ukProperty.nonEmpty) {
+
+        @p(id = Some("uk-property-p1")) {
+            @getMessage("uk-property.p1") }
+
         @govukTable(Table(
             head = Some(List(
                 HeadCell(
@@ -122,7 +128,8 @@
                     content = Text(ukProperty.map(_.tradingStartDate.toLongDate).get),
                     attributes = Map("id" -> "table-row-trading-start-date-uk")
                 )
-            ))
+            )),
+            attributes = Map("id" -> "uk-property-table")
         ))
     } else {
         @hr()
@@ -137,10 +144,11 @@
     @h2(msg = getMessage("foreign-property.h2"),
         optId = Some("foreign-property-h2"))
 
-    @p(id = Some("foreign-property-h2")) {
-        @getMessage("foreign-property.p1") }
-
     @if(foreignProperty.nonEmpty) {
+
+        @p(id = Some("foreign-property-p1")) {
+            @getMessage("foreign-property.p1") }
+
         @govukTable(Table(
             head = Some(List(
                 HeadCell(
@@ -151,7 +159,8 @@
                 TableRow(
                     content = Text(foreignProperty.map(_.tradingStartDate.toLongDate).get),
                     attributes = Map("id" -> "table-row-trading-start-date-foreign"))
-            ))
+            )),
+            attributes = Map("id" -> "foreign-property-table")
         ))
     } else {
         @hr()
@@ -179,17 +188,18 @@
                     content = Text(getMessage("table-head.date-ended")),
                     attributes = Map("id" -> "table-head-date-ended-ceased"))
             )),
-            rows = ceasedBusinesses.zipWithIndex.map { case (b, index) => Seq(
+            rows = ceasedBusinesses.zipWithIndex.map { case (business, index) => Seq(
                 TableRow(
-                    content = Text(b.tradingName),
+                    content = Text(business.tradingName),
                     attributes = Map("id" -> s"table-row-trading-name-ceased-$index")),
                 TableRow(
-                    content = Text(b.tradingStartDate.toLongDate),
+                    content = Text(business.tradingStartDate.toLongDate),
                     attributes = Map("id" -> s"table-row-trading-start-date-ceased-$index")),
                 TableRow(
-                    content = Text(b.cessationDate.toLongDate),
+                    content = Text(business.cessationDate.toLongDate),
                     attributes = Map("id" -> s"table-row-cessation-date-$index")),
-            )}
+            )},
+            attributes = Map("id" -> "ceased-businesses-table")
         ))
     }
 }

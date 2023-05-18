@@ -82,7 +82,7 @@ class NotMigratedUserController @Inject()(val notMigrated: NotMigratedUser,
   def showAgent(): Action[AnyContent] = Authenticated.async {
     implicit request =>
       implicit agent =>
-        getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true).flatMap {
+        getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
           implicit user =>
             handleShowRequest(errorHandler = itvcErrorHandlerAgent,
               isAgent = true,
