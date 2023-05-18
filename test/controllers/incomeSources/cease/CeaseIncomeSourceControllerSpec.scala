@@ -18,15 +18,25 @@ package controllers.incomeSources.cease
 
 import config.featureswitch.FeatureSwitch.switches
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import config.featureswitch.FeatureSwitching
-import controllers.incomeSources.add.AddIncomeSourceController
+import config.featureswitch.{FeatureSwitching, IncomeSources}
 import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
+import exceptions.MissingFieldException
 import implicits.ImplicitDateFormatter
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
 import mocks.services.MockIncomeSourceDetailsService
-import play.api.mvc.MessagesControllerComponents
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
+import play.api.mvc.{MessagesControllerComponents, Result}
+import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
+import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testIndividualAuthSuccessWithSaUtrResponse}
 import testUtils.TestSupport
+import play.api.http.Status
+import models.incomeSourceDetails.viewmodels.CeaseIncomeSourcesViewModel
+import testConstants.BusinessDetailsTestConstants.{ceaseBusinessDetailsViewModel, ceaseBusinessDetailsViewModel2}
+import testConstants.PropertyDetailsTestConstants.{ceaseForeignPropertyDetailsViewModel, ceaseUkPropertyDetailsViewModel}
+
+import scala.concurrent.Future
 
 class CeaseIncomeSourceControllerSpec extends MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate with ImplicitDateFormatter
   with MockIncomeSourceDetailsService with MockNavBarEnumFsPredicate with MockFrontendAuthorisedFunctions with FeatureSwitching with TestSupport {
@@ -53,34 +63,83 @@ class CeaseIncomeSourceControllerSpec extends MockAuthenticationPredicate with M
   }
 
   "The CeaseIncomeSourcesController" should {
-
     "redirect an individual back to the home page" when {
-
       "the IncomeSources FS is disabled" in {
+        disableAllSwitches()
+        isDisabled(IncomeSources)
+        mockSingleBISWithCurrentYearAsMigrationYear()
+        setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
 
+        val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
+        status(result) shouldBe Status.SEE_OTHER
+        redirectLocation(result) shouldBe Some(controllers.routes.HomeController.show().url)
       }
-
     }
 
     "redirect an agent back to the home page" when {
-
       "the IncomeSources FS is disabled" in {
+        disableAllSwitches()
+        isDisabled(IncomeSources)
+        mockSingleBISWithCurrentYearAsMigrationYear()
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
-      }
-
-    }
-
-    "redirect an individual to the cease a sole trader page" when {
-      "user has a Sole Trader Businesses and a UK property" in {
-
-      }
-    }
-
-    "redirect an agent to the add income source page" when {
-      "agent has a Sole Trader Businesses and a UK property" in {
+        val result: Future[Result] = controller.showAgent()(fakeRequestConfirmedClient())
+        status(result) shouldBe Status.SEE_OTHER
 
       }
     }
 
+    "redirect an individual to the cease an income source page" when {
+      "user has a sole trader businesses, UK property" in {
+        disableAllSwitches()
+        enable(IncomeSources)
+        mockBothIncomeSources()
+        setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
+
+        when(mockIncomeSourceDetailsService.getCeaseIncomeSourceViewModel(any()))
+          .thenReturn(Right(CeaseIncomeSourcesViewModel(
+            soleTraderBusinesses = List(ceaseBusinessDetailsViewModel, ceaseBusinessDetailsViewModel2),
+            ukProperty = Some(ceaseUkPropertyDetailsViewModel),
+            foreignProperty = None,
+            ceasedBusinesses = Nil)))
+
+        val result = controller.show()(fakeRequestWithActiveSession)
+        status(result) shouldBe Status.OK
+      }
+    }
+
+    "redirect an agent to the cease an income source page" when {
+      "agent's client has a sole trader businesses, UK property" in {
+        disableAllSwitches()
+        enable(IncomeSources)
+        mockBothIncomeSources()
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+
+        when(mockIncomeSourceDetailsService.getCeaseIncomeSourceViewModel(any()))
+          .thenReturn(Right(CeaseIncomeSourcesViewModel(
+            soleTraderBusinesses = List(ceaseBusinessDetailsViewModel, ceaseBusinessDetailsViewModel2),
+            ukProperty = Some(ceaseUkPropertyDetailsViewModel),
+            foreignProperty = Some(ceaseForeignPropertyDetailsViewModel),
+            ceasedBusinesses = Nil)))
+
+        val result = controller.showAgent()(fakeRequestConfirmedClient("AB123456C"))
+        status(result) shouldBe Status.OK
+      }
+    }
+
+    "show error page" when {
+      "error response from service" in {
+        disableAllSwitches()
+        enable(IncomeSources)
+        mockBothIncomeSources()
+        setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
+
+        when(mockIncomeSourceDetailsService.getCeaseIncomeSourceViewModel(any()))
+          .thenReturn(Left(MissingFieldException("Trading Name")))
+
+        val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
+        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+      }
+    }
   }
 }

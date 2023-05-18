@@ -22,6 +22,7 @@ import config.featureswitch.{FeatureSwitching, IncomeSources}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
 import models.incomeSourceDetails.IncomeSourceDetailsModel
+import models.incomeSourceDetails.viewmodels.{CeaseBusinessDetailsViewModel, CeaseCeasedBusinessDetailsViewModel, CeaseIncomeSourcesViewModel, CeasePropertyDetailsViewModel}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
@@ -29,6 +30,7 @@ import services.IncomeSourceDetailsService
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import views.html.incomeSources.cease.CeaseIncomeSources
 
+import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -79,7 +81,7 @@ class CeaseIncomeSourceController @Inject()(val ceaseIncomeSources: CeaseIncomeS
         incomeSourceDetailsService.getCeaseIncomeSourceViewModel(sources) match {
           case Right(viewModel) =>
             Ok(ceaseIncomeSources(
-              viewModel,
+              sourcesTest,
               isAgent = isAgent,
               backUrl = backUrl
             ))
@@ -97,4 +99,19 @@ class CeaseIncomeSourceController @Inject()(val ceaseIncomeSources: CeaseIncomeS
       }
     )
   }
+
+  val soleTrader: CeaseBusinessDetailsViewModel = CeaseBusinessDetailsViewModel(tradingName = "TESLA", tradingStartDate = LocalDate.of(2020, 1, 5))
+
+  val soleTrader2: CeaseBusinessDetailsViewModel = CeaseBusinessDetailsViewModel(tradingName = "TESLA2", tradingStartDate = LocalDate.of(2020, 1, 5))
+
+  val ukProperty: CeasePropertyDetailsViewModel = CeasePropertyDetailsViewModel(tradingStartDate = LocalDate.of(2020, 1, 5))
+
+  val foreignProperty: CeasePropertyDetailsViewModel = CeasePropertyDetailsViewModel(tradingStartDate = LocalDate.of(2099, 1, 5))
+
+  val ceasedBusiness: CeaseCeasedBusinessDetailsViewModel = CeaseCeasedBusinessDetailsViewModel(tradingName = "Phoenix", tradingStartDate = LocalDate.of(2019, 1, 5), cessationDate = LocalDate.of(2021, 1, 5))
+
+  val ceasedBusiness2: CeaseCeasedBusinessDetailsViewModel = CeaseCeasedBusinessDetailsViewModel(tradingName = "Phoenix2", tradingStartDate = LocalDate.of(2019, 1, 5), cessationDate = LocalDate.of(2021, 1, 5))
+
+  val sourcesTest: CeaseIncomeSourcesViewModel = CeaseIncomeSourcesViewModel(soleTraderBusinesses = List(soleTrader, soleTrader2), ukProperty = Some(ukProperty), foreignProperty = Some(foreignProperty), ceasedBusinesses = List(ceasedBusiness, ceasedBusiness2))
+
 }

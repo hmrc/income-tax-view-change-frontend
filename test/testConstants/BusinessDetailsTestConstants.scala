@@ -21,7 +21,7 @@ import testConstants.BaseTestConstants._
 import testConstants.NextUpdatesTestConstants.{fakeNextUpdatesModel, openObligation, overdueObligation}
 import models.core._
 import models.incomeSourceDetails.BusinessDetailsModel
-import models.incomeSourceDetails.viewmodels.BusinessDetailsViewModel
+import models.incomeSourceDetails.viewmodels.{BusinessDetailsViewModel, CeaseBusinessDetailsViewModel}
 import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, ObligationsModel}
 
 object BusinessDetailsTestConstants {
@@ -98,6 +98,16 @@ object BusinessDetailsTestConstants {
   )
 
   val businessDetailsViewModel2 = BusinessDetailsViewModel(
+    tradingName = testTradeName2,
+    tradingStartDate = testStartDate2
+  )
+
+  val ceaseBusinessDetailsViewModel = CeaseBusinessDetailsViewModel(
+    tradingName = testTradeName,
+    tradingStartDate = testStartDate
+  )
+
+  val ceaseBusinessDetailsViewModel2 = CeaseBusinessDetailsViewModel(
     tradingName = testTradeName2,
     tradingStartDate = testStartDate2
   )
