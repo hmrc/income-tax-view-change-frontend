@@ -81,7 +81,7 @@ class CeaseIncomeSourceController @Inject()(val ceaseIncomeSources: CeaseIncomeS
         incomeSourceDetailsService.getCeaseIncomeSourceViewModel(sources) match {
           case Right(viewModel) =>
             Ok(ceaseIncomeSources(
-              sourcesTest,
+              viewModel,
               isAgent = isAgent,
               backUrl = backUrl
             ))
@@ -99,19 +99,4 @@ class CeaseIncomeSourceController @Inject()(val ceaseIncomeSources: CeaseIncomeS
       }
     )
   }
-
-  val soleTrader: CeaseBusinessDetailsViewModel = CeaseBusinessDetailsViewModel(tradingName = "TESLA", tradingStartDate = LocalDate.of(2020, 1, 5))
-
-  val soleTrader2: CeaseBusinessDetailsViewModel = CeaseBusinessDetailsViewModel(tradingName = "TESLA2", tradingStartDate = LocalDate.of(2020, 1, 5))
-
-  val ukProperty: CeasePropertyDetailsViewModel = CeasePropertyDetailsViewModel(tradingStartDate = LocalDate.of(2020, 1, 5))
-
-  val foreignProperty: CeasePropertyDetailsViewModel = CeasePropertyDetailsViewModel(tradingStartDate = LocalDate.of(2099, 1, 5))
-
-  val ceasedBusiness: CeaseCeasedBusinessDetailsViewModel = CeaseCeasedBusinessDetailsViewModel(tradingName = "Phoenix", tradingStartDate = LocalDate.of(2019, 1, 5), cessationDate = LocalDate.of(2021, 1, 5))
-
-  val ceasedBusiness2: CeaseCeasedBusinessDetailsViewModel = CeaseCeasedBusinessDetailsViewModel(tradingName = "Phoenix2", tradingStartDate = LocalDate.of(2019, 1, 5), cessationDate = LocalDate.of(2021, 1, 5))
-
-  val sourcesTest: CeaseIncomeSourcesViewModel = CeaseIncomeSourcesViewModel(soleTraderBusinesses = List(soleTrader, soleTrader2), ukProperty = Some(ukProperty), foreignProperty = Some(foreignProperty), ceasedBusinesses = List(ceasedBusiness, ceasedBusiness2))
-
 }
