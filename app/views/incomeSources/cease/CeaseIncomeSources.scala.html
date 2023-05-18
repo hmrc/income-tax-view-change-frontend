@@ -68,7 +68,7 @@
     btaNavPartial = user.btaNavPartial) {
 
     @h1(msg = getMessage("heading"),
-        id = Some("???"))
+        id = Some("heading"))
 
     @if(soleTraderBusinesses.nonEmpty) {
 
@@ -84,7 +84,8 @@
                     content = Text(getMessage("table-head.date-started")),
                     attributes = Map("id" -> "table-head-date-started")),
                 HeadCell(
-                    content = Empty)
+                    content = Empty,
+                    attributes = Map("id" -> "empty1"))
             )),
             rows = soleTraderBusinesses.zipWithIndex.map { case (b, index) => Seq(
                 TableRow(
@@ -122,7 +123,8 @@
                     content = Text(getMessage("table-head.date-started")),
                     attributes = Map("id" -> "table-head-date-started-uk")),
                 HeadCell(
-                    content = Empty)
+                    content = Empty,
+                    attributes = Map("id" -> "empty2"))
             )),
 
             rows = Seq(Seq(
@@ -156,7 +158,8 @@
                     content = Text(getMessage("table-head.date-started")),
                     attributes = Map("id" -> "table-head-date-started-foreign")),
                 HeadCell(
-                    content = Empty)
+                    content = Empty,
+                    attributes = Map("id" -> "empty3"))
             )),
             rows = Seq(Seq(
                 TableRow(
