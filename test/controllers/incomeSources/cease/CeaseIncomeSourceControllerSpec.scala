@@ -90,7 +90,7 @@ class CeaseIncomeSourceControllerSpec extends MockAuthenticationPredicate with M
     }
 
     "redirect an individual to the cease an income source page" when {
-      "user has a sole trader businesses, UK property" in {
+      "user has a sole trader business and a UK property" in {
         disableAllSwitches()
         enable(IncomeSources)
         mockBothIncomeSources()
@@ -109,7 +109,7 @@ class CeaseIncomeSourceControllerSpec extends MockAuthenticationPredicate with M
     }
 
     "redirect an agent to the cease an income source page" when {
-      "agent's client has a sole trader businesses, UK property" in {
+      "agent's client has a sole trader business and a UK property" in {
         disableAllSwitches()
         enable(IncomeSources)
         mockBothIncomeSources()
