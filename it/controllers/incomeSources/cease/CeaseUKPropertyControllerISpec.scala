@@ -33,7 +33,7 @@ class CeaseUKPropertyControllerISpec extends ComponentSpecBase {
 
   s"calling GET ${showCeaseUKPropertyControllerUrl}" should {
     "render the Cease UK Property Page" when {
-      "Agent is authorised" in {
+      "User is authorised" in {
         Given("I wiremock stub a successful Income Source Details response with multiple business and property")
         enable(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)

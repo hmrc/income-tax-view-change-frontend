@@ -25,18 +25,19 @@ import forms.incomeSources.cease.DateUKPropertyCeasedForm
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents, Result}
-import services.IncomeSourceDetailsService
+import services.{DateService, IncomeSourceDetailsService}
 import uk.gov.hmrc.http.HeaderCarrier
 import views.html.errorPages.CustomNotFoundError
 import views.html.incomeSources.cease.DateUKPropertyCeased
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
+@Singleton
 class DateUKPropertyCeasedController @Inject()(val authenticate: AuthenticationPredicate,
                                                val authorisedFunctions: FrontendAuthorisedFunctions,
                                                val checkSessionTimeout: SessionTimeoutPredicate,
-                                               val formProvider: DateUKPropertyCeasedForm,
+                                               val dateUKPropertyCeasedForm: DateUKPropertyCeasedForm,
                                                val incomeSourceDetailsService: IncomeSourceDetailsService,
                                                val retrieveBtaNavBar: NavBarPredicate,
                                                val retrieveIncomeSources: IncomeSourceDetailsPredicate,
@@ -62,7 +63,7 @@ class DateUKPropertyCeasedController @Inject()(val authenticate: AuthenticationP
 
     if (incomeSourcesEnabled) {
       Future.successful(Ok(view(
-        dateUKPropertyCeasedForm = formProvider.apply,
+        dateUKPropertyCeasedForm = dateUKPropertyCeasedForm.apply,
         postAction = postAction,
         isAgent = isAgent,
         backUrl = backUrl,
@@ -100,17 +101,16 @@ class DateUKPropertyCeasedController @Inject()(val authenticate: AuthenticationP
 
   def submit: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
-    implicit request =>
-      formProvider.apply.bindFromRequest().fold(
+    implicit user =>
+      dateUKPropertyCeasedForm.apply.bindFromRequest().fold(
         hasErrors => Future.successful(BadRequest(view(
           dateUKPropertyCeasedForm = hasErrors,
           postAction = controllers.incomeSources.cease.routes.DateUKPropertyCeasedController.submit(),
           backUrl = controllers.incomeSources.cease.routes.CeaseUKPropertyController.show().url,
           isAgent = false
-        )).addingToSession("ceaseUKPropertyDeclare" -> "false")),
+        ))),
         _ =>
-          Future.successful(Redirect(controllers.incomeSources.cease.routes.DateUKPropertyCeasedController.show())
-            .addingToSession("ceaseUKPropertyDeclare" -> "true"))
+          Future.successful(Redirect(controllers.incomeSources.cease.routes.CheckCeaseUKPropertyDetailsController.show()))
       )
   }
 
@@ -119,16 +119,15 @@ class DateUKPropertyCeasedController @Inject()(val authenticate: AuthenticationP
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = false).flatMap {
           implicit mtdItUser =>
-            formProvider.apply.bindFromRequest().fold(
+            dateUKPropertyCeasedForm.apply.bindFromRequest().fold(
               hasErrors => Future.successful(BadRequest(view(
                 dateUKPropertyCeasedForm = hasErrors,
                 postAction = controllers.incomeSources.cease.routes.DateUKPropertyCeasedController.submitAgent(),
                 backUrl = controllers.incomeSources.cease.routes.CeaseUKPropertyController.showAgent().url,
                 isAgent = true
-              )).addingToSession("ceaseUKPropertyDeclare" -> "false")),
+              ))),
               _ =>
-                Future.successful(Redirect(controllers.incomeSources.cease.routes.DateUKPropertyCeasedController.showAgent())
-                  .addingToSession("ceaseUKPropertyDeclare" -> "true"))
+                Future.successful(Redirect(controllers.incomeSources.cease.routes.CheckCeaseUKPropertyDetailsController.showAgent()))
             )
         }
   }

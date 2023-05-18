@@ -16,11 +16,14 @@
 
 package helpers.agent
 
+import auth.MtdItUser
 import com.github.tomakehurst.wiremock.client.WireMock
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
 import forms.CeaseUKPropertyForm
 import forms.agent.ClientsUTRForm
+import forms.incomeSources.cease.DateUKPropertyCeasedForm
+import forms.models.DateFormElement
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import helpers.{CustomMatchers, GenericStubMethods, WiremockHelper}
 import org.scalatest._
@@ -34,10 +37,13 @@ import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.crypto.DefaultCookieSigner
 import play.api.libs.ws.WSResponse
+import play.api.test.FakeRequest
 import play.api.{Application, Environment, Mode}
 import services.{DateService, DateServiceInterface}
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
 import testConstants.IncomeSourceIntegrationTestConstants._
+import uk.gov.hmrc.auth.core.AffinityGroup
+import uk.gov.hmrc.auth.core.retrieve.Name
 
 import java.time.LocalDate
 import javax.inject.Singleton
@@ -251,6 +257,8 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
         )
       )
 
+    def getDateUKPropertyCeased(additionalCookies: Map[String, String] = Map.empty): WSResponse =
+      getWithClientDetailsInSession("/agents/income-sources/cease/uk-property-end-date", additionalCookies)
   }
 
   def unauthorisedTest(uri: String): Unit = {

@@ -164,17 +164,14 @@ GET          /agents/income-sources/cease/uk-property-declare             contro
 POST         /income-sources/cease/uk-property-declare                    controllers.incomeSources.cease.CeaseUKPropertyController.submit
 POST         /agents/income-sources/cease/uk-property-declare             controllers.incomeSources.cease.CeaseUKPropertyController.submitAgent
 
-GET         /income-sources/cease/uk-property-end-date                    controllers.incomeSources.cease.DateUKPropertyCeasedController.show(origin: Option[String] ?= None)
-GET         /agents/income-sources/cease/uk-property-end-date             controllers.incomeSources.cease.DateUKPropertyCeasedController.showAgent()
-
-
-
-
 
 GET         /income-sources/cease/uk-property-end-date                    controllers.incomeSources.cease.DateUKPropertyCeasedController.show(origin: Option[String] ?= None)
 GET         /agents/income-sources/cease/uk-property-end-date             controllers.incomeSources.cease.DateUKPropertyCeasedController.showAgent()
 POST        /income-sources/cease/uk-property-end-date                    controllers.incomeSources.cease.DateUKPropertyCeasedController.submit()
 POST        /agents/income-sources/cease/uk-property-end-date             controllers.incomeSources.cease.DateUKPropertyCeasedController.submitAgent()
+
+GET         /income-sources/cease/uk-property-check-details               controllers.incomeSources.cease.CheckCeaseUKPropertyDetailsController.show(origin: Option[String] ?= None)
+GET         /agents/income-sources/cease/uk-property-check-details        controllers.incomeSources.cease.CheckCeaseUKPropertyDetailsController.showAgent()
 
 
 # Income Sources - TO BE IMPLEMENTED

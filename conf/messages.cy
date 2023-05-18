@@ -12,9 +12,6 @@ base.error-prefix                                               = Gwall:
 base.backToHome                                                 = Yn ôl i hafan Treth Incwm
 base.continue                                                   = Yn eich blaen
 base.govUk                                                      = GOV.UK
-base.day                                                        = Diwrnod
-base.month                                                      = Mis
-base.year                                                       = Blwyddyn
 
 # Fallback Back Links
 back.whatYouOwe = Yn ôl i Yr hyn sydd arnoch
@@ -1176,7 +1173,7 @@ incomeSources.ceaseUKProperty.radioLabel                            = Rwy’n da
 incomeSources.ceaseUKProperty.radioError                            = Mae’n rhaid i chi ddatgan nad ydych chi bellach yn cael incwm o unrhyw eiddo yn y DU
 incomeSources.cease.dateUKPropertyCeased.heading                    = Y dyddiad pan wnaeth eich busnes eiddo yn y DU stopio
 incomeSources.cease.dateUKPropertyCeased.hint                       = Er enghraifft, 27 3 2020
-incomeSources.cease.dateUKPropertyCeased.dateMustBeEntered          = Mae’n rhaid i’r dyddiad gynnwys diwrnod, mis a blwyddyn
-incomeSources.cease.dateUKPropertyCeased.dateMustBeReal             = Mae’n rhaid i’r dyddiad y daeth eich busnes eiddo yn y DU i ben fod yn ddyddiad go iawn
-incomeSources.cease.dateUKPropertyCeased.dateMustNotBeInTheFuture   = Ni allwch nodi dyddiad dod i ben sydd y tu hwnt i’r diwrnod presennol na dyddiad yn y dyfodol
-incomeSources.cease.dateUKPropertyCeased.dateMustBeAfterStartDate   = Ni all y dyddiad dod i ben ar gyfer y busnes fod cyn y dyddiad dechrau
+incomeSources.cease.dateUKPropertyCeased.error.incomplete           = Mae’n rhaid i’r dyddiad gynnwys diwrnod, mis a blwyddyn
+incomeSources.cease.dateUKPropertyCeased.error.invalid              = Mae’n rhaid i’r dyddiad y daeth eich busnes eiddo yn y DU i ben fod yn ddyddiad go iawn
+incomeSources.cease.dateUKPropertyCeased.error.future               = Ni allwch nodi dyddiad dod i ben sydd y tu hwnt i’r diwrnod presennol na dyddiad yn y dyfodol
+incomeSources.cease.dateUKPropertyCeased.error.beforeStartDate      = Ni all y dyddiad dod i ben ar gyfer y busnes fod cyn y dyddiad dechrau

@@ -17,27 +17,29 @@
 package forms.incomeSources.cease
 
 import auth.MtdItUser
-import controllers.predicates.IncomeSourceDetailsPredicate
 import forms.models.DateFormElement
 import forms.validation.Constraints
 import play.api.data.Form
 import play.api.data.Forms._
-import services.{DateService, IncomeSourceDetailsService}
+import services.DateService
 
 import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
 
+
 @Singleton
-class DateUKPropertyCeasedForm @Inject()(val dateService: DateService,
-                                         val incomeSourceDetailsService: IncomeSourceDetailsService,
-                                         val retrieveIncomeSources: IncomeSourceDetailsPredicate) extends Constraints {
-  val dateMustBeEntered = "incomeSources.cease.dateUKPropertyCeased.dateMustBeEntered"
-  val dateMustBeReal = "incomeSources.cease.dateUKPropertyCeased.dateMustBeReal"
-  val dateMustNotBeInTheFuture = "incomeSources.cease.dateUKPropertyCeased.dateMustNotBeInTheFuture"
-  val dateMustBeAfterStartDate = "incomeSources.cease.dateUKPropertyCeased.dateMustBeAfterStartDate"
+class DateUKPropertyCeasedForm @Inject()(val dateService: DateService) extends Constraints {
+
+  val dateMustBeEntered = "incomeSources.cease.dateUKPropertyCeased.error.incomplete"
+  val dateMustBeReal = "incomeSources.cease.dateUKPropertyCeased.error.invalid"
+  val dateMustNotBeInTheFuture = "incomeSources.cease.dateUKPropertyCeased.error.future"
+  val dateMustBeAfterStartDate = "incomeSources.cease.dateUKPropertyCeased.error.beforeStartDate"
+
 
   def apply(implicit user: MtdItUser[_]): Form[DateFormElement] = {
-    val propertyBusinessStartDate: Option[LocalDate] = user.incomeSources.properties.filter(_.isUkProperty).map(_.tradingStartDate).head
+    val currentDate: LocalDate = dateService.getCurrentDate()
+    val UKPropertyStartDate: Option[LocalDate] = user.incomeSources.properties.filter(_.isUkProperty).flatMap(_.tradingStartDate).headOption
+
     Form(
       mapping("date-uk-property-stopped" -> tuple(
         "day" -> default(text(), ""),
@@ -48,8 +50,14 @@ class DateUKPropertyCeasedForm @Inject()(val dateService: DateService,
         ).transform[LocalDate](
         { case (day, month, year) => LocalDate.of(year.toInt, month.toInt, day.toInt) },
         date => (date.getDayOfMonth.toString, date.getMonthValue.toString, date.getYear.toString)
-      ).verifying(minDate(propertyBusinessStartDate.getOrElse(LocalDate.MIN), dateMustBeAfterStartDate))
-        .verifying(maxDate(dateService.getCurrentDate(), dateMustNotBeInTheFuture))
+      ).verifying(minDate(UKPropertyStartDate.getOrElse(LocalDate.MIN), dateMustBeAfterStartDate))
+        .verifying(maxDate(currentDate, dateMustNotBeInTheFuture))
       )(DateFormElement.apply)(DateFormElement.unapply))
+  }
+
+  object DateUKPropertyCeasedForm {
+    def apply(dateService: DateService)(implicit user: MtdItUser[_]): Form[DateFormElement] = {
+      new DateUKPropertyCeasedForm(dateService).apply
+    }
   }
 }

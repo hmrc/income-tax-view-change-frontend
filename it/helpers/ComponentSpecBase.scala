@@ -21,6 +21,7 @@ import com.github.tomakehurst.wiremock.client.WireMock
 import config.FrontendAppConfig
 import config.featureswitch.{FeatureSwitch, FeatureSwitching}
 import forms.CeaseUKPropertyForm
+import forms.incomeSources.cease.DateUKPropertyCeasedForm
 import helpers.agent.SessionCookieBaker
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import implicits.ImplicitDateFormatterImpl
@@ -36,6 +37,7 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.crypto.DefaultCookieSigner
 import play.api.libs.ws.WSResponse
 import play.api.{Application, Environment, Mode}
+import play.libs.F.Tuple
 import services.{DateService, DateServiceInterface}
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
 import testConstants.IncomeSourceIntegrationTestConstants._
@@ -256,6 +258,8 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
         declaration => CeaseUKPropertyForm.form.fill(CeaseUKPropertyForm(Some(declaration), "csrfToken")).data.map { case (k, v) => (k, Seq(v)) }
       )
     )
+
+    def getDateUKPropertyCeased: WSResponse = get("/income-sources/cease/uk-property-end-date")
   }
 
   def unauthorisedTest(uri: String): Unit = {
