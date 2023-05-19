@@ -54,7 +54,7 @@ class CheckCeaseUKPropertyDetailsController @Inject()(val authenticate: Authenti
   def showAgent(): Action[AnyContent] = Authenticated.async {
     implicit request =>
       implicit user =>
-        getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = false).flatMap {
+        getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
           implicit mtdItUser =>
             Future.successful(NotImplemented)
         }

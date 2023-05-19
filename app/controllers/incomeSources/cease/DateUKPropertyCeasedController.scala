@@ -91,7 +91,7 @@ class DateUKPropertyCeasedController @Inject()(val authenticate: AuthenticationP
   def showAgent(): Action[AnyContent] = Authenticated.async {
     implicit request =>
       implicit user =>
-        getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = false).flatMap {
+        getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
           implicit mtdItUser =>
             handleRequest(
               isAgent = true
@@ -117,7 +117,7 @@ class DateUKPropertyCeasedController @Inject()(val authenticate: AuthenticationP
   def submitAgent: Action[AnyContent] = Authenticated.async {
     implicit request =>
       implicit user =>
-        getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = false).flatMap {
+        getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
           implicit mtdItUser =>
             dateUKPropertyCeasedForm.apply.bindFromRequest().fold(
               hasErrors => Future.successful(BadRequest(view(
