@@ -64,7 +64,7 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
     Authenticated.async {
       implicit request =>
         implicit user =>
-          getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true) flatMap {
+          getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
             implicit mtdItUser =>
               handleRequest(
                 isAgent = true,
@@ -110,7 +110,7 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
   def submitAgent: Action[AnyContent] = Authenticated.async {
     implicit request =>
       implicit user =>
-        getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true) flatMap {
+        getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
           implicit mtdItUser =>
             BusinessNameForm.form.bindFromRequest().fold(
               formWithErrors => {

@@ -115,7 +115,7 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
     Authenticated.async {
       implicit request =>
         implicit user =>
-          getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true) flatMap {
+          getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
             implicit mtdItUser =>
               handleRequest(taxYear, id, isLatePaymentCharge, isAgent = true)
           }

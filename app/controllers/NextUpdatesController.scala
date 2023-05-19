@@ -75,7 +75,7 @@ class NextUpdatesController @Inject()(NoNextUpdatesView: NoNextUpdates,
 
   val getNextUpdatesAgent: Action[AnyContent] = Authenticated.async { implicit request =>
     implicit user =>
-      getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = false).flatMap {
+      getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
         mtdItUser =>
           nextUpdatesService.getNextUpdates()(implicitly, mtdItUser).map {
             case nextUpdates: ObligationsModel if nextUpdates.obligations.nonEmpty =>

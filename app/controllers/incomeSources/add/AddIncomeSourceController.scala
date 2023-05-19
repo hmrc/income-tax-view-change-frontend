@@ -59,7 +59,7 @@ class AddIncomeSourceController @Inject()(val addIncomeSources: AddIncomeSources
   def showAgent(): Action[AnyContent] = Authenticated.async {
     implicit request =>
       implicit user =>
-        getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true) flatMap {
+        getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
           implicit mtdItUser =>
             handleRequest(
               sources = mtdItUser.incomeSources,
