@@ -88,7 +88,7 @@ class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate
           }
         },
         formData => {
-          if (formData.trade == request.session.get("addBusinessName").get){
+          if (formData.trade == request.session.get("businessName").get){
             Future {
               Ok(addBusinessTradeView(BusinessTradeForm.form, routes.AddBusinessTradeController.submit(), false, backURL, agentBackURL, true))
             }
