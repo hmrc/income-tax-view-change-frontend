@@ -123,20 +123,18 @@ class AddBusinessTradeControllerSpec extends TestSupport
 
     ".submit trade" when {
       "redirect to the add business address page" when {
-        /*"the individual is authenticated and the business trade entered is valid" in {
+        "the individual is authenticated and the business trade entered is valid" in {
 
           disableAllSwitches()
           enable(IncomeSources)
 
-          val validBusinessName: String = "Test Name"
           val validBusinessTrade: String = "Test Trade"
           setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
           setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
 
           val result: Future[Result] = {
-            TestAddBusinessTradeController.submit()(fakeRequestWithActiveSession.withFormUrlEncodedBody(
-              SessionKeys.businessName -> validBusinessName,
+            TestAddBusinessTradeController.submit()(fakeRequestWithActiveSessionWithBusinessName.withFormUrlEncodedBody(
               SessionKeys.businessTrade -> validBusinessTrade
             ))
           }
@@ -144,20 +142,18 @@ class AddBusinessTradeControllerSpec extends TestSupport
           status(result) mustBe SEE_OTHER
           redirectLocation(result) mustBe Some(routes.AddBusinessAddressController.show().url)
           session(result).get(SessionKeys.businessTrade) mustBe Some(validBusinessTrade)
-        }*/
+        }
 
         "the agent is authenticated and the business trade entered is valid" in {
 
           disableAllSwitches()
           enable(IncomeSources)
 
-          val validBusinessName: String = "Test Name"
           val validBusinessTrade: String = "Test Trade"
           setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
           setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
-          val result: Future[Result] = TestAddBusinessTradeController.agentSubmit()(fakeRequestConfirmedClient().withFormUrlEncodedBody(
-            SessionKeys.businessName -> validBusinessName,
+          val result: Future[Result] = TestAddBusinessTradeController.agentSubmit()(fakeRequestConfirmedClientwithBusinessName().withFormUrlEncodedBody(
             SessionKeys.businessTrade -> validBusinessTrade
           ))
 

@@ -102,6 +102,10 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterE
     HeaderNames.REFERER -> "/test/url"
   )
 
+  lazy val fakeRequestWithActiveSessionWithBusinessName: FakeRequest[AnyContentAsEmpty.type] = fakeRequestWithActiveSession.withSession(
+   utils.SessionKeys.businessName -> "Test Name"
+  )
+
   def fakeRequestWithActiveSessionWithReferer(referer: String): FakeRequest[AnyContentAsEmpty.type] = FakeRequest().withSession(
     SessionKeys.lastRequestTimestamp -> "1498236506662",
     SessionKeys.authToken -> "Bearer Token"
@@ -139,6 +143,17 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterE
       utils.SessionKeys.clientMTDID -> "XAIT00000000015",
       utils.SessionKeys.clientNino -> clientNino,
       utils.SessionKeys.confirmedClient -> "true"
+    )
+
+  def fakeRequestConfirmedClientwithBusinessName(clientNino: String = "AA111111A"): FakeRequest[AnyContentAsEmpty.type] =
+    fakeRequestWithActiveSession.withSession(
+      utils.SessionKeys.clientFirstName -> "Test",
+      utils.SessionKeys.clientLastName -> "User",
+      utils.SessionKeys.clientUTR -> "1234567890",
+      utils.SessionKeys.clientMTDID -> "XAIT00000000015",
+      utils.SessionKeys.clientNino -> clientNino,
+      utils.SessionKeys.confirmedClient -> "true",
+      utils.SessionKeys.businessName -> "Test Name"
     )
 
   def fakeRequestConfirmedClientWithCalculationId(clientNino: String = "AA111111A"): FakeRequest[AnyContentAsEmpty.type] =
