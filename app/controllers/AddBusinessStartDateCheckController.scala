@@ -53,7 +53,7 @@ class AddBusinessStartDateCheckController @Inject()(authenticate: Authentication
     Authenticated.async {
       implicit request =>
         implicit user =>
-          getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true) flatMap {
+          getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
             implicit mtdItUser =>
               handleRequest(isAgent = true)
           }
