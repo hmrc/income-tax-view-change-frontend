@@ -1153,6 +1153,19 @@ add-business-name.form.error.required                             = Nodwch eich 
 add-business-name.form.error.maxLength                            = Mae’n rhaid i enw’r busnes fod yn 105 o gymeriadau neu lai
 add-business-name.form.error.invalidNameFormat                    = Ni all enw’r busnes gynnwys !, "", * neu ?
 
+## view Income Sources
+view-income-sources.heading                  = Bwrw golwg dros eich ffynonellau incwm a’u rheoli
+view-income-sources.self-employed-h2         = Busnesau unig fasnachwr
+view-income-sources.uk-property-h2           = Eiddo yn y DU
+view-income-sources.foreign-property-h2      = Eiddo tramor
+view-income-sources.ceased-businesses-h2     = Busnesau sydd wedi dod i ben
+view-income-sources.table-head.business-name = Enw’r busnes
+view-income-sources.table-head.date-started  = Dyddiad cychwyn
+view-income-sources.table-head.date-ended    = Y dyddiad dod i ben
+view-income-sources.link                     = Choose
+view-income-sources.unknown-field            = Unknown
+
+
 shortMonth.1 = Ion
 shortMonth.2 = Chwe
 shortMonth.3 = Maw

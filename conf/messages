@@ -1140,11 +1140,13 @@ view-income-sources.heading                  = View and manage income sources
 view-income-sources.self-employed-h2         = Sole trader businesses
 view-income-sources.uk-property-h2           = UK property
 view-income-sources.foreign-property-h2      = Foreign property
-view-income-sources.ceased-businesses-h2  = Businesses that have ceased
+view-income-sources.ceased-businesses-h2     = Businesses that have ceased
 view-income-sources.table-head.business-name = Business name
 view-income-sources.table-head.date-started  = Date started
 view-income-sources.table-head.date-ended    = Date ended
 view-income-sources.link                     = Choose
+view-income-sources.unknown-field            = Unknown
+
 
 #Following empty fields are not in Use
 #These fields are kept to match with Messages.cy

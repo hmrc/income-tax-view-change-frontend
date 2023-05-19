@@ -70,6 +70,16 @@ class ManageIncomeSourceController @Inject()(val manageIncomeSources: ManageInco
         }
   }
 
+  def showBusinessDetails(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+    andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
+    implicit user =>
+      handleRequest(
+        sources = user.incomeSources,
+        isAgent = false,
+        backUrl = controllers.routes.HomeController.show().url
+      )
+  }
+
   def handleRequest(sources: IncomeSourceDetailsModel, isAgent: Boolean, backUrl: String)
                    (implicit user: MtdItUser[_]): Future[Result] = {
     Future.successful(

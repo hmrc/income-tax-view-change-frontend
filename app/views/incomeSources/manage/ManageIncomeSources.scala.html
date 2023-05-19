@@ -20,6 +20,9 @@
 @import exceptions.MissingFieldException
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import models.incomeSourceDetails.viewmodels.AddIncomeSourcesViewModel
+@import controllers.incomeSources.manage.ManageIncomeSourceController
+@import play.api.mvc.Call
+@import controllers.routes
 
 @this(
         mainTemplate: unifiedLayout,
@@ -54,6 +57,7 @@
     else controllers.routes.AddBusinessNameController.show().url
 }
 
+
 @addUkPropertyBusinessStartDateURL = @{
     if(isAgent) controllers.routes.AddUkPropertyBusinessStartDate.showAgent().url
     else controllers.routes.AddUkPropertyBusinessStartDate.show().url
@@ -64,8 +68,11 @@
     else controllers.routes.AddForeignPropertyBusinessStartDate.show().url
 }
 
+@manageIncomeSource = @{
+        controllers.incomeSources.manage.routes.ManageIncomeSourceController.showBusinessDetails()
+    }
 
-@mainTemplate(pageTitle = getMessage("heading"),
+@mainTemplate(pageTitle = getMessage("heading "),
     backUrl = Some(backUrl),
     btaNavPartial = user.btaNavPartial) {
 
@@ -75,7 +82,7 @@
     @if(soleTraderBusinesses.nonEmpty) {
         @h2(msg = getMessage("self-employed-h2"),
             optId = Some("self-employed-h1"))
-
+        @println("soleTraderBusinesses: " + sources.soleTraderBusinesses)
         @govukTable(Table(
             head = Some(List(
                 HeadCell(
@@ -88,18 +95,15 @@
                     content = Text("") //TODO see on extending line w/o blank cell
                 )
             )),
-            rows = soleTraderBusinesses.zipWithIndex.map { case (b, index) => Seq(
+            rows = soleTraderBusinesses.zipWithIndex.map { case (business, index) => Seq(
                 TableRow(
-                    content = Text(b.tradingName),
+                    content = Text(business.tradingName),
                     attributes = Map("id" -> s"table-row-trading-name-$index")),
-
                 TableRow(
-                    content = Text(b.tradingStartDate.toLongDate),
+                    content = Text(business.tradingStartDate.toLongDate),
                     attributes = Map("id" -> s"table-row-trading-start-date-$index")),
-
                 TableRow(
                     content = Text("Choose")
-
                 )
             )}
         ))
@@ -108,6 +112,8 @@
 
     @h2(msg = getMessage("uk-property-h2"),
         optId = Some("uk-property-h2"))
+
+    @println("ukProperty: " + sources.ukProperty )
 
     @if(ukProperty.nonEmpty) {
         @govukTable(Table(
@@ -126,9 +132,7 @@
     } else {
         @hr()
 
-        @link(link = addUkPropertyBusinessStartDateURL,
-            messageKey = getMessage("uk-property.link"),
-            id = Some("uk-property-link"))
+        <p class="govuk-body">@getMessage("unknown-field")</p>
 
         @hr()
     }
@@ -153,9 +157,7 @@
     } else {
         @hr()
 
-        @link(link = addForeignPropertyBusinessStartDateURL,
-            messageKey = getMessage("foreign-property.link"),
-            id = Some("foreign-property-link"))
+        <p class="govuk-body">@getMessage("unknown-field")</p>
 
         @hr()
     }
