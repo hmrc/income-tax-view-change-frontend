@@ -99,7 +99,7 @@ class AddBusinessTradeViewSpec extends ViewSpec {
             val error: Element = form.selectHead("span")
             val input: Element = form.selectHead("input")
 
-            error.attr("id") shouldBe s"${SessionKeys.businessTrade}-error"
+            error.attr("id") shouldBe s"${SessionKeys.businessTrade}-error-2"
             error.text shouldBe s"${AddBusinessTradeMessages.errorPrefix} $errorMessage"
             val errorPrefix: Element = error.selectHead("span > span")
             errorPrefix.attr("class") shouldBe "govuk-visually-hidden"
