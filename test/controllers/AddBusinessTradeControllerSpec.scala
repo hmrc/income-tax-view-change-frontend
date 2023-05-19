@@ -171,6 +171,7 @@ class AddBusinessTradeControllerSpec extends TestSupport
           status(result) mustBe OK
           contentAsString(result) must include("Business trade cannot include !, &quot;&quot;, * or ?")
         }
+
         "trade name is empty" in {
           disableAllSwitches()
           enable(IncomeSources)
@@ -201,6 +202,7 @@ class AddBusinessTradeControllerSpec extends TestSupport
           status(result) mustBe OK
           contentAsString(result) must include("Enter the trade of your business")
         }
+
         "trade name is too short" in {
           disableAllSwitches()
           enable(IncomeSources)
@@ -231,8 +233,36 @@ class AddBusinessTradeControllerSpec extends TestSupport
           status(result) mustBe OK
           contentAsString(result) must include("Business trade must have at least two letters")
         }
-        "trade name is too long" in {
 
+        "trade name is too long" in {
+          disableAllSwitches()
+          enable(IncomeSources)
+
+          val invalidBusinessTradeEmpty: String = "This trade name is far too long to be accepted"
+          setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
+          setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+
+          val result: Future[Result] = TestAddBusinessTradeController.submit()(fakeRequestWithActiveSession.withFormUrlEncodedBody(
+            SessionKeys.businessTrade -> invalidBusinessTradeEmpty
+          ))
+
+          status(result) mustBe OK
+          contentAsString(result) must include("Business trade must be 35 characters or fewer")
+        }
+        "trade name is too long as agent" in {
+          disableAllSwitches()
+          enable(IncomeSources)
+
+          val invalidBusinessTradeEmpty: String = "This trade name is far too long to be accepted"
+          setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
+          setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+
+          val result: Future[Result] = TestAddBusinessTradeController.agentSubmit()(fakeRequestConfirmedClient().withFormUrlEncodedBody(
+            SessionKeys.businessTrade -> invalidBusinessTradeEmpty
+          ))
+
+          status(result) mustBe OK
+          contentAsString(result) must include("Business trade must be 35 characters or fewer")
         }
       }
     }
