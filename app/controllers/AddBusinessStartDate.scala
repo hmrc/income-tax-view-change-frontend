@@ -31,16 +31,16 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class AddBusinessStartDateController @Inject()(authenticate: AuthenticationPredicate,
-                                               val authorisedFunctions: AuthorisedFunctions,
-                                               checkSessionTimeout: SessionTimeoutPredicate,
-                                               retrieveNino: NinoPredicate,
-                                               val addBusinessView: AddBusiness,
-                                               val retrieveIncomeSources: IncomeSourceDetailsPredicate,
-                                               val retrieveBtaNavBar: NavBarPredicate,
-                                               val itvcErrorHandler: ItvcErrorHandler,
-                                               incomeSourceDetailsService: IncomeSourceDetailsService)
-                                              (implicit val appConfig: FrontendAppConfig,
+class AddBusinessStartDate @Inject()(authenticate: AuthenticationPredicate,
+                                     val authorisedFunctions: AuthorisedFunctions,
+                                     checkSessionTimeout: SessionTimeoutPredicate,
+                                     retrieveNino: NinoPredicate,
+                                     val addBusinessView: AddBusiness,
+                                     val retrieveIncomeSources: IncomeSourceDetailsPredicate,
+                                     val retrieveBtaNavBar: NavBarPredicate,
+                                     val itvcErrorHandler: ItvcErrorHandler,
+                                     incomeSourceDetailsService: IncomeSourceDetailsService)
+                                    (implicit val appConfig: FrontendAppConfig,
                                       implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                       implicit override val mcc: MessagesControllerComponents,
                                       val ec: ExecutionContext)
