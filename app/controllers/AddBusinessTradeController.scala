@@ -88,7 +88,7 @@ class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate
           }
         },
         formData => {
-          if (formData.trade == request.session.get("addBusinessName").getOrElse("????")){
+          if (formData.trade == request.session.get("addBusinessName").get){
             Future {
               Ok(addBusinessTradeView(BusinessTradeForm.form, routes.AddBusinessTradeController.submit(), false, backURL, agentBackURL, true))
             }
@@ -114,9 +114,9 @@ class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate
                 }
               },
               formData => {
-                if (formData.trade == request.session.get("addBusinessName").getOrElse("????")) {
+                if (formData.trade == request.session.get("businessName").get) {
                   Future {
-                    Ok(addBusinessTradeView(BusinessTradeForm.form, routes.AddBusinessTradeController.agentSubmit(), false, backURL, agentBackURL, true))
+                    Ok(addBusinessTradeView(BusinessTradeForm.form, routes.AddBusinessTradeController.agentSubmit(), true, backURL, agentBackURL, true))
                   }
                 }
                 else {
