@@ -30,7 +30,7 @@ object SessionKeys {
 
   val ceaseUKPropertyDeclare: String = "ceaseUKPropertyDeclare"
 
-  val businessName: String = "BusinessName"
+  val businessName: String = "addBusinessName"
 
-  val businessTrade: String = "BusinessTrade"
+  val businessTrade: String = "addBusinessTrade"
 }

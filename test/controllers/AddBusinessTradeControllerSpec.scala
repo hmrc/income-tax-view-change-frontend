@@ -28,8 +28,7 @@ import mocks.services.MockClientDetailsService
 import models.incomeSourceDetails.BusinessTradeForm
 import org.mockito.Mockito.mock
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
-import play.api.mvc.{AnyContentAsEmpty, Call, MessagesControllerComponents, Result}
-import play.api.test.FakeRequest
+import play.api.mvc.{ Call, MessagesControllerComponents, Result}
 import play.api.test.Helpers._
 import services.IncomeSourceDetailsService
 import testConstants.BaseTestConstants

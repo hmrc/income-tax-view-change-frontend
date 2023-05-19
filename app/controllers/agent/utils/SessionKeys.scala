@@ -27,5 +27,5 @@ object SessionKeys {
 
   val confirmedClient: String = "ConfirmedClient"
 
-  val businessName: String = "businessName"
+  val businessName: String = "addBusinessName"
 }
