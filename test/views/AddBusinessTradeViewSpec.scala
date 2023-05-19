@@ -37,8 +37,8 @@ class AddBusinessTradeViewSpec extends ViewSpec {
     val errorPrefix: String = messages("base.error-prefix")
   }
 
-  val backUrl: String = controllers.routes.AddBusinessStartDateController.show().url
-  val agentBackUrl: String = controllers.routes.AddBusinessStartDateController.showAgent().url
+  val backUrl: String = controllers.routes.AddBusinessStartDate.show().url
+  val agentBackUrl: String = controllers.routes.AddBusinessStartDate.showAgent().url
 
   val enterBusinessTrade: AddBusinessTrade = app.injector.instanceOf[AddBusinessTrade]
 

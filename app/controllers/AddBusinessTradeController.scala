@@ -68,14 +68,14 @@ class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate
     }
 
   def handleRequest(isAgent: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
-    Future {
       if (isDisabled(IncomeSources)) {
-        Redirect(controllers.routes.HomeController.show())
+        Future.successful(Redirect(controllers.routes.HomeController.show()))
       } else {
-        if(!isAgent) Ok(addBusinessTradeView(BusinessTradeForm.form, routes.AddBusinessTradeController.submit(), isAgent, backURL, agentBackURL, false))
-        else Ok(addBusinessTradeView(BusinessTradeForm.form, routes.AddBusinessTradeController.agentSubmit(), isAgent, backURL, agentBackURL, false))
+        Future {
+          if (!isAgent) Ok(addBusinessTradeView(BusinessTradeForm.form, routes.AddBusinessTradeController.submit(), isAgent, backURL, agentBackURL, false))
+          else Ok(addBusinessTradeView(BusinessTradeForm.form, routes.AddBusinessTradeController.agentSubmit(), isAgent, backURL, agentBackURL, false))
+        }
       }
-    }
   }
 
   def submit: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
