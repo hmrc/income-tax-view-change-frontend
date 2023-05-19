@@ -49,8 +49,8 @@ class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate
                                              val ec: ExecutionContext)
   extends ClientConfirmedController with I18nSupport with FeatureSwitching{
 
-  val backURL: String = "/report-quarterly/income-and-expenses/view/income-sources/add/business-start-date-check"
-  val agentBackURL: String = "/report-quarterly/income-and-expenses/view/agents/income-sources/add/business-start-date-check"
+  val backURL: String = controllers.routes.AddBusinessStartDateCheckController.show().url
+  val agentBackURL: String = controllers.routes.AddBusinessStartDateCheckController.showAgent().url
   def show: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>

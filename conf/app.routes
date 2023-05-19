@@ -164,6 +164,8 @@ GET          /income-sources/add/business-address                               
 GET          /agents/income-sources/add/business-address                                                controllers.AddBusinessAddressController.showAgent()
 GET          /income-sources/add/business-start-date                                                    controllers.AddBusinessStartDate.show()
 GET          /agents/income-sources/add/business-start-date                                             controllers.AddBusinessStartDate.showAgent()
+GET          /income-sources/add/business-start-date-check                                              controllers.AddBusinessStartDateCheckController.show()
+GET          /agents/income-sources/add/business-start-date-check                                       controllers.AddBusinessStartDateCheckController.showAgent()
 
 GET          /income-sources/cease/cease-an-income-source                 controllers.incomeSources.cease.CeaseIncomeSourceController.show(origin: Option[String] ?= None)
 GET          /agents/income-sources/cease/cease-an-income-source          controllers.incomeSources.cease.CeaseIncomeSourceController.showAgent()
