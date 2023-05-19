@@ -36,6 +36,7 @@ object BusinessTradeForm {
   val tradeShortError = "add-business-trade.form.error.short"
   val tradeLongError = "add-business-trade.form.error.long"
   val tradeInvalidCharError = "add-business-trade.form.error.invalid"
+  val tradeSameNameError = "You cannot enter the same trade and same business name"
 
   val isValidLength: Constraint[String] = Constraint(value =>
     value.length match {
