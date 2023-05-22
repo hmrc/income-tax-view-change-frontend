@@ -78,10 +78,10 @@ class IncomeSourceDetailsService @Inject()(val incomeTaxViewChangeConnector: Inc
     val maybeSoleTraderBusinesses = sources.businesses.filterNot(_.isCeased)
     val soleTraderBusinessesExists = maybeSoleTraderBusinesses.nonEmpty
 
-    val maybeUkProperty = sources.properties.filterNot(_.isCeased).find(_.isUkProperty)
+    val maybeUkProperty = sources.properties.find(_.isUkProperty)
     val ukPropertyExists = maybeUkProperty.nonEmpty
 
-    val maybeForeignProperty = sources.properties.filterNot(_.isCeased).find(_.isForeignProperty)
+    val maybeForeignProperty = sources.properties.find(_.isForeignProperty)
     val foreignPropertyExists = maybeForeignProperty.nonEmpty
 
     val maybeCeasedBusinesses = sources.businesses.filter(_.isCeased)
