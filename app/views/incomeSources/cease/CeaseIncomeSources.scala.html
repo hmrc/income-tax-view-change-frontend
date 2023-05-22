@@ -63,6 +63,10 @@
     else controllers.incomeSources.cease.routes.CeaseForeignPropertyController.show().url
 }
 
+@ceaseMessage = @{
+    getMessage("cease")
+}
+
 @mainTemplate(pageTitle = getMessage("heading"),
     backUrl = Some(backUrl),
     btaNavPartial = user.btaNavPartial) {
@@ -100,7 +104,7 @@
                     content = HtmlContent(
                         s"""<dd class="govuk-summary-list__actions">
                                 <a class="govuk-link" href='$ceaseSoleTraderBusinessURL'>
-                                    Cease<span class="govuk-visually-hidden">cease</span>
+                                    $ceaseMessage<span class="govuk-visually-hidden">cease</span>
                                 </a>
                             </dd>"""
                     )
@@ -115,8 +119,8 @@
         @h2(msg = getMessage("uk-property.h1"),
             optId = Some("uk-property-h1"))
 
-        @p(id = Some("property-p1")) {
-            @getMessage("property.p1") }
+        @p(id = Some("uk-property-p1")) {
+            @getMessage("uk-property.p1") }
 
         @govukTable(Table(
             head = Some(List(
@@ -136,7 +140,7 @@
                     content = HtmlContent(
                         s"""<dd class="govuk-summary-list__actions">
                                 <a class="govuk-link" href='$ceaseUkPropertyURL'>
-                                    Cease<span class="govuk-visually-hidden">cease</span>
+                                    $ceaseMessage<span class="govuk-visually-hidden">cease</span>
                                 </a>
                             </dd>"""
                     )
@@ -151,8 +155,8 @@
         @h2(msg = getMessage("foreign-property.h1"),
             optId = Some("foreign-property-h1"))
 
-        @p(id = Some("property-p1")) {
-            @getMessage("property.p1") }
+        @p(id = Some("foreign-property-p1")) {
+            @getMessage("foreign-property.p1") }
 
         @govukTable(Table(
             head = Some(List(
@@ -171,7 +175,7 @@
                     content = HtmlContent(
                         s"""<dd class="govuk-summary-list__actions">
                                 <a class="govuk-link" href='$ceaseForeignPropertyURL'>
-                                    Cease<span class="govuk-visually-hidden">cease</span>
+                                    $ceaseMessage<span class="govuk-visually-hidden">cease</span>
                                 </a>
                             </dd>"""
                     )

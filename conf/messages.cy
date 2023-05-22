@@ -1152,10 +1152,12 @@ cease-income-sources.table-head.business-name = Enw’r busnes
 cease-income-sources.table-head.date-started  = Dyddiad cychwyn
 cease-income-sources.cease                    = Dod i ben
 cease-income-sources.uk-property.h1           = Eiddo yn y DU
-cease-income-sources.uk-property-paragraph    = Bydd dim ond angen i chi ddod â’ch incwm o eiddo i ben pan na fydd gennych incwm o eiddo i’w ddatgan.
+cease-income-sources.uk-property.p1           = **Welsh to be translated**
 cease-income-sources.foreign-property.h1      = Eiddo tramor
-cease-income-sources.heading                  = Busnesau sydd wedi dod i ben
+cease-income-sources.foreign-property.p1      = **Welsh to be translated**
+cease-income-sources.ceased-businesses.h1     = Busnesau sydd wedi dod i ben
 cease-income-sources.table-head.date-ended    = Y dyddiad dod i ben
+cease-income-sources.empty                    =
 
 # add Business page
 add-business-name.heading                                         = Beth yw enw’ch busnes?
