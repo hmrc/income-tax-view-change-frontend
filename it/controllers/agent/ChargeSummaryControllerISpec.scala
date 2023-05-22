@@ -108,7 +108,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
 
       AuditStub.verifyAuditEvent(ChargeSummaryAudit(
         MtdItUser(
-          testMtditid, testNino, None, multipleBusinessesAndPropertyResponse,
+          testMtditid, testNino, None, noBusinessesOnePropertyResponse,
           None, Some("1234567890"), None, Some(Agent), Some(testArn)
         )(FakeRequest()),
         docDateDetailWithInterest(LocalDate.of(2019, 1, 1).toString, "ITSA- POA 1"),
