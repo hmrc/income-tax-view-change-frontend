@@ -96,11 +96,11 @@ class ManageIncomeSourceController @Inject()(val manageIncomeSources: ManageInco
           case Left(ex) =>
             if (isAgent) {
               Logger("application").error(
-                s"[Agent][AddIncomeSourceController][handleRequest] - Error: ${ex.getMessage}")
+                s"[Agent][ManageIncomeSourceController][handleRequest] - Error: ${ex.getMessage}")
               itvcErrorHandlerAgent.showInternalServerError()
             } else {
               Logger("application").error(
-                s"[AddIncomeSourceController][handleRequest] - Error: ${ex.getMessage}")
+                s"[ManageIncomeSourceController][handleRequest] - Error: ${ex.getMessage}")
               itvcErrorHandler.showInternalServerError()
             }
         }

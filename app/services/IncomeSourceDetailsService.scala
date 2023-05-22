@@ -19,13 +19,14 @@ package services
 import auth.MtdItUserWithNino
 import connectors.IncomeTaxViewChangeConnector
 import exceptions.MissingFieldException
-import models.incomeSourceDetails.viewmodels.{AddIncomeSourcesViewModel, BusinessDetailsViewModel, CeasedBusinessDetailsViewModel, PropertyDetailsViewModel}
+import models.incomeSourceDetails.viewmodels._
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, IncomeSourceDetailsResponse}
 import play.api.Logger
 import play.api.cache.AsyncCacheApi
 import play.api.libs.json.{JsPath, JsSuccess, JsValue, Json}
 import uk.gov.hmrc.http.HeaderCarrier
 
+import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.duration.{Duration, DurationInt}
 import scala.concurrent.{Await, ExecutionContext, Future}
@@ -112,6 +113,53 @@ class IncomeSourceDetailsService @Inject()(val incomeTaxViewChangeConnector: Inc
             CeasedBusinessDetailsViewModel(
               tradingName = business.tradingName.getOrElse(throw MissingFieldException("CeasedBusiness: Trading Name")),
               tradingStartDate = business.tradingStartDate.getOrElse(throw MissingFieldException("CeasedBusiness: Trading Start Date")),
+              cessationDate = business.cessation.flatMap(_.date).getOrElse(throw MissingFieldException("Cessation Date"))
+            )
+          }
+        } else Nil
+      )
+    }.toEither
+  }
+
+  def getViewIncomeSourceViewModel(sources: IncomeSourceDetailsModel): Either[Throwable, ViewIncomeSourcesViewModel] = {
+
+    val maybeSoleTraderBusinesses = sources.businesses.filterNot(_.isCeased)
+    val soleTraderBusinessesExists = maybeSoleTraderBusinesses.nonEmpty
+
+    val maybeUkProperty = sources.properties.find(_.isUkProperty)
+    val ukPropertyExists = maybeUkProperty.nonEmpty
+
+    val maybeForeignProperty = sources.properties.find(_.isForeignProperty)
+    val foreignPropertyExists = maybeForeignProperty.nonEmpty
+
+    val maybeCeasedBusinesses = sources.businesses.filter(_.isCeased)
+    val ceasedBusinessExists = maybeCeasedBusinesses.nonEmpty
+
+    Try {
+      ViewIncomeSourcesViewModel(
+        viewSoleTraderBusinesses = if (soleTraderBusinessesExists) {
+          maybeSoleTraderBusinesses.map { business =>
+            ViewBusinessDetailsViewModel(
+              business.tradingName.getOrElse("Unknown"),
+              business.tradingStartDate.orElse(Some(LocalDate.parse("Unknown")))
+            )
+          }
+        } else Nil,
+        viewUkProperty = if (ukPropertyExists) {
+          Some(ViewPropertyDetailsViewModel(
+            maybeUkProperty.flatMap(_.tradingStartDate).orElse(Some(LocalDate.parse("Unknown")))
+          ))
+        } else None,
+        viewForeignProperty = if (foreignPropertyExists) {
+          Some(ViewPropertyDetailsViewModel(
+            maybeForeignProperty.flatMap(_.tradingStartDate).orElse(Some(LocalDate.parse("Unknown")))
+          ))
+        } else None,
+        viewCeasedBusinesses = if (ceasedBusinessExists) {
+          maybeCeasedBusinesses.map { business =>
+            ViewCeasedBusinessDetailsViewModel(
+              tradingName = business.tradingName.getOrElse("Unknown"),
+              tradingStartDate = business.tradingStartDate.orElse(Some(LocalDate.parse("Unknown"))),
               cessationDate = business.cessation.flatMap(_.date).getOrElse(throw MissingFieldException("Cessation Date"))
             )
           }

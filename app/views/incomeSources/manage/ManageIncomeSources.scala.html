@@ -109,13 +109,11 @@
         ))
     }
 
-
-    @h2(msg = getMessage("uk-property-h2"),
-        optId = Some("uk-property-h2"))
-
-    @println("ukProperty: " + sources.ukProperty )
-
     @if(ukProperty.nonEmpty) {
+
+        @h2(msg = getMessage("uk-property-h2"),
+            optId = Some("uk-property-h2"))
+
         @govukTable(Table(
             head = Some(List(
                 HeadCell(
@@ -129,19 +127,14 @@
                 )
             ))
         ))
-    } else {
-        @hr()
-
-        <p class="govuk-body">@getMessage("unknown-field")</p>
-
-        @hr()
     }
-
-    @h2(msg = getMessage("foreign-property-h2"),
-        optId = Some("foreign-property-h2"))
 
 
     @if(foreignProperty.nonEmpty) {
+
+        @h2(msg = getMessage("foreign-property-h2"),
+            optId = Some("foreign-property-h2"))
+
         @govukTable(Table(
             head = Some(List(
                 HeadCell(
@@ -154,12 +147,6 @@
                     attributes = Map("id" -> "table-row-trading-start-date-foreign"))
             ))
         ))
-    } else {
-        @hr()
-
-        <p class="govuk-body">@getMessage("unknown-field")</p>
-
-        @hr()
     }
 
     @if(ceasedBusinesses.nonEmpty) {
