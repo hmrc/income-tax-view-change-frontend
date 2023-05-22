@@ -86,7 +86,7 @@ class ManageIncomeSourceController @Inject()(val manageIncomeSources: ManageInco
       if (isDisabled(IncomeSources)) {
         Redirect(controllers.routes.HomeController.show())
       } else {
-        incomeSourceDetailsService.getAddIncomeSourceViewModel(sources) match {
+        incomeSourceDetailsService.getViewIncomeSourceViewModel(sources) match {
           case Right(viewModel) =>
             Ok(manageIncomeSources(
               viewModel,

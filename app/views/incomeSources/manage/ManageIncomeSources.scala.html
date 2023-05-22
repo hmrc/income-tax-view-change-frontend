@@ -19,7 +19,7 @@
 @import views.html.components._
 @import exceptions.MissingFieldException
 @import uk.gov.hmrc.govukfrontend.views.html.components._
-@import models.incomeSourceDetails.viewmodels.AddIncomeSourcesViewModel
+@import models.incomeSourceDetails.viewmodels.ViewIncomeSourcesViewModel
 @import controllers.incomeSources.manage.ManageIncomeSourceController
 @import play.api.mvc.Call
 @import controllers.routes
@@ -36,7 +36,7 @@
 )
 
 @(
-        sources: AddIncomeSourcesViewModel,
+        sources: ViewIncomeSourcesViewModel,
         isAgent: Boolean,
         backUrl: String
 )(implicit messages: Messages, user: auth.MtdItUser[_])
@@ -47,26 +47,11 @@
     messages(s"view-income-sources.$key", args: _*)
 }
 
-@ukProperty = @{ sources.ukProperty }
-@foreignProperty = @{ sources.foreignProperty }
-@ceasedBusinesses = @{ sources.ceasedBusinesses }
-@soleTraderBusinesses = @{ sources.soleTraderBusinesses }
+@ukProperty = @{ sources.viewUkProperty }
+@foreignProperty = @{ sources.viewForeignProperty }
+@ceasedBusinesses = @{ sources.viewCeasedBusinesses }
+@soleTraderBusinesses = @{ sources.viewSoleTraderBusinesses }
 
-@addBusinessNameURL = @{
-    if(isAgent) controllers.routes.AddBusinessNameController.showAgent().url
-    else controllers.routes.AddBusinessNameController.show().url
-}
-
-
-@addUkPropertyBusinessStartDateURL = @{
-    if(isAgent) controllers.routes.AddUkPropertyBusinessStartDate.showAgent().url
-    else controllers.routes.AddUkPropertyBusinessStartDate.show().url
-}
-
-@addForeignPropertyBusinessStartDateURL = @{
-    if(isAgent) controllers.routes.AddForeignPropertyBusinessStartDate.showAgent().url
-    else controllers.routes.AddForeignPropertyBusinessStartDate.show().url
-}
 
 @manageIncomeSource = @{
         controllers.incomeSources.manage.routes.ManageIncomeSourceController.showBusinessDetails()
@@ -82,7 +67,7 @@
     @if(soleTraderBusinesses.nonEmpty) {
         @h2(msg = getMessage("self-employed-h2"),
             optId = Some("self-employed-h1"))
-        @println("soleTraderBusinesses: " + sources.soleTraderBusinesses)
+
         @govukTable(Table(
             head = Some(List(
                 HeadCell(

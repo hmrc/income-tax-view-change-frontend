@@ -141,26 +141,26 @@ class IncomeSourceDetailsService @Inject()(val incomeTaxViewChangeConnector: Inc
           maybeSoleTraderBusinesses.map { business =>
             ViewBusinessDetailsViewModel(
               business.tradingName.getOrElse("Unknown"),
-              business.tradingStartDate.orElse(Some(LocalDate.parse("Unknown")))
+              business.tradingStartDate.getOrElse(LocalDate.parse("Unknown trad start"))
             )
           }
         } else Nil,
         viewUkProperty = if (ukPropertyExists) {
           Some(ViewPropertyDetailsViewModel(
-            maybeUkProperty.flatMap(_.tradingStartDate).orElse(Some(LocalDate.parse("Unknown")))
+            maybeUkProperty.flatMap(_.tradingStartDate).getOrElse(LocalDate.parse("Unknown uk"))
           ))
         } else None,
         viewForeignProperty = if (foreignPropertyExists) {
           Some(ViewPropertyDetailsViewModel(
-            maybeForeignProperty.flatMap(_.tradingStartDate).orElse(Some(LocalDate.parse("Unknown")))
+            maybeForeignProperty.flatMap(_.tradingStartDate).getOrElse(LocalDate.parse("Unknown for"))
           ))
         } else None,
         viewCeasedBusinesses = if (ceasedBusinessExists) {
           maybeCeasedBusinesses.map { business =>
             ViewCeasedBusinessDetailsViewModel(
               tradingName = business.tradingName.getOrElse("Unknown"),
-              tradingStartDate = business.tradingStartDate.orElse(Some(LocalDate.parse("Unknown"))),
-              cessationDate = business.cessation.flatMap(_.date).getOrElse(throw MissingFieldException("Cessation Date"))
+              tradingStartDate = business.tradingStartDate.getOrElse(LocalDate.parse("Unknown ceas start date")),
+              cessationDate = business.cessation.flatMap(_.date).getOrElse(LocalDate.parse("Unknown ceas date"))
             )
           }
         } else Nil
