@@ -29,7 +29,7 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
-import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testIndividualAuthSuccessWithSaUtrResponse}
+import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testAuthAgentSuccessWithSaUtrResponse, testIndividualAuthSuccessWithSaUtrResponse}
 import testUtils.TestSupport
 import play.api.http.Status
 import models.incomeSourceDetails.viewmodels.CeaseIncomeSourcesViewModel
@@ -128,7 +128,7 @@ class CeaseIncomeSourceControllerSpec extends MockAuthenticationPredicate with M
     }
 
     "show error page" when {
-      "error response from service" in {
+      "error response from service for individual" in {
         disableAllSwitches()
         enable(IncomeSources)
         mockBothIncomeSources()
@@ -138,6 +138,19 @@ class CeaseIncomeSourceControllerSpec extends MockAuthenticationPredicate with M
           .thenReturn(Left(MissingFieldException("Trading Name")))
 
         val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
+        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+      }
+
+      "error response from service for agent" in {
+        disableAllSwitches()
+        enable(IncomeSources)
+        mockBothIncomeSources()
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+
+        when(mockIncomeSourceDetailsService.getCeaseIncomeSourceViewModel(any()))
+          .thenReturn(Left(MissingFieldException("Trading Name")))
+
+        val result: Future[Result] = controller.showAgent()(fakeRequestConfirmedClient("AB123456C"))
         status(result) shouldBe Status.INTERNAL_SERVER_ERROR
       }
     }
