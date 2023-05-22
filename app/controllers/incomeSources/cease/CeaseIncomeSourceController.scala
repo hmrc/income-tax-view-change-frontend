@@ -16,13 +16,12 @@
 
 package controllers.incomeSources.cease
 
-import auth.{FrontendAuthorisedFunctions, MtdItUser}
+import auth.MtdItUser
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import config.featureswitch.{FeatureSwitching, IncomeSources}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
 import models.incomeSourceDetails.IncomeSourceDetailsModel
-import models.incomeSourceDetails.viewmodels.{CeaseBusinessDetailsViewModel, CeaseCeasedBusinessDetailsViewModel, CeaseIncomeSourcesViewModel, CeasePropertyDetailsViewModel}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
@@ -30,7 +29,6 @@ import services.IncomeSourceDetailsService
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import views.html.incomeSources.cease.CeaseIncomeSources
 
-import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -74,29 +72,33 @@ class CeaseIncomeSourceController @Inject()(val ceaseIncomeSources: CeaseIncomeS
 
   def handleRequest(sources: IncomeSourceDetailsModel, isAgent: Boolean, backUrl: String)
                    (implicit user: MtdItUser[_]): Future[Result] = {
-    Future.successful(
       if (isDisabled(IncomeSources)) {
-        Redirect(controllers.routes.HomeController.show())
+        Future.successful(Redirect(controllers.routes.HomeController.show()))
       } else {
-        incomeSourceDetailsService.getCeaseIncomeSourceViewModel(sources) match {
-          case Right(viewModel) =>
-            Ok(ceaseIncomeSources(
-              viewModel,
-              isAgent = isAgent,
-              backUrl = backUrl
-            ))
-          case Left(ex) =>
-            if (isAgent) {
-              Logger("application").error(
-                s"[Agent][CeaseIncomeSourceController][handleRequest] - Error: ${ex.getMessage}")
-              itvcErrorHandlerAgent.showInternalServerError()
-            } else {
-              Logger("application").error(
-                s"[CeaseIncomeSourceController][handleRequest] - Error: ${ex.getMessage}")
-              itvcErrorHandler.showInternalServerError()
-            }
-        }
+        showCeaseIncomeSourceView(sources, isAgent, backUrl)
       }
-    )
+  }
+
+  private def showCeaseIncomeSourceView(sources: IncomeSourceDetailsModel, isAgent: Boolean, backUrl: String) (implicit user: MtdItUser[_]) = {
+    Future {
+      incomeSourceDetailsService.getCeaseIncomeSourceViewModel(sources) match {
+        case Right(viewModel) =>
+          Ok(ceaseIncomeSources(
+            viewModel,
+            isAgent = isAgent,
+            backUrl = backUrl
+          ))
+        case Left(ex) =>
+          if (isAgent) {
+            Logger("application").error(
+              s"[Agent][CeaseIncomeSourceController][handleRequest] - Error: ${ex.getMessage}")
+            itvcErrorHandlerAgent.showInternalServerError()
+          } else {
+            Logger("application").error(
+              s"[CeaseIncomeSourceController][handleRequest] - Error: ${ex.getMessage}")
+            itvcErrorHandler.showInternalServerError()
+          }
+      }
+    }
   }
 }
