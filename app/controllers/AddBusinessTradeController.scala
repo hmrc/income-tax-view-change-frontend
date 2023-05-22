@@ -72,8 +72,8 @@ class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate
         Future.successful(Redirect(controllers.routes.HomeController.show()))
       } else {
         Future {
-          if (!isAgent) Ok(addBusinessTradeView(BusinessTradeForm.form, routes.AddBusinessTradeController.submit(), isAgent, backURL, agentBackURL, false))
-          else Ok(addBusinessTradeView(BusinessTradeForm.form, routes.AddBusinessTradeController.agentSubmit(), isAgent, backURL, agentBackURL, false))
+          if (!isAgent) Ok(addBusinessTradeView(BusinessTradeForm.form, routes.AddBusinessTradeController.submit(), isAgent, backURL, false))
+          else Ok(addBusinessTradeView(BusinessTradeForm.form, routes.AddBusinessTradeController.agentSubmit(), isAgent, agentBackURL, false))
         }
       }
   }
@@ -84,13 +84,13 @@ class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate
       BusinessTradeForm.form.bindFromRequest().fold(
         formWithErrors => {
           Future {
-            Ok(addBusinessTradeView(formWithErrors, routes.AddBusinessTradeController.submit(), false, backURL, agentBackURL, false))
+            Ok(addBusinessTradeView(formWithErrors, routes.AddBusinessTradeController.submit(), false, backURL, false))
           }
         },
         formData => {
           if (formData.trade == request.session.get(SessionKeys.businessName).get){
             Future {
-              Ok(addBusinessTradeView(BusinessTradeForm.form, routes.AddBusinessTradeController.submit(), false, backURL, agentBackURL, true))
+              Ok(addBusinessTradeView(BusinessTradeForm.form, routes.AddBusinessTradeController.submit(), false, backURL, true))
             }
           }
           else {
@@ -110,13 +110,13 @@ class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate
             BusinessTradeForm.form.bindFromRequest().fold(
               formWithErrors => {
                 Future {
-                  Ok(addBusinessTradeView(formWithErrors, routes.AddBusinessTradeController.agentSubmit(), true, backURL, agentBackURL, false))
+                  Ok(addBusinessTradeView(formWithErrors, routes.AddBusinessTradeController.agentSubmit(), true, agentBackURL, false))
                 }
               },
               formData => {
                 if (formData.trade == request.session.get(SessionKeys.businessName).get) {
                   Future {
-                    Ok(addBusinessTradeView(BusinessTradeForm.form, routes.AddBusinessTradeController.agentSubmit(), true, backURL, agentBackURL, true))
+                    Ok(addBusinessTradeView(BusinessTradeForm.form, routes.AddBusinessTradeController.agentSubmit(), true, agentBackURL, true))
                   }
                 }
                 else {

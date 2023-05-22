@@ -42,7 +42,7 @@ inputHelper: InputHelper,
 errorSummary: ErrorSummary
 )
 
-@(businessTradeForm: Form[BusinessTradeForm], postAction: Call, isUserAgent: Boolean, backURL: String, agentBackURL: String, sameNameError: Boolean)(implicit messages: Messages, user: auth.MtdItUser[_])
+@(businessTradeForm: Form[BusinessTradeForm], postAction: Call, isUserAgent: Boolean, backURL: String, sameNameError: Boolean)(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @getMessage(key: String, args: String*) = @{
 messages(s"add-business-trade.$key", args: _*)
@@ -57,7 +57,7 @@ field.error
 
 @mainTemplate(pageTitle = getMessage("heading"),
 form = Some(businessTradeForm),
-backUrl = if(!isUserAgent){Some(backURL)}else{Some(agentBackURL)},
+backUrl = Some(backURL),
 isAgent = isUserAgent,
 btaNavPartial = user.btaNavPartial) {
 

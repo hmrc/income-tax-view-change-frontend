@@ -42,12 +42,12 @@ class AddBusinessTradeViewSpec extends ViewSpec {
 
   val enterBusinessTrade: AddBusinessTrade = app.injector.instanceOf[AddBusinessTrade]
 
-  val pageWithoutError: Html = enterBusinessTrade(BusinessTradeForm.form, testCall, false, backUrl, agentBackUrl, false)
+  val pageWithoutError: Html = enterBusinessTrade(BusinessTradeForm.form, testCall, false, backUrl, false)
 
   def pageWithError(error: String = BusinessTradeForm.tradeEmptyError): Html = {
     val modifiedForm = BusinessTradeForm.form.withError(SessionKeys.businessTrade, error)
       .fill(BusinessTradeForm("??Invalid Name??"))
-    enterBusinessTrade(modifiedForm, testCall, false, backUrl, agentBackUrl, false)
+    enterBusinessTrade(modifiedForm, testCall, false, backUrl, false)
   }
 
   "The add business trade page" when {

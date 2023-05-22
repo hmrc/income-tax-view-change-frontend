@@ -28,7 +28,7 @@ import mocks.services.MockClientDetailsService
 import models.incomeSourceDetails.BusinessTradeForm
 import org.mockito.Mockito.mock
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
-import play.api.mvc.{ Call, MessagesControllerComponents, Result}
+import play.api.mvc.{Call, MessagesControllerComponents, Result}
 import play.api.test.Helpers._
 import services.IncomeSourceDetailsService
 import testConstants.BaseTestConstants
@@ -99,7 +99,7 @@ class AddBusinessTradeControllerSpec extends TestSupport
 
   "AddBusinessTradeController" should {
     "redirect a user back to the custom error page" when {
-      "the user is not authenticated" should {
+      "the indivdual is not authenticated" should {
         "redirect them to sign in" in {
           setupMockAuthorisationException()
           val result = TestAddBusinessTradeController.show()(fakeRequestWithActiveSession)
@@ -116,6 +116,29 @@ class AddBusinessTradeControllerSpec extends TestSupport
 
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout.url)
+      }
+    }
+
+    ".show" should {
+      "show correct page when user valid" in {
+        disableAllSwitches()
+        enable(IncomeSources)
+
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
+        setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+
+        val result: Future[Result] = TestAddBusinessTradeController.show()(fakeRequestWithActiveSession)
+        status(result) shouldBe OK
+      }
+      "show correct page when agent valid" in {
+        disableAllSwitches()
+        enable(IncomeSources)
+
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
+        setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+
+        val result: Future[Result] = TestAddBusinessTradeController.showAgent()(fakeRequestConfirmedClient())
+        status(result) shouldBe OK
       }
     }
 
@@ -160,6 +183,37 @@ class AddBusinessTradeControllerSpec extends TestSupport
       }
 
       "return to add business trade page" when {
+        "trade name is same as business name" in {
+          disableAllSwitches()
+          enable(IncomeSources)
+
+          val sameNameAsTrade = "Test Name"
+          setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
+          setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+
+          val result: Future[Result] = TestAddBusinessTradeController.submit()(fakeRequestWithActiveSessionWithBusinessName.withFormUrlEncodedBody(
+            SessionKeys.businessTrade -> sameNameAsTrade
+          ))
+
+          status(result) mustBe OK
+          contentAsString(result) must include("You cannot enter the same trade and same business name")
+        }
+        "trade name is same as business name for agent" in {
+          disableAllSwitches()
+          enable(IncomeSources)
+
+          val sameNameAsTrade = "Test Name"
+          setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
+          setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+
+          val result: Future[Result] = TestAddBusinessTradeController.agentSubmit()(fakeRequestConfirmedClientwithBusinessName().withFormUrlEncodedBody(
+            SessionKeys.businessTrade -> sameNameAsTrade
+          ))
+
+          status(result) mustBe OK
+          contentAsString(result) must include("You cannot enter the same trade and same business name")
+        }
+
         "trade name contains invalid characters" in {
           disableAllSwitches()
           enable(IncomeSources)
