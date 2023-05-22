@@ -24,6 +24,7 @@ import play.api.data.Form
 import play.api.i18n.{I18nSupport}
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc._
+import play.api.Logger
 import play.api.{Configuration, Environment}
 import testOnly.connectors.DynamicStubConnector
 import testOnly.forms.StubDataForm
@@ -63,13 +64,20 @@ class StubDataController @Inject()(stubDataView: StubDataView)
   }
 
   val stubProxy: Action[JsValue] = Action.async(parse.json) { implicit request =>
+    Logger("application").warn("gets here" + parse.json)
     withJsonBody[DataModel](
-      json => dynamicStubConnector.addData(json).map(
-        response => response.status match {
-          case OK => Ok(s"The following JSON was added to the stub: \n\n${Json.toJson(json)}")
-          case _ => InternalServerError(response.body)
-        }
-      )
+      json => {
+        Logger("application").warn("gets here2" + json)
+        dynamicStubConnector.addData(json).map(
+          response => response.status match {
+            case OK => Ok(s"The following JSON was added to the stub: \n\n${Json.toJson(json)}")
+            case _ => {
+              Logger("application").error(response.body)
+              InternalServerError(response.body)
+            }
+          }
+        )
+      }
     )
   }
 

@@ -31,9 +31,12 @@ import scala.concurrent.Future
 import testOnly.models.Nino
 import testOnly.utils.FileUtil._
 import testOnly.utils.LoginUtil._
+import testOnly.utils.UserRepository
+
 case class EnrolmentData(name: String, state: String, taxIdentifier: scala.Seq[TaxIdentifierData])
 
 case class TaxIdentifierData(key: String, value: String)
+
 case class DelegatedEnrolmentData(key: String, taxIdentifier: Seq[TaxIdentifierData], delegatedAuthRule: String)
 
 case class GovernmentGatewayToken(gatewayToken: String)
@@ -48,16 +51,14 @@ case class AuthExchange(bearerToken: String, sessionAuthorityUri: String)
 
 @Singleton
 class CustomAuthConnector @Inject()(servicesConfig: ServicesConfig,
+                                    val userRepository: UserRepository,
                                     val http: HttpClient) extends PlayAuthConnector {
   override val serviceUrl: String = servicesConfig.baseUrl("auth-login")
 
 
   def login(nino: Nino, isAgent: Boolean)(implicit hc: HeaderCarrier): Future[(AuthExchange, GovernmentGatewayToken)] = {
-    createPayload(nino, isAgent) match {
-      case Left(ex) =>
-        Future.failed(new RuntimeException(s"Internal Error: unable to create a payload: $ex"))
-      case Right(payload) =>
-        loginRequest(payload)
+    createPayload(nino, isAgent) flatMap {
+      payload => loginRequest(payload)
     }
   }
 
@@ -80,50 +81,52 @@ class CustomAuthConnector @Inject()(servicesConfig: ServicesConfig,
     }
   }
 
-  private def createPayload(nino: Nino, isAgent: Boolean): Either[Throwable, JsValue] = {
-    getUserCredentials(nino.nino) match {
-      case Left(ex) => Left(ex)
-      case Right(userCredentials) =>
+  private def createPayload(nino: Nino, isAgent: Boolean): Future[JsValue] = {
+    getUserCredentials(nino.nino, userRepository) map {
+      userCredentials =>
         val delegateEnrolments = getDelegatedEnrolmentData(isAgent = isAgent, userCredentials.enrolmentData)
-        Right(
-          Json.obj(
-            "credId" -> userCredentials.credId,
-            "affinityGroup" -> { if (isAgent) "Agent" else { "Individual"} } ,
-            "confidenceLevel" -> userCredentials.confidenceLevel,
-            "credentialStrength" -> userCredentials.credentialStrength,
-            "credentialRole" -> userCredentials.Role,
-            "usersName" -> "usersName",
-            "enrolments" -> getEnrolmentData(isAgent = isAgent, userCredentials.enrolmentData),
-            "delegatedEnrolments" -> delegateEnrolments
-          ) ++ {
-            if (isAgent) {
-              removeEmptyValues(
-                "email" -> Some("user@test.com")
-              ) ++
-                Json.obj(
-                  "gatewayInformation" -> JsObject.empty)
-
-            } else {
-              removeEmptyValues(
-                "nino" -> Some(nino.value),
-                "groupIdentifier" -> Some("groupIdentifier"),
-                "gatewayToken" -> Some("gatewayToken"),
-                "agentId" -> Some("agentId"),
-                "agentCode" -> Some("agentCode"),
-                "agentFriendlyName" -> Some("agentFriendlyName"),
-                "email" -> Some("email")
-              )
+        Json.obj(
+          "credId" -> userCredentials.credId,
+          "affinityGroup" -> {
+            if (isAgent) "Agent" else {
+              "Individual"
             }
+          },
+          "confidenceLevel" -> userCredentials.confidenceLevel,
+          "credentialStrength" -> userCredentials.credentialStrength,
+          "credentialRole" -> userCredentials.Role,
+          "usersName" -> "usersName",
+          "enrolments" -> getEnrolmentData(isAgent = isAgent, userCredentials.enrolmentData),
+          "delegatedEnrolments" -> delegateEnrolments
+        ) ++ {
+          if (isAgent) {
+            removeEmptyValues(
+              "email" -> Some("user@test.com")
+            ) ++
+              Json.obj(
+                "gatewayInformation" -> JsObject.empty)
+
+          } else {
+            removeEmptyValues(
+              "nino" -> Some(nino.value),
+              "groupIdentifier" -> Some("groupIdentifier"),
+              "gatewayToken" -> Some("gatewayToken"),
+              "agentId" -> Some("agentId"),
+              "agentCode" -> Some("agentCode"),
+              "agentFriendlyName" -> Some("agentFriendlyName"),
+              "email" -> Some("email")
+            )
           }
-        )
+        }
+
     }
   }
 
-//  private def delegatedEnrolmentsJson(delegatedEnrolments: Seq[DelegatedEnrolmentData]) =
-//    delegatedEnrolments
-//      .filterNot(invalidDelegatedEnrolment)
-//      .filter(validateDelegatedEnrolmentIdentifiers)
-//      .map(toJson)
+  //  private def delegatedEnrolmentsJson(delegatedEnrolments: Seq[DelegatedEnrolmentData]) =
+  //    delegatedEnrolments
+  //      .filterNot(invalidDelegatedEnrolment)
+  //      .filter(validateDelegatedEnrolmentIdentifiers)
+  //      .map(toJson)
 
   private def invalidDelegatedEnrolment(delegatedEnrolment: DelegatedEnrolmentData) =
     delegatedEnrolment.key.isEmpty || delegatedEnrolment.delegatedAuthRule.isEmpty

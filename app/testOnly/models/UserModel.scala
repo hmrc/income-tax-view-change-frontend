@@ -26,4 +26,6 @@ object UserModel {
     (JsPath \ "mtdItId" \ "mtdItId").format[String] and
       (JsPath \ "nino" \ "nino").format[String]
     ) (UserModel.apply, unlift(UserModel.unapply))
+
+  def toUserModel(x: UserRecord): UserModel = UserModel(x.mtditid, x.nino)
 }

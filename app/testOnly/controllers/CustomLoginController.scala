@@ -23,10 +23,10 @@ import play.api.i18n.I18nSupport
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc._
 import play.api.{Configuration, Environment, Logger}
-import testOnly.connectors.DynamicStubConnector
+import testOnly.connectors.{CustomAuthConnector, DynamicStubConnector}
 import testOnly.forms.StubSchemaForm
-import testOnly.models.SchemaModel
-import testOnly.utils.FileUtil
+import testOnly.models.{Nino, PostedUser, SchemaModel, UserRecord}
+import testOnly.utils.{FileUtil, UserRepository}
 import testOnly.views.html.StubSchemaView
 import uk.gov.hmrc.play.bootstrap.config.AuthRedirects
 import utils.{AuthExchange, SessionBuilder}
@@ -38,64 +38,79 @@ import testOnly.views.html.LoginPage
 @Singleton
 class CustomLoginController @Inject()(stubSchemaView: StubSchemaView)
                                      (implicit val appConfig: FrontendAppConfig,
-                                     override val config: Configuration,
-                                     override val env: Environment,
-                                     implicit val mcc: MessagesControllerComponents,
-                                     implicit val executionContext: ExecutionContext,
+                                      override val config: Configuration,
+                                      override val env: Environment,
+                                      implicit val mcc: MessagesControllerComponents,
+                                      implicit val executionContext: ExecutionContext,
+                                      userRepository: UserRepository,
                                       loginPage: LoginPage,
-                                     val dynamicStubConnector: DynamicStubConnector
-                                    ) extends BaseController with AuthRedirects with I18nSupport {
+                                      val dynamicStubConnector: DynamicStubConnector,
+                                      val customAuthConnector: CustomAuthConnector
+                                     ) extends BaseController with AuthRedirects with I18nSupport {
 
   // Logging page functionality
   val showLogin: Action[AnyContent] = Action.async { implicit request =>
 
-    FileUtil.getUsersFromFile("/data/users.txt") match {
-      case Left(ex) =>
-        Logger("application").error(s"[ITVC-Stub][getLogin] - Unable to read nino's: $ex")
-        Future.successful(BadRequest(s"Unable to read nino's: $ex"))
-      case Right(userRecords) =>
-        Future.successful(Ok(loginPage(routes.CustomLoginController.postLogin, userRecords)))
-    }
+    userRepository.findAll().map(userRecords =>
+      Ok(loginPage(routes.CustomLoginController.postLogin, userRecords))
+    )
 
   }
 
   val postLogin: Action[AnyContent] = Action.async { implicit request =>
-    val nino = request.body.asFormUrlEncoded.map(m => m("nino")).getOrElse(Seq.empty).mkString(" ")
-    val isAgent: Option[String] = request.body.asFormUrlEncoded.map(m => m.getOrElse("Agent", Nil)).getOrElse(Seq.empty).headOption
-    val redirectURL =
-      if (isAgent.contains("true"))
-        s"report-quarterly/income-and-expenses/view/test-only/stub-client/nino/${nino}/utr/"
-      else
-        "report-quarterly/income-and-expenses/view?origin=BTA"
+    PostedUser.form.bindFromRequest().fold(
+      formWithErrors =>
+        Future.successful(BadRequest(s"Invalid form submission: $formWithErrors")),
+      (postedUser: PostedUser) => {
+        userRepository.findUser(postedUser.nino).flatMap(
+          user =>
+            customAuthConnector.login(Nino(user.nino), postedUser.isAgent).map {
+              case (authExchange, _) =>
+                val (bearer, auth) = (authExchange.bearerToken, authExchange.sessionAuthorityUri)
+                val redirectURL = if (postedUser.isAgent)
+                  s"report-quarterly/income-and-expenses/view/test-only/stub-client/nino/${user.nino}/utr/" + user.utr
+                else
+                  "report-quarterly/income-and-expenses/view?origin=BTA"
+                val homePage = s"${appConfig.itvcFrontendEnvironment}/$redirectURL"
 
-    dynamicStubConnector.postLogin("login", nino, isAgent.getOrElse("false")).map(
-      response => response.status match {
-        case OK =>
-          if (isAgent.contains("true")) {
-            val homePage = s"${appConfig.itvcFrontendEnvironment}/$redirectURL"
-            val (bearer, auth, utr) = {
-              val arr = response.body.split(";")
-              (arr(0), arr(1), arr(2))
+                Redirect(homePage)
+                  .withSession(
+                    SessionBuilder.buildGGSession(AuthExchange(bearerToken = bearer,
+                      sessionAuthorityUri = auth)))
+
+              case code =>
+                //            Ok(response.body).as("text/html")
+                InternalServerError("something went wrong..")
+
             }
-            Redirect(homePage + utr)
-              .withSession(
-                SessionBuilder.buildGGSession(AuthExchange(bearerToken = bearer,
-                  sessionAuthorityUri = auth)))
-          } else {
-            val homePage = s"${appConfig.itvcFrontendEnvironment}/$redirectURL"
-            val (bearer, auth) = {
-              val arr = response.body.split(";")
-              (arr(0), arr(1))
-            }
-            Redirect(homePage)
-              .withSession(
-                SessionBuilder.buildGGSession(AuthExchange(bearerToken = bearer,
-                  sessionAuthorityUri = auth)))
-          }
-        case code =>
-          Ok(response.body).as("text/html")
-      }
-    )
+        )
+      })
+    //      response => response.status match {
+    //        case OK =>
+    //          if (isAgent.contains("true")) {
+    //            val homePage = s"${appConfig.itvcFrontendEnvironment}/$redirectURL"
+    //            val (bearer, auth, utr) = {
+    //              val arr = response.body.split(";")
+    //              (arr(0), arr(1), arr(2))
+    //            }
+    //            Redirect(homePage + utr)
+    //              .withSession(
+    //                SessionBuilder.buildGGSession(AuthExchange(bearerToken = bearer,
+    //                  sessionAuthorityUri = auth)))
+    //          } else {
+    //            val homePage = s"${appConfig.itvcFrontendEnvironment}/$redirectURL"
+    //            val (bearer, auth) = {
+    //              val arr = response.body.split(";")
+    //              (arr(0), arr(1))
+    //            }
+    //            Redirect(homePage)
+    //              .withSession(
+    //                SessionBuilder.buildGGSession(AuthExchange(bearerToken = bearer,
+    //                  sessionAuthorityUri = auth)))
+    //          }
+    //        case code =>
+    //          Ok(response.body).as("text/html")
+
   }
 
   val showCss: Action[AnyContent] = Action.async { implicit request =>

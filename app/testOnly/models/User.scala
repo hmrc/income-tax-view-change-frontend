@@ -16,12 +16,12 @@
 
 package testOnly.models
 
-
 import play.api.data.Forms.{boolean, mapping, text}
 import play.api.data.{Form, Mapping}
+import play.api.libs.json.{Json, OFormat}
 
 case class User(nino: Nino, isAgent: Boolean)
-case class UserRecord(nino: String, mtditid: String, utr: String, description: String)
+
 object User {
   val ninoNonEmptyMapping: Mapping[Nino] = {
 
@@ -38,4 +38,24 @@ object User {
         "isAgent" -> boolean
       )(User.apply)(User.unapply)
     )
+}
+
+case class UserRecord(nino: String, mtditid: String, utr: String, description: String)
+
+object UserRecord {
+  implicit val formats: OFormat[UserRecord] = Json.format[UserRecord]
+
+
+}
+
+case class PostedUser(nino: String, isAgent: Boolean)
+
+object PostedUser {
+    val form: Form[PostedUser] =
+      Form(
+        mapping(
+          "nino" -> text,
+          "Agent" -> boolean
+        )(PostedUser.apply)(PostedUser.unapply)
+      )
 }
