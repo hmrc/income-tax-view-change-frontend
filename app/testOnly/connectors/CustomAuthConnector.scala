@@ -55,7 +55,6 @@ class CustomAuthConnector @Inject()(servicesConfig: ServicesConfig,
                                     val http: HttpClient) extends PlayAuthConnector {
   override val serviceUrl: String = servicesConfig.baseUrl("auth-login")
 
-
   def login(nino: Nino, isAgent: Boolean)(implicit hc: HeaderCarrier): Future[(AuthExchange, GovernmentGatewayToken)] = {
     createPayload(nino, isAgent) flatMap {
       payload => loginRequest(payload)
@@ -122,52 +121,12 @@ class CustomAuthConnector @Inject()(servicesConfig: ServicesConfig,
     }
   }
 
-  //  private def delegatedEnrolmentsJson(delegatedEnrolments: Seq[DelegatedEnrolmentData]) =
-  //    delegatedEnrolments
-  //      .filterNot(invalidDelegatedEnrolment)
-  //      .filter(validateDelegatedEnrolmentIdentifiers)
-  //      .map(toJson)
-
-  private def invalidDelegatedEnrolment(delegatedEnrolment: DelegatedEnrolmentData) =
-    delegatedEnrolment.key.isEmpty || delegatedEnrolment.delegatedAuthRule.isEmpty
-
-  private def validateDelegatedEnrolmentIdentifiers(delegatedEnrolment: DelegatedEnrolmentData) =
-    delegatedEnrolment.taxIdentifier.forall(taxId => !(taxId.key.isEmpty || taxId.value.isEmpty))
-
-  private def toJson(enrolment: DelegatedEnrolmentData): JsObject =
-    Json.obj(
-      "key" -> enrolment.key,
-      "identifiers" -> enrolment.taxIdentifier.map(taxId => Json.obj(
-        "key" -> taxId.key,
-        "value" -> taxId.value
-      )),
-      "delegatedAuthRule" -> enrolment.delegatedAuthRule
-    )
-
-  private def toJson(enrolment: EnrolmentData): JsObject =
-    Json.obj(
-      "key" -> enrolment.name,
-      "identifiers" -> enrolment.taxIdentifier.map(taxId => Json.obj(
-        "key" -> taxId.key,
-        "value" -> taxId.value
-      )),
-      "state" -> enrolment.state
-    )
-
-  private def toJson[A: Writes](optData: Option[A], key: String): JsObject =
-    optData.map(data => Json.obj(key -> Json.toJson(data))).getOrElse(Json.obj())
-
   private def removeEmptyValues(fields: (String, Option[String])*): JsObject = {
     val onlyDefinedFields = fields
       .collect {
         case (key, Some(value)) => key -> Json.toJsFieldJsValueWrapper(value)
       }
     Json.obj(onlyDefinedFields: _*)
-  }
-
-  private def toJson(gatewayToken: Option[String]): JsObject = {
-    val ggToken = gatewayToken.map(token => "gatewayToken" -> Json.toJsFieldJsValueWrapper(token))
-    Json.obj("gatewayInformation" -> Json.obj(scala.Seq(ggToken).flatten: _*))
   }
 
 }

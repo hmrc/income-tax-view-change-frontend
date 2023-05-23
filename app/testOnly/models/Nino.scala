@@ -16,10 +16,6 @@
 
 package testOnly.models
 
-//import models.Nino
-import play.api.libs.json.{Reads, Writes}
-//import utils.{SimpleObjectReads, SimpleObjectWrites}
-
 case class Nino(nino: String) {
   val ninoWithoutDescription: String = nino.split(" ").headOption.getOrElse("No description found")
 
@@ -33,8 +29,6 @@ case class Nino(nino: String) {
 }
 
 object Nino extends (String => Nino) {
-//  implicit val ninoWrite: Writes[Nino] = new SimpleObjectWrites[Nino](_.value)
-//  implicit val ninoRead: Reads[Nino] = new SimpleObjectReads[Nino]("nino", Nino.apply)
 
   private val validNinoFormat = "[[A-Z]&&[^DFIQUV]][[A-Z]&&[^DFIQUVO]] ?\\d{2} ?\\d{2} ?\\d{2} ?[A-D]{1}"
   private val invalidPrefixes = List("BG", "GB", "NK", "KN", "TN", "NT", "ZZ")
@@ -42,6 +36,5 @@ object Nino extends (String => Nino) {
   private def hasValidPrefix(nino: String) = !invalidPrefixes.exists(nino.startsWith)
 
   def isValid(nino: String): Boolean = hasValidPrefix(nino) && nino.matches(validNinoFormat)
-
 
 }

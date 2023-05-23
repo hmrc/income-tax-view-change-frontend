@@ -48,8 +48,6 @@ object LoginUtil {
       (JsPath \ "delegatedAuthRule").write[String]
     ) (unlift(DelegatedEnrolment.unapply))
 
-  val reDirectURL = "http://localhost:9081/report-quarterly/income-and-expenses/view?origin=BTA"
-
   def getEnrolmentData(isAgent: Boolean, enrolment: EnrolmentValues): JsValue = {
     val es = if (isAgent) {
       val enrolmentKey = "HMRC-AS-AGENT"

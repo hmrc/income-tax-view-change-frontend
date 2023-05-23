@@ -44,8 +44,6 @@ case class UserRecord(nino: String, mtditid: String, utr: String, description: S
 
 object UserRecord {
   implicit val formats: OFormat[UserRecord] = Json.format[UserRecord]
-
-
 }
 
 case class PostedUser(nino: String, isAgent: Boolean)

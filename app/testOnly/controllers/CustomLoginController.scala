@@ -20,14 +20,11 @@ import config.FrontendAppConfig
 import controllers.BaseController
 import play.api.data.Form
 import play.api.i18n.I18nSupport
-import play.api.libs.json.{JsValue, Json}
 import play.api.mvc._
-import play.api.{Configuration, Environment, Logger}
+import play.api.{Configuration, Environment}
 import testOnly.connectors.{CustomAuthConnector, DynamicStubConnector}
-import testOnly.forms.StubSchemaForm
-import testOnly.models.{Nino, PostedUser, SchemaModel, UserRecord}
-import testOnly.utils.{FileUtil, UserRepository}
-import testOnly.views.html.StubSchemaView
+import testOnly.models.{Nino, PostedUser}
+import testOnly.utils.{UserRepository}
 import uk.gov.hmrc.play.bootstrap.config.AuthRedirects
 import utils.{AuthExchange, SessionBuilder}
 
@@ -36,8 +33,7 @@ import scala.concurrent.{ExecutionContext, Future}
 import testOnly.views.html.LoginPage
 
 @Singleton
-class CustomLoginController @Inject()(stubSchemaView: StubSchemaView)
-                                     (implicit val appConfig: FrontendAppConfig,
+class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
                                       override val config: Configuration,
                                       override val env: Environment,
                                       implicit val mcc: MessagesControllerComponents,
@@ -50,11 +46,9 @@ class CustomLoginController @Inject()(stubSchemaView: StubSchemaView)
 
   // Logging page functionality
   val showLogin: Action[AnyContent] = Action.async { implicit request =>
-
     userRepository.findAll().map(userRecords =>
       Ok(loginPage(routes.CustomLoginController.postLogin, userRecords))
     )
-
   }
 
   val postLogin: Action[AnyContent] = Action.async { implicit request =>
@@ -79,37 +73,10 @@ class CustomLoginController @Inject()(stubSchemaView: StubSchemaView)
                       sessionAuthorityUri = auth)))
 
               case code =>
-                //            Ok(response.body).as("text/html")
-                InternalServerError("something went wrong..")
-
+                InternalServerError("something went wrong.." + code)
             }
         )
       })
-    //      response => response.status match {
-    //        case OK =>
-    //          if (isAgent.contains("true")) {
-    //            val homePage = s"${appConfig.itvcFrontendEnvironment}/$redirectURL"
-    //            val (bearer, auth, utr) = {
-    //              val arr = response.body.split(";")
-    //              (arr(0), arr(1), arr(2))
-    //            }
-    //            Redirect(homePage + utr)
-    //              .withSession(
-    //                SessionBuilder.buildGGSession(AuthExchange(bearerToken = bearer,
-    //                  sessionAuthorityUri = auth)))
-    //          } else {
-    //            val homePage = s"${appConfig.itvcFrontendEnvironment}/$redirectURL"
-    //            val (bearer, auth) = {
-    //              val arr = response.body.split(";")
-    //              (arr(0), arr(1))
-    //            }
-    //            Redirect(homePage)
-    //              .withSession(
-    //                SessionBuilder.buildGGSession(AuthExchange(bearerToken = bearer,
-    //                  sessionAuthorityUri = auth)))
-    //          }
-    //        case code =>
-    //          Ok(response.body).as("text/html")
 
   }
 
@@ -121,13 +88,5 @@ class CustomLoginController @Inject()(stubSchemaView: StubSchemaView)
       }
     )
   }
-
-  private def view(form: Form[SchemaModel], showSuccess: Boolean = false, errorMessage: Option[String] = None)(implicit request: Request[AnyContent]) =
-    stubSchemaView(
-      form,
-      testOnly.controllers.routes.StubSchemaController.submit,
-      showSuccess,
-      errorMessage
-    )
 
 }

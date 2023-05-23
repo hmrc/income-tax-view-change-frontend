@@ -16,7 +16,6 @@
 
 package testOnly.utils
 
-import models.core.Nino
 import play.api.Play
 import testOnly.models.{UserCredentials, UserRecord}
 
@@ -38,13 +37,6 @@ object FileUtil {
     }.toEither
   }
 
-  //  def getUtrBtyNino(nino: String): Either[Throwable, Option[String]] = {
-  //    FileUtil.getUsersFromFile("/data/users.txt") match {
-  //      case Left(ex) => Left(ex)
-  //      case Right(records: Seq[UserRecord]) => Right(records.find(_.nino == nino).map(_.utr))
-  //    }
-  //  }
-
   def getUserCredentials(nino: String, userRepository: UserRepository)(implicit executor: ExecutionContext): Future[UserCredentials] = {
     userRepository.findUser(nino).map {
       case record: UserRecord =>
@@ -56,22 +48,7 @@ object FileUtil {
           enrolmentData = EnrolmentValues(record.mtditid, record.utr),
           delegatedEnrolmentData = None
         )
-
     }
   }
-
-//  def getAgentCredentials(nino: String, userRepository: UserRepository): Future[UserCredentials] = {
-//    userRepository.findUser(nino).map {
-//      case record: UserRecord =>
-//        UserCredentials(credId = UserCredentials.credId, //"6528180096307862",
-//          affinityGroup = "Agent",
-//          confidenceLevel = 250,
-//          credentialStrength = "strong",
-//          Role = "User",
-//          enrolmentData = EnrolmentValues(record.mtditid, record.utr),
-//          delegatedEnrolmentData = Some(DelegatedEnrolmentValues(record.mtditid, record.utr))
-//        )
-//    }
-//  }
 
 }

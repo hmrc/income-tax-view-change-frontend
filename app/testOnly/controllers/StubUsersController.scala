@@ -61,7 +61,6 @@ class StubUsersController @Inject()(stubUsersView: StubUsersView)
   }
 
   def stubUsers: Action[JsValue] = Action.async(parse.json) { implicit request =>
-//    Logger("application").warn("body:" + request.body)
     withJsonBody[UserRecord](
       userRecord => {
         Logger("application").info("userRecord:" + userRecord)
@@ -72,7 +71,6 @@ class StubUsersController @Inject()(stubUsersView: StubUsersView)
               _ => {
                 desResponse.status match {
                   case CREATED =>
-                    Logger("application").info("adding user to mongo..")
                     Future.successful(Ok(s"The following USER was added to the stub: \n\n${Json.toJson(um)}"))
                   case _ =>
                     Logger("application").error(desResponse.body)
@@ -80,10 +78,8 @@ class StubUsersController @Inject()(stubUsersView: StubUsersView)
                 }
               }
             )
-
           }
         )
-
       }
     )
   }
