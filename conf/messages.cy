@@ -1177,3 +1177,20 @@ notmigrated.agent.link_title                                    = cyfrif Hunanas
 incomeSources.ceaseUKProperty.heading                           = Dod ag eiddo yn y DU i ben
 incomeSources.ceaseUKProperty.radioLabel                        = Rwy’n datgan nad wyf bellach yn cael incwm o unrhyw eiddo yn y DU.
 incomeSources.ceaseUKProperty.radioError                        = Mae’n rhaid i chi ddatgan nad ydych chi bellach yn cael incwm o unrhyw eiddo yn y DU
+
+incomeSources.add.UKPropertyBusinessStartDate.heading           = Pryd y dechreuodd eich busnes eiddo yn y DU?
+incomeSources.add.UKPropertyBusinessStartDate.hint              = Dyma’r dyddiad y dechreuodd y gweithgarwch o roi unrhyw eiddo yn y DU ar osod yn y lle cyntaf.
+incomeSources.add.UKPropertyBusinessStartDate.error.required    = Enter the date your UK property business started trading
+incomeSources.add.UKPropertyBusinessStartDate.error.future      = Mae’n rhaid i’r dyddiad y dechreuodd eich busnes eiddo yn y DU fod cyn {0}
+incomeSources.add.UKPropertyBusinessStartDate.error.invalid     = Mae’n rhaid i’r dyddiad y dechreuodd eich busnes eiddo yn y DU fod yn ddyddiad go iawn
+incomeSources.add.CheckUKPropertyBusinessStartDate.error.required  = Dewiswch ‘Iawn’ os yw dyddiad dechrau’ch busnes eiddo yn y DU yn gywir
+
+#Generic date form messages
+dateForm.hint                                                       = Er enghraifft, 27 3 2020
+dateForm.error.day.required                                         = Mae’n rhaid i’r dyddiad gynnwys diwrnod
+dateForm.error.month.required                                       = Mae’n rhaid i’r dyddiad gynnwys mis
+dateForm.error.year.required                                        = Mae’n rhaid i’r dyddiad gynnwys blwyddyn
+dateForm.error.dayAndMonth.required                                 = Mae’n rhaid i’r dyddiad gynnwys diwrnod a mis
+dateForm.error.dayAndYear.required                                  = Mae’n rhaid i’r dyddiad gynnwys diwrnod a blwyddyn
+dateForm.error.monthAndYear.required                                = Mae’n rhaid i’r dyddiad gynnwys mis a blwyddyn
+dateForm.check.heading                                              = A yw’r dyddiad hwn yn gywir?

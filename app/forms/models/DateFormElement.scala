@@ -14,23 +14,14 @@
  * limitations under the License.
  */
 
-package forms.utils
+package forms.models
 
-object SessionKeys {
+import play.api.libs.json.{Json, OFormat}
 
-  val calculationId: String = "calculationId"
+import java.time.LocalDate
 
-  val summaryData: String = "summaryData"
+case class DateFormElement(date: LocalDate)
 
-  val gatewayPage: String = "gatewayPage"
-
-  val calcPagesBackPage: String = "calcPagesBackPage"
-
-  val origin: String = "origin"
-
-  val ceaseUKPropertyDeclare: String = "ceaseUKPropertyDeclare"
-
-  val addUkPropertyStartDate: String = "addUkPropertyStartDate"
-
-  val businessName: String = "addBusinessName"
+object DateFormElement {
+  implicit val DateFormElement: OFormat[DateFormElement] = Json.format[DateFormElement]
 }

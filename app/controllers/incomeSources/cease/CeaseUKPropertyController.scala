@@ -50,12 +50,12 @@ class CeaseUKPropertyController @Inject()(val authenticate: AuthenticationPredic
                                          )
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
-  def handleRequest(isAgent: Boolean, origin: Option[String] = None)
+  def handleRequest(isAgent: Boolean)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
 
     val incomeSourcesEnabled: Boolean = isEnabled(IncomeSources)
     val backUrl: String = if (isAgent) controllers.incomeSources.cease.routes.CeaseIncomeSourceController.showAgent().url else
-      controllers.incomeSources.cease.routes.CeaseIncomeSourceController.show(origin).url
+      controllers.incomeSources.cease.routes.CeaseIncomeSourceController.show().url
     val postAction: Call = if (isAgent) controllers.incomeSources.cease.routes.CeaseUKPropertyController.submitAgent else
       controllers.incomeSources.cease.routes.CeaseUKPropertyController.submit
     val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
@@ -65,8 +65,7 @@ class CeaseUKPropertyController @Inject()(val authenticate: AuthenticationPredic
         ceaseUKPropertyForm = CeaseUKPropertyForm.form,
         postAction = postAction,
         isAgent = isAgent,
-        backUrl = backUrl,
-        origin = origin)(user, messages)))
+        backUrl = backUrl)(user, messages)))
     } else {
       Future.successful(Ok(customNotFoundErrorView()(user, messages)))
     } recover {
@@ -82,8 +81,7 @@ class CeaseUKPropertyController @Inject()(val authenticate: AuthenticationPredic
       andThen retrieveIncomeSources).async {
       implicit user =>
         handleRequest(
-          isAgent = false,
-          origin
+          isAgent = false
         )
     }
 
