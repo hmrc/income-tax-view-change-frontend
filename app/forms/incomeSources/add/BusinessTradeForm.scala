@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package models.incomeSourceDetails
+package forms.incomeSources.add
 
 import forms.utils.ConstraintUtil.ConstraintUtil
 import forms.utils.SessionKeys
-import play.api.data._
 import play.api.data.Forms._
+import play.api.data._
 import play.api.data.validation._
 
 import scala.util.matching.Regex
