@@ -30,6 +30,9 @@ case class PropertyDetailsModel(incomeSourceId: Option[String],
   def isUkProperty: Boolean = incomeSourceType.contains("uk-property")
 
   def isForeignProperty: Boolean = incomeSourceType.contains("foreign-property")
+
+  def isCeased: Boolean = cessation.exists(_.date.nonEmpty)
+
 }
 
 object PropertyDetailsModel {
