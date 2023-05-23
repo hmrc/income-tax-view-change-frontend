@@ -46,7 +46,7 @@ agent.confirmClient.heading                                     = Confirm your c
 agent.confirmClient.clientName                                  = Client’s name
 agent.confirmClient.clientUtr                                   = Client’s Unique Taxpayer Reference (UTR)
 agent.confirmClient.changeClient                                = Change client
-agent.confirmClient.confirmContinue                              = Confirm and continue
+agent.confirmClient.confirmContinue                             = Confirm and continue
 
 # Agent - Client Relationship Failure
 agent.client_relationship_failure.heading                       = You are not authorised to view this client
@@ -1171,3 +1171,8 @@ notmigrated.agent.link_title                                    = Self Assessmen
 incomeSources.ceaseUKProperty.heading                           = Cease UK property
 incomeSources.ceaseUKProperty.radioLabel                        = I declare that I no longer get an income from any property in the UK.
 incomeSources.ceaseUKProperty.radioError                        = You must declare that you no longer get an income from any property in the UK
+incomeSources.ceaseUKProperty.checkDetails.heading              = Check your details
+incomeSources.ceaseUKProperty.checkDetails.paragraph            = UK property business you entered
+incomeSources.ceaseUKProperty.checkDetails.content              = Date business stopped
+incomeSources.ceaseUKProperty.checkDetails.confirm              = Confirm and continue
+incomeSources.ceaseUKProperty.checkDetails.change               = Change
