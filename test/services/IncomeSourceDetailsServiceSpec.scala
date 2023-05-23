@@ -19,7 +19,7 @@ package services
 import audit.mocks.MockAuditingService
 import mocks.connectors.MockIncomeTaxViewChangeConnector
 import mocks.services.{MockAsyncCacheApi, MockNextUpdatesService}
-import models.incomeSourceDetails.viewmodels.{AddIncomeSourcesViewModel, BusinessDetailsViewModel, CeasedBusinessDetailsViewModel, PropertyDetailsViewModel}
+import models.incomeSourceDetails.viewmodels.{AddIncomeSourcesViewModel, CeaseIncomeSourcesViewModel, BusinessDetailsViewModel, CeaseBusinessDetailsViewModel, CeaseCeasedBusinessDetailsViewModel, CeasedBusinessDetailsViewModel, CeasePropertyDetailsViewModel, PropertyDetailsViewModel}
 import org.scalacheck.Gen
 import play.api.cache.AsyncCacheApi
 import testConstants.BaseTestConstants._
@@ -133,6 +133,48 @@ class IncomeSourceDetailsServiceSpec extends TestSupport with MockIncomeTaxViewC
         val generatedFailedData = Gen.oneOf( Seq(ukPropertyAndSoleTraderBusinessIncomeNoTradingName, ukPropertyAndSoleTraderBusinessIncomeNoTradingStartDate, foreignPropertyAndCeasedBusinessIncomeNoStartDate) ).sample.get
         val result = TestIncomeSourceDetailsService.getAddIncomeSourceViewModel(generatedFailedData)
         result.isLeft should be (true)
+      }
+    }
+  }
+
+  "The IncomeSourceDetailsService.getCeaseIncomeSourceViewModel method" when {
+    "a user has a uk property and a sole trader business" should {
+      "return a CeaseIncomeSourcesViewModel with a sole trader business and uk property" in {
+
+        val result = TestIncomeSourceDetailsService.getCeaseIncomeSourceViewModel(ukPropertyAndSoleTraderBusinessIncome)
+
+        result shouldBe Right(CeaseIncomeSourcesViewModel(
+          soleTraderBusinesses = List(CeaseBusinessDetailsViewModel(testTradeName, testStartDate)),
+          ukProperty = Some(CeasePropertyDetailsViewModel(testStartDate)),
+          foreignProperty = None,
+          ceasedBusinesses = Nil
+        ))
+      }
+    }
+    "a user has a foreign property and a ceased businesses" should {
+      "return a CeaseIncomeSourcesViewModel with a foreign property and ceased businesses" in {
+
+        val result = TestIncomeSourceDetailsService.getCeaseIncomeSourceViewModel(foreignPropertyAndCeasedBusinessIncome)
+
+        result shouldBe Right(CeaseIncomeSourcesViewModel(
+          soleTraderBusinesses = Nil,
+          ukProperty = None,
+          foreignProperty = Some(CeasePropertyDetailsViewModel(testStartDate)),
+          ceasedBusinesses = List(
+            CeaseCeasedBusinessDetailsViewModel(testTradeName, testStartDate, testCessation.date.get),
+            CeaseCeasedBusinessDetailsViewModel(testTradeName2, testStartDate2, testCessation2.date.get)
+          )
+        ))
+      }
+    }
+
+    "invalid data provided" should {
+      "return failure" in {
+        // Simulate dynamic data generation from one of the invalid data
+        // TODO: eventually need to be move under tests data generation section
+        val generatedFailedData = Gen.oneOf(Seq(ukPropertyAndSoleTraderBusinessIncomeNoTradingName, ukPropertyAndSoleTraderBusinessIncomeNoTradingStartDate, foreignPropertyAndCeasedBusinessIncomeNoStartDate)).sample.get
+        val result = TestIncomeSourceDetailsService.getCeaseIncomeSourceViewModel(generatedFailedData)
+        result.isLeft should be(true)
       }
     }
   }
