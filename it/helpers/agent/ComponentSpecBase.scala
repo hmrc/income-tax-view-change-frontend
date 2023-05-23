@@ -19,8 +19,8 @@ package helpers.agent
 import com.github.tomakehurst.wiremock.client.WireMock
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
-import forms.CeaseUKPropertyForm
 import forms.agent.ClientsUTRForm
+import forms.incomeSources.cease.CeaseUKPropertyForm
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import helpers.{CustomMatchers, GenericStubMethods, WiremockHelper}
 import org.scalatest._

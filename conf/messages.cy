@@ -1194,3 +1194,8 @@ dateForm.error.dayAndMonth.required                                 = Mae’n rh
 dateForm.error.dayAndYear.required                                  = Mae’n rhaid i’r dyddiad gynnwys diwrnod a blwyddyn
 dateForm.error.monthAndYear.required                                = Mae’n rhaid i’r dyddiad gynnwys mis a blwyddyn
 dateForm.check.heading                                              = A yw’r dyddiad hwn yn gywir?
+
+#Generic radio form messages
+radioForm.checkDate.heading                                         = A yw’r dyddiad hwn yn gywir?
+radioForm.yes                                                       = Iawn
+radioForm.no                                                        = Na

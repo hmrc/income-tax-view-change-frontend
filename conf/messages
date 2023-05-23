@@ -1195,8 +1195,8 @@ dateForm.error.year.required                                        = The date m
 dateForm.error.dayAndMonth.required                                 = The date must include a day and a month
 dateForm.error.dayAndYear.required                                  = The date must include a day and a year
 dateForm.error.monthAndYear.required                                = The date must include a month and a year
-dateForm.check.heading                                              = Is this date correct?
 
 #Generic radio form messages
+radioForm.checkDate.heading                                         = Is this date correct?
 radioForm.yes                                                       = Yes
 radioForm.no                                                        = No

@@ -25,7 +25,7 @@
 
 @this(mainTemplate: unifiedLayout, dateInput: dateInput, continueButton: ContinueButton, formWithCSRF: FormWithCSRF, errorSummary: ErrorSummary, p: p)
 
-@(dateUKPropertyStartedForm: Form[_], postAction: Call, isAgent: Boolean = false, backUrl: String)(implicit request: Request[_], messages: Messages)
+@(addUKPropertyBusinessStartDateForm: Form[_], postAction: Call, isAgent: Boolean = false, backUrl: String)(implicit request: Request[_], messages: Messages)
 
 @getHintContent = {
     @p(classes = "govuk-hint") {
@@ -39,14 +39,14 @@
 @mainTemplate(pageTitle = messages("incomeSources.add.UKPropertyBusinessStartDate.heading"), isAgent = isAgent) {
 
   @errorSummary(
-    form = dateUKPropertyStartedForm
+    form = addUKPropertyBusinessStartDateForm
   )
 
-  @formWithCSRF(action = postAction, Symbol("id") -> "date-uk-property-started-form") {
+  @formWithCSRF(action = postAction, Symbol("id") -> "add-uk-property-business-start-date-form") {
 
     @dateInput(
       content = messages("incomeSources.add.UKPropertyBusinessStartDate.heading"),
-      field = dateUKPropertyStartedForm("add-uk-property-business-start-date"),
+      field = addUKPropertyBusinessStartDateForm("add-uk-property-business-start-date"),
       hintContent = Some(HtmlContent(getHintContent)),
       pageHeading = true
     )

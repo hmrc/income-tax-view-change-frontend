@@ -60,10 +60,8 @@ class CheckUKPropertyBusinessStartDateController @Inject()(val authenticate: Aut
     val incomeSourcesEnabled: Boolean = isEnabled(IncomeSources)
     val backUrl: String = if (isAgent) controllers.incomeSources.add.routes.AddUKPropertyBusinessStartDateController.showAgent().url else
       controllers.incomeSources.add.routes.AddIncomeSourceController.show().url
-    val postAction: Call = if (isAgent) controllers.incomeSources.add.routes.CheckUKPropertyBusinessStartDateController.submitAgent() else {
+    val postAction: Call = if (isAgent) controllers.incomeSources.add.routes.CheckUKPropertyBusinessStartDateController.submitAgent() else
       controllers.incomeSources.add.routes.CheckUKPropertyBusinessStartDateController.submit()
-    }
-
     val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
     if (incomeSourcesEnabled) {
@@ -122,13 +120,15 @@ class CheckUKPropertyBusinessStartDateController @Inject()(val authenticate: Aut
           isAgent = false,
           startDate = formattedStartDate
         ))),
-        validInput =>
-          if (validInput == Some("no")) {
+        validInput => {
+          val changeDateAndGoBack = validInput.equals("no")
+          if (changeDateAndGoBack) {
             Future.successful(Redirect(controllers.incomeSources.add.routes.AddUKPropertyBusinessStartDateController.show())
               .removingFromSession("addUkPropertyStartDate"))
           } else {
             Future.successful(Redirect(controllers.incomeSources.add.routes.UKPropertyAccountingMethod.show()))
           }
+        }
       )
   }
 
@@ -147,13 +147,15 @@ class CheckUKPropertyBusinessStartDateController @Inject()(val authenticate: Aut
                 isAgent = true,
                 startDate = formattedStartDate
               ))),
-              validInput =>
-                if (validInput == Some("no")) {
+              validInput => {
+                val changeDateAndGoBack = validInput.equals("no")
+                if (changeDateAndGoBack) {
                   Future.successful(Redirect(controllers.incomeSources.add.routes.AddUKPropertyBusinessStartDateController.showAgent())
                     .removingFromSession("addUkPropertyStartDate"))
                 } else {
                   Future.successful(Redirect(controllers.incomeSources.add.routes.UKPropertyAccountingMethod.showAgent()))
                 }
+              }
             )
         }
   }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package forms
+package forms.incomeSources.cease
 
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec

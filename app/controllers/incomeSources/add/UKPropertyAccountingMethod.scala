@@ -26,7 +26,6 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.IncomeSourceDetailsService
 import uk.gov.hmrc.http.HeaderCarrier
 import views.html.errorPages.CustomNotFoundError
-import views.html.incomeSources.add.DateUKPropertyStarted
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}

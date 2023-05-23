@@ -20,7 +20,7 @@ import auth.HeaderExtractor
 import com.github.tomakehurst.wiremock.client.WireMock
 import config.FrontendAppConfig
 import config.featureswitch.{FeatureSwitch, FeatureSwitching}
-import forms.CeaseUKPropertyForm
+import forms.incomeSources.cease.CeaseUKPropertyForm
 import helpers.agent.SessionCookieBaker
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import implicits.ImplicitDateFormatterImpl
