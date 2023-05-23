@@ -58,10 +58,6 @@
     else controllers.incomeSources.cease.routes.CeaseForeignPropertyController.show().url
 }
 
-@ceaseMessage = @{
-    getMessage("cease")
-}
-
 @mainTemplate(pageTitle = getMessage("heading"),
     backUrl = Some(backUrl),
     btaNavPartial = user.btaNavPartial) {
@@ -99,7 +95,7 @@
                     content = HtmlContent(
                         s"""<dd class="govuk-summary-list__actions">
                                 <a class="govuk-link" href='$ceaseSoleTraderBusinessURL'>
-                                    $ceaseMessage<span class="govuk-visually-hidden">cease</span>
+                                    ${getMessage("cease")}<span class="govuk-visually-hidden">cease</span>
                                 </a>
                             </dd>"""
                     )
@@ -135,7 +131,7 @@
                     content = HtmlContent(
                         s"""<dd class="govuk-summary-list__actions">
                                 <a class="govuk-link" href='$ceaseUkPropertyURL'>
-                                    $ceaseMessage<span class="govuk-visually-hidden">cease</span>
+                                    ${getMessage("cease")}<span class="govuk-visually-hidden">cease</span>
                                 </a>
                             </dd>"""
                     )
@@ -170,7 +166,7 @@
                     content = HtmlContent(
                         s"""<dd class="govuk-summary-list__actions">
                                 <a class="govuk-link" href='$ceaseForeignPropertyURL'>
-                                    $ceaseMessage<span class="govuk-visually-hidden">cease</span>
+                                    ${getMessage("cease")}<span class="govuk-visually-hidden">cease</span>
                                 </a>
                             </dd>"""
                     )
