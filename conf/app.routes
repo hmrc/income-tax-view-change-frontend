@@ -188,7 +188,7 @@ GET          /income-sources/add/uk-property-business-start-date                
 GET          /agents/income-sources/add/uk-property-business-start-date                                 controllers.AddUkPropertyBusinessStartDate.showAgent()
 GET          /income-sources/add/foreign-property-business-start-date                                   controllers.AddForeignPropertyBusinessStartDate.show()
 GET          /agents/income-sources/add/foreign-property-business-start-date                            controllers.AddForeignPropertyBusinessStartDate.showAgent()
-GET
+
 GET          /income-sources/cease/business-end-date                        controllers.incomeSources.cease.CeaseBusinessNameController.show()
 GET          /agents/income-sources/cease/business-end-date                 controllers.incomeSources.cease.CeaseBusinessNameController.showAgent()
 GET          /income-sources/cease/foreign-property-declare                 controllers.incomeSources.cease.CeaseForeignPropertyController.show()
