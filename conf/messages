@@ -741,7 +741,7 @@ nextUpdates.section.heading.taxYear								   = Tax year: {0} to {1}
 nextUpdates.previousYears.textOne								   = To view previously submitted updates visit the
 nextUpdates.previousYears.textTwo								   = page.
 nextUpdates.previousYears.link									   = tax years
-nextUpdates.eops            									   = Annual update
+nextUpdates.eops            									   = End of period statement
 nextUpdates.crystallised            							   = Final declaration
 nextUpdates.quarterly                                              = Quarterly update
 nextUpdates.crystallisedAll            							   = All income sources
@@ -1046,7 +1046,7 @@ updateTab.obligationType.property                               = Property incom
 updateTab.obligationType.business                               = Business
 updateTab.obligationType.crystallised                           = All income sources
 updateTab.updateType.quarterly                                  = Quarterly update
-updateTab.updateType.eops                                       = Annual update
+updateTab.updateType.eops                                       = End of period statement
 updateTab.updateType.crystallised                               = Final declaration
 
 ## Final Tax Overview (Individual/Common Content)
