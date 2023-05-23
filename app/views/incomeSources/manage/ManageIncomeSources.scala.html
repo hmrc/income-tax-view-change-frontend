@@ -17,12 +17,9 @@
 @import _root_.implicits.ImplicitDateFormatterImpl
 @import views.html.layouts.unifiedLayout
 @import views.html.components._
-@import exceptions.MissingFieldException
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import models.incomeSourceDetails.viewmodels.ViewIncomeSourcesViewModel
-@import controllers.incomeSources.manage.ManageIncomeSourceController
-@import play.api.mvc.Call
-@import controllers.routes
+
 
 @this(
         mainTemplate: unifiedLayout,
@@ -47,8 +44,12 @@
     messages(s"view-income-sources.$key", args: _*)
 }
 
-@viewBusinessDetailsURL = @{
-    controllers.incomeSources.manage.routes.ManageIncomeSourceController.showBusinessDetails().url
+@viewSelfEmploymentDetailsURL = @{
+    if(isAgent){
+        controllers.incomeSources.manage.routes.ManageSelfEmploymentSourceController.showAgent().url
+    } else {
+        controllers.incomeSources.manage.routes.ManageSelfEmploymentSourceController.show().url
+    }
 }
 
 @ukProperty = @{ sources.viewUkProperty }
@@ -56,10 +57,6 @@
 @ceasedBusinesses = @{ sources.viewCeasedBusinesses }
 @soleTraderBusinesses = @{ sources.viewSoleTraderBusinesses }
 
-
-@manageIncomeSource = @{
-        controllers.incomeSources.manage.routes.ManageIncomeSourceController.showBusinessDetails()
-    }
 
 @mainTemplate(pageTitle = getMessage("heading"),
     backUrl = Some(backUrl),
@@ -94,7 +91,7 @@
                 TableRow(
                     content = HtmlContent(
                         s"""<dd class="govuk-summary-list__actions">
-                                <a class="govuk-link" href='$viewBusinessDetailsURL'>
+                                <a class="govuk-link" href='$viewSelfEmploymentDetailsURL'>
                                     ${getMessage("business-details")}<span class="govuk-visually-hidden">cease</span>
                                 </a>
                             </dd>"""
@@ -123,7 +120,6 @@
             ))
         ))
     }
-
 
     @if(foreignProperty.nonEmpty) {
 

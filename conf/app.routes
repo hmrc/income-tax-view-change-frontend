@@ -150,8 +150,8 @@ GET          /how-to-claim-refund-external                                contro
 GET          /agents/how-to-claim-refund-external                         controllers.NotMigratedUserController.redirectAgent()
 
 # Income Sources
-GET          /income-sources/manage/choose-income-sources                 controllers.incomeSources.manage.ManageIncomeSourceController.show()
-GET          /agents/income-sources/manage/choose-income-sources          controllers.incomeSources.manage.ManageIncomeSourceController.showAgent()
+GET          /income-sources/manage/view-and-manage-income-sources        controllers.incomeSources.manage.ManageIncomeSourceController.show()
+GET          /agents/income-sources/manage/view-and-manage-income-sources controllers.incomeSources.manage.ManageIncomeSourceController.showAgent()
 
 GET          /income-sources/add/new-income-sources                       controllers.incomeSources.add.AddIncomeSourceController.show()
 GET          /agents/income-sources/add/new-income-sources                controllers.incomeSources.add.AddIncomeSourceController.showAgent()
@@ -172,7 +172,9 @@ GET          /agents/income-sources/add/business-name                     contro
 POST         /income-sources/add/business-name                            controllers.AddBusinessNameController.submit()
 POST         /agents/income-sources/add/business-name                     controllers.AddBusinessNameController.submitAgent()
 
-GET          /income-sources/manage/your-details                          controllers.incomeSources.manage.ManageIncomeSourceController.showBusinessDetails()
+GET          /income-sources/manage/your-details                          controllers.incomeSources.manage.ManageSelfEmploymentSourceController.show()
+GET          /agents/income-sources/manage/your-details                   controllers.incomeSources.manage.ManageSelfEmploymentSourceController.showAgent()
+
 
 
 # Income Sources - TO BE IMPLEMENTED
