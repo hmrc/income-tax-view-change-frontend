@@ -23,10 +23,10 @@ case class ViewIncomeSourcesViewModel(viewSoleTraderBusinesses: List[ViewBusines
                                       viewForeignProperty: Option[ViewPropertyDetailsViewModel],
                                       viewCeasedBusinesses: List[ViewCeasedBusinessDetailsViewModel])
 
-case class ViewBusinessDetailsViewModel(tradingName: String, tradingStartDate: LocalDate)
+case class ViewBusinessDetailsViewModel(tradingName: String, tradingStartDate: Option[LocalDate])
 
-case class ViewPropertyDetailsViewModel(tradingStartDate: LocalDate)
+case class ViewPropertyDetailsViewModel(tradingStartDate: Option[LocalDate])
 
 case class ViewCeasedBusinessDetailsViewModel(tradingName: String,
-                                          tradingStartDate: LocalDate,
+                                          tradingStartDate: Option[LocalDate],
                                           cessationDate: LocalDate)

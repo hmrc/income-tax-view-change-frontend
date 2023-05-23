@@ -141,25 +141,25 @@ class IncomeSourceDetailsService @Inject()(val incomeTaxViewChangeConnector: Inc
           maybeSoleTraderBusinesses.map { business =>
             ViewBusinessDetailsViewModel(
               business.tradingName.getOrElse("Unknown"),
-              business.tradingStartDate.getOrElse(LocalDate.parse("Unknown trad start"))
+              business.tradingStartDate
             )
           }
         } else Nil,
         viewUkProperty = if (ukPropertyExists) {
           Some(ViewPropertyDetailsViewModel(
-            maybeUkProperty.flatMap(_.tradingStartDate).getOrElse(LocalDate.parse("Unknown uk"))
+            maybeUkProperty.flatMap(_.tradingStartDate)
           ))
         } else None,
         viewForeignProperty = if (foreignPropertyExists) {
           Some(ViewPropertyDetailsViewModel(
-            maybeForeignProperty.flatMap(_.tradingStartDate).getOrElse(LocalDate.parse("Unknown for"))
+            maybeForeignProperty.flatMap(_.tradingStartDate)
           ))
         } else None,
         viewCeasedBusinesses = if (ceasedBusinessExists) {
           maybeCeasedBusinesses.map { business =>
             ViewCeasedBusinessDetailsViewModel(
               tradingName = business.tradingName.getOrElse("Unknown"),
-              tradingStartDate = business.tradingStartDate.getOrElse(LocalDate.parse("Unknown ceas start date")),
+              tradingStartDate = business.tradingStartDate,
               cessationDate = business.cessation.flatMap(_.date).getOrElse(LocalDate.parse("Unknown ceas date"))
             )
           }

@@ -47,6 +47,10 @@
     messages(s"view-income-sources.$key", args: _*)
 }
 
+@viewBusinessDetailsURL = @{
+    controllers.incomeSources.manage.routes.ManageIncomeSourceController.showBusinessDetails().url
+}
+
 @ukProperty = @{ sources.viewUkProperty }
 @foreignProperty = @{ sources.viewForeignProperty }
 @ceasedBusinesses = @{ sources.viewCeasedBusinesses }
@@ -57,7 +61,7 @@
         controllers.incomeSources.manage.routes.ManageIncomeSourceController.showBusinessDetails()
     }
 
-@mainTemplate(pageTitle = getMessage("heading "),
+@mainTemplate(pageTitle = getMessage("heading"),
     backUrl = Some(backUrl),
     btaNavPartial = user.btaNavPartial) {
 
@@ -85,10 +89,16 @@
                     content = Text(business.tradingName),
                     attributes = Map("id" -> s"table-row-trading-name-$index")),
                 TableRow(
-                    content = Text(business.tradingStartDate.toLongDate),
+                    content = Text(business.tradingStartDate.map(_.toLongDate).getOrElse("Unknown")),
                     attributes = Map("id" -> s"table-row-trading-start-date-$index")),
                 TableRow(
-                    content = Text("Choose")
+                    content = HtmlContent(
+                        s"""<dd class="govuk-summary-list__actions">
+                                <a class="govuk-link" href='$viewBusinessDetailsURL'>
+                                    ${getMessage("business-details")}<span class="govuk-visually-hidden">cease</span>
+                                </a>
+                            </dd>"""
+                    )
                 )
             )}
         ))
@@ -107,7 +117,7 @@
             )),
             rows = Seq(Seq(
                 TableRow(
-                    content = Text(ukProperty.map(_.tradingStartDate.toLongDate).get),
+                    content = Text(ukProperty.map(_.tradingStartDate.map(_.toLongDate).getOrElse("Unknown")).get),
                     attributes = Map("id" -> "table-row-trading-start-date-uk")
                 )
             ))
@@ -128,7 +138,7 @@
             )),
             rows = Seq(Seq(
                 TableRow(
-                    content = Text(foreignProperty.map(_.tradingStartDate.toLongDate).get),
+                    content = Text(foreignProperty.map(_.tradingStartDate.map(_.toLongDate).getOrElse("Unknown")).get),
                     attributes = Map("id" -> "table-row-trading-start-date-foreign"))
             ))
         ))
@@ -155,7 +165,7 @@
                     content = Text(b.tradingName),
                     attributes = Map("id" -> s"table-row-trading-name-ceased-$index")),
                 TableRow(
-                    content = Text(b.tradingStartDate.toLongDate),
+                    content = Text(b.tradingStartDate.map(_.toLongDate).getOrElse("Unknown")),
                     attributes = Map("id" -> s"table-row-trading-start-date-ceased-$index")),
                 TableRow(
                     content = Text(b.cessationDate.toLongDate),
