@@ -1145,6 +1145,20 @@ new-income-sources.table-head.business-name = Enw’r busnes
 new-income-sources.table-head.date-started  = Dyddiad cychwyn
 new-income-sources.table-head.date-ended    = Y dyddiad dod i ben
 
+## cease income sources
+cease-income-sources.heading                  = Dod â ffynhonnell incwm i ben
+cease-income-sources.self-employment.h1       = Hunangyflogaeth (unig fasnachwr)
+cease-income-sources.table-head.business-name = Enw’r busnes
+cease-income-sources.table-head.date-started  = Dyddiad cychwyn
+cease-income-sources.cease                    = Dod i ben
+cease-income-sources.uk-property.h1           = Eiddo yn y DU
+cease-income-sources.uk-property.p1           = **Welsh to be translated**
+cease-income-sources.foreign-property.h1      = Eiddo tramor
+cease-income-sources.foreign-property.p1      = **Welsh to be translated**
+cease-income-sources.ceased-businesses.h1     = Busnesau sydd wedi dod i ben
+cease-income-sources.table-head.date-ended    = Y dyddiad dod i ben
+cease-income-sources.empty                    =
+
 # add Business page
 add-business-name.heading                                         = Beth yw enw’ch busnes?
 add-business-name.p1                                              = Dyma enw’r busnes a ddefnyddioch i gofrestru ar gyfer Hunanasesiad. Os nad oes enw gwahanol ar eich busnes unig fasnachwr, nodwch eich enw cyntaf ac enw olaf.
