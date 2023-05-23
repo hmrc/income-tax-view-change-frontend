@@ -156,6 +156,17 @@ GET          /agents/income-sources/manage/choose-income-sources          contro
 GET          /income-sources/add/new-income-sources                       controllers.incomeSources.add.AddIncomeSourceController.show()
 GET          /agents/income-sources/add/new-income-sources                controllers.incomeSources.add.AddIncomeSourceController.showAgent()
 
+GET          /income-sources/add/business-trade                                                         controllers.AddBusinessTradeController.show()
+GET          /agents/income-sources/add/business-trade                                                  controllers.AddBusinessTradeController.showAgent()
+POST         /income-sources/add/business-trade                                                         controllers.AddBusinessTradeController.submit()
+POST         /agents/income-sources/add/business-trade                                                  controllers.AddBusinessTradeController.agentSubmit()
+GET          /income-sources/add/business-address                                                       controllers.AddBusinessAddressController.show()
+GET          /agents/income-sources/add/business-address                                                controllers.AddBusinessAddressController.showAgent()
+GET          /income-sources/add/business-start-date                                                    controllers.AddBusinessStartDate.show()
+GET          /agents/income-sources/add/business-start-date                                             controllers.AddBusinessStartDate.showAgent()
+GET          /income-sources/add/business-start-date-check                                              controllers.AddBusinessStartDateCheckController.show()
+GET          /agents/income-sources/add/business-start-date-check                                       controllers.AddBusinessStartDateCheckController.showAgent()
+
 GET          /income-sources/cease/cease-an-income-source                 controllers.incomeSources.cease.CeaseIncomeSourceController.show()
 GET          /agents/income-sources/cease/cease-an-income-source          controllers.incomeSources.cease.CeaseIncomeSourceController.showAgent()
 
@@ -164,8 +175,8 @@ GET          /agents/income-sources/cease/uk-property-declare             contro
 POST         /income-sources/cease/uk-property-declare                    controllers.incomeSources.cease.CeaseUKPropertyController.submit
 POST         /agents/income-sources/cease/uk-property-declare             controllers.incomeSources.cease.CeaseUKPropertyController.submitAgent
 
-GET         /income-sources/cease/uk-property-end-date                    controllers.incomeSources.cease.DateUKPropertyCeasedController.show(origin: Option[String] ?= None)
-GET         /agents/income-sources/cease/uk-property-end-date             controllers.incomeSources.cease.DateUKPropertyCeasedController.showAgent()
+GET          /income-sources/cease/uk-property-end-date                    controllers.incomeSources.cease.DateUKPropertyCeasedController.show(origin: Option[String] ?= None)
+GET          /agents/income-sources/cease/uk-property-end-date             controllers.incomeSources.cease.DateUKPropertyCeasedController.showAgent()
 
 GET          /income-sources/add/business-name                            controllers.AddBusinessNameController.show()
 GET          /agents/income-sources/add/business-name                     controllers.AddBusinessNameController.showAgent()
@@ -173,13 +184,11 @@ POST         /income-sources/add/business-name                            contro
 POST         /agents/income-sources/add/business-name                     controllers.AddBusinessNameController.submitAgent()
 
 # Income Sources - TO BE IMPLEMENTED
-GET          /income-sources/add/uk-property-business-start-date                  controllers.AddUkPropertyBusinessStartDate.show()
-GET          /agents/income-sources/add/uk-property-business-start-date           controllers.AddUkPropertyBusinessStartDate.showAgent()
-GET          /income-sources/add/foreign-property-business-start-date             controllers.AddForeignPropertyBusinessStartDate.show()
-GET          /agents/income-sources/add/foreign-property-business-start-date      controllers.AddForeignPropertyBusinessStartDate.showAgent()
-GET          /income-sources/add/business-start-date                              controllers.AddBusinessStartDate.show()
-GET          /agents/income-sources/add/business-start-date                       controllers.AddBusinessStartDate.showAgent()
-
+GET          /income-sources/add/uk-property-business-start-date                                        controllers.AddUkPropertyBusinessStartDate.show()
+GET          /agents/income-sources/add/uk-property-business-start-date                                 controllers.AddUkPropertyBusinessStartDate.showAgent()
+GET          /income-sources/add/foreign-property-business-start-date                                   controllers.AddForeignPropertyBusinessStartDate.show()
+GET          /agents/income-sources/add/foreign-property-business-start-date                            controllers.AddForeignPropertyBusinessStartDate.showAgent()
+GET
 GET          /income-sources/cease/business-end-date                        controllers.incomeSources.cease.CeaseBusinessNameController.show()
 GET          /agents/income-sources/cease/business-end-date                 controllers.incomeSources.cease.CeaseBusinessNameController.showAgent()
 GET          /income-sources/cease/foreign-property-declare                 controllers.incomeSources.cease.CeaseForeignPropertyController.show()

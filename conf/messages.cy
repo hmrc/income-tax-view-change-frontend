@@ -1167,6 +1167,15 @@ add-business-name.form.error.required                             = Nodwch eich 
 add-business-name.form.error.maxLength                            = Mae’n rhaid i enw’r busnes fod yn 105 o gymeriadau neu lai
 add-business-name.form.error.invalidNameFormat                    = Ni all enw’r busnes gynnwys !, "", * neu ?
 
+## Add business trade page
+add-business-trade.heading                  = Beth yw masnach eich busnes?
+add-business-trade.p1                       = Er enghraifft: plymio, gwaith trydanol, ymgynghori.
+add-business-trade.form.error.empty         = Nodwch fasnach eich busnes
+add-business-trade.form.error.short         = Mae’n rhaid i fasnach y busnes gynnwys o leiaf dwy lythyren
+add-business-trade.form.error.long          = Mae’n rhaid i fasnach y busnes fod yn 35 o gymeriadau neu lai
+add-business-trade.form.error.invalid       = Ni all masnach y busnes gynnwys !, "" , * na ?
+add-business-trade.form.error.same-name     = Ni allwch nodi’r un peth ar gyfer masnach busnes ac enw’r busnes
+
 shortMonth.1 = Ion
 shortMonth.2 = Chwe
 shortMonth.3 = Maw

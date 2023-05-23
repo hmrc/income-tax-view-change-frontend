@@ -26,13 +26,16 @@ import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
 import mocks.services.MockIncomeSourceDetailsService
 import models.incomeSourceDetails.viewmodels.AddIncomeSourcesViewModel
+import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.http.Status
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers._
+import testConstants.BaseTestConstants
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testIndividualAuthSuccessWithSaUtrResponse}
-import testConstants.BusinessDetailsTestConstants.{businessDetailsViewModel, businessDetailsViewModel2}
+import testConstants.BusinessDetailsTestConstants.{businessDetailsViewModel, businessDetailsViewModel2, ceasedBusiness, ceasedBusinessDetailsViewModel}
 import testConstants.PropertyDetailsTestConstants.{foreignPropertyDetailsViewModel, ukPropertyDetailsViewModel}
 import testUtils.TestSupport
 
@@ -94,10 +97,10 @@ class AddIncomeSourceControllerSpec extends MockAuthenticationPredicate
         }
       }
       "redirect an individual to the add income source page" when {
-        "user has a Sole Trader Businesses and a UK property" in {
+        "user has a Sole Trader Business and a UK property" in {
           disableAllSwitches()
           enable(IncomeSources)
-          mockBothIncomeSources()
+          mockUkPropertyWithSoleTraderBusiness()
           setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
 
           when(mockIncomeSourceDetailsService.getAddIncomeSourceViewModel(any()))
@@ -112,21 +115,91 @@ class AddIncomeSourceControllerSpec extends MockAuthenticationPredicate
         }
       }
       "redirect an agent to the add income source page" when {
-        "user has a Sole Trader Businesses, a UK property and a Foreign Property" in {
+        "user has a Sole Trader Business, a UK property and a Foreign Property" in {
           disableAllSwitches()
           enable(IncomeSources)
-          mockBothIncomeSources()
+          ukPlusForeignPropertyWithSoleTraderIncomeSource()
           setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
           when(mockIncomeSourceDetailsService.getAddIncomeSourceViewModel(any()))
             .thenReturn(Right(AddIncomeSourcesViewModel(
-              soleTraderBusinesses = List(businessDetailsViewModel, businessDetailsViewModel2),
+              soleTraderBusinesses = List(businessDetailsViewModel),
               ukProperty = Some(ukPropertyDetailsViewModel),
               foreignProperty = Some(foreignPropertyDetailsViewModel),
               ceasedBusinesses = Nil)))
 
           val result = controller.showAgent()(fakeRequestConfirmedClient("AB123456C"))
           status(result) shouldBe Status.OK
+        }
+      }
+      "redirect a user to the add income source page with no tables or table paragraph text" when {
+        "user has no businesses or properties" in {
+          disableAllSwitches()
+          enable(IncomeSources)
+          mockNoIncomeSources()
+          setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+          setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
+
+          when(mockIncomeSourceDetailsService.getAddIncomeSourceViewModel(any()))
+            .thenReturn(Right(AddIncomeSourcesViewModel(Nil, None, None, Nil)))
+
+          val result = controller.show()(fakeRequestWithActiveSession)
+          val resultAgent = controller.showAgent()(fakeRequestConfirmedClient("AB123456C"))
+
+          val doc: Document = Jsoup.parse(contentAsString(result))
+          val docAgent: Document = Jsoup.parse(contentAsString(resultAgent))
+
+          Option(doc.getElementById("sole-trader-businesses-table")).isDefined shouldBe false
+          Option(docAgent.getElementById("sole-trader-businesses-table")).isDefined shouldBe false
+
+          Option(doc.getElementById("uk-property-table")).isDefined shouldBe false
+          Option(docAgent.getElementById("uk-property-table")).isDefined shouldBe false
+
+          Option(doc.getElementById("foreign-property-table")).isDefined shouldBe false
+          Option(docAgent.getElementById("foreign-property-table")).isDefined shouldBe false
+
+          Option(doc.getElementById("ceased-businesses-table")).isDefined shouldBe false
+          Option(docAgent.getElementById("ceased-businesses-table")).isDefined shouldBe false
+
+          Option(doc.getElementById("uk-property-p1")).isDefined shouldBe false
+          Option(doc.getElementById("foreign-property-p1")).isDefined shouldBe false
+        }
+      }
+      "redirect a user to the add income source page with all tables showing" when {
+        "user has a ceased business, sole trader business and uk/foreign property" in {
+          disableAllSwitches()
+          enable(IncomeSources)
+          mockBothPropertyBothBusiness()
+          setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+          setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
+
+          when(mockIncomeSourceDetailsService.getAddIncomeSourceViewModel(any()))
+            .thenReturn(Right(AddIncomeSourcesViewModel(
+              soleTraderBusinesses = List(businessDetailsViewModel),
+              ukProperty = Some(ukPropertyDetailsViewModel),
+              foreignProperty = Some(foreignPropertyDetailsViewModel),
+              ceasedBusinesses = List(ceasedBusinessDetailsViewModel))))
+
+          val result = controller.show()(fakeRequestWithActiveSession)
+          val resultAgent = controller.showAgent()(fakeRequestConfirmedClient("AB123456C"))
+
+          val doc: Document = Jsoup.parse(contentAsString(result))
+          val docAgent: Document = Jsoup.parse(contentAsString(resultAgent))
+
+          Option(doc.getElementById("sole-trader-businesses-table")).isDefined shouldBe true
+          Option(docAgent.getElementById("sole-trader-businesses-table")).isDefined shouldBe true
+
+          Option(doc.getElementById("uk-property-table")).isDefined shouldBe true
+          Option(docAgent.getElementById("uk-property-table")).isDefined shouldBe true
+
+          Option(doc.getElementById("foreign-property-table")).isDefined shouldBe true
+          Option(docAgent.getElementById("foreign-property-table")).isDefined shouldBe true
+
+          Option(doc.getElementById("ceased-businesses-table")).isDefined shouldBe true
+          Option(docAgent.getElementById("ceased-businesses-table")).isDefined shouldBe true
+
+          Option(doc.getElementById("uk-property-p1")).isDefined shouldBe true
+          Option(doc.getElementById("foreign-property-p1")).isDefined shouldBe true
         }
       }
     }

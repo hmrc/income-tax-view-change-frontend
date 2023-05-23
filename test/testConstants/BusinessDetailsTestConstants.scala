@@ -22,6 +22,7 @@ import testConstants.NextUpdatesTestConstants.{fakeNextUpdatesModel, openObligat
 import models.core._
 import models.incomeSourceDetails.BusinessDetailsModel
 import models.incomeSourceDetails.viewmodels.{BusinessDetailsViewModel, CeaseBusinessDetailsViewModel}
+import models.incomeSourceDetails.viewmodels.{BusinessDetailsViewModel, CeasedBusinessDetailsViewModel}
 import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, ObligationsModel}
 
 object BusinessDetailsTestConstants {
@@ -55,6 +56,8 @@ object BusinessDetailsTestConstants {
   val testMtdItId = "XIAT0000000000A"
   val testStartDate = LocalDate.parse("2022-01-01")
   val testStartDate2 = LocalDate.parse("2021-01-01")
+  val testEndDate = LocalDate.parse("2023-01-01")
+
 
   val business1 = BusinessDetailsModel(
     incomeSourceId = Some(testSelfEmploymentId),
@@ -110,6 +113,12 @@ object BusinessDetailsTestConstants {
   val ceaseBusinessDetailsViewModel2 = CeaseBusinessDetailsViewModel(
     tradingName = testTradeName2,
     tradingStartDate = testStartDate2
+  )
+
+  val ceasedBusinessDetailsViewModel = CeasedBusinessDetailsViewModel(
+    tradingName = testTradeName,
+    tradingStartDate = testStartDate,
+    cessationDate = testEndDate
   )
 
   val business2 = BusinessDetailsModel(
