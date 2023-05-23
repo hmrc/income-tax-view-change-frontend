@@ -594,7 +594,7 @@ obligations.quarterly.to                                        = i
 obligations.eops                                                = Blwyddyn dreth gyfan (gwiriad olaf)
 obligations.noReports                                           = Nid oes unrhyw adroddiadau’n nesáu at eu dyddiad cau ar hyn o bryd. Bydd eich dyddiad cau nesaf yn dangos yma ar ddydd Llun cyntaf y mis nesaf.
 nextUpdates.quarterly                                           = Diweddariad bob chwarter
-nextUpdates.eops            									= Diweddariad blynyddol
+nextUpdates.eops            									= Datganiad diwedd cyfnod
 nextUpdates.crystallised            							= Datganiad terfynol
 nextUpdates.crystallisedAll            							= Pob ffynhonnell incwm
 nextUpdates.propertyIncome            							= Incwm o eiddo
@@ -1021,7 +1021,7 @@ updateTab.obligationType.crystallised                           = Pob ffynhonnel
 updateTab.due                                                   = Yn ddyledus erbyn {0}
 updateTab.dateSubmitted                                         = Dyddiad cyflwyno
 updateTab.updateType.quarterly                                  = Diweddariad bob chwarter
-updateTab.updateType.eops                                       = Diweddariad blynyddol
+updateTab.updateType.eops                                       = Datganiad diwedd cyfnod
 updateTab.updateType.crystallised                               = Datganiad terfynol
 
 #Language Selector
