@@ -43,11 +43,6 @@
     messages(s"cease-income-sources.$key", args: _*)
 }
 
-@soleTraderBusinesses = @{ sources.soleTraderBusinesses }
-@ukProperty = @{ sources.ukProperty }
-@foreignProperty = @{ sources.foreignProperty }
-@ceasedBusinesses = @{ sources.ceasedBusinesses }
-
 @ceaseSoleTraderBusinessURL = @{
     if(isAgent) controllers.incomeSources.cease.routes.CeaseBusinessNameController.showAgent().url
     else controllers.incomeSources.cease.routes.CeaseBusinessNameController.show().url
@@ -74,7 +69,7 @@
     @h1(msg = getMessage("heading"),
         id = Some("heading"))
 
-    @if(soleTraderBusinesses.nonEmpty) {
+    @if(sources.soleTraderBusinesses.nonEmpty) {
 
         @h2(msg = getMessage("self-employment.h1"),
             optId = Some("self-employment-h1"))
@@ -91,7 +86,7 @@
                     content = Empty,
                     attributes = Map("id" -> "empty1"))
             )),
-            rows = soleTraderBusinesses.zipWithIndex.map { case (business, index) => Seq(
+            rows = sources.soleTraderBusinesses.zipWithIndex.map { case (business, index) => Seq(
                 TableRow(
                     content = Text(business.tradingName),
                     attributes = Map("id" -> s"table-row-trading-name-$index")),
@@ -114,7 +109,7 @@
         ))
     }
 
-    @if(ukProperty.nonEmpty) {
+    @if(sources.ukProperty.nonEmpty) {
 
         @h2(msg = getMessage("uk-property.h1"),
             optId = Some("uk-property-h1"))
@@ -134,7 +129,7 @@
 
             rows = Seq(Seq(
                 TableRow(
-                    content = Text(ukProperty.map(_.tradingStartDate.toLongDate).get),
+                    content = Text(sources.ukProperty.map(_.tradingStartDate.toLongDate).get),
                     attributes = Map("id" -> "table-row-trading-start-date-uk")),
                 TableRow(
                     content = HtmlContent(
@@ -150,7 +145,7 @@
         ))
     }
 
-    @if(foreignProperty.nonEmpty) {
+    @if(sources.foreignProperty.nonEmpty) {
 
         @h2(msg = getMessage("foreign-property.h1"),
             optId = Some("foreign-property-h1"))
@@ -169,7 +164,7 @@
             )),
             rows = Seq(Seq(
                 TableRow(
-                    content = Text(foreignProperty.map(_.tradingStartDate.toLongDate).get),
+                    content = Text(sources.foreignProperty.map(_.tradingStartDate.toLongDate).get),
                     attributes = Map("id" -> "table-row-trading-start-date-foreign")),
                 TableRow(
                     content = HtmlContent(
@@ -185,7 +180,7 @@
         ))
     }
 
-    @if(ceasedBusinesses.nonEmpty) {
+    @if(sources.ceasedBusinesses.nonEmpty) {
         @h2(msg = getMessage("ceased-businesses.h1"),
             optId = Some("ceased-businesses-h1"))
 
@@ -201,7 +196,7 @@
                     content = Text(getMessage("table-head.date-ended")),
                     attributes = Map("id" -> "table-head-date-ended-ceased"))
             )),
-            rows = ceasedBusinesses.zipWithIndex.map { case (business, index) => Seq(
+            rows = sources.ceasedBusinesses.zipWithIndex.map { case (business, index) => Seq(
                 TableRow(
                     content = Text(business.tradingName),
                     attributes = Map("id" -> s"table-row-trading-name-ceased-$index")),
