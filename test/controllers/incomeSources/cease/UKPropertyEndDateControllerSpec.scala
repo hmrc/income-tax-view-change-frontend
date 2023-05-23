@@ -19,7 +19,7 @@ package controllers.incomeSources.cease
 import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
-import forms.incomeSources.cease.DateUKPropertyCeasedForm
+import forms.incomeSources.cease.UKPropertyEndDateForm
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -33,48 +33,48 @@ import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testIndiv
 import testUtils.TestSupport
 import uk.gov.hmrc.http.{HttpClient, HttpResponse}
 import views.html.errorPages.CustomNotFoundError
-import views.html.incomeSources.cease.DateUKPropertyCeased
+import views.html.incomeSources.cease.UKPropertyEndDate
 
 import scala.concurrent.Future
 
-class DateUKPropertyCeasedControllerSpec extends TestSupport with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate
+class UKPropertyEndDateControllerSpec extends TestSupport with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate
   with FeatureSwitching {
 
   val mockHttpClient: HttpClient = mock(classOf[HttpClient])
 
-  object TestDateUKPropertyCeasedController extends DateUKPropertyCeasedController(
+  object TestUKPropertyEndDateController extends UKPropertyEndDateController(
     MockAuthenticationPredicate,
     mockAuthService,
     app.injector.instanceOf[SessionTimeoutPredicate],
-    app.injector.instanceOf[DateUKPropertyCeasedForm],
+    app.injector.instanceOf[UKPropertyEndDateForm],
     mockIncomeSourceDetailsService,
     app.injector.instanceOf[NavBarPredicate],
     MockIncomeSourceDetailsPredicate,
     app.injector.instanceOf[NinoPredicate],
-    app.injector.instanceOf[DateUKPropertyCeased],
+    app.injector.instanceOf[UKPropertyEndDate],
     app.injector.instanceOf[CustomNotFoundError])(appConfig,
     mcc = app.injector.instanceOf[MessagesControllerComponents],
     ec, app.injector.instanceOf[ItvcErrorHandler],
     app.injector.instanceOf[AgentItvcErrorHandler]) {
 
-    val title: String = s"${messages("htmlTitle", messages("incomeSources.cease.dateUKPropertyCeased.heading"))}"
-    val titleAgent: String = s"${messages("htmlTitle.agent", messages("incomeSources.cease.dateUKPropertyCeased.heading"))}"
-    val heading: String = messages("incomeSources.cease.dateUKPropertyCeased.heading")
+    val title: String = s"${messages("htmlTitle", messages("incomeSources.cease.UKPropertyEndDate.heading"))}"
+    val titleAgent: String = s"${messages("htmlTitle.agent", messages("incomeSources.cease.UKPropertyEndDate.heading"))}"
+    val heading: String = messages("incomeSources.cease.UKPropertyEndDate.heading")
     
   }
 
-  "Individual - DateUKPropertyCeasedController.show" should {
+  "Individual - UKPropertyEndDateController.show" should {
     "return 200 OK" when {
       "navigating to the page with FS Enabled" in {
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
         enable(IncomeSources)
         mockUKPropertyIncomeSource()
-        val result: Future[Result] = TestDateUKPropertyCeasedController.show()(fakeRequestWithActiveSession)
+        val result: Future[Result] = TestUKPropertyEndDateController.show()(fakeRequestWithActiveSession)
         val document: Document = Jsoup.parse(contentAsString(result))
 
         status(result) shouldBe Status.OK
-        document.title shouldBe TestDateUKPropertyCeasedController.title
-        document.select("h1").text shouldBe TestDateUKPropertyCeasedController.heading
+        document.title shouldBe TestUKPropertyEndDateController.title
+        document.select("h1").text shouldBe TestUKPropertyEndDateController.heading
       }
     }
     "return 303 SEE_OTHER and redirect to custom not found error page" when {
@@ -82,21 +82,21 @@ class DateUKPropertyCeasedControllerSpec extends TestSupport with MockAuthentica
         disable(IncomeSources)
         mockPropertyIncomeSource()
 
-        val result: Future[Result] = TestDateUKPropertyCeasedController.show()(fakeRequestWithActiveSession)
-        val expectedContent: String = TestDateUKPropertyCeasedController.customNotFoundErrorView().toString()
+        val result: Future[Result] = TestUKPropertyEndDateController.show()(fakeRequestWithActiveSession)
+        val expectedContent: String = TestUKPropertyEndDateController.customNotFoundErrorView().toString()
         status(result) shouldBe Status.OK
         contentAsString(result) shouldBe expectedContent
       }
       "called with an unauthenticated user" in {
         setupMockAuthorisationException()
-        val result: Future[Result] = TestDateUKPropertyCeasedController.show()(fakeRequestWithActiveSession)
+        val result: Future[Result] = TestUKPropertyEndDateController.show()(fakeRequestWithActiveSession)
         status(result) shouldBe Status.SEE_OTHER
       }
     }
   }
 
   "Individual - CeaseUKPropertyController.submit" should {
-    s"return 303 SEE_OTHER and redirect to ${controllers.incomeSources.cease.routes.DateUKPropertyCeasedController.show().url}" when {
+    s"return 303 SEE_OTHER and redirect to ${controllers.incomeSources.cease.routes.UKPropertyEndDateController.show().url}" when {
       "form is completed successfully" in {
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
         enable(IncomeSources)
@@ -106,9 +106,9 @@ class DateUKPropertyCeasedControllerSpec extends TestSupport with MockAuthentica
           .thenReturn(Future.successful(HttpResponse(OK, "valid")))
 
         lazy val result: Future[Result] = {
-          TestDateUKPropertyCeasedController.submit()(fakeRequestCeaseUKPropertyDeclarationComplete
-            .withFormUrlEncodedBody("date-uk-property-stopped.day" -> "20", "date-uk-property-stopped.month" -> "12",
-              "date-uk-property-stopped.year" -> "2022"))
+          TestUKPropertyEndDateController.submit()(fakeRequestCeaseUKPropertyDeclarationComplete
+            .withFormUrlEncodedBody("uk-property-end-date.day" -> "20", "uk-property-end-date.month" -> "12",
+              "uk-property-end-date.year" -> "2022"))
         }
 
         status(result) shouldBe Status.SEE_OTHER
@@ -125,9 +125,9 @@ class DateUKPropertyCeasedControllerSpec extends TestSupport with MockAuthentica
           .thenReturn(Future.successful(HttpResponse(OK)))
 
         lazy val result: Future[Result] = {
-          TestDateUKPropertyCeasedController.submit()(fakeRequestCeaseUKPropertyDeclarationComplete.withMethod("POST")
-            .withFormUrlEncodedBody("date-uk-property-stopped.day" -> "", "date-uk-property-stopped.month" -> "12",
-              "date-uk-property-stopped.year" -> "2022"))
+          TestUKPropertyEndDateController.submit()(fakeRequestCeaseUKPropertyDeclarationComplete.withMethod("POST")
+            .withFormUrlEncodedBody("uk-property-end-date.day" -> "", "uk-property-end-date.month" -> "12",
+              "uk-property-end-date.year" -> "2022"))
         }
 
         status(result) shouldBe Status.BAD_REQUEST
@@ -135,19 +135,19 @@ class DateUKPropertyCeasedControllerSpec extends TestSupport with MockAuthentica
     }
   }
 
-  "Agent - DateUKPropertyCeasedController.show" should {
+  "Agent - UKPropertyEndDateController.show" should {
     "return 200 OK" when {
       "navigating to the page with FS Enabled" in {
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         enable(IncomeSources)
         mockUKPropertyIncomeSource()
 
-        val result: Future[Result] = TestDateUKPropertyCeasedController.showAgent()(fakeRequestCeaseUKPropertyDeclarationCompleteAgent)
+        val result: Future[Result] = TestUKPropertyEndDateController.showAgent()(fakeRequestCeaseUKPropertyDeclarationCompleteAgent)
         val document: Document = Jsoup.parse(contentAsString(result))
 
         status(result) shouldBe Status.OK
-        document.title shouldBe TestDateUKPropertyCeasedController.titleAgent
-        document.select("legend:nth-child(1)").text shouldBe TestDateUKPropertyCeasedController.heading
+        document.title shouldBe TestUKPropertyEndDateController.titleAgent
+        document.select("legend:nth-child(1)").text shouldBe TestUKPropertyEndDateController.heading
       }
     }
     "return 303 SEE_OTHER and redirect to custom not found error page" when {
@@ -156,21 +156,21 @@ class DateUKPropertyCeasedControllerSpec extends TestSupport with MockAuthentica
         disable(IncomeSources)
         mockPropertyIncomeSource()
 
-        val result: Future[Result] = TestDateUKPropertyCeasedController.showAgent()(fakeRequestConfirmedClient())
-        val expectedContent: String = TestDateUKPropertyCeasedController.customNotFoundErrorView().toString()
+        val result: Future[Result] = TestUKPropertyEndDateController.showAgent()(fakeRequestConfirmedClient())
+        val expectedContent: String = TestUKPropertyEndDateController.customNotFoundErrorView().toString()
         status(result) shouldBe Status.OK
         contentAsString(result) shouldBe expectedContent
       }
       "called with an unauthenticated user" in {
         setupMockAgentAuthorisationException()
-        val result: Future[Result] = TestDateUKPropertyCeasedController.showAgent()(fakeRequestConfirmedClient())
+        val result: Future[Result] = TestUKPropertyEndDateController.showAgent()(fakeRequestConfirmedClient())
         status(result) shouldBe Status.SEE_OTHER
       }
     }
   }
 
-  "Agent - DateUKPropertyCeasedController.submit" should {
-    s"return 303 SEE_OTHER and redirect to ${controllers.incomeSources.cease.routes.DateUKPropertyCeasedController.showAgent().url}" when {
+  "Agent - UKPropertyEndDateController.submit" should {
+    s"return 303 SEE_OTHER and redirect to ${controllers.incomeSources.cease.routes.UKPropertyEndDateController.showAgent().url}" when {
       "form is completed successfully" in {
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         enable(IncomeSources)
@@ -180,9 +180,9 @@ class DateUKPropertyCeasedControllerSpec extends TestSupport with MockAuthentica
           .thenReturn(Future.successful(HttpResponse(OK)))
 
         lazy val result: Future[Result] = {
-          TestDateUKPropertyCeasedController.submitAgent()(fakeRequestConfirmedClient()
-            .withFormUrlEncodedBody("date-uk-property-stopped.day" -> "20", "date-uk-property-stopped.month" -> "12",
-              "date-uk-property-stopped.year" -> "2022"))
+          TestUKPropertyEndDateController.submitAgent()(fakeRequestConfirmedClient()
+            .withFormUrlEncodedBody("uk-property-end-date.day" -> "20", "uk-property-end-date.month" -> "12",
+              "uk-property-end-date.year" -> "2022"))
         }
 
         status(result) shouldBe Status.SEE_OTHER
@@ -199,9 +199,9 @@ class DateUKPropertyCeasedControllerSpec extends TestSupport with MockAuthentica
           .thenReturn(Future.successful(HttpResponse(OK)))
 
         lazy val result: Future[Result] = {
-          TestDateUKPropertyCeasedController.submitAgent()(fakeRequestCeaseUKPropertyDeclarationCompleteAgent.withMethod("POST")
-            .withFormUrlEncodedBody("date-uk-property-stopped.day" -> "", "date-uk-property-stopped.month" -> "12",
-              "date-uk-property-stopped.year" -> "2023"))
+          TestUKPropertyEndDateController.submitAgent()(fakeRequestCeaseUKPropertyDeclarationCompleteAgent.withMethod("POST")
+            .withFormUrlEncodedBody("uk-property-end-date.day" -> "", "uk-property-end-date.month" -> "12",
+              "uk-property-end-date.year" -> "2023"))
         }
 
         status(result) shouldBe Status.BAD_REQUEST

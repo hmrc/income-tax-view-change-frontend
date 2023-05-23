@@ -255,7 +255,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
       )
     )
 
-    def getDateUKPropertyCeased: WSResponse = get("/income-sources/cease/uk-property-end-date")
+    def getUKPropertyEndDate: WSResponse = get("/income-sources/cease/uk-property-end-date")
   }
 
   def unauthorisedTest(uri: String): Unit = {

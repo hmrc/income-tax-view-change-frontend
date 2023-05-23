@@ -17,7 +17,7 @@
 package views.incomeSources.cease
 
 import auth.MtdItUser
-import forms.incomeSources.cease.DateUKPropertyCeasedForm
+import forms.incomeSources.cease.UKPropertyEndDateForm
 import forms.models.DateFormElement
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -30,11 +30,11 @@ import testConstants.BaseTestConstants.{testMtditid, testNino}
 import testConstants.IncomeSourceDetailsTestConstants.ukPropertyIncome
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
-import views.html.incomeSources.cease.DateUKPropertyCeased
+import views.html.incomeSources.cease.UKPropertyEndDate
 
-class DateUKPropertyCeasedViewSpec extends TestSupport {
+class UKPropertyEndDateViewSpec extends TestSupport {
 
-  val dateUKPropertyCeasedView: DateUKPropertyCeased = app.injector.instanceOf[DateUKPropertyCeased]
+  val UKPropertyEndDateView: UKPropertyEndDate = app.injector.instanceOf[UKPropertyEndDate]
 
   val testUser: MtdItUser[_] = MtdItUser(
     mtditid = testMtditid,
@@ -51,33 +51,33 @@ class DateUKPropertyCeasedViewSpec extends TestSupport {
 
   class Setup(isAgent: Boolean, error: Boolean = false) {
     val mockDateService: DateService = app.injector.instanceOf[DateService]
-    val form: Form[DateFormElement] = new DateUKPropertyCeasedForm(mockDateService).apply(testUser)
+    val form: Form[DateFormElement] = new UKPropertyEndDateForm(mockDateService).apply(testUser)
 
     lazy val view: HtmlFormat.Appendable = if (isAgent) {
-      dateUKPropertyCeasedView(
-        dateUKPropertyCeasedForm = form,
-        postAction = controllers.incomeSources.cease.routes.DateUKPropertyCeasedController.submitAgent(),
+      UKPropertyEndDateView(
+        UKPropertyEndDateForm = form,
+        postAction = controllers.incomeSources.cease.routes.UKPropertyEndDateController.submitAgent(),
         isAgent = true,
         backUrl = controllers.incomeSources.cease.routes.CeaseUKPropertyController.showAgent().url)(FakeRequest(), implicitly)
     } else {
-      dateUKPropertyCeasedView(
-        dateUKPropertyCeasedForm = form,
-        postAction = controllers.incomeSources.cease.routes.DateUKPropertyCeasedController.submit(),
+      UKPropertyEndDateView(
+        UKPropertyEndDateForm = form,
+        postAction = controllers.incomeSources.cease.routes.UKPropertyEndDateController.submit(),
         isAgent = false,
         backUrl = controllers.incomeSources.cease.routes.CeaseUKPropertyController.show().url,
         origin = Some("pta"))(FakeRequest(), implicitly)
     }
 
     lazy val viewWithInputErrors: HtmlFormat.Appendable = if (isAgent) {
-      dateUKPropertyCeasedView(
-        dateUKPropertyCeasedForm = form.withError(FormError("date-uk-property-stopped", "incomeSources.cease.dateUKPropertyCeased.error.beforeStartDate")),
-        postAction = controllers.incomeSources.cease.routes.DateUKPropertyCeasedController.submitAgent(),
+      UKPropertyEndDateView(
+        UKPropertyEndDateForm = form.withError(FormError("uk-property-end-date", "incomeSources.cease.UKPropertyEndDate.error.beforeStartDate")),
+        postAction = controllers.incomeSources.cease.routes.UKPropertyEndDateController.submitAgent(),
         isAgent = true,
         backUrl = controllers.incomeSources.cease.routes.CheckCeaseUKPropertyDetailsController.showAgent().url)(FakeRequest(), implicitly)
     } else {
-      dateUKPropertyCeasedView(
-        dateUKPropertyCeasedForm = form.withError(FormError("date-uk-property-stopped", "incomeSources.cease.dateUKPropertyCeased.error.beforeStartDate")),
-        postAction = controllers.incomeSources.cease.routes.DateUKPropertyCeasedController.submit(),
+      UKPropertyEndDateView(
+        UKPropertyEndDateForm = form.withError(FormError("uk-property-end-date", "incomeSources.cease.UKPropertyEndDate.error.beforeStartDate")),
+        postAction = controllers.incomeSources.cease.routes.UKPropertyEndDateController.submit(),
         isAgent = false,
         backUrl = controllers.incomeSources.cease.routes.CeaseUKPropertyController.show().url,
         origin = Some("pta"))(FakeRequest(), implicitly)
@@ -86,12 +86,12 @@ class DateUKPropertyCeasedViewSpec extends TestSupport {
     lazy val document: Document = if (error) Jsoup.parse(contentAsString(viewWithInputErrors)) else Jsoup.parse(contentAsString(view))
   }
 
-  "DateUKPropertyCeasedView - Individual" should {
+  "UKPropertyEndDateView - Individual" should {
     "render the heading" in new Setup(false) {
-      document.getElementsByClass("govuk-fieldset__heading").first().text() shouldBe messages("incomeSources.cease.dateUKPropertyCeased.heading")
+      document.getElementsByClass("govuk-fieldset__heading").first().text() shouldBe messages("incomeSources.cease.UKPropertyEndDate.heading")
     }
     "render the hint" in new Setup(false) {
-      document.getElementById("date-uk-property-stopped-hint").text() shouldBe messages("incomeSources.cease.dateUKPropertyCeased.hint")
+      document.getElementById("uk-property-end-date-hint").text() shouldBe messages("incomeSources.cease.UKPropertyEndDate.hint")
     }
     "render the date form" in new Setup(false) {
       document.getElementsByClass("govuk-label govuk-date-input__label").eq(0).text() shouldBe "Day"
@@ -107,21 +107,21 @@ class DateUKPropertyCeasedViewSpec extends TestSupport {
       document.getElementById("continue-button").text() shouldBe messages("base.continue")
     }
     "render the error message" in new Setup(false, true) {
-      document.getElementById("date-uk-property-stopped-error").text() shouldBe messages("base.error-prefix") + " " +
-        messages("incomeSources.cease.dateUKPropertyCeased.error.beforeStartDate")
+      document.getElementById("uk-property-end-date-error").text() shouldBe messages("base.error-prefix") + " " +
+        messages("incomeSources.cease.UKPropertyEndDate.error.beforeStartDate")
     }
     "render the error summary" in new Setup(false, true) {
       document.getElementById("error-summary-heading").text() shouldBe messages("base.error_summary.heading")
-      document.getElementsByClass("govuk-error-summary__body").first().text() shouldBe messages("incomeSources.cease.dateUKPropertyCeased.error.beforeStartDate")
+      document.getElementsByClass("govuk-error-summary__body").first().text() shouldBe messages("incomeSources.cease.UKPropertyEndDate.error.beforeStartDate")
     }
   }
 
-  "DateUKPropertyCeasedView - Agent" should {
+  "UKPropertyEndDateView - Agent" should {
     "render the heading" in new Setup(true) {
-      document.getElementsByClass("govuk-fieldset__heading").first().text() shouldBe messages("incomeSources.cease.dateUKPropertyCeased.heading")
+      document.getElementsByClass("govuk-fieldset__heading").first().text() shouldBe messages("incomeSources.cease.UKPropertyEndDate.heading")
     }
     "render the hint" in new Setup(true) {
-      document.getElementById("date-uk-property-stopped-hint").text() shouldBe messages("incomeSources.cease.dateUKPropertyCeased.hint")
+      document.getElementById("uk-property-end-date-hint").text() shouldBe messages("incomeSources.cease.UKPropertyEndDate.hint")
     }
     "render the date form" in new Setup(true) {
       document.getElementsByClass("govuk-label govuk-date-input__label").eq(0).text() shouldBe "Day"
@@ -137,12 +137,12 @@ class DateUKPropertyCeasedViewSpec extends TestSupport {
       document.getElementById("continue-button").text() shouldBe messages("base.continue")
     }
     "render the error message" in new Setup(true, true) {
-      document.getElementById("date-uk-property-stopped-error").text() shouldBe messages("base.error-prefix") + " " +
-        messages("incomeSources.cease.dateUKPropertyCeased.error.beforeStartDate")
+      document.getElementById("uk-property-end-date-error").text() shouldBe messages("base.error-prefix") + " " +
+        messages("incomeSources.cease.UKPropertyEndDate.error.beforeStartDate")
     }
     "render the error summary" in new Setup(true, true) {
       document.getElementById("error-summary-heading").text() shouldBe messages("base.error_summary.heading")
-      document.getElementsByClass("govuk-error-summary__body").first().text() shouldBe messages("incomeSources.cease.dateUKPropertyCeased.error.beforeStartDate")
+      document.getElementsByClass("govuk-error-summary__body").first().text() shouldBe messages("incomeSources.cease.UKPropertyEndDate.error.beforeStartDate")
     }
   }
 

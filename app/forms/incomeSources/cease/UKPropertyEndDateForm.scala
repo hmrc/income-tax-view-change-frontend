@@ -28,12 +28,12 @@ import javax.inject.{Inject, Singleton}
 
 
 @Singleton
-class DateUKPropertyCeasedForm @Inject()(val dateService: DateService) extends Constraints {
+class UKPropertyEndDateForm @Inject()(val dateService: DateService) extends Constraints {
 
-  val dateMustBeEntered = "incomeSources.cease.dateUKPropertyCeased.error.incomplete"
-  val dateMustBeReal = "incomeSources.cease.dateUKPropertyCeased.error.invalid"
-  val dateMustNotBeInTheFuture = "incomeSources.cease.dateUKPropertyCeased.error.future"
-  val dateMustBeAfterStartDate = "incomeSources.cease.dateUKPropertyCeased.error.beforeStartDate"
+  val dateMustBeEntered = "incomeSources.cease.UKPropertyEndDate.error.incomplete"
+  val dateMustBeReal = "incomeSources.cease.UKPropertyEndDate.error.invalid"
+  val dateMustNotBeInTheFuture = "incomeSources.cease.UKPropertyEndDate.error.future"
+  val dateMustBeAfterStartDate = "incomeSources.cease.UKPropertyEndDate.error.beforeStartDate"
 
 
   def apply(implicit user: MtdItUser[_]): Form[DateFormElement] = {
@@ -41,7 +41,7 @@ class DateUKPropertyCeasedForm @Inject()(val dateService: DateService) extends C
     val UKPropertyStartDate: Option[LocalDate] = user.incomeSources.properties.filter(_.isUkProperty).flatMap(_.tradingStartDate).headOption
 
     Form(
-      mapping("date-uk-property-stopped" -> tuple(
+      mapping("uk-property-end-date" -> tuple(
         "day" -> default(text(), ""),
         "month" -> default(text(), ""),
         "year" -> default(text(), ""))
@@ -55,9 +55,9 @@ class DateUKPropertyCeasedForm @Inject()(val dateService: DateService) extends C
       )(DateFormElement.apply)(DateFormElement.unapply))
   }
 
-  object DateUKPropertyCeasedForm {
+  object UKPropertyEndDateForm {
     def apply(dateService: DateService)(implicit user: MtdItUser[_]): Form[DateFormElement] = {
-      new DateUKPropertyCeasedForm(dateService).apply
+      new UKPropertyEndDateForm(dateService).apply
     }
   }
 }

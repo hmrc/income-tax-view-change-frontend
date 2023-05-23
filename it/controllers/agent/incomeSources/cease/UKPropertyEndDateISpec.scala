@@ -23,11 +23,11 @@ import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testMtditid}
 import testConstants.IncomeSourceIntegrationTestConstants.ukPropertyOnlyResponse
 
-class DateUKPropertyCeasedISpec extends ComponentSpecBase {
-  val dateUKPropertyShowUrl: String = controllers.incomeSources.cease.routes.DateUKPropertyCeasedController.showAgent().url
-  val dateUKPropertySubmitUrl: String = controllers.incomeSources.cease.routes.DateUKPropertyCeasedController.submitAgent().url
+class UKPropertyEndDateISpec extends ComponentSpecBase {
+  val dateUKPropertyShowUrl: String = controllers.incomeSources.cease.routes.UKPropertyEndDateController.showAgent().url
+  val dateUKPropertySubmitUrl: String = controllers.incomeSources.cease.routes.UKPropertyEndDateController.submitAgent().url
   val checkYourCeaseDetailsShowUrl: String = controllers.incomeSources.cease.routes.CheckCeaseUKPropertyDetailsController.showAgent().url
-  val hintText: String = messagesAPI("incomeSources.cease.dateUKPropertyCeased.hint")
+  val hintText: String = messagesAPI("incomeSources.cease.UKPropertyEndDate.hint")
   val continueButtonText: String = messagesAPI("base.continue")
 
   s"calling GET $dateUKPropertyShowUrl" should {
@@ -40,23 +40,23 @@ class DateUKPropertyCeasedISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
 
         When(s"I call GET $dateUKPropertyShowUrl")
-        val result = IncomeTaxViewChangeFrontend.getDateUKPropertyCeased(clientDetailsWithConfirmation)
+        val result = IncomeTaxViewChangeFrontend.getUKPropertyEndDate(clientDetailsWithConfirmation)
         verifyIncomeSourceDetailsCall(testMtditid)
 
         result should have(
           httpStatus(OK),
-          pageTitleAgent("incomeSources.cease.dateUKPropertyCeased.heading"),
-          elementTextByID("date-uk-property-stopped-hint")(hintText),
+          pageTitleAgent("incomeSources.cease.UKPropertyEndDate.heading"),
+          elementTextByID("uk-property-end-date-hint")(hintText),
           elementTextByID("continue-button")(continueButtonText)
         )
       }
     }
   }
   s"calling POST $dateUKPropertySubmitUrl" should {
-    "redirect to showDateUKPropertyCeasedControllerUrl" when {
+    "redirect to showUKPropertyEndDateControllerUrl" when {
       "form is filled correctly" in {
         val formData: Map[String, Seq[String]] = {
-          Map("date-uk-property-stopped.day" -> Seq("20"), "date-uk-property-stopped.month" -> Seq("12"), "date-uk-property-stopped.year" -> Seq("2022"))
+          Map("uk-property-end-date.day" -> Seq("20"), "uk-property-end-date.month" -> Seq("12"), "uk-property-end-date.year" -> Seq("2022"))
         }
         stubAuthorisedAgentUser(authorised = true)
 
@@ -72,7 +72,7 @@ class DateUKPropertyCeasedISpec extends ComponentSpecBase {
       }
       "form is filled incorrectly" in {
         val formData: Map[String, Seq[String]] = {
-          Map("date-uk-property-stopped.day" -> Seq("aa"), "date-uk-property-stopped.month" -> Seq("12"), "date-uk-property-stopped.year" -> Seq("2022"))
+          Map("uk-property-end-date.day" -> Seq("aa"), "uk-property-end-date.month" -> Seq("12"), "uk-property-end-date.year" -> Seq("2022"))
         }
         stubAuthorisedAgentUser(authorised = true)
 
@@ -83,8 +83,8 @@ class DateUKPropertyCeasedISpec extends ComponentSpecBase {
 
         result should have(
           httpStatus(BAD_REQUEST),
-          elementTextByID("date-uk-property-stopped-error")(messagesAPI("base.error-prefix") + " " +
-            messagesAPI("incomeSources.cease.dateUKPropertyCeased.error.invalid"))
+          elementTextByID("uk-property-end-date-error")(messagesAPI("base.error-prefix") + " " +
+            messagesAPI("incomeSources.cease.UKPropertyEndDate.error.invalid"))
         )
       }
     }

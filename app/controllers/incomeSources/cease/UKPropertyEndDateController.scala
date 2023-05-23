@@ -21,28 +21,28 @@ import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
-import forms.incomeSources.cease.DateUKPropertyCeasedForm
+import forms.incomeSources.cease.UKPropertyEndDateForm
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc._
 import services.IncomeSourceDetailsService
 import uk.gov.hmrc.http.HeaderCarrier
 import views.html.errorPages.CustomNotFoundError
-import views.html.incomeSources.cease.DateUKPropertyCeased
+import views.html.incomeSources.cease.UKPropertyEndDate
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class DateUKPropertyCeasedController @Inject()(val authenticate: AuthenticationPredicate,
+class UKPropertyEndDateController @Inject()(val authenticate: AuthenticationPredicate,
                                                val authorisedFunctions: FrontendAuthorisedFunctions,
                                                val checkSessionTimeout: SessionTimeoutPredicate,
-                                               val dateUKPropertyCeasedForm: DateUKPropertyCeasedForm,
+                                               val UKPropertyEndDateForm: UKPropertyEndDateForm,
                                                val incomeSourceDetailsService: IncomeSourceDetailsService,
                                                val retrieveBtaNavBar: NavBarPredicate,
                                                val retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                                val retrieveNino: NinoPredicate,
-                                               val view: DateUKPropertyCeased,
+                                               val view: UKPropertyEndDate,
                                                val customNotFoundErrorView: CustomNotFoundError)
                                               (implicit val appConfig: FrontendAppConfig,
                                                mcc: MessagesControllerComponents,
@@ -57,13 +57,13 @@ class DateUKPropertyCeasedController @Inject()(val authenticate: AuthenticationP
     val incomeSourcesEnabled: Boolean = isEnabled(IncomeSources)
     val backUrl: String = if (isAgent) controllers.incomeSources.cease.routes.CeaseUKPropertyController.showAgent().url else
       controllers.incomeSources.cease.routes.CeaseUKPropertyController.show().url
-    val postAction: Call = if (isAgent) controllers.incomeSources.cease.routes.DateUKPropertyCeasedController.submitAgent() else
-      controllers.incomeSources.cease.routes.DateUKPropertyCeasedController.submit()
+    val postAction: Call = if (isAgent) controllers.incomeSources.cease.routes.UKPropertyEndDateController.submitAgent() else
+      controllers.incomeSources.cease.routes.UKPropertyEndDateController.submit()
     val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
     if (incomeSourcesEnabled) {
       Future.successful(Ok(view(
-        dateUKPropertyCeasedForm = dateUKPropertyCeasedForm.apply,
+        UKPropertyEndDateForm = UKPropertyEndDateForm.apply,
         postAction = postAction,
         isAgent = isAgent,
         backUrl = backUrl,
@@ -73,7 +73,7 @@ class DateUKPropertyCeasedController @Inject()(val authenticate: AuthenticationP
     } recover {
       case ex: Exception =>
         Logger("application").error(s"${if (isAgent) "[Agent]"}" +
-          s"Error getting DateUKPropertyCeased page: ${ex.getMessage}")
+          s"Error getting UKPropertyEndDate page: ${ex.getMessage}")
         errorHandler.showInternalServerError()
     }
   }
@@ -102,10 +102,10 @@ class DateUKPropertyCeasedController @Inject()(val authenticate: AuthenticationP
   def submit: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
-      dateUKPropertyCeasedForm.apply.bindFromRequest().fold(
+      UKPropertyEndDateForm.apply.bindFromRequest().fold(
         hasErrors => Future.successful(BadRequest(view(
-          dateUKPropertyCeasedForm = hasErrors,
-          postAction = controllers.incomeSources.cease.routes.DateUKPropertyCeasedController.submit(),
+          UKPropertyEndDateForm = hasErrors,
+          postAction = controllers.incomeSources.cease.routes.UKPropertyEndDateController.submit(),
           backUrl = controllers.incomeSources.cease.routes.CeaseUKPropertyController.show().url,
           isAgent = false
         ))),
@@ -119,10 +119,10 @@ class DateUKPropertyCeasedController @Inject()(val authenticate: AuthenticationP
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
           implicit mtdItUser =>
-            dateUKPropertyCeasedForm.apply.bindFromRequest().fold(
+            UKPropertyEndDateForm.apply.bindFromRequest().fold(
               hasErrors => Future.successful(BadRequest(view(
-                dateUKPropertyCeasedForm = hasErrors,
-                postAction = controllers.incomeSources.cease.routes.DateUKPropertyCeasedController.submitAgent(),
+                UKPropertyEndDateForm = hasErrors,
+                postAction = controllers.incomeSources.cease.routes.UKPropertyEndDateController.submitAgent(),
                 backUrl = controllers.incomeSources.cease.routes.CeaseUKPropertyController.showAgent().url,
                 isAgent = true
               ))),

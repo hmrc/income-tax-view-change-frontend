@@ -109,7 +109,7 @@ class CeaseUKPropertyController @Inject()(val authenticate: AuthenticationPredic
           isAgent = false
         )).addingToSession("ceaseUKPropertyDeclare" -> "false")),
         _ =>
-          Future.successful(Redirect(controllers.incomeSources.cease.routes.DateUKPropertyCeasedController.show())
+          Future.successful(Redirect(controllers.incomeSources.cease.routes.UKPropertyEndDateController.show())
             .addingToSession("ceaseUKPropertyDeclare" -> "true"))
       )
   }
@@ -127,7 +127,7 @@ class CeaseUKPropertyController @Inject()(val authenticate: AuthenticationPredic
                 isAgent = true
               )).addingToSession("ceaseUKPropertyDeclare" -> "false")),
               _ =>
-                Future.successful(Redirect(controllers.incomeSources.cease.routes.DateUKPropertyCeasedController.showAgent())
+                Future.successful(Redirect(controllers.incomeSources.cease.routes.UKPropertyEndDateController.showAgent())
                   .addingToSession("ceaseUKPropertyDeclare" -> "true"))
             )
         }

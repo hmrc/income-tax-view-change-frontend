@@ -25,20 +25,20 @@
 
 @this(mainTemplate: unifiedLayout, dateInput: dateInput, continueButton: ContinueButton, formWithCSRF: FormWithCSRF, errorSummary: ErrorSummary)
 
-@(dateUKPropertyCeasedForm: Form[_], postAction: Call, isAgent: Boolean = false, backUrl: String, origin: Option[String] = None)(implicit request: Request[_], messages: Messages)
+@(UKPropertyEndDateForm: Form[_], postAction: Call, isAgent: Boolean = false, backUrl: String, origin: Option[String] = None)(implicit request: Request[_], messages: Messages)
 
-@mainTemplate(pageTitle = messages("incomeSources.cease.dateUKPropertyCeased.heading"), isAgent = isAgent, backUrl = Some(backUrl)) {
+@mainTemplate(pageTitle = messages("incomeSources.cease.UKPropertyEndDate.heading"), isAgent = isAgent, backUrl = Some(backUrl)) {
 
 @errorSummary(
- form = dateUKPropertyCeasedForm
+ form = UKPropertyEndDateForm
 )
 
- @formWithCSRF(action = postAction, Symbol("id") -> "date-uk-property-ceased-form") {
+ @formWithCSRF(action = postAction, Symbol("id") -> "uk-property-end-date-form") {
 
   @dateInput(
-   content = messages("incomeSources.cease.dateUKPropertyCeased.heading"),
-   field = dateUKPropertyCeasedForm("date-uk-property-stopped"),
-   hintContent = Some(messages("incomeSources.cease.dateUKPropertyCeased.hint")),
+   content = messages("incomeSources.cease.UKPropertyEndDate.heading"),
+   field = UKPropertyEndDateForm("uk-property-end-date"),
+   hintContent = Some(messages("incomeSources.cease.UKPropertyEndDate.hint")),
    pageHeading = true
   )
 
