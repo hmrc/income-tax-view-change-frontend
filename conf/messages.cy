@@ -1177,3 +1177,7 @@ notmigrated.agent.link_title                                    = cyfrif Hunanas
 incomeSources.ceaseUKProperty.heading                           = Dod ag eiddo yn y DU i ben
 incomeSources.ceaseUKProperty.radioLabel                        = Rwy’n datgan nad wyf bellach yn cael incwm o unrhyw eiddo yn y DU.
 incomeSources.ceaseUKProperty.radioError                        = Mae’n rhaid i chi ddatgan nad ydych chi bellach yn cael incwm o unrhyw eiddo yn y DU
+
+incomeSources.ceaseForeignProperty.heading                      = Dod ag eiddo tramor i ben
+incomeSources.ceaseForeignProperty.checkboxLabel                = Rwy’n datgan nad wyf bellach yn cael incwm o unrhyw eiddo tramor.
+incomeSources.ceaseForeignProperty.checkboxError                = Mae’n rhaid i chi ddatgan nad ydych chi bellach yn cael incwm o unrhyw eiddo tramor

@@ -167,6 +167,14 @@ POST         /agents/income-sources/cease/uk-property-declare             contro
 GET         /income-sources/cease/uk-property-end-date                    controllers.incomeSources.cease.DateUKPropertyCeasedController.show(origin: Option[String] ?= None)
 GET         /agents/income-sources/cease/uk-property-end-date             controllers.incomeSources.cease.DateUKPropertyCeasedController.showAgent()
 
+GET          /income-sources/cease/foreign-property-declare               controllers.incomeSources.cease.CeaseForeignPropertyController.show(origin: Option[String] ?= None)
+GET          /agents/income-sources/cease/foreign-property-declare        controllers.incomeSources.cease.CeaseForeignPropertyController.showAgent()
+POST         /income-sources/cease/foreign-property-declare               controllers.incomeSources.cease.CeaseForeignPropertyController.submit
+POST         /agents/income-sources/cease/foreign-property-declare        controllers.incomeSources.cease.CeaseForeignPropertyController.submitAgent
+
+GET         /income-sources/cease/foreign-property-end-date               controllers.incomeSources.cease.DateForeignPropertyCeasedController.show(origin: Option[String] ?= None)
+GET         /agents/income-sources/cease/foreign-property-end-date        controllers.incomeSources.cease.DateForeignPropertyCeasedController.showAgent()
+
 GET          /income-sources/add/business-name                            controllers.AddBusinessNameController.show()
 GET          /agents/income-sources/add/business-name                     controllers.AddBusinessNameController.showAgent()
 POST         /income-sources/add/business-name                            controllers.AddBusinessNameController.submit()
