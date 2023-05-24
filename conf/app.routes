@@ -169,7 +169,8 @@ GET         /agents/income-sources/cease/uk-property-end-date             contro
 
 GET         /income-sources/cease/uk-property-check-details               controllers.incomeSources.cease.CheckCeaseUKPropertyDetailsController.show(origin: Option[String] ?= None)
 GET         /agents/income-sources/cease/uk-property-check-details        controllers.incomeSources.cease.CheckCeaseUKPropertyDetailsController.showAgent()
-POST        /income-sources/cease/uk-property-check-details               controllers.incomeSources.cease.CheckCeaseUKPropertyDetailsController.confirmAndContinue()
+POST        /income-sources/cease/uk-property-check-details               controllers.incomeSources.cease.CheckCeaseUKPropertyDetailsController.submit()
+POST        /agents/income-sources/cease/uk-property-check-details               controllers.incomeSources.cease.CheckCeaseUKPropertyDetailsController.submitAgent()
 
 # Income Sources - TO BE IMPLEMENTED
 GET          /income-sources/add/business-name                                                          controllers.AddBusinessNameController.show()

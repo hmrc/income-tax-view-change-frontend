@@ -34,19 +34,19 @@
 )
 @(isAgent: Boolean = false, origin: Option[String] = None)(implicit request: Request[_], messages: Messages)
 
-@getChangeHref(isAgent: Boolean) = @{
+@getChangeHref = @{
    if(isAgent){
-     controllers.incomeSources.cease.routes.DateUKPropertyCeasedController.show().url
-   }else{
      controllers.incomeSources.cease.routes.DateUKPropertyCeasedController.showAgent().url
+   }else{
+     controllers.incomeSources.cease.routes.DateUKPropertyCeasedController.show().url
    }
 }
 
-@getConfirmAndContinueHref(isAgent: Boolean) = @{
+@getSubmitHref = @{
   if(isAgent){
-    controllers.incomeSources.cease.routes.DateUKPropertyCeasedController.show().url
+    controllers.incomeSources.cease.routes.CheckCeaseUKPropertyDetailsController.submitAgent()
   }else{
-    controllers.incomeSources.cease.routes.DateUKPropertyCeasedController.showAgent().url
+    controllers.incomeSources.cease.routes.CheckCeaseUKPropertyDetailsController.submit()
   }
 }
 
@@ -58,7 +58,6 @@
  }
 }
 
-@postAction = @{controllers.incomeSources.cease.routes.CheckDetailsUKPropertyCeasedController.confirmAndContinue}
 
 @content= {
  @p(classes = "govuk-caption-l"){@messages("incomeSources.ceaseUKProperty.checkDetails.paragraph")}
@@ -70,7 +69,7 @@
    <dt class="govuk-summary-list__key">@messages("incomeSources.ceaseUKProperty.checkDetails.content")</dt>
     <dd class="govuk-summary-list__value">@businessStopDate</dd>
    <dd class="govuk-summary-list__actions">
-    <a class="govuk-link" href="@getChangeHref(isAgent)">
+    <a class="govuk-link" href="@getChangeHref">
      @messages("incomeSources.ceaseUKProperty.checkDetails.change")
      <span class="govuk-visually-hidden">@messages("incomeSources.ceaseUKProperty.checkDetails.change")</span>
     </a>
@@ -78,13 +77,13 @@
 
   </div>
  </dl>
-    @formWithCSRF(postAction){
+    @formWithCSRF(getSubmitHref){
         @continueButton(Some(messages("incomeSources.ceaseUKProperty.checkDetails.confirm")))
     }
 
 
 }
 
-@mainTemplate(pageTitle = messages("incomeSources.ceaseUKProperty.checkDetails.heading"), isAgent = isAgent, backUrl = Some(getChangeHref(isAgent))) {
+@mainTemplate(pageTitle = messages("incomeSources.ceaseUKProperty.checkDetails.heading"), isAgent = isAgent, backUrl = Some(getChangeHref)) {
  @content
 }

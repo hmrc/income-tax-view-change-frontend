@@ -17,35 +17,37 @@
 package controllers.incomeSources.cease
 
 import auth.{FrontendAuthorisedFunctions, MtdItUser}
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import config.featureswitch.{FeatureSwitching, IncomeSources}
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
-import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
+import controllers.predicates._
+import models.updateIncomeSource.{UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages}
-import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents, Request, Result}
-import services.IncomeSourceDetailsService
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import services.{IncomeSourceDetailsService, UpdateIncomeSourceService}
 import uk.gov.hmrc.http.HeaderCarrier
 import views.html.errorPages.CustomNotFoundError
-import views.html.incomeSources.cease.CheckDetailsUKPropertyCeased
+import views.html.incomeSources.cease.CheckCeaseUKPropertyDetails
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class CheckCeaseUKPropertyDetailsController @Inject()(val authenticate: AuthenticationPredicate,
-                                                       val authorisedFunctions: FrontendAuthorisedFunctions,
-                                                       val checkSessionTimeout: SessionTimeoutPredicate,
-                                                       val retrieveIncomeSources: IncomeSourceDetailsPredicate,
-                                                       val incomeSourceDetailsService: IncomeSourceDetailsService,
-                                                       val retrieveNino: NinoPredicate,
-                                                       val retrieveBtaNavBar: NavBarPredicate,
-                                                       val view: CheckDetailsUKPropertyCeased,
-                                                       val customNotFoundErrorView: CustomNotFoundError)
-                                                      (implicit val appConfig: FrontendAppConfig,
-                                                       mcc: MessagesControllerComponents,
-                                                       val ec: ExecutionContext,
-                                                       val itvcErrorHandler: ItvcErrorHandler,
-                                                       val itvcErrorHandlerAgent: AgentItvcErrorHandler)
+                                                      val authorisedFunctions: FrontendAuthorisedFunctions,
+                                                      val checkSessionTimeout: SessionTimeoutPredicate,
+                                                      val retrieveIncomeSources: IncomeSourceDetailsPredicate,
+                                                      val incomeSourceDetailsService: IncomeSourceDetailsService,
+                                                      val retrieveNino: NinoPredicate,
+                                                      val retrieveBtaNavBar: NavBarPredicate,
+                                                      val view: CheckCeaseUKPropertyDetails,
+                                                      val service: UpdateIncomeSourceService,
+                                                      val customNotFoundErrorView: CustomNotFoundError)
+                                                     (implicit val appConfig: FrontendAppConfig,
+                                                      mcc: MessagesControllerComponents,
+                                                      val ec: ExecutionContext,
+                                                      val itvcErrorHandler: ItvcErrorHandler,
+                                                      val itvcErrorHandlerAgent: AgentItvcErrorHandler)
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
   def handleRequest(isAgent: Boolean, origin: Option[String] = None)
@@ -53,18 +55,18 @@ class CheckCeaseUKPropertyDetailsController @Inject()(val authenticate: Authenti
 
     val incomeSourcesEnabled: Boolean = isEnabled(IncomeSources)
     val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-      if (incomeSourcesEnabled) {
-        Future.successful(Ok(view(
-          isAgent = isAgent,
-          origin = origin)(user, messages)))
-      } else {
-        Future.successful(Ok(customNotFoundErrorView()(user, messages)))
-      } recover {
-        case ex: Exception =>
-          Logger("application").error(s"${if (isAgent) "[Agent]"}" +
-            s"Error getting CeaseUKProperty page: ${ex.getMessage}")
-          errorHandler.showInternalServerError()
-      }
+    if (incomeSourcesEnabled) {
+      Future.successful(Ok(view(
+        isAgent = isAgent,
+        origin = origin)(user, messages)))
+    } else {
+      Future.successful(Ok(customNotFoundErrorView()(user, messages)))
+    } recover {
+      case ex: Exception =>
+        Logger("application").error(s"${if (isAgent) "[Agent]"}" +
+          s"Error getting CeaseUKProperty page: ${ex.getMessage}")
+        errorHandler.showInternalServerError()
+    }
   }
 
   def show(origin: Option[String] = None): Action[AnyContent] =
@@ -87,9 +89,38 @@ class CheckCeaseUKPropertyDetailsController @Inject()(val authenticate: Authenti
         }
   }
 
-  def confirmAndContinue(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+  def submit(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
-    implicit request => Action{Ok("")}
+    implicit request =>
+    service.updateCessationDate.map{
+      case Left(ex) =>
+        Logger("application").error(s"[CheckCeaseUKPropertyDetailsController][submit] Error submitting cease date:${ex.getMessage}")
+        itvcErrorHandler.showInternalServerError()
+      case Right(result) => result match {
+        case r:UpdateIncomeSourceResponseModel => Redirect(controllers.incomeSources.cease.routes.CeaseUKPropertyController.show().url)
+        case r:UpdateIncomeSourceResponseError =>
+          Logger("application").error(s"[CheckCeaseUKPropertyDetailsController][submit] Error submitting cease date:${r.status} ${r.reason}")
+          itvcErrorHandler.showInternalServerError()
+      }
+    }
+  }
 
+  def submitAgent: Action[AnyContent] = Authenticated.async {
+    implicit request =>
+      implicit user =>
+        getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true).flatMap {
+          implicit mtdItUser =>
+            service.updateCessationDate.map {
+              case Left(ex) =>
+                Logger("application").error(s"[CheckCeaseUKPropertyDetailsController][submitAgent] Error submitting cease date:${ex.getMessage}")
+                itvcErrorHandlerAgent.showInternalServerError()
+              case Right(result) => result match {
+                case r: UpdateIncomeSourceResponseModel => Redirect(controllers.incomeSources.cease.routes.CeaseUKPropertyController.show().url)
+                case r: UpdateIncomeSourceResponseError =>
+                  Logger("application").error(s"[CheckCeaseUKPropertyDetailsController][submitAgent] Error submitting cease date:${r.status} ${r.reason}")
+                  itvcErrorHandlerAgent.showInternalServerError()
+              }
+            }
+        }
   }
 }
