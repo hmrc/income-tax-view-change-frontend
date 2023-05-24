@@ -72,11 +72,18 @@ class AddBusinessStartDateController @Inject()(authenticate: AuthenticationPredi
     }
 
   def handleRequest(isAgent: Boolean, backUrl: String)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
+
+    val backUrl = if(isAgent) {
+      routes.AddBusinessNameController.showAgent().url
+    } else {
+      routes.AddBusinessNameController.show().url
+    }
+
     Future {
       if (isDisabled(IncomeSources)) {
         Redirect(controllers.routes.HomeController.show())
       } else {
-        Ok("PAGE IN DEVELOPMENT")
+        Ok(addBusinessStartDate(isAgent, backUrl))
       }
     }
   }
@@ -89,8 +96,7 @@ class AddBusinessStartDateController @Inject()(authenticate: AuthenticationPredi
           Future {
             Ok(addBusinessStartDate(
               formWithErrors,
-              routes.AddBusinessStartDateController.submit(),
-              backUrl
+              routes.AddBusinessStartDateController.show(), backUrl
             ))
           }
         },
