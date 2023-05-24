@@ -83,7 +83,7 @@ class AddBusinessStartDateController @Inject()(authenticate: AuthenticationPredi
       else routes.AddBusinessStartDateController.submit()
     }
 
-    val errorHandler: ShowInternalServerError = {
+    val errorHandler = {
       if(isAgent) itvcErrorHandlerAgent
       else itvcErrorHandler
     }
