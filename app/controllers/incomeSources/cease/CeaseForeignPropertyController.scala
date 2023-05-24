@@ -55,7 +55,7 @@ class CeaseForeignPropertyController @Inject()(val authenticate: AuthenticationP
 
     val incomeSourcesEnabled: Boolean = isEnabled(IncomeSources)
     val backUrl: String = if (isAgent) controllers.incomeSources.cease.routes.CeaseIncomeSourceController.showAgent().url else
-      controllers.incomeSources.cease.routes.CeaseIncomeSourceController.show(origin).url
+      controllers.incomeSources.cease.routes.CeaseIncomeSourceController.show().url
     val postAction: Call = if (isAgent) controllers.incomeSources.cease.routes.CeaseForeignPropertyController.submitAgent else
       controllers.incomeSources.cease.routes.CeaseForeignPropertyController.submit
     val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
