@@ -1145,6 +1145,20 @@ new-income-sources.table-head.business-name = Enw’r busnes
 new-income-sources.table-head.date-started  = Dyddiad cychwyn
 new-income-sources.table-head.date-ended    = Y dyddiad dod i ben
 
+## cease income sources
+cease-income-sources.heading                  = Dod â ffynhonnell incwm i ben
+cease-income-sources.self-employment.h1       = Hunangyflogaeth (unig fasnachwr)
+cease-income-sources.table-head.business-name = Enw’r busnes
+cease-income-sources.table-head.date-started  = Dyddiad cychwyn
+cease-income-sources.cease                    = Dod i ben
+cease-income-sources.uk-property.h1           = Eiddo yn y DU
+cease-income-sources.uk-property.p1           = **Welsh to be translated**
+cease-income-sources.foreign-property.h1      = Eiddo tramor
+cease-income-sources.foreign-property.p1      = **Welsh to be translated**
+cease-income-sources.ceased-businesses.h1     = Busnesau sydd wedi dod i ben
+cease-income-sources.table-head.date-ended    = Y dyddiad dod i ben
+cease-income-sources.empty                    =
+
 # add Business page
 add-business-name.heading                                         = Beth yw enw’ch busnes?
 add-business-name.p1                                              = Dyma enw’r busnes a ddefnyddioch i gofrestru ar gyfer Hunanasesiad. Os nad oes enw gwahanol ar eich busnes unig fasnachwr, nodwch eich enw cyntaf ac enw olaf.
@@ -1183,6 +1197,14 @@ notmigrated.agent.content_extra                                 = Bydd hyn yn Dd
 notmigrated.user.link_title                                     = cyfrif Hunanasesiad ar-lein
 notmigrated.agent.link_title                                    = cyfrif Hunanasesiad ar gyfer Asiantau
 
-incomeSources.ceaseUKProperty.heading                           = Dod ag eiddo yn y DU i ben
-incomeSources.ceaseUKProperty.radioLabel                        = Rwy’n datgan nad wyf bellach yn cael incwm o unrhyw eiddo yn y DU.
-incomeSources.ceaseUKProperty.radioError                        = Mae’n rhaid i chi ddatgan nad ydych chi bellach yn cael incwm o unrhyw eiddo yn y DU
+
+
+incomeSources.ceaseUKProperty.heading                               = Dod ag eiddo yn y DU i ben
+incomeSources.ceaseUKProperty.radioLabel                            = Rwy’n datgan nad wyf bellach yn cael incwm o unrhyw eiddo yn y DU.
+incomeSources.ceaseUKProperty.radioError                            = Mae’n rhaid i chi ddatgan nad ydych chi bellach yn cael incwm o unrhyw eiddo yn y DU
+incomeSources.cease.UKPropertyEndDate.heading                    = Y dyddiad pan wnaeth eich busnes eiddo yn y DU stopio
+incomeSources.cease.UKPropertyEndDate.hint                       = Er enghraifft, 27 3 2020
+incomeSources.cease.UKPropertyEndDate.error.incomplete           = Mae’n rhaid i’r dyddiad gynnwys diwrnod, mis a blwyddyn
+incomeSources.cease.UKPropertyEndDate.error.invalid              = Mae’n rhaid i’r dyddiad y daeth eich busnes eiddo yn y DU i ben fod yn ddyddiad go iawn
+incomeSources.cease.UKPropertyEndDate.error.future               = Ni allwch nodi dyddiad dod i ben sydd y tu hwnt i’r diwrnod presennol na dyddiad yn y dyfodol
+incomeSources.cease.UKPropertyEndDate.error.beforeStartDate      = Ni all y dyddiad dod i ben ar gyfer y busnes fod cyn y dyddiad dechrau

@@ -18,29 +18,41 @@ package controllers.incomeSources.cease
 
 import auth.FrontendAuthorisedFunctions
 import config.featureswitch.FeatureSwitching
-import config.{AgentItvcErrorHandler, FrontendAppConfig}
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
-import controllers.predicates.{AuthenticationPredicate, SessionTimeoutPredicate}
+import controllers.predicates._
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import services.IncomeSourceDetailsService
+import views.html.incomeSources.cease.CeaseUKProperty
+import views.html.errorPages.CustomNotFoundError
 
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
-class DateUKPropertyCeasedController @Inject()(val authenticate: AuthenticationPredicate,
+class CeaseBusinessNameController @Inject()(val authenticate: AuthenticationPredicate,
                                             val authorisedFunctions: FrontendAuthorisedFunctions,
-                                            val checkSessionTimeout: SessionTimeoutPredicate)
+                                            val checkSessionTimeout: SessionTimeoutPredicate,
+                                            val incomeSourceDetailsService: IncomeSourceDetailsService,
+                                            val retrieveBtaNavBar: NavBarPredicate,
+                                            val retrieveIncomeSources: IncomeSourceDetailsPredicate,
+                                            val retrieveNino: NinoPredicate,
+                                            val view: CeaseUKProperty,
+                                            val customNotFoundErrorView: CustomNotFoundError)
                                            (implicit val appConfig: FrontendAppConfig,
                                             mcc: MessagesControllerComponents,
                                             val ec: ExecutionContext,
-                                            val itvcErrorHandlerAgent: AgentItvcErrorHandler)
+                                            val itvcErrorHandler: ItvcErrorHandler,
+                                            val itvcErrorHandlerAgent: AgentItvcErrorHandler
+                                           )
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
   def show(origin: Option[String] = None): Action[AnyContent] = Action {
-    Ok(" ")
+    Ok("")
   }
 
   def showAgent(): Action[AnyContent] = Action {
-    Ok(" ")
+    Ok("")
   }
+
 }
