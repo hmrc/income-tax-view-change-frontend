@@ -165,6 +165,7 @@ GET          /agents/income-sources/add/business-address                  contro
 GET          /income-sources/add/business-start-date                      controllers.AddBusinessStartDateController.show()
 GET          /agents/income-sources/add/business-start-date               controllers.AddBusinessStartDateController.showAgent()
 POST         /income-sources/add/business-start-date                      controllers.AddBusinessStartDateController.submit()
+POST         /agents/income-sources/add/business-start-date               controllers.AddBusinessStartDateController.submitAgent()
 GET          /income-sources/add/business-start-date-check                controllers.AddBusinessStartDateCheckController.show()
 GET          /agents/income-sources/add/business-start-date-check         controllers.AddBusinessStartDateCheckController.showAgent()
 

@@ -51,14 +51,14 @@ class AddBusinessStartDateController @Inject()(authenticate: AuthenticationPredi
                                                val ec: ExecutionContext)
   extends ClientConfirmedController with I18nSupport with FeatureSwitching {
 
-  lazy val backUrl: String = routes.AddBusinessNameController.show().url
-  lazy val backUrlAgent: String = routes.AddBusinessNameController.showAgent().url
+  lazy val backUrl: String = routes.AddBusinessStartDateCheckController.show().url
+  lazy val backUrlAgent: String = routes.AddBusinessStartDateCheckController.showAgent().url
   def show(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
       handleRequest(
         isAgent = false,
-        backUrl = backUrlAgent
+        backUrl = backUrl
       )
   }
 
@@ -69,7 +69,7 @@ class AddBusinessStartDateController @Inject()(authenticate: AuthenticationPredi
           implicit mtdItUser =>
             handleRequest(
               isAgent = true,
-              backUrl = backUrl
+              backUrl = backUrlAgent
             )
         }
   }
@@ -77,7 +77,7 @@ class AddBusinessStartDateController @Inject()(authenticate: AuthenticationPredi
   def handleRequest(isAgent: Boolean, backUrl: String)(implicit user: MtdItUser[_], ec: ExecutionContext, messages: Messages): Future[Result] = {
 
     val postAction = {
-      if(isAgent) routes.AddBusinessStartDateController.submit()
+      if(isAgent) routes.AddBusinessStartDateController.submitAgent()
       else routes.AddBusinessStartDateController.submit()
     }
 
@@ -116,5 +116,29 @@ class AddBusinessStartDateController @Inject()(authenticate: AuthenticationPredi
           )
         }
       )
+  }
+
+  def submitAgent: Action[AnyContent] = Authenticated.async {
+    implicit request =>
+      implicit user =>
+        getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
+          implicit mtdItUser =>
+            businessStartDateForm.apply.bindFromRequest().fold(
+              formWithErrors => {
+                Future.successful(
+                  BadRequest(addBusinessStartDate(
+                    form = formWithErrors,
+                    postAction = routes.AddBusinessStartDateController.submitAgent(),
+                    backUrl = backUrlAgent,
+                    isAgent = true
+                  ))
+                )
+              },
+              formData =>
+                Future.successful(
+                  Redirect(routes.AddBusinessStartDateCheckController.showAgent())
+                    .addingToSession(SessionKeys.businessStartDate -> formData.date.toString))
+            )
+        }
   }
 }
