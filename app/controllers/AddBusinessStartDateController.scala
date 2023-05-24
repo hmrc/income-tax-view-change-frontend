@@ -83,10 +83,7 @@ class AddBusinessStartDateController @Inject()(authenticate: AuthenticationPredi
       else routes.AddBusinessStartDateController.submit()
     }
 
-    val errorHandler = {
-      if(isAgent) itvcErrorHandlerAgent
-      else itvcErrorHandler
-    }
+    val errorHandler = if(isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
       if (isDisabled(IncomeSources)) {
         Future.successful(
