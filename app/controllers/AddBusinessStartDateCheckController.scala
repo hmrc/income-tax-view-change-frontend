@@ -21,7 +21,6 @@ import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
-import forms.BusinessNameForm
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
@@ -31,19 +30,17 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class AddBusinessStartDate @Inject()(authenticate: AuthenticationPredicate,
+class AddBusinessStartDateCheckController @Inject()(authenticate: AuthenticationPredicate,
                                      val authorisedFunctions: AuthorisedFunctions,
                                      checkSessionTimeout: SessionTimeoutPredicate,
                                      retrieveNino: NinoPredicate,
-                                     val addBusinessView: AddBusiness,
                                      val retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                      val retrieveBtaNavBar: NavBarPredicate,
-                                     val itvcErrorHandler: ItvcErrorHandler,
                                      incomeSourceDetailsService: IncomeSourceDetailsService)
                                     (implicit val appConfig: FrontendAppConfig,
-                                      implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
-                                      implicit override val mcc: MessagesControllerComponents,
-                                      val ec: ExecutionContext)
+                                     implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
+                                     implicit override val mcc: MessagesControllerComponents,
+                                     val ec: ExecutionContext)
   extends ClientConfirmedController with I18nSupport with FeatureSwitching {
 
   def show(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
@@ -61,7 +58,8 @@ class AddBusinessStartDate @Inject()(authenticate: AuthenticationPredicate,
               handleRequest(isAgent = true)
           }
     }
-//TODO Start date page to be implemented
+
+  //TODO Start date page to be implemented
   def handleRequest(isAgent: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
     Future {
       if (isDisabled(IncomeSources)) {
@@ -71,6 +69,4 @@ class AddBusinessStartDate @Inject()(authenticate: AuthenticationPredicate,
       }
     }
   }
-
-
 }

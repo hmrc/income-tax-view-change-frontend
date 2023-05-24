@@ -160,7 +160,55 @@ class IncomeSourceDetailsService @Inject()(val incomeTaxViewChangeConnector: Inc
             ViewCeasedBusinessDetailsViewModel(
               tradingName = business.tradingName.getOrElse("Unknown"),
               tradingStartDate = business.tradingStartDate,
-              cessationDate = business.cessation.flatMap(_.date).getOrElse(LocalDate.parse("Unknown ceas date"))
+              cessationDate = business.cessation.flatMap(_.date).getOrElse(LocalDate.parse("Unknown"))
+            )
+          }
+        } else Nil
+      )
+    }.toEither
+  }
+
+
+  def getCeaseIncomeSourceViewModel(sources: IncomeSourceDetailsModel): Either[Throwable, CeaseIncomeSourcesViewModel] = {
+
+    val maybeSoleTraderBusinesses = sources.businesses.filterNot(_.isCeased)
+    val soleTraderBusinessesExists = maybeSoleTraderBusinesses.nonEmpty
+
+    val maybeUkProperty = sources.properties.filterNot(_.isCeased).find(_.isUkProperty)
+    val ukPropertyExists = maybeUkProperty.nonEmpty
+
+    val maybeForeignProperty = sources.properties.filterNot(_.isCeased).find(_.isForeignProperty)
+    val foreignPropertyExists = maybeForeignProperty.nonEmpty
+
+    val maybeCeasedBusinesses = sources.businesses.filter(_.isCeased)
+    val ceasedBusinessExists = maybeCeasedBusinesses.nonEmpty
+
+    Try {
+      CeaseIncomeSourcesViewModel(
+        soleTraderBusinesses = if (soleTraderBusinessesExists) {
+          maybeSoleTraderBusinesses.map { business =>
+            CeaseBusinessDetailsViewModel(
+              business.tradingName.getOrElse(throw MissingFieldException("Trading Name")),
+              business.tradingStartDate.getOrElse(throw MissingFieldException("Trading Start Date"))
+            )
+          }
+        } else Nil,
+        ukProperty = if (ukPropertyExists) {
+          Some(CeasePropertyDetailsViewModel(
+            maybeUkProperty.flatMap(_.tradingStartDate).getOrElse(throw MissingFieldException("UkProperty: Trading Start Date"))
+          ))
+        } else None,
+        foreignProperty = if (foreignPropertyExists) {
+          Some(CeasePropertyDetailsViewModel(
+            maybeForeignProperty.flatMap(_.tradingStartDate).getOrElse(throw MissingFieldException("ForeignProperty: Trading Start Date"))
+          ))
+        } else None,
+        ceasedBusinesses = if (ceasedBusinessExists) {
+          maybeCeasedBusinesses.map { business =>
+            CeaseCeasedBusinessDetailsViewModel(
+              tradingName = business.tradingName.getOrElse(throw MissingFieldException("CeasedBusiness: Trading Name")),
+              tradingStartDate = business.tradingStartDate.getOrElse(throw MissingFieldException("CeasedBusiness: Trading Start Date")),
+              cessationDate = business.cessation.flatMap(_.date).getOrElse(throw MissingFieldException("Cessation Date"))
             )
           }
         } else Nil

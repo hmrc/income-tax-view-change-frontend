@@ -1145,14 +1145,20 @@ new-income-sources.table-head.business-name = Enw’r busnes
 new-income-sources.table-head.date-started  = Dyddiad cychwyn
 new-income-sources.table-head.date-ended    = Y dyddiad dod i ben
 
-# add Business page
-add-business-name.heading                                         = Beth yw enw’ch busnes?
-add-business-name.p1                                              = Dyma enw’r busnes a ddefnyddioch i gofrestru ar gyfer Hunanasesiad. Os nad oes enw gwahanol ar eich busnes unig fasnachwr, nodwch eich enw cyntaf ac enw olaf.
-add-business-name.p2                                              = Gall enw’r busnes rydych yn ei nodi gynnwys llythrennau mawr neu fach, atalnodau llawn, comas, digidau, &, ’, \, /, - yn unig.
-add-business-name.form.error.required                             = Nodwch eich enw neu enw’ch busnes
-add-business-name.form.error.maxLength                            = Mae’n rhaid i enw’r busnes fod yn 105 o gymeriadau neu lai
-add-business-name.form.error.invalidNameFormat                    = Ni all enw’r busnes gynnwys !, "", * neu ?
-
+## cease income sources
+cease-income-sources.heading                  = Dod â ffynhonnell incwm i ben
+cease-income-sources.self-employment.h1       = Hunangyflogaeth (unig fasnachwr)
+cease-income-sources.table-head.business-name = Enw’r busnes
+cease-income-sources.table-head.date-started  = Dyddiad cychwyn
+cease-income-sources.cease                    = Dod i ben
+cease-income-sources.uk-property.h1           = Eiddo yn y DU
+cease-income-sources.uk-property.p1           = **Welsh to be translated**
+cease-income-sources.foreign-property.h1      = Eiddo tramor
+cease-income-sources.foreign-property.p1      = **Welsh to be translated**
+cease-income-sources.ceased-businesses.h1     = Busnesau sydd wedi dod i ben
+cease-income-sources.table-head.date-ended    = Y dyddiad dod i ben
+cease-income-sources.empty                    =
+  
 ## view Income Sources
 view-income-sources.heading                  = Bwrw golwg dros eich ffynonellau incwm a’u rheoli
 view-income-sources.self-employed-h2         = Busnesau unig fasnachwr
@@ -1164,6 +1170,23 @@ view-income-sources.table-head.date-started  = Dyddiad cychwyn
 view-income-sources.table-head.date-ended    = Y dyddiad dod i ben
 view-income-sources.business-details         = Dewis
 view-income-sources.unknown-field            = Unknown
+
+# add Business page
+add-business-name.heading                                         = Beth yw enw’ch busnes?
+add-business-name.p1                                              = Dyma enw’r busnes a ddefnyddioch i gofrestru ar gyfer Hunanasesiad. Os nad oes enw gwahanol ar eich busnes unig fasnachwr, nodwch eich enw cyntaf ac enw olaf.
+add-business-name.p2                                              = Gall enw’r busnes rydych yn ei nodi gynnwys llythrennau mawr neu fach, atalnodau llawn, comas, digidau, &, ’, \, /, - yn unig.
+add-business-name.form.error.required                             = Nodwch eich enw neu enw’ch busnes
+add-business-name.form.error.maxLength                            = Mae’n rhaid i enw’r busnes fod yn 105 o gymeriadau neu lai
+add-business-name.form.error.invalidNameFormat                    = Ni all enw’r busnes gynnwys !, "", * neu ?
+
+## Add business trade page
+add-business-trade.heading                  = Beth yw masnach eich busnes?
+add-business-trade.p1                       = Er enghraifft: plymio, gwaith trydanol, ymgynghori.
+add-business-trade.form.error.empty         = Nodwch fasnach eich busnes
+add-business-trade.form.error.short         = Mae’n rhaid i fasnach y busnes gynnwys o leiaf dwy lythyren
+add-business-trade.form.error.long          = Mae’n rhaid i fasnach y busnes fod yn 35 o gymeriadau neu lai
+add-business-trade.form.error.invalid       = Ni all masnach y busnes gynnwys !, "" , * na ?
+add-business-trade.form.error.same-name     = Ni allwch nodi’r un peth ar gyfer masnach busnes ac enw’r busnes
 
 
 shortMonth.1 = Ion
@@ -1187,6 +1210,14 @@ notmigrated.agent.content_extra                                 = Bydd hyn yn Dd
 notmigrated.user.link_title                                     = cyfrif Hunanasesiad ar-lein
 notmigrated.agent.link_title                                    = cyfrif Hunanasesiad ar gyfer Asiantau
 
-incomeSources.ceaseUKProperty.heading                           = Dod ag eiddo yn y DU i ben
-incomeSources.ceaseUKProperty.radioLabel                        = Rwy’n datgan nad wyf bellach yn cael incwm o unrhyw eiddo yn y DU.
-incomeSources.ceaseUKProperty.radioError                        = Mae’n rhaid i chi ddatgan nad ydych chi bellach yn cael incwm o unrhyw eiddo yn y DU
+
+
+incomeSources.ceaseUKProperty.heading                               = Dod ag eiddo yn y DU i ben
+incomeSources.ceaseUKProperty.radioLabel                            = Rwy’n datgan nad wyf bellach yn cael incwm o unrhyw eiddo yn y DU.
+incomeSources.ceaseUKProperty.radioError                            = Mae’n rhaid i chi ddatgan nad ydych chi bellach yn cael incwm o unrhyw eiddo yn y DU
+incomeSources.cease.UKPropertyEndDate.heading                    = Y dyddiad pan wnaeth eich busnes eiddo yn y DU stopio
+incomeSources.cease.UKPropertyEndDate.hint                       = Er enghraifft, 27 3 2020
+incomeSources.cease.UKPropertyEndDate.error.incomplete           = Mae’n rhaid i’r dyddiad gynnwys diwrnod, mis a blwyddyn
+incomeSources.cease.UKPropertyEndDate.error.invalid              = Mae’n rhaid i’r dyddiad y daeth eich busnes eiddo yn y DU i ben fod yn ddyddiad go iawn
+incomeSources.cease.UKPropertyEndDate.error.future               = Ni allwch nodi dyddiad dod i ben sydd y tu hwnt i’r diwrnod presennol na dyddiad yn y dyfodol
+incomeSources.cease.UKPropertyEndDate.error.beforeStartDate      = Ni all y dyddiad dod i ben ar gyfer y busnes fod cyn y dyddiad dechrau
