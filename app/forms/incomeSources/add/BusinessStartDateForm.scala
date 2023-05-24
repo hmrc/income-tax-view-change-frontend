@@ -46,7 +46,7 @@ class BusinessStartDateForm @Inject()(val dateService: DateService, val dateForm
   def apply(implicit user: MtdItUser[_], messages: Messages): Form[DateFormElement] = {
     val currentDate: LocalDate = dateService.getCurrentDate()
     val currentDatePlusOneWeek: String = dateFormatter.longDate(currentDate.plusWeeks(1)).toLongDate
-    def dateMustNotBeInTheFuture(maximumDate: String): String = messages(s"incomeSources.add.UKPropertyBusinessStartDate.error.future", maximumDate)
+    def dateMustNotBeInTheFuture(maximumDate: String): String = messages(s"$messagePrefix.error.future", maximumDate)
 
     Form(
       mapping("add-business-start-date" -> tuple(

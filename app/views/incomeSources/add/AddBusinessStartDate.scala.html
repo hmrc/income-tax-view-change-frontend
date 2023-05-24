@@ -17,14 +17,19 @@
 @import _root_.implicits.ImplicitDateFormatterImpl
 @import views.html.layouts.unifiedLayout
 @import views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.html.components.FormWithCSRF
+@import views.html.helpers.injected.ErrorSummary
 
 @this(
     mainTemplate: unifiedLayout,
     implicitDateFormatter: ImplicitDateFormatterImpl,
     h1: h1,
-    h2: h2,
-    p: p,
-    link: link
+    dateInput: dateInput,
+    continueButton: ContinueButton,
+    formWithCSRF: FormWithCSRF,
+    errorSummary: ErrorSummary,
+    govukDateInput: GovukDateInput
 )
 
 @(
@@ -34,12 +39,37 @@
     isAgent: Boolean
 )(implicit request: Request[_], messages: Messages)
 
-@import implicitDateFormatter.longDate
+@prefix = @{ "add-business-start-date" }
 
 @getMessage(key: String, args: String*) = @{
-    messages(s"add-business-start-date.$key", args: _*)
+    messages(s"$prefix.$key", args: _*)
 }
 
-@mainTemplate(pageTitle = getMessage("heading"), backUrl = Some(backUrl)) {
+@mainTemplate(
+    pageTitle = getMessage("heading"),
+    backUrl = Some(backUrl),
+    isAgent = isAgent) {
 
+    @errorSummary(form)
+
+    @formWithCSRF(action = postAction, Symbol("id") -> s"$prefix-form") {
+
+        @govukDateInput(DateInput(
+            hint = Some(Hint(content = HtmlContent(s"<div>${getMessage("hint-prt1")}</div></br><div>${getMessage("hint-prt2")}</div>"))),
+            fieldset = Some(Fieldset(
+                legend = Some(Legend(
+                    content = Text(getMessage("heading")),
+                    classes = "govuk-label--l",
+                    isPageHeading = true
+                ))
+            )),
+            items = Seq(
+                InputItem(attributes = Map("maxLength" -> "2")),
+                InputItem(attributes = Map("maxLength" -> "2")),
+                InputItem(attributes = Map("maxLength" -> "4"))
+            )
+        ).withFormField(form(prefix)))
+
+        @continueButton()
+    }
 }
