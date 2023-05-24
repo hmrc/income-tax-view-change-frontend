@@ -16,6 +16,7 @@
 
 package forms.incomeSources.add
 
+import auth.MtdItUser
 import forms.utils.ConstraintUtil.ConstraintUtil
 import forms.utils.SessionKeys
 import play.api.data.Forms._
@@ -26,7 +27,7 @@ import scala.util.matching.Regex
 
 case class BusinessTradeForm(trade: String)
 
-object BusinessTradeForm {
+class BusinessTradeForm(implicit user: MtdItUser[_]) {
 
   private val validTrade: Regex = "^[A-Za-z0-9 ,.&'\\\\/-]+$".r
 
@@ -52,9 +53,10 @@ object BusinessTradeForm {
     else Invalid(tradeInvalidCharError)
   )
 
-  val form: Form[BusinessTradeForm] = Form(
+  def apply(implicit user: MtdItUser[_]): Form[BusinessTradeForm] = Form(
     mapping(
       SessionKeys.businessTrade -> text.verifying(isValidLength andThen isValidChars)
+        .verifying("test", user.session.get(""))
     )(BusinessTradeForm.apply)(BusinessTradeForm.unapply)
   )
 

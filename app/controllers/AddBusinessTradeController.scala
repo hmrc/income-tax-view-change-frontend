@@ -39,18 +39,21 @@ class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate
                                            checkSessionTimeout: SessionTimeoutPredicate,
                                            retrieveNino: NinoPredicate,
                                            val addBusinessTradeView: AddBusinessTrade,
+                                           val form: ???,
                                            val retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                            val retrieveBtaNavBar: NavBarPredicate,
                                            val itvcErrorHandler: ItvcErrorHandler,
                                            incomeSourceDetailsService: IncomeSourceDetailsService)
                                           (implicit val appConfig: FrontendAppConfig,
-                                             implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
-                                             implicit override val mcc: MessagesControllerComponents,
-                                             val ec: ExecutionContext)
-  extends ClientConfirmedController with I18nSupport with FeatureSwitching{
+                                           implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
+                                           implicit override val mcc: MessagesControllerComponents,
+                                           val ec: ExecutionContext)
+
+  extends ClientConfirmedController with I18nSupport with FeatureSwitching {
 
   val backURL: String = controllers.routes.AddBusinessStartDateCheckController.show().url
   val agentBackURL: String = controllers.routes.AddBusinessStartDateCheckController.showAgent().url
+
   def show: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
@@ -68,14 +71,15 @@ class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate
     }
 
   def handleRequest(isAgent: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
-      if (isDisabled(IncomeSources)) {
-        Future.successful(Redirect(controllers.routes.HomeController.show()))
-      } else {
-        Future {
-          if (!isAgent) Ok(addBusinessTradeView(BusinessTradeForm.form, routes.AddBusinessTradeController.submit(), isAgent, backURL, false))
-          else Ok(addBusinessTradeView(BusinessTradeForm.form, routes.AddBusinessTradeController.agentSubmit(), isAgent, agentBackURL, false))
-        }
-      }
+    val submitAction = if (isAgent) ??? else ???
+
+    if (isDisabled(IncomeSources)) {
+      Future.successful(Redirect(controllers.routes.HomeController.show()))
+    } else {
+
+      submitAction
+
+    }
   }
 
   def submit: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
@@ -88,19 +92,20 @@ class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate
           }
         },
         formData => {
-          if (formData.trade.toLowerCase == request.session.get(SessionKeys.businessName).get.toLowerCase){
+          if (formData.trade.toLowerCase == request.session.get(SessionKeys.businessName).get.toLowerCase) {
             Future {
               Ok(addBusinessTradeView(BusinessTradeForm.form, routes.AddBusinessTradeController.submit(), false, backURL, true))
             }
           }
           else {
             Future.successful {
-              Redirect(routes.AddBusinessAddressController.show().url).withSession(request.session + (SessionKeys.businessTrade -> formData.trade))
+              Redirect(routes.AddBusinessAddressController.show().url).addingToSession(SessionKeys.businessTrade -> formData.trade)
+              )
             }
           }
         }
       )
-    }
+  }
 
   def agentSubmit: Action[AnyContent] = Authenticated.async {
     implicit request =>
@@ -109,9 +114,8 @@ class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate
           implicit mtdItUser =>
             BusinessTradeForm.form.bindFromRequest().fold(
               formWithErrors => {
-                Future {
-                  Ok(addBusinessTradeView(formWithErrors, routes.AddBusinessTradeController.agentSubmit(), true, agentBackURL, false))
-                }
+                Ok(addBusinessTradeView(formWithErrors, Future.successful(routes.AddBusinessTradeController.agentSubmit(), true, agentBackURL, false))
+
               },
               formData => {
                 if (formData.trade == request.session.get(SessionKeys.businessName).get) {
