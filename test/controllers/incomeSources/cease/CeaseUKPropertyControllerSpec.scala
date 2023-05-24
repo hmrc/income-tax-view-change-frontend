@@ -20,6 +20,7 @@ import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
 import forms.CeaseUKPropertyForm
+import forms.utils.SessionKeys.ceaseUKPropertyDeclare
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -111,7 +112,7 @@ class CeaseUKPropertyControllerSpec extends TestSupport with MockAuthenticationP
           TestCeaseUKPropertyController.submit()(fakeRequestCeaseUKPropertyDeclarationComplete
             .withFormUrlEncodedBody(CeaseUKPropertyForm.declaration -> "true", CeaseUKPropertyForm.ceaseCsrfToken -> "12345"))
         }
-        result.futureValue.session(fakeRequestCeaseUKPropertyDeclarationComplete).get("ceaseUKPropertyDeclare") shouldBe Some("true")
+        result.futureValue.session(fakeRequestCeaseUKPropertyDeclarationComplete).get(ceaseUKPropertyDeclare) shouldBe Some("true")
         status(result) shouldBe Status.SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.UKPropertyEndDateController.show().url)
       }
@@ -138,7 +139,7 @@ class CeaseUKPropertyControllerSpec extends TestSupport with MockAuthenticationP
             .withFormUrlEncodedBody(CeaseUKPropertyForm.declaration -> "invalid", CeaseUKPropertyForm.ceaseCsrfToken -> "12345"))
         }
 
-        result.futureValue.session(fakeRequestCeaseUKPropertyDeclarationIncomplete).get("ceaseUKPropertyDeclare") shouldBe Some("false")
+        result.futureValue.session(fakeRequestCeaseUKPropertyDeclarationIncomplete).get(ceaseUKPropertyDeclare) shouldBe Some("false")
         status(result) shouldBe Status.BAD_REQUEST
         contentAsString(result) shouldBe expectedContent
       }
@@ -195,7 +196,7 @@ class CeaseUKPropertyControllerSpec extends TestSupport with MockAuthenticationP
           TestCeaseUKPropertyController.submitAgent()(fakeRequestCeaseUKPropertyDeclarationCompleteAgent
             .withFormUrlEncodedBody(CeaseUKPropertyForm.declaration -> "true", CeaseUKPropertyForm.ceaseCsrfToken -> "12345"))
         }
-        result.futureValue.session(fakeRequestCeaseUKPropertyDeclarationComplete).get("ceaseUKPropertyDeclare") shouldBe Some("true")
+        result.futureValue.session(fakeRequestCeaseUKPropertyDeclarationComplete).get(ceaseUKPropertyDeclare) shouldBe Some("true")
         status(result) shouldBe Status.SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.UKPropertyEndDateController.showAgent().url)
       }
@@ -222,7 +223,7 @@ class CeaseUKPropertyControllerSpec extends TestSupport with MockAuthenticationP
             .withFormUrlEncodedBody(CeaseUKPropertyForm.declaration -> "false", CeaseUKPropertyForm.ceaseCsrfToken -> "12345"))
         }
 
-        result.futureValue.session(fakeRequestCeaseUKPropertyDeclarationIncomplete).get("ceaseUKPropertyDeclare") shouldBe Some("false")
+        result.futureValue.session(fakeRequestCeaseUKPropertyDeclarationIncomplete).get(ceaseUKPropertyDeclare) shouldBe Some("false")
         status(result) shouldBe Status.BAD_REQUEST
         contentAsString(result) shouldBe expectedContent
       }
