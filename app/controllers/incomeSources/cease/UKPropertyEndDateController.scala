@@ -22,6 +22,7 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowI
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import forms.incomeSources.cease.UKPropertyEndDateForm
+import forms.utils.SessionKeys.ceaseUKPropertyEndDate
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc._
@@ -111,7 +112,7 @@ class UKPropertyEndDateController @Inject()(val authenticate: AuthenticationPred
         ))),
         validatedInput =>
           Future.successful(Redirect(controllers.incomeSources.cease.routes.CheckCeaseUKPropertyDetailsController.show())
-            .addingToSession("ceaseUKPropertyEndDate" -> validatedInput.date.toString))
+            .addingToSession(ceaseUKPropertyEndDate -> validatedInput.date.toString))
       )
   }
 
@@ -129,7 +130,7 @@ class UKPropertyEndDateController @Inject()(val authenticate: AuthenticationPred
               ))),
               validatedInput =>
                 Future.successful(Redirect(controllers.incomeSources.cease.routes.CheckCeaseUKPropertyDetailsController.showAgent())
-                  .addingToSession("ceaseUKPropertyEndDate" -> validatedInput.date.toString))
+                  .addingToSession(ceaseUKPropertyEndDate -> validatedInput.date.toString))
             )
         }
   }
