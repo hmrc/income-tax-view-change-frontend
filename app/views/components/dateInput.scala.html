@@ -21,29 +21,28 @@
 @this(govukDateInput: GovukDateInput)
 
 @(content: String,
-    field: Field,
-    hintContent: Option[String] = None,
-    smallText: Boolean = false,
-    largeText: Boolean = true,
-    labelClass: Option[String] = None,
-    pageHeading: Boolean = true
+        field: Field,
+        hintContent: Option[Content] = None,
+        smallText: Boolean = false,
+        largeText: Boolean = true,
+        labelClass: Option[String] = None,
+        pageHeading: Boolean = true
 )(implicit messages: Messages)
 
-@inputItems = @{
-    Seq(InputItem(attributes = Map("maxLength" -> "2")),
-    InputItem(attributes = Map("maxLength" -> "2")),
-    InputItem(attributes = Map("maxLength" -> "4"))
-    )
-}
+ @inputItems = @{
+  Seq(InputItem(attributes = Map("maxLength" -> "2")),
+   InputItem(attributes = Map("maxLength" -> "2")),
+   InputItem(attributes = Map("maxLength" -> "4")))
+ }
 
-@govukDateInput(DateInput(
-    hint = hintContent.map(text => Hint(content = Text(text))),
-    fieldset = Some(Fieldset(
-        legend = Some(Legend(
-            content = Text(content),
-            classes = if(smallText) "govuk-body" else s"""${if(largeText) "govuk-label--xl" else "govuk-label--m"} ${labelClass.getOrElse("")}""",
-            isPageHeading = pageHeading
-        ))
-    )),
-    items = inputItems
-).withFormField(field))
+ @govukDateInput(DateInput(
+  hint = hintContent.map(hintHtml => Hint(content = hintHtml)),
+  fieldset = Some(Fieldset(
+   legend = Some(Legend(
+    content = Text(content),
+    classes = if(smallText) "govuk-body" else s"""${if(largeText) "govuk-label--xl" else "govuk-label--m"} ${labelClass.getOrElse("")}""",
+    isPageHeading = pageHeading
+   ))
+  )),
+  items = inputItems
+ ).withFormField(field))

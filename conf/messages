@@ -1111,7 +1111,7 @@ credit-and-refund.credit-from-balancing-charge-prt-1              = from a
 credit-and-refund.credit-from-balancing-charge-prt-2              = balancing charge credit
 credit-and-refund.credit-from-earlier-tax-year                    = credit from an earlier tax year
 
-## check income sources
+## new income sources
 new-income-sources.heading                  = Add a new sole trader or property income source
 new-income-sources.self-employment.h2       = Sole trader businesses
 new-income-sources.self-employment.p1       = You do not need to tell us about a business we already know about.
@@ -1141,7 +1141,7 @@ cease-income-sources.ceased-businesses.h1     = Businesses that have ceased
 cease-income-sources.table-head.date-ended    = Date ended
 cease-income-sources.empty                    =
 
-# add Business page
+# add Business name
 add-business-name.heading                                         = What is the name of your business?
 add-business-name.p1                                              = This is the business name you used to register for Self Assessment. If your sole trader business does not have a separate name, enter your own first and last name.
 add-business-name.p2                                              = The business name you enter can only include upper or lower case letters, full stops, commas, digits, &, '', \, /, -.
@@ -1157,6 +1157,18 @@ add-business-trade.form.error.short         = Business trade must have at least 
 add-business-trade.form.error.long          = Business trade must be 35 characters or fewer
 add-business-trade.form.error.invalid       = Business trade cannot include !, "", * or ?
 add-business-trade.form.error.same-name     = You cannot enter the same trade and same business name
+
+# add Business start date
+add-business-start-date.heading                      = When did your business start trading?
+add-business-start-date.hint-prt1                    = This is the date we'll use to calculate your Class 2 National Insurance charge, if appropriate.
+add-business-start-date.hint-prt2                    = For example, 27 3 2020
+add-business-start-date.day                          = Day
+add-business-start-date.form.month                   = Month
+add-business-start-date.form.year                    = Year
+add-business-start-date.form.continue                = Continue
+add-business-start-date.error.future                 = The date your business started trading must be before {0}
+add-business-start-date.error.error.required         = Enter the date your business started trading
+add-business-start-date.error.invalid                = The date your business started trading must be a real date
 
 #Following empty fields are not in Use
 #These fields are kept to match with Messages.cy
@@ -1210,3 +1222,13 @@ incomeSources.cease.UKPropertyEndDate.error.incomplete           = The date must
 incomeSources.cease.UKPropertyEndDate.error.invalid              = The date your UK property business stopped must be a real date
 incomeSources.cease.UKPropertyEndDate.error.future               = You cannot provide a cessation date that is beyond the current day or a date in the future
 incomeSources.cease.UKPropertyEndDate.error.beforeStartDate      = The cessation date cannot be earlier than the start date for the business
+
+#Generic date form messages
+dateForm.hint                                                       = For example, 27 3 2020
+dateForm.error.day.required                                         = The date must include a day
+dateForm.error.month.required                                       = The date must include a month
+dateForm.error.year.required                                        = The date must include a year
+dateForm.error.dayAndMonth.required                                 = The date must include a day and a month
+dateForm.error.dayAndYear.required                                  = The date must include a day and a year
+dateForm.error.monthAndYear.required                                = The date must include a month and a year
+dateForm.check.heading                                              = Is this date correct?
