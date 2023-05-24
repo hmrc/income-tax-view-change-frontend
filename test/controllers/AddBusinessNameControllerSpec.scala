@@ -118,8 +118,7 @@ class AddBusinessNameControllerSpec extends TestSupport
           ))
 
           status(result) mustBe SEE_OTHER
-          //Change back to AddBusinessStartDateController when implemented
-          redirectLocation(result) mustBe Some(routes.AddBusinessTradeController.show().url)
+          redirectLocation(result) mustBe Some(routes.AddBusinessStartDate.show().url)
           session(result).get(SessionKeys.businessName) mustBe Some(validBusinessName)
         }
 
@@ -137,8 +136,7 @@ class AddBusinessNameControllerSpec extends TestSupport
           ))
 
           status(result) mustBe SEE_OTHER
-          //Change back to AddBusinessStartDateController when implemented
-          redirectLocation(result) mustBe Some(routes.AddBusinessTradeController.showAgent().url)
+          redirectLocation(result) mustBe Some(routes.AddBusinessStartDate.showAgent().url)
           session(result).get(SessionKeys.businessName) mustBe Some(validBusinessName)
         }
 
