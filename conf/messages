@@ -1127,6 +1127,20 @@ new-income-sources.table-head.business-name = Business name
 new-income-sources.table-head.date-started  = Date started
 new-income-sources.table-head.date-ended    = Date ended
 
+## cease income sources
+cease-income-sources.heading                  = Cease an income source
+cease-income-sources.self-employment.h1       = Self employment (sole trader)
+cease-income-sources.table-head.business-name = Business name
+cease-income-sources.table-head.date-started  = Date started
+cease-income-sources.cease                    = Cease
+cease-income-sources.uk-property.h1           = UK property
+cease-income-sources.uk-property.p1           = You should only cease your UK property if you no longer receive any income from it.
+cease-income-sources.foreign-property.h1      = Foreign property
+cease-income-sources.foreign-property.p1      = You should only cease your foreign property if you no longer receive any income from it.
+cease-income-sources.ceased-businesses.h1     = Businesses that have ceased
+cease-income-sources.table-head.date-ended    = Date ended
+cease-income-sources.empty                    =
+
 # add Business page
 add-business-name.heading                                         = What is the name of your business?
 add-business-name.p1                                              = This is the business name you used to register for Self Assessment. If your sole trader business does not have a separate name, enter your own first and last name.
@@ -1134,6 +1148,15 @@ add-business-name.p2                                              = The business
 add-business-name.form.error.required                             = Enter your name or the name of your business
 add-business-name.form.error.maxLength                            = Business name must be 105 characters or fewer
 add-business-name.form.error.invalidNameFormat                    = Business name cannot include !, "", * or ?
+
+## Add business trade page
+add-business-trade.heading                  = What is the trade of your business?
+add-business-trade.p1                       = For example: plumbing, electrical work, consulting.
+add-business-trade.form.error.empty         = Enter the trade of your business
+add-business-trade.form.error.short         = Business trade must have at least two letters
+add-business-trade.form.error.long          = Business trade must be 35 characters or fewer
+add-business-trade.form.error.invalid       = Business trade cannot include !, "", * or ?
+add-business-trade.form.error.same-name     = You cannot enter the same trade and same business name
 
 #Following empty fields are not in Use
 #These fields are kept to match with Messages.cy
@@ -1176,10 +1199,14 @@ notmigrated.agent.content_extra                                 = This will be a
 notmigrated.user.link_title                                     = Self Assessment online account
 notmigrated.agent.link_title                                    = Self Assessment for Agents Account
 
-incomeSources.ceaseUKProperty.heading                           = Cease UK property
-incomeSources.ceaseUKProperty.radioLabel                        = I declare that I no longer get an income from any property in the UK.
-incomeSources.ceaseUKProperty.radioError                        = You must declare that you no longer get an income from any property in the UK
 
-incomeSources.ceaseForeignProperty.heading                      = Cease foreign property
-incomeSources.ceaseForeignProperty.checkboxLabel                = I declare that I no longer get an income from any foreign property.
-incomeSources.ceaseForeignProperty.checkboxError                = You must declare that you no longer  get an income from any foreign property
+
+incomeSources.ceaseUKProperty.heading                            = Cease UK property
+incomeSources.ceaseUKProperty.radioLabel                         = I declare that I no longer get an income from any property in the UK.
+incomeSources.ceaseUKProperty.radioError                         = You must declare that you no longer get an income from any property in the UK
+incomeSources.cease.UKPropertyEndDate.heading                    = Date your UK property business stopped
+incomeSources.cease.UKPropertyEndDate.hint                       = For example, 27 3 2020
+incomeSources.cease.UKPropertyEndDate.error.incomplete           = The date must include a day, a month and a year
+incomeSources.cease.UKPropertyEndDate.error.invalid              = The date your UK property business stopped must be a real date
+incomeSources.cease.UKPropertyEndDate.error.future               = You cannot provide a cessation date that is beyond the current day or a date in the future
+incomeSources.cease.UKPropertyEndDate.error.beforeStartDate      = The cessation date cannot be earlier than the start date for the business

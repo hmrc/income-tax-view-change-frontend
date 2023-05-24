@@ -20,16 +20,16 @@ import auth.HeaderExtractor
 import com.github.tomakehurst.wiremock.client.WireMock
 import config.FrontendAppConfig
 import config.featureswitch.{FeatureSwitch, FeatureSwitching}
-import forms.{CeaseForeignPropertyForm, CeaseUKPropertyForm}
+import forms.CeaseUKPropertyForm
 import helpers.agent.SessionCookieBaker
-import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
+import helpers.servicemocks.AuditStub
 import implicits.ImplicitDateFormatterImpl
 import org.scalatest._
 import org.scalatest.concurrent.{Eventually, IntegrationPatience, ScalaFutures}
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
 import play.api.cache.AsyncCacheApi
 import play.api.http.HeaderNames
-import play.api.http.Status.{OK, SEE_OTHER}
+import play.api.http.Status.SEE_OTHER
 import play.api.i18n.{Lang, MessagesApi}
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -37,8 +37,6 @@ import play.api.libs.crypto.DefaultCookieSigner
 import play.api.libs.ws.WSResponse
 import play.api.{Application, Environment, Mode}
 import services.{DateService, DateServiceInterface}
-import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
-import testConstants.IncomeSourceIntegrationTestConstants._
 import uk.gov.hmrc.http.{Authorization, HeaderCarrier}
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import uk.gov.hmrc.play.language.LanguageUtils
@@ -257,13 +255,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
       )
     )
 
-    def getCeaseForeignProperty: WSResponse = get("/income-sources/cease/foreign-property-declare")
-
-    def postCeaseForeignProperty(answer: Option[String]): WSResponse = post("/income-sources/cease/foreign-property-declare")(
-      answer.fold(Map.empty[String, Seq[String]])(
-        declaration => CeaseForeignPropertyForm.form.fill(CeaseForeignPropertyForm(Some(declaration), "csrfToken")).data.map { case (k, v) => (k, Seq(v)) }
-      )
-    )
+    def getUKPropertyEndDate: WSResponse = get("/income-sources/cease/uk-property-end-date")
   }
 
   def unauthorisedTest(uri: String): Unit = {

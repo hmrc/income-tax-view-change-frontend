@@ -33,4 +33,6 @@ object SessionKeys {
   val ceaseForeignPropertyDeclare: String = "ceaseForeignPropertyDeclare"
 
   val businessName: String = "addBusinessName"
+
+  val businessTrade: String = "addBusinessTrade"
 }
