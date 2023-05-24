@@ -28,8 +28,10 @@
 )
 
 @(
-    isAgent: Boolean,
-    backUrl: String
+    form: Form[_],
+    postAction: Call,
+    backUrl: String,
+    isAgent: Boolean
 )(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @import implicitDateFormatter.longDate
@@ -41,9 +43,5 @@
 @mainTemplate(pageTitle = getMessage("heading"),
     backUrl = Some(backUrl),
     btaNavPartial = user.btaNavPartial) {
-
-
-
-
 
 }

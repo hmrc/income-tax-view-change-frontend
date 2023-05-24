@@ -1186,6 +1186,11 @@ add-business-start-date.year                         = Blwyddyn
 add-business-start-date.continue                     = Yn eich blaen
 add-business-start-date.form.error.emptyDateField    = Nodwch y dyddiad y dechreuodd eich busnes fasnachu
 
+add-business-start-date.error.future                 = Mae?n rhaid i?r dyddiad y dechreuodd eich busnes eiddo tramor fod cyn {0}
+add-business-start-date.error.error.required         = Nodwch y dyddiad y dechreuodd eich busnes fasnachu
+add-business-start-date.error.invalid                = Mae?n rhaid i?r dyddiad y dechreuodd eich busnes fasnachu fod yn ddyddiad go iawn
+
+
 shortMonth.1 = Ion
 shortMonth.2 = Chwe
 shortMonth.3 = Maw

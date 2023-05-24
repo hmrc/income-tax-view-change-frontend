@@ -48,8 +48,8 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
                                              val ec: ExecutionContext)
   extends ClientConfirmedController with I18nSupport with FeatureSwitching {
 
-  lazy val backUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceController.show.url
-  lazy val backUrlAgent: String = controllers.incomeSources.add.routes.AddIncomeSourceController.showAgent.url
+  lazy val backUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceController.show().url
+  lazy val backUrlAgent: String = controllers.incomeSources.add.routes.AddIncomeSourceController.showAgent().url
 
   def show(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
@@ -78,9 +78,9 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
         Redirect(controllers.routes.HomeController.show())
       } else {
         if (isAgent) {
-          Ok(addBusinessView(BusinessNameForm.form, routes.AddBusinessNameController.submitAgent(), backUrl))
+          Ok(addBusinessView(BusinessNameForm.form, controllers.routes.AddBusinessNameController.submitAgent(), backUrl))
         } else {
-          Ok(addBusinessView(BusinessNameForm.form, routes.AddBusinessNameController.submit(), backUrl))
+          Ok(addBusinessView(BusinessNameForm.form, controllers.routes.AddBusinessNameController.submit(), backUrl))
         }
       }
     }
