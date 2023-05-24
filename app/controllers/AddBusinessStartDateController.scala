@@ -18,12 +18,13 @@ package controllers
 
 import auth.MtdItUser
 import config.featureswitch.{FeatureSwitching, IncomeSources}
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
 import forms.BusinessNameForm
 import forms.incomeSources.add.BusinessStartDateForm
 import forms.utils.SessionKeys
+import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc._
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
@@ -74,32 +75,46 @@ class AddBusinessStartDateController @Inject()(authenticate: AuthenticationPredi
         }
   }
 
-  def handleRequest(isAgent: Boolean, backUrl: String)(implicit user: MtdItUser[_], ec: ExecutionContext, messages: Messages): Future[Result] = {
+  def handleRequest(isAgent: Boolean, backUrl: String)
+                   (implicit user: MtdItUser[_], ec: ExecutionContext, messages: Messages): Future[Result] = {
 
     val postAction = {
       if(isAgent) routes.AddBusinessStartDateController.submitAgent()
       else routes.AddBusinessStartDateController.submit()
     }
 
-    Future.successful(
+    val errorHandler: ShowInternalServerError = {
+      if(isAgent) itvcErrorHandlerAgent
+      else itvcErrorHandler
+    }
+
       if (isDisabled(IncomeSources)) {
-        Redirect(controllers.routes.HomeController.show())
+        Future.successful(
+          Redirect(controllers.routes.HomeController.show())
+        )
       } else {
-        Ok(addBusinessStartDate(
-          form = businessStartDateForm.apply(user, messages),
-          postAction = postAction,
-          backUrl = backUrl,
-          isAgent = isAgent
-        )(user, messages))
+        Future.successful(
+          Ok(addBusinessStartDate(
+            form = businessStartDateForm.apply(user, messages),
+            postAction = postAction,
+            backUrl = backUrl,
+            isAgent = isAgent
+          )(user, messages))
+        )
+      } recover {
+        case ex: Exception =>
+          Logger("application").error(s"${if (isAgent) "[Agent]"}" +
+            s"[AddBusinessStartDateController][handleRequest] - Error: ${ex.getMessage}")
+          errorHandler.showInternalServerError()
       }
-    )
+
   }
 
   def submit: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
       businessStartDateForm.apply.bindFromRequest().fold(
-        formWithErrors => {
+        formWithErrors =>
           Future.successful(
             BadRequest(addBusinessStartDate(
               form = formWithErrors,
@@ -107,14 +122,12 @@ class AddBusinessStartDateController @Inject()(authenticate: AuthenticationPredi
               backUrl = backUrl,
               isAgent = false
             ))
-          )
-        },
-        formData => {
+          ),
+        formData =>
           Future.successful(
             Redirect(routes.AddBusinessStartDateCheckController.show())
               .addingToSession(SessionKeys.businessStartDate -> formData.date.toString)
           )
-        }
       )
   }
 
@@ -124,7 +137,7 @@ class AddBusinessStartDateController @Inject()(authenticate: AuthenticationPredi
         getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
           implicit mtdItUser =>
             businessStartDateForm.apply.bindFromRequest().fold(
-              formWithErrors => {
+              formWithErrors =>
                 Future.successful(
                   BadRequest(addBusinessStartDate(
                     form = formWithErrors,
@@ -132,8 +145,7 @@ class AddBusinessStartDateController @Inject()(authenticate: AuthenticationPredi
                     backUrl = backUrlAgent,
                     isAgent = true
                   ))
-                )
-              },
+                ),
               formData =>
                 Future.successful(
                   Redirect(routes.AddBusinessStartDateCheckController.showAgent())
