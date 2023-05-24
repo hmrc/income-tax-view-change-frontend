@@ -100,7 +100,7 @@ class TaxDueSummaryController @Inject()(val authorisedFunctions: AuthorisedFunct
   def showTaxDueSummaryAgent(taxYear: Int): Action[AnyContent] = {
     Authenticated.async { implicit request =>
       implicit user =>
-        getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true) flatMap { implicit mtdItUser =>
+        getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap { implicit mtdItUser =>
           handleRequest(
             itcvErrorHandler = itvcErrorHandlerAgent,
             taxYear = taxYear,

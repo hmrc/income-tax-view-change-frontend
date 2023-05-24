@@ -246,7 +246,7 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
   def renderAgentTaxYearSummaryPage(taxYear: Int): Action[AnyContent] = Authenticated.async { implicit request =>
     implicit user =>
       if (taxYear.toString.matches("[0-9]{4}")) {
-        getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = false) flatMap { implicit mtdItUser =>
+        getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap { implicit mtdItUser =>
           handleRequest(taxYear, None, true)
         }
       } else {

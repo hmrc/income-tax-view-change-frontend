@@ -102,7 +102,7 @@ class RefundToTaxPayerController @Inject()(val refundToTaxPayerView: RefundToTax
   def showAgent(repaymentRequestNumber: String): Action[AnyContent] = {
     Authenticated.async { implicit request =>
       implicit user =>
-        getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true) flatMap { implicit mtdItUser =>
+        getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap { implicit mtdItUser =>
           handleRequest(
             backUrl = controllers.routes.PaymentHistoryController.showAgent.url,
             isAgent = true,

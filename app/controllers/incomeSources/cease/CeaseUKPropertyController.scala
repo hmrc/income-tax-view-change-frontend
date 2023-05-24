@@ -22,6 +22,7 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowI
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import forms.CeaseUKPropertyForm
+import forms.utils.SessionKeys.ceaseUKPropertyDeclare
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents, Result}
@@ -55,7 +56,7 @@ class CeaseUKPropertyController @Inject()(val authenticate: AuthenticationPredic
 
     val incomeSourcesEnabled: Boolean = isEnabled(IncomeSources)
     val backUrl: String = if (isAgent) controllers.incomeSources.cease.routes.CeaseIncomeSourceController.showAgent().url else
-      controllers.incomeSources.cease.routes.CeaseIncomeSourceController.show(origin).url
+      controllers.incomeSources.cease.routes.CeaseIncomeSourceController.show().url
     val postAction: Call = if (isAgent) controllers.incomeSources.cease.routes.CeaseUKPropertyController.submitAgent else
       controllers.incomeSources.cease.routes.CeaseUKPropertyController.submit
     val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
@@ -90,7 +91,7 @@ class CeaseUKPropertyController @Inject()(val authenticate: AuthenticationPredic
   def showAgent(): Action[AnyContent] = Authenticated.async {
     implicit request =>
       implicit user =>
-        getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true).flatMap {
+        getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
           implicit mtdItUser =>
             handleRequest(
               isAgent = true
@@ -107,17 +108,17 @@ class CeaseUKPropertyController @Inject()(val authenticate: AuthenticationPredic
           postAction = controllers.incomeSources.cease.routes.CeaseUKPropertyController.submit,
           backUrl = controllers.incomeSources.cease.routes.CeaseIncomeSourceController.show().url,
           isAgent = false
-        )).addingToSession("ceaseUKPropertyDeclare" -> "false")),
+        )).addingToSession(ceaseUKPropertyDeclare -> "false")),
         _ =>
-          Future.successful(Redirect(controllers.incomeSources.cease.routes.DateUKPropertyCeasedController.show())
-            .addingToSession("ceaseUKPropertyDeclare" -> "true"))
+          Future.successful(Redirect(controllers.incomeSources.cease.routes.UKPropertyEndDateController.show())
+            .addingToSession(ceaseUKPropertyDeclare -> "true"))
       )
   }
 
   def submitAgent: Action[AnyContent] = Authenticated.async {
     implicit request =>
       implicit user =>
-        getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true).flatMap {
+        getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
           implicit mtdItUser =>
             CeaseUKPropertyForm.form.bindFromRequest().fold(
               hasErrors => Future.successful(BadRequest(view(
@@ -125,10 +126,10 @@ class CeaseUKPropertyController @Inject()(val authenticate: AuthenticationPredic
                 postAction = controllers.incomeSources.cease.routes.CeaseUKPropertyController.submitAgent,
                 backUrl = controllers.incomeSources.cease.routes.CeaseIncomeSourceController.showAgent().url,
                 isAgent = true
-              )).addingToSession("ceaseUKPropertyDeclare" -> "false")),
+              )).addingToSession(ceaseUKPropertyDeclare -> "false")),
               _ =>
-                Future.successful(Redirect(controllers.incomeSources.cease.routes.DateUKPropertyCeasedController.showAgent())
-                  .addingToSession("ceaseUKPropertyDeclare" -> "true"))
+                Future.successful(Redirect(controllers.incomeSources.cease.routes.UKPropertyEndDateController.showAgent())
+                  .addingToSession(ceaseUKPropertyDeclare -> "true"))
             )
         }
   }

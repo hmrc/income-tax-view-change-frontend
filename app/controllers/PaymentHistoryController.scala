@@ -115,7 +115,7 @@ class PaymentHistoryController @Inject()(val paymentHistoryView: PaymentHistory,
     Authenticated.async {
       implicit request =>
         implicit user =>
-          getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true) flatMap {
+          getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
             implicit mtdItUser =>
               handleRequest(
                 itvcErrorHandler = itvcErrorHandlerAgent,
