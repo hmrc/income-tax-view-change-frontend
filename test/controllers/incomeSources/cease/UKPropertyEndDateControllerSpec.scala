@@ -20,6 +20,7 @@ import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
 import forms.incomeSources.cease.UKPropertyEndDateForm
+import forms.utils.SessionKeys.ceaseUKPropertyEndDate
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -112,6 +113,7 @@ class UKPropertyEndDateControllerSpec extends TestSupport with MockAuthenticatio
         }
 
         status(result) shouldBe Status.SEE_OTHER
+        result.futureValue.session.get(ceaseUKPropertyEndDate) shouldBe Some("2022-12-20")
         redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.CheckCeaseUKPropertyDetailsController.show().url)
       }
     }
@@ -131,6 +133,7 @@ class UKPropertyEndDateControllerSpec extends TestSupport with MockAuthenticatio
         }
 
         status(result) shouldBe Status.BAD_REQUEST
+        result.futureValue.session.get(ceaseUKPropertyEndDate) shouldBe None
       }
     }
   }
@@ -186,6 +189,7 @@ class UKPropertyEndDateControllerSpec extends TestSupport with MockAuthenticatio
         }
 
         status(result) shouldBe Status.SEE_OTHER
+        result.futureValue.session.get(ceaseUKPropertyEndDate) shouldBe Some("2022-12-20")
         redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.CheckCeaseUKPropertyDetailsController.showAgent().url)
       }
     }
@@ -205,6 +209,7 @@ class UKPropertyEndDateControllerSpec extends TestSupport with MockAuthenticatio
         }
 
         status(result) shouldBe Status.BAD_REQUEST
+        result.futureValue.session.get(ceaseUKPropertyEndDate) shouldBe None
       }
     }
   }
