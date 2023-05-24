@@ -1200,6 +1200,14 @@ notmigrated.agent.content_extra                                 = This will be a
 notmigrated.user.link_title                                     = Self Assessment online account
 notmigrated.agent.link_title                                    = Self Assessment for Agents Account
 
-incomeSources.ceaseUKProperty.heading                           = Cease UK property
-incomeSources.ceaseUKProperty.radioLabel                        = I declare that I no longer get an income from any property in the UK.
-incomeSources.ceaseUKProperty.radioError                        = You must declare that you no longer get an income from any property in the UK
+
+
+incomeSources.ceaseUKProperty.heading                            = Cease UK property
+incomeSources.ceaseUKProperty.radioLabel                         = I declare that I no longer get an income from any property in the UK.
+incomeSources.ceaseUKProperty.radioError                         = You must declare that you no longer get an income from any property in the UK
+incomeSources.cease.UKPropertyEndDate.heading                    = Date your UK property business stopped
+incomeSources.cease.UKPropertyEndDate.hint                       = For example, 27 3 2020
+incomeSources.cease.UKPropertyEndDate.error.incomplete           = The date must include a day, a month and a year
+incomeSources.cease.UKPropertyEndDate.error.invalid              = The date your UK property business stopped must be a real date
+incomeSources.cease.UKPropertyEndDate.error.future               = You cannot provide a cessation date that is beyond the current day or a date in the future
+incomeSources.cease.UKPropertyEndDate.error.beforeStartDate      = The cessation date cannot be earlier than the start date for the business
