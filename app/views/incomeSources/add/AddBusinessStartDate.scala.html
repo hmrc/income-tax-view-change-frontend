@@ -32,7 +32,7 @@
     postAction: Call,
     backUrl: String,
     isAgent: Boolean
-)(implicit messages: Messages, user: auth.MtdItUser[_])
+)(implicit request: Request[_], messages: Messages)
 
 @import implicitDateFormatter.longDate
 
@@ -40,8 +40,6 @@
     messages(s"add-business-start-date.$key", args: _*)
 }
 
-@mainTemplate(pageTitle = getMessage("heading"),
-    backUrl = Some(backUrl),
-    btaNavPartial = user.btaNavPartial) {
+@mainTemplate(pageTitle = getMessage("heading"), backUrl = Some(backUrl)) {
 
 }

@@ -77,7 +77,7 @@ class AddBusinessStartDateController @Inject()(authenticate: AuthenticationPredi
   def handleRequest(isAgent: Boolean, backUrl: String)(implicit user: MtdItUser[_], ec: ExecutionContext, messages: Messages): Future[Result] = {
 
     val postAction = {
-      if(isAgent) routes.AddBusinessStartDateController.submitAgent()
+      if(isAgent) routes.AddBusinessStartDateController.submit()
       else routes.AddBusinessStartDateController.submit()
     }
 
@@ -104,7 +104,8 @@ class AddBusinessStartDateController @Inject()(authenticate: AuthenticationPredi
             BadRequest(addBusinessStartDate(
               form = formWithErrors,
               postAction = routes.AddBusinessStartDateController.submit(),
-              backUrl = backUrl
+              backUrl = backUrl,
+              isAgent = false
             ))
           )
         },

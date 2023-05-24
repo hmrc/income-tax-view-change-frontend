@@ -163,8 +163,9 @@ POST         /income-sources/add/business-trade                                 
 POST         /agents/income-sources/add/business-trade                                                  controllers.AddBusinessTradeController.agentSubmit()
 GET          /income-sources/add/business-address                                                       controllers.AddBusinessAddressController.show()
 GET          /agents/income-sources/add/business-address                                                controllers.AddBusinessAddressController.showAgent()
-GET          /income-sources/add/business-start-date                                                    controllers.AddBusinessStartDate.show()
-GET          /agents/income-sources/add/business-start-date                                             controllers.AddBusinessStartDate.showAgent()
+GET          /income-sources/add/business-start-date                                                    controllers.AddBusinessStartDateController.show()
+GET          /agents/income-sources/add/business-start-date                                             controllers.AddBusinessStartDateController.showAgent()
+POST         /income-sources/add/business-start-date                                                    controllers.AddBusinessStartDateController.submit()
 GET          /income-sources/add/business-start-date-check                                              controllers.AddBusinessStartDateCheckController.show()
 GET          /agents/income-sources/add/business-start-date-check                                       controllers.AddBusinessStartDateCheckController.showAgent()
 
@@ -181,9 +182,12 @@ GET         /agents/income-sources/cease/uk-property-end-date             contro
 
 GET          /income-sources/add/business-name                            controllers.AddBusinessNameController.show()
 GET          /agents/income-sources/add/business-name                     controllers.AddBusinessNameController.showAgent()
+POST         /income-sources/add/business-name                            controllers.AddBusinessNameController.submit()
+POST         /agents/income-sources/add/business-name                     controllers.AddBusinessNameController.submitAgent()
 
 GET          /income-sources/add/business-start-date                      controllers.AddBusinessStartDateController.show()
 GET          /agents/income-sources/add/business-start-date               controllers.AddBusinessStartDateController.showAgent()
+POST         /income-sources/add/business-start-date                      controllers.AddBusinessStartDateController.submit()
 
 
 GET          /income-sources/add/uk-property-business-start-date                                        controllers.incomeSources.add.AddUKPropertyBusinessStartDateController.show()
