@@ -53,10 +53,6 @@ class BusinessStartDateForm @Inject()(dateService: DateService, dateFormatter: I
     val futureErrorMessage: String = dateFormatter.longDate(currentDatePlusOneWeekOneDay)(messages).toLongDate
     def dateMustNotBeInTheFuture(maximumDate: String): String = messages(dateMustNotBeTooFarInFuture, maximumDate)
 
-    println(s"\n[CURRENT DATE]: ${dateService.getCurrentDate()}\n")
-
-    println(s"\n[CURRENT DATE + 1 WEEK]: ${currentDatePlusOneWeekOneDay}\n")
-
     Form(
       mapping(s"$messagePrefix" -> tuple(
         day -> default(text(), ""),
