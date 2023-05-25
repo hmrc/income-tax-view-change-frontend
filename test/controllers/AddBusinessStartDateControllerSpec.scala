@@ -294,14 +294,14 @@ class AddBusinessStartDateControllerSpec extends TestSupport
         enable(IncomeSources)
 
         mockNoIncomeSources()
-        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
         val testDay = "01"
         val testMonth = ""
         val testYear = ""
 
-        val result = TestAddBusinessStartDateController.submit()(
-          fakeRequestWithActiveSession.withFormUrlEncodedBody(
+        val result = TestAddBusinessStartDateController.submitAgent()(
+          fakeRequestConfirmedClient().withFormUrlEncodedBody(
             dayField -> testDay,
             monthField -> testMonth,
             yearField -> testYear
@@ -317,16 +317,16 @@ class AddBusinessStartDateControllerSpec extends TestSupport
         enable(IncomeSources)
 
         mockNoIncomeSources()
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
-        val postAction: Call = controllers.routes.AddBusinessStartDateCheckController.showAgent()
+        val postAction: Call = controllers.routes.AddBusinessStartDateCheckController.show()
 
         val testDay = "01"
         val testMonth = "01"
         val testYear = "2022"
 
-        val result = TestAddBusinessStartDateController.submitAgent()(
-          fakeRequestConfirmedClient().withFormUrlEncodedBody(
+        val result = TestAddBusinessStartDateController.submit()(
+          fakeRequestWithActiveSession.withFormUrlEncodedBody(
             dayField -> testDay,
             monthField -> testMonth,
             yearField -> testYear
