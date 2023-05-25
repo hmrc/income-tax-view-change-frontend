@@ -87,7 +87,7 @@
                     <td class="govuk-table__cell">
                         <dl>
                             <dt>
-                        <dd class="govuk-summary-list__actions" id="cease0">
+                        <dd class="govuk-summary-list__actions" id="@{s"cease-link-business-$index"}">
                             <a class="govuk-link" href=@ceaseSoleTraderBusinessURL>
                                 @getMessage("cease")<span class="govuk-visually-hidden">cease</span>
                             </a>
@@ -122,7 +122,7 @@
                     <td class="govuk-table__cell">
                         <dl>
                             <dt>
-                        <dd class="govuk-summary-list__actions" id="cease1">
+                        <dd class="govuk-summary-list__actions" id="cease-link-uk">
                             <a class="govuk-link" href=@ceaseUkPropertyURL>
                                 @getMessage("cease")<span class="govuk-visually-hidden">cease</span>
                             </a>
@@ -143,7 +143,7 @@
         @p(id = Some("foreign-property-p1")) {
             @getMessage("foreign-property.p1") }
 
-        <table class="govuk-table govuk-!-margin-bottom-3" id="uk-property-table">
+        <table class="govuk-table govuk-!-margin-bottom-3" id="foreign-property-table">
             <thead class="govuk-table__head">
                 <tr class="govuk-table__row">
                     <th class="govuk-table__header" scope="col" id="table-head-date-started-foreign">@getMessage("table-head.date-started")</th>
@@ -156,7 +156,7 @@
                     <td class="govuk-table__cell">
                         <dl>
                             <dt>
-                        <dd class="govuk-summary-list__actions" id="cease2">
+                        <dd class="govuk-summary-list__actions" id="cease-link-foreign">
                             <a class="govuk-link" href=@ceaseForeignPropertyURL>
                                 @getMessage("cease")<span class="govuk-visually-hidden">cease</span>
                             </a>
