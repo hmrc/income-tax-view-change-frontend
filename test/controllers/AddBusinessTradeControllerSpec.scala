@@ -159,7 +159,7 @@ class AddBusinessTradeControllerSpec extends TestSupport
               SessionKeys.businessTrade -> validBusinessTrade
             ))
           status(result) mustBe SEE_OTHER
-          redirectLocation(result) mustBe Some(routes.AddBusinessAddressController.show().url)
+          redirectLocation(result) mustBe Some(routes.AddBusinessStartDateController.show().url)
           session(result).get(SessionKeys.businessTrade) mustBe Some(validBusinessTrade)
         }
 
