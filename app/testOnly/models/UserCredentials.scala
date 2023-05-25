@@ -16,16 +16,19 @@
 
 package testOnly.models
 
-import play.api.libs.functional.syntax._
-import play.api.libs.json.{JsPath, OFormat}
+import testOnly.utils.{DelegatedEnrolmentValues, EnrolmentValues}
 
-case class UserModel(mtdItId: String, nino: String)
+import scala.util.Random
 
-object UserModel {
-  implicit val formats: OFormat[UserModel] = (
-    (JsPath \ "mtdItId" \ "mtdItId").format[String] and
-      (JsPath \ "nino" \ "nino").format[String]
-    ) (UserModel.apply, unlift(UserModel.unapply))
 
-  def toUserModel(x: UserRecord): UserModel = UserModel(x.mtditid, x.nino)
+case class UserCredentials(credId: String,
+                           affinityGroup: String,
+                           confidenceLevel: Int,
+                           credentialStrength: String,
+                           Role: String,
+                           enrolmentData : EnrolmentValues,
+                           delegatedEnrolmentData: Option[DelegatedEnrolmentValues])
+
+object UserCredentials{
+  def credId: String = Random.alphanumeric.take(16).mkString("")
 }
