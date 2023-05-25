@@ -30,7 +30,7 @@ import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
 
 @Singleton
-class BusinessStartDateForm @Inject()(val dateService: DateService, val dateFormatter: ImplicitDateFormatterImpl) extends Constraints {
+class BusinessStartDateForm @Inject()(dateService: DateService, dateFormatter: ImplicitDateFormatterImpl, messages: Messages) extends Constraints {
 
   private val messagePrefix = "add-business-start-date"
   private val dateMustNotBeTooFarInFuture = s"$messagePrefix.error.future"
@@ -46,9 +46,10 @@ class BusinessStartDateForm @Inject()(val dateService: DateService, val dateForm
   val day: String = "day"
   val month: String = "month"
   val year: String = "year"
-  def apply(implicit user: MtdItUser[_], messages: Messages): Form[DateFormElement] = {
+
+  val form: Form[DateFormElement] = {
     val currentDate: LocalDate = dateService.getCurrentDate()
-    val currentDatePlusOneWeek: String = dateFormatter.longDate(currentDate.plusWeeks(1)).toLongDate
+    val currentDatePlusOneWeek: String = dateFormatter.longDate(currentDate.plusWeeks(1))(messages).toLongDate
     def dateMustNotBeInTheFuture(maximumDate: String): String = messages(s"$messagePrefix.error.future", maximumDate)
 
     Form(
@@ -92,7 +93,7 @@ class BusinessStartDateForm @Inject()(val dateService: DateService, val dateForm
 }
 
 object BusinessStartDateForm {
-  def apply(dateService: DateService, dateFormatter: ImplicitDateFormatterImpl)(implicit user: MtdItUser[_], messages: Messages): Form[DateFormElement] = {
-    new BusinessStartDateForm(dateService, dateFormatter).apply
+  def apply()(implicit messages: Messages, dateService: DateService, dateFormatter: ImplicitDateFormatterImpl): Form[DateFormElement] = {
+    new BusinessStartDateForm(dateService, dateFormatter, messages).form
   }
 }

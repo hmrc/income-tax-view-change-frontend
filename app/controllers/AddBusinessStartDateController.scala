@@ -24,12 +24,13 @@ import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredi
 import forms.BusinessNameForm
 import forms.incomeSources.add.BusinessStartDateForm
 import forms.utils.SessionKeys
+import implicits.ImplicitDateFormatterImpl
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc._
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import views.html.AddBusiness
-import services.IncomeSourceDetailsService
+import services.{DateService, IncomeSourceDetailsService}
 import views.html.incomeSources.add.AddBusinessStartDate
 
 import javax.inject.{Inject, Singleton}
@@ -39,7 +40,6 @@ import scala.concurrent.{ExecutionContext, Future}
 class AddBusinessStartDateController @Inject()(authenticate: AuthenticationPredicate,
                                                val authorisedFunctions: AuthorisedFunctions,
                                                checkSessionTimeout: SessionTimeoutPredicate,
-                                               businessStartDateForm: BusinessStartDateForm,
                                                retrieveNino: NinoPredicate,
                                                val addBusinessStartDate: AddBusinessStartDate,
                                                val retrieveIncomeSources: IncomeSourceDetailsPredicate,
@@ -47,6 +47,8 @@ class AddBusinessStartDateController @Inject()(authenticate: AuthenticationPredi
                                                val itvcErrorHandler: ItvcErrorHandler,
                                                incomeSourceDetailsService: IncomeSourceDetailsService)
                                               (implicit val appConfig: FrontendAppConfig,
+                                               implicit val dateService: DateService,
+                                               implicit val dateFormatter: ImplicitDateFormatterImpl,
                                                implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                                implicit override val mcc: MessagesControllerComponents,
                                                val ec: ExecutionContext)
@@ -76,7 +78,7 @@ class AddBusinessStartDateController @Inject()(authenticate: AuthenticationPredi
   }
 
   def handleRequest(isAgent: Boolean, backUrl: String)
-                   (implicit user: MtdItUser[_], ec: ExecutionContext, messages: Messages): Future[Result] = {
+                   (implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
 
     val postAction = {
       if(isAgent) routes.AddBusinessStartDateController.submitAgent()
@@ -90,11 +92,11 @@ class AddBusinessStartDateController @Inject()(authenticate: AuthenticationPredi
           Redirect(controllers.routes.HomeController.show())
         } else {
           Ok(addBusinessStartDate(
-            form = businessStartDateForm.apply(user, messages),
+            form = BusinessStartDateForm(),
             postAction = postAction,
             backUrl = backUrl,
             isAgent = isAgent
-          )(user, messages))
+          ))
         }
       ) recover {
         case ex: Exception =>
@@ -106,8 +108,16 @@ class AddBusinessStartDateController @Inject()(authenticate: AuthenticationPredi
 
   def submit: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
-    implicit user =>
-      businessStartDateForm.apply.bindFromRequest().fold(
+    implicit request =>
+      BusinessStartDateForm().bindFromRequest().fold(
+        formWithErrors =>
+          println(s"[formWithErrors]: $formWithErrors"),
+        formData =>
+          println(s"[formData]: $formData"),
+
+      )
+
+      BusinessStartDateForm().bindFromRequest().fold(
         formWithErrors =>
           Future.successful(
             BadRequest(addBusinessStartDate(
@@ -120,7 +130,7 @@ class AddBusinessStartDateController @Inject()(authenticate: AuthenticationPredi
         formData =>
           Future.successful(
             Redirect(routes.AddBusinessStartDateCheckController.show())
-              .addingToSession(SessionKeys.businessStartDate -> formData.date.toString)
+              .addingToSession(SessionKeys.businessStartDate -> formData.toString)
           )
       )
   }
@@ -130,7 +140,7 @@ class AddBusinessStartDateController @Inject()(authenticate: AuthenticationPredi
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
           implicit mtdItUser =>
-            businessStartDateForm.apply.bindFromRequest().fold(
+            BusinessStartDateForm().bindFromRequest().fold(
               formWithErrors =>
                 Future.successful(
                   BadRequest(addBusinessStartDate(

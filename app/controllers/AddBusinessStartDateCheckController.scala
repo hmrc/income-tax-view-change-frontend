@@ -47,8 +47,8 @@ class AddBusinessStartDateCheckController @Inject()(authenticate: Authentication
                                                     val ec: ExecutionContext)
   extends ClientConfirmedController with I18nSupport with FeatureSwitching {
 
-  def show(): Action[AnyContent] = Action.async {
-    Future.successful(Ok)
+  def show(): Action[AnyContent] = Action.async { implicit request =>
+    Future.successful(Ok(request.session.toString))
   }
 
   def showAgent(): Action[AnyContent] = Action.async {

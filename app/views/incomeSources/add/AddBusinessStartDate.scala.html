@@ -37,7 +37,7 @@
     postAction: Call,
     backUrl: String,
     isAgent: Boolean
-)(implicit request: Request[_], messages: Messages)
+)(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @prefix = @{ "add-business-start-date" }
 
