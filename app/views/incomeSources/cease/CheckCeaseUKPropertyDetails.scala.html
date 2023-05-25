@@ -58,18 +58,19 @@
  }
 }
 
+@heading = @{"incomeSources.ceaseUKProperty.checkDetails.heading"}
 
 @content= {
- @p(classes = "govuk-caption-l"){@messages("incomeSources.ceaseUKProperty.checkDetails.paragraph")}
- @h1(msg = "incomeSources.ceaseUKProperty.checkDetails.heading", classes = "govuk-heading-l", id=Some("heading"))
+ @p(classes = "govuk-caption-l", id = Some("caption")){@messages("incomeSources.ceaseUKProperty.checkDetails.paragraph")}
+ @h1(msg = heading , classes = "govuk-heading-l", id=Some("heading"))
 
  <dl class="govuk-summary-list govuk-!-margin-bottom-9">
   <div class="govuk-summary-list__row">
 
-   <dt class="govuk-summary-list__key">@messages("incomeSources.ceaseUKProperty.checkDetails.content")</dt>
-    <dd class="govuk-summary-list__value">@businessStopDate</dd>
+   <dt class="govuk-summary-list__key" id="businessStopDateLabel">@messages("incomeSources.ceaseUKProperty.checkDetails.content")</dt>
+    <dd class="govuk-summary-list__value" id="businessStopDate">@businessStopDate</dd>
    <dd class="govuk-summary-list__actions">
-    <a class="govuk-link" href="@getChangeHref">
+    <a class="govuk-link" href="@getChangeHref" id="change">
      @messages("incomeSources.ceaseUKProperty.checkDetails.change")
      <span class="govuk-visually-hidden">@messages("incomeSources.ceaseUKProperty.checkDetails.change")</span>
     </a>
@@ -84,6 +85,6 @@
 
 }
 
-@mainTemplate(pageTitle = messages("incomeSources.ceaseUKProperty.checkDetails.heading"), isAgent = isAgent, backUrl = Some(getChangeHref)) {
- @content
+@mainTemplate(pageTitle = messages(heading), isAgent = isAgent, backUrl = Some(getChangeHref)) {
+@content
 }

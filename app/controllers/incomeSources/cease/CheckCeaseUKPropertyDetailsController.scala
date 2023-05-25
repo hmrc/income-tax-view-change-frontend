@@ -63,8 +63,8 @@ class CheckCeaseUKPropertyDetailsController @Inject()(val authenticate: Authenti
       Future.successful(Ok(customNotFoundErrorView()(user, messages)))
     } recover {
       case ex: Exception =>
-        Logger("application").error(s"${if (isAgent) "[Agent]"}" +
-          s"Error getting CeaseUKProperty page: ${ex.getMessage}")
+        Logger("application").error(s"[ClientConfirmedController][handleRequest]${if (isAgent) "[Agent] "}" +
+          s"Error getting CheckCeaseUKPropertyDetails page: ${ex.getMessage}")
         errorHandler.showInternalServerError()
     }
   }
@@ -92,19 +92,27 @@ class CheckCeaseUKPropertyDetailsController @Inject()(val authenticate: Authenti
   def submit(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit request =>
-    service.updateCessationDate.map{
-      case Left(ex) =>
-        Logger("application").error(s"[CheckCeaseUKPropertyDetailsController][submit] Error submitting cease date:${ex.getMessage}")
-        itvcErrorHandler.showInternalServerError()
-      case Right(result) => result match {
-        case r: UpdateIncomeSourceResponseModel =>
-          Logger("application").info(s"[CheckCeaseUKPropertyDetailsController][submitAgent] successfully submitted cease date: processingDate ${r.processingDate}")
-          Redirect(controllers.incomeSources.cease.routes.CeaseUKPropertyController.show().url)
-        case r:UpdateIncomeSourceResponseError =>
-          Logger("application").error(s"[CheckCeaseUKPropertyDetailsController][submit] Error submitting cease date:${r.status} ${r.reason}")
+      if (isEnabled(IncomeSources)) {
+        service.updateCessationDate.map {
+          case Left(ex) =>
+            Logger("application").error(s"[CheckCeaseUKPropertyDetailsController][submit] Error submitting cease date:${ex.getMessage}")
+            itvcErrorHandler.showInternalServerError()
+          case Right(result) => result match {
+            case r: UpdateIncomeSourceResponseModel =>
+              Logger("application").info(s"[CheckCeaseUKPropertyDetailsController][submitAgent] successfully submitted cease date: processingDate ${r.processingDate}")
+              Redirect(controllers.incomeSources.cease.routes.CeaseUKPropertySuccessController.show().url)
+            case r: UpdateIncomeSourceResponseError =>
+              Logger("application").error(s"[CheckCeaseUKPropertyDetailsController][submit] Error submitting cease date:${r.status} ${r.reason}")
+              itvcErrorHandler.showInternalServerError()
+          }
+        }
+      } else {
+        Future.successful(NotFound)
+      } recover {
+        case ex: Exception =>
+          Logger("application").error(s"[CheckCeaseUKPropertyDetailsController][submit] Error Submitting Cease Date : ${ex.getMessage}")
           itvcErrorHandler.showInternalServerError()
       }
-    }
   }
 
   def submitAgent: Action[AnyContent] = Authenticated.async {
@@ -112,18 +120,26 @@ class CheckCeaseUKPropertyDetailsController @Inject()(val authenticate: Authenti
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
           implicit mtdItUser =>
-            service.updateCessationDate.map {
-              case Left(ex) =>
-                Logger("application").error(s"[CheckCeaseUKPropertyDetailsController][submitAgent] Error submitting cease date:${ex.getMessage}")
-                itvcErrorHandlerAgent.showInternalServerError()
-              case Right(result) => result match {
-                case r: UpdateIncomeSourceResponseModel =>
-                  Logger("application").info(s"[CheckCeaseUKPropertyDetailsController][submitAgent] successfully submitted cease date: processingDate ${r.processingDate}")
-                  Redirect(controllers.incomeSources.cease.routes.CeaseUKPropertyController.show().url)
-                case r: UpdateIncomeSourceResponseError =>
-                  Logger("application").error(s"[CheckCeaseUKPropertyDetailsController][submitAgent] Error submitting cease date:${r.status} ${r.reason}")
+            if (isEnabled(IncomeSources)) {
+              service.updateCessationDate.map {
+                case Left(ex) =>
+                  Logger("application").error(s"[CheckCeaseUKPropertyDetailsController][submitAgent] Error submitting cease date:${ex.getMessage}")
                   itvcErrorHandlerAgent.showInternalServerError()
+                case Right(result) => result match {
+                  case r: UpdateIncomeSourceResponseModel =>
+                    Logger("application").info(s"[CheckCeaseUKPropertyDetailsController][submitAgent] successfully submitted cease date: processingDate ${r.processingDate}")
+                    Redirect(controllers.incomeSources.cease.routes.CeaseUKPropertySuccessController.showAgent().url)
+                  case r: UpdateIncomeSourceResponseError =>
+                    Logger("application").error(s"[CheckCeaseUKPropertyDetailsController][submitAgent] Error submitting cease date:${r.status} ${r.reason}")
+                    itvcErrorHandlerAgent.showInternalServerError()
+                }
               }
+            } else {
+              Future.successful(NotFound)
+            } recover {
+              case ex: Exception =>
+                Logger("application").error(s"[CheckCeaseUKPropertyDetailsController][submitAgent] Error Submitting Cease Date : ${ex.getMessage}")
+                itvcErrorHandlerAgent.showInternalServerError()
             }
         }
   }

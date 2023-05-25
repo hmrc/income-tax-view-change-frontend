@@ -199,3 +199,6 @@ GET          /income-sources/cease/business-end-date                        cont
 GET          /agents/income-sources/cease/business-end-date                 controllers.incomeSources.cease.CeaseBusinessNameController.showAgent()
 GET          /income-sources/cease/foreign-property-declare                 controllers.incomeSources.cease.CeaseForeignPropertyController.show()
 GET          /agents/income-sources/cease/foreign-property-declare          controllers.incomeSources.cease.CeaseForeignPropertyController.showAgent()
+
+GET          /income-sources/cease/cease-uk-property-success                controllers.incomeSources.cease.CeaseUKPropertySuccessController.show()
+GET          /agents/income-sources/cease/cease-uk-property-success         controllers.incomeSources.cease.CeaseUKPropertySuccessController.showAgent()
