@@ -317,15 +317,15 @@ class AddBusinessStartDateControllerSpec extends TestSupport
         enable(IncomeSources)
 
         mockNoIncomeSources()
-        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
-        val postAction: Call = controllers.routes.AddBusinessStartDateCheckController.show()
+        val postAction: Call = controllers.routes.AddBusinessStartDateCheckController.showAgent()
 
         val testDay = "01"
         val testMonth = "01"
         val testYear = "2022"
 
-        val result = TestAddBusinessStartDateController.submit()(
+        val result = TestAddBusinessStartDateController.submitAgent()(
           fakeRequestWithActiveSession.withFormUrlEncodedBody(
             dayField -> testDay,
             monthField -> testMonth,
