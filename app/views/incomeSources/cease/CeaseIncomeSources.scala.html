@@ -60,7 +60,8 @@
 
 @mainTemplate(pageTitle = getMessage("heading"),
     backUrl = Some(backUrl),
-    btaNavPartial = user.btaNavPartial) {
+    btaNavPartial = user.btaNavPartial,
+    isAgent = isAgent) {
 
     @h1(msg = getMessage("heading"),
         id = Some("heading"))
@@ -70,23 +71,23 @@
         @h2(msg = getMessage("self-employment.h1"),
             optId = Some("self-employment-h1"))
 
-        <table class="govuk-table govuk-!-margin-bottom-3">
+        <table class="govuk-table govuk-!-margin-bottom-3" id="sole-trader-businesses-table">
             <thead class="govuk-table__head">
                 <tr class="govuk-table__row">
-                    <th class="govuk-table__header" scope="col">@getMessage("table-head.business-name")</th>
-                    <th class="govuk-table__header" scope="col">@getMessage("table-head.date-started")</th>
-                    <td class="govuk-table__header"></td>
+                    <th class="govuk-table__header" scope="col" id="table-head-business-name">@getMessage("table-head.business-name")</th>
+                    <th class="govuk-table__header" scope="col" id="table-head-date-started">@getMessage("table-head.date-started")</th>
+                    <td class="govuk-table__header" id="empty0"></td>
                 </tr>
             </thead>
             <tbody>
                 @for((item, index) <- sources.soleTraderBusinesses.zipWithIndex) {
                 <tr class="govuk-table__row">
-                    <td class="govuk-table__cell">@item.tradingName</td>
-                    <td class="govuk-table__cell">@item.tradingStartDate.toLongDate</td>
+                    <td class="govuk-table__cell" id="@{s"table-row-trading-name-$index"}">@item.tradingName</td>
+                    <td class="govuk-table__cell" id="@{s"table-row-trading-start-date-$index"}">@item.tradingStartDate.toLongDate</td>
                     <td class="govuk-table__cell">
                         <dl>
                             <dt>
-                        <dd class="govuk-summary-list__actions">
+                        <dd class="govuk-summary-list__actions" id="cease0">
                             <a class="govuk-link" href=@ceaseSoleTraderBusinessURL>
                                 @getMessage("cease")<span class="govuk-visually-hidden">cease</span>
                             </a>
@@ -108,20 +109,20 @@
         @p(id = Some("uk-property-p1")) {
             @getMessage("uk-property.p1") }
 
-        <table class="govuk-table govuk-!-margin-bottom-3">
+        <table class="govuk-table govuk-!-margin-bottom-3" id="uk-property-table">
             <thead class="govuk-table__head">
                 <tr class="govuk-table__row">
-                    <th class="govuk-table__header" scope="col">@getMessage("table-head.date-started")</th>
-                    <td class="govuk-table__header"></td>
+                    <th class="govuk-table__header" scope="col" id="table-head-date-started-uk">@getMessage("table-head.date-started")</th>
+                    <td class="govuk-table__header" id="empty1"></td>
                 </tr>
             </thead>
             <tbody>
                 <tr class="govuk-table__row">
-                    <td class="govuk-table__cell">@sources.ukProperty.map(_.tradingStartDate.toLongDate).get</td>
+                    <td class="govuk-table__cell" id="table-row-trading-start-date-uk">@sources.ukProperty.map(_.tradingStartDate.toLongDate).get</td>
                     <td class="govuk-table__cell">
                         <dl>
                             <dt>
-                        <dd class="govuk-summary-list__actions">
+                        <dd class="govuk-summary-list__actions" id="cease1">
                             <a class="govuk-link" href=@ceaseUkPropertyURL>
                                 @getMessage("cease")<span class="govuk-visually-hidden">cease</span>
                             </a>
@@ -142,20 +143,20 @@
         @p(id = Some("foreign-property-p1")) {
             @getMessage("foreign-property.p1") }
 
-        <table class="govuk-table govuk-!-margin-bottom-3">
+        <table class="govuk-table govuk-!-margin-bottom-3" id="uk-property-table">
             <thead class="govuk-table__head">
                 <tr class="govuk-table__row">
-                    <th class="govuk-table__header" scope="col">@getMessage("table-head.date-started")</th>
-                    <td class="govuk-table__header"></td>
+                    <th class="govuk-table__header" scope="col" id="table-head-date-started-foreign">@getMessage("table-head.date-started")</th>
+                    <td class="govuk-table__header" id="empty2"></td>
                 </tr>
             </thead>
             <tbody>
                 <tr class="govuk-table__row">
-                    <td class="govuk-table__cell">@sources.foreignProperty.map(_.tradingStartDate.toLongDate).get</td>
+                    <td class="govuk-table__cell" id="table-row-trading-start-date-foreign">@sources.foreignProperty.map(_.tradingStartDate.toLongDate).get</td>
                     <td class="govuk-table__cell">
                         <dl>
                             <dt>
-                        <dd class="govuk-summary-list__actions">
+                        <dd class="govuk-summary-list__actions" id="cease2">
                             <a class="govuk-link" href=@ceaseForeignPropertyURL>
                                 @getMessage("cease")<span class="govuk-visually-hidden">cease</span>
                             </a>
@@ -172,20 +173,20 @@
         @h2(msg = getMessage("ceased-businesses.h1"),
             optId = Some("ceased-businesses-h1"))
 
-        <table class="govuk-table govuk-!-margin-bottom-3">
+        <table class="govuk-table govuk-!-margin-bottom-3" id="ceased-businesses-table">
             <thead class="govuk-table__head">
                 <tr class="govuk-table__row">
-                    <th class="govuk-table__header" scope="col">@getMessage("table-head.business-name")</th>
-                    <th class="govuk-table__header" scope="col">@getMessage("table-head.date-started")</th>
-                    <th class="govuk-table__header" scope="col">@getMessage("table-head.date-ended")</th>
+                    <th class="govuk-table__header" scope="col" id="table-head-business-name-ceased">@getMessage("table-head.business-name")</th>
+                    <th class="govuk-table__header" scope="col" id="table-head-date-started-ceased">@getMessage("table-head.date-started")</th>
+                    <th class="govuk-table__header" scope="col" id="table-head-date-ended-ceased">@getMessage("table-head.date-ended")</th>
                 </tr>
             </thead>
             <tbody>
             @for((item, index) <- sources.ceasedBusinesses.zipWithIndex) {
                 <tr class="govuk-table__row">
-                    <td class="govuk-table__cell">@item.tradingName</td>
-                    <td class="govuk-table__cell">@item.tradingStartDate.toLongDate</td>
-                    <td class="govuk-table__cell">@item.cessationDate.toLongDate</td>
+                    <td class="govuk-table__cell" id="@{s"table-row-trading-name-$index-ceased"}">@item.tradingName</td>
+                    <td class="govuk-table__cell" id="@{s"table-row-trading-start-date-$index-ceased"}">@item.tradingStartDate.toLongDate</td>
+                    <td class="govuk-table__cell" id="@{s"table-row-trading-end-date-$index-ceased"}">@item.cessationDate.toLongDate</td>
                 </tr>
             }
             </tbody>
