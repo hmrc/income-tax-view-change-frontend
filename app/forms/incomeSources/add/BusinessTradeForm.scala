@@ -25,13 +25,17 @@ import play.api.data.validation._
 
 import scala.util.matching.Regex
 
-case class BusinessTradeForm(trade: String)
+/*object BusinessTradeForm{
+  val businessTrade = "businessTrade"
+}*/
 
-class BusinessTradeForm(implicit user: MtdItUser[_]) {
+class BusinessTradeForm() {
 
   private val validTrade: Regex = "^[A-Za-z0-9 ,.&'\\\\/-]+$".r
 
   val maxLength = 35
+
+  val businessTrade = "business-trade"
 
   val tradeEmptyError = "add-business-trade.form.error.empty"
   val tradeShortError = "add-business-trade.form.error.short"
@@ -53,12 +57,20 @@ class BusinessTradeForm(implicit user: MtdItUser[_]) {
     else Invalid(tradeInvalidCharError)
   )
 
-  def apply(implicit user: MtdItUser[_]): Form[BusinessTradeForm] = Form(
-    mapping(
-      SessionKeys.businessTrade -> text.verifying(isValidLength andThen isValidChars)
-        .verifying("test", user.session.get(""))
-    )(BusinessTradeForm.apply)(BusinessTradeForm.unapply)
-  )
+  def isNotSameName(businessName: Option[String]): Constraint[String] = Constraint { value =>
+    businessName match {
+      case Some(name) => if (value.toLowerCase.trim == name.toLowerCase)
+            Invalid(tradeSameNameError) else Valid
+      case None => Valid
+    }
+  }
 
 
+  def apply(implicit user: MtdItUser[_]): Form[String] = {
+    val businessName: Option[String] = user.session.get(SessionKeys.businessName)
+    Form[String](
+      mapping("business-trade" -> text.verifying(isValidLength andThen isValidChars andThen isNotSameName(businessName))
+      )(identity)(Some(_))
+    )
+  }
 }

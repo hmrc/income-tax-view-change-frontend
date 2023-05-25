@@ -16,8 +16,9 @@
 
 package views
 
+import auth.MtdItUser
 import forms.utils.SessionKeys
-import models.incomeSourceDetails.BusinessTradeForm
+import forms.incomeSources.add.BusinessTradeForm
 import org.jsoup.nodes.Element
 import play.twirl.api.Html
 import testUtils.ViewSpec
@@ -37,18 +38,23 @@ class AddBusinessTradeViewSpec extends ViewSpec {
     val errorPrefix: String = messages("base.error-prefix")
   }
 
+  var form = app.injector.instanceOf[BusinessTradeForm]
+  val user = app.injector.instanceOf[MtdItUser[_]]
+
   val backUrl: String = controllers.routes.AddBusinessStartDate.show().url
   val agentBackUrl: String = controllers.routes.AddBusinessStartDate.showAgent().url
 
   val enterBusinessTrade: AddBusinessTrade = app.injector.instanceOf[AddBusinessTrade]
 
-  val pageWithoutError: Html = enterBusinessTrade(BusinessTradeForm.form, testCall, false, backUrl, false)
+  val pageWithoutError: Html = enterBusinessTrade(form.apply(user), testCall, false, backUrl)
 
-  def pageWithError(error: String = BusinessTradeForm.tradeEmptyError): Html = {
-    val modifiedForm = BusinessTradeForm.form.withError(SessionKeys.businessTrade, error)
-      .fill(BusinessTradeForm("??Invalid Name??"))
-    enterBusinessTrade(modifiedForm, testCall, false, backUrl, false)
+  def pageWithError(error: String = form.tradeEmptyError): Html = {
+    val modifiedForm = form.apply(user).withError(SessionKeys.businessTrade, error)
+      .fill("??Invalid Name??")
+    enterBusinessTrade(modifiedForm, testCall, false, backUrl)
   }
+
+  //CeaseUKProperty
 
   "The add business trade page" when {
     "There are no errors to display" should {
@@ -83,11 +89,11 @@ class AddBusinessTradeViewSpec extends ViewSpec {
 
     "there is an input error on the page" should {
       List(
-        BusinessTradeForm.tradeEmptyError -> AddBusinessTradeMessages.tradeEmptyError,
-        BusinessTradeForm.tradeShortError -> AddBusinessTradeMessages.tradeShortError,
-        BusinessTradeForm.tradeLongError -> AddBusinessTradeMessages.tradeLongError,
-        BusinessTradeForm.tradeInvalidCharError -> AddBusinessTradeMessages.tradeInvalidCharError,
-        BusinessTradeForm.tradeSameNameError -> AddBusinessTradeMessages.tradeSameNameError
+        form.tradeEmptyError -> AddBusinessTradeMessages.tradeEmptyError,
+        form.tradeShortError -> AddBusinessTradeMessages.tradeShortError,
+        form.tradeLongError -> AddBusinessTradeMessages.tradeLongError,
+        form.tradeInvalidCharError -> AddBusinessTradeMessages.tradeInvalidCharError,
+        form.tradeSameNameError -> AddBusinessTradeMessages.tradeSameNameError
       ) foreach { case (errorKey, errorMessage) =>
         s"for the error '$errorMessage'" should {
 
