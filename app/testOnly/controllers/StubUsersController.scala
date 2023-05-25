@@ -43,7 +43,7 @@ class StubUsersController @Inject()(stubUsersView: StubUsersView)
                                     implicit val mcc: MessagesControllerComponents,
                                     implicit val executionContext: ExecutionContext,
                                     val desSimulatorConnector: DesSimulatorConnector,
-                                    userRepository: UserRepository,
+                                    userRepository: UserRepository
                                    ) extends BaseController with AuthRedirects with I18nSupport {
 
   def show: Action[AnyContent] = Action.async { implicit request =>
