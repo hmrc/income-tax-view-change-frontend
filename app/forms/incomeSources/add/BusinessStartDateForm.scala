@@ -49,8 +49,13 @@ class BusinessStartDateForm @Inject()(dateService: DateService, dateFormatter: I
 
   val form: Form[DateFormElement] = {
     val currentDate: LocalDate = dateService.getCurrentDate()
-    val currentDatePlusOneWeek: String = dateFormatter.longDate(currentDate.plusWeeks(1))(messages).toLongDate
-    def dateMustNotBeInTheFuture(maximumDate: String): String = messages(s"$messagePrefix.error.future", maximumDate)
+    val currentDatePlusOneWeekOneDay: LocalDate = currentDate.plusWeeks(1).plusDays(1)
+    val futureErrorMessage: String = dateFormatter.longDate(currentDatePlusOneWeekOneDay)(messages).toLongDate
+    def dateMustNotBeInTheFuture(maximumDate: String): String = messages(dateMustNotBeTooFarInFuture, maximumDate)
+
+    println(s"\n[CURRENT DATE]: ${dateService.getCurrentDate()}\n")
+
+    println(s"\n[CURRENT DATE + 1 WEEK]: ${currentDatePlusOneWeekOneDay}\n")
 
     Form(
       mapping(s"$messagePrefix" -> tuple(
@@ -66,10 +71,8 @@ class BusinessStartDateForm @Inject()(dateService: DateService, dateFormatter: I
         },
         date => (date.getDayOfMonth.toString, date.getMonthValue.toString, date.getYear.toString)
       )
-        .verifying(maxDate(currentDate, dateMustNotBeInTheFuture(currentDatePlusOneWeek)))
+        .verifying(maxDate(currentDatePlusOneWeekOneDay, dateMustNotBeInTheFuture(futureErrorMessage)))
       )(DateFormElement.apply)(DateFormElement.unapply))
-
-
   }
 
   private def checkRequiredFields: Constraint[(String, String, String)] = Constraint("constraints.requiredFields") {
@@ -90,6 +93,14 @@ class BusinessStartDateForm @Inject()(dateService: DateService, dateFormatter: I
     case _ =>
       Valid
   }
+
+  override protected def maxDate(maximum: LocalDate, errorKey: String, args: Any*): Constraint[LocalDate] =
+    Constraint {
+      case date if date.isAfter(maximum) || date.equals(maximum) =>
+        Invalid(errorKey, args: _*)
+      case _ =>
+        Valid
+    }
 }
 
 object BusinessStartDateForm {

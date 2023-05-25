@@ -16,38 +16,24 @@
 
 package controllers
 
-import auth.MtdItUser
 import config.featureswitch.FeatureSwitch.switches
 import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
-import forms.BusinessNameForm
-import forms.incomeSources.add.BusinessStartDateForm
 import forms.models.DateFormElement
-import forms.utils.SessionKeys
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
 import mocks.services.MockClientDetailsService
-import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
-import org.mockito.Mockito.{mock, reset}
 import org.scalatest.matchers.must.Matchers._
-import play.api.mvc.{Call, MessagesControllerComponents, Result}
+import play.api.mvc.{Call, MessagesControllerComponents}
 import play.api.test.Helpers._
-import services.{DateService, IncomeSourceDetailsService}
+import services.DateService
 import testConstants.BaseTestConstants
-import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testIndividualAuthSuccessWithSaUtrResponse}
-import testConstants.FinancialDetailsIntegrationTestConstants.currentDate
-import testConstants.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
+import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
 import testUtils.TestSupport
-import uk.gov.hmrc.play.language.LanguageUtils
-import views.html.AddBusiness
 import views.html.incomeSources.add.AddBusinessStartDate
-
-import java.time.LocalDate
-import scala.concurrent.Future
 
 
 class AddBusinessStartDateControllerSpec extends TestSupport
@@ -60,12 +46,10 @@ class AddBusinessStartDateControllerSpec extends TestSupport
   with ImplicitDateFormatter
   with FeatureSwitching {
 
-  val postAction: Call = controllers.routes.AddBusinessStartDateController.submit()
-  val postActionAgent: Call = controllers.routes.AddBusinessStartDateController.submitAgent()
-
   val dayField = "add-business-start-date.day"
   val monthField = "add-business-start-date.month"
   val yearField = "add-business-start-date.year"
+
   def disableAllSwitches(): Unit = {
     switches.foreach(switch => disable(switch))
   }
@@ -112,9 +96,35 @@ class AddBusinessStartDateControllerSpec extends TestSupport
         mockNoIncomeSources()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
-        val result = TestAddBusinessStartDateController.showAgent()(fakeRequestConfirmedClient("AB123456C"))
+        val result = TestAddBusinessStartDateController.showAgent()(fakeRequestConfirmedClient())
 
         status(result) shouldBe SEE_OTHER
+      }
+    }
+    "redirect an individual to the add business start date page" when {
+      "incomeSources FS is enabled" in {
+        disableAllSwitches()
+        enable(IncomeSources)
+
+        mockNoIncomeSources()
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
+
+        val result = TestAddBusinessStartDateController.show()(fakeRequestWithActiveSession)
+
+        status(result) shouldBe OK
+      }
+    }
+    "redirect an agent to the add business start date page" when {
+      "incomeSources FS is enabled" in {
+        disableAllSwitches()
+        enable(IncomeSources)
+
+        mockNoIncomeSources()
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+
+        val result = TestAddBusinessStartDateController.showAgent()(fakeRequestConfirmedClient())
+
+        status(result) shouldBe OK
       }
     }
     "display all fields missing error message" when {
@@ -143,7 +153,7 @@ class AddBusinessStartDateControllerSpec extends TestSupport
         val currentDate = dateService.getCurrentDate()
 
         val testDate = DateFormElement(
-          currentDate.plusDays(10)
+          currentDate.plusDays(8)
         ).date
 
         val result = TestAddBusinessStartDateController.submit()(
@@ -155,11 +165,200 @@ class AddBusinessStartDateControllerSpec extends TestSupport
         )
 
         val maxDate = mockImplicitDateFormatter
-          .longDate(currentDate.plusWeeks(1))
+          .longDate(currentDate.plusWeeks(1).plusDays(1))
           .toLongDate
 
         status(result) shouldBe BAD_REQUEST
         contentAsString(result) must include(s"The date your business started trading must be before $maxDate")
+      }
+    }
+    "display invalid date error message" when {
+      "input date is invalid" in {
+        disableAllSwitches()
+        enable(IncomeSources)
+
+        mockNoIncomeSources()
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
+
+        val testDay = "99"
+        val testMonth = "99"
+        val testYear = "9999"
+
+        val result = TestAddBusinessStartDateController.submit()(
+          fakeRequestWithActiveSession.withFormUrlEncodedBody(
+            dayField -> testDay,
+            monthField -> testMonth,
+            yearField -> testYear
+          )
+        )
+        status(result) shouldBe BAD_REQUEST
+        contentAsString(result) must include("The date your business started trading must be a real date")
+      }
+    }
+    "display missing day error message" when {
+      "only month and year is entered" in {
+        disableAllSwitches()
+        enable(IncomeSources)
+
+        mockNoIncomeSources()
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
+
+        val testDay = ""
+        val testMonth = "01"
+        val testYear = "2020"
+
+        val result = TestAddBusinessStartDateController.submit()(
+          fakeRequestWithActiveSession.withFormUrlEncodedBody(
+            dayField -> testDay,
+            monthField -> testMonth,
+            yearField -> testYear
+          )
+        )
+        status(result) shouldBe BAD_REQUEST
+        contentAsString(result) must include("The date must include a day")
+      }
+    }
+
+    "display missing year error message" when {
+      "only day and month is entered" in {
+        disableAllSwitches()
+        enable(IncomeSources)
+
+        mockNoIncomeSources()
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
+
+        val testDay = "01"
+        val testMonth = "01"
+        val testYear = ""
+
+        val result = TestAddBusinessStartDateController.submit()(
+          fakeRequestWithActiveSession.withFormUrlEncodedBody(
+            dayField -> testDay,
+            monthField -> testMonth,
+            yearField -> testYear
+          )
+        )
+        status(result) shouldBe BAD_REQUEST
+        contentAsString(result) must include("The date must include a year")
+      }
+    }
+    "display missing day and month error message" when {
+      "only year is entered" in {
+        disableAllSwitches()
+        enable(IncomeSources)
+
+        mockNoIncomeSources()
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
+
+        val testDay = ""
+        val testMonth = ""
+        val testYear = "2021"
+
+        val result = TestAddBusinessStartDateController.submit()(
+          fakeRequestWithActiveSession.withFormUrlEncodedBody(
+            dayField -> testDay,
+            monthField -> testMonth,
+            yearField -> testYear
+          )
+        )
+        status(result) shouldBe BAD_REQUEST
+        contentAsString(result) must include("The date must include a day and a month")
+      }
+    }
+    "display missing day and year error message" when {
+      "only month is entered" in {
+        disableAllSwitches()
+        enable(IncomeSources)
+
+        mockNoIncomeSources()
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
+
+        val testDay = ""
+        val testMonth = "01"
+        val testYear = ""
+
+        val result = TestAddBusinessStartDateController.submit()(
+          fakeRequestWithActiveSession.withFormUrlEncodedBody(
+            dayField -> testDay,
+            monthField -> testMonth,
+            yearField -> testYear
+          )
+        )
+        status(result) shouldBe BAD_REQUEST
+        contentAsString(result) must include("The date must include a day and a year")
+      }
+    }
+    "display missing month and year error message" when {
+      "only day is entered" in {
+        disableAllSwitches()
+        enable(IncomeSources)
+
+        mockNoIncomeSources()
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
+
+        val testDay = "01"
+        val testMonth = ""
+        val testYear = ""
+
+        val result = TestAddBusinessStartDateController.submit()(
+          fakeRequestWithActiveSession.withFormUrlEncodedBody(
+            dayField -> testDay,
+            monthField -> testMonth,
+            yearField -> testYear
+          )
+        )
+        status(result) shouldBe BAD_REQUEST
+        contentAsString(result) must include("The date must include a month and a year")
+      }
+    }
+    "redirect to the business start date check page" when {
+      "an individual enters a valid date" in {
+        disableAllSwitches()
+        enable(IncomeSources)
+
+        mockNoIncomeSources()
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
+
+        val postAction: Call = controllers.routes.AddBusinessStartDateCheckController.show()
+
+        val testDay = "01"
+        val testMonth = "01"
+        val testYear = "2022"
+
+        val result = TestAddBusinessStartDateController.submit()(
+          fakeRequestWithActiveSession.withFormUrlEncodedBody(
+            dayField -> testDay,
+            monthField -> testMonth,
+            yearField -> testYear
+          )
+        )
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(result) shouldBe Some(postAction.url)
+      }
+    }
+    "redirect to the business start date check page" when {
+      "an agent enters a valid date" in {
+        disableAllSwitches()
+        enable(IncomeSources)
+
+        mockNoIncomeSources()
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+
+        val postActionAgent: Call = controllers.routes.AddBusinessStartDateCheckController.showAgent()
+
+        val testDay = "01"
+        val testMonth = "01"
+        val testYear = "2022"
+
+        val result = TestAddBusinessStartDateController.submitAgent()(
+          fakeRequestConfirmedClient().withFormUrlEncodedBody(
+            dayField -> testDay,
+            monthField -> testMonth,
+            yearField -> testYear
+          )
+        )
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(result) shouldBe Some(postActionAgent.url)
       }
     }
   }
