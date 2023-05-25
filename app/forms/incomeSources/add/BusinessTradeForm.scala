@@ -38,14 +38,18 @@ object BusinessTradeForm {
   val tradeInvalidCharError = "add-business-trade.form.error.invalid"
   val tradeSameNameError = "You cannot enter the same trade and same business name"
 
-  val isValidLength: Constraint[String] = Constraint(value =>
-    value.length match {
-      case i: Int if i==0 => Invalid(tradeEmptyError)
-      case i: Int if i<2 => Invalid(tradeShortError)
-      case i: Int if i>maxLength => Invalid(tradeLongError)
-      case _ => Valid
+  val isValidLength: Constraint[String] = Constraint(value => {
+    if (value.isEmpty) Invalid(tradeEmptyError)
+    else {
+      val specialChars = "0123456789,.&'/\\\\-"
+      val normalised = value.filter(c => !specialChars.contains(c))
+      normalised.length match {
+        case i: Int if i < 2 => Invalid(tradeShortError)
+        case i: Int if i > maxLength => Invalid(tradeLongError)
+        case _ => Valid
+      }
     }
-  )
+  })
 
   val isValidChars: Constraint[String] = Constraint(value =>
     if (validTrade.pattern.matcher(value).matches()) Valid
