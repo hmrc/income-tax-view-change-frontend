@@ -38,6 +38,7 @@ class BusinessTradeFormSpec extends AnyWordSpec with Matchers{
       }
     }*/
 
+
     "return an error" when {
       "the business trade is empty" in {
         val result = form("").errors
