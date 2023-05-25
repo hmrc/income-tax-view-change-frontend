@@ -18,8 +18,9 @@ package services
 
 import auth.MtdItUser
 import connectors.IncomeTaxViewChangeConnector
+import exceptions.MissingSessionKey
+import forms.utils.SessionKeys.ceaseUKPropertyEndDate
 import models.updateIncomeSource.UpdateIncomeSourceResponse
-import play.api.mvc.AnyContent
 import uk.gov.hmrc.http.HeaderCarrier
 
 import java.time.LocalDate
@@ -29,17 +30,16 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class UpdateIncomeSourceService @Inject()(connector: IncomeTaxViewChangeConnector) {
 
-  def updateCessationDate(implicit request: MtdItUser[AnyContent], hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Exception,UpdateIncomeSourceResponse]] = {
+  def updateCessationDate(implicit request: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Exception,UpdateIncomeSourceResponse]] = {
     val nino: String = request.nino
     val incomeSourceId: Option[String] = request.incomeSources.properties.filter(_.isUkProperty).flatMap(_.incomeSourceId).headOption
-    val ceaseUKPropertyEndDateSessionKey = "ceaseUKPropertyEndDate"
-    request.session.get(ceaseUKPropertyEndDateSessionKey) match {
+    request.session.get(ceaseUKPropertyEndDate) match {
       case Some(date) =>
         connector.updateCessationDate(
           nino = nino,
           incomeSourceId = incomeSourceId.get,
           cessationDate = Some(LocalDate.parse(date))).map(Right(_))
-      case _ => Future.successful(Left(new Exception(s"Missing session field - $ceaseUKPropertyEndDateSessionKey")))
+      case _ => Future.successful(Left(MissingSessionKey(ceaseUKPropertyEndDate)))
     }
 
   }

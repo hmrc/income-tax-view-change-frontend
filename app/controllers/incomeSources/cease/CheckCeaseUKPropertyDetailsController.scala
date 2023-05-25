@@ -69,19 +69,19 @@ class CheckCeaseUKPropertyDetailsController @Inject()(val authenticate: Authenti
     }
   }
 
-  def show(origin: Option[String] = None): Action[AnyContent] =
+  def show(): Action[AnyContent] =
     (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources).async {
       implicit user =>
         handleRequest(
           isAgent = false,
-          origin
+          None
         )
     }
 
   def showAgent(): Action[AnyContent] = Authenticated.async {
     implicit request =>
       implicit user =>
-        getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true).flatMap {
+        getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
           implicit mtdItUser =>
             handleRequest(
               isAgent = true
@@ -97,7 +97,9 @@ class CheckCeaseUKPropertyDetailsController @Inject()(val authenticate: Authenti
         Logger("application").error(s"[CheckCeaseUKPropertyDetailsController][submit] Error submitting cease date:${ex.getMessage}")
         itvcErrorHandler.showInternalServerError()
       case Right(result) => result match {
-        case r:UpdateIncomeSourceResponseModel => Redirect(controllers.incomeSources.cease.routes.CeaseUKPropertyController.show().url)
+        case r: UpdateIncomeSourceResponseModel =>
+          Logger("application").info(s"[CheckCeaseUKPropertyDetailsController][submitAgent] successfully submitted cease date: processingDate ${r.processingDate}")
+          Redirect(controllers.incomeSources.cease.routes.CeaseUKPropertyController.show().url)
         case r:UpdateIncomeSourceResponseError =>
           Logger("application").error(s"[CheckCeaseUKPropertyDetailsController][submit] Error submitting cease date:${r.status} ${r.reason}")
           itvcErrorHandler.showInternalServerError()
@@ -108,14 +110,16 @@ class CheckCeaseUKPropertyDetailsController @Inject()(val authenticate: Authenti
   def submitAgent: Action[AnyContent] = Authenticated.async {
     implicit request =>
       implicit user =>
-        getMtdItUserWithIncomeSources(incomeSourceDetailsService, useCache = true).flatMap {
+        getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
           implicit mtdItUser =>
             service.updateCessationDate.map {
               case Left(ex) =>
                 Logger("application").error(s"[CheckCeaseUKPropertyDetailsController][submitAgent] Error submitting cease date:${ex.getMessage}")
                 itvcErrorHandlerAgent.showInternalServerError()
               case Right(result) => result match {
-                case r: UpdateIncomeSourceResponseModel => Redirect(controllers.incomeSources.cease.routes.CeaseUKPropertyController.show().url)
+                case r: UpdateIncomeSourceResponseModel =>
+                  Logger("application").info(s"[CheckCeaseUKPropertyDetailsController][submitAgent] successfully submitted cease date: processingDate ${r.processingDate}")
+                  Redirect(controllers.incomeSources.cease.routes.CeaseUKPropertyController.show().url)
                 case r: UpdateIncomeSourceResponseError =>
                   Logger("application").error(s"[CheckCeaseUKPropertyDetailsController][submitAgent] Error submitting cease date:${r.status} ${r.reason}")
                   itvcErrorHandlerAgent.showInternalServerError()

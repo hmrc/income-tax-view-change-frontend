@@ -592,7 +592,7 @@ trait IncomeTaxViewChangeConnector extends RawResponseReads with FeatureSwitchin
         case OK => response.json.validate[UpdateIncomeSourceResponseModel].fold(
           invalid => {
             Logger("application").error(s"[IncomeTaxViewChangeConnector][updateCessationDate] - Json validation error parsing repayment response, error $invalid")
-            UpdateIncomeSourceResponseError(INTERNAL_SERVER_ERROR, "Json validation error parsing repayment response")
+            UpdateIncomeSourceResponseError(INTERNAL_SERVER_ERROR, "Json validation error parsing response")
           },
           valid => valid
         )

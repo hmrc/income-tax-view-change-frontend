@@ -181,16 +181,13 @@ POST        /income-sources/cease/uk-property-end-date                    contro
 POST        /agents/income-sources/cease/uk-property-end-date             controllers.incomeSources.cease.UKPropertyEndDateController.submitAgent()
 GET         /income-sources/cease/uk-property-check-details               controllers.incomeSources.cease.CheckCeaseUKPropertyDetailsController.show()
 GET         /agents/income-sources/cease/uk-property-check-details        controllers.incomeSources.cease.CheckCeaseUKPropertyDetailsController.showAgent()
+POST        /income-sources/cease/uk-property-check-details               controllers.incomeSources.cease.CheckCeaseUKPropertyDetailsController.submit()
+POST        /agents/income-sources/cease/uk-property-check-details        controllers.incomeSources.cease.CheckCeaseUKPropertyDetailsController.submitAgent()
 
 # Income Sources - Manage
 GET          /income-sources/manage/choose-income-sources                 controllers.incomeSources.manage.ManageIncomeSourceController.show()
 GET          /agents/income-sources/manage/choose-income-sources          controllers.incomeSources.manage.ManageIncomeSourceController.showAgent()
 
-
-GET         /income-sources/cease/uk-property-check-details               controllers.incomeSources.cease.CheckCeaseUKPropertyDetailsController.show(origin: Option[String] ?= None)
-GET         /agents/income-sources/cease/uk-property-check-details        controllers.incomeSources.cease.CheckCeaseUKPropertyDetailsController.showAgent()
-POST        /income-sources/cease/uk-property-check-details               controllers.incomeSources.cease.CheckCeaseUKPropertyDetailsController.submit()
-POST        /agents/income-sources/cease/uk-property-check-details               controllers.incomeSources.cease.CheckCeaseUKPropertyDetailsController.submitAgent()
 
 # Income Sources - TO BE IMPLEMENTED
 GET          /income-sources/add/uk-property-business-start-date                                        controllers.AddUkPropertyBusinessStartDate.show()
