@@ -326,7 +326,7 @@ class AddBusinessStartDateControllerSpec extends TestSupport
         val testYear = "2022"
 
         val result = TestAddBusinessStartDateController.submitAgent()(
-          fakeRequestWithActiveSession.withFormUrlEncodedBody(
+          fakeRequestConfirmedClient().withFormUrlEncodedBody(
             dayField -> testDay,
             monthField -> testMonth,
             yearField -> testYear
