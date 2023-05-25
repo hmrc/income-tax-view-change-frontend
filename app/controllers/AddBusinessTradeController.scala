@@ -95,7 +95,7 @@ class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate
           }
           else {
             Future.successful {
-              Redirect(routes.AddBusinessAddressController.show().url).withSession(request.session + (SessionKeys.businessTrade -> formData.trade))
+              Redirect(routes.AddBusinessStartDateController.show().url).withSession(request.session + (SessionKeys.businessTrade -> formData.trade))
             }
           }
         }

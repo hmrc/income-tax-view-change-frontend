@@ -85,26 +85,23 @@ class AddBusinessStartDateController @Inject()(authenticate: AuthenticationPredi
 
     val errorHandler = if(isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
-      if (isDisabled(IncomeSources)) {
-        Future.successful(
+      Future.successful(
+        if (isDisabled(IncomeSources)) {
           Redirect(controllers.routes.HomeController.show())
-        )
-      } else {
-        Future.successful(
+        } else {
           Ok(addBusinessStartDate(
             form = businessStartDateForm.apply(user, messages),
             postAction = postAction,
             backUrl = backUrl,
             isAgent = isAgent
           )(user, messages))
-        )
-      } recover {
+        }
+      ) recover {
         case ex: Exception =>
           Logger("application").error(s"${if (isAgent) "[Agent]"}" +
             s"[AddBusinessStartDateController][handleRequest] - Error: ${ex.getMessage}")
           errorHandler.showInternalServerError()
       }
-
   }
 
   def submit: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino

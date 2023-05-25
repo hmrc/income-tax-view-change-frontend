@@ -33,8 +33,7 @@ import javax.inject.{Inject, Singleton}
 class BusinessStartDateForm @Inject()(val dateService: DateService, val dateFormatter: ImplicitDateFormatterImpl) extends Constraints {
 
   private val messagePrefix = "add-business-start-date"
-
-  private val dateMustNotBeTooFar = s"$messagePrefix.error.future"
+  private val dateMustNotBeTooFarInFuture = s"$messagePrefix.error.future"
   private val dateMustBeEntered = s"$messagePrefix.error.error.required"
   private val dateMustBeReal = s"$messagePrefix.error.invalid"
   private val dayRequired = s"dateForm.error.day.required"
@@ -43,16 +42,20 @@ class BusinessStartDateForm @Inject()(val dateService: DateService, val dateForm
   private val dayAndMonthRequired = s"dateForm.error.dayAndMonth.required"
   private val dayAndYearRequired = s"dateForm.error.dayAndYear.required"
   private val monthAndYearRequired = s"dateForm.error.monthAndYear.required"
+
+  val day: String = "day"
+  val month: String = "month"
+  val year: String = "year"
   def apply(implicit user: MtdItUser[_], messages: Messages): Form[DateFormElement] = {
     val currentDate: LocalDate = dateService.getCurrentDate()
     val currentDatePlusOneWeek: String = dateFormatter.longDate(currentDate.plusWeeks(1)).toLongDate
     def dateMustNotBeInTheFuture(maximumDate: String): String = messages(s"$messagePrefix.error.future", maximumDate)
 
     Form(
-      mapping("add-business-start-date" -> tuple(
-        "day" -> default(text(), ""),
-        "month" -> default(text(), ""),
-        "year" -> default(text(), ""))
+      mapping(s"$messagePrefix" -> tuple(
+        day -> default(text(), ""),
+        month -> default(text(), ""),
+        year -> default(text(), ""))
         .verifying(firstError(
           checkRequiredFields,
           validDate(dateMustBeReal)
