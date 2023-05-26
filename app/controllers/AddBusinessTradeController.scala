@@ -28,7 +28,6 @@ import play.api.mvc._
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import views.html.AddBusinessTrade
 import services.IncomeSourceDetailsService
-
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -88,7 +87,7 @@ class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate
           }
         },
         formData => {
-          if (formData.trade == request.session.get(SessionKeys.businessName).get){
+          if (formData.trade.toLowerCase == request.session.get(SessionKeys.businessName).get.toLowerCase.trim){
             Future {
               Ok(addBusinessTradeView(BusinessTradeForm.form, routes.AddBusinessTradeController.submit(), false, backURL, true))
             }

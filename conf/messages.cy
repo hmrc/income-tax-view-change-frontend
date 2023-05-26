@@ -594,7 +594,7 @@ obligations.quarterly.to                                        = i
 obligations.eops                                                = Blwyddyn dreth gyfan (gwiriad olaf)
 obligations.noReports                                           = Nid oes unrhyw adroddiadau’n nesáu at eu dyddiad cau ar hyn o bryd. Bydd eich dyddiad cau nesaf yn dangos yma ar ddydd Llun cyntaf y mis nesaf.
 nextUpdates.quarterly                                           = Diweddariad bob chwarter
-nextUpdates.eops            									= Diweddariad blynyddol
+nextUpdates.eops            									= Datganiad diwedd cyfnod
 nextUpdates.crystallised            							= Datganiad terfynol
 nextUpdates.crystallisedAll            							= Pob ffynhonnell incwm
 nextUpdates.propertyIncome            							= Incwm o eiddo
@@ -663,7 +663,7 @@ obligations.quarterlyUpdates                                    = Diweddariadau 
 obligation.dropdown.quarterlyReturn.text.v2.lin2                = Gan ddefnyddio eich {0}, mae’n rhaid i chi gyflwyno 4 diweddariad chwarterol yn y flwyddyn ar gyfer pob ffynhonnell incwm.
 obligation.dropdown.quarterlyReturn.info.v2                     = Beth yw diweddariad chwarterol?
 obligation.dropdown.quarterlyReturn.text.v2                     = Mae diweddariad chwarterol yn nodi’r incwm a’r treuliau ar gyfer pob cyfnod 3 mis.
-obligations.annualUpdates                                       = Diweddariadau blynyddol
+obligations.annualUpdates                                       = Datganiad diwedd cyfnod
 obligation.dropdown.annualReturn.text.v2.lin2                   = Gan ddefnyddio eich {0}, mae’n rhaid i chi gyflwyno un diweddariad blynyddol ar gyfer pob ffynhonnell incwm ar ddiwedd y cyfnod cyfrifyddu.
 obligation.dropdown.annualUpdates.info.v2                       = Beth yw diweddariad blynyddol?
 obligation.dropdown.annualReturn.text.v2                        = Yn y diweddariad blynyddol, mae’n rhaid i chi ddatgan bod y 4 diweddariad chwarterol y gwnaethoch eu cyflwyno yn gywir, neu mae’n rhaid i chi gywiro unrhyw gamgymeriadau
@@ -680,9 +680,9 @@ nextUpdates.dropdown.info                                       = Beth yw’r ma
 nextUpdates.info                                       			= Mae’n rhaid i bob diweddariad gael ei anfon gan ddefnyddio ein meddalwedd cadw cofnodion erbyn pob dyddiad a ddangosir.
 nextUpdates.dropdown.quarterlyReturn.text                       = Diweddariad chwarterol yw cofnod o’ch holl incwm busnes mewn cyfnod 3 mis.
 nextUpdates.dropdown.quarterlyReturn.text.lin2                  = Gan ddefnyddio’ch meddalwedd cadw cofnodion, mae’n rhaid i chi anfon 4 diweddariad chwarterol yn y flwyddyn ar gyfer pob ffynhonnell incwm.
-nextUpdates.dropdown.annualReturn.text                          = Mewn diweddariad blynyddol, mae angen i chi ddatgan bod y 4 diweddariad chwarterol y gwnaethoch eu hanfon yn gywir. Gallwch hefyd newid unrhyw wallau blaenorol.
-nextUpdates.dropdown.annualReturn.text.lin2                     = Gan ddefnyddio’ch meddalwedd cadw cofnodion, mae’n rhaid i chi anfon un diweddariad blynyddol ar gyfer pob ffynhonnell incwm ar ddiwedd pob cyfnod cyfrifyddu.
-nextUpdates.dropdown.finalDeclaration.text                      = Mae’ch datganiad terfynol yn cadarnhau bod y diweddariadau blynyddol y gwnaethoch eu hanfon yn gywir a’ch bod wedi cyflwyno pob ffynhonnell incwm a phob ffynhonnell treuliau, hyd eithaf eich gwybodaeth. Caiff hyn ei wneud gan ddefnyddio’ch meddalwedd cadw cofnodion.
+nextUpdates.dropdown.annualReturn.text                          = Mewn Datganiad diwedd cyfnod, mae angen i chi ddatgan bod y 4 diweddariad chwarterol y gwnaethoch eu hanfon yn gywir. Gallwch hefyd newid unrhyw wallau blaenorol.
+nextUpdates.dropdown.annualReturn.text.lin2                     = Gan ddefnyddio’ch meddalwedd cadw cofnodion, mae’n rhaid i chi anfon un Datganiad diwedd cyfnod ar gyfer pob ffynhonnell incwm ar ddiwedd pob cyfnod cyfrifyddu.
+nextUpdates.dropdown.finalDeclaration.text                      = Mae’ch datganiad terfynol yn cadarnhau bod y Datganiad diwedd cyfnod y gwnaethoch ei hanfon yn gywir a’ch bod wedi cyflwyno pob ffynhonnell incwm a phob ffynhonnell treuliau, hyd eithaf eich gwybodaeth. Caiff hyn ei wneud gan ddefnyddio’ch meddalwedd cadw cofnodion.
 nextUpdates.table.header.type									= Math o ddiweddariad
 nextUpdates.table.header.source									= Ffynhonnell incwm
 nextUpdates.section.heading.updates								= Diweddariad ar gyfer: {0} i {1}
@@ -695,6 +695,7 @@ sections.open.all												= Dangos pob un
 sections.close.all												= Cuddio pob un
 sections.open												    = Dangos
 sections.close												    = Cuddio
+
 
 ## Credits Summary Page ##
 credits.heading                                                         = Credydau yn {0}
@@ -1021,7 +1022,7 @@ updateTab.obligationType.crystallised                           = Pob ffynhonnel
 updateTab.due                                                   = Yn ddyledus erbyn {0}
 updateTab.dateSubmitted                                         = Dyddiad cyflwyno
 updateTab.updateType.quarterly                                  = Diweddariad bob chwarter
-updateTab.updateType.eops                                       = Diweddariad blynyddol
+updateTab.updateType.eops                                       = Datganiad diwedd cyfnod
 updateTab.updateType.crystallised                               = Datganiad terfynol
 
 #Language Selector
@@ -1152,12 +1153,11 @@ cease-income-sources.table-head.business-name = Enw’r busnes
 cease-income-sources.table-head.date-started  = Dyddiad cychwyn
 cease-income-sources.cease                    = Dod i ben
 cease-income-sources.uk-property.h1           = Eiddo yn y DU
-cease-income-sources.uk-property.p1           = **Welsh to be translated**
+cease-income-sources.uk-property.p1           = Dylech ond dod â’ch eiddo yn y DU i ben os nad ydych yn cael unrhyw incwm oddi wrtho mwyach.
 cease-income-sources.foreign-property.h1      = Eiddo tramor
-cease-income-sources.foreign-property.p1      = **Welsh to be translated**
+cease-income-sources.foreign-property.p1      = Dylech ond dod â’ch eiddo tramor i ben os nad ydych yn cael unrhyw incwm oddi wrtho mwyach.
 cease-income-sources.ceased-businesses.h1     = Busnesau sydd wedi dod i ben
 cease-income-sources.table-head.date-ended    = Y dyddiad dod i ben
-cease-income-sources.empty                    =
 
 # add Business page
 add-business-name.heading                                         = Beth yw enw’ch busnes?
@@ -1213,15 +1213,19 @@ notmigrated.agent.link_title                                    = cyfrif Hunanas
 
 
 
-incomeSources.ceaseUKProperty.heading                               = Dod ag eiddo yn y DU i ben
-incomeSources.ceaseUKProperty.radioLabel                            = Rwy’n datgan nad wyf bellach yn cael incwm o unrhyw eiddo yn y DU.
-incomeSources.ceaseUKProperty.radioError                            = Mae’n rhaid i chi ddatgan nad ydych chi bellach yn cael incwm o unrhyw eiddo yn y DU
+incomeSources.ceaseUKProperty.heading                            = Dod ag eiddo yn y DU i ben
+incomeSources.ceaseUKProperty.radioLabel                         = Rwy’n datgan nad wyf bellach yn cael incwm o unrhyw eiddo yn y DU.
+incomeSources.ceaseUKProperty.radioError                         = Mae’n rhaid i chi ddatgan nad ydych chi bellach yn cael incwm o unrhyw eiddo yn y DU
 incomeSources.cease.UKPropertyEndDate.heading                    = Y dyddiad pan wnaeth eich busnes eiddo yn y DU stopio
 incomeSources.cease.UKPropertyEndDate.hint                       = Er enghraifft, 27 3 2020
 incomeSources.cease.UKPropertyEndDate.error.incomplete           = Mae’n rhaid i’r dyddiad gynnwys diwrnod, mis a blwyddyn
 incomeSources.cease.UKPropertyEndDate.error.invalid              = Mae’n rhaid i’r dyddiad y daeth eich busnes eiddo yn y DU i ben fod yn ddyddiad go iawn
 incomeSources.cease.UKPropertyEndDate.error.future               = Ni allwch nodi dyddiad dod i ben sydd y tu hwnt i’r diwrnod presennol na dyddiad yn y dyfodol
 incomeSources.cease.UKPropertyEndDate.error.beforeStartDate      = Ni all y dyddiad dod i ben ar gyfer y busnes fod cyn y dyddiad dechrau
+
+incomeSources.ceaseForeignProperty.heading                       = Dod ag eiddo tramor i ben
+incomeSources.ceaseForeignProperty.checkboxLabel                 = Rwy’n datgan nad wyf bellach yn cael incwm o unrhyw eiddo tramor.
+incomeSources.ceaseForeignProperty.checkboxError                 = Mae’n rhaid i chi ddatgan nad ydych chi bellach yn cael incwm o unrhyw eiddo tramor
 
 #Generic date form messages
 dateForm.hint                                                       = Er enghraifft, 27 3 2020

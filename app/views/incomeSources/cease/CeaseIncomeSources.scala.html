@@ -60,7 +60,8 @@
 
 @mainTemplate(pageTitle = getMessage("heading"),
     backUrl = Some(backUrl),
-    btaNavPartial = user.btaNavPartial) {
+    btaNavPartial = user.btaNavPartial,
+    isAgent = isAgent) {
 
     @h1(msg = getMessage("heading"),
         id = Some("heading"))
@@ -70,39 +71,34 @@
         @h2(msg = getMessage("self-employment.h1"),
             optId = Some("self-employment-h1"))
 
-        @govukTable(Table(
-            head = Some(List(
-                HeadCell(
-                    content = Text(getMessage("table-head.business-name")),
-                    attributes = Map("id" -> "table-head-business-name")),
-                HeadCell(
-                    content = Text(getMessage("table-head.date-started")),
-                    attributes = Map("id" -> "table-head-date-started")),
-                HeadCell(
-                    content = Empty,
-                    attributes = Map("id" -> "empty1"))
-            )),
-            rows = sources.soleTraderBusinesses.zipWithIndex.map { case (business, index) => Seq(
-                TableRow(
-                    content = Text(business.tradingName),
-                    attributes = Map("id" -> s"table-row-trading-name-$index")),
-
-                TableRow(
-                    content = Text(business.tradingStartDate.toLongDate),
-                    attributes = Map("id" -> s"table-row-trading-start-date-$index")),
-
-                TableRow(
-                    content = HtmlContent(
-                        s"""<dd class="govuk-summary-list__actions">
-                                <a class="govuk-link" href='$ceaseSoleTraderBusinessURL'>
-                                    ${getMessage("cease")}<span class="govuk-visually-hidden">cease</span>
-                                </a>
-                            </dd>"""
-                    )
-                )
-            )},
-            attributes = Map("id" -> "sole-trader-businesses-table")
-        ))
+        <table class="govuk-table govuk-!-margin-bottom-3" id="sole-trader-businesses-table">
+            <thead class="govuk-table__head">
+                <tr class="govuk-table__row">
+                    <th class="govuk-table__header" scope="col" id="table-head-business-name">@getMessage("table-head.business-name")</th>
+                    <th class="govuk-table__header" scope="col" id="table-head-date-started">@getMessage("table-head.date-started")</th>
+                    <td class="govuk-table__header" id="empty0"></td>
+                </tr>
+            </thead>
+            <tbody>
+                @for((item, index) <- sources.soleTraderBusinesses.zipWithIndex) {
+                <tr class="govuk-table__row">
+                    <td class="govuk-table__cell" id="@{s"table-row-trading-name-$index"}">@item.tradingName</td>
+                    <td class="govuk-table__cell" id="@{s"table-row-trading-start-date-$index"}">@item.tradingStartDate.toLongDate</td>
+                    <td class="govuk-table__cell">
+                        <dl>
+                            <dt>
+                        <dd class="govuk-summary-list__actions" id="@{s"cease-link-business-$index"}">
+                            <a class="govuk-link" href=@ceaseSoleTraderBusinessURL>
+                                @getMessage("cease")<span class="govuk-visually-hidden">cease</span>
+                            </a>
+                        </dd>
+                            </dt>
+                        </dl>
+                    </td>
+                </tr>
+                }
+            </tbody>
+        </table>
     }
 
     @if(sources.ukProperty.nonEmpty) {
@@ -113,32 +109,30 @@
         @p(id = Some("uk-property-p1")) {
             @getMessage("uk-property.p1") }
 
-        @govukTable(Table(
-            head = Some(List(
-                HeadCell(
-                    content = Text(getMessage("table-head.date-started")),
-                    attributes = Map("id" -> "table-head-date-started-uk")),
-                HeadCell(
-                    content = Empty,
-                    attributes = Map("id" -> "empty2"))
-            )),
-
-            rows = Seq(Seq(
-                TableRow(
-                    content = Text(sources.ukProperty.map(_.tradingStartDate.toLongDate).get),
-                    attributes = Map("id" -> "table-row-trading-start-date-uk")),
-                TableRow(
-                    content = HtmlContent(
-                        s"""<dd class="govuk-summary-list__actions">
-                                <a class="govuk-link" href='$ceaseUkPropertyURL'>
-                                    ${getMessage("cease")}<span class="govuk-visually-hidden">cease</span>
-                                </a>
-                            </dd>"""
-                    )
-                )
-            )),
-            attributes = Map("id" -> "uk-property-table")
-        ))
+        <table class="govuk-table govuk-!-margin-bottom-3" id="uk-property-table">
+            <thead class="govuk-table__head">
+                <tr class="govuk-table__row">
+                    <th class="govuk-table__header" scope="col" id="table-head-date-started-uk">@getMessage("table-head.date-started")</th>
+                    <td class="govuk-table__header" id="empty1"></td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="govuk-table__row">
+                    <td class="govuk-table__cell" id="table-row-trading-start-date-uk">@sources.ukProperty.map(_.tradingStartDate.toLongDate).get</td>
+                    <td class="govuk-table__cell">
+                        <dl>
+                            <dt>
+                        <dd class="govuk-summary-list__actions" id="cease-link-uk">
+                            <a class="govuk-link" href=@ceaseUkPropertyURL>
+                                @getMessage("cease")<span class="govuk-visually-hidden">cease</span>
+                            </a>
+                        </dd>
+                            </dt>
+                        </dl>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
     }
 
     @if(sources.foreignProperty.nonEmpty) {
@@ -149,61 +143,53 @@
         @p(id = Some("foreign-property-p1")) {
             @getMessage("foreign-property.p1") }
 
-        @govukTable(Table(
-            head = Some(List(
-                HeadCell(
-                    content = Text(getMessage("table-head.date-started")),
-                    attributes = Map("id" -> "table-head-date-started-foreign")),
-                HeadCell(
-                    content = Empty,
-                    attributes = Map("id" -> "empty3"))
-            )),
-            rows = Seq(Seq(
-                TableRow(
-                    content = Text(sources.foreignProperty.map(_.tradingStartDate.toLongDate).get),
-                    attributes = Map("id" -> "table-row-trading-start-date-foreign")),
-                TableRow(
-                    content = HtmlContent(
-                        s"""<dd class="govuk-summary-list__actions">
-                                <a class="govuk-link" href='$ceaseForeignPropertyURL'>
-                                    ${getMessage("cease")}<span class="govuk-visually-hidden">cease</span>
-                                </a>
-                            </dd>"""
-                    )
-                )
-            )),
-            attributes = Map("id" -> "foreign-property-table")
-        ))
+        <table class="govuk-table govuk-!-margin-bottom-3" id="foreign-property-table">
+            <thead class="govuk-table__head">
+                <tr class="govuk-table__row">
+                    <th class="govuk-table__header" scope="col" id="table-head-date-started-foreign">@getMessage("table-head.date-started")</th>
+                    <td class="govuk-table__header" id="empty2"></td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="govuk-table__row">
+                    <td class="govuk-table__cell" id="table-row-trading-start-date-foreign">@sources.foreignProperty.map(_.tradingStartDate.toLongDate).get</td>
+                    <td class="govuk-table__cell">
+                        <dl>
+                            <dt>
+                        <dd class="govuk-summary-list__actions" id="cease-link-foreign">
+                            <a class="govuk-link" href=@ceaseForeignPropertyURL>
+                                @getMessage("cease")<span class="govuk-visually-hidden">cease</span>
+                            </a>
+                        </dd>
+                            </dt>
+                        </dl>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
     }
 
     @if(sources.ceasedBusinesses.nonEmpty) {
         @h2(msg = getMessage("ceased-businesses.h1"),
             optId = Some("ceased-businesses-h1"))
 
-        @govukTable(Table(
-            head = Some(List(
-                HeadCell(
-                    content = Text(getMessage("table-head.business-name")),
-                    attributes = Map("id" -> "table-head-business-start-name-ceased")),
-                HeadCell(
-                    content = Text(getMessage("table-head.date-started")),
-                    attributes = Map("id" -> "table-head-date-started-ceased")),
-                HeadCell(
-                    content = Text(getMessage("table-head.date-ended")),
-                    attributes = Map("id" -> "table-head-date-ended-ceased"))
-            )),
-            rows = sources.ceasedBusinesses.zipWithIndex.map { case (business, index) => Seq(
-                TableRow(
-                    content = Text(business.tradingName),
-                    attributes = Map("id" -> s"table-row-trading-name-ceased-$index")),
-                TableRow(
-                    content = Text(business.tradingStartDate.toLongDate),
-                    attributes = Map("id" -> s"table-row-trading-start-date-ceased-$index")),
-                TableRow(
-                    content = Text(business.cessationDate.toLongDate),
-                    attributes = Map("id" -> s"table-row-cessation-date-$index")),
-            )},
-            attributes = Map("id" -> "ceased-businesses-table")
-        ))
+        <table class="govuk-table govuk-!-margin-bottom-3" id="ceased-businesses-table">
+            <thead class="govuk-table__head">
+                <tr class="govuk-table__row">
+                    <th class="govuk-table__header" scope="col" id="table-head-business-name-ceased">@getMessage("table-head.business-name")</th>
+                    <th class="govuk-table__header" scope="col" id="table-head-date-started-ceased">@getMessage("table-head.date-started")</th>
+                    <th class="govuk-table__header" scope="col" id="table-head-date-ended-ceased">@getMessage("table-head.date-ended")</th>
+                </tr>
+            </thead>
+            <tbody>
+            @for((item, index) <- sources.ceasedBusinesses.zipWithIndex) {
+                <tr class="govuk-table__row">
+                    <td class="govuk-table__cell" id="@{s"table-row-trading-name-$index-ceased"}">@item.tradingName</td>
+                    <td class="govuk-table__cell" id="@{s"table-row-trading-start-date-$index-ceased"}">@item.tradingStartDate.toLongDate</td>
+                    <td class="govuk-table__cell" id="@{s"table-row-trading-end-date-$index-ceased"}">@item.cessationDate.toLongDate</td>
+                </tr>
+            }
+            </tbody>
+        </table>
     }
 }
