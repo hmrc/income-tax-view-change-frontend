@@ -25,7 +25,7 @@ import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation
 import testConstants.IncomeSourceIntegrationTestConstants.businessAndPropertyResponse
 
 class CeaseUKPropertyControllerISpec extends ComponentSpecBase with FeatureSwitching {
-  val showDateUKPropertyCeasedControllerUrl: String = controllers.incomeSources.cease.routes.DateUKPropertyCeasedController.showAgent().url
+  val showUKPropertyEndDateControllerUrl: String = controllers.incomeSources.cease.routes.UKPropertyEndDateController.showAgent().url
   val showCeaseUKPropertyControllerUrl: String = controllers.incomeSources.cease.routes.CeaseUKPropertyController.showAgent().url
   val radioErrorMessage: String = messagesAPI("incomeSources.ceaseUKProperty.radioError")
   val radioLabelMessage: String = messagesAPI("incomeSources.ceaseUKProperty.radioLabel")
@@ -56,7 +56,7 @@ class CeaseUKPropertyControllerISpec extends ComponentSpecBase with FeatureSwitc
   }
 
   s"calling POST ${controllers.incomeSources.cease.routes.CeaseUKPropertyController.submit.url}" should {
-    "redirect to showDateUKPropertyCeasedControllerUrl" when {
+    "redirect to showUKPropertyEndDateControllerUrl" when {
       "form is filled correctly" in {
         enable(IncomeSources)
         AuthStub.stubAuthorisedAgent()
@@ -65,7 +65,7 @@ class CeaseUKPropertyControllerISpec extends ComponentSpecBase with FeatureSwitc
         verifyIncomeSourceDetailsCall(testMtditid)
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(showDateUKPropertyCeasedControllerUrl)
+          redirectURI(showUKPropertyEndDateControllerUrl)
         )
       }
       "form is filled incorrectly" in {
