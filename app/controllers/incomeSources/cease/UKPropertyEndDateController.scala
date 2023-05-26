@@ -22,6 +22,7 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowI
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import forms.incomeSources.cease.UKPropertyEndDateForm
+import forms.utils.SessionKeys.ceaseUKPropertyEndDate
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc._
@@ -35,20 +36,20 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class UKPropertyEndDateController @Inject()(val authenticate: AuthenticationPredicate,
-                                               val authorisedFunctions: FrontendAuthorisedFunctions,
-                                               val checkSessionTimeout: SessionTimeoutPredicate,
-                                               val UKPropertyEndDateForm: UKPropertyEndDateForm,
-                                               val incomeSourceDetailsService: IncomeSourceDetailsService,
-                                               val retrieveBtaNavBar: NavBarPredicate,
-                                               val retrieveIncomeSources: IncomeSourceDetailsPredicate,
-                                               val retrieveNino: NinoPredicate,
-                                               val view: UKPropertyEndDate,
-                                               val customNotFoundErrorView: CustomNotFoundError)
-                                              (implicit val appConfig: FrontendAppConfig,
-                                               mcc: MessagesControllerComponents,
-                                               val ec: ExecutionContext,
-                                               val itvcErrorHandler: ItvcErrorHandler,
-                                               val itvcErrorHandlerAgent: AgentItvcErrorHandler)
+                                            val authorisedFunctions: FrontendAuthorisedFunctions,
+                                            val checkSessionTimeout: SessionTimeoutPredicate,
+                                            val UKPropertyEndDateForm: UKPropertyEndDateForm,
+                                            val incomeSourceDetailsService: IncomeSourceDetailsService,
+                                            val retrieveBtaNavBar: NavBarPredicate,
+                                            val retrieveIncomeSources: IncomeSourceDetailsPredicate,
+                                            val retrieveNino: NinoPredicate,
+                                            val view: UKPropertyEndDate,
+                                            val customNotFoundErrorView: CustomNotFoundError)
+                                           (implicit val appConfig: FrontendAppConfig,
+                                            mcc: MessagesControllerComponents,
+                                            val ec: ExecutionContext,
+                                            val itvcErrorHandler: ItvcErrorHandler,
+                                            val itvcErrorHandlerAgent: AgentItvcErrorHandler)
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
   def handleRequest(isAgent: Boolean, origin: Option[String] = None)
@@ -109,8 +110,9 @@ class UKPropertyEndDateController @Inject()(val authenticate: AuthenticationPred
           backUrl = controllers.incomeSources.cease.routes.CeaseUKPropertyController.show().url,
           isAgent = false
         ))),
-        _ =>
-          Future.successful(Redirect(controllers.incomeSources.cease.routes.CheckCeaseUKPropertyDetailsController.show()))
+        validatedInput =>
+          Future.successful(Redirect(controllers.incomeSources.cease.routes.CheckCeaseUKPropertyDetailsController.show())
+            .addingToSession(ceaseUKPropertyEndDate -> validatedInput.date.toString))
       )
   }
 
@@ -126,8 +128,9 @@ class UKPropertyEndDateController @Inject()(val authenticate: AuthenticationPred
                 backUrl = controllers.incomeSources.cease.routes.CeaseUKPropertyController.showAgent().url,
                 isAgent = true
               ))),
-              _ =>
-                Future.successful(Redirect(controllers.incomeSources.cease.routes.CheckCeaseUKPropertyDetailsController.showAgent()))
+              validatedInput =>
+                Future.successful(Redirect(controllers.incomeSources.cease.routes.CheckCeaseUKPropertyDetailsController.showAgent())
+                  .addingToSession(ceaseUKPropertyEndDate -> validatedInput.date.toString))
             )
         }
   }
