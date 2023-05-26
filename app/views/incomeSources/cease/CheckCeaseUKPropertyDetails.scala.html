@@ -19,6 +19,7 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components.FormWithCSRF
 @import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 @import views.html.components._
+@import exceptions.MissingSessionKey
 @import java.time.LocalDate
 @import _root_.implicits.ImplicitDateFormatterImpl
 
@@ -54,7 +55,7 @@
 @businessStopDate = @{
  request.session.get("ceaseUKPropertyEndDate") match {
    case Some(date) => LocalDate.parse(date).toLongDateShort
-   case _ => ""
+   case _ => throw MissingSessionKey("ceaseUKPropertyEndDate")
  }
 }
 

@@ -28,8 +28,9 @@ class CheckCeaseUKPropertyDetailsViewSpec extends TestSupport with ViewSpec{
   val checkCeaseUKPropertyDetailsView = app.injector.instanceOf[CheckCeaseUKPropertyDetails]
   val businessEndDate = "2022-04-23"
   val businessEndShortLongDate = "23 Apr 2022"
-  lazy val viewAgent: HtmlFormat.Appendable = checkCeaseUKPropertyDetailsView(true)(FakeRequest().withSession(forms.utils.SessionKeys.ceaseUKPropertyEndDate -> "2022-04-23"), implicitly)
-  lazy val view: HtmlFormat.Appendable = checkCeaseUKPropertyDetailsView(false)(FakeRequest().withSession(forms.utils.SessionKeys.ceaseUKPropertyEndDate -> "2022-04-23"), implicitly)
+  val req = FakeRequest().withSession(forms.utils.SessionKeys.ceaseUKPropertyEndDate -> businessEndDate)
+  lazy val viewAgent: HtmlFormat.Appendable = checkCeaseUKPropertyDetailsView(true)(req, implicitly)
+  lazy val view: HtmlFormat.Appendable = checkCeaseUKPropertyDetailsView(false)(req, implicitly)
 
   val caption = messages("incomeSources.ceaseUKProperty.checkDetails.paragraph")
   val heading = messages("incomeSources.ceaseUKProperty.checkDetails.heading")

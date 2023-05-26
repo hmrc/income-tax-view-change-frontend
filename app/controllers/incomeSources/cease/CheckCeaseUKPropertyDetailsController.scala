@@ -115,7 +115,7 @@ class CheckCeaseUKPropertyDetailsController @Inject()(val authenticate: Authenti
       }
   }
 
-  def submitAgent: Action[AnyContent] = Authenticated.async {
+  def submitAgent(): Action[AnyContent] = Authenticated.async {
     implicit request =>
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
