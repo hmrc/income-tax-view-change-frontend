@@ -103,8 +103,7 @@ object IncomeSourceIntegrationTestConstants {
     testMtdItId,
     businesses = List(
       business1,
-      business2,
-      ceasedBusiness1
+      business2
     ),
     properties = List(ukProperty),
     yearOfMigration = Some("2018")

@@ -21,19 +21,29 @@ import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import play.api.http.Status.OK
 import testConstants.BaseIntegrationTestConstants.testMtditid
-import testConstants.IncomeSourceIntegrationTestConstants.{multipleBusinessesAndPropertyAndCeasedBusinessResponse, multipleBusinessesAndPropertyResponse, multipleBusinessesAndUkProperty}
+import testConstants.IncomeSourceIntegrationTestConstants.{foreignPropertyAndCeasedBusiness, multipleBusinessesAndUkProperty}
 
 class CeaseIncomeSourcesControllerISpec extends ComponentSpecBase {
 
   val showIndividualCeaseIncomeSourceControllerUrl: String = controllers.incomeSources.cease.routes.CeaseIncomeSourceController.show().url
   val showAgentCeaseIncomeSourceControllerUrl: String = controllers.incomeSources.cease.routes.CeaseIncomeSourceController.showAgent().url
   val pageTitleMsgKey = "cease-income-sources.heading"
+  val soleTraderBusinessName1: String = "business"
+  val soleTraderBusinessName2: String = "secondBusiness"
+  val ceaseMessage: String = messagesAPI("cease-income-sources.cease") + "cease"
+  val startDateMessage: String = messagesAPI("cease-income-sources.table-head.date-started")
+  val ceasedDateMessage: String = messagesAPI("cease-income-sources.table-head.date-ended")
+  val businessNameMessage: String = messagesAPI("cease-income-sources.table-head.business-name")
+  val ukPropertyStartDate: String = "1 January 2017"
+  val foreignPropertyStartDate: String = "1 January 2017"
+  val ceasedBusinessMessage: String = messagesAPI("cease-income-sources.ceased-businesses.h1")
+  val ceasedBusinessName: String = "ceasedBusiness"
 
 
   s"calling GET ${showIndividualCeaseIncomeSourceControllerUrl}" should {
     "render the Cease Income Source page for an Individual" when {
       "User is authorised" in {
-        Given("I wiremock stub a successful Income Source Details response with multiple businesses, a uk property, a foreign property, and a ceased business")
+        Given("I wiremock stub a successful Income Source Details response with multiple businesses and a uk property")
         enable(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndUkProperty)
         When(s"I call GET ${showIndividualCeaseIncomeSourceControllerUrl}")
@@ -43,11 +53,39 @@ class CeaseIncomeSourcesControllerISpec extends ComponentSpecBase {
         res should have(
           httpStatus(OK),
           pageTitleIndividual(pageTitleMsgKey),
-          elementTextByID("continue-button")(buttonLabel)
-
+          elementTextByID("table-head-business-name")(businessNameMessage),
+          elementTextByID("table-row-trading-name-0")(soleTraderBusinessName1),
+          elementTextByID("table-row-trading-name-1")(soleTraderBusinessName2),
+          elementTextByID("cease-link-business-0")(ceaseMessage),
+          elementTextByID("cease-link-business-1")(ceaseMessage),
+          elementTextByID("table-head-date-started-uk")(startDateMessage),
+          elementTextByID("table-row-trading-start-date-uk")(ukPropertyStartDate)
         )
       }
     }
   }
 
+  s"calling GET ${showAgentCeaseIncomeSourceControllerUrl}" should {
+    "render the Cease Income Source page for an Agent" when {
+      "User is authorised" in {
+        Given("I wiremock stub a successful Income Source Details response with a foreign property and a ceased business")
+        enable(IncomeSources)
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyAndCeasedBusiness)
+        When(s"I call GET ${showAgentCeaseIncomeSourceControllerUrl}")
+        val res = IncomeTaxViewChangeFrontend.getCeaseIncomeSourcesAgent
+        verifyIncomeSourceDetailsCall(testMtditid)
+
+        res should have(
+          httpStatus(OK),
+          pageTitleAgent(pageTitleMsgKey),
+          elementTextByID("ceased-businesses-h1")(businessNameMessage),
+          elementTextByID("table-head-date-ended-ceased")(ceasedDateMessage),
+          elementTextByID("table-row-trading-name-0-ceased")(soleTraderBusinessName1),
+          elementTextByID("cease-link-foreign")(ceaseMessage),
+          elementTextByID("table-head-date-started-foreign")(startDateMessage),
+          elementTextByID("table-row-trading-start-date-foreign")(foreignPropertyStartDate)
+        )
+      }
+    }
+  }
 }
