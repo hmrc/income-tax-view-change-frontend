@@ -696,6 +696,7 @@ sections.close.all												= Cuddio pob un
 sections.open												    = Dangos
 sections.close												    = Cuddio
 
+
 ## Credits Summary Page ##
 credits.heading                                                         = Credydau yn {0}
 credits.tableHead.date                                                  = Dyddiad
