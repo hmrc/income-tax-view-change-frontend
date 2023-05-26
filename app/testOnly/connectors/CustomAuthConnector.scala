@@ -16,7 +16,6 @@
 
 package testOnly.connectors
 
-
 import play.api.Logger
 import play.api.http.HeaderNames
 import play.api.http.Status.{CREATED, TOO_MANY_REQUESTS}
@@ -63,7 +62,10 @@ class CustomAuthConnector @Inject()(servicesConfig: ServicesConfig,
   }
 
   def loginRequest(payload: JsValue)(implicit hc: HeaderCarrier): Future[(AuthExchange, GovernmentGatewayToken)] = {
+<<<<<<< HEAD
     Logger("application").info("login request info:" + payload)
+=======
+>>>>>>> main
     http.POST[JsValue, HttpResponse](s"$serviceUrl/government-gateway/session/login", payload) flatMap {
       case response@HttpResponse(CREATED, _, _) =>
         (
@@ -73,10 +75,14 @@ class CustomAuthConnector @Inject()(servicesConfig: ServicesConfig,
         ) match {
           case (Some(token), Some(sessionUri), Some(receivedGatewayToken)) =>
             Future.successful((AuthExchange(token, sessionUri), GovernmentGatewayToken(receivedGatewayToken)))
+<<<<<<< HEAD
           case (token, sessionUri, gatewayToken) =>
             Logger("application").info("response json:" + response.json)
             Logger("application").info(s"login response info: $token :: $sessionUri :: $gatewayToken")
             Future.failed(new RuntimeException("Internal Error, missing headers or gatewayToken in response from auth-login-api"))
+=======
+          case _ => Future.failed(new RuntimeException("Internal Error, missing headers or gatewayToken in response from auth-login-api"))
+>>>>>>> main
         }
       case response@HttpResponse(TOO_MANY_REQUESTS, _, _) =>
         Future.failed(new TooManyRequestException(s"response from $serviceUrl/government-gateway/session/login was ${response.status}. Body ${response.body}"))
