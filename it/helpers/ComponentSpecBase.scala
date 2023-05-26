@@ -20,7 +20,7 @@ import auth.HeaderExtractor
 import com.github.tomakehurst.wiremock.client.WireMock
 import config.FrontendAppConfig
 import config.featureswitch.{FeatureSwitch, FeatureSwitching}
-import forms.CeaseUKPropertyForm
+import forms.{CeaseForeignPropertyForm, CeaseUKPropertyForm}
 import helpers.agent.SessionCookieBaker
 import helpers.servicemocks.AuditStub
 import implicits.ImplicitDateFormatterImpl
@@ -256,6 +256,15 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     )
 
     def getUKPropertyEndDate: WSResponse = get("/income-sources/cease/uk-property-end-date")
+
+    def getCeaseForeignProperty: WSResponse = get("/income-sources/cease/foreign-property-declare")
+
+    def postCeaseForeignProperty(answer: Option[String]): WSResponse = post("/income-sources/cease/foreign-property-declare")(
+      answer.fold(Map.empty[String, Seq[String]])(
+        declaration => CeaseForeignPropertyForm.form.fill(CeaseForeignPropertyForm(Some(declaration), "csrfToken")).data.map { case (k, v) => (k, Seq(v)) }
+      )
+    )
+
   }
 
   def unauthorisedTest(uri: String): Unit = {
