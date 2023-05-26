@@ -37,9 +37,9 @@ class CheckCeaseUKPropertyDetailsController @Inject()(val authenticate: Authenti
                                                       val authorisedFunctions: FrontendAuthorisedFunctions,
                                                       val checkSessionTimeout: SessionTimeoutPredicate,
                                                       val retrieveIncomeSources: IncomeSourceDetailsPredicate,
-                                                      val incomeSourceDetailsService: IncomeSourceDetailsService,
-                                                      val retrieveNino: NinoPredicate,
                                                       val retrieveBtaNavBar: NavBarPredicate,
+                                                      val retrieveNino: NinoPredicate,
+                                                      val incomeSourceDetailsService: IncomeSourceDetailsService,
                                                       val view: CheckCeaseUKPropertyDetails,
                                                       val service: UpdateIncomeSourceService,
                                                       val customNotFoundErrorView: CustomNotFoundError)
