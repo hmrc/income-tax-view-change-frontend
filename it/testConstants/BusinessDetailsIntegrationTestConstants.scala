@@ -76,4 +76,16 @@ object BusinessDetailsIntegrationTestConstants {
     cessation = None
   )
 
+  val ceasedBusiness1 = BusinessDetailsModel(
+    incomeSourceId = Some(otherTestSelfEmploymentId),
+    accountingPeriod = Some(AccountingPeriodModel(
+      start = b2AccountingStart,
+      end = b2AccountingEnd
+    )),
+    tradingName = Some(b2TradingName),
+    firstAccountingPeriodEndDate = Some(b2AccountingEnd),
+    tradingStartDate = Some(b2TradingStart),
+    cessation = Some(CessationModel(Some(b2CessationDate), Some(b2CessationReason)))
+  )
+
 }
