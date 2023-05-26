@@ -78,15 +78,15 @@
                     content = Text(getMessage("table-head.date-started")),
                     attributes = Map("id" -> "table-head-date-started")),
                 HeadCell(
-                    content = Text("") //TODO see on extending line w/o blank cell
+                    content = Text(""),
                 )
             )),
             rows = soleTraderBusinesses.zipWithIndex.map { case (business, index) => Seq(
                 TableRow(
-                    content = Text(business.tradingName),
+                    content = Text(if (business.tradingName.nonEmpty) business.tradingName else getMessage("unknown-field")),
                     attributes = Map("id" -> s"table-row-trading-name-$index")),
                 TableRow(
-                    content = Text(business.tradingStartDate.map(_.toLongDate).getOrElse("Unknown")),
+                    content = Text(business.tradingStartDate.map(_.toLongDate).getOrElse(getMessage("unknown-field"))),
                     attributes = Map("id" -> s"table-row-trading-start-date-$index")),
                 TableRow(
                     content = HtmlContent(
@@ -114,7 +114,7 @@
             )),
             rows = Seq(Seq(
                 TableRow(
-                    content = Text(ukProperty.map(_.tradingStartDate.map(_.toLongDate).getOrElse("Unknown")).get),
+                    content = Text(ukProperty.map(_.tradingStartDate.map(_.toLongDate).getOrElse(getMessage("unknown-field"))).get),
                     attributes = Map("id" -> "table-row-trading-start-date-uk")
                 )
             ))
@@ -134,7 +134,7 @@
             )),
             rows = Seq(Seq(
                 TableRow(
-                    content = Text(foreignProperty.map(_.tradingStartDate.map(_.toLongDate).getOrElse("Unknown")).get),
+                    content = Text(foreignProperty.map(_.tradingStartDate.map(_.toLongDate).getOrElse(getMessage("unknown-field"))).get),
                     attributes = Map("id" -> "table-row-trading-start-date-foreign"))
             ))
         ))
@@ -156,15 +156,15 @@
                     content = Text(getMessage("table-head.date-ended")),
                     attributes = Map("id" -> "table-head-date-ended-ceased"))
             )),
-            rows = ceasedBusinesses.zipWithIndex.map { case (b, index) => Seq(
+            rows = ceasedBusinesses.zipWithIndex.map { case (business, index) => Seq(
                 TableRow(
-                    content = Text(b.tradingName),
+                    content = Text(business.tradingName),
                     attributes = Map("id" -> s"table-row-trading-name-ceased-$index")),
                 TableRow(
-                    content = Text(b.tradingStartDate.map(_.toLongDate).getOrElse("Unknown")),
+                    content = Text(business.tradingStartDate.map(_.toLongDate).getOrElse(getMessage("unknown-field"))),
                     attributes = Map("id" -> s"table-row-trading-start-date-ceased-$index")),
                 TableRow(
-                    content = Text(b.cessationDate.toLongDate),
+                    content = Text(business.cessationDate.toLongDate),
                     attributes = Map("id" -> s"table-row-cessation-date-$index")),
             )}
         ))
