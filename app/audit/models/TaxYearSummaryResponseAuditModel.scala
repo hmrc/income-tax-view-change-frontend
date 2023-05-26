@@ -134,7 +134,7 @@ case class TaxYearSummaryResponseAuditModel(mtdItUser: MtdItUser[_],
   private def getUpdateType(updateType: String) = {
     updateType match {
       case "Quarterly" => "Quarterly Update"
-      case "EOPS" => "Annual update"
+      case "EOPS" => "End of period statement"
       case "Crystallised" => "Final Declaration"
       case _ => updateType
     }

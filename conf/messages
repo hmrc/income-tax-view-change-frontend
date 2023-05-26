@@ -703,7 +703,7 @@ obligations.sub-heading.v2                                         = Updates due
 obligations.sub-heading.info                                       = You must submit these returns on your {0} by the dates listed.
 obligations.record-keeping-software                                = record-keeping software (opens in a new tab)
 obligation.dropdown.declarations.info.v2                           = Information about declarations
-obligation.dropdown.annualUpdates.info.v2                          = What is an Annual update?
+obligation.dropdown.annualUpdates.info.v2                          = What is an End of period statement?
 obligation.dropdown.quarterlyReturn.info.v2                        = What is a Quarterly update?
 obligation.dropdown.finalDeclaration.info.v2                       = What is a Final declaration?
 obligations.dropdown.declarations.types.v2                         = There are two types of declarations.
@@ -713,16 +713,16 @@ obligations.dropdown.declarations.li1.text.v2                      = - Depending
 obligations.dropdown.declarations.li2.text.v2                      = - This is to confirm that you have disclosed your income from all sources true to your knowledge. You need to do send this declaration using your software.
 obligation.dropdown.quarterlyReturn.text.v2                        = A Quarterly update sets out the income and expenses for each 3-month period.
 obligation.dropdown.quarterlyReturn.text.v2.lin2                   = Using your {0}, you must submit 4 Quarterly updates in a year for each source of income.
-obligation.dropdown.annualReturn.text.v2                           = In the Annual update you must declare that the 4 Quarterly updates you submitted are correct or amend any errors.
-obligation.dropdown.annualReturn.text.v2.lin2                      = Using your {0}, you need to submit one Annual update for each source of income at the end of its accounting period.
+obligation.dropdown.annualReturn.text.v2                           = In the End of period statement you must declare that the 4 Quarterly updates you submitted are correct or amend any errors.
+obligation.dropdown.annualReturn.text.v2.lin2                      = Using your {0}, you need to submit one End of period statement for each source of income at the end of its accounting period.
 obligations.quarterlyUpdates                                       = Quarterly updates
 obligations.declarations                                           = Declarations
 obligations.propertyIncome                                         = Property Income
 obligations.dueOn                                                  = Due on:
 obligations.dateToDate                                             = {0} to {1}
-obligations.annualUpdates                                          = Annual updates
+obligations.annualUpdates                                          = End of period statements
 obligations.finalDeclarationUpdate                                  = Final declaration
-obligation.dropdown.finalDeclaration.text.v2                        = Your Final declaration is to confirm that the Annual updates you submitted are correct and that you have submitted every source of income true to your knowledge using your {0}.
+obligation.dropdown.finalDeclaration.text.v2                        = Your Final declaration is to confirm that the End of period statements you submitted are correct and that you have submitted every source of income true to your knowledge using your {0}.
 obligations.opens-in-new-tab                                       = (opens in a new tab)
 obligations.contents                                               = Contents
 nextUpdates.heading                                                = Next updates
@@ -731,9 +731,9 @@ nextUpdates.dropdown.info                                          = What are th
 nextUpdates.info                                       			   = All updates need to be sent using your record keeping software by each date shown.
 nextUpdates.dropdown.quarterlyReturn.text                          = A Quarterly update is a record of all your business income in a 3 month period.
 nextUpdates.dropdown.quarterlyReturn.text.lin2                     = Using your record-keeping software, you must send 4 Quarterly updates in a year for each source of income.
-nextUpdates.dropdown.annualReturn.text                             = In an Annual update you need to declare that the 4 Quarterly updates you have sent are correct. You can also change any previous errors.
-nextUpdates.dropdown.annualReturn.text.lin2                        = Using your record-keeping software, you need to send one Annual update for each source of income at the end of each accounting period.
-nextUpdates.dropdown.finalDeclaration.text                          = Your Final declaration confirms that the Annual updates you have sent are correct and that you have submitted every source of income and expenses true to your knowledge. This is done using your record-keeping software.
+nextUpdates.dropdown.annualReturn.text                             = In an End of period statement you need to declare that the 4 Quarterly updates you have sent are correct. You can also change any previous errors.
+nextUpdates.dropdown.annualReturn.text.lin2                        = Using your record-keeping software, you need to send one End of period statement for each source of income at the end of each accounting period.
+nextUpdates.dropdown.finalDeclaration.text                          = Your final declaration confirms that the End of period statement you have sent is correct and that you have submitted every source of income and expenses true to your knowledge. This is done using your record-keeping software.
 nextUpdates.table.header.type									   = Update type
 nextUpdates.table.header.source									   = Income source
 nextUpdates.section.heading.updates								   = Update for: {0} to {1}
@@ -741,7 +741,7 @@ nextUpdates.section.heading.taxYear								   = Tax year: {0} to {1}
 nextUpdates.previousYears.textOne								   = To view previously submitted updates visit the
 nextUpdates.previousYears.textTwo								   = page.
 nextUpdates.previousYears.link									   = tax years
-nextUpdates.eops            									   = Annual update
+nextUpdates.eops            									   = End of period statement
 nextUpdates.crystallised            							   = Final declaration
 nextUpdates.quarterly                                              = Quarterly update
 nextUpdates.crystallisedAll            							   = All income sources
@@ -1036,6 +1036,7 @@ paymentAllocation.paymentAllocations.balancingCharge.text       = Late payment i
 paymentAllocation.paymentAllocations.hmrcAdjustment.text        = HMRC adjustment
 
 
+
 ##Tax Years Overview Update Tab##
 updateTab.due                                                   = Due {0}
 updateTab.updateType                                            = Update type
@@ -1046,7 +1047,7 @@ updateTab.obligationType.property                               = Property incom
 updateTab.obligationType.business                               = Business
 updateTab.obligationType.crystallised                           = All income sources
 updateTab.updateType.quarterly                                  = Quarterly update
-updateTab.updateType.eops                                       = Annual update
+updateTab.updateType.eops                                       = End of period statement
 updateTab.updateType.crystallised                               = Final declaration
 
 ## Final Tax Overview (Individual/Common Content)
@@ -1199,7 +1200,6 @@ notmigrated.user.link_title                                     = Self Assessmen
 notmigrated.agent.link_title                                    = Self Assessment for Agents Account
 
 
-
 incomeSources.ceaseUKProperty.heading                            = Cease UK property
 incomeSources.ceaseUKProperty.radioLabel                         = I declare that I no longer get an income from any property in the UK.
 incomeSources.ceaseUKProperty.radioError                         = You must declare that you no longer get an income from any property in the UK
@@ -1209,3 +1209,7 @@ incomeSources.cease.UKPropertyEndDate.error.incomplete           = The date must
 incomeSources.cease.UKPropertyEndDate.error.invalid              = The date your UK property business stopped must be a real date
 incomeSources.cease.UKPropertyEndDate.error.future               = You cannot provide a cessation date that is beyond the current day or a date in the future
 incomeSources.cease.UKPropertyEndDate.error.beforeStartDate      = The cessation date cannot be earlier than the start date for the business
+
+incomeSources.ceaseForeignProperty.heading                       = Cease foreign property
+incomeSources.ceaseForeignProperty.checkboxLabel                 = I declare that I no longer get an income from any foreign property.
+incomeSources.ceaseForeignProperty.checkboxError                 = You must declare that you no longer get an income from any foreign property
