@@ -1157,7 +1157,6 @@ cease-income-sources.foreign-property.h1      = Eiddo tramor
 cease-income-sources.foreign-property.p1      = Dylech ond dod â’ch eiddo tramor i ben os nad ydych yn cael unrhyw incwm oddi wrtho mwyach.
 cease-income-sources.ceased-businesses.h1     = Busnesau sydd wedi dod i ben
 cease-income-sources.table-head.date-ended    = Y dyddiad dod i ben
-cease-income-sources.empty                    =
 
 # add Business page
 add-business-name.heading                                         = Beth yw enw’ch busnes?
