@@ -26,11 +26,11 @@ POST        /report-quarterly/income-and-expenses/view/test-only/stub-schema/pro
 DELETE      /report-quarterly/income-and-expenses/view/test-only/all-schemas/proxy                    testOnly.controllers.StubSchemaController.deleteAllProxy
 
 + nocsrf
-GET         /report-quarterly/income-and-expenses/view/test-only/custom-login                         testOnly.controllers.StubSchemaController.createLogin
-GET         /hmrc-frontend/assets/hmrc-frontend-5.19.0.min.css                                        testOnly.controllers.StubSchemaController.showCss
+GET         /report-quarterly/income-and-expenses/view/test-only/custom-login                         testOnly.controllers.CustomLoginController.showLogin
+GET         /hmrc-frontend/assets/hmrc-frontend-5.19.0.min.css                                        testOnly.controllers.CustomLoginController.showCss
 
 + nocsrf
-POST        /report-quarterly/income-and-expenses/view/test-only/submitLogin                          testOnly.controllers.StubSchemaController.postLogin
+POST        /report-quarterly/income-and-expenses/view/test-only/submitLogin                          testOnly.controllers.CustomLoginController.postLogin
 
 
 GET         /report-quarterly/income-and-expenses/view/test-only/stub-data                            testOnly.controllers.StubDataController.show
