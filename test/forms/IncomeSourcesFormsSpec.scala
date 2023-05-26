@@ -17,7 +17,8 @@
 package forms
 
 
-import generators.IncomeSourceGens.businessNameGenerator
+import forms.incomeSources.add.BusinessTradeForm
+import generators.IncomeSourceGens.{businessNameGenerator, businessTradeGenerator}
 import org.scalacheck.Prop.{forAll, propBoolean}
 import org.scalacheck.{Gen, Properties}
 import play.api.data.Form
@@ -28,11 +29,23 @@ object IncomeSourcesFormsSpec  extends Properties("incomeSourcesForms.validation
     optValue.fold[Map[String, String]](Map.empty)(value => Map(BusinessNameForm.bnf -> value))
   )
 
-  property("validation") = forAll(businessNameGenerator) { (charsList: List[Char]) =>
+  val businessTradeForm = (optValue: Option[String]) => BusinessTradeForm.form.bind(
+    optValue.fold[Map[String, String]](Map.empty)(value => Map("businessTrade" -> value))
+  )
+
+  property("businessName.validation") = forAll(businessNameGenerator) { (charsList: List[Char]) =>
     (charsList.length > 0 && charsList.length <= BusinessNameForm.businessNameLength) ==> {
       val businessName = charsList.mkString("")
-      println(s"Generate business name: ${businessName}")
+      //println(s"Generate business name: ${businessName}")
       businessNameForm(Some(businessName)).errors.isEmpty
+    }
+  }
+
+  property("businessTrade.validation") = forAll(businessTradeGenerator) { (charsList: List[Char]) =>
+    val businessTrade = charsList.mkString("").trim
+    (businessTrade.length > 2 && businessTrade.length <= BusinessTradeForm.maxLength) ==> {
+      println(s"Generate business trade: ${businessTrade}")
+      businessTradeForm(Some(businessTrade)).errors.isEmpty
     }
   }
 

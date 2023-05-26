@@ -20,8 +20,26 @@ import org.scalacheck.Gen
 
 object IncomeSourceGens {
 
-  val businessNamePermittedCharacters = (('a' to 'z') ++ ('A' to 'Z') ++ ('0' to '9')) ++ Seq(' ', ',', '.', '&', '\'')
+  private val businessNamePermittedCharacters = (('a' to 'z') ++ ('A' to 'Z') ++ ('0' to '9')) ++ Seq(' ', ',', '.', '&', '\'')
 
-  val businessNameGenerator: Gen[List[Char]] = Gen.listOf(Gen.oneOf(businessNamePermittedCharacters))
+
+  //"^[A-Za-z0-9 ,.&'\\\\/-]+$".r
+  private val businessTradePermittedCharacters = (('a' to 'z') ++ ('A' to 'Z') ++ ('0' to '9')) ++ Seq(' ', ',', '.', '&', '\'', '-')
+  private val alphabet = ('a' to 'z') ++ ('A' to 'Z')
+
+  private def containsTimes(s: List[Char], times: Int): Boolean = {
+    val x = s.foldLeft(0) { (acc, char) => if (alphabet.contains(char)) acc + 1 else acc }
+    println(s"Times: $x")
+    x >= times
+  }
+
+  val businessNameGenerator: Gen[List[Char]] = Gen.listOf( Gen.oneOf(businessNamePermittedCharacters))
+
+  val businessTradeGenerator: Gen[List[Char]] = {
+    for {
+     body <- Gen.listOf(Gen.oneOf(businessTradePermittedCharacters))
+      twoChars <- Gen.listOfN(2, Gen.oneOf(alphabet))
+    } yield body ++ twoChars
+  }
 
 }
