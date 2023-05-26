@@ -88,7 +88,7 @@ class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate
           }
         },
         formData => {
-          if (formData.trade == request.session.get(SessionKeys.businessName).get){
+          if (formData.trade.toLowerCase == request.session.get(SessionKeys.businessName).get.toLowerCase.trim){
             Future {
               Ok(addBusinessTradeView(BusinessTradeForm.form, routes.AddBusinessTradeController.submit(), false, backURL, true))
             }
