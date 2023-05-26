@@ -114,7 +114,7 @@ class NextUpdatesViewSpec extends TestSupport {
       val section = pageDocument.select(".govuk-accordion__section:nth-of-type(2)")
 
       section.select("dl").size() shouldBe 1
-      section.select("dl dt").text() shouldBe "Annual update"
+      section.select("dl dt").text() shouldBe "End of period statement"
       section.select("dl dd").text() shouldBe messages(testTradeName)
     }
   }

@@ -175,14 +175,22 @@ GET          /income-sources/cease/uk-property-declare                    contro
 GET          /agents/income-sources/cease/uk-property-declare             controllers.incomeSources.cease.CeaseUKPropertyController.showAgent()
 POST         /income-sources/cease/uk-property-declare                    controllers.incomeSources.cease.CeaseUKPropertyController.submit
 POST         /agents/income-sources/cease/uk-property-declare             controllers.incomeSources.cease.CeaseUKPropertyController.submitAgent
-GET         /income-sources/cease/uk-property-end-date                    controllers.incomeSources.cease.UKPropertyEndDateController.show()
-GET         /agents/income-sources/cease/uk-property-end-date             controllers.incomeSources.cease.UKPropertyEndDateController.showAgent()
-POST        /income-sources/cease/uk-property-end-date                    controllers.incomeSources.cease.UKPropertyEndDateController.submit()
-POST        /agents/income-sources/cease/uk-property-end-date             controllers.incomeSources.cease.UKPropertyEndDateController.submitAgent()
-GET         /income-sources/cease/uk-property-check-details               controllers.incomeSources.cease.CheckCeaseUKPropertyDetailsController.show()
-GET         /agents/income-sources/cease/uk-property-check-details        controllers.incomeSources.cease.CheckCeaseUKPropertyDetailsController.showAgent()
-POST        /income-sources/cease/uk-property-check-details               controllers.incomeSources.cease.CheckCeaseUKPropertyDetailsController.submit()
-POST        /agents/income-sources/cease/uk-property-check-details        controllers.incomeSources.cease.CheckCeaseUKPropertyDetailsController.submitAgent()
+GET          /income-sources/cease/uk-property-end-date                   controllers.incomeSources.cease.UKPropertyEndDateController.show()
+GET          /agents/income-sources/cease/uk-property-end-date            controllers.incomeSources.cease.UKPropertyEndDateController.showAgent()
+POST         /income-sources/cease/uk-property-end-date                   controllers.incomeSources.cease.UKPropertyEndDateController.submit()
+POST         /agents/income-sources/cease/uk-property-end-date            controllers.incomeSources.cease.UKPropertyEndDateController.submitAgent()
+GET          /income-sources/cease/uk-property-check-details              controllers.incomeSources.cease.CheckCeaseUKPropertyDetailsController.show()
+GET          /agents/income-sources/cease/uk-property-check-details       controllers.incomeSources.cease.CheckCeaseUKPropertyDetailsController.showAgent()
+POST         /income-sources/cease/uk-property-check-details              controllers.incomeSources.cease.CheckCeaseUKPropertyDetailsController.submit()
+POST         /agents/income-sources/cease/uk-property-check-details       controllers.incomeSources.cease.CheckCeaseUKPropertyDetailsController.submitAgent()
+
+GET          /income-sources/cease/foreign-property-declare               controllers.incomeSources.cease.CeaseForeignPropertyController.show(origin: Option[String] ?= None)
+GET          /agents/income-sources/cease/foreign-property-declare        controllers.incomeSources.cease.CeaseForeignPropertyController.showAgent()
+POST         /income-sources/cease/foreign-property-declare               controllers.incomeSources.cease.CeaseForeignPropertyController.submit
+POST         /agents/income-sources/cease/foreign-property-declare        controllers.incomeSources.cease.CeaseForeignPropertyController.submitAgent
+
+GET          /income-sources/cease/foreign-property-end-date              controllers.incomeSources.cease.DateForeignPropertyCeasedController.show(origin: Option[String] ?= None)
+GET          /agents/income-sources/cease/foreign-property-end-date       controllers.incomeSources.cease.DateForeignPropertyCeasedController.showAgent()
 
 # Income Sources - Manage
 GET          /income-sources/manage/choose-income-sources                 controllers.incomeSources.manage.ManageIncomeSourceController.show()
@@ -197,8 +205,6 @@ GET          /agents/income-sources/add/foreign-property-business-start-date    
 
 GET          /income-sources/cease/business-end-date                        controllers.incomeSources.cease.CeaseBusinessNameController.show()
 GET          /agents/income-sources/cease/business-end-date                 controllers.incomeSources.cease.CeaseBusinessNameController.showAgent()
-GET          /income-sources/cease/foreign-property-declare                 controllers.incomeSources.cease.CeaseForeignPropertyController.show()
-GET          /agents/income-sources/cease/foreign-property-declare          controllers.incomeSources.cease.CeaseForeignPropertyController.showAgent()
 
 GET          /income-sources/cease/cease-uk-property-success                controllers.incomeSources.cease.CeaseUKPropertySuccessController.show()
 GET          /agents/income-sources/cease/cease-uk-property-success         controllers.incomeSources.cease.CeaseUKPropertySuccessController.showAgent()

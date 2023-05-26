@@ -20,7 +20,7 @@ import auth.HeaderExtractor
 import com.github.tomakehurst.wiremock.client.WireMock
 import config.FrontendAppConfig
 import config.featureswitch.{FeatureSwitch, FeatureSwitching}
-import forms.CeaseUKPropertyForm
+import forms.{CeaseForeignPropertyForm, CeaseUKPropertyForm}
 import helpers.agent.SessionCookieBaker
 import helpers.servicemocks.AuditStub
 import implicits.ImplicitDateFormatterImpl
@@ -189,7 +189,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     def get(uri: String): WSResponse = buildClient(uri)
       .get().futureValue
 
-    def post(uri: String,additionalCookies: Map[String, String] = Map.empty)(body: Map[String, Seq[String]]): WSResponse = {
+    def post(uri: String, additionalCookies: Map[String, String] = Map.empty)(body: Map[String, Seq[String]]): WSResponse = {
       When(s"I call POST /report-quarterly/income-and-expenses/view" + uri)
       buildClient(uri)
         .withHttpHeaders(HeaderNames.COOKIE -> bakeSessionCookie(additionalCookies ),"Csrf-Token" -> "nocheck")
@@ -258,11 +258,20 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
     def getUKPropertyEndDate: WSResponse = get("/income-sources/cease/uk-property-end-date")
 
-    def getCheckCeaseUKPropertyDetails(session:Map[String, String]): WSResponse =
-      getWithClientDetailsInSession("/income-sources/cease/uk-property-check-details",session)
+    def getCeaseForeignProperty: WSResponse = get("/income-sources/cease/foreign-property-declare")
 
-    def postCheckCeaseUKPropertyDetails(session:Map[String, String]): WSResponse =
-      post("/income-sources/cease/uk-property-check-details",session)(Map.empty)
+    def postCeaseForeignProperty(answer: Option[String]): WSResponse = post("/income-sources/cease/foreign-property-declare")(
+      answer.fold(Map.empty[String, Seq[String]])(
+        declaration => CeaseForeignPropertyForm.form.fill(CeaseForeignPropertyForm(Some(declaration), "csrfToken")).data.map { case (k, v) => (k, Seq(v)) }
+      )
+    )
+
+
+    def getCheckCeaseUKPropertyDetails(session: Map[String, String]): WSResponse =
+      getWithClientDetailsInSession("/income-sources/cease/uk-property-check-details", session)
+
+    def postCheckCeaseUKPropertyDetails(session: Map[String, String]): WSResponse =
+      post("/income-sources/cease/uk-property-check-details", session)(Map.empty)
   }
 
   def unauthorisedTest(uri: String): Unit = {
