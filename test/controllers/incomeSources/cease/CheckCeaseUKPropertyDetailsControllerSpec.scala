@@ -111,7 +111,7 @@ class CheckCeaseUKPropertyDetailsControllerSpec extends TestSupport with MockAut
         enable(IncomeSources)
         mockUKPropertyIncomeSource()
 
-        val m = when(mockUpdateIncomeSourceService.updateCessationDate(any(), any(), any())).thenReturn(Future.successful(Right(successResponse)))
+        when(mockUpdateIncomeSourceService.updateCessationDate(any(), any(), any())).thenReturn(Future.successful(Right(successResponse)))
 
         lazy val result: Future[Result] = {
           TestCheckCeaseUKPropertyDetailsController.submit()(fakeRequestWithCeaseUKPropertyDate(cessationDate))
