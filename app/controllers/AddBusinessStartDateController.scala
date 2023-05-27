@@ -18,18 +18,16 @@ package controllers
 
 import auth.MtdItUser
 import config.featureswitch.{FeatureSwitching, IncomeSources}
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
-import forms.BusinessNameForm
 import forms.incomeSources.add.BusinessStartDateForm
 import forms.utils.SessionKeys
 import implicits.ImplicitDateFormatterImpl
 import play.api.Logger
-import play.api.i18n.{I18nSupport, Messages}
+import play.api.i18n.I18nSupport
 import play.api.mvc._
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import views.html.AddBusiness
 import services.{DateService, IncomeSourceDetailsService}
 import views.html.incomeSources.add.AddBusinessStartDate
 
@@ -57,7 +55,7 @@ class AddBusinessStartDateController @Inject()(authenticate: AuthenticationPredi
   lazy val backUrl: String = routes.AddBusinessStartDateCheckController.show().url
   lazy val backUrlAgent: String = routes.AddBusinessStartDateCheckController.showAgent().url
 
-  def show(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+  def show: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
       handleRequest(
@@ -101,7 +99,7 @@ class AddBusinessStartDateController @Inject()(authenticate: AuthenticationPredi
         }
       ) recover {
         case ex: Exception =>
-          Logger("application").error(s"${if (isAgent) "[Agent]"}" +
+          Logger("application").error(s"${if (isAgent) "[Agent]" else ""}" +
             s"[AddBusinessStartDateController][handleRequest] - Error: ${ex.getMessage}")
           errorHandler.showInternalServerError()
       }
