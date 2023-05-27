@@ -172,6 +172,36 @@ class AddBusinessStartDateControllerSpec extends TestSupport
         contentAsString(result) must include(s"The date your business started trading must be before $maxDate")
       }
     }
+    "not display date too far ahead error message" when {
+      "input date is 7 days or less in the future" in {
+        disableAllSwitches()
+        enable(IncomeSources)
+
+        mockNoIncomeSources()
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
+
+        val currentDate = dateService.getCurrentDate()
+
+        val testDate = DateFormElement(
+          currentDate.plusDays(7)
+        ).date
+
+        val result = TestAddBusinessStartDateController.submit()(
+          fakeRequestWithActiveSession.withFormUrlEncodedBody(
+            dayField -> testDate.getDayOfMonth.toString,
+            monthField -> testDate.getMonthValue.toString,
+            yearField -> testDate.getYear.toString
+          )
+        )
+
+        val maxDate = mockImplicitDateFormatter
+          .longDate(currentDate.plusWeeks(1).plusDays(1))
+          .toLongDate
+
+        status(result) shouldBe SEE_OTHER
+        contentAsString(result) must not include(s"The date your business started trading must be before $maxDate")
+      }
+    }
     "display invalid date error message" when {
       "input date is invalid" in {
         disableAllSwitches()
