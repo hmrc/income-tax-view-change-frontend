@@ -195,7 +195,7 @@ class AddBusinessStartDateControllerSpec extends TestSupport
         )
 
         val maxDate = mockImplicitDateFormatter
-          .longDate(currentDate.plusWeeks(1).plusDays(1))
+          .longDate(currentDate.plusDays(8))
           .toLongDate
 
         status(result) shouldBe SEE_OTHER
