@@ -50,6 +50,15 @@ class AddBusinessStartDateControllerSpec extends TestSupport
   val monthField = "add-business-start-date.month"
   val yearField = "add-business-start-date.year"
 
+  val currentDate = dateService.getCurrentDate()
+
+  val maximumAllowableDate = mockImplicitDateFormatter
+    .longDate(dateService.getCurrentDate().plusWeeks(1))
+
+  val maximumAllowableDatePlusOneDay = mockImplicitDateFormatter
+    .longDate(currentDate.plusWeeks(1).plusDays(1))
+    .toLongDate
+
   def disableAllSwitches(): Unit = {
     switches.foreach(switch => disable(switch))
   }
@@ -150,8 +159,6 @@ class AddBusinessStartDateControllerSpec extends TestSupport
         mockNoIncomeSources()
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
-        val currentDate = dateService.getCurrentDate()
-
         val testDate = DateFormElement(
           currentDate.plusDays(8)
         ).date
@@ -163,10 +170,6 @@ class AddBusinessStartDateControllerSpec extends TestSupport
             yearField -> testDate.getYear.toString
           )
         )
-
-        val maximumAllowableDatePlusOneDay = mockImplicitDateFormatter
-          .longDate(currentDate.plusWeeks(1).plusDays(1))
-          .toLongDate
 
         status(result) shouldBe BAD_REQUEST
         contentAsString(result) must include(s"The date your business started trading must be before $maximumAllowableDatePlusOneDay")
@@ -180,8 +183,6 @@ class AddBusinessStartDateControllerSpec extends TestSupport
         mockNoIncomeSources()
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
-        val currentDate = dateService.getCurrentDate()
-
         val testDate = DateFormElement(
           currentDate.plusDays(7)
         ).date
@@ -194,12 +195,8 @@ class AddBusinessStartDateControllerSpec extends TestSupport
           )
         )
 
-        val maxDate = mockImplicitDateFormatter
-          .longDate(currentDate.plusDays(8))
-          .toLongDate
-
         status(result) shouldBe SEE_OTHER
-        contentAsString(result) must not include(s"The date your business started trading must be before $maxDate")
+        contentAsString(result) must not include(s"The date your business started trading must be before $maximumAllowableDatePlusOneDay")
       }
     }
     "display invalid date error message" when {
