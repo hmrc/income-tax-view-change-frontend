@@ -47,9 +47,9 @@ object BusinessStartDateForm extends Constraints {
 
   def apply()(implicit messages: Messages, dateService: DateService, dateFormatter: ImplicitDateFormatterImpl): Form[DateFormElement] = {
     val currentDate: LocalDate = dateService.getCurrentDate()
-    val currentDatePlusOneWeek: LocalDate = currentDate.plusWeeks(1)
-    val currentDatePlusOneWeekOneDay: LocalDate = currentDate.plusWeeks(1).plusDays(1)
-    val futureErrorMessage: String = dateFormatter.longDate(currentDatePlusOneWeekOneDay)(messages).toLongDate
+    val maximumAllowableDate: LocalDate = currentDate.plusWeeks(1)
+    val maximumAllowableDatePlusOneDay: LocalDate = currentDate.plusWeeks(1).plusDays(1)
+    val futureErrorMessage: String = dateFormatter.longDate(maximumAllowableDatePlusOneDay)(messages).toLongDate
     def dateMustNotBeInTheFuture(maximumDate: String): String = messages(dateMustNotBeTooFarInFuture, maximumDate)
 
     Form(
@@ -66,7 +66,7 @@ object BusinessStartDateForm extends Constraints {
         },
         date => (date.getDayOfMonth.toString, date.getMonthValue.toString, date.getYear.toString)
       )
-        .verifying(maxDate(currentDatePlusOneWeek, dateMustNotBeInTheFuture(futureErrorMessage)))
+        .verifying(maxDate(maximumAllowableDate, dateMustNotBeInTheFuture(futureErrorMessage)))
       )(DateFormElement.apply)(DateFormElement.unapply))
   }
 

@@ -164,12 +164,12 @@ class AddBusinessStartDateControllerSpec extends TestSupport
           )
         )
 
-        val maxDate = mockImplicitDateFormatter
+        val maximumAllowableDatePlusOneDay = mockImplicitDateFormatter
           .longDate(currentDate.plusWeeks(1).plusDays(1))
           .toLongDate
 
         status(result) shouldBe BAD_REQUEST
-        contentAsString(result) must include(s"The date your business started trading must be before $maxDate")
+        contentAsString(result) must include(s"The date your business started trading must be before $maximumAllowableDatePlusOneDay")
       }
     }
     "not display date too far ahead error message" when {
