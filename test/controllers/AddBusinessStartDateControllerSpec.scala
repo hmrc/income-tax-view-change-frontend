@@ -52,9 +52,6 @@ class AddBusinessStartDateControllerSpec extends TestSupport
 
   val currentDate = dateService.getCurrentDate()
 
-  val maximumAllowableDate = mockImplicitDateFormatter
-    .longDate(dateService.getCurrentDate().plusWeeks(1))
-
   val maximumAllowableDatePlusOneDay = mockImplicitDateFormatter
     .longDate(currentDate.plusWeeks(1).plusDays(1))
     .toLongDate
