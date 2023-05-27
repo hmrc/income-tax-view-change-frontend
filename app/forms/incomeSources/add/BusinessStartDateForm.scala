@@ -27,10 +27,8 @@ import play.api.i18n.Messages
 import services.DateService
 
 import java.time.LocalDate
-import javax.inject.{Inject, Singleton}
 
-@Singleton
-class BusinessStartDateForm @Inject()(dateService: DateService, dateFormatter: ImplicitDateFormatterImpl, messages: Messages) extends Constraints {
+object BusinessStartDateForm extends Constraints {
 
   private val messagePrefix = "add-business-start-date"
   private val dateMustNotBeTooFarInFuture = s"$messagePrefix.error.future"
@@ -47,8 +45,9 @@ class BusinessStartDateForm @Inject()(dateService: DateService, dateFormatter: I
   val month: String = "month"
   val year: String = "year"
 
-  val form: Form[DateFormElement] = {
+  def apply()(implicit messages: Messages, dateService: DateService, dateFormatter: ImplicitDateFormatterImpl): Form[DateFormElement] = {
     val currentDate: LocalDate = dateService.getCurrentDate()
+    val currentDatePlusOneWeek: LocalDate = currentDate.plusWeeks(1)
     val currentDatePlusOneWeekOneDay: LocalDate = currentDate.plusWeeks(1).plusDays(1)
     val futureErrorMessage: String = dateFormatter.longDate(currentDatePlusOneWeekOneDay)(messages).toLongDate
     def dateMustNotBeInTheFuture(maximumDate: String): String = messages(dateMustNotBeTooFarInFuture, maximumDate)
@@ -67,7 +66,7 @@ class BusinessStartDateForm @Inject()(dateService: DateService, dateFormatter: I
         },
         date => (date.getDayOfMonth.toString, date.getMonthValue.toString, date.getYear.toString)
       )
-        .verifying(maxDate(currentDatePlusOneWeekOneDay, dateMustNotBeInTheFuture(futureErrorMessage)))
+        .verifying(maxDate(currentDatePlusOneWeek, dateMustNotBeInTheFuture(futureErrorMessage)))
       )(DateFormElement.apply)(DateFormElement.unapply))
   }
 
@@ -88,19 +87,5 @@ class BusinessStartDateForm @Inject()(dateService: DateService, dateFormatter: I
       Invalid(Seq(ValidationError(yearRequired)))
     case _ =>
       Valid
-  }
-
-  override protected def maxDate(maximum: LocalDate, errorKey: String, args: Any*): Constraint[LocalDate] =
-    Constraint {
-      case date if date.isAfter(maximum) || date.equals(maximum) =>
-        Invalid(errorKey, args: _*)
-      case _ =>
-        Valid
-    }
-}
-
-object BusinessStartDateForm {
-  def apply()(implicit messages: Messages, dateService: DateService, dateFormatter: ImplicitDateFormatterImpl): Form[DateFormElement] = {
-    new BusinessStartDateForm(dateService, dateFormatter, messages).form
   }
 }
