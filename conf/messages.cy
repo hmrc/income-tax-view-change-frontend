@@ -1130,7 +1130,7 @@ credit-and-refund.credit-from-balancing-charge-prt-1              = yn sgil
 credit-and-refund.credit-from-balancing-charge-prt-2              = credyd tâl mantoli
 credit-and-refund.credit-from-earlier-tax-year                    = credyd o flwyddyn dreth gynharach
 
-## check income sources
+## new income sources
 new-income-sources.heading                  = Unig fasnachwr a incwm o eiddo
 new-income-sources.self-employment.h2       = Busnesau unig fasnachwr
 new-income-sources.self-employment.p1       = Nid oes angen i chi roi gwybod i ni am fusnes y gwyddwn amdano eisoes.
@@ -1176,6 +1176,20 @@ add-business-trade.form.error.long          = Mae’n rhaid i fasnach y busnes f
 add-business-trade.form.error.invalid       = Ni all masnach y busnes gynnwys !, "" , * na ?
 add-business-trade.form.error.same-name     = Ni allwch nodi’r un peth ar gyfer masnach busnes ac enw’r busnes
 
+# add Business start date
+add-business-start-date.heading                      = Pryd y dechreuodd eich busnes fasnachu?
+add-business-start-date.hint-prt1                    = Byddwn yn defnyddio hwn i gyfrifo eich ffi Yswiriant Gwladol Dosbarth 2, os yw?n briodol.
+add-business-start-date.hint-prt2                    = Er enghraifft, 27 3 2020
+add-business-start-date.day                          = Diwrnod
+add-business-start-date.month                        = Mis
+add-business-start-date.year                         = Blwyddyn
+add-business-start-date.continue                     = Yn eich blaen
+add-business-start-date.form.error.emptyDateField    = Nodwch y dyddiad y dechreuodd eich busnes fasnachu
+
+add-business-start-date.error.future                 = Mae?n rhaid i?r dyddiad y dechreuodd eich busnes eiddo tramor fod cyn {0}
+add-business-start-date.error.error.required         = Nodwch y dyddiad y dechreuodd eich busnes fasnachu
+add-business-start-date.error.invalid                = Mae?n rhaid i?r dyddiad y dechreuodd eich busnes fasnachu fod yn ddyddiad go iawn
+
 # add Business start date check
 add-business-start-date-check.heading                = A yw?r dyddiad hwn yn gywir?
 add-business-start-date-check.radio.yes              = Iawn
@@ -1218,3 +1232,13 @@ incomeSources.cease.UKPropertyEndDate.error.beforeStartDate      = Ni all y dydd
 incomeSources.ceaseForeignProperty.heading                       = Dod ag eiddo tramor i ben
 incomeSources.ceaseForeignProperty.checkboxLabel                 = Rwy’n datgan nad wyf bellach yn cael incwm o unrhyw eiddo tramor.
 incomeSources.ceaseForeignProperty.checkboxError                 = Mae’n rhaid i chi ddatgan nad ydych chi bellach yn cael incwm o unrhyw eiddo tramor
+
+#Generic date form messages
+dateForm.hint                                                       = Er enghraifft, 27 3 2020
+dateForm.error.day.required                                         = Mae?n rhaid i?r dyddiad gynnwys diwrnod
+dateForm.error.month.required                                       = Mae?n rhaid i?r dyddiad gynnwys mis
+dateForm.error.year.required                                        = Mae?n rhaid i?r dyddiad gynnwys blwyddyn
+dateForm.error.dayAndMonth.required                                 = Mae?n rhaid i?r dyddiad gynnwys diwrnod a mis
+dateForm.error.dayAndYear.required                                  = Mae?n rhaid i?r dyddiad gynnwys diwrnod a blwyddyn
+dateForm.error.monthAndYear.required                                = Mae?n rhaid i?r dyddiad gynnwys mis a blwyddyn
+dateForm.check.heading                                              = A yw?r dyddiad hwn yn gywir?

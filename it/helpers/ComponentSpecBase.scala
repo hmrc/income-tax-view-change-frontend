@@ -276,6 +276,8 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
       )
     )
 
+    def getAddBusinessStartDate: WSResponse = get("/income-sources/add/business-start-date")
+
     def getAddBusinessStartDateCheck(date: String): WSResponse = {
       getWithCalcIdInSessionAndWithoutAwait(
         uri = "/income-sources/add/business-start-date-check",

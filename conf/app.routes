@@ -164,6 +164,10 @@ GET          /income-sources/add/business-address                         contro
 GET          /agents/income-sources/add/business-address                  controllers.AddBusinessAddressController.showAgent()
 GET          /income-sources/add/business-start-date                      controllers.AddBusinessStartDateController.show()
 GET          /agents/income-sources/add/business-start-date               controllers.AddBusinessStartDateController.showAgent()
+GET          /income-sources/add/business-start-date                      controllers.AddBusinessStartDateController.show()
+GET          /agents/income-sources/add/business-start-date               controllers.AddBusinessStartDateController.showAgent()
+POST         /income-sources/add/business-start-date                      controllers.AddBusinessStartDateController.submit()
+POST         /agents/income-sources/add/business-start-date               controllers.AddBusinessStartDateController.submitAgent()
 GET          /income-sources/add/business-start-date-check                controllers.AddBusinessStartDateCheckController.show()
 GET          /agents/income-sources/add/business-start-date-check         controllers.AddBusinessStartDateCheckController.showAgent()
 POST         /income-sources/add/business-start-date-check                controllers.AddBusinessStartDateCheckController.submit()
@@ -201,6 +205,5 @@ GET          /income-sources/add/uk-property-business-start-date                
 GET          /agents/income-sources/add/uk-property-business-start-date                                 controllers.AddUkPropertyBusinessStartDate.showAgent()
 GET          /income-sources/add/foreign-property-business-start-date                                   controllers.AddForeignPropertyBusinessStartDate.show()
 GET          /agents/income-sources/add/foreign-property-business-start-date                            controllers.AddForeignPropertyBusinessStartDate.showAgent()
-
 GET          /income-sources/cease/business-end-date                        controllers.incomeSources.cease.CeaseBusinessNameController.show()
 GET          /agents/income-sources/cease/business-end-date                 controllers.incomeSources.cease.CeaseBusinessNameController.showAgent()

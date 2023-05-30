@@ -18,15 +18,19 @@ package controllers
 
 import auth.MtdItUser
 import config.featureswitch.{FeatureSwitching, IncomeSources}
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
-import forms.BusinessNameForm
+import forms.incomeSources.add.BusinessStartDateForm
+import forms.utils.SessionKeys
+import implicits.ImplicitDateFormatterImpl
+import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import views.html.AddBusiness
-import services.IncomeSourceDetailsService
+import services.{DateService, IncomeSourceDetailsService}
+import views.html.incomeSources.add.AddBusinessStartDate
+
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -35,42 +39,114 @@ class AddBusinessStartDateController @Inject()(authenticate: AuthenticationPredi
                                                val authorisedFunctions: AuthorisedFunctions,
                                                checkSessionTimeout: SessionTimeoutPredicate,
                                                retrieveNino: NinoPredicate,
-                                               val addBusinessView: AddBusiness,
+                                               val addBusinessStartDate: AddBusinessStartDate,
                                                val retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                                val retrieveBtaNavBar: NavBarPredicate,
                                                val itvcErrorHandler: ItvcErrorHandler,
                                                incomeSourceDetailsService: IncomeSourceDetailsService)
                                               (implicit val appConfig: FrontendAppConfig,
-                                      implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
-                                      implicit override val mcc: MessagesControllerComponents,
-                                      val ec: ExecutionContext)
+                                               implicit val dateService: DateService,
+                                               implicit val dateFormatter: ImplicitDateFormatterImpl,
+                                               implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
+                                               implicit override val mcc: MessagesControllerComponents,
+                                               val ec: ExecutionContext)
   extends ClientConfirmedController with I18nSupport with FeatureSwitching {
 
-  def show(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+  lazy val backUrl: String = routes.AddBusinessNameController.show().url
+  lazy val backUrlAgent: String = routes.AddBusinessNameController.showAgent().url
+
+  lazy val postAction: Call = routes.AddBusinessStartDateController.submit()
+  lazy val postActionAgent: Call = routes.AddBusinessStartDateController.submitAgent()
+
+  def show: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
-      handleRequest(isAgent = false)
+      handleRequest(
+        isAgent = false,
+        backUrl = backUrl,
+        postAction = postAction,
+        itvcErrorHandler = itvcErrorHandler
+      )
   }
 
-  def showAgent(): Action[AnyContent] =
-    Authenticated.async {
-      implicit request =>
-        implicit user =>
-          getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
-            implicit mtdItUser =>
-              handleRequest(isAgent = true)
-          }
-    }
-//TODO Start date page to be implemented
-  def handleRequest(isAgent: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
-    Future {
+  def showAgent(): Action[AnyContent] = Authenticated.async {
+    implicit request =>
+      implicit user =>
+        getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
+          implicit mtdItUser =>
+            handleRequest(
+              isAgent = true,
+              backUrl = backUrlAgent,
+              postAction = postActionAgent,
+              itvcErrorHandler = itvcErrorHandlerAgent
+            )
+        }
+  }
+
+  def handleRequest(isAgent: Boolean,
+                    backUrl: String,
+                    postAction: Call,
+                    itvcErrorHandler: ShowInternalServerError)
+                   (implicit user: MtdItUser[_]): Future[Result] = {
+    Future.successful(
       if (isDisabled(IncomeSources)) {
         Redirect(controllers.routes.HomeController.show())
       } else {
-        Ok("PAGE IN DEVELOPMENT")
+        Ok(addBusinessStartDate(
+          form = BusinessStartDateForm(),
+          postAction = postAction,
+          backUrl = backUrl,
+          isAgent = isAgent
+        ))
       }
+    ) recover {
+      case ex: Exception =>
+        Logger("application").error(s"${if (isAgent) "[Agent]" else ""}" +
+          s"[AddBusinessStartDateController][handleRequest] - Error: ${ex.getMessage}")
+        itvcErrorHandler.showInternalServerError()
     }
   }
 
+  def submit: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+    andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
+    implicit request =>
+      Future.successful(
+        BusinessStartDateForm().bindFromRequest().fold(
+          formWithErrors =>
+            BadRequest(addBusinessStartDate(
+              form = formWithErrors,
+              postAction = postAction,
+              backUrl = backUrl,
+              isAgent = false
+            )),
+          formData =>
+            Redirect(routes.AddBusinessStartDateCheckController.show())
+              .withHeaders(SessionKeys.businessStartDate -> formData.date.toString)
+              .addingToSession(SessionKeys.businessStartDate -> formData.date.toString)
+        )
+      )
+  }
 
+  def submitAgent: Action[AnyContent] = Authenticated.async {
+    implicit request =>
+      implicit user =>
+        getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
+          implicit mtdItUser =>
+            Future.successful(
+              BusinessStartDateForm().bindFromRequest().fold(
+                formWithErrors =>
+                  BadRequest(addBusinessStartDate(
+                    form = formWithErrors,
+                    postAction = postActionAgent,
+                    backUrl = backUrlAgent,
+                    isAgent = true
+                  )),
+                formData =>
+                  Redirect(routes.AddBusinessStartDateCheckController.showAgent())
+                    .withHeaders(SessionKeys.businessStartDate -> formData.date.toString)
+                    .addingToSession(SessionKeys.businessStartDate -> formData.date.toString)
+              )
+            )
+        }
+  }
 }
