@@ -16,12 +16,10 @@
 
 package forms
 
-
 import forms.incomeSources.add.BusinessTradeForm
 import generators.IncomeSourceGens.{businessNameGenerator, businessTradeGenerator}
 import org.scalacheck.Prop.{forAll, propBoolean}
-import org.scalacheck.{Gen, Properties}
-import play.api.data.Form
+import org.scalacheck.Properties
 
 object IncomeSourcesFormsSpec  extends Properties("incomeSourcesForms.validation") {
 
@@ -30,7 +28,7 @@ object IncomeSourcesFormsSpec  extends Properties("incomeSourcesForms.validation
   )
 
   val businessTradeForm = (optValue: Option[String]) => BusinessTradeForm.form.bind(
-    optValue.fold[Map[String, String]](Map.empty)(value => Map("businessTrade" -> value))
+    optValue.fold[Map[String, String]](Map.empty)(value => Map("addBusinessTrade" -> value))
   )
 
   property("businessName.validation") = forAll(businessNameGenerator) { (charsList: List[Char]) =>
@@ -43,8 +41,8 @@ object IncomeSourcesFormsSpec  extends Properties("incomeSourcesForms.validation
 
   property("businessTrade.validation") = forAll(businessTradeGenerator) { (charsList: List[Char]) =>
     val businessTrade = charsList.mkString("").trim
-    (businessTrade.length > 2 && businessTrade.length <= BusinessTradeForm.maxLength) ==> {
-      println(s"Generate business trade: ${businessTrade}")
+    (businessTrade.length > 2) ==> {
+      //println(s"Generate business trade: ${businessTrade}")
       businessTradeForm(Some(businessTrade)).errors.isEmpty
     }
   }

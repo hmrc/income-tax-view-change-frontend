@@ -16,6 +16,7 @@
 
 package generators
 
+import forms.incomeSources.add.BusinessTradeForm
 import org.scalacheck.Gen
 
 object IncomeSourceGens {
@@ -25,9 +26,9 @@ object IncomeSourceGens {
 
   //"^[A-Za-z0-9 ,.&'\\\\/-]+$".r
   private val businessTradePermittedCharacters = (('a' to 'z') ++ ('A' to 'Z') ++ ('0' to '9')) ++ Seq(' ', ',', '.', '&', '\'', '-')
-  private val alphabet = ('a' to 'z') ++ ('A' to 'Z')
+  val alphabet = ('a' to 'z') ++ ('A' to 'Z')
 
-  private def containsTimes(s: List[Char], times: Int): Boolean = {
+  def containsTimes(s: List[Char], times: Int): Boolean = {
     val x = s.foldLeft(0) { (acc, char) => if (alphabet.contains(char)) acc + 1 else acc }
     println(s"Times: $x")
     x >= times
@@ -37,9 +38,15 @@ object IncomeSourceGens {
 
   val businessTradeGenerator: Gen[List[Char]] = {
     for {
-     body <- Gen.listOf(Gen.oneOf(businessTradePermittedCharacters))
+      body <- Gen.listOf(Gen.oneOf(businessTradePermittedCharacters))
       twoChars <- Gen.listOfN(2, Gen.oneOf(alphabet))
-    } yield body ++ twoChars
+    } yield {
+      val candidate = twoChars ++ body
+      if (candidate.length > BusinessTradeForm.maxLength)
+        candidate.take(BusinessTradeForm.maxLength)
+      else
+        candidate
+    }
   }
 
 }
