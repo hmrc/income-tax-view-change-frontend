@@ -265,6 +265,8 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
       )
     )
 
+    def getAddBusinessStartDate: WSResponse = get("/income-sources/add/business-start-date")
+
   }
 
   def unauthorisedTest(uri: String): Unit = {

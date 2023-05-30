@@ -56,7 +56,10 @@
     @formWithCSRF(action = postAction, Symbol("id") -> s"$prefix-form") {
 
         @govukDateInput(DateInput(
-            hint = Some(Hint(content = HtmlContent(s"<div>${getMessage("hint-prt1")}</div></br><div>${getMessage("hint-prt2")}</div>"))),
+            hint = Some(Hint(
+                id = Some(s"$prefix-hint"),
+                content = HtmlContent(s"<div>${getMessage("hint-prt1")}</div></br><div>${getMessage("hint-prt2")}</div>")
+            )),
             fieldset = Some(Fieldset(
                 legend = Some(Legend(
                     content = Text(getMessage("heading")),
