@@ -1176,6 +1176,12 @@ add-business-trade.form.error.long          = Mae’n rhaid i fasnach y busnes f
 add-business-trade.form.error.invalid       = Ni all masnach y busnes gynnwys !, "" , * na ?
 add-business-trade.form.error.same-name     = Ni allwch nodi’r un peth ar gyfer masnach busnes ac enw’r busnes
 
+# add Business start date check
+add-business-start-date-check.heading                = A yw?r dyddiad hwn yn gywir?
+add-business-start-date-check.radio.yes              = Iawn
+add-business-start-date-check.radio.no               = Na
+add-business-start-date-check.radio.error            = Dewiswch ?Iawn? os yw dyddiad dechrau?ch busnes yn gywir
+
 shortMonth.1 = Ion
 shortMonth.2 = Chwe
 shortMonth.3 = Maw

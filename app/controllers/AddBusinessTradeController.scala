@@ -94,7 +94,7 @@ class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate
           }
           else {
             Future.successful {
-              Redirect(routes.AddBusinessAddressController.show().url).withSession(request.session + (SessionKeys.businessTrade -> formData.trade))
+              Redirect(routes.AddBusinessStartDateController.show().url).withSession(request.session + (SessionKeys.businessTrade -> formData.trade))
             }
           }
         }
@@ -120,7 +120,7 @@ class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate
                 }
                 else {
                   Future.successful {
-                    Redirect(routes.AddBusinessAddressController.showAgent().url).withSession(request.session + (SessionKeys.businessTrade -> formData.trade))
+                    Redirect(routes.AddBusinessStartDateController.showAgent().url).withSession(request.session + (SessionKeys.businessTrade -> formData.trade))
                   }
                 }
               }

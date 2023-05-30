@@ -1158,6 +1158,12 @@ add-business-trade.form.error.long          = Business trade must be 35 characte
 add-business-trade.form.error.invalid       = Business trade cannot include !, "", * or ?
 add-business-trade.form.error.same-name     = You cannot enter the same trade and same business name
 
+# add Business start date check
+add-business-start-date-check.heading                 = Is this date correct?
+add-business-start-date-check.radio.yes               = Yes
+add-business-start-date-check.radio.no                = No
+add-business-start-date-check.radio.error             = Select yes if your business start date is correct
+
 #Following empty fields are not in Use
 #These fields are kept to match with Messages.cy
 shortMonth.1 =
