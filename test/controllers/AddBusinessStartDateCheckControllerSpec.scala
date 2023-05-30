@@ -37,7 +37,7 @@ import uk.gov.hmrc.play.language.LanguageUtils
 import views.html.incomeSources.add.AddBusinessStartDateCheck
 
 
-class AddBusinessStartDateControllerCheckControllerSpec extends TestSupport
+class AddBusinessStartDateCheckControllerSpec extends TestSupport
   with MockFrontendAuthorisedFunctions
   with MockIncomeSourceDetailsPredicate
   with MockAuthenticationPredicate
