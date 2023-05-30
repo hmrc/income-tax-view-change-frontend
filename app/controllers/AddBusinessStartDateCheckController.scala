@@ -62,12 +62,16 @@ class AddBusinessStartDateCheckController @Inject()(authenticate: Authentication
   lazy val addBusinessTradeUrl: String = routes.AddBusinessTradeController.show().url
   lazy val addBusinessTradeAgentUrl: String = routes.AddBusinessTradeController.showAgent().url
 
+  lazy val homePageUrl: String = routes.HomeController.show().url
+  lazy val homePageAgentUrl: String = routes.HomeController.showAgent.url
+
   def show(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
       handleRequest(
         isAgent = false,
         backUrl = backUrl,
+        homePageUrl = homePageUrl,
         postAction = postAction,
         itvcErrorHandler = itvcErrorHandler
       )
@@ -81,6 +85,7 @@ class AddBusinessStartDateCheckController @Inject()(authenticate: Authentication
             handleRequest(
               isAgent = true,
               backUrl = backUrlAgent,
+              homePageUrl = homePageAgentUrl,
               postAction = postActionAgent,
               itvcErrorHandler = itvcErrorHandlerAgent
             )
@@ -116,12 +121,13 @@ class AddBusinessStartDateCheckController @Inject()(authenticate: Authentication
 
   def handleRequest(isAgent: Boolean,
                     backUrl: String,
+                    homePageUrl: String,
                     postAction: Call,
                     itvcErrorHandler: ShowInternalServerError)
                    (implicit request: Request[_], mtdItUser: MtdItUser[_]): Future[Result] = {
     Future.successful(
       if (isDisabled(IncomeSources)) {
-        Redirect(controllers.routes.HomeController.show())
+        Redirect(homePageUrl)
       } else {
         request.session.get(businessStartDate) match {
           case Some(date) =>
@@ -159,15 +165,21 @@ class AddBusinessStartDateCheckController @Inject()(authenticate: Authentication
                 isAgent = isAgent,
                 businessStartDate = date.toLocalDate.toLongDate
               )),
-            _.toFormMap(response).headOption match {
+            formData => formData.toFormMap(response).headOption match {
               case selection if selection.contains(responseNo) =>
-                Redirect(backUrl).removingFromSession(businessStartDate)
+                Redirect(backUrl)
+                  .discardingHeader(businessStartDate)
+                  .removingFromSession(businessStartDate)
               case selection if selection.contains(responseYes) =>
                 Redirect(nextPageUrl)
-              case ex =>
-                Logger("application").error(s"${if (isAgent) "[Agent]" else ""}" +
-                  s"[AddBusinessStartDateCheckController][handleSubmitRequest]: invalid form submission: $ex")
-                itvcErrorHandler.showInternalServerError()
+              case _ =>
+                NotAcceptable(addBusinessStartDateCheck(
+                  form = BusinessStartDateCheckForm.form.fill(formData),
+                  postAction = postAction,
+                  backUrl = backUrl,
+                  isAgent = isAgent,
+                  businessStartDate = date.toLocalDate.toLongDate
+                ))
             }
           )
         case _ =>

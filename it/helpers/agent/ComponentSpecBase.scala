@@ -288,6 +288,17 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
         )
       )
     }
+
+    def postAddBusinessStartDateCheckNoDateHeader(answer: Option[String])(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      post(
+        uri = "/income-sources/add/business-start-date-check",
+        additionalCookies = additionalCookies
+      )(
+        answer.fold(Map.empty[String, Seq[String]])(
+          selection => BusinessStartDateCheckForm.form.fill(BusinessStartDateCheckForm(Some(selection), "csrfToken")).data.map { case (k, v) => (k, Seq(v)) }
+        )
+      )
+    }
   }
 
   def unauthorisedTest(uri: String): Unit = {

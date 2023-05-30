@@ -206,7 +206,7 @@ class AddBusinessStartDateCheckControllerSpec extends TestSupport
           contentAsString(result) must include("Select yes if your business start date is correct")
         }
       }
-      "show the internal server error page" when {
+      "return NOT_ACCEPTABLE response" when {
         "an invalid response is submitted" in {
           disableAllSwitches()
           enable(IncomeSources)
@@ -224,11 +224,11 @@ class AddBusinessStartDateCheckControllerSpec extends TestSupport
                 BusinessStartDateCheckForm.csrfToken -> csrfToken
               ))
 
-          status(result) shouldBe INTERNAL_SERVER_ERROR
+          status(result) shouldBe NOT_ACCEPTABLE
         }
       }
       "redirect to add business trade page" when {
-        "Yes is submitted with the form with a valid session" in {
+        "Yes is submitted with the form with a valid header" in {
           disableAllSwitches()
           enable(IncomeSources)
 
