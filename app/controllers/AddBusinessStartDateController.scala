@@ -18,7 +18,7 @@ package controllers
 
 import auth.MtdItUser
 import config.featureswitch.{FeatureSwitching, IncomeSources}
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
 import forms.incomeSources.add.BusinessStartDateForm
@@ -55,12 +55,17 @@ class AddBusinessStartDateController @Inject()(authenticate: AuthenticationPredi
   lazy val backUrl: String = routes.AddBusinessStartDateCheckController.show().url
   lazy val backUrlAgent: String = routes.AddBusinessStartDateCheckController.showAgent().url
 
+  lazy val postAction: Call = routes.AddBusinessStartDateController.submit()
+  lazy val postActionAgent: Call = routes.AddBusinessStartDateController.submitAgent()
+
   def show: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
       handleRequest(
         isAgent = false,
-        backUrl = backUrl
+        backUrl = backUrl,
+        postAction = postAction,
+        itvcErrorHandler = itvcErrorHandler
       )
   }
 
@@ -71,38 +76,35 @@ class AddBusinessStartDateController @Inject()(authenticate: AuthenticationPredi
           implicit mtdItUser =>
             handleRequest(
               isAgent = true,
-              backUrl = backUrlAgent
+              backUrl = backUrlAgent,
+              postAction = postActionAgent,
+              itvcErrorHandler = itvcErrorHandlerAgent
             )
         }
   }
 
-  def handleRequest(isAgent: Boolean, backUrl: String)
-                   (implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
-
-    val postAction = {
-      if(isAgent) routes.AddBusinessStartDateController.submitAgent()
-      else routes.AddBusinessStartDateController.submit()
-    }
-
-    val errorHandler = if(isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-
-      Future.successful(
-        if (isDisabled(IncomeSources)) {
-          Redirect(controllers.routes.HomeController.show())
-        } else {
-          Ok(addBusinessStartDate(
-            form = BusinessStartDateForm(),
-            postAction = postAction,
-            backUrl = backUrl,
-            isAgent = isAgent
-          ))
-        }
-      ) recover {
-        case ex: Exception =>
-          Logger("application").error(s"${if (isAgent) "[Agent]" else ""}" +
-            s"[AddBusinessStartDateController][handleRequest] - Error: ${ex.getMessage}")
-          errorHandler.showInternalServerError()
+  def handleRequest(isAgent: Boolean,
+                    backUrl: String,
+                    postAction: Call,
+                    itvcErrorHandler: ShowInternalServerError)
+                   (implicit user: MtdItUser[_]): Future[Result] = {
+    Future.successful(
+      if (isDisabled(IncomeSources)) {
+        Redirect(controllers.routes.HomeController.show())
+      } else {
+        Ok(addBusinessStartDate(
+          form = BusinessStartDateForm(),
+          postAction = postAction,
+          backUrl = backUrl,
+          isAgent = isAgent
+        ))
       }
+    ) recover {
+      case ex: Exception =>
+        Logger("application").error(s"${if (isAgent) "[Agent]" else ""}" +
+          s"[AddBusinessStartDateController][handleRequest] - Error: ${ex.getMessage}")
+        itvcErrorHandler.showInternalServerError()
+    }
   }
 
   def submit: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
@@ -111,15 +113,15 @@ class AddBusinessStartDateController @Inject()(authenticate: AuthenticationPredi
       Future.successful(
         BusinessStartDateForm().bindFromRequest().fold(
           formWithErrors =>
-              BadRequest(addBusinessStartDate(
-                form = formWithErrors,
-                postAction = routes.AddBusinessStartDateController.submit(),
-                backUrl = backUrl,
-                isAgent = false
-              )),
+            BadRequest(addBusinessStartDate(
+              form = formWithErrors,
+              postAction = postAction,
+              backUrl = backUrl,
+              isAgent = false
+            )),
           formData =>
             Redirect(routes.AddBusinessStartDateCheckController.show())
-              .addingToSession(SessionKeys.businessStartDate -> formData.toString)
+              .addingToSession(SessionKeys.businessStartDate -> formData.date.toString)
         )
       )
   }
@@ -130,18 +132,18 @@ class AddBusinessStartDateController @Inject()(authenticate: AuthenticationPredi
         getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
           implicit mtdItUser =>
             Future.successful(
-                BusinessStartDateForm().bindFromRequest().fold(
-                  formWithErrors =>
-                    BadRequest(addBusinessStartDate(
-                      form = formWithErrors,
-                      postAction = routes.AddBusinessStartDateController.submitAgent(),
-                      backUrl = backUrlAgent,
-                      isAgent = true
-                    )),
-                  formData =>
-                     Redirect(routes.AddBusinessStartDateCheckController.showAgent())
-                        .addingToSession(SessionKeys.businessStartDate -> formData.date.toString)
-                )
+              BusinessStartDateForm().bindFromRequest().fold(
+                formWithErrors =>
+                  BadRequest(addBusinessStartDate(
+                    form = formWithErrors,
+                    postAction = postActionAgent,
+                    backUrl = backUrlAgent,
+                    isAgent = true
+                  )),
+                formData =>
+                  Redirect(routes.AddBusinessStartDateCheckController.showAgent())
+                    .addingToSession(SessionKeys.businessStartDate -> formData.date.toString)
+              )
             )
         }
   }
