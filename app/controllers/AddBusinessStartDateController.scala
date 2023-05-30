@@ -121,6 +121,7 @@ class AddBusinessStartDateController @Inject()(authenticate: AuthenticationPredi
             )),
           formData =>
             Redirect(routes.AddBusinessStartDateCheckController.show())
+              .withHeaders(SessionKeys.businessStartDate -> formData.date.toString)
               .addingToSession(SessionKeys.businessStartDate -> formData.date.toString)
         )
       )
