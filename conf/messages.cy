@@ -1185,10 +1185,15 @@ add-business-start-date.month                        = Mis
 add-business-start-date.year                         = Blwyddyn
 add-business-start-date.continue                     = Yn eich blaen
 add-business-start-date.form.error.emptyDateField    = Nodwch y dyddiad y dechreuodd eich busnes fasnachu
-
 add-business-start-date.error.future                 = Mae?n rhaid i?r dyddiad y dechreuodd eich busnes eiddo tramor fod cyn {0}
 add-business-start-date.error.error.required         = Nodwch y dyddiad y dechreuodd eich busnes fasnachu
 add-business-start-date.error.invalid                = Mae?n rhaid i?r dyddiad y dechreuodd eich busnes fasnachu fod yn ddyddiad go iawn
+
+# add Business start date check
+add-business-start-date-check.heading                = A yw?r dyddiad hwn yn gywir?
+add-business-start-date-check.radio.yes              = Iawn
+add-business-start-date-check.radio.no               = Na
+add-business-start-date-check.radio.error            = Dewiswch ?Iawn? os yw dyddiad dechrau?ch busnes yn gywir
 
 shortMonth.1 = Ion
 shortMonth.2 = Chwe
