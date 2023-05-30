@@ -262,6 +262,9 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
         )
       )
 
+    def getAddBusinessStartDate(additionalCookies: Map[String, String] = Map.empty): WSResponse =
+      get("/income-sources/add/business-start-date", additionalCookies)
+
   }
 
   def unauthorisedTest(uri: String): Unit = {
