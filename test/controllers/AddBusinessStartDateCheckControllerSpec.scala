@@ -177,7 +177,7 @@ class AddBusinessStartDateCheckControllerSpec extends TestSupport
 
           val result = TestAddBusinessStartDateCheckController.submit()(
             fakeRequestWithActiveSession
-              .withSession(SessionKeys.businessStartDate -> validTestDate)
+              .withHeaders(SessionKeys.businessStartDate -> validTestDate)
               .withFormUrlEncodedBody(
                 BusinessStartDateCheckForm.response -> responseNo,
                 BusinessStartDateCheckForm.csrfToken -> csrfToken
@@ -199,7 +199,7 @@ class AddBusinessStartDateCheckControllerSpec extends TestSupport
 
           val result = TestAddBusinessStartDateCheckController.submit()(
             fakeRequestWithActiveSession
-              .withSession(SessionKeys.businessStartDate -> validTestDate)
+              .withHeaders(SessionKeys.businessStartDate -> validTestDate)
               .withFormUrlEncodedBody())
 
           status(result) shouldBe BAD_REQUEST
@@ -218,7 +218,7 @@ class AddBusinessStartDateCheckControllerSpec extends TestSupport
 
           val result = TestAddBusinessStartDateCheckController.submit()(
             fakeRequestWithActiveSession
-              .withSession(SessionKeys.businessStartDate -> validTestDate)
+              .withHeaders(SessionKeys.businessStartDate -> validTestDate)
               .withFormUrlEncodedBody(
                 BusinessStartDateCheckForm.response -> invalidResponse,
                 BusinessStartDateCheckForm.csrfToken -> csrfToken
@@ -237,7 +237,7 @@ class AddBusinessStartDateCheckControllerSpec extends TestSupport
 
           val result = TestAddBusinessStartDateCheckController.submit()(
             fakeRequestWithActiveSession
-              .withSession(SessionKeys.businessStartDate -> validTestDate)
+              .withHeaders(SessionKeys.businessStartDate -> validTestDate)
               .withFormUrlEncodedBody(
                 BusinessStartDateCheckForm.response -> responseYes,
                 BusinessStartDateCheckForm.csrfToken -> csrfToken

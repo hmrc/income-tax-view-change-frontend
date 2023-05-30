@@ -24,13 +24,12 @@ import controllers.predicates._
 import forms.BusinessStartDateCheckForm.{response, responseNo, responseYes}
 import forms.{BusinessNameForm, BusinessStartDateCheckForm}
 import forms.utils.SessionKeys.businessStartDate
-import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl, ImplicitDateParser}
+import implicits.ImplicitDateFormatter
 import play.api.Logger
-import play.api.i18n.{I18nSupport, Messages}
+import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.IncomeSourceDetailsService
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import uk.gov.hmrc.play.bootstrap.frontend.http.FrontendErrorHandler
 import uk.gov.hmrc.play.language.LanguageUtils
 import views.html.incomeSources.add.AddBusinessStartDateCheck
 
@@ -149,7 +148,7 @@ class AddBusinessStartDateCheckController @Inject()(authenticate: Authentication
                           itvcErrorHandler: ShowInternalServerError)
                          (implicit request: Request[_], mtdItUser: MtdItUser[_]): Future[Result] = {
     Future.successful(
-      request.session.get(businessStartDate) match {
+      request.headers.get(businessStartDate) match {
         case Some(date) =>
           BusinessStartDateCheckForm.form.bindFromRequest().fold(
             formWithErrors =>
@@ -173,7 +172,7 @@ class AddBusinessStartDateCheckController @Inject()(authenticate: Authentication
           )
         case _ =>
           Logger("application").error(s"${if (isAgent) "[Agent]" else ""}" +
-            "[AddBusinessStartDateCheckController][handleSubmitRequest]: failed to get businessStartDate from session")
+            "[AddBusinessStartDateCheckController][handleSubmitRequest]: failed to get businessStartDate from headers")
           itvcErrorHandler.showInternalServerError()
       }
     )

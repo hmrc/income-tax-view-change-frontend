@@ -20,7 +20,8 @@ import auth.HeaderExtractor
 import com.github.tomakehurst.wiremock.client.WireMock
 import config.FrontendAppConfig
 import config.featureswitch.{FeatureSwitch, FeatureSwitching}
-import forms.{CeaseForeignPropertyForm, CeaseUKPropertyForm}
+import forms.utils.SessionKeys
+import forms.{BusinessStartDateCheckForm, CeaseForeignPropertyForm, CeaseUKPropertyForm}
 import helpers.agent.SessionCookieBaker
 import helpers.servicemocks.AuditStub
 import implicits.ImplicitDateFormatterImpl
@@ -196,6 +197,14 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
         .post(body).futureValue
     }
 
+    def postWithAdditionalHeader(uri: String, additionalHeader: (String, String))(body: Map[String, Seq[String]]): WSResponse = {
+      When(s"I call POST /report-quarterly/income-and-expenses/view" + uri)
+      buildClient(uri)
+        .withFollowRedirects(false)
+        .withHttpHeaders(additionalHeader, "Csrf-Token" -> "nocheck")
+        .post(body).futureValue
+    }
+
     def getCreditAndRefunds(): WSResponse = get("/claim-refund")
 
     def getTaxYears: WSResponse = get("/tax-years")
@@ -265,6 +274,23 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
       )
     )
 
+    def getAddBusinessStartDateCheck(date: String): WSResponse = {
+      getWithCalcIdInSessionAndWithoutAwait(
+        uri = "/income-sources/add/business-start-date-check",
+        additionalCookies = Map(SessionKeys.businessStartDate -> date)
+      ).futureValue
+    }
+
+    def postAddBusinessStartDateCheck(answer: Option[String]): WSResponse = {
+      postWithAdditionalHeader(
+        uri = "/income-sources/add/business-start-date-check",
+        additionalHeader = "addBusinessStartDate" -> "2022-10-10"
+      )(
+        answer.fold(Map.empty[String, Seq[String]])(
+          selection => BusinessStartDateCheckForm.form.fill(BusinessStartDateCheckForm(Some(selection), "csrfToken")).data.map { case (k, v) => (k, Seq(v)) }
+        )
+      )
+    }
   }
 
   def unauthorisedTest(uri: String): Unit = {
