@@ -41,9 +41,9 @@ object BusinessStartDateForm extends Constraints {
   private val dayAndYearRequired = s"dateForm.error.dayAndYear.required"
   private val monthAndYearRequired = s"dateForm.error.monthAndYear.required"
 
-  val day: String = "day"
-  val month: String = "month"
-  val year: String = "year"
+  val dayInputFieldName: String = "day"
+  val monthInputFieldName: String = "month"
+  val yearInputFieldName: String = "year"
 
   def apply()(implicit messages: Messages, dateService: DateService, dateFormatter: ImplicitDateFormatterImpl): Form[DateFormElement] = {
 
@@ -54,9 +54,9 @@ object BusinessStartDateForm extends Constraints {
 
     Form(
       mapping(s"$messagePrefix" -> tuple(
-        day -> default(text(), ""),
-        month -> default(text(), ""),
-        year -> default(text(), ""))
+        dayInputFieldName -> default(text(), ""),
+        monthInputFieldName -> default(text(), ""),
+        yearInputFieldName -> default(text(), ""))
         .verifying(firstError(
           checkRequiredFields,
           validDate(dateMustBeReal)
