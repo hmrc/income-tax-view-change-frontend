@@ -26,7 +26,6 @@ import testConstants.IncomeSourceIntegrationTestConstants.{foreignPropertyAndCea
 class CeaseIncomeSourcesControllerISpec extends ComponentSpecBase {
 
   val showIndividualCeaseIncomeSourceControllerUrl: String = controllers.incomeSources.cease.routes.CeaseIncomeSourceController.show().url
-  val showAgentCeaseIncomeSourceControllerUrl: String = controllers.incomeSources.cease.routes.CeaseIncomeSourceController.showAgent().url
   val pageTitleMsgKey = "cease-income-sources.heading"
   val soleTraderBusinessName1: String = "business"
   val soleTraderBusinessName2: String = "secondBusiness"
@@ -62,25 +61,21 @@ class CeaseIncomeSourcesControllerISpec extends ComponentSpecBase {
           elementTextByID("table-row-trading-start-date-uk")(ukPropertyStartDate)
         )
       }
-    }
-  }
 
-  s"calling GET ${showAgentCeaseIncomeSourceControllerUrl}" should {
-    "render the Cease Income Source page for an Agent" when {
-      "User is authorised" in {
+      "User is authorised with different data" in {
         Given("I wiremock stub a successful Income Source Details response with a foreign property and a ceased business")
         enable(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyAndCeasedBusiness)
-        When(s"I call GET ${showAgentCeaseIncomeSourceControllerUrl}")
-        val res = IncomeTaxViewChangeFrontend.getCeaseIncomeSourcesAgent
+        When(s"I call GET ${showIndividualCeaseIncomeSourceControllerUrl}")
+        val res = IncomeTaxViewChangeFrontend.getCeaseIncomeSourcesIndividual
         verifyIncomeSourceDetailsCall(testMtditid)
 
         res should have(
           httpStatus(OK),
-          pageTitleAgent(pageTitleMsgKey),
-          elementTextByID("ceased-businesses-h1")(businessNameMessage),
+          pageTitleIndividual(pageTitleMsgKey),
+          elementTextByID("ceased-businesses-h1")(ceasedBusinessMessage),
           elementTextByID("table-head-date-ended-ceased")(ceasedDateMessage),
-          elementTextByID("table-row-trading-name-0-ceased")(soleTraderBusinessName1),
+          elementTextByID("table-row-trading-name-0-ceased")(ceasedBusinessName),
           elementTextByID("cease-link-foreign")(ceaseMessage),
           elementTextByID("table-head-date-started-foreign")(startDateMessage),
           elementTextByID("table-row-trading-start-date-foreign")(foreignPropertyStartDate)
