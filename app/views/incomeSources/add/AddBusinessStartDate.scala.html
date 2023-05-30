@@ -48,7 +48,8 @@
 @mainTemplate(
     pageTitle = getMessage("heading"),
     backUrl = Some(backUrl),
-    isAgent = isAgent) {
+    isAgent = isAgent,
+    btaNavPartial = user.btaNavPartial) {
 
     @errorSummary(form)
 
