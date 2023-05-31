@@ -250,6 +250,8 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
     def getCeaseUKProperty: WSResponse = get("/income-sources/cease/uk-property-declare")
 
+    def getCeaseIncomeSourcesIndividual: WSResponse = get("/income-sources/cease/cease-an-income-source")
+
     def postCeaseUKProperty(answer: Option[String]): WSResponse = post("/income-sources/cease/uk-property-declare")(
       answer.fold(Map.empty[String, Seq[String]])(
         declaration => CeaseUKPropertyForm.form.fill(CeaseUKPropertyForm(Some(declaration), "csrfToken")).data.map { case (k, v) => (k, Seq(v)) }

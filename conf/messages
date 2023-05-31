@@ -1140,7 +1140,6 @@ cease-income-sources.foreign-property.h1      = Foreign property
 cease-income-sources.foreign-property.p1      = You should only cease your foreign property if you no longer receive any income from it.
 cease-income-sources.ceased-businesses.h1     = Businesses that have ceased
 cease-income-sources.table-head.date-ended    = Date ended
-cease-income-sources.empty                    =
 
 # add Business page
 add-business-name.heading                                         = What is the name of your business?
