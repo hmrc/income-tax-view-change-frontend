@@ -30,21 +30,21 @@ import views.html.errorPages.CustomNotFoundError
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
-class CeaseBusinessNameController @Inject()(val authenticate: AuthenticationPredicate,
-                                            val authorisedFunctions: FrontendAuthorisedFunctions,
-                                            val checkSessionTimeout: SessionTimeoutPredicate,
-                                            val incomeSourceDetailsService: IncomeSourceDetailsService,
-                                            val retrieveBtaNavBar: NavBarPredicate,
-                                            val retrieveIncomeSources: IncomeSourceDetailsPredicate,
-                                            val retrieveNino: NinoPredicate,
-                                            val view: CeaseUKProperty,
-                                            val customNotFoundErrorView: CustomNotFoundError)
-                                           (implicit val appConfig: FrontendAppConfig,
-                                            mcc: MessagesControllerComponents,
-                                            val ec: ExecutionContext,
-                                            val itvcErrorHandler: ItvcErrorHandler,
-                                            val itvcErrorHandlerAgent: AgentItvcErrorHandler
-                                           )
+class BusinessEndDateController @Inject()(val authenticate: AuthenticationPredicate,
+                                          val authorisedFunctions: FrontendAuthorisedFunctions,
+                                          val checkSessionTimeout: SessionTimeoutPredicate,
+                                          val UKPropertyEndDateForm: BusinessEndDateForm,
+                                          val incomeSourceDetailsService: IncomeSourceDetailsService,
+                                          val retrieveBtaNavBar: NavBarPredicate,
+                                          val retrieveIncomeSources: IncomeSourceDetailsPredicate,
+                                          val retrieveNino: NinoPredicate,
+                                          val view: BusinessEndDate,
+                                          val customNotFoundErrorView: CustomNotFoundError)
+                                         (implicit val appConfig: FrontendAppConfig,
+                                          mcc: MessagesControllerComponents,
+                                          val ec: ExecutionContext,
+                                          val itvcErrorHandler: ItvcErrorHandler,
+                                          val itvcErrorHandlerAgent: AgentItvcErrorHandler)
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
   def show(origin: Option[String] = None): Action[AnyContent] = Action {
