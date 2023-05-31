@@ -21,7 +21,6 @@ import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
 import forms.{BusinessStartDateCheckForm, CeaseForeignPropertyForm, CeaseUKPropertyForm}
 import forms.agent.ClientsUTRForm
-import forms.utils.SessionKeys
 import helpers.servicemocks.AuditStub
 import helpers.{CustomMatchers, GenericStubMethods, WiremockHelper}
 import org.scalatest._
@@ -169,14 +168,6 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
         .withHttpHeaders(HeaderNames.COOKIE -> bakeSessionCookie(Map.empty ++ additionalCookies), "Csrf-Token" -> "nocheck")
         .post(body).futureValue
     }
-
-    def postWithAdditionalHeader(uri: String, additionalCookies: Map[String, String] = Map.empty, additionalHeader: (String, String))(body: Map[String, Seq[String]]): WSResponse = {
-      When(s"I call POST /report-quarterly/income-and-expenses/view/agents" + uri)
-      buildClient("/agents" + uri)
-        .withHttpHeaders(HeaderNames.COOKIE -> bakeSessionCookie(Map.empty ++ additionalCookies), "Csrf-Token" -> "nocheck", additionalHeader)
-        .post(body).futureValue
-    }
-
     def getEnterClientsUTR: WSResponse = get("/client-utr")
 
     def postEnterClientsUTR(answer: Option[String]): WSResponse = post("/client-utr")(
@@ -270,28 +261,15 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
         )
       )
 
-    def getAddBusinessStartDateCheck(date: String)(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
-      getWithClientDetailsInSession(
-        uri = "/agents/income-sources/add/business-start-date-check",
-        additionalCookies = additionalCookies ++ Map(SessionKeys.businessStartDate -> date)
+    def getAddBusinessStartDateCheck(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      get(
+        uri = "/income-sources/add/business-start-date-check", additionalCookies
       )
     }
 
-    def postAddBusinessStartDateCheck(answer: Option[String], date: String)(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
-      postWithAdditionalHeader(
-        uri = "/income-sources/add/business-start-date-check",
-        additionalCookies = additionalCookies,
-        additionalHeader = SessionKeys.businessStartDate -> date
-      )(
-        answer.fold(Map.empty[String, Seq[String]])(
-          selection => BusinessStartDateCheckForm.form.fill(BusinessStartDateCheckForm(Some(selection), "csrfToken")).data.map { case (k, v) => (k, Seq(v)) }
-        )
-      )
-    }
-
-    def postAddBusinessStartDateCheckNoDateHeader(answer: Option[String])(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+    def postAddBusinessStartDateCheck(answer: Option[String])(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
       post(
-        uri = "/income-sources/add/business-start-date-check",
+        uri = s"/income-sources/add/business-start-date-check?date=1+November+2020",
         additionalCookies = additionalCookies
       )(
         answer.fold(Map.empty[String, Seq[String]])(
@@ -301,7 +279,6 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     }
     def getAddBusinessStartDate(additionalCookies: Map[String, String] = Map.empty): WSResponse =
       get("/income-sources/add/business-start-date", additionalCookies)
-
   }
 
   def unauthorisedTest(uri: String): Unit = {

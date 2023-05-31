@@ -285,23 +285,12 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
       ).futureValue
     }
 
-    def postAddBusinessStartDateCheck(answer: Option[String], additionalHeader: (String, String)): WSResponse = {
-      postWithAdditionalHeader(
-        uri = "/income-sources/add/business-start-date-check",
-        additionalHeader = additionalHeader
-      )(
+    def postAddBusinessStartDateCheck(answer: Option[String]): WSResponse = {
+      post(s"/income-sources/add/business-start-date-check?date=1+November+2020")(
         answer.fold(Map.empty[String, Seq[String]])(
-          selection => BusinessStartDateCheckForm.form.fill(BusinessStartDateCheckForm(Some(selection), "csrfToken")).data.map { case (k, v) => (k, Seq(v)) }
-        )
-      )
-    }
-
-    def postAddBusinessStartDateCheckNoHeader(answer: Option[String]): WSResponse = {
-      post(
-        uri = "/income-sources/add/business-start-date-check"
-      )(
-        answer.fold(Map.empty[String, Seq[String]])(
-          selection => BusinessStartDateCheckForm.form.fill(BusinessStartDateCheckForm(Some(selection), "csrfToken")).data.map { case (k, v) => (k, Seq(v)) }
+          selection => BusinessStartDateCheckForm.form.fill(BusinessStartDateCheckForm(Some(selection), "csrfToken")).data.map {
+            case (k, v) => (k, Seq(v))
+          }
         )
       )
     }

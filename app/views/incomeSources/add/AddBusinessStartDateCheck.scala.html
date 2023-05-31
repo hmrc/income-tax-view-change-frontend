@@ -35,7 +35,6 @@
 
 @(
         form: Form[_],
-        postAction: Call,
         backUrl: String,
         isAgent: Boolean,
         businessStartDate: String
@@ -45,6 +44,11 @@
 
 @getMessage(key: String, args: String*) = @{
     messages(s"$prefix.$key", args: _*)
+}
+
+@postAction = @{
+    if(isAgent) routes.AddBusinessStartDateCheckController.submitAgent(businessStartDate)
+    else routes.AddBusinessStartDateCheckController.submit(businessStartDate)
 }
 
 @mainTemplate(

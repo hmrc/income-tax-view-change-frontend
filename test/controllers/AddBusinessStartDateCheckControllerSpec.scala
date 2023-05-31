@@ -134,119 +134,86 @@ class AddBusinessStartDateCheckControllerSpec extends TestSupport
         status(result) shouldBe OK
       }
     }
-    "show the internal server error page" when {
-      "an individual submits form with businessStartDate not in session" in {
+    "redirect back to add business start date page with businessStartDate removed from session" when {
+      "No is submitted with the form" in {
         disableAllSwitches()
         enable(IncomeSources)
 
         mockNoIncomeSources()
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
-        val result = TestAddBusinessStartDateCheckController.submit()(
-          fakeRequestWithActiveSession.withFormUrlEncodedBody(
-            BusinessStartDateCheckForm.response -> responseYes
-          ))
+        val result = TestAddBusinessStartDateCheckController.submit(validTestDate)(
+          fakeRequestWithActiveSession
+            .withHeaders(SessionKeys.businessStartDate -> validTestDate)
+            .withFormUrlEncodedBody(
+              BusinessStartDateCheckForm.response -> responseNo,
+              BusinessStartDateCheckForm.csrfToken -> csrfToken
+            ))
 
-        status(result) shouldBe INTERNAL_SERVER_ERROR
+
+        result.futureValue.session.get(SessionKeys.businessStartDate).isDefined shouldBe false
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(result) shouldBe Some(routes.AddBusinessStartDateController.show().url)
       }
     }
-    "show the internal server error page" when {
-      "an agent submits form with businessStartDate not in session" in {
+    "return BAD_REQUEST with an error summary" when {
+      "form is submitted with neither radio option selected" in {
         disableAllSwitches()
         enable(IncomeSources)
 
         mockNoIncomeSources()
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
-        val result = TestAddBusinessStartDateCheckController.submitAgent()(
-          fakeRequestConfirmedClient()
+        val result = TestAddBusinessStartDateCheckController.submit(validTestDate)(
+          fakeRequestWithActiveSession
+            .withHeaders(SessionKeys.businessStartDate -> validTestDate)
+            .withFormUrlEncodedBody())
+
+        status(result) shouldBe BAD_REQUEST
+        contentAsString(result) must include("Select yes if your business start date is correct")
+      }
+    }
+    "return NOT_ACCEPTABLE response" when {
+      "an invalid response is submitted" in {
+        disableAllSwitches()
+        enable(IncomeSources)
+
+        mockNoIncomeSources()
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
+
+        val invalidResponse: String = "£££"
+
+        val result = TestAddBusinessStartDateCheckController.submit(validTestDate)(
+          fakeRequestWithActiveSession
+            .withHeaders(SessionKeys.businessStartDate -> validTestDate)
             .withFormUrlEncodedBody(
-              BusinessStartDateCheckForm.response -> responseYes,
+              BusinessStartDateCheckForm.response -> invalidResponse,
               BusinessStartDateCheckForm.csrfToken -> csrfToken
             ))
 
         status(result) shouldBe INTERNAL_SERVER_ERROR
       }
-      "redirect back to add business start date page with businessStartDate removed from session" when {
-        "No is submitted with the form" in {
-          disableAllSwitches()
-          enable(IncomeSources)
+    }
+    "redirect to add business trade page" when {
+      "Yes is submitted with the form with a valid session" in {
+        disableAllSwitches()
+        enable(IncomeSources)
 
-          mockNoIncomeSources()
-          setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
+        mockNoIncomeSources()
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
-          val result = TestAddBusinessStartDateCheckController.submit()(
-            fakeRequestWithActiveSession
-              .withHeaders(SessionKeys.businessStartDate -> validTestDate)
-              .withFormUrlEncodedBody(
-                BusinessStartDateCheckForm.response -> responseNo,
-                BusinessStartDateCheckForm.csrfToken -> csrfToken
-              ))
+        val result = TestAddBusinessStartDateCheckController.submit(validTestDate)(
+          fakeRequestWithActiveSession
+            .withHeaders(SessionKeys.businessStartDate -> validTestDate)
+            .withFormUrlEncodedBody(
+              BusinessStartDateCheckForm.response -> responseYes,
+              BusinessStartDateCheckForm.csrfToken -> csrfToken
+            ))
 
-
-          result.futureValue.session.get(SessionKeys.businessStartDate).isDefined shouldBe false
-          status(result) shouldBe SEE_OTHER
-          redirectLocation(result) shouldBe Some(routes.AddBusinessStartDateController.show().url)
-        }
-      }
-      "return BAD_REQUEST with an error summary" when {
-        "form is submitted with neither radio option selected" in {
-          disableAllSwitches()
-          enable(IncomeSources)
-
-          mockNoIncomeSources()
-          setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-
-          val result = TestAddBusinessStartDateCheckController.submit()(
-            fakeRequestWithActiveSession
-              .withHeaders(SessionKeys.businessStartDate -> validTestDate)
-              .withFormUrlEncodedBody())
-
-          status(result) shouldBe BAD_REQUEST
-          contentAsString(result) must include("Select yes if your business start date is correct")
-        }
-      }
-      "return NOT_ACCEPTABLE response" when {
-        "an invalid response is submitted" in {
-          disableAllSwitches()
-          enable(IncomeSources)
-
-          mockNoIncomeSources()
-          setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-
-          val invalidResponse: String = "£££"
-
-          val result = TestAddBusinessStartDateCheckController.submit()(
-            fakeRequestWithActiveSession
-              .withHeaders(SessionKeys.businessStartDate -> validTestDate)
-              .withFormUrlEncodedBody(
-                BusinessStartDateCheckForm.response -> invalidResponse,
-                BusinessStartDateCheckForm.csrfToken -> csrfToken
-              ))
-
-          status(result) shouldBe NOT_ACCEPTABLE
-        }
-      }
-      "redirect to add business trade page" when {
-        "Yes is submitted with the form with a valid header" in {
-          disableAllSwitches()
-          enable(IncomeSources)
-
-          mockNoIncomeSources()
-          setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-
-          val result = TestAddBusinessStartDateCheckController.submit()(
-            fakeRequestWithActiveSession
-              .withHeaders(SessionKeys.businessStartDate -> validTestDate)
-              .withFormUrlEncodedBody(
-                BusinessStartDateCheckForm.response -> responseYes,
-                BusinessStartDateCheckForm.csrfToken -> csrfToken
-              ))
-
-          status(result) shouldBe SEE_OTHER
-          redirectLocation(result) shouldBe Some(routes.AddBusinessTradeController.show().url)
-        }
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(result) shouldBe Some(routes.AddBusinessTradeController.show().url)
       }
     }
   }
+
 }

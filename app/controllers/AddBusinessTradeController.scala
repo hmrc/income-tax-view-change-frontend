@@ -43,13 +43,13 @@ class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate
                                            val itvcErrorHandler: ItvcErrorHandler,
                                            incomeSourceDetailsService: IncomeSourceDetailsService)
                                           (implicit val appConfig: FrontendAppConfig,
-                                             implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
-                                             implicit override val mcc: MessagesControllerComponents,
-                                             val ec: ExecutionContext)
+                                           implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
+                                           implicit override val mcc: MessagesControllerComponents,
+                                           val ec: ExecutionContext)
   extends ClientConfirmedController with I18nSupport with FeatureSwitching{
 
-  val backURL: String = routes.AddBusinessStartDateCheckController.show().url
-  val agentBackURL: String = routes.AddBusinessStartDateCheckController.showAgent().url
+  lazy val backURL: String = routes.AddBusinessStartDateCheckController.show().url
+  lazy val agentBackURL: String = routes.AddBusinessStartDateCheckController.showAgent().url
   def show: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>

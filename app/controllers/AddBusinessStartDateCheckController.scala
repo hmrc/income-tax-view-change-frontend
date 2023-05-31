@@ -56,9 +56,6 @@ class AddBusinessStartDateCheckController @Inject()(authenticate: Authentication
   lazy val backUrl: String = routes.AddBusinessStartDateController.show().url
   lazy val backUrlAgent: String = routes.AddBusinessStartDateController.showAgent().url
 
-  lazy val postAction: Call = routes.AddBusinessStartDateCheckController.submit()
-  lazy val postActionAgent: Call = routes.AddBusinessStartDateCheckController.submitAgent()
-
   lazy val addBusinessTradeUrl: String = routes.AddBusinessTradeController.show().url
   lazy val addBusinessTradeAgentUrl: String = routes.AddBusinessTradeController.showAgent().url
 
@@ -72,7 +69,6 @@ class AddBusinessStartDateCheckController @Inject()(authenticate: Authentication
         isAgent = false,
         backUrl = backUrl,
         homePageCall = homePageCall,
-        postAction = postAction,
         itvcErrorHandler = itvcErrorHandler
       )
   }
@@ -86,33 +82,32 @@ class AddBusinessStartDateCheckController @Inject()(authenticate: Authentication
               isAgent = true,
               backUrl = backUrlAgent,
               homePageCall = homePageCallAgent,
-              postAction = postActionAgent,
               itvcErrorHandler = itvcErrorHandlerAgent
             )
         }
   }
 
-  def submit(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+  def submit(date: String): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit request =>
       handleSubmitRequest(
+        date = date,
         isAgent = false,
         backUrl = backUrl,
-        postAction = postAction,
         nextPageUrl = addBusinessTradeUrl,
         itvcErrorHandler = itvcErrorHandler
       )
   }
 
-  def submitAgent(): Action[AnyContent] = Authenticated.async {
+  def submitAgent(date: String): Action[AnyContent] = Authenticated.async {
     implicit request =>
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
           implicit mtdItUser =>
             handleSubmitRequest(
+              date = date,
               isAgent = true,
               backUrl = backUrlAgent,
-              postAction = postActionAgent,
               nextPageUrl = addBusinessTradeAgentUrl,
               itvcErrorHandler = itvcErrorHandlerAgent
             )
@@ -122,7 +117,6 @@ class AddBusinessStartDateCheckController @Inject()(authenticate: Authentication
   def handleRequest(isAgent: Boolean,
                     backUrl: String,
                     homePageCall: Call,
-                    postAction: Call,
                     itvcErrorHandler: ShowInternalServerError)
                    (implicit request: Request[_], mtdItUser: MtdItUser[_]): Future[Result] = {
     Future.successful(
@@ -133,7 +127,6 @@ class AddBusinessStartDateCheckController @Inject()(authenticate: Authentication
           case Some(date) =>
             Ok(addBusinessStartDateCheck(
               form = BusinessNameForm.form,
-              postAction = postAction,
               backUrl = backUrl,
               isAgent = isAgent,
               businessStartDate = longDate(date.toLocalDate).toLongDate
@@ -147,46 +140,33 @@ class AddBusinessStartDateCheckController @Inject()(authenticate: Authentication
     )
   }
 
-  def handleSubmitRequest(isAgent: Boolean,
+  def handleSubmitRequest(date: String,
+                          isAgent: Boolean,
                           backUrl: String,
-                          postAction: Call,
                           nextPageUrl: String,
                           itvcErrorHandler: ShowInternalServerError)
-                         (implicit request: Request[_], mtdItUser: MtdItUser[_]): Future[Result] = {
-
+                         (implicit mtdItUser: MtdItUser[_]): Future[Result] = {
     Future.successful(
-      request.session.get(businessStartDate) match {
-        case Some(date) =>
-          BusinessStartDateCheckForm.form.bindFromRequest().fold(
-            formWithErrors =>
-              BadRequest(addBusinessStartDateCheck(
-                form = formWithErrors,
-                postAction = postAction,
-                backUrl = backUrl,
-                isAgent = isAgent,
-                businessStartDate = date.toLocalDate.toLongDate
-              )),
-            formData => formData.toFormMap(response).headOption match {
-              case selection if selection.contains(responseNo) =>
-                Redirect(backUrl)
-                  .removingFromSession(businessStartDate)
-              case selection if selection.contains(responseYes) =>
-                Redirect(nextPageUrl)
-              case _ =>
-                BadRequest(addBusinessStartDateCheck(
-                  form = BusinessStartDateCheckForm.form.fill(formData),
-                  postAction = postAction,
-                  backUrl = backUrl,
-                  isAgent = isAgent,
-                  businessStartDate = date.toLocalDate.toLongDate
-                ))
-            }
-          )
-        case _ =>
-          Logger("application").error(s"${if (isAgent) "[Agent]" else ""}" +
-            "[AddBusinessStartDateCheckController][handleSubmitRequest]: failed to get businessStartDate from headers")
-          itvcErrorHandler.showInternalServerError()
-      }
+      BusinessStartDateCheckForm.form.bindFromRequest().fold(
+        formWithErrors =>
+          BadRequest(addBusinessStartDateCheck(
+            form = formWithErrors,
+            backUrl = backUrl,
+            isAgent = isAgent,
+            businessStartDate = date
+          )),
+        formData => formData.toFormMap(response).headOption match {
+          case selection if selection.contains(responseNo) =>
+            Redirect(backUrl)
+              .removingFromSession(businessStartDate)
+          case selection if selection.contains(responseYes) =>
+            Redirect(nextPageUrl)
+          case e =>
+            Logger("application").error(s"${if (isAgent) "[Agent]" else ""}" +
+              s"[AddBusinessStartDateCheckController][handleSubmitRequest]: invalid form submission: $e")
+            itvcErrorHandler.showInternalServerError()
+        }
+      )
     )
   }
 }

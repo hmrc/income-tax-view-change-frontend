@@ -164,14 +164,12 @@ GET          /income-sources/add/business-address                         contro
 GET          /agents/income-sources/add/business-address                  controllers.AddBusinessAddressController.showAgent()
 GET          /income-sources/add/business-start-date                      controllers.AddBusinessStartDateController.show()
 GET          /agents/income-sources/add/business-start-date               controllers.AddBusinessStartDateController.showAgent()
-GET          /income-sources/add/business-start-date                      controllers.AddBusinessStartDateController.show()
-GET          /agents/income-sources/add/business-start-date               controllers.AddBusinessStartDateController.showAgent()
 POST         /income-sources/add/business-start-date                      controllers.AddBusinessStartDateController.submit()
 POST         /agents/income-sources/add/business-start-date               controllers.AddBusinessStartDateController.submitAgent()
 GET          /income-sources/add/business-start-date-check                controllers.AddBusinessStartDateCheckController.show()
 GET          /agents/income-sources/add/business-start-date-check         controllers.AddBusinessStartDateCheckController.showAgent()
-POST         /income-sources/add/business-start-date-check                controllers.AddBusinessStartDateCheckController.submit()
-POST         /agents/income-sources/add/business-start-date-check         controllers.AddBusinessStartDateCheckController.submitAgent()
+POST         /income-sources/add/business-start-date-check                controllers.AddBusinessStartDateCheckController.submit(date: String)
+POST         /agents/income-sources/add/business-start-date-check         controllers.AddBusinessStartDateCheckController.submitAgent(date: String)
 
 # Income Sources - Cease
 GET          /income-sources/cease/cease-an-income-source                 controllers.incomeSources.cease.CeaseIncomeSourceController.show()
