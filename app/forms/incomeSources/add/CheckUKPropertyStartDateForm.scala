@@ -16,29 +16,21 @@
 
 package forms.incomeSources.add
 
-import auth.MtdItUser
 import forms.validation.Constraints
 import play.api.data.Form
 import play.api.data.Forms.{mapping, optional, text}
-import play.api.i18n.Messages
 
-class CheckUKPropertyBusinessStartDateForm extends Constraints {
-  private val radioMustBeSelected = "incomeSources.add.CheckUKPropertyBusinessStartDate.error.required"
+object CheckUKPropertyStartDateForm extends Constraints {
+  private val radioMustBeSelected = "incomeSources.add.checkUKPropertyStartDate.error.required"
   private val validRadioOptions = Set("yes", "no")
 
-  def apply(implicit user: MtdItUser[_], messages: Messages): Form[_] = {
+  val form: Form[_] = {
     Form(
       mapping(
-        "check-uk-property-business-start-date" -> optional(text)
+        "check-uk-property-start-date" -> optional(text)
           .verifying(radioMustBeSelected, value => value.isDefined && validRadioOptions.contains(value.get))
       )(identity)(Option(_))
     )
-  }
-}
-
-object CheckUKPropertyBusinessStartDateForm {
-  def apply(implicit user: MtdItUser[_], messages: Messages): Form[_] = {
-    new CheckUKPropertyBusinessStartDateForm().apply
   }
 }
 

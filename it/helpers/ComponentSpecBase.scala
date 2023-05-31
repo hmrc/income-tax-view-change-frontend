@@ -22,14 +22,14 @@ import config.FrontendAppConfig
 import config.featureswitch.{FeatureSwitch, FeatureSwitching}
 import forms.incomeSources.cease.CeaseUKPropertyForm
 import helpers.agent.SessionCookieBaker
-import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
+import helpers.servicemocks.AuditStub
 import implicits.ImplicitDateFormatterImpl
 import org.scalatest._
 import org.scalatest.concurrent.{Eventually, IntegrationPatience, ScalaFutures}
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
 import play.api.cache.AsyncCacheApi
 import play.api.http.HeaderNames
-import play.api.http.Status.{OK, SEE_OTHER}
+import play.api.http.Status.SEE_OTHER
 import play.api.i18n.{Lang, MessagesApi}
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -37,8 +37,6 @@ import play.api.libs.crypto.DefaultCookieSigner
 import play.api.libs.ws.WSResponse
 import play.api.{Application, Environment, Mode}
 import services.{DateService, DateServiceInterface}
-import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
-import testConstants.IncomeSourceIntegrationTestConstants._
 import uk.gov.hmrc.http.{Authorization, HeaderCarrier}
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import uk.gov.hmrc.play.language.LanguageUtils
@@ -102,6 +100,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
   val titleClientRelationshipFailure: String = "agent.client_relationship_failure.heading"
 
   def config: Map[String, String] = Map(
+    "play.filters.csrf.header.bypassHeaders.Csrf-Token" -> "nocheck",
     "microservice.services.auth.host" -> mockHost,
     "microservice.services.auth.port" -> mockPort,
     "microservice.services.income-tax-view-change.host" -> mockHost,
@@ -187,14 +186,17 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
   }
 
   object IncomeTaxViewChangeFrontend {
-    def get(uri: String): WSResponse = buildClient(uri)
-      .get().futureValue
+    def get(uri: String, additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      buildClient(uri)
+        .withHttpHeaders(HeaderNames.COOKIE -> bakeSessionCookie(additionalCookies))
+        .get().futureValue
+    }
 
-    def post(uri: String)(body: Map[String, Seq[String]]): WSResponse = {
+    def post(uri: String, additionalCookies: Map[String, String] = Map.empty)(body: Map[String, Seq[String]]): WSResponse = {
       When(s"I call POST /report-quarterly/income-and-expenses/view" + uri)
       buildClient(uri)
         .withFollowRedirects(false)
-        .withHttpHeaders("Csrf-Token" -> "nocheck")
+        .withHttpHeaders(HeaderNames.COOKIE -> bakeSessionCookie(additionalCookies), "Csrf-Token" -> "nocheck")
         .post(body).futureValue
     }
 

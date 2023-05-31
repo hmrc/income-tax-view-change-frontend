@@ -21,33 +21,35 @@ import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
-import forms.incomeSources.add.AddUKPropertyBusinessStartDateForm
+import forms.incomeSources.add.AddUKPropertyStartDateForm
+import implicits.ImplicitDateFormatterImpl
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc._
-import services.IncomeSourceDetailsService
+import services.{DateService, IncomeSourceDetailsService}
 import uk.gov.hmrc.http.HeaderCarrier
 import views.html.errorPages.CustomNotFoundError
-import views.html.incomeSources.add.AddUKPropertyBusinessStartDate
+import views.html.incomeSources.add.AddUKPropertyStartDate
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class AddUKPropertyBusinessStartDateController @Inject()(val authenticate: AuthenticationPredicate,
-                                                         val authorisedFunctions: FrontendAuthorisedFunctions,
-                                                         val checkSessionTimeout: SessionTimeoutPredicate,
-                                                         val addUKPropertyBusinessStartDateForm: AddUKPropertyBusinessStartDateForm,
-                                                         val incomeSourceDetailsService: IncomeSourceDetailsService,
-                                                         val retrieveBtaNavBar: NavBarPredicate,
-                                                         val retrieveIncomeSources: IncomeSourceDetailsPredicate,
-                                                         val retrieveNino: NinoPredicate,
-                                                         val view: AddUKPropertyBusinessStartDate,
-                                                         val customNotFoundErrorView: CustomNotFoundError)
-                                                        (implicit val appConfig: FrontendAppConfig,
-                                                         mcc: MessagesControllerComponents,
-                                                         val ec: ExecutionContext,
-                                                         val itvcErrorHandler: ItvcErrorHandler,
-                                                         val itvcErrorHandlerAgent: AgentItvcErrorHandler)
+class AddUKPropertyStartDateController @Inject()(val authenticate: AuthenticationPredicate,
+                                                 val authorisedFunctions: FrontendAuthorisedFunctions,
+                                                 val checkSessionTimeout: SessionTimeoutPredicate,
+                                                 val incomeSourceDetailsService: IncomeSourceDetailsService,
+                                                 val retrieveBtaNavBar: NavBarPredicate,
+                                                 val retrieveIncomeSources: IncomeSourceDetailsPredicate,
+                                                 val retrieveNino: NinoPredicate,
+                                                 val view: AddUKPropertyStartDate,
+                                                 val customNotFoundErrorView: CustomNotFoundError)
+                                                (implicit val appConfig: FrontendAppConfig,
+                                                 val dateFormatter: ImplicitDateFormatterImpl,
+                                                 val dateService: DateService,
+                                                 mcc: MessagesControllerComponents,
+                                                 val ec: ExecutionContext,
+                                                 val itvcErrorHandler: ItvcErrorHandler,
+                                                 val itvcErrorHandlerAgent: AgentItvcErrorHandler)
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
   def handleRequest(isAgent: Boolean)
@@ -56,15 +58,13 @@ class AddUKPropertyBusinessStartDateController @Inject()(val authenticate: Authe
     val incomeSourcesEnabled: Boolean = isEnabled(IncomeSources)
     val backUrl: String = if (isAgent) controllers.incomeSources.add.routes.AddIncomeSourceController.showAgent().url else
       controllers.incomeSources.add.routes.AddIncomeSourceController.show().url
-    val postAction: Call = if (isAgent) controllers.incomeSources.add.routes.AddUKPropertyBusinessStartDateController.submitAgent() else {
-      controllers.incomeSources.add.routes.AddUKPropertyBusinessStartDateController.submit()
-    }
-
+    val postAction: Call = if (isAgent) controllers.incomeSources.add.routes.AddUKPropertyStartDateController.submitAgent() else
+      controllers.incomeSources.add.routes.AddUKPropertyStartDateController.submit()
     val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
     if (incomeSourcesEnabled) {
       Future.successful(Ok(view(
-        addUKPropertyBusinessStartDateForm = addUKPropertyBusinessStartDateForm.apply(user, messages),
+        addUKPropertyStartDateForm = AddUKPropertyStartDateForm()(dateFormatter, dateService, messages),
         postAction = postAction,
         isAgent = isAgent,
         backUrl = backUrl)(user, messages)))
@@ -72,8 +72,12 @@ class AddUKPropertyBusinessStartDateController @Inject()(val authenticate: Authe
       Future.successful(Ok(customNotFoundErrorView()(user, messages)))
     } recover {
       case ex: Exception =>
-        Logger("application").error(s"${if (isAgent) "[Agent]"}" +
-          s"Error getting AddUKPropertyBusinessStartDate page: ${ex.getMessage}")
+        Logger("application").error(s"${
+          if (isAgent) "[Agent]"
+        }" +
+          s"Error getting AddUKPropertyStartDate page: ${
+            ex.getMessage
+          }")
         errorHandler.showInternalServerError()
     }
   }
@@ -101,16 +105,16 @@ class AddUKPropertyBusinessStartDateController @Inject()(val authenticate: Authe
   def submit: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
-      addUKPropertyBusinessStartDateForm.apply.bindFromRequest().fold(
+      AddUKPropertyStartDateForm().bindFromRequest().fold(
         hasErrors => Future.successful(BadRequest(view(
-          addUKPropertyBusinessStartDateForm = hasErrors,
-          postAction = controllers.incomeSources.add.routes.AddUKPropertyBusinessStartDateController.submit(),
+          addUKPropertyStartDateForm = hasErrors,
+          postAction = controllers.incomeSources.add.routes.AddUKPropertyStartDateController.submit(),
           backUrl = controllers.incomeSources.add.routes.AddIncomeSourceController.show().url,
           isAgent = false
         ))),
-        validDate =>
-          Future.successful(Redirect(controllers.incomeSources.add.routes.CheckUKPropertyBusinessStartDateController.show())
-            .addingToSession("addUkPropertyStartDate" -> validDate.date.toString))
+        validatedInput =>
+          Future.successful(Redirect(controllers.incomeSources.add.routes.CheckUKPropertyStartDateController.show())
+            .addingToSession("addUkPropertyStartDate" -> validatedInput.date.toString))
       )
   }
 
@@ -119,16 +123,16 @@ class AddUKPropertyBusinessStartDateController @Inject()(val authenticate: Authe
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
           implicit mtdItUser =>
-            addUKPropertyBusinessStartDateForm.apply.bindFromRequest().fold(
+            AddUKPropertyStartDateForm().bindFromRequest().fold(
               hasErrors => Future.successful(BadRequest(view(
-                addUKPropertyBusinessStartDateForm = hasErrors,
-                postAction = controllers.incomeSources.add.routes.AddUKPropertyBusinessStartDateController.submit(),
+                addUKPropertyStartDateForm = hasErrors,
+                postAction = controllers.incomeSources.add.routes.AddUKPropertyStartDateController.submit(),
                 backUrl = controllers.incomeSources.add.routes.AddIncomeSourceController.showAgent().url,
                 isAgent = true
               ))),
-              validDate =>
-                Future.successful(Redirect(controllers.incomeSources.add.routes.CheckUKPropertyBusinessStartDateController.showAgent())
-                  .addingToSession("addUkPropertyStartDate" -> validDate.date.toString))
+              validatedInput =>
+                Future.successful(Redirect(controllers.incomeSources.add.routes.CheckUKPropertyStartDateController.showAgent())
+                  .addingToSession("addUkPropertyStartDate" -> validatedInput.date.toString))
             )
         }
   }

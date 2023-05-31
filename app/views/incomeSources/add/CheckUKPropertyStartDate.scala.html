@@ -23,35 +23,45 @@
 @import views.html.helpers.injected.ErrorSummary
 @import views.html.components._
 
-@this(mainTemplate: unifiedLayout, dateInput: dateInput, continueButton: ContinueButton, formWithCSRF: FormWithCSRF, errorSummary: ErrorSummary, p: p)
+@this(mainTemplate: unifiedLayout,
+    continueButton: ContinueButton,
+    formWithCSRF: FormWithCSRF,
+    errorSummary: ErrorSummary,
+    govukRadios: GovukRadios,
+    h1: h1,
+    p: p)
 
-@(addUKPropertyBusinessStartDateForm: Form[_], postAction: Call, isAgent: Boolean = false, backUrl: String)(implicit request: Request[_], messages: Messages)
+@(checkUKPropertyStartDateForm: Form[_], startDate: String, postAction: Call, isAgent: Boolean = false, backUrl: String)(implicit request: Request[_], messages: Messages)
 
-@getHintContent = {
-    @p(classes = "govuk-hint") {
-        @messages("incomeSources.add.UKPropertyBusinessStartDate.hint")
-    }
-    @p(classes = "govuk-hint") {
-        @messages("dateForm.hint")
-    }
-}
-
-@mainTemplate(pageTitle = messages("incomeSources.add.UKPropertyBusinessStartDate.heading"), isAgent = isAgent) {
+@mainTemplate(pageTitle = messages("radioForm.checkDate.heading"), isAgent = isAgent, backUrl = Some(backUrl)) {
 
   @errorSummary(
-    form = addUKPropertyBusinessStartDateForm
+    form = checkUKPropertyStartDateForm
   )
 
-  @formWithCSRF(action = postAction, Symbol("id") -> "add-uk-property-business-start-date-form") {
+  @h1(messages("radioForm.checkDate.heading"))
 
-    @dateInput(
-      content = messages("incomeSources.add.UKPropertyBusinessStartDate.heading"),
-      field = addUKPropertyBusinessStartDateForm("add-uk-property-business-start-date"),
-      hintContent = Some(HtmlContent(getHintContent)),
-      pageHeading = true
+  @formWithCSRF(action = postAction, Symbol("id") -> "check-uk-property-start-date") {
+
+    @p(){
+      @startDate
+    }
+
+    @govukRadios(Radios(
+      items = Seq(
+        RadioItem(
+          content = Text(messages("radioForm.yes")),
+          value = Some("yes")
+        ),
+        RadioItem(
+          content = Text(messages("radioForm.no")),
+          value = Some("no")
+        )
+      )).withFormField(checkUKPropertyStartDateForm("check-uk-property-start-date"))
     )
 
     @continueButton()
 
   }
 }
+

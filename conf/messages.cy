@@ -1178,12 +1178,12 @@ incomeSources.ceaseUKProperty.heading                           = Dod ag eiddo y
 incomeSources.ceaseUKProperty.radioLabel                        = Rwy’n datgan nad wyf bellach yn cael incwm o unrhyw eiddo yn y DU.
 incomeSources.ceaseUKProperty.radioError                        = Mae’n rhaid i chi ddatgan nad ydych chi bellach yn cael incwm o unrhyw eiddo yn y DU
 
-incomeSources.add.UKPropertyBusinessStartDate.heading           = Pryd y dechreuodd eich busnes eiddo yn y DU?
-incomeSources.add.UKPropertyBusinessStartDate.hint              = Dyma’r dyddiad y dechreuodd y gweithgarwch o roi unrhyw eiddo yn y DU ar osod yn y lle cyntaf.
-incomeSources.add.UKPropertyBusinessStartDate.error.required    = Enter the date your UK property business started trading
-incomeSources.add.UKPropertyBusinessStartDate.error.future      = Mae’n rhaid i’r dyddiad y dechreuodd eich busnes eiddo yn y DU fod cyn {0}
-incomeSources.add.UKPropertyBusinessStartDate.error.invalid     = Mae’n rhaid i’r dyddiad y dechreuodd eich busnes eiddo yn y DU fod yn ddyddiad go iawn
-incomeSources.add.CheckUKPropertyBusinessStartDate.error.required  = Dewiswch ‘Iawn’ os yw dyddiad dechrau’ch busnes eiddo yn y DU yn gywir
+incomeSources.add.UKPropertyStartDate.heading                   = Pryd y dechreuodd eich busnes eiddo yn y DU?
+incomeSources.add.UKPropertyStartDate.hint                      = Dyma’r dyddiad y dechreuodd y gweithgarwch o roi unrhyw eiddo yn y DU ar osod yn y lle cyntaf.
+incomeSources.add.UKPropertyStartDate.error.required            = Enter the date your UK property business started trading
+incomeSources.add.UKPropertyStartDate.error.future              = Mae’n rhaid i’r dyddiad y dechreuodd eich busnes eiddo yn y DU fod cyn {0}
+incomeSources.add.UKPropertyStartDate.error.invalid             = Mae’n rhaid i’r dyddiad y dechreuodd eich busnes eiddo yn y DU fod yn ddyddiad go iawn
+incomeSources.add.checkUKPropertyStartDate.error.required       = Dewiswch ‘Iawn’ os yw dyddiad dechrau’r busnes eiddo yn y DU yn gywir
 
 #Generic date form messages
 dateForm.hint                                                       = Er enghraifft, 27 3 2020

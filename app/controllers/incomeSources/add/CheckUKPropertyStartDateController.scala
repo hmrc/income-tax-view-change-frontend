@@ -21,7 +21,7 @@ import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
-import forms.incomeSources.add.CheckUKPropertyBusinessStartDateForm
+import forms.incomeSources.add.CheckUKPropertyStartDateForm
 import forms.utils.SessionKeys
 import implicits.ImplicitDateFormatterImpl
 import play.api.Logger
@@ -30,22 +30,21 @@ import play.api.mvc._
 import services.IncomeSourceDetailsService
 import uk.gov.hmrc.http.HeaderCarrier
 import views.html.errorPages.CustomNotFoundError
-import views.html.incomeSources.add.CheckUKPropertyBusinessStartDate
+import views.html.incomeSources.add.CheckUKPropertyStartDate
 
 import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class CheckUKPropertyBusinessStartDateController @Inject()(val authenticate: AuthenticationPredicate,
+class CheckUKPropertyStartDateController @Inject()(val authenticate: AuthenticationPredicate,
                                                            val authorisedFunctions: FrontendAuthorisedFunctions,
                                                            val checkSessionTimeout: SessionTimeoutPredicate,
-                                                           val checkUKPropertyBusinessStartDateForm: CheckUKPropertyBusinessStartDateForm,
                                                            val dateFormatter: ImplicitDateFormatterImpl,
                                                            val incomeSourceDetailsService: IncomeSourceDetailsService,
                                                            val retrieveBtaNavBar: NavBarPredicate,
                                                            val retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                                            val retrieveNino: NinoPredicate,
-                                                           val view: CheckUKPropertyBusinessStartDate,
+                                                           val view: CheckUKPropertyStartDate,
                                                            val customNotFoundErrorView: CustomNotFoundError)
                                                           (implicit val appConfig: FrontendAppConfig,
                                                            mcc: MessagesControllerComponents,
@@ -58,15 +57,15 @@ class CheckUKPropertyBusinessStartDateController @Inject()(val authenticate: Aut
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
 
     val incomeSourcesEnabled: Boolean = isEnabled(IncomeSources)
-    val backUrl: String = if (isAgent) controllers.incomeSources.add.routes.AddUKPropertyBusinessStartDateController.showAgent().url else
+    val backUrl: String = if (isAgent) controllers.incomeSources.add.routes.AddUKPropertyStartDateController.showAgent().url else
       controllers.incomeSources.add.routes.AddIncomeSourceController.show().url
-    val postAction: Call = if (isAgent) controllers.incomeSources.add.routes.CheckUKPropertyBusinessStartDateController.submitAgent() else
-      controllers.incomeSources.add.routes.CheckUKPropertyBusinessStartDateController.submit()
+    val postAction: Call = if (isAgent) controllers.incomeSources.add.routes.CheckUKPropertyStartDateController.submitAgent() else
+      controllers.incomeSources.add.routes.CheckUKPropertyStartDateController.submit()
     val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
     if (incomeSourcesEnabled) {
       Future.successful(Ok(view(
-        checkUKPropertyBusinessStartDateForm = checkUKPropertyBusinessStartDateForm.apply(user, messages),
+        checkUKPropertyStartDateForm = CheckUKPropertyStartDateForm.form,
         startDate = startDate,
         postAction = postAction,
         isAgent = isAgent,
@@ -76,7 +75,7 @@ class CheckUKPropertyBusinessStartDateController @Inject()(val authenticate: Aut
     } recover {
       case ex: Exception =>
         Logger("application").error(s"${if (isAgent) "[Agent]"}" +
-          s"Error getting CheckUKPropertyBusinessStartDate page: ${ex.getMessage}")
+          s"Error getting CheckUKPropertyStartDate page: ${ex.getMessage}")
         errorHandler.showInternalServerError()
     }
   }
@@ -112,18 +111,18 @@ class CheckUKPropertyBusinessStartDateController @Inject()(val authenticate: Aut
     implicit user =>
       val startDate = user.session.get(SessionKeys.addUkPropertyStartDate).get
       val formattedStartDate = dateFormatter.longDate(LocalDate.parse(startDate)).toLongDate
-      checkUKPropertyBusinessStartDateForm.apply.bindFromRequest().fold(
+      CheckUKPropertyStartDateForm.form.bindFromRequest().fold(
         hasErrors => Future.successful(BadRequest(view(
-          checkUKPropertyBusinessStartDateForm = hasErrors,
-          postAction = controllers.incomeSources.add.routes.AddUKPropertyBusinessStartDateController.submit(),
-          backUrl = controllers.incomeSources.add.routes.AddIncomeSourceController.show().url,
+          checkUKPropertyStartDateForm = hasErrors,
+          postAction = controllers.incomeSources.add.routes.CheckUKPropertyStartDateController.submit(),
+          backUrl = controllers.incomeSources.add.routes.AddUKPropertyStartDateController.show().url,
           isAgent = false,
           startDate = formattedStartDate
         ))),
-        validInput => {
-          val changeDateAndGoBack = validInput.equals("no")
-          if (changeDateAndGoBack) {
-            Future.successful(Redirect(controllers.incomeSources.add.routes.AddUKPropertyBusinessStartDateController.show())
+        validatedInput => {
+          val goBackAndChangeDate = validatedInput.equals(Some("no"))
+          if (goBackAndChangeDate) {
+            Future.successful(Redirect(controllers.incomeSources.add.routes.AddUKPropertyStartDateController.show())
               .removingFromSession("addUkPropertyStartDate"))
           } else {
             Future.successful(Redirect(controllers.incomeSources.add.routes.UKPropertyAccountingMethod.show()))
@@ -139,18 +138,18 @@ class CheckUKPropertyBusinessStartDateController @Inject()(val authenticate: Aut
           implicit mtdItUser =>
             val startDate = mtdItUser.session.get(SessionKeys.addUkPropertyStartDate).get
             val formattedStartDate = dateFormatter.longDate(LocalDate.parse(startDate)).toLongDate
-            checkUKPropertyBusinessStartDateForm.apply.bindFromRequest().fold(
+            CheckUKPropertyStartDateForm.form.bindFromRequest().fold(
               hasErrors => Future.successful(BadRequest(view(
-                checkUKPropertyBusinessStartDateForm = hasErrors,
-                postAction = controllers.incomeSources.add.routes.AddUKPropertyBusinessStartDateController.submit(),
-                backUrl = controllers.incomeSources.add.routes.AddIncomeSourceController.showAgent().url,
+                checkUKPropertyStartDateForm = hasErrors,
+                postAction = controllers.incomeSources.add.routes.CheckUKPropertyStartDateController.submit(),
+                backUrl = controllers.incomeSources.add.routes.AddUKPropertyStartDateController.showAgent().url,
                 isAgent = true,
                 startDate = formattedStartDate
               ))),
-              validInput => {
-                val changeDateAndGoBack = validInput.equals("no")
-                if (changeDateAndGoBack) {
-                  Future.successful(Redirect(controllers.incomeSources.add.routes.AddUKPropertyBusinessStartDateController.showAgent())
+              validatedInput => {
+                val goBackAndChangeDate = validatedInput.equals(Some("no"))
+                if (goBackAndChangeDate) {
+                  Future.successful(Redirect(controllers.incomeSources.add.routes.AddUKPropertyStartDateController.showAgent())
                     .removingFromSession("addUkPropertyStartDate"))
                 } else {
                   Future.successful(Redirect(controllers.incomeSources.add.routes.UKPropertyAccountingMethod.showAgent()))

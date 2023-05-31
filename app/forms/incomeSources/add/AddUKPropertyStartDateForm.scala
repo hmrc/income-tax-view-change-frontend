@@ -16,7 +16,6 @@
 
 package forms.incomeSources.add
 
-import auth.MtdItUser
 import forms.models.DateFormElement
 import forms.validation.Constraints
 import implicits.ImplicitDateFormatterImpl
@@ -27,13 +26,12 @@ import play.api.i18n.Messages
 import services.DateService
 
 import java.time.LocalDate
-import javax.inject.{Inject, Singleton}
 
-@Singleton
-class AddUKPropertyBusinessStartDateForm @Inject()(val dateService: DateService, val dateFormatter: ImplicitDateFormatterImpl) extends Constraints {
 
-  private val dateMustBeEntered = "incomeSources.add.UKPropertyBusinessStartDate.error.required"
-  private val dateMustBeReal = "incomeSources.add.UKPropertyBusinessStartDate.error.invalid"
+object AddUKPropertyStartDateForm extends Constraints {
+
+  private val dateMustBeEntered = "incomeSources.add.UKPropertyStartDate.error.required"
+  private val dateMustBeReal = "incomeSources.add.UKPropertyStartDate.error.invalid"
   private val dayRequired = "dateForm.error.day.required"
   private val monthRequired = "dateForm.error.month.required"
   private val yearRequired = "dateForm.error.year.required"
@@ -41,14 +39,15 @@ class AddUKPropertyBusinessStartDateForm @Inject()(val dateService: DateService,
   private val dayAndYearRequired = "dateForm.error.dayAndYear.required"
   private val monthAndYearRequired = "dateForm.error.monthAndYear.required"
 
-  def apply(implicit user: MtdItUser[_], messages: Messages): Form[DateFormElement] = {
+  def apply()(implicit dateFormatter: ImplicitDateFormatterImpl, dateService: DateService, messages: Messages): Form[DateFormElement] = {
     val currentDate: LocalDate = dateService.getCurrentDate()
     val currentDatePlusOneWeek: LocalDate = currentDate.plusWeeks(1)
     val currentDatePlusOneWeekFormatted: String = dateFormatter.longDate(currentDate.plusWeeks(1)).toLongDate
-    def dateMustNotBeInTheFuture(maximumDate: String): String = messages("incomeSources.add.UKPropertyBusinessStartDate.error.future", maximumDate)
+
+    def dateMustNotBeInTheFuture(maximumDate: String): String = messages("incomeSources.add.UKPropertyStartDate.error.future", maximumDate)
 
     Form(
-      mapping("add-uk-property-business-start-date" -> tuple(
+      mapping("add-uk-property-start-date" -> tuple(
         "day" -> default(text(), ""),
         "month" -> default(text(), ""),
         "year" -> default(text(), ""))
@@ -60,8 +59,7 @@ class AddUKPropertyBusinessStartDateForm @Inject()(val dateService: DateService,
           case (day, month, year) => LocalDate.of(year.toInt, month.toInt, day.toInt)
         },
         date => (date.getDayOfMonth.toString, date.getMonthValue.toString, date.getYear.toString)
-      )
-        .verifying(maxDate(currentDatePlusOneWeek, dateMustNotBeInTheFuture(currentDatePlusOneWeekFormatted)))
+      ).verifying(maxDate(currentDatePlusOneWeek, dateMustNotBeInTheFuture(currentDatePlusOneWeekFormatted))),
       )(DateFormElement.apply)(DateFormElement.unapply))
   }
 
@@ -82,12 +80,6 @@ class AddUKPropertyBusinessStartDateForm @Inject()(val dateService: DateService,
       Invalid(Seq(ValidationError(yearRequired)))
     case _ =>
       Valid
-  }
-}
-
-object AddUKPropertyBusinessStartDateForm {
-  def apply(dateService: DateService, dateFormatter: ImplicitDateFormatterImpl)(implicit user: MtdItUser[_], messages: Messages): Form[DateFormElement] = {
-    new AddUKPropertyBusinessStartDateForm(dateService, dateFormatter).apply(user, messages)
   }
 }
 

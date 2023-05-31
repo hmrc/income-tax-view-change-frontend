@@ -23,45 +23,35 @@
 @import views.html.helpers.injected.ErrorSummary
 @import views.html.components._
 
-@this(mainTemplate: unifiedLayout,
-    continueButton: ContinueButton,
-    formWithCSRF: FormWithCSRF,
-    errorSummary: ErrorSummary,
-    govukRadios: GovukRadios,
-    h1: h1,
-    p: p)
+@this(mainTemplate: unifiedLayout, dateInput: dateInput, continueButton: ContinueButton, formWithCSRF: FormWithCSRF, errorSummary: ErrorSummary, p: p)
 
-@(checkUKPropertyBusinessStartDateForm: Form[_], startDate: String, postAction: Call, isAgent: Boolean = false, backUrl: String)(implicit request: Request[_], messages: Messages)
+@(addUKPropertyStartDateForm: Form[_], postAction: Call, isAgent: Boolean = false, backUrl: String)(implicit request: Request[_], messages: Messages)
 
-@mainTemplate(pageTitle = messages("radioForm.checkDate.heading"), isAgent = isAgent) {
+@getHintContent = {
+    @p(classes = "govuk-hint") {
+        @messages("incomeSources.add.UKPropertyStartDate.hint")
+    }
+    @p(classes = "govuk-hint") {
+        @messages("dateForm.hint")
+    }
+}
+
+@mainTemplate(pageTitle = messages("incomeSources.add.UKPropertyStartDate.heading"), isAgent = isAgent, backUrl = Some(backUrl)) {
 
   @errorSummary(
-    form = checkUKPropertyBusinessStartDateForm
+    form = addUKPropertyStartDateForm
   )
 
-  @formWithCSRF(action = postAction, Symbol("id") -> "check-uk-property-business-start-date") {
+  @formWithCSRF(action = postAction, Symbol("id") -> "add-uk-property-start-date-form") {
 
-    @h1(messages("dateForm.check.heading"))
-
-    @p(){
-      @startDate
-    }
-
-    @govukRadios(Radios(
-      items = Seq(
-        RadioItem(
-          content = Text(messages("radioForm.yes")),
-          value = Some("yes")
-        ),
-        RadioItem(
-          content = Text(messages("radioForm.no")),
-          value = Some("no")
-        )
-      )).withFormField(checkUKPropertyBusinessStartDateForm("check-uk-property-business-start-date"))
+    @dateInput(
+      content = messages("incomeSources.add.UKPropertyStartDate.heading"),
+      field = addUKPropertyStartDateForm("add-uk-property-start-date"),
+      hintContent = Some(HtmlContent(getHintContent)),
+      pageHeading = true
     )
 
     @continueButton()
 
   }
 }
-

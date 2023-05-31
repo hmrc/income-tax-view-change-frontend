@@ -16,10 +16,11 @@
 
 package controllers.incomeSources.add
 
-import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import config.featureswitch.{FeatureSwitching, IncomeSources}
+import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
-import forms.incomeSources.add.AddUKPropertyBusinessStartDateForm
+import forms.utils.SessionKeys
+import forms.utils.SessionKeys.addUkPropertyStartDate
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -33,34 +34,35 @@ import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testIndiv
 import testUtils.TestSupport
 import uk.gov.hmrc.http.{HttpClient, HttpResponse}
 import views.html.errorPages.CustomNotFoundError
-import views.html.incomeSources.add.AddUKPropertyBusinessStartDate
+import views.html.incomeSources.add.AddUKPropertyStartDate
 
 import scala.concurrent.Future
 
-class AddUKPropertyBusinessStartDateControllerSpec extends TestSupport with MockAuthenticationPredicate
+class AddUKPropertyStartDateControllerSpec extends TestSupport with MockAuthenticationPredicate
   with MockIncomeSourceDetailsPredicate with FeatureSwitching {
 
   val mockHttpClient: HttpClient = mock(classOf[HttpClient])
 
-  object TestAddUKPropertyBusinessStartDateController extends AddUKPropertyBusinessStartDateController(
+  object TestAddUKPropertyStartDateController extends AddUKPropertyStartDateController(
     MockAuthenticationPredicate,
     mockAuthService,
     app.injector.instanceOf[SessionTimeoutPredicate],
-    app.injector.instanceOf[AddUKPropertyBusinessStartDateForm],
     mockIncomeSourceDetailsService,
     app.injector.instanceOf[NavBarPredicate],
     MockIncomeSourceDetailsPredicate,
     app.injector.instanceOf[NinoPredicate],
-    app.injector.instanceOf[AddUKPropertyBusinessStartDate],
+    app.injector.instanceOf[AddUKPropertyStartDate],
     app.injector.instanceOf[CustomNotFoundError])(appConfig,
+    mockImplicitDateFormatter,
+    dateService,
     mcc = app.injector.instanceOf[MessagesControllerComponents],
     ec, app.injector.instanceOf[ItvcErrorHandler],
     app.injector.instanceOf[AgentItvcErrorHandler]) {
 
-    val title: String = s"${messages("htmlTitle", messages("incomeSources.add.UKPropertyBusinessStartDate.heading"))}"
-    val titleAgent: String = s"${messages("htmlTitle.agent", messages("incomeSources.add.UKPropertyBusinessStartDate.heading"))}"
-    val heading: String = messages("incomeSources.add.UKPropertyBusinessStartDate.heading")
-    val headingAgent: String = messages("incomeSources.add.UKPropertyBusinessStartDate.heading")
+    val title: String = s"${messages("htmlTitle", messages("incomeSources.add.UKPropertyStartDate.heading"))}"
+    val titleAgent: String = s"${messages("htmlTitle.agent", messages("incomeSources.add.UKPropertyStartDate.heading"))}"
+    val heading: String = messages("incomeSources.add.UKPropertyStartDate.heading")
+    val headingAgent: String = messages("incomeSources.add.UKPropertyStartDate.heading")
   }
 
   "Individual - AddUKPropertyBusinessController.show" should {
@@ -68,12 +70,12 @@ class AddUKPropertyBusinessStartDateControllerSpec extends TestSupport with Mock
       "navigating to the page with FS Enabled" in {
         enable(IncomeSources)
         mockSingleBusinessIncomeSource()
-        val result: Future[Result] = TestAddUKPropertyBusinessStartDateController.show()(fakeRequestWithActiveSession)
+        val result: Future[Result] = TestAddUKPropertyStartDateController.show()(fakeRequestWithActiveSession)
         val document: Document = Jsoup.parse(contentAsString(result))
 
         status(result) shouldBe Status.OK
-        document.title shouldBe TestAddUKPropertyBusinessStartDateController.title
-        document.select("h1:nth-child(1)").text shouldBe TestAddUKPropertyBusinessStartDateController.heading
+        document.title shouldBe TestAddUKPropertyStartDateController.title
+        document.select("h1:nth-child(1)").text shouldBe TestAddUKPropertyStartDateController.heading
       }
     }
     "return 303 SEE_OTHER and redirect to custom not found error page" when {
@@ -81,37 +83,39 @@ class AddUKPropertyBusinessStartDateControllerSpec extends TestSupport with Mock
         disable(IncomeSources)
         mockSingleBusinessIncomeSource()
 
-        val result: Future[Result] = TestAddUKPropertyBusinessStartDateController.show()(fakeRequestWithActiveSession)
-        val expectedContent: String = TestAddUKPropertyBusinessStartDateController.customNotFoundErrorView().toString()
+        val result: Future[Result] = TestAddUKPropertyStartDateController.show()(fakeRequestWithActiveSession)
+        val expectedContent: String = TestAddUKPropertyStartDateController.customNotFoundErrorView().toString()
         status(result) shouldBe Status.OK
         contentAsString(result) shouldBe expectedContent
       }
       "called with an unauthenticated user" in {
         setupMockAuthorisationException()
-        val result: Future[Result] = TestAddUKPropertyBusinessStartDateController.show()(fakeRequestWithActiveSession)
+        val result: Future[Result] = TestAddUKPropertyStartDateController.show()(fakeRequestWithActiveSession)
         status(result) shouldBe Status.SEE_OTHER
       }
     }
   }
 
-  "Individual - AddUKPropertyBusinessStartDateController.submit" should {
-    s"return 303 SEE_OTHER and redirect to ${controllers.incomeSources.add.routes.CheckUKPropertyBusinessStartDateController.show().url}" when {
+  "Individual - AddUKPropertyStartDateController.submit" should {
+    s"return 303 SEE_OTHER and redirect to ${controllers.incomeSources.add.routes.CheckUKPropertyStartDateController.show().url}" when {
       "form is completed successfully" in {
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
         enable(IncomeSources)
         mockSingleBusinessIncomeSource()
 
         when(mockHttpClient.POSTForm[HttpResponse](any(), any(), any())(any(), any(), any()))
-          .thenReturn(Future.successful(HttpResponse(OK, "valid")))
+          .thenReturn(Future.successful(HttpResponse(OK)))
 
         lazy val result: Future[Result] = {
-          TestAddUKPropertyBusinessStartDateController.submit()(fakeRequestWithActiveSession
-            .withFormUrlEncodedBody("add-uk-property-business-start-date.day" -> "20", "add-uk-property-business-start-date.month" -> "04",
-              "add-uk-property-business-start-date.year" -> "2023"))
+          TestAddUKPropertyStartDateController.submit()(fakeRequestWithActiveSession
+            .withSession(SessionKeys.addUkPropertyStartDate -> "2023-04-20")
+            .withFormUrlEncodedBody("add-uk-property-start-date.day" -> "20", "add-uk-property-start-date.month" -> "04",
+              "add-uk-property-start-date.year" -> "2023"))
         }
 
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.CheckUKPropertyBusinessStartDateController.show().url)
+        result.futureValue.session.get(addUkPropertyStartDate) shouldBe Some("2023-04-20")
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.CheckUKPropertyStartDateController.show().url)
       }
     }
     "return 400 BAD_REQUEST" when {
@@ -124,11 +128,12 @@ class AddUKPropertyBusinessStartDateControllerSpec extends TestSupport with Mock
           .thenReturn(Future.successful(HttpResponse(OK)))
 
         lazy val result: Future[Result] = {
-          TestAddUKPropertyBusinessStartDateController.submit()(fakeRequestWithActiveSession.withMethod("POST")
-            .withFormUrlEncodedBody("add-uk-property-business-start-date.day" -> "", "add-uk-property-business-start-date.month" -> "12",
-              "add-uk-property-business-start-date.year" -> "2022"))
+          TestAddUKPropertyStartDateController.submit()(fakeRequestWithActiveSession
+            .withFormUrlEncodedBody("add-uk-property-start-date.day" -> "", "add-uk-property-start-date.month" -> "",
+              "add-uk-property-start-date.year" -> ""))
         }
 
+        result.futureValue.session.get(addUkPropertyStartDate) shouldBe None
         status(result) shouldBe Status.BAD_REQUEST
       }
     }
@@ -137,52 +142,54 @@ class AddUKPropertyBusinessStartDateControllerSpec extends TestSupport with Mock
   "Agent - AddUKPropertyBusinessController.showAgent" should {
     "return 200 OK" when {
       "navigating to the page with FS Enabled" in {
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         enable(IncomeSources)
         mockSingleBusinessIncomeSource()
-        val result: Future[Result] = TestAddUKPropertyBusinessStartDateController.showAgent()(fakeRequestWithActiveSession)
+        val result: Future[Result] = TestAddUKPropertyStartDateController.showAgent()(fakeRequestConfirmedClient())
         val document: Document = Jsoup.parse(contentAsString(result))
 
         status(result) shouldBe Status.OK
-        document.title shouldBe TestAddUKPropertyBusinessStartDateController.titleAgent
-        document.select("h1:nth-child(1)").text shouldBe TestAddUKPropertyBusinessStartDateController.headingAgent
+        document.title shouldBe TestAddUKPropertyStartDateController.titleAgent
+        document.select("h1:nth-child(1)").text shouldBe TestAddUKPropertyStartDateController.headingAgent
       }
     }
     "return 303 SEE_OTHER and redirect to custom not found error page" when {
       "navigating to the page with FS Disabled" in {
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         disable(IncomeSources)
         mockSingleBusinessIncomeSource()
 
-        val result: Future[Result] = TestAddUKPropertyBusinessStartDateController.showAgent()(fakeRequestWithActiveSession)
-        val expectedContent: String = TestAddUKPropertyBusinessStartDateController.customNotFoundErrorView().toString()
+        val result: Future[Result] = TestAddUKPropertyStartDateController.showAgent()(fakeRequestConfirmedClient())
+        val expectedContent: String = TestAddUKPropertyStartDateController.customNotFoundErrorView().toString()
         status(result) shouldBe Status.OK
         contentAsString(result) shouldBe expectedContent
       }
       "called with an unauthenticated user" in {
         setupMockAgentAuthorisationException()
-        val result: Future[Result] = TestAddUKPropertyBusinessStartDateController.showAgent()(fakeRequestWithActiveSession)
+        val result: Future[Result] = TestAddUKPropertyStartDateController.showAgent()(fakeRequestConfirmedClient())
         status(result) shouldBe Status.SEE_OTHER
       }
     }
   }
 
-  "Agent - AddUKPropertyBusinessStartDateController.submitAgent" should {
-    s"return 303 SEE_OTHER and redirect to ${controllers.incomeSources.add.routes.CheckUKPropertyBusinessStartDateController.showAgent().url}" when {
+  "Agent - AddUKPropertyStartDateController.submitAgent" should {
+    s"return 303 SEE_OTHER and redirect to ${controllers.incomeSources.add.routes.CheckUKPropertyStartDateController.showAgent().url}" when {
       "form is completed successfully" in {
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         enable(IncomeSources)
         mockSingleBusinessIncomeSource()
 
         when(mockHttpClient.POSTForm[HttpResponse](any(), any(), any())(any(), any(), any()))
-          .thenReturn(Future.successful(HttpResponse(OK, "valid")))
+          .thenReturn(Future.successful(HttpResponse(OK)))
 
         lazy val result: Future[Result] = {
-          TestAddUKPropertyBusinessStartDateController.submitAgent()(fakeRequestConfirmedClient()
-            .withFormUrlEncodedBody("add-uk-property-business-start-date.day" -> "20", "add-uk-property-business-start-date.month" -> "04",
-              "add-uk-property-business-start-date.year" -> "2023"))
+          TestAddUKPropertyStartDateController.submitAgent()(fakeRequestConfirmedClient()
+            .withFormUrlEncodedBody("add-uk-property-start-date.day" -> "20", "add-uk-property-start-date.month" -> "04",
+              "add-uk-property-start-date.year" -> "2023"))
         }
 
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.CheckUKPropertyBusinessStartDateController.showAgent().url)
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.CheckUKPropertyStartDateController.showAgent().url)
       }
     }
     "return 400 BAD_REQUEST" when {
@@ -195,9 +202,9 @@ class AddUKPropertyBusinessStartDateControllerSpec extends TestSupport with Mock
           .thenReturn(Future.successful(HttpResponse(OK)))
 
         lazy val result: Future[Result] = {
-          TestAddUKPropertyBusinessStartDateController.submitAgent()(fakeRequestConfirmedClient().withMethod("POST")
-            .withFormUrlEncodedBody("add-uk-property-business-start-date.day" -> "", "add-uk-property-business-start-date.month" -> "12",
-              "add-uk-property-business-start-date.year" -> "2022"))
+          TestAddUKPropertyStartDateController.submitAgent()(fakeRequestConfirmedClient()
+            .withFormUrlEncodedBody("add-uk-property-start-date.day" -> "", "add-uk-property-start-date.month" -> "12",
+              "add-uk-property-start-date.year" -> "2022"))
         }
 
         status(result) shouldBe Status.BAD_REQUEST
