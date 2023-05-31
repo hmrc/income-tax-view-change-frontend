@@ -62,8 +62,8 @@ class AddBusinessStartDateCheckController @Inject()(authenticate: Authentication
   lazy val addBusinessTradeUrl: String = routes.AddBusinessTradeController.show().url
   lazy val addBusinessTradeAgentUrl: String = routes.AddBusinessTradeController.showAgent().url
 
-  lazy val homePageUrl: String = routes.HomeController.show().url
-  lazy val homePageAgentUrl: String = routes.HomeController.showAgent.url
+  lazy val homePageCall: Call = routes.HomeController.show()
+  lazy val homePageCallAgent: Call = routes.HomeController.showAgent
 
   def show(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
@@ -71,7 +71,7 @@ class AddBusinessStartDateCheckController @Inject()(authenticate: Authentication
       handleRequest(
         isAgent = false,
         backUrl = backUrl,
-        homePageUrl = homePageUrl,
+        homePageCall = homePageCall,
         postAction = postAction,
         itvcErrorHandler = itvcErrorHandler
       )
@@ -85,7 +85,7 @@ class AddBusinessStartDateCheckController @Inject()(authenticate: Authentication
             handleRequest(
               isAgent = true,
               backUrl = backUrlAgent,
-              homePageUrl = homePageAgentUrl,
+              homePageCall = homePageCallAgent,
               postAction = postActionAgent,
               itvcErrorHandler = itvcErrorHandlerAgent
             )
@@ -121,15 +121,13 @@ class AddBusinessStartDateCheckController @Inject()(authenticate: Authentication
 
   def handleRequest(isAgent: Boolean,
                     backUrl: String,
-                    homePageUrl: String,
+                    homePageCall: Call,
                     postAction: Call,
                     itvcErrorHandler: ShowInternalServerError)
                    (implicit request: Request[_], mtdItUser: MtdItUser[_]): Future[Result] = {
-    println(s"\n[backUrl CHECK PAGE]: $backUrl\n")
-
     Future.successful(
       if (isDisabled(IncomeSources)) {
-        Redirect(homePageUrl)
+        Redirect(homePageCall)
       } else {
         request.session.get(businessStartDate) match {
           case Some(date) =>
@@ -175,7 +173,7 @@ class AddBusinessStartDateCheckController @Inject()(authenticate: Authentication
               case selection if selection.contains(responseYes) =>
                 Redirect(nextPageUrl)
               case _ =>
-                NotAcceptable(addBusinessStartDateCheck(
+                BadRequest(addBusinessStartDateCheck(
                   form = BusinessStartDateCheckForm.form.fill(formData),
                   postAction = postAction,
                   backUrl = backUrl,

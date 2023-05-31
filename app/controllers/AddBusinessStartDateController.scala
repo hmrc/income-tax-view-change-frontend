@@ -58,6 +58,9 @@ class AddBusinessStartDateController @Inject()(authenticate: AuthenticationPredi
   lazy val postAction: Call = routes.AddBusinessStartDateController.submit()
   lazy val postActionAgent: Call = routes.AddBusinessStartDateController.submitAgent()
 
+  lazy val homePageCall: Call = routes.HomeController.show()
+  lazy val homePageCallAgent: Call = routes.HomeController.showAgent
+
   def show: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
@@ -65,6 +68,7 @@ class AddBusinessStartDateController @Inject()(authenticate: AuthenticationPredi
         isAgent = false,
         backUrl = backUrl,
         postAction = postAction,
+        homePageCall = homePageCall,
         itvcErrorHandler = itvcErrorHandler
       )
   }
@@ -78,6 +82,7 @@ class AddBusinessStartDateController @Inject()(authenticate: AuthenticationPredi
               isAgent = true,
               backUrl = backUrlAgent,
               postAction = postActionAgent,
+              homePageCall = homePageCallAgent,
               itvcErrorHandler = itvcErrorHandlerAgent
             )
         }
@@ -86,11 +91,12 @@ class AddBusinessStartDateController @Inject()(authenticate: AuthenticationPredi
   def handleRequest(isAgent: Boolean,
                     backUrl: String,
                     postAction: Call,
+                    homePageCall: Call,
                     itvcErrorHandler: ShowInternalServerError)
                    (implicit user: MtdItUser[_]): Future[Result] = {
     Future.successful(
       if (isDisabled(IncomeSources)) {
-        Redirect(controllers.routes.HomeController.show())
+        Redirect(homePageCall)
       } else {
         Ok(addBusinessStartDate(
           form = BusinessStartDateForm(),
@@ -121,7 +127,6 @@ class AddBusinessStartDateController @Inject()(authenticate: AuthenticationPredi
             )),
           formData =>
             Redirect(routes.AddBusinessStartDateCheckController.show())
-              .withHeaders(SessionKeys.businessStartDate -> formData.date.toString)
               .addingToSession(SessionKeys.businessStartDate -> formData.date.toString)
         )
       )
