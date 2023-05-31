@@ -46,12 +46,16 @@ class AddIncomeSourceController @Inject()(val addIncomeSources: AddIncomeSources
                                           val appConfig: FrontendAppConfig) extends ClientConfirmedController
   with FeatureSwitching {
 
+  lazy val homePageCall: Call = controllers.routes.HomeController.show()
+  lazy val homePageCallAgent: Call = controllers.routes.HomeController.showAgent
+
   def show(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
       handleRequest(
-        sources = user.incomeSources,
         isAgent = false,
+        homePageCall = homePageCall,
+        sources = user.incomeSources,
         backUrl = controllers.routes.HomeController.show().url
       )
   }
@@ -62,38 +66,40 @@ class AddIncomeSourceController @Inject()(val addIncomeSources: AddIncomeSources
         getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
           implicit mtdItUser =>
             handleRequest(
-              sources = mtdItUser.incomeSources,
               isAgent = true,
+              homePageCall = homePageCallAgent,
+              sources = mtdItUser.incomeSources,
               backUrl = controllers.routes.HomeController.showAgent.url
             )
         }
   }
 
-  def handleRequest(sources: IncomeSourceDetailsModel, isAgent: Boolean, backUrl: String)
+  def handleRequest(sources: IncomeSourceDetailsModel,
+                    homePageCall: Call,
+                    isAgent: Boolean,
+                    backUrl: String)
                    (implicit user: MtdItUser[_]): Future[Result] = {
-    Future.successful(
-      if (isDisabled(IncomeSources)) {
-        Redirect(controllers.routes.HomeController.show())
-      } else {
-        incomeSourceDetailsService.getAddIncomeSourceViewModel(sources) match {
-          case Right(viewModel) =>
-            Ok(addIncomeSources(
-              viewModel,
-              isAgent = isAgent,
-              backUrl = backUrl
-            ))
-          case Left(ex) =>
-            if (isAgent) {
-              Logger("application").error(
-                s"[Agent][AddIncomeSourceController][handleRequest] - Error: ${ex.getMessage}")
-              itvcErrorHandlerAgent.showInternalServerError()
-            } else {
-              Logger("application").error(
-                s"[AddIncomeSourceController][handleRequest] - Error: ${ex.getMessage}")
-              itvcErrorHandler.showInternalServerError()
-            }
-        }
+    if (isDisabled(IncomeSources)) {
+      Future(Redirect(homePageCall))
+    } else {
+      incomeSourceDetailsService.getAddIncomeSourceViewModel(sources) match {
+        case Right(viewModel) =>
+          Future(Ok(addIncomeSources(
+            sources = viewModel,
+            isAgent = isAgent,
+            backUrl = backUrl
+          )))
+        case Left(ex) =>
+          if (isAgent) {
+            Logger("application").error(
+              s"[Agent][AddIncomeSourceController][handleRequest] - Error: ${ex.getMessage}")
+            Future(itvcErrorHandlerAgent.showInternalServerError())
+          } else {
+            Logger("application").error(
+              s"[AddIncomeSourceController][handleRequest] - Error: ${ex.getMessage}")
+            Future(itvcErrorHandler.showInternalServerError())
+          }
       }
-    )
+    }
   }
 }

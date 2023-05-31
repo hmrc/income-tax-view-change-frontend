@@ -119,25 +119,23 @@ class AddBusinessStartDateCheckController @Inject()(authenticate: Authentication
                     homePageCall: Call,
                     itvcErrorHandler: ShowInternalServerError)
                    (implicit request: Request[_], mtdItUser: MtdItUser[_]): Future[Result] = {
-    Future.successful(
-      if (isDisabled(IncomeSources)) {
-        Redirect(homePageCall)
-      } else {
-        request.session.get(businessStartDate) match {
-          case Some(date) =>
-            Ok(addBusinessStartDateCheck(
-              form = BusinessNameForm.form,
-              backUrl = backUrl,
-              isAgent = isAgent,
-              businessStartDate = longDate(date.toLocalDate).toLongDate
-            ))
-          case _ =>
-            Logger("application").error(s"${if (isAgent) "[Agent]" else ""}" +
-              "[AddBusinessStartDateCheckController][handleRequest]: failed to get businessStartDate from session")
-            itvcErrorHandler.showInternalServerError()
-        }
+    if (isDisabled(IncomeSources)) {
+      Future(Redirect(homePageCall))
+    } else {
+      request.session.get(businessStartDate) match {
+        case Some(date) =>
+          Future(Ok(addBusinessStartDateCheck(
+            form = BusinessNameForm.form,
+            backUrl = backUrl,
+            isAgent = isAgent,
+            businessStartDate = longDate(date.toLocalDate).toLongDate
+          )))
+        case _ =>
+          Logger("application").error(s"${if (isAgent) "[Agent]" else ""}" +
+            "[AddBusinessStartDateCheckController][handleRequest]: failed to get businessStartDate from session")
+          Future(itvcErrorHandler.showInternalServerError())
       }
-    )
+    }
   }
 
   def handleSubmitRequest(date: String,
@@ -146,27 +144,25 @@ class AddBusinessStartDateCheckController @Inject()(authenticate: Authentication
                           nextPageUrl: String,
                           itvcErrorHandler: ShowInternalServerError)
                          (implicit mtdItUser: MtdItUser[_]): Future[Result] = {
-    Future.successful(
-      BusinessStartDateCheckForm.form.bindFromRequest().fold(
-        formWithErrors =>
-          BadRequest(addBusinessStartDateCheck(
-            form = formWithErrors,
-            backUrl = backUrl,
-            isAgent = isAgent,
-            businessStartDate = date
-          )),
-        _.toFormMap(response).headOption match {
-          case selection if selection.contains(responseNo) =>
-            Redirect(backUrl)
-              .removingFromSession(businessStartDate)
-          case selection if selection.contains(responseYes) =>
-            Redirect(nextPageUrl)
-          case e =>
-            Logger("application").error(s"${if (isAgent) "[Agent]" else ""}" +
-              s"[AddBusinessStartDateCheckController][handleSubmitRequest]: invalid form submission: $e")
-            itvcErrorHandler.showInternalServerError()
-        }
-      )
+    BusinessStartDateCheckForm.form.bindFromRequest().fold(
+      formWithErrors =>
+        Future(BadRequest(addBusinessStartDateCheck(
+          form = formWithErrors,
+          backUrl = backUrl,
+          isAgent = isAgent,
+          businessStartDate = date
+        ))),
+      _.toFormMap(response).headOption match {
+        case selection if selection.contains(responseNo) =>
+          Future(Redirect(backUrl)
+            .removingFromSession(businessStartDate))
+        case selection if selection.contains(responseYes) =>
+          Future(Redirect(nextPageUrl))
+        case e =>
+          Logger("application").error(s"${if (isAgent) "[Agent]" else ""}" +
+            s"[AddBusinessStartDateCheckController][handleSubmitRequest]: invalid form submission: $e")
+          Future(itvcErrorHandler.showInternalServerError())
+      }
     )
   }
 }
