@@ -86,7 +86,7 @@
                     <td class="govuk-table__cell" id="@{s"table-row-trading-start-date-$index"}">@item.tradingStartDate.toLongDate</td>
                     <td class="govuk-table__cell">
                         <a class="govuk-link govuk-summary-list__actions" id="@{s"cease-link-business-$index"}" href=@ceaseSoleTraderBusinessURL>
-                            @getMessage("cease")<span class="govuk-visually-hidden">cease</span>
+                            @getMessage("cease")
                         </a>
                     </td>
                 </tr>
@@ -115,7 +115,7 @@
                     <td class="govuk-table__cell" id="table-row-trading-start-date-uk">@sources.ukProperty.map(_.tradingStartDate.toLongDate).get</td>
                     <td class="govuk-table__cell">
                         <a class="govuk-link govuk-summary-list__actions" id="cease-link-uk" href=@ceaseUkPropertyURL>
-                            @getMessage("cease")<span class="govuk-visually-hidden">cease</span>
+                            @getMessage("cease")
                         </a>
                     </td>
                 </tr>
@@ -143,7 +143,7 @@
                     <td class="govuk-table__cell" id="table-row-trading-start-date-foreign">@sources.foreignProperty.map(_.tradingStartDate.toLongDate).get</td>
                     <td class="govuk-table__cell">
                         <a class="govuk-link govuk-summary-list__actions" id="cease-link-foreign" href=@ceaseForeignPropertyURL>
-                            @getMessage("cease")<span class="govuk-visually-hidden">cease</span>
+                            @getMessage("cease")
                         </a>
                     </td>
                 </tr>
