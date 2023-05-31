@@ -19,20 +19,17 @@ package generators
 import forms.incomeSources.add.BusinessTradeForm
 import org.scalacheck.Gen
 
+import java.time.LocalDate
+import scala.util.{Random, Try}
+
 object IncomeSourceGens {
 
   private val businessNamePermittedCharacters = (('a' to 'z') ++ ('A' to 'Z') ++ ('0' to '9')) ++ Seq(' ', ',', '.', '&', '\'')
 
-
-  //"^[A-Za-z0-9 ,.&'\\\\/-]+$".r
   private val businessTradePermittedCharacters = (('a' to 'z') ++ ('A' to 'Z') ++ ('0' to '9')) ++ Seq(' ', ',', '.', '&', '\'', '-')
   val alphabet = ('a' to 'z') ++ ('A' to 'Z')
 
-  def containsTimes(s: List[Char], times: Int): Boolean = {
-    val x = s.foldLeft(0) { (acc, char) => if (alphabet.contains(char)) acc + 1 else acc }
-    println(s"Times: $x")
-    x >= times
-  }
+  case class Day(day: String, month: String, year: String)
 
   val businessNameGenerator: Gen[List[Char]] = Gen.listOf( Gen.oneOf(businessNamePermittedCharacters))
 
@@ -41,12 +38,22 @@ object IncomeSourceGens {
       body <- Gen.listOf(Gen.oneOf(businessTradePermittedCharacters))
       twoChars <- Gen.listOfN(2, Gen.oneOf(alphabet))
     } yield {
-      val candidate = twoChars ++ body
+      val candidate = Random.shuffle(twoChars ++ body)
       if (candidate.length > BusinessTradeForm.maxLength)
         candidate.take(BusinessTradeForm.maxLength)
       else
         candidate
     }
+  }
+
+  val dateGenerator = (currentDate: LocalDate)  => {
+    for {
+      day <- Gen.oneOf(1 to 5)
+      month <- Gen.oneOf(1 to 12)
+      year <- Gen.oneOf(1965 to 2075)
+      if Try{ LocalDate.of(year, month, day) }.toOption.isDefined
+      if LocalDate.of(year, month, day).toEpochDay < currentDate.toEpochDay
+    } yield Day(day.toString, month.toString, year.toString)
   }
 
 }

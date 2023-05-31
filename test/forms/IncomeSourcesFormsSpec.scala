@@ -17,11 +17,29 @@
 package forms
 
 import forms.incomeSources.add.BusinessTradeForm
-import generators.IncomeSourceGens.{businessNameGenerator, businessTradeGenerator}
+import forms.incomeSources.cease.UKPropertyEndDateForm
+import generators.IncomeSourceGens.{Day, businessNameGenerator, businessTradeGenerator, dateGenerator}
 import org.scalacheck.Prop.{forAll, propBoolean}
 import org.scalacheck.Properties
+import services.DateServiceInterface
+import testUtils.TestSupport
 
-object IncomeSourcesFormsSpec  extends Properties("incomeSourcesForms.validation") {
+import java.time.LocalDate
+
+object IncomeSourcesFormsSpec  extends Properties("incomeSourcesForms.validation") with TestSupport {
+
+  private val currentDate: LocalDate = LocalDate.of(2075, 1, 1)
+
+  val testDateService = new DateServiceInterface {
+
+    override def getCurrentDate(isTimeMachineEnabled: Boolean): LocalDate = currentDate
+
+    override def getCurrentTaxYearEnd(isTimeMachineEnabled: Boolean): Int = currentDate.getYear
+
+    override def isDayBeforeTaxYearLastDay(isTimeMachineEnabled: Boolean): Boolean = false
+  }
+  val ukPropertyFormFactory = new UKPropertyEndDateForm(testDateService)
+  val ukPropertyForm = ukPropertyFormFactory(individualUser)
 
   val businessNameForm = (optValue: Option[String]) => BusinessNameForm.form.bind(
     optValue.fold[Map[String, String]](Map.empty)(value => Map(BusinessNameForm.bnf -> value))
@@ -31,7 +49,13 @@ object IncomeSourcesFormsSpec  extends Properties("incomeSourcesForms.validation
     optValue.fold[Map[String, String]](Map.empty)(value => Map("addBusinessTrade" -> value))
   )
 
-  property("businessName.validation") = forAll(businessNameGenerator) { (charsList: List[Char]) =>
+  val ukPropertyFormUnderTest = (date: Day) => ukPropertyForm.bind(
+    Map("uk-property-end-date.day" -> date.day,
+      "uk-property-end-date.month" -> date.month,
+      "uk-property-end-date.year" -> date.year)
+  )
+
+  property("businessName") = forAll(businessNameGenerator) { (charsList: List[Char]) =>
     (charsList.length > 0 && charsList.length <= BusinessNameForm.businessNameLength) ==> {
       val businessName = charsList.mkString("")
       //println(s"Generate business name: ${businessName}")
@@ -39,12 +63,17 @@ object IncomeSourcesFormsSpec  extends Properties("incomeSourcesForms.validation
     }
   }
 
-  property("businessTrade.validation") = forAll(businessTradeGenerator) { (charsList: List[Char]) =>
+  property("businessTrade") = forAll(businessTradeGenerator) { (charsList: List[Char]) =>
     val businessTrade = charsList.mkString("").trim
     (businessTrade.length > 2) ==> {
       //println(s"Generate business trade: ${businessTrade}")
       businessTradeForm(Some(businessTrade)).errors.isEmpty
     }
+  }
+
+  property("ukPropertyEndDateForm") = forAll(dateGenerator(currentDate)) { date =>
+    //println(s"Generate ukPropertyForm: ${date}")
+    ukPropertyFormUnderTest( date ).errors.isEmpty
   }
 
 }
