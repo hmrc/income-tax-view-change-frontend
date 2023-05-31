@@ -57,18 +57,18 @@
     isAgent = isAgent,
     btaNavPartial = user.btaNavPartial) {
 
-    @formWithCSRF(action = postAction, Symbol("id") -> s"$prefix-form") {
 
-        @h1(getMessage("heading"))
+    @formWithCSRF(action = postAction, Symbol("id") -> s"$prefix-form") {
 
         @errorSummary(form)
 
         @govukRadios(Radios(
             fieldset = Some(Fieldset(
                 legend = Some(Legend(
-                    content = Text(businessStartDate))
+                    content = Text(getMessage("heading")),
+                    classes = "govuk-fieldset__legend--l"
                 ))
-            ),
+            )),
             items = Seq(
                 RadioItem(
                     id = Some(s"$prefix-yes-response"),
@@ -80,7 +80,8 @@
                     value = Some("No"),
                     content = Text(getMessage("radio.no"))
                 )
-            )
+            ),
+            hint = Some(Hint(content = HtmlContent(businessStartDate)))
         ).withFormField(form(prefix)))
 
         @continueButton()
