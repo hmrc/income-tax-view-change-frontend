@@ -100,6 +100,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
   val titleClientRelationshipFailure: String = "agent.client_relationship_failure.heading"
 
   def config: Map[String, String] = Map(
+    "play.filters.csrf.header.bypassHeaders.Csrf-Token" -> "nocheck",
     "microservice.services.auth.host" -> mockHost,
     "microservice.services.auth.port" -> mockPort,
     "microservice.services.income-tax-view-change.host" -> mockHost,
@@ -188,11 +189,11 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     def get(uri: String): WSResponse = buildClient(uri)
       .get().futureValue
 
-    def post(uri: String)(body: Map[String, Seq[String]]): WSResponse = {
+    def post(uri: String, additionalCookies: Map[String, String] = Map.empty)(body: Map[String, Seq[String]]): WSResponse = {
       When(s"I call POST /report-quarterly/income-and-expenses/view" + uri)
       buildClient(uri)
+        .withHttpHeaders(HeaderNames.COOKIE -> bakeSessionCookie(additionalCookies ),"Csrf-Token" -> "nocheck")
         .withFollowRedirects(false)
-        .withHttpHeaders("Csrf-Token" -> "nocheck")
         .post(body).futureValue
     }
 
@@ -267,6 +268,12 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
       )
     )
 
+
+    def getCheckCeaseUKPropertyDetails(session: Map[String, String]): WSResponse =
+      getWithClientDetailsInSession("/income-sources/cease/uk-property-check-details", session)
+
+    def postCheckCeaseUKPropertyDetails(session: Map[String, String]): WSResponse =
+      post("/income-sources/cease/uk-property-check-details", session)(Map.empty)
   }
 
   def unauthorisedTest(uri: String): Unit = {

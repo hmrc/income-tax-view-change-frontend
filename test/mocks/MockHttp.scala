@@ -48,6 +48,13 @@ trait MockHttp extends UnitSpec with BeforeAndAfterEach {
     when(mockHttpGet.GET[HttpResponse](matches(url), ArgumentMatchers.any(), ArgumentMatchers.any())
       (ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any())).thenReturn(Future.successful(response))
 
+  def setupMockHttpPutWithHeaderCarrier[R](url: String, headers: Seq[(String, String)] = Seq())(body: R, response: HttpResponse): Unit =
+    when(mockHttpGet.PUT[R, HttpResponse](ArgumentMatchers.eq(url), ArgumentMatchers.eq(body), ArgumentMatchers.eq(headers))
+      (ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any())).thenReturn(Future.successful(response))
+  def setupMockHttpPutFailed[R](url: String, headers: Seq[(String, String)] = Seq())(body: R): Unit =
+    when(mockHttpGet.PUT[R, HttpResponse](ArgumentMatchers.eq(url), ArgumentMatchers.eq(body), ArgumentMatchers.eq(headers))
+      (ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any())).thenReturn(Future.failed(new Exception("error")))
+
   def setupAgentMockHttpGet(url: Option[String] = None)(status: Int, response: JsValue): Unit = {
     lazy val urlMatcher = url.fold(ArgumentMatchers.any[String]())(x => matches(x))
     when(mockHttpGet.GET[HttpResponse](urlMatcher)
