@@ -120,7 +120,7 @@ class AddBusinessStartDateCheckController @Inject()(authenticate: Authentication
                     itvcErrorHandler: ShowInternalServerError)
                    (implicit request: Request[_], mtdItUser: MtdItUser[_]): Future[Result] = {
     if (isDisabled(IncomeSources)) {
-      Future(Redirect(homePageCall))
+      Future.successful(Redirect(homePageCall))
     } else {
       request.session.get(businessStartDate) match {
         case Some(date) =>
@@ -154,10 +154,12 @@ class AddBusinessStartDateCheckController @Inject()(authenticate: Authentication
         ))),
       _.toFormMap(response).headOption match {
         case selection if selection.contains(responseNo) =>
-          Future(Redirect(backUrl)
-            .removingFromSession(businessStartDate))
+          Future.successful(
+            Redirect(backUrl)
+              .removingFromSession(businessStartDate)
+          )
         case selection if selection.contains(responseYes) =>
-          Future(Redirect(nextPageUrl))
+          Future.successful(Redirect(nextPageUrl))
         case e =>
           Logger("application").error(s"${if (isAgent) "[Agent]" else ""}" +
             s"[AddBusinessStartDateCheckController][handleSubmitRequest]: invalid form submission: $e")

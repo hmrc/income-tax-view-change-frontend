@@ -80,7 +80,7 @@ class AddIncomeSourceController @Inject()(val addIncomeSources: AddIncomeSources
                     backUrl: String)
                    (implicit user: MtdItUser[_]): Future[Result] = {
     if (isDisabled(IncomeSources)) {
-      Future(Redirect(homePageCall))
+      Future.successful(Redirect(homePageCall))
     } else {
       incomeSourceDetailsService.getAddIncomeSourceViewModel(sources) match {
         case Right(viewModel) =>

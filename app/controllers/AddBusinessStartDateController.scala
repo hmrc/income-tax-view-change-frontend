@@ -95,7 +95,7 @@ class AddBusinessStartDateController @Inject()(authenticate: AuthenticationPredi
                     itvcErrorHandler: ShowInternalServerError)
                    (implicit user: MtdItUser[_]): Future[Result] = {
       if (isDisabled(IncomeSources)) {
-        Future(Redirect(homePageCall))
+        Future.successful(Redirect(homePageCall))
       } else {
         Future(Ok(addBusinessStartDate(
           form = BusinessStartDateForm(),
@@ -123,8 +123,10 @@ class AddBusinessStartDateController @Inject()(authenticate: AuthenticationPredi
             isAgent = false
           ))),
         formData =>
-          Future(Redirect(routes.AddBusinessStartDateCheckController.show())
-            .addingToSession(SessionKeys.businessStartDate -> formData.date.toString))
+          Future.successful(
+            Redirect(routes.AddBusinessStartDateCheckController.show())
+              .addingToSession(SessionKeys.businessStartDate -> formData.date.toString)
+          )
       )
   }
 
@@ -142,8 +144,10 @@ class AddBusinessStartDateController @Inject()(authenticate: AuthenticationPredi
                   isAgent = true
                 ))),
               formData =>
-                Future(Redirect(routes.AddBusinessStartDateCheckController.showAgent())
-                  .addingToSession(SessionKeys.businessStartDate -> formData.date.toString))
+                Future.successful(
+                  Redirect(routes.AddBusinessStartDateCheckController.showAgent())
+                    .addingToSession(SessionKeys.businessStartDate -> formData.date.toString)
+                )
             )
         }
   }
