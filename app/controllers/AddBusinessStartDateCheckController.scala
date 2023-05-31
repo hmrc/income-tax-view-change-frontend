@@ -125,6 +125,8 @@ class AddBusinessStartDateCheckController @Inject()(authenticate: Authentication
                     postAction: Call,
                     itvcErrorHandler: ShowInternalServerError)
                    (implicit request: Request[_], mtdItUser: MtdItUser[_]): Future[Result] = {
+    println(s"\n[backUrl CHECK PAGE]: $backUrl\n")
+
     Future.successful(
       if (isDisabled(IncomeSources)) {
         Redirect(homePageUrl)
@@ -153,8 +155,9 @@ class AddBusinessStartDateCheckController @Inject()(authenticate: Authentication
                           nextPageUrl: String,
                           itvcErrorHandler: ShowInternalServerError)
                          (implicit request: Request[_], mtdItUser: MtdItUser[_]): Future[Result] = {
+
     Future.successful(
-      request.headers.get(businessStartDate) match {
+      request.session.get(businessStartDate) match {
         case Some(date) =>
           BusinessStartDateCheckForm.form.bindFromRequest().fold(
             formWithErrors =>
@@ -168,7 +171,6 @@ class AddBusinessStartDateCheckController @Inject()(authenticate: Authentication
             formData => formData.toFormMap(response).headOption match {
               case selection if selection.contains(responseNo) =>
                 Redirect(backUrl)
-                  .discardingHeader(businessStartDate)
                   .removingFromSession(businessStartDate)
               case selection if selection.contains(responseYes) =>
                 Redirect(nextPageUrl)
