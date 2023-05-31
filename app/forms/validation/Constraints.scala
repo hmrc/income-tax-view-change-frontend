@@ -60,6 +60,18 @@ trait Constraints {
     case _ => Valid
   }
 
+  protected def nonEmptyDateFieldCheck(errKeys: Map[String, String], args: Seq[String] = Seq()): Constraint[(String, String, String)] = Constraint {
+    case ("", "", "") => Invalid(errKeys("noFields"), args: _*)
+    case (_, _, "") | ("", _, _) | (_, "", _) => Invalid(errKey, args: _*)
+    case (_, _, "") | ("", _, _) | (_, "", _) => Invalid(errKey, args: _*)
+    case (_, _, "") | ("", _, _) | (_, "", _) => Invalid(errKey, args: _*)
+    case (_, _, "") | ("", _, _) | (_, "", _) => Invalid(errKey, args: _*)
+    case (_, _, "") | ("", _, _) | (_, "", _) => Invalid(errKey, args: _*)
+    case (_, _, "") | ("", _, _) | (_, "", _) => Invalid(errKey, args: _*)
+
+    case _ => Valid
+  }
+
   protected def maxDate(maximum: LocalDate, errorKey: String, args: Any*): Constraint[LocalDate] =
     Constraint {
       case date if date.isAfter(maximum) =>
@@ -69,6 +81,14 @@ trait Constraints {
     }
 
   protected def minDate(minimum: LocalDate, errorKey: String, args: Any*): Constraint[LocalDate] =
+    Constraint {
+      case date if date.isBefore(minimum) =>
+        Invalid(errorKey, args: _*)
+      case _ =>
+        Valid
+    }
+
+  protected def minDate6April2015(minimum: LocalDate, errorKey: String, args: Any*): Constraint[LocalDate] =
     Constraint {
       case date if date.isBefore(minimum) =>
         Invalid(errorKey, args: _*)

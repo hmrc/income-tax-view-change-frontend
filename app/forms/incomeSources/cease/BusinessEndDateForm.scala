@@ -28,34 +28,54 @@ import javax.inject.Inject
 
 class BusinessEndDateForm @Inject()(val dateService: DateService) extends Constraints {
 
-  val dateMustBeEntered = "incomeSources.cease.UKPropertyEndDate.error.incomplete"
-  val dateMustBeReal = "incomeSources.cease.UKPropertyEndDate.error.invalid"
-  val dateMustNotBeInTheFuture = "incomeSources.cease.UKPropertyEndDate.error.future"
-  val dateMustBeAfterStartDate = "incomeSources.cease.UKPropertyEndDate.error.beforeStartDate"
+  val dateMustBeComplete = "incomeSources.cease.BusinessEndDate.error.incomplete.all"
+  val dateMustNotBeMissingDayField = "incomeSources.cease.BusinessEndDate.error.incomplete.day"
+  val dateMustNotBeMissingMonthField = "incomeSources.cease.BusinessEndDate.error.incomplete.month"
+  val dateMustNotBeMissingYearField = "incomeSources.cease.BusinessEndDate.error.incomplete.year"
+  val dateMustNotBeMissingDayAndMonthField = "incomeSources.cease.BusinessEndDate.error.incomplete.day.and.month"
+  val dateMustNotBeMissingDayAndYearField = "incomeSources.cease.BusinessEndDate.error.incomplete.day.and.year"
+  val dateMustNotBeMissingMonthAndYearField = "incomeSources.cease.BusinessEndDate.error.incomplete.month.and.year"
+  val dateMustNotBeInvalid = "incomeSources.cease.BusinessEndDate.error.invalid"
+  val dateMustNotBeInTheFuture = "incomeSources.cease.BusinessEndDate.error.future"
+  val dateMustBeAfterBusinessStartDate = "incomeSources.cease.BusinessEndDate.error.beforeStartDate"
+  val dateMustNotBeBefore6April2015 = "incomeSources.cease.BusinessEndDate.error.beforeEarliestDate"
+  val sixthAprilTwentyFifteen: LocalDate = LocalDate.of(2015, 4, 6)
 
+
+  val missingFieldMessageSequence: Map[String, String] = Map(
+    "noFields" -> dateMustBeComplete,
+    "noDay" -> dateMustNotBeMissingDayField,
+    "noMonth" -> dateMustNotBeMissingMonthField,
+    "noYear" -> dateMustNotBeMissingYearField,
+    "noDayOrMonth" -> dateMustNotBeMissingDayAndMonthField,
+    "noDayOrYear" -> dateMustNotBeMissingDayAndYearField,
+    "noMonthOrYear" -> dateMustNotBeMissingDayField,
+    "noDay" -> dateMustNotBeMissingMonthAndYearField,
+  )
 
   def apply(implicit user: MtdItUser[_]): Form[DateFormElement] = {
     val currentDate: LocalDate = dateService.getCurrentDate()
-    val UKPropertyStartDate: Option[LocalDate] = user.incomeSources.properties.filter(_.isUkProperty).flatMap(_.tradingStartDate).headOption
+    val businessStartDate: Option[LocalDate] = ???
 
     Form(
-      mapping("uk-property-end-date" -> tuple(
+      mapping("business-end-date" -> tuple(
         "day" -> default(text(), ""),
         "month" -> default(text(), ""),
         "year" -> default(text(), ""))
-        .verifying(firstError(nonEmptyDate(dateMustBeEntered),
-          validDate(dateMustBeReal))
+        .verifying(firstError(nonEmptyDateFieldCheck(missingFieldMessageSequence),
+          validDate(dateMustNotBeInvalid))
         ).transform[LocalDate](
         { case (day, month, year) => LocalDate.of(year.toInt, month.toInt, day.toInt) },
         date => (date.getDayOfMonth.toString, date.getMonthValue.toString, date.getYear.toString)
-      ).verifying(minDate(UKPropertyStartDate.getOrElse(LocalDate.MIN), dateMustBeAfterStartDate))
+      ).verifying(minDate(businessStartDate.getOrElse(LocalDate.MIN), dateMustBeAfterBusinessStartDate))
         .verifying(maxDate(currentDate, dateMustNotBeInTheFuture))
+        .verifying(minDate6April2015(businessStartDate.getOrElse(LocalDate.MIN), dateMustNotBeBefore6April2015))
       )(DateFormElement.apply)(DateFormElement.unapply))
   }
 
-  object UKPropertyEndDateForm {
+  object BusinessEndDateForm {
     def apply(dateService: DateService)(implicit user: MtdItUser[_]): Form[DateFormElement] = {
-      new UKPropertyEndDateForm(dateService).apply
+      new BusinessEndDateForm(dateService).apply
     }
   }
 }

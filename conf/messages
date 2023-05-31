@@ -1199,7 +1199,6 @@ notmigrated.agent.content_extra                                 = This will be a
 notmigrated.user.link_title                                     = Self Assessment online account
 notmigrated.agent.link_title                                    = Self Assessment for Agents Account
 
-
 incomeSources.ceaseUKProperty.heading                            = Cease UK property
 incomeSources.ceaseUKProperty.radioLabel                         = I declare that I no longer get an income from any property in the UK.
 incomeSources.ceaseUKProperty.radioError                         = You must declare that you no longer get an income from any property in the UK
@@ -1213,3 +1212,22 @@ incomeSources.cease.UKPropertyEndDate.error.beforeStartDate      = The cessation
 incomeSources.ceaseForeignProperty.heading                       = Cease foreign property
 incomeSources.ceaseForeignProperty.checkboxLabel                 = I declare that I no longer get an income from any foreign property.
 incomeSources.ceaseForeignProperty.checkboxError                 = You must declare that you no longer get an income from any foreign property
+
+incomeSources.cease.BusinessEndDate.heading                               = Date your self-employed business stopped
+incomeSources.cease.BusinessEndDate.error.incomplete.all                  = The date must include a day, a month and a year
+incomeSources.cease.BusinessEndDate.error.incomplete.day                  = The date must include a day
+incomeSources.cease.BusinessEndDate.error.incomplete.month                = The date must include a month
+incomeSources.cease.BusinessEndDate.error.incomplete.year                 = The date must include a year
+incomeSources.cease.BusinessEndDate.error.incomplete.day.and.month        = The date must include a day and a month
+incomeSources.cease.BusinessEndDate.error.incomplete.day.and.year         = The date must include a day and a year
+incomeSources.cease.BusinessEndDate.error.incomplete.month.and.year       = The date must include a month and a year
+incomeSources.cease.BusinessEndDate.error.invalid                         = The date your self-employed business stopped trading must be a real date
+incomeSources.cease.BusinessEndDate.error.future                          = You cannot provide a cessation date that is beyond the current day or a date in the future
+incomeSources.cease.BusinessEndDate.error.beforeStartDate                 = The cessation date cannot be earlier than the start date for the business
+incomeSources.cease.BusinessEndDate.error.beforeEarliestDate              = The cessation date cannot be earlier than the 6th of April 2015
+
+
+
+
+
+
