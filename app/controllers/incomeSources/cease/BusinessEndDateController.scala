@@ -21,10 +21,12 @@ import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
+import forms.incomeSources.cease.BusinessEndDateForm
 import play.api.i18n.I18nSupport
+import play.api.i18n.Messages.implicitMessagesProviderToMessages
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.IncomeSourceDetailsService
-import views.html.incomeSources.cease.CeaseUKProperty
+import views.html.incomeSources.cease.BusinessEndDate
 import views.html.errorPages.CustomNotFoundError
 
 import javax.inject.Inject
@@ -33,12 +35,12 @@ import scala.concurrent.ExecutionContext
 class BusinessEndDateController @Inject()(val authenticate: AuthenticationPredicate,
                                           val authorisedFunctions: FrontendAuthorisedFunctions,
                                           val checkSessionTimeout: SessionTimeoutPredicate,
-                                          val UKPropertyEndDateForm: BusinessEndDateForm,
+                                          val businessEndDateForm: BusinessEndDateForm,
                                           val incomeSourceDetailsService: IncomeSourceDetailsService,
                                           val retrieveBtaNavBar: NavBarPredicate,
                                           val retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                           val retrieveNino: NinoPredicate,
-                                          val view: BusinessEndDate,
+                                          val businessEndDate: BusinessEndDate,
                                           val customNotFoundErrorView: CustomNotFoundError)
                                          (implicit val appConfig: FrontendAppConfig,
                                           mcc: MessagesControllerComponents,
@@ -48,7 +50,7 @@ class BusinessEndDateController @Inject()(val authenticate: AuthenticationPredic
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
   def show(origin: Option[String] = None): Action[AnyContent] = Action {
-    Ok("")
+    Ok(businessEndDate("data"))
   }
 
   def showAgent(): Action[AnyContent] = Action {
