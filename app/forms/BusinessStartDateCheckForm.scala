@@ -31,17 +31,14 @@ object BusinessStartDateCheckForm {
   val form: Form[BusinessStartDateCheckForm] = Form[BusinessStartDateCheckForm](
     mapping(
       response -> optional(text)
-        .verifying(radiosEmptyError, _.nonEmpty),
-      csrfToken -> text
+        .verifying(radiosEmptyError, _.nonEmpty)
     )(BusinessStartDateCheckForm.apply)(BusinessStartDateCheckForm.unapply)
   )
 }
 
-case class BusinessStartDateCheckForm(response: Option[String],
-                                      csrfToken: String) {
+case class BusinessStartDateCheckForm(response: Option[String]) {
 
   def toFormMap: Map[String, Seq[String]] = Map(
-    BusinessStartDateCheckForm.response -> Seq(response.getOrElse("N/A")),
-    BusinessStartDateCheckForm.csrfToken -> Seq(csrfToken)
+    BusinessStartDateCheckForm.response -> Seq(response.getOrElse("N/A"))
   )
 }

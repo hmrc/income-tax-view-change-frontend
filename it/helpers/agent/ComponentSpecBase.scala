@@ -273,7 +273,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
         additionalCookies = additionalCookies
       )(
         answer.fold(Map.empty[String, Seq[String]])(
-          selection => BusinessStartDateCheckForm.form.fill(BusinessStartDateCheckForm(Some(selection), "csrfToken")).data.map { case (k, v) => (k, Seq(v)) }
+          selection => BusinessStartDateCheckForm.form.fill(BusinessStartDateCheckForm(Some(selection))).data.map { case (k, v) => (k, Seq(v)) }
         )
       )
     }

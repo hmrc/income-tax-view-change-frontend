@@ -288,7 +288,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     def postAddBusinessStartDateCheck(answer: Option[String]): WSResponse = {
       post(s"/income-sources/add/business-start-date-check?date=1+November+2020")(
         answer.fold(Map.empty[String, Seq[String]])(
-          selection => BusinessStartDateCheckForm.form.fill(BusinessStartDateCheckForm(Some(selection), "csrfToken")).data.map {
+          selection => BusinessStartDateCheckForm.form.fill(BusinessStartDateCheckForm(Some(selection))).data.map {
             case (k, v) => (k, Seq(v))
           }
         )
