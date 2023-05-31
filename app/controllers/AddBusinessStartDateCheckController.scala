@@ -155,7 +155,7 @@ class AddBusinessStartDateCheckController @Inject()(authenticate: Authentication
             isAgent = isAgent,
             businessStartDate = date
           )),
-        formData => formData.toFormMap(response).headOption match {
+        _.toFormMap(response).headOption match {
           case selection if selection.contains(responseNo) =>
             Redirect(backUrl)
               .removingFromSession(businessStartDate)
