@@ -594,7 +594,7 @@ obligations.quarterly.to                                        = i
 obligations.eops                                                = Blwyddyn dreth gyfan (gwiriad olaf)
 obligations.noReports                                           = Nid oes unrhyw adroddiadau’n nesáu at eu dyddiad cau ar hyn o bryd. Bydd eich dyddiad cau nesaf yn dangos yma ar ddydd Llun cyntaf y mis nesaf.
 nextUpdates.quarterly                                           = Diweddariad bob chwarter
-nextUpdates.eops            									= Diweddariad blynyddol
+nextUpdates.eops            									= Datganiad diwedd cyfnod
 nextUpdates.crystallised            							= Datganiad terfynol
 nextUpdates.crystallisedAll            							= Pob ffynhonnell incwm
 nextUpdates.propertyIncome            							= Incwm o eiddo
@@ -663,7 +663,7 @@ obligations.quarterlyUpdates                                    = Diweddariadau 
 obligation.dropdown.quarterlyReturn.text.v2.lin2                = Gan ddefnyddio eich {0}, mae’n rhaid i chi gyflwyno 4 diweddariad chwarterol yn y flwyddyn ar gyfer pob ffynhonnell incwm.
 obligation.dropdown.quarterlyReturn.info.v2                     = Beth yw diweddariad chwarterol?
 obligation.dropdown.quarterlyReturn.text.v2                     = Mae diweddariad chwarterol yn nodi’r incwm a’r treuliau ar gyfer pob cyfnod 3 mis.
-obligations.annualUpdates                                       = Diweddariadau blynyddol
+obligations.annualUpdates                                       = Datganiad diwedd cyfnod
 obligation.dropdown.annualReturn.text.v2.lin2                   = Gan ddefnyddio eich {0}, mae’n rhaid i chi gyflwyno un diweddariad blynyddol ar gyfer pob ffynhonnell incwm ar ddiwedd y cyfnod cyfrifyddu.
 obligation.dropdown.annualUpdates.info.v2                       = Beth yw diweddariad blynyddol?
 obligation.dropdown.annualReturn.text.v2                        = Yn y diweddariad blynyddol, mae’n rhaid i chi ddatgan bod y 4 diweddariad chwarterol y gwnaethoch eu cyflwyno yn gywir, neu mae’n rhaid i chi gywiro unrhyw gamgymeriadau
@@ -680,9 +680,9 @@ nextUpdates.dropdown.info                                       = Beth yw’r ma
 nextUpdates.info                                       			= Mae’n rhaid i bob diweddariad gael ei anfon gan ddefnyddio ein meddalwedd cadw cofnodion erbyn pob dyddiad a ddangosir.
 nextUpdates.dropdown.quarterlyReturn.text                       = Diweddariad chwarterol yw cofnod o’ch holl incwm busnes mewn cyfnod 3 mis.
 nextUpdates.dropdown.quarterlyReturn.text.lin2                  = Gan ddefnyddio’ch meddalwedd cadw cofnodion, mae’n rhaid i chi anfon 4 diweddariad chwarterol yn y flwyddyn ar gyfer pob ffynhonnell incwm.
-nextUpdates.dropdown.annualReturn.text                          = Mewn diweddariad blynyddol, mae angen i chi ddatgan bod y 4 diweddariad chwarterol y gwnaethoch eu hanfon yn gywir. Gallwch hefyd newid unrhyw wallau blaenorol.
-nextUpdates.dropdown.annualReturn.text.lin2                     = Gan ddefnyddio’ch meddalwedd cadw cofnodion, mae’n rhaid i chi anfon un diweddariad blynyddol ar gyfer pob ffynhonnell incwm ar ddiwedd pob cyfnod cyfrifyddu.
-nextUpdates.dropdown.finalDeclaration.text                      = Mae’ch datganiad terfynol yn cadarnhau bod y diweddariadau blynyddol y gwnaethoch eu hanfon yn gywir a’ch bod wedi cyflwyno pob ffynhonnell incwm a phob ffynhonnell treuliau, hyd eithaf eich gwybodaeth. Caiff hyn ei wneud gan ddefnyddio’ch meddalwedd cadw cofnodion.
+nextUpdates.dropdown.annualReturn.text                          = Mewn Datganiad diwedd cyfnod, mae angen i chi ddatgan bod y 4 diweddariad chwarterol y gwnaethoch eu hanfon yn gywir. Gallwch hefyd newid unrhyw wallau blaenorol.
+nextUpdates.dropdown.annualReturn.text.lin2                     = Gan ddefnyddio’ch meddalwedd cadw cofnodion, mae’n rhaid i chi anfon un Datganiad diwedd cyfnod ar gyfer pob ffynhonnell incwm ar ddiwedd pob cyfnod cyfrifyddu.
+nextUpdates.dropdown.finalDeclaration.text                      = Mae’ch datganiad terfynol yn cadarnhau bod y Datganiad diwedd cyfnod y gwnaethoch ei hanfon yn gywir a’ch bod wedi cyflwyno pob ffynhonnell incwm a phob ffynhonnell treuliau, hyd eithaf eich gwybodaeth. Caiff hyn ei wneud gan ddefnyddio’ch meddalwedd cadw cofnodion.
 nextUpdates.table.header.type									= Math o ddiweddariad
 nextUpdates.table.header.source									= Ffynhonnell incwm
 nextUpdates.section.heading.updates								= Diweddariad ar gyfer: {0} i {1}
@@ -1021,7 +1021,7 @@ updateTab.obligationType.crystallised                           = Pob ffynhonnel
 updateTab.due                                                   = Yn ddyledus erbyn {0}
 updateTab.dateSubmitted                                         = Dyddiad cyflwyno
 updateTab.updateType.quarterly                                  = Diweddariad bob chwarter
-updateTab.updateType.eops                                       = Diweddariad blynyddol
+updateTab.updateType.eops                                       = Datganiad diwedd cyfnod
 updateTab.updateType.crystallised                               = Datganiad terfynol
 
 #Language Selector
@@ -1145,6 +1145,19 @@ new-income-sources.table-head.business-name = Enw’r busnes
 new-income-sources.table-head.date-started  = Dyddiad cychwyn
 new-income-sources.table-head.date-ended    = Y dyddiad dod i ben
 
+## cease income sources
+cease-income-sources.heading                  = Dod â ffynhonnell incwm i ben
+cease-income-sources.self-employment.h1       = Hunangyflogaeth (unig fasnachwr)
+cease-income-sources.table-head.business-name = Enw’r busnes
+cease-income-sources.table-head.date-started  = Dyddiad cychwyn
+cease-income-sources.cease                    = Dod i ben
+cease-income-sources.uk-property.h1           = Eiddo yn y DU
+cease-income-sources.uk-property.p1           = Dylech ond dod â’ch eiddo yn y DU i ben os nad ydych yn cael unrhyw incwm oddi wrtho mwyach.
+cease-income-sources.foreign-property.h1      = Eiddo tramor
+cease-income-sources.foreign-property.p1      = Dylech ond dod â’ch eiddo tramor i ben os nad ydych yn cael unrhyw incwm oddi wrtho mwyach.
+cease-income-sources.ceased-businesses.h1     = Busnesau sydd wedi dod i ben
+cease-income-sources.table-head.date-ended    = Y dyddiad dod i ben
+
 # add Business page
 add-business-name.heading                                         = Beth yw enw’ch busnes?
 add-business-name.p1                                              = Dyma enw’r busnes a ddefnyddioch i gofrestru ar gyfer Hunanasesiad. Os nad oes enw gwahanol ar eich busnes unig fasnachwr, nodwch eich enw cyntaf ac enw olaf.
@@ -1152,6 +1165,15 @@ add-business-name.p2                                              = Gall enw’r
 add-business-name.form.error.required                             = Nodwch eich enw neu enw’ch busnes
 add-business-name.form.error.maxLength                            = Mae’n rhaid i enw’r busnes fod yn 105 o gymeriadau neu lai
 add-business-name.form.error.invalidNameFormat                    = Ni all enw’r busnes gynnwys !, "", * neu ?
+
+## Add business trade page
+add-business-trade.heading                  = Beth yw masnach eich busnes?
+add-business-trade.p1                       = Er enghraifft: plymio, gwaith trydanol, ymgynghori.
+add-business-trade.form.error.empty         = Nodwch fasnach eich busnes
+add-business-trade.form.error.short         = Mae’n rhaid i fasnach y busnes gynnwys o leiaf dwy lythyren
+add-business-trade.form.error.long          = Mae’n rhaid i fasnach y busnes fod yn 35 o gymeriadau neu lai
+add-business-trade.form.error.invalid       = Ni all masnach y busnes gynnwys !, "" , * na ?
+add-business-trade.form.error.same-name     = Ni allwch nodi’r un peth ar gyfer masnach busnes ac enw’r busnes
 
 shortMonth.1 = Ion
 shortMonth.2 = Chwe
@@ -1199,3 +1221,52 @@ dateForm.check.heading                                              = A yw’r d
 radioForm.checkDate.heading                                         = A yw’r dyddiad hwn yn gywir?
 radioForm.yes                                                       = Iawn
 radioForm.no                                                        = Na
+
+incomeSources.ceaseUKProperty.heading                            = Dod ag eiddo yn y DU i ben
+incomeSources.ceaseUKProperty.radioLabel                         = Rwy’n datgan nad wyf bellach yn cael incwm o unrhyw eiddo yn y DU.
+incomeSources.ceaseUKProperty.radioError                         = Mae’n rhaid i chi ddatgan nad ydych chi bellach yn cael incwm o unrhyw eiddo yn y DU
+incomeSources.cease.UKPropertyEndDate.heading                    = Y dyddiad pan wnaeth eich busnes eiddo yn y DU stopio
+incomeSources.cease.UKPropertyEndDate.hint                       = Er enghraifft, 27 3 2020
+incomeSources.cease.UKPropertyEndDate.error.incomplete           = Mae’n rhaid i’r dyddiad gynnwys diwrnod, mis a blwyddyn
+incomeSources.cease.UKPropertyEndDate.error.invalid              = Mae’n rhaid i’r dyddiad y daeth eich busnes eiddo yn y DU i ben fod yn ddyddiad go iawn
+incomeSources.cease.UKPropertyEndDate.error.future               = Ni allwch nodi dyddiad dod i ben sydd y tu hwnt i’r diwrnod presennol na dyddiad yn y dyfodol
+incomeSources.cease.UKPropertyEndDate.error.beforeStartDate      = Ni all y dyddiad dod i ben ar gyfer y busnes fod cyn y dyddiad dechrau
+
+incomeSources.ceaseForeignProperty.heading                       = Dod ag eiddo tramor i ben
+incomeSources.ceaseForeignProperty.checkboxLabel                 = Rwy’n datgan nad wyf bellach yn cael incwm o unrhyw eiddo tramor.
+incomeSources.ceaseForeignProperty.checkboxError                 = Mae’n rhaid i chi ddatgan nad ydych chi bellach yn cael incwm o unrhyw eiddo tramor
+
+#Generic date form messages
+dateForm.hint                                                       = Er enghraifft, 27 3 2020
+dateForm.error.day.required                                         = Mae?n rhaid i?r dyddiad gynnwys diwrnod
+dateForm.error.month.required                                       = Mae?n rhaid i?r dyddiad gynnwys mis
+dateForm.error.year.required                                        = Mae?n rhaid i?r dyddiad gynnwys blwyddyn
+dateForm.error.dayAndMonth.required                                 = Mae?n rhaid i?r dyddiad gynnwys diwrnod a mis
+dateForm.error.dayAndYear.required                                  = Mae?n rhaid i?r dyddiad gynnwys diwrnod a blwyddyn
+dateForm.error.monthAndYear.required                                = Mae?n rhaid i?r dyddiad gynnwys mis a blwyddyn
+dateForm.check.heading                                              = A yw?r dyddiad hwn yn gywir?
+
+incomeSources.ceaseUKProperty.checkDetails.heading               = Gwirio’ch manylion
+incomeSources.ceaseUKProperty.checkDetails.paragraph             = Y busnes eiddo yn y DU a nodwyd gennych
+incomeSources.ceaseUKProperty.checkDetails.content               = Dyddiad y gwnaeth y busnes stopio
+incomeSources.ceaseUKProperty.checkDetails.confirm               = Cadarnhau ac yn eich blaen
+incomeSources.ceaseUKProperty.checkDetails.change                = Newid
+
+# add Business start date
+add-business-start-date.heading                      = Pryd y dechreuodd eich busnes fasnachu?
+add-business-start-date.hint-prt1                    = Byddwn yn defnyddio hwn i gyfrifo eich ffi Yswiriant Gwladol Dosbarth 2, os yw?n briodol.
+add-business-start-date.hint-prt2                    = Er enghraifft, 27 3 2020
+add-business-start-date.day                          = Diwrnod
+add-business-start-date.month                        = Mis
+add-business-start-date.year                         = Blwyddyn
+add-business-start-date.continue                     = Yn eich blaen
+add-business-start-date.form.error.emptyDateField    = Nodwch y dyddiad y dechreuodd eich busnes fasnachu
+add-business-start-date.error.future                 = Mae?n rhaid i?r dyddiad y dechreuodd eich busnes eiddo tramor fod cyn {0}
+add-business-start-date.error.error.required         = Nodwch y dyddiad y dechreuodd eich busnes fasnachu
+add-business-start-date.error.invalid                = Mae?n rhaid i?r dyddiad y dechreuodd eich busnes fasnachu fod yn ddyddiad go iawn
+
+# add Business start date check
+add-business-start-date-check.heading                = A yw?r dyddiad hwn yn gywir?
+add-business-start-date-check.radio.yes              = Iawn
+add-business-start-date-check.radio.no               = Na
+add-business-start-date-check.radio.error            = Dewiswch ?Iawn? os yw dyddiad dechrau?ch busnes yn gywir

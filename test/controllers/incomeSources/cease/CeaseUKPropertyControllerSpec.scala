@@ -19,6 +19,7 @@ package controllers.incomeSources.cease
 import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
+import forms.utils.SessionKeys.ceaseUKPropertyDeclare
 import forms.incomeSources.cease.CeaseUKPropertyForm
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import org.jsoup.Jsoup
@@ -35,7 +36,7 @@ import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testIndiv
 import testUtils.TestSupport
 import uk.gov.hmrc.http.{HttpClient, HttpResponse}
 import views.html.errorPages.CustomNotFoundError
-import views.html.incomeSources.cease.{CeaseUKProperty, DateUKPropertyCeased}
+import views.html.incomeSources.cease.{CeaseUKProperty, UKPropertyEndDate}
 
 import scala.concurrent.Future
 
@@ -43,7 +44,7 @@ class CeaseUKPropertyControllerSpec extends TestSupport with MockAuthenticationP
 
   val mockHttpClient: HttpClient = mock(classOf[HttpClient])
   val mockCeaseUKProperty: CeaseUKProperty = app.injector.instanceOf[CeaseUKProperty]
-  val mockDateUKPropertyCeased: DateUKPropertyCeased = mock(classOf[DateUKPropertyCeased])
+  val mockUKPropertyEndDate: UKPropertyEndDate = mock(classOf[UKPropertyEndDate])
 
   object TestCeaseUKPropertyController extends CeaseUKPropertyController(
     MockAuthenticationPredicate,
@@ -97,7 +98,7 @@ class CeaseUKPropertyControllerSpec extends TestSupport with MockAuthenticationP
   }
 
   "Individual - CeaseUKPropertyController.submit" should {
-    s"return 303 SEE_OTHER and redirect to ${controllers.incomeSources.cease.routes.DateUKPropertyCeasedController.show().url}" when {
+    s"return 303 SEE_OTHER and redirect to ${controllers.incomeSources.cease.routes.UKPropertyEndDateController.show().url}" when {
       "form is completed successfully" in {
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
         enable(IncomeSources)
@@ -105,15 +106,15 @@ class CeaseUKPropertyControllerSpec extends TestSupport with MockAuthenticationP
 
         when(mockHttpClient.POSTForm[HttpResponse](any(), any(), any())(any(), any(), any()))
           .thenReturn(Future.successful(HttpResponse(OK, "true")))
-        when(mockDateUKPropertyCeased(any(), any(), any())(any(), any())).thenReturn(HtmlFormat.empty)
+        when(mockUKPropertyEndDate(any(), any(), any(), any(), any())(any(), any())).thenReturn(HtmlFormat.empty)
 
         lazy val result: Future[Result] = {
           TestCeaseUKPropertyController.submit()(fakeRequestCeaseUKPropertyDeclarationComplete
             .withFormUrlEncodedBody(CeaseUKPropertyForm.declaration -> "true", CeaseUKPropertyForm.ceaseCsrfToken -> "12345"))
         }
-        result.futureValue.session(fakeRequestCeaseUKPropertyDeclarationComplete).get("ceaseUKPropertyDeclare") shouldBe Some("true")
+        result.futureValue.session(fakeRequestCeaseUKPropertyDeclarationComplete).get(ceaseUKPropertyDeclare) shouldBe Some("true")
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.DateUKPropertyCeasedController.show().url)
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.UKPropertyEndDateController.show().url)
       }
     }
     "return 400 BAD_REQUEST" when {
@@ -138,7 +139,7 @@ class CeaseUKPropertyControllerSpec extends TestSupport with MockAuthenticationP
             .withFormUrlEncodedBody(CeaseUKPropertyForm.declaration -> "invalid", CeaseUKPropertyForm.ceaseCsrfToken -> "12345"))
         }
 
-        result.futureValue.session(fakeRequestCeaseUKPropertyDeclarationIncomplete).get("ceaseUKPropertyDeclare") shouldBe Some("false")
+        result.futureValue.session(fakeRequestCeaseUKPropertyDeclarationIncomplete).get(ceaseUKPropertyDeclare) shouldBe Some("false")
         status(result) shouldBe Status.BAD_REQUEST
         contentAsString(result) shouldBe expectedContent
       }
@@ -181,7 +182,7 @@ class CeaseUKPropertyControllerSpec extends TestSupport with MockAuthenticationP
   }
 
   "Agent - CeaseUKPropertyController.submit" should {
-    s"return 303 SEE_OTHER and redirect to ${controllers.incomeSources.cease.routes.DateUKPropertyCeasedController.showAgent().url}" when {
+    s"return 303 SEE_OTHER and redirect to ${controllers.incomeSources.cease.routes.UKPropertyEndDateController.showAgent().url}" when {
       "form is completed successfully" in {
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         enable(IncomeSources)
@@ -189,15 +190,15 @@ class CeaseUKPropertyControllerSpec extends TestSupport with MockAuthenticationP
 
         when(mockHttpClient.POSTForm[HttpResponse](any(), any(), any())(any(), any(), any()))
           .thenReturn(Future.successful(HttpResponse(OK, "true")))
-        when(mockDateUKPropertyCeased(any(), any(), any())(any(), any())).thenReturn(HtmlFormat.empty)
+        when(mockUKPropertyEndDate(any(), any(), any(), any(), any())(any(), any())).thenReturn(HtmlFormat.empty)
 
         lazy val result: Future[Result] = {
           TestCeaseUKPropertyController.submitAgent()(fakeRequestCeaseUKPropertyDeclarationCompleteAgent
             .withFormUrlEncodedBody(CeaseUKPropertyForm.declaration -> "true", CeaseUKPropertyForm.ceaseCsrfToken -> "12345"))
         }
-        result.futureValue.session(fakeRequestCeaseUKPropertyDeclarationComplete).get("ceaseUKPropertyDeclare") shouldBe Some("true")
+        result.futureValue.session(fakeRequestCeaseUKPropertyDeclarationComplete).get(ceaseUKPropertyDeclare) shouldBe Some("true")
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.DateUKPropertyCeasedController.showAgent().url)
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.UKPropertyEndDateController.showAgent().url)
       }
     }
     "return 400 BAD_REQUEST" when {
@@ -222,7 +223,7 @@ class CeaseUKPropertyControllerSpec extends TestSupport with MockAuthenticationP
             .withFormUrlEncodedBody(CeaseUKPropertyForm.declaration -> "false", CeaseUKPropertyForm.ceaseCsrfToken -> "12345"))
         }
 
-        result.futureValue.session(fakeRequestCeaseUKPropertyDeclarationIncomplete).get("ceaseUKPropertyDeclare") shouldBe Some("false")
+        result.futureValue.session(fakeRequestCeaseUKPropertyDeclarationIncomplete).get(ceaseUKPropertyDeclare) shouldBe Some("false")
         status(result) shouldBe Status.BAD_REQUEST
         contentAsString(result) shouldBe expectedContent
       }

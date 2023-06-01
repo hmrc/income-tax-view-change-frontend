@@ -16,6 +16,7 @@
 
 package forms.incomeSources.cease
 
+import forms.CeaseUKPropertyForm
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.data.{Form, FormError}

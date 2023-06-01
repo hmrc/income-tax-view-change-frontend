@@ -26,4 +26,8 @@ object SessionKeys {
   val chargeSummaryBackPage: String = "chargeSummaryBackPage"
 
   val confirmedClient: String = "ConfirmedClient"
+
+  val businessName: String = "addBusinessName"
+
+  val businessStartDate: String = "addBusinessStartDate"
 }

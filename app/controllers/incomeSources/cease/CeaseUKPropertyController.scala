@@ -22,6 +22,7 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowI
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import forms.incomeSources.cease.CeaseUKPropertyForm
+import forms.utils.SessionKeys.ceaseUKPropertyDeclare
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents, Result}
@@ -105,10 +106,10 @@ class CeaseUKPropertyController @Inject()(val authenticate: AuthenticationPredic
           postAction = controllers.incomeSources.cease.routes.CeaseUKPropertyController.submit,
           backUrl = controllers.incomeSources.cease.routes.CeaseIncomeSourceController.show().url,
           isAgent = false
-        )).addingToSession("ceaseUKPropertyDeclare" -> "false")),
+        )).addingToSession(ceaseUKPropertyDeclare -> "false")),
         _ =>
-          Future.successful(Redirect(controllers.incomeSources.cease.routes.DateUKPropertyCeasedController.show())
-            .addingToSession("ceaseUKPropertyDeclare" -> "true"))
+          Future.successful(Redirect(controllers.incomeSources.cease.routes.UKPropertyEndDateController.show())
+            .addingToSession(ceaseUKPropertyDeclare -> "true"))
       )
   }
 
@@ -123,10 +124,10 @@ class CeaseUKPropertyController @Inject()(val authenticate: AuthenticationPredic
                 postAction = controllers.incomeSources.cease.routes.CeaseUKPropertyController.submitAgent,
                 backUrl = controllers.incomeSources.cease.routes.CeaseIncomeSourceController.showAgent().url,
                 isAgent = true
-              )).addingToSession("ceaseUKPropertyDeclare" -> "false")),
+              )).addingToSession(ceaseUKPropertyDeclare -> "false")),
               _ =>
-                Future.successful(Redirect(controllers.incomeSources.cease.routes.DateUKPropertyCeasedController.showAgent())
-                  .addingToSession("ceaseUKPropertyDeclare" -> "true"))
+                Future.successful(Redirect(controllers.incomeSources.cease.routes.UKPropertyEndDateController.showAgent())
+                  .addingToSession(ceaseUKPropertyDeclare -> "true"))
             )
         }
   }

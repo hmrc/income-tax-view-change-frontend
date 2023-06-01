@@ -99,6 +99,25 @@ object IncomeSourceIntegrationTestConstants {
     yearOfMigration = Some("2018")
   )
 
+  val multipleBusinessesAndUkProperty: IncomeSourceDetailsModel = IncomeSourceDetailsModel(
+    testMtdItId,
+    businesses = List(
+      business1,
+      business2
+    ),
+    properties = List(ukProperty),
+    yearOfMigration = Some("2018")
+  )
+
+  val foreignPropertyAndCeasedBusiness: IncomeSourceDetailsModel = IncomeSourceDetailsModel(
+    testMtdItId,
+    businesses = List(
+      ceasedBusiness1
+    ),
+    properties = List(foreignProperty),
+    yearOfMigration = Some("2018")
+  )
+
   val multipleBusinessesAndPropertyResponseWoMigration: IncomeSourceDetailsModel = IncomeSourceDetailsModel(
     testMtdItId,
     businesses = List(
@@ -113,6 +132,13 @@ object IncomeSourceIntegrationTestConstants {
     testMtdItId,
     businesses = List(),
     properties = List(property),
+    yearOfMigration = Some("2018")
+  )
+
+  val ukPropertyOnlyResponse: IncomeSourceDetailsModel = IncomeSourceDetailsModel(
+    testMtdItId,
+    businesses = List(),
+    properties = List(ukProperty),
     yearOfMigration = Some("2018")
   )
 

@@ -13,7 +13,7 @@ class ItvcLanguageControllerISpec extends ComponentSpecBase {
 
   "GET /language/cymraeg" should {
     "update the PLAY_LANG cookie to cy and return the user where they were when a REFERER is in the headers" in {
-      lazy val resultCy: WSResponse = getWithHeaders("/switch-to-welsh", "REFERER" -> testRefererRoute)
+      lazy val resultCy: WSResponse = getWithAdditionalHeader("/switch-to-welsh", "REFERER" -> testRefererRoute)
       resultCy.headers.isDefinedAt("Set-Cookie") shouldBe true
       resultCy.headers.toString.contains("PLAY_LANG=cy;") shouldBe true
       resultCy should have(
@@ -23,7 +23,7 @@ class ItvcLanguageControllerISpec extends ComponentSpecBase {
     }
 
     "update the PLAY_LANG cookie to en and return the user where they were when a REFERER is in the headers" in {
-      lazy val resultCy: WSResponse = getWithHeaders("/switch-to-english", "REFERER" -> testRefererRoute)
+      lazy val resultCy: WSResponse = getWithAdditionalHeader("/switch-to-english", "REFERER" -> testRefererRoute)
       resultCy.headers.isDefinedAt("Set-Cookie") shouldBe true
       resultCy.headers.toString.contains("PLAY_LANG=en;") shouldBe true
       resultCy should have(
@@ -33,7 +33,7 @@ class ItvcLanguageControllerISpec extends ComponentSpecBase {
     }
 
     "preserve the fragment in the redirect url" in {
-      lazy val resultCy: WSResponse = getWithHeaders("/switch-to-welsh?fragment=fragment", "REFERER" -> testRefererRoute)
+      lazy val resultCy: WSResponse = getWithAdditionalHeader("/switch-to-welsh?fragment=fragment", "REFERER" -> testRefererRoute)
       resultCy.headers.isDefinedAt("Set-Cookie") shouldBe true
       resultCy.headers.toString.contains("PLAY_LANG=cy;") shouldBe true
       resultCy should have(
@@ -55,7 +55,7 @@ class ItvcLanguageControllerISpec extends ComponentSpecBase {
 
   "GET /language/english" should {
     "update the PLAY_LANG cookie to en and return the user where they were when a REFERER is in the headers" in {
-      lazy val resultEn: WSResponse = getWithHeaders("/language/english", "REFERER" -> testRefererRoute)
+      lazy val resultEn: WSResponse = getWithAdditionalHeader("/language/english", "REFERER" -> testRefererRoute)
       resultEn.headers.isDefinedAt("Set-Cookie") shouldBe true
       resultEn.headers.toString.contains("PLAY_LANG=en;") shouldBe true
       resultEn should have(
@@ -65,7 +65,7 @@ class ItvcLanguageControllerISpec extends ComponentSpecBase {
     }
 
     "update the PLAY_LANG cookie to en and return the user to the overview page when REFERER is not in the headers" in {
-      lazy val resultEn: WSResponse = getWithHeaders("/language/english")
+      lazy val resultEn: WSResponse = getWithAdditionalHeader("/language/english")
       resultEn.headers.isDefinedAt("Set-Cookie") shouldBe true
       resultEn.headers.toString.contains("PLAY_LANG=en;") shouldBe true
       resultEn should have(

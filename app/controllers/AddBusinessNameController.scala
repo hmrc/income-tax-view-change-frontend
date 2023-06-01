@@ -48,8 +48,8 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
                                              val ec: ExecutionContext)
   extends ClientConfirmedController with I18nSupport with FeatureSwitching {
 
-  lazy val backUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceController.show.url
-  lazy val backUrlAgent: String = controllers.incomeSources.add.routes.AddIncomeSourceController.showAgent.url
+  lazy val backUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceController.show().url
+  lazy val backUrlAgent: String = controllers.incomeSources.add.routes.AddIncomeSourceController.showAgent().url
 
   def show(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
@@ -57,7 +57,7 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
       handleRequest(
         isAgent = false,
         backUrl = backUrl
-        )
+      )
   }
 
   def showAgent(): Action[AnyContent] =
@@ -68,7 +68,8 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
             implicit mtdItUser =>
               handleRequest(
                 isAgent = true,
-                backUrl = backUrlAgent)
+                backUrl = backUrlAgent
+              )
           }
     }
 
@@ -96,9 +97,9 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
           }
         },
         formData => {
-          Future {
-            Redirect(routes.AddBusinessStartDate.show())
-              .withSession(request.session + (SessionKeys.businessName -> formData.name))
+          Future.successful {
+            Redirect(routes.AddBusinessStartDateController.show())
+              .addingToSession(SessionKeys.businessName -> formData.name)
           }
         }
       )
@@ -116,9 +117,9 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
                 }
               },
               formData => {
-                Future {
-                  Redirect(routes.AddBusinessStartDate.showAgent())
-                    .withSession(request.session + (SessionKeys.businessName -> formData.name))
+                Future.successful {
+                  Redirect(routes.AddBusinessStartDateController.showAgent())
+                    .addingToSession(SessionKeys.businessName -> formData.name)
                 }
               }
             )

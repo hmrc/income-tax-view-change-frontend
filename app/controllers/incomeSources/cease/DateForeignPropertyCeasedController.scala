@@ -27,10 +27,10 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
-class DateUKPropertyCeasedController @Inject()(val authenticate: AuthenticationPredicate,
-                                            val authorisedFunctions: FrontendAuthorisedFunctions,
-                                            val checkSessionTimeout: SessionTimeoutPredicate)
-                                           (implicit val appConfig: FrontendAppConfig,
+class DateForeignPropertyCeasedController @Inject()(val authenticate: AuthenticationPredicate,
+                                                    val authorisedFunctions: FrontendAuthorisedFunctions,
+                                                    val checkSessionTimeout: SessionTimeoutPredicate)
+                                                   (implicit val appConfig: FrontendAppConfig,
                                             mcc: MessagesControllerComponents,
                                             val ec: ExecutionContext,
                                             val itvcErrorHandlerAgent: AgentItvcErrorHandler)

@@ -102,6 +102,14 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterE
     HeaderNames.REFERER -> "/test/url"
   )
 
+  lazy val fakeRequestWithActiveSessionWithBusinessName: FakeRequest[AnyContentAsEmpty.type] = FakeRequest().withSession(
+    SessionKeys.lastRequestTimestamp -> "1498236506662",
+    SessionKeys.authToken -> "Bearer Token",
+    utils.SessionKeys.businessName -> "Test Name"
+  ).withHeaders(
+    HeaderNames.REFERER -> "/test/url"
+  )
+
   def fakeRequestWithActiveSessionWithReferer(referer: String): FakeRequest[AnyContentAsEmpty.type] = FakeRequest().withSession(
     SessionKeys.lastRequestTimestamp -> "1498236506662",
     SessionKeys.authToken -> "Bearer Token"
@@ -139,6 +147,17 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterE
       utils.SessionKeys.clientMTDID -> "XAIT00000000015",
       utils.SessionKeys.clientNino -> clientNino,
       utils.SessionKeys.confirmedClient -> "true"
+    )
+
+  def fakeRequestConfirmedClientwithBusinessName(clientNino: String = "AA111111A"): FakeRequest[AnyContentAsEmpty.type] =
+    fakeRequestWithActiveSession.withSession(
+      utils.SessionKeys.clientFirstName -> "Test",
+      utils.SessionKeys.clientLastName -> "User",
+      utils.SessionKeys.clientUTR -> "1234567890",
+      utils.SessionKeys.clientMTDID -> "XAIT00000000015",
+      utils.SessionKeys.clientNino -> clientNino,
+      utils.SessionKeys.confirmedClient -> "true",
+      utils.SessionKeys.businessName -> "Test Name"
     )
 
   def fakeRequestConfirmedClientWithCalculationId(clientNino: String = "AA111111A"): FakeRequest[AnyContentAsEmpty.type] =
@@ -206,6 +225,25 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterE
   lazy val fakeRequestCeaseUKPropertyDeclarationIncompleteAgent: FakeRequest[AnyContentAsEmpty.type] = fakeRequestConfirmedClient().withSession(
     forms.utils.SessionKeys.ceaseUKPropertyDeclare -> "false"
   )
+
+  lazy val fakeRequestCeaseForeignPropertyDeclarationComplete: FakeRequest[AnyContentAsEmpty.type] = fakeRequestWithNinoAndOrigin("pta").withSession(
+    forms.utils.SessionKeys.ceaseForeignPropertyDeclare -> "true"
+  )
+
+  lazy val fakeRequestCeaseForeignPropertyDeclarationCompleteAgent: FakeRequest[AnyContentAsEmpty.type] = fakeRequestConfirmedClient().withSession(
+    forms.utils.SessionKeys.ceaseForeignPropertyDeclare -> "true"
+  )
+
+  lazy val fakeRequestCeaseForeignPropertyDeclarationIncomplete: FakeRequest[AnyContentAsEmpty.type] = fakeRequestWithNinoAndOrigin("pta").withSession(
+    forms.utils.SessionKeys.ceaseForeignPropertyDeclare -> "false"
+  )
+
+  lazy val fakeRequestCeaseForeignPropertyDeclarationIncompleteAgent: FakeRequest[AnyContentAsEmpty.type] = fakeRequestConfirmedClient().withSession(
+    forms.utils.SessionKeys.ceaseForeignPropertyDeclare -> "false"
+  )
+
+   def fakeRequestWithCeaseUKPropertyDate(endDate: String): FakeRequest[AnyContentAsEmpty.type] = fakeRequestWithNinoAndOrigin("pta")
+     .withSession(forms.utils.SessionKeys.ceaseUKPropertyEndDate -> endDate).withMethod("POST")
 
   implicit class FakeRequestUtil[C](fakeRequest: FakeRequest[C]) {
     def addingToSession(newSessions: (String, String)*): FakeRequest[C] = {
