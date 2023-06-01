@@ -19,7 +19,7 @@ package helpers.agent
 import com.github.tomakehurst.wiremock.client.WireMock
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
-import forms.CeaseUKPropertyForm
+import forms.{CeaseForeignPropertyForm, CeaseUKPropertyForm}
 import forms.agent.ClientsUTRForm
 import helpers.servicemocks.AuditStub
 import helpers.{CustomMatchers, GenericStubMethods, WiremockHelper}
@@ -40,6 +40,7 @@ import services.{DateService, DateServiceInterface}
 import java.time.LocalDate
 import javax.inject.Singleton
 import scala.concurrent.Future
+import forms.{BusinessStartDateCheckForm, CeaseForeignPropertyForm, CeaseUKPropertyForm}
 
 @Singleton
 class TestDateService extends DateServiceInterface {
@@ -251,6 +252,43 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
     def getUKPropertyEndDate(additionalCookies: Map[String, String] = Map.empty): WSResponse =
       getWithClientDetailsInSession("/agents/income-sources/cease/uk-property-end-date", additionalCookies)
+
+    def getCeaseForeignProperty(additionalCookies: Map[String, String] = Map.empty): WSResponse =
+      getWithClientDetailsInSession("/agents/income-sources/cease/foreign-property-declare", additionalCookies)
+
+    def postCeaseForeignProperty(answer: Option[String], additionalCookies: Map[String, String] = Map.empty): WSResponse =
+      post(uri = "/income-sources/cease/foreign-property-declare", additionalCookies = additionalCookies)(
+        answer.fold(Map.empty[String, Seq[String]])(
+          declaration => CeaseForeignPropertyForm.form.fill(CeaseForeignPropertyForm(Some(declaration), "csrfToken")).data.map { case (k, v) => (k, Seq(v)) }
+        )
+      )
+
+    def getAddBusinessStartDateCheck(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      get(
+        uri = "/income-sources/add/business-start-date-check", additionalCookies
+      )
+    }
+
+    def postAddBusinessStartDateCheck(answer: Option[String])(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      post(
+        uri = s"/income-sources/add/business-start-date-check?date=1+November+2020",
+        additionalCookies = additionalCookies
+      )(
+        answer.fold(Map.empty[String, Seq[String]])(
+          selection => BusinessStartDateCheckForm.form.fill(BusinessStartDateCheckForm(Some(selection))).data.map { case (k, v) => (k, Seq(v)) }
+        )
+      )
+    }
+
+    def getAddBusinessStartDate(additionalCookies: Map[String, String] = Map.empty): WSResponse =
+      get("/income-sources/add/business-start-date", additionalCookies)
+
+
+    def getCheckCeaseUKPropertyDetails(additionalCookies: Map[String, String]): WSResponse =
+      getWithClientDetailsInSession("/agents/income-sources/cease/uk-property-check-details", additionalCookies)
+
+    def postCheckCeaseUKPropertyDetails(additionalCookies: Map[String, String]): WSResponse =
+      post("/income-sources/cease/uk-property-check-details", additionalCookies)(Map.empty)
   }
 
   def unauthorisedTest(uri: String): Unit = {

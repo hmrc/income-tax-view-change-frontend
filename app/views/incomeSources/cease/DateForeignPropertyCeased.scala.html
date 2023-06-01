@@ -1,4 +1,4 @@
-/*
+@*
  * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,22 +12,15 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *@
 
-package controllers.agent.utils
+@import play.api.mvc.Results.NotImplemented
+@import views.html.layouts.unifiedLayout
+@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 
-object SessionKeys {
+@this(mainTemplate: unifiedLayout)
 
-  val clientNino: String = "ClientNino"
-  val clientMTDID: String = "ClientMTDID"
-  val clientUTR: String = "ClientUTR"
-  val clientFirstName: String = "ClientFirstName"
-  val clientLastName: String = "ClientLastName"
-  val chargeSummaryBackPage: String = "chargeSummaryBackPage"
+@(isAgent: Boolean = false, backUrl: String, origin: Option[String] = None)(implicit request: Request[_], messages: Messages)
 
-  val confirmedClient: String = "ConfirmedClient"
-
-  val businessName: String = "addBusinessName"
-
-  val businessStartDate: String = "addBusinessStartDate"
+@mainTemplate(pageTitle = "", isAgent = isAgent, backUrl = Some(backUrl)) {
 }

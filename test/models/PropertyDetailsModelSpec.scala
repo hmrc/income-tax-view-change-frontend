@@ -14,20 +14,24 @@
  * limitations under the License.
  */
 
-package controllers.agent.utils
+package models
 
-object SessionKeys {
+import testConstants.PropertyDetailsTestConstants.{ceasedPropertyDetails, propertyDetails}
+import testUtils.UnitSpec
 
-  val clientNino: String = "ClientNino"
-  val clientMTDID: String = "ClientMTDID"
-  val clientUTR: String = "ClientUTR"
-  val clientFirstName: String = "ClientFirstName"
-  val clientLastName: String = "ClientLastName"
-  val chargeSummaryBackPage: String = "chargeSummaryBackPage"
+class PropertyDetailsModelSpec extends UnitSpec {
 
-  val confirmedClient: String = "ConfirmedClient"
+  "The PropertyDetailsModel" when {
+    "A property is ceased, the isCeased method" should {
+      "return true" in {
+        ceasedPropertyDetails.isCeased shouldBe true
+      }
+    }
 
-  val businessName: String = "addBusinessName"
-
-  val businessStartDate: String = "addBusinessStartDate"
+    "A property is not ceased, the isCeased method" should {
+      "return false" in {
+        propertyDetails.isCeased shouldBe false
+      }
+    }
+  }
 }
