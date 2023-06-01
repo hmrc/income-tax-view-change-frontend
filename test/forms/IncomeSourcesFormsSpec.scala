@@ -72,7 +72,6 @@ object IncomeSourcesFormsSpec  extends Properties("incomeSourcesForms.validation
   property("businessName") = forAll(businessNameGenerator) { (charsList: List[Char]) =>
     (charsList.length > 0 && charsList.length <= BusinessNameForm.businessNameLength) ==> {
       val businessName = charsList.mkString("")
-      //println(s"Generate business name: ${businessName}")
       businessNameForm(Some(businessName)).errors.isEmpty
     }
   }
@@ -80,18 +79,15 @@ object IncomeSourcesFormsSpec  extends Properties("incomeSourcesForms.validation
   property("businessTrade") = forAll(businessTradeGenerator) { (charsList: List[Char]) =>
     val businessTrade = charsList.mkString("").trim
     (businessTrade.length > 2) ==> {
-      //println(s"Generate business trade: ${businessTrade}")
       businessTradeForm(Some(businessTrade)).errors.isEmpty
     }
   }
 
   property("ukPropertyEndDate") = forAll(dateGenerator(currentDate)) { date =>
-    //println(s"Generate ukPropertyForm: ${date}")
     ukPropertyFormUnderTest( date ).errors.isEmpty
   }
 
   property("businessStartDate") = forAll(dateGenerator(currentDate)) { date =>
-    //println(s"Generate ukPropertyForm: ${date}")
     businessStartDateCheckForm(date).errors.isEmpty
   }
 
