@@ -14,7 +14,20 @@
  * limitations under the License.
  */
 
-package exceptions
+package models.updateIncomeSource
 
-case class MissingFieldException(fieldName: String) extends RuntimeException(s"Missing Mandatory Expected Field: $fieldName")
-case class MissingSessionKey(key:String) extends RuntimeException(s"Missing session key: $key")
+import play.api.libs.json.{Format, Json}
+
+sealed trait UpdateIncomeSourceResponse
+
+case class UpdateIncomeSourceResponseModel(processingDate: String) extends UpdateIncomeSourceResponse
+
+object UpdateIncomeSourceResponseModel {
+  implicit val format: Format[UpdateIncomeSourceResponseModel] = Json.format
+}
+
+case class UpdateIncomeSourceResponseError(status: Int, reason: String) extends UpdateIncomeSourceResponse
+
+object UpdateIncomeSourceResponseError {
+  implicit val format: Format[UpdateIncomeSourceResponseError] = Json.format
+}

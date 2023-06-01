@@ -46,7 +46,7 @@ agent.confirmClient.heading                                     = Confirm your c
 agent.confirmClient.clientName                                  = Client’s name
 agent.confirmClient.clientUtr                                   = Client’s Unique Taxpayer Reference (UTR)
 agent.confirmClient.changeClient                                = Change client
-agent.confirmClient.confirmContinue                              = Confirm and continue
+agent.confirmClient.confirmContinue                             = Confirm and continue
 
 # Agent - Client Relationship Failure
 agent.client_relationship_failure.heading                       = You are not authorised to view this client
@@ -1112,7 +1112,7 @@ credit-and-refund.credit-from-balancing-charge-prt-1              = from a
 credit-and-refund.credit-from-balancing-charge-prt-2              = balancing charge credit
 credit-and-refund.credit-from-earlier-tax-year                    = credit from an earlier tax year
 
-## new income sources
+## check income sources
 new-income-sources.heading                  = Add a new sole trader or property income source
 new-income-sources.self-employment.h2       = Sole trader businesses
 new-income-sources.self-employment.p1       = You do not need to tell us about a business we already know about.
@@ -1157,24 +1157,6 @@ add-business-trade.form.error.short         = Business trade must have at least 
 add-business-trade.form.error.long          = Business trade must be 35 characters or fewer
 add-business-trade.form.error.invalid       = Business trade cannot include !, "", * or ?
 add-business-trade.form.error.same-name     = You cannot enter the same trade and same business name
-
-# add Business start date
-add-business-start-date.heading                      = When did your business start trading?
-add-business-start-date.hint-prt1                    = This is the date we'll use to calculate your Class 2 National Insurance charge, if appropriate.
-add-business-start-date.hint-prt2                    = For example, 27 3 2020
-add-business-start-date.day                          = Day
-add-business-start-date.form.month                   = Month
-add-business-start-date.form.year                    = Year
-add-business-start-date.form.continue                = Continue
-add-business-start-date.error.future                 = The date your business started trading must be before {0}
-add-business-start-date.error.error.required         = Enter the date your business started trading
-add-business-start-date.error.invalid                = The date your business started trading must be a real date
-
-# add Business start date check
-add-business-start-date-check.heading                 = Is this date correct?
-add-business-start-date-check.radio.yes               = Yes
-add-business-start-date-check.radio.no                = No
-add-business-start-date-check.radio.error             = Select yes if your business start date is correct
 
 #Following empty fields are not in Use
 #These fields are kept to match with Messages.cy
@@ -1231,9 +1213,8 @@ incomeSources.cease.UKPropertyEndDate.error.beforeStartDate      = The cessation
 incomeSources.ceaseForeignProperty.heading                       = Cease foreign property
 incomeSources.ceaseForeignProperty.checkboxLabel                 = I declare that I no longer get an income from any foreign property.
 incomeSources.ceaseForeignProperty.checkboxError                 = You must declare that you no longer get an income from any foreign property
-
 #Generic date form messages
-dateForm.hint                                                       = For example, 27 3 2020
+dateForm.hint                                                    = For example, 27 3 2020
 dateForm.error.day.required                                         = The date must include a day
 dateForm.error.month.required                                       = The date must include a month
 dateForm.error.year.required                                        = The date must include a year
@@ -1241,3 +1222,27 @@ dateForm.error.dayAndMonth.required                                 = The date m
 dateForm.error.dayAndYear.required                                  = The date must include a day and a year
 dateForm.error.monthAndYear.required                                = The date must include a month and a year
 dateForm.check.heading                                              = Is this date correct?
+
+incomeSources.ceaseUKProperty.checkDetails.heading               = Check your details
+incomeSources.ceaseUKProperty.checkDetails.paragraph             = UK property business you entered
+incomeSources.ceaseUKProperty.checkDetails.content               = Date business stopped
+incomeSources.ceaseUKProperty.checkDetails.confirm               = Confirm and continue
+incomeSources.ceaseUKProperty.checkDetails.change                = Change
+
+# add Business start date
+add-business-start-date.heading                      = When did your business start trading?
+add-business-start-date.hint-prt1                    = This is the date we'll use to calculate your Class 2 National Insurance charge, if appropriate.
+add-business-start-date.hint-prt2                    = For example, 27 3 2020
+add-business-start-date.day                          = Day
+add-business-start-date.form.month                   = Month
+add-business-start-date.form.year                    = Year
+add-business-start-date.form.continue                = Continue
+add-business-start-date.error.future                 = The date your business started trading must be before {0}
+add-business-start-date.error.error.required         = Enter the date your business started trading
+add-business-start-date.error.invalid                = The date your business started trading must be a real date
+
+# add Business start date check
+add-business-start-date-check.heading                 = Is this date correct?
+add-business-start-date-check.radio.yes               = Yes
+add-business-start-date-check.radio.no                = No
+add-business-start-date-check.radio.error             = Select yes if your business start date is correct

@@ -19,7 +19,7 @@ package helpers.agent
 import com.github.tomakehurst.wiremock.client.WireMock
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
-import forms.{BusinessStartDateCheckForm, CeaseForeignPropertyForm, CeaseUKPropertyForm}
+import forms.{CeaseForeignPropertyForm, CeaseUKPropertyForm}
 import forms.agent.ClientsUTRForm
 import helpers.servicemocks.AuditStub
 import helpers.{CustomMatchers, GenericStubMethods, WiremockHelper}
@@ -40,6 +40,7 @@ import services.{DateService, DateServiceInterface}
 import java.time.LocalDate
 import javax.inject.Singleton
 import scala.concurrent.Future
+import forms.{BusinessStartDateCheckForm, CeaseForeignPropertyForm, CeaseUKPropertyForm}
 
 @Singleton
 class TestDateService extends DateServiceInterface {
@@ -168,6 +169,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
         .withHttpHeaders(HeaderNames.COOKIE -> bakeSessionCookie(Map.empty ++ additionalCookies), "Csrf-Token" -> "nocheck")
         .post(body).futureValue
     }
+
     def getEnterClientsUTR: WSResponse = get("/client-utr")
 
     def postEnterClientsUTR(answer: Option[String]): WSResponse = post("/client-utr")(
@@ -277,8 +279,16 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
         )
       )
     }
+
     def getAddBusinessStartDate(additionalCookies: Map[String, String] = Map.empty): WSResponse =
       get("/income-sources/add/business-start-date", additionalCookies)
+
+
+    def getCheckCeaseUKPropertyDetails(additionalCookies: Map[String, String]): WSResponse =
+      getWithClientDetailsInSession("/agents/income-sources/cease/uk-property-check-details", additionalCookies)
+
+    def postCheckCeaseUKPropertyDetails(additionalCookies: Map[String, String]): WSResponse =
+      post("/income-sources/cease/uk-property-check-details", additionalCookies)(Map.empty)
   }
 
   def unauthorisedTest(uri: String): Unit = {

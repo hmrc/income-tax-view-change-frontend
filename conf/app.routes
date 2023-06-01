@@ -184,6 +184,8 @@ POST         /income-sources/cease/uk-property-end-date                   contro
 POST         /agents/income-sources/cease/uk-property-end-date            controllers.incomeSources.cease.UKPropertyEndDateController.submitAgent()
 GET          /income-sources/cease/uk-property-check-details              controllers.incomeSources.cease.CheckCeaseUKPropertyDetailsController.show()
 GET          /agents/income-sources/cease/uk-property-check-details       controllers.incomeSources.cease.CheckCeaseUKPropertyDetailsController.showAgent()
+POST         /income-sources/cease/uk-property-check-details              controllers.incomeSources.cease.CheckCeaseUKPropertyDetailsController.submit()
+POST         /agents/income-sources/cease/uk-property-check-details       controllers.incomeSources.cease.CheckCeaseUKPropertyDetailsController.submitAgent()
 
 GET          /income-sources/cease/foreign-property-declare               controllers.incomeSources.cease.CeaseForeignPropertyController.show(origin: Option[String] ?= None)
 GET          /agents/income-sources/cease/foreign-property-declare        controllers.incomeSources.cease.CeaseForeignPropertyController.showAgent()
@@ -205,3 +207,6 @@ GET          /income-sources/add/foreign-property-business-start-date           
 GET          /agents/income-sources/add/foreign-property-business-start-date                            controllers.AddForeignPropertyBusinessStartDate.showAgent()
 GET          /income-sources/cease/business-end-date                        controllers.incomeSources.cease.CeaseBusinessNameController.show()
 GET          /agents/income-sources/cease/business-end-date                 controllers.incomeSources.cease.CeaseBusinessNameController.showAgent()
+
+GET          /income-sources/cease/cease-uk-property-success                controllers.incomeSources.cease.CeaseUKPropertySuccessController.show()
+GET          /agents/income-sources/cease/cease-uk-property-success         controllers.incomeSources.cease.CeaseUKPropertySuccessController.showAgent()
