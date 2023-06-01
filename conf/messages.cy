@@ -1212,3 +1212,39 @@ incomeSources.cease.UKPropertyEndDate.error.beforeStartDate      = Ni all y dydd
 incomeSources.ceaseForeignProperty.heading                       = Dod ag eiddo tramor i ben
 incomeSources.ceaseForeignProperty.checkboxLabel                 = Rwy’n datgan nad wyf bellach yn cael incwm o unrhyw eiddo tramor.
 incomeSources.ceaseForeignProperty.checkboxError                 = Mae’n rhaid i chi ddatgan nad ydych chi bellach yn cael incwm o unrhyw eiddo tramor
+
+#Generic date form messages
+dateForm.hint                                                       = Er enghraifft, 27 3 2020
+dateForm.error.day.required                                         = Mae?n rhaid i?r dyddiad gynnwys diwrnod
+dateForm.error.month.required                                       = Mae?n rhaid i?r dyddiad gynnwys mis
+dateForm.error.year.required                                        = Mae?n rhaid i?r dyddiad gynnwys blwyddyn
+dateForm.error.dayAndMonth.required                                 = Mae?n rhaid i?r dyddiad gynnwys diwrnod a mis
+dateForm.error.dayAndYear.required                                  = Mae?n rhaid i?r dyddiad gynnwys diwrnod a blwyddyn
+dateForm.error.monthAndYear.required                                = Mae?n rhaid i?r dyddiad gynnwys mis a blwyddyn
+dateForm.check.heading                                              = A yw?r dyddiad hwn yn gywir?
+
+incomeSources.ceaseUKProperty.checkDetails.heading               = Gwirio’ch manylion
+incomeSources.ceaseUKProperty.checkDetails.paragraph             = Y busnes eiddo yn y DU a nodwyd gennych
+incomeSources.ceaseUKProperty.checkDetails.content               = Dyddiad y gwnaeth y busnes stopio
+incomeSources.ceaseUKProperty.checkDetails.confirm               = Cadarnhau ac yn eich blaen
+incomeSources.ceaseUKProperty.checkDetails.change                = Newid
+
+# add Business start date
+add-business-start-date.heading                      = Pryd y dechreuodd eich busnes fasnachu?
+add-business-start-date.hint-prt1                    = Byddwn yn defnyddio hwn i gyfrifo eich ffi Yswiriant Gwladol Dosbarth 2, os yw?n briodol.
+add-business-start-date.hint-prt2                    = Er enghraifft, 27 3 2020
+add-business-start-date.day                          = Diwrnod
+add-business-start-date.month                        = Mis
+add-business-start-date.year                         = Blwyddyn
+add-business-start-date.continue                     = Yn eich blaen
+add-business-start-date.form.error.emptyDateField    = Nodwch y dyddiad y dechreuodd eich busnes fasnachu
+
+add-business-start-date.error.future                 = Mae?n rhaid i?r dyddiad y dechreuodd eich busnes eiddo tramor fod cyn {0}
+add-business-start-date.error.error.required         = Nodwch y dyddiad y dechreuodd eich busnes fasnachu
+add-business-start-date.error.invalid                = Mae?n rhaid i?r dyddiad y dechreuodd eich busnes fasnachu fod yn ddyddiad go iawn
+
+# add Business start date check
+add-business-start-date-check.heading                = A yw?r dyddiad hwn yn gywir?
+add-business-start-date-check.radio.yes              = Iawn
+add-business-start-date-check.radio.no               = Na
+add-business-start-date-check.radio.error            = Dewiswch ?Iawn? os yw dyddiad dechrau?ch busnes yn gywir

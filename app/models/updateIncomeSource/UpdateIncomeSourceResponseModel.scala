@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-package controllers.agent.utils
+package models.updateIncomeSource
 
-object SessionKeys {
+import play.api.libs.json.{Format, Json}
 
-  val clientNino: String = "ClientNino"
-  val clientMTDID: String = "ClientMTDID"
-  val clientUTR: String = "ClientUTR"
-  val clientFirstName: String = "ClientFirstName"
-  val clientLastName: String = "ClientLastName"
-  val chargeSummaryBackPage: String = "chargeSummaryBackPage"
+sealed trait UpdateIncomeSourceResponse
 
-  val confirmedClient: String = "ConfirmedClient"
+case class UpdateIncomeSourceResponseModel(processingDate: String) extends UpdateIncomeSourceResponse
 
-  val businessName: String = "addBusinessName"
+object UpdateIncomeSourceResponseModel {
+  implicit val format: Format[UpdateIncomeSourceResponseModel] = Json.format
+}
 
-  val businessStartDate: String = "addBusinessStartDate"
+case class UpdateIncomeSourceResponseError(status: Int, reason: String) extends UpdateIncomeSourceResponse
+
+object UpdateIncomeSourceResponseError {
+  implicit val format: Format[UpdateIncomeSourceResponseError] = Json.format
 }
