@@ -64,15 +64,17 @@ class CustomAuthConnector @Inject()(servicesConfig: ServicesConfig,
   def loginRequest(payload: JsValue)(implicit hc: HeaderCarrier): Future[(AuthExchange, GovernmentGatewayToken)] = {
     Logger("application").info("login request info:" + payload)
     http.POST[JsValue, HttpResponse](s"$serviceUrl/government-gateway/session/login", payload) flatMap {
-      case response@HttpResponse(CREATED, _, _) =>
+      case response@HttpResponse(CREATED, _, headers) =>
         (
           response.header(HeaderNames.AUTHORIZATION),
           response.header(HeaderNames.LOCATION),
           (response.json \ "gatewayToken").asOpt[String]
         ) match {
           case (Some(token), Some(sessionUri), Some(receivedGatewayToken)) =>
+            Logger("application").info("HEADERS: " + headers)
             Future.successful((AuthExchange(token, sessionUri), GovernmentGatewayToken(receivedGatewayToken)))
           case (token, sessionUri, gatewayToken) =>
+            Logger("application").info("HEADERS: " + headers)
             Logger("application").info("response json:" + response.json)
             Logger("application").info(s"login response info: $token :: $sessionUri :: $gatewayToken")
             Future.failed(new RuntimeException("Internal Error, missing headers or gatewayToken in response from auth-login-api"))
