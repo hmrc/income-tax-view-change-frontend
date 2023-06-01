@@ -16,13 +16,15 @@
 
 package forms
 
-import forms.incomeSources.add.BusinessTradeForm
+import forms.incomeSources.add.{BusinessStartDateForm, BusinessTradeForm}
 import forms.incomeSources.cease.UKPropertyEndDateForm
 import generators.IncomeSourceGens.{Day, businessNameGenerator, businessTradeGenerator, dateGenerator}
+import implicits.ImplicitDateFormatter
 import org.scalacheck.Prop.{forAll, propBoolean}
 import org.scalacheck.Properties
 import services.DateServiceInterface
 import testUtils.TestSupport
+import uk.gov.hmrc.play.language.LanguageUtils
 
 import java.time.LocalDate
 
@@ -38,6 +40,10 @@ object IncomeSourcesFormsSpec  extends Properties("incomeSourcesForms.validation
 
     override def isDayBeforeTaxYearLastDay(isTimeMachineEnabled: Boolean): Boolean = false
   }
+  val testDateFormatter = new ImplicitDateFormatter{
+    override implicit val languageUtils: LanguageUtils = languageUtils
+  }
+
   val ukPropertyFormFactory = new UKPropertyEndDateForm(testDateService)
   val ukPropertyForm = ukPropertyFormFactory(individualUser)
 
@@ -55,6 +61,14 @@ object IncomeSourcesFormsSpec  extends Properties("incomeSourcesForms.validation
       "uk-property-end-date.year" -> date.year)
   )
 
+  val businessStartDateCheckForm = (date: Day) => {
+    BusinessStartDateForm()(messages, testDateService, mockImplicitDateFormatter).bind(
+      Map("add-business-start-date.day" -> date.day,
+        "add-business-start-date.month" -> date.month,
+        "add-business-start-date.year" -> date.year)
+    )
+  }
+
   property("businessName") = forAll(businessNameGenerator) { (charsList: List[Char]) =>
     (charsList.length > 0 && charsList.length <= BusinessNameForm.businessNameLength) ==> {
       val businessName = charsList.mkString("")
@@ -71,9 +85,14 @@ object IncomeSourcesFormsSpec  extends Properties("incomeSourcesForms.validation
     }
   }
 
-  property("ukPropertyEndDateForm") = forAll(dateGenerator(currentDate)) { date =>
+  property("ukPropertyEndDate") = forAll(dateGenerator(currentDate)) { date =>
     //println(s"Generate ukPropertyForm: ${date}")
     ukPropertyFormUnderTest( date ).errors.isEmpty
+  }
+
+  property("businessStartDate") = forAll(dateGenerator(currentDate)) { date =>
+    //println(s"Generate ukPropertyForm: ${date}")
+    businessStartDateCheckForm(date).errors.isEmpty
   }
 
 }
