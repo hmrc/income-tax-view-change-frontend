@@ -25,8 +25,22 @@
 
 @this(mainTemplate: unifiedLayout, dateInput: dateInput, continueButton: ContinueButton, formWithCSRF: FormWithCSRF, errorSummary: ErrorSummary)
 
-@(data: String)
+@(BusinessEndDateForm: Form[_], postAction: Call, isAgent: Boolean = false, backUrl: String, origin: Option[String] = None)(implicit request: Request[_], messages: Messages)
 
-<div>
- data
-</div>
+@mainTemplate(pageTitle = messages("incomeSources.cease.UKPropertyEndDate.heading"), isAgent = isAgent, backUrl = Some(backUrl)) {
+
+ @errorSummary(
+  form = BusinessEndDateForm
+ )
+
+ @formWithCSRF(action = postAction, Symbol("id") -> "business-end-date-form") {
+
+  @dateInput(
+   content = messages("incomeSources.cease.BusinessEndDate.heading"),
+   field = BusinessEndDateForm("uk-property-end-date"),
+   pageHeading = true
+  )
+
+  @continueButton()
+ }
+}

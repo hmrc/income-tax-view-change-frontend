@@ -1226,8 +1226,3 @@ incomeSources.cease.BusinessEndDate.error.future                          = You 
 incomeSources.cease.BusinessEndDate.error.beforeStartDate                 = The cessation date cannot be earlier than the start date for the business
 incomeSources.cease.BusinessEndDate.error.beforeEarliestDate              = The cessation date cannot be earlier than the 6th of April 2015
 
-
-
-
-
-
