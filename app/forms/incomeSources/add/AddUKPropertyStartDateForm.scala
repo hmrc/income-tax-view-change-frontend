@@ -40,11 +40,16 @@ object AddUKPropertyStartDateForm extends Constraints {
   private val monthAndYearRequired = "dateForm.error.monthAndYear.required"
 
   def apply()(implicit dateFormatter: ImplicitDateFormatterImpl, dateService: DateService, messages: Messages): Form[DateFormElement] = {
+    val MAXIMUM_ALLOWABLE_DAYS = 7
+    val ADDITIONAL_DAYS = 1
     val currentDate: LocalDate = dateService.getCurrentDate()
-    val currentDatePlusOneWeek: LocalDate = currentDate.plusWeeks(1)
-    val currentDatePlusOneWeekFormatted: String = dateFormatter.longDate(currentDate.plusWeeks(1)).toLongDate
+    val maximumDate: LocalDate = currentDate.plusDays(MAXIMUM_ALLOWABLE_DAYS)
+    val errorDate: LocalDate = currentDate.plusDays(MAXIMUM_ALLOWABLE_DAYS + ADDITIONAL_DAYS)
 
-    def dateMustNotBeInTheFuture(maximumDate: String): String = messages("incomeSources.add.UKPropertyStartDate.error.future", maximumDate)
+    def futureDateErrorMessage: String = {
+      val formattedErrorDate: String = dateFormatter.longDate(errorDate).toLongDate
+      messages("incomeSources.add.UKPropertyStartDate.error.future", formattedErrorDate)
+    }
 
     Form(
       mapping("add-uk-property-start-date" -> tuple(
@@ -59,7 +64,7 @@ object AddUKPropertyStartDateForm extends Constraints {
           case (day, month, year) => LocalDate.of(year.toInt, month.toInt, day.toInt)
         },
         date => (date.getDayOfMonth.toString, date.getMonthValue.toString, date.getYear.toString)
-      ).verifying(maxDate(currentDatePlusOneWeek, dateMustNotBeInTheFuture(currentDatePlusOneWeekFormatted))),
+      ).verifying(maxDate(maximumDate, futureDateErrorMessage))
       )(DateFormElement.apply)(DateFormElement.unapply))
   }
 
