@@ -40,6 +40,7 @@ import services.{DateService, DateServiceInterface}
 import java.time.LocalDate
 import javax.inject.Singleton
 import scala.concurrent.Future
+import forms.{BusinessStartDateCheckForm, CeaseForeignPropertyForm, CeaseUKPropertyForm}
 
 @Singleton
 class TestDateService extends DateServiceInterface {
@@ -261,6 +262,26 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
           declaration => CeaseForeignPropertyForm.form.fill(CeaseForeignPropertyForm(Some(declaration), "csrfToken")).data.map { case (k, v) => (k, Seq(v)) }
         )
       )
+
+    def getAddBusinessStartDateCheck(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      get(
+        uri = "/income-sources/add/business-start-date-check", additionalCookies
+      )
+    }
+
+    def postAddBusinessStartDateCheck(answer: Option[String])(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      post(
+        uri = s"/income-sources/add/business-start-date-check?date=1+November+2020",
+        additionalCookies = additionalCookies
+      )(
+        answer.fold(Map.empty[String, Seq[String]])(
+          selection => BusinessStartDateCheckForm.form.fill(BusinessStartDateCheckForm(Some(selection))).data.map { case (k, v) => (k, Seq(v)) }
+        )
+      )
+    }
+
+    def getAddBusinessStartDate(additionalCookies: Map[String, String] = Map.empty): WSResponse =
+      get("/income-sources/add/business-start-date", additionalCookies)
 
 
     def getCheckCeaseUKPropertyDetails(additionalCookies: Map[String, String]): WSResponse =

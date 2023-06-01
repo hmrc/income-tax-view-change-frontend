@@ -44,6 +44,8 @@ import uk.gov.hmrc.play.language.LanguageUtils
 import java.time.LocalDate
 import javax.inject.Singleton
 import scala.concurrent.Future
+import forms.utils.SessionKeys
+import forms.{BusinessStartDateCheckForm, CeaseForeignPropertyForm, CeaseUKPropertyForm}
 
 @Singleton
 class TestHeaderExtractor extends HeaderExtractor {
@@ -197,6 +199,14 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
         .post(body).futureValue
     }
 
+    def postWithAdditionalHeader(uri: String, additionalHeader: (String, String))(body: Map[String, Seq[String]]): WSResponse = {
+      When(s"I call POST /report-quarterly/income-and-expenses/view" + uri)
+      buildClient(uri)
+        .withFollowRedirects(false)
+        .withHttpHeaders(additionalHeader, "Csrf-Token" -> "nocheck")
+        .post(body).futureValue
+    }
+
     def getCreditAndRefunds(): WSResponse = get("/claim-refund")
 
     def getTaxYears: WSResponse = get("/tax-years")
@@ -268,6 +278,24 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
       )
     )
 
+    def getAddBusinessStartDate: WSResponse = get("/income-sources/add/business-start-date")
+
+    def getAddBusinessStartDateCheck(date: String): WSResponse = {
+      getWithCalcIdInSessionAndWithoutAwait(
+        uri = "/income-sources/add/business-start-date-check",
+        additionalCookies = Map(SessionKeys.businessStartDate -> date)
+      ).futureValue
+    }
+
+    def postAddBusinessStartDateCheck(answer: Option[String]): WSResponse = {
+      post(s"/income-sources/add/business-start-date-check?date=1+November+2020")(
+        answer.fold(Map.empty[String, Seq[String]])(
+          selection => BusinessStartDateCheckForm.form.fill(BusinessStartDateCheckForm(Some(selection))).data.map {
+            case (k, v) => (k, Seq(v))
+          }
+        )
+      )
+    }
 
     def getCheckCeaseUKPropertyDetails(session: Map[String, String]): WSResponse =
       getWithClientDetailsInSession("/income-sources/cease/uk-property-check-details", session)

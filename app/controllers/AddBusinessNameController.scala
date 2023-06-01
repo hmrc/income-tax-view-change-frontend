@@ -57,7 +57,7 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
       handleRequest(
         isAgent = false,
         backUrl = backUrl
-        )
+      )
   }
 
   def showAgent(): Action[AnyContent] =
@@ -68,7 +68,8 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
             implicit mtdItUser =>
               handleRequest(
                 isAgent = true,
-                backUrl = backUrlAgent)
+                backUrl = backUrlAgent
+              )
           }
     }
 
@@ -97,11 +98,8 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
         },
         formData => {
           Future.successful {
-            //Should be the below comment, but changed to redirect to business trade so ATs can be made while Start Date is not yet implemented
-            //            Redirect(routes.AddBusinessStartDateController.show())
-            //   .withSession(request.session + (SessionKeys.businessName -> formData.name))
-            Redirect(routes.AddBusinessTradeController.show())
-              .withSession(request.session + (SessionKeys.businessName -> formData.name))
+            Redirect(routes.AddBusinessStartDateController.show())
+              .addingToSession(SessionKeys.businessName -> formData.name)
           }
         }
       )
@@ -120,11 +118,8 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
               },
               formData => {
                 Future.successful {
-                  //Should be the below comment, but changed to redirect to business trade so ATs can be made while Start Date is not yet implemented
-                  //Redirect(routes.AddBusinessStartDateController.showAgent())
-                  //  .withSession(request.session + (SessionKeys.businessName -> formData.name))
-                  Redirect(routes.AddBusinessTradeController.showAgent())
-                    .withSession(request.session + (SessionKeys.businessName -> formData.name))
+                  Redirect(routes.AddBusinessStartDateController.showAgent())
+                    .addingToSession(SessionKeys.businessName -> formData.name)
                 }
               }
             )
