@@ -66,13 +66,12 @@ class CustomAuthConnector @Inject()(servicesConfig: ServicesConfig,
     http.POST[JsValue, HttpResponse](s"$serviceUrl/government-gateway/session/login", payload) flatMap {
       case response@HttpResponse(CREATED, _, headers) =>
         (
-          response.header(HeaderNames.AUTHORIZATION),
-          response.header(HeaderNames.LOCATION),
+          headers.get(HeaderNames.AUTHORIZATION),
+          headers.get(HeaderNames.LOCATION),
           (response.json \ "gatewayToken").asOpt[String]
         ) match {
           case (Some(token), Some(sessionUri), Some(receivedGatewayToken)) =>
-            Logger("application").info("HEADERS: " + headers)
-            Future.successful((AuthExchange(token, sessionUri), GovernmentGatewayToken(receivedGatewayToken)))
+            Future.successful((AuthExchange(token.mkString, sessionUri.mkString), GovernmentGatewayToken(receivedGatewayToken)))
           case (token, sessionUri, gatewayToken) =>
             Logger("application").info("HEADERS: " + headers)
             Logger("application").info("response json:" + response.json)
