@@ -71,7 +71,6 @@ class CustomAuthConnector @Inject()(servicesConfig: ServicesConfig,
           (response.json \ "gatewayToken").asOpt[String]
         ) match {
           case (Some(token), Some(sessionUri), Some(receivedGatewayToken)) =>
-            Logger("application").info("HEADERS: " + headers)
             Future.successful((AuthExchange(token.mkString, sessionUri.mkString), GovernmentGatewayToken(receivedGatewayToken)))
           case (token, sessionUri, gatewayToken) =>
             Logger("application").info("HEADERS: " + headers)
