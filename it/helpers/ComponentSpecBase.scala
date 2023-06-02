@@ -44,6 +44,8 @@ import uk.gov.hmrc.play.language.LanguageUtils
 import java.time.LocalDate
 import javax.inject.Singleton
 import scala.concurrent.Future
+import forms.utils.SessionKeys
+import forms.{BusinessStartDateCheckForm, CeaseForeignPropertyForm, CeaseUKPropertyForm}
 
 @Singleton
 class TestHeaderExtractor extends HeaderExtractor {
@@ -100,6 +102,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
   val titleClientRelationshipFailure: String = "agent.client_relationship_failure.heading"
 
   def config: Map[String, String] = Map(
+    "play.filters.csrf.header.bypassHeaders.Csrf-Token" -> "nocheck",
     "microservice.services.auth.host" -> mockHost,
     "microservice.services.auth.port" -> mockPort,
     "microservice.services.income-tax-view-change.host" -> mockHost,
@@ -188,11 +191,19 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     def get(uri: String): WSResponse = buildClient(uri)
       .get().futureValue
 
-    def post(uri: String)(body: Map[String, Seq[String]]): WSResponse = {
+    def post(uri: String, additionalCookies: Map[String, String] = Map.empty)(body: Map[String, Seq[String]]): WSResponse = {
+      When(s"I call POST /report-quarterly/income-and-expenses/view" + uri)
+      buildClient(uri)
+        .withHttpHeaders(HeaderNames.COOKIE -> bakeSessionCookie(additionalCookies ),"Csrf-Token" -> "nocheck")
+        .withFollowRedirects(false)
+        .post(body).futureValue
+    }
+
+    def postWithAdditionalHeader(uri: String, additionalHeader: (String, String))(body: Map[String, Seq[String]]): WSResponse = {
       When(s"I call POST /report-quarterly/income-and-expenses/view" + uri)
       buildClient(uri)
         .withFollowRedirects(false)
-        .withHttpHeaders("Csrf-Token" -> "nocheck")
+        .withHttpHeaders(additionalHeader, "Csrf-Token" -> "nocheck")
         .post(body).futureValue
     }
 
@@ -269,6 +280,30 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
     def getForeignPropertyEndDate: WSResponse = get("/income-sources/cease/foreign-property-end-date")
 
+    def getAddBusinessStartDate: WSResponse = get("/income-sources/add/business-start-date")
+
+    def getAddBusinessStartDateCheck(date: String): WSResponse = {
+      getWithCalcIdInSessionAndWithoutAwait(
+        uri = "/income-sources/add/business-start-date-check",
+        additionalCookies = Map(SessionKeys.businessStartDate -> date)
+      ).futureValue
+    }
+
+    def postAddBusinessStartDateCheck(answer: Option[String]): WSResponse = {
+      post(s"/income-sources/add/business-start-date-check?date=1+November+2020")(
+        answer.fold(Map.empty[String, Seq[String]])(
+          selection => BusinessStartDateCheckForm.form.fill(BusinessStartDateCheckForm(Some(selection))).data.map {
+            case (k, v) => (k, Seq(v))
+          }
+        )
+      )
+    }
+
+    def getCheckCeaseUKPropertyDetails(session: Map[String, String]): WSResponse =
+      getWithClientDetailsInSession("/income-sources/cease/uk-property-check-details", session)
+
+    def postCheckCeaseUKPropertyDetails(session: Map[String, String]): WSResponse =
+      post("/income-sources/cease/uk-property-check-details", session)(Map.empty)
   }
 
   def unauthorisedTest(uri: String): Unit = {

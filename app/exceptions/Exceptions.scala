@@ -17,3 +17,4 @@
 package exceptions
 
 case class MissingFieldException(fieldName: String) extends RuntimeException(s"Missing Mandatory Expected Field: $fieldName")
+case class MissingSessionKey(key:String) extends RuntimeException(s"Missing session key: $key")

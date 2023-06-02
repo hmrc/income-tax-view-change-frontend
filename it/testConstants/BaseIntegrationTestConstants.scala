@@ -92,6 +92,16 @@ object BaseIntegrationTestConstants {
     SessionKeys.confirmedClient -> "true"
   )
 
+  val clientDetailsWithStartDate: Map[String, String] = Map(
+    SessionKeys.clientFirstName -> "Test",
+    SessionKeys.clientLastName -> "User",
+    SessionKeys.clientUTR -> "1234567890",
+    SessionKeys.clientNino -> testNino,
+    SessionKeys.clientMTDID -> testMtditid,
+    SessionKeys.confirmedClient -> "true",
+    SessionKeys.businessStartDate -> "2020-11-1"
+  )
+
   val getCurrentTaxYearEnd: LocalDate = {
     val currentDate: LocalDate = LocalDate.of(2023, 4, 5)
     if (currentDate.isBefore(LocalDate.of(currentDate.getYear, 4, 6))) LocalDate.of(currentDate.getYear, 4, 5)

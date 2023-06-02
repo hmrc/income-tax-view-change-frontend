@@ -25,16 +25,16 @@ import models.chargeHistory._
 import models.core.{Nino, NinoResponse, NinoResponseError, NinoResponseSuccess}
 import models.financialDetails._
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel, IncomeSourceDetailsResponse}
+import models.nextUpdates.{NextUpdatesErrorModel, NextUpdatesResponseModel, ObligationsModel}
 import models.outstandingCharges._
 import models.paymentAllocationCharges.{FinancialDetailsWithDocumentDetailsErrorModel, FinancialDetailsWithDocumentDetailsModel, FinancialDetailsWithDocumentDetailsResponse}
 import models.paymentAllocations.{PaymentAllocations, PaymentAllocationsError, PaymentAllocationsResponse}
-import models.nextUpdates.{NextUpdatesErrorModel, NextUpdatesResponseModel, ObligationsModel}
 import models.repaymentHistory.{RepaymentHistoryErrorModel, RepaymentHistoryModel, RepaymentHistoryResponseModel}
+import models.updateIncomeSource.{Cessation, UpdateIncomeSourceRequestModel, UpdateIncomeSourceResponse, UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
 import play.api.Logger
 import play.api.http.Status
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
-import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
-import uk.gov.hmrc.http.HttpClient
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 
 import java.time.LocalDate
 import javax.inject.Inject
@@ -106,6 +106,10 @@ trait IncomeTaxViewChangeConnector extends RawResponseReads with FeatureSwitchin
 
   def getAllRepaymentHistoryUrl(nino: String): String = {
     s"${appConfig.itvcProtectedService}/income-tax-view-change/repayments/$nino"
+  }
+
+  def getUpdateCessationDateUrl: String = {
+    s"${appConfig.itvcProtectedService}/income-tax-view-change/update-income-source/update-cessation-date"
   }
 
   def getBusinessDetails(nino: String)(implicit headerCarrier: HeaderCarrier): Future[IncomeSourceDetailsResponse] = {
@@ -523,7 +527,7 @@ trait IncomeTaxViewChangeConnector extends RawResponseReads with FeatureSwitchin
   }
 
   def getRepaymentHistoryByRepaymentId(nino: Nino, repaymentId: String)
-                                     (implicit headerCarrier: HeaderCarrier): Future[RepaymentHistoryResponseModel] = {
+                                      (implicit headerCarrier: HeaderCarrier): Future[RepaymentHistoryResponseModel] = {
     http.GET[HttpResponse](getRepaymentHistoryByIdUrl(nino.value, repaymentId))(
       httpReads,
       headerCarrier.withExtraHeaders("Accept" -> "application/vnd.hmrc.2.0+json"),
@@ -576,4 +580,31 @@ trait IncomeTaxViewChangeConnector extends RawResponseReads with FeatureSwitchin
       }
     }
   }
+
+  def updateCessationDate(nino: String, incomeSourceId: String, cessationDate: Option[LocalDate])(implicit headerCarrier: HeaderCarrier): Future[UpdateIncomeSourceResponse] = {
+    val body = UpdateIncomeSourceRequestModel(nino = nino, incomeSourceId = incomeSourceId,
+      cessation = Some(Cessation(cessationIndicator = true, cessationDate = cessationDate)))
+
+    http.PUT[UpdateIncomeSourceRequestModel, HttpResponse](
+      getUpdateCessationDateUrl,
+      body, Seq[(String, String)]()).map { response =>
+      response.status match {
+        case OK => response.json.validate[UpdateIncomeSourceResponseModel].fold(
+          invalid => {
+            Logger("application").error(s"[IncomeTaxViewChangeConnector][updateCessationDate] - Json validation error parsing repayment response, error $invalid")
+            UpdateIncomeSourceResponseError(INTERNAL_SERVER_ERROR, "Json validation error parsing response")
+          },
+          valid => valid
+        )
+        case status =>
+          if (status >= INTERNAL_SERVER_ERROR) {
+            Logger("application").error(s"[IncomeTaxViewChangeConnector][updateCessationDate] - Response status: ${response.status}, body: ${response.body}")
+          } else {
+            Logger("application").warn(s"[IncomeTaxViewChangeConnector][updateCessationDate] - Response status: ${response.status}, body: ${response.body}")
+          }
+          UpdateIncomeSourceResponseError(response.status, response.body)
+      }
+    }
+  }
+
 }

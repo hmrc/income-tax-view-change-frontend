@@ -62,17 +62,24 @@ class CustomAuthConnector @Inject()(servicesConfig: ServicesConfig,
   }
 
   def loginRequest(payload: JsValue)(implicit hc: HeaderCarrier): Future[(AuthExchange, GovernmentGatewayToken)] = {
+
+    def getHeader(headerName: String, headers: Map[String, Seq[String]]): Option[String] = {
+      val headerNames = List(headerName, headerName.take(1).toUpperCase() + headerName.drop(1))
+      headerNames.flatMap(name => headers.get(name)).headOption.map(_.mkString)
+    }
+
     Logger("application").info("login request info:" + payload)
     http.POST[JsValue, HttpResponse](s"$serviceUrl/government-gateway/session/login", payload) flatMap {
-      case response@HttpResponse(CREATED, _, _) =>
+      case response@HttpResponse(CREATED, _, headers) =>
         (
-          response.header(HeaderNames.AUTHORIZATION),
-          response.header(HeaderNames.LOCATION),
+          getHeader("authorization", headers),
+          getHeader("location", headers),
           (response.json \ "gatewayToken").asOpt[String]
         ) match {
           case (Some(token), Some(sessionUri), Some(receivedGatewayToken)) =>
             Future.successful((AuthExchange(token, sessionUri), GovernmentGatewayToken(receivedGatewayToken)))
           case (token, sessionUri, gatewayToken) =>
+            Logger("application").info("HEADERS: " + headers)
             Logger("application").info("response json:" + response.json)
             Logger("application").info(s"login response info: $token :: $sessionUri :: $gatewayToken")
             Future.failed(new RuntimeException("Internal Error, missing headers or gatewayToken in response from auth-login-api"))

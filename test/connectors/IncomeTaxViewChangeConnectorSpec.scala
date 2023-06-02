@@ -39,10 +39,13 @@ import models.paymentAllocationCharges.{FinancialDetailsWithDocumentDetailsError
 import models.paymentAllocations.{PaymentAllocationsError, PaymentAllocationsResponse}
 import models.nextUpdates.{NextUpdatesErrorModel, NextUpdatesResponseModel}
 import models.repaymentHistory.{RepaymentHistoryErrorModel, RepaymentHistoryModel, RepaymentHistoryResponseModel}
+import models.updateIncomeSource.UpdateIncomeSourceResponse
 import org.mockito.Mockito.{mock, when}
 import play.api.libs.json.Json
 import play.mvc.Http.Status
 import testConstants.RepaymentHistoryTestConstants.{repaymentHistoryOneRSI, validMultipleRepaymentHistoryJson, validRepaymentHistoryOneRSIJson}
+import testConstants.UpdateIncomeSourceTestConstants
+import testConstants.UpdateIncomeSourceTestConstants.{badJsonResponse, cessationDate, failureResponse, incomeSourceId, successHttpResponse, successResponse}
 import testUtils.TestSupport
 import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.http.HttpClient
@@ -707,5 +710,34 @@ class IncomeTaxViewChangeConnectorSpec extends TestSupport with MockHttp with Mo
         result.futureValue shouldBe RepaymentHistoryErrorModel(400, """"Error message"""")
       }
     }
+  }
+
+  ".updateCessationDate" should {
+
+    s"return a valid UpdateIncomeSourceResponseModel" in new Setup {
+      setupMockHttpPutWithHeaderCarrier(getUpdateCessationDateUrl)(
+        UpdateIncomeSourceTestConstants.request,
+        UpdateIncomeSourceTestConstants.successHttpResponse)
+        val result:Future[UpdateIncomeSourceResponse]  = updateCessationDate(testNino,incomeSourceId,Some(LocalDate.parse(cessationDate)))
+        result.futureValue shouldBe successResponse
+    }
+
+    s"return INTERNAL_SERVER_ERROR UpdateIncomeSourceResponseError" when {
+      "invalid json response" in new Setup {
+        setupMockHttpPutWithHeaderCarrier(getUpdateCessationDateUrl)(
+          UpdateIncomeSourceTestConstants.request,
+          UpdateIncomeSourceTestConstants.successInvalidJsonResponse)
+        val result: Future[UpdateIncomeSourceResponse] = updateCessationDate(testNino, incomeSourceId, Some(LocalDate.parse(cessationDate)))
+        result.futureValue shouldBe badJsonResponse
+      }
+      "receiving a 500+ response" in new Setup {
+        setupMockHttpPutWithHeaderCarrier(getUpdateCessationDateUrl)(
+          UpdateIncomeSourceTestConstants.request, HttpResponse(status = Status.INTERNAL_SERVER_ERROR,
+            json = Json.toJson("Error message"), headers = Map.empty))
+        val result: Future[UpdateIncomeSourceResponse] = updateCessationDate(testNino, incomeSourceId, Some(LocalDate.parse(cessationDate)))
+        result.futureValue shouldBe failureResponse
+      }
+    }
+
   }
 }
