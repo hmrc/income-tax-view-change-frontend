@@ -183,28 +183,24 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
   }
 
   object IncomeTaxViewChangeFrontend {
-    def get(uri: String): WSResponse = buildClient(uri)
-      .get().futureValue
-
-    def getWithAdditionalHeader(uri: String, additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+    def get(uri: String, additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      When(s"I call GET /report-quarterly/income-and-expenses/view" + uri)
       buildClient(uri)
         .withHttpHeaders(HeaderNames.COOKIE -> bakeSessionCookie(additionalCookies))
+        .get().futureValue
+    }
+
+    def getWithHeaders(uri: String, headers: (String, String)*): WSResponse = {
+      buildClient(uri)
+        .withHttpHeaders(headers: _*)
         .get().futureValue
     }
 
     def post(uri: String, additionalCookies: Map[String, String] = Map.empty)(body: Map[String, Seq[String]]): WSResponse = {
       When(s"I call POST /report-quarterly/income-and-expenses/view" + uri)
       buildClient(uri)
+        .withFollowRedirects(false)
         .withHttpHeaders(HeaderNames.COOKIE -> bakeSessionCookie(additionalCookies), "Csrf-Token" -> "nocheck")
-        .withFollowRedirects(false)
-        .post(body).futureValue
-    }
-
-    def postWithAdditionalHeader(uri: String, additionalHeader: (String, String))(body: Map[String, Seq[String]]): WSResponse = {
-      When(s"I call POST /report-quarterly/income-and-expenses/view" + uri)
-      buildClient(uri)
-        .withFollowRedirects(false)
-        .withHttpHeaders(additionalHeader, "Csrf-Token" -> "nocheck")
         .post(body).futureValue
     }
 

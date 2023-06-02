@@ -131,12 +131,6 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     super.afterAll()
   }
 
-  def getWithHeaders(uri: String, headers: (String, String)*): WSResponse = {
-    buildClient(uri)
-      .withHttpHeaders(headers: _*)
-      .get().futureValue
-  }
-
   def getWithClientDetailsInSession(uri: String, additionalCookies: Map[String, String] = Map.empty): WSResponse = {
     buildClient(uri)
       .withHttpHeaders(HeaderNames.COOKIE -> bakeSessionCookie(Map.empty ++ additionalCookies), "Csrf-Token" -> "nocheck")
@@ -161,6 +155,12 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
       When(s"I call GET /report-quarterly/income-and-expenses/view/agents" + uri)
       buildClient("/agents" + uri)
         .withHttpHeaders(HeaderNames.COOKIE -> bakeSessionCookie(Map.empty ++ additionalCookies))
+        .get().futureValue
+    }
+
+    def getWithHeaders(uri: String, headers: (String, String)*): WSResponse = {
+      buildClient("/agents" + uri)
+        .withHttpHeaders(headers: _*)
         .get().futureValue
     }
 
@@ -245,7 +245,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
       getWithClientDetailsInSession("/agents/income-sources/cease/uk-property-declare", additionalCookies)
 
     def postCeaseUKProperty(answer: Option[String], additionalCookies: Map[String, String] = Map.empty): WSResponse =
-      post(uri = "/income-sources/cease/uk-property-declare", additionalCookies = additionalCookies)(
+      post(uri = "/income-sources/cease/uk-property-declare", additionalCookies)(
         answer.fold(Map.empty[String, Seq[String]])(
           declaration => CeaseUKPropertyForm.form.fill(CeaseUKPropertyForm(Some(declaration), "csrfToken")).data.map { case (k, v) => (k, Seq(v)) }
         )
@@ -258,7 +258,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
       getWithClientDetailsInSession("/agents/income-sources/cease/foreign-property-declare", additionalCookies)
 
     def postCeaseForeignProperty(answer: Option[String], additionalCookies: Map[String, String] = Map.empty): WSResponse =
-      post(uri = "/income-sources/cease/foreign-property-declare", additionalCookies = additionalCookies)(
+      post(uri = "/income-sources/cease/foreign-property-declare", additionalCookies)(
         answer.fold(Map.empty[String, Seq[String]])(
           declaration => CeaseForeignPropertyForm.form.fill(CeaseForeignPropertyForm(Some(declaration), "csrfToken")).data.map { case (k, v) => (k, Seq(v)) }
         )
@@ -273,7 +273,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     def postAddBusinessStartDateCheck(answer: Option[String])(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
       post(
         uri = s"/income-sources/add/business-start-date-check?date=1+November+2020",
-        additionalCookies = additionalCookies
+        additionalCookies
       )(
         answer.fold(Map.empty[String, Seq[String]])(
           selection => BusinessStartDateCheckForm.form.fill(BusinessStartDateCheckForm(Some(selection))).data.map { case (k, v) => (k, Seq(v)) }
