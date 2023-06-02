@@ -171,8 +171,14 @@ GET          /agents/income-sources/add/business-start-date-check         contro
 # Income Sources - Cease
 GET          /income-sources/cease/cease-an-income-source                 controllers.incomeSources.cease.CeaseIncomeSourceController.show()
 GET          /agents/income-sources/cease/cease-an-income-source          controllers.incomeSources.cease.CeaseIncomeSourceController.showAgent()
+
 GET          /income-sources/cease/business-end-date                      controllers.incomeSources.cease.BusinessEndDateController.show()
 GET          /agents/income-sources/cease/business-end-date               controllers.incomeSources.cease.BusinessEndDateController.showAgent()
+POST         /income-sources/cease/business-end-date                      controllers.incomeSources.cease.BusinessEndDateController.submit()
+POST         /agents/income-sources/cease/business-end-date               controllers.incomeSources.cease.BusinessEndDateController.submitAgent()
+GET          /income-sources/cease/uk-property-check-details              controllers.incomeSources.cease.CheckCeaseBusinessDetailsController.show()
+GET          /agents/income-sources/cease/uk-property-check-details       controllers.incomeSources.cease.CheckCeaseBusinessDetailsController.showAgent()
+
 GET          /income-sources/cease/uk-property-declare                    controllers.incomeSources.cease.CeaseUKPropertyController.show()
 GET          /agents/income-sources/cease/uk-property-declare             controllers.incomeSources.cease.CeaseUKPropertyController.showAgent()
 POST         /income-sources/cease/uk-property-declare                    controllers.incomeSources.cease.CeaseUKPropertyController.submit
