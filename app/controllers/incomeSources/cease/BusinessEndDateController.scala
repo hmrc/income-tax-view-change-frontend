@@ -25,13 +25,11 @@ import forms.incomeSources.cease.BusinessEndDateForm
 import forms.utils.SessionKeys.{ceaseBusinessEndDate, ceaseUKPropertyEndDate}
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages}
-import play.api.i18n.Messages.implicitMessagesProviderToMessages
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents, Result}
 import services.IncomeSourceDetailsService
 import uk.gov.hmrc.http.HeaderCarrier
 import views.html.incomeSources.cease.BusinessEndDate
 import views.html.errorPages.CustomNotFoundError
-
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -46,7 +44,7 @@ class BusinessEndDateController @Inject()(val authenticate: AuthenticationPredic
                                           val businessEndDate: BusinessEndDate,
                                           val customNotFoundErrorView: CustomNotFoundError)
                                          (implicit val appConfig: FrontendAppConfig,
-                                          mcc: MessagesControllerComponents,
+                                          implicit override val mcc: MessagesControllerComponents,
                                           val ec: ExecutionContext,
                                           val itvcErrorHandler: ItvcErrorHandler,
                                           val itvcErrorHandlerAgent: AgentItvcErrorHandler)
@@ -107,7 +105,7 @@ class BusinessEndDateController @Inject()(val authenticate: AuthenticationPredic
         hasErrors => Future.successful(BadRequest(businessEndDate(
           BusinessEndDateForm = hasErrors,
           postAction = controllers.incomeSources.cease.routes.BusinessEndDateController.submit(),
-          backUrl = controllers.incomeSources.cease.routes.CeaseUKPropertyController.show().url,
+          backUrl = controllers.incomeSources.cease.routes.CeaseIncomeSourceController.show().url,
           isAgent = false
         ))),
         validatedInput =>
@@ -124,13 +122,13 @@ class BusinessEndDateController @Inject()(val authenticate: AuthenticationPredic
             businessEndDateForm.apply.bindFromRequest().fold(
               hasErrors => Future.successful(BadRequest(businessEndDate(
                 BusinessEndDateForm = hasErrors,
-                postAction = controllers.incomeSources.cease.routes.UKPropertyEndDateController.submitAgent(),
-                backUrl = controllers.incomeSources.cease.routes.CeaseUKPropertyController.showAgent().url,
+                postAction = controllers.incomeSources.cease.routes.BusinessEndDateController.submitAgent(),
+                backUrl = controllers.incomeSources.cease.routes.CeaseIncomeSourceController.showAgent().url,
                 isAgent = true
               ))),
               validatedInput =>
-                Future.successful(Redirect(controllers.incomeSources.cease.routes.CheckCeaseUKPropertyDetailsController.showAgent())
-                  .addingToSession(ceaseUKPropertyEndDate -> validatedInput.date.toString))
+                Future.successful(Redirect(controllers.incomeSources.cease.routes.CheckCeaseBusinessDetailsController.showAgent())
+                  .addingToSession(ceaseBusinessEndDate -> validatedInput.date.toString))
             )
         }
   }
