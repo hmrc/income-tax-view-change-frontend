@@ -262,6 +262,9 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
         )
       )
 
+    def getForeignPropertyEndDate(additionalCookies: Map[String, String] = Map.empty): WSResponse =
+      getWithClientDetailsInSession("/agents/income-sources/cease/foreign-property-end-date", additionalCookies)
+
   }
 
   def unauthorisedTest(uri: String): Unit = {

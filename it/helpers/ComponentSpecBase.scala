@@ -267,6 +267,8 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
       )
     )
 
+    def getForeignPropertyEndDate: WSResponse = get("/income-sources/cease/foreign-property-end-date")
+
   }
 
   def unauthorisedTest(uri: String): Unit = {
