@@ -275,7 +275,7 @@
                 </tr>
             </thead>
             <tbody>
-            @dueObligations.map { nextUpdateWithIncomeType =>
+            @dueObligations.distinct.map { nextUpdateWithIncomeType =>
                 <tr class="govuk-table__row">
                     <th scope="row" class="govuk-table__header govuk-!-font-weight-regular">
                         <div>@updateTypeHelper(nextUpdateWithIncomeType.obligation.obligationType)</div>
