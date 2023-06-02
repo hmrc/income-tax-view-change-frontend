@@ -203,5 +203,32 @@ class AddIncomeSourceControllerSpec extends MockAuthenticationPredicate
         }
       }
     }
+
+    "show error page" when {
+      "failed to return incomeSourceViewModel for individual" in {
+        disableAllSwitches()
+        enable(IncomeSources)
+        mockUkPropertyWithSoleTraderBusiness()
+        setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
+
+        when(mockIncomeSourceDetailsService.getAddIncomeSourceViewModel(any()))
+          .thenReturn(Left(new Exception("UnknownError")))
+
+        val result = controller.show()(fakeRequestWithActiveSession)
+        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+      }
+      "failed to return incomeSourceViewModel for agent" in {
+        disableAllSwitches()
+        enable(IncomeSources)
+        ukPlusForeignPropertyWithSoleTraderIncomeSource()
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+
+        when(mockIncomeSourceDetailsService.getAddIncomeSourceViewModel(any()))
+          .thenReturn(Left(new Exception("UnknownError")))
+
+        val result = controller.showAgent()(fakeRequestConfirmedClient("AB123456C"))
+        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+      }
+    }
   }
 }
