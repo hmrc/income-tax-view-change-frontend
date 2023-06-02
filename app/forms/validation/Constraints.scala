@@ -76,7 +76,7 @@ trait Constraints {
         Valid
     }
 
-  protected def minDate6April2015(minimum: LocalDate, errorKey: String, args: Any*): Constraint[LocalDate] =
+  protected def minDate6April2015(errorKey: String, args: Any*): Constraint[LocalDate] =
     Constraint {
       case date if date.isBefore(LocalDate.of(2015, 4, 6)) =>
         Invalid(errorKey, args: _*)

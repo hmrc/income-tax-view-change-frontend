@@ -62,7 +62,7 @@ class BusinessEndDateForm @Inject()(val dateService: DateService) extends Constr
         date => (date.getDayOfMonth.toString, date.getMonthValue.toString, date.getYear.toString)
       ).verifying(maxDate(currentDate, dateMustNotBeInFuture))
         .verifying(minDate(businessStartDate.getOrElse(LocalDate.MIN), dateMustBeAfterBusinessStartDate))
-        .verifying(minDate6April2015(sixthAprilTwentyFifteen, dateMustNotBeBefore6April2015))
+        .verifying(minDate6April2015(dateMustNotBeBefore6April2015))
       )(DateFormElement.apply)(DateFormElement.unapply))
 
   }
