@@ -116,5 +116,22 @@ class BusinessEndDateController @Inject()(val authenticate: AuthenticationPredic
       )
   }
 
-
+  def submitAgent: Action[AnyContent] = Authenticated.async {
+    implicit request =>
+      implicit user =>
+        getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
+          implicit mtdItUser =>
+            businessEndDateForm.apply.bindFromRequest().fold(
+              hasErrors => Future.successful(BadRequest(businessEndDate(
+                BusinessEndDateForm = hasErrors,
+                postAction = controllers.incomeSources.cease.routes.UKPropertyEndDateController.submitAgent(),
+                backUrl = controllers.incomeSources.cease.routes.CeaseUKPropertyController.showAgent().url,
+                isAgent = true
+              ))),
+              validatedInput =>
+                Future.successful(Redirect(controllers.incomeSources.cease.routes.CheckCeaseUKPropertyDetailsController.showAgent())
+                  .addingToSession(ceaseUKPropertyEndDate -> validatedInput.date.toString))
+            )
+        }
+  }
 }
