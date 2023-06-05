@@ -34,7 +34,7 @@
 
 @(
         sources: ViewIncomeSourcesViewModel,
-        isUserAgent: Boolean,
+        isAgent: Boolean,
         backUrl: String
 )(implicit messages: Messages, user: auth.MtdItUser[_])
 
@@ -45,7 +45,7 @@
 }
 
 @viewSelfEmploymentDetailsURL = @{
-    if(isUserAgent){
+    if(isAgent){
         controllers.incomeSources.manage.routes.ManageSelfEmploymentSourceController.showAgent().url
     } else {
         controllers.incomeSources.manage.routes.ManageSelfEmploymentSourceController.show().url
@@ -58,13 +58,15 @@
 @soleTraderBusinesses = @{ sources.viewSoleTraderBusinesses }
 
 
+
 @mainTemplate(pageTitle = getMessage("heading"),
     backUrl = Some(backUrl),
-    isAgent = isUserAgent,
     btaNavPartial = user.btaNavPartial) {
 
     @h1(msg = getMessage("heading"),
         id = Some("new-income-sources-h1"))
+
+
 
     @if(soleTraderBusinesses.nonEmpty) {
         @h2(msg = getMessage("self-employed-h2"),
@@ -82,7 +84,8 @@
                     content = Text(""),
                 )
             )),
-            rows = soleTraderBusinesses.zipWithIndex.map { case (business, index) => Seq(
+            rows = soleTraderBusinesses.zipWithIndex.map { case (business, index) =>
+                Seq(
                 TableRow(
                     content = Text(business.tradingName.getOrElse(getMessage("unknown-field"))),
                     attributes = Map("id" -> s"table-row-trading-name-$index")),
@@ -92,8 +95,8 @@
                 TableRow(
                     content = HtmlContent(
                         s"""<dd class="govuk-link govuk-summary-list__actions">
-                                <a class="govuk-link" id="@{s'view-link-business-0'}" href='$viewSelfEmploymentDetailsURL'>
-                                    ${getMessage("business-details")}<span class="govuk-visually-hidden">choose</span>
+                                <a class="govuk-link" id="${s"view-link-business-$index"}" href='$viewSelfEmploymentDetailsURL'>
+                                     ${getMessage("business-details")}
                                 </a>
                             </dd>"""
                     )

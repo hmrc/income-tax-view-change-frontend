@@ -49,13 +49,15 @@ class ManageIncomeSourceControllerISpec extends ComponentSpecBase {
         val res = IncomeTaxViewChangeFrontend.getManageIncomeSource
         verifyIncomeSourceDetailsCall(testMtditid)
 
+        println(s"Here is HTML: ${res.body} ")
+
         res should have(
           httpStatus(OK),
           pageTitleIndividual(pageTitleMsgKey),
           elementTextByID("table-head-business-name")(businessNameMessage),
           elementTextByID("table-row-trading-name-0")(soleTraderBusinessName1),
           elementTextByID("table-row-trading-name-1")(soleTraderBusinessName2),
-          elementTextByID("view-link-businesses-0")(chooseMessage),
+          elementTextByID("view-link-business-1")(chooseMessage),
           elementTextByID("table-head-date-started-uk")(startDateMessage),
           elementTextByID("table-row-trading-start-date-uk")(ukPropertyStartDate)
         )
