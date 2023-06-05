@@ -22,6 +22,7 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowI
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import forms.incomeSources.add.AddUKPropertyStartDateForm
+import forms.utils.SessionKeys.addUkPropertyStartDate
 import implicits.ImplicitDateFormatterImpl
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages}
@@ -114,7 +115,7 @@ class AddUKPropertyStartDateController @Inject()(val authenticate: Authenticatio
         ))),
         validatedInput =>
           Future.successful(Redirect(controllers.incomeSources.add.routes.CheckUKPropertyStartDateController.show())
-            .addingToSession("addUkPropertyStartDate" -> validatedInput.date.toString))
+            .addingToSession(addUkPropertyStartDate -> validatedInput.date.toString))
       )
   }
 
@@ -132,7 +133,7 @@ class AddUKPropertyStartDateController @Inject()(val authenticate: Authenticatio
               ))),
               validatedInput =>
                 Future.successful(Redirect(controllers.incomeSources.add.routes.CheckUKPropertyStartDateController.showAgent())
-                  .addingToSession("addUkPropertyStartDate" -> validatedInput.date.toString))
+                  .addingToSession(addUkPropertyStartDate -> validatedInput.date.toString))
             )
         }
   }
