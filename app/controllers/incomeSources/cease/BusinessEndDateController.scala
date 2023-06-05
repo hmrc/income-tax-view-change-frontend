@@ -23,6 +23,7 @@ import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import forms.incomeSources.cease.BusinessEndDateForm
 import forms.utils.SessionKeys.{ceaseBusinessEndDate, ceaseUKPropertyEndDate}
+import models.incomeSourceDetails.viewmodels.CeaseBusinessDetailsViewModel
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents, Result}
@@ -30,6 +31,8 @@ import services.IncomeSourceDetailsService
 import uk.gov.hmrc.http.HeaderCarrier
 import views.html.incomeSources.cease.BusinessEndDate
 import views.html.errorPages.CustomNotFoundError
+
+import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -50,28 +53,30 @@ class BusinessEndDateController @Inject()(val authenticate: AuthenticationPredic
                                           val itvcErrorHandlerAgent: AgentItvcErrorHandler)
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
-  def show(origin: Option[String] = None): Action[AnyContent] =
+  def show(businessStartDate: Option[String] = None, origin: Option[String] = None): Action[AnyContent] =
     (checkSessionTimeout andThen authenticate andThen retrieveNino
       andThen retrieveIncomeSources).async {
       implicit user =>
         handleRequest(
           isAgent = false,
+          LocalDate.parse(businessStartDate.get),
           origin
         )
     }
 
-  def showAgent(): Action[AnyContent] = Authenticated.async {
+  def showAgent(businessStartDate: Option[String]): Action[AnyContent] = Authenticated.async {
     implicit request =>
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
           implicit mtdItUser =>
             handleRequest(
-              isAgent = true
+              isAgent = true,
+              LocalDate.parse(businessStartDate.get)
             )
         }
   }
 
-  def handleRequest(isAgent: Boolean, origin: Option[String] = None)
+  def handleRequest(isAgent: Boolean, businessStartDate: LocalDate, origin: Option[String] = None)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
 
     val incomeSourcesEnabled: Boolean = isEnabled(IncomeSources)
@@ -83,7 +88,7 @@ class BusinessEndDateController @Inject()(val authenticate: AuthenticationPredic
 
     if (incomeSourcesEnabled) {
       Future.successful(Ok(businessEndDate(
-        BusinessEndDateForm = businessEndDateForm.apply,
+        BusinessEndDateForm = businessEndDateForm.apply(user, businessStartDate = Some(businessStartDate)),
         postAction = postAction,
         isAgent = isAgent,
         backUrl = backUrl,
@@ -101,7 +106,7 @@ class BusinessEndDateController @Inject()(val authenticate: AuthenticationPredic
   def submit: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
-      businessEndDateForm.apply.bindFromRequest().fold(
+      businessEndDateForm.apply(user, None).bindFromRequest().fold(
         hasErrors => Future.successful(BadRequest(businessEndDate(
           BusinessEndDateForm = hasErrors,
           postAction = controllers.incomeSources.cease.routes.BusinessEndDateController.submit(),
@@ -119,7 +124,7 @@ class BusinessEndDateController @Inject()(val authenticate: AuthenticationPredic
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
           implicit mtdItUser =>
-            businessEndDateForm.apply.bindFromRequest().fold(
+            businessEndDateForm.apply(mtdItUser, None).bindFromRequest().fold(
               hasErrors => Future.successful(BadRequest(businessEndDate(
                 BusinessEndDateForm = hasErrors,
                 postAction = controllers.incomeSources.cease.routes.BusinessEndDateController.submitAgent(),

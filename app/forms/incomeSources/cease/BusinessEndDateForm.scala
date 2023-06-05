@@ -43,9 +43,8 @@ class BusinessEndDateForm @Inject()(val dateService: DateService) extends Constr
   val dateMustNotBeBefore6April2015 = "incomeSources.cease.BusinessEndDate.error.beforeEarliestDate"
   val sixthAprilTwentyFifteen: LocalDate = LocalDate.of(2015, 4, 6)
 
-  def apply(implicit user: MtdItUser[_]): Form[DateFormElement] = {
+  def apply (implicit user: MtdItUser[_], businessStartDate: Option[LocalDate]): Form[DateFormElement] = {
     val currentDate: LocalDate = dateService.getCurrentDate()
-    val businessStartDate: Option[LocalDate] = ??? // TODO: Get business start date using session data?
 
     Form(
       mapping("business-end-date" -> tuple(
@@ -88,7 +87,7 @@ class BusinessEndDateForm @Inject()(val dateService: DateService) extends Constr
 
   object BusinessEndDateForm {
     def apply(dateService: DateService)(implicit user: MtdItUser[_]): Form[DateFormElement] = {
-      new BusinessEndDateForm(dateService).apply
+      new BusinessEndDateForm(dateService).apply(user, None)
     }
   }
 }

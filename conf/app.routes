@@ -172,8 +172,8 @@ GET          /agents/income-sources/add/business-start-date-check         contro
 GET          /income-sources/cease/cease-an-income-source                 controllers.incomeSources.cease.CeaseIncomeSourceController.show()
 GET          /agents/income-sources/cease/cease-an-income-source          controllers.incomeSources.cease.CeaseIncomeSourceController.showAgent()
 
-GET          /income-sources/cease/business-end-date                      controllers.incomeSources.cease.BusinessEndDateController.show()
-GET          /agents/income-sources/cease/business-end-date               controllers.incomeSources.cease.BusinessEndDateController.showAgent()
+GET          /income-sources/cease/business-end-date                      controllers.incomeSources.cease.BusinessEndDateController.show(businessStartDate: Option[String] ?= None)
+GET          /agents/income-sources/cease/business-end-date               controllers.incomeSources.cease.BusinessEndDateController.showAgent(businessStartDate: Option[String] ?= None)
 POST         /income-sources/cease/business-end-date                      controllers.incomeSources.cease.BusinessEndDateController.submit()
 POST         /agents/income-sources/cease/business-end-date               controllers.incomeSources.cease.BusinessEndDateController.submitAgent()
 GET          /income-sources/cease/business-check-details                 controllers.incomeSources.cease.CheckCeaseBusinessDetailsController.show()

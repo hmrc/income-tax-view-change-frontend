@@ -19,6 +19,7 @@
 @import views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import models.incomeSourceDetails.viewmodels.CeaseIncomeSourcesViewModel
+@import java.time.format.DateTimeFormatter
 
 @this(
         mainTemplate: unifiedLayout,
@@ -39,13 +40,14 @@
 
 @import implicitDateFormatter.longDate
 
+@import java.time.LocalDate
 @getMessage(key: String, args: String*) = @{
     messages(s"cease-income-sources.$key", args: _*)
 }
 
-@ceaseSoleTraderBusinessURL = @{
-    if(isAgent) controllers.incomeSources.cease.routes.BusinessEndDateController.showAgent().url
-    else controllers.incomeSources.cease.routes.BusinessEndDateController.show().url
+@ceaseSoleTraderBusinessURL(businessStartDate: Option[String]) = @{
+    if(isAgent) controllers.incomeSources.cease.routes.BusinessEndDateController.showAgent(businessStartDate).url
+    else controllers.incomeSources.cease.routes.BusinessEndDateController.show(businessStartDate).url
 }
 
 @ceaseUkPropertyURL = @{
@@ -88,7 +90,7 @@
                         <dl>
                             <dt>
                         <dd class="govuk-summary-list__actions" id="@{s"cease-link-business-$index"}">
-                            <a class="govuk-link" href=@ceaseSoleTraderBusinessURL>
+                            <a class="govuk-link" href=@ceaseSoleTraderBusinessURL(Some(item.tradingStartDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))))>
                                 @getMessage("cease")<span class="govuk-visually-hidden">cease</span>
                             </a>
                         </dd>
