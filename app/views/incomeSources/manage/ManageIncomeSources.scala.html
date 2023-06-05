@@ -90,9 +90,9 @@
                     attributes = Map("id" -> s"table-row-trading-start-date-$index")),
                 TableRow(
                     content = HtmlContent(
-                        s"""<dd class="govuk-summary-list__actions">
-                                <a class="govuk-link" href='$viewSelfEmploymentDetailsURL'>
-                                    ${getMessage("business-details")}<span class="govuk-visually-hidden">cease</span>
+                        s"""<dd class="govuk-link govuk-summary-list__actions">
+                                <a class="govuk-link" id="@{s"view-link-business-$index"}" href='$viewSelfEmploymentDetailsURL'>
+                                    ${getMessage("business-details")}<span class="govuk-visually-hidden">choose</span>
                                 </a>
                             </dd>"""
                     )

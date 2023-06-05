@@ -29,13 +29,13 @@ class ManageIncomeSourceControllerISpec extends ComponentSpecBase {
   val pageTitleMsgKey = "view-income-sources.heading"
   val soleTraderBusinessName1: String = "business"
   val soleTraderBusinessName2: String = "secondBusiness"
-  val chooseMessage: String = messagesAPI("view-income-sources.business-details") + "choose"
+  val chooseMessage: String = messagesAPI("view-income-sources.business-details")
   val startDateMessage: String = messagesAPI("view-income-sources.table-head.date-started")
   val ceasedDateMessage: String = messagesAPI("view-income-sources.table-head.date-ended")
   val businessNameMessage: String = messagesAPI("view-income-sources.table-head.business-name")
   val ukPropertyStartDate: String = "1 January 2017"
   val foreignPropertyStartDate: String = "1 January 2017"
-  val ceasedBusinessMessage: String = messagesAPI("view-income-sources.ceased-businesses.h1")
+  val ceasedBusinessMessage: String = messagesAPI("view-income-sources.ceased-businesses-h2")
   val ceasedBusinessName: String = "ceasedBusiness"
 
 
@@ -55,8 +55,7 @@ class ManageIncomeSourceControllerISpec extends ComponentSpecBase {
           elementTextByID("table-head-business-name")(businessNameMessage),
           elementTextByID("table-row-trading-name-0")(soleTraderBusinessName1),
           elementTextByID("table-row-trading-name-1")(soleTraderBusinessName2),
-          elementTextByID("cease-link-business-0")(chooseMessage),
-          elementTextByID("cease-link-business-1")(chooseMessage),
+          elementTextByID("view-link-businesses-0")(chooseMessage),
           elementTextByID("table-head-date-started-uk")(startDateMessage),
           elementTextByID("table-row-trading-start-date-uk")(ukPropertyStartDate)
         )
@@ -73,10 +72,9 @@ class ManageIncomeSourceControllerISpec extends ComponentSpecBase {
         res should have(
           httpStatus(OK),
           pageTitleIndividual(pageTitleMsgKey),
-          elementTextByID("ceased-businesses-h1")(ceasedBusinessMessage),
+          elementTextByID("ceased-businesses-h2")(ceasedBusinessMessage),
           elementTextByID("table-head-date-ended-ceased")(ceasedDateMessage),
-          elementTextByID("table-row-trading-name-0-ceased")(ceasedBusinessName),
-          elementTextByID("choose-link-foreign")(chooseMessage),
+          elementTextByID("table-row-trading-name-ceased-0")(ceasedBusinessName),
           elementTextByID("table-head-date-started-foreign")(startDateMessage),
           elementTextByID("table-row-trading-start-date-foreign")(foreignPropertyStartDate)
         )
