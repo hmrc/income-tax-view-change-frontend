@@ -80,8 +80,8 @@ class ManageIncomeSourceController @Inject()(val manageIncomeSources: ManageInco
           case Right(viewModel) =>
             Ok(manageIncomeSources(
               viewModel,
-              isAgent = isAgent,
-              backUrl = backUrl
+              isAgent,
+              backUrl
             ))
           case Left(ex) =>
             if (isAgent) {

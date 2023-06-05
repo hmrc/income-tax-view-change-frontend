@@ -34,7 +34,7 @@
 
 @(
         sources: ViewIncomeSourcesViewModel,
-        isAgent: Boolean,
+        isUserAgent: Boolean,
         backUrl: String
 )(implicit messages: Messages, user: auth.MtdItUser[_])
 
@@ -45,7 +45,7 @@
 }
 
 @viewSelfEmploymentDetailsURL = @{
-    if(isAgent){
+    if(isUserAgent){
         controllers.incomeSources.manage.routes.ManageSelfEmploymentSourceController.showAgent().url
     } else {
         controllers.incomeSources.manage.routes.ManageSelfEmploymentSourceController.show().url
@@ -60,6 +60,7 @@
 
 @mainTemplate(pageTitle = getMessage("heading"),
     backUrl = Some(backUrl),
+    isAgent = isUserAgent,
     btaNavPartial = user.btaNavPartial) {
 
     @h1(msg = getMessage("heading"),
@@ -91,7 +92,7 @@
                 TableRow(
                     content = HtmlContent(
                         s"""<dd class="govuk-link govuk-summary-list__actions">
-                                <a class="govuk-link" id="@{s"view-link-business-$index"}" href='$viewSelfEmploymentDetailsURL'>
+                                <a class="govuk-link" id="@{s'view-link-business-0'}" href='$viewSelfEmploymentDetailsURL'>
                                     ${getMessage("business-details")}<span class="govuk-visually-hidden">choose</span>
                                 </a>
                             </dd>"""
