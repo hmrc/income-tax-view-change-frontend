@@ -21,14 +21,14 @@ import forms.models.DateFormElement
 import forms.validation.Constraints
 import play.api.data.Form
 import play.api.data.Forms._
-import services.DateService
+import services.DateServiceInterface
 
 import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
 
 
 @Singleton
-class UKPropertyEndDateForm @Inject()(val dateService: DateService) extends Constraints {
+class UKPropertyEndDateForm @Inject()(val dateService: DateServiceInterface) extends Constraints {
 
   val dateMustBeEntered = "incomeSources.cease.UKPropertyEndDate.error.incomplete"
   val dateMustBeReal = "incomeSources.cease.UKPropertyEndDate.error.invalid"
@@ -56,7 +56,7 @@ class UKPropertyEndDateForm @Inject()(val dateService: DateService) extends Cons
   }
 
   object UKPropertyEndDateForm {
-    def apply(dateService: DateService)(implicit user: MtdItUser[_]): Form[DateFormElement] = {
+    def apply(dateService: DateServiceInterface)(implicit user: MtdItUser[_]): Form[DateFormElement] = {
       new UKPropertyEndDateForm(dateService).apply
     }
   }
