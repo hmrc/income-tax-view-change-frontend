@@ -58,7 +58,7 @@ class CheckUKPropertyStartDateController @Inject()(val authenticate: Authenticat
 
     val incomeSourcesEnabled: Boolean = isEnabled(IncomeSources)
     val backUrl: String = if (isAgent) controllers.incomeSources.add.routes.AddUKPropertyStartDateController.showAgent().url else
-      controllers.incomeSources.add.routes.AddIncomeSourceController.show().url
+      controllers.incomeSources.add.routes.AddUKPropertyStartDateController.show().url
     val postAction: Call = if (isAgent) controllers.incomeSources.add.routes.CheckUKPropertyStartDateController.submitAgent() else
       controllers.incomeSources.add.routes.CheckUKPropertyStartDateController.submit()
     val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
