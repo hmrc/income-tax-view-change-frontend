@@ -60,6 +60,17 @@ trait Constraints {
     case _ => Valid
   }
 
+  protected def dateCheck(errKey: DatePartErrorMessageKeys, args: Seq[String] = Seq()): Constraint[(String, String, String)] = Constraint {
+    case ("", "", "") => Invalid(errKey.containsNothing, args: _*)
+    case (_, "", "") => Invalid(errKey.containsOnlyDay, args: _*)
+    case ("", _, "") => Invalid(errKey.containsOnlyMonth, args: _*)
+    case ("", "", _) => Invalid(errKey.containsOnlyYear, args: _*)
+    case ("", _, _) => Invalid(errKey.containsOnlyMonthYear, args: _*)
+    case (_, "", _) => Invalid(errKey.containsOnlyDayYear, args: _*)
+    case (_, _, "") => Invalid(errKey.containsOnlyDayMonth, args: _*)
+    case _ => Valid
+  }
+
   protected def maxDate(maximum: LocalDate, errorKey: String, args: Any*): Constraint[LocalDate] =
     Constraint {
       case date if date.isAfter(maximum) =>
@@ -75,4 +86,12 @@ trait Constraints {
       case _ =>
         Valid
     }
+
+  case class DatePartErrorMessageKeys(containsNothing: String,
+                                      containsOnlyDay: String,
+                                      containsOnlyMonth: String,
+                                      containsOnlyYear: String,
+                                      containsOnlyDayMonth: String,
+                                      containsOnlyDayYear: String,
+                                      containsOnlyMonthYear: String)
 }

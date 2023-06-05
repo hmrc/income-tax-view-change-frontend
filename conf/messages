@@ -1213,6 +1213,24 @@ incomeSources.cease.UKPropertyEndDate.error.beforeStartDate      = The cessation
 incomeSources.ceaseForeignProperty.heading                       = Cease foreign property
 incomeSources.ceaseForeignProperty.checkboxLabel                 = I declare that I no longer get an income from any foreign property.
 incomeSources.ceaseForeignProperty.checkboxError                 = You must declare that you no longer get an income from any foreign property
+
+incomeSources.add.foreignProperty.startDate.heading                  = When did your foreign property business start?
+incomeSources.add.foreignProperty.startDate.hint                     = This is the date that letting or renting out any foreign property first started.
+incomeSources.add.foreignProperty.startDate.hintExample              = For example, 27 3 2020
+incomeSources.add.foreignProperty.startDate.error.empty              = Enter the date your foreign property business started trading
+incomeSources.add.foreignProperty.startDate.error.missingMonthYear   = The date must include a month and a year
+incomeSources.add.foreignProperty.startDate.error.missingDayYear     = The date must include a day and a year
+incomeSources.add.foreignProperty.startDate.error.missingDayMonth    = The date must include a day and a month
+incomeSources.add.foreignProperty.startDate.error.missingYear        = The date must include a year
+incomeSources.add.foreignProperty.startDate.error.missingMonth       = The date must include a month
+incomeSources.add.foreignProperty.startDate.error.missingDay         = The date must include a day
+incomeSources.add.foreignProperty.startDate.error.invalid            = The date your foreign property business started must be a real date
+incomeSources.add.foreignProperty.startDate.error.future             = The date your foreign property business started must be before {0}
+incomeSources.add.foreignProperty.startDate.check.heading            = Is this date correct?
+incomeSources.add.foreignProperty.startDate.check.error              = Select yes if your foreign property business start date is correct
+incomeSources.add.foreignProperty.startDate.check.radio.yes          = Yes
+incomeSources.add.foreignProperty.startDate.check.radio.no           = No
+
 #Generic date form messages
 dateForm.hint                                                    = For example, 27 3 2020
 dateForm.error.day.required                                         = The date must include a day
