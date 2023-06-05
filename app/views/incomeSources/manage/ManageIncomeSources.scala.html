@@ -58,9 +58,9 @@
 @soleTraderBusinesses = @{ sources.viewSoleTraderBusinesses }
 
 
-
 @mainTemplate(pageTitle = getMessage("heading"),
     backUrl = Some(backUrl),
+    isAgent = isAgent,
     btaNavPartial = user.btaNavPartial) {
 
     @h1(msg = getMessage("heading"),
