@@ -83,7 +83,7 @@
             )),
             rows = soleTraderBusinesses.zipWithIndex.map { case (business, index) => Seq(
                 TableRow(
-                    content = Text(if (business.tradingName.nonEmpty) business.tradingName else getMessage("unknown-field")),
+                    content = Text(business.tradingName.getOrElse(getMessage("unknown-field"))),
                     attributes = Map("id" -> s"table-row-trading-name-$index")),
                 TableRow(
                     content = Text(business.tradingStartDate.map(_.toLongDate).getOrElse(getMessage("unknown-field"))),
@@ -158,7 +158,7 @@
             )),
             rows = ceasedBusinesses.zipWithIndex.map { case (business, index) => Seq(
                 TableRow(
-                    content = Text(business.tradingName),
+                    content = Text(business.tradingName.getOrElse(getMessage("unknown-field"))),
                     attributes = Map("id" -> s"table-row-trading-name-ceased-$index")),
                 TableRow(
                     content = Text(business.tradingStartDate.map(_.toLongDate).getOrElse(getMessage("unknown-field"))),

@@ -203,8 +203,8 @@ class IncomeSourceDetailsServiceSpec extends TestSupport with MockIncomeTaxViewC
           viewUkProperty = None,
           viewForeignProperty = Some(ViewPropertyDetailsViewModel(testStartDateOption)),
           viewCeasedBusinesses = List(
-            ViewCeasedBusinessDetailsViewModel(testTradeName, testStartDateOption, testCessation.date.get),
-            ViewCeasedBusinessDetailsViewModel(testTradeName2, testStartDateOption2, testCessation2.date.get)
+            ViewCeasedBusinessDetailsViewModel(testTradeNameOption, testStartDateOption, testCessation.date.get),
+            ViewCeasedBusinessDetailsViewModel(testTradeNameOption2, testStartDateOption2, testCessation2.date.get)
           )
         ))
       }

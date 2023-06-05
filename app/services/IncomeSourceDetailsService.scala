@@ -140,7 +140,7 @@ class IncomeSourceDetailsService @Inject()(val incomeTaxViewChangeConnector: Inc
         viewSoleTraderBusinesses = if (soleTraderBusinessesExists) {
           maybeSoleTraderBusinesses.map { business =>
             ViewBusinessDetailsViewModel(
-              business.tradingName.getOrElse(throw MissingFieldException("Trading Name")),
+              business.tradingName,
               business.tradingStartDate
             )
           }
@@ -158,7 +158,7 @@ class IncomeSourceDetailsService @Inject()(val incomeTaxViewChangeConnector: Inc
         viewCeasedBusinesses = if (ceasedBusinessExists) {
           maybeCeasedBusinesses.map { business =>
             ViewCeasedBusinessDetailsViewModel(
-              tradingName = business.tradingName.getOrElse(throw MissingFieldException("Trading Name")),
+              tradingName = business.tradingName,
               tradingStartDate = business.tradingStartDate,
               cessationDate = business.cessation.flatMap(_.date).getOrElse(throw MissingFieldException("Cessation Date"))
             )
