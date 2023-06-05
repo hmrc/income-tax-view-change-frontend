@@ -563,11 +563,11 @@ html[data-useragent*='MSIE 10.0'] .flex-container {
         display:table-row
     }
 }
-.govuk-summary-list__key,.govuk-summary-list__value,.govuk-summary-list__actions {
+.govuk-summary-list__key,.govuk-summary-list__value,.govuk-summary-list__actions, .govuk-summary-list__actions_cease {
     margin: 0
 }
 @media (min-width: 40.0625em) {
-    .govuk-summary-list__key,.govuk-summary-list__value,.govuk-summary-list__actions {
+    .govuk-summary-list__key,.govuk-summary-list__value,.govuk-summary-list__actions, .govuk-summary-list__actions_cease {
         display:table-cell;
         padding-right: 20px
     }
@@ -579,11 +579,21 @@ html[data-useragent*='MSIE 10.0'] .flex-container {
         border-bottom: 1px solid #b1b4b6
     }
 }
+@media (min-width: 40.0625em) {
+    .govuk-summary-list__actions_cease {
+        padding-top:27px;
+        padding-bottom: 27px;
+        border-bottom: 1px solid #b1b4b6
+    }
+}
 .govuk-summary-list__actions {
     margin-bottom: 15px
 }
+.govuk-summary-list__actions_cease {
+    margin-bottom: 15px
+}
 @media (min-width: 40.0625em) {
-    .govuk-summary-list__actions {
+    .govuk-summary-list__actions, .govuk-summary-list__actions_cease {
         width:20%;
         padding-right: 0;
         text-align: right
@@ -647,7 +657,7 @@ html[data-useragent*='MSIE 10.0'] .flex-container {
     }
 }
 @media (min-width: 40.0625em) {
-    .govuk-summary-list--no-border .govuk-summary-list__key,.govuk-summary-list--no-border .govuk-summary-list__value,.govuk-summary-list--no-border .govuk-summary-list__actions {
+    .govuk-summary-list--no-border .govuk-summary-list__key,.govuk-summary-list--no-border .govuk-summary-list__value,.govuk-summary-list--no-border .govuk-summary-list__actions, .govuk-summary-list__actions_cease {
         padding-bottom:11px;
         border: 0
     }
@@ -658,7 +668,7 @@ html[data-useragent*='MSIE 10.0'] .flex-container {
     }
 }
 @media (min-width: 40.0625em) {
-    .govuk-summary-list__row--no-border .govuk-summary-list__key,.govuk-summary-list__row--no-border .govuk-summary-list__value,.govuk-summary-list__row--no-border .govuk-summary-list__actions {
+    .govuk-summary-list__row--no-border .govuk-summary-list__key,.govuk-summary-list__row--no-border .govuk-summary-list__value,.govuk-summary-list__row--no-border .govuk-summary-list__actions, .govuk-summary-list__actions_cease {
         padding-bottom:11px;
         border: 0
     }
