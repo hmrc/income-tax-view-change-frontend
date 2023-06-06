@@ -696,7 +696,6 @@ sections.close.all												= Cuddio pob un
 sections.open												    = Dangos
 sections.close												    = Cuddio
 
-
 ## Credits Summary Page ##
 credits.heading                                                         = Credydau yn {0}
 credits.tableHead.date                                                  = Dyddiad
@@ -1209,7 +1208,31 @@ notmigrated.agent.content_extra                                 = Bydd hyn yn Dd
 notmigrated.user.link_title                                     = cyfrif Hunanasesiad ar-lein
 notmigrated.agent.link_title                                    = cyfrif Hunanasesiad ar gyfer Asiantau
 
+incomeSources.ceaseUKProperty.heading                           = Dod ag eiddo yn y DU i ben
+incomeSources.ceaseUKProperty.radioLabel                        = Rwy’n datgan nad wyf bellach yn cael incwm o unrhyw eiddo yn y DU.
+incomeSources.ceaseUKProperty.radioError                        = Mae’n rhaid i chi ddatgan nad ydych chi bellach yn cael incwm o unrhyw eiddo yn y DU
 
+incomeSources.add.UKPropertyStartDate.heading                   = Pryd y dechreuodd eich busnes eiddo yn y DU?
+incomeSources.add.UKPropertyStartDate.hint                      = Dyma’r dyddiad y dechreuodd y gweithgarwch o roi unrhyw eiddo yn y DU ar osod yn y lle cyntaf.
+incomeSources.add.UKPropertyStartDate.error.required            = Enter the date your UK property business started trading
+incomeSources.add.UKPropertyStartDate.error.future              = Mae’n rhaid i’r dyddiad y dechreuodd eich busnes eiddo yn y DU fod cyn {0}
+incomeSources.add.UKPropertyStartDate.error.invalid             = Mae’n rhaid i’r dyddiad y dechreuodd eich busnes eiddo yn y DU fod yn ddyddiad go iawn
+incomeSources.add.checkUKPropertyStartDate.error.required       = Dewiswch ‘Iawn’ os yw dyddiad dechrau’r busnes eiddo yn y DU yn gywir
+
+#Generic date form messages
+dateForm.hint                                                       = Er enghraifft, 27 3 2020
+dateForm.error.day.required                                         = Mae’n rhaid i’r dyddiad gynnwys diwrnod
+dateForm.error.month.required                                       = Mae’n rhaid i’r dyddiad gynnwys mis
+dateForm.error.year.required                                        = Mae’n rhaid i’r dyddiad gynnwys blwyddyn
+dateForm.error.dayAndMonth.required                                 = Mae’n rhaid i’r dyddiad gynnwys diwrnod a mis
+dateForm.error.dayAndYear.required                                  = Mae’n rhaid i’r dyddiad gynnwys diwrnod a blwyddyn
+dateForm.error.monthAndYear.required                                = Mae’n rhaid i’r dyddiad gynnwys mis a blwyddyn
+dateForm.check.heading                                              = A yw’r dyddiad hwn yn gywir?
+
+#Generic radio form messages
+radioForm.checkDate.heading                                         = A yw’r dyddiad hwn yn gywir?
+radioForm.yes                                                       = Iawn
+radioForm.no                                                        = Na
 
 incomeSources.ceaseUKProperty.heading                            = Dod ag eiddo yn y DU i ben
 incomeSources.ceaseUKProperty.radioLabel                         = Rwy’n datgan nad wyf bellach yn cael incwm o unrhyw eiddo yn y DU.
@@ -1250,8 +1273,7 @@ add-business-start-date.month                        = Mis
 add-business-start-date.year                         = Blwyddyn
 add-business-start-date.continue                     = Yn eich blaen
 add-business-start-date.form.error.emptyDateField    = Nodwch y dyddiad y dechreuodd eich busnes fasnachu
-
-add-business-start-date.error.future                 = Mae?n rhaid i’r dyddiad y dechreuodd eich busnes eiddo tramor fod cyn {0}
+add-business-start-date.error.future                 = Mae’n rhaid i’r dyddiad y dechreuodd eich busnes eiddo tramor fod cyn {0}
 add-business-start-date.error.error.required         = Nodwch y dyddiad y dechreuodd eich busnes fasnachu
 add-business-start-date.error.invalid                = Mae’n rhaid i’r dyddiad y dechreuodd eich busnes fasnachu fod yn ddyddiad go iawn
 

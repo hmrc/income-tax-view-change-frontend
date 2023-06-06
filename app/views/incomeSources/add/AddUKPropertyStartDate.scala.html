@@ -19,37 +19,39 @@
 @import uk.gov.hmrc.hmrcfrontend.views.Implicits.RichDateInput
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components.FormWithCSRF
-@import views.html.components.dateInput
 @import views.html.helpers.injected.ContinueButton
 @import views.html.helpers.injected.ErrorSummary
 @import views.html.components._
 
 @this(mainTemplate: unifiedLayout, dateInput: dateInput, continueButton: ContinueButton, formWithCSRF: FormWithCSRF, errorSummary: ErrorSummary, p: p)
 
-@(UKPropertyEndDateForm: Form[_], postAction: Call, isAgent: Boolean = false, backUrl: String, origin: Option[String] = None)(implicit request: Request[_], messages: Messages)
+@(addUKPropertyStartDateForm: Form[_], postAction: Call, isAgent: Boolean = false, backUrl: String)(implicit request: Request[_], messages: Messages)
 
 @getHintContent = {
-  @p(classes = "govuk-hint") {
-    @messages("incomeSources.cease.UKPropertyEndDate.hint")
-  }
+    @p(classes = "govuk-hint") {
+        @messages("incomeSources.add.UKPropertyStartDate.hint")
+    }
+    @p(classes = "govuk-hint") {
+        @messages("dateForm.hint")
+    }
 }
 
-@mainTemplate(pageTitle = messages("incomeSources.cease.UKPropertyEndDate.heading"), isAgent = isAgent, backUrl = Some(backUrl)) {
+@mainTemplate(pageTitle = messages("incomeSources.add.UKPropertyStartDate.heading"), isAgent = isAgent, backUrl = Some(backUrl)) {
 
-@errorSummary(
-  form = UKPropertyEndDateForm
-)
+  @errorSummary(
+    form = addUKPropertyStartDateForm
+  )
 
-  @formWithCSRF(action = postAction, Symbol("id") -> "uk-property-end-date-form") {
+  @formWithCSRF(action = postAction, Symbol("id") -> "add-uk-property-start-date-form") {
 
     @dateInput(
-      content = messages("incomeSources.cease.UKPropertyEndDate.heading"),
-      field = UKPropertyEndDateForm("uk-property-end-date"),
+      content = messages("incomeSources.add.UKPropertyStartDate.heading"),
+      field = addUKPropertyStartDateForm("add-uk-property-start-date"),
       hintContent = Some(HtmlContent(getHintContent)),
       pageHeading = true
-   )
+    )
 
-  @continueButton()
+    @continueButton()
 
   }
 }

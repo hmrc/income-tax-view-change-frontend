@@ -84,7 +84,7 @@ class AddIncomeSourceController @Inject()(val addIncomeSources: AddIncomeSources
     } else {
       incomeSourceDetailsService.getAddIncomeSourceViewModel(sources) match {
         case Right(viewModel) =>
-          Future(Ok(addIncomeSources(
+          Future.successful(Ok(addIncomeSources(
             sources = viewModel,
             isAgent = isAgent,
             backUrl = backUrl

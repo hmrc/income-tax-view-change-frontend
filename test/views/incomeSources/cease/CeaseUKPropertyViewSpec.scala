@@ -16,7 +16,7 @@
 
 package views.incomeSources.cease
 
-import forms.CeaseUKPropertyForm
+import forms.incomeSources.cease.CeaseUKPropertyForm
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.FakeRequest
