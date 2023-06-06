@@ -171,13 +171,13 @@ GET          /agents/income-sources/add/business-start-date-check         contro
 POST         /income-sources/add/business-start-date-check                controllers.AddBusinessStartDateCheckController.submit(date: String)
 POST         /agents/income-sources/add/business-start-date-check         controllers.AddBusinessStartDateCheckController.submitAgent(date: String)
 GET          /income-sources/add/foreign-property-start-date              controllers.incomeSources.add.ForeignPropertyStartDateController.show()
-GET          /agent/income-sources/add/foreign-property-start-date        controllers.incomeSources.add.ForeignPropertyStartDateController.showAgent()
+GET          /agents/income-sources/add/foreign-property-start-date       controllers.incomeSources.add.ForeignPropertyStartDateController.showAgent()
 POST         /income-sources/add/foreign-property-start-date              controllers.incomeSources.add.ForeignPropertyStartDateController.submit()
-POST         /agent/income-sources/add/foreign-property-start-date        controllers.incomeSources.add.ForeignPropertyStartDateController.submitAgent()
+POST         /agents/income-sources/add/foreign-property-start-date       controllers.incomeSources.add.ForeignPropertyStartDateController.submitAgent()
 GET          /income-sources/add/foreign-property-start-date-check              controllers.incomeSources.add.ForeignPropertyStartDateCheckController.show()
-GET          /agent/income-sources/add/foreign-property-start-date-check        controllers.incomeSources.add.ForeignPropertyStartDateCheckController.showAgent()
+GET          /agents/income-sources/add/foreign-property-start-date-check       controllers.incomeSources.add.ForeignPropertyStartDateCheckController.showAgent()
 POST         /income-sources/add/foreign-property-start-date-check              controllers.incomeSources.add.ForeignPropertyStartDateCheckController.submit()
-POST         /agent/income-sources/add/foreign-property-start-date-check        controllers.incomeSources.add.ForeignPropertyStartDateCheckController.submitAgent()
+POST         /agents/income-sources/add/foreign-property-start-date-check       controllers.incomeSources.add.ForeignPropertyStartDateCheckController.submitAgent()
 
 
 # Income Sources - Cease
