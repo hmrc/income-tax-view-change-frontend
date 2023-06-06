@@ -20,14 +20,15 @@ import auth.MtdItUser
 import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
-import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
+import controllers.predicates._
 import forms.incomeSources.add.BusinessTradeForm
 import forms.utils.SessionKeys
 import play.api.i18n.I18nSupport
 import play.api.mvc._
+import services.IncomeSourceDetailsService
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import views.html.AddBusinessTrade
-import services.IncomeSourceDetailsService
+
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 

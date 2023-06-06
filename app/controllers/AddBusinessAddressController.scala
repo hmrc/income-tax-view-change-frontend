@@ -16,16 +16,19 @@
 
 package controllers
 
-import auth.{FrontendAuthorisedFunctions, MtdItUser}
+import auth.MtdItUser
 import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import connectors.AddressLookupConnector
 import controllers.agent.predicates.ClientConfirmedController
-import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
+import controllers.predicates._
+import models.incomeSourceDetails.BusinessAddressModel
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, RequestHeader, Result}
 import services.IncomeSourceDetailsService
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import views.html.AddBusinessTrade
+import uk.gov.hmrc.http.HeaderCarrier
+import views.html.AddBusinessAddress
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -37,13 +40,19 @@ class AddBusinessAddressController @Inject()(authenticate: AuthenticationPredica
                                              val retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                              val retrieveBtaNavBar: NavBarPredicate,
                                              val itvcErrorHandler: ItvcErrorHandler,
-                                             incomeSourceDetailsService: IncomeSourceDetailsService)
-                                         (implicit val appConfig: FrontendAppConfig,
-                                          mcc: MessagesControllerComponents,
+                                             incomeSourceDetailsService: IncomeSourceDetailsService,
+                                             addressLookupConnector: AddressLookupConnector,
+                                             addBusinessAddressView: AddBusinessAddress)
+                                         (implicit
+                                          val appConfig: FrontendAppConfig,
                                           val ec: ExecutionContext,
-                                          val itvcErrorHandlerAgent: AgentItvcErrorHandler)
+                                          val itvcErrorHandlerAgent: AgentItvcErrorHandler,
+                                          mcc: MessagesControllerComponents
+                                         )
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
+  lazy val backURL: String = routes.AddBusinessTradeController.show().url
+  lazy val agentBackURL: String = routes.AddBusinessTradeController.showAgent().url
   def show: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
@@ -64,7 +73,24 @@ class AddBusinessAddressController @Inject()(authenticate: AuthenticationPredica
     if (isDisabled(IncomeSources)) {
       Future.successful(Redirect(controllers.routes.HomeController.show()))
     } else {
-      
+      Future {
+        addressLookupConnector.initialiseAddressLookup(isAgent)
+        val model = addressLookupConnector.getAddressDetails(user.mtditid)
+        if (!isAgent) Ok(addBusinessAddressView(routes.AddBusinessAddressController.submit(), isAgent, backURL, model))
+        else Ok(addBusinessAddressView(routes.AddBusinessAddressController.agentSubmit(), isAgent, agentBackURL))
+      }
     }
+  }
+
+  def submit(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+    andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
+    implicit request =>
+      Future{Ok}
+  }
+
+  def agentSubmit(): Action[AnyContent] = Authenticated.async{
+    implicit request =>
+      implicit user =>
+          Future{Ok}
   }
 }

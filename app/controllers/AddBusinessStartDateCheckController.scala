@@ -22,8 +22,8 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowI
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import forms.BusinessStartDateCheckForm.{response, responseNo, responseYes}
-import forms.{BusinessNameForm, BusinessStartDateCheckForm}
 import forms.utils.SessionKeys.businessStartDate
+import forms.{BusinessNameForm, BusinessStartDateCheckForm}
 import implicits.ImplicitDateFormatter
 import play.api.Logger
 import play.api.i18n.I18nSupport

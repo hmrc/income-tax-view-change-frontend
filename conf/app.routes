@@ -162,6 +162,8 @@ POST         /income-sources/add/business-trade                           contro
 POST         /agents/income-sources/add/business-trade                    controllers.AddBusinessTradeController.agentSubmit()
 GET          /income-sources/add/business-address                         controllers.AddBusinessAddressController.show()
 GET          /agents/income-sources/add/business-address                  controllers.AddBusinessAddressController.showAgent()
+POST         /income-sources/add/business-address                         controllers.AddBusinessAddressController.submit()
+POST         /agents/income-sources/add/business-address                  controllers.AddBusinessAddressController.agentSubmit()
 GET          /income-sources/add/business-start-date                      controllers.AddBusinessStartDateController.show()
 GET          /agents/income-sources/add/business-start-date               controllers.AddBusinessStartDateController.showAgent()
 POST         /income-sources/add/business-start-date                      controllers.AddBusinessStartDateController.submit()
@@ -170,6 +172,8 @@ GET          /income-sources/add/business-start-date-check                contro
 GET          /agents/income-sources/add/business-start-date-check         controllers.AddBusinessStartDateCheckController.showAgent()
 POST         /income-sources/add/business-start-date-check                controllers.AddBusinessStartDateCheckController.submit(date: String)
 POST         /agents/income-sources/add/business-start-date-check         controllers.AddBusinessStartDateCheckController.submitAgent(date: String)
+GET          /income-sources/add/business-check-details                   controllers.AddBusinessCheckDetailsController.show()
+GET          /agents/income-sources/add/business-check-details            controllers.AddBusinessCheckDetailsController.showAgent()
 
 # Income Sources - Cease
 GET          /income-sources/cease/cease-an-income-source                 controllers.incomeSources.cease.CeaseIncomeSourceController.show()
