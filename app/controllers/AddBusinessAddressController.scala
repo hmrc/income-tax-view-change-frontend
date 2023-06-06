@@ -23,15 +23,17 @@ import connectors.AddressLookupConnector
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import models.incomeSourceDetails.BusinessAddressModel
+import models.incomeSourceDetails.viewmodels.httpparser.GetAddressLookupDetailsHttpParser.GetAddressLookupDetailsResponse
+import models.incomeSourceDetails.viewmodels.httpparser.PostAddressLookupHttpParser.PostAddressLookupResponse
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, RequestHeader, Result}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.IncomeSourceDetailsService
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import uk.gov.hmrc.http.HeaderCarrier
 import views.html.AddBusinessAddress
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.{Failure, Success}
 
 class AddBusinessAddressController @Inject()(authenticate: AuthenticationPredicate,
                                              val authorisedFunctions: AuthorisedFunctions,
@@ -74,10 +76,26 @@ class AddBusinessAddressController @Inject()(authenticate: AuthenticationPredica
       Future.successful(Redirect(controllers.routes.HomeController.show()))
     } else {
       Future {
-        addressLookupConnector.initialiseAddressLookup(isAgent)
-        val model = addressLookupConnector.getAddressDetails(user.mtditid)
-        if (!isAgent) Ok(addBusinessAddressView(routes.AddBusinessAddressController.submit(), isAgent, backURL, model))
-        else Ok(addBusinessAddressView(routes.AddBusinessAddressController.agentSubmit(), isAgent, agentBackURL))
+        val ref: Future[PostAddressLookupResponse] = addressLookupConnector.initialiseAddressLookup(isAgent)
+        val model: Future[GetAddressLookupDetailsResponse] = addressLookupConnector.getAddressDetails(user.mtditid)
+        Thread.sleep(100)
+        Redirect(ref.value.get.get)
+        model.value match {
+          case Some(response) => response match {
+            case Failure(exception) => BadRequest
+            case Success(success) => success match {
+              case Left(value) => BadRequest //Status failure
+              case Right(value) => value match {
+                case Some(value) => {
+                  if (!isAgent) Ok(addBusinessAddressView(routes.AddBusinessAddressController.submit(), isAgent, backURL, value))
+                  else Ok(addBusinessAddressView(routes.AddBusinessAddressController.agentSubmit(), isAgent, agentBackURL, value))
+                }
+                case None => Ok //Not found <- This one now
+              }
+            }
+          }
+          case None => BadRequest /// <- Future not completed
+        }
       }
     }
   }
