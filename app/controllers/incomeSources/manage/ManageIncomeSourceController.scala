@@ -72,10 +72,10 @@ class ManageIncomeSourceController @Inject()(val manageIncomeSources: ManageInco
 
   def handleRequest(sources: IncomeSourceDetailsModel, isAgent: Boolean, backUrl: String)
                    (implicit user: MtdItUser[_]): Future[Result] = {
-    Future.successful(
-      if (isDisabled(IncomeSources)) {
-        Redirect(controllers.routes.HomeController.show())
-      } else {
+    if (isDisabled(IncomeSources)) {
+      Future.successful(Redirect(controllers.routes.HomeController.show()))
+    } else {
+      Future {
         incomeSourceDetailsService.getViewIncomeSourceViewModel(sources) match {
           case Right(viewModel) =>
             Ok(manageIncomeSources(
@@ -95,6 +95,6 @@ class ManageIncomeSourceController @Inject()(val manageIncomeSources: ManageInco
             }
         }
       }
-    )
+    }
   }
 }
