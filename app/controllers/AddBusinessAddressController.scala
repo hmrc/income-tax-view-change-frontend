@@ -16,31 +16,51 @@
 
 package controllers
 
-import auth.FrontendAuthorisedFunctions
+import auth.{FrontendAuthorisedFunctions, MtdItUser}
 import config.featureswitch.FeatureSwitching
-import config.{AgentItvcErrorHandler, FrontendAppConfig}
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
-import controllers.predicates.{AuthenticationPredicate, SessionTimeoutPredicate}
+import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import services.IncomeSourceDetailsService
+import uk.gov.hmrc.auth.core.AuthorisedFunctions
+import views.html.AddBusinessTrade
 
 import javax.inject.Inject
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
-class AddBusinessAddressController @Inject()(val authenticate: AuthenticationPredicate,
-                                          val authorisedFunctions: FrontendAuthorisedFunctions,
-                                          val checkSessionTimeout: SessionTimeoutPredicate)
+class AddBusinessAddressController @Inject()(authenticate: AuthenticationPredicate,
+                                             val authorisedFunctions: AuthorisedFunctions,
+                                             checkSessionTimeout: SessionTimeoutPredicate,
+                                             retrieveNino: NinoPredicate,
+                                             val retrieveIncomeSources: IncomeSourceDetailsPredicate,
+                                             val retrieveBtaNavBar: NavBarPredicate,
+                                             val itvcErrorHandler: ItvcErrorHandler,
+                                             incomeSourceDetailsService: IncomeSourceDetailsService)
                                          (implicit val appConfig: FrontendAppConfig,
                                           mcc: MessagesControllerComponents,
                                           val ec: ExecutionContext,
                                           val itvcErrorHandlerAgent: AgentItvcErrorHandler)
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
-  def show(): Action[AnyContent] = Action {
-    Ok("")
+  def show: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+    andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
+    implicit user =>
+      handleRequest(isAgent = false)
   }
 
-  def showAgent(): Action[AnyContent] = Action {
-    Ok("")
+  def showAgent(): Action[AnyContent] =
+    Authenticated.async {
+      implicit request =>
+        implicit user =>
+          getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
+            implicit mtdItUser =>
+              handleRequest(isAgent = true)
+          }
+    }
+
+  def handleRequest(isAgent: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
+
   }
 }
