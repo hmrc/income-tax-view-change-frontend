@@ -17,7 +17,6 @@
 package testOnly.connectors
 
 import play.api.Logger
-import play.api.http.HeaderNames
 import play.api.http.Status.{CREATED, TOO_MANY_REQUESTS}
 import play.api.libs.json._
 import uk.gov.hmrc.auth.core.PlayAuthConnector
@@ -68,7 +67,6 @@ class CustomAuthConnector @Inject()(servicesConfig: ServicesConfig,
       headerNames.flatMap(name => headers.get(name)).headOption.map(_.mkString)
     }
 
-    Logger("application").info("login request info:" + payload)
     http.POST[JsValue, HttpResponse](s"$serviceUrl/government-gateway/session/login", payload) flatMap {
       case response@HttpResponse(CREATED, _, headers) =>
         (

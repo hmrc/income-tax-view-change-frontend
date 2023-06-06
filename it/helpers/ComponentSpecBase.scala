@@ -304,6 +304,8 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
     def postCheckCeaseUKPropertyDetails(session: Map[String, String]): WSResponse =
       post("/income-sources/cease/uk-property-check-details", session)(Map.empty)
+
+    def getManageIncomeSource: WSResponse = get("/income-sources/manage/view-and-manage-income-sources")
   }
 
   def unauthorisedTest(uri: String): Unit = {
