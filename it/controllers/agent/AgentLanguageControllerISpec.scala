@@ -12,7 +12,7 @@ class AgentLanguageControllerISpec extends ComponentSpecBase {
 
   "GET /agents/language/cymraeg" should {
     "update the PLAY_LANG cookie to cy and return the user where they were when a REFERER is in the headers" in {
-      lazy val resultCy: WSResponse = getWithHeaders("/agents/language/cymraeg", "REFERER" -> testRefererRoute)
+      lazy val resultCy: WSResponse = IncomeTaxViewChangeFrontend.getWithHeaders("/language/cymraeg", ("REFERER" -> testRefererRoute))
       resultCy.headers.isDefinedAt("Set-Cookie") shouldBe true
       resultCy.headers.toString.contains("PLAY_LANG=cy;") shouldBe true
       resultCy should have(
@@ -22,7 +22,7 @@ class AgentLanguageControllerISpec extends ComponentSpecBase {
     }
 
     "update the PLAY_LANG cookie to cy and return the user to the overview page when REFERER is not in the headers" in {
-      lazy val resultCy: WSResponse = getWithHeaders("/agents/language/cymraeg")
+      lazy val resultCy: WSResponse = IncomeTaxViewChangeFrontend.get("/language/cymraeg")
       resultCy.headers.isDefinedAt("Set-Cookie") shouldBe true
       resultCy.headers.toString.contains("PLAY_LANG=cy;") shouldBe true
       resultCy should have(
@@ -34,7 +34,7 @@ class AgentLanguageControllerISpec extends ComponentSpecBase {
 
   "GET /agents/language/english" should {
     "update the PLAY_LANG cookie to en and return the user where they were when a REFERER is in the headers" in {
-      lazy val resultEn: WSResponse = getWithHeaders("/agents/language/english", "REFERER" -> testRefererRoute)
+      lazy val resultEn: WSResponse = IncomeTaxViewChangeFrontend.getWithHeaders("/language/english", ("REFERER" -> testRefererRoute))
       resultEn.headers.isDefinedAt("Set-Cookie") shouldBe true
       resultEn.headers.toString.contains("PLAY_LANG=en;") shouldBe true
       resultEn should have(
@@ -44,7 +44,7 @@ class AgentLanguageControllerISpec extends ComponentSpecBase {
     }
 
     "update the PLAY_LANG cookie to en and return the user to the overview page when REFERER is not in the headers" in {
-      lazy val resultEn: WSResponse = getWithHeaders("/agents/language/english")
+      lazy val resultEn: WSResponse = IncomeTaxViewChangeFrontend.get("/language/english")
       resultEn.headers.isDefinedAt("Set-Cookie") shouldBe true
       resultEn.headers.toString.contains("PLAY_LANG=en;") shouldBe true
       resultEn should have(

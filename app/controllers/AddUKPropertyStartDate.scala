@@ -27,7 +27,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
-class AddUkPropertyBusinessStartDate @Inject()(val authenticate: AuthenticationPredicate,
+class AddUKPropertyStartDate @Inject()(val authenticate: AuthenticationPredicate,
                                                val authorisedFunctions: FrontendAuthorisedFunctions,
                                                val checkSessionTimeout: SessionTimeoutPredicate)
                                               (implicit val appConfig: FrontendAppConfig,

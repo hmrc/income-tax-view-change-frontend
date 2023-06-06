@@ -20,7 +20,8 @@ import auth.HeaderExtractor
 import com.github.tomakehurst.wiremock.client.WireMock
 import config.FrontendAppConfig
 import config.featureswitch.{FeatureSwitch, FeatureSwitching}
-import forms.{CeaseForeignPropertyForm, CeaseUKPropertyForm}
+import forms.incomeSources.cease.CeaseUKPropertyForm
+import forms.CeaseForeignPropertyForm
 import helpers.agent.SessionCookieBaker
 import helpers.servicemocks.AuditStub
 import implicits.ImplicitDateFormatterImpl
@@ -45,7 +46,7 @@ import java.time.LocalDate
 import javax.inject.Singleton
 import scala.concurrent.Future
 import forms.utils.SessionKeys
-import forms.{BusinessStartDateCheckForm, CeaseForeignPropertyForm, CeaseUKPropertyForm}
+import forms.BusinessStartDateCheckForm
 
 @Singleton
 class TestHeaderExtractor extends HeaderExtractor {
@@ -163,12 +164,6 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     FeatureSwitch.switches foreach disable
   }
 
-  def getWithHeaders(uri: String, headers: (String, String)*): WSResponse = {
-    buildClient(uri)
-      .withHttpHeaders(headers: _*)
-      .get().futureValue
-  }
-
   def getWithClientDetailsInSession(uri: String, additionalCookies: Map[String, String] = Map.empty): WSResponse = {
     buildClient(uri)
       .withHttpHeaders(HeaderNames.COOKIE -> bakeSessionCookie(Map.empty ++ additionalCookies), "Csrf-Token" -> "nocheck")
@@ -188,22 +183,24 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
   }
 
   object IncomeTaxViewChangeFrontend {
-    def get(uri: String): WSResponse = buildClient(uri)
-      .get().futureValue
+    def get(uri: String, additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      When(s"I call GET /report-quarterly/income-and-expenses/view" + uri)
+      buildClient(uri)
+        .withHttpHeaders(HeaderNames.COOKIE -> bakeSessionCookie(additionalCookies))
+        .get().futureValue
+    }
+
+    def getWithHeaders(uri: String, headers: (String, String)*): WSResponse = {
+      buildClient(uri)
+        .withHttpHeaders(headers: _*)
+        .get().futureValue
+    }
 
     def post(uri: String, additionalCookies: Map[String, String] = Map.empty)(body: Map[String, Seq[String]]): WSResponse = {
       When(s"I call POST /report-quarterly/income-and-expenses/view" + uri)
       buildClient(uri)
-        .withHttpHeaders(HeaderNames.COOKIE -> bakeSessionCookie(additionalCookies ),"Csrf-Token" -> "nocheck")
         .withFollowRedirects(false)
-        .post(body).futureValue
-    }
-
-    def postWithAdditionalHeader(uri: String, additionalHeader: (String, String))(body: Map[String, Seq[String]]): WSResponse = {
-      When(s"I call POST /report-quarterly/income-and-expenses/view" + uri)
-      buildClient(uri)
-        .withFollowRedirects(false)
-        .withHttpHeaders(additionalHeader, "Csrf-Token" -> "nocheck")
+        .withHttpHeaders(HeaderNames.COOKIE -> bakeSessionCookie(additionalCookies), "Csrf-Token" -> "nocheck")
         .post(body).futureValue
     }
 
