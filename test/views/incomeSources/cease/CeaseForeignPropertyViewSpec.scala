@@ -35,14 +35,14 @@ class CeaseForeignPropertyViewSpec extends TestSupport {
         ceaseForeignPropertyForm = CeaseForeignPropertyForm.form,
         postAction = controllers.incomeSources.cease.routes.CeaseForeignPropertyController.submitAgent,
         isAgent = true,
-        backUrl = controllers.incomeSources.cease.routes.CeaseIncomeSourceController.showAgent().url)(FakeRequest(), implicitly)
+        backUrl = controllers.incomeSources.cease.routes.CeaseIncomeSourceController.showAgent().url)
     } else {
       ceaseForeignPropertyView(
         ceaseForeignPropertyForm = CeaseForeignPropertyForm.form,
         postAction = controllers.incomeSources.cease.routes.CeaseForeignPropertyController.submit,
         isAgent = false,
         backUrl = controllers.incomeSources.cease.routes.CeaseIncomeSourceController.show().url,
-        origin = Some("pta"))(FakeRequest(), implicitly)
+        origin = Some("pta"))
     }
 
     lazy val viewWithInputErrors: HtmlFormat.Appendable = if (isAgent) {
@@ -51,7 +51,7 @@ class CeaseForeignPropertyViewSpec extends TestSupport {
           .withError(CeaseForeignPropertyForm.declarationUnselectedError, messages("incomeSources.ceaseForeignProperty.checkboxError")),
         postAction = controllers.incomeSources.cease.routes.CeaseForeignPropertyController.submitAgent,
         isAgent = true,
-        backUrl = controllers.incomeSources.cease.routes.CeaseIncomeSourceController.showAgent().url)(FakeRequest(), implicitly)
+        backUrl = controllers.incomeSources.cease.routes.CeaseIncomeSourceController.showAgent().url)
     } else {
       ceaseForeignPropertyView(
         ceaseForeignPropertyForm = CeaseForeignPropertyForm.form
@@ -59,7 +59,7 @@ class CeaseForeignPropertyViewSpec extends TestSupport {
         postAction = controllers.incomeSources.cease.routes.CeaseForeignPropertyController.submit,
         isAgent = false,
         backUrl = controllers.incomeSources.cease.routes.CeaseIncomeSourceController.show().url,
-        origin = Some("pta"))(FakeRequest(), implicitly)
+        origin = Some("pta"))
     }
 
     lazy val document: Document = if (error) Jsoup.parse(contentAsString(viewWithInputErrors)) else Jsoup.parse(contentAsString(view))

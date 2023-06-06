@@ -58,14 +58,14 @@ class ForeignPropertyEndDateViewSpec extends TestSupport {
         ForeignPropertyEndDateForm = form,
         postAction = controllers.incomeSources.cease.routes.ForeignPropertyEndDateController.submitAgent(),
         isAgent = true,
-        backUrl = controllers.incomeSources.cease.routes.CeaseForeignPropertyController.showAgent().url)(FakeRequest(), implicitly)
+        backUrl = controllers.incomeSources.cease.routes.CeaseForeignPropertyController.showAgent().url)
     } else {
       ForeignPropertyEndDateView(
         ForeignPropertyEndDateForm = form,
         postAction = controllers.incomeSources.cease.routes.ForeignPropertyEndDateController.submit(),
         isAgent = false,
         backUrl = controllers.incomeSources.cease.routes.CeaseForeignPropertyController.show().url,
-        origin = Some("pta"))(FakeRequest(), implicitly)
+        origin = Some("pta"))
     }
 
     lazy val viewWithInputErrors: HtmlFormat.Appendable = if (isAgent) {
@@ -73,14 +73,14 @@ class ForeignPropertyEndDateViewSpec extends TestSupport {
         ForeignPropertyEndDateForm = form.withError(FormError("foreign-property-end-date", "incomeSources.cease.ForeignPropertyEndDate.error.beforeStartDate")),
         postAction = controllers.incomeSources.cease.routes.ForeignPropertyEndDateController.submitAgent(),
         isAgent = true,
-        backUrl = controllers.incomeSources.cease.routes.CheckCeaseForeignPropertyDetailsController.showAgent().url)(FakeRequest(), implicitly)
+        backUrl = controllers.incomeSources.cease.routes.CheckCeaseForeignPropertyDetailsController.showAgent().url)
     } else {
       ForeignPropertyEndDateView(
         ForeignPropertyEndDateForm = form.withError(FormError("foreign-property-end-date", "incomeSources.cease.ForeignPropertyEndDate.error.beforeStartDate")),
         postAction = controllers.incomeSources.cease.routes.ForeignPropertyEndDateController.submit(),
         isAgent = false,
         backUrl = controllers.incomeSources.cease.routes.CeaseForeignPropertyController.show().url,
-        origin = Some("pta"))(FakeRequest(), implicitly)
+        origin = Some("pta"))
     }
 
     lazy val document: Document = if (error) Jsoup.parse(contentAsString(viewWithInputErrors)) else Jsoup.parse(contentAsString(view))

@@ -26,7 +26,7 @@
 
 @this(mainTemplate: unifiedLayout, dateInput: dateInput, continueButton: ContinueButton, formWithCSRF: FormWithCSRF, errorSummary: ErrorSummary, p: p)
 
-@(ForeignPropertyEndDateForm: Form[_], postAction: Call, isAgent: Boolean = false, backUrl: String, origin: Option[String] = None)(implicit request: Request[_], messages: Messages)
+@(ForeignPropertyEndDateForm: Form[_], postAction: Call, isAgent: Boolean = false, backUrl: String, origin: Option[String] = None)(implicit user: auth.MtdItUser[_], messages: Messages)
 
 @getHintContent = {
   @p(classes = "govuk-hint") {
@@ -34,7 +34,7 @@
   }
 }
 
-@mainTemplate(pageTitle = messages("incomeSources.cease.ForeignPropertyEndDate.heading"), isAgent = isAgent, backUrl = Some(backUrl), useFallbackBackLink = true) {
+@mainTemplate(pageTitle = messages("incomeSources.cease.ForeignPropertyEndDate.heading"), isAgent = isAgent, backUrl = Some(backUrl), useFallbackBackLink = true, btaNavPartial = user.btaNavPartial) {
 
 @errorSummary(
  form = ForeignPropertyEndDateForm
