@@ -1159,6 +1159,18 @@ cease-income-sources.foreign-property.p1      = Dylech ond dod â’ch eiddo tra
 cease-income-sources.ceased-businesses.h1     = Busnesau sydd wedi dod i ben
 cease-income-sources.table-head.date-ended    = Y dyddiad dod i ben
 
+## view Income Sources
+view-income-sources.heading                  = Bwrw golwg dros eich ffynonellau incwm a’u rheoli
+view-income-sources.self-employed-h2         = Busnesau unig fasnachwr
+view-income-sources.uk-property-h2           = Eiddo yn y DU
+view-income-sources.foreign-property-h2      = Eiddo tramor
+view-income-sources.ceased-businesses-h2     = Busnesau sydd wedi dod i ben
+view-income-sources.table-head.business-name = Enw’r busnes
+view-income-sources.table-head.date-started  = Dyddiad cychwyn
+view-income-sources.table-head.date-ended    = Y dyddiad dod i ben
+view-income-sources.business-details         = Dewis
+view-income-sources.unknown-field            = Anhysbys
+
 # add Business page
 add-business-name.heading                                         = Beth yw enw’ch busnes?
 add-business-name.p1                                              = Dyma enw’r busnes a ddefnyddioch i gofrestru ar gyfer Hunanasesiad. Os nad oes enw gwahanol ar eich busnes unig fasnachwr, nodwch eich enw cyntaf ac enw olaf.

@@ -32,7 +32,7 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ManageIncomeSourceController @Inject()(val manageIncomeSources: ManageIncomeSources,
+class ManageSelfEmploymentSourceController @Inject()(val manageIncomeSources: ManageIncomeSources,
                                              val checkSessionTimeout: SessionTimeoutPredicate,
                                              val authenticate: AuthenticationPredicate,
                                              val authorisedFunctions: AuthorisedFunctions,
@@ -47,54 +47,12 @@ class ManageIncomeSourceController @Inject()(val manageIncomeSources: ManageInco
                                              val appConfig: FrontendAppConfig) extends ClientConfirmedController
   with FeatureSwitching {
 
-  def show(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
-    andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
-    implicit user =>
-      handleRequest(
-        sources = user.incomeSources,
-        isAgent = false,
-        backUrl = controllers.routes.HomeController.show().url
-      )
+  def show(origin: Option[String] = None): Action[AnyContent] = Action {
+    Ok("Page WIP")
   }
 
-  def showAgent(): Action[AnyContent] = Authenticated.async {
-    implicit request =>
-      implicit user =>
-        getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
-          implicit mtdItUser =>
-            handleRequest(
-              sources = mtdItUser.incomeSources,
-              isAgent = true,
-              backUrl = controllers.routes.HomeController.showAgent.url
-            )
-        }
+  def showAgent(): Action[AnyContent] = Action {
+    Ok("Agent Page WIP")
   }
 
-  def handleRequest(sources: IncomeSourceDetailsModel, isAgent: Boolean, backUrl: String)
-                   (implicit user: MtdItUser[_]): Future[Result] = {
-    if (isDisabled(IncomeSources)) {
-      Future.successful(Redirect(controllers.routes.HomeController.show()))
-    } else {
-      Future {
-        incomeSourceDetailsService.getViewIncomeSourceViewModel(sources) match {
-          case Right(viewModel) =>
-            Ok(manageIncomeSources(
-              viewModel,
-              isAgent,
-              backUrl
-            ))
-          case Left(ex) =>
-            if (isAgent) {
-              Logger("application").error(
-                s"[Agent][ManageIncomeSourceController][handleRequest] - Error: ${ex.getMessage}")
-              itvcErrorHandlerAgent.showInternalServerError()
-            } else {
-              Logger("application").error(
-                s"[ManageIncomeSourceController][handleRequest] - Error: ${ex.getMessage}")
-              itvcErrorHandler.showInternalServerError()
-            }
-        }
-      }
-    }
-  }
 }
