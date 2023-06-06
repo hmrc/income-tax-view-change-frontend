@@ -33,6 +33,7 @@ import views.html.incomeSources.cease.BusinessEndDate
 import views.html.errorPages.CustomNotFoundError
 
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -82,8 +83,8 @@ class BusinessEndDateController @Inject()(val authenticate: AuthenticationPredic
     val incomeSourcesEnabled: Boolean = isEnabled(IncomeSources)
     val backUrl: String = if (isAgent) controllers.incomeSources.cease.routes.CeaseUKPropertyController.showAgent().url else
       controllers.incomeSources.cease.routes.CeaseUKPropertyController.show().url
-    val postAction: Call = if (isAgent) controllers.incomeSources.cease.routes.BusinessEndDateController.submitAgent() else
-      controllers.incomeSources.cease.routes.BusinessEndDateController.submit()
+    val postAction: Call = if (isAgent) controllers.incomeSources.cease.routes.BusinessEndDateController.submitAgent(Some(businessStartDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))) else
+      controllers.incomeSources.cease.routes.BusinessEndDateController.submit(Some(businessStartDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))))
     val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
     if (incomeSourcesEnabled) {
@@ -103,13 +104,13 @@ class BusinessEndDateController @Inject()(val authenticate: AuthenticationPredic
     }
   }
 
-  def submit: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+  def submit(businessStartDate: Option[String]): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
-      businessEndDateForm.apply(user, None).bindFromRequest().fold(
+      businessEndDateForm.apply(user, Some(LocalDate.parse(businessStartDate.get))).bindFromRequest().fold(
         hasErrors => Future.successful(BadRequest(businessEndDate(
           BusinessEndDateForm = hasErrors,
-          postAction = controllers.incomeSources.cease.routes.BusinessEndDateController.submit(),
+          postAction = controllers.incomeSources.cease.routes.BusinessEndDateController.submit(businessStartDate),
           backUrl = controllers.incomeSources.cease.routes.CeaseIncomeSourceController.show().url,
           isAgent = false
         ))),
@@ -119,15 +120,15 @@ class BusinessEndDateController @Inject()(val authenticate: AuthenticationPredic
       )
   }
 
-  def submitAgent: Action[AnyContent] = Authenticated.async {
+  def submitAgent(businessStartDate: Option[String]): Action[AnyContent] = Authenticated.async {
     implicit request =>
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
           implicit mtdItUser =>
-            businessEndDateForm.apply(mtdItUser, None).bindFromRequest().fold(
+            businessEndDateForm.apply(mtdItUser, Some(LocalDate.parse(businessStartDate.get))).bindFromRequest().fold(
               hasErrors => Future.successful(BadRequest(businessEndDate(
                 BusinessEndDateForm = hasErrors,
-                postAction = controllers.incomeSources.cease.routes.BusinessEndDateController.submitAgent(),
+                postAction = controllers.incomeSources.cease.routes.BusinessEndDateController.submitAgent(businessStartDate),
                 backUrl = controllers.incomeSources.cease.routes.CeaseIncomeSourceController.showAgent().url,
                 isAgent = true
               ))),

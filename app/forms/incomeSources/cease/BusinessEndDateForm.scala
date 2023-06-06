@@ -46,6 +46,8 @@ class BusinessEndDateForm @Inject()(val dateService: DateService) extends Constr
   def apply (implicit user: MtdItUser[_], businessStartDate: Option[LocalDate]): Form[DateFormElement] = {
     val currentDate: LocalDate = dateService.getCurrentDate()
 
+    println("QQQQQQQQqQQQQQQQQqQQQQQQQQqQQQQQQQQqQQQQQQQQqQQQQQQQQqQQQQQQQQq")
+    println(businessStartDate)
     Form(
       mapping("business-end-date" -> tuple(
         "day" -> default(text(), ""),
@@ -56,7 +58,9 @@ class BusinessEndDateForm @Inject()(val dateService: DateService) extends Constr
           validDate(dateMustNotBeInvalid)
         )).transform[LocalDate](
         {
-          case (day, month, year) => LocalDate.of(year.toInt, month.toInt, day.toInt)
+          case (day, month, year) =>
+            println(businessStartDate)
+            LocalDate.of(year.toInt, month.toInt, day.toInt)
         },
         date => (date.getDayOfMonth.toString, date.getMonthValue.toString, date.getYear.toString)
       ).verifying(maxDate(currentDate, dateMustNotBeInFuture))
