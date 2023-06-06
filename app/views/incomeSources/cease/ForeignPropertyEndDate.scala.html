@@ -27,7 +27,7 @@
 
 @(ForeignPropertyEndDateForm: Form[_], postAction: Call, isAgent: Boolean = false, backUrl: String, origin: Option[String] = None)(implicit request: Request[_], messages: Messages)
 
-@mainTemplate(pageTitle = messages("incomeSources.cease.ForeignPropertyEndDate.heading"), isAgent = isAgent, backUrl = Some(backUrl)) {
+@mainTemplate(pageTitle = messages("incomeSources.cease.ForeignPropertyEndDate.heading"), isAgent = isAgent, backUrl = Some(backUrl), useFallbackBackLink = true) {
 
 @errorSummary(
  form = ForeignPropertyEndDateForm
