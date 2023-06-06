@@ -37,7 +37,8 @@
 
   @dateInput(
    content = messages("incomeSources.cease.BusinessEndDate.heading"),
-   field = BusinessEndDateForm("uk-property-end-date"),
+   field = BusinessEndDateForm("business-end-date"),
+   hintContent = Some(messages("incomeSources.cease.BusinessEndDate.hintText")),
    pageHeading = true
   )
 
