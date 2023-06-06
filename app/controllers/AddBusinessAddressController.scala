@@ -17,7 +17,7 @@
 package controllers
 
 import auth.{FrontendAuthorisedFunctions, MtdItUser}
-import config.featureswitch.FeatureSwitching
+import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
@@ -61,6 +61,10 @@ class AddBusinessAddressController @Inject()(authenticate: AuthenticationPredica
     }
 
   def handleRequest(isAgent: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
-
+    if (isDisabled(IncomeSources)) {
+      Future.successful(Redirect(controllers.routes.HomeController.show()))
+    } else {
+      
+    }
   }
 }
