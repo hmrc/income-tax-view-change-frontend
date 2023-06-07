@@ -264,6 +264,9 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
         )
       )
 
+    def getForeignPropertyEndDate(additionalCookies: Map[String, String] = Map.empty): WSResponse =
+      getWithClientDetailsInSession("/agents/income-sources/cease/foreign-property-end-date", additionalCookies)
+
     def getAddBusinessStartDateCheck(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
       get(
         uri = "/income-sources/add/business-start-date-check", additionalCookies

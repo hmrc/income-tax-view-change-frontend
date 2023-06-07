@@ -275,6 +275,8 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
       )
     )
 
+    def getForeignPropertyEndDate: WSResponse = get("/income-sources/cease/foreign-property-end-date")
+
     def getAddBusinessStartDate: WSResponse = get("/income-sources/add/business-start-date")
 
     def getAddBusinessStartDateCheck(date: String): WSResponse = {

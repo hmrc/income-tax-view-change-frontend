@@ -1244,9 +1244,21 @@ incomeSources.cease.UKPropertyEndDate.error.invalid              = Mae’n rhaid
 incomeSources.cease.UKPropertyEndDate.error.future               = Ni allwch nodi dyddiad dod i ben sydd y tu hwnt i’r diwrnod presennol na dyddiad yn y dyfodol
 incomeSources.cease.UKPropertyEndDate.error.beforeStartDate      = Ni all y dyddiad dod i ben ar gyfer y busnes fod cyn y dyddiad dechrau
 
-incomeSources.ceaseForeignProperty.heading                       = Dod ag eiddo tramor i ben
-incomeSources.ceaseForeignProperty.checkboxLabel                 = Rwy’n datgan nad wyf bellach yn cael incwm o unrhyw eiddo tramor.
-incomeSources.ceaseForeignProperty.checkboxError                 = Mae’n rhaid i chi ddatgan nad ydych chi bellach yn cael incwm o unrhyw eiddo tramor
+incomeSources.ceaseForeignProperty.heading                              = Dod ag eiddo tramor i ben
+incomeSources.ceaseForeignProperty.checkboxLabel                        = Rwy’n datgan nad wyf bellach yn cael incwm o unrhyw eiddo tramor.
+incomeSources.ceaseForeignProperty.checkboxError                        = Mae’n rhaid i chi ddatgan nad ydych chi bellach yn cael incwm o unrhyw eiddo tramor
+incomeSources.cease.ForeignPropertyEndDate.heading                      = Y dyddiad pan wnaeth eich busnes eiddo tramor stopio
+incomeSources.cease.ForeignPropertyEndDate.hint                         = Er enghraifft, 27 3 2020
+incomeSources.cease.ForeignPropertyEndDate.error.incomplete             = Mae’n rhaid i’r dyddiad gynnwys diwrnod, mis a blwyddyn
+incomeSources.cease.ForeignPropertyEndDate.error.incompleteDay          = Mae’n rhaid i’r dyddiad gynnwys diwrnod
+incomeSources.cease.ForeignPropertyEndDate.error.incompleteMonth        = Mae’n rhaid i’r dyddiad gynnwys mis
+incomeSources.cease.ForeignPropertyEndDate.error.incompleteYear         = Mae’n rhaid i’r dyddiad gynnwys blwyddyn
+incomeSources.cease.ForeignPropertyEndDate.error.incompleteDayMonth     = Mae’n rhaid i’r dyddiad gynnwys diwrnod a mis
+incomeSources.cease.ForeignPropertyEndDate.error.incompleteDayYear      = Mae’n rhaid i’r dyddiad gynnwys diwrnod a blwyddyn
+incomeSources.cease.ForeignPropertyEndDate.error.incompleteMonthYear    = Mae’n rhaid i’r dyddiad gynnwys mis a blwyddyn
+incomeSources.cease.ForeignPropertyEndDate.error.invalid                = Mae’n rhaid i’r dyddiad y daeth eich busnes eiddo tramor i ben fod yn ddyddiad go iawn
+incomeSources.cease.ForeignPropertyEndDate.error.future                 = Ni allwch nodi dyddiad dod i ben sydd y tu hwnt i’r diwrnod presennol na dyddiad yn y dyfodol
+incomeSources.cease.ForeignPropertyEndDate.error.beforeStartDate        = Ni all y dyddiad dod i ben ar gyfer y busnes fod cyn y dyddiad dechrau
 
 #Generic date form messages
 dateForm.hint                                                       = Er enghraifft, 27 3 2020
