@@ -70,7 +70,7 @@ class CheckCeaseUKPropertyDetailsController @Inject()(val authenticate: Authenti
   }
 
   def show(): Action[AnyContent] =
-    (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources).async {
+    (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
       implicit user =>
         handleRequest(
           isAgent = false,
