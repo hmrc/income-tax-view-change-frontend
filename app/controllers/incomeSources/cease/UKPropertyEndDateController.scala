@@ -68,7 +68,7 @@ class UKPropertyEndDateController @Inject()(val authenticate: AuthenticationPred
         postAction = postAction,
         isAgent = isAgent,
         backUrl = backUrl,
-        origin = origin)(user, messages)))
+        btaNavPartial = user.btaNavPartial)(user, messages)))
     } else {
       Future.successful(Ok(customNotFoundErrorView()(user, messages)))
     } recover {
@@ -79,13 +79,12 @@ class UKPropertyEndDateController @Inject()(val authenticate: AuthenticationPred
     }
   }
 
-  def show(origin: Option[String] = None): Action[AnyContent] =
+  def show(): Action[AnyContent] =
     (checkSessionTimeout andThen authenticate andThen retrieveNino
       andThen retrieveIncomeSources).async {
       implicit user =>
         handleRequest(
-          isAgent = false,
-          origin
+          isAgent = false
         )
     }
 
@@ -108,7 +107,8 @@ class UKPropertyEndDateController @Inject()(val authenticate: AuthenticationPred
           UKPropertyEndDateForm = hasErrors,
           postAction = controllers.incomeSources.cease.routes.UKPropertyEndDateController.submit(),
           backUrl = controllers.incomeSources.cease.routes.CeaseUKPropertyController.show().url,
-          isAgent = false
+          isAgent = false,
+          btaNavPartial = user.btaNavPartial
         ))),
         validatedInput =>
           Future.successful(Redirect(controllers.incomeSources.cease.routes.CheckCeaseUKPropertyDetailsController.show())
@@ -126,7 +126,8 @@ class UKPropertyEndDateController @Inject()(val authenticate: AuthenticationPred
                 UKPropertyEndDateForm = hasErrors,
                 postAction = controllers.incomeSources.cease.routes.UKPropertyEndDateController.submitAgent(),
                 backUrl = controllers.incomeSources.cease.routes.CeaseUKPropertyController.showAgent().url,
-                isAgent = true
+                isAgent = true,
+                btaNavPartial = mtdItUser.btaNavPartial
               ))),
               validatedInput =>
                 Future.successful(Redirect(controllers.incomeSources.cease.routes.CheckCeaseUKPropertyDetailsController.showAgent())
