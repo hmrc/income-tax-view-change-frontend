@@ -107,7 +107,7 @@ class ForeignPropertyStartDateCheckViewSpec extends TestSupport {
     }
 
     "render the form with post action" in new Setup(false) {
-      document.getElementById("foreign-property-start-date-check-form").attr("action") shouldBe controllers.incomeSources.add.routes.ForeignPropertyAccountingMethodController.show()
+      document.getElementById("foreign-property-start-date-check-form").attr("action") shouldBe controllers.incomeSources.add.routes.ForeignPropertyStartDateCheckController.submit().url
     }
 
     "render the error message" in new Setup(false, true) {
@@ -145,7 +145,7 @@ class ForeignPropertyStartDateCheckViewSpec extends TestSupport {
     }
 
     "render the form with post action" in new Setup(true) {
-      document.getElementById("foreign-property-start-date-check-form").attr("action") shouldBe controllers.incomeSources.add.routes.ForeignPropertyAccountingMethodController.showAgent()
+      document.getElementById("foreign-property-start-date-check-form").attr("action") shouldBe controllers.incomeSources.add.routes.ForeignPropertyStartDateCheckController.submitAgent().url
     }
 
     "render the error message" in new Setup(true, true) {
