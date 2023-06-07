@@ -63,7 +63,6 @@ class BusinessEndDateForm @Inject()(val dateService: DateService) extends Constr
         )).transform[LocalDate](
         {
           case (day, month, year) =>
-            println(businessStartDate)
             LocalDate.of(year.toInt, month.toInt, day.toInt)
         },
         date => (date.getDayOfMonth.toString, date.getMonthValue.toString, date.getYear.toString)
