@@ -76,7 +76,7 @@ class ManageIncomeSourceControllerISpec extends ComponentSpecBase {
           pageTitleIndividual(pageTitleMsgKey),
           elementTextByID("ceased-businesses-h2")(ceasedBusinessMessage),
           elementTextByID("table-head-date-ended-ceased")(ceasedDateMessage),
-          elementTextByID("table-row-trading-name-ceased-0")(ceasedBusinessName),
+          elementTextByID("table-row-trading-name-0-ceased")(ceasedBusinessName),
           elementTextByID("table-head-date-started-foreign")(startDateMessage),
           elementTextByID("table-row-trading-start-date-foreign")(foreignPropertyStartDate)
         )
