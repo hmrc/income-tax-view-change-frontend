@@ -25,11 +25,20 @@
 
 @this(mainTemplate: unifiedLayout, dateInput: dateInput, continueButton: ContinueButton, formWithCSRF: FormWithCSRF, errorSummary: ErrorSummary)
 
-@(foreignPropertyStartDateForm: Form[_], postAction: Call, isAgent: Boolean = false, backUrl: String, origin: Option[String] = None)(implicit request: Request[_], messages: Messages)
+@(foreignPropertyStartDateForm: Form[_],
+  postAction: Call,
+  isAgent: Boolean = false,
+  backUrl: String,
+  origin: Option[String] = None)(implicit user: auth.MtdItUser[_], messages: Messages)
 
 @getMessage(key:String) = @{ messages(s"incomeSources.add.foreignProperty.startDate.$key") }
 
-@mainTemplate(pageTitle = messages("incomeSources.add.foreignProperty.startDate.heading"), isAgent = isAgent, backUrl = Some(backUrl)) {
+@mainTemplate(
+ pageTitle = messages("incomeSources.add.foreignProperty.startDate.heading"),
+ isAgent = isAgent,
+ backUrl = Some(backUrl),
+ useFallbackBackLink = true,
+ btaNavPartial = user.btaNavPartial) {
 
  @errorSummary(form = foreignPropertyStartDateForm)
 

@@ -99,7 +99,7 @@ class CheckCeaseUKPropertyDetailsController @Inject()(val authenticate: Authenti
             itvcErrorHandler.showInternalServerError()
           case Right(result) => result match {
             case r: UpdateIncomeSourceResponseModel =>
-              Logger("application").info(s"[CheckCeaseUKPropertyDetailsController][submitAgent] successfully submitted cease date: processingDate ${r.processingDate}")
+              Logger("application").info(s"[CheckCeaseUKPropertyDetailsController][submit] successfully submitted cease date: processingDate ${r.processingDate}")
               Redirect(controllers.incomeSources.cease.routes.CeaseUKPropertySuccessController.show().url)
             case r: UpdateIncomeSourceResponseError =>
               Logger("application").error(s"[CheckCeaseUKPropertyDetailsController][submit] Error submitting cease date:${r.status} ${r.reason}")

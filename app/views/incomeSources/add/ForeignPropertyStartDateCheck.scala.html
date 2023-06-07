@@ -33,11 +33,7 @@
         inputRadios: input_radios,
 )
 
-@(
-    form: Form[_],backUrl:
-    String,isAgent: Boolean,
-    foreignPropertyStartDate: String
-)(implicit user:auth.MtdItUser[_], messages: Messages)
+@(form: Form[_],backUrl:String,isAgent: Boolean,foreignPropertyStartDate: String)(implicit user:auth.MtdItUser[_], messages: Messages)
 
 @prefix = @{"incomeSources.add.foreignProperty.startDate.check" }
 @formId = @{"foreign-property-start-date-check-form" }
@@ -55,7 +51,8 @@
     pageTitle = getMessage("heading"),
     backUrl = Some(backUrl),
     isAgent = isAgent,
-    btaNavPartial = user.btaNavPartial) {
+    btaNavPartial = user.btaNavPartial,
+    useFallbackBackLink = true) {
 
 
     @formWithCSRF(action = postAction, Symbol("id") -> formId) {

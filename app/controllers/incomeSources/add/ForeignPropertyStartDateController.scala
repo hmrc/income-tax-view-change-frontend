@@ -56,7 +56,7 @@ class ForeignPropertyStartDateController @Inject()(val authenticate: Authenticat
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
     val controller = controllers.incomeSources.add.routes.ForeignPropertyStartDateController
     val incomeSourcesEnabled: Boolean = isEnabled(IncomeSources)
-    val backUrl: String = user.headers.get(REFERER).getOrElse(controllers.incomeSources.add.routes.AddIncomeSourceController.show().url)
+    val backUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceController.show().url
     val postAction: Call = if (isAgent) controller.submitAgent() else controller.submit()
     val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
@@ -95,7 +95,7 @@ class ForeignPropertyStartDateController @Inject()(val authenticate: Authenticat
 
   def show(origin: Option[String] = None): Action[AnyContent] =
     (checkSessionTimeout andThen authenticate andThen retrieveNino
-      andThen retrieveIncomeSources).async {
+      andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
       implicit user =>
         handleRequest(
           isAgent = false,
