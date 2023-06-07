@@ -22,7 +22,7 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowI
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import forms.incomeSources.cease.BusinessEndDateForm
-import forms.utils.SessionKeys.{ceaseBusinessEndDate, ceaseUKPropertyEndDate}
+import forms.utils.SessionKeys.{ceaseBusinessEndDate, ceaseBusinessStartDate, ceaseUKPropertyEndDate}
 import models.incomeSourceDetails.viewmodels.CeaseBusinessDetailsViewModel
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages}
@@ -32,6 +32,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import views.html.incomeSources.cease.BusinessEndDate
 import views.html.errorPages.CustomNotFoundError
 
+import java.lang
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
@@ -116,7 +117,8 @@ class BusinessEndDateController @Inject()(val authenticate: AuthenticationPredic
         ))),
         validatedInput =>
           Future.successful(Redirect(controllers.incomeSources.cease.routes.CheckCeaseBusinessDetailsController.show())
-            .addingToSession(ceaseBusinessEndDate -> validatedInput.date.toString))
+            .addingToSession(ceaseBusinessEndDate -> validatedInput.date.toString)
+            .addingToSession(ceaseBusinessStartDate -> businessStartDate.getOrElse(throw new NullPointerException)))
       )
   }
 
@@ -134,7 +136,8 @@ class BusinessEndDateController @Inject()(val authenticate: AuthenticationPredic
               ))),
               validatedInput =>
                 Future.successful(Redirect(controllers.incomeSources.cease.routes.CheckCeaseBusinessDetailsController.showAgent())
-                  .addingToSession(ceaseBusinessEndDate -> validatedInput.date.toString))
+                  .addingToSession(ceaseBusinessEndDate -> validatedInput.date.toString)
+                  .addingToSession(ceaseBusinessStartDate -> businessStartDate.getOrElse(throw new NullPointerException)))
             )
         }
   }

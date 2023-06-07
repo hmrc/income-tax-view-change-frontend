@@ -21,6 +21,7 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import config.featureswitch.FeatureSwitching
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
+import forms.utils.SessionKeys.{ceaseBusinessEndDate, ceaseBusinessStartDate}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.IncomeSourceDetailsService
@@ -48,6 +49,8 @@ class CheckCeaseBusinessDetailsController @Inject()(val authenticate: Authentica
     (checkSessionTimeout andThen authenticate andThen retrieveNino
       andThen retrieveIncomeSources).async {
       implicit user =>
+        println(user.session.get(ceaseBusinessStartDate))
+        println(user.session.get(ceaseBusinessEndDate))
         Future.successful(NotImplemented)
     }
 
