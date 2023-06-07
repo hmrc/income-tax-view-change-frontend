@@ -20,7 +20,8 @@ import auth.HeaderExtractor
 import com.github.tomakehurst.wiremock.client.WireMock
 import config.FrontendAppConfig
 import config.featureswitch.{FeatureSwitch, FeatureSwitching}
-import forms.{CeaseForeignPropertyForm, CeaseUKPropertyForm}
+import forms.incomeSources.cease.CeaseUKPropertyForm
+import forms.CeaseForeignPropertyForm
 import helpers.agent.SessionCookieBaker
 import helpers.servicemocks.AuditStub
 import implicits.ImplicitDateFormatterImpl
@@ -45,7 +46,7 @@ import java.time.LocalDate
 import javax.inject.Singleton
 import scala.concurrent.Future
 import forms.utils.SessionKeys
-import forms.{BusinessStartDateCheckForm, CeaseForeignPropertyForm, CeaseUKPropertyForm}
+import forms.BusinessStartDateCheckForm
 
 import java.time.Month.{APRIL, JANUARY}
 
@@ -178,12 +179,6 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     FeatureSwitch.switches foreach disable
   }
 
-  def getWithHeaders(uri: String, headers: (String, String)*): WSResponse = {
-    buildClient(uri)
-      .withHttpHeaders(headers: _*)
-      .get().futureValue
-  }
-
   def getWithClientDetailsInSession(uri: String, additionalCookies: Map[String, String] = Map.empty): WSResponse = {
     buildClient(uri)
       .withHttpHeaders(HeaderNames.COOKIE -> bakeSessionCookie(Map.empty ++ additionalCookies), "Csrf-Token" -> "nocheck")
@@ -203,22 +198,24 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
   }
 
   object IncomeTaxViewChangeFrontend {
-    def get(uri: String): WSResponse = buildClient(uri)
-      .get().futureValue
+    def get(uri: String, additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      When(s"I call GET /report-quarterly/income-and-expenses/view" + uri)
+      buildClient(uri)
+        .withHttpHeaders(HeaderNames.COOKIE -> bakeSessionCookie(additionalCookies))
+        .get().futureValue
+    }
+
+    def getWithHeaders(uri: String, headers: (String, String)*): WSResponse = {
+      buildClient(uri)
+        .withHttpHeaders(headers: _*)
+        .get().futureValue
+    }
 
     def post(uri: String, additionalCookies: Map[String, String] = Map.empty)(body: Map[String, Seq[String]]): WSResponse = {
       When(s"I call POST /report-quarterly/income-and-expenses/view" + uri)
       buildClient(uri)
-        .withHttpHeaders(HeaderNames.COOKIE -> bakeSessionCookie(additionalCookies ),"Csrf-Token" -> "nocheck")
         .withFollowRedirects(false)
-        .post(body).futureValue
-    }
-
-    def postWithAdditionalHeader(uri: String, additionalHeader: (String, String))(body: Map[String, Seq[String]]): WSResponse = {
-      When(s"I call POST /report-quarterly/income-and-expenses/view" + uri)
-      buildClient(uri)
-        .withFollowRedirects(false)
-        .withHttpHeaders(additionalHeader, "Csrf-Token" -> "nocheck")
+        .withHttpHeaders(HeaderNames.COOKIE -> bakeSessionCookie(additionalCookies), "Csrf-Token" -> "nocheck")
         .post(body).futureValue
     }
 
@@ -293,6 +290,8 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
       )
     )
 
+    def getForeignPropertyEndDate: WSResponse = get("/income-sources/cease/foreign-property-end-date")
+
     def getAddBusinessStartDate: WSResponse = get("/income-sources/add/business-start-date")
 
     def getAddBusinessStartDateCheck(date: String): WSResponse = {
@@ -318,6 +317,8 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
     def postCheckCeaseUKPropertyDetails(session: Map[String, String]): WSResponse =
       post("/income-sources/cease/uk-property-check-details", session)(Map.empty)
+
+    def getManageIncomeSource: WSResponse = get("/income-sources/manage/view-and-manage-income-sources")
   }
 
   def unauthorisedTest(uri: String): Unit = {

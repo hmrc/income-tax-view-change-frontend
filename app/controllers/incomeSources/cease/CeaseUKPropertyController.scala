@@ -21,7 +21,7 @@ import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
-import forms.CeaseUKPropertyForm
+import forms.incomeSources.cease.CeaseUKPropertyForm
 import forms.utils.SessionKeys.ceaseUKPropertyDeclare
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages}
@@ -51,7 +51,7 @@ class CeaseUKPropertyController @Inject()(val authenticate: AuthenticationPredic
                                          )
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
-  def handleRequest(isAgent: Boolean, origin: Option[String] = None)
+  def handleRequest(isAgent: Boolean)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
 
     val incomeSourcesEnabled: Boolean = isEnabled(IncomeSources)
@@ -66,8 +66,7 @@ class CeaseUKPropertyController @Inject()(val authenticate: AuthenticationPredic
         ceaseUKPropertyForm = CeaseUKPropertyForm.form,
         postAction = postAction,
         isAgent = isAgent,
-        backUrl = backUrl,
-        origin = origin)(user, messages)))
+        backUrl = backUrl)(user, messages)))
     } else {
       Future.successful(Ok(customNotFoundErrorView()(user, messages)))
     } recover {
@@ -83,8 +82,7 @@ class CeaseUKPropertyController @Inject()(val authenticate: AuthenticationPredic
       andThen retrieveIncomeSources).async {
       implicit user =>
         handleRequest(
-          isAgent = false,
-          origin
+          isAgent = false
         )
     }
 

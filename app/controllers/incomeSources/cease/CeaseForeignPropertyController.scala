@@ -22,6 +22,7 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowI
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import forms.CeaseForeignPropertyForm
+import forms.utils.SessionKeys.ceaseForeignPropertyDeclare
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc._
@@ -79,7 +80,7 @@ class CeaseForeignPropertyController @Inject()(val authenticate: AuthenticationP
 
   def show(origin: Option[String] = None): Action[AnyContent] =
     (checkSessionTimeout andThen authenticate andThen retrieveNino
-      andThen retrieveIncomeSources).async {
+      andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
       implicit user =>
         handleRequest(
           isAgent = false,
@@ -107,10 +108,10 @@ class CeaseForeignPropertyController @Inject()(val authenticate: AuthenticationP
           postAction = controllers.incomeSources.cease.routes.CeaseForeignPropertyController.submit,
           backUrl = controllers.incomeSources.cease.routes.CeaseIncomeSourceController.show().url,
           isAgent = false
-        )).addingToSession("ceaseForeignPropertyDeclare" -> "false")),
+        )).addingToSession(ceaseForeignPropertyDeclare -> "false")),
         _ =>
-          Future.successful(Redirect(controllers.incomeSources.cease.routes.DateForeignPropertyCeasedController.show())
-            .addingToSession("ceaseForeignPropertyDeclare" -> "true"))
+          Future.successful(Redirect(controllers.incomeSources.cease.routes.ForeignPropertyEndDateController.show())
+            .addingToSession(ceaseForeignPropertyDeclare -> "true"))
       )
   }
 
@@ -125,10 +126,10 @@ class CeaseForeignPropertyController @Inject()(val authenticate: AuthenticationP
                 postAction = controllers.incomeSources.cease.routes.CeaseForeignPropertyController.submitAgent,
                 backUrl = controllers.incomeSources.cease.routes.CeaseIncomeSourceController.showAgent().url,
                 isAgent = true
-              )).addingToSession("ceaseForeignPropertyDeclare" -> "false")),
+              )).addingToSession(ceaseForeignPropertyDeclare -> "false")),
               _ =>
-                Future.successful(Redirect(controllers.incomeSources.cease.routes.DateForeignPropertyCeasedController.showAgent())
-                  .addingToSession("ceaseForeignPropertyDeclare" -> "true"))
+                Future.successful(Redirect(controllers.incomeSources.cease.routes.ForeignPropertyEndDateController.showAgent())
+                  .addingToSession(ceaseForeignPropertyDeclare -> "true"))
             )
         }
   }

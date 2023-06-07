@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.incomeSources.cease
+package controllers
 
 import auth.FrontendAuthorisedFunctions
 import config.featureswitch.FeatureSwitching
@@ -27,20 +27,20 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
-class DateForeignPropertyCeasedController @Inject()(val authenticate: AuthenticationPredicate,
-                                                    val authorisedFunctions: FrontendAuthorisedFunctions,
-                                                    val checkSessionTimeout: SessionTimeoutPredicate)
-                                                   (implicit val appConfig: FrontendAppConfig,
-                                            mcc: MessagesControllerComponents,
-                                            val ec: ExecutionContext,
-                                            val itvcErrorHandlerAgent: AgentItvcErrorHandler)
+class AddUKPropertyStartDate @Inject()(val authenticate: AuthenticationPredicate,
+                                               val authorisedFunctions: FrontendAuthorisedFunctions,
+                                               val checkSessionTimeout: SessionTimeoutPredicate)
+                                              (implicit val appConfig: FrontendAppConfig,
+                                          mcc: MessagesControllerComponents,
+                                          val ec: ExecutionContext,
+                                          val itvcErrorHandlerAgent: AgentItvcErrorHandler)
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
-  def show(origin: Option[String] = None): Action[AnyContent] = Action {
-    Ok(" ")
+  def show(): Action[AnyContent] = Action {
+    Ok("")
   }
 
   def showAgent(): Action[AnyContent] = Action {
-    Ok(" ")
+    Ok("")
   }
 }

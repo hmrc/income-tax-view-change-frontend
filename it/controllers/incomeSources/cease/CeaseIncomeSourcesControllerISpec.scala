@@ -29,7 +29,7 @@ class CeaseIncomeSourcesControllerISpec extends ComponentSpecBase {
   val pageTitleMsgKey = "cease-income-sources.heading"
   val soleTraderBusinessName1: String = "business"
   val soleTraderBusinessName2: String = "secondBusiness"
-  val ceaseMessage: String = messagesAPI("cease-income-sources.cease") + "cease"
+  val ceaseMessage: String = messagesAPI("cease-income-sources.cease")
   val startDateMessage: String = messagesAPI("cease-income-sources.table-head.date-started")
   val ceasedDateMessage: String = messagesAPI("cease-income-sources.table-head.date-ended")
   val businessNameMessage: String = messagesAPI("cease-income-sources.table-head.business-name")
@@ -39,7 +39,7 @@ class CeaseIncomeSourcesControllerISpec extends ComponentSpecBase {
   val ceasedBusinessName: String = "ceasedBusiness"
 
 
-  s"calling GET ${showIndividualCeaseIncomeSourceControllerUrl}" should {
+  s"calling GET $showIndividualCeaseIncomeSourceControllerUrl" should {
     "render the Cease Income Source page for an Individual" when {
       "User is authorised" in {
         Given("I wiremock stub a successful Income Source Details response with multiple businesses and a uk property")

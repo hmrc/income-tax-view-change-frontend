@@ -24,7 +24,7 @@ import testConstants.BaseIntegrationTestConstants.testMtditid
 import testConstants.IncomeSourceIntegrationTestConstants.multipleBusinessesAndPropertyResponse
 
 class CeaseForeignPropertyControllerISpec extends ComponentSpecBase {
-  val showDateForeignPropertyCeasedControllerUrl: String = controllers.incomeSources.cease.routes.DateForeignPropertyCeasedController.show().url
+  val showForeignPropertyEndDateControllerUrl: String = controllers.incomeSources.cease.routes.ForeignPropertyEndDateController.show().url
   val showCeaseForeignPropertyControllerUrl: String = controllers.incomeSources.cease.routes.CeaseForeignPropertyController.show().url
   val checkboxErrorMessage: String = messagesAPI("incomeSources.ceaseForeignProperty.checkboxError")
   val checkboxLabelMessage: String = messagesAPI("incomeSources.ceaseForeignProperty.checkboxLabel")
@@ -33,7 +33,7 @@ class CeaseForeignPropertyControllerISpec extends ComponentSpecBase {
 
   s"calling GET $showCeaseForeignPropertyControllerUrl" should {
     "render the Cease Foreign Property Page" when {
-      "Agent is authorised" in {
+      "User is authorised" in {
         Given("I wiremock stub a successful Income Source Details response with multiple business and property")
         enable(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
@@ -52,7 +52,7 @@ class CeaseForeignPropertyControllerISpec extends ComponentSpecBase {
   }
 
   s"calling POST ${controllers.incomeSources.cease.routes.CeaseForeignPropertyController.submit.url}" should {
-    "redirect to showDateForeignPropertyCeasedControllerUrl" when {
+    "redirect to showForeignPropertyEndDateControllerUrl" when {
       "form is filled correctly" in {
         enable(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
@@ -60,7 +60,7 @@ class CeaseForeignPropertyControllerISpec extends ComponentSpecBase {
         result.status shouldBe SEE_OTHER
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(showDateForeignPropertyCeasedControllerUrl)
+          redirectURI(showForeignPropertyEndDateControllerUrl)
         )
       }
       "form is filled incorrectly" in {
