@@ -60,6 +60,17 @@ trait Constraints {
     case _ => Valid
   }
 
+  protected def nonEmptyDateFields(errKey: String, args: Seq[String] = Seq()): Constraint[(String, String, String)] = Constraint {
+    case ("", "", "") => Invalid(errKey, args: _*)
+    case ("", "", _) => Invalid(errKey + "DayMonth", args: _*)
+    case ("", _, "") => Invalid(errKey + "DayYear", args: _*)
+    case (_, "", "") => Invalid(errKey + "MonthYear", args: _*)
+    case ("", _, _) => Invalid(errKey + "Day", args: _*)
+    case (_, "", _) => Invalid(errKey + "Month", args: _*)
+    case (_, _, "") => Invalid(errKey + "Year", args: _*)
+    case _ => Valid
+  }
+
   protected def dateCheck(errKey: DatePartErrorMessageKeys, args: Seq[String] = Seq()): Constraint[(String, String, String)] = Constraint {
     case ("", "", "") => Invalid(errKey.containsNothing, args: _*)
     case (_, "", "") => Invalid(errKey.containsOnlyDay, args: _*)

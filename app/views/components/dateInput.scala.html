@@ -22,7 +22,7 @@
 
 @(content: String,
     field: Field,
-    hintContent: Option[String] = None,
+    hintContent: Option[Content] = None,
     smallText: Boolean = false,
     largeText: Boolean = true,
     labelClass: Option[String] = None,
@@ -31,20 +31,19 @@
 )(implicit messages: Messages)
 
 @inputItems = @{
-    Seq(InputItem(attributes = Map("maxLength" -> "2")),
-    InputItem(attributes = Map("maxLength" -> "2")),
-    InputItem(attributes = Map("maxLength" -> "4"))
-    )
+  Seq(InputItem(attributes = Map("maxLength" -> "2")),
+  InputItem(attributes = Map("maxLength" -> "2")),
+  InputItem(attributes = Map("maxLength" -> "4")))
 }
 
 @govukDateInput(DateInput(
-    hint = hintContent.map(text => Hint(content = HtmlContent(text), classes = hintClass.getOrElse("") )),
-    fieldset = Some(Fieldset(
-        legend = Some(Legend(
-            content = Text(content),
-            classes = if(smallText) "govuk-body" else s"""${if(largeText) "govuk-label--xl"} ${labelClass.getOrElse("")}""",
-            isPageHeading = pageHeading
-        ))
-    )),
-    items = inputItems
+  hint = hintContent.map(hintHtml => Hint(content = hintHtml, classes = hintClass.getOrElse(""))),
+  fieldset = Some(Fieldset(
+    legend = Some(Legend(
+    content = Text(content),
+    classes = if(smallText) "govuk-body" else s"""${if(largeText) "govuk-label--xl"} ${labelClass.getOrElse("")}""",
+    isPageHeading = pageHeading
+    ))
+  )),
+  items = inputItems
 ).withFormField(field))

@@ -696,7 +696,6 @@ sections.close.all												= Cuddio pob un
 sections.open												    = Dangos
 sections.close												    = Cuddio
 
-
 ## Credits Summary Page ##
 credits.heading                                                         = Credydau yn {0}
 credits.tableHead.date                                                  = Dyddiad
@@ -1159,6 +1158,18 @@ cease-income-sources.foreign-property.p1      = Dylech ond dod â’ch eiddo tra
 cease-income-sources.ceased-businesses.h1     = Busnesau sydd wedi dod i ben
 cease-income-sources.table-head.date-ended    = Y dyddiad dod i ben
 
+## view Income Sources
+view-income-sources.heading                  = Bwrw golwg dros eich ffynonellau incwm a’u rheoli
+view-income-sources.self-employed-h2         = Busnesau unig fasnachwr
+view-income-sources.uk-property-h2           = Eiddo yn y DU
+view-income-sources.foreign-property-h2      = Eiddo tramor
+view-income-sources.ceased-businesses-h2     = Busnesau sydd wedi dod i ben
+view-income-sources.table-head.business-name = Enw’r busnes
+view-income-sources.table-head.date-started  = Dyddiad cychwyn
+view-income-sources.table-head.date-ended    = Y dyddiad dod i ben
+view-income-sources.business-details         = Dewis
+view-income-sources.unknown-field            = Anhysbys
+
 # add Business page
 add-business-name.heading                                         = Beth yw enw’ch busnes?
 add-business-name.p1                                              = Dyma enw’r busnes a ddefnyddioch i gofrestru ar gyfer Hunanasesiad. Os nad oes enw gwahanol ar eich busnes unig fasnachwr, nodwch eich enw cyntaf ac enw olaf.
@@ -1197,7 +1208,31 @@ notmigrated.agent.content_extra                                 = Bydd hyn yn Dd
 notmigrated.user.link_title                                     = cyfrif Hunanasesiad ar-lein
 notmigrated.agent.link_title                                    = cyfrif Hunanasesiad ar gyfer Asiantau
 
+incomeSources.ceaseUKProperty.heading                           = Dod ag eiddo yn y DU i ben
+incomeSources.ceaseUKProperty.radioLabel                        = Rwy’n datgan nad wyf bellach yn cael incwm o unrhyw eiddo yn y DU.
+incomeSources.ceaseUKProperty.radioError                        = Mae’n rhaid i chi ddatgan nad ydych chi bellach yn cael incwm o unrhyw eiddo yn y DU
 
+incomeSources.add.UKPropertyStartDate.heading                   = Pryd y dechreuodd eich busnes eiddo yn y DU?
+incomeSources.add.UKPropertyStartDate.hint                      = Dyma’r dyddiad y dechreuodd y gweithgarwch o roi unrhyw eiddo yn y DU ar osod yn y lle cyntaf.
+incomeSources.add.UKPropertyStartDate.error.required            = Enter the date your UK property business started trading
+incomeSources.add.UKPropertyStartDate.error.future              = Mae’n rhaid i’r dyddiad y dechreuodd eich busnes eiddo yn y DU fod cyn {0}
+incomeSources.add.UKPropertyStartDate.error.invalid             = Mae’n rhaid i’r dyddiad y dechreuodd eich busnes eiddo yn y DU fod yn ddyddiad go iawn
+incomeSources.add.checkUKPropertyStartDate.error.required       = Dewiswch ‘Iawn’ os yw dyddiad dechrau’r busnes eiddo yn y DU yn gywir
+
+#Generic date form messages
+dateForm.hint                                                       = Er enghraifft, 27 3 2020
+dateForm.error.day.required                                         = Mae’n rhaid i’r dyddiad gynnwys diwrnod
+dateForm.error.month.required                                       = Mae’n rhaid i’r dyddiad gynnwys mis
+dateForm.error.year.required                                        = Mae’n rhaid i’r dyddiad gynnwys blwyddyn
+dateForm.error.dayAndMonth.required                                 = Mae’n rhaid i’r dyddiad gynnwys diwrnod a mis
+dateForm.error.dayAndYear.required                                  = Mae’n rhaid i’r dyddiad gynnwys diwrnod a blwyddyn
+dateForm.error.monthAndYear.required                                = Mae’n rhaid i’r dyddiad gynnwys mis a blwyddyn
+dateForm.check.heading                                              = A yw’r dyddiad hwn yn gywir?
+
+#Generic radio form messages
+radioForm.checkDate.heading                                         = A yw’r dyddiad hwn yn gywir?
+radioForm.yes                                                       = Iawn
+radioForm.no                                                        = Na
 
 incomeSources.ceaseUKProperty.heading                            = Dod ag eiddo yn y DU i ben
 incomeSources.ceaseUKProperty.radioLabel                         = Rwy’n datgan nad wyf bellach yn cael incwm o unrhyw eiddo yn y DU.
@@ -1209,9 +1244,21 @@ incomeSources.cease.UKPropertyEndDate.error.invalid              = Mae’n rhaid
 incomeSources.cease.UKPropertyEndDate.error.future               = Ni allwch nodi dyddiad dod i ben sydd y tu hwnt i’r diwrnod presennol na dyddiad yn y dyfodol
 incomeSources.cease.UKPropertyEndDate.error.beforeStartDate      = Ni all y dyddiad dod i ben ar gyfer y busnes fod cyn y dyddiad dechrau
 
-incomeSources.ceaseForeignProperty.heading                       = Dod ag eiddo tramor i ben
-incomeSources.ceaseForeignProperty.checkboxLabel                 = Rwy’n datgan nad wyf bellach yn cael incwm o unrhyw eiddo tramor.
-incomeSources.ceaseForeignProperty.checkboxError                 = Mae’n rhaid i chi ddatgan nad ydych chi bellach yn cael incwm o unrhyw eiddo tramor
+incomeSources.ceaseForeignProperty.heading                              = Dod ag eiddo tramor i ben
+incomeSources.ceaseForeignProperty.checkboxLabel                        = Rwy’n datgan nad wyf bellach yn cael incwm o unrhyw eiddo tramor.
+incomeSources.ceaseForeignProperty.checkboxError                        = Mae’n rhaid i chi ddatgan nad ydych chi bellach yn cael incwm o unrhyw eiddo tramor
+incomeSources.cease.ForeignPropertyEndDate.heading                      = Y dyddiad pan wnaeth eich busnes eiddo tramor stopio
+incomeSources.cease.ForeignPropertyEndDate.hint                         = Er enghraifft, 27 3 2020
+incomeSources.cease.ForeignPropertyEndDate.error.incomplete             = Mae’n rhaid i’r dyddiad gynnwys diwrnod, mis a blwyddyn
+incomeSources.cease.ForeignPropertyEndDate.error.incompleteDay          = Mae’n rhaid i’r dyddiad gynnwys diwrnod
+incomeSources.cease.ForeignPropertyEndDate.error.incompleteMonth        = Mae’n rhaid i’r dyddiad gynnwys mis
+incomeSources.cease.ForeignPropertyEndDate.error.incompleteYear         = Mae’n rhaid i’r dyddiad gynnwys blwyddyn
+incomeSources.cease.ForeignPropertyEndDate.error.incompleteDayMonth     = Mae’n rhaid i’r dyddiad gynnwys diwrnod a mis
+incomeSources.cease.ForeignPropertyEndDate.error.incompleteDayYear      = Mae’n rhaid i’r dyddiad gynnwys diwrnod a blwyddyn
+incomeSources.cease.ForeignPropertyEndDate.error.incompleteMonthYear    = Mae’n rhaid i’r dyddiad gynnwys mis a blwyddyn
+incomeSources.cease.ForeignPropertyEndDate.error.invalid                = Mae’n rhaid i’r dyddiad y daeth eich busnes eiddo tramor i ben fod yn ddyddiad go iawn
+incomeSources.cease.ForeignPropertyEndDate.error.future                 = Ni allwch nodi dyddiad dod i ben sydd y tu hwnt i’r diwrnod presennol na dyddiad yn y dyfodol
+incomeSources.cease.ForeignPropertyEndDate.error.beforeStartDate        = Ni all y dyddiad dod i ben ar gyfer y busnes fod cyn y dyddiad dechrau
 
 incomeSources.add.foreignProperty.startDate.heading                  = Pryd y dechreuodd eich busnes eiddo tramor?
 incomeSources.add.foreignProperty.startDate.hint                     = Dyma’r dyddiad y dechreuodd y gweithgarwch o roi unrhyw eiddo tramor ar osod yn y lle cyntaf.
@@ -1248,20 +1295,19 @@ incomeSources.ceaseUKProperty.checkDetails.change                = Newid
 
 # add Business start date
 add-business-start-date.heading                      = Pryd y dechreuodd eich busnes fasnachu?
-add-business-start-date.hint-prt1                    = Byddwn yn defnyddio hwn i gyfrifo eich ffi Yswiriant Gwladol Dosbarth 2, os yw?n briodol.
+add-business-start-date.hint-prt1                    = Byddwn yn defnyddio hwn i gyfrifo eich ffi Yswiriant Gwladol Dosbarth 2, os yw’n briodol.
 add-business-start-date.hint-prt2                    = Er enghraifft, 27 3 2020
 add-business-start-date.day                          = Diwrnod
 add-business-start-date.month                        = Mis
 add-business-start-date.year                         = Blwyddyn
 add-business-start-date.continue                     = Yn eich blaen
 add-business-start-date.form.error.emptyDateField    = Nodwch y dyddiad y dechreuodd eich busnes fasnachu
-
-add-business-start-date.error.future                 = Mae?n rhaid i?r dyddiad y dechreuodd eich busnes eiddo tramor fod cyn {0}
+add-business-start-date.error.future                 = Mae’n rhaid i’r dyddiad y dechreuodd eich busnes eiddo tramor fod cyn {0}
 add-business-start-date.error.error.required         = Nodwch y dyddiad y dechreuodd eich busnes fasnachu
-add-business-start-date.error.invalid                = Mae?n rhaid i?r dyddiad y dechreuodd eich busnes fasnachu fod yn ddyddiad go iawn
+add-business-start-date.error.invalid                = Mae’n rhaid i’r dyddiad y dechreuodd eich busnes fasnachu fod yn ddyddiad go iawn
 
 # add Business start date check
-add-business-start-date-check.heading                = A yw?r dyddiad hwn yn gywir?
+add-business-start-date-check.heading                = A yw’r dyddiad hwn yn gywir?
 add-business-start-date-check.radio.yes              = Iawn
 add-business-start-date-check.radio.no               = Na
-add-business-start-date-check.radio.error            = Dewiswch ?Iawn? os yw dyddiad dechrau?ch busnes yn gywir
+add-business-start-date-check.radio.error            = Dewiswch ’Iawn’ os yw dyddiad dechrau’ch busnes yn gywir

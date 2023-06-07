@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-package forms
+package forms.incomeSources.cease
 
 import play.api.data.Form
 import play.api.data.Forms._
-import play.api.data.validation.{Constraint, Invalid, Valid}
 
 
 object CeaseUKPropertyForm {

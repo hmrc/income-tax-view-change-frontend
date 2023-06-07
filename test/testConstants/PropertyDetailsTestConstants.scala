@@ -19,7 +19,7 @@ package testConstants
 import testConstants.BaseTestConstants.testPropertyIncomeId
 import testConstants.NextUpdatesTestConstants.fakeNextUpdatesModel
 import models.core.{AccountingPeriodModel, CessationModel}
-import models.incomeSourceDetails.viewmodels.{PropertyDetailsViewModel, CeasePropertyDetailsViewModel}
+import models.incomeSourceDetails.viewmodels.{PropertyDetailsViewModel, CeasePropertyDetailsViewModel, ViewPropertyDetailsViewModel}
 import models.incomeSourceDetails.{PropertiesRentedModel, PropertyDetailsModel}
 import models.nextUpdates.NextUpdateModel
 
@@ -33,6 +33,7 @@ object PropertyDetailsTestConstants {
 
   val testStartDate = LocalDate.parse("2022-01-01")
   val testStartDate2 = LocalDate.parse("2021-01-01")
+  val testStartDateOption: Option[LocalDate] = Some(LocalDate.parse("2022-01-01"))
   val testIncomeType = "property-unspecified"
   val ukIncomeType = "uk-property"
   val foreignIncomeType = "foreign-property"
@@ -61,6 +62,10 @@ object PropertyDetailsTestConstants {
 
   val ceaseUkPropertyDetailsViewModel = CeasePropertyDetailsViewModel(
     tradingStartDate = testStartDate
+  )
+
+  val viewUkPropertyDetailsViewModel = ViewPropertyDetailsViewModel(
+    tradingStartDate = testStartDateOption
   )
 
   val foreignPropertyDetails = PropertyDetailsModel(

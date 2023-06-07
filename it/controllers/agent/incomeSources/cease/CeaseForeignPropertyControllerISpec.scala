@@ -25,7 +25,7 @@ import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation
 import testConstants.IncomeSourceIntegrationTestConstants.businessAndPropertyResponse
 
 class CeaseForeignPropertyControllerISpec extends ComponentSpecBase with FeatureSwitching {
-  val showDateForeignPropertyCeasedControllerUrl: String = controllers.incomeSources.cease.routes.DateForeignPropertyCeasedController.showAgent().url
+  val showForeignPropertyEndDateControllerUrl: String = controllers.incomeSources.cease.routes.ForeignPropertyEndDateController.showAgent().url
   val showCeaseForeignPropertyControllerUrl: String = controllers.incomeSources.cease.routes.CeaseForeignPropertyController.showAgent().url
   val checkboxErrorMessage: String = messagesAPI("incomeSources.ceaseForeignProperty.checkboxError")
   val checkboxLabelMessage: String = messagesAPI("incomeSources.ceaseForeignProperty.checkboxLabel")
@@ -56,7 +56,7 @@ class CeaseForeignPropertyControllerISpec extends ComponentSpecBase with Feature
   }
 
   s"calling POST ${controllers.incomeSources.cease.routes.CeaseForeignPropertyController.submit.url}" should {
-    "redirect to showDateForeignPropertyCeasedControllerUrl" when {
+    "redirect to showForeignPropertyEndDateControllerUrl" when {
       "form is filled correctly" in {
         enable(IncomeSources)
         AuthStub.stubAuthorisedAgent()
@@ -65,7 +65,7 @@ class CeaseForeignPropertyControllerISpec extends ComponentSpecBase with Feature
         verifyIncomeSourceDetailsCall(testMtditid)
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(showDateForeignPropertyCeasedControllerUrl)
+          redirectURI(showForeignPropertyEndDateControllerUrl)
         )
       }
       "form is filled incorrectly" in {
