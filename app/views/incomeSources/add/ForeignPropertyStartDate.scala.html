@@ -47,7 +47,7 @@
   @dateInput(
    content = getMessage("heading"),
    field = foreignPropertyStartDateForm("foreign-property-start-date"),
-   hintContent = Some(s"<div>${getMessage("hint")}</div><br><div>${getMessage("hintExample")}</div>"),
+   hintContent = Some(HtmlContent(s"<div>${getMessage("hint")}</div><br><div>${getMessage("hintExample")}</div>")),
    pageHeading = true,
    labelClass = Some("govuk-fieldset__legend govuk-label--l govuk-!-margin-bottom-7 "),
    largeText = false,
