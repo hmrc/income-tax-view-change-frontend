@@ -40,5 +40,5 @@ object SessionKeys {
 
   val ceaseBusinessEndDate: String = "ceaseBusinessEndDate"
 
-  val ceaseBusinessStartDate: String = "ceaseBusinessStartDate"
+  val ceaseBusinessIncomeSourceId: String = "ceaseBusinessIncomeSourceId"
 }

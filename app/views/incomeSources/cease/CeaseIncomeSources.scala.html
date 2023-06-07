@@ -45,9 +45,9 @@
     messages(s"cease-income-sources.$key", args: _*)
 }
 
-@ceaseSoleTraderBusinessURL(businessStartDate: Option[String]) = @{
-    if(isAgent) controllers.incomeSources.cease.routes.BusinessEndDateController.showAgent(businessStartDate).url
-    else controllers.incomeSources.cease.routes.BusinessEndDateController.show(businessStartDate).url
+@ceaseSoleTraderBusinessURL(incomeSourceId: String) = @{
+    if(isAgent) controllers.incomeSources.cease.routes.BusinessEndDateController.showAgent(incomeSourceId).url
+    else controllers.incomeSources.cease.routes.BusinessEndDateController.show(incomeSourceId).url
 }
 
 @ceaseUkPropertyURL = @{
@@ -90,7 +90,7 @@
                         <dl>
                             <dt>
                         <dd class="govuk-summary-list__actions" id="@{s"cease-link-business-$index"}">
-                            <a class="govuk-link" href=@ceaseSoleTraderBusinessURL(Some(item.tradingStartDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))))>
+                            <a class="govuk-link" href=@ceaseSoleTraderBusinessURL(item.incomeSourceId)>
                                 @getMessage("cease")<span class="govuk-visually-hidden">cease</span>
                             </a>
                         </dd>

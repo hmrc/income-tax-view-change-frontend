@@ -17,6 +17,7 @@
 package forms.incomeSources.cease
 
 import auth.MtdItUser
+import exceptions.MissingFieldException
 import forms.models.DateFormElement
 import forms.validation.Constraints
 import play.api.data
@@ -26,6 +27,7 @@ import play.api.data.validation.{Constraint, Invalid, Valid, ValidationError}
 import services.DateService
 
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 class BusinessEndDateForm @Inject()(val dateService: DateService) extends Constraints {
@@ -43,11 +45,13 @@ class BusinessEndDateForm @Inject()(val dateService: DateService) extends Constr
   val dateMustNotBeBefore6April2015 = "incomeSources.cease.BusinessEndDate.error.beforeEarliestDate"
   val sixthAprilTwentyFifteen: LocalDate = LocalDate.of(2015, 4, 6)
 
-  def apply (implicit user: MtdItUser[_], businessStartDate: Option[LocalDate]): Form[DateFormElement] = {
+  def apply (implicit user: MtdItUser[_], id: Option[String]): Form[DateFormElement] = {
     val currentDate: LocalDate = dateService.getCurrentDate()
 
-    println("QQQQQQQQqQQQQQQQQqQQQQQQQQqQQQQQQQQqQQQQQQQQqQQQQQQQQqQQQQQQQQq")
-    println(businessStartDate)
+    val businessStartDate = user.incomeSources.businesses
+      .find(_.incomeSourceId.getOrElse(throw new MissingFieldException("Income Source Id from User Income Sources")) == id.getOrElse(throw new MissingFieldException("Income Source Id from Frontend")))
+      .flatMap(_.tradingStartDate).get
+
     Form(
       mapping("business-end-date" -> tuple(
         "day" -> default(text(), ""),
@@ -64,7 +68,7 @@ class BusinessEndDateForm @Inject()(val dateService: DateService) extends Constr
         },
         date => (date.getDayOfMonth.toString, date.getMonthValue.toString, date.getYear.toString)
       ).verifying(maxDate(currentDate, dateMustNotBeInFuture))
-        .verifying(minDate(businessStartDate.getOrElse(LocalDate.MIN), dateMustBeAfterBusinessStartDate))
+        .verifying(minDate(businessStartDate, dateMustBeAfterBusinessStartDate))
         .verifying(minDate6April2015(dateMustNotBeBefore6April2015))
       )(DateFormElement.apply)(DateFormElement.unapply))
 

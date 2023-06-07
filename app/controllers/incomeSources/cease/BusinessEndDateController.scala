@@ -22,7 +22,7 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowI
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import forms.incomeSources.cease.BusinessEndDateForm
-import forms.utils.SessionKeys.{ceaseBusinessEndDate, ceaseBusinessStartDate, ceaseUKPropertyEndDate}
+import forms.utils.SessionKeys.{ceaseBusinessEndDate, ceaseBusinessIncomeSourceId, ceaseUKPropertyEndDate}
 import models.incomeSourceDetails.viewmodels.CeaseBusinessDetailsViewModel
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages}
@@ -55,42 +55,42 @@ class BusinessEndDateController @Inject()(val authenticate: AuthenticationPredic
                                           val itvcErrorHandlerAgent: AgentItvcErrorHandler)
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
-  def show(businessStartDate: Option[String] = None, origin: Option[String] = None): Action[AnyContent] =
+  def show(id: String, origin: Option[String] = None): Action[AnyContent] =
     (checkSessionTimeout andThen authenticate andThen retrieveNino
       andThen retrieveIncomeSources).async {
       implicit user =>
         handleRequest(
           isAgent = false,
-          LocalDate.parse(businessStartDate.get),
+          id,
           origin
         )
     }
 
-  def showAgent(businessStartDate: Option[String]): Action[AnyContent] = Authenticated.async {
+  def showAgent(id: String): Action[AnyContent] = Authenticated.async {
     implicit request =>
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
           implicit mtdItUser =>
             handleRequest(
               isAgent = true,
-              LocalDate.parse(businessStartDate.get)
+              id
             )
         }
   }
 
-  def handleRequest(isAgent: Boolean, businessStartDate: LocalDate, origin: Option[String] = None)
+  def handleRequest(isAgent: Boolean, id: String, origin: Option[String] = None)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
 
     val incomeSourcesEnabled: Boolean = isEnabled(IncomeSources)
     val backUrl: String = if (isAgent) controllers.incomeSources.cease.routes.CeaseUKPropertyController.showAgent().url else
       controllers.incomeSources.cease.routes.CeaseUKPropertyController.show().url
-    val postAction: Call = if (isAgent) controllers.incomeSources.cease.routes.BusinessEndDateController.submitAgent(Some(businessStartDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))) else
-      controllers.incomeSources.cease.routes.BusinessEndDateController.submit(Some(businessStartDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))))
+    val postAction: Call = if (isAgent) controllers.incomeSources.cease.routes.BusinessEndDateController.submitAgent(id) else
+      controllers.incomeSources.cease.routes.BusinessEndDateController.submit(id)
     val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
     if (incomeSourcesEnabled) {
       Future.successful(Ok(businessEndDate(
-        BusinessEndDateForm = businessEndDateForm.apply(user, businessStartDate = Some(businessStartDate)),
+        BusinessEndDateForm = businessEndDateForm.apply(user, Option(id)),
         postAction = postAction,
         isAgent = isAgent,
         backUrl = backUrl,
@@ -105,39 +105,39 @@ class BusinessEndDateController @Inject()(val authenticate: AuthenticationPredic
     }
   }
 
-  def submit(businessStartDate: Option[String]): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+  def submit(id: String): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
-      businessEndDateForm.apply(user, Some(LocalDate.parse(businessStartDate.get))).bindFromRequest().fold(
+      businessEndDateForm.apply(user, Option(id)).bindFromRequest().fold(
         hasErrors => Future.successful(BadRequest(businessEndDate(
           BusinessEndDateForm = hasErrors,
-          postAction = controllers.incomeSources.cease.routes.BusinessEndDateController.submit(businessStartDate),
+          postAction = controllers.incomeSources.cease.routes.BusinessEndDateController.submit(id),
           backUrl = controllers.incomeSources.cease.routes.CeaseIncomeSourceController.show().url,
           isAgent = false
         ))),
         validatedInput =>
           Future.successful(Redirect(controllers.incomeSources.cease.routes.CheckCeaseBusinessDetailsController.show())
             .addingToSession(ceaseBusinessEndDate -> validatedInput.date.toString)
-            .addingToSession(ceaseBusinessStartDate -> businessStartDate.getOrElse(throw new NullPointerException)))
+            .addingToSession(ceaseBusinessIncomeSourceId -> id))
       )
   }
 
-  def submitAgent(businessStartDate: Option[String]): Action[AnyContent] = Authenticated.async {
+  def submitAgent(id: String): Action[AnyContent] = Authenticated.async {
     implicit request =>
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
           implicit mtdItUser =>
-            businessEndDateForm.apply(mtdItUser, Some(LocalDate.parse(businessStartDate.get))).bindFromRequest().fold(
+            businessEndDateForm.apply(mtdItUser, Option(id)).bindFromRequest().fold(
               hasErrors => Future.successful(BadRequest(businessEndDate(
                 BusinessEndDateForm = hasErrors,
-                postAction = controllers.incomeSources.cease.routes.BusinessEndDateController.submitAgent(businessStartDate),
+                postAction = controllers.incomeSources.cease.routes.BusinessEndDateController.submitAgent(id),
                 backUrl = controllers.incomeSources.cease.routes.CeaseIncomeSourceController.showAgent().url,
                 isAgent = true
               ))),
               validatedInput =>
                 Future.successful(Redirect(controllers.incomeSources.cease.routes.CheckCeaseBusinessDetailsController.showAgent())
                   .addingToSession(ceaseBusinessEndDate -> validatedInput.date.toString)
-                  .addingToSession(ceaseBusinessStartDate -> businessStartDate.getOrElse(throw new NullPointerException)))
+                  .addingToSession(ceaseBusinessIncomeSourceId -> id))
             )
         }
   }
