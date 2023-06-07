@@ -16,13 +16,11 @@
 
 package forms.validation
 
-import play.api.data.Forms.{optional, text}
-import play.api.data.Mapping
 import play.api.data.validation.{Constraint, Invalid, Valid}
 
 import java.time.LocalDate
 import java.time.format.{DateTimeFormatter, ResolverStyle}
-import scala.util.{Success, Try}
+import scala.util.Try
 
 trait Constraints {
 
@@ -57,6 +55,17 @@ trait Constraints {
 
   protected def nonEmptyDate(errKey: String, args: Seq[String] = Seq()): Constraint[(String, String, String)] = Constraint {
     case (_, _, "") | ("", _, _) | (_, "", _) => Invalid(errKey, args: _*)
+    case _ => Valid
+  }
+
+  protected def nonEmptyDateFields(errKey: String, args: Seq[String] = Seq()): Constraint[(String, String, String)] = Constraint {
+    case ("", "", "") => Invalid(errKey, args: _*)
+    case ("", "", _) => Invalid(errKey + "DayMonth", args: _*)
+    case ("", _, "") => Invalid(errKey + "DayYear", args: _*)
+    case (_, "", "") => Invalid(errKey + "MonthYear", args: _*)
+    case ("", _, _) => Invalid(errKey + "Day", args: _*)
+    case (_, "", _) => Invalid(errKey + "Month", args: _*)
+    case (_, _, "") => Invalid(errKey + "Year", args: _*)
     case _ => Valid
   }
 

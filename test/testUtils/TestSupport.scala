@@ -242,6 +242,9 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterE
     forms.utils.SessionKeys.ceaseForeignPropertyDeclare -> "false"
   )
 
+   def fakeRequestWithCeaseUKPropertyDate(endDate: String): FakeRequest[AnyContentAsEmpty.type] = fakeRequestWithNinoAndOrigin("pta")
+     .withSession(forms.utils.SessionKeys.ceaseUKPropertyEndDate -> endDate).withMethod("POST")
+
   implicit class FakeRequestUtil[C](fakeRequest: FakeRequest[C]) {
     def addingToSession(newSessions: (String, String)*): FakeRequest[C] = {
       fakeRequest.withSession(fakeRequest.session.data ++: newSessions: _*)

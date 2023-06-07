@@ -54,9 +54,9 @@
     else controllers.routes.AddBusinessNameController.show().url
 }
 
-@addUkPropertyBusinessStartDateURL = @{
-    if(isAgent) controllers.routes.AddUkPropertyBusinessStartDate.showAgent().url
-    else controllers.routes.AddUkPropertyBusinessStartDate.show().url
+@addUKPropertyStartDateURL = @{
+    if(isAgent) controllers.incomeSources.add.routes.AddUKPropertyStartDateController.showAgent().url
+    else controllers.incomeSources.add.routes.AddUKPropertyStartDateController.show().url
 }
 
 @addForeignPropertyBusinessStartDateURL = @{
@@ -66,6 +66,7 @@
 
 @mainTemplate(pageTitle = getMessage("heading"),
     backUrl = Some(backUrl),
+    isAgent = isAgent,
     btaNavPartial = user.btaNavPartial) {
 
     @h1(msg = getMessage("heading"),
@@ -134,7 +135,7 @@
     } else {
         @hr()
 
-        @link(link = addUkPropertyBusinessStartDateURL,
+        @link(link = addUKPropertyStartDateURL,
             messageKey = getMessage("uk-property.link"),
             id = Some("uk-property-link"))
 

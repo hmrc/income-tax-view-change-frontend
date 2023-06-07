@@ -42,6 +42,15 @@ object WiremockHelper extends Eventually with IntegrationPatience {
     verify(postRequest)
   }
 
+  def verifyPut(uri: String, optBody: Option[String] = None): Unit = {
+    val uriMapping = putRequestedFor(urlEqualTo(uri))
+    val putRequest = optBody match {
+      case Some(body) => uriMapping.withRequestBody(equalTo(body))
+      case None => uriMapping
+    }
+    verify(putRequest)
+  }
+
   def verifyPostContaining(uri: String, optBody: Option[String] = None): Unit = {
     val uriMapping = postRequestedFor(urlEqualTo(uri))
     val postRequest = optBody match {
@@ -86,7 +95,7 @@ object WiremockHelper extends Eventually with IntegrationPatience {
     verify(exactly(noOfCalls), getRequestedFor(urlEqualTo(uri)))
   }
 
-  def verifyGetWithHeader(uri: String, headerKey: String, headerValue: String): Unit = {
+  def verifyGetWithHeaders(uri: String, headerKey: String, headerValue: String): Unit = {
     verify(getRequestedFor(urlEqualTo(uri)).withHeader(headerKey, equalTo(headerValue)))
   }
 
