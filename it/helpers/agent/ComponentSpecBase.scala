@@ -42,16 +42,31 @@ import javax.inject.Singleton
 import scala.concurrent.Future
 import forms.{BusinessStartDateCheckForm, CeaseForeignPropertyForm, CeaseUKPropertyForm}
 
+import java.time.Month.{APRIL, JANUARY}
+
 @Singleton
 class TestDateService extends DateServiceInterface {
 
   override def getCurrentDate(isTimeMachineEnabled: Boolean = false): LocalDate = LocalDate.of(2023, 4, 5)
 
-  override def isDayBeforeTaxYearLastDay(isTimeMachineEnabled: Boolean = false): Boolean = true
+  override def isBeforeLastDayOfTaxYear(isTimeMachineEnabled: Boolean = false): Boolean = true
 
   override def getCurrentTaxYearEnd(isTimeMachineEnabled: Boolean): Int = {
     val currentDate = getCurrentDate(isTimeMachineEnabled)
-    if (isDayBeforeTaxYearLastDay(isTimeMachineEnabled)) currentDate.getYear else currentDate.getYear + 1
+    if (isBeforeLastDayOfTaxYear(isTimeMachineEnabled)) currentDate.getYear else currentDate.getYear + 1
+  }
+
+  override def getAccountingPeriodEndDate(startDate: LocalDate): String = {
+    val startDateYear = startDate.getYear
+    val minimumDate = LocalDate.of(startDateYear, JANUARY, 1)
+    val maximumDate = LocalDate.of(startDateYear, APRIL, 5)
+
+    if ( startDate.isEqual(minimumDate) || startDate.isAfter(minimumDate) && startDate.isBefore(maximumDate)) {
+      LocalDate.of(startDateYear, APRIL, 5).toString
+    } else {
+      val startDateYearPlusOne = startDate.plusYears(1).getYear
+      LocalDate.of(startDateYearPlusOne, APRIL, 5).toString
+    }
   }
 }
 
@@ -271,7 +286,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
     def postAddBusinessStartDateCheck(answer: Option[String])(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
       post(
-        uri = s"/income-sources/add/business-start-date-check?date=1+November+2020",
+        uri = s"/income-sources/add/business-start-date-check",
         additionalCookies = additionalCookies
       )(
         answer.fold(Map.empty[String, Seq[String]])(

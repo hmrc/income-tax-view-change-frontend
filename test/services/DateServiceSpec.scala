@@ -53,20 +53,20 @@ class DateServiceSpec extends TestSupport with FeatureSwitching {
       val f = fixture()
       disable(TimeMachineAddYear)
       f.mockedTestDateService.getCurrentDate() should equal(LocalDate.parse("2018-03-29"))
-      f.mockedTestDateService.isDayBeforeTaxYearLastDay(false) shouldBe true
+      f.mockedTestDateService.isBeforeLastDayOfTaxYear(false) shouldBe true
     }
 
     "return mocked current date: 2018-04-06" in {
       val f = fixture("2018-04-06")
       disable(TimeMachineAddYear)
-      f.mockedTestDateService.isDayBeforeTaxYearLastDay(false) shouldBe false
+      f.mockedTestDateService.isBeforeLastDayOfTaxYear(false) shouldBe false
     }
 
     "return mocked current date: 2019-04-05" in {
       val f = fixture("2019-04-05")
       disable(TimeMachineAddYear)
       f.mockedTestDateService.getCurrentDate() should equal(LocalDate.parse("2019-04-05"))
-      f.mockedTestDateService.isDayBeforeTaxYearLastDay(false) shouldBe true
+      f.mockedTestDateService.isBeforeLastDayOfTaxYear(false) shouldBe true
     }
 
   }
@@ -74,14 +74,14 @@ class DateServiceSpec extends TestSupport with FeatureSwitching {
   "The getCurrentTaxYearEnd" should {
     "return the current tax year" in {
       disable(TimeMachineAddYear)
-      val expectedYear = if (TestDateService.isDayBeforeTaxYearLastDay(false)) LocalDate.now.getYear
+      val expectedYear = if (TestDateService.isBeforeLastDayOfTaxYear(false)) LocalDate.now.getYear
       else LocalDate.now.plusYears(1).getYear
       TestDateService.getCurrentTaxYearEnd() shouldBe expectedYear
     }
 
     "return next tax year when time machine is enabled" in {
       enable(TimeMachineAddYear)
-      val expectedYear = if (TestDateService.isDayBeforeTaxYearLastDay(true)) LocalDate.now.plusYears(1).getYear
+      val expectedYear = if (TestDateService.isBeforeLastDayOfTaxYear(true)) LocalDate.now.plusYears(1).getYear
       else LocalDate.now.plusYears(2).getYear
       TestDateService.getCurrentTaxYearEnd(true) shouldBe expectedYear
     }
