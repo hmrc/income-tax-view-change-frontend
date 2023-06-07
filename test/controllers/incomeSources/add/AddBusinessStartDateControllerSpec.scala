@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.incomeSources.add
 
 import config.featureswitch.FeatureSwitch.switches
 import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import forms.models.DateFormElement
-import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
+import implicits.ImplicitDateFormatter
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
@@ -69,15 +69,15 @@ class AddBusinessStartDateControllerSpec extends TestSupport
       app.injector.instanceOf[AddBusinessStartDate],
       MockIncomeSourceDetailsPredicate,
       MockNavBarPredicate,
-      app.injector.instanceOf[ItvcErrorHandler],
       mockIncomeSourceDetailsService
     )(
       app.injector.instanceOf[FrontendAppConfig],
-      app.injector.instanceOf[DateService],
-      app.injector.instanceOf[ImplicitDateFormatterImpl],
+      app.injector.instanceOf[ItvcErrorHandler],
       app.injector.instanceOf[AgentItvcErrorHandler],
+      mockImplicitDateFormatter,
+      app.injector.instanceOf[DateService],
       app.injector.instanceOf[MessagesControllerComponents],
-      ec = ec
+      ec
     )
 
   "AddBusinessStartDateController" should {
@@ -343,7 +343,7 @@ class AddBusinessStartDateControllerSpec extends TestSupport
         mockNoIncomeSources()
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
-        val postAction: Call = controllers.routes.AddBusinessStartDateCheckController.show()
+        val postAction: Call = controllers.incomeSources.add.routes.AddBusinessStartDateCheckController.show()
 
         val testDay = "01"
         val testMonth = "01"
@@ -368,7 +368,7 @@ class AddBusinessStartDateControllerSpec extends TestSupport
         mockNoIncomeSources()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
-        val postActionAgent: Call = controllers.routes.AddBusinessStartDateCheckController.showAgent()
+        val postActionAgent: Call = controllers.incomeSources.add.routes.AddBusinessStartDateCheckController.showAgent()
 
         val testDay = "01"
         val testMonth = "01"

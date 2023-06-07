@@ -27,6 +27,7 @@ import testUtils.TestSupport
 import uk.gov.hmrc.play.language.LanguageUtils
 
 import java.time.LocalDate
+import java.time.Month.{APRIL, JANUARY}
 
 object IncomeSourcesFormsSpec  extends Properties("incomeSourcesForms.validation") with TestSupport {
 
@@ -38,7 +39,21 @@ object IncomeSourcesFormsSpec  extends Properties("incomeSourcesForms.validation
 
     override def getCurrentTaxYearEnd(isTimeMachineEnabled: Boolean): Int = currentDate.getYear
 
-    override def isDayBeforeTaxYearLastDay(isTimeMachineEnabled: Boolean): Boolean = false
+    override def isBeforeLastDayOfTaxYear(isTimeMachineEnabled: Boolean): Boolean = false
+
+    override def getAccountingPeriodEndDate(startDate: LocalDate): String = {
+      val startDateYear = startDate.getYear
+      val minimumDate = LocalDate.of(startDateYear, JANUARY, 1)
+      val maximumDate = LocalDate.of(startDateYear, APRIL, 5)
+
+      if (startDate.isEqual(minimumDate) || startDate.isAfter(minimumDate) &&
+        startDate.isBefore(maximumDate)) {
+        LocalDate.of(startDateYear, APRIL, 5).toString
+      } else {
+        val startDateYearPlusOne = startDate.plusYears(1).getYear
+        LocalDate.of(startDateYearPlusOne, APRIL, 5).toString
+      }
+    }
   }
   val testDateFormatter = new ImplicitDateFormatter{
     override implicit val languageUtils: LanguageUtils = languageUtils

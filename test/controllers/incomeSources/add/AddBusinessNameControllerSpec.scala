@@ -14,25 +14,23 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.incomeSources.add
 
 import config.featureswitch.FeatureSwitch.switches
 import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
+import controllers.{AddBusinessNameController, routes}
 import forms.BusinessNameForm
 import forms.utils.SessionKeys
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
 import mocks.services.MockClientDetailsService
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{mock, when}
+import org.mockito.Mockito.mock
 import org.scalatest.matchers.must.Matchers._
-import play.api.mvc.Results.Status
-import play.api.test.Helpers._
 import play.api.mvc.{Call, MessagesControllerComponents, Result}
-import play.twirl.api.HtmlFormat
+import play.api.test.Helpers._
 import services.IncomeSourceDetailsService
 import testConstants.BaseTestConstants
 import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
@@ -118,7 +116,7 @@ class AddBusinessNameControllerSpec extends TestSupport
           ))
 
           status(result) mustBe SEE_OTHER
-          redirectLocation(result) mustBe Some(routes.AddBusinessStartDateController.show().url)
+          redirectLocation(result) mustBe Some(controllers.incomeSources.add.routes.AddBusinessStartDateController.show().url)
           session(result).get(SessionKeys.businessName) mustBe Some(validBusinessName)
         }
 
@@ -136,7 +134,7 @@ class AddBusinessNameControllerSpec extends TestSupport
           ))
 
           status(result) mustBe SEE_OTHER
-          redirectLocation(result) mustBe Some(routes.AddBusinessStartDateController.showAgent().url)
+          redirectLocation(result) mustBe Some(controllers.incomeSources.add.routes.AddBusinessStartDateController.showAgent().url)
           session(result).get(SessionKeys.businessName) mustBe Some(validBusinessName)
         }
 

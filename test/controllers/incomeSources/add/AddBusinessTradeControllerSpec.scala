@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.incomeSources.add
 
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import config.featureswitch.FeatureSwitch.switches
 import config.featureswitch.{FeatureSwitching, IncomeSources}
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
+import controllers.{AddBusinessNameController, routes}
 import forms.incomeSources.add.BusinessTradeForm
 import forms.utils.SessionKeys
 import mocks.MockItvcErrorHandler
@@ -55,7 +56,7 @@ class AddBusinessTradeControllerSpec extends TestSupport
   val mockBusinessTradeForm: BusinessTradeForm = mock(classOf[BusinessTradeForm])
   val incomeSourceDetailsService: IncomeSourceDetailsService = mock(classOf[IncomeSourceDetailsService])
 
-  val postAction: Call = controllers.routes.AddBusinessTradeController.submit()
+  val postAction: Call = controllers.incomeSources.add.routes.AddBusinessTradeController.submit()
 
   def disableAllSwitches(): Unit = {
     switches.foreach(switch => disable(switch))
