@@ -67,110 +67,93 @@
         id = Some("new-income-sources-h1"))
 
 
-
     @if(soleTraderBusinesses.nonEmpty) {
         @h2(msg = getMessage("self-employed-h2"),
             optId = Some("self-employed-h1"))
 
-        @govukTable(Table(
-            head = Some(List(
-                HeadCell(
-                    content = Text(getMessage("table-head.business-name")),
-                    attributes = Map("id" -> "table-head-business-name")),
-                HeadCell(
-                    content = Text(getMessage("table-head.date-started")),
-                    attributes = Map("id" -> "table-head-date-started")),
-                HeadCell(
-                    content = Text(""),
-                )
-            )),
-            rows = soleTraderBusinesses.zipWithIndex.map { case (business, index) =>
-                Seq(
-                TableRow(
-                    content = Text(business.tradingName.getOrElse(getMessage("unknown-field"))),
-                    attributes = Map("id" -> s"table-row-trading-name-$index")),
-                TableRow(
-                    content = Text(business.tradingStartDate.map(_.toLongDate).getOrElse(getMessage("unknown-field"))),
-                    attributes = Map("id" -> s"table-row-trading-start-date-$index")),
-                TableRow(
-                    content = HtmlContent(
-                        s"""<dd class="govuk-link govuk-summary-list__actions">
-                                <a class="govuk-link" id="${s"view-link-business-$index"}" href='$viewSelfEmploymentDetailsURL'>
-                                     ${getMessage("business-details")}
-                                </a>
-                            </dd>"""
-                    )
-                )
-            )}
-        ))
+        <table class="govuk-table govuk-!-margin-bottom-3" id="sole-trader-businesses-table">
+            <thead class="govuk-table__head">
+                <tr class="govuk-table__row">
+                    <th class="govuk-table__header" scope="col" id="table-head-business-name">@getMessage("table-head.business-name")</th>
+                    <th class="govuk-table__header" scope="col" id="table-head-date-started">@getMessage("table-head.date-started")</th>
+                    <td class="govuk-table__header" id="empty0"></td>
+                </tr>
+            </thead>
+            <tbody>
+            @for((business, index) <- soleTraderBusinesses.zipWithIndex) {
+                <tr class="govuk-table__row">
+                    <td class="govuk-table__cell" id="@{s"table-row-trading-name-$index"}">@business.tradingName.getOrElse(getMessage("unknown-field"))</td>
+                    <td class="govuk-table__cell" id="@{s"table-row-trading-start-date-$index"}">@business.tradingStartDate.map(_.toLongDate).getOrElse(getMessage("unknown-field"))</td>
+                    <td class="govuk-table__cell govuk-!-text-align-right">
+                        <a class="govuk-link" id="@{s"view-link-business-$index"}" href=@viewSelfEmploymentDetailsURL>
+                        @getMessage("business-details")
+                        </a>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
     }
 
     @if(ukProperty.nonEmpty) {
-
         @h2(msg = getMessage("uk-property-h2"),
             optId = Some("uk-property-h2"))
 
-        @govukTable(Table(
-            head = Some(List(
-                HeadCell(
-                    content = Text(getMessage("table-head.date-started")),
-                    attributes = Map("id" -> "table-head-date-started-uk"))
-            )),
-            rows = Seq(Seq(
-                TableRow(
-                    content = Text(ukProperty.map(_.tradingStartDate.map(_.toLongDate).getOrElse(getMessage("unknown-field"))).get),
-                    attributes = Map("id" -> "table-row-trading-start-date-uk")
-                )
-            ))
-        ))
+        <table class="govuk-table govuk-!-margin-bottom-3" id="uk-property-table">
+            <thead class="govuk-table__head">
+                <tr class="govuk-table__row">
+                    <th class="govuk-table__header" scope="col" id="table-head-date-started-uk">@getMessage("table-head.date-started")</th>
+                    <td class="govuk-table__header" id="empty1"></td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="govuk-table__row">
+                    <td class="govuk-table__cell" id="table-row-trading-start-date-uk">@ukProperty.map(_.tradingStartDate.map(_.toLongDate).getOrElse(getMessage("unknown-field"))).get</td>
+                </tr>
+            </tbody>
+        </table>
     }
 
     @if(foreignProperty.nonEmpty) {
-
         @h2(msg = getMessage("foreign-property-h2"),
             optId = Some("foreign-property-h2"))
 
-        @govukTable(Table(
-            head = Some(List(
-                HeadCell(
-                    content = Text(getMessage("table-head.date-started")),
-                    attributes = Map("id" -> "table-head-date-started-foreign"))
-            )),
-            rows = Seq(Seq(
-                TableRow(
-                    content = Text(foreignProperty.map(_.tradingStartDate.map(_.toLongDate).getOrElse(getMessage("unknown-field"))).get),
-                    attributes = Map("id" -> "table-row-trading-start-date-foreign"))
-            ))
-        ))
+        <table class="govuk-table govuk-!-margin-bottom-3" id="foreign-property-table">
+            <thead class="govuk-table__head">
+                <tr class="govuk-table__row">
+                    <th class="govuk-table__header" scope="col" id="table-head-date-started-foreign">@getMessage("table-head.date-started")</th>
+                    <td class="govuk-table__header" id="empty1"></td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="govuk-table__row">
+                    <td class="govuk-table__cell" id="table-row-trading-start-date-foreign">@foreignProperty.map(_.tradingStartDate.map(_.toLongDate).getOrElse(getMessage("unknown-field"))).get</td>
+                </tr>
+            </tbody>
+        </table>
     }
 
     @if(ceasedBusinesses.nonEmpty) {
         @h2(msg = getMessage("ceased-businesses-h2"),
             optId = Some("ceased-businesses-h2"))
 
-        @govukTable(Table(
-            head = Some(List(
-                HeadCell(
-                    content = Text(getMessage("table-head.business-name")),
-                    attributes = Map("id" -> "table-head-business-start-name-ceased")),
-                HeadCell(
-                    content = Text(getMessage("table-head.date-started")),
-                    attributes = Map("id" -> "table-head-date-started-ceased")),
-                HeadCell(
-                    content = Text(getMessage("table-head.date-ended")),
-                    attributes = Map("id" -> "table-head-date-ended-ceased"))
-            )),
-            rows = ceasedBusinesses.zipWithIndex.map { case (business, index) => Seq(
-                TableRow(
-                    content = Text(business.tradingName.getOrElse(getMessage("unknown-field"))),
-                    attributes = Map("id" -> s"table-row-trading-name-ceased-$index")),
-                TableRow(
-                    content = Text(business.tradingStartDate.map(_.toLongDate).getOrElse(getMessage("unknown-field"))),
-                    attributes = Map("id" -> s"table-row-trading-start-date-ceased-$index")),
-                TableRow(
-                    content = Text(business.cessationDate.toLongDate),
-                    attributes = Map("id" -> s"table-row-cessation-date-$index")),
-            )}
-        ))
+        <table class="govuk-table govuk-!-margin-bottom-3" id="ceased-businesses-table">
+            <thead class="govuk-table__head">
+                <tr class="govuk-table__row">
+                    <th class="govuk-table__header" scope="col" id="table-head-business-name-ceased">@getMessage("table-head.business-name")</th>
+                    <th class="govuk-table__header" scope="col" id="table-head-date-started-ceased">@getMessage("table-head.date-started")</th>
+                    <th class="govuk-table__header" scope="col" id="table-head-date-ended-ceased">@getMessage("table-head.date-ended")</th>
+                </tr>
+            </thead>
+            <tbody>
+            @for((business, index) <- ceasedBusinesses.zipWithIndex) {
+                <tr class="govuk-table__row">
+                    <td class="govuk-table__cell" id="@{s"table-row-trading-name-$index-ceased"}">@business.tradingName.getOrElse(getMessage("unknown-field"))</td>
+                    <td class="govuk-table__cell" id="@{s"table-row-trading-start-date-$index-ceased"}">@business.tradingStartDate.map(_.toLongDate).getOrElse(getMessage("unknown-field"))</td>
+                    <td class="govuk-table__cell" id="@{s"table-row-trading-end-date-$index-ceased"}">@business.cessationDate.toLongDate</td>
+                </tr>
+            }
+            </tbody>
+        </table>
     }
 }
