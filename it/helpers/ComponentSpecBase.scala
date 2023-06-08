@@ -47,6 +47,7 @@ import javax.inject.Singleton
 import scala.concurrent.Future
 import forms.utils.SessionKeys
 import forms.BusinessStartDateCheckForm
+import testConstants.BaseIntegrationTestConstants.testSelfEmploymentId
 
 @Singleton
 class TestHeaderExtractor extends HeaderExtractor {
@@ -264,6 +265,8 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
         declaration => CeaseUKPropertyForm.form.fill(CeaseUKPropertyForm(Some(declaration), "csrfToken")).data.map { case (k, v) => (k, Seq(v)) }
       )
     )
+
+    def getBusinessEndDate: WSResponse = get(s"/income-sources/cease/business-end-date?id=$testSelfEmploymentId")
 
     def getUKPropertyEndDate: WSResponse = get("/income-sources/cease/uk-property-end-date")
 

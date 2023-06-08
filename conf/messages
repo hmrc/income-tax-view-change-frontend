@@ -1271,7 +1271,7 @@ dateForm.check.heading                                              = Is this da
 incomeSources.ceaseUKProperty.checkDetails.heading               = Check your details
 incomeSources.ceaseUKProperty.checkDetails.paragraph             = UK property business you entered
 incomeSources.ceaseUKProperty.checkDetails.content               = Date business stopped
-incomeSources.ceaseUKProperty.checkDetails.confirm                = Confirm and continue
+incomeSources.ceaseUKProperty.checkDetails.confirm               = Confirm and continue
 incomeSources.ceaseUKProperty.checkDetails.change                = Change
 
 incomeSources.ceaseForeignProperty.heading                       = Cease foreign property

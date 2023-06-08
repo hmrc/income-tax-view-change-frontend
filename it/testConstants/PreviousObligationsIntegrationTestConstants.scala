@@ -18,7 +18,7 @@ package testConstants
 import java.time.LocalDate
 
 import models.nextUpdates.{ObligationsModel, NextUpdateModel, NextUpdatesModel}
-import BaseIntegrationTestConstants.{testMtditid, testPropertyIncomeId, testSelfEmploymentId}
+import BaseIntegrationTestConstants.{testMtditid, testPropertyIncomeSourceId, testSelfEmploymentId}
 
 object PreviousObligationsIntegrationTestConstants {
 
@@ -53,7 +53,7 @@ object PreviousObligationsIntegrationTestConstants {
 
   val previousObligationsModel = ObligationsModel(Seq(
     previousQuarterlyObligation(testSelfEmploymentId),
-    previousEOPSObligation(testPropertyIncomeId),
+    previousEOPSObligation(testPropertyIncomeSourceId),
     previousCrystallisationObligation
   ))
 

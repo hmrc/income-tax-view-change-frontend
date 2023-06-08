@@ -110,11 +110,13 @@ object BusinessDetailsTestConstants {
   )
 
   val ceaseBusinessDetailsViewModel = CeaseBusinessDetailsViewModel(
+    incomeSourceId = "1234",
     tradingName = testTradeName,
     tradingStartDate = testStartDate
   )
 
   val ceaseBusinessDetailsViewModel2 = CeaseBusinessDetailsViewModel(
+    incomeSourceId = "1234",
     tradingName = testTradeName2,
     tradingStartDate = testStartDate2
   )

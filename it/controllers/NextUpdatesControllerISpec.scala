@@ -81,7 +81,7 @@ class NextUpdatesControllerISpec extends ComponentSpecBase {
       "the user has a quarterly property income obligation only" in {
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-        IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, ObligationsModel(Seq(singleObligationQuarterlyModel(testPropertyIncomeId))))
+        IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, ObligationsModel(Seq(singleObligationQuarterlyModel(testPropertyIncomeSourceId))))
 
         IncomeTaxViewChangeStub.stubGetPreviousObligationsNotFound(testNino)
 
