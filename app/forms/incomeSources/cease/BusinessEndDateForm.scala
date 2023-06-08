@@ -32,13 +32,13 @@ import javax.inject.Inject
 
 class BusinessEndDateForm @Inject()(val dateService: DateService) extends Constraints {
 
-  val dateMustBeComplete = "incomeSources.cease.BusinessEndDate.error.incomplete.all"
-  val dateMustNotBeMissingDayField = "incomeSources.cease.BusinessEndDate.error.incomplete.day"
-  val dateMustNotBeMissingMonthField = "incomeSources.cease.BusinessEndDate.error.incomplete.month"
-  val dateMustNotBeMissingYearField = "incomeSources.cease.BusinessEndDate.error.incomplete.year"
-  val dateMustNotBeMissingDayAndMonthField = "incomeSources.cease.BusinessEndDate.error.incomplete.day.and.month"
-  val dateMustNotBeMissingDayAndYearField = "incomeSources.cease.BusinessEndDate.error.incomplete.day.and.year"
-  val dateMustNotBeMissingMonthAndYearField = "incomeSources.cease.BusinessEndDate.error.incomplete.month.and.year"
+  val dateMustBeComplete = "dateForm.error.dayMonthAndYear.required"
+  val dateMustNotBeMissingDayField = "dateForm.error.day.required"
+  val dateMustNotBeMissingMonthField = "dateForm.error.month.required"
+  val dateMustNotBeMissingYearField = "dateForm.error.year.required"
+  val dateMustNotBeMissingDayAndMonthField = "dateForm.error.dayAndMonth.required"
+  val dateMustNotBeMissingDayAndYearField = "dateForm.error.dayAndYear.required"
+  val dateMustNotBeMissingMonthAndYearField = "dateForm.error.monthAndYear.required"
   val dateMustNotBeInvalid = "incomeSources.cease.BusinessEndDate.error.invalid"
   val dateMustNotBeInFuture = "incomeSources.cease.BusinessEndDate.error.future"
   val dateMustBeAfterBusinessStartDate = "incomeSources.cease.BusinessEndDate.error.beforeStartDate"
