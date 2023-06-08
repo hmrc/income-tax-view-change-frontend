@@ -25,6 +25,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import play.twirl.api.HtmlFormat
 import services.DateService
+import testConstants.BaseTestConstants.testNavHtml
 import testUtils.TestSupport
 import views.html.incomeSources.add.CheckUKPropertyStartDate
 
@@ -51,7 +52,8 @@ class CheckUKPropertyStartDateSpec extends TestSupport {
         postAction = postAction,
         isAgent = isAgent,
         backUrl = backUrl,
-        startDate = formattedStartDate)(FakeRequest(), implicitly)
+        startDate = formattedStartDate,
+        btaNavPartial = testNavHtml)(FakeRequest(), implicitly)
     }
 
     lazy val viewWithInputErrors: HtmlFormat.Appendable = {
@@ -61,7 +63,8 @@ class CheckUKPropertyStartDateSpec extends TestSupport {
         postAction = postAction,
         isAgent = isAgent,
         backUrl = backUrl,
-        startDate = formattedStartDate)(FakeRequest(), implicitly)
+        startDate = formattedStartDate,
+        btaNavPartial = testNavHtml)(FakeRequest(), implicitly)
     }
 
     lazy val document: Document = if (error) Jsoup.parse(contentAsString(viewWithInputErrors)) else Jsoup.parse(contentAsString(view))
@@ -72,7 +75,7 @@ class CheckUKPropertyStartDateSpec extends TestSupport {
       document.getElementsByClass("govuk-heading-xl").text() shouldBe messages("radioForm.checkDate.heading")
     }
     "render the date entered in Add UK Property Start Date page" in new Setup(false) {
-      document.getElementById("check-uk-property-start-date").getElementsByTag("p").first.text shouldBe formattedStartDate
+      document.getElementById("check-uk-property-start-date-form").getElementsByTag("p").first.text shouldBe formattedStartDate
     }
     "render the radio form" in new Setup(false) {
       document.getElementsByClass("govuk-label govuk-radios__label").eq(0).text() shouldBe messages("radioForm.yes")
@@ -104,7 +107,7 @@ class CheckUKPropertyStartDateSpec extends TestSupport {
       document.getElementsByClass("govuk-heading-xl").text() shouldBe messages("radioForm.checkDate.heading")
     }
     "render the date entered in Add UK Property Start Date page" in new Setup(false) {
-      document.getElementById("check-uk-property-start-date").getElementsByTag("p").first.text shouldBe formattedStartDate
+      document.getElementById("check-uk-property-start-date-form").getElementsByTag("p").first.text shouldBe formattedStartDate
     }
     "render the radio form" in new Setup(true) {
       document.getElementsByClass("govuk-label govuk-radios__label").eq(0).text() shouldBe messages("radioForm.yes")

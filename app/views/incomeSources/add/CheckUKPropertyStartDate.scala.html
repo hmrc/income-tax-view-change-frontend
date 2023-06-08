@@ -31,9 +31,9 @@
     h1: h1,
     p: p)
 
-@(checkUKPropertyStartDateForm: Form[_], startDate: String, postAction: Call, isAgent: Boolean = false, backUrl: String)(implicit request: Request[_], messages: Messages)
+@(checkUKPropertyStartDateForm: Form[_], startDate: String, postAction: Call, isAgent: Boolean = false, backUrl: String, btaNavPartial: Option[Html] = None)(implicit request: Request[_], messages: Messages)
 
-@mainTemplate(pageTitle = messages("radioForm.checkDate.heading"), isAgent = isAgent, backUrl = Some(backUrl)) {
+@mainTemplate(pageTitle = messages("radioForm.checkDate.heading"), isAgent = isAgent, backUrl = Some(backUrl), btaNavPartial = btaNavPartial) {
 
   @errorSummary(
     form = checkUKPropertyStartDateForm
@@ -41,7 +41,7 @@
 
   @h1(messages("radioForm.checkDate.heading"))
 
-  @formWithCSRF(action = postAction, Symbol("id") -> "check-uk-property-start-date") {
+  @formWithCSRF(action = postAction, Symbol("id") -> "check-uk-property-start-date-form") {
 
     @p(){
       @startDate
