@@ -43,4 +43,6 @@ object SessionKeys {
   val ceaseForeignPropertyEndDate: String = "ceaseForeignPropertyEndDate"
 
   val businessStartDate: String = "addBusinessStartDate"
+
+  val foreignPropertyStartDate: String = "addForeignPropertyStartDate"
 }

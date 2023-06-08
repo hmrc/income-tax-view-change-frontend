@@ -1260,6 +1260,23 @@ incomeSources.cease.ForeignPropertyEndDate.error.invalid                = Mae’
 incomeSources.cease.ForeignPropertyEndDate.error.future                 = Ni allwch nodi dyddiad dod i ben sydd y tu hwnt i’r diwrnod presennol na dyddiad yn y dyfodol
 incomeSources.cease.ForeignPropertyEndDate.error.beforeStartDate        = Ni all y dyddiad dod i ben ar gyfer y busnes fod cyn y dyddiad dechrau
 
+incomeSources.add.foreignProperty.startDate.heading                  = Pryd y dechreuodd eich busnes eiddo tramor?
+incomeSources.add.foreignProperty.startDate.hint                     = Dyma’r dyddiad y dechreuodd y gweithgarwch o roi unrhyw eiddo tramor ar osod yn y lle cyntaf.
+incomeSources.add.foreignProperty.startDate.hintExample              = Er enghraifft, 27 3 2020
+incomeSources.add.foreignProperty.startDate.error.empty              = Nodwch y dyddiad y dechreuodd eich busnes eiddo tramor fasnachu
+incomeSources.add.foreignProperty.startDate.error.missingMonthYear   = Mae’n rhaid i’r dyddiad gynnwys mis a blwyddyn
+incomeSources.add.foreignProperty.startDate.error.missingDayYear     = Mae’n rhaid i’r dyddiad gynnwys diwrnod a blwyddyn
+incomeSources.add.foreignProperty.startDate.error.missingDayMonth    = Mae’n rhaid i’r dyddiad gynnwys diwrnod a mis
+incomeSources.add.foreignProperty.startDate.error.missingYear        = Mae’n rhaid i’r dyddiad gynnwys blwyddyn
+incomeSources.add.foreignProperty.startDate.error.missingMonth       = Mae’n rhaid i’r dyddiad gynnwys mis
+incomeSources.add.foreignProperty.startDate.error.missingDay         = Mae’n rhaid i’r dyddiad gynnwys diwrnod
+incomeSources.add.foreignProperty.startDate.error.invalid            = Mae’n rhaid i’r dyddiad y dechreuodd eich busnes eiddo tramor fod yn ddyddiad go iawn
+incomeSources.add.foreignProperty.startDate.error.future             = Mae’n rhaid i’r dyddiad y dechreuodd eich busnes eiddo tramor fod cyn {0}
+incomeSources.add.foreignProperty.startDate.check.heading            = A yw’r dyddiad hwn yn gywir?
+incomeSources.add.foreignProperty.startDate.check.error              = Dewiswch ‘Iawn’ os yw dyddiad dechrau’r busnes eiddo tramor yn gywir
+incomeSources.add.foreignProperty.startDate.check.radio.yes          = Iawn
+incomeSources.add.foreignProperty.startDate.check.radio.no           = Na
+
 #Generic date form messages
 dateForm.hint                                                       = Er enghraifft, 27 3 2020
 dateForm.error.day.required                                         = Mae?n rhaid i?r dyddiad gynnwys diwrnod
