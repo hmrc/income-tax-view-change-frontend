@@ -60,14 +60,80 @@ class UKPropertyEndDateFormSpec extends AnyWordSpec with Matchers with TestSuppo
       completedForm.errors shouldBe List.empty
     }
     "bind with an incomplete date field" in {
+      val formData = Map("uk-property-end-date.day" -> "", "uk-property-end-date.month" -> "", "uk-property-end-date.year" -> "")
+      val completedForm = form.bind(formData)
+
+      completedForm.data.get("uk-property-end-date.day") shouldBe Some("")
+      completedForm.data.get("uk-property-end-date.month") shouldBe Some("")
+      completedForm.data.get("uk-property-end-date.year") shouldBe Some("")
+      completedForm.errors shouldBe List(FormError("uk-property-end-date",List("incomeSources.cease.UKPropertyEndDate.error.incomplete"),List()))
+    }
+
+    "bind with an incomplete date field contains empty day value" in {
       val formData = Map("uk-property-end-date.day" -> "", "uk-property-end-date.month" -> "12", "uk-property-end-date.year" -> "2022")
       val completedForm = form.bind(formData)
 
       completedForm.data.get("uk-property-end-date.day") shouldBe Some("")
       completedForm.data.get("uk-property-end-date.month") shouldBe Some("12")
       completedForm.data.get("uk-property-end-date.year") shouldBe Some("2022")
-      completedForm.errors shouldBe List(FormError("uk-property-end-date",List("incomeSources.cease.UKPropertyEndDate.error.incomplete"),List()))
+      completedForm.errors shouldBe List(FormError("uk-property-end-date", List("incomeSources.cease.UKPropertyEndDate.error.incompleteDay"), List()))
     }
+
+    "bind with an incomplete date field contains empty month value" in {
+      val formData = Map("uk-property-end-date.day" -> "1", "uk-property-end-date.month" -> "", "uk-property-end-date.year" -> "2022")
+      val completedForm = form.bind(formData)
+
+      completedForm.data.get("uk-property-end-date.day") shouldBe Some("1")
+      completedForm.data.get("uk-property-end-date.month") shouldBe Some("")
+      completedForm.data.get("uk-property-end-date.year") shouldBe Some("2022")
+      completedForm.errors shouldBe List(FormError("uk-property-end-date",
+        List("incomeSources.cease.UKPropertyEndDate.error.incompleteMonth"), List()))
+    }
+
+    "bind with an incomplete date field contains empty year value" in {
+      val formData = Map("uk-property-end-date.day" -> "1", "uk-property-end-date.month" -> "12", "uk-property-end-date.year" -> "")
+      val completedForm = form.bind(formData)
+
+      completedForm.data.get("uk-property-end-date.day") shouldBe Some("1")
+      completedForm.data.get("uk-property-end-date.month") shouldBe Some("12")
+      completedForm.data.get("uk-property-end-date.year") shouldBe Some("")
+      completedForm.errors shouldBe List(FormError("uk-property-end-date",
+        List("incomeSources.cease.UKPropertyEndDate.error.incompleteYear"), List()))
+    }
+
+    "bind with an incomplete date field contains empty day & month value" in {
+      val formData = Map("uk-property-end-date.day" -> "", "uk-property-end-date.month" -> "", "uk-property-end-date.year" -> "2022")
+      val completedForm = form.bind(formData)
+
+      completedForm.data.get("uk-property-end-date.day") shouldBe Some("")
+      completedForm.data.get("uk-property-end-date.month") shouldBe Some("")
+      completedForm.data.get("uk-property-end-date.year") shouldBe Some("2022")
+      completedForm.errors shouldBe List(FormError("uk-property-end-date",
+        List("incomeSources.cease.UKPropertyEndDate.error.incompleteDayMonth"), List()))
+    }
+
+    "bind with an incomplete date field contains empty day & year value" in {
+      val formData = Map("uk-property-end-date.day" -> "", "uk-property-end-date.month" -> "12", "uk-property-end-date.year" -> "")
+      val completedForm = form.bind(formData)
+
+      completedForm.data.get("uk-property-end-date.day") shouldBe Some("")
+      completedForm.data.get("uk-property-end-date.month") shouldBe Some("12")
+      completedForm.data.get("uk-property-end-date.year") shouldBe Some("")
+      completedForm.errors shouldBe List(FormError("uk-property-end-date",
+        List("incomeSources.cease.UKPropertyEndDate.error.incompleteDayYear"), List()))
+    }
+
+    "bind with an incomplete date field contains empty month & year value" in {
+      val formData = Map("uk-property-end-date.day" -> "1", "uk-property-end-date.month" -> "", "uk-property-end-date.year" -> "")
+      val completedForm = form.bind(formData)
+
+      completedForm.data.get("uk-property-end-date.day") shouldBe Some("1")
+      completedForm.data.get("uk-property-end-date.month") shouldBe Some("")
+      completedForm.data.get("uk-property-end-date.year") shouldBe Some("")
+      completedForm.errors shouldBe List(FormError("uk-property-end-date",
+        List("incomeSources.cease.UKPropertyEndDate.error.incompleteMonthYear"), List()))
+    }
+
     "bind with an invalid date field" in {
       val formData = Map("uk-property-end-date.day" -> "hi", "uk-property-end-date.month" -> "im", "uk-property-end-date.year" -> "fake")
       val completedForm = form.bind(formData)
