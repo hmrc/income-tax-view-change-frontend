@@ -40,6 +40,7 @@ import testConstants.PropertyDetailsTestConstants.{foreignPropertyDetailsViewMod
 import testUtils.TestSupport
 
 import scala.concurrent.Future
+import scala.util.{Failure, Success}
 
 class AddIncomeSourceControllerSpec extends MockAuthenticationPredicate
   with MockIncomeSourceDetailsPredicate
@@ -57,14 +58,14 @@ class AddIncomeSourceControllerSpec extends MockAuthenticationPredicate
     mockAuthService,
     app.injector.instanceOf[NinoPredicate],
     MockIncomeSourceDetailsPredicate,
-    app.injector.instanceOf[ItvcErrorHandler],
-    app.injector.instanceOf[AgentItvcErrorHandler],
     mockIncomeSourceDetailsService,
     app.injector.instanceOf[NavBarPredicate]
-  )(
+  )(app.injector.instanceOf[FrontendAppConfig],
     ec,
+    app.injector.instanceOf[ItvcErrorHandler],
+    app.injector.instanceOf[AgentItvcErrorHandler],
     app.injector.instanceOf[MessagesControllerComponents],
-    app.injector.instanceOf[FrontendAppConfig]
+
   )
 
   def disableAllSwitches(): Unit = {
@@ -104,7 +105,7 @@ class AddIncomeSourceControllerSpec extends MockAuthenticationPredicate
           setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
 
           when(mockIncomeSourceDetailsService.getAddIncomeSourceViewModel(any()))
-            .thenReturn( Right(AddIncomeSourcesViewModel(
+            .thenReturn( Success(AddIncomeSourcesViewModel(
               soleTraderBusinesses = List(businessDetailsViewModel, businessDetailsViewModel2),
               ukProperty = Some(ukPropertyDetailsViewModel),
               foreignProperty = None,
@@ -122,7 +123,7 @@ class AddIncomeSourceControllerSpec extends MockAuthenticationPredicate
           setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
           when(mockIncomeSourceDetailsService.getAddIncomeSourceViewModel(any()))
-            .thenReturn(Right(AddIncomeSourcesViewModel(
+            .thenReturn(Success(AddIncomeSourcesViewModel(
               soleTraderBusinesses = List(businessDetailsViewModel),
               ukProperty = Some(ukPropertyDetailsViewModel),
               foreignProperty = Some(foreignPropertyDetailsViewModel),
@@ -141,7 +142,7 @@ class AddIncomeSourceControllerSpec extends MockAuthenticationPredicate
           setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
           when(mockIncomeSourceDetailsService.getAddIncomeSourceViewModel(any()))
-            .thenReturn(Right(AddIncomeSourcesViewModel(Nil, None, None, Nil)))
+            .thenReturn(Success(AddIncomeSourcesViewModel(Nil, None, None, Nil)))
 
           val result = controller.show()(fakeRequestWithActiveSession)
           val resultAgent = controller.showAgent()(fakeRequestConfirmedClient("AB123456C"))
@@ -174,7 +175,7 @@ class AddIncomeSourceControllerSpec extends MockAuthenticationPredicate
           setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
           when(mockIncomeSourceDetailsService.getAddIncomeSourceViewModel(any()))
-            .thenReturn(Right(AddIncomeSourcesViewModel(
+            .thenReturn(Success(AddIncomeSourcesViewModel(
               soleTraderBusinesses = List(businessDetailsViewModel),
               ukProperty = Some(ukPropertyDetailsViewModel),
               foreignProperty = Some(foreignPropertyDetailsViewModel),
@@ -212,7 +213,7 @@ class AddIncomeSourceControllerSpec extends MockAuthenticationPredicate
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
 
         when(mockIncomeSourceDetailsService.getAddIncomeSourceViewModel(any()))
-          .thenReturn(Left(new Exception("UnknownError")))
+          .thenReturn(Failure(new Exception("UnknownError")))
 
         val result = controller.show()(fakeRequestWithActiveSession)
         status(result) shouldBe Status.INTERNAL_SERVER_ERROR
@@ -224,7 +225,7 @@ class AddIncomeSourceControllerSpec extends MockAuthenticationPredicate
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
         when(mockIncomeSourceDetailsService.getAddIncomeSourceViewModel(any()))
-          .thenReturn(Left(new Exception("UnknownError")))
+          .thenReturn(Failure(new Exception("UnknownError")))
 
         val result = controller.showAgent()(fakeRequestConfirmedClient("AB123456C"))
         status(result) shouldBe Status.INTERNAL_SERVER_ERROR
