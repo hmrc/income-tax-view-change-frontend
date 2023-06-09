@@ -75,9 +75,6 @@ class UKPropertyEndDateISpec extends ComponentSpecBase {
 
         val result = IncomeTaxViewChangeFrontend.post("/income-sources/cease/uk-property-end-date")(formData)
 
-        println("QQQQQQQQQQQQQQQQQQ")
-        println(result)
-
         result should have(
           httpStatus(BAD_REQUEST),
           elementTextByID("uk-property-end-date-error")(messagesAPI("base.error-prefix") + " " +
