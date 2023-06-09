@@ -22,10 +22,10 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowI
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import exceptions.MissingSessionKey
+import forms.BusinessStartDateCheckForm
 import forms.BusinessStartDateCheckForm.{response, responseNo, responseYes}
 import forms.utils.SessionKeys
 import forms.utils.SessionKeys.addBusinessStartDate
-import forms.{BusinessNameForm, BusinessStartDateCheckForm}
 import implicits.ImplicitDateFormatterImpl
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages}
@@ -85,7 +85,7 @@ class AddBusinessStartDateCheckController @Inject()(authenticate: Authentication
   }
 
   def getBusinessStartDate()(implicit user: MtdItUser[_]): String = {
-    user.session.get(SessionKeys.addBusinessStartDate).getOrElse(???)
+    user.session.get(SessionKeys.addBusinessStartDate).getOrElse(throw MissingSessionKey(SessionKeys.addBusinessStartDate))
   }
 
   def show(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
@@ -120,7 +120,7 @@ class AddBusinessStartDateCheckController @Inject()(authenticate: Authentication
     val formattedBusinessStartDate = getFormattedBusinessStartDate()
 
     Future.successful(Ok(addBusinessStartDateCheck(
-      form = BusinessNameForm.form,
+      form = BusinessStartDateCheckForm.form,
       postAction = postAction,
       backUrl = backUrl,
       isAgent = isAgent,
