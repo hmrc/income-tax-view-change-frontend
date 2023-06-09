@@ -106,7 +106,7 @@ class CeaseUKPropertyControllerSpec extends TestSupport with MockAuthenticationP
 
         when(mockHttpClient.POSTForm[HttpResponse](any(), any(), any())(any(), any(), any()))
           .thenReturn(Future.successful(HttpResponse(OK, "true")))
-        when(mockUKPropertyEndDate(any(), any(), any(), any(), any())(any(), any())).thenReturn(HtmlFormat.empty)
+        when(mockUKPropertyEndDate(any(), any(), any(), any())(any(), any())).thenReturn(HtmlFormat.empty)
 
         lazy val result: Future[Result] = {
           TestCeaseUKPropertyController.submit()(fakeRequestCeaseUKPropertyDeclarationComplete
@@ -190,7 +190,7 @@ class CeaseUKPropertyControllerSpec extends TestSupport with MockAuthenticationP
 
         when(mockHttpClient.POSTForm[HttpResponse](any(), any(), any())(any(), any(), any()))
           .thenReturn(Future.successful(HttpResponse(OK, "true")))
-        when(mockUKPropertyEndDate(any(), any(), any(), any(), any())(any(), any())).thenReturn(HtmlFormat.empty)
+        when(mockUKPropertyEndDate(any(), any(), any(), any())(any(), any())).thenReturn(HtmlFormat.empty)
 
         lazy val result: Future[Result] = {
           TestCeaseUKPropertyController.submitAgent()(fakeRequestCeaseUKPropertyDeclarationCompleteAgent

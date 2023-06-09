@@ -52,8 +52,7 @@ class CheckUKPropertyStartDateSpec extends TestSupport {
         postAction = postAction,
         isAgent = isAgent,
         backUrl = backUrl,
-        startDate = formattedStartDate,
-        btaNavPartial = testNavHtml)(FakeRequest(), implicitly)
+        startDate = formattedStartDate)(individualUser, implicitly)
     }
 
     lazy val viewWithInputErrors: HtmlFormat.Appendable = {
@@ -63,8 +62,7 @@ class CheckUKPropertyStartDateSpec extends TestSupport {
         postAction = postAction,
         isAgent = isAgent,
         backUrl = backUrl,
-        startDate = formattedStartDate,
-        btaNavPartial = testNavHtml)(FakeRequest(), implicitly)
+        startDate = formattedStartDate)(individualUser, implicitly)
     }
 
     lazy val document: Document = if (error) Jsoup.parse(contentAsString(viewWithInputErrors)) else Jsoup.parse(contentAsString(view))
@@ -72,7 +70,7 @@ class CheckUKPropertyStartDateSpec extends TestSupport {
 
   "CheckUKPropertyStartDate - Individual" should {
     "render the heading" in new Setup(false) {
-      document.getElementsByClass("govuk-heading-xl").text() shouldBe messages("radioForm.checkDate.heading")
+      document.getElementsByClass("govuk-heading-l").text() shouldBe messages("radioForm.checkDate.heading")
     }
     "render the date entered in Add UK Property Start Date page" in new Setup(false) {
       document.getElementById("check-uk-property-start-date-form").getElementsByTag("p").first.text shouldBe formattedStartDate
@@ -104,7 +102,7 @@ class CheckUKPropertyStartDateSpec extends TestSupport {
 
   "CheckUKPropertyStartDate - Agent" should {
     "render the heading" in new Setup(true) {
-      document.getElementsByClass("govuk-heading-xl").text() shouldBe messages("radioForm.checkDate.heading")
+      document.getElementsByClass("govuk-heading-l").text() shouldBe messages("radioForm.checkDate.heading")
     }
     "render the date entered in Add UK Property Start Date page" in new Setup(false) {
       document.getElementById("check-uk-property-start-date-form").getElementsByTag("p").first.text shouldBe formattedStartDate

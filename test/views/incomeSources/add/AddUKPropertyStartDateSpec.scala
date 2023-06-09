@@ -47,7 +47,7 @@ class AddUKPropertyStartDateSpec extends TestSupport {
         addUKPropertyStartDateForm = AddUKPropertyStartDateForm()(mockImplicitDateFormatter, dateService, messages),
         postAction = postAction,
         isAgent = isAgent,
-        backUrl = backUrl)(FakeRequest(), implicitly)
+        backUrl = backUrl)(individualUser, implicitly)
     }
 
     lazy val viewWithInputErrors: HtmlFormat.Appendable = {
@@ -56,7 +56,7 @@ class AddUKPropertyStartDateSpec extends TestSupport {
           .withError(FormError("add-uk-property-start-date", "incomeSources.add.UKPropertyStartDate.error.required")),
         postAction = postAction,
         isAgent = isAgent,
-        backUrl = backUrl)(FakeRequest(), implicitly)
+        backUrl = backUrl)(individualUser, implicitly)
     }
 
     lazy val document: Document = if (error) Jsoup.parse(contentAsString(viewWithInputErrors)) else Jsoup.parse(contentAsString(view))

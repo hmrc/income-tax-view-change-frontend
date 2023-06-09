@@ -41,7 +41,7 @@
   fieldset = Some(Fieldset(
     legend = Some(Legend(
     content = Text(content),
-    classes = if(smallText) "govuk-body" else s"""${if(largeText) "govuk-label--xl"} ${labelClass.getOrElse("")}""",
+    classes = if(smallText) "govuk-body" else s"""${if(largeText) "govuk-label--l"} ${labelClass.getOrElse("")}""",
     isPageHeading = pageHeading
     ))
   )),
