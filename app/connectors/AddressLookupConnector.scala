@@ -22,9 +22,13 @@ import config.featureswitch.FeatureSwitching
 import models.incomeSourceDetails.viewmodels.httpparser.GetAddressLookupDetailsHttpParser.GetAddressLookupDetailsResponse
 import models.incomeSourceDetails.viewmodels.httpparser.PostAddressLookupHttpParser.PostAddressLookupResponse
 import play.api.libs.json.JsValue
+import play.api.libs.json.Json
 import play.api.mvc.{AnyContent, RequestHeader}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 import controllers.routes
+import play.api.Logger
+import play.libs.Json
+
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -46,11 +50,47 @@ class AddressLookupConnector @Inject()(val appConfig: FrontendAppConfig,
   lazy val continueUrl: String = routes.AddBusinessCheckDetailsController.show().url
   lazy val agentContinueUrl: String = routes.AddBusinessCheckDetailsController.showAgent().url
 
+  def addressJson(): JsValue = {
+    play.api.libs.json.Json.parse(
+      s"""
+         |{
+         |  "version" : 2,
+         |  "options" : {
+         |    "continueUrl" : "http://localhost:7500/claim-for-reimbursement-of-import-duties/rejected-goods/single/claimant-details/update-address",
+         |    "timeoutConfig" : {
+         |      "timeoutAmount" : 3600,
+         |      "timeoutUrl" : "/claim-for-reimbursement-of-import-duties/exit/we-signed-you-out",
+         |      "timeoutKeepAliveUrl" : "http://localhost:7500/claim-for-reimbursement-of-import-duties/keep-alive"
+         |    },
+         |    "signOutHref" : "http://localhost:9949/auth-login-stub/session/logout",
+         |    "accessibilityFooterUrl" : "http://localhost:12346/accessibility-statement/cds-reimbursement-claim",
+         |    "selectPageConfig" : {
+         |      "proposalListLimit" : 15
+         |    },
+         |    "confirmPageConfig" : {
+         |      "showChangeLink" : true,
+         |      "showSearchAgainLink" : true,
+         |      "showConfirmChangeText" : true
+         |    },
+         |    "phaseFeedbackLink" : "http://localhost:9250/contact/contact-hmrc?service=play.cds-reimbursement-claim-frontend",
+         |    "deskProServiceName" : "cds-reimbursement-claim",
+         |    "showPhaseBanner" : true,
+         |    "ukMode" : true
+         |  }
+         |}
+      """.stripMargin
+    )
+  }
+
   def initialiseAddressLookup(isAgent: Boolean)(implicit hc: HeaderCarrier, request: RequestHeader): Future[PostAddressLookupResponse] = {
+    Logger("application").info(s"URL: $addressLookupInitializeUrl")
+    val payload = addressJson()
     http.POST[JsValue, PostAddressLookupResponse](
       url = addressLookupInitializeUrl,
-      body = if (isAgent) addressConfig.config(agentContinueUrl) else addressConfig.config(continueUrl)
+      body = payload
     )
+    // if (isAgent) addressConfig.config(agentContinueUrl) else addressConfig.config(continueUrl)
+
   }
 
   def getAddressDetails(id: String)(implicit hc: HeaderCarrier): Future[GetAddressLookupDetailsResponse] = {
