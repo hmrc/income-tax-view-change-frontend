@@ -47,7 +47,7 @@ class CheckUKPropertyStartDateControllerISpec extends ComponentSpecBase {
         result should have(
           httpStatus(OK),
           pageTitleIndividual("radioForm.checkDate.heading"),
-          elementTextBySelector("#check-uk-property-start-date > p")(dateText),
+          elementTextBySelector("#check-uk-property-start-date-form > p")(dateText),
           elementTextByID("continue-button")(continueButtonText)
         )
       }

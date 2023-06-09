@@ -68,7 +68,8 @@ class AddUKPropertyStartDateController @Inject()(val authenticate: Authenticatio
         addUKPropertyStartDateForm = AddUKPropertyStartDateForm()(dateFormatter, dateService, messages),
         postAction = postAction,
         isAgent = isAgent,
-        backUrl = backUrl)(user, messages)))
+        backUrl = backUrl,
+        btaNavPartial = user.btaNavPartial)(user, messages)))
     } else {
       Future.successful(Ok(customNotFoundErrorView()(user, messages)))
     } recover {
@@ -111,7 +112,8 @@ class AddUKPropertyStartDateController @Inject()(val authenticate: Authenticatio
           addUKPropertyStartDateForm = hasErrors,
           postAction = controllers.incomeSources.add.routes.AddUKPropertyStartDateController.submit(),
           backUrl = controllers.incomeSources.add.routes.AddIncomeSourceController.show().url,
-          isAgent = false
+          isAgent = false,
+          btaNavPartial = user.btaNavPartial
         ))),
         validatedInput =>
           Future.successful(Redirect(controllers.incomeSources.add.routes.CheckUKPropertyStartDateController.show())
@@ -129,7 +131,8 @@ class AddUKPropertyStartDateController @Inject()(val authenticate: Authenticatio
                 addUKPropertyStartDateForm = hasErrors,
                 postAction = controllers.incomeSources.add.routes.AddUKPropertyStartDateController.submit(),
                 backUrl = controllers.incomeSources.add.routes.AddIncomeSourceController.showAgent().url,
-                isAgent = true
+                isAgent = true,
+                btaNavPartial = mtdItUser.btaNavPartial
               ))),
               validatedInput =>
                 Future.successful(Redirect(controllers.incomeSources.add.routes.CheckUKPropertyStartDateController.showAgent())

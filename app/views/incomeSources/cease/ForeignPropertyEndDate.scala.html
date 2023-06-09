@@ -29,7 +29,7 @@
 @(ForeignPropertyEndDateForm: Form[_], postAction: Call, isAgent: Boolean = false, backUrl: String, origin: Option[String] = None)(implicit user: auth.MtdItUser[_], messages: Messages)
 
 @getHintContent = {
-  @p(classes = "govuk-hint") {
+  @p(classes = "form-hint") {
     @messages("incomeSources.cease.ForeignPropertyEndDate.hint")
   }
 }
@@ -43,12 +43,13 @@
  @formWithCSRF(action = postAction, Symbol("id") -> "foreign-property-end-date-form") {
 
   @dateInput(
-   content = messages("incomeSources.cease.ForeignPropertyEndDate.heading"),
-   field = ForeignPropertyEndDateForm("foreign-property-end-date"),
-   hintContent = Some(HtmlContent(getHintContent)),
-   pageHeading = true
+    content = messages("incomeSources.cease.ForeignPropertyEndDate.heading"),
+    field = ForeignPropertyEndDateForm("foreign-property-end-date"),
+    hintContent = Some(HtmlContent(getHintContent)),
+    pageHeading = true,
+    labelClass = Some("govuk-fieldset__legend govuk-label--l govuk-!-margin-bottom-5"),
+    largeText = false
   )
-
   @continueButton()
  }
 }
