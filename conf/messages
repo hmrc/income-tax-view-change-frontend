@@ -1111,21 +1111,22 @@ credit-and-refund.credit-from-balancing-charge-prt-1              = from a
 credit-and-refund.credit-from-balancing-charge-prt-2              = balancing charge credit
 credit-and-refund.credit-from-earlier-tax-year                    = credit from an earlier tax year
 
-## check income sources
-new-income-sources.heading                  = Add a new sole trader or property income source
-new-income-sources.self-employment.h2       = Sole trader businesses
-new-income-sources.self-employment.p1       = You do not need to tell us about a business we already know about.
-new-income-sources.self-employment.link     = Add a sole trader income source
-new-income-sources.uk-property.h2           = UK Property
-new-income-sources.uk-property.p1           = You only need to tell us you have UK property income once.
-new-income-sources.uk-property.link         = Add income from UK property
-new-income-sources.foreign-property.h2      = Foreign Property
-new-income-sources.foreign-property.p1      = You only need to tell us you have foreign property income once.
-new-income-sources.foreign-property.link    = Add income from foreign property
-new-income-sources.ceased-businesses.h2     = Businesses that have ceased
-new-income-sources.table-head.business-name = Business name
-new-income-sources.table-head.date-started  = Date started
-new-income-sources.table-head.date-ended    = Date ended
+## Income Sources - Add
+incomeSources.add.addIncomeSources.heading                          = Add a new sole trader or property income source
+incomeSources.add.addIncomeSources.selfEmployment.heading           = Sole trader businesses
+incomeSources.add.addIncomeSources.selfEmployment.text              = You do not need to tell us about a business we already know about.
+incomeSources.add.addIncomeSources.selfEmployment.link              = Add a sole trader income source
+incomeSources.add.addIncomeSources.ukProperty.heading               = UK Property
+incomeSources.add.addIncomeSources.ukProperty.text                  = You only need to tell us you have UK property income once.
+incomeSources.add.addIncomeSources.ukProperty.link                  = Add income from UK property
+incomeSources.add.addIncomeSources.foreignProperty.heading          = Foreign Property
+incomeSources.add.addIncomeSources.foreignProperty.text             = You only need to tell us you have foreign property income once.
+incomeSources.add.addIncomeSources.foreignProperty.link             = Add income from foreign property
+incomeSources.add.addIncomeSources.ceasedBusinesses.heading         = Businesses that have ceased
+incomeSources.add.addIncomeSources.tableHead.businessName           = Business name
+incomeSources.add.addIncomeSources.tableHead.dateStarted            = Date started
+incomeSources.add.addIncomeSources.tableHead.dateEnded              = Date ended
+incomeSources.add.addIncomeSources.unknown                          = Unknown
 
 ## cease income sources
 cease-income-sources.heading                  = Cease an income source
