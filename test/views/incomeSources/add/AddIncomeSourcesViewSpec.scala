@@ -79,17 +79,17 @@ class AddIncomeSourcesViewSpec extends TestSupport {
       }
     }
     "display `Unknown` when data missing from optional fields" when {
-      "Sole trader trading name and trading start date are present in the response" in new Setup(viewModelMin, isAgent = false) {
+      "Sole trader trading name and trading start date are not present in the response" in new Setup(viewModelMin, isAgent = false) {
         document.getElementById("table-row-trading-name-0").text shouldBe testUnknownValue
         document.getElementById("table-row-trading-start-date-0").text shouldBe testUnknownValue
       }
-      "UK property trading start date is present in the response" in new Setup(viewModelMin, isAgent = false) {
+      "UK property trading start date is not present in the response" in new Setup(viewModelMin, isAgent = false) {
         document.getElementById("table-row-trading-start-date-uk").text shouldBe testUnknownValue
       }
-      "Foreign property trading start date is present in the response" in new Setup(viewModelMin, isAgent = false) {
+      "Foreign property trading start date is not present in the response" in new Setup(viewModelMin, isAgent = false) {
         document.getElementById("table-row-trading-start-date-foreign").text shouldBe testUnknownValue
       }
-      "Ceased business trading name and trading start date are present in the response" in new Setup(viewModelMin, isAgent = false) {
+      "Ceased business trading name and trading start date are not present in the response" in new Setup(viewModelMin, isAgent = false) {
         document.getElementById("table-row-trading-name-ceased-0").text shouldBe testUnknownValue
         document.getElementById("table-row-trading-start-date-ceased-0").text shouldBe testUnknownValue
       }
