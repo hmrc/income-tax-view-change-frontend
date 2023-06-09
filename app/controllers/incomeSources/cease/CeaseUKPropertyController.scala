@@ -66,7 +66,8 @@ class CeaseUKPropertyController @Inject()(val authenticate: AuthenticationPredic
         ceaseUKPropertyForm = CeaseUKPropertyForm.form,
         postAction = postAction,
         isAgent = isAgent,
-        backUrl = backUrl)(user, messages)))
+        backUrl = backUrl,
+        btaNavPartial = user.btaNavPartial)(user, messages)))
     } else {
       Future.successful(Ok(customNotFoundErrorView()(user, messages)))
     } recover {
@@ -77,7 +78,7 @@ class CeaseUKPropertyController @Inject()(val authenticate: AuthenticationPredic
     }
   }
 
-  def show(origin: Option[String] = None): Action[AnyContent] =
+  def show(): Action[AnyContent] =
     (checkSessionTimeout andThen authenticate andThen retrieveNino
       andThen retrieveIncomeSources).async {
       implicit user =>
@@ -99,13 +100,14 @@ class CeaseUKPropertyController @Inject()(val authenticate: AuthenticationPredic
 
   def submit: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
-    implicit request =>
+    implicit user =>
       CeaseUKPropertyForm.form.bindFromRequest().fold(
         hasErrors => Future.successful(BadRequest(view(
           ceaseUKPropertyForm = hasErrors,
           postAction = controllers.incomeSources.cease.routes.CeaseUKPropertyController.submit,
           backUrl = controllers.incomeSources.cease.routes.CeaseIncomeSourceController.show().url,
-          isAgent = false
+          isAgent = false,
+          btaNavPartial = user.btaNavPartial
         )).addingToSession(ceaseUKPropertyDeclare -> "false")),
         _ =>
           Future.successful(Redirect(controllers.incomeSources.cease.routes.UKPropertyEndDateController.show())
@@ -123,7 +125,8 @@ class CeaseUKPropertyController @Inject()(val authenticate: AuthenticationPredic
                 ceaseUKPropertyForm = hasErrors,
                 postAction = controllers.incomeSources.cease.routes.CeaseUKPropertyController.submitAgent,
                 backUrl = controllers.incomeSources.cease.routes.CeaseIncomeSourceController.showAgent().url,
-                isAgent = true
+                isAgent = true,
+                btaNavPartial = mtdItUser.btaNavPartial
               )).addingToSession(ceaseUKPropertyDeclare -> "false")),
               _ =>
                 Future.successful(Redirect(controllers.incomeSources.cease.routes.UKPropertyEndDateController.showAgent())

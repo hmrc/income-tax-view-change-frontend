@@ -28,5 +28,5 @@ case class ViewBusinessDetailsViewModel(tradingName: Option[String], tradingStar
 case class ViewPropertyDetailsViewModel(tradingStartDate: Option[LocalDate])
 
 case class ViewCeasedBusinessDetailsViewModel(tradingName: Option[String],
-                                          tradingStartDate: Option[LocalDate],
-                                          cessationDate: LocalDate)
+                                              tradingStartDate: Option[LocalDate],
+                                              cessationDate: LocalDate)

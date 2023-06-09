@@ -49,6 +49,8 @@ import forms.utils.SessionKeys
 import forms.BusinessStartDateCheckForm
 import testConstants.BaseIntegrationTestConstants.testSelfEmploymentId
 
+import java.time.Month.{APRIL, JANUARY}
+
 @Singleton
 class TestHeaderExtractor extends HeaderExtractor {
 
@@ -65,9 +67,20 @@ class TestDateService extends DateServiceInterface {
 
   override def getCurrentDate(isTimeMachineEnabled: Boolean = false): LocalDate = LocalDate.of(2023, 4, 5)
 
-  override def isDayBeforeTaxYearLastDay(isTimeMachineEnabled: Boolean = false): Boolean = true
+  override def isBeforeLastDayOfTaxYear(isTimeMachineEnabled: Boolean = false): Boolean = true
 
   override def getCurrentTaxYearEnd(isTimeMachineEnabled: Boolean): Int = 2023
+
+  override def getAccountingPeriodEndDate(startDate: LocalDate): String = {
+    val startDateYear = startDate.getYear
+    val accountingPeriodEndDate = LocalDate.of(startDateYear, APRIL, 5)
+
+    if (startDate.isBefore(accountingPeriodEndDate) || startDate.isEqual(accountingPeriodEndDate)) {
+      accountingPeriodEndDate.toString
+    } else {
+      accountingPeriodEndDate.plusYears(1).toString
+    }
+  }
 
 }
 
@@ -285,12 +298,13 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     def getAddBusinessStartDateCheck(date: String): WSResponse = {
       getWithCalcIdInSessionAndWithoutAwait(
         uri = "/income-sources/add/business-start-date-check",
-        additionalCookies = Map(SessionKeys.businessStartDate -> date)
+        additionalCookies = Map(SessionKeys.addBusinessStartDate -> date)
       ).futureValue
     }
 
-    def postAddBusinessStartDateCheck(answer: Option[String]): WSResponse = {
-      post(s"/income-sources/add/business-start-date-check?date=1+November+2020")(
+    def postAddBusinessStartDateCheck(answer: Option[String])(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      post(s"/income-sources/add/business-start-date-check",
+        additionalCookies = additionalCookies)(
         answer.fold(Map.empty[String, Seq[String]])(
           selection => BusinessStartDateCheckForm.form.fill(BusinessStartDateCheckForm(Some(selection))).data.map {
             case (k, v) => (k, Seq(v))

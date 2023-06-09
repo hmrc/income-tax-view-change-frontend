@@ -59,9 +59,12 @@ object BusinessDetailsTestConstants {
   val testMtdItId = "XIAT0000000000A"
   val testStartDate = LocalDate.parse("2022-01-01")
   val testStartDate2 = LocalDate.parse("2021-01-01")
+  val testStartDateFormatted = "1 January 2022"
+  val testStartDate2Formatted = "1 January 2021"
   val testStartDateOption: Option[LocalDate] = Some(LocalDate.parse("2022-01-01"))
   val testStartDateOption2: Option[LocalDate] = Some(LocalDate.parse("2021-01-01"))
   val testEndDate = LocalDate.parse("2023-01-01")
+  val testUnknownValue = "Unknown"
 
 
   val business1 = BusinessDetailsModel(
@@ -110,13 +113,13 @@ object BusinessDetailsTestConstants {
   )
 
   val businessDetailsViewModel = BusinessDetailsViewModel(
-    tradingName = testTradeName,
-    tradingStartDate = testStartDate
+    tradingName = Some(testTradeName),
+    tradingStartDate = Some(testStartDate)
   )
 
   val businessDetailsViewModel2 = BusinessDetailsViewModel(
-    tradingName = testTradeName2,
-    tradingStartDate = testStartDate2
+    tradingName = Some(testTradeName2),
+    tradingStartDate = Some(testStartDate2)
   )
 
   val ceaseBusinessDetailsViewModel = CeaseBusinessDetailsViewModel(
@@ -132,8 +135,8 @@ object BusinessDetailsTestConstants {
   )
 
   val ceasedBusinessDetailsViewModel = CeasedBusinessDetailsViewModel(
-    tradingName = testTradeName,
-    tradingStartDate = testStartDate,
+    tradingName = Some(testTradeName),
+    tradingStartDate = Some(testStartDate),
     cessationDate = testEndDate
   )
 

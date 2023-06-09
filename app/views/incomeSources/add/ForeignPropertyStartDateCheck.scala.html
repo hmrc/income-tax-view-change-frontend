@@ -21,37 +21,41 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components.FormWithCSRF
 @import views.html.helpers.injected.ErrorSummary
 
-@this(mainTemplate: unifiedLayout,
-    implicitDateFormatter: ImplicitDateFormatterImpl,
-    h1: h1,
-    dateInput: dateInput,
-    continueButton: ContinueButton,
-    formWithCSRF: FormWithCSRF,
-    govukRadios: GovukRadios,
-    errorSummary: ErrorSummary,
-    inputRadios: input_radios)
+@this(
+        mainTemplate: unifiedLayout,
+        implicitDateFormatter: ImplicitDateFormatterImpl,
+        h1: h1,
+        dateInput: dateInput,
+        continueButton: ContinueButton,
+        formWithCSRF: FormWithCSRF,
+        govukRadios: GovukRadios,
+        errorSummary: ErrorSummary,
+        inputRadios: input_radios,
+)
 
-@(form: Form[_],
-    postAction: Call,
-    backUrl: String,
-    isAgent: Boolean,
-    businessStartDate: String,
-    btaNavPartial: Option[Html] = None)(implicit messages: Messages, request: Request[_])
+@(form: Form[_],backUrl:String,isAgent: Boolean,foreignPropertyStartDate: String)(implicit user:auth.MtdItUser[_], messages: Messages)
 
-@prefix = @{ "add-business-start-date-check" }
+@prefix = @{"incomeSources.add.foreignProperty.startDate.check" }
+@formId = @{"foreign-property-start-date-check-form" }
 
 @getMessage(key: String, args: String*) = @{
     messages(s"$prefix.$key", args: _*)
+}
+
+@postAction = @{
+    if(isAgent) controllers.incomeSources.add.routes.ForeignPropertyStartDateCheckController.submitAgent()
+    else controllers.incomeSources.add.routes.ForeignPropertyStartDateCheckController.submit()
 }
 
 @mainTemplate(
     pageTitle = getMessage("heading"),
     backUrl = Some(backUrl),
     isAgent = isAgent,
-    btaNavPartial = btaNavPartial) {
+    btaNavPartial = user.btaNavPartial,
+    useFallbackBackLink = true) {
 
 
-    @formWithCSRF(action = postAction, Symbol("id") -> s"$prefix-form") {
+    @formWithCSRF(action = postAction, Symbol("id") -> formId) {
 
         @errorSummary(form)
 
@@ -74,8 +78,8 @@
                     content = Text(getMessage("radio.no"))
                 )
             ),
-            hint = Some(Hint(content = HtmlContent(businessStartDate)))
-        ).withFormField(form(prefix)))
+            hint = Some(Hint(content = HtmlContent(foreignPropertyStartDate)))
+        ).withFormField(form("foreign-property-start-date-check")))
 
         @continueButton()
     }

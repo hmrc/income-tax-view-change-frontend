@@ -27,8 +27,9 @@ import testUtils.TestSupport
 import uk.gov.hmrc.play.language.LanguageUtils
 
 import java.time.LocalDate
+import java.time.Month.{APRIL, JANUARY}
 
-object IncomeSourcesFormsSpec  extends Properties("incomeSourcesForms.validation") with TestSupport {
+object IncomeSourcesFormsSpec extends Properties("incomeSourcesForms.validation") with TestSupport {
 
   private val currentDate: LocalDate = LocalDate.of(2075, 1, 1)
 
@@ -38,9 +39,20 @@ object IncomeSourcesFormsSpec  extends Properties("incomeSourcesForms.validation
 
     override def getCurrentTaxYearEnd(isTimeMachineEnabled: Boolean): Int = currentDate.getYear
 
-    override def isDayBeforeTaxYearLastDay(isTimeMachineEnabled: Boolean): Boolean = false
+    override def isBeforeLastDayOfTaxYear(isTimeMachineEnabled: Boolean): Boolean = false
+
+    override def getAccountingPeriodEndDate(startDate: LocalDate): String = {
+      val startDateYear = startDate.getYear
+      val accountingPeriodEndDate = LocalDate.of(startDateYear, APRIL, 5)
+
+      if (startDate.isBefore(accountingPeriodEndDate) || startDate.isEqual(accountingPeriodEndDate)) {
+        accountingPeriodEndDate.toString
+      } else {
+        accountingPeriodEndDate.plusYears(1).toString
+      }
+    }
   }
-  val testDateFormatter = new ImplicitDateFormatter{
+  val testDateFormatter = new ImplicitDateFormatter {
     override implicit val languageUtils: LanguageUtils = languageUtils
   }
 
@@ -84,7 +96,7 @@ object IncomeSourcesFormsSpec  extends Properties("incomeSourcesForms.validation
   }
 
   property("ukPropertyEndDate") = forAll(dateGenerator(currentDate)) { date =>
-    ukPropertyFormUnderTest( date ).errors.isEmpty
+    ukPropertyFormUnderTest(date).errors.isEmpty
   }
 
   property("businessStartDate") = forAll(dateGenerator(currentDate)) { date =>

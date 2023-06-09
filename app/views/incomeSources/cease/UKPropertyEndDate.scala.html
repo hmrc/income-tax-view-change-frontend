@@ -26,7 +26,7 @@
 
 @this(mainTemplate: unifiedLayout, dateInput: dateInput, continueButton: ContinueButton, formWithCSRF: FormWithCSRF, errorSummary: ErrorSummary, p: p)
 
-@(UKPropertyEndDateForm: Form[_], postAction: Call, isAgent: Boolean = false, backUrl: String, origin: Option[String] = None)(implicit request: Request[_], messages: Messages)
+@(UKPropertyEndDateForm: Form[_], postAction: Call, isAgent: Boolean = false, backUrl: String, btaNavPartial: Option[Html] = None)(implicit request: Request[_], messages: Messages)
 
 @getHintContent = {
   @p(classes = "govuk-hint") {
@@ -34,22 +34,23 @@
   }
 }
 
-@mainTemplate(pageTitle = messages("incomeSources.cease.UKPropertyEndDate.heading"), isAgent = isAgent, backUrl = Some(backUrl)) {
+@mainTemplate(pageTitle = messages("incomeSources.cease.UKPropertyEndDate.heading"), isAgent = isAgent,
+    backUrl = Some(backUrl), btaNavPartial = btaNavPartial) {
 
-@errorSummary(
-  form = UKPropertyEndDateForm
-)
+    @errorSummary(
+      form = UKPropertyEndDateForm
+    )
 
-  @formWithCSRF(action = postAction, Symbol("id") -> "uk-property-end-date-form") {
+    @formWithCSRF(action = postAction, Symbol("id") -> "uk-property-end-date-form") {
 
-    @dateInput(
-      content = messages("incomeSources.cease.UKPropertyEndDate.heading"),
-      field = UKPropertyEndDateForm("uk-property-end-date"),
-      hintContent = Some(HtmlContent(getHintContent)),
-      pageHeading = true
-   )
+        @dateInput(
+          content = messages("incomeSources.cease.UKPropertyEndDate.heading"),
+          field = UKPropertyEndDateForm("uk-property-end-date"),
+          hintContent = Some(HtmlContent(getHintContent)),
+          pageHeading = true
+       )
 
-  @continueButton()
+        @continueButton()
 
   }
 }
