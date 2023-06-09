@@ -32,7 +32,9 @@ import testConstants.IncomeSourceIntegrationTestConstants._
 import testConstants.OutstandingChargesIntegrationTestConstants._
 import testConstants.messages.WhatYouOweMessages.{hmrcAdjustment, hmrcAdjustmentHeading, hmrcAdjustmentLine1}
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
+
 import java.time.LocalDate
+import java.time.Month.{APRIL, JANUARY}
 
 class WhatYouOweControllerISpec extends ComponentSpecBase {
 
@@ -68,11 +70,22 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
        |""".stripMargin)
 
   val testDateService: DateServiceInterface = new DateServiceInterface {
-    override def getCurrentDate(isTimeMachineEnabled: Boolean = false): LocalDate = LocalDate.of(2023, 4, 5 )
+    override def getCurrentDate(isTimeMachineEnabled: Boolean = false): LocalDate = LocalDate.of(2023, 4, 5)
 
     override def getCurrentTaxYearEnd(isTimeMachineEnabled: Boolean = false): Int = 2022
 
-    override def isDayBeforeTaxYearLastDay(isTimeMachineEnabled: Boolean): Boolean = false
+    override def isBeforeLastDayOfTaxYear(isTimeMachineEnabled: Boolean): Boolean = false
+
+    override   def getAccountingPeriodEndDate(startDate: LocalDate): String = {
+      val startDateYear = startDate.getYear
+      val accountingPeriodEndDate = LocalDate.of(startDateYear, APRIL, 5)
+
+      if (startDate.isBefore(accountingPeriodEndDate) || startDate.isEqual(accountingPeriodEndDate)) {
+        accountingPeriodEndDate.toString
+      } else {
+        accountingPeriodEndDate.plusYears(1).toString
+      }
+    }
   }
 
   "Navigating to /report-quarterly/income-and-expenses/view/payments-owed" when {

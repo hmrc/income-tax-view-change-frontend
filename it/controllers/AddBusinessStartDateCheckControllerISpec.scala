@@ -26,33 +26,17 @@ import testConstants.BaseIntegrationTestConstants.testMtditid
 import testConstants.IncomeSourceIntegrationTestConstants.ukPropertyOnlyResponse
 
 class AddBusinessStartDateCheckControllerISpec extends ComponentSpecBase with SessionCookieCrumbler {
-  val testDate: String = "2020-11-1"
-  val addBusinessStartDateCheckShowUrl: String = controllers.routes.AddBusinessStartDateCheckController.submit(testDate).url
-  val addBusinessTradeShowUrl: String = controllers.routes.AddBusinessTradeController.show().url
-  val addBusinessStartDateShowUrl: String = routes.AddBusinessStartDateController.show().url
-  val addBusinessStartDateCheckSubmitUrl: String = controllers.routes.AddBusinessStartDateCheckController.submit(testDate).url
+  val testDate: String = "2020-11-10"
+  val addBusinessStartDateCheckShowUrl: String = controllers.incomeSources.add.routes.AddBusinessStartDateCheckController.submit().url
+  val addBusinessTradeShowUrl: String = controllers.incomeSources.add.routes.AddBusinessTradeController.show().url
+  val addBusinessStartDateShowUrl: String = controllers.incomeSources.add.routes.AddBusinessStartDateController.show().url
+  val addBusinessStartDateCheckSubmitUrl: String = controllers.incomeSources.add.routes.AddBusinessStartDateCheckController.submit().url
   val continueButtonText: String = messagesAPI("base.continue")
   val prefix: String = "add-business-start-date-check"
   val csrfToken: String = "csrfToken"
+  val testAddBusinessStartDate: Map[String, String] = Map(SessionKeys.addBusinessStartDate -> "2022-10-10")
 
   s"calling GET $addBusinessStartDateCheckShowUrl" should {
-    "redirect to the Home Page" when {
-      "IncomeSources FS is disabled" in {
-        Given("I wiremock stub a successful Income Source Details response with UK property")
-        disable(IncomeSources)
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
-
-        When(s"I call GET $addBusinessStartDateCheckShowUrl")
-
-        val result = IncomeTaxViewChangeFrontend.getAddBusinessStartDateCheck(testDate)
-        verifyIncomeSourceDetailsCall(testMtditid)
-
-        result should have(
-          httpStatus(SEE_OTHER),
-          redirectURI(controllers.routes.HomeController.show().url)
-        )
-      }
-    }
     "render the Add Business Start Date Check Page" when {
       "User is authorised" in {
         Given("I wiremock stub a successful Income Source Details response with UK property")
@@ -80,7 +64,7 @@ class AddBusinessStartDateCheckControllerISpec extends ComponentSpecBase with Se
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
 
         val result = IncomeTaxViewChangeFrontend
-          .postAddBusinessStartDateCheck(Some("Yes"))
+          .postAddBusinessStartDateCheck(Some("Yes"))(testAddBusinessStartDate)
 
         result should have(
           httpStatus(SEE_OTHER),
@@ -95,7 +79,7 @@ class AddBusinessStartDateCheckControllerISpec extends ComponentSpecBase with Se
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
 
         val result = IncomeTaxViewChangeFrontend
-          .postAddBusinessStartDateCheck(Some("No"))
+          .postAddBusinessStartDateCheck(Some("No"))(testAddBusinessStartDate)
 
         result should have(
           httpStatus(SEE_OTHER),
@@ -110,7 +94,7 @@ class AddBusinessStartDateCheckControllerISpec extends ComponentSpecBase with Se
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
 
         val result = IncomeTaxViewChangeFrontend
-          .postAddBusinessStartDateCheck(None)
+          .postAddBusinessStartDateCheck(None)(testAddBusinessStartDate)
 
         result should have(
           httpStatus(BAD_REQUEST),
@@ -126,7 +110,7 @@ class AddBusinessStartDateCheckControllerISpec extends ComponentSpecBase with Se
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
 
         val result = IncomeTaxViewChangeFrontend
-          .postAddBusinessStartDateCheck(Some("@INVALID@"))
+          .postAddBusinessStartDateCheck(Some("@INVALID@"))(testAddBusinessStartDate)
 
         result should have(
           httpStatus(INTERNAL_SERVER_ERROR)
