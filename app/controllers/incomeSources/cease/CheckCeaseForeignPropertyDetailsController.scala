@@ -16,15 +16,22 @@
 
 package controllers.incomeSources.cease
 
-import auth.FrontendAuthorisedFunctions
-import config.featureswitch.FeatureSwitching
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import auth.{FrontendAuthorisedFunctions, MtdItUser}
+import config.featureswitch.{FeatureSwitching, IncomeSources}
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
-import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import exceptions.MissingSessionKey
+import forms.utils.SessionKeys.ceaseForeignPropertyEndDate
+import implicits.ImplicitDateFormatter
+import play.api.Logger
+import play.api.i18n.{I18nSupport, Messages}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents, Request, Result}
 import services.IncomeSourceDetailsService
+import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.language.LanguageUtils
 import views.html.errorPages.CustomNotFoundError
+import views.html.incomeSources.cease.CheckCeaseForeignPropertyDetails
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -36,19 +43,55 @@ class CheckCeaseForeignPropertyDetailsController @Inject()(val authenticate: Aut
                                                            val retrieveBtaNavBar: NavBarPredicate,
                                                            val retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                                            val retrieveNino: NinoPredicate,
+                                                           val checkCeaseForeignPropertyDetails: CheckCeaseForeignPropertyDetails,
                                                            val customNotFoundErrorView: CustomNotFoundError)
                                                           (implicit val appConfig: FrontendAppConfig,
+                                                           implicit val languageUtils: LanguageUtils,
                                                       mcc: MessagesControllerComponents,
                                                       val ec: ExecutionContext,
                                                       val itvcErrorHandler: ItvcErrorHandler,
                                                       val itvcErrorHandlerAgent: AgentItvcErrorHandler)
-  extends ClientConfirmedController with FeatureSwitching with I18nSupport {
+  extends ClientConfirmedController with FeatureSwitching with I18nSupport with ImplicitDateFormatter {
 
-  def show(origin: Option[String] = None): Action[AnyContent] =
+  lazy val backUrl: String = routes.ForeignPropertyEndDateController.show().url
+  lazy val backUrlAgent: String = routes.ForeignPropertyEndDateController.showAgent().url
+
+  lazy val homePageCall: Call = controllers.routes.HomeController.show()
+  lazy val homePageCallAgent: Call = controllers.routes.HomeController.showAgent
+
+  lazy val postAction: Call = controllers.incomeSources.cease.routes.CheckCeaseForeignPropertyDetailsController.submit()
+  lazy val postActionAgent: Call = controllers.incomeSources.cease.routes.CheckCeaseForeignPropertyDetailsController.submitAgent()
+
+  def handleRequest(isAgent: Boolean, backUrl: String, postAction: Call, homePageCall: Call, itvcErrorHandler: ShowInternalServerError)
+                   (implicit user: MtdItUser[_], request: Request[_]): Future[Result] = {
+
+    if (isDisabled(IncomeSources)) {
+      Future.successful(Redirect(homePageCall))
+    } else {
+      request.session.get(ceaseForeignPropertyEndDate) match {
+        case Some(date) =>
+          Future(Ok(checkCeaseForeignPropertyDetails(
+            isAgent = isAgent,
+            backUrl = backUrl,
+            postAction = postAction,
+            endDate = longDate(date.toLocalDate).toLongDate
+          )))
+        case _ => throw MissingSessionKey(ceaseForeignPropertyEndDate)
+      }
+    }
+  }
+
+  def show(): Action[AnyContent] =
     (checkSessionTimeout andThen authenticate andThen retrieveNino
-      andThen retrieveIncomeSources).async {
+      andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
       implicit user =>
-        Future.successful(NotImplemented)
+        handleRequest(
+          isAgent = false,
+          backUrl = backUrl,
+          postAction = postAction,
+          homePageCall = homePageCall,
+          itvcErrorHandler = itvcErrorHandler
+        )
     }
 
   def showAgent(): Action[AnyContent] = Authenticated.async {
@@ -56,8 +99,28 @@ class CheckCeaseForeignPropertyDetailsController @Inject()(val authenticate: Aut
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
           implicit mtdItUser =>
-            Future.successful(NotImplemented)
+            handleRequest(
+              isAgent = true,
+              backUrl = backUrlAgent,
+              postAction = postActionAgent,
+              homePageCall = homePageCallAgent,
+              itvcErrorHandler = itvcErrorHandlerAgent
+            )
         }
   }
 
+  def submit(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+    andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
+    implicit request =>
+      Future(Ok)
+  }
+
+  def submitAgent(): Action[AnyContent] = Authenticated.async {
+    implicit request =>
+      implicit user =>
+        getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
+          implicit mtdItUser =>
+            Future(Ok)
+        }
+  }
 }

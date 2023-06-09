@@ -216,6 +216,8 @@ POST         /income-sources/cease/foreign-property-end-date              contro
 POST         /agents/income-sources/cease/foreign-property-end-date       controllers.incomeSources.cease.ForeignPropertyEndDateController.submitAgent()
 GET          /income-sources/cease/foreign-property-check-details         controllers.incomeSources.cease.CheckCeaseForeignPropertyDetailsController.show()
 GET          /agents/income-sources/cease/foreign-property-check-details  controllers.incomeSources.cease.CheckCeaseForeignPropertyDetailsController.showAgent()
+POST         /income-sources/cease/foreign-property-check-details         controllers.incomeSources.cease.CheckCeaseForeignPropertyDetailsController.submit()
+POST         /agents/income-sources/cease/foreign-property-check-details  controllers.incomeSources.cease.CheckCeaseForeignPropertyDetailsController.submitAgent()
 
 # Income Sources - Manage
 GET          /income-sources/manage/view-and-manage-income-sources        controllers.incomeSources.manage.ManageIncomeSourceController.show()
