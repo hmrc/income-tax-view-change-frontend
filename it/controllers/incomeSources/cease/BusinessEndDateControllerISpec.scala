@@ -20,12 +20,12 @@ import config.featureswitch.IncomeSources
 import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
-import testConstants.BaseIntegrationTestConstants.{testMtditid, testPropertyIncomeSourceId, testSelfEmploymentId}
-import testConstants.IncomeSourceIntegrationTestConstants.{businessOnlyResponse, ukPropertyOnlyResponse}
+import testConstants.BaseIntegrationTestConstants.{testMtditid, testPropertyIncomeId, testSelfEmploymentId}
+import testConstants.IncomeSourceIntegrationTestConstants.businessOnlyResponse
 
 class BusinessEndDateControllerISpec extends ComponentSpecBase {
-  val dateBusinessShowUrl: String = controllers.incomeSources.cease.routes.BusinessEndDateController.show(testPropertyIncomeSourceId).url
-  val dateBusinessSubmitUrl: String = controllers.incomeSources.cease.routes.BusinessEndDateController.submit(testPropertyIncomeSourceId).url
+  val dateBusinessShowUrl: String = controllers.incomeSources.cease.routes.BusinessEndDateController.show(testPropertyIncomeId).url
+  val dateBusinessSubmitUrl: String = controllers.incomeSources.cease.routes.BusinessEndDateController.submit(testPropertyIncomeId).url
   val checkCeaseBusinessDetailsShowUrl: String = controllers.incomeSources.cease.routes.CheckCeaseBusinessDetailsController.show().url
   val hintText: String = messagesAPI("dateForm.hint")
   val continueButtonText: String = messagesAPI("base.continue")

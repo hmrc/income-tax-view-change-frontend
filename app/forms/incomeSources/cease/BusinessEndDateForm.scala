@@ -20,14 +20,12 @@ import auth.MtdItUser
 import exceptions.MissingFieldException
 import forms.models.DateFormElement
 import forms.validation.Constraints
-import play.api.data
 import play.api.data.Form
 import play.api.data.Forms.{default, mapping, text, tuple}
 import play.api.data.validation.{Constraint, Invalid, Valid, ValidationError}
 import services.DateService
 
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 class BusinessEndDateForm @Inject()(val dateService: DateService) extends Constraints {
@@ -43,7 +41,6 @@ class BusinessEndDateForm @Inject()(val dateService: DateService) extends Constr
   val dateMustNotBeInFuture = "incomeSources.cease.BusinessEndDate.error.future"
   val dateMustBeAfterBusinessStartDate = "incomeSources.cease.BusinessEndDate.error.beforeStartDate"
   val dateMustNotBeBefore6April2015 = "incomeSources.cease.BusinessEndDate.error.beforeEarliestDate"
-  val sixthAprilTwentyFifteen: LocalDate = LocalDate.of(2015, 4, 6)
 
   def apply (implicit user: MtdItUser[_], id: Option[String]): Form[DateFormElement] = {
     val currentDate: LocalDate = dateService.getCurrentDate()
@@ -70,7 +67,6 @@ class BusinessEndDateForm @Inject()(val dateService: DateService) extends Constr
         .verifying(minDate(businessStartDate, dateMustBeAfterBusinessStartDate))
         .verifying(minDate6April2015(dateMustNotBeBefore6April2015))
       )(DateFormElement.apply)(DateFormElement.unapply))
-
   }
 
   private def checkRequiredFields: Constraint[(String, String, String)] = Constraint("constraints.requiredFields") {

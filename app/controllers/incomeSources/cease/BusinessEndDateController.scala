@@ -22,22 +22,19 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowI
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import forms.incomeSources.cease.BusinessEndDateForm
-import forms.utils.SessionKeys.{ceaseBusinessEndDate, ceaseBusinessIncomeSourceId, ceaseUKPropertyEndDate}
-import models.incomeSourceDetails.viewmodels.CeaseBusinessDetailsViewModel
+import forms.utils.SessionKeys.{ceaseBusinessEndDate, ceaseBusinessIncomeSourceId}
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages}
-import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents, Result}
+import play.api.mvc._
 import services.IncomeSourceDetailsService
 import uk.gov.hmrc.http.HeaderCarrier
-import views.html.incomeSources.cease.BusinessEndDate
 import views.html.errorPages.CustomNotFoundError
+import views.html.incomeSources.cease.BusinessEndDate
 
-import java.lang
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
+@Singleton
 class BusinessEndDateController @Inject()(val authenticate: AuthenticationPredicate,
                                           val authorisedFunctions: FrontendAuthorisedFunctions,
                                           val checkSessionTimeout: SessionTimeoutPredicate,
@@ -49,7 +46,7 @@ class BusinessEndDateController @Inject()(val authenticate: AuthenticationPredic
                                           val businessEndDate: BusinessEndDate,
                                           val customNotFoundErrorView: CustomNotFoundError)
                                          (implicit val appConfig: FrontendAppConfig,
-                                          implicit override val mcc: MessagesControllerComponents,
+                                          mcc: MessagesControllerComponents,
                                           val ec: ExecutionContext,
                                           val itvcErrorHandler: ItvcErrorHandler,
                                           val itvcErrorHandlerAgent: AgentItvcErrorHandler)
@@ -88,8 +85,6 @@ class BusinessEndDateController @Inject()(val authenticate: AuthenticationPredic
     val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
     if (incomeSourcesEnabled) {
-      println("QQQQQQQQQQQ")
-      println(user)
       Future.successful(Ok(businessEndDate(
         BusinessEndDateForm = businessEndDateForm.apply(user, Option(id)),
         postAction = postAction,

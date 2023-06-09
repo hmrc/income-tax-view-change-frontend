@@ -22,7 +22,6 @@ import mocks.services.{MockAsyncCacheApi, MockNextUpdatesService}
 import models.incomeSourceDetails.viewmodels.{AddIncomeSourcesViewModel, BusinessDetailsViewModel, CeaseBusinessDetailsViewModel, CeaseCeasedBusinessDetailsViewModel, CeaseIncomeSourcesViewModel, CeasePropertyDetailsViewModel, CeasedBusinessDetailsViewModel, PropertyDetailsViewModel, ViewCeasedBusinessDetailsViewModel, ViewIncomeSourcesViewModel, ViewPropertyDetailsViewModel}
 import org.scalacheck.Gen
 import play.api.cache.AsyncCacheApi
-import testConstants.BaseIntegrationTestConstants.testPropertyIncomeSourceId
 import testConstants.BaseTestConstants._
 import testConstants.BusinessDetailsTestConstants._
 import testConstants.IncomeSourceDetailsTestConstants._
@@ -146,7 +145,7 @@ class IncomeSourceDetailsServiceSpec extends TestSupport with MockIncomeTaxViewC
         val result = TestIncomeSourceDetailsService.getCeaseIncomeSourceViewModel(ukPropertyAndSoleTraderBusinessIncome)
 
         result shouldBe Right(CeaseIncomeSourcesViewModel(
-          soleTraderBusinesses = List(CeaseBusinessDetailsViewModel(testPropertyIncomeSourceId, testTradeName, testStartDate)),
+          soleTraderBusinesses = List(CeaseBusinessDetailsViewModel(testPropertyIncomeId, testTradeName, testStartDate)),
           ukProperty = Some(CeasePropertyDetailsViewModel(testStartDate)),
           foreignProperty = None,
           ceasedBusinesses = Nil

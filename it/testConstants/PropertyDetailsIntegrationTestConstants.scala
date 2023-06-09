@@ -19,7 +19,7 @@ package testConstants
 import models.core.AccountingPeriodModel
 import models.incomeSourceDetails.PropertyDetailsModel
 import play.api.libs.json.{JsValue, Json}
-import testConstants.BaseIntegrationTestConstants.{getCurrentTaxYearEnd, testPropertyIncomeSourceId}
+import testConstants.BaseIntegrationTestConstants.{getCurrentTaxYearEnd, testPropertyIncomeId}
 
 import java.time.LocalDate
 
@@ -41,7 +41,7 @@ object PropertyDetailsIntegrationTestConstants {
 
 
   val property: PropertyDetailsModel = PropertyDetailsModel(
-    incomeSourceId = Some(testPropertyIncomeSourceId),
+    incomeSourceId = Some(testPropertyIncomeId),
     accountingPeriod = Some(AccountingPeriodModel(
       start = propertyAccountingStartLocalDate,
       end = propertyAccounringEndLocalDate
@@ -53,7 +53,7 @@ object PropertyDetailsIntegrationTestConstants {
   )
 
   val oldProperty: PropertyDetailsModel = PropertyDetailsModel(
-    incomeSourceId = Some(testPropertyIncomeSourceId),
+    incomeSourceId = Some(testPropertyIncomeId),
     accountingPeriod = Some(AccountingPeriodModel(
       start = propertyAccountingStartLocalDate,
       end = propertyAccounringEndLocalDate
@@ -65,7 +65,7 @@ object PropertyDetailsIntegrationTestConstants {
   )
 
   def propertyWithCurrentYear(endYear: Int): PropertyDetailsModel = PropertyDetailsModel(
-    incomeSourceId = Some(testPropertyIncomeSourceId),
+    incomeSourceId = Some(testPropertyIncomeId),
     accountingPeriod = Some(AccountingPeriodModel(
       start = propertyAccountingStartLocalDateOfCurrentYear(endYear),
       end = propertyAccounringEndLocalDateOfCurrentYear(endYear)
@@ -77,7 +77,7 @@ object PropertyDetailsIntegrationTestConstants {
   )
 
   val ukProperty: PropertyDetailsModel = PropertyDetailsModel(
-    incomeSourceId = Some(testPropertyIncomeSourceId),
+    incomeSourceId = Some(testPropertyIncomeId),
     accountingPeriod = Some(AccountingPeriodModel(
       start = propertyAccountingStartLocalDate,
       end = propertyAccounringEndLocalDate
@@ -89,7 +89,7 @@ object PropertyDetailsIntegrationTestConstants {
   )
 
   val foreignProperty: PropertyDetailsModel = PropertyDetailsModel(
-    incomeSourceId = Some(testPropertyIncomeSourceId),
+    incomeSourceId = Some(testPropertyIncomeId),
     accountingPeriod = Some(AccountingPeriodModel(
       start = propertyAccountingStartLocalDate,
       end = propertyAccounringEndLocalDate
@@ -101,7 +101,7 @@ object PropertyDetailsIntegrationTestConstants {
   )
 
   val propertySuccessResponse: JsValue = Json.obj(
-    "incomeSourceId" -> testPropertyIncomeSourceId,
+    "incomeSourceId" -> testPropertyIncomeId,
     "accountingPeriod" -> Json.obj(
       "start" -> propertyAccountingStart,
       "end" -> propertyAccountingEnd
