@@ -21,7 +21,6 @@ import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
-import exceptions.MissingSessionKey
 import forms.BusinessStartDateCheckForm
 import forms.BusinessStartDateCheckForm.{response, responseNo, responseYes}
 import forms.utils.SessionKeys
@@ -85,7 +84,7 @@ class AddBusinessStartDateCheckController @Inject()(authenticate: Authentication
   }
 
   def getBusinessStartDate()(implicit user: MtdItUser[_]): String = {
-    user.session.get(SessionKeys.addBusinessStartDate).getOrElse(throw MissingSessionKey(SessionKeys.addBusinessStartDate))
+    user.session.get(SessionKeys.addBusinessStartDate).get
   }
 
   def show(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
