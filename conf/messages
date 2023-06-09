@@ -1298,7 +1298,7 @@ incomeSources.ceaseUKProperty.checkDetails.change                = Change
 
 # add Business start date
 add-business-start-date.heading                      = When did your business start trading?
-add-business-start-date.hint-prt1                    = This is the date we'll use to calculate your Class 2 National Insurance charge, if appropriate.
+add-business-start-date.hint-prt1                    = This is the date we’ll use to calculate your Class 2 National Insurance charge, if appropriate.
 add-business-start-date.hint-prt2                    = For example, 27 3 2020
 add-business-start-date.day                          = Day
 add-business-start-date.form.month                   = Month
