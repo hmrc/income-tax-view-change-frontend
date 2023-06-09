@@ -47,23 +47,25 @@ class AddressLookupConnector @Inject()(val appConfig: FrontendAppConfig,
     s"${appConfig.addressLookupService}/api/v2/confirmed?id=$mtditid"
   }
 
-  lazy val continueUrl: String = routes.AddBusinessCheckDetailsController.show().url
-  lazy val agentContinueUrl: String = routes.AddBusinessCheckDetailsController.showAgent().url
+  lazy val individualContinueUrl: String = routes.AddBusinessAddressController.submit().url
+  lazy val agentContinueUrl: String = routes.AddBusinessAddressController.agentSubmit().url
 
-  def addressJson(): JsValue = {
+
+  //"http://localhost:9081/report-quarterly/income-and-expenses/view/income-sources/add/business-check-details"
+  def addressJson(continueUrl: String): JsValue = {
     play.api.libs.json.Json.parse(
       s"""
          |{
          |  "version" : 2,
          |  "options" : {
-         |    "continueUrl" : "http://localhost:7500/claim-for-reimbursement-of-import-duties/rejected-goods/single/claimant-details/update-address",
+         |    "continueUrl" : "placeholder",
          |    "timeoutConfig" : {
          |      "timeoutAmount" : 3600,
-         |      "timeoutUrl" : "/claim-for-reimbursement-of-import-duties/exit/we-signed-you-out",
-         |      "timeoutKeepAliveUrl" : "http://localhost:7500/claim-for-reimbursement-of-import-duties/keep-alive"
+         |      "timeoutUrl" : "http://localhost:9081/report-quarterly/income-and-expenses/session-timeout",
+         |      "timeoutKeepAliveUrl" : "http://localhost:9081/report-quarterly/income-and-expenses/keep-alive"
          |    },
-         |    "signOutHref" : "http://localhost:9949/auth-login-stub/session/logout",
-         |    "accessibilityFooterUrl" : "http://localhost:12346/accessibility-statement/cds-reimbursement-claim",
+         |    "signOutHref" : "http://localhost:9081/report-quarterly/income-and-expenses/view/sign-out",
+         |    "accessibilityFooterUrl" : "http://localhost:12346/accessibility-statement/income-tax-view-change?referrerUrl=%2Freport-quarterly%2Fincome-and-expenses%2Fview",
          |    "selectPageConfig" : {
          |      "proposalListLimit" : 15
          |    },
@@ -72,19 +74,19 @@ class AddressLookupConnector @Inject()(val appConfig: FrontendAppConfig,
          |      "showSearchAgainLink" : true,
          |      "showConfirmChangeText" : true
          |    },
-         |    "phaseFeedbackLink" : "http://localhost:9250/contact/contact-hmrc?service=play.cds-reimbursement-claim-frontend",
+         |    "phaseFeedbackLink" : "http://localhost:9081/report-quarterly/income-and-expenses/view/feedback",
          |    "deskProServiceName" : "cds-reimbursement-claim",
          |    "showPhaseBanner" : true,
          |    "ukMode" : true
          |  }
          |}
-      """.stripMargin
+      """.stripMargin.replace("placeholder", "http://localhost:9081/report-quarterly" + continueUrl)
     )
   }
 
   def initialiseAddressLookup(isAgent: Boolean)(implicit hc: HeaderCarrier, request: RequestHeader): Future[PostAddressLookupResponse] = {
     Logger("application").info(s"URL: $addressLookupInitializeUrl")
-    val payload = addressJson()
+    val payload = if (isAgent) addressJson(agentContinueUrl) else addressJson(individualContinueUrl)
     http.POST[JsValue, PostAddressLookupResponse](
       url = addressLookupInitializeUrl,
       body = payload

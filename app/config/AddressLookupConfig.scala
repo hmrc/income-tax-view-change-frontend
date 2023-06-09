@@ -32,7 +32,7 @@ class AddressLookupConfig @Inject()(appConfig: FrontendAppConfig, messagesApi: M
       "version"-> 2
       ,
       "options"-> Json.obj (
-        "continueUrl"-> "...",
+        "continueUrl"-> continueUrl,
         "homeNavHref"-> "..",
         "signOutHref"-> "..",
         "accessibilityFooterUrl"-> "...",
