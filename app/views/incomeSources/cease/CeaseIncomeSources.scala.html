@@ -40,7 +40,6 @@
 
 @import implicitDateFormatter.longDate
 
-@import java.time.LocalDate
 @getMessage(key: String, args: String*) = @{
     messages(s"cease-income-sources.$key", args: _*)
 }
@@ -97,6 +96,8 @@
         </table>
     }
 
+    <br>
+
     @if(sources.ukProperty.nonEmpty) {
 
         @h2(msg = getMessage("uk-property.h1"),
@@ -125,6 +126,8 @@
         </table>
     }
 
+    <br>
+
     @if(sources.foreignProperty.nonEmpty) {
 
         @h2(msg = getMessage("foreign-property.h1"),
@@ -152,6 +155,8 @@
             </tbody>
         </table>
     }
+
+    <br>
 
     @if(sources.ceasedBusinesses.nonEmpty) {
         @h2(msg = getMessage("ceased-businesses.h1"),

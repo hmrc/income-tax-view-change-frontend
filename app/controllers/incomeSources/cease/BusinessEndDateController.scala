@@ -55,14 +55,13 @@ class BusinessEndDateController @Inject()(val authenticate: AuthenticationPredic
                                           val itvcErrorHandlerAgent: AgentItvcErrorHandler)
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
-  def show(id: String, origin: Option[String] = None): Action[AnyContent] =
+  def show(id: String): Action[AnyContent] =
     (checkSessionTimeout andThen authenticate andThen retrieveNino
-      andThen retrieveIncomeSources).async {
+      andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
       implicit user =>
         handleRequest(
           isAgent = false,
-          id,
-          origin
+          id
         )
     }
 
@@ -82,19 +81,22 @@ class BusinessEndDateController @Inject()(val authenticate: AuthenticationPredic
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
 
     val incomeSourcesEnabled: Boolean = isEnabled(IncomeSources)
-    val backUrl: String = if (isAgent) controllers.incomeSources.cease.routes.CeaseUKPropertyController.showAgent().url else
-      controllers.incomeSources.cease.routes.CeaseUKPropertyController.show().url
+    val backUrl: String = if (isAgent) controllers.incomeSources.cease.routes.CeaseIncomeSourceController.showAgent().url else
+      controllers.incomeSources.cease.routes.CeaseIncomeSourceController.show().url
     val postAction: Call = if (isAgent) controllers.incomeSources.cease.routes.BusinessEndDateController.submitAgent(id) else
       controllers.incomeSources.cease.routes.BusinessEndDateController.submit(id)
     val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
     if (incomeSourcesEnabled) {
+      println("QQQQQQQQQQQ")
+      println(user)
       Future.successful(Ok(businessEndDate(
         BusinessEndDateForm = businessEndDateForm.apply(user, Option(id)),
         postAction = postAction,
         isAgent = isAgent,
         backUrl = backUrl,
-        origin = origin)(user, messages)))
+        btaNavPartial = user.btaNavPartial
+      )(user, messages)))
     } else {
       Future.successful(Ok(customNotFoundErrorView()(user, messages)))
     } recover {
@@ -113,7 +115,8 @@ class BusinessEndDateController @Inject()(val authenticate: AuthenticationPredic
           BusinessEndDateForm = hasErrors,
           postAction = controllers.incomeSources.cease.routes.BusinessEndDateController.submit(id),
           backUrl = controllers.incomeSources.cease.routes.CeaseIncomeSourceController.show().url,
-          isAgent = false
+          isAgent = false,
+          btaNavPartial = user.btaNavPartial
         ))),
         validatedInput =>
           Future.successful(Redirect(controllers.incomeSources.cease.routes.CheckCeaseBusinessDetailsController.show())
@@ -132,7 +135,8 @@ class BusinessEndDateController @Inject()(val authenticate: AuthenticationPredic
                 BusinessEndDateForm = hasErrors,
                 postAction = controllers.incomeSources.cease.routes.BusinessEndDateController.submitAgent(id),
                 backUrl = controllers.incomeSources.cease.routes.CeaseIncomeSourceController.showAgent().url,
-                isAgent = true
+                isAgent = true,
+                btaNavPartial = mtdItUser.btaNavPartial
               ))),
               validatedInput =>
                 Future.successful(Redirect(controllers.incomeSources.cease.routes.CheckCeaseBusinessDetailsController.showAgent())

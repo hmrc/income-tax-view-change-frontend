@@ -24,7 +24,7 @@
 
 @this(mainTemplate: unifiedLayout, dateInput: dateInput, continueButton: ContinueButton, formWithCSRF: FormWithCSRF, errorSummary: ErrorSummary, p: p)
 
-@(BusinessEndDateForm: Form[_], postAction: Call, isAgent: Boolean = false, backUrl: String, origin: Option[String] = None)(implicit request: Request[_], messages: Messages)
+@(BusinessEndDateForm: Form[_], postAction: Call, isAgent: Boolean = false, backUrl: String, btaNavPartial: Option[Html] = None)(implicit request: Request[_], messages: Messages)
 
 @getHintContent = {
   @p(classes = "govuk-hint") {
@@ -32,7 +32,7 @@
   }
 }
 
-@mainTemplate(pageTitle = messages("incomeSources.cease.BusinessEndDate.heading"), isAgent = isAgent, backUrl = Some(backUrl)) {
+@mainTemplate(pageTitle = messages("incomeSources.cease.BusinessEndDate.heading"), isAgent = isAgent, backUrl = Some(backUrl), btaNavPartial = btaNavPartial) {
 
  @errorSummary(
   form = BusinessEndDateForm
