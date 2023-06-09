@@ -22,6 +22,7 @@ import config.FrontendAppConfig
 import java.time.LocalDate
 import java.time.Month.{APRIL, JANUARY}
 import javax.inject.{Inject, Singleton}
+import scala.math.Ordered.orderingToOrdered
 
 @Singleton
 class DateService @Inject()(implicit val frontendAppConfig: FrontendAppConfig) extends DateServiceInterface {
@@ -54,14 +55,12 @@ class DateService @Inject()(implicit val frontendAppConfig: FrontendAppConfig) e
 
   def getAccountingPeriodEndDate(startDate: LocalDate): String = {
     val startDateYear = startDate.getYear
-    val minimumDate = LocalDate.of(startDateYear, JANUARY, 1)
-    val maximumDate = LocalDate.of(startDateYear, APRIL, 5)
+    val accountingPeriodEndDate = LocalDate.of(startDateYear, APRIL, 5)
 
-    if ( startDate.isEqual(minimumDate) || startDate.isAfter(minimumDate) && startDate.isBefore(maximumDate)) {
-      LocalDate.of(startDateYear, APRIL, 5).toString
+    if (startDate.isBefore(accountingPeriodEndDate) || startDate.isEqual(accountingPeriodEndDate)) {
+      accountingPeriodEndDate.toString
     } else {
-      val startDateYearPlusOne = startDate.plusYears(1).getYear
-      LocalDate.of(startDateYearPlusOne, APRIL, 5).toString
+      accountingPeriodEndDate.plusYears(1).toString
     }
   }
 }

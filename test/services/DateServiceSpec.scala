@@ -87,4 +87,27 @@ class DateServiceSpec extends TestSupport with FeatureSwitching {
     }
 
   }
+
+  "getAccountingPeriodEndDate" should {
+    "return 2020-04-05 (same year as business start year)" when {
+      "business start date is 01/01/2020" in {
+        val businessStartDate = LocalDate.of(2020, 1, 1)
+        TestDateService.getAccountingPeriodEndDate(businessStartDate) shouldBe "2020-04-05"
+      }
+      "business start date is 05/04/2020 (last day of accounting period)" in {
+        val businessStartDate = LocalDate.of(2020, 4, 5)
+        TestDateService.getAccountingPeriodEndDate(businessStartDate) shouldBe "2020-04-05"
+      }
+    }
+    "return 2021-04-05 (business start year + 1)" when {
+      "business start date is 06/04/2020" in {
+        val businessStartDate = LocalDate.of(2020, 4, 6)
+        TestDateService.getAccountingPeriodEndDate(businessStartDate) shouldBe "2021-04-05"
+      }
+      "business start date is 23/07/2020" in {
+        val businessStartDate = LocalDate.of(2020, 7, 23)
+        TestDateService.getAccountingPeriodEndDate(businessStartDate) shouldBe "2021-04-05"
+      }
+    }
+  }
 }

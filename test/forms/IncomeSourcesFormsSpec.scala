@@ -29,7 +29,7 @@ import uk.gov.hmrc.play.language.LanguageUtils
 import java.time.LocalDate
 import java.time.Month.{APRIL, JANUARY}
 
-object IncomeSourcesFormsSpec  extends Properties("incomeSourcesForms.validation") with TestSupport {
+object IncomeSourcesFormsSpec extends Properties("incomeSourcesForms.validation") with TestSupport {
 
   private val currentDate: LocalDate = LocalDate.of(2075, 1, 1)
 
@@ -43,19 +43,16 @@ object IncomeSourcesFormsSpec  extends Properties("incomeSourcesForms.validation
 
     override def getAccountingPeriodEndDate(startDate: LocalDate): String = {
       val startDateYear = startDate.getYear
-      val minimumDate = LocalDate.of(startDateYear, JANUARY, 1)
-      val maximumDate = LocalDate.of(startDateYear, APRIL, 5)
+      val accountingPeriodEndDate = LocalDate.of(startDateYear, APRIL, 5)
 
-      if (startDate.isEqual(minimumDate) || startDate.isAfter(minimumDate) &&
-        startDate.isBefore(maximumDate)) {
-        LocalDate.of(startDateYear, APRIL, 5).toString
+      if (startDate.isBefore(accountingPeriodEndDate) || startDate.isEqual(accountingPeriodEndDate)) {
+        accountingPeriodEndDate.toString
       } else {
-        val startDateYearPlusOne = startDate.plusYears(1).getYear
-        LocalDate.of(startDateYearPlusOne, APRIL, 5).toString
+        accountingPeriodEndDate.plusYears(1).toString
       }
     }
   }
-  val testDateFormatter = new ImplicitDateFormatter{
+  val testDateFormatter = new ImplicitDateFormatter {
     override implicit val languageUtils: LanguageUtils = languageUtils
   }
 
@@ -99,7 +96,7 @@ object IncomeSourcesFormsSpec  extends Properties("incomeSourcesForms.validation
   }
 
   property("ukPropertyEndDate") = forAll(dateGenerator(currentDate)) { date =>
-    ukPropertyFormUnderTest( date ).errors.isEmpty
+    ukPropertyFormUnderTest(date).errors.isEmpty
   }
 
   property("businessStartDate") = forAll(dateGenerator(currentDate)) { date =>
