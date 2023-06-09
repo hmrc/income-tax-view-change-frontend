@@ -22,8 +22,8 @@ import config.featureswitch.FeatureSwitching
 import models.incomeSourceDetails.viewmodels.httpparser.GetAddressLookupDetailsHttpParser.GetAddressLookupDetailsResponse
 import models.incomeSourceDetails.viewmodels.httpparser.PostAddressLookupHttpParser.PostAddressLookupResponse
 import play.api.libs.json.JsValue
-import play.api.mvc.RequestHeader
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
+import play.api.mvc.{AnyContent, RequestHeader}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 import controllers.routes
 
 import javax.inject.Inject
@@ -36,7 +36,7 @@ class AddressLookupConnector @Inject()(val appConfig: FrontendAppConfig,
   val baseUrl: String = appConfig.addressLookupService
 
   def addressLookupInitializeUrl: String = {
-    s"${appConfig.addressLookupService}/api/v2/init"
+    s"${baseUrl}/api/v2/init"
   }
 
   def getAddressDetailsUrl(mtditid: String): String = {
@@ -55,5 +55,6 @@ class AddressLookupConnector @Inject()(val appConfig: FrontendAppConfig,
 
   def getAddressDetails(id: String)(implicit hc: HeaderCarrier): Future[GetAddressLookupDetailsResponse] = {
     http.GET[GetAddressLookupDetailsResponse](getAddressDetailsUrl(id))
+    //http.GET(baseUrl+"/lookup-address/test-only/v2/test-setup")
   }
 }

@@ -26,35 +26,44 @@ import javax.inject.{Inject, Singleton}
 @Singleton
 class AddressLookupConfig @Inject()(appConfig: FrontendAppConfig, messagesApi: MessagesApi, accessibilityStatementConfig: AccessibilityStatementConfig){
 
-  def config(continueUrl: String)(implicit request: RequestHeader): JsObject = {
+  def config(continueUrl: String)(implicit request: RequestHeader): JsObject =
 
-    Json.obj(
-      "version" -> 2,
-      "options" -> Json.obj(
-        "continueUrl" -> continueUrl,
-        "showBackButtons" -> false,
-        "includeHMRCBranding" -> true,
-        "ukMode"-> true,
-        "selectPageConfig" -> Json.obj(
-          "proposalListLimit" -> 50,
-          "showSearchLinkAgain" -> true
+    Json.obj (
+      "version"-> 2
+      ,
+      "options"-> Json.obj (
+        "continueUrl"-> "...",
+        "homeNavHref"-> "..",
+        "signOutHref"-> "..",
+        "accessibilityFooterUrl"-> "...",
+        "phaseFeedbackLink"-> "/help/alpha",
+        "deskProServiceName"-> "",
+        "showPhaseBanner"-> false,
+        "alphaPhase"-> false,
+        "disableTranslations"-> true,
+        "showBackButtons"-> false,
+        "includeHMRCBranding"-> true,
+        "allowedCountryCodes"-> "GB",
+        "ukMode"-> false,
+        "selectPageConfig"-> Json.obj (
+        "proposalListLimit"-> 30,
+        "showSearchLinkAgain"-> true
         ),
-        "confirmPageConfig" -> Json.obj(
-          "showChangeLink" -> true,
-          "showSubHeadingAndInfo" -> true,
-          "showSearchAgainLink" -> false,
-          "showConfirmChangeText" -> true
+        "confirmPageConfig"-> Json.obj (
+        "showChangeLink"-> false,
+        "showSubHeadingAndInfo"-> false,
+        "showSearchAgainLink"-> false,
+        "showConfirmChangeText"-> true
         ),
-        "timeoutConfig" -> Json.obj(
-          "timeoutAmount" -> 900,
-          "timeoutUrl" -> s"${appConfig.baseUrl}/session-timeout"
-        )
-        ,
-        "accessibilityFooterUrl" -> accessibilityStatementConfig.url
-      )
+        "timeoutConfig"-> Json.obj (
+        "timeoutAmount"-> 900,
+        "timeoutUrl"-> "/timeout-uri",
+        "timeoutKeepAliveUrl"-> "/keep-alive-uri"
+        ),
+        "pageHeadingStyle"-> "govuk-heading-xl"
       ,
       "labels"-> Json.obj (
-        "en" -> Json.obj (
+        "en"-> Json.obj (
           "appLevelLabels"-> Json.obj (
           "navTitle"-> "",
           "phaseBannerHtml"-> ""
@@ -64,7 +73,7 @@ class AddressLookupConfig @Inject()(appConfig: FrontendAppConfig, messagesApi: M
           "heading"-> "Custom heading",
           "countryLabel"-> "Custom country label",
           "submitLabel"-> "Custom submit label"
-          ),
+            ),
           "selectPageLabels"-> Json.obj (
           "title"-> "Choose address",
           "heading"-> "Choose address",
@@ -73,7 +82,7 @@ class AddressLookupConfig @Inject()(appConfig: FrontendAppConfig, messagesApi: M
           "submitLabel"-> "Continue",
           "searchAgainLinkText"-> "Search again",
           "editAddressLinkText"-> "Enter address manually"
-          ),
+            ),
           "lookupPageLabels"-> Json.obj (
           "title"-> "Find address",
           "heading"-> "Find address",
@@ -84,7 +93,7 @@ class AddressLookupConfig @Inject()(appConfig: FrontendAppConfig, messagesApi: M
           "noResultsFoundMessage"-> "Sorry, we couldn't find anything for that postcode.",
           "resultLimitExceededMessage"-> "There were too many results. Please add additional details to limit the number of results.",
           "manualAddressLinkText"-> "Enter the address manually"
-          ),
+            ),
           "confirmPageLabels"-> Json.obj (
           "title"-> "Confirm address",
           "heading"-> "Review and confirm",
@@ -94,7 +103,7 @@ class AddressLookupConfig @Inject()(appConfig: FrontendAppConfig, messagesApi: M
           "searchAgainLinkText"-> "Search again",
           "changeLinkText"-> "Edit address",
           "confirmChangeText"-> "By confirming this change, you agree that the information you have given is complete and correct."
-          ),
+            ),
           "editPageLabels"-> Json.obj (
           "title"-> "Enter address",
           "heading"-> "Enter address",
@@ -139,7 +148,7 @@ class AddressLookupConfig @Inject()(appConfig: FrontendAppConfig, messagesApi: M
           "resultLimitExceededMessage"-> "There were too many results. Please add additional details to limit the number of results. welsh",
           "manualAddressLinkText"-> "Enter the address manually welsh"
             ),
-          "confirmPageLabels"-> Json.obj(
+          "confirmPageLabels"-> Json.obj (
           "title"-> "Confirm address welsh",
           "heading"-> "Review and confirm welsh",
           "infoSubheading"-> "Your selected address welsh",
@@ -149,7 +158,7 @@ class AddressLookupConfig @Inject()(appConfig: FrontendAppConfig, messagesApi: M
           "changeLinkText"-> "Edit address welsh",
           "confirmChangeText"-> "By confirming this change, you agree that the information you have given is complete and correct. welsh"
             ),
-          "editPageLabels"-> Json.obj(
+          "editPageLabels"-> Json.obj (
           "title"-> "Enter address welsh",
           "heading"-> "Enter address welsh",
           "organisationLabel"-> "Organisation (optional) welsh",
@@ -164,5 +173,5 @@ class AddressLookupConfig @Inject()(appConfig: FrontendAppConfig, messagesApi: M
         )
       )
     )
-  }
+    )
 }

@@ -23,12 +23,15 @@ import connectors.AddressLookupConnector
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import models.incomeSourceDetails.BusinessAddressModel
-import models.incomeSourceDetails.viewmodels.httpparser.GetAddressLookupDetailsHttpParser.GetAddressLookupDetailsResponse
-import models.incomeSourceDetails.viewmodels.httpparser.PostAddressLookupHttpParser.PostAddressLookupResponse
+import models.incomeSourceDetails.viewmodels.httpparser.GetAddressLookupDetailsHttpParser.{GetAddressLookupDetailsResponse, getAddressLookupDetailsHttpReads}
+import models.incomeSourceDetails.viewmodels.httpparser.PostAddressLookupHttpParser
+import models.incomeSourceDetails.viewmodels.httpparser.PostAddressLookupHttpParser.{PostAddressLookupResponse, PostAddressLookupSuccessResponse}
+import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.IncomeSourceDetailsService
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
+import uk.gov.hmrc.http.InternalServerException
 import views.html.AddBusinessAddress
 
 import javax.inject.Inject
@@ -59,6 +62,10 @@ class AddBusinessAddressController @Inject()(authenticate: AuthenticationPredica
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
       handleRequest(isAgent = false)
+      /*val ref = addressLookupConnector.getAddressDetails(user.mtditid)
+      Thread.sleep(100)
+      Logger("application").info("BEEP" + ref.toString)
+      Future{Ok}*/
   }
 
   def showAgent(): Action[AnyContent] =
@@ -72,11 +79,25 @@ class AddBusinessAddressController @Inject()(authenticate: AuthenticationPredica
     }
 
   def handleRequest(isAgent: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
+    //val ref = addressLookupConnector.getAddressDetails(user.mtditid)
+    //Thread.sleep(100)
+    //Logger("application").info("BEEP" + ref.toString)
     if (isDisabled(IncomeSources)) {
       Future.successful(Redirect(controllers.routes.HomeController.show()))
     } else {
-      Future {
-        val ref: Future[PostAddressLookupResponse] = addressLookupConnector.initialiseAddressLookup(isAgent)
+        addressLookupConnector.initialiseAddressLookup(
+          isAgent = false
+        )  map {
+          case Right(PostAddressLookupSuccessResponse(Some(location))) =>
+            Redirect(location)
+          case Right(PostAddressLookupSuccessResponse(None)) =>
+            throw new InternalServerException(s"[AddBusinessAddressController][handleRequest] - Unexpected response, success, but no location returned")
+          case Left(PostAddressLookupHttpParser.UnexpectedStatusFailure(status)) =>
+            throw new InternalServerException(s"[AddBusinessAddressController][handleRequest] - Unexpected response, status: $status")
+        }
+
+
+        /*val ref: Future[PostAddressLookupResponse] = addressLookupConnector.initialiseAddressLookup(isAgent)
         val model: Future[GetAddressLookupDetailsResponse] = addressLookupConnector.getAddressDetails(user.mtditid)
         Thread.sleep(100)
         Redirect(ref.value.get.get)
@@ -95,9 +116,9 @@ class AddBusinessAddressController @Inject()(authenticate: AuthenticationPredica
             }
           }
           case None => BadRequest /// <- Future not completed
-        }
-      }
+        }*/
     }
+
   }
 
   def submit(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
