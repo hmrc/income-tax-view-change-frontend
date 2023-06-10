@@ -14,47 +14,37 @@
  * limitations under the License.
  *@
 
-@import _root_.implicits.ImplicitDateFormatterImpl
 @import views.html.layouts.unifiedLayout
 @import views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components._
-@import uk.gov.hmrc.govukfrontend.views.html.components.FormWithCSRF
-@import views.html.helpers.injected.ErrorSummary
-
-@import views.html.layouts.unifiedLayout
-@import views.html.helpers.injected.ContinueButton
-@import uk.gov.hmrc.govukfrontend.views.html.components.FormWithCSRF
-@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
-@import views.html.components._
-@import exceptions.MissingSessionKey
-@import java.time.LocalDate
-@import _root_.implicits.ImplicitDateFormatterImpl
-@import uk.gov.hmrc.govukfrontend.views.html.components._
-@import uk.gov.hmrc.hmrcfrontend.views.viewmodels.pageheading.PageHeading
-
 
 @this(
         mainTemplate: unifiedLayout,
         h1: h1_large,
-        p: p,
-        formWithCSRF:FormWithCSRF,
-        continueButton: ContinueButton,
+        formWithCSRF: FormWithCSRF,
         govukSummaryList: GovukSummaryList,
         link: link,
-        caption: caption
+        caption: caption,
+        govukButton: GovukButton
 )
 
 @(
         isAgent: Boolean,
         backUrl: String,
-        postAction: Call,
-        endDate: String
+        changeUrl: String,
+        endDate: String,
+        formattedEndDate: String
 )(implicit request: auth.MtdItUser[_], messages: Messages)
 
 @prefix = @{ "add-business-start-date-check" }
 
 @getMessage(key: String, args: String*) = @{
     messages(s"$prefix.$key", args: _*)
+}
+
+@postCall = @{
+    if(isAgent) controllers.incomeSources.cease.routes.CheckCeaseForeignPropertyDetailsController.submitAgent(endDate)
+    else controllers.incomeSources.cease.routes.CheckCeaseForeignPropertyDetailsController.submit(endDate)
 }
 
 @mainTemplate(
@@ -69,13 +59,22 @@
 
     @govukSummaryList(
         SummaryList(Seq(SummaryListRow(
-            key = Key(Text(messages("incomeSources.ceaseUKProperty.checkDetails.content"))),
-            value = Value(Text(endDate)),
-            actions = Some(Actions(items = Seq(ActionItem(
-                href = "",
-                content = HtmlContent(link(link = "", messageKey = "Change"))
+            key = Key(Text(messages("Date business stopped"))),
+            value = Value(Text(formattedEndDate)),
+            actions = Some(Actions(
+                items = Seq(ActionItem(
+                    content = HtmlContent(link(
+                        link = changeUrl,
+                        messageKey = "Change"
+                    ))
             ))))
         )))
     )
-    @continueButton()
+
+    @formWithCSRF(postCall) {
+        @govukButton(Button(
+            content = Text(messages("Confirm and continue")),
+            attributes = Map("id" -> "confirm-and-continue-button")
+        ))
+    }
 }

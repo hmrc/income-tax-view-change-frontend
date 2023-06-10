@@ -20,7 +20,7 @@ import auth.MtdItUser
 import connectors.IncomeTaxViewChangeConnector
 import exceptions.MissingSessionKey
 import forms.utils.SessionKeys.ceaseUKPropertyEndDate
-import models.updateIncomeSource.UpdateIncomeSourceResponse
+import models.updateIncomeSource.{UpdateIncomeSourceResponse, UpdateIncomeSourceResponseModel}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import java.time.LocalDate
@@ -44,4 +44,18 @@ class UpdateIncomeSourceService @Inject()(connector: IncomeTaxViewChangeConnecto
 
   }
 
+  def updateCessationDatev2(nino: String, incomeSourceId: String, cessationDate: String)
+                           (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[UpdateIncomeSourceError.type, UpdateIncomeSourceSuccess.type]]= {
+    connector.updateCessationDate(
+      nino = nino,
+      incomeSourceId = incomeSourceId,
+      cessationDate = Some(LocalDate.parse(cessationDate))
+    ) map {
+      case _: UpdateIncomeSourceResponseModel => Right(UpdateIncomeSourceSuccess)
+      case _ => Left(UpdateIncomeSourceError)
+    }
+  }
 }
+
+case object UpdateIncomeSourceError
+case object UpdateIncomeSourceSuccess

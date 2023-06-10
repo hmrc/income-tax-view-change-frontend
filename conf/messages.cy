@@ -12,6 +12,7 @@ base.error-prefix                                               = Gwall:
 base.backToHome                                                 = Yn ôl i hafan Treth Incwm
 base.continue                                                   = Yn eich blaen
 base.govUk                                                      = GOV.UK
+base.confirm-and-continue                                       = Cadarnhau ac yn eich blaen
 
 # Fallback Back Links
 back.whatYouOwe = Yn ôl i Yr hyn sydd arnoch

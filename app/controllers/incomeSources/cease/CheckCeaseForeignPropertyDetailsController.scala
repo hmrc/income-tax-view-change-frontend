@@ -24,10 +24,11 @@ import controllers.predicates._
 import exceptions.MissingSessionKey
 import forms.utils.SessionKeys.ceaseForeignPropertyEndDate
 import implicits.ImplicitDateFormatter
+import models.updateIncomeSource.{UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents, Request, Result}
-import services.IncomeSourceDetailsService
+import services.{IncomeSourceDetailsService, UpdateIncomeSourceService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.language.LanguageUtils
 import views.html.errorPages.CustomNotFoundError
@@ -43,6 +44,7 @@ class CheckCeaseForeignPropertyDetailsController @Inject()(val authenticate: Aut
                                                            val retrieveBtaNavBar: NavBarPredicate,
                                                            val retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                                            val retrieveNino: NinoPredicate,
+                                                           val updateIncomeSourceservice: UpdateIncomeSourceService,
                                                            val checkCeaseForeignPropertyDetails: CheckCeaseForeignPropertyDetails,
                                                            val customNotFoundErrorView: CustomNotFoundError)
                                                           (implicit val appConfig: FrontendAppConfig,
@@ -56,30 +58,14 @@ class CheckCeaseForeignPropertyDetailsController @Inject()(val authenticate: Aut
   lazy val backUrl: String = routes.ForeignPropertyEndDateController.show().url
   lazy val backUrlAgent: String = routes.ForeignPropertyEndDateController.showAgent().url
 
+  lazy val changeUrl: String = routes.ForeignPropertyEndDateController.show().url
+  lazy val changeUrlAgent: String = routes.ForeignPropertyEndDateController.showAgent().url
+
   lazy val homePageCall: Call = controllers.routes.HomeController.show()
   lazy val homePageCallAgent: Call = controllers.routes.HomeController.showAgent
 
-  lazy val postAction: Call = controllers.incomeSources.cease.routes.CheckCeaseForeignPropertyDetailsController.submit()
-  lazy val postActionAgent: Call = controllers.incomeSources.cease.routes.CheckCeaseForeignPropertyDetailsController.submitAgent()
-
-  def handleRequest(isAgent: Boolean, backUrl: String, postAction: Call, homePageCall: Call, itvcErrorHandler: ShowInternalServerError)
-                   (implicit user: MtdItUser[_], request: Request[_]): Future[Result] = {
-
-    if (isDisabled(IncomeSources)) {
-      Future.successful(Redirect(homePageCall))
-    } else {
-      request.session.get(ceaseForeignPropertyEndDate) match {
-        case Some(date) =>
-          Future(Ok(checkCeaseForeignPropertyDetails(
-            isAgent = isAgent,
-            backUrl = backUrl,
-            postAction = postAction,
-            endDate = longDate(date.toLocalDate).toLongDate
-          )))
-        case _ => throw MissingSessionKey(ceaseForeignPropertyEndDate)
-      }
-    }
-  }
+  lazy val successCall: Call = controllers.incomeSources.cease.routes.CeaseForeignPropertySuccessController.show()
+  lazy val successCallAgent: Call = controllers.incomeSources.cease.routes.CeaseForeignPropertySuccessController.showAgent()
 
   def show(): Action[AnyContent] =
     (checkSessionTimeout andThen authenticate andThen retrieveNino
@@ -88,7 +74,7 @@ class CheckCeaseForeignPropertyDetailsController @Inject()(val authenticate: Aut
         handleRequest(
           isAgent = false,
           backUrl = backUrl,
-          postAction = postAction,
+          changeUrl = changeUrl,
           homePageCall = homePageCall,
           itvcErrorHandler = itvcErrorHandler
         )
@@ -102,25 +88,84 @@ class CheckCeaseForeignPropertyDetailsController @Inject()(val authenticate: Aut
             handleRequest(
               isAgent = true,
               backUrl = backUrlAgent,
-              postAction = postActionAgent,
+              changeUrl = changeUrlAgent,
               homePageCall = homePageCallAgent,
               itvcErrorHandler = itvcErrorHandlerAgent
             )
         }
   }
 
-  def submit(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+  def submit(cessationDate: String): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit request =>
-      Future(Ok)
+      handleSubmitRequest(
+        successCall = successCall,
+        homePageCall = homePageCall,
+        cessationDate = cessationDate,
+        itvcErrorHandler = itvcErrorHandler
+      )
   }
 
-  def submitAgent(): Action[AnyContent] = Authenticated.async {
+  def submitAgent(cessationDate: String): Action[AnyContent] = Authenticated.async {
     implicit request =>
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
           implicit mtdItUser =>
-            Future(Ok)
+            handleSubmitRequest(
+              cessationDate = cessationDate,
+              successCall = successCallAgent,
+              homePageCall = homePageCallAgent,
+              itvcErrorHandler = itvcErrorHandlerAgent
+            )
         }
+  }
+
+
+  def handleRequest(isAgent: Boolean,
+                    backUrl: String,
+                    changeUrl: String,
+                    homePageCall: Call,
+                    itvcErrorHandler: ShowInternalServerError)
+                   (implicit user: MtdItUser[_], request: Request[_]): Future[Result] = {
+
+    if (isDisabled(IncomeSources)) {
+      Future.successful(Redirect(homePageCall))
+    } else {
+      request.session.get(ceaseForeignPropertyEndDate) match {
+        case Some(date) =>
+          Future(Ok(checkCeaseForeignPropertyDetails(
+            isAgent = isAgent,
+            backUrl = backUrl,
+            changeUrl = changeUrl,
+            endDate = date,
+            formattedEndDate = longDate(date.toLocalDate).toLongDate
+          )))
+        case _ => throw MissingSessionKey(ceaseForeignPropertyEndDate)
+      }
+    }
+  }
+
+  def handleSubmitRequest(homePageCall: Call,
+                          successCall: Call,
+                          cessationDate: String,
+                          itvcErrorHandler: ShowInternalServerError)
+                         (implicit user: MtdItUser[_]): Future[Result] = {
+    if (isDisabled(IncomeSources)) {
+      Future.successful(Redirect(homePageCall))
+    } else {
+
+      val incomeSourceId = user.incomeSources.properties
+        .find(_.isForeignProperty)
+        .flatMap(_.incomeSourceId)
+        .get
+
+      updateIncomeSourceservice.updateCessationDatev2(user.nino, incomeSourceId, cessationDate).flatMap {
+        case Right(_) => Future.successful(Redirect(successCall))
+        case _ =>
+          Logger("application").error(s"[CheckCeaseForeignPropertyDetailsController][handleSubmitRequest]:" +
+            s" Unsuccessful update response received")
+          Future(itvcErrorHandler.showInternalServerError)
+      }
+    }
   }
 }
