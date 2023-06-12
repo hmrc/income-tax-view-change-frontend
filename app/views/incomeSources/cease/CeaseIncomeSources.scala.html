@@ -19,6 +19,7 @@
 @import views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import models.incomeSourceDetails.viewmodels.CeaseIncomeSourcesViewModel
+@import java.time.format.DateTimeFormatter
 
 @this(
         mainTemplate: unifiedLayout,
@@ -43,9 +44,9 @@
     messages(s"cease-income-sources.$key", args: _*)
 }
 
-@ceaseSoleTraderBusinessURL = @{
-    if(isAgent) controllers.incomeSources.cease.routes.CeaseBusinessNameController.showAgent().url
-    else controllers.incomeSources.cease.routes.CeaseBusinessNameController.show().url
+@ceaseSoleTraderBusinessURL(incomeSourceId: String) = @{
+    if(isAgent) controllers.incomeSources.cease.routes.BusinessEndDateController.showAgent(incomeSourceId).url
+    else controllers.incomeSources.cease.routes.BusinessEndDateController.show(incomeSourceId).url
 }
 
 @ceaseUkPropertyURL = @{
@@ -85,7 +86,7 @@
                     <td class="govuk-table__cell" id="@{s"table-row-trading-name-$index"}">@item.tradingName</td>
                     <td class="govuk-table__cell" id="@{s"table-row-trading-start-date-$index"}">@item.tradingStartDate.toLongDate</td>
                     <td class="govuk-table__cell govuk-!-text-align-right">
-                        <a class="govuk-link" id="@{s"cease-link-business-$index"}" href=@ceaseSoleTraderBusinessURL>
+                        <a class="govuk-link" id="@{s"cease-link-business-$index"}" href=@ceaseSoleTraderBusinessURL(item.incomeSourceId)>
                             @getMessage("cease")
                         </a>
                     </td>
@@ -94,6 +95,8 @@
             </tbody>
         </table>
     }
+
+    <br>
 
     @if(sources.ukProperty.nonEmpty) {
 
@@ -123,6 +126,8 @@
         </table>
     }
 
+    <br>
+
     @if(sources.foreignProperty.nonEmpty) {
 
         @h2(msg = getMessage("foreign-property.h1"),
@@ -150,6 +155,8 @@
             </tbody>
         </table>
     }
+
+    <br>
 
     @if(sources.ceasedBusinesses.nonEmpty) {
         @h2(msg = getMessage("ceased-businesses.h1"),

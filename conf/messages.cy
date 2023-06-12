@@ -1318,3 +1318,9 @@ add-business-start-date-check.heading                = A yw’r dyddiad hwn yn g
 add-business-start-date-check.radio.yes              = Iawn
 add-business-start-date-check.radio.no               = Na
 add-business-start-date-check.radio.error            = Dewiswch ’Iawn’ os yw dyddiad dechrau’ch busnes yn gywir
+
+incomeSources.cease.BusinessEndDate.heading                               = Y dyddiad gwnaeth eich busnes hunangyflogedig stopio
+incomeSources.cease.BusinessEndDate.error.invalid                         = Mae'n rhaid i’r dyddiad y gwnaeth eich busnes hunangyflogedig roi’r gorau i fasnachu fod yn ddyddiad go iawn
+incomeSources.cease.BusinessEndDate.error.future                          = Ni allwch nodi dyddiad dod i ben sydd y tu hwnt i’r diwrnod presennol na dyddiad yn y dyfodol
+incomeSources.cease.BusinessEndDate.error.beforeStartDate                 = Ni all y dyddiad dod i ben ar gyfer y busnes fod cyn y dyddiad dechrau
+incomeSources.cease.BusinessEndDate.error.beforeEarliestDate              = Ni all y dyddiad dod i ben fod cyn 6 Ebrill 2015
