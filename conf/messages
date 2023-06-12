@@ -1227,6 +1227,7 @@ dateForm.error.dayAndMonth.required                                 = The date m
 dateForm.error.dayAndYear.required                                  = The date must include a day and a year
 dateForm.error.monthAndYear.required                                = The date must include a month and a year
 dateForm.error.dayMonthAndYear.required                             = The date must include a day, a month and a year
+dateForm.check.heading                                              = Is this date correct?
 
 #Generic radio form messages
 radioForm.checkDate.heading                                         = Is this date correct?
@@ -1281,16 +1282,6 @@ incomeSources.add.foreignProperty.startDate.check.heading            = Is this d
 incomeSources.add.foreignProperty.startDate.check.error              = Select yes if your foreign property business start date is correct
 incomeSources.add.foreignProperty.startDate.check.radio.yes          = Yes
 incomeSources.add.foreignProperty.startDate.check.radio.no           = No
-
-#Generic date form messages
-dateForm.hint                                                       = For example, 27 3 2020
-dateForm.error.day.required                                         = The date must include a day
-dateForm.error.month.required                                       = The date must include a month
-dateForm.error.year.required                                        = The date must include a year
-dateForm.error.dayAndMonth.required                                 = The date must include a day and a month
-dateForm.error.dayAndYear.required                                  = The date must include a day and a year
-dateForm.error.monthAndYear.required                                = The date must include a month and a year
-dateForm.check.heading                                              = Is this date correct?
 
 incomeSources.ceaseUKProperty.checkDetails.heading               = Check your details
 incomeSources.ceaseUKProperty.checkDetails.paragraph             = UK property business you entered

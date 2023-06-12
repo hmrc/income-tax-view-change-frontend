@@ -1229,6 +1229,7 @@ dateForm.error.dayAndMonth.required                                 = Mae’n rh
 dateForm.error.dayAndYear.required                                  = Mae’n rhaid i’r dyddiad gynnwys diwrnod a blwyddyn
 dateForm.error.monthAndYear.required                                = Mae’n rhaid i’r dyddiad gynnwys mis a blwyddyn
 dateForm.check.heading                                              = A yw’r dyddiad hwn yn gywir?
+dateForm.error.dayMonthAndYear.required                             = Mae’n rhaid i’r dyddiad gynnwys diwrnod, mis a blwyddyn
 
 #Generic radio form messages
 radioForm.checkDate.heading                                         = A yw’r dyddiad hwn yn gywir?
@@ -1283,16 +1284,6 @@ incomeSources.add.foreignProperty.startDate.check.heading            = A yw’r 
 incomeSources.add.foreignProperty.startDate.check.error              = Dewiswch ‘Iawn’ os yw dyddiad dechrau’r busnes eiddo tramor yn gywir
 incomeSources.add.foreignProperty.startDate.check.radio.yes          = Iawn
 incomeSources.add.foreignProperty.startDate.check.radio.no           = Na
-
-#Generic date form messages
-dateForm.hint                                                       = Er enghraifft, 27 3 2020
-dateForm.error.day.required                                         = Mae’n rhaid i’r dyddiad gynnwys diwrnod
-dateForm.error.month.required                                       = Mae’n rhaid i’r dyddiad gynnwys mis
-dateForm.error.year.required                                        = Mae’n rhaid i’r dyddiad gynnwys blwyddyn
-dateForm.error.dayAndMonth.required                                 = Mae’n rhaid i’r dyddiad gynnwys diwrnod a mis
-dateForm.error.dayAndYear.required                                  = Mae’n rhaid i’r dyddiad gynnwys diwrnod a blwyddyn
-dateForm.error.monthAndYear.required                                = Mae’n rhaid i’r dyddiad gynnwys mis a blwyddyn
-dateForm.check.heading                                              = A yw’r dyddiad hwn yn gywir?
 
 incomeSources.ceaseUKProperty.checkDetails.heading               = Gwirio’ch manylion
 incomeSources.ceaseUKProperty.checkDetails.paragraph             = Y busnes eiddo yn y DU a nodwyd gennych

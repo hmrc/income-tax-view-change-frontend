@@ -33,7 +33,7 @@ class BusinessEndDateControllerISpec extends ComponentSpecBase {
   s"calling GET $dateBusinessShowUrl" should {
     "render the Date Business Ceased Page" when {
       "User is authorised" in {
-        Given("I wiremock stub a successful Income Source Details response with UK property")
+        Given("I wiremock stub a successful Income Source Details response with a business")
         enable(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
