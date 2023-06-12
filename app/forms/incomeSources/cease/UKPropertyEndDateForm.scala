@@ -45,7 +45,7 @@ class UKPropertyEndDateForm @Inject()(val dateService: DateServiceInterface) ext
         "day" -> default(text(), ""),
         "month" -> default(text(), ""),
         "year" -> default(text(), ""))
-        .verifying(firstError(nonEmptyDate(dateMustBeEntered),
+        .verifying(firstError(nonEmptyDateFields(dateMustBeEntered),
           validDate(dateMustBeReal))
         ).transform[LocalDate](
         { case (day, month, year) => LocalDate.of(year.toInt, month.toInt, day.toInt) },

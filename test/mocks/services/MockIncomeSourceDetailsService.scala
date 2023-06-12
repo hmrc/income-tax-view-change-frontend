@@ -60,6 +60,8 @@ trait MockIncomeSourceDetailsService extends BeforeAndAfterEach {
 
   def mockSingleBISWithCurrentYearAsMigrationYear(): Unit = setupMockGetIncomeSourceDetails()(singleBusinessIncomeWithCurrentYear)
 
+  def mockBusinessIncomeSource(): Unit = setupMockGetIncomeSourceDetails()(businessIncome)
+
   def mockPropertyIncomeSource(): Unit = setupMockGetIncomeSourceDetails()(propertyIncomeOnly)
 
   def mockUKPropertyIncomeSource(): Unit = setupMockGetIncomeSourceDetails()(ukPropertyIncome)

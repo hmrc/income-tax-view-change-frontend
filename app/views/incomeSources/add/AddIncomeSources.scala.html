@@ -21,27 +21,27 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import models.incomeSourceDetails.viewmodels.AddIncomeSourcesViewModel
 
-@this(
-    mainTemplate: unifiedLayout,
+@this(mainTemplate: unifiedLayout,
     implicitDateFormatter: ImplicitDateFormatterImpl,
     h1: h1,
     h2: h2,
     p: p,
     link: link,
     hr: hr,
-    govukTable: GovukTable
-)
+    govukTable: GovukTable)
 
-@(
-    sources: AddIncomeSourcesViewModel,
+@(sources: AddIncomeSourcesViewModel,
     isAgent: Boolean,
-    backUrl: String
-)(implicit messages: Messages, user: auth.MtdItUser[_])
+    backUrl: String)(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @import implicitDateFormatter.longDate
 
 @getMessage(key: String, args: String*) = @{
-    messages(s"new-income-sources.$key", args: _*)
+    messages(s"incomeSources.add.addIncomeSources.$key", args: _*)
+}
+
+@messageForEmptyField = @{
+    messages("incomeSources.add.addIncomeSources.unknown")
 }
 
 @ukProperty = @{ sources.ukProperty }
@@ -60,8 +60,8 @@
 }
 
 @addForeignPropertyBusinessStartDateURL = @{
-    if(isAgent) controllers.routes.AddForeignPropertyBusinessStartDate.showAgent().url
-    else controllers.routes.AddForeignPropertyBusinessStartDate.show().url
+    if(isAgent) controllers.incomeSources.add.routes.ForeignPropertyStartDateController.showAgent().url
+    else controllers.incomeSources.add.routes.ForeignPropertyStartDateController.show().url
 }
 
 @mainTemplate(pageTitle = getMessage("heading"),
@@ -70,12 +70,12 @@
     btaNavPartial = user.btaNavPartial) {
 
     @h1(msg = getMessage("heading"),
-        id = Some("new-income-sources-h1"))
+        id = Some("incomeSources.add.addIncomeSources-h1"))
 
     @p(id = Some("self-employment-p1")) {
-        @getMessage("self-employment.p1") }
+        @getMessage("selfEmployment.text") }
 
-    @h2(msg = getMessage("self-employment.h2"),
+    @h2(msg = getMessage("selfEmployment.heading"),
         optId = Some("self-employment-h2"))
 
     @if(soleTraderBusinesses.nonEmpty) {
@@ -83,19 +83,19 @@
         @govukTable(Table(
             head = Some(List(
                 HeadCell(
-                    content = Text(getMessage("table-head.business-name")),
+                    content = Text(getMessage("tableHead.businessName")),
                     attributes = Map("id" -> "table-head-business-name")),
                 HeadCell(
-                    content = Text(getMessage("table-head.date-started")),
+                    content = Text(getMessage("tableHead.dateStarted")),
                     attributes = Map("id" -> "table-head-date-started"))
             )),
             rows = soleTraderBusinesses.zipWithIndex.map { case (business, index) => Seq(
                 TableRow(
-                    content = Text(business.tradingName),
+                    content = Text(business.tradingName.getOrElse(messageForEmptyField)),
                     attributes = Map("id" -> s"table-row-trading-name-$index")),
 
                 TableRow(
-                    content = Text(business.tradingStartDate.toLongDate),
+                    content = Text(business.tradingStartDate.map(_.toLongDate).getOrElse(messageForEmptyField)),
                     attributes = Map("id" -> s"table-row-trading-start-date-$index"))
             )},
             attributes = Map("id" -> "sole-trader-businesses-table")
@@ -105,28 +105,28 @@
     }
 
     @link(link = addBusinessNameURL,
-        messageKey = getMessage("self-employment.link"),
+        messageKey = getMessage("selfEmployment.link"),
         id = Some("self-employment-link"))
 
     @hr()
 
-    @h2(msg = getMessage("uk-property.h2"),
+    @h2(msg = getMessage("ukProperty.heading"),
         optId = Some("uk-property-h2"))
 
     @if(ukProperty.nonEmpty) {
 
         @p(id = Some("uk-property-p1")) {
-            @getMessage("uk-property.p1") }
+            @getMessage("ukProperty.text") }
 
         @govukTable(Table(
             head = Some(List(
                 HeadCell(
-                    content = Text(getMessage("table-head.date-started")),
+                    content = Text(getMessage("tableHead.dateStarted")),
                     attributes = Map("id" -> "table-head-date-started-uk"))
             )),
             rows = Seq(Seq(
                 TableRow(
-                    content = Text(ukProperty.map(_.tradingStartDate.toLongDate).get),
+                    content = Text(ukProperty.flatMap(_.tradingStartDate.map(_.toLongDate)).getOrElse(messageForEmptyField)),
                     attributes = Map("id" -> "table-row-trading-start-date-uk")
                 )
             )),
@@ -136,29 +136,29 @@
         @hr()
 
         @link(link = addUKPropertyStartDateURL,
-            messageKey = getMessage("uk-property.link"),
+            messageKey = getMessage("ukProperty.link"),
             id = Some("uk-property-link"))
 
         @hr()
     }
 
-    @h2(msg = getMessage("foreign-property.h2"),
+    @h2(msg = getMessage("foreignProperty.heading"),
         optId = Some("foreign-property-h2"))
 
     @if(foreignProperty.nonEmpty) {
 
         @p(id = Some("foreign-property-p1")) {
-            @getMessage("foreign-property.p1") }
+            @getMessage("foreignProperty.text") }
 
         @govukTable(Table(
             head = Some(List(
                 HeadCell(
-                    content = Text(getMessage("table-head.date-started")),
+                    content = Text(getMessage("tableHead.dateStarted")),
                     attributes = Map("id" -> "table-head-date-started-foreign"))
             )),
             rows = Seq(Seq(
                 TableRow(
-                    content = Text(foreignProperty.map(_.tradingStartDate.toLongDate).get),
+                    content = Text(foreignProperty.flatMap(_.tradingStartDate.map(_.toLongDate)).getOrElse(messageForEmptyField)),
                     attributes = Map("id" -> "table-row-trading-start-date-foreign"))
             )),
             attributes = Map("id" -> "foreign-property-table")
@@ -167,34 +167,34 @@
         @hr()
 
         @link(link = addForeignPropertyBusinessStartDateURL,
-            messageKey = getMessage("foreign-property.link"),
+            messageKey = getMessage("foreignProperty.link"),
             id = Some("foreign-property-link"))
 
         @hr()
     }
 
     @if(ceasedBusinesses.nonEmpty) {
-        @h2(msg = getMessage("ceased-businesses.h2"),
+        @h2(msg = getMessage("ceasedBusinesses.heading"),
             optId = Some("ceased-businesses-h2"))
 
         @govukTable(Table(
             head = Some(List(
                 HeadCell(
-                    content = Text(getMessage("table-head.business-name")),
+                    content = Text(getMessage("tableHead.businessName")),
                     attributes = Map("id" -> "table-head-business-start-name-ceased")),
                 HeadCell(
-                    content = Text(getMessage("table-head.date-started")),
+                    content = Text(getMessage("tableHead.dateStarted")),
                     attributes = Map("id" -> "table-head-date-started-ceased")),
                 HeadCell(
-                    content = Text(getMessage("table-head.date-ended")),
+                    content = Text(getMessage("tableHead.dateEnded")),
                     attributes = Map("id" -> "table-head-date-ended-ceased"))
             )),
             rows = ceasedBusinesses.zipWithIndex.map { case (business, index) => Seq(
                 TableRow(
-                    content = Text(business.tradingName),
+                    content = Text(business.tradingName.getOrElse(messageForEmptyField)),
                     attributes = Map("id" -> s"table-row-trading-name-ceased-$index")),
                 TableRow(
-                    content = Text(business.tradingStartDate.toLongDate),
+                    content = Text(business.tradingStartDate.map(_.toLongDate).getOrElse(messageForEmptyField)),
                     attributes = Map("id" -> s"table-row-trading-start-date-ceased-$index")),
                 TableRow(
                     content = Text(business.cessationDate.toLongDate),

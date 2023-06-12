@@ -42,9 +42,11 @@
     govukCheckboxes: GovukCheckboxes,
 )
 
-@(ceaseUKPropertyForm: Form[CeaseUKPropertyForm], postAction: Call, isAgent: Boolean = false, backUrl: String, origin: Option[String] = None)(implicit request: Request[_], messages: Messages)
+@(ceaseUKPropertyForm: Form[CeaseUKPropertyForm], postAction: Call, isAgent: Boolean = false, backUrl: String,
+    btaNavPartial: Option[Html] = None)(implicit request: Request[_], messages: Messages)
 
-@mainTemplate(pageTitle = messages("incomeSources.ceaseUKProperty.heading"), form = Some(ceaseUKPropertyForm), isAgent = isAgent, backUrl = Some(backUrl)) {
+@mainTemplate(pageTitle = messages("incomeSources.ceaseUKProperty.heading"), form = Some(ceaseUKPropertyForm),
+    isAgent = isAgent, backUrl = Some(backUrl), btaNavPartial = btaNavPartial) {
 
 
     @errorSummary(
