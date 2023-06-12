@@ -21,15 +21,12 @@ import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
-import exceptions.MissingSessionKey
 import forms.utils.SessionKeys.ceaseForeignPropertyEndDate
 import implicits.ImplicitDateFormatter
-import models.updateIncomeSource.{UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
 import play.api.Logger
-import play.api.i18n.{I18nSupport, Messages}
+import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents, Request, Result}
 import services.{IncomeSourceDetailsService, UpdateIncomeSourceService}
-import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.language.LanguageUtils
 import views.html.errorPages.CustomNotFoundError
 import views.html.incomeSources.cease.CheckCeaseForeignPropertyDetails
@@ -49,11 +46,14 @@ class CheckCeaseForeignPropertyDetailsController @Inject()(val authenticate: Aut
                                                            val customNotFoundErrorView: CustomNotFoundError)
                                                           (implicit val appConfig: FrontendAppConfig,
                                                            implicit val languageUtils: LanguageUtils,
-                                                      mcc: MessagesControllerComponents,
-                                                      val ec: ExecutionContext,
-                                                      val itvcErrorHandler: ItvcErrorHandler,
-                                                      val itvcErrorHandlerAgent: AgentItvcErrorHandler)
+                                                           mcc: MessagesControllerComponents,
+                                                           val ec: ExecutionContext,
+                                                           val itvcErrorHandler: ItvcErrorHandler,
+                                                           val itvcErrorHandlerAgent: AgentItvcErrorHandler)
   extends ClientConfirmedController with FeatureSwitching with I18nSupport with ImplicitDateFormatter {
+
+  lazy val homePageCall: Call = controllers.routes.HomeController.show()
+  lazy val homePageCallAgent: Call = controllers.routes.HomeController.showAgent
 
   lazy val backUrl: String = routes.ForeignPropertyEndDateController.show().url
   lazy val backUrlAgent: String = routes.ForeignPropertyEndDateController.showAgent().url
@@ -61,23 +61,19 @@ class CheckCeaseForeignPropertyDetailsController @Inject()(val authenticate: Aut
   lazy val changeUrl: String = routes.ForeignPropertyEndDateController.show().url
   lazy val changeUrlAgent: String = routes.ForeignPropertyEndDateController.showAgent().url
 
-  lazy val homePageCall: Call = controllers.routes.HomeController.show()
-  lazy val homePageCallAgent: Call = controllers.routes.HomeController.showAgent
-
   lazy val successCall: Call = controllers.incomeSources.cease.routes.CeaseForeignPropertySuccessController.show()
   lazy val successCallAgent: Call = controllers.incomeSources.cease.routes.CeaseForeignPropertySuccessController.showAgent()
 
-  def show(): Action[AnyContent] =
-    (checkSessionTimeout andThen authenticate andThen retrieveNino
-      andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
-      implicit user =>
-        handleRequest(
-          isAgent = false,
-          backUrl = backUrl,
-          changeUrl = changeUrl,
-          homePageCall = homePageCall,
-          itvcErrorHandler = itvcErrorHandler
-        )
+  def show(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+    andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
+    implicit user =>
+      handleRequest(
+        isAgent = false,
+        backUrl = backUrl,
+        changeUrl = changeUrl,
+        homePageCall = homePageCall,
+        itvcErrorHandler = itvcErrorHandler
+      )
     }
 
   def showAgent(): Action[AnyContent] = Authenticated.async {
@@ -120,7 +116,6 @@ class CheckCeaseForeignPropertyDetailsController @Inject()(val authenticate: Aut
         }
   }
 
-
   def handleRequest(isAgent: Boolean,
                     backUrl: String,
                     changeUrl: String,
@@ -134,13 +129,16 @@ class CheckCeaseForeignPropertyDetailsController @Inject()(val authenticate: Aut
       request.session.get(ceaseForeignPropertyEndDate) match {
         case Some(date) =>
           Future(Ok(checkCeaseForeignPropertyDetails(
-            isAgent = isAgent,
-            backUrl = backUrl,
-            changeUrl = changeUrl,
             endDate = date,
+            backUrl = backUrl,
+            isAgent = isAgent,
+            changeUrl = changeUrl,
             formattedEndDate = longDate(date.toLocalDate).toLongDate
           )))
-        case _ => throw MissingSessionKey(ceaseForeignPropertyEndDate)
+        case _ =>
+          Logger("application").error(s"[CheckCeaseForeignPropertyDetailsController][handleSubmitRequest]:" +
+            s" Could not get ceaseForeignPropertyEndDate from session")
+          Future(itvcErrorHandler.showInternalServerError())
       }
     }
   }
@@ -154,16 +152,24 @@ class CheckCeaseForeignPropertyDetailsController @Inject()(val authenticate: Aut
       Future.successful(Redirect(homePageCall))
     } else {
 
-      val incomeSourceId = user.incomeSources.properties
+      val maybeIncomeSourceId = user.incomeSources.properties
         .find(_.isForeignProperty)
         .flatMap(_.incomeSourceId)
-        .get
 
-      updateIncomeSourceservice.updateCessationDatev2(user.nino, incomeSourceId, cessationDate).flatMap {
-        case Right(_) => Future.successful(Redirect(successCall))
+      maybeIncomeSourceId match {
+        case Some(id) =>
+          updateIncomeSourceservice
+            .updateCessationDatev2(user.nino, id, cessationDate).flatMap {
+              case Right(_) =>
+                Future.successful(Redirect(successCall))
+              case _ =>
+                Logger("application").error(s"[CheckCeaseForeignPropertyDetailsController][handleSubmitRequest]:" +
+                  s" Unsuccessful update response received")
+                Future(itvcErrorHandler.showInternalServerError)
+          }
         case _ =>
           Logger("application").error(s"[CheckCeaseForeignPropertyDetailsController][handleSubmitRequest]:" +
-            s" Unsuccessful update response received")
+          s" Failed to retrieve incomeSourceId for foreign property")
           Future(itvcErrorHandler.showInternalServerError)
       }
     }
