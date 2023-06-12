@@ -1261,8 +1261,8 @@ incomeSources.cease.ForeignPropertyEndDate.error.incompleteYear         = The da
 incomeSources.cease.ForeignPropertyEndDate.error.incompleteDayMonth     = The date must include a day and a month
 incomeSources.cease.ForeignPropertyEndDate.error.incompleteDayYear      = The date must include a day and a year
 incomeSources.cease.ForeignPropertyEndDate.error.incompleteMonthYear    = The date must include a month and a year
-incomeSources.cease.ForeignPropertyEndDate.error.invalid                = The date your Foreign property business stopped must be a real date
-incomeSources.cease.ForeignPropertyEndDate.error.future                 = You cannot provide a cessation date that is beyond the current day or a date in the future.
+incomeSources.cease.ForeignPropertyEndDate.error.invalid                = The date your foreign property business stopped must be a real date
+incomeSources.cease.ForeignPropertyEndDate.error.future                 = You cannot provide a cessation date that is beyond the current day or a date in the future
 incomeSources.cease.ForeignPropertyEndDate.error.beforeStartDate        = The cessation date cannot be earlier than the start date for the business
 
 incomeSources.add.foreignProperty.startDate.heading                  = When did your foreign property business start?
