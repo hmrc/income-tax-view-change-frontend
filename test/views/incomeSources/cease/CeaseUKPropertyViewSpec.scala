@@ -36,15 +36,13 @@ class CeaseUKPropertyViewSpec extends TestSupport {
         ceaseUKPropertyForm = CeaseUKPropertyForm.form,
         postAction = controllers.incomeSources.cease.routes.CeaseUKPropertyController.submitAgent,
         isAgent = true,
-        backUrl = controllers.incomeSources.cease.routes.CeaseIncomeSourceController.showAgent().url,
-        btaNavPartial = testNavHtml)(FakeRequest(), implicitly)
+        backUrl = controllers.incomeSources.cease.routes.CeaseIncomeSourceController.showAgent().url)(agentUserConfirmedClient(), implicitly)
     } else {
       ceaseUKPropertyView(
         ceaseUKPropertyForm = CeaseUKPropertyForm.form,
         postAction = controllers.incomeSources.cease.routes.CeaseUKPropertyController.submit,
         isAgent = false,
-        backUrl = controllers.incomeSources.cease.routes.CeaseIncomeSourceController.show().url,
-        btaNavPartial = testNavHtml)(FakeRequest(), implicitly)
+        backUrl = controllers.incomeSources.cease.routes.CeaseIncomeSourceController.show().url)(individualUser, implicitly)
     }
 
     lazy val viewWithInputErrors: HtmlFormat.Appendable = if (isAgent) {
@@ -53,16 +51,14 @@ class CeaseUKPropertyViewSpec extends TestSupport {
           .withError(CeaseUKPropertyForm.declarationUnselectedError, messages("incomeSources.ceaseUKProperty.radioError")),
         postAction = controllers.incomeSources.cease.routes.CeaseUKPropertyController.submitAgent,
         isAgent = true,
-        backUrl = controllers.incomeSources.cease.routes.CeaseIncomeSourceController.showAgent().url,
-        btaNavPartial = testNavHtml)(FakeRequest(), implicitly)
+        backUrl = controllers.incomeSources.cease.routes.CeaseIncomeSourceController.showAgent().url)(agentUserConfirmedClient(), implicitly)
     } else {
       ceaseUKPropertyView(
         ceaseUKPropertyForm = CeaseUKPropertyForm.form
           .withError(CeaseUKPropertyForm.declarationUnselectedError, messages("incomeSources.ceaseUKProperty.radioError")),
         postAction = controllers.incomeSources.cease.routes.CeaseUKPropertyController.submit,
         isAgent = false,
-        backUrl = controllers.incomeSources.cease.routes.CeaseIncomeSourceController.show().url,
-        btaNavPartial = testNavHtml)(FakeRequest(), implicitly)
+        backUrl = controllers.incomeSources.cease.routes.CeaseIncomeSourceController.show().url)(individualUser, implicitly)
     }
 
     lazy val document: Document = if (error) Jsoup.parse(contentAsString(viewWithInputErrors)) else Jsoup.parse(contentAsString(view))

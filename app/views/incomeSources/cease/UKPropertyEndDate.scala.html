@@ -26,7 +26,7 @@
 
 @this(mainTemplate: unifiedLayout, dateInput: dateInput, continueButton: ContinueButton, formWithCSRF: FormWithCSRF, errorSummary: ErrorSummary, p: p)
 
-@(UKPropertyEndDateForm: Form[_], postAction: Call, isAgent: Boolean = false, backUrl: String, btaNavPartial: Option[Html] = None)(implicit request: Request[_], messages: Messages)
+@(UKPropertyEndDateForm: Form[_], postAction: Call, isAgent: Boolean = false, backUrl: String)(implicit user: auth.MtdItUser[_], messages: Messages)
 
 @getHintContent = {
   @p(classes = "govuk-hint") {
@@ -35,7 +35,7 @@
 }
 
 @mainTemplate(pageTitle = messages("incomeSources.cease.UKPropertyEndDate.heading"), isAgent = isAgent,
-    backUrl = Some(backUrl), btaNavPartial = btaNavPartial) {
+    backUrl = Some(backUrl), btaNavPartial = user.btaNavPartial) {
 
     @errorSummary(
       form = UKPropertyEndDateForm
@@ -50,7 +50,9 @@
           pageHeading = true
        )
 
-        @continueButton()
+        <div class="govuk-!-padding-top-5">
+            @continueButton()
+        </div>
 
   }
 }

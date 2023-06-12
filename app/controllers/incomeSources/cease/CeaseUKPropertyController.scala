@@ -66,8 +66,7 @@ class CeaseUKPropertyController @Inject()(val authenticate: AuthenticationPredic
         ceaseUKPropertyForm = CeaseUKPropertyForm.form,
         postAction = postAction,
         isAgent = isAgent,
-        backUrl = backUrl,
-        btaNavPartial = user.btaNavPartial)(user, messages)))
+        backUrl = backUrl)(user, messages)))
     } else {
       Future.successful(Ok(customNotFoundErrorView()(user, messages)))
     } recover {
@@ -80,11 +79,9 @@ class CeaseUKPropertyController @Inject()(val authenticate: AuthenticationPredic
 
   def show(): Action[AnyContent] =
     (checkSessionTimeout andThen authenticate andThen retrieveNino
-      andThen retrieveIncomeSources).async {
+      andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
       implicit user =>
-        handleRequest(
-          isAgent = false
-        )
+        handleRequest(isAgent = false)
     }
 
   def showAgent(): Action[AnyContent] = Authenticated.async {
@@ -92,9 +89,7 @@ class CeaseUKPropertyController @Inject()(val authenticate: AuthenticationPredic
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
           implicit mtdItUser =>
-            handleRequest(
-              isAgent = true
-            )
+            handleRequest(isAgent = true)
         }
   }
 
@@ -106,8 +101,7 @@ class CeaseUKPropertyController @Inject()(val authenticate: AuthenticationPredic
           ceaseUKPropertyForm = hasErrors,
           postAction = controllers.incomeSources.cease.routes.CeaseUKPropertyController.submit,
           backUrl = controllers.incomeSources.cease.routes.CeaseIncomeSourceController.show().url,
-          isAgent = false,
-          btaNavPartial = user.btaNavPartial
+          isAgent = false
         )).addingToSession(ceaseUKPropertyDeclare -> "false")),
         _ =>
           Future.successful(Redirect(controllers.incomeSources.cease.routes.UKPropertyEndDateController.show())
@@ -125,8 +119,7 @@ class CeaseUKPropertyController @Inject()(val authenticate: AuthenticationPredic
                 ceaseUKPropertyForm = hasErrors,
                 postAction = controllers.incomeSources.cease.routes.CeaseUKPropertyController.submitAgent,
                 backUrl = controllers.incomeSources.cease.routes.CeaseIncomeSourceController.showAgent().url,
-                isAgent = true,
-                btaNavPartial = mtdItUser.btaNavPartial
+                isAgent = true
               )).addingToSession(ceaseUKPropertyDeclare -> "false")),
               _ =>
                 Future.successful(Redirect(controllers.incomeSources.cease.routes.UKPropertyEndDateController.showAgent())

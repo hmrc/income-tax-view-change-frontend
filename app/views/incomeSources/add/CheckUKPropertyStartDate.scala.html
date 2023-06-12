@@ -28,18 +28,18 @@
     formWithCSRF: FormWithCSRF,
     errorSummary: ErrorSummary,
     govukRadios: GovukRadios,
-    h1: h1,
+    h1_large: h1_large,
     p: p)
 
-@(checkUKPropertyStartDateForm: Form[_], startDate: String, postAction: Call, isAgent: Boolean = false, backUrl: String, btaNavPartial: Option[Html] = None)(implicit request: Request[_], messages: Messages)
+@(checkUKPropertyStartDateForm: Form[_], startDate: String, postAction: Call, isAgent: Boolean = false, backUrl: String)(implicit user: auth.MtdItUser[_], messages: Messages)
 
-@mainTemplate(pageTitle = messages("radioForm.checkDate.heading"), isAgent = isAgent, backUrl = Some(backUrl), btaNavPartial = btaNavPartial) {
+@mainTemplate(pageTitle = messages("radioForm.checkDate.heading"), isAgent = isAgent, backUrl = Some(backUrl), btaNavPartial = user.btaNavPartial) {
 
   @errorSummary(
     form = checkUKPropertyStartDateForm
   )
 
-  @h1(messages("radioForm.checkDate.heading"))
+  @h1_large(messages("radioForm.checkDate.heading"))
 
   @formWithCSRF(action = postAction, Symbol("id") -> "check-uk-property-start-date-form") {
 
