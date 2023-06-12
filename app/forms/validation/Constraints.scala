@@ -98,6 +98,14 @@ trait Constraints {
         Valid
     }
 
+  protected def minDate6April2015(errorKey: String, args: Any*): Constraint[LocalDate] =
+    Constraint {
+      case date if date.isBefore(LocalDate.of(2015, 4, 6)) =>
+        Invalid(errorKey, args: _*)
+      case _ =>
+        Valid
+    }
+
   case class DatePartErrorMessageKeys(containsNothing: String,
                                       containsOnlyDay: String,
                                       containsOnlyMonth: String,

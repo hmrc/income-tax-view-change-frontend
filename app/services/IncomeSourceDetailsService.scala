@@ -169,6 +169,7 @@ class IncomeSourceDetailsService @Inject()(val incomeTaxViewChangeConnector: Inc
         soleTraderBusinesses = if (soleTraderBusinessesExists) {
           maybeSoleTraderBusinesses.map { business =>
             CeaseBusinessDetailsViewModel(
+              business.incomeSourceId.getOrElse(throw MissingFieldException("Income Source Id")),
               business.tradingName.getOrElse(throw MissingFieldException("Trading Name")),
               business.tradingStartDate.getOrElse(throw MissingFieldException("Trading Start Date"))
             )

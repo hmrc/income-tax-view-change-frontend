@@ -27,6 +27,7 @@ import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, ObligationsModel}
 
 object BusinessDetailsTestConstants {
 
+  val year2013: Int = 2013
   val year2017: Int = 2017
   val year2018: Int = 2018
   val year2019: Int = 2019
@@ -84,6 +85,15 @@ object BusinessDetailsTestConstants {
     cessation = None
   )
 
+  val soleTraderBusiness2 = BusinessDetailsModel(
+    incomeSourceId = Some(testSelfEmploymentId),
+    accountingPeriod = Some(testBusinessAccountingPeriod),
+    tradingName = Some(testTradeName),
+    firstAccountingPeriodEndDate = Some(LocalDate.of(year2013, Month.APRIL, 5)),
+    tradingStartDate = Some(testStartDate),
+    cessation = None
+  )
+
   val soleTraderBusinessNoTradingName = BusinessDetailsModel(
     incomeSourceId = Some(testSelfEmploymentId),
     accountingPeriod = Some(testBusinessAccountingPeriod),
@@ -113,11 +123,13 @@ object BusinessDetailsTestConstants {
   )
 
   val ceaseBusinessDetailsViewModel = CeaseBusinessDetailsViewModel(
+    incomeSourceId = "1234",
     tradingName = testTradeName,
     tradingStartDate = testStartDate
   )
 
   val ceaseBusinessDetailsViewModel2 = CeaseBusinessDetailsViewModel(
+    incomeSourceId = "1234",
     tradingName = testTradeName2,
     tradingStartDate = testStartDate2
   )

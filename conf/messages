@@ -1226,6 +1226,7 @@ dateForm.error.year.required                                        = The date m
 dateForm.error.dayAndMonth.required                                 = The date must include a day and a month
 dateForm.error.dayAndYear.required                                  = The date must include a day and a year
 dateForm.error.monthAndYear.required                                = The date must include a month and a year
+dateForm.error.dayMonthAndYear.required                             = The date must include a day, a month and a year
 
 #Generic radio form messages
 radioForm.checkDate.heading                                         = Is this date correct?
@@ -1282,7 +1283,7 @@ incomeSources.add.foreignProperty.startDate.check.radio.yes          = Yes
 incomeSources.add.foreignProperty.startDate.check.radio.no           = No
 
 #Generic date form messages
-dateForm.hint                                                    = For example, 27 3 2020
+dateForm.hint                                                       = For example, 27 3 2020
 dateForm.error.day.required                                         = The date must include a day
 dateForm.error.month.required                                       = The date must include a month
 dateForm.error.year.required                                        = The date must include a year
@@ -1314,3 +1315,9 @@ add-business-start-date-check.heading                 = Is this date correct?
 add-business-start-date-check.radio.yes               = Yes
 add-business-start-date-check.radio.no                = No
 add-business-start-date-check.radio.error             = Select yes if your business start date is correct
+
+incomeSources.cease.BusinessEndDate.heading                               = Date your self-employed business stopped
+incomeSources.cease.BusinessEndDate.error.invalid                         = The date your self-employed business stopped trading must be a real date
+incomeSources.cease.BusinessEndDate.error.future                          = You cannot provide a cessation date that is beyond the current day or a date in the future
+incomeSources.cease.BusinessEndDate.error.beforeStartDate                 = The cessation date cannot be earlier than the start date for the business
+incomeSources.cease.BusinessEndDate.error.beforeEarliestDate              = The cessation date cannot be earlier than the 6th of April 2015

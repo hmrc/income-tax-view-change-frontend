@@ -35,6 +35,7 @@ import uk.gov.hmrc.auth.core.retrieve.{Credentials, Name, ~}
 object BaseTestConstants extends UnitSpec with GuiceOneAppPerSuite {
 
   val testMtditid = "XAIT0000123456"
+  val testMtditid2 = "XAIT0000123457"
   val testMtditidAgent = "XAIT00000000015"
   val testNinoAgent = "AA111111A"
   val testNino = "AB123456C"
