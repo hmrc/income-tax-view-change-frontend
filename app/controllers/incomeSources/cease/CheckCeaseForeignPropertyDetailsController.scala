@@ -148,6 +148,7 @@ class CheckCeaseForeignPropertyDetailsController @Inject()(val authenticate: Aut
                           cessationDate: String,
                           itvcErrorHandler: ShowInternalServerError)
                          (implicit user: MtdItUser[_]): Future[Result] = {
+
     if (isDisabled(IncomeSources)) {
       Future.successful(Redirect(homePageCall))
     } else {
