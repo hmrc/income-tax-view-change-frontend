@@ -42,8 +42,7 @@ class CheckCeaseForeignPropertyDetailsController @Inject()(val authenticate: Aut
                                                            val retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                                            val retrieveNino: NinoPredicate,
                                                            val updateIncomeSourceservice: UpdateIncomeSourceService,
-                                                           val checkCeaseForeignPropertyDetails: CheckCeaseForeignPropertyDetails,
-                                                           val customNotFoundErrorView: CustomNotFoundError)
+                                                           val checkCeaseForeignPropertyDetails: CheckCeaseForeignPropertyDetails)
                                                           (implicit val appConfig: FrontendAppConfig,
                                                            implicit val languageUtils: LanguageUtils,
                                                            mcc: MessagesControllerComponents,
