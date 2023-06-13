@@ -43,8 +43,8 @@ class AddressLookupConnector @Inject()(val appConfig: FrontendAppConfig,
     s"${baseUrl}/api/v2/init"
   }
 
-  def getAddressDetailsUrl(mtditid: String): String = {
-    s"${appConfig.addressLookupService}/api/v2/confirmed?id=$mtditid"
+  def getAddressDetailsUrl(id: String): String = {
+    s"${baseUrl}/api/v2/confirmed?id=$id"
   }
 
   lazy val individualContinueUrl: String = routes.AddBusinessAddressController.submit(None).url
@@ -58,7 +58,7 @@ class AddressLookupConnector @Inject()(val appConfig: FrontendAppConfig,
          |{
          |  "version" : 2,
          |  "options" : {
-         |    "continueUrl" : "placeholder",
+         |    "continueUrl" : "http://localhost:9081placeholder",
          |    "timeoutConfig" : {
          |      "timeoutAmount" : 3600,
          |      "timeoutUrl" : "http://localhost:9081/report-quarterly/income-and-expenses/session-timeout",
@@ -80,7 +80,7 @@ class AddressLookupConnector @Inject()(val appConfig: FrontendAppConfig,
          |    "ukMode" : true
          |  }
          |}
-      """.stripMargin.replace("placeholder", "http://localhost:9081/report-quarterly" + continueUrl)
+      """.stripMargin.replace("placeholder", continueUrl)
     )
   }
 
@@ -92,7 +92,6 @@ class AddressLookupConnector @Inject()(val appConfig: FrontendAppConfig,
       body = payload
     )
     // if (isAgent) addressConfig.config(agentContinueUrl) else addressConfig.config(continueUrl)
-
   }
 
   def getAddressDetails(id: String)(implicit hc: HeaderCarrier): Future[GetAddressLookupDetailsResponse] = {

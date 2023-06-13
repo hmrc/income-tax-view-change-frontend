@@ -91,13 +91,13 @@ class AddBusinessAddressController @Inject()(authenticate: AuthenticationPredica
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit request =>
       id match {
-        case Some(value) => fetchAddress(value) //need to get addressId from url
+        case Some(value) => fetchAddress(value)
           fetchAddress(value) map { value =>
             Redirect(routes.AddBusinessCheckDetailsController.show().url).addingToSession(
-              SessionKeys.addBusinessAddressLine1 -> value.address.lines.head, //CHANGE, may not always have 5 lines
-              SessionKeys.addBusinessAddressLine2 -> value.address.lines(1),
-              SessionKeys.addBusinessAddressLine3 -> value.address.lines(2),
-              SessionKeys.addBusinessAddressLine4 -> value.address.lines(3),
+              SessionKeys.addBusinessAddressLine1 -> value.address.lines.head,
+              SessionKeys.addBusinessAddressLine2 -> {if (value.address.lines(1).isEmpty) "" else value.address.lines(1)},
+              SessionKeys.addBusinessAddressLine3 -> {if (value.address.lines(2).isEmpty) "" else value.address.lines(2)},
+              SessionKeys.addBusinessAddressLine4 -> {if (value.address.lines(3).isEmpty) "" else value.address.lines(3)},
               SessionKeys.addBusinessPostalCode -> value.address.postcode.get,// make postcode not Optional
               SessionKeys.addBusinessCountryCode -> "GB"
             )
@@ -110,14 +110,14 @@ class AddBusinessAddressController @Inject()(authenticate: AuthenticationPredica
     implicit request =>
       implicit user =>
         id match {
-          case Some(value) => val address: Future[BusinessAddressModel] = fetchAddress(value) //need to get addressId from url
+          case Some(value) => val address: Future[BusinessAddressModel] = fetchAddress(value)
             address map { value =>
               Redirect(routes.AddBusinessCheckDetailsController.showAgent().url).addingToSession(
-                SessionKeys.addBusinessAddressLine1 -> value.address.lines.head, //CHANGE, may not always have 5 lines
-                SessionKeys.addBusinessAddressLine2 -> value.address.lines(1),
-                SessionKeys.addBusinessAddressLine3 -> value.address.lines(2),
-                SessionKeys.addBusinessAddressLine4 -> value.address.lines(3),
-                SessionKeys.addBusinessPostalCode -> value.address.lines(3),
+                SessionKeys.addBusinessAddressLine1 -> value.address.lines.head,
+                SessionKeys.addBusinessAddressLine2 -> {if (value.address.lines(1).isEmpty) "" else value.address.lines(1)},
+                SessionKeys.addBusinessAddressLine3 -> {if (value.address.lines(2).isEmpty) "" else value.address.lines(2)},
+                SessionKeys.addBusinessAddressLine4 -> {if (value.address.lines(3).isEmpty) "" else value.address.lines(3)},
+                SessionKeys.addBusinessPostalCode -> value.address.postcode.get, // make postcode not Optional
                 SessionKeys.addBusinessCountryCode -> "GB"
               )
             }
