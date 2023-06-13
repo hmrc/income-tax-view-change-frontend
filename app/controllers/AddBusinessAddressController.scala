@@ -54,8 +54,6 @@ class AddBusinessAddressController @Inject()(authenticate: AuthenticationPredica
                                          )
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
-  lazy val backURL: String = routes.AddBusinessTradeController.show().url
-  lazy val agentBackURL: String = routes.AddBusinessTradeController.showAgent().url
   def show: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
