@@ -1318,3 +1318,9 @@ add-business-start-date-check.heading                = A yw’r dyddiad hwn yn g
 add-business-start-date-check.radio.yes              = Iawn
 add-business-start-date-check.radio.no               = Na
 add-business-start-date-check.radio.error            = Dewiswch ’Iawn’ os yw dyddiad dechrau’ch busnes yn gywir
+
+check-cease-foreign-property-details.heading            = Gwirio’ch manylion
+check-cease-foreign-property-details.caption            = Y busnes eiddo tramor a nodwyd gennych
+check-cease-foreign-property-details.summary-list.key   = Dyddiad y gwnaeth y busnes stopio
+check-cease-foreign-property-details.summary-list.link  = Newid
+check-cease-foreign-property-details.button             = Cadarnhau ac yn eich blaen

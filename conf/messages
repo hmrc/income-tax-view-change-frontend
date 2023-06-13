@@ -1314,3 +1314,9 @@ add-business-start-date-check.heading                 = Is this date correct?
 add-business-start-date-check.radio.yes               = Yes
 add-business-start-date-check.radio.no                = No
 add-business-start-date-check.radio.error             = Select yes if your business start date is correct
+
+check-cease-foreign-property-details.heading            = Check your details
+check-cease-foreign-property-details.caption            = Foreign property business you entered
+check-cease-foreign-property-details.summary-list.key   = Date business stopped
+check-cease-foreign-property-details.summary-list.link  = Change
+check-cease-foreign-property-details.button             = Confirm and continue
