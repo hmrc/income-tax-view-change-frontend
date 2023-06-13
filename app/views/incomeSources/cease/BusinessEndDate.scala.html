@@ -15,44 +15,39 @@
  *@
 
 @import views.html.layouts.unifiedLayout
-@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
-@import uk.gov.hmrc.hmrcfrontend.views.Implicits.RichDateInput
+@import views.html.components.p
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components.FormWithCSRF
 @import views.html.components.dateInput
 @import views.html.helpers.injected.ContinueButton
 @import views.html.helpers.injected.ErrorSummary
-@import views.html.components._
 
 @this(mainTemplate: unifiedLayout, dateInput: dateInput, continueButton: ContinueButton, formWithCSRF: FormWithCSRF, errorSummary: ErrorSummary, p: p)
 
-@(UKPropertyEndDateForm: Form[_], postAction: Call, isAgent: Boolean = false, backUrl: String)(implicit user: auth.MtdItUser[_], messages: Messages)
+@(BusinessEndDateForm: Form[_], postAction: Call, isAgent: Boolean = false, backUrl: String, btaNavPartial: Option[Html] = None)(implicit request: Request[_], messages: Messages)
 
 @getHintContent = {
   @p(classes = "govuk-hint") {
-    @messages("incomeSources.cease.UKPropertyEndDate.hint")
+    @messages("dateForm.hint")
   }
 }
 
-@mainTemplate(pageTitle = messages("incomeSources.cease.UKPropertyEndDate.heading"), isAgent = isAgent,
-    backUrl = Some(backUrl), btaNavPartial = user.btaNavPartial) {
+@mainTemplate(pageTitle = messages("incomeSources.cease.BusinessEndDate.heading"), isAgent = isAgent, backUrl = Some(backUrl), btaNavPartial = btaNavPartial) {
 
-    @errorSummary(
-      form = UKPropertyEndDateForm
-    )
+ @errorSummary(
+  form = BusinessEndDateForm
+ )
 
-    @formWithCSRF(action = postAction, Symbol("id") -> "uk-property-end-date-form") {
+ @formWithCSRF(action = postAction, Symbol("id") -> "business-end-date-form") {
 
-        @dateInput(
-          content = messages("incomeSources.cease.UKPropertyEndDate.heading"),
-          field = UKPropertyEndDateForm("uk-property-end-date"),
-          hintContent = Some(HtmlContent(getHintContent)),
-          pageHeading = true
-       )
+  @dateInput(
+   content = messages("incomeSources.cease.BusinessEndDate.heading"),
+   field = BusinessEndDateForm("business-end-date"),
+   hintContent = Some(HtmlContent(getHintContent)),
+   pageHeading = true
+  )
 
-        <div class="govuk-!-padding-top-5">
-            @continueButton()
-        </div>
+  @continueButton()
 
-  }
+ }
 }

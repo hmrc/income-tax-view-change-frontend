@@ -68,8 +68,7 @@ class AddUKPropertyStartDateController @Inject()(val authenticate: Authenticatio
         addUKPropertyStartDateForm = AddUKPropertyStartDateForm()(dateFormatter, dateService, messages),
         postAction = postAction,
         isAgent = isAgent,
-        backUrl = backUrl,
-        btaNavPartial = user.btaNavPartial)(user, messages)))
+        backUrl = backUrl)(user, messages)))
     } else {
       Future.successful(Ok(customNotFoundErrorView()(user, messages)))
     } recover {
@@ -86,7 +85,7 @@ class AddUKPropertyStartDateController @Inject()(val authenticate: Authenticatio
 
   def show(): Action[AnyContent] =
     (checkSessionTimeout andThen authenticate andThen retrieveNino
-      andThen retrieveIncomeSources).async {
+      andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
       implicit user =>
         handleRequest(
           isAgent = false
@@ -112,8 +111,7 @@ class AddUKPropertyStartDateController @Inject()(val authenticate: Authenticatio
           addUKPropertyStartDateForm = hasErrors,
           postAction = controllers.incomeSources.add.routes.AddUKPropertyStartDateController.submit(),
           backUrl = controllers.incomeSources.add.routes.AddIncomeSourceController.show().url,
-          isAgent = false,
-          btaNavPartial = user.btaNavPartial
+          isAgent = false
         ))),
         validatedInput =>
           Future.successful(Redirect(controllers.incomeSources.add.routes.CheckUKPropertyStartDateController.show())
@@ -131,8 +129,7 @@ class AddUKPropertyStartDateController @Inject()(val authenticate: Authenticatio
                 addUKPropertyStartDateForm = hasErrors,
                 postAction = controllers.incomeSources.add.routes.AddUKPropertyStartDateController.submit(),
                 backUrl = controllers.incomeSources.add.routes.AddIncomeSourceController.showAgent().url,
-                isAgent = true,
-                btaNavPartial = mtdItUser.btaNavPartial
+                isAgent = true
               ))),
               validatedInput =>
                 Future.successful(Redirect(controllers.incomeSources.add.routes.CheckUKPropertyStartDateController.showAgent())

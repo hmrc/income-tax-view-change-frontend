@@ -64,7 +64,7 @@
     btaNavPartial = user.btaNavPartial) {
 
     @h1(msg = getMessage("heading"),
-        id = Some("new-income-sources-h1"))
+        id = Some("incomeSources.add.addIncomeSources-h1"))
 
 
     @if(soleTraderBusinesses.nonEmpty) {
@@ -95,6 +95,8 @@
         </table>
     }
 
+    <br>
+
     @if(ukProperty.nonEmpty) {
         @h2(msg = getMessage("uk-property-h2"),
             optId = Some("uk-property-h2"))
@@ -114,6 +116,8 @@
         </table>
     }
 
+    <br>
+
     @if(foreignProperty.nonEmpty) {
         @h2(msg = getMessage("foreign-property-h2"),
             optId = Some("foreign-property-h2"))
@@ -132,6 +136,8 @@
             </tbody>
         </table>
     }
+
+    <br>
 
     @if(ceasedBusinesses.nonEmpty) {
         @h2(msg = getMessage("ceased-businesses-h2"),

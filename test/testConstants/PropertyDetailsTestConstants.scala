@@ -57,7 +57,7 @@ object PropertyDetailsTestConstants {
   )
 
   val ukPropertyDetailsViewModel = PropertyDetailsViewModel(
-    tradingStartDate = testStartDate
+    tradingStartDate = Some(testStartDate)
   )
 
   val ceaseUkPropertyDetailsViewModel = CeasePropertyDetailsViewModel(
@@ -87,7 +87,7 @@ object PropertyDetailsTestConstants {
   )
 
   val foreignPropertyDetailsViewModel = PropertyDetailsViewModel(
-    tradingStartDate = testStartDate2
+    tradingStartDate = Some(testStartDate2)
   )
 
   val ceaseForeignPropertyDetailsViewModel = CeasePropertyDetailsViewModel(

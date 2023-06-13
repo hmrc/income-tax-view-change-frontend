@@ -16,15 +16,15 @@
 
 package forms.validation
 
-import play.api.data.Forms.{optional, text}
-import play.api.data.Mapping
 import play.api.data.validation.{Constraint, Invalid, Valid}
 
 import java.time.LocalDate
 import java.time.format.{DateTimeFormatter, ResolverStyle}
-import scala.util.{Success, Try}
+import scala.util.Try
 
 trait Constraints {
+
+  val sixthAprilTwentyFifteen: LocalDate = LocalDate.of(2015, 4, 6)
 
   protected def firstError[A](constraints: Constraint[A]*): Constraint[A] =
     Constraint {
@@ -94,6 +94,16 @@ trait Constraints {
     Constraint {
       case date if date.isBefore(minimum) =>
         Invalid(errorKey, args: _*)
+      case _ =>
+        Valid
+    }
+
+  protected def minDateWithSixAprilTwentyFifteenMinimum(startDate: LocalDate, errorKey: String, errorKey6April2015: String, args: Any*): Constraint[LocalDate] =
+    Constraint {
+      case date if date.isBefore(startDate) && startDate.isAfter(sixthAprilTwentyFifteen) =>
+        Invalid(errorKey, args: _*) // case where start date is after 6-4-2015
+      case date if date.isBefore(sixthAprilTwentyFifteen) && startDate.isBefore(sixthAprilTwentyFifteen) =>
+        Invalid(errorKey6April2015, args: _*) // case where start date is before 6-4-2015
       case _ =>
         Valid
     }

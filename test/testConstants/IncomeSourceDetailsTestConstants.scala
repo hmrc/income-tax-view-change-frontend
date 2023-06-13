@@ -16,10 +16,10 @@
 
 package testConstants
 
-import testConstants.BaseTestConstants.{testErrorMessage, testErrorStatus, testMigrationYear2019}
-import testConstants.BusinessDetailsTestConstants._
-import testConstants.PropertyDetailsTestConstants.{ceasedPropertyDetails, foreignPropertyDetails, foreignPropertyDetailsNoStartDate, propertyDetails, ukPropertyDetails}
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel}
+import testConstants.BaseTestConstants.{testErrorMessage, testErrorStatus, testMigrationYear2019, testMtditid, testMtditid2}
+import testConstants.BusinessDetailsTestConstants._
+import testConstants.PropertyDetailsTestConstants._
 
 import java.time.LocalDate
 
@@ -41,7 +41,8 @@ object IncomeSourceDetailsTestConstants {
     List(oldUseralignedBusiness), List(propertyDetails))
   val preSanitised = IncomeSourceDetailsModel(testMtdItId, Some((LocalDate.now.getYear - 1).toString), List(business2018, alignedBusiness), List(propertyDetails))
 
-
+  val businessIncome = IncomeSourceDetailsModel(testMtditid, Some("2018"), List(soleTraderBusiness), List())
+  val businessIncome2 = IncomeSourceDetailsModel(testMtditid2, Some("2018"), List(soleTraderBusiness2), List())
   val ukPropertyIncome  = IncomeSourceDetailsModel(testMtdItId, Some("2018"), List(), List(ukPropertyDetails))
   val ukPropertyWithSoleTraderBusiness = IncomeSourceDetailsModel(testMtdItId, None, List(business2018), List(ukPropertyDetails))
   val ukPlusForeignPropertyWithSoleTraderIncomeSource = IncomeSourceDetailsModel(testMtdItId, Some("2018"), List(soleTraderBusiness), List(ukPropertyDetails, foreignPropertyDetails))

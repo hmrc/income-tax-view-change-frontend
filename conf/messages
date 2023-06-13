@@ -1112,21 +1112,22 @@ credit-and-refund.credit-from-balancing-charge-prt-1              = from a
 credit-and-refund.credit-from-balancing-charge-prt-2              = balancing charge credit
 credit-and-refund.credit-from-earlier-tax-year                    = credit from an earlier tax year
 
-## check income sources
-new-income-sources.heading                  = Add a new sole trader or property income source
-new-income-sources.self-employment.h2       = Sole trader businesses
-new-income-sources.self-employment.p1       = You do not need to tell us about a business we already know about.
-new-income-sources.self-employment.link     = Add a sole trader income source
-new-income-sources.uk-property.h2           = UK Property
-new-income-sources.uk-property.p1           = You only need to tell us you have UK property income once.
-new-income-sources.uk-property.link         = Add income from UK property
-new-income-sources.foreign-property.h2      = Foreign Property
-new-income-sources.foreign-property.p1      = You only need to tell us you have foreign property income once.
-new-income-sources.foreign-property.link    = Add income from foreign property
-new-income-sources.ceased-businesses.h2     = Businesses that have ceased
-new-income-sources.table-head.business-name = Business name
-new-income-sources.table-head.date-started  = Date started
-new-income-sources.table-head.date-ended    = Date ended
+## Income Sources - Add
+incomeSources.add.addIncomeSources.heading                          = Add a new sole trader or property income source
+incomeSources.add.addIncomeSources.selfEmployment.heading           = Sole trader businesses
+incomeSources.add.addIncomeSources.selfEmployment.text              = You do not need to tell us about a business we already know about.
+incomeSources.add.addIncomeSources.selfEmployment.link              = Add a sole trader income source
+incomeSources.add.addIncomeSources.ukProperty.heading               = UK Property
+incomeSources.add.addIncomeSources.ukProperty.text                  = You only need to tell us you have UK property income once.
+incomeSources.add.addIncomeSources.ukProperty.link                  = Add income from UK property
+incomeSources.add.addIncomeSources.foreignProperty.heading          = Foreign Property
+incomeSources.add.addIncomeSources.foreignProperty.text             = You only need to tell us you have foreign property income once.
+incomeSources.add.addIncomeSources.foreignProperty.link             = Add income from foreign property
+incomeSources.add.addIncomeSources.ceasedBusinesses.heading         = Businesses that have ceased
+incomeSources.add.addIncomeSources.tableHead.businessName           = Business name
+incomeSources.add.addIncomeSources.tableHead.dateStarted            = Date started
+incomeSources.add.addIncomeSources.tableHead.dateEnded              = Date ended
+incomeSources.add.addIncomeSources.unknown                          = Unknown
 
 ## cease income sources
 cease-income-sources.heading                  = Cease an income source
@@ -1226,6 +1227,8 @@ dateForm.error.year.required                                        = The date m
 dateForm.error.dayAndMonth.required                                 = The date must include a day and a month
 dateForm.error.dayAndYear.required                                  = The date must include a day and a year
 dateForm.error.monthAndYear.required                                = The date must include a month and a year
+dateForm.error.dayMonthAndYear.required                             = The date must include a day, a month and a year
+dateForm.check.heading                                              = Is this date correct?
 
 #Generic radio form messages
 radioForm.checkDate.heading                                         = Is this date correct?
@@ -1251,7 +1254,7 @@ incomeSources.cease.UKPropertyEndDate.error.beforeStartDate      = The cessation
 incomeSources.ceaseForeignProperty.heading                              = Cease foreign property
 incomeSources.ceaseForeignProperty.checkboxLabel                        = I declare that I no longer get an income from any foreign property.
 incomeSources.ceaseForeignProperty.checkboxError                        = You must declare that you no longer get an income from any foreign property
-incomeSources.cease.ForeignPropertyEndDate.heading                      = Date your Foreign property business stopped
+incomeSources.cease.ForeignPropertyEndDate.heading                      = Date your foreign property business stopped
 incomeSources.cease.ForeignPropertyEndDate.hint                         = For example, 27 3 2020
 incomeSources.cease.ForeignPropertyEndDate.error.incomplete             = The date must include a day, a month and a year
 incomeSources.cease.ForeignPropertyEndDate.error.incompleteDay          = The date must include a day
@@ -1260,8 +1263,8 @@ incomeSources.cease.ForeignPropertyEndDate.error.incompleteYear         = The da
 incomeSources.cease.ForeignPropertyEndDate.error.incompleteDayMonth     = The date must include a day and a month
 incomeSources.cease.ForeignPropertyEndDate.error.incompleteDayYear      = The date must include a day and a year
 incomeSources.cease.ForeignPropertyEndDate.error.incompleteMonthYear    = The date must include a month and a year
-incomeSources.cease.ForeignPropertyEndDate.error.invalid                = The date your Foreign property business stopped must be a real date
-incomeSources.cease.ForeignPropertyEndDate.error.future                 = You cannot provide a cessation date that is beyond the current day or a date in the future.
+incomeSources.cease.ForeignPropertyEndDate.error.invalid                = The date your foreign property business stopped must be a real date
+incomeSources.cease.ForeignPropertyEndDate.error.future                 = You cannot provide a cessation date that is beyond the current day or a date in the future
 incomeSources.cease.ForeignPropertyEndDate.error.beforeStartDate        = The cessation date cannot be earlier than the start date for the business
 
 incomeSources.add.foreignProperty.startDate.heading                  = When did your foreign property business start?
@@ -1280,16 +1283,6 @@ incomeSources.add.foreignProperty.startDate.check.heading            = Is this d
 incomeSources.add.foreignProperty.startDate.check.error              = Select yes if your foreign property business start date is correct
 incomeSources.add.foreignProperty.startDate.check.radio.yes          = Yes
 incomeSources.add.foreignProperty.startDate.check.radio.no           = No
-
-#Generic date form messages
-dateForm.hint                                                    = For example, 27 3 2020
-dateForm.error.day.required                                         = The date must include a day
-dateForm.error.month.required                                       = The date must include a month
-dateForm.error.year.required                                        = The date must include a year
-dateForm.error.dayAndMonth.required                                 = The date must include a day and a month
-dateForm.error.dayAndYear.required                                  = The date must include a day and a year
-dateForm.error.monthAndYear.required                                = The date must include a month and a year
-dateForm.check.heading                                              = Is this date correct?
 
 incomeSources.ceaseUKProperty.checkDetails.heading               = Check your details
 incomeSources.ceaseUKProperty.checkDetails.paragraph             = UK property business you entered
@@ -1314,6 +1307,12 @@ add-business-start-date-check.heading                 = Is this date correct?
 add-business-start-date-check.radio.yes               = Yes
 add-business-start-date-check.radio.no                = No
 add-business-start-date-check.radio.error             = Select yes if your business start date is correct
+
+incomeSources.cease.BusinessEndDate.heading                               = Date your self-employed business stopped
+incomeSources.cease.BusinessEndDate.error.invalid                         = The date your self-employed business stopped trading must be a real date
+incomeSources.cease.BusinessEndDate.error.future                          = You cannot provide a cessation date that is beyond the current day or a date in the future
+incomeSources.cease.BusinessEndDate.error.beforeStartDate                 = The cessation date cannot be earlier than the start date for the business
+incomeSources.cease.BusinessEndDate.error.beforeEarliestDate              = The cessation date cannot be earlier than the 6th of April 2015
 
 check-cease-foreign-property-details.heading            = Check your details
 check-cease-foreign-property-details.caption            = Foreign property business you entered

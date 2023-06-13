@@ -58,15 +58,13 @@ class UKPropertyEndDateViewSpec extends TestSupport {
         UKPropertyEndDateForm = form,
         postAction = controllers.incomeSources.cease.routes.UKPropertyEndDateController.submitAgent(),
         isAgent = true,
-        backUrl = controllers.incomeSources.cease.routes.CeaseUKPropertyController.showAgent().url,
-        btaNavPartial = testNavHtml)(FakeRequest(), implicitly)
+        backUrl = controllers.incomeSources.cease.routes.CeaseUKPropertyController.showAgent().url)(agentUserConfirmedClient(), implicitly)
     } else {
       UKPropertyEndDateView(
         UKPropertyEndDateForm = form,
         postAction = controllers.incomeSources.cease.routes.UKPropertyEndDateController.submit(),
         isAgent = false,
-        backUrl = controllers.incomeSources.cease.routes.CeaseUKPropertyController.show().url,
-        btaNavPartial = testNavHtml)(FakeRequest(), implicitly)
+        backUrl = controllers.incomeSources.cease.routes.CeaseUKPropertyController.show().url)(individualUser, implicitly)
     }
 
     lazy val viewWithInputErrors: HtmlFormat.Appendable = if (isAgent) {
@@ -74,15 +72,13 @@ class UKPropertyEndDateViewSpec extends TestSupport {
         UKPropertyEndDateForm = form.withError(FormError("uk-property-end-date", "incomeSources.cease.UKPropertyEndDate.error.beforeStartDate")),
         postAction = controllers.incomeSources.cease.routes.UKPropertyEndDateController.submitAgent(),
         isAgent = true,
-        backUrl = controllers.incomeSources.cease.routes.CheckCeaseUKPropertyDetailsController.showAgent().url,
-        btaNavPartial = testNavHtml)(FakeRequest(), implicitly)
+        backUrl = controllers.incomeSources.cease.routes.CheckCeaseUKPropertyDetailsController.showAgent().url)(agentUserConfirmedClient(), implicitly)
     } else {
       UKPropertyEndDateView(
         UKPropertyEndDateForm = form.withError(FormError("uk-property-end-date", "incomeSources.cease.UKPropertyEndDate.error.beforeStartDate")),
         postAction = controllers.incomeSources.cease.routes.UKPropertyEndDateController.submit(),
         isAgent = false,
-        backUrl = controllers.incomeSources.cease.routes.CeaseUKPropertyController.show().url,
-        btaNavPartial = testNavHtml)(FakeRequest(), implicitly)
+        backUrl = controllers.incomeSources.cease.routes.CeaseUKPropertyController.show().url)(individualUser, implicitly)
     }
 
     lazy val document: Document = if (error) Jsoup.parse(contentAsString(viewWithInputErrors)) else Jsoup.parse(contentAsString(view))

@@ -69,8 +69,7 @@ class CheckUKPropertyStartDateController @Inject()(val authenticate: Authenticat
         startDate = startDate,
         postAction = postAction,
         isAgent = isAgent,
-        backUrl = backUrl,
-        btaNavPartial = user.btaNavPartial)(user, messages)))
+        backUrl = backUrl)(user, messages)))
     } else {
       Future.successful(Ok(customNotFoundErrorView()(user, messages)))
     } recover {
@@ -83,7 +82,7 @@ class CheckUKPropertyStartDateController @Inject()(val authenticate: Authenticat
 
   def show(): Action[AnyContent] =
     (checkSessionTimeout andThen authenticate andThen retrieveNino
-      andThen retrieveIncomeSources).async {
+      andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
       implicit user =>
         val startDate = user.session.get(SessionKeys.addUkPropertyStartDate).get
         val formattedStartDate = dateFormatter.longDate(LocalDate.parse(startDate)).toLongDate
@@ -118,8 +117,7 @@ class CheckUKPropertyStartDateController @Inject()(val authenticate: Authenticat
           postAction = controllers.incomeSources.add.routes.CheckUKPropertyStartDateController.submit(),
           backUrl = controllers.incomeSources.add.routes.AddUKPropertyStartDateController.show().url,
           isAgent = false,
-          startDate = formattedStartDate,
-          btaNavPartial = user.btaNavPartial
+          startDate = formattedStartDate
         ))),
         validatedInput => {
           val goBackAndChangeDate = validatedInput.equals(Some("no"))
@@ -146,8 +144,7 @@ class CheckUKPropertyStartDateController @Inject()(val authenticate: Authenticat
                 postAction = controllers.incomeSources.add.routes.CheckUKPropertyStartDateController.submit(),
                 backUrl = controllers.incomeSources.add.routes.AddUKPropertyStartDateController.showAgent().url,
                 isAgent = true,
-                startDate = formattedStartDate,
-                btaNavPartial = mtdItUser.btaNavPartial
+                startDate = formattedStartDate
               ))),
               validatedInput => {
                 val goBackAndChangeDate = validatedInput.equals(Some("no"))

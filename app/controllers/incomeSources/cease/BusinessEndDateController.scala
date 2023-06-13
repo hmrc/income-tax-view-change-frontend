@@ -21,109 +21,122 @@ import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
-import forms.incomeSources.cease.CeaseUKPropertyForm
-import forms.utils.SessionKeys.ceaseUKPropertyDeclare
+import forms.incomeSources.cease.BusinessEndDateForm
+import forms.utils.SessionKeys.{ceaseBusinessEndDate, ceaseBusinessIncomeSourceId}
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages}
-import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents, Result}
+import play.api.mvc._
 import services.IncomeSourceDetailsService
 import uk.gov.hmrc.http.HeaderCarrier
-import views.html.incomeSources.cease.CeaseUKProperty
 import views.html.errorPages.CustomNotFoundError
+import views.html.incomeSources.cease.BusinessEndDate
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
-class CeaseUKPropertyController @Inject()(val authenticate: AuthenticationPredicate,
+@Singleton
+class BusinessEndDateController @Inject()(val authenticate: AuthenticationPredicate,
                                           val authorisedFunctions: FrontendAuthorisedFunctions,
                                           val checkSessionTimeout: SessionTimeoutPredicate,
+                                          val businessEndDateForm: BusinessEndDateForm,
                                           val incomeSourceDetailsService: IncomeSourceDetailsService,
                                           val retrieveBtaNavBar: NavBarPredicate,
                                           val retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                           val retrieveNino: NinoPredicate,
-                                          val view: CeaseUKProperty,
+                                          val businessEndDate: BusinessEndDate,
                                           val customNotFoundErrorView: CustomNotFoundError)
                                          (implicit val appConfig: FrontendAppConfig,
                                           mcc: MessagesControllerComponents,
                                           val ec: ExecutionContext,
                                           val itvcErrorHandler: ItvcErrorHandler,
-                                          val itvcErrorHandlerAgent: AgentItvcErrorHandler
-                                         )
+                                          val itvcErrorHandlerAgent: AgentItvcErrorHandler)
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
-  def handleRequest(isAgent: Boolean)
+  def show(id: String): Action[AnyContent] =
+    (checkSessionTimeout andThen authenticate andThen retrieveNino
+      andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
+      implicit user =>
+        handleRequest(
+          isAgent = false,
+          id
+        )
+    }
+
+  def showAgent(id: String): Action[AnyContent] = Authenticated.async {
+    implicit request =>
+      implicit user =>
+        getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
+          implicit mtdItUser =>
+            handleRequest(
+              isAgent = true,
+              id
+            )
+        }
+  }
+
+  def handleRequest(isAgent: Boolean, id: String, origin: Option[String] = None)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
 
     val incomeSourcesEnabled: Boolean = isEnabled(IncomeSources)
     val backUrl: String = if (isAgent) controllers.incomeSources.cease.routes.CeaseIncomeSourceController.showAgent().url else
       controllers.incomeSources.cease.routes.CeaseIncomeSourceController.show().url
-    val postAction: Call = if (isAgent) controllers.incomeSources.cease.routes.CeaseUKPropertyController.submitAgent else
-      controllers.incomeSources.cease.routes.CeaseUKPropertyController.submit
+    val postAction: Call = if (isAgent) controllers.incomeSources.cease.routes.BusinessEndDateController.submitAgent(id) else
+      controllers.incomeSources.cease.routes.BusinessEndDateController.submit(id)
     val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
     if (incomeSourcesEnabled) {
-      Future.successful(Ok(view(
-        ceaseUKPropertyForm = CeaseUKPropertyForm.form,
+      Future.successful(Ok(businessEndDate(
+        BusinessEndDateForm = businessEndDateForm.apply(user, Option(id)),
         postAction = postAction,
         isAgent = isAgent,
-        backUrl = backUrl)(user, messages)))
+        backUrl = backUrl,
+        btaNavPartial = user.btaNavPartial
+      )(user, messages)))
     } else {
       Future.successful(Ok(customNotFoundErrorView()(user, messages)))
     } recover {
       case ex: Exception =>
         Logger("application").error(s"${if (isAgent) "[Agent]"}" +
-          s"Error getting CeaseUKProperty page: ${ex.getMessage}")
+          s"Error getting BusinessEndDate page: ${ex.getMessage}")
         errorHandler.showInternalServerError()
     }
   }
 
-  def show(): Action[AnyContent] =
-    (checkSessionTimeout andThen authenticate andThen retrieveNino
-      andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
-      implicit user =>
-        handleRequest(isAgent = false)
-    }
-
-  def showAgent(): Action[AnyContent] = Authenticated.async {
-    implicit request =>
-      implicit user =>
-        getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
-          implicit mtdItUser =>
-            handleRequest(isAgent = true)
-        }
-  }
-
-  def submit: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+  def submit(id: String): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
-      CeaseUKPropertyForm.form.bindFromRequest().fold(
-        hasErrors => Future.successful(BadRequest(view(
-          ceaseUKPropertyForm = hasErrors,
-          postAction = controllers.incomeSources.cease.routes.CeaseUKPropertyController.submit,
+      businessEndDateForm.apply(user, Option(id)).bindFromRequest().fold(
+        hasErrors => Future.successful(BadRequest(businessEndDate(
+          BusinessEndDateForm = hasErrors,
+          postAction = controllers.incomeSources.cease.routes.BusinessEndDateController.submit(id),
           backUrl = controllers.incomeSources.cease.routes.CeaseIncomeSourceController.show().url,
-          isAgent = false
-        )).addingToSession(ceaseUKPropertyDeclare -> "false")),
-        _ =>
-          Future.successful(Redirect(controllers.incomeSources.cease.routes.UKPropertyEndDateController.show())
-            .addingToSession(ceaseUKPropertyDeclare -> "true"))
+          isAgent = false,
+          btaNavPartial = user.btaNavPartial
+        ))),
+        validatedInput =>
+          Future.successful(Redirect(controllers.incomeSources.cease.routes.CheckCeaseBusinessDetailsController.show())
+            .addingToSession(ceaseBusinessEndDate -> validatedInput.date.toString)
+            .addingToSession(ceaseBusinessIncomeSourceId -> id))
       )
   }
 
-  def submitAgent: Action[AnyContent] = Authenticated.async {
+  def submitAgent(id: String): Action[AnyContent] = Authenticated.async {
     implicit request =>
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
           implicit mtdItUser =>
-            CeaseUKPropertyForm.form.bindFromRequest().fold(
-              hasErrors => Future.successful(BadRequest(view(
-                ceaseUKPropertyForm = hasErrors,
-                postAction = controllers.incomeSources.cease.routes.CeaseUKPropertyController.submitAgent,
+            businessEndDateForm.apply(mtdItUser, Option(id)).bindFromRequest().fold(
+              hasErrors => Future.successful(BadRequest(businessEndDate(
+                BusinessEndDateForm = hasErrors,
+                postAction = controllers.incomeSources.cease.routes.BusinessEndDateController.submitAgent(id),
                 backUrl = controllers.incomeSources.cease.routes.CeaseIncomeSourceController.showAgent().url,
-                isAgent = true
-              )).addingToSession(ceaseUKPropertyDeclare -> "false")),
-              _ =>
-                Future.successful(Redirect(controllers.incomeSources.cease.routes.UKPropertyEndDateController.showAgent())
-                  .addingToSession(ceaseUKPropertyDeclare -> "true"))
+                isAgent = true,
+                btaNavPartial = mtdItUser.btaNavPartial
+              ))),
+              validatedInput =>
+                Future.successful(Redirect(controllers.incomeSources.cease.routes.CheckCeaseBusinessDetailsController.showAgent())
+                  .addingToSession(ceaseBusinessEndDate -> validatedInput.date.toString)
+                  .addingToSession(ceaseBusinessIncomeSourceId -> id))
             )
         }
   }
