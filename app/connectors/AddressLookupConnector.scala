@@ -47,8 +47,8 @@ class AddressLookupConnector @Inject()(val appConfig: FrontendAppConfig,
     s"${appConfig.addressLookupService}/api/v2/confirmed?id=$mtditid"
   }
 
-  lazy val individualContinueUrl: String = routes.AddBusinessAddressController.submit().url
-  lazy val agentContinueUrl: String = routes.AddBusinessAddressController.agentSubmit().url
+  lazy val individualContinueUrl: String = routes.AddBusinessAddressController.submit(None).url
+  lazy val agentContinueUrl: String = routes.AddBusinessAddressController.agentSubmit(None).url
 
 
   //"http://localhost:9081/report-quarterly/income-and-expenses/view/income-sources/add/business-check-details"

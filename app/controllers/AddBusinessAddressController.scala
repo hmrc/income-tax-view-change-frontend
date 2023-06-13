@@ -33,10 +33,8 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.IncomeSourceDetailsService
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
-import views.html.AddBusinessAddress
 
 import javax.inject.Inject
-import scala.concurrent.impl.Promise
 import scala.concurrent.{ExecutionContext, Future}
 
 class AddBusinessAddressController @Inject()(authenticate: AuthenticationPredicate,
@@ -47,8 +45,7 @@ class AddBusinessAddressController @Inject()(authenticate: AuthenticationPredica
                                              val retrieveBtaNavBar: NavBarPredicate,
                                              val itvcErrorHandler: ItvcErrorHandler,
                                              incomeSourceDetailsService: IncomeSourceDetailsService,
-                                             addressLookupConnector: AddressLookupConnector,
-                                             addBusinessAddressView: AddBusinessAddress)
+                                             addressLookupConnector: AddressLookupConnector)
                                          (implicit
                                           val appConfig: FrontendAppConfig,
                                           val ec: ExecutionContext,
@@ -96,20 +93,19 @@ class AddBusinessAddressController @Inject()(authenticate: AuthenticationPredica
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit request =>
       id match {
-        case Some(value) => val address: Future[BusinessAddressModel] = fetchAddress(value) //need to get addressId from url
-          address map { value =>
+        case Some(value) => fetchAddress(value) //need to get addressId from url
+          fetchAddress(value) map { value =>
             Redirect(routes.AddBusinessCheckDetailsController.show().url).addingToSession(
               SessionKeys.addBusinessAddressLine1 -> value.address.lines.head, //CHANGE, may not always have 5 lines
               SessionKeys.addBusinessAddressLine2 -> value.address.lines(1),
               SessionKeys.addBusinessAddressLine3 -> value.address.lines(2),
               SessionKeys.addBusinessAddressLine4 -> value.address.lines(3),
-              SessionKeys.addBusinessPostalCode -> value.address.lines(3),
+              SessionKeys.addBusinessPostalCode -> value.address.postcode.get,// make postcode not Optional
               SessionKeys.addBusinessCountryCode -> "GB"
             )
           }
         case None => throw new InternalServerException(s"[AddressLookupRoutingController][fetchAddress] - Id not returned from address service")
       }
-      //Future{Ok}
   }
 
   def agentSubmit(id: Option[String]): Action[AnyContent] = Authenticated.async{
