@@ -14,7 +14,7 @@
  * limitations under the License.
  *@
 
-@import forms.CeaseUKPropertyForm
+@import forms.incomeSources.cease.CeaseUKPropertyForm
 @import views.html.layouts.unifiedLayout
 @import views.html.helpers.injected.ContinueButton
 @import views.html.helpers.injected.ErrorSummary
@@ -22,13 +22,12 @@
 @import views.helpers.RadioOption
 @import views.html.helpers.injected.InputHelper
 @import uk.gov.hmrc.govukfrontend.views.html.components.FormWithCSRF
-@import uk.gov.hmrc.govukfrontend.views.html.components.{GovukCheckboxes, Radios, GovukRadios, Fieldset, Legend, Text, RadioItem}
+@import uk.gov.hmrc.govukfrontend.views.html.components.{GovukCheckboxes, Fieldset, Legend, Text}
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.checkboxes.CheckboxItem
 @import uk.gov.hmrc.govukfrontend.views.Aliases.Checkboxes
 @import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 @import views.html.layouts.unifiedLayout
 @import views.html.components._
-
 
 @this(
     mainTemplate: unifiedLayout,
@@ -36,15 +35,13 @@
     continueButton: ContinueButton,
     formWithCSRF: FormWithCSRF,
     errorSummary: ErrorSummary,
-    radioHelper: RadioHelper,
-    govukRadios: GovukRadios,
-    inputRadios: input_radios,
     govukCheckboxes: GovukCheckboxes,
 )
 
-@(ceaseUKPropertyForm: Form[CeaseUKPropertyForm], postAction: Call, isAgent: Boolean = false, backUrl: String, origin: Option[String] = None)(implicit request: Request[_], messages: Messages)
+@(ceaseUKPropertyForm: Form[CeaseUKPropertyForm], postAction: Call, isAgent: Boolean = false, backUrl: String)(implicit user: auth.MtdItUser[_], messages: Messages)
 
-@mainTemplate(pageTitle = messages("incomeSources.ceaseUKProperty.heading"), form = Some(ceaseUKPropertyForm), isAgent = isAgent, backUrl = Some(backUrl)) {
+@mainTemplate(pageTitle = messages("incomeSources.ceaseUKProperty.heading"), form = Some(ceaseUKPropertyForm),
+    isAgent = isAgent, backUrl = Some(backUrl), btaNavPartial = user.btaNavPartial) {
 
 
     @errorSummary(
@@ -67,7 +64,9 @@
             )
         )
 
+    <div class="govuk-!-padding-top-5">
         @continueButton()
+    </div>
 
     }
 }

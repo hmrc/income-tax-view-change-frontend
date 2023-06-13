@@ -98,7 +98,7 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
         },
         formData => {
           Future.successful {
-            Redirect(routes.AddBusinessStartDateController.show())
+            Redirect(controllers.incomeSources.add.routes.AddBusinessStartDateController.show())
               .addingToSession(SessionKeys.businessName -> formData.name)
           }
         }
@@ -118,7 +118,7 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
               },
               formData => {
                 Future.successful {
-                  Redirect(routes.AddBusinessStartDateController.showAgent())
+                  Redirect(controllers.incomeSources.add.routes.AddBusinessStartDateController.showAgent())
                     .addingToSession(SessionKeys.businessName -> formData.name)
                 }
               }

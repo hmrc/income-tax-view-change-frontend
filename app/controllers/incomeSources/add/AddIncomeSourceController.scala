@@ -29,6 +29,7 @@ import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import views.html.incomeSources.add.AddIncomeSources
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.{Success, Failure}
 
 @Singleton
 class AddIncomeSourceController @Inject()(val addIncomeSources: AddIncomeSources,
@@ -37,13 +38,13 @@ class AddIncomeSourceController @Inject()(val addIncomeSources: AddIncomeSources
                                           val authorisedFunctions: AuthorisedFunctions,
                                           val retrieveNino: NinoPredicate,
                                           val retrieveIncomeSources: IncomeSourceDetailsPredicate,
-                                          val itvcErrorHandler: ItvcErrorHandler,
-                                          implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                           val incomeSourceDetailsService: IncomeSourceDetailsService,
                                           val retrieveBtaNavBar: NavBarPredicate)
-                                         (implicit val ec: ExecutionContext,
-                                          implicit override val mcc: MessagesControllerComponents,
-                                          val appConfig: FrontendAppConfig) extends ClientConfirmedController
+                                         (implicit val appConfig: FrontendAppConfig,
+                                          implicit val ec: ExecutionContext,
+                                          implicit val itvcErrorHandler: ItvcErrorHandler,
+                                          implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
+                                          implicit override val mcc: MessagesControllerComponents) extends ClientConfirmedController
   with FeatureSwitching {
 
   lazy val homePageCall: Call = controllers.routes.HomeController.show()
@@ -83,20 +84,18 @@ class AddIncomeSourceController @Inject()(val addIncomeSources: AddIncomeSources
       Future.successful(Redirect(homePageCall))
     } else {
       incomeSourceDetailsService.getAddIncomeSourceViewModel(sources) match {
-        case Right(viewModel) =>
-          Future(Ok(addIncomeSources(
+        case Success(viewModel) =>
+          Future.successful(Ok(addIncomeSources(
             sources = viewModel,
             isAgent = isAgent,
             backUrl = backUrl
           )))
-        case Left(ex) =>
+        case Failure(ex) =>
           if (isAgent) {
-            Logger("application").error(
-              s"[Agent][AddIncomeSourceController][handleRequest] - Error: ${ex.getMessage}")
+            Logger("application").error(s"[Agent][AddIncomeSourceController][handleRequest] - Error: ${ex.getMessage}")
             Future(itvcErrorHandlerAgent.showInternalServerError())
           } else {
-            Logger("application").error(
-              s"[AddIncomeSourceController][handleRequest] - Error: ${ex.getMessage}")
+            Logger("application").error(s"[AddIncomeSourceController][handleRequest] - Error: ${ex.getMessage}")
             Future(itvcErrorHandler.showInternalServerError())
           }
       }

@@ -67,8 +67,7 @@ class UKPropertyEndDateController @Inject()(val authenticate: AuthenticationPred
         UKPropertyEndDateForm = UKPropertyEndDateForm.apply,
         postAction = postAction,
         isAgent = isAgent,
-        backUrl = backUrl,
-        origin = origin)(user, messages)))
+        backUrl = backUrl)(user, messages)))
     } else {
       Future.successful(Ok(customNotFoundErrorView()(user, messages)))
     } recover {
@@ -79,13 +78,12 @@ class UKPropertyEndDateController @Inject()(val authenticate: AuthenticationPred
     }
   }
 
-  def show(origin: Option[String] = None): Action[AnyContent] =
+  def show(): Action[AnyContent] =
     (checkSessionTimeout andThen authenticate andThen retrieveNino
-      andThen retrieveIncomeSources).async {
+      andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
       implicit user =>
         handleRequest(
-          isAgent = false,
-          origin
+          isAgent = false
         )
     }
 

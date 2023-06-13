@@ -19,13 +19,16 @@ package services
 import audit.mocks.MockAuditingService
 import mocks.connectors.MockIncomeTaxViewChangeConnector
 import mocks.services.{MockAsyncCacheApi, MockNextUpdatesService}
-import models.incomeSourceDetails.viewmodels.{AddIncomeSourcesViewModel, CeaseIncomeSourcesViewModel, BusinessDetailsViewModel, CeaseBusinessDetailsViewModel, CeaseCeasedBusinessDetailsViewModel, CeasedBusinessDetailsViewModel, CeasePropertyDetailsViewModel, PropertyDetailsViewModel}
+import models.incomeSourceDetails.viewmodels.{AddIncomeSourcesViewModel, BusinessDetailsViewModel, CeaseBusinessDetailsViewModel, CeaseCeasedBusinessDetailsViewModel, CeaseIncomeSourcesViewModel, CeasePropertyDetailsViewModel, CeasedBusinessDetailsViewModel, PropertyDetailsViewModel, ViewCeasedBusinessDetailsViewModel, ViewIncomeSourcesViewModel, ViewPropertyDetailsViewModel}
 import org.scalacheck.Gen
 import play.api.cache.AsyncCacheApi
 import testConstants.BaseTestConstants._
 import testConstants.BusinessDetailsTestConstants._
 import testConstants.IncomeSourceDetailsTestConstants._
+import testConstants.PropertyDetailsTestConstants.viewUkPropertyDetailsViewModel
 import testUtils.TestSupport
+
+import scala.util.Success
 
 //scalastyle:off
 class IncomeSourceDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChangeConnector with MockNextUpdatesService
@@ -34,7 +37,7 @@ class IncomeSourceDetailsServiceSpec extends TestSupport with MockIncomeTaxViewC
 
   object TestIncomeSourceDetailsService extends IncomeSourceDetailsService(mockIncomeTaxViewChangeConnector, cache)
 
-  override def beforeEach() {
+  override def beforeEach(): Unit = {
     super.beforeEach()
     cache.removeAll()
   }
@@ -99,9 +102,9 @@ class IncomeSourceDetailsServiceSpec extends TestSupport with MockIncomeTaxViewC
 
         val result = TestIncomeSourceDetailsService.getAddIncomeSourceViewModel(ukPropertyAndSoleTraderBusinessIncome)
 
-        result shouldBe Right(AddIncomeSourcesViewModel(
-          soleTraderBusinesses = List(BusinessDetailsViewModel(testTradeName, testStartDate)),
-          ukProperty = Some(PropertyDetailsViewModel(testStartDate)),
+        result shouldBe Success(AddIncomeSourcesViewModel(
+          soleTraderBusinesses = List(BusinessDetailsViewModel(Some(testTradeName), Some(testStartDate))),
+          ukProperty = Some(PropertyDetailsViewModel(Some(testStartDate))),
           foreignProperty = None,
           ceasedBusinesses = Nil
         )
@@ -113,26 +116,16 @@ class IncomeSourceDetailsServiceSpec extends TestSupport with MockIncomeTaxViewC
 
         val result = TestIncomeSourceDetailsService.getAddIncomeSourceViewModel(foreignPropertyAndCeasedBusinessIncome)
 
-        result shouldBe Right(AddIncomeSourcesViewModel(
+        result shouldBe Success(AddIncomeSourcesViewModel(
           soleTraderBusinesses = Nil,
           ukProperty = None,
-          foreignProperty = Some(PropertyDetailsViewModel(testStartDate)),
+          foreignProperty = Some(PropertyDetailsViewModel(Some(testStartDate))),
           ceasedBusinesses = List(
-            CeasedBusinessDetailsViewModel(testTradeName, testStartDate, testCessation.date.get),
-            CeasedBusinessDetailsViewModel(testTradeName2, testStartDate2, testCessation2.date.get)
+            CeasedBusinessDetailsViewModel(Some(testTradeName), Some(testStartDate), testCessation.date.get),
+            CeasedBusinessDetailsViewModel(Some(testTradeName2), Some(testStartDate2), testCessation2.date.get)
           )
         )
         )
-      }
-    }
-
-    "invalid data provided" should {
-      "return failure" in {
-        // Simulate dynamic data generation from one of the invalid data
-        // TODO: eventually need to be move under tests data generation section
-        val generatedFailedData = Gen.oneOf( Seq(ukPropertyAndSoleTraderBusinessIncomeNoTradingName, ukPropertyAndSoleTraderBusinessIncomeNoTradingStartDate, foreignPropertyAndCeasedBusinessIncomeNoStartDate) ).sample.get
-        val result = TestIncomeSourceDetailsService.getAddIncomeSourceViewModel(generatedFailedData)
-        result.isLeft should be (true)
       }
     }
   }
@@ -144,7 +137,7 @@ class IncomeSourceDetailsServiceSpec extends TestSupport with MockIncomeTaxViewC
         val result = TestIncomeSourceDetailsService.getCeaseIncomeSourceViewModel(ukPropertyAndSoleTraderBusinessIncome)
 
         result shouldBe Right(CeaseIncomeSourcesViewModel(
-          soleTraderBusinesses = List(CeaseBusinessDetailsViewModel(testTradeName, testStartDate)),
+          soleTraderBusinesses = List(CeaseBusinessDetailsViewModel(testSelfEmploymentId, testTradeName, testStartDate)),
           ukProperty = Some(CeasePropertyDetailsViewModel(testStartDate)),
           foreignProperty = None,
           ceasedBusinesses = Nil
@@ -175,6 +168,47 @@ class IncomeSourceDetailsServiceSpec extends TestSupport with MockIncomeTaxViewC
         val generatedFailedData = Gen.oneOf(Seq(ukPropertyAndSoleTraderBusinessIncomeNoTradingName, ukPropertyAndSoleTraderBusinessIncomeNoTradingStartDate, foreignPropertyAndCeasedBusinessIncomeNoStartDate)).sample.get
         val result = TestIncomeSourceDetailsService.getCeaseIncomeSourceViewModel(generatedFailedData)
         result.isLeft should be(true)
+      }
+    }
+  }
+
+  "The IncomeSourceDetailsService.getViewIncomeSourceViewModel method" when {
+    "a user has a uk property and a sole trader business" should {
+      "return a ViewIncomeSourcesViewModel with a sole trader business and uk property" in {
+
+        val result = TestIncomeSourceDetailsService.getViewIncomeSourceViewModel(ukPropertyAndSoleTraderBusinessIncome)
+
+        result shouldBe Right(ViewIncomeSourcesViewModel(
+          viewSoleTraderBusinesses = List(viewBusinessDetailsViewModel),
+          viewUkProperty = Some(viewUkPropertyDetailsViewModel),
+          viewForeignProperty = None,
+          viewCeasedBusinesses = Nil))
+      }
+    }
+    "a user has a foreign property and a ceased businesses" should {
+      "return a ViewIncomeSourcesViewModel with a foreign property and ceased businesses" in {
+
+        val result = TestIncomeSourceDetailsService.getViewIncomeSourceViewModel(foreignPropertyAndCeasedBusinessIncome)
+
+        result shouldBe Right(ViewIncomeSourcesViewModel(
+          viewSoleTraderBusinesses = Nil,
+          viewUkProperty = None,
+          viewForeignProperty = Some(ViewPropertyDetailsViewModel(testStartDateOption)),
+          viewCeasedBusinesses = List(
+            ViewCeasedBusinessDetailsViewModel(testTradeNameOption, testStartDateOption, testCessation.date.get),
+            ViewCeasedBusinessDetailsViewModel(testTradeNameOption2, testStartDateOption2, testCessation2.date.get)
+          )
+        ))
+      }
+    }
+
+    "invalid data provided" should {
+      "still return page as unknown is used rather than error" in {
+        // Simulate dynamic data generation from one of the invalid data
+        // TODO: eventually need to be move under tests data generation section
+        val generatedFailedData = Gen.oneOf(Seq(ukPropertyAndSoleTraderBusinessIncomeNoTradingName, ukPropertyAndSoleTraderBusinessIncomeNoTradingStartDate, foreignPropertyAndCeasedBusinessIncomeNoStartDate)).sample.get
+        val result = TestIncomeSourceDetailsService.getViewIncomeSourceViewModel(generatedFailedData)
+        result.isLeft should be(false)
       }
     }
   }

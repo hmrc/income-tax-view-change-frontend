@@ -19,8 +19,8 @@ package controllers.incomeSources.cease
 import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
-import forms.CeaseUKPropertyForm
 import forms.utils.SessionKeys.ceaseUKPropertyDeclare
+import forms.incomeSources.cease.CeaseUKPropertyForm
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -106,7 +106,7 @@ class CeaseUKPropertyControllerSpec extends TestSupport with MockAuthenticationP
 
         when(mockHttpClient.POSTForm[HttpResponse](any(), any(), any())(any(), any(), any()))
           .thenReturn(Future.successful(HttpResponse(OK, "true")))
-        when(mockUKPropertyEndDate(any(), any(), any(), any(), any())(any(), any())).thenReturn(HtmlFormat.empty)
+        when(mockUKPropertyEndDate(any(), any(), any(), any())(any(), any())).thenReturn(HtmlFormat.empty)
 
         lazy val result: Future[Result] = {
           TestCeaseUKPropertyController.submit()(fakeRequestCeaseUKPropertyDeclarationComplete
@@ -190,7 +190,7 @@ class CeaseUKPropertyControllerSpec extends TestSupport with MockAuthenticationP
 
         when(mockHttpClient.POSTForm[HttpResponse](any(), any(), any())(any(), any(), any()))
           .thenReturn(Future.successful(HttpResponse(OK, "true")))
-        when(mockUKPropertyEndDate(any(), any(), any(), any(), any())(any(), any())).thenReturn(HtmlFormat.empty)
+        when(mockUKPropertyEndDate(any(), any(), any(), any())(any(), any())).thenReturn(HtmlFormat.empty)
 
         lazy val result: Future[Result] = {
           TestCeaseUKPropertyController.submitAgent()(fakeRequestCeaseUKPropertyDeclarationCompleteAgent

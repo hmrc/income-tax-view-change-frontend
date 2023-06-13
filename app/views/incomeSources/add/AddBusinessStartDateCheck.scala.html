@@ -21,24 +21,22 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components.FormWithCSRF
 @import views.html.helpers.injected.ErrorSummary
 
-@this(
-        mainTemplate: unifiedLayout,
-        implicitDateFormatter: ImplicitDateFormatterImpl,
-        h1: h1,
-        dateInput: dateInput,
-        continueButton: ContinueButton,
-        formWithCSRF: FormWithCSRF,
-        govukRadios: GovukRadios,
-        errorSummary: ErrorSummary,
-        inputRadios: input_radios,
-)
+@this(mainTemplate: unifiedLayout,
+    implicitDateFormatter: ImplicitDateFormatterImpl,
+    h1: h1,
+    dateInput: dateInput,
+    continueButton: ContinueButton,
+    formWithCSRF: FormWithCSRF,
+    govukRadios: GovukRadios,
+    errorSummary: ErrorSummary,
+    inputRadios: input_radios)
 
-@(
-        form: Form[_],
-        backUrl: String,
-        isAgent: Boolean,
-        businessStartDate: String
-)(implicit messages: Messages, user: auth.MtdItUser[_])
+@(form: Form[_],
+    postAction: Call,
+    backUrl: String,
+    isAgent: Boolean,
+    businessStartDate: String,
+    btaNavPartial: Option[Html] = None)(implicit messages: Messages, request: Request[_])
 
 @prefix = @{ "add-business-start-date-check" }
 
@@ -46,16 +44,11 @@
     messages(s"$prefix.$key", args: _*)
 }
 
-@postAction = @{
-    if(isAgent) routes.AddBusinessStartDateCheckController.submitAgent(businessStartDate)
-    else routes.AddBusinessStartDateCheckController.submit(businessStartDate)
-}
-
 @mainTemplate(
     pageTitle = getMessage("heading"),
     backUrl = Some(backUrl),
     isAgent = isAgent,
-    btaNavPartial = user.btaNavPartial) {
+    btaNavPartial = btaNavPartial) {
 
 
     @formWithCSRF(action = postAction, Symbol("id") -> s"$prefix-form") {

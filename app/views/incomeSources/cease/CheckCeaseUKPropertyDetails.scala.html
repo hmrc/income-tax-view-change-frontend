@@ -33,7 +33,7 @@
     continueButton: ContinueButton,
     implicitDateFormatter: ImplicitDateFormatterImpl
 )
-@(isAgent: Boolean = false, origin: Option[String] = None)(implicit request: Request[_], messages: Messages)
+@(isAgent: Boolean = false, origin: Option[String] = None)(implicit request: auth.MtdItUser[_], messages: Messages)
 
 @getChangeHref = @{
    if(isAgent){
@@ -86,6 +86,6 @@
 
 }
 
-@mainTemplate(pageTitle = messages(heading), isAgent = isAgent, backUrl = Some(getChangeHref)) {
+@mainTemplate(pageTitle = messages(heading), isAgent = isAgent, backUrl = Some(getChangeHref), useFallbackBackLink = true, btaNavPartial = request.btaNavPartial) {
 @content
 }

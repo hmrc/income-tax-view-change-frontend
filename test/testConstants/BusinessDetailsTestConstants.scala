@@ -21,12 +21,13 @@ import testConstants.BaseTestConstants._
 import testConstants.NextUpdatesTestConstants.{fakeNextUpdatesModel, openObligation, overdueObligation}
 import models.core._
 import models.incomeSourceDetails.BusinessDetailsModel
-import models.incomeSourceDetails.viewmodels.{BusinessDetailsViewModel, CeaseBusinessDetailsViewModel}
+import models.incomeSourceDetails.viewmodels.{BusinessDetailsViewModel, CeaseBusinessDetailsViewModel, ViewBusinessDetailsViewModel}
 import models.incomeSourceDetails.viewmodels.{BusinessDetailsViewModel, CeasedBusinessDetailsViewModel}
 import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, ObligationsModel}
 
 object BusinessDetailsTestConstants {
 
+  val year2013: Int = 2013
   val year2017: Int = 2017
   val year2018: Int = 2018
   val year2019: Int = 2019
@@ -42,6 +43,8 @@ object BusinessDetailsTestConstants {
   val test2018BusinessAccountingPeriod = AccountingPeriodModel(start = LocalDate.of(year2019, Month.MARCH, 6), end = LocalDate.of(year2018, Month.MARCH, 6))
   val testTradeName = "nextUpdates.business"
   val testTradeName2 = "nextUpdates.business2"
+  val testTradeNameOption: Option[String] = Some("nextUpdates.business")
+  val testTradeNameOption2: Option[String] = Some("nextUpdates.business2")
   val testBizAddress = AddressModel(
     addressLine1 = "64 Zoo Lane",
     addressLine2 = Some("Happy Place"),
@@ -56,7 +59,12 @@ object BusinessDetailsTestConstants {
   val testMtdItId = "XIAT0000000000A"
   val testStartDate = LocalDate.parse("2022-01-01")
   val testStartDate2 = LocalDate.parse("2021-01-01")
+  val testStartDateFormatted = "1 January 2022"
+  val testStartDate2Formatted = "1 January 2021"
+  val testStartDateOption: Option[LocalDate] = Some(LocalDate.parse("2022-01-01"))
+  val testStartDateOption2: Option[LocalDate] = Some(LocalDate.parse("2021-01-01"))
   val testEndDate = LocalDate.parse("2023-01-01")
+  val testUnknownValue = "Unknown"
 
 
   val business1 = BusinessDetailsModel(
@@ -73,6 +81,15 @@ object BusinessDetailsTestConstants {
     accountingPeriod = Some(testBusinessAccountingPeriod),
     tradingName = Some(testTradeName),
     firstAccountingPeriodEndDate = Some(LocalDate.of(year2018, Month.APRIL, 5)),
+    tradingStartDate = Some(testStartDate),
+    cessation = None
+  )
+
+  val soleTraderBusiness2 = BusinessDetailsModel(
+    incomeSourceId = Some(testSelfEmploymentId),
+    accountingPeriod = Some(testBusinessAccountingPeriod),
+    tradingName = Some(testTradeName),
+    firstAccountingPeriodEndDate = Some(LocalDate.of(year2013, Month.APRIL, 5)),
     tradingStartDate = Some(testStartDate),
     cessation = None
   )
@@ -96,29 +113,36 @@ object BusinessDetailsTestConstants {
   )
 
   val businessDetailsViewModel = BusinessDetailsViewModel(
-    tradingName = testTradeName,
-    tradingStartDate = testStartDate
+    tradingName = Some(testTradeName),
+    tradingStartDate = Some(testStartDate)
   )
 
   val businessDetailsViewModel2 = BusinessDetailsViewModel(
-    tradingName = testTradeName2,
-    tradingStartDate = testStartDate2
+    tradingName = Some(testTradeName2),
+    tradingStartDate = Some(testStartDate2)
   )
 
   val ceaseBusinessDetailsViewModel = CeaseBusinessDetailsViewModel(
+    incomeSourceId = "1234",
     tradingName = testTradeName,
     tradingStartDate = testStartDate
   )
 
   val ceaseBusinessDetailsViewModel2 = CeaseBusinessDetailsViewModel(
+    incomeSourceId = "1234",
     tradingName = testTradeName2,
     tradingStartDate = testStartDate2
   )
 
   val ceasedBusinessDetailsViewModel = CeasedBusinessDetailsViewModel(
-    tradingName = testTradeName,
-    tradingStartDate = testStartDate,
+    tradingName = Some(testTradeName),
+    tradingStartDate = Some(testStartDate),
     cessationDate = testEndDate
+  )
+
+  val viewBusinessDetailsViewModel = ViewBusinessDetailsViewModel(
+    tradingName = testTradeNameOption,
+    tradingStartDate = testStartDateOption
   )
 
   val business2 = BusinessDetailsModel(

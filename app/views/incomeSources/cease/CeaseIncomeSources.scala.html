@@ -19,6 +19,7 @@
 @import views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import models.incomeSourceDetails.viewmodels.CeaseIncomeSourcesViewModel
+@import java.time.format.DateTimeFormatter
 
 @this(
         mainTemplate: unifiedLayout,
@@ -43,9 +44,9 @@
     messages(s"cease-income-sources.$key", args: _*)
 }
 
-@ceaseSoleTraderBusinessURL = @{
-    if(isAgent) controllers.incomeSources.cease.routes.CeaseBusinessNameController.showAgent().url
-    else controllers.incomeSources.cease.routes.CeaseBusinessNameController.show().url
+@ceaseSoleTraderBusinessURL(incomeSourceId: String) = @{
+    if(isAgent) controllers.incomeSources.cease.routes.BusinessEndDateController.showAgent(incomeSourceId).url
+    else controllers.incomeSources.cease.routes.BusinessEndDateController.show(incomeSourceId).url
 }
 
 @ceaseUkPropertyURL = @{
@@ -84,8 +85,8 @@
                 <tr class="govuk-table__row">
                     <td class="govuk-table__cell" id="@{s"table-row-trading-name-$index"}">@item.tradingName</td>
                     <td class="govuk-table__cell" id="@{s"table-row-trading-start-date-$index"}">@item.tradingStartDate.toLongDate</td>
-                    <td class="govuk-table__cell">
-                        <a class="govuk-link govuk-summary-list__actions" id="@{s"cease-link-business-$index"}" href=@ceaseSoleTraderBusinessURL>
+                    <td class="govuk-table__cell govuk-!-text-align-right">
+                        <a class="govuk-link" id="@{s"cease-link-business-$index"}" href=@ceaseSoleTraderBusinessURL(item.incomeSourceId)>
                             @getMessage("cease")
                         </a>
                     </td>
@@ -94,6 +95,8 @@
             </tbody>
         </table>
     }
+
+    <br>
 
     @if(sources.ukProperty.nonEmpty) {
 
@@ -113,8 +116,8 @@
             <tbody>
                 <tr class="govuk-table__row">
                     <td class="govuk-table__cell" id="table-row-trading-start-date-uk">@sources.ukProperty.map(_.tradingStartDate.toLongDate).get</td>
-                    <td class="govuk-table__cell">
-                        <a class="govuk-link govuk-summary-list__actions" id="cease-link-uk" href=@ceaseUkPropertyURL>
+                    <td class="govuk-table__cell govuk-!-text-align-right">
+                        <a class="govuk-link" id="cease-link-uk" href=@ceaseUkPropertyURL>
                             @getMessage("cease")
                         </a>
                     </td>
@@ -122,6 +125,8 @@
             </tbody>
         </table>
     }
+
+    <br>
 
     @if(sources.foreignProperty.nonEmpty) {
 
@@ -141,8 +146,8 @@
             <tbody>
                 <tr class="govuk-table__row">
                     <td class="govuk-table__cell" id="table-row-trading-start-date-foreign">@sources.foreignProperty.map(_.tradingStartDate.toLongDate).get</td>
-                    <td class="govuk-table__cell">
-                        <a class="govuk-link govuk-summary-list__actions" id="cease-link-foreign" href=@ceaseForeignPropertyURL>
+                    <td class="govuk-table__cell govuk-!-text-align-right">
+                        <a class="govuk-link" id="cease-link-foreign" href=@ceaseForeignPropertyURL>
                             @getMessage("cease")
                         </a>
                     </td>
@@ -150,6 +155,8 @@
             </tbody>
         </table>
     }
+
+    <br>
 
     @if(sources.ceasedBusinesses.nonEmpty) {
         @h2(msg = getMessage("ceased-businesses.h1"),
