@@ -27,7 +27,6 @@ import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, ObligationsModel}
 
 object BusinessDetailsTestConstants {
 
-  val year2013: Int = 2013
   val year2017: Int = 2017
   val year2018: Int = 2018
   val year2019: Int = 2019
@@ -59,6 +58,7 @@ object BusinessDetailsTestConstants {
   val testMtdItId = "XIAT0000000000A"
   val testStartDate = LocalDate.parse("2022-01-01")
   val testStartDate2 = LocalDate.parse("2021-01-01")
+  val testStartDate3 = LocalDate.parse("2013-01-01")
   val testStartDateFormatted = "1 January 2022"
   val testStartDate2Formatted = "1 January 2021"
   val testStartDateOption: Option[LocalDate] = Some(LocalDate.parse("2022-01-01"))
@@ -86,11 +86,11 @@ object BusinessDetailsTestConstants {
   )
 
   val soleTraderBusiness2 = BusinessDetailsModel(
-    incomeSourceId = Some(testSelfEmploymentId),
+    incomeSourceId = Some(testSelfEmploymentId2),
     accountingPeriod = Some(testBusinessAccountingPeriod),
     tradingName = Some(testTradeName),
-    firstAccountingPeriodEndDate = Some(LocalDate.of(year2013, Month.APRIL, 5)),
-    tradingStartDate = Some(testStartDate),
+    firstAccountingPeriodEndDate = Some(LocalDate.of(year2018, Month.APRIL, 5)),
+    tradingStartDate = Some(testStartDate3),
     cessation = None
   )
 
