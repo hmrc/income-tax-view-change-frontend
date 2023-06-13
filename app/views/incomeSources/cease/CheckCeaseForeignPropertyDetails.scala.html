@@ -36,7 +36,7 @@
         formattedEndDate: String
 )(implicit request: auth.MtdItUser[_], messages: Messages)
 
-@prefix = @{ "add-business-start-date-check" }
+@prefix = @{ "check-cease-foreign-property-details" }
 
 @getMessage(key: String, args: String*) = @{
     messages(s"$prefix.$key", args: _*)
@@ -53,19 +53,19 @@
     isAgent = isAgent,
     btaNavPartial = request.btaNavPartial) {
 
-    @caption("Foreign property business you entered")
+    @caption(getMessage("caption"))
 
-    @h1("Check your details")
+    @h1(getMessage("heading"))
 
     @govukSummaryList(
         SummaryList(Seq(SummaryListRow(
-            key = Key(Text(messages("Date business stopped"))),
+            key = Key(Text(getMessage("summary-list.key"))),
             value = Value(Text(formattedEndDate)),
             actions = Some(Actions(
                 items = Seq(ActionItem(
                     content = HtmlContent(link(
                         link = changeUrl,
-                        messageKey = "Change"
+                        messageKey = getMessage("summary-list.link")
                     ))
             ))))
         )))
@@ -73,7 +73,7 @@
 
     @formWithCSRF(postCall) {
         @govukButton(Button(
-            content = Text(messages("Confirm and continue")),
+            content = Text(getMessage("button")),
             attributes = Map("id" -> "confirm-and-continue-button")
         ))
     }
