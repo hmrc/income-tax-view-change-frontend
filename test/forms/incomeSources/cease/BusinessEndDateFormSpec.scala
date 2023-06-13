@@ -80,7 +80,6 @@ class BusinessEndDateFormSpec extends AnyWordSpec with Matchers with TestSupport
     }
     "bind with a future date" in {
       val form: Form[DateFormElement] = new BusinessEndDateForm(mockDateService).apply(testUser, Some(testSelfEmploymentId))
-
       val futureYear = dateService.getCurrentTaxYearEnd() + 1
       val formData = Map("business-end-date.day" -> "20", "business-end-date.month" -> "12", "business-end-date.year" -> s"$futureYear")
       val completedForm = form.bind(formData)
@@ -92,7 +91,6 @@ class BusinessEndDateFormSpec extends AnyWordSpec with Matchers with TestSupport
     }
     "bind with a date earlier than the business start date" in {
       val form: Form[DateFormElement] = new BusinessEndDateForm(mockDateService).apply(testUser, Some(testSelfEmploymentId))
-
       val formData = Map("business-end-date.day" -> "27", "business-end-date.month" -> "8", "business-end-date.year" -> "2016")
       val completedForm = form.bind(formData)
 
@@ -104,7 +102,6 @@ class BusinessEndDateFormSpec extends AnyWordSpec with Matchers with TestSupport
     }
     "give the correct error when binding with a date both before business start date and the 6th of April 2015" in {
       val form: Form[DateFormElement] = new BusinessEndDateForm(mockDateService).apply(testUser2, Some(testSelfEmploymentId2))
-
       val formData = Map("business-end-date.day" -> "14", "business-end-date.month" -> "10", "business-end-date.year" -> "2012")
       val completedForm = form.bind(formData)
 
@@ -117,7 +114,6 @@ class BusinessEndDateFormSpec extends AnyWordSpec with Matchers with TestSupport
     }
     "bind with a date missing day field" in {
       val form: Form[DateFormElement] = new BusinessEndDateForm(mockDateService).apply(testUser, Some(testSelfEmploymentId))
-
       val formData = Map("business-end-date.day" -> "", "business-end-date.month" -> "12", "business-end-date.year" -> "2016")
       val completedForm = form.bind(formData)
 
@@ -128,7 +124,6 @@ class BusinessEndDateFormSpec extends AnyWordSpec with Matchers with TestSupport
     }
     "bind with a date missing month field" in {
       val form: Form[DateFormElement] = new BusinessEndDateForm(mockDateService).apply(testUser, Some(testSelfEmploymentId))
-
       val formData = Map("business-end-date.day" -> "20", "business-end-date.month" -> "", "business-end-date.year" -> "2016")
       val completedForm = form.bind(formData)
 
