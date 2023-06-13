@@ -320,6 +320,12 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
       post("/income-sources/cease/uk-property-check-details", session)(Map.empty)
 
     def getManageIncomeSource: WSResponse = get("/income-sources/manage/view-and-manage-income-sources")
+
+    def getCheckCeaseForeignPropertyDetails(session: Map[String, String]): WSResponse =
+      getWithClientDetailsInSession("/income-sources/cease/foreign-property-check-details", session)
+
+    def postCheckCeaseForeignPropertyDetails(cessationDate: String, session: Map[String, String]): WSResponse =
+      post(s"/income-sources/cease/foreign-property-check-details/$cessationDate", session)(Map.empty)
   }
 
   def unauthorisedTest(uri: String): Unit = {
