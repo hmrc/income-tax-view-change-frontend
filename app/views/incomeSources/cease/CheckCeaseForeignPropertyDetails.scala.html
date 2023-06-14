@@ -63,10 +63,9 @@
             value = Value(Text(formattedEndDate)),
             actions = Some(Actions(
                 items = Seq(ActionItem(
-                    content = HtmlContent(link(
-                        link = changeUrl,
-                        messageKey = getMessage("summary-list.link")
-                    ))
+                    href = changeUrl,
+                    classes = "govuk-link govuk-body",
+                    content = HtmlContent(getMessage("summary-list.link"))
             ))))
         )))
     )
