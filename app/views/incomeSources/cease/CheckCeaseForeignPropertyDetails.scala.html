@@ -17,6 +17,9 @@
 @import views.html.layouts.unifiedLayout
 @import views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components._
+@import _root_.implicits.ImplicitDateFormatterImpl
+@import java.time.LocalDate
+
 
 @this(
         mainTemplate: unifiedLayout,
@@ -25,6 +28,7 @@
         govukSummaryList: GovukSummaryList,
         link: link,
         caption: caption,
+        implicitDateFormatter: ImplicitDateFormatterImpl,
         govukButton: GovukButton
 )
 
@@ -32,8 +36,7 @@
         isAgent: Boolean,
         backUrl: String,
         changeUrl: String,
-        endDate: String,
-        formattedEndDate: String
+        endDate: LocalDate
 )(implicit request: auth.MtdItUser[_], messages: Messages)
 
 @prefix = @{ "check-cease-foreign-property-details" }
@@ -43,8 +46,8 @@
 }
 
 @postCall = @{
-    if(isAgent) controllers.incomeSources.cease.routes.CheckCeaseForeignPropertyDetailsController.submitAgent(endDate)
-    else controllers.incomeSources.cease.routes.CheckCeaseForeignPropertyDetailsController.submit(endDate)
+    if(isAgent) controllers.incomeSources.cease.routes.CheckCeaseForeignPropertyDetailsController.submitAgent(endDate.toString)
+    else controllers.incomeSources.cease.routes.CheckCeaseForeignPropertyDetailsController.submit(endDate.toString)
 }
 
 @mainTemplate(
@@ -60,7 +63,7 @@
     @govukSummaryList(
         SummaryList(Seq(SummaryListRow(
             key = Key(Text(getMessage("summary-list.key"))),
-            value = Value(Text(formattedEndDate)),
+            value = Value(Text(implicitDateFormatter.longDate(endDate).toLongDate)),
             actions = Some(Actions(
                 items = Seq(ActionItem(
                     href = changeUrl,

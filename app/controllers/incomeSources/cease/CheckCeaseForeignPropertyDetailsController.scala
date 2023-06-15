@@ -128,11 +128,10 @@ class CheckCeaseForeignPropertyDetailsController @Inject()(val authenticate: Aut
       request.session.get(ceaseForeignPropertyEndDate) match {
         case Some(date) =>
           Future(Ok(checkCeaseForeignPropertyDetails(
-            endDate = date,
+            endDate = date.toLocalDate,
             backUrl = backUrl,
             isAgent = isAgent,
-            changeUrl = changeUrl,
-            formattedEndDate = longDate(date.toLocalDate).toLongDate
+            changeUrl = changeUrl
           )))
         case _ =>
           Logger("application").error(s"[CheckCeaseForeignPropertyDetailsController][handleSubmitRequest]:" +
