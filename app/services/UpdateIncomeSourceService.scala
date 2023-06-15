@@ -44,19 +44,18 @@ class UpdateIncomeSourceService @Inject()(connector: IncomeTaxViewChangeConnecto
     }
 
   }
-
   def updateCessationDatev2(nino: String, incomeSourceId: String, cessationDate: String)
-                           (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[UpdateIncomeSourceError.type, UpdateIncomeSourceSuccess.type]]= {
+                           (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[UpdateIncomeSourceError, UpdateIncomeSourceSuccess]] = {
     connector.updateCessationDate(
       nino = nino,
       incomeSourceId = incomeSourceId,
       cessationDate = Some(LocalDate.parse(cessationDate))
     ) map {
-      case _: UpdateIncomeSourceResponseModel => Right(UpdateIncomeSourceSuccess)
-      case _ => Left(UpdateIncomeSourceError)
+      case _: UpdateIncomeSourceResponseModel => Right(UpdateIncomeSourceSuccess(incomeSourceId))
+      case _ => Left(UpdateIncomeSourceError("[UpdateIncomeSourceService][updateCessationDatev2]: Failed to update cessationDate"))
     }
   }
 }
 
-case object UpdateIncomeSourceError
-case object UpdateIncomeSourceSuccess
+case class UpdateIncomeSourceError(reason: String)
+case class UpdateIncomeSourceSuccess(incomeSourceId: String)

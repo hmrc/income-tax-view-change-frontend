@@ -64,11 +64,15 @@ class CheckCeaseForeignPropertyDetailsControllerSpec extends TestSupport with Mo
     val title: String = s"${messages("htmlTitle", messages("check-cease-foreign-property-details.heading"))}"
     val titleAgent: String = s"${messages("htmlTitle.agent", messages("check-cease-foreign-property-details.heading"))}"
     val heading: String = messages("check-cease-foreign-property-details.heading")
+
   }
 
   def disableAllSwitches(): Unit = {
     switches.foreach(switch => disable(switch))
   }
+
+  val testIncomeSourceId = "123"
+
 
   "Individual - CheckCeaseForeignPropertyDetailsController.show" should {
     "return 200 OK" when {
@@ -111,7 +115,7 @@ class CheckCeaseForeignPropertyDetailsControllerSpec extends TestSupport with Mo
         mockForeignPropertyIncomeSource()
 
         when(mockUpdateIncomeSourceService.updateCessationDatev2(any(), any(), any())(any(), any()))
-          .thenReturn(Future.successful(Right(UpdateIncomeSourceSuccess)))
+          .thenReturn(Future.successful(Right(UpdateIncomeSourceSuccess(testIncomeSourceId))))
 
         lazy val result: Future[Result] = {
           TestCheckCeaseForeignPropertyDetailsController.submit(cessationDate)(fakeRequestWithCeaseForeignPropertyDate(cessationDate))
@@ -164,7 +168,7 @@ class CheckCeaseForeignPropertyDetailsControllerSpec extends TestSupport with Mo
         mockForeignPropertyIncomeSource()
 
         when(mockUpdateIncomeSourceService.updateCessationDatev2(any(), any(), any())(any(), any()))
-          .thenReturn(Future.successful(Right(UpdateIncomeSourceSuccess)))
+          .thenReturn(Future.successful(Right(UpdateIncomeSourceSuccess(testIncomeSourceId))))
 
         lazy val result: Future[Result] = {
           TestCheckCeaseForeignPropertyDetailsController.submitAgent(cessationDate)(fakeRequestConfirmedClient()
