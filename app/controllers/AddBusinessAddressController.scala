@@ -75,7 +75,7 @@ class AddBusinessAddressController @Inject()(authenticate: AuthenticationPredica
       Future.successful(Redirect(controllers.routes.HomeController.show()))
     } else {
         addressLookupConnector.initialiseAddressLookup(
-          isAgent = false
+          isAgent = isAgent
         ) map {
           case Right(PostAddressLookupSuccessResponse(Some(location))) =>
             Redirect(location)
@@ -93,11 +93,11 @@ class AddBusinessAddressController @Inject()(authenticate: AuthenticationPredica
       id match {
         case Some(value) => fetchAddress(value)
           fetchAddress(value) map { value =>
-            Redirect(routes.AddBusinessCheckDetailsController.show().url).addingToSession(
+            Redirect(routes.AddBusinessAccountingMethodController.show().url).addingToSession(
               SessionKeys.addBusinessAddressLine1 -> value.address.lines.head,
               SessionKeys.addBusinessAddressLine2 -> {if (value.address.lines(1).isEmpty) "" else value.address.lines(1)},
               SessionKeys.addBusinessAddressLine3 -> {if (value.address.lines(2).isEmpty) "" else value.address.lines(2)},
-              SessionKeys.addBusinessAddressLine4 -> {if (value.address.lines(3).isEmpty) "" else value.address.lines(3)},
+              //SessionKeys.addBusinessAddressLine4 -> {if (value.address.lines(3).isEmpty) "" else value.address.lines(3)},
               SessionKeys.addBusinessPostalCode -> value.address.postcode.get,// make postcode not Optional
               SessionKeys.addBusinessCountryCode -> "GB"
             )
@@ -112,11 +112,11 @@ class AddBusinessAddressController @Inject()(authenticate: AuthenticationPredica
         id match {
           case Some(value) => val address: Future[BusinessAddressModel] = fetchAddress(value)
             address map { value =>
-              Redirect(routes.AddBusinessCheckDetailsController.showAgent().url).addingToSession(
+              Redirect(routes.AddBusinessAccountingMethodController.showAgent().url).addingToSession(
                 SessionKeys.addBusinessAddressLine1 -> value.address.lines.head,
                 SessionKeys.addBusinessAddressLine2 -> {if (value.address.lines(1).isEmpty) "" else value.address.lines(1)},
                 SessionKeys.addBusinessAddressLine3 -> {if (value.address.lines(2).isEmpty) "" else value.address.lines(2)},
-                SessionKeys.addBusinessAddressLine4 -> {if (value.address.lines(3).isEmpty) "" else value.address.lines(3)},
+                //SessionKeys.addBusinessAddressLine4 -> {if (value.address.lines(3).isEmpty) "" else value.address.lines(3)},
                 SessionKeys.addBusinessPostalCode -> value.address.postcode.get, // make postcode not Optional
                 SessionKeys.addBusinessCountryCode -> "GB"
               )
