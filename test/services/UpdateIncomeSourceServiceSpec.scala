@@ -96,12 +96,12 @@ class UpdateIncomeSourceServiceSpec  extends TestSupport with FeatureSwitching{
       "valid response" in {
         when(mockIncomeTaxViewChangeConnector.updateCessationDate(any(), any(), any())(any()))
           .thenReturn(Future.successful(UpdateIncomeSourceTestConstants.successResponse))
-        TestUpdateIncomeSourceService.updateCessationDatev2(testNino, testIncomeSourceId, cessationDate).futureValue shouldBe Right(UpdateIncomeSourceSuccess)
+        TestUpdateIncomeSourceService.updateCessationDatev2(testNino, testIncomeSourceId, cessationDate).futureValue shouldBe Right(UpdateIncomeSourceSuccess(testIncomeSourceId))
       }
       "invalid response" in {
         when(mockIncomeTaxViewChangeConnector.updateCessationDate(any(), any(), any())(any()))
           .thenReturn(Future.successful(UpdateIncomeSourceTestConstants.failureResponse))
-        TestUpdateIncomeSourceService.updateCessationDatev2(testNino, testIncomeSourceId, cessationDate).futureValue shouldBe Left(UpdateIncomeSourceError)
+        TestUpdateIncomeSourceService.updateCessationDatev2(testNino, testIncomeSourceId, cessationDate).futureValue shouldBe Left(UpdateIncomeSourceError("Failed to update cessationDate"))
       }
     }
   }

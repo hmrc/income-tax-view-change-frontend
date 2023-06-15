@@ -52,7 +52,7 @@ class UpdateIncomeSourceService @Inject()(connector: IncomeTaxViewChangeConnecto
       cessationDate = Some(LocalDate.parse(cessationDate))
     ) map {
       case _: UpdateIncomeSourceResponseModel => Right(UpdateIncomeSourceSuccess(incomeSourceId))
-      case _ => Left(UpdateIncomeSourceError("[UpdateIncomeSourceService][updateCessationDatev2]: Failed to update cessationDate"))
+      case _ => Left(UpdateIncomeSourceError("Failed to update cessationDate"))
     }
   }
 }
