@@ -74,13 +74,13 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
     }
 
   def handleRequest(isAgent: Boolean, backUrl: String)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
-    Future {
-      if (isDisabled(IncomeSources)) {
-        Redirect(
-          if(isAgent) controllers.routes.HomeController.showAgent
-          else controllers.routes.HomeController.show()
-        )
-      } else {
+    if (isDisabled(IncomeSources)) {
+      Future.successful(Redirect(
+        if(isAgent) controllers.routes.HomeController.showAgent
+        else controllers.routes.HomeController.show()
+      ))
+    } else {
+      Future {
         if (isAgent) {
           Ok(addBusinessView(BusinessNameForm.form, isAgent, routes.AddBusinessNameController.submitAgent(), backUrl))
         } else {
