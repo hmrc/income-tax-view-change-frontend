@@ -29,7 +29,7 @@ import org.mockito.Mockito.{mock, when}
 import play.api.http.Status
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
-import services.{UpdateIncomeSourceService, UpdateIncomeSourceSuccess}
+import services.{UpdateIncomeSourceError, UpdateIncomeSourceService, UpdateIncomeSourceSuccess}
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testIndividualAuthSuccessWithSaUtrResponse}
 import testConstants.UpdateIncomeSourceTestConstants.cessationDate
 import testUtils.TestSupport
@@ -105,6 +105,17 @@ class CheckCeaseForeignPropertyDetailsControllerSpec extends TestSupport with Mo
         status(result) shouldBe Status.SEE_OTHER
       }
     }
+    "return 500 INTERNAL_SERVER_ERROR" when {
+      "session does not contain: ceaseForeignPropertyEndDate" in {
+        setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
+        enable(IncomeSources)
+        mockForeignPropertyIncomeSource()
+
+        val result: Future[Result] = TestCheckCeaseForeignPropertyDetailsController.show()(fakeRequestWithActiveSession)
+
+        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+      }
+    }
   }
 
   "Individual - CheckCeaseForeignPropertyDetailsController.submit" should {
@@ -122,6 +133,49 @@ class CheckCeaseForeignPropertyDetailsControllerSpec extends TestSupport with Mo
         }
         status(result) shouldBe Status.SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.CeaseForeignPropertySuccessController.show().url)
+      }
+    }
+    s"return 203 SEE_OTHER and redirect to the home page" when {
+      "FS disabled" in {
+        setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
+        disable(IncomeSources)
+        mockForeignPropertyIncomeSource()
+
+        lazy val result: Future[Result] = {
+          TestCheckCeaseForeignPropertyDetailsController.submit(cessationDate)(fakeRequestWithCeaseForeignPropertyDate(cessationDate))
+        }
+
+        status(result) shouldBe Status.SEE_OTHER
+      }
+    }
+    s"return 500 INTERNAL_SERVER_ERROR" when {
+      "UpdateIncomeSourceError model returned from UpdateIncomeSourceService" in {
+        setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
+        enable(IncomeSources)
+        mockForeignPropertyIncomeSource()
+
+        when(mockUpdateIncomeSourceService.updateCessationDatev2(any(), any(), any())(any(), any()))
+          .thenReturn(Future.successful(Left(UpdateIncomeSourceError("Failed to update cessationDate"))))
+
+        lazy val result: Future[Result] = {
+          TestCheckCeaseForeignPropertyDetailsController.submit(cessationDate)(fakeRequestWithCeaseForeignPropertyDate(cessationDate))
+        }
+        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+      }
+    }
+    s"return 500 INTERNAL_SERVER_ERROR" when {
+      "user has no foreign property income sources" in {
+        setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
+        enable(IncomeSources)
+        mockNoIncomeSources()
+
+        when(mockUpdateIncomeSourceService.updateCessationDatev2(any(), any(), any())(any(), any()))
+          .thenReturn(Future.successful(Right(UpdateIncomeSourceSuccess(testIncomeSourceId))))
+
+        lazy val result: Future[Result] = {
+          TestCheckCeaseForeignPropertyDetailsController.submit(cessationDate)(fakeRequestWithCeaseForeignPropertyDate(cessationDate))
+        }
+        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
       }
     }
   }
@@ -142,7 +196,7 @@ class CheckCeaseForeignPropertyDetailsControllerSpec extends TestSupport with Mo
         document.select("h1").text shouldBe TestCheckCeaseForeignPropertyDetailsController.heading
       }
     }
-    "return 303 SEE_OTHER and redirect to custom not found error page" when {
+    "return 303 SEE_OTHER and redirect to home page" when {
       "navigating to the page with FS Disabled" in {
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         disable(IncomeSources)
@@ -156,6 +210,16 @@ class CheckCeaseForeignPropertyDetailsControllerSpec extends TestSupport with Mo
         setupMockAgentAuthorisationException()
         val result: Future[Result] = TestCheckCeaseForeignPropertyDetailsController.showAgent()(fakeRequestConfirmedClient())
         status(result) shouldBe Status.SEE_OTHER
+      }
+    }
+    "return 500 INTERNAL_SERVER_ERROR" when {
+      "session does not contain: ceaseForeignPropertyEndDate" in {
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+        enable(IncomeSources)
+        mockPropertyIncomeSource()
+
+        val result: Future[Result] = TestCheckCeaseForeignPropertyDetailsController.showAgent()(fakeRequestConfirmedClient())
+        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
       }
     }
   }
@@ -177,7 +241,39 @@ class CheckCeaseForeignPropertyDetailsControllerSpec extends TestSupport with Mo
         }
 
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.CeaseForeignPropertySuccessController.showAgent().url)
+      }
+    }
+    s"redirect to home page 303 SEE_OTHER" when {
+      "FS disabled" in {
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+        disable(IncomeSources)
+        mockForeignPropertyIncomeSource()
+
+        when(mockUpdateIncomeSourceService.updateCessationDatev2(any(), any(), any())(any(), any()))
+          .thenReturn(Future.successful(Right(UpdateIncomeSourceSuccess(testIncomeSourceId))))
+
+        lazy val result: Future[Result] = {
+          TestCheckCeaseForeignPropertyDetailsController.submitAgent(cessationDate)(fakeRequestConfirmedClient()
+            .withSession(forms.utils.SessionKeys.ceaseForeignPropertyEndDate -> cessationDate)
+            .withMethod("POST"))
+        }
+
+        status(result) shouldBe Status.SEE_OTHER
+        redirectLocation(result) shouldBe Some(controllers.routes.HomeController.showAgent.url)
+      }
+    }
+    s"return 500 INTERNAL_SERVER_ERROR" when {
+      "user has no foreign property income sources" in {
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+        enable(IncomeSources)
+        mockNoIncomeSources()
+
+        lazy val result: Future[Result] = {
+          TestCheckCeaseForeignPropertyDetailsController.submitAgent(cessationDate)(fakeRequestConfirmedClient()
+            .withMethod("POST"))
+        }
+
+        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
       }
     }
   }
