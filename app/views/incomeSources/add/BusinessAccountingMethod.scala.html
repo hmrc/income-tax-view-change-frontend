@@ -31,7 +31,7 @@ govukRadios: GovukRadios,
 errorSummary: ErrorSummary,
 inputRadios: input_radios)
 
-@(data: String)
+@(postAction: Call, isAgent: Boolean = false, backUrl: String, btaNavPartial: Option[Html] = None)(implicit request: Request[_], messages: Messages)
 
 <div>
  data

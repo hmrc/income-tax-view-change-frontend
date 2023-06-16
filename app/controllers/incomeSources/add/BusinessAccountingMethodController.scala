@@ -17,10 +17,11 @@
 package controllers.incomeSources.add
 
 import auth.{FrontendAuthorisedFunctions, MtdItUser}
-import config.featureswitch.FeatureSwitching
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import config.featureswitch.{FeatureSwitching, IncomeSources}
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
+import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc._
 import services.IncomeSourceDetailsService
@@ -48,17 +49,41 @@ class BusinessAccountingMethodController @Inject()(val authenticate: Authenticat
                                                    val itvcErrorHandlerAgent: AgentItvcErrorHandler)
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
-  def handleRequest(isAgent: Boolean)
+  def handleRequest(isAgent: Boolean, origin: Option[String] = None)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
-    Future.successful(???)
+
+    val incomeSourcesEnabled: Boolean = isEnabled(IncomeSources)
+    val backUrl: String = if (isAgent) controllers.incomeSources.add.routes.CheckBusinessDetailsController.showAgent().url else
+      controllers.incomeSources.add.routes.CheckBusinessDetailsController.show().url //checkurl
+    val postAction: Call = if (isAgent) controllers.incomeSources.add.routes.BusinessAccountingMethodController.submitAgent() else
+      controllers.incomeSources.add.routes.BusinessAccountingMethodController.submit() //checkurl
+    val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
+
+    if (incomeSourcesEnabled) {
+      Future.successful(Ok(view(
+        postAction = postAction,
+        isAgent = isAgent,
+        backUrl = backUrl,
+        btaNavPartial = user.btaNavPartial
+      )(user, messages)))
+    } else {
+      Future.successful(Ok(customNotFoundErrorView()(user, messages)))
+    } recover {
+      case ex: Exception =>
+        Logger("application").error(s"${if (isAgent) "[Agent]"}" +
+          s"Error getting BusinessEndDate page: ${ex.getMessage}")
+        errorHandler.showInternalServerError()
+    }
   }
 
 
   def show(): Action[AnyContent] =
     (checkSessionTimeout andThen authenticate andThen retrieveNino
-      andThen retrieveIncomeSources).async {
+      andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
       implicit user =>
-        Future.successful(Ok(view("hello")))
+        handleRequest(
+          isAgent = false
+        )
     }
 
   def showAgent(): Action[AnyContent] = Authenticated.async {
