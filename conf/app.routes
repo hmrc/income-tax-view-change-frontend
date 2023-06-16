@@ -188,6 +188,10 @@ GET          /income-sources/add/foreign-property-start-date-check              
 GET          /agents/income-sources/add/foreign-property-start-date-check       controllers.incomeSources.add.ForeignPropertyStartDateCheckController.showAgent()
 POST         /income-sources/add/foreign-property-start-date-check              controllers.incomeSources.add.ForeignPropertyStartDateCheckController.submit()
 POST         /agents/income-sources/add/foreign-property-start-date-check       controllers.incomeSources.add.ForeignPropertyStartDateCheckController.submitAgent()
+GET          /income-sources/add/business-accounting-method               controllers.incomeSources.add.BusinessAccountingMethodController.show()
+GET          /agents/income-sources/add/business-accounting-method        controllers.incomeSources.add.BusinessAccountingMethodController.showAgent()
+# POST         /income-sources/add/business-accounting-method               controllers.incomeSources.add.BusinessAccountingMethodController.submit()
+# POST         /agents/income-sources/add/business-accounting-method        controllers.incomeSources.add.BusinessAccountingMethodController.submitAgent()
 
 
 # Income Sources - Cease
