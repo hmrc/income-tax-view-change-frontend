@@ -16,39 +16,39 @@
 
 package connectors
 
-import testConstants.BaseTestConstants._
-import testConstants.ChargeHistoryTestConstants._
-import testConstants.FinancialDetailsTestConstants._
-import testConstants.IncomeSourceDetailsTestConstants.{singleBusinessAndPropertyMigrat2019, singleBusinessIncome}
-import testConstants.NinoLookupTestConstants._
-import testConstants.OutstandingChargesTestConstants._
-import testConstants.PaymentAllocationsTestConstants._
-import testConstants.NextUpdatesTestConstants._
 import audit.AuditingService
 import audit.mocks.MockAuditingService
 import audit.models._
 import config.FrontendAppConfig
-import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND, OK}
 import mocks.MockHttp
 import models.chargeHistory.{ChargeHistoryResponseModel, ChargesHistoryErrorModel}
 import models.core.{NinoResponse, NinoResponseError}
 import models.financialDetails._
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsResponse}
+import models.nextUpdates.{NextUpdatesErrorModel, NextUpdatesResponseModel}
 import models.outstandingCharges.{OutstandingChargesErrorModel, OutstandingChargesResponseModel}
 import models.paymentAllocationCharges.{FinancialDetailsWithDocumentDetailsErrorModel, FinancialDetailsWithDocumentDetailsResponse}
 import models.paymentAllocations.{PaymentAllocationsError, PaymentAllocationsResponse}
-import models.nextUpdates.{NextUpdatesErrorModel, NextUpdatesResponseModel}
 import models.repaymentHistory.{RepaymentHistoryErrorModel, RepaymentHistoryModel, RepaymentHistoryResponseModel}
 import models.updateIncomeSource.UpdateIncomeSourceResponse
 import org.mockito.Mockito.{mock, when}
+import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND, OK}
 import play.api.libs.json.Json
 import play.mvc.Http.Status
+import testConstants.BaseTestConstants._
+import testConstants.ChargeHistoryTestConstants._
+import testConstants.FinancialDetailsTestConstants._
+import testConstants.ITSAStatusTestConstants.{badJsonErrorITSAStatusError, errorITSAStatusError}
+import testConstants.IncomeSourceDetailsTestConstants.{singleBusinessAndPropertyMigrat2019, singleBusinessIncome}
+import testConstants.NextUpdatesTestConstants._
+import testConstants.NinoLookupTestConstants._
+import testConstants.OutstandingChargesTestConstants._
+import testConstants.PaymentAllocationsTestConstants._
 import testConstants.RepaymentHistoryTestConstants.{repaymentHistoryOneRSI, validMultipleRepaymentHistoryJson, validRepaymentHistoryOneRSIJson}
 import testConstants.UpdateIncomeSourceTestConstants
-import testConstants.UpdateIncomeSourceTestConstants.{badJsonResponse, cessationDate, failureResponse, incomeSourceId, successHttpResponse, successResponse}
+import testConstants.UpdateIncomeSourceTestConstants._
 import testUtils.TestSupport
-import uk.gov.hmrc.http.HttpResponse
-import uk.gov.hmrc.http.HttpClient
+import uk.gov.hmrc.http.{HttpClient, HttpResponse}
 
 import java.time.LocalDate
 import scala.concurrent.{ExecutionContext, Future}
@@ -712,14 +712,14 @@ class IncomeTaxViewChangeConnectorSpec extends TestSupport with MockHttp with Mo
     }
   }
 
-  ".updateCessationDate" should {
+  "updateCessationDate" should {
 
     s"return a valid UpdateIncomeSourceResponseModel" in new Setup {
       setupMockHttpPutWithHeaderCarrier(getUpdateCessationDateUrl)(
         UpdateIncomeSourceTestConstants.request,
         UpdateIncomeSourceTestConstants.successHttpResponse)
-        val result:Future[UpdateIncomeSourceResponse]  = updateCessationDate(testNino,incomeSourceId,Some(LocalDate.parse(cessationDate)))
-        result.futureValue shouldBe successResponse
+      val result: Future[UpdateIncomeSourceResponse] = updateCessationDate(testNino, incomeSourceId, Some(LocalDate.parse(cessationDate)))
+      result.futureValue shouldBe successResponse
     }
 
     s"return INTERNAL_SERVER_ERROR UpdateIncomeSourceResponseError" when {
@@ -737,6 +737,36 @@ class IncomeTaxViewChangeConnectorSpec extends TestSupport with MockHttp with Mo
         val result: Future[UpdateIncomeSourceResponse] = updateCessationDate(testNino, incomeSourceId, Some(LocalDate.parse(cessationDate)))
         result.futureValue shouldBe failureResponse
       }
+    }
+
+  }
+
+  "getITSAStatusDetail" should {
+    import testConstants.ITSAStatusTestConstants.{badJsonHttpResponse, errorHttpResponse, successHttpResponse, successITSAStatusResponseModel}
+    val successResponse = successHttpResponse
+    val successResponseBadJson = badJsonHttpResponse
+    val badResponse = errorHttpResponse
+    val argument = (testNino, "2020", true, true)
+
+
+    "return a List[ITSAStatusResponseModel] model when successful JSON is received" in new Setup {
+      val url = getITSAStatusDetailUrl(argument._1, argument._2)
+      setupMockHttpGet(url)(successResponse)
+      val result = (getITSAStatusDetail _).tupled(argument)
+      result.futureValue shouldBe Right(List(successITSAStatusResponseModel))
+    }
+
+    "return ITSAStatusResponseError model in case of bad/malformed JSON response" in new Setup {
+      setupMockHttpGet(getITSAStatusDetailUrl(argument._1, argument._2))(successResponseBadJson)
+      val result = (getITSAStatusDetail _).tupled(argument)
+      result.futureValue shouldBe Left(badJsonErrorITSAStatusError)
+    }
+
+    "return ITSAStatusResponseError model in case of failure" in new Setup {
+      setupMockHttpGet(getITSAStatusDetailUrl(argument._1, argument._2))(badResponse)
+      val result = (getITSAStatusDetail _).tupled(argument)
+      result.futureValue shouldBe Left(errorITSAStatusError)
+
     }
 
   }
