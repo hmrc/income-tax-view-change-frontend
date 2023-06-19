@@ -95,10 +95,10 @@ class AddBusinessAddressController @Inject()(authenticate: AuthenticationPredica
           fetchAddress(value) map { value =>
             Redirect(routes.AddBusinessAccountingMethodController.show().url).addingToSession(
               SessionKeys.addBusinessAddressLine1 -> value.address.lines.head,
-              SessionKeys.addBusinessAddressLine2 -> {if (value.address.lines(1).isEmpty) "" else value.address.lines(1)},
+              /*SessionKeys.addBusinessAddressLine2 -> {if (value.address.lines(1).isEmpty) "" else value.address.lines(1)},
               SessionKeys.addBusinessAddressLine3 -> {if (value.address.lines(2).isEmpty) "" else value.address.lines(2)},
               //SessionKeys.addBusinessAddressLine4 -> {if (value.address.lines(3).isEmpty) "" else value.address.lines(3)},
-              SessionKeys.addBusinessPostalCode -> value.address.postcode.get,// make postcode not Optional
+              SessionKeys.addBusinessPostalCode -> value.address.postcode.get,// make postcode not Optional*/
               SessionKeys.addBusinessCountryCode -> "GB"
             )
           }
@@ -114,10 +114,10 @@ class AddBusinessAddressController @Inject()(authenticate: AuthenticationPredica
             address map { value =>
               Redirect(routes.AddBusinessAccountingMethodController.showAgent().url).addingToSession(
                 SessionKeys.addBusinessAddressLine1 -> value.address.lines.head,
-                SessionKeys.addBusinessAddressLine2 -> {if (value.address.lines(1).isEmpty) "" else value.address.lines(1)},
+                /*SessionKeys.addBusinessAddressLine2 -> {if (value.address.lines(1).isEmpty) "" else value.address.lines(1)},
                 SessionKeys.addBusinessAddressLine3 -> {if (value.address.lines(2).isEmpty) "" else value.address.lines(2)},
                 //SessionKeys.addBusinessAddressLine4 -> {if (value.address.lines(3).isEmpty) "" else value.address.lines(3)},
-                SessionKeys.addBusinessPostalCode -> value.address.postcode.get, // make postcode not Optional
+                SessionKeys.addBusinessPostalCode -> value.address.postcode.get, // make postcode not Optional*/
                 SessionKeys.addBusinessCountryCode -> "GB"
               )
             }
