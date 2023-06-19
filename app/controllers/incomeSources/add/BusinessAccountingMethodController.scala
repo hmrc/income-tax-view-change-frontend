@@ -21,8 +21,10 @@ import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
+import exceptions.MissingFieldException
 import forms.incomeSources.add.BusinessAccountingMethodForm
 import forms.utils.SessionKeys.addBusinessAccountingMethod
+import models.incomeSourceDetails.BusinessDetailsModel
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc._
@@ -59,6 +61,7 @@ class BusinessAccountingMethodController @Inject()(val authenticate: Authenticat
       controllers.incomeSources.add.routes.CheckBusinessDetailsController.show().url //checkurl
     val postAction: Call = if (isAgent) controllers.incomeSources.add.routes.BusinessAccountingMethodController.submitAgent() else //placeholder controller
       controllers.incomeSources.add.routes.BusinessAccountingMethodController.submit() //checkurl
+
     val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
     if (incomeSourcesEnabled) {
@@ -79,14 +82,26 @@ class BusinessAccountingMethodController @Inject()(val authenticate: Authenticat
     }
   }
 
+  def currentAccountingMethod(business: BusinessDetailsModel): String =
+    if (business.cashOrAccrualsFlag.getOrElse(throw new MissingFieldException("cashOrAccrualsFlag"))) {
+      "accruals"
+    } else {
+      "cash"
+    }
 
   def show(): Action[AnyContent] =
     (checkSessionTimeout andThen authenticate andThen retrieveNino
       andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
       implicit user =>
-        handleRequest(
-          isAgent = false
-        )
+        if (user.incomeSources.businesses.nonEmpty) {
+          val currentAccountingMethodValue: String = currentAccountingMethod(user.incomeSources.businesses.head)
+          Future.successful(Redirect(controllers.incomeSources.add.routes.CheckBusinessDetailsController.show())
+            .addingToSession(addBusinessAccountingMethod -> currentAccountingMethodValue))
+        } else {
+          handleRequest(
+            isAgent = false
+          )
+        }
     }
 
   def showAgent(): Action[AnyContent] = Authenticated.async {
@@ -94,9 +109,15 @@ class BusinessAccountingMethodController @Inject()(val authenticate: Authenticat
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
           implicit mtdItUser =>
-            handleRequest(
-              isAgent = true
-            )
+            if (mtdItUser.incomeSources.businesses.nonEmpty) {
+              val currentAccountingMethodValue: String = currentAccountingMethod(mtdItUser.incomeSources.businesses.head)
+              Future.successful(Redirect(controllers.incomeSources.add.routes.CheckBusinessDetailsController.showAgent())
+                .addingToSession(addBusinessAccountingMethod -> currentAccountingMethodValue))
+            } else {
+              handleRequest(
+                isAgent = false
+              )
+            }
         }
   }
 
