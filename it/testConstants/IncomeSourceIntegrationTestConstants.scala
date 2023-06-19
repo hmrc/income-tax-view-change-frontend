@@ -154,7 +154,7 @@ object IncomeSourceIntegrationTestConstants {
   val foreignPropertyOnlyResponse: IncomeSourceDetailsModel = IncomeSourceDetailsModel(
     testMtdItId,
     businesses = List(),
-    properties = List(ukProperty),
+    properties = List(foreignProperty),
     yearOfMigration = Some("2018")
   )
 

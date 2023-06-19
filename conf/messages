@@ -12,6 +12,7 @@ base.continue                                                   = Continue
 base.error_summary.heading                                      = There is a problem
 base.error-prefix                                                = Error:
 base.govUk                                                      = GOV.UK
+base.confirm-and-continue                                       = Confirm and continue
 
 # Fallback Back Links
 back.whatYouOwe = Back to What You Owe
@@ -1227,6 +1228,7 @@ dateForm.error.dayAndMonth.required                                 = The date m
 dateForm.error.dayAndYear.required                                  = The date must include a day and a year
 dateForm.error.monthAndYear.required                                = The date must include a month and a year
 dateForm.error.dayMonthAndYear.required                             = The date must include a day, a month and a year
+dateForm.check.heading                                              = Is this date correct?
 
 #Generic radio form messages
 radioForm.checkDate.heading                                         = Is this date correct?
@@ -1282,16 +1284,6 @@ incomeSources.add.foreignProperty.startDate.check.error              = Select ye
 incomeSources.add.foreignProperty.startDate.check.radio.yes          = Yes
 incomeSources.add.foreignProperty.startDate.check.radio.no           = No
 
-#Generic date form messages
-dateForm.hint                                                       = For example, 27 3 2020
-dateForm.error.day.required                                         = The date must include a day
-dateForm.error.month.required                                       = The date must include a month
-dateForm.error.year.required                                        = The date must include a year
-dateForm.error.dayAndMonth.required                                 = The date must include a day and a month
-dateForm.error.dayAndYear.required                                  = The date must include a day and a year
-dateForm.error.monthAndYear.required                                = The date must include a month and a year
-dateForm.check.heading                                              = Is this date correct?
-
 incomeSources.ceaseUKProperty.checkDetails.heading               = Check your details
 incomeSources.ceaseUKProperty.checkDetails.paragraph             = UK property business you entered
 incomeSources.ceaseUKProperty.checkDetails.content               = Date business stopped
@@ -1321,3 +1313,9 @@ incomeSources.cease.BusinessEndDate.error.invalid                         = The 
 incomeSources.cease.BusinessEndDate.error.future                          = You cannot provide a cessation date that is beyond the current day or a date in the future
 incomeSources.cease.BusinessEndDate.error.beforeStartDate                 = The cessation date cannot be earlier than the start date for the business
 incomeSources.cease.BusinessEndDate.error.beforeEarliestDate              = The cessation date cannot be earlier than the 6th of April 2015
+
+check-cease-foreign-property-details.heading            = Check your details
+check-cease-foreign-property-details.caption            = Foreign property business you entered
+check-cease-foreign-property-details.summary-list.key   = Date business stopped
+check-cease-foreign-property-details.summary-list.link  = Change
+check-cease-foreign-property-details.button             = Confirm and continue

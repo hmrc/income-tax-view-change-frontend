@@ -12,6 +12,7 @@ base.error-prefix                                               = Gwall:
 base.backToHome                                                 = Yn ôl i hafan Treth Incwm
 base.continue                                                   = Yn eich blaen
 base.govUk                                                      = GOV.UK
+base.confirm-and-continue                                       = Cadarnhau ac yn eich blaen
 
 # Fallback Back Links
 back.whatYouOwe = Yn ôl i Yr hyn sydd arnoch
@@ -1229,6 +1230,7 @@ dateForm.error.dayAndMonth.required                                 = Mae’n rh
 dateForm.error.dayAndYear.required                                  = Mae’n rhaid i’r dyddiad gynnwys diwrnod a blwyddyn
 dateForm.error.monthAndYear.required                                = Mae’n rhaid i’r dyddiad gynnwys mis a blwyddyn
 dateForm.check.heading                                              = A yw’r dyddiad hwn yn gywir?
+dateForm.error.dayMonthAndYear.required                             = Mae’n rhaid i’r dyddiad gynnwys diwrnod, mis a blwyddyn
 
 #Generic radio form messages
 radioForm.checkDate.heading                                         = A yw’r dyddiad hwn yn gywir?
@@ -1284,16 +1286,6 @@ incomeSources.add.foreignProperty.startDate.check.error              = Dewiswch 
 incomeSources.add.foreignProperty.startDate.check.radio.yes          = Iawn
 incomeSources.add.foreignProperty.startDate.check.radio.no           = Na
 
-#Generic date form messages
-dateForm.hint                                                       = Er enghraifft, 27 3 2020
-dateForm.error.day.required                                         = Mae’n rhaid i’r dyddiad gynnwys diwrnod
-dateForm.error.month.required                                       = Mae’n rhaid i’r dyddiad gynnwys mis
-dateForm.error.year.required                                        = Mae’n rhaid i’r dyddiad gynnwys blwyddyn
-dateForm.error.dayAndMonth.required                                 = Mae’n rhaid i’r dyddiad gynnwys diwrnod a mis
-dateForm.error.dayAndYear.required                                  = Mae’n rhaid i’r dyddiad gynnwys diwrnod a blwyddyn
-dateForm.error.monthAndYear.required                                = Mae’n rhaid i’r dyddiad gynnwys mis a blwyddyn
-dateForm.check.heading                                              = A yw’r dyddiad hwn yn gywir?
-
 incomeSources.ceaseUKProperty.checkDetails.heading               = Gwirio’ch manylion
 incomeSources.ceaseUKProperty.checkDetails.paragraph             = Y busnes eiddo yn y DU a nodwyd gennych
 incomeSources.ceaseUKProperty.checkDetails.content               = Dyddiad y gwnaeth y busnes stopio
@@ -1320,7 +1312,13 @@ add-business-start-date-check.radio.no               = Na
 add-business-start-date-check.radio.error            = Dewiswch ’Iawn’ os yw dyddiad dechrau’ch busnes yn gywir
 
 incomeSources.cease.BusinessEndDate.heading                               = Y dyddiad gwnaeth eich busnes hunangyflogedig stopio
-incomeSources.cease.BusinessEndDate.error.invalid                         = Mae'n rhaid i’r dyddiad y gwnaeth eich busnes hunangyflogedig roi’r gorau i fasnachu fod yn ddyddiad go iawn
+incomeSources.cease.BusinessEndDate.error.invalid                         = Mae’n rhaid i’r dyddiad y gwnaeth eich busnes hunangyflogedig roi’r gorau i fasnachu fod yn ddyddiad go iawn
 incomeSources.cease.BusinessEndDate.error.future                          = Ni allwch nodi dyddiad dod i ben sydd y tu hwnt i’r diwrnod presennol na dyddiad yn y dyfodol
 incomeSources.cease.BusinessEndDate.error.beforeStartDate                 = Ni all y dyddiad dod i ben ar gyfer y busnes fod cyn y dyddiad dechrau
 incomeSources.cease.BusinessEndDate.error.beforeEarliestDate              = Ni all y dyddiad dod i ben fod cyn 6 Ebrill 2015
+
+check-cease-foreign-property-details.heading            = Gwirio’ch manylion
+check-cease-foreign-property-details.caption            = Y busnes eiddo tramor a nodwyd gennych
+check-cease-foreign-property-details.summary-list.key   = Dyddiad y gwnaeth y busnes stopio
+check-cease-foreign-property-details.summary-list.link  = Newid
+check-cease-foreign-property-details.button             = Cadarnhau ac yn eich blaen

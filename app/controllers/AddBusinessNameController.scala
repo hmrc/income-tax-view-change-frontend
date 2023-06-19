@@ -74,14 +74,17 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
     }
 
   def handleRequest(isAgent: Boolean, backUrl: String)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
-    Future {
-      if (isDisabled(IncomeSources)) {
-        Redirect(controllers.routes.HomeController.show())
-      } else {
+    if (isDisabled(IncomeSources)) {
+      Future.successful(Redirect(
+        if(isAgent) controllers.routes.HomeController.showAgent
+        else controllers.routes.HomeController.show()
+      ))
+    } else {
+      Future {
         if (isAgent) {
-          Ok(addBusinessView(BusinessNameForm.form, routes.AddBusinessNameController.submitAgent(), backUrl))
+          Ok(addBusinessView(BusinessNameForm.form, isAgent, routes.AddBusinessNameController.submitAgent(), backUrl))
         } else {
-          Ok(addBusinessView(BusinessNameForm.form, routes.AddBusinessNameController.submit(), backUrl))
+          Ok(addBusinessView(BusinessNameForm.form, isAgent, routes.AddBusinessNameController.submit(), backUrl))
         }
       }
     }
@@ -93,7 +96,7 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
       BusinessNameForm.form.bindFromRequest().fold(
         formWithErrors => {
           Future {
-            Ok(addBusinessView(formWithErrors, routes.AddBusinessNameController.submit(), backUrl))
+            Ok(addBusinessView(formWithErrors, true, routes.AddBusinessNameController.submit(), backUrl))
           }
         },
         formData => {
@@ -113,7 +116,7 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
             BusinessNameForm.form.bindFromRequest().fold(
               formWithErrors => {
                 Future {
-                  Ok(addBusinessView(formWithErrors, routes.AddBusinessNameController.submitAgent(), backUrl))
+                  Ok(addBusinessView(formWithErrors, false, routes.AddBusinessNameController.submitAgent(), backUrl))
                 }
               },
               formData => {
