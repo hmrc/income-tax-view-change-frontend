@@ -20,15 +20,17 @@ import auth.MtdItUser
 import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
+import controllers.agent.utils.SessionKeys
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
 import models.incomeSourceDetails.IncomeSourceDetailsModel
+import models.incomeSourceDetails.viewmodels.CheckBusinessDetailsViewModel
 import play.api.Logger
 import play.api.mvc._
 import services.IncomeSourceDetailsService
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import views.html.incomeSources.add.CheckBusinessDetails
-import views.html.incomeSources.manage.ManageIncomeSources
 
+import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -71,20 +73,44 @@ class CheckBusinessDetailsController @Inject()(val checkBusinessDetails: CheckBu
         }
   }
 
-  def handleRequest(sources: IncomeSourceDetailsModel, isAgent: Boolean, backUrl: String)
-                   (implicit user: MtdItUser[_]): Future[Result] = {
+  def getDetails(implicit user: MtdItUser[_]): Either[Throwable, CheckBusinessDetailsViewModel] = {
     val sessionData = user.session.data
     val businessName = sessionData.get("addBusinessName")
-    val businessStartDate = sessionData.get("addBusinessStartDate")
+    val businessStartDate = sessionData.get("addBusinessStartDate").map(LocalDate.parse)
     val businessTrade = sessionData.get("addBusinessTrade")
     val businessAddressLine1 = sessionData.get("addBusinessAddressLine1")
     val businessPostalCode = sessionData.get("addBusinessPostalCode")
+    val businessAccountingMethod = sessionData.get("addBusinessAccountingMethod")
+
+    if (
+        businessName.isEmpty ||
+        businessStartDate.isEmpty ||
+        businessTrade.isEmpty ||
+        businessAddressLine1.isEmpty ||
+        businessPostalCode.isEmpty
+    ) {
+      Left(new IllegalArgumentException(s"Missing required session data $businessName.get" ))
+
+    } else {
+      Right(CheckBusinessDetailsViewModel(
+        Some(businessName.get),
+        Some(businessStartDate.get),
+        Some(businessTrade.get),
+        Some(businessAddressLine1.get),
+        Some(businessPostalCode.get),
+        Some(businessAccountingMethod.get)
+      ))
+    }
+  }
+
+  def handleRequest(sources: IncomeSourceDetailsModel, isAgent: Boolean, backUrl: String)
+                   (implicit user: MtdItUser[_]): Future[Result] = {
 
     if (isDisabled(IncomeSources)) {
       Future.successful(Redirect(controllers.routes.HomeController.show()))
     } else {
       Future {
-        incomeSourceDetailsService.getViewIncomeSourceViewModel(sources) match {
+        getDetails(user) match {
           case Right(viewModel) =>
             Ok(checkBusinessDetails(
               viewModel,

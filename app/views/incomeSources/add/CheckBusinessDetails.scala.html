@@ -18,7 +18,7 @@
 @import views.html.layouts.unifiedLayout
 @import views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components._
-@import models.incomeSourceDetails.viewmodels.ViewIncomeSourcesViewModel
+@import models.incomeSourceDetails.viewmodels.CheckBusinessDetailsViewModel
 
 
 @this(
@@ -30,11 +30,11 @@ p: p,
 link: link,
 hr: hr,
 govukTable: GovukTable,
-continueButton: ContinueButton
+govukButton : GovukButton,
 )
 
 @(
-sources: ViewIncomeSourcesViewModel,
+sources: CheckBusinessDetailsViewModel,
 isAgent: Boolean,
 backUrl: String
 )(implicit messages: Messages, user: auth.MtdItUser[_])
@@ -146,6 +146,8 @@ btaNavPartial = user.btaNavPartial) {
     </tbody>
 </table>
 
-@continueButton()
+@govukButton(Button(
+content = Text(messages("check-business-details.confirm-button"))
+))
 
 }
