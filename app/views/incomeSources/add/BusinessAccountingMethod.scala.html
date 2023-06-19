@@ -22,17 +22,82 @@
 @import views.html.helpers.injected.ErrorSummary
 
 @this(mainTemplate: unifiedLayout,
-implicitDateFormatter: ImplicitDateFormatterImpl,
-h1: h1,
-dateInput: dateInput,
-continueButton: ContinueButton,
-formWithCSRF: FormWithCSRF,
-govukRadios: GovukRadios,
-errorSummary: ErrorSummary,
-inputRadios: input_radios)
+    implicitDateFormatter: ImplicitDateFormatterImpl,
+    h1: h1,
+    p: p,
+    dateInput: dateInput,
+    continueButton: ContinueButton,
+    formWithCSRF: FormWithCSRF,
+    govukRadios: GovukRadios,
+    errorSummary: ErrorSummary,
+    inputRadios: input_radios,
+    detailsDropdown: detailsDropdown)
 
-@(postAction: Call, isAgent: Boolean = false, backUrl: String, btaNavPartial: Option[Html] = None)(implicit request: Request[_], messages: Messages)
+@(form: Form[_], postAction: Call, isAgent: Boolean = false, backUrl: String, btaNavPartial: Option[Html] = None)(implicit request: Request[_], messages: Messages)
 
-<div>
- data
-</div>
+@prefix = @{"incomeSources.add.business-accounting-method"}
+
+@getMessage(key: String, args: String*) = @{
+    messages(s"$prefix.$key", args: _*)
+}
+
+@detailsContent = {
+    <div id="details-content-0">
+        @p(id = Some(s"$prefix-hint-content"))(Html(getMessage("drop-down-text")))
+    </div>
+    <ul class="govuk-list govuk-list--bullet" id="drop-down-text-bullets">
+        <li>@getMessage("drop-down-text-bp-1")</li>
+        <li>@getMessage("drop-down-text-bp-2")</li>
+    </ul>
+}
+
+@mainTemplate(
+    pageTitle = getMessage("heading"),
+    backUrl = Some(backUrl),
+    isAgent = isAgent,
+    btaNavPartial = btaNavPartial) {
+
+
+    @formWithCSRF(action = postAction, Symbol("id") -> s"$prefix-form") {
+
+        @errorSummary(form)
+
+        @govukRadios(Radios(
+            fieldset = Some(Fieldset(
+                legend = Some(Legend(
+                    content = Text(getMessage("heading")),
+                    classes = "govuk-fieldset__legend--l"
+                ))
+            )),
+            hint = Some(Hint(
+                id = Some(s"$prefix-hint"),
+                classes = "govuk-hint",
+                content = HtmlContent(s"""<br><div>${getMessage("hint")}</div></br><div>${detailsDropdown("incomeSources.add.business-accounting-method.example", detailsContent)}</div>""")
+            )),
+            items = Seq(
+                RadioItem(
+                    id = Some(s"$prefix-cash-basis-response"),
+                    value = Some("radio-1-title"),
+                    content = Text(getMessage("radio-1-title")),
+                    hint = Some(Hint(
+                        id = Some(s"$prefix-radio-hint-1"),
+                        classes = "govuk-hint govuk-radios__hint",
+                        content = Text(getMessage("radio-1-hint"))
+                    ))
+                ),
+                RadioItem(
+                    id = Some(s"$prefix-traditional"),
+                    value = Some("radio-2-title"),
+                    content = Text(getMessage("radio-2-title")),
+                    hint = Some(Hint(
+                        id = Some(s"$prefix-radio-hint-2"),
+                        classes = "govuk-hint govuk-radios__hint",
+                        content = Text(getMessage("radio-2-hint"))
+                    ))
+                )
+            )
+        ).withFormField(form(prefix)))
+
+        @continueButton()
+    }
+}

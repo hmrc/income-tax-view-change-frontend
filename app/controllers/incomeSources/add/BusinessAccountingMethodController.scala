@@ -21,6 +21,7 @@ import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
+import forms.incomeSources.add.BusinessAccountingMethodForm
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc._
@@ -55,12 +56,13 @@ class BusinessAccountingMethodController @Inject()(val authenticate: Authenticat
     val incomeSourcesEnabled: Boolean = isEnabled(IncomeSources)
     val backUrl: String = if (isAgent) controllers.incomeSources.add.routes.CheckBusinessDetailsController.showAgent().url else
       controllers.incomeSources.add.routes.CheckBusinessDetailsController.show().url //checkurl
-    val postAction: Call = if (isAgent) controllers.incomeSources.add.routes.BusinessAccountingMethodController.submitAgent() else
-      controllers.incomeSources.add.routes.BusinessAccountingMethodController.submit() //checkurl
+    val postAction: Call = if (isAgent) controllers.incomeSources.add.routes.ForeignPropertyStartDateCheckController.submitAgent() else //placeholder controller
+      controllers.incomeSources.add.routes.ForeignPropertyStartDateCheckController.submit() //checkurl
     val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
     if (incomeSourcesEnabled) {
       Future.successful(Ok(view(
+        form = BusinessAccountingMethodForm.form,
         postAction = postAction,
         isAgent = isAgent,
         backUrl = backUrl,
@@ -97,8 +99,8 @@ class BusinessAccountingMethodController @Inject()(val authenticate: Authenticat
         }
   }
 
-  def submit() = ???
+  def submit() = Ok
 
-  def submitAgent() = ???
+  def submitAgent() = Ok
 
 }

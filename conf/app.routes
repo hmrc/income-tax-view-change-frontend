@@ -190,8 +190,8 @@ POST         /income-sources/add/foreign-property-start-date-check              
 POST         /agents/income-sources/add/foreign-property-start-date-check       controllers.incomeSources.add.ForeignPropertyStartDateCheckController.submitAgent()
 GET          /income-sources/add/business-accounting-method               controllers.incomeSources.add.BusinessAccountingMethodController.show()
 GET          /agents/income-sources/add/business-accounting-method        controllers.incomeSources.add.BusinessAccountingMethodController.showAgent()
-POST         /income-sources/add/business-accounting-method               controllers.incomeSources.add.BusinessAccountingMethodController.submit()
-POST         /agents/income-sources/add/business-accounting-method        controllers.incomeSources.add.BusinessAccountingMethodController.submitAgent()
+# POST         /income-sources/add/business-accounting-method               controllers.incomeSources.add.BusinessAccountingMethodController.submit()
+# POST         /agents/income-sources/add/business-accounting-method        controllers.incomeSources.add.BusinessAccountingMethodController.submitAgent()
 GET          /income-sources/add/business-check-details                 controllers.incomeSources.add.CheckBusinessDetailsController.show()
 GET          /agents/income-sources/add/business-check-details          controllers.incomeSources.add.CheckBusinessDetailsController.showAgent()
 
@@ -236,7 +236,6 @@ GET          /agents/income-sources/manage/view-and-manage-income-sources contro
 
 GET          /income-sources/manage/your-details                          controllers.incomeSources.manage.ManageSelfEmploymentSourceController.show()
 GET          /agents/income-sources/manage/your-details                   controllers.incomeSources.manage.ManageSelfEmploymentSourceController.showAgent()
-
 
 # Income Sources - TO BE IMPLEMENTED
 GET          /income-sources/cease/cease-uk-property-success                controllers.incomeSources.cease.CeaseUKPropertySuccessController.show()
