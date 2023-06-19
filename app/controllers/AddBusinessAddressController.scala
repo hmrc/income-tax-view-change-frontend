@@ -95,10 +95,10 @@ class AddBusinessAddressController @Inject()(authenticate: AuthenticationPredica
           fetchAddress(value) map { value =>
             Redirect(routes.AddBusinessAccountingMethodController.show().url).addingToSession(
               SessionKeys.addBusinessAddressLine1 -> value.address.lines.head,
-              /*SessionKeys.addBusinessAddressLine2 -> {if (value.address.lines(1).isEmpty) "" else value.address.lines(1)},
-              SessionKeys.addBusinessAddressLine3 -> {if (value.address.lines(2).isEmpty) "" else value.address.lines(2)},
-              //SessionKeys.addBusinessAddressLine4 -> {if (value.address.lines(3).isEmpty) "" else value.address.lines(3)},
-              SessionKeys.addBusinessPostalCode -> value.address.postcode.get,// make postcode not Optional*/
+              SessionKeys.addBusinessAddressLine2 -> {if (value.address.lines.isDefinedAt(1)) value.address.lines(1) else ""},
+              SessionKeys.addBusinessAddressLine3 -> {if (value.address.lines.isDefinedAt(2)) value.address.lines(2) else ""},
+              SessionKeys.addBusinessAddressLine4 -> {if (value.address.lines.isDefinedAt(3)) value.address.lines(3) else ""},
+              SessionKeys.addBusinessPostalCode -> value.address.postcode.getOrElse(""),// check what postcode null value should be
               SessionKeys.addBusinessCountryCode -> "GB"
             )
           }
@@ -114,10 +114,10 @@ class AddBusinessAddressController @Inject()(authenticate: AuthenticationPredica
             address map { value =>
               Redirect(routes.AddBusinessAccountingMethodController.showAgent().url).addingToSession(
                 SessionKeys.addBusinessAddressLine1 -> value.address.lines.head,
-                /*SessionKeys.addBusinessAddressLine2 -> {if (value.address.lines(1).isEmpty) "" else value.address.lines(1)},
-                SessionKeys.addBusinessAddressLine3 -> {if (value.address.lines(2).isEmpty) "" else value.address.lines(2)},
-                //SessionKeys.addBusinessAddressLine4 -> {if (value.address.lines(3).isEmpty) "" else value.address.lines(3)},
-                SessionKeys.addBusinessPostalCode -> value.address.postcode.get, // make postcode not Optional*/
+                SessionKeys.addBusinessAddressLine2 -> {if (value.address.lines.isDefinedAt(1)) value.address.lines(1) else ""},
+                SessionKeys.addBusinessAddressLine3 -> {if (value.address.lines.isDefinedAt(2)) value.address.lines(2) else ""},
+                SessionKeys.addBusinessAddressLine4 -> {if (value.address.lines.isDefinedAt(3)) value.address.lines(3) else ""},
+                SessionKeys.addBusinessPostalCode -> value.address.postcode.getOrElse(""), // check what postcode null value should be
                 SessionKeys.addBusinessCountryCode -> "GB"
               )
             }
