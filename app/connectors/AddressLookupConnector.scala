@@ -16,7 +16,6 @@
 
 package connectors
 
-import config.AddressLookupConfig
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
 import models.incomeSourceDetails.viewmodels.httpparser.GetAddressLookupDetailsHttpParser.GetAddressLookupDetailsResponse
@@ -34,7 +33,6 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class AddressLookupConnector @Inject()(val appConfig: FrontendAppConfig,
-                                       val addressConfig: AddressLookupConfig,
                                        http: HttpClient)(implicit ec: ExecutionContext) extends FeatureSwitching {
 
   val baseUrl: String = appConfig.addressLookupService
