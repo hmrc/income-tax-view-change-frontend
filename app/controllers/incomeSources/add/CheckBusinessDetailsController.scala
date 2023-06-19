@@ -21,11 +21,13 @@ import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
+import forms.utils.SessionKeys.addBusinessAccountingMethod
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.IncomeSourceDetailsService
 import uk.gov.hmrc.http.HeaderCarrier
 import views.html.errorPages.CustomNotFoundError
+import views.html.incomeSources.add.CheckBusinessDetails
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -37,7 +39,7 @@ class CheckBusinessDetailsController @Inject()(val authenticate: AuthenticationP
                                            val retrieveBtaNavBar: NavBarPredicate,
                                            val retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                            val retrieveNino: NinoPredicate,
-                                           //                                           val view: ???,
+                                           val view: CheckBusinessDetails,
                                            val customNotFoundErrorView: CustomNotFoundError)
                                           (implicit val appConfig: FrontendAppConfig,
                                            mcc: MessagesControllerComponents,
@@ -48,7 +50,8 @@ class CheckBusinessDetailsController @Inject()(val authenticate: AuthenticationP
 
   def handleRequest(isAgent: Boolean)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
-    Future.successful(NotImplemented)
+    val businessAccountingMethod: String = user.session.get(addBusinessAccountingMethod).toString
+    Future.successful(Ok(view(businessAccountingMethod)))
   }
 
   def show(): Action[AnyContent] =

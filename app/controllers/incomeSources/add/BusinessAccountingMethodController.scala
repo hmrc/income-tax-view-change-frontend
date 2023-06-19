@@ -22,6 +22,7 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowI
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import forms.incomeSources.add.BusinessAccountingMethodForm
+import forms.utils.SessionKeys.addBusinessAccountingMethod
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc._
@@ -56,8 +57,8 @@ class BusinessAccountingMethodController @Inject()(val authenticate: Authenticat
     val incomeSourcesEnabled: Boolean = isEnabled(IncomeSources)
     val backUrl: String = if (isAgent) controllers.incomeSources.add.routes.CheckBusinessDetailsController.showAgent().url else
       controllers.incomeSources.add.routes.CheckBusinessDetailsController.show().url //checkurl
-    val postAction: Call = if (isAgent) controllers.incomeSources.add.routes.ForeignPropertyStartDateCheckController.submitAgent() else //placeholder controller
-      controllers.incomeSources.add.routes.ForeignPropertyStartDateCheckController.submit() //checkurl
+    val postAction: Call = if (isAgent) controllers.incomeSources.add.routes.BusinessAccountingMethodController.submitAgent() else //placeholder controller
+      controllers.incomeSources.add.routes.BusinessAccountingMethodController.submit() //checkurl
     val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
     if (incomeSourcesEnabled) {
@@ -99,8 +100,50 @@ class BusinessAccountingMethodController @Inject()(val authenticate: Authenticat
         }
   }
 
-  def submit() = Ok
+  def submit: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+    andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
+    implicit user =>
+      BusinessAccountingMethodForm.form.bindFromRequest().fold(
+        hasErrors => Future.successful(BadRequest(view(
+          form = hasErrors,
+          postAction = controllers.incomeSources.add.routes.BusinessAccountingMethodController.submit(),
+          backUrl = controllers.incomeSources.add.routes.CheckBusinessDetailsController.show().url,
+          isAgent = false
+        ))),
+        validatedInput => {
+          if (validatedInput.equals(Some("cash"))) {
+            Future.successful(Redirect(controllers.incomeSources.add.routes.CheckBusinessDetailsController.show())
+              .addingToSession(addBusinessAccountingMethod -> "cash"))
+          } else {
+            Future.successful(Redirect(controllers.incomeSources.add.routes.CheckBusinessDetailsController.show())
+              .addingToSession(addBusinessAccountingMethod -> "accruals"))
+          }
+        }
+      )
+  }
 
-  def submitAgent() = Ok
-
+  def submitAgent: Action[AnyContent] = Authenticated.async {
+    implicit request =>
+      implicit user =>
+        getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
+          implicit mtdItUser =>
+            BusinessAccountingMethodForm.form.bindFromRequest().fold(
+              hasErrors => Future.successful(BadRequest(view(
+                form = hasErrors,
+                postAction = controllers.incomeSources.add.routes.BusinessAccountingMethodController.submit(),
+                backUrl = controllers.incomeSources.add.routes.CheckBusinessDetailsController.showAgent().url,
+                isAgent = true,
+              ))),
+              validatedInput => {
+                if (validatedInput.equals("cash")) {
+                  Future.successful(Redirect(controllers.incomeSources.add.routes.CheckBusinessDetailsController.showAgent())
+                    .addingToSession(addBusinessAccountingMethod -> "cash"))
+                } else {
+                  Future.successful(Redirect(controllers.incomeSources.add.routes.CheckBusinessDetailsController.showAgent())
+                    .addingToSession(addBusinessAccountingMethod -> "accruals"))
+                }
+              }
+            )
+        }
+  }
 }

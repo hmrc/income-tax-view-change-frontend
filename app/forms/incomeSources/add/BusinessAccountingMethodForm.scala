@@ -16,28 +16,21 @@
 
 package forms.incomeSources.add
 
+import forms.incomeSources.add.CheckUKPropertyStartDateForm.{radioMustBeSelected, validRadioOptions}
 import play.api.data.Form
 import play.api.data.Forms.{mapping, optional, text}
 
 object BusinessAccountingMethodForm {
 
-  val responseCashBasis: String = "incomeSources.add.business-accounting-method.radio-1-title"
-  val responseTraditional: String = "incomeSources.add.business-accounting-method.radio-2-title"
-  val response: String = "business-accounting-method"
-  val radiosEmptyError: String = "incomeSources.add.business-accounting-method.no-selection"
-  val csrfToken: String = "csrfToken"
+  private val radioEmptyError: String = "incomeSources.add.business-accounting-method.no-selection"
+  private val validRadioOptions = Set("cash", "traditional")
 
-  val form: Form[BusinessAccountingMethodForm] = Form[BusinessAccountingMethodForm](
-    mapping(
-      response -> optional(text)
-        .verifying(radiosEmptyError, _.nonEmpty)
-    )(BusinessAccountingMethodForm.apply)(BusinessAccountingMethodForm.unapply)
-  )
-}
-
-case class BusinessAccountingMethodForm(response: Option[String]) {
-
-  def toFormMap: Map[String, Seq[String]] = Map(
-    BusinessAccountingMethodForm.response -> Seq(response.getOrElse("N/A"))
-  )
+  val form: Form[_] = {
+    Form(
+      mapping(
+        "incomeSources.add.business-accounting-method" -> optional(text)
+          .verifying(radioEmptyError, value => value.isDefined && validRadioOptions.contains(value.get))
+      )(identity)(Option(_))
+    )
+  }
 }
