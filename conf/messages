@@ -1312,3 +1312,15 @@ incomeSources.cease.BusinessEndDate.error.invalid                         = The 
 incomeSources.cease.BusinessEndDate.error.future                          = You cannot provide a cessation date that is beyond the current day or a date in the future
 incomeSources.cease.BusinessEndDate.error.beforeStartDate                 = The cessation date cannot be earlier than the start date for the business
 incomeSources.cease.BusinessEndDate.error.beforeEarliestDate              = The cessation date cannot be earlier than the 6th of April 2015
+
+# check business details
+check-business-details.sole-trader-text                 = Sole trader business you entered
+check-business-details.heading                         = Check your details
+check-business-details.business-name                    = Business name
+check-business-details.change-details-link              = Change
+check-business-details.business-start-date              = Business trading start date
+check-business-details.business-description             = Business description
+check-business-details.business-address                 = Business address
+check-business-details.confirm-button                   = Confirm and Continue
+check-business-details.accounting-method                = Accounting method for sole trader income
+check-business-details.x                   = X

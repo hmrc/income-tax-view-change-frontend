@@ -1315,3 +1315,14 @@ incomeSources.cease.BusinessEndDate.error.invalid                         = Mae�
 incomeSources.cease.BusinessEndDate.error.future                          = Ni allwch nodi dyddiad dod i ben sydd y tu hwnt i’r diwrnod presennol na dyddiad yn y dyfodol
 incomeSources.cease.BusinessEndDate.error.beforeStartDate                 = Ni all y dyddiad dod i ben ar gyfer y busnes fod cyn y dyddiad dechrau
 incomeSources.cease.BusinessEndDate.error.beforeEarliestDate              = Ni all y dyddiad dod i ben fod cyn 6 Ebrill 2015
+
+# check business details
+check-business-details.sole-trader-text                 = Y busnes unig fasnachwr a nodwyd gennych
+check-business-details.heading1                         = Gwirio’ch manylion
+check-business-details.business-name                    = Enw’r busnes
+check-business-details.change-details-link              = Newid
+check-business-details.business-start-date              = Dyddiad dechrau masnachu’r busnes
+check-business-details.business-description             = Disgrifiad o’r busnes
+check-business-details.business-address                 = Cyfeiriad y busnes
+check-business-details.confirm-button                   = Cadarnhau ac yn eich blaen
+check-business-details.accounting-method                = Dull cyfrifyddu ar gyfer incwm unig fasnachwr
