@@ -75,10 +75,10 @@ class CheckBusinessDetailsController @Inject()(val checkBusinessDetails: CheckBu
                    (implicit user: MtdItUser[_]): Future[Result] = {
     val sessionData = user.session.data
     val businessName = sessionData.get("addBusinessName")
-    val startDate = sessionData.get("addBusinessStartDate")
+    val businessStartDate = sessionData.get("addBusinessStartDate")
     val businessTrade = sessionData.get("addBusinessTrade")
-    val addressLine1 = sessionData.get("addBusinessAddressLine1")
-    val postalCode = sessionData.get("addBusinessPostalCode")
+    val businessAddressLine1 = sessionData.get("addBusinessAddressLine1")
+    val businessPostalCode = sessionData.get("addBusinessPostalCode")
 
     if (isDisabled(IncomeSources)) {
       Future.successful(Redirect(controllers.routes.HomeController.show()))
