@@ -26,7 +26,7 @@ case class BusinessDetailsModel(incomeSourceId: Option[String],
                                 firstAccountingPeriodEndDate: Option[LocalDate],
                                 tradingStartDate: Option[LocalDate],
                                 cessation: Option[CessationModel],
-                                cashOrAccrualsFlag: Option[Boolean]) {
+                                cashOrAccruals: Option[String]) {
   def isCeased: Boolean = cessation.exists(_.date.nonEmpty)
 }
 
