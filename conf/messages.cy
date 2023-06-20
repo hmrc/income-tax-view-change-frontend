@@ -1315,3 +1315,15 @@ incomeSources.cease.BusinessEndDate.error.invalid                         = Mae�
 incomeSources.cease.BusinessEndDate.error.future                          = Ni allwch nodi dyddiad dod i ben sydd y tu hwnt i’r diwrnod presennol na dyddiad yn y dyfodol
 incomeSources.cease.BusinessEndDate.error.beforeStartDate                 = Ni all y dyddiad dod i ben ar gyfer y busnes fod cyn y dyddiad dechrau
 incomeSources.cease.BusinessEndDate.error.beforeEarliestDate              = Ni all y dyddiad dod i ben fod cyn 6 Ebrill 2015
+
+
+incomeSources.add.businessReportingMethod.heading                   =   Dewis dull o gyflwyno adroddiad
+incomeSources.add.businessReportingMethod.description1              =   Mae’ch busnes yn gymwys i gael cyfnod gras hyd at Ebrill {0}, lle y gallwch gyflwyno adroddiadau’n flynyddol.
+incomeSources.add.businessReportingMethod.description2              =   Bydd yn rhaid gwneud un diweddariad, a hynny erbyn 31 Ionawr fan bellaf.
+incomeSources.add.businessReportingMethod.description3              =   Nid yw’r canlynol yn cael effaith ar eich cyfnod gras:
+incomeSources.add.businessReportingMethod.description4              =   <li> lefel eich incwm o ffynonellau eraill</li> <li>y trosiant rydych yn disgwyl i’ch busnes newydd ei wneud</li> <li>sut yr ydych yn cyflwyno adroddiadau ar gyfer unrhyw ffynonellau incwm presennol</li>
+incomeSources.add.businessReportingMethod.chooseReport              =   Dewiswch sut yr hoffech gyflwyno adroddiadau
+incomeSources.add.businessReportingMethod.taxYear                   =   Blwyddyn dreth {0}-{1}
+incomeSources.add.businessReportingMethod.chooseAnnualReport        =   Dewis cyflwyno adroddiadau’n flynyddol
+incomeSources.add.businessReportingMethod.chooseQuarterlyReport     =   Dewis cyflwyno adroddiadau’n chwarterol
+incomeSources.add.businessReportingMethod.error                     =   Dewiswch a hoffech gyflwyno adroddiad yn flynyddol neu’n chwarterol ar gyfer blwyddyn dreth {0} i {1}

@@ -1312,3 +1312,14 @@ incomeSources.cease.BusinessEndDate.error.invalid                         = The 
 incomeSources.cease.BusinessEndDate.error.future                          = You cannot provide a cessation date that is beyond the current day or a date in the future
 incomeSources.cease.BusinessEndDate.error.beforeStartDate                 = The cessation date cannot be earlier than the start date for the business
 incomeSources.cease.BusinessEndDate.error.beforeEarliestDate              = The cessation date cannot be earlier than the 6th of April 2015
+
+incomeSources.add.businessReportingMethod.heading                   =   Choose a reporting method
+incomeSources.add.businessReportingMethod.description1              =   Your business qualifies for a grace period available up until April {0} where you can report annually.
+incomeSources.add.businessReportingMethod.description2              =   This involves a single update no later than 31 January.
+incomeSources.add.businessReportingMethod.description3              =   This grace period is not affected by either:
+incomeSources.add.businessReportingMethod.description4              =   <li> your level of income from other sources</li> <li>the turnover you expect your new business to make</li> <li>how you report with any existing income sources</li>
+incomeSources.add.businessReportingMethod.chooseReport              =   Choose how you want to report
+incomeSources.add.businessReportingMethod.taxYear                   =   Tax year {0}-{1}
+incomeSources.add.businessReportingMethod.chooseAnnualReport        =   Choose annual reporting
+incomeSources.add.businessReportingMethod.chooseQuarterlyReport     =   Choose quarterly reporting
+incomeSources.add.businessReportingMethod.error                     =   Select if you want to report annually or quarterly for tax year {0} to {1}
