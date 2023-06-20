@@ -118,7 +118,7 @@ class BusinessAccountingMethodController @Inject()(val authenticate: Authenticat
                 .addingToSession(addBusinessAccountingMethod -> currentAccountingMethod(userBusinesses)))
             } else {
               handleRequest(
-                isAgent = false
+                isAgent = true
               )
             }
         }
@@ -154,12 +154,12 @@ class BusinessAccountingMethodController @Inject()(val authenticate: Authenticat
             BusinessAccountingMethodForm.form.bindFromRequest().fold(
               hasErrors => Future.successful(BadRequest(view(
                 form = hasErrors,
-                postAction = controllers.incomeSources.add.routes.BusinessAccountingMethodController.submit(),
+                postAction = controllers.incomeSources.add.routes.BusinessAccountingMethodController.submitAgent(),
                 backUrl = controllers.incomeSources.add.routes.CheckBusinessDetailsController.showAgent().url,
                 isAgent = true,
               ))),
               validatedInput => {
-                if (validatedInput.equals("cash")) {
+                if (validatedInput.equals(Some("cash"))) {
                   Future.successful(Redirect(controllers.incomeSources.add.routes.CheckBusinessDetailsController.showAgent())
                     .addingToSession(addBusinessAccountingMethod -> "cash"))
                 } else {
