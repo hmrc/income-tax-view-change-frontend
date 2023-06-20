@@ -15,19 +15,18 @@
  *@
 
 @import views.html.layouts.unifiedLayout
-@import views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import _root_.implicits.ImplicitDateFormatterImpl
 @import java.time.LocalDate
+@import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcPageHeading
+@import uk.gov.hmrc.hmrcfrontend.views.viewmodels.pageheading.PageHeading
 
 
 @this(
         mainTemplate: unifiedLayout,
-        h1: h1_large,
+        hmrcPageHeading: HmrcPageHeading,
         formWithCSRF: FormWithCSRF,
         govukSummaryList: GovukSummaryList,
-        link: link,
-        caption: caption,
         implicitDateFormatter: ImplicitDateFormatterImpl,
         govukButton: GovukButton
 )
@@ -56,9 +55,12 @@
     isAgent = isAgent,
     btaNavPartial = request.btaNavPartial) {
 
-    @caption(getMessage("caption"))
-
-    @h1(getMessage("heading"))
+    @hmrcPageHeading(PageHeading(
+        text = getMessage("heading"),
+        headingClasses = Some("govuk-heading-l"),
+        section = Some(getMessage("caption")),
+        captionClasses = Some("govuk-caption-l")
+    ))
 
     @govukSummaryList(SummaryList(
         classes = "govuk-!-margin-bottom-9",
