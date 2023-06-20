@@ -32,7 +32,7 @@ object GetAddressLookupDetailsHttpParser {
         case _ => Left(InvalidJson)
       }
       case NOT_FOUND => Right(None)
-      case status => Left(UnexpectedStatusFailure(status))
+      case status => Left(UnexpectedGetStatusFailure(status))
     }
   }
 
@@ -40,6 +40,6 @@ object GetAddressLookupDetailsHttpParser {
 
   case object InvalidJson extends GetAddressLookupDetailsFailure
 
-  case class UnexpectedStatusFailure(status: Int) extends GetAddressLookupDetailsFailure
+  case class UnexpectedGetStatusFailure(status: Int) extends GetAddressLookupDetailsFailure
 
 }

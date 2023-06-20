@@ -30,7 +30,7 @@ object PostAddressLookupHttpParser {
           case ACCEPTED => Right(
             PostAddressLookupSuccessResponse(response.header(key = "Location"))
           )
-          case status => Left(UnexpectedStatusFailure(status))
+          case status => Left(UnexpectedPostStatusFailure(status))
         }
       }
     }
@@ -41,6 +41,6 @@ object PostAddressLookupHttpParser {
 
   sealed trait PostAddressLookupFailure
 
-  case class UnexpectedStatusFailure(status: Int) extends PostAddressLookupFailure
+  case class UnexpectedPostStatusFailure(status: Int) extends PostAddressLookupFailure
 
 }

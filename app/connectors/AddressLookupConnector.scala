@@ -21,12 +21,10 @@ import config.featureswitch.FeatureSwitching
 import models.incomeSourceDetails.viewmodels.httpparser.GetAddressLookupDetailsHttpParser.GetAddressLookupDetailsResponse
 import models.incomeSourceDetails.viewmodels.httpparser.PostAddressLookupHttpParser.PostAddressLookupResponse
 import play.api.libs.json.JsValue
-import play.api.libs.json.Json
 import play.api.mvc.{AnyContent, RequestHeader}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 import controllers.routes
 import play.api.Logger
-import play.libs.Json
 
 
 import javax.inject.Inject
