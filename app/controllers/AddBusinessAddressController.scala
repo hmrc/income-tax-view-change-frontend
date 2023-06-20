@@ -80,9 +80,11 @@ class AddBusinessAddressController @Inject()(authenticate: AuthenticationPredica
           case Right(PostAddressLookupSuccessResponse(Some(location))) =>
             Redirect(location)
           case Right(PostAddressLookupSuccessResponse(None)) =>
-            throw new InternalServerException(s"[AddBusinessAddressController][handleRequest] - Unexpected response, success, but no location returned")
+            Logger("application").error(s"[AddBusinessAddressController][handleRequest] - No redirect location returned from connector")
+            itvcErrorHandler.showInternalServerError()
           case Left(PostAddressLookupHttpParser.UnexpectedStatusFailure(status)) =>
-            throw new InternalServerException(s"[AddBusinessAddressController][handleRequest] - Unexpected response, status: $status")
+            Logger("application").error(s"[AddBusinessAddressController][handleRequest] - Unexpected response, status: $status")
+            itvcErrorHandler.showInternalServerError()
         }
     }
   }
@@ -91,7 +93,7 @@ class AddBusinessAddressController @Inject()(authenticate: AuthenticationPredica
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit request =>
       id match {
-        case Some(value) => fetchAddress(value)
+        case Some(value) =>
           fetchAddress(value) map { value =>
             Redirect(routes.AddBusinessAccountingMethodController.show().url).addingToSession(
               SessionKeys.addBusinessAddressLine1 -> value.address.lines.head,
@@ -102,7 +104,8 @@ class AddBusinessAddressController @Inject()(authenticate: AuthenticationPredica
               SessionKeys.addBusinessCountryCode -> "GB"
             )
           }
-        case None => throw new InternalServerException(s"[AddressLookupRoutingController][fetchAddress] - Id not returned from address service")
+        case None => Logger("application").error(s"[AddBusinessAddressController][fetchAddress] - Id not returned from address service")
+          Future(itvcErrorHandler.showInternalServerError())
       }
   }
 
@@ -121,20 +124,24 @@ class AddBusinessAddressController @Inject()(authenticate: AuthenticationPredica
                 SessionKeys.addBusinessCountryCode -> "GB"
               )
             }
-          case None => throw new InternalServerException(s"[AddressLookupRoutingController][fetchAddress] - Id not returned from address service")
+          case None => Logger("application").error(s"[AddBusinessAddressController][fetchAddress] - Id not returned from address service")
+            Future(itvcErrorHandler.showInternalServerError())
         }
 
   }
 
   def fetchAddress(id: String)(implicit hc: HeaderCarrier): Future[BusinessAddressModel] = {
-        addressLookupConnector.getAddressDetails(id) map {
-          case Right(Some(addressDetails)) => addressDetails
-          case Right(None) =>
-            throw new InternalServerException(s"[AddressLookupRoutingController][fetchAddress] - No address details found with id: $id")
-          case Left(InvalidJson) =>
-            throw new InternalServerException(s"[AddressLookupRoutingController][fetchAddress] - Invalid json response")
-          case Left(GetAddressLookupDetailsHttpParser.UnexpectedStatusFailure(status)) =>
-            throw new InternalServerException(s"[AddressLookupRoutingController][fetchAddress] - Unexpected response, status: $status")
-        }
+      addressLookupConnector.getAddressDetails(id) map {
+        case Right(Some(addressDetails)) => addressDetails
+        case Right(None) =>
+          Logger("application").error(s"[AddBusinessAddressController][fetchAddress] - No address details found with id: $id")
+          itvcErrorHandler.showInternalServerError()
+        case Left(InvalidJson) =>
+          Logger("application").error(s"[AddBusinessAddressController][fetchAddress] - Invalid json response")
+          itvcErrorHandler.showInternalServerError()
+        case Left(GetAddressLookupDetailsHttpParser.UnexpectedStatusFailure(status)) =>
+          Logger("application").error(s"[AddBusinessAddressController][fetchAddress] - Unexpected response, status: $status")
+          itvcErrorHandler.showInternalServerError()
+      }
   }
 }
