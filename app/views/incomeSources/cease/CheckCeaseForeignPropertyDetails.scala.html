@@ -60,8 +60,9 @@
 
     @h1(getMessage("heading"))
 
-    @govukSummaryList(
-        SummaryList(Seq(SummaryListRow(
+    @govukSummaryList(SummaryList(
+        classes = "govuk-!-margin-bottom-9",
+        rows = Seq(SummaryListRow(
             key = Key(Text(getMessage("summary-list.key"))),
             value = Value(Text(implicitDateFormatter.longDate(endDate).toLongDate)),
             actions = Some(Actions(
@@ -70,9 +71,9 @@
                     classes = "govuk-link govuk-body",
                     content = HtmlContent(getMessage("summary-list.link")),
                     attributes = Map("id" -> "change-link")
-            ))))
-        )))
-    )
+                ))))
+        ))
+    ))
 
     @formWithCSRF(postCall) {
         @govukButton(Button(
