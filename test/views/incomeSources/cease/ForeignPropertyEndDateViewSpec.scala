@@ -100,8 +100,8 @@ class ForeignPropertyEndDateViewSpec extends TestSupport {
       document.getElementsByClass("govuk-date-input__item").size() shouldBe 3
     }
     "render the back link with the correct URL" in new Setup(false) {
-      document.getElementById("back-fallback").text() shouldBe messages("base.back")
-      document.getElementById("back-fallback").attr("href") shouldBe controllers.incomeSources.cease.routes.CeaseForeignPropertyController.show().url
+      document.getElementById("back").text() shouldBe messages("base.back")
+      document.getElementById("back").attr("href") shouldBe controllers.incomeSources.cease.routes.CeaseForeignPropertyController.show().url
     }
     "render the continue button" in new Setup(false) {
       document.getElementById("continue-button").text() shouldBe messages("base.continue")
@@ -130,8 +130,8 @@ class ForeignPropertyEndDateViewSpec extends TestSupport {
       document.getElementsByClass("govuk-date-input__item").size() shouldBe 3
     }
     "render the back link with the correct URL" in new Setup(true) {
-      document.getElementById("back-fallback").text() shouldBe messages("base.back")
-      document.getElementById("back-fallback").attr("href") shouldBe controllers.incomeSources.cease.routes.CeaseForeignPropertyController.showAgent().url
+      document.getElementById("back").text() shouldBe messages("base.back")
+      document.getElementById("back").attr("href") shouldBe controllers.incomeSources.cease.routes.CeaseForeignPropertyController.showAgent().url
     }
     "render the continue button" in new Setup(true) {
       document.getElementById("continue-button").text() shouldBe messages("base.continue")
