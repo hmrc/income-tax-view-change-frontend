@@ -69,10 +69,10 @@ class BusinessAccountingMethodController @Inject()(val authenticate: Authenticat
       if (shouldAutomaticallyRedirect(userBusinesses)) {
         if (isAgent) {
           Future.successful(Redirect(controllers.incomeSources.add.routes.CheckBusinessDetailsController.showAgent())
-            .addingToSession(addBusinessAccountingMethod -> currentAccountingMethod(userBusinesses)))
+            .addingToSession(addBusinessAccountingMethod -> "cash"))
         } else {
           Future.successful(Redirect(controllers.incomeSources.add.routes.CheckBusinessDetailsController.show())
-            .addingToSession(addBusinessAccountingMethod -> currentAccountingMethod(userBusinesses)))
+            .addingToSession(addBusinessAccountingMethod -> "cash"))
         }
       } else {
         Future.successful(Ok(view(
@@ -96,15 +96,10 @@ class BusinessAccountingMethodController @Inject()(val authenticate: Authenticat
   def shouldAutomaticallyRedirect(businesses: List[BusinessDetailsModel]): Boolean = {
     val activeSoleTraderBusinesses: Boolean = !businesses.forall(_.isCeased)
     if (activeSoleTraderBusinesses) {
-      businesses.forall(_.cashOrAccruals == businesses.head.cashOrAccruals)
+      businesses.exists(_.cashOrAccruals == Option("cash"))
     } else {
       activeSoleTraderBusinesses
     }
-  }
-
-  def currentAccountingMethod(businesses: List[BusinessDetailsModel]): String = {
-    val activeSoleTraderBusinesses: List[BusinessDetailsModel] = businesses.filterNot(_.isCeased)
-    activeSoleTraderBusinesses.head.cashOrAccruals.getOrElse(throw MissingFieldException("cashOrAccruals should exist"))
   }
 
   def show(): Action[AnyContent] =
