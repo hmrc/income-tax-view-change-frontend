@@ -16,7 +16,6 @@
 
 package forms.incomeSources.add
 
-import forms.incomeSources.add.CheckUKPropertyStartDateForm.{radioMustBeSelected, validRadioOptions}
 import play.api.data.Form
 import play.api.data.Forms.{mapping, optional, text}
 
