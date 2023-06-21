@@ -66,7 +66,7 @@ class AddBusinessAddressController @Inject()(authenticate: AuthenticationPredica
 
   def handleRequest(isAgent: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
     if (isDisabled(IncomeSources)) {
-      Future.successful(Redirect(controllers.routes.HomeController.show()))
+      Future.successful(if (isAgent) Redirect(controllers.routes.HomeController.showAgent) else Redirect(controllers.routes.HomeController.show()))
     } else {
         addressLookupService.initialiseAddressJourney(
           isAgent = isAgent
@@ -86,9 +86,8 @@ class AddBusinessAddressController @Inject()(authenticate: AuthenticationPredica
   def submit(id: Option[String]): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
-      for {
-        res <- addressLookupService.fetchAddress(id)
-      } yield res match {
+      val res = addressLookupService.fetchAddress(id)
+      res map {
         case Right(value) =>
           Redirect(routes.AddBusinessAccountingMethodController.showAgent().url).addingToSession(
             SessionKeys.addBusinessAddressLine1 -> {
