@@ -47,7 +47,7 @@ class BusinessAccountingMethodController @Inject()(val authenticate: Authenticat
                                                    val view: BusinessAccountingMethod,
                                                    val customNotFoundErrorView: CustomNotFoundError)
                                                   (implicit val appConfig: FrontendAppConfig,
-                                                   mcc: MessagesControllerComponents,
+                                                   override val mcc: MessagesControllerComponents,
                                                    val ec: ExecutionContext,
                                                    val itvcErrorHandler: ItvcErrorHandler,
                                                    val itvcErrorHandlerAgent: AgentItvcErrorHandler)
