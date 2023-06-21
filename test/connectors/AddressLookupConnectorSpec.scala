@@ -18,9 +18,15 @@ package connectors
 
 import config.featureswitch.FeatureSwitch.switches
 import config.featureswitch.{FeatureSwitching, IncomeSources}
-import org.mockito.Mockito.mock
+import models.incomeSourceDetails.viewmodels.httpparser.PostAddressLookupHttpParser.{PostAddressLookupResponse, PostAddressLookupSuccessResponse}
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.{mock, when}
+import play.api.libs.json.JsValue
+import org.scalactic.Fail
 import testUtils.TestSupport
 import uk.gov.hmrc.http.HttpClient
+
+import scala.concurrent.Future
 
 class AddressLookupConnectorSpec extends TestSupport with FeatureSwitching {
 
@@ -51,6 +57,22 @@ class AddressLookupConnectorSpec extends TestSupport with FeatureSwitching {
 
         val result = TestAddressLookupConnector.getAddressDetailsUrl("123")
         result shouldBe s"${baseUrl}/api/v2/confirmed?id=123"
+      }
+    }
+
+    "initialiseAddressLookup" should {
+      "work" in {
+        disableAllSwitches()
+        enable(IncomeSources)
+
+        when(mockHttpGet.POST[JsValue, PostAddressLookupResponse](any(),any())(any(),any(),any(),any())).
+          thenReturn(Future(PostAddressLookupSuccessResponse(Some("Sample location"))))
+
+        val result = TestAddressLookupConnector.initialiseAddressLookup(false)
+        result map {
+          case Left(_) => Fail("Error returned from lookup service")
+          case Right(PostAddressLookupSuccessResponse(location)) => location shouldBe "sample location"
+        }
       }
     }
   }
