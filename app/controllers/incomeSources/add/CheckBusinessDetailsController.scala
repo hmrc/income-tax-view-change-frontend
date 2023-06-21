@@ -22,6 +22,7 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.agent.utils.SessionKeys
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
+import forms.utils.SessionKeys.addBusinessStartDate
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import models.incomeSourceDetails.viewmodels.CheckBusinessDetailsViewModel
 import play.api.Logger
@@ -74,34 +75,43 @@ class CheckBusinessDetailsController @Inject()(val checkBusinessDetails: CheckBu
   }
 
   def getDetails(implicit user: MtdItUser[_]): Either[Throwable, CheckBusinessDetailsViewModel] = {
-    val sessionData = user.session.data
-    val businessName = sessionData.get("addBusinessName")
-    val businessStartDate = sessionData.get("addBusinessStartDate").map(LocalDate.parse)
-    val businessTrade = sessionData.get("addBusinessTrade")
-    val businessAddressLine1 = sessionData.get("addBusinessAddressLine1")
-    val businessPostalCode = sessionData.get("addBusinessPostalCode")
-    val businessAccountingMethod = sessionData.get("addBusinessAccountingMethod")
 
-    if (
-        businessName.isEmpty ||
-        businessStartDate.isEmpty ||
-        businessTrade.isEmpty ||
-        businessAddressLine1.isEmpty ||
-        businessPostalCode.isEmpty
-    ) {
-      Left(new IllegalArgumentException(s"Missing required session data $businessName.get" ))
+    case class MissingKey(msg: String)
 
-    } else {
-      Right(CheckBusinessDetailsViewModel(
-        Some(businessName.get),
-        Some(businessStartDate.get),
-        Some(businessTrade.get),
-        Some(businessAddressLine1.get),
-        Some(businessPostalCode.get),
-        Some(businessAccountingMethod.get)
-      ))
+    val errors: Seq[String] = Seq(
+      user.session.data.get("addBusinessName").orElse(Option(MissingKey("MissingKey: addBusinessName"))),
+      user.session.data.get("addBusinessStartDate").orElse(Option(MissingKey("MissingKey: addBusinessStartDate"))),
+      user.session.data.get("addBusinessTrade").orElse(Option(MissingKey("MissingKey: addBusinessTrade"))),
+      user.session.data.get("addBusinessAddressLine1").orElse(Option(MissingKey("MissingKey: addBusinessAddressLine1"))),
+      user.session.data.get("addBusinessPostalCode").orElse(Option(MissingKey("MissingKey: addBusinessAccountingMethod"))),
+    ).collect {
+      case Some(MissingKey(msg)) => MissingKey(msg)
+    }.map(e => e.msg)
+
+    val result: Option[CheckBusinessDetailsViewModel] = for {
+      businessName <- user.session.data.get("addBusinessName")
+      businessStartDate <- user.session.data.get("addBusinessStartDate").map(LocalDate.parse)
+      businessTrade <- user.session.data.get("addBusinessTrade")
+      businessAddressLine1 <- user.session.data.get("addBusinessAddressLine1")
+      businessPostalCode <- user.session.data.get("addBusinessPostalCode")
+      businessAccountingMethod <- user.session.data.get("addBusinessAccountingMethod")
+    } yield CheckBusinessDetailsViewModel(
+      Some(businessName),
+      Some(businessStartDate),
+      Some(businessTrade),
+      Some(businessAddressLine1),
+      Some(businessPostalCode),
+      Some(businessAccountingMethod)
+    )
+
+    result match {
+      case Some(checkBusinessDetailsViewModel) =>
+        Right(checkBusinessDetailsViewModel)
+      case None =>
+        Left(new IllegalArgumentException(s"Missing required session data: ${errors.mkString(" ")}"))
     }
   }
+
 
   def handleRequest(sources: IncomeSourceDetailsModel, isAgent: Boolean, backUrl: String)
                    (implicit user: MtdItUser[_]): Future[Result] = {
