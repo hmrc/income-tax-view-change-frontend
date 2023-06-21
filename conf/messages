@@ -12,6 +12,7 @@ base.continue                                                   = Continue
 base.error_summary.heading                                      = There is a problem
 base.error-prefix                                                = Error:
 base.govUk                                                      = GOV.UK
+base.confirm-and-continue                                       = Confirm and continue
 
 # Fallback Back Links
 back.whatYouOwe = Back to What You Owe
@@ -1312,6 +1313,12 @@ incomeSources.cease.BusinessEndDate.error.invalid                         = The 
 incomeSources.cease.BusinessEndDate.error.future                          = You cannot provide a cessation date that is beyond the current day or a date in the future
 incomeSources.cease.BusinessEndDate.error.beforeStartDate                 = The cessation date cannot be earlier than the start date for the business
 incomeSources.cease.BusinessEndDate.error.beforeEarliestDate              = The cessation date cannot be earlier than the 6th of April 2015
+
+check-cease-foreign-property-details.heading            = Check your details
+check-cease-foreign-property-details.caption            = Foreign property business you entered
+check-cease-foreign-property-details.summary-list.key   = Date business stopped
+check-cease-foreign-property-details.summary-list.link  = Change
+check-cease-foreign-property-details.button             = Confirm and continue
 
 incomeSources.add.businessReportingMethod.heading                   =   Choose a reporting method
 incomeSources.add.businessReportingMethod.description1              =   Your business qualifies for a grace period available up until April {0} where you can report annually.
