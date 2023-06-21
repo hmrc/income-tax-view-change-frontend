@@ -159,7 +159,7 @@ class BusinessAccountingMethodController @Inject()(val authenticate: Authenticat
                 form = hasErrors,
                 postAction = controllers.incomeSources.add.routes.BusinessAccountingMethodController.submitAgent(),
                 backUrl = controllers.incomeSources.add.routes.CheckBusinessDetailsController.showAgent().url,
-                isAgent = true,
+                isAgent = true
               ))),
               validatedInput => {
                 if (validatedInput.equals(Some("cash"))) {
