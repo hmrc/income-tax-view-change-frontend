@@ -58,20 +58,31 @@ class BusinessAccountingMethodController @Inject()(val authenticate: Authenticat
 
     val incomeSourcesEnabled: Boolean = isEnabled(IncomeSources)
     val backUrl: String = if (isAgent) controllers.incomeSources.add.routes.CheckBusinessDetailsController.showAgent().url else
-      controllers.incomeSources.add.routes.CheckBusinessDetailsController.show().url //checkurl
-    val postAction: Call = if (isAgent) controllers.incomeSources.add.routes.BusinessAccountingMethodController.submitAgent() else //placeholder controller
-      controllers.incomeSources.add.routes.BusinessAccountingMethodController.submit() //checkurl
+      controllers.incomeSources.add.routes.CheckBusinessDetailsController.show().url
+    val postAction: Call = if (isAgent) controllers.incomeSources.add.routes.BusinessAccountingMethodController.submitAgent() else
+      controllers.incomeSources.add.routes.BusinessAccountingMethodController.submit()
 
     val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
     if (incomeSourcesEnabled) {
-      Future.successful(Ok(view(
+      val userBusinesses: List[BusinessDetailsModel] = user.incomeSources.businesses
+      if (shouldAutomaticallyRedirect(userBusinesses)) {
+        if (isAgent) {
+          Future.successful(Redirect(controllers.incomeSources.add.routes.CheckBusinessDetailsController.showAgent())
+            .addingToSession(addBusinessAccountingMethod -> currentAccountingMethod(userBusinesses)))
+        } else {
+          Future.successful(Redirect(controllers.incomeSources.add.routes.CheckBusinessDetailsController.show())
+            .addingToSession(addBusinessAccountingMethod -> currentAccountingMethod(userBusinesses)))
+        }
+      } else {
+        Future.successful(Ok(view(
         form = BusinessAccountingMethodForm.form,
         postAction = postAction,
         isAgent = isAgent,
         backUrl = backUrl,
         btaNavPartial = user.btaNavPartial
-      )(user, messages)))
+        )(user, messages)))
+      }
     } else {
       Future.successful(Ok(customNotFoundErrorView()(user, messages)))
     } recover {
@@ -82,9 +93,13 @@ class BusinessAccountingMethodController @Inject()(val authenticate: Authenticat
     }
   }
 
-  def activeBusinessesExist(businesses: List[BusinessDetailsModel]): Boolean = {
-    val activeSoleTraderBusinesses: List[BusinessDetailsModel] = businesses.filterNot(_.isCeased)
-    activeSoleTraderBusinesses.nonEmpty
+  def shouldAutomaticallyRedirect(businesses: List[BusinessDetailsModel]): Boolean = {
+    val activeSoleTraderBusinesses: Boolean = !businesses.forall(_.isCeased)
+    if (activeSoleTraderBusinesses) {
+      businesses.forall(_.cashOrAccruals == businesses.head.cashOrAccruals)
+    } else {
+      activeSoleTraderBusinesses
+    }
   }
 
   def currentAccountingMethod(businesses: List[BusinessDetailsModel]): String = {
@@ -96,15 +111,9 @@ class BusinessAccountingMethodController @Inject()(val authenticate: Authenticat
     (checkSessionTimeout andThen authenticate andThen retrieveNino
       andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
       implicit user =>
-        val userBusinesses: List[BusinessDetailsModel] = user.incomeSources.businesses
-        if (activeBusinessesExist(userBusinesses)) {
-          Future.successful(Redirect(controllers.incomeSources.add.routes.CheckBusinessDetailsController.show())
-            .addingToSession(addBusinessAccountingMethod -> currentAccountingMethod(userBusinesses)))
-        } else {
-          handleRequest(
-            isAgent = false
-          )
-        }
+        handleRequest(
+          isAgent = false
+        )
     }
 
   def showAgent(): Action[AnyContent] = Authenticated.async {
@@ -112,15 +121,9 @@ class BusinessAccountingMethodController @Inject()(val authenticate: Authenticat
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
           implicit mtdItUser =>
-            val userBusinesses: List[BusinessDetailsModel] = mtdItUser.incomeSources.businesses
-            if (activeBusinessesExist(userBusinesses)) {
-              Future.successful(Redirect(controllers.incomeSources.add.routes.CheckBusinessDetailsController.showAgent())
-                .addingToSession(addBusinessAccountingMethod -> currentAccountingMethod(userBusinesses)))
-            } else {
-              handleRequest(
-                isAgent = true
-              )
-            }
+            handleRequest(
+              isAgent = true
+            )
         }
   }
 
