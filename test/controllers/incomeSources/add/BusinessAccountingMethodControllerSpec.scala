@@ -197,7 +197,7 @@ class BusinessAccountingMethodControllerSpec extends TestSupport with MockAuthen
       }
     }
   }
-  ////////////////////////////////////
+
   "Agent - BusinessAccountingMethodController.showAgent()" should {
     "return 200 OK" when {
       "navigating to the page with FS Enabled and no active self employment businesses" in {

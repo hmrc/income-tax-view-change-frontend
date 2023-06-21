@@ -22,15 +22,24 @@ import play.api.data.Forms.{mapping, optional, text}
 
 object BusinessAccountingMethodForm {
 
-  private val radioEmptyError: String = "incomeSources.add.business-accounting-method.no-selection"
+  val radioEmptyError: String = "incomeSources.add.business-accounting-method.no-selection"
   private val validRadioOptions = Set("cash", "traditional")
+  val cashAccountingMethod = "cash"
+  val traditionalAccountingMethod = "traditional"
+  val response: String = "incomeSources.add.business-accounting-method"
 
   val form: Form[_] = {
     Form(
       mapping(
-        "incomeSources.add.business-accounting-method" -> optional(text)
+        response -> optional(text)
           .verifying(radioEmptyError, value => value.isDefined && validRadioOptions.contains(value.get))
       )(identity)(Option(_))
     )
   }
+}
+
+case class BusinessAccountingMethodForm(response: Option[String]) {
+  def toFormMap: Map[String, Seq[String]] = Map(
+    BusinessAccountingMethodForm.response -> Seq(response.getOrElse(""))
+  )
 }
