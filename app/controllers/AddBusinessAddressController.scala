@@ -89,7 +89,7 @@ class AddBusinessAddressController @Inject()(authenticate: AuthenticationPredica
       val res = addressLookupService.fetchAddress(id)
       res map {
         case Right(value) =>
-          Redirect(routes.AddBusinessAccountingMethodController.showAgent().url).addingToSession(
+          Redirect(routes.AddBusinessAccountingMethodController.show().url).addingToSession(
             SessionKeys.addBusinessAddressLine1 -> {
               if (value.address.lines.isDefinedAt(0)) value.address.lines.head else ""
             },

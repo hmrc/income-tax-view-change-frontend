@@ -45,23 +45,26 @@ class AddressLookupConnector @Inject()(val appConfig: FrontendAppConfig,
   lazy val individualContinueUrl: String = routes.AddBusinessAddressController.submit(None).url
   lazy val agentContinueUrl: String = routes.AddBusinessAddressController.agentSubmit(None).url
 
+  lazy val individualFeedbackUrl: String = controllers.feedback.routes.FeedbackController.show.url
+  lazy val agentFeedbackUrl: String = controllers.feedback.routes.FeedbackController.showAgent.url
 
-  def addressJson(continueUrl: String): JsValue = {
+
+  def addressJson(continueUrl: String, feedbackUrl: String): JsValue = {
     JsObject(
       Seq(
         "version" -> JsNumber(2),
         "options" -> JsObject(
           Seq(
-            "continueUrl" -> JsString(s"http://localhost:9081${continueUrl}"),
+            "continueUrl" -> JsString(appConfig.itvcFrontendEnvironment + continueUrl),
             "timeoutConfig" -> JsObject(
               Seq(
                 "timeoutAmount" -> JsNumber(3600),
-                "timeoutUrl" -> JsString("http://localhost:9081/report-quarterly/income-and-expenses/session-timeout"),
-                "timeoutKeepAliveUrl" -> JsString("http://localhost:9081/report-quarterly/income-and-expenses/keep-alive")
+                "timeoutUrl" -> JsString(appConfig.itvcFrontendEnvironment + controllers.timeout.routes.SessionTimeoutController.timeout.url),
+                "timeoutKeepAliveUrl" -> JsString(appConfig.itvcFrontendEnvironment + controllers.timeout.routes.SessionTimeoutController.keepAlive.url)
               )
             ),
-            "signOutHref" -> JsString("http://localhost:9081/report-quarterly/income-and-expenses/view/sign-out"),
-            "accessibilityFooterUrl" -> JsString("http://localhost:12346/accessibility-statement/income-tax-view-change?referrerUrl=%2Freport-quarterly%2Fincome-and-expenses%2Fview"),
+            "signOutHref" -> JsString(appConfig.itvcFrontendEnvironment + controllers.routes.SignOutController.signOut.url),
+            "accessibilityFooterUrl" -> JsString(appConfig.itvcFrontendEnvironment +  "/accessibility-statement/income-tax-view-change?referrerUrl=%2Freport-quarterly%2Fincome-and-expenses%2Fview"),
             "selectPageConfig" -> JsObject(
               Seq(
                 "proposalListLimit" -> JsNumber(15)
@@ -74,7 +77,7 @@ class AddressLookupConnector @Inject()(val appConfig: FrontendAppConfig,
                 "showConfirmChangeText" -> JsBoolean(true)
               )
             ),
-            "phaseFeedbackLink" -> JsString("http://localhost:9081/report-quarterly/income-and-expenses/view/feedback"),
+            "phaseFeedbackLink" -> JsString(appConfig.itvcFrontendEnvironment + feedbackUrl),
             "deskProServiceName" -> JsString("cds-reimbursement-claim"),
             "showPhaseBanner" -> JsBoolean(true),
             "ukMode" -> JsBoolean(true)
@@ -87,7 +90,7 @@ class AddressLookupConnector @Inject()(val appConfig: FrontendAppConfig,
 
   def initialiseAddressLookup(isAgent: Boolean)(implicit hc: HeaderCarrier, request: RequestHeader): Future[PostAddressLookupResponse] = {
     Logger("application").info(s"URL: $addressLookupInitializeUrl")
-    val payload = if (isAgent) addressJson(agentContinueUrl) else addressJson(individualContinueUrl)
+    val payload = if (isAgent) addressJson(agentContinueUrl, agentFeedbackUrl) else addressJson(individualContinueUrl, individualFeedbackUrl)
     http.POST[JsValue, PostAddressLookupResponse](
       url = addressLookupInitializeUrl,
       body = payload
