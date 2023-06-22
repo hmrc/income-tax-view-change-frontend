@@ -25,6 +25,7 @@ import play.api.libs.json.JsValue
 import org.scalactic.Fail
 import testUtils.TestSupport
 import uk.gov.hmrc.http.HttpClient
+import helpers.servicemocks.AuthStub.messagesAPI
 
 import scala.concurrent.Future
 
@@ -37,7 +38,7 @@ class AddressLookupConnectorSpec extends TestSupport with FeatureSwitching {
   val mockHttpGet: HttpClient = mock(classOf[HttpClient])
   val baseUrl: String = appConfig.addressLookupService
 
-  object TestAddressLookupConnector extends AddressLookupConnector(appConfig, mockHttpGet)
+  object TestAddressLookupConnector extends AddressLookupConnector(appConfig, mockHttpGet, messagesAPI)
 
   "AddressLookupConnector" should {
     "addressLookupInitializeUrl" should {
