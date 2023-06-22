@@ -1171,6 +1171,13 @@ add-business-trade.form.error.long          = Business trade must be 35 characte
 add-business-trade.form.error.invalid       = Business trade cannot include !, "", * or ?
 add-business-trade.form.error.same-name     = You cannot enter the same trade and same business name
 
+## Add business address page
+add-business-address.select.heading         = Select business address
+add-business-address.lookup.heading         = What is your business address?
+add-business-address.confirm.heading        = Confirm business address
+add-business-address.edit.heading           = Enter your business address
+
+
 #Following empty fields are not in Use
 #These fields are kept to match with Messages.cy
 shortMonth.1 =
