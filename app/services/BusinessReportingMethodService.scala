@@ -16,18 +16,61 @@
 
 package services
 
-import models.incomeSourceDetails.BusinessReportingMethodModel
-import play.api.cache.AsyncCacheApi
+import connectors.IncomeTaxViewChangeConnector
+import forms.incomeSources.add.AddBusinessReportingMethodForm
+import models.incomeSourceDetails.viewmodels.BusinessReportingMethodViewModel
+import models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponse}
+import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.{Inject, Singleton}
+import scala.concurrent.Future
 
 @Singleton
-class BusinessReportingMethodService @Inject()(val cache: AsyncCacheApi) {
+class BusinessReportingMethodService @Inject()(incomeTaxViewChangeConnector: IncomeTaxViewChangeConnector) {
 
-  def getBusinessReportingMethodDetails(): BusinessReportingMethodModel = {
+  def getBusinessReportingMethodDetails(): BusinessReportingMethodViewModel = {
+    /*
+      TODO S0:   1. Check Latency details for new Income source
+                 2. if latency details empty redirect to business-added page else cover below scenarios
 
-    BusinessReportingMethodModel(2022, 2023)
+      or
 
+      TODO S1:  1. Check current year is in TY1 from Latency
+                2. Show Radio for TY1 & TY2
+
+     or
+
+      TODO S2a: 1. Check current year is in TY2 and TY1 is *not Crystallised (no final Declaration API#1404/API#1896)
+                2. Show Radio for TY1 & TY2
+
+      or
+
+      TODO S2b: 1. Check current year is in TY2 and TY1 is *Crystallised ( has final Declaration API#1404/API#1896)
+                2. Show Radio TY2
+
+      or
+
+      TODO S3:  1. If I am beyond latency period i.e I am in S0
+
+    */
+    BusinessReportingMethodViewModel(Some(2022), Some(2023))
+    //BusinessReportingMethodViewModel(None, Some(2023))
+    //BusinessReportingMethodViewModel(Some(2022), None)
+    //BusinessReportingMethodViewModel(None, None)
+  }
+
+  def updateIncomeSourceTaxYearSpecific(nino: String, incomeSourceId: String, taxYearSpecific: AddBusinessReportingMethodForm)(implicit hc:HeaderCarrier): Future[UpdateIncomeSourceResponse] = {
+    val ty1 = taxYearSpecific.taxYearReporting1 match {
+      case Some(s) => Some(TaxYearSpecific(taxYearSpecific.taxYear1.get, s.toBoolean))
+      case _ => None
+    }
+    val ty2 = taxYearSpecific.taxYearReporting2 match {
+      case Some(s) => Some(TaxYearSpecific(taxYearSpecific.taxYear2.get, s.toBoolean))
+      case _ => None
+    }
+    incomeTaxViewChangeConnector.updateIncomeSourceTaxYearSpecific(nino = nino,
+      incomeSourceId = incomeSourceId,
+      taxYearSpecific = List(ty1,ty2).flatten)
   }
 }
 

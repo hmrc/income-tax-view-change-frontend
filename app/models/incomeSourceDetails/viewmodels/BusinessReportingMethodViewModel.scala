@@ -14,20 +14,10 @@
  * limitations under the License.
  */
 
-package models.incomeSourceDetails
+package models.incomeSourceDetails.viewmodels
 
-import play.api.libs.json.{Json, OFormat}
 import services.DateServiceInterface
 
-case class BusinessReportingMethodModel(taxYear1: Int,
-                                        taxYear2: Int
-                                       ){
-
+case class BusinessReportingMethodViewModel(taxYear1: Option[Int], taxYear2: Option[Int]) {
   def currentTaxYear(implicit dateService: DateServiceInterface): Int = dateService.getCurrentTaxYearEnd()
-
-
-}
-
-object BusinessReportingMethodModel {
-  implicit val format: OFormat[BusinessReportingMethodModel] = Json.format[BusinessReportingMethodModel]
 }

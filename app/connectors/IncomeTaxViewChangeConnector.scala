@@ -30,7 +30,7 @@ import models.outstandingCharges._
 import models.paymentAllocationCharges.{FinancialDetailsWithDocumentDetailsErrorModel, FinancialDetailsWithDocumentDetailsModel, FinancialDetailsWithDocumentDetailsResponse}
 import models.paymentAllocations.{PaymentAllocations, PaymentAllocationsError, PaymentAllocationsResponse}
 import models.repaymentHistory.{RepaymentHistoryErrorModel, RepaymentHistoryModel, RepaymentHistoryResponseModel}
-import models.updateIncomeSource.{Cessation, UpdateIncomeSourceRequestModel, UpdateIncomeSourceResponse, UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
+import models.updateIncomeSource.{Cessation, TaxYearSpecific, UpdateIncomeSourceRequestModel, UpdateIncomeSourceResponse, UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
 import play.api.Logger
 import play.api.http.Status
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
@@ -108,8 +108,8 @@ trait IncomeTaxViewChangeConnector extends RawResponseReads with FeatureSwitchin
     s"${appConfig.itvcProtectedService}/income-tax-view-change/repayments/$nino"
   }
 
-  def getUpdateCessationDateUrl: String = {
-    s"${appConfig.itvcProtectedService}/income-tax-view-change/update-income-source/update-cessation-date"
+  def getUpdateIncomeSourceUrl: String = {
+    s"${appConfig.itvcProtectedService}/income-tax-view-change/update-income-source"
   }
 
   def getBusinessDetails(nino: String)(implicit headerCarrier: HeaderCarrier): Future[IncomeSourceDetailsResponse] = {
@@ -586,7 +586,7 @@ trait IncomeTaxViewChangeConnector extends RawResponseReads with FeatureSwitchin
       cessation = Some(Cessation(cessationIndicator = true, cessationDate = cessationDate)))
 
     http.PUT[UpdateIncomeSourceRequestModel, HttpResponse](
-      getUpdateCessationDateUrl,
+      getUpdateIncomeSourceUrl,
       body, Seq[(String, String)]()).map { response =>
       response.status match {
         case OK => response.json.validate[UpdateIncomeSourceResponseModel].fold(
@@ -607,4 +607,28 @@ trait IncomeTaxViewChangeConnector extends RawResponseReads with FeatureSwitchin
     }
   }
 
+  def updateIncomeSourceTaxYearSpecific(nino: String, incomeSourceId: String, taxYearSpecific: List[TaxYearSpecific])(implicit headerCarrier: HeaderCarrier): Future[UpdateIncomeSourceResponse] = {
+    val body = UpdateIncomeSourceRequestModel(nino = nino, incomeSourceId = incomeSourceId, taxYearSpecific = Some(taxYearSpecific))
+
+    http.PUT[UpdateIncomeSourceRequestModel, HttpResponse](
+      getUpdateIncomeSourceUrl,
+      body, Seq[(String, String)]()).map { response =>
+      response.status match {
+        case OK => response.json.validate[UpdateIncomeSourceResponseModel].fold(
+          invalid => {
+            Logger("application").error(s"[IncomeTaxViewChangeConnector][updateIncomeSourceTaxYearSpecific] - Json validation error parsing repayment response, error $invalid")
+            UpdateIncomeSourceResponseError(INTERNAL_SERVER_ERROR, "Json validation error parsing response")
+          },
+          valid => valid
+        )
+        case status =>
+          if (status >= INTERNAL_SERVER_ERROR) {
+            Logger("application").error(s"[IncomeTaxViewChangeConnector][updateIncomeSourceTaxYearSpecific] - Response status: ${response.status}, body: ${response.body}")
+          } else {
+            Logger("application").warn(s"[IncomeTaxViewChangeConnector][updateIncomeSourceTaxYearSpecific] - Response status: ${response.status}, body: ${response.body}")
+          }
+          UpdateIncomeSourceResponseError(response.status, response.body)
+      }
+    }
+  }
 }

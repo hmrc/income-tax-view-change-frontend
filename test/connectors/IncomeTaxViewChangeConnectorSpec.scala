@@ -715,7 +715,7 @@ class IncomeTaxViewChangeConnectorSpec extends TestSupport with MockHttp with Mo
   ".updateCessationDate" should {
 
     s"return a valid UpdateIncomeSourceResponseModel" in new Setup {
-      setupMockHttpPutWithHeaderCarrier(getUpdateCessationDateUrl)(
+      setupMockHttpPutWithHeaderCarrier(getUpdateIncomeSourceUrl)(
         UpdateIncomeSourceTestConstants.request,
         UpdateIncomeSourceTestConstants.successHttpResponse)
         val result:Future[UpdateIncomeSourceResponse]  = updateCessationDate(testNino,incomeSourceId,Some(LocalDate.parse(cessationDate)))
@@ -724,14 +724,14 @@ class IncomeTaxViewChangeConnectorSpec extends TestSupport with MockHttp with Mo
 
     s"return INTERNAL_SERVER_ERROR UpdateIncomeSourceResponseError" when {
       "invalid json response" in new Setup {
-        setupMockHttpPutWithHeaderCarrier(getUpdateCessationDateUrl)(
+        setupMockHttpPutWithHeaderCarrier(getUpdateIncomeSourceUrl)(
           UpdateIncomeSourceTestConstants.request,
           UpdateIncomeSourceTestConstants.successInvalidJsonResponse)
         val result: Future[UpdateIncomeSourceResponse] = updateCessationDate(testNino, incomeSourceId, Some(LocalDate.parse(cessationDate)))
         result.futureValue shouldBe badJsonResponse
       }
       "receiving a 500+ response" in new Setup {
-        setupMockHttpPutWithHeaderCarrier(getUpdateCessationDateUrl)(
+        setupMockHttpPutWithHeaderCarrier(getUpdateIncomeSourceUrl)(
           UpdateIncomeSourceTestConstants.request, HttpResponse(status = Status.INTERNAL_SERVER_ERROR,
             json = Json.toJson("Error message"), headers = Map.empty))
         val result: Future[UpdateIncomeSourceResponse] = updateCessationDate(testNino, incomeSourceId, Some(LocalDate.parse(cessationDate)))

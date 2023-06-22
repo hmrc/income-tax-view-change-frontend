@@ -250,3 +250,5 @@ GET          /income-sources/add/foreign-property-accounting-method         cont
 GET          /agents/income-sources/add/foreign-property-accounting-method   controllers.incomeSources.add.ForeignPropertyAccountingMethodController.showAgent()
 GET          /income-sources/add/business-added                              controllers.incomeSources.add.BusinessAddedController.show()
 GET          /agents/income-sources/add/business-added                       controllers.incomeSources.add.BusinessAddedController.showAgent()
+GET          /income-sources/add/business-check-details                      controllers.incomeSources.add.CheckBusinessDetailsController.show()
+GET          /agents/income-sources/add/business-check-details               controllers.incomeSources.add.CheckBusinessDetailsController.showAgent()
