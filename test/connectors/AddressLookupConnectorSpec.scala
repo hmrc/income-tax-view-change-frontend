@@ -23,9 +23,9 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import play.api.libs.json.JsValue
 import org.scalactic.Fail
+import play.api.i18n.MessagesApi
 import testUtils.TestSupport
 import uk.gov.hmrc.http.HttpClient
-import helpers.servicemocks.AuthStub.messagesAPI
 
 import scala.concurrent.Future
 
@@ -37,8 +37,9 @@ class AddressLookupConnectorSpec extends TestSupport with FeatureSwitching {
 
   val mockHttpGet: HttpClient = mock(classOf[HttpClient])
   val baseUrl: String = appConfig.addressLookupService
+  override def messagesApi: MessagesApi = inject[MessagesApi]
 
-  object TestAddressLookupConnector extends AddressLookupConnector(appConfig, mockHttpGet, messagesAPI)
+  object TestAddressLookupConnector extends AddressLookupConnector(appConfig, mockHttpGet, messagesApi)
 
   "AddressLookupConnector" should {
     "addressLookupInitializeUrl" should {
