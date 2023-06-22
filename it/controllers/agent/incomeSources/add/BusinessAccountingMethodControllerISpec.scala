@@ -14,21 +14,20 @@
  * limitations under the License.
  */
 
-package controllers.incomeSources.add
+package controllers.agent.incomeSources.add
 
 import config.featureswitch.IncomeSources
-import forms.utils.SessionKeys.addBusinessAccountingMethod
-import helpers.ComponentSpecBase
+import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
-import testConstants.BaseIntegrationTestConstants.testMtditid
+import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testMtditid}
 import testConstants.IncomeSourceIntegrationTestConstants.noPropertyOrBusinessResponse
 
 class BusinessAccountingMethodControllerISpec extends ComponentSpecBase {
 
-  val addBusinessAccountingMethodShowUrl: String = controllers.incomeSources.add.routes.BusinessAccountingMethodController.show().url
-  val addBusinessAccountingMethodSubmitUrl: String = controllers.incomeSources.add.routes.BusinessAccountingMethodController.submit().url
-  val checkBusinessDetailsShowUrl: String = controllers.incomeSources.add.routes.CheckBusinessDetailsController.show().url
+  val addBusinessAccountingMethodShowUrl: String = controllers.incomeSources.add.routes.BusinessAccountingMethodController.showAgent().url
+  val addBusinessAccountingMethodSubmitUrl: String = controllers.incomeSources.add.routes.BusinessAccountingMethodController.submitAgent().url
+  val checkBusinessDetailsShowUrl: String = controllers.incomeSources.add.routes.CheckBusinessDetailsController.showAgent().url
 
   val addBusinessAccountingMethodShowAgentUrl: String = controllers.incomeSources.add.routes.BusinessAccountingMethodController.showAgent().url
   val addBusinessAccountingMethodSubmitAgentUrl: String = controllers.incomeSources.add.routes.BusinessAccountingMethodController.submitAgent().url
@@ -40,16 +39,17 @@ class BusinessAccountingMethodControllerISpec extends ComponentSpecBase {
     "render the Business Accounting Method page" when {
       "User is authorised" in {
         Given("I wiremock stub a successful Income Source Details response with no businesses or properties")
+        stubAuthorisedAgentUser(authorised = true)
         enable(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
         When(s"I call GET $addBusinessAccountingMethodShowUrl")
-        val result = IncomeTaxViewChangeFrontend.get("/income-sources/add/business-accounting-method")
+        val result = IncomeTaxViewChangeFrontend.get("/income-sources/add/business-accounting-method", clientDetailsWithConfirmation)
         verifyIncomeSourceDetailsCall(testMtditid)
 
         result should have(
           httpStatus(OK),
-          pageTitleIndividual("incomeSources.add.business-accounting-method.heading"),
+          pageTitleAgent("incomeSources.add.business-accounting-method.heading"),
           elementTextByID("continue-button")(continueButtonText)
         )
       }
@@ -59,10 +59,11 @@ class BusinessAccountingMethodControllerISpec extends ComponentSpecBase {
     s"redirect to $checkBusinessDetailsShowUrl" when {
       "user selects 'cash basis accounting', 'cash' should be added to session storage" in {
         val formData: Map[String, Seq[String]] = Map("incomeSources.add.business-accounting-method" -> Seq("cash"))
+        stubAuthorisedAgentUser(authorised = true)
         enable(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
-        val result = IncomeTaxViewChangeFrontend.post("/income-sources/add/business-accounting-method")(formData)
+        val result = IncomeTaxViewChangeFrontend.post("/income-sources/add/business-accounting-method", clientDetailsWithConfirmation)(formData)
 
         result should have(
           httpStatus(SEE_OTHER),
@@ -72,10 +73,11 @@ class BusinessAccountingMethodControllerISpec extends ComponentSpecBase {
       s"redirect to $checkBusinessDetailsShowUrl" when {
         "user selects 'traditional accounting', 'accruals' should be added to session storage" in {
           val formData: Map[String, Seq[String]] = Map("incomeSources.add.business-accounting-method" -> Seq("cash"))
+          stubAuthorisedAgentUser(authorised = true)
           enable(IncomeSources)
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
-          val result = IncomeTaxViewChangeFrontend.post("/income-sources/add/business-accounting-method")(formData)
+          val result = IncomeTaxViewChangeFrontend.post("/income-sources/add/business-accounting-method", clientDetailsWithConfirmation)(formData)
 
           result should have(
             httpStatus(SEE_OTHER),
@@ -85,11 +87,13 @@ class BusinessAccountingMethodControllerISpec extends ComponentSpecBase {
       }
       s"return BAD_REQUEST $checkBusinessDetailsShowUrl" when {
         "user does not select anything" in {
+
+          stubAuthorisedAgentUser(authorised = true)
           val formData: Map[String, Seq[String]] = Map("incomeSources.add.business-accounting-method" -> Seq(""))
           enable(IncomeSources)
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
-          val result = IncomeTaxViewChangeFrontend.post("/income-sources/add/business-accounting-method")(formData)
+          val result = IncomeTaxViewChangeFrontend.post("/income-sources/add/business-accounting-method", clientDetailsWithConfirmation)(formData)
 
           result should have(
             httpStatus(BAD_REQUEST),
