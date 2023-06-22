@@ -19,24 +19,29 @@
 @import views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import models.incomeSourceDetails.viewmodels.CheckBusinessDetailsViewModel
+@import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcPageHeading
+@import uk.gov.hmrc.hmrcfrontend.views.viewmodels.pageheading.PageHeading
+
 
 
 @this(
-mainTemplate: unifiedLayout,
-implicitDateFormatter: ImplicitDateFormatterImpl,
-h1: h1,
-h2: h2,
-p: p,
-link: link,
-hr: hr,
-govukTable: GovukTable,
-govukButton : GovukButton,
+    mainTemplate: unifiedLayout,
+    hmrcPageHeading: HmrcPageHeading,
+    govukSummaryList: GovukSummaryList,
+    implicitDateFormatter: ImplicitDateFormatterImpl,
+    h1: h1,
+    h2: h2,
+    p: p,
+    link: link,
+    hr: hr,
+    govukTable: GovukTable,
+    govukButton : GovukButton,
 )
 
 @(
-sources: CheckBusinessDetailsViewModel,
-isAgent: Boolean,
-backUrl: String
+    sources: CheckBusinessDetailsViewModel,
+    isAgent: Boolean,
+    backUrl: String
 )(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @import implicitDateFormatter.longDate
@@ -46,105 +51,108 @@ messages(s"check-business-details.$key", args: _*)
 }
 
 @changeBusinessNameURL = @{
-    if(isAgent){
-        controllers.incomeSources.add.routes.CheckBusinessDetailsController.changeBusinessNameAgent().url
-    } else {
-        controllers.incomeSources.add.routes.CheckBusinessDetailsController.changeBusinessName().url
-    }
+if(isAgent){
+controllers.incomeSources.add.routes.CheckBusinessDetailsController.changeBusinessNameAgent().url
+} else {
+controllers.incomeSources.add.routes.CheckBusinessDetailsController.changeBusinessName().url
+}
 }
 
 @changeBusinessStartDateURL = @{
-    if(isAgent){
-        controllers.incomeSources.add.routes.CheckBusinessDetailsController.changeBusinessStartDateAgent().url
-    } else {
-        controllers.incomeSources.add.routes.CheckBusinessDetailsController.changeBusinessStartDate().url
-    }
+if(isAgent){
+controllers.incomeSources.add.routes.CheckBusinessDetailsController.changeBusinessStartDateAgent().url
+} else {
+controllers.incomeSources.add.routes.CheckBusinessDetailsController.changeBusinessStartDate().url
+}
 }
 
 @changeBusinessTradeURL = @{
-    if(isAgent){
-        controllers.incomeSources.add.routes.CheckBusinessDetailsController.changeBusinessTradeAgent().url
-    } else {
-        controllers.incomeSources.add.routes.CheckBusinessDetailsController.changeBusinessTrade().url
-    }
+if(isAgent){
+controllers.incomeSources.add.routes.CheckBusinessDetailsController.changeBusinessTradeAgent().url
+} else {
+controllers.incomeSources.add.routes.CheckBusinessDetailsController.changeBusinessTrade().url
+}
 }
 
 @changeBusinessAddressURL = @{
-    if(isAgent){
-        controllers.incomeSources.add.routes.CheckBusinessDetailsController.changeBusinessAddressAgent().url
-    } else {
-        controllers.incomeSources.add.routes.CheckBusinessDetailsController.changeBusinessAddress().url
-    }
+if(isAgent){
+controllers.incomeSources.add.routes.CheckBusinessDetailsController.changeBusinessAddressAgent().url
+} else {
+controllers.incomeSources.add.routes.CheckBusinessDetailsController.changeBusinessAddress().url
+}
 }
 
 @changeBusinessAccountingMethodURL = @{
-    if(isAgent){
-        controllers.incomeSources.add.routes.CheckBusinessDetailsController.changeBusinessAccountingMethodAgent().url
-    } else {
-        controllers.incomeSources.add.routes.CheckBusinessDetailsController.changeBusinessAccountingMethod().url
-    }
+if(isAgent){
+controllers.incomeSources.add.routes.CheckBusinessDetailsController.changeBusinessAccountingMethodAgent().url
+} else {
+controllers.incomeSources.add.routes.CheckBusinessDetailsController.changeBusinessAccountingMethod().url
+}
 }
 
-@mainTemplate(pageTitle = getMessage("heading"),
-backUrl = Some(backUrl),
-isAgent = isAgent,
-btaNavPartial = user.btaNavPartial) {
+@mainTemplate(
+    pageTitle = getMessage("heading"),
+    backUrl = Some(backUrl),
+    isAgent = isAgent,
+    btaNavPartial = user.btaNavPartial) {
 
-<h1 class="govuk-heading-xl" id="heading">
-    <span class="govuk-caption-xl">@messages("check-business-details.sole-trader-text")</span>
-    @messages("check-business-details.heading")
-</h1>
+    @hmrcPageHeading(PageHeading(
+        text = getMessage("heading"),
+        headingClasses = Some("govuk-heading-l"),
+        section = Some(getMessage("sole-trader-caption")),
+        captionClasses = Some("govuk-caption-l")
+    ))
 
+    @govukSummaryList(SummaryList(
+        classes = "govuk-!-margin-bottom-9",
+        rows = Seq(
+            SummaryListRow(
+                key = Key(Text(getMessage("business-name"))),
+                value = Value(Text(sources.businessName)),
+                actions = Some(Actions(
+                    items = Seq(ActionItem(
+                        classes = "govuk-link govuk-body",
+                        content = HtmlContent(getMessage("change-details-link")),
+                        attributes = Map("id" -> "change-link")
+                    ))
+                ))
+            ),
+            SummaryListRow(
+                key = Key(Text(getMessage("business-start-date"))),
+                value = Value(Text(implicitDateFormatter.longDate(sources.businessStartDate).toLongDate)),
+                actions = Some(Actions(
+                    items = Seq(ActionItem(
+                        classes = "govuk-link govuk-body",
+                        content = HtmlContent(getMessage("change-details-link")),
+                        attributes = Map("id" -> "change-link")
+                    ))
+                ))
+            ),
+            SummaryListRow(
+                key = Key(Text(getMessage("business-description"))),
+                value = Value(Text(sources.businessTrade)),
+                actions = Some(Actions(
+                    items = Seq(ActionItem(
+                    classes = "govuk-link govuk-body",
+                    content = HtmlContent(getMessage("change-details-link")),
+                    attributes = Map("id" -> "change-link")
+                    ))
+                ))
+            ),
+            SummaryListRow(
+                key = Key(Text(getMessage("business-address"))),
+                value = Value(Text(sources.businessAddressLine1 + " " + sources.businessPostalCode)),
+                actions = Some(Actions(
+                    items = Seq(ActionItem(
+                    classes = "govuk-link govuk-body",
+                    content = HtmlContent(getMessage("change-details-link")),
+                    attributes = Map("id" -> "change-link")
+                    ))
+                ))
+            ),
+        )
+    ))
 
-<table class="govuk-table govuk-!-margin-bottom-3" id="sole-trader-businesses-table">
-    <tbody>
-    <tr class="govuk-table__row">
-        <td class="govuk-table__cell">@getMessage("business-name")</td>
-        <td class="govuk-table__cell">@getMessage("x")</td>
-        <td class="govuk-table__cell govuk-!-text-align-right">
-            <a class="govuk-link" href=@changeBusinessNameURL>
-            @getMessage("change-details-link")
-            </a>
-        </td>
-    </tr>
-    <tr class="govuk-table__row">
-        <td class="govuk-table__cell">@getMessage("business-start-date")</td>
-        <td class="govuk-table__cell">@getMessage("x")</td>
-        <td class="govuk-table__cell govuk-!-text-align-right">
-            <a class="govuk-link" href=@changeBusinessStartDateURL>
-            @getMessage("change-details-link")
-            </a>
-        </td>
-    </tr>
-    <tr class="govuk-table__row">
-        <td class="govuk-table__cell">@getMessage("business-description")</td>
-        <td class="govuk-table__cell">@getMessage("x")</td>
-        <td class="govuk-table__cell govuk-!-text-align-right">
-            <a class="govuk-link" href=@changeBusinessTradeURL>
-            @getMessage("change-details-link")
-            </a>
-        </td>
-    </tr>
-    <tr class="govuk-table__row">
-        <td class="govuk-table__cell">@getMessage("business-address")</td>
-        <td class="govuk-table__cell">@getMessage("x")</td>
-        <td class="govuk-table__cell govuk-!-text-align-right">
-            <a class="govuk-link" href=@changeBusinessAddressURL>
-            @getMessage("change-details-link")
-            </a>
-        </td>
-    </tr>
-    <tr class="govuk-table__row">
-        <td class="govuk-table__cell">@getMessage("accounting-method")</td>
-        <td class="govuk-table__cell">addBusinessName</td>
-        <td class="govuk-table__cell govuk-!-text-align-right">
-            <a class="govuk-link" href=@changeBusinessAccountingMethodURL>
-            @getMessage("change-details-link")
-            </a>
-        </td>
-    </tr>
-    </tbody>
-</table>
 
 @govukButton(Button(
 content = Text(messages("check-business-details.confirm-button"))

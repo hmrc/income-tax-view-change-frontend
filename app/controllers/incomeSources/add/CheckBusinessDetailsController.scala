@@ -22,12 +22,12 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.agent.utils.SessionKeys
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
-import forms.utils.SessionKeys.addBusinessStartDate
+import forms.utils.SessionKeys.{addBusinessStartDate, businessName}
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import models.incomeSourceDetails.viewmodels.CheckBusinessDetailsViewModel
 import play.api.Logger
 import play.api.mvc._
-import services.IncomeSourceDetailsService
+import services.{CreateBusinessDetailsService, IncomeSourceDetailsService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import views.html.incomeSources.add.CheckBusinessDetails
 
@@ -45,7 +45,8 @@ class CheckBusinessDetailsController @Inject()(val checkBusinessDetails: CheckBu
                                              val itvcErrorHandler: ItvcErrorHandler,
                                              implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                              val incomeSourceDetailsService: IncomeSourceDetailsService,
-                                             val retrieveBtaNavBar: NavBarPredicate)
+                                             val retrieveBtaNavBar: NavBarPredicate,
+                                               val businessDetailsService: CreateBusinessDetailsService)
                                             (implicit val ec: ExecutionContext,
                                              implicit override val mcc: MessagesControllerComponents,
                                              val appConfig: FrontendAppConfig) extends ClientConfirmedController
@@ -89,19 +90,17 @@ class CheckBusinessDetailsController @Inject()(val checkBusinessDetails: CheckBu
     }.map(e => e.msg)
 
     val result: Option[CheckBusinessDetailsViewModel] = for {
-      businessName <- user.session.data.get("addBusinessName")
-      businessStartDate <- user.session.data.get("addBusinessStartDate").map(LocalDate.parse)
-      businessTrade <- user.session.data.get("addBusinessTrade")
-      businessAddressLine1 <- user.session.data.get("addBusinessAddressLine1")
-      businessPostalCode <- user.session.data.get("addBusinessPostalCode")
-      businessAccountingMethod <- user.session.data.get("addBusinessAccountingMethod")
+        businessName <- user.session.data.get("addBusinessName")
+        businessStartDate <- user.session.data.get("addBusinessStartDate").map(LocalDate.parse)
+        businessTrade <- user.session.data.get("addBusinessTrade")
+        businessAddressLine1 <- user.session.data.get("addBusinessAddressLine1")
+        businessPostalCode <- user.session.data.get("addBusinessPostalCode")
     } yield CheckBusinessDetailsViewModel(
-      Some(businessName),
-      Some(businessStartDate),
-      Some(businessTrade),
-      Some(businessAddressLine1),
-      Some(businessPostalCode),
-      Some(businessAccountingMethod)
+        businessName,
+        businessStartDate,
+        businessTrade,
+        businessAddressLine1,
+        businessPostalCode
     )
 
     result match {
@@ -141,104 +140,56 @@ class CheckBusinessDetailsController @Inject()(val checkBusinessDetails: CheckBu
       }
     }
   }
+//TODO - connector for submit
+//
+//  def submit(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+//    andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
+//    implicit user =>
+//      businessDetailsService.createBusinessDetails(true) map {
+//        case Left(_) =>  Future.successful(Redirect(controllers.routes.HomeController.show()))
+//
+//        case Right(_) => Future.successful(Redirect(controllers.routes.HomeController.show()))
+//
+//      }
+//  }
 
-  def changeBusinessName(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
-    andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
-    implicit user =>
-      handleRequest(
-        sources = user.incomeSources,
-        isAgent = false,
-        backUrl = controllers.routes.HomeController.show().url
-      )
+  def changeBusinessName(): Action[AnyContent] = Action {
+    Ok("Change Business Name WIP")
   }
 
-  def changeBusinessNameAgent(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
-    andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
-    implicit user =>
-      handleRequest(
-        sources = user.incomeSources,
-        isAgent = true,
-        backUrl = controllers.routes.HomeController.show().url
-      )
+  def changeBusinessNameAgent(): Action[AnyContent] = Action {
+    Ok("Agent Change Business Name WIP")
   }
 
-  def changeBusinessStartDate(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
-    andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
-    implicit user =>
-      handleRequest(
-        sources = user.incomeSources,
-        isAgent = false,
-        backUrl = controllers.routes.HomeController.show().url
-      )
+  def changeBusinessStartDate(): Action[AnyContent] = Action {
+    Ok("Change Business Start Date WIP")
   }
 
-  def changeBusinessStartDateAgent(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
-    andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
-    implicit user =>
-      handleRequest(
-        sources = user.incomeSources,
-        isAgent = true,
-        backUrl = controllers.routes.HomeController.show().url
-      )
+  def changeBusinessStartDateAgent(): Action[AnyContent] = Action {
+    Ok("Agent Change Business Start Date WIP")
   }
 
-  def changeBusinessTrade(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
-    andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
-    implicit user =>
-      handleRequest(
-        sources = user.incomeSources,
-        isAgent = false,
-        backUrl = controllers.routes.HomeController.show().url
-      )
+  def changeBusinessTrade(): Action[AnyContent] = Action {
+    Ok("Change Business Trade  WIP")
   }
 
-  def changeBusinessTradeAgent(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
-    andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
-    implicit user =>
-      handleRequest(
-        sources = user.incomeSources,
-        isAgent = true,
-        backUrl = controllers.routes.HomeController.show().url
-      )
+  def changeBusinessTradeAgent(): Action[AnyContent] = Action {
+    Ok("Agent Change Business Trade  WIP")
   }
 
-  def changeBusinessAddress(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
-    andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
-    implicit user =>
-      handleRequest(
-        sources = user.incomeSources,
-        isAgent = false,
-        backUrl = controllers.routes.HomeController.show().url
-      )
+  def changeBusinessAddress(): Action[AnyContent] = Action {
+    Ok("Change Business Address  WIP")
   }
 
-  def changeBusinessAddressAgent(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
-    andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
-    implicit user =>
-      handleRequest(
-        sources = user.incomeSources,
-        isAgent = true,
-        backUrl = controllers.routes.HomeController.show().url
-      )
+  def changeBusinessAddressAgent(): Action[AnyContent] = Action {
+    Ok("Agent Change Business Address  WIP")
   }
 
-  def changeBusinessAccountingMethod(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
-    andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
-    implicit user =>
-      handleRequest(
-        sources = user.incomeSources,
-        isAgent = false,
-        backUrl = controllers.routes.HomeController.show().url
-      )
+  def changeBusinessAccountingMethod(): Action[AnyContent] = Action {
+    Ok("Change Business Accounting Method  WIP")
   }
 
-  def changeBusinessAccountingMethodAgent(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
-    andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
-    implicit user =>
-      handleRequest(
-        sources = user.incomeSources,
-        isAgent = true,
-        backUrl = controllers.routes.HomeController.show().url
-      )
+  def changeBusinessAccountingMethodAgent(): Action[AnyContent] = Action {
+    Ok("Agent Change Business Accounting Method  WIP")
   }
 }

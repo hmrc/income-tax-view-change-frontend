@@ -1321,8 +1321,8 @@ check-cease-foreign-property-details.summary-list.link  = Change
 check-cease-foreign-property-details.button             = Confirm and continue
 
 # check business details
-check-business-details.sole-trader-text                 = Sole trader business you entered
-check-business-details.heading                         = Check your details
+check-business-details.sole-trader-caption                 = Sole trader business you entered
+check-business-details.heading                          = Check your details
 check-business-details.business-name                    = Business name
 check-business-details.change-details-link              = Change
 check-business-details.business-start-date              = Business trading start date
