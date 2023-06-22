@@ -87,10 +87,10 @@ class BusinessAccountingMethodControllerSpec extends TestSupport with MockAuthen
       }
     }
     "return 200 OK" when {
-      "navigating to the page with FS Enabled and two self employment businesses, one cash and one accruals" in {
+      "navigating to the page with FS Enabled and one self-employment businesses, with the cashOrAccruals field set to the string accruals" in {
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
         enable(IncomeSources)
-        mockBusinessIncomeSourceWithCashAndAccruals()
+        mockBusinessIncomeSourceWithAccruals()
 
         val result: Future[Result] = TestBusinessAccountingMethodController.show()(fakeRequestWithActiveSession)
         val document: Document = Jsoup.parse(contentAsString(result))
@@ -112,15 +112,15 @@ class BusinessAccountingMethodControllerSpec extends TestSupport with MockAuthen
         result.futureValue.session.get(addBusinessAccountingMethod) shouldBe Some("cash")
         redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.CheckBusinessDetailsController.show().url)
       }
-      "navigating to the page with FS Enabled and one self-employment businesses, with the cashOrAccruals field set to the string accruals" in {
+      "navigating to the page with FS Enabled and two self employment businesses, one cash and one accruals" in {
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
         enable(IncomeSources)
-        mockBusinessIncomeSourceWithAccruals()
+        mockBusinessIncomeSourceWithCashAndAccruals()
 
         val result: Future[Result] = TestBusinessAccountingMethodController.show()(fakeRequestWithActiveSession)
 
         status(result) shouldBe Status.SEE_OTHER
-        result.futureValue.session.get(addBusinessAccountingMethod) shouldBe Some("accruals")
+        result.futureValue.session.get(addBusinessAccountingMethod) shouldBe Some("cash")
         redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.CheckBusinessDetailsController.show().url)
       }
     }
@@ -215,11 +215,10 @@ class BusinessAccountingMethodControllerSpec extends TestSupport with MockAuthen
       }
     }
     "return 200 OK" when {
-      "navigating to the page with FS Enabled and client has two self employment businesses, one cash and one accruals" in {
+      "navigating to the page with FS Enabled and client has one self-employment businesses, with the cashOrAccruals field set to the string accruals" in {
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        disableAllSwitches()
         enable(IncomeSources)
-        mockBusinessIncomeSourceWithCashAndAccruals()
+        mockBusinessIncomeSourceWithAccruals()
 
         val result: Future[Result] = TestBusinessAccountingMethodController.showAgent()(fakeRequestConfirmedClient())
         val document: Document = Jsoup.parse(contentAsString(result))
@@ -241,15 +240,16 @@ class BusinessAccountingMethodControllerSpec extends TestSupport with MockAuthen
         result.futureValue.session.get(addBusinessAccountingMethod) shouldBe Some("cash")
         redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.CheckBusinessDetailsController.showAgent().url)
       }
-      "navigating to the page with FS Enabled and client has one self-employment businesses, with the cashOrAccruals field set to the string accruals" in {
+      "navigating to the page with FS Enabled and client has two self employment businesses, one cash and one accruals" in {
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+        disableAllSwitches()
         enable(IncomeSources)
-        mockBusinessIncomeSourceWithAccruals()
+        mockBusinessIncomeSourceWithCashAndAccruals()
 
         val result: Future[Result] = TestBusinessAccountingMethodController.showAgent()(fakeRequestConfirmedClient())
 
         status(result) shouldBe Status.SEE_OTHER
-        result.futureValue.session.get(addBusinessAccountingMethod) shouldBe Some("accruals")
+        result.futureValue.session.get(addBusinessAccountingMethod) shouldBe Some("cash")
         redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.CheckBusinessDetailsController.showAgent().url)
       }
     }
