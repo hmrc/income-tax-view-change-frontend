@@ -82,6 +82,58 @@ class AddressLookupConnector @Inject()(val appConfig: FrontendAppConfig,
             "showPhaseBanner" -> JsBoolean(true),
             "ukMode" -> JsBoolean(true)
           )
+        ),
+        "labels" -> JsObject(
+          Seq(
+            "en" -> JsObject(
+              Seq(
+                "selectPageLabels" -> JsObject(
+                  Seq(
+                    "heading" -> JsString("Select business address")
+                  )
+                ),
+                "lookupPageLabels" -> JsObject(
+                  Seq(
+                    "heading" -> JsString("What is your business address?")
+                  )
+                ),
+                "confirmPageLabels" -> JsObject(
+                  Seq(
+                    "heading" -> JsString("Confirm business address")
+                  )
+                ),
+                "editPageLabels" -> JsObject(
+                  Seq(
+                    "heading" -> JsString("Enter your business address")
+                  )
+                )
+              )
+            ),
+            "cy" -> JsObject(
+              Seq(
+                "selectPageLabels" -> JsObject(
+                  Seq(
+                    "heading" -> JsString("Dewiswch gyfeiriad y busnes")
+                  )
+                ),
+                "lookupPageLabels" -> JsObject(
+                  Seq(
+                    "heading" -> JsString("Beth yw cyfeiriad eich busnes?")
+                  )
+                ),
+                "confirmPageLabels" -> JsObject(
+                  Seq(
+                    "heading" -> JsString("Cadarnhewch gyfeiriad y busnes")
+                  )
+                ),
+                "editPageLabels" -> JsObject(
+                  Seq(
+                    "heading" -> JsString("Nodwch gyfeiriad eich busnes")
+                  )
+                )
+              )
+            )
+          )
         )
       )
     )
