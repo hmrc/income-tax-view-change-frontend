@@ -108,7 +108,7 @@ controllers.incomeSources.add.routes.CheckBusinessDetailsController.changeBusine
         rows = Seq(
             SummaryListRow(
                 key = Key(Text(getMessage("business-name"))),
-                value = Value(Text(sources.businessName)),
+                value = Value(Text(sources.businessName.get)),
                 actions = Some(Actions(
                     items = Seq(ActionItem(
                         classes = "govuk-link govuk-body",
@@ -119,7 +119,7 @@ controllers.incomeSources.add.routes.CheckBusinessDetailsController.changeBusine
             ),
             SummaryListRow(
                 key = Key(Text(getMessage("business-start-date"))),
-                value = Value(Text(implicitDateFormatter.longDate(sources.businessStartDate).toLongDate)),
+                value = Value(Text(implicitDateFormatter.longDate(sources.businessStartDate.get).toLongDate)),
                 actions = Some(Actions(
                     items = Seq(ActionItem(
                         classes = "govuk-link govuk-body",
@@ -130,7 +130,7 @@ controllers.incomeSources.add.routes.CheckBusinessDetailsController.changeBusine
             ),
             SummaryListRow(
                 key = Key(Text(getMessage("business-description"))),
-                value = Value(Text(sources.businessTrade)),
+                value = Value(Text(sources.businessTrade.get)),
                 actions = Some(Actions(
                     items = Seq(ActionItem(
                     classes = "govuk-link govuk-body",
@@ -141,7 +141,7 @@ controllers.incomeSources.add.routes.CheckBusinessDetailsController.changeBusine
             ),
             SummaryListRow(
                 key = Key(Text(getMessage("business-address"))),
-                value = Value(Text(sources.businessAddressLine1 + " " + sources.businessPostalCode)),
+                value = Value(Text(sources.businessAddressLine1.get + " " + sources.businessPostalCode.get)),
                 actions = Some(Actions(
                     items = Seq(ActionItem(
                     classes = "govuk-link govuk-body",

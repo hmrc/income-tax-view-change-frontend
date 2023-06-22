@@ -21,6 +21,7 @@ import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.agent.utils.SessionKeys
+import controllers.agent.utils.SessionKeys.businessAccountingMethod
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
 import forms.utils.SessionKeys.{addBusinessStartDate, businessName}
 import models.incomeSourceDetails.IncomeSourceDetailsModel
@@ -84,7 +85,8 @@ class CheckBusinessDetailsController @Inject()(val checkBusinessDetails: CheckBu
       user.session.data.get("addBusinessStartDate").orElse(Option(MissingKey("MissingKey: addBusinessStartDate"))),
       user.session.data.get("addBusinessTrade").orElse(Option(MissingKey("MissingKey: addBusinessTrade"))),
       user.session.data.get("addBusinessAddressLine1").orElse(Option(MissingKey("MissingKey: addBusinessAddressLine1"))),
-      user.session.data.get("addBusinessPostalCode").orElse(Option(MissingKey("MissingKey: addBusinessAccountingMethod"))),
+      user.session.data.get("addBusinessPostalCode").orElse(Option(MissingKey("MissingKey: addBusinessPostalCode"))),
+      user.session.data.get("addBusinessAccountingMethod").orElse(Option(MissingKey("MissingKey: addBusinessAccountingMethod"))),
     ).collect {
       case Some(MissingKey(msg)) => MissingKey(msg)
     }.map(e => e.msg)
@@ -95,12 +97,14 @@ class CheckBusinessDetailsController @Inject()(val checkBusinessDetails: CheckBu
         businessTrade <- user.session.data.get("addBusinessTrade")
         businessAddressLine1 <- user.session.data.get("addBusinessAddressLine1")
         businessPostalCode <- user.session.data.get("addBusinessPostalCode")
+        businessAccountingMethod <- user.session.data.get("addBusinessAccountingMethod")
     } yield CheckBusinessDetailsViewModel(
-        businessName,
-        businessStartDate,
-        businessTrade,
-        businessAddressLine1,
-        businessPostalCode
+        Some(businessName),
+        Some(businessStartDate),
+        Some(businessTrade),
+        Some(businessAddressLine1),
+        Some(businessPostalCode),
+        Some(businessAccountingMethod)
     )
 
     result match {
@@ -140,18 +144,27 @@ class CheckBusinessDetailsController @Inject()(val checkBusinessDetails: CheckBu
       }
     }
   }
-//TODO - connector for submit
-//
-//  def submit(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
-//    andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
-//    implicit user =>
-//      businessDetailsService.createBusinessDetails(true) map {
-//        case Left(_) =>  Future.successful(Redirect(controllers.routes.HomeController.show()))
-//
-//        case Right(_) => Future.successful(Redirect(controllers.routes.HomeController.show()))
-//
-//      }
-//  }
+
+  def submit(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+    andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
+    implicit user =>
+      getDetails(user).toOption match {
+        case Some(viewModel: CheckBusinessDetailsViewModel) =>
+          businessDetailsService.createBusinessDetails(viewModel) map {
+          case Left(ex) => Logger("application").error(
+            s"[CheckBusinessDetailsController][handleRequest] - Unable to create income source: ${ex.getMessage}")
+            itvcErrorHandler.showInternalServerError()
+
+          case Right(_) => Redirect(controllers.routes.HomeController.show())
+
+        }
+        case None => Logger("application").error(
+          s"[CheckBusinessDetailsController][submit] - Error: Unable to build view model on submit")
+          Future.successful(itvcErrorHandler.showInternalServerError())
+
+      }
+
+  }
 
   def changeBusinessName(): Action[AnyContent] = Action {
     Ok("Change Business Name WIP")

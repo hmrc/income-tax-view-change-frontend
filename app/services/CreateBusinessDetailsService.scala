@@ -17,6 +17,8 @@
 package services
 
 
+import models.incomeSourceDetails.viewmodels.CheckBusinessDetailsViewModel
+
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -24,16 +26,8 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class CreateBusinessDetailsService @Inject()() {
 
-def createBusinessDetails(isSuccess: Boolean)(implicit ec: ExecutionContext): Future[Either[FailureResponse.type, SuccessResponse.type ]] = {
-      if (isSuccess) {
-        Future{
-          Right(SuccessResponse)
-        }
-      } else {
-        Future{
-          Left(FailureResponse)
-        }
-      }
+def createBusinessDetails(viewModel: CheckBusinessDetailsViewModel)(implicit ec: ExecutionContext): Future[Either[Throwable, CheckBusinessDetailsViewModel]] = {
+    ???
   }
 
 }
