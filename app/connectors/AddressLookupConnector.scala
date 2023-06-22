@@ -86,8 +86,6 @@ class AddressLookupConnector @Inject()(val appConfig: FrontendAppConfig,
       )
     )
   }
-
-
   def initialiseAddressLookup(isAgent: Boolean)(implicit hc: HeaderCarrier, request: RequestHeader): Future[PostAddressLookupResponse] = {
     Logger("application").info(s"URL: $addressLookupInitializeUrl")
     val payload = if (isAgent) addressJson(agentContinueUrl, agentFeedbackUrl) else addressJson(individualContinueUrl, individualFeedbackUrl)
