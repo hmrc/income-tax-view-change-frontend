@@ -196,10 +196,10 @@ object IncomeTaxViewChangeStub { // scalastyle:off number.of.methods
   }
 
   def stubUpdateCessationDate(status:Int,response:JsValue): StubMapping =
-    WiremockHelper.stubPut("/income-tax-view-change/update-income-source/update-cessation-date",status,response.toString())
+    WiremockHelper.stubPut("/income-tax-view-change/update-income-source",status,response.toString())
 
   def verifyUpdateCessationDate(body:Option[String]): Unit = {
-    WiremockHelper.verifyPut("/income-tax-view-change/update-income-source/update-cessation-date",body)
+    WiremockHelper.verifyPut("/income-tax-view-change/update-income-source",body)
   }
 
 }
