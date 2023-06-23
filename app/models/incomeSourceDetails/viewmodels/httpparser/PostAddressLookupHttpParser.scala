@@ -28,7 +28,8 @@ object PostAddressLookupHttpParser {
       override def read(method: String, url: String, response: HttpResponse): PostAddressLookupResponse = {
         response.status match {
           case ACCEPTED => Right(
-            PostAddressLookupSuccessResponse(response.header(key = "Location"))
+            if (response.header(key = "location").isEmpty) PostAddressLookupSuccessResponse(response.header(key = "Location"))
+            else PostAddressLookupSuccessResponse(response.header(key = "location"))
           )
           case status => Left(UnexpectedPostStatusFailure(status))
         }
