@@ -38,20 +38,24 @@ class AddressLookupService @Inject()(val frontendAppConfig: FrontendAppConfig,
       isAgent = isAgent
     ) map {
       case Left(UnexpectedPostStatusFailure(status)) =>
-        Logger("application").info(s"[AddressLookupService][initialiseAddressJourney] - error during initialise ${status}")
+        Logger("application").info(s"[AddressLookupService][initialiseAddressJourney] - error during initialise $status")
         Left(AddressError("status: " + status))
       case Right(PostAddressLookupSuccessResponse(location: Option[String])) => Right(location)
     }
   }
+
   def fetchAddress(id: Option[String])(implicit hc: HeaderCarrier): Future[Either[Throwable, BusinessAddressModel]] = {
     id match {
       case Some(value) =>
         addressLookupConnector.getAddressDetails(value) map {
           case Left(UnexpectedGetStatusFailure(status)) => Left(AddressError("status: " + status))
-          case Right(None) => Left(AddressError("Not found"))
+          case Right(None) =>
+            Logger("application").info(s"[AddressLookupService][fetchAddress] - failed to get details for $id")
+            Left(AddressError("Not found"))
           case Right(Some(model)) => Right(model)
       }
       case None => Future(Left(AddressError("No id provided")))
     }
   }
+
 }
