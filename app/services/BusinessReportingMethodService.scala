@@ -19,14 +19,31 @@ package services
 import connectors.IncomeTaxViewChangeConnector
 import forms.incomeSources.add.AddBusinessReportingMethodForm
 import models.incomeSourceDetails.viewmodels.BusinessReportingMethodViewModel
+import models.itsaStatus.ITSAStatusResponseError
 import models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponse}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class BusinessReportingMethodService @Inject()(incomeTaxViewChangeConnector: IncomeTaxViewChangeConnector) {
+class BusinessReportingMethodService @Inject()(incomeTaxViewChangeConnector: IncomeTaxViewChangeConnector,
+                                               dateService: DateService) {
+  private val validStatus = List("MTD Mandated", "MTD Voluntary")
+
+  def checkITSAStatusCurrentYear(nino: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[ITSAStatusResponseError, Boolean]] = {
+    val yearEnd = dateService.getCurrentTaxYearEnd().toString.substring(2).toInt
+    val yearStart = yearEnd - 1
+    incomeTaxViewChangeConnector.getITSAStatusDetail(
+      nino = nino,
+      taxYear = s"$yearStart-$yearEnd",
+      futureYears = false,
+      history = false).map {
+      case Right(listStatus) =>
+        Right(listStatus.headOption.flatMap(_.itsaStatusDetails).flatMap(_.headOption).map(x => validStatus.contains(x.status)).get)
+      case Left(x: ITSAStatusResponseError) => Left(x)
+    }
+  }
 
   def getBusinessReportingMethodDetails(): BusinessReportingMethodViewModel = {
     /*
@@ -59,7 +76,7 @@ class BusinessReportingMethodService @Inject()(incomeTaxViewChangeConnector: Inc
     //BusinessReportingMethodViewModel(None, None)
   }
 
-  def updateIncomeSourceTaxYearSpecific(nino: String, incomeSourceId: String, taxYearSpecific: AddBusinessReportingMethodForm)(implicit hc:HeaderCarrier): Future[UpdateIncomeSourceResponse] = {
+  def updateIncomeSourceTaxYearSpecific(nino: String, incomeSourceId: String, taxYearSpecific: AddBusinessReportingMethodForm)(implicit hc: HeaderCarrier): Future[UpdateIncomeSourceResponse] = {
     val ty1 = taxYearSpecific.taxYearReporting1 match {
       case Some(s) => Some(TaxYearSpecific(taxYearSpecific.taxYear1.get, s.toBoolean))
       case _ => None
@@ -70,7 +87,7 @@ class BusinessReportingMethodService @Inject()(incomeTaxViewChangeConnector: Inc
     }
     incomeTaxViewChangeConnector.updateIncomeSourceTaxYearSpecific(nino = nino,
       incomeSourceId = incomeSourceId,
-      taxYearSpecific = List(ty1,ty2).flatten)
+      taxYearSpecific = List(ty1, ty2).flatten)
   }
 }
 
