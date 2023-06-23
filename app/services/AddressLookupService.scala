@@ -21,6 +21,7 @@ import connectors.AddressLookupConnector
 import models.incomeSourceDetails.BusinessAddressModel
 import models.incomeSourceDetails.viewmodels.httpparser.GetAddressLookupDetailsHttpParser.UnexpectedGetStatusFailure
 import models.incomeSourceDetails.viewmodels.httpparser.PostAddressLookupHttpParser.{PostAddressLookupSuccessResponse, UnexpectedPostStatusFailure}
+import play.api.Logger
 import play.api.mvc.RequestHeader
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -31,20 +32,24 @@ class AddressLookupService @Inject()(val frontendAppConfig: FrontendAppConfig,
                                      addressLookupConnector: AddressLookupConnector)
                                     (implicit ec: ExecutionContext) {
   case class AddressError(status: String) extends RuntimeException
+
   def initialiseAddressJourney(isAgent: Boolean)(implicit hc: HeaderCarrier, request: RequestHeader): Future[Either[Throwable, Option[String]]] = {
     addressLookupConnector.initialiseAddressLookup(
       isAgent = isAgent
     ) map {
-      case Left(UnexpectedPostStatusFailure(status)) => Left(AddressError("status: " + status))
+      case Left(UnexpectedPostStatusFailure(status)) =>
+        Logger("application").info(s"[AddressLookupService][initialiseAddressJourney] - error during initialise ${status}")
+        Left(AddressError("status: " + status))
       case Right(PostAddressLookupSuccessResponse(location: Option[String])) => Right(location)
     }
   }
   def fetchAddress(id: Option[String])(implicit hc: HeaderCarrier): Future[Either[Throwable, BusinessAddressModel]] = {
     id match {
-      case Some(value) => addressLookupConnector.getAddressDetails(value) map {
-        case Left(UnexpectedGetStatusFailure(status)) => Left(AddressError("status: " + status))
-        case Right(None) => Left(AddressError("Not found"))
-        case Right(Some(model)) => Right(model)
+      case Some(value) =>
+        addressLookupConnector.getAddressDetails(value) map {
+          case Left(UnexpectedGetStatusFailure(status)) => Left(AddressError("status: " + status))
+          case Right(None) => Left(AddressError("Not found"))
+          case Right(Some(model)) => Right(model)
       }
       case None => Future(Left(AddressError("No id provided")))
     }
