@@ -103,55 +103,58 @@ controllers.incomeSources.add.routes.CheckBusinessDetailsController.changeBusine
         captionClasses = Some("govuk-caption-l")
     ))
 
-    @govukSummaryList(SummaryList(
-        classes = "govuk-!-margin-bottom-9",
-        rows = Seq(
-            SummaryListRow(
-                key = Key(Text(getMessage("business-name"))),
-                value = Value(Text(sources.businessName.get)),
-                actions = Some(Actions(
-                    items = Seq(ActionItem(
-                        classes = "govuk-link govuk-body",
-                        content = HtmlContent(getMessage("change-details-link")),
-                        attributes = Map("id" -> "change-link")
-                    ))
-                ))
-            ),
-            SummaryListRow(
-                key = Key(Text(getMessage("business-start-date"))),
-                value = Value(Text(implicitDateFormatter.longDate(sources.businessStartDate.get).toLongDate)),
-                actions = Some(Actions(
-                    items = Seq(ActionItem(
-                        classes = "govuk-link govuk-body",
-                        content = HtmlContent(getMessage("change-details-link")),
-                        attributes = Map("id" -> "change-link")
-                    ))
-                ))
-            ),
-            SummaryListRow(
-                key = Key(Text(getMessage("business-description"))),
-                value = Value(Text(sources.businessTrade.get)),
-                actions = Some(Actions(
-                    items = Seq(ActionItem(
-                    classes = "govuk-link govuk-body",
-                    content = HtmlContent(getMessage("change-details-link")),
-                    attributes = Map("id" -> "change-link")
-                    ))
-                ))
-            ),
-            SummaryListRow(
-                key = Key(Text(getMessage("business-address"))),
-                value = Value(Text(sources.businessAddressLine1.get + " " + sources.businessPostalCode.get)),
-                actions = Some(Actions(
-                    items = Seq(ActionItem(
-                    classes = "govuk-link govuk-body",
-                    content = HtmlContent(getMessage("change-details-link")),
-                    attributes = Map("id" -> "change-link")
-                    ))
-                ))
-            ),
-        )
-    ))
+        <dl class="govuk-summary-list" id="refund-to-taxpayer-table">
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">@getMessage("business-name")</dt>
+                <dd class="govuk-summary-list__value">@{sources.businessName.get}</dd>
+                <dd class="govuk-summary-list__actions govuk-!-text-align-right govuk-!-margin-0">
+                    <a class="govuk-link"  href=@changeBusinessNameURL>
+                        @getMessage("change-details-link")
+                    </a>
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">@getMessage("business-start-date")</dt>
+                <dd class="govuk-summary-list__value">@{sources.businessStartDate.get}</dd>
+                <dd class="govuk-summary-list__actions govuk-!-text-align-right govuk-!-margin-0">
+                    <a class="govuk-link"  href=@changeBusinessStartDateURL>
+                        @getMessage("change-details-link")
+                    </a>
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">@getMessage("business-description")</dt>
+                <dd class="govuk-summary-list__value">@{sources.businessTrade.get}</dd>
+                <dd class="govuk-summary-list__actions govuk-!-text-align-right govuk-!-margin-0">
+                    <a class="govuk-link"  href=@changeBusinessTradeURL>
+                        @getMessage("change-details-link")
+                    </a>
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">@getMessage("business-address")</dt>
+                <dd class="govuk-summary-list__value">@{sources.businessAddressLine1.get + " " + sources.businessPostalCode.get}</dd>
+                <dd class="govuk-summary-list__actions govuk-!-text-align-right govuk-!-margin-0">
+                    <a class="govuk-link"  href=@changeBusinessAddressURL>
+                        @getMessage("change-details-link")
+                    </a>
+                </dd>
+            </div>
+            @if(sources.businessAccountingMethod.nonEmpty){
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">@getMessage("accounting-method")</dt>
+                    <dd class="govuk-summary-list__value">@{sources.businessAccountingMethod.get}</dd>
+                    <dd class="govuk-summary-list__actions govuk-!-text-align-right govuk-!-margin-0">
+                        <a class="govuk-link"  href=@changeBusinessAccountingMethodURL>
+                            @getMessage("change-details-link")
+                        </a>
+                    </dd>
+                </div>
+            }
+        </dl>
+
+
+
 
 
 @govukButton(Button(

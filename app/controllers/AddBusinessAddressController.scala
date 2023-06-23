@@ -48,8 +48,7 @@ class AddBusinessAddressController @Inject()(val authenticate: AuthenticationPre
         Redirect(controllers.incomeSources.add.routes.CheckBusinessDetailsController.show())
           .addingToSession(
             SessionKeys.addBusinessAddressLine1 -> "123 House",
-            SessionKeys.addBusinessPostCode -> "232 hbc"
-          )
+            SessionKeys.addBusinessPostCode -> "232 hbc")
       )
   }
 

@@ -85,8 +85,7 @@ class CheckBusinessDetailsController @Inject()(val checkBusinessDetails: CheckBu
       user.session.data.get("addBusinessStartDate").orElse(Option(MissingKey("MissingKey: addBusinessStartDate"))),
       user.session.data.get("addBusinessTrade").orElse(Option(MissingKey("MissingKey: addBusinessTrade"))),
       user.session.data.get("addBusinessAddressLine1").orElse(Option(MissingKey("MissingKey: addBusinessAddressLine1"))),
-      user.session.data.get("addBusinessPostalCode").orElse(Option(MissingKey("MissingKey: addBusinessPostalCode"))),
-      user.session.data.get("addBusinessAccountingMethod").orElse(Option(MissingKey("MissingKey: addBusinessAccountingMethod"))),
+      user.session.data.get("addBusinessPostalCode").orElse(Option(MissingKey("MissingKey: addBusinessPostalCode")))
     ).collect {
       case Some(MissingKey(msg)) => MissingKey(msg)
     }.map(e => e.msg)
@@ -97,15 +96,17 @@ class CheckBusinessDetailsController @Inject()(val checkBusinessDetails: CheckBu
         businessTrade <- user.session.data.get("addBusinessTrade")
         businessAddressLine1 <- user.session.data.get("addBusinessAddressLine1")
         businessPostalCode <- user.session.data.get("addBusinessPostalCode")
-        businessAccountingMethod <- user.session.data.get("addBusinessAccountingMethod")
-    } yield CheckBusinessDetailsViewModel(
+    } yield {
+      val businessAccountingMethod = user.session.data.get("addBusinessAccountingMethod")
+      CheckBusinessDetailsViewModel(
         Some(businessName),
         Some(businessStartDate),
         Some(businessTrade),
         Some(businessAddressLine1),
         Some(businessPostalCode),
-        Some(businessAccountingMethod)
-    )
+        businessAccountingMethod
+      )
+    }
 
     result match {
       case Some(checkBusinessDetailsViewModel) =>
