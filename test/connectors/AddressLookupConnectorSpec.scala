@@ -19,17 +19,19 @@ package connectors
 import config.featureswitch.FeatureSwitch.switches
 import config.featureswitch.{FeatureSwitching, IncomeSources}
 import controllers.routes
-import models.incomeSourceDetails.viewmodels.httpparser.PostAddressLookupHttpParser.{PostAddressLookupResponse, PostAddressLookupSuccessResponse}
+import models.incomeSourceDetails.viewmodels.httpparser.PostAddressLookupHttpParser.{PostAddressLookupSuccessResponse, UnexpectedPostStatusFailure}
+import models.incomeSourceDetails.viewmodels.httpparser.GetAddressLookupDetailsHttpParser.UnexpectedGetStatusFailure
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import org.mockito.stubbing.OngoingStubbing
 import play.api.libs.json.{JsObject, JsString, JsValue}
-import org.scalactic.Fail
+import org.scalactic.{Fail, Pass}
 import play.api.i18n.{Lang, MessagesApi}
 import mocks.MockHttp
 import models.incomeSourceDetails.{Address, BusinessAddressModel}
-import play.api.http.Status.{ACCEPTED, OK}
+import play.api.Logger
+import play.api.http.Status.{ACCEPTED, IM_A_TEAPOT, INTERNAL_SERVER_ERROR, NOT_FOUND, OK}
 import testUtils.TestSupport
 import uk.gov.hmrc.http.{HttpClient, HttpResponse}
 import play.api.libs.json._
@@ -99,6 +101,21 @@ class AddressLookupConnectorSpec extends TestSupport with FeatureSwitching with 
           }
         }
       }
+      "return an error" when {
+        "non-standard status returned from lookup-service" in {
+          disableAllSwitches()
+          enable(IncomeSources)
+
+          setupMockHttpPost(TestAddressLookupConnector.addressLookupInitializeUrl, addressJson(agentContinueUrl, agentFeedbackUrl))(HttpResponse(status = 1,
+            json = JsString(""), headers = Map.empty))
+
+          val result = TestAddressLookupConnector.initialiseAddressLookup(isAgent = false)
+          result map {
+            case Left(UnexpectedPostStatusFailure(status)) => status shouldBe 1
+            case Right(_) => Fail("error should be returned")
+          }
+        }
+      }
     }
 
     "getAddressDetails" should {
@@ -110,13 +127,44 @@ class AddressLookupConnectorSpec extends TestSupport with FeatureSwitching with 
           setupMockHttpGet(TestAddressLookupConnector.getAddressDetailsUrl("123"))(HttpResponse(status = OK,
             json = Json.toJson(testBusinessAddressModel), headers = Map.empty))
 
-          val result = TestAddressLookupConnector.getAddressDetails("123")
+          val result = TestAddressLookupConnector.getAddressDetails("123") //result set to null
           result map{
             case Left(_) => Fail("Error returned from lookup service")
             case Right(None) => Fail("No address details with that id")
             case Right(Some(model)) => model shouldBe testBusinessAddressModel
           }
+        }
+      }
+      "return None" when {
+        "no address details with specified id exist" in {
+          disableAllSwitches()
+          enable(IncomeSources)
 
+          setupMockHttpGet(TestAddressLookupConnector.getAddressDetailsUrl("123"))(HttpResponse(status = NOT_FOUND,
+            json = JsString(""), headers = Map.empty))
+
+          val result = TestAddressLookupConnector.getAddressDetails("123") //result set to null
+          result map {
+            case Left(_) => Fail("Error returned from lookup service")
+            case Right(None) => Pass
+            case Right(Some(_)) => Fail("Model found where model should not exist")
+          }
+        }
+      }
+      "return an error" when {
+        "non-standard status returned from lookup-service" in {
+          disableAllSwitches()
+          enable(IncomeSources)
+
+          setupMockHttpGet(TestAddressLookupConnector.getAddressDetailsUrl("123"))(HttpResponse(status = IM_A_TEAPOT,
+            json = JsString(""), headers = Map.empty))
+
+          val result = TestAddressLookupConnector.getAddressDetails("123") //result set to null
+          result map {
+            case Left(UnexpectedGetStatusFailure(status)) => status shouldBe IM_A_TEAPOT
+            case Right(None) => Fail("Tried to check for model")
+            case Right(Some(_)) => Fail("Model found where model should not exist")
+          }
         }
       }
     }
