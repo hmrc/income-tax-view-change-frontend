@@ -29,8 +29,8 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 import play.api.Logger
 
 class IncomeSourceConnectorImpl @Inject()(val http: HttpClient,
-                                      val appConfig: FrontendAppConfig
-                                     )(implicit val ec: ExecutionContext) extends RawResponseReads with FeatureSwitching {
+                                          val appConfig: FrontendAppConfig
+                                         )(implicit val ec: ExecutionContext) extends RawResponseReads with FeatureSwitching {
 }
 
 trait IncomeSourceConnector {
@@ -38,10 +38,9 @@ trait IncomeSourceConnector {
   val appConfig: FrontendAppConfig
   implicit val ec: ExecutionContext
 
-  private def addBusinessDetailsUrl(authTag: String) : String = ???
+  private def addBusinessDetailsUrl(authTag: String): String = s"${appConfig.itvcProtectedService}/income-tax-view-change/create-income-source/business/$authTag"
 
-  def create(businessDetails: BusinessDetails)(implicit headerCarrier: HeaderCarrier): Future[AddIncomeSourceResponse] =
-  {
+  def create(businessDetails: BusinessDetails)(implicit headerCarrier: HeaderCarrier): Future[AddIncomeSourceResponse] = {
     val body = AddBusinessIncomeSourcesRequest(businessDetails = Some(
       List(businessDetails)
     ))
@@ -66,6 +65,6 @@ trait IncomeSourceConnector {
           AddIncomeSourceResponseError(response.status, response.body)
       }
     }
- }
+  }
 
 }
