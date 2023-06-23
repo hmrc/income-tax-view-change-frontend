@@ -17,20 +17,44 @@
 package services
 
 
+import connectors.{IncomeSourceConnector}
+import models.addIncomeSource.{AddIncomeSourceRequest, AddIncomeSourceResponse, AddIncomeSourceSuccessResponse, AddressDetails, BusinessDetails}
 import models.incomeSourceDetails.viewmodels.CheckBusinessDetailsViewModel
+import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 
-@Singleton
-class CreateBusinessDetailsService @Inject()() {
+class CreateBusinessDetailsService @Inject()(val incomeSourceConnector: IncomeSourceConnector) {
 
-def createBusinessDetails(viewModel: CheckBusinessDetailsViewModel)(implicit ec: ExecutionContext): Future[Either[Throwable, CheckBusinessDetailsViewModel]] = {
-    ???
+def createBusinessDetails(mtditid: String, viewModel: CheckBusinessDetailsViewModel)
+                         (implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Either[Throwable, AddIncomeSourceResponse]] = {
+  val businessDetails =
+    BusinessDetails(
+      accountingPeriodStartDate = "",
+      accountingPeriodEndDate = "",
+      tradingName = "",
+      addressDetails = AddressDetails(
+        addressLine1 = "",
+        addressLine2 = None,
+        addressLine3 = None,
+        addressLine4 = None,
+        countryCode = "GB",
+        postalCode = "SE13 4ER"
+      ),
+      typeOfBusiness = None,
+      tradingStartDate = "",
+      cashOrAccrualsFlag = "Cash",
+      cessationDate = None,
+      cessationReason = None
+    )
+  incomeSourceConnector.create(mtditid, businessDetails) match {
+    case success: AddIncomeSourceSuccessResponse =>
+      success.map(Right(_))
+    case _ =>
+      Future.successful(Left(new Error(("Failed to created incomeSources"))))
   }
+}
 
 }
-case class SuccessResponse()
-
-case class FailureResponse()

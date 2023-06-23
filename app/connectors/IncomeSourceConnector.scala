@@ -16,45 +16,40 @@
 
 package connectors
 
-import audit.AuditingService
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 import models.addIncomeSource.{AddIncomeSourceResponse, _}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 import play.api.Logger
 
-class IncomeSourceConnectorImpl @Inject()(val http: HttpClient,
+class IncomeSourceConnector @Inject()(val http: HttpClient,
                                           val appConfig: FrontendAppConfig
                                          )(implicit val ec: ExecutionContext) extends RawResponseReads with FeatureSwitching {
-}
-
-trait IncomeSourceConnector {
-  val http: HttpClient
-  val appConfig: FrontendAppConfig
-  implicit val ec: ExecutionContext
 
   private def addBusinessDetailsUrl(authTag: String): String = s"${appConfig.itvcProtectedService}/income-tax-view-change/create-income-source/business/$authTag"
 
-  def create(businessDetails: BusinessDetails)(implicit headerCarrier: HeaderCarrier): Future[AddIncomeSourceResponse] = {
+  def create(mtditid: String, businessDetails: BusinessDetails)(implicit headerCarrier: HeaderCarrier): Future[Either[Throwable, List[IncomeSource]]] = {
     val body = AddBusinessIncomeSourcesRequest(businessDetails = Some(
       List(businessDetails)
     ))
 
     http.POST[AddBusinessIncomeSourcesRequest, HttpResponse](
-      addBusinessDetailsUrl(""),
+      addBusinessDetailsUrl(mtditid),
+      //addBusinessDetailsUrl("XYIT99999999992"),
       body, Seq[(String, String)]()).map { response =>
       response.status match {
-        case OK => response.json.validate[AddIncomeSourceSuccessResponse].fold(
+        case OK => response.json.validate[List[IncomeSource]].fold(
           invalid => {
             Logger("application").error(s"[IncomeTaxViewChangeConnector][updateCessationDate] - Json validation error parsing repayment response, error $invalid")
-            AddIncomeSourceResponseError(INTERNAL_SERVER_ERROR, "Json validation error parsing response")
+            Left(new Error(s"Not valid json: ${response.json}"))
           },
-          valid => valid
+          valid =>
+            Right(valid)
         )
         case status =>
           if (status >= INTERNAL_SERVER_ERROR) {
@@ -62,7 +57,7 @@ trait IncomeSourceConnector {
           } else {
             Logger("application").warn(s"[IncomeTaxViewChangeConnector][updateCessationDate] - Response status: ${response.status}, body: ${response.body}")
           }
-          AddIncomeSourceResponseError(response.status, response.body)
+          Left(new Error(s"Error creating incomeSource: ${response.status} - ${response.json}"))
       }
     }
   }

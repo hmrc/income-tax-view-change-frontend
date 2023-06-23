@@ -23,18 +23,7 @@ import java.time.LocalDate
 sealed trait AddIncomeSourceResponse
 
 
-case class AddIncomeSourceSuccessResponse(
-                            _id: String,
-                            schemaId: String,
-                            method: String,
-                            status: Int,
-                            response: List[IncomeSource]) extends  AddIncomeSourceResponse
-
 case class IncomeSource(incomeSourceId: String)
-
-object AddIncomeSourceSuccessResponse {
-  implicit val format: Format[AddIncomeSourceSuccessResponse] = Json.format
-}
 
 object IncomeSource {
   implicit val format: Format[IncomeSource] = Json.format
