@@ -28,10 +28,9 @@ object PostAddressLookupHttpParser {
     new HttpReads[PostAddressLookupResponse] {
       override def read(method: String, url: String, response: HttpResponse): PostAddressLookupResponse = {
         response.status match {
-          case ACCEPTED =>
-            Logger("application").info(s"[PostAddressLookupHttpParser] Success response: $response.toString()")
-            Right(
-            PostAddressLookupSuccessResponse(response.header(key = "location"))
+          case ACCEPTED => Right(
+            if (response.header(key = "location").isEmpty) PostAddressLookupSuccessResponse(response.header(key = "Location"))
+            else PostAddressLookupSuccessResponse(response.header(key = "location"))
           )
           case status => Left(UnexpectedPostStatusFailure(status))
         }

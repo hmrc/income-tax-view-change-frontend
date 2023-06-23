@@ -1189,6 +1189,12 @@ add-business-trade.form.error.long          = Mae’n rhaid i fasnach y busnes f
 add-business-trade.form.error.invalid       = Ni all masnach y busnes gynnwys !, "" , * na ?
 add-business-trade.form.error.same-name     = Ni allwch nodi’r un peth ar gyfer masnach busnes ac enw’r busnes
 
+## Add business address page
+add-business-address.select.heading         = Dewiswch gyfeiriad y busnes
+add-business-address.lookup.heading         = Beth yw cyfeiriad eich busnes?
+add-business-address.confirm.heading        = Cadarnhewch gyfeiriad y busnes
+add-business-address.edit.heading           = Nodwch gyfeiriad eich busnes
+
 shortMonth.1 = Ion
 shortMonth.2 = Chwe
 shortMonth.3 = Maw
