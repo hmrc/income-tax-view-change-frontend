@@ -48,7 +48,9 @@ class AddressLookupService @Inject()(val frontendAppConfig: FrontendAppConfig,
     id match {
       case Some(value) =>
         addressLookupConnector.getAddressDetails(value) map {
-          case Left(UnexpectedGetStatusFailure(status)) => Left(AddressError("status: " + status))
+          case Left(UnexpectedGetStatusFailure(status)) =>
+            Logger("application").error(s"[AddressLookupService][fetchAddress] - failed to get details for $id with status $status")
+            Left(AddressError("status: " + status))
           case Right(None) =>
             Logger("application").info(s"[AddressLookupService][fetchAddress] - failed to get details for $id")
             Left(AddressError("Not found"))
