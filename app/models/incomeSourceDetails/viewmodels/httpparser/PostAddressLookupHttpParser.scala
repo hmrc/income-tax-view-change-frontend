@@ -31,7 +31,7 @@ object PostAddressLookupHttpParser {
           case ACCEPTED =>
             Logger("application").info(s"[PostAddressLookupHttpParser] Success response: $response.toString()")
             Right(
-            PostAddressLookupSuccessResponse(response.header(key = "Location"))
+            PostAddressLookupSuccessResponse(response.header(key = "location"))
           )
           case status => Left(UnexpectedPostStatusFailure(status))
         }
