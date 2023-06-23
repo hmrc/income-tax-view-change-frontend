@@ -17,6 +17,7 @@
 package models.incomeSourceDetails.viewmodels.httpparser
 
 import models.incomeSourceDetails.BusinessAddressModel
+import play.api.Logger
 import play.api.http.Status.{NOT_FOUND, OK}
 import play.api.libs.json.JsSuccess
 import uk.gov.hmrc.http.HttpReads
@@ -26,6 +27,7 @@ object GetAddressLookupDetailsHttpParser {
   type GetAddressLookupDetailsResponse = Either[GetAddressLookupDetailsFailure, Option[BusinessAddressModel]]
 
   implicit def getAddressLookupDetailsHttpReads: HttpReads[GetAddressLookupDetailsResponse] = HttpReads { (_, _, response) =>
+    Logger("application").info("BEEP" + response.toString() + "response: " + response.json.toString() + "headers: " + response.headers.toString())
     response.status match {
       case OK => response.json.validate[BusinessAddressModel] match {
         case JsSuccess(value, _) => Right(Some(value))
