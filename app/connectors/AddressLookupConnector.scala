@@ -89,8 +89,9 @@ class AddressLookupConnector @Inject()(val appConfig: FrontendAppConfig,
 
 
   def initialiseAddressLookup(isAgent: Boolean)(implicit hc: HeaderCarrier, request: RequestHeader): Future[PostAddressLookupResponse] = {
-    Logger("application").info(s"URL: $addressLookupInitializeUrl")
+    Logger("application").info(s"[AddressLookupConnector] - URL: $addressLookupInitializeUrl")
     val payload = if (isAgent) addressJson(agentContinueUrl, agentFeedbackUrl) else addressJson(individualContinueUrl, individualFeedbackUrl)
+    Logger("application").info(s"[AddressLookupConnector] - Payload: $payload")
     http.POST[JsValue, PostAddressLookupResponse](
       url = addressLookupInitializeUrl,
       body = payload
@@ -98,6 +99,8 @@ class AddressLookupConnector @Inject()(val appConfig: FrontendAppConfig,
   }
 
   def getAddressDetails(id: String)(implicit hc: HeaderCarrier): Future[GetAddressLookupDetailsResponse] = {
-    http.GET[GetAddressLookupDetailsResponse](getAddressDetailsUrl(id))
+    val url = getAddressDetailsUrl(id)
+    Logger("application").info(s"[AddressLookupConnector] - getAddressDetails ULR: $url")
+    http.GET[GetAddressLookupDetailsResponse](url)
   }
 }
