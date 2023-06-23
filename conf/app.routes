@@ -160,6 +160,7 @@ GET          /income-sources/add/business-trade                           contro
 GET          /agents/income-sources/add/business-trade                    controllers.incomeSources.add.AddBusinessTradeController.showAgent()
 POST         /income-sources/add/business-trade                           controllers.incomeSources.add.AddBusinessTradeController.submit()
 POST         /agents/income-sources/add/business-trade                    controllers.incomeSources.add.AddBusinessTradeController.agentSubmit()
+
 GET          /income-sources/add/business-address                         controllers.AddBusinessAddressController.show()
 GET          /agents/income-sources/add/business-address                  controllers.AddBusinessAddressController.showAgent()
 GET          /income-sources/add/business-address/id/                     controllers.AddBusinessAddressController.submit(id: Option[String])
