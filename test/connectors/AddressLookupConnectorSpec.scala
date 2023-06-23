@@ -101,6 +101,7 @@ class AddressLookupConnectorSpec extends TestSupport with FeatureSwitching with 
           }
         }
       }
+
       "return an error" when {
         "non-standard status returned from lookup-service" in {
           disableAllSwitches()
