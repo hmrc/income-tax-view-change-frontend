@@ -27,7 +27,6 @@ import controllers.routes
 import play.api.Logger
 import play.api.i18n.{Lang, MessagesApi}
 import play.api.libs.json._
-
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -67,7 +66,7 @@ class AddressLookupConnector @Inject()(val appConfig: FrontendAppConfig,
               )
             ),
             "signOutHref" -> JsString(appConfig.itvcFrontendEnvironment + controllers.routes.SignOutController.signOut.url),
-            "accessibilityFooterUrl" -> JsString(appConfig.itvcFrontendEnvironment + "/accessibility-statement/income-tax-view-change?referrerUrl=%2Freport-quarterly%2Fincome-and-expenses%2Fview"),
+            "accessibilityFooterUrl" -> JsString(appConfig.itvcFrontendEnvironment +  "/accessibility-statement/income-tax-view-change?referrerUrl=%2Freport-quarterly%2Fincome-and-expenses%2Fview"),
             "selectPageConfig" -> JsObject(
               Seq(
                 "proposalListLimit" -> JsNumber(15)
@@ -142,10 +141,13 @@ class AddressLookupConnector @Inject()(val appConfig: FrontendAppConfig,
     )
   }
 
+
   def initialiseAddressLookup(isAgent: Boolean)(implicit hc: HeaderCarrier, request: RequestHeader): Future[PostAddressLookupResponse] = {
     Logger("application").info(s"Address lookup initialisation URL: $addressLookupInitializeUrl")
+    Logger("application").info(s"[AddressLookupConnector] - URL: $addressLookupInitializeUrl")
     val payload = if (isAgent) addressJson(agentContinueUrl, agentFeedbackUrl) else addressJson(individualContinueUrl, individualFeedbackUrl)
     Logger("application").info(s"AddressLookupPayload: $payload")
+    Logger("application").info(s"[AddressLookupConnector] - Payload: $payload")
     http.POST[JsValue, PostAddressLookupResponse](
       url = addressLookupInitializeUrl,
       body = payload
@@ -153,6 +155,8 @@ class AddressLookupConnector @Inject()(val appConfig: FrontendAppConfig,
   }
 
   def getAddressDetails(id: String)(implicit hc: HeaderCarrier): Future[GetAddressLookupDetailsResponse] = {
-    http.GET[GetAddressLookupDetailsResponse](getAddressDetailsUrl(id))
+    val url = getAddressDetailsUrl(id)
+    Logger("application").info(s"[AddressLookupConnector] - getAddressDetails ULR: $url")
+    http.GET[GetAddressLookupDetailsResponse](url)
   }
 }
