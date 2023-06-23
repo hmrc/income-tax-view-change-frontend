@@ -95,7 +95,10 @@ class AddressLookupConnector @Inject()(val appConfig: FrontendAppConfig,
     http.POST[JsValue, PostAddressLookupResponse](
       url = addressLookupInitializeUrl,
       body = payload
-    )
+    ).map { res =>
+      Logger("application").info(s"[AddressLookupConnector] - Response: $res")
+      res
+    }
   }
 
   def getAddressDetails(id: String)(implicit hc: HeaderCarrier): Future[GetAddressLookupDetailsResponse] = {
