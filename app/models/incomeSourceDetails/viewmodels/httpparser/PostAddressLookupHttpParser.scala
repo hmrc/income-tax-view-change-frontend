@@ -16,6 +16,7 @@
 
 package models.incomeSourceDetails.viewmodels.httpparser
 
+import play.api.Logger
 import play.api.http.Status.ACCEPTED
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
 
@@ -27,8 +28,10 @@ object PostAddressLookupHttpParser {
     new HttpReads[PostAddressLookupResponse] {
       override def read(method: String, url: String, response: HttpResponse): PostAddressLookupResponse = {
         response.status match {
-          case ACCEPTED => Right(
-            PostAddressLookupSuccessResponse(response.header(key = "Location"))
+          case ACCEPTED =>
+            Logger("application").info(s"[PostAddressLookupHttpParser] Success response: $response.toString()")
+            Right(
+            PostAddressLookupSuccessResponse(response.header(key = "location"))
           )
           case status => Left(UnexpectedPostStatusFailure(status))
         }
