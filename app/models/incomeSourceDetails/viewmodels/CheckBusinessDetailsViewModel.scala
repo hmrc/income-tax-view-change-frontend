@@ -14,23 +14,9 @@
  * limitations under the License.
  */
 
-package services
+package models.incomeSourceDetails.viewmodels
 
-
-import models.incomeSourceDetails.viewmodels.CheckBusinessDetailsViewModel
-
-import javax.inject.{Inject, Singleton}
-import scala.concurrent.{ExecutionContext, Future}
-
-
-@Singleton
-class CreateBusinessDetailsService @Inject()() {
-
-def createBusinessDetails(viewModel: CheckBusinessDetailsViewModel)(implicit ec: ExecutionContext): Future[Either[Throwable, CheckBusinessDetailsViewModel]] = {
-    ???
-  }
-
-}
-case class SuccessResponse()
-
-case class FailureResponse()
+import java.time.LocalDate
+case class CheckBusinessDetailsViewModel(businessName: Option[String], businessStartDate: Option[LocalDate],
+                                         businessTrade: Option[String], businessAddressLine1: Option[String],
+                                         businessPostalCode: Option[String], businessAccountingMethod: Option[String])

@@ -1322,3 +1322,14 @@ check-cease-foreign-property-details.caption            = Y busnes eiddo tramor 
 check-cease-foreign-property-details.summary-list.key   = Dyddiad y gwnaeth y busnes stopio
 check-cease-foreign-property-details.summary-list.link  = Newid
 check-cease-foreign-property-details.button             = Cadarnhau ac yn eich blaen
+
+# check business details
+check-business-details.sole-trader-caption              = Y busnes unig fasnachwr a nodwyd gennych
+check-business-details.heading1                         = Gwirio’ch manylion
+check-business-details.business-name                    = Enw’r busnes
+check-business-details.change-details-link              = Newid
+check-business-details.business-start-date              = Dyddiad dechrau masnachu’r busnes
+check-business-details.business-description             = Disgrifiad o’r busnes
+check-business-details.business-address                 = Cyfeiriad y busnes
+check-business-details.confirm-button                   = Cadarnhau ac yn eich blaen
+check-business-details.accounting-method                = Dull cyfrifyddu ar gyfer incwm unig fasnachwr
