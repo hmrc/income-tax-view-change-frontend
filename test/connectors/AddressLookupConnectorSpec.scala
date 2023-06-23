@@ -106,12 +106,12 @@ class AddressLookupConnectorSpec extends TestSupport with FeatureSwitching with 
           disableAllSwitches()
           enable(IncomeSources)
 
-          setupMockHttpPost(TestAddressLookupConnector.addressLookupInitializeUrl, addressJson(agentContinueUrl, agentFeedbackUrl))(HttpResponse(status = 1,
+          setupMockHttpPost(TestAddressLookupConnector.addressLookupInitializeUrl, addressJson(individualContinueUrl, individualFeedbackUrl))(HttpResponse(status = OK,
             json = JsString(""), headers = Map.empty))
 
           val result = TestAddressLookupConnector.initialiseAddressLookup(isAgent = false)
           result map {
-            case Left(UnexpectedPostStatusFailure(status)) => status shouldBe 1
+            case Left(UnexpectedPostStatusFailure(status)) => status shouldBe OK
             case Right(_) => Fail("error should be returned")
           }
         }
