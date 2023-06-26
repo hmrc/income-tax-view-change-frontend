@@ -18,11 +18,8 @@
 @import views.html.layouts.unifiedLayout
 @import views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components._
-@import models.incomeSourceDetails.viewmodels.CheckBusinessDetailsViewModel
-@import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcPageHeading
-@import uk.gov.hmrc.hmrcfrontend.views.viewmodels.pageheading.PageHeading
-
-
+@import uk.gov.hmrc.govukfrontend.views.html.components.FormWithCSRF
+@import views.html.helpers.injected.ErrorSummary
 
 @this(
     mainTemplate: unifiedLayout,
@@ -152,7 +149,6 @@ controllers.incomeSources.add.routes.CheckBusinessDetailsController.changeBusine
                 </div>
             }
         </dl>
-
 
         @govukButton(Button(
         content = Text(messages("check-business-details.confirm-button")),

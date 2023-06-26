@@ -56,9 +56,20 @@ object SessionKeys {
 
   val businessStartDate: String = "addBusinessStartDate"
 
+  val addBusinessAddressLine1: String = "addBusinessAddressLine1"
+  val addBusinessAddressLine2: String = "addBusinessAddressLine2"
+  val addBusinessAddressLine3: String = "addBusinessAddressLine3"
+  val addBusinessAddressLine4: String = "addBusinessAddressLine4"
+  val addBusinessPostalCode: String = "addBusinessPostalCode"
+  val addBusinessCountryCode: String = "addBusinessCountryCode"
+
+
+
   val ceaseBusinessEndDate: String = "ceaseBusinessEndDate"
 
   val ceaseBusinessIncomeSourceId: String = "ceaseBusinessIncomeSourceId"
 
   val foreignPropertyStartDate: String = "addForeignPropertyStartDate"
+
+  val addBusinessAccountingMethod: String = "addBusinessAccountingMethod"
 }

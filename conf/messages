@@ -1036,7 +1036,6 @@ paymentAllocation.paymentAllocations.paymentOnAccount2.text     = Late payment i
 paymentAllocation.paymentAllocations.balancingCharge.text       = Late payment interest for Balancing payment
 paymentAllocation.paymentAllocations.hmrcAdjustment.text        = HMRC adjustment
 
-
 ##Tax Years Overview Update Tab##
 updateTab.due                                                   = Due {0}
 updateTab.updateType                                            = Update type
@@ -1170,6 +1169,12 @@ add-business-trade.form.error.short         = Business trade must have at least 
 add-business-trade.form.error.long          = Business trade must be 35 characters or fewer
 add-business-trade.form.error.invalid       = Business trade cannot include !, "", * or ?
 add-business-trade.form.error.same-name     = You cannot enter the same trade and same business name
+
+## Add business address page
+add-business-address.select.heading         = Select business address
+add-business-address.lookup.heading         = What is your business address?
+add-business-address.confirm.heading        = Confirm business address
+add-business-address.edit.heading           = Enter your business address
 
 #Following empty fields are not in Use
 #These fields are kept to match with Messages.cy
@@ -1307,6 +1312,19 @@ add-business-start-date-check.heading                 = Is this date correct?
 add-business-start-date-check.radio.yes               = Yes
 add-business-start-date-check.radio.no                = No
 add-business-start-date-check.radio.error             = Select yes if your business start date is correct
+
+# add business accounting method
+incomeSources.add.business-accounting-method.heading                 = What accounting method do you use for your sole trader business?
+incomeSources.add.business-accounting-method.hint                    = If you have more than one sole trader business, all your businesses need to have the same accounting method.
+incomeSources.add.business-accounting-method.example                 = Show me an example
+incomeSources.add.business-accounting-method.radio-1-title           = Cash basis accounting
+incomeSources.add.business-accounting-method.radio-1-hint            = You record on the date you receive money or pay a bill. Most sole traders and small businesses use this method.
+incomeSources.add.business-accounting-method.radio-2-title           = Traditional accounting
+incomeSources.add.business-accounting-method.radio-2-hint            = You record on the date you send or receive an invoice, even if you do not receive or pay any money. This is called ’accruals’ or ’standard accounting’.
+incomeSources.add.business-accounting-method.drop-down-text          = You created an invoice for someone in March 2017, but did not receive the money until May 2017. If you tell HMRC you received this income in:
+incomeSources.add.business-accounting-method.drop-down-text-bp-1     = May 2017, you use ’cash basis accounting’
+incomeSources.add.business-accounting-method.drop-down-text-bp-2     = March 2017, you use ’traditional accounting’
+incomeSources.add.business-accounting-method.no-selection            = Enter the accounting method you use for your sole trader business
 
 incomeSources.cease.BusinessEndDate.heading                               = Date your self-employed business stopped
 incomeSources.cease.BusinessEndDate.error.invalid                         = The date your self-employed business stopped trading must be a real date

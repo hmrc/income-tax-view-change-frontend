@@ -46,15 +46,14 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   lazy val betaFeedbackUrl = s"/$baseUrl/feedback"
   lazy val agentBetaFeedbackUrl = s"/$agentBaseUrl/feedback"
 
-
-  //SA-API Config
-  lazy val saApiService: String = servicesConfig.baseUrl("self-assessment-api")
-
   //ITVC Protected Service
   lazy val itvcProtectedService: String = servicesConfig.baseUrl("income-tax-view-change")
 
   //Income tax calculation service
   lazy val incomeTaxCalculationService: String = servicesConfig.baseUrl("income-tax-calculation")
+
+  //Address lookup service
+  lazy val addressLookupService: String = servicesConfig.baseUrl("address-lookup-frontend")
 
   //View L&P
   def saViewLandPService(utr: String): String = servicesConfig.getString("old-sa-viewer-frontend.host") + s"/$utr/account"

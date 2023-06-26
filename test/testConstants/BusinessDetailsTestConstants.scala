@@ -82,7 +82,8 @@ object BusinessDetailsTestConstants {
     tradingName = Some(testTradeName),
     firstAccountingPeriodEndDate = Some(LocalDate.of(year2018, Month.APRIL, 5)),
     tradingStartDate = Some(testStartDate),
-    cessation = None
+    cessation = None,
+    cashOrAccruals = Some("cash")
   )
 
   val soleTraderBusiness2 = BusinessDetailsModel(
@@ -91,7 +92,8 @@ object BusinessDetailsTestConstants {
     tradingName = Some(testTradeName),
     firstAccountingPeriodEndDate = Some(LocalDate.of(year2018, Month.APRIL, 5)),
     tradingStartDate = Some(testStartDate3),
-    cessation = None
+    cessation = None,
+    cashOrAccruals = Some("accruals")
   )
 
   val soleTraderBusinessNoTradingName = BusinessDetailsModel(
