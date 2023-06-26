@@ -48,7 +48,7 @@ class CheckBusinessDetailsViewSpec extends TestSupport {
   class Setup(isAgent: Boolean, error: Boolean = false) {
 
     val businessName = "Test Business"
-    val businessStartDate = "2022-01-01"
+    val businessStartDate = "1 January 2022"
     val businessTrade = "Test Trade"
     val businessAddressLine1 = "Test Business Address Line 1"
     val businessPostalCode = "Test Business Postal Code"

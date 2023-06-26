@@ -26,11 +26,16 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class CreateBusinessDetailsService @Inject()() {
 
-def createBusinessDetails(viewModel: CheckBusinessDetailsViewModel)(implicit ec: ExecutionContext): Future[Either[Throwable, CheckBusinessDetailsViewModel]] = {
-    ???
+def createBusinessDetails(viewModel: CheckBusinessDetailsViewModel)(implicit ec: ExecutionContext): Future[Either[Throwable, IncomeSource]] = {
+    return Future{
+      Right(IncomeSource("123"))
+    }
   }
 
 }
+
+case class IncomeSource(incomeSourceId: String)
+
 case class SuccessResponse()
 
 case class FailureResponse()

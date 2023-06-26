@@ -196,11 +196,10 @@ GET          /income-sources/add/business-accounting-method                   co
 GET          /agents/income-sources/add/business-accounting-method            controllers.incomeSources.add.BusinessAccountingMethodController.showAgent()
 POST         /income-sources/add/business-accounting-method                   controllers.incomeSources.add.BusinessAccountingMethodController.submit()
 POST         /agents/income-sources/add/business-accounting-method            controllers.incomeSources.add.BusinessAccountingMethodController.submitAgent()
-GET          /income-sources/add/business-check-details                       controllers.incomeSources.add.CheckBusinessDetailsController.show()
-GET          /agents/income-sources/add/business-check-details                controllers.incomeSources.add.CheckBusinessDetailsController.showAgent()
 
 #Check details
 GET          /income-sources/add/business-check-details                     controllers.incomeSources.add.CheckBusinessDetailsController.show()
+GET          /agents/income-sources/add/business-check-details              controllers.incomeSources.add.CheckBusinessDetailsController.showAgent()
 GET          /income-sources/add/change-business-name                       controllers.incomeSources.add.CheckBusinessDetailsController.changeBusinessName()
 GET          /agents/income-sources/add/change-business-name                controllers.incomeSources.add.CheckBusinessDetailsController.changeBusinessNameAgent()
 GET          /income-sources/add/change-business-start-date                 controllers.incomeSources.add.CheckBusinessDetailsController.changeBusinessStartDate()
@@ -211,9 +210,12 @@ GET          /income-sources/add/change-business-address-lookup             cont
 GET          /agents/income-sources/add/change-business-address-lookup      controllers.incomeSources.add.CheckBusinessDetailsController.changeBusinessAddressAgent()
 GET          /income-sources/add/change-business-accounting-method          controllers.incomeSources.add.CheckBusinessDetailsController.changeBusinessAccountingMethod()
 GET          /agents/income-sources/add/change-business-accounting-method   controllers.incomeSources.add.CheckBusinessDetailsController.changeBusinessAccountingMethodAgent()
-GET          /income-sources/add/error-business-not-added                   controllers.incomeSources.add.CheckBusinessDetailsController.changeBusinessReportingMethod()
-GET          /agents/income-sources/add/error-business-not-added            controllers.incomeSources.add.CheckBusinessDetailsController.changeBusinessReportingMethodAgent()
-
+GET          /income-sources/add/business-reporting-method                  controllers.incomeSources.add.CheckBusinessDetailsController.changeBusinessReportingMethod()
+GET          /agents/income-sources/add/business-reporting-method           controllers.incomeSources.add.CheckBusinessDetailsController.changeBusinessReportingMethodAgent()
++ nocsrf
+POST          /income-sources/add/business-check-details                    controllers.incomeSources.add.CheckBusinessDetailsController.submit()
++nocsrf
+POST          /agents/income-sources/add/business-check-details              controllers.incomeSources.add.CheckBusinessDetailsController.submitAgent()
 
 # Income Sources - Cease
 GET          /income-sources/cease/cease-an-income-source                 controllers.incomeSources.cease.CeaseIncomeSourceController.show()

@@ -103,45 +103,46 @@ controllers.incomeSources.add.routes.CheckBusinessDetailsController.changeBusine
         section = Some(getMessage("sole-trader-caption")),
         captionClasses = Some("govuk-caption-l")
     ))
+        <form method="POST" action="business-check-details">
 
-        <dl class="govuk-summary-list" id="refund-to-taxpayer-table">
-            <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">@getMessage("business-name")</dt>
-                <dd class="govuk-summary-list__value" id="business-name-value">@{sources.businessName.get}</dd>
-                <dd class="govuk-summary-list__actions govuk-!-text-align-right govuk-!-margin-0">
-                    <a class="govuk-link"  href=@changeBusinessNameURL>
-                        @getMessage("change-details-link")
-                    </a>
-                </dd>
-            </div>
-            <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">@getMessage("business-start-date")</dt>
-                <dd class="govuk-summary-list__value" id="business-date-value">@{sources.businessStartDate.get}</dd>
-                <dd class="govuk-summary-list__actions govuk-!-text-align-right govuk-!-margin-0">
-                    <a class="govuk-link"  href=@changeBusinessStartDateURL>
-                        @getMessage("change-details-link")
-                    </a>
-                </dd>
-            </div>
-            <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">@getMessage("business-description")</dt>
-                <dd class="govuk-summary-list__value" id="business-trade-value">@{sources.businessTrade.get}</dd>
-                <dd class="govuk-summary-list__actions govuk-!-text-align-right govuk-!-margin-0">
-                    <a class="govuk-link"  href=@changeBusinessTradeURL>
-                        @getMessage("change-details-link")
-                    </a>
-                </dd>
-            </div>
-            <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">@getMessage("business-address")</dt>
-                <dd class="govuk-summary-list__value" id="business-address-value">@{sources.businessAddressLine1.get + " " + sources.businessPostalCode.get}</dd>
-                <dd class="govuk-summary-list__actions govuk-!-text-align-right govuk-!-margin-0">
-                    <a class="govuk-link"  href=@changeBusinessAddressURL>
-                        @getMessage("change-details-link")
-                    </a>
-                </dd>
-            </div>
-            @if(sources.businessAccountingMethod.nonEmpty){
+            <dl class="govuk-summary-list" id="refund-to-taxpayer-table">
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">@getMessage("business-name")</dt>
+                    <dd class="govuk-summary-list__value" id="business-name-value">@{sources.businessName.get}</dd>
+                    <dd class="govuk-summary-list__actions govuk-!-text-align-right govuk-!-margin-0">
+                        <a class="govuk-link"  href=@changeBusinessNameURL>
+                            @getMessage("change-details-link")
+                        </a>
+                    </dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">@getMessage("business-start-date")</dt>
+                    <dd class="govuk-summary-list__value" id="business-date-value">@{(sources.businessStartDate.get).toLongDate}</dd>
+                    <dd class="govuk-summary-list__actions govuk-!-text-align-right govuk-!-margin-0">
+                        <a class="govuk-link"  href=@changeBusinessStartDateURL>
+                            @getMessage("change-details-link")
+                        </a>
+                    </dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">@getMessage("business-description")</dt>
+                    <dd class="govuk-summary-list__value" id="business-trade-value">@{sources.businessTrade.get}</dd>
+                    <dd class="govuk-summary-list__actions govuk-!-text-align-right govuk-!-margin-0">
+                        <a class="govuk-link"  href=@changeBusinessTradeURL>
+                            @getMessage("change-details-link")
+                        </a>
+                    </dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">@getMessage("business-address")</dt>
+                    <dd class="govuk-summary-list__value" id="business-address-value">@{sources.businessAddressLine1.get + " " + sources.businessPostalCode.get}</dd>
+                    <dd class="govuk-summary-list__actions govuk-!-text-align-right govuk-!-margin-0">
+                        <a class="govuk-link"  href=@changeBusinessAddressURL>
+                            @getMessage("change-details-link")
+                        </a>
+                    </dd>
+                </div>
+                @if(sources.businessAccountingMethod.nonEmpty){
                 <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key">@getMessage("accounting-method")</dt>
                     <dd class="govuk-summary-list__value" id="business-accounting-value">@{sources.businessAccountingMethod.get}</dd>
@@ -151,12 +152,15 @@ controllers.incomeSources.add.routes.CheckBusinessDetailsController.changeBusine
                         </a>
                     </dd>
                 </div>
-            }
-        </dl>
+                }
+            </dl>
 
-        @govukButton(Button(
-        content = Text(messages("check-business-details.confirm-button")),
-        attributes = Map("id" -> "confirm-button")
-        ))
+            @govukButton(Button(
+            content = Text(messages("check-business-details.confirm-button")),
+            attributes = Map("id" -> "confirm-button")
+            ))
+        </form>
+
+
 
 }

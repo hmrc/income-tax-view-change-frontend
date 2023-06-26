@@ -102,6 +102,30 @@ class CheckBusinessDetailsControllerSpec extends TestSupport with MockAuthentica
           document.select("h1:nth-child(1)").text shouldBe TestCheckBusinessDetailsController.heading
       }
     }
+
+    "return 303" when {
+      "data is submitted and redirect next page" in {
+        disableAllSwitches()
+        enable(IncomeSources)
+
+        mockNoIncomeSources()
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
+
+        val result = TestCheckBusinessDetailsController.submit()(
+          fakeRequestWithActiveSession
+            .withSession(
+              SessionKeys.businessName -> testBusinessStartDate,
+              SessionKeys.businessStartDate -> testBusinessStartDate,
+              SessionKeys.businessTrade -> testBusinessTrade,
+              SessionKeys.addBusinessAddressLine1 -> testBusinessAddressLine1,
+              SessionKeys.addBusinessPostCode -> testBusinessPostCode,
+              SessionKeys.addBusinessAccountingMethod -> testBusinessAccountingMethod
+            ))
+
+        status(result) shouldBe Status.SEE_OTHER
+
+      }
+    }
       //TODO - returns 200 with Ok in method
     "return 303 when individual wants to change details" when {
       "the user selects change link" in {
@@ -176,6 +200,30 @@ class CheckBusinessDetailsControllerSpec extends TestSupport with MockAuthentica
           ))
 
         status(result) shouldBe Status.OK
+
+      }
+    }
+
+    "return 303 " when {
+      "data is submitted and redirect to next page" in {
+        disableAllSwitches()
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+        enable(IncomeSources)
+
+        mockSingleBusinessIncomeSource()
+
+
+        val result = TestCheckBusinessDetailsController.submitAgent()(
+          fakeRequestConfirmedClient().withSession(
+            SessionKeys.businessName -> testBusinessStartDate,
+            SessionKeys.businessStartDate -> testBusinessStartDate,
+            SessionKeys.businessTrade -> testBusinessTrade,
+            SessionKeys.addBusinessAddressLine1 -> testBusinessAddressLine1,
+            SessionKeys.addBusinessPostCode -> testBusinessPostCode,
+            SessionKeys.addBusinessAccountingMethod -> testBusinessAccountingMethod
+          ))
+
+        status(result) shouldBe Status.SEE_OTHER
 
       }
     }
