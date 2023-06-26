@@ -118,7 +118,7 @@ class AddressLookupConnector @Inject()(val appConfig: FrontendAppConfig,
                 ),
                 "appLevelLabels" -> JsObject(
                   Seq(
-                    "navTitle" -> JsString(headerEnglish),
+                    "navTitle" -> JsString(headerEnglish)
                   )
                 )
               )
