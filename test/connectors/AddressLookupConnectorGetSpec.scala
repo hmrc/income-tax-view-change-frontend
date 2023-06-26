@@ -74,6 +74,41 @@ class AddressLookupConnectorGetSpec extends TestSupport with FeatureSwitching wi
         }
       }
     }
+    /*"return None" when {
+      "no address details with specified id exist" in {
+        disableAllSwitches()
+        enable(IncomeSources)
+
+        setupMockHttpGet(TestAddressLookupConnector.getAddressDetailsUrl("123"))(HttpResponse(status = NOT_FOUND,
+          json = JsString(""), headers = Map.empty))
+
+        val result = TestAddressLookupConnector.getAddressDetails("123") //result set to null
+        result map {
+          case Left(_) => Fail("Error returned from lookup service")
+          case Right(None) => Pass
+          case Right(Some(_)) => Fail("Model found where model should not exist")
+        }
+      }
+    }
+
+
+    "return an error" when {
+      "non-standard status returned from lookup-service" in {
+        disableAllSwitches()
+        enable(IncomeSources)
+
+
+        setupMockHttpGet(TestAddressLookupConnector.getAddressDetailsUrl("123"))(HttpResponse(status = IM_A_TEAPOT,
+          json = JsString(""), headers = Map.empty))
+
+        val result = TestAddressLookupConnector.getAddressDetails("123") //result set to null
+        result map {
+          case Left(UnexpectedGetStatusFailure(status)) => status shouldBe IM_A_TEAPOT
+          case Right(None) => Fail("Tried to check for model")
+          case Right(Some(_)) => Fail("Model found where model should not exist")
+        }
+      }
+    }*/
   }
 
 }

@@ -120,69 +120,6 @@ class AddressLookupConnectorSpec extends TestSupport with FeatureSwitching with 
       }
     }
 
-
-    "getAddressDetails" should {
-      "return the address details" when {
-        "called by service" in {
-          disableAllSwitches()
-          enable(IncomeSources)
-          beforeEach()
-          reset(mockHttpGet)
-
-          val testValidJson: JsValue = Json.obj("auditRef" -> "1",
-            "address" -> Json.obj("lines" -> Seq("line1", "line2", "line3"), "postcode" -> Some("TF3 4NT")))
-
-          val businessAddressModel: BusinessAddressModel = BusinessAddressModel(auditRef = "1",
-            Address(lines = Seq("line1", "line2", "line3"), postcode = Some("TF3 4NT")))
-
-          setupMockHttpGet(TestAddressLookupConnector.getAddressDetailsUrl("1"))(HttpResponse(status = OK,
-            json = testValidJson, headers = Map.empty))
-
-          val result = TestAddressLookupConnector.getAddressDetails("123") //result set to null
-          result map {
-            case Left(_) => Fail("Error returned from lookup service")
-            case Right(None) => Fail("No address details with that id")
-            case Right(Some(model)) => model shouldBe businessAddressModel
-          }
-        }
-      }
-      /*"return None" when {
-        "no address details with specified id exist" in {
-          disableAllSwitches()
-          enable(IncomeSources)
-
-          setupMockHttpGet(TestAddressLookupConnector.getAddressDetailsUrl("123"))(HttpResponse(status = NOT_FOUND,
-            json = JsString(""), headers = Map.empty))
-
-          val result = TestAddressLookupConnector.getAddressDetails("123") //result set to null
-          result map {
-            case Left(_) => Fail("Error returned from lookup service")
-            case Right(None) => Pass
-            case Right(Some(_)) => Fail("Model found where model should not exist")
-          }
-        }
-      }
-
-
-      "return an error" when {
-        "non-standard status returned from lookup-service" in {
-          disableAllSwitches()
-          enable(IncomeSources)
-
-
-          setupMockHttpGet(TestAddressLookupConnector.getAddressDetailsUrl("123"))(HttpResponse(status = IM_A_TEAPOT,
-            json = JsString(""), headers = Map.empty))
-
-          val result = TestAddressLookupConnector.getAddressDetails("123") //result set to null
-          result map {
-            case Left(UnexpectedGetStatusFailure(status)) => status shouldBe IM_A_TEAPOT
-            case Right(None) => Fail("Tried to check for model")
-            case Right(Some(_)) => Fail("Model found where model should not exist")
-          }
-        }
-      }*/
-    }
-
     lazy val individualContinueUrl: String = routes.AddBusinessAddressController.submit(None).url
     lazy val agentContinueUrl: String = routes.AddBusinessAddressController.agentSubmit(None).url
 
@@ -280,5 +217,4 @@ class AddressLookupConnectorSpec extends TestSupport with FeatureSwitching with 
       )
     }
   }
-
 }
