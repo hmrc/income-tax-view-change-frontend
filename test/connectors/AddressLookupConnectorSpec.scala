@@ -77,7 +77,7 @@ class AddressLookupConnectorSpec extends TestSupport with FeatureSwitching with 
           enable(IncomeSources)
           beforeEach()
 
-          setupMockHttpPost(TestAddressLookupConnector.addressLookupInitializeUrl, addressJson(individualContinueUrl, individualFeedbackUrl))(HttpResponse(status = ACCEPTED,
+          setupMockHttpPost(TestAddressLookupConnector.addressLookupInitializeUrl, addressJson(individualContinueUrl, individualFeedbackUrl, individualEnglishBanner, individualWelshBanner))(HttpResponse(status = ACCEPTED,
             json = JsString(""), headers = Map("Location" -> Seq("Sample location"))))
 
           val result = TestAddressLookupConnector.initialiseAddressLookup(isAgent = false)
@@ -91,7 +91,7 @@ class AddressLookupConnectorSpec extends TestSupport with FeatureSwitching with 
           enable(IncomeSources)
           beforeEach()
 
-          setupMockHttpPost(TestAddressLookupConnector.addressLookupInitializeUrl, addressJson(agentContinueUrl, agentFeedbackUrl))(HttpResponse(status = ACCEPTED,
+          setupMockHttpPost(TestAddressLookupConnector.addressLookupInitializeUrl, addressJson(agentContinueUrl, agentFeedbackUrl, individualEnglishBanner, individualWelshBanner))(HttpResponse(status = ACCEPTED,
             json = JsString(""), headers = Map("Location" -> Seq("Sample location"))))
 
           val result = TestAddressLookupConnector.initialiseAddressLookup(isAgent = true)
@@ -108,7 +108,7 @@ class AddressLookupConnectorSpec extends TestSupport with FeatureSwitching with 
           enable(IncomeSources)
           beforeEach()
 
-          setupMockHttpPost(TestAddressLookupConnector.addressLookupInitializeUrl, addressJson(individualContinueUrl, individualFeedbackUrl))(HttpResponse(status = OK,
+          setupMockHttpPost(TestAddressLookupConnector.addressLookupInitializeUrl, addressJson(individualContinueUrl, individualFeedbackUrl, individualEnglishBanner, individualWelshBanner))(HttpResponse(status = OK,
             json = JsString(""), headers = Map.empty))
 
           val result = TestAddressLookupConnector.initialiseAddressLookup(isAgent = false)
@@ -126,8 +126,13 @@ class AddressLookupConnectorSpec extends TestSupport with FeatureSwitching with 
     lazy val individualFeedbackUrl: String = controllers.feedback.routes.FeedbackController.show.url
     lazy val agentFeedbackUrl: String = controllers.feedback.routes.FeedbackController.showAgent.url
 
+    lazy val individualEnglishBanner: String = messagesApi.preferred(Seq(Lang("en")))("header.serviceName")
+    lazy val agentEnglishBanner: String = messagesApi.preferred(Seq(Lang("en")))("agent.header.serviceName")
 
-    def addressJson(continueUrl: String, feedbackUrl: String): JsValue = {
+    lazy val individualWelshBanner: String = messagesApi.preferred(Seq(Lang("cy")))("header.serviceName")
+    lazy val agentWelshBanner: String = messagesApi.preferred(Seq(Lang("cy")))("agent.header.serviceName")
+
+    def addressJson(continueUrl: String, feedbackUrl: String, headerEnglish: String, headerWelsh: String): JsValue = {
       JsObject(
         Seq(
           "version" -> JsNumber(2),
@@ -165,6 +170,11 @@ class AddressLookupConnectorSpec extends TestSupport with FeatureSwitching with 
             Seq(
               "en" -> JsObject(
                 Seq(
+                  "appLevelLabels" -> JsObject(
+                    Seq(
+                      "navTitle" -> JsString(headerEnglish),
+                    )
+                  ),
                   "selectPageLabels" -> JsObject(
                     Seq(
                       "heading" -> JsString(messagesApi.preferred(Seq(Lang("en")))("add-business-address.select.heading"))
@@ -189,6 +199,11 @@ class AddressLookupConnectorSpec extends TestSupport with FeatureSwitching with 
               ),
               "cy" -> JsObject(
                 Seq(
+                  "appLevelLabels" -> JsObject(
+                    Seq(
+                      "navTitle" -> JsString(headerWelsh)
+                    )
+                  ),
                   "selectPageLabels" -> JsObject(
                     Seq(
                       "heading" -> JsString(messagesApi.preferred(Seq(Lang("cy")))("add-business-address.select.heading"))

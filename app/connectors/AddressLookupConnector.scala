@@ -51,11 +51,11 @@ class AddressLookupConnector @Inject()(val appConfig: FrontendAppConfig,
   lazy val individualFeedbackUrl: String = controllers.feedback.routes.FeedbackController.show.url
   lazy val agentFeedbackUrl: String = controllers.feedback.routes.FeedbackController.showAgent.url
 
-  val individualEnglishBanner: String = messagesApi.preferred(Seq(Lang("en")))("header.serviceName")
-  val agentEnglishBanner: String = messagesApi.preferred(Seq(Lang("en")))("agent.header.serviceName")
+  lazy val individualEnglishBanner: String = messagesApi.preferred(Seq(Lang("en")))("header.serviceName")
+  lazy val agentEnglishBanner: String = messagesApi.preferred(Seq(Lang("en")))("agent.header.serviceName")
 
-  val individualWelshBanner: String = messagesApi.preferred(Seq(Lang("cy")))("header.serviceName")
-  val agentWelshBanner: String = messagesApi.preferred(Seq(Lang("cy")))("agent.header.serviceName")
+  lazy val individualWelshBanner: String = messagesApi.preferred(Seq(Lang("cy")))("header.serviceName")
+  lazy val agentWelshBanner: String = messagesApi.preferred(Seq(Lang("cy")))("agent.header.serviceName")
 
   def addressJson(continueUrl: String, feedbackUrl: String, headerEnglish: String, headerWelsh: String): JsValue = {
     JsObject(
