@@ -96,11 +96,6 @@ class AddressLookupConnector @Inject()(val appConfig: FrontendAppConfig,
           Seq(
             "en" -> JsObject(
               Seq(
-                "appLevelLabels" -> JsObject(
-                  Seq(
-                    "navTitle" -> JsString(headerEnglish),
-                  )
-                ),
                 "selectPageLabels" -> JsObject(
                   Seq(
                     "heading" -> JsString(messagesApi.preferred(Seq(Lang("en")))("add-business-address.select.heading"))
@@ -120,16 +115,16 @@ class AddressLookupConnector @Inject()(val appConfig: FrontendAppConfig,
                   Seq(
                     "heading" -> JsString(messagesApi.preferred(Seq(Lang("en")))("add-business-address.edit.heading"))
                   )
+                ),
+                "appLevelLabels" -> JsObject(
+                  Seq(
+                    "navTitle" -> JsString(headerEnglish),
+                  )
                 )
               )
             ),
             "cy" -> JsObject(
               Seq(
-                "appLevelLabels" -> JsObject(
-                  Seq(
-                    "navTitle" -> JsString(headerWelsh)
-                  )
-                ),
                 "selectPageLabels" -> JsObject(
                   Seq(
                     "heading" -> JsString(messagesApi.preferred(Seq(Lang("cy")))("add-business-address.select.heading"))
@@ -148,6 +143,11 @@ class AddressLookupConnector @Inject()(val appConfig: FrontendAppConfig,
                 "editPageLabels" -> JsObject(
                   Seq(
                     "heading" -> JsString(messagesApi.preferred(Seq(Lang("cy")))("add-business-address.edit.heading"))
+                  )
+                ),
+                "appLevelLabels" -> JsObject(
+                  Seq(
+                    "navTitle" -> JsString(headerWelsh)
                   )
                 )
               )
