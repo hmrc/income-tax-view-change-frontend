@@ -20,7 +20,7 @@ import java.time.{LocalDate, Month}
 import testConstants.BaseTestConstants._
 import testConstants.NextUpdatesTestConstants.{fakeNextUpdatesModel, openObligation, overdueObligation}
 import models.core._
-import models.incomeSourceDetails.BusinessDetailsModel
+import models.incomeSourceDetails.{BusinessDetailsModel, LatencyDetails}
 import models.incomeSourceDetails.viewmodels.{BusinessDetailsViewModel, CeaseBusinessDetailsViewModel, ViewBusinessDetailsViewModel}
 import models.incomeSourceDetails.viewmodels.{BusinessDetailsViewModel, CeasedBusinessDetailsViewModel}
 import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, ObligationsModel}
@@ -65,6 +65,12 @@ object BusinessDetailsTestConstants {
   val testStartDateOption2: Option[LocalDate] = Some(LocalDate.parse("2021-01-01"))
   val testEndDate = LocalDate.parse("2023-01-01")
   val testUnknownValue = "Unknown"
+  val testLatencyDetails = LatencyDetails(
+    latencyEndDate = LocalDate.of(year2019, 1, 1),
+    taxYear1 = year2018.toString,
+    latencyIndicator1 = "A",
+    taxYear2 = year2019.toString,
+    latencyIndicator2 = "Q")
 
 
   val business1 = BusinessDetailsModel(
@@ -73,7 +79,8 @@ object BusinessDetailsTestConstants {
     tradingName = Some(testTradeName),
     firstAccountingPeriodEndDate = Some(LocalDate.of(year2018, Month.APRIL, 5)),
     tradingStartDate = Some(testStartDate),
-    cessation = None
+    cessation = None,
+    latencyDetails = Some(testLatencyDetails)
   )
 
   val soleTraderBusiness = BusinessDetailsModel(
@@ -82,7 +89,8 @@ object BusinessDetailsTestConstants {
     tradingName = Some(testTradeName),
     firstAccountingPeriodEndDate = Some(LocalDate.of(year2018, Month.APRIL, 5)),
     tradingStartDate = Some(testStartDate),
-    cessation = None
+    cessation = None,
+    latencyDetails = None
   )
 
   val soleTraderBusiness2 = BusinessDetailsModel(
@@ -91,7 +99,8 @@ object BusinessDetailsTestConstants {
     tradingName = Some(testTradeName),
     firstAccountingPeriodEndDate = Some(LocalDate.of(year2018, Month.APRIL, 5)),
     tradingStartDate = Some(testStartDate3),
-    cessation = None
+    cessation = None,
+    latencyDetails = None
   )
 
   val soleTraderBusinessNoTradingName = BusinessDetailsModel(
@@ -100,7 +109,8 @@ object BusinessDetailsTestConstants {
     tradingName = None,
     firstAccountingPeriodEndDate = Some(LocalDate.of(year2018, Month.APRIL, 5)),
     tradingStartDate = Some(testStartDate),
-    cessation = None
+    cessation = None,
+    latencyDetails = None
   )
 
   val soleTraderBusinessNoTradingStartDate = BusinessDetailsModel(
@@ -109,7 +119,8 @@ object BusinessDetailsTestConstants {
     tradingName = Some(testTradeName),
     firstAccountingPeriodEndDate = Some(LocalDate.of(year2018, Month.APRIL, 5)),
     tradingStartDate = None,
-    cessation = None
+    cessation = None,
+    latencyDetails = None
   )
 
   val businessDetailsViewModel = BusinessDetailsViewModel(
@@ -151,7 +162,8 @@ object BusinessDetailsTestConstants {
     tradingName = Some(testTradeName2),
     firstAccountingPeriodEndDate = None,
     cessation = None,
-    tradingStartDate = Some(testStartDate2)
+    tradingStartDate = Some(testStartDate2),
+    latencyDetails = None
   )
 
   val business2018 = BusinessDetailsModel(
@@ -160,7 +172,8 @@ object BusinessDetailsTestConstants {
     tradingName = Some(testTradeName),
     firstAccountingPeriodEndDate = None,
     tradingStartDate = Some(testStartDate),
-    cessation = None
+    cessation = None,
+    latencyDetails = None
   )
 
   val business2019 = BusinessDetailsModel(
@@ -169,7 +182,8 @@ object BusinessDetailsTestConstants {
     tradingName = Some(testTradeName),
     firstAccountingPeriodEndDate = None,
     cessation = None,
-    tradingStartDate = Some(testStartDate)
+    tradingStartDate = Some(testStartDate),
+    latencyDetails = None
   )
 
   val businessNotValidObligationType = fakeNextUpdatesModel(NextUpdateModel(
@@ -187,7 +201,8 @@ object BusinessDetailsTestConstants {
     tradingName = Some(testTradeName),
     tradingStartDate = Some(testStartDate),
     firstAccountingPeriodEndDate = Some(getCurrentTaxYearEnd.minusYears(1)),
-    cessation = None
+    cessation = None,
+    latencyDetails = None
   )
 
   val ceasedBusiness = BusinessDetailsModel(
@@ -196,7 +211,8 @@ object BusinessDetailsTestConstants {
     tradingName = Some(testTradeName),
     firstAccountingPeriodEndDate = None,
     tradingStartDate = Some(testStartDate),
-    cessation = Some(testCessation)
+    cessation = Some(testCessation),
+    latencyDetails = None
   )
 
   val ceasedBusiness2 = BusinessDetailsModel(
@@ -205,7 +221,8 @@ object BusinessDetailsTestConstants {
     tradingName = Some(testTradeName2),
     firstAccountingPeriodEndDate = None,
     tradingStartDate = Some(testStartDate2),
-    cessation = Some(testCessation2)
+    cessation = Some(testCessation2),
+    latencyDetails = None
   )
 
   val oldUseralignedBusiness = BusinessDetailsModel(
@@ -214,7 +231,8 @@ object BusinessDetailsTestConstants {
     tradingName = Some(testTradeName),
     firstAccountingPeriodEndDate = Some(getCurrentTaxYearEnd.minusYears(1)),
     tradingStartDate = Some(testStartDate),
-    cessation = None
+    cessation = None,
+    latencyDetails = None
   )
 
   val businessErrorModel = ErrorModel(testErrorStatus, testErrorMessage)

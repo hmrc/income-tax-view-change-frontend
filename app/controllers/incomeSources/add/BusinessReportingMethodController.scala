@@ -32,6 +32,7 @@ import views.html.incomeSources.add.BusinessReportingMethod
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.Failure
 
 class BusinessReportingMethodController @Inject()(val authenticate: AuthenticationPredicate,
                                                   val authorisedFunctions: FrontendAuthorisedFunctions,
@@ -51,8 +52,8 @@ class BusinessReportingMethodController @Inject()(val authenticate: Authenticati
                                                  )
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
-  def handleRequest(isAgent: Boolean)
-                   (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
+  private def handleRequest(isAgent: Boolean, incomeSourceId: String)
+                           (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
 
     val incomeSourcesEnabled: Boolean = isEnabled(IncomeSources)
     val backUrl: String = if (isAgent) controllers.incomeSources.add.routes.CheckBusinessDetailsController.showAgent().url else
@@ -60,14 +61,29 @@ class BusinessReportingMethodController @Inject()(val authenticate: Authenticati
     val postAction: Call = if (isAgent) controllers.incomeSources.add.routes.BusinessReportingMethodController.submitAgent() else
       controllers.incomeSources.add.routes.BusinessReportingMethodController.submit()
     val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
+    val redirectUrl: Call = if (isAgent) routes.BusinessAddedController.show() else routes.BusinessAddedController.showAgent()
 
     if (incomeSourcesEnabled) {
-      Future.successful(Ok(view(
-        addBusinessReportingMethodForm = AddBusinessReportingMethodForm.form,
-        businessReportingViewModel = businessReportingMethodService.getBusinessReportingMethodDetails(),
-        postAction = postAction,
-        isAgent = isAgent,
-        backUrl = backUrl)(user, messages)))
+      businessReportingMethodService.checkITSAStatusCurrentYear.map {
+        case true =>
+
+          Ok(view(
+            addBusinessReportingMethodForm = AddBusinessReportingMethodForm.form,
+            businessReportingViewModel = businessReportingMethodService.getBusinessReportingMethodDetails(),
+            postAction = postAction,
+            isAgent = isAgent,
+            backUrl = backUrl)(user, messages))
+        case false => Redirect(redirectUrl)
+
+      }.recover(
+        err => {
+          Logger("application").error(s"${if (isAgent) "[Agent]"}" +
+            s"Error getting ITSA Status : $err")
+          errorHandler.showInternalServerError()
+        }
+      )
+
+
     } else {
       Future.successful(Ok(customNotFoundErrorView()(user, messages)))
     } recover {
@@ -78,7 +94,7 @@ class BusinessReportingMethodController @Inject()(val authenticate: Authenticati
     }
   }
 
-  def handleSubmitRequest(isAgent: Boolean)(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] = {
+  private def handleSubmitRequest(isAgent: Boolean, incomeSourceId: String)(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] = {
     val incomeSourcesEnabled: Boolean = isEnabled(IncomeSources)
     val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
     if (incomeSourcesEnabled) {
@@ -88,9 +104,9 @@ class BusinessReportingMethodController @Inject()(val authenticate: Authenticati
           if (updatedForm.hasErrors) {
             Future.successful(BadRequest(view(
               addBusinessReportingMethodForm = updatedForm,
-              businessReportingViewModel = businessReportingMethodService.getBusinessReportingMethodDetails(),
+              businessReportingViewModel = businessReportingMethodService.getBusinessReportingMethodDetails(???),
               postAction = controllers.incomeSources.add.routes.BusinessReportingMethodController.submit(),
-              backUrl = controllers.incomeSources.add.routes.BusinessReportingMethodController.show().url,
+              backUrl = controllers.incomeSources.add.routes.CheckBusinessDetailsController.show().url,
               isAgent = false)))
           } else {
             businessReportingMethodService.updateIncomeSourceTaxYearSpecific(???, ???, updatedForm.get)
@@ -112,17 +128,17 @@ class BusinessReportingMethodController @Inject()(val authenticate: Authenticati
 
   }
 
-  def show(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+  def show(incomeSourceId: String): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
-    implicit user => handleRequest(isAgent = false)
+    implicit user => handleRequest(isAgent = false, incomeSourceId = incomeSourceId)
   }
 
-  def showAgent(): Action[AnyContent] = Authenticated.async {
+  def showAgent(incomeSourceId: String): Action[AnyContent] = Authenticated.async {
     implicit request =>
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
           implicit mtdItUser =>
-            handleRequest(isAgent = true)
+            handleRequest(isAgent = true, incomeSourceId = incomeSourceId)
         }
   }
 

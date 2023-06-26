@@ -14,9 +14,14 @@
  * limitations under the License.
  */
 
-package models.incomeSourceDetails.viewmodels
+package models.incomeSourceDetails
 
-case class BusinessReportingMethodViewModel(taxYear1: Option[Int] = None,
-                                            latencyIndicator1: Option[String] = None,
-                                            taxYear2: Option[Int] = None,
-                                            latencyIndicator2: Option[String] = None)
+import play.api.libs.json.{Format, Json}
+
+import java.time.LocalDate
+
+case class LatencyDetails(latencyEndDate: LocalDate, taxYear1: String, latencyIndicator1: String, taxYear2: String, latencyIndicator2: String)
+
+object LatencyDetails {
+  implicit val format: Format[LatencyDetails] = Json.format[LatencyDetails]
+}

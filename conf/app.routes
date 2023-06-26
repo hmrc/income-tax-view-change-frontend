@@ -244,8 +244,8 @@ GET          /income-sources/manage/your-details                          contro
 GET          /agents/income-sources/manage/your-details                   controllers.incomeSources.manage.ManageSelfEmploymentSourceController.showAgent()
 
 # Income Sources - Reporting Method
-GET          /income-sources/add/business-reporting-method                controllers.incomeSources.add.BusinessReportingMethodController.show()
-GET          /agents/income-sources/add/business-reporting-method         controllers.incomeSources.add.BusinessReportingMethodController.showAgent()
+GET          /income-sources/add/business-reporting-method                controllers.incomeSources.add.BusinessReportingMethodController.show(incomeSourceId:String)
+GET          /agents/income-sources/add/business-reporting-method         controllers.incomeSources.add.BusinessReportingMethodController.showAgent(incomeSourceId:String)
 POST         /income-sources/add/business-reporting-method                controllers.incomeSources.add.BusinessReportingMethodController.submit()
 POST         /agents/income-sources/add/business-reporting-method         controllers.incomeSources.add.BusinessReportingMethodController.submitAgent()
 
