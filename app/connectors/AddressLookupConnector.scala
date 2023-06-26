@@ -25,12 +25,15 @@ import play.api.mvc.{AnyContent, RequestHeader}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 import controllers.routes
 import play.api.Logger
+import play.api.i18n.{Lang, MessagesApi}
 import play.api.libs.json._
+
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class AddressLookupConnector @Inject()(val appConfig: FrontendAppConfig,
-                                       http: HttpClient)(implicit ec: ExecutionContext) extends FeatureSwitching {
+                                       http: HttpClient,
+                                       val messagesApi: MessagesApi)(implicit ec: ExecutionContext) extends FeatureSwitching {
 
   val baseUrl: String = appConfig.addressLookupService
 
@@ -81,6 +84,58 @@ class AddressLookupConnector @Inject()(val appConfig: FrontendAppConfig,
             "deskProServiceName" -> JsString("cds-reimbursement-claim"),
             "showPhaseBanner" -> JsBoolean(true),
             "ukMode" -> JsBoolean(true)
+          )
+        ),
+        "labels" -> JsObject(
+          Seq(
+            "en" -> JsObject(
+              Seq(
+                "selectPageLabels" -> JsObject(
+                  Seq(
+                    "heading" -> JsString(messagesApi.preferred(Seq(Lang("en")))("add-business-address.select.heading"))
+                  )
+                ),
+                "lookupPageLabels" -> JsObject(
+                  Seq(
+                    "heading" -> JsString(messagesApi.preferred(Seq(Lang("en")))("add-business-address.lookup.heading"))
+                  )
+                ),
+                "confirmPageLabels" -> JsObject(
+                  Seq(
+                    "heading" -> JsString(messagesApi.preferred(Seq(Lang("en")))("add-business-address.confirm.heading"))
+                  )
+                ),
+                "editPageLabels" -> JsObject(
+                  Seq(
+                    "heading" -> JsString(messagesApi.preferred(Seq(Lang("en")))("add-business-address.edit.heading"))
+                  )
+                )
+              )
+            ),
+            "cy" -> JsObject(
+              Seq(
+                "selectPageLabels" -> JsObject(
+                  Seq(
+                    "heading" -> JsString(messagesApi.preferred(Seq(Lang("cy")))("add-business-address.select.heading"))
+                  )
+                ),
+                "lookupPageLabels" -> JsObject(
+                  Seq(
+                    "heading" -> JsString(messagesApi.preferred(Seq(Lang("cy")))("add-business-address.lookup.heading"))
+                  )
+                ),
+                "confirmPageLabels" -> JsObject(
+                  Seq(
+                    "heading" -> JsString(messagesApi.preferred(Seq(Lang("cy")))("add-business-address.select.heading"))
+                  )
+                ),
+                "editPageLabels" -> JsObject(
+                  Seq(
+                    "heading" -> JsString(messagesApi.preferred(Seq(Lang("cy")))("add-business-address.edit.heading"))
+                  )
+                )
+              )
+            )
           )
         )
       )
