@@ -18,7 +18,7 @@ package services
 
 
 import connectors.IncomeSourceConnector
-import models.addIncomeSource.{AddIncomeSourceResponse, AddressDetails, BusinessDetails}
+import models.addIncomeSource.{AddIncomeSourceResponse, AddressDetails, BusinessDetails, IncomeSource}
 import models.incomeSourceDetails.viewmodels.CheckBusinessDetailsViewModel
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -29,7 +29,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class CreateBusinessDetailsService @Inject()(val incomeSourceConnector: IncomeSourceConnector) {
 
 def createBusinessDetails(mtditid: String, viewModel: CheckBusinessDetailsViewModel)
-                         (implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Either[Throwable, AddIncomeSourceResponse]] = {
+                         (implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Either[Throwable, List[IncomeSource]]] = {
   val businessDetails =
     BusinessDetails(
       accountingPeriodStartDate = "",
@@ -49,12 +49,15 @@ def createBusinessDetails(mtditid: String, viewModel: CheckBusinessDetailsViewMo
       cessationDate = None,
       cessationReason = None
     )
-  incomeSourceConnector.create(mtditid, businessDetails) match {
-//    case success: AddIncomeSourceSuccessResponse =>
-//      success.map(Right(_))
-    case _ =>
-      Future.successful(Left(new Error(("Failed to created incomeSources"))))
+  for {
+    res <- incomeSourceConnector.create(mtditid, businessDetails)
+  } yield res match {
+    case Right(success) =>
+      Right(success)
+    case Left(ex) =>
+      Left(new Error(("Failed to created incomeSources: $ex")))
   }
+
 }
 
 }
