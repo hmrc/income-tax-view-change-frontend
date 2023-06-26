@@ -1189,6 +1189,12 @@ add-business-trade.form.error.long          = Mae’n rhaid i fasnach y busnes f
 add-business-trade.form.error.invalid       = Ni all masnach y busnes gynnwys !, "" , * na ?
 add-business-trade.form.error.same-name     = Ni allwch nodi’r un peth ar gyfer masnach busnes ac enw’r busnes
 
+## Add business address page
+add-business-address.select.heading         = Dewiswch gyfeiriad y busnes
+add-business-address.lookup.heading         = Beth yw cyfeiriad eich busnes?
+add-business-address.confirm.heading        = Cadarnhewch gyfeiriad y busnes
+add-business-address.edit.heading           = Nodwch gyfeiriad eich busnes
+
 shortMonth.1 = Ion
 shortMonth.2 = Chwe
 shortMonth.3 = Maw
@@ -1304,6 +1310,19 @@ add-business-start-date.form.error.emptyDateField    = Nodwch y dyddiad y dechre
 add-business-start-date.error.future                 = Mae’n rhaid i’r dyddiad y dechreuodd eich busnes eiddo tramor fod cyn {0}
 add-business-start-date.error.error.required         = Nodwch y dyddiad y dechreuodd eich busnes fasnachu
 add-business-start-date.error.invalid                = Mae’n rhaid i’r dyddiad y dechreuodd eich busnes fasnachu fod yn ddyddiad go iawn
+
+# add business accounting method
+incomeSources.add.business-accounting-method.heading                 = Pa ddull cyfrifyddu yr ydych yn ei ddefnyddio ar gyfer eich busnes unig fasnachwr?
+incomeSources.add.business-accounting-method.hint                    = Os oes gennych fwy nag un busnes unig fasnachwr, mae angen i’ch holl, fusnesau gael yr un dull cyfrifddu.
+incomeSources.add.business-accounting-method.example                 = Dangoswch enghraifft i mi
+incomeSources.add.business-accounting-method.radio-1-title           = Cyfrifyddu ar sail arian parod
+incomeSources.add.business-accounting-method.radio-1-hint            = Rydych yn cofnodi nail ai ar y dyddiad yr ydych yn cael taliad gan eich tenantiaid i mewn i’ch cyfrif banc, neu ar y dyddiad yr ydych yn talu bil, er enghraifft ar gyfer atgyweirio a chynnal a chadow. Mae’r rhan fwyaf o fusnesau bach yn defnyddio’r dull hwn.
+incomeSources.add.business-accounting-method.radio-2-title           = Cyfrifyddu traddodiadol
+incomeSources.add.business-accounting-method.radio-2-hint            = Rydych yn cofnodi ar y dyddiad yr ydych yn anfon anfoneb at eich tenantiaid, neu’n gofyn am daliad ganddynt, hyd yn oed os nad ydych yn cael nac yn talu unrhyw arian. Rydych yn cofnodi ar y dyddiad yr ydych yn cael anfoneb ar gyfer atgyweirio neu gynnal a chadw. Mae hwn hefyd yn cael ei alw yn ‘cyfrifyddu croniadau’ neu ‘cyfrifyddu traddodiadol’.
+incomeSources.add.business-accounting-method.drop-down-text          = Gwnaethoch greu anfoneb i rywun ym mis Mawrth 2017, ond ni chawsoch yr arian tan fis Mai 2017. Bydd yn rhaid i chi ddefnyddio dull cyfrifyddu penodol wrth roi gwybod i CThEF bod yr incwm hwn wedi dod i’ch llaw, a hynny’n dibynnu ar y dyddiadau canlynol:
+incomeSources.add.business-accounting-method.drop-down-text-bp-1     = os daeth yr incwm i law ym mis Mai 2017, dylech ddefnyddio ‘cyfrifyddu ar sail arian parod’
+incomeSources.add.business-accounting-method.drop-down-text-bp-2     = os daeth yr incwm i law ym mis Mawrth 2017, dylech ddefnyddio ‘cyfrifyddu traddodiadol’
+incomeSources.add.business-accounting-method.no-selection            = Nodwch y dull cyfrifyddu yr ydych yn ei ddefnyddio ar gyfer eich busnes unig fasnachwr
 
 # add Business start date check
 add-business-start-date-check.heading                = A yw’r dyddiad hwn yn gywir?
