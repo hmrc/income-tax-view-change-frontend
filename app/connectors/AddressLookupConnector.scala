@@ -158,7 +158,7 @@ class AddressLookupConnector @Inject()(val appConfig: FrontendAppConfig,
 
   def getAddressDetails(id: String)(implicit hc: HeaderCarrier): Future[GetAddressLookupDetailsResponse] = {
     val url = getAddressDetailsUrl(id)
-    Logger("application").info(s"[AddressLookupConnector] - getAddressDetails ULR: $url")
+    Logger("application").info(s"[AddressLookupConnector] - getAddressDetails URL: '$url'")
     http.GET[GetAddressLookupDetailsResponse](url).map { res =>
       Logger("application").info(s"[AddressLookupConnector] - Response: $res")
       res

@@ -23,7 +23,7 @@ import models.incomeSourceDetails.viewmodels.httpparser.PostAddressLookupHttpPar
 import models.incomeSourceDetails.viewmodels.httpparser.GetAddressLookupDetailsHttpParser.UnexpectedGetStatusFailure
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{mock, when}
+import org.mockito.Mockito.{mock, reset, when}
 import org.mockito.stubbing.OngoingStubbing
 import play.api.libs.json.{JsObject, JsString, JsValue}
 import org.scalactic.{Fail, Pass}
@@ -46,8 +46,6 @@ class AddressLookupConnectorSpec extends TestSupport with FeatureSwitching with 
 
   val baseUrl: String = appConfig.addressLookupService
   override def messagesApi: MessagesApi = inject[MessagesApi]
-  val testBusinessAddressModel: BusinessAddressModel = BusinessAddressModel("auditRef", Address(Seq("Line 1", "Line 2"), Some("AA1 1AA")))
-
 
   object TestAddressLookupConnector extends AddressLookupConnector(appConfig, mockHttpGet, messagesApi)
 
@@ -77,6 +75,7 @@ class AddressLookupConnectorSpec extends TestSupport with FeatureSwitching with 
         "location returned from the lookup-service (individual)" in {
           disableAllSwitches()
           enable(IncomeSources)
+          beforeEach()
 
           setupMockHttpPost(TestAddressLookupConnector.addressLookupInitializeUrl, addressJson(individualContinueUrl, individualFeedbackUrl))(HttpResponse(status = ACCEPTED,
             json = JsString(""), headers = Map("Location" -> Seq("Sample location"))))
@@ -90,6 +89,7 @@ class AddressLookupConnectorSpec extends TestSupport with FeatureSwitching with 
         "location returned from lookup-service (agent)" in { //this is the only specific agent test, just to test that everything works with both possible json payloads
           disableAllSwitches()
           enable(IncomeSources)
+          beforeEach()
 
           setupMockHttpPost(TestAddressLookupConnector.addressLookupInitializeUrl, addressJson(agentContinueUrl, agentFeedbackUrl))(HttpResponse(status = ACCEPTED,
             json = JsString(""), headers = Map("Location" -> Seq("Sample location"))))
@@ -106,6 +106,7 @@ class AddressLookupConnectorSpec extends TestSupport with FeatureSwitching with 
         "non-standard status returned from lookup-service" in {
           disableAllSwitches()
           enable(IncomeSources)
+          beforeEach()
 
           setupMockHttpPost(TestAddressLookupConnector.addressLookupInitializeUrl, addressJson(individualContinueUrl, individualFeedbackUrl))(HttpResponse(status = OK,
             json = JsString(""), headers = Map.empty))
@@ -120,19 +121,22 @@ class AddressLookupConnectorSpec extends TestSupport with FeatureSwitching with 
     }
 
 
-    /*"getAddressDetails" should {
+    "getAddressDetails" should {
       "return the address details" when {
         "called by service" in {
           disableAllSwitches()
           enable(IncomeSources)
-          val testValidJson: JsObject = Json.obj("auditRef" -> "1",
+          beforeEach()
+          reset(mockHttpGet)
+
+          val testValidJson: JsValue = Json.obj("auditRef" -> "1",
             "address" -> Json.obj("lines" -> Seq("line1", "line2", "line3"), "postcode" -> Some("TF3 4NT")))
 
           val businessAddressModel: BusinessAddressModel = BusinessAddressModel(auditRef = "1",
             Address(lines = Seq("line1", "line2", "line3"), postcode = Some("TF3 4NT")))
 
           setupMockHttpGet(TestAddressLookupConnector.getAddressDetailsUrl("1"))(HttpResponse(status = OK,
-            json = testValidJson, headers = Map("Content-Type" -> Seq("List(application/json)"))))
+            json = testValidJson, headers = Map.empty))
 
           val result = TestAddressLookupConnector.getAddressDetails("123") //result set to null
           result map {
@@ -142,7 +146,7 @@ class AddressLookupConnectorSpec extends TestSupport with FeatureSwitching with 
           }
         }
       }
-      "return None" when {
+      /*"return None" when {
         "no address details with specified id exist" in {
           disableAllSwitches()
           enable(IncomeSources)
@@ -158,8 +162,6 @@ class AddressLookupConnectorSpec extends TestSupport with FeatureSwitching with 
           }
         }
       }
-    }
-
 
 
       "return an error" when {
@@ -176,19 +178,10 @@ class AddressLookupConnectorSpec extends TestSupport with FeatureSwitching with 
             case Left(UnexpectedGetStatusFailure(status)) => status shouldBe IM_A_TEAPOT
             case Right(None) => Fail("Tried to check for model")
             case Right(Some(_)) => Fail("Model found where model should not exist")
-
-          setupMockHttpPost(TestAddressLookupConnector.addressLookupInitializeUrl, addressJson(individualContinueUrl, individualFeedbackUrl))(HttpResponse(status = OK,
-            json = JsString(""), headers = Map.empty))
-
-          val result = TestAddressLookupConnector.initialiseAddressLookup(isAgent = false)
-          result map {
-            case Left(UnexpectedPostStatusFailure(status)) => status shouldBe OK
-            case Right(_) => Fail("error should be returned")
-
           }
         }
-      }
-    }*/
+      }*/
+    }
 
     lazy val individualContinueUrl: String = routes.AddBusinessAddressController.submit(None).url
     lazy val agentContinueUrl: String = routes.AddBusinessAddressController.agentSubmit(None).url
