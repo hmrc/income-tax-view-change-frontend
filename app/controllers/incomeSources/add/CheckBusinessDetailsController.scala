@@ -23,6 +23,8 @@ import controllers.agent.predicates.ClientConfirmedController
 import controllers.agent.utils.SessionKeys
 import controllers.agent.utils.SessionKeys.businessAccountingMethod
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
+import forms.incomeSources.add.CheckUKPropertyStartDateForm
+import forms.utils.SessionKeys
 import forms.utils.SessionKeys.{addBusinessStartDate, businessName}
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import models.incomeSourceDetails.viewmodels.CheckBusinessDetailsViewModel
@@ -116,7 +118,6 @@ class CheckBusinessDetailsController @Inject()(val checkBusinessDetails: CheckBu
     }
   }
 
-
   def handleRequest(sources: IncomeSourceDetailsModel, isAgent: Boolean, backUrl: String)
                    (implicit user: MtdItUser[_]): Future[Result] = {
 
@@ -156,16 +157,34 @@ class CheckBusinessDetailsController @Inject()(val checkBusinessDetails: CheckBu
             s"[CheckBusinessDetailsController][handleRequest] - Unable to create income source: ${ex.getMessage}")
             itvcErrorHandler.showInternalServerError()
 
-          case Right(_) => Redirect(controllers.routes.HomeController.show())
-
+          case Right(_) => Redirect(controllers.incomeSources.add.routes.CheckBusinessDetailsController.changeBusinessName())
         }
         case None => Logger("application").error(
           s"[CheckBusinessDetailsController][submit] - Error: Unable to build view model on submit")
           Future.successful(itvcErrorHandler.showInternalServerError())
-
       }
-
   }
+
+
+//  def submitAgent: Action[AnyContent] = Authenticated.async {
+//    implicit request =>
+//      implicit user =>
+//          implicit mtdItUser =>
+//            getDetails(user).toOption match {
+//              case Some(viewModel: CheckBusinessDetailsViewModel) =>
+//                businessDetailsService.createBusinessDetails(viewModel) map {
+//                  case Left(ex) => Logger("application").error(
+//                    s"[CheckBusinessDetailsController][handleRequest] - Unable to create income source: ${ex.getMessage}")
+//                    itvcErrorHandler.showInternalServerError()
+//
+//                  case Right(_) => Redirect(controllers.incomeSources.add.routes.CheckBusinessDetailsController.changeBusinessName())
+//                }
+//              case None => Logger("application").error(
+//                s"[CheckBusinessDetailsController][submit] - Error: Unable to build view model on submit")
+//                Future.successful(itvcErrorHandler.showInternalServerError())
+//            }
+//        }
+//  }
 
   def changeBusinessName(): Action[AnyContent] = Action {
     Ok("Change Business Name WIP")
@@ -205,5 +224,13 @@ class CheckBusinessDetailsController @Inject()(val checkBusinessDetails: CheckBu
 
   def changeBusinessAccountingMethodAgent(): Action[AnyContent] = Action {
     Ok("Agent Change Business Accounting Method  WIP")
+  }
+
+  def changeBusinessReportingMethod(): Action[AnyContent] = Action {
+    Ok("Change Business Reporting Method WIP")
+  }
+
+  def changeBusinessReportingMethodAgent(): Action[AnyContent] = Action {
+    Ok("Agent Change Business Reporting Method WIP")
   }
 }

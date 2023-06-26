@@ -115,7 +115,7 @@ controllers.incomeSources.add.routes.CheckBusinessDetailsController.changeBusine
             </div>
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">@getMessage("business-start-date")</dt>
-                <dd class="govuk-summary-list__value">@{sources.businessStartDate.get}</dd>
+                <dd class="govuk-summary-list__value" id="business-date-value">@{sources.businessStartDate.get}</dd>
                 <dd class="govuk-summary-list__actions govuk-!-text-align-right govuk-!-margin-0">
                     <a class="govuk-link"  href=@changeBusinessStartDateURL>
                         @getMessage("change-details-link")
@@ -124,7 +124,7 @@ controllers.incomeSources.add.routes.CheckBusinessDetailsController.changeBusine
             </div>
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">@getMessage("business-description")</dt>
-                <dd class="govuk-summary-list__value">@{sources.businessTrade.get}</dd>
+                <dd class="govuk-summary-list__value" id="business-trade-value">@{sources.businessTrade.get}</dd>
                 <dd class="govuk-summary-list__actions govuk-!-text-align-right govuk-!-margin-0">
                     <a class="govuk-link"  href=@changeBusinessTradeURL>
                         @getMessage("change-details-link")
@@ -133,7 +133,7 @@ controllers.incomeSources.add.routes.CheckBusinessDetailsController.changeBusine
             </div>
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">@getMessage("business-address")</dt>
-                <dd class="govuk-summary-list__value">@{sources.businessAddressLine1.get + " " + sources.businessPostalCode.get}</dd>
+                <dd class="govuk-summary-list__value" id="business-address-value">@{sources.businessAddressLine1.get + " " + sources.businessPostalCode.get}</dd>
                 <dd class="govuk-summary-list__actions govuk-!-text-align-right govuk-!-margin-0">
                     <a class="govuk-link"  href=@changeBusinessAddressURL>
                         @getMessage("change-details-link")
@@ -143,7 +143,7 @@ controllers.incomeSources.add.routes.CheckBusinessDetailsController.changeBusine
             @if(sources.businessAccountingMethod.nonEmpty){
                 <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key">@getMessage("accounting-method")</dt>
-                    <dd class="govuk-summary-list__value">@{sources.businessAccountingMethod.get}</dd>
+                    <dd class="govuk-summary-list__value" id="business-accounting-value">@{sources.businessAccountingMethod.get}</dd>
                     <dd class="govuk-summary-list__actions govuk-!-text-align-right govuk-!-margin-0">
                         <a class="govuk-link"  href=@changeBusinessAccountingMethodURL>
                             @getMessage("change-details-link")

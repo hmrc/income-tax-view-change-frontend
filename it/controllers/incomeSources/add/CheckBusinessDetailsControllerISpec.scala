@@ -18,7 +18,12 @@ class CheckBusinessDetailsControllerISpec extends ComponentSpecBase{
                                             addBusinessAddressLine1 -> "Test Road",
                                             addBusinessPostCode -> "B32 1PQ",
                                             addBusinessAccountingMethod -> "Quarterly")
-  val businessName: String = "Test Business"
+  val testBusinessName: String = "Test Business"
+  val testBusinessStartDate: String = "2022-01-01"
+  val testBusinessTrade: String = "Plumbing"
+  val testBusinessAddressLine1: String = "Test Road"
+  val testBusinessPostCode: String = "B32 1PQ"
+  val testBusinessAccountingMethod: String = "Quarterly"
   val continueButtonText: String = messagesAPI("check-business-details.confirm-button")
 
 
@@ -35,7 +40,11 @@ class CheckBusinessDetailsControllerISpec extends ComponentSpecBase{
         result should have(
           httpStatus(OK),
           pageTitleIndividual("check-business-details.heading"),
-          elementTextByID("business-name-value")(businessName),
+          elementTextByID("business-name-value")(testBusinessName),
+          elementTextByID("business-date-value")(testBusinessStartDate),
+          elementTextByID("business-trade-value")(testBusinessTrade),
+          elementTextByID("business-address-value")(testBusinessAddressLine1 + " " + testBusinessPostCode),
+          elementTextByID("business-accounting-value")(testBusinessAccountingMethod),
           elementTextByID("confirm-button")(continueButtonText)
         )
       }
