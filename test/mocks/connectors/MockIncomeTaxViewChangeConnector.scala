@@ -17,6 +17,7 @@
 package mocks.connectors
 
 import connectors.IncomeTaxViewChangeConnector
+import models.calculationList.CalculationListResponseModel
 import models.core.{Nino, NinoResponse}
 import models.financialDetails.{FinancialDetailsResponseModel, PaymentsResponse}
 import models.incomeSourceDetails.IncomeSourceDetailsResponse
@@ -113,6 +114,16 @@ trait MockIncomeTaxViewChangeConnector extends UnitSpec with BeforeAndAfterEach 
 
   def setupGetRepaymentHistoryByRepaymentIdError(nino: String, repaymentId: String)(response: RepaymentHistoryErrorModel): Unit = {
     when(mockIncomeTaxViewChangeConnector.getRepaymentHistoryByRepaymentId(Nino(ArgumentMatchers.eq(nino)), ArgumentMatchers.eq(repaymentId))(any()))
+      .thenReturn(Future.successful(response))
+  }
+
+  def setupGetLegacyCalculationList(nino: String, taxYear: String)(response: CalculationListResponseModel): Unit = {
+    when(mockIncomeTaxViewChangeConnector.getLegacyCalculationList(Nino(ArgumentMatchers.eq(nino)), ArgumentMatchers.eq(taxYear))(any()))
+      .thenReturn(Future.successful(response))
+  }
+
+  def setupGetCalculationList(nino: String, taxYearRange: String)(response: CalculationListResponseModel): Unit = {
+    when(mockIncomeTaxViewChangeConnector.getCalculationList(Nino(ArgumentMatchers.eq(nino)), ArgumentMatchers.eq(taxYearRange))(any()))
       .thenReturn(Future.successful(response))
   }
 }
