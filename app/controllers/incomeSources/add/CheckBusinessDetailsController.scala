@@ -16,51 +16,39 @@
 
 package controllers.incomeSources.add
 
-import auth.{FrontendAuthorisedFunctions, MtdItUser}
+import auth.FrontendAuthorisedFunctions
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
-import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
-import forms.utils.SessionKeys.addBusinessAccountingMethod
-import play.api.i18n.{I18nSupport, Messages}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import controllers.predicates._
+import play.api.i18n.I18nSupport
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.IncomeSourceDetailsService
-import uk.gov.hmrc.http.HeaderCarrier
 import views.html.errorPages.CustomNotFoundError
-import views.html.incomeSources.add.CheckBusinessDetails
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class CheckBusinessDetailsController @Inject()(val authenticate: AuthenticationPredicate,
-                                           val authorisedFunctions: FrontendAuthorisedFunctions,
-                                           val checkSessionTimeout: SessionTimeoutPredicate,
-                                           val incomeSourceDetailsService: IncomeSourceDetailsService,
-                                           val retrieveBtaNavBar: NavBarPredicate,
-                                           val retrieveIncomeSources: IncomeSourceDetailsPredicate,
-                                           val retrieveNino: NinoPredicate,
-                                           val view: CheckBusinessDetails,
-                                           val customNotFoundErrorView: CustomNotFoundError)
-                                          (implicit val appConfig: FrontendAppConfig,
-                                           mcc: MessagesControllerComponents,
-                                           val ec: ExecutionContext,
-                                           val itvcErrorHandler: ItvcErrorHandler,
-                                           val itvcErrorHandlerAgent: AgentItvcErrorHandler)
+                                               val authorisedFunctions: FrontendAuthorisedFunctions,
+                                               val checkSessionTimeout: SessionTimeoutPredicate,
+                                               val incomeSourceDetailsService: IncomeSourceDetailsService,
+                                               val retrieveBtaNavBar: NavBarPredicate,
+                                               val retrieveIncomeSources: IncomeSourceDetailsPredicate,
+                                               val retrieveNino: NinoPredicate,
+                                               val customNotFoundErrorView: CustomNotFoundError)
+                                              (implicit val appConfig: FrontendAppConfig,
+                                                      mcc: MessagesControllerComponents,
+                                                      val ec: ExecutionContext,
+                                                      val itvcErrorHandler: ItvcErrorHandler,
+                                                      val itvcErrorHandlerAgent: AgentItvcErrorHandler)
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
-  def handleRequest(isAgent: Boolean)
-                   (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
-    val businessAccountingMethod: String = user.session.get(addBusinessAccountingMethod).toString
-    Future.successful(Ok(view(businessAccountingMethod)))
-  }
-
-  def show(): Action[AnyContent] =
+  def show(origin: Option[String] = None): Action[AnyContent] =
     (checkSessionTimeout andThen authenticate andThen retrieveNino
       andThen retrieveIncomeSources).async {
       implicit user =>
-        handleRequest(
-          isAgent = false
-        )
+        Future.successful(NotImplemented)
     }
 
   def showAgent(): Action[AnyContent] = Authenticated.async {
@@ -68,10 +56,9 @@ class CheckBusinessDetailsController @Inject()(val authenticate: AuthenticationP
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
           implicit mtdItUser =>
-            handleRequest(
-              isAgent = true
-            )
+            Future.successful(NotImplemented)
         }
   }
 
 }
+
