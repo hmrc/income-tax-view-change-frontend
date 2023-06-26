@@ -16,18 +16,30 @@
 
 package controllers
 
-import auth.FrontendAuthorisedFunctions
+import auth.{FrontendAuthorisedFunctions, MtdItUser}
 import config.featureswitch.FeatureSwitching
-import config.{AgentItvcErrorHandler, FrontendAppConfig}
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
-import controllers.predicates.AuthenticationPredicate
+import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request, Result}
+import services.CreateBusinessDetailsService
 
 import javax.inject.Inject
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
+import models.incomeSourceDetails.viewmodels.CheckBusinessDetailsViewModel
+import uk.gov.hmrc.http.HeaderCarrier
+
+import java.time.LocalDate
+
 
 class AddBusinessCheckDetailsController @Inject()(val authenticate: AuthenticationPredicate,
+                                                  val createBusinessDetailsService: CreateBusinessDetailsService,
+                                                  val retrieveBtaNavBar: NavBarPredicate,
+                                                  val retrieveNino: NinoPredicate,
+                                                  val checkSessionTimeout: SessionTimeoutPredicate,
+                                                  val retrieveIncomeSources: IncomeSourceDetailsPredicate,
+                                                  val itvcErrorHandler: ItvcErrorHandler,
                                              val authorisedFunctions: FrontendAuthorisedFunctions)
                                             (implicit val appConfig: FrontendAppConfig,
                                              mcc: MessagesControllerComponents,
@@ -35,8 +47,36 @@ class AddBusinessCheckDetailsController @Inject()(val authenticate: Authenticati
                                              val itvcErrorHandlerAgent: AgentItvcErrorHandler)
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
-  def show(): Action[AnyContent] = Action {
-    Ok("")
+  def show(): Action[AnyContent]  = {
+    (checkSessionTimeout andThen authenticate andThen retrieveNino
+      andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
+      implicit user =>
+        handleRequest(
+          backUrl = "",
+          itvcErrorHandler = itvcErrorHandler,
+          isAgent = false
+        )
+    }
+  }
+
+  def handleRequest(isAgent: Boolean, itvcErrorHandler: ShowInternalServerError, backUrl: String)
+                   (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] = {
+    val viewModel = CheckBusinessDetailsViewModel(
+      businessName = Some("someBusinessName"),
+      businessStartDate = Some(LocalDate.of(2022, 11, 11)),
+      businessTrade = Some("someBusinessTrade"),
+      businessAddressLine1 = Some("businessAddressLine1"),
+      businessPostalCode = Some("SE15 4ER"),
+      businessAccountingMethod = None
+    )
+    for {
+      res <- createBusinessDetailsService.createBusinessDetails(user.mtditid, viewModel)
+    } yield res match {
+      case Right(_) =>
+        Ok("OK")
+      case Left(ex) =>
+        Ok(s"ERROR: ${ex}")
+    }
   }
 
   def showAgent(): Action[AnyContent] = Action {
