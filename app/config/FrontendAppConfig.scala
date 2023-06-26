@@ -46,10 +46,6 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   lazy val betaFeedbackUrl = s"/$baseUrl/feedback"
   lazy val agentBetaFeedbackUrl = s"/$agentBaseUrl/feedback"
 
-
-  //SA-API Config
-  lazy val saApiService: String = servicesConfig.baseUrl("self-assessment-api")
-
   //ITVC Protected Service
   lazy val itvcProtectedService: String = servicesConfig.baseUrl("income-tax-view-change")
 
