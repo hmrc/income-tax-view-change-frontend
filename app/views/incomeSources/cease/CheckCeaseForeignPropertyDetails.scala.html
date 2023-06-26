@@ -1,0 +1,87 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import views.html.layouts.unifiedLayout
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import _root_.implicits.ImplicitDateFormatterImpl
+@import java.time.LocalDate
+@import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcPageHeading
+@import uk.gov.hmrc.hmrcfrontend.views.viewmodels.pageheading.PageHeading
+
+
+@this(
+        mainTemplate: unifiedLayout,
+        hmrcPageHeading: HmrcPageHeading,
+        formWithCSRF: FormWithCSRF,
+        govukSummaryList: GovukSummaryList,
+        implicitDateFormatter: ImplicitDateFormatterImpl,
+        govukButton: GovukButton
+)
+
+@(
+        isAgent: Boolean,
+        backUrl: String,
+        changeUrl: String,
+        endDate: LocalDate
+)(implicit request: auth.MtdItUser[_], messages: Messages)
+
+@prefix = @{ "check-cease-foreign-property-details" }
+
+@getMessage(key: String, args: String*) = @{
+    messages(s"$prefix.$key", args: _*)
+}
+
+@postCall = @{
+    if(isAgent) controllers.incomeSources.cease.routes.CheckCeaseForeignPropertyDetailsController.submitAgent(endDate.toString)
+    else controllers.incomeSources.cease.routes.CheckCeaseForeignPropertyDetailsController.submit(endDate.toString)
+}
+
+@mainTemplate(
+    pageTitle = getMessage("heading"),
+    backUrl = Some(backUrl),
+    isAgent = isAgent,
+    btaNavPartial = request.btaNavPartial) {
+
+    @hmrcPageHeading(PageHeading(
+        text = getMessage("heading"),
+        headingClasses = Some("govuk-heading-l"),
+        section = Some(getMessage("caption")),
+        captionClasses = Some("govuk-caption-l")
+    ))
+
+    @govukSummaryList(SummaryList(
+        classes = "govuk-!-margin-bottom-9",
+        rows = Seq(SummaryListRow(
+            key = Key(Text(getMessage("summary-list.key"))),
+            value = Value(Text(implicitDateFormatter.longDate(endDate).toLongDate)),
+            actions = Some(Actions(
+                items = Seq(ActionItem(
+                    href = changeUrl,
+                    classes = "govuk-link govuk-body",
+                    content = HtmlContent(getMessage("summary-list.link")),
+                    attributes = Map("id" -> "change-link")
+                ))
+            ))
+        ))
+    ))
+
+    @formWithCSRF(postCall) {
+        @govukButton(Button(
+            content = Text(getMessage("button")),
+            attributes = Map("id" -> "continue-button")
+        ))
+    }
+}

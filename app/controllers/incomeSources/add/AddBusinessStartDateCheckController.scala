@@ -153,6 +153,8 @@ class AddBusinessStartDateCheckController @Inject()(authenticate: Authentication
             Future.successful(Redirect(backUrl).removingFromSession(SessionKeys.addBusinessStartDate))
           case Some(selection) if selection.contains(responseYes) =>
             val businessAccountingPeriodEndDate = dateService.getAccountingPeriodEndDate(businessStartDateAsLocalDate)
+            Logger("application").info(s"[AddBusinessStartDateCheckController][submit]: businessAccountingPeriodStartDate = $businessStartDate")
+            Logger("application").info(s"[AddBusinessStartDateCheckController][submit]: businessAccountingPeriodEndDate = $businessAccountingPeriodEndDate")
             Future.successful(Redirect(continueUrl)
               .addingToSession(SessionKeys.addBusinessAccountingPeriodStartDate -> businessStartDate,
                 SessionKeys.addBusinessAccountingPeriodEndDate -> businessAccountingPeriodEndDate))
@@ -192,6 +194,8 @@ class AddBusinessStartDateCheckController @Inject()(authenticate: Authentication
                   Future.successful(Redirect(backUrl).removingFromSession(SessionKeys.addBusinessStartDate))
                 case Some(selection) if selection.contains(responseYes) =>
                   val businessAccountingPeriodEndDate = dateService.getAccountingPeriodEndDate(businessStartDateAsLocalDate)
+                  Logger("application").info(s"[Agent][AddBusinessStartDateCheckController][submitAgent]: businessAccountingPeriodStartDate = $businessStartDate")
+                  Logger("application").info(s"[Agent][AddBusinessStartDateCheckController][submitAgent]: businessAccountingPeriodEndDate = $businessAccountingPeriodEndDate")
                   Future.successful(Redirect(continueUrl)
                     .addingToSession(SessionKeys.addBusinessAccountingPeriodStartDate -> businessStartDate,
                       SessionKeys.addBusinessAccountingPeriodEndDate -> businessAccountingPeriodEndDate))

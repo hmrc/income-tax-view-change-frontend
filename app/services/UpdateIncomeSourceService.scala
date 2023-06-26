@@ -20,7 +20,7 @@ import auth.MtdItUser
 import connectors.IncomeTaxViewChangeConnector
 import exceptions.MissingSessionKey
 import forms.utils.SessionKeys.ceaseUKPropertyEndDate
-import models.updateIncomeSource.UpdateIncomeSourceResponse
+import models.updateIncomeSource.{UpdateIncomeSourceResponse, UpdateIncomeSourceResponseModel}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import java.time.LocalDate
@@ -30,6 +30,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class UpdateIncomeSourceService @Inject()(connector: IncomeTaxViewChangeConnector) {
 
+  //TODO: We should use updateCessationDatev2 method
   def updateCessationDate(implicit request: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Exception,UpdateIncomeSourceResponse]] = {
     val nino: String = request.nino
     val incomeSourceId: Option[String] = request.incomeSources.properties.filter(_.isUkProperty).flatMap(_.incomeSourceId).headOption
@@ -43,5 +44,18 @@ class UpdateIncomeSourceService @Inject()(connector: IncomeTaxViewChangeConnecto
     }
 
   }
-
+  def updateCessationDatev2(nino: String, incomeSourceId: String, cessationDate: String)
+                           (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[UpdateIncomeSourceError, UpdateIncomeSourceSuccess]] = {
+    connector.updateCessationDate(
+      nino = nino,
+      incomeSourceId = incomeSourceId,
+      cessationDate = Some(LocalDate.parse(cessationDate))
+    ) map {
+      case _: UpdateIncomeSourceResponseModel => Right(UpdateIncomeSourceSuccess(incomeSourceId))
+      case _ => Left(UpdateIncomeSourceError("Failed to update cessationDate"))
+    }
+  }
 }
+
+case class UpdateIncomeSourceError(reason: String)
+case class UpdateIncomeSourceSuccess(incomeSourceId: String)

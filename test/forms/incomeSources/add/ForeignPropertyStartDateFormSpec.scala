@@ -148,9 +148,10 @@ class ForeignPropertyStartDateFormSpec extends TestSupport with ImplicitDateForm
 
     "bind with a future date" in {
       val now = dateService.getCurrentDate()
-      val day = now.plusDays(8).getDayOfMonth.toString
-      val month = now.getMonthValue.toString
-      val year = now.getYear.toString
+      val futureDate = now.plusDays(8)
+      val day = futureDate.getDayOfMonth.toString
+      val month = futureDate.getMonthValue.toString
+      val year = futureDate.getYear.toString
       val allowedTillDate = dateService.getCurrentDate().plusWeeks(1).toLongDate
       val formData = Map("foreign-property-start-date.day" -> day, "foreign-property-start-date.month" -> month, "foreign-property-start-date.year" -> year)
       val completedForm = form.bind(formData)
