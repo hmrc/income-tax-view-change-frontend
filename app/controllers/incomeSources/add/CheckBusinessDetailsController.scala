@@ -157,7 +157,7 @@ class CheckBusinessDetailsController @Inject()(val checkBusinessDetails: CheckBu
             s"[CheckBusinessDetailsController][handleRequest] - Unable to create income source: ${ex.getMessage}")
             itvcErrorHandler.showInternalServerError()
 
-          case Right(_) => Redirect(controllers.incomeSources.add.routes.CheckBusinessDetailsController.changeBusinessName())
+          case Right(_) => Redirect(controllers.incomeSources.add.routes.CheckBusinessDetailsController.changeBusinessReportingMethod())
         }
         case None => Logger("application").error(
           s"[CheckBusinessDetailsController][submit] - Error: Unable to build view model on submit")

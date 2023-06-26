@@ -211,6 +211,8 @@ GET          /income-sources/add/change-business-address-lookup             cont
 GET          /agents/income-sources/add/change-business-address-lookup      controllers.incomeSources.add.CheckBusinessDetailsController.changeBusinessAddressAgent()
 GET          /income-sources/add/change-business-accounting-method          controllers.incomeSources.add.CheckBusinessDetailsController.changeBusinessAccountingMethod()
 GET          /agents/income-sources/add/change-business-accounting-method   controllers.incomeSources.add.CheckBusinessDetailsController.changeBusinessAccountingMethodAgent()
+GET          /income-sources/add/error-business-not-added                   controllers.incomeSources.add.CheckBusinessDetailsController.changeBusinessReportingMethod()
+GET          /agents/income-sources/add/error-business-not-added            controllers.incomeSources.add.CheckBusinessDetailsController.changeBusinessReportingMethodAgent()
 
 
 # Income Sources - Cease
