@@ -16,7 +16,7 @@
 
 package models.incomeSourceDetails.viewmodels
 
-case class BusinessReportingMethodViewModel(taxYear1: Option[Int] = None,
+case class BusinessReportingMethodViewModel(taxYear1: Option[String] = None,
                                             latencyIndicator1: Option[String] = None,
-                                            taxYear2: Option[Int] = None,
+                                            taxYear2: Option[String] = None,
                                             latencyIndicator2: Option[String] = None)

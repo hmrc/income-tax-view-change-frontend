@@ -21,6 +21,9 @@ import config.FrontendAppConfig
 import config.featureswitch.{FeatureSwitching, TimeMachineAddYear}
 import connectors.IncomeTaxViewChangeConnector
 import forms.incomeSources.add.AddBusinessReportingMethodForm
+import forms.incomeSources.add.AddBusinessReportingMethodForm._
+import models.calculationList.{CalculationListErrorModel, CalculationListModel}
+import models.core.Nino
 import models.incomeSourceDetails.viewmodels.BusinessReportingMethodViewModel
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel, LatencyDetails}
 import models.itsaStatus.ITSAStatusResponseError
@@ -53,7 +56,21 @@ class BusinessReportingMethodService @Inject()(incomeTaxViewChangeConnector: Inc
     }
   }
 
-  def isTaxYearCrystallised(ty: Int): Boolean = true
+  def isTaxYearCrystallised(ty: Int)(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Boolean] = {
+    if (ty <= 2023) {
+      incomeTaxViewChangeConnector.getLegacyCalculationList(Nino(user.nino), ty.toString).map {
+        case res: CalculationListModel => ???
+        case err: CalculationListErrorModel => ???
+      }
+    } else {
+      val tyRange = s"${(ty - 1).toString.substring(2)}-${ty.toString.substring(2)}"
+      incomeTaxViewChangeConnector.getCalculationList(Nino(user.nino), tyRange).map {
+        case res: CalculationListModel => ???
+        case err: CalculationListErrorModel => ???
+      }
+    }
+
+  }
 
   def getBusinessReportingMethodDetails(incomeSourceId: String)(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Option[BusinessReportingMethodViewModel]] = {
     incomeTaxViewChangeConnector.getBusinessDetails(user.nino).flatMap {
@@ -62,11 +79,20 @@ class BusinessReportingMethodService @Inject()(incomeTaxViewChangeConnector: Inc
         latencyDetails match {
           case Some(x) =>
             val currentTaxYearEnd = dateService.getCurrentTaxYearEnd(isEnabled(TimeMachineAddYear))
-            Future.successful(x match {
-              case LatencyDetails(_, _, _, ty2, _) if ty2.toInt < currentTaxYearEnd => None
-              case LatencyDetails(_, ty1, _, ty2, ty2i) if isTaxYearCrystallised(ty1.toInt) => Some(BusinessReportingMethodViewModel(None, None, Some(ty2.toInt), Some(ty2i)))
-              case LatencyDetails(_, ty1, ty1i, ty2, ty2i) if !isTaxYearCrystallised(ty1.toInt) => Some(BusinessReportingMethodViewModel(Some(ty1.toInt), Some(ty1i), Some(ty2.toInt), Some(ty2i)))
-            })
+            x match {
+              case LatencyDetails(_, _, _, ty2, _) if ty2.toInt < currentTaxYearEnd => Future.successful(None)
+              case LatencyDetails(_, ty1, ty1i, ty2, ty2i) =>
+                isTaxYearCrystallised(ty1.toInt).flatMap {
+                  case true =>
+                    Future.successful(Some(BusinessReportingMethodViewModel(None, None, Some(ty2), Some(ty2i))))
+                  case false =>
+                    Future.successful(Some(BusinessReportingMethodViewModel(Some(ty1), Some(ty1i), Some(ty2), Some(ty2i))))
+                }.recoverWith {
+                  case err: Exception =>
+                    Logger("application").error(s"[BusinessReportingMethodService][getBusinessReportingMethodDetails] Failed to retrieve tax year crystallisation status : $err")
+                    Future.failed(err)
+                }
+            }
           case None =>
             Logger("application").info(s"[BusinessReportingMethodService][getBusinessReportingMethodDetails] latency details not available")
             Future.successful(None)
@@ -76,13 +102,28 @@ class BusinessReportingMethodService @Inject()(incomeTaxViewChangeConnector: Inc
         Future.failed(new InternalServerException("[BusinessReportingMethodService][getBusinessReportingMethodDetails] - Failed to retrieve IncomeSourceDetails"))
     }
   }
-  private def annualQuarterlyToBoolean(method:Option[String]):Option[Boolean] = method match {
+
+  private def annualQuarterlyToBoolean(method: Option[String]): Option[Boolean] = method match {
     case Some("A") => Some(true)
     case Some("Q") => Some(false)
     case _ => None
 
   }
-  def updateIncomeSourceTaxYearSpecific(nino: String, incomeSourceId: String, reportingMethod: AddBusinessReportingMethodForm)(implicit hc: HeaderCarrier, ec:ExecutionContext): Future[Option[UpdateIncomeSourceResponse]] = {
+
+  def updateIncomeSourceTaxYearSpecific(nino: String, incomeSourceId: String, formData: Map[String, String])(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[UpdateIncomeSourceResponse]] = {
+
+    val data = AddBusinessReportingMethodForm(
+      newTaxYear1ReportingMethod = formData.get(newTaxYear1ReportingMethod),
+      newTaxYear2ReportingMethod = formData.get(newTaxYear2ReportingMethod),
+      taxYear1 = formData.get(taxYear1),
+      taxYear2 = formData.get(taxYear2),
+      taxYear1ReportingMethod = formData.get(taxYear1ReportingMethod),
+      taxYear2ReportingMethod = formData.get(taxYear2ReportingMethod)
+    )
+    updateIncomeSourceTaxYearSpecific(nino, incomeSourceId, data)
+  }
+
+  def updateIncomeSourceTaxYearSpecific(nino: String, incomeSourceId: String, reportingMethod: AddBusinessReportingMethodForm)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[UpdateIncomeSourceResponse]] = {
 
     val ty1ReportingMethod = reportingMethod.taxYear1ReportingMethod
     val ty2ReportingMethod = reportingMethod.taxYear2ReportingMethod

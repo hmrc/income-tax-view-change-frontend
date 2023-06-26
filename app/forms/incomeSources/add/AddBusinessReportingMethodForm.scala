@@ -21,12 +21,12 @@ import play.api.data.Form
 import play.api.data.Forms._
 
 object AddBusinessReportingMethodForm extends Constraints {
-  private val newTaxYear1ReportingMethod = "new_tax_year_1_reporting_method"
-  private val newTaxYear2ReportingMethod = "new_tax_year_2_reporting_method"
-  private val taxYear1 = s"""${newTaxYear1ReportingMethod}_tax_year"""
-  private val taxYear2 = s"""${newTaxYear2ReportingMethod}_tax_year"""
-  private val taxYear1ReportingMethod = "tax_year_1_reporting_method"
-  private val taxYear2ReportingMethod = "tax_year_2_reporting_method"
+  val newTaxYear1ReportingMethod = "new_tax_year_1_reporting_method"
+  val newTaxYear2ReportingMethod = "new_tax_year_2_reporting_method"
+  val taxYear1 = s"${newTaxYear1ReportingMethod}_tax_year"
+  val taxYear2 = s"${newTaxYear2ReportingMethod}_tax_year"
+  val taxYear1ReportingMethod = "tax_year_1_reporting_method"
+  val taxYear2ReportingMethod = "tax_year_2_reporting_method"
   private val radioMustBeSelectedMessageKey = "incomeSources.add.businessReportingMethod.error"
   private val validRadioOptions = Set("A", "Q")
 
