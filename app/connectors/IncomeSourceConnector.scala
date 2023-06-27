@@ -49,9 +49,9 @@ class IncomeSourceConnector @Inject()(val http: HttpClient,
     http.POST(url, body).map { response =>
       response.status match {
         case OK => response.json.validate[List[IncomeSourceResponse]].fold(
-          invalid => {
-            Logger("application").error(s"[IncomeTaxViewChangeConnector][create] - Json validation error parsing repayment response, error $invalid")
-            Left(CreateBusinessErrorResponse(response.status, s"Not valid json: ${response.json}"))
+          _ => {
+            Logger("application").error(s"[IncomeTaxViewChangeConnector][create] - Json validation error parsing repayment response, error ${response.body}")
+            Left(CreateBusinessErrorResponse(response.status, s"Not valid json: ${response.body}"))
           },
           valid =>
             Right(valid)
@@ -62,10 +62,7 @@ class IncomeSourceConnector @Inject()(val http: HttpClient,
           } else {
             Logger("application").warn(s"[IncomeTaxViewChangeConnector][create] - Response status: ${response.status}, body: ${response.body}")
           }
-          response.json.validate[CreateBusinessErrorResponse].fold(
-            _ => Left(CreateBusinessErrorResponse(response.status, s"Error creating incomeSource: ${response.json}")),
-            valid => Left(valid)
-          )
+          Left(CreateBusinessErrorResponse(response.status, s"Error creating incomeSource: ${response.json}"))
       }
     }
   }

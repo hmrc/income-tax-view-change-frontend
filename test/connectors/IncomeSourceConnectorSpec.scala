@@ -53,12 +53,38 @@ class IncomeSourceConnectorSpec  extends TestSupport with MockHttp with IncomeSo
             |{"businessDetails":[{"accountingPeriodStartDate":"01-02-2023","accountingPeriodEndDate":"","tradingName":"","addressDetails":{"addressLine1":"tests test","addressLine2":"","countryCode":"","postalCode":""},"tradingStartDate":"","cashOrAccrualsFlag":"","cessationDate":""}]}
         """.stripMargin
         )
+
         setupMockHttpPost(url, testBody)(response = expectedResponse)
 
         val result: Future[Either[CreateBusinessErrorResponse, List[IncomeSourceResponse]]] = UnderTestConnector.create(mtdId, businessDetails)
 
         result.futureValue shouldBe Right(List(IncomeSourceResponse(expectedIncomeSourceId)))
       }
+
+
+//      "return expected status code OK - invalid json" in {
+//        val mtdId = individualUser.mtditid
+//
+//        val url = UnderTestConnector.addBusinessDetailsUrl(mtdId)
+//        val expectedResponse = HttpResponse(status = Status.OK, "Invalid Json here", headers = Map.empty)
+//
+//        val testBody = Json.parse(
+//          """
+//            |{"businessDetails":[{"accountingPeriodStartDate":"01-02-2023","accountingPeriodEndDate":"","tradingName":"","addressDetails":{"addressLine1":"tests test","addressLine2":"","countryCode":"","postalCode":""},"tradingStartDate":"","cashOrAccrualsFlag":"","cessationDate":""}]}
+//        """.stripMargin
+//        )
+//        setupMockHttpPost(url, testBody)(response = expectedResponse)
+//
+//        val result: Future[Either[CreateBusinessErrorResponse, List[IncomeSourceResponse]]] = UnderTestConnector.create(mtdId, businessDetails)
+//
+//        result.failed
+//
+//        result.futureValue match {
+//          case Left(_) =>
+//            succeed
+//          case _ => fail("Invalid json in response: we expect failure")
+//        }
+//      }
     }
 
     "return failure" when {
@@ -80,7 +106,12 @@ class IncomeSourceConnectorSpec  extends TestSupport with MockHttp with IncomeSo
 
         val result: Future[Either[CreateBusinessErrorResponse, List[IncomeSourceResponse]]] = UnderTestConnector.create(mtdId, businessDetails)
 
-        result.futureValue shouldBe Left(CreateBusinessErrorResponse(500,"Some error message"))
+        result.futureValue match {
+          case Left(CreateBusinessErrorResponse(500, _)) =>
+            succeed
+          case _ =>
+            fail("We expect error code 500 to be returned")
+        }
       }
     }
 
