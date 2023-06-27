@@ -137,7 +137,7 @@ class AddressLookupConnector @Inject()(val appConfig: FrontendAppConfig,
                 ),
                 "confirmPageLabels" -> JsObject(
                   Seq(
-                    "heading" -> JsString(messagesApi.preferred(Seq(Lang("cy")))("add-business-address.select.heading"))
+                    "heading" -> JsString(messagesApi.preferred(Seq(Lang("cy")))("add-business-address.confirm.heading"))
                   )
                 ),
                 "editPageLabels" -> JsObject(

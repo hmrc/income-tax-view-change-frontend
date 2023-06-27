@@ -53,13 +53,10 @@ class AddressLookupConnectorGetSpec extends TestSupport with FeatureSwitching wi
         enable(IncomeSources)
         beforeEach()
 
-        val testValidJson: JsValue = Json.obj("auditRef" -> "1",
-          "address" -> Json.obj("lines" -> Seq("line1", "line2", "line3"), "postcode" -> Some("TF3 4NT")))
-
         val businessAddressModel: BusinessAddressModel = BusinessAddressModel(auditRef = "1",
           Address(lines = Seq("line1", "line2", "line3"), postcode = Some("TF3 4NT")))
 
-        val testResponse = HttpResponse(status = OK, json = testValidJson, headers = Map.empty)
+        val testResponse = HttpResponse(status = OK, json = Json.toJson(businessAddressModel), headers = Map.empty)
 
         lazy val url = TestAddressLookupConnector.getAddressDetailsUrl("123")
         Logger("application").info("test call url: " + url)
