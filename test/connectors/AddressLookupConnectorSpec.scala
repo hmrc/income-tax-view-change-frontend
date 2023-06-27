@@ -23,7 +23,7 @@ import models.incomeSourceDetails.viewmodels.httpparser.PostAddressLookupHttpPar
 import models.incomeSourceDetails.viewmodels.httpparser.GetAddressLookupDetailsHttpParser.UnexpectedGetStatusFailure
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{mock, reset, when}
+import org.mockito.Mockito.{mock, when}
 import org.mockito.stubbing.OngoingStubbing
 import play.api.libs.json.{JsObject, JsString, JsValue}
 import org.scalactic.{Fail, Pass}
@@ -46,6 +46,8 @@ class AddressLookupConnectorSpec extends TestSupport with FeatureSwitching with 
 
   val baseUrl: String = appConfig.addressLookupService
   override def messagesApi: MessagesApi = inject[MessagesApi]
+  val testBusinessAddressModel: BusinessAddressModel = BusinessAddressModel("auditRef", Address(Seq("Line 1", "Line 2"), Some("AA1 1AA")))
+
 
   object TestAddressLookupConnector extends AddressLookupConnector(appConfig, mockHttpGet, messagesApi)
 
@@ -77,7 +79,7 @@ class AddressLookupConnectorSpec extends TestSupport with FeatureSwitching with 
           enable(IncomeSources)
           beforeEach()
 
-          setupMockHttpPost(TestAddressLookupConnector.addressLookupInitializeUrl, addressJson(individualContinueUrl, individualFeedbackUrl))(HttpResponse(status = ACCEPTED,
+          setupMockHttpPost(TestAddressLookupConnector.addressLookupInitializeUrl, addressJson(individualContinueUrl, individualFeedbackUrl, individualEnglishBanner, individualWelshBanner))(HttpResponse(status = ACCEPTED,
             json = JsString(""), headers = Map("Location" -> Seq("Sample location"))))
 
           val result = TestAddressLookupConnector.initialiseAddressLookup(isAgent = false)
@@ -91,7 +93,7 @@ class AddressLookupConnectorSpec extends TestSupport with FeatureSwitching with 
           enable(IncomeSources)
           beforeEach()
 
-          setupMockHttpPost(TestAddressLookupConnector.addressLookupInitializeUrl, addressJson(agentContinueUrl, agentFeedbackUrl))(HttpResponse(status = ACCEPTED,
+          setupMockHttpPost(TestAddressLookupConnector.addressLookupInitializeUrl, addressJson(agentContinueUrl, agentFeedbackUrl, agentEnglishBanner, agentWelshBanner))(HttpResponse(status = ACCEPTED,
             json = JsString(""), headers = Map("Location" -> Seq("Sample location"))))
 
           val result = TestAddressLookupConnector.initialiseAddressLookup(isAgent = true)
@@ -108,7 +110,7 @@ class AddressLookupConnectorSpec extends TestSupport with FeatureSwitching with 
           enable(IncomeSources)
           beforeEach()
 
-          setupMockHttpPost(TestAddressLookupConnector.addressLookupInitializeUrl, addressJson(individualContinueUrl, individualFeedbackUrl))(HttpResponse(status = OK,
+          setupMockHttpPost(TestAddressLookupConnector.addressLookupInitializeUrl, addressJson(individualContinueUrl, individualFeedbackUrl, individualEnglishBanner, individualWelshBanner))(HttpResponse(status = OK,
             json = JsString(""), headers = Map.empty))
 
           val result = TestAddressLookupConnector.initialiseAddressLookup(isAgent = false)
@@ -126,7 +128,13 @@ class AddressLookupConnectorSpec extends TestSupport with FeatureSwitching with 
     lazy val individualFeedbackUrl: String = controllers.feedback.routes.FeedbackController.show.url
     lazy val agentFeedbackUrl: String = controllers.feedback.routes.FeedbackController.showAgent.url
 
-    def addressJson(continueUrl: String, feedbackUrl: String): JsValue = {
+    lazy val individualEnglishBanner: String = messagesApi.preferred(Seq(Lang("en")))("header.serviceName")
+    lazy val agentEnglishBanner: String = messagesApi.preferred(Seq(Lang("en")))("agent.header.serviceName")
+
+    lazy val individualWelshBanner: String = messagesApi.preferred(Seq(Lang("cy")))("header.serviceName")
+    lazy val agentWelshBanner: String = messagesApi.preferred(Seq(Lang("cy")))("agent.header.serviceName")
+
+    def addressJson(continueUrl: String, feedbackUrl: String, headerEnglish: String, headerWelsh: String): JsValue = {
       JsObject(
         Seq(
           "version" -> JsNumber(2),
@@ -164,6 +172,11 @@ class AddressLookupConnectorSpec extends TestSupport with FeatureSwitching with 
             Seq(
               "en" -> JsObject(
                 Seq(
+                  "appLevelLabels" -> JsObject(
+                    Seq(
+                      "navTitle" -> JsString(headerEnglish),
+                    )
+                  ),
                   "selectPageLabels" -> JsObject(
                     Seq(
                       "heading" -> JsString(messagesApi.preferred(Seq(Lang("en")))("add-business-address.select.heading"))
@@ -188,6 +201,11 @@ class AddressLookupConnectorSpec extends TestSupport with FeatureSwitching with 
               ),
               "cy" -> JsObject(
                 Seq(
+                  "appLevelLabels" -> JsObject(
+                    Seq(
+                      "navTitle" -> JsString(headerWelsh)
+                    )
+                  ),
                   "selectPageLabels" -> JsObject(
                     Seq(
                       "heading" -> JsString(messagesApi.preferred(Seq(Lang("cy")))("add-business-address.select.heading"))
