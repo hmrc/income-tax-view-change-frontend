@@ -22,11 +22,12 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowI
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import forms.incomeSources.add.AddBusinessReportingMethodForm
+import models.updateIncomeSource.{UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc._
 import services.{BusinessReportingMethodService, IncomeSourceDetailsService}
-import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 import views.html.errorPages.CustomNotFoundError
 import views.html.incomeSources.add.BusinessReportingMethod
 
@@ -51,23 +52,42 @@ class BusinessReportingMethodController @Inject()(val authenticate: Authenticati
                                                  )
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
-  def handleRequest(isAgent: Boolean)
-                   (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
+  private def handleRequest(isAgent: Boolean, incomeSourceId: String)
+                           (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
 
     val incomeSourcesEnabled: Boolean = isEnabled(IncomeSources)
-    val backUrl: String = if (isAgent) controllers.incomeSources.add.routes.CheckBusinessDetailsController.showAgent().url else
-      controllers.incomeSources.add.routes.CheckBusinessDetailsController.show().url
-    val postAction: Call = if (isAgent) controllers.incomeSources.add.routes.BusinessReportingMethodController.submitAgent() else
-      controllers.incomeSources.add.routes.BusinessReportingMethodController.submit()
+    val postAction: Call = if (isAgent) controllers.incomeSources.add.routes.BusinessReportingMethodController.submitAgent(incomeSourceId) else
+      controllers.incomeSources.add.routes.BusinessReportingMethodController.submit(incomeSourceId)
     val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
+    val redirectUrl: Call = if (isAgent) routes.BusinessAddedController.show() else routes.BusinessAddedController.showAgent()
 
     if (incomeSourcesEnabled) {
-      Future.successful(Ok(view(
-        addBusinessReportingMethodForm = AddBusinessReportingMethodForm.form,
-        businessReportingViewModel = businessReportingMethodService.getBusinessReportingMethodDetails(),
-        postAction = postAction,
-        isAgent = isAgent,
-        backUrl = backUrl)(user, messages)))
+      businessReportingMethodService.checkITSAStatusCurrentYear.flatMap {
+        case true =>
+          businessReportingMethodService.getBusinessReportingMethodDetails(incomeSourceId).map {
+            case Some(viewModel) =>
+              Ok(view(
+                addBusinessReportingMethodForm = AddBusinessReportingMethodForm.form,
+                businessReportingViewModel = viewModel,
+                postAction = postAction,
+                isAgent = isAgent)(user, messages))
+            case None =>
+              Redirect(redirectUrl)
+          }.recover {
+            case err: Exception =>
+              Logger("application").error(s"${if (isAgent) "[Agent]"}" + s"Error getting BusinessReportingMethodDetails : $err")
+              errorHandler.showInternalServerError()
+          }
+
+        case false => Future.successful(Redirect(redirectUrl))
+
+      }.recover {
+        case err: InternalServerException =>
+          Logger("application").error(s"${if (isAgent) "[Agent]"}" + s"Error getting ITSA Status : $err")
+          errorHandler.showInternalServerError()
+      }
+
+
     } else {
       Future.successful(Ok(customNotFoundErrorView()(user, messages)))
     } recover {
@@ -78,28 +98,59 @@ class BusinessReportingMethodController @Inject()(val authenticate: Authenticati
     }
   }
 
-  def handleSubmitRequest(isAgent: Boolean)(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] = {
+  private def handleSubmitRequest(isAgent: Boolean, incomeSourceId: String)(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] = {
     val incomeSourcesEnabled: Boolean = isEnabled(IncomeSources)
     val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
+    val redirectUrl: Call = if (isAgent) routes.BusinessAddedController.show() else routes.BusinessAddedController.showAgent()
     if (incomeSourcesEnabled) {
       AddBusinessReportingMethodForm.form.bindFromRequest().fold(
         hasErrors => {
           val updatedForm = AddBusinessReportingMethodForm.updateErrorMessagesWithValues(hasErrors)
+
           if (updatedForm.hasErrors) {
-            Future.successful(BadRequest(view(
-              addBusinessReportingMethodForm = updatedForm,
-              businessReportingViewModel = businessReportingMethodService.getBusinessReportingMethodDetails(),
-              postAction = controllers.incomeSources.add.routes.BusinessReportingMethodController.submit(),
-              backUrl = controllers.incomeSources.add.routes.BusinessReportingMethodController.show().url,
-              isAgent = false)))
+            businessReportingMethodService.getBusinessReportingMethodDetails(incomeSourceId).map {
+              case Some(viewModel) =>
+                BadRequest(view(
+                  addBusinessReportingMethodForm = updatedForm,
+                  businessReportingViewModel = viewModel,
+                  postAction = controllers.incomeSources.add.routes.BusinessReportingMethodController.submit(incomeSourceId),
+                  isAgent = isAgent))
+              case None =>
+                Redirect(redirectUrl)
+            }.recover {
+              case err: InternalServerException =>
+                Logger("application").error(s"${if (isAgent) "[Agent]"}" + s"Error getting BusinessReportingMethodDetails : $err")
+                errorHandler.showInternalServerError()
+            }
+
+
           } else {
-            businessReportingMethodService.updateIncomeSourceTaxYearSpecific(???, ???, updatedForm.get)
-            Future.successful(Redirect(controllers.incomeSources.add.routes.BusinessAddedController.show()))
+            businessReportingMethodService.updateIncomeSourceTaxYearSpecific(user.nino, incomeSourceId, updatedForm.data).map {
+              case Some(res: UpdateIncomeSourceResponseModel) =>
+                Logger("application").info(s"${if (isAgent) "[Agent]"}" + s" Updated tax year specific reporting method : $res")
+                Redirect(routes.BusinessAddedController.show())
+              case Some(err: UpdateIncomeSourceResponseError) =>
+                Logger("application").error(s"${if (isAgent) "[Agent]"}" + s" Failed to Updated tax year specific reporting method : $err")
+                errorHandler.showInternalServerError()
+              case None =>
+                Logger("application").info(s"${if (isAgent) "[Agent]"}" + s" Updating tax year specific reporting method not required.")
+                Redirect(routes.BusinessAddedController.show())
+            }
+
           }
         },
         valid => {
-          businessReportingMethodService.updateIncomeSourceTaxYearSpecific(???, ???, valid)
-          Future.successful(Redirect(controllers.incomeSources.add.routes.BusinessAddedController.show()))
+          businessReportingMethodService.updateIncomeSourceTaxYearSpecific(user.nino, incomeSourceId, valid).map {
+            case Some(res: UpdateIncomeSourceResponseModel) =>
+              Logger("application").info(s"${if (isAgent) "[Agent]"}" + s" Updated tax year specific reporting method : $res")
+              Redirect(routes.BusinessAddedController.show())
+            case Some(err: UpdateIncomeSourceResponseError) =>
+              Logger("application").error(s"${if (isAgent) "[Agent]"}" + s" failed to Updated tax year specific reporting method : $err")
+              errorHandler.showInternalServerError()
+            case None =>
+              Logger("application").info(s"${if (isAgent) "[Agent]"}" + s" Updating tax year specific reporting method not required.")
+              Redirect(routes.BusinessAddedController.show())
+          }
         }
       )
     } else {
@@ -112,31 +163,31 @@ class BusinessReportingMethodController @Inject()(val authenticate: Authenticati
 
   }
 
-  def show(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+  def show(incomeSourceId: String): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
-    implicit user => handleRequest(isAgent = false)
+    implicit user => handleRequest(isAgent = false, incomeSourceId = incomeSourceId)
   }
 
-  def showAgent(): Action[AnyContent] = Authenticated.async {
+  def showAgent(incomeSourceId: String): Action[AnyContent] = Authenticated.async {
     implicit request =>
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
           implicit mtdItUser =>
-            handleRequest(isAgent = true)
+            handleRequest(isAgent = true, incomeSourceId = incomeSourceId)
         }
   }
 
-  def submit: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+  def submit(incomeSourceId: String): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
-      handleSubmitRequest(isAgent = false)
+      handleSubmitRequest(isAgent = false, incomeSourceId = incomeSourceId)
   }
 
-  def submitAgent: Action[AnyContent] = Authenticated.async {
+  def submitAgent(incomeSourceId: String): Action[AnyContent] = Authenticated.async {
     implicit request =>
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
-          implicit mtdItUser => handleSubmitRequest(isAgent = true)
+          implicit mtdItUser => handleSubmitRequest(isAgent = true, incomeSourceId = incomeSourceId)
         }
   }
 

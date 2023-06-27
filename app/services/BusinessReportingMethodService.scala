@@ -16,78 +16,139 @@
 
 package services
 
+import auth.MtdItUser
+import config.FrontendAppConfig
+import config.featureswitch.{FeatureSwitching, TimeMachineAddYear}
 import connectors.IncomeTaxViewChangeConnector
 import forms.incomeSources.add.AddBusinessReportingMethodForm
+import forms.incomeSources.add.AddBusinessReportingMethodForm._
+import models.calculationList.{CalculationListErrorModel, CalculationListModel}
+import models.core.Nino
 import models.incomeSourceDetails.viewmodels.BusinessReportingMethodViewModel
+import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel, LatencyDetails}
 import models.itsaStatus.ITSAStatusResponseError
 import models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponse}
-import uk.gov.hmrc.http.HeaderCarrier
+import play.api.Logger
+import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class BusinessReportingMethodService @Inject()(incomeTaxViewChangeConnector: IncomeTaxViewChangeConnector,
-                                               dateService: DateService) {
+                                               dateService: DateService,
+                                               implicit val appConfig: FrontendAppConfig) extends FeatureSwitching {
   private val validStatus = List("MTD Mandated", "MTD Voluntary")
 
-  def checkITSAStatusCurrentYear(nino: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[ITSAStatusResponseError, Boolean]] = {
-    val yearEnd = dateService.getCurrentTaxYearEnd().toString.substring(2).toInt
+  def checkITSAStatusCurrentYear(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Boolean] = {
+    val yearEnd = dateService.getCurrentTaxYearEnd(isEnabled(TimeMachineAddYear)).toString.substring(2).toInt
     val yearStart = yearEnd - 1
     incomeTaxViewChangeConnector.getITSAStatusDetail(
-      nino = nino,
+      nino = user.nino,
       taxYear = s"$yearStart-$yearEnd",
       futureYears = false,
-      history = false).map {
+      history = false).flatMap {
       case Right(listStatus) =>
-        Right(listStatus.headOption.flatMap(_.itsaStatusDetails).flatMap(_.headOption).map(x => validStatus.contains(x.status)).get)
-      case Left(x: ITSAStatusResponseError) => Left(x)
+        Future.successful(listStatus.headOption.flatMap(_.itsaStatusDetails).flatMap(_.headOption).map(x => validStatus.contains(x.status)).get)
+      case Left(x: ITSAStatusResponseError) =>
+        Logger("application").error(s"[BusinessReportingMethodService][checkITSAStatusCurrentYear] $x")
+        Future.failed(new InternalServerException("[BusinessReportingMethodService][checkITSAStatusCurrentYear] - Failed to retrieve ITSAStatus"))
     }
   }
 
-  def getBusinessReportingMethodDetails(): BusinessReportingMethodViewModel = {
-    /*
-      TODO S0:   1. Check Latency details for new Income source
-                 2. if latency details empty redirect to business-added page else cover below scenarios
+  def isTaxYearCrystallised(ty: Int)(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Boolean] = {
+    if (ty <= 2023) {
+      incomeTaxViewChangeConnector.getLegacyCalculationList(Nino(user.nino), ty.toString).map {
+        case res: CalculationListModel => ???
+        case err: CalculationListErrorModel => ???
+      }
+    } else {
+      val tyRange = s"${(ty - 1).toString.substring(2)}-${ty.toString.substring(2)}"
+      incomeTaxViewChangeConnector.getCalculationList(Nino(user.nino), tyRange).map {
+        case res: CalculationListModel => ???
+        case err: CalculationListErrorModel => ???
+      }
+    }
 
-      or
-
-      TODO S1:  1. Check current year is in TY1 from Latency
-                2. Show Radio for TY1 & TY2
-
-     or
-
-      TODO S2a: 1. Check current year is in TY2 and TY1 is *not Crystallised (no final Declaration API#1404/API#1896)
-                2. Show Radio for TY1 & TY2
-
-      or
-
-      TODO S2b: 1. Check current year is in TY2 and TY1 is *Crystallised ( has final Declaration API#1404/API#1896)
-                2. Show Radio TY2
-
-      or
-
-      TODO S3:  1. If I am beyond latency period i.e I am in S0
-
-    */
-    BusinessReportingMethodViewModel(Some(2022), Some(2023))
-    //BusinessReportingMethodViewModel(None, Some(2023))
-    //BusinessReportingMethodViewModel(Some(2022), None)
-    //BusinessReportingMethodViewModel(None, None)
   }
 
-  def updateIncomeSourceTaxYearSpecific(nino: String, incomeSourceId: String, taxYearSpecific: AddBusinessReportingMethodForm)(implicit hc: HeaderCarrier): Future[UpdateIncomeSourceResponse] = {
-    val ty1 = taxYearSpecific.taxYearReporting1 match {
-      case Some(s) => Some(TaxYearSpecific(taxYearSpecific.taxYear1.get, s.toBoolean))
-      case _ => None
+  def getBusinessReportingMethodDetails(incomeSourceId: String)(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Option[BusinessReportingMethodViewModel]] = {
+    incomeTaxViewChangeConnector.getBusinessDetails(user.nino).flatMap {
+      case value: IncomeSourceDetailsModel =>
+        val latencyDetails: Option[LatencyDetails] = value.businesses.find(_.incomeSourceId.getOrElse("").equals(incomeSourceId)).flatMap(_.latencyDetails)
+        latencyDetails match {
+          case Some(x) =>
+            val currentTaxYearEnd = dateService.getCurrentTaxYearEnd(isEnabled(TimeMachineAddYear))
+            x match {
+              case LatencyDetails(_, _, _, ty2, _) if ty2.toInt < currentTaxYearEnd => Future.successful(None)
+              case LatencyDetails(_, ty1, ty1i, ty2, ty2i) =>
+                isTaxYearCrystallised(ty1.toInt).flatMap {
+                  case true =>
+                    Future.successful(Some(BusinessReportingMethodViewModel(None, None, Some(ty2), Some(ty2i))))
+                  case false =>
+                    Future.successful(Some(BusinessReportingMethodViewModel(Some(ty1), Some(ty1i), Some(ty2), Some(ty2i))))
+                }.recoverWith {
+                  case err: Exception =>
+                    Logger("application").error(s"[BusinessReportingMethodService][getBusinessReportingMethodDetails] Failed to retrieve tax year crystallisation status : $err")
+                    Future.failed(err)
+                }
+            }
+          case None =>
+            Logger("application").info(s"[BusinessReportingMethodService][getBusinessReportingMethodDetails] latency details not available")
+            Future.successful(None)
+        }
+      case err: IncomeSourceDetailsError =>
+        Logger("application").error(s"[BusinessReportingMethodService][getBusinessReportingMethodDetails] $err")
+        Future.failed(new InternalServerException("[BusinessReportingMethodService][getBusinessReportingMethodDetails] - Failed to retrieve IncomeSourceDetails"))
     }
-    val ty2 = taxYearSpecific.taxYearReporting2 match {
-      case Some(s) => Some(TaxYearSpecific(taxYearSpecific.taxYear2.get, s.toBoolean))
-      case _ => None
-    }
-    incomeTaxViewChangeConnector.updateIncomeSourceTaxYearSpecific(nino = nino,
-      incomeSourceId = incomeSourceId,
-      taxYearSpecific = List(ty1, ty2).flatten)
   }
+
+  private def annualQuarterlyToBoolean(method: Option[String]): Option[Boolean] = method match {
+    case Some("A") => Some(true)
+    case Some("Q") => Some(false)
+    case _ => None
+
+  }
+
+  def updateIncomeSourceTaxYearSpecific(nino: String, incomeSourceId: String, formData: Map[String, String])(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[UpdateIncomeSourceResponse]] = {
+
+    val data = AddBusinessReportingMethodForm(
+      newTaxYear1ReportingMethod = formData.get(newTaxYear1ReportingMethod),
+      newTaxYear2ReportingMethod = formData.get(newTaxYear2ReportingMethod),
+      taxYear1 = formData.get(taxYear1),
+      taxYear2 = formData.get(taxYear2),
+      taxYear1ReportingMethod = formData.get(taxYear1ReportingMethod),
+      taxYear2ReportingMethod = formData.get(taxYear2ReportingMethod)
+    )
+    updateIncomeSourceTaxYearSpecific(nino, incomeSourceId, data)
+  }
+
+  def updateIncomeSourceTaxYearSpecific(nino: String, incomeSourceId: String, reportingMethod: AddBusinessReportingMethodForm)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[UpdateIncomeSourceResponse]] = {
+
+    val ty1ReportingMethod = reportingMethod.taxYear1ReportingMethod
+    val ty2ReportingMethod = reportingMethod.taxYear2ReportingMethod
+    val newTy1ReportingMethod = reportingMethod.newTaxYear1ReportingMethod
+    val newTy2ReportingMethod = reportingMethod.newTaxYear2ReportingMethod
+
+    if (ty1ReportingMethod != newTy1ReportingMethod || ty2ReportingMethod != newTy2ReportingMethod) {
+      val ty1 = newTy1ReportingMethod match {
+        case Some(s) => Some(TaxYearSpecific(reportingMethod.taxYear1.get, annualQuarterlyToBoolean(Some(s)).get))
+        case _ => None
+      }
+
+      val ty2 = newTy2ReportingMethod match {
+        case Some(s) => Some(TaxYearSpecific(reportingMethod.taxYear2.get, annualQuarterlyToBoolean(Some(s)).get))
+        case _ => None
+      }
+
+      incomeTaxViewChangeConnector.updateIncomeSourceTaxYearSpecific(nino = nino,
+        incomeSourceId = incomeSourceId,
+        taxYearSpecific = List(ty1, ty2).flatten).map(Some(_))
+
+    } else {
+      Future.successful(None)
+    }
+  }
+
 }
 
