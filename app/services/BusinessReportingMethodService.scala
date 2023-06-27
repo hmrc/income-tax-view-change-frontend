@@ -56,17 +56,17 @@ class BusinessReportingMethodService @Inject()(incomeTaxViewChangeConnector: Inc
     }
   }
 
-  def isTaxYearCrystallised(ty: Int)(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Boolean] = {
+  def isTaxYearCrystallised(ty: Int)(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Option[Boolean]] = {
     if (ty <= 2023) {
-      incomeTaxViewChangeConnector.getLegacyCalculationList(Nino(user.nino), ty.toString).map {
-        case res: CalculationListModel => ???
-        case err: CalculationListErrorModel => ???
+      incomeTaxViewChangeConnector.getLegacyCalculationList(Nino(user.nino), ty.toString).flatMap {
+        case res: CalculationListModel => Future.successful(res.crystallised)
+        case err: CalculationListErrorModel => Future.failed(new InternalServerException(err.message))
       }
     } else {
       val tyRange = s"${(ty - 1).toString.substring(2)}-${ty.toString.substring(2)}"
-      incomeTaxViewChangeConnector.getCalculationList(Nino(user.nino), tyRange).map {
-        case res: CalculationListModel => ???
-        case err: CalculationListErrorModel => ???
+      incomeTaxViewChangeConnector.getCalculationList(Nino(user.nino), tyRange).flatMap {
+        case res: CalculationListModel => Future.successful(res.crystallised)
+        case err: CalculationListErrorModel => Future.failed(new InternalServerException(err.message))
       }
     }
 
@@ -83,10 +83,13 @@ class BusinessReportingMethodService @Inject()(incomeTaxViewChangeConnector: Inc
               case LatencyDetails(_, _, _, ty2, _) if ty2.toInt < currentTaxYearEnd => Future.successful(None)
               case LatencyDetails(_, ty1, ty1i, ty2, ty2i) =>
                 isTaxYearCrystallised(ty1.toInt).flatMap {
-                  case true =>
+                  case Some(true) =>
                     Future.successful(Some(BusinessReportingMethodViewModel(None, None, Some(ty2), Some(ty2i))))
-                  case false =>
+                  case Some(false) =>
                     Future.successful(Some(BusinessReportingMethodViewModel(Some(ty1), Some(ty1i), Some(ty2), Some(ty2i))))
+                  case None =>
+                    Logger("application").error(s"[BusinessReportingMethodService][getBusinessReportingMethodDetails] Crystallisation status not found")
+                    Future.failed(new InternalServerException("BusinessReportingMethodService][getBusinessReportingMethodDetails] Crystallisation status not found"))
                 }.recoverWith {
                   case err: Exception =>
                     Logger("application").error(s"[BusinessReportingMethodService][getBusinessReportingMethodDetails] Failed to retrieve tax year crystallisation status : $err")
