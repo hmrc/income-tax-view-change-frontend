@@ -27,7 +27,6 @@ object GetAddressLookupDetailsHttpParser {
   type GetAddressLookupDetailsResponse = Either[GetAddressLookupDetailsFailure, Option[BusinessAddressModel]]
 
   implicit def getAddressLookupDetailsHttpReads: HttpReads[GetAddressLookupDetailsResponse] = HttpReads { (_, _, response) =>
-    Logger("application").info("BEEP" + response.toString() + "response: " + response.json.toString() + "headers: " + response.headers.toString())
     response.status match {
       case OK => response.json.validate[BusinessAddressModel] match {
         case JsSuccess(value, _) => Right(Some(value))

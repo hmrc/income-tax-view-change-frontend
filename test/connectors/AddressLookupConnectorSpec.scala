@@ -122,7 +122,6 @@ class AddressLookupConnectorSpec extends TestSupport with FeatureSwitching with 
       }
     }
 
-
     lazy val individualContinueUrl: String = routes.AddBusinessAddressController.submit(None).url
     lazy val agentContinueUrl: String = routes.AddBusinessAddressController.agentSubmit(None).url
 
@@ -219,7 +218,7 @@ class AddressLookupConnectorSpec extends TestSupport with FeatureSwitching with 
                   ),
                   "confirmPageLabels" -> JsObject(
                     Seq(
-                      "heading" -> JsString(messagesApi.preferred(Seq(Lang("cy")))("add-business-address.select.heading"))
+                      "heading" -> JsString(messagesApi.preferred(Seq(Lang("cy")))("add-business-address.confirm.heading"))
                     )
                   ),
                   "editPageLabels" -> JsObject(
