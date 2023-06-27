@@ -38,8 +38,6 @@ object SessionKeys {
 
   val businessTrade: String = "addBusinessTrade"
 
-  val addBusinessPostCode: String = "addBusinessPostalCode"
-
   val addBusinessAccountingMethod: String = "addBusinessAccountingMethod"
 
   val ceaseUKPropertyEndDate: String = "ceaseUKPropertyEndDate"

@@ -91,7 +91,7 @@ class CheckBusinessDetailsControllerSpec extends TestSupport with MockAuthentica
                 SessionKeys.businessStartDate -> testBusinessStartDate,
                 SessionKeys.businessTrade -> testBusinessTrade,
                 SessionKeys.addBusinessAddressLine1 -> testBusinessAddressLine1,
-                SessionKeys.addBusinessPostCode -> testBusinessPostCode,
+                SessionKeys.addBusinessPostalCode -> testBusinessPostCode,
                 SessionKeys.addBusinessAccountingMethod -> testBusinessAccountingMethod
               ))
 
@@ -118,7 +118,7 @@ class CheckBusinessDetailsControllerSpec extends TestSupport with MockAuthentica
               SessionKeys.businessStartDate -> testBusinessStartDate,
               SessionKeys.businessTrade -> testBusinessTrade,
               SessionKeys.addBusinessAddressLine1 -> testBusinessAddressLine1,
-              SessionKeys.addBusinessPostCode -> testBusinessPostCode,
+              SessionKeys.addBusinessPostalCode -> testBusinessPostCode,
               SessionKeys.addBusinessAccountingMethod -> testBusinessAccountingMethod
             ))
 
@@ -195,7 +195,7 @@ class CheckBusinessDetailsControllerSpec extends TestSupport with MockAuthentica
             SessionKeys.businessStartDate -> testBusinessStartDate,
             SessionKeys.businessTrade -> testBusinessTrade,
             SessionKeys.addBusinessAddressLine1 -> testBusinessAddressLine1,
-            SessionKeys.addBusinessPostCode -> testBusinessPostCode,
+            SessionKeys.addBusinessPostalCode -> testBusinessPostCode,
             SessionKeys.addBusinessAccountingMethod -> testBusinessAccountingMethod
           ))
 
@@ -219,7 +219,7 @@ class CheckBusinessDetailsControllerSpec extends TestSupport with MockAuthentica
             SessionKeys.businessStartDate -> testBusinessStartDate,
             SessionKeys.businessTrade -> testBusinessTrade,
             SessionKeys.addBusinessAddressLine1 -> testBusinessAddressLine1,
-            SessionKeys.addBusinessPostCode -> testBusinessPostCode,
+            SessionKeys.addBusinessPostalCode -> testBusinessPostCode,
             SessionKeys.addBusinessAccountingMethod -> testBusinessAccountingMethod
           ))
 

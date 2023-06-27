@@ -1,7 +1,7 @@
 package controllers.incomeSources.add
 
 import config.featureswitch.IncomeSources
-import forms.utils.SessionKeys.{addBusinessAccountingMethod, addBusinessAddressLine1, addBusinessPostCode, businessName, businessStartDate, businessTrade}
+import forms.utils.SessionKeys.{addBusinessAccountingMethod, addBusinessAddressLine1, addBusinessPostalCode, businessName, businessStartDate, businessTrade}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
@@ -18,7 +18,7 @@ class CheckBusinessDetailsControllerISpec extends ComponentSpecBase{
                                             businessStartDate -> "2022-01-01",
                                             businessTrade -> "Plumbing",
                                             addBusinessAddressLine1 -> "Test Road",
-                                            addBusinessPostCode -> "B32 1PQ",
+                                            addBusinessPostalCode -> "B32 1PQ",
                                             addBusinessAccountingMethod -> "Quarterly")
   val testBusinessName: String = "Test Business"
   val testBusinessStartDate: String = "1 January 2022"
@@ -77,7 +77,7 @@ class CheckBusinessDetailsControllerISpec extends ComponentSpecBase{
     }
 
     s"return BAD_REQUEST $checkBusinessDetailsShowUrl" when {
-      "user does not select anything" in {
+      "user session has no details" in {
         val formData: Map[String, Seq[String]] = Map("addBusinessName" -> Seq(""),
           "addBusinessTrade" -> Seq(""),
           "addBusinessStartDate" -> Seq(""),

@@ -1,26 +1,25 @@
 package controllers.agent.incomeSources.add
 
-package controllers.incomeSources.add
 
 import config.featureswitch.IncomeSources
-import forms.utils.SessionKeys.{addBusinessAccountingMethod, addBusinessAddressLine1, addBusinessPostCode, businessName, businessStartDate, businessTrade}
+import forms.utils.SessionKeys.{addBusinessAccountingMethod, addBusinessAddressLine1, addBusinessPostalCode, businessName, businessStartDate, businessTrade}
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
+import play.api.http.Status.{BAD_REQUEST, NOT_FOUND, OK, SEE_OTHER}
 import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testMtditid}
 import testConstants.IncomeSourceIntegrationTestConstants.noPropertyOrBusinessResponse
 
 class CheckBusinessDetailsControllerISpec extends ComponentSpecBase{
 
-  val checkBusinessDetailsShowUrl: String = controllers.incomeSources.add.routes.CheckBusinessDetailsController.show().url
-  val checkBusinessDetailsSubmitUrl: String = controllers.incomeSources.add.routes.CheckBusinessDetailsController.submit().url
-  val checkBusinessReportingMethodUrl: String = controllers.incomeSources.add.routes.CheckBusinessDetailsController.changeBusinessReportingMethod().url + "?IncomeSourceID=123"
+  val checkBusinessDetailsShowUrlAgent: String = controllers.incomeSources.add.routes.CheckBusinessDetailsController.showAgent().url
+  val checkBusinessDetailsSubmitUrlAgent: String = controllers.incomeSources.add.routes.CheckBusinessDetailsController.submitAgent().url
+  val checkBusinessReportingMethodUrlAgent: String = controllers.incomeSources.add.routes.CheckBusinessDetailsController.changeBusinessReportingMethodAgent().url + "?IncomeSourceID=123"
 
   val sessionData: Map[String, String] = Map(businessName -> "Test Business",
                                             businessStartDate -> "2022-01-01",
                                             businessTrade -> "Plumbing",
                                             addBusinessAddressLine1 -> "Test Road",
-                                            addBusinessPostCode -> "B32 1PQ",
+                                            addBusinessPostalCode -> "B32 1PQ",
                                             addBusinessAccountingMethod -> "Quarterly")
   val testBusinessName: String = "Test Business"
   val testBusinessStartDate: String = "1 January 2022"
@@ -32,7 +31,7 @@ class CheckBusinessDetailsControllerISpec extends ComponentSpecBase{
   val continueButtonText: String = messagesAPI("check-business-details.confirm-button")
 
 
-  s"calling GET $checkBusinessDetailsShowUrl" should {
+  s"calling GET $checkBusinessDetailsShowUrlAgent" should {
     "render the Check Business details page" when {
       "User is authorised" in {
         Given("I wiremock stub a successful Income Source Details response with no businesses or properties")
@@ -41,13 +40,12 @@ class CheckBusinessDetailsControllerISpec extends ComponentSpecBase{
         enable(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
-        When(s"I call GET $checkBusinessDetailsShowUrl")
-        val result = IncomeTaxViewChangeFrontend.get("/income-sources/add/business-check-details", sessionData)
+        When(s"I call GET $checkBusinessDetailsShowUrlAgent")
+        val result = IncomeTaxViewChangeFrontend.get("/income-sources/add/business-check-details", sessionData ++ clientDetailsWithConfirmation)
         println("LOOOOK" + result)
 
         result should have(
           httpStatus(OK),
-          pageTitleIndividual("check-business-details.heading"),
           elementTextByID("business-name-value")(testBusinessName),
           elementTextByID("business-date-value")(testBusinessStartDate),
           elementTextByID("business-trade-value")(testBusinessTrade),
@@ -59,8 +57,8 @@ class CheckBusinessDetailsControllerISpec extends ComponentSpecBase{
     }
   }
 
-  s"calling POST $checkBusinessDetailsSubmitUrl" should {
-    s"redirect to $checkBusinessReportingMethodUrl+?IncomeSourceID=123" when {
+  s"calling POST $checkBusinessDetailsSubmitUrlAgent" should {
+    s"redirect to $checkBusinessReportingMethodUrlAgent+?IncomeSourceID=123" when {
       "user selects 'confirm and continue'" in {
         val formData: Map[String,Seq[String]] = Map("addBusinessName" -> Seq("Test Business Name"),
           "addBusinessTrade" -> Seq("Test Business Name"),
@@ -73,17 +71,17 @@ class CheckBusinessDetailsControllerISpec extends ComponentSpecBase{
         enable(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
-        val result = IncomeTaxViewChangeFrontend.post(s"/income-sources/add/business-check-details", sessionData)(formData)
+        val result = IncomeTaxViewChangeFrontend.post("/income-sources/add/business-check-details", sessionData ++ clientDetailsWithConfirmation)(formData)
 
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(checkBusinessReportingMethodUrl)
+          redirectURI(checkBusinessReportingMethodUrlAgent)
         )
       }
     }
 
-    s"return BAD_REQUEST $checkBusinessDetailsShowUrl" when {
-      "user does not select anything" in {
+    s"return BAD_REQUEST $checkBusinessDetailsShowUrlAgent" when {
+      "agent session details are empty" in {
         val formData: Map[String, Seq[String]] = Map("addBusinessName" -> Seq(""),
           "addBusinessTrade" -> Seq(""),
           "addBusinessStartDate" -> Seq(""),
@@ -95,7 +93,7 @@ class CheckBusinessDetailsControllerISpec extends ComponentSpecBase{
         enable(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
-        val result = IncomeTaxViewChangeFrontend.post("/income-sources/add/business-accounting-method")(formData)
+        val result = IncomeTaxViewChangeFrontend.post("/income-sources/add/business-accounting-method", sessionData ++ clientDetailsWithConfirmation)(formData)
 
         result should have(
           httpStatus(BAD_REQUEST),

@@ -20,9 +20,9 @@ import auth.MtdItUser
 import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
-import controllers.agent.utils.SessionKeys
-import controllers.agent.utils.SessionKeys.{businessAccountingMethod, clientUTR}
+import controllers.agent.utils.SessionKeys.businessAccountingMethod
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
+import forms.utils.SessionKeys.{addBusinessAccountingMethod, addBusinessAddressLine1, addBusinessPostalCode, businessName, businessStartDate, businessTrade}
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import models.incomeSourceDetails.viewmodels.CheckBusinessDetailsViewModel
 import services._
@@ -59,7 +59,7 @@ class CheckBusinessDetailsController @Inject()(val checkBusinessDetails: CheckBu
       handleRequest(
         sources = user.incomeSources,
         isAgent = false,
-        backUrl = controllers.routes.HomeController.show().url
+        backUrl = getBackUrl(isAgent = false)(user)
       )
   }
 
@@ -71,9 +71,17 @@ class CheckBusinessDetailsController @Inject()(val checkBusinessDetails: CheckBu
             handleRequest(
               sources = mtdItUser.incomeSources,
               isAgent = true,
-              backUrl = controllers.routes.HomeController.showAgent.url
+              backUrl = getBackUrl(isAgent = true)(mtdItUser)
             )
         }
+  }
+
+  def getBackUrl(isAgent: Boolean)(implicit user: MtdItUser[_]) = {
+    if (user.session.data.get(businessAccountingMethod).isEmpty) {
+      controllers.routes.AddBusinessAddressController.show().url
+    } else {
+      controllers.incomeSources.add.routes.BusinessAccountingMethodController.show().url
+    }
   }
 
   def getDetails(implicit user: MtdItUser[_]): Either[Throwable, CheckBusinessDetailsViewModel] = {
@@ -81,23 +89,25 @@ class CheckBusinessDetailsController @Inject()(val checkBusinessDetails: CheckBu
     case class MissingKey(msg: String)
 
     val errors: Seq[String] = Seq(
-      user.session.data.get("addBusinessName").orElse(Option(MissingKey("MissingKey: addBusinessName"))),
-      user.session.data.get("addBusinessStartDate").orElse(Option(MissingKey("MissingKey: addBusinessStartDate"))),
-      user.session.data.get("addBusinessTrade").orElse(Option(MissingKey("MissingKey: addBusinessTrade"))),
-      user.session.data.get("addBusinessAddressLine1").orElse(Option(MissingKey("MissingKey: addBusinessAddressLine1"))),
-      user.session.data.get("addBusinessPostalCode").orElse(Option(MissingKey("MissingKey: addBusinessPostalCode")))
+      user.session.data.get(businessName).orElse(Option(MissingKey("MissingKey: addBusinessName"))),
+      user.session.data.get(businessStartDate).orElse(Option(MissingKey("MissingKey: addBusinessStartDate"))),
+      user.session.data.get(businessTrade).orElse(Option(MissingKey("MissingKey: addBusinessTrade"))),
+      user.session.data.get(addBusinessAddressLine1).orElse(Option(MissingKey("MissingKey: addBusinessAddressLine1"))),
+      user.session.data.get(addBusinessPostalCode).orElse(Option(MissingKey("MissingKey: addBusinessPostalCode")))
     ).collect {
       case Some(MissingKey(msg)) => MissingKey(msg)
     }.map(e => e.msg)
 
+
     val result: Option[CheckBusinessDetailsViewModel] = for {
-        businessName <- user.session.data.get("addBusinessName")
-        businessStartDate <- user.session.data.get("addBusinessStartDate").map(LocalDate.parse)
-        businessTrade <- user.session.data.get("addBusinessTrade")
-        businessAddressLine1 <- user.session.data.get("addBusinessAddressLine1")
-        businessPostalCode <- user.session.data.get("addBusinessPostalCode")
+        businessName <- user.session.data.get(businessName)
+        businessStartDate <- user.session.data.get(businessStartDate).map(LocalDate.parse)
+        businessTrade <- user.session.data.get(businessTrade)
+        businessAddressLine1 <- user.session.data.get(addBusinessAddressLine1)
+        businessPostalCode <- user.session.data.get(addBusinessPostalCode)
     } yield {
-      val businessAccountingMethod = user.session.data.get("addBusinessAccountingMethod")
+      val businessAccountingMethod = user.session.data.get(addBusinessAccountingMethod)
+
       CheckBusinessDetailsViewModel(
         Some(businessName),
         Some(businessStartDate),
@@ -115,6 +125,7 @@ class CheckBusinessDetailsController @Inject()(val checkBusinessDetails: CheckBu
         Left(new IllegalArgumentException(s"Missing required session data: ${errors.mkString(" ")}"))
     }
   }
+
 
   def handleRequest(sources: IncomeSourceDetailsModel, isAgent: Boolean, backUrl: String)
                    (implicit user: MtdItUser[_]): Future[Result] = {
@@ -156,8 +167,7 @@ class CheckBusinessDetailsController @Inject()(val checkBusinessDetails: CheckBu
             itvcErrorHandler.showInternalServerError()
 
           case Right(IncomeSource(id)) =>
-            user.session.data - "addBusinessName" - "addBusinessStartDate" - "addBusinessTrade" - "addBusinessAddressLine1" - "addBusinessPostalCode" - "addBusinessAccountingMethod"
-            Redirect(controllers.incomeSources.add.routes.CheckBusinessDetailsController.changeBusinessReportingMethod().url + s"?IncomeSourceID=$id")
+            Redirect(controllers.incomeSources.add.routes.CheckBusinessDetailsController.changeBusinessReportingMethod().url + s"?IncomeSourceID=$id").withNewSession
         }
         case None => Logger("application").error(
           s"[CheckBusinessDetailsController][submit] - Error: Unable to build view model on submit")
@@ -177,9 +187,8 @@ class CheckBusinessDetailsController @Inject()(val checkBusinessDetails: CheckBu
                     s"[CheckBusinessDetailsController][handleRequest] - Unable to create income source: ${ex.getMessage}")
                     itvcErrorHandler.showInternalServerError()
 
-                  case Right(_) =>
-                    mtdItUser.session.data - "addBusinessName" - "addBusinessStartDate" - "addBusinessTrade" - "addBusinessAddressLine1" - "addBusinessPostalCode" - "addBusinessAccountingMethod"
-                    Redirect(controllers.incomeSources.add.routes.CheckBusinessDetailsController.changeBusinessReportingMethodAgent())
+                  case Right(IncomeSource(id)) =>
+                    Redirect(controllers.incomeSources.add.routes.CheckBusinessDetailsController.changeBusinessReportingMethodAgent().url + s"?IncomeSourceID=$id").withNewSession
                 }
               case None => Logger("application").error(
                 s"[CheckBusinessDetailsController][submit] - Error: Unable to build view model on submit")
