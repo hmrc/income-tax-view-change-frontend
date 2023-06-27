@@ -52,43 +52,43 @@ messages(s"check-business-details.$key", args: _*)
 }
 
 @changeBusinessNameURL = @{
-if(isAgent){
-controllers.incomeSources.add.routes.CheckBusinessDetailsController.changeBusinessNameAgent().url
-} else {
-controllers.incomeSources.add.routes.CheckBusinessDetailsController.changeBusinessName().url
-}
+    if(isAgent){
+    controllers.routes.AddBusinessNameController.changeBusinessNameAgent().url
+    } else {
+    controllers.routes.AddBusinessNameController.changeBusinessName().url
+    }
 }
 
 @changeBusinessStartDateURL = @{
-if(isAgent){
-controllers.incomeSources.add.routes.CheckBusinessDetailsController.changeBusinessStartDateAgent().url
-} else {
-controllers.incomeSources.add.routes.CheckBusinessDetailsController.changeBusinessStartDate().url
-}
+    if(isAgent){
+    controllers.incomeSources.add.routes.AddBusinessStartDateController.changeBusinessStartDateAgent().url
+    } else {
+    controllers.incomeSources.add.routes.AddBusinessStartDateController.changeBusinessStartDate().url
+    }
 }
 
 @changeBusinessTradeURL = @{
-if(isAgent){
-controllers.incomeSources.add.routes.CheckBusinessDetailsController.changeBusinessTradeAgent().url
-} else {
-controllers.incomeSources.add.routes.CheckBusinessDetailsController.changeBusinessTrade().url
-}
+    if(isAgent){
+    controllers.incomeSources.add.routes.AddBusinessTradeController.changeBusinessTradeAgent().url
+    } else {
+    controllers.incomeSources.add.routes.AddBusinessTradeController.changeBusinessTrade().url
+    }
 }
 
 @changeBusinessAddressURL = @{
-if(isAgent){
-controllers.incomeSources.add.routes.CheckBusinessDetailsController.changeBusinessAddressAgent().url
-} else {
-controllers.incomeSources.add.routes.CheckBusinessDetailsController.changeBusinessAddress().url
-}
+    if(isAgent){
+        controllers.routes.AddBusinessAddressController.changeBusinessAddressAgent().url
+    } else {
+        controllers.routes.AddBusinessAddressController.changeBusinessAddress().url
+    }
 }
 
 @changeBusinessAccountingMethodURL = @{
-if(isAgent){
-controllers.incomeSources.add.routes.CheckBusinessDetailsController.changeBusinessAccountingMethodAgent().url
-} else {
-controllers.incomeSources.add.routes.CheckBusinessDetailsController.changeBusinessAccountingMethod().url
-}
+    if(isAgent){
+    controllers.incomeSources.add.routes.BusinessAccountingMethodController.changeBusinessAccountingMethodAgent().url
+    } else {
+    controllers.incomeSources.add.routes.BusinessAccountingMethodController.changeBusinessAccountingMethod().url
+    }
 }
 
 @mainTemplate(

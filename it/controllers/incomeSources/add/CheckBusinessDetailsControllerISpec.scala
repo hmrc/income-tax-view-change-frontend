@@ -12,7 +12,7 @@ class CheckBusinessDetailsControllerISpec extends ComponentSpecBase{
 
   val checkBusinessDetailsShowUrl: String = controllers.incomeSources.add.routes.CheckBusinessDetailsController.show().url
   val checkBusinessDetailsSubmitUrl: String = controllers.incomeSources.add.routes.CheckBusinessDetailsController.submit().url
-  val checkBusinessReportingMethodUrl: String = controllers.incomeSources.add.routes.CheckBusinessDetailsController.changeBusinessReportingMethod().url + "?IncomeSourceID=123"
+  val checkBusinessReportingMethodUrl: String = controllers.incomeSources.add.routes.AddBusinessReportingMethod.show().url + "?IncomeSourceID=123"
 
   val sessionData: Map[String, String] = Map(businessName -> "Test Business",
                                             businessStartDate -> "2022-01-01",

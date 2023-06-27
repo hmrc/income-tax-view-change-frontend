@@ -19,6 +19,7 @@ package controllers.incomeSources.add
 import config.featureswitch.FeatureSwitch.switches
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import config.featureswitch.{FeatureSwitching, IncomeSources}
+import controllers.AddBusinessNameController
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import forms.utils.SessionKeys
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
@@ -34,6 +35,7 @@ import testConstants.BaseTestConstants
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testIndividualAuthSuccessWithSaUtrResponse}
 import testUtils.TestSupport
 import uk.gov.hmrc.http.HttpClient
+import views.html.AddBusiness
 import views.html.incomeSources.add.CheckBusinessDetails
 
 import scala.concurrent.Future
@@ -72,7 +74,26 @@ class CheckBusinessDetailsControllerSpec extends TestSupport with MockAuthentica
   ) {
     val heading: String = messages("check-business-details.heading")
     val title: String = s"${messages("htmlTitle", heading)}"
+    val link: String = s"${messages("check-business-details.change-details-link")}"
   }
+
+  object TestAddBusinessNameNameController
+    extends AddBusinessNameController(
+      MockAuthenticationPredicate,
+      authorisedFunctions = mockAuthService,
+      checkSessionTimeout = app.injector.instanceOf[SessionTimeoutPredicate],
+      retrieveNino = app.injector.instanceOf[NinoPredicate],
+      addBusinessView = app.injector.instanceOf[AddBusiness],
+      retrieveIncomeSources = MockIncomeSourceDetailsPredicate,
+      retrieveBtaNavBar = MockNavBarPredicate,
+      itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
+      incomeSourceDetailsService = mockIncomeSourceDetailsService,
+    )(
+      mcc = app.injector.instanceOf[MessagesControllerComponents],
+      appConfig = app.injector.instanceOf[FrontendAppConfig],
+      itvcErrorHandlerAgent = app.injector.instanceOf[AgentItvcErrorHandler],
+      ec = ec
+    )
 
   "CheckBusinessDetailsController" should {
 
@@ -96,11 +117,16 @@ class CheckBusinessDetailsControllerSpec extends TestSupport with MockAuthentica
               ))
 
           val document: Document = Jsoup.parse(contentAsString(result))
+          val changeDetailsLinks = document.select(".govuk-summary-list__actions .govuk-link")
+
 
           status(result) shouldBe OK
           document.title shouldBe TestCheckBusinessDetailsController.title
           document.select("h1:nth-child(1)").text shouldBe TestCheckBusinessDetailsController.heading
-      }
+          changeDetailsLinks.first().text shouldBe TestCheckBusinessDetailsController.link
+
+
+        }
     }
 
     "return 303" when {
@@ -124,18 +150,6 @@ class CheckBusinessDetailsControllerSpec extends TestSupport with MockAuthentica
 
         status(result) shouldBe Status.SEE_OTHER
 
-      }
-    }
-      //TODO - returns 200 with Ok in method
-    "return 303 when individual wants to change details" when {
-      "the user selects change link" in {
-        disableAllSwitches()
-        enable(IncomeSources)
-
-        val result: Future[Result] = TestCheckBusinessDetailsController.changeBusinessName()(fakeRequestWithActiveSession)
-        //status(result) shouldBe Status.SEE_OTHER
-        //redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.CheckBusinessDetailsController.changeBusinessName().url)
-        status(result) shouldBe OK
       }
     }
 
@@ -201,6 +215,12 @@ class CheckBusinessDetailsControllerSpec extends TestSupport with MockAuthentica
 
         status(result) shouldBe Status.OK
 
+        val document: Document = Jsoup.parse(contentAsString(result))
+
+        val changeDetailsLinks = document.select(".govuk-summary-list__actions .govuk-link")
+        changeDetailsLinks.first().text shouldBe TestCheckBusinessDetailsController.link
+
+
       }
     }
 
@@ -228,17 +248,6 @@ class CheckBusinessDetailsControllerSpec extends TestSupport with MockAuthentica
       }
     }
 
-    "return 303 when agent wants to change details" when {
-      "the user selects change link" in {
-        disableAllSwitches()
-        enable(IncomeSources)
-
-        val result: Future[Result] = TestCheckBusinessDetailsController.changeBusinessNameAgent()(fakeRequestWithActiveSession)
-        //status(result) shouldBe Status.SEE_OTHER
-        //redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.CheckBusinessDetailsController.changeBusinessName().url)
-        status(result) shouldBe OK
-      }
-    }
     "return 303 SEE_OTHER and redirect to home page" when {
       "navigating to the page with FS Disabled" in {
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)

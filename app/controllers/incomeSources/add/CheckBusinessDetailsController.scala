@@ -167,7 +167,7 @@ class CheckBusinessDetailsController @Inject()(val checkBusinessDetails: CheckBu
             itvcErrorHandler.showInternalServerError()
 
           case Right(IncomeSource(id)) =>
-            Redirect(controllers.incomeSources.add.routes.CheckBusinessDetailsController.changeBusinessReportingMethod().url + s"?IncomeSourceID=$id").withNewSession
+            Redirect(controllers.incomeSources.add.routes.AddBusinessReportingMethod.show().url + s"?IncomeSourceID=$id").withNewSession
         }
         case None => Logger("application").error(
           s"[CheckBusinessDetailsController][submit] - Error: Unable to build view model on submit")
@@ -188,7 +188,7 @@ class CheckBusinessDetailsController @Inject()(val checkBusinessDetails: CheckBu
                     itvcErrorHandler.showInternalServerError()
 
                   case Right(IncomeSource(id)) =>
-                    Redirect(controllers.incomeSources.add.routes.CheckBusinessDetailsController.changeBusinessReportingMethodAgent().url + s"?IncomeSourceID=$id").withNewSession
+                    Redirect(controllers.incomeSources.add.routes.AddBusinessReportingMethod.showAgent().url + s"?IncomeSourceID=$id").withNewSession
                 }
               case None => Logger("application").error(
                 s"[CheckBusinessDetailsController][submit] - Error: Unable to build view model on submit")
@@ -197,60 +197,4 @@ class CheckBusinessDetailsController @Inject()(val checkBusinessDetails: CheckBu
         }
   }
 
-
-  def changeBusinessName(): Action[AnyContent] = Action {
-    Ok("Change Business Name WIP")
-  }
-
-  def changeBusinessNameAgent(): Action[AnyContent] = Action {
-    Ok("Agent Change Business Name WIP")
-  }
-
-  def changeBusinessStartDate(): Action[AnyContent] = Action {
-    Ok("Change Business Start Date WIP")
-  }
-
-  def changeBusinessStartDateAgent(): Action[AnyContent] = Action {
-    Ok("Agent Change Business Start Date WIP")
-  }
-
-  def changeBusinessTrade(): Action[AnyContent] = Action {
-    Ok("Change Business Trade  WIP")
-  }
-
-  def changeBusinessTradeAgent(): Action[AnyContent] = Action {
-    Ok("Agent Change Business Trade  WIP")
-  }
-
-  def changeBusinessAddress(): Action[AnyContent] = Action {
-    Ok("Change Business Address  WIP")
-  }
-
-  def changeBusinessAddressAgent(): Action[AnyContent] = Action {
-    Ok("Agent Change Business Address  WIP")
-  }
-
-  def changeBusinessAccountingMethod(): Action[AnyContent] = Action {
-    Ok("Change Business Accounting Method  WIP")
-  }
-
-  def changeBusinessAccountingMethodAgent(): Action[AnyContent] = Action {
-    Ok("Agent Change Business Accounting Method  WIP")
-  }
-
-  def changeBusinessReportingMethod(): Action[AnyContent] = Action {
-    Ok("Change Business Reporting Method WIP")
-  }
-
-  def changeBusinessReportingMethodAgent(): Action[AnyContent] = Action {
-    Ok("Agent Change Business Reporting Method WIP")
-  }
-
-  def businessNotAdded: Action[AnyContent] = Action {
-    Ok("Error - Business not added WIP")
-  }
-
-  def businessNotAddedAgent: Action[AnyContent] = Action {
-    Ok("Error - Agent Business not added WIP")
-  }
 }
