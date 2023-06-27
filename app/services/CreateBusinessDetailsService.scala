@@ -18,7 +18,7 @@ package services
 
 
 import connectors.IncomeSourceConnector
-import models.addIncomeSource.{AddIncomeSourceResponse, AddressDetails, BusinessDetails, IncomeSource}
+import models.addIncomeSource.{AddIncomeSourceResponse, AddressDetails, BusinessDetails, IncomeSourceResponse}
 import models.incomeSourceDetails.viewmodels.CheckBusinessDetailsViewModel
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -29,7 +29,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class CreateBusinessDetailsService @Inject()(val incomeSourceConnector: IncomeSourceConnector) {
 
 def createBusinessDetails(mtditid: String, viewModel: CheckBusinessDetailsViewModel)
-                         (implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Either[Throwable, List[IncomeSource]]] = {
+                         (implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Either[Throwable, List[IncomeSourceResponse]]] = {
   val businessDetails =
     BusinessDetails(
       accountingPeriodStartDate = "",

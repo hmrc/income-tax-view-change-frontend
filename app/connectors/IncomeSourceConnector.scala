@@ -16,6 +16,7 @@
 
 package connectors
 
+import com.fasterxml.jackson.annotation.JsonValue
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
@@ -26,38 +27,45 @@ import models.addIncomeSource.{AddIncomeSourceResponse, _}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 import play.api.Logger
+import play.api.libs.json.{JsValue, Json}
 
 class IncomeSourceConnector @Inject()(val http: HttpClient,
-                                          val appConfig: FrontendAppConfig
-                                         )(implicit val ec: ExecutionContext) extends RawResponseReads with FeatureSwitching {
+                                      val appConfig: FrontendAppConfig
+                                     )(implicit val ec: ExecutionContext) {
 
-  private def addBusinessDetailsUrl(authTag: String): String = s"${appConfig.itvcProtectedService}/income-tax-view-change/create-income-source/business/$authTag"
 
-  def create(mtditid: String, businessDetails: BusinessDetails)(implicit headerCarrier: HeaderCarrier): Future[Either[Throwable, List[IncomeSource]]] = {
-    val body = AddBusinessIncomeSourcesRequest(businessDetails = Some(
+  def addBusinessDetailsUrl(authTag: String): String = s"${appConfig.itvcProtectedService}/income-tax-view-change/create-income-source/business/$authTag"
+
+  private def createRequest(businessDetails: BusinessDetails): JsValue = {
+    val requestObject = AddBusinessIncomeSourcesRequest(businessDetails = Some(
       List(businessDetails)
     ))
+    Json.toJson(requestObject)
+  }
 
-    http.POST[AddBusinessIncomeSourcesRequest, HttpResponse](
-      addBusinessDetailsUrl(mtditid),
-      //addBusinessDetailsUrl("XYIT99999999992"),
-      body, Seq[(String, String)]()).map { response =>
+  def create(mtdItid: String, businessDetails: BusinessDetails)(implicit headerCarrier: HeaderCarrier): Future[Either[CreateBusinessErrorResponse, List[IncomeSourceResponse]]] = {
+    val body = createRequest(businessDetails)
+    val url = addBusinessDetailsUrl(mtdItid)
+    http.POST(url, body).map { response =>
       response.status match {
-        case OK => response.json.validate[List[IncomeSource]].fold(
+        case OK => response.json.validate[List[IncomeSourceResponse]].fold(
           invalid => {
-            Logger("application").error(s"[IncomeTaxViewChangeConnector][updateCessationDate] - Json validation error parsing repayment response, error $invalid")
-            Left(new Error(s"Not valid json: ${response.json}"))
+            Logger("application").error(s"[IncomeTaxViewChangeConnector][create] - Json validation error parsing repayment response, error $invalid")
+            Left(CreateBusinessErrorResponse(response.status, s"Not valid json: ${response.json}"))
           },
           valid =>
             Right(valid)
         )
         case status =>
           if (status >= INTERNAL_SERVER_ERROR) {
-            Logger("application").error(s"[IncomeTaxViewChangeConnector][updateCessationDate] - Response status: ${response.status}, body: ${response.body}")
+            Logger("application").error(s"[IncomeTaxViewChangeConnector][create] - Response status: ${response.status}, body: ${response.body}")
           } else {
-            Logger("application").warn(s"[IncomeTaxViewChangeConnector][updateCessationDate] - Response status: ${response.status}, body: ${response.body}")
+            Logger("application").warn(s"[IncomeTaxViewChangeConnector][create] - Response status: ${response.status}, body: ${response.body}")
           }
-          Left(new Error(s"Error creating incomeSource: ${response.status} - ${response.json}"))
+          response.json.validate[CreateBusinessErrorResponse].fold(
+            _ => Left(CreateBusinessErrorResponse(response.status, s"Error creating incomeSource: ${response.json}")),
+            valid => Left(valid)
+          )
       }
     }
   }
