@@ -79,7 +79,7 @@ class CreateBusinessDetailsServiceSpec extends  TestSupport with FeatureSwitchin
             Left(CreateBusinessErrorResponse(Status.INTERNAL_SERVER_ERROR, s"Error creating incomeSource"))
           })
         val result = UnderTestCreateBusinessDetailsService.createBusinessDetails("someMtditId", viewModel)
-        result.futureValue shouldBe Left(IncomeSourceResponse("123"))
+        result.futureValue shouldBe Left(CreateBusinessErrorResponse(Status.INTERNAL_SERVER_ERROR,"Error creating incomeSource"))
       }
     }
   }
