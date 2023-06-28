@@ -65,7 +65,7 @@ class AddBusinessCheckDetailsController @Inject()(val authenticate: Authenticati
       businessName = Some("someBusinessName"),
       businessStartDate = Some(LocalDate.of(2022, 11, 11)),
       businessTrade = Some("someBusinessTrade"),
-      businessAddressLine1 = Some("businessAddressLine1"),
+      businessAddressLine1 = "businessAddressLine1",
       businessPostalCode = Some("SE15 4ER"),
       businessAccountingMethod = None
     )

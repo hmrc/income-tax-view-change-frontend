@@ -16,10 +16,9 @@
 
 package connectors
 
-import com.fasterxml.jackson.core.JsonParseException
 import connectors.helpers.IncomeSourceConnectorDataHelper
 import mocks.MockHttp
-import models.addIncomeSource.{AddressDetails, BusinessDetails, CreateBusinessErrorResponse, IncomeSourceResponse}
+import models.addIncomeSource.{CreateBusinessErrorResponse, IncomeSourceResponse}
 import play.api.libs.json.{Format, Json}
 import play.mvc.Http.Status
 import testUtils.TestSupport
@@ -57,7 +56,7 @@ class IncomeSourceConnectorSpec extends TestSupport with MockHttp with IncomeSou
 
         setupMockHttpPost(url, testBody)(response = expectedResponse)
 
-        val result: Future[Either[CreateBusinessErrorResponse, List[IncomeSourceResponse]]] = UnderTestConnector.create(mtdId, businessDetails)
+        val result: Future[Either[CreateBusinessErrorResponse, List[IncomeSourceResponse]]] = UnderTestConnector.create(mtdId, addBusinessDetailsRequestObject)
 
         result.futureValue shouldBe Right(List(IncomeSourceResponse(expectedIncomeSourceId)))
       }
@@ -75,7 +74,7 @@ class IncomeSourceConnectorSpec extends TestSupport with MockHttp with IncomeSou
         """.stripMargin
         )
         setupMockHttpPost(url, testBody)(response = expectedResponse)
-        val result: Future[Either[CreateBusinessErrorResponse, List[IncomeSourceResponse]]] = UnderTestConnector.create(mtdId, businessDetails)
+        val result: Future[Either[CreateBusinessErrorResponse, List[IncomeSourceResponse]]] = UnderTestConnector.create(mtdId, addBusinessDetailsRequestObject)
         result.futureValue shouldBe Left(CreateBusinessErrorResponse(Status.OK, s"Not valid json: \"Error message\""))
       }
     }
@@ -97,7 +96,7 @@ class IncomeSourceConnectorSpec extends TestSupport with MockHttp with IncomeSou
         )
         setupMockHttpPost(url, testBody2)(response = expectedResponse)
 
-        val result: Future[Either[CreateBusinessErrorResponse, List[IncomeSourceResponse]]] = UnderTestConnector.create(mtdId, businessDetails)
+        val result: Future[Either[CreateBusinessErrorResponse, List[IncomeSourceResponse]]] = UnderTestConnector.create(mtdId, addBusinessDetailsRequestObject)
 
         result.futureValue match {
           case Left(CreateBusinessErrorResponse(500, _)) =>

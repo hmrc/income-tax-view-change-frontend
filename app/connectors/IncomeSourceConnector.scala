@@ -33,30 +33,19 @@ class IncomeSourceConnector @Inject()(val http: HttpClient,
 
   def addBusinessDetailsUrl(authTag: String): String = s"${appConfig.itvcProtectedService}/income-tax-view-change/create-income-source/business/$authTag"
 
-  private def createRequest(businessDetails: BusinessDetails): JsValue = {
-    val requestObject = AddBusinessIncomeSourcesRequest(businessDetails = Some(
-      List(businessDetails)
-    ))
-    Json.toJson(requestObject)
-  }
-
-  def create(mtdItid: String, businessDetails: BusinessDetails)(implicit headerCarrier: HeaderCarrier): Future[Either[CreateBusinessErrorResponse, List[IncomeSourceResponse]]] = {
-    val body = createRequest(businessDetails)
+  def create(mtdItid: String, addBusinessIncomeSourcesRequest: AddBusinessIncomeSourcesRequest)(implicit headerCarrier: HeaderCarrier): Future[Either[CreateBusinessErrorResponse, List[IncomeSourceResponse]]] = {
+    val bodyAsJson = Json.toJson(addBusinessIncomeSourcesRequest)
     val url = addBusinessDetailsUrl(mtdItid)
-    http.POST(url, body).map { response =>
+    http.POST(url, bodyAsJson).map { response =>
       response.status match {
         case OK =>
-          response.json.validateOpt[List[IncomeSourceResponse]].fold(
+          response.json.validate[List[IncomeSourceResponse]].fold(
             _ => {
               Logger("application").error(s"[IncomeTaxViewChangeConnector][create] - Json validation error parsing repayment response, error ${response.body}")
               Left(CreateBusinessErrorResponse(response.status, s"Not valid json: ${response.body}"))
             },
-            valid => valid match {
-              case Some(validJson) =>
-                Right(validJson)
-              case None =>
-                Left(CreateBusinessErrorResponse(response.status, s"Not valid json: ${response.body}"))
-            }
+            valid =>
+              Right(valid)
           )
         case status =>
           if (status >= INTERNAL_SERVER_ERROR) {

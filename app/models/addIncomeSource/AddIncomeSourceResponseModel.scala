@@ -20,8 +20,6 @@ import play.api.libs.json.{Format, Json}
 
 import java.time.LocalDate
 
-sealed trait AddIncomeSourceResponse
-
 
 case class IncomeSourceResponse(incomeSourceId: String)
 
@@ -34,44 +32,3 @@ final case class CreateBusinessErrorResponse(status: Int, reason: String)
 object CreateBusinessErrorResponse {
   implicit val format: Format[CreateBusinessErrorResponse] = Json.format
 }
-
-
-//case class AddIncomeSourceResponseError(status: Int, reason: String) extends AddIncomeSourceResponse
-
-//case class SingleError(code: String, reason: String)
-
-//case class MultipleErrors(failures: List[SingleError])
-
-//case class FailedSingleErrorResponse(
-//                                      _id: String,
-//                                      schemaId: String,
-//                                      method: String,
-//                                      status: Int,
-//                                      response: SingleError) extends  AddIncomeSourceResponse
-//
-//case class FailedMultiErrorResponse(
-//                                     _id: String,
-//                                     schemaId: String,
-//                                     method: String,
-//                                     status: Int,
-//                                     response: MultipleErrors) extends  AddIncomeSourceResponse
-
-//object AddIncomeSourceResponseError {
-//  implicit val format: Format[AddIncomeSourceResponseError] = Json.format
-//}
-//
-//object SingleError {
-//  implicit val format: Format[SingleError] = Json.format
-//}
-//
-//object MultipleErrors {
-//  implicit val format: Format[MultipleErrors] = Json.format
-//}
-//
-//object FailedSingleErrorResponse {
-//  implicit val format: Format[FailedSingleErrorResponse] = Json.format
-//}
-//
-//object FailedMultiErrorResponse {
-//  implicit val format: Format[FailedMultiErrorResponse] = Json.format
-//}

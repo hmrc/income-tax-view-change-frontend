@@ -16,7 +16,7 @@
 
 package connectors.helpers
 
-import models.addIncomeSource.{AddressDetails, BusinessDetails}
+import models.addIncomeSource.{AddBusinessIncomeSourcesRequest, AddressDetails, BusinessDetails}
 
 trait IncomeSourceConnectorDataHelper {
   val businessDetails = BusinessDetails(accountingPeriodStartDate = "01-02-2023",
@@ -28,12 +28,16 @@ trait IncomeSourceConnectorDataHelper {
       addressLine3 = None,
       addressLine4 = None,
       countryCode = "",
-      postalCode = ""
+      postalCode = Some("")
     ),
     typeOfBusiness = None,
     tradingStartDate = "",
     cashOrAccrualsFlag = "",
     cessationDate = Some(""),
     cessationReason = None
+  )
+
+  val addBusinessDetailsRequestObject = AddBusinessIncomeSourcesRequest(businessDetails =
+    List(businessDetails)
   )
 }

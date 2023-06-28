@@ -22,7 +22,7 @@ import java.time.LocalDate
 
 sealed trait AddIncomeSourceRequest
 
-case class AddBusinessIncomeSourcesRequest(businessDetails: Option[List[BusinessDetails]]) extends AddIncomeSourceRequest
+case class AddBusinessIncomeSourcesRequest(businessDetails: List[BusinessDetails]) extends AddIncomeSourceRequest
 
 
 case class BusinessDetails(accountingPeriodStartDate: String,
@@ -41,7 +41,7 @@ case class AddressDetails(addressLine1: String,
                           addressLine3: Option[String],
                           addressLine4: Option[String],
                           countryCode: String,
-                          postalCode: String
+                          postalCode: Option[String]
                          )
 
 object AddBusinessIncomeSourcesRequest {

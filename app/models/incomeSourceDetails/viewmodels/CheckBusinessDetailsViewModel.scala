@@ -18,5 +18,5 @@ package models.incomeSourceDetails.viewmodels
 
 import java.time.LocalDate
 case class CheckBusinessDetailsViewModel(businessName: Option[String], businessStartDate: Option[LocalDate],
-                                         businessTrade: Option[String], businessAddressLine1: Option[String],
+                                         businessTrade: Option[String], businessAddressLine1: String,
                                          businessPostalCode: Option[String], businessAccountingMethod: Option[String])
