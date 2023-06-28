@@ -16,18 +16,15 @@
 
 package connectors
 
-import com.fasterxml.jackson.annotation.JsonValue
 import config.FrontendAppConfig
-import config.featureswitch.FeatureSwitching
+import models.addIncomeSource._
+import play.api.Logger
+import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
+import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 
-import javax.inject.{Inject, Singleton}
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-import models.addIncomeSource.{AddIncomeSourceResponse, _}
-import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
-import play.api.Logger
-import play.api.libs.json.{JsValue, Json}
 
 class IncomeSourceConnector @Inject()(val http: HttpClient,
                                       val appConfig: FrontendAppConfig
@@ -48,14 +45,19 @@ class IncomeSourceConnector @Inject()(val http: HttpClient,
     val url = addBusinessDetailsUrl(mtdItid)
     http.POST(url, body).map { response =>
       response.status match {
-        case OK => response.json.validate[List[IncomeSourceResponse]].fold(
-          _ => {
-            Logger("application").error(s"[IncomeTaxViewChangeConnector][create] - Json validation error parsing repayment response, error ${response.body}")
-            Left(CreateBusinessErrorResponse(response.status, s"Not valid json: ${response.body}"))
-          },
-          valid =>
-            Right(valid)
-        )
+        case OK =>
+          response.json.validateOpt[List[IncomeSourceResponse]].fold(
+            _ => {
+              Logger("application").error(s"[IncomeTaxViewChangeConnector][create] - Json validation error parsing repayment response, error ${response.body}")
+              Left(CreateBusinessErrorResponse(response.status, s"Not valid json: ${response.body}"))
+            },
+            valid => valid match {
+              case Some(validJson) =>
+                Right(validJson)
+              case None =>
+                Left(CreateBusinessErrorResponse(response.status, s"Not valid json: ${response.body}"))
+            }
+          )
         case status =>
           if (status >= INTERNAL_SERVER_ERROR) {
             Logger("application").error(s"[IncomeTaxViewChangeConnector][create] - Response status: ${response.status}, body: ${response.body}")

@@ -16,6 +16,7 @@
 
 package connectors
 
+import com.fasterxml.jackson.core.JsonParseException
 import connectors.helpers.IncomeSourceConnectorDataHelper
 import mocks.MockHttp
 import models.addIncomeSource.{AddressDetails, BusinessDetails, CreateBusinessErrorResponse, IncomeSourceResponse}
@@ -26,7 +27,7 @@ import uk.gov.hmrc.http.HttpResponse
 
 import scala.concurrent.Future
 
-class IncomeSourceConnectorSpec  extends TestSupport with MockHttp with IncomeSourceConnectorDataHelper {
+class IncomeSourceConnectorSpec extends TestSupport with MockHttp with IncomeSourceConnectorDataHelper {
 
   object UnderTestConnector extends IncomeSourceConnector(mockHttpGet, appConfig)
 
@@ -62,29 +63,21 @@ class IncomeSourceConnectorSpec  extends TestSupport with MockHttp with IncomeSo
       }
 
 
-//      "return expected status code OK - invalid json" in {
-//        val mtdId = individualUser.mtditid
-//
-//        val url = UnderTestConnector.addBusinessDetailsUrl(mtdId)
-//        val expectedResponse = HttpResponse(status = Status.OK, "Invalid Json here", headers = Map.empty)
-//
-//        val testBody = Json.parse(
-//          """
-//            |{"businessDetails":[{"accountingPeriodStartDate":"01-02-2023","accountingPeriodEndDate":"","tradingName":"","addressDetails":{"addressLine1":"tests test","addressLine2":"","countryCode":"","postalCode":""},"tradingStartDate":"","cashOrAccrualsFlag":"","cessationDate":""}]}
-//        """.stripMargin
-//        )
-//        setupMockHttpPost(url, testBody)(response = expectedResponse)
-//
-//        val result: Future[Either[CreateBusinessErrorResponse, List[IncomeSourceResponse]]] = UnderTestConnector.create(mtdId, businessDetails)
-//
-//        result.failed
-//
-//        result.futureValue match {
-//          case Left(_) =>
-//            succeed
-//          case _ => fail("Invalid json in response: we expect failure")
-//        }
-//      }
+      "return expected status code OK - but invalid json" in {
+        val mtdId = individualUser.mtditid
+
+        val url = UnderTestConnector.addBusinessDetailsUrl(mtdId)
+        val expectedResponse = HttpResponse(status = Status.OK, json = Json.toJson("Error message"), headers = Map.empty)
+
+        val testBody = Json.parse(
+          """
+            |{"businessDetails":[{"accountingPeriodStartDate":"01-02-2023","accountingPeriodEndDate":"","tradingName":"","addressDetails":{"addressLine1":"tests test","addressLine2":"","countryCode":"","postalCode":""},"tradingStartDate":"","cashOrAccrualsFlag":"","cessationDate":""}]}
+        """.stripMargin
+        )
+        setupMockHttpPost(url, testBody)(response = expectedResponse)
+        val result: Future[Either[CreateBusinessErrorResponse, List[IncomeSourceResponse]]] = UnderTestConnector.create(mtdId, businessDetails)
+        result.futureValue shouldBe Left(CreateBusinessErrorResponse(Status.OK, s"Not valid json: \"Error message\""))
+      }
     }
 
     "return failure" when {
