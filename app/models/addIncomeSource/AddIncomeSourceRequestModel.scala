@@ -40,7 +40,7 @@ case class AddressDetails(addressLine1: String,
                           addressLine2: Option[String],
                           addressLine3: Option[String],
                           addressLine4: Option[String],
-                          countryCode: String,
+                          countryCode: Option[String],
                           postalCode: Option[String]
                          )
 

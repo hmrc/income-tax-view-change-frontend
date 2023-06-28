@@ -62,15 +62,21 @@ class AddBusinessCheckDetailsController @Inject()(val authenticate: Authenticati
   def handleRequest(isAgent: Boolean, itvcErrorHandler: ShowInternalServerError, backUrl: String)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] = {
     val viewModel = CheckBusinessDetailsViewModel(
-      businessName = Some("someBusinessName"),
-      businessStartDate = Some(LocalDate.of(2022, 11, 11)),
+      businessName = "someBusinessName",
+      businessStartDate = LocalDate.of(2022, 11, 11),
       businessTrade = Some("someBusinessTrade"),
       businessAddressLine1 = "businessAddressLine1",
       businessPostalCode = Some("SE15 4ER"),
-      businessAccountingMethod = None
+      businessAccountingMethod = None,
+      accountingPeriodEndDate = LocalDate.of(2022, 11, 11),
+      businessAddressLine2 = None,
+      businessAddressLine3 = None,
+      businessAddressLine4 = None,
+      businessCountryCode = Some("UK"),
+      cashOrAccrualsFlag = "Cash"
     )
     for {
-      res <- createBusinessDetailsService.createBusinessDetails(user.mtditid, viewModel)
+      res <- createBusinessDetailsService.createBusinessDetails(viewModel)
     } yield res match {
       case Right(_) =>
         Ok("OK")

@@ -30,7 +30,7 @@ trait IncomeSourcesDataHelper {
       addressLine2 = Some(""),
       addressLine3 = None,
       addressLine4 = None,
-      countryCode = "",
+      countryCode = Some("UK"),
       postalCode = Some("")
     ),
     typeOfBusiness = None,
@@ -45,11 +45,17 @@ trait IncomeSourcesDataHelper {
   )
 
   val viewModel = CheckBusinessDetailsViewModel(
-    businessName = Some("someBusinessName"),
-    businessStartDate = Some(LocalDate.of(2022, 11, 11)),
+    businessName = "someBusinessName",
+    businessStartDate = LocalDate.of(2022, 11, 11),
     businessTrade = Some("someBusinessTrade"),
     businessAddressLine1 = "businessAddressLine1",
     businessPostalCode = Some("SE15 4ER"),
-    businessAccountingMethod = None
+    businessAccountingMethod = None,
+    accountingPeriodEndDate = LocalDate.of(2022, 11, 11),
+    businessAddressLine2 = None,
+    businessAddressLine3 = None,
+    businessAddressLine4 = None,
+    businessCountryCode = Some("UK"),
+    cashOrAccrualsFlag = "CASH"
   )
 }

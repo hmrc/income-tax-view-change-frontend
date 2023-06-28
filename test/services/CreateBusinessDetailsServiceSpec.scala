@@ -61,14 +61,20 @@ class CreateBusinessDetailsServiceSpec extends  TestSupport with FeatureSwitchin
           .thenReturn(Future{ Right(List(IncomeSourceResponse("123"))) })
 
         val viewModel = CheckBusinessDetailsViewModel(
-          businessName = Some("someBusinessName"),
-          businessStartDate = Some(LocalDate.of(2022, 11, 11)),
+          businessName = "someBusinessName",
+          businessStartDate = LocalDate.of(2022, 11, 11),
           businessTrade = Some("someBusinessTrade"),
           businessAddressLine1 = "businessAddressLine1",
+          businessAddressLine2 = None,
+          businessAddressLine3 = None,
+          businessAddressLine4 = None,
           businessPostalCode = Some("SE15 4ER"),
-          businessAccountingMethod = None
+          businessAccountingMethod = None,
+          accountingPeriodEndDate = LocalDate.of(2022, 11, 11),
+          businessCountryCode = Some("UK"),
+          cashOrAccrualsFlag = "Cash"
         )
-        val result = UnderTestCreateBusinessDetailsService.createBusinessDetails("someMtditId", viewModel)
+        val result = UnderTestCreateBusinessDetailsService.createBusinessDetails(viewModel)
 
         result.futureValue shouldBe Right(IncomeSourceResponse("123"))
       }
@@ -78,7 +84,7 @@ class CreateBusinessDetailsServiceSpec extends  TestSupport with FeatureSwitchin
           .thenReturn(Future {
             Left(CreateBusinessErrorResponse(Status.INTERNAL_SERVER_ERROR, s"Error creating incomeSource"))
           })
-        val result = UnderTestCreateBusinessDetailsService.createBusinessDetails("someMtditId", viewModel)
+        val result = UnderTestCreateBusinessDetailsService.createBusinessDetails(viewModel)
         result.futureValue match {
           case Left(_) => succeed
           case Right(_) => fail("Expecting to return left")

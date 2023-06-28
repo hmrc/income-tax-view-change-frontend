@@ -17,6 +17,7 @@
 package services
 
 
+import auth.MtdItUser
 import connectors.IncomeSourceConnector
 import models.addIncomeSource.{AddBusinessIncomeSourcesRequest, AddressDetails, BusinessDetails, IncomeSourceResponse}
 import models.incomeSourceDetails.viewmodels.CheckBusinessDetailsViewModel
@@ -28,33 +29,36 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class CreateBusinessDetailsService @Inject()(val incomeSourceConnector: IncomeSourceConnector) {
 
-  def createBusinessDetails(mtditid: String, viewModel: CheckBusinessDetailsViewModel)
-                           (implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Either[Throwable, IncomeSourceResponse]] = {
+  def createPayload(viewModel: CheckBusinessDetailsViewModel) : AddBusinessIncomeSourcesRequest = {
     val businessDetails =
       BusinessDetails(
-        accountingPeriodStartDate = "",
-        accountingPeriodEndDate = "",
-        tradingName = "",
+        accountingPeriodStartDate = viewModel.businessStartDate.toString, // TODO: verify date format required
+        accountingPeriodEndDate = viewModel.accountingPeriodEndDate.toString,
+        tradingName = viewModel.businessName,
         addressDetails = AddressDetails(
           addressLine1 = viewModel.businessAddressLine1,
-          addressLine2 = None,
-          addressLine3 = None,
-          addressLine4 = None,
-          countryCode = "UK",
+          addressLine2 = viewModel.businessAddressLine2,
+          addressLine3 = viewModel.businessAddressLine3,
+          addressLine4 = viewModel.businessAddressLine4,
+          countryCode = viewModel.businessCountryCode,
           postalCode = viewModel.businessPostalCode
         ),
-        typeOfBusiness = None,
-        tradingStartDate = "",
-        cashOrAccrualsFlag = "Cash",
+        typeOfBusiness = viewModel.businessTrade,
+        tradingStartDate = viewModel.businessStartDate.toString,
+        cashOrAccrualsFlag = viewModel.cashOrAccrualsFlag,
         cessationDate = None,
         cessationReason = None
       )
-
-    val requestObject = AddBusinessIncomeSourcesRequest(businessDetails =
+    AddBusinessIncomeSourcesRequest(businessDetails =
       List(businessDetails)
     )
+  }
+
+  def createBusinessDetails(viewModel: CheckBusinessDetailsViewModel)
+                           (implicit ec: ExecutionContext, user: MtdItUser[_], hc: HeaderCarrier): Future[Either[Throwable, IncomeSourceResponse]] = {
+    val requestObject = createPayload(viewModel)
     for {
-      res <- incomeSourceConnector.create(mtditid, requestObject)
+      res <- incomeSourceConnector.create(user.mtditid, requestObject)
     } yield res match {
       case Right(List(incomeSourceId)) =>
         Logger("application").info("[PaymentAllocationsService][getPaymentAllocation] - New income source created successfully: $incomeSourceId ")
