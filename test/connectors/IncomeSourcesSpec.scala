@@ -16,7 +16,7 @@
 
 package connectors
 
-import connectors.helpers.IncomeSourceConnectorDataHelper
+import connectors.helpers.IncomeSourcesDataHelper
 import mocks.MockHttp
 import models.addIncomeSource.{CreateBusinessErrorResponse, IncomeSourceResponse}
 import play.api.libs.json.{Format, Json}
@@ -26,7 +26,7 @@ import uk.gov.hmrc.http.HttpResponse
 
 import scala.concurrent.Future
 
-class IncomeSourceConnectorSpec extends TestSupport with MockHttp with IncomeSourceConnectorDataHelper {
+class IncomeSourcesSpec extends TestSupport with MockHttp with IncomeSourcesDataHelper {
 
   object UnderTestConnector extends IncomeSourceConnector(mockHttpGet, appConfig)
 

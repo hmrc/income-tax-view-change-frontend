@@ -19,10 +19,12 @@ package services
 import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
 import connectors.IncomeSourceConnector
-import models.addIncomeSource.IncomeSourceResponse
+import connectors.helpers.IncomeSourcesDataHelper
+import models.addIncomeSource.{CreateBusinessErrorResponse, IncomeSourceResponse}
 import models.incomeSourceDetails.viewmodels._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
+import play.api.http.Status
 import play.api.test.FakeRequest
 import testConstants.BaseTestConstants.{testMtditid, testNino, testRetrievedUserName}
 import testConstants.IncomeSourceDetailsTestConstants.singleBusinessIncomeWithCurrentYear
@@ -32,7 +34,7 @@ import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 import java.time.LocalDate
 import scala.concurrent.Future
 
-class CreateBusinessDetailsServiceSpec extends  TestSupport with FeatureSwitching {
+class CreateBusinessDetailsServiceSpec extends  TestSupport with FeatureSwitching with IncomeSourcesDataHelper{
 
   implicit val mtdItUser: MtdItUser[_] = MtdItUser(
     mtditid = testMtditid,
@@ -53,7 +55,8 @@ class CreateBusinessDetailsServiceSpec extends  TestSupport with FeatureSwitchin
 
   "CreateBusinessDetailsService call create" when {
     "" should {
-      "return expected incomeSourceId" in {
+
+      "return success response with incomeSourceId" in {
         when(mockIncomeSourceConnector.create(any(), any())(any()))
           .thenReturn(Future{ Right(List(IncomeSourceResponse("123"))) })
 
@@ -68,6 +71,15 @@ class CreateBusinessDetailsServiceSpec extends  TestSupport with FeatureSwitchin
         val result = UnderTestCreateBusinessDetailsService.createBusinessDetails("someMtditId", viewModel)
 
         result.futureValue shouldBe Right(IncomeSourceResponse("123"))
+      }
+
+      "return failure response with error" in {
+        when(mockIncomeSourceConnector.create(any(), any())(any()))
+          .thenReturn(Future {
+            Left(CreateBusinessErrorResponse(Status.INTERNAL_SERVER_ERROR, s"Error creating incomeSource"))
+          })
+        val result = UnderTestCreateBusinessDetailsService.createBusinessDetails("someMtditId", viewModel)
+        result.futureValue shouldBe Left(IncomeSourceResponse("123"))
       }
     }
   }

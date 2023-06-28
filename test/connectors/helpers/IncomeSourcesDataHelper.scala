@@ -17,8 +17,11 @@
 package connectors.helpers
 
 import models.addIncomeSource.{AddBusinessIncomeSourcesRequest, AddressDetails, BusinessDetails}
+import models.incomeSourceDetails.viewmodels._
 
-trait IncomeSourceConnectorDataHelper {
+import java.time.LocalDate
+
+trait IncomeSourcesDataHelper {
   val businessDetails = BusinessDetails(accountingPeriodStartDate = "01-02-2023",
     accountingPeriodEndDate = "",
     tradingName = "",
@@ -39,5 +42,14 @@ trait IncomeSourceConnectorDataHelper {
 
   val addBusinessDetailsRequestObject = AddBusinessIncomeSourcesRequest(businessDetails =
     List(businessDetails)
+  )
+
+  val viewModel = CheckBusinessDetailsViewModel(
+    businessName = Some("someBusinessName"),
+    businessStartDate = Some(LocalDate.of(2022, 11, 11)),
+    businessTrade = Some("someBusinessTrade"),
+    businessAddressLine1 = "businessAddressLine1",
+    businessPostalCode = Some("SE15 4ER"),
+    businessAccountingMethod = None
   )
 }
