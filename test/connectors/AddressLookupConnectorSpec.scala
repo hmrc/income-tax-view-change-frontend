@@ -77,6 +77,7 @@ class AddressLookupConnectorSpec extends TestSupport with FeatureSwitching with 
         "location returned from the lookup-service (individual)" in {
           disableAllSwitches()
           enable(IncomeSources)
+          beforeEach()
 
           setupMockHttpPost(TestAddressLookupConnector.addressLookupInitializeUrl, addressJson(individualContinueUrl, individualFeedbackUrl, individualEnglishBanner, individualWelshBanner))(HttpResponse(status = ACCEPTED,
             json = JsString(""), headers = Map("Location" -> Seq("Sample location"))))
@@ -90,6 +91,7 @@ class AddressLookupConnectorSpec extends TestSupport with FeatureSwitching with 
         "location returned from lookup-service (agent)" in { //this is the only specific agent test, just to test that everything works with both possible json payloads
           disableAllSwitches()
           enable(IncomeSources)
+          beforeEach()
 
           setupMockHttpPost(TestAddressLookupConnector.addressLookupInitializeUrl, addressJson(agentContinueUrl, agentFeedbackUrl, agentEnglishBanner, agentWelshBanner))(HttpResponse(status = ACCEPTED,
             json = JsString(""), headers = Map("Location" -> Seq("Sample location"))))
@@ -106,6 +108,7 @@ class AddressLookupConnectorSpec extends TestSupport with FeatureSwitching with 
         "non-standard status returned from lookup-service" in {
           disableAllSwitches()
           enable(IncomeSources)
+          beforeEach()
 
           setupMockHttpPost(TestAddressLookupConnector.addressLookupInitializeUrl, addressJson(individualContinueUrl, individualFeedbackUrl, individualEnglishBanner, individualWelshBanner))(HttpResponse(status = OK,
             json = JsString(""), headers = Map.empty))
@@ -215,7 +218,7 @@ class AddressLookupConnectorSpec extends TestSupport with FeatureSwitching with 
                   ),
                   "confirmPageLabels" -> JsObject(
                     Seq(
-                      "heading" -> JsString(messagesApi.preferred(Seq(Lang("cy")))("add-business-address.select.heading"))
+                      "heading" -> JsString(messagesApi.preferred(Seq(Lang("cy")))("add-business-address.confirm.heading"))
                     )
                   ),
                   "editPageLabels" -> JsObject(
@@ -231,5 +234,4 @@ class AddressLookupConnectorSpec extends TestSupport with FeatureSwitching with 
       )
     }
   }
-
 }

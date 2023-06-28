@@ -137,7 +137,7 @@ class AddressLookupConnector @Inject()(val appConfig: FrontendAppConfig,
                 ),
                 "confirmPageLabels" -> JsObject(
                   Seq(
-                    "heading" -> JsString(messagesApi.preferred(Seq(Lang("cy")))("add-business-address.select.heading"))
+                    "heading" -> JsString(messagesApi.preferred(Seq(Lang("cy")))("add-business-address.confirm.heading"))
                   )
                 ),
                 "editPageLabels" -> JsObject(
@@ -162,19 +162,13 @@ class AddressLookupConnector @Inject()(val appConfig: FrontendAppConfig,
   def initialiseAddressLookup(isAgent: Boolean)(implicit hc: HeaderCarrier, request: RequestHeader): Future[PostAddressLookupResponse] = {
     Logger("application").info(s"[AddressLookupConnector] - URL: $addressLookupInitializeUrl")
     val payload = if (isAgent) {addressJson(agentContinueUrl, agentFeedbackUrl, agentEnglishBanner, agentWelshBanner)} else {addressJson(individualContinueUrl, individualFeedbackUrl, individualEnglishBanner, individualWelshBanner)}
-    Logger("application").info(s"[AddressLookupConnector] - Payload: $payload")
     http.POST[JsValue, PostAddressLookupResponse](
       url = addressLookupInitializeUrl,
       body = payload
-    ).map { res =>
-      Logger("application").info(s"[AddressLookupConnector] - Response: $res")
-      res
-    }
+    )
   }
 
   def getAddressDetails(id: String)(implicit hc: HeaderCarrier): Future[GetAddressLookupDetailsResponse] = {
-    val url = getAddressDetailsUrl(id)
-    Logger("application").info(s"[AddressLookupConnector] - getAddressDetails ULR: $url")
-    http.GET[GetAddressLookupDetailsResponse](url)
+    http.GET[GetAddressLookupDetailsResponse](getAddressDetailsUrl(id))
   }
 }
