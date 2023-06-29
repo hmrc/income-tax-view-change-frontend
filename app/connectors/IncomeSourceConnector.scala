@@ -35,6 +35,7 @@ class IncomeSourceConnector @Inject()(val http: HttpClient,
 
   def create(mtdItid: String, addBusinessIncomeSourcesRequest: AddBusinessIncomeSourcesRequest)(implicit headerCarrier: HeaderCarrier): Future[Either[CreateBusinessErrorResponse, List[IncomeSourceResponse]]] = {
     val bodyAsJson = Json.toJson(addBusinessIncomeSourcesRequest)
+    println(s"Here is a body: ${bodyAsJson}")
     val url = addBusinessDetailsUrl(mtdItid)
     http.POST(url, bodyAsJson).map { response =>
       response.status match {

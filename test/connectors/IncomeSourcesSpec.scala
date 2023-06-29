@@ -50,7 +50,7 @@ class IncomeSourcesSpec extends TestSupport with MockHttp with IncomeSourcesData
 
         val testBody = Json.parse(
           """
-            |{"businessDetails":[{"accountingPeriodStartDate":"01-02-2023","accountingPeriodEndDate":"","tradingName":"","addressDetails":{"addressLine1":"tests test","addressLine2":"","countryCode":"","postalCode":""},"tradingStartDate":"","cashOrAccrualsFlag":"","cessationDate":""}]}
+            |{"businessDetails":[{"accountingPeriodStartDate":"01-02-2023","accountingPeriodEndDate":"","tradingName":"","addressDetails":{"addressLine1":"tests test","addressLine2":"","countryCode":"UK","postalCode":""},"tradingStartDate":"","cashOrAccrualsFlag":"","cessationDate":""}]}
         """.stripMargin
         )
 
@@ -70,7 +70,7 @@ class IncomeSourcesSpec extends TestSupport with MockHttp with IncomeSourcesData
 
         val testBody = Json.parse(
           """
-            |{"businessDetails":[{"accountingPeriodStartDate":"01-02-2023","accountingPeriodEndDate":"","tradingName":"","addressDetails":{"addressLine1":"tests test","addressLine2":"","countryCode":"","postalCode":""},"tradingStartDate":"","cashOrAccrualsFlag":"","cessationDate":""}]}
+            |{"businessDetails":[{"accountingPeriodStartDate":"01-02-2023","accountingPeriodEndDate":"","tradingName":"","addressDetails":{"addressLine1":"tests test","addressLine2":"","countryCode":"UK","postalCode":""},"tradingStartDate":"","cashOrAccrualsFlag":"","cessationDate":""}]}
         """.stripMargin
         )
         setupMockHttpPost(url, testBody)(response = expectedResponse)
@@ -91,7 +91,7 @@ class IncomeSourcesSpec extends TestSupport with MockHttp with IncomeSourcesData
 
         val testBody2 = Json.parse(
           """
-            |{"businessDetails":[{"accountingPeriodStartDate":"01-02-2023","accountingPeriodEndDate":"","tradingName":"","addressDetails":{"addressLine1":"tests test","addressLine2":"","countryCode":"","postalCode":""},"tradingStartDate":"","cashOrAccrualsFlag":"","cessationDate":""}]}
+            |{"businessDetails":[{"accountingPeriodStartDate":"01-02-2023","accountingPeriodEndDate":"","tradingName":"","addressDetails":{"addressLine1":"tests test","addressLine2":"","countryCode":"UK","postalCode":""},"tradingStartDate":"","cashOrAccrualsFlag":"","cessationDate":""}]}
         """.stripMargin
         )
         setupMockHttpPost(url, testBody2)(response = expectedResponse)
