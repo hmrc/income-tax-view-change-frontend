@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import models.addIncomeSource._
 import play.api.Logger
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.Json
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 
 import javax.inject.Inject
