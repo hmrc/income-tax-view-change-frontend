@@ -40,6 +40,24 @@ object CalculationListTestConstants {
     )
   }
 
+  val calculationListFalseFull: CalculationListResponseModel = {
+    CalculationListModel(
+      calculationId = "c432a56d-e811-474c-a26a-76fc3bcaefe5",
+      calculationTimestamp = "2023-10-31T12:55:51.159Z",
+      calculationType = "finalDeclaration",
+      crystallised = Some(false)
+    )
+  }
+
+  val calculationListNone: CalculationListResponseModel = {
+    CalculationListModel(
+      calculationId = "c432a56d-e811-474c-a26a-76fc3bcaefe5",
+      calculationTimestamp = "2023-10-31T12:55:51.159Z",
+      calculationType = "finalDeclaration",
+      crystallised = None
+    )
+  }
+
   val jsonResponseMin: JsValue = Json.parse(
     """
       |{

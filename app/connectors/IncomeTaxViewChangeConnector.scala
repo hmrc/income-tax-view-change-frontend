@@ -119,7 +119,7 @@ trait IncomeTaxViewChangeConnector extends RawResponseReads with FeatureSwitchin
   }
 
   def getLegacyCalculationListUrl(nino: String, taxYearEnd: String): String = {
-    s"${appConfig.itvcProtectedService}/list-of-calculation-results/$nino/$taxYearEnd"
+    s"${appConfig.itvcProtectedService}/income-tax-view-change/list-of-calculation-results/$nino/$taxYearEnd"
   }
 
   def getCalculationListUrl(nino: String, taxYearRange: String): String = {
@@ -645,11 +645,12 @@ trait IncomeTaxViewChangeConnector extends RawResponseReads with FeatureSwitchin
       }
     }
   }
+
   def getITSAStatusDetail(nino: String, taxYear: String, futureYears: Boolean, history: Boolean)
-                         (implicit headerCarrier: HeaderCarrier): Future[Either[ITSAStatusResponse,List[ITSAStatusResponseModel]]] = {
-    val url = getITSAStatusDetailUrl(nino,taxYear)
-    val queryParams = Seq(("futureYears" -> futureYears.toString ) , ("history" -> history.toString))
-    http.GET[HttpResponse](url = url,queryParams = queryParams)(
+                         (implicit headerCarrier: HeaderCarrier): Future[Either[ITSAStatusResponse, List[ITSAStatusResponseModel]]] = {
+    val url = getITSAStatusDetailUrl(nino, taxYear)
+    val queryParams = Seq("futureYears" -> futureYears.toString, "history" -> history.toString)
+    http.GET[HttpResponse](url = url, queryParams = queryParams)(
       httpReads,
       headerCarrier.withExtraHeaders("Accept" -> "application/vnd.hmrc.2.0+json"),
       ec
@@ -675,7 +676,7 @@ trait IncomeTaxViewChangeConnector extends RawResponseReads with FeatureSwitchin
   }
 
   def getLegacyCalculationList(nino: Nino, taxYearEnd: String)
-                               (implicit headerCarrier: HeaderCarrier): Future[CalculationListResponseModel] = {
+                              (implicit headerCarrier: HeaderCarrier): Future[CalculationListResponseModel] = {
 
     http.GET[HttpResponse](getLegacyCalculationListUrl(nino.value, taxYearEnd))(
       httpReads,
@@ -704,7 +705,7 @@ trait IncomeTaxViewChangeConnector extends RawResponseReads with FeatureSwitchin
   }
 
   def getCalculationList(nino: Nino, taxYearRange: String)
-                              (implicit headerCarrier: HeaderCarrier): Future[CalculationListResponseModel] = {
+                        (implicit headerCarrier: HeaderCarrier): Future[CalculationListResponseModel] = {
 
     http.GET[HttpResponse](getCalculationListUrl(nino.value, taxYearRange))(
       httpReads,

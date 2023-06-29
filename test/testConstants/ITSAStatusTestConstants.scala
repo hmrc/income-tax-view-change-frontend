@@ -25,8 +25,10 @@ import uk.gov.hmrc.http.HttpResponse
 
 object ITSAStatusTestConstants {
   val statusDetail = StatusDetail("2023-06-15T15:38:33.960Z", "No Status", "Sign up - return available", Some(8000.25))
+  val statusDetailMTDMandated = StatusDetail("2023-06-15T15:38:33.960Z", "MTD Mandated", "Sign up - return available", Some(8000.25))
   val statusDetailMinimal = StatusDetail("2023-06-15T15:38:33.960Z", "No Status", "Sign up - return available", None)
   val successITSAStatusResponseModel = ITSAStatusResponseModel("2019-20", Some(List(statusDetail)))
+  val successITSAStatusResponseMTDMandatedModel = ITSAStatusResponseModel("2019-20", Some(List(statusDetailMTDMandated)))
   val successITSAStatusResponseModelMinimal = ITSAStatusResponseModel("2019-20", None)
   val errorITSAStatusError = ITSAStatusResponseError(BAD_REQUEST, "Dummy message")
   val badJsonErrorITSAStatusError = ITSAStatusResponseError(INTERNAL_SERVER_ERROR, "Json validation error parsing ITSA Status response")

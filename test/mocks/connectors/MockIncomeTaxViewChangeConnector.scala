@@ -21,10 +21,12 @@ import models.calculationList.CalculationListResponseModel
 import models.core.{Nino, NinoResponse}
 import models.financialDetails.{FinancialDetailsResponseModel, PaymentsResponse}
 import models.incomeSourceDetails.IncomeSourceDetailsResponse
+import models.itsaStatus.{ITSAStatusResponse, ITSAStatusResponseModel}
 import models.paymentAllocationCharges.FinancialDetailsWithDocumentDetailsResponse
 import models.paymentAllocations.PaymentAllocationsResponse
 import models.nextUpdates.NextUpdatesResponseModel
 import models.repaymentHistory.{RepaymentHistoryErrorModel, RepaymentHistoryModel}
+import models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponse}
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.{any, anyString, eq => matches}
 import org.mockito.Mockito._
@@ -124,6 +126,16 @@ trait MockIncomeTaxViewChangeConnector extends UnitSpec with BeforeAndAfterEach 
 
   def setupGetCalculationList(nino: String, taxYearRange: String)(response: CalculationListResponseModel): Unit = {
     when(mockIncomeTaxViewChangeConnector.getCalculationList(Nino(ArgumentMatchers.eq(nino)), ArgumentMatchers.eq(taxYearRange))(any()))
+      .thenReturn(Future.successful(response))
+  }
+
+  def setupGetITSAStatusDetail(nino: String, taxYear: String, futureYears: Boolean, history: Boolean)(response: Either[ITSAStatusResponse, List[ITSAStatusResponseModel]]): Unit = {
+    when(mockIncomeTaxViewChangeConnector.getITSAStatusDetail(ArgumentMatchers.eq(nino), ArgumentMatchers.eq(taxYear), ArgumentMatchers.eq(futureYears), ArgumentMatchers.eq(history))(any()))
+      .thenReturn(Future.successful(response))
+  }
+
+  def setupUpdateIncomeSourceTaxYearSpecific(nino: String, incomeSourceId: String, taxYearSpecific: List[TaxYearSpecific])(response: UpdateIncomeSourceResponse): Unit = {
+    when(mockIncomeTaxViewChangeConnector.updateIncomeSourceTaxYearSpecific(ArgumentMatchers.eq(nino), ArgumentMatchers.eq(incomeSourceId), ArgumentMatchers.eq(taxYearSpecific))(any()))
       .thenReturn(Future.successful(response))
   }
 }

@@ -89,7 +89,7 @@ class BusinessReportingMethodService @Inject()(incomeTaxViewChangeConnector: Inc
                     Future.successful(Some(BusinessReportingMethodViewModel(Some(ty1), Some(ty1i), Some(ty2), Some(ty2i))))
                   case None =>
                     Logger("application").error(s"[BusinessReportingMethodService][getBusinessReportingMethodDetails] Crystallisation status not found")
-                    Future.failed(new InternalServerException("BusinessReportingMethodService][getBusinessReportingMethodDetails] Crystallisation status not found"))
+                    Future.failed(new InternalServerException("[BusinessReportingMethodService][getBusinessReportingMethodDetails] Crystallisation status not found"))
                 }.recoverWith {
                   case err: Exception =>
                     Logger("application").error(s"[BusinessReportingMethodService][getBusinessReportingMethodDetails] Failed to retrieve tax year crystallisation status : $err")
