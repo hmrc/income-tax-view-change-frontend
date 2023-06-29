@@ -128,13 +128,13 @@ class BusinessReportingMethodController @Inject()(val authenticate: Authenticati
             businessReportingMethodService.updateIncomeSourceTaxYearSpecific(user.nino, incomeSourceId, updatedForm.data).map {
               case Some(res: UpdateIncomeSourceResponseModel) =>
                 Logger("application").info(s"${if (isAgent) "[Agent]"}" + s" Updated tax year specific reporting method : $res")
-                Redirect(routes.BusinessAddedController.show())
+                Redirect(redirectUrl)
               case Some(err: UpdateIncomeSourceResponseError) =>
                 Logger("application").error(s"${if (isAgent) "[Agent]"}" + s" Failed to Updated tax year specific reporting method : $err")
                 errorHandler.showInternalServerError()
               case None =>
                 Logger("application").info(s"${if (isAgent) "[Agent]"}" + s" Updating tax year specific reporting method not required.")
-                Redirect(routes.BusinessAddedController.show())
+                Redirect(redirectUrl)
             }
 
           }
@@ -143,13 +143,13 @@ class BusinessReportingMethodController @Inject()(val authenticate: Authenticati
           businessReportingMethodService.updateIncomeSourceTaxYearSpecific(user.nino, incomeSourceId, valid).map {
             case Some(res: UpdateIncomeSourceResponseModel) =>
               Logger("application").info(s"${if (isAgent) "[Agent]"}" + s" Updated tax year specific reporting method : $res")
-              Redirect(routes.BusinessAddedController.show())
+              Redirect(redirectUrl)
             case Some(err: UpdateIncomeSourceResponseError) =>
               Logger("application").error(s"${if (isAgent) "[Agent]"}" + s" failed to Updated tax year specific reporting method : $err")
               errorHandler.showInternalServerError()
             case None =>
               Logger("application").info(s"${if (isAgent) "[Agent]"}" + s" Updating tax year specific reporting method not required.")
-              Redirect(routes.BusinessAddedController.show())
+              Redirect(redirectUrl)
           }
         }
       )
