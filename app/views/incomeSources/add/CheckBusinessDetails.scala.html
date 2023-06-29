@@ -42,7 +42,8 @@
 @(
     sources: CheckBusinessDetailsViewModel,
     isAgent: Boolean,
-    backUrl: String
+    backUrl: String,
+    origin: Option[String] = None
 )(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @import implicitDateFormatter.longDate
