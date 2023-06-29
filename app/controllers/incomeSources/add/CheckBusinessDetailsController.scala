@@ -93,7 +93,7 @@ class CheckBusinessDetailsController @Inject()(val checkBusinessDetails: CheckBu
           implicit mtdItUser =>
             handleRequest(
               sources = mtdItUser.incomeSources,
-              isAgent = true,
+              isAgent = true
             )
         }
   }
@@ -153,7 +153,7 @@ class CheckBusinessDetailsController @Inject()(val checkBusinessDetails: CheckBu
             Ok(checkBusinessDetails(
               viewModel,
               isAgent,
-              backUrl = if (isAgent) getAgentBackURL(user.headers.get(REFERER)) else getBackURL(user.headers.get(REFERER), origin),
+              backUrl = if (isAgent) getAgentBackURL(user.headers.get(REFERER)) else getBackURL(user.headers.get(REFERER), origin)
             ))
           case Left(ex) =>
             if (isAgent) {
