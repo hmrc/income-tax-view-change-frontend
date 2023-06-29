@@ -33,10 +33,10 @@ class BusinessReportingMethodViewSpec extends TestSupport {
   val businessReportingMethodView: BusinessReportingMethod = app.injector.instanceOf[BusinessReportingMethod]
 
   class Setup(isAgent: Boolean, error: Boolean = false) {
-    val taxYear1 = "tax_year_1_reporting_tax_year"
-    val taxYear2 = "tax_year_2_reporting_tax_year"
-    val taxYearReporting1 = "tax_year_1_reporting"
-    val taxYearReporting2 = "tax_year_2_reporting"
+    val taxYear1 = "tax_year_1_reporting_method_tax_year"
+    val taxYear2 = "tax_year_2_reporting_method_tax_year"
+    val taxYearReporting1 = "new_tax_year_1_reporting_method"
+    val taxYearReporting2 = "new_tax_year_2_reporting_method"
     val radioMustBeSelectedMessageKey = "incomeSources.add.businessReportingMethod.error"
 
     val form: Form[_] = AddBusinessReportingMethodForm.form
@@ -101,7 +101,7 @@ class BusinessReportingMethodViewSpec extends TestSupport {
       "render the radio form with input error" in new Setup(false, error = true) {
         val doc = documentScenario1.getElementById("add-business-reporting-method-form")
         doc.getElementsByTag("p").get(0).text() shouldBe messages("incomeSources.add.businessReportingMethod.taxYear", (viewModelScenario1.taxYear1.get.toInt - 1).toString, viewModelScenario1.taxYear1.get)
-        doc.getElementsByTag("p").get(1).text() shouldBe messages("incomeSources.add.businessReportingMethod.taxYear", (viewModelScenario1.taxYear2.get.toInt - 1).toString, viewModelScenario1.taxYear2.get)
+        doc.getElementsByTag("p").get(2).text() shouldBe messages("incomeSources.add.businessReportingMethod.taxYear", (viewModelScenario1.taxYear2.get.toInt - 1).toString, viewModelScenario1.taxYear2.get)
         doc.getElementsByClass("govuk-label govuk-radios__label").eq(0).text() shouldBe messages("incomeSources.add.businessReportingMethod.chooseAnnualReport")
         doc.getElementsByClass("govuk-label govuk-radios__label").eq(1).text() shouldBe messages("incomeSources.add.businessReportingMethod.chooseQuarterlyReport")
         doc.getElementsByClass("govuk-label govuk-radios__label").eq(2).text() shouldBe messages("incomeSources.add.businessReportingMethod.chooseAnnualReport")
@@ -131,7 +131,7 @@ class BusinessReportingMethodViewSpec extends TestSupport {
         doc.getElementsByClass("govuk-label govuk-radios__label").eq(0).text() shouldBe messages("incomeSources.add.businessReportingMethod.chooseAnnualReport")
         doc.getElementsByClass("govuk-label govuk-radios__label").eq(1).text() shouldBe messages("incomeSources.add.businessReportingMethod.chooseQuarterlyReport")
         doc.getElementsByClass("govuk-radios").size() shouldBe 1
-        doc.getElementById("new_tax_year_1_reporting_method-error").text() shouldBe messages("base.error-prefix") + " " + messages("incomeSources.add.businessReportingMethod.error", (viewModelScenario1.taxYear2.get.toInt - 1).toString, viewModelScenario1.taxYear2.get)
+        doc.getElementById("new_tax_year_2_reporting_method-error").text() shouldBe messages("base.error-prefix") + " " + messages("incomeSources.add.businessReportingMethod.error", (viewModelScenario1.taxYear2.get.toInt - 1).toString, viewModelScenario1.taxYear2.get)
         documentScenario2.getElementById("error-summary-heading").text() shouldBe messages("base.error_summary.heading")
         documentScenario2.getElementsByClass("govuk-list govuk-error-summary__list").text() shouldBe {
           messages("incomeSources.add.businessReportingMethod.error", (viewModelScenario2.taxYear2.get.toInt - 1).toString, viewModelScenario2.taxYear2.get)
@@ -176,7 +176,7 @@ class BusinessReportingMethodViewSpec extends TestSupport {
       "render the radio form with input error" in new Setup(true, error = true) {
         val doc = documentScenario1.getElementById("add-business-reporting-method-form")
         doc.getElementsByTag("p").get(0).text() shouldBe messages("incomeSources.add.businessReportingMethod.taxYear", (viewModelScenario1.taxYear1.get.toInt - 1).toString, viewModelScenario1.taxYear1.get)
-        doc.getElementsByTag("p").get(1).text() shouldBe messages("incomeSources.add.businessReportingMethod.taxYear", (viewModelScenario1.taxYear2.get.toInt - 1).toString, viewModelScenario1.taxYear2.get)
+        doc.getElementsByTag("p").get(2).text() shouldBe messages("incomeSources.add.businessReportingMethod.taxYear", (viewModelScenario1.taxYear2.get.toInt - 1).toString, viewModelScenario1.taxYear2.get)
         doc.getElementsByClass("govuk-label govuk-radios__label").eq(0).text() shouldBe messages("incomeSources.add.businessReportingMethod.chooseAnnualReport")
         doc.getElementsByClass("govuk-label govuk-radios__label").eq(1).text() shouldBe messages("incomeSources.add.businessReportingMethod.chooseQuarterlyReport")
         doc.getElementsByClass("govuk-label govuk-radios__label").eq(2).text() shouldBe messages("incomeSources.add.businessReportingMethod.chooseAnnualReport")
