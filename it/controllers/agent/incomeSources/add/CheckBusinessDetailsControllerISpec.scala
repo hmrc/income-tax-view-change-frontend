@@ -13,7 +13,7 @@ class CheckBusinessDetailsControllerISpec extends ComponentSpecBase{
 
   val checkBusinessDetailsShowUrlAgent: String = controllers.incomeSources.add.routes.CheckBusinessDetailsController.showAgent().url
   val checkBusinessDetailsSubmitUrlAgent: String = controllers.incomeSources.add.routes.CheckBusinessDetailsController.submitAgent().url
-  val checkBusinessReportingMethodUrlAgent: String = controllers.incomeSources.add.routes.AddBusinessReportingMethod.showAgent() + "?IncomeSourceID=123"
+  val checkBusinessReportingMethodUrlAgent: String = controllers.incomeSources.add.routes.AddBusinessReportingMethod.showAgent() + "?id=123"
 
   val sessionData: Map[String, String] = Map(businessName -> "Test Business",
                                             businessStartDate -> "2022-01-01",
