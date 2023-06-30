@@ -20,16 +20,13 @@ import auth.MtdItUser
 import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
-import controllers.agent.utils.SessionKeys.businessAccountingMethod
-import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
-import forms.utils.SessionKeys.{addBusinessAccountingMethod, addBusinessAccountingPeriodEndDate, addBusinessAddressLine1, addBusinessAddressLine2, addBusinessAddressLine3, addBusinessAddressLine4, addBusinessCountryCode, addBusinessPostalCode, businessName, businessStartDate, businessTrade, origin}
+import controllers.predicates._
+import forms.utils.SessionKeys._
 import models.addIncomeSource.AddIncomeSourceResponse
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import models.incomeSourceDetails.viewmodels.CheckBusinessDetailsViewModel
-import services._
 import play.api.Logger
 import play.api.mvc._
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.{CreateBusinessDetailsService, IncomeSourceDetailsService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
@@ -150,6 +147,9 @@ class CheckBusinessDetailsController @Inject()(val checkBusinessDetails: CheckBu
   def handleRequest(sources: IncomeSourceDetailsModel, isAgent: Boolean, origin: Option[String] = None)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
 
+    val postAction: Call = { if (isAgent) controllers.incomeSources.add.routes.CheckBusinessDetailsController.submitAgent() else
+      controllers.incomeSources.add.routes.CheckBusinessDetailsController.submit() }
+
     if (isDisabled(IncomeSources)) {
       Future.successful(Redirect(controllers.routes.HomeController.show()))
     } else {
@@ -158,6 +158,7 @@ class CheckBusinessDetailsController @Inject()(val checkBusinessDetails: CheckBu
           case Right(viewModel) =>
             Ok(checkBusinessDetails(
               viewModel,
+              postAction = postAction,
               isAgent,
               backUrl = if (isAgent) getAgentBackURL(user.headers.get(REFERER)) else getBackURL(user.headers.get(REFERER), origin)
             ))

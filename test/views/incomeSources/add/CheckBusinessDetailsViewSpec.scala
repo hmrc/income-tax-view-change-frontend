@@ -51,6 +51,9 @@ class CheckBusinessDetailsViewSpec extends TestSupport {
     cashOrAccrualsFlag = "Cash"
   )
 
+  val postAction: Call = {
+      controllers.incomeSources.add.routes.CheckBusinessDetailsController.submit()
+  }
   class Setup(isAgent: Boolean, error: Boolean = false) {
 
     val businessName = "Test Business"
@@ -70,6 +73,7 @@ class CheckBusinessDetailsViewSpec extends TestSupport {
       checkBusinessDetailsView(
         viewModelMax,
         isAgent = isAgent,
+        postAction = postAction,
         backUrl = backUrl)(messages, implicitly)
     }
 
