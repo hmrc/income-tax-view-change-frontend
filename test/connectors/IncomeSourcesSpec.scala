@@ -18,7 +18,7 @@ package connectors
 
 import connectors.helpers.IncomeSourcesDataHelper
 import mocks.MockHttp
-import models.addIncomeSource.{CreateBusinessErrorResponse, IncomeSourceResponse}
+import models.addIncomeSource.{CreateBusinessErrorResponse, AddIncomeSourceResponse}
 import play.api.libs.json.{Format, Json}
 import play.mvc.Http.Status
 import testUtils.TestSupport
@@ -45,7 +45,7 @@ class IncomeSourcesSpec extends TestSupport with MockHttp with IncomeSourcesData
 
         val url = UnderTestConnector.addBusinessDetailsUrl(mtdId)
         val expectedResponse = HttpResponse(status = Status.OK, json = Json.toJson(
-          List(IncomeSourceResponse(expectedIncomeSourceId))),
+          List(AddIncomeSourceResponse(expectedIncomeSourceId))),
           headers = Map.empty)
 
         val testBody = Json.parse(
@@ -56,9 +56,9 @@ class IncomeSourcesSpec extends TestSupport with MockHttp with IncomeSourcesData
 
         setupMockHttpPost(url, testBody)(response = expectedResponse)
 
-        val result: Future[Either[CreateBusinessErrorResponse, List[IncomeSourceResponse]]] = UnderTestConnector.create(mtdId, addBusinessDetailsRequestObject)
+        val result: Future[Either[CreateBusinessErrorResponse, List[AddIncomeSourceResponse]]] = UnderTestConnector.create(mtdId, addBusinessDetailsRequestObject)
 
-        result.futureValue shouldBe Right(List(IncomeSourceResponse(expectedIncomeSourceId)))
+        result.futureValue shouldBe Right(List(AddIncomeSourceResponse(expectedIncomeSourceId)))
       }
 
 
@@ -74,7 +74,7 @@ class IncomeSourcesSpec extends TestSupport with MockHttp with IncomeSourcesData
         """.stripMargin
         )
         setupMockHttpPost(url, testBody)(response = expectedResponse)
-        val result: Future[Either[CreateBusinessErrorResponse, List[IncomeSourceResponse]]] = UnderTestConnector.create(mtdId, addBusinessDetailsRequestObject)
+        val result: Future[Either[CreateBusinessErrorResponse, List[AddIncomeSourceResponse]]] = UnderTestConnector.create(mtdId, addBusinessDetailsRequestObject)
         result.futureValue shouldBe Left(CreateBusinessErrorResponse(Status.OK, s"Not valid json: \"Error message\""))
       }
     }
@@ -96,7 +96,7 @@ class IncomeSourcesSpec extends TestSupport with MockHttp with IncomeSourcesData
         )
         setupMockHttpPost(url, testBody2)(response = expectedResponse)
 
-        val result: Future[Either[CreateBusinessErrorResponse, List[IncomeSourceResponse]]] = UnderTestConnector.create(mtdId, addBusinessDetailsRequestObject)
+        val result: Future[Either[CreateBusinessErrorResponse, List[AddIncomeSourceResponse]]] = UnderTestConnector.create(mtdId, addBusinessDetailsRequestObject)
 
         result.futureValue match {
           case Left(CreateBusinessErrorResponse(500, _)) =>

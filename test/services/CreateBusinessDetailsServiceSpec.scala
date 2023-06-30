@@ -20,7 +20,7 @@ import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
 import connectors.IncomeSourceConnector
 import connectors.helpers.IncomeSourcesDataHelper
-import models.addIncomeSource.{CreateBusinessErrorResponse, IncomeSourceResponse}
+import models.addIncomeSource.{CreateBusinessErrorResponse, AddIncomeSourceResponse}
 import models.incomeSourceDetails.viewmodels._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
@@ -58,7 +58,7 @@ class CreateBusinessDetailsServiceSpec extends  TestSupport with FeatureSwitchin
 
       "return success response with incomeSourceId" in {
         when(mockIncomeSourceConnector.create(any(), any())(any()))
-          .thenReturn(Future{ Right(List(IncomeSourceResponse("123"))) })
+          .thenReturn(Future{ Right(List(AddIncomeSourceResponse("123"))) })
 
         val viewModel = CheckBusinessDetailsViewModel(
           businessName = Some("someBusinessName"),
@@ -76,7 +76,7 @@ class CreateBusinessDetailsServiceSpec extends  TestSupport with FeatureSwitchin
         )
         val result = UnderTestCreateBusinessDetailsService.createBusinessDetails(viewModel)
 
-        result.futureValue shouldBe Right(IncomeSourceResponse("123"))
+        result.futureValue shouldBe Right(AddIncomeSourceResponse("123"))
       }
 
       "return failure response with error" in {

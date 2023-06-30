@@ -31,16 +31,16 @@ class IncomeSourceConnector @Inject()(val http: HttpClient,
                                      )(implicit val ec: ExecutionContext) {
 
 
-  def addBusinessDetailsUrl(authTag: String): String = s"${appConfig.itvcProtectedService}/income-tax-view-change/create-income-source/business/$authTag"
+  def addBusinessDetailsUrl(mtdItid: String): String = s"${appConfig.itvcProtectedService}/income-tax-view-change/create-income-source/business/$mtdItid"
 
-  def create(mtdItid: String, addBusinessIncomeSourcesRequest: AddBusinessIncomeSourcesRequest)(implicit headerCarrier: HeaderCarrier): Future[Either[CreateBusinessErrorResponse, List[IncomeSourceResponse]]] = {
+  def create(mtdItid: String, addBusinessIncomeSourcesRequest: AddBusinessIncomeSourcesRequest)(implicit headerCarrier: HeaderCarrier): Future[Either[CreateBusinessErrorResponse, List[AddIncomeSourceResponse]]] = {
     val bodyAsJson = Json.toJson(addBusinessIncomeSourcesRequest)
     println(s"Here is a body: ${bodyAsJson}")
     val url = addBusinessDetailsUrl(mtdItid)
     http.POST(url, bodyAsJson).map { response =>
       response.status match {
         case OK =>
-          response.json.validate[List[IncomeSourceResponse]].fold(
+          response.json.validate[List[AddIncomeSourceResponse]].fold(
             _ => {
               Logger("application").error(s"[IncomeTaxViewChangeConnector][create] - Json validation error parsing repayment response, error ${response.body}")
               Left(CreateBusinessErrorResponse(response.status, s"Not valid json: ${response.body}"))

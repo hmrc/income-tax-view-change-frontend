@@ -23,7 +23,7 @@ import controllers.AddBusinessNameController
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import forms.utils.SessionKeys
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
-import models.addIncomeSource.IncomeSourceResponse
+import models.addIncomeSource.AddIncomeSourceResponse
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.mockito.ArgumentMatchers.any
@@ -126,7 +126,7 @@ class CheckBusinessDetailsControllerSpec extends TestSupport with MockAuthentica
         mockNoIncomeSources()
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         when(mockBusinessDetailsService.createBusinessDetails(any())(any(), any(), any()) )
-          .thenReturn(Future{ Right(IncomeSourceResponse("incomeSourceId")) } )
+          .thenReturn(Future{ Right(AddIncomeSourceResponse("incomeSourceId")) } )
 
         val result = TestCheckBusinessDetailsController.submit()(
           fakeRequestWithActiveSession
@@ -173,7 +173,7 @@ class CheckBusinessDetailsControllerSpec extends TestSupport with MockAuthentica
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         when(mockBusinessDetailsService.createBusinessDetails(any())(any(), any(), any()))
           .thenReturn(Future {
-            Right(IncomeSourceResponse("incomeSourceId"))
+            Right(AddIncomeSourceResponse("incomeSourceId"))
           })
 
         val result = TestCheckBusinessDetailsController.show()(
@@ -200,7 +200,7 @@ class CheckBusinessDetailsControllerSpec extends TestSupport with MockAuthentica
         mockSingleBusinessIncomeSource()
         when(mockBusinessDetailsService.createBusinessDetails(any())(any(), any(), any()))
           .thenReturn(Future {
-            Right(IncomeSourceResponse("incomeSourceId"))
+            Right(AddIncomeSourceResponse("incomeSourceId"))
           })
 
         val result = TestCheckBusinessDetailsController.showAgent()(
@@ -210,7 +210,9 @@ class CheckBusinessDetailsControllerSpec extends TestSupport with MockAuthentica
             SessionKeys.businessTrade -> testBusinessTrade,
             SessionKeys.addBusinessAddressLine1 -> testBusinessAddressLine1,
             SessionKeys.addBusinessPostalCode -> testBusinessPostCode,
-            SessionKeys.addBusinessAccountingMethod -> testBusinessAccountingMethod
+            SessionKeys.addBusinessAccountingMethod -> testBusinessAccountingMethod,
+            SessionKeys.addBusinessAccountingPeriodEndDate -> testAccountingPeriodEndDate,
+            SessionKeys.addBusinessPostalCode -> testBusinessPostCode
           ))
 
         status(result) shouldBe Status.OK
@@ -233,7 +235,7 @@ class CheckBusinessDetailsControllerSpec extends TestSupport with MockAuthentica
         mockSingleBusinessIncomeSource()
         when(mockBusinessDetailsService.createBusinessDetails(any())(any(), any(), any()))
           .thenReturn(Future {
-            Right(IncomeSourceResponse("incomeSourceId"))
+            Right(AddIncomeSourceResponse("incomeSourceId"))
           })
 
         val result = TestCheckBusinessDetailsController.submitAgent()(
@@ -243,7 +245,9 @@ class CheckBusinessDetailsControllerSpec extends TestSupport with MockAuthentica
             SessionKeys.businessTrade -> testBusinessTrade,
             SessionKeys.addBusinessAddressLine1 -> testBusinessAddressLine1,
             SessionKeys.addBusinessPostalCode -> testBusinessPostCode,
-            SessionKeys.addBusinessAccountingMethod -> testBusinessAccountingMethod
+            SessionKeys.addBusinessAccountingMethod -> testBusinessAccountingMethod,
+            SessionKeys.addBusinessAccountingPeriodEndDate -> testAccountingPeriodEndDate,
+            SessionKeys.addBusinessPostalCode -> testBusinessPostCode,
           ))
 
         status(result) shouldBe Status.SEE_OTHER

@@ -21,10 +21,10 @@ import play.api.libs.json.{Format, Json}
 import java.time.LocalDate
 
 
-case class IncomeSourceResponse(incomeSourceId: String)
+case class AddIncomeSourceResponse(incomeSourceId: String)
 
-object IncomeSourceResponse {
-  implicit val format: Format[IncomeSourceResponse] = Json.format
+object AddIncomeSourceResponse {
+  implicit val format: Format[AddIncomeSourceResponse] = Json.format
 }
 
 final case class CreateBusinessErrorResponse(status: Int, reason: String)

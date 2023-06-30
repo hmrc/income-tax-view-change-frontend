@@ -19,7 +19,7 @@ package services
 
 import auth.MtdItUser
 import connectors.IncomeSourceConnector
-import models.addIncomeSource.{AddBusinessIncomeSourcesRequest, AddressDetails, BusinessDetails, IncomeSourceResponse}
+import models.addIncomeSource.{AddBusinessIncomeSourcesRequest, AddressDetails, BusinessDetails, AddIncomeSourceResponse}
 import models.incomeSourceDetails.viewmodels.CheckBusinessDetailsViewModel
 import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
@@ -31,7 +31,7 @@ class CreateBusinessDetailsService @Inject()(val incomeSourceConnector: IncomeSo
 
 
   def createBusinessDetails(viewModel: CheckBusinessDetailsViewModel)
-                           (implicit ec: ExecutionContext, user: MtdItUser[_], hc: HeaderCarrier): Future[Either[Throwable, IncomeSourceResponse]] = {
+                           (implicit ec: ExecutionContext, user: MtdItUser[_], hc: HeaderCarrier): Future[Either[Throwable, AddIncomeSourceResponse]] = {
     val businessDetails =
       BusinessDetails(
         accountingPeriodStartDate = viewModel.businessStartDate.toString, // TODO: verify date format required

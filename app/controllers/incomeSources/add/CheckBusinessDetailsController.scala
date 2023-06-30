@@ -23,7 +23,7 @@ import controllers.agent.predicates.ClientConfirmedController
 import controllers.agent.utils.SessionKeys.businessAccountingMethod
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
 import forms.utils.SessionKeys.{addBusinessAccountingMethod, addBusinessAccountingPeriodEndDate, addBusinessAddressLine1, addBusinessAddressLine2, addBusinessAddressLine3, addBusinessAddressLine4, addBusinessCountryCode, addBusinessPostalCode, businessName, businessStartDate, businessTrade, origin}
-import models.addIncomeSource.IncomeSourceResponse
+import models.addIncomeSource.AddIncomeSourceResponse
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import models.incomeSourceDetails.viewmodels.CheckBusinessDetailsViewModel
 import services._
@@ -123,6 +123,7 @@ class CheckBusinessDetailsController @Inject()(val checkBusinessDetails: CheckBu
         accountingPeriodEndDate <- user.session.data.get(addBusinessAccountingPeriodEndDate).map(LocalDate.parse)
     } yield {
 
+      println("AAAAAA")
       CheckBusinessDetailsViewModel(
         businessName = Some(businessName),
         businessStartDate = Some(businessStartDate),
@@ -186,7 +187,7 @@ class CheckBusinessDetailsController @Inject()(val checkBusinessDetails: CheckBu
             s"[CheckBusinessDetailsController][handleRequest] - Unable to create income source: ${ex.getMessage}")
             itvcErrorHandler.showInternalServerError()
 
-          case Right(IncomeSourceResponse(id)) =>
+          case Right(AddIncomeSourceResponse(id)) =>
             Redirect(controllers.incomeSources.add.routes.AddBusinessReportingMethod.show().url + s"?id=$id").withNewSession
         }
         case None => Logger("application").error(
@@ -207,7 +208,7 @@ class CheckBusinessDetailsController @Inject()(val checkBusinessDetails: CheckBu
                     s"[CheckBusinessDetailsController][handleRequest] - Unable to create income source: ${ex.getMessage}")
                     itvcErrorHandler.showInternalServerError()
 
-                  case Right(IncomeSourceResponse(id)) =>
+                  case Right(AddIncomeSourceResponse(id)) =>
                     Redirect(controllers.incomeSources.add.routes.AddBusinessReportingMethod.showAgent().url + s"?id=$id").withNewSession
                 }
               case None => Logger("application").error(
