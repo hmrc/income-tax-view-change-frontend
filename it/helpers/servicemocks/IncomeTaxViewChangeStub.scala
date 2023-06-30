@@ -195,11 +195,11 @@ object IncomeTaxViewChangeStub { // scalastyle:off number.of.methods
     WiremockHelper.stubGet(getRepaymentHistoryByIdUrl(nino.value, repaymentId), status, Json.toJson(response).toString())
   }
 
-  def stubUpdateCessationDate(status:Int,response:JsValue): StubMapping =
-    WiremockHelper.stubPut("/income-tax-view-change/update-income-source",status,response.toString())
+  def stubUpdateIncomeSource(status: Int, response: JsValue): StubMapping =
+    WiremockHelper.stubPut("/income-tax-view-change/update-income-source", status, response.toString())
 
-  def verifyUpdateCessationDate(body:Option[String]): Unit = {
-    WiremockHelper.verifyPut("/income-tax-view-change/update-income-source",body)
+  def verifyUpdateIncomeSource(body: Option[String]): Unit = {
+    WiremockHelper.verifyPut("/income-tax-view-change/update-income-source", body)
   }
 
 }

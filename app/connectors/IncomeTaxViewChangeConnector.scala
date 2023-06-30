@@ -123,7 +123,7 @@ trait IncomeTaxViewChangeConnector extends RawResponseReads with FeatureSwitchin
   }
 
   def getCalculationListUrl(nino: String, taxYearRange: String): String = {
-    s"${appConfig.itvcProtectedService}/calculation-list/$nino/$taxYearRange"
+    s"${appConfig.itvcProtectedService}/income-tax-view-change/calculation-list/$nino/$taxYearRange"
   }
 
   def getBusinessDetails(nino: String)(implicit headerCarrier: HeaderCarrier): Future[IncomeSourceDetailsResponse] = {

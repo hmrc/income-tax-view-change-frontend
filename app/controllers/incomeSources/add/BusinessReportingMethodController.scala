@@ -59,7 +59,8 @@ class BusinessReportingMethodController @Inject()(val authenticate: Authenticati
     val postAction: Call = if (isAgent) controllers.incomeSources.add.routes.BusinessReportingMethodController.submitAgent(incomeSourceId) else
       controllers.incomeSources.add.routes.BusinessReportingMethodController.submit(incomeSourceId)
     val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-    val redirectUrl: Call = if (isAgent) routes.BusinessAddedController.showAgent(incomeSourceId) else routes.BusinessAddedController.show(incomeSourceId)
+    val redirectUrl: Call = if (isAgent) controllers.incomeSources.add.routes.BusinessAddedController.showAgent(incomeSourceId) else
+      controllers.incomeSources.add.routes.BusinessAddedController.show(incomeSourceId)
 
     if (incomeSourcesEnabled) {
       businessReportingMethodService.checkITSAStatusCurrentYear.flatMap {
@@ -102,6 +103,9 @@ class BusinessReportingMethodController @Inject()(val authenticate: Authenticati
     val incomeSourcesEnabled: Boolean = isEnabled(IncomeSources)
     val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
     val redirectUrl: Call = if (isAgent) routes.BusinessAddedController.showAgent(incomeSourceId) else routes.BusinessAddedController.show(incomeSourceId)
+    val submitUrl: Call = if (isAgent) controllers.incomeSources.add.routes.BusinessReportingMethodController.submitAgent(incomeSourceId) else
+      controllers.incomeSources.add.routes.BusinessReportingMethodController.submit(incomeSourceId)
+
     if (incomeSourcesEnabled) {
       AddBusinessReportingMethodForm.form.bindFromRequest().fold(
         hasErrors => {
@@ -113,7 +117,7 @@ class BusinessReportingMethodController @Inject()(val authenticate: Authenticati
                 BadRequest(view(
                   addBusinessReportingMethodForm = updatedForm,
                   businessReportingViewModel = viewModel,
-                  postAction = controllers.incomeSources.add.routes.BusinessReportingMethodController.submit(incomeSourceId),
+                  postAction = submitUrl,
                   isAgent = isAgent))
               case None =>
                 Redirect(redirectUrl)

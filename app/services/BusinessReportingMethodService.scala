@@ -43,6 +43,7 @@ class BusinessReportingMethodService @Inject()(incomeTaxViewChangeConnector: Inc
   def checkITSAStatusCurrentYear(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Boolean] = {
     val yearEnd = dateService.getCurrentTaxYearEnd(isEnabled(TimeMachineAddYear)).toString.substring(2).toInt
     val yearStart = yearEnd - 1
+
     incomeTaxViewChangeConnector.getITSAStatusDetail(
       nino = user.nino,
       taxYear = s"$yearStart-$yearEnd",

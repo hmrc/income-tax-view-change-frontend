@@ -52,11 +52,11 @@ class CheckCeaseForeignPropertyDetailsControllerISpec extends ComponentSpecBase 
         enable(IncomeSources)
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
-        IncomeTaxViewChangeStub.stubUpdateCessationDate(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
+        IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
 
         val res = IncomeTaxViewChangeFrontend.postCheckCeaseForeignPropertyDetails(cessationDate, Map.empty)
         verifyIncomeSourceDetailsCall(testMtditid)
-        IncomeTaxViewChangeStub.verifyUpdateCessationDate(Some(Json.toJson(request).toString()))
+        IncomeTaxViewChangeStub.verifyUpdateIncomeSource(Some(Json.toJson(request).toString()))
 
         res should have(
           httpStatus(SEE_OTHER),
