@@ -128,4 +128,12 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
             )
         }
   }
+
+  def changeBusinessName(): Action[AnyContent] = Action {
+    Ok("Change Business Name WIP")
+  }
+
+  def changeBusinessNameAgent(): Action[AnyContent] = Action {
+    Ok("Agent Change Business Name WIP")
+  }
 }

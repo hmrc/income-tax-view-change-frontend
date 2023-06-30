@@ -168,4 +168,12 @@ class BusinessAccountingMethodController @Inject()(val authenticate: Authenticat
             )
         }
   }
+
+  def changeBusinessAccountingMethod(): Action[AnyContent] = Action {
+    Ok("Change Business Accounting Method  WIP")
+  }
+
+  def changeBusinessAccountingMethodAgent(): Action[AnyContent] = Action {
+    Ok("Agent Change Business Accounting Method  WIP")
+  }
 }

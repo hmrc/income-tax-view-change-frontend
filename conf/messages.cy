@@ -1342,6 +1342,18 @@ check-cease-foreign-property-details.summary-list.key   = Dyddiad y gwnaeth y bu
 check-cease-foreign-property-details.summary-list.link  = Newid
 check-cease-foreign-property-details.button             = Cadarnhau ac yn eich blaen
 
+# check business details
+check-business-details.sole-trader-caption              = Y busnes unig fasnachwr a nodwyd gennych
+check-business-details.heading1                         = Gwirio’ch manylion
+check-business-details.business-name                    = Enw’r busnes
+check-business-details.change-details-link              = Newid
+check-business-details.business-start-date              = Dyddiad dechrau masnachu’r busnes
+check-business-details.business-description             = Disgrifiad o’r busnes
+check-business-details.business-address                 = Cyfeiriad y busnes
+check-business-details.confirm-button                   = Cadarnhau ac yn eich blaen
+check-business-details.accounting-method                = Dull cyfrifyddu ar gyfer incwm unig fasnachwr
+
+
 incomeSources.add.businessReportingMethod.heading                   =   Dewis dull o gyflwyno adroddiad
 incomeSources.add.businessReportingMethod.description1              =   Mae’ch busnes yn gymwys i gael cyfnod gras hyd at Ebrill {0}, lle y gallwch gyflwyno adroddiadau’n flynyddol.
 incomeSources.add.businessReportingMethod.description2              =   Bydd yn rhaid gwneud un diweddariad, a hynny erbyn 31 Ionawr fan bellaf.

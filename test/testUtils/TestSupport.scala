@@ -160,6 +160,22 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterE
       utils.SessionKeys.businessName -> "Test Name"
     )
 
+  def fakeRequestConfirmedClientwithFullBusinessDetails(clientNino: String = "AA111111A"): FakeRequest[AnyContentAsEmpty.type] =
+    fakeRequestWithActiveSession.withSession(
+      utils.SessionKeys.clientFirstName -> "Test",
+      utils.SessionKeys.clientLastName -> "User",
+      utils.SessionKeys.clientUTR -> "1234567890",
+      utils.SessionKeys.clientMTDID -> testMtditid,
+      utils.SessionKeys.clientNino -> clientNino,
+      utils.SessionKeys.confirmedClient -> "true",
+      utils.SessionKeys.businessName -> "Test Name",
+      utils.SessionKeys.businessStartDate -> "21-04-2020",
+      utils.SessionKeys.businessTrade -> "Plumber",
+      utils.SessionKeys.businessAddressLine1 -> "10 Test Road",
+      utils.SessionKeys.businessPostCode -> "TE5 T69",
+      utils.SessionKeys.businessAccountingMethod -> "Quarterly"
+    )
+
   def fakeRequestConfirmedClientWithCalculationId(clientNino: String = "AA111111A"): FakeRequest[AnyContentAsEmpty.type] =
     fakeRequestWithActiveSession.withSession(
       utils.SessionKeys.clientFirstName -> "Test",

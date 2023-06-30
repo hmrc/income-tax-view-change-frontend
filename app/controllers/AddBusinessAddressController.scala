@@ -17,6 +17,7 @@
 package controllers
 
 import auth.MtdItUser
+import com.google.inject.Singleton
 import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
@@ -31,6 +32,7 @@ import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
+@Singleton
 class AddBusinessAddressController @Inject()(authenticate: AuthenticationPredicate,
                                              val authorisedFunctions: AuthorisedFunctions,
                                              checkSessionTimeout: SessionTimeoutPredicate,
@@ -135,5 +137,13 @@ class AddBusinessAddressController @Inject()(authenticate: AuthenticationPredica
               Logger("application").error(s"[AddBusinessAddressController][fetchAddress] - Unexpected response, $value")
               itvcErrorHandlerAgent.showInternalServerError()
           }
+  }
+
+  def changeBusinessAddress(): Action[AnyContent] = Action {
+    Ok("Change Business Address  WIP")
+  }
+
+  def changeBusinessAddressAgent(): Action[AnyContent] = Action {
+    Ok("Agent Change Business Address  WIP")
   }
 }
