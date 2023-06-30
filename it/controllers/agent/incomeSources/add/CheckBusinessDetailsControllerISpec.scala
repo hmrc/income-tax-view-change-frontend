@@ -2,9 +2,10 @@ package controllers.agent.incomeSources.add
 
 
 import config.featureswitch.IncomeSources
-import forms.utils.SessionKeys.{addBusinessAccountingMethod, addBusinessAddressLine1, addBusinessPostalCode, businessName, businessStartDate, businessTrade}
+import forms.utils.SessionKeys.{addBusinessAccountingMethod, addBusinessAccountingPeriodEndDate, addBusinessAddressLine1, addBusinessPostalCode, businessName, businessStartDate, businessTrade}
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
+import models.addIncomeSource.AddIncomeSourceResponse
 import play.api.http.Status.{BAD_REQUEST, NOT_FOUND, OK, SEE_OTHER}
 import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testMtditid}
 import testConstants.IncomeSourceIntegrationTestConstants.noPropertyOrBusinessResponse
@@ -20,7 +21,8 @@ class CheckBusinessDetailsControllerISpec extends ComponentSpecBase{
                                             businessTrade -> "Plumbing",
                                             addBusinessAddressLine1 -> "Test Road",
                                             addBusinessPostalCode -> "B32 1PQ",
-                                            addBusinessAccountingMethod -> "Quarterly")
+                                            addBusinessAccountingMethod -> "Quarterly",
+                                            addBusinessAccountingPeriodEndDate -> "2023-11-11")
   val testBusinessName: String = "Test Business"
   val testBusinessStartDate: String = "1 January 2022"
   val testBusinessTrade: String = "Plumbing"
@@ -39,6 +41,8 @@ class CheckBusinessDetailsControllerISpec extends ComponentSpecBase{
 
         enable(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
+        val response = List(AddIncomeSourceResponse("321"))
+        IncomeTaxViewChangeStub.stubCreateBusinessDetailsResponse(testMtditid)(OK, response)
 
         When(s"I call GET $checkBusinessDetailsShowUrlAgent")
         val result = IncomeTaxViewChangeFrontend.get("/income-sources/add/business-check-details", sessionData ++ clientDetailsWithConfirmation)
@@ -70,6 +74,8 @@ class CheckBusinessDetailsControllerISpec extends ComponentSpecBase{
 
         enable(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
+        val response = List(AddIncomeSourceResponse("123"))
+        IncomeTaxViewChangeStub.stubCreateBusinessDetailsResponse(testMtditid)(OK, response)
 
         val result = IncomeTaxViewChangeFrontend.post("/income-sources/add/business-check-details", sessionData ++ clientDetailsWithConfirmation)(formData)
 
