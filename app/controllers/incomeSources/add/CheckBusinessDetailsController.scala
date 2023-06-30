@@ -134,7 +134,7 @@ class CheckBusinessDetailsController @Inject()(val checkBusinessDetails: CheckBu
         businessAddressLine4 = user.session.data.get(addBusinessAddressLine4),
         businessPostalCode = user.session.data.get(addBusinessPostalCode),
         businessCountryCode = user.session.data.get(addBusinessCountryCode),
-        businessAccountingMethod = user.session.data.get(addBusinessAccountingPeriodEndDate),
+        businessAccountingMethod = user.session.data.get(addBusinessAccountingMethod),
         cashOrAccrualsFlag = businessAccountingMethod)
     }
 

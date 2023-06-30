@@ -61,9 +61,9 @@ class CreateBusinessDetailsServiceSpec extends  TestSupport with FeatureSwitchin
           .thenReturn(Future{ Right(List(IncomeSourceResponse("123"))) })
 
         val viewModel = CheckBusinessDetailsViewModel(
-          businessName = "someBusinessName",
-          businessStartDate = LocalDate.of(2022, 11, 11),
-          businessTrade = Some("someBusinessTrade"),
+          businessName = Some("someBusinessName"),
+          businessStartDate = Some(LocalDate.of(2022, 11, 11)),
+          businessTrade = "someBusinessTrade",
           businessAddressLine1 = "businessAddressLine1",
           businessAddressLine2 = None,
           businessAddressLine3 = None,

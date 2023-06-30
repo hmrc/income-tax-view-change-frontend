@@ -29,7 +29,9 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class CreateBusinessDetailsService @Inject()(val incomeSourceConnector: IncomeSourceConnector) {
 
-  def createPayload(viewModel: CheckBusinessDetailsViewModel) : AddBusinessIncomeSourcesRequest = {
+
+  def createBusinessDetails(viewModel: CheckBusinessDetailsViewModel)
+                           (implicit ec: ExecutionContext, user: MtdItUser[_], hc: HeaderCarrier): Future[Either[Throwable, IncomeSourceResponse]] = {
     val businessDetails =
       BusinessDetails(
         accountingPeriodStartDate = viewModel.businessStartDate.toString, // TODO: verify date format required
@@ -49,14 +51,9 @@ class CreateBusinessDetailsService @Inject()(val incomeSourceConnector: IncomeSo
         cessationDate = None,
         cessationReason = None
       )
-    AddBusinessIncomeSourcesRequest(businessDetails =
+    val requestObject = AddBusinessIncomeSourcesRequest(businessDetails =
       List(businessDetails)
     )
-  }
-
-  def createBusinessDetails(viewModel: CheckBusinessDetailsViewModel)
-                           (implicit ec: ExecutionContext, user: MtdItUser[_], hc: HeaderCarrier): Future[Either[Throwable, IncomeSourceResponse]] = {
-    val requestObject = createPayload(viewModel)
     for {
       res <- incomeSourceConnector.create(user.mtditid, requestObject)
     } yield res match {

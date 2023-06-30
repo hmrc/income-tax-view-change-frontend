@@ -45,9 +45,9 @@ trait IncomeSourcesDataHelper {
   )
 
   val viewModel = CheckBusinessDetailsViewModel(
-    businessName = "someBusinessName",
-    businessStartDate = LocalDate.of(2022, 11, 11),
-    businessTrade = Some("someBusinessTrade"),
+    businessName = Some("someBusinessName"),
+    businessStartDate = Some(LocalDate.of(2022, 11, 11)),
+    businessTrade = "someBusinessTrade",
     businessAddressLine1 = "businessAddressLine1",
     businessPostalCode = Some("SE15 4ER"),
     businessAccountingMethod = None,
