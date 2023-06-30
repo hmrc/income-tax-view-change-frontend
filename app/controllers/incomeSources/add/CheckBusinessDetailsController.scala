@@ -123,7 +123,6 @@ class CheckBusinessDetailsController @Inject()(val checkBusinessDetails: CheckBu
         accountingPeriodEndDate <- user.session.data.get(addBusinessAccountingPeriodEndDate).map(LocalDate.parse)
     } yield {
 
-      println("AAAAAA")
       CheckBusinessDetailsViewModel(
         businessName = Some(businessName),
         businessStartDate = Some(businessStartDate),

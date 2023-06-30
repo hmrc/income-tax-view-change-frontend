@@ -46,7 +46,6 @@ class CheckBusinessDetailsControllerISpec extends ComponentSpecBase{
 
         When(s"I call GET $checkBusinessDetailsShowUrlAgent")
         val result = IncomeTaxViewChangeFrontend.get("/income-sources/add/business-check-details", sessionData ++ clientDetailsWithConfirmation)
-        println("LOOOOK" + result)
 
         result should have(
           httpStatus(OK),
