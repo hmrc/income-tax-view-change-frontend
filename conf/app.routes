@@ -174,8 +174,8 @@ GET          /agents/income-sources/add/business-start-date-check         contro
 POST         /income-sources/add/business-start-date-check                controllers.incomeSources.add.AddBusinessStartDateCheckController.submit()
 POST         /agents/income-sources/add/business-start-date-check         controllers.incomeSources.add.AddBusinessStartDateCheckController.submitAgent()
 
-GET          /income-sources/add/business-added                           controllers.incomeSources.add.BusinessAddedObligationsController.show()
-GET          /agents/income-sources/add/business-added                    controllers.incomeSources.add.BusinessAddedObligationsController.showAgent()
+GET          /income-sources/add/business-added                           controllers.incomeSources.add.BusinessAddedObligationsController.show(id: Option[String])
+GET          /agents/income-sources/add/business-added                    controllers.incomeSources.add.BusinessAddedObligationsController.showAgent(id: Option[String])
 POST         /income-sources/add/business-added                           controllers.incomeSources.add.BusinessAddedObligationsController.submit()
 POST         /agents/income-sources/add/business-added                    controllers.incomeSources.add.BusinessAddedObligationsController.agentSubmit()
 

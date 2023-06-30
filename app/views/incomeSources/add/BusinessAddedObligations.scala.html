@@ -19,6 +19,7 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components.FormWithCSRF
 @import views.html.helpers.injected.ErrorSummary
+@import models.incomeSourceDetails.viewmodels.ObligationsViewModel
 
 @this(
 mainTemplate: unifiedLayout,
@@ -30,9 +31,8 @@ errorSummary: ErrorSummary,
 govukDateInput: GovukDateInput
 )
 
-@(
-form: Form[_],
-postAction: Call,
-backUrl: String,
-isAgent: Boolean
-)(implicit messages: Messages, user: auth.MtdItUser[_])
+@(sources: ObligationsViewModel, postAction: Call, backUrl: String, isAgent: Boolean)(implicit messages: Messages, user: auth.MtdItUser[_])
+
+BEEP BOOP
+
+@sources
