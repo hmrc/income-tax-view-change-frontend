@@ -45,11 +45,11 @@ class BusinessAddedController @Inject()(val authenticate: AuthenticationPredicat
                                               )
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
-  def show(origin: Option[String] = None): Action[AnyContent] = Action {
+  def show(incomeSourceId: String): Action[AnyContent] = Action {
     Ok("")
   }
 
-  def showAgent(): Action[AnyContent] = Action {
+  def showAgent( incomeSourceId: String): Action[AnyContent] = Action {
     Ok("")
   }
 

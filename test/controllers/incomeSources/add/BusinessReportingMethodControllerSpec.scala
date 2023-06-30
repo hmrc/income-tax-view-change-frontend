@@ -245,7 +245,7 @@ class BusinessReportingMethodControllerSpec extends TestSupport with MockAuthent
         val result: Future[Result] = TestBusinessReportingMethodController.show(TestBusinessReportingMethodController.incomeSourceId)(fakeRequestWithActiveSession)
 
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(routes.BusinessAddedController.show().url)
+        redirectLocation(result) shouldBe Some(routes.BusinessAddedController.show(TestBusinessReportingMethodController.incomeSourceId).url)
 
       }
 
@@ -255,7 +255,7 @@ class BusinessReportingMethodControllerSpec extends TestSupport with MockAuthent
         val result: Future[Result] = TestBusinessReportingMethodController.show(TestBusinessReportingMethodController.incomeSourceId)(fakeRequestWithActiveSession)
 
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(routes.BusinessAddedController.show().url)
+        redirectLocation(result) shouldBe Some(routes.BusinessAddedController.show(TestBusinessReportingMethodController.incomeSourceId).url)
       }
     }
 
@@ -393,7 +393,7 @@ class BusinessReportingMethodControllerSpec extends TestSupport with MockAuthent
           ))
 
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(routes.BusinessAddedController.show().url)
+        redirectLocation(result) shouldBe Some(routes.BusinessAddedController.show(TestBusinessReportingMethodController.incomeSourceId).url)
       }
     }
 
@@ -416,7 +416,7 @@ class BusinessReportingMethodControllerSpec extends TestSupport with MockAuthent
           ))
 
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(routes.BusinessAddedController.show().url)
+        redirectLocation(result) shouldBe Some(routes.BusinessAddedController.show(TestBusinessReportingMethodController.incomeSourceId).url)
       }
     }
 
@@ -558,7 +558,7 @@ class BusinessReportingMethodControllerSpec extends TestSupport with MockAuthent
         val result: Future[Result] = TestBusinessReportingMethodController.showAgent(TestBusinessReportingMethodController.incomeSourceId)(fakeRequestConfirmedClient())
 
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(routes.BusinessAddedController.showAgent().url)
+        redirectLocation(result) shouldBe Some(routes.BusinessAddedController.showAgent(TestBusinessReportingMethodController.incomeSourceId).url)
 
       }
 
@@ -568,7 +568,7 @@ class BusinessReportingMethodControllerSpec extends TestSupport with MockAuthent
         val result: Future[Result] = TestBusinessReportingMethodController.showAgent(TestBusinessReportingMethodController.incomeSourceId)(fakeRequestConfirmedClient())
 
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(routes.BusinessAddedController.showAgent().url)
+        redirectLocation(result) shouldBe Some(routes.BusinessAddedController.showAgent(TestBusinessReportingMethodController.incomeSourceId).url)
       }
     }
 
@@ -706,7 +706,7 @@ class BusinessReportingMethodControllerSpec extends TestSupport with MockAuthent
           ))
 
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(routes.BusinessAddedController.showAgent().url)
+        redirectLocation(result) shouldBe Some(routes.BusinessAddedController.showAgent(TestBusinessReportingMethodController.incomeSourceId).url)
       }
     }
 
@@ -729,7 +729,7 @@ class BusinessReportingMethodControllerSpec extends TestSupport with MockAuthent
           ))
 
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(routes.BusinessAddedController.showAgent().url)
+        redirectLocation(result) shouldBe Some(routes.BusinessAddedController.showAgent(TestBusinessReportingMethodController.incomeSourceId).url)
       }
     }
 

@@ -59,7 +59,7 @@ class BusinessReportingMethodController @Inject()(val authenticate: Authenticati
     val postAction: Call = if (isAgent) controllers.incomeSources.add.routes.BusinessReportingMethodController.submitAgent(incomeSourceId) else
       controllers.incomeSources.add.routes.BusinessReportingMethodController.submit(incomeSourceId)
     val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-    val redirectUrl: Call = if (isAgent) routes.BusinessAddedController.showAgent() else routes.BusinessAddedController.show()
+    val redirectUrl: Call = if (isAgent) routes.BusinessAddedController.showAgent(incomeSourceId) else routes.BusinessAddedController.show(incomeSourceId)
 
     if (incomeSourcesEnabled) {
       businessReportingMethodService.checkITSAStatusCurrentYear.flatMap {
@@ -101,7 +101,7 @@ class BusinessReportingMethodController @Inject()(val authenticate: Authenticati
   private def handleSubmitRequest(isAgent: Boolean, incomeSourceId: String)(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] = {
     val incomeSourcesEnabled: Boolean = isEnabled(IncomeSources)
     val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-    val redirectUrl: Call = if (isAgent) routes.BusinessAddedController.showAgent() else routes.BusinessAddedController.show()
+    val redirectUrl: Call = if (isAgent) routes.BusinessAddedController.showAgent(incomeSourceId) else routes.BusinessAddedController.show(incomeSourceId)
     if (incomeSourcesEnabled) {
       AddBusinessReportingMethodForm.form.bindFromRequest().fold(
         hasErrors => {
