@@ -196,8 +196,28 @@ GET          /income-sources/add/business-accounting-method                   co
 GET          /agents/income-sources/add/business-accounting-method            controllers.incomeSources.add.BusinessAccountingMethodController.showAgent()
 POST         /income-sources/add/business-accounting-method                   controllers.incomeSources.add.BusinessAccountingMethodController.submit()
 POST         /agents/income-sources/add/business-accounting-method            controllers.incomeSources.add.BusinessAccountingMethodController.submitAgent()
-GET          /income-sources/add/business-check-details                       controllers.incomeSources.add.CheckBusinessDetailsController.show()
-GET          /agents/income-sources/add/business-check-details                controllers.incomeSources.add.CheckBusinessDetailsController.showAgent()
+
+#Check details / Change
+GET          /income-sources/add/business-check-details                     controllers.incomeSources.add.CheckBusinessDetailsController.show()
+GET          /agents/income-sources/add/business-check-details              controllers.incomeSources.add.CheckBusinessDetailsController.showAgent()
+
+GET          /income-sources/add/change-business-name                       controllers.AddBusinessNameController.changeBusinessName()
+GET          /agents/income-sources/add/change-business-name                controllers.AddBusinessNameController.changeBusinessNameAgent()
+GET          /income-sources/add/change-business-start-date                 controllers.incomeSources.add.AddBusinessStartDateController.changeBusinessStartDate()
+GET          /agents/income-sources/add/change-business-start-date          controllers.incomeSources.add.AddBusinessStartDateController.changeBusinessStartDateAgent()
+GET          /income-sources/add/change-business-trade                      controllers.incomeSources.add.AddBusinessTradeController.changeBusinessTrade()
+GET          /agents/income-sources/add/change-business-trade               controllers.incomeSources.add.AddBusinessTradeController.changeBusinessTradeAgent()
+GET          /income-sources/add/change-business-address-lookup             controllers.AddBusinessAddressController.changeBusinessAddress()
+GET          /agents/income-sources/add/change-business-address-lookup      controllers.AddBusinessAddressController.changeBusinessAddressAgent()
+GET          /income-sources/add/change-business-accounting-method          controllers.incomeSources.add.BusinessAccountingMethodController.changeBusinessAccountingMethod()
+GET          /agents/income-sources/add/change-business-accounting-method   controllers.incomeSources.add.BusinessAccountingMethodController.changeBusinessAccountingMethodAgent()
+GET          /income-sources/add/business-reporting-method                  controllers.incomeSources.add.AddBusinessReportingMethod.show()
+GET          /agents/income-sources/add/business-reporting-method           controllers.incomeSources.add.AddBusinessReportingMethod.showAgent()
++ nocsrf
+POST          /income-sources/add/business-check-details                    controllers.incomeSources.add.CheckBusinessDetailsController.submit()
++nocsrf
+POST          /agents/income-sources/add/business-check-details              controllers.incomeSources.add.CheckBusinessDetailsController.submitAgent()
+
 
 
 # Income Sources - Cease

@@ -17,10 +17,10 @@
 package models.incomeSourceDetails.viewmodels
 
 import java.time.LocalDate
-case class CheckBusinessDetailsViewModel(businessName: String,
-                                         businessStartDate: LocalDate,
+case class CheckBusinessDetailsViewModel(businessName: Option[String],
+                                         businessStartDate: Option[LocalDate],
                                          accountingPeriodEndDate: LocalDate,
-                                         businessTrade: Option[String],
+                                         businessTrade: String,
                                          businessAddressLine1: String,
                                          businessAddressLine2: Option[String],
                                          businessAddressLine3: Option[String],

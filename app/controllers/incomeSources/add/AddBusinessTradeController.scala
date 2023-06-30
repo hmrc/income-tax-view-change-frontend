@@ -129,4 +129,12 @@ class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate
             )
         }
   }
+
+  def changeBusinessTrade(): Action[AnyContent] = Action {
+    Ok("Change Business Trade  WIP")
+  }
+
+  def changeBusinessTradeAgent(): Action[AnyContent] = Action {
+    Ok("Agent Change Business Trade  WIP")
+  }
 }

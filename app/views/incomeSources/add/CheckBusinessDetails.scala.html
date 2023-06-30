@@ -19,20 +19,147 @@
 @import views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components.FormWithCSRF
+@import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcPageHeading
+@import uk.gov.hmrc.hmrcfrontend.views.viewmodels.pageheading.PageHeading
 @import views.html.helpers.injected.ErrorSummary
+@import models.incomeSourceDetails.viewmodels.CheckBusinessDetailsViewModel
 
-@this(mainTemplate: unifiedLayout,
-implicitDateFormatter: ImplicitDateFormatterImpl,
-h1: h1,
-dateInput: dateInput,
-continueButton: ContinueButton,
-formWithCSRF: FormWithCSRF,
-govukRadios: GovukRadios,
-errorSummary: ErrorSummary,
-inputRadios: input_radios)
 
-@(sessionStorage: String)
+@this(
+    mainTemplate: unifiedLayout,
+    hmrcPageHeading: HmrcPageHeading,
+    govukSummaryList: GovukSummaryList,
+    implicitDateFormatter: ImplicitDateFormatterImpl,
+    h1: h1,
+    h2: h2,
+    p: p,
+    link: link,
+    hr: hr,
+    govukTable: GovukTable,
+    govukButton : GovukButton,
+)
 
-<div>
-    @sessionStorage
-</div>
+@(
+    viewModel: CheckBusinessDetailsViewModel,
+    isAgent: Boolean,
+    backUrl: String,
+    origin: Option[String] = None
+)(implicit messages: Messages, user: auth.MtdItUser[_])
+
+@import implicitDateFormatter.longDate
+
+@getMessage(key: String, args: String*) = @{
+messages(s"check-business-details.$key", args: _*)
+}
+
+@changeBusinessNameURL = @{
+    if(isAgent){
+    controllers.routes.AddBusinessNameController.changeBusinessNameAgent().url
+    } else {
+    controllers.routes.AddBusinessNameController.changeBusinessName().url
+    }
+}
+
+@changeBusinessStartDateURL = @{
+    if(isAgent){
+    controllers.incomeSources.add.routes.AddBusinessStartDateController.changeBusinessStartDateAgent().url
+    } else {
+    controllers.incomeSources.add.routes.AddBusinessStartDateController.changeBusinessStartDate().url
+    }
+}
+
+@changeBusinessTradeURL = @{
+    if(isAgent){
+    controllers.incomeSources.add.routes.AddBusinessTradeController.changeBusinessTradeAgent().url
+    } else {
+    controllers.incomeSources.add.routes.AddBusinessTradeController.changeBusinessTrade().url
+    }
+}
+
+@changeBusinessAddressURL = @{
+    if(isAgent){
+        controllers.routes.AddBusinessAddressController.changeBusinessAddressAgent().url
+    } else {
+        controllers.routes.AddBusinessAddressController.changeBusinessAddress().url
+    }
+}
+
+@changeBusinessAccountingMethodURL = @{
+    if(isAgent){
+    controllers.incomeSources.add.routes.BusinessAccountingMethodController.changeBusinessAccountingMethodAgent().url
+    } else {
+    controllers.incomeSources.add.routes.BusinessAccountingMethodController.changeBusinessAccountingMethod().url
+    }
+}
+
+@mainTemplate(
+    pageTitle = getMessage("heading"),
+    backUrl = Some(backUrl),
+    isAgent = isAgent,
+    btaNavPartial = user.btaNavPartial) {
+
+    @hmrcPageHeading(PageHeading(
+        text = getMessage("heading"),
+        headingClasses = Some("govuk-heading-l"),
+        section = Some(getMessage("sole-trader-caption")),
+        captionClasses = Some("govuk-caption-l")
+    ))
+        <form method="POST" action="business-check-details">
+
+            <dl class="govuk-summary-list" id="refund-to-taxpayer-table">
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">@getMessage("business-name")</dt>
+                    <dd class="govuk-summary-list__value" id="business-name-value">@{viewModel.businessName.getOrElse("")}</dd>
+                    <dd class="govuk-summary-list__actions govuk-!-text-align-right govuk-!-margin-0">
+                        <a class="govuk-link"  href=@changeBusinessNameURL>
+                            @getMessage("change-details-link")
+                        </a>
+                    </dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">@getMessage("business-start-date")</dt>
+                    <dd class="govuk-summary-list__value" id="business-date-value">@{viewModel.businessStartDate.map(_.toLongDate).getOrElse("")}</dd>
+                    <dd class="govuk-summary-list__actions govuk-!-text-align-right govuk-!-margin-0">
+                        <a class="govuk-link"  href=@changeBusinessStartDateURL>
+                            @getMessage("change-details-link")
+                        </a>
+                    </dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">@getMessage("business-description")</dt>
+                    <dd class="govuk-summary-list__value" id="business-trade-value">@{viewModel.businessTrade}</dd>
+                    <dd class="govuk-summary-list__actions govuk-!-text-align-right govuk-!-margin-0">
+                        <a class="govuk-link"  href=@changeBusinessTradeURL>
+                            @getMessage("change-details-link")
+                        </a>
+                    </dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">@getMessage("business-address")</dt>
+                    <dd class="govuk-summary-list__value" id="business-address-value">@{viewModel.businessAddressLine1 + " " + viewModel.businessPostalCode.getOrElse("")}</dd>
+                    <dd class="govuk-summary-list__actions govuk-!-text-align-right govuk-!-margin-0">
+                        <a class="govuk-link"  href=@changeBusinessAddressURL>
+                            @getMessage("change-details-link")
+                        </a>
+                    </dd>
+                </div>
+                @if(viewModel.businessAccountingMethod.nonEmpty){
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">@getMessage("accounting-method")</dt>
+                    <dd class="govuk-summary-list__value" id="business-accounting-value">@{viewModel.businessAccountingMethod.getOrElse("")}</dd>
+                    <dd class="govuk-summary-list__actions govuk-!-text-align-right govuk-!-margin-0">
+                        <a class="govuk-link"  href=@changeBusinessAccountingMethodURL>
+                            @getMessage("change-details-link")
+                        </a>
+                    </dd>
+                </div>
+                }
+            </dl>
+
+            @govukButton(Button(
+            content = Text(messages("check-business-details.confirm-button")),
+            attributes = Map("id" -> "confirm-button")
+            ))
+        </form>
+
+}

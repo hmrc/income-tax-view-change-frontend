@@ -1176,6 +1176,7 @@ add-business-address.lookup.heading         = What is your business address?
 add-business-address.confirm.heading        = Confirm business address
 add-business-address.edit.heading           = Enter your business address
 
+
 #Following empty fields are not in Use
 #These fields are kept to match with Messages.cy
 shortMonth.1 =
@@ -1337,3 +1338,14 @@ check-cease-foreign-property-details.caption            = Foreign property busin
 check-cease-foreign-property-details.summary-list.key   = Date business stopped
 check-cease-foreign-property-details.summary-list.link  = Change
 check-cease-foreign-property-details.button             = Confirm and continue
+
+# check business details
+check-business-details.sole-trader-caption              = Sole trader business you entered
+check-business-details.heading                          = Check your details
+check-business-details.business-name                    = Business name
+check-business-details.change-details-link              = Change
+check-business-details.business-start-date              = Business trading start date
+check-business-details.business-description             = Business description
+check-business-details.business-address                 = Business address
+check-business-details.confirm-button                   = Confirm and Continue
+check-business-details.accounting-method                = Accounting method for sole trader income

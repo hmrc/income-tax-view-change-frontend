@@ -52,7 +52,13 @@ class AddressLookupConnector @Inject()(val appConfig: FrontendAppConfig,
   lazy val agentFeedbackUrl: String = controllers.feedback.routes.FeedbackController.showAgent.url
 
 
-  def addressJson(continueUrl: String, feedbackUrl: String): JsValue = {
+  lazy val individualEnglishBanner: String = messagesApi.preferred(Seq(Lang("en")))("header.serviceName")
+  lazy val agentEnglishBanner: String = messagesApi.preferred(Seq(Lang("en")))("agent.header.serviceName")
+
+  lazy val individualWelshBanner: String = messagesApi.preferred(Seq(Lang("cy")))("header.serviceName")
+  lazy val agentWelshBanner: String = messagesApi.preferred(Seq(Lang("cy")))("agent.header.serviceName")
+
+  def addressJson(continueUrl: String, feedbackUrl: String, headerEnglish: String, headerWelsh: String): JsValue = {
     JsObject(
       Seq(
         "version" -> JsNumber(2),
@@ -109,6 +115,11 @@ class AddressLookupConnector @Inject()(val appConfig: FrontendAppConfig,
                   Seq(
                     "heading" -> JsString(messagesApi.preferred(Seq(Lang("en")))("add-business-address.edit.heading"))
                   )
+                ),
+                "appLevelLabels" -> JsObject(
+                  Seq(
+                    "navTitle" -> JsString(headerEnglish)
+                  )
                 )
               )
             ),
@@ -126,12 +137,17 @@ class AddressLookupConnector @Inject()(val appConfig: FrontendAppConfig,
                 ),
                 "confirmPageLabels" -> JsObject(
                   Seq(
-                    "heading" -> JsString(messagesApi.preferred(Seq(Lang("cy")))("add-business-address.select.heading"))
+                    "heading" -> JsString(messagesApi.preferred(Seq(Lang("cy")))("add-business-address.confirm.heading"))
                   )
                 ),
                 "editPageLabels" -> JsObject(
                   Seq(
                     "heading" -> JsString(messagesApi.preferred(Seq(Lang("cy")))("add-business-address.edit.heading"))
+                  )
+                ),
+                "appLevelLabels" -> JsObject(
+                  Seq(
+                    "navTitle" -> JsString(headerWelsh)
                   )
                 )
               )
@@ -145,20 +161,14 @@ class AddressLookupConnector @Inject()(val appConfig: FrontendAppConfig,
 
   def initialiseAddressLookup(isAgent: Boolean)(implicit hc: HeaderCarrier, request: RequestHeader): Future[PostAddressLookupResponse] = {
     Logger("application").info(s"[AddressLookupConnector] - URL: $addressLookupInitializeUrl")
-    val payload = if (isAgent) addressJson(agentContinueUrl, agentFeedbackUrl) else addressJson(individualContinueUrl, individualFeedbackUrl)
-    Logger("application").info(s"[AddressLookupConnector] - Payload: $payload")
+    val payload = if (isAgent) {addressJson(agentContinueUrl, agentFeedbackUrl, agentEnglishBanner, agentWelshBanner)} else {addressJson(individualContinueUrl, individualFeedbackUrl, individualEnglishBanner, individualWelshBanner)}
     http.POST[JsValue, PostAddressLookupResponse](
       url = addressLookupInitializeUrl,
       body = payload
-    ).map { res =>
-      Logger("application").info(s"[AddressLookupConnector] - Response: $res")
-      res
-    }
+    )
   }
 
   def getAddressDetails(id: String)(implicit hc: HeaderCarrier): Future[GetAddressLookupDetailsResponse] = {
-    val url = getAddressDetailsUrl(id)
-    Logger("application").info(s"[AddressLookupConnector] - getAddressDetails ULR: $url")
-    http.GET[GetAddressLookupDetailsResponse](url)
+    http.GET[GetAddressLookupDetailsResponse](getAddressDetailsUrl(id))
   }
 }

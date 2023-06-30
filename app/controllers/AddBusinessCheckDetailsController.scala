@@ -47,43 +47,43 @@ class AddBusinessCheckDetailsController @Inject()(val authenticate: Authenticati
                                              val itvcErrorHandlerAgent: AgentItvcErrorHandler)
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
-  def show(): Action[AnyContent]  = {
-    (checkSessionTimeout andThen authenticate andThen retrieveNino
-      andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
-      implicit user =>
-        handleRequest(
-          backUrl = "",
-          itvcErrorHandler = itvcErrorHandler,
-          isAgent = false
-        )
-    }
-  }
+//  def show(): Action[AnyContent]  = {
+//    (checkSessionTimeout andThen authenticate andThen retrieveNino
+//      andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
+//      implicit user =>
+//        handleRequest(
+//          backUrl = "",
+//          itvcErrorHandler = itvcErrorHandler,
+//          isAgent = false
+//        )
+//    }
+//  }
 
-  def handleRequest(isAgent: Boolean, itvcErrorHandler: ShowInternalServerError, backUrl: String)
-                   (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] = {
-    val viewModel = CheckBusinessDetailsViewModel(
-      businessName = "someBusinessName",
-      businessStartDate = LocalDate.of(2022, 11, 11),
-      businessTrade = Some("someBusinessTrade"),
-      businessAddressLine1 = "businessAddressLine1",
-      businessPostalCode = Some("SE15 4ER"),
-      businessAccountingMethod = None,
-      accountingPeriodEndDate = LocalDate.of(2022, 11, 11),
-      businessAddressLine2 = None,
-      businessAddressLine3 = None,
-      businessAddressLine4 = None,
-      businessCountryCode = Some("UK"),
-      cashOrAccrualsFlag = "Cash"
-    )
-    for {
-      res <- createBusinessDetailsService.createBusinessDetails(viewModel)
-    } yield res match {
-      case Right(_) =>
-        Ok("OK")
-      case Left(ex) =>
-        Ok(s"ERROR: ${ex}")
-    }
-  }
+//  def handleRequest(isAgent: Boolean, itvcErrorHandler: ShowInternalServerError, backUrl: String)
+//                   (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] = {
+//    val viewModel = CheckBusinessDetailsViewModel(
+//      businessName = Some("someBusinessName"),
+//      businessStartDate = Some(LocalDate.of(2022, 11, 11)),
+//      businessTrade = Some("someBusinessTrade"),
+//      businessAddressLine1 = "businessAddressLine1",
+//      businessPostalCode = Some("SE15 4ER"),
+//      businessAccountingMethod = None,
+//      accountingPeriodEndDate = LocalDate.of(2022, 11, 11),
+//      businessAddressLine2 = None,
+//      businessAddressLine3 = None,
+//      businessAddressLine4 = None,
+//      businessCountryCode = Some("UK"),
+//      cashOrAccrualsFlag = "Cash"
+//    )
+//    for {
+//      res <- createBusinessDetailsService.createBusinessDetails(viewModel)
+//    } yield res match {
+//      case Right(_) =>
+//        Ok("OK")
+//      case Left(ex) =>
+//        Ok(s"ERROR: ${ex}")
+//    }
+//  }
 
   def showAgent(): Action[AnyContent] = Action {
     Ok("")

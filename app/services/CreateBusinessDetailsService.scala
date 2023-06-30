@@ -34,7 +34,7 @@ class CreateBusinessDetailsService @Inject()(val incomeSourceConnector: IncomeSo
       BusinessDetails(
         accountingPeriodStartDate = viewModel.businessStartDate.toString, // TODO: verify date format required
         accountingPeriodEndDate = viewModel.accountingPeriodEndDate.toString,
-        tradingName = viewModel.businessName,
+        tradingName = viewModel.businessName.getOrElse(""),
         addressDetails = AddressDetails(
           addressLine1 = viewModel.businessAddressLine1,
           addressLine2 = viewModel.businessAddressLine2,
@@ -43,7 +43,7 @@ class CreateBusinessDetailsService @Inject()(val incomeSourceConnector: IncomeSo
           countryCode = viewModel.businessCountryCode,
           postalCode = viewModel.businessPostalCode
         ),
-        typeOfBusiness = viewModel.businessTrade,
+        typeOfBusiness = Some(viewModel.businessTrade),
         tradingStartDate = viewModel.businessStartDate.toString,
         cashOrAccrualsFlag = viewModel.cashOrAccrualsFlag,
         cessationDate = None,
