@@ -157,4 +157,13 @@ class AddBusinessStartDateController @Inject()(authenticate: AuthenticationPredi
             )
         }
   }
+
+  def changeBusinessStartDate(): Action[AnyContent] = Action {
+    Ok("Change Business Start Date WIP")
+  }
+
+  def changeBusinessStartDateAgent(): Action[AnyContent] = Action {
+    Ok("Agent Change Business Start Date WIP")
+  }
+
 }
