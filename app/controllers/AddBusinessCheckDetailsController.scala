@@ -16,21 +16,17 @@
 
 package controllers
 
-import auth.{FrontendAuthorisedFunctions, MtdItUser}
+import auth.FrontendAuthorisedFunctions
 import config.featureswitch.FeatureSwitching
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
-import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
+import controllers.predicates._
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request, Result}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.CreateBusinessDetailsService
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
-import models.incomeSourceDetails.viewmodels.CheckBusinessDetailsViewModel
-import uk.gov.hmrc.http.HeaderCarrier
-
-import java.time.LocalDate
+import scala.concurrent.ExecutionContext
 
 
 class AddBusinessCheckDetailsController @Inject()(val authenticate: AuthenticationPredicate,
@@ -47,43 +43,10 @@ class AddBusinessCheckDetailsController @Inject()(val authenticate: Authenticati
                                              val itvcErrorHandlerAgent: AgentItvcErrorHandler)
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
-//  def show(): Action[AnyContent]  = {
-//    (checkSessionTimeout andThen authenticate andThen retrieveNino
-//      andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
-//      implicit user =>
-//        handleRequest(
-//          backUrl = "",
-//          itvcErrorHandler = itvcErrorHandler,
-//          isAgent = false
-//        )
-//    }
-//  }
+  def show(): Action[AnyContent] = Action {
+    Ok("")
+  }
 
-//  def handleRequest(isAgent: Boolean, itvcErrorHandler: ShowInternalServerError, backUrl: String)
-//                   (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] = {
-//    val viewModel = CheckBusinessDetailsViewModel(
-//      businessName = Some("someBusinessName"),
-//      businessStartDate = Some(LocalDate.of(2022, 11, 11)),
-//      businessTrade = Some("someBusinessTrade"),
-//      businessAddressLine1 = "businessAddressLine1",
-//      businessPostalCode = Some("SE15 4ER"),
-//      businessAccountingMethod = None,
-//      accountingPeriodEndDate = LocalDate.of(2022, 11, 11),
-//      businessAddressLine2 = None,
-//      businessAddressLine3 = None,
-//      businessAddressLine4 = None,
-//      businessCountryCode = Some("UK"),
-//      cashOrAccrualsFlag = "Cash"
-//    )
-//    for {
-//      res <- createBusinessDetailsService.createBusinessDetails(viewModel)
-//    } yield res match {
-//      case Right(_) =>
-//        Ok("OK")
-//      case Left(ex) =>
-//        Ok(s"ERROR: ${ex}")
-//    }
-//  }
 
   def showAgent(): Action[AnyContent] = Action {
     Ok("")
