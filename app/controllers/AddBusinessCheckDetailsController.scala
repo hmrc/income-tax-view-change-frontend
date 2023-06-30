@@ -47,8 +47,8 @@ class AddBusinessCheckDetailsController @Inject()(val authenticate: Authenticati
     Ok("")
   }
 
-
   def showAgent(): Action[AnyContent] = Action {
     Ok("")
   }
+
 }
