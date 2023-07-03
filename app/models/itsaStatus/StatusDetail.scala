@@ -21,7 +21,11 @@ import play.api.libs.json.{Format, Json}
 case class StatusDetail(submittedOn: String,
                         status: String,
                         statusReason: String,
-                        businessIncomePriorTo2Years: Option[BigDecimal] = None)
+                        businessIncomePriorTo2Years: Option[BigDecimal] = None) {
+
+  def isMandatedOrVoluntary: Boolean = status.equals("MTD Mandated") || status.equals("MTD Voluntary")
+
+}
 
 object StatusDetail {
   implicit val format: Format[StatusDetail] = Json.format

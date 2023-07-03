@@ -38,7 +38,6 @@ import scala.concurrent.{ExecutionContext, Future}
 class BusinessReportingMethodService @Inject()(incomeTaxViewChangeConnector: IncomeTaxViewChangeConnector,
                                                dateService: DateService,
                                                implicit val appConfig: FrontendAppConfig) extends FeatureSwitching {
-  private val validStatus = List("MTD Mandated", "MTD Voluntary")
 
   def checkITSAStatusCurrentYear(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Boolean] = {
     val yearEnd = dateService.getCurrentTaxYearEnd(isEnabled(TimeMachineAddYear)).toString.substring(2).toInt
@@ -49,8 +48,9 @@ class BusinessReportingMethodService @Inject()(incomeTaxViewChangeConnector: Inc
       taxYear = s"$yearStart-$yearEnd",
       futureYears = false,
       history = false).flatMap {
-      case Right(listStatus) =>
-        Future.successful(listStatus.headOption.flatMap(_.itsaStatusDetails).flatMap(_.headOption).map(x => validStatus.contains(x.status)).get)
+      case Right(itsaStatus) =>
+        val isMandatedOrVoluntary = itsaStatus.exists(_.itsaStatusDetails.exists(_.exists(_.isMandatedOrVoluntary)))
+        Future.successful(isMandatedOrVoluntary)
       case Left(x: ITSAStatusResponseError) =>
         Logger("application").error(s"[BusinessReportingMethodService][checkITSAStatusCurrentYear] $x")
         Future.failed(new InternalServerException("[BusinessReportingMethodService][checkITSAStatusCurrentYear] - Failed to retrieve ITSAStatus"))
