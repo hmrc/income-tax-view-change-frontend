@@ -49,24 +49,23 @@ govukTable: GovukTable,
 
     @formWithCSRF(action = postAction) {
 
-
-        <div class="govuk-form-group form-field-group  {govuk-form-group--error}">
-            <div class="govuk-panel govuk-panel--confirmation">
-              <h1 class="govuk-panel__title">
-                @businessName
-              </h1>
-              <div class="govuk-panel__body">
-              @getMessage("h2")
-              </div>
+        <div class="govuk-panel govuk-panel--confirmation">
+            <div class="govuk-panel__body">
+                @getMessage("h1")
             </div>
-
-            <h1 class="govuk-label-wrapper">
-              <label class="govuk-label govuk-label--l">
-              @getMessage("text")
-              </label>
+            <h1 class="govuk-panel__title">
+                @businessName
             </h1>
+            <div class="govuk-panel__body">
+                @getMessage("h2")
+            </div>
         </div>
 
+        <h1 class="govuk-label-wrapper">
+          <label class="govuk-label govuk-label--l">
+          @getMessage("text")
+          </label>
+        </h1>
 
         @if(sources.quarterlyObligationsDates.nonEmpty){
             <div class="dotted govuk">
@@ -84,8 +83,8 @@ govukTable: GovukTable,
                     <tbody class="govuk-table__body">
                     @sources.quarterlyObligationsDates.distinct.map{ x =>
                         <tr class="govuk-table__row">
-                            <td class="govuk-table__cell">@(x.inboundCorrespondenceFrom.map(_.toLongDate).get + " " + getMessage("to") + " " + x.inboundCorrespondenceTo.map(_.toLongDate).get)</td>
-                            <td class="govuk-table__cell">@(x.inboundCorrespondenceDue.map(_.toLongDate))</td>
+                            <td class="govuk-table__cell">@(x.inboundCorrespondenceFrom.toLongDate + " " + getMessage("to") + " " + x.inboundCorrespondenceTo.toLongDate)</td>
+                            <td class="govuk-table__cell">@(x.inboundCorrespondenceDue.toLongDate)</td>
                         </tr>
                     }
                     </tbody>
@@ -110,8 +109,8 @@ govukTable: GovukTable,
                     <tbody class="govuk-table__body">
                         @sources.eopsObligationsDates.distinct.map{ x =>
                             <tr class="govuk-table__row">
-                                <td class="govuk-table__cell">@(x.inboundCorrespondenceFrom.get.getYear + " " + getMessage("to") + " " + x.inboundCorrespondenceTo.get.getYear)</td>
-                                <td class="govuk-table__cell">@(x.inboundCorrespondenceDue.map(_.toLongDate))</td>
+                                <td class="govuk-table__cell">@(x.inboundCorrespondenceFrom.getYear + " " + getMessage("to") + " " + x.inboundCorrespondenceTo.getYear)</td>
+                                <td class="govuk-table__cell">@(x.inboundCorrespondenceDue.toLongDate)</td>
                             </tr>
                         }
                     </tbody>

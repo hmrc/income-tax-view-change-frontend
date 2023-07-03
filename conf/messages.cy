@@ -1354,7 +1354,8 @@ check-business-details.confirm-button                   = Cadarnhau ac yn eich b
 check-business-details.accounting-method                = Dull cyfrifyddu ar gyfer incwm unig fasnachwr
 
 # business added page
-business-added.h2                                       = has been added to your account
+business-added.h1                                       = Ychwanegwyd
+business-added.h2                                       = i’ch cyfrif
 business-added.text                                     = Yr hyn y mae’n rhaid i chi ei wneud
 business-added.to                                       = i
 

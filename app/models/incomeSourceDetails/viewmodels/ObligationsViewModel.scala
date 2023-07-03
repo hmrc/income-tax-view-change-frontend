@@ -20,6 +20,6 @@ import java.time.LocalDate
 
 case class ObligationsViewModel (quarterlyObligationsDates: Seq[DatesModel], eopsObligationsDates: Seq[DatesModel], currentTaxYear: Int)
 
-case class DatesModel (inboundCorrespondenceFrom: Option[LocalDate],
-                       inboundCorrespondenceTo: Option[LocalDate], inboundCorrespondenceDue: Option[LocalDate],
+case class DatesModel (inboundCorrespondenceFrom: LocalDate,
+                       inboundCorrespondenceTo: LocalDate, inboundCorrespondenceDue: LocalDate,
                        obligationType: String, periodKey: String)

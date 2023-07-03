@@ -1351,6 +1351,7 @@ check-business-details.confirm-button                   = Confirm and Continue
 check-business-details.accounting-method                = Accounting method for sole trader income
 
 # business added page
+business-added.h1                                       =
 business-added.h2                                       = has been added to your account
 business-added.text                                     = What you must do
 business-added.to                                       =  to
