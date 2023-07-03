@@ -1153,29 +1153,6 @@ view-income-sources.table-head.date-ended    = Date ended
 view-income-sources.business-details         = Choose
 view-income-sources.unknown-field            = Unknown
 
-# add Business page
-add-business-name.heading                                         = What is the name of your business?
-add-business-name.p1                                              = This is the business name you used to register for Self Assessment. If your sole trader business does not have a separate name, enter your own first and last name.
-add-business-name.p2                                              = The business name you enter can only include upper or lower case letters, full stops, commas, digits, &, '', \, /, -.
-add-business-name.form.error.required                             = Enter your name or the name of your business
-add-business-name.form.error.maxLength                            = Business name must be 105 characters or fewer
-add-business-name.form.error.invalidNameFormat                    = Business name cannot include !, "", * or ?
-
-## Add business trade page
-add-business-trade.heading                  = What is the trade of your business?
-add-business-trade.p1                       = For example: plumbing, electrical work, consulting.
-add-business-trade.form.error.empty         = Enter the trade of your business
-add-business-trade.form.error.short         = Business trade must have at least two letters
-add-business-trade.form.error.long          = Business trade must be 35 characters or fewer
-add-business-trade.form.error.invalid       = Business trade cannot include !, "", * or ?
-add-business-trade.form.error.same-name     = You cannot enter the same trade and same business name
-
-## Add business address page
-add-business-address.select.heading         = Select business address
-add-business-address.lookup.heading         = What is your business address?
-add-business-address.confirm.heading        = Confirm business address
-add-business-address.edit.heading           = Enter your business address
-
 
 #Following empty fields are not in Use
 #These fields are kept to match with Messages.cy
@@ -1296,6 +1273,29 @@ incomeSources.ceaseUKProperty.checkDetails.content               = Date business
 incomeSources.ceaseUKProperty.checkDetails.confirm               = Confirm and continue
 incomeSources.ceaseUKProperty.checkDetails.change                = Change
 
+# add Business page
+add-business-name.heading                                         = What is the name of your business?
+add-business-name.p1                                              = This is the business name you used to register for Self Assessment. If your sole trader business does not have a separate name, enter your own first and last name.
+add-business-name.p2                                              = The business name you enter can only include upper or lower case letters, full stops, commas, digits, &, '', \, /, -.
+add-business-name.form.error.required                             = Enter your name or the name of your business
+add-business-name.form.error.maxLength                            = Business name must be 105 characters or fewer
+add-business-name.form.error.invalidNameFormat                    = Business name cannot include !, "", * or ?
+
+## Add business trade page
+add-business-trade.heading                  = What is the trade of your business?
+add-business-trade.p1                       = For example: plumbing, electrical work, consulting.
+add-business-trade.form.error.empty         = Enter the trade of your business
+add-business-trade.form.error.short         = Business trade must have at least two letters
+add-business-trade.form.error.long          = Business trade must be 35 characters or fewer
+add-business-trade.form.error.invalid       = Business trade cannot include !, "", * or ?
+add-business-trade.form.error.same-name     = You cannot enter the same trade and same business name
+
+## Add business address page
+add-business-address.select.heading         = Select business address
+add-business-address.lookup.heading         = What is your business address?
+add-business-address.confirm.heading        = Confirm business address
+add-business-address.edit.heading           = Enter your business address
+
 # add Business start date
 add-business-start-date.heading                      = When did your business start trading?
 add-business-start-date.hint-prt1                    = This is the date we’ll use to calculate your Class 2 National Insurance charge, if appropriate.
@@ -1349,3 +1349,13 @@ check-business-details.business-description             = Business description
 check-business-details.business-address                 = Business address
 check-business-details.confirm-button                   = Confirm and Continue
 check-business-details.accounting-method                = Accounting method for sole trader income
+
+# business added page
+business-added.h2                                       = has been added to your account
+business-added.text                                     = What you must do
+
+business-added.final-declaration-heading                = Submit final declarations and pay your tax
+business-added.final-declaration-text                   = You must submit your final declarations and pay the tax you owe by the deadline.
+business-added.table.heading-1                          = Tax year
+business-added.table.heading-2                          = Deadline
+business-added.income-sources-button                    = Your income sources

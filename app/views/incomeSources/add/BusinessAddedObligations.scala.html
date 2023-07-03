@@ -25,14 +25,76 @@
 mainTemplate: unifiedLayout,
 h1: h1,
 dateInput: dateInput,
-continueButton: ContinueButton,
+govukButton : GovukButton,
 formWithCSRF: FormWithCSRF,
 errorSummary: ErrorSummary,
-govukDateInput: GovukDateInput
+govukTable: GovukTable,
 )
 
-@(sources: ObligationsViewModel, postAction: Call, backUrl: String, isAgent: Boolean)(implicit messages: Messages, user: auth.MtdItUser[_])
+@(businessName: String, sources: ObligationsViewModel, postAction: Call, backUrl: String, isAgent: Boolean)(implicit messages: Messages, user: auth.MtdItUser[_])
 
-BEEP BOOP
+@getMessage(key: String, args: String*) = @{
+  messages(s"business-added.$key", args: _*)
+}
 
-@sources
+@mainTemplate(pageTitle = businessName + " " + getMessage("h2"),
+  backUrl = Some(backUrl),
+  isAgent = isAgent,
+  btaNavPartial = user.btaNavPartial) {
+
+@formWithCSRF(action = postAction) {
+
+<div class="grid-row">
+
+    <div class="govuk-form-group form-field-group  {govuk-form-group--error}">
+        <div class="govuk-panel govuk-panel--confirmation">
+          <h1 class="govuk-panel__title">
+            @businessName
+          </h1>
+          <div class="govuk-panel__body">
+          @getMessage("h2")
+          </div>
+        </div>
+
+        <h1 class="govuk-label-wrapper">
+          <label class="govuk-label govuk-label--l">
+          @getMessage("text")
+          </label>
+        </h1>
+    </div>
+
+    Quarterly:
+    @sources.quarterlyObligationsDates
+
+    EOPS:
+    @sources.eopsObligationsDates
+
+    <div class="dotted govuk">
+        <h3 class="govuk-heading-m"><div class="page_headers"> @getMessage("final-declaration-heading") </div></h3>
+
+        <p>@getMessage("final-declaration-text") </p>
+        <table class="govuk-table">
+            <thead class="govuk-table__head">
+
+            <tr class="govuk-table__row">
+                <th scope="col" class="govuk-table__header govuk" style="width:55%;">@getMessage("table.heading-1")</th>
+                <th scope="col" class="govuk-table__header govuk" style="width:30%;">@getMessage("table.heading-2")</th>
+                <th scope="col" class="govuk-table__header govuk" style="width:15%; text-align:right"></th>
+            </tr>
+
+            </thead>
+            <tbody class="govuk-table__body">
+
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+    @govukButton(Button(
+        content = Text(
+            getMessage("income-sources-button")
+        )
+    ))
+    }
+}

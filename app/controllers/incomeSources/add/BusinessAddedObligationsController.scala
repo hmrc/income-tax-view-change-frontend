@@ -80,20 +80,29 @@ class BusinessAddedObligationsController @Inject()(authenticate: AuthenticationP
           s"[BusinessAddedObligationsController][handleRequest] - Error: No id supplied by reporting method page")
           Future(itvcErrorHandler.showInternalServerError())
         case Some(value) => {
-          val businessName = user.incomeSources.businesses.find(x => x.incomeSourceId.contains(value)).get.tradingName
-          val dates: Seq[DatesModel] = Await.result(nextUpdatesService.getNextUpdates() map {
-            case NextUpdatesErrorModel(code, message) => Logger("application").error(
-              s"[BusinessAddedObligationsController][handleRequest] - Error: $message, code $code")
-              itvcErrorHandler.showInternalServerError()
-              Seq.empty
-            case NextUpdateModel(start, end, due, obligationType, dateReceived, periodKey) =>
-              Seq(DatesModel(Some(start), Some(end), Some(due)))
-            case ObligationsModel(obligations) =>
-              obligations.flatMap(obligation => obligation.obligations.map(x => DatesModel(Some(x.start), Some(x.end), Some(x.due))))
-          }, Duration(100, MILLISECONDS))
-          Future {
-            if (isAgent) Ok(obligationsView(ObligationsViewModel(businessName, dates), controllers.incomeSources.add.routes.BusinessAddedObligationsController.agentSubmit(), agentBackUrl, true))
-            else Ok(obligationsView(ObligationsViewModel(businessName, dates), controllers.incomeSources.add.routes.BusinessAddedObligationsController.submit(), backUrl, false))
+          if (!user.incomeSources.businesses.exists(x => x.incomeSourceId.contains(value))) {
+            Logger("application").error(
+              s"[BusinessAddedObligationsController][handleRequest] - No income source with supplied id")
+            Future(itvcErrorHandler.showInternalServerError())
+          }
+          else {
+            val businessName = user.incomeSources.businesses.find(x => x.incomeSourceId.contains(value)).get.tradingName.getOrElse("")
+            val dates: Seq[DatesModel] = Await.result(nextUpdatesService.getNextUpdates() map {
+              case NextUpdatesErrorModel(code, message) => Logger("application").error(
+                s"[BusinessAddedObligationsController][handleRequest] - Error: $message, code $code")
+                itvcErrorHandler.showInternalServerError()
+                Seq.empty
+              case NextUpdateModel(start, end, due, obligationType, dateReceived, periodKey) =>
+                Seq(DatesModel(Some(start), Some(end), Some(due), obligationType))
+              case ObligationsModel(obligations) =>
+                obligations.flatMap(obligation => obligation.obligations.map(x => DatesModel(Some(x.start), Some(x.end), Some(x.due), x.obligationType)))
+            }, Duration(100, MILLISECONDS)) //REMOVE
+            Future {
+              if (isAgent) Ok(obligationsView(businessName, ObligationsViewModel(dates.filter(x => x.obligationType == "Quarterly"), dates.filter(x => x.obligationType == "EOPS")),
+                controllers.incomeSources.add.routes.BusinessAddedObligationsController.agentSubmit(), agentBackUrl, true))
+              else Ok(obligationsView(businessName, ObligationsViewModel(dates.filter(x => x.obligationType == "Quarterly"), dates.filter(x => x.obligationType == "EOPS")),
+                controllers.incomeSources.add.routes.BusinessAddedObligationsController.submit(), backUrl, false))
+            }
           }
         }
       }
@@ -102,14 +111,20 @@ class BusinessAddedObligationsController @Inject()(authenticate: AuthenticationP
 
   def submit: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
-    implicit request => ???
+    implicit request =>
+      Future.successful {
+        Redirect(controllers.incomeSources.add.routes.AddIncomeSourceController.show().url)
+      }
   }
 
   def agentSubmit: Action[AnyContent] = Authenticated.async {
     implicit request =>
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
-          implicit mtdItUser => ???
+          implicit mtdItUser =>
+            Future.successful {
+              Redirect(controllers.incomeSources.add.routes.AddIncomeSourceController.showAgent().url)
+            }
         }
   }
 
