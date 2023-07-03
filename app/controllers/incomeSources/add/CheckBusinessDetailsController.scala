@@ -110,7 +110,6 @@ class CheckBusinessDetailsController @Inject()(val checkBusinessDetails: CheckBu
       case Some(MissingKey(msg)) => MissingKey(msg)
     }.map(e => e.msg)
 
-
     val result: Option[CheckBusinessDetailsViewModel] = for {
         businessName <- user.session.data.get(businessName)
         businessStartDate <- user.session.data.get(businessStartDate).map(LocalDate.parse)
@@ -177,6 +176,10 @@ class CheckBusinessDetailsController @Inject()(val checkBusinessDetails: CheckBu
     }
   }
 
+  private val sessionKeys = Seq(businessName, businessStartDate, addBusinessAccountingPeriodStartDate,
+    businessTrade, addBusinessAddressLine1, addBusinessAddressLine2, addBusinessAddressLine3, addBusinessAddressLine4,
+    addBusinessPostalCode, addBusinessCountryCode, addBusinessAccountingMethod)
+
   def submit(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
@@ -188,7 +191,7 @@ class CheckBusinessDetailsController @Inject()(val checkBusinessDetails: CheckBu
             itvcErrorHandler.showInternalServerError()
 
           case Right(AddIncomeSourceResponse(id)) =>
-            Redirect(controllers.incomeSources.add.routes.AddBusinessReportingMethod.show().url + s"?id=$id").withNewSession
+            Redirect(controllers.incomeSources.add.routes.AddBusinessReportingMethod.show().url + s"?id=$id").withSession(user.session -- sessionKeys)
         }
         case None => Logger("application").error(
           s"[CheckBusinessDetailsController][submit] - Error: Unable to build view model on submit")
@@ -209,7 +212,7 @@ class CheckBusinessDetailsController @Inject()(val checkBusinessDetails: CheckBu
                     itvcErrorHandler.showInternalServerError()
 
                   case Right(AddIncomeSourceResponse(id)) =>
-                    Redirect(controllers.incomeSources.add.routes.AddBusinessReportingMethod.showAgent().url + s"?id=$id").withNewSession
+                    Redirect(controllers.incomeSources.add.routes.AddBusinessReportingMethod.showAgent().url + s"?id=$id").withSession(mtdItUser.session -- sessionKeys)
                 }
               case None => Logger("application").error(
                 s"[CheckBusinessDetailsController][submit] - Error: Unable to build view model on submit")
