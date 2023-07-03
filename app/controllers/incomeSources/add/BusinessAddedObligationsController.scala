@@ -95,6 +95,10 @@ class BusinessAddedObligationsController @Inject()(authenticate: AuthenticationP
           }
 
           val dates: Seq[DatesModel] = getObligationDates
+          val quarterlyDates: Seq[DatesModel] = dates.filter(x => x.periodKey.contains("00"))
+          val quarterlyDatesByYear: (Seq[DatesModel], Seq[DatesModel]) = quarterlyDates.partition(x => dateService.getAccountingPeriodEndDate(quarterlyDates.head.inboundCorrespondenceTo) == dateService.getAccountingPeriodEndDate(quarterlyDates.head.inboundCorrespondenceTo))
+
+          val eopsDates: Seq[DatesModel] = dates.filter(x => x.periodKey == "EOPS")
 
           val showPreviousTaxYears: Boolean = if (addedBusiness.tradingStartDate.isDefined) {
             addedBusiness.tradingStartDate.get.isBefore(getStartOfCurrentTaxYear)
@@ -106,9 +110,9 @@ class BusinessAddedObligationsController @Inject()(authenticate: AuthenticationP
           }
 
           Future {
-            if (isAgent) Ok(obligationsView(businessName, ObligationsViewModel(dates.filter(x => x.periodKey.nonEmpty), dates.filter(x => x.obligationType == "EOPS"), dateService.getCurrentTaxYearEnd()),
+            if (isAgent) Ok(obligationsView(businessName, ObligationsViewModel(quarterlyDatesByYear._1, quarterlyDatesByYear._2, eopsDates, dateService.getCurrentTaxYearEnd()),
               controllers.incomeSources.add.routes.BusinessAddedObligationsController.agentSubmit(), agentBackUrl, true, showPreviousTaxYears))
-            else Ok(obligationsView(businessName, ObligationsViewModel(dates.filter(x => x.periodKey.nonEmpty), dates.filter(x => x.obligationType == "EOPS"), dateService.getCurrentTaxYearEnd()),
+            else Ok(obligationsView(businessName, ObligationsViewModel(quarterlyDatesByYear._1, quarterlyDatesByYear._2, eopsDates, dateService.getCurrentTaxYearEnd()),
               controllers.incomeSources.add.routes.BusinessAddedObligationsController.submit(), backUrl, false, showPreviousTaxYears))
           }
         }
