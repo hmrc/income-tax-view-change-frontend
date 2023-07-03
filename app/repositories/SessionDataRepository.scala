@@ -34,10 +34,10 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class SessionDataRepository @Inject()(
-                                   mongoComponent: MongoComponent,
-                                   appConfig: FrontendAppConfig,
-                                   clock: Clock
-                                 )(implicit ec: ExecutionContext)
+                                       mongoComponent: MongoComponent,
+                                       appConfig: FrontendAppConfig,
+                                       clock: Clock
+                                     )(implicit ec: ExecutionContext)
   extends PlayMongoRepository[UserAnswers](
     collectionName = "add-income-source-journey-data",
     mongoComponent = mongoComponent,
@@ -54,32 +54,34 @@ class SessionDataRepository @Inject()(
 
   implicit val instantFormat: Format[Instant] = MongoJavatimeFormats.instantFormat
 
-  private def byId(id: String): Bson = Filters.equal("_id", id)
+  private def byId(answers: UserAnswers): Bson = Filters.equal("_id", answers.getId())
 
-  def keepAlive(id: String): Future[Boolean] =
+  def keepAlive(answers: UserAnswers): Future[Boolean] =
     collection
       .updateOne(
-        filter = byId(id),
+        filter = byId(answers),
         update = Updates.set("lastUpdated", Instant.now(clock)),
       )
       .toFuture
       .map(_ => true)
 
-  def get(id: String): Future[Option[UserAnswers]] =
-    keepAlive(id).flatMap {
+  def get(sessionId: String, journeyType: String): Future[Option[UserAnswers]] = {
+    val answers = UserAnswers(sessionId, journeyType)
+    keepAlive(answers).flatMap {
       _ =>
         collection
-          .find(byId(id))
+          .find(byId(answers))
           .headOption
     }
+  }
 
-  def set(answers: UserAnswers)(implicit hc: HeaderCarrier): Future[Boolean] = {
+  def set(answers: UserAnswers): Future[Boolean] = {
 
     val updatedAnswers = answers copy (lastUpdated = Instant.now(clock))
 
     collection
       .replaceOne(
-        filter = byId(updatedAnswers.id),
+        filter = byId(answers),
         replacement = updatedAnswers,
         options = ReplaceOptions().upsert(true)
       )
@@ -87,9 +89,9 @@ class SessionDataRepository @Inject()(
       .map(_ => true)
   }
 
-  def clear(id: String): Future[Boolean] =
+  def clear(answers: UserAnswers): Future[Boolean] =
     collection
-      .deleteOne(byId(id))
+      .deleteOne(byId(answers))
       .toFuture
       .map(_ => true)
 }
