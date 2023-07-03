@@ -39,7 +39,7 @@ object AddBusinessReportingMethodForm extends Constraints {
       taxYear1 -> optional(text),
       taxYear1ReportingMethod -> optional(text),
       taxYear2 -> optional(text),
-      taxYear2ReportingMethod -> optional(text),
+      taxYear2ReportingMethod -> optional(text)
     )(AddBusinessReportingMethodForm.apply)(AddBusinessReportingMethodForm.unapply)
   )
 
@@ -56,13 +56,12 @@ object AddBusinessReportingMethodForm extends Constraints {
   }
 }
 
-case class AddBusinessReportingMethodForm(
-                                           newTaxYear1ReportingMethod: Option[String],
-                                           newTaxYear2ReportingMethod: Option[String],
-                                           taxYear1: Option[String],
-                                           taxYear1ReportingMethod: Option[String],
-                                           taxYear2: Option[String],
-                                           taxYear2ReportingMethod: Option[String]) {
+case class AddBusinessReportingMethodForm(newTaxYear1ReportingMethod: Option[String],
+                                          newTaxYear2ReportingMethod: Option[String],
+                                          taxYear1: Option[String],
+                                          taxYear1ReportingMethod: Option[String],
+                                          taxYear2: Option[String],
+                                          taxYear2ReportingMethod: Option[String]) {
 
   def toFormMap: Map[String, Option[String]] = Map(
     AddBusinessReportingMethodForm.newTaxYear1ReportingMethod -> newTaxYear1ReportingMethod,
