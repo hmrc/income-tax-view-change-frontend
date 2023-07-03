@@ -18,16 +18,24 @@ package controllers
 
 import auth.FrontendAuthorisedFunctions
 import config.featureswitch.FeatureSwitching
-import config.{AgentItvcErrorHandler, FrontendAppConfig}
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
-import controllers.predicates.AuthenticationPredicate
+import controllers.predicates._
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import services.CreateBusinessDetailsService
 
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
+
 class AddBusinessCheckDetailsController @Inject()(val authenticate: AuthenticationPredicate,
+                                                  val createBusinessDetailsService: CreateBusinessDetailsService,
+                                                  val retrieveBtaNavBar: NavBarPredicate,
+                                                  val retrieveNino: NinoPredicate,
+                                                  val checkSessionTimeout: SessionTimeoutPredicate,
+                                                  val retrieveIncomeSources: IncomeSourceDetailsPredicate,
+                                                  val itvcErrorHandler: ItvcErrorHandler,
                                              val authorisedFunctions: FrontendAuthorisedFunctions)
                                             (implicit val appConfig: FrontendAppConfig,
                                              mcc: MessagesControllerComponents,
@@ -42,4 +50,5 @@ class AddBusinessCheckDetailsController @Inject()(val authenticate: Authenticati
   def showAgent(): Action[AnyContent] = Action {
     Ok("")
   }
+
 }

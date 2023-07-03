@@ -218,9 +218,8 @@ GET          /income-sources/add/change-business-accounting-method          cont
 GET          /agents/income-sources/add/change-business-accounting-method   controllers.incomeSources.add.BusinessAccountingMethodController.changeBusinessAccountingMethodAgent()
 GET          /income-sources/add/business-reporting-method                  controllers.incomeSources.add.AddBusinessReportingMethod.show()
 GET          /agents/income-sources/add/business-reporting-method           controllers.incomeSources.add.AddBusinessReportingMethod.showAgent()
-+ nocsrf
+
 POST          /income-sources/add/business-check-details                    controllers.incomeSources.add.CheckBusinessDetailsController.submit()
-+nocsrf
 POST          /agents/income-sources/add/business-check-details              controllers.incomeSources.add.CheckBusinessDetailsController.submitAgent()
 
 
