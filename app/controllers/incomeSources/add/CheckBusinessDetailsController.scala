@@ -179,6 +179,10 @@ class CheckBusinessDetailsController @Inject()(val checkBusinessDetails: CheckBu
     }
   }
 
+  private val sessionKeys = Seq(businessName, businessStartDate, addBusinessAccountingPeriodStartDate,
+    businessTrade, addBusinessAddressLine1, addBusinessAddressLine2, addBusinessAddressLine3, addBusinessAddressLine4,
+    addBusinessPostalCode, addBusinessCountryCode, addBusinessAccountingMethod)
+
   def submit(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
