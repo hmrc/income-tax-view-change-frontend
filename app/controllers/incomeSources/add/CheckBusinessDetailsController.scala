@@ -41,20 +41,20 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class CheckBusinessDetailsController @Inject()(val checkBusinessDetails: CheckBusinessDetails,
-                                             val checkSessionTimeout: SessionTimeoutPredicate,
-                                             val authenticate: AuthenticationPredicate,
-                                             val authorisedFunctions: AuthorisedFunctions,
-                                             val retrieveNino: NinoPredicate,
-                                             val retrieveIncomeSources: IncomeSourceDetailsPredicate,
-                                             val itvcErrorHandler: ItvcErrorHandler,
-                                             implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
-                                             val incomeSourceDetailsService: IncomeSourceDetailsService,
-                                             val retrieveBtaNavBar: NavBarPredicate,
+                                               val checkSessionTimeout: SessionTimeoutPredicate,
+                                               val authenticate: AuthenticationPredicate,
+                                               val authorisedFunctions: AuthorisedFunctions,
+                                               val retrieveNino: NinoPredicate,
+                                               val retrieveIncomeSources: IncomeSourceDetailsPredicate,
+                                               val itvcErrorHandler: ItvcErrorHandler,
+                                               implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
+                                               val incomeSourceDetailsService: IncomeSourceDetailsService,
+                                               val retrieveBtaNavBar: NavBarPredicate,
                                                val businessDetailsService: CreateBusinessDetailsService)
-                                            (implicit val ec: ExecutionContext,
-                                             implicit override val mcc: MessagesControllerComponents,
+                                              (implicit val ec: ExecutionContext,
+                                               implicit override val mcc: MessagesControllerComponents,
 
-                                             val appConfig: FrontendAppConfig) extends ClientConfirmedController
+                                               val appConfig: FrontendAppConfig) extends ClientConfirmedController
   with FeatureSwitching {
 
   lazy val businessAddressUrl: String = controllers.routes.AddBusinessAddressController.show().url
@@ -114,11 +114,11 @@ class CheckBusinessDetailsController @Inject()(val checkBusinessDetails: CheckBu
 
 
     val result: Option[CheckBusinessDetailsViewModel] = for {
-        businessName <- user.session.data.get(businessName)
-        businessStartDate <- user.session.data.get(businessStartDate).map(LocalDate.parse)
-        businessTrade <- user.session.data.get(businessTrade)
-        businessAddressLine1 <- user.session.data.get(addBusinessAddressLine1)
-        businessPostalCode <- user.session.data.get(addBusinessPostalCode)
+      businessName <- user.session.data.get(businessName)
+      businessStartDate <- user.session.data.get(businessStartDate).map(LocalDate.parse)
+      businessTrade <- user.session.data.get(businessTrade)
+      businessAddressLine1 <- user.session.data.get(addBusinessAddressLine1)
+      businessPostalCode <- user.session.data.get(addBusinessPostalCode)
     } yield {
       val businessAccountingMethod = user.session.data.get(addBusinessAccountingMethod)
 
@@ -176,13 +176,13 @@ class CheckBusinessDetailsController @Inject()(val checkBusinessDetails: CheckBu
       getDetails(user).toOption match {
         case Some(viewModel: CheckBusinessDetailsViewModel) =>
           businessDetailsService.createBusinessDetails(viewModel).map {
-          case Left(ex) => Logger("application").error(
-            s"[CheckBusinessDetailsController][handleRequest] - Unable to create income source: ${ex.getMessage}")
-            itvcErrorHandler.showInternalServerError()
+            case Left(ex) => Logger("application").error(
+              s"[CheckBusinessDetailsController][handleRequest] - Unable to create income source: ${ex.getMessage}")
+              itvcErrorHandler.showInternalServerError()
 
-          case Right(IncomeSource(id)) =>
-            Redirect(controllers.incomeSources.add.routes.AddBusinessReportingMethod.show().url + s"?id=$id").withNewSession
-        }
+            case Right(IncomeSource(id)) =>
+              Redirect(controllers.incomeSources.add.routes.BusinessReportingMethodController.show(id).url).withNewSession
+          }
         case None => Logger("application").error(
           s"[CheckBusinessDetailsController][submit] - Error: Unable to build view model on submit")
           Future.successful(itvcErrorHandler.showInternalServerError())
@@ -202,7 +202,7 @@ class CheckBusinessDetailsController @Inject()(val checkBusinessDetails: CheckBu
                     itvcErrorHandler.showInternalServerError()
 
                   case Right(IncomeSource(id)) =>
-                    Redirect(controllers.incomeSources.add.routes.AddBusinessReportingMethod.showAgent().url + s"?id=$id").withNewSession
+                    Redirect(controllers.incomeSources.add.routes.BusinessReportingMethodController.showAgent(id).url).withNewSession
                 }
               case None => Logger("application").error(
                 s"[CheckBusinessDetailsController][submit] - Error: Unable to build view model on submit")

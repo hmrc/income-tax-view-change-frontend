@@ -49,8 +49,6 @@ class ManageIncomeSourceControllerISpec extends ComponentSpecBase {
         val res = IncomeTaxViewChangeFrontend.getManageIncomeSource
         verifyIncomeSourceDetailsCall(testMtditid)
 
-        println(s"Here is HTML: ${res.body} ")
-
         res should have(
           httpStatus(OK),
           pageTitleIndividual(pageTitleMsgKey),
