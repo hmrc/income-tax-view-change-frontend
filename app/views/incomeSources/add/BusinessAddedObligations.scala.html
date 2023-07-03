@@ -20,81 +20,139 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components.FormWithCSRF
 @import views.html.helpers.injected.ErrorSummary
 @import models.incomeSourceDetails.viewmodels.ObligationsViewModel
+@import java.time.LocalDate
+@import _root_.implicits.ImplicitDateFormatterImpl
+
 
 @this(
 mainTemplate: unifiedLayout,
 h1: h1,
-dateInput: dateInput,
+implicitDateFormatter: ImplicitDateFormatterImpl,
 govukButton : GovukButton,
 formWithCSRF: FormWithCSRF,
 errorSummary: ErrorSummary,
 govukTable: GovukTable,
 )
 
-@(businessName: String, sources: ObligationsViewModel, postAction: Call, backUrl: String, isAgent: Boolean)(implicit messages: Messages, user: auth.MtdItUser[_])
+@(businessName: String, sources: ObligationsViewModel, postAction: Call, backUrl: String, isAgent: Boolean, showPrevTaxYears: Boolean)(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @getMessage(key: String, args: String*) = @{
   messages(s"business-added.$key", args: _*)
 }
+
+@import implicitDateFormatter.longDate
 
 @mainTemplate(pageTitle = businessName + " " + getMessage("h2"),
   backUrl = Some(backUrl),
   isAgent = isAgent,
   btaNavPartial = user.btaNavPartial) {
 
-@formWithCSRF(action = postAction) {
+    @formWithCSRF(action = postAction) {
 
-<div class="grid-row">
 
-    <div class="govuk-form-group form-field-group  {govuk-form-group--error}">
-        <div class="govuk-panel govuk-panel--confirmation">
-          <h1 class="govuk-panel__title">
-            @businessName
-          </h1>
-          <div class="govuk-panel__body">
-          @getMessage("h2")
-          </div>
+        <div class="govuk-form-group form-field-group  {govuk-form-group--error}">
+            <div class="govuk-panel govuk-panel--confirmation">
+              <h1 class="govuk-panel__title">
+                @businessName
+              </h1>
+              <div class="govuk-panel__body">
+              @getMessage("h2")
+              </div>
+            </div>
+
+            <h1 class="govuk-label-wrapper">
+              <label class="govuk-label govuk-label--l">
+              @getMessage("text")
+              </label>
+            </h1>
         </div>
 
-        <h1 class="govuk-label-wrapper">
-          <label class="govuk-label govuk-label--l">
-          @getMessage("text")
-          </label>
-        </h1>
-    </div>
 
-    Quarterly:
-    @sources.quarterlyObligationsDates
+        @if(sources.quarterlyObligationsDates.nonEmpty){
+            <div class="dotted govuk">
+                <h3 class="govuk-heading-m"><div class="page_headers"> @getMessage("quarterly-heading") </div></h3>
+                <p class="govuk-body"> @getMessage("quarterly-p1") </p>
 
-    EOPS:
-    @sources.eopsObligationsDates
+                <table class="govuk-table">
+                    <thead class="govuk-table__head">
+                    <tr class="govuk-table__row">
+                        <th scope="col" class="govuk-table__header govuk" style="width:55%;">@getMessage("table.heading-1")</th>
+                        <th scope="col" class="govuk-table__header govuk" style="width:30%;">@getMessage("table.heading-2")</th>
+                    </tr>
+                    </thead>
 
-    <div class="dotted govuk">
-        <h3 class="govuk-heading-m"><div class="page_headers"> @getMessage("final-declaration-heading") </div></h3>
+                    <tbody class="govuk-table__body">
+                    @sources.quarterlyObligationsDates.distinct.map{ x =>
+                        <tr class="govuk-table__row">
+                            <td class="govuk-table__cell">@(x.inboundCorrespondenceFrom.map(_.toLongDate).get + " " + getMessage("to") + " " + x.inboundCorrespondenceTo.map(_.toLongDate).get)</td>
+                            <td class="govuk-table__cell">@(x.inboundCorrespondenceDue.map(_.toLongDate))</td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        }
 
-        <p>@getMessage("final-declaration-text") </p>
-        <table class="govuk-table">
-            <thead class="govuk-table__head">
 
-            <tr class="govuk-table__row">
-                <th scope="col" class="govuk-table__header govuk" style="width:55%;">@getMessage("table.heading-1")</th>
-                <th scope="col" class="govuk-table__header govuk" style="width:30%;">@getMessage("table.heading-2")</th>
-                <th scope="col" class="govuk-table__header govuk" style="width:15%; text-align:right"></th>
-            </tr>
+        @if(sources.eopsObligationsDates.nonEmpty){
+            <div class="dotted govuk">
+                <h3 class="govuk-heading-m"><div class="page_headers"> @getMessage("eops-heading") </div></h3>
+                <p class="govuk-body"> @getMessage("eops-p1") </p>
 
-            </thead>
-            <tbody class="govuk-table__body">
+                <table class="govuk-table">
+                    <thead class="govuk-table__head">
+                    <tr class="govuk-table__row">
+                        <th scope="col" class="govuk-table__header govuk" style="width:55%;">@getMessage("table.heading-1")</th>
+                        <th scope="col" class="govuk-table__header govuk" style="width:30%;">@getMessage("table.heading-2")</th>
+                    </tr>
+                    </thead>
 
-            </tbody>
-        </table>
-    </div>
+                    <tbody class="govuk-table__body">
+                        @sources.eopsObligationsDates.distinct.map{ x =>
+                            <tr class="govuk-table__row">
+                                <td class="govuk-table__cell">@(x.inboundCorrespondenceFrom.get.getYear + " " + getMessage("to") + " " + x.inboundCorrespondenceTo.get.getYear)</td>
+                                <td class="govuk-table__cell">@(x.inboundCorrespondenceDue.map(_.toLongDate))</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
 
-</div>
 
-    @govukButton(Button(
-        content = Text(
-            getMessage("income-sources-button")
-        )
-    ))
+        <div class="dotted govuk">
+            <h3 class="govuk-heading-m"><div class="page_headers"> @getMessage("final-declaration-heading") </div></h3>
+            <p class="govuk-body"> @getMessage("final-declaration-text") </p>
+
+            <table class="govuk-table">
+                <thead class="govuk-table__head">
+                <tr class="govuk-table__row">
+                    <th scope="col" class="govuk-table__header govuk" style="width:55%;">@getMessage("table.heading-1")</th>
+                    <th scope="col" class="govuk-table__header govuk" style="width:30%;">@getMessage("table.heading-2")</th>
+                </tr>
+                </thead>
+
+                <tbody class="govuk-table__body">
+
+                </tbody>
+            </table>
+        </div>
+
+
+        @if(showPrevTaxYears) {
+            <div class="dotted govuk">
+                <h3 class="govuk-heading-m"><div class="page_headers"> @getMessage("previous-tax-years-heading") </div></h3>
+                <p class="govuk-body">
+                    @(getMessage("previous-tax-years-t1")+" "+(sources.currentTaxYear-1).toString+" "+getMessage("to")+" "+sources.currentTaxYear.toString+".")
+                </p>
+            </div>
+        }
+
+
+        @govukButton(Button(
+            content = Text(
+                getMessage("income-sources-button")
+            )
+        ))
     }
 }

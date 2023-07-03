@@ -18,7 +18,8 @@ package models.incomeSourceDetails.viewmodels
 
 import java.time.LocalDate
 
-case class ObligationsViewModel (quarterlyObligationsDates: Seq[DatesModel], eopsObligationsDates: Seq[DatesModel])
+case class ObligationsViewModel (quarterlyObligationsDates: Seq[DatesModel], eopsObligationsDates: Seq[DatesModel], currentTaxYear: Int)
 
 case class DatesModel (inboundCorrespondenceFrom: Option[LocalDate],
-                       inboundCorrespondenceTo: Option[LocalDate], inboundCorrespondenceDue: Option[LocalDate], obligationType: String)
+                       inboundCorrespondenceTo: Option[LocalDate], inboundCorrespondenceDue: Option[LocalDate],
+                       obligationType: String, periodKey: String)

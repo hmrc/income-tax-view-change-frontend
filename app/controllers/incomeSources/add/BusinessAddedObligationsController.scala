@@ -23,15 +23,18 @@ import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import controllers.routes
 import forms.utils.SessionKeys
+import models.incomeSourceDetails.BusinessDetailsModel
 import models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
 import models.nextUpdates.{NextUpdateModel, NextUpdatesErrorModel, NextUpdatesResponseModel, ObligationsModel}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.{IncomeSourceDetailsService, NextUpdatesService}
+import services.{DateServiceInterface, IncomeSourceDetailsService, NextUpdatesService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import views.html.incomeSources.add.BusinessAddedObligations
 
+import java.time.LocalDate
+import java.time.Month.APRIL
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.duration.{Duration, MILLISECONDS}
 import scala.concurrent.{Await, CanAwait, ExecutionContext, Future}
@@ -49,7 +52,8 @@ class BusinessAddedObligationsController @Inject()(authenticate: AuthenticationP
                                                   (implicit val appConfig: FrontendAppConfig,
                                                    implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                                    implicit override val mcc: MessagesControllerComponents,
-                                                   val ec: ExecutionContext)
+                                                   val ec: ExecutionContext,
+                                                   dateService: DateServiceInterface)
   extends ClientConfirmedController with I18nSupport with FeatureSwitching{
 
   lazy val backUrl = controllers.incomeSources.add.routes.AddBusinessReportingMethod.show().url
@@ -86,27 +90,48 @@ class BusinessAddedObligationsController @Inject()(authenticate: AuthenticationP
             Future(itvcErrorHandler.showInternalServerError())
           }
           else {
-            val businessName = user.incomeSources.businesses.find(x => x.incomeSourceId.contains(value)).get.tradingName.getOrElse("")
+            val addedBusiness: BusinessDetailsModel = user.incomeSources.businesses.find(x => x.incomeSourceId.contains(value)).get
+            val businessName: String = addedBusiness.tradingName match {
+              case Some(value) => value
+              case None => Logger("application").error(
+                s"[BusinessAddedObligationsController][handleRequest] - No business name for business with provided id")
+                itvcErrorHandler.showInternalServerError()
+                ""
+            }
             val dates: Seq[DatesModel] = Await.result(nextUpdatesService.getNextUpdates() map {
               case NextUpdatesErrorModel(code, message) => Logger("application").error(
                 s"[BusinessAddedObligationsController][handleRequest] - Error: $message, code $code")
                 itvcErrorHandler.showInternalServerError()
                 Seq.empty
               case NextUpdateModel(start, end, due, obligationType, dateReceived, periodKey) =>
-                Seq(DatesModel(Some(start), Some(end), Some(due), obligationType))
+                Seq(DatesModel(Some(start), Some(end), Some(due), obligationType, periodKey))
               case ObligationsModel(obligations) =>
-                obligations.flatMap(obligation => obligation.obligations.map(x => DatesModel(Some(x.start), Some(x.end), Some(x.due), x.obligationType)))
+                obligations.flatMap(obligation => obligation.obligations.map(x => DatesModel(Some(x.start), Some(x.end), Some(x.due), x.obligationType, x.periodKey)))
             }, Duration(100, MILLISECONDS)) //REMOVE
+            val showPreviousTaxYears: Boolean = if (addedBusiness.tradingStartDate.isDefined){
+              addedBusiness.tradingStartDate.get.isBefore(getStartOfCurrentTaxYear)
+            }
+            else{
+              Logger("application").error(s"[BusinessAddedObligationsController][handleRequest] - No business start date for business with provided id")
+              Future(itvcErrorHandler.showInternalServerError())
+              false
+            }
             Future {
-              if (isAgent) Ok(obligationsView(businessName, ObligationsViewModel(dates.filter(x => x.obligationType == "Quarterly"), dates.filter(x => x.obligationType == "EOPS")),
-                controllers.incomeSources.add.routes.BusinessAddedObligationsController.agentSubmit(), agentBackUrl, true))
-              else Ok(obligationsView(businessName, ObligationsViewModel(dates.filter(x => x.obligationType == "Quarterly"), dates.filter(x => x.obligationType == "EOPS")),
-                controllers.incomeSources.add.routes.BusinessAddedObligationsController.submit(), backUrl, false))
+              if (isAgent) Ok(obligationsView(businessName, ObligationsViewModel(dates.filter(x => x.periodKey.nonEmpty), dates.filter(x => x.obligationType == "EOPS"), dateService.getCurrentTaxYearEnd()),
+                controllers.incomeSources.add.routes.BusinessAddedObligationsController.agentSubmit(), agentBackUrl, true, showPreviousTaxYears))
+              else Ok(obligationsView(businessName, ObligationsViewModel(dates.filter(x => x.periodKey.nonEmpty), dates.filter(x => x.obligationType == "EOPS"), dateService.getCurrentTaxYearEnd()),
+                controllers.incomeSources.add.routes.BusinessAddedObligationsController.submit(), backUrl, false, showPreviousTaxYears))
             }
           }
         }
       }
     }
+  }
+
+  def getStartOfCurrentTaxYear: LocalDate = {
+    val currentDate = dateService.getCurrentDate()
+    if (currentDate.isBefore(LocalDate.of(currentDate.getYear, APRIL, 6))) LocalDate.of(currentDate.getYear - 1, APRIL, 6)
+    else LocalDate.of(currentDate.getYear, APRIL, 6)
   }
 
   def submit: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino

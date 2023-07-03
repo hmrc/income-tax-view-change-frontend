@@ -1352,3 +1352,20 @@ check-business-details.business-description             = Disgrifiad o’r busne
 check-business-details.business-address                 = Cyfeiriad y busnes
 check-business-details.confirm-button                   = Cadarnhau ac yn eich blaen
 check-business-details.accounting-method                = Dull cyfrifyddu ar gyfer incwm unig fasnachwr
+
+# business added page
+business-added.h2                                       = has been added to your account
+business-added.text                                     = Yr hyn y mae’n rhaid i chi ei wneud
+business-added.to                                       = i
+
+business-added.quarterly-heading                        = Anfon diweddariadau chwarterol
+business-added.quarterly-p1                             = Mae’n rhaid i chi anfon diweddariadau chwarterol o’ch incwm a’ch treuliau, gan ddefnyddio meddalwedd sy’n cydweddu, erbyn y dyddiadau cau canlynol:
+business-added.eops-heading                             = Anfon datganiadau diwedd cyfnod
+business-added.eops-p1                                  = Mae’n rhaid i chi gyflwyno datganiadau diwedd cyfnod gan ddefnyddio’ch meddalwedd, a hynny erbyn y dyddiad cau.
+business-added.final-declaration-heading                = Cyflwyno’ch datganiadau terfynol a thalu’ch treth
+business-added.final-declaration-text                   = Bydd yn rhaid i chi gyflwyno’ch datganiadau terfynol a thalu’r dreth sydd arnoch erbyn y dyddiad cau.
+business-added.table.heading-1                          = Blwyddyn dreth
+business-added.table.heading-2                          = Dyddiad cau
+business-added.income-sources-button                    = Your income sources
+business-added.previous-tax-years-heading               = Blynyddoedd treth blaenorol
+business-added.previous-tax-years-t1                    = Mae’n rhaid i chi wneud yn siŵr eich bod wedi anfon yr holl Incwm a threuliau, a datganiadau terfynol ar gyfer blynyddoedd treth cyn
