@@ -17,25 +17,27 @@
 package controllers.incomeSources.add
 
 import config.featureswitch.IncomeSources
-import forms.utils.SessionKeys.{addBusinessAccountingMethod, addBusinessAddressLine1, addBusinessPostalCode, businessName, businessStartDate, businessTrade}
+import forms.utils.SessionKeys.{addBusinessAccountingMethod, addBusinessAccountingPeriodEndDate, addBusinessAddressLine1, addBusinessPostalCode, businessName, businessStartDate, businessTrade}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
+import models.addIncomeSource.AddIncomeSourceResponse
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
-import testConstants.BaseIntegrationTestConstants.testMtditid
+import testConstants.BaseIntegrationTestConstants.{testMtditid, testSelfEmploymentId}
 import testConstants.IncomeSourceIntegrationTestConstants.noPropertyOrBusinessResponse
 
 class CheckBusinessDetailsControllerISpec extends ComponentSpecBase {
 
   val checkBusinessDetailsShowUrl: String = controllers.incomeSources.add.routes.CheckBusinessDetailsController.show().url
   val checkBusinessDetailsSubmitUrl: String = controllers.incomeSources.add.routes.CheckBusinessDetailsController.submit().url
-  val addBusinessReportingMethodUrl: String = controllers.incomeSources.add.routes.BusinessReportingMethodController.show("123").url
+  val addBusinessReportingMethodUrl: String = controllers.incomeSources.add.routes.BusinessReportingMethodController.show(testSelfEmploymentId).url
 
   val sessionData: Map[String, String] = Map(businessName -> "Test Business",
     businessStartDate -> "2022-01-01",
     businessTrade -> "Plumbing",
     addBusinessAddressLine1 -> "Test Road",
     addBusinessPostalCode -> "B32 1PQ",
-    addBusinessAccountingMethod -> "Quarterly")
+    addBusinessAccountingMethod -> "Quarterly",
+    addBusinessAccountingPeriodEndDate -> "2023-11-11")
 
   val testBusinessName: String = "Test Business"
   val testBusinessStartDate: String = "1 January 2022"
@@ -52,6 +54,9 @@ class CheckBusinessDetailsControllerISpec extends ComponentSpecBase {
         Given("I wiremock stub a successful Income Source Details response with no businesses or properties")
         enable(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
+
+        val response = List(AddIncomeSourceResponse(testSelfEmploymentId))
+        IncomeTaxViewChangeStub.stubCreateBusinessDetailsResponse(testMtditid)(OK, response)
 
         When(s"I call GET $checkBusinessDetailsShowUrl")
         val result = IncomeTaxViewChangeFrontend.get("/income-sources/add/business-check-details", sessionData)
@@ -75,12 +80,15 @@ class CheckBusinessDetailsControllerISpec extends ComponentSpecBase {
       "user selects 'confirm and continue'" in {
         val formData: Map[String, Seq[String]] = Map("addBusinessName" -> Seq("Test Business Name"),
           "addBusinessTrade" -> Seq("Test Business Name"),
-          "addBusinessStartDate" -> Seq("Test Business Name"),
+          "addBusinessStartDate" -> Seq("2011-11-11"),
           "addBusinessAddressLine1" -> Seq("Test Business Name"),
-          "addBusinessPostalCode" -> Seq("Test Business Name"),
-          "addBusinessAccountingMethod" -> Seq("Test Business Name"))
+          "addBusinessPostalCode" -> Seq("SE15 1WR"),
+          "addBusinessAccountingMethod" -> Seq("Test Business Name"),
+          "addBusinessAccountingPeriodEndDate" -> Seq("2023-11-11"))
         enable(IncomeSources)
+        val response = List(AddIncomeSourceResponse(testSelfEmploymentId))
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
+        IncomeTaxViewChangeStub.stubCreateBusinessDetailsResponse(testMtditid)(OK, response)
 
         val result = IncomeTaxViewChangeFrontend.post(s"/income-sources/add/business-check-details", sessionData)(formData)
 

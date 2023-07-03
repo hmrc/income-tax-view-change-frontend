@@ -18,6 +18,7 @@ package helpers.servicemocks
 
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import helpers.WiremockHelper
+import models.addIncomeSource.AddIncomeSourceResponse
 import models.core.{Nino, NinoResponseError, NinoResponseSuccess}
 import models.financialDetails.Payment
 import models.incomeSourceDetails.IncomeSourceDetailsResponse
@@ -66,6 +67,11 @@ object IncomeTaxViewChangeStub { // scalastyle:off number.of.methods
   def verifyGetIncomeSourceDetails(mtditid: String, noOfCalls: Int = 1): Unit = {
     WiremockHelper.verifyGet(incomeSourceDetailsUrl(mtditid), noOfCalls)
   }
+
+  // Stub CreateBusinessDetails
+  def stubCreateBusinessDetailsResponse(mtditid: String)(status: Int, response: List[AddIncomeSourceResponse]): Unit =
+    WiremockHelper.stubPost(s"/income-tax-view-change/create-income-source/business/$mtditid", status, Json.toJson(response).toString)
+
 
   //PreviousObligations Stubs
   def previousObligationsUrl(nino: String): String = {

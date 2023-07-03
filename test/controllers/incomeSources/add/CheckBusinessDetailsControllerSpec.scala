@@ -23,9 +23,11 @@ import controllers.AddBusinessNameController
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import forms.utils.SessionKeys
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
+import models.addIncomeSource.AddIncomeSourceResponse
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import org.mockito.Mockito.mock
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.{mock, when}
 import play.api.http.Status
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import play.api.mvc.{MessagesControllerComponents, Result}
@@ -38,6 +40,7 @@ import uk.gov.hmrc.http.HttpClient
 import views.html.AddBusiness
 import views.html.incomeSources.add.CheckBusinessDetails
 
+import java.time.LocalDate
 import scala.concurrent.Future
 
 class CheckBusinessDetailsControllerSpec extends TestSupport with MockAuthenticationPredicate
@@ -48,14 +51,16 @@ class CheckBusinessDetailsControllerSpec extends TestSupport with MockAuthentica
   }
 
   val testBusinessName: String = "Test Business"
-  val testBusinessStartDate: String = "2022-11-11"
+  val testBusinessStartDate: String = LocalDate.of(2023, 1, 2).toString
   val testBusinessTrade: String = "Plumbing"
   val testBusinessAddressLine1: String = "123 Main Street"
   val testBusinessPostCode: String = "AB123CD"
   val testBusinessAccountingMethod = "Quarterly"
+  val testAccountingPeriodEndDate = LocalDate.of(2023, 11, 11).toString
 
   val mockHttpClient: HttpClient = mock(classOf[HttpClient])
   val mockCheckBusinessDetails: CheckBusinessDetails = app.injector.instanceOf[CheckBusinessDetails]
+  val mockBusinessDetailsService : CreateBusinessDetailsService = mock(classOf[CreateBusinessDetailsService])
 
   object TestCheckBusinessDetailsController extends CheckBusinessDetailsController(
     checkBusinessDetails = app.injector.instanceOf[CheckBusinessDetails],
@@ -68,7 +73,7 @@ class CheckBusinessDetailsControllerSpec extends TestSupport with MockAuthentica
     itvcErrorHandlerAgent = app.injector.instanceOf[AgentItvcErrorHandler],
     incomeSourceDetailsService = mockIncomeSourceDetailsService,
     retrieveBtaNavBar = MockNavBarPredicate,
-    businessDetailsService = app.injector.instanceOf[CreateBusinessDetailsService]
+    businessDetailsService = mockBusinessDetailsService
   )(ec, mcc = app.injector.instanceOf[MessagesControllerComponents],
     appConfig = app.injector.instanceOf[FrontendAppConfig]
   ) {
@@ -77,23 +82,6 @@ class CheckBusinessDetailsControllerSpec extends TestSupport with MockAuthentica
     val link: String = s"${messages("check-business-details.change-details-link")}"
   }
 
-  object TestAddBusinessNameNameController
-    extends AddBusinessNameController(
-      MockAuthenticationPredicate,
-      authorisedFunctions = mockAuthService,
-      checkSessionTimeout = app.injector.instanceOf[SessionTimeoutPredicate],
-      retrieveNino = app.injector.instanceOf[NinoPredicate],
-      addBusinessView = app.injector.instanceOf[AddBusiness],
-      retrieveIncomeSources = MockIncomeSourceDetailsPredicate,
-      retrieveBtaNavBar = MockNavBarPredicate,
-      itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
-      incomeSourceDetailsService = mockIncomeSourceDetailsService,
-    )(
-      mcc = app.injector.instanceOf[MessagesControllerComponents],
-      appConfig = app.injector.instanceOf[FrontendAppConfig],
-      itvcErrorHandlerAgent = app.injector.instanceOf[AgentItvcErrorHandler],
-      ec = ec
-    )
 
   "CheckBusinessDetailsController" should {
 
@@ -112,8 +100,9 @@ class CheckBusinessDetailsControllerSpec extends TestSupport with MockAuthentica
                 SessionKeys.businessStartDate -> testBusinessStartDate,
                 SessionKeys.businessTrade -> testBusinessTrade,
                 SessionKeys.addBusinessAddressLine1 -> testBusinessAddressLine1,
+                SessionKeys.addBusinessAccountingMethod -> testBusinessAccountingMethod,
+                SessionKeys.addBusinessAccountingPeriodEndDate -> testAccountingPeriodEndDate,
                 SessionKeys.addBusinessPostalCode -> testBusinessPostCode,
-                SessionKeys.addBusinessAccountingMethod -> testBusinessAccountingMethod
               ))
 
           val document: Document = Jsoup.parse(contentAsString(result))
@@ -136,6 +125,8 @@ class CheckBusinessDetailsControllerSpec extends TestSupport with MockAuthentica
 
         mockNoIncomeSources()
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
+        when(mockBusinessDetailsService.createBusinessDetails(any())(any(), any(), any()) )
+          .thenReturn(Future{ Right(AddIncomeSourceResponse("incomeSourceId")) } )
 
         val result = TestCheckBusinessDetailsController.submit()(
           fakeRequestWithActiveSession
@@ -145,7 +136,9 @@ class CheckBusinessDetailsControllerSpec extends TestSupport with MockAuthentica
               SessionKeys.businessTrade -> testBusinessTrade,
               SessionKeys.addBusinessAddressLine1 -> testBusinessAddressLine1,
               SessionKeys.addBusinessPostalCode -> testBusinessPostCode,
-              SessionKeys.addBusinessAccountingMethod -> testBusinessAccountingMethod
+              SessionKeys.addBusinessAccountingMethod -> testBusinessAccountingMethod,
+              SessionKeys.addBusinessAccountingPeriodEndDate -> testAccountingPeriodEndDate,
+              SessionKeys.addBusinessPostalCode -> testBusinessPostCode,
             ))
 
         status(result) shouldBe Status.SEE_OTHER
@@ -178,6 +171,10 @@ class CheckBusinessDetailsControllerSpec extends TestSupport with MockAuthentica
 
         mockNoIncomeSources()
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
+        when(mockBusinessDetailsService.createBusinessDetails(any())(any(), any(), any()))
+          .thenReturn(Future {
+            Right(AddIncomeSourceResponse("incomeSourceId"))
+          })
 
         val result = TestCheckBusinessDetailsController.show()(
           fakeRequestWithActiveSession
@@ -201,7 +198,10 @@ class CheckBusinessDetailsControllerSpec extends TestSupport with MockAuthentica
         enable(IncomeSources)
 
         mockSingleBusinessIncomeSource()
-
+        when(mockBusinessDetailsService.createBusinessDetails(any())(any(), any(), any()))
+          .thenReturn(Future {
+            Right(AddIncomeSourceResponse("incomeSourceId"))
+          })
 
         val result = TestCheckBusinessDetailsController.showAgent()(
           fakeRequestConfirmedClient().withSession(
@@ -210,7 +210,9 @@ class CheckBusinessDetailsControllerSpec extends TestSupport with MockAuthentica
             SessionKeys.businessTrade -> testBusinessTrade,
             SessionKeys.addBusinessAddressLine1 -> testBusinessAddressLine1,
             SessionKeys.addBusinessPostalCode -> testBusinessPostCode,
-            SessionKeys.addBusinessAccountingMethod -> testBusinessAccountingMethod
+            SessionKeys.addBusinessAccountingMethod -> testBusinessAccountingMethod,
+            SessionKeys.addBusinessAccountingPeriodEndDate -> testAccountingPeriodEndDate,
+            SessionKeys.addBusinessPostalCode -> testBusinessPostCode
           ))
 
         status(result) shouldBe Status.OK
@@ -231,7 +233,10 @@ class CheckBusinessDetailsControllerSpec extends TestSupport with MockAuthentica
         enable(IncomeSources)
 
         mockSingleBusinessIncomeSource()
-
+        when(mockBusinessDetailsService.createBusinessDetails(any())(any(), any(), any()))
+          .thenReturn(Future {
+            Right(AddIncomeSourceResponse("incomeSourceId"))
+          })
 
         val result = TestCheckBusinessDetailsController.submitAgent()(
           fakeRequestConfirmedClient().withSession(
@@ -240,7 +245,9 @@ class CheckBusinessDetailsControllerSpec extends TestSupport with MockAuthentica
             SessionKeys.businessTrade -> testBusinessTrade,
             SessionKeys.addBusinessAddressLine1 -> testBusinessAddressLine1,
             SessionKeys.addBusinessPostalCode -> testBusinessPostCode,
-            SessionKeys.addBusinessAccountingMethod -> testBusinessAccountingMethod
+            SessionKeys.addBusinessAccountingMethod -> testBusinessAccountingMethod,
+            SessionKeys.addBusinessAccountingPeriodEndDate -> testAccountingPeriodEndDate,
+            SessionKeys.addBusinessPostalCode -> testBusinessPostCode,
           ))
 
         status(result) shouldBe Status.SEE_OTHER

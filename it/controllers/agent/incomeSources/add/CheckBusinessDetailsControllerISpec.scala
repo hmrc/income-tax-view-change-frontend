@@ -16,27 +16,29 @@
 
 package controllers.agent.incomeSources.add
 
+
 import config.featureswitch.IncomeSources
-import forms.utils.SessionKeys._
+import forms.utils.SessionKeys.{addBusinessAccountingMethod, addBusinessAccountingPeriodEndDate, addBusinessAddressLine1, addBusinessPostalCode, businessName, businessStartDate, businessTrade}
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
-import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testMtditid}
+import models.addIncomeSource.AddIncomeSourceResponse
+import play.api.http.Status.{BAD_REQUEST, NOT_FOUND, OK, SEE_OTHER}
+import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testMtditid, testSelfEmploymentId}
 import testConstants.IncomeSourceIntegrationTestConstants.noPropertyOrBusinessResponse
 
 class CheckBusinessDetailsControllerISpec extends ComponentSpecBase {
 
   val checkBusinessDetailsShowUrlAgent: String = controllers.incomeSources.add.routes.CheckBusinessDetailsController.showAgent().url
   val checkBusinessDetailsSubmitUrlAgent: String = controllers.incomeSources.add.routes.CheckBusinessDetailsController.submitAgent().url
-  val addBusinessReportingMethodUrlAgent: String = controllers.incomeSources.add.routes.BusinessReportingMethodController.showAgent("123").url
+  val addBusinessReportingMethodUrlAgent: String = controllers.incomeSources.add.routes.BusinessReportingMethodController.showAgent(testSelfEmploymentId).url
 
   val sessionData: Map[String, String] = Map(businessName -> "Test Business",
     businessStartDate -> "2022-01-01",
     businessTrade -> "Plumbing",
     addBusinessAddressLine1 -> "Test Road",
     addBusinessPostalCode -> "B32 1PQ",
-    addBusinessAccountingMethod -> "Quarterly")
-
+    addBusinessAccountingMethod -> "Quarterly",
+    addBusinessAccountingPeriodEndDate -> "2023-11-11")
   val testBusinessName: String = "Test Business"
   val testBusinessStartDate: String = "1 January 2022"
   val testBusinessTrade: String = "Plumbing"
@@ -54,6 +56,8 @@ class CheckBusinessDetailsControllerISpec extends ComponentSpecBase {
 
         enable(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
+        val response = List(AddIncomeSourceResponse(testSelfEmploymentId))
+        IncomeTaxViewChangeStub.stubCreateBusinessDetailsResponse(testMtditid)(OK, response)
 
         When(s"I call GET $checkBusinessDetailsShowUrlAgent")
         val result = IncomeTaxViewChangeFrontend.get("/income-sources/add/business-check-details", sessionData ++ clientDetailsWithConfirmation)
@@ -84,6 +88,8 @@ class CheckBusinessDetailsControllerISpec extends ComponentSpecBase {
 
         enable(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
+        val response = List(AddIncomeSourceResponse(testSelfEmploymentId))
+        IncomeTaxViewChangeStub.stubCreateBusinessDetailsResponse(testMtditid)(OK, response)
 
         val result = IncomeTaxViewChangeFrontend.post("/income-sources/add/business-check-details", sessionData ++ clientDetailsWithConfirmation)(formData)
 
