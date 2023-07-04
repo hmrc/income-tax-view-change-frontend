@@ -95,8 +95,8 @@ class BusinessAddedObligationsController @Inject()(authenticate: AuthenticationP
           }
 
           val dates: Seq[DatesModel] = getObligationDates(id.get)
-          val quarterlyDates: Seq[DatesModel] = dates.filter(x => x.periodKey.contains("00"))
-          val quarterlyDatesByYear: (Seq[DatesModel], Seq[DatesModel]) = quarterlyDates.partition(x => dateService.getAccountingPeriodEndDate(quarterlyDates.head.inboundCorrespondenceTo) == dateService.getAccountingPeriodEndDate(quarterlyDates.head.inboundCorrespondenceTo))
+          val quarterlyDates: Seq[DatesModel] = dates.filter(x => x.periodKey.contains("00")).sortBy(_.inboundCorrespondenceFrom)
+          val quarterlyDatesByYear: (Seq[DatesModel], Seq[DatesModel]) = quarterlyDates.partition(x => dateService.getAccountingPeriodEndDate(x.inboundCorrespondenceTo) == dateService.getAccountingPeriodEndDate(quarterlyDates.head.inboundCorrespondenceTo))
 
           val eopsDates: Seq[DatesModel] = dates.filter(x => x.periodKey == "EOPS")
 

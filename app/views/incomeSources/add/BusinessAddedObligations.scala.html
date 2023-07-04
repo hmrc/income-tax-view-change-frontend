@@ -159,7 +159,7 @@ govukTable: GovukTable,
 
 
         @if(showPrevTaxYears) {
-            <div class="dotted govuk">
+            <div class="govuk-form-control-error">
                 <h3 class="govuk-heading-m"><div class="page_headers"> @getMessage("previous-tax-years-heading") </div></h3>
                 <p class="govuk-body">
                     @(getMessage("previous-tax-years-t1")+" "+(sources.currentTaxYear-1).toString+" "+getMessage("to")+" "+sources.currentTaxYear.toString+".")
