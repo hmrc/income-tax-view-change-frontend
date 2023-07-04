@@ -94,15 +94,6 @@ class BusinessAccountingMethodController @Inject()(val authenticate: Authenticat
     }
   }
 
-  def shouldAutomaticallyRedirect(businesses: List[BusinessDetailsModel]): Boolean = {
-    val activeSoleTraderBusinesses: Boolean = !businesses.forall(_.isCeased)
-    if (activeSoleTraderBusinesses) {
-      businesses.exists(_.cashOrAccruals == Option("cash"))
-    } else {
-      activeSoleTraderBusinesses
-    }
-  }
-
   def show(): Action[AnyContent] =
     (checkSessionTimeout andThen authenticate andThen retrieveNino
       andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
