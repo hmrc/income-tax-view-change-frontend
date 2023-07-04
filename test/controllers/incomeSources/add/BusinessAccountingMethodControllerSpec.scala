@@ -111,7 +111,7 @@ class BusinessAccountingMethodControllerSpec extends TestSupport with MockAuthen
         result.futureValue.session.get(addBusinessAccountingMethod) shouldBe Some("cash")
         redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.CheckBusinessDetailsController.show().url)
       }
-      "navigating to the page with FS Enabled and two self employment businesses, one cash and one accruals" in {
+      "navigating to the page with FS Enabled and two SE businesses, one cash, one accruals (should be impossible, but in this case, we use head of list)" in {
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
         enable(IncomeSources)
         mockBusinessIncomeSourceWithCashAndAccruals()
@@ -190,8 +190,10 @@ class BusinessAccountingMethodControllerSpec extends TestSupport with MockAuthen
           TestBusinessAccountingMethodController.submit()(fakeRequestNoSession.withMethod("POST")
             .withFormUrlEncodedBody("incomeSources.add.business-accounting-method" -> ""))
         }
+        val document: Document = Jsoup.parse(contentAsString(result))
 
         status(result) shouldBe Status.BAD_REQUEST
+        document.title shouldBe TestBusinessAccountingMethodController.title
         result.futureValue.session.get(addBusinessAccountingMethod) shouldBe None
       }
     }
@@ -238,7 +240,7 @@ class BusinessAccountingMethodControllerSpec extends TestSupport with MockAuthen
         result.futureValue.session.get(addBusinessAccountingMethod) shouldBe Some("cash")
         redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.CheckBusinessDetailsController.showAgent().url)
       }
-      "navigating to the page with FS Enabled and client has two self employment businesses, one cash and one accruals" in {
+      "navigating to the page with FS Enabled and two SE businesses, one cash, one accruals (should be impossible, but in this case, we use head of list)" in {
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         disableAllSwitches()
         enable(IncomeSources)
@@ -319,8 +321,10 @@ class BusinessAccountingMethodControllerSpec extends TestSupport with MockAuthen
           TestBusinessAccountingMethodController.submitAgent()(fakeRequestConfirmedClient().withMethod("POST")
             .withFormUrlEncodedBody("incomeSources.add.business-accounting-method" -> ""))
         }
+        val document: Document = Jsoup.parse(contentAsString(result))
 
         status(result) shouldBe Status.BAD_REQUEST
+        document.title shouldBe TestBusinessAccountingMethodController.titleAgent
         result.futureValue.session.get(addBusinessAccountingMethod) shouldBe None
       }
     }

@@ -24,7 +24,7 @@ import controllers.predicates._
 import exceptions.MissingFieldException
 import forms.incomeSources.add.BusinessAccountingMethodForm
 import forms.utils.SessionKeys.addBusinessAccountingMethod
-import models.incomeSourceDetails.BusinessDetailsModel
+import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc._
@@ -66,7 +66,7 @@ class BusinessAccountingMethodController @Inject()(val authenticate: Authenticat
 
     if (incomeSourcesEnabled) {
       val userBusinesses: List[BusinessDetailsModel] = user.incomeSources.businesses
-      if (!userBusinesses.forall(_.isCeased)) {
+      if (user.incomeSources.checkBusinessesCashOrAccrualsTypes && !userBusinesses.forall(_.isCeased)) {
         val accountingMethod: String = userBusinesses.head.cashOrAccruals.getOrElse(throw MissingFieldException("cashOrAccruals field missing"))
         if (isAgent) {
           Future.successful(Redirect(controllers.incomeSources.add.routes.CheckBusinessDetailsController.showAgent())

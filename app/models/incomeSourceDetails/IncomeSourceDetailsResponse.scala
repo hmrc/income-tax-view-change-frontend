@@ -16,8 +16,10 @@
 
 package models.incomeSourceDetails
 
+import play.api.Logging
 import play.api.libs.json.{Format, JsValue, Json}
 import services.DateServiceInterface
+import uk.gov.hmrc.http.InternalServerException
 
 sealed trait IncomeSourceDetailsResponse {
   def toJson: JsValue
@@ -27,12 +29,20 @@ case class IncomeSourceDetailsModel(mtdbsa: String,
                                     yearOfMigration: Option[String],
                                     businesses: List[BusinessDetailsModel],
                                     properties: List[PropertyDetailsModel]
-                                   ) extends IncomeSourceDetailsResponse {
+                                   ) extends IncomeSourceDetailsResponse with Logging {
 
   val hasPropertyIncome: Boolean = properties.nonEmpty
   val hasBusinessIncome: Boolean = businesses.nonEmpty
   val hasOngoingBusinessOrPropertyIncome: Boolean = businesses.exists(b => b.cessation.forall(_.date.isEmpty)) ||
     properties.exists(p => p.cessation.forall(_.date.isEmpty))
+
+  val cashOrAccrualsMatchTypes: Boolean = businesses.flatMap(_.cashOrAccruals).distinct.size > 1
+  def checkBusinessesCashOrAccrualsTypes: Boolean = if (!cashOrAccrualsMatchTypes) {
+    logger.error(throw new InternalServerException("user businesses had different cashOrAccruals types"))
+    cashOrAccrualsMatchTypes
+  } else {
+    cashOrAccrualsMatchTypes
+  }
 
   override def toJson: JsValue = Json.toJson(this)
 
