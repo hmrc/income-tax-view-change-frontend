@@ -86,7 +86,7 @@ class BusinessAccountingMethodControllerSpec extends TestSupport with MockAuthen
         document.select("legend").text shouldBe TestBusinessAccountingMethodController.heading
       }
     }
-    "return 200 OK" when {
+    "return 303 SEE_OTHER" when {
       "navigating to the page with FS Enabled and one self-employment businesses, with the cashOrAccruals field set to the string accruals" in {
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
         enable(IncomeSources)
