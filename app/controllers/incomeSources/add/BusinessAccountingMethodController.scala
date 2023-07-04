@@ -57,8 +57,8 @@ class BusinessAccountingMethodController @Inject()(val authenticate: Authenticat
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
 
     val incomeSourcesEnabled: Boolean = isEnabled(IncomeSources)
-    val backUrl: String = if (isAgent) controllers.incomeSources.add.routes.CheckBusinessDetailsController.showAgent().url else
-      controllers.incomeSources.add.routes.CheckBusinessDetailsController.show().url
+    val backUrl: String = if (isAgent) controllers.routes.AddBusinessAddressController.showAgent().url else
+      controllers.routes.AddBusinessAddressController.show().url
     val postAction: Call = if (isAgent) controllers.incomeSources.add.routes.BusinessAccountingMethodController.submitAgent() else
       controllers.incomeSources.add.routes.BusinessAccountingMethodController.submit()
 
@@ -66,13 +66,14 @@ class BusinessAccountingMethodController @Inject()(val authenticate: Authenticat
 
     if (incomeSourcesEnabled) {
       val userBusinesses: List[BusinessDetailsModel] = user.incomeSources.businesses
-      if (shouldAutomaticallyRedirect(userBusinesses)) {
+      if (!userBusinesses.forall(_.isCeased)) {
+        val accountingMethod: String = userBusinesses.head.cashOrAccruals.getOrElse(throw MissingFieldException("cashOrAccruals field missing"))
         if (isAgent) {
           Future.successful(Redirect(controllers.incomeSources.add.routes.CheckBusinessDetailsController.showAgent())
-            .addingToSession(addBusinessAccountingMethod -> "cash"))
+            .addingToSession(addBusinessAccountingMethod -> accountingMethod))
         } else {
           Future.successful(Redirect(controllers.incomeSources.add.routes.CheckBusinessDetailsController.show())
-            .addingToSession(addBusinessAccountingMethod -> "cash"))
+            .addingToSession(addBusinessAccountingMethod -> accountingMethod))
         }
       } else {
         Future.successful(Ok(view(
@@ -129,7 +130,7 @@ class BusinessAccountingMethodController @Inject()(val authenticate: Authenticat
         hasErrors => Future.successful(BadRequest(view(
           form = hasErrors,
           postAction = controllers.incomeSources.add.routes.BusinessAccountingMethodController.submit(),
-          backUrl = controllers.incomeSources.add.routes.CheckBusinessDetailsController.show().url,
+          backUrl = controllers.routes.AddBusinessAddressController.show().url,
           isAgent = false
         ))),
         validatedInput => {
@@ -153,7 +154,7 @@ class BusinessAccountingMethodController @Inject()(val authenticate: Authenticat
               hasErrors => Future.successful(BadRequest(view(
                 form = hasErrors,
                 postAction = controllers.incomeSources.add.routes.BusinessAccountingMethodController.submitAgent(),
-                backUrl = controllers.incomeSources.add.routes.CheckBusinessDetailsController.showAgent().url,
+                backUrl = controllers.routes.AddBusinessAddressController.showAgent().url,
                 isAgent = true
               ))),
               validatedInput => {
