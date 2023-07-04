@@ -93,11 +93,10 @@ class BusinessAccountingMethodControllerSpec extends TestSupport with MockAuthen
         mockBusinessIncomeSourceWithAccruals()
 
         val result: Future[Result] = TestBusinessAccountingMethodController.show()(fakeRequestWithActiveSession)
-        val document: Document = Jsoup.parse(contentAsString(result))
 
-        status(result) shouldBe Status.OK
-        document.title shouldBe TestBusinessAccountingMethodController.title
-        document.select("legend").text shouldBe TestBusinessAccountingMethodController.heading
+        status(result) shouldBe Status.SEE_OTHER
+        result.futureValue.session.get(addBusinessAccountingMethod) shouldBe Some("accruals")
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.CheckBusinessDetailsController.show().url)
       }
     }
     "return 303 SEE_OTHER" when {
@@ -214,18 +213,17 @@ class BusinessAccountingMethodControllerSpec extends TestSupport with MockAuthen
         document.select("legend:nth-child(1)").text shouldBe TestBusinessAccountingMethodController.heading
       }
     }
-    "return 200 OK" when {
+    "return 303 SEE_OTHER" when {
       "navigating to the page with FS Enabled and client has one self-employment businesses, with the cashOrAccruals field set to the string accruals" in {
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         enable(IncomeSources)
         mockBusinessIncomeSourceWithAccruals()
 
         val result: Future[Result] = TestBusinessAccountingMethodController.showAgent()(fakeRequestConfirmedClient())
-        val document: Document = Jsoup.parse(contentAsString(result))
 
-        status(result) shouldBe Status.OK
-        document.title shouldBe TestBusinessAccountingMethodController.titleAgent
-        document.select("legend:nth-child(1)").text shouldBe TestBusinessAccountingMethodController.heading
+        status(result) shouldBe Status.SEE_OTHER
+        result.futureValue.session.get(addBusinessAccountingMethod) shouldBe Some("accruals")
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.CheckBusinessDetailsController.showAgent().url)
       }
     }
     "return 303 SEE_OTHER" when {
