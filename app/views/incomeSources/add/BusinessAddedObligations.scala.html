@@ -68,7 +68,7 @@ govukTable: GovukTable,
         </h1>
 
         @if(sources.quarterlyObligationsDatesYearOne.nonEmpty){
-            <div class="dotted govuk">
+            <div class="box-simple">
                 <h3 class="govuk-heading-m"><div class="page_headers"> @getMessage("quarterly-heading") </div></h3>
                 <p class="govuk-body"> @getMessage("quarterly-p1") </p>
 
@@ -114,7 +114,7 @@ govukTable: GovukTable,
 
 
         @if(sources.eopsObligationsDates.nonEmpty){
-            <div class="dotted govuk">
+            <div class="box-simple">
                 <h3 class="govuk-heading-m"><div class="page_headers"> @getMessage("eops-heading") </div></h3>
                 <p class="govuk-body"> @getMessage("eops-p1") </p>
 
@@ -139,7 +139,7 @@ govukTable: GovukTable,
         }
 
 
-        <div class ="border--thick govuk ">
+        <div class="box-simple">
             <h3 class="govuk-heading-m"><div class="page_headers"> @getMessage("final-declaration-heading") </div></h3>
             <p class="govuk-body"> @getMessage("final-declaration-text") </p>
 
@@ -159,7 +159,7 @@ govukTable: GovukTable,
 
 
         @if(showPrevTaxYears) {
-            <div class="govuk-form-control-error">
+            <div class="box-simple">
                 <h3 class="govuk-heading-m"><div class="page_headers"> @getMessage("previous-tax-years-heading") </div></h3>
                 <p class="govuk-body">
                     @(getMessage("previous-tax-years-t1")+" "+(sources.currentTaxYear-1).toString+" "+getMessage("to")+" "+sources.currentTaxYear.toString+".")
