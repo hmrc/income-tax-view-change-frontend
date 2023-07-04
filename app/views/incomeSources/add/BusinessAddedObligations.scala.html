@@ -50,9 +50,9 @@ govukTable: GovukTable,
     @formWithCSRF(action = postAction) {
 
         <div class="govuk-panel govuk-panel--confirmation">
-            <div class="govuk-panel__body">
+            <h1 class="govuk-panel__body">
                 @getMessage("h1")
-            </div>
+            </h1>
             <h1 class="govuk-panel__title">
                 @businessName
             </h1>
@@ -139,7 +139,7 @@ govukTable: GovukTable,
         }
 
 
-        <div class="dotted govuk">
+        <div class ="border--thick govuk ">
             <h3 class="govuk-heading-m"><div class="page_headers"> @getMessage("final-declaration-heading") </div></h3>
             <p class="govuk-body"> @getMessage("final-declaration-text") </p>
 

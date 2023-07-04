@@ -94,7 +94,7 @@ class BusinessAddedObligationsController @Inject()(authenticate: AuthenticationP
               ""
           }
 
-          val dates: Seq[DatesModel] = getObligationDates
+          val dates: Seq[DatesModel] = getObligationDates(id.get)
           val quarterlyDates: Seq[DatesModel] = dates.filter(x => x.periodKey.contains("00"))
           val quarterlyDatesByYear: (Seq[DatesModel], Seq[DatesModel]) = quarterlyDates.partition(x => dateService.getAccountingPeriodEndDate(quarterlyDates.head.inboundCorrespondenceTo) == dateService.getAccountingPeriodEndDate(quarterlyDates.head.inboundCorrespondenceTo))
 
@@ -120,7 +120,7 @@ class BusinessAddedObligationsController @Inject()(authenticate: AuthenticationP
     }
   }
 
-  def getObligationDates(implicit user: MtdItUser[_], ec: ExecutionContext): Seq[DatesModel] = {
+  def getObligationDates(id: String)(implicit user: MtdItUser[_], ec: ExecutionContext): Seq[DatesModel] = {
     Await.result(nextUpdatesService.getNextUpdates() map {
       case NextUpdatesErrorModel(code, message) => Logger("application").error(
         s"[BusinessAddedObligationsController][handleRequest] - Error: $message, code $code")
@@ -129,7 +129,7 @@ class BusinessAddedObligationsController @Inject()(authenticate: AuthenticationP
       case NextUpdateModel(start, end, due, obligationType, dateReceived, periodKey) =>
         Seq(DatesModel(start, end, due, obligationType, periodKey))
       case ObligationsModel(obligations) =>
-        obligations.flatMap(obligation => obligation.obligations.map(x => DatesModel(x.start, x.end, x.due, x.obligationType, x.periodKey)))
+        obligations.filter(x => x.identification == id).flatMap(obligation => obligation.obligations.map(x => DatesModel(x.start, x.end, x.due, x.obligationType, x.periodKey)))
     }, Duration(100, MILLISECONDS)) //REMOVE
   }
 

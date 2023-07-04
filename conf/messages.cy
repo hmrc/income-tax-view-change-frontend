@@ -1367,6 +1367,6 @@ business-added.final-declaration-heading                = Cyflwyno’ch datgania
 business-added.final-declaration-text                   = Bydd yn rhaid i chi gyflwyno’ch datganiadau terfynol a thalu’r dreth sydd arnoch erbyn y dyddiad cau.
 business-added.table.heading-1                          = Blwyddyn dreth
 business-added.table.heading-2                          = Dyddiad cau
-business-added.income-sources-button                    = Your income sources
+business-added.income-sources-button                    = Eich ffynonellau incwm
 business-added.previous-tax-years-heading               = Blynyddoedd treth blaenorol
 business-added.previous-tax-years-t1                    = Mae’n rhaid i chi wneud yn siŵr eich bod wedi anfon yr holl Incwm a threuliau, a datganiadau terfynol ar gyfer blynyddoedd treth cyn
