@@ -110,7 +110,7 @@ class BusinessAddedObligationsController @Inject()(authenticate: AuthenticationP
           }
 
           Future {
-            if (isAgent) Ok(obligationsView(businessName, ObligationsViewModel(quarterlyDatesByYear._1, quarterlyDatesByYear._2, eopsDates, dateService.getCurrentTaxYearEnd()),
+            if (isAgent) Ok(obligationsView(businessName, ObligationsViewModel(quarterlyDatesByYear._1.sortBy(_.periodKey), quarterlyDatesByYear._2.sortBy(_.periodKey), eopsDates, dateService.getCurrentTaxYearEnd()),
               controllers.incomeSources.add.routes.BusinessAddedObligationsController.agentSubmit(), agentBackUrl, true, showPreviousTaxYears))
             else Ok(obligationsView(businessName, ObligationsViewModel(quarterlyDatesByYear._1, quarterlyDatesByYear._2, eopsDates, dateService.getCurrentTaxYearEnd()),
               controllers.incomeSources.add.routes.BusinessAddedObligationsController.submit(), backUrl, false, showPreviousTaxYears))
