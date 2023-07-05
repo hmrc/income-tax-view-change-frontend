@@ -30,7 +30,7 @@ import views.html.errorPages.CustomNotFoundError
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class UKPropertyAccountingMethod @Inject()(val authenticate: AuthenticationPredicate,
+class CheckUKPropertyDetailsController @Inject()(val authenticate: AuthenticationPredicate,
                                            val authorisedFunctions: FrontendAuthorisedFunctions,
                                            val checkSessionTimeout: SessionTimeoutPredicate,
                                            val incomeSourceDetailsService: IncomeSourceDetailsService,
