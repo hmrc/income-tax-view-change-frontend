@@ -68,9 +68,9 @@ class BusinessAccountingMethodController @Inject()(val authenticate: Authenticat
 
       user.incomeSources.doAllBusinessesCashOrAccrualsMatch()
 
-      val userBusinesses: List[BusinessDetailsModel] = user.incomeSources.businesses
-      if (!userBusinesses.forall(_.isCeased)) {
-        val accountingMethod: String = userBusinesses.head.cashOrAccruals.getOrElse(throw MissingFieldException("cashOrAccruals field missing"))
+      val userActiveBusinesses: List[BusinessDetailsModel] = user.incomeSources.businesses.filterNot(_.isCeased)
+      if (!userActiveBusinesses.forall(_.isCeased)) {
+        val accountingMethod: String = userActiveBusinesses.head.cashOrAccruals.getOrElse(throw MissingFieldException("cashOrAccruals field missing"))
         if (isAgent) {
           Future.successful(Redirect(controllers.incomeSources.add.routes.CheckBusinessDetailsController.showAgent())
             .addingToSession(addBusinessAccountingMethod -> accountingMethod))
