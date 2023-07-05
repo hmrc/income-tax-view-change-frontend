@@ -21,7 +21,7 @@ import forms.utils.SessionKeys
 import org.jsoup.nodes.Element
 import play.twirl.api.Html
 import testUtils.ViewSpec
-import views.html.AddBusinessTrade
+import views.html.incomeSources.add.AddBusinessTrade
 
 class AddBusinessTradeViewSpec extends ViewSpec {
 

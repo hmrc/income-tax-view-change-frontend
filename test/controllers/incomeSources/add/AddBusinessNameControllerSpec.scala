@@ -36,7 +36,7 @@ import testConstants.BaseTestConstants
 import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
 import testConstants.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 import testUtils.TestSupport
-import views.html.AddBusiness
+import views.html.incomeSources.add.AddBusiness
 
 import scala.concurrent.Future
 
@@ -54,7 +54,7 @@ class AddBusinessNameControllerSpec extends TestSupport
   val mockBusinessNameForm: BusinessNameForm = mock(classOf[BusinessNameForm])
   val incomeSourceDetailsService: IncomeSourceDetailsService = mock(classOf[IncomeSourceDetailsService])
 
-  val postAction: Call = controllers.routes.AddBusinessNameController.submit()
+  val postAction: Call = controllers.incomeSources.add.routes.AddBusinessNameController.submit()
 
   def disableAllSwitches(): Unit = {
     switches.foreach(switch => disable(switch))

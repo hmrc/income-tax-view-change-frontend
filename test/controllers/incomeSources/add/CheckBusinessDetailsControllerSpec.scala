@@ -36,7 +36,6 @@ import testConstants.BaseTestConstants
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testIndividualAuthSuccessWithSaUtrResponse}
 import testUtils.TestSupport
 import uk.gov.hmrc.http.HttpClient
-import views.html.AddBusiness
 import views.html.incomeSources.add.CheckBusinessDetails
 
 import java.time.LocalDate

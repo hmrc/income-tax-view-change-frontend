@@ -36,7 +36,7 @@ import testConstants.BaseTestConstants
 import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
 import testConstants.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 import testUtils.TestSupport
-import views.html.{AddBusiness, AddBusinessTrade}
+import views.html.incomeSources.add.{AddBusiness, AddBusinessTrade}
 
 import scala.concurrent.Future
 
@@ -160,7 +160,7 @@ class AddBusinessTradeControllerSpec extends TestSupport
               SessionKeys.businessTrade -> validBusinessTrade
             ))
           status(result) mustBe SEE_OTHER
-          redirectLocation(result) mustBe Some(routes.AddBusinessAddressController.show().url)
+          redirectLocation(result) mustBe Some(controllers.incomeSources.add.routes.AddBusinessAddressController.show().url)
           session(result).get(SessionKeys.businessTrade) mustBe Some(validBusinessTrade)
         }
 
@@ -178,7 +178,7 @@ class AddBusinessTradeControllerSpec extends TestSupport
           ))
 
           status(result) mustBe SEE_OTHER
-          redirectLocation(result) mustBe Some(routes.AddBusinessAddressController.showAgent().url)
+          redirectLocation(result) mustBe Some(controllers.incomeSources.add.routes.AddBusinessAddressController.showAgent().url)
           session(result).get(SessionKeys.businessTrade) mustBe Some(validBusinessTrade)
         }
       }
