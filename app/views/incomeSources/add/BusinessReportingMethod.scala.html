@@ -48,6 +48,42 @@
 
 @(addBusinessReportingMethodForm: Form[_], businessReportingViewModel: BusinessReportingMethodViewModel, postAction: Call, isAgent: Boolean = false, origin: Option[String] = None)(implicit user: auth.MtdItUser[_], messages: Messages)
 
+@renderChooseReportingMethodOptions(taxYear: Option[String], taxYearSeq: String, latencyIndicator: Option[String]) = {
+
+    @p(){@messages("incomeSources.add.businessReportingMethod.taxYear", (taxYear.get.toInt - 1).toString, taxYear.get.toString)}
+
+    @govukInput(
+        Input(
+            inputType = "hidden",
+            classes = "govuk-visually-hidden",
+            value = taxYear
+        ).withFormField(addBusinessReportingMethodForm("new_"+taxYearSeq+"_reporting_method_tax_year"))
+    )
+
+    @govukInput(
+        Input(
+            inputType = "hidden",
+            classes = "govuk-visually-hidden",
+            value = latencyIndicator
+        ).withFormField(addBusinessReportingMethodForm(taxYearSeq+"_reporting_method"))
+    )
+
+
+    @govukRadios(
+        Radios(
+            items = Seq(
+                RadioItem(
+                    content = HtmlContent("<b>"+messages("incomeSources.add.businessReportingMethod.chooseAnnualReport")+"</b>"),
+                    value = Some("A")
+                ),
+                RadioItem(
+                    content = HtmlContent("<b>"+messages("incomeSources.add.businessReportingMethod.chooseQuarterlyReport")+"</b>"),
+                    value = Some("Q")
+                )
+        )).withFormField(addBusinessReportingMethodForm("new_"+taxYearSeq+"_reporting_method"))
+    )
+}
+
 @mainTemplate(pageTitle = messages("incomeSources.add.businessReportingMethod.heading"), isAgent = isAgent, backUrl = None, btaNavPartial = user.btaNavPartial) {
 
     @errorSummary(
@@ -70,65 +106,11 @@
 
     @formWithCSRF(action = postAction, Symbol("id") -> "add-business-reporting-method-form") {
        @if(businessReportingViewModel.taxYear1.isDefined){
-            @p(){@messages("incomeSources.add.businessReportingMethod.taxYear", (businessReportingViewModel.taxYear1.get.toInt - 1).toString, businessReportingViewModel.taxYear1.get.toString)}
-
-            @govukInput(Input(
-                    inputType = "hidden",
-                    classes = "govuk-visually-hidden",
-                    value = businessReportingViewModel.taxYear1
-                ).withFormField(addBusinessReportingMethodForm("new_tax_year_1_reporting_method_tax_year"))
-            )
-
-            @govukInput(Input(
-                    inputType = "hidden",
-                    classes = "govuk-visually-hidden",
-                    value = businessReportingViewModel.latencyIndicator1
-                ).withFormField(addBusinessReportingMethodForm("tax_year_1_reporting_method"))
-            )
-
-
-            @govukRadios(Radios(
-                items = Seq(
-                    RadioItem(
-                        content = HtmlContent("<b>"+messages("incomeSources.add.businessReportingMethod.chooseAnnualReport")+"</b>"),
-                        value = Some("A")
-                    ),
-                    RadioItem(
-                        content = HtmlContent("<b>"+messages("incomeSources.add.businessReportingMethod.chooseQuarterlyReport")+"</b>"),
-                        value = Some("Q")
-                    )
-                )).withFormField(addBusinessReportingMethodForm("new_tax_year_1_reporting_method"))
-            )
+            @renderChooseReportingMethodOptions(businessReportingViewModel.taxYear1, "tax_year_1", businessReportingViewModel.latencyIndicator1)
         }
 
        @if(businessReportingViewModel.taxYear2.isDefined){
-            @p(){@messages("incomeSources.add.businessReportingMethod.taxYear", (businessReportingViewModel.taxYear2.get.toInt - 1).toString, businessReportingViewModel.taxYear2.get.toString)}
-
-            @govukInput(Input(
-                    inputType = "hidden",
-                    classes = "govuk-visually-hidden",
-                    value = businessReportingViewModel.taxYear2
-                ).withFormField(addBusinessReportingMethodForm("new_tax_year_2_reporting_method_tax_year"))
-            )
-
-            @govukInput(Input(
-                    inputType = "hidden",
-                    classes = "govuk-visually-hidden",
-                    value = businessReportingViewModel.latencyIndicator2
-                ).withFormField(addBusinessReportingMethodForm("tax_year_2_reporting_method"))
-            )
-
-            @govukRadios(Radios(
-                items = Seq(
-                    RadioItem(
-                        content = HtmlContent("<b>"+messages("incomeSources.add.businessReportingMethod.chooseAnnualReport")+"</b>"),
-                        value = Some("A")
-                    ),
-                    RadioItem(
-                        content = HtmlContent("<b>"+messages("incomeSources.add.businessReportingMethod.chooseQuarterlyReport")+"</b>"),
-                        value = Some("Q")
-                    )
-                )).withFormField(addBusinessReportingMethodForm("new_tax_year_2_reporting_method")))
+            @renderChooseReportingMethodOptions(businessReportingViewModel.taxYear2, "tax_year_2", businessReportingViewModel.latencyIndicator2)
         }
 
         @continueButton()
