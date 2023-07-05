@@ -54,9 +54,38 @@ class BusinessAccountingMethodController @Inject()(val authenticate: Authenticat
                                                    val itvcErrorHandlerAgent: AgentItvcErrorHandler)
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
-  def doAllBusinessesCashOrAccrualsMatch(implicit user: MtdItUser[_]): Unit = {
-    if (user.incomeSources.businesses.filterNot(_.isCeased).flatMap(_.cashOrAccruals).distinct.size > 1) {
-    logger.warn("user businesses had different cashOrAccruals types")
+  def handleUserActiveBusinessesCashOrAccruals(isAgent: Boolean, errorHandler: ShowInternalServerError)
+                                              (implicit user: MtdItUser[_], backUrl: String, postAction: Call, messages: Messages): Future[Result] = {
+    val userActiveBusinesses: List[BusinessDetailsModel] = user.incomeSources.businesses.filterNot(_.isCeased)
+
+    if (userActiveBusinesses.flatMap(_.cashOrAccruals).distinct.size > 1) {
+      Logger("application").error(s"${if (isAgent) "[Agent]"}" +
+        s"Error getting business cashOrAccrualsField")    }
+
+    userActiveBusinesses match {
+      case head :: _ if (head.cashOrAccruals.isDefined) => {
+        val accountingMethod: String = head.cashOrAccruals.get
+        if (isAgent) {
+          Future.successful(Redirect(controllers.incomeSources.add.routes.CheckBusinessDetailsController.showAgent())
+            .addingToSession(addBusinessAccountingMethod -> accountingMethod))
+        } else {
+          Future.successful(Redirect(controllers.incomeSources.add.routes.CheckBusinessDetailsController.show())
+            .addingToSession(addBusinessAccountingMethod -> accountingMethod))
+        }
+      }
+      case head :: _ if head.cashOrAccruals.isEmpty =>
+        Logger("application").error(s"${if (isAgent) "[Agent]"}" +
+          s"Error getting business cashOrAccrualsField")
+        Future.successful(errorHandler.showInternalServerError())
+      case _ => {
+        Future.successful(Ok(view(
+          form = BusinessAccountingMethodForm.form,
+          postAction = postAction,
+          isAgent = isAgent,
+          backUrl = backUrl,
+          btaNavPartial = user.btaNavPartial
+        )(user, messages)))
+      }
     }
   }
 
@@ -72,28 +101,8 @@ class BusinessAccountingMethodController @Inject()(val authenticate: Authenticat
     val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
     if (incomeSourcesEnabled) {
-
-      doAllBusinessesCashOrAccrualsMatch(user)
-
-      val userActiveBusinesses: List[BusinessDetailsModel] = user.incomeSources.businesses.filterNot(_.isCeased)
-      if (!userActiveBusinesses.forall(_.isCeased)) {
-        val accountingMethod: String = userActiveBusinesses.head.cashOrAccruals.getOrElse(throw MissingFieldException("cashOrAccruals field missing"))
-        if (isAgent) {
-          Future.successful(Redirect(controllers.incomeSources.add.routes.CheckBusinessDetailsController.showAgent())
-            .addingToSession(addBusinessAccountingMethod -> accountingMethod))
-        } else {
-          Future.successful(Redirect(controllers.incomeSources.add.routes.CheckBusinessDetailsController.show())
-            .addingToSession(addBusinessAccountingMethod -> accountingMethod))
-        }
-      } else {
-        Future.successful(Ok(view(
-        form = BusinessAccountingMethodForm.form,
-        postAction = postAction,
-        isAgent = isAgent,
-        backUrl = backUrl,
-        btaNavPartial = user.btaNavPartial
-        )(user, messages)))
-      }
+      handleUserActiveBusinessesCashOrAccruals(isAgent = isAgent, errorHandler = errorHandler)(
+        user = user, backUrl = backUrl, postAction = postAction, messages = messages)
     } else {
       Future.successful(Ok(customNotFoundErrorView()(user, messages)))
     } recover {
