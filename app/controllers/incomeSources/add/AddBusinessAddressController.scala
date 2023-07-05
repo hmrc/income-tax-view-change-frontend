@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.incomeSources.add
 
 import auth.MtdItUser
 import com.google.inject.Singleton

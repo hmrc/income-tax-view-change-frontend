@@ -28,7 +28,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.IncomeSourceDetailsService
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import views.html.AddBusinessTrade
+import views.html.incomeSources.add.AddBusinessTrade
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -96,7 +96,7 @@ class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate
           }
           else {
             Future.successful {
-              Redirect(routes.AddBusinessAddressController.show().url).withSession(request.session + (SessionKeys.businessTrade -> formData.trade))
+              Redirect(controllers.incomeSources.add.routes.AddBusinessAddressController.show().url).withSession(request.session + (SessionKeys.businessTrade -> formData.trade))
             }
           }
         }
@@ -122,7 +122,7 @@ class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate
                 }
                 else {
                   Future.successful {
-                    Redirect(routes.AddBusinessAddressController.showAgent().url).withSession(request.session + (SessionKeys.businessTrade -> formData.trade))
+                    Redirect(controllers.incomeSources.add.routes.AddBusinessAddressController.showAgent().url).withSession(request.session + (SessionKeys.businessTrade -> formData.trade))
                   }
                 }
               }

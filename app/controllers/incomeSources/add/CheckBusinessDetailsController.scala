@@ -55,10 +55,10 @@ class CheckBusinessDetailsController @Inject()(val checkBusinessDetails: CheckBu
                                              val appConfig: FrontendAppConfig) extends ClientConfirmedController
   with FeatureSwitching {
 
-  lazy val businessAddressUrl: String = controllers.routes.AddBusinessAddressController.show().url
+  lazy val businessAddressUrl: String = controllers.incomeSources.add.routes.AddBusinessAddressController.show().url
   lazy val businessAccountingMethodUrl: String = controllers.incomeSources.add.routes.BusinessAccountingMethodController.show().url
 
-  lazy val agentBusinessAddressUrl: String = controllers.routes.AddBusinessAddressController.showAgent().url
+  lazy val agentBusinessAddressUrl: String = controllers.incomeSources.add.routes.AddBusinessAddressController.showAgent().url
   lazy val agentBusinessAccountingMethodUrl: String = controllers.incomeSources.add.routes.BusinessAccountingMethodController.showAgent().url
 
   private def getBackURL(referer: Option[String], origin: Option[String]): String = {

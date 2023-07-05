@@ -20,7 +20,7 @@ import config.featureswitch.FeatureSwitch.switches
 import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
-import controllers.{AddBusinessNameController, routes}
+import controllers.routes
 import forms.incomeSources.add.BusinessTradeForm
 import forms.utils.SessionKeys
 import mocks.MockItvcErrorHandler

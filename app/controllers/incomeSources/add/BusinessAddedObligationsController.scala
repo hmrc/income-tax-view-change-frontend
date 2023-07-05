@@ -25,7 +25,7 @@ import controllers.routes
 import forms.utils.SessionKeys
 import models.incomeSourceDetails.BusinessDetailsModel
 import models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
-import models.nextUpdates.{NextUpdateModel, NextUpdatesErrorModel, NextUpdatesResponseModel, ObligationsModel}
+import models.nextUpdates.{NextUpdateModel, NextUpdateModelWithIncomeType, NextUpdatesErrorModel, NextUpdatesResponseModel, ObligationsModel}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
@@ -95,10 +95,13 @@ class BusinessAddedObligationsController @Inject()(authenticate: AuthenticationP
           }
 
           val dates: Seq[DatesModel] = getObligationDates(id.get)
+
           val quarterlyDates: Seq[DatesModel] = dates.filter(x => x.periodKey.contains("00")).sortBy(_.inboundCorrespondenceFrom)
           val quarterlyDatesByYear: (Seq[DatesModel], Seq[DatesModel]) = quarterlyDates.partition(x => dateService.getAccountingPeriodEndDate(x.inboundCorrespondenceTo) == dateService.getAccountingPeriodEndDate(quarterlyDates.head.inboundCorrespondenceTo))
 
           val eopsDates: Seq[DatesModel] = dates.filter(x => x.periodKey == "EOPS")
+
+          val finalDeclarationDates = getFinalDeclarationDates(id.get)
 
           val showPreviousTaxYears: Boolean = if (addedBusiness.tradingStartDate.isDefined) {
             addedBusiness.tradingStartDate.get.isBefore(getStartOfCurrentTaxYear)
@@ -110,9 +113,9 @@ class BusinessAddedObligationsController @Inject()(authenticate: AuthenticationP
           }
 
           Future {
-            if (isAgent) Ok(obligationsView(businessName, ObligationsViewModel(quarterlyDatesByYear._1.sortBy(_.periodKey), quarterlyDatesByYear._2.sortBy(_.periodKey), eopsDates, dateService.getCurrentTaxYearEnd()),
+            if (isAgent) Ok(obligationsView(businessName, ObligationsViewModel(quarterlyDatesByYear._1.sortBy(_.periodKey), quarterlyDatesByYear._2.sortBy(_.periodKey), eopsDates, finalDeclarationDates, dateService.getCurrentTaxYearEnd()),
               controllers.incomeSources.add.routes.BusinessAddedObligationsController.agentSubmit(), agentBackUrl, true, showPreviousTaxYears))
-            else Ok(obligationsView(businessName, ObligationsViewModel(quarterlyDatesByYear._1, quarterlyDatesByYear._2, eopsDates, dateService.getCurrentTaxYearEnd()),
+            else Ok(obligationsView(businessName, ObligationsViewModel(quarterlyDatesByYear._1, quarterlyDatesByYear._2, eopsDates, finalDeclarationDates, dateService.getCurrentTaxYearEnd()),
               controllers.incomeSources.add.routes.BusinessAddedObligationsController.submit(), backUrl, false, showPreviousTaxYears))
           }
         }
@@ -131,6 +134,15 @@ class BusinessAddedObligationsController @Inject()(authenticate: AuthenticationP
       case ObligationsModel(obligations) =>
         obligations.filter(x => x.identification == id).flatMap(obligation => obligation.obligations.map(x => DatesModel(x.start, x.end, x.due, x.obligationType, x.periodKey)))
     }, Duration(100, MILLISECONDS)) //REMOVE
+  }
+
+  def getFinalDeclarationDates(id: String)(implicit user: MtdItUser[_], ec: ExecutionContext): Seq[DatesModel] = {
+    Await.result(nextUpdatesService.getNextUpdates() map {
+      case model: ObligationsModel =>
+        Logger("application").info("BEEP" + model.allDeadlinesWithSource().map(x => x.incomeType).toString())
+        val finalDeclarations: Seq[NextUpdateModelWithIncomeType] = model.allDeadlinesWithSource().filter(x => x.incomeType == "ITSA")
+        finalDeclarations.map(x => DatesModel(x.obligation.start, x.obligation.end, x.obligation.due, x.obligation.obligationType, x.obligation.periodKey))
+    }, Duration(100, MILLISECONDS))
   }
 
   def getStartOfCurrentTaxYear: LocalDate = {

@@ -14,25 +14,26 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.incomeSources.add
 
 import auth.FrontendAuthorisedFunctions
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig}
 import controllers.agent.predicates.ClientConfirmedController
-import controllers.predicates.AuthenticationPredicate
+import controllers.predicates.{AuthenticationPredicate, SessionTimeoutPredicate}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
-class AddBusinessAccountingMethodController @Inject()(val authenticate: AuthenticationPredicate,
-                                                      val authorisedFunctions: FrontendAuthorisedFunctions)
-                                                     (implicit val appConfig: FrontendAppConfig,
-                                                      mcc: MessagesControllerComponents,
-                                                      val ec: ExecutionContext,
-                                                      val itvcErrorHandlerAgent: AgentItvcErrorHandler)
+class AddUKPropertyStartDate @Inject()(val authenticate: AuthenticationPredicate,
+                                               val authorisedFunctions: FrontendAuthorisedFunctions,
+                                               val checkSessionTimeout: SessionTimeoutPredicate)
+                                              (implicit val appConfig: FrontendAppConfig,
+                                          mcc: MessagesControllerComponents,
+                                          val ec: ExecutionContext,
+                                          val itvcErrorHandlerAgent: AgentItvcErrorHandler)
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
   def show(): Action[AnyContent] = Action {
