@@ -26,6 +26,7 @@ import forms.incomeSources.add.BusinessAccountingMethodForm
 import forms.utils.SessionKeys.addBusinessAccountingMethod
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
 import play.api.Logger
+import play.api.i18n.Lang.logger
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc._
 import services.IncomeSourceDetailsService
@@ -53,6 +54,12 @@ class BusinessAccountingMethodController @Inject()(val authenticate: Authenticat
                                                    val itvcErrorHandlerAgent: AgentItvcErrorHandler)
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
+  def doAllBusinessesCashOrAccrualsMatch(implicit user: MtdItUser[_]): Unit = {
+    if (user.incomeSources.businesses.filterNot(_.isCeased).flatMap(_.cashOrAccruals).distinct.size > 1) {
+    logger.warn("user businesses had different cashOrAccruals types")
+    }
+  }
+
   def handleRequest(isAgent: Boolean)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
 
@@ -66,7 +73,7 @@ class BusinessAccountingMethodController @Inject()(val authenticate: Authenticat
 
     if (incomeSourcesEnabled) {
 
-      user.incomeSources.doAllBusinessesCashOrAccrualsMatch()
+      doAllBusinessesCashOrAccrualsMatch(user)
 
       val userActiveBusinesses: List[BusinessDetailsModel] = user.incomeSources.businesses.filterNot(_.isCeased)
       if (!userActiveBusinesses.forall(_.isCeased)) {
