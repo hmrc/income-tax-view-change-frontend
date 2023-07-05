@@ -17,12 +17,12 @@
 package repositories
 
 import config.FrontendAppConfig
-import models.incomeSourceDetails.UserAnswers
-import uk.gov.hmrc.http.HeaderCarrier
-//import models.incomeSourceDetails.{UserAnswers, UserAnswersStorage}
+import models.incomeSourceDetails.AddIncomeSourceSessionData
+import org.mongodb.scala.result.UpdateResult
+import org.mongodb.scala.bson.collection.mutable.Document
 import org.mongodb.scala.bson.conversions.Bson
 import org.mongodb.scala.model._
-import play.api.libs.json.{Format, JsObject, Json, OFormat}
+import play.api.libs.json.{Format}
 import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
 import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
@@ -33,15 +33,15 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class SessionDataRepository @Inject()(
+class AddIncomeSourceSessionDataRepository @Inject()(
                                        mongoComponent: MongoComponent,
                                        appConfig: FrontendAppConfig,
                                        clock: Clock
                                      )(implicit ec: ExecutionContext)
-  extends PlayMongoRepository[UserAnswers](
-    collectionName = "add-income-source-journey-data",
+  extends PlayMongoRepository[AddIncomeSourceSessionData](
+    collectionName = "add-income-source-session-data",
     mongoComponent = mongoComponent,
-    domainFormat = UserAnswers.format,
+    domainFormat = AddIncomeSourceSessionData.format,
     indexes = Seq(
       IndexModel(
         Indexes.ascending("lastUpdated"),
@@ -54,44 +54,54 @@ class SessionDataRepository @Inject()(
 
   implicit val instantFormat: Format[Instant] = MongoJavatimeFormats.instantFormat
 
-  private def byId(answers: UserAnswers): Bson = Filters.equal("_id", answers.getId())
+  private def dataFilter(data: AddIncomeSourceSessionData): Bson = {
+    import Filters._
+    and(equal("sessionId", data.sessionId), equal("journeyType", data.journeyType))
+  }
 
-  def keepAlive(answers: UserAnswers): Future[Boolean] =
+  def keepAlive(data: AddIncomeSourceSessionData): Future[Boolean] =
     collection
       .updateOne(
-        filter = byId(answers),
+        filter = dataFilter(data),
         update = Updates.set("lastUpdated", Instant.now(clock)),
       )
-      .toFuture
+      .toFuture()
       .map(_ => true)
 
-  def get(sessionId: String, journeyType: String): Future[Option[UserAnswers]] = {
-    val answers = UserAnswers(sessionId, journeyType)
-    keepAlive(answers).flatMap {
+  def get(sessionId: String, journeyType: String): Future[Option[AddIncomeSourceSessionData]] = {
+    val data = AddIncomeSourceSessionData(sessionId, journeyType)
+    keepAlive(data).flatMap {
       _ =>
         collection
-          .find(byId(answers))
+          .find(dataFilter(data))
           .headOption
     }
   }
 
-  def set(answers: UserAnswers): Future[Boolean] = {
+  def set(data: AddIncomeSourceSessionData): Future[Boolean] = {
 
-    val updatedAnswers = answers copy (lastUpdated = Instant.now(clock))
+    val updatedAnswers = data copy (lastUpdated = Instant.now(clock))
 
     collection
       .replaceOne(
-        filter = byId(answers),
+        filter = dataFilter(data),
         replacement = updatedAnswers,
         options = ReplaceOptions().upsert(true)
       )
-      .toFuture
+      .toFuture()
       .map(_ => true)
   }
 
-  def clear(answers: UserAnswers): Future[Boolean] =
+  def updateData(data: AddIncomeSourceSessionData, key: String, value: String): Future[UpdateResult] = {
+    collection.updateOne(
+      filter = dataFilter(data),
+      update = Document("$set" -> Document(key -> value))
+    ).toFuture()
+  }
+
+  def clear(data: AddIncomeSourceSessionData): Future[Boolean] =
     collection
-      .deleteOne(byId(answers))
-      .toFuture
+      .deleteOne(dataFilter(data))
+      .toFuture()
       .map(_ => true)
 }

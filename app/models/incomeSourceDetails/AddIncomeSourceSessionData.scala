@@ -24,31 +24,17 @@ import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
 
 import java.time.Instant
 
-final case class UserAnswers(
+final case class AddIncomeSourceSessionData(
                               sessionId: String,
                               journeyType: String,
                               businessName: Option[String] = None,
                               dateStarted: Option[LocalDate] = None,
                               lastUpdated: Instant = Instant.now
-                            ) {
-  //  var id = "unset"
-  //  def setid()(implicit hc: HeaderCarrier) = {
-  //    id = s"${hc.sessionId.get.value}-${journeyType}"
-  //  }
-  //  def apply(journeyType: String)(implicit hc: HeaderCarrier): UserAnswers = {
-  //    val ua = UserAnswers(journeyType)
-  //    ua.setid()
-  //    ua
-  //  }
-  //  def id(implicit hc: HeaderCarrier) =
-  def getId(): String = {
-    sessionId + "!!" + journeyType
-  }
-}
+                            )
 
-object UserAnswers {
+object AddIncomeSourceSessionData {
 
-  val reads: Reads[UserAnswers] = {
+  val reads: Reads[AddIncomeSourceSessionData] = {
 
     import play.api.libs.functional.syntax._
 
@@ -58,32 +44,21 @@ object UserAnswers {
         (__ \ "businessName").readNullable[String] and
         (__ \ "dateStarted").readNullable[LocalDate] and
         (__ \ "lastUpdated").read(MongoJavatimeFormats.instantFormat)
-      ) (UserAnswers.apply _)
+      ) (AddIncomeSourceSessionData.apply _)
   }
 
-  //  val writes: OWrites[UserAnswers] = {
-  //
-  //    import play.api.libs.functional.syntax._
-  //
-  //    (
-  //      (__ \ "_id").write[String] and
-  //        (__ \ "journeyType").write[String] and
-  //        (__ \ "businessName").writeNullable[String] and
-  //        (__ \ "dateStarted").writeNullable[LocalDate] and
-  //        (__ \ "lastUpdated").write(MongoJavatimeFormats.instantFormat)
-  //      ) (unlift(UserAnswers.unapply))
-  //  }
-  val writer = new OWrites[UserAnswers] {
-    def writes(foo: UserAnswers): JsObject = {
-      Json.obj("journeyType" -> foo.journeyType,
-        "sessionId" -> foo.sessionId,
-        "businessName" -> foo.businessName,
-        "dateStarted" -> foo.dateStarted,
-        "lastUpdated" -> foo.lastUpdated,
-        "_id" -> foo.getId())
+    val writes: OWrites[AddIncomeSourceSessionData] = {
+
+      import play.api.libs.functional.syntax._
+
+      (
+        (__ \ "sessionId").write[String] and
+          (__ \ "journeyType").write[String] and
+          (__ \ "businessName").writeNullable[String] and
+          (__ \ "dateStarted").writeNullable[LocalDate] and
+          (__ \ "lastUpdated").write(MongoJavatimeFormats.instantFormat)
+        ) (unlift(AddIncomeSourceSessionData.unapply))
     }
-  }
-  implicit val format: OFormat[UserAnswers] = OFormat(reads, writer)
 
-
+  implicit val format: OFormat[AddIncomeSourceSessionData] = OFormat(reads, writes)
 }
