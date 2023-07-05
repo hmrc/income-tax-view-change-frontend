@@ -36,12 +36,6 @@ case class IncomeSourceDetailsModel(mtdbsa: String,
   val hasOngoingBusinessOrPropertyIncome: Boolean = businesses.exists(b => b.cessation.forall(_.date.isEmpty)) ||
     properties.exists(p => p.cessation.forall(_.date.isEmpty))
 
-  def doAllBusinessesCashOrAccrualsMatch(): Boolean = if (businesses.filterNot(_.isCeased).flatMap(_.cashOrAccruals).distinct.size > 1) {
-    logger.warn("user businesses had different cashOrAccruals types")
-    false
-  } else {
-    true
-  }
 
   override def toJson: JsValue = Json.toJson(this)
 
