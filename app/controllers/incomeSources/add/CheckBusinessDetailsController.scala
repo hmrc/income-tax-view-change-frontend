@@ -20,15 +20,13 @@ import auth.MtdItUser
 import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
-import controllers.agent.utils.SessionKeys.businessAccountingMethod
-import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
-import forms.utils.SessionKeys.{addBusinessAccountingMethod, addBusinessAddressLine1, addBusinessPostalCode, businessName, businessStartDate, businessTrade, origin}
+import controllers.predicates._
+import forms.utils.SessionKeys._
+import models.addIncomeSource.AddIncomeSourceResponse
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import models.incomeSourceDetails.viewmodels.CheckBusinessDetailsViewModel
-import services._
 import play.api.Logger
 import play.api.mvc._
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.{CreateBusinessDetailsService, IncomeSourceDetailsService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
@@ -112,24 +110,28 @@ class CheckBusinessDetailsController @Inject()(val checkBusinessDetails: CheckBu
       case Some(MissingKey(msg)) => MissingKey(msg)
     }.map(e => e.msg)
 
-
     val result: Option[CheckBusinessDetailsViewModel] = for {
         businessName <- user.session.data.get(businessName)
         businessStartDate <- user.session.data.get(businessStartDate).map(LocalDate.parse)
         businessTrade <- user.session.data.get(businessTrade)
         businessAddressLine1 <- user.session.data.get(addBusinessAddressLine1)
-        businessPostalCode <- user.session.data.get(addBusinessPostalCode)
+        businessAccountingMethod <- user.session.data.get(addBusinessAccountingMethod)
+        accountingPeriodEndDate <- user.session.data.get(addBusinessAccountingPeriodEndDate).map(LocalDate.parse)
     } yield {
-      val businessAccountingMethod = user.session.data.get(addBusinessAccountingMethod)
 
       CheckBusinessDetailsViewModel(
-        Some(businessName),
-        Some(businessStartDate),
-        Some(businessTrade),
-        Some(businessAddressLine1),
-        Some(businessPostalCode),
-        businessAccountingMethod
-      )
+        businessName = Some(businessName),
+        businessStartDate = Some(businessStartDate),
+        accountingPeriodEndDate = accountingPeriodEndDate,
+        businessTrade = businessTrade,
+        businessAddressLine1 = businessAddressLine1,
+        businessAddressLine2 = user.session.data.get(addBusinessAddressLine2),
+        businessAddressLine3 = user.session.data.get(addBusinessAddressLine3),
+        businessAddressLine4 = user.session.data.get(addBusinessAddressLine4),
+        businessPostalCode = user.session.data.get(addBusinessPostalCode),
+        businessCountryCode = user.session.data.get(addBusinessCountryCode),
+        businessAccountingMethod = user.session.data.get(addBusinessAccountingMethod),
+        cashOrAccrualsFlag = businessAccountingMethod)
     }
 
     result match {
@@ -144,6 +146,9 @@ class CheckBusinessDetailsController @Inject()(val checkBusinessDetails: CheckBu
   def handleRequest(sources: IncomeSourceDetailsModel, isAgent: Boolean, origin: Option[String] = None)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
 
+    val postAction: Call = { if (isAgent) controllers.incomeSources.add.routes.CheckBusinessDetailsController.submitAgent() else
+      controllers.incomeSources.add.routes.CheckBusinessDetailsController.submit() }
+
     if (isDisabled(IncomeSources)) {
       Future.successful(Redirect(controllers.routes.HomeController.show()))
     } else {
@@ -152,6 +157,7 @@ class CheckBusinessDetailsController @Inject()(val checkBusinessDetails: CheckBu
           case Right(viewModel) =>
             Ok(checkBusinessDetails(
               viewModel,
+              postAction = postAction,
               isAgent,
               backUrl = if (isAgent) getAgentBackURL(user.headers.get(REFERER)) else getBackURL(user.headers.get(REFERER), origin)
             ))
@@ -170,6 +176,10 @@ class CheckBusinessDetailsController @Inject()(val checkBusinessDetails: CheckBu
     }
   }
 
+  private val sessionKeys = Seq(businessName, businessStartDate, addBusinessAccountingPeriodStartDate,
+    businessTrade, addBusinessAddressLine1, addBusinessAddressLine2, addBusinessAddressLine3, addBusinessAddressLine4,
+    addBusinessPostalCode, addBusinessCountryCode, addBusinessAccountingMethod)
+
   def submit(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
@@ -180,8 +190,8 @@ class CheckBusinessDetailsController @Inject()(val checkBusinessDetails: CheckBu
             s"[CheckBusinessDetailsController][handleRequest] - Unable to create income source: ${ex.getMessage}")
             itvcErrorHandler.showInternalServerError()
 
-          case Right(IncomeSource(id)) =>
-            Redirect(controllers.incomeSources.add.routes.AddBusinessReportingMethod.show().url + s"?id=$id").withNewSession
+          case Right(AddIncomeSourceResponse(id)) =>
+            Redirect(controllers.incomeSources.add.routes.AddBusinessReportingMethod.show().url + s"?id=$id").withSession(user.session -- sessionKeys)
         }
         case None => Logger("application").error(
           s"[CheckBusinessDetailsController][submit] - Error: Unable to build view model on submit")
@@ -201,8 +211,8 @@ class CheckBusinessDetailsController @Inject()(val checkBusinessDetails: CheckBu
                     s"[CheckBusinessDetailsController][handleRequest] - Unable to create income source: ${ex.getMessage}")
                     itvcErrorHandler.showInternalServerError()
 
-                  case Right(IncomeSource(id)) =>
-                    Redirect(controllers.incomeSources.add.routes.AddBusinessReportingMethod.showAgent().url + s"?id=$id").withNewSession
+                  case Right(AddIncomeSourceResponse(id)) =>
+                    Redirect(controllers.incomeSources.add.routes.AddBusinessReportingMethod.showAgent().url + s"?id=$id").withSession(mtdItUser.session -- sessionKeys)
                 }
               case None => Logger("application").error(
                 s"[CheckBusinessDetailsController][submit] - Error: Unable to build view model on submit")

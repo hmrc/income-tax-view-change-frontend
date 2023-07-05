@@ -39,12 +39,21 @@ class CheckBusinessDetailsViewSpec extends TestSupport {
   val viewModelMax: CheckBusinessDetailsViewModel = CheckBusinessDetailsViewModel(
     businessName = Some("Test Business"),
     businessStartDate = Some(LocalDate.of(2022, 1, 1)),
-    businessTrade = Some("Test Trade"),
-    businessAddressLine1 = Some("Test Business Address Line 1"),
+    businessTrade = "Test Trade",
+    businessAddressLine1 = "Test Business Address Line 1",
     businessPostalCode = Some("Test Business Postal Code"),
-    businessAccountingMethod = Some("Test Accounting Method")
+    businessAccountingMethod = Some("Test Accounting Method"),
+    accountingPeriodEndDate = LocalDate.of(2022, 1, 1),
+    businessAddressLine2 = None,
+    businessAddressLine3 = None,
+    businessAddressLine4 = None,
+    businessCountryCode = Some("UK"),
+    cashOrAccrualsFlag = "Cash"
   )
 
+  val postAction: Call = {
+      controllers.incomeSources.add.routes.CheckBusinessDetailsController.submit()
+  }
   class Setup(isAgent: Boolean, error: Boolean = false) {
 
     val businessName = "Test Business"
@@ -64,6 +73,7 @@ class CheckBusinessDetailsViewSpec extends TestSupport {
       checkBusinessDetailsView(
         viewModelMax,
         isAgent = isAgent,
+        postAction = postAction,
         backUrl = backUrl)(messages, implicitly)
     }
 

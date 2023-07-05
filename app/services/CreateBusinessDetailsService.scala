@@ -17,25 +17,54 @@
 package services
 
 
+import auth.MtdItUser
+import connectors.IncomeSourceConnector
+import models.addIncomeSource.{AddBusinessIncomeSourcesRequest, AddressDetails, BusinessDetails, AddIncomeSourceResponse}
 import models.incomeSourceDetails.viewmodels.CheckBusinessDetailsViewModel
-
-import javax.inject.{Inject, Singleton}
+import play.api.Logger
+import uk.gov.hmrc.http.HeaderCarrier
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 
-@Singleton
-class CreateBusinessDetailsService @Inject()() {
+class CreateBusinessDetailsService @Inject()(val incomeSourceConnector: IncomeSourceConnector) {
 
-def createBusinessDetails(viewModel: CheckBusinessDetailsViewModel)(implicit ec: ExecutionContext): Future[Either[Throwable, IncomeSource]] = {
-    return Future{
-      Right(IncomeSource("123"))
+
+  def createBusinessDetails(viewModel: CheckBusinessDetailsViewModel)
+                           (implicit ec: ExecutionContext, user: MtdItUser[_], hc: HeaderCarrier): Future[Either[Throwable, AddIncomeSourceResponse]] = {
+    val businessDetails =
+      BusinessDetails(
+        accountingPeriodStartDate = viewModel.businessStartDate.toString, // TODO: verify date format required
+        accountingPeriodEndDate = viewModel.accountingPeriodEndDate.toString,
+        tradingName = viewModel.businessName.getOrElse(""),
+        addressDetails = AddressDetails(
+          addressLine1 = viewModel.businessAddressLine1,
+          addressLine2 = viewModel.businessAddressLine2,
+          addressLine3 = viewModel.businessAddressLine3,
+          addressLine4 = viewModel.businessAddressLine4,
+          countryCode = viewModel.businessCountryCode,
+          postalCode = viewModel.businessPostalCode
+        ),
+        typeOfBusiness = Some(viewModel.businessTrade),
+        tradingStartDate = viewModel.businessStartDate.toString,
+        cashOrAccrualsFlag = viewModel.cashOrAccrualsFlag,
+        cessationDate = None,
+        cessationReason = None
+      )
+    val requestObject = AddBusinessIncomeSourcesRequest(businessDetails =
+      List(businessDetails)
+    )
+    for {
+      res <- incomeSourceConnector.create(user.mtditid, requestObject)
+    } yield res match {
+      case Right(List(incomeSourceId)) =>
+        Logger("application").info("[PaymentAllocationsService][getPaymentAllocation] - New income source created successfully: $incomeSourceId ")
+        Right(incomeSourceId)
+      case Left(ex) =>
+        Logger("application").error("[CreateBusinessDetailsService][createBusinessDetails] - failed to created ")
+        Left(new Error(s"Failed to created incomeSources: $ex"))
     }
+
   }
 
 }
-
-case class IncomeSource(incomeSourceId: String)
-
-case class SuccessResponse()
-
-case class FailureResponse()
