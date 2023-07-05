@@ -18,7 +18,7 @@ package connectors
 
 import connectors.helpers.IncomeSourcesDataHelper
 import mocks.MockHttp
-import models.addIncomeSource.{CreateBusinessErrorResponse, AddIncomeSourceResponse}
+import models.addIncomeSource.{AddIncomeSourceResponse, CreateBusinessErrorResponse, CreateForeignPropertyIncomeSource}
 import play.api.libs.json.{Format, Json}
 import play.mvc.Http.Status
 import testUtils.TestSupport
@@ -26,9 +26,9 @@ import uk.gov.hmrc.http.HttpResponse
 
 import scala.concurrent.Future
 
-class IncomeSourcesSpec extends TestSupport with MockHttp with IncomeSourcesDataHelper {
+class CreateIncomeSourcesSpec extends TestSupport with MockHttp with IncomeSourcesDataHelper {
 
-  object UnderTestConnector extends IncomeSourceConnector(mockHttpGet, appConfig)
+  object UnderTestConnector extends CreateIncomeSourceConnector(mockHttpGet, appConfig)
 
   case class UnknownError(error: String)
 
@@ -36,7 +36,7 @@ class IncomeSourcesSpec extends TestSupport with MockHttp with IncomeSourcesData
     implicit val format: Format[UnknownError] = Json.format
   }
 
-  "call create method" should {
+  "call create business" should {
 
     "return success" when {
       "return expected status code OK" in {
@@ -56,7 +56,8 @@ class IncomeSourcesSpec extends TestSupport with MockHttp with IncomeSourcesData
 
         setupMockHttpPost(url, testBody)(response = expectedResponse)
 
-        val result: Future[Either[CreateBusinessErrorResponse, List[AddIncomeSourceResponse]]] = UnderTestConnector.create(mtdId, addBusinessDetailsRequestObject)
+        val result: Future[Either[CreateBusinessErrorResponse, List[AddIncomeSourceResponse]]] =
+          UnderTestConnector.createBusiness(mtdId, createBusinessDetailsRequestObject)
 
         result.futureValue shouldBe Right(List(AddIncomeSourceResponse(expectedIncomeSourceId)))
       }
@@ -74,7 +75,7 @@ class IncomeSourcesSpec extends TestSupport with MockHttp with IncomeSourcesData
         """.stripMargin
         )
         setupMockHttpPost(url, testBody)(response = expectedResponse)
-        val result: Future[Either[CreateBusinessErrorResponse, List[AddIncomeSourceResponse]]] = UnderTestConnector.create(mtdId, addBusinessDetailsRequestObject)
+        val result: Future[Either[CreateBusinessErrorResponse, List[AddIncomeSourceResponse]]] = UnderTestConnector.createBusiness(mtdId, createBusinessDetailsRequestObject)
         result.futureValue shouldBe Left(CreateBusinessErrorResponse(Status.OK, s"Not valid json: \"Error message\""))
       }
     }
@@ -96,7 +97,7 @@ class IncomeSourcesSpec extends TestSupport with MockHttp with IncomeSourcesData
         )
         setupMockHttpPost(url, testBody2)(response = expectedResponse)
 
-        val result: Future[Either[CreateBusinessErrorResponse, List[AddIncomeSourceResponse]]] = UnderTestConnector.create(mtdId, addBusinessDetailsRequestObject)
+        val result: Future[Either[CreateBusinessErrorResponse, List[AddIncomeSourceResponse]]] = UnderTestConnector.createBusiness(mtdId, createBusinessDetailsRequestObject)
 
         result.futureValue match {
           case Left(CreateBusinessErrorResponse(500, _)) =>
@@ -107,6 +108,31 @@ class IncomeSourcesSpec extends TestSupport with MockHttp with IncomeSourcesData
       }
     }
 
+  }
+
+  "call create foreign property" should {
+    "return expected status code OK" in {
+      val expectedIncomeSourceId = "5656"
+      val mtdId = individualUser.mtditid
+
+      val url = UnderTestConnector.addBusinessDetailsUrl(mtdId)
+      val expectedResponse = HttpResponse(status = Status.OK, json = Json.toJson(
+        List(AddIncomeSourceResponse(expectedIncomeSourceId))),
+        headers = Map.empty)
+
+      val testBody = Json.parse(
+        """
+          |{"tradingStartDate":"2011-01-01","cashOrAccrualsFlag":"Cash","startDate":"2011-01-01"}
+        """.stripMargin
+      )
+
+      setupMockHttpPost(url, testBody)(response = expectedResponse)
+
+      val result: Future[Either[CreateBusinessErrorResponse, List[AddIncomeSourceResponse]]] =
+        UnderTestConnector.createForeignProperty(mtdId, createForeignPropertyRequestObject)
+
+      result.futureValue shouldBe Right(List(AddIncomeSourceResponse(expectedIncomeSourceId)))
+    }
   }
 
 }

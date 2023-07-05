@@ -20,10 +20,11 @@ import play.api.libs.json.{Format, Json}
 
 import java.time.LocalDate
 
-sealed trait AddIncomeSourceRequest
+sealed trait CreateIncomeSourceRequest
 
-case class AddBusinessIncomeSourcesRequest(businessDetails: List[BusinessDetails]) extends AddIncomeSourceRequest
-
+final case class CreateBusinessIncomeSourceRequest(businessDetails: List[BusinessDetails]) extends CreateIncomeSourceRequest {
+  require(businessDetails.length == 1, "Only single business can be created at a time")
+}
 
 case class BusinessDetails(accountingPeriodStartDate: String,
                            accountingPeriodEndDate: String,
@@ -44,8 +45,8 @@ case class AddressDetails(addressLine1: String,
                           postalCode: Option[String]
                          )
 
-object AddBusinessIncomeSourcesRequest {
-  implicit val format: Format[AddBusinessIncomeSourcesRequest] = Json.format
+object CreateBusinessIncomeSourceRequest {
+  implicit val format: Format[CreateBusinessIncomeSourceRequest] = Json.format
 }
 
 object BusinessDetails {
@@ -54,4 +55,14 @@ object BusinessDetails {
 
 object AddressDetails {
   implicit val format: Format[AddressDetails] = Json.format
+}
+
+final case class CreateForeignPropertyIncomeSource(tradingStartDate: String,
+                                                   cashOrAccrualsFlag: String,
+                                                   startDate: String) extends CreateIncomeSourceRequest {
+  require(tradingStartDate == startDate, "Trading start date and start date must be the equal")
+}
+
+object CreateForeignPropertyIncomeSource {
+  implicit val format: Format[CreateForeignPropertyIncomeSource] = Json.format
 }

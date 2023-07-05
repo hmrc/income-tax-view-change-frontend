@@ -18,8 +18,8 @@ package services
 
 
 import auth.MtdItUser
-import connectors.IncomeSourceConnector
-import models.addIncomeSource.{AddBusinessIncomeSourcesRequest, AddressDetails, BusinessDetails, AddIncomeSourceResponse}
+import connectors.CreateIncomeSourceConnector
+import models.addIncomeSource.{CreateBusinessIncomeSourceRequest, AddressDetails, BusinessDetails, AddIncomeSourceResponse}
 import models.incomeSourceDetails.viewmodels.CheckBusinessDetailsViewModel
 import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
@@ -27,7 +27,7 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 
-class CreateBusinessDetailsService @Inject()(val incomeSourceConnector: IncomeSourceConnector) {
+class CreateBusinessDetailsService @Inject()(val incomeSourceConnector: CreateIncomeSourceConnector) {
 
 
   def createBusinessDetails(viewModel: CheckBusinessDetailsViewModel)
@@ -51,11 +51,11 @@ class CreateBusinessDetailsService @Inject()(val incomeSourceConnector: IncomeSo
         cessationDate = None,
         cessationReason = None
       )
-    val requestObject = AddBusinessIncomeSourcesRequest(businessDetails =
+    val requestObject = CreateBusinessIncomeSourceRequest(businessDetails =
       List(businessDetails)
     )
     for {
-      res <- incomeSourceConnector.create(user.mtditid, requestObject)
+      res <- incomeSourceConnector.createBusiness(user.mtditid, requestObject)
     } yield res match {
       case Right(List(incomeSourceId)) =>
         Logger("application").info("[PaymentAllocationsService][getPaymentAllocation] - New income source created successfully: $incomeSourceId ")

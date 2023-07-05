@@ -18,7 +18,7 @@ package services
 
 import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
-import connectors.IncomeSourceConnector
+import connectors.CreateIncomeSourceConnector
 import connectors.helpers.IncomeSourcesDataHelper
 import models.addIncomeSource.{CreateBusinessErrorResponse, AddIncomeSourceResponse}
 import models.incomeSourceDetails.viewmodels._
@@ -48,7 +48,7 @@ class CreateBusinessDetailsServiceSpec extends  TestSupport with FeatureSwitchin
     None
   )(FakeRequest())
 
-  val mockIncomeSourceConnector: IncomeSourceConnector = mock(classOf[IncomeSourceConnector])
+  val mockIncomeSourceConnector: CreateIncomeSourceConnector = mock(classOf[CreateIncomeSourceConnector])
 
   object UnderTestCreateBusinessDetailsService extends CreateBusinessDetailsService(mockIncomeSourceConnector)
 
@@ -57,7 +57,7 @@ class CreateBusinessDetailsServiceSpec extends  TestSupport with FeatureSwitchin
     "" should {
 
       "return success response with incomeSourceId" in {
-        when(mockIncomeSourceConnector.create(any(), any())(any()))
+        when(mockIncomeSourceConnector.createBusiness(any(), any())(any()))
           .thenReturn(Future{ Right(List(AddIncomeSourceResponse("123"))) })
 
         val viewModel = CheckBusinessDetailsViewModel(
@@ -80,7 +80,7 @@ class CreateBusinessDetailsServiceSpec extends  TestSupport with FeatureSwitchin
       }
 
       "return failure response with error" in {
-        when(mockIncomeSourceConnector.create(any(), any())(any()))
+        when(mockIncomeSourceConnector.createBusiness(any(), any())(any()))
           .thenReturn(Future {
             Left(CreateBusinessErrorResponse(Status.INTERNAL_SERVER_ERROR, s"Error creating incomeSource"))
           })
