@@ -126,6 +126,24 @@ class IncomeSourceDetailsModelSpec extends UnitSpec with Matchers {
         preSanitised.sanitise shouldBe expected
       }
     }
+    "the doAllBusinessesCashOrAccrualsMatch" should {
+      "return false" when {
+        "there are two income sources with different values for their cashOrAccruals fields" in {
+          twoBusinessesIncomeDifferentAccountingMethods.doAllBusinessesCashOrAccrualsMatch shouldBe false
+        }
+      }
+      "return true" when {
+        "there are two income sources with both having 'cash' in their cashOrAccruals fields" in {
+          twoBusinessesIncomeBothCashAccountingMethod.doAllBusinessesCashOrAccrualsMatch shouldBe true
+        }
+        "there are two income sources with both having 'accruals' in their cashOrAccruals fields" in {
+          twoBusinessesIncomeBothAccrualsAccountingMethod.doAllBusinessesCashOrAccrualsMatch shouldBe true
+        }
+        "there are no active income sources" in {
+          noIncomeDetails.doAllBusinessesCashOrAccrualsMatch shouldBe true
+        }
+      }
+    }
   }
 
 }

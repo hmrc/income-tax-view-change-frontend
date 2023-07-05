@@ -65,8 +65,11 @@ class BusinessAccountingMethodController @Inject()(val authenticate: Authenticat
     val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
     if (incomeSourcesEnabled) {
+
+      user.incomeSources.doAllBusinessesCashOrAccrualsMatch()
+
       val userBusinesses: List[BusinessDetailsModel] = user.incomeSources.businesses
-      if (user.incomeSources.checkBusinessesCashOrAccrualsTypes && !userBusinesses.forall(_.isCeased)) {
+      if (!userBusinesses.forall(_.isCeased)) {
         val accountingMethod: String = userBusinesses.head.cashOrAccruals.getOrElse(throw MissingFieldException("cashOrAccruals field missing"))
         if (isAgent) {
           Future.successful(Redirect(controllers.incomeSources.add.routes.CheckBusinessDetailsController.showAgent())

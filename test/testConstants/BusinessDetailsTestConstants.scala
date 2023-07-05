@@ -156,6 +156,46 @@ object BusinessDetailsTestConstants {
     tradingStartDate = Some(testStartDate2)
   )
 
+  val business3 = BusinessDetailsModel(
+    incomeSourceId = Some(testSelfEmploymentId),
+    accountingPeriod = Some(testBusinessAccountingPeriod),
+    tradingName = Some(testTradeName),
+    firstAccountingPeriodEndDate = None,
+    cessation = None,
+    tradingStartDate = Some(testStartDate),
+    cashOrAccruals = Some("cash")
+  )
+
+  val business4 = BusinessDetailsModel(
+    incomeSourceId = Some(testSelfEmploymentId2),
+    accountingPeriod = Some(testBusinessAccountingPeriod),
+    tradingName = Some(testTradeName2),
+    firstAccountingPeriodEndDate = None,
+    cessation = None,
+    tradingStartDate = Some(testStartDate2),
+    cashOrAccruals = Some("cash")
+  )
+
+  val business5 = BusinessDetailsModel(
+    incomeSourceId = Some(testSelfEmploymentId),
+    accountingPeriod = Some(testBusinessAccountingPeriod),
+    tradingName = Some(testTradeName),
+    firstAccountingPeriodEndDate = None,
+    cessation = None,
+    tradingStartDate = Some(testStartDate),
+    cashOrAccruals = Some("accruals")
+  )
+
+  val business6 = BusinessDetailsModel(
+    incomeSourceId = Some(testSelfEmploymentId2),
+    accountingPeriod = Some(testBusinessAccountingPeriod),
+    tradingName = Some(testTradeName2),
+    firstAccountingPeriodEndDate = None,
+    cessation = None,
+    tradingStartDate = Some(testStartDate2),
+    cashOrAccruals = Some("accruals")
+  )
+
   val business2018 = BusinessDetailsModel(
     incomeSourceId = Some(testSelfEmploymentId),
     accountingPeriod = Some(test2018BusinessAccountingPeriod),
