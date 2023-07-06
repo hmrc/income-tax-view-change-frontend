@@ -50,8 +50,8 @@
 @soleTraderBusinesses = @{ sources.soleTraderBusinesses }
 
 @addBusinessNameURL = @{
-    if(isAgent) controllers.routes.AddBusinessNameController.showAgent().url
-    else controllers.routes.AddBusinessNameController.show().url
+    if(isAgent) controllers.incomeSources.add.routes.AddBusinessNameController.showAgent().url
+    else controllers.incomeSources.add.routes.AddBusinessNameController.show().url
 }
 
 @addUKPropertyStartDateURL = @{
