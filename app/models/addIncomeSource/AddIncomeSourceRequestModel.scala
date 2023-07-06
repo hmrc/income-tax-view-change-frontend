@@ -60,6 +60,8 @@ object AddressDetails {
 final case class CreateForeignPropertyIncomeSource(tradingStartDate: String,
                                                    cashOrAccrualsFlag: String,
                                                    startDate: String) extends CreateIncomeSourceRequest {
+  require(cashOrAccrualsFlag.nonEmpty, "Accounting method must be provided")
+  require(tradingStartDate.nonEmpty, "Trading start date must be provided")
   require(tradingStartDate == startDate, "Trading start date and start date must be the equal")
 }
 

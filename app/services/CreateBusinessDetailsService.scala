@@ -32,7 +32,7 @@ import scala.util.Try
 class CreateBusinessDetailsService @Inject()(val createIncomeSourceConnector: CreateIncomeSourceConnector) {
 
 
-  private def convertToCreateBusinessIncomeSourceRequest(viewModel: CheckBusinessDetailsViewModel): Either[Throwable, CreateBusinessIncomeSourceRequest] = {
+  def convertToCreateBusinessIncomeSourceRequest(viewModel: CheckBusinessDetailsViewModel): Either[Throwable, CreateBusinessIncomeSourceRequest] = {
     Try {
       CreateBusinessIncomeSourceRequest(
         List(
@@ -82,21 +82,32 @@ class CreateBusinessDetailsService @Inject()(val createIncomeSourceConnector: Cr
     }
   }
 
+  def createForeignPropertyIncomeSourceRequest(viewModel: CheckForeignPropertyViewModel) : Either[Throwable, CreateForeignPropertyIncomeSource] = {
+    Try {
+      CreateForeignPropertyIncomeSource(tradingStartDate = viewModel.tradingStartDate.toString,
+        cashOrAccrualsFlag = viewModel.cashOrAccrualsFlag,
+        startDate = viewModel.tradingStartDate.toString)
+    }.toEither
+  }
+
   def createForeignProperty(viewModel: CheckForeignPropertyViewModel)
                            (implicit ec: ExecutionContext, user: MtdItUser[_], hc: HeaderCarrier): Future[Either[Throwable, AddIncomeSourceResponse]] = {
     // map view model to request object
-    val requestObject = CreateForeignPropertyIncomeSource(tradingStartDate = viewModel.tradingStartDate.toString,
-      cashOrAccrualsFlag = viewModel.cashOrAccrualsFlag,
-      startDate = viewModel.tradingStartDate.toString)
-    for {
-      res <- createIncomeSourceConnector.createForeignProperty(user.mtditid, requestObject)
-    } yield res match {
-      case Right(List(incomeSourceId)) =>
-        Logger("application").info("[CreateBusinessDetailsService][createBusinessDetails] - New income source created successfully: $incomeSourceId ")
-        Right(incomeSourceId)
+    createForeignPropertyIncomeSourceRequest(viewModel) match {
+      case Right(requestObject) =>
+        for {
+          res <- createIncomeSourceConnector.createForeignProperty(user.mtditid, requestObject)
+        } yield res match {
+          case Right(List(incomeSourceId)) =>
+            Logger("application").info("[CreateBusinessDetailsService][createBusinessDetails] - New income source created successfully: $incomeSourceId ")
+            Right(incomeSourceId)
+          case Left(ex) =>
+            Logger("application").error("[CreateBusinessDetailsService][createBusinessDetails] - failed to created ")
+            Left(new Error(s"Failed to created incomeSources: $ex"))
+        }
       case Left(ex) =>
-        Logger("application").error("[CreateBusinessDetailsService][createBusinessDetails] - failed to created ")
-        Left(new Error(s"Failed to created incomeSources: $ex"))
+        Logger("application").error("[CreateBusinessDetailsService][createBusinessDetails] - unable to create request object ")
+        Future.successful(Left(new Error(s"Failed to created incomeSources: $ex")))
     }
   }
 }
