@@ -94,14 +94,14 @@ class BusinessAddedObligationsController @Inject()(authenticate: AuthenticationP
               ""
           }
 
-          val dates: Seq[DatesModel] =  getObligationDates(id.get)
+          val dates: Seq[DatesModel] = getObligationDates(id.get)
 
           val quarterlyDates: Seq[DatesModel] = dates.filter(x => x.periodKey.contains("00")).sortBy(_.inboundCorrespondenceFrom)
           val quarterlyDatesByYear: (Seq[DatesModel], Seq[DatesModel]) = quarterlyDates.partition(x => dateService.getAccountingPeriodEndDate(x.inboundCorrespondenceTo) == dateService.getAccountingPeriodEndDate(quarterlyDates.head.inboundCorrespondenceTo))
 
           val eopsDates: Seq[DatesModel] = dates.filter(x => x.periodKey == "EOPS")
 
-          val finalDeclarationDates: Seq[DatesModel] = dates.filter(x => x.periodKey == "C")
+          val finalDeclarationDates: Seq[DatesModel] = getFinalDeclarationDates
 
           val showPreviousTaxYears: Boolean = if (addedBusiness.tradingStartDate.isDefined) {
             addedBusiness.tradingStartDate.get.isBefore(getStartOfCurrentTaxYear)
@@ -134,6 +134,21 @@ class BusinessAddedObligationsController @Inject()(authenticate: AuthenticationP
       case ObligationsModel(obligations) =>
         obligations.filter(x => x.identification == id).flatMap(obligation => obligation.obligations.map(x => DatesModel(x.start, x.end, x.due, x.obligationType, x.periodKey)))
     }, Duration(100, MILLISECONDS)) //REMOVE
+  }
+
+  def getFinalDeclarationDates(implicit user: MtdItUser[_], ec: ExecutionContext): Seq[DatesModel] = {
+    val ref = Await.result(nextUpdatesService.getNextUpdates() map {
+      case model: ObligationsModel => model.allCrystallised map {
+        source => DatesModel(source.obligation.start, source.obligation.end, source.obligation.due, source.obligation.obligationType, source.obligation.periodKey)
+      }
+    }, Duration(100, MILLISECONDS))
+    Logger("application").info("BEEP" + ref)
+    ref
+    /*Await.result(nextUpdatesService.getNextUpdates() map {
+      case model: ObligationsModel => model.allDeadlinesWithSource() map {
+        source => DatesModel(source.obligation.start, source.obligation.end, source.obligation.due, source.obligation.obligationType, source.obligation.periodKey)
+      }
+    }, Duration(100, MILLISECONDS))*/
   }
 
   def getStartOfCurrentTaxYear: LocalDate = {
