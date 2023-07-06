@@ -28,7 +28,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.IncomeSourceDetailsService
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import views.html.AddBusinessTrade
+import views.html.incomeSources.add.AddBusinessTrade
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -47,7 +47,7 @@ class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate
                                            implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                            implicit override val mcc: MessagesControllerComponents,
                                            val ec: ExecutionContext)
-  extends ClientConfirmedController with I18nSupport with FeatureSwitching{
+  extends ClientConfirmedController with I18nSupport with FeatureSwitching {
 
   lazy val backURL: String = controllers.incomeSources.add.routes.AddBusinessStartDateCheckController.show().url
   lazy val agentBackURL: String = controllers.incomeSources.add.routes.AddBusinessStartDateCheckController.showAgent().url
@@ -69,14 +69,14 @@ class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate
     }
 
   def handleRequest(isAgent: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
-      if (isDisabled(IncomeSources)) {
-        Future.successful(Redirect(controllers.routes.HomeController.show()))
-      } else {
-        Future {
-          if (!isAgent) Ok(addBusinessTradeView(BusinessTradeForm.form, controllers.incomeSources.add.routes.AddBusinessTradeController.submit(), isAgent, backURL, false))
-          else Ok(addBusinessTradeView(BusinessTradeForm.form, controllers.incomeSources.add.routes.AddBusinessTradeController.agentSubmit(), isAgent, agentBackURL, false))
-        }
+    if (isDisabled(IncomeSources)) {
+      Future.successful(Redirect(controllers.routes.HomeController.show()))
+    } else {
+      Future {
+        if (!isAgent) Ok(addBusinessTradeView(BusinessTradeForm.form, controllers.incomeSources.add.routes.AddBusinessTradeController.submit(), isAgent, backURL, false))
+        else Ok(addBusinessTradeView(BusinessTradeForm.form, controllers.incomeSources.add.routes.AddBusinessTradeController.agentSubmit(), isAgent, agentBackURL, false))
       }
+    }
   }
 
   def submit: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
@@ -89,19 +89,20 @@ class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate
           }
         },
         formData => {
-          if (formData.trade.toLowerCase == request.session.get(SessionKeys.businessName).get.toLowerCase.trim){
+          if (formData.trade.toLowerCase == request.session.get(SessionKeys.businessName).get.toLowerCase.trim) {
             Future {
               Ok(addBusinessTradeView(BusinessTradeForm.form, controllers.incomeSources.add.routes.AddBusinessTradeController.submit(), false, backURL, true))
             }
           }
           else {
             Future.successful {
-              Redirect(routes.AddBusinessAddressController.show().url).withSession(request.session + (SessionKeys.businessTrade -> formData.trade))
+              Redirect(controllers.incomeSources.add.routes.AddBusinessAddressController.show().url)
+                .addingToSession(SessionKeys.businessTrade -> formData.trade)
             }
           }
         }
       )
-    }
+  }
 
   def agentSubmit: Action[AnyContent] = Authenticated.async {
     implicit request =>
@@ -122,7 +123,8 @@ class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate
                 }
                 else {
                   Future.successful {
-                    Redirect(routes.AddBusinessAddressController.showAgent().url).withSession(request.session + (SessionKeys.businessTrade -> formData.trade))
+                    Redirect(controllers.incomeSources.add.routes.AddBusinessAddressController.showAgent().url)
+                      .addingToSession(SessionKeys.businessTrade -> formData.trade)
                   }
                 }
               }
