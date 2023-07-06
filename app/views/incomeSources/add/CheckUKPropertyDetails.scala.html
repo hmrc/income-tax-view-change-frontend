@@ -1,0 +1,92 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import _root_.implicits.ImplicitDateFormatterImpl
+@import views.html.layouts.unifiedLayout
+@import views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.html.components.FormWithCSRF
+@import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcPageHeading
+@import uk.gov.hmrc.hmrcfrontend.views.viewmodels.pageheading.PageHeading
+@import views.html.helpers.injected.ErrorSummary
+@import models.checkUKPropertyDetails.CheckUKPropertyDetailsViewModel
+
+
+@this(
+        mainTemplate: unifiedLayout,
+        continueButton: ContinueButton,
+        hmrcPageHeading: HmrcPageHeading,
+        formWithCSRF: FormWithCSRF
+)
+
+@(viewModel:CheckUKPropertyDetailsViewModel,isAgent:Boolean,backUrl: String = "",postAction:Call,origin: Option[String] = None)(implicit messages: Messages, user: auth.MtdItUser[_])
+
+@heading = @{messages("incomeSources.add.checkUKPropertyDetails.heading")}
+@caption = @{messages("incomeSources.add.checkUKPropertyDetails.caption")}
+@startDateLabel = @{messages("incomeSources.add.checkUKPropertyDetails.startDateLabel")}
+@accountingMethodLabel = {@messages("incomeSources.add.checkUKPropertyDetails.accountingMethodLabel")}
+@change = @{messages("incomeSources.add.checkUKPropertyDetails.change")}
+@getChangeStartDateHref = @{""}
+@getChangeAccountingMethodHref = @{""}
+
+
+@mainTemplate(
+    pageTitle = heading,
+    backUrl = Some(""),
+    isAgent = isAgent,
+    btaNavPartial = user.btaNavPartial) {
+
+    @hmrcPageHeading(PageHeading(
+        text = heading,
+        headingClasses = Some("govuk-heading-l"),
+        section = Some(caption),
+        captionClasses = Some("govuk-caption-l")
+    ))
+
+    <dl class="govuk-summary-list govuk-!-margin-bottom-0">
+        <div class="govuk-summary-list__row">
+
+            <dt class="govuk-summary-list__key govuk-!-width-one-third" id="ukPropertyBusinessStartDateLabel">@startDateLabel</dt>
+            <dd class="govuk-summary-list__value" id="ukPropertyBusinessStartDate">21 Jan 2023</dd>
+            <dd class="govuk-summary-list__actions">
+                <a class="govuk-link" href="@getChangeStartDateHref" id="changeStartDate">
+                    @change
+                    <span class="govuk-visually-hidden">@change</span>
+                </a>
+            </dd>
+
+        </div>
+    </dl>
+
+    <dl class="govuk-summary-list govuk-!-margin-bottom-9">
+        <div class="govuk-summary-list__row">
+
+            <dt class="govuk-summary-list__key govuk-!-width-one-third"  id="ukPropertyAccountingMethodLabel">@accountingMethodLabel</dt>
+            <dd class="govuk-summary-list__value" id="ukPropertyAccountingMethod">Cash Accounting</dd>
+            <dd class="govuk-summary-list__actions">
+                <a class="govuk-link" href="@getChangeAccountingMethodHref" id="changeAccountingMethod">
+                    @change
+                    <span class="govuk-visually-hidden">@change</span>
+                </a>
+            </dd>
+
+        </div>
+    </dl>
+
+    @formWithCSRF(action = postAction, Symbol("id") -> "check-uk-property-details-form") {
+            @continueButton(Some(messages("incomeSources.add.checkUKPropertyDetails.confirm")))
+    }
+}

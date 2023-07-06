@@ -184,6 +184,9 @@ POST         /income-sources/add/uk-property-start-date-check             contro
 POST         /agents/income-sources/add/uk-property-start-date-check      controllers.incomeSources.add.CheckUKPropertyStartDateController.submitAgent()
 GET          /income-sources/add/uk-property-accounting-method            controllers.incomeSources.add.UKPropertyAccountingMethod.show()
 GET          /agents/income-sources/add/uk-property-accounting-method     controllers.incomeSources.add.UKPropertyAccountingMethod.showAgent()
+GET          /income-sources/add/uk-property-check-details                controllers.incomeSources.add.CheckUKPropertyDetailsController.show()
+GET          /agents/income-sources/add/uk-property-check-details         controllers.incomeSources.add.CheckUKPropertyDetailsController.showAgent()
+
 GET          /income-sources/add/foreign-property-start-date              controllers.incomeSources.add.ForeignPropertyStartDateController.show()
 GET          /agents/income-sources/add/foreign-property-start-date       controllers.incomeSources.add.ForeignPropertyStartDateController.showAgent()
 POST         /income-sources/add/foreign-property-start-date              controllers.incomeSources.add.ForeignPropertyStartDateController.submit()

@@ -1147,6 +1147,13 @@ incomeSources.add.addIncomeSources.tableHead.dateStarted            = Dyddiad cy
 incomeSources.add.addIncomeSources.tableHead.dateEnded              = Y dyddiad dod i ben
 incomeSources.add.addIncomeSources.unknown                          = Anhysbys
 
+incomeSources.add.checkUKPropertyDetails.heading                = Gwirio’ch manylion
+incomeSources.add.checkUKPropertyDetails.caption                = Y busnes eiddo yn y DU a nodwyd gennych
+incomeSources.add.checkUKPropertyDetails.startDateLabel         = Dyddiad dechrau’r busnes eiddo yn y DU
+incomeSources.add.checkUKPropertyDetails.accountingMethodLabel  = Dull cyfrifyddu’r busnes eiddo yn y DU
+incomeSources.add.checkUKPropertyDetails.change                 = Newid
+incomeSources.add.checkUKPropertyDetails.confirm                = Cadarnhau ac yn eich blaen
+
 ## cease income sources
 cease-income-sources.heading                  = Dod â ffynhonnell incwm i ben
 cease-income-sources.self-employment.h1       = Hunangyflogaeth (unig fasnachwr)
