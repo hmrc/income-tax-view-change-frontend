@@ -27,6 +27,7 @@ import java.time.LocalDate
 object UpdateIncomeSourceTestConstants {
   val incomeSourceId = "11111111111"
   val cessationDate = "2023-04-01"
+  val taxYearSpecific = TaxYearSpecific("2022", true)
   val request: UpdateIncomeSourceRequestModel = UpdateIncomeSourceRequestModel(
     nino = testNino,
     incomeSourceId = incomeSourceId,
@@ -36,7 +37,7 @@ object UpdateIncomeSourceTestConstants {
   val requestTaxYearSpecific: UpdateIncomeSourceRequestModel = UpdateIncomeSourceRequestModel(
     nino = testNino,
     incomeSourceId = incomeSourceId,
-    taxYearSpecific = Some(List(TaxYearSpecific("2022", true)))
+    taxYearSpecific = Some(List(taxYearSpecific))
   )
 
   val requestTaxYearSpecificJson: JsValue = Json.obj(

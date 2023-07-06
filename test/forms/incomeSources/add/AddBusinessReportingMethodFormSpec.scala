@@ -41,7 +41,7 @@ class AddBusinessReportingMethodFormSpec extends TestSupport {
 
     "invalidate when tax year 1 reporting method radio button is not selected" in {
       val formData = Map(
-        "new_tax_year_1_reporting_method" -> "",
+        "new_tax_year_1_reporting_method" -> "none",
         "new_tax_year_2_reporting_method" -> "Q",
         "taxYear1" -> "2022",
         "taxYear1_reporting_method" -> "A",

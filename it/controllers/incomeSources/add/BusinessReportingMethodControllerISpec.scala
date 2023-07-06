@@ -21,6 +21,7 @@ import forms.incomeSources.add.AddBusinessReportingMethodForm
 import helpers.ComponentSpecBase
 import helpers.servicemocks.{CalculationListStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
 import models.incomeSourceDetails.{IncomeSourceDetailsError, LatencyDetails}
+import models.updateIncomeSource.UpdateIncomeSourceResponseModel
 import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.libs.json.Json
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino, testSelfEmploymentId, testTaxYearRange}
@@ -54,14 +55,8 @@ class BusinessReportingMethodControllerISpec extends ComponentSpecBase {
         Given("Income Sources FS is enabled")
         enable(IncomeSources)
 
-        And("API 1171 getBusinessDetails returns a success response with latency details")
-        IncomeTaxViewChangeStub.stubGetBusinessDetails(testNino)(
-          status = OK,
-          response = Json.toJson(singleBusinessResponseInLatencyPeriod(latencyDetails))
-        )
-
         And("API 1525 getIncomeSourceDetails returns a success response")
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse)
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseInLatencyPeriod(latencyDetails))
 
         And("API 1878 getITSAStatus returns a success response with a valid status (MTD Mandated or MTD Voluntary)")
         ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated")
@@ -83,14 +78,8 @@ class BusinessReportingMethodControllerISpec extends ComponentSpecBase {
         Given("Income Sources FS is enabled")
         enable(IncomeSources)
 
-        And("API 1171 getBusinessDetails returns a success response with latency details")
-        IncomeTaxViewChangeStub.stubGetBusinessDetails(testNino)(
-          status = OK,
-          response = Json.toJson(singleBusinessResponseInLatencyPeriod(latencyDetails))
-        )
-
         And("API 1525 getIncomeSourceDetails returns a success response")
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse)
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseInLatencyPeriod(latencyDetails))
 
         And("API 1878 getITSAStatus returns a success response with a valid status (MTD Mandated or MTD Voluntary)")
         ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated")
@@ -124,14 +113,8 @@ class BusinessReportingMethodControllerISpec extends ComponentSpecBase {
         Given("Income Sources FS is enabled")
         enable(IncomeSources)
 
-        And("API 1171 getBusinessDetails returns a success response with latency details")
-        IncomeTaxViewChangeStub.stubGetBusinessDetails(testNino)(
-          status = OK,
-          response = Json.toJson(singleBusinessResponseInLatencyPeriod(latencyDetailsPreviousTaxYear))
-        )
-
         And("API 1525 getIncomeSourceDetails returns a success response")
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse)
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseInLatencyPeriod(latencyDetailsPreviousTaxYear))
 
         And("API 1878 getITSAStatus returns a success response with a valid status (MTD Mandated or MTD Voluntary)")
         ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated")
@@ -165,14 +148,8 @@ class BusinessReportingMethodControllerISpec extends ComponentSpecBase {
         Given("Income Sources FS is enabled")
         enable(IncomeSources)
 
-        And("API 1171 getBusinessDetails returns a success response with latency details")
-        IncomeTaxViewChangeStub.stubGetBusinessDetails(testNino)(
-          status = OK,
-          response = Json.toJson(singleBusinessResponseInLatencyPeriod(latencyDetailsPreviousTaxYear))
-        )
-
         And("API 1525 getIncomeSourceDetails returns a success response")
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse)
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseInLatencyPeriod(latencyDetailsPreviousTaxYear))
 
         And("API 1878 getITSAStatus returns a success response with a valid status (MTD Mandated or MTD Voluntary)")
         ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated")
@@ -195,12 +172,6 @@ class BusinessReportingMethodControllerISpec extends ComponentSpecBase {
       "authorised user is out of latency period and URL contains a valid income source ID" in {
         Given("Income Sources FS is enabled")
         enable(IncomeSources)
-
-        And("API 1171 getBusinessDetails returns a success response without latency details")
-        IncomeTaxViewChangeStub.stubGetBusinessDetails(testNino)(
-          status = OK,
-          response = Json.toJson(singleBusinessResponse)
-        )
 
         And("API 1525 getIncomeSourceDetails returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse)
@@ -236,14 +207,8 @@ class BusinessReportingMethodControllerISpec extends ComponentSpecBase {
         Given("Income Sources FS is enabled")
         enable(IncomeSources)
 
-        And("API 1171 getBusinessDetails returns a success response with latency details")
-        IncomeTaxViewChangeStub.stubGetBusinessDetails(testNino)(
-          status = OK,
-          response = Json.toJson(singleBusinessResponseInLatencyPeriod(latencyDetails))
-        )
-
         And("API 1525 getIncomeSourceDetails returns a success response")
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse)
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseInLatencyPeriod(latencyDetails))
 
         And("API 1878 getITSAStatus returns a success response with a valid status (MTD Mandated or MTD Voluntary)")
         ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated")
@@ -273,14 +238,8 @@ class BusinessReportingMethodControllerISpec extends ComponentSpecBase {
         Given("Income Sources FS is enabled")
         enable(IncomeSources)
 
-        And("API 1171 getBusinessDetails returns a success response with latency details")
-        IncomeTaxViewChangeStub.stubGetBusinessDetails(testNino)(
-          status = OK,
-          response = Json.toJson(singleBusinessResponseInLatencyPeriod(latencyDetailsPreviousTaxYear))
-        )
-
         And("API 1525 getIncomeSourceDetails returns a success response")
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse)
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseInLatencyPeriod(latencyDetailsPreviousTaxYear))
 
         And("API 1878 getITSAStatus returns a success response with a valid status (MTD Mandated or MTD Voluntary)")
         ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated")
@@ -298,14 +257,8 @@ class BusinessReportingMethodControllerISpec extends ComponentSpecBase {
         Given("Income Sources FS is enabled")
         enable(IncomeSources)
 
-        And("API 1171 getBusinessDetails returns a success response with latency details")
-        IncomeTaxViewChangeStub.stubGetBusinessDetails(testNino)(
-          status = OK,
-          response = Json.toJson(singleBusinessResponseInLatencyPeriod(latencyDetails))
-        )
-
         And("API 1525 getIncomeSourceDetails returns a success response")
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse)
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseInLatencyPeriod(latencyDetails))
 
         And("API 1878 getITSAStatus returns a success response with one of these statuses: Annual, No Status, Non Digital, Dormant, MTD Exempt")
         ITSAStatusDetailsStub.stubGetITSAStatusDetailsError
@@ -322,12 +275,6 @@ class BusinessReportingMethodControllerISpec extends ComponentSpecBase {
       "API 1525 getIncomeSourceDetails returns an error" in {
         Given("Income Sources FS is enabled")
         enable(IncomeSources)
-
-        And("API 1171 getBusinessDetails returns a success response with latency details")
-        IncomeTaxViewChangeStub.stubGetBusinessDetails(testNino)(
-          status = OK,
-          response = Json.toJson(singleBusinessResponseInLatencyPeriod(latencyDetails))
-        )
 
         And("API 1525 getIncomeSourceDetails returns an error response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(INTERNAL_SERVER_ERROR,
@@ -351,25 +298,19 @@ class BusinessReportingMethodControllerISpec extends ComponentSpecBase {
     s"redirect to $businessAddedShowUrl" when {
       "user completes the form and API 1776 updateIncomeSource returns a success response" in {
         val formData: Map[String, Seq[String]] = Map(
-          "newTaxYear1ReportingMethod" -> Seq("A"),
-          "newTaxYear2ReportingMethod" -> Seq("A"),
-          "taxYear1" -> Seq(taxYear1.toString),
-          "taxYear1ReportingMethod" -> Seq("Q"),
-          "taxYear2" -> Seq(taxYear2.toString),
-          "taxYear2ReportingMethod" -> Seq("Q")
+          "new_tax_year_1_reporting_method" -> Seq("A"),
+          "new_tax_year_2_reporting_method" -> Seq("A"),
+          "new_tax_year_1_reporting_method_tax_year" -> Seq(taxYear1.toString),
+          "tax_year_1_reporting_method" -> Seq("Q"),
+          "new_tax_year_2_reporting_method_tax_year" -> Seq(taxYear2.toString),
+          "tax_year_2_reporting_method" -> Seq("Q")
         )
 
         Given("Income Sources FS is enabled")
         enable(IncomeSources)
 
-        And("API 1171 getBusinessDetails returns a success response with latency details")
-        IncomeTaxViewChangeStub.stubGetBusinessDetails(testNino)(
-          status = OK,
-          response = Json.toJson(singleBusinessResponseInLatencyPeriod(latencyDetails))
-        )
-
         And("API 1525 getIncomeSourceDetails returns a success response")
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse)
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseInLatencyPeriod(latencyDetails))
 
         And("API 1878 getITSAStatus returns a success response with a valid status (MTD Mandated or MTD Voluntary)")
         ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated")
@@ -377,8 +318,10 @@ class BusinessReportingMethodControllerISpec extends ComponentSpecBase {
         And("API 1896 getCalculationList returns a success response")
         CalculationListStub.stubGetCalculationList(testNino, testTaxYearRange)(CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString())
 
-        val result = IncomeTaxViewChangeFrontend.post(s"/income-sources/add/business-reporting-method?id=$testSelfEmploymentId")(formData)
+        And("API 1776 updateTaxYearSpecific returns a success response")
+        IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel("")))
 
+        val result = IncomeTaxViewChangeFrontend.post(s"/income-sources/add/business-reporting-method?id=$testSelfEmploymentId")(formData)
         result should have(
           httpStatus(SEE_OTHER),
           redirectURI(s"/report-quarterly/income-and-expenses/view/income-sources/add/business-added?id=$testSelfEmploymentId")
@@ -401,14 +344,8 @@ class BusinessReportingMethodControllerISpec extends ComponentSpecBase {
         Given("Income Sources FS is enabled")
         enable(IncomeSources)
 
-        And("API 1171 getBusinessDetails returns a success response with latency details")
-        IncomeTaxViewChangeStub.stubGetBusinessDetails(testNino)(
-          status = OK,
-          response = Json.toJson(singleBusinessResponseInLatencyPeriod(latencyDetails))
-        )
-
         And("API 1525 getIncomeSourceDetails returns a success response")
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse)
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseInLatencyPeriod(latencyDetails))
 
         And("API 1878 getITSAStatus returns a success response with a valid status (MTD Mandated or MTD Voluntary)")
         ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated")

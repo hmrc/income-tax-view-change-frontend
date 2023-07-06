@@ -742,6 +742,39 @@ class IncomeTaxViewChangeConnectorSpec extends TestSupport with MockHttp with Mo
 
   }
 
+  "updateTaxYearSpecific" should {
+
+    s"return a valid UpdateIncomeSourceResponseModel" in new Setup {
+      setupMockHttpPutWithHeaderCarrier(getUpdateIncomeSourceUrl)(
+        UpdateIncomeSourceTestConstants.requestTaxYearSpecific,
+        UpdateIncomeSourceTestConstants.successHttpResponse)
+      val result: Future[UpdateIncomeSourceResponse] = updateIncomeSourceTaxYearSpecific(
+        testNino, incomeSourceId, List(taxYearSpecific))
+      result.futureValue shouldBe successResponse
+    }
+
+    s"return INTERNAL_SERVER_ERROR UpdateIncomeSourceResponseError" when {
+      "invalid json response" in new Setup {
+        setupMockHttpPutWithHeaderCarrier(getUpdateIncomeSourceUrl)(
+          UpdateIncomeSourceTestConstants.requestTaxYearSpecific,
+          UpdateIncomeSourceTestConstants.successInvalidJsonResponse)
+        val result: Future[UpdateIncomeSourceResponse] = updateIncomeSourceTaxYearSpecific(
+          testNino, incomeSourceId, List(taxYearSpecific))
+        result.futureValue shouldBe badJsonResponse
+      }
+      "receiving a 500+ response" in new Setup {
+        setupMockHttpPutWithHeaderCarrier(getUpdateIncomeSourceUrl)(
+          UpdateIncomeSourceTestConstants.requestTaxYearSpecific,
+          HttpResponse(status = Status.INTERNAL_SERVER_ERROR,
+            json = Json.toJson("Error message"), headers = Map.empty))
+        val result: Future[UpdateIncomeSourceResponse] = updateIncomeSourceTaxYearSpecific(
+          testNino, incomeSourceId, List(taxYearSpecific))
+        result.futureValue shouldBe failureResponse
+      }
+    }
+
+  }
+
   "getITSAStatusDetail" should {
     import testConstants.ITSAStatusTestConstants.{badJsonHttpResponse, errorHttpResponse, successHttpResponse, successITSAStatusResponseModel}
     val successResponse = successHttpResponse

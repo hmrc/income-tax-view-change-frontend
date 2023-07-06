@@ -16,11 +16,12 @@
 
 package services
 
+import auth.MtdItUser
 import connectors.IncomeTaxViewChangeConnector
-import models.calculationList.CalculationListResponseModel
+import models.calculationList.{CalculationListErrorModel, CalculationListModel, CalculationListResponseModel}
 import models.core.Nino
 import play.api.Logger
-import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -41,5 +42,21 @@ class CalculationListService @Inject()(incomeTaxViewChangeConnector: IncomeTaxVi
     Logger("application").debug(s"[CalculationService][getLatestCalculation] - " +
       s"Requesting calculation list (1896) data from the backend with nino / taxYearRange: ${nino.value} - $taxYearRange")
     incomeTaxViewChangeConnector.getCalculationList(nino, taxYearRange)
+  }
+
+  def isTaxYearCrystallised(taxYear: Int)(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Option[Boolean]] = {
+    if (taxYear <= 2023) {
+      incomeTaxViewChangeConnector.getLegacyCalculationList(Nino(user.nino), taxYear.toString).flatMap {
+        case res: CalculationListModel => Future.successful(res.crystallised)
+        case err: CalculationListErrorModel => Future.failed(new InternalServerException(err.message))
+      }
+    } else {
+      val taxYearRange = s"${(taxYear - 1).toString.substring(2)}-${taxYear.toString.substring(2)}"
+      incomeTaxViewChangeConnector.getCalculationList(Nino(user.nino), taxYearRange).flatMap {
+        case res: CalculationListModel => Future.successful(res.crystallised)
+        case err: CalculationListErrorModel => Future.failed(new InternalServerException(err.message))
+      }
+    }
+
   }
 }

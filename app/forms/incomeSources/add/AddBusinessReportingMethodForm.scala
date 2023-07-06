@@ -33,7 +33,7 @@ object AddBusinessReportingMethodForm extends Constraints {
   val form: Form[AddBusinessReportingMethodForm] = Form[AddBusinessReportingMethodForm](
     mapping(
       newTaxYear1ReportingMethod -> optional(text)
-        .verifying(newTaxYear1ReportingMethod, taxYearReporting1 => taxYearReporting1.isDefined && validRadioOptions.contains(taxYearReporting1.get)),
+        .verifying(newTaxYear1ReportingMethod, taxYearReporting1 => taxYearReporting1.isEmpty || validRadioOptions.contains(taxYearReporting1.get)),
       newTaxYear2ReportingMethod -> optional(text)
         .verifying(newTaxYear2ReportingMethod, taxYearReporting2 => taxYearReporting2.isDefined && validRadioOptions.contains(taxYearReporting2.get)),
       taxYear1 -> optional(text),

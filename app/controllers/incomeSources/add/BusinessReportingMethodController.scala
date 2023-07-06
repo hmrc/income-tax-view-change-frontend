@@ -17,16 +17,18 @@
 package controllers.incomeSources.add
 
 import auth.{FrontendAuthorisedFunctions, MtdItUser}
-import config.featureswitch.{FeatureSwitching, IncomeSources}
+import config.featureswitch.{FeatureSwitching, IncomeSources, TimeMachineAddYear}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import forms.incomeSources.add.AddBusinessReportingMethodForm
-import models.updateIncomeSource.{UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
+import models.incomeSourceDetails.LatencyDetails
+import models.incomeSourceDetails.viewmodels.BusinessReportingMethodViewModel
+import models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc._
-import services.{BusinessReportingMethodService, IncomeSourceDetailsService}
+import services.{CalculationListService, DateService, ITSAStatusService, IncomeSourceDetailsService, UpdateIncomeSourceService}
 import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 import views.html.errorPages.CustomNotFoundError
 import views.html.incomeSources.add.BusinessReportingMethod
@@ -42,7 +44,10 @@ class BusinessReportingMethodController @Inject()(val authenticate: Authenticati
                                                   val retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                                   val retrieveNino: NinoPredicate,
                                                   val view: BusinessReportingMethod,
-                                                  val businessReportingMethodService: BusinessReportingMethodService,
+                                                  val updateIncomeSourceService: UpdateIncomeSourceService,
+                                                  val itsaStatusService: ITSAStatusService,
+                                                  val dateService: DateService,
+                                                  val calculationListService: CalculationListService,
                                                   val customNotFoundErrorView: CustomNotFoundError)
                                                  (implicit val appConfig: FrontendAppConfig,
                                                   mcc: MessagesControllerComponents,
@@ -52,6 +57,32 @@ class BusinessReportingMethodController @Inject()(val authenticate: Authenticati
                                                  )
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
+  private def annualQuarterlyToBoolean(method: Option[String]): Option[Boolean] = method match {
+    case Some("A") => Some(true)
+    case Some("Q") => Some(false)
+    case _ => None
+  }
+  private def getBusinessReportingMethodDetails(incomeSourceId: String)(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Option[BusinessReportingMethodViewModel]] = {
+    val latencyDetails: Option[LatencyDetails] = user.incomeSources.businesses.find(_.incomeSourceId.getOrElse("").equals(incomeSourceId)).flatMap(_.latencyDetails)
+    latencyDetails match {
+      case Some(x) =>
+        val currentTaxYearEnd = dateService.getCurrentTaxYearEnd(isEnabled(TimeMachineAddYear))
+        x match {
+          case LatencyDetails(_, _, _, taxYear2, _) if taxYear2.toInt < currentTaxYearEnd => Future.successful(None)
+          case LatencyDetails(_, taxYear1, taxYear1LatencyIndicator, taxYear2, taxYear2LatencyIndicator) =>
+            calculationListService.isTaxYearCrystallised(taxYear1.toInt).flatMap {
+              case Some(true) =>
+                Future.successful(Some(BusinessReportingMethodViewModel(None, None, Some(taxYear2), Some(taxYear2LatencyIndicator))))
+              case _ =>
+                Future.successful(Some(BusinessReportingMethodViewModel(Some(taxYear1), Some(taxYear1LatencyIndicator), Some(taxYear2), Some(taxYear2LatencyIndicator))))
+            }
+        }
+      case None =>
+        Logger("application").info(s"[BusinessReportingMethodService][getBusinessReportingMethodDetails] latency details not available")
+        Future.successful(None)
+    }
+
+  }
   private def handleRequest(isAgent: Boolean, id: String)
                            (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
 
@@ -63,9 +94,9 @@ class BusinessReportingMethodController @Inject()(val authenticate: Authenticati
       controllers.incomeSources.add.routes.BusinessAddedController.show(id)
 
     if (incomeSourcesEnabled) {
-      businessReportingMethodService.checkITSAStatusCurrentYear.flatMap {
+      itsaStatusService.hasMandatedOrVoluntaryStatusCurrentYear.flatMap {
         case true =>
-          businessReportingMethodService.getBusinessReportingMethodDetails(id).map {
+          getBusinessReportingMethodDetails(id).map {
             case Some(viewModel) =>
               Ok(view(
                 addBusinessReportingMethodForm = AddBusinessReportingMethodForm.form,
@@ -74,20 +105,10 @@ class BusinessReportingMethodController @Inject()(val authenticate: Authenticati
                 isAgent = isAgent)(user, messages))
             case None =>
               Redirect(redirectUrl)
-          }.recover {
-            case err: Exception =>
-              Logger("application").error(s"${if (isAgent) "[Agent]"}" + s"Error getting BusinessReportingMethodDetails : $err")
-              errorHandler.showInternalServerError()
           }
 
         case false => Future.successful(Redirect(redirectUrl))
-
-      }.recover {
-        case err: InternalServerException =>
-          Logger("application").error(s"${if (isAgent) "[Agent]"}" + s"Error getting ITSA Status : $err")
-          errorHandler.showInternalServerError()
       }
-
 
     } else {
       Future.successful(Ok(customNotFoundErrorView()(user, messages)))
@@ -110,53 +131,44 @@ class BusinessReportingMethodController @Inject()(val authenticate: Authenticati
       AddBusinessReportingMethodForm.form.bindFromRequest().fold(
         hasErrors => {
           val updatedForm = AddBusinessReportingMethodForm.updateErrorMessagesWithValues(hasErrors)
-
-          if (updatedForm.hasErrors) {
-            businessReportingMethodService.getBusinessReportingMethodDetails(id).map {
-              case Some(viewModel) =>
-                BadRequest(view(
-                  addBusinessReportingMethodForm = updatedForm,
-                  businessReportingViewModel = viewModel,
-                  postAction = submitUrl,
-                  isAgent = isAgent))
-              case None =>
-                Redirect(redirectUrl)
-            }.recover {
-              case err: InternalServerException =>
-                Logger("application").error(s"${if (isAgent) "[Agent]"}" + s"Error getting BusinessReportingMethodDetails : $err")
-                errorHandler.showInternalServerError()
-            }
-
-
-          } else {
-            businessReportingMethodService.updateIncomeSourceTaxYearSpecific(user.nino, id, updatedForm.data).map {
-              case Some(res: UpdateIncomeSourceResponseModel) =>
-                Logger("application").info(s"${if (isAgent) "[Agent]"}" + s" Updated tax year specific reporting method : $res")
-                Redirect(redirectUrl)
-              case Some(err: UpdateIncomeSourceResponseError) =>
-                Logger("application").error(s"${if (isAgent) "[Agent]"}" + s" Failed to Updated tax year specific reporting method : $err")
-                errorHandler.showInternalServerError()
-              case None =>
-                Logger("application").info(s"${if (isAgent) "[Agent]"}" + s" Updating tax year specific reporting method not required.")
-                Redirect(redirectUrl)
-            }
-
+          getBusinessReportingMethodDetails(id).map {
+            case Some(viewModel) =>
+              BadRequest(view(
+                addBusinessReportingMethodForm = updatedForm,
+                businessReportingViewModel = viewModel,
+                postAction = submitUrl,
+                isAgent = isAgent))
+            case None => Redirect(redirectUrl)
           }
         },
         valid => {
-          businessReportingMethodService.updateIncomeSourceTaxYearSpecific(user.nino, id, valid).map {
-            case Some(res: UpdateIncomeSourceResponseModel) =>
-              Logger("application").info(s"${if (isAgent) "[Agent]"}" + s" Updated tax year specific reporting method : $res")
-              Redirect(redirectUrl)
-            case Some(err: UpdateIncomeSourceResponseError) =>
-              Logger("application").error(s"${if (isAgent) "[Agent]"}" + s" failed to Updated tax year specific reporting method : $err")
-              errorHandler.showInternalServerError()
-            case None =>
-              Logger("application").info(s"${if (isAgent) "[Agent]"}" + s" Updating tax year specific reporting method not required.")
-              Redirect(redirectUrl)
+          val taxYear1ReportingMethod = valid.taxYear1ReportingMethod
+          val taxYear2ReportingMethod = valid.taxYear2ReportingMethod
+          val newTaxYear1ReportingMethod = valid.newTaxYear1ReportingMethod
+          val newTaxYear2ReportingMethod = valid.newTaxYear2ReportingMethod
+
+          if (taxYear1ReportingMethod != newTaxYear1ReportingMethod || taxYear2ReportingMethod != newTaxYear2ReportingMethod) {
+            val taxYearSpecific1 = newTaxYear1ReportingMethod match {
+              case Some(s) => Some(TaxYearSpecific(valid.taxYear1.get, annualQuarterlyToBoolean(Some(s)).get))
+              case _ => None
+            }
+            val taxYearSpecific2 = newTaxYear2ReportingMethod match {
+              case Some(s) => Some(TaxYearSpecific(valid.taxYear2.get, annualQuarterlyToBoolean(Some(s)).get))
+              case _ => None
+            }
+            updateIncomeSourceService.updateTaxYearSpecific(user.nino, id, List(taxYearSpecific1, taxYearSpecific2).flatten).map {
+              case res: UpdateIncomeSourceResponseModel =>
+                Logger("application").info(s"${if (isAgent) "[Agent]"}" + s" Updated tax year specific reporting method : $res")
+                Redirect(redirectUrl)
+              case err: UpdateIncomeSourceResponseError =>
+                Logger("application").error(s"${if (isAgent) "[Agent]"}" + s" Failed to Updated tax year specific reporting method : $err")
+                errorHandler.showInternalServerError()
+            }
+          } else {
+            Logger("application").info(s"${if (isAgent) "[Agent]"}" + s" Updating the tax year specific reporting method not required.")
+            Future(Redirect(redirectUrl))
           }
-        }
-      )
+        })
     } else {
       Future.successful(Ok(customNotFoundErrorView()))
     } recover {
