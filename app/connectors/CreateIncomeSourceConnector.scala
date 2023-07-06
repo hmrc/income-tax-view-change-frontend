@@ -57,7 +57,6 @@ class CreateIncomeSourceConnector @Inject()(val http: HttpClient,
                            (implicit headerCarrier: HeaderCarrier): Future[Either[CreateBusinessErrorResponse, List[AddIncomeSourceResponse]]] = {
     val bodyAsJson = Json.toJson(createForeignPropertyRequest)
     val url = addBusinessDetailsUrl(mtdItid)
-    println()
     http.POST(url, bodyAsJson).map {
       case response if response.status == OK =>
         response.json.validate[List[AddIncomeSourceResponse]].fold(

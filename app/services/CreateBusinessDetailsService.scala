@@ -17,11 +17,9 @@
 package services
 
 
-import akka.stream.Attributes.LogLevels.Error
 import auth.MtdItUser
-import cats.data.EitherT
 import connectors.CreateIncomeSourceConnector
-import models.addIncomeSource.{AddIncomeSourceResponse, AddressDetails, BusinessDetails, CreateBusinessIncomeSourceRequest, CreateForeignPropertyIncomeSource}
+import models.addIncomeSource._
 import models.incomeSourceDetails.viewmodels.{CheckBusinessDetailsViewModel, CheckForeignPropertyViewModel}
 import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
