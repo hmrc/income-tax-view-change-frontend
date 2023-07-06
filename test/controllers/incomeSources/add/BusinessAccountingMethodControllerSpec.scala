@@ -131,7 +131,7 @@ class BusinessAccountingMethodControllerSpec extends TestSupport with MockAuthen
         val expectedContent: String = TestBusinessAccountingMethodController.customNotFoundErrorView().toString()
 
         status(result) shouldBe Status.SEE_OTHER
-        contentAsString(result) shouldBe expectedContent
+        contentAsString(result) shouldBe ""
       }
     }
     "return 303 SEE_OTHER and redirect to custom not found error page" when {
