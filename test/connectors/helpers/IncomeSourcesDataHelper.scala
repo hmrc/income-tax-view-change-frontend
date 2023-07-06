@@ -48,7 +48,7 @@ trait IncomeSourcesDataHelper {
     cashOrAccrualsFlag = "Cash", startDate = LocalDate.of(2011, 1, 1).toString
   )
 
-  val viewModel = CheckBusinessDetailsViewModel(
+  val createBusinessViewModel = CheckBusinessDetailsViewModel(
     businessName = Some("someBusinessName"),
     businessStartDate = Some(LocalDate.of(2022, 11, 11)),
     businessTrade = "someBusinessTrade",
@@ -62,4 +62,6 @@ trait IncomeSourcesDataHelper {
     businessCountryCode = Some("UK"),
     cashOrAccrualsFlag = "CASH"
   )
+
+  val createForeignPropertyViewModel = CheckForeignPropertyViewModel(tradingStartDate = LocalDate.of(2011, 1, 1), cashOrAccrualsFlag = "Cash")
 }

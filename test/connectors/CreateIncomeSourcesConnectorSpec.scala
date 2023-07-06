@@ -26,7 +26,7 @@ import uk.gov.hmrc.http.HttpResponse
 
 import scala.concurrent.Future
 
-class CreateIncomeSourcesSpec extends TestSupport with MockHttp with IncomeSourcesDataHelper {
+class CreateIncomeSourcesConnectorSpec extends TestSupport with MockHttp with IncomeSourcesDataHelper {
 
   object UnderTestConnector extends CreateIncomeSourceConnector(mockHttpGet, appConfig)
 
@@ -132,6 +132,33 @@ class CreateIncomeSourcesSpec extends TestSupport with MockHttp with IncomeSourc
         UnderTestConnector.createForeignProperty(mtdId, createForeignPropertyRequestObject)
 
       result.futureValue shouldBe Right(List(AddIncomeSourceResponse(expectedIncomeSourceId)))
+    }
+
+    "return failure" when {
+      "return error" in {
+        val mtdId = individualUser.mtditid
+
+        val url = UnderTestConnector.addBusinessDetailsUrl(mtdId)
+        val expectedResponse = HttpResponse(status = Status.INTERNAL_SERVER_ERROR, json = Json.toJson(
+          CreateBusinessErrorResponse(status = 500, "Some error message")),
+          headers = Map.empty)
+
+        val testBody = Json.parse(
+          """
+            |{"tradingStartDate":"2011-01-01","cashOrAccrualsFlag":"Cash","startDate":"2011-01-01"}
+        """.stripMargin
+        )
+        setupMockHttpPost(url, testBody)(response = expectedResponse)
+
+        val result: Future[Either[CreateBusinessErrorResponse, List[AddIncomeSourceResponse]]] = UnderTestConnector.createForeignProperty(mtdId, createForeignPropertyRequestObject)
+
+        result.futureValue match {
+          case Left(CreateBusinessErrorResponse(500, _)) =>
+            succeed
+          case _ =>
+            fail("We expect error code 500 to be returned")
+        }
+      }
     }
   }
 

@@ -85,17 +85,16 @@ class CreateBusinessDetailsServiceSpec extends TestSupport with FeatureSwitching
         .thenReturn(Future {
           Left(CreateBusinessErrorResponse(Status.INTERNAL_SERVER_ERROR, s"Error creating incomeSource"))
         })
-      val result = UnderTestCreateBusinessDetailsService.createBusinessDetails(viewModel)
+      val result = UnderTestCreateBusinessDetailsService.createBusinessDetails(createBusinessViewModel)
       result.futureValue match {
         case Left(_) => succeed
-        case Right(_) => fail("Expecting to return left")
+        case Right(_) => fail("Expecting to fail")
       }
     }
 
   }
 
   "CreateBusinessDetailsService call create foreign property " when {
-
 
     "return success response with incomeSourceId" in {
       when(mockIncomeSourceConnector.createForeignProperty(any(), any())(any()))
@@ -109,6 +108,18 @@ class CreateBusinessDetailsServiceSpec extends TestSupport with FeatureSwitching
       val result = UnderTestCreateBusinessDetailsService.createForeignProperty(viewModel)
 
       result.futureValue shouldBe Right(AddIncomeSourceResponse("561"))
+    }
+
+    "return failure response with error" in {
+      when(mockIncomeSourceConnector.createForeignProperty(any(), any())(any()))
+        .thenReturn(Future {
+          Left(CreateBusinessErrorResponse(Status.INTERNAL_SERVER_ERROR, s"Error creating incomeSource"))
+        })
+      val result = UnderTestCreateBusinessDetailsService.createForeignProperty(createForeignPropertyViewModel)
+      result.futureValue match {
+        case Left(_) => succeed
+        case Right(_) => fail("Expecting to fail")
+      }
     }
 
   }
