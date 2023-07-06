@@ -135,12 +135,12 @@ class CreateIncomeSourcesConnectorSpec extends TestSupport with MockHttp with In
     }
 
     "return failure" when {
-      "return error" in {
+      "return status error 500" in {
         val mtdId = individualUser.mtditid
 
         val url = UnderTestConnector.addBusinessDetailsUrl(mtdId)
         val expectedResponse = HttpResponse(status = Status.INTERNAL_SERVER_ERROR, json = Json.toJson(
-          CreateBusinessErrorResponse(status = 500, "Some error message")),
+          CreateBusinessErrorResponse(status = Status.INTERNAL_SERVER_ERROR, "Some error message")),
           headers = Map.empty)
 
         val testBody = Json.parse(
@@ -153,12 +153,13 @@ class CreateIncomeSourcesConnectorSpec extends TestSupport with MockHttp with In
         val result: Future[Either[CreateBusinessErrorResponse, List[AddIncomeSourceResponse]]] = UnderTestConnector.createForeignProperty(mtdId, createForeignPropertyRequestObject)
 
         result.futureValue match {
-          case Left(CreateBusinessErrorResponse(500, _)) =>
+          case Left(CreateBusinessErrorResponse(Status.INTERNAL_SERVER_ERROR, _)) =>
             succeed
           case _ =>
             fail("We expect error code 500 to be returned")
         }
       }
+
     }
   }
 

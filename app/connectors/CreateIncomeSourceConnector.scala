@@ -28,7 +28,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class CreateIncomeSourceConnector @Inject()(val http: HttpClient,
                                             val appConfig: FrontendAppConfig
-                                     )(implicit val ec: ExecutionContext) {
+                                           )(implicit val ec: ExecutionContext) {
 
 
   def addBusinessDetailsUrl(mtdItid: String): String = s"${appConfig.itvcProtectedService}/income-tax-view-change/create-income-source/business/$mtdItid"
@@ -37,53 +37,39 @@ class CreateIncomeSourceConnector @Inject()(val http: HttpClient,
                     (implicit headerCarrier: HeaderCarrier): Future[Either[CreateBusinessErrorResponse, List[AddIncomeSourceResponse]]] = {
     val bodyAsJson = Json.toJson(createBusinessIncomeSourcesRequest)
     val url = addBusinessDetailsUrl(mtdItid)
-    http.POST(url, bodyAsJson).map { response =>
-      response.status match {
-        case OK =>
-          response.json.validate[List[AddIncomeSourceResponse]].fold(
-            _ => {
-              Logger("application").error(s"[IncomeTaxViewChangeConnector][createBusiness] - Json validation error parsing repayment response, error ${response.body}")
-              Left(CreateBusinessErrorResponse(response.status, s"Not valid json: ${response.body}"))
-            },
-            valid =>
-              Right(valid)
-          )
-        case status =>
-          if (status >= INTERNAL_SERVER_ERROR) {
-            Logger("application").error(s"[IncomeTaxViewChangeConnector][createBusiness] - Response status: ${response.status}, body: ${response.body}")
-          } else {
-            Logger("application").warn(s"[IncomeTaxViewChangeConnector][createBusiness] - Response status: ${response.status}, body: ${response.body}")
-          }
-          Left(CreateBusinessErrorResponse(response.status, s"Error creating incomeSource: ${response.json}"))
-      }
+    http.POST(url, bodyAsJson).map {
+      case response if response.status == OK =>
+        response.json.validate[List[AddIncomeSourceResponse]].fold(
+          _ => {
+            Logger("application").error(s"[IncomeTaxViewChangeConnector][createBusiness] - Json validation error parsing repayment response, error ${response.body}")
+            Left(CreateBusinessErrorResponse(response.status, s"Not valid json: ${response.body}"))
+          },
+          valid =>
+            Right(valid)
+        )
+      case response =>
+        Logger("application").error(s"[IncomeTaxViewChangeConnector][createBusiness] - Response status: ${response.status}, body: ${response.body}")
+        Left(CreateBusinessErrorResponse(response.status, s"Error creating incomeSource: ${response.json}"))
     }
   }
 
   def createForeignProperty(mtdItid: String, createForeignPropertyRequest: CreateForeignPropertyIncomeSource)
-            (implicit headerCarrier: HeaderCarrier): Future[Either[CreateBusinessErrorResponse, List[AddIncomeSourceResponse]]] = {
+                           (implicit headerCarrier: HeaderCarrier): Future[Either[CreateBusinessErrorResponse, List[AddIncomeSourceResponse]]] = {
     val bodyAsJson = Json.toJson(createForeignPropertyRequest)
     val url = addBusinessDetailsUrl(mtdItid)
-    println(s"Json: ${bodyAsJson}")
-    http.POST(url, bodyAsJson).map { response =>
-      response.status match {
-        case OK =>
-          response.json.validate[List[AddIncomeSourceResponse]].fold(
-            _ => {
-              Logger("application").error(s"[IncomeTaxViewChangeConnector][createForeignProperty] - Json validation error parsing repayment response, error ${response.body}")
-              Left(CreateBusinessErrorResponse(response.status, s"Not valid json: ${response.body}"))
-            },
-            valid =>
-              Right(valid)
-          )
-        case status =>
-          if (status >= INTERNAL_SERVER_ERROR) {
-            Logger("application").error(s"[IncomeTaxViewChangeConnector][createForeignProperty] - Response status: ${response.status}, body: ${response.body}")
-          } else {
-            Logger("application").warn(s"[IncomeTaxViewChangeConnector][createForeignProperty] - Response status: ${response.status}, body: ${response.body}")
-          }
-          Left(CreateBusinessErrorResponse(response.status, s"Error creating incomeSource: ${response.json}"))
-      }
+    http.POST(url, bodyAsJson).map {
+      case response: AddIncomeSourceResponse if response.status == OK =>
+        response.json.validate[List[AddIncomeSourceResponse]].fold(
+          _ => {
+            Logger("application").error(s"[IncomeTaxViewChangeConnector][createForeignProperty] - Json validation error parsing repayment response, error ${response.body}")
+            Left(CreateBusinessErrorResponse(response.status, s"Not valid json: ${response.body}"))
+          },
+          valid =>
+            Right(valid)
+        )
+      case response =>
+        Logger("application").error(s"[IncomeTaxViewChangeConnector][createForeignProperty] - Response status: ${response.status}, body: ${response.body}")
+        Left(CreateBusinessErrorResponse(response.status, s"Error creating incomeSource: ${response.json}"))
     }
   }
-
 }
