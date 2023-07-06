@@ -98,6 +98,7 @@ class BusinessAddedObligationsControllerSpec extends TestSupport
       }
     }
 
+
     ".show" should {
       "show correct page when individual valid" in {
         disableAllSwitches()
