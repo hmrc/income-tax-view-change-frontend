@@ -64,7 +64,7 @@ class BusinessAccountingMethodController @Inject()(val authenticate: Authenticat
     }
 
     userActiveBusinesses match {
-      case head :: _ if (head.cashOrAccruals.isDefined) => {
+      case head :: _ if (head.cashOrAccruals.isDefined) =>
         val accountingMethod: String = head.cashOrAccruals.get
         if (isAgent) {
           Future.successful(Redirect(controllers.incomeSources.add.routes.CheckBusinessDetailsController.showAgent())
@@ -73,12 +73,11 @@ class BusinessAccountingMethodController @Inject()(val authenticate: Authenticat
           Future.successful(Redirect(controllers.incomeSources.add.routes.CheckBusinessDetailsController.show())
             .addingToSession(addBusinessAccountingMethod -> accountingMethod))
         }
-      }
       case head :: _ if head.cashOrAccruals.isEmpty =>
         Logger("application").error(s"${if (isAgent) "[Agent]"}" +
           s"Error getting business cashOrAccrualsField")
         Future.successful(errorHandler.showInternalServerError())
-      case _ => {
+      case _ =>
         Future.successful(Ok(view(
           form = BusinessAccountingMethodForm.form,
           postAction = postAction,
@@ -86,7 +85,6 @@ class BusinessAccountingMethodController @Inject()(val authenticate: Authenticat
           backUrl = backUrl,
           btaNavPartial = user.btaNavPartial
         )(user, messages)))
-      }
     }
   }
 

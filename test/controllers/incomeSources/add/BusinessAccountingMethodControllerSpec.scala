@@ -114,13 +114,24 @@ class BusinessAccountingMethodControllerSpec extends TestSupport with MockAuthen
       "navigating to the page with FS Enabled and two SE businesses, one cash, one accruals (should be impossible, but in this case, we use head of list)" in {
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
         enable(IncomeSources)
-        mockBusinessIncomeSourceWithCashAndAccruals()
+        mockBusinessIncomeSourceMissingCashOrAccrualsField()
 
         val result: Future[Result] = TestBusinessAccountingMethodController.show()(fakeRequestWithActiveSession)
 
         status(result) shouldBe Status.SEE_OTHER
         result.futureValue.session.get(addBusinessAccountingMethod) shouldBe Some("cash")
         redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.CheckBusinessDetailsController.show().url)
+      }
+      "navigating to the page with FS Enabled and a user with a SE business missing its cashOrAccruals field" in {
+        setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
+        enable(IncomeSources)
+        mockBusinessIncomeSourceWithCashAndAccruals()
+
+        val result: Future[Result] = TestBusinessAccountingMethodController.show()(fakeRequestWithActiveSession)
+        val expectedContent: String = TestBusinessAccountingMethodController.customNotFoundErrorView().toString()
+
+        status(result) shouldBe Status.SEE_OTHER
+        contentAsString(result) shouldBe expectedContent
       }
     }
     "return 303 SEE_OTHER and redirect to custom not found error page" when {
@@ -130,6 +141,7 @@ class BusinessAccountingMethodControllerSpec extends TestSupport with MockAuthen
 
         val result: Future[Result] = TestBusinessAccountingMethodController.show()(fakeRequestWithActiveSession)
         val expectedContent: String = TestBusinessAccountingMethodController.customNotFoundErrorView().toString()
+
         status(result) shouldBe Status.OK
         contentAsString(result) shouldBe expectedContent
       }
