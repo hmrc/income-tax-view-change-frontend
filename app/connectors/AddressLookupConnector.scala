@@ -45,8 +45,8 @@ class AddressLookupConnector @Inject()(val appConfig: FrontendAppConfig,
     s"${baseUrl}/api/v2/confirmed?id=$id"
   }
 
-  lazy val individualContinueUrl: String = routes.AddBusinessAddressController.submit(None).url
-  lazy val agentContinueUrl: String = routes.AddBusinessAddressController.agentSubmit(None).url
+  lazy val individualContinueUrl: String = controllers.incomeSources.add.routes.AddBusinessAddressController.submit(None).url
+  lazy val agentContinueUrl: String = controllers.incomeSources.add.routes.AddBusinessAddressController.agentSubmit(None).url
 
   lazy val individualFeedbackUrl: String = controllers.feedback.routes.FeedbackController.show.url
   lazy val agentFeedbackUrl: String = controllers.feedback.routes.FeedbackController.showAgent.url
