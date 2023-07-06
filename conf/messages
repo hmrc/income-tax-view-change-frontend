@@ -1290,6 +1290,19 @@ incomeSources.add.foreignProperty.startDate.check.error              = Select ye
 incomeSources.add.foreignProperty.startDate.check.radio.yes          = Yes
 incomeSources.add.foreignProperty.startDate.check.radio.no           = No
 
+# add foreign property accounting method
+incomeSources.add.foreignPropertyAccountingMethod.heading                 = What accounting method do you use for your foreign property business?
+incomeSources.add.foreignPropertyAccountingMethod.example                 = Show me an example
+incomeSources.add.foreignPropertyAccountingMethod.radio-1-title           = Cash basis accounting
+incomeSources.add.foreignPropertyAccountingMethod.radio-1-hint            = You record on the date you receive money or pay a bill. Most sole traders and small business use this method.
+incomeSources.add.foreignPropertyAccountingMethod.radio-2-title           = Traditional accounting
+incomeSources.add.foreignPropertyAccountingMethod.radio-2-hint            = You record on the date you send or receive an invoice, even if you do not receive or pay any money. This is called 'accruals' or 'standard accounting'.
+incomeSources.add.foreignPropertyAccountingMethod.drop-down-text          = You created an invoice for someone in March 2017, but did not receive the money until May 2017. If you tell HMRC you received this income in:
+incomeSources.add.foreignPropertyAccountingMethod.drop-down-text-bp-1     = May 2017, you use 'cash basis accounting'
+incomeSources.add.foreignPropertyAccountingMethod.drop-down-text-bp-2     = March 2017, you use 'traditional accounting'
+incomeSources.add.foreignPropertyAccountingMethod.no-selection            = Enter the accounting method you use for your foreign property business
+
+
 incomeSources.ceaseUKProperty.checkDetails.heading               = Check your details
 incomeSources.ceaseUKProperty.checkDetails.paragraph             = UK property business you entered
 incomeSources.ceaseUKProperty.checkDetails.content               = Date business stopped
