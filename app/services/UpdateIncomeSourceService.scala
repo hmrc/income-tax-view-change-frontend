@@ -59,7 +59,7 @@ class UpdateIncomeSourceService @Inject()(connector: IncomeTaxViewChangeConnecto
 
   def updateTaxYearSpecific(nino: String, incomeSourceId: String, taxYearSpecific: List[TaxYearSpecific])
                            (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[UpdateIncomeSourceResponse] = {
-    connector.updateIncomeSourceTaxYearSpecific(nino = nino, incomeSourceId = incomeSourceId,taxYearSpecific)
+    connector.updateIncomeSourceTaxYearSpecific(nino = nino, incomeSourceId = incomeSourceId, taxYearSpecific)
   }
 
 }

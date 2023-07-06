@@ -50,7 +50,7 @@ class AddBusinessReportingMethodFormSpec extends TestSupport {
       )
 
       val boundForm = form.bind(formData)
-      boundForm.errors should contain(FormError("new_tax_year_1_reporting_method",List("new_tax_year_1_reporting_method")))
+      boundForm.errors should contain(FormError("new_tax_year_1_reporting_method", List("new_tax_year_1_reporting_method")))
     }
 
     "invalidate when tax year 2 reporting method radio button is not selected" in {
@@ -64,7 +64,7 @@ class AddBusinessReportingMethodFormSpec extends TestSupport {
       )
 
       val boundForm = form.bind(formData)
-      boundForm.errors should contain(FormError("new_tax_year_2_reporting_method",List("new_tax_year_2_reporting_method")))
+      boundForm.errors should contain(FormError("new_tax_year_2_reporting_method", List("new_tax_year_2_reporting_method")))
     }
   }
 }

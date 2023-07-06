@@ -24,7 +24,7 @@ import models.incomeSourceDetails.{IncomeSourceDetailsError, LatencyDetails}
 import models.updateIncomeSource.UpdateIncomeSourceResponseModel
 import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.libs.json.Json
-import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testMtditid, testNino, testSelfEmploymentId, testTaxYearRange}
+import testConstants.BaseIntegrationTestConstants._
 import testConstants.CalculationListIntegrationTestConstants
 import testConstants.IncomeSourceIntegrationTestConstants.{singleBusinessResponse, singleBusinessResponseInLatencyPeriod}
 

@@ -28,7 +28,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class CalculationListService @Inject()(incomeTaxViewChangeConnector: IncomeTaxViewChangeConnector)
-                                      (implicit ec: ExecutionContext)  {
+                                      (implicit ec: ExecutionContext) {
 
   def getLegacyCalculationList(nino: Nino, taxYearEnd: String)
                               (implicit headerCarrier: HeaderCarrier): Future[CalculationListResponseModel] = {
