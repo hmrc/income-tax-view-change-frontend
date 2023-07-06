@@ -60,7 +60,8 @@ class BusinessAccountingMethodController @Inject()(val authenticate: Authenticat
 
     if (userActiveBusinesses.flatMap(_.cashOrAccruals).distinct.size > 1) {
       Logger("application").error(s"${if (isAgent) "[Agent]"}" +
-        s"Error getting business cashOrAccrualsField")    }
+        s"Error getting business cashOrAccrualsField")
+    }
 
     userActiveBusinesses match {
       case head :: _ if (head.cashOrAccruals.isDefined) => {
