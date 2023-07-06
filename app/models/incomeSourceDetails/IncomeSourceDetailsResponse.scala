@@ -36,7 +36,6 @@ case class IncomeSourceDetailsModel(mtdbsa: String,
   val hasOngoingBusinessOrPropertyIncome: Boolean = businesses.exists(b => b.cessation.forall(_.date.isEmpty)) ||
     properties.exists(p => p.cessation.forall(_.date.isEmpty))
 
-
   override def toJson: JsValue = Json.toJson(this)
 
   def sanitise: IncomeSourceDetailsModel = {
