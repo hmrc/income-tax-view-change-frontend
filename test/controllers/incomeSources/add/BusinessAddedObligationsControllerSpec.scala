@@ -16,6 +16,7 @@
 
 package controllers.incomeSources.add
 
+import auth.MtdItUser
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import config.featureswitch.FeatureSwitch.switches
 import config.featureswitch.{FeatureSwitching, IncomeSources}
@@ -24,6 +25,7 @@ import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
 import mocks.services.{MockClientDetailsService, MockNextUpdatesService}
+import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
 import models.nextUpdates.ObligationsModel
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
@@ -96,14 +98,21 @@ class BusinessAddedObligationsControllerSpec extends TestSupport
       }
     }
 
-    /*".show" should {
+    ".show" should {
       "show correct page when individual valid" in {
         disableAllSwitches()
         enable(IncomeSources)
 
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-        mockSingleBusinessIncomeSourceWithDeadlines()
+        //mockSingleBusinessIncomeSourceWithDeadlines()
+        val sources: IncomeSourceDetailsModel = IncomeSourceDetailsModel("", Some("2022"), List(BusinessDetailsModel(
+          Some("123"),
+          None,
+          Some("Test name"),
+          None, None, None
+        )), List.empty)
+        setupMockGetIncomeSourceDetails()(sources)
         when(mockNextUpdatesService.getNextUpdates(any())(any(), any())).
           thenReturn(Future(ObligationsModel(Seq.empty)))
 
@@ -117,12 +126,19 @@ class BusinessAddedObligationsControllerSpec extends TestSupport
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
         mockSingleBusinessIncomeSourceWithDeadlines()
+        val sources: IncomeSourceDetailsModel = IncomeSourceDetailsModel("", Some("2022"), List(BusinessDetailsModel(
+          Some("123"),
+          None,
+          Some("Test name"),
+          None, None, None
+        )), List.empty)
+        setupMockGetIncomeSourceDetails()(sources)
         when(mockNextUpdatesService.getNextUpdates(any())(any(), any())).
           thenReturn(Future(ObligationsModel(Seq.empty)))
 
         val result: Future[Result] = TestObligationsController.showAgent(Some("123"))(fakeRequestConfirmedClient())
         status(result) shouldBe OK
       }
-    }*/
+    }
   }
 }
