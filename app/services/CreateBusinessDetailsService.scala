@@ -32,6 +32,10 @@ import scala.util.Try
 class CreateBusinessDetailsService @Inject()(val createIncomeSourceConnector: CreateIncomeSourceConnector) {
 
 
+  /**
+   * @param viewModel - provided by the caller/controller
+   * @return
+   */
   def convertToCreateBusinessIncomeSourceRequest(viewModel: CheckBusinessDetailsViewModel): Either[Throwable, CreateBusinessIncomeSourceRequest] = {
     Try {
       CreateBusinessIncomeSourceRequest(
@@ -82,12 +86,14 @@ class CreateBusinessDetailsService @Inject()(val createIncomeSourceConnector: Cr
     }
   }
 
+  /**
+   * @param viewModel - view model provided by the caller/controller
+   * @return
+   */
   def createForeignPropertyIncomeSourceRequest(viewModel: CheckForeignPropertyViewModel) : Either[Throwable, CreateForeignPropertyIncomeSource] = {
-    Try {
-      CreateForeignPropertyIncomeSource(tradingStartDate = viewModel.tradingStartDate.toString,
-        cashOrAccrualsFlag = viewModel.cashOrAccrualsFlag,
-        startDate = viewModel.tradingStartDate.toString)
-    }.toEither
+    Try(CreateForeignPropertyIncomeSource(tradingStartDate = viewModel.tradingStartDate.toString,
+      cashOrAccrualsFlag = viewModel.cashOrAccrualsFlag,
+      startDate = viewModel.tradingStartDate.toString)).toEither
   }
 
   def createForeignProperty(viewModel: CheckForeignPropertyViewModel)
