@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package views
+package views.incomeSources.add
 
 import forms.incomeSources.add.BusinessTradeForm
 import forms.utils.SessionKeys
@@ -40,14 +40,14 @@ class AddBusinessTradeViewSpec extends ViewSpec {
   val backUrl: String = controllers.incomeSources.add.routes.AddBusinessStartDateController.show().url
   val agentBackUrl: String = controllers.incomeSources.add.routes.AddBusinessStartDateController.showAgent().url
 
-  val enterBusinessTrade: AddBusinessTrade = app.injector.instanceOf[AddBusinessTrade]
+  val addBusinessTradeView: AddBusinessTrade = app.injector.instanceOf[AddBusinessTrade]
 
-  val pageWithoutError: Html = enterBusinessTrade(BusinessTradeForm.form, testCall, false, backUrl, false)
+  val pageWithoutError: Html = addBusinessTradeView(BusinessTradeForm.form, testCall, false, backUrl, false)
 
   def pageWithError(error: String = BusinessTradeForm.tradeEmptyError): Html = {
     val modifiedForm = BusinessTradeForm.form.withError(SessionKeys.businessTrade, error)
       .fill(BusinessTradeForm("??Invalid Name??"))
-    enterBusinessTrade(modifiedForm, testCall, false, backUrl, false)
+    addBusinessTradeView(modifiedForm, testCall, false, backUrl, false)
   }
 
   "The add business trade page" when {

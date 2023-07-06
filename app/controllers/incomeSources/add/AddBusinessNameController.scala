@@ -21,14 +21,13 @@ import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
-import controllers.routes
 import forms.BusinessNameForm
 import forms.utils.SessionKeys
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.IncomeSourceDetailsService
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import views.html.incomeSources.add.AddBusiness
+import views.html.incomeSources.add.AddBusinessName
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -38,19 +37,21 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
                                           val authorisedFunctions: AuthorisedFunctions,
                                           checkSessionTimeout: SessionTimeoutPredicate,
                                           retrieveNino: NinoPredicate,
-                                          val addBusinessView: AddBusiness,
+                                          val addBusinessView: AddBusinessName,
                                           val retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                           val retrieveBtaNavBar: NavBarPredicate,
                                           val itvcErrorHandler: ItvcErrorHandler,
                                           incomeSourceDetailsService: IncomeSourceDetailsService)
                                          (implicit val appConfig: FrontendAppConfig,
-                                             implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
-                                             implicit override val mcc: MessagesControllerComponents,
-                                             val ec: ExecutionContext)
+                                          implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
+                                          implicit override val mcc: MessagesControllerComponents,
+                                          val ec: ExecutionContext)
   extends ClientConfirmedController with I18nSupport with FeatureSwitching {
 
   lazy val backUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceController.show().url
   lazy val backUrlAgent: String = controllers.incomeSources.add.routes.AddIncomeSourceController.showAgent().url
+  lazy val submitAction: Call = controllers.incomeSources.add.routes.AddBusinessNameController.submit()
+  lazy val submitActionAgent: Call = controllers.incomeSources.add.routes.AddBusinessNameController.submitAgent()
 
   def show(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
@@ -77,15 +78,15 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
   def handleRequest(isAgent: Boolean, backUrl: String)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
     if (isDisabled(IncomeSources)) {
       Future.successful(Redirect(
-        if(isAgent) controllers.routes.HomeController.showAgent
+        if (isAgent) controllers.routes.HomeController.showAgent
         else controllers.routes.HomeController.show()
       ))
     } else {
       Future {
         if (isAgent) {
-          Ok(addBusinessView(BusinessNameForm.form, isAgent, controllers.incomeSources.add.routes.AddBusinessNameController.submitAgent(), backUrl))
+          Ok(addBusinessView(BusinessNameForm.form, isAgent, submitActionAgent, backUrl))
         } else {
-          Ok(addBusinessView(BusinessNameForm.form, isAgent, controllers.incomeSources.add.routes.AddBusinessNameController.submit(), backUrl))
+          Ok(addBusinessView(BusinessNameForm.form, isAgent, submitAction, backUrl))
         }
       }
     }
@@ -97,7 +98,7 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
       BusinessNameForm.form.bindFromRequest().fold(
         formWithErrors => {
           Future {
-            Ok(addBusinessView(formWithErrors, false, controllers.incomeSources.add.routes.AddBusinessNameController.submit(), backUrl))
+            Ok(addBusinessView(formWithErrors, false, submitAction, backUrl))
           }
         },
         formData => {
@@ -117,7 +118,7 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
             BusinessNameForm.form.bindFromRequest().fold(
               formWithErrors => {
                 Future {
-                  Ok(addBusinessView(formWithErrors, true, controllers.incomeSources.add.routes.AddBusinessNameController.submitAgent(), backUrl))
+                  Ok(addBusinessView(formWithErrors, true, submitActionAgent, backUrl))
                 }
               },
               formData => {

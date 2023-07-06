@@ -36,10 +36,8 @@ import testConstants.BaseTestConstants
 import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
 import testConstants.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 import testUtils.TestSupport
-import views.html.incomeSources.add.{AddBusiness, AddBusinessTrade}
-
+import views.html.incomeSources.add.AddBusinessTrade
 import scala.concurrent.Future
-
 
 
 class AddBusinessTradeControllerSpec extends TestSupport
@@ -69,24 +67,6 @@ class AddBusinessTradeControllerSpec extends TestSupport
       checkSessionTimeout = app.injector.instanceOf[SessionTimeoutPredicate],
       retrieveNino = app.injector.instanceOf[NinoPredicate],
       addBusinessTradeView = app.injector.instanceOf[AddBusinessTrade],
-      retrieveIncomeSources = MockIncomeSourceDetailsPredicate,
-      retrieveBtaNavBar = MockNavBarPredicate,
-      itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
-      incomeSourceDetailsService = mockIncomeSourceDetailsService,
-    )(
-      mcc = app.injector.instanceOf[MessagesControllerComponents],
-      appConfig = app.injector.instanceOf[FrontendAppConfig],
-      itvcErrorHandlerAgent = app.injector.instanceOf[AgentItvcErrorHandler],
-      ec = ec
-    )
-
-  object TestAddBusinessNameNameController$
-    extends AddBusinessNameController(
-      MockAuthenticationPredicate,
-      authorisedFunctions = mockAuthService,
-      checkSessionTimeout = app.injector.instanceOf[SessionTimeoutPredicate],
-      retrieveNino = app.injector.instanceOf[NinoPredicate],
-      addBusinessView = app.injector.instanceOf[AddBusiness],
       retrieveIncomeSources = MockIncomeSourceDetailsPredicate,
       retrieveBtaNavBar = MockNavBarPredicate,
       itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
@@ -157,8 +137,8 @@ class AddBusinessTradeControllerSpec extends TestSupport
 
 
           val result: Future[Result] = TestAddBusinessTradeController.submit()(fakeRequestWithActiveSessionWithBusinessName.withFormUrlEncodedBody(
-              SessionKeys.businessTrade -> validBusinessTrade
-            ))
+            SessionKeys.businessTrade -> validBusinessTrade
+          ))
           status(result) mustBe SEE_OTHER
           redirectLocation(result) mustBe Some(controllers.incomeSources.add.routes.AddBusinessAddressController.show().url)
           session(result).get(SessionKeys.businessTrade) mustBe Some(validBusinessTrade)

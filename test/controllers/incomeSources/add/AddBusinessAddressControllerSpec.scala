@@ -16,11 +16,9 @@
 
 package controllers.incomeSources.add
 
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import config.featureswitch.FeatureSwitch.switches
 import config.featureswitch.{FeatureSwitching, IncomeSources}
-import connectors.AddressLookupConnector
-import controllers.routes
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import forms.utils.SessionKeys
 import mocks.MockItvcErrorHandler
@@ -28,12 +26,10 @@ import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
 import mocks.services.MockClientDetailsService
 import models.incomeSourceDetails.{Address, BusinessAddressModel}
-import models.incomeSourceDetails.viewmodels.httpparser.PostAddressLookupHttpParser.{PostAddressLookupSuccessResponse, UnexpectedPostStatusFailure}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
-import play.api.Logger
-import play.api.http.Status.{IM_A_TEAPOT, INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
+import play.api.http.Status.{INTERNAL_SERVER_ERROR, SEE_OTHER}
 import play.api.mvc.{Call, MessagesControllerComponents, Result}
 import play.api.test.Helpers._
 import services.{AddressLookupService, IncomeSourceDetailsService}
@@ -41,8 +37,6 @@ import testConstants.BaseTestConstants
 import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
 import testConstants.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 import testUtils.TestSupport
-
-import java.lang
 import scala.concurrent.Future
 
 
@@ -64,6 +58,7 @@ class AddBusinessAddressControllerSpec extends TestSupport
   }
 
   val mockAddressLookupService: AddressLookupService = mock(classOf[AddressLookupService])
+
   object TestAddBusinessAddressController
     extends AddBusinessAddressController(
       MockAuthenticationPredicate,
@@ -83,8 +78,8 @@ class AddBusinessAddressControllerSpec extends TestSupport
     )
 
   val testBusinessAddressModel: BusinessAddressModel = BusinessAddressModel("auditRef", Address(Seq("Line 1", "Line 2"), Some("AA1 1AA")))
-  case class AddressError(status: String) extends RuntimeException
 
+  case class AddressError(status: String) extends RuntimeException
 
 
   "AddBusinessAddressController" should {
@@ -110,7 +105,7 @@ class AddBusinessAddressControllerSpec extends TestSupport
     }
 
     ".show" should {
-      "redirect to the address lookup service" when{
+      "redirect to the address lookup service" when {
         "location redirect is returned by the lookup service to individual" in {
           disableAllSwitches()
           enable(IncomeSources)
@@ -280,14 +275,5 @@ class AddBusinessAddressControllerSpec extends TestSupport
         }
       }
     }
-
-
-
-
-
-
-
-
-
   }
 }

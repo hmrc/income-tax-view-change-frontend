@@ -1344,7 +1344,7 @@ check-cease-foreign-property-details.button             = Cadarnhau ac yn eich b
 
 # check business details
 check-business-details.sole-trader-caption              = Y busnes unig fasnachwr a nodwyd gennych
-check-business-details.heading1                         = Gwirio’ch manylion
+check-business-details.heading                          = Gwirio’ch manylion
 check-business-details.business-name                    = Enw’r busnes
 check-business-details.change-details-link              = Newid
 check-business-details.business-start-date              = Dyddiad dechrau masnachu’r busnes

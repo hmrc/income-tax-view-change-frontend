@@ -36,7 +36,7 @@ import testConstants.BaseTestConstants
 import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
 import testConstants.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 import testUtils.TestSupport
-import views.html.incomeSources.add.AddBusiness
+import views.html.incomeSources.add.AddBusinessName
 
 import scala.concurrent.Future
 
@@ -50,7 +50,7 @@ class AddBusinessNameControllerSpec extends TestSupport
   with MockClientDetailsService
   with FeatureSwitching {
 
-  val mockAddBusinessView: AddBusiness = mock(classOf[AddBusiness])
+  val mockAddBusinessNameView: AddBusinessName = mock(classOf[AddBusinessName])
   val mockBusinessNameForm: BusinessNameForm = mock(classOf[BusinessNameForm])
   val incomeSourceDetailsService: IncomeSourceDetailsService = mock(classOf[IncomeSourceDetailsService])
 
@@ -66,7 +66,7 @@ class AddBusinessNameControllerSpec extends TestSupport
       authorisedFunctions = mockAuthService,
       checkSessionTimeout = app.injector.instanceOf[SessionTimeoutPredicate],
       retrieveNino = app.injector.instanceOf[NinoPredicate],
-      addBusinessView = app.injector.instanceOf[AddBusiness],
+      addBusinessView = app.injector.instanceOf[AddBusinessName],
       retrieveIncomeSources = MockIncomeSourceDetailsPredicate,
       retrieveBtaNavBar = MockNavBarPredicate,
       itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
@@ -152,7 +152,7 @@ class AddBusinessNameControllerSpec extends TestSupport
           ))
 
           status(result) mustBe OK
-          contentAsString(result) must include ("Enter your name or the name of your business")
+          contentAsString(result) must include("Enter your name or the name of your business")
         }
 
         "return to AddBusiness when business name is empty" in {
@@ -205,7 +205,7 @@ class AddBusinessNameControllerSpec extends TestSupport
         }
       }
     }
-"when feature switch is disabled" in {
+    "when feature switch is disabled" in {
       disableAllSwitches()
 
       setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
