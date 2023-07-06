@@ -92,8 +92,8 @@ class BusinessAccountingMethodController @Inject()(val authenticate: Authenticat
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
 
     val incomeSourcesEnabled: Boolean = isEnabled(IncomeSources)
-    val backUrl: String = if (isAgent) controllers.routes.AddBusinessAddressController.showAgent().url else
-      controllers.routes.AddBusinessAddressController.show().url
+    val backUrl: String = if (isAgent) controllers.incomeSources.add.routes.AddBusinessAddressController.showAgent().url else
+      controllers.incomeSources.add.routes.AddBusinessAddressController.show().url
     val postAction: Call = if (isAgent) controllers.incomeSources.add.routes.BusinessAccountingMethodController.submitAgent() else
       controllers.incomeSources.add.routes.BusinessAccountingMethodController.submit()
 
@@ -139,7 +139,7 @@ class BusinessAccountingMethodController @Inject()(val authenticate: Authenticat
         hasErrors => Future.successful(BadRequest(view(
           form = hasErrors,
           postAction = controllers.incomeSources.add.routes.BusinessAccountingMethodController.submit(),
-          backUrl = controllers.routes.AddBusinessAddressController.show().url,
+          backUrl = controllers.incomeSources.add.routes.AddBusinessAddressController.show().url,
           isAgent = false
         ))),
         validatedInput => {
@@ -163,7 +163,7 @@ class BusinessAccountingMethodController @Inject()(val authenticate: Authenticat
               hasErrors => Future.successful(BadRequest(view(
                 form = hasErrors,
                 postAction = controllers.incomeSources.add.routes.BusinessAccountingMethodController.submitAgent(),
-                backUrl = controllers.routes.AddBusinessAddressController.showAgent().url,
+                backUrl = controllers.incomeSources.add.routes.AddBusinessAddressController.showAgent().url,
                 isAgent = true
               ))),
               validatedInput => {
