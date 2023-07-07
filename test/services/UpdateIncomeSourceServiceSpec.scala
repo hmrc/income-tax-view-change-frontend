@@ -23,19 +23,17 @@ import exceptions.MissingSessionKey
 import forms.utils.SessionKeys.ceaseUKPropertyEndDate
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
-import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import testConstants.BaseTestConstants.{testMtditid, testNino, testRetrievedUserName}
-import testConstants.IncomeSourceDetailsTestConstants.{singleBusinessIncomeWithCurrentYear, ukPropertyIncome}
+import testConstants.IncomeSourceDetailsTestConstants.ukPropertyIncome
 import testConstants.UpdateIncomeSourceTestConstants
-import testConstants.UpdateIncomeSourceTestConstants.{cessationDate, failureResponse, successResponse}
+import testConstants.UpdateIncomeSourceTestConstants.{cessationDate, failureResponse, successResponse, taxYearSpecific}
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
-import uk.gov.hmrc.http.HeaderCarrier
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
-class UpdateIncomeSourceServiceSpec  extends TestSupport with FeatureSwitching{
+class UpdateIncomeSourceServiceSpec extends TestSupport with FeatureSwitching {
   implicit val userWithSessionKey = MtdItUser(
     mtditid = testMtditid,
     nino = testNino,
@@ -46,7 +44,7 @@ class UpdateIncomeSourceServiceSpec  extends TestSupport with FeatureSwitching{
     credId = Some("credId"),
     userType = Some(Individual),
     None
-  )(FakeRequest().withSession(ceaseUKPropertyEndDate -> cessationDate ))
+  )(FakeRequest().withSession(ceaseUKPropertyEndDate -> cessationDate))
 
   val userWithOutSessionKey = MtdItUser(
     mtditid = testMtditid,
@@ -59,7 +57,6 @@ class UpdateIncomeSourceServiceSpec  extends TestSupport with FeatureSwitching{
     userType = Some(Individual),
     None
   )(FakeRequest())
-
 
 
   val mockIncomeTaxViewChangeConnector: IncomeTaxViewChangeConnector = mock(classOf[IncomeTaxViewChangeConnector])
@@ -81,18 +78,16 @@ class UpdateIncomeSourceServiceSpec  extends TestSupport with FeatureSwitching{
     }
 
     "return exception " when {
-      "session key is missing" in  {
+      "session key is missing" in {
         val exception = Left(MissingSessionKey(ceaseUKPropertyEndDate))
-        TestUpdateIncomeSourceService.updateCessationDate(userWithOutSessionKey,headerCarrier,ec).futureValue shouldBe exception
+        TestUpdateIncomeSourceService.updateCessationDate(userWithOutSessionKey, headerCarrier, ec).futureValue shouldBe exception
       }
     }
   }
 
   "The UpdateIncomeSourceService.updateCessationDatev2 method" should {
     "return UpdateIncomeSourceSuccess" when {
-
       val testIncomeSourceId = "123"
-
       "valid response" in {
         when(mockIncomeTaxViewChangeConnector.updateCessationDate(any(), any(), any())(any()))
           .thenReturn(Future.successful(UpdateIncomeSourceTestConstants.successResponse))
@@ -102,6 +97,22 @@ class UpdateIncomeSourceServiceSpec  extends TestSupport with FeatureSwitching{
         when(mockIncomeTaxViewChangeConnector.updateCessationDate(any(), any(), any())(any()))
           .thenReturn(Future.successful(UpdateIncomeSourceTestConstants.failureResponse))
         TestUpdateIncomeSourceService.updateCessationDatev2(testNino, testIncomeSourceId, cessationDate).futureValue shouldBe Left(UpdateIncomeSourceError("Failed to update cessationDate"))
+      }
+    }
+  }
+
+  "The UpdateIncomeSourceService.updateTaxYearSpecific method" should {
+    "return UpdateIncomeSourceSuccess" when {
+      val testIncomeSourceId = "123"
+      "valid response" in {
+        when(mockIncomeTaxViewChangeConnector.updateIncomeSourceTaxYearSpecific(any(), any(), any())(any()))
+          .thenReturn(Future.successful(UpdateIncomeSourceTestConstants.successResponse))
+        TestUpdateIncomeSourceService.updateTaxYearSpecific(testNino, testIncomeSourceId, List(taxYearSpecific)).futureValue shouldBe successResponse
+      }
+      "invalid response" in {
+        when(mockIncomeTaxViewChangeConnector.updateIncomeSourceTaxYearSpecific(any(), any(), any())(any()))
+          .thenReturn(Future.successful(UpdateIncomeSourceTestConstants.failureResponse))
+        TestUpdateIncomeSourceService.updateTaxYearSpecific(testNino, testIncomeSourceId, List(taxYearSpecific)).futureValue shouldBe failureResponse
       }
     }
   }

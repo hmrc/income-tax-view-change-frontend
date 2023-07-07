@@ -16,39 +16,40 @@
 
 package connectors
 
-import testConstants.BaseTestConstants._
-import testConstants.ChargeHistoryTestConstants._
-import testConstants.FinancialDetailsTestConstants._
-import testConstants.IncomeSourceDetailsTestConstants.{singleBusinessAndPropertyMigrat2019, singleBusinessIncome}
-import testConstants.NinoLookupTestConstants._
-import testConstants.OutstandingChargesTestConstants._
-import testConstants.PaymentAllocationsTestConstants._
-import testConstants.NextUpdatesTestConstants._
 import audit.AuditingService
 import audit.mocks.MockAuditingService
 import audit.models._
 import config.FrontendAppConfig
-import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND, OK}
 import mocks.MockHttp
+import models.calculationList.{CalculationListErrorModel, CalculationListResponseModel}
 import models.chargeHistory.{ChargeHistoryResponseModel, ChargesHistoryErrorModel}
-import models.core.{NinoResponse, NinoResponseError}
+import models.core.{Nino, NinoResponse, NinoResponseError}
 import models.financialDetails._
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsResponse}
+import models.nextUpdates.{NextUpdatesErrorModel, NextUpdatesResponseModel}
 import models.outstandingCharges.{OutstandingChargesErrorModel, OutstandingChargesResponseModel}
 import models.paymentAllocationCharges.{FinancialDetailsWithDocumentDetailsErrorModel, FinancialDetailsWithDocumentDetailsResponse}
 import models.paymentAllocations.{PaymentAllocationsError, PaymentAllocationsResponse}
-import models.nextUpdates.{NextUpdatesErrorModel, NextUpdatesResponseModel}
 import models.repaymentHistory.{RepaymentHistoryErrorModel, RepaymentHistoryModel, RepaymentHistoryResponseModel}
 import models.updateIncomeSource.UpdateIncomeSourceResponse
 import org.mockito.Mockito.{mock, when}
+import play.api.http.Status._
 import play.api.libs.json.Json
 import play.mvc.Http.Status
+import testConstants.BaseTestConstants._
+import testConstants.ChargeHistoryTestConstants._
+import testConstants.FinancialDetailsTestConstants._
+import testConstants.ITSAStatusTestConstants.{badJsonErrorITSAStatusError, errorITSAStatusError}
+import testConstants.IncomeSourceDetailsTestConstants.{singleBusinessAndPropertyMigrat2019, singleBusinessIncome}
+import testConstants.NextUpdatesTestConstants._
+import testConstants.NinoLookupTestConstants._
+import testConstants.OutstandingChargesTestConstants._
+import testConstants.PaymentAllocationsTestConstants._
 import testConstants.RepaymentHistoryTestConstants.{repaymentHistoryOneRSI, validMultipleRepaymentHistoryJson, validRepaymentHistoryOneRSIJson}
-import testConstants.UpdateIncomeSourceTestConstants
-import testConstants.UpdateIncomeSourceTestConstants.{badJsonResponse, cessationDate, failureResponse, incomeSourceId, successHttpResponse, successResponse}
+import testConstants.UpdateIncomeSourceTestConstants._
+import testConstants.{CalculationListTestConstants, UpdateIncomeSourceTestConstants}
 import testUtils.TestSupport
-import uk.gov.hmrc.http.HttpResponse
-import uk.gov.hmrc.http.HttpClient
+import uk.gov.hmrc.http.{HttpClient, HttpResponse}
 
 import java.time.LocalDate
 import scala.concurrent.{ExecutionContext, Future}
@@ -712,26 +713,26 @@ class IncomeTaxViewChangeConnectorSpec extends TestSupport with MockHttp with Mo
     }
   }
 
-  ".updateCessationDate" should {
+  "updateCessationDate" should {
 
     s"return a valid UpdateIncomeSourceResponseModel" in new Setup {
-      setupMockHttpPutWithHeaderCarrier(getUpdateCessationDateUrl)(
+      setupMockHttpPutWithHeaderCarrier(getUpdateIncomeSourceUrl)(
         UpdateIncomeSourceTestConstants.request,
         UpdateIncomeSourceTestConstants.successHttpResponse)
-        val result:Future[UpdateIncomeSourceResponse]  = updateCessationDate(testNino,incomeSourceId,Some(LocalDate.parse(cessationDate)))
-        result.futureValue shouldBe successResponse
+      val result: Future[UpdateIncomeSourceResponse] = updateCessationDate(testNino, incomeSourceId, Some(LocalDate.parse(cessationDate)))
+      result.futureValue shouldBe successResponse
     }
 
     s"return INTERNAL_SERVER_ERROR UpdateIncomeSourceResponseError" when {
       "invalid json response" in new Setup {
-        setupMockHttpPutWithHeaderCarrier(getUpdateCessationDateUrl)(
+        setupMockHttpPutWithHeaderCarrier(getUpdateIncomeSourceUrl)(
           UpdateIncomeSourceTestConstants.request,
           UpdateIncomeSourceTestConstants.successInvalidJsonResponse)
         val result: Future[UpdateIncomeSourceResponse] = updateCessationDate(testNino, incomeSourceId, Some(LocalDate.parse(cessationDate)))
         result.futureValue shouldBe badJsonResponse
       }
       "receiving a 500+ response" in new Setup {
-        setupMockHttpPutWithHeaderCarrier(getUpdateCessationDateUrl)(
+        setupMockHttpPutWithHeaderCarrier(getUpdateIncomeSourceUrl)(
           UpdateIncomeSourceTestConstants.request, HttpResponse(status = Status.INTERNAL_SERVER_ERROR,
             json = Json.toJson("Error message"), headers = Map.empty))
         val result: Future[UpdateIncomeSourceResponse] = updateCessationDate(testNino, incomeSourceId, Some(LocalDate.parse(cessationDate)))
@@ -739,5 +740,134 @@ class IncomeTaxViewChangeConnectorSpec extends TestSupport with MockHttp with Mo
       }
     }
 
+  }
+
+  "updateTaxYearSpecific" should {
+
+    s"return a valid UpdateIncomeSourceResponseModel" in new Setup {
+      setupMockHttpPutWithHeaderCarrier(getUpdateIncomeSourceUrl)(
+        UpdateIncomeSourceTestConstants.requestTaxYearSpecific,
+        UpdateIncomeSourceTestConstants.successHttpResponse)
+      val result: Future[UpdateIncomeSourceResponse] = updateIncomeSourceTaxYearSpecific(
+        testNino, incomeSourceId, List(taxYearSpecific))
+      result.futureValue shouldBe successResponse
+    }
+
+    s"return INTERNAL_SERVER_ERROR UpdateIncomeSourceResponseError" when {
+      "invalid json response" in new Setup {
+        setupMockHttpPutWithHeaderCarrier(getUpdateIncomeSourceUrl)(
+          UpdateIncomeSourceTestConstants.requestTaxYearSpecific,
+          UpdateIncomeSourceTestConstants.successInvalidJsonResponse)
+        val result: Future[UpdateIncomeSourceResponse] = updateIncomeSourceTaxYearSpecific(
+          testNino, incomeSourceId, List(taxYearSpecific))
+        result.futureValue shouldBe badJsonResponse
+      }
+      "receiving a 500+ response" in new Setup {
+        setupMockHttpPutWithHeaderCarrier(getUpdateIncomeSourceUrl)(
+          UpdateIncomeSourceTestConstants.requestTaxYearSpecific,
+          HttpResponse(status = Status.INTERNAL_SERVER_ERROR,
+            json = Json.toJson("Error message"), headers = Map.empty))
+        val result: Future[UpdateIncomeSourceResponse] = updateIncomeSourceTaxYearSpecific(
+          testNino, incomeSourceId, List(taxYearSpecific))
+        result.futureValue shouldBe failureResponse
+      }
+    }
+
+  }
+
+  "getITSAStatusDetail" should {
+    import testConstants.ITSAStatusTestConstants.{badJsonHttpResponse, errorHttpResponse, successHttpResponse, successITSAStatusResponseModel}
+    val successResponse = successHttpResponse
+    val successResponseBadJson = badJsonHttpResponse
+    val badResponse = errorHttpResponse
+    val argument = (testNino, "2020", true, true)
+
+
+    "return a List[ITSAStatusResponseModel] model when successful JSON is received" in new Setup {
+      val url = getITSAStatusDetailUrl(argument._1, argument._2)
+      setupMockHttpGet(url)(successResponse)
+      val result = (getITSAStatusDetail _).tupled(argument)
+      result.futureValue shouldBe Right(List(successITSAStatusResponseModel))
+    }
+
+    "return ITSAStatusResponseError model in case of bad/malformed JSON response" in new Setup {
+      setupMockHttpGet(getITSAStatusDetailUrl(argument._1, argument._2))(successResponseBadJson)
+      val result = (getITSAStatusDetail _).tupled(argument)
+      result.futureValue shouldBe Left(badJsonErrorITSAStatusError)
+    }
+
+    "return ITSAStatusResponseError model in case of failure" in new Setup {
+      setupMockHttpGet(getITSAStatusDetailUrl(argument._1, argument._2))(badResponse)
+      val result = (getITSAStatusDetail _).tupled(argument)
+      result.futureValue shouldBe Left(errorITSAStatusError)
+
+    }
+
+  }
+
+  ".getLegacyCalculationList (API 1404)" should {
+    "return a valid CalculationListResponseModel" in new Setup {
+      val itvc1404Url: String = getLegacyCalculationListUrl(testNino, testTaxYear.toString)
+      val successResponse: HttpResponse = HttpResponse(status = OK, json = CalculationListTestConstants.jsonResponseFull, headers = Map.empty)
+      setupMockHttpGet(itvc1404Url)(successResponse)
+
+      val result: Future[CalculationListResponseModel] = getLegacyCalculationList(Nino(testNino), testTaxYear.toString)
+      result.futureValue shouldBe CalculationListTestConstants.calculationListFull
+    }
+    "return an error" when {
+      "receiving a 400-499 response" in new Setup {
+        val itvc1404Url: String = getLegacyCalculationListUrl(testNino, testTaxYear.toString)
+        val errorResponse: HttpResponse = HttpResponse(status = IM_A_TEAPOT, """I'm a teapot""", headers = Map.empty)
+        setupMockHttpGet(itvc1404Url)(errorResponse)
+
+        val result: Future[CalculationListResponseModel] = getLegacyCalculationList(Nino(testNino), testTaxYear.toString)
+        result.futureValue shouldBe CalculationListErrorModel(IM_A_TEAPOT, "I'm a teapot")
+      }
+      "receiving a 500-599 response" in new Setup {
+        val itvc1404Url: String = getLegacyCalculationListUrl(testNino, testTaxYear.toString)
+        val errorResponse: HttpResponse = HttpResponse(status = SERVICE_UNAVAILABLE, """Dependent systems are currently not responding.""", headers = Map.empty)
+        setupMockHttpGet(itvc1404Url)(errorResponse)
+
+        val result: Future[CalculationListResponseModel] = getLegacyCalculationList(Nino(testNino), testTaxYear.toString)
+        result.futureValue shouldBe CalculationListErrorModel(SERVICE_UNAVAILABLE, "Dependent systems are currently not responding.")
+      }
+    }
+  }
+
+  ".getCalculationList (API 1896)" should {
+    "return a valid CalculationListResponseModel (including optional field `crystallised`)" in new Setup {
+      val itvc1896Url: String = getCalculationListUrl(testNino, testTaxYearRange)
+      val successResponse: HttpResponse = HttpResponse(status = OK, json = CalculationListTestConstants.jsonResponseFull, headers = Map.empty)
+      setupMockHttpGet(itvc1896Url)(successResponse)
+
+      val result: Future[CalculationListResponseModel] = getCalculationList(Nino(testNino), testTaxYearRange)
+      result.futureValue shouldBe CalculationListTestConstants.calculationListFull
+    }
+    "return a valid CalculationListResponseModel (excluding optional field `crystallised`)" in new Setup {
+      val itvc1896Url: String = getCalculationListUrl(testNino, testTaxYearRange)
+      val successResponse: HttpResponse = HttpResponse(status = OK, json = CalculationListTestConstants.jsonResponseFull, headers = Map.empty)
+      setupMockHttpGet(itvc1896Url)(successResponse)
+
+      val result: Future[CalculationListResponseModel] = getCalculationList(Nino(testNino), testTaxYearRange)
+      result.futureValue shouldBe CalculationListTestConstants.calculationListFull
+    }
+    "return an error" when {
+      "receiving a 400-499 response" in new Setup {
+        val itvc1896Url: String = getCalculationListUrl(testNino, testTaxYearRange)
+        val errorResponse: HttpResponse = HttpResponse(status = IM_A_TEAPOT, """I'm a teapot""", headers = Map.empty)
+        setupMockHttpGet(itvc1896Url)(errorResponse)
+
+        val result: Future[CalculationListResponseModel] = getCalculationList(Nino(testNino), testTaxYearRange)
+        result.futureValue shouldBe CalculationListErrorModel(IM_A_TEAPOT, "I'm a teapot")
+      }
+      "receiving a 500-599 response" in new Setup {
+        val itvc1896Url: String = getCalculationListUrl(testNino, testTaxYearRange)
+        val errorResponse: HttpResponse = HttpResponse(status = SERVICE_UNAVAILABLE, """Dependent systems are currently not responding.""", headers = Map.empty)
+        setupMockHttpGet(itvc1896Url)(errorResponse)
+
+        val result: Future[CalculationListResponseModel] = getCalculationList(Nino(testNino), testTaxYearRange)
+        result.futureValue shouldBe CalculationListErrorModel(SERVICE_UNAVAILABLE, "Dependent systems are currently not responding.")
+      }
+    }
   }
 }

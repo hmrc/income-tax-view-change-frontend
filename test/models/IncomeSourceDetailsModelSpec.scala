@@ -67,6 +67,9 @@ class IncomeSourceDetailsModelSpec extends UnitSpec with Matchers {
       s"should have the trading name of 'Test Business'" in {
         singleBusinessIncome.businesses.head.tradingName.get shouldBe testTradeName
       }
+      "should have latency details" in {
+        singleBusinessIncome.businesses.head.latencyDetails.get shouldBe testLatencyDetails
+      }
       //Test Property details
       s"should not have property details" in {
         singleBusinessIncome.properties shouldBe Nil
@@ -103,7 +106,8 @@ class IncomeSourceDetailsModelSpec extends UnitSpec with Matchers {
               tradingName = Some("nextUpdates.business"),
               firstAccountingPeriodEndDate = None,
               tradingStartDate = Some(LocalDate.parse("2022-01-01")),
-              cessation = None
+              cessation = None,
+              latencyDetails = None
             ),
             BusinessDetailsModel(
               incomeSourceId = None,
@@ -111,7 +115,8 @@ class IncomeSourceDetailsModelSpec extends UnitSpec with Matchers {
               tradingName = Some("nextUpdates.business"),
               tradingStartDate = Some(LocalDate.parse("2022-01-01")),
               firstAccountingPeriodEndDate = Some(getCurrentTaxYearEnd.minusYears(1)),
-              cessation = None
+              cessation = None,
+              latencyDetails = None
             )
           ),
           List(PropertyDetailsModel(
@@ -127,5 +132,4 @@ class IncomeSourceDetailsModelSpec extends UnitSpec with Matchers {
       }
     }
   }
-
 }
