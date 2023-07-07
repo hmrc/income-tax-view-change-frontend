@@ -34,7 +34,7 @@ errorSummary: ErrorSummary,
 govukTable: GovukTable,
 )
 
-@(businessName: String, sources: ObligationsViewModel, postAction: Call, backUrl: String, isAgent: Boolean, showPrevTaxYears: Boolean)(implicit messages: Messages, user: auth.MtdItUser[_])
+@(businessName: String, sources: ObligationsViewModel, postAction: Call, backUrl: String, isAgent: Boolean)(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @getMessage(key: String, args: String*) = @{
   messages(s"business-added.$key", args: _*)
@@ -62,10 +62,11 @@ govukTable: GovukTable,
         </div>
 
         <h1 class="govuk-label-wrapper">
-          <label class="govuk-label govuk-label--l">
+          <label class="govuk-label govuk-label--l govuk-!-margin-top-8">
           @getMessage("text")
           </label>
         </h1>
+
 
         @if(sources.quarterlyObligationsDatesYearOne.nonEmpty){
             <div class="box-simple">
@@ -162,7 +163,7 @@ govukTable: GovukTable,
             </table>
         </div>
 
-        @if(showPrevTaxYears) {
+        @if(sources.showPrevTaxYears) {
             <div class="box-simple">
                 <h3 class="govuk-heading-m"><div class="page_headers"> @getMessage("previous-tax-years-heading") </div></h3>
                 <p class="govuk-body">

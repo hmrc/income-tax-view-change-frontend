@@ -95,54 +95,46 @@ class BusinessAddedObligationsController @Inject()(authenticate: AuthenticationP
           }
 
           val businessName: String = addedBusiness.tradingName.get
+          val startDate = addedBusiness.tradingStartDate.get
 
-          val dates: Seq[DatesModel] = getObligationDates(id.get)
+          getObligationDates(id.get) map {
+            datesList: Seq[DatesModel] =>
 
-          val quarterlyDates: Seq[DatesModel] = dates.filter(x => x.periodKey.contains("00")).sortBy(_.inboundCorrespondenceFrom)
-          val quarterlyDatesByYear: (Seq[DatesModel], Seq[DatesModel]) = quarterlyDates.partition(x => dateService.getAccountingPeriodEndDate(x.inboundCorrespondenceTo) == dateService.getAccountingPeriodEndDate(quarterlyDates.head.inboundCorrespondenceTo))
+              val (finalDeclarationDates, otherObligationDates) = datesList.partition(x => x.isFinalDec)
 
-          val eopsDates: Seq[DatesModel] = dates.filter(x => x.periodKey == "EOPS")
+              val quarterlyDates: Seq[DatesModel] = otherObligationDates.filter(x => x.periodKey.contains("00")).sortBy(_.inboundCorrespondenceFrom)
+              val quarterlyDatesByYear: (Seq[DatesModel], Seq[DatesModel]) = quarterlyDates.partition(x => dateService.getAccountingPeriodEndDate(x.inboundCorrespondenceTo) == dateService.getAccountingPeriodEndDate(quarterlyDates.head.inboundCorrespondenceTo))
+              val quarterlyDatesYearOne = quarterlyDatesByYear._1.sortBy(_.periodKey)
+              val quarterlyDatesYearTwo = quarterlyDatesByYear._2.sortBy(_.periodKey)
 
-          val finalDeclarationDates: Seq[DatesModel] = getFinalDeclarationDates
+              val eopsDates: Seq[DatesModel] = otherObligationDates.filter(x => x.periodKey == "EOPS")
 
-          val showPreviousTaxYears: Boolean = addedBusiness.tradingStartDate.get.isBefore(getStartOfCurrentTaxYear)
+              val showPreviousTaxYears: Boolean = startDate.isBefore(dateService.getCurrentTaxYearStart())
 
-
-          Future {
-            if (isAgent) Ok(obligationsView(businessName, ObligationsViewModel(quarterlyDatesByYear._1.sortBy(_.periodKey), quarterlyDatesByYear._2.sortBy(_.periodKey), eopsDates, finalDeclarationDates, dateService.getCurrentTaxYearEnd()),
-              controllers.incomeSources.add.routes.BusinessAddedObligationsController.agentSubmit(), agentBackUrl, isAgent = true, showPrevTaxYears = showPreviousTaxYears))
-            else Ok(obligationsView(businessName, ObligationsViewModel(quarterlyDatesByYear._1, quarterlyDatesByYear._2, eopsDates, finalDeclarationDates, dateService.getCurrentTaxYearEnd()),
-              controllers.incomeSources.add.routes.BusinessAddedObligationsController.submit(), backUrl, isAgent = false, showPrevTaxYears = showPreviousTaxYears))
+              if (isAgent) Ok(obligationsView(businessName, ObligationsViewModel(quarterlyDatesYearOne, quarterlyDatesYearTwo, eopsDates, finalDeclarationDates, dateService.getCurrentTaxYearEnd(), showPrevTaxYears = showPreviousTaxYears),
+                controllers.incomeSources.add.routes.BusinessAddedObligationsController.agentSubmit(), agentBackUrl, isAgent = true))
+              else Ok(obligationsView(businessName, ObligationsViewModel(quarterlyDatesYearOne, quarterlyDatesYearTwo, eopsDates, finalDeclarationDates, dateService.getCurrentTaxYearEnd(), showPrevTaxYears = showPreviousTaxYears),
+                controllers.incomeSources.add.routes.BusinessAddedObligationsController.submit(), backUrl, isAgent = false))
           }
       }
     }
   }
 
-  private def getObligationDates(id: String)(implicit user: MtdItUser[_], ec: ExecutionContext): Seq[DatesModel] = {
-    Await.result(nextUpdatesService.getNextUpdates() map {
+  private def getObligationDates(id: String)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Seq[DatesModel]] = {
+    nextUpdatesService.getNextUpdates() map {
       case NextUpdatesErrorModel(code, message) => Logger("application").error(
         s"[BusinessAddedObligationsController][handleRequest] - Error: $message, code $code")
         itvcErrorHandler.showInternalServerError()
         Seq.empty
       case NextUpdateModel(start, end, due, obligationType, dateReceived, periodKey) =>
-        Seq(DatesModel(start, end, due, obligationType, periodKey))
-      case ObligationsModel(obligations) =>
-        obligations.filter(x => x.identification == id).flatMap(obligation => obligation.obligations.map(x => DatesModel(x.start, x.end, x.due, x.obligationType, x.periodKey)))
-    }, Duration(100, MILLISECONDS))
-  }
-
-  private def getFinalDeclarationDates(implicit user: MtdItUser[_], ec: ExecutionContext): Seq[DatesModel] = {
-    Await.result(nextUpdatesService.getNextUpdates() map {
-      case model: ObligationsModel => model.allCrystallised map {
-        source => DatesModel(source.obligation.start, source.obligation.end, source.obligation.due, source.obligation.obligationType, source.obligation.periodKey)
-      }
-    }, Duration(100, MILLISECONDS))
-  }
-
-  private def getStartOfCurrentTaxYear: LocalDate = {
-    val currentDate = dateService.getCurrentDate()
-    if (currentDate.isBefore(LocalDate.of(currentDate.getYear, APRIL, 6))) LocalDate.of(currentDate.getYear - 1, APRIL, 6)
-    else LocalDate.of(currentDate.getYear, APRIL, 6)
+        Seq(DatesModel(start, end, due, periodKey, isFinalDec = false))
+      case model: ObligationsModel =>
+        Seq(model.allCrystallised map {
+          source => DatesModel(source.obligation.start, source.obligation.end, source.obligation.due, source.obligation.periodKey, isFinalDec = true)
+          },
+          model.obligations.flatMap(obligation => obligation.obligations.map(x => DatesModel(x.start, x.end, x.due, x.periodKey, isFinalDec = false)))
+        ).flatten
+    }
   }
 
   def submit: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino

@@ -149,7 +149,7 @@ class BusinessAddedObligationsControllerSpec extends TestSupport
           Some(LocalDate.of(2022,1,1)),
           None
         )), List.empty)
-        when(mockDateService.getCurrentDate(any())).thenReturn(LocalDate.of(2023,1,1))
+        when(mockDateService.getCurrentTaxYearStart(any())).thenReturn(LocalDate.of(2023,1,1))
         setupMockGetIncomeSourceDetails()(sources)
         when(mockNextUpdatesService.getNextUpdates(any())(any(), any())).
           thenReturn(Future(testObligationsModel))
@@ -172,7 +172,7 @@ class BusinessAddedObligationsControllerSpec extends TestSupport
           Some(LocalDate.of(2022,1,1)),
           None
         )), List.empty)
-        when(mockDateService.getCurrentDate(any())).thenReturn(LocalDate.of(2023,12,1))
+        when(mockDateService.getCurrentTaxYearStart(any())).thenReturn(LocalDate.of(2023,12,1))
         setupMockGetIncomeSourceDetails()(sources)
         when(mockNextUpdatesService.getNextUpdates(any())(any(), any())).
           thenReturn(Future(testObligationsModel))

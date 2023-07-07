@@ -57,6 +57,8 @@ class TestDateService extends DateServiceInterface {
     if (isBeforeLastDayOfTaxYear(isTimeMachineEnabled)) currentDate.getYear else currentDate.getYear + 1
   }
 
+  override def getCurrentTaxYearStart(isTimeMachineEnabled: Boolean): LocalDate = LocalDate.of(2022, 4, 6)
+
   override def getAccountingPeriodEndDate(startDate: LocalDate): String = {
     val startDateYear = startDate.getYear
     val accountingPeriodEndDate = LocalDate.of(startDateYear, APRIL, 5)
