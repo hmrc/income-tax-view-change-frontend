@@ -191,7 +191,7 @@ class CheckBusinessDetailsController @Inject()(val checkBusinessDetails: CheckBu
               itvcErrorHandler.showInternalServerError()
 
             case Right(AddIncomeSourceResponse(id)) =>
-              Redirect(controllers.incomeSources.add.routes.AddBusinessReportingMethod.show().url + s"?id=$id").withSession(user.session -- sessionKeys)
+              Redirect(controllers.incomeSources.add.routes.BusinessReportingMethodController.show(id).url).withSession(user.session -- sessionKeys)
           }
         case None => Logger("application").error(
           s"[CheckBusinessDetailsController][submit] - Error: Unable to build view model on submit")
@@ -212,7 +212,7 @@ class CheckBusinessDetailsController @Inject()(val checkBusinessDetails: CheckBu
                     itvcErrorHandler.showInternalServerError()
 
                   case Right(AddIncomeSourceResponse(id)) =>
-                    Redirect(controllers.incomeSources.add.routes.AddBusinessReportingMethod.showAgent().url + s"?id=$id").withSession(mtdItUser.session -- sessionKeys)
+                    Redirect(controllers.incomeSources.add.routes.BusinessReportingMethodController.showAgent(id).url).withSession(mtdItUser.session -- sessionKeys)
                 }
               case None => Logger("application").error(
                 s"[CheckBusinessDetailsController][submit] - Error: Unable to build view model on submit")

@@ -21,7 +21,7 @@ import PaymentHistoryTestConstraints.oldBusiness1
 import PropertyDetailsIntegrationTestConstants._
 import enums.ChargeType.{ITSA_NI, NIC4_SCOTLAND}
 import enums.CodingOutType._
-import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel, IncomeSourceDetailsResponse}
+import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel, IncomeSourceDetailsResponse, LatencyDetails}
 import play.api.libs.json.{JsValue, Json}
 import testConstants.BaseIntegrationTestConstants.getCurrentTaxYearEnd
 
@@ -39,6 +39,13 @@ object IncomeSourceIntegrationTestConstants {
     businesses = List(business1),
     properties = Nil,
     yearOfMigration = None
+  )
+
+  def singleBusinessResponseInLatencyPeriod(latencyDetails: LatencyDetails): IncomeSourceDetailsModel = IncomeSourceDetailsModel(
+    testMtdItId,
+    businesses = List(business1.copy(latencyDetails = Some(latencyDetails))),
+    properties = Nil,
+    yearOfMigration = Some("2018")
   )
 
   val misalignedBusinessWithPropertyResponse: IncomeSourceDetailsResponse = IncomeSourceDetailsModel(

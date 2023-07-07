@@ -16,7 +16,7 @@
 
 package testConstants
 
-import models.updateIncomeSource.{Cessation, TaxYearSpecific, UpdateIncomeSourceRequestModel, UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
+import models.updateIncomeSource._
 import play.api.libs.json.{JsValue, Json}
 import play.mvc.Http.Status
 import testConstants.BaseTestConstants.testNino
@@ -27,6 +27,7 @@ import java.time.LocalDate
 object UpdateIncomeSourceTestConstants {
   val incomeSourceId = "11111111111"
   val cessationDate = "2023-04-01"
+  val taxYearSpecific = TaxYearSpecific("2022", true)
   val request: UpdateIncomeSourceRequestModel = UpdateIncomeSourceRequestModel(
     nino = testNino,
     incomeSourceId = incomeSourceId,
@@ -36,13 +37,13 @@ object UpdateIncomeSourceTestConstants {
   val requestTaxYearSpecific: UpdateIncomeSourceRequestModel = UpdateIncomeSourceRequestModel(
     nino = testNino,
     incomeSourceId = incomeSourceId,
-    taxYearSpecific = Some(TaxYearSpecific("2022", true))
+    taxYearSpecific = Some(List(taxYearSpecific))
   )
 
   val requestTaxYearSpecificJson: JsValue = Json.obj(
     "nino" -> testNino,
     "incomeSourceId" -> incomeSourceId,
-    "taxYearSpecific" -> Json.obj("taxYear" -> "2022", "latencyIndicator" -> true)
+    "taxYearSpecific" -> Json.arr(Json.obj("taxYear" -> "2022", "latencyIndicator" -> true))
   )
 
   val requestJson: JsValue = Json.obj(

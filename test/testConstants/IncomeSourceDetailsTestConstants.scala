@@ -27,6 +27,8 @@ object IncomeSourceDetailsTestConstants {
   val businessesAndPropertyIncome = IncomeSourceDetailsModel(testMtdItId, Some("2018"), List(business1, business2), List(propertyDetails))
   val businessesAndPropertyIncomeCeased = IncomeSourceDetailsModel(testMtdItId, Some("2018"), List(ceasedBusiness), List(ceasedPropertyDetails))
   val singleBusinessIncome = IncomeSourceDetailsModel(testMtdItId, Some("2017"), List(business1), Nil)
+  val singleBusinessIncome2023 = IncomeSourceDetailsModel(testMtdItId, Some("2023"), List(businessWithLatency1), Nil)
+  val singleBusinessIncome2024 = IncomeSourceDetailsModel(testMtdItId, Some("2024"), List(businessWithLatency2), Nil)
   val singleBusinessIncomeNotMigrated = IncomeSourceDetailsModel(testMtdItId, None, List(business1), Nil)
   val singleBusinessIncomeWithCurrentYear = IncomeSourceDetailsModel(testMtdItId, Some(LocalDate.now().getYear.toString), List(business1), Nil)
   val businessIncome2018and2019 = IncomeSourceDetailsModel(testMtdItId, None, List(business2018, business2019), Nil)
@@ -54,13 +56,11 @@ object IncomeSourceDetailsTestConstants {
   val ukPropertyAndSoleTraderBusinessIncomeNoTradingStartDate = IncomeSourceDetailsModel(testMtdItId, Some("2018"), List(soleTraderBusinessNoTradingStartDate), List(ukPropertyDetails))
 
 
-
   val foreignPropertyAndCeasedBusinessIncome = IncomeSourceDetailsModel(testMtdItId, Some("2018"), List(ceasedBusiness, ceasedBusiness2), List(foreignPropertyDetails))
   val foreignPropertyAndCeasedBusinessIncomeNoStartDate = IncomeSourceDetailsModel(testMtdItId, Some("2018"), List(ceasedBusiness, ceasedBusiness2), List(foreignPropertyDetailsNoStartDate))
 
 
   val foreignPropertyIncome = IncomeSourceDetailsModel(testMtdItId, Some("2018"), Nil, List(foreignPropertyDetails))
-
 
 
   def getCurrentTaxEndYear(currentDate: LocalDate): Int = {
