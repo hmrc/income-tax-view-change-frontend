@@ -16,8 +16,10 @@
 
 package models.incomeSourceDetails
 
+import play.api.Logging
 import play.api.libs.json.{Format, JsValue, Json}
 import services.DateServiceInterface
+import uk.gov.hmrc.http.InternalServerException
 
 sealed trait IncomeSourceDetailsResponse {
   def toJson: JsValue
@@ -27,7 +29,7 @@ case class IncomeSourceDetailsModel(mtdbsa: String,
                                     yearOfMigration: Option[String],
                                     businesses: List[BusinessDetailsModel],
                                     properties: List[PropertyDetailsModel]
-                                   ) extends IncomeSourceDetailsResponse {
+                                   ) extends IncomeSourceDetailsResponse with Logging {
 
   val hasPropertyIncome: Boolean = properties.nonEmpty
   val hasBusinessIncome: Boolean = businesses.nonEmpty

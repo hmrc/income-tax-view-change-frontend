@@ -132,5 +132,4 @@ class IncomeSourceDetailsModelSpec extends UnitSpec with Matchers {
       }
     }
   }
-
 }

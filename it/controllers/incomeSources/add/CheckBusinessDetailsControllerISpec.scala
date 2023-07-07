@@ -17,7 +17,8 @@
 package controllers.incomeSources.add
 
 import config.featureswitch.IncomeSources
-import forms.utils.SessionKeys.{addBusinessAccountingMethod, addBusinessAccountingPeriodEndDate, addBusinessAddressLine1, addBusinessPostalCode, businessName, businessStartDate, businessTrade}
+import forms.utils.SessionKeys.{addBusinessAccountingMethod, addBusinessAccountingPeriodEndDate,
+  addBusinessAddressLine1, addBusinessPostalCode, businessName, businessStartDate, businessTrade}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.addIncomeSource.AddIncomeSourceResponse
