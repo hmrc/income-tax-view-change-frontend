@@ -47,6 +47,8 @@ import javax.inject.Singleton
 import scala.concurrent.Future
 import forms.utils.SessionKeys
 import forms.BusinessStartDateCheckForm
+import forms.incomeSources.add.AddBusinessReportingMethodForm
+import play.api.libs.json.Json
 import testConstants.BaseIntegrationTestConstants.testSelfEmploymentId
 
 import java.time.Month.{APRIL, JANUARY}
@@ -328,6 +330,11 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
     def postCheckCeaseForeignPropertyDetails(cessationDate: String, session: Map[String, String]): WSResponse =
       post(s"/income-sources/cease/foreign-property-check-details/$cessationDate", session)(Map.empty)
+
+    def postAddBusinessReportingMethod(form: AddBusinessReportingMethodForm)(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      val formData = form.toFormMap.map { case (k, v) => (k -> Seq(v.getOrElse(""))) }
+      post(s"/income-sources/add/business-reporting-method?id=$testSelfEmploymentId", additionalCookies = additionalCookies)(formData)
+    }
   }
 
   def unauthorisedTest(uri: String): Unit = {

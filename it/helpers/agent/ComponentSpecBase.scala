@@ -42,8 +42,9 @@ import java.time.LocalDate
 import javax.inject.Singleton
 import scala.concurrent.Future
 import forms.BusinessStartDateCheckForm
-
-import java.time.Month.{APRIL, JANUARY}
+import forms.incomeSources.add.AddBusinessReportingMethodForm
+import testConstants.BaseIntegrationTestConstants.testSelfEmploymentId
+import java.time.Month.APRIL
 
 @Singleton
 class TestDateService extends DateServiceInterface {
@@ -89,7 +90,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
   implicit val dateService: DateService = new DateService() {
     override def getCurrentDate(isTimeMachineEnabled: Boolean = false): LocalDate = LocalDate.of(2023, 4, 5)
 
-    override def getCurrentTaxYearEnd(isTimeMachineEnabled: Boolean = false): Int = 2022
+    override def getCurrentTaxYearEnd(isTimeMachineEnabled: Boolean = false): Int = 2023
   }
 
   def config: Map[String, String] = Map(
@@ -308,6 +309,11 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
     def postCheckCeaseUKPropertyDetails(additionalCookies: Map[String, String]): WSResponse =
       post("/income-sources/cease/uk-property-check-details", additionalCookies)(Map.empty)
+
+    def postAddBusinessReportingMethod(form: AddBusinessReportingMethodForm)(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      val formData = form.toFormMap.map { case (k, v) => (k -> Seq(v.getOrElse(""))) }
+      post(s"/income-sources/add/business-reporting-method?id=$testSelfEmploymentId", additionalCookies = additionalCookies)(formData)
+    }
   }
 
   def unauthorisedTest(uri: String): Unit = {
