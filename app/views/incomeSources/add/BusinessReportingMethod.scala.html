@@ -107,7 +107,7 @@
     @formWithCSRF(action = postAction, Symbol("id") -> "add-business-reporting-method-form") {
        @if(businessReportingViewModel.taxYear1.isDefined){
             @renderChooseReportingMethodOptions(businessReportingViewModel.taxYear1, "tax_year_1", businessReportingViewModel.latencyIndicator1)
-            <input type="radio" name="new_tax_year_1_reporting_method" value="none" style="govuk-visually-hidden" checked>
+            <input type="radio" name="new_tax_year_1_reporting_method" value="none" class="govuk-visually-hidden" checked>
         }
 
        @if(businessReportingViewModel.taxYear2.isDefined){
