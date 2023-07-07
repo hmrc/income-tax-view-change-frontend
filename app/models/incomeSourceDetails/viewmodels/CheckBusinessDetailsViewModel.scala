@@ -17,6 +17,7 @@
 package models.incomeSourceDetails.viewmodels
 
 import java.time.LocalDate
+
 case class CheckBusinessDetailsViewModel(businessName: Option[String],
                                          businessStartDate: Option[LocalDate],
                                          accountingPeriodEndDate: LocalDate,
@@ -29,3 +30,5 @@ case class CheckBusinessDetailsViewModel(businessName: Option[String],
                                          businessCountryCode: Option[String],
                                          businessAccountingMethod: Option[String],
                                          cashOrAccrualsFlag: String)
+
+case class CheckForeignPropertyViewModel(tradingStartDate: LocalDate, cashOrAccrualsFlag: String)
