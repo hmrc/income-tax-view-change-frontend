@@ -26,9 +26,9 @@ import uk.gov.hmrc.http.HeaderCarrier
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class ObligationsRetrievalService @Inject()(val itvcErrorHandler: ItvcErrorHandler,nextUpdatesService: NextUpdatesService)(implicit hc: HeaderCarrier){
+class ObligationsRetrievalService @Inject()(val itvcErrorHandler: ItvcErrorHandler,nextUpdatesService: NextUpdatesService){
 
-  def getObligationDates(id: String)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Seq[DatesModel]] = {
+  def getObligationDates(id: String)(implicit user: MtdItUser[_], ec: ExecutionContext, hc: HeaderCarrier): Future[Seq[DatesModel]] = {
     nextUpdatesService.getNextUpdates() map {
       case NextUpdatesErrorModel(code, message) => Logger("application").error(
         s"[BusinessAddedObligationsController][handleRequest] - Error: $message, code $code")
