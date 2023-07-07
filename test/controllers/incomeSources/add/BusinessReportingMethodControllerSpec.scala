@@ -248,7 +248,7 @@ class BusinessReportingMethodControllerSpec extends TestSupport with MockAuthent
         document.getElementById("new_tax_year_1_reporting_method_tax_year").`val`() shouldBe "2022"
         document.getElementsByClass("govuk-body").get(4).text shouldBe TestBusinessReportingMethodController.taxYear2_TY1
         document.getElementById("new_tax_year_2_reporting_method_tax_year").`val`() shouldBe "2023"
-        document.getElementsByClass("govuk-form-group").size() shouldBe 6
+        document.getElementsByClass("govuk-form-group").size() shouldBe 7
       }
     }
 
@@ -493,7 +493,7 @@ class BusinessReportingMethodControllerSpec extends TestSupport with MockAuthent
         document.getElementById("new_tax_year_1_reporting_method_tax_year").`val`() shouldBe "2022"
         document.getElementsByClass("govuk-body").get(4).text shouldBe TestBusinessReportingMethodController.taxYear2_TY1
         document.getElementById("new_tax_year_2_reporting_method_tax_year").`val`() shouldBe "2023"
-        document.getElementsByClass("govuk-form-group").size() shouldBe 6
+        document.getElementsByClass("govuk-form-group").size() shouldBe 7
       }
     }
 
