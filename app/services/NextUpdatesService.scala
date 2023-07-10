@@ -115,22 +115,20 @@ class NextUpdatesService @Inject()(val incomeTaxViewChangeConnector: IncomeTaxVi
       case NextUpdateModel(start, end, due, _, _, periodKey) =>
         Seq(DatesModel(start, end, due, periodKey, isFinalDec = false))
       case model: ObligationsModel =>
-        Seq(model.allCrystallised map {
+        Seq(model.obligations.flatMap(x => x.currentCrystDeadlines) map {
           source =>
-            DatesModel(source.obligation.start, source.obligation.end, source.obligation.due, source.obligation.periodKey, isFinalDec = true)
+            DatesModel(source.start, source.end, source.due, source.periodKey, isFinalDec = true)
         },
           model.obligations.filter(x => x.identification == id).flatMap(obligation => obligation.obligations.map(x => DatesModel(x.start, x.end, x.due, x.periodKey, isFinalDec = false)))
         ).flatten
     }
   }
 
-  def getObligationsViewModel(id: String, addedBusiness: String, startDate: String, showPreviousTaxYears: Boolean)
-                             (implicit user: MtdItUser[_], ec: ExecutionContext, hc: HeaderCarrier): Future[Either[Throwable, ObligationsViewModel]] = {
+  def getObligationsViewModel(id: String, showPreviousTaxYears: Boolean)
+                             (implicit user: MtdItUser[_], ec: ExecutionContext, hc: HeaderCarrier): Future[ObligationsViewModel] = {
     val processingRes = for {
       datesList<- getObligationDates(id)
     } yield {
-      // we should really avoid using Try and process data gracefull, so this is just a short cut at this stage
-      Try {
         val (finalDeclarationDates, otherObligationDates) = datesList.partition(x => x.isFinalDec)
 
         val quarterlyDates: Seq[DatesModel] = otherObligationDates.filter(x => x.periodKey.contains("00")).sortBy(_.inboundCorrespondenceFrom)
@@ -138,11 +136,10 @@ class NextUpdatesService @Inject()(val incomeTaxViewChangeConnector: IncomeTaxVi
         val quarterlyDatesYearOne = quarterlyDatesByYear._1.sortBy(_.periodKey)
         val quarterlyDatesYearTwo = quarterlyDatesByYear._2.sortBy(_.periodKey)
 
-        val eopsDates: Seq[DatesModel] = otherObligationDates.filter(x => x.periodKey == "EOPS")
+        val eopsDates: Seq[DatesModel] = otherObligationDates.filter(x => x.periodKey.contains("EOPS"))
 
 
         ObligationsViewModel(quarterlyDatesYearOne, quarterlyDatesYearTwo, eopsDates, finalDeclarationDates, dateService.getCurrentTaxYearEnd(), showPrevTaxYears = showPreviousTaxYears)
-      }.toEither
     }
     processingRes
   }

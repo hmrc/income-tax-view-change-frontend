@@ -24,7 +24,7 @@ import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
 import mocks.services.{MockClientDetailsService, MockNextUpdatesService}
-import models.incomeSourceDetails.viewmodels.DatesModel
+import models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
 import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, ObligationsModel}
 import org.mockito.ArgumentMatchers.any
@@ -32,7 +32,7 @@ import org.mockito.Mockito.{mock, when}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
-import services.{DateService, ObligationsRetrievalService}
+import services.{DateService}
 import testConstants.BaseTestConstants
 import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
 import testConstants.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
@@ -58,7 +58,6 @@ class BusinessAddedObligationsControllerSpec extends TestSupport
   }
 
   val mockDateService: DateService = mock(classOf[DateService])
-  val mockObligationsService: ObligationsRetrievalService = mock(classOf[ObligationsRetrievalService])
 
   object TestObligationsController extends BusinessAddedObligationsController(
     MockAuthenticationPredicate,
@@ -70,7 +69,7 @@ class BusinessAddedObligationsControllerSpec extends TestSupport
     itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
     incomeSourceDetailsService = mockIncomeSourceDetailsService,
     obligationsView = app.injector.instanceOf[BusinessAddedObligations],
-    mockObligationsService
+    mockNextUpdatesService
   )(
     appConfig = app.injector.instanceOf[FrontendAppConfig],
     itvcErrorHandlerAgent = app.injector.instanceOf[AgentItvcErrorHandler],
@@ -158,7 +157,14 @@ class BusinessAddedObligationsControllerSpec extends TestSupport
         )
         when(mockDateService.getCurrentTaxYearStart(any())).thenReturn(LocalDate.of(2023,1,1))
         setupMockGetIncomeSourceDetails()(sources)
-        when(mockObligationsService.getObligationDates(any())(any(), any(), any())).thenReturn(Future(dates))
+        when(mockNextUpdatesService.getObligationsViewModel(any(), any())(any(), any(), any())).thenReturn(Future(ObligationsViewModel(
+          dates,
+          dates,
+          dates,
+          dates,
+          2023,
+          showPrevTaxYears = true
+        )))
         when(mockNextUpdatesService.getNextUpdates(any())(any(), any())).
           thenReturn(Future(testObligationsModel))
 
@@ -187,7 +193,14 @@ class BusinessAddedObligationsControllerSpec extends TestSupport
         )
         when(mockDateService.getCurrentTaxYearStart(any())).thenReturn(LocalDate.of(2023,12,1))
         setupMockGetIncomeSourceDetails()(sources)
-        when(mockObligationsService.getObligationDates(any())(any(), any(), any())).thenReturn(Future(dates))
+        when(mockNextUpdatesService.getObligationsViewModel(any(), any())(any(), any(), any())).thenReturn(Future(ObligationsViewModel(
+          dates,
+          dates,
+          dates,
+          dates,
+          2023,
+          showPrevTaxYears = true
+        )))
         when(mockNextUpdatesService.getNextUpdates(any())(any(), any())).
           thenReturn(Future(testObligationsModel))
 
@@ -220,7 +233,7 @@ class BusinessAddedObligationsControllerSpec extends TestSupport
         disableAllSwitches()
         enable(IncomeSources)
 
-        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
         val sources: IncomeSourceDetailsModel = IncomeSourceDetailsModel("", Some("2022"), List(BusinessDetailsModel(
           Some("123"),
@@ -234,7 +247,7 @@ class BusinessAddedObligationsControllerSpec extends TestSupport
         when(mockNextUpdatesService.getNextUpdates(any())(any(), any())).
           thenReturn(Future(testObligationsModel))
 
-        val result: Future[Result] = TestObligationsController.show("")(fakeRequestWithActiveSession)
+        val result: Future[Result] = TestObligationsController.showAgent("")(fakeRequestConfirmedClient())
         status(result) shouldBe INTERNAL_SERVER_ERROR
       }
       "throw an error when no start date for supplied business" in {

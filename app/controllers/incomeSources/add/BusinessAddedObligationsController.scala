@@ -27,7 +27,7 @@ import models.nextUpdates.{NextUpdateModel, NextUpdatesErrorModel, ObligationsMo
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.{DateServiceInterface, IncomeSourceDetailsService, NextUpdatesService, ObligationsRetrievalService}
+import services.{DateServiceInterface, IncomeSourceDetailsService, NextUpdatesService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import views.html.incomeSources.add.BusinessAddedObligations
 
@@ -86,25 +86,17 @@ class BusinessAddedObligationsController @Inject()(authenticate: AuthenticationP
       businessDetailsParams match {
         case Some((_, businessName, startDate)) =>
           val showPreviousTaxYears: Boolean = startDate.isBefore(dateService.getCurrentTaxYearStart())
-          for {
-            maybeViewModel <- nextUpdatesService.getObligationsViewModel(id, businessName, startDate.toString, showPreviousTaxYears)
-          } yield maybeViewModel match {
-            case Right(viewModel) =>
-              if (isAgent) Ok(obligationsView(businessName, viewModel,
-                controllers.incomeSources.add.routes.BusinessAddedObligationsController.agentSubmit(), agentBackUrl, isAgent = true))
-              else Ok(obligationsView(businessName, viewModel,
-                controllers.incomeSources.add.routes.BusinessAddedObligationsController.submit(), backUrl, isAgent = false))
-            case Left(ex) =>
-              Logger("application").error(
-                s"[BusinessAddedObligationsController][handleRequest] - unable to construct viewModel $ex ")
-              // TODO: call correct handler individual/agent
-              itvcErrorHandler.showInternalServerError()
+          nextUpdatesService.getObligationsViewModel(id, showPreviousTaxYears) map { viewModel =>
+            if (isAgent) Ok(obligationsView(businessName, viewModel,
+              controllers.incomeSources.add.routes.BusinessAddedObligationsController.agentSubmit(), agentBackUrl, isAgent = true))
+            else Ok(obligationsView(businessName, viewModel,
+              controllers.incomeSources.add.routes.BusinessAddedObligationsController.submit(), backUrl, isAgent = false))
           }
         case _ =>
           Logger("application").error(
             s"[BusinessAddedObligationsController][handleRequest] - unable to find incomeSource by id: $id ")
-          // TODO: call correct handler individual/agent
-          Future(itvcErrorHandler.showInternalServerError())
+          if (isAgent) Future(itvcErrorHandlerAgent.showInternalServerError())
+          else Future(itvcErrorHandler.showInternalServerError())
       }
 
     }
