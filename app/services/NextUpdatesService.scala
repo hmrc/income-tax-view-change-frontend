@@ -17,15 +17,18 @@
 package services
 
 import java.time.LocalDate
-
 import auth.MtdItUser
 import connectors._
+
 import javax.inject.{Inject, Singleton}
 import models.nextUpdates._
 import play.api.Logger
 import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 
 import scala.concurrent.{ExecutionContext, Future}
+import models.incomeSourceDetails.viewmodels._
+
+import scala.util.Try
 
 @Singleton
 class NextUpdatesService @Inject()(val incomeTaxViewChangeConnector: IncomeTaxViewChangeConnector)(implicit ec: ExecutionContext, val dateService: DateServiceInterface) {
@@ -99,5 +102,48 @@ class NextUpdatesService @Inject()(val incomeTaxViewChangeConnector: IncomeTaxVi
         case (_, error: NextUpdatesErrorModel) => error
       }
     }
+  }
+
+
+  def getObligationDates(id: String)
+                        (implicit user: MtdItUser[_], ec: ExecutionContext, hc: HeaderCarrier): Future[Seq[DatesModel]] = {
+    getNextUpdates() map {
+      case NextUpdatesErrorModel(code, message) =>
+        Logger("application").error(
+          s"[BusinessAddedObligationsController][handleRequest] - Error: $message, code $code")
+        Seq.empty
+      case NextUpdateModel(start, end, due, _, _, periodKey) =>
+        Seq(DatesModel(start, end, due, periodKey, isFinalDec = false))
+      case model: ObligationsModel =>
+        Seq(model.allCrystallised map {
+          source =>
+            DatesModel(source.obligation.start, source.obligation.end, source.obligation.due, source.obligation.periodKey, isFinalDec = true)
+        },
+          model.obligations.filter(x => x.identification == id).flatMap(obligation => obligation.obligations.map(x => DatesModel(x.start, x.end, x.due, x.periodKey, isFinalDec = false)))
+        ).flatten
+    }
+  }
+
+  def getObligationsViewModel(id: String, addedBusiness: String, startDate: String, showPreviousTaxYears: Boolean)
+                             (implicit user: MtdItUser[_], ec: ExecutionContext, hc: HeaderCarrier): Future[Either[Throwable, ObligationsViewModel]] = {
+    val processingRes = for {
+      datesList<- getObligationDates(id)
+    } yield {
+      // we should really avoid using Try and process data gracefull, so this is just a short cut at this stage
+      Try {
+        val (finalDeclarationDates, otherObligationDates) = datesList.partition(x => x.isFinalDec)
+
+        val quarterlyDates: Seq[DatesModel] = otherObligationDates.filter(x => x.periodKey.contains("00")).sortBy(_.inboundCorrespondenceFrom)
+        val quarterlyDatesByYear: (Seq[DatesModel], Seq[DatesModel]) = quarterlyDates.partition(x => dateService.getAccountingPeriodEndDate(x.inboundCorrespondenceTo) == dateService.getAccountingPeriodEndDate(quarterlyDates.head.inboundCorrespondenceTo))
+        val quarterlyDatesYearOne = quarterlyDatesByYear._1.sortBy(_.periodKey)
+        val quarterlyDatesYearTwo = quarterlyDatesByYear._2.sortBy(_.periodKey)
+
+        val eopsDates: Seq[DatesModel] = otherObligationDates.filter(x => x.periodKey == "EOPS")
+
+
+        ObligationsViewModel(quarterlyDatesYearOne, quarterlyDatesYearTwo, eopsDates, finalDeclarationDates, dateService.getCurrentTaxYearEnd(), showPrevTaxYears = showPreviousTaxYears)
+      }.toEither
+    }
+    processingRes
   }
 }

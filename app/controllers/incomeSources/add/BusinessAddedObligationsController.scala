@@ -46,7 +46,7 @@ class BusinessAddedObligationsController @Inject()(authenticate: AuthenticationP
                                                    val itvcErrorHandler: ItvcErrorHandler,
                                                    incomeSourceDetailsService: IncomeSourceDetailsService,
                                                    val obligationsView: BusinessAddedObligations,
-                                                   obligationsService: ObligationsRetrievalService)
+                                                   nextUpdatesService: NextUpdatesService)
                                                   (implicit val appConfig: FrontendAppConfig,
                                                    implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                                    implicit override val mcc: MessagesControllerComponents,
@@ -85,28 +85,25 @@ class BusinessAddedObligationsController @Inject()(authenticate: AuthenticationP
       } yield (addedBusiness, businessName, startDate)
       businessDetailsParams match {
         case Some((_, businessName, startDate)) =>
-          obligationsService.getObligationDates(id) map {
-            datesList: Seq[DatesModel] =>
-
-              val (finalDeclarationDates, otherObligationDates) = datesList.partition(x => x.isFinalDec)
-
-              val quarterlyDates: Seq[DatesModel] = otherObligationDates.filter(x => x.periodKey.contains("00")).sortBy(_.inboundCorrespondenceFrom)
-              val quarterlyDatesByYear: (Seq[DatesModel], Seq[DatesModel]) = quarterlyDates.partition(x => dateService.getAccountingPeriodEndDate(x.inboundCorrespondenceTo) == dateService.getAccountingPeriodEndDate(quarterlyDates.head.inboundCorrespondenceTo))
-              val quarterlyDatesYearOne = quarterlyDatesByYear._1.sortBy(_.periodKey)
-              val quarterlyDatesYearTwo = quarterlyDatesByYear._2.sortBy(_.periodKey)
-
-              val eopsDates: Seq[DatesModel] = otherObligationDates.filter(x => x.periodKey == "EOPS")
-
-              val showPreviousTaxYears: Boolean = startDate.isBefore(dateService.getCurrentTaxYearStart())
-
-              if (isAgent) Ok(obligationsView(businessName, ObligationsViewModel(quarterlyDatesYearOne, quarterlyDatesYearTwo, eopsDates, finalDeclarationDates, dateService.getCurrentTaxYearEnd(), showPrevTaxYears = showPreviousTaxYears),
+          val showPreviousTaxYears: Boolean = startDate.isBefore(dateService.getCurrentTaxYearStart())
+          for {
+            maybeViewModel <- nextUpdatesService.getObligationsViewModel(id, businessName, startDate.toString, showPreviousTaxYears)
+          } yield maybeViewModel match {
+            case  Right(viewModel) =>
+              if (isAgent) Ok(obligationsView(businessName, viewModel,
                 controllers.incomeSources.add.routes.BusinessAddedObligationsController.agentSubmit(), agentBackUrl, isAgent = true))
-              else Ok(obligationsView(businessName, ObligationsViewModel(quarterlyDatesYearOne, quarterlyDatesYearTwo, eopsDates, finalDeclarationDates, dateService.getCurrentTaxYearEnd(), showPrevTaxYears = showPreviousTaxYears),
+              else Ok(obligationsView(businessName, viewModel,
                 controllers.incomeSources.add.routes.BusinessAddedObligationsController.submit(), backUrl, isAgent = false))
+            case Left(ex) =>
+              Logger("application").error(
+                s"[BusinessAddedObligationsController][handleRequest] - unable to construct viewModel $ex ")
+              // TODO: call correct handler individual/agent
+              itvcErrorHandler.showInternalServerError()
           }
         case _ =>
           Logger("application").error(
             s"[BusinessAddedObligationsController][handleRequest] - unable to find incomeSource by id: $id ")
+          // TODO: call correct handler individual/agent
           Future(itvcErrorHandler.showInternalServerError())
       }
 
