@@ -38,9 +38,10 @@ class ObligationsRetrievalService @Inject()(val itvcErrorHandler: ItvcErrorHandl
         Seq(DatesModel(start, end, due, periodKey, isFinalDec = false))
       case model: ObligationsModel =>
         Seq(model.allCrystallised map {
-          source => DatesModel(source.obligation.start, source.obligation.end, source.obligation.due, source.obligation.periodKey, isFinalDec = true)
-        },
-          model.obligations.filter(x => x.identification == id).flatMap(obligation => obligation.obligations.map(x => DatesModel(x.start, x.end, x.due, x.periodKey, isFinalDec = false)))
+            source =>
+              DatesModel(source.obligation.start, source.obligation.end, source.obligation.due, source.obligation.periodKey, isFinalDec = true)
+            },
+            model.obligations.filter(x => x.identification == id).flatMap(obligation => obligation.obligations.map(x => DatesModel(x.start, x.end, x.due, x.periodKey, isFinalDec = false)))
         ).flatten
     }
   }
