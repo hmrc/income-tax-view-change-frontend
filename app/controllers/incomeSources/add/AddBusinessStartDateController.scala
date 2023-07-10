@@ -54,8 +54,8 @@ class AddBusinessStartDateController @Inject()(authenticate: AuthenticationPredi
                                                val ec: ExecutionContext)
   extends ClientConfirmedController with I18nSupport with FeatureSwitching {
 
-  lazy val backUrl: String = routes.AddBusinessNameController.show().url
-  lazy val backUrlAgent: String = routes.AddBusinessNameController.showAgent().url
+  lazy val backUrl: String = controllers.incomeSources.add.routes.AddBusinessNameController.show().url
+  lazy val backUrlAgent: String = controllers.incomeSources.add.routes.AddBusinessNameController.showAgent().url
 
   lazy val postAction: Call = controllers.incomeSources.add.routes.AddBusinessStartDateController.submit()
   lazy val postActionAgent: Call = controllers.incomeSources.add.routes.AddBusinessStartDateController.submitAgent()

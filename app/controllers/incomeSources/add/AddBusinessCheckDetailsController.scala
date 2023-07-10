@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.incomeSources.add
 
 import auth.FrontendAuthorisedFunctions
 import config.featureswitch.FeatureSwitching

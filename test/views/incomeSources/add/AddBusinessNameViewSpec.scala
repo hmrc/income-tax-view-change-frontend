@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package views
+package views.incomeSources.add
 
 import forms.BusinessNameForm
 import forms.BusinessNameForm.invalidName
@@ -22,15 +22,15 @@ import forms.utils.SessionKeys
 import org.jsoup.nodes.Element
 import play.twirl.api.Html
 import testUtils.ViewSpec
-import views.html.AddBusiness
+import views.html.incomeSources.add.AddBusinessName
 
-class AddBusinessViewSpec extends ViewSpec {
+class AddBusinessNameViewSpec extends ViewSpec {
 
   object AddBusinessNameMessages {
-    val heading: String =  messages("add-business-name.heading")
+    val heading: String = messages("add-business-name.heading")
     val paragraph1: String = messages("add-business-name.p1")
     val paragraph2: String = messages("add-business-name.p2")
-    val errorBusinessNameEmpty: String =  messages("add-business-name.form.error.required")
+    val errorBusinessNameEmpty: String = messages("add-business-name.form.error.required")
     val errorBusinessNameLength: String = messages("add-business-name.form.error.maxLength")
     val errorBusinessNameChar: String = messages("add-business-name.form.error.invalidNameFormat")
     val continue: String = messages("base.continue")
@@ -40,15 +40,16 @@ class AddBusinessViewSpec extends ViewSpec {
   lazy val backUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceController.show.url
   lazy val backUrlAgent: String = controllers.incomeSources.add.routes.AddIncomeSourceController.showAgent.url
 
-  val enterBusinessName: AddBusiness = app.injector.instanceOf[AddBusiness]
+  val addBusinessName: AddBusinessName = app.injector.instanceOf[AddBusinessName]
 
-  val pageWithoutError: Html = enterBusinessName(BusinessNameForm.form, false, testCall, backUrl)
+  val pageWithoutError: Html = addBusinessName(BusinessNameForm.form, false, testCall, backUrl)
 
   def pageWithError(error: String = BusinessNameForm.businessNameEmptyError): Html = {
     val modifiedForm = BusinessNameForm.form.withError(SessionKeys.businessName, error)
       .fill(BusinessNameForm(invalidName))
-    enterBusinessName(modifiedForm, false, testCall, backUrl)
+    addBusinessName(modifiedForm, false, testCall, backUrl)
   }
+
   "The add business name page" when {
     "there is no error on the page" should {
       "have the correct heading" in new Setup(pageWithoutError) {
@@ -71,7 +72,8 @@ class AddBusinessViewSpec extends ViewSpec {
         input.attr("id") shouldBe SessionKeys.businessName
         input.attr("name") shouldBe SessionKeys.businessName
         input.attr("type") shouldBe "text"
-        input.attr("aria-describedby") shouldBe s"${SessionKeys.businessName}-hint"}
+        input.attr("aria-describedby") shouldBe s"${SessionKeys.businessName}-hint"
+      }
       "have a continue button" in new Setup(pageWithoutError) {
         val button: Element = layoutContent.selectHead("form").selectHead("button")
         button.text shouldBe AddBusinessNameMessages.continue

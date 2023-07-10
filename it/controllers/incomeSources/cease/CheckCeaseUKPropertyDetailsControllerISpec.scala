@@ -57,11 +57,11 @@ class CheckCeaseUKPropertyDetailsControllerISpec extends ComponentSpecBase {
         enable(IncomeSources)
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
-        IncomeTaxViewChangeStub.stubUpdateCessationDate(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
+        IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
 
         val res = IncomeTaxViewChangeFrontend.postCheckCeaseUKPropertyDetails(sessionCeaseUKPropertyEndDate)
         verifyIncomeSourceDetailsCall(testMtditid)
-        IncomeTaxViewChangeStub.verifyUpdateCessationDate(Some(Json.toJson(request).toString()))
+        IncomeTaxViewChangeStub.verifyUpdateIncomeSource(Some(Json.toJson(request).toString()))
 
         res should have(
           httpStatus(SEE_OTHER),

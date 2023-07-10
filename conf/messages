@@ -1176,7 +1176,6 @@ add-business-address.lookup.heading         = What is your business address?
 add-business-address.confirm.heading        = Confirm business address
 add-business-address.edit.heading           = Enter your business address
 
-
 #Following empty fields are not in Use
 #These fields are kept to match with Messages.cy
 shortMonth.1 =
@@ -1362,3 +1361,15 @@ check-business-details.business-description             = Business description
 check-business-details.business-address                 = Business address
 check-business-details.confirm-button                   = Confirm and Continue
 check-business-details.accounting-method                = Accounting method for sole trader income
+
+
+incomeSources.add.businessReportingMethod.heading                   =   Choose a reporting method
+incomeSources.add.businessReportingMethod.description1              =   Your business qualifies for a grace period available up until April {0} where you can report annually.
+incomeSources.add.businessReportingMethod.description2              =   This involves a single update no later than 31 January.
+incomeSources.add.businessReportingMethod.description3              =   This grace period is not affected by either:
+incomeSources.add.businessReportingMethod.description4              =   <li>your level of income from other sources</li><li>the turnover you expect your new business to make</li><li>how you report with any existing income sources</li>
+incomeSources.add.businessReportingMethod.chooseReport              =   Choose how you want to report
+incomeSources.add.businessReportingMethod.taxYear                   =   Tax year {0}-{1}
+incomeSources.add.businessReportingMethod.chooseAnnualReport        =   Choose annual reporting
+incomeSources.add.businessReportingMethod.chooseQuarterlyReport     =   Choose quarterly reporting
+incomeSources.add.businessReportingMethod.error                     =   Select if you want to report annually or quarterly for tax year {0} to {1}

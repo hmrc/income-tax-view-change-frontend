@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.incomeSources.add
 
 import config.featureswitch.IncomeSources
 import helpers.ComponentSpecBase
