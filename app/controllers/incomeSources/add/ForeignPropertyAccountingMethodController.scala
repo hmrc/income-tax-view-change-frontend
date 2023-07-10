@@ -77,8 +77,8 @@ class ForeignPropertyAccountingMethodController @Inject()(val authenticate: Auth
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
 
     val incomeSourcesEnabled: Boolean = isEnabled(IncomeSources)
-    val backUrl: String = if (isAgent) controllers.incomeSources.add.routes.CheckBusinessDetailsController.showAgent().url else
-      controllers.incomeSources.add.routes.CheckBusinessDetailsController.show().url
+    val backUrl: String = if (isAgent) controllers.incomeSources.add.routes.ForeignPropertyStartDateCheckController.showAgent().url else
+      controllers.incomeSources.add.routes.ForeignPropertyStartDateCheckController.show().url
     val postAction: Call = if (isAgent) controllers.incomeSources.add.routes.ForeignPropertyAccountingMethodController.submitAgent() else
       controllers.incomeSources.add.routes.ForeignPropertyAccountingMethodController.submit()
 
@@ -109,7 +109,7 @@ class ForeignPropertyAccountingMethodController @Inject()(val authenticate: Auth
         hasErrors => Future.successful(BadRequest(view(
           form = hasErrors,
           postAction = controllers.incomeSources.add.routes.ForeignPropertyAccountingMethodController.submit(),
-          backUrl = controllers.incomeSources.add.routes.CheckBusinessDetailsController.show().url,
+          backUrl = controllers.incomeSources.add.routes.ForeignPropertyAccountingMethodController.show().url,
           isAgent = false
         ))),
         validatedInput => {
@@ -133,7 +133,7 @@ class ForeignPropertyAccountingMethodController @Inject()(val authenticate: Auth
               hasErrors => Future.successful(BadRequest(view(
                 form = hasErrors,
                 postAction = controllers.incomeSources.add.routes.ForeignPropertyAccountingMethodController.submitAgent(),
-                backUrl = controllers.incomeSources.add.routes.CheckBusinessDetailsController.showAgent().url,
+                backUrl = controllers.incomeSources.add.routes.ForeignPropertyAccountingMethodController.showAgent().url,
                 isAgent = true
               ))),
               validatedInput => {
