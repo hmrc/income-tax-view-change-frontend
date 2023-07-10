@@ -52,7 +52,7 @@ class BusinessAddedObligationsController @Inject()(authenticate: AuthenticationP
                                                    implicit override val mcc: MessagesControllerComponents,
                                                    val ec: ExecutionContext,
                                                    dateService: DateServiceInterface)
-  extends ClientConfirmedController with I18nSupport with FeatureSwitching{
+  extends ClientConfirmedController with I18nSupport with FeatureSwitching {
 
 
   def show(id: String): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
@@ -78,44 +78,38 @@ class BusinessAddedObligationsController @Inject()(authenticate: AuthenticationP
     if (isDisabled(IncomeSources)) {
       Future.successful(Redirect(controllers.routes.HomeController.show()))
     } else {
+      val businessDetailsParams = for {
+        addedBusiness <- user.incomeSources.businesses.find(x => x.incomeSourceId.contains(id))
+        businessName <- addedBusiness.tradingName
+        startDate <- addedBusiness.tradingStartDate
+      } yield (addedBusiness, businessName, startDate)
+      businessDetailsParams match {
+        case Some((_, businessName, startDate)) =>
+          obligationsService.getObligationDates(id) map {
+            datesList: Seq[DatesModel] =>
 
-      val business: Option[BusinessDetailsModel] = user.incomeSources.businesses.find(x => x.incomeSourceId.contains(id))
-      business match {
-        case None => Logger("application").error(
-          s"[BusinessAddedObligationsController][handleRequest] - No business with provided id")
+              val (finalDeclarationDates, otherObligationDates) = datesList.partition(x => x.isFinalDec)
+
+              val quarterlyDates: Seq[DatesModel] = otherObligationDates.filter(x => x.periodKey.contains("00")).sortBy(_.inboundCorrespondenceFrom)
+              val quarterlyDatesByYear: (Seq[DatesModel], Seq[DatesModel]) = quarterlyDates.partition(x => dateService.getAccountingPeriodEndDate(x.inboundCorrespondenceTo) == dateService.getAccountingPeriodEndDate(quarterlyDates.head.inboundCorrespondenceTo))
+              val quarterlyDatesYearOne = quarterlyDatesByYear._1.sortBy(_.periodKey)
+              val quarterlyDatesYearTwo = quarterlyDatesByYear._2.sortBy(_.periodKey)
+
+              val eopsDates: Seq[DatesModel] = otherObligationDates.filter(x => x.periodKey == "EOPS")
+
+              val showPreviousTaxYears: Boolean = startDate.isBefore(dateService.getCurrentTaxYearStart())
+
+              if (isAgent) Ok(obligationsView(businessName, ObligationsViewModel(quarterlyDatesYearOne, quarterlyDatesYearTwo, eopsDates, finalDeclarationDates, dateService.getCurrentTaxYearEnd(), showPrevTaxYears = showPreviousTaxYears),
+                controllers.incomeSources.add.routes.BusinessAddedObligationsController.agentSubmit(), agentBackUrl, isAgent = true))
+              else Ok(obligationsView(businessName, ObligationsViewModel(quarterlyDatesYearOne, quarterlyDatesYearTwo, eopsDates, finalDeclarationDates, dateService.getCurrentTaxYearEnd(), showPrevTaxYears = showPreviousTaxYears),
+                controllers.incomeSources.add.routes.BusinessAddedObligationsController.submit(), backUrl, isAgent = false))
+          }
+        case _ =>
+          Logger("application").error(
+            s"[BusinessAddedObligationsController][handleRequest] - unable to find incomeSource by id: $id ")
           Future(itvcErrorHandler.showInternalServerError())
-        case Some(addedBusiness) =>
-          try {
-            val businessName: String = addedBusiness.tradingName.get
-            val startDate = addedBusiness.tradingStartDate.get
-
-            obligationsService.getObligationDates(id) map {
-              datesList: Seq[DatesModel] =>
-
-                val (finalDeclarationDates, otherObligationDates) = datesList.partition(x => x.isFinalDec)
-
-                val quarterlyDates: Seq[DatesModel] = otherObligationDates.filter(x => x.periodKey.contains("00")).sortBy(_.inboundCorrespondenceFrom)
-                val quarterlyDatesByYear: (Seq[DatesModel], Seq[DatesModel]) = quarterlyDates.partition(x => dateService.getAccountingPeriodEndDate(x.inboundCorrespondenceTo) == dateService.getAccountingPeriodEndDate(quarterlyDates.head.inboundCorrespondenceTo))
-                val quarterlyDatesYearOne = quarterlyDatesByYear._1.sortBy(_.periodKey)
-                val quarterlyDatesYearTwo = quarterlyDatesByYear._2.sortBy(_.periodKey)
-
-                val eopsDates: Seq[DatesModel] = otherObligationDates.filter(x => x.periodKey == "EOPS")
-
-                val showPreviousTaxYears: Boolean = startDate.isBefore(dateService.getCurrentTaxYearStart())
-
-                if (isAgent) Ok(obligationsView(businessName, ObligationsViewModel(quarterlyDatesYearOne, quarterlyDatesYearTwo, eopsDates, finalDeclarationDates, dateService.getCurrentTaxYearEnd(), showPrevTaxYears = showPreviousTaxYears),
-                  controllers.incomeSources.add.routes.BusinessAddedObligationsController.agentSubmit(), agentBackUrl, isAgent = true))
-                else Ok(obligationsView(businessName, ObligationsViewModel(quarterlyDatesYearOne, quarterlyDatesYearTwo, eopsDates, finalDeclarationDates, dateService.getCurrentTaxYearEnd(), showPrevTaxYears = showPreviousTaxYears),
-                  controllers.incomeSources.add.routes.BusinessAddedObligationsController.submit(), backUrl, isAgent = false))
-            }
-          }
-          catch{
-            case _: Exception =>
-              Logger("application").error(
-                s"[BusinessAddedObligationsController][handleRequest] - tradingName or tradingStartDate missing, name: ${addedBusiness.tradingName}, date: ${addedBusiness.tradingStartDate} ")
-              Future(itvcErrorHandler.showInternalServerError())
-          }
       }
+
     }
   }
 
