@@ -1354,25 +1354,6 @@ check-business-details.confirm-button                   = Cadarnhau ac yn eich b
 check-business-details.accounting-method                = Dull cyfrifyddu ar gyfer incwm unig fasnachwr
 
 
-# business added page
-business-added.h1                                       = Ychwanegwyd
-business-added.h2                                       = i’ch cyfrif
-business-added.text                                     = Yr hyn y mae’n rhaid i chi ei wneud
-business-added.to                                       = i
-
-business-added.quarterly-heading                        = Anfon diweddariadau chwarterol
-business-added.quarterly-p1                             = Mae’n rhaid i chi anfon diweddariadau chwarterol o’ch incwm a’ch treuliau, gan ddefnyddio meddalwedd sy’n cydweddu, erbyn y dyddiadau cau canlynol:
-business-added.eops-heading                             = Anfon datganiadau diwedd cyfnod
-business-added.eops-p1                                  = Mae’n rhaid i chi gyflwyno datganiadau diwedd cyfnod gan ddefnyddio’ch meddalwedd, a hynny erbyn y dyddiad cau.
-business-added.final-declaration-heading                = Cyflwyno’ch datganiadau terfynol a thalu’ch treth
-business-added.final-declaration-text                   = Bydd yn rhaid i chi gyflwyno’ch datganiadau terfynol a thalu’r dreth sydd arnoch erbyn y dyddiad cau.
-business-added.table.heading-1                          = Blwyddyn dreth
-business-added.table.heading-2                          = Dyddiad cau
-business-added.income-sources-button                    = Eich ffynonellau incwm
-business-added.previous-tax-years-heading               = Blynyddoedd treth blaenorol
-business-added.previous-tax-years-t1                    = Mae’n rhaid i chi wneud yn siŵr eich bod wedi anfon yr holl Incwm a threuliau, a datganiadau terfynol ar gyfer blynyddoedd treth cyn
-
-
 incomeSources.add.businessReportingMethod.heading                   =   Dewis dull o gyflwyno adroddiad
 incomeSources.add.businessReportingMethod.description1              =   Mae’ch busnes yn gymwys i gael cyfnod gras hyd at Ebrill {0}, lle y gallwch gyflwyno adroddiadau’n flynyddol.
 incomeSources.add.businessReportingMethod.description2              =   Bydd yn rhaid gwneud un diweddariad, a hynny erbyn 31 Ionawr fan bellaf.
@@ -1384,3 +1365,14 @@ incomeSources.add.businessReportingMethod.chooseAnnualReport        =   Dewis cy
 incomeSources.add.businessReportingMethod.chooseQuarterlyReport     =   Dewis cyflwyno adroddiadau’n chwarterol
 incomeSources.add.businessReportingMethod.error                     =   Dewiswch a hoffech gyflwyno adroddiad yn flynyddol neu’n chwarterol ar gyfer blwyddyn dreth {0} i {1}
 
+# add uk property business accounting method
+incomeSources.add.uk-property-business-accounting-method.heading                 = Pa ddull cyfrifyddu yr ydych yn ei ddefnyddio ar gyfer eich busnes eiddo yn y DU?
+incomeSources.add.uk-property-business-accounting-method.example                 = Dangoswch enghraifft i mi
+incomeSources.add.uk-property-business-accounting-method.radio-1-title           = Cyfrifyddu ar sail arian parod
+incomeSources.add.uk-property-business-accounting-method.radio-1-hint            = Rydych yn cofnodi naill ai ar y dyddiad yr ydych yn cael taliad gan eich tenantiaid i mewn i’ch cyfrif banc, neu ar y dyddiad yr ydych yn talu bil, er enghraifft ar gyfer atgyweirio a chynnal a chadow. Mae’r rhan fwyaf o fusnesau bach yn defnyddio’r dull hwn.
+incomeSources.add.uk-property-business-accounting-method.radio-2-title           = Cyfrifyddu traddodiadol
+incomeSources.add.uk-property-business-accounting-method.radio-2-hint            = Rydych yn cofnodi ar y dyddiad yr ydych yn anfon anfoneb et eich tenantiad, neu’n gofyn am daliad ganddynt, hyd yn oed os nad ydych yn cael nac yn talu unrhyw arian. Rydych yn cofnodi ar y dyddiad yr ydych yn cael anfoneb ar gyfer atgyweirio neu gynnal a chadow. Mae hyn hefyd yn cael ei alw’n gyfrifyddu ‘ar sail croniadau’ neu’n gyfrifyddu ‘safonol’.
+incomeSources.add.uk-property-business-accounting-method.drop-down-text          = Gwnaethoch greu anfoneb i rywun ym mis Mawrth 2017, ond ni chawsoch yr arian tan fis Mai 2017. Bydd yn rhaid i chi ddefnyddio dull cyfrifyddu penodol wrth roi gwybod i CThEF bod yr incwm hwn wedi dod i'ch llaw, a hynny’n dibynnu ar y dyddiadau canlynol:
+incomeSources.add.uk-property-business-accounting-method.drop-down-text-bp-1     = os daeth yr incwm i law ym mis Mai 2017, dylech ddefnyddio ‘cyfrifyddu ar sail arian parod’
+incomeSources.add.uk-property-business-accounting-method.drop-down-text-bp-2     = os daeth yr incwm i law ym mis Mawrth 2017, dylech ddefnyddio ‘cyfrifyddu traddodiadol’
+incomeSources.add.uk-property-business-accounting-method.no-selection            = Nodwch y dull cyfrifyddu yr ydych yn ei ddefnyddio ar gyfer eich busnes eiddo yn y DU
