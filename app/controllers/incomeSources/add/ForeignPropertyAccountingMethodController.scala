@@ -109,7 +109,7 @@ class ForeignPropertyAccountingMethodController @Inject()(val authenticate: Auth
         hasErrors => Future.successful(BadRequest(view(
           form = hasErrors,
           postAction = controllers.incomeSources.add.routes.ForeignPropertyAccountingMethodController.submit(),
-          backUrl = controllers.incomeSources.add.routes.ForeignPropertyAccountingMethodController.show().url,
+          backUrl = controllers.incomeSources.add.routes.ForeignPropertyStartDateCheckController.show().url,
           isAgent = false
         ))),
         validatedInput => {
@@ -133,7 +133,7 @@ class ForeignPropertyAccountingMethodController @Inject()(val authenticate: Auth
               hasErrors => Future.successful(BadRequest(view(
                 form = hasErrors,
                 postAction = controllers.incomeSources.add.routes.ForeignPropertyAccountingMethodController.submitAgent(),
-                backUrl = controllers.incomeSources.add.routes.ForeignPropertyAccountingMethodController.showAgent().url,
+                backUrl = controllers.incomeSources.add.routes.ForeignPropertyStartDateCheckController.showAgent().url,
                 isAgent = true
               ))),
               validatedInput => {
