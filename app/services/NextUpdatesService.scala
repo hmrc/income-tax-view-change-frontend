@@ -138,7 +138,6 @@ class NextUpdatesService @Inject()(val incomeTaxViewChangeConnector: IncomeTaxVi
 
         val eopsDates: Seq[DatesModel] = otherObligationDates.filter(x => x.periodKey.contains("EOPS"))
 
-
         ObligationsViewModel(quarterlyDatesYearOne, quarterlyDatesYearTwo, eopsDates, finalDeclarationDates, dateService.getCurrentTaxYearEnd(), showPrevTaxYears = showPreviousTaxYears)
     }
     processingRes
