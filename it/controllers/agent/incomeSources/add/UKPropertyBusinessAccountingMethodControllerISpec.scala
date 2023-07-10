@@ -66,53 +66,50 @@ class UKPropertyBusinessAccountingMethodControllerISpec extends ComponentSpecBas
           redirectURI(checkUKPropertyDetailsShowUrl)
         )
       }
-      s"redirect to $checkUKPropertyDetailsShowUrl" when {
-        "user selects 'traditional accounting', 'accruals' should be added to session storage" in {
-          val formData: Map[String, Seq[String]] = Map("incomeSources.add.uk-property-business-accounting-method" -> Seq("traditional"))
-          stubAuthorisedAgentUser(authorised = true)
-          enable(IncomeSources)
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
-          val result = IncomeTaxViewChangeFrontend.post("/income-sources/add/uk-property-accounting-method", clientDetailsWithConfirmation)(formData)
+      "user selects 'traditional accounting', 'accruals' should be added to session storage" in {
+        val formData: Map[String, Seq[String]] = Map("incomeSources.add.uk-property-business-accounting-method" -> Seq("traditional"))
+        stubAuthorisedAgentUser(authorised = true)
+        enable(IncomeSources)
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
-          result should have(
-            httpStatus(SEE_OTHER),
-            redirectURI(checkUKPropertyDetailsShowUrl),
-          )
-        }
+        val result = IncomeTaxViewChangeFrontend.post("/income-sources/add/uk-property-accounting-method", clientDetailsWithConfirmation)(formData)
+
+        result should have(
+          httpStatus(SEE_OTHER),
+          redirectURI(checkUKPropertyDetailsShowUrl),
+        )
       }
 
-      s"redirect to $checkUKPropertyDetailsShowUrl" when {
-        "UK property already exists" in {
-          val formData: Map[String, Seq[String]] = Map("incomeSources.add.uk-property-business-accounting-method" -> Seq("traditional"))
-          stubAuthorisedAgentUser(authorised = true)
-          enable(IncomeSources)
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
+      "UK property already exists" in {
+        val formData: Map[String, Seq[String]] = Map("incomeSources.add.uk-property-business-accounting-method" -> Seq("traditional"))
+        stubAuthorisedAgentUser(authorised = true)
+        enable(IncomeSources)
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
 
-          val result = IncomeTaxViewChangeFrontend.post("/income-sources/add/uk-property-accounting-method", clientDetailsWithConfirmation)(formData)
+        val result = IncomeTaxViewChangeFrontend.post("/income-sources/add/uk-property-accounting-method", clientDetailsWithConfirmation)(formData)
 
-          result should have(
-            httpStatus(SEE_OTHER),
-            redirectURI(checkUKPropertyDetailsShowUrl),
-          )
-        }
+        result should have(
+          httpStatus(SEE_OTHER),
+          redirectURI(checkUKPropertyDetailsShowUrl),
+        )
       }
+    }
 
-      s"return BAD_REQUEST $checkUKPropertyDetailsShowUrl" when {
-        "user does not select anything" in {
+    s"return BAD_REQUEST $checkUKPropertyDetailsShowUrl" when {
+      "user does not select anything" in {
 
-          stubAuthorisedAgentUser(authorised = true)
-          val formData: Map[String, Seq[String]] = Map("incomeSources.add.uk-property-business-accounting-method" -> Seq(""))
-          enable(IncomeSources)
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
+        stubAuthorisedAgentUser(authorised = true)
+        val formData: Map[String, Seq[String]] = Map("incomeSources.add.uk-property-business-accounting-method" -> Seq(""))
+        enable(IncomeSources)
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
-          val result = IncomeTaxViewChangeFrontend.post("/income-sources/add/uk-property-accounting-method", clientDetailsWithConfirmation)(formData)
+        val result = IncomeTaxViewChangeFrontend.post("/income-sources/add/uk-property-accounting-method", clientDetailsWithConfirmation)(formData)
 
-          result should have(
-            httpStatus(BAD_REQUEST),
-            elementTextByID("error-summary-heading")(messagesAPI("base.error_summary.heading"))
-          )
-        }
+        result should have(
+          httpStatus(BAD_REQUEST),
+          elementTextByID("error-summary-heading")(messagesAPI("base.error_summary.heading"))
+        )
       }
     }
   }

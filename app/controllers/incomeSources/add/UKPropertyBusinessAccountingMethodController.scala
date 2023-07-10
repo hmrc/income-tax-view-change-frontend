@@ -120,50 +120,54 @@ class UKPropertyBusinessAccountingMethodController @Inject()(val authenticate: A
         }
   }
 
-  def submit: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
-    andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
-    implicit user =>
+  private def handleSubmitRequest(isAgent: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
+    val incomeSourcesEnabled: Boolean = isEnabled(IncomeSources)
+    val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
+    val submitUrl: Call = if (isAgent) controllers.incomeSources.add.routes.UKPropertyBusinessAccountingMethodController.submitAgent() else
+      controllers.incomeSources.add.routes.UKPropertyBusinessAccountingMethodController.submit()
+    val backUrl: String = if (isAgent) controllers.incomeSources.add.routes.CheckUKPropertyStartDateController.showAgent().url else
+      controllers.incomeSources.add.routes.CheckUKPropertyStartDateController.show().url
+    val redirectUrl: Call = if (isAgent) controllers.incomeSources.add.routes.CheckUKPropertyDetailsController.showAgent() else
+      controllers.incomeSources.add.routes.CheckUKPropertyDetailsController.show()
+
+    if (incomeSourcesEnabled) {
       UKPropertyBusinessAccountingMethodForm.form.bindFromRequest().fold(
         hasErrors => Future.successful(BadRequest(view(
           form = hasErrors,
-          postAction = controllers.incomeSources.add.routes.UKPropertyBusinessAccountingMethodController.submit(),
-          backUrl = controllers.incomeSources.add.routes.CheckUKPropertyStartDateController.show().url,
-          isAgent = false
+          postAction = submitUrl,
+          backUrl = backUrl,
+          isAgent = isAgent
         ))),
         validatedInput => {
           if (validatedInput.equals(Some("cash"))) {
-            Future.successful(Redirect(controllers.incomeSources.add.routes.CheckUKPropertyDetailsController.show())
+            Future.successful(Redirect(redirectUrl)
               .addingToSession(addUkPropertyAccountingMethod -> "cash"))
           } else {
-            Future.successful(Redirect(controllers.incomeSources.add.routes.CheckUKPropertyDetailsController.show())
+            Future.successful(Redirect(redirectUrl)
               .addingToSession(addUkPropertyAccountingMethod -> "accruals"))
           }
         }
       )
+    } else {
+      Future.successful(Ok(customNotFoundErrorView()))
+    } recover {
+      case ex: Exception =>
+        Logger("application").error(s"Error getting UKPropertyBusinessAccountingMethodController page: ${ex.getMessage}")
+        errorHandler.showInternalServerError()
+    }
   }
 
-  def submitAgent: Action[AnyContent] = Authenticated.async {
+  def submit(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+    andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
+    implicit user =>
+      handleSubmitRequest(isAgent = false)
+  }
+
+  def submitAgent(): Action[AnyContent] = Authenticated.async {
     implicit request =>
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
-          implicit mtdItUser =>
-            UKPropertyBusinessAccountingMethodForm.form.bindFromRequest().fold(
-              hasErrors => Future.successful(BadRequest(view(
-                form = hasErrors,
-                postAction = controllers.incomeSources.add.routes.UKPropertyBusinessAccountingMethodController.submitAgent(),
-                backUrl = controllers.incomeSources.add.routes.CheckUKPropertyStartDateController.showAgent().url,
-                isAgent = true
-              ))),
-              validatedInput => {
-                if (validatedInput.equals(Some("cash"))) {
-                  Future.successful(Redirect(controllers.incomeSources.add.routes.CheckUKPropertyDetailsController.showAgent())
-                    .addingToSession(addUkPropertyAccountingMethod -> "cash"))
-                } else {
-                  Future.successful(Redirect(controllers.incomeSources.add.routes.CheckUKPropertyDetailsController.showAgent())
-                    .addingToSession(addUkPropertyAccountingMethod -> "accruals"))
-                }
-              }
-            )
+          implicit mtdItUser => handleSubmitRequest(isAgent = true)
         }
   }
 

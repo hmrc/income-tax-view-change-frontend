@@ -64,49 +64,46 @@ class UKPropertyBusinessAccountingMethodControllerISpec extends ComponentSpecBas
           redirectURI(checkUKPropertyDetailsShowUrl)
         )
       }
-      s"redirect to $checkUKPropertyDetailsShowUrl" when {
-        "user selects 'traditional accounting', 'accruals' should be added to session storage" in {
-          val formData: Map[String, Seq[String]] = Map("incomeSources.add.uk-property-business-accounting-method" -> Seq("traditional"))
-          enable(IncomeSources)
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
-          val result = IncomeTaxViewChangeFrontend.post("/income-sources/add/uk-property-accounting-method")(formData)
+      "user selects 'traditional accounting', 'accruals' should be added to session storage" in {
+        val formData: Map[String, Seq[String]] = Map("incomeSources.add.uk-property-business-accounting-method" -> Seq("traditional"))
+        enable(IncomeSources)
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
-          result should have(
-            httpStatus(SEE_OTHER),
-            redirectURI(checkUKPropertyDetailsShowUrl),
-          )
-        }
+        val result = IncomeTaxViewChangeFrontend.post("/income-sources/add/uk-property-accounting-method")(formData)
+
+        result should have(
+          httpStatus(SEE_OTHER),
+          redirectURI(checkUKPropertyDetailsShowUrl),
+        )
       }
 
-      s"redirect to $checkUKPropertyDetailsShowUrl" when {
-        "UK property already exists" in {
-          val formData: Map[String, Seq[String]] = Map("incomeSources.add.uk-property-business-accounting-method" -> Seq("traditional"))
-          enable(IncomeSources)
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
+      "UK property already exists" in {
+        val formData: Map[String, Seq[String]] = Map("incomeSources.add.uk-property-business-accounting-method" -> Seq("traditional"))
+        enable(IncomeSources)
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
 
-          val result = IncomeTaxViewChangeFrontend.post("/income-sources/add/uk-property-accounting-method")(formData)
+        val result = IncomeTaxViewChangeFrontend.post("/income-sources/add/uk-property-accounting-method")(formData)
 
-          result should have(
-            httpStatus(SEE_OTHER),
-            redirectURI(checkUKPropertyDetailsShowUrl),
-          )
-        }
+        result should have(
+          httpStatus(SEE_OTHER),
+          redirectURI(checkUKPropertyDetailsShowUrl),
+        )
       }
+    }
 
-      s"return BAD_REQUEST $checkUKPropertyDetailsShowUrl" when {
-        "user does not select anything" in {
-          val formData: Map[String, Seq[String]] = Map("incomeSources.add.uk-property-business-accounting-method" -> Seq(""))
-          enable(IncomeSources)
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
+    s"return BAD_REQUEST $checkUKPropertyDetailsShowUrl" when {
+      "user does not select anything" in {
+        val formData: Map[String, Seq[String]] = Map("incomeSources.add.uk-property-business-accounting-method" -> Seq(""))
+        enable(IncomeSources)
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
-          val result = IncomeTaxViewChangeFrontend.post("/income-sources/add/uk-property-accounting-method")(formData)
+        val result = IncomeTaxViewChangeFrontend.post("/income-sources/add/uk-property-accounting-method")(formData)
 
-          result should have(
-            httpStatus(BAD_REQUEST),
-            elementTextByID("error-summary-heading")(messagesAPI("base.error_summary.heading"))
-          )
-        }
+        result should have(
+          httpStatus(BAD_REQUEST),
+          elementTextByID("error-summary-heading")(messagesAPI("base.error_summary.heading"))
+        )
       }
     }
   }

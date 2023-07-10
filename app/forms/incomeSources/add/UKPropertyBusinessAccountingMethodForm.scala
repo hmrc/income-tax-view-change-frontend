@@ -37,8 +37,4 @@ object UKPropertyBusinessAccountingMethodForm {
   }
 }
 
-case class UKPropertyBusinessAccountingMethodForm(response: Option[String]) {
-  def toFormMap: Map[String, Seq[String]] = Map(
-    UKPropertyBusinessAccountingMethodForm.response -> Seq(response.getOrElse(""))
-  )
-}
+case class UKPropertyBusinessAccountingMethodForm(response: Option[String])
