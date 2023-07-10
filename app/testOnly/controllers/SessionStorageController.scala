@@ -18,6 +18,7 @@ package testOnly.controllers
 
 import config.FrontendAppConfig
 import play.api.i18n.I18nSupport
+import play.api.mvc.Results.Redirect
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
@@ -38,6 +39,24 @@ class SessionStorageController @Inject()
       .filter( kv => !filterOutKeys.contains(kv._1))
       .mkString("\n")
     Future.successful(Ok(sessionDataStr))
+  }
+
+  def upsert(keyOpt: Option[String], valueOpt: Option[String]): Action[AnyContent] = Action.async {
+    implicit request =>
+      val res = for {
+        key <- keyOpt
+        value <- valueOpt
+      } yield (key, value)
+      res match {
+        case Some((k, v)) =>
+          Future.successful(
+            Redirect("/report-quarterly/income-and-expenses/view/test-only/showSession")
+              .withSession(request.session + (k -> v))
+          )
+        case None =>
+          Future.successful(Ok(s"Unable to add data to session storage"))
+    }
+
   }
 
 }
