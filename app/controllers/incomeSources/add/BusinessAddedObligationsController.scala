@@ -89,7 +89,7 @@ class BusinessAddedObligationsController @Inject()(authenticate: AuthenticationP
           for {
             maybeViewModel <- nextUpdatesService.getObligationsViewModel(id, businessName, startDate.toString, showPreviousTaxYears)
           } yield maybeViewModel match {
-            case  Right(viewModel) =>
+            case Right(viewModel) =>
               if (isAgent) Ok(obligationsView(businessName, viewModel,
                 controllers.incomeSources.add.routes.BusinessAddedObligationsController.agentSubmit(), agentBackUrl, isAgent = true))
               else Ok(obligationsView(businessName, viewModel,
