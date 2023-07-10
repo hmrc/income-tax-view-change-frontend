@@ -20,7 +20,7 @@ import auth.MtdItUser
 import connectors.IncomeTaxViewChangeConnector
 import exceptions.MissingSessionKey
 import forms.utils.SessionKeys.ceaseUKPropertyEndDate
-import models.updateIncomeSource.{UpdateIncomeSourceResponse, UpdateIncomeSourceResponseModel}
+import models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponse, UpdateIncomeSourceResponseModel}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import java.time.LocalDate
@@ -31,7 +31,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class UpdateIncomeSourceService @Inject()(connector: IncomeTaxViewChangeConnector) {
 
   //TODO: We should use updateCessationDatev2 method
-  def updateCessationDate(implicit request: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Exception,UpdateIncomeSourceResponse]] = {
+  def updateCessationDate(implicit request: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Exception, UpdateIncomeSourceResponse]] = {
     val nino: String = request.nino
     val incomeSourceId: Option[String] = request.incomeSources.properties.filter(_.isUkProperty).flatMap(_.incomeSourceId).headOption
     request.session.get(ceaseUKPropertyEndDate) match {
@@ -44,6 +44,7 @@ class UpdateIncomeSourceService @Inject()(connector: IncomeTaxViewChangeConnecto
     }
 
   }
+
   def updateCessationDatev2(nino: String, incomeSourceId: String, cessationDate: String)
                            (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[UpdateIncomeSourceError, UpdateIncomeSourceSuccess]] = {
     connector.updateCessationDate(
@@ -55,7 +56,14 @@ class UpdateIncomeSourceService @Inject()(connector: IncomeTaxViewChangeConnecto
       case _ => Left(UpdateIncomeSourceError("Failed to update cessationDate"))
     }
   }
+
+  def updateTaxYearSpecific(nino: String, incomeSourceId: String, taxYearSpecific: List[TaxYearSpecific])
+                           (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[UpdateIncomeSourceResponse] = {
+    connector.updateIncomeSourceTaxYearSpecific(nino = nino, incomeSourceId = incomeSourceId, taxYearSpecific)
+  }
+
 }
 
 case class UpdateIncomeSourceError(reason: String)
+
 case class UpdateIncomeSourceSuccess(incomeSourceId: String)

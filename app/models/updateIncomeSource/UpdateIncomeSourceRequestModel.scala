@@ -37,7 +37,7 @@ object Cessation {
 case class UpdateIncomeSourceRequestModel(nino: String,
                                           incomeSourceId: String,
                                           cessation: Option[Cessation] = None,
-                                          taxYearSpecific: Option[TaxYearSpecific] = None) extends UpdateIncomeSourceRequest
+                                          taxYearSpecific: Option[List[TaxYearSpecific]] = None) extends UpdateIncomeSourceRequest
 
 object UpdateIncomeSourceRequestModel {
   implicit val format: Format[UpdateIncomeSourceRequestModel] = Json.format

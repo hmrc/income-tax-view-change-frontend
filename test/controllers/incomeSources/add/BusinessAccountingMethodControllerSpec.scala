@@ -29,7 +29,7 @@ import org.mockito.Mockito.{mock, when}
 import play.api.http.Status
 import play.api.http.Status.OK
 import play.api.mvc.{MessagesControllerComponents, Result}
-import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
+import play.api.test.Helpers.{contentAsString, contentType, defaultAwaitTimeout, redirectLocation, status}
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testIndividualAuthSuccessWithSaUtrResponse}
 import testUtils.TestSupport
 import uk.gov.hmrc.http.{HttpClient, HttpResponse}
@@ -86,21 +86,18 @@ class BusinessAccountingMethodControllerSpec extends TestSupport with MockAuthen
         document.select("legend").text shouldBe TestBusinessAccountingMethodController.heading
       }
     }
-    "return 200 OK" when {
+    "return 303 SEE_OTHER" when {
       "navigating to the page with FS Enabled and one self-employment businesses, with the cashOrAccruals field set to the string accruals" in {
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
         enable(IncomeSources)
         mockBusinessIncomeSourceWithAccruals()
 
         val result: Future[Result] = TestBusinessAccountingMethodController.show()(fakeRequestWithActiveSession)
-        val document: Document = Jsoup.parse(contentAsString(result))
 
-        status(result) shouldBe Status.OK
-        document.title shouldBe TestBusinessAccountingMethodController.title
-        document.select("legend").text shouldBe TestBusinessAccountingMethodController.heading
+        status(result) shouldBe Status.SEE_OTHER
+        result.futureValue.session.get(addBusinessAccountingMethod) shouldBe Some("accruals")
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.CheckBusinessDetailsController.show().url)
       }
-    }
-    "return 303 SEE_OTHER" when {
       "navigating to the page with FS Enabled and one self-employment businesses, with the cashOrAccruals field set to the string cash" in {
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
         enable(IncomeSources)
@@ -112,7 +109,7 @@ class BusinessAccountingMethodControllerSpec extends TestSupport with MockAuthen
         result.futureValue.session.get(addBusinessAccountingMethod) shouldBe Some("cash")
         redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.CheckBusinessDetailsController.show().url)
       }
-      "navigating to the page with FS Enabled and two self employment businesses, one cash and one accruals" in {
+      "navigating to the page with FS Enabled and two SE businesses, one cash, one accruals (should be impossible, but in this case, we use head of list)" in {
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
         enable(IncomeSources)
         mockBusinessIncomeSourceWithCashAndAccruals()
@@ -124,6 +121,18 @@ class BusinessAccountingMethodControllerSpec extends TestSupport with MockAuthen
         redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.CheckBusinessDetailsController.show().url)
       }
     }
+    "return 500 INTERNAL_SERVER_ERROR" when {
+      "navigating to the page with FS Enabled and a user with a SE business missing its cashOrAccruals field" in {
+        setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
+        enable(IncomeSources)
+        mockBusinessIncomeSourceMissingCashOrAccrualsField()
+
+        val result: Future[Result] = TestBusinessAccountingMethodController.show()(fakeRequestWithActiveSession)
+
+        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+        contentType(result) shouldBe Some("text/html")
+      }
+    }
     "return 303 SEE_OTHER and redirect to custom not found error page" when {
       "navigating to the page with FS Disabled" in {
         disable(IncomeSources)
@@ -131,6 +140,7 @@ class BusinessAccountingMethodControllerSpec extends TestSupport with MockAuthen
 
         val result: Future[Result] = TestBusinessAccountingMethodController.show()(fakeRequestWithActiveSession)
         val expectedContent: String = TestBusinessAccountingMethodController.customNotFoundErrorView().toString()
+
         status(result) shouldBe Status.OK
         contentAsString(result) shouldBe expectedContent
       }
@@ -146,7 +156,7 @@ class BusinessAccountingMethodControllerSpec extends TestSupport with MockAuthen
       "form is completed successfully with cash radio button selected" in {
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
         enable(IncomeSources)
-        mockBusinessIncomeSourceWithCashAndAccruals()
+        mockNoIncomeSources()
 
         when(mockHttpClient.POSTForm[HttpResponse](any(), any(), any())(any(), any(), any()))
           .thenReturn(Future.successful(HttpResponse(OK, "valid")))
@@ -163,7 +173,7 @@ class BusinessAccountingMethodControllerSpec extends TestSupport with MockAuthen
       "form is completed successfully with traditional radio button selected" in {
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
         enable(IncomeSources)
-        mockBusinessIncomeSourceWithCashAndAccruals()
+        mockNoIncomeSources()
 
         when(mockHttpClient.POSTForm[HttpResponse](any(), any(), any())(any(), any(), any()))
           .thenReturn(Future.successful(HttpResponse(OK, "valid")))
@@ -182,7 +192,7 @@ class BusinessAccountingMethodControllerSpec extends TestSupport with MockAuthen
       "the form is not completed successfully" in {
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
         enable(IncomeSources)
-        mockBusinessIncomeSourceWithCashAndAccruals()
+        mockNoIncomeSources()
 
         when(mockHttpClient.POSTForm[HttpResponse](any(), any(), any())(any(), any(), any()))
           .thenReturn(Future.successful(HttpResponse(OK)))
@@ -191,8 +201,10 @@ class BusinessAccountingMethodControllerSpec extends TestSupport with MockAuthen
           TestBusinessAccountingMethodController.submit()(fakeRequestNoSession.withMethod("POST")
             .withFormUrlEncodedBody("incomeSources.add.business-accounting-method" -> ""))
         }
+        val document: Document = Jsoup.parse(contentAsString(result))
 
         status(result) shouldBe Status.BAD_REQUEST
+        document.title shouldBe TestBusinessAccountingMethodController.title
         result.futureValue.session.get(addBusinessAccountingMethod) shouldBe None
       }
     }
@@ -214,21 +226,18 @@ class BusinessAccountingMethodControllerSpec extends TestSupport with MockAuthen
         document.select("legend:nth-child(1)").text shouldBe TestBusinessAccountingMethodController.heading
       }
     }
-    "return 200 OK" when {
+    "return 303 SEE_OTHER" when {
       "navigating to the page with FS Enabled and client has one self-employment businesses, with the cashOrAccruals field set to the string accruals" in {
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         enable(IncomeSources)
         mockBusinessIncomeSourceWithAccruals()
 
         val result: Future[Result] = TestBusinessAccountingMethodController.showAgent()(fakeRequestConfirmedClient())
-        val document: Document = Jsoup.parse(contentAsString(result))
 
-        status(result) shouldBe Status.OK
-        document.title shouldBe TestBusinessAccountingMethodController.titleAgent
-        document.select("legend:nth-child(1)").text shouldBe TestBusinessAccountingMethodController.heading
+        status(result) shouldBe Status.SEE_OTHER
+        result.futureValue.session.get(addBusinessAccountingMethod) shouldBe Some("accruals")
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.CheckBusinessDetailsController.showAgent().url)
       }
-    }
-    "return 303 SEE_OTHER" when {
       "navigating to the page with FS Enabled and client has one self-employment businesses, with the cashOrAccruals field set to the string cash" in {
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         enable(IncomeSources)
@@ -240,7 +249,7 @@ class BusinessAccountingMethodControllerSpec extends TestSupport with MockAuthen
         result.futureValue.session.get(addBusinessAccountingMethod) shouldBe Some("cash")
         redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.CheckBusinessDetailsController.showAgent().url)
       }
-      "navigating to the page with FS Enabled and client has two self employment businesses, one cash and one accruals" in {
+      "navigating to the page with FS Enabled and two SE businesses, one cash, one accruals (should be impossible, but in this case, we use head of list)" in {
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         disableAllSwitches()
         enable(IncomeSources)
@@ -253,14 +262,27 @@ class BusinessAccountingMethodControllerSpec extends TestSupport with MockAuthen
         redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.CheckBusinessDetailsController.showAgent().url)
       }
     }
+    "return 500 INTERNAL_SERVER_ERROR" when {
+      "navigating to the page with FS Enabled and a user with a SE business missing its cashOrAccruals field" in {
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+        enable(IncomeSources)
+        mockBusinessIncomeSourceMissingCashOrAccrualsField()
+
+        val result: Future[Result] = TestBusinessAccountingMethodController.showAgent()(fakeRequestConfirmedClient())
+
+        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+        contentType(result) shouldBe Some("text/html")
+      }
+    }
     "return 303 SEE_OTHER and redirect to custom not found error page" when {
       "navigating to the page with FS Disabled" in {
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         disable(IncomeSources)
-        mockBusinessIncomeSourceWithCashAndAccruals()
+        mockBusinessIncomeSource()
 
         val result: Future[Result] = TestBusinessAccountingMethodController.showAgent()(fakeRequestConfirmedClient())
         val expectedContent: String = TestBusinessAccountingMethodController.customNotFoundErrorView().toString()
+
         status(result) shouldBe Status.OK
         contentAsString(result) shouldBe expectedContent
       }
@@ -276,7 +298,7 @@ class BusinessAccountingMethodControllerSpec extends TestSupport with MockAuthen
       "form is completed successfully with cash radio button selected" in {
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         enable(IncomeSources)
-        mockBusinessIncomeSourceWithCashAndAccruals()
+        mockNoIncomeSources()
 
         when(mockHttpClient.POSTForm[HttpResponse](any(), any(), any())(any(), any(), any()))
           .thenReturn(Future.successful(HttpResponse(OK, "valid")))
@@ -293,7 +315,7 @@ class BusinessAccountingMethodControllerSpec extends TestSupport with MockAuthen
       "form is completed successfully with traditional radio button selected" in {
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         enable(IncomeSources)
-        mockBusinessIncomeSourceWithCashAndAccruals()
+        mockNoIncomeSources()
 
         when(mockHttpClient.POSTForm[HttpResponse](any(), any(), any())(any(), any(), any()))
           .thenReturn(Future.successful(HttpResponse(OK, "valid")))
@@ -312,7 +334,7 @@ class BusinessAccountingMethodControllerSpec extends TestSupport with MockAuthen
       "the form is not completed successfully" in {
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         enable(IncomeSources)
-        mockBusinessIncomeSourceWithCashAndAccruals()
+        mockNoIncomeSources()
 
         when(mockHttpClient.POSTForm[HttpResponse](any(), any(), any())(any(), any(), any()))
           .thenReturn(Future.successful(HttpResponse(OK)))
@@ -321,8 +343,10 @@ class BusinessAccountingMethodControllerSpec extends TestSupport with MockAuthen
           TestBusinessAccountingMethodController.submitAgent()(fakeRequestConfirmedClient().withMethod("POST")
             .withFormUrlEncodedBody("incomeSources.add.business-accounting-method" -> ""))
         }
+        val document: Document = Jsoup.parse(contentAsString(result))
 
         status(result) shouldBe Status.BAD_REQUEST
+        document.title shouldBe TestBusinessAccountingMethodController.titleAgent
         result.futureValue.session.get(addBusinessAccountingMethod) shouldBe None
       }
     }
