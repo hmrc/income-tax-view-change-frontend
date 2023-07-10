@@ -112,7 +112,7 @@ class BusinessAddedObligationsController @Inject()(authenticate: AuthenticationP
           catch{
             case _: Exception =>
               Logger("application").error(
-                s"[BusinessAddedObligationsController][handleRequest] - No business name and/or tradingStartDate for business with provided id")
+                s"[BusinessAddedObligationsController][handleRequest] - tradingName or tradingStartDate missing, name: ${addedBusiness.tradingName}, date: ${addedBusiness.tradingStartDate} ")
               Future(itvcErrorHandler.showInternalServerError())
           }
       }

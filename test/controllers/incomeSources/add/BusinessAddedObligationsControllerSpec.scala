@@ -205,7 +205,9 @@ class BusinessAddedObligationsControllerSpec extends TestSupport
           Some("123"),
           None,
           None,
-          None, None, None
+          None,
+          Some(LocalDate.of(2022,1,1)),
+          None
         )), List.empty)
         setupMockGetIncomeSourceDetails()(sources)
         when(mockNextUpdatesService.getNextUpdates(any())(any(), any())).
@@ -224,7 +226,9 @@ class BusinessAddedObligationsControllerSpec extends TestSupport
           Some("123"),
           None,
           Some("Test name"),
-          None, None, None
+          None,
+          Some(LocalDate.of(2022,1,1)),
+          None
         )), List.empty)
         setupMockGetIncomeSourceDetails()(sources)
         when(mockNextUpdatesService.getNextUpdates(any())(any(), any())).
@@ -242,7 +246,7 @@ class BusinessAddedObligationsControllerSpec extends TestSupport
         val sources: IncomeSourceDetailsModel = IncomeSourceDetailsModel("", Some("2022"), List(BusinessDetailsModel(
           Some("123"),
           None,
-          None,
+          Some("test"),
           None, None, None
         )), List.empty)
         setupMockGetIncomeSourceDetails()(sources)
