@@ -39,6 +39,8 @@ object IncomeSourcesFormsSpec extends Properties("incomeSourcesForms.validation"
 
     override def getCurrentTaxYearEnd(isTimeMachineEnabled: Boolean): Int = currentDate.getYear
 
+    override def getCurrentTaxYearStart(isTimeMachineEnabled: Boolean): LocalDate = currentDate
+
     override def isBeforeLastDayOfTaxYear(isTimeMachineEnabled: Boolean): Boolean = false
 
     override def getAccountingPeriodEndDate(startDate: LocalDate): String = {

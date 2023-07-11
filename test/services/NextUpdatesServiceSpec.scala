@@ -16,15 +16,18 @@
 
 package services
 
-import config.featureswitch.{FeatureSwitching, TimeMachineAddYear}
+import config.featureswitch.FeatureSwitch.switches
+import config.featureswitch.{FeatureSwitching, IncomeSources, TimeMachineAddYear}
 
 import java.time.LocalDate
 import testConstants.BusinessDetailsTestConstants.{obligationsDataSuccessModel => _}
-import testConstants.IncomeSourceDetailsTestConstants.{businessAndPropertyAligned, noIncomeDetails, propertyIncomeOnly}
+import models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
 import testConstants.NextUpdatesTestConstants._
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND}
 import mocks.connectors.MockIncomeTaxViewChangeConnector
 import models.nextUpdates.{NextUpdateModel, NextUpdatesErrorModel, NextUpdatesModel, ObligationsModel}
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
 import testUtils.TestSupport
 import uk.gov.hmrc.http.InternalServerException
 
@@ -271,6 +274,123 @@ class NextUpdatesServiceSpec extends TestSupport with MockIncomeTaxViewChangeCon
           result shouldBe NextUpdatesErrorModel(INTERNAL_SERVER_ERROR, "not found")
         }
       }
+    }
+  }
+
+  def disableAllSwitches(): Unit = {
+    switches.foreach(switch => disable(switch))
+  }
+
+  "getObligationDates" should {
+    "return the correct set of dates given an ObligationsModel" in {
+      disableAllSwitches()
+      enable(IncomeSources)
+
+      val day = LocalDate.of(2023, 1, 1)
+      val nextModel: ObligationsModel = ObligationsModel(Seq(
+        NextUpdatesModel("123", List(
+          NextUpdateModel(day, day.plusDays(1), day.plusDays(2), "EOPS", None, "C")
+        ))
+      ))
+      when(mockIncomeTaxViewChangeConnector.getNextUpdates()(any(), any())).
+        thenReturn(Future(nextModel))
+
+      val result = TestNextUpdatesService.getObligationDates("123")
+      result.futureValue shouldBe Seq(DatesModel(day, day.plusDays(1), day.plusDays(2), "C", isFinalDec = false))
+    }
+    "return the correct set of dates given a NextUpdateModel" in {
+      disableAllSwitches()
+      enable(IncomeSources)
+
+      val day = LocalDate.of(2023, 1, 1)
+      val nextModel: NextUpdateModel = NextUpdateModel(day, day.plusDays(1), day.plusDays(2), "EOPS", None, "C")
+      when(mockIncomeTaxViewChangeConnector.getNextUpdates()(any(), any())).
+        thenReturn(Future(nextModel))
+
+      val result = TestNextUpdatesService.getObligationDates("123")
+      result.futureValue shouldBe (Seq(DatesModel(day, day.plusDays(1), day.plusDays(2), "C", isFinalDec = false)))
+    }
+    "show correct error when given a NextUpdatesErrorModel" in {
+      disableAllSwitches()
+      enable(IncomeSources)
+
+      val nextModel: NextUpdatesErrorModel = NextUpdatesErrorModel(1, "fail")
+      when(mockIncomeTaxViewChangeConnector.getNextUpdates()(any(), any())).
+        thenReturn(Future(nextModel))
+
+      val result = TestNextUpdatesService.getObligationDates("123")
+      result.futureValue shouldBe Seq.empty
+    }
+  }
+
+  "getObligationsViewModel" should {
+    "return a valid view model with EOPS and quarterly obligations and final declaration(s)" in {
+      disableAllSwitches()
+      enable(IncomeSources)
+
+      val day = LocalDate.of(2023, 1, 1)
+      val nextModel: ObligationsModel = ObligationsModel(Seq(
+        NextUpdatesModel("123", List(
+          NextUpdateModel(day, day.plusDays(1), day.plusDays(2), "Quarterly", None, "#001")
+        )),
+        NextUpdatesModel("123", List(
+          NextUpdateModel(day.minusYears(1), day.minusYears(1).plusDays(1), day.minusYears(1).plusDays(2), "Quarterly", None, "#001")
+        )),
+        NextUpdatesModel("123", List(
+          NextUpdateModel(day, day.plusDays(1), day.plusDays(2), "EOPS", None, "EOPS")
+        )),
+        NextUpdatesModel("123", List(
+          NextUpdateModel(day, day.plusDays(1), day.plusDays(2), "Crystallised", None, "C")
+        ))
+      ))
+      when(mockIncomeTaxViewChangeConnector.getNextUpdates()(any(), any())).
+        thenReturn(Future(nextModel))
+
+      val result = TestNextUpdatesService.getObligationsViewModel("123", showPreviousTaxYears = true)
+      result.futureValue shouldBe ObligationsViewModel(
+        Seq(DatesModel(day.minusYears(1), day.minusYears(1).plusDays(1), day.minusYears(1).plusDays(2), "#001", isFinalDec = false)),
+        Seq(DatesModel(day, day.plusDays(1), day.plusDays(2), "#001", isFinalDec = false)),
+        Seq(DatesModel(day, day.plusDays(1), day.plusDays(2), "EOPS", isFinalDec = false)),
+        Seq(DatesModel(day, day.plusDays(1), day.plusDays(2), "C", isFinalDec = true)),
+        dateService.getCurrentTaxYearEnd(),
+        showPrevTaxYears = true
+      )
+    }
+    "return a valid view model if no EOPS obligations" in {
+      disableAllSwitches()
+      enable(IncomeSources)
+
+      val day = LocalDate.of(2023, 1, 1)
+      val nextModel: NextUpdateModel = NextUpdateModel(day, day.plusDays(1), day.plusDays(2), "Quarterly", None, "#001")
+      when(mockIncomeTaxViewChangeConnector.getNextUpdates()(any(), any())).
+        thenReturn(Future(nextModel))
+
+      val result = TestNextUpdatesService.getObligationsViewModel("123", showPreviousTaxYears = true)
+      result.futureValue shouldBe ObligationsViewModel(
+        Seq(DatesModel(day, day.plusDays(1), day.plusDays(2), "#001", isFinalDec = false)),
+        Seq.empty, Seq.empty,
+        Seq.empty,
+        dateService.getCurrentTaxYearEnd(),
+        showPrevTaxYears = true
+      )
+    }
+    "return a valid view model if no quarterly obligations" in {
+      disableAllSwitches()
+      enable(IncomeSources)
+
+      val day = LocalDate.of(2023, 1, 1)
+      val nextModel: NextUpdateModel = NextUpdateModel(day, day.plusDays(1), day.plusDays(2), "EOPS", None, "EOPS")
+      when(mockIncomeTaxViewChangeConnector.getNextUpdates()(any(), any())).
+        thenReturn(Future(nextModel))
+
+      val result = TestNextUpdatesService.getObligationsViewModel("123", showPreviousTaxYears = true)
+      result.futureValue shouldBe ObligationsViewModel(
+        Seq.empty, Seq.empty,
+        Seq(DatesModel(day, day.plusDays(1), day.plusDays(2), "EOPS", isFinalDec = false)),
+        Seq.empty,
+        dateService.getCurrentTaxYearEnd(),
+        showPrevTaxYears = true
+      )
     }
   }
 }
