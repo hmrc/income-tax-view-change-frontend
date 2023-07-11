@@ -74,8 +74,8 @@ object IncomeSourcesUtils {
 
   def getPropertyDetailsFromSession(implicit user: MtdItUser[_]): Either[Throwable, PropertyDetails] = {
     val errors: Seq[String] = Seq(
-      user.session.data.get(businessStartDate).orElse(Option(MissingKey("MissingKey: addBusinessStartDate"))),
-      user.session.data.get(businessTrade).orElse(Option(MissingKey("MissingKey: addBusinessTrade"))),
+      user.session.data.get(addUkPropertyStartDate).orElse(Option(MissingKey(s"MissingKey: $addUkPropertyStartDate"))),
+      user.session.data.get(businessTrade).orElse(Option(MissingKey(s"MissingKey: $businessTrade"))),
     ).collect {
       case Some(MissingKey(msg)) => MissingKey(msg)
     }.map(e => e.msg)
