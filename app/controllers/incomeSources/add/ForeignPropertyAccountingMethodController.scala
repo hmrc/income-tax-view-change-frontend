@@ -55,4 +55,12 @@ class ForeignPropertyAccountingMethodController @Inject()(val authenticate: Auth
     Ok("")
   }
 
+  def changeForeignPropertyAccountingMethod(): Action[AnyContent] = Action {
+    Ok("Change Foreign Property Accounting Method WIP")
+  }
+
+  def changeForeignPropertyAccountingMethodAgent(): Action[AnyContent] = Action {
+    Ok("Agent change Foreign Property Accounting Method WIP")
+  }
+
 }

@@ -1360,3 +1360,6 @@ incomeSources.add.businessReportingMethod.taxYear                   =   Tax year
 incomeSources.add.businessReportingMethod.chooseAnnualReport        =   Choose annual reporting
 incomeSources.add.businessReportingMethod.chooseQuarterlyReport     =   Choose quarterly reporting
 incomeSources.add.businessReportingMethod.error                     =   Select if you want to report annually or quarterly for tax year {0} to {1}
+
+incomeSources.add.foreign-property-check-details.cash-basis-accounting          = Cash basis accounting
+incomeSources.add.foreign-property-check-details.traditional-accounting         = Traditional accounting

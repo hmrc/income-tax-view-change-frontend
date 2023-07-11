@@ -137,4 +137,12 @@ class ForeignPropertyStartDateController @Inject()(val authenticate: Authenticat
         }
   }
 
+  def changeForeignPropertyStartDate(): Action[AnyContent] = Action {
+    Ok("Change Foreign Property Start Date WIP")
+  }
+
+  def changeForeignPropertyStartDateAgent(): Action[AnyContent] = Action {
+    Ok("Agent change Foreign Property Start Date WIP")
+  }
+
 }

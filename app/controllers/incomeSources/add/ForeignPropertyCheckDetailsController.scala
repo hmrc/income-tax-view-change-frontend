@@ -30,7 +30,7 @@ import play.api.mvc._
 import services.{CreateBusinessDetailsService, IncomeSourceDetailsService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
-import views.html.incomeSources.add.CheckBusinessDetails
+import views.html.incomeSources.add.ForeignPropertyCheckDetails
 
 import java.net.URI
 import java.time.LocalDate
@@ -38,7 +38,7 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ForeignPropertyCheckDetailsController @Inject()(val checkForeignPropertyDetails: CheckForeignPropertyDetails,
+class ForeignPropertyCheckDetailsController @Inject()(val checkForeignPropertyDetails: ForeignPropertyCheckDetails,
                                                       val checkSessionTimeout: SessionTimeoutPredicate,
                                                       val authenticate: AuthenticationPredicate,
                                                       val authorisedFunctions: AuthorisedFunctions,
@@ -56,13 +56,13 @@ class ForeignPropertyCheckDetailsController @Inject()(val checkForeignPropertyDe
 
   lazy val businessAccountingMethodUrl: String = controllers.incomeSources.add.routes.ForeignPropertyAccountingMethodController.show().url
   lazy val agentBusinessAccountingMethodUrl: String = controllers.incomeSources.add.routes.ForeignPropertyAccountingMethodController.showAgent().url
-  lazy val backUrl: String = businessAccountingMethodUrl
+  lazy val backUrlIndividual: String = businessAccountingMethodUrl
   lazy val backUrlAgent: String = agentBusinessAccountingMethodUrl
 
   def handleRequest(sources: IncomeSourceDetailsModel, isAgent: Boolean)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
 
-    val backUrl: String = if (isAgent) backUrl else backUrlAgent
+    val backUrl: String = if (isAgent) backUrlIndividual else backUrlAgent
     val postAction: Call = if (isAgent) controllers.incomeSources.add.routes.ForeignPropertyCheckDetailsController.submitAgent() else
       controllers.incomeSources.add.routes.ForeignPropertyCheckDetailsController.submit()
 
@@ -72,7 +72,7 @@ class ForeignPropertyCheckDetailsController @Inject()(val checkForeignPropertyDe
       Future {
         getDetails(user) match {
           case Right(viewModel) =>
-            Ok(checkBusinessDetails(
+            Ok(checkForeignPropertyDetails(
               viewModel,
               postAction = postAction,
               isAgent,
@@ -81,11 +81,11 @@ class ForeignPropertyCheckDetailsController @Inject()(val checkForeignPropertyDe
           case Left(ex) =>
             if (isAgent) {
               Logger("application").error(
-                s"[Agent][CheckBusinessDetailsController][handleRequest] - Error: ${ex.getMessage}")
+                s"[Agent][ForeignPropertyCheckDetailsController][handleRequest] - Error: ${ex.getMessage}")
               itvcErrorHandlerAgent.showInternalServerError()
             } else {
               Logger("application").error(
-                s"[CheckBusinessDetailsController][handleRequest] - Error: ${ex.getMessage}")
+                s"[ForeignPropertyCheckDetailsController][handleRequest] - Error: ${ex.getMessage}")
               itvcErrorHandler.showInternalServerError()
             }
         }
