@@ -55,38 +55,38 @@ class BusinessAddedObligationsController @Inject()(authenticate: AuthenticationP
   extends ClientConfirmedController with I18nSupport with FeatureSwitching {
 
 
-  def show(id: String): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+  def show(incomeSourceId: String): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
-      handleRequest(isAgent = false, id)
+      handleRequest(isAgent = false, incomeSourceId)
   }
 
-  def showAgent(id: String): Action[AnyContent] =
+  def showAgent(incomeSourceId: String): Action[AnyContent] =
     Authenticated.async {
       implicit request =>
         implicit user =>
           getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
             implicit mtdItUser =>
-              handleRequest(isAgent = true, id)
+              handleRequest(isAgent = true, incomeSourceId)
           }
     }
 
-  def handleRequest(isAgent: Boolean, id: String)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
-    lazy val backUrl: String = controllers.incomeSources.add.routes.BusinessReportingMethodController.show(id).url
-    lazy val agentBackUrl = controllers.incomeSources.add.routes.BusinessReportingMethodController.showAgent(id).url
+  def handleRequest(isAgent: Boolean, incomeSourceId: String)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
+    lazy val backUrl: String = controllers.incomeSources.add.routes.BusinessReportingMethodController.show(incomeSourceId).url
+    lazy val agentBackUrl = controllers.incomeSources.add.routes.BusinessReportingMethodController.showAgent(incomeSourceId).url
 
     if (isDisabled(IncomeSources)) {
       Future.successful(Redirect(controllers.routes.HomeController.show()))
     } else {
       val businessDetailsParams = for {
-        addedBusiness <- user.incomeSources.businesses.find(x => x.incomeSourceId.contains(id))
+        addedBusiness <- user.incomeSources.businesses.find(x => x.incomeSourceId.contains(incomeSourceId))
         businessName <- addedBusiness.tradingName
         startDate <- addedBusiness.tradingStartDate
       } yield (addedBusiness, businessName, startDate)
       businessDetailsParams match {
         case Some((_, businessName, startDate)) =>
           val showPreviousTaxYears: Boolean = startDate.isBefore(dateService.getCurrentTaxYearStart())
-          nextUpdatesService.getObligationsViewModel(id, showPreviousTaxYears) map { viewModel =>
+          nextUpdatesService.getObligationsViewModel(incomeSourceId, showPreviousTaxYears) map { viewModel =>
             if (isAgent) Ok(obligationsView(businessName, viewModel,
               controllers.incomeSources.add.routes.BusinessAddedObligationsController.agentSubmit(), agentBackUrl, isAgent = true))
             else Ok(obligationsView(businessName, viewModel,
@@ -94,7 +94,7 @@ class BusinessAddedObligationsController @Inject()(authenticate: AuthenticationP
           }
         case _ =>
           Logger("application").error(
-            s"[BusinessAddedObligationsController][handleRequest] - unable to find incomeSource by id: $id ")
+            s"[BusinessAddedObligationsController][handleRequest] - unable to find incomeSource by id: $incomeSourceId ")
           if (isAgent) Future(itvcErrorHandlerAgent.showInternalServerError())
           else Future(itvcErrorHandler.showInternalServerError())
       }
