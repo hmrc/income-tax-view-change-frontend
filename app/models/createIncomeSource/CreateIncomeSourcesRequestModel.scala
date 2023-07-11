@@ -63,7 +63,6 @@ object CreateForeignPropertyIncomeSourceRequest {
 
 object CreateUKPropertyIncomeSourceRequest {
   implicit val format: Format[CreateUKPropertyIncomeSourceRequest] = Json.format
-
 }
 
 object PropertyDetails {
