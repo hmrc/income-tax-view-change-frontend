@@ -59,11 +59,11 @@ object SessionKeys {
   val addBusinessPostalCode: String = "addBusinessPostalCode"
   val addBusinessCountryCode: String = "addBusinessCountryCode"
 
-
-
   val ceaseBusinessEndDate: String = "ceaseBusinessEndDate"
 
   val ceaseBusinessIncomeSourceId: String = "ceaseBusinessIncomeSourceId"
 
   val foreignPropertyStartDate: String = "addForeignPropertyStartDate"
+
+  val addForeignPropertyAccountingMethod = "addForeignPropertyAccountingMethod"
 }
