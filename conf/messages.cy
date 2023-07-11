@@ -1352,7 +1352,8 @@ check-business-details.business-description             = Disgrifiad o’r busne
 check-business-details.business-address                 = Cyfeiriad y busnes
 check-business-details.confirm-button                   = Cadarnhau ac yn eich blaen
 check-business-details.accounting-method                = Dull cyfrifyddu ar gyfer incwm unig fasnachwr
-
+check-business-details.cash-accounting                  = Cyfrifyddu ar sail arian parod
+check-business-details.traditional-accounting           = Cyfrifyddu traddodiadol
 
 incomeSources.add.businessReportingMethod.heading                   =   Dewis dull o gyflwyno adroddiad
 incomeSources.add.businessReportingMethod.description1              =   Mae’ch busnes yn gymwys i gael cyfnod gras hyd at Ebrill {0}, lle y gallwch gyflwyno adroddiadau’n flynyddol.

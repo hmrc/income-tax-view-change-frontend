@@ -154,15 +154,19 @@
                     </a>
                 </dd>
             </div>
-            @if(viewModel.businessAccountingMethod.nonEmpty) {
+            @if(viewModel.skippedAccountingMethod) {
                 <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key">@getMessage("accounting-method")</dt>
-                    <dd class="govuk-summary-list__value" id="business-accounting-value">@{
-                        viewModel.businessAccountingMethod.getOrElse("")
-                    }</dd>
+                    <dd class="govuk-summary-list__value" id="business-accounting-value">
+                        @if(viewModel.businessAccountingMethod.getOrElse("") == "cash"){
+                        @getMessage("cash-accounting")
+                        } else {
+                        @getMessage("traditional-accounting")
+                        }
+                    </dd>
                     <dd class="govuk-summary-list__actions govuk-!-text-align-right govuk-!-margin-0">
                         <a class="govuk-link" href=@changeBusinessAccountingMethodURL>
-                        @getMessage("change-details-link")
+                            @getMessage("change-details-link")
                         </a>
                     </dd>
                 </div>
@@ -173,7 +177,7 @@
         <br>
 
         @govukButton(Button(
-            content = Text(messages("check-business-details.confirm-button")),
+            content = Text(messages("base.confirm-and-continue")),
             attributes = Map("id" -> "confirm-button")
         ))
     }

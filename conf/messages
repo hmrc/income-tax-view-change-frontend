@@ -1346,9 +1346,9 @@ check-business-details.change-details-link              = Change
 check-business-details.business-start-date              = Business trading start date
 check-business-details.business-description             = Business description
 check-business-details.business-address                 = Business address
-check-business-details.confirm-button                   = Confirm and Continue
 check-business-details.accounting-method                = Accounting method for sole trader income
-
+check-business-details.cash-accounting                  = Cash basis accounting
+check-business-details.traditional-accounting           = Traditional accounting
 
 incomeSources.add.businessReportingMethod.heading                   =   Choose a reporting method
 incomeSources.add.businessReportingMethod.description1              =   Your business qualifies for a grace period available up until April {0} where you can report annually.
