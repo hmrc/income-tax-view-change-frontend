@@ -17,8 +17,8 @@
 package utils
 
 import auth.MtdItUser
-import forms.utils.SessionKeys.{addBusinessAccountingMethod, addBusinessAccountingPeriodEndDate, addBusinessAccountingPeriodStartDate, addBusinessAddressLine1, addBusinessAddressLine2, addBusinessAddressLine3, addBusinessAddressLine4, addBusinessCountryCode, addBusinessPostalCode, addUkPropertyStartDate, businessName, businessStartDate, businessTrade}
-import models.addIncomeSource.PropertyDetails
+import forms.utils.SessionKeys.{addBusinessAccountingMethod, addBusinessAccountingPeriodEndDate, addBusinessAccountingPeriodStartDate, addBusinessAddressLine1, addBusinessAddressLine2, addBusinessAddressLine3, addBusinessAddressLine4, addBusinessCountryCode, addBusinessPostalCode, addUkPropertyAccountingMethod, addUkPropertyStartDate, businessName, businessStartDate, businessTrade}
+import models.createIncomeSource.PropertyDetails
 import models.incomeSourceDetails.viewmodels.CheckBusinessDetailsViewModel
 
 import java.time.LocalDate
@@ -72,7 +72,7 @@ object IncomeSourcesUtils {
     }
   }
 
-  def getPropertyDetailsFromSession(implicit user: MtdItUser[_]): Either[Throwable, PropertyDetails] = {
+  def getUKPropertyDetailsFromSession(implicit user: MtdItUser[_]): Either[Throwable, PropertyDetails] = {
     val errors: Seq[String] = Seq(
       user.session.data.get(addUkPropertyStartDate).orElse(Option(MissingKey(s"MissingKey: $addUkPropertyStartDate"))),
       user.session.data.get(businessTrade).orElse(Option(MissingKey(s"MissingKey: $businessTrade"))),
@@ -81,17 +81,12 @@ object IncomeSourcesUtils {
     }.map(e => e.msg)
 
     val result: Option[PropertyDetails] = for {
-      accountingPeriodStartDate <- user.session.data.get(addBusinessAccountingPeriodStartDate)
-      accountingPeriodEndDate <- user.session.data.get(addBusinessAccountingPeriodEndDate)
-      businessTrade <- user.session.data.get(businessTrade)
-      tradingStartDate <- user.session.data.get(businessStartDate)
-      cashOrAccrualsFlag <- user.session.data.get(addBusinessAccountingMethod)
+      tradingStartDate <- user.session.data.get(addUkPropertyStartDate)
+      cashOrAccrualsFlag <- user.session.data.get(addUkPropertyAccountingMethod)
     } yield {
       PropertyDetails(
-        accountingPeriodStartDate = accountingPeriodStartDate,
-        accountingPeriodEndDate = accountingPeriodEndDate,
-        typeOfBusiness = businessTrade,
         tradingStartDate = tradingStartDate,
+        startDate = tradingStartDate,
         cashOrAccrualsFlag = cashOrAccrualsFlag
       )
     }
@@ -102,5 +97,30 @@ object IncomeSourcesUtils {
       case None =>
         Left(new IllegalArgumentException(s"Missing required session data: ${errors.mkString(" ")}"))
     }
+  }
+
+  def removeIncomeSourceDetailsFromSession(implicit user: MtdItUser[_]): Unit = {
+    val sessionKeysToRemove = Seq(
+      "addUkPropertyStartDate",
+      "addBusinessName",
+      "addBusinessTrade",
+      "addBusinessAccountingMethod",
+      "addBusinessStartDate",
+      "addBusinessAccountingPeriodStartDate",
+      "addBusinessAccountingPeriodEndDate",
+      "addBusinessStartDate",
+      "addBusinessAddressLine1",
+      "addBusinessAddressLine2",
+      "addBusinessAddressLine3",
+      "addBusinessAddressLine4",
+      "addBusinessPostalCode",
+      "addBusinessCountryCode",
+      "ceaseForeignPropertyDeclare",
+      "ceaseForeignPropertyEndDate",
+      "ceaseUKPropertyDeclare",
+      "ceaseUKPropertyEndDate"
+    ) //TODO: check this is all the keys
+
+    user.session -- sessionKeysToRemove
   }
 }

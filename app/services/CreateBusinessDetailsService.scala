@@ -18,21 +18,23 @@ package services
 
 
 import auth.MtdItUser
-import connectors.IncomeSourceConnector
-import models.addIncomeSource.{AddBusinessIncomeSourcesRequest, AddIncomeSourceRequest, AddIncomeSourceResponse, AddPropertyIncomeSourcesRequest, AddressDetails, BusinessDetails, PropertyDetails}
+import connectors.CreateBusinessIncomeSourcesConnector
+import models.createIncomeSource.CreateBusinessIncomeSourceRequest.format
+import models.createIncomeSource.CreateUKPropertyIncomeSourceRequest.format
+import models.createIncomeSource.{AddressDetails, BusinessDetails, CreateBusinessIncomeSourceRequest, CreateIncomeSourcesResponse, CreateUKPropertyIncomeSourceRequest, PropertyDetails}
 import models.incomeSourceDetails.viewmodels.CheckBusinessDetailsViewModel
 import play.api.Logger
-import play.api.libs.json.{Json, Writes}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 
-class CreateBusinessDetailsService @Inject()(val incomeSourceConnector: IncomeSourceConnector) {
+class CreateBusinessDetailsService @Inject()(val incomeSourceConnector: CreateBusinessIncomeSourcesConnector) {
 
   def createBusinessDetails(viewModel: CheckBusinessDetailsViewModel)
-                           (implicit ec: ExecutionContext, user: MtdItUser[_], hc: HeaderCarrier): Future[Either[Throwable, AddIncomeSourceResponse]] = {
+                           (implicit ec: ExecutionContext, user: MtdItUser[_], hc: HeaderCarrier): Future[Either[Throwable, CreateIncomeSourcesResponse]] = {
+
     val businessDetails =
       BusinessDetails(
         accountingPeriodStartDate = viewModel.businessStartDate.toString, // TODO: verify date format required
@@ -52,14 +54,14 @@ class CreateBusinessDetailsService @Inject()(val incomeSourceConnector: IncomeSo
         cessationDate = None,
         cessationReason = None
       )
-    val requestObject = AddBusinessIncomeSourcesRequest(businessDetails =
+    val requestObject = CreateBusinessIncomeSourceRequest(businessDetails =
       List(businessDetails)
     )
     for {
       res <- incomeSourceConnector.create(user.mtditid, requestObject)
     } yield res match {
       case Right(List(incomeSourceId)) =>
-        Logger("application").info("[CreateBusinessDetailsService][createBusinessDetails] - New income source created successfully: $incomeSourceId ")
+        Logger("application").info(s"[CreateBusinessDetailsService][createBusinessDetails] - New income source created successfully: $incomeSourceId ")
         Right(incomeSourceId)
       case Left(ex) =>
         Logger("application").error("[CreateBusinessDetailsService][createBusinessDetails] - failed to create new income source")
@@ -67,16 +69,15 @@ class CreateBusinessDetailsService @Inject()(val incomeSourceConnector: IncomeSo
     }
   }
 
-  def createPropertyDetails(propertyDetails: PropertyDetails)
-                           (implicit ec: ExecutionContext, user: MtdItUser[_], hc: HeaderCarrier): Future[Either[Throwable, AddIncomeSourceResponse]] = {
+  def createUKPropertyDetails(propertyDetails: PropertyDetails)
+                           (implicit ec: ExecutionContext, user: MtdItUser[_], hc: HeaderCarrier): Future[Either[Throwable, CreateIncomeSourcesResponse]] = {
 
-    val requestObject = AddPropertyIncomeSourcesRequest(List(propertyDetails)
-    )
+    val requestObject = CreateUKPropertyIncomeSourceRequest(ukPropertyDetails = propertyDetails)
     for {
       res <- incomeSourceConnector.create(user.mtditid, requestObject)
     } yield res match {
       case Right(List(incomeSourceId)) =>
-        Logger("application").info("[CreateBusinessDetailsService][createPropertyDetails] - New income source created successfully: $incomeSourceId ")
+        Logger("application").info(s"[CreateBusinessDetailsService][createPropertyDetails] - New income source created successfully: $incomeSourceId ")
         Right(incomeSourceId)
       case Left(ex) =>
         Logger("application").error("[CreateBusinessDetailsService][createPropertyDetails] - failed to create new income source")

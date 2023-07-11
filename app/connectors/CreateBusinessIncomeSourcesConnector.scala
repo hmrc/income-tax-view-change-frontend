@@ -17,7 +17,7 @@
 package connectors
 
 import config.FrontendAppConfig
-import models.addIncomeSource._
+import models.createIncomeSource._
 import play.api.Logger
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import play.api.libs.json.Format.GenericFormat
@@ -27,24 +27,25 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class IncomeSourceConnector @Inject()(val http: HttpClient, val appConfig: FrontendAppConfig)
-                                     (implicit val ec: ExecutionContext) {
+class CreateBusinessIncomeSourcesConnector @Inject()(val http: HttpClient, val appConfig: FrontendAppConfig)
+                                                    (implicit val ec: ExecutionContext) {
 
 
-  def addBusinessDetailsUrl(mtdItid: String): String = s"${appConfig.itvcProtectedService}/income-tax-view-change/create-income-source/business/$mtdItid"
+  def createBusinessIncomeSourcesDetailsUrl(mtdItid: String): String =
+    s"${appConfig.itvcProtectedService}/income-tax-view-change/create-income-source/business/$mtdItid"
 
-  def create[AddIncomeSourceRequest](mtdItid: String, request: AddIncomeSourceRequest)
-                                    (implicit headerCarrier: HeaderCarrier,
-                                     writes: Writes[AddIncomeSourceRequest]): Future[Either[AddIncomeSourceErrorResponse, List[AddIncomeSourceResponse]]] = {
+  def create[CreateIncomeSourcesRequest](mtdItid: String, request: CreateIncomeSourcesRequest)
+                                        (implicit headerCarrier: HeaderCarrier, writes: Writes[CreateIncomeSourcesRequest]): Future[Either[CreateIncomeSourcesErrorResponse, List[CreateIncomeSourcesResponse]]] = {
     val bodyAsJson = Json.toJson(request)
-    val url = addBusinessDetailsUrl(mtdItid)
+    val url = createBusinessIncomeSourcesDetailsUrl(mtdItid)
     http.POST(url, bodyAsJson).map { response =>
       response.status match {
         case OK =>
-          response.json.validate[List[AddIncomeSourceResponse]].fold(
+          response.json.validate[List[CreateIncomeSourcesResponse]].fold(
             _ => {
-              Logger("application").error(s"[IncomeTaxViewChangeConnector][create] - Json validation error parsing repayment response, error ${response.body}")
-              Left(AddIncomeSourceErrorResponse(response.status, s"Not valid json: ${response.body}"))
+              Logger("application").error(s"[IncomeTaxViewChangeConnector][create] - Json validation error parsing " +
+                s"createBusinessDetails response, error ${response.body}")
+              Left(CreateIncomeSourcesErrorResponse(response.status, s"Not valid json: ${response.body}"))
             },
             valid =>
               Right(valid)
@@ -55,7 +56,7 @@ class IncomeSourceConnector @Inject()(val http: HttpClient, val appConfig: Front
           } else {
             Logger("application").warn(s"[IncomeTaxViewChangeConnector][create] - Response status: ${response.status}, body: ${response.body}")
           }
-          Left(AddIncomeSourceErrorResponse(response.status, s"Error creating incomeSource: ${response.json}"))
+          Left(CreateIncomeSourcesErrorResponse(response.status, s"Error creating incomeSource: ${response.json}"))
       }
     }
   }

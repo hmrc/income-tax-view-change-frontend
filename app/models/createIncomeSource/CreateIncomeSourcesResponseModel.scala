@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-package models.addIncomeSource
+package models.createIncomeSource
 
 import play.api.libs.json.{Format, Json}
 
 
-case class AddIncomeSourceResponse(incomeSourceId: String)
+case class CreateIncomeSourcesResponse(incomeSourceId: String)
 
-object AddIncomeSourceResponse {
-  implicit val format: Format[AddIncomeSourceResponse] = Json.format
+object CreateIncomeSourcesResponse {
+  implicit val format: Format[CreateIncomeSourcesResponse] = Json.format
 }
 
-final case class AddIncomeSourceErrorResponse(status: Int, reason: String)
+final case class CreateIncomeSourcesErrorResponse(status: Int, reason: String)
 
-object AddIncomeSourceErrorResponse {
-  implicit val format: Format[AddIncomeSourceErrorResponse] = Json.format
+object CreateIncomeSourceErrorResponse {
+  implicit val format: Format[CreateIncomeSourcesErrorResponse] = Json.format
 }

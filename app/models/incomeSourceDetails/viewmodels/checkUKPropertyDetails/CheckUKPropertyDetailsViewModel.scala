@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 
-package models.checkUKPropertyDetails
+package models.incomeSourceDetails.viewmodels.checkUKPropertyDetails
 
 case class CheckUKPropertyDetailsViewModel(startDateFormatted: String, accountingMethod: String)

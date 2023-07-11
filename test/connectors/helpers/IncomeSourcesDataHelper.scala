@@ -16,7 +16,7 @@
 
 package connectors.helpers
 
-import models.addIncomeSource.{AddBusinessIncomeSourcesRequest, AddressDetails, BusinessDetails}
+import models.createIncomeSource.{AddBusinessIncomeSourcesRequest, AddressDetails, BusinessDetails}
 import models.incomeSourceDetails.viewmodels._
 
 import java.time.LocalDate

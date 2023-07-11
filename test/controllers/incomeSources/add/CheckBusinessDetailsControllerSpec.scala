@@ -23,7 +23,7 @@ import controllers.AddBusinessNameController
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import forms.utils.SessionKeys
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
-import models.addIncomeSource.AddIncomeSourceResponse
+import models.createIncomeSource.AddIncomeSourceResponse
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.mockito.ArgumentMatchers.any

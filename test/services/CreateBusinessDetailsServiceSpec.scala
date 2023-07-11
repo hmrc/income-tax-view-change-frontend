@@ -18,9 +18,9 @@ package services
 
 import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
-import connectors.IncomeSourceConnector
+import connectors.CreateBusinessIncomeSourcesConnector
 import connectors.helpers.IncomeSourcesDataHelper
-import models.addIncomeSource.{CreateBusinessErrorResponse, AddIncomeSourceResponse}
+import models.createIncomeSource.{CreateBusinessErrorResponse, AddIncomeSourceResponse}
 import models.incomeSourceDetails.viewmodels._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
@@ -48,7 +48,7 @@ class CreateBusinessDetailsServiceSpec extends  TestSupport with FeatureSwitchin
     None
   )(FakeRequest())
 
-  val mockIncomeSourceConnector: IncomeSourceConnector = mock(classOf[IncomeSourceConnector])
+  val mockIncomeSourceConnector: CreateBusinessIncomeSourcesConnector = mock(classOf[CreateBusinessIncomeSourcesConnector])
 
   object UnderTestCreateBusinessDetailsService extends CreateBusinessDetailsService(mockIncomeSourceConnector)
 

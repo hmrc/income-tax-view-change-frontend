@@ -14,14 +14,17 @@
  * limitations under the License.
  */
 
-package models.addIncomeSource
+package models.createIncomeSource
 
 import play.api.libs.json.{Format, Json}
 
-sealed trait AddIncomeSourceRequest
+sealed trait CreateIncomeSourcesRequest
 
-case class AddBusinessIncomeSourcesRequest(businessDetails: List[BusinessDetails]) extends AddIncomeSourceRequest
-case class AddPropertyIncomeSourcesRequest(businessDetails: List[PropertyDetails]) extends AddIncomeSourceRequest
+case class CreateBusinessIncomeSourceRequest(businessDetails: List[BusinessDetails]) extends CreateIncomeSourcesRequest
+
+case class CreateForeignPropertyIncomeSourceRequest(foreignPropertyDetails: PropertyDetails) extends CreateIncomeSourcesRequest
+
+case class CreateUKPropertyIncomeSourceRequest(ukPropertyDetails: PropertyDetails) extends CreateIncomeSourcesRequest
 
 case class BusinessDetails(accountingPeriodStartDate: String,
                            accountingPeriodEndDate: String,
@@ -31,36 +34,36 @@ case class BusinessDetails(accountingPeriodStartDate: String,
                            tradingStartDate: String,
                            cashOrAccrualsFlag: String,
                            cessationDate: Option[String] = None,
-                           cessationReason: Option[String] = None
-                          )
-
-case class PropertyDetails(accountingPeriodStartDate: String,
-                           accountingPeriodEndDate: String,
-                           typeOfBusiness: String,
-                           tradingStartDate: String,
-                           cashOrAccrualsFlag: String,
-                           cessationDate: Option[String] = None,
-                           cessationReason: Option[String] = None
-                          )
+                           cessationReason: Option[String] = None)
 
 case class AddressDetails(addressLine1: String,
                           addressLine2: Option[String],
                           addressLine3: Option[String],
                           addressLine4: Option[String],
                           countryCode: Option[String],
-                          postalCode: Option[String]
-                         )
+                          postalCode: Option[String])
 
-object AddBusinessIncomeSourcesRequest {
-  implicit val format: Format[AddBusinessIncomeSourcesRequest] = Json.format
+case class PropertyDetails(tradingStartDate: String,
+                           cashOrAccrualsFlag: String,
+                           startDate: String,
+                           cessationDate: Option[String] = None,
+                           cessationReason: Option[String] = None)
+
+object CreateBusinessIncomeSourceRequest {
+  implicit val format: Format[CreateBusinessIncomeSourceRequest] = Json.format
 }
 
 object BusinessDetails {
   implicit val format: Format[BusinessDetails] = Json.format
 }
 
-object AddPropertyIncomeSourcesRequest {
-  implicit val format: Format[AddPropertyIncomeSourcesRequest] = Json.format
+object CreateForeignPropertyIncomeSourceRequest {
+  implicit val format: Format[CreateForeignPropertyIncomeSourceRequest] = Json.format
+}
+
+object CreateUKPropertyIncomeSourceRequest {
+  implicit val format: Format[CreateUKPropertyIncomeSourceRequest] = Json.format
+
 }
 
 object PropertyDetails {
