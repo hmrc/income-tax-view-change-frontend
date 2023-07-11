@@ -133,12 +133,14 @@ class NextUpdatesService @Inject()(val incomeTaxViewChangeConnector: IncomeTaxVi
 
         val quarterlyDates: Seq[DatesModel] = otherObligationDates.filter(x => x.periodKey.contains("00")).sortBy(_.inboundCorrespondenceFrom)
         val quarterlyDatesByYear: (Seq[DatesModel], Seq[DatesModel]) = quarterlyDates.partition(x => dateService.getAccountingPeriodEndDate(x.inboundCorrespondenceTo) == dateService.getAccountingPeriodEndDate(quarterlyDates.head.inboundCorrespondenceTo))
-        val quarterlyDatesYearOne = quarterlyDatesByYear._1.sortBy(_.periodKey)
-        val quarterlyDatesYearTwo = quarterlyDatesByYear._2.sortBy(_.periodKey)
+        val quarterlyDatesYearOne = quarterlyDatesByYear._1.distinct.sortBy(_.periodKey)
+        val quarterlyDatesYearTwo = quarterlyDatesByYear._2.distinct.sortBy(_.periodKey)
 
-        val eopsDates: Seq[DatesModel] = otherObligationDates.filter(x => x.periodKey.contains("EOPS"))
+        val eopsDates: Seq[DatesModel] = otherObligationDates.filter(x => x.periodKey.contains("EOPS")).distinct.sortBy(_.inboundCorrespondenceFrom)
 
-        ObligationsViewModel(quarterlyDatesYearOne, quarterlyDatesYearTwo, eopsDates, finalDeclarationDates, dateService.getCurrentTaxYearEnd(), showPrevTaxYears = showPreviousTaxYears)
+        val finalDecDates: Seq[DatesModel] = finalDeclarationDates.distinct.sortBy(_.inboundCorrespondenceFrom)
+
+        ObligationsViewModel(quarterlyDatesYearOne, quarterlyDatesYearTwo, eopsDates, finalDecDates, dateService.getCurrentTaxYearEnd(), showPrevTaxYears = showPreviousTaxYears)
     }
     processingRes
   }
