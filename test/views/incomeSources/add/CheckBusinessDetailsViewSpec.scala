@@ -42,7 +42,7 @@ class CheckBusinessDetailsViewSpec extends TestSupport {
     businessTrade = "Test Trade",
     businessAddressLine1 = "Test Business Address Line 1",
     businessPostalCode = Some("Test Business Postal Code"),
-    businessAccountingMethod = Some("Test Accounting Method"),
+    businessAccountingMethod = Some("accruals"),
     accountingPeriodEndDate = LocalDate.of(2022, 1, 1),
     businessAddressLine2 = None,
     businessAddressLine3 = None,
