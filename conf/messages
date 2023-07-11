@@ -1111,7 +1111,14 @@ credit-and-refund.credit-from-balancing-charge-prt-1              = from a
 credit-and-refund.credit-from-balancing-charge-prt-2              = balancing charge credit
 credit-and-refund.credit-from-earlier-tax-year                    = credit from an earlier tax year
 
-## Income Sources - Add
+#######################################################################################################################
+## Income Sources - Add ##
+#######################################################################################################################
+## Reusable Add Messages ##
+incomeSources.add.accountingMethod.cash                             = Cash basis accounting
+incomeSources.add.accountingMethod.accruals                         = Traditional accounting
+
+## Add Income Sources Page ##
 incomeSources.add.addIncomeSources.heading                          = Add a new sole trader or property income source
 incomeSources.add.addIncomeSources.selfEmployment.heading           = Sole trader businesses
 incomeSources.add.addIncomeSources.selfEmployment.text              = You do not need to tell us about a business we already know about.
@@ -1320,6 +1327,9 @@ add-business-start-date-check.heading                 = Is this date correct?
 add-business-start-date-check.radio.yes               = Yes
 add-business-start-date-check.radio.no                = No
 add-business-start-date-check.radio.error             = Select yes if your business start date is correct
+
+incomeSources.add.accountingMethod.cash               = Cash basis accounting
+incomeSources.add.accountingMethod.accruals           = Traditional accounting
 
 # add business accounting method
 incomeSources.add.business-accounting-method.heading                 = What accounting method do you use for your sole trader business?

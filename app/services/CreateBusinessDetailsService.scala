@@ -19,16 +19,17 @@ package services
 
 import auth.MtdItUser
 import connectors.IncomeSourceConnector
-import models.addIncomeSource.{AddBusinessIncomeSourcesRequest, AddressDetails, BusinessDetails, AddIncomeSourceResponse}
+import models.addIncomeSource.{AddBusinessIncomeSourcesRequest, AddIncomeSourceRequest, AddIncomeSourceResponse, AddPropertyIncomeSourcesRequest, AddressDetails, BusinessDetails, PropertyDetails}
 import models.incomeSourceDetails.viewmodels.CheckBusinessDetailsViewModel
 import play.api.Logger
+import play.api.libs.json.{Json, Writes}
 import uk.gov.hmrc.http.HeaderCarrier
+
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 
 class CreateBusinessDetailsService @Inject()(val incomeSourceConnector: IncomeSourceConnector) {
-
 
   def createBusinessDetails(viewModel: CheckBusinessDetailsViewModel)
                            (implicit ec: ExecutionContext, user: MtdItUser[_], hc: HeaderCarrier): Future[Either[Throwable, AddIncomeSourceResponse]] = {
@@ -58,13 +59,29 @@ class CreateBusinessDetailsService @Inject()(val incomeSourceConnector: IncomeSo
       res <- incomeSourceConnector.create(user.mtditid, requestObject)
     } yield res match {
       case Right(List(incomeSourceId)) =>
-        Logger("application").info("[PaymentAllocationsService][getPaymentAllocation] - New income source created successfully: $incomeSourceId ")
+        Logger("application").info("[CreateBusinessDetailsService][createBusinessDetails] - New income source created successfully: $incomeSourceId ")
         Right(incomeSourceId)
       case Left(ex) =>
-        Logger("application").error("[CreateBusinessDetailsService][createBusinessDetails] - failed to created ")
-        Left(new Error(s"Failed to created incomeSources: $ex"))
+        Logger("application").error("[CreateBusinessDetailsService][createBusinessDetails] - failed to create new income source")
+        Left(new Error(s"Failed to create incomeSources: $ex"))
     }
+  }
 
+  def createPropertyDetails(propertyDetails: PropertyDetails)
+                           (implicit ec: ExecutionContext, user: MtdItUser[_], hc: HeaderCarrier): Future[Either[Throwable, AddIncomeSourceResponse]] = {
+
+    val requestObject = AddPropertyIncomeSourcesRequest(List(propertyDetails)
+    )
+    for {
+      res <- incomeSourceConnector.create(user.mtditid, requestObject)
+    } yield res match {
+      case Right(List(incomeSourceId)) =>
+        Logger("application").info("[CreateBusinessDetailsService][createPropertyDetails] - New income source created successfully: $incomeSourceId ")
+        Right(incomeSourceId)
+      case Left(ex) =>
+        Logger("application").error("[CreateBusinessDetailsService][createPropertyDetails] - failed to create new income source")
+        Left(new Error(s"Failed to create incomeSources: $ex"))
+    }
   }
 
 }

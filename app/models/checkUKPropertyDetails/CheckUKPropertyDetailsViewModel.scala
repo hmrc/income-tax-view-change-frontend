@@ -16,6 +16,4 @@
 
 package models.checkUKPropertyDetails
 
-import java.time.LocalDate
-
-case class CheckUKPropertyDetailsViewModel(businessStartDate:LocalDate, accountingMethod:String)
+case class CheckUKPropertyDetailsViewModel(startDateFormatted: String, accountingMethod: String)

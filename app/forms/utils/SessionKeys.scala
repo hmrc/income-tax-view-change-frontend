@@ -66,4 +66,6 @@ object SessionKeys {
   val ceaseBusinessIncomeSourceId: String = "ceaseBusinessIncomeSourceId"
 
   val foreignPropertyStartDate: String = "addForeignPropertyStartDate"
+
+  val addUkPropertyAccountingMethod: String = "addUkPropertyAccountingMethod"
 }

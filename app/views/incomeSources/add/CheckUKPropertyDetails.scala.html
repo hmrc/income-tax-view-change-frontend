@@ -32,20 +32,34 @@
         formWithCSRF: FormWithCSRF
 )
 
-@(viewModel:CheckUKPropertyDetailsViewModel,isAgent:Boolean,backUrl: String = "",postAction:Call,origin: Option[String] = None)(implicit messages: Messages, user: auth.MtdItUser[_])
+@(viewModel:CheckUKPropertyDetailsViewModel, isAgent: Boolean, backUrl: String, postAction: Call, ukPropertyStartDate: String, ukPropertyAccountingMethod: String)(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @heading = @{messages("incomeSources.add.checkUKPropertyDetails.heading")}
 @caption = @{messages("incomeSources.add.checkUKPropertyDetails.caption")}
 @startDateLabel = @{messages("incomeSources.add.checkUKPropertyDetails.startDateLabel")}
 @accountingMethodLabel = {@messages("incomeSources.add.checkUKPropertyDetails.accountingMethodLabel")}
 @change = @{messages("incomeSources.add.checkUKPropertyDetails.change")}
-@getChangeStartDateHref = @{""}
-@getChangeAccountingMethodHref = @{""}
+
+@getChangeUKPropertyStartDateUrl = @{
+    if (isAgent) {
+        controllers.incomeSources.add.routes.AddUKPropertyStartDateController.changeAgent().url
+    } else {
+        controllers.incomeSources.add.routes.AddUKPropertyStartDateController.change().url
+    }
+}
+
+@getChangeUKPropertyAccountingMethodUrl = @{
+    if (isAgent) {
+        controllers.incomeSources.add.routes.UKPropertyAccountingMethod.changeAgent().url
+    } else {
+        controllers.incomeSources.add.routes.UKPropertyAccountingMethod.change().url
+    }
+}
 
 
 @mainTemplate(
     pageTitle = heading,
-    backUrl = Some(""),
+    backUrl = Some(backUrl),
     isAgent = isAgent,
     btaNavPartial = user.btaNavPartial) {
 
@@ -60,9 +74,9 @@
         <div class="govuk-summary-list__row">
 
             <dt class="govuk-summary-list__key govuk-!-width-one-third" id="ukPropertyBusinessStartDateLabel">@startDateLabel</dt>
-            <dd class="govuk-summary-list__value" id="ukPropertyBusinessStartDate">21 Jan 2023</dd>
+            <dd class="govuk-summary-list__value" id="ukPropertyBusinessStartDate">@ukPropertyStartDate</dd>
             <dd class="govuk-summary-list__actions">
-                <a class="govuk-link" href="@getChangeStartDateHref" id="changeStartDate">
+                <a class="govuk-link" href="@getChangeUKPropertyStartDateUrl" id="changeStartDate">
                     @change
                     <span class="govuk-visually-hidden">@change</span>
                 </a>
@@ -75,9 +89,9 @@
         <div class="govuk-summary-list__row">
 
             <dt class="govuk-summary-list__key govuk-!-width-one-third"  id="ukPropertyAccountingMethodLabel">@accountingMethodLabel</dt>
-            <dd class="govuk-summary-list__value" id="ukPropertyAccountingMethod">Cash Accounting</dd>
+            <dd class="govuk-summary-list__value" id="ukPropertyAccountingMethod">@ukPropertyAccountingMethod</dd>
             <dd class="govuk-summary-list__actions">
-                <a class="govuk-link" href="@getChangeAccountingMethodHref" id="changeAccountingMethod">
+                <a class="govuk-link" href="@getChangeUKPropertyAccountingMethodUrl" id="changeAccountingMethod">
                     @change
                     <span class="govuk-visually-hidden">@change</span>
                 </a>

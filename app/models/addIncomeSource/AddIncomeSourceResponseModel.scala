@@ -18,8 +18,6 @@ package models.addIncomeSource
 
 import play.api.libs.json.{Format, Json}
 
-import java.time.LocalDate
-
 
 case class AddIncomeSourceResponse(incomeSourceId: String)
 
@@ -27,8 +25,8 @@ object AddIncomeSourceResponse {
   implicit val format: Format[AddIncomeSourceResponse] = Json.format
 }
 
-final case class CreateBusinessErrorResponse(status: Int, reason: String)
+final case class AddIncomeSourceErrorResponse(status: Int, reason: String)
 
-object CreateBusinessErrorResponse {
-  implicit val format: Format[CreateBusinessErrorResponse] = Json.format
+object AddIncomeSourceErrorResponse {
+  implicit val format: Format[AddIncomeSourceErrorResponse] = Json.format
 }

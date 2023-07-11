@@ -1130,7 +1130,14 @@ credit-and-refund.credit-from-balancing-charge-prt-1              = yn sgil
 credit-and-refund.credit-from-balancing-charge-prt-2              = credyd tâl mantoli
 credit-and-refund.credit-from-earlier-tax-year                    = credyd o flwyddyn dreth gynharach
 
-## Income Sources - Add
+#######################################################################################################################
+## Income Sources - Add ##
+#######################################################################################################################
+## Reusable Add Messages ##
+incomeSources.add.accountingMethod.cash                             = Cyfrifyddu ar sail arian parod
+incomeSources.add.accountingMethod.accruals                         = Cyfrifyddu traddodiadol
+
+## Add Income Sources Page ##
 incomeSources.add.addIncomeSources.heading                          = Unig fasnachwr a incwm o eiddo
 incomeSources.add.addIncomeSources.selfEmployment.heading           = Busnesau unig fasnachwr
 incomeSources.add.addIncomeSources.selfEmployment.text              = Nid oes angen i chi roi gwybod i ni am fusnes y gwyddwn amdano eisoes.

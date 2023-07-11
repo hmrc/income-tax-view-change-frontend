@@ -37,7 +37,7 @@ class UKPropertyAccountingMethod @Inject()(val authenticate: AuthenticationPredi
                                            val retrieveBtaNavBar: NavBarPredicate,
                                            val retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                            val retrieveNino: NinoPredicate,
-//                                           val view: ???,
+                                           //                                           val view: ???,
                                            val customNotFoundErrorView: CustomNotFoundError)
                                           (implicit val appConfig: FrontendAppConfig,
                                            mcc: MessagesControllerComponents,
@@ -48,7 +48,7 @@ class UKPropertyAccountingMethod @Inject()(val authenticate: AuthenticationPredi
 
   def handleRequest(isAgent: Boolean)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
-    Future.successful(NotImplemented)
+    if (isAgent) Future.successful(Ok("UK Property Accounting Method page (agent)")) else Future.successful(Ok("UK Property Accounting Method page"))
   }
 
 
@@ -62,6 +62,26 @@ class UKPropertyAccountingMethod @Inject()(val authenticate: AuthenticationPredi
     }
 
   def showAgent(): Action[AnyContent] = Authenticated.async {
+    implicit request =>
+      implicit user =>
+        getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
+          implicit mtdItUser =>
+            handleRequest(
+              isAgent = true
+            )
+        }
+  }
+
+  def change(): Action[AnyContent] =
+    (checkSessionTimeout andThen authenticate andThen retrieveNino
+      andThen retrieveIncomeSources).async {
+      implicit user =>
+        handleRequest(
+          isAgent = false
+        )
+    }
+
+  def changeAgent(): Action[AnyContent] = Authenticated.async {
     implicit request =>
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {

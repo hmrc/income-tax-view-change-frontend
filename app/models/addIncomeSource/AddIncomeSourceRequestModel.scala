@@ -18,12 +18,10 @@ package models.addIncomeSource
 
 import play.api.libs.json.{Format, Json}
 
-import java.time.LocalDate
-
 sealed trait AddIncomeSourceRequest
 
 case class AddBusinessIncomeSourcesRequest(businessDetails: List[BusinessDetails]) extends AddIncomeSourceRequest
-
+case class AddPropertyIncomeSourcesRequest(businessDetails: List[PropertyDetails]) extends AddIncomeSourceRequest
 
 case class BusinessDetails(accountingPeriodStartDate: String,
                            accountingPeriodEndDate: String,
@@ -32,8 +30,17 @@ case class BusinessDetails(accountingPeriodStartDate: String,
                            typeOfBusiness: Option[String],
                            tradingStartDate: String,
                            cashOrAccrualsFlag: String,
-                           cessationDate: Option[String],
-                           cessationReason: Option[String]
+                           cessationDate: Option[String] = None,
+                           cessationReason: Option[String] = None
+                          )
+
+case class PropertyDetails(accountingPeriodStartDate: String,
+                           accountingPeriodEndDate: String,
+                           typeOfBusiness: String,
+                           tradingStartDate: String,
+                           cashOrAccrualsFlag: String,
+                           cessationDate: Option[String] = None,
+                           cessationReason: Option[String] = None
                           )
 
 case class AddressDetails(addressLine1: String,
@@ -50,6 +57,14 @@ object AddBusinessIncomeSourcesRequest {
 
 object BusinessDetails {
   implicit val format: Format[BusinessDetails] = Json.format
+}
+
+object AddPropertyIncomeSourcesRequest {
+  implicit val format: Format[AddPropertyIncomeSourcesRequest] = Json.format
+}
+
+object PropertyDetails {
+  implicit val format: Format[PropertyDetails] = Json.format
 }
 
 object AddressDetails {
