@@ -23,7 +23,7 @@ import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import forms.utils.SessionKeys._
 import models.addIncomeSource.AddIncomeSourceResponse
-import models.incomeSourceDetails.IncomeSourceDetailsModel
+import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
 import models.incomeSourceDetails.viewmodels.CheckBusinessDetailsViewModel
 import play.api.Logger
 import play.api.mvc._
@@ -97,6 +97,10 @@ class CheckBusinessDetailsController @Inject()(val checkBusinessDetails: CheckBu
 
   def getDetails(implicit user: MtdItUser[_]): Either[Throwable, CheckBusinessDetailsViewModel] = {
 
+    val userActiveBusinesses: List[BusinessDetailsModel] = user.incomeSources.businesses.filterNot(_.isCeased)
+    val skipAccountingMethod: Boolean = userActiveBusinesses.isEmpty
+
+
     case class MissingKey(msg: String)
 
     val errors: Seq[String] = Seq(
@@ -130,7 +134,8 @@ class CheckBusinessDetailsController @Inject()(val checkBusinessDetails: CheckBu
         businessPostalCode = user.session.data.get(addBusinessPostalCode),
         businessCountryCode = user.session.data.get(addBusinessCountryCode),
         businessAccountingMethod = user.session.data.get(addBusinessAccountingMethod),
-        cashOrAccrualsFlag = businessAccountingMethod)
+        cashOrAccrualsFlag = businessAccountingMethod,
+        skippedAccountingMethod = skipAccountingMethod)
     }
 
     result match {

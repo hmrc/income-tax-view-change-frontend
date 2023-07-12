@@ -1384,9 +1384,9 @@ check-business-details.change-details-link              = Change
 check-business-details.business-start-date              = Business trading start date
 check-business-details.business-description             = Business description
 check-business-details.business-address                 = Business address
-check-business-details.confirm-button                   = Confirm and Continue
 check-business-details.accounting-method                = Accounting method for sole trader income
-
+check-business-details.cash-accounting                  = Cash basis accounting
+check-business-details.traditional-accounting           = Traditional accounting
 
 # business added page
 business-added.h1                                       =
