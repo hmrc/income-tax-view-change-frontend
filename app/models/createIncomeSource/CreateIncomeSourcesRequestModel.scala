@@ -18,13 +18,16 @@ package models.createIncomeSource
 
 import play.api.libs.json.{Format, Json}
 
-sealed trait CreateIncomeSourcesRequest
+sealed trait CreateIncomeSourceRequest
 
-case class CreateBusinessIncomeSourceRequest(businessDetails: List[BusinessDetails]) extends CreateIncomeSourcesRequest
 
-case class CreateForeignPropertyIncomeSourceRequest(foreignPropertyDetails: PropertyDetails) extends CreateIncomeSourcesRequest
+// *********************************************************************************************************************
+// *                                                   Self-employment                                                 *
+// *********************************************************************************************************************
 
-case class CreateUKPropertyIncomeSourceRequest(ukPropertyDetails: PropertyDetails) extends CreateIncomeSourcesRequest
+final case class CreateBusinessIncomeSourceRequest(businessDetails: List[BusinessDetails]) extends CreateIncomeSourceRequest {
+  require(businessDetails.length == 1, "Only single business can be created at a time")
+}
 
 case class BusinessDetails(accountingPeriodStartDate: String,
                            accountingPeriodEndDate: String,
@@ -33,42 +36,55 @@ case class BusinessDetails(accountingPeriodStartDate: String,
                            typeOfBusiness: Option[String],
                            tradingStartDate: String,
                            cashOrAccrualsFlag: String,
-                           cessationDate: Option[String] = None,
-                           cessationReason: Option[String] = None)
+                           cessationDate: Option[String],
+                           cessationReason: Option[String]
+                          )
 
 case class AddressDetails(addressLine1: String,
                           addressLine2: Option[String],
                           addressLine3: Option[String],
                           addressLine4: Option[String],
                           countryCode: Option[String],
-                          postalCode: Option[String])
-
-case class PropertyDetails(tradingStartDate: String,
-                           cashOrAccrualsFlag: String,
-                           startDate: String,
-                           cessationDate: Option[String] = None,
-                           cessationReason: Option[String] = None)
+                          postalCode: Option[String]
+                         )
 
 object CreateBusinessIncomeSourceRequest {
-  implicit val format: Format[CreateBusinessIncomeSourceRequest] = Json.format
+  implicit val format: Format[CreateBusinessIncomeSourceRequest] = Json.format[CreateBusinessIncomeSourceRequest]
 }
 
 object BusinessDetails {
-  implicit val format: Format[BusinessDetails] = Json.format
-}
-
-object CreateForeignPropertyIncomeSourceRequest {
-  implicit val format: Format[CreateForeignPropertyIncomeSourceRequest] = Json.format
-}
-
-object CreateUKPropertyIncomeSourceRequest {
-  implicit val format: Format[CreateUKPropertyIncomeSourceRequest] = Json.format
-}
-
-object PropertyDetails {
-  implicit val format: Format[PropertyDetails] = Json.format
+  implicit val format: Format[BusinessDetails] = Json.format[BusinessDetails]
 }
 
 object AddressDetails {
-  implicit val format: Format[AddressDetails] = Json.format
+  implicit val format: Format[AddressDetails] = Json.format[AddressDetails]
 }
+
+
+
+// *********************************************************************************************************************
+// *                                                   Property                                                        *
+// *********************************************************************************************************************
+
+final case class PropertyDetails(tradingStartDate: String, cashOrAccrualsFlag: String, startDate: String) extends CreateIncomeSourceRequest {
+  require(cashOrAccrualsFlag.nonEmpty, "Accounting method must be provided")
+  require(tradingStartDate.nonEmpty, "Trading start date must be provided")
+  require(tradingStartDate == startDate, "Trading start date and start date must be the same")
+}
+
+final case class CreateForeignPropertyIncomeSource(foreignPropertyDetails: PropertyDetails)
+
+final case class CreateUKPropertyIncomeSource(ukPropertyDetails: PropertyDetails)
+
+object PropertyDetails {
+  implicit val format: Format[PropertyDetails] = Json.format[PropertyDetails]
+}
+
+object CreateForeignPropertyIncomeSource {
+  implicit val format: Format[CreateForeignPropertyIncomeSource] = Json.format[CreateForeignPropertyIncomeSource]
+}
+
+object CreateUKPropertyIncomeSource {
+  implicit val format: Format[CreateUKPropertyIncomeSource] = Json.format[CreateUKPropertyIncomeSource]
+}
+

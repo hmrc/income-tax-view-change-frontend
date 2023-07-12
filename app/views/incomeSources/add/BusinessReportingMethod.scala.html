@@ -1,0 +1,127 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import views.html.layouts.unifiedLayout
+@import views.html.helpers.injected.ContinueButton
+@import views.html.helpers.injected.ErrorSummary
+@import views.html.helpers.injected.RadioHelper
+@import views.helpers.RadioOption
+@import models.incomeSourceDetails.viewmodels.BusinessReportingMethodViewModel
+@import views.html.helpers.injected.InputHelper
+@import uk.gov.hmrc.govukfrontend.views.html.components.FormWithCSRF
+@import uk.gov.hmrc.govukfrontend.views.html.components.{GovukCheckboxes, Radios, GovukRadios, Fieldset, Legend, Text, RadioItem, GovukInput, Input}
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.checkboxes.CheckboxItem
+@import uk.gov.hmrc.govukfrontend.views.Aliases.Checkboxes
+@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
+@import views.html.layouts.unifiedLayout
+@import views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+
+
+@this(
+    mainTemplate: unifiedLayout,
+    inputHelper: InputHelper,
+    continueButton: ContinueButton,
+    formWithCSRF: FormWithCSRF,
+    errorSummary: ErrorSummary,
+    radioHelper: RadioHelper,
+    govukRadios: GovukRadios,
+    inputRadios: input_radios,
+    govukCheckboxes: GovukCheckboxes,
+    govukInput : GovukInput,
+    h1: h1,
+    p:p
+)
+
+@(addBusinessReportingMethodForm: Form[_], businessReportingViewModel: BusinessReportingMethodViewModel, postAction: Call, isAgent: Boolean = false, origin: Option[String] = None)(implicit user: auth.MtdItUser[_], messages: Messages)
+
+@renderChooseReportingMethodOptions(taxYear: Option[String], taxYearSeq: String, latencyIndicator: Option[String]) = {
+
+    @p(){@messages("incomeSources.add.businessReportingMethod.taxYear", (taxYear.get.toInt - 1).toString, taxYear.get.toString)}
+
+    @govukInput(
+        Input(
+            inputType = "hidden",
+            classes = "govuk-visually-hidden",
+            value = taxYear
+        ).withFormField(addBusinessReportingMethodForm("new_"+taxYearSeq+"_reporting_method_tax_year"))
+    )
+
+    @govukInput(
+        Input(
+            inputType = "hidden",
+            classes = "govuk-visually-hidden",
+            value = latencyIndicator
+        ).withFormField(addBusinessReportingMethodForm(taxYearSeq+"_reporting_method"))
+    )
+
+
+    @govukRadios(
+        Radios(
+            items = Seq(
+                RadioItem(
+                    content = HtmlContent("<b>"+messages("incomeSources.add.businessReportingMethod.chooseAnnualReport")+"</b>"),
+                    value = Some("A")
+                ),
+                RadioItem(
+                    content = HtmlContent("<b>"+messages("incomeSources.add.businessReportingMethod.chooseQuarterlyReport")+"</b>"),
+                    value = Some("Q")
+                )
+        )).withFormField(addBusinessReportingMethodForm("new_"+taxYearSeq+"_reporting_method"))
+    )
+}
+
+@mainTemplate(pageTitle = messages("incomeSources.add.businessReportingMethod.heading"), isAgent = isAgent, backUrl = None, btaNavPartial = user.btaNavPartial) {
+
+    @errorSummary(
+        form = addBusinessReportingMethodForm
+    )
+
+    @h1(messages("incomeSources.add.businessReportingMethod.heading"), classes = "govuk-heading-xl margin-bottom-100")
+
+    @p(){@messages("incomeSources.add.businessReportingMethod.description1", businessReportingViewModel.taxYear2.get.toString)}
+
+    @p(){@messages("incomeSources.add.businessReportingMethod.description2")}
+
+    @p(){@messages("incomeSources.add.businessReportingMethod.description3")}
+
+    <ul class="govuk-list govuk-list--bullet">
+        @Html(messages("incomeSources.add.businessReportingMethod.description4"))
+    </ul>
+
+    @h1(messages("incomeSources.add.businessReportingMethod.chooseReport"), classes = "govuk-heading-m")
+
+    @formWithCSRF(action = postAction, Symbol("id") -> "add-business-reporting-method-form") {
+       @if(businessReportingViewModel.taxYear1.isDefined){
+            @renderChooseReportingMethodOptions(businessReportingViewModel.taxYear1, "tax_year_1", businessReportingViewModel.latencyIndicator1)
+                @govukInput(
+                    Input(
+                        id = "new_tax_year_1_reporting_method-3",
+                        inputType = "hidden",
+                        classes = "govuk-visually-hidden",
+                        value = Some("none")
+                    ).withFormField(addBusinessReportingMethodForm("new_tax_year_1_reporting_method").copy(errors = Seq()))
+                )
+        }
+
+       @if(businessReportingViewModel.taxYear2.isDefined){
+            @renderChooseReportingMethodOptions(businessReportingViewModel.taxYear2, "tax_year_2", businessReportingViewModel.latencyIndicator2)
+        }
+
+        @continueButton()
+    }
+
+}

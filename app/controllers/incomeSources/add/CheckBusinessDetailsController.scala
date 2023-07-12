@@ -43,20 +43,20 @@ class CheckBusinessDetailsController @Inject()(val checkBusinessDetails: CheckBu
                                                val authorisedFunctions: AuthorisedFunctions,
                                                val retrieveNino: NinoPredicate,
                                                val retrieveIncomeSources: IncomeSourceDetailsPredicate,
-                                               val itvcErrorHandler: ItvcErrorHandler,
-                                               implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                                val incomeSourceDetailsService: IncomeSourceDetailsService,
                                                val retrieveBtaNavBar: NavBarPredicate,
                                                val businessDetailsService: CreateBusinessDetailsService)
                                               (implicit val ec: ExecutionContext,
                                                implicit override val mcc: MessagesControllerComponents,
-                                               val appConfig: FrontendAppConfig) extends ClientConfirmedController
+                                               val appConfig: FrontendAppConfig,
+                                               implicit val itvcErrorHandler: ItvcErrorHandler,
+                                               implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler) extends ClientConfirmedController
   with FeatureSwitching {
 
-  lazy val businessAddressUrl: String = controllers.routes.AddBusinessAddressController.show().url
-  lazy val businessAccountingMethodUrl: String = controllers.incomeSources.add.routes.BusinessAccountingMethodController.show().url
+  lazy val businessAddressUrl: String = controllers.incomeSources.add.routes.AddBusinessAddressController.show().url
+  lazy val agentBusinessAddressUrl: String = controllers.incomeSources.add.routes.AddBusinessAddressController.showAgent().url
 
-  lazy val agentBusinessAddressUrl: String = controllers.routes.AddBusinessAddressController.showAgent().url
+  lazy val businessAccountingMethodUrl: String = controllers.incomeSources.add.routes.BusinessAccountingMethodController.show().url
   lazy val agentBusinessAccountingMethodUrl: String = controllers.incomeSources.add.routes.BusinessAccountingMethodController.showAgent().url
 
   private def getBackURL(referer: Option[String]): String = {
@@ -97,10 +97,9 @@ class CheckBusinessDetailsController @Inject()(val checkBusinessDetails: CheckBu
   def handleRequest(sources: IncomeSourceDetailsModel, isAgent: Boolean, origin: Option[String] = None)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
 
-    val postAction: Call = {
-      if (isAgent) controllers.incomeSources.add.routes.CheckBusinessDetailsController.submitAgent() else
-        controllers.incomeSources.add.routes.CheckBusinessDetailsController.submit()
-    }
+    val backUrl: String = if (isAgent) getAgentBackURL(user.headers.get(REFERER)) else getBackURL(user.headers.get(REFERER))
+    val postAction: Call = if (isAgent) controllers.incomeSources.add.routes.CheckBusinessDetailsController.submitAgent() else
+      controllers.incomeSources.add.routes.CheckBusinessDetailsController.submit()
 
     if (isDisabled(IncomeSources)) {
       Future.successful(Redirect(controllers.routes.HomeController.show()))
@@ -112,7 +111,7 @@ class CheckBusinessDetailsController @Inject()(val checkBusinessDetails: CheckBu
               viewModel,
               postAction = postAction,
               isAgent,
-              backUrl = if (isAgent) getAgentBackURL(user.headers.get(REFERER)) else getBackURL(user.headers.get(REFERER), origin)
+              backUrl = backUrl
             ))
           case Left(ex) =>
             if (isAgent) {
@@ -141,7 +140,7 @@ class CheckBusinessDetailsController @Inject()(val checkBusinessDetails: CheckBu
 
             case Right(CreateIncomeSourcesResponse(id)) =>
               removeIncomeSourceDetailsFromSession(user)
-              Redirect(controllers.incomeSources.add.routes.AddBusinessReportingMethod.show().url + s"?id=$id")
+              Redirect(controllers.incomeSources.add.routes.BusinessReportingMethodController.show(id).url)
           }
         case None => Logger("application").error(
           s"[CheckBusinessDetailsController][submit] - Error: Unable to build view model on submit")
@@ -163,7 +162,7 @@ class CheckBusinessDetailsController @Inject()(val checkBusinessDetails: CheckBu
 
                   case Right(CreateIncomeSourcesResponse(id)) =>
                     removeIncomeSourceDetailsFromSession(mtdItUser)
-                    Redirect(controllers.incomeSources.add.routes.AddBusinessReportingMethod.showAgent().url + s"?id=$id")
+                    Redirect(controllers.incomeSources.add.routes.BusinessReportingMethodController.showAgent(id).url)
                 }
               case None => Logger("application").error(
                 s"[CheckBusinessDetailsController][submit] - Error: Unable to build view model on submit")

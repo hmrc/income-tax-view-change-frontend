@@ -56,9 +56,9 @@
 
 @changeBusinessNameURL = @{
     if(isAgent) {
-        controllers.routes.AddBusinessNameController.changeBusinessNameAgent().url
+        controllers.incomeSources.add.routes.AddBusinessNameController.changeBusinessNameAgent().url
     } else {
-        controllers.routes.AddBusinessNameController.changeBusinessName().url
+        controllers.incomeSources.add.routes.AddBusinessNameController.changeBusinessName().url
     }
 }
 
@@ -80,9 +80,9 @@
 
 @changeBusinessAddressURL = @{
     if(isAgent) {
-        controllers.routes.AddBusinessAddressController.changeBusinessAddressAgent().url
+        controllers.incomeSources.add.routes.AddBusinessAddressController.changeBusinessAddressAgent().url
     } else {
-        controllers.routes.AddBusinessAddressController.changeBusinessAddress().url
+        controllers.incomeSources.add.routes.AddBusinessAddressController.changeBusinessAddress().url
     }
 }
 
@@ -168,6 +168,9 @@
                 </div>
             }
         </dl>
+
+        <br>
+        <br>
 
         @govukButton(Button(
             content = Text(messages("check-business-details.confirm-button")),

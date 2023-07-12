@@ -21,13 +21,11 @@ import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
-import exceptions.MissingSessionKey
-import forms.utils.SessionKeys.{addBusinessAccountingPeriodEndDate, addUkPropertyAccountingMethod, addUkPropertyStartDate, businessTrade}
 import implicits.ImplicitDateFormatter
-import models.createIncomeSource.{CreateIncomeSourcesResponse, PropertyDetails}
-import models.incomeSourceDetails.viewmodels.checkUKPropertyDetails.CheckUKPropertyDetailsViewModel
+import models.createIncomeSource.CreateIncomeSourcesResponse
+import models.incomeSourceDetails.viewmodels.CheckUKPropertyViewModel
 import play.api.Logger
-import play.api.i18n.{I18nSupport, Messages}
+import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.{CreateBusinessDetailsService, IncomeSourceDetailsService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
@@ -35,7 +33,6 @@ import uk.gov.hmrc.play.language.LanguageUtils
 import utils.IncomeSourcesUtils.{getUKPropertyDetailsFromSession, removeIncomeSourceDetailsFromSession}
 import views.html.incomeSources.add.CheckUKPropertyDetails
 
-import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -58,8 +55,8 @@ class CheckUKPropertyDetailsController @Inject()(val checkUKPropertyDetails: Che
                                                  val languageUtils: LanguageUtils) extends ClientConfirmedController with I18nSupport with FeatureSwitching with ImplicitDateFormatter {
 
   def getBackUrl(isAgent: Boolean): String = {
-    if (isAgent) controllers.incomeSources.add.routes.UKPropertyAccountingMethod.showAgent().url else {
-      controllers.incomeSources.add.routes.UKPropertyAccountingMethod.show().url
+    if (isAgent) controllers.incomeSources.add.routes.UKPropertyAccountingMethodController.showAgent().url else {
+      controllers.incomeSources.add.routes.UKPropertyAccountingMethodController.show().url
     }
   }
 
@@ -73,28 +70,10 @@ class CheckUKPropertyDetailsController @Inject()(val checkUKPropertyDetails: Che
       controllers.routes.HomeController.show()
   }
 
-  def getUKPropertyAccountingMethodUrl(isAgent: Boolean): Call = {
-    if (isAgent) controllers.incomeSources.add.routes.UKPropertyAccountingMethod.showAgent() else
-      controllers.incomeSources.add.routes.UKPropertyAccountingMethod.show()
+  def getUKPropertyReportingMethodUrl(isAgent: Boolean): Call = {
+    if (isAgent) controllers.incomeSources.add.routes.UKPropertyReportingMethodController.showAgent() else
+      controllers.incomeSources.add.routes.UKPropertyReportingMethodController.show()
   }
-
-  def getUkPropertyStartDate(user: MtdItUser[_])(implicit messages: Messages): String = {
-    val startDate = user.session.get(addUkPropertyStartDate).getOrElse(throw MissingSessionKey(addUkPropertyStartDate))
-    val startDateAsLocalDate = LocalDate.from(startDate).toLongDate
-    startDateAsLocalDate
-  }
-
-  def getUkPropertyAccountingMethod(user: MtdItUser[_])(implicit messages: Messages): String = {
-    val valueFromSession = user.session.get(addUkPropertyAccountingMethod).getOrElse(throw MissingSessionKey(addUkPropertyAccountingMethod))
-    val cashAccountingSelected = valueFromSession.equals("CASH")
-
-    if (cashAccountingSelected) {
-      messages("incomeSources.add.accountingMethod.cash")
-    } else {
-      messages("incomeSources.add.accountingMethod.accruals")
-    }
-  }
-
 
   def show(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
@@ -119,23 +98,21 @@ class CheckUKPropertyDetailsController @Inject()(val checkUKPropertyDetails: Che
     val backUrl = getBackUrl(isAgent)
     val postAction = getSubmitUrl(isAgent)
     val homePageRedirectUrl = getHomePageUrl(isAgent)
-    val ukPropertyStartDate = getUkPropertyStartDate(user)
-    val ukPropertyAccountingMethod = getUkPropertyAccountingMethod(user)
-    val viewModel = CheckUKPropertyDetailsViewModel(ukPropertyStartDate, ukPropertyAccountingMethod)
 
     if (isDisabled(IncomeSources)) {
       Future.successful(Redirect(homePageRedirectUrl))
     } else {
-      Future.successful(Ok(
-        checkUKPropertyDetails(viewModel = viewModel,
-          isAgent = isAgent,
-          backUrl = backUrl,
-          postAction = postAction,
-          ukPropertyStartDate = ukPropertyStartDate,
-          ukPropertyAccountingMethod = ukPropertyAccountingMethod)).addingToSession(
-        addUkPropertyAccountingMethod -> "CASH",
-        businessTrade -> "uk-property"
-      )) //TODO: uncomment after Tharun's PR
+      getUKPropertyDetailsFromSession(user).toOption match {
+        case Some(checkUKPropertyViewModel: CheckUKPropertyViewModel) =>
+          Future.successful(Ok(
+            checkUKPropertyDetails(viewModel = checkUKPropertyViewModel,
+              isAgent = isAgent,
+              backUrl = backUrl,
+              postAction = postAction)))
+        case None => Logger("application").error(
+          s"[CheckUKPropertyDetailsController][handleRequest] - Error: Unable to build UK property details")
+          Future.successful(itvcErrorHandler.showInternalServerError())
+      }
     }
   }
 
@@ -155,14 +132,14 @@ class CheckUKPropertyDetailsController @Inject()(val checkUKPropertyDetails: Che
   }
 
   def handleSubmit(isAgent: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
-    val redirectUrl = getUKPropertyAccountingMethodUrl(isAgent)
+    val redirectUrl = getUKPropertyReportingMethodUrl(isAgent)
 
     if (isDisabled(IncomeSources)) {
       Future.successful(Redirect(redirectUrl))
     } else {
       getUKPropertyDetailsFromSession(user).toOption match {
-        case Some(propertyDetails: PropertyDetails) =>
-          businessDetailsService.createUKPropertyDetails(propertyDetails).map {
+        case Some(checkUKPropertyViewModel: CheckUKPropertyViewModel) =>
+          businessDetailsService.createUKProperty(checkUKPropertyViewModel).map {
             case Left(ex) => Logger("application").error(
               s"[CheckUKPropertyDetailsController][handleRequest] - Unable to create income source: ${ex.getMessage}")
               itvcErrorHandler.showInternalServerError()

@@ -17,9 +17,9 @@
 package utils
 
 import auth.MtdItUser
-import forms.utils.SessionKeys.{addBusinessAccountingMethod, addBusinessAccountingPeriodEndDate, addBusinessAccountingPeriodStartDate, addBusinessAddressLine1, addBusinessAddressLine2, addBusinessAddressLine3, addBusinessAddressLine4, addBusinessCountryCode, addBusinessPostalCode, addUkPropertyAccountingMethod, addUkPropertyStartDate, businessName, businessStartDate, businessTrade}
+import forms.utils.SessionKeys._
 import models.createIncomeSource.PropertyDetails
-import models.incomeSourceDetails.viewmodels.CheckBusinessDetailsViewModel
+import models.incomeSourceDetails.viewmodels.{CheckBusinessDetailsViewModel, CheckUKPropertyViewModel}
 
 import java.time.LocalDate
 
@@ -72,7 +72,7 @@ object IncomeSourcesUtils {
     }
   }
 
-  def getUKPropertyDetailsFromSession(implicit user: MtdItUser[_]): Either[Throwable, PropertyDetails] = {
+  def getUKPropertyDetailsFromSession(implicit user: MtdItUser[_]): Either[Throwable, CheckUKPropertyViewModel] = {
     val errors: Seq[String] = Seq(
       user.session.data.get(addUkPropertyStartDate).orElse(Option(MissingKey(s"MissingKey: $addUkPropertyStartDate"))),
       user.session.data.get(businessTrade).orElse(Option(MissingKey(s"MissingKey: $businessTrade"))),
@@ -80,13 +80,12 @@ object IncomeSourcesUtils {
       case Some(MissingKey(msg)) => MissingKey(msg)
     }.map(e => e.msg)
 
-    val result: Option[PropertyDetails] = for {
+    val result: Option[CheckUKPropertyViewModel] = for {
       tradingStartDate <- user.session.data.get(addUkPropertyStartDate)
       cashOrAccrualsFlag <- user.session.data.get(addUkPropertyAccountingMethod)
     } yield {
-      PropertyDetails(
-        tradingStartDate = tradingStartDate,
-        startDate = tradingStartDate,
+      CheckUKPropertyViewModel(
+        tradingStartDate = LocalDate.parse(tradingStartDate),
         cashOrAccrualsFlag = cashOrAccrualsFlag
       )
     }

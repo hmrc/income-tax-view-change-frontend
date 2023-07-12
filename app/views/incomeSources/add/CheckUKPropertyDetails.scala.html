@@ -22,23 +22,26 @@
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcPageHeading
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.pageheading.PageHeading
 @import views.html.helpers.injected.ErrorSummary
-@import models.incomeSourceDetails.viewmodels.checkUKPropertyDetails.CheckUKPropertyDetailsViewModel
+@import models.incomeSourceDetails.viewmodels.CheckUKPropertyViewModel
 
 
 @this(
         mainTemplate: unifiedLayout,
         continueButton: ContinueButton,
         hmrcPageHeading: HmrcPageHeading,
-        formWithCSRF: FormWithCSRF
+        formWithCSRF: FormWithCSRF,
+        implicitDateFormatter: ImplicitDateFormatterImpl
 )
 
-@(viewModel:CheckUKPropertyDetailsViewModel, isAgent: Boolean, backUrl: String, postAction: Call, ukPropertyStartDate: String, ukPropertyAccountingMethod: String)(implicit messages: Messages, user: auth.MtdItUser[_])
+@(viewModel: CheckUKPropertyViewModel, isAgent: Boolean, backUrl: String, postAction: Call)(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @heading = @{messages("incomeSources.add.checkUKPropertyDetails.heading")}
 @caption = @{messages("incomeSources.add.checkUKPropertyDetails.caption")}
 @startDateLabel = @{messages("incomeSources.add.checkUKPropertyDetails.startDateLabel")}
 @accountingMethodLabel = {@messages("incomeSources.add.checkUKPropertyDetails.accountingMethodLabel")}
 @change = @{messages("incomeSources.add.checkUKPropertyDetails.change")}
+
+@import implicitDateFormatter.longDate
 
 @getChangeUKPropertyStartDateUrl = @{
     if (isAgent) {
@@ -50,10 +53,18 @@
 
 @getChangeUKPropertyAccountingMethodUrl = @{
     if (isAgent) {
-        controllers.incomeSources.add.routes.UKPropertyAccountingMethod.changeAgent().url
+        controllers.incomeSources.add.routes.UKPropertyAccountingMethodController.changeAgent().url
     } else {
-        controllers.incomeSources.add.routes.UKPropertyAccountingMethod.change().url
+        controllers.incomeSources.add.routes.UKPropertyAccountingMethodController.change().url
     }
+}
+
+@accountingMethodMessageKey = @{
+    viewModel.getAccountingMethodMessageKey
+}
+
+@startDateFormatted = @{
+    viewModel.tradingStartDate.toLongDate
 }
 
 
@@ -73,10 +84,10 @@
     <dl class="govuk-summary-list govuk-!-margin-bottom-0">
         <div class="govuk-summary-list__row">
 
-            <dt class="govuk-summary-list__key govuk-!-width-one-third" id="ukPropertyBusinessStartDateLabel">@startDateLabel</dt>
-            <dd class="govuk-summary-list__value" id="ukPropertyBusinessStartDate">@ukPropertyStartDate</dd>
+            <dt class="govuk-summary-list__key govuk-!-width-one-third" id="uk-property-start-date-label">@startDateLabel</dt>
+            <dd class="govuk-summary-list__value" id="uk-property-start-date">@startDateFormatted</dd>
             <dd class="govuk-summary-list__actions">
-                <a class="govuk-link" href="@getChangeUKPropertyStartDateUrl" id="changeStartDate">
+                <a class="govuk-link" href="@getChangeUKPropertyStartDateUrl" id="change-start-date-link">
                     @change
                     <span class="govuk-visually-hidden">@change</span>
                 </a>
@@ -88,10 +99,10 @@
     <dl class="govuk-summary-list govuk-!-margin-bottom-9">
         <div class="govuk-summary-list__row">
 
-            <dt class="govuk-summary-list__key govuk-!-width-one-third"  id="ukPropertyAccountingMethodLabel">@accountingMethodLabel</dt>
-            <dd class="govuk-summary-list__value" id="ukPropertyAccountingMethod">@ukPropertyAccountingMethod</dd>
+            <dt class="govuk-summary-list__key govuk-!-width-one-third"  id="uk-property-accounting-method-label">@accountingMethodLabel</dt>
+            <dd class="govuk-summary-list__value" id="uk-property-accounting-method">@messages(accountingMethodMessageKey)</dd>
             <dd class="govuk-summary-list__actions">
-                <a class="govuk-link" href="@getChangeUKPropertyAccountingMethodUrl" id="changeAccountingMethod">
+                <a class="govuk-link" href="@getChangeUKPropertyAccountingMethodUrl" id="change-accounting-method-link">
                     @change
                     <span class="govuk-visually-hidden">@change</span>
                 </a>

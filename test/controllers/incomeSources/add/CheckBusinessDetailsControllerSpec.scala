@@ -17,13 +17,11 @@
 package controllers.incomeSources.add
 
 import config.featureswitch.FeatureSwitch.switches
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import config.featureswitch.{FeatureSwitching, IncomeSources}
-import controllers.AddBusinessNameController
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import forms.utils.SessionKeys
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
-import models.createIncomeSource.AddIncomeSourceResponse
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.mockito.ArgumentMatchers.any
@@ -34,10 +32,9 @@ import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import services.CreateBusinessDetailsService
 import testConstants.BaseTestConstants
-import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testIndividualAuthSuccessWithSaUtrResponse}
+import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
 import testUtils.TestSupport
 import uk.gov.hmrc.http.HttpClient
-import views.html.AddBusiness
 import views.html.incomeSources.add.CheckBusinessDetails
 
 import java.time.LocalDate
@@ -60,7 +57,7 @@ class CheckBusinessDetailsControllerSpec extends TestSupport with MockAuthentica
 
   val mockHttpClient: HttpClient = mock(classOf[HttpClient])
   val mockCheckBusinessDetails: CheckBusinessDetails = app.injector.instanceOf[CheckBusinessDetails]
-  val mockBusinessDetailsService : CreateBusinessDetailsService = mock(classOf[CreateBusinessDetailsService])
+  val mockBusinessDetailsService: CreateBusinessDetailsService = mock(classOf[CreateBusinessDetailsService])
 
   object TestCheckBusinessDetailsController extends CheckBusinessDetailsController(
     checkBusinessDetails = app.injector.instanceOf[CheckBusinessDetails],
@@ -69,13 +66,13 @@ class CheckBusinessDetailsControllerSpec extends TestSupport with MockAuthentica
     authorisedFunctions = mockAuthService,
     retrieveNino = app.injector.instanceOf[NinoPredicate],
     retrieveIncomeSources = MockIncomeSourceDetailsPredicate,
-    itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
-    itvcErrorHandlerAgent = app.injector.instanceOf[AgentItvcErrorHandler],
     incomeSourceDetailsService = mockIncomeSourceDetailsService,
     retrieveBtaNavBar = MockNavBarPredicate,
     businessDetailsService = mockBusinessDetailsService
   )(ec, mcc = app.injector.instanceOf[MessagesControllerComponents],
-    appConfig = app.injector.instanceOf[FrontendAppConfig]
+    appConfig = app.injector.instanceOf[FrontendAppConfig],
+    itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
+    itvcErrorHandlerAgent = app.injector.instanceOf[AgentItvcErrorHandler]
   ) {
     val heading: String = messages("check-business-details.heading")
     val title: String = s"${messages("htmlTitle", heading)}"
@@ -86,36 +83,36 @@ class CheckBusinessDetailsControllerSpec extends TestSupport with MockAuthentica
   "CheckBusinessDetailsController" should {
 
     "return 200 OK" when {
-        "the session contains full business details and FS enabled" in {
-          disableAllSwitches()
-          enable(IncomeSources)
+      "the session contains full business details and FS enabled" in {
+        disableAllSwitches()
+        enable(IncomeSources)
 
-          mockNoIncomeSources()
-          setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
+        mockNoIncomeSources()
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
-          val result = TestCheckBusinessDetailsController.show()(
-            fakeRequestWithActiveSession
-              .withSession(
-                SessionKeys.businessName -> testBusinessStartDate,
-                SessionKeys.businessStartDate -> testBusinessStartDate,
-                SessionKeys.businessTrade -> testBusinessTrade,
-                SessionKeys.addBusinessAddressLine1 -> testBusinessAddressLine1,
-                SessionKeys.addBusinessAccountingMethod -> testBusinessAccountingMethod,
-                SessionKeys.addBusinessAccountingPeriodEndDate -> testAccountingPeriodEndDate,
-                SessionKeys.addBusinessPostalCode -> testBusinessPostCode,
-              ))
+        val result = TestCheckBusinessDetailsController.show()(
+          fakeRequestWithActiveSession
+            .withSession(
+              SessionKeys.businessName -> testBusinessStartDate,
+              SessionKeys.businessStartDate -> testBusinessStartDate,
+              SessionKeys.businessTrade -> testBusinessTrade,
+              SessionKeys.addBusinessAddressLine1 -> testBusinessAddressLine1,
+              SessionKeys.addBusinessAccountingMethod -> testBusinessAccountingMethod,
+              SessionKeys.addBusinessAccountingPeriodEndDate -> testAccountingPeriodEndDate,
+              SessionKeys.addBusinessPostalCode -> testBusinessPostCode,
+            ))
 
-          val document: Document = Jsoup.parse(contentAsString(result))
-          val changeDetailsLinks = document.select(".govuk-summary-list__actions .govuk-link")
-
-
-          status(result) shouldBe OK
-          document.title shouldBe TestCheckBusinessDetailsController.title
-          document.select("h1:nth-child(1)").text shouldBe TestCheckBusinessDetailsController.heading
-          changeDetailsLinks.first().text shouldBe TestCheckBusinessDetailsController.link
+        val document: Document = Jsoup.parse(contentAsString(result))
+        val changeDetailsLinks = document.select(".govuk-summary-list__actions .govuk-link")
 
 
-        }
+        status(result) shouldBe OK
+        document.title shouldBe TestCheckBusinessDetailsController.title
+        document.select("h1:nth-child(1)").text shouldBe TestCheckBusinessDetailsController.heading
+        changeDetailsLinks.first().text shouldBe TestCheckBusinessDetailsController.link
+
+
+      }
     }
 
     "return 303" when {
@@ -125,8 +122,10 @@ class CheckBusinessDetailsControllerSpec extends TestSupport with MockAuthentica
 
         mockNoIncomeSources()
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-        when(mockBusinessDetailsService.createBusinessDetails(any())(any(), any(), any()) )
-          .thenReturn(Future{ Right(AddIncomeSourceResponse("incomeSourceId")) } )
+        when(mockBusinessDetailsService.createBusinessDetails(any())(any(), any(), any()))
+          .thenReturn(Future {
+            Right(AddIncomeSourceResponse("incomeSourceId"))
+          })
 
         val result = TestCheckBusinessDetailsController.submit()(
           fakeRequestWithActiveSession

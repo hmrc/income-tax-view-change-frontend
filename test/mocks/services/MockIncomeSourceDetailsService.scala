@@ -16,14 +16,13 @@
 
 package mocks.services
 
-import testConstants.BaseTestConstants.{testErrorMessage, testErrorStatus}
-import testConstants.IncomeSourceDetailsTestConstants._
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsResponse}
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.{mock, reset, when}
 import org.scalatest.{BeforeAndAfterEach, Suite}
-import org.mockito.Mockito.mock
 import services.IncomeSourceDetailsService
+import testConstants.BaseTestConstants.{testErrorMessage, testErrorStatus}
+import testConstants.IncomeSourceDetailsTestConstants._
 
 import scala.concurrent.Future
 
@@ -44,8 +43,8 @@ trait MockIncomeSourceDetailsService extends BeforeAndAfterEach {
       .thenReturn(Future.successful(sources))
   }
 
-  def mockSingleBusinessIncomeSource(userMigrated : Boolean = true): Unit = setupMockGetIncomeSourceDetails()(
-    if (userMigrated){
+  def mockSingleBusinessIncomeSource(userMigrated: Boolean = true): Unit = setupMockGetIncomeSourceDetails()(
+    if (userMigrated) {
       singleBusinessIncome
     } else {
       singleBusinessIncomeNotMigrated
@@ -66,6 +65,8 @@ trait MockIncomeSourceDetailsService extends BeforeAndAfterEach {
 
   def mockBusinessIncomeSourceWithCashAndAccruals(): Unit = setupMockGetIncomeSourceDetails()(businessIncome3)
 
+  def mockBusinessIncomeSourceMissingCashOrAccrualsField(): Unit = setupMockGetIncomeSourceDetails()(businessIncome4)
+
   def mockPropertyIncomeSource(): Unit = setupMockGetIncomeSourceDetails()(propertyIncomeOnly)
 
   def mockUKPropertyIncomeSource(): Unit = setupMockGetIncomeSourceDetails()(ukPropertyIncome)
@@ -75,6 +76,7 @@ trait MockIncomeSourceDetailsService extends BeforeAndAfterEach {
   def mockBothIncomeSources(): Unit = setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
   def mockUkPropertyWithSoleTraderBusiness(): Unit = setupMockGetIncomeSourceDetails()(ukPropertyWithSoleTraderBusiness)
+
   def mockNoIncomeSources(): Unit = setupMockGetIncomeSourceDetails()(noIncomeDetails)
 
   def mockBothIncomeSourcesBusinessAligned(): Unit = setupMockGetIncomeSourceDetails()(businessAndPropertyAligned)
@@ -82,4 +84,8 @@ trait MockIncomeSourceDetailsService extends BeforeAndAfterEach {
   def mockErrorIncomeSource(): Unit = setupMockGetIncomeSourceDetails()(IncomeSourceDetailsError(testErrorStatus, testErrorMessage))
 
   def mockBothPropertyBothBusiness(): Unit = setupMockGetIncomeSourceDetails()(ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome)
+
+  def mockBusinessIncomeSourceWithLatency2023(): Unit = setupMockGetIncomeSourceDetails()(singleBusinessIncome2023)
+
+  def mockBusinessIncomeSourceWithLatency2024(): Unit = setupMockGetIncomeSourceDetails()(singleBusinessIncome2024)
 }
