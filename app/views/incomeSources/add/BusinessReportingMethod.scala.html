@@ -50,8 +50,6 @@
 
 @renderChooseReportingMethodOptions(taxYear: Option[String], taxYearSeq: String, latencyIndicator: Option[String]) = {
 
-    @p(){@messages("incomeSources.add.businessReportingMethod.taxYear", (taxYear.get.toInt - 1).toString, taxYear.get.toString)}
-
     @govukInput(
         Input(
             inputType = "hidden",
@@ -71,6 +69,13 @@
 
     @govukRadios(
         Radios(
+            fieldset = Some(Fieldset(
+                legend = Some(Legend(
+                    content = Text(messages("incomeSources.add.businessReportingMethod.taxYear", (taxYear.get.toInt - 1).toString, taxYear.get.toString)),
+                    classes = "govuk-fieldset__legend govuk-!-margin-bottom-5",
+                    isPageHeading = false
+                ))
+            )),
             items = Seq(
                 RadioItem(
                     content = HtmlContent("<b>"+messages("incomeSources.add.businessReportingMethod.chooseAnnualReport")+"</b>"),
