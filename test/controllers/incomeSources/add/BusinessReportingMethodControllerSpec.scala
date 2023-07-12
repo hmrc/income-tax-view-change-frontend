@@ -244,9 +244,9 @@ class BusinessReportingMethodControllerSpec extends TestSupport with MockAuthent
         document.getElementsByClass("govuk-body").get(2).text shouldBe TestBusinessReportingMethodController.description3
         document.select("ul").get(1).select("li").toString.replaceAll("\n", "") shouldBe TestBusinessReportingMethodController.description4
         document.select("h1").get(1).text shouldBe TestBusinessReportingMethodController.chooseReport
-        document.getElementsByClass("govuk-body").get(3).text shouldBe TestBusinessReportingMethodController.taxYear1_TY1
+        document.getElementsByTag("legend").get(0).text shouldBe TestBusinessReportingMethodController.taxYear1_TY1
         document.getElementById("new_tax_year_1_reporting_method_tax_year").`val`() shouldBe "2022"
-        document.getElementsByClass("govuk-body").get(4).text shouldBe TestBusinessReportingMethodController.taxYear2_TY1
+        document.getElementsByTag("legend").get(1).text shouldBe TestBusinessReportingMethodController.taxYear2_TY1
         document.getElementById("new_tax_year_2_reporting_method_tax_year").`val`() shouldBe "2023"
         document.getElementsByClass("govuk-form-group").size() shouldBe 7
       }
@@ -267,7 +267,7 @@ class BusinessReportingMethodControllerSpec extends TestSupport with MockAuthent
         document.getElementsByClass("govuk-body").get(2).text shouldBe TestBusinessReportingMethodController.description3
         document.select("ul").get(1).select("li").toString.replaceAll("\n", "") shouldBe TestBusinessReportingMethodController.description4
         document.select("h1").get(1).text shouldBe TestBusinessReportingMethodController.chooseReport
-        document.getElementsByClass("govuk-body").get(3).text shouldBe TestBusinessReportingMethodController.taxYear2_TY1
+        document.getElementsByTag("legend").get(0).text shouldBe TestBusinessReportingMethodController.taxYear2_TY1
         document.getElementById("new_tax_year_2_reporting_method_tax_year").`val`() shouldBe "2023"
         document.getElementsByClass("govuk-form-group").size() shouldBe 3
       }
@@ -489,9 +489,9 @@ class BusinessReportingMethodControllerSpec extends TestSupport with MockAuthent
         document.getElementsByClass("govuk-body").get(2).text shouldBe TestBusinessReportingMethodController.description3
         document.select("ul").get(1).select("li").toString.replaceAll("\n", "") shouldBe TestBusinessReportingMethodController.description4
         document.select("h1").get(1).text shouldBe TestBusinessReportingMethodController.chooseReport
-        document.getElementsByClass("govuk-body").get(3).text shouldBe TestBusinessReportingMethodController.taxYear1_TY1
+        document.getElementsByTag("legend").get(0).text shouldBe TestBusinessReportingMethodController.taxYear1_TY1
         document.getElementById("new_tax_year_1_reporting_method_tax_year").`val`() shouldBe "2022"
-        document.getElementsByClass("govuk-body").get(4).text shouldBe TestBusinessReportingMethodController.taxYear2_TY1
+        document.getElementsByTag("legend").get(1).text shouldBe TestBusinessReportingMethodController.taxYear2_TY1
         document.getElementById("new_tax_year_2_reporting_method_tax_year").`val`() shouldBe "2023"
         document.getElementsByClass("govuk-form-group").size() shouldBe 7
       }
@@ -512,7 +512,7 @@ class BusinessReportingMethodControllerSpec extends TestSupport with MockAuthent
         document.getElementsByClass("govuk-body").get(2).text shouldBe TestBusinessReportingMethodController.description3
         document.select("ul").get(1).select("li").toString.replaceAll("\n", "") shouldBe TestBusinessReportingMethodController.description4
         document.select("h1").get(1).text shouldBe TestBusinessReportingMethodController.chooseReport
-        document.getElementsByClass("govuk-body").get(3).text shouldBe TestBusinessReportingMethodController.taxYear2_TY1
+        document.getElementsByTag("legend").get(0).text shouldBe TestBusinessReportingMethodController.taxYear2_TY1
         document.getElementById("new_tax_year_2_reporting_method_tax_year").`val`() shouldBe "2023"
         document.getElementsByClass("govuk-form-group").size() shouldBe 3
       }
