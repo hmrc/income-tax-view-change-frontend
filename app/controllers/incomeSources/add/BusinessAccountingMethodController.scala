@@ -21,12 +21,10 @@ import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
-import exceptions.MissingFieldException
 import forms.incomeSources.add.BusinessAccountingMethodForm
 import forms.utils.SessionKeys.addBusinessAccountingMethod
-import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
+import models.incomeSourceDetails.BusinessDetailsModel
 import play.api.Logger
-import play.api.i18n.Lang.logger
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc._
 import services.IncomeSourceDetailsService

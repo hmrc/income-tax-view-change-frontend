@@ -68,15 +68,15 @@
 }
 
 @mainTemplate(
-    pageTitle = getMessage("heading"),
+    pageTitle = getMessage("title"),
     backUrl = Some(backUrl),
     isAgent = isAgent,
     btaNavPartial = user.btaNavPartial) {
 
     @hmrcPageHeading(PageHeading(
-        text = getMessage("heading"),
+        text = getMessage("title"),
         headingClasses = Some("govuk-heading-l"),
-        section = Some(getMessage("sole-trader-caption")),
+        section = Some(getMessage("heading")),
         captionClasses = Some("govuk-caption-l")
     ))
 
@@ -84,13 +84,13 @@
 
         <dl class="govuk-summary-list" id="refund-to-taxpayer-table">
             <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">@getMessage("foreign-property-start-date")</dt>
+                <dt class="govuk-summary-list__key">@getMessage("start-date")</dt>
                 <dd class="govuk-summary-list__value" id="foreign-property-date-value">@{
-                    viewModel.tradingStartDate.toLongDate
+                    viewModel.tradingStartDate.get.toLongDate
                 }</dd>
                 <dd class="govuk-summary-list__actions govuk-!-text-align-right govuk-!-margin-0">
                     <a class="govuk-link" id="start-date-change-details-link" href=@changeForeignPropertyStartDateURL>
-                    @getMessage("change-details-link")
+                    @getMessage("change")
                     </a>
                 </dd>
             </div>
@@ -105,7 +105,7 @@
                 }</dd>
                 <dd class="govuk-summary-list__actions govuk-!-text-align-right govuk-!-margin-0">
                     <a class="govuk-link" id="accounting-method-change-details-link" href=@changeForeignPropertyAccountingMethodURL>
-                    @getMessage("change-details-link")
+                    @getMessage("change")
                     </a>
                 </dd>
             </div>

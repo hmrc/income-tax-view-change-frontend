@@ -31,4 +31,4 @@ case class CheckBusinessDetailsViewModel(businessName: Option[String],
                                          businessAccountingMethod: Option[String],
                                          cashOrAccrualsFlag: String)
 
-case class CheckForeignPropertyViewModel(tradingStartDate: LocalDate, cashOrAccrualsFlag: String)
+case class CheckForeignPropertyViewModel(tradingStartDate: Option[LocalDate], cashOrAccrualsFlag: String)

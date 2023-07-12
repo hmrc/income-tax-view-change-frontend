@@ -1361,5 +1361,10 @@ incomeSources.add.businessReportingMethod.chooseAnnualReport        =   Choose a
 incomeSources.add.businessReportingMethod.chooseQuarterlyReport     =   Choose quarterly reporting
 incomeSources.add.businessReportingMethod.error                     =   Select if you want to report annually or quarterly for tax year {0} to {1}
 
-incomeSources.add.foreign-property-check-details.cash-basis-accounting          = Cash basis accounting
-incomeSources.add.foreign-property-check-details.traditional-accounting         = Traditional accounting
+incomeSources.add.foreign-property-check-details.cash-basis-accounting      = Cash basis accounting
+incomeSources.add.foreign-property-check-details.traditional-accounting     = Traditional accounting
+incomeSources.add.foreign-property-check-details.heading                    = Foreign property business you entered
+incomeSources.add.foreign-property-check-details.title                      = Check your details
+incomeSources.add.foreign-property-check-details.start-date                 = Foreign property business start date
+incomeSources.add.foreign-property-check-details.accounting-method          = Foreign property business accounting method
+incomeSources.add.foreign-property-check-details.change                     = Change

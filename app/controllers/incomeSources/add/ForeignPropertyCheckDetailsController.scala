@@ -21,10 +21,9 @@ import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
-import forms.utils.SessionKeys.{businessName, businessStartDate, businessTrade, foreignPropertyStartDate, _}
-import models.addIncomeSource.AddIncomeSourceResponse
+import forms.utils.SessionKeys._
 import models.incomeSourceDetails.IncomeSourceDetailsModel
-import models.incomeSourceDetails.viewmodels.{CheckBusinessDetailsViewModel, CheckForeignPropertyViewModel}
+import models.incomeSourceDetails.viewmodels.CheckForeignPropertyViewModel
 import play.api.Logger
 import play.api.mvc._
 import services.{CreateBusinessDetailsService, IncomeSourceDetailsService}
@@ -32,7 +31,6 @@ import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
 import views.html.incomeSources.add.ForeignPropertyCheckDetails
 
-import java.net.URI
 import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -48,10 +46,10 @@ class ForeignPropertyCheckDetailsController @Inject()(val checkForeignPropertyDe
                                                       val retrieveBtaNavBar: NavBarPredicate,
                                                       val businessDetailsService: CreateBusinessDetailsService)
                                                      (implicit val ec: ExecutionContext,
-                                            implicit override val mcc: MessagesControllerComponents,
-                                            val appConfig: FrontendAppConfig,
-                                            implicit val itvcErrorHandler: ItvcErrorHandler,
-                                            implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler) extends ClientConfirmedController
+                                                      implicit override val mcc: MessagesControllerComponents,
+                                                      val appConfig: FrontendAppConfig,
+                                                      implicit val itvcErrorHandler: ItvcErrorHandler,
+                                                      implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler) extends ClientConfirmedController
   with FeatureSwitching {
 
   lazy val businessAccountingMethodUrl: String = controllers.incomeSources.add.routes.ForeignPropertyAccountingMethodController.show().url
@@ -105,11 +103,11 @@ class ForeignPropertyCheckDetailsController @Inject()(val checkForeignPropertyDe
 
     val result: Option[CheckForeignPropertyViewModel] = for {
       foreignPropertyStartDate <- user.session.data.get(foreignPropertyStartDate).map(LocalDate.parse)
-      foreignPropertyAccountingMethod <- user.session.data.get(addForeignPropertyAccountingMethod)
+      cashOrAccrualsFlag <- user.session.data.get(addForeignPropertyAccountingMethod)
     } yield {
       CheckForeignPropertyViewModel(
-        tradingStartDate = foreignPropertyStartDate,
-        cashOrAccrualsFlag = foreignPropertyAccountingMethod)
+        tradingStartDate = Some(foreignPropertyStartDate),
+        cashOrAccrualsFlag = cashOrAccrualsFlag)
     }
     result match {
       case Some(checkForeignPropertyViewModel) =>
