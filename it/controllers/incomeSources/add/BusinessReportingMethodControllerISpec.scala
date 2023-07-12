@@ -70,8 +70,8 @@ class BusinessReportingMethodControllerISpec extends ComponentSpecBase {
         result should have(
           httpStatus(OK),
           pageTitleIndividual("incomeSources.add.businessReportingMethod.heading"),
-          elementTextBySelectorList("#add-business-reporting-method-form", "p:nth-of-type(1)")(s"Tax year ${taxYear1 - 1}-$taxYear1"),
-          elementTextBySelectorList("#add-business-reporting-method-form", "p:nth-of-type(2)")(s"Tax year ${taxYear2 - 1}-$taxYear2")
+          elementTextBySelectorList("#add-business-reporting-method-form", "legend:nth-of-type(1)")(s"Tax year ${taxYear1 - 1}-$taxYear1"),
+          elementTextBySelectorList("#add-business-reporting-method-form", "legend:nth-of-type(2)")(s"Tax year ${taxYear2 - 1}-$taxYear2")
         )
       }
       "URL contains a valid income source ID and authorised user is within latency period (Tax Year 1 is crystallised)" in {
@@ -93,8 +93,8 @@ class BusinessReportingMethodControllerISpec extends ComponentSpecBase {
         result should have(
           httpStatus(OK),
           pageTitleIndividual("incomeSources.add.businessReportingMethod.heading"),
-          elementTextBySelectorList("#add-business-reporting-method-form", "p:nth-of-type(1)")(s"Tax year ${taxYear2 - 1}-$taxYear2"),
-          elementCountBySelector("#add-business-reporting-method-form > p:nth-of-type(2)")(0)
+          elementTextBySelectorList("#add-business-reporting-method-form", "legend:nth-of-type(1)")(s"Tax year ${taxYear2 - 1}-$taxYear2"),
+          elementCountBySelector("#add-business-reporting-method-form > legend:nth-of-type(2)")(0)
         )
       }
       "URL contains a valid income source ID and authorised user is within latency period (Tax Year 1 NOT crystallised - before 2023-24 Tax Year)" in {
@@ -128,8 +128,8 @@ class BusinessReportingMethodControllerISpec extends ComponentSpecBase {
         result should have(
           httpStatus(OK),
           pageTitleIndividual("incomeSources.add.businessReportingMethod.heading"),
-          elementTextBySelectorList("#add-business-reporting-method-form", "p:nth-of-type(1)")(s"Tax year ${taxYear2023 - 1}-$taxYear2023"),
-          elementTextBySelectorList("#add-business-reporting-method-form", "p:nth-of-type(2)")(s"Tax year ${taxYear2024 - 1}-$taxYear2024")
+          elementTextBySelectorList("#add-business-reporting-method-form", "legend:nth-of-type(1)")(s"Tax year ${taxYear2023 - 1}-$taxYear2023"),
+          elementTextBySelectorList("#add-business-reporting-method-form", "legend:nth-of-type(2)")(s"Tax year ${taxYear2024 - 1}-$taxYear2024")
         )
       }
       "URL contains a valid income source ID and authorised user is within latency period (Tax Year 1 crystallised - before 2023-24 Tax Year)" in {
@@ -163,8 +163,8 @@ class BusinessReportingMethodControllerISpec extends ComponentSpecBase {
         result should have(
           httpStatus(OK),
           pageTitleIndividual("incomeSources.add.businessReportingMethod.heading"),
-          elementTextBySelectorList("#add-business-reporting-method-form", "p:nth-of-type(1)")(s"Tax year ${taxYear2024 - 1}-$taxYear2024"),
-          elementCountBySelector("#add-business-reporting-method-form > p:nth-of-type(2)")(0)
+          elementTextBySelectorList("#add-business-reporting-method-form", "legend:nth-of-type(1)")(s"Tax year ${taxYear2024 - 1}-$taxYear2024"),
+          elementCountBySelector("#add-business-reporting-method-form > legend:nth-of-type(2)")(0)
         )
       }
     }
