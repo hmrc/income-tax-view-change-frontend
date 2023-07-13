@@ -22,6 +22,7 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import forms.utils.SessionKeys._
+import models.addIncomeSource.AddIncomeSourceResponse
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import models.incomeSourceDetails.viewmodels.CheckForeignPropertyViewModel
 import play.api.Logger
@@ -96,7 +97,8 @@ class ForeignPropertyCheckDetailsController @Inject()(val checkForeignPropertyDe
     case class MissingKey(msg: String)
 
     val errors: Seq[String] = Seq(
-      user.session.data.get(foreignPropertyStartDate).orElse(Option(MissingKey("MissingKey: addForeignPropertyStartDate")))
+      user.session.data.get(foreignPropertyStartDate).orElse(Option(MissingKey("MissingKey: addForeignPropertyStartDate"))),
+      user.session.data.get(addForeignPropertyAccountingMethod).orElse(Option(MissingKey("MissingKey: addForeignPropertyAccountingMethod")))
     ).collect {
       case Some(MissingKey(msg)) => MissingKey(msg)
     }.map(e => e.msg)
@@ -138,8 +140,53 @@ class ForeignPropertyCheckDetailsController @Inject()(val checkForeignPropertyDe
         }
   }
 
-  def submit(): Action[AnyContent] = ???
-
-  def submitAgent: Action[AnyContent] = ???
-
+  def submit(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+    andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
+    implicit user =>
+      handleSubmit(false)
   }
+
+  def submitAgent: Action[AnyContent] = Authenticated.async {
+    implicit request =>
+      implicit user =>
+        getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
+          implicit mtdItUser =>
+            handleSubmit(true)
+        }
+  }
+
+  private val sessionKeys = Seq(foreignPropertyStartDate, addForeignPropertyAccountingMethod)
+
+  def handleSubmit(isAgent: Boolean)(implicit user: MtdItUser[AnyContent], request: Request[AnyContent]): Future[Result] = {
+    getDetails(user).toOption match {
+      case Some(viewModel: CheckForeignPropertyViewModel) =>
+        businessDetailsService.createForeignProperty(viewModel).map {
+          case Left(ex) => if (isAgent) {
+            Logger("application").error(
+              s"[CheckBusinessDetailsController][handleRequest] - Unable to create income source: ${ex.getMessage}")
+            itvcErrorHandlerAgent.showInternalServerError()
+          }
+            else
+            {
+              Logger("application").error(
+                s"[CheckBusinessDetailsController][handleRequest] - Unable to create income source: ${ex.getMessage}")
+              itvcErrorHandler.showInternalServerError()
+            }
+
+          case Right(AddIncomeSourceResponse(id)) =>
+            if (isAgent) Redirect(controllers.incomeSources.add.routes.ForeignPropertyReportingMethodController.showAgent().url).withSession(user.session -- sessionKeys)
+            else Redirect(controllers.incomeSources.add.routes.ForeignPropertyReportingMethodController.show().url).withSession(user.session -- sessionKeys)
+        }
+      case None => if(isAgent){
+        Logger("application").error(
+          s"[CheckBusinessDetailsController][submit] - Error: Unable to build view model on submit")
+        Future.successful(itvcErrorHandlerAgent.showInternalServerError())
+      } else {
+        Logger("application").error(
+          s"[CheckBusinessDetailsController][submit] - Error: Unable to build view model on submit")
+        Future.successful(itvcErrorHandler.showInternalServerError())
+      }
+    }
+  }
+
+}
