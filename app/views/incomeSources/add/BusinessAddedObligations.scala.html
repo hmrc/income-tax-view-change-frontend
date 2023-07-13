@@ -50,20 +50,22 @@ govukTable: GovukTable,
     @formWithCSRF(action = postAction) {
 
         <div class="govuk-panel govuk-panel--confirmation">
-            <h2 class = "govuk-panel__body">
-                <p>@getMessage("h1")</p>
-                <span class="govuk-panel__title">
-                    @businessName
-                </span>
-                <p>@getMessage("h2")</p>
-            </h2>
+            <div class="govuk-panel__body govuk-!-margin-bottom-3">
+                @getMessage("h1")
+            </div>
+            <h1 class="govuk-panel__title">
+                @businessName
+            </h1>
+            <div class="govuk-panel__body">
+                @getMessage("h2")
+            </div>
         </div>
 
-        <h1 class="govuk-label-wrapper">
-          <label class="govuk-label govuk-label--l govuk-!-margin-top-8">
-          @getMessage("text")
-          </label>
-        </h1>
+        <h2 class="govuk-label-wrapper">
+            <label class="govuk-label govuk-label--l govuk-!-margin-top-8">
+            @getMessage("text")
+            </label>
+        </h2>
 
 
         @if(sources.quarterlyObligationsDatesYearOne.nonEmpty){
