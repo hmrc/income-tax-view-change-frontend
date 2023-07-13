@@ -1292,6 +1292,18 @@ incomeSources.add.foreignProperty.startDate.check.error              = Dewiswch 
 incomeSources.add.foreignProperty.startDate.check.radio.yes          = Iawn
 incomeSources.add.foreignProperty.startDate.check.radio.no           = Na
 
+# add foreign property accounting method
+incomeSources.add.foreignPropertyAccountingMethod.heading                 = Pa ddull cyfrifyddu yr ydych yn ei ddefnyddio ar gyfer eich busnes eiddo tramor?
+incomeSources.add.foreignPropertyAccountingMethod.example                 = Dangoswch enghraifft i mi
+incomeSources.add.foreignPropertyAccountingMethod.radio-1-title           = Cyfrifyddu ar sail arian parod
+incomeSources.add.foreignPropertyAccountingMethod.radio-1-hint            = Rydych yn cofnodi naill ai ar y dyddiad yr ydych yn cael taliad gan eich tenantiaid i mewn i’ch cyfrif banc, neu ar y dyddiad yr ydych yn talu bil, er enghraifft ar gyfer atgyweirio a chynnal a chadw. Mae’r rhan fwyaf o fusnesau bach yn defnyddio’r dull hwn.
+incomeSources.add.foreignPropertyAccountingMethod.radio-2-title           = Cyfrifyddu traddodiadol
+incomeSources.add.foreignPropertyAccountingMethod.radio-2-hint            = Rydych yn cofnodi ar y dyddiad yr ydych yn anfon anfoneb at eich tenantiaid, neu’n gofyn am daliad ganddynt, hyd yn oed os nad ydych yn cael nac yn talu unrhyw arian. Rydych yn cofnodi’r y dyddiad yr ydych yn cael anfoneb ar gyfer atgyweirio neu gynnal a chadw. Mae hyn hefyd yn cael ei alw’n gyfrifyddu ‘ar sail croniadau’ neu’n gyfrifyddu ‘safonol’.
+incomeSources.add.foreignPropertyAccountingMethod.drop-down-text          = Gwnaethoch greu anfoneb i rywun ym mis Mawrth 2017, ond ni chawsoch yr arian tan fis Mai 2017. Bydd yn rhaid i chi ddefnyddio dull cyfrifyddu penodol wrth roi gwybod i CThEF bod yr incwm hwn wedi dod i''ch llaw, a hynny’n dibynnu ar y dyddiadau canlynol:
+incomeSources.add.foreignPropertyAccountingMethod.drop-down-text-bp-1     = os daeth yr incwm i law ym mis Mai 2017, dylech ddefnyddio ‘cyfrifyddu ar sail arian parod’
+incomeSources.add.foreignPropertyAccountingMethod.drop-down-text-bp-2     = os daeth yr incwm i law ym mis Mawrth 2017, dylech ddefnyddio ‘cyfrifyddu traddodiadol’
+incomeSources.add.foreignPropertyAccountingMethod.no-selection            = Nodwch y dull cyfrifyddu yr ydych yn ei ddefnyddio ar gyfer eich busnes eiddo tramor
+
 incomeSources.ceaseUKProperty.checkDetails.heading               = Gwirio’ch manylion
 incomeSources.ceaseUKProperty.checkDetails.paragraph             = Y busnes eiddo yn y DU a nodwyd gennych
 incomeSources.ceaseUKProperty.checkDetails.content               = Dyddiad y gwnaeth y busnes stopio
@@ -1352,7 +1364,8 @@ check-business-details.business-description             = Disgrifiad o’r busne
 check-business-details.business-address                 = Cyfeiriad y busnes
 check-business-details.confirm-button                   = Cadarnhau ac yn eich blaen
 check-business-details.accounting-method                = Dull cyfrifyddu ar gyfer incwm unig fasnachwr
-
+check-business-details.cash-accounting                  = Cyfrifyddu ar sail arian parod
+check-business-details.traditional-accounting           = Cyfrifyddu traddodiadol
 
 # business added page
 business-added.h1                                       = Ychwanegwyd

@@ -97,6 +97,7 @@
 @mainTemplate(
     pageTitle = getMessage("heading"),
     backUrl = Some(backUrl),
+    useFallbackBackLink = true,
     isAgent = isAgent,
     btaNavPartial = user.btaNavPartial) {
 
@@ -154,15 +155,19 @@
                     </a>
                 </dd>
             </div>
-            @if(viewModel.businessAccountingMethod.nonEmpty) {
+            @if(viewModel.skippedAccountingMethod) {
                 <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key">@getMessage("accounting-method")</dt>
-                    <dd class="govuk-summary-list__value" id="business-accounting-value">@{
-                        viewModel.businessAccountingMethod.getOrElse("")
-                    }</dd>
+                    <dd class="govuk-summary-list__value" id="business-accounting-value">
+                        @viewModel.businessAccountingMethod match {
+                            case Some(method) if method == "cash" => { @getMessage("cash-accounting") }
+                            case Some(method) if method == "accruals" => { @getMessage("traditional-accounting") }
+                            case _ => {(""}
+                        }
+                    </dd>
                     <dd class="govuk-summary-list__actions govuk-!-text-align-right govuk-!-margin-0">
                         <a class="govuk-link" href=@changeBusinessAccountingMethodURL>
-                        @getMessage("change-details-link")
+                            @getMessage("change-details-link")
                         </a>
                     </dd>
                 </div>
@@ -173,7 +178,7 @@
         <br>
 
         @govukButton(Button(
-            content = Text(messages("check-business-details.confirm-button")),
+            content = Text(messages("base.confirm-and-continue")),
             attributes = Map("id" -> "confirm-button")
         ))
     }

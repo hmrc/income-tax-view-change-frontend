@@ -24,7 +24,7 @@ import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.addIncomeSource.AddIncomeSourceResponse
 import play.api.http.Status.{BAD_REQUEST, NOT_FOUND, OK, SEE_OTHER}
 import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testMtditid, testSelfEmploymentId}
-import testConstants.IncomeSourceIntegrationTestConstants.noPropertyOrBusinessResponse
+import testConstants.IncomeSourceIntegrationTestConstants.{multipleBusinessesAndPropertyResponse, noPropertyOrBusinessResponse}
 
 class CheckBusinessDetailsControllerISpec extends ComponentSpecBase {
 
@@ -37,19 +37,22 @@ class CheckBusinessDetailsControllerISpec extends ComponentSpecBase {
     businessTrade -> "Plumbing",
     addBusinessAddressLine1 -> "Test Road",
     addBusinessPostalCode -> "B32 1PQ",
-    addBusinessAccountingMethod -> "Quarterly",
+    addBusinessAccountingMethod -> "accruals",
     addBusinessAccountingPeriodEndDate -> "2023-11-11")
+
   val testBusinessName: String = "Test Business"
   val testBusinessStartDate: String = "1 January 2022"
   val testBusinessTrade: String = "Plumbing"
   val testBusinessAddressLine1: String = "Test Road"
   val testBusinessPostCode: String = "B32 1PQ"
-  val testBusinessAccountingMethod: String = "Quarterly"
-  val continueButtonText: String = messagesAPI("check-business-details.confirm-button")
+  val testBusinessAccountingMethod: String = "Traditional accounting"
+  val continueButtonText: String = messagesAPI("base.confirm-and-continue")
+
+  val noAccountingMethod: String = ""
 
 
   s"calling GET $checkBusinessDetailsShowUrlAgent" should {
-    "render the Check Business details page" when {
+    "render the Check Business details page with accounting method" when {
       "User is authorised" in {
         Given("I wiremock stub a successful Income Source Details response with no businesses or properties")
         stubAuthorisedAgentUser(authorised = true)
@@ -69,6 +72,30 @@ class CheckBusinessDetailsControllerISpec extends ComponentSpecBase {
           elementTextByID("business-trade-value")(testBusinessTrade),
           elementTextByID("business-address-value")(testBusinessAddressLine1 + " " + testBusinessPostCode),
           elementTextByID("business-accounting-value")(testBusinessAccountingMethod),
+          elementTextByID("confirm-button")(continueButtonText)
+        )
+      }
+    }
+    "render the Check Business details page without accounting method" when {
+      "User is authorised" in {
+        Given("I wiremock stub a successful Income Source Details response with existing businesses")
+        stubAuthorisedAgentUser(authorised = true)
+
+        enable(IncomeSources)
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
+        val response = List(AddIncomeSourceResponse(testSelfEmploymentId))
+        IncomeTaxViewChangeStub.stubCreateBusinessDetailsResponse(testMtditid)(OK, response)
+
+        When(s"I call GET $checkBusinessDetailsShowUrlAgent")
+        val result = IncomeTaxViewChangeFrontend.get("/income-sources/add/business-check-details", sessionData ++ clientDetailsWithConfirmation)
+
+        result should have(
+          httpStatus(OK),
+          elementTextByID("business-name-value")(testBusinessName),
+          elementTextByID("business-date-value")(testBusinessStartDate),
+          elementTextByID("business-trade-value")(testBusinessTrade),
+          elementTextByID("business-address-value")(testBusinessAddressLine1 + " " + testBusinessPostCode),
+          elementTextByID("business-accounting-value")(noAccountingMethod),
           elementTextByID("confirm-button")(continueButtonText)
         )
       }
