@@ -42,6 +42,9 @@ class RepaymentService @Inject()(val repaymentConnector: RepaymentConnector) {
             Logger("application").error(s"[RepaymentService][start]: " +
               s"Repayment journey start error with response code: $status and message: $message")
             Left(new InternalError)
+          case _ =>
+            Logger("application").error(s"[RepaymentService][start]: Repayment journey start unknown error")
+            Left(new InternalError)
         }.recover { case ex: Exception =>
           Logger("application").error(s"[RepaymentService][start]: " +
             s"Repayment journey start error with exception: $ex")
@@ -64,6 +67,9 @@ class RepaymentService @Inject()(val repaymentConnector: RepaymentConnector) {
       case RepaymentJourneyErrorResponse(status, message) =>
         Logger("application").error(s" [RepaymentService][start]: " +
           s" Repayment journey view error with response code: $status and message: $message")
+        Left(new InternalError)
+      case _ =>
+        Logger("application").error(s" [RepaymentService][start]: Repayment journey - unknown error")
         Left(new InternalError)
     }.recover { case ex: Exception =>
       Logger("application").error(s"[RepaymentService][start]: " +

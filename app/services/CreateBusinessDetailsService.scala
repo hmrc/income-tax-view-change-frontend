@@ -71,13 +71,15 @@ class CreateBusinessDetailsService @Inject()(val createIncomeSourceConnector: Cr
         createIncomeSourceConnector.createBusiness(user.mtditid, requestObject).flatMap(response =>
           response match {
             case Right(List(incomeSourceId)) =>
-              Logger("application").info("[CreateBusinessDetailsService][createBusinessDetails] - income source created: $incomeSourceId ")
+              Logger("application").info("[CreateBusinessDetailsService][createBusinessDetails] - income source created: `$incomeSourceId` ")
               Future.successful(Right(incomeSourceId))
+            case Right(incomeSourceIds) =>
+              Logger ("application").error (s"[CreateBusinessDetailsService][createBusinessDetails] - " +
+                s"single `incomeSourceId` is expected in the response - ${incomeSourceIds.mkString(",")}")
+              Future.successful { Left (new Error (s"single incomeSourceId is expected in the response") )}
             case Left(ex) =>
               Logger("application").error("[CreateBusinessDetailsService][createBusinessDetails] - failed to created")
-              Future.successful {
-                Left(new Error(s"Failed to created incomeSources: $ex"))
-              }
+              Future.successful { Left(new Error(s"Failed to created incomeSources: $ex")) }
           }
         )
       case Left(ex) =>
@@ -107,6 +109,10 @@ class CreateBusinessDetailsService @Inject()(val createIncomeSourceConnector: Cr
           case Right(List(incomeSourceId)) =>
             Logger("application").info("[CreateBusinessDetailsService][createBusinessDetails] - New income source created successfully: $incomeSourceId ")
             Right(incomeSourceId)
+          case Right(incomeSourceIds) =>
+            Logger("application").info(s"[CreateBusinessDetailsService][createBusinessDetails] - " +
+              s"Single incomeSourceId is expected in the response: ${incomeSourceIds.mkString(",")} ")
+            Left(new Error(s"Single incomeSourceId is expected in the response"))
           case Left(ex) =>
             Logger("application").error("[CreateBusinessDetailsService][createBusinessDetails] - failed to created ")
             Left(new Error(s"Failed to created incomeSources: $ex"))

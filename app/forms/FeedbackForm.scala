@@ -79,7 +79,7 @@ object FeedbackForm {
         override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], String] = {
           data.get(key) match {
             case Some(value) if value.trim.nonEmpty => Right(value.trim)
-            case Some(_) => Left(Seq(FormError(key, commentsEmptyError, Nil)))
+            case _ => Left(Seq(FormError(key, commentsEmptyError, Nil)))
           }
         }
 
