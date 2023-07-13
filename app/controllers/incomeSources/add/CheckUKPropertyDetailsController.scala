@@ -97,10 +97,10 @@ class CheckUKPropertyDetailsController @Inject()(val checkUKPropertyDetails: Che
   def handleRequest(isAgent: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
     val backUrl = getBackUrl(isAgent)
     val postAction = getSubmitUrl(isAgent)
-    val homePageRedirectUrl = getHomePageUrl(isAgent)
+    val homePageUrl = getHomePageUrl(isAgent)
 
     if (isDisabled(IncomeSources)) {
-      Future.successful(Redirect(homePageRedirectUrl))
+      Future.successful(Redirect(homePageUrl))
     } else {
       getUKPropertyDetailsFromSession(user).toOption match {
         case Some(checkUKPropertyViewModel: CheckUKPropertyViewModel) =>
@@ -132,10 +132,11 @@ class CheckUKPropertyDetailsController @Inject()(val checkUKPropertyDetails: Che
   }
 
   def handleSubmit(isAgent: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
+    val homePageUrl = getHomePageUrl(isAgent)
     val redirectUrl = getUKPropertyReportingMethodUrl(isAgent)
 
     if (isDisabled(IncomeSources)) {
-      Future.successful(Redirect(redirectUrl))
+      Future.successful(Redirect(homePageUrl))
     } else {
       getUKPropertyDetailsFromSession(user).toOption match {
         case Some(checkUKPropertyViewModel: CheckUKPropertyViewModel) =>
@@ -153,5 +154,4 @@ class CheckUKPropertyDetailsController @Inject()(val checkUKPropertyDetails: Che
       }
     }
   }
-
 }

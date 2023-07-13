@@ -16,7 +16,7 @@
 
 package connectors.helpers
 
-import models.addIncomeSource.{AddressDetails, BusinessDetails, CreateBusinessIncomeSourceRequest, CreateForeignPropertyIncomeSource}
+import models.createIncomeSource.{AddressDetails, BusinessDetails, CreateBusinessIncomeSourceRequest, CreateForeignPropertyIncomeSource, PropertyDetails}
 import models.incomeSourceDetails.viewmodels._
 
 import java.time.LocalDate
@@ -44,8 +44,8 @@ trait IncomeSourcesDataHelper {
     List(businessDetails)
   )
 
-  val createForeignPropertyRequestObject = CreateForeignPropertyIncomeSource(tradingStartDate = LocalDate.of(2011, 1, 1).toString,
-    cashOrAccrualsFlag = "Cash", startDate = LocalDate.of(2011, 1, 1).toString
+  val createForeignPropertyRequestObject = CreateForeignPropertyIncomeSource(PropertyDetails(tradingStartDate = LocalDate.of(2011, 1, 1).toString,
+    cashOrAccrualsFlag = "CASH", startDate = LocalDate.of(2011, 1, 1).toString)
   )
 
   val createBusinessViewModel = CheckBusinessDetailsViewModel(
@@ -63,5 +63,5 @@ trait IncomeSourcesDataHelper {
     cashOrAccrualsFlag = "CASH"
   )
 
-  val createForeignPropertyViewModel = CheckForeignPropertyViewModel(tradingStartDate = LocalDate.of(2011, 1, 1), cashOrAccrualsFlag = "Cash")
+  val createForeignPropertyViewModel = CheckForeignPropertyViewModel(tradingStartDate = LocalDate.of(2011, 1, 1), cashOrAccrualsFlag = "CASH")
 }

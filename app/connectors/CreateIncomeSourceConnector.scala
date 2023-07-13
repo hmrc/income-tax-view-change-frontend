@@ -42,7 +42,7 @@ class CreateIncomeSourceConnector @Inject()(val http: HttpClient,
       case response if response.status == OK =>
         response.json.validate[List[CreateIncomeSourcesResponse]].fold(
           _ => {
-            Logger("application").error(s"[CreateIncomeSourceConnector][createBusiness] - Json validation error parsing repayment response, error ${response.body}")
+            Logger("application").error(s"[CreateIncomeSourceConnector][createBusiness] - Json validation error parsing business income sources response, error ${response.body}")
             Left(CreateIncomeSourcesErrorResponse(response.status, s"Not valid json: ${response.body}"))
           },
           valid =>
@@ -62,7 +62,7 @@ class CreateIncomeSourceConnector @Inject()(val http: HttpClient,
       case response if response.status == OK =>
         response.json.validate[List[CreateIncomeSourcesResponse]].fold(
           _ => {
-            Logger("application").error(s"[CreateIncomeSourceConnector][createForeignProperty] - Json validation error parsing repayment response, error ${response.body}")
+            Logger("application").error(s"[CreateIncomeSourceConnector][createForeignProperty] - Json validation error parsing business income sources response, error ${response.body}")
             Left(CreateIncomeSourcesErrorResponse(response.status, s"Not valid json: ${response.body}"))
           },
           valid =>
@@ -82,14 +82,14 @@ class CreateIncomeSourceConnector @Inject()(val http: HttpClient,
       case response if response.status == OK =>
         response.json.validate[List[CreateIncomeSourcesResponse]].fold(
           _ => {
-            Logger("application").error(s"[CreateIncomeSourceConnector][createForeignProperty] - Json validation error parsing repayment response, error ${response.body}")
+            Logger("application").error(s"[CreateIncomeSourceConnector][createUKProperty] - Json validation error parsing business income sources response, error ${response.body}")
             Left(CreateIncomeSourcesErrorResponse(response.status, s"Not valid json: ${response.body}"))
           },
           valid =>
             Right(valid)
         )
       case response =>
-        Logger("application").error(s"[CreateIncomeSourceConnector][createForeignProperty] - Response status: ${response.status}, body: ${response.body}")
+        Logger("application").error(s"[CreateIncomeSourceConnector][createUKProperty] - Response status: ${response.status}, body: ${response.body}")
         Left(CreateIncomeSourcesErrorResponse(response.status, s"Error creating incomeSource: ${response.json}"))
     }
   }

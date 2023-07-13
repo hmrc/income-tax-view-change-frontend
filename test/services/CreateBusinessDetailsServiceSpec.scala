@@ -20,7 +20,7 @@ import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
 import connectors.CreateIncomeSourceConnector
 import connectors.helpers.IncomeSourcesDataHelper
-import models.addIncomeSource.{CreateBusinessErrorResponse, AddIncomeSourceResponse}
+import models.createIncomeSource.{CreateIncomeSourcesErrorResponse, CreateIncomeSourcesResponse}
 import models.incomeSourceDetails.viewmodels._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
@@ -58,18 +58,18 @@ class CreateBusinessDetailsServiceSpec extends TestSupport with FeatureSwitching
     "return success response with incomeSourceId" in {
       when(mockIncomeSourceConnector.createBusiness(any(), any())(any()))
         .thenReturn(Future {
-          Right(List(AddIncomeSourceResponse("123")))
+          Right(List(CreateIncomeSourcesResponse("123")))
         })
 
       val result = UnderTestCreateBusinessDetailsService.createBusinessDetails(createBusinessViewModel)
 
-      result.futureValue shouldBe Right(AddIncomeSourceResponse("123"))
+      result.futureValue shouldBe Right(CreateIncomeSourcesResponse("123"))
     }
 
     "return failure response with error" in {
       when(mockIncomeSourceConnector.createBusiness(any(), any())(any()))
         .thenReturn(Future {
-          Left(CreateBusinessErrorResponse(Status.INTERNAL_SERVER_ERROR, s"Error creating incomeSource"))
+          Left(CreateIncomeSourcesErrorResponse(Status.INTERNAL_SERVER_ERROR, s"Error creating incomeSource"))
         })
       val result = UnderTestCreateBusinessDetailsService.createBusinessDetails(createBusinessViewModel)
       result.futureValue match {
@@ -81,7 +81,7 @@ class CreateBusinessDetailsServiceSpec extends TestSupport with FeatureSwitching
     "return failure: wrong data" in {
       when(mockIncomeSourceConnector.createBusiness(any(), any())(any()))
         .thenReturn(Future {
-          Right(List(AddIncomeSourceResponse("561")))
+          Right(List(CreateIncomeSourcesResponse("561")))
         })
 
       // set view model with the wrong data
@@ -100,7 +100,7 @@ class CreateBusinessDetailsServiceSpec extends TestSupport with FeatureSwitching
     "return success response with incomeSourceId" in {
       when(mockIncomeSourceConnector.createForeignProperty(any(), any())(any()))
         .thenReturn(Future {
-          Right(List(AddIncomeSourceResponse("561")))
+          Right(List(CreateIncomeSourcesResponse("561")))
         })
 
       val viewModel = CheckForeignPropertyViewModel(tradingStartDate = LocalDate.of(2011, 1, 1),
@@ -108,13 +108,13 @@ class CreateBusinessDetailsServiceSpec extends TestSupport with FeatureSwitching
       )
       val result = UnderTestCreateBusinessDetailsService.createForeignProperty(viewModel)
 
-      result.futureValue shouldBe Right(AddIncomeSourceResponse("561"))
+      result.futureValue shouldBe Right(CreateIncomeSourcesResponse("561"))
     }
 
     "return failure response with error" in {
       when(mockIncomeSourceConnector.createForeignProperty(any(), any())(any()))
         .thenReturn(Future {
-          Left(CreateBusinessErrorResponse(Status.INTERNAL_SERVER_ERROR, s"Error creating incomeSource"))
+          Left(CreateIncomeSourcesErrorResponse(Status.INTERNAL_SERVER_ERROR, s"Error creating incomeSource"))
         })
       val result = UnderTestCreateBusinessDetailsService.createForeignProperty(createForeignPropertyViewModel)
       result.futureValue match {
@@ -126,7 +126,7 @@ class CreateBusinessDetailsServiceSpec extends TestSupport with FeatureSwitching
     "return failure: wrong data" in {
       when(mockIncomeSourceConnector.createForeignProperty(any(), any())(any()))
         .thenReturn(Future {
-          Right(List(AddIncomeSourceResponse("561")))
+          Right(List(CreateIncomeSourcesResponse("561")))
         })
 
       // set cashOrAccrualsFlag field as empty to cause failure

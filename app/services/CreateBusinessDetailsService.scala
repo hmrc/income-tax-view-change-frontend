@@ -72,11 +72,11 @@ class CreateBusinessDetailsService @Inject()(val createIncomeSourceConnector: Cr
           case Right(List(incomeSourceId)) =>
             Logger("application").info(s"[CreateBusinessDetailsService][createBusinessDetails] - income source created: $incomeSourceId ")
             Future.successful(Right(incomeSourceId))
-          case Right(Nil) =>
-            Logger("application").error("[CreateBusinessDetailsService][createBusinessDetails] - failed to create, empty list returned")
-            Future.successful(Left(new Error("Failed to create incomeSources: Empty list returned")))
+          case Right(_) =>
+            Logger("application").error("[CreateBusinessDetailsService][createBusinessDetails] - failed to create, unexpected response")
+            Future.successful(Left(new Error("Failed to create incomeSources")))
           case Left(ex) =>
-            Logger("application").error("[CreateBusinessDetailsService][createBusinessDetails] - failed to created")
+            Logger("application").error("[CreateBusinessDetailsService][createBusinessDetails] - failed to create")
             Future.successful {
               Left(new Error(s"Failed to created incomeSources: $ex"))
             }
@@ -114,9 +114,9 @@ class CreateBusinessDetailsService @Inject()(val createIncomeSourceConnector: Cr
           case Right(List(incomeSourceId)) =>
             Logger("application").info(s"[CreateBusinessDetailsService][createForeignProperty] - New income source created successfully: $incomeSourceId")
             Right(incomeSourceId)
-          case Right(Nil) =>
-            Logger("application").error("[CreateBusinessDetailsService][createForeignProperty] - failed to create, empty list returned")
-            Left(new Error("Failed to create incomeSources: Empty list returned"))
+          case Right(_) =>
+            Logger("application").error("[CreateBusinessDetailsService][createForeignProperty] - failed to create, unexpected response")
+            Left(new Error("Failed to create incomeSources"))
           case Left(ex) =>
             Logger("application").error("[CreateBusinessDetailsService][createForeignProperty] - failed to create")
             Left(new Error(s"Failed to created incomeSources: $ex"))
@@ -153,9 +153,9 @@ class CreateBusinessDetailsService @Inject()(val createIncomeSourceConnector: Cr
           case Right(List(incomeSourceId)) =>
             Logger("application").info(s"[CreateBusinessDetailsService][createUKProperty] - New income source created successfully: $incomeSourceId")
             Right(incomeSourceId)
-          case Right(Nil) =>
-            Logger("application").error("[CreateBusinessDetailsService][createUKProperty] - failed to create, empty list returned")
-            Left(new Error("Failed to create incomeSources: Empty list returned"))
+          case Right(_) =>
+            Logger("application").error("[CreateBusinessDetailsService][createUKProperty] - failed to create, unexpected response")
+            Left(new Error("Failed to create incomeSources"))
           case Left(ex) =>
             Logger("application").error("[CreateBusinessDetailsService][createUKProperty] - failed to create")
             Left(new Error(s"Failed to created incomeSources: $ex"))
