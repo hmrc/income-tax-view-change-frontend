@@ -302,5 +302,3 @@ GET          /income-sources/add/foreign-property-accounting-method         cont
 GET          /agents/income-sources/add/foreign-property-accounting-method   controllers.incomeSources.add.ForeignPropertyAccountingMethodController.showAgent()
 GET          /income-sources/add/change-foreign-property-accounting-method          controllers.incomeSources.add.ForeignPropertyAccountingMethodController.changeForeignPropertyAccountingMethod()
 GET          /agents/income-sources/add/change-foreign-property-accounting-method   controllers.incomeSources.add.ForeignPropertyAccountingMethodController.changeForeignPropertyAccountingMethodAgent()
-GET          /income-sources/add/business-added                              controllers.incomeSources.add.BusinessAddedController.show(id:String)
-GET          /agents/income-sources/add/business-added                       controllers.incomeSources.add.BusinessAddedController.showAgent(id:String)

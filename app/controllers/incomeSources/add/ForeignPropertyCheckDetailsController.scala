@@ -60,7 +60,7 @@ class ForeignPropertyCheckDetailsController @Inject()(val checkForeignPropertyDe
   def handleRequest(sources: IncomeSourceDetailsModel, isAgent: Boolean)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
 
-    val backUrl: String = if (isAgent) backUrlIndividual else backUrlAgent
+    val backUrl: String = if (isAgent) backUrlAgent else backUrlIndividual
     val postAction: Call = if (isAgent) controllers.incomeSources.add.routes.ForeignPropertyCheckDetailsController.submitAgent() else
       controllers.incomeSources.add.routes.ForeignPropertyCheckDetailsController.submit()
 
