@@ -50,15 +50,13 @@ govukTable: GovukTable,
     @formWithCSRF(action = postAction) {
 
         <div class="govuk-panel govuk-panel--confirmation">
-            <h1 class="govuk-panel__body">
-                @getMessage("h1")
-            </h1>
-            <h1 class="govuk-panel__title">
-                @businessName
-            </h1>
-            <div class="govuk-panel__body">
-                @getMessage("h2")
-            </div>
+            <h2 class = "govuk-panel__body">
+                <p>@getMessage("h1")</p>
+                <span class="govuk-panel__title">
+                    @businessName
+                </span>
+                <p>@getMessage("h2")</p>
+            </h2>
         </div>
 
         <h1 class="govuk-label-wrapper">
@@ -70,7 +68,7 @@ govukTable: GovukTable,
 
         @if(sources.quarterlyObligationsDatesYearOne.nonEmpty){
             <div class="box-simple">
-                <h3 class="govuk-heading-m"><div class="page_headers"> @getMessage("quarterly-heading") </div></h3>
+                <div class="page_headers govuk-heading-m"> @getMessage("quarterly-heading") </div>
                 <p class="govuk-body"> @getMessage("quarterly-p1") </p>
 
                 <table class="govuk-table">
@@ -114,7 +112,7 @@ govukTable: GovukTable,
 
         @if(sources.eopsObligationsDates.nonEmpty){
             <div class="box-simple">
-                <h3 class="govuk-heading-m"><div class="page_headers"> @getMessage("eops-heading") </div></h3>
+                <div class="page_headers govuk-heading-m"> @getMessage("eops-heading") </div>
                 <p class="govuk-body"> @getMessage("eops-p1") </p>
 
                 <table class="govuk-table">
@@ -139,7 +137,7 @@ govukTable: GovukTable,
 
 
         <div class="box-simple">
-            <h3 class="govuk-heading-m"><div class="page_headers"> @getMessage("final-declaration-heading") </div></h3>
+            <div class="page_headers govuk-heading-m"> @getMessage("final-declaration-heading") </div>
             <p class="govuk-body"> @getMessage("final-declaration-text") </p>
 
             <table class="govuk-table">
@@ -163,7 +161,7 @@ govukTable: GovukTable,
 
         @if(sources.showPrevTaxYears) {
             <div class="box-simple">
-                <h3 class="govuk-heading-m"><div class="page_headers"> @getMessage("previous-tax-years-heading") </div></h3>
+                <div class="page_headers govuk-heading-m"> @getMessage("previous-tax-years-heading") </div>
                 <p class="govuk-body">
                     @(getMessage("previous-tax-years-t1")+" "+(sources.currentTaxYear-1).toString+" "+getMessage("to")+" "+sources.currentTaxYear.toString+".")
                 </p>
