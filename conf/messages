@@ -1388,7 +1388,7 @@ check-business-details.accounting-method                = Accounting method for 
 check-business-details.cash-accounting                  = Cash basis accounting
 check-business-details.traditional-accounting           = Traditional accounting
 
-# business added page
+# business added page - h1 intentionally empty
 business-added.h1                                       =
 business-added.h2                                       = has been added to your account
 business-added.text                                     = What you must do
