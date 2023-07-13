@@ -85,7 +85,22 @@ class DateServiceSpec extends TestSupport with FeatureSwitching {
       else LocalDate.now.plusYears(2).getYear
       TestDateService.getCurrentTaxYearEnd(true) shouldBe expectedYear
     }
+  }
 
+  "getCurrentTaxYearStart" should {
+    "return the start of the current tax year" in {
+      disable(TimeMachineAddYear)
+      val expectedDate = if (TestDateService.isBeforeLastDayOfTaxYear(false)) LocalDate.of(LocalDate.now.getYear - 1, 4,6)
+      else LocalDate.of(LocalDate.now.getYear, 4, 6)
+      TestDateService.getCurrentTaxYearStart(false) shouldBe expectedDate
+    }
+
+    "return the start of the next tax year if time machine enabled" in {
+      enable(TimeMachineAddYear)
+      val expectedDate = if (TestDateService.isBeforeLastDayOfTaxYear(true)) LocalDate.of(LocalDate.now.getYear, 4, 6)
+      else LocalDate.of(LocalDate.now.getYear + 1, 4, 6)
+      TestDateService.getCurrentTaxYearStart(true) shouldBe expectedDate
+    }
   }
 
   "getAccountingPeriodEndDate" should {

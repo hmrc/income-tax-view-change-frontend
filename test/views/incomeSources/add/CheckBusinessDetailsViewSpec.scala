@@ -42,13 +42,14 @@ class CheckBusinessDetailsViewSpec extends TestSupport {
     businessTrade = "Test Trade",
     businessAddressLine1 = "Test Business Address Line 1",
     businessPostalCode = Some("Test Business Postal Code"),
-    businessAccountingMethod = Some("Test Accounting Method"),
+    businessAccountingMethod = Some("accruals"),
     accountingPeriodEndDate = LocalDate.of(2022, 1, 1),
     businessAddressLine2 = None,
     businessAddressLine3 = None,
     businessAddressLine4 = None,
     businessCountryCode = Some("UK"),
-    cashOrAccrualsFlag = "Cash"
+    cashOrAccrualsFlag = "Cash",
+    skippedAccountingMethod = true
   )
 
   val postAction: Call = {
@@ -61,7 +62,7 @@ class CheckBusinessDetailsViewSpec extends TestSupport {
     val businessTrade = "Test Trade"
     val businessAddressLine1 = "Test Business Address Line 1"
     val businessPostalCode = "Test Business Postal Code"
-    val businessAccountingMethod = "Test Accounting Method"
+    val businessAccountingMethod = "Traditional accounting"
 
     val backUrl: String = if (isAgent) controllers.routes.HomeController.showAgent.url else
       controllers.routes.HomeController.show().url
@@ -101,15 +102,13 @@ class CheckBusinessDetailsViewSpec extends TestSupport {
       document.getElementsByClass("govuk-summary-list__value").eq(4).text() shouldBe businessAccountingMethod
 
     }
-    "render the back link with the correct URL" in new Setup(false) {
-      document.getElementById("back").text() shouldBe messages("base.back")
-      document.getElementById("back").attr("href") shouldBe backUrl
+    "render the back link" in new Setup(false) {
+      document.getElementById("back-fallback").text() shouldBe messages("base.back")
+      document.getElementById("back-fallback").attr("href") shouldBe backUrl
+
     }
     "render the continue button" in new Setup(false) {
-      document.getElementById("confirm-button").text() shouldBe messages("check-business-details.confirm-button")
-    }
-    "render the back url" in new Setup(false, true) {
-      document.getElementById("back").attr("href") shouldBe backUrl
+      document.getElementById("confirm-button").text() shouldBe messages("base.confirm-and-continue")
     }
   }
 
@@ -141,15 +140,13 @@ class CheckBusinessDetailsViewSpec extends TestSupport {
       document.getElementsByClass("govuk-summary-list__actions").eq(4).text() shouldBe messages("check-business-details.change-details-link")
 
     }
-    "render the back link with the correct URL" in new Setup(true) {
-      document.getElementById("back").text() shouldBe messages("base.back")
-      document.getElementById("back").attr("href") shouldBe backUrl
+    "render the back link" in new Setup(true) {
+      document.getElementById("back-fallback").text() shouldBe messages("base.back")
+      document.getElementById("back-fallback").attr("href") shouldBe backUrl
+
     }
     "render the continue button" in new Setup(true) {
-      document.getElementById("confirm-button").text() shouldBe messages("check-business-details.confirm-button")
-    }
-    "render the back url" in new Setup(true, true) {
-      document.getElementById("back").attr("href") shouldBe backUrl
+      document.getElementById("confirm-button").text() shouldBe messages("base.confirm-and-continue")
     }
   }
 }

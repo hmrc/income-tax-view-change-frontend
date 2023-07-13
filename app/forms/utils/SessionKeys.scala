@@ -40,6 +40,8 @@ object SessionKeys {
 
   val addBusinessAccountingMethod: String = "addBusinessAccountingMethod"
 
+  val addUkPropertyAccountingMethod: String = "addUkPropertyAccountingMethod"
+
   val ceaseUKPropertyEndDate: String = "ceaseUKPropertyEndDate"
 
   val addBusinessStartDate: String = "addBusinessStartDate"
@@ -65,5 +67,5 @@ object SessionKeys {
 
   val foreignPropertyStartDate: String = "addForeignPropertyStartDate"
 
-  val addForeignPropertyAccountingMethod = "addForeignPropertyAccountingMethod"
+  val addForeignPropertyAccountingMethod: String = "addForeignPropertyAccountingMethod"
 }

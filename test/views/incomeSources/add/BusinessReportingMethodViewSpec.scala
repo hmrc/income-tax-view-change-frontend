@@ -89,8 +89,8 @@ class BusinessReportingMethodViewSpec extends TestSupport {
     "taxYear1 and taxYear2 are present in Latency" should {
       "render the radio form" in new Setup(false) {
         val doc = documentScenario1.getElementById("add-business-reporting-method-form")
-        doc.getElementsByTag("p").get(0).text() shouldBe messages("incomeSources.add.businessReportingMethod.taxYear", (viewModelScenario1.taxYear1.get.toInt - 1).toString, viewModelScenario1.taxYear1.get)
-        doc.getElementsByTag("p").get(1).text() shouldBe messages("incomeSources.add.businessReportingMethod.taxYear", (viewModelScenario1.taxYear2.get.toInt - 1).toString, viewModelScenario1.taxYear2.get)
+        doc.getElementsByTag("legend").get(0).text() shouldBe messages("incomeSources.add.businessReportingMethod.taxYear", (viewModelScenario1.taxYear1.get.toInt - 1).toString, viewModelScenario1.taxYear1.get)
+        doc.getElementsByTag("legend").get(1).text() shouldBe messages("incomeSources.add.businessReportingMethod.taxYear", (viewModelScenario1.taxYear2.get.toInt - 1).toString, viewModelScenario1.taxYear2.get)
         doc.getElementsByClass("govuk-label govuk-radios__label").eq(0).text() shouldBe messages("incomeSources.add.businessReportingMethod.chooseAnnualReport")
         doc.getElementsByClass("govuk-label govuk-radios__label").eq(1).text() shouldBe messages("incomeSources.add.businessReportingMethod.chooseQuarterlyReport")
         doc.getElementsByClass("govuk-label govuk-radios__label").eq(2).text() shouldBe messages("incomeSources.add.businessReportingMethod.chooseAnnualReport")
@@ -100,8 +100,8 @@ class BusinessReportingMethodViewSpec extends TestSupport {
 
       "render the radio form with input error" in new Setup(false, error = true) {
         val doc = documentScenario1.getElementById("add-business-reporting-method-form")
-        doc.getElementsByTag("p").get(0).text() shouldBe messages("incomeSources.add.businessReportingMethod.taxYear", (viewModelScenario1.taxYear1.get.toInt - 1).toString, viewModelScenario1.taxYear1.get)
-        doc.getElementsByTag("p").get(2).text() shouldBe messages("incomeSources.add.businessReportingMethod.taxYear", (viewModelScenario1.taxYear2.get.toInt - 1).toString, viewModelScenario1.taxYear2.get)
+        doc.getElementsByTag("legend").get(0).text() shouldBe messages("incomeSources.add.businessReportingMethod.taxYear", (viewModelScenario1.taxYear1.get.toInt - 1).toString, viewModelScenario1.taxYear1.get)
+        doc.getElementsByTag("legend").get(1).text() shouldBe messages("incomeSources.add.businessReportingMethod.taxYear", (viewModelScenario1.taxYear2.get.toInt - 1).toString, viewModelScenario1.taxYear2.get)
         doc.getElementsByClass("govuk-label govuk-radios__label").eq(0).text() shouldBe messages("incomeSources.add.businessReportingMethod.chooseAnnualReport")
         doc.getElementsByClass("govuk-label govuk-radios__label").eq(1).text() shouldBe messages("incomeSources.add.businessReportingMethod.chooseQuarterlyReport")
         doc.getElementsByClass("govuk-label govuk-radios__label").eq(2).text() shouldBe messages("incomeSources.add.businessReportingMethod.chooseAnnualReport")
@@ -119,7 +119,7 @@ class BusinessReportingMethodViewSpec extends TestSupport {
     "taxYear1 is crystallised and taxYear2 are present in Latency" should {
       "render the radio form" in new Setup(false) {
         val doc = documentScenario2.getElementById("add-business-reporting-method-form")
-        doc.getElementsByTag("p").get(0).text() shouldBe messages("incomeSources.add.businessReportingMethod.taxYear", (viewModelScenario2.taxYear2.get.toInt - 1).toString, viewModelScenario1.taxYear2.get)
+        doc.getElementsByTag("legend").get(0).text() shouldBe messages("incomeSources.add.businessReportingMethod.taxYear", (viewModelScenario2.taxYear2.get.toInt - 1).toString, viewModelScenario1.taxYear2.get)
         doc.getElementsByClass("govuk-label govuk-radios__label").eq(0).text() shouldBe messages("incomeSources.add.businessReportingMethod.chooseAnnualReport")
         doc.getElementsByClass("govuk-label govuk-radios__label").eq(1).text() shouldBe messages("incomeSources.add.businessReportingMethod.chooseQuarterlyReport")
         doc.getElementsByClass("govuk-radios").size() shouldBe 1
@@ -127,7 +127,7 @@ class BusinessReportingMethodViewSpec extends TestSupport {
 
       "render the radio form with input error" in new Setup(false, error = true) {
         val doc = documentScenario2.getElementById("add-business-reporting-method-form")
-        doc.getElementsByTag("p").get(0).text() shouldBe messages("incomeSources.add.businessReportingMethod.taxYear", (viewModelScenario1.taxYear2.get.toInt - 1).toString, viewModelScenario1.taxYear2.get)
+        doc.getElementsByTag("legend").get(0).text() shouldBe messages("incomeSources.add.businessReportingMethod.taxYear", (viewModelScenario1.taxYear2.get.toInt - 1).toString, viewModelScenario1.taxYear2.get)
         doc.getElementsByClass("govuk-label govuk-radios__label").eq(0).text() shouldBe messages("incomeSources.add.businessReportingMethod.chooseAnnualReport")
         doc.getElementsByClass("govuk-label govuk-radios__label").eq(1).text() shouldBe messages("incomeSources.add.businessReportingMethod.chooseQuarterlyReport")
         doc.getElementsByClass("govuk-radios").size() shouldBe 1
@@ -164,8 +164,8 @@ class BusinessReportingMethodViewSpec extends TestSupport {
     "taxYear1 and taxYear2 are present in Latency" should {
       "render the radio form" in new Setup(true) {
         val doc = documentScenario1.getElementById("add-business-reporting-method-form")
-        doc.getElementsByTag("p").get(0).text() shouldBe messages("incomeSources.add.businessReportingMethod.taxYear", (viewModelScenario1.taxYear1.get.toInt - 1).toString, viewModelScenario1.taxYear1.get)
-        doc.getElementsByTag("p").get(1).text() shouldBe messages("incomeSources.add.businessReportingMethod.taxYear", (viewModelScenario1.taxYear2.get.toInt - 1).toString, viewModelScenario1.taxYear2.get)
+        doc.getElementsByTag("legend").get(0).text() shouldBe messages("incomeSources.add.businessReportingMethod.taxYear", (viewModelScenario1.taxYear1.get.toInt - 1).toString, viewModelScenario1.taxYear1.get)
+        doc.getElementsByTag("legend").get(1).text() shouldBe messages("incomeSources.add.businessReportingMethod.taxYear", (viewModelScenario1.taxYear2.get.toInt - 1).toString, viewModelScenario1.taxYear2.get)
         doc.getElementsByClass("govuk-label govuk-radios__label").eq(0).text() shouldBe messages("incomeSources.add.businessReportingMethod.chooseAnnualReport")
         doc.getElementsByClass("govuk-label govuk-radios__label").eq(1).text() shouldBe messages("incomeSources.add.businessReportingMethod.chooseQuarterlyReport")
         doc.getElementsByClass("govuk-label govuk-radios__label").eq(2).text() shouldBe messages("incomeSources.add.businessReportingMethod.chooseAnnualReport")
@@ -175,8 +175,8 @@ class BusinessReportingMethodViewSpec extends TestSupport {
 
       "render the radio form with input error" in new Setup(true, error = true) {
         val doc = documentScenario1.getElementById("add-business-reporting-method-form")
-        doc.getElementsByTag("p").get(0).text() shouldBe messages("incomeSources.add.businessReportingMethod.taxYear", (viewModelScenario1.taxYear1.get.toInt - 1).toString, viewModelScenario1.taxYear1.get)
-        doc.getElementsByTag("p").get(2).text() shouldBe messages("incomeSources.add.businessReportingMethod.taxYear", (viewModelScenario1.taxYear2.get.toInt - 1).toString, viewModelScenario1.taxYear2.get)
+        doc.getElementsByTag("legend").get(0).text() shouldBe messages("incomeSources.add.businessReportingMethod.taxYear", (viewModelScenario1.taxYear1.get.toInt - 1).toString, viewModelScenario1.taxYear1.get)
+        doc.getElementsByTag("legend").get(1).text() shouldBe messages("incomeSources.add.businessReportingMethod.taxYear", (viewModelScenario1.taxYear2.get.toInt - 1).toString, viewModelScenario1.taxYear2.get)
         doc.getElementsByClass("govuk-label govuk-radios__label").eq(0).text() shouldBe messages("incomeSources.add.businessReportingMethod.chooseAnnualReport")
         doc.getElementsByClass("govuk-label govuk-radios__label").eq(1).text() shouldBe messages("incomeSources.add.businessReportingMethod.chooseQuarterlyReport")
         doc.getElementsByClass("govuk-label govuk-radios__label").eq(2).text() shouldBe messages("incomeSources.add.businessReportingMethod.chooseAnnualReport")
@@ -194,7 +194,7 @@ class BusinessReportingMethodViewSpec extends TestSupport {
     "taxYear1 is crystallised and taxYear2 are present in Latency" should {
       "render the radio form" in new Setup(true) {
         val doc = documentScenario2.getElementById("add-business-reporting-method-form")
-        doc.getElementsByTag("p").get(0).text() shouldBe messages("incomeSources.add.businessReportingMethod.taxYear", (viewModelScenario2.taxYear2.get.toInt - 1).toString, viewModelScenario1.taxYear2.get)
+        doc.getElementsByTag("legend").get(0).text() shouldBe messages("incomeSources.add.businessReportingMethod.taxYear", (viewModelScenario2.taxYear2.get.toInt - 1).toString, viewModelScenario1.taxYear2.get)
         doc.getElementsByClass("govuk-label govuk-radios__label").eq(0).text() shouldBe messages("incomeSources.add.businessReportingMethod.chooseAnnualReport")
         doc.getElementsByClass("govuk-label govuk-radios__label").eq(1).text() shouldBe messages("incomeSources.add.businessReportingMethod.chooseQuarterlyReport")
         doc.getElementsByClass("govuk-radios").size() shouldBe 1
@@ -202,7 +202,7 @@ class BusinessReportingMethodViewSpec extends TestSupport {
 
       "render the radio form with input error" in new Setup(true, error = true) {
         val doc = documentScenario2.getElementById("add-business-reporting-method-form")
-        doc.getElementsByTag("p").get(0).text() shouldBe messages("incomeSources.add.businessReportingMethod.taxYear", (viewModelScenario1.taxYear2.get.toInt - 1).toString, viewModelScenario1.taxYear2.get)
+        doc.getElementsByTag("legend").get(0).text() shouldBe messages("incomeSources.add.businessReportingMethod.taxYear", (viewModelScenario1.taxYear2.get.toInt - 1).toString, viewModelScenario1.taxYear2.get)
         doc.getElementsByClass("govuk-label govuk-radios__label").eq(0).text() shouldBe messages("incomeSources.add.businessReportingMethod.chooseAnnualReport")
         doc.getElementsByClass("govuk-label govuk-radios__label").eq(1).text() shouldBe messages("incomeSources.add.businessReportingMethod.chooseQuarterlyReport")
         doc.getElementsByClass("govuk-radios").size() shouldBe 1
