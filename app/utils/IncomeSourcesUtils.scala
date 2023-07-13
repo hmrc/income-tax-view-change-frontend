@@ -18,7 +18,6 @@ package utils
 
 import auth.MtdItUser
 import forms.utils.SessionKeys._
-import models.createIncomeSource.PropertyDetails
 import models.incomeSourceDetails.viewmodels.{CheckBusinessDetailsViewModel, CheckUKPropertyViewModel}
 
 import java.time.LocalDate

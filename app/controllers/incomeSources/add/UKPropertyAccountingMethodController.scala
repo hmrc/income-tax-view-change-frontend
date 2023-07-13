@@ -68,10 +68,10 @@ class UKPropertyAccountingMethodController @Inject()(val authenticate: Authentic
       if (shouldRedirectToCheckDetailsPage(userProperties)) {
         if (isAgent) {
           Future.successful(Redirect(controllers.incomeSources.add.routes.CheckUKPropertyDetailsController.showAgent())
-            .addingToSession(addUkPropertyAccountingMethod -> "cash"))
+            .addingToSession(addUkPropertyAccountingMethod -> "CASH"))
         } else {
           Future.successful(Redirect(controllers.incomeSources.add.routes.CheckUKPropertyDetailsController.show())
-            .addingToSession(addUkPropertyAccountingMethod -> "cash"))
+            .addingToSession(addUkPropertyAccountingMethod -> "CASH"))
         }
       } else {
         Future.successful(Ok(view(
@@ -141,10 +141,10 @@ class UKPropertyAccountingMethodController @Inject()(val authenticate: Authentic
         validatedInput => {
           if (validatedInput.equals(Some("cash"))) {
             Future.successful(Redirect(redirectUrl)
-              .addingToSession(addUkPropertyAccountingMethod -> "cash"))
+              .addingToSession(addUkPropertyAccountingMethod -> "CASH"))
           } else {
             Future.successful(Redirect(redirectUrl)
-              .addingToSession(addUkPropertyAccountingMethod -> "accruals"))
+              .addingToSession(addUkPropertyAccountingMethod -> "ACCRUALS"))
           }
         }
       )

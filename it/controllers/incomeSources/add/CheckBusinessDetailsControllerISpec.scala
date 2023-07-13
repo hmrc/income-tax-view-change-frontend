@@ -36,7 +36,7 @@ class CheckBusinessDetailsControllerISpec extends ComponentSpecBase {
     businessTrade -> "Plumbing",
     addBusinessAddressLine1 -> "Test Road",
     addBusinessPostalCode -> "B32 1PQ",
-    addBusinessAccountingMethod -> "Quarterly",
+    addBusinessAccountingMethod -> "CASH",
     addBusinessAccountingPeriodEndDate -> "2023-11-11")
 
   val testBusinessName: String = "Test Business"
@@ -44,7 +44,7 @@ class CheckBusinessDetailsControllerISpec extends ComponentSpecBase {
   val testBusinessTrade: String = "Plumbing"
   val testBusinessAddressLine1: String = "Test Road"
   val testBusinessPostCode: String = "B32 1PQ"
-  val testBusinessAccountingMethod: String = "Quarterly"
+  val testBusinessAccountingMethod: String = "CASH"
   val continueButtonText: String = messagesAPI("check-business-details.confirm-button")
 
 

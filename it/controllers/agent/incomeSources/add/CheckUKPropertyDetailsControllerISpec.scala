@@ -127,7 +127,7 @@ class CheckUKPropertyDetailsControllerISpec extends ComponentSpecBase {
         enable(IncomeSources)
         val createResponseJson = List(CreateIncomeSourcesResponse("1234567890"))
         IncomeTaxViewChangeStub.stubCreateBusinessDetailsResponse(testMtditid)(OK, createResponseJson)
-        
+
         val testBody = Map(
           "ukPropertyDetails.tradingStartDate" -> Seq("2011-01-01"),
           "ukPropertyDetails.cashOrAccrualsFlag" -> Seq("CASH"),

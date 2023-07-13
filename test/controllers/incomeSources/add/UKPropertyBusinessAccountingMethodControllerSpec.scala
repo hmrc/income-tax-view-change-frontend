@@ -107,7 +107,7 @@ class UKPropertyAccountingMethodControllerSpec extends TestSupport with MockAuth
         val result: Future[Result] = TestUKPropertyAccountingMethodController.show()(fakeRequestWithActiveSession)
 
         status(result) shouldBe Status.SEE_OTHER
-        result.futureValue.session.get(addUkPropertyAccountingMethod) shouldBe Some("cash")
+        result.futureValue.session.get(addUkPropertyAccountingMethod) shouldBe Some("CASH")
         redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.CheckUKPropertyDetailsController.show().url)
       }
       "navigating to the page with FS Enabled and has both UK and Foreign Property" in {
@@ -118,7 +118,7 @@ class UKPropertyAccountingMethodControllerSpec extends TestSupport with MockAuth
         val result: Future[Result] = TestUKPropertyAccountingMethodController.show()(fakeRequestWithActiveSession)
 
         status(result) shouldBe Status.SEE_OTHER
-        result.futureValue.session.get(addUkPropertyAccountingMethod) shouldBe Some("cash")
+        result.futureValue.session.get(addUkPropertyAccountingMethod) shouldBe Some("CASH")
         redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.CheckUKPropertyDetailsController.show().url)
       }
     }
@@ -155,7 +155,7 @@ class UKPropertyAccountingMethodControllerSpec extends TestSupport with MockAuth
         }
 
         status(result) shouldBe Status.SEE_OTHER
-        result.futureValue.session.get(addUkPropertyAccountingMethod) shouldBe Some("cash")
+        result.futureValue.session.get(addUkPropertyAccountingMethod) shouldBe Some("CASH")
         redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.CheckUKPropertyDetailsController.show().url)
       }
       "form is completed successfully with traditional radio button selected" in {
@@ -172,7 +172,7 @@ class UKPropertyAccountingMethodControllerSpec extends TestSupport with MockAuth
         }
 
         status(result) shouldBe Status.SEE_OTHER
-        result.futureValue.session.get(addUkPropertyAccountingMethod) shouldBe Some("accruals")
+        result.futureValue.session.get(addUkPropertyAccountingMethod) shouldBe Some("ACCRUALS")
         redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.CheckUKPropertyDetailsController.show().url)
       }
     }
@@ -235,7 +235,7 @@ class UKPropertyAccountingMethodControllerSpec extends TestSupport with MockAuth
         val result: Future[Result] = TestUKPropertyAccountingMethodController.showAgent()(fakeRequestConfirmedClient())
 
         status(result) shouldBe Status.SEE_OTHER
-        result.futureValue.session.get(addUkPropertyAccountingMethod) shouldBe Some("cash")
+        result.futureValue.session.get(addUkPropertyAccountingMethod) shouldBe Some("CASH")
         redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.CheckUKPropertyDetailsController.showAgent().url)
       }
       "navigating to the page with FS Enabled and has both UK and Foreign Property" in {
@@ -246,7 +246,7 @@ class UKPropertyAccountingMethodControllerSpec extends TestSupport with MockAuth
         val result: Future[Result] = TestUKPropertyAccountingMethodController.showAgent()(fakeRequestConfirmedClient())
 
         status(result) shouldBe Status.SEE_OTHER
-        result.futureValue.session.get(addUkPropertyAccountingMethod) shouldBe Some("cash")
+        result.futureValue.session.get(addUkPropertyAccountingMethod) shouldBe Some("CASH")
         redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.CheckUKPropertyDetailsController.showAgent().url)
       }
     }
@@ -284,7 +284,7 @@ class UKPropertyAccountingMethodControllerSpec extends TestSupport with MockAuth
         }
 
         status(result) shouldBe Status.SEE_OTHER
-        result.futureValue.session.get(addUkPropertyAccountingMethod) shouldBe Some("cash")
+        result.futureValue.session.get(addUkPropertyAccountingMethod) shouldBe Some("CASH")
         redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.CheckUKPropertyDetailsController.showAgent().url)
       }
       "form is completed successfully with traditional radio button selected" in {
@@ -301,7 +301,7 @@ class UKPropertyAccountingMethodControllerSpec extends TestSupport with MockAuth
         }
 
         status(result) shouldBe Status.SEE_OTHER
-        result.futureValue.session.get(addUkPropertyAccountingMethod) shouldBe Some("accruals")
+        result.futureValue.session.get(addUkPropertyAccountingMethod) shouldBe Some("ACCRUALS")
         redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.CheckUKPropertyDetailsController.showAgent().url)
       }
     }
