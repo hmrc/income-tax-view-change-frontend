@@ -88,6 +88,17 @@ class ForeignPropertyCheckDetailsController @Inject()(val checkForeignPropertyDe
               itvcErrorHandler.showInternalServerError()
             }
         }
+      }.recover{
+        case ex =>
+          if (isAgent) {
+            Logger("application").error(
+              s"[Agent][ForeignPropertyCheckDetailsController][handleRequest] - Error: Unable to construct Future ${ex.getMessage}")
+            itvcErrorHandlerAgent.showInternalServerError()
+          } else {
+            Logger("application").error(
+              s"[ForeignPropertyCheckDetailsController][handleRequest] - Error: Unable to construct Future ${ex.getMessage}")
+            itvcErrorHandler.showInternalServerError()
+          }
       }
     }
   }
