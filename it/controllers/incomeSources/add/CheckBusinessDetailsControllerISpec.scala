@@ -36,7 +36,7 @@ class CheckBusinessDetailsControllerISpec extends ComponentSpecBase {
     businessTrade -> "Plumbing",
     addBusinessAddressLine1 -> "Test Road",
     addBusinessPostalCode -> "B32 1PQ",
-    addBusinessAccountingMethod -> "accruals",
+    addBusinessAccountingMethod -> "ACCRUALS",
     addBusinessAccountingPeriodEndDate -> "2023-11-11")
 
   val testBusinessName: String = "Test Business"
@@ -109,7 +109,7 @@ class CheckBusinessDetailsControllerISpec extends ComponentSpecBase {
           "addBusinessStartDate" -> Seq("2011-11-11"),
           "addBusinessAddressLine1" -> Seq("Test Business Name"),
           "addBusinessPostalCode" -> Seq("SE15 1WR"),
-          "addBusinessAccountingMethod" -> Seq("Test Business Name"),
+          "addBusinessAccountingMethod" -> Seq("CASH"),
           "addBusinessAccountingPeriodEndDate" -> Seq("2023-11-11"))
         enable(IncomeSources)
         val response = List(CreateIncomeSourcesResponse(testSelfEmploymentId))

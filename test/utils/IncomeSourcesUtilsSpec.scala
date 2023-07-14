@@ -36,7 +36,8 @@ class IncomeSourcesUtilsSpec extends TestSupport {
     businessAddressLine3 = None,
     businessAddressLine4 = None,
     businessCountryCode = None,
-    cashOrAccrualsFlag = "Cash"
+    cashOrAccrualsFlag = "Cash",
+    skippedAccountingMethod = false
   )
 
   val checkUKPropertyViewModel = CheckUKPropertyViewModel(

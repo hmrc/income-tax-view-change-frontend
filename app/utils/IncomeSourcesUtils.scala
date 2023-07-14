@@ -18,6 +18,7 @@ package utils
 
 import auth.MtdItUser
 import forms.utils.SessionKeys._
+import models.incomeSourceDetails.BusinessDetailsModel
 import models.incomeSourceDetails.viewmodels.{CheckBusinessDetailsViewModel, CheckUKPropertyViewModel}
 import play.api.mvc.Session
 
@@ -28,7 +29,8 @@ case class MissingKey(msg: String)
 object IncomeSourcesUtils {
 
   def getBusinessDetailsFromSession(implicit user: MtdItUser[_]): Either[Throwable, CheckBusinessDetailsViewModel] = {
-
+    val userActiveBusinesses: List[BusinessDetailsModel] = user.incomeSources.businesses.filterNot(_.isCeased)
+    val skipAccountingMethod: Boolean = userActiveBusinesses.isEmpty
     val errors: Seq[String] = Seq(
       user.session.data.get(businessName).orElse(Option(MissingKey("MissingKey: addBusinessName"))),
       user.session.data.get(businessStartDate).orElse(Option(MissingKey("MissingKey: addBusinessStartDate"))),
@@ -61,7 +63,8 @@ object IncomeSourcesUtils {
         businessPostalCode = user.session.data.get(addBusinessPostalCode),
         businessCountryCode = user.session.data.get(addBusinessCountryCode),
         businessAccountingMethod = user.session.data.get(addBusinessAccountingMethod),
-        cashOrAccrualsFlag = businessAccountingMethod)
+        cashOrAccrualsFlag = businessAccountingMethod,
+        skippedAccountingMethod = skipAccountingMethod)
     }
 
     result match {

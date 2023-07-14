@@ -160,9 +160,9 @@
                     <dt class="govuk-summary-list__key">@getMessage("accounting-method")</dt>
                     <dd class="govuk-summary-list__value" id="business-accounting-value">
                         @viewModel.businessAccountingMethod match {
-                            case Some(method) if method == "cash" => { @getMessage("cash-accounting") }
-                            case Some(method) if method == "accruals" => { @getMessage("traditional-accounting") }
-                            case _ => {(""}
+                            case Some(method) if method == "CASH" => { @getMessage("cash-accounting") }
+                            case Some(method) if method == "ACCRUALS" => { @getMessage("traditional-accounting") }
+                            case _ => {""}
                         }
                     </dd>
                     <dd class="govuk-summary-list__actions govuk-!-text-align-right govuk-!-margin-0">

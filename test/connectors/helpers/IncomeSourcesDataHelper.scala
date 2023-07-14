@@ -61,7 +61,7 @@ trait IncomeSourcesDataHelper {
       |                "postalCode": ""
       |            },
       |            "tradingStartDate": "",
-      |            "cashOrAccrualsFlag": "",
+      |            "cashOrAccrualsFlag": "CASH",
       |            "cessationDate": ""
       |        }
       |    ]
