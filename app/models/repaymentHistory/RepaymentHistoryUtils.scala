@@ -99,6 +99,7 @@ object RepaymentHistoryUtils {
       case (false, true, false, false) => if (CutOverCreditsEnabled) Some(cutOverCreditEntry(payment, isAgent)) else None
       case (false, false, true, false) => if (MFACreditsEnabled) Some(mfaCreditEntry(payment, isAgent)) else None
       case (false, false, false, true) => Some(paymentToHMRCEntry(payment, isAgent))
+      case (_, _,  _, _) => None // TBC: if this is a correct approach
     }
 
   }

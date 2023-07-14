@@ -56,7 +56,7 @@ class PaymentController @Inject()(val checkSessionTimeout: SessionTimeoutPredica
       case Some(utr) =>
         payApiConnector.startPaymentJourney(utr, paymentAmountInPence, isAgent).map {
           case model: PaymentJourneyModel => Redirect(model.nextUrl)
-          case _: PaymentJourneyErrorResponse => throw new Exception("Failed to start payments journey due to downstream response")
+          case _ => throw new Exception("Failed to start payments journey due to downstream response")
         }
       case _ =>
         Logger("application").error("Failed to start payments journey due to missing UTR")

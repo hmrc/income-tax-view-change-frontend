@@ -44,7 +44,7 @@ class ITSAStatusService @Inject()(incomeTaxViewChangeConnector: IncomeTaxViewCha
       case Right(itsaStatus) =>
         val isMandatedOrVoluntary = itsaStatus.exists(_.itsaStatusDetails.exists(_.exists(_.isMandatedOrVoluntary)))
         Future.successful(isMandatedOrVoluntary)
-      case Left(x: ITSAStatusResponseError) =>
+      case Left(x) =>
         Logger("application").error(s"[ITSAStatusService][hasEligibleITSAStatusCurrentYear] $x")
         Future.failed(new InternalServerException("[ITSAStatusService][hasEligibleITSAStatusCurrentYear] - Failed to retrieve ITSAStatus"))
     }

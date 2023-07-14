@@ -158,7 +158,7 @@ class AddBusinessStartDateCheckController @Inject()(authenticate: Authentication
             Future.successful(Redirect(continueUrl)
               .addingToSession(SessionKeys.addBusinessAccountingPeriodStartDate -> businessStartDate,
                 SessionKeys.addBusinessAccountingPeriodEndDate -> businessAccountingPeriodEndDate))
-          case None => Future.successful(itvcErrorHandler.showInternalServerError())
+          case Some(_) | None => Future.successful(itvcErrorHandler.showInternalServerError())
         }
       ).recoverWith {
         case ex => Logger("application").error(s"[AddBusinessStartDateCheckController][submit]: ${ex.getMessage}")
@@ -199,7 +199,7 @@ class AddBusinessStartDateCheckController @Inject()(authenticate: Authentication
                   Future.successful(Redirect(continueUrl)
                     .addingToSession(SessionKeys.addBusinessAccountingPeriodStartDate -> businessStartDate,
                       SessionKeys.addBusinessAccountingPeriodEndDate -> businessAccountingPeriodEndDate))
-                case None => Future.successful(itvcErrorHandler.showInternalServerError())
+                case Some(_) | None => Future.successful(itvcErrorHandler.showInternalServerError())
               }
             )
         }.recoverWith {

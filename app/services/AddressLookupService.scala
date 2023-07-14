@@ -19,7 +19,7 @@ package services
 import config.FrontendAppConfig
 import connectors.AddressLookupConnector
 import models.incomeSourceDetails.BusinessAddressModel
-import models.incomeSourceDetails.viewmodels.httpparser.GetAddressLookupDetailsHttpParser.UnexpectedGetStatusFailure
+import models.incomeSourceDetails.viewmodels.httpparser.GetAddressLookupDetailsHttpParser.{InvalidJson, UnexpectedGetStatusFailure}
 import models.incomeSourceDetails.viewmodels.httpparser.PostAddressLookupHttpParser.{PostAddressLookupSuccessResponse, UnexpectedPostStatusFailure}
 import play.api.Logger
 import play.api.mvc.RequestHeader
@@ -53,6 +53,9 @@ class AddressLookupService @Inject()(val frontendAppConfig: FrontendAppConfig,
           case Left(UnexpectedGetStatusFailure(status)) =>
             Logger("application").error(s"[AddressLookupService][fetchAddress] - failed to get details for $id with status $status")
             Left(AddressError("status: " + status))
+          case Left(InvalidJson) =>
+            Logger("application").error(s"[AddressLookupService][fetchAddress] - invalid json $InvalidJson")
+            Left(new Error("Invalid json"))
           case Right(None) =>
             Logger("application").info(s"[AddressLookupService][fetchAddress] - failed to get details for $id")
             Left(AddressError("Not found"))
