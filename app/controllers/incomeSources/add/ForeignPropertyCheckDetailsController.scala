@@ -143,7 +143,7 @@ class ForeignPropertyCheckDetailsController @Inject()(val checkForeignPropertyDe
   def submit(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
-      handleSubmit(false)
+      handleSubmit(isAgent = false)
   }
 
   def submitAgent: Action[AnyContent] = Authenticated.async {
@@ -151,7 +151,7 @@ class ForeignPropertyCheckDetailsController @Inject()(val checkForeignPropertyDe
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
           implicit mtdItUser =>
-            handleSubmit(true)
+            handleSubmit(isAgent = true)
         }
   }
 
