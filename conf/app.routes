@@ -209,9 +209,6 @@ GET          /agents/income-sources/add/foreign-property-business-accounting-met
 POST         /income-sources/add/foreign-property-business-accounting-method         controllers.incomeSources.add.ForeignPropertyAccountingMethodController.submit()
 POST         /agents/income-sources/add/foreign-property-business-accounting-method  controllers.incomeSources.add.ForeignPropertyAccountingMethodController.submitAgent()
 
-GET          /income-sources/add/check-foreign-property-details               controllers.incomeSources.add.CheckForeignPropertyDetailsController.show()
-GET          /agents/income-sources/add/check-foreign-property-details        controllers.incomeSources.add.CheckForeignPropertyDetailsController.showAgent()
-
 
 GET          /income-sources/add/business-accounting-method                   controllers.incomeSources.add.BusinessAccountingMethodController.show()
 GET          /agents/income-sources/add/business-accounting-method            controllers.incomeSources.add.BusinessAccountingMethodController.showAgent()
@@ -298,8 +295,8 @@ GET          /agents/income-sources/cease/cease-uk-property-success         cont
 GET          /income-sources/cease/cease-foreign-property-success           controllers.incomeSources.cease.CeaseForeignPropertySuccessController.show()
 GET          /agents/income-sources/cease/cease-foreign-property-success    controllers.incomeSources.cease.CeaseForeignPropertySuccessController.showAgent()
 
-GET          /income-sources/add/foreign-property-accounting-method         controllers.incomeSources.add.ForeignPropertyAccountingMethodController.show()
-GET          /agents/income-sources/add/foreign-property-accounting-method   controllers.incomeSources.add.ForeignPropertyAccountingMethodController.showAgent()
+GET          /income-sources/add/foreign-property-accounting-method                 controllers.incomeSources.add.ForeignPropertyAccountingMethodController.show()
+GET          /agents/income-sources/add/foreign-property-accounting-method          controllers.incomeSources.add.ForeignPropertyAccountingMethodController.showAgent()
 GET          /income-sources/add/change-foreign-property-accounting-method          controllers.incomeSources.add.ForeignPropertyAccountingMethodController.changeForeignPropertyAccountingMethod()
 GET          /agents/income-sources/add/change-foreign-property-accounting-method   controllers.incomeSources.add.ForeignPropertyAccountingMethodController.changeForeignPropertyAccountingMethodAgent()
 GET          /income-sources/add/foreign-property-reporting-method                  controllers.incomeSources.add.ForeignPropertyReportingMethodController.show()

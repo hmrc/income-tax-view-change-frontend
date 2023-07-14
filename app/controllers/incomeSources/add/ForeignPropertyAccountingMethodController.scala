@@ -32,7 +32,6 @@ import views.html.errorPages.CustomNotFoundError
 import views.html.incomeSources.add.ForeignPropertyAccountingMethod
 import forms.incomeSources.add.ForeignPropertyAccountingMethodForm
 import forms.utils.SessionKeys.addForeignPropertyAccountingMethod
-import controllers.incomeSources.add.CheckForeignPropertyDetailsController
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -114,10 +113,10 @@ class ForeignPropertyAccountingMethodController @Inject()(val authenticate: Auth
         ))),
         validatedInput => {
           if (validatedInput.equals(Some("cash"))) {
-            Future.successful(Redirect(controllers.incomeSources.add.routes.CheckForeignPropertyDetailsController.show())
+            Future.successful(Redirect(controllers.incomeSources.add.routes.ForeignPropertyCheckDetailsController.show())
               .addingToSession(addForeignPropertyAccountingMethod -> "cash"))
           } else {
-            Future.successful(Redirect(controllers.incomeSources.add.routes.CheckForeignPropertyDetailsController.show())
+            Future.successful(Redirect(controllers.incomeSources.add.routes.ForeignPropertyCheckDetailsController.show())
               .addingToSession(addForeignPropertyAccountingMethod -> "accruals"))
           }
         }
@@ -138,10 +137,10 @@ class ForeignPropertyAccountingMethodController @Inject()(val authenticate: Auth
               ))),
               validatedInput => {
                 if (validatedInput.equals(Some("cash"))) {
-                  Future.successful(Redirect(controllers.incomeSources.add.routes.CheckForeignPropertyDetailsController.showAgent())
+                  Future.successful(Redirect(controllers.incomeSources.add.routes.ForeignPropertyCheckDetailsController.showAgent())
                     .addingToSession(addForeignPropertyAccountingMethod -> "cash"))
                 } else {
-                  Future.successful(Redirect(controllers.incomeSources.add.routes.CheckForeignPropertyDetailsController.showAgent())
+                  Future.successful(Redirect(controllers.incomeSources.add.routes.ForeignPropertyCheckDetailsController.showAgent())
                     .addingToSession(addForeignPropertyAccountingMethod -> "accruals"))
                 }
               }
