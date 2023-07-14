@@ -38,7 +38,7 @@ trait IncomeSourcesDataHelper {
     ),
     typeOfBusiness = None,
     tradingStartDate = "",
-    cashOrAccrualsFlag = "",
+    cashOrAccrualsFlag = "CASH",
     cessationDate = Some(""),
     cessationReason = None
   )

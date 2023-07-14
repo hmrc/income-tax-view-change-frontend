@@ -104,7 +104,7 @@ class CreateBusinessDetailsServiceSpec extends TestSupport with FeatureSwitching
         })
 
       val viewModel = CheckForeignPropertyViewModel(tradingStartDate = LocalDate.of(2011, 1, 1),
-        cashOrAccrualsFlag = "Cash"
+        cashOrAccrualsFlag = "CASH"
       )
       val result = UnderTestCreateBusinessDetailsService.createForeignProperty(viewModel)
 
@@ -129,10 +129,10 @@ class CreateBusinessDetailsServiceSpec extends TestSupport with FeatureSwitching
           Right(List(CreateIncomeSourcesResponse("561")))
         })
 
-      // set cashOrAccrualsFlag field as empty to cause failure
+      // set cashOrAccruals field to lowercase to cause failure
       val viewModel = CheckForeignPropertyViewModel(
         tradingStartDate = LocalDate.of(2011, 1, 1),
-        cashOrAccrualsFlag = ""
+        cashOrAccrualsFlag = "cash"
       )
       val result = UnderTestCreateBusinessDetailsService.createForeignProperty(viewModel)
       result.futureValue match {

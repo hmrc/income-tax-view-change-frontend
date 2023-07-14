@@ -27,6 +27,8 @@ sealed trait CreateIncomeSourceRequest
 
 final case class CreateBusinessIncomeSourceRequest(businessDetails: List[BusinessDetails]) extends CreateIncomeSourceRequest {
   require(businessDetails.length == 1, "Only single business can be created at a time")
+  require(businessDetails.head.cashOrAccrualsFlag.nonEmpty, "Accounting method must be provided")
+  require(businessDetails.head.cashOrAccrualsFlag.matches("^[A-Z]+$"), "Accounting method must be capitalised")
 }
 
 case class BusinessDetails(accountingPeriodStartDate: String,
@@ -68,6 +70,7 @@ object AddressDetails {
 
 final case class PropertyDetails(tradingStartDate: String, cashOrAccrualsFlag: String, startDate: String) extends CreateIncomeSourceRequest {
   require(cashOrAccrualsFlag.nonEmpty, "Accounting method must be provided")
+  require(cashOrAccrualsFlag.matches("^[A-Z]+$"), "Accounting method must be capitalised")
   require(tradingStartDate.nonEmpty, "Trading start date must be provided")
   require(tradingStartDate == startDate, "Trading start date and start date must be the same")
 }

@@ -18,11 +18,11 @@ package controllers.agent.incomeSources.add
 
 
 import config.featureswitch.IncomeSources
-import forms.utils.SessionKeys.{addBusinessAccountingMethod, addBusinessAccountingPeriodEndDate, addBusinessAddressLine1, addBusinessPostalCode, businessName, businessStartDate, businessTrade}
+import forms.utils.SessionKeys._
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.createIncomeSource.CreateIncomeSourcesResponse
-import play.api.http.Status.{BAD_REQUEST, NOT_FOUND, OK, SEE_OTHER}
+import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testMtditid, testSelfEmploymentId}
 import testConstants.IncomeSourceIntegrationTestConstants.noPropertyOrBusinessResponse
 
@@ -37,14 +37,14 @@ class CheckBusinessDetailsControllerISpec extends ComponentSpecBase {
     businessTrade -> "Plumbing",
     addBusinessAddressLine1 -> "Test Road",
     addBusinessPostalCode -> "B32 1PQ",
-    addBusinessAccountingMethod -> "Quarterly",
+    addBusinessAccountingMethod -> "CASH",
     addBusinessAccountingPeriodEndDate -> "2023-11-11")
   val testBusinessName: String = "Test Business"
   val testBusinessStartDate: String = "1 January 2022"
   val testBusinessTrade: String = "Plumbing"
   val testBusinessAddressLine1: String = "Test Road"
   val testBusinessPostCode: String = "B32 1PQ"
-  val testBusinessAccountingMethod: String = "Quarterly"
+  val testBusinessAccountingMethod: String = "CASH"
   val continueButtonText: String = messagesAPI("check-business-details.confirm-button")
 
 
