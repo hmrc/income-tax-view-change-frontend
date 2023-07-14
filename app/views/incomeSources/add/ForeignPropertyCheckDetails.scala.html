@@ -86,7 +86,7 @@
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">@getMessage("start-date")</dt>
                 <dd class="govuk-summary-list__value" id="foreign-property-date-value">@{
-                    viewModel.tradingStartDate.get.toLongDate
+                    viewModel.tradingStartDate.toLongDate
                 }</dd>
                 <dd class="govuk-summary-list__actions govuk-!-text-align-right govuk-!-margin-0">
                     <a class="govuk-link" id="start-date-change-details-link" href=@changeForeignPropertyStartDateURL>

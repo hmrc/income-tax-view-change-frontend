@@ -108,7 +108,7 @@ class ForeignPropertyCheckDetailsController @Inject()(val checkForeignPropertyDe
       cashOrAccrualsFlag <- user.session.data.get(addForeignPropertyAccountingMethod)
     } yield {
       CheckForeignPropertyViewModel(
-        tradingStartDate = Some(foreignPropertyStartDate),
+        tradingStartDate = foreignPropertyStartDate,
         cashOrAccrualsFlag = cashOrAccrualsFlag)
     }
     result match {
@@ -174,8 +174,8 @@ class ForeignPropertyCheckDetailsController @Inject()(val checkForeignPropertyDe
             }
 
           case Right(AddIncomeSourceResponse(id)) =>
-            if (isAgent) Redirect(controllers.incomeSources.add.routes.ForeignPropertyReportingMethodController.showAgent().url).withSession(user.session -- sessionKeys)
-            else Redirect(controllers.incomeSources.add.routes.ForeignPropertyReportingMethodController.show().url).withSession(user.session -- sessionKeys)
+            if (isAgent) Redirect(controllers.incomeSources.add.routes.ForeignPropertyReportingMethodController.showAgent(id).url).withSession(user.session -- sessionKeys)
+            else Redirect(controllers.incomeSources.add.routes.ForeignPropertyReportingMethodController.show(id).url).withSession(user.session -- sessionKeys)
         }
       case None => if(isAgent){
         Logger("application").error(

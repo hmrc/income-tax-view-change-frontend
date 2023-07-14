@@ -299,5 +299,5 @@ GET          /income-sources/add/foreign-property-accounting-method             
 GET          /agents/income-sources/add/foreign-property-accounting-method          controllers.incomeSources.add.ForeignPropertyAccountingMethodController.showAgent()
 GET          /income-sources/add/change-foreign-property-accounting-method          controllers.incomeSources.add.ForeignPropertyAccountingMethodController.changeForeignPropertyAccountingMethod()
 GET          /agents/income-sources/add/change-foreign-property-accounting-method   controllers.incomeSources.add.ForeignPropertyAccountingMethodController.changeForeignPropertyAccountingMethodAgent()
-GET          /income-sources/add/foreign-property-reporting-method                  controllers.incomeSources.add.ForeignPropertyReportingMethodController.show()
-GET          /agents/income-sources/add/foreign-property-reporting-method           controllers.incomeSources.add.ForeignPropertyReportingMethodController.showAgent()
+GET          /income-sources/add/foreign-property-reporting-method                  controllers.incomeSources.add.ForeignPropertyReportingMethodController.show(id: String)
+GET          /agents/income-sources/add/foreign-property-reporting-method           controllers.incomeSources.add.ForeignPropertyReportingMethodController.showAgent(id: String)

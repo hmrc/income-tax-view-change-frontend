@@ -36,11 +36,11 @@ class ForeignPropertyReportingMethodController @Inject()(val authenticate: Authe
                                              val itvcErrorHandlerAgent: AgentItvcErrorHandler)
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
-  def show(): Action[AnyContent] = Action {
+  def show(id: String): Action[AnyContent] = Action {
     Ok("")
   }
 
-  def showAgent(): Action[AnyContent] = Action {
+  def showAgent(id: String): Action[AnyContent] = Action {
     Ok("")
   }
 }

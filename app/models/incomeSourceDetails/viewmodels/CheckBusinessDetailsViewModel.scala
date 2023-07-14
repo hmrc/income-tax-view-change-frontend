@@ -32,4 +32,4 @@ case class CheckBusinessDetailsViewModel(businessName: Option[String],
                                          cashOrAccrualsFlag: String,
                                          skippedAccountingMethod: Boolean)
 
-case class CheckForeignPropertyViewModel(tradingStartDate: Option[LocalDate], cashOrAccrualsFlag: String)
+case class CheckForeignPropertyViewModel(tradingStartDate: LocalDate, cashOrAccrualsFlag: String)
