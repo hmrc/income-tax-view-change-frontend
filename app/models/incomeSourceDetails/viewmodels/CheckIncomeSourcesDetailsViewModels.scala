@@ -29,7 +29,8 @@ case class CheckBusinessDetailsViewModel(businessName: Option[String],
                                          businessPostalCode: Option[String],
                                          businessCountryCode: Option[String],
                                          businessAccountingMethod: Option[String],
-                                         cashOrAccrualsFlag: String)
+                                         cashOrAccrualsFlag: String,
+                                         skippedAccountingMethod: Boolean)
 
 case class CheckForeignPropertyViewModel(tradingStartDate: LocalDate, cashOrAccrualsFlag: String)
 

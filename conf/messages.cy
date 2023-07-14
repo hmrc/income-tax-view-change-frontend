@@ -1342,9 +1342,9 @@ incomeSources.add.business-accounting-method.heading                 = Pa ddull 
 incomeSources.add.business-accounting-method.hint                    = Os oes gennych fwy nag un busnes unig fasnachwr, mae angen i’ch holl, fusnesau gael yr un dull cyfrifddu.
 incomeSources.add.business-accounting-method.example                 = Dangoswch enghraifft i mi
 incomeSources.add.business-accounting-method.radio-1-title           = Cyfrifyddu ar sail arian parod
-incomeSources.add.business-accounting-method.radio-1-hint            = Rydych yn cofnodi nail ai ar y dyddiad yr ydych yn cael taliad gan eich tenantiaid i mewn i’ch cyfrif banc, neu ar y dyddiad yr ydych yn talu bil, er enghraifft ar gyfer atgyweirio a chynnal a chadow. Mae’r rhan fwyaf o fusnesau bach yn defnyddio’r dull hwn.
+incomeSources.add.business-accounting-method.radio-1-hint            = Rydych yn cofnodi ar y dyddiad yr ydych yn cael arian neu’n talu bil. Mae’r rhan fwyaf o unig fasnachwyr a busnesau bach yn defnyddio’r dull hwn.
 incomeSources.add.business-accounting-method.radio-2-title           = Cyfrifyddu traddodiadol
-incomeSources.add.business-accounting-method.radio-2-hint            = Rydych yn cofnodi ar y dyddiad yr ydych yn anfon anfoneb at eich tenantiaid, neu’n gofyn am daliad ganddynt, hyd yn oed os nad ydych yn cael nac yn talu unrhyw arian. Rydych yn cofnodi ar y dyddiad yr ydych yn cael anfoneb ar gyfer atgyweirio neu gynnal a chadw. Mae hwn hefyd yn cael ei alw yn ‘cyfrifyddu croniadau’ neu ‘cyfrifyddu traddodiadol’.
+incomeSources.add.business-accounting-method.radio-2-hint            = Rydych yn cofnodi ar y dyddiad yr ydych yn anfon neu’n cael anfoneb, hyd yn oed os nad ydych yn cael nac yn talu unrhyw arian. Mae hyn hefyd yn cael ei alw’n gyfrifyddu ‘ar sail croniadau’ neu’n gyfrifyddu ‘safonol’.
 incomeSources.add.business-accounting-method.drop-down-text          = Gwnaethoch greu anfoneb i rywun ym mis Mawrth 2017, ond ni chawsoch yr arian tan fis Mai 2017. Bydd yn rhaid i chi ddefnyddio dull cyfrifyddu penodol wrth roi gwybod i CThEF bod yr incwm hwn wedi dod i’ch llaw, a hynny’n dibynnu ar y dyddiadau canlynol:
 incomeSources.add.business-accounting-method.drop-down-text-bp-1     = os daeth yr incwm i law ym mis Mai 2017, dylech ddefnyddio ‘cyfrifyddu ar sail arian parod’
 incomeSources.add.business-accounting-method.drop-down-text-bp-2     = os daeth yr incwm i law ym mis Mawrth 2017, dylech ddefnyddio ‘cyfrifyddu traddodiadol’
@@ -1378,7 +1378,8 @@ check-business-details.business-description             = Disgrifiad o’r busne
 check-business-details.business-address                 = Cyfeiriad y busnes
 check-business-details.confirm-button                   = Cadarnhau ac yn eich blaen
 check-business-details.accounting-method                = Dull cyfrifyddu ar gyfer incwm unig fasnachwr
-
+check-business-details.cash-accounting                  = Cyfrifyddu ar sail arian parod
+check-business-details.traditional-accounting           = Cyfrifyddu traddodiadol
 
 # business added page
 business-added.h1                                       = Ychwanegwyd
