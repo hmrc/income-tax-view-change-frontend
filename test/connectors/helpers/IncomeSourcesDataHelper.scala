@@ -16,12 +16,15 @@
 
 package connectors.helpers
 
-import models.createIncomeSource.{AddressDetails, BusinessDetails, CreateBusinessIncomeSourceRequest, CreateForeignPropertyIncomeSource, PropertyDetails}
+import models.createIncomeSource._
 import models.incomeSourceDetails.viewmodels._
+import play.api.libs.json.{JsValue, Json}
 
 import java.time.LocalDate
 
 trait IncomeSourcesDataHelper {
+
+
   val businessDetails = BusinessDetails(accountingPeriodStartDate = "01-02-2023",
     accountingPeriodEndDate = "",
     tradingName = "",
@@ -44,9 +47,49 @@ trait IncomeSourcesDataHelper {
     List(businessDetails)
   )
 
+  val createBusinessDetailsRequestObjectJson: JsValue = Json.parse(
+    """{
+      |    "businessDetails": [
+      |        {
+      |            "accountingPeriodStartDate": "01-02-2023",
+      |            "accountingPeriodEndDate": "",
+      |            "tradingName": "",
+      |            "addressDetails": {
+      |                "addressLine1": "tests test",
+      |                "addressLine2": "",
+      |                "countryCode": "UK",
+      |                "postalCode": ""
+      |            },
+      |            "tradingStartDate": "",
+      |            "cashOrAccrualsFlag": "",
+      |            "cessationDate": ""
+      |        }
+      |    ]
+      |}""".stripMargin)
+
   val createForeignPropertyRequestObject = CreateForeignPropertyIncomeSource(PropertyDetails(tradingStartDate = LocalDate.of(2011, 1, 1).toString,
     cashOrAccrualsFlag = "CASH", startDate = LocalDate.of(2011, 1, 1).toString)
   )
+
+  val createForeignPropertyRequestObjectJson = Json.parse("""{
+        |    "foreignPropertyDetails": {
+        |        "tradingStartDate": "2011-01-01",
+        |        "cashOrAccrualsFlag": "CASH",
+        |        "startDate": "2011-01-01"
+        |    }
+        |}""".stripMargin)
+
+  val createUKPropertyRequestObject = CreateUKPropertyIncomeSource(PropertyDetails(tradingStartDate = LocalDate.of(2011, 1, 1).toString,
+    cashOrAccrualsFlag = "CASH", startDate = LocalDate.of(2011, 1, 1).toString)
+  )
+
+  val createUKPropertyRequestObjectJson  = Json.parse("""{
+    |    "ukPropertyDetails": {
+    |        "tradingStartDate": "2011-01-01",
+    |        "cashOrAccrualsFlag": "CASH",
+    |        "startDate": "2011-01-01"
+    |    }
+    |}""".stripMargin)
 
   val createBusinessViewModel = CheckBusinessDetailsViewModel(
     businessName = Some("someBusinessName"),
@@ -64,4 +107,6 @@ trait IncomeSourcesDataHelper {
   )
 
   val createForeignPropertyViewModel = CheckForeignPropertyViewModel(tradingStartDate = LocalDate.of(2011, 1, 1), cashOrAccrualsFlag = "CASH")
+
+  val createUKPropertyViewModel = CheckUKPropertyViewModel(tradingStartDate = LocalDate.of(2011, 1, 1), cashOrAccrualsFlag = "CASH")
 }

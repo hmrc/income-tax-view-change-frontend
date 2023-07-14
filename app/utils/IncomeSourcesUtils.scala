@@ -18,8 +18,8 @@ package utils
 
 import auth.MtdItUser
 import forms.utils.SessionKeys._
-import models.createIncomeSource.PropertyDetails
 import models.incomeSourceDetails.viewmodels.{CheckBusinessDetailsViewModel, CheckUKPropertyViewModel}
+import play.api.mvc.Session
 
 import java.time.LocalDate
 
@@ -98,7 +98,7 @@ object IncomeSourcesUtils {
     }
   }
 
-  def removeIncomeSourceDetailsFromSession(implicit user: MtdItUser[_]): Unit = {
+  def removeIncomeSourceDetailsFromSession(implicit user: MtdItUser[_]): Session = {
     val sessionKeysToRemove = Seq(
       "addUkPropertyStartDate",
       "addBusinessName",

@@ -21,7 +21,7 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 
 import javax.inject.{Inject, Singleton}
@@ -41,11 +41,11 @@ class UKPropertyReportingMethodController @Inject()(val checkSessionTimeout: Ses
                                                     val itvcErrorHandlerAgent: AgentItvcErrorHandler) extends ClientConfirmedController
   with I18nSupport with FeatureSwitching {
 
-  def show(): Action[AnyContent] = Action {
+  def show(id: String): Action[AnyContent] = Action {
     Ok("UK Property Reporting Method - Individual")
   }
 
-  def showAgent(): Action[AnyContent] = Action {
+  def showAgent(id: String): Action[AnyContent] = Action {
     Ok("UK Property Reporting Method - Agent")
   }
 

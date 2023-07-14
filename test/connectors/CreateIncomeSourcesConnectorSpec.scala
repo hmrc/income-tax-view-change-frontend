@@ -157,4 +157,56 @@ class CreateIncomeSourcesConnectorSpec extends TestSupport with MockHttp with In
     }
   }
 
+  "call create UK property" should {
+    "return expected status code OK" in {
+      val expectedIncomeSourceId = "5656"
+      val mtdId = individualUser.mtditid
+
+      val url = UnderTestConnector.createBusinessIncomeSourcesUrl(mtdId)
+      val expectedResponse = HttpResponse(status = Status.OK, json = Json.toJson(
+        List(CreateIncomeSourcesResponse(expectedIncomeSourceId))),
+        headers = Map.empty)
+
+      val testBody = Json.parse(
+        """
+          |{"ukPropertyDetails": {"tradingStartDate":"2011-01-01","cashOrAccrualsFlag":"CASH","startDate":"2011-01-01"}}
+        """.stripMargin)
+
+      setupMockHttpPost(url, testBody)(response = expectedResponse)
+
+      val result: Future[Either[CreateIncomeSourcesErrorResponse, List[CreateIncomeSourcesResponse]]] =
+        UnderTestConnector.createUKProperty(mtdId, createUKPropertyRequestObject)
+
+      result.futureValue shouldBe Right(List(CreateIncomeSourcesResponse(expectedIncomeSourceId)))
+    }
+
+    "return failure" when {
+      "return status error 500" in {
+        val mtdId = individualUser.mtditid
+
+        val url = UnderTestConnector.createBusinessIncomeSourcesUrl(mtdId)
+        val expectedResponse = HttpResponse(status = Status.INTERNAL_SERVER_ERROR, json = Json.toJson(
+          CreateIncomeSourcesErrorResponse(status = Status.INTERNAL_SERVER_ERROR, "Some error message")),
+          headers = Map.empty)
+
+        val testBody = Json.parse(
+          """
+            |{"ukPropertyDetails": {"tradingStartDate":"2011-01-01","cashOrAccrualsFlag":"CASH","startDate":"2011-01-01"}}
+        """.stripMargin)
+
+        setupMockHttpPost(url, testBody)(response = expectedResponse)
+
+        val result: Future[Either[CreateIncomeSourcesErrorResponse, List[CreateIncomeSourcesResponse]]] = UnderTestConnector.createUKProperty(mtdId, createUKPropertyRequestObject)
+
+        result.futureValue match {
+          case Left(CreateIncomeSourcesErrorResponse(Status.INTERNAL_SERVER_ERROR, _)) =>
+            succeed
+          case _ =>
+            fail("We expect error code 500 to be returned")
+        }
+      }
+
+    }
+  }
+
 }

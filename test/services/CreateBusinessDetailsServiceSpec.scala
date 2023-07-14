@@ -142,4 +142,55 @@ class CreateBusinessDetailsServiceSpec extends TestSupport with FeatureSwitching
     }
 
   }
+
+  "CreateBusinessDetailsService call create UK property " when {
+
+    "return success response with incomeSourceId" in {
+      when(mockIncomeSourceConnector.createUKProperty(any(), any())(any()))
+        .thenReturn(Future {
+          Right(List(CreateIncomeSourcesResponse("561")))
+        })
+
+      val viewModel = CheckUKPropertyViewModel(tradingStartDate = LocalDate.of(2011, 1, 1),
+        cashOrAccrualsFlag = "CASH"
+      )
+      val result = UnderTestCreateBusinessDetailsService.createUKProperty(viewModel)
+
+      result.futureValue shouldBe Right(CreateIncomeSourcesResponse("561"))
+    }
+
+    "return failure response with error" in {
+      when(mockIncomeSourceConnector.createUKProperty(any(), any())(any()))
+        .thenReturn(Future {
+          Left(CreateIncomeSourcesErrorResponse(Status.INTERNAL_SERVER_ERROR, s"Error creating incomeSource"))
+        })
+      val viewModel = CheckUKPropertyViewModel(tradingStartDate = LocalDate.of(2011, 1, 1),
+        cashOrAccrualsFlag = "CASH"
+      )
+      val result = UnderTestCreateBusinessDetailsService.createUKProperty(viewModel)
+      result.futureValue match {
+        case Left(_) => succeed
+        case Right(_) => fail("Expecting to fail")
+      }
+    }
+
+    "return failure: wrong data" in {
+      when(mockIncomeSourceConnector.createForeignProperty(any(), any())(any()))
+        .thenReturn(Future {
+          Right(List(CreateIncomeSourcesResponse("561")))
+        })
+
+      // set cashOrAccrualsFlag field as empty to cause failure
+      val viewModel = CheckUKPropertyViewModel(
+        tradingStartDate = LocalDate.of(2011, 1, 1),
+        cashOrAccrualsFlag = ""
+      )
+      val result = UnderTestCreateBusinessDetailsService.createUKProperty(viewModel)
+      result.futureValue match {
+        case Left(_) => succeed
+        case Right(_) => fail("Incorrect data in the view model")
+      }
+    }
+
+  }
 }

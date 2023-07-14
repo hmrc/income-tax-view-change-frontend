@@ -26,13 +26,12 @@ import testConstants.BaseIntegrationTestConstants.testMtditid
 import testConstants.IncomeSourceIntegrationTestConstants.noPropertyOrBusinessResponse
 
 
-
 class CheckUKPropertyDetailsControllerISpec extends ComponentSpecBase {
   object CheckUKPropertyDetails {
     val showUrl: String = controllers.incomeSources.add.routes.CheckUKPropertyDetailsController.show().url
     val submitUrl: String = controllers.incomeSources.add.routes.CheckUKPropertyDetailsController.submit().url
     val backUrl: String = controllers.incomeSources.add.routes.UKPropertyAccountingMethodController.show().url
-    val successUrl: String = controllers.incomeSources.add.routes.UKPropertyReportingMethodController.show().url + "?id=1234567890"
+    val successUrl: String = controllers.incomeSources.add.routes.UKPropertyReportingMethodController.show("1234567890").url
     val completedJourneyCookies: Map[String, String] = Map(addUkPropertyStartDate -> "2022-10-10",
       addUkPropertyAccountingMethod -> "CASH")
     val changeText: String = messagesAPI("incomeSources.add.checkUKPropertyDetails.change") + " " +

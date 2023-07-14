@@ -31,7 +31,7 @@ class CheckUKPropertyDetailsControllerISpec extends ComponentSpecBase {
     val showUrl: String = controllers.incomeSources.add.routes.CheckUKPropertyDetailsController.showAgent().url
     val submitUrl: String = controllers.incomeSources.add.routes.CheckUKPropertyDetailsController.submitAgent().url
     val backUrl: String = controllers.incomeSources.add.routes.UKPropertyAccountingMethodController.showAgent().url
-    val successUrl: String = controllers.incomeSources.add.routes.UKPropertyReportingMethodController.showAgent().url + "?id=1234567890"
+    val successUrl: String = controllers.incomeSources.add.routes.UKPropertyReportingMethodController.showAgent("1234567890").url
     val completedJourneyCookies: Map[String, String] = Map(addUkPropertyStartDate -> "2022-10-10",
       addUkPropertyAccountingMethod -> "CASH") ++ clientDetailsWithConfirmation
     val changeText: String = messagesAPI("incomeSources.add.checkUKPropertyDetails.change") + " " +
@@ -127,7 +127,7 @@ class CheckUKPropertyDetailsControllerISpec extends ComponentSpecBase {
         enable(IncomeSources)
         val createResponseJson = List(CreateIncomeSourcesResponse("1234567890"))
         IncomeTaxViewChangeStub.stubCreateBusinessDetailsResponse(testMtditid)(OK, createResponseJson)
-        
+
         val testBody = Map(
           "ukPropertyDetails.tradingStartDate" -> Seq("2011-01-01"),
           "ukPropertyDetails.cashOrAccrualsFlag" -> Seq("CASH"),

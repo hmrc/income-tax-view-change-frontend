@@ -70,9 +70,9 @@ class CheckUKPropertyDetailsController @Inject()(val checkUKPropertyDetails: Che
       controllers.routes.HomeController.show()
   }
 
-  def getUKPropertyReportingMethodUrl(isAgent: Boolean): Call = {
-    if (isAgent) controllers.incomeSources.add.routes.UKPropertyReportingMethodController.showAgent() else
-      controllers.incomeSources.add.routes.UKPropertyReportingMethodController.show()
+  def getUKPropertyReportingMethodUrl(isAgent: Boolean, id: String): Call = {
+    if (isAgent) controllers.incomeSources.add.routes.UKPropertyReportingMethodController.showAgent(id) else
+      controllers.incomeSources.add.routes.UKPropertyReportingMethodController.show(id)
   }
 
   def show(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
@@ -133,8 +133,6 @@ class CheckUKPropertyDetailsController @Inject()(val checkUKPropertyDetails: Che
 
   def handleSubmit(isAgent: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
     val homePageUrl = getHomePageUrl(isAgent)
-    val redirectUrl = getUKPropertyReportingMethodUrl(isAgent)
-
     if (isDisabled(IncomeSources)) {
       Future.successful(Redirect(homePageUrl))
     } else {
@@ -145,8 +143,8 @@ class CheckUKPropertyDetailsController @Inject()(val checkUKPropertyDetails: Che
               s"[CheckUKPropertyDetailsController][handleRequest] - Unable to create income source: ${ex.getMessage}")
               itvcErrorHandler.showInternalServerError()
             case Right(CreateIncomeSourcesResponse(id)) =>
-              removeIncomeSourceDetailsFromSession(user)
-              Redirect(redirectUrl + s"?id=$id")
+              val newSession = removeIncomeSourceDetailsFromSession(user)
+              Redirect(getUKPropertyReportingMethodUrl(isAgent,id)).withSession(newSession)
           }
         case None => Logger("application").error(
           s"[CheckUKPropertyDetailsController][handleSubmit] - Error: Unable to build UK property details on submit")
