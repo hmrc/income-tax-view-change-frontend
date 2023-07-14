@@ -64,5 +64,5 @@ trait IncomeSourcesDataHelper {
     skippedAccountingMethod = false,
   )
 
-  val createForeignPropertyViewModel = CheckForeignPropertyViewModel(tradingStartDate = Some(LocalDate.of(2011, 1, 1)), cashOrAccrualsFlag = "Cash")
+  val createForeignPropertyViewModel = CheckForeignPropertyViewModel(tradingStartDate = LocalDate.of(2011, 1, 1), cashOrAccrualsFlag = "Cash")
 }
