@@ -105,7 +105,7 @@ class ForeignPropertyAccountingMethodControllerSpec extends TestSupport with Moc
   }
 
   "Individual - ForeignPropertyAccountingMethodController.submit()" should{
-    s"return 303 SEE_OTHER and redirect to ${controllers.incomeSources.add.routes.CheckForeignPropertyDetailsController.show().url}" when {
+    s"return 303 SEE_OTHER and redirect to ${controllers.incomeSources.add.routes.ForeignPropertyCheckDetailsController.show().url}" when {
       "form is completed successfully with cash radio button selected" in {
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
         disableAllSwitches()
@@ -123,7 +123,7 @@ class ForeignPropertyAccountingMethodControllerSpec extends TestSupport with Moc
 
         status(result) shouldBe Status.SEE_OTHER
         result.futureValue.session.get(addForeignPropertyAccountingMethod) shouldBe Some("cash")
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.CheckForeignPropertyDetailsController.show().url)
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.ForeignPropertyCheckDetailsController.show().url)
       }
       "form is completed successfully with traditional radio button selected" in {
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
@@ -142,7 +142,7 @@ class ForeignPropertyAccountingMethodControllerSpec extends TestSupport with Moc
 
         status(result) shouldBe Status.SEE_OTHER
         result.futureValue.session.get(addForeignPropertyAccountingMethod) shouldBe Some("accruals")
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.CheckForeignPropertyDetailsController.show().url)
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.ForeignPropertyCheckDetailsController.show().url)
       }
     }
 
@@ -202,7 +202,7 @@ class ForeignPropertyAccountingMethodControllerSpec extends TestSupport with Moc
   }
 
   "Agent - BusinessAccountingMethodController.submit()" should {
-    s"return 303 SEE_OTHER and redirect to ${controllers.incomeSources.add.routes.CheckForeignPropertyDetailsController.showAgent().url}" when {
+    s"return 303 SEE_OTHER and redirect to ${controllers.incomeSources.add.routes.ForeignPropertyCheckDetailsController.showAgent().url}" when {
       "form is completed successfully with cash radio button selected" in {
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         enable(IncomeSources)
@@ -218,7 +218,7 @@ class ForeignPropertyAccountingMethodControllerSpec extends TestSupport with Moc
 
         status(result) shouldBe Status.SEE_OTHER
         result.futureValue.session.get(addForeignPropertyAccountingMethod) shouldBe Some("cash")
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.CheckForeignPropertyDetailsController.showAgent().url)
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.ForeignPropertyCheckDetailsController.showAgent().url)
       }
       "form is completed successfully with traditional radio button selected" in {
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
@@ -235,7 +235,7 @@ class ForeignPropertyAccountingMethodControllerSpec extends TestSupport with Moc
 
         status(result) shouldBe Status.SEE_OTHER
         result.futureValue.session.get(addForeignPropertyAccountingMethod) shouldBe Some("accruals")
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.CheckForeignPropertyDetailsController.showAgent().url)
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.ForeignPropertyCheckDetailsController.showAgent().url)
       }
     }
     "return 400 BAD_REQUEST" when {

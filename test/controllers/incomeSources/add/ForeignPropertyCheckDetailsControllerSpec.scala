@@ -36,7 +36,7 @@ import views.html.incomeSources.add.ForeignPropertyCheckDetails
 
 import java.time.LocalDate
 
-class ForeignPropertyCheckDetailsControllerTest extends TestSupport with MockAuthenticationPredicate
+class ForeignPropertyCheckDetailsControllerSpec extends TestSupport with MockAuthenticationPredicate
 with MockIncomeSourceDetailsPredicate with MockNavBarEnumFsPredicate with FeatureSwitching {
 
   val mockHttpClient: HttpClient = mock(classOf[HttpClient])
