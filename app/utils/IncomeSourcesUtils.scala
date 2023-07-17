@@ -78,7 +78,7 @@ object IncomeSourcesUtils {
   def getUKPropertyDetailsFromSession(implicit user: MtdItUser[_]): Either[Throwable, CheckUKPropertyViewModel] = {
     val errors: Seq[String] = Seq(
       user.session.data.get(addUkPropertyStartDate).orElse(Option(MissingKey(s"MissingKey: $addUkPropertyStartDate"))),
-      user.session.data.get(businessTrade).orElse(Option(MissingKey(s"MissingKey: $businessTrade"))),
+      user.session.data.get(businessTrade).orElse(Option(MissingKey(s"MissingKey: $businessTrade")))
     ).collect {
       case Some(MissingKey(msg)) => MissingKey(msg)
     }.map(e => e.msg)
