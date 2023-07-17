@@ -317,6 +317,15 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
       )
     }
 
+    def getAddBusinessObligations(id: String): WSResponse = {
+      getWithCalcIdInSessionAndWithoutAwait(
+        uri = s"/income-sources/add/business-added/?id=$id"
+      ).futureValue
+    }
+
+    def postAddedBusinessObligations(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      post(s"/income-sources/add/business-added", additionalCookies)(Map.empty)
+    }
     def getCheckCeaseUKPropertyDetails(session: Map[String, String]): WSResponse =
       getWithClientDetailsInSession("/income-sources/cease/uk-property-check-details", session)
 

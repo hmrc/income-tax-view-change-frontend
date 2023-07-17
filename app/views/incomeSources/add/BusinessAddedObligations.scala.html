@@ -28,7 +28,7 @@
 mainTemplate: unifiedLayout,
 h1: h1,
 implicitDateFormatter: ImplicitDateFormatterImpl,
-govukButton : GovukButton,
+        continueButton: ContinueButton,
 formWithCSRF: FormWithCSRF,
 errorSummary: ErrorSummary,
 govukTable: GovukTable,
@@ -76,8 +76,8 @@ govukTable: GovukTable,
                 <table class="govuk-table">
                     <thead class="govuk-table__head">
                     <tr class="govuk-table__row">
-                        <th scope="col" class="govuk-table__header govuk" style="width:55%;">@(getMessage("table.heading-1")+" "+sources.quarterlyObligationsDatesYearOne.head.inboundCorrespondenceFrom.getYear+" "+getMessage("to")+" "+(sources.quarterlyObligationsDatesYearOne.head.inboundCorrespondenceFrom.getYear + 1))</th>
-                        <th scope="col" class="govuk-table__header govuk" style="width:30%;">@getMessage("table.heading-2")</th>
+                        <th scope="col" class="govuk-table__header govuk" style="width:66.6%;">@(getMessage("table.heading-1")+" "+sources.quarterlyObligationsDatesYearOne.head.inboundCorrespondenceFrom.getYear+" "+getMessage("to")+" "+(sources.quarterlyObligationsDatesYearOne.head.inboundCorrespondenceFrom.getYear + 1))</th>
+                        <th scope="col" class="govuk-table__header govuk" style="width:33.3%;">@getMessage("table.heading-2")</th>
                     </tr>
                     </thead>
 
@@ -93,8 +93,8 @@ govukTable: GovukTable,
                     @if(sources.quarterlyObligationsDatesYearTwo.nonEmpty){
                         <thead class="govuk-table__head">
                             <tr class="govuk-table__row">
-                                <th scope="col" class="govuk-table__header govuk" style="width:55%;">@(getMessage("table.heading-1")+" "+sources.quarterlyObligationsDatesYearTwo.head.inboundCorrespondenceFrom.getYear+" "+getMessage("to")+" "+(sources.quarterlyObligationsDatesYearTwo.head.inboundCorrespondenceFrom.getYear + 1))</th>
-                                <th scope="col" class="govuk-table__header govuk" style="width:55%;"> </th>
+                                <th scope="col" class="govuk-table__header govuk" style="width:66.6%;">@(getMessage("table.heading-1")+" "+sources.quarterlyObligationsDatesYearTwo.head.inboundCorrespondenceFrom.getYear+" "+getMessage("to")+" "+(sources.quarterlyObligationsDatesYearTwo.head.inboundCorrespondenceFrom.getYear + 1))</th>
+                                <th scope="col" class="govuk-table__header govuk" style="width:33.3%;"> </th>
                             </tr>
                         </thead>
 
@@ -120,8 +120,8 @@ govukTable: GovukTable,
                 <table class="govuk-table">
                     <thead class="govuk-table__head">
                     <tr class="govuk-table__row">
-                        <th scope="col" class="govuk-table__header govuk" style="width:55%;">@getMessage("table.heading-1")</th>
-                        <th scope="col" class="govuk-table__header govuk" style="width:30%;">@getMessage("table.heading-2")</th>
+                        <th scope="col" class="govuk-table__header govuk" style="width:66.6%;">@getMessage("table.heading-1")</th>
+                        <th scope="col" class="govuk-table__header govuk" style="width:33.3%;">@getMessage("table.heading-2")</th>
                     </tr>
                     </thead>
 
@@ -145,8 +145,8 @@ govukTable: GovukTable,
             <table class="govuk-table">
                 <thead class="govuk-table__head">
                 <tr class="govuk-table__row">
-                    <th scope="col" class="govuk-table__header govuk" style="width:55%;">@getMessage("table.heading-1")</th>
-                    <th scope="col" class="govuk-table__header govuk" style="width:30%;">@getMessage("table.heading-2")</th>
+                    <th scope="col" class="govuk-table__header govuk" style="width:66.6%;">@getMessage("table.heading-1")</th>
+                    <th scope="col" class="govuk-table__header govuk" style="width:33.3%;">@getMessage("table.heading-2")</th>
                 </tr>
                 </thead>
 
@@ -174,10 +174,8 @@ govukTable: GovukTable,
 
         </div>
 
-        @govukButton(Button(
-            content = Text(
-                getMessage("income-sources-button")
-            )
-        ))
+        @continueButton(
+            Some(getMessage("income-sources-button"))
+        )
     }
 }
