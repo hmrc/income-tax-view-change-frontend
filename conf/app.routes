@@ -207,6 +207,12 @@ GET          /agents/income-sources/add/foreign-property-business-accounting-met
 POST         /income-sources/add/foreign-property-business-accounting-method         controllers.incomeSources.add.ForeignPropertyAccountingMethodController.submit()
 POST         /agents/income-sources/add/foreign-property-business-accounting-method  controllers.incomeSources.add.ForeignPropertyAccountingMethodController.submitAgent()
 
+GET          /income-sources/add/foreign-property-added                       controllers.incomeSources.add.ForeignPropertyAddedObligationsController.show(id: String)
+GET          /agents/income-sources/add/foreign-property-added                controllers.incomeSources.add.ForeignPropertyAddedObligationsController.showAgent(id: String)
+POST         /income-sources/add/new-income-sources                           controllers.incomeSources.add.ForeignPropertyAddedObligationsController.submit()
+POST         /agents/income-sources/add/new-income-sources                    controllers.incomeSources.add.ForeignPropertyAddedObligationsController.submitAgent()
+
+
 GET          /income-sources/add/check-foreign-property-details               controllers.incomeSources.add.CheckForeignPropertyDetailsController.show()
 GET          /agents/income-sources/add/check-foreign-property-details        controllers.incomeSources.add.CheckForeignPropertyDetailsController.showAgent()
 

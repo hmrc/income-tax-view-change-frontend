@@ -1406,6 +1406,10 @@ business-added.income-sources-button                    = Your income sources
 business-added.previous-tax-years-heading               = Previous tax years
 business-added.previous-tax-years-t1                    = You must make sure that you have sent all the required income and expenses, and final declarations for tax years earlier than
 
+business-added.foreign-property-h1                      = Foreign Property
+business-added.foreign-property-head                    =
+business-added.foreign-property-base                    = has been added to your account
+
 
 incomeSources.add.businessReportingMethod.heading                   =   Choose a reporting method
 incomeSources.add.businessReportingMethod.description1              =   Your business qualifies for a grace period available up until April {0} where you can report annually.
