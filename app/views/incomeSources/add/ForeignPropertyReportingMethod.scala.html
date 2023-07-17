@@ -1,0 +1,133 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import views.html.layouts.unifiedLayout
+@import views.html.helpers.injected.ContinueButton
+@import views.html.helpers.injected.ErrorSummary
+@import views.html.helpers.injected.RadioHelper
+@import views.helpers.RadioOption
+@import models.incomeSourceDetails.viewmodels.ForeignPropertyReportingMethodViewModel
+@import views.html.helpers.injected.InputHelper
+@import uk.gov.hmrc.govukfrontend.views.html.components.FormWithCSRF
+@import uk.gov.hmrc.govukfrontend.views.html.components.{GovukCheckboxes, Radios, GovukRadios, Fieldset, Legend, Text, RadioItem, GovukInput, Input}
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.checkboxes.CheckboxItem
+@import uk.gov.hmrc.govukfrontend.views.Aliases.Checkboxes
+@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
+@import views.html.layouts.unifiedLayout
+@import views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+
+
+@this(
+    mainTemplate: unifiedLayout,
+    inputHelper: InputHelper,
+    continueButton: ContinueButton,
+    formWithCSRF: FormWithCSRF,
+    errorSummary: ErrorSummary,
+    radioHelper: RadioHelper,
+    govukRadios: GovukRadios,
+    inputRadios: input_radios,
+    govukCheckboxes: GovukCheckboxes,
+    govukInput : GovukInput,
+    h1: h1,
+    p:p
+)
+
+@(addForeignPropertyReportingMethodForm: Form[_],
+        foreignPropertyReportingViewModel: ForeignPropertyReportingMethodViewModel,
+        postAction: Call,
+        isAgent: Boolean)(implicit user: auth.MtdItUser[_], messages: Messages)
+
+@renderChooseReportingMethodOptions(taxYear: Option[String], taxYearSeq: String, latencyIndicator: Option[String]) = {
+
+    @govukInput(
+        Input(
+            inputType = "hidden",
+            classes = "govuk-visually-hidden",
+            value = taxYear
+        ).withFormField(addForeignPropertyReportingMethodForm("new_"+taxYearSeq+"_reporting_method_tax_year"))
+    )
+
+    @govukInput(
+        Input(
+            inputType = "hidden",
+            classes = "govuk-visually-hidden",
+            value = latencyIndicator
+        ).withFormField(addForeignPropertyReportingMethodForm(taxYearSeq+"_reporting_method"))
+    )
+
+    @govukRadios(
+        Radios(
+            fieldset = Some(Fieldset(
+                legend = Some(Legend(
+                    content = Text(messages("incomeSources.add.foreignPropertyReportingMethod.taxYear", (taxYear.get.toInt - 1).toString, taxYear.get.toString)),
+                    classes = "govuk-fieldset__legend govuk-!-margin-bottom-5",
+                    isPageHeading = false
+                ))
+            )),
+            items = Seq(
+                RadioItem(
+                    content = HtmlContent("<b>"+messages("incomeSources.add.foreignPropertyReportingMethod.chooseAnnualReport")+"</b>"),
+                    value = Some("A")
+                ),
+                RadioItem(
+                    content = HtmlContent("<b>"+messages("incomeSources.add.foreignPropertyReportingMethod.chooseQuarterlyReport")+"</b>"),
+                    value = Some("Q")
+                )
+        )).withFormField(addForeignPropertyReportingMethodForm("new_"+taxYearSeq+"_reporting_method"))
+    )
+}
+
+@mainTemplate(pageTitle = messages("incomeSources.add.foreignPropertyReportingMethod.heading"), isAgent = isAgent, backUrl = None, btaNavPartial = user.btaNavPartial) {
+
+    @errorSummary(
+        form = addForeignPropertyReportingMethodForm
+    )
+
+    @h1(messages("incomeSources.add.foreignPropertyReportingMethod.heading"), classes = "govuk-heading-xl margin-bottom-100")
+
+    @p(){@messages("incomeSources.add.foreignPropertyReportingMethod.description1", foreignPropertyReportingViewModel.taxYear2.get.toString)}
+
+    @p(){@messages("incomeSources.add.foreignPropertyReportingMethod.description2")}
+
+    @p(){@messages("incomeSources.add.foreignPropertyReportingMethod.description3")}
+
+    <ul class="govuk-list govuk-list--bullet">
+        @Html(messages("incomeSources.add.foreignPropertyReportingMethod.description4"))
+    </ul>
+
+    @h1(messages("incomeSources.add.foreignPropertyReportingMethod.chooseReport"), classes = "govuk-heading-m")
+
+    @formWithCSRF(action = postAction, Symbol("id") -> "add-business-reporting-method-form") {
+       @if(foreignPropertyReportingViewModel.taxYear1.isDefined){
+            @renderChooseReportingMethodOptions(foreignPropertyReportingViewModel.taxYear1, "tax_year_1", foreignPropertyReportingViewModel.latencyIndicator1)
+                @govukInput(
+                    Input(
+                        id = "new_tax_year_1_reporting_method-3",
+                        inputType = "hidden",
+                        classes = "govuk-visually-hidden",
+                        value = Some("none")
+                    ).withFormField(addForeignPropertyReportingMethodForm("new_tax_year_1_reporting_method").copy(errors = Seq()))
+                )
+        }
+
+       @if(foreignPropertyReportingViewModel.taxYear2.isDefined){
+            @renderChooseReportingMethodOptions(foreignPropertyReportingViewModel.taxYear2, "tax_year_2", foreignPropertyReportingViewModel.latencyIndicator2)
+        }
+
+        @continueButton()
+    }
+}
