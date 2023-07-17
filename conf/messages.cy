@@ -1397,6 +1397,15 @@ incomeSources.add.businessReportingMethod.chooseAnnualReport        =   Dewis cy
 incomeSources.add.businessReportingMethod.chooseQuarterlyReport     =   Dewis cyflwyno adroddiadau’n chwarterol
 incomeSources.add.businessReportingMethod.error                     =   Dewiswch a hoffech gyflwyno adroddiad yn flynyddol neu’n chwarterol ar gyfer blwyddyn dreth {0} i {1}
 
+incomeSources.add.foreignPropertyReportingMethod.heading                   =   Dewis dull o gyflwyno adroddiad
+incomeSources.add.foreignPropertyReportingMethod.description1              =   Mae’ch busnes yn gymwys i gael cyfnod gras hyd at Ebrill {0}, lle y gallwch gyflwyno adroddiadau’n flynyddol.
+incomeSources.add.foreignPropertyReportingMethod.description2              =   Bydd yn rhaid gwneud un diweddariad, a hynny erbyn 31 Ionawr fan bellaf.
+incomeSources.add.foreignPropertyReportingMethod.description3              =   Nid yw’r canlynol yn cael effaith ar eich cyfnod gras:
+incomeSources.add.foreignPropertyReportingMethod.description4              =   <li>lefel eich incwm o ffynonellau eraill</li><li>y trosiant rydych yn disgwyl i’ch busnes newydd ei wneud</li><li>sut yr ydych yn cyflwyno adroddiadau ar gyfer unrhyw ffynonellau incwm presennol</li>
+incomeSources.add.foreignPropertyReportingMethod.chooseReport              =   Dewiswch sut yr hoffech gyflwyno adroddiadau
+incomeSources.add.foreignPropertyReportingMethod.taxYear                   =   Blwyddyn dreth {0}-{1}
+incomeSources.add.foreignPropertyReportingMethod.chooseAnnualReport        =   Dewis cyflwyno adroddiadau’n flynyddol
+incomeSources.add.foreignPropertyReportingMethod.chooseQuarterlyReport     =   Dewis cyflwyno adroddiadau’n chwarterol
 incomeSources.add.foreignPropertyReportingMethod.error                     =   Dewiswch a hoffech gyflwyno adroddiad yn flynyddol neu’n chwarterol ar gyfer blwyddyn dreth {0} i {1}
 
 
