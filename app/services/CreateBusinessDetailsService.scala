@@ -147,7 +147,6 @@ class CreateBusinessDetailsService @Inject()(val createIncomeSourceConnector: Cr
                       (implicit ec: ExecutionContext, user: MtdItUser[_], hc: HeaderCarrier): Future[Either[Throwable, CreateIncomeSourcesResponse]] = {
     createUKPropertyIncomeSourceRequest(viewModel) match {
       case Right(requestObject) =>
-        println(Console.GREEN + requestObject + Console.WHITE)
         for {
           res <- createIncomeSourceConnector.createUKProperty(user.mtditid, requestObject)
         } yield res match {
