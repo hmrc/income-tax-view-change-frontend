@@ -129,9 +129,9 @@ class BusinessAddedObligationsViewSpec extends ViewSpec{
     }
 
     "Not display any obligation sections when user has no obligations" in new Setup(validCall) {
-      layoutContent.getElementById("quarterly") shouldBe null
-      layoutContent.getElementById("eops") shouldBe null
-      layoutContent.getElementById("prevyears") shouldBe null
+      Option(layoutContent.getElementById("quarterly")) shouldBe None
+      Option(layoutContent.getElementById("eops")) shouldBe None
+      Option(layoutContent.getElementById("prevyears")) shouldBe None
     }
   }
 
