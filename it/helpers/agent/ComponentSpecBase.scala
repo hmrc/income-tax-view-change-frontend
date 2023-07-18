@@ -306,7 +306,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     def getAddBusinessObligations(id: String, additionalCookies: Map[String, String] = Map.empty): WSResponse = {
       getWithCalcIdInSessionAndWithoutAwait(
         uri = s"/income-sources/add/business-added/?id=$id",
-
+        additionalCookies
       ).futureValue
     }
 

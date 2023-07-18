@@ -14,14 +14,10 @@ import java.time.LocalDate
 class BusinessAddedObligationsISpec extends ComponentSpecBase {
 
   val businessAddedObligationsShowUrl: String = controllers.incomeSources.add.routes.BusinessAddedObligationsController.show("").url
-  val businessAddedObligationsShowAgentUrl: String = controllers.incomeSources.add.routes.BusinessAddedObligationsController.showAgent("").url
   val businessReportingMethodUrl: String = controllers.incomeSources.add.routes.BusinessReportingMethodController.show("").url
-  val businessReportingMethodAgentUrl: String = controllers.incomeSources.add.routes.BusinessReportingMethodController.showAgent("").url
 
   val businessAddedObligationsSubmitUrl: String = controllers.incomeSources.add.routes.BusinessAddedObligationsController.submit().url
-  val businessAddedObligationsSubmitAgenturl: String = controllers.incomeSources.add.routes.BusinessAddedObligationsController.agentSubmit().url
   val addIncomeSourceUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceController.show().url
-  val addIncomeSourceAgentUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceController.showAgent().url
 
   val testDate: String = "2020-11-10"
   val prefix: String = "business-added"
