@@ -20,8 +20,10 @@ import auth.HeaderExtractor
 import com.github.tomakehurst.wiremock.client.WireMock
 import config.FrontendAppConfig
 import config.featureswitch.{FeatureSwitch, FeatureSwitching}
+import forms.incomeSources.add.{AddBusinessReportingMethodForm, AddUKPropertyReportingMethodForm}
 import forms.incomeSources.cease.CeaseUKPropertyForm
-import forms.CeaseForeignPropertyForm
+import forms.utils.SessionKeys
+import forms.{BusinessStartDateCheckForm, CeaseForeignPropertyForm}
 import helpers.agent.SessionCookieBaker
 import helpers.servicemocks.AuditStub
 import implicits.ImplicitDateFormatterImpl
@@ -38,20 +40,15 @@ import play.api.libs.crypto.DefaultCookieSigner
 import play.api.libs.ws.WSResponse
 import play.api.{Application, Environment, Mode}
 import services.{DateService, DateServiceInterface}
+import testConstants.BaseIntegrationTestConstants.{testPropertyIncomeId, testSelfEmploymentId}
 import uk.gov.hmrc.http.{Authorization, HeaderCarrier}
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import uk.gov.hmrc.play.language.LanguageUtils
 
 import java.time.LocalDate
+import java.time.Month.APRIL
 import javax.inject.Singleton
 import scala.concurrent.Future
-import forms.utils.SessionKeys
-import forms.BusinessStartDateCheckForm
-import forms.incomeSources.add.AddBusinessReportingMethodForm
-import play.api.libs.json.Json
-import testConstants.BaseIntegrationTestConstants.testSelfEmploymentId
-
-import java.time.Month.{APRIL, JANUARY}
 
 @Singleton
 class TestHeaderExtractor extends HeaderExtractor {
@@ -334,6 +331,11 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     def postAddBusinessReportingMethod(form: AddBusinessReportingMethodForm)(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
       val formData = form.toFormMap.map { case (k, v) => (k -> Seq(v.getOrElse(""))) }
       post(s"/income-sources/add/business-reporting-method?id=$testSelfEmploymentId", additionalCookies = additionalCookies)(formData)
+    }
+
+    def postAddUKPropertyReportingMethod(form: AddUKPropertyReportingMethodForm)(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      val formData = form.toFormMap.map { case (k, v) => (k -> Seq(v.getOrElse(""))) }
+      post(s"/income-sources/add/uk-property-reporting-method?id=$testPropertyIncomeId", additionalCookies = additionalCookies)(formData)
     }
   }
 
