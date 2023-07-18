@@ -102,7 +102,7 @@ with MockIncomeSourceDetailsPredicate with MockNavBarEnumFsPredicate with Featur
     }
 
     "feature switch is disabled" should {
-      "redirect to home page" in {
+      "redirect to home page (individual)" in {
         disableAllSwitches()
 
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
@@ -111,6 +111,16 @@ with MockIncomeSourceDetailsPredicate with MockNavBarEnumFsPredicate with Featur
         val result: Future[Result] = TestForeignPropertyCheckDetailsController.show()(fakeRequestWithActiveSession)
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.routes.HomeController.show().url)
+      }
+      "redirect to home page (agent)" in {
+        disableAllSwitches()
+
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
+        setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+
+        val result: Future[Result] = TestForeignPropertyCheckDetailsController.showAgent()(fakeRequestConfirmedClient())
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(result) shouldBe Some(controllers.routes.HomeController.showAgent.url)
       }
     }
 

@@ -66,7 +66,7 @@ class ForeignPropertyCheckDetailsController @Inject()(val checkForeignPropertyDe
       controllers.incomeSources.add.routes.ForeignPropertyCheckDetailsController.submit()
 
     if (isDisabled(IncomeSources)) {
-      Future.successful(Redirect(controllers.routes.HomeController.show()))
+      if (isAgent) Future.successful(Redirect(controllers.routes.HomeController.showAgent)) else Future.successful(Redirect(controllers.routes.HomeController.show()))
     } else {
       Future {
         getDetails(user) match {
