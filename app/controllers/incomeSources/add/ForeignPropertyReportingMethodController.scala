@@ -106,7 +106,7 @@ class ForeignPropertyReportingMethodController @Inject()(val authenticate: Authe
               isAgent = true,
               itvcErrorHandler = itvcErrorHandlerAgent,
               redirectCall = redirectCallAgent(id),
-              postAction = postActionAgent(id),
+              postAction = postActionAgent(id)
             )
         }
   }
@@ -118,32 +118,75 @@ class ForeignPropertyReportingMethodController @Inject()(val authenticate: Authe
                             redirectCall: Call)
                            (implicit user: MtdItUser[_]): Future[Result] = {
 
-    if (isEnabled(IncomeSources)) {
-      itsaStatusService.hasMandatedOrVoluntaryStatusCurrentYear.flatMap {
-        case true =>
-
-          val maybeLatencyDetails = user.incomeSources.properties
-            .find(_.incomeSourceId.contains(id))
-            .flatMap(_.latencyDetails)
-
-          maybeLatencyDetails match {
-            case Some(details) =>
-              getForeignPropertyReportingMethodDetails(details).map {
-                case Some(viewModel) =>
-                  Ok(foreignPropertyReportingMethodView(
-                    addForeignPropertyReportingMethodForm = AddForeignPropertyReportingMethodForm.form,
-                    foreignPropertyReportingViewModel = viewModel,
-                    postAction = postAction,
-                    isAgent = isAgent
-                  ))
-                case _ => Redirect(redirectCall)
-              }
-            case _ =>
-              Logger("application").error(s"[ForeignPropertyReportingMethodController][handleRequest]: Failed to retrieve latency details")
-              Future.successful(Redirect(redirectCall))
+        if (isEnabled(IncomeSources)) {
+          for {
+            isMandatoryOrVoluntary <- itsaStatusService.hasMandatedOrVoluntaryStatusCurrentYear
+            latencyDetails <- user.incomeSources.properties.find(_.incomeSourceId.contains(id)).flatMap(_.latencyDetails)
+            viewModel <- getForeignPropertyReportingMethodDetails(latencyDetails)
+          } yield {
+            (isMandatoryOrVoluntary, viewModel) match {
+              case (_, None) => Future(Redirect(redirectCall))
+              case (true, Some(viewModel)) =>
+                Future(Ok(foreignPropertyReportingMethodView(
+                  addForeignPropertyReportingMethodForm = AddForeignPropertyReportingMethodForm.form,
+                  foreignPropertyReportingViewModel = viewModel,
+                  postAction = postAction,
+                  isAgent = isAgent
+                )))
+              case _ => Future(Ok(customNotFoundErrorView()))
+            }
           }
-      }
-    } else Future(Ok(customNotFoundErrorView()))
+        } else Future(Ok(customNotFoundErrorView()))
+
+    //    itsaStatusService.hasMandatedOrVoluntaryStatusCurrentYear.flatMap { isMandatoryOrVoluntary =>
+    //      user.incomeSources.properties.find(_.incomeSourceId.contains(id)).map { propertyDetails =>
+    //          (isMandatoryOrVoluntary, propertyDetails.latencyDetails) match {
+    //            case (_, None) => Future(Redirect(redirectCall))
+    //            case (true, Some(details)) =>
+    //              getForeignPropertyReportingMethodDetails(details).map {
+    //                case Some(viewModel) =>
+    //                  Ok(foreignPropertyReportingMethodView(
+    //                    addForeignPropertyReportingMethodForm = AddForeignPropertyReportingMethodForm.form,
+    //                    foreignPropertyReportingViewModel = viewModel,
+    //                    postAction = postAction,
+    //                    isAgent = isAgent
+    //                  ))
+    //                case _ => Redirect(redirectCall)
+    //              }
+    //            case _ =>
+    //              Logger("application").error(s"[ForeignPropertyReportingMethodController][handleRequest]: Failed to retrieve latency details")
+    //              Future.successful(Redirect(redirectCall))
+    //          }
+    //      }
+
+//
+//    if (isEnabled(IncomeSources)) {
+//      itsaStatusService.hasMandatedOrVoluntaryStatusCurrentYear.flatMap {
+//        case true =>
+//
+//          val maybeLatencyDetails = user.incomeSources.properties
+//            .find(_.incomeSourceId.contains(id))
+//            .flatMap(_.latencyDetails)
+//
+//          maybeLatencyDetails match {
+//            case Some(details) =>
+//              getForeignPropertyReportingMethodDetails(details).map {
+//                case Some(viewModel) =>
+//                  Ok(foreignPropertyReportingMethodView(
+//                    addForeignPropertyReportingMethodForm = AddForeignPropertyReportingMethodForm.form,
+//                    foreignPropertyReportingViewModel = viewModel,
+//                    postAction = postAction,
+//                    isAgent = isAgent
+//                  ))
+//                case None => Redirect(redirectCall)
+//              }
+//            case None =>
+//              Logger("application").error(s"[ForeignPropertyReportingMethodController][handleRequest]: Latency details not found")
+//              Future.successful(Redirect(redirectCall))
+//          }
+//        case false => Future.successful(Redirect(redirectCall))
+//      }
+//    } else Future(Ok(customNotFoundErrorView()))
   }
 
     private def handleSubmitRequest(id: String,
@@ -231,9 +274,8 @@ class ForeignPropertyReportingMethodController @Inject()(val authenticate: Authe
 
     calculationListService.isTaxYearCrystallised(latencyDetails.taxYear1.toInt).flatMap { isTaxYear1Crystallised =>
       (latencyDetails, isTaxYear1Crystallised) match {
-        case _ if latencyDetails.taxYear2.toInt < currentTaxYearEnd =>
-          Future.successful(None)
-        case (latencyDetails, Some(true)) =>
+        case _ if latencyDetails.taxYear2.toInt < currentTaxYearEnd => Future.successful(None)
+        case (_, Some(true)) =>
           Future.successful(Some(ForeignPropertyReportingMethodViewModel(
             taxYear2 = Some(latencyDetails.taxYear2),
             latencyIndicator2 = Some(latencyDetails.latencyIndicator2)
