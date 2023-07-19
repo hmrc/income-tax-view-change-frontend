@@ -1169,7 +1169,7 @@ view-income-sources.ceased-businesses-h2     = Busnesau sydd wedi dod i ben
 view-income-sources.table-head.business-name = Enw’r busnes
 view-income-sources.table-head.date-started  = Dyddiad cychwyn
 view-income-sources.table-head.date-ended    = Y dyddiad dod i ben
-view-income-sources.business-details         = Dewis
+view-income-sources.choose                   = Dewis
 view-income-sources.unknown-field            = Anhysbys
 
 # add Business page
