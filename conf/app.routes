@@ -181,8 +181,8 @@ POST         /agents/income-sources/add/business-added                    contro
 
 GET          /income-sources/add/uk-property-start-date                   controllers.incomeSources.add.AddUKPropertyStartDateController.show()
 GET          /agents/income-sources/add/uk-property-start-date            controllers.incomeSources.add.AddUKPropertyStartDateController.showAgent()
-GET          /income-sources/add/change-uk-property-start-date                   controllers.incomeSources.add.AddUKPropertyStartDateController.show()
-GET          /agents/income-sources/add/change-uk-property-start-date            controllers.incomeSources.add.AddUKPropertyStartDateController.showAgent()
+GET          /income-sources/add/change-uk-property-start-date                   controllers.incomeSources.add.AddUKPropertyStartDateController.change()
+GET          /agents/income-sources/add/change-uk-property-start-date            controllers.incomeSources.add.AddUKPropertyStartDateController.changeAgent()
 POST         /income-sources/add/uk-property-start-date                   controllers.incomeSources.add.AddUKPropertyStartDateController.submit()
 POST         /agents/income-sources/add/uk-property-start-date            controllers.incomeSources.add.AddUKPropertyStartDateController.submitAgent()
 GET          /income-sources/add/uk-property-start-date-check             controllers.incomeSources.add.CheckUKPropertyStartDateController.show()
@@ -239,8 +239,8 @@ GET          /agents/income-sources/add/change-business-accounting-method   cont
 POST          /income-sources/add/business-check-details                    controllers.incomeSources.add.CheckBusinessDetailsController.submit()
 POST          /agents/income-sources/add/business-check-details              controllers.incomeSources.add.CheckBusinessDetailsController.submitAgent()
 
-GET          /income-sources/add/change-uk-property-accounting-method            controllers.incomeSources.add.UKPropertyAccountingMethodController.show()
-GET          /agents/income-sources/add/change-uk-property-accounting-method     controllers.incomeSources.add.UKPropertyAccountingMethodController.showAgent()
+GET          /income-sources/add/change-uk-property-accounting-method            controllers.incomeSources.add.UKPropertyAccountingMethodController.change()
+GET          /agents/income-sources/add/change-uk-property-accounting-method     controllers.incomeSources.add.UKPropertyAccountingMethodController.changeAgent()
 
 
 

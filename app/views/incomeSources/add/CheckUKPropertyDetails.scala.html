@@ -45,17 +45,17 @@
 
 @getChangeUKPropertyStartDateUrl = @{
     if (isAgent) {
-        controllers.incomeSources.add.routes.AddUKPropertyStartDateController.showAgent().url
+        controllers.incomeSources.add.routes.AddUKPropertyStartDateController.changeAgent().url
     } else {
-        controllers.incomeSources.add.routes.AddUKPropertyStartDateController.show().url
+        controllers.incomeSources.add.routes.AddUKPropertyStartDateController.change().url
     }
 }
 
 @getChangeUKPropertyAccountingMethodUrl = @{
     if (isAgent) {
-        controllers.incomeSources.add.routes.UKPropertyAccountingMethodController.showAgent().url
+        controllers.incomeSources.add.routes.UKPropertyAccountingMethodController.changeAgent().url
     } else {
-        controllers.incomeSources.add.routes.UKPropertyAccountingMethodController.show().url
+        controllers.incomeSources.add.routes.UKPropertyAccountingMethodController.change().url
     }
 }
 

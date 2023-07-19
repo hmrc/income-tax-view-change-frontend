@@ -49,6 +49,5 @@ class UKPropertyReportingMethodController @Inject()(val checkSessionTimeout: Ses
     Ok("UK Property Reporting Method - Agent")
   }
 
-
 }
 

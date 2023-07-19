@@ -37,19 +37,19 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class UKPropertyAccountingMethodController @Inject()(val authenticate: AuthenticationPredicate,
-                                                   val authorisedFunctions: FrontendAuthorisedFunctions,
-                                                   val checkSessionTimeout: SessionTimeoutPredicate,
-                                                   val incomeSourceDetailsService: IncomeSourceDetailsService,
-                                                   val retrieveBtaNavBar: NavBarPredicate,
-                                                   val retrieveIncomeSources: IncomeSourceDetailsPredicate,
-                                                   val retrieveNino: NinoPredicate,
-                                                   val view: UKPropertyBusinessAccountingMethod,
-                                                   val customNotFoundErrorView: CustomNotFoundError)
-                                                  (implicit val appConfig: FrontendAppConfig,
-                                                   mcc: MessagesControllerComponents,
-                                                   val ec: ExecutionContext,
-                                                   val itvcErrorHandler: ItvcErrorHandler,
-                                                   val itvcErrorHandlerAgent: AgentItvcErrorHandler)
+                                                     val authorisedFunctions: FrontendAuthorisedFunctions,
+                                                     val checkSessionTimeout: SessionTimeoutPredicate,
+                                                     val incomeSourceDetailsService: IncomeSourceDetailsService,
+                                                     val retrieveBtaNavBar: NavBarPredicate,
+                                                     val retrieveIncomeSources: IncomeSourceDetailsPredicate,
+                                                     val retrieveNino: NinoPredicate,
+                                                     val view: UKPropertyBusinessAccountingMethod,
+                                                     val customNotFoundErrorView: CustomNotFoundError)
+                                                    (implicit val appConfig: FrontendAppConfig,
+                                                     mcc: MessagesControllerComponents,
+                                                     val ec: ExecutionContext,
+                                                     val itvcErrorHandler: ItvcErrorHandler,
+                                                     val itvcErrorHandlerAgent: AgentItvcErrorHandler)
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
   def handleRequest(isAgent: Boolean)
@@ -93,7 +93,7 @@ class UKPropertyAccountingMethodController @Inject()(val authenticate: Authentic
   }
 
   def shouldRedirectToCheckDetailsPage(userProperties: List[PropertyDetailsModel]): Boolean = {
-    if(userProperties.filter(_.isUkProperty).size > 0) {
+    if (userProperties.filter(_.isUkProperty).size > 0) {
       true
     } else {
       false
@@ -168,6 +168,22 @@ class UKPropertyAccountingMethodController @Inject()(val authenticate: Authentic
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
           implicit mtdItUser => handleSubmitRequest(isAgent = true)
+        }
+  }
+
+  def change(): Action[AnyContent] =
+    (checkSessionTimeout andThen authenticate andThen retrieveNino
+      andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
+      implicit user =>
+        Future.successful(Ok("Change UK Property Accounting Method - Individual"))
+    }
+
+  def changeAgent(): Action[AnyContent] = Authenticated.async {
+    implicit request =>
+      implicit user =>
+        getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
+          implicit mtdItUser =>
+            Future.successful(Ok("Change UK Property Accounting Method - Agent"))
         }
   }
 
