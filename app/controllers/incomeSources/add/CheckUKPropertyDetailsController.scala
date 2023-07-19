@@ -17,12 +17,12 @@
 package controllers.incomeSources.add
 
 import auth.MtdItUser
-import config.featureswitch.{FeatureSwitching, IncomeSources}
+import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import implicits.ImplicitDateFormatter
-import models.createIncomeSource.CreateIncomeSourcesResponse
+import models.createIncomeSource.CreateIncomeSourceResponse
 import models.incomeSourceDetails.viewmodels.CheckUKPropertyViewModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -31,7 +31,8 @@ import services.{CreateBusinessDetailsService, IncomeSourceDetailsService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.play.bootstrap.frontend.http.FrontendErrorHandler
 import uk.gov.hmrc.play.language.LanguageUtils
-import utils.IncomeSourcesUtils.{getUKPropertyDetailsFromSession, removeIncomeSourceDetailsFromSession}
+import utils.IncomeSourcesUtils
+import utils.IncomeSourcesUtils.getUKPropertyDetailsFromSession
 import views.html.incomeSources.add.CheckUKPropertyDetails
 
 import javax.inject.{Inject, Singleton}
@@ -53,7 +54,7 @@ class CheckUKPropertyDetailsController @Inject()(val checkUKPropertyDetails: Che
                                                  val ec: ExecutionContext,
                                                  val itvcErrorHandler: ItvcErrorHandler,
                                                  val itvcErrorHandlerAgent: AgentItvcErrorHandler,
-                                                 val languageUtils: LanguageUtils) extends ClientConfirmedController with I18nSupport with FeatureSwitching with ImplicitDateFormatter {
+                                                 val languageUtils: LanguageUtils) extends ClientConfirmedController with I18nSupport with FeatureSwitching with ImplicitDateFormatter with IncomeSourcesUtils {
 
   def getBackUrl(isAgent: Boolean): String = {
     if (isAgent) controllers.incomeSources.add.routes.UKPropertyAccountingMethodController.showAgent().url else
@@ -63,11 +64,6 @@ class CheckUKPropertyDetailsController @Inject()(val checkUKPropertyDetails: Che
   def getSubmitUrl(isAgent: Boolean): Call = {
     if (isAgent) controllers.incomeSources.add.routes.CheckUKPropertyDetailsController.submitAgent() else
       controllers.incomeSources.add.routes.CheckUKPropertyDetailsController.submit()
-  }
-
-  def getHomePageUrl(isAgent: Boolean): Call = {
-    if (isAgent) controllers.routes.HomeController.showAgent else
-      controllers.routes.HomeController.show()
   }
 
   def getUKPropertyReportingMethodUrl(isAgent: Boolean, id: String): Call = {
@@ -90,7 +86,7 @@ class CheckUKPropertyDetailsController @Inject()(val checkUKPropertyDetails: Che
   def showAgent(): Action[AnyContent] = Authenticated.async {
     implicit request =>
       implicit user =>
-        getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
+        getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
           implicit mtdItUser =>
             handleRequest(
               isAgent = true
@@ -101,12 +97,9 @@ class CheckUKPropertyDetailsController @Inject()(val checkUKPropertyDetails: Che
   def handleRequest(isAgent: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
     val backUrl = getBackUrl(isAgent)
     val postAction = getSubmitUrl(isAgent)
-    val homePageUrl = getHomePageUrl(isAgent)
     val errorHandler = getErrorHandler(isAgent)
 
-    if (isDisabled(IncomeSources)) {
-      Future.successful(Redirect(homePageUrl))
-    } else {
+    withIncomeSourcesFS {
       getUKPropertyDetailsFromSession(user).toOption match {
         case Some(checkUKPropertyViewModel: CheckUKPropertyViewModel) =>
           Future.successful(Ok(
@@ -130,28 +123,27 @@ class CheckUKPropertyDetailsController @Inject()(val checkUKPropertyDetails: Che
   def submitAgent(): Action[AnyContent] = Authenticated.async {
     implicit request =>
       implicit user =>
-        getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
+        getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
           implicit mtdItUser =>
             handleSubmit(isAgent = true)
         }
   }
 
   def handleSubmit(isAgent: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
-    val homePageUrl = getHomePageUrl(isAgent)
     val errorHandler = getErrorHandler(isAgent)
 
-    if (isDisabled(IncomeSources)) {
-      Future.successful(Redirect(homePageUrl))
-    } else {
+    withIncomeSourcesFS {
       getUKPropertyDetailsFromSession(user).toOption match {
         case Some(checkUKPropertyViewModel: CheckUKPropertyViewModel) =>
           businessDetailsService.createUKProperty(checkUKPropertyViewModel).map {
             case Left(ex) => Logger("application").error(
               s"[CheckUKPropertyDetailsController][handleRequest] - Unable to create income source: ${ex.getMessage}")
               errorHandler.showInternalServerError()
-            case Right(CreateIncomeSourcesResponse(id)) =>
-              val newSession = removeIncomeSourceDetailsFromSession(user)
-              Redirect(getUKPropertyReportingMethodUrl(isAgent,id)).withSession(newSession)
+            case Right(CreateIncomeSourceResponse(id)) =>
+              val redirectUrl = getUKPropertyReportingMethodUrl(isAgent, id)
+              withIncomeSourcesRemovedFromSession {
+                Redirect(redirectUrl)
+              }
           }
         case None => Logger("application").error(
           s"[CheckUKPropertyDetailsController][handleSubmit] - Error: Unable to build UK property details on submit")

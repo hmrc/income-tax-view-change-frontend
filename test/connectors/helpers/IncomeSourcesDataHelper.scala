@@ -67,7 +67,7 @@ trait IncomeSourcesDataHelper {
       |    ]
       |}""".stripMargin)
 
-  val createForeignPropertyRequestObject = CreateForeignPropertyIncomeSource(PropertyDetails(tradingStartDate = LocalDate.of(2011, 1, 1).toString,
+  val createForeignPropertyRequestObject = CreateForeignPropertyIncomeSourceRequest(PropertyDetails(tradingStartDate = LocalDate.of(2011, 1, 1).toString,
     cashOrAccrualsFlag = "CASH", startDate = LocalDate.of(2011, 1, 1).toString)
   )
 
@@ -79,7 +79,7 @@ trait IncomeSourcesDataHelper {
         |    }
         |}""".stripMargin)
 
-  val createUKPropertyRequestObject = CreateUKPropertyIncomeSource(PropertyDetails(tradingStartDate = LocalDate.of(2011, 1, 1).toString,
+  val createUKPropertyRequestObject = CreateUKPropertyIncomeSourceRequest(PropertyDetails(tradingStartDate = LocalDate.of(2011, 1, 1).toString,
     cashOrAccrualsFlag = "CASH", startDate = LocalDate.of(2011, 1, 1).toString)
   )
 
@@ -104,7 +104,7 @@ trait IncomeSourcesDataHelper {
     businessAddressLine4 = None,
     businessCountryCode = Some("UK"),
     cashOrAccrualsFlag = "CASH",
-    skippedAccountingMethod = false,
+    skippedAccountingMethod = false
   )
 
   val createForeignPropertyViewModel = CheckForeignPropertyViewModel(tradingStartDate = LocalDate.of(2011, 1, 1), cashOrAccrualsFlag = "CASH")

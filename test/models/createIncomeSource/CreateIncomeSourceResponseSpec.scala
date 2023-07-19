@@ -19,12 +19,12 @@ package models.createIncomeSource
 import play.api.libs.json.{JsSuccess, Json}
 import testUtils.TestSupport
 
-class CreateIncomeSourcesResponseSpec extends TestSupport {
-  val createIncomeSourcesResponse = CreateIncomeSourcesResponse("1234567")
+class CreateIncomeSourceResponseSpec extends TestSupport {
+  val createIncomeSourcesResponse = CreateIncomeSourceResponse("1234567")
   val createIncomeSourcesResponseJson = Json.obj("incomeSourceId" -> createIncomeSourcesResponse.incomeSourceId)
   "The CreateIncomeSourcesResponseModel" should {
     "read from Json" in {
-      Json.fromJson(createIncomeSourcesResponseJson)(CreateIncomeSourcesResponse.format) shouldBe JsSuccess(createIncomeSourcesResponse)
+      Json.fromJson(createIncomeSourcesResponseJson)(CreateIncomeSourceResponse.format) shouldBe JsSuccess(createIncomeSourcesResponse)
     }
 
     "write to Json" in {

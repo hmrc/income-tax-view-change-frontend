@@ -19,14 +19,14 @@ package models.createIncomeSource
 import play.api.libs.json.{Format, Json}
 
 
-case class CreateIncomeSourcesResponse(incomeSourceId: String)
+case class CreateIncomeSourceResponse(incomeSourceId: String)
 
-object CreateIncomeSourcesResponse {
-  implicit val format: Format[CreateIncomeSourcesResponse] = Json.format
+object CreateIncomeSourceResponse {
+  implicit val format: Format[CreateIncomeSourceResponse] = Json.format
 }
 
-final case class CreateIncomeSourcesErrorResponse(status: Int, reason: String)
+final case class CreateIncomeSourceErrorResponse(status: Int, reason: String)
 
 object CreateIncomeSourceErrorResponse {
-  implicit val format: Format[CreateIncomeSourcesErrorResponse] = Json.format
+  implicit val format: Format[CreateIncomeSourceErrorResponse] = Json.format
 }

@@ -171,19 +171,4 @@ class UKPropertyAccountingMethodController @Inject()(val authenticate: Authentic
         }
   }
 
-  def change(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
-    andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
-    implicit user =>
-      Future.successful(Ok("UK Property Accounting Method Change - Individual"))
-  }
-
-  def changeAgent(): Action[AnyContent] = Authenticated.async {
-    implicit request =>
-      implicit user =>
-        getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
-          implicit mtdItUser =>
-            Future.successful(Ok("UK Property Accounting Method Change - Agent"))
-        }
-  }
-
 }

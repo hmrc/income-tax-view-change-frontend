@@ -21,7 +21,7 @@ import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
-import models.createIncomeSource.CreateIncomeSourcesResponse
+import models.createIncomeSource.CreateIncomeSourceResponse
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import models.incomeSourceDetails.viewmodels.CheckBusinessDetailsViewModel
 import play.api.Logger
@@ -29,7 +29,8 @@ import play.api.mvc._
 import services.{CreateBusinessDetailsService, IncomeSourceDetailsService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.IncomeSourcesUtils.{getBusinessDetailsFromSession, removeIncomeSourceDetailsFromSession}
+import utils.IncomeSourcesUtils
+import utils.IncomeSourcesUtils.getBusinessDetailsFromSession
 import views.html.incomeSources.add.CheckBusinessDetails
 
 import java.net.URI
@@ -50,7 +51,7 @@ class CheckBusinessDetailsController @Inject()(val checkBusinessDetails: CheckBu
                                                implicit override val mcc: MessagesControllerComponents,
                                                val appConfig: FrontendAppConfig,
                                                implicit val itvcErrorHandler: ItvcErrorHandler,
-                                               implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler) extends ClientConfirmedController
+                                               implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler) extends ClientConfirmedController with IncomeSourcesUtils
   with FeatureSwitching {
 
   lazy val businessAddressUrl: String = controllers.incomeSources.add.routes.AddBusinessAddressController.show().url
@@ -138,9 +139,10 @@ class CheckBusinessDetailsController @Inject()(val checkBusinessDetails: CheckBu
               s"[CheckBusinessDetailsController][handleRequest] - Unable to create income source: ${ex.getMessage}")
               itvcErrorHandler.showInternalServerError()
 
-            case Right(CreateIncomeSourcesResponse(id)) =>
-              val newSession = removeIncomeSourceDetailsFromSession(user)
-              Redirect(controllers.incomeSources.add.routes.BusinessReportingMethodController.show(id).url).withSession(newSession)
+            case Right(CreateIncomeSourceResponse(id)) =>
+              withIncomeSourcesRemovedFromSession {
+                Redirect(controllers.incomeSources.add.routes.BusinessReportingMethodController.show(id).url)
+              }
           }
         case None => Logger("application").error(
           s"[CheckBusinessDetailsController][submit] - Error: Unable to build view model on submit")
@@ -160,9 +162,10 @@ class CheckBusinessDetailsController @Inject()(val checkBusinessDetails: CheckBu
                     s"[CheckBusinessDetailsController][handleRequest] - Unable to create income source: ${ex.getMessage}")
                     itvcErrorHandler.showInternalServerError()
 
-                  case Right(CreateIncomeSourcesResponse(id)) =>
-                    val newSession = removeIncomeSourceDetailsFromSession(mtdItUser)
-                    Redirect(controllers.incomeSources.add.routes.BusinessReportingMethodController.showAgent(id).url).withSession(newSession)
+                  case Right(CreateIncomeSourceResponse(id)) =>
+                    withIncomeSourcesRemovedFromSession {
+                      Redirect(controllers.incomeSources.add.routes.BusinessReportingMethodController.showAgent(id).url)
+                    }
                 }
               case None => Logger("application").error(
                 s"[CheckBusinessDetailsController][submit] - Error: Unable to build view model on submit")

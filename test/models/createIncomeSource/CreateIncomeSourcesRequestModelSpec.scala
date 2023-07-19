@@ -45,7 +45,7 @@ class CreateIncomeSourcesRequestModelSpec extends TestSupport with IncomeSources
 
   "CreateForeignPropertyIncomeSource" should {
     "read from Json" in {
-      Json.fromJson(createForeignPropertyRequestObjectJson)(CreateForeignPropertyIncomeSource.format) shouldBe JsSuccess(createForeignPropertyRequestObject)
+      Json.fromJson(createForeignPropertyRequestObjectJson)(CreateForeignPropertyIncomeSourceRequest.format) shouldBe JsSuccess(createForeignPropertyRequestObject)
     }
     "write to Json" in {
 
@@ -55,7 +55,7 @@ class CreateIncomeSourcesRequestModelSpec extends TestSupport with IncomeSources
 
   "CreateUKPropertyIncomeSource" should {
     "read from Json" in {
-      Json.fromJson(createUKPropertyRequestObjectJson)(CreateUKPropertyIncomeSource.format) shouldBe JsSuccess(createUKPropertyRequestObject)
+      Json.fromJson(createUKPropertyRequestObjectJson)(CreateUKPropertyIncomeSourceRequest.format) shouldBe JsSuccess(createUKPropertyRequestObject)
     }
     "write to Json" in {
       Json.toJson(createUKPropertyRequestObject) shouldBe createUKPropertyRequestObjectJson

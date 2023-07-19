@@ -20,6 +20,9 @@ import play.api.libs.json.{Format, Json}
 
 sealed trait CreateIncomeSourceRequest
 
+object CreateIncomeSourceRequest {
+  implicit val format: Format[CreateIncomeSourceRequest] = Json.format[CreateIncomeSourceRequest]
+}
 
 // *********************************************************************************************************************
 // *                                                   Self-employment                                                 *
@@ -68,26 +71,26 @@ object AddressDetails {
 // *                                                   Property                                                        *
 // *********************************************************************************************************************
 
-final case class PropertyDetails(tradingStartDate: String, cashOrAccrualsFlag: String, startDate: String) extends CreateIncomeSourceRequest {
+final case class PropertyDetails(tradingStartDate: String, cashOrAccrualsFlag: String, startDate: String) {
   require(cashOrAccrualsFlag.nonEmpty, "Accounting method must be provided")
   require(cashOrAccrualsFlag.matches("^[A-Z]+$"), "Accounting method must be capitalised")
   require(tradingStartDate.nonEmpty, "Trading start date must be provided")
   require(tradingStartDate == startDate, "Trading start date and start date must be the same")
 }
 
-final case class CreateForeignPropertyIncomeSource(foreignPropertyDetails: PropertyDetails)
+final case class CreateForeignPropertyIncomeSourceRequest(foreignPropertyDetails: PropertyDetails) extends CreateIncomeSourceRequest
 
-final case class CreateUKPropertyIncomeSource(ukPropertyDetails: PropertyDetails)
+final case class CreateUKPropertyIncomeSourceRequest(ukPropertyDetails: PropertyDetails) extends CreateIncomeSourceRequest
 
 object PropertyDetails {
   implicit val format: Format[PropertyDetails] = Json.format[PropertyDetails]
 }
 
-object CreateForeignPropertyIncomeSource {
-  implicit val format: Format[CreateForeignPropertyIncomeSource] = Json.format[CreateForeignPropertyIncomeSource]
+object CreateForeignPropertyIncomeSourceRequest {
+  implicit val format: Format[CreateForeignPropertyIncomeSourceRequest] = Json.format[CreateForeignPropertyIncomeSourceRequest]
 }
 
-object CreateUKPropertyIncomeSource {
-  implicit val format: Format[CreateUKPropertyIncomeSource] = Json.format[CreateUKPropertyIncomeSource]
+object CreateUKPropertyIncomeSourceRequest {
+  implicit val format: Format[CreateUKPropertyIncomeSourceRequest] = Json.format[CreateUKPropertyIncomeSourceRequest]
 }
 

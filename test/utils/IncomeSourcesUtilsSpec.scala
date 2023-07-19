@@ -18,11 +18,13 @@ package utils
 
 import forms.utils.SessionKeys._
 import models.incomeSourceDetails.viewmodels.{CheckBusinessDetailsViewModel, CheckUKPropertyViewModel}
+import play.api.mvc.Result
+import play.api.mvc.Results.Redirect
 import testUtils.TestSupport
 
 import java.time.LocalDate
 
-class IncomeSourcesUtilsSpec extends TestSupport {
+class IncomeSourcesUtilsSpec extends TestSupport with IncomeSourcesUtils {
 
   val viewModelMax: CheckBusinessDetailsViewModel = CheckBusinessDetailsViewModel(
     businessName = Some("Test Business"),
@@ -96,26 +98,28 @@ class IncomeSourcesUtilsSpec extends TestSupport {
     "user has session data" should {
       "remove session data" in {
         implicit val user = individualUser.copy()(fakeRequest)
-        val newSession = IncomeSourcesUtils.removeIncomeSourceDetailsFromSession
-
-        newSession.get("addUkPropertyStartDate") shouldBe None
-        newSession.get("addBusinessName") shouldBe None
-        newSession.get("addBusinessTrade") shouldBe None
-        newSession.get("addBusinessAccountingMethod") shouldBe None
-        newSession.get("addBusinessStartDate") shouldBe None
-        newSession.get("addBusinessAccountingPeriodStartDate") shouldBe None
-        newSession.get("addBusinessAccountingPeriodEndDate") shouldBe None
-        newSession.get("addBusinessStartDate") shouldBe None
-        newSession.get("addBusinessAddressLine1") shouldBe None
-        newSession.get("addBusinessAddressLine2") shouldBe None
-        newSession.get("addBusinessAddressLine3") shouldBe None
-        newSession.get("addBusinessAddressLine4") shouldBe None
-        newSession.get("addBusinessPostalCode") shouldBe None
-        newSession.get("addBusinessCountryCode") shouldBe None
-        newSession.get("ceaseForeignPropertyDeclare") shouldBe None
-        newSession.get("ceaseForeignPropertyEndDate") shouldBe None
-        newSession.get("ceaseUKPropertyDeclare") shouldBe None
-        newSession.get("ceaseUKPropertyEndDate") shouldBe None
+        val redirect = withIncomeSourcesRemovedFromSession {
+          Redirect("nowhere")
+        }
+        
+        redirect.session.get("addUkPropertyStartDate") shouldBe None
+        redirect.session.get("addBusinessName") shouldBe None
+        redirect.session.get("addBusinessTrade") shouldBe None
+        redirect.session.get("addBusinessAccountingMethod") shouldBe None
+        redirect.session.get("addBusinessStartDate") shouldBe None
+        redirect.session.get("addBusinessAccountingPeriodStartDate") shouldBe None
+        redirect.session.get("addBusinessAccountingPeriodEndDate") shouldBe None
+        redirect.session.get("addBusinessStartDate") shouldBe None
+        redirect.session.get("addBusinessAddressLine1") shouldBe None
+        redirect.session.get("addBusinessAddressLine2") shouldBe None
+        redirect.session.get("addBusinessAddressLine3") shouldBe None
+        redirect.session.get("addBusinessAddressLine4") shouldBe None
+        redirect.session.get("addBusinessPostalCode") shouldBe None
+        redirect.session.get("addBusinessCountryCode") shouldBe None
+        redirect.session.get("ceaseForeignPropertyDeclare") shouldBe None
+        redirect.session.get("ceaseForeignPropertyEndDate") shouldBe None
+        redirect.session.get("ceaseUKPropertyDeclare") shouldBe None
+        redirect.session.get("ceaseUKPropertyEndDate") shouldBe None
       }
     }
   }

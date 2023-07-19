@@ -20,7 +20,7 @@ import config.featureswitch.IncomeSources
 import forms.utils.SessionKeys._
 import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.createIncomeSource.CreateIncomeSourcesResponse
+import models.createIncomeSource.CreateIncomeSourceResponse
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testSelfEmploymentId}
 import testConstants.IncomeSourceIntegrationTestConstants.{multipleBusinessesAndUkProperty, noPropertyOrBusinessResponse}
@@ -57,7 +57,7 @@ class CheckBusinessDetailsControllerISpec extends ComponentSpecBase {
         enable(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
-        val response = List(CreateIncomeSourcesResponse(testSelfEmploymentId))
+        val response = List(CreateIncomeSourceResponse(testSelfEmploymentId))
         IncomeTaxViewChangeStub.stubCreateBusinessDetailsResponse(testMtditid)(OK, response)
 
         When(s"I call GET $checkBusinessDetailsShowUrl")
@@ -81,7 +81,7 @@ class CheckBusinessDetailsControllerISpec extends ComponentSpecBase {
         enable(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndUkProperty)
 
-        val response = List(CreateIncomeSourcesResponse(testSelfEmploymentId))
+        val response = List(CreateIncomeSourceResponse(testSelfEmploymentId))
         IncomeTaxViewChangeStub.stubCreateBusinessDetailsResponse(testMtditid)(OK, response)
 
         When(s"I call GET $checkBusinessDetailsShowUrl")
@@ -112,7 +112,7 @@ class CheckBusinessDetailsControllerISpec extends ComponentSpecBase {
           "addBusinessAccountingMethod" -> Seq("CASH"),
           "addBusinessAccountingPeriodEndDate" -> Seq("2023-11-11"))
         enable(IncomeSources)
-        val response = List(CreateIncomeSourcesResponse(testSelfEmploymentId))
+        val response = List(CreateIncomeSourceResponse(testSelfEmploymentId))
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
         IncomeTaxViewChangeStub.stubCreateBusinessDetailsResponse(testMtditid)(OK, response)
 

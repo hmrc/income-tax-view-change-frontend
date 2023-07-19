@@ -19,8 +19,9 @@ package services
 
 import auth.MtdItUser
 import connectors.CreateIncomeSourceConnector
-import models.createIncomeSource.{AddressDetails, BusinessDetails, CreateBusinessIncomeSourceRequest, CreateForeignPropertyIncomeSource, CreateIncomeSourcesResponse, CreateUKPropertyIncomeSource, PropertyDetails}
-import models.incomeSourceDetails.viewmodels.{CheckBusinessDetailsViewModel, CheckForeignPropertyViewModel, CheckUKPropertyViewModel}
+import models.createIncomeSource._
+import models.createIncomeSource.CreateIncomeSourceResponse
+import models.incomeSourceDetails.viewmodels._
 import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -28,14 +29,37 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
 
-
 class CreateBusinessDetailsService @Inject()(val createIncomeSourceConnector: CreateIncomeSourceConnector) {
 
+  private def createBusiness(requestObject: CreateBusinessIncomeSourceRequest)
+                            (implicit ec: ExecutionContext, user: MtdItUser[_], hc: HeaderCarrier): Future[Either[Throwable, CreateIncomeSourceResponse]] = {
+    createIncomeSourceConnector.createBusiness(user.mtditid, requestObject).flatMap(response => handleResponse(response))
+  }
 
-  /**
-   * @param viewModel - provided by the caller/controller
-   * @return
-   */
+  private def createUKProperty(requestObject: CreateUKPropertyIncomeSourceRequest)
+                              (implicit ec: ExecutionContext, user: MtdItUser[_], hc: HeaderCarrier): Future[Either[Throwable, CreateIncomeSourceResponse]] = {
+    createIncomeSourceConnector.createUKProperty(user.mtditid, requestObject).flatMap(response => handleResponse(response))
+  }
+
+  private def createForeignProperty(requestObject: CreateForeignPropertyIncomeSourceRequest)
+                                   (implicit ec: ExecutionContext, user: MtdItUser[_], hc: HeaderCarrier): Future[Either[Throwable, CreateIncomeSourceResponse]] = {
+    createIncomeSourceConnector.createForeignProperty(user.mtditid, requestObject).flatMap(response => handleResponse(response))
+  }
+
+  def handleResponse(response: Either[CreateIncomeSourceErrorResponse, List[CreateIncomeSourceResponse]]): Future[Either[Error, CreateIncomeSourceResponse]] = {
+    response match {
+      case Right(List(incomeSourceId)) =>
+        Logger("application").info(s"[CreateBusinessDetailsService][createIncomeSource] - New income source created successfully: $incomeSourceId")
+        Future.successful(Right(incomeSourceId))
+      case Right(_) =>
+        Logger("application").error("[CreateBusinessDetailsService][createIncomeSource] - failed to create, unexpected response")
+        Future.successful(Left(new Error("Failed to create incomeSources")))
+      case Left(ex) =>
+        Logger("application").error("[CreateBusinessDetailsService][createIncomeSource] - failed to create")
+        Future.successful(Left(new Error(s"Failed to create incomeSources: $ex")))
+    }
+  }
+
   def convertToCreateBusinessIncomeSourceRequest(viewModel: CheckBusinessDetailsViewModel): Either[Throwable, CreateBusinessIncomeSourceRequest] = {
     Try {
       CreateBusinessIncomeSourceRequest(
@@ -43,7 +67,7 @@ class CreateBusinessDetailsService @Inject()(val createIncomeSourceConnector: Cr
           BusinessDetails(
             accountingPeriodStartDate = viewModel.businessStartDate.toString,
             accountingPeriodEndDate = viewModel.accountingPeriodEndDate.toString,
-            tradingName = viewModel.businessName.get, // raise error if not provided
+            tradingName = viewModel.businessName.get,
             addressDetails = AddressDetails(
               addressLine1 = viewModel.businessAddressLine1,
               addressLine2 = viewModel.businessAddressLine2,
@@ -54,7 +78,7 @@ class CreateBusinessDetailsService @Inject()(val createIncomeSourceConnector: Cr
             ),
             typeOfBusiness = Some(viewModel.businessTrade),
             tradingStartDate = viewModel.businessStartDate.toString,
-            cashOrAccrualsFlag = viewModel.cashOrAccrualsFlag,
+            cashOrAccrualsFlag = viewModel.cashOrAccrualsFlag.toUpperCase,
             cessationDate = None,
             cessationReason = None
           )
@@ -63,24 +87,13 @@ class CreateBusinessDetailsService @Inject()(val createIncomeSourceConnector: Cr
     }.toEither
   }
 
-  def createBusinessDetails(viewModel: CheckBusinessDetailsViewModel)
-                           (implicit ec: ExecutionContext, user: MtdItUser[_], hc: HeaderCarrier): Future[Either[Throwable, CreateIncomeSourcesResponse]] = {
-    // actual mapping from view model to request object
+  def createBusinessDetails(viewModel: CheckBusinessDetailsViewModel)(implicit
+                                                                      ec: ExecutionContext,
+                                                                      user: MtdItUser[_],
+                                                                      hc: HeaderCarrier): Future[Either[Throwable, CreateIncomeSourceResponse]] = {
     convertToCreateBusinessIncomeSourceRequest(viewModel) match {
       case Right(requestObject) =>
-        createIncomeSourceConnector.createBusiness(user.mtditid, requestObject).flatMap {
-          case Right(List(incomeSourceId)) =>
-            Logger("application").info(s"[CreateBusinessDetailsService][createBusinessDetails] - income source created: $incomeSourceId ")
-            Future.successful(Right(incomeSourceId))
-          case Right(_) =>
-            Logger("application").error("[CreateBusinessDetailsService][createBusinessDetails] - failed to create, unexpected response")
-            Future.successful(Left(new Error("Failed to create incomeSources")))
-          case Left(ex) =>
-            Logger("application").error("[CreateBusinessDetailsService][createBusinessDetails] - failed to create")
-            Future.successful {
-              Left(new Error(s"Failed to created incomeSources: $ex"))
-            }
-        }
+        createBusiness(requestObject)
       case Left(ex) =>
         Logger("application").error("[CreateBusinessDetailsService][createBusinessDetails] - unable to create request object")
         Future.successful(Left(ex))
@@ -90,79 +103,57 @@ class CreateBusinessDetailsService @Inject()(val createIncomeSourceConnector: Cr
     }
   }
 
-  /**
-   * @param viewModel - view model provided by the caller/controller
-   * @return
-   */
-  def createForeignPropertyIncomeSourceRequest(viewModel: CheckForeignPropertyViewModel): Either[Throwable, CreateForeignPropertyIncomeSource] = {
-    Try(CreateForeignPropertyIncomeSource(
-      PropertyDetails(tradingStartDate = viewModel.tradingStartDate.toString,
-        cashOrAccrualsFlag = viewModel.cashOrAccrualsFlag,
-        startDate = viewModel.tradingStartDate.toString
+  def createForeignPropertyIncomeSourceRequest(viewModel: CheckForeignPropertyViewModel): Either[Throwable, CreateForeignPropertyIncomeSourceRequest] = {
+    Try(
+      CreateForeignPropertyIncomeSourceRequest(
+        PropertyDetails(
+          tradingStartDate = viewModel.tradingStartDate.toString,
+          cashOrAccrualsFlag = viewModel.cashOrAccrualsFlag.toUpperCase,
+          startDate = viewModel.tradingStartDate.toString
+        )
       )
-    )).toEither
+    ).toEither
   }
 
-  def createForeignProperty(viewModel: CheckForeignPropertyViewModel)
-                           (implicit ec: ExecutionContext, user: MtdItUser[_], hc: HeaderCarrier): Future[Either[Throwable, CreateIncomeSourcesResponse]] = {
-    // map view model to request object
+  def createForeignProperty(viewModel: CheckForeignPropertyViewModel)(implicit
+                                                                      ec: ExecutionContext,
+                                                                      user: MtdItUser[_],
+                                                                      hc: HeaderCarrier): Future[Either[Throwable, CreateIncomeSourceResponse]] = {
     createForeignPropertyIncomeSourceRequest(viewModel) match {
       case Right(requestObject) =>
-        for {
-          res <- createIncomeSourceConnector.createForeignProperty(user.mtditid, requestObject)
-        } yield res match {
-          case Right(List(incomeSourceId)) =>
-            Logger("application").info(s"[CreateBusinessDetailsService][createForeignProperty] - New income source created successfully: $incomeSourceId")
-            Right(incomeSourceId)
-          case Right(_) =>
-            Logger("application").error("[CreateBusinessDetailsService][createForeignProperty] - failed to create, unexpected response")
-            Left(new Error("Failed to create incomeSources"))
-          case Left(ex) =>
-            Logger("application").error("[CreateBusinessDetailsService][createForeignProperty] - failed to create")
-            Left(new Error(s"Failed to created incomeSources: $ex"))
-        }
+        createForeignProperty(requestObject)
       case Left(ex) =>
         Logger("application").error("[CreateBusinessDetailsService][createForeignProperty] - unable to create request object")
-        Future.successful(Left(new Error(s"Failed to created incomeSources: $ex")))
+        Future.successful(Left(ex))
       case _ =>
         Logger("application").error("[CreateBusinessDetailsService][createForeignProperty] - unknown error occurred")
         Future.successful(Left(new Error("Unknown error occurred")))
     }
   }
 
-  /**
-   * @param viewModel - view model provided by the caller/controller
-   * @return
-   */
-  def createUKPropertyIncomeSourceRequest(viewModel: CheckUKPropertyViewModel): Either[Throwable, CreateUKPropertyIncomeSource] = {
-    Try(CreateUKPropertyIncomeSource(
-      PropertyDetails(tradingStartDate = viewModel.tradingStartDate.toString,
-        cashOrAccrualsFlag = viewModel.cashOrAccrualsFlag,
-        startDate = viewModel.tradingStartDate.toString
+  def createUKPropertyIncomeSourceRequest(viewModel: CheckUKPropertyViewModel): Either[Throwable, CreateUKPropertyIncomeSourceRequest] = {
+    Try(
+      CreateUKPropertyIncomeSourceRequest(
+        PropertyDetails(
+          tradingStartDate = viewModel.tradingStartDate.toString,
+          cashOrAccrualsFlag = viewModel.cashOrAccrualsFlag.toUpperCase,
+          startDate = viewModel.tradingStartDate.toString
+        )
       )
-    )).toEither
+    ).toEither
   }
 
   def createUKProperty(viewModel: CheckUKPropertyViewModel)
-                      (implicit ec: ExecutionContext, user: MtdItUser[_], hc: HeaderCarrier): Future[Either[Throwable, CreateIncomeSourcesResponse]] = {
+                      (implicit
+                       ec: ExecutionContext,
+                       user: MtdItUser[_],
+                       hc: HeaderCarrier): Future[Either[Throwable, CreateIncomeSourceResponse]] = {
     createUKPropertyIncomeSourceRequest(viewModel) match {
       case Right(requestObject) =>
-        for {
-          res <- createIncomeSourceConnector.createUKProperty(user.mtditid, requestObject)
-        } yield res match {
-          case Right(List(incomeSourceId)) =>
-            Logger("application").info(s"[CreateBusinessDetailsService][createUKProperty] - New income source created successfully: $incomeSourceId")
-            Right(incomeSourceId)
-          case Right(_) =>
-            Logger("application").error("[CreateBusinessDetailsService][createUKProperty] - failed to create, unexpected response")
-            Left(new Error("Failed to create incomeSources"))
-          case Left(ex) =>
-            Logger("application").error("[CreateBusinessDetailsService][createUKProperty] - failed to create")
-            Left(new Error(s"Failed to created incomeSources: $ex"))
-        }
+        createUKProperty(requestObject)
       case Left(ex) =>
         Logger("application").error("[CreateBusinessDetailsService][createUKProperty] - unable to create request object")
-        Future.successful(Left(new Error(s"Failed to created incomeSources: $ex")))
+        Future.successful(Left(ex))
       case _ =>
         Logger("application").error("[CreateBusinessDetailsService][createUKProperty] - unknown error occurred")
         Future.successful(Left(new Error("Unknown error occurred")))

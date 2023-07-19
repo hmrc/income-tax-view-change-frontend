@@ -20,7 +20,7 @@ import config.featureswitch.IncomeSources
 import forms.utils.SessionKeys.{addUkPropertyAccountingMethod, addUkPropertyStartDate}
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.createIncomeSource.CreateIncomeSourcesResponse
+import models.createIncomeSource.CreateIncomeSourceResponse
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testMtditid}
 import testConstants.IncomeSourceIntegrationTestConstants.noPropertyOrBusinessResponse
@@ -102,7 +102,7 @@ class CheckUKPropertyDetailsControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
         Given("I wiremock stub a successful Create Income Sources (UK Property) response")
-        val createResponseJson = List(CreateIncomeSourcesResponse("1234567890"))
+        val createResponseJson = List(CreateIncomeSourceResponse("1234567890"))
         val testBody = Map(
           "ukPropertyDetails.tradingStartDate" -> Seq("2011-01-01"),
           "ukPropertyDetails.cashOrAccrualsFlag" -> Seq("CASH"),
@@ -125,7 +125,7 @@ class CheckUKPropertyDetailsControllerISpec extends ComponentSpecBase {
         Given("I wiremock stub a successful Create Income Sources (UK Property) response")
         stubAuthorisedAgentUser(authorised = true)
         enable(IncomeSources)
-        val createResponseJson = List(CreateIncomeSourcesResponse("1234567890"))
+        val createResponseJson = List(CreateIncomeSourceResponse("1234567890"))
         IncomeTaxViewChangeStub.stubCreateBusinessDetailsResponse(testMtditid)(OK, createResponseJson)
 
         val testBody = Map(

@@ -23,7 +23,7 @@ import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import forms.utils.SessionKeys.{addUkPropertyAccountingMethod, addUkPropertyStartDate}
 import implicits.ImplicitDateFormatter
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
-import models.createIncomeSource.CreateIncomeSourcesResponse
+import models.createIncomeSource.CreateIncomeSourceResponse
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.mockito.ArgumentMatchers.any
@@ -37,13 +37,14 @@ import testConstants.BaseTestConstants
 import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
 import testUtils.TestSupport
 import uk.gov.hmrc.http.HttpClient
+import utils.IncomeSourcesUtils
 import views.html.incomeSources.add.{CheckBusinessDetails, CheckUKPropertyDetails}
 
 import java.time.LocalDate
 import scala.concurrent.Future
 
 class CheckUKPropertyDetailsControllerSpec extends TestSupport with MockAuthenticationPredicate
-  with MockIncomeSourceDetailsPredicate with MockNavBarEnumFsPredicate with FeatureSwitching with ImplicitDateFormatter {
+  with MockIncomeSourceDetailsPredicate with MockNavBarEnumFsPredicate with FeatureSwitching with ImplicitDateFormatter with IncomeSourcesUtils {
 
   def disableAllSwitches(): Unit = {
     switches.foreach(switch => disable(switch))
@@ -104,8 +105,8 @@ class CheckUKPropertyDetailsControllerSpec extends TestSupport with MockAuthenti
         status(result) shouldBe OK
         document.title shouldBe TestCheckUKPropertyDetailsController.title
         document.select("h1:nth-child(1)").text shouldBe TestCheckUKPropertyDetailsController.heading
-        document.getElementById("uk-property-business-start-date").text() shouldBe propertyStartDate.toLongDate
-        document.getElementById("uk-property-business-accounting-method").text() shouldBe cash
+        document.select("dl:nth-of-type(1) > div > dd.govuk-summary-list__value").text() shouldBe propertyStartDate.toLongDate
+        document.select("dl:nth-of-type(2) > div > dd.govuk-summary-list__value").text() shouldBe cash
 
       }
     }
@@ -120,7 +121,7 @@ class CheckUKPropertyDetailsControllerSpec extends TestSupport with MockAuthenti
         val incomeSourceId = "incomeSourceId"
         when(mockBusinessDetailsService.createUKProperty(any())(any(), any(), any()))
           .thenReturn(Future {
-            Right(CreateIncomeSourcesResponse(incomeSourceId))
+            Right(CreateIncomeSourceResponse(incomeSourceId))
           })
 
         val result = TestCheckUKPropertyDetailsController.submit()(
@@ -163,7 +164,7 @@ class CheckUKPropertyDetailsControllerSpec extends TestSupport with MockAuthenti
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         when(mockBusinessDetailsService.createBusinessDetails(any())(any(), any(), any()))
           .thenReturn(Future {
-            Right(CreateIncomeSourcesResponse("incomeSourceId"))
+            Right(CreateIncomeSourceResponse("incomeSourceId"))
           })
 
         val result = TestCheckUKPropertyDetailsController.show()(
@@ -197,9 +198,8 @@ class CheckUKPropertyDetailsControllerSpec extends TestSupport with MockAuthenti
         status(result) shouldBe OK
         document.title shouldBe TestCheckUKPropertyDetailsController.agentsTitle
         document.select("h1:nth-child(1)").text shouldBe TestCheckUKPropertyDetailsController.heading
-        document.getElementById("uk-property-business-start-date").text() shouldBe propertyStartDate.toLongDate
-        document.getElementById("uk-property-business-accounting-method").text() shouldBe cash
-
+        document.select("dl:nth-of-type(1) > div > dd.govuk-summary-list__value").text() shouldBe propertyStartDate.toLongDate
+        document.select("dl:nth-of-type(2) > div > dd.govuk-summary-list__value").text() shouldBe cash
       }
     }
 
@@ -213,7 +213,7 @@ class CheckUKPropertyDetailsControllerSpec extends TestSupport with MockAuthenti
         val incomeSourceId = "incomeSourceId"
         when(mockBusinessDetailsService.createUKProperty(any())(any(), any(), any()))
           .thenReturn(Future {
-            Right(CreateIncomeSourcesResponse(incomeSourceId))
+            Right(CreateIncomeSourceResponse(incomeSourceId))
           })
 
         val result = TestCheckUKPropertyDetailsController.submitAgent()(
@@ -229,7 +229,7 @@ class CheckUKPropertyDetailsControllerSpec extends TestSupport with MockAuthenti
       }
     }
 
-    "return 303 and redirect an individual back to the home page" when {
+    "return 303 and redirect an agent back to the home page" when {
       "the IncomeSources FS is disabled" in {
         disable(IncomeSources)
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
@@ -257,7 +257,7 @@ class CheckUKPropertyDetailsControllerSpec extends TestSupport with MockAuthenti
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         when(mockBusinessDetailsService.createBusinessDetails(any())(any(), any(), any()))
           .thenReturn(Future {
-            Right(CreateIncomeSourcesResponse("incomeSourceId"))
+            Right(CreateIncomeSourceResponse("incomeSourceId"))
           })
 
         val result = TestCheckUKPropertyDetailsController.showAgent()(

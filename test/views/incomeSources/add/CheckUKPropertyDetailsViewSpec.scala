@@ -56,15 +56,15 @@ class CheckUKPropertyDetailsViewSpec extends TestSupport with ImplicitDateFormat
       controllers.incomeSources.add.routes.CheckUKPropertyDetailsController.show()
     }
     val changeStartDateUrl = if (isAgent) {
-      controllers.incomeSources.add.routes.AddUKPropertyStartDateController.changeAgent().url
+      controllers.incomeSources.add.routes.AddUKPropertyStartDateController.showAgent().url
     } else {
-      controllers.incomeSources.add.routes.AddUKPropertyStartDateController.change().url
+      controllers.incomeSources.add.routes.AddUKPropertyStartDateController.show().url
     }
 
     val changeAccountingMethodUrl = if (isAgent) {
-      controllers.incomeSources.add.routes.UKPropertyAccountingMethodController.changeAgent().url
+      controllers.incomeSources.add.routes.UKPropertyAccountingMethodController.showAgent().url
     } else {
-      controllers.incomeSources.add.routes.UKPropertyAccountingMethodController.change().url
+      controllers.incomeSources.add.routes.UKPropertyAccountingMethodController.show().url
     }
 
     lazy val view: HtmlFormat.Appendable = {
@@ -87,13 +87,13 @@ class CheckUKPropertyDetailsViewSpec extends TestSupport with ImplicitDateFormat
       document.getElementById("back").attr("href") shouldBe backUrl.url
     }
     "renders the summary" in new Setup(false) {
-      document.getElementById("uk-property-business-start-date-label").text() shouldBe startDateLabel
-      document.getElementById("uk-property-business-start-date").text() shouldBe tradingStartDate.toLongDate
+      document.select("dl:nth-of-type(1) > div > dt.govuk-summary-list__key").text() shouldBe startDateLabel
+      document.select("dl:nth-of-type(1) > div > dd.govuk-summary-list__value").text() shouldBe tradingStartDate.toLongDate
       document.getElementById("change-start-date-link").attr("href") shouldBe changeStartDateUrl
       document.getElementById("change-start-date-link").text() shouldBe s"$change $change"
 
-      document.getElementById("uk-property-business-accounting-method-label").text() shouldBe accountingMethodLabel
-      document.getElementById("uk-property-business-accounting-method").text() shouldBe cash
+      document.select("dl:nth-of-type(2) > div > dt.govuk-summary-list__key").text() shouldBe accountingMethodLabel
+      document.select("dl:nth-of-type(2) > div > dd.govuk-summary-list__value").text() shouldBe cash
       document.getElementById("change-accounting-method-link").attr("href") shouldBe changeAccountingMethodUrl
       document.getElementById("change-accounting-method-link").text() shouldBe s"$change $change"
 
@@ -110,13 +110,13 @@ class CheckUKPropertyDetailsViewSpec extends TestSupport with ImplicitDateFormat
       document.getElementById("back").attr("href") shouldBe backUrl.url
     }
     "renders the summary" in new Setup(true) {
-      document.getElementById("uk-property-business-start-date-label").text() shouldBe startDateLabel
-      document.getElementById("uk-property-business-start-date").text() shouldBe tradingStartDate.toLongDate
+      document.select("dl:nth-of-type(1) > div > dt.govuk-summary-list__key").text()  shouldBe startDateLabel
+      document.select("dl:nth-of-type(1) > div > dd.govuk-summary-list__value").text() shouldBe tradingStartDate.toLongDate
       document.getElementById("change-start-date-link").attr("href") shouldBe changeStartDateUrl
       document.getElementById("change-start-date-link").text() shouldBe s"$change $change"
 
-      document.getElementById("uk-property-business-accounting-method-label").text() shouldBe accountingMethodLabel
-      document.getElementById("uk-property-business-accounting-method").text() shouldBe cash
+      document.select("dl:nth-of-type(2) > div > dt.govuk-summary-list__key").text() shouldBe accountingMethodLabel
+      document.select("dl:nth-of-type(2) > div > dd.govuk-summary-list__value").text() shouldBe cash
       document.getElementById("change-accounting-method-link").attr("href") shouldBe changeAccountingMethodUrl
       document.getElementById("change-accounting-method-link").text() shouldBe s"$change $change"
 

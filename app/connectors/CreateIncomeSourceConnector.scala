@@ -17,80 +17,60 @@
 package connectors
 
 import config.FrontendAppConfig
-import models.createIncomeSource.{CreateBusinessIncomeSourceRequest, CreateForeignPropertyIncomeSource, CreateIncomeSourcesErrorResponse, CreateIncomeSourcesResponse, CreateUKPropertyIncomeSource}
+import models.createIncomeSource._
 import play.api.Logger
 import play.api.http.Status.OK
-import play.api.libs.json.Json
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
+import play.api.libs.json.{JsError, Json}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
+@Singleton
 class CreateIncomeSourceConnector @Inject()(val http: HttpClient,
                                             val appConfig: FrontendAppConfig
                                            )(implicit val ec: ExecutionContext) {
 
-
   def createBusinessIncomeSourcesUrl(mtdItid: String): String =
     s"${appConfig.itvcProtectedService}/income-tax-view-change/create-income-source/business/$mtdItid"
 
-  def createBusiness(mtdItid: String, createBusinessIncomeSourcesRequest: CreateBusinessIncomeSourceRequest)
-                    (implicit headerCarrier: HeaderCarrier): Future[Either[CreateIncomeSourcesErrorResponse, List[CreateIncomeSourcesResponse]]] = {
-    val bodyAsJson = Json.toJson(createBusinessIncomeSourcesRequest)
+  def createBusiness(mtdItid: String, request: CreateBusinessIncomeSourceRequest)
+                        (implicit headerCarrier: HeaderCarrier): Future[Either[CreateIncomeSourceErrorResponse, List[CreateIncomeSourceResponse]]] = {
     val url = createBusinessIncomeSourcesUrl(mtdItid)
-    http.POST(url, bodyAsJson).map {
-      case response if response.status == OK =>
-        response.json.validate[List[CreateIncomeSourcesResponse]].fold(
-          _ => {
-            Logger("application").error(s"[CreateIncomeSourceConnector][createBusiness] - Json validation error parsing business income sources response, error ${response.body}")
-            Left(CreateIncomeSourcesErrorResponse(response.status, s"Not valid json: ${response.body}"))
-          },
-          valid =>
-            Right(valid)
-        )
-      case response =>
-        Logger("application").error(s"[CreateIncomeSourceConnector][createBusiness] - Response status: ${response.status}, body: ${response.body}")
-        Left(CreateIncomeSourcesErrorResponse(response.status, s"Error creating incomeSource: ${response.json}"))
-    }
+    val jsonRequest = Json.toJson(request)
+
+    http.POST(url, jsonRequest).flatMap(handleResponse)
   }
 
-  def createForeignProperty(mtdItid: String, createForeignPropertyRequest: CreateForeignPropertyIncomeSource)
-                           (implicit headerCarrier: HeaderCarrier): Future[Either[CreateIncomeSourcesErrorResponse, List[CreateIncomeSourcesResponse]]] = {
-    val bodyAsJson = Json.toJson(createForeignPropertyRequest)
+  def createForeignProperty(mtdItid: String, request: CreateForeignPropertyIncomeSourceRequest)
+                    (implicit headerCarrier: HeaderCarrier): Future[Either[CreateIncomeSourceErrorResponse, List[CreateIncomeSourceResponse]]] = {
     val url = createBusinessIncomeSourcesUrl(mtdItid)
-    http.POST(url, bodyAsJson).map {
-      case response if response.status == OK =>
-        response.json.validate[List[CreateIncomeSourcesResponse]].fold(
-          _ => {
-            Logger("application").error(s"[CreateIncomeSourceConnector][createForeignProperty] - Json validation error parsing business income sources response, error ${response.body}")
-            Left(CreateIncomeSourcesErrorResponse(response.status, s"Not valid json: ${response.body}"))
-          },
-          valid =>
-            Right(valid)
-        )
-      case response =>
-        Logger("application").error(s"[CreateIncomeSourceConnector][createForeignProperty] - Response status: ${response.status}, body: ${response.body}")
-        Left(CreateIncomeSourcesErrorResponse(response.status, s"Error creating incomeSource: ${response.json}"))
-    }
+    val jsonRequest = Json.toJson(request)
+
+    http.POST(url, jsonRequest).flatMap(handleResponse)
   }
 
-  def createUKProperty(mtdItid: String, createUKPropertyRequest: CreateUKPropertyIncomeSource)
-                           (implicit headerCarrier: HeaderCarrier): Future[Either[CreateIncomeSourcesErrorResponse, List[CreateIncomeSourcesResponse]]] = {
-    val bodyAsJson = Json.toJson(createUKPropertyRequest)
+  def createUKProperty(mtdItid: String, request: CreateUKPropertyIncomeSourceRequest)
+                           (implicit headerCarrier: HeaderCarrier): Future[Either[CreateIncomeSourceErrorResponse, List[CreateIncomeSourceResponse]]] = {
     val url = createBusinessIncomeSourcesUrl(mtdItid)
-    http.POST(url, bodyAsJson).map {
-      case response if response.status == OK =>
-        response.json.validate[List[CreateIncomeSourcesResponse]].fold(
-          _ => {
-            Logger("application").error(s"[CreateIncomeSourceConnector][createUKProperty] - Json validation error parsing business income sources response, error ${response.body}")
-            Left(CreateIncomeSourcesErrorResponse(response.status, s"Not valid json: ${response.body}"))
-          },
-          valid =>
-            Right(valid)
-        )
-      case response =>
-        Logger("application").error(s"[CreateIncomeSourceConnector][createUKProperty] - Response status: ${response.status}, body: ${response.body}")
-        Left(CreateIncomeSourcesErrorResponse(response.status, s"Error creating incomeSource: ${response.json}"))
+    val jsonRequest = Json.toJson(request)
+
+    http.POST(url, jsonRequest).flatMap(handleResponse)
+  }
+
+
+  private def handleResponse(response: HttpResponse): Future[Either[CreateIncomeSourceErrorResponse, List[CreateIncomeSourceResponse]]] = {
+    if (response.status == OK) {
+      response.json.validate[List[CreateIncomeSourceResponse]].fold(
+        errors => {
+          Logger("application").error(s"[CreateIncomeSourceConnector][handleResponse] - Json validation error parsing business income sources response, error ${JsError.toJson(errors)}")
+          Future.successful(Left(CreateIncomeSourceErrorResponse(response.status, s"Not valid json: ${response.body}")))
+        },
+        valid => Future.successful(Right(valid))
+      )
+    } else {
+      Logger("application").error(s"[CreateIncomeSourceConnector][handleResponse] - Response status: ${response.status}, body: ${response.body}")
+      Future.successful(Left(CreateIncomeSourceErrorResponse(response.status, s"Error creating incomeSource: ${response.json}")))
     }
   }
 }
