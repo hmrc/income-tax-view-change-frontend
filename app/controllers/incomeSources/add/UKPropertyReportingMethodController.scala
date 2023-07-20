@@ -78,7 +78,7 @@ class UKPropertyReportingMethodController @Inject()(val authenticate: Authentica
             }
         }
       case None =>
-        Logger("application").info(s"[UKPropertyReportingMethodService][getUKPropertyReportingMethodDetails] latency details not available")
+        Logger("application").info(s"[UKPropertyReportingMethodController][getUKPropertyReportingMethodDetails] latency details not available")
         Future.successful(None)
     }
 
