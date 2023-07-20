@@ -36,7 +36,7 @@ case class CheckForeignPropertyViewModel(tradingStartDate: LocalDate, cashOrAccr
 
 case class CheckUKPropertyViewModel(tradingStartDate: LocalDate, cashOrAccrualsFlag: String) {
   def getAccountingMethodMessageKey: String = {
-    val cashAccountingSelected = cashOrAccrualsFlag.equals("cash")
+    val cashAccountingSelected = cashOrAccrualsFlag.toLowerCase.equals("cash")
 
     if (cashAccountingSelected) {
       "incomeSources.add.accountingMethod.cash"
