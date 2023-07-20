@@ -132,6 +132,16 @@ class BusinessAddedObligationsControllerSpec extends TestSupport
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.routes.HomeController.show().url)
       }
+      "redirect to home page (agent)" in {
+        disableAllSwitches()
+
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
+        setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+
+        val result: Future[Result] = TestObligationsController.showAgent("123")(fakeRequestConfirmedClient())
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(result) shouldBe Some(controllers.routes.HomeController.showAgent.url)
+      }
     }
 
 

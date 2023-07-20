@@ -42,8 +42,9 @@ import java.time.LocalDate
 import javax.inject.Singleton
 import scala.concurrent.Future
 import forms.BusinessStartDateCheckForm
-import forms.incomeSources.add.AddBusinessReportingMethodForm
-import testConstants.BaseIntegrationTestConstants.testSelfEmploymentId
+import forms.incomeSources.add.{AddBusinessReportingMethodForm, AddUKPropertyReportingMethodForm}
+import testConstants.BaseIntegrationTestConstants.{testPropertyIncomeId, testSelfEmploymentId}
+
 import java.time.Month.APRIL
 
 @Singleton
@@ -303,6 +304,16 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     def getAddBusinessStartDate(additionalCookies: Map[String, String] = Map.empty): WSResponse =
       get("/income-sources/add/business-start-date", additionalCookies)
 
+    def getAddBusinessObligations(id: String, additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      get(
+        uri = s"/income-sources/add/business-added/?id=$id",
+        additionalCookies
+      )
+    }
+
+    def postAddedBusinessObligations(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      post(s"/income-sources/add/business-added", additionalCookies)(Map.empty)
+    }
 
     def getCheckCeaseUKPropertyDetails(additionalCookies: Map[String, String]): WSResponse =
       getWithClientDetailsInSession("/agents/income-sources/cease/uk-property-check-details", additionalCookies)
@@ -313,6 +324,11 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     def postAddBusinessReportingMethod(form: AddBusinessReportingMethodForm)(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
       val formData = form.toFormMap.map { case (k, v) => (k -> Seq(v.getOrElse(""))) }
       post(s"/income-sources/add/business-reporting-method?id=$testSelfEmploymentId", additionalCookies = additionalCookies)(formData)
+    }
+
+    def postAddUKPropertyReportingMethod(form: AddUKPropertyReportingMethodForm)(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      val formData = form.toFormMap.map { case (k, v) => (k -> Seq(v.getOrElse(""))) }
+      post(s"/income-sources/add/uk-property-reporting-method?id=$testPropertyIncomeId", additionalCookies = additionalCookies)(formData)
     }
   }
 
