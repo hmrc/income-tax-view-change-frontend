@@ -61,11 +61,11 @@ govukTable: GovukTable,
             </div>
         </div>
 
-        <h1 class="govuk-label-wrapper">
+        <h2 class="govuk-label-wrapper">
           <label class="govuk-label govuk-label--l govuk-!-margin-top-8">
           @getMessage("text")
           </label>
-        </h1>
+        </h2>
 
 
         @if(sources.quarterlyObligationsDatesYearOne.nonEmpty){
@@ -76,8 +76,8 @@ govukTable: GovukTable,
                 <table class="govuk-table">
                     <thead class="govuk-table__head">
                     <tr class="govuk-table__row">
-                        <th scope="col" class="govuk-table__header govuk" style="width:55%;">@(getMessage("table.heading-1")+" "+sources.quarterlyObligationsDatesYearOne.head.inboundCorrespondenceFrom.getYear+" "+getMessage("to")+" "+(sources.quarterlyObligationsDatesYearOne.head.inboundCorrespondenceFrom.getYear + 1))</th>
-                        <th scope="col" class="govuk-table__header govuk" style="width:30%;">@getMessage("table.heading-2")</th>
+                        <th scope="col" class="govuk-table__header govuk-!-width-two-thirds">@(getMessage("table.heading-1")+" "+sources.quarterlyObligationsDatesYearOne.head.inboundCorrespondenceFrom.getYear+" "+getMessage("to")+" "+(sources.quarterlyObligationsDatesYearOne.head.inboundCorrespondenceFrom.getYear + 1))</th>
+                        <th scope="col" class="govuk-table__header govuk-!-width-one-third">@getMessage("table.heading-2")</th>
                     </tr>
                     </thead>
 
@@ -93,8 +93,8 @@ govukTable: GovukTable,
                     @if(sources.quarterlyObligationsDatesYearTwo.nonEmpty){
                         <thead class="govuk-table__head">
                             <tr class="govuk-table__row">
-                                <th scope="col" class="govuk-table__header govuk" style="width:55%;">@(getMessage("table.heading-1")+" "+sources.quarterlyObligationsDatesYearTwo.head.inboundCorrespondenceFrom.getYear+" "+getMessage("to")+" "+(sources.quarterlyObligationsDatesYearTwo.head.inboundCorrespondenceFrom.getYear + 1))</th>
-                                <th scope="col" class="govuk-table__header govuk" style="width:55%;"> </th>
+                                <th scope="col" class="govuk-table__header govuk-!-width-two-thirds">@(getMessage("table.heading-1")+" "+sources.quarterlyObligationsDatesYearTwo.head.inboundCorrespondenceFrom.getYear+" "+getMessage("to")+" "+(sources.quarterlyObligationsDatesYearTwo.head.inboundCorrespondenceFrom.getYear + 1))</th>
+                                <th scope="col" class="govuk-table__header govuk-!-width-one-third"> </th>
                             </tr>
                         </thead>
 
@@ -120,8 +120,8 @@ govukTable: GovukTable,
                 <table class="govuk-table">
                     <thead class="govuk-table__head">
                     <tr class="govuk-table__row">
-                        <th scope="col" class="govuk-table__header govuk" style="width:55%;">@getMessage("table.heading-1")</th>
-                        <th scope="col" class="govuk-table__header govuk" style="width:30%;">@getMessage("table.heading-2")</th>
+                        <th scope="col" class="govuk-table__header govuk-!-width-two-thirds">@getMessage("table.heading-1")</th>
+                        <th scope="col" class="govuk-table__header govuk-!-width-one-third">@getMessage("table.heading-2")</th>
                     </tr>
                     </thead>
 
@@ -145,8 +145,8 @@ govukTable: GovukTable,
             <table class="govuk-table">
                 <thead class="govuk-table__head">
                 <tr class="govuk-table__row">
-                    <th scope="col" class="govuk-table__header govuk" style="width:55%;">@getMessage("table.heading-1")</th>
-                    <th scope="col" class="govuk-table__header govuk" style="width:30%;">@getMessage("table.heading-2")</th>
+                    <th scope="col" class="govuk-table__header govuk-!-width-two-thirds">@getMessage("table.heading-1")</th>
+                    <th scope="col" class="govuk-table__header govuk-!-width-one-third">@getMessage("table.heading-2")</th>
                 </tr>
                 </thead>
 

@@ -22,9 +22,11 @@ import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
 import forms.utils.SessionKeys
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
+import models.addIncomeSource.AddIncomeSourceResponse
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import org.mockito.Mockito.mock
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.{mock, when}
 import play.api.Logger
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.mvc.{MessagesControllerComponents, Result}
@@ -85,6 +87,14 @@ with MockIncomeSourceDetailsPredicate with MockNavBarEnumFsPredicate with Featur
         "redirect them to sign in" in {
           setupMockAuthorisationException()
           val result = TestForeignPropertyCheckDetailsController.show()(fakeRequestWithActiveSession)
+          status(result) shouldBe SEE_OTHER
+          redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn.url)
+        }
+      }
+      "agent is not authenticated" should {
+        "redirect them to sign in" in {
+          setupMockAgentAuthorisationException()
+          val result = TestForeignPropertyCheckDetailsController.showAgent()(fakeRequestConfirmedClient())
           status(result) shouldBe SEE_OTHER
           redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn.url)
         }
@@ -171,75 +181,187 @@ with MockIncomeSourceDetailsPredicate with MockNavBarEnumFsPredicate with Featur
     }
   }
 
-  "return an error" when {
-    "session data is missing a start date (individual)" in {
-      disableAllSwitches()
-      enable(IncomeSources)
+  ".show" should {
+    "return an error" when {
+      "session data is missing a start date (individual)" in {
+        disableAllSwitches()
+        enable(IncomeSources)
 
-      setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-      setupMockGetIncomeSourceDetails()(noIncomeDetails)
-      val result = TestForeignPropertyCheckDetailsController.show()(
-        fakeRequestWithActiveSession
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
+        setupMockGetIncomeSourceDetails()(noIncomeDetails)
+        val result = TestForeignPropertyCheckDetailsController.show()(
+          fakeRequestWithActiveSession
+            .withSession(
+              SessionKeys.addForeignPropertyAccountingMethod -> testForeignPropertyAccountingMethod
+            ))
+
+        val document: Document = Jsoup.parse(contentAsString(result))
+
+        status(result) shouldBe INTERNAL_SERVER_ERROR
+        document.title shouldBe messages("standardError.heading") + " - GOV.UK"
+      }
+      "session data is missing a start date (agent)" in {
+        disableAllSwitches()
+        enable(IncomeSources)
+
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
+        setupMockGetIncomeSourceDetails()(noIncomeDetails)
+        val result = TestForeignPropertyCheckDetailsController.showAgent()(
+          fakeRequestConfirmedClient()
+            .withSession(
+              SessionKeys.addForeignPropertyAccountingMethod -> testForeignPropertyAccountingMethod
+            ))
+
+        val document: Document = Jsoup.parse(contentAsString(result))
+
+        status(result) shouldBe INTERNAL_SERVER_ERROR
+        document.title shouldBe messages("standardError.heading") + " - GOV.UK"
+      }
+
+      "session data is missing an accounting method (individual)" in {
+        disableAllSwitches()
+        enable(IncomeSources)
+
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
+        setupMockGetIncomeSourceDetails()(noIncomeDetails)
+        val result = TestForeignPropertyCheckDetailsController.show()(
+          fakeRequestWithActiveSession
+            .withSession(
+              SessionKeys.foreignPropertyStartDate -> testForeignPropertyStartDate
+            ))
+
+        val document: Document = Jsoup.parse(contentAsString(result))
+
+        status(result) shouldBe INTERNAL_SERVER_ERROR
+        document.title shouldBe messages("standardError.heading") + " - GOV.UK"
+      }
+      "session data is missing an accounting method (agent)" in {
+        disableAllSwitches()
+        enable(IncomeSources)
+
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
+        setupMockGetIncomeSourceDetails()(noIncomeDetails)
+        val result = TestForeignPropertyCheckDetailsController.showAgent()(
+          fakeRequestConfirmedClient()
+            .withSession(
+              SessionKeys.foreignPropertyStartDate -> testForeignPropertyStartDate
+            ))
+
+        val document: Document = Jsoup.parse(contentAsString(result))
+
+        status(result) shouldBe INTERNAL_SERVER_ERROR
+        document.title shouldBe messages("standardError.heading") + " - GOV.UK"
+      }
+    }
+  }
+
+  ".submit" should {
+    "redirect to the reporting method page" when {
+      "foreign property model successfully created and user clicks continue button (individual)" in {
+        disableAllSwitches()
+        enable(IncomeSources)
+
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
+        setupMockGetIncomeSourceDetails()(noIncomeDetails)
+
+        when(mockBusinessDetailsService.createForeignProperty(any())(any(), any(), any())).
+          thenReturn(Future(Right(AddIncomeSourceResponse("123"))))
+        val result = TestForeignPropertyCheckDetailsController.submit()(
+          fakeRequestWithActiveSession
+            .withSession(
+              SessionKeys.foreignPropertyStartDate -> testForeignPropertyStartDate,
+              SessionKeys.addForeignPropertyAccountingMethod -> testForeignPropertyAccountingMethod
+            )
+        )
+
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.ForeignPropertyReportingMethodController.show("123").url)
+      }
+      "foreign property model successfully created and user clicks continue button (agent)" in {
+        disableAllSwitches()
+        enable(IncomeSources)
+
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
+        setupMockGetIncomeSourceDetails()(noIncomeDetails)
+        when(mockBusinessDetailsService.createForeignProperty(any())(any(), any(), any())).
+          thenReturn(Future(Right(AddIncomeSourceResponse("123"))))
+
+        val result = TestForeignPropertyCheckDetailsController.submitAgent(fakeRequestConfirmedClient()
           .withSession(
+            SessionKeys.foreignPropertyStartDate -> testForeignPropertyStartDate,
             SessionKeys.addForeignPropertyAccountingMethod -> testForeignPropertyAccountingMethod
           ))
 
-      val document: Document = Jsoup.parse(contentAsString(result))
-
-      status(result) shouldBe INTERNAL_SERVER_ERROR
-      document.title shouldBe messages("standardError.heading") + " - GOV.UK"
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.ForeignPropertyReportingMethodController.showAgent("123").url)
+      }
     }
-    "session data is missing a start date (agent)" in {
-      disableAllSwitches()
-      enable(IncomeSources)
+    "return an error" when {
+      "individual is missing session storage" in {
+        disableAllSwitches()
+        enable(IncomeSources)
 
-      setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
-      setupMockGetIncomeSourceDetails()(noIncomeDetails)
-      val result = TestForeignPropertyCheckDetailsController.showAgent()(
-        fakeRequestConfirmedClient()
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
+        setupMockGetIncomeSourceDetails()(noIncomeDetails)
+        val result = TestForeignPropertyCheckDetailsController.submit()(
+          fakeRequestWithActiveSession)
+
+        val document: Document = Jsoup.parse(contentAsString(result))
+
+        status(result) shouldBe INTERNAL_SERVER_ERROR
+        document.title shouldBe messages("standardError.heading") + " - GOV.UK"
+      }
+      "agent is missing session storage" in {
+        disableAllSwitches()
+        enable(IncomeSources)
+
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
+        setupMockGetIncomeSourceDetails()(noIncomeDetails)
+        val result = TestForeignPropertyCheckDetailsController.submitAgent(
+          fakeRequestConfirmedClient())
+
+        val document: Document = Jsoup.parse(contentAsString(result))
+
+        status(result) shouldBe INTERNAL_SERVER_ERROR
+        document.title shouldBe messages("standardError.heading") + " - GOV.UK"
+      }
+
+      "foreign property model can't be created (individual)" in {
+        disableAllSwitches()
+        enable(IncomeSources)
+
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
+        setupMockGetIncomeSourceDetails()(noIncomeDetails)
+
+        when(mockBusinessDetailsService.createForeignProperty(any())(any(), any(), any())).
+          thenReturn(Future(Left(new Error(s"Failed to created incomeSources"))))
+        val result = TestForeignPropertyCheckDetailsController.submit()(
+          fakeRequestWithActiveSession
+            .withSession(
+              SessionKeys.foreignPropertyStartDate -> testForeignPropertyStartDate,
+              SessionKeys.addForeignPropertyAccountingMethod -> testForeignPropertyAccountingMethod
+            )
+        )
+
+        status(result) shouldBe INTERNAL_SERVER_ERROR
+      }
+      "foreign property model cannot be created (agent)" in {
+        disableAllSwitches()
+        enable(IncomeSources)
+
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
+        setupMockGetIncomeSourceDetails()(noIncomeDetails)
+        when(mockBusinessDetailsService.createForeignProperty(any())(any(), any(), any())).
+          thenReturn(Future(Left(new Error(s"Failed to created incomeSources"))))
+
+        val result = TestForeignPropertyCheckDetailsController.submitAgent(fakeRequestConfirmedClient()
           .withSession(
+            SessionKeys.foreignPropertyStartDate -> testForeignPropertyStartDate,
             SessionKeys.addForeignPropertyAccountingMethod -> testForeignPropertyAccountingMethod
           ))
 
-      val document: Document = Jsoup.parse(contentAsString(result))
-
-      status(result) shouldBe INTERNAL_SERVER_ERROR
-      document.title shouldBe messages("standardError.heading") + " - GOV.UK"
-    }
-
-    "session data is missing an accounting method (individual)" in {
-      disableAllSwitches()
-      enable(IncomeSources)
-
-      setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-      setupMockGetIncomeSourceDetails()(noIncomeDetails)
-      val result = TestForeignPropertyCheckDetailsController.show()(
-        fakeRequestWithActiveSession
-          .withSession(
-            SessionKeys.foreignPropertyStartDate -> testForeignPropertyStartDate
-          ))
-
-      val document: Document = Jsoup.parse(contentAsString(result))
-
-      status(result) shouldBe INTERNAL_SERVER_ERROR
-      document.title shouldBe messages("standardError.heading") + " - GOV.UK"
-    }
-    "session data is missing an accounting method (agent)" in {
-      disableAllSwitches()
-      enable(IncomeSources)
-
-      setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
-      setupMockGetIncomeSourceDetails()(noIncomeDetails)
-      val result = TestForeignPropertyCheckDetailsController.showAgent()(
-        fakeRequestConfirmedClient()
-          .withSession(
-            SessionKeys.foreignPropertyStartDate -> testForeignPropertyStartDate
-          ))
-
-      val document: Document = Jsoup.parse(contentAsString(result))
-
-      status(result) shouldBe INTERNAL_SERVER_ERROR
-      document.title shouldBe messages("standardError.heading") + " - GOV.UK"
+        status(result) shouldBe INTERNAL_SERVER_ERROR
+      }
     }
   }
 }
