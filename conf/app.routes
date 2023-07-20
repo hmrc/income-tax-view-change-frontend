@@ -305,6 +305,10 @@ GET          /agents/income-sources/add/uk-property-reporting-method         con
 POST         /income-sources/add/uk-property-reporting-method                controllers.incomeSources.add.UKPropertyReportingMethodController.submit(id:String)
 POST         /agents/income-sources/add/uk-property-reporting-method         controllers.incomeSources.add.UKPropertyReportingMethodController.submitAgent(id:String)
 
+GET          /income-sources/add/foreign-property-reporting-method                controllers.incomeSources.add.ForeignPropertyReportingMethodController.show(id:String)
+GET          /agents/income-sources/add/foreign-property-reporting-method         controllers.incomeSources.add.ForeignPropertyReportingMethodController.showAgent(id:String)
+POST         /income-sources/add/foreign-property-reporting-method                controllers.incomeSources.add.ForeignPropertyReportingMethodController.submit(id:String)
+POST         /agents/income-sources/add/foreign-property-reporting-method         controllers.incomeSources.add.ForeignPropertyReportingMethodController.submitAgent(id:String)
 
 # Income Sources - TO BE IMPLEMENTED
 GET          /income-sources/cease/cease-uk-property-success                controllers.incomeSources.cease.CeaseUKPropertySuccessController.show()
@@ -317,3 +321,5 @@ GET          /agents/income-sources/add/business-added                       con
 
 GET          /income-sources/add/uk-property-added                           controllers.incomeSources.add.UKPropertyAddedController.show(id:String)
 GET          /agents/income-sources/add/uk-property-added                    controllers.incomeSources.add.UKPropertyAddedController.showAgent(id:String)
+GET          /income-sources/add/foreign-property-added                      controllers.incomeSources.add.ForeignPropertyAddedController.show(id:String)
+GET          /agents/income-sources/add/foreign-property-added               controllers.incomeSources.add.ForeignPropertyAddedController.showAgent(id:String)

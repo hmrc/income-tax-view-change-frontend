@@ -1435,6 +1435,18 @@ incomeSources.add.businessReportingMethod.chooseAnnualReport        =   Choose a
 incomeSources.add.businessReportingMethod.chooseQuarterlyReport     =   Choose quarterly reporting
 incomeSources.add.businessReportingMethod.error                     =   Select if you want to report annually or quarterly for tax year {0} to {1}
 
+incomeSources.add.foreignPropertyReportingMethod.heading                   =   Choose a reporting method
+incomeSources.add.foreignPropertyReportingMethod.description1              =   Your business qualifies for a grace period available up until April {0} where you can report annually.
+incomeSources.add.foreignPropertyReportingMethod.description2              =   This involves a single update no later than 31 January.
+incomeSources.add.foreignPropertyReportingMethod.description3              =   This grace period is not affected by either:
+incomeSources.add.foreignPropertyReportingMethod.description4.bullet1      =   your level of income from other sources
+incomeSources.add.foreignPropertyReportingMethod.description4.bullet2      =   the turnover you expect your new business to make
+incomeSources.add.foreignPropertyReportingMethod.description4.bullet3      =   how you report with any existing income sources
+incomeSources.add.foreignPropertyReportingMethod.chooseReport              =   Choose how you want to report
+incomeSources.add.foreignPropertyReportingMethod.taxYear                   =   Tax year {0}-{1}
+incomeSources.add.foreignPropertyReportingMethod.chooseAnnualReport        =   Choose annual reporting
+incomeSources.add.foreignPropertyReportingMethod.chooseQuarterlyReport     =   Choose quarterly reporting
+incomeSources.add.foreignPropertyReportingMethod.error                     =   Select if you want to report annually or quarterly for tax year {0} to {1}
 
 # add uk property business accounting method
 incomeSources.add.uk-property-business-accounting-method.heading                 = What accounting method do you use for your UK property business?
