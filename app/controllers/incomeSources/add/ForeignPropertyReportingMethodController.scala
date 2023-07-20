@@ -33,6 +33,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import views.html.errorPages.CustomNotFoundError
 import views.html.incomeSources.add.{BusinessReportingMethod, ForeignPropertyReportingMethod}
 
+import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -116,10 +117,16 @@ class ForeignPropertyReportingMethodController @Inject()(val authenticate: Authe
                             postAction: Call,
                             redirectCall: Call)
                            (implicit user: MtdItUser[_]): Future[Result] = {
+
+    val dummyLatency = Some(LatencyDetails(
+      latencyEndDate = LocalDate.of(2023,4,1), taxYear1 = "2022", latencyIndicator1 = "A", taxYear2 = "2023", latencyIndicator2 = "A"
+    )
+    )
+
     (for {
       isMandatoryOrVoluntary <- itsaStatusService.hasMandatedOrVoluntaryStatusCurrentYear
       latencyDetailsMaybe <- Future(user.incomeSources.properties.find(_.incomeSourceId.contains(id)).flatMap(_.latencyDetails))
-      viewModel <- getForeignPropertyReportingMethodDetails(latencyDetailsMaybe)
+      viewModel <- getForeignPropertyReportingMethodDetails(dummyLatency)
     } yield {
       (isEnabled(IncomeSources), isMandatoryOrVoluntary, viewModel) match {
         case (false, _, _) => Future(Ok(customNotFoundErrorView()))

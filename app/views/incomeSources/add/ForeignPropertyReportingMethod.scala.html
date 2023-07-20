@@ -113,8 +113,6 @@
 
     @formWithCSRF(action = postAction, Symbol("id") -> "add-foreign-property-reporting-method-form") {
 
-        @if(form.errors.nonEmpty) { @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form)) }
-
         @if(viewModel.taxYear1.isDefined){
             @renderForm(viewModel.taxYear1, "tax_year_1", viewModel.latencyIndicator1)
             @govukInput(Input(

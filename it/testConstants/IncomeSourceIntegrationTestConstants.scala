@@ -55,6 +55,13 @@ object IncomeSourceIntegrationTestConstants {
     yearOfMigration = Some("2018")
   )
 
+  def singleForeignPropertyResponseInLatencyPeriod(latencyDetails: LatencyDetails): IncomeSourceDetailsModel = IncomeSourceDetailsModel(
+    testMtditid,
+    businesses = List(business1.copy(latencyDetails = Some(latencyDetails))),
+    properties = List(foreignProperty.copy(latencyDetails = Some(latencyDetails))),
+    yearOfMigration = Some("2018")
+  )
+
   val misalignedBusinessWithPropertyResponse: IncomeSourceDetailsResponse = IncomeSourceDetailsModel(
     testMtdItId,
     businesses = List(business2),
