@@ -14,21 +14,19 @@
  * limitations under the License.
  */
 
-package models.addIncomeSource
+package models.createIncomeSource
 
 import play.api.libs.json.{Format, Json}
 
-import java.time.LocalDate
 
+case class CreateIncomeSourceResponse(incomeSourceId: String)
 
-case class AddIncomeSourceResponse(incomeSourceId: String)
-
-object AddIncomeSourceResponse {
-  implicit val format: Format[AddIncomeSourceResponse] = Json.format
+object CreateIncomeSourceResponse {
+  implicit val format: Format[CreateIncomeSourceResponse] = Json.format
 }
 
-final case class CreateBusinessErrorResponse(status: Int, reason: String)
+final case class CreateIncomeSourceErrorResponse(status: Int, reason: String)
 
-object CreateBusinessErrorResponse {
-  implicit val format: Format[CreateBusinessErrorResponse] = Json.format
+object CreateIncomeSourceErrorResponse {
+  implicit val format: Format[CreateIncomeSourceErrorResponse] = Json.format
 }

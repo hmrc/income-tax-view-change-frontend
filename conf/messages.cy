@@ -1130,7 +1130,14 @@ credit-and-refund.credit-from-balancing-charge-prt-1              = yn sgil
 credit-and-refund.credit-from-balancing-charge-prt-2              = credyd tâl mantoli
 credit-and-refund.credit-from-earlier-tax-year                    = credyd o flwyddyn dreth gynharach
 
-## Income Sources - Add
+#######################################################################################################################
+## Income Sources - Add ##
+#######################################################################################################################
+## Reusable Add Messages ##
+incomeSources.add.accountingMethod.cash                             = Cyfrifyddu ar sail arian parod
+incomeSources.add.accountingMethod.accruals                         = Cyfrifyddu traddodiadol
+
+## Add Income Sources Page ##
 incomeSources.add.addIncomeSources.heading                          = Unig fasnachwr a incwm o eiddo
 incomeSources.add.addIncomeSources.selfEmployment.heading           = Busnesau unig fasnachwr
 incomeSources.add.addIncomeSources.selfEmployment.text              = Nid oes angen i chi roi gwybod i ni am fusnes y gwyddwn amdano eisoes.
@@ -1146,6 +1153,13 @@ incomeSources.add.addIncomeSources.tableHead.businessName           = Enw’r bu
 incomeSources.add.addIncomeSources.tableHead.dateStarted            = Dyddiad cychwyn
 incomeSources.add.addIncomeSources.tableHead.dateEnded              = Y dyddiad dod i ben
 incomeSources.add.addIncomeSources.unknown                          = Anhysbys
+
+incomeSources.add.checkUKPropertyDetails.heading                = Gwirio’ch manylion
+incomeSources.add.checkUKPropertyDetails.caption                = Y busnes eiddo yn y DU a nodwyd gennych
+incomeSources.add.checkUKPropertyDetails.startDateLabel         = Dyddiad dechrau’r busnes eiddo yn y DU
+incomeSources.add.checkUKPropertyDetails.accountingMethodLabel  = Dull cyfrifyddu’r busnes eiddo yn y DU
+incomeSources.add.checkUKPropertyDetails.change                 = Newid
+incomeSources.add.checkUKPropertyDetails.confirm                = Cadarnhau ac yn eich blaen
 
 ## cease income sources
 cease-income-sources.heading                  = Dod â ffynhonnell incwm i ben
