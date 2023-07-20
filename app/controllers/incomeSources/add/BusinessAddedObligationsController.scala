@@ -76,7 +76,8 @@ class BusinessAddedObligationsController @Inject()(authenticate: AuthenticationP
     lazy val agentBackUrl = controllers.incomeSources.add.routes.BusinessReportingMethodController.showAgent(incomeSourceId).url
 
     if (isDisabled(IncomeSources)) {
-      Future.successful(Redirect(controllers.routes.HomeController.show()))
+      if (isAgent) Future.successful(Redirect(controllers.routes.HomeController.showAgent))
+      else Future.successful(Redirect(controllers.routes.HomeController.show()))
     } else {
       val businessDetailsParams = for {
         addedBusiness <- user.incomeSources.businesses.find(x => x.incomeSourceId.contains(incomeSourceId))
