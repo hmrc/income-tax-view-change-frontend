@@ -23,7 +23,7 @@ import enums.ChargeType.{ITSA_NI, NIC4_SCOTLAND}
 import enums.CodingOutType._
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel, IncomeSourceDetailsResponse, LatencyDetails}
 import play.api.libs.json.{JsValue, Json}
-import testConstants.BaseIntegrationTestConstants.getCurrentTaxYearEnd
+import testConstants.BaseIntegrationTestConstants.{getCurrentTaxYearEnd, testMtditid}
 
 object IncomeSourceIntegrationTestConstants {
 
@@ -45,6 +45,13 @@ object IncomeSourceIntegrationTestConstants {
     testMtdItId,
     businesses = List(business1.copy(latencyDetails = Some(latencyDetails))),
     properties = Nil,
+    yearOfMigration = Some("2018")
+  )
+
+  def singleUKPropertyResponseInLatencyPeriod(latencyDetails: LatencyDetails): IncomeSourceDetailsModel = IncomeSourceDetailsModel(
+    testMtditid,
+    businesses = List(business1.copy(latencyDetails = Some(latencyDetails))),
+    properties = List(ukProperty.copy(latencyDetails = Some(latencyDetails))),
     yearOfMigration = Some("2018")
   )
 
