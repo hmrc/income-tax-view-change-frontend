@@ -17,14 +17,14 @@
 package models
 
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, PropertyDetailsModel}
+import org.scalatest.Matchers
 import testConstants.BaseTestConstants._
-import testConstants.BusinessDetailsTestConstants.{testStartDate, _}
+import testConstants.BusinessDetailsTestConstants.{testLatencyDetails, _}
 import testConstants.IncomeSourceDetailsTestConstants._
 import testConstants.PropertyDetailsTestConstants._
-import org.scalatest.Matchers
 import testUtils.UnitSpec
 
-import java.time.{LocalDate, Month}
+import java.time.LocalDate
 
 class IncomeSourceDetailsModelSpec extends UnitSpec with Matchers {
 

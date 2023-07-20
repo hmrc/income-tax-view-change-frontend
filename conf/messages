@@ -1150,7 +1150,7 @@ view-income-sources.ceased-businesses-h2     = Businesses that have ceased
 view-income-sources.table-head.business-name = Business name
 view-income-sources.table-head.date-started  = Date started
 view-income-sources.table-head.date-ended    = Date ended
-view-income-sources.business-details         = Choose
+view-income-sources.choose                   = Choose
 view-income-sources.unknown-field            = Unknown
 
 
@@ -1434,4 +1434,16 @@ incomeSources.add.uk-property-business-accounting-method.drop-down-text         
 incomeSources.add.uk-property-business-accounting-method.drop-down-text-bp-1     = May 2017, you use ’cash basis accounting’
 incomeSources.add.uk-property-business-accounting-method.drop-down-text-bp-2     = March 2017, you use ’traditional accounting’
 incomeSources.add.uk-property-business-accounting-method.no-selection            = Enter the accounting method you use for your UK property business
+
+# uk property reporting method
+incomeSources.add.ukPropertyReportingMethod.heading                   =   Choose a reporting method
+incomeSources.add.ukPropertyReportingMethod.description1              =   Your business qualifies for a grace period available up until April {0} where you can report annually.
+incomeSources.add.ukPropertyReportingMethod.description2              =   This involves a single update no later than 31 January.
+incomeSources.add.ukPropertyReportingMethod.description3              =   This grace period is not affected by either:
+incomeSources.add.ukPropertyReportingMethod.description4              =   <li>your level of income from other source</li><li>the turnover you expect your new business to make</li><li>how you report with any existing income sources</li>
+incomeSources.add.ukPropertyReportingMethod.chooseReport              =   Choose how you want to report
+incomeSources.add.ukPropertyReportingMethod.taxYear                   =   Tax year {0}-{1}
+incomeSources.add.ukPropertyReportingMethod.chooseAnnualReport        =   Choose annual reporting
+incomeSources.add.ukPropertyReportingMethod.chooseQuarterlyReport     =   Choose quarterly reporting
+incomeSources.add.ukPropertyReportingMethod.error                     =   Select if you want to report annually or quarterly for tax year {0} to {1}
 
