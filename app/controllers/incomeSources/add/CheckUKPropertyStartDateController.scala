@@ -125,7 +125,7 @@ class CheckUKPropertyStartDateController @Inject()(val authenticate: Authenticat
             Future.successful(Redirect(controllers.incomeSources.add.routes.AddUKPropertyStartDateController.show())
               .removingFromSession("addUkPropertyStartDate"))
           } else {
-            Future.successful(Redirect(controllers.incomeSources.add.routes.UKPropertyBusinessAccountingMethodController.show()))
+            Future.successful(Redirect(controllers.incomeSources.add.routes.UKPropertyAccountingMethodController.show()))
           }
         }
       )
@@ -152,7 +152,7 @@ class CheckUKPropertyStartDateController @Inject()(val authenticate: Authenticat
                   Future.successful(Redirect(controllers.incomeSources.add.routes.AddUKPropertyStartDateController.showAgent())
                     .removingFromSession("addUkPropertyStartDate"))
                 } else {
-                  Future.successful(Redirect(controllers.incomeSources.add.routes.UKPropertyBusinessAccountingMethodController.showAgent()))
+                  Future.successful(Redirect(controllers.incomeSources.add.routes.UKPropertyAccountingMethodController.showAgent()))
                 }
               }
             )

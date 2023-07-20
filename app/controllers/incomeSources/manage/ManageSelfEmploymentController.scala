@@ -32,27 +32,27 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ManageSelfEmploymentSourceController @Inject()(val manageIncomeSources: ManageIncomeSources,
-                                             val checkSessionTimeout: SessionTimeoutPredicate,
-                                             val authenticate: AuthenticationPredicate,
-                                             val authorisedFunctions: AuthorisedFunctions,
-                                             val retrieveNino: NinoPredicate,
-                                             val retrieveIncomeSources: IncomeSourceDetailsPredicate,
-                                             val itvcErrorHandler: ItvcErrorHandler,
-                                             implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
-                                             val incomeSourceDetailsService: IncomeSourceDetailsService,
-                                             val retrieveBtaNavBar: NavBarPredicate)
-                                            (implicit val ec: ExecutionContext,
+class ManageSelfEmploymentController @Inject()(val manageIncomeSources: ManageIncomeSources,
+                                               val checkSessionTimeout: SessionTimeoutPredicate,
+                                               val authenticate: AuthenticationPredicate,
+                                               val authorisedFunctions: AuthorisedFunctions,
+                                               val retrieveNino: NinoPredicate,
+                                               val retrieveIncomeSources: IncomeSourceDetailsPredicate,
+                                               val itvcErrorHandler: ItvcErrorHandler,
+                                               implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
+                                               val incomeSourceDetailsService: IncomeSourceDetailsService,
+                                               val retrieveBtaNavBar: NavBarPredicate)
+                                              (implicit val ec: ExecutionContext,
                                              implicit override val mcc: MessagesControllerComponents,
                                              val appConfig: FrontendAppConfig) extends ClientConfirmedController
   with FeatureSwitching {
 
-  def show(origin: Option[String] = None): Action[AnyContent] = Action {
-    Ok("Page WIP")
+  def show(id: String): Action[AnyContent] = Action {
+    Ok("Page WIP. Income source id: " + id)
   }
 
-  def showAgent(): Action[AnyContent] = Action {
-    Ok("Agent Page WIP")
+  def showAgent(id: String): Action[AnyContent] = Action {
+    Ok("Agent Page WIP. Income source id: " + id)
   }
 
 }
