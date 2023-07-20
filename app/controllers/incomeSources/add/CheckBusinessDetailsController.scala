@@ -161,9 +161,9 @@ class CheckBusinessDetailsController @Inject()(val checkBusinessDetails: CheckBu
         getDetails(user) match {
           case Right(viewModel) =>
             Ok(checkBusinessDetails(
-              viewModel,
+              viewModel = viewModel,
               postAction = postAction,
-              isAgent,
+              isAgent = isAgent,
               backUrl = backUrl
             ))
           case Left(ex) =>

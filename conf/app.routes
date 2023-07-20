@@ -279,6 +279,9 @@ GET          /agents/income-sources/manage/view-and-manage-income-sources      c
 GET          /income-sources/manage/your-details                               controllers.incomeSources.manage.ManageSelfEmploymentController.show(id: String)
 GET          /agents/income-sources/manage/your-details                        controllers.incomeSources.manage.ManageSelfEmploymentController.showAgent(id: String)
 
+GET          /income-sources/manage/confirm-you-want-to-switch                 controllers.incomeSources.manage.ChangeBusinessReportingMethodController.show(id: String, taxtear: String, changeto: String)
+GET          /agents/income-sources/manage/confirm-you-want-to-switch          controllers.incomeSources.manage.ChangeBusinessReportingMethodController.showAgent(id: String, taxtear: String, changeto: String)
+
 GET          /income-sources/manage/your-details-UK-property                   controllers.incomeSources.manage.ManageUKPropertyController.show()
 GET          /agents/income-sources/manage/your-details-UK-property            controllers.incomeSources.manage.ManageUKPropertyController.showAgent()
 
@@ -302,9 +305,6 @@ GET          /income-sources/cease/cease-uk-property-success                cont
 GET          /agents/income-sources/cease/cease-uk-property-success         controllers.incomeSources.cease.CeaseUKPropertySuccessController.showAgent()
 GET          /income-sources/cease/cease-foreign-property-success           controllers.incomeSources.cease.CeaseForeignPropertySuccessController.show()
 GET          /agents/income-sources/cease/cease-foreign-property-success    controllers.incomeSources.cease.CeaseForeignPropertySuccessController.showAgent()
-
-GET          /income-sources/add/business-added                              controllers.incomeSources.add.BusinessAddedController.show(id:String)
-GET          /agents/income-sources/add/business-added                       controllers.incomeSources.add.BusinessAddedController.showAgent(id:String)
 
 GET          /income-sources/add/uk-property-added                           controllers.incomeSources.add.UKPropertyAddedController.show(id:String)
 GET          /agents/income-sources/add/uk-property-added                    controllers.incomeSources.add.UKPropertyAddedController.showAgent(id:String)

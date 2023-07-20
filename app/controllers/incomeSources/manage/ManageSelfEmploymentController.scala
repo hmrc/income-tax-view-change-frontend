@@ -21,18 +21,21 @@ import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
-import models.incomeSourceDetails.IncomeSourceDetailsModel
+import exceptions.MissingFieldException
+import models.incomeSourceDetails.viewmodels.ViewBusinessDetailsViewModel
+import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
 import play.api.Logger
 import play.api.mvc._
 import services.IncomeSourceDetailsService
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import views.html.incomeSources.manage.ManageIncomeSources
+import uk.gov.hmrc.http.HeaderCarrier
+import views.html.incomeSources.manage.BusinessManageDetails
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ManageSelfEmploymentController @Inject()(val manageIncomeSources: ManageIncomeSources,
+class ManageSelfEmploymentController @Inject()(val view: BusinessManageDetails,
                                                val checkSessionTimeout: SessionTimeoutPredicate,
                                                val authenticate: AuthenticationPredicate,
                                                val authorisedFunctions: AuthorisedFunctions,
@@ -47,12 +50,57 @@ class ManageSelfEmploymentController @Inject()(val manageIncomeSources: ManageIn
                                              val appConfig: FrontendAppConfig) extends ClientConfirmedController
   with FeatureSwitching {
 
-  def show(id: String): Action[AnyContent] = Action {
-    Ok("Page WIP. Income source id: " + id)
+  def show(id: String): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+    andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
+    implicit user =>
+      handleRequest(
+        sources = user.incomeSources,
+        isAgent = false,
+        backUrl = controllers.incomeSources.manage.routes.ManageIncomeSourceController.show().url,
+        id = id
+      )
   }
 
-  def showAgent(id: String): Action[AnyContent] = Action {
-    Ok("Agent Page WIP. Income source id: " + id)
+  def showAgent(id: String): Action[AnyContent] = Authenticated.async {
+    implicit request =>
+      implicit user =>
+        getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
+          implicit mtdItUser =>
+            handleRequest(
+              sources = mtdItUser.incomeSources,
+              isAgent = true,
+              backUrl = controllers.incomeSources.manage.routes.ManageIncomeSourceController.showAgent().url,
+              id = id
+            )
+        }
   }
 
+  def handleRequest(sources: IncomeSourceDetailsModel, isAgent: Boolean, backUrl: String, id: String)
+                   (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
+
+    if (isDisabled(IncomeSources)) {
+      Future.successful(Redirect(controllers.routes.HomeController.show()))
+    } else {
+      Future {
+        incomeSourceDetailsService.getViewIncomeSourceChosenViewModel(sources = sources, id = id) match {
+          case Right(viewModel: ViewBusinessDetailsViewModel) =>
+            Ok(view(
+              viewModel = viewModel,
+              isAgent = isAgent,
+              backUrl = backUrl
+            ))
+          case Left(ex: Exception) =>
+            if (isAgent) {
+              Logger("application").error(
+                s"[Agent][ManageSelfEmploymentController][handleRequest] - Error: ${ex.getMessage}")
+              itvcErrorHandlerAgent.showInternalServerError()
+            } else {
+              Logger("application").error(
+                s"[ManageSelfEmploymentController][handleRequest] - Error: ${ex.getMessage}")
+              itvcErrorHandler.showInternalServerError()
+            }
+        }
+      }
+    }
+  }
 }

@@ -20,7 +20,7 @@ import auth.MtdItUserWithNino
 import connectors.IncomeTaxViewChangeConnector
 import exceptions.MissingFieldException
 import models.incomeSourceDetails.viewmodels._
-import models.incomeSourceDetails.{IncomeSourceDetailsModel, IncomeSourceDetailsResponse}
+import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, IncomeSourceDetailsResponse}
 import play.api.Logger
 import play.api.cache.AsyncCacheApi
 import play.api.libs.json.{JsPath, JsSuccess, JsValue, Json}
@@ -146,6 +146,21 @@ class IncomeSourceDetailsService @Inject()(val incomeTaxViewChangeConnector: Inc
             )
           }
         } else Nil
+      )
+    }.toEither
+  }
+
+  def getViewIncomeSourceChosenViewModel(sources: IncomeSourceDetailsModel, id: String): Either[Throwable, ViewBusinessDetailsViewModel] = {
+    val desiredIncomeSource: BusinessDetailsModel = sources.businesses
+      .filterNot(_.isCeased)
+      .filter(_.incomeSourceId.getOrElse(throw new MissingFieldException("incomeSourceId missing")) == id)
+      .head
+
+    Try {
+      ViewBusinessDetailsViewModel(
+        incomeSourceId = desiredIncomeSource.incomeSourceId.getOrElse(throw new MissingFieldException("Missing incomeSourceId field")),
+        tradingName = desiredIncomeSource.tradingName,
+        tradingStartDate = desiredIncomeSource.tradingStartDate
       )
     }.toEither
   }
