@@ -29,7 +29,9 @@ object Utilities {
 
   //Checks and adding the value to the test header
   def checkAndAddTestHeaders(requestPath: String, headerCarrier: HeaderCarrier): HeaderCarrier = {
-    val updatedHeaders = govUKTestHeaderValuesMap.get(requestPath.split('/').last) match {
+    val urlPathArray = requestPath.split('/')
+    val actionPath = if(urlPathArray.isEmpty) "" else urlPathArray.last
+    val updatedHeaders = govUKTestHeaderValuesMap.get(actionPath) match {
       case Some(data) => "Gov-Test-Scenario" -> data
       case _ => "Gov-Test-Scenario" -> ""
     }
