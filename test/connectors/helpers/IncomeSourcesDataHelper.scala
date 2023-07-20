@@ -16,12 +16,15 @@
 
 package connectors.helpers
 
-import models.addIncomeSource.{AddressDetails, BusinessDetails, CreateBusinessIncomeSourceRequest, CreateForeignPropertyIncomeSource}
+import models.createIncomeSource._
 import models.incomeSourceDetails.viewmodels._
+import play.api.libs.json.{JsValue, Json}
 
 import java.time.LocalDate
 
 trait IncomeSourcesDataHelper {
+
+
   val businessDetails = BusinessDetails(accountingPeriodStartDate = "01-02-2023",
     accountingPeriodEndDate = "",
     tradingName = "",
@@ -35,7 +38,7 @@ trait IncomeSourcesDataHelper {
     ),
     typeOfBusiness = None,
     tradingStartDate = "",
-    cashOrAccrualsFlag = "",
+    cashOrAccrualsFlag = "CASH",
     cessationDate = Some(""),
     cessationReason = None
   )
@@ -44,9 +47,49 @@ trait IncomeSourcesDataHelper {
     List(businessDetails)
   )
 
-  val createForeignPropertyRequestObject = CreateForeignPropertyIncomeSource(tradingStartDate = LocalDate.of(2011, 1, 1).toString,
-    cashOrAccrualsFlag = "Cash", startDate = LocalDate.of(2011, 1, 1).toString
+  val createBusinessDetailsRequestObjectJson: JsValue = Json.parse(
+    """{
+      |    "businessDetails": [
+      |        {
+      |            "accountingPeriodStartDate": "01-02-2023",
+      |            "accountingPeriodEndDate": "",
+      |            "tradingName": "",
+      |            "addressDetails": {
+      |                "addressLine1": "tests test",
+      |                "addressLine2": "",
+      |                "countryCode": "UK",
+      |                "postalCode": ""
+      |            },
+      |            "tradingStartDate": "",
+      |            "cashOrAccrualsFlag": "CASH",
+      |            "cessationDate": ""
+      |        }
+      |    ]
+      |}""".stripMargin)
+
+  val createForeignPropertyRequestObject = CreateForeignPropertyIncomeSourceRequest(PropertyDetails(tradingStartDate = LocalDate.of(2011, 1, 1).toString,
+    cashOrAccrualsFlag = "CASH", startDate = LocalDate.of(2011, 1, 1).toString)
   )
+
+  val createForeignPropertyRequestObjectJson = Json.parse("""{
+        |    "foreignPropertyDetails": {
+        |        "tradingStartDate": "2011-01-01",
+        |        "cashOrAccrualsFlag": "CASH",
+        |        "startDate": "2011-01-01"
+        |    }
+        |}""".stripMargin)
+
+  val createUKPropertyRequestObject = CreateUKPropertyIncomeSourceRequest(PropertyDetails(tradingStartDate = LocalDate.of(2011, 1, 1).toString,
+    cashOrAccrualsFlag = "CASH", startDate = LocalDate.of(2011, 1, 1).toString)
+  )
+
+  val createUKPropertyRequestObjectJson  = Json.parse("""{
+    |    "ukPropertyDetails": {
+    |        "tradingStartDate": "2011-01-01",
+    |        "cashOrAccrualsFlag": "CASH",
+    |        "startDate": "2011-01-01"
+    |    }
+    |}""".stripMargin)
 
   val createBusinessViewModel = CheckBusinessDetailsViewModel(
     businessName = Some("someBusinessName"),
@@ -61,8 +104,10 @@ trait IncomeSourcesDataHelper {
     businessAddressLine4 = None,
     businessCountryCode = Some("UK"),
     cashOrAccrualsFlag = "CASH",
-    skippedAccountingMethod = false,
+    skippedAccountingMethod = false
   )
 
-  val createForeignPropertyViewModel = CheckForeignPropertyViewModel(tradingStartDate = LocalDate.of(2011, 1, 1), cashOrAccrualsFlag = "Cash")
+  val createForeignPropertyViewModel = CheckForeignPropertyViewModel(tradingStartDate = LocalDate.of(2011, 1, 1), cashOrAccrualsFlag = "CASH")
+
+  val createUKPropertyViewModel = CheckUKPropertyViewModel(tradingStartDate = LocalDate.of(2011, 1, 1), cashOrAccrualsFlag = "CASH")
 }
