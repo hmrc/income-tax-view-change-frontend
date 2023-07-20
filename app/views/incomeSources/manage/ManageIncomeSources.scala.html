@@ -44,11 +44,27 @@
     messages(s"view-income-sources.$key", args: _*)
 }
 
-@viewSelfEmploymentDetailsURL = @{
+@viewSelfEmploymentDetailsURL(id: String) = @{
     if(isAgent){
-        controllers.incomeSources.manage.routes.ManageSelfEmploymentSourceController.showAgent().url
+        controllers.incomeSources.manage.routes.ManageSelfEmploymentController.showAgent(id).url
     } else {
-        controllers.incomeSources.manage.routes.ManageSelfEmploymentSourceController.show().url
+        controllers.incomeSources.manage.routes.ManageSelfEmploymentController.show(id).url
+    }
+}
+
+@viewUKPropertyDetailsURL = @{
+    if(isAgent){
+        controllers.incomeSources.manage.routes.ManageUKPropertyController.showAgent().url
+    } else {
+        controllers.incomeSources.manage.routes.ManageUKPropertyController.show().url
+    }
+}
+
+@viewForeignPropertyDetailsURL = @{
+    if(isAgent){
+        controllers.incomeSources.manage.routes.ManageForeignPropertyController.showAgent().url
+    } else {
+        controllers.incomeSources.manage.routes.ManageForeignPropertyController.show().url
     }
 }
 
@@ -85,17 +101,19 @@
                     <td class="govuk-table__cell" id="@{s"table-row-trading-name-$index"}">@business.tradingName.getOrElse(getMessage("unknown-field"))</td>
                     <td class="govuk-table__cell" id="@{s"table-row-trading-start-date-$index"}">@business.tradingStartDate.map(_.toLongDate).getOrElse(getMessage("unknown-field"))</td>
                     <td class="govuk-table__cell govuk-!-text-align-right">
-                        <a class="govuk-link" id="@{s"view-link-business-$index"}" href=@viewSelfEmploymentDetailsURL>
-                        @getMessage("business-details")
+                        <a class="govuk-link" id="@{s"view-link-business-$index"}" href=@viewSelfEmploymentDetailsURL(business.incomeSourceId)>
+                        @getMessage("choose")
                         </a>
                     </td>
                 </tr>
             }
             </tbody>
         </table>
+
+        <br>
+
     }
 
-    <br>
 
     @if(ukProperty.nonEmpty) {
         @h2(msg = getMessage("uk-property-h2"),
@@ -111,12 +129,18 @@
             <tbody>
                 <tr class="govuk-table__row">
                     <td class="govuk-table__cell" id="table-row-trading-start-date-uk">@ukProperty.map(_.tradingStartDate.map(_.toLongDate).getOrElse(getMessage("unknown-field"))).get</td>
+                    <td class="govuk-table__cell govuk-!-text-align-right">
+                        <a class="govuk-link" id="view-link-business-uk-property" href=@viewUKPropertyDetailsURL>
+                        @getMessage("choose")
+                        </a>
+                    </td>
                 </tr>
             </tbody>
         </table>
-    }
 
-    <br>
+        <br>
+
+    }
 
     @if(foreignProperty.nonEmpty) {
         @h2(msg = getMessage("foreign-property-h2"),
@@ -126,18 +150,24 @@
             <thead class="govuk-table__head">
                 <tr class="govuk-table__row">
                     <th class="govuk-table__header" scope="col" id="table-head-date-started-foreign">@getMessage("table-head.date-started")</th>
-                    <td class="govuk-table__header" id="empty1"></td>
+                    <td class="govuk-table__header" id="empty2"></td>
                 </tr>
             </thead>
             <tbody>
                 <tr class="govuk-table__row">
                     <td class="govuk-table__cell" id="table-row-trading-start-date-foreign">@foreignProperty.map(_.tradingStartDate.map(_.toLongDate).getOrElse(getMessage("unknown-field"))).get</td>
+                    <td class="govuk-table__cell govuk-!-text-align-right">
+                        <a class="govuk-link" id="view-link-business-foreign-property" href=@viewForeignPropertyDetailsURL>
+                        @getMessage("choose")
+                        </a>
+                    </td>
                 </tr>
             </tbody>
         </table>
-    }
 
-    <br>
+        <br>
+
+    }
 
     @if(ceasedBusinesses.nonEmpty) {
         @h2(msg = getMessage("ceased-businesses-h2"),

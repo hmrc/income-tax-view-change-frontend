@@ -303,6 +303,16 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     def getAddBusinessStartDate(additionalCookies: Map[String, String] = Map.empty): WSResponse =
       get("/income-sources/add/business-start-date", additionalCookies)
 
+    def getAddBusinessObligations(id: String, additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      get(
+        uri = s"/income-sources/add/business-added/?id=$id",
+        additionalCookies
+      )
+    }
+
+    def postAddedBusinessObligations(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      post(s"/income-sources/add/business-added", additionalCookies)(Map.empty)
+    }
 
     def getCheckCeaseUKPropertyDetails(additionalCookies: Map[String, String]): WSResponse =
       getWithClientDetailsInSession("/agents/income-sources/cease/uk-property-check-details", additionalCookies)

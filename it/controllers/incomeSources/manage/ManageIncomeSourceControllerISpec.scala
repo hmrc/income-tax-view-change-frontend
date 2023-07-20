@@ -29,7 +29,7 @@ class ManageIncomeSourceControllerISpec extends ComponentSpecBase {
   val pageTitleMsgKey = "view-income-sources.heading"
   val soleTraderBusinessName1: String = "business"
   val soleTraderBusinessName2: String = "secondBusiness"
-  val chooseMessage: String = messagesAPI("view-income-sources.business-details")
+  val chooseMessage: String = messagesAPI("view-income-sources.choose")
   val startDateMessage: String = messagesAPI("view-income-sources.table-head.date-started")
   val ceasedDateMessage: String = messagesAPI("view-income-sources.table-head.date-ended")
   val businessNameMessage: String = messagesAPI("view-income-sources.table-head.business-name")
