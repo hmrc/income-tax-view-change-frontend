@@ -17,17 +17,17 @@
 package utils
 
 import testUtils.TestSupport
-import utils.Utilities.checkAndAddTestHeaders
+import utils.Headers.checkAndAddTestHeader
 
-class UtilitiesSpec extends TestSupport {
+class HeadersSpec extends TestSupport {
 
   val ukSelectReportingMethod: String = "uk-property-reporting-method"
-  val incomeSourceCreatedJourney: String = "ISCreated"
+  val incomeSourceCreatedJourney: String = "afterIncomeSourceCreated"
   val testHeader: String = "Gov-Test-Scenario"
 
   "Return updated Gov-Test-Scenario headers" when {
     "the action scenario matches the govUKTestHeaderValuesMap" in {
-        val updatedHeaders = checkAndAddTestHeaders(ukSelectReportingMethod, headerCarrier)
+        val updatedHeaders = checkAndAddTestHeader(ukSelectReportingMethod, headerCarrier)
         val hc = headerCarrier.withExtraHeaders(testHeader -> incomeSourceCreatedJourney)
         updatedHeaders shouldBe hc
     }
@@ -35,7 +35,7 @@ class UtilitiesSpec extends TestSupport {
 
   "Return empty Gov-Test-Scenario headers" when {
     "the action scenario does not matches the govUKTestHeaderValuesMap" in {
-      val updatedHeaders = checkAndAddTestHeaders("otherAction", headerCarrier)
+      val updatedHeaders = checkAndAddTestHeader("otherAction", headerCarrier)
       val hc = headerCarrier.withExtraHeaders(testHeader -> "")
       updatedHeaders shouldBe hc
     }

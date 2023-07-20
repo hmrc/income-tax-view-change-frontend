@@ -32,12 +32,12 @@ import models.outstandingCharges._
 import models.paymentAllocationCharges.{FinancialDetailsWithDocumentDetailsErrorModel, FinancialDetailsWithDocumentDetailsModel, FinancialDetailsWithDocumentDetailsResponse}
 import models.paymentAllocations.{PaymentAllocations, PaymentAllocationsError, PaymentAllocationsResponse}
 import models.repaymentHistory.{RepaymentHistoryErrorModel, RepaymentHistoryModel, RepaymentHistoryResponseModel}
-import models.updateIncomeSource.{Cessation, TaxYearSpecific, UpdateIncomeSourceRequestModel, UpdateIncomeSourceResponse, UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
+import models.updateIncomeSource._
 import play.api.Logger
 import play.api.http.Status
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
-import utils.Utilities.checkAndAddTestHeaders
+import utils.Headers.checkAndAddTestHeader
 
 import java.time.LocalDate
 import javax.inject.Inject
@@ -163,7 +163,7 @@ trait IncomeTaxViewChangeConnector extends RawResponseReads with FeatureSwitchin
     implicit headerCarrier: HeaderCarrier, mtdItUser: MtdItUserWithNino[_]): Future[IncomeSourceDetailsResponse] = {
 
     //Check and add test headers Gov-Test-Scenario for dynamic stub Income Sources Created Scenarios
-    val hc = checkAndAddTestHeaders(mtdItUser.path, headerCarrier)
+    val hc = checkAndAddTestHeader(mtdItUser.path, headerCarrier)
 
     val url = getIncomeSourcesUrl(mtdItUser.mtditid)
     Logger("application").debug(s"[IncomeTaxViewChangeConnector][getIncomeSources] - GET $url")

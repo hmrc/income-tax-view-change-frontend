@@ -17,31 +17,12 @@
 package utils
 
 import play.api.libs.json.{JsObject, Json, Writes}
-import uk.gov.hmrc.http.HeaderCarrier
 
 object Utilities {
 
   implicit class JsonUtil[A](json: JsObject) {
     def ++(key: String, optValue: Option[A])(implicit writes: Writes[A]): JsObject = {
       json ++ optValue.fold(Json.obj())(value => Json.obj(key -> value))
-    }
-  }
-
-  //Checks and adding the value to the test header
-  def checkAndAddTestHeaders(requestPath: String, headerCarrier: HeaderCarrier): HeaderCarrier = {
-    val urlPathArray = requestPath.split('/')
-    val actionPath = if(urlPathArray.isEmpty) "" else urlPathArray.last
-    val updatedHeaders = govUKTestHeaderValuesMap.get(actionPath) match {
-      case Some(data) => "Gov-Test-Scenario" -> data
-      case _ => "Gov-Test-Scenario" -> ""
-    }
-    headerCarrier.withExtraHeaders(updatedHeaders)
-  }
-
-  // Map list of action names with its test header values
-  def govUKTestHeaderValuesMap(): Map[String, String] = {
-    Map {
-      "uk-property-reporting-method" -> "ISCreated" // UK Property Select reporting method
     }
   }
 
