@@ -37,6 +37,7 @@ import play.api.Logger
 import play.api.http.Status
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
+import utils.Utilities.checkAndAddTestHeaders
 
 import java.time.LocalDate
 import javax.inject.Inject
@@ -161,10 +162,14 @@ trait IncomeTaxViewChangeConnector extends RawResponseReads with FeatureSwitchin
   def getIncomeSources()(
     implicit headerCarrier: HeaderCarrier, mtdItUser: MtdItUserWithNino[_]): Future[IncomeSourceDetailsResponse] = {
 
+    //Check and add test headers Gov-Test-Scenario for dynamic stub Income Sources Created Scenarios
+    val hc = checkAndAddTestHeaders(mtdItUser.path, headerCarrier)
+
     val url = getIncomeSourcesUrl(mtdItUser.mtditid)
     Logger("application").debug(s"[IncomeTaxViewChangeConnector][getIncomeSources] - GET $url")
 
-    http.GET[HttpResponse](url) map { response =>
+    //Passing the updated headercarrier implicitly to the request
+    http.GET[HttpResponse](url)(implicitly, hc = hc, implicitly) map { response =>
       response.status match {
         case OK =>
           Logger("application").debug(s"[IncomeTaxViewChangeConnector][getIncomeSources] - RESPONSE status: ${response.status}, json: ${response.json}")
