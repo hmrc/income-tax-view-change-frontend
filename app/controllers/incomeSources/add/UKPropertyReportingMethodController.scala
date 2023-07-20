@@ -123,7 +123,8 @@ class UKPropertyReportingMethodController @Inject()(val authenticate: Authentica
   private def handleSubmitRequest(isAgent: Boolean, id: String)(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] = {
     val incomeSourcesEnabled: Boolean = isEnabled(IncomeSources)
     val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-    val redirectUrl: Call = if (isAgent) routes.UKPropertyAddedController.showAgent(id) else routes.UKPropertyAddedController.show(id)
+    val redirectUrl: Call = if (isAgent) controllers.incomeSources.add.routes.UKPropertyAddedController.showAgent(id) else
+      controllers.incomeSources.add.routes.UKPropertyAddedController.show(id)
     val submitUrl: Call = if (isAgent) controllers.incomeSources.add.routes.UKPropertyReportingMethodController.submitAgent(id) else
       controllers.incomeSources.add.routes.UKPropertyReportingMethodController.submit(id)
 
