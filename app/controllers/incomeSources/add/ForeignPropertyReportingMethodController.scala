@@ -53,36 +53,8 @@ class ForeignPropertyReportingMethodController @Inject()(val authenticate: Authe
                                                          override implicit val mcc: MessagesControllerComponents,
                                                          val ec: ExecutionContext,
                                                          val itvcErrorHandler: ItvcErrorHandler,
-                                                         val itvcErrorHandlerAgent: AgentItvcErrorHandler
-                                                        )
+                                                         val itvcErrorHandlerAgent: AgentItvcErrorHandler)
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {
-
-  def submit(id: String): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
-    andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
-    implicit user =>
-      handleSubmitRequest(
-        id = id,
-        isAgent = false,
-        itvcErrorHandler = itvcErrorHandler,
-        redirectCall = redirectCall(id),
-        postAction = postAction(id)
-      )
-  }
-
-  def submitAgent(id: String): Action[AnyContent] = Authenticated.async {
-    implicit request =>
-      implicit user =>
-        getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
-          implicit mtdItUser =>
-            handleSubmitRequest(
-              id = id,
-              isAgent = true,
-              itvcErrorHandler = itvcErrorHandlerAgent,
-              redirectCall = redirectCallAgent(id),
-              postAction = postActionAgent(id)
-            )
-        }
-  }
 
   def show(id: String): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
@@ -90,9 +62,9 @@ class ForeignPropertyReportingMethodController @Inject()(val authenticate: Authe
       handleRequest(
         id = id,
         isAgent = false,
-        itvcErrorHandler = itvcErrorHandler,
-        redirectCall = redirectCall(id),
         postAction = postAction(id),
+        redirectCall = redirectCall(id),
+        itvcErrorHandler = itvcErrorHandler
       )
   }
 
@@ -104,9 +76,36 @@ class ForeignPropertyReportingMethodController @Inject()(val authenticate: Authe
             handleRequest(
               id = id,
               isAgent = true,
-              itvcErrorHandler = itvcErrorHandlerAgent,
+              postAction = postActionAgent(id),
               redirectCall = redirectCallAgent(id),
-              postAction = postActionAgent(id)
+              itvcErrorHandler = itvcErrorHandlerAgent
+            )
+        }
+  }
+
+  def submit(id: String): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+    andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
+    implicit user =>
+      handleSubmitRequest(
+        id = id,
+        isAgent = false,
+        postAction = postAction(id),
+        redirectCall = redirectCall(id),
+        itvcErrorHandler = itvcErrorHandler
+      )
+  }
+
+  def submitAgent(id: String): Action[AnyContent] = Authenticated.async {
+    implicit request =>
+      implicit user =>
+        getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
+          implicit mtdItUser =>
+            handleSubmitRequest(
+              id = id,
+              isAgent = true,
+              postAction = postActionAgent(id),
+              redirectCall = redirectCallAgent(id),
+              itvcErrorHandler = itvcErrorHandlerAgent
             )
         }
   }
@@ -117,77 +116,24 @@ class ForeignPropertyReportingMethodController @Inject()(val authenticate: Authe
                             postAction: Call,
                             redirectCall: Call)
                            (implicit user: MtdItUser[_]): Future[Result] = {
-
-        if (isEnabled(IncomeSources)) {
-          val res = for {
-            isMandatoryOrVoluntary <- itsaStatusService.hasMandatedOrVoluntaryStatusCurrentYear
-            latencyDetailsMaybe  <- Future { user.incomeSources.properties.find(_.incomeSourceId.contains(id)).flatMap(_.latencyDetails) }
-            viewModel <- getForeignPropertyReportingMethodDetails(latencyDetailsMaybe)
-          } yield {
-            (isMandatoryOrVoluntary, viewModel) match {
-                          case (_, None) => Future(Redirect(redirectCall))
-                          case (true, Some(viewModel)) =>
-                            Future(Ok(foreignPropertyReportingMethodView(
-                              addForeignPropertyReportingMethodForm = AddForeignPropertyReportingMethodForm.form,
-                              foreignPropertyReportingViewModel = viewModel,
-                              postAction = postAction,
-                              isAgent = isAgent
-                            )))
-                          case _ => Future(Ok(customNotFoundErrorView()))
-                        }
-                      }
-          res.flatten
-        } else Future(Ok(customNotFoundErrorView()))
-
-    //    itsaStatusService.hasMandatedOrVoluntaryStatusCurrentYear.flatMap { isMandatoryOrVoluntary =>
-    //      user.incomeSources.properties.find(_.incomeSourceId.contains(id)).map { propertyDetails =>
-    //          (isMandatoryOrVoluntary, propertyDetails.latencyDetails) match {
-    //            case (_, None) => Future(Redirect(redirectCall))
-    //            case (true, Some(details)) =>
-    //              getForeignPropertyReportingMethodDetails(details).map {
-    //                case Some(viewModel) =>
-    //                  Ok(foreignPropertyReportingMethodView(
-    //                    addForeignPropertyReportingMethodForm = AddForeignPropertyReportingMethodForm.form,
-    //                    foreignPropertyReportingViewModel = viewModel,
-    //                    postAction = postAction,
-    //                    isAgent = isAgent
-    //                  ))
-    //                case _ => Redirect(redirectCall)
-    //              }
-    //            case _ =>
-    //              Logger("application").error(s"[ForeignPropertyReportingMethodController][handleRequest]: Failed to retrieve latency details")
-    //              Future.successful(Redirect(redirectCall))
-    //          }
-    //      }
-
-//
-//    if (isEnabled(IncomeSources)) {
-//      itsaStatusService.hasMandatedOrVoluntaryStatusCurrentYear.flatMap {
-//        case true =>
-//
-//          val maybeLatencyDetails = user.incomeSources.properties
-//            .find(_.incomeSourceId.contains(id))
-//            .flatMap(_.latencyDetails)
-//
-//          maybeLatencyDetails match {
-//            case Some(details) =>
-//              getForeignPropertyReportingMethodDetails(details).map {
-//                case Some(viewModel) =>
-//                  Ok(foreignPropertyReportingMethodView(
-//                    addForeignPropertyReportingMethodForm = AddForeignPropertyReportingMethodForm.form,
-//                    foreignPropertyReportingViewModel = viewModel,
-//                    postAction = postAction,
-//                    isAgent = isAgent
-//                  ))
-//                case None => Redirect(redirectCall)
-//              }
-//            case None =>
-//              Logger("application").error(s"[ForeignPropertyReportingMethodController][handleRequest]: Latency details not found")
-//              Future.successful(Redirect(redirectCall))
-//          }
-//        case false => Future.successful(Redirect(redirectCall))
-//      }
-//    } else Future(Ok(customNotFoundErrorView()))
+    (for {
+      isMandatoryOrVoluntary <- itsaStatusService.hasMandatedOrVoluntaryStatusCurrentYear
+      latencyDetailsMaybe <- Future(user.incomeSources.properties.find(_.incomeSourceId.contains(id)).flatMap(_.latencyDetails))
+      viewModel <- getForeignPropertyReportingMethodDetails(latencyDetailsMaybe)
+    } yield {
+      (isEnabled(IncomeSources), isMandatoryOrVoluntary, viewModel) match {
+        case (false, _, _) => Future(Ok(customNotFoundErrorView()))
+        case (_, _, None) => Future.successful(Redirect(redirectCall))
+        case (_, true, Some(viewModel)) =>
+          Future(Ok(foreignPropertyReportingMethodView(
+            form = AddForeignPropertyReportingMethodForm.form,
+            viewModel = viewModel,
+            postAction = postAction,
+            isAgent = isAgent
+          )))
+        case _ => Future(Ok(customNotFoundErrorView()))
+      }
+    }).flatten
   }
 
     private def handleSubmitRequest(id: String,
@@ -199,50 +145,39 @@ class ForeignPropertyReportingMethodController @Inject()(val authenticate: Authe
 
       if (isEnabled(IncomeSources)) {
         AddForeignPropertyReportingMethodForm.form.bindFromRequest().fold(
-          hasErrors => {
-
-            val maybeLatencyDetails = user.incomeSources.properties
-              .find(_.incomeSourceId.contains(id))
-              .flatMap(_.latencyDetails)
-
-            val updatedForm = AddForeignPropertyReportingMethodForm.updateErrorMessagesWithValues(hasErrors)
-
-//            maybeLatencyDetails match {
-//              case Some(details) =>
-                getForeignPropertyReportingMethodDetails(maybeLatencyDetails).map {
-                  case Some(viewModel) =>
-                    BadRequest(foreignPropertyReportingMethodView(
-                      addForeignPropertyReportingMethodForm = updatedForm,
-                      foreignPropertyReportingViewModel = viewModel,
-                      postAction = postAction,
-                      isAgent = isAgent
-                    ))
-                  case None =>
-                    Logger("application").error(s"[ForeignPropertyReportingMethodController][handleRequest]: Failed to retrieve latency details")
-//                                    Future.successful(Redirect(redirectCall))
-                    Redirect(redirectCall)
-                }
-//              case _ =>
-//                Logger("application").error(s"[ForeignPropertyReportingMethodController][handleRequest]: Failed to retrieve latency details")
-//                Future.successful(Redirect(redirectCall))
-//            }
+          formWithErrors => {
+            for {
+              latencyDetailsMaybe <- Future(user.incomeSources.properties.find(_.incomeSourceId.contains(id)).flatMap(_.latencyDetails))
+              fPropertyReportingMethodViewModel <- getForeignPropertyReportingMethodDetails(latencyDetailsMaybe)
+            } yield {
+              fPropertyReportingMethodViewModel match {
+                case Some(viewModel) =>
+                  BadRequest(foreignPropertyReportingMethodView(
+                    form = AddForeignPropertyReportingMethodForm.updateErrorMessagesWithValues(formWithErrors),
+                    viewModel = viewModel,
+                    postAction = postAction,
+                    isAgent = isAgent
+                  ))
+                case None =>
+                  Logger("application").error(s"[ForeignPropertyReportingMethodController][handleRequest]: Failed to retrieve latency details")
+                  Redirect(redirectCall)
+              }
+            }
           },
           valid => {
-            val taxYear1ReportingMethod = valid.taxYear1ReportingMethod
-            val taxYear2ReportingMethod = valid.taxYear2ReportingMethod
-            val newTaxYear1ReportingMethod = valid.newTaxYear1ReportingMethod
-            val newTaxYear2ReportingMethod = valid.newTaxYear2ReportingMethod
 
-            if (taxYear1ReportingMethod != newTaxYear1ReportingMethod || taxYear2ReportingMethod != newTaxYear2ReportingMethod) {
-              val taxYearSpecific1 = newTaxYear1ReportingMethod match {
-                case Some(s) => Some(TaxYearSpecific(valid.taxYear1.get, annualQuarterlyToBoolean(Some(s)).get))
-                case _ => None
-              }
-              val taxYearSpecific2 = newTaxYear2ReportingMethod match {
-                case Some(s) => Some(TaxYearSpecific(valid.taxYear2.get, annualQuarterlyToBoolean(Some(s)).get))
-                case _ => None
-              }
-              updateIncomeSourceService.updateTaxYearSpecific(user.nino, id, List(taxYearSpecific1, taxYearSpecific2).flatten).map {
+            if (valid.reportingMethodIsChanged) {
+
+              val updatedReportingMethods = List(
+                getTaxYearSpecific(valid.taxYear1, valid.taxYear1ReportingMethod),
+                getTaxYearSpecific(valid.taxYear2, valid.taxYear2ReportingMethod)
+              ).flatten
+
+              updateIncomeSourceService.updateTaxYearSpecific(
+                nino = user.nino,
+                incomeSourceId = id,
+                taxYearSpecific = updatedReportingMethods
+              ).map {
                 case res: UpdateIncomeSourceResponseModel =>
                   Logger("application").info(s"${if (isAgent) "[Agent]"}" + s" Updated tax year specific reporting method : $res")
                   Redirect(redirectCall)
@@ -252,24 +187,11 @@ class ForeignPropertyReportingMethodController @Inject()(val authenticate: Authe
               }
             } else {
               Logger("application").info(s"${if (isAgent) "[Agent]"}" + s" Updating the tax year specific reporting method not required.")
-              Future(Redirect(redirectCall))
+              Future.successful(Redirect(redirectCall))
             }
           })
-      } else {
-        Future.successful(Ok(customNotFoundErrorView()))
-      } recover {
-        case ex: Exception =>
-          Logger("application").error(s"Error getting BusinessReportingMethodController page: ${ex.getMessage}")
-          itvcErrorHandler.showInternalServerError()
-      }
-
+      } else Future(Ok(customNotFoundErrorView()))
     }
-
-  private def annualQuarterlyToBoolean(method: Option[String]): Option[Boolean] = method match {
-    case Some("A") => Some(true)
-    case Some("Q") => Some(false)
-    case _ => None
-  }
 
   private def getForeignPropertyReportingMethodDetails(latencyDetailsMaybe: Option[LatencyDetails])
                                                       (implicit user: MtdItUser[_]): Future[Option[ForeignPropertyReportingMethodViewModel]] = {
@@ -294,8 +216,25 @@ class ForeignPropertyReportingMethodController @Inject()(val authenticate: Authe
               )))
           }
         }
-      case None => Future{ None }
+      case None => Future(None)
     }
+  }
+
+  private def isAnnualReporting(taxYearReportingMethod: String): Boolean = {
+    taxYearReportingMethod match {
+      case "A" => true
+      case _ => false
+    }
+  }
+
+  private def getTaxYearSpecific(taxYear: Option[String], reportingMethod: Option[String]): Option[TaxYearSpecific] = for {
+    taxYear <- taxYear
+    taxYearReportingMethod <- reportingMethod
+  } yield {
+    TaxYearSpecific(
+      taxYear = taxYear,
+      latencyIndicator = isAnnualReporting(taxYearReportingMethod)
+    )
   }
 
   private def postAction(id: String) = controllers.incomeSources.add.routes.ForeignPropertyReportingMethodController.submit(id)

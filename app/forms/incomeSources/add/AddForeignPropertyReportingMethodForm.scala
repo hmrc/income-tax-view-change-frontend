@@ -63,6 +63,8 @@ case class AddForeignPropertyReportingMethodForm(newTaxYear1ReportingMethod: Opt
                                                  taxYear2: Option[String],
                                                  taxYear2ReportingMethod: Option[String]) {
 
+  def reportingMethodIsChanged: Boolean = taxYear1ReportingMethod != newTaxYear1ReportingMethod || taxYear2ReportingMethod != newTaxYear2ReportingMethod
+
   def toFormMap: Map[String, Option[String]] = Map(
     AddForeignPropertyReportingMethodForm.newTaxYear1ReportingMethod -> newTaxYear1ReportingMethod,
     AddForeignPropertyReportingMethodForm.newTaxYear2ReportingMethod -> newTaxYear2ReportingMethod,

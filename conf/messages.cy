@@ -1401,7 +1401,11 @@ incomeSources.add.foreignPropertyReportingMethod.heading                   =   D
 incomeSources.add.foreignPropertyReportingMethod.description1              =   Mae’ch busnes yn gymwys i gael cyfnod gras hyd at Ebrill {0}, lle y gallwch gyflwyno adroddiadau’n flynyddol.
 incomeSources.add.foreignPropertyReportingMethod.description2              =   Bydd yn rhaid gwneud un diweddariad, a hynny erbyn 31 Ionawr fan bellaf.
 incomeSources.add.foreignPropertyReportingMethod.description3              =   Nid yw’r canlynol yn cael effaith ar eich cyfnod gras:
-incomeSources.add.foreignPropertyReportingMethod.description4              =   <li>lefel eich incwm o ffynonellau eraill</li><li>y trosiant rydych yn disgwyl i’ch busnes newydd ei wneud</li><li>sut yr ydych yn cyflwyno adroddiadau ar gyfer unrhyw ffynonellau incwm presennol</li>
+incomeSources.add.foreignPropertyReportingMethod.description4.bullet1      =   lefel eich incwm o ffynonellau eraill
+incomeSources.add.foreignPropertyReportingMethod.description4.bullet2      =   y trosiant rydych yn disgwyl i’ch busnes newydd ei wneud
+incomeSources.add.foreignPropertyReportingMethod.description4.bullet3      =   sut yr ydych yn cyflwyno adroddiadau ar gyfer unrhyw ffynonellau incwm presennol
+
+
 incomeSources.add.foreignPropertyReportingMethod.chooseReport              =   Dewiswch sut yr hoffech gyflwyno adroddiadau
 incomeSources.add.foreignPropertyReportingMethod.taxYear                   =   Blwyddyn dreth {0}-{1}
 incomeSources.add.foreignPropertyReportingMethod.chooseAnnualReport        =   Dewis cyflwyno adroddiadau’n flynyddol

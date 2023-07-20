@@ -18,21 +18,21 @@
 @import views.html.helpers.injected.ContinueButton
 @import views.html.helpers.injected.ErrorSummary
 @import views.html.helpers.injected.RadioHelper
-@import views.helpers.RadioOption
 @import models.incomeSourceDetails.viewmodels.ForeignPropertyReportingMethodViewModel
 @import views.html.helpers.injected.InputHelper
 @import uk.gov.hmrc.govukfrontend.views.html.components.FormWithCSRF
 @import uk.gov.hmrc.govukfrontend.views.html.components.{GovukCheckboxes, Radios, GovukRadios, Fieldset, Legend, Text, RadioItem, GovukInput, Input}
-@import uk.gov.hmrc.govukfrontend.views.viewmodels.checkboxes.CheckboxItem
-@import uk.gov.hmrc.govukfrontend.views.Aliases.Checkboxes
 @import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
-@import views.html.layouts.unifiedLayout
 @import views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcPageHeading
+@import uk.gov.hmrc.hmrcfrontend.views.viewmodels.pageheading.PageHeading
 
 
 @this(
     mainTemplate: unifiedLayout,
+    hmrcPageHeading: HmrcPageHeading,
+    govukErrorSummary: GovukErrorSummary,
     inputHelper: InputHelper,
     continueButton: ContinueButton,
     formWithCSRF: FormWithCSRF,
@@ -43,91 +43,96 @@
     govukCheckboxes: GovukCheckboxes,
     govukInput : GovukInput,
     h1: h1,
-    p:p
+    p: p
 )
 
-@(addForeignPropertyReportingMethodForm: Form[_],
-        foreignPropertyReportingViewModel: ForeignPropertyReportingMethodViewModel,
+@(
+        form: Form[_],
+        viewModel: ForeignPropertyReportingMethodViewModel,
         postAction: Call,
         isAgent: Boolean)(implicit user: auth.MtdItUser[_], messages: Messages)
 
-@renderChooseReportingMethodOptions(taxYear: Option[String], taxYearSeq: String, latencyIndicator: Option[String]) = {
-
-    @govukInput(
-        Input(
-            inputType = "hidden",
-            classes = "govuk-visually-hidden",
-            value = taxYear
-        ).withFormField(addForeignPropertyReportingMethodForm("new_"+taxYearSeq+"_reporting_method_tax_year"))
-    )
-
-    @govukInput(
-        Input(
-            inputType = "hidden",
-            classes = "govuk-visually-hidden",
-            value = latencyIndicator
-        ).withFormField(addForeignPropertyReportingMethodForm(taxYearSeq+"_reporting_method"))
-    )
-
-    @govukRadios(
-        Radios(
-            fieldset = Some(Fieldset(
-                legend = Some(Legend(
-                    content = Text(messages("incomeSources.add.foreignPropertyReportingMethod.taxYear", (taxYear.get.toInt - 1).toString, taxYear.get.toString)),
-                    classes = "govuk-fieldset__legend govuk-!-margin-bottom-5",
-                    isPageHeading = false
-                ))
-            )),
-            items = Seq(
-                RadioItem(
-                    content = HtmlContent("<b>"+messages("incomeSources.add.foreignPropertyReportingMethod.chooseAnnualReport")+"</b>"),
-                    value = Some("A")
-                ),
-                RadioItem(
-                    content = HtmlContent("<b>"+messages("incomeSources.add.foreignPropertyReportingMethod.chooseQuarterlyReport")+"</b>"),
-                    value = Some("Q")
-                )
-        )).withFormField(addForeignPropertyReportingMethodForm("new_"+taxYearSeq+"_reporting_method"))
-    )
+@getMessage(key: String, args: String*) = @{
+    messages(s"incomeSources.add.foreignPropertyReportingMethod.$key", args: _*)
 }
 
-@mainTemplate(pageTitle = messages("incomeSources.add.foreignPropertyReportingMethod.heading"), isAgent = isAgent, backUrl = None, btaNavPartial = user.btaNavPartial) {
+@renderForm(taxYear: Option[String], taxYearSeq: String, latencyIndicator: Option[String]) = {
 
-    @errorSummary(
-        form = addForeignPropertyReportingMethodForm
-    )
+    @govukInput(Input(
+        inputType = "hidden",
+        classes = "govuk-visually-hidden",
+        value = taxYear
+    ).withFormField(form("new_" + taxYearSeq + "_reporting_method_tax_year")))
 
-    @h1(messages("incomeSources.add.foreignPropertyReportingMethod.heading"), classes = "govuk-heading-xl margin-bottom-100")
+    @govukInput(Input(
+        inputType = "hidden",
+        classes = "govuk-visually-hidden",
+        value = latencyIndicator
+    ).withFormField(form(taxYearSeq + "_reporting_method")))
 
-    @p(){@messages("incomeSources.add.foreignPropertyReportingMethod.description1", foreignPropertyReportingViewModel.taxYear2.get.toString)}
+    @govukRadios(Radios(
+        fieldset = Some(Fieldset(
+            legend = Some(Legend(
+                content = Text(messages(getMessage("taxYear"), (taxYear.get.toInt - 1).toString, taxYear.get)),
+                classes = "govuk-fieldset__legend govuk-!-margin-bottom-5",
+                isPageHeading = false
+            ))
+        )),
+        items = Seq(
+            RadioItem(
+                content = HtmlContent("<b>" + getMessage("chooseAnnualReport") + "</b>"),
+                value = Some("A")
+            ),
+            RadioItem(
+                content = HtmlContent("<b>" + getMessage("chooseQuarterlyReport") + "</b>"),
+                value = Some("Q")
+            )
+    )).withFormField(form("new_"+taxYearSeq+"_reporting_method")))
+}
 
-    @p(){@messages("incomeSources.add.foreignPropertyReportingMethod.description2")}
+@mainTemplate(
+    pageTitle = messages(getMessage("heading")),
+    isAgent = isAgent,
+    backUrl = None,
+    btaNavPartial = user.btaNavPartial) {
 
-    @p(){@messages("incomeSources.add.foreignPropertyReportingMethod.description3")}
+    @hmrcPageHeading(PageHeading(
+        text = getMessage("heading"),
+        headingClasses = Some("govuk-heading-xl margin-bottom-100")
+    ))
+
+    @p(){@messages(getMessage("description1"), viewModel.taxYear2.get)}
+    @p(){@messages(getMessage("description2"))}
+    @p(){@messages(getMessage("description3"))}
 
     <ul class="govuk-list govuk-list--bullet">
-        @Html(messages("incomeSources.add.foreignPropertyReportingMethod.description4"))
+        <li>@Html(messages(getMessage("description4.bullet1")))</li>
+        <li>@Html(messages(getMessage("description4.bullet2")))</li>
+        <li>@Html(messages(getMessage("description4.bullet3")))</li>
     </ul>
 
-    @h1(messages("incomeSources.add.foreignPropertyReportingMethod.chooseReport"), classes = "govuk-heading-m")
+    @hmrcPageHeading(PageHeading(
+        text = getMessage("chooseReport"),
+        headingClasses = Some("govuk-heading-m"),
+    ))
 
-    @formWithCSRF(action = postAction, Symbol("id") -> "add-business-reporting-method-form") {
-       @if(foreignPropertyReportingViewModel.taxYear1.isDefined){
-            @renderChooseReportingMethodOptions(foreignPropertyReportingViewModel.taxYear1, "tax_year_1", foreignPropertyReportingViewModel.latencyIndicator1)
-                @govukInput(
-                    Input(
-                        id = "new_tax_year_1_reporting_method-3",
-                        inputType = "hidden",
-                        classes = "govuk-visually-hidden",
-                        value = Some("none")
-                    ).withFormField(addForeignPropertyReportingMethodForm("new_tax_year_1_reporting_method").copy(errors = Seq()))
-                )
+    @formWithCSRF(action = postAction, Symbol("id") -> "add-foreign-property-reporting-method-form") {
+
+        @if(form.errors.nonEmpty) { @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form)) }
+
+        @if(viewModel.taxYear1.isDefined){
+            @renderForm(viewModel.taxYear1, "tax_year_1", viewModel.latencyIndicator1)
+                @govukInput(Input(
+                    id = "new_tax_year_1_reporting_method-3",
+                    inputType = "hidden",
+                    classes = "govuk-visually-hidden",
+                    value = Some("none")
+                ).withFormField(form("new_tax_year_1_reporting_method").copy(errors = Seq())))
         }
 
-       @if(foreignPropertyReportingViewModel.taxYear2.isDefined){
-            @renderChooseReportingMethodOptions(foreignPropertyReportingViewModel.taxYear2, "tax_year_2", foreignPropertyReportingViewModel.latencyIndicator2)
+       @if(viewModel.taxYear2.isDefined){
+            @renderForm(viewModel.taxYear2, "tax_year_2", viewModel.latencyIndicator2)
         }
-
         @continueButton()
     }
 }
