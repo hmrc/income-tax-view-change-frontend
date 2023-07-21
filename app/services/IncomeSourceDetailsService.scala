@@ -16,11 +16,12 @@
 
 package services
 
-import auth.MtdItUserWithNino
+import auth.{MtdItUser, MtdItUserWithNino}
+import config.featureswitch.TimeMachineAddYear
 import connectors.IncomeTaxViewChangeConnector
 import exceptions.MissingFieldException
 import models.incomeSourceDetails.viewmodels._
-import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, IncomeSourceDetailsResponse}
+import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, IncomeSourceDetailsResponse, LatencyDetails}
 import play.api.Logger
 import play.api.cache.AsyncCacheApi
 import play.api.libs.json.{JsPath, JsSuccess, JsValue, Json}
@@ -149,27 +150,6 @@ class IncomeSourceDetailsService @Inject()(val incomeTaxViewChangeConnector: Inc
       )
     }.toEither
   }
-
-  def getViewIncomeSourceChosenViewModel(sources: IncomeSourceDetailsModel, id: String): Either[Throwable, ViewBusinessDetailsViewModel] = {
-    val desiredIncomeSource: BusinessDetailsModel = sources.businesses
-//      .filterNot(_.isCeased)
-//      .filter(_.incomeSourceId.getOrElse(throw new MissingFieldException("incomeSourceId missing")) == id)
-      .head
-
-    println("MMMMMMMMMMMMMMM" + sources)
-    println("??????????????????" + desiredIncomeSource)
-
-    Try {
-      ViewBusinessDetailsViewModel(
-        incomeSourceId = desiredIncomeSource.incomeSourceId.getOrElse(throw new MissingFieldException("Missing incomeSourceId field")),
-        tradingName = desiredIncomeSource.tradingName,
-        tradingStartDate = desiredIncomeSource.tradingStartDate,
-        businessAddressDetails = desiredIncomeSource.businessAddressDetails,
-        businessAccountingMethod = desiredIncomeSource.cashOrAccruals
-      )
-    }.toEither
-  }
-
 
   def getCeaseIncomeSourceViewModel(sources: IncomeSourceDetailsModel): Either[Throwable, CeaseIncomeSourcesViewModel] = {
 

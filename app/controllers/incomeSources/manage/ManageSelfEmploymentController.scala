@@ -17,22 +17,23 @@
 package controllers.incomeSources.manage
 
 import auth.MtdItUser
-import config.featureswitch.{FeatureSwitching, IncomeSources}
+import config.featureswitch.{FeatureSwitching, IncomeSources, TimeMachineAddYear}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
 import exceptions.MissingFieldException
 import models.incomeSourceDetails.viewmodels.ViewBusinessDetailsViewModel
-import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
+import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, LatencyDetails}
 import play.api.Logger
 import play.api.mvc._
-import services.IncomeSourceDetailsService
+import services.{DateService, ITSAStatusService, IncomeSourceDetailsService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
 import views.html.incomeSources.manage.BusinessManageDetails
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.Try
 
 @Singleton
 class ManageSelfEmploymentController @Inject()(val view: BusinessManageDetails,
@@ -44,6 +45,8 @@ class ManageSelfEmploymentController @Inject()(val view: BusinessManageDetails,
                                                val itvcErrorHandler: ItvcErrorHandler,
                                                implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                                val incomeSourceDetailsService: IncomeSourceDetailsService,
+                                               val itsaStatusService: ITSAStatusService,
+                                               val dateService: DateService,
                                                val retrieveBtaNavBar: NavBarPredicate)
                                               (implicit val ec: ExecutionContext,
                                              implicit override val mcc: MessagesControllerComponents,
@@ -75,6 +78,33 @@ class ManageSelfEmploymentController @Inject()(val view: BusinessManageDetails,
         }
   }
 
+  def getViewIncomeSourceChosenViewModel(sources: IncomeSourceDetailsModel, id: String)
+                                        (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Option[ViewBusinessDetailsViewModel]] = {
+    val desiredIncomeSource: BusinessDetailsModel = sources.businesses
+      .filterNot(_.isCeased)
+      .filter(_.incomeSourceId.getOrElse(throw new MissingFieldException("incomeSourceId missing")) == id)
+      .head
+
+    val latencyDetails: Option[LatencyDetails] = desiredIncomeSource.latencyDetails
+    latencyDetails match {
+      case Some(x) =>
+        val currentTaxYear = dateService.getCurrentTaxYearEnd(isEnabled(TimeMachineAddYear))
+        x match {
+          case LatencyDetails(_, _, _, taxYear2, _) if // use BusinessReportingMethodController
+        }
+    }
+    Try {
+      ViewBusinessDetailsViewModel(
+        incomeSourceId = desiredIncomeSource.incomeSourceId.getOrElse(throw new MissingFieldException("Missing incomeSourceId field")),
+        tradingName = desiredIncomeSource.tradingName,
+        tradingStartDate = desiredIncomeSource.tradingStartDate,
+        address = desiredIncomeSource.address,
+        businessAccountingMethod = desiredIncomeSource.cashOrAccruals,
+        itsaHasMandatedOrVoluntaryStatusCurrentYear = itsaStatusService.hasMandatedOrVoluntaryStatusCurrentYear
+      )
+    }.toEither
+  }
+
   def handleRequest(sources: IncomeSourceDetailsModel, isAgent: Boolean, backUrl: String, id: String)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
 
@@ -82,7 +112,7 @@ class ManageSelfEmploymentController @Inject()(val view: BusinessManageDetails,
       Future.successful(Redirect(controllers.routes.HomeController.show()))
     } else {
       Future {
-        incomeSourceDetailsService.getViewIncomeSourceChosenViewModel(sources = sources, id = id) match {
+        getViewIncomeSourceChosenViewModel(sources = sources, id = id) match {
           case Right(viewModel: ViewBusinessDetailsViewModel) =>
             Ok(view(
               viewModel = viewModel,

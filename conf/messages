@@ -1445,6 +1445,7 @@ incomeSources.add.ukPropertyReportingMethod.error                     =   Select
 
 # manage journey manage income source
 incomeSources.manage.business-manage-details.heading                =   Manage your details
+incomeSources.manage.business-manage-details.sole-trader-section    =   Sole trader business
 incomeSources.manage.business-manage-details.business-name          =   Business name
 incomeSources.manage.business-manage-details.business-address       =   Business address
 incomeSources.manage.business-manage-details.date-started           =   Date started

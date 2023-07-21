@@ -16,7 +16,7 @@
 
 package models.incomeSourceDetails.viewmodels
 
-import models.incomeSourceDetails.{BusinessAddressDetailsModel, LatencyDetails}
+import models.core.AddressModel
 
 import java.time.LocalDate
 
@@ -28,8 +28,9 @@ case class ViewIncomeSourcesViewModel(viewSoleTraderBusinesses: List[ViewBusines
 case class ViewBusinessDetailsViewModel(incomeSourceId: String,
                                         tradingName: Option[String],
                                         tradingStartDate: Option[LocalDate],
-                                        businessAddressDetails: Option[BusinessAddressDetailsModel] = None,
-                                        businessAccountingMethod: Option[String] = None
+                                        address: Option[AddressModel] = None,
+                                        businessAccountingMethod: Option[String] = None,
+                                        itsaHasMandatedOrVoluntaryStatusCurrentYear: Boolean
                                        )
 
 case class ViewPropertyDetailsViewModel(tradingStartDate: Option[LocalDate])

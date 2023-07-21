@@ -72,7 +72,7 @@
     @hmrcPageHeading(PageHeading(
         text = getMessage("heading"),
         headingClasses = Some("govuk-heading-l"),
-        section = Some(getMessage("sole-trader-caption")),
+        section = Some(getMessage("sole-trader-section")),
         captionClasses = Some("govuk-caption-l")
     ))
 
@@ -86,8 +86,7 @@
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">@getMessage("business-address")</dt>
             <dd class="govuk-summary-list__value" id="business-address">@{
-                viewModel.businessAddressDetails.get.postCode
-                <p>!!!!!!!!!!!!!!!!!!!</p>
+                viewModel.address.get.postCode
             }</dd>
         </div>
         <div class="govuk-summary-list__row">
