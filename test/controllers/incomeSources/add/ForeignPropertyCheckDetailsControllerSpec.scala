@@ -22,7 +22,7 @@ import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
 import forms.utils.SessionKeys
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
-import models.addIncomeSource.AddIncomeSourceResponse
+import models.createIncomeSource.CreateIncomeSourceResponse
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.mockito.ArgumentMatchers.any
@@ -265,7 +265,7 @@ with MockIncomeSourceDetailsPredicate with MockNavBarEnumFsPredicate with Featur
         setupMockGetIncomeSourceDetails()(noIncomeDetails)
 
         when(mockBusinessDetailsService.createForeignProperty(any())(any(), any(), any())).
-          thenReturn(Future(Right(AddIncomeSourceResponse("123"))))
+          thenReturn(Future(Right(CreateIncomeSourceResponse("123"))))
         val result = TestForeignPropertyCheckDetailsController.submit()(
           fakeRequestWithActiveSession
             .withSession(
@@ -284,7 +284,7 @@ with MockIncomeSourceDetailsPredicate with MockNavBarEnumFsPredicate with Featur
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
         setupMockGetIncomeSourceDetails()(noIncomeDetails)
         when(mockBusinessDetailsService.createForeignProperty(any())(any(), any(), any())).
-          thenReturn(Future(Right(AddIncomeSourceResponse("123"))))
+          thenReturn(Future(Right(CreateIncomeSourceResponse("123"))))
 
         val result = TestForeignPropertyCheckDetailsController.submitAgent(fakeRequestConfirmedClient()
           .withSession(
