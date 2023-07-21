@@ -1111,7 +1111,14 @@ credit-and-refund.credit-from-balancing-charge-prt-1              = from a
 credit-and-refund.credit-from-balancing-charge-prt-2              = balancing charge credit
 credit-and-refund.credit-from-earlier-tax-year                    = credit from an earlier tax year
 
-## Income Sources - Add
+#######################################################################################################################
+## Income Sources - Add ##
+#######################################################################################################################
+## Reusable Add Messages ##
+incomeSources.add.accountingMethod.cash                             = Cash basis accounting
+incomeSources.add.accountingMethod.accruals                         = Traditional accounting
+
+## Add Income Sources Page ##
 incomeSources.add.addIncomeSources.heading                          = Add a new sole trader or property income source
 incomeSources.add.addIncomeSources.selfEmployment.heading           = Sole trader businesses
 incomeSources.add.addIncomeSources.selfEmployment.text              = You do not need to tell us about a business we already know about.
@@ -1219,12 +1226,19 @@ notmigrated.agent.content_extra                                 = This will be a
 notmigrated.user.link_title                                     = Self Assessment online account
 notmigrated.agent.link_title                                    = Self Assessment for Agents Account
 
-incomeSources.add.UKPropertyStartDate.heading           = When did your UK property business start?
-incomeSources.add.UKPropertyStartDate.hint              = This is the date that letting or renting out any UK property first started.
-incomeSources.add.UKPropertyStartDate.error.required    = Enter the date your UK property business started trading
-incomeSources.add.UKPropertyStartDate.error.future      = The date your UK property business started must be before {0}
-incomeSources.add.UKPropertyStartDate.error.invalid     = The date your UK property business started must be a real date
-incomeSources.add.checkUKPropertyStartDate.error.required  = Select yes if your UK property business start date is correct
+incomeSources.add.UKPropertyStartDate.heading                   = When did your UK property business start?
+incomeSources.add.UKPropertyStartDate.hint                      = This is the date that letting or renting out any UK property first started.
+incomeSources.add.UKPropertyStartDate.error.required            = Enter the date your UK property business started trading
+incomeSources.add.UKPropertyStartDate.error.future              = The date your UK property business started must be before {0}
+incomeSources.add.UKPropertyStartDate.error.invalid             = The date your UK property business started must be a real date
+incomeSources.add.checkUKPropertyStartDate.error.required       = Select yes if your UK property business start date is correct
+
+incomeSources.add.checkUKPropertyDetails.heading                = Check your details
+incomeSources.add.checkUKPropertyDetails.caption                = UK property business you entered
+incomeSources.add.checkUKPropertyDetails.startDateLabel         = UK property business start date
+incomeSources.add.checkUKPropertyDetails.accountingMethodLabel  = UK property business accounting method
+incomeSources.add.checkUKPropertyDetails.change                 = Change
+incomeSources.add.checkUKPropertyDetails.confirm                = Confirm and continue
 
 #Generic date form messages
 dateForm.hint                                                       = For example, 27 3 2020
@@ -1351,6 +1365,9 @@ add-business-start-date-check.radio.yes               = Yes
 add-business-start-date-check.radio.no                = No
 add-business-start-date-check.radio.error             = Select yes if your business start date is correct
 
+incomeSources.add.accountingMethod.cash               = Cash basis accounting
+incomeSources.add.accountingMethod.accruals           = Traditional accounting
+
 # add business accounting method
 incomeSources.add.business-accounting-method.heading                 = What accounting method do you use for your sole trader business?
 incomeSources.add.business-accounting-method.hint                    = If you have more than one sole trader business, all your businesses need to have the same accounting method.
@@ -1418,6 +1435,7 @@ incomeSources.add.businessReportingMethod.chooseAnnualReport        =   Choose a
 incomeSources.add.businessReportingMethod.chooseQuarterlyReport     =   Choose quarterly reporting
 incomeSources.add.businessReportingMethod.error                     =   Select if you want to report annually or quarterly for tax year {0} to {1}
 
+
 incomeSources.add.foreign-property-check-details.cash-basis-accounting      = Cash basis accounting
 incomeSources.add.foreign-property-check-details.traditional-accounting     = Traditional accounting
 incomeSources.add.foreign-property-check-details.heading                    = Foreign property business you entered
@@ -1426,6 +1444,20 @@ incomeSources.add.foreign-property-check-details.start-date                 = Fo
 incomeSources.add.foreign-property-check-details.accounting-method          = Foreign property business accounting method
 incomeSources.add.foreign-property-check-details.change                     = Change
 
+
+
+incomeSources.add.foreignPropertyReportingMethod.heading                   =   Choose a reporting method
+incomeSources.add.foreignPropertyReportingMethod.description1              =   Your business qualifies for a grace period available up until April {0} where you can report annually.
+incomeSources.add.foreignPropertyReportingMethod.description2              =   This involves a single update no later than 31 January.
+incomeSources.add.foreignPropertyReportingMethod.description3              =   This grace period is not affected by either:
+incomeSources.add.foreignPropertyReportingMethod.description4.bullet1      =   your level of income from other sources
+incomeSources.add.foreignPropertyReportingMethod.description4.bullet2      =   the turnover you expect your new business to make
+incomeSources.add.foreignPropertyReportingMethod.description4.bullet3      =   how you report with any existing income sources
+incomeSources.add.foreignPropertyReportingMethod.chooseReport              =   Choose how you want to report
+incomeSources.add.foreignPropertyReportingMethod.taxYear                   =   Tax year {0}-{1}
+incomeSources.add.foreignPropertyReportingMethod.chooseAnnualReport        =   Choose annual reporting
+incomeSources.add.foreignPropertyReportingMethod.chooseQuarterlyReport     =   Choose quarterly reporting
+incomeSources.add.foreignPropertyReportingMethod.error                     =   Select if you want to report annually or quarterly for tax year {0} to {1}
 
 
 # add uk property business accounting method

@@ -14,21 +14,9 @@
  * limitations under the License.
  */
 
-package models.addIncomeSource
+package models.incomeSourceDetails.viewmodels
 
-import play.api.libs.json.{Format, Json}
-
-import java.time.LocalDate
-
-
-case class AddIncomeSourceResponse(incomeSourceId: String)
-
-object AddIncomeSourceResponse {
-  implicit val format: Format[AddIncomeSourceResponse] = Json.format
-}
-
-final case class CreateBusinessErrorResponse(status: Int, reason: String)
-
-object CreateBusinessErrorResponse {
-  implicit val format: Format[CreateBusinessErrorResponse] = Json.format
-}
+case class ForeignPropertyReportingMethodViewModel(taxYear1: Option[String] = None,
+                                                   latencyIndicator1: Option[String] = None,
+                                                   taxYear2: Option[String] = None,
+                                                   latencyIndicator2: Option[String] = None)
