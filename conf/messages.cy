@@ -1411,6 +1411,14 @@ incomeSources.add.businessReportingMethod.chooseAnnualReport        =   Dewis cy
 incomeSources.add.businessReportingMethod.chooseQuarterlyReport     =   Dewis cyflwyno adroddiadau’n chwarterol
 incomeSources.add.businessReportingMethod.error                     =   Dewiswch a hoffech gyflwyno adroddiad yn flynyddol neu’n chwarterol ar gyfer blwyddyn dreth {0} i {1}
 
+incomeSources.add.foreign-property-check-details.cash-basis-accounting      = Cyfrifyddu ar sail arian parod
+incomeSources.add.foreign-property-check-details.traditional-accounting     = Cyfrifyddu traddodiadol
+incomeSources.add.foreign-property-check-details.heading                    = Y busnes eiddo tramor a nodwyd gennych
+incomeSources.add.foreign-property-check-details.title                      = Gwirio’ch manylion
+incomeSources.add.foreign-property-check-details.start-date                 = Dyddiad dechrau’r busnes eiddo tramor
+incomeSources.add.foreign-property-check-details.accounting-method          = Dull cyfrifyddu’r busnes eiddo tramor
+incomeSources.add.foreign-property-check-details.change                     = Newid
+
 incomeSources.add.foreignPropertyReportingMethod.heading                   =   Dewis dull o gyflwyno adroddiad
 incomeSources.add.foreignPropertyReportingMethod.description1              =   Mae’ch busnes yn gymwys i gael cyfnod gras hyd at Ebrill {0}, lle y gallwch gyflwyno adroddiadau’n flynyddol.
 incomeSources.add.foreignPropertyReportingMethod.description2              =   Bydd yn rhaid gwneud un diweddariad, a hynny erbyn 31 Ionawr fan bellaf.
