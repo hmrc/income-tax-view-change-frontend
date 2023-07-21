@@ -124,10 +124,12 @@ class ForeignPropertyReportingMethodController @Inject()(val authenticate: Authe
     } yield {
       (isEnabled(IncomeSources), isMandatoryOrVoluntary, viewModel) match {
         case (false, _, _) =>
-          // TODO: log error
+          Logger("application")
+            .error(s"[ForeignPropertyReportingMethodController][handleRequest]: not found error")
           Future(Ok(customNotFoundErrorView()))
         case (_, _, Left(ex)) =>
-          // TODO: Log error and call error handler
+          Logger("application")
+            .error(s"[ForeignPropertyReportingMethodController][handleRequest]: Failed with error - $ex")
           Future.successful(Redirect(redirectCall))
         case (_, true, Right(viewModel)) =>
           Future(Ok(foreignPropertyReportingMethodView(
@@ -136,7 +138,10 @@ class ForeignPropertyReportingMethodController @Inject()(val authenticate: Authe
             postAction = postAction,
             isAgent = isAgent
           )))
-        case _ => Future(Ok(customNotFoundErrorView()))
+        case _ =>
+          Logger("application")
+            .error(s"[ForeignPropertyReportingMethodController][handleRequest]: second level not found error")
+          Future(Ok(customNotFoundErrorView()))
       }
     }).flatten
   }
