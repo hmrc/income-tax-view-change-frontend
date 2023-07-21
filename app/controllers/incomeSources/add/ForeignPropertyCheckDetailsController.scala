@@ -22,7 +22,7 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import forms.utils.SessionKeys._
-import models.addIncomeSource.AddIncomeSourceResponse
+import models.createIncomeSource.CreateIncomeSourceResponse
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import models.incomeSourceDetails.viewmodels.CheckForeignPropertyViewModel
 import play.api.Logger
@@ -184,7 +184,7 @@ class ForeignPropertyCheckDetailsController @Inject()(val checkForeignPropertyDe
               itvcErrorHandler.showInternalServerError()
             }
 
-          case Right(AddIncomeSourceResponse(id)) =>
+          case Right(CreateIncomeSourceResponse(id)) =>
             if (isAgent) Redirect(controllers.incomeSources.add.routes.ForeignPropertyReportingMethodController.showAgent(id).url).withSession(user.session -- sessionKeys)
             else Redirect(controllers.incomeSources.add.routes.ForeignPropertyReportingMethodController.show(id).url).withSession(user.session -- sessionKeys)
         }
