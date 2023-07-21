@@ -20,7 +20,7 @@ import config.featureswitch.IncomeSources
 import forms.utils.SessionKeys.{addUkPropertyAccountingMethod, addUkPropertyStartDate}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.createIncomeSource.CreateIncomeSourceResponse
+import models.createIncomeSource.{CreateIncomeSourceErrorResponse, CreateIncomeSourceResponse}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import testConstants.BaseIntegrationTestConstants.testMtditid
 import testConstants.IncomeSourceIntegrationTestConstants.noPropertyOrBusinessResponse
@@ -32,6 +32,7 @@ class CheckUKPropertyDetailsControllerISpec extends ComponentSpecBase {
     val submitUrl: String = controllers.incomeSources.add.routes.CheckUKPropertyDetailsController.submit().url
     val backUrl: String = controllers.incomeSources.add.routes.UKPropertyAccountingMethodController.show().url
     val successUrl: String = controllers.incomeSources.add.routes.UKPropertyReportingMethodController.show("1234567890").url
+    val failureUrl: String = controllers.incomeSources.add.routes.UKPropertyNotAddedController.show().url
     val completedJourneyCookies: Map[String, String] = Map(addUkPropertyStartDate -> "2022-10-10",
       addUkPropertyAccountingMethod -> "CASH")
     val changeText: String = messagesAPI("incomeSources.add.checkUKPropertyDetails.change") + " " +
@@ -113,6 +114,30 @@ class CheckUKPropertyDetailsControllerISpec extends ComponentSpecBase {
         result should have(
           httpStatus(SEE_OTHER),
           redirectURI(CheckUKPropertyDetails.successUrl)
+        )
+      }
+    }
+    "303 SEE_OTHER and redirect to UK Property Not Added error page" when {
+      "Error received from API 1776" in {
+        Given("I wiremock stub a successful Income Source Details response with no businesses or properties")
+        enable(IncomeSources)
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
+
+        Given("I wiremock stub an unsuccessful Create Income Sources (UK Property) response")
+        val testBody = Map(
+          "ukPropertyDetails.tradingStartDate" -> Seq("2011-01-01"),
+          "ukPropertyDetails.cashOrAccrualsFlag" -> Seq("CASH"),
+          "ukPropertyDetails.startDate" -> Seq("2011-01-01")
+        )
+
+        IncomeTaxViewChangeStub.stubCreateBusinessDetailsErrorResponse(testMtditid)
+
+        When(s"I call POST ${CheckUKPropertyDetails.submitUrl}")
+        val result = IncomeTaxViewChangeFrontend.post("/income-sources/add/uk-property-check-details", CheckUKPropertyDetails.completedJourneyCookies)(testBody)
+
+        result should have(
+          httpStatus(SEE_OTHER),
+          redirectURI(CheckUKPropertyDetails.failureUrl)
         )
       }
     }
