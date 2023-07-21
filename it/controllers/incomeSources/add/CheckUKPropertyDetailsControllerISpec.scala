@@ -20,7 +20,7 @@ import config.featureswitch.IncomeSources
 import forms.utils.SessionKeys.{addUkPropertyAccountingMethod, addUkPropertyStartDate}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.createIncomeSource.{CreateIncomeSourceErrorResponse, CreateIncomeSourceResponse}
+import models.createIncomeSource.CreateIncomeSourceResponse
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import testConstants.BaseIntegrationTestConstants.testMtditid
 import testConstants.IncomeSourceIntegrationTestConstants.noPropertyOrBusinessResponse
