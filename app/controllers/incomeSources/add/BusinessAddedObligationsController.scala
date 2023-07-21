@@ -103,12 +103,17 @@ class BusinessAddedObligationsController @Inject()(authenticate: AuthenticationP
     }
   }
 
+  def handleSubmitRequest(isAgent: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
+    val redirectUrl = if (isAgent) routes.AddIncomeSourceController.showAgent().url else routes.AddIncomeSourceController.show().url
+    Future.successful {
+      Redirect(redirectUrl)
+    }
+  }
+
   def submit: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit request =>
-      Future.successful {
-        Redirect(controllers.incomeSources.add.routes.AddIncomeSourceController.show().url)
-      }
+      handleSubmitRequest(isAgent = false)
   }
 
   def agentSubmit: Action[AnyContent] = Authenticated.async {
@@ -116,9 +121,7 @@ class BusinessAddedObligationsController @Inject()(authenticate: AuthenticationP
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
           implicit mtdItUser =>
-            Future.successful {
-              Redirect(controllers.incomeSources.add.routes.AddIncomeSourceController.showAgent().url)
-            }
+            handleSubmitRequest(isAgent = true)
         }
   }
 
