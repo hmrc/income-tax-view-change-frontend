@@ -53,10 +53,10 @@ class ForeignPropertyCheckDetailsController @Inject()(val checkForeignPropertyDe
                                                       implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler) extends ClientConfirmedController
   with FeatureSwitching {
 
-  lazy val businessAccountingMethodUrl: String = controllers.incomeSources.add.routes.ForeignPropertyAccountingMethodController.show().url
-  lazy val agentBusinessAccountingMethodUrl: String = controllers.incomeSources.add.routes.ForeignPropertyAccountingMethodController.showAgent().url
-  lazy val backUrlIndividual: String = businessAccountingMethodUrl
-  lazy val backUrlAgent: String = agentBusinessAccountingMethodUrl
+  lazy val foreignPropertyAccountingMethodUrl: String = controllers.incomeSources.add.routes.ForeignPropertyAccountingMethodController.show().url
+  lazy val agentForeignPropertyAccountingMethodUrl: String = controllers.incomeSources.add.routes.ForeignPropertyAccountingMethodController.showAgent().url
+  lazy val backUrlIndividual: String = foreignPropertyAccountingMethodUrl
+  lazy val backUrlAgent: String = agentForeignPropertyAccountingMethodUrl
 
   def handleRequest(sources: IncomeSourceDetailsModel, isAgent: Boolean)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
