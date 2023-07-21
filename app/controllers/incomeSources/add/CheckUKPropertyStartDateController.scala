@@ -111,11 +111,11 @@ class CheckUKPropertyStartDateController @Inject()(val authenticate: Authenticat
       if (isAgent)
         (routes.CheckUKPropertyStartDateController.submitAgent(),
           routes.AddUKPropertyStartDateController.showAgent(),
-          routes.UKPropertyBusinessAccountingMethodController.showAgent())
+          routes.UKPropertyAccountingMethodController.showAgent())
       else
         (routes.CheckUKPropertyStartDateController.submit(),
           routes.AddUKPropertyStartDateController.show(),
-          routes.UKPropertyBusinessAccountingMethodController.show())
+          routes.UKPropertyAccountingMethodController.show())
     }
     val startDate = user.session.get(SessionKeys.addUkPropertyStartDate).get
     val formattedStartDate = dateFormatter.longDate(LocalDate.parse(startDate)).toLongDate

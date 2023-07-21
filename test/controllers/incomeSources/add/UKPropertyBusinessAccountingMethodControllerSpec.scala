@@ -38,13 +38,13 @@ import views.html.incomeSources.add.UKPropertyBusinessAccountingMethod
 
 import scala.concurrent.Future
 
-class UKPropertyBusinessAccountingMethodControllerSpec extends TestSupport with MockAuthenticationPredicate
+class UKPropertyAccountingMethodControllerSpec extends TestSupport with MockAuthenticationPredicate
   with MockIncomeSourceDetailsPredicate with FeatureSwitching {
 
   val mockHttpClient: HttpClient = mock(classOf[HttpClient])
   val mockUKPropertyBusinessAccountingMethod: UKPropertyBusinessAccountingMethod = app.injector.instanceOf[UKPropertyBusinessAccountingMethod]
 
-  object TestUKPropertyBusinessAccountingMethodController extends UKPropertyBusinessAccountingMethodController (
+  object TestUKPropertyAccountingMethodController extends UKPropertyAccountingMethodController (
     MockAuthenticationPredicate,
     mockAuthService,
     app.injector.instanceOf[SessionTimeoutPredicate],
@@ -68,7 +68,7 @@ class UKPropertyBusinessAccountingMethodControllerSpec extends TestSupport with 
     switches.foreach(switch => disable(switch))
   }
 
-  "Individual - UKPropertyBusinessAccountingMethodController.show()" should {
+  "Individual - UKPropertyAccountingMethodController.show()" should {
     "return 200 OK" when {
       "navigating to the page with FS Enabled and no active UK Property" in {
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
@@ -76,12 +76,12 @@ class UKPropertyBusinessAccountingMethodControllerSpec extends TestSupport with 
         enable(IncomeSources)
         mockNoIncomeSources()
 
-        val result: Future[Result] = TestUKPropertyBusinessAccountingMethodController.show()(fakeRequestWithActiveSession)
+        val result: Future[Result] = TestUKPropertyAccountingMethodController.show()(fakeRequestWithActiveSession)
         val document: Document = Jsoup.parse(contentAsString(result))
 
         status(result) shouldBe Status.OK
-        document.title shouldBe TestUKPropertyBusinessAccountingMethodController.title
-        document.select("legend").text shouldBe TestUKPropertyBusinessAccountingMethodController.heading
+        document.title shouldBe TestUKPropertyAccountingMethodController.title
+        document.select("legend").text shouldBe TestUKPropertyAccountingMethodController.heading
       }
     }
     "return 200 OK" when {
@@ -90,12 +90,12 @@ class UKPropertyBusinessAccountingMethodControllerSpec extends TestSupport with 
         enable(IncomeSources)
         mockForeignPropertyIncomeSource()
 
-        val result: Future[Result] = TestUKPropertyBusinessAccountingMethodController.show()(fakeRequestWithActiveSession)
+        val result: Future[Result] = TestUKPropertyAccountingMethodController.show()(fakeRequestWithActiveSession)
         val document: Document = Jsoup.parse(contentAsString(result))
 
         status(result) shouldBe Status.OK
-        document.title shouldBe TestUKPropertyBusinessAccountingMethodController.title
-        document.select("legend").text shouldBe TestUKPropertyBusinessAccountingMethodController.heading
+        document.title shouldBe TestUKPropertyAccountingMethodController.title
+        document.select("legend").text shouldBe TestUKPropertyAccountingMethodController.heading
       }
     }
     "return 303 SEE_OTHER" when {
@@ -104,10 +104,10 @@ class UKPropertyBusinessAccountingMethodControllerSpec extends TestSupport with 
         enable(IncomeSources)
         mockUKPropertyIncomeSource()
 
-        val result: Future[Result] = TestUKPropertyBusinessAccountingMethodController.show()(fakeRequestWithActiveSession)
+        val result: Future[Result] = TestUKPropertyAccountingMethodController.show()(fakeRequestWithActiveSession)
 
         status(result) shouldBe Status.SEE_OTHER
-        result.futureValue.session.get(addUkPropertyAccountingMethod) shouldBe Some("cash")
+        result.futureValue.session.get(addUkPropertyAccountingMethod) shouldBe Some("CASH")
         redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.CheckUKPropertyDetailsController.show().url)
       }
       "navigating to the page with FS Enabled and has both UK and Foreign Property" in {
@@ -115,10 +115,10 @@ class UKPropertyBusinessAccountingMethodControllerSpec extends TestSupport with 
         enable(IncomeSources)
         mockBothPropertyBothBusiness()
 
-        val result: Future[Result] = TestUKPropertyBusinessAccountingMethodController.show()(fakeRequestWithActiveSession)
+        val result: Future[Result] = TestUKPropertyAccountingMethodController.show()(fakeRequestWithActiveSession)
 
         status(result) shouldBe Status.SEE_OTHER
-        result.futureValue.session.get(addUkPropertyAccountingMethod) shouldBe Some("cash")
+        result.futureValue.session.get(addUkPropertyAccountingMethod) shouldBe Some("CASH")
         redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.CheckUKPropertyDetailsController.show().url)
       }
     }
@@ -127,19 +127,19 @@ class UKPropertyBusinessAccountingMethodControllerSpec extends TestSupport with 
         disable(IncomeSources)
         mockBusinessIncomeSource()
 
-        val result: Future[Result] = TestUKPropertyBusinessAccountingMethodController.show()(fakeRequestWithActiveSession)
-        val expectedContent: String = TestUKPropertyBusinessAccountingMethodController.customNotFoundErrorView().toString()
+        val result: Future[Result] = TestUKPropertyAccountingMethodController.show()(fakeRequestWithActiveSession)
+        val expectedContent: String = TestUKPropertyAccountingMethodController.customNotFoundErrorView().toString()
         status(result) shouldBe Status.OK
         contentAsString(result) shouldBe expectedContent
       }
       "called with an unauthenticated user" in {
         setupMockAuthorisationException()
-        val result: Future[Result] = TestUKPropertyBusinessAccountingMethodController.show()(fakeRequestWithActiveSession)
+        val result: Future[Result] = TestUKPropertyAccountingMethodController.show()(fakeRequestWithActiveSession)
         status(result) shouldBe Status.SEE_OTHER
       }
     }
   }
-  "Individual - UKPropertyBusinessAccountingMethodController.submit()" should {
+  "Individual - UKPropertyAccountingMethodController.submit()" should {
     s"return 303 SEE_OTHER and redirect to ${controllers.incomeSources.add.routes.CheckUKPropertyDetailsController.show().url}" when {
       "form is completed successfully with cash radio button selected" in {
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
@@ -150,12 +150,12 @@ class UKPropertyBusinessAccountingMethodControllerSpec extends TestSupport with 
           .thenReturn(Future.successful(HttpResponse(OK, "valid")))
 
         lazy val result: Future[Result] = {
-          TestUKPropertyBusinessAccountingMethodController.submit()(fakeRequestNoSession
+          TestUKPropertyAccountingMethodController.submit()(fakeRequestNoSession
             .withFormUrlEncodedBody("incomeSources.add.uk-property-business-accounting-method" -> "cash"))
         }
 
         status(result) shouldBe Status.SEE_OTHER
-        result.futureValue.session.get(addUkPropertyAccountingMethod) shouldBe Some("cash")
+        result.futureValue.session.get(addUkPropertyAccountingMethod) shouldBe Some("CASH")
         redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.CheckUKPropertyDetailsController.show().url)
       }
       "form is completed successfully with traditional radio button selected" in {
@@ -167,12 +167,12 @@ class UKPropertyBusinessAccountingMethodControllerSpec extends TestSupport with 
           .thenReturn(Future.successful(HttpResponse(OK, "valid")))
 
         lazy val result: Future[Result] = {
-          TestUKPropertyBusinessAccountingMethodController.submit()(fakeRequestNoSession
+          TestUKPropertyAccountingMethodController.submit()(fakeRequestNoSession
             .withFormUrlEncodedBody("incomeSources.add.uk-property-business-accounting-method" -> "traditional"))
         }
 
         status(result) shouldBe Status.SEE_OTHER
-        result.futureValue.session.get(addUkPropertyAccountingMethod) shouldBe Some("accruals")
+        result.futureValue.session.get(addUkPropertyAccountingMethod) shouldBe Some("ACCRUALS")
         redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.CheckUKPropertyDetailsController.show().url)
       }
     }
@@ -186,7 +186,7 @@ class UKPropertyBusinessAccountingMethodControllerSpec extends TestSupport with 
           .thenReturn(Future.successful(HttpResponse(OK)))
 
         lazy val result: Future[Result] = {
-          TestUKPropertyBusinessAccountingMethodController.submit()(fakeRequestNoSession.withMethod("POST")
+          TestUKPropertyAccountingMethodController.submit()(fakeRequestNoSession.withMethod("POST")
             .withFormUrlEncodedBody("incomeSources.add.uk-property-business-accounting-method" -> ""))
         }
 
@@ -196,7 +196,7 @@ class UKPropertyBusinessAccountingMethodControllerSpec extends TestSupport with 
     }
   }
 
-  "Agent - UKPropertyBusinessAccountingMethodController.showAgent()" should {
+  "Agent - UKPropertyAccountingMethodController.showAgent()" should {
     "return 200 OK" when {
       "navigating to the page with FS Enabled and no active UK Property" in {
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
@@ -204,12 +204,12 @@ class UKPropertyBusinessAccountingMethodControllerSpec extends TestSupport with 
         enable(IncomeSources)
         mockNoIncomeSources()
 
-        val result: Future[Result] = TestUKPropertyBusinessAccountingMethodController.showAgent()(fakeRequestConfirmedClient())
+        val result: Future[Result] = TestUKPropertyAccountingMethodController.showAgent()(fakeRequestConfirmedClient())
         val document: Document = Jsoup.parse(contentAsString(result))
 
         status(result) shouldBe Status.OK
-        document.title shouldBe TestUKPropertyBusinessAccountingMethodController.titleAgent
-        document.select("legend").text shouldBe TestUKPropertyBusinessAccountingMethodController.headingAgent
+        document.title shouldBe TestUKPropertyAccountingMethodController.titleAgent
+        document.select("legend").text shouldBe TestUKPropertyAccountingMethodController.headingAgent
       }
     }
     "return 200 OK" when {
@@ -218,12 +218,12 @@ class UKPropertyBusinessAccountingMethodControllerSpec extends TestSupport with 
         enable(IncomeSources)
         mockForeignPropertyIncomeSource()
 
-        val result: Future[Result] = TestUKPropertyBusinessAccountingMethodController.showAgent()(fakeRequestConfirmedClient())
+        val result: Future[Result] = TestUKPropertyAccountingMethodController.showAgent()(fakeRequestConfirmedClient())
         val document: Document = Jsoup.parse(contentAsString(result))
 
         status(result) shouldBe Status.OK
-        document.title shouldBe TestUKPropertyBusinessAccountingMethodController.titleAgent
-        document.select("legend").text shouldBe TestUKPropertyBusinessAccountingMethodController.headingAgent
+        document.title shouldBe TestUKPropertyAccountingMethodController.titleAgent
+        document.select("legend").text shouldBe TestUKPropertyAccountingMethodController.headingAgent
       }
     }
     "return 303 SEE_OTHER" when {
@@ -232,10 +232,10 @@ class UKPropertyBusinessAccountingMethodControllerSpec extends TestSupport with 
         enable(IncomeSources)
         mockUKPropertyIncomeSource()
 
-        val result: Future[Result] = TestUKPropertyBusinessAccountingMethodController.showAgent()(fakeRequestConfirmedClient())
+        val result: Future[Result] = TestUKPropertyAccountingMethodController.showAgent()(fakeRequestConfirmedClient())
 
         status(result) shouldBe Status.SEE_OTHER
-        result.futureValue.session.get(addUkPropertyAccountingMethod) shouldBe Some("cash")
+        result.futureValue.session.get(addUkPropertyAccountingMethod) shouldBe Some("CASH")
         redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.CheckUKPropertyDetailsController.showAgent().url)
       }
       "navigating to the page with FS Enabled and has both UK and Foreign Property" in {
@@ -243,10 +243,10 @@ class UKPropertyBusinessAccountingMethodControllerSpec extends TestSupport with 
         enable(IncomeSources)
         mockBothPropertyBothBusiness()
 
-        val result: Future[Result] = TestUKPropertyBusinessAccountingMethodController.showAgent()(fakeRequestConfirmedClient())
+        val result: Future[Result] = TestUKPropertyAccountingMethodController.showAgent()(fakeRequestConfirmedClient())
 
         status(result) shouldBe Status.SEE_OTHER
-        result.futureValue.session.get(addUkPropertyAccountingMethod) shouldBe Some("cash")
+        result.futureValue.session.get(addUkPropertyAccountingMethod) shouldBe Some("CASH")
         redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.CheckUKPropertyDetailsController.showAgent().url)
       }
     }
@@ -256,19 +256,19 @@ class UKPropertyBusinessAccountingMethodControllerSpec extends TestSupport with 
         disable(IncomeSources)
         mockBusinessIncomeSource()
 
-        val result: Future[Result] = TestUKPropertyBusinessAccountingMethodController.showAgent()(fakeRequestConfirmedClient())
-        val expectedContent: String = TestUKPropertyBusinessAccountingMethodController.customNotFoundErrorView().toString()
+        val result: Future[Result] = TestUKPropertyAccountingMethodController.showAgent()(fakeRequestConfirmedClient())
+        val expectedContent: String = TestUKPropertyAccountingMethodController.customNotFoundErrorView().toString()
         status(result) shouldBe Status.OK
         contentAsString(result) shouldBe expectedContent
       }
       "called with an unauthenticated user" in {
         setupMockAgentAuthorisationException()
-        val result: Future[Result] = TestUKPropertyBusinessAccountingMethodController.showAgent()(fakeRequestConfirmedClient())
+        val result: Future[Result] = TestUKPropertyAccountingMethodController.showAgent()(fakeRequestConfirmedClient())
         status(result) shouldBe Status.SEE_OTHER
       }
     }
   }
-  "Agent - UKPropertyBusinessAccountingMethodController.submitAgent()" should {
+  "Agent - UKPropertyAccountingMethodController.submitAgent()" should {
     s"return 303 SEE_OTHER and redirect to ${controllers.incomeSources.add.routes.CheckUKPropertyDetailsController.showAgent().url}" when {
       "form is completed successfully with cash radio button selected" in {
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
@@ -279,12 +279,12 @@ class UKPropertyBusinessAccountingMethodControllerSpec extends TestSupport with 
           .thenReturn(Future.successful(HttpResponse(OK, "valid")))
 
         lazy val result: Future[Result] = {
-          TestUKPropertyBusinessAccountingMethodController.submitAgent()(fakeRequestConfirmedClient()
+          TestUKPropertyAccountingMethodController.submitAgent()(fakeRequestConfirmedClient()
             .withFormUrlEncodedBody("incomeSources.add.uk-property-business-accounting-method" -> "cash"))
         }
 
         status(result) shouldBe Status.SEE_OTHER
-        result.futureValue.session.get(addUkPropertyAccountingMethod) shouldBe Some("cash")
+        result.futureValue.session.get(addUkPropertyAccountingMethod) shouldBe Some("CASH")
         redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.CheckUKPropertyDetailsController.showAgent().url)
       }
       "form is completed successfully with traditional radio button selected" in {
@@ -296,12 +296,12 @@ class UKPropertyBusinessAccountingMethodControllerSpec extends TestSupport with 
           .thenReturn(Future.successful(HttpResponse(OK, "valid")))
 
         lazy val result: Future[Result] = {
-          TestUKPropertyBusinessAccountingMethodController.submitAgent()(fakeRequestConfirmedClient()
+          TestUKPropertyAccountingMethodController.submitAgent()(fakeRequestConfirmedClient()
             .withFormUrlEncodedBody("incomeSources.add.uk-property-business-accounting-method" -> "traditional"))
         }
 
         status(result) shouldBe Status.SEE_OTHER
-        result.futureValue.session.get(addUkPropertyAccountingMethod) shouldBe Some("accruals")
+        result.futureValue.session.get(addUkPropertyAccountingMethod) shouldBe Some("ACCRUALS")
         redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.CheckUKPropertyDetailsController.showAgent().url)
       }
     }
@@ -315,7 +315,7 @@ class UKPropertyBusinessAccountingMethodControllerSpec extends TestSupport with 
           .thenReturn(Future.successful(HttpResponse(OK)))
 
         lazy val result: Future[Result] = {
-          TestUKPropertyBusinessAccountingMethodController.submitAgent()(fakeRequestConfirmedClient().withMethod("POST")
+          TestUKPropertyAccountingMethodController.submitAgent()(fakeRequestConfirmedClient().withMethod("POST")
             .withFormUrlEncodedBody("incomeSources.add.uk-property-business-accounting-method" -> ""))
         }
 

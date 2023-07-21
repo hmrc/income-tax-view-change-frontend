@@ -144,4 +144,19 @@ class AddUKPropertyStartDateController @Inject()(val authenticate: Authenticatio
         }
   }
 
+  def change(): Action[AnyContent] =
+    (checkSessionTimeout andThen authenticate andThen retrieveNino
+      andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
+      implicit user =>
+        Future.successful(Ok("Change UK Property Start Date - Individual"))
+    }
+
+  def changeAgent(): Action[AnyContent] = Authenticated.async {
+    implicit request =>
+      implicit user =>
+        getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
+          implicit mtdItUser =>
+            Future.successful(Ok("Change UK Property Start Date - Agent"))
+        }
+  }
 }

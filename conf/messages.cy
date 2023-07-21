@@ -1130,7 +1130,14 @@ credit-and-refund.credit-from-balancing-charge-prt-1              = yn sgil
 credit-and-refund.credit-from-balancing-charge-prt-2              = credyd tâl mantoli
 credit-and-refund.credit-from-earlier-tax-year                    = credyd o flwyddyn dreth gynharach
 
-## Income Sources - Add
+#######################################################################################################################
+## Income Sources - Add ##
+#######################################################################################################################
+## Reusable Add Messages ##
+incomeSources.add.accountingMethod.cash                             = Cyfrifyddu ar sail arian parod
+incomeSources.add.accountingMethod.accruals                         = Cyfrifyddu traddodiadol
+
+## Add Income Sources Page ##
 incomeSources.add.addIncomeSources.heading                          = Unig fasnachwr a incwm o eiddo
 incomeSources.add.addIncomeSources.selfEmployment.heading           = Busnesau unig fasnachwr
 incomeSources.add.addIncomeSources.selfEmployment.text              = Nid oes angen i chi roi gwybod i ni am fusnes y gwyddwn amdano eisoes.
@@ -1146,6 +1153,13 @@ incomeSources.add.addIncomeSources.tableHead.businessName           = Enw’r bu
 incomeSources.add.addIncomeSources.tableHead.dateStarted            = Dyddiad cychwyn
 incomeSources.add.addIncomeSources.tableHead.dateEnded              = Y dyddiad dod i ben
 incomeSources.add.addIncomeSources.unknown                          = Anhysbys
+
+incomeSources.add.checkUKPropertyDetails.heading                = Gwirio’ch manylion
+incomeSources.add.checkUKPropertyDetails.caption                = Y busnes eiddo yn y DU a nodwyd gennych
+incomeSources.add.checkUKPropertyDetails.startDateLabel         = Dyddiad dechrau’r busnes eiddo yn y DU
+incomeSources.add.checkUKPropertyDetails.accountingMethodLabel  = Dull cyfrifyddu’r busnes eiddo yn y DU
+incomeSources.add.checkUKPropertyDetails.change                 = Newid
+incomeSources.add.checkUKPropertyDetails.confirm                = Cadarnhau ac yn eich blaen
 
 ## cease income sources
 cease-income-sources.heading                  = Dod â ffynhonnell incwm i ben
@@ -1397,6 +1411,21 @@ incomeSources.add.businessReportingMethod.chooseAnnualReport        =   Dewis cy
 incomeSources.add.businessReportingMethod.chooseQuarterlyReport     =   Dewis cyflwyno adroddiadau’n chwarterol
 incomeSources.add.businessReportingMethod.error                     =   Dewiswch a hoffech gyflwyno adroddiad yn flynyddol neu’n chwarterol ar gyfer blwyddyn dreth {0} i {1}
 
+incomeSources.add.foreignPropertyReportingMethod.heading                   =   Dewis dull o gyflwyno adroddiad
+incomeSources.add.foreignPropertyReportingMethod.description1              =   Mae’ch busnes yn gymwys i gael cyfnod gras hyd at Ebrill {0}, lle y gallwch gyflwyno adroddiadau’n flynyddol.
+incomeSources.add.foreignPropertyReportingMethod.description2              =   Bydd yn rhaid gwneud un diweddariad, a hynny erbyn 31 Ionawr fan bellaf.
+incomeSources.add.foreignPropertyReportingMethod.description3              =   Nid yw’r canlynol yn cael effaith ar eich cyfnod gras:
+incomeSources.add.foreignPropertyReportingMethod.description4.bullet1      =   lefel eich incwm o ffynonellau eraill
+incomeSources.add.foreignPropertyReportingMethod.description4.bullet2      =   y trosiant rydych yn disgwyl i’ch busnes newydd ei wneud
+incomeSources.add.foreignPropertyReportingMethod.description4.bullet3      =   sut yr ydych yn cyflwyno adroddiadau ar gyfer unrhyw ffynonellau incwm presennol
+
+
+incomeSources.add.foreignPropertyReportingMethod.chooseReport              =   Dewiswch sut yr hoffech gyflwyno adroddiadau
+incomeSources.add.foreignPropertyReportingMethod.taxYear                   =   Blwyddyn dreth {0}-{1}
+incomeSources.add.foreignPropertyReportingMethod.chooseAnnualReport        =   Dewis cyflwyno adroddiadau’n flynyddol
+incomeSources.add.foreignPropertyReportingMethod.chooseQuarterlyReport     =   Dewis cyflwyno adroddiadau’n chwarterol
+incomeSources.add.foreignPropertyReportingMethod.error                     =   Dewiswch a hoffech gyflwyno adroddiad yn flynyddol neu’n chwarterol ar gyfer blwyddyn dreth {0} i {1}
+
 
 # add uk property business accounting method
 incomeSources.add.uk-property-business-accounting-method.heading                 = Pa ddull cyfrifyddu yr ydych yn ei ddefnyddio ar gyfer eich busnes eiddo yn y DU?
@@ -1410,3 +1439,14 @@ incomeSources.add.uk-property-business-accounting-method.drop-down-text-bp-1    
 incomeSources.add.uk-property-business-accounting-method.drop-down-text-bp-2     = os daeth yr incwm i law ym mis Mawrth 2017, dylech ddefnyddio ‘cyfrifyddu traddodiadol’
 incomeSources.add.uk-property-business-accounting-method.no-selection            = Nodwch y dull cyfrifyddu yr ydych yn ei ddefnyddio ar gyfer eich busnes eiddo yn y DU
 
+# uk property reporting method
+incomeSources.add.ukPropertyReportingMethod.heading                   =   Dewis dull o gyflwyno adroddiad
+incomeSources.add.ukPropertyReportingMethod.description1              =   Mae’ch busnes yn gymwys i gael cyfnod gras hyd at Ebrill {0}, lle y gallwch gyflwyno adroddiadau’n flynyddol.
+incomeSources.add.ukPropertyReportingMethod.description2              =   Bydd yn rhaid gwneud un diweddariad, a hynny erbyn 31 Ionawr fan bellaf.
+incomeSources.add.ukPropertyReportingMethod.description3              =   Nid yw’r canlynol yn cael effaith ar eich cyfnod gras:
+incomeSources.add.ukPropertyReportingMethod.description4              =   <li>lefel eich incwm o ffynonellau eraill</li><li>y trosiant rydych yn disgwyl i’ch busnes newydd ei wneud</li><li>sut yr ydych yn cyflwyno adroddiadau ar gyfer unrhyw ffynonellau incwm presennol</li>
+incomeSources.add.ukPropertyReportingMethod.chooseReport              =   Dewiswch sut yr hoffech gyflwyno adroddiadau
+incomeSources.add.ukPropertyReportingMethod.taxYear                   =   Blwyddyn dreth {0}-{1}
+incomeSources.add.ukPropertyReportingMethod.chooseAnnualReport        =   Dewis cyflwyno adroddiadau’n flynyddol
+incomeSources.add.ukPropertyReportingMethod.chooseQuarterlyReport     =   Dewis cyflwyno adroddiadau’n chwarterol
+incomeSources.add.ukPropertyReportingMethod.error                     =   Dewiswch a hoffech gyflwyno adroddiad yn flynyddol neu’n chwarterol ar gyfer blwyddyn dreth {0} i {1}

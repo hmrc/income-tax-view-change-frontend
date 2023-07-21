@@ -23,10 +23,10 @@ import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import testConstants.BaseIntegrationTestConstants.testMtditid
 import testConstants.IncomeSourceIntegrationTestConstants.{noPropertyOrBusinessResponse, ukPropertyOnlyResponse}
 
-class UKPropertyBusinessAccountingMethodControllerISpec extends ComponentSpecBase {
+class UKPropertyAccountingMethodControllerISpec extends ComponentSpecBase {
 
-  val addUKPropertyBusinessAccountingMethodShowUrl: String = controllers.incomeSources.add.routes.UKPropertyBusinessAccountingMethodController.show().url
-  val addUKPropertyBusinessAccountingMethodSubmitUrl: String = controllers.incomeSources.add.routes.UKPropertyBusinessAccountingMethodController.submit().url
+  val addUKPropertyBusinessAccountingMethodShowUrl: String = controllers.incomeSources.add.routes.UKPropertyAccountingMethodController.show().url
+  val addUKPropertyBusinessAccountingMethodSubmitUrl: String = controllers.incomeSources.add.routes.UKPropertyAccountingMethodController.submit().url
   val checkUKPropertyDetailsShowUrl: String = controllers.incomeSources.add.routes.CheckUKPropertyDetailsController.show().url
 
   val continueButtonText: String = messagesAPI("base.continue")

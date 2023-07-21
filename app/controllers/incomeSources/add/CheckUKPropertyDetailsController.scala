@@ -16,50 +16,72 @@
 
 package controllers.incomeSources.add
 
-import auth.{FrontendAuthorisedFunctions, MtdItUser}
+import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
-import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
-import play.api.i18n.{I18nSupport, Messages}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import services.IncomeSourceDetailsService
-import uk.gov.hmrc.http.HeaderCarrier
-import views.html.errorPages.CustomNotFoundError
+import controllers.predicates._
+import implicits.ImplicitDateFormatter
+import models.createIncomeSource.CreateIncomeSourceResponse
+import models.incomeSourceDetails.viewmodels.CheckUKPropertyViewModel
+import play.api.Logger
+import play.api.i18n.I18nSupport
+import play.api.mvc._
+import services.{CreateBusinessDetailsService, IncomeSourceDetailsService}
+import uk.gov.hmrc.auth.core.AuthorisedFunctions
+import uk.gov.hmrc.play.bootstrap.frontend.http.FrontendErrorHandler
+import uk.gov.hmrc.play.language.LanguageUtils
+import utils.IncomeSourcesUtils
+import utils.IncomeSourcesUtils.getUKPropertyDetailsFromSession
+import views.html.incomeSources.add.CheckUKPropertyDetails
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
-class CheckUKPropertyDetailsController @Inject()(val authenticate: AuthenticationPredicate,
-                                           val authorisedFunctions: FrontendAuthorisedFunctions,
-                                           val checkSessionTimeout: SessionTimeoutPredicate,
-                                           val incomeSourceDetailsService: IncomeSourceDetailsService,
-                                           val retrieveBtaNavBar: NavBarPredicate,
-                                           val retrieveIncomeSources: IncomeSourceDetailsPredicate,
-                                           val retrieveNino: NinoPredicate,
-//                                           val view: ???,
-                                           val customNotFoundErrorView: CustomNotFoundError)
-                                          (implicit val appConfig: FrontendAppConfig,
-                                           mcc: MessagesControllerComponents,
-                                           val ec: ExecutionContext,
-                                           val itvcErrorHandler: ItvcErrorHandler,
-                                           val itvcErrorHandlerAgent: AgentItvcErrorHandler)
-  extends ClientConfirmedController with FeatureSwitching with I18nSupport {
+@Singleton
+class CheckUKPropertyDetailsController @Inject()(val checkUKPropertyDetails: CheckUKPropertyDetails,
+                                                 val checkSessionTimeout: SessionTimeoutPredicate,
+                                                 val authenticate: AuthenticationPredicate,
+                                                 val authorisedFunctions: AuthorisedFunctions,
+                                                 val retrieveNino: NinoPredicate,
+                                                 val retrieveIncomeSources: IncomeSourceDetailsPredicate,
+                                                 val businessDetailsService: CreateBusinessDetailsService,
+                                                 val incomeSourceDetailsService: IncomeSourceDetailsService,
+                                                 val createBusinessDetailsService: CreateBusinessDetailsService,
+                                                 val retrieveBtaNavBar: NavBarPredicate)
+                                                (implicit val appConfig: FrontendAppConfig,
+                                                 mcc: MessagesControllerComponents,
+                                                 val ec: ExecutionContext,
+                                                 val itvcErrorHandler: ItvcErrorHandler,
+                                                 val itvcErrorHandlerAgent: AgentItvcErrorHandler,
+                                                 val languageUtils: LanguageUtils) extends ClientConfirmedController with I18nSupport with FeatureSwitching with ImplicitDateFormatter with IncomeSourcesUtils {
 
-  def handleRequest(isAgent: Boolean)
-                   (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
-    Future.successful(NotImplemented)
+  def getBackUrl(isAgent: Boolean): String = {
+    if (isAgent) controllers.incomeSources.add.routes.UKPropertyAccountingMethodController.showAgent().url else
+      controllers.incomeSources.add.routes.UKPropertyAccountingMethodController.show().url
   }
 
+  def getSubmitUrl(isAgent: Boolean): Call = {
+    if (isAgent) controllers.incomeSources.add.routes.CheckUKPropertyDetailsController.submitAgent() else
+      controllers.incomeSources.add.routes.CheckUKPropertyDetailsController.submit()
+  }
 
-  def show(): Action[AnyContent] =
-    (checkSessionTimeout andThen authenticate andThen retrieveNino
-      andThen retrieveIncomeSources).async {
-      implicit user =>
-        handleRequest(
-          isAgent = false
-        )
-    }
+  def getUKPropertyReportingMethodUrl(isAgent: Boolean, id: String): Call = {
+    if (isAgent) controllers.incomeSources.add.routes.UKPropertyReportingMethodController.showAgent(id) else
+      controllers.incomeSources.add.routes.UKPropertyReportingMethodController.show(id)
+  }
+
+  def getErrorHandler(isAgent: Boolean): FrontendErrorHandler with ShowInternalServerError = {
+    if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
+  }
+
+  def show(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+    andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
+    implicit user =>
+      handleRequest(
+        isAgent = false
+      )
+  }
 
   def showAgent(): Action[AnyContent] = Authenticated.async {
     implicit request =>
@@ -72,4 +94,61 @@ class CheckUKPropertyDetailsController @Inject()(val authenticate: Authenticatio
         }
   }
 
+  def handleRequest(isAgent: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
+    val backUrl = getBackUrl(isAgent)
+    val postAction = getSubmitUrl(isAgent)
+    val errorHandler = getErrorHandler(isAgent)
+
+    withIncomeSourcesFS {
+      getUKPropertyDetailsFromSession(user).toOption match {
+        case Some(checkUKPropertyViewModel: CheckUKPropertyViewModel) =>
+          Future.successful(Ok(
+            checkUKPropertyDetails(viewModel = checkUKPropertyViewModel,
+              isAgent = isAgent,
+              backUrl = backUrl,
+              postAction = postAction)))
+        case None => Logger("application").error(
+          s"[CheckUKPropertyDetailsController][handleRequest] - Error: Unable to build UK property details")
+          Future.successful(errorHandler.showInternalServerError())
+      }
+    }
+  }
+
+  def submit(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+    andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
+    implicit user =>
+      handleSubmit(isAgent = false)
+  }
+
+  def submitAgent(): Action[AnyContent] = Authenticated.async {
+    implicit request =>
+      implicit user =>
+        getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
+          implicit mtdItUser =>
+            handleSubmit(isAgent = true)
+        }
+  }
+
+  def handleSubmit(isAgent: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
+    val errorHandler = getErrorHandler(isAgent)
+
+    withIncomeSourcesFS {
+      getUKPropertyDetailsFromSession(user).toOption match {
+        case Some(checkUKPropertyViewModel: CheckUKPropertyViewModel) =>
+          businessDetailsService.createUKProperty(checkUKPropertyViewModel).map {
+            case Left(ex) => Logger("application").error(
+              s"[CheckUKPropertyDetailsController][handleRequest] - Unable to create income source: ${ex.getMessage}")
+              errorHandler.showInternalServerError()
+            case Right(CreateIncomeSourceResponse(id)) =>
+              val redirectUrl = getUKPropertyReportingMethodUrl(isAgent, id)
+              withIncomeSourcesRemovedFromSession {
+                Redirect(redirectUrl)
+              }
+          }
+        case None => Logger("application").error(
+          s"[CheckUKPropertyDetailsController][handleSubmit] - Error: Unable to build UK property details on submit")
+          Future.successful(errorHandler.showInternalServerError())
+      }
+    }
+  }
 }
