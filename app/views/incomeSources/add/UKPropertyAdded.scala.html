@@ -1,0 +1,188 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import views.html.layouts.unifiedLayout
+@import views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.html.components.FormWithCSRF
+@import views.html.helpers.injected.ErrorSummary
+@import models.incomeSourceDetails.viewmodels.ObligationsViewModel
+@import java.time.LocalDate
+@import _root_.implicits.ImplicitDateFormatterImpl
+
+
+@this(
+    mainTemplate: unifiedLayout,
+    h1: h1,
+    h2: h2,
+    link: link,
+    implicitDateFormatter: ImplicitDateFormatterImpl,
+    continueButton: ContinueButton,
+    formWithCSRF: FormWithCSRF,
+    errorSummary: ErrorSummary,
+    govukTable: GovukTable
+)
+
+@(incomeSources: ObligationsViewModel, isAgent: Boolean, backUrl: String)(implicit messages: Messages, user: auth.MtdItUser[_])
+
+@import implicitDateFormatter.longDate
+
+@getPageTitle = @{
+    s"${messages("incomeSourceAdded.additionalWelshContent")} " +
+    s"${messages("incomeSourceAdded.ukProperty")} " +
+    s"${messages("incomeSourceAdded.heading")}".trim()
+}
+
+@getAddIncomeSourcesLink = @{
+    if(isAgent) {
+        controllers.incomeSources.add.routes.AddIncomeSourceController.showAgent().url
+    } else {
+        controllers.incomeSources.add.routes.AddIncomeSourceController.show().url
+    }
+}
+
+@mainTemplate(pageTitle = getPageTitle,
+    isAgent = isAgent,
+    btaNavPartial = user.btaNavPartial,
+    backUrl = Some(backUrl)) {
+
+    <div class="govuk-panel govuk-panel--confirmation">
+        <div class="govuk-panel__body">
+            @messages("incomeSourceAdded.additionalWelshContent")
+        </div>
+        @h1(messages("incomeSourceAdded.ukProperty"), classes = "govuk-panel__title")
+        <div class="govuk-panel__body">
+            @messages("incomeSourceAdded.heading")
+        </div>
+    </div>
+
+    @h2(messages("incomeSourceAdded.subheading"), classes = "govuk-heading-l govuk-!-margin-top-8")
+
+    @if(incomeSources.quarterlyObligationsDatesYearOne.nonEmpty) {
+        <div class="box-simple">
+            <div class="page_headers govuk-heading-m"> @messages(s"incomeSourceAdded.quarterly-heading") </div>
+            <p class="govuk-body"> @messages(s"incomeSourceAdded.quarterly-p1") </p>
+
+            <table class="govuk-table">
+                <thead class="govuk-table__head">
+                    <tr class="govuk-table__row">
+                        <th scope="col" class="govuk-table__header">@(messages(s"incomeSourceAdded.table.heading-1") + " " +
+                            incomeSources.quarterlyObligationsDatesYearOne.head.inboundCorrespondenceFrom.getYear + " " + messages(s"incomeSourceAdded.to") + " " +
+                            (incomeSources.quarterlyObligationsDatesYearOne.head.inboundCorrespondenceFrom.getYear + 1))</th>
+                        <th scope="col" class="govuk-table__header">@messages(s"incomeSourceAdded.table.heading-2")</th>
+                    </tr>
+                </thead>
+
+                <tbody class="govuk-table__body">
+                    @incomeSources.quarterlyObligationsDatesYearOne.map { x =>
+                        <tr class="govuk-table__row">
+                            <td class="govuk-table__cell">@(x.inboundCorrespondenceFrom.toLongDate + " " + messages(s"incomeSourceAdded.to") + " " + x.inboundCorrespondenceTo.toLongDate)</td>
+                            <td class="govuk-table__cell">@(x.inboundCorrespondenceDue.toLongDate)</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+            @if(incomeSources.quarterlyObligationsDatesYearTwo.nonEmpty){
+                <table class="govuk-table">
+                    <thead class="govuk-table__head">
+                        <tr class="govuk-table__row">
+                            <th scope="col" class="govuk-table__header">@(messages(s"incomeSourceAdded.table.heading-1") + " " +
+                                incomeSources.quarterlyObligationsDatesYearTwo.head.inboundCorrespondenceFrom.getYear + " " + messages(s"incomeSourceAdded.to") + " " +
+                                (incomeSources.quarterlyObligationsDatesYearTwo.head.inboundCorrespondenceFrom.getYear + 1))</th>
+                            <th scope="col" class="govuk-table__header"> </th>
+                        </tr>
+                    </thead>
+
+                    <tbody class="govuk-table__body">
+                        @incomeSources.quarterlyObligationsDatesYearTwo.map { x =>
+                            <tr class="govuk-table__row">
+                                <td class="govuk-table__cell">@(x.inboundCorrespondenceFrom.toLongDate + " " + messages(s"incomeSourceAdded.to") + " " + x.inboundCorrespondenceTo.toLongDate)</td>
+                                <td class="govuk-table__cell">@(x.inboundCorrespondenceDue.toLongDate)</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+        </div>
+    }
+
+    @if(incomeSources.eopsObligationsDates.nonEmpty) {
+        <div class="box-simple">
+            <div class="page_headers govuk-heading-m">@messages(s"incomeSourceAdded.eops-heading")</div>
+            <p class="govuk-body">@messages(s"incomeSourceAdded.eops-p1")</p>
+
+            <table class="govuk-table">
+                <thead class="govuk-table__head">
+                    <tr class="govuk-table__row">
+                        <th scope="col" class="govuk-table__header">@messages(s"incomeSourceAdded.table.heading-1")</th>
+                        <th scope="col" class="govuk-table__header">@messages(s"incomeSourceAdded.table.heading-2")</th>
+                    </tr>
+                </thead>
+
+                <tbody class="govuk-table__body">
+                    @incomeSources.eopsObligationsDates.map { x =>
+                    <tr class="govuk-table__row">
+                        <td class="govuk-table__cell">@(x.inboundCorrespondenceFrom.getYear + " " + messages(s"incomeSourceAdded.to") + " " + x.inboundCorrespondenceTo.getYear)</td>
+                        <td class="govuk-table__cell">@(x.inboundCorrespondenceDue.toLongDate)</td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+
+    @if(incomeSources.finalDeclarationDates.nonEmpty) {
+        <div class="box-simple">
+            <div class="page_headers govuk-heading-m"> @messages(s"incomeSourceAdded.final-declaration-heading") </div>
+            <p class="govuk-body"> @messages(s"incomeSourceAdded.final-declaration-text") </p>
+
+            <table class="govuk-table">
+                <thead class="govuk-table__head">
+                    <tr class="govuk-table__row">
+                        <th scope="col" class="govuk-table__header">@messages(s"incomeSourceAdded.table.heading-1")</th>
+                        <th scope="col" class="govuk-table__header">@messages(s"incomeSourceAdded.table.heading-2")</th>
+                    </tr>
+                </thead>
+
+                <tbody class="govuk-table__body">
+                    @incomeSources.finalDeclarationDates.map { x =>
+                        <tr class="govuk-table__row">
+                            <td class="govuk-table__cell">@(x.inboundCorrespondenceFrom.getYear + " " + messages(s"incomeSourceAdded.to") + " " + x.inboundCorrespondenceTo.getYear)</td>
+                            <td class="govuk-table__cell">@(x.inboundCorrespondenceDue.toLongDate)</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+
+    @if(incomeSources.showPrevTaxYears) {
+        <div class="box-simple">
+            <div class="page_headers govuk-heading-m">@messages(s"incomeSourceAdded.previous-tax-years-heading")</div>
+            <p class="govuk-body">
+                @(messages(s"incomeSourceAdded.previous-tax-years-t1")+ " " + (incomeSources.currentTaxYear-1).toString + " " +
+                messages(s"incomeSourceAdded.to") + " " + incomeSources.currentTaxYear.toString + ".")
+            </p>
+        </div>
+    }
+
+    <div class="govuk-!-margin-top-8">
+        @link(link = getAddIncomeSourcesLink,
+            messageKey = "incomeSourceAdded.income-sources-button", classes = "govuk-button", role = Some("button"),
+            id = Some("income-sources-link"))
+    </div>
+}

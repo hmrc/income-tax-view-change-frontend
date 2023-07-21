@@ -27,7 +27,7 @@ import org.mockito.Mockito.{mock, when}
 import play.api.http.Status
 import play.api.test.FakeRequest
 import testConstants.BaseTestConstants.{testMtditid, testNino, testRetrievedUserName}
-import testConstants.IncomeSourceDetailsTestConstants.singleBusinessIncomeWithCurrentYear
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants.singleBusinessIncomeWithCurrentYear
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 

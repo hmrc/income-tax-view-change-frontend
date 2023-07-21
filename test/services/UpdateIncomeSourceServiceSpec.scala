@@ -25,7 +25,7 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import play.api.test.FakeRequest
 import testConstants.BaseTestConstants.{testMtditid, testNino, testRetrievedUserName}
-import testConstants.IncomeSourceDetailsTestConstants.ukPropertyIncome
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants.ukPropertyIncome
 import testConstants.UpdateIncomeSourceTestConstants
 import testConstants.UpdateIncomeSourceTestConstants.{cessationDate, failureResponse, successResponse, taxYearSpecific}
 import testUtils.TestSupport

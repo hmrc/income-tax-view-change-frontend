@@ -26,7 +26,7 @@ import models.paymentAllocations.AllocationDetail
 import org.jsoup.select.Elements
 import play.api.test.FakeRequest
 import testConstants.BaseTestConstants.{testMtditid, testNino, testRetrievedUserName}
-import testConstants.IncomeSourceDetailsTestConstants.businessAndPropertyAligned
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessAndPropertyAligned
 import testConstants.PaymentAllocationsTestConstants._
 import testUtils.ViewSpec
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual

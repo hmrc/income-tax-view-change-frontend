@@ -22,7 +22,7 @@ import org.mockito.Mockito.{mock, reset, when}
 import org.scalatest.{BeforeAndAfterEach, Suite}
 import services.IncomeSourceDetailsService
 import testConstants.BaseTestConstants.{testErrorMessage, testErrorStatus}
-import testConstants.IncomeSourceDetailsTestConstants._
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants._
 
 import scala.concurrent.Future
 

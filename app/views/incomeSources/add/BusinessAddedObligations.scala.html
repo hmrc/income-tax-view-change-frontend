@@ -37,7 +37,7 @@ govukTable: GovukTable,
 @(businessName: String, sources: ObligationsViewModel, postAction: Call, backUrl: String, isAgent: Boolean)(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @getMessage(key: String, args: String*) = @{
-  messages(s"business-added.$key", args: _*)
+  messages(s"incomeSourceAdded.$key", args: _*)
 }
 
 @import implicitDateFormatter.longDate
@@ -51,19 +51,19 @@ govukTable: GovukTable,
 
         <div class="govuk-panel govuk-panel--confirmation">
             <div class="govuk-panel__body govuk-!-margin-bottom-3">
-                @getMessage("h1")
+                @getMessage("business.h1")
             </div>
             <h1 class="govuk-panel__title">
                 @businessName
             </h1>
             <div class="govuk-panel__body">
-                @getMessage("h2")
+                @getMessage("business.h2")
             </div>
         </div>
 
         <h2 class="govuk-label-wrapper">
             <label class="govuk-label govuk-label--l govuk-!-margin-top-8">
-            @getMessage("text")
+            @getMessage("business.text")
             </label>
         </h2>
 
