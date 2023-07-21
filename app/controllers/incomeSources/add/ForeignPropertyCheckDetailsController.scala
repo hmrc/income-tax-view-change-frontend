@@ -170,6 +170,9 @@ class ForeignPropertyCheckDetailsController @Inject()(val checkForeignPropertyDe
 
   private val sessionKeys = Seq(foreignPropertyStartDate, addForeignPropertyAccountingMethod)
 
+  private lazy val errorUrl: String = controllers.incomeSources.add.routes.ForeignPropertyBusinessNotAddedErrorController.show().url
+  private lazy val agentErrorUrl: String = controllers.incomeSources.add.routes.ForeignPropertyBusinessNotAddedErrorController.showAgent().url
+
   def handleSubmit(isAgent: Boolean)(implicit user: MtdItUser[AnyContent], request: Request[AnyContent]): Future[Result] = {
     getDetails(user) flatMap {
       case Right(viewModel: CheckForeignPropertyViewModel) =>
@@ -177,13 +180,13 @@ class ForeignPropertyCheckDetailsController @Inject()(val checkForeignPropertyDe
           case Left(ex) => if (isAgent) {
             Logger("application").error(
               s"[CheckBusinessDetailsController][handleRequest] - Unable to create income source: ${ex.getMessage}")
-            itvcErrorHandlerAgent.showInternalServerError()
+            Redirect(errorUrl)
           }
             else
             {
               Logger("application").error(
                 s"[CheckBusinessDetailsController][handleRequest] - Unable to create income source: ${ex.getMessage}")
-              itvcErrorHandler.showInternalServerError()
+              Redirect(agentErrorUrl)
             }
 
           case Right(CreateIncomeSourceResponse(id)) =>
