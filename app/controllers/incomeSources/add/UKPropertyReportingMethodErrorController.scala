@@ -46,7 +46,7 @@ class UKPropertyReportingMethodErrorController @Inject()(val authenticate: Authe
                                                         )
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
-  def erroHandler(isAgent: Boolean)(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Result = {
+  def errorHandler(isAgent: Boolean)(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Result = {
     val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
     errorHandler.showInternalServerError()
   }
@@ -54,13 +54,13 @@ class UKPropertyReportingMethodErrorController @Inject()(val authenticate: Authe
   def show(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources) {
     implicit user =>
-      erroHandler(false)
+      errorHandler(false)
   }
 
   def showAgent(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources) {
     implicit user =>
-      erroHandler(true)
+      errorHandler(true)
   }
 
 }
