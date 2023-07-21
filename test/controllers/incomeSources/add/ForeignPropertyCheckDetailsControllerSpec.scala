@@ -80,6 +80,9 @@ with MockIncomeSourceDetailsPredicate with MockNavBarEnumFsPredicate with Featur
     switches.foreach(switch => disable(switch))
   }
 
+  lazy val errorUrl: String = controllers.incomeSources.add.routes.ForeignPropertyBusinessNotAddedErrorController.show().url
+  lazy val agentErrorUrl: String = controllers.incomeSources.add.routes.ForeignPropertyBusinessNotAddedErrorController.showAgent().url
+
   "ForeignPropertyCheckDetailsController" should {
 
     "redirect a user back to the custom error page" when {
@@ -296,7 +299,7 @@ with MockIncomeSourceDetailsPredicate with MockNavBarEnumFsPredicate with Featur
         redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.ForeignPropertyReportingMethodController.showAgent("123").url)
       }
     }
-    "return an error" when {
+    "redirect to custom error page" when {
       "individual is missing session storage" in {
         disableAllSwitches()
         enable(IncomeSources)
@@ -306,10 +309,8 @@ with MockIncomeSourceDetailsPredicate with MockNavBarEnumFsPredicate with Featur
         val result = TestForeignPropertyCheckDetailsController.submit()(
           fakeRequestWithActiveSession)
 
-        val document: Document = Jsoup.parse(contentAsString(result))
-
-        status(result) shouldBe INTERNAL_SERVER_ERROR
-        document.title shouldBe messages("standardError.heading") + " - GOV.UK"
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(result) shouldBe Some(errorUrl)
       }
       "agent is missing session storage" in {
         disableAllSwitches()
@@ -320,10 +321,8 @@ with MockIncomeSourceDetailsPredicate with MockNavBarEnumFsPredicate with Featur
         val result = TestForeignPropertyCheckDetailsController.submitAgent(
           fakeRequestConfirmedClient())
 
-        val document: Document = Jsoup.parse(contentAsString(result))
-
-        status(result) shouldBe INTERNAL_SERVER_ERROR
-        document.title shouldBe messages("standardError.heading") + " - GOV.UK"
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(result) shouldBe Some(agentErrorUrl)
       }
 
       "foreign property model can't be created (individual)" in {
@@ -343,7 +342,8 @@ with MockIncomeSourceDetailsPredicate with MockNavBarEnumFsPredicate with Featur
             )
         )
 
-        status(result) shouldBe INTERNAL_SERVER_ERROR
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(result) shouldBe Some(errorUrl)
       }
       "foreign property model cannot be created (agent)" in {
         disableAllSwitches()
@@ -360,7 +360,8 @@ with MockIncomeSourceDetailsPredicate with MockNavBarEnumFsPredicate with Featur
             SessionKeys.addForeignPropertyAccountingMethod -> testForeignPropertyAccountingMethod
           ))
 
-        status(result) shouldBe INTERNAL_SERVER_ERROR
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(result) shouldBe Some(agentErrorUrl)
       }
     }
   }

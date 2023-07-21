@@ -5,9 +5,9 @@ import forms.utils.SessionKeys.{addBusinessAccountingMethod, addBusinessAccounti
 import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.createIncomeSource.CreateIncomeSourceResponse
-import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
+import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, NOT_FOUND, OK, SEE_OTHER}
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testSelfEmploymentId}
-import testConstants.IncomeSourceIntegrationTestConstants.{multipleBusinessesAndUkProperty, noPropertyOrBusinessResponse}
+import testConstants.IncomeSourceIntegrationTestConstants.{errorResponse, multipleBusinessesAndUkProperty, noPropertyOrBusinessResponse}
 
 class ForeignPropertyCheckDetailsControllerISpec extends ComponentSpecBase{
 
@@ -16,6 +16,8 @@ class ForeignPropertyCheckDetailsControllerISpec extends ComponentSpecBase{
 
   val foreignPropertyCheckDetailsSubmitUrl: String = controllers.incomeSources.add.routes.ForeignPropertyCheckDetailsController.submit().url
   val foreignPropertyReportingMethodShowUrl: String = controllers.incomeSources.add.routes.ForeignPropertyReportingMethodController.show("ABC123456789").url
+
+  val errorPageUrl: String = controllers.incomeSources.add.routes.ForeignPropertyBusinessNotAddedErrorController.show().url
 
   val sessionData: Map[String, String] = Map(
     foreignPropertyStartDate -> "2023-01-01",
@@ -87,6 +89,28 @@ class ForeignPropertyCheckDetailsControllerISpec extends ComponentSpecBase{
         result should have(
           httpStatus(SEE_OTHER),
           redirectURI(foreignPropertyReportingMethodShowUrl)
+        )
+      }
+    }
+    s"redirect to $errorPageUrl" when {
+      "error in response from API" in {
+        Given("Income Sources FS is enabled")
+        enable(IncomeSources)
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
+
+        val formData: Map[String, Seq[String]] = Map(
+          "foreignPropertyStartDate" -> Seq("2023-01-01"),
+          "addForeignPropertyAccountingMethod" -> Seq("ACCRUALS")
+        )
+
+        IncomeTaxViewChangeStub.stubCreateBusinessDetailsResponse(testMtditid)(OK, List.empty)
+
+        When(s"I call $foreignPropertyCheckDetailsSubmitUrl")
+        val result = IncomeTaxViewChangeFrontend.post("/income-sources/add/foreign-property-check-details", sessionData)(formData)
+
+        result should have(
+          httpStatus(SEE_OTHER),
+          redirectURI(errorPageUrl)
         )
       }
     }

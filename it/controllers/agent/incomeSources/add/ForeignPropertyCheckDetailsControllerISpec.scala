@@ -18,6 +18,8 @@ class ForeignPropertyCheckDetailsControllerISpec extends ComponentSpecBase{
   val foreignPropertyCheckDetailsSubmitAgentUrl: String = controllers.incomeSources.add.routes.ForeignPropertyCheckDetailsController.submitAgent().url
   val foreignPropertyReportingMethodShowAgentUrl: String = controllers.incomeSources.add.routes.ForeignPropertyReportingMethodController.showAgent("ABC123456789").url
 
+  val errorPageUrl: String = controllers.incomeSources.add.routes.ForeignPropertyBusinessNotAddedErrorController.showAgent().url
+
   val sessionData: Map[String, String] = Map(
     foreignPropertyStartDate -> "2023-01-01",
     addForeignPropertyAccountingMethod -> "ACCRUALS"
@@ -91,6 +93,29 @@ class ForeignPropertyCheckDetailsControllerISpec extends ComponentSpecBase{
         result should have(
           httpStatus(SEE_OTHER),
           redirectURI(foreignPropertyReportingMethodShowAgentUrl)
+        )
+      }
+    }
+    s"redirect to $errorPageUrl" when {
+      "error in response from API" in {
+        Given("Income Sources FS is enabled")
+        stubAuthorisedAgentUser(authorised = true)
+        enable(IncomeSources)
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
+
+        val formData: Map[String, Seq[String]] = Map(
+          "foreignPropertyStartDate" -> Seq("2023-01-01"),
+          "addForeignPropertyAccountingMethod" -> Seq("ACCRUALS")
+        )
+
+        IncomeTaxViewChangeStub.stubCreateBusinessDetailsResponse(testMtditid)(OK, List.empty)
+
+        When(s"I call $foreignPropertyCheckDetailsSubmitAgentUrl")
+        val result = IncomeTaxViewChangeFrontend.post("/income-sources/add/foreign-property-check-details", sessionData ++ clientDetailsWithConfirmation)(formData)
+
+        result should have(
+          httpStatus(SEE_OTHER),
+          redirectURI(errorPageUrl)
         )
       }
     }
