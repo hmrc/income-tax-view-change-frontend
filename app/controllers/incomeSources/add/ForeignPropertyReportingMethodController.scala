@@ -35,6 +35,7 @@ import views.html.incomeSources.add.{BusinessReportingMethod, ForeignPropertyRep
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.Try
 
 class ForeignPropertyReportingMethodController @Inject()(val authenticate: AuthenticationPredicate,
                                                          val authorisedFunctions: FrontendAuthorisedFunctions,
@@ -122,9 +123,13 @@ class ForeignPropertyReportingMethodController @Inject()(val authenticate: Authe
       viewModel <- getForeignPropertyReportingMethodDetails(latencyDetailsMaybe)
     } yield {
       (isEnabled(IncomeSources), isMandatoryOrVoluntary, viewModel) match {
-        case (false, _, _) => Future(Ok(customNotFoundErrorView()))
-        case (_, _, None) => Future.successful(Redirect(redirectCall))
-        case (_, true, Some(viewModel)) =>
+        case (false, _, _) =>
+          // TODO: log error
+          Future(Ok(customNotFoundErrorView()))
+        case (_, _, Left(ex)) =>
+          // TODO: Log error and call error handler
+          Future.successful(Redirect(redirectCall))
+        case (_, true, Right(viewModel)) =>
           Future(Ok(foreignPropertyReportingMethodView(
             form = AddForeignPropertyReportingMethodForm.form,
             viewModel = viewModel,
@@ -147,19 +152,23 @@ class ForeignPropertyReportingMethodController @Inject()(val authenticate: Authe
         AddForeignPropertyReportingMethodForm.form.bindFromRequest().fold(
           formWithErrors => {
             for {
-              latencyDetailsMaybe <- Future(user.incomeSources.properties.find(_.incomeSourceId.contains(id)).flatMap(_.latencyDetails))
+              latencyDetailsMaybe <- Future(user.incomeSources.properties
+                .find(_.incomeSourceId.contains(id))
+                .flatMap(_.latencyDetails))
               fPropertyReportingMethodViewModel <- getForeignPropertyReportingMethodDetails(latencyDetailsMaybe)
             } yield {
               fPropertyReportingMethodViewModel match {
-                case Some(viewModel) =>
+                case Right(viewModel) =>
                   BadRequest(foreignPropertyReportingMethodView(
                     form = AddForeignPropertyReportingMethodForm.updateErrorMessagesWithValues(formWithErrors),
                     viewModel = viewModel,
                     postAction = postAction,
                     isAgent = isAgent
                   ))
-                case None =>
-                  Logger("application").error(s"[ForeignPropertyReportingMethodController][handleRequest]: Failed to retrieve latency details")
+                case Left(ex) =>
+                  Logger("application")
+                    .error(s"[ForeignPropertyReportingMethodController][handleRequest]: " +
+                      s"Failed to retrieve latency details - $ex")
                   Redirect(redirectCall)
               }
             }
@@ -193,22 +202,31 @@ class ForeignPropertyReportingMethodController @Inject()(val authenticate: Authe
       } else Future(Ok(customNotFoundErrorView()))
     }
 
+  import cats.syntax.either._
   private def getForeignPropertyReportingMethodDetails(latencyDetailsMaybe: Option[LatencyDetails])
-                                                      (implicit user: MtdItUser[_]): Future[Option[ForeignPropertyReportingMethodViewModel]] = {
+                                                      (implicit user: MtdItUser[_]): Future[Either[Throwable, ForeignPropertyReportingMethodViewModel]] = {
 
     val currentTaxYearEnd = dateService.getCurrentTaxYearEnd(isEnabled(TimeMachineAddYear))
     latencyDetailsMaybe match {
-      case Some(latencyDetails) =>
+      case Some(latencyDetails) if Try(latencyDetails.taxYear1.toInt).toOption.isDefined =>
         calculationListService.isTaxYearCrystallised(latencyDetails.taxYear1.toInt).flatMap { isTaxYear1Crystallised =>
           (latencyDetails, isTaxYear1Crystallised) match {
-            case _ if latencyDetails.taxYear2.toInt < currentTaxYearEnd => Future.successful(None)
+            case _ if Try(latencyDetails.taxYear2).toOption.isEmpty =>
+              Future.successful( Left( new Error(s"Unable to convert taxYear2 to Int: ${latencyDetails.taxYear2}") ) )
+            case _ if latencyDetails.taxYear2.toInt < currentTaxYearEnd =>
+              Future.successful( Left( new Error("Current tax year not in scope of change period") ) )
             case (_, Some(true)) =>
-              Future.successful(Some(ForeignPropertyReportingMethodViewModel(
-                taxYear2 = Some(latencyDetails.taxYear2),
-                latencyIndicator2 = Some(latencyDetails.latencyIndicator2)
-              )))
+              Future.successful(
+                Right(
+                  ForeignPropertyReportingMethodViewModel(
+                    taxYear2 = Some(latencyDetails.taxYear2),
+                  latencyIndicator2 = Some(latencyDetails.latencyIndicator2)
+                )
+                )
+              )
             case _ =>
-              Future.successful(Some(ForeignPropertyReportingMethodViewModel(
+              Future.successful(
+                Right(ForeignPropertyReportingMethodViewModel(
                 taxYear1 = Some(latencyDetails.taxYear1),
                 latencyIndicator1 = Some(latencyDetails.latencyIndicator1),
                 taxYear2 = Some(latencyDetails.taxYear2),
@@ -216,19 +234,17 @@ class ForeignPropertyReportingMethodController @Inject()(val authenticate: Authe
               )))
           }
         }
-      case None => Future(None)
+      case Some(latencyDetails) =>
+        Future(Left(new Error(s"Unable to convert taxYear1 to Int: ${latencyDetails.taxYear1}")))
+      case None =>
+        Future.successful(Left(new Error("Latency details are not provided")))
     }
   }
 
-  private def isAnnualReporting(taxYearReportingMethod: String): Boolean = {
-    taxYearReportingMethod match {
-      case "A" => true
-      case _ => false
-    }
-  }
+  private def isAnnualReporting(taxYearReportingMethod: String): Boolean = taxYearReportingMethod.toUpperCase().equals("A")
 
-  private def getTaxYearSpecific(taxYear: Option[String], reportingMethod: Option[String]): Option[TaxYearSpecific] = for {
-    taxYear <- taxYear
+  private def getTaxYearSpecific(taxYearMaybe: Option[String], reportingMethod: Option[String]): Option[TaxYearSpecific] = for {
+    taxYear <- taxYearMaybe
     taxYearReportingMethod <- reportingMethod
   } yield {
     TaxYearSpecific(
