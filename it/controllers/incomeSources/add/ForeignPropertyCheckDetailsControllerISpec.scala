@@ -68,6 +68,7 @@ class ForeignPropertyCheckDetailsControllerISpec extends ComponentSpecBase{
     }
   }
 
+
   s"calling POST $foreignPropertyCheckDetailsSubmitUrl" should {
     s"redirect to $foreignPropertyReportingMethodShowUrl" when {
       "user selects 'confirm and continue'" in {
