@@ -18,7 +18,7 @@ package controllers.incomeSources.add
 
 import auth.MtdItUser
 import config.featureswitch.{FeatureSwitching, IncomeSources}
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import forms.utils.SessionKeys._
@@ -62,14 +62,15 @@ class ForeignPropertyCheckDetailsController @Inject()(val checkForeignPropertyDe
                    (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
 
     val backUrl: String = if (isAgent) backUrlAgent else backUrlIndividual
-    val postAction: Call = if (isAgent) controllers.incomeSources.add.routes.ForeignPropertyCheckDetailsController.submitAgent() else
+    val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
+    val postAction: Call = if (isAgent) controllers.incomeSources.add.routes.ForeignPropertyCheckDetailsController.submitAgent() else {
       controllers.incomeSources.add.routes.ForeignPropertyCheckDetailsController.submit()
+    }
 
     if (isDisabled(IncomeSources)) {
       if (isAgent) Future.successful(Redirect(controllers.routes.HomeController.showAgent)) else Future.successful(Redirect(controllers.routes.HomeController.show()))
     } else {
-      Future {
-        getDetails(user) match {
+        getDetails(user) map {
           case Right(viewModel) =>
             Ok(checkForeignPropertyDetails(
               viewModel,
@@ -81,29 +82,28 @@ class ForeignPropertyCheckDetailsController @Inject()(val checkForeignPropertyDe
             if (isAgent) {
               Logger("application").error(
                 s"[Agent][ForeignPropertyCheckDetailsController][handleRequest] - Error: ${ex.getMessage}")
-              itvcErrorHandlerAgent.showInternalServerError()
+              errorHandler.showInternalServerError()
             } else {
               Logger("application").error(
                 s"[ForeignPropertyCheckDetailsController][handleRequest] - Error: ${ex.getMessage}")
-              itvcErrorHandler.showInternalServerError()
+              errorHandler.showInternalServerError()
             }
-        }
-      }.recover{
-        case ex =>
+      } recover {
+        case ex: Exception =>
           if (isAgent) {
             Logger("application").error(
               s"[Agent][ForeignPropertyCheckDetailsController][handleRequest] - Error: Unable to construct Future ${ex.getMessage}")
-            itvcErrorHandlerAgent.showInternalServerError()
+            errorHandler.showInternalServerError()
           } else {
             Logger("application").error(
               s"[ForeignPropertyCheckDetailsController][handleRequest] - Error: Unable to construct Future ${ex.getMessage}")
-            itvcErrorHandler.showInternalServerError()
+            errorHandler.showInternalServerError()
           }
       }
     }
   }
 
-  def getDetails(implicit user: MtdItUser[_]): Either[Throwable, CheckForeignPropertyViewModel] = {
+  def getDetails(implicit user: MtdItUser[_]): Future[Either[Throwable, CheckForeignPropertyViewModel]] = {
 
     case class MissingKey(msg: String)
 
@@ -122,12 +122,14 @@ class ForeignPropertyCheckDetailsController @Inject()(val checkForeignPropertyDe
         tradingStartDate = foreignPropertyStartDate,
         cashOrAccrualsFlag = cashOrAccrualsFlag)
     }
-    result match {
-      case Some(checkForeignPropertyViewModel) =>
-        Right(checkForeignPropertyViewModel)
-      case None =>
-        Left(new IllegalArgumentException(s"Missing required session data: ${errors.mkString(" ")}"))
-    }
+    Future.successful(
+      result match {
+        case Some(checkForeignPropertyViewModel) =>
+          Right(checkForeignPropertyViewModel)
+        case None =>
+          Left(new IllegalArgumentException(s"Missing required session data: ${errors.mkString(" ")}"))
+      }
+    )
   }
 
   def show(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
@@ -169,8 +171,8 @@ class ForeignPropertyCheckDetailsController @Inject()(val checkForeignPropertyDe
   private val sessionKeys = Seq(foreignPropertyStartDate, addForeignPropertyAccountingMethod)
 
   def handleSubmit(isAgent: Boolean)(implicit user: MtdItUser[AnyContent], request: Request[AnyContent]): Future[Result] = {
-    getDetails(user).toOption match {
-      case Some(viewModel: CheckForeignPropertyViewModel) =>
+    getDetails(user) flatMap {
+      case Right(viewModel: CheckForeignPropertyViewModel) =>
         businessDetailsService.createForeignProperty(viewModel).map {
           case Left(ex) => if (isAgent) {
             Logger("application").error(
@@ -188,7 +190,7 @@ class ForeignPropertyCheckDetailsController @Inject()(val checkForeignPropertyDe
             if (isAgent) Redirect(controllers.incomeSources.add.routes.ForeignPropertyReportingMethodController.showAgent(id).url).withSession(user.session -- sessionKeys)
             else Redirect(controllers.incomeSources.add.routes.ForeignPropertyReportingMethodController.show(id).url).withSession(user.session -- sessionKeys)
         }
-      case None => if(isAgent){
+      case Left(_) => if(isAgent){
         Logger("application").error(
           s"[CheckBusinessDetailsController][submit] - Error: Unable to build view model on submit")
         Future.successful(itvcErrorHandlerAgent.showInternalServerError())
@@ -199,5 +201,4 @@ class ForeignPropertyCheckDetailsController @Inject()(val checkForeignPropertyDe
       }
     }
   }
-
 }
