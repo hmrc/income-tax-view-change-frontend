@@ -152,15 +152,20 @@ class IncomeSourceDetailsService @Inject()(val incomeTaxViewChangeConnector: Inc
 
   def getViewIncomeSourceChosenViewModel(sources: IncomeSourceDetailsModel, id: String): Either[Throwable, ViewBusinessDetailsViewModel] = {
     val desiredIncomeSource: BusinessDetailsModel = sources.businesses
-      .filterNot(_.isCeased)
-      .filter(_.incomeSourceId.getOrElse(throw new MissingFieldException("incomeSourceId missing")) == id)
+//      .filterNot(_.isCeased)
+//      .filter(_.incomeSourceId.getOrElse(throw new MissingFieldException("incomeSourceId missing")) == id)
       .head
+
+    println("MMMMMMMMMMMMMMM" + sources)
+    println("??????????????????" + desiredIncomeSource)
 
     Try {
       ViewBusinessDetailsViewModel(
         incomeSourceId = desiredIncomeSource.incomeSourceId.getOrElse(throw new MissingFieldException("Missing incomeSourceId field")),
         tradingName = desiredIncomeSource.tradingName,
-        tradingStartDate = desiredIncomeSource.tradingStartDate
+        tradingStartDate = desiredIncomeSource.tradingStartDate,
+        businessAddressDetails = desiredIncomeSource.businessAddressDetails,
+        businessAccountingMethod = desiredIncomeSource.cashOrAccruals
       )
     }.toEither
   }

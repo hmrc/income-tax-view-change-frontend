@@ -1443,3 +1443,15 @@ incomeSources.add.ukPropertyReportingMethod.chooseAnnualReport        =   Choose
 incomeSources.add.ukPropertyReportingMethod.chooseQuarterlyReport     =   Choose quarterly reporting
 incomeSources.add.ukPropertyReportingMethod.error                     =   Select if you want to report annually or quarterly for tax year {0} to {1}
 
+# manage journey manage income source
+incomeSources.manage.business-manage-details.heading                =   Manage your details
+incomeSources.manage.business-manage-details.business-name          =   Business name
+incomeSources.manage.business-manage-details.business-address       =   Business address
+incomeSources.manage.business-manage-details.date-started           =   Date started
+incomeSources.manage.business-manage-details.accounting-method      =   Accounting method for sole trader income
+incomeSources.manage.business-manage-details.reporting-method       =   Income reporting method {0}-{1}
+incomeSources.manage.business-manage-details.change                 =   Change
+
+
+
+

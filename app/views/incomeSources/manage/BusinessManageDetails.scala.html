@@ -18,30 +18,38 @@
 @import views.html.layouts.unifiedLayout
 @import views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.html.components.FormWithCSRF
+@import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcPageHeading
+@import uk.gov.hmrc.hmrcfrontend.views.viewmodels.pageheading.PageHeading
 @import models.incomeSourceDetails.viewmodels.ViewIncomeSourcesViewModel
 @import models.incomeSourceDetails.viewmodels.ViewBusinessDetailsViewModel
 
 @this(
         mainTemplate: unifiedLayout,
+        hmrcPageHeading: HmrcPageHeading,
+        govukSummaryList: GovukSummaryList,
         implicitDateFormatter: ImplicitDateFormatterImpl,
         h1: h1,
         h2: h2,
         p: p,
         link: link,
         hr: hr,
-        govukTable: GovukTable
+        govukTable: GovukTable,
+        govukButton: GovukButton,
+        formWithCSRF: FormWithCSRF
 )
 
 @(
         viewModel: ViewBusinessDetailsViewModel,
         isAgent: Boolean,
-        backUrl: String
+        backUrl: String,
+        origin: Option[String] = None
         )(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @import implicitDateFormatter.longDate
 
 @getMessage(key: String, args: String*) = @{
-    messages(s"view-income-sources.$key", args: _*)
+    messages(s"incomeSources.manage.business-manage-details.$key", args: _*)
 }
 
 @changeReportingMethodYearOne(id: String, taxYear: String, changeto: String) = @{
@@ -52,8 +60,52 @@
     }
 }
 
-    <h1>@changeReportingMethodYearOne("i", "j", "k")</h1>
-    <h1>@viewModel.incomeSourceId</h1>
-    <h1>@viewModel.tradingName</h1>
-    <h1>@viewModel.tradingStartDate</h1>
+
+
+@mainTemplate(
+    pageTitle = getMessage("heading"),
+    backUrl = Some(backUrl),
+    useFallbackBackLink = true,
+    isAgent = isAgent,
+    btaNavPartial = user.btaNavPartial) {
+
+    @hmrcPageHeading(PageHeading(
+        text = getMessage("heading"),
+        headingClasses = Some("govuk-heading-l"),
+        section = Some(getMessage("sole-trader-caption")),
+        captionClasses = Some("govuk-caption-l")
+    ))
+
+    <dl class="govuk-summary-list" id="refund-to-taxpayer-table">
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">@getMessage("business-name")</dt>
+            <dd class="govuk-summary-list__value" id="business-name">@{
+                viewModel.tradingName.getOrElse("")
+            }</dd>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">@getMessage("business-address")</dt>
+            <dd class="govuk-summary-list__value" id="business-address">@{
+                viewModel.businessAddressDetails.get.postCode
+                <p>!!!!!!!!!!!!!!!!!!!</p>
+            }</dd>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">@getMessage("date-started")</dt>
+            <dd class="govuk-summary-list__value" id="business-date-started">@{
+                viewModel.tradingStartDate.map(_.toLongDate).getOrElse("")
+            }</dd>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">@getMessage("accounting-method")</dt>
+            <dd class="govuk-summary-list__value" id="business-accounting-method">@{
+                viewModel.businessAccountingMethod.getOrElse("")
+            }</dd>
+        </div>
+    </dl>
+
+    <br>
+    <br>
+
+}
 
