@@ -1,7 +1,7 @@
 package controllers.incomeSources.add
 
 import config.featureswitch.IncomeSources
-import forms.utils.SessionKeys.{addBusinessAccountingMethod, addBusinessAccountingPeriodEndDate, addBusinessAddressLine1, addBusinessPostalCode, businessName, businessStartDate, businessTrade}
+import forms.utils.SessionKeys.{addBusinessAccountingMethod, addBusinessAccountingPeriodEndDate, addBusinessAddressLine1, addBusinessPostalCode, addForeignPropertyAccountingMethod, businessName, businessStartDate, businessTrade, foreignPropertyStartDate}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.createIncomeSource.CreateIncomeSourceResponse
@@ -17,6 +17,11 @@ class ForeignPropertyCheckDetailsControllerISpec extends ComponentSpecBase{
   val foreignPropertyCheckDetailsSubmitUrl: String = controllers.incomeSources.add.routes.ForeignPropertyCheckDetailsController.submit().url
   val foreignPropertyReportingMethodShowUrl: String = controllers.incomeSources.add.routes.ForeignPropertyReportingMethodController.show("123").url
 
+  val sessionData: Map[String, String] = Map(
+    foreignPropertyStartDate -> "2023-01-01",
+    addForeignPropertyAccountingMethod -> "ACCRUALS"
+  )
+
   s"calling GET $foreignPropertyCheckDetailsShowUrl" should {
     "render the FP check details page" when {
       "User is authorised" in {
@@ -28,7 +33,7 @@ class ForeignPropertyCheckDetailsControllerISpec extends ComponentSpecBase{
         IncomeTaxViewChangeStub.stubCreateBusinessDetailsResponse(testMtditid)(OK, response)
 
         When(s"I call $foreignPropertyCheckDetailsShowUrl")
-        val result = IncomeTaxViewChangeFrontend.get("/income-sources/add/foreign-property-check-details")
+        val result = IncomeTaxViewChangeFrontend.get("/income-sources/add/foreign-property-check-details", sessionData)
         result should have(
           httpStatus(OK),
           pageTitleIndividual("incomeSources.add.foreign-property-check-details.title")
