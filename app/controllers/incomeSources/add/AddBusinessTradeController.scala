@@ -21,7 +21,6 @@ import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
-import controllers.routes
 import forms.incomeSources.add.BusinessTradeForm
 import forms.utils.SessionKeys
 import play.api.i18n.I18nSupport
@@ -29,6 +28,7 @@ import play.api.mvc._
 import services.IncomeSourceDetailsService
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import views.html.incomeSources.add.AddBusinessTrade
+
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -51,6 +51,10 @@ class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate
 
   lazy val backURL: String = controllers.incomeSources.add.routes.AddBusinessStartDateCheckController.show().url
   lazy val agentBackURL: String = controllers.incomeSources.add.routes.AddBusinessStartDateCheckController.showAgent().url
+  lazy val postAction: Call = controllers.incomeSources.add.routes.AddBusinessTradeController.submit()
+  lazy val postActionAgent: Call = controllers.incomeSources.add.routes.AddBusinessTradeController.agentSubmit()
+  lazy val redirect: String = controllers.incomeSources.add.routes.AddBusinessAddressController.show().url
+  lazy val redirectAgent: String = controllers.incomeSources.add.routes.AddBusinessAddressController.showAgent().url
 
   def show: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
@@ -73,8 +77,8 @@ class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate
       Future.successful(Redirect(controllers.routes.HomeController.show()))
     } else {
       Future {
-        if (!isAgent) Ok(addBusinessTradeView(BusinessTradeForm.form, controllers.incomeSources.add.routes.AddBusinessTradeController.submit(), isAgent, backURL, false))
-        else Ok(addBusinessTradeView(BusinessTradeForm.form, controllers.incomeSources.add.routes.AddBusinessTradeController.agentSubmit(), isAgent, agentBackURL, false))
+        if (!isAgent) Ok(addBusinessTradeView(BusinessTradeForm.form, controllers.incomeSources.add.routes.AddBusinessTradeController.submit(), isAgent, backURL, sameNameError = false))
+        else Ok(addBusinessTradeView(BusinessTradeForm.form, controllers.incomeSources.add.routes.AddBusinessTradeController.agentSubmit(), isAgent, agentBackURL, sameNameError = false))
       }
     }
   }
@@ -82,26 +86,7 @@ class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate
   def submit: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit request =>
-      BusinessTradeForm.form.bindFromRequest().fold(
-        formWithErrors => {
-          Future {
-            Ok(addBusinessTradeView(formWithErrors, controllers.incomeSources.add.routes.AddBusinessTradeController.submit(), false, backURL, false))
-          }
-        },
-        formData => {
-          if (formData.trade.toLowerCase == request.session.get(SessionKeys.businessName).get.toLowerCase.trim) {
-            Future {
-              Ok(addBusinessTradeView(BusinessTradeForm.form, controllers.incomeSources.add.routes.AddBusinessTradeController.submit(), false, backURL, true))
-            }
-          }
-          else {
-            Future.successful {
-              Redirect(controllers.incomeSources.add.routes.AddBusinessAddressController.show().url)
-                .addingToSession(SessionKeys.businessTrade -> formData.trade)
-            }
-          }
-        }
-      )
+      handelSubmitRequest(isAgent = false)
   }
 
   def agentSubmit: Action[AnyContent] = Authenticated.async {
@@ -109,27 +94,35 @@ class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
           implicit mtdItUser =>
-            BusinessTradeForm.form.bindFromRequest().fold(
-              formWithErrors => {
-                Future {
-                  Ok(addBusinessTradeView(formWithErrors, controllers.incomeSources.add.routes.AddBusinessTradeController.agentSubmit(), true, agentBackURL, false))
-                }
-              },
-              formData => {
-                if (formData.trade == request.session.get(SessionKeys.businessName).get) {
-                  Future {
-                    Ok(addBusinessTradeView(BusinessTradeForm.form, controllers.incomeSources.add.routes.AddBusinessTradeController.agentSubmit(), true, agentBackURL, true))
-                  }
-                }
-                else {
-                  Future.successful {
-                    Redirect(controllers.incomeSources.add.routes.AddBusinessAddressController.showAgent().url)
-                      .addingToSession(SessionKeys.businessTrade -> formData.trade)
-                  }
-                }
-              }
-            )
+            handelSubmitRequest(isAgent = true)
         }
+  }
+
+  def handelSubmitRequest(isAgent: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
+    val (postActionLocal, backUrlLocal, redirectLocal) = {
+      if (isAgent) (postActionAgent, agentBackURL, redirectAgent)
+      else (postAction, backURL, redirect)
+    }
+    BusinessTradeForm.form.bindFromRequest().fold(
+      formWithErrors => {
+        Future {
+          Ok(addBusinessTradeView(formWithErrors, postActionLocal, isUserAgent = true, backUrlLocal, sameNameError = false))
+        }
+      },
+      formData => {
+        if (formData.trade == user.session.get(SessionKeys.businessName).get) {
+          Future {
+            Ok(addBusinessTradeView(BusinessTradeForm.form, postActionLocal, isUserAgent = true, backUrlLocal, sameNameError = true))
+          }
+        }
+        else {
+          Future.successful {
+            Redirect(redirectLocal)
+              .addingToSession(SessionKeys.businessTrade -> formData.trade)
+          }
+        }
+      }
+    )
   }
 
   def changeBusinessTrade(): Action[AnyContent] = Action {

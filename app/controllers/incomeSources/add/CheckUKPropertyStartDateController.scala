@@ -37,20 +37,20 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class CheckUKPropertyStartDateController @Inject()(val authenticate: AuthenticationPredicate,
-                                                           val authorisedFunctions: FrontendAuthorisedFunctions,
-                                                           val checkSessionTimeout: SessionTimeoutPredicate,
-                                                           val dateFormatter: ImplicitDateFormatterImpl,
-                                                           val incomeSourceDetailsService: IncomeSourceDetailsService,
-                                                           val retrieveBtaNavBar: NavBarPredicate,
-                                                           val retrieveIncomeSources: IncomeSourceDetailsPredicate,
-                                                           val retrieveNino: NinoPredicate,
-                                                           val view: CheckUKPropertyStartDate,
-                                                           val customNotFoundErrorView: CustomNotFoundError)
-                                                          (implicit val appConfig: FrontendAppConfig,
-                                                           mcc: MessagesControllerComponents,
-                                                           val ec: ExecutionContext,
-                                                           val itvcErrorHandler: ItvcErrorHandler,
-                                                           val itvcErrorHandlerAgent: AgentItvcErrorHandler)
+                                                   val authorisedFunctions: FrontendAuthorisedFunctions,
+                                                   val checkSessionTimeout: SessionTimeoutPredicate,
+                                                   val dateFormatter: ImplicitDateFormatterImpl,
+                                                   val incomeSourceDetailsService: IncomeSourceDetailsService,
+                                                   val retrieveBtaNavBar: NavBarPredicate,
+                                                   val retrieveIncomeSources: IncomeSourceDetailsPredicate,
+                                                   val retrieveNino: NinoPredicate,
+                                                   val view: CheckUKPropertyStartDate,
+                                                   val customNotFoundErrorView: CustomNotFoundError)
+                                                  (implicit val appConfig: FrontendAppConfig,
+                                                   mcc: MessagesControllerComponents,
+                                                   val ec: ExecutionContext,
+                                                   val itvcErrorHandler: ItvcErrorHandler,
+                                                   val itvcErrorHandlerAgent: AgentItvcErrorHandler)
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
   def handleRequest(isAgent: Boolean, startDate: String)
@@ -106,29 +106,43 @@ class CheckUKPropertyStartDateController @Inject()(val authenticate: Authenticat
         }
   }
 
+  def handleSubmitRequest(isAgent: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
+    val (postAction, backUrl, redirectToAccountingMethod) = {
+      if (isAgent)
+        (routes.CheckUKPropertyStartDateController.submitAgent(),
+          routes.AddUKPropertyStartDateController.showAgent(),
+          routes.UKPropertyBusinessAccountingMethodController.showAgent())
+      else
+        (routes.CheckUKPropertyStartDateController.submit(),
+          routes.AddUKPropertyStartDateController.show(),
+          routes.UKPropertyBusinessAccountingMethodController.show())
+    }
+    val startDate = user.session.get(SessionKeys.addUkPropertyStartDate).get
+    val formattedStartDate = dateFormatter.longDate(LocalDate.parse(startDate)).toLongDate
+    CheckUKPropertyStartDateForm.form.bindFromRequest().fold(
+      hasErrors => Future.successful(BadRequest(view(
+        checkUKPropertyStartDateForm = hasErrors,
+        postAction = postAction,
+        backUrl = backUrl.url,
+        isAgent = isAgent,
+        startDate = formattedStartDate
+      ))),
+      validatedInput => {
+        val goBackAndChangeDate = validatedInput.equals(Some("no"))
+        if (goBackAndChangeDate) {
+          Future.successful(Redirect(backUrl)
+            .removingFromSession("addUkPropertyStartDate"))
+        } else {
+          Future.successful(Redirect(redirectToAccountingMethod))
+        }
+      }
+    )
+  }
+
   def submit: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
-      val startDate = user.session.get(SessionKeys.addUkPropertyStartDate).get
-      val formattedStartDate = dateFormatter.longDate(LocalDate.parse(startDate)).toLongDate
-      CheckUKPropertyStartDateForm.form.bindFromRequest().fold(
-        hasErrors => Future.successful(BadRequest(view(
-          checkUKPropertyStartDateForm = hasErrors,
-          postAction = controllers.incomeSources.add.routes.CheckUKPropertyStartDateController.submit(),
-          backUrl = controllers.incomeSources.add.routes.AddUKPropertyStartDateController.show().url,
-          isAgent = false,
-          startDate = formattedStartDate
-        ))),
-        validatedInput => {
-          val goBackAndChangeDate = validatedInput.equals(Some("no"))
-          if (goBackAndChangeDate) {
-            Future.successful(Redirect(controllers.incomeSources.add.routes.AddUKPropertyStartDateController.show())
-              .removingFromSession("addUkPropertyStartDate"))
-          } else {
-            Future.successful(Redirect(controllers.incomeSources.add.routes.UKPropertyBusinessAccountingMethodController.show()))
-          }
-        }
-      )
+      handleSubmitRequest(isAgent = false)
   }
 
   def submitAgent: Action[AnyContent] = Authenticated.async {
@@ -136,26 +150,7 @@ class CheckUKPropertyStartDateController @Inject()(val authenticate: Authenticat
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
           implicit mtdItUser =>
-            val startDate = mtdItUser.session.get(SessionKeys.addUkPropertyStartDate).get
-            val formattedStartDate = dateFormatter.longDate(LocalDate.parse(startDate)).toLongDate
-            CheckUKPropertyStartDateForm.form.bindFromRequest().fold(
-              hasErrors => Future.successful(BadRequest(view(
-                checkUKPropertyStartDateForm = hasErrors,
-                postAction = controllers.incomeSources.add.routes.CheckUKPropertyStartDateController.submit(),
-                backUrl = controllers.incomeSources.add.routes.AddUKPropertyStartDateController.showAgent().url,
-                isAgent = true,
-                startDate = formattedStartDate
-              ))),
-              validatedInput => {
-                val goBackAndChangeDate = validatedInput.equals(Some("no"))
-                if (goBackAndChangeDate) {
-                  Future.successful(Redirect(controllers.incomeSources.add.routes.AddUKPropertyStartDateController.showAgent())
-                    .removingFromSession("addUkPropertyStartDate"))
-                } else {
-                  Future.successful(Redirect(controllers.incomeSources.add.routes.UKPropertyBusinessAccountingMethodController.showAgent()))
-                }
-              }
-            )
+            handleSubmitRequest(isAgent = true)
         }
   }
 }

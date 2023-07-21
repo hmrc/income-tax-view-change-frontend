@@ -46,10 +46,10 @@ class ForeignPropertyEndDateController @Inject()(val authenticate: Authenticatio
                                                  val view: ForeignPropertyEndDate,
                                                  val customNotFoundErrorView: CustomNotFoundError)
                                                 (implicit val appConfig: FrontendAppConfig,
-                                            mcc: MessagesControllerComponents,
-                                            val ec: ExecutionContext,
-                                            val itvcErrorHandler: ItvcErrorHandler,
-                                            val itvcErrorHandlerAgent: AgentItvcErrorHandler)
+                                                 mcc: MessagesControllerComponents,
+                                                 val ec: ExecutionContext,
+                                                 val itvcErrorHandler: ItvcErrorHandler,
+                                                 val itvcErrorHandlerAgent: AgentItvcErrorHandler)
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
   def handleRequest(isAgent: Boolean, origin: Option[String] = None)
@@ -100,20 +100,37 @@ class ForeignPropertyEndDateController @Inject()(val authenticate: Authenticatio
         }
   }
 
+  def handleSubmitRequest(isAgent: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
+
+    val (postAction, backAction, redirectAction) = {
+      if (isAgent)
+        (routes.ForeignPropertyEndDateController.submitAgent(),
+          routes.CeaseForeignPropertyController.showAgent(),
+          routes.CheckCeaseForeignPropertyDetailsController.showAgent())
+      else
+        (routes.ForeignPropertyEndDateController.submit(),
+          routes.CeaseForeignPropertyController.show(),
+          routes.CheckCeaseForeignPropertyDetailsController.show())
+
+    }
+
+    ForeignPropertyEndDateForm.apply.bindFromRequest().fold(
+      hasErrors => Future.successful(BadRequest(view(
+        ForeignPropertyEndDateForm = hasErrors,
+        postAction = postAction,
+        backUrl = backAction.url,
+        isAgent = isAgent
+      ))),
+      validatedInput =>
+        Future.successful(Redirect(redirectAction)
+          .addingToSession(ceaseForeignPropertyEndDate -> validatedInput.date.toString))
+    )
+  }
+
   def submit: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
-      ForeignPropertyEndDateForm.apply.bindFromRequest().fold(
-        hasErrors => Future.successful(BadRequest(view(
-          ForeignPropertyEndDateForm = hasErrors,
-          postAction = controllers.incomeSources.cease.routes.ForeignPropertyEndDateController.submit(),
-          backUrl = controllers.incomeSources.cease.routes.CeaseForeignPropertyController.show().url,
-          isAgent = false
-        ))),
-        validatedInput =>
-          Future.successful(Redirect(controllers.incomeSources.cease.routes.CheckCeaseForeignPropertyDetailsController.show())
-            .addingToSession(ceaseForeignPropertyEndDate -> validatedInput.date.toString))
-      )
+      handleSubmitRequest(isAgent = false)
   }
 
   def submitAgent: Action[AnyContent] = Authenticated.async {
@@ -121,17 +138,7 @@ class ForeignPropertyEndDateController @Inject()(val authenticate: Authenticatio
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
           implicit mtdItUser =>
-            ForeignPropertyEndDateForm.apply.bindFromRequest().fold(
-              hasErrors => Future.successful(BadRequest(view(
-                ForeignPropertyEndDateForm = hasErrors,
-                postAction = controllers.incomeSources.cease.routes.ForeignPropertyEndDateController.submitAgent(),
-                backUrl = controllers.incomeSources.cease.routes.CeaseForeignPropertyController.showAgent().url,
-                isAgent = true
-              ))),
-              validatedInput =>
-                Future.successful(Redirect(controllers.incomeSources.cease.routes.CheckCeaseForeignPropertyDetailsController.showAgent())
-                  .addingToSession(ceaseForeignPropertyEndDate -> validatedInput.date.toString))
-            )
+            handleSubmitRequest(isAgent = true)
         }
   }
 
