@@ -242,6 +242,9 @@ POST          /agents/income-sources/add/business-check-details              con
 GET          /income-sources/add/change-uk-property-accounting-method            controllers.incomeSources.add.UKPropertyAccountingMethodController.change()
 GET          /agents/income-sources/add/change-uk-property-accounting-method     controllers.incomeSources.add.UKPropertyAccountingMethodController.changeAgent()
 
+GET          /income-sources/add/error-uk-property-not-added                    controllers.incomeSources.add.UKPropertyNotAddedController.show()
+GET          /agents/income-sources/add/error-uk-property-not-added             controllers.incomeSources.add.UKPropertyNotAddedController.showAgent()
+
 
 
 # Income Sources - Cease
