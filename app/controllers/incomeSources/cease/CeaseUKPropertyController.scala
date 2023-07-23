@@ -93,20 +93,34 @@ class CeaseUKPropertyController @Inject()(val authenticate: AuthenticationPredic
         }
   }
 
+  def handleSubmitRequest(isAgent: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
+    val (postAction, backAction, redirectAction) = {
+      if (isAgent)
+        (routes.CeaseUKPropertyController.submitAgent,
+          routes.CeaseIncomeSourceController.showAgent(),
+          routes.UKPropertyEndDateController.showAgent())
+      else
+        (routes.CeaseUKPropertyController.submit,
+          routes.CeaseIncomeSourceController.show(),
+          routes.UKPropertyEndDateController.show())
+    }
+    CeaseUKPropertyForm.form.bindFromRequest().fold(
+      hasErrors => Future.successful(BadRequest(view(
+        ceaseUKPropertyForm = hasErrors,
+        postAction = postAction,
+        backUrl = backAction.url,
+        isAgent = isAgent
+      )).addingToSession(ceaseUKPropertyDeclare -> "false")),
+      _ =>
+        Future.successful(Redirect(redirectAction)
+          .addingToSession(ceaseUKPropertyDeclare -> "true"))
+    )
+  }
+
   def submit: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
-      CeaseUKPropertyForm.form.bindFromRequest().fold(
-        hasErrors => Future.successful(BadRequest(view(
-          ceaseUKPropertyForm = hasErrors,
-          postAction = controllers.incomeSources.cease.routes.CeaseUKPropertyController.submit,
-          backUrl = controllers.incomeSources.cease.routes.CeaseIncomeSourceController.show().url,
-          isAgent = false
-        )).addingToSession(ceaseUKPropertyDeclare -> "false")),
-        _ =>
-          Future.successful(Redirect(controllers.incomeSources.cease.routes.UKPropertyEndDateController.show())
-            .addingToSession(ceaseUKPropertyDeclare -> "true"))
-      )
+      handleSubmitRequest(isAgent = false)
   }
 
   def submitAgent: Action[AnyContent] = Authenticated.async {
@@ -114,17 +128,7 @@ class CeaseUKPropertyController @Inject()(val authenticate: AuthenticationPredic
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
           implicit mtdItUser =>
-            CeaseUKPropertyForm.form.bindFromRequest().fold(
-              hasErrors => Future.successful(BadRequest(view(
-                ceaseUKPropertyForm = hasErrors,
-                postAction = controllers.incomeSources.cease.routes.CeaseUKPropertyController.submitAgent,
-                backUrl = controllers.incomeSources.cease.routes.CeaseIncomeSourceController.showAgent().url,
-                isAgent = true
-              )).addingToSession(ceaseUKPropertyDeclare -> "false")),
-              _ =>
-                Future.successful(Redirect(controllers.incomeSources.cease.routes.UKPropertyEndDateController.showAgent())
-                  .addingToSession(ceaseUKPropertyDeclare -> "true"))
-            )
+            handleSubmitRequest(isAgent = true)
         }
   }
 }

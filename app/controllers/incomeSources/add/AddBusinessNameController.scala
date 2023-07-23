@@ -52,6 +52,8 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
   lazy val backUrlAgent: String = controllers.incomeSources.add.routes.AddIncomeSourceController.showAgent().url
   lazy val submitAction: Call = controllers.incomeSources.add.routes.AddBusinessNameController.submit()
   lazy val submitActionAgent: Call = controllers.incomeSources.add.routes.AddBusinessNameController.submitAgent()
+  lazy val redirect: Call = controllers.incomeSources.add.routes.AddBusinessStartDateController.show()
+  lazy val redirectAgent: Call = controllers.incomeSources.add.routes.AddBusinessStartDateController.showAgent()
 
   def show(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
@@ -95,19 +97,7 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
   def submit: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit request =>
-      BusinessNameForm.form.bindFromRequest().fold(
-        formWithErrors => {
-          Future {
-            Ok(addBusinessView(formWithErrors, false, submitAction, backUrl))
-          }
-        },
-        formData => {
-          Future.successful {
-            Redirect(controllers.incomeSources.add.routes.AddBusinessStartDateController.show())
-              .addingToSession(SessionKeys.businessName -> formData.name)
-          }
-        }
-      )
+      handleSubmitRequest(isAgent = false)
   }
 
   def submitAgent: Action[AnyContent] = Authenticated.async {
@@ -115,20 +105,31 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
           implicit mtdItUser =>
-            BusinessNameForm.form.bindFromRequest().fold(
-              formWithErrors => {
-                Future {
-                  Ok(addBusinessView(formWithErrors, true, submitActionAgent, backUrl))
-                }
-              },
-              formData => {
-                Future.successful {
-                  Redirect(controllers.incomeSources.add.routes.AddBusinessStartDateController.showAgent())
-                    .addingToSession(SessionKeys.businessName -> formData.name)
-                }
-              }
-            )
+            handleSubmitRequest(isAgent = true)
         }
+  }
+
+  def handleSubmitRequest(isAgent: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
+    val (backUrlLocal, submitActionLocal, redirectLocal) = {
+      if (isAgent)
+        (backUrlAgent, submitActionAgent, redirectAgent)
+      else
+        (backUrl, submitAction, redirect)
+    }
+
+    BusinessNameForm.form.bindFromRequest().fold(
+      formWithErrors => {
+        Future {
+          Ok(addBusinessView(formWithErrors, isAgent, submitActionLocal, backUrlLocal))
+        }
+      },
+      formData => {
+        Future.successful {
+          Redirect(redirectLocal)
+            .addingToSession(SessionKeys.businessName -> formData.name)
+        }
+      }
+    )
   }
 
   def changeBusinessName(): Action[AnyContent] = Action {
