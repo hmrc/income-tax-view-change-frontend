@@ -32,7 +32,6 @@ import views.html.errorPages.CustomNotFoundError
 import views.html.incomeSources.add.ForeignPropertyAccountingMethod
 import forms.incomeSources.add.ForeignPropertyAccountingMethodForm
 import forms.utils.SessionKeys.addForeignPropertyAccountingMethod
-import controllers.incomeSources.add.CheckForeignPropertyDetailsController
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -123,11 +122,11 @@ class ForeignPropertyAccountingMethodController @Inject()(val authenticate: Auth
       if (isAgent)
         (routes.ForeignPropertyAccountingMethodController.submitAgent(),
           routes.ForeignPropertyStartDateCheckController.showAgent(),
-          routes.CheckForeignPropertyDetailsController.showAgent())
+          routes.ForeignPropertyCheckDetailsController.showAgent())
       else
         (routes.ForeignPropertyAccountingMethodController.submit(),
           routes.ForeignPropertyStartDateCheckController.show(),
-          routes.CheckForeignPropertyDetailsController.show())
+          routes.ForeignPropertyCheckDetailsController.show())
     }
 
 
@@ -148,6 +147,14 @@ class ForeignPropertyAccountingMethodController @Inject()(val authenticate: Auth
         }
       }
     )
+  }
+
+  def changeForeignPropertyAccountingMethod(): Action[AnyContent] = Action {
+    Ok("Change Foreign Property Accounting Method WIP")
+  }
+
+  def changeForeignPropertyAccountingMethodAgent(): Action[AnyContent] = Action {
+    Ok("Agent change Foreign Property Accounting Method WIP")
   }
 
 }

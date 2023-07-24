@@ -34,7 +34,7 @@ import java.time.Month.APRIL
 class BusinessReportingMethodControllerISpec extends ComponentSpecBase {
   val businessReportingMethodShowUrl: String = controllers.incomeSources.add.routes.BusinessReportingMethodController.show(testSelfEmploymentId).url
   val businessReportingMethodSubmitUrl: String = controllers.incomeSources.add.routes.BusinessReportingMethodController.submit(testSelfEmploymentId).url
-  val businessAddedShowUrl: String = controllers.incomeSources.add.routes.BusinessAddedController.show(testSelfEmploymentId).url
+  val businessAddedShowUrl: String = controllers.incomeSources.add.routes.BusinessAddedObligationsController.show(testSelfEmploymentId).url
   val currentTaxYear: Int = dateService.getCurrentTaxYearEnd()
   val lastDayOfCurrentTaxYear: LocalDate = LocalDate.of(currentTaxYear, APRIL, 5)
   val taxYear1: Int = (currentTaxYear + 1)
