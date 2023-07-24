@@ -99,20 +99,36 @@ class CeaseForeignPropertyController @Inject()(val authenticate: AuthenticationP
         }
   }
 
+  def handleSubmitRequest(isAgent: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
+    val (postAction, backAction, redirectAction) = {
+      if (isAgent)
+        (routes.CeaseForeignPropertyController.submitAgent,
+          routes.CeaseIncomeSourceController.showAgent(),
+          routes.ForeignPropertyEndDateController.showAgent())
+      else
+        (routes.CeaseForeignPropertyController.submit,
+          routes.CeaseIncomeSourceController.show(),
+          routes.ForeignPropertyEndDateController.show())
+    }
+
+    CeaseForeignPropertyForm.form.bindFromRequest().fold(
+      hasErrors => Future.successful(BadRequest(view(
+        ceaseForeignPropertyForm = hasErrors,
+        postAction = postAction,
+        backUrl = backAction.url,
+        isAgent = isAgent
+      )).addingToSession(ceaseForeignPropertyDeclare -> "false")),
+      _ =>
+        Future.successful(Redirect(redirectAction)
+          .addingToSession(ceaseForeignPropertyDeclare -> "true"))
+    )
+  }
+
+
   def submit: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit request =>
-      CeaseForeignPropertyForm.form.bindFromRequest().fold(
-        hasErrors => Future.successful(BadRequest(view(
-          ceaseForeignPropertyForm = hasErrors,
-          postAction = controllers.incomeSources.cease.routes.CeaseForeignPropertyController.submit,
-          backUrl = controllers.incomeSources.cease.routes.CeaseIncomeSourceController.show().url,
-          isAgent = false
-        )).addingToSession(ceaseForeignPropertyDeclare -> "false")),
-        _ =>
-          Future.successful(Redirect(controllers.incomeSources.cease.routes.ForeignPropertyEndDateController.show())
-            .addingToSession(ceaseForeignPropertyDeclare -> "true"))
-      )
+      handleSubmitRequest(isAgent = false)
   }
 
   def submitAgent: Action[AnyContent] = Authenticated.async {
@@ -120,17 +136,7 @@ class CeaseForeignPropertyController @Inject()(val authenticate: AuthenticationP
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
           implicit mtdItUser =>
-            CeaseForeignPropertyForm.form.bindFromRequest().fold(
-              hasErrors => Future.successful(BadRequest(view(
-                ceaseForeignPropertyForm = hasErrors,
-                postAction = controllers.incomeSources.cease.routes.CeaseForeignPropertyController.submitAgent,
-                backUrl = controllers.incomeSources.cease.routes.CeaseIncomeSourceController.showAgent().url,
-                isAgent = true
-              )).addingToSession(ceaseForeignPropertyDeclare -> "false")),
-              _ =>
-                Future.successful(Redirect(controllers.incomeSources.cease.routes.ForeignPropertyEndDateController.showAgent())
-                  .addingToSession(ceaseForeignPropertyDeclare -> "true"))
-            )
+            handleSubmitRequest(isAgent = true)
         }
   }
 }

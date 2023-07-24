@@ -129,25 +129,35 @@ class CheckBusinessDetailsController @Inject()(val checkBusinessDetails: CheckBu
     }
   }
 
+  def handleSubmitRequest(isAgent: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
+    val (redirect, errorHandler) = {
+      if (isAgent)
+        (routes.BusinessReportingMethodController.showAgent _, itvcErrorHandlerAgent)
+      else
+        (routes.BusinessReportingMethodController.show _, itvcErrorHandler)
+    }
+    getBusinessDetailsFromSession(user).toOption match {
+      case Some(viewModel: CheckBusinessDetailsViewModel) =>
+        businessDetailsService.createBusinessDetails(viewModel).map {
+          case Left(ex) => Logger("application").error(
+            s"${if (isAgent) "[Agents]"}[CheckBusinessDetailsController][handleSubmitRequest] - Unable to create income source: ${ex.getMessage}")
+            errorHandler.showInternalServerError()
+
+          case Right(CreateIncomeSourceResponse(id)) =>
+            withIncomeSourcesRemovedFromSession {
+              Redirect(redirect(id).url)
+            }
+        }
+      case None => Logger("application").error(
+        s"${if (isAgent) "[Agents]"}[CheckBusinessDetailsController][handleSubmitRequest] - Error: Unable to build view model on submit")
+        Future.successful(errorHandler.showInternalServerError())
+    }
+  }
+
   def submit(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
-      getBusinessDetailsFromSession(user).toOption match {
-        case Some(viewModel: CheckBusinessDetailsViewModel) =>
-          businessDetailsService.createBusinessDetails(viewModel).map {
-            case Left(ex) => Logger("application").error(
-              s"[CheckBusinessDetailsController][handleRequest] - Unable to create income source: ${ex.getMessage}")
-              itvcErrorHandler.showInternalServerError()
-
-            case Right(CreateIncomeSourceResponse(id)) =>
-              withIncomeSourcesRemovedFromSession {
-                Redirect(controllers.incomeSources.add.routes.BusinessReportingMethodController.show(id).url)
-              }
-          }
-        case None => Logger("application").error(
-          s"[CheckBusinessDetailsController][submit] - Error: Unable to build view model on submit")
-          Future.successful(itvcErrorHandler.showInternalServerError())
-      }
+      handleSubmitRequest(isAgent = false)
   }
 
   def submitAgent: Action[AnyContent] = Authenticated.async {
@@ -155,22 +165,7 @@ class CheckBusinessDetailsController @Inject()(val checkBusinessDetails: CheckBu
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
           implicit mtdItUser =>
-            getBusinessDetailsFromSession(mtdItUser).toOption match {
-              case Some(viewModel: CheckBusinessDetailsViewModel) =>
-                businessDetailsService.createBusinessDetails(viewModel).map {
-                  case Left(ex) => Logger("application").error(
-                    s"[CheckBusinessDetailsController][handleRequest] - Unable to create income source: ${ex.getMessage}")
-                    itvcErrorHandler.showInternalServerError()
-
-                  case Right(CreateIncomeSourceResponse(id)) =>
-                    withIncomeSourcesRemovedFromSession {
-                      Redirect(controllers.incomeSources.add.routes.BusinessReportingMethodController.showAgent(id).url)
-                    }
-                }
-              case None => Logger("application").error(
-                s"[CheckBusinessDetailsController][submit] - Error: Unable to build view model on submit")
-                Future.successful(itvcErrorHandler.showInternalServerError())
-            }
+            handleSubmitRequest(isAgent = true)
         }
   }
 
