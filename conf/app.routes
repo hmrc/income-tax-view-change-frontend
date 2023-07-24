@@ -310,10 +310,12 @@ POST         /agents/income-sources/add/uk-property-reporting-method            
 GET          /income-sources/add/error-uk-reporting-reporting-method-not-saved              controllers.incomeSources.add.UKPropertyReportingMethodErrorController.show()
 GET          /agents/income-sources/add/error-uk-reporting-reporting-method-not-saved       controllers.incomeSources.add.UKPropertyReportingMethodErrorController.showAgent()
 
-GET          /income-sources/add/foreign-property-reporting-method                controllers.incomeSources.add.ForeignPropertyReportingMethodController.show(id:String)
-GET          /agents/income-sources/add/foreign-property-reporting-method         controllers.incomeSources.add.ForeignPropertyReportingMethodController.showAgent(id:String)
-POST         /income-sources/add/foreign-property-reporting-method                controllers.incomeSources.add.ForeignPropertyReportingMethodController.submit(id:String)
-POST         /agents/income-sources/add/foreign-property-reporting-method         controllers.incomeSources.add.ForeignPropertyReportingMethodController.submitAgent(id:String)
+GET          /income-sources/add/foreign-property-reporting-method                               controllers.incomeSources.add.ForeignPropertyReportingMethodController.show(id:String)
+GET          /agents/income-sources/add/foreign-property-reporting-method                        controllers.incomeSources.add.ForeignPropertyReportingMethodController.showAgent(id:String)
+POST         /income-sources/add/foreign-property-reporting-method                               controllers.incomeSources.add.ForeignPropertyReportingMethodController.submit(id:String)
+POST         /agents/income-sources/add/foreign-property-reporting-method                        controllers.incomeSources.add.ForeignPropertyReportingMethodController.submitAgent(id:String)
+GET          /income-sources/add/error-foreign-reporting-reporting-method-not-saved              controllers.incomeSources.add.ForeignPropertyReportingMethodErrorController.show()
+GET          /agents/income-sources/add/error-foreign-reporting-reporting-method-not-saved       controllers.incomeSources.add.ForeignPropertyReportingMethodErrorController.showAgent()
 
 # Income Sources - TO BE IMPLEMENTED
 GET          /income-sources/cease/cease-uk-property-success                controllers.incomeSources.cease.CeaseUKPropertySuccessController.show()
