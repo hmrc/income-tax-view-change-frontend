@@ -123,7 +123,7 @@ class AddBusinessAddressController @Inject()(authenticate: AuthenticationPredica
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
           implicit mtdItUser =>
-            handleSubmitRequest(isAgent = false, id)
+            handleSubmitRequest(isAgent = true, id)
         }
 
   }
