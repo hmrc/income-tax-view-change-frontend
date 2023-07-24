@@ -23,7 +23,7 @@ import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
 import exceptions.MissingFieldException
 import models.calculationList.CalculationListResponseModel
-import models.incomeSourceDetails.viewmodels.ViewBusinessDetailsViewModel
+import models.incomeSourceDetails.viewmodels.{ViewBusinessDetailsViewModel, ViewLatencyDetailsViewModel}
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, LatencyDetails}
 import play.api.Logger
 import play.api.mvc._
@@ -81,7 +81,7 @@ class ManageSelfEmploymentController @Inject()(val view: BusinessManageDetails,
   }
 
   def getViewIncomeSourceChosenViewModel(sources: IncomeSourceDetailsModel, id: String)
-                                        (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): ViewBusinessDetailsViewModel = {
+                                        (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[ViewBusinessDetailsViewModel] = {
     val desiredIncomeSource: BusinessDetailsModel = sources.businesses
       .filterNot(_.isCeased)
       .filter(_.incomeSourceId.getOrElse(throw new MissingFieldException("incomeSourceId missing")) == id)
@@ -89,21 +89,29 @@ class ManageSelfEmploymentController @Inject()(val view: BusinessManageDetails,
 
     val isTaxYearOneCrystallised: Future[Option[Boolean]]  = calculationListService.isTaxYearCrystallised(desiredIncomeSource.latencyDetails.get.taxYear1.toInt)
     val isTaxYearTwoCrystallised: Future[Option[Boolean]] = calculationListService.isTaxYearCrystallised(desiredIncomeSource.latencyDetails.get.taxYear2.toInt)
+    val istaStatus: Future[Boolean] = itsaStatusService.hasMandatedOrVoluntaryStatusCurrentYear
 
-    isTaxYearOneCrystallised.flatMap(crystallisationTaxYearOne =>
-      isTaxYearTwoCrystallised.flatMap(crystallisationTaxYearOne =>
-        itsaStatusService.hasMandatedOrVoluntaryStatusCurrentYear.flatMap((value: Boolean) =>
-          ViewBusinessDetailsViewModel(
-            incomeSourceId = desiredIncomeSource.incomeSourceId.getOrElse(throw new MissingFieldException("Missing incomeSourceId field")),
-            tradingName = desiredIncomeSource.tradingName,
-            tradingStartDate = desiredIncomeSource.tradingStartDate,
-            address = desiredIncomeSource.address,
-            businessAccountingMethod = desiredIncomeSource.cashOrAccruals,
-            itsaHasMandatedOrVoluntaryStatusCurrentYear = Option(value),
-            taxYearOneCrystallised = crystallisationTaxYearOne,
-            taxYearTwoCrystallised = crystallisationTaxYearOne)
-        )
-      )
+    for {
+      i <- isTaxYearOneCrystallised
+      j <- isTaxYearTwoCrystallised
+      k <- istaStatus
+    } yield (
+      ViewBusinessDetailsViewModel(
+        incomeSourceId = desiredIncomeSource.incomeSourceId.getOrElse(throw new MissingFieldException("Missing incomeSourceId field")),
+        tradingName = desiredIncomeSource.tradingName,
+        tradingStartDate = desiredIncomeSource.tradingStartDate,
+        address = desiredIncomeSource.address,
+        businessAccountingMethod = desiredIncomeSource.cashOrAccruals,
+        itsaHasMandatedOrVoluntaryStatusCurrentYear = i,
+        taxYearOneCrystallised = j,
+        taxYearTwoCrystallised = Option(k),
+        latencyDetails = Option(ViewLatencyDetailsViewModel(
+          latencyEndDate = desiredIncomeSource.latencyDetails.get.latencyEndDate,
+          taxYear1 = desiredIncomeSource.latencyDetails.get.taxYear1.toInt,
+          latencyIndicator1 = desiredIncomeSource.latencyDetails.get.latencyIndicator1,
+          taxYear2 = desiredIncomeSource.latencyDetails.get.taxYear2.toInt,
+          latencyIndicator2 = desiredIncomeSource.latencyDetails.get.latencyIndicator2)
+      ))
     )
   }
 
@@ -113,25 +121,11 @@ class ManageSelfEmploymentController @Inject()(val view: BusinessManageDetails,
     if (isDisabled(IncomeSources)) {
       Future.successful(Redirect(controllers.routes.HomeController.show()))
     } else {
-      Future {
-        getViewIncomeSourceChosenViewModel(sources = sources, id = id) match {
-          case Right(viewModel: ViewBusinessDetailsViewModel) =>
-            Ok(view(
-              viewModel = viewModel,
-              isAgent = isAgent,
-              backUrl = backUrl
-            ))
-          case Left(ex: Exception) =>
-            if (isAgent) {
-              Logger("application").error(
-                s"[Agent][ManageSelfEmploymentController][handleRequest] - Error: ${ex.getMessage}")
-              itvcErrorHandlerAgent.showInternalServerError()
-            } else {
-              Logger("application").error(
-                s"[ManageSelfEmploymentController][handleRequest] - Error: ${ex.getMessage}")
-              itvcErrorHandler.showInternalServerError()
-            }
-        }
+      getViewIncomeSourceChosenViewModel(sources = sources, id = id).flatMap{value =>
+        Future.successful(Ok(view(viewModel = value,
+          isAgent = isAgent,
+          backUrl = backUrl
+        )))
       }
     }
   }

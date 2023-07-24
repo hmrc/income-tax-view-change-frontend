@@ -1452,7 +1452,8 @@ incomeSources.manage.business-manage-details.date-started           =   Date sta
 incomeSources.manage.business-manage-details.accounting-method      =   Accounting method for sole trader income
 incomeSources.manage.business-manage-details.reporting-method       =   Income reporting method {0}-{1}
 incomeSources.manage.business-manage-details.change                 =   Change
-
+incomeSources.manage.business-manage-details.quarterly              =   Quarterly
+incomeSources.manage.business-manage-details.annually               =   Annually
 
 
 

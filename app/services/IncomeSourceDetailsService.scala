@@ -107,13 +107,10 @@ class IncomeSourceDetailsService @Inject()(val incomeTaxViewChangeConnector: Inc
 
     val maybeSoleTraderBusinesses = sources.businesses.filterNot(_.isCeased)
     val soleTraderBusinessesExists = maybeSoleTraderBusinesses.nonEmpty
-
     val maybeUkProperty = sources.properties.filterNot(_.isCeased).find(_.isUkProperty)
     val ukPropertyExists = maybeUkProperty.nonEmpty
-
     val maybeForeignProperty = sources.properties.filterNot(_.isCeased).find(_.isForeignProperty)
     val foreignPropertyExists = maybeForeignProperty.nonEmpty
-
     val maybeCeasedBusinesses = sources.businesses.filter(_.isCeased)
     val ceasedBusinessExists = maybeCeasedBusinesses.nonEmpty
 
@@ -124,7 +121,13 @@ class IncomeSourceDetailsService @Inject()(val incomeTaxViewChangeConnector: Inc
             ViewBusinessDetailsViewModel(
               business.incomeSourceId.getOrElse(throw new MissingFieldException("Missing incomeSourceId field")),
               business.tradingName,
-              business.tradingStartDate
+              business.tradingStartDate,
+              address = None,
+              businessAccountingMethod = None,
+              itsaHasMandatedOrVoluntaryStatusCurrentYear = None,
+              taxYearOneCrystallised = None,
+              taxYearTwoCrystallised = None,
+              latencyDetails = None
             )
           }
         } else Nil,

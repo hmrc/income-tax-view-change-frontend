@@ -1431,3 +1431,5 @@ incomeSources.manage.business-manage-details.date-started           =   Dyddiad 
 incomeSources.manage.business-manage-details.accounting-method      =   Dull cyfrifyddu ar gyfer incwm unig fasnachwr
 incomeSources.manage.business-manage-details.reporting-method       =   Dull o adrodd am incwm ar gyfer {0}-{1}
 incomeSources.manage.business-manage-details.change                 =   Newid
+incomeSources.manage.business-manage-details.change                 =   Quarterly
+incomeSources.manage.business-manage-details.change                 =   Annually

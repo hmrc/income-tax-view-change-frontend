@@ -17,6 +17,7 @@
 package models.incomeSourceDetails.viewmodels
 
 import models.core.AddressModel
+import models.incomeSourceDetails.LatencyDetails
 
 import java.time.LocalDate
 
@@ -32,7 +33,8 @@ case class ViewBusinessDetailsViewModel(incomeSourceId: String,
                                         businessAccountingMethod: Option[String] = None,
                                         itsaHasMandatedOrVoluntaryStatusCurrentYear: Option[Boolean],
                                         taxYearOneCrystallised: Option[Boolean],
-                                        taxYearTwoCrystallised: Option[Boolean]
+                                        taxYearTwoCrystallised: Option[Boolean],
+                                        latencyDetails: Option[ViewLatencyDetailsViewModel]
                                        )
 
 case class ViewPropertyDetailsViewModel(tradingStartDate: Option[LocalDate])
@@ -40,3 +42,6 @@ case class ViewPropertyDetailsViewModel(tradingStartDate: Option[LocalDate])
 case class ViewCeasedBusinessDetailsViewModel(tradingName: Option[String],
                                               tradingStartDate: Option[LocalDate],
                                               cessationDate: LocalDate)
+
+case class ViewLatencyDetailsViewModel(latencyEndDate: LocalDate, taxYear1: Int, latencyIndicator1: String,
+                                       taxYear2: Int, latencyIndicator2: String)

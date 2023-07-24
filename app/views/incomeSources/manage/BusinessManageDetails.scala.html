@@ -52,11 +52,19 @@
     messages(s"incomeSources.manage.business-manage-details.$key", args: _*)
 }
 
-@changeReportingMethodYearOne(id: String, taxYear: String, changeto: String) = @{
+@changeReportingMethodUrl(id: String, taxYear: String, changeTo: String) = @{
     if(isAgent){
-        controllers.incomeSources.manage.routes.ChangeBusinessReportingMethodController.showAgent(id, taxYear, changeto: String).url
+        controllers.incomeSources.manage.routes.ChangeBusinessReportingMethodController.showAgent(id, taxYear, changeTo: String).url
     } else {
-        controllers.incomeSources.manage.routes.ChangeBusinessReportingMethodController.show(id, taxYear, changeto: String).url
+        controllers.incomeSources.manage.routes.ChangeBusinessReportingMethodController.show(id, taxYear, changeTo: String).url
+    }
+}
+
+@changeToValue(currentMethod: String) = @{
+    if (currentMethod == "Q") {
+        "A"
+    } else {
+        "Q"
     }
 }
 
@@ -99,10 +107,51 @@
                 viewModel.businessAccountingMethod.getOrElse("")
             }</dd>
         </div>
+        @if(viewModel.itsaHasMandatedOrVoluntaryStatusCurrentYear
+                && viewModel.latencyDetails.isDefined) {
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">@getMessage("reporting-method", viewModel.latencyDetails.get.taxYear1.toString, (viewModel.latencyDetails.get.taxYear2).toString)</dt>
+                <dd class="govuk-summary-list__value" id="reporting-method-1">@{
+                    viewModel.latencyDetails.get.latencyIndicator1 match {
+                        case method: String if method == "A" => getMessage("quarterly")
+                        case method: String if method == "Q" => getMessage("annually")
+                        case _ => "Field Missing"
+                    }
+                }</dd>
+                @if(!viewModel.taxYearOneCrystallised){
+                    <dd class="govuk-summary-list__actions govuk-!-text-align-right govuk-!-margin-0">
+                        <a class="govuk-link" href=@changeReportingMethodUrl(viewModel.incomeSourceId, viewModel.latencyDetails.get.taxYear1.toString, changeToValue(viewModel.latencyDetails.get.latencyIndicator1))>
+                        @getMessage("change")
+                        </a>
+                    </dd>
+                }
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">@getMessage("reporting-method", viewModel.latencyDetails.get.taxYear2.toString, (viewModel.latencyDetails.get.taxYear2 + 1).toString)</dt>
+                <dd class="govuk-summary-list__value" id="reporting-method-2">@{
+                    viewModel.latencyDetails.get.latencyIndicator2 match {
+                        case method: String if method == "A" => getMessage("quarterly")
+                        case method: String if method == "Q" => getMessage("annually")
+                        case _ => "Field Missing"
+                    }
+                }</dd>
+                @if(!viewModel.taxYearTwoCrystallised){
+                    <dd class="govuk-summary-list__actions govuk-!-text-align-right govuk-!-margin-0">
+                        <a class="govuk-link" href=@changeReportingMethodUrl(viewModel.incomeSourceId, viewModel.latencyDetails.get.taxYear2.toString, changeToValue(viewModel.latencyDetails.get.latencyIndicator2))>
+                        @getMessage("change")
+                        </a>
+                    </dd>
+                }
+            </div>
+        }
     </dl>
 
     <br>
     <br>
+
+    <p>@viewModel.itsaHasMandatedOrVoluntaryStatusCurrentYear.getOrElse("I AM A FAILURE 1")</p>
+    <p>@viewModel.taxYearOneCrystallised.getOrElse("I AM A FAILURE 2")</p>
+    <p>@viewModel.taxYearTwoCrystallised.getOrElse("I AM A FAILURE 3")</p>
 
 }
 
