@@ -104,10 +104,10 @@ class ForeignPropertyAddedObligationsControllerSpec extends TestSupport
         mockForeignPropertyIncomeSource()
 
         val sources: IncomeSourceDetailsModel = IncomeSourceDetailsModel("", Some("2022"), List.empty, List(PropertyDetailsModel(
-          Some("123"),
+          Some("123456"),
           None,
           None,
-          None,
+          Some("foreign-property"),
           Some(LocalDate.of(2022, 4, 21)),
           None
         )))
@@ -130,7 +130,7 @@ class ForeignPropertyAddedObligationsControllerSpec extends TestSupport
         when(mockNextUpdatesService.getNextUpdates(any())(any(), any())).
           thenReturn(Future(testObligationsModel))
 
-        val result: Future[Result] = TestForeignPropertyObligationsController.show("123")(fakeRequestWithActiveSession)
+        val result: Future[Result] = TestForeignPropertyObligationsController.show("123456")(fakeRequestWithActiveSession)
         status(result) shouldBe OK
 
       }
@@ -187,7 +187,7 @@ class ForeignPropertyAddedObligationsControllerSpec extends TestSupport
           Some("123"),
           None,
           None,
-          None,
+          Some("foreign-property"),
           Some(LocalDate.of(2022, 4, 21)),
           None
         )))
@@ -224,7 +224,7 @@ class ForeignPropertyAddedObligationsControllerSpec extends TestSupport
 
         val result: Future[Result] = TestForeignPropertyObligationsController.showAgent("123")(fakeRequestConfirmedClient())
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.routes.HomeController.show().url)
+        redirectLocation(result) shouldBe Some(controllers.routes.HomeController.showAgent.url)
       }
       "called with an unauthenticated user" in {
         setupMockAgentAuthorisationException()

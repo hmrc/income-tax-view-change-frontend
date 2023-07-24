@@ -72,14 +72,18 @@ class ForeignPropertyAddedObligationsController @Inject()(val foreignPropertyObl
     }
 
   def handleRequest(isAgent: Boolean, incomeSourceId: String)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
-    lazy val backUrl: String = controllers.incomeSources.add.routes.BusinessReportingMethodController.show(incomeSourceId).url
-    lazy val agentBackUrl = controllers.incomeSources.add.routes.BusinessReportingMethodController.showAgent(incomeSourceId).url
+    lazy val backUrl: String = controllers.incomeSources.add.routes.ForeignPropertyReportingMethodController.show(incomeSourceId).url
+    lazy val agentBackUrl = controllers.incomeSources.add.routes.ForeignPropertyReportingMethodController.showAgent(incomeSourceId).url
 
     if (isDisabled(IncomeSources)) {
-      Future.successful(Redirect(controllers.routes.HomeController.show()))
+      if (isAgent) {
+        Future.successful(Redirect(controllers.routes.HomeController.showAgent))
+      } else {
+        Future.successful(Redirect(controllers.routes.HomeController.show()))
+      }
     } else {
       val foreignPropertyDetailsParams = for {
-        addedForeignProperty <- user.incomeSources.properties.find(x => x.incomeSourceId.contains(incomeSourceId))
+        addedForeignProperty <- user.incomeSources.properties.filter(_.isForeignProperty).find(x => x.incomeSourceId.contains(incomeSourceId))
         startDate <- addedForeignProperty.tradingStartDate
       } yield (addedForeignProperty, startDate)
       foreignPropertyDetailsParams match {

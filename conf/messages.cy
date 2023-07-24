@@ -1399,6 +1399,7 @@ business-added.income-sources-button                    = Eich ffynonellau incwm
 business-added.previous-tax-years-heading               = Blynyddoedd treth blaenorol
 business-added.previous-tax-years-t1                    = Mae’n rhaid i chi wneud yn siŵr eich bod wedi anfon yr holl Incwm a threuliau, a datganiadau terfynol ar gyfer blynyddoedd treth cyn
 
+# Foreign Property Added - Uses above keys as base also, intentionally empty field below.
 business-added.foreign-property-h1                      = eiddo tramor
 business-added.foreign-property-head                    = Mae
 business-added.foreign-property-base                    = wedi cael ei ychwanegu i’ch cyfrif

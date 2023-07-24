@@ -78,10 +78,11 @@ class ForeignPropertyAddedObligationsViewSpec extends ViewSpec{
       val banner: Element = layoutContent.getElementsByTag("h1").first()
       banner.text() shouldBe ForeignPropertyAddedMessages.h1
 
-      val secondH2Element: Option[Element] = layoutContent.select("h2").eq(1)
 
-      secondH2Element match {
-        case Some(heading) => heading.text shouldBe ForeignPropertyAddedMessages.h2
+      val subText: Option[Element] = layoutContent.select("div").eq(3)
+
+      subText match {
+        case Some(heading) => heading.text shouldBe ForeignPropertyAddedMessages.h1 + " " + ForeignPropertyAddedMessages.h2
         case _ => fail("No 2nd h2 element found.")
       }
 
@@ -158,10 +159,10 @@ class ForeignPropertyAddedObligationsViewSpec extends ViewSpec{
       val banner: Element = layoutContent.getElementsByTag("h1").first()
       banner.text() shouldBe ForeignPropertyAddedMessages.h1
 
-      val secondH2Element: Option[Element] = layoutContent.select("h2").eq(1)
+      val subText: Option[Element] = layoutContent.select("div").eq(3)
 
-      secondH2Element match {
-        case Some(heading) => heading.text shouldBe ForeignPropertyAddedMessages.h2
+      subText match {
+        case Some(heading) => heading.text shouldBe ForeignPropertyAddedMessages.h1 + " " + ForeignPropertyAddedMessages.h2
         case _ => fail("No 2nd h2 element found.")
       }
 
