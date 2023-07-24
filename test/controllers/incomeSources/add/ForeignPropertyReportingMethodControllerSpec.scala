@@ -419,8 +419,8 @@ class ForeignPropertyReportingMethodControllerSpec extends TestSupport with Mock
             taxYear2ReportingMethod -> "Q"
           ))
 
-        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-        redirectLocation(result) shouldBe None
+        status(result) shouldBe Status.SEE_OTHER
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.ForeignPropertyReportingMethodErrorController.show().url)
       }
     }
   }
@@ -665,8 +665,8 @@ class ForeignPropertyReportingMethodControllerSpec extends TestSupport with Mock
             taxYear2ReportingMethod -> "Q"
           ))
 
-        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-        redirectLocation(result) shouldBe None
+        status(result) shouldBe Status.SEE_OTHER
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.ForeignPropertyReportingMethodErrorController.showAgent().url)
       }
     }
   }

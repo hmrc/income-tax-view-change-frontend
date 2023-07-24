@@ -66,8 +66,7 @@ class ForeignPropertyReportingMethodController @Inject()(val authenticate: Authe
         id = id,
         isAgent = false,
         postAction = postAction(id),
-        redirectCall = redirectCall(id),
-        itvcErrorHandler = itvcErrorHandler
+        redirectCall = redirectCall(id)
       )
   }
 
@@ -80,8 +79,7 @@ class ForeignPropertyReportingMethodController @Inject()(val authenticate: Authe
               id = id,
               isAgent = true,
               postAction = postActionAgent(id),
-              redirectCall = redirectCallAgent(id),
-              itvcErrorHandler = itvcErrorHandlerAgent
+              redirectCall = redirectCallAgent(id)
             )
         }
   }
@@ -94,7 +92,7 @@ class ForeignPropertyReportingMethodController @Inject()(val authenticate: Authe
         isAgent = false,
         postAction = postAction(id),
         redirectCall = redirectCall(id),
-        itvcErrorHandler = itvcErrorHandler
+        errorCall = redirectErrorCall
       )
   }
 
@@ -108,20 +106,21 @@ class ForeignPropertyReportingMethodController @Inject()(val authenticate: Authe
               isAgent = true,
               postAction = postActionAgent(id),
               redirectCall = redirectCallAgent(id),
-              itvcErrorHandler = itvcErrorHandlerAgent
+              errorCall = redirectErrorCallAgent
             )
         }
   }
 
   private def handleRequest(id: String,
                             isAgent: Boolean,
-                            itvcErrorHandler: ShowInternalServerError,
                             postAction: Call,
                             redirectCall: Call)
                            (implicit user: MtdItUser[_]): Future[Result] = {
     (for {
       isMandatoryOrVoluntary <- itsaStatusService.hasMandatedOrVoluntaryStatusCurrentYear
-      latencyDetailsMaybe <- Future(user.incomeSources.properties.find(_.incomeSourceId.contains(id)).flatMap(_.latencyDetails))
+      latencyDetailsMaybe <- Future(user.incomeSources.properties.find(
+        propertyDetails => propertyDetails.incomeSourceId.contains(id) && propertyDetails.isForeignProperty
+      ).flatMap(_.latencyDetails))
       viewModel <- getForeignPropertyReportingMethodDetails(latencyDetailsMaybe)
     } yield {
       (isEnabled(IncomeSources), isMandatoryOrVoluntary, viewModel) match {
@@ -150,9 +149,9 @@ class ForeignPropertyReportingMethodController @Inject()(val authenticate: Authe
 
     private def handleSubmitRequest(id: String,
                                     isAgent: Boolean,
-                                    itvcErrorHandler: ShowInternalServerError,
                                     postAction: Call,
-                                    redirectCall: Call)
+                                    redirectCall: Call,
+                                    errorCall: Call)
                                    (implicit user: MtdItUser[_]): Future[Result] = {
 
       if (isEnabled(IncomeSources)) {
@@ -199,7 +198,7 @@ class ForeignPropertyReportingMethodController @Inject()(val authenticate: Authe
                   Redirect(redirectCall)
                 case err: UpdateIncomeSourceResponseError =>
                   Logger("application").error(s"${if (isAgent) "[Agent]"}" + s" Failed to Updated tax year specific reporting method : $err")
-                  itvcErrorHandler.showInternalServerError()
+                  Redirect(errorCall)
               }
             } else {
               Logger("application").info(s"${if (isAgent) "[Agent]"}" + s" Updating the tax year specific reporting method not required.")
@@ -264,4 +263,8 @@ class ForeignPropertyReportingMethodController @Inject()(val authenticate: Authe
 
   private def redirectCall(id: String) = controllers.incomeSources.add.routes.ForeignPropertyAddedController.show(id)
   private def redirectCallAgent(id: String) = controllers.incomeSources.add.routes.ForeignPropertyAddedController.showAgent(id)
+
+  val redirectErrorCall: Call = controllers.incomeSources.add.routes.ForeignPropertyReportingMethodErrorController.show()
+  val redirectErrorCallAgent: Call = controllers.incomeSources.add.routes.ForeignPropertyReportingMethodErrorController.showAgent()
+
 }
