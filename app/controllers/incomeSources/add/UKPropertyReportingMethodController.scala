@@ -50,11 +50,11 @@ class UKPropertyReportingMethodController @Inject()(val authenticate: Authentica
                                                     val calculationListService: CalculationListService,
                                                     val customNotFoundErrorView: CustomNotFoundError)
                                                    (implicit val appConfig: FrontendAppConfig,
-                                                  mcc: MessagesControllerComponents,
-                                                  val ec: ExecutionContext,
-                                                  val itvcErrorHandler: ItvcErrorHandler,
-                                                  val itvcErrorHandlerAgent: AgentItvcErrorHandler
-                                                 )
+                                                    mcc: MessagesControllerComponents,
+                                                    val ec: ExecutionContext,
+                                                    val itvcErrorHandler: ItvcErrorHandler,
+                                                    val itvcErrorHandlerAgent: AgentItvcErrorHandler
+                                                   )
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
   private def annualQuarterlyToBoolean(method: Option[String]): Option[Boolean] = method match {
@@ -62,8 +62,12 @@ class UKPropertyReportingMethodController @Inject()(val authenticate: Authentica
     case Some("Q") => Some(false)
     case _ => None
   }
-  private def getUKPropertyReportingMethodDetails(incomeSourceId: String)(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Option[UKPropertyReportingMethodViewModel]] = {
-    val latencyDetails: Option[LatencyDetails] = user.incomeSources.properties.find(_.incomeSourceId.getOrElse("").equals(incomeSourceId)).flatMap(_.latencyDetails)
+
+  private def getUKPropertyReportingMethodDetails(incomeSourceId: String)
+                                                 (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext)
+  : Future[Option[UKPropertyReportingMethodViewModel]] = {
+    val latencyDetails: Option[LatencyDetails] = user.incomeSources.properties
+      .filter(_.isUkProperty).find(_.incomeSourceId.getOrElse("").equals(incomeSourceId)).flatMap(_.latencyDetails)
     latencyDetails match {
       case Some(x) =>
         val currentTaxYearEnd = dateService.getCurrentTaxYearEnd(isEnabled(TimeMachineAddYear))
@@ -74,7 +78,8 @@ class UKPropertyReportingMethodController @Inject()(val authenticate: Authentica
               case Some(true) =>
                 Future.successful(Some(UKPropertyReportingMethodViewModel(None, None, Some(taxYear2), Some(taxYear2LatencyIndicator))))
               case _ =>
-                Future.successful(Some(UKPropertyReportingMethodViewModel(Some(taxYear1), Some(taxYear1LatencyIndicator), Some(taxYear2), Some(taxYear2LatencyIndicator))))
+                Future.successful(Some(UKPropertyReportingMethodViewModel(Some(taxYear1),
+                  Some(taxYear1LatencyIndicator), Some(taxYear2), Some(taxYear2LatencyIndicator))))
             }
         }
       case None =>
@@ -83,6 +88,7 @@ class UKPropertyReportingMethodController @Inject()(val authenticate: Authentica
     }
 
   }
+
   private def handleRequest(isAgent: Boolean, id: String)
                            (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
 
@@ -123,8 +129,8 @@ class UKPropertyReportingMethodController @Inject()(val authenticate: Authentica
   private def handleSubmitRequest(isAgent: Boolean, id: String)(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] = {
     val incomeSourcesEnabled: Boolean = isEnabled(IncomeSources)
     val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-    val redirectUrl: Call = if (isAgent) controllers.incomeSources.add.routes.UKPropertyAddedController.showAgent(id) else
-      controllers.incomeSources.add.routes.UKPropertyAddedController.show(id)
+    val redirectUrl: Call = if (isAgent) routes.UKPropertyAddedController.showAgent(id) else routes.UKPropertyAddedController.show(id)
+    val redirectErrorUrl: Call = if (isAgent) routes.UKPropertyReportingMethodErrorController.showAgent() else routes.UKPropertyReportingMethodErrorController.show()
     val submitUrl: Call = if (isAgent) controllers.incomeSources.add.routes.UKPropertyReportingMethodController.submitAgent(id) else
       controllers.incomeSources.add.routes.UKPropertyReportingMethodController.submit(id)
 
@@ -163,7 +169,7 @@ class UKPropertyReportingMethodController @Inject()(val authenticate: Authentica
                 Redirect(redirectUrl)
               case err: UpdateIncomeSourceResponseError =>
                 Logger("application").error(s"${if (isAgent) "[Agent]"}" + s" Failed to Updated tax year specific reporting method : $err")
-                errorHandler.showInternalServerError()
+                Redirect(redirectErrorUrl)
             }
           } else {
             Logger("application").info(s"${if (isAgent) "[Agent]"}" + s" Updating the tax year specific reporting method not required.")

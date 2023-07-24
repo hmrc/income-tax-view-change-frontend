@@ -49,11 +49,11 @@ class ForeignPropertyAccountingMethodController @Inject()(val authenticate: Auth
                                                           val customNotFoundErrorView: CustomNotFoundError,
                                                           val view: ForeignPropertyAccountingMethod)
                                                          (implicit val appConfig: FrontendAppConfig,
-                                               mcc: MessagesControllerComponents,
-                                               val ec: ExecutionContext,
-                                               val itvcErrorHandler: ItvcErrorHandler,
-                                               val itvcErrorHandlerAgent: AgentItvcErrorHandler
-                                              )
+                                                          mcc: MessagesControllerComponents,
+                                                          val ec: ExecutionContext,
+                                                          val itvcErrorHandler: ItvcErrorHandler,
+                                                          val itvcErrorHandlerAgent: AgentItvcErrorHandler
+                                                         )
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
   def show(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
@@ -104,23 +104,7 @@ class ForeignPropertyAccountingMethodController @Inject()(val authenticate: Auth
   def submit: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
-      ForeignPropertyAccountingMethodForm.form.bindFromRequest().fold(
-        hasErrors => Future.successful(BadRequest(view(
-          form = hasErrors,
-          postAction = controllers.incomeSources.add.routes.ForeignPropertyAccountingMethodController.submit(),
-          backUrl = controllers.incomeSources.add.routes.ForeignPropertyStartDateCheckController.show().url,
-          isAgent = false
-        ))),
-        validatedInput => {
-          if (validatedInput.equals(Some("cash"))) {
-            Future.successful(Redirect(controllers.incomeSources.add.routes.ForeignPropertyCheckDetailsController.show())
-              .addingToSession(addForeignPropertyAccountingMethod -> "cash"))
-          } else {
-            Future.successful(Redirect(controllers.incomeSources.add.routes.ForeignPropertyCheckDetailsController.show())
-              .addingToSession(addForeignPropertyAccountingMethod -> "accruals"))
-          }
-        }
-      )
+      handleSubmitRequest(isAgent = false)
   }
 
   def submitAgent: Action[AnyContent] = Authenticated.async {
@@ -128,24 +112,41 @@ class ForeignPropertyAccountingMethodController @Inject()(val authenticate: Auth
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
           implicit mtdItUser =>
-            ForeignPropertyAccountingMethodForm.form.bindFromRequest().fold(
-              hasErrors => Future.successful(BadRequest(view(
-                form = hasErrors,
-                postAction = controllers.incomeSources.add.routes.ForeignPropertyAccountingMethodController.submitAgent(),
-                backUrl = controllers.incomeSources.add.routes.ForeignPropertyStartDateCheckController.showAgent().url,
-                isAgent = true
-              ))),
-              validatedInput => {
-                if (validatedInput.equals(Some("cash"))) {
-                  Future.successful(Redirect(controllers.incomeSources.add.routes.ForeignPropertyCheckDetailsController.showAgent())
-                    .addingToSession(addForeignPropertyAccountingMethod -> "cash"))
-                } else {
-                  Future.successful(Redirect(controllers.incomeSources.add.routes.ForeignPropertyCheckDetailsController.showAgent())
-                    .addingToSession(addForeignPropertyAccountingMethod -> "accruals"))
-                }
-              }
-            )
+            handleSubmitRequest(isAgent = true)
         }
+  }
+
+  def handleSubmitRequest(isAgent: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
+
+    val (postAction, backAction, redirectAction) = {
+      if (isAgent)
+        (routes.ForeignPropertyAccountingMethodController.submitAgent(),
+          routes.ForeignPropertyStartDateCheckController.showAgent(),
+          routes.CheckForeignPropertyDetailsController.showAgent())
+      else
+        (routes.ForeignPropertyAccountingMethodController.submit(),
+          routes.ForeignPropertyStartDateCheckController.show(),
+          routes.CheckForeignPropertyDetailsController.show())
+    }
+
+
+    ForeignPropertyAccountingMethodForm.form.bindFromRequest().fold(
+      hasErrors => Future.successful(BadRequest(view(
+        form = hasErrors,
+        postAction = postAction,
+        backUrl = backAction.url,
+        isAgent = true
+      ))),
+      validatedInput => {
+        if (validatedInput.equals(Some("cash"))) {
+          Future.successful(Redirect(redirectAction)
+            .addingToSession(addForeignPropertyAccountingMethod -> "cash"))
+        } else {
+          Future.successful(Redirect(redirectAction)
+            .addingToSession(addForeignPropertyAccountingMethod -> "accruals"))
+        }
+      }
+    )
   }
 
   def changeForeignPropertyAccountingMethod(): Action[AnyContent] = Action {

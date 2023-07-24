@@ -110,6 +110,36 @@ class BusinessAccountingMethodController @Inject()(val authenticate: Authenticat
     }
   }
 
+  def handleSubmitRequest(isAgent: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
+    val (postAction, backUrl, redirect) = {
+      if (isAgent)
+        (routes.BusinessAccountingMethodController.submitAgent(),
+          routes.AddBusinessAddressController.showAgent().url,
+          routes.CheckBusinessDetailsController.showAgent())
+      else
+        (routes.BusinessAccountingMethodController.submit(),
+          routes.AddBusinessAddressController.show().url,
+          routes.CheckBusinessDetailsController.show())
+    }
+    BusinessAccountingMethodForm.form.bindFromRequest().fold(
+      hasErrors => Future.successful(BadRequest(view(
+        form = hasErrors,
+        postAction = postAction,
+        backUrl = backUrl,
+        isAgent = isAgent
+      ))),
+      validatedInput => {
+        if (validatedInput.equals(Some("cash"))) {
+          Future.successful(Redirect(redirect)
+            .addingToSession(addBusinessAccountingMethod -> "cash"))
+        } else {
+          Future.successful(Redirect(redirect)
+            .addingToSession(addBusinessAccountingMethod -> "accruals"))
+        }
+      }
+    )
+  }
+
   def show(): Action[AnyContent] =
     (checkSessionTimeout andThen authenticate andThen retrieveNino
       andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
@@ -133,23 +163,7 @@ class BusinessAccountingMethodController @Inject()(val authenticate: Authenticat
   def submit: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
-      BusinessAccountingMethodForm.form.bindFromRequest().fold(
-        hasErrors => Future.successful(BadRequest(view(
-          form = hasErrors,
-          postAction = controllers.incomeSources.add.routes.BusinessAccountingMethodController.submit(),
-          backUrl = controllers.incomeSources.add.routes.AddBusinessAddressController.show().url,
-          isAgent = false
-        ))),
-        validatedInput => {
-          if (validatedInput.equals(Some("cash"))) {
-            Future.successful(Redirect(controllers.incomeSources.add.routes.CheckBusinessDetailsController.show())
-              .addingToSession(addBusinessAccountingMethod -> "cash"))
-          } else {
-            Future.successful(Redirect(controllers.incomeSources.add.routes.CheckBusinessDetailsController.show())
-              .addingToSession(addBusinessAccountingMethod -> "accruals"))
-          }
-        }
-      )
+      handleSubmitRequest(isAgent = false)
   }
 
   def submitAgent: Action[AnyContent] = Authenticated.async {
@@ -157,23 +171,7 @@ class BusinessAccountingMethodController @Inject()(val authenticate: Authenticat
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
           implicit mtdItUser =>
-            BusinessAccountingMethodForm.form.bindFromRequest().fold(
-              hasErrors => Future.successful(BadRequest(view(
-                form = hasErrors,
-                postAction = controllers.incomeSources.add.routes.BusinessAccountingMethodController.submitAgent(),
-                backUrl = controllers.incomeSources.add.routes.AddBusinessAddressController.showAgent().url,
-                isAgent = true
-              ))),
-              validatedInput => {
-                if (validatedInput.equals(Some("cash"))) {
-                  Future.successful(Redirect(controllers.incomeSources.add.routes.CheckBusinessDetailsController.showAgent())
-                    .addingToSession(addBusinessAccountingMethod -> "cash"))
-                } else {
-                  Future.successful(Redirect(controllers.incomeSources.add.routes.CheckBusinessDetailsController.showAgent())
-                    .addingToSession(addBusinessAccountingMethod -> "accruals"))
-                }
-              }
-            )
+            handleSubmitRequest(isAgent = true)
         }
   }
 

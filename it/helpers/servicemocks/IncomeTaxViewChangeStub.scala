@@ -25,6 +25,7 @@ import models.incomeSourceDetails.IncomeSourceDetailsResponse
 import models.nextUpdates.ObligationsModel
 import models.repaymentHistory.RepaymentHistoryModel
 import play.api.http.Status
+import play.api.http.Status.INTERNAL_SERVER_ERROR
 import play.api.libs.json.{JsValue, Json}
 
 import java.time.LocalDate
@@ -72,6 +73,8 @@ object IncomeTaxViewChangeStub { // scalastyle:off number.of.methods
   def stubCreateBusinessDetailsResponse(mtditid: String)(status: Int, response: List[CreateIncomeSourceResponse]): Unit =
     WiremockHelper.stubPost(s"/income-tax-view-change/create-income-source/business/$mtditid", status, Json.toJson(response).toString)
 
+  def stubCreateBusinessDetailsErrorResponse(mtditid: String): Unit =
+    WiremockHelper.stubPost(s"/income-tax-view-change/create-income-source/business/$mtditid", INTERNAL_SERVER_ERROR, "")
 
   //PreviousObligations Stubs
   def previousObligationsUrl(nino: String): String = {

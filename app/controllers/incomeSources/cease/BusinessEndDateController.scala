@@ -105,19 +105,7 @@ class BusinessEndDateController @Inject()(val authenticate: AuthenticationPredic
   def submit(id: String): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
-      businessEndDateForm.apply(user, Option(id)).bindFromRequest().fold(
-        hasErrors => Future.successful(BadRequest(businessEndDate(
-          BusinessEndDateForm = hasErrors,
-          postAction = controllers.incomeSources.cease.routes.BusinessEndDateController.submit(id),
-          backUrl = controllers.incomeSources.cease.routes.CeaseIncomeSourceController.show().url,
-          isAgent = false,
-          btaNavPartial = user.btaNavPartial
-        ))),
-        validatedInput =>
-          Future.successful(Redirect(controllers.incomeSources.cease.routes.CheckCeaseBusinessDetailsController.show())
-            .addingToSession(ceaseBusinessEndDate -> validatedInput.date.toString)
-            .addingToSession(ceaseBusinessIncomeSourceId -> id))
-      )
+      handleSubmitRequest(id = id, isAgent = false)
   }
 
   def submitAgent(id: String): Action[AnyContent] = Authenticated.async {
@@ -125,19 +113,35 @@ class BusinessEndDateController @Inject()(val authenticate: AuthenticationPredic
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
           implicit mtdItUser =>
-            businessEndDateForm.apply(mtdItUser, Option(id)).bindFromRequest().fold(
-              hasErrors => Future.successful(BadRequest(businessEndDate(
-                BusinessEndDateForm = hasErrors,
-                postAction = controllers.incomeSources.cease.routes.BusinessEndDateController.submitAgent(id),
-                backUrl = controllers.incomeSources.cease.routes.CeaseIncomeSourceController.showAgent().url,
-                isAgent = true,
-                btaNavPartial = mtdItUser.btaNavPartial
-              ))),
-              validatedInput =>
-                Future.successful(Redirect(controllers.incomeSources.cease.routes.CheckCeaseBusinessDetailsController.showAgent())
-                  .addingToSession(ceaseBusinessEndDate -> validatedInput.date.toString)
-                  .addingToSession(ceaseBusinessIncomeSourceId -> id))
-            )
+            handleSubmitRequest(id = id, isAgent = true)
         }
+  }
+
+  def handleSubmitRequest(id: String, isAgent: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
+
+    val (postAction, backAction, redirectAction) = {
+      if (isAgent)
+        (routes.BusinessEndDateController.submitAgent _,
+          routes.CeaseIncomeSourceController.showAgent(),
+          routes.CheckCeaseBusinessDetailsController.showAgent())
+      else
+        (routes.BusinessEndDateController.submit _,
+          routes.CeaseIncomeSourceController.show(),
+          routes.CheckCeaseBusinessDetailsController.show())
+    }
+
+    businessEndDateForm.apply(user, Option(id)).bindFromRequest().fold(
+      hasErrors => Future.successful(BadRequest(businessEndDate(
+        BusinessEndDateForm = hasErrors,
+        postAction = postAction(id),
+        backUrl = backAction.url,
+        isAgent = isAgent,
+        btaNavPartial = user.btaNavPartial
+      ))),
+      validatedInput =>
+        Future.successful(Redirect(redirectAction)
+          .addingToSession(ceaseBusinessEndDate -> validatedInput.date.toString)
+          .addingToSession(ceaseBusinessIncomeSourceId -> id))
+    )
   }
 }

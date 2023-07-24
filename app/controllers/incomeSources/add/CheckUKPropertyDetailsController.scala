@@ -54,7 +54,8 @@ class CheckUKPropertyDetailsController @Inject()(val checkUKPropertyDetails: Che
                                                  val ec: ExecutionContext,
                                                  val itvcErrorHandler: ItvcErrorHandler,
                                                  val itvcErrorHandlerAgent: AgentItvcErrorHandler,
-                                                 val languageUtils: LanguageUtils) extends ClientConfirmedController with I18nSupport with FeatureSwitching with ImplicitDateFormatter with IncomeSourcesUtils {
+                                                 val languageUtils: LanguageUtils)
+  extends ClientConfirmedController with I18nSupport with FeatureSwitching with ImplicitDateFormatter with IncomeSourcesUtils {
 
   def getBackUrl(isAgent: Boolean): String = {
     if (isAgent) controllers.incomeSources.add.routes.UKPropertyAccountingMethodController.showAgent().url else
@@ -133,21 +134,37 @@ class CheckUKPropertyDetailsController @Inject()(val checkUKPropertyDetails: Che
     val errorHandler = getErrorHandler(isAgent)
 
     withIncomeSourcesFS {
-      getUKPropertyDetailsFromSession(user).toOption match {
-        case Some(checkUKPropertyViewModel: CheckUKPropertyViewModel) =>
+      getUKPropertyDetailsFromSession(user) match {
+        case Right(checkUKPropertyViewModel: CheckUKPropertyViewModel) =>
           businessDetailsService.createUKProperty(checkUKPropertyViewModel).map {
             case Left(ex) => Logger("application").error(
               s"[CheckUKPropertyDetailsController][handleRequest] - Unable to create income source: ${ex.getMessage}")
-              errorHandler.showInternalServerError()
+              withIncomeSourcesRemovedFromSession {
+                if (isAgent) Redirect(controllers.incomeSources.add.routes.UKPropertyNotAddedController.showAgent())
+                else Redirect(controllers.incomeSources.add.routes.UKPropertyNotAddedController.show())
+              }
             case Right(CreateIncomeSourceResponse(id)) =>
               val redirectUrl = getUKPropertyReportingMethodUrl(isAgent, id)
               withIncomeSourcesRemovedFromSession {
                 Redirect(redirectUrl)
               }
+          }.recover {
+            case ex: Throwable =>
+              Logger("application").error(
+                s"[CheckUKPropertyDetailsController][handleRequest] - Error while processing request: ${ex.getMessage}")
+              withIncomeSourcesRemovedFromSession {
+                if (isAgent) Redirect(controllers.incomeSources.add.routes.UKPropertyNotAddedController.showAgent())
+                else Redirect(controllers.incomeSources.add.routes.UKPropertyNotAddedController.show())
+              }
           }
-        case None => Logger("application").error(
-          s"[CheckUKPropertyDetailsController][handleSubmit] - Error: Unable to build UK property details on submit")
-          Future.successful(errorHandler.showInternalServerError())
+        case Left(ex: Throwable) =>
+          Logger("application").error(
+            s"[CheckUKPropertyDetailsController][handleSubmit] - Error: Unable to build UK property details on submit ${ex.getMessage}")
+          Future.successful {
+            withIncomeSourcesRemovedFromSession {
+              errorHandler.showInternalServerError()
+            }
+          }
       }
     }
   }

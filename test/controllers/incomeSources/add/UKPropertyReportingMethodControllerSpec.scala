@@ -60,6 +60,8 @@ class UKPropertyReportingMethodControllerSpec extends TestSupport with MockAuthe
   val taxYear2 = s"${newTaxYear2ReportingMethod}_tax_year"
   val taxYear1ReportingMethod = "tax_year_1_reporting_method"
   val taxYear2ReportingMethod = "tax_year_2_reporting_method"
+  val redirectURL = "/report-quarterly/income-and-expenses/view/income-sources/add/error-uk-reporting-reporting-method-not-saved"
+  val redirectAgentURL = "/report-quarterly/income-and-expenses/view/agents/income-sources/add/error-uk-reporting-reporting-method-not-saved"
 
   object TestUKPropertyReportingMethodController extends UKPropertyReportingMethodController(
     MockAuthenticationPredicate,
@@ -403,7 +405,7 @@ class UKPropertyReportingMethodControllerSpec extends TestSupport with MockAuthe
         when(mockUpdateIncomeSourceService.updateTaxYearSpecific(
           ArgumentMatchers.eq(TestUKPropertyReportingMethodController.testNino),
           ArgumentMatchers.eq(TestUKPropertyReportingMethodController.incomeSourceId),
-          ArgumentMatchers.eq(List(tySpecific1, tySpecific2)))(any, any)).thenReturn(Future(UpdateIncomeSourceResponseError(Status.INTERNAL_SERVER_ERROR, "")))
+          ArgumentMatchers.eq(List(tySpecific1, tySpecific2)))(any, any)).thenReturn(Future(UpdateIncomeSourceResponseError(Status.SEE_OTHER, "")))
 
         val result = TestUKPropertyReportingMethodController.submit(TestUKPropertyReportingMethodController.incomeSourceId)(
           fakeRequestWithActiveSession.withFormUrlEncodedBody(
@@ -415,8 +417,8 @@ class UKPropertyReportingMethodControllerSpec extends TestSupport with MockAuthe
             taxYear2ReportingMethod -> "Q"
           ))
 
-        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-        redirectLocation(result) shouldBe None
+        status(result) shouldBe Status.SEE_OTHER
+        redirectLocation(result).get shouldBe redirectURL
       }
     }
   }
@@ -648,7 +650,7 @@ class UKPropertyReportingMethodControllerSpec extends TestSupport with MockAuthe
         when(mockUpdateIncomeSourceService.updateTaxYearSpecific(
           ArgumentMatchers.eq(TestUKPropertyReportingMethodController.testNino),
           ArgumentMatchers.eq(TestUKPropertyReportingMethodController.incomeSourceId),
-          ArgumentMatchers.eq(List(tySpecific1, tySpecific2)))(any, any)).thenReturn(Future(UpdateIncomeSourceResponseError(Status.INTERNAL_SERVER_ERROR, "")))
+          ArgumentMatchers.eq(List(tySpecific1, tySpecific2)))(any, any)).thenReturn(Future(UpdateIncomeSourceResponseError(Status.SEE_OTHER, "")))
 
         val result = TestUKPropertyReportingMethodController.submitAgent(TestUKPropertyReportingMethodController.incomeSourceId)(
           fakeRequestConfirmedClient(TestUKPropertyReportingMethodController.testNino).withFormUrlEncodedBody(
@@ -660,8 +662,8 @@ class UKPropertyReportingMethodControllerSpec extends TestSupport with MockAuthe
             taxYear2ReportingMethod -> "Q"
           ))
 
-        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-        redirectLocation(result) shouldBe None
+        status(result) shouldBe Status.SEE_OTHER
+        redirectLocation(result).get shouldBe redirectAgentURL
       }
     }
   }
