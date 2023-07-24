@@ -48,11 +48,11 @@ class CheckForeignPropertyDetailsController @Inject()(val authenticate: Authenti
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
   def show(origin: Option[String] = None): Action[AnyContent] = Action {
-    Redirect(controllers.incomeSources.add.routes.ForeignPropertyReportingMethodController.show("XAIS00000000004"))
+    Ok
   }
 
   def showAgent(): Action[AnyContent] = Action {
-    Ok("Agent Check Foreign Property Details - WIP")
+    Ok
   }
 
 }
