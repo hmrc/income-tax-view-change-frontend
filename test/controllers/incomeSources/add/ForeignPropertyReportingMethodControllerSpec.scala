@@ -423,6 +423,10 @@ class ForeignPropertyReportingMethodControllerSpec extends TestSupport with Mock
         redirectLocation(result) shouldBe None
       }
     }
+
+    "return an Error when "
+
+
   }
 
   "Agent - ForeignPropertyReportingMethodController" should {
