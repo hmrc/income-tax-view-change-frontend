@@ -71,4 +71,5 @@ class ForeignPropertyAddedObligationsControllerISpec extends ComponentSpecBase {
       }
     }
   }
+
 }
