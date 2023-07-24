@@ -35,7 +35,8 @@ import views.html.incomeSources.add.{BusinessReportingMethod, ForeignPropertyRep
 
 import java.time.LocalDate
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.duration.DurationInt
+import scala.concurrent.{Await, ExecutionContext, Future}
 import scala.util.Try
 
 class ForeignPropertyReportingMethodController @Inject()(val authenticate: AuthenticationPredicate,
@@ -118,16 +119,10 @@ class ForeignPropertyReportingMethodController @Inject()(val authenticate: Authe
                             postAction: Call,
                             redirectCall: Call)
                            (implicit user: MtdItUser[_]): Future[Result] = {
-
-    val dummyLatency = Some(LatencyDetails(
-      latencyEndDate = LocalDate.of(2023,4,1), taxYear1 = "2022", latencyIndicator1 = "A", taxYear2 = "2023", latencyIndicator2 = "A"
-    )
-    )
-
     (for {
       isMandatoryOrVoluntary <- itsaStatusService.hasMandatedOrVoluntaryStatusCurrentYear
       latencyDetailsMaybe <- Future(user.incomeSources.properties.find(_.incomeSourceId.contains(id)).flatMap(_.latencyDetails))
-      viewModel <- getForeignPropertyReportingMethodDetails(dummyLatency)
+      viewModel <- getForeignPropertyReportingMethodDetails(latencyDetailsMaybe)
     } yield {
       (isEnabled(IncomeSources), isMandatoryOrVoluntary, viewModel) match {
         case (false, _, _) =>
@@ -214,7 +209,6 @@ class ForeignPropertyReportingMethodController @Inject()(val authenticate: Authe
       } else Future(Ok(customNotFoundErrorView()))
     }
 
-  import cats.syntax.either._
   private def getForeignPropertyReportingMethodDetails(latencyDetailsMaybe: Option[LatencyDetails])
                                                       (implicit user: MtdItUser[_]): Future[Either[Throwable, ForeignPropertyReportingMethodViewModel]] = {
 

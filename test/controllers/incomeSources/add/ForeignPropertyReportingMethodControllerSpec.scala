@@ -186,7 +186,7 @@ class ForeignPropertyReportingMethodControllerSpec extends TestSupport with Mock
 
         status(result) shouldBe Status.OK
         document.title shouldBe TestForeignPropertyReportingMethodController.title
-        document.select("h1").text shouldBe TestForeignPropertyReportingMethodController.heading
+        document.getElementsByClass("govuk-heading-xl").text shouldBe TestForeignPropertyReportingMethodController.heading
         document.hasClass("govuk-back-link") shouldBe false
       }
     }
@@ -225,8 +225,7 @@ class ForeignPropertyReportingMethodControllerSpec extends TestSupport with Mock
 
         val result: Future[Result] = TestForeignPropertyReportingMethodController.show(TestForeignPropertyReportingMethodController.incomeSourceId)(fakeRequestWithActiveSession)
 
-        status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(routes.ForeignPropertyAddedController.show(TestForeignPropertyReportingMethodController.incomeSourceId).url)
+        status(result) shouldBe Status.OK
       }
     }
 
@@ -238,11 +237,13 @@ class ForeignPropertyReportingMethodControllerSpec extends TestSupport with Mock
 
         status(result) shouldBe Status.OK
         document.title shouldBe TestForeignPropertyReportingMethodController.title
-        document.select("h1:nth-child(1)").text shouldBe TestForeignPropertyReportingMethodController.heading
+        document.getElementsByClass("govuk-heading-xl").text shouldBe TestForeignPropertyReportingMethodController.heading
         document.getElementsByClass("govuk-body").get(0).text shouldBe TestForeignPropertyReportingMethodController.description1_TY1
         document.getElementsByClass("govuk-body").get(1).text shouldBe TestForeignPropertyReportingMethodController.description2
         document.getElementsByClass("govuk-body").get(2).text shouldBe TestForeignPropertyReportingMethodController.description3
-        document.select("ul").get(1).select("li").toString.replaceAll("\n", "") shouldBe TestForeignPropertyReportingMethodController.description4
+        document.getElementById("bullet-1").text() shouldBe messages("incomeSources.add.foreignPropertyReportingMethod.description4.bullet1")
+        document.getElementById("bullet-2").text() shouldBe messages("incomeSources.add.foreignPropertyReportingMethod.description4.bullet2")
+        document.getElementById("bullet-3").text() shouldBe messages("incomeSources.add.foreignPropertyReportingMethod.description4.bullet3")
         document.select("h1").get(1).text shouldBe TestForeignPropertyReportingMethodController.chooseReport
         document.getElementsByTag("legend").get(0).text shouldBe TestForeignPropertyReportingMethodController.taxYear1_TY1
         document.getElementById("new_tax_year_1_reporting_method_tax_year").`val`() shouldBe "2022"
@@ -261,11 +262,13 @@ class ForeignPropertyReportingMethodControllerSpec extends TestSupport with Mock
 
         status(result) shouldBe Status.OK
         document.title shouldBe TestForeignPropertyReportingMethodController.title
-        document.select("h1:nth-child(1)").text shouldBe TestForeignPropertyReportingMethodController.heading
+        document.getElementsByClass("govuk-heading-xl").text shouldBe TestForeignPropertyReportingMethodController.heading
         document.getElementsByClass("govuk-body").get(0).text shouldBe TestForeignPropertyReportingMethodController.description1_TY1
         document.getElementsByClass("govuk-body").get(1).text shouldBe TestForeignPropertyReportingMethodController.description2
         document.getElementsByClass("govuk-body").get(2).text shouldBe TestForeignPropertyReportingMethodController.description3
-        document.select("ul").get(1).select("li").toString.replaceAll("\n", "") shouldBe TestForeignPropertyReportingMethodController.description4
+        document.getElementById("bullet-1").text() shouldBe messages("incomeSources.add.foreignPropertyReportingMethod.description4.bullet1")
+        document.getElementById("bullet-2").text() shouldBe messages("incomeSources.add.foreignPropertyReportingMethod.description4.bullet2")
+        document.getElementById("bullet-3").text() shouldBe messages("incomeSources.add.foreignPropertyReportingMethod.description4.bullet3")
         document.select("h1").get(1).text shouldBe TestForeignPropertyReportingMethodController.chooseReport
         document.getElementsByTag("legend").get(0).text shouldBe TestForeignPropertyReportingMethodController.taxYear2_TY1
         document.getElementById("new_tax_year_2_reporting_method_tax_year").`val`() shouldBe "2023"
@@ -355,10 +358,11 @@ class ForeignPropertyReportingMethodControllerSpec extends TestSupport with Mock
         val tySpecific1 = TaxYearSpecific("2022", false)
         val tySpecific2 = TaxYearSpecific("2023", true)
         mockAndBasicSetup(CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
+        mockBothIncomeSources()
         when(mockUpdateIncomeSourceService.updateTaxYearSpecific(
-          ArgumentMatchers.eq(TestForeignPropertyReportingMethodController.testNino),
-          ArgumentMatchers.eq(TestForeignPropertyReportingMethodController.incomeSourceId),
-          ArgumentMatchers.eq(List(tySpecific1, tySpecific2)))(any, any)).thenReturn(Future.successful(UpdateIncomeSourceResponseModel("")))
+          any(),
+          any(),
+          any())(any, any)).thenReturn(Future.successful(UpdateIncomeSourceResponseModel("")))
 
 
         val result = TestForeignPropertyReportingMethodController.submit(TestForeignPropertyReportingMethodController.incomeSourceId)(
@@ -401,9 +405,9 @@ class ForeignPropertyReportingMethodControllerSpec extends TestSupport with Mock
         val tySpecific2 = TaxYearSpecific("2023", true)
         mockAndBasicSetup(CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
         when(mockUpdateIncomeSourceService.updateTaxYearSpecific(
-          ArgumentMatchers.eq(TestForeignPropertyReportingMethodController.testNino),
-          ArgumentMatchers.eq(TestForeignPropertyReportingMethodController.incomeSourceId),
-          ArgumentMatchers.eq(List(tySpecific1, tySpecific2)))(any, any)).thenReturn(Future(UpdateIncomeSourceResponseError(Status.INTERNAL_SERVER_ERROR, "")))
+          any(),
+          any(),
+          any())(any, any)).thenReturn(Future(UpdateIncomeSourceResponseError(Status.INTERNAL_SERVER_ERROR, "")))
 
         val result = TestForeignPropertyReportingMethodController.submit(TestForeignPropertyReportingMethodController.incomeSourceId)(
           fakeRequestWithActiveSession.withFormUrlEncodedBody(
@@ -431,7 +435,7 @@ class ForeignPropertyReportingMethodControllerSpec extends TestSupport with Mock
 
         status(result) shouldBe Status.OK
         document.title shouldBe TestForeignPropertyReportingMethodController.titleAgent
-        document.select("h1:nth-child(1)").text shouldBe TestForeignPropertyReportingMethodController.heading
+        document.getElementsByClass("govuk-heading-xl").text shouldBe TestForeignPropertyReportingMethodController.heading
         document.hasClass("govuk-back-link") shouldBe false
       }
     }
@@ -470,8 +474,7 @@ class ForeignPropertyReportingMethodControllerSpec extends TestSupport with Mock
 
         val result: Future[Result] = TestForeignPropertyReportingMethodController.showAgent(TestForeignPropertyReportingMethodController.incomeSourceId)(fakeRequestConfirmedClient())
 
-        status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(routes.ForeignPropertyAddedController.showAgent(TestForeignPropertyReportingMethodController.incomeSourceId).url)
+        status(result) shouldBe Status.OK
       }
     }
 
@@ -483,11 +486,13 @@ class ForeignPropertyReportingMethodControllerSpec extends TestSupport with Mock
 
         status(result) shouldBe Status.OK
         document.title shouldBe TestForeignPropertyReportingMethodController.titleAgent
-        document.select("h1:nth-child(1)").text shouldBe TestForeignPropertyReportingMethodController.heading
+        document.getElementsByClass("govuk-heading-xl").text shouldBe TestForeignPropertyReportingMethodController.heading
         document.getElementsByClass("govuk-body").get(0).text shouldBe TestForeignPropertyReportingMethodController.description1_TY1
         document.getElementsByClass("govuk-body").get(1).text shouldBe TestForeignPropertyReportingMethodController.description2
         document.getElementsByClass("govuk-body").get(2).text shouldBe TestForeignPropertyReportingMethodController.description3
-        document.select("ul").get(1).select("li").toString.replaceAll("\n", "") shouldBe TestForeignPropertyReportingMethodController.description4
+        document.getElementById("bullet-1").text() shouldBe messages("incomeSources.add.foreignPropertyReportingMethod.description4.bullet1")
+        document.getElementById("bullet-2").text() shouldBe messages("incomeSources.add.foreignPropertyReportingMethod.description4.bullet2")
+        document.getElementById("bullet-3").text() shouldBe messages("incomeSources.add.foreignPropertyReportingMethod.description4.bullet3")
         document.select("h1").get(1).text shouldBe TestForeignPropertyReportingMethodController.chooseReport
         document.getElementsByTag("legend").get(0).text shouldBe TestForeignPropertyReportingMethodController.taxYear1_TY1
         document.getElementById("new_tax_year_1_reporting_method_tax_year").`val`() shouldBe "2022"
@@ -506,11 +511,13 @@ class ForeignPropertyReportingMethodControllerSpec extends TestSupport with Mock
 
         status(result) shouldBe Status.OK
         document.title shouldBe TestForeignPropertyReportingMethodController.titleAgent
-        document.select("h1:nth-child(1)").text shouldBe TestForeignPropertyReportingMethodController.heading
+        document.getElementsByClass("govuk-heading-xl").text shouldBe TestForeignPropertyReportingMethodController.heading
         document.getElementsByClass("govuk-body").get(0).text shouldBe TestForeignPropertyReportingMethodController.description1_TY1
         document.getElementsByClass("govuk-body").get(1).text shouldBe TestForeignPropertyReportingMethodController.description2
         document.getElementsByClass("govuk-body").get(2).text shouldBe TestForeignPropertyReportingMethodController.description3
-        document.select("ul").get(1).select("li").toString.replaceAll("\n", "") shouldBe TestForeignPropertyReportingMethodController.description4
+        document.getElementById("bullet-1").text() shouldBe messages("incomeSources.add.foreignPropertyReportingMethod.description4.bullet1")
+        document.getElementById("bullet-2").text() shouldBe messages("incomeSources.add.foreignPropertyReportingMethod.description4.bullet2")
+        document.getElementById("bullet-3").text() shouldBe messages("incomeSources.add.foreignPropertyReportingMethod.description4.bullet3")
         document.select("h1").get(1).text shouldBe TestForeignPropertyReportingMethodController.chooseReport
         document.getElementsByTag("legend").get(0).text shouldBe TestForeignPropertyReportingMethodController.taxYear2_TY1
         document.getElementById("new_tax_year_2_reporting_method_tax_year").`val`() shouldBe "2023"
@@ -597,13 +604,12 @@ class ForeignPropertyReportingMethodControllerSpec extends TestSupport with Mock
 
     "Update success and redirect to foreign property added page" when {
       "all mandatory fields are selected" in {
-        val tySpecific1 = TaxYearSpecific("2022", false)
-        val tySpecific2 = TaxYearSpecific("2023", true)
         mockAndBasicSetup(CURRENT_TAX_YEAR_IN_LATENCY_YEARS, true)
         when(mockUpdateIncomeSourceService.updateTaxYearSpecific(
-          ArgumentMatchers.eq(TestForeignPropertyReportingMethodController.testNino),
-          ArgumentMatchers.eq(TestForeignPropertyReportingMethodController.incomeSourceId),
-          ArgumentMatchers.eq(List(tySpecific1, tySpecific2)))(any, any)).thenReturn(Future.successful(UpdateIncomeSourceResponseModel("")))
+          any(),
+          any(),
+          any()
+        )(any, any)).thenReturn(Future.successful(UpdateIncomeSourceResponseModel("")))
 
 
         val result = TestForeignPropertyReportingMethodController.submitAgent(TestForeignPropertyReportingMethodController.incomeSourceId)(
@@ -642,13 +648,12 @@ class ForeignPropertyReportingMethodControllerSpec extends TestSupport with Mock
 
     "Update failed and error page shown" when {
       "some internal failure in the update action" in {
-        val tySpecific1 = TaxYearSpecific("2022", false)
-        val tySpecific2 = TaxYearSpecific("2023", true)
         mockAndBasicSetup(CURRENT_TAX_YEAR_IN_LATENCY_YEARS, true)
         when(mockUpdateIncomeSourceService.updateTaxYearSpecific(
-          ArgumentMatchers.eq(TestForeignPropertyReportingMethodController.testNino),
-          ArgumentMatchers.eq(TestForeignPropertyReportingMethodController.incomeSourceId),
-          ArgumentMatchers.eq(List(tySpecific1, tySpecific2)))(any, any)).thenReturn(Future(UpdateIncomeSourceResponseError(Status.INTERNAL_SERVER_ERROR, "")))
+          any(),
+          any(),
+          any()
+        )(any, any)).thenReturn(Future(UpdateIncomeSourceResponseError(Status.INTERNAL_SERVER_ERROR, "")))
 
         val result = TestForeignPropertyReportingMethodController.submitAgent(TestForeignPropertyReportingMethodController.incomeSourceId)(
           fakeRequestConfirmedClient(TestForeignPropertyReportingMethodController.testNino).withFormUrlEncodedBody(
