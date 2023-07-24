@@ -30,7 +30,9 @@ case class ViewBusinessDetailsViewModel(incomeSourceId: String,
                                         tradingStartDate: Option[LocalDate],
                                         address: Option[AddressModel] = None,
                                         businessAccountingMethod: Option[String] = None,
-                                        itsaHasMandatedOrVoluntaryStatusCurrentYear: Boolean
+                                        itsaHasMandatedOrVoluntaryStatusCurrentYear: Option[Boolean],
+                                        taxYearOneCrystallised: Option[Boolean],
+                                        taxYearTwoCrystallised: Option[Boolean]
                                        )
 
 case class ViewPropertyDetailsViewModel(tradingStartDate: Option[LocalDate])

@@ -22,11 +22,12 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
 import exceptions.MissingFieldException
+import models.calculationList.CalculationListResponseModel
 import models.incomeSourceDetails.viewmodels.ViewBusinessDetailsViewModel
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, LatencyDetails}
 import play.api.Logger
 import play.api.mvc._
-import services.{DateService, ITSAStatusService, IncomeSourceDetailsService}
+import services.{CalculationListService, DateService, ITSAStatusService, IncomeSourceDetailsService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
 import views.html.incomeSources.manage.BusinessManageDetails
@@ -47,7 +48,8 @@ class ManageSelfEmploymentController @Inject()(val view: BusinessManageDetails,
                                                val incomeSourceDetailsService: IncomeSourceDetailsService,
                                                val itsaStatusService: ITSAStatusService,
                                                val dateService: DateService,
-                                               val retrieveBtaNavBar: NavBarPredicate)
+                                               val retrieveBtaNavBar: NavBarPredicate,
+                                               val calculationListService: CalculationListService)
                                               (implicit val ec: ExecutionContext,
                                              implicit override val mcc: MessagesControllerComponents,
                                              val appConfig: FrontendAppConfig) extends ClientConfirmedController
@@ -79,30 +81,30 @@ class ManageSelfEmploymentController @Inject()(val view: BusinessManageDetails,
   }
 
   def getViewIncomeSourceChosenViewModel(sources: IncomeSourceDetailsModel, id: String)
-                                        (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Option[ViewBusinessDetailsViewModel]] = {
+                                        (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): ViewBusinessDetailsViewModel = {
     val desiredIncomeSource: BusinessDetailsModel = sources.businesses
       .filterNot(_.isCeased)
       .filter(_.incomeSourceId.getOrElse(throw new MissingFieldException("incomeSourceId missing")) == id)
       .head
 
-    val latencyDetails: Option[LatencyDetails] = desiredIncomeSource.latencyDetails
-    latencyDetails match {
-      case Some(x) =>
-        val currentTaxYear = dateService.getCurrentTaxYearEnd(isEnabled(TimeMachineAddYear))
-        x match {
-          case LatencyDetails(_, _, _, taxYear2, _) if // use BusinessReportingMethodController
-        }
-    }
-    Try {
-      ViewBusinessDetailsViewModel(
-        incomeSourceId = desiredIncomeSource.incomeSourceId.getOrElse(throw new MissingFieldException("Missing incomeSourceId field")),
-        tradingName = desiredIncomeSource.tradingName,
-        tradingStartDate = desiredIncomeSource.tradingStartDate,
-        address = desiredIncomeSource.address,
-        businessAccountingMethod = desiredIncomeSource.cashOrAccruals,
-        itsaHasMandatedOrVoluntaryStatusCurrentYear = itsaStatusService.hasMandatedOrVoluntaryStatusCurrentYear
+    val isTaxYearOneCrystallised: Future[Option[Boolean]]  = calculationListService.isTaxYearCrystallised(desiredIncomeSource.latencyDetails.get.taxYear1.toInt)
+    val isTaxYearTwoCrystallised: Future[Option[Boolean]] = calculationListService.isTaxYearCrystallised(desiredIncomeSource.latencyDetails.get.taxYear2.toInt)
+
+    isTaxYearOneCrystallised.flatMap(crystallisationTaxYearOne =>
+      isTaxYearTwoCrystallised.flatMap(crystallisationTaxYearOne =>
+        itsaStatusService.hasMandatedOrVoluntaryStatusCurrentYear.flatMap((value: Boolean) =>
+          ViewBusinessDetailsViewModel(
+            incomeSourceId = desiredIncomeSource.incomeSourceId.getOrElse(throw new MissingFieldException("Missing incomeSourceId field")),
+            tradingName = desiredIncomeSource.tradingName,
+            tradingStartDate = desiredIncomeSource.tradingStartDate,
+            address = desiredIncomeSource.address,
+            businessAccountingMethod = desiredIncomeSource.cashOrAccruals,
+            itsaHasMandatedOrVoluntaryStatusCurrentYear = Option(value),
+            taxYearOneCrystallised = crystallisationTaxYearOne,
+            taxYearTwoCrystallised = crystallisationTaxYearOne)
+        )
       )
-    }.toEither
+    )
   }
 
   def handleRequest(sources: IncomeSourceDetailsModel, isAgent: Boolean, backUrl: String, id: String)
