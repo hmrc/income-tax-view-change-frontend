@@ -28,7 +28,7 @@ class ForeignPropertyAccountingMethodControllerISpec extends ComponentSpecBase {
   val foreignPropertyAccountingMethodShowUrl: String = controllers.incomeSources.add.routes.ForeignPropertyAccountingMethodController.showAgent().url
   val foreignPropertyAccountingMethodSubmitUrl: String = controllers.incomeSources.add.routes.ForeignPropertyAccountingMethodController.submitAgent().url
 
-  val checkForeignPropertyDetailsShowUrl: String = controllers.incomeSources.add.routes.CheckForeignPropertyDetailsController.showAgent().url
+  val checkForeignPropertyDetailsShowUrl: String = controllers.incomeSources.add.routes.ForeignPropertyCheckDetailsController.showAgent().url
 
   val cashCookie: Map[String, String] = Map(addForeignPropertyAccountingMethod -> "cash")
   val accrualsCookie: Map[String, String] = Map(addForeignPropertyAccountingMethod -> "accruals")

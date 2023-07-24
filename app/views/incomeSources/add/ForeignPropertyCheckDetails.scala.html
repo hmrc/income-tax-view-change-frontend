@@ -1,0 +1,123 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import _root_.implicits.ImplicitDateFormatterImpl
+@import models.incomeSourceDetails.viewmodels.CheckForeignPropertyViewModel
+@import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF, _}
+@import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcPageHeading
+@import uk.gov.hmrc.hmrcfrontend.views.viewmodels.pageheading.PageHeading
+@import views.html.components._
+@import views.html.layouts.unifiedLayout
+
+@this(
+        mainTemplate: unifiedLayout,
+        hmrcPageHeading: HmrcPageHeading,
+        govukSummaryList: GovukSummaryList,
+        implicitDateFormatter: ImplicitDateFormatterImpl,
+        h1: h1,
+        h2: h2,
+        p: p,
+        link: link,
+        hr: hr,
+        govukTable: GovukTable,
+        govukButton: GovukButton,
+        formWithCSRF: FormWithCSRF
+)
+
+@(
+        viewModel: CheckForeignPropertyViewModel,
+        postAction: Call,
+        isAgent: Boolean,
+        backUrl: String,
+        origin: Option[String] = None
+)(implicit messages: Messages, user: auth.MtdItUser[_])
+
+@import implicitDateFormatter.longDate
+
+@getMessage(key: String, args: String*) = @{
+    messages(s"incomeSources.add.foreign-property-check-details.$key", args: _*)
+}
+
+@changeForeignPropertyStartDateURL = @{
+    if(isAgent) {
+        controllers.incomeSources.add.routes.ForeignPropertyStartDateController.changeForeignPropertyStartDateAgent().url
+    } else {
+        controllers.incomeSources.add.routes.ForeignPropertyStartDateController.changeForeignPropertyStartDate().url
+    }
+}
+
+@changeForeignPropertyAccountingMethodURL = @{
+    if(isAgent) {
+        controllers.incomeSources.add.routes.ForeignPropertyAccountingMethodController.changeForeignPropertyAccountingMethodAgent().url
+    } else {
+        controllers.incomeSources.add.routes.ForeignPropertyAccountingMethodController.changeForeignPropertyAccountingMethod().url
+    }
+}
+
+@mainTemplate(
+    pageTitle = getMessage("title"),
+    backUrl = Some(backUrl),
+    isAgent = isAgent,
+    btaNavPartial = user.btaNavPartial) {
+
+    @hmrcPageHeading(PageHeading(
+        text = getMessage("title"),
+        headingClasses = Some("govuk-heading-l"),
+        section = Some(getMessage("heading")),
+        captionClasses = Some("govuk-caption-l")
+    ))
+
+    @formWithCSRF(action = postAction) {
+
+        <dl class="govuk-summary-list" id="refund-to-taxpayer-table">
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">@getMessage("start-date")</dt>
+                <dd class="govuk-summary-list__value" id="foreign-property-date-value">@{
+                    viewModel.tradingStartDate.toLongDate
+                }</dd>
+                <dd class="govuk-summary-list__actions govuk-!-text-align-right govuk-!-margin-0">
+                    <a class="govuk-link" id="start-date-change-details-link" href=@changeForeignPropertyStartDateURL>
+                    @getMessage("change")
+                    </a>
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">@getMessage("accounting-method")</dt>
+                <dd class="govuk-summary-list__value" id="business-accounting-value">@{
+                    if (viewModel.cashOrAccrualsFlag == "cash") {
+                        getMessage("cash-basis-accounting")
+                    } else {
+                        getMessage("traditional-accounting")
+                    }
+                }</dd>
+                <dd class="govuk-summary-list__actions govuk-!-text-align-right govuk-!-margin-0">
+                    <a class="govuk-link" id="accounting-method-change-details-link" href=@changeForeignPropertyAccountingMethodURL>
+                    @getMessage("change")
+                    </a>
+                </dd>
+            </div>
+        </dl>
+
+        <br>
+        <br>
+
+        @govukButton(Button(
+            content = Text(messages("base.confirm-and-continue")),
+            attributes = Map("id" -> "confirm-button")
+        ))
+    }
+
+}
