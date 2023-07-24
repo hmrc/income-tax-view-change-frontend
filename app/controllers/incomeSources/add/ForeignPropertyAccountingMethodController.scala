@@ -122,11 +122,11 @@ class ForeignPropertyAccountingMethodController @Inject()(val authenticate: Auth
       if (isAgent)
         (routes.ForeignPropertyAccountingMethodController.submitAgent(),
           routes.ForeignPropertyStartDateCheckController.showAgent(),
-          routes.CheckForeignPropertyDetailsController.showAgent())
+          routes.ForeignPropertyCheckDetailsController.showAgent())
       else
         (routes.ForeignPropertyAccountingMethodController.submit(),
           routes.ForeignPropertyStartDateCheckController.show(),
-          routes.CheckForeignPropertyDetailsController.show())
+          routes.ForeignPropertyCheckDetailsController.show())
     }
 
 
