@@ -101,9 +101,9 @@
     @p(){@getMessage("description3")}
 
     <ul class="govuk-list govuk-list--bullet">
-        <li>@Html(getMessage("description4.bullet1"))</li>
-        <li>@Html(getMessage("description4.bullet2"))</li>
-        <li>@Html(getMessage("description4.bullet3"))</li>
+        <li id="bullet-1">@Html(getMessage("description4.bullet1"))</li>
+        <li id="bullet-2">@Html(getMessage("description4.bullet2"))</li>
+        <li id="bullet-3">@Html(getMessage("description4.bullet3"))</li>
     </ul>
 
     @hmrcPageHeading(PageHeading(
@@ -113,10 +113,10 @@
 
     @formWithCSRF(action = postAction, Symbol("id") -> "add-foreign-property-reporting-method-form") {
 
-        @if(form.errors.nonEmpty) { @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form)) }
-
         @if(viewModel.taxYear1.isDefined){
+
             @renderForm(viewModel.taxYear1, "tax_year_1", viewModel.latencyIndicator1)
+
             @govukInput(Input(
                 id = "new_tax_year_1_reporting_method-3",
                 inputType = "hidden",
