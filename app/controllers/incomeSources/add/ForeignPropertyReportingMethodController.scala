@@ -217,7 +217,7 @@ class ForeignPropertyReportingMethodController @Inject()(val authenticate: Authe
       case Some(latencyDetails) if Try(latencyDetails.taxYear1.toInt).toOption.isDefined =>
         calculationListService.isTaxYearCrystallised(latencyDetails.taxYear1.toInt).flatMap { isTaxYear1Crystallised =>
           (latencyDetails, isTaxYear1Crystallised) match {
-            case _ if Try(latencyDetails.taxYear2).toOption.isEmpty =>
+            case _ if Try(latencyDetails.taxYear2.toInt).toOption.isEmpty =>
               Future.successful( Left( new Error(s"Unable to convert taxYear2 to Int: ${latencyDetails.taxYear2}") ) )
             case _ if latencyDetails.taxYear2.toInt < currentTaxYearEnd =>
               Future.successful( Left( new Error("Current tax year not in scope of change period") ) )
