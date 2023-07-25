@@ -41,7 +41,7 @@ import java.time.LocalDate
 import scala.concurrent.Future
 
 
-class ForeignPropertyAddedObligationsControllerSpec extends TestSupport
+class ForeignPropertyAddedControllerSpec extends TestSupport
   with MockFrontendAuthorisedFunctions
   with MockIncomeSourceDetailsPredicate
   with MockAuthenticationPredicate
@@ -57,7 +57,7 @@ class ForeignPropertyAddedObligationsControllerSpec extends TestSupport
 
   val mockDateService: DateService = mock(classOf[DateService])
 
-  object TestForeignPropertyObligationsController extends ForeignPropertyAddedObligationsController(
+  object TestForeignPropertyObligationsController extends ForeignPropertyAddedController(
     foreignPropertyObligationsView = app.injector.instanceOf[ForeignPropertyAddedObligations],
     checkSessionTimeout = app.injector.instanceOf[SessionTimeoutPredicate],
     authenticate = MockAuthenticationPredicate,

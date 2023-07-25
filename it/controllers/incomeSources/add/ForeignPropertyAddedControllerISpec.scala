@@ -1,22 +1,22 @@
-package controllers.agent.incomeSources.add
+package controllers.incomeSources.add
 
 import config.featureswitch.IncomeSources
-import helpers.agent.ComponentSpecBase
+import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, ObligationsModel}
 import play.api.http.Status.{OK, SEE_OTHER}
-import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testMtditid, testPropertyIncomeId}
-import testConstants.IncomeSourceIntegrationTestConstants.{foreignPropertyOnlyResponse}
+import testConstants.BaseIntegrationTestConstants.{testMtditid, testPropertyIncomeId}
+import testConstants.IncomeSourceIntegrationTestConstants.foreignPropertyOnlyResponse
 
 import java.time.LocalDate
 
-class ForeignPropertyAddedObligationsControllerISpec extends ComponentSpecBase {
+class ForeignPropertyAddedControllerISpec extends ComponentSpecBase {
 
-  val foreignPropertyObligationsShowAgentUrl: String = controllers.incomeSources.add.routes.ForeignPropertyAddedObligationsController.showAgent("").url
-  val foreignPropertyReportingMethodAgentUrl: String = controllers.incomeSources.add.routes.ForeignPropertyReportingMethodController.showAgent("").url
+  val foreignPropertyAddedObligationsShowUrl: String = controllers.incomeSources.add.routes.ForeignPropertyAddedController.show("").url
+  val foreignPropertyReportingMethodShowUrl: String = controllers.incomeSources.add.routes.ForeignPropertyReportingMethodController.show("").url
 
-  val foreignPropertyAddedObligationsSubmitAgentUrl: String = controllers.incomeSources.add.routes.ForeignPropertyAddedObligationsController.submitAgent().url
-  val addIncomeSourceAgentUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceController.showAgent().url
+  val foreignPropertyAddedObligationsSubmitUrl: String = controllers.incomeSources.add.routes.ForeignPropertyAddedController.submit().url
+  val addIncomeSourceShowUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceController.show().url
 
   val testDate: String = "2020-11-10"
   val prefix: String = "business-added"
@@ -26,15 +26,13 @@ class ForeignPropertyAddedObligationsControllerISpec extends ComponentSpecBase {
   val testObligationsModel: ObligationsModel = ObligationsModel(Seq(NextUpdatesModel("123", List(NextUpdateModel(day, day.plusDays(1), day.plusDays(2),"EOPS", None, "EOPS")))))
 
 
-  s"calling GET $foreignPropertyObligationsShowAgentUrl" should {
+  s"calling GET $foreignPropertyAddedObligationsShowUrl" should {
     "render the Foreign Property Added obligations page" when {
       "User is authorised" in {
-        stubAuthorisedAgentUser(authorised = true)
-
         Given("Income Sources FS is enabled")
         enable(IncomeSources)
 
-        When(s"I call GET $foreignPropertyObligationsShowAgentUrl")
+        When(s"I call GET $foreignPropertyAddedObligationsShowUrl")
 
         And("API 1771 returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
@@ -43,37 +41,35 @@ class ForeignPropertyAddedObligationsControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetNextUpdates(testMtditid, testObligationsModel)
 
         val incomeSourceId = testPropertyIncomeId
-        val result = IncomeTaxViewChangeFrontend.getForeignPropertyAddedObligations(incomeSourceId, clientDetailsWithConfirmation)
+        val result = IncomeTaxViewChangeFrontend.getForeignPropertyAddedObligations(incomeSourceId)
         verifyIncomeSourceDetailsCall(testMtditid)
 
         val expectedText: String = messagesAPI("business-added.foreign-property-h1") + " " + messagesAPI("business-added.h2")
 
         result should have(
           httpStatus(OK),
-          pageTitleAgent(expectedText),
+          pageTitleIndividual(expectedText),
           elementTextByID("continue-button")(continueButtonText)
         )
       }
     }
   }
 
-  s"calling POST $foreignPropertyAddedObligationsSubmitAgentUrl" should {
-    s"redirect to $addIncomeSourceAgentUrl" when {
+  s"calling POST $foreignPropertyAddedObligationsSubmitUrl" should {
+    s"redirect to $addIncomeSourceShowUrl" when {
       "called" in {
-        stubAuthorisedAgentUser(authorised = true)
-
         Given("Income Sources FS is enabled")
         enable(IncomeSources)
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
 
-        val result = IncomeTaxViewChangeFrontend.postForeignPropertyAddedObligations(clientDetailsWithConfirmation)
-
+        val result = IncomeTaxViewChangeFrontend.postForeignPropertyAddedObligations()
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(s"/report-quarterly/income-and-expenses/view/agents/income-sources/add/new-income-sources")
+          redirectURI(s"/report-quarterly/income-and-expenses/view/income-sources/add/new-income-sources")
         )
       }
     }
   }
+
 }
