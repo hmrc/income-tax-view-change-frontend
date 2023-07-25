@@ -62,20 +62,6 @@ class UKPropertyAddedControllerSpec extends TestSupport with MockAuthenticationP
     ec, app.injector.instanceOf[ItvcErrorHandler],
     app.injector.instanceOf[AgentItvcErrorHandler])
 
-  //  object TestForeignPropertyStartDateCheckController
-  //    extends ForeignPropertyStartDateCheckController(
-  //      MockAuthenticationPredicate,
-  //      mockAuthService,
-  //      app.injector.instanceOf[SessionTimeoutPredicate],
-  //      MockIncomeSourceDetailsPredicate,
-  //      MockNavBarPredicate,
-  //      app.injector.instanceOf[NinoPredicate],
-  //      mockIncomeSourceDetailsService,
-  //      app.injector.instanceOf[ForeignPropertyStartDateCheck],
-  //      app.injector.instanceOf[CustomNotFoundError],
-  //      app.injector.instanceOf[LanguageUtils]
-  //    )
-
   object UKPropertyAddedTestConstants {
     val incomeSourceId = "1234"
   }
@@ -98,7 +84,7 @@ class UKPropertyAddedControllerSpec extends TestSupport with MockAuthenticationP
   "UKPropertyAddedController.show" should {
     "return 200 OK" when {
       "FS enabled with newly added UK Property and obligations view model" in {
-disable(NavBarFs)
+        disable(NavBarFs)
         enable(IncomeSources)
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         mockUKPropertyIncomeSource()
