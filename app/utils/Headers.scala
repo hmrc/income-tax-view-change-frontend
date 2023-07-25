@@ -27,8 +27,6 @@ object Headers {
     val incomeSourcePage : Map[String, String] = configPages.map(kv =>
           kv.map(k => (k, "afterIncomeSourceCreated")).toMap
       ).getOrElse( Map[String, String]())
-
-    println(s"Here is all incomeSource: $incomeSourcePage")
     val urlPathArray = requestPath.split('/')
     val actionPath = if(urlPathArray.isEmpty) "" else urlPathArray.last
     val updatedHeader = incomeSourcePage.get(actionPath) match {
@@ -36,15 +34,6 @@ object Headers {
       case _ => "Gov-Test-Scenario" -> ""
     }
     headerCarrier.withExtraHeaders(updatedHeader)
-  }
-
-  // Map list of action names with its test header values
-  def govUKTestHeaderValuesMap(): Map[String, String] = {
-    Map(
-      "uk-property-reporting-method" -> "afterIncomeSourceCreated", // UK Property Select reporting method
-      "foreign-property-reporting-method" -> "afterIncomeSourceCreated", // Foreign Property Select reporting method
-      "foreign-property-added" -> "afterIncomeSourceCreated"
-    )
   }
 
 }
