@@ -165,6 +165,6 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   lazy val ivUrl = servicesConfig.getString("identity-verification-frontend.host")
   lazy val relativeIVUpliftParams = servicesConfig.getBoolean("identity-verification-frontend.use-relative-params")
 
-  lazy val incomeSourceOverrides = config.getOptional[Seq[String]]("afterIncomeSourceCreated")
+  def incomeSourceOverrides(): Option[Seq[String]] = config.getOptional[Seq[String]]("afterIncomeSourceCreated")
 
 }
