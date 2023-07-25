@@ -68,6 +68,7 @@ class UKPropertyReportingMethodController @Inject()(val authenticate: Authentica
   : Future[Option[UKPropertyReportingMethodViewModel]] = {
     val latencyDetails: Option[LatencyDetails] = user.incomeSources.properties
       .filter(_.isUkProperty).find(_.incomeSourceId.getOrElse("").equals(incomeSourceId)).flatMap(_.latencyDetails)
+
     latencyDetails match {
       case Some(x) =>
         val currentTaxYearEnd = dateService.getCurrentTaxYearEnd(isEnabled(TimeMachineAddYear))
@@ -188,7 +189,15 @@ class UKPropertyReportingMethodController @Inject()(val authenticate: Authentica
 
   def show(id: String): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
-    implicit user => handleRequest(isAgent = false, id = id)
+    implicit user =>
+
+      println(s"\nSHOW: ALL user properties ON PAGE LOAD: ${user.incomeSources.properties}\n")
+
+      println(s"\nSHOW: UK PROPERTIES ON PAGE LOAD: ${user.incomeSources.properties.find(_.isUkProperty)}\n")
+
+      println(s"\nmaybeLatencyDetails: ${user.incomeSources.properties.filter(_.isUkProperty).find(_.incomeSourceId.getOrElse("").equals(id))}\n")
+
+      handleRequest(isAgent = false, id = id)
   }
 
   def showAgent(id: String): Action[AnyContent] = Authenticated.async {

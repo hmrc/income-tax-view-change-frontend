@@ -20,7 +20,7 @@ import auth.MtdItUser
 import config.featureswitch.{FeatureSwitching, IncomeSources}
 import forms.utils.SessionKeys._
 import models.incomeSourceDetails.BusinessDetailsModel
-import models.incomeSourceDetails.viewmodels.{CheckBusinessDetailsViewModel, CheckUKPropertyViewModel}
+import models.incomeSourceDetails.viewmodels.{CheckBusinessDetailsViewModel, CheckForeignPropertyViewModel, CheckUKPropertyViewModel}
 import play.api.mvc.Result
 import play.api.mvc.Results.Redirect
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
@@ -141,4 +141,30 @@ object IncomeSourcesUtils {
         Left(new IllegalArgumentException(s"Missing required session data: ${errors.mkString(" ")}"))
     }
   }
+
+  def getForeignPropertyDetailsFromSession(implicit user: MtdItUser[_]): Either[Throwable, CheckForeignPropertyViewModel] = {
+    val result: Option[Either[Throwable, CheckForeignPropertyViewModel]] = for {
+      tradingStartDate <- user.session.data.get(addForeignPropertyStartDate)
+      cashOrAccrualsFlag <- user.session.data.get(addForeignPropertyAccountingMethod)
+    } yield {
+      Right(CheckForeignPropertyViewModel(
+        tradingStartDate = LocalDate.parse(tradingStartDate),
+        cashOrAccrualsFlag = cashOrAccrualsFlag
+      ))
+    }
+
+    result match {
+      case Some(propertyDetails) =>
+        propertyDetails
+      case None =>
+        val errors: Seq[String] = Seq(
+          user.session.data.get(addForeignPropertyStartDate).orElse(Some(MissingKey(s"MissingKey: $addForeignPropertyStartDate"))),
+          user.session.data.get(businessTrade).orElse(Some(MissingKey(s"MissingKey: $businessTrade")))
+        ).collect {
+          case Some(MissingKey(msg)) => msg
+        }
+        Left(new IllegalArgumentException(s"Missing required session data: ${errors.mkString(" ")}"))
+    }
+  }
+
 }

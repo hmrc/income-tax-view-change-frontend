@@ -53,6 +53,7 @@ class AddIncomeSourceController @Inject()(val addIncomeSources: AddIncomeSources
   def show(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
+      println(s"\nINCOME SOURCES: ${user.incomeSources.properties}\n")
       handleRequest(
         isAgent = false,
         homePageCall = homePageCall,

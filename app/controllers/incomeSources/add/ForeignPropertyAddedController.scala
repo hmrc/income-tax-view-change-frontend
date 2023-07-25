@@ -27,7 +27,7 @@ import services.IncomeSourceDetailsService
 import views.html.errorPages.CustomNotFoundError
 
 import javax.inject.Inject
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class ForeignPropertyAddedController @Inject()(val authenticate: AuthenticationPredicate,
                                                val authorisedFunctions: FrontendAuthorisedFunctions,
@@ -45,7 +45,19 @@ class ForeignPropertyAddedController @Inject()(val authenticate: AuthenticationP
                                               )
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
-  def show(incomeSourceId: String): Action[AnyContent] = Action(Ok)
+  def show(id: String): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+    andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
+    implicit user =>
+
+      println(s"\nSHOW: ALL user properties ON PAGE LOAD: ${user.incomeSources.properties}\n")
+
+      println(s"\nSHOW: FOREIGN PROPERTIES ON PAGE LOAD: ${user.incomeSources.properties.find(_.isForeignProperty)}\n")
+
+      println(s"\nmaybeLatencyDetails: ${user.incomeSources.properties.filter(_.isForeignProperty).find(_.incomeSourceId.getOrElse("").equals(id))}\n")
+      Future(Ok)
+  }
+
+//  def show(incomeSourceId: String): Action[AnyContent] = Action(Ok)
 
   def showAgent(incomeSourceId: String): Action[AnyContent] = Action(Ok)
 }

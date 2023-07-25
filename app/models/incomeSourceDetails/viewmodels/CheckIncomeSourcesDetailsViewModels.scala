@@ -32,7 +32,17 @@ case class CheckBusinessDetailsViewModel(businessName: Option[String],
                                          cashOrAccrualsFlag: String,
                                          skippedAccountingMethod: Boolean)
 
-case class CheckForeignPropertyViewModel(tradingStartDate: LocalDate, cashOrAccrualsFlag: String)
+case class CheckForeignPropertyViewModel(tradingStartDate: LocalDate, cashOrAccrualsFlag: String) {
+  def getAccountingMethodMessageKey: String = {
+    val cashAccountingSelected = cashOrAccrualsFlag.toLowerCase.equals("cash")
+
+    if (cashAccountingSelected) {
+      "incomeSources.add.accountingMethod.cash"
+    } else {
+      "incomeSources.add.accountingMethod.accruals"
+    }
+  }
+}
 
 case class CheckUKPropertyViewModel(tradingStartDate: LocalDate, cashOrAccrualsFlag: String) {
   def getAccountingMethodMessageKey: String = {

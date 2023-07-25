@@ -79,6 +79,10 @@ class CheckUKPropertyDetailsController @Inject()(val checkUKPropertyDetails: Che
   def show(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
+      println(s"\nCHECK PAGE SHOW: ALL user properties ON PAGE LOAD: ${user.incomeSources.properties}\n")
+
+      println(s"\nCHECK PAGE SHOW: UK PROPERTIES ON PAGE LOAD: ${user.incomeSources.properties.find(_.isUkProperty)}\n")
+
       handleRequest(
         isAgent = false
       )
