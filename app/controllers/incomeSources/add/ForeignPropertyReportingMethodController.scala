@@ -116,6 +116,9 @@ class ForeignPropertyReportingMethodController @Inject()(val authenticate: Authe
                             postAction: Call,
                             redirectCall: Call)
                            (implicit user: MtdItUser[_]): Future[Result] = {
+
+    println(s"\nXXXXXXX: ${user.incomeSources.properties.filter(_.isForeignProperty).find(x => x.incomeSourceId.contains(id))}\n")
+
     (for {
       isMandatoryOrVoluntary <- itsaStatusService.hasMandatedOrVoluntaryStatusCurrentYear
       latencyDetailsMaybe <- Future(user.incomeSources.properties.find(
@@ -147,66 +150,66 @@ class ForeignPropertyReportingMethodController @Inject()(val authenticate: Authe
     }).flatten
   }
 
-    private def handleSubmitRequest(id: String,
-                                    isAgent: Boolean,
-                                    postAction: Call,
-                                    redirectCall: Call,
-                                    errorCall: Call)
-                                   (implicit user: MtdItUser[_]): Future[Result] = {
+  private def handleSubmitRequest(id: String,
+                                  isAgent: Boolean,
+                                  postAction: Call,
+                                  redirectCall: Call,
+                                  errorCall: Call)
+                                 (implicit user: MtdItUser[_]): Future[Result] = {
 
-      if (isEnabled(IncomeSources)) {
-        AddForeignPropertyReportingMethodForm.form.bindFromRequest().fold(
-          formWithErrors => {
-            for {
-              latencyDetailsMaybe <- Future(user.incomeSources.properties
-                .find(_.incomeSourceId.contains(id))
-                .flatMap(_.latencyDetails))
-              fPropertyReportingMethodViewModel <- getForeignPropertyReportingMethodDetails(latencyDetailsMaybe)
-            } yield {
-              fPropertyReportingMethodViewModel match {
-                case Right(viewModel) =>
-                  BadRequest(foreignPropertyReportingMethodView(
-                    form = AddForeignPropertyReportingMethodForm.updateErrorMessagesWithValues(formWithErrors),
-                    viewModel = viewModel,
-                    postAction = postAction,
-                    isAgent = isAgent
-                  ))
-                case Left(ex) =>
-                  Logger("application")
-                    .error(s"[ForeignPropertyReportingMethodController][handleRequest]: " +
-                      s"Failed to retrieve latency details - $ex")
-                  Redirect(redirectCall)
-              }
+    if (isEnabled(IncomeSources)) {
+      AddForeignPropertyReportingMethodForm.form.bindFromRequest().fold(
+        formWithErrors => {
+          for {
+            latencyDetailsMaybe <- Future(user.incomeSources.properties
+              .find(_.incomeSourceId.contains(id))
+              .flatMap(_.latencyDetails))
+            fPropertyReportingMethodViewModel <- getForeignPropertyReportingMethodDetails(latencyDetailsMaybe)
+          } yield {
+            fPropertyReportingMethodViewModel match {
+              case Right(viewModel) =>
+                BadRequest(foreignPropertyReportingMethodView(
+                  form = AddForeignPropertyReportingMethodForm.updateErrorMessagesWithValues(formWithErrors),
+                  viewModel = viewModel,
+                  postAction = postAction,
+                  isAgent = isAgent
+                ))
+              case Left(ex) =>
+                Logger("application")
+                  .error(s"[ForeignPropertyReportingMethodController][handleRequest]: " +
+                    s"Failed to retrieve latency details - $ex")
+                Redirect(redirectCall)
             }
-          },
-          valid => {
+          }
+        },
+        valid => {
 
-            if (valid.reportingMethodIsChanged) {
+          if (valid.reportingMethodIsChanged) {
 
-              val updatedReportingMethods = List(
-                getTaxYearSpecific(valid.taxYear1, valid.taxYear1ReportingMethod),
-                getTaxYearSpecific(valid.taxYear2, valid.taxYear2ReportingMethod)
-              ).flatten
+            val updatedReportingMethods = List(
+              getTaxYearSpecific(valid.taxYear1, valid.taxYear1ReportingMethod),
+              getTaxYearSpecific(valid.taxYear2, valid.taxYear2ReportingMethod)
+            ).flatten
 
-              updateIncomeSourceService.updateTaxYearSpecific(
-                nino = user.nino,
-                incomeSourceId = id,
-                taxYearSpecific = updatedReportingMethods
-              ).map {
-                case res: UpdateIncomeSourceResponseModel =>
-                  Logger("application").info(s"${if (isAgent) "[Agent]"}" + s" Updated tax year specific reporting method : $res")
-                  Redirect(redirectCall)
-                case err: UpdateIncomeSourceResponseError =>
-                  Logger("application").error(s"${if (isAgent) "[Agent]"}" + s" Failed to Updated tax year specific reporting method : $err")
-                  Redirect(errorCall)
-              }
-            } else {
-              Logger("application").info(s"${if (isAgent) "[Agent]"}" + s" Updating the tax year specific reporting method not required.")
-              Future.successful(Redirect(redirectCall))
+            updateIncomeSourceService.updateTaxYearSpecific(
+              nino = user.nino,
+              incomeSourceId = id,
+              taxYearSpecific = updatedReportingMethods
+            ).map {
+              case res: UpdateIncomeSourceResponseModel =>
+                Logger("application").info(s"${if (isAgent) "[Agent]"}" + s" Updated tax year specific reporting method : $res")
+                Redirect(redirectCall)
+              case err: UpdateIncomeSourceResponseError =>
+                Logger("application").error(s"${if (isAgent) "[Agent]"}" + s" Failed to Updated tax year specific reporting method : $err")
+                Redirect(errorCall)
             }
-          })
-      } else Future(Ok(customNotFoundErrorView()))
-    }
+          } else {
+            Logger("application").info(s"${if (isAgent) "[Agent]"}" + s" Updating the tax year specific reporting method not required.")
+            Future.successful(Redirect(redirectCall))
+          }
+        })
+    } else Future(Ok(customNotFoundErrorView()))
+  }
 
   private def getForeignPropertyReportingMethodDetails(latencyDetailsMaybe: Option[LatencyDetails])
                                                       (implicit user: MtdItUser[_]): Future[Either[Throwable, ForeignPropertyReportingMethodViewModel]] = {
@@ -214,30 +217,34 @@ class ForeignPropertyReportingMethodController @Inject()(val authenticate: Authe
     val currentTaxYearEnd = dateService.getCurrentTaxYearEnd(isEnabled(TimeMachineAddYear))
     latencyDetailsMaybe match {
       case Some(latencyDetails) if Try(latencyDetails.taxYear1.toInt).toOption.isDefined =>
-        calculationListService.isTaxYearCrystallised(latencyDetails.taxYear1.toInt).flatMap { isTaxYear1Crystallised =>
-          (latencyDetails, isTaxYear1Crystallised) match {
-            case _ if Try(latencyDetails.taxYear2.toInt).toOption.isEmpty =>
-              Future.successful( Left( new Error(s"Unable to convert taxYear2 to Int: ${latencyDetails.taxYear2}") ) )
-            case _ if latencyDetails.taxYear2.toInt < currentTaxYearEnd =>
-              Future.successful( Left( new Error("Current tax year not in scope of change period") ) )
-            case (_, Some(true)) =>
-              Future.successful(
-                Right(
-                  ForeignPropertyReportingMethodViewModel(
-                    taxYear2 = Some(latencyDetails.taxYear2),
-                  latencyIndicator2 = Some(latencyDetails.latencyIndicator2)
+        latencyDetails match {
+          case _ if Try(latencyDetails.taxYear2.toInt).toOption.isEmpty =>
+            Future.successful( Left( new Error(s"Unable to convert taxYear2 to Int: ${latencyDetails.taxYear2}") ) )
+          case _ if latencyDetails.taxYear2.toInt < currentTaxYearEnd =>
+            Future.successful( Left( new Error("Current tax year not in scope of change period") ) )
+          case LatencyDetails(_, tY1, tY1LatencyIndicator, tY2, tY2LatencyIndicator) =>
+            calculationListService.isTaxYearCrystallised(tY1.toInt).flatMap {
+              case Some(true) =>
+                Future.successful(
+                  Right(
+                    ForeignPropertyReportingMethodViewModel(
+                      taxYear2 = Some(tY2),
+                      latencyIndicator2 = Some(tY2LatencyIndicator)
+                    )
+                  )
                 )
+              case _ =>
+                Future.successful(
+                  Right(
+                    ForeignPropertyReportingMethodViewModel(
+                      taxYear1 = Some(tY1),
+                      latencyIndicator1 = Some(tY1LatencyIndicator),
+                      taxYear2 = Some(tY2),
+                      latencyIndicator2 = Some(tY2LatencyIndicator)
+                    )
+                  )
                 )
-              )
-            case _ =>
-              Future.successful(
-                Right(ForeignPropertyReportingMethodViewModel(
-                taxYear1 = Some(latencyDetails.taxYear1),
-                latencyIndicator1 = Some(latencyDetails.latencyIndicator1),
-                taxYear2 = Some(latencyDetails.taxYear2),
-                latencyIndicator2 = Some(latencyDetails.taxYear2)
-              )))
-          }
+            }
         }
       case Some(latencyDetails) =>
         Future(Left(new Error(s"Unable to convert taxYear1 to Int: ${latencyDetails.taxYear1}")))
