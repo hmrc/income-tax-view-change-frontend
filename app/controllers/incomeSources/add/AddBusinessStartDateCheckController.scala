@@ -131,39 +131,7 @@ class AddBusinessStartDateCheckController @Inject()(authenticate: Authentication
   def submit: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit request =>
-      val backUrl = getBackUrl(false)
-      val continueUrl = getContinueUrl(false)
-      val postAction = getPostAction(false)
-      val businessStartDate = getBusinessStartDate()
-      val businessStartDateAsLocalDate = LocalDate.parse(businessStartDate)
-      val formattedBusinessStartDate = getFormattedBusinessStartDate()
-
-      BusinessStartDateCheckForm.form.bindFromRequest().fold(
-        formWithErrors =>
-          Future.successful(BadRequest(addBusinessStartDateCheck(
-            form = formWithErrors,
-            postAction = postAction,
-            backUrl = backUrl,
-            isAgent = false,
-            businessStartDate = formattedBusinessStartDate,
-            btaNavPartial = request.btaNavPartial
-          ))),
-        _.toFormMap(response).headOption match {
-          case Some(selection) if selection.contains(responseNo) =>
-            Future.successful(Redirect(backUrl).removingFromSession(SessionKeys.addBusinessStartDate))
-          case Some(selection) if selection.contains(responseYes) =>
-            val businessAccountingPeriodEndDate = dateService.getAccountingPeriodEndDate(businessStartDateAsLocalDate)
-            Logger("application").info(s"[AddBusinessStartDateCheckController][submit]: businessAccountingPeriodStartDate = $businessStartDate")
-            Logger("application").info(s"[AddBusinessStartDateCheckController][submit]: businessAccountingPeriodEndDate = $businessAccountingPeriodEndDate")
-            Future.successful(Redirect(continueUrl)
-              .addingToSession(SessionKeys.addBusinessAccountingPeriodStartDate -> businessStartDate,
-                SessionKeys.addBusinessAccountingPeriodEndDate -> businessAccountingPeriodEndDate))
-          case None => Future.successful(itvcErrorHandler.showInternalServerError())
-        }
-      ).recoverWith {
-        case ex => Logger("application").error(s"[AddBusinessStartDateCheckController][submit]: ${ex.getMessage}")
-          Future.successful(itvcErrorHandler.showInternalServerError())
-      }
+      handelSubmitRequest(isAgent = false)
   }
 
   def submitAgent: Action[AnyContent] = Authenticated.async {
@@ -171,41 +139,45 @@ class AddBusinessStartDateCheckController @Inject()(authenticate: Authentication
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
           implicit mtdItUser =>
-            val backUrl = getBackUrl(true)
-            val continueUrl = getContinueUrl(true)
-            val postAction = getPostAction(true)
-            val businessStartDate = getBusinessStartDate()
-            val businessStartDateAsLocalDate = LocalDate.parse(businessStartDate)
-            val formattedBusinessStartDate = getFormattedBusinessStartDate()
-
-            BusinessStartDateCheckForm.form.bindFromRequest().fold(
-              formWithErrors => {
-                Future.successful(BadRequest(addBusinessStartDateCheck(
-                  form = formWithErrors,
-                  postAction = postAction,
-                  backUrl = backUrl,
-                  isAgent = true,
-                  businessStartDate = formattedBusinessStartDate,
-                  btaNavPartial = mtdItUser.btaNavPartial
-                )))
-              },
-              _.toFormMap(response).headOption match {
-                case Some(selection) if selection.contains(responseNo) =>
-                  Future.successful(Redirect(backUrl).removingFromSession(SessionKeys.addBusinessStartDate))
-                case Some(selection) if selection.contains(responseYes) =>
-                  val businessAccountingPeriodEndDate = dateService.getAccountingPeriodEndDate(businessStartDateAsLocalDate)
-                  Logger("application").info(s"[Agent][AddBusinessStartDateCheckController][submitAgent]: businessAccountingPeriodStartDate = $businessStartDate")
-                  Logger("application").info(s"[Agent][AddBusinessStartDateCheckController][submitAgent]: businessAccountingPeriodEndDate = $businessAccountingPeriodEndDate")
-                  Future.successful(Redirect(continueUrl)
-                    .addingToSession(SessionKeys.addBusinessAccountingPeriodStartDate -> businessStartDate,
-                      SessionKeys.addBusinessAccountingPeriodEndDate -> businessAccountingPeriodEndDate))
-                case None => Future.successful(itvcErrorHandler.showInternalServerError())
-              }
-            )
-        }.recoverWith {
-          case ex => Logger("application").error(s"[Agent][AddBusinessStartDateCheckController][submitAgent]: ${ex.getMessage}")
-            Future.successful(itvcErrorHandler.showInternalServerError())
+            handelSubmitRequest(isAgent = true)
         }
+  }
+
+  def handelSubmitRequest(isAgent: Boolean)(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] = {
+    val backUrl = getBackUrl(isAgent)
+    val continueUrl = getContinueUrl(isAgent)
+    val postAction = getPostAction(isAgent)
+    val businessStartDate = getBusinessStartDate()
+    val businessStartDateAsLocalDate = LocalDate.parse(businessStartDate)
+    val formattedBusinessStartDate = getFormattedBusinessStartDate()
+    val errorHandler = if (isAgent) itvcErrorHandler else itvcErrorHandlerAgent
+
+    BusinessStartDateCheckForm.form.bindFromRequest().fold(
+      formWithErrors =>
+        Future.successful(BadRequest(addBusinessStartDateCheck(
+          form = formWithErrors,
+          postAction = postAction,
+          backUrl = backUrl,
+          isAgent = isAgent,
+          businessStartDate = formattedBusinessStartDate,
+          btaNavPartial = user.btaNavPartial
+        ))),
+      _.toFormMap(response).headOption match {
+        case Some(selection) if selection.contains(responseNo) =>
+          Future.successful(Redirect(backUrl).removingFromSession(SessionKeys.addBusinessStartDate))
+        case Some(selection) if selection.contains(responseYes) =>
+          val businessAccountingPeriodEndDate = dateService.getAccountingPeriodEndDate(businessStartDateAsLocalDate)
+          Logger("application").info(s"${if (isAgent) "[Agent]"}[AddBusinessStartDateCheckController][handelSubmitRequest]: businessAccountingPeriodStartDate = $businessStartDate")
+          Logger("application").info(s"${if (isAgent) "[Agent]"}[AddBusinessStartDateCheckController][handelSubmitRequest]: businessAccountingPeriodEndDate = $businessAccountingPeriodEndDate")
+          Future.successful(Redirect(continueUrl)
+            .addingToSession(SessionKeys.addBusinessAccountingPeriodStartDate -> businessStartDate,
+              SessionKeys.addBusinessAccountingPeriodEndDate -> businessAccountingPeriodEndDate))
+        case _ => Future.successful(errorHandler.showInternalServerError())
+      }
+    ).recoverWith {
+      case ex => Logger("application").error(s"${if (isAgent) "[Agent]"}[AddBusinessStartDateCheckController][handelSubmitRequest]: ${ex.getMessage}")
+        Future.successful(errorHandler.showInternalServerError())
+    }
   }
 
 }

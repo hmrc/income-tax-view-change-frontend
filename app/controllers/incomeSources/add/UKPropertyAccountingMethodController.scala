@@ -36,20 +36,20 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class UKPropertyBusinessAccountingMethodController @Inject()(val authenticate: AuthenticationPredicate,
-                                                   val authorisedFunctions: FrontendAuthorisedFunctions,
-                                                   val checkSessionTimeout: SessionTimeoutPredicate,
-                                                   val incomeSourceDetailsService: IncomeSourceDetailsService,
-                                                   val retrieveBtaNavBar: NavBarPredicate,
-                                                   val retrieveIncomeSources: IncomeSourceDetailsPredicate,
-                                                   val retrieveNino: NinoPredicate,
-                                                   val view: UKPropertyBusinessAccountingMethod,
-                                                   val customNotFoundErrorView: CustomNotFoundError)
-                                                  (implicit val appConfig: FrontendAppConfig,
-                                                   mcc: MessagesControllerComponents,
-                                                   val ec: ExecutionContext,
-                                                   val itvcErrorHandler: ItvcErrorHandler,
-                                                   val itvcErrorHandlerAgent: AgentItvcErrorHandler)
+class UKPropertyAccountingMethodController @Inject()(val authenticate: AuthenticationPredicate,
+                                                     val authorisedFunctions: FrontendAuthorisedFunctions,
+                                                     val checkSessionTimeout: SessionTimeoutPredicate,
+                                                     val incomeSourceDetailsService: IncomeSourceDetailsService,
+                                                     val retrieveBtaNavBar: NavBarPredicate,
+                                                     val retrieveIncomeSources: IncomeSourceDetailsPredicate,
+                                                     val retrieveNino: NinoPredicate,
+                                                     val view: UKPropertyBusinessAccountingMethod,
+                                                     val customNotFoundErrorView: CustomNotFoundError)
+                                                    (implicit val appConfig: FrontendAppConfig,
+                                                     mcc: MessagesControllerComponents,
+                                                     val ec: ExecutionContext,
+                                                     val itvcErrorHandler: ItvcErrorHandler,
+                                                     val itvcErrorHandlerAgent: AgentItvcErrorHandler)
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
   def handleRequest(isAgent: Boolean)
@@ -58,8 +58,8 @@ class UKPropertyBusinessAccountingMethodController @Inject()(val authenticate: A
     val incomeSourcesEnabled: Boolean = isEnabled(IncomeSources)
     val backUrl: String = if (isAgent) controllers.incomeSources.add.routes.CheckUKPropertyStartDateController.showAgent().url else
       controllers.incomeSources.add.routes.CheckUKPropertyStartDateController.show().url
-    val postAction: Call = if (isAgent) controllers.incomeSources.add.routes.UKPropertyBusinessAccountingMethodController.submitAgent() else
-      controllers.incomeSources.add.routes.UKPropertyBusinessAccountingMethodController.submit()
+    val postAction: Call = if (isAgent) controllers.incomeSources.add.routes.UKPropertyAccountingMethodController.submitAgent() else
+      controllers.incomeSources.add.routes.UKPropertyAccountingMethodController.submit()
 
     val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
@@ -68,10 +68,10 @@ class UKPropertyBusinessAccountingMethodController @Inject()(val authenticate: A
       if (shouldRedirectToCheckDetailsPage(userProperties)) {
         if (isAgent) {
           Future.successful(Redirect(controllers.incomeSources.add.routes.CheckUKPropertyDetailsController.showAgent())
-            .addingToSession(addUkPropertyAccountingMethod -> "cash"))
+            .addingToSession(addUkPropertyAccountingMethod -> "CASH"))
         } else {
           Future.successful(Redirect(controllers.incomeSources.add.routes.CheckUKPropertyDetailsController.show())
-            .addingToSession(addUkPropertyAccountingMethod -> "cash"))
+            .addingToSession(addUkPropertyAccountingMethod -> "CASH"))
         }
       } else {
         Future.successful(Ok(view(
@@ -93,7 +93,7 @@ class UKPropertyBusinessAccountingMethodController @Inject()(val authenticate: A
   }
 
   def shouldRedirectToCheckDetailsPage(userProperties: List[PropertyDetailsModel]): Boolean = {
-    if(userProperties.filter(_.isUkProperty).size > 0) {
+    if (userProperties.filter(_.isUkProperty).size > 0) {
       true
     } else {
       false
@@ -123,8 +123,8 @@ class UKPropertyBusinessAccountingMethodController @Inject()(val authenticate: A
   private def handleSubmitRequest(isAgent: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
     val incomeSourcesEnabled: Boolean = isEnabled(IncomeSources)
     val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-    val submitUrl: Call = if (isAgent) controllers.incomeSources.add.routes.UKPropertyBusinessAccountingMethodController.submitAgent() else
-      controllers.incomeSources.add.routes.UKPropertyBusinessAccountingMethodController.submit()
+    val submitUrl: Call = if (isAgent) controllers.incomeSources.add.routes.UKPropertyAccountingMethodController.submitAgent() else
+      controllers.incomeSources.add.routes.UKPropertyAccountingMethodController.submit()
     val backUrl: String = if (isAgent) controllers.incomeSources.add.routes.CheckUKPropertyStartDateController.showAgent().url else
       controllers.incomeSources.add.routes.CheckUKPropertyStartDateController.show().url
     val redirectUrl: Call = if (isAgent) controllers.incomeSources.add.routes.CheckUKPropertyDetailsController.showAgent() else
@@ -141,10 +141,10 @@ class UKPropertyBusinessAccountingMethodController @Inject()(val authenticate: A
         validatedInput => {
           if (validatedInput.equals(Some("cash"))) {
             Future.successful(Redirect(redirectUrl)
-              .addingToSession(addUkPropertyAccountingMethod -> "cash"))
+              .addingToSession(addUkPropertyAccountingMethod -> "CASH"))
           } else {
             Future.successful(Redirect(redirectUrl)
-              .addingToSession(addUkPropertyAccountingMethod -> "accruals"))
+              .addingToSession(addUkPropertyAccountingMethod -> "ACCRUALS"))
           }
         }
       )
@@ -152,7 +152,7 @@ class UKPropertyBusinessAccountingMethodController @Inject()(val authenticate: A
       Future.successful(Ok(customNotFoundErrorView()))
     } recover {
       case ex: Exception =>
-        Logger("application").error(s"Error getting UKPropertyBusinessAccountingMethodController page: ${ex.getMessage}")
+        Logger("application").error(s"Error getting UKPropertyAccountingMethodController page: ${ex.getMessage}")
         errorHandler.showInternalServerError()
     }
   }
@@ -168,6 +168,22 @@ class UKPropertyBusinessAccountingMethodController @Inject()(val authenticate: A
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
           implicit mtdItUser => handleSubmitRequest(isAgent = true)
+        }
+  }
+
+  def change(): Action[AnyContent] =
+    (checkSessionTimeout andThen authenticate andThen retrieveNino
+      andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
+      implicit user =>
+        Future.successful(Ok("Change UK Property Accounting Method - Individual"))
+    }
+
+  def changeAgent(): Action[AnyContent] = Authenticated.async {
+    implicit request =>
+      implicit user =>
+        getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
+          implicit mtdItUser =>
+            Future.successful(Ok("Change UK Property Accounting Method - Agent"))
         }
   }
 
