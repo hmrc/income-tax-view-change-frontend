@@ -62,6 +62,7 @@ class ForeignPropertyReportingMethodController @Inject()(val authenticate: Authe
   def show(id: String): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
+      println(s"\n${user.incomeSources.properties.filter(_.isUkProperty)}\n")
       handleRequest(
         id = id,
         isAgent = false,
@@ -116,6 +117,7 @@ class ForeignPropertyReportingMethodController @Inject()(val authenticate: Authe
                             postAction: Call,
                             redirectCall: Call)
                            (implicit user: MtdItUser[_]): Future[Result] = {
+
     (for {
       isMandatoryOrVoluntary <- itsaStatusService.hasMandatedOrVoluntaryStatusCurrentYear
       latencyDetailsMaybe <- Future(user.incomeSources.properties.find(

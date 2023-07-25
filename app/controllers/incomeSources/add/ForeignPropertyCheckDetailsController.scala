@@ -135,6 +135,7 @@ class ForeignPropertyCheckDetailsController @Inject()(val checkForeignPropertyDe
   def show(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
+      println(s"\n${user.incomeSources.properties.filter(_.isUkProperty)}\n")
       handleRequest(
         sources = user.incomeSources,
         isAgent = false
