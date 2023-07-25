@@ -16,16 +16,22 @@
 
 package testConstants
 
-import testConstants.BaseTestConstants.testPropertyIncomeId
-import testConstants.NextUpdatesTestConstants.fakeNextUpdatesModel
 import models.core.{AccountingPeriodModel, CessationModel}
-import models.incomeSourceDetails.viewmodels.{PropertyDetailsViewModel, CeasePropertyDetailsViewModel, ViewPropertyDetailsViewModel}
-import models.incomeSourceDetails.{PropertiesRentedModel, PropertyDetailsModel}
+import models.incomeSourceDetails.viewmodels.{CeasePropertyDetailsViewModel, PropertyDetailsViewModel, ViewPropertyDetailsViewModel}
+import models.incomeSourceDetails.{LatencyDetails, PropertyDetailsModel}
 import models.nextUpdates.NextUpdateModel
+import testConstants.BaseTestConstants.{testPropertyIncomeId, testSelfEmploymentId}
+import testConstants.NextUpdatesTestConstants.fakeNextUpdatesModel
 
 import java.time.LocalDate
 
 object PropertyDetailsTestConstants {
+
+  val year2018: Int = 2018
+  val year2019: Int = 2019
+  val year2022: Int = 2022
+  val year2023: Int = 2023
+  val year2024: Int = 2024
 
   val testPropertyAccountingPeriod = AccountingPeriodModel(LocalDate.of(2017, 4, 6), LocalDate.of(2018, 4, 5))
 
@@ -43,15 +49,6 @@ object PropertyDetailsTestConstants {
     accountingPeriod = Some(testPropertyAccountingPeriod),
     firstAccountingPeriodEndDate = None,
     incomeSourceType = Some(testIncomeType),
-    tradingStartDate = Some(testStartDate),
-    None
-  )
-
-  val ukPropertyDetails = PropertyDetailsModel(
-    incomeSourceId = Some(testPropertyIncomeId),
-    accountingPeriod = Some(testPropertyAccountingPeriod),
-    firstAccountingPeriodEndDate = None,
-    incomeSourceType = Some(ukIncomeType),
     tradingStartDate = Some(testStartDate),
     None
   )
@@ -111,4 +108,75 @@ object PropertyDetailsTestConstants {
     dateReceived = None,
     obligationType = "Crystallised"
   ))
+
+  val testLatencyDetails = LatencyDetails(
+    latencyEndDate = LocalDate.of(year2019, 1, 1),
+    taxYear1 = year2018.toString,
+    latencyIndicator1 = "A",
+    taxYear2 = year2019.toString,
+    latencyIndicator2 = "Q")
+
+  val testLatencyDetails1 = LatencyDetails(
+    latencyEndDate = LocalDate.of(year2023, 1, 1),
+    taxYear1 = year2022.toString,
+    latencyIndicator1 = "A",
+    taxYear2 = year2023.toString,
+    latencyIndicator2 = "Q")
+
+  val testLatencyDetails2 = LatencyDetails(
+    latencyEndDate = LocalDate.of(year2023, 1, 1),
+    taxYear1 = year2023.toString,
+    latencyIndicator1 = "A",
+    taxYear2 = year2024.toString,
+    latencyIndicator2 = "Q")
+
+  val ukPropertyDetails = PropertyDetailsModel(
+    incomeSourceId = Some(testSelfEmploymentId),
+    accountingPeriod = Some(testPropertyAccountingPeriod),
+    firstAccountingPeriodEndDate = None,
+    incomeSourceType = Some(ukIncomeType),
+    tradingStartDate = Some(testStartDate),
+    cessation = None,
+    latencyDetails = Some(testLatencyDetails)
+  )
+
+  val ukPropertyWithLatencyDetails1 = PropertyDetailsModel(
+    incomeSourceId = Some(testSelfEmploymentId),
+    accountingPeriod = Some(testPropertyAccountingPeriod),
+    firstAccountingPeriodEndDate = None,
+    incomeSourceType = Some(ukIncomeType),
+    tradingStartDate = Some(testStartDate),
+    cessation = None,
+    latencyDetails = Some(testLatencyDetails1)
+  )
+
+  val ukPropertyWithLatencyDetails2 = PropertyDetailsModel(
+    incomeSourceId = Some(testSelfEmploymentId),
+    accountingPeriod = Some(testPropertyAccountingPeriod),
+    firstAccountingPeriodEndDate = None,
+    incomeSourceType = Some(ukIncomeType),
+    tradingStartDate = Some(testStartDate),
+    cessation = None,
+    latencyDetails = Some(testLatencyDetails2)
+  )
+
+  val foreignPropertyWithLatencyDetails1 = PropertyDetailsModel(
+    incomeSourceId = Some(testSelfEmploymentId),
+    accountingPeriod = Some(testPropertyAccountingPeriod),
+    firstAccountingPeriodEndDate = None,
+    incomeSourceType = Some(foreignIncomeType),
+    tradingStartDate = Some(testStartDate),
+    cessation = None,
+    latencyDetails = Some(testLatencyDetails1)
+  )
+
+  val foreignPropertyWithLatencyDetails2 = PropertyDetailsModel(
+    incomeSourceId = Some(testSelfEmploymentId),
+    accountingPeriod = Some(testPropertyAccountingPeriod),
+    firstAccountingPeriodEndDate = None,
+    incomeSourceType = Some(foreignIncomeType),
+    tradingStartDate = Some(testStartDate),
+    cessation = None,
+    latencyDetails = Some(testLatencyDetails2)
+  )
 }

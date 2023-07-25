@@ -20,7 +20,7 @@ import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
 import connectors.CreateIncomeSourceConnector
 import connectors.helpers.IncomeSourcesDataHelper
-import models.addIncomeSource.{CreateBusinessErrorResponse, AddIncomeSourceResponse}
+import models.createIncomeSource.{CreateIncomeSourceErrorResponse, CreateIncomeSourceResponse}
 import models.incomeSourceDetails.viewmodels._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
@@ -58,18 +58,18 @@ class CreateBusinessDetailsServiceSpec extends TestSupport with FeatureSwitching
     "return success response with incomeSourceId" in {
       when(mockIncomeSourceConnector.createBusiness(any(), any())(any()))
         .thenReturn(Future {
-          Right(List(AddIncomeSourceResponse("123")))
+          Right(List(CreateIncomeSourceResponse("123")))
         })
 
       val result = UnderTestCreateBusinessDetailsService.createBusinessDetails(createBusinessViewModel)
 
-      result.futureValue shouldBe Right(AddIncomeSourceResponse("123"))
+      result.futureValue shouldBe Right(CreateIncomeSourceResponse("123"))
     }
 
     "return failure response with error" in {
       when(mockIncomeSourceConnector.createBusiness(any(), any())(any()))
         .thenReturn(Future {
-          Left(CreateBusinessErrorResponse(Status.INTERNAL_SERVER_ERROR, s"Error creating incomeSource"))
+          Left(CreateIncomeSourceErrorResponse(Status.INTERNAL_SERVER_ERROR, s"Error creating incomeSource"))
         })
       val result = UnderTestCreateBusinessDetailsService.createBusinessDetails(createBusinessViewModel)
       result.futureValue match {
@@ -81,7 +81,7 @@ class CreateBusinessDetailsServiceSpec extends TestSupport with FeatureSwitching
     "return failure: wrong data" in {
       when(mockIncomeSourceConnector.createBusiness(any(), any())(any()))
         .thenReturn(Future {
-          Right(List(AddIncomeSourceResponse("561")))
+          Right(List(CreateIncomeSourceResponse("561")))
         })
 
       // set view model with the wrong data
@@ -100,21 +100,21 @@ class CreateBusinessDetailsServiceSpec extends TestSupport with FeatureSwitching
     "return success response with incomeSourceId" in {
       when(mockIncomeSourceConnector.createForeignProperty(any(), any())(any()))
         .thenReturn(Future {
-          Right(List(AddIncomeSourceResponse("561")))
+          Right(List(CreateIncomeSourceResponse("561")))
         })
 
       val viewModel = CheckForeignPropertyViewModel(tradingStartDate = LocalDate.of(2011, 1, 1),
-        cashOrAccrualsFlag = "Cash"
+        cashOrAccrualsFlag = "CASH"
       )
       val result = UnderTestCreateBusinessDetailsService.createForeignProperty(viewModel)
 
-      result.futureValue shouldBe Right(AddIncomeSourceResponse("561"))
+      result.futureValue shouldBe Right(CreateIncomeSourceResponse("561"))
     }
 
     "return failure response with error" in {
       when(mockIncomeSourceConnector.createForeignProperty(any(), any())(any()))
         .thenReturn(Future {
-          Left(CreateBusinessErrorResponse(Status.INTERNAL_SERVER_ERROR, s"Error creating incomeSource"))
+          Left(CreateIncomeSourceErrorResponse(Status.INTERNAL_SERVER_ERROR, s"Error creating incomeSource"))
         })
       val result = UnderTestCreateBusinessDetailsService.createForeignProperty(createForeignPropertyViewModel)
       result.futureValue match {
@@ -126,15 +126,66 @@ class CreateBusinessDetailsServiceSpec extends TestSupport with FeatureSwitching
     "return failure: wrong data" in {
       when(mockIncomeSourceConnector.createForeignProperty(any(), any())(any()))
         .thenReturn(Future {
-          Right(List(AddIncomeSourceResponse("561")))
+          Right(List(CreateIncomeSourceResponse("561")))
         })
 
-      // set cashOrAccrualsFlag field as empty to cause failure
+      // set cashOrAccruals field to empty to cause failure
       val viewModel = CheckForeignPropertyViewModel(
         tradingStartDate = LocalDate.of(2011, 1, 1),
         cashOrAccrualsFlag = ""
       )
       val result = UnderTestCreateBusinessDetailsService.createForeignProperty(viewModel)
+      result.futureValue match {
+        case Left(_) => succeed
+        case Right(_) => fail("Incorrect data in the view model")
+      }
+    }
+
+  }
+
+  "CreateBusinessDetailsService call create UK property " when {
+
+    "return success response with incomeSourceId" in {
+      when(mockIncomeSourceConnector.createUKProperty(any(), any())(any()))
+        .thenReturn(Future {
+          Right(List(CreateIncomeSourceResponse("561")))
+        })
+
+      val viewModel = CheckUKPropertyViewModel(tradingStartDate = LocalDate.of(2011, 1, 1),
+        cashOrAccrualsFlag = "CASH"
+      )
+      val result = UnderTestCreateBusinessDetailsService.createUKProperty(viewModel)
+
+      result.futureValue shouldBe Right(CreateIncomeSourceResponse("561"))
+    }
+
+    "return failure response with error" in {
+      when(mockIncomeSourceConnector.createUKProperty(any(), any())(any()))
+        .thenReturn(Future {
+          Left(CreateIncomeSourceErrorResponse(Status.INTERNAL_SERVER_ERROR, s"Error creating incomeSource"))
+        })
+      val viewModel = CheckUKPropertyViewModel(tradingStartDate = LocalDate.of(2011, 1, 1),
+        cashOrAccrualsFlag = "CASH"
+      )
+      val result = UnderTestCreateBusinessDetailsService.createUKProperty(viewModel)
+      result.futureValue match {
+        case Left(_) => succeed
+        case Right(_) => fail("Expecting to fail")
+      }
+    }
+
+    "return failure: wrong data" in {
+      when(mockIncomeSourceConnector.createUKProperty(any(), any())(any()))
+        .thenReturn(Future {
+          Right(List(CreateIncomeSourceResponse("561")))
+        })
+
+      // set cashOrAccrualsFlag field as empty to cause failure
+      val viewModel = CheckUKPropertyViewModel(
+        tradingStartDate = LocalDate.of(2011, 1, 1),
+        cashOrAccrualsFlag = ""
+      )
+      val result = UnderTestCreateBusinessDetailsService.createUKProperty(viewModel)
       result.futureValue match {
         case Left(_) => succeed
         case Right(_) => fail("Incorrect data in the view model")

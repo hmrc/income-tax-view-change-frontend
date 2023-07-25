@@ -29,15 +29,15 @@ import views.html.errorPages.CustomNotFoundError
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
-class BusinessAddedController @Inject()(val authenticate: AuthenticationPredicate,
-                                        val authorisedFunctions: FrontendAuthorisedFunctions,
-                                        val checkSessionTimeout: SessionTimeoutPredicate,
-                                        val incomeSourceDetailsService: IncomeSourceDetailsService,
-                                        val retrieveBtaNavBar: NavBarPredicate,
-                                        val retrieveIncomeSources: IncomeSourceDetailsPredicate,
-                                        val retrieveNino: NinoPredicate,
-                                        val customNotFoundErrorView: CustomNotFoundError)
-                                       (implicit val appConfig: FrontendAppConfig,
+class ForeignPropertyAddedController @Inject()(val authenticate: AuthenticationPredicate,
+                                               val authorisedFunctions: FrontendAuthorisedFunctions,
+                                               val checkSessionTimeout: SessionTimeoutPredicate,
+                                               val incomeSourceDetailsService: IncomeSourceDetailsService,
+                                               val retrieveBtaNavBar: NavBarPredicate,
+                                               val retrieveIncomeSources: IncomeSourceDetailsPredicate,
+                                               val retrieveNino: NinoPredicate,
+                                               val customNotFoundErrorView: CustomNotFoundError)
+                                              (implicit val appConfig: FrontendAppConfig,
                                                mcc: MessagesControllerComponents,
                                                val ec: ExecutionContext,
                                                val itvcErrorHandler: ItvcErrorHandler,
@@ -45,12 +45,7 @@ class BusinessAddedController @Inject()(val authenticate: AuthenticationPredicat
                                               )
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
-  def show(incomeSourceId: String): Action[AnyContent] = Action {
-    Ok("")
-  }
+  def show(incomeSourceId: String): Action[AnyContent] = Action(Ok)
 
-  def showAgent( incomeSourceId: String): Action[AnyContent] = Action {
-    Ok("")
-  }
-
+  def showAgent(incomeSourceId: String): Action[AnyContent] = Action(Ok)
 }

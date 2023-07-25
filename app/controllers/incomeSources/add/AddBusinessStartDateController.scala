@@ -63,6 +63,9 @@ class AddBusinessStartDateController @Inject()(authenticate: AuthenticationPredi
   lazy val homePageCall: Call = routes.HomeController.show()
   lazy val homePageCallAgent: Call = routes.HomeController.showAgent
 
+  lazy val redirectCall: Call = controllers.incomeSources.add.routes.AddBusinessStartDateCheckController.show()
+  lazy val redirectCallAgent: Call = controllers.incomeSources.add.routes.AddBusinessStartDateCheckController.showAgent()
+
   def show: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
@@ -116,22 +119,7 @@ class AddBusinessStartDateController @Inject()(authenticate: AuthenticationPredi
   def submit: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit request =>
-      BusinessStartDateForm().bindFromRequest().fold(
-        formWithErrors =>
-          Future.successful(BadRequest(addBusinessStartDate(
-            form = formWithErrors,
-            postAction = postAction,
-            backUrl = backUrl,
-            isAgent = false
-          ))),
-        formData => {
-          val businessStartDate = formData.date
-          Future.successful(
-            Redirect(controllers.incomeSources.add.routes.AddBusinessStartDateCheckController.show())
-              .addingToSession(SessionKeys.addBusinessStartDate -> businessStartDate.toString)
-          )
-        }
-      )
+      handelSubmitRequest(isAgent = false)
   }
 
   def submitAgent: Action[AnyContent] = Authenticated.async {
@@ -139,23 +127,28 @@ class AddBusinessStartDateController @Inject()(authenticate: AuthenticationPredi
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
           implicit mtdItUser =>
-            BusinessStartDateForm().bindFromRequest().fold(
-              formWithErrors =>
-                Future.successful(BadRequest(addBusinessStartDate(
-                  form = formWithErrors,
-                  postAction = postActionAgent,
-                  backUrl = backUrlAgent,
-                  isAgent = true
-                ))),
-              formData => {
-                val businessStartDate = formData.date
-                Future.successful(
-                  Redirect(controllers.incomeSources.add.routes.AddBusinessStartDateCheckController.showAgent())
-                    .addingToSession(SessionKeys.addBusinessStartDate -> businessStartDate.toString)
-                )
-              }
-            )
+            handelSubmitRequest(isAgent = true)
         }
+  }
+
+  def handelSubmitRequest(isAgent: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
+    val (postActionLocal, backAction, redirectAction) = if (isAgent) (postActionAgent, backUrlAgent, redirectCallAgent) else (postAction, backUrl, redirectCall)
+    BusinessStartDateForm().bindFromRequest().fold(
+      formWithErrors =>
+        Future.successful(BadRequest(addBusinessStartDate(
+          form = formWithErrors,
+          postAction = postActionLocal,
+          backUrl = backAction,
+          isAgent = isAgent
+        ))),
+      formData => {
+        val businessStartDate = formData.date
+        Future.successful(
+          Redirect(redirectAction)
+            .addingToSession(SessionKeys.addBusinessStartDate -> businessStartDate.toString)
+        )
+      }
+    )
   }
 
   def changeBusinessStartDate(): Action[AnyContent] = Action {

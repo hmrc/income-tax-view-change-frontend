@@ -28,7 +28,7 @@
 mainTemplate: unifiedLayout,
 h1: h1,
 implicitDateFormatter: ImplicitDateFormatterImpl,
-govukButton : GovukButton,
+        continueButton: ContinueButton,
 formWithCSRF: FormWithCSRF,
 errorSummary: ErrorSummary,
 govukTable: GovukTable,
@@ -40,16 +40,21 @@ govukTable: GovukTable,
   messages(s"incomeSourceAdded.$key", args: _*)
 }
 
+@getPageTitle = @{
+    val title = getMessage("h1") + " " +  businessName + " " + getMessage("h2")
+    title.trim()
+}
+
 @import implicitDateFormatter.longDate
 
-@mainTemplate(pageTitle = businessName + " " + getMessage("h2"),
+@mainTemplate(pageTitle = getPageTitle,
   backUrl = Some(backUrl),
   isAgent = isAgent,
   btaNavPartial = user.btaNavPartial) {
 
     @formWithCSRF(action = postAction) {
 
-        <div class="govuk-panel govuk-panel--confirmation">
+        <div class="govuk-panel govuk-panel--confirmation" id="banner">
             <div class="govuk-panel__body govuk-!-margin-bottom-3">
                 @getMessage("business.h1")
             </div>
@@ -69,15 +74,15 @@ govukTable: GovukTable,
 
 
         @if(sources.quarterlyObligationsDatesYearOne.nonEmpty){
-            <div class="box-simple">
+            <div class="box-simple" id="quarterly">
                 <div class="page_headers govuk-heading-m"> @getMessage("quarterly-heading") </div>
                 <p class="govuk-body"> @getMessage("quarterly-p1") </p>
 
                 <table class="govuk-table">
                     <thead class="govuk-table__head">
                     <tr class="govuk-table__row">
-                        <th scope="col" class="govuk-table__header govuk" style="width:55%;">@(getMessage("table.heading-1")+" "+sources.quarterlyObligationsDatesYearOne.head.inboundCorrespondenceFrom.getYear+" "+getMessage("to")+" "+(sources.quarterlyObligationsDatesYearOne.head.inboundCorrespondenceFrom.getYear + 1))</th>
-                        <th scope="col" class="govuk-table__header govuk" style="width:30%;">@getMessage("table.heading-2")</th>
+                        <th scope="col" class="govuk-table__header">@(getMessage("table.heading-1")+" "+sources.quarterlyObligationsDatesYearOne.head.inboundCorrespondenceFrom.getYear+" "+getMessage("to")+" "+(sources.quarterlyObligationsDatesYearOne.head.inboundCorrespondenceFrom.getYear + 1))</th>
+                        <th scope="col" class="govuk-table__header">@getMessage("table.heading-2")</th>
                     </tr>
                     </thead>
 
@@ -93,8 +98,8 @@ govukTable: GovukTable,
                     @if(sources.quarterlyObligationsDatesYearTwo.nonEmpty){
                         <thead class="govuk-table__head">
                             <tr class="govuk-table__row">
-                                <th scope="col" class="govuk-table__header govuk" style="width:55%;">@(getMessage("table.heading-1")+" "+sources.quarterlyObligationsDatesYearTwo.head.inboundCorrespondenceFrom.getYear+" "+getMessage("to")+" "+(sources.quarterlyObligationsDatesYearTwo.head.inboundCorrespondenceFrom.getYear + 1))</th>
-                                <th scope="col" class="govuk-table__header govuk" style="width:55%;"> </th>
+                                <th scope="col" class="govuk-table__header">@(getMessage("table.heading-1")+" "+sources.quarterlyObligationsDatesYearTwo.head.inboundCorrespondenceFrom.getYear+" "+getMessage("to")+" "+(sources.quarterlyObligationsDatesYearTwo.head.inboundCorrespondenceFrom.getYear + 1))</th>
+                                <th scope="col" class="govuk-table__header"> </th>
                             </tr>
                         </thead>
 
@@ -113,15 +118,15 @@ govukTable: GovukTable,
 
 
         @if(sources.eopsObligationsDates.nonEmpty){
-            <div class="box-simple">
+            <div class="box-simple" id="eops">
                 <div class="page_headers govuk-heading-m"> @getMessage("eops-heading") </div>
                 <p class="govuk-body"> @getMessage("eops-p1") </p>
 
                 <table class="govuk-table">
                     <thead class="govuk-table__head">
                     <tr class="govuk-table__row">
-                        <th scope="col" class="govuk-table__header govuk" style="width:55%;">@getMessage("table.heading-1")</th>
-                        <th scope="col" class="govuk-table__header govuk" style="width:30%;">@getMessage("table.heading-2")</th>
+                        <th scope="col" class="govuk-table__header">@getMessage("table.heading-1")</th>
+                        <th scope="col" class="govuk-table__header">@getMessage("table.heading-2")</th>
                     </tr>
                     </thead>
 
@@ -138,15 +143,15 @@ govukTable: GovukTable,
         }
 
 
-        <div class="box-simple">
+        <div class="box-simple" id="finalDec">
             <div class="page_headers govuk-heading-m"> @getMessage("final-declaration-heading") </div>
             <p class="govuk-body"> @getMessage("final-declaration-text") </p>
 
             <table class="govuk-table">
                 <thead class="govuk-table__head">
                 <tr class="govuk-table__row">
-                    <th scope="col" class="govuk-table__header govuk" style="width:55%;">@getMessage("table.heading-1")</th>
-                    <th scope="col" class="govuk-table__header govuk" style="width:30%;">@getMessage("table.heading-2")</th>
+                    <th scope="col" class="govuk-table__header">@getMessage("table.heading-1")</th>
+                    <th scope="col" class="govuk-table__header">@getMessage("table.heading-2")</th>
                 </tr>
                 </thead>
 
@@ -162,7 +167,7 @@ govukTable: GovukTable,
         </div>
 
         @if(sources.showPrevTaxYears) {
-            <div class="box-simple">
+            <div class="box-simple" id="prevYears">
                 <div class="page_headers govuk-heading-m"> @getMessage("previous-tax-years-heading") </div>
                 <p class="govuk-body">
                     @(getMessage("previous-tax-years-t1")+" "+(sources.currentTaxYear-1).toString+" "+getMessage("to")+" "+sources.currentTaxYear.toString+".")
@@ -174,10 +179,8 @@ govukTable: GovukTable,
 
         </div>
 
-        @govukButton(Button(
-            content = Text(
-                getMessage("income-sources-button")
-            )
-        ))
+        @continueButton(
+            Some(getMessage("income-sources-button"))
+        )
     }
 }

@@ -83,6 +83,32 @@ class AddUKPropertyStartDateController @Inject()(val authenticate: Authenticatio
     }
   }
 
+  def handleSubmitRequest(isAgent: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
+    val (postAction, backUrl, redirect) = {
+      if (isAgent)
+        (routes.AddUKPropertyStartDateController.submitAgent(),
+          routes.AddIncomeSourceController.showAgent().url,
+          routes.CheckUKPropertyStartDateController.showAgent())
+      else
+        (routes.AddUKPropertyStartDateController.submit(),
+          routes.AddIncomeSourceController.show().url,
+          routes.CheckUKPropertyStartDateController.show())
+
+    }
+    AddUKPropertyStartDateForm().bindFromRequest().fold(
+      hasErrors => Future.successful(BadRequest(view(
+        addUKPropertyStartDateForm = hasErrors,
+        postAction = postAction,
+        backUrl = backUrl,
+        isAgent = isAgent
+      ))),
+      validatedInput =>
+        Future.successful(Redirect(redirect)
+          .addingToSession(addUkPropertyStartDate -> validatedInput.date.toString))
+    )
+  }
+
+
   def show(): Action[AnyContent] =
     (checkSessionTimeout andThen authenticate andThen retrieveNino
       andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
@@ -106,17 +132,7 @@ class AddUKPropertyStartDateController @Inject()(val authenticate: Authenticatio
   def submit: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
-      AddUKPropertyStartDateForm().bindFromRequest().fold(
-        hasErrors => Future.successful(BadRequest(view(
-          addUKPropertyStartDateForm = hasErrors,
-          postAction = controllers.incomeSources.add.routes.AddUKPropertyStartDateController.submit(),
-          backUrl = controllers.incomeSources.add.routes.AddIncomeSourceController.show().url,
-          isAgent = false
-        ))),
-        validatedInput =>
-          Future.successful(Redirect(controllers.incomeSources.add.routes.CheckUKPropertyStartDateController.show())
-            .addingToSession(addUkPropertyStartDate -> validatedInput.date.toString))
-      )
+      handleSubmitRequest(isAgent = false)
   }
 
   def submitAgent: Action[AnyContent] = Authenticated.async {
@@ -124,18 +140,23 @@ class AddUKPropertyStartDateController @Inject()(val authenticate: Authenticatio
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
           implicit mtdItUser =>
-            AddUKPropertyStartDateForm().bindFromRequest().fold(
-              hasErrors => Future.successful(BadRequest(view(
-                addUKPropertyStartDateForm = hasErrors,
-                postAction = controllers.incomeSources.add.routes.AddUKPropertyStartDateController.submit(),
-                backUrl = controllers.incomeSources.add.routes.AddIncomeSourceController.showAgent().url,
-                isAgent = true
-              ))),
-              validatedInput =>
-                Future.successful(Redirect(controllers.incomeSources.add.routes.CheckUKPropertyStartDateController.showAgent())
-                  .addingToSession(addUkPropertyStartDate -> validatedInput.date.toString))
-            )
+            handleSubmitRequest(isAgent = true)
         }
   }
 
+  def change(): Action[AnyContent] =
+    (checkSessionTimeout andThen authenticate andThen retrieveNino
+      andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
+      implicit user =>
+        Future.successful(Ok("Change UK Property Start Date - Individual"))
+    }
+
+  def changeAgent(): Action[AnyContent] = Authenticated.async {
+    implicit request =>
+      implicit user =>
+        getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
+          implicit mtdItUser =>
+            Future.successful(Ok("Change UK Property Start Date - Agent"))
+        }
+  }
 }

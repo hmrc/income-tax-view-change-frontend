@@ -98,20 +98,37 @@ class UKPropertyEndDateController @Inject()(val authenticate: AuthenticationPred
         }
   }
 
+  def handleSubmitRequest(isAgent: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
+
+    val (postAction, backAction, redirectAction) = {
+      if (isAgent)
+        (routes.UKPropertyEndDateController.submitAgent(),
+          routes.CeaseUKPropertyController.showAgent(),
+          routes.CheckCeaseUKPropertyDetailsController.showAgent())
+      else
+        (routes.UKPropertyEndDateController.submit(),
+          routes.CeaseUKPropertyController.show(),
+          routes.CheckCeaseUKPropertyDetailsController.show())
+    }
+
+    UKPropertyEndDateForm.apply.bindFromRequest().fold(
+      hasErrors => Future.successful(BadRequest(view(
+        UKPropertyEndDateForm = hasErrors,
+        postAction = postAction,
+        backUrl = backAction.url,
+        isAgent = isAgent
+      ))),
+      validatedInput =>
+        Future.successful(Redirect(redirectAction)
+          .addingToSession(ceaseUKPropertyEndDate -> validatedInput.date.toString))
+    )
+
+  }
+
   def submit: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
-      UKPropertyEndDateForm.apply.bindFromRequest().fold(
-        hasErrors => Future.successful(BadRequest(view(
-          UKPropertyEndDateForm = hasErrors,
-          postAction = controllers.incomeSources.cease.routes.UKPropertyEndDateController.submit(),
-          backUrl = controllers.incomeSources.cease.routes.CeaseUKPropertyController.show().url,
-          isAgent = false
-        ))),
-        validatedInput =>
-          Future.successful(Redirect(controllers.incomeSources.cease.routes.CheckCeaseUKPropertyDetailsController.show())
-            .addingToSession(ceaseUKPropertyEndDate -> validatedInput.date.toString))
-      )
+      handleSubmitRequest(isAgent = false)
   }
 
   def submitAgent: Action[AnyContent] = Authenticated.async {
@@ -119,17 +136,7 @@ class UKPropertyEndDateController @Inject()(val authenticate: AuthenticationPred
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
           implicit mtdItUser =>
-            UKPropertyEndDateForm.apply.bindFromRequest().fold(
-              hasErrors => Future.successful(BadRequest(view(
-                UKPropertyEndDateForm = hasErrors,
-                postAction = controllers.incomeSources.cease.routes.UKPropertyEndDateController.submitAgent(),
-                backUrl = controllers.incomeSources.cease.routes.CeaseUKPropertyController.showAgent().url,
-                isAgent = true
-              ))),
-              validatedInput =>
-                Future.successful(Redirect(controllers.incomeSources.cease.routes.CheckCeaseUKPropertyDetailsController.showAgent())
-                  .addingToSession(ceaseUKPropertyEndDate -> validatedInput.date.toString))
-            )
+            handleSubmitRequest(isAgent = true)
         }
   }
 

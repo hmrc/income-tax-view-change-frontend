@@ -28,7 +28,7 @@ class CheckUKPropertyStartDateControllerISpec extends ComponentSpecBase {
   val checkUKPropertyStartDateShowUrl: String = controllers.incomeSources.add.routes.CheckUKPropertyStartDateController.show().url
   val checkUKPropertyStartDateSubmitUrl: String = controllers.incomeSources.add.routes.CheckUKPropertyStartDateController.submit().url
   val addUKPropertyStartDateShowUrl: String = controllers.incomeSources.add.routes.AddUKPropertyStartDateController.show().url
-  val ukPropertyAccountingMethodShowUrl: String = controllers.incomeSources.add.routes.UKPropertyBusinessAccountingMethodController.show().url
+  val ukPropertyAccountingMethodShowUrl: String = controllers.incomeSources.add.routes.UKPropertyAccountingMethodController.show().url
 
   val dateCookie: Map[String, String] = Map(addUkPropertyStartDate -> "2022-10-10")
   val dateText: String = "10 October 2022"
