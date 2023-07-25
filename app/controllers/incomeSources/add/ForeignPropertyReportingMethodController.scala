@@ -62,7 +62,7 @@ class ForeignPropertyReportingMethodController @Inject()(val authenticate: Authe
   def show(id: String): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
-      println(s"\n${user.incomeSources.properties.filter(_.isUkProperty)}\n")
+      println(s"\n${user.incomeSources.properties.filter(_.isForeignProperty)}\n")
       handleRequest(
         id = id,
         isAgent = false,

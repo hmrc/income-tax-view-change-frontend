@@ -104,6 +104,8 @@ class UKPropertyAccountingMethodController @Inject()(val authenticate: Authentic
     (checkSessionTimeout andThen authenticate andThen retrieveNino
       andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
       implicit user =>
+        println(s"\n${user.incomeSources.properties.filter(_.isUkProperty)}\n")
+
         handleRequest(
           isAgent = false
         )
