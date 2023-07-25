@@ -261,8 +261,8 @@ class ForeignPropertyReportingMethodController @Inject()(val authenticate: Authe
   private def postAction(id: String) = controllers.incomeSources.add.routes.ForeignPropertyReportingMethodController.submit(id)
   private def postActionAgent(id: String) = controllers.incomeSources.add.routes.ForeignPropertyReportingMethodController.submitAgent(id)
 
-  private def redirectCall(id: String) = controllers.incomeSources.add.routes.ForeignPropertyAddedController.show(id)
-  private def redirectCallAgent(id: String) = controllers.incomeSources.add.routes.ForeignPropertyAddedController.showAgent(id)
+  private def redirectCall(id: String) = controllers.incomeSources.add.routes.ForeignPropertyAddedObligationsController.show(id)
+  private def redirectCallAgent(id: String) = controllers.incomeSources.add.routes.ForeignPropertyAddedObligationsController.showAgent(id)
 
   val redirectErrorCall: Call = controllers.incomeSources.add.routes.ForeignPropertyReportingMethodErrorController.show()
   val redirectErrorCallAgent: Call = controllers.incomeSources.add.routes.ForeignPropertyReportingMethodErrorController.showAgent()

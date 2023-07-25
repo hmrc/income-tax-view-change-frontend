@@ -35,7 +35,8 @@ object Headers {
   def govUKTestHeaderValuesMap(): Map[String, String] = {
     Map(
       "uk-property-reporting-method" -> "afterIncomeSourceCreated", // UK Property Select reporting method
-      "foreign-property-reporting-method" -> "afterIncomeSourceCreated" // Foreign Property Select reporting method
+      "foreign-property-reporting-method" -> "afterIncomeSourceCreated", // Foreign Property Select reporting method
+      "foreign-property-added" -> "afterIncomeSourceCreated"
     )
   }
 
