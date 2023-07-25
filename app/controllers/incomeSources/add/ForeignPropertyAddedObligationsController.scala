@@ -97,11 +97,10 @@ class ForeignPropertyAddedObligationsController @Inject()(val foreignPropertyObl
           }
         case _ =>
           Logger("application").error(
-            s"[ForeignPropertyAddedObligationsController][handleRequest] - unable to find incomeSource by id: $incomeSourceId, $foreignPropertyDetailsParams ")
+            s"[ForeignPropertyAddedObligationsController][handleRequest] - unable to find incomeSource by id: $incomeSourceId")
           if (isAgent) Future(itvcErrorHandlerAgent.showInternalServerError())
           else Future(itvcErrorHandler.showInternalServerError())
       }
-
     }
   }
 
