@@ -21,10 +21,17 @@ import uk.gov.hmrc.http.HeaderCarrier
 object Headers {
 
   //Checks and adding the value to the test header
-  def checkAndAddTestHeader(requestPath: String, headerCarrier: HeaderCarrier): HeaderCarrier = {
+  def checkAndAddTestHeader(requestPath: String,
+                            headerCarrier: HeaderCarrier,
+                            configPages: Option[Seq[String]]): HeaderCarrier = {
+    val incomeSourcePage : Map[String, String] = configPages.map(kv =>
+          kv.map(k => (k, "afterIncomeSourceCreated")).toMap
+      ).getOrElse( Map[String, String]())
+
+    println(s"Here is all incomeSource: $incomeSourcePage")
     val urlPathArray = requestPath.split('/')
     val actionPath = if(urlPathArray.isEmpty) "" else urlPathArray.last
-    val updatedHeader = govUKTestHeaderValuesMap.get(actionPath) match {
+    val updatedHeader = incomeSourcePage.get(actionPath) match {
       case Some(data) => "Gov-Test-Scenario" -> data
       case _ => "Gov-Test-Scenario" -> ""
     }
