@@ -117,8 +117,6 @@ class ForeignPropertyReportingMethodController @Inject()(val authenticate: Authe
                             redirectCall: Call)
                            (implicit user: MtdItUser[_]): Future[Result] = {
 
-    println(s"\nXXXXXXX: ${user.incomeSources.properties.filter(_.isForeignProperty).find(x => x.incomeSourceId.contains(id))}\n")
-
     (for {
       isMandatoryOrVoluntary <- itsaStatusService.hasMandatedOrVoluntaryStatusCurrentYear
       latencyDetailsMaybe <- Future(user.incomeSources.properties.find(
