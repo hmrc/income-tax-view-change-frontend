@@ -123,6 +123,7 @@ class TaxYearSummaryResponseAuditModelSpec extends WordSpecLike with TestSupport
     Some("Test Trading Name"),
     None,
     Some(getCurrentTaxYearEnd),
+    None,
     None
   ))
 

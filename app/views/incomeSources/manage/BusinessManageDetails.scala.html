@@ -104,7 +104,11 @@
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">@getMessage("accounting-method")</dt>
             <dd class="govuk-summary-list__value" id="business-accounting-method">@{
-                viewModel.businessAccountingMethod.getOrElse("")
+                viewModel.businessAccountingMethod.getOrElse("") match {
+                    case value if value == "cash" => getMessage("cash-accounting")
+                    case value if value == "accruals" => getMessage("traditional-accounting")
+                    case _ => ""
+                }
             }</dd>
         </div>
         @if(viewModel.itsaHasMandatedOrVoluntaryStatusCurrentYear
@@ -118,8 +122,8 @@
                         case _ => "Field Missing"
                     }
                 }</dd>
-                @if(!viewModel.taxYearOneCrystallised){
-                    <dd class="govuk-summary-list__actions govuk-!-text-align-right govuk-!-margin-0">
+                @if(!viewModel.taxYearOneCrystallised.get){
+                    <dd class="govuk-summary-list__actions govuk-!-text-align-right govuk-!-margin-0" id="change-link-1">
                         <a class="govuk-link" href=@changeReportingMethodUrl(viewModel.incomeSourceId, viewModel.latencyDetails.get.taxYear1.toString, changeToValue(viewModel.latencyDetails.get.latencyIndicator1))>
                         @getMessage("change")
                         </a>
@@ -135,8 +139,8 @@
                         case _ => "Field Missing"
                     }
                 }</dd>
-                @if(!viewModel.taxYearTwoCrystallised){
-                    <dd class="govuk-summary-list__actions govuk-!-text-align-right govuk-!-margin-0">
+                @if(!viewModel.taxYearTwoCrystallised.get){
+                    <dd class="govuk-summary-list__actions govuk-!-text-align-right govuk-!-margin-0" id="change-link-2">
                         <a class="govuk-link" href=@changeReportingMethodUrl(viewModel.incomeSourceId, viewModel.latencyDetails.get.taxYear2.toString, changeToValue(viewModel.latencyDetails.get.latencyIndicator2))>
                         @getMessage("change")
                         </a>

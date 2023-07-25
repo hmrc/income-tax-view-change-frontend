@@ -1423,13 +1423,15 @@ incomeSources.add.ukPropertyReportingMethod.chooseQuarterlyReport     =   Dewis 
 incomeSources.add.ukPropertyReportingMethod.error                     =   Dewiswch a hoffech gyflwyno adroddiad yn flynyddol neu’n chwarterol ar gyfer blwyddyn dreth {0} i {1}
 
 # manage journey manage income source
-incomeSources.manage.business-manage-details.heading                =   Gwirio’ch manylion
-incomeSources.manage.business-manage-details.sole-trader-section    =   Dull cyfrifyddu ar gyfer incwm unig fasnachwr
-incomeSources.manage.business-manage-details.business-name          =   Enw’r busnes
-incomeSources.manage.business-manage-details.business-address       =   Cyfeiriad y busnes
-incomeSources.manage.business-manage-details.date-started           =   Dyddiad cychwyn
-incomeSources.manage.business-manage-details.accounting-method      =   Dull cyfrifyddu ar gyfer incwm unig fasnachwr
-incomeSources.manage.business-manage-details.reporting-method       =   Dull o adrodd am incwm ar gyfer {0}-{1}
-incomeSources.manage.business-manage-details.change                 =   Newid
-incomeSources.manage.business-manage-details.change                 =   Quarterly
-incomeSources.manage.business-manage-details.change                 =   Annually
+incomeSources.manage.business-manage-details.heading                  =   Gwirio’ch manylion
+incomeSources.manage.business-manage-details.sole-trader-section      =   Dull cyfrifyddu ar gyfer incwm unig fasnachwr
+incomeSources.manage.business-manage-details.business-name            =   Enw’r busnes
+incomeSources.manage.business-manage-details.business-address         =   Cyfeiriad y busnes
+incomeSources.manage.business-manage-details.date-started             =   Dyddiad cychwyn
+incomeSources.manage.business-manage-details.accounting-method        =   Dull cyfrifyddu ar gyfer incwm unig fasnachwr
+incomeSources.manage.business-manage-details.reporting-method         =   Dull o adrodd am incwm ar gyfer {0}-{1}
+incomeSources.manage.business-manage-details.change                   =   Newid
+incomeSources.manage.business-manage-details.quarterly                =   Quarterly
+incomeSources.manage.business-manage-details.annually                 =   Annually
+incomeSources.manage.business-manage-details.cash-accounting          =   Cyfrifyddu ar sail arian parod
+incomeSources.manage.business-manage-details.traditional-accounting   =   Cyfrifyddu traddodiadol

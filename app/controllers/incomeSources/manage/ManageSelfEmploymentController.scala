@@ -17,15 +17,13 @@
 package controllers.incomeSources.manage
 
 import auth.MtdItUser
-import config.featureswitch.{FeatureSwitching, IncomeSources, TimeMachineAddYear}
+import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
-import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
+import controllers.predicates._
 import exceptions.MissingFieldException
-import models.calculationList.CalculationListResponseModel
 import models.incomeSourceDetails.viewmodels.{ViewBusinessDetailsViewModel, ViewLatencyDetailsViewModel}
-import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, LatencyDetails}
-import play.api.Logger
+import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
 import play.api.mvc._
 import services.{CalculationListService, DateService, ITSAStatusService, IncomeSourceDetailsService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
@@ -34,7 +32,6 @@ import views.html.incomeSources.manage.BusinessManageDetails
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.Try
 
 @Singleton
 class ManageSelfEmploymentController @Inject()(val view: BusinessManageDetails,
@@ -92,9 +89,9 @@ class ManageSelfEmploymentController @Inject()(val view: BusinessManageDetails,
     val istaStatus: Future[Boolean] = itsaStatusService.hasMandatedOrVoluntaryStatusCurrentYear
 
     for {
-      i <- isTaxYearOneCrystallised
-      j <- isTaxYearTwoCrystallised
-      k <- istaStatus
+      i <- istaStatus
+      j <- isTaxYearOneCrystallised
+      k <- isTaxYearTwoCrystallised
     } yield (
       ViewBusinessDetailsViewModel(
         incomeSourceId = desiredIncomeSource.incomeSourceId.getOrElse(throw new MissingFieldException("Missing incomeSourceId field")),
@@ -102,9 +99,9 @@ class ManageSelfEmploymentController @Inject()(val view: BusinessManageDetails,
         tradingStartDate = desiredIncomeSource.tradingStartDate,
         address = desiredIncomeSource.address,
         businessAccountingMethod = desiredIncomeSource.cashOrAccruals,
-        itsaHasMandatedOrVoluntaryStatusCurrentYear = i,
+        itsaHasMandatedOrVoluntaryStatusCurrentYear = Option(i),
         taxYearOneCrystallised = j,
-        taxYearTwoCrystallised = Option(k),
+        taxYearTwoCrystallised = k,
         latencyDetails = Option(ViewLatencyDetailsViewModel(
           latencyEndDate = desiredIncomeSource.latencyDetails.get.latencyEndDate,
           taxYear1 = desiredIncomeSource.latencyDetails.get.taxYear1.toInt,

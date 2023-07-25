@@ -107,7 +107,8 @@ class IncomeSourceDetailsModelSpec extends UnitSpec with Matchers {
               firstAccountingPeriodEndDate = None,
               tradingStartDate = Some(LocalDate.parse("2022-01-01")),
               cessation = None,
-              latencyDetails = None
+              latencyDetails = None,
+              address = None
             ),
             BusinessDetailsModel(
               incomeSourceId = None,
@@ -116,7 +117,8 @@ class IncomeSourceDetailsModelSpec extends UnitSpec with Matchers {
               tradingStartDate = Some(LocalDate.parse("2022-01-01")),
               firstAccountingPeriodEndDate = Some(getCurrentTaxYearEnd.minusYears(1)),
               cessation = None,
-              latencyDetails = None
+              latencyDetails = None,
+              address = None
             )
           ),
           List(PropertyDetailsModel(
