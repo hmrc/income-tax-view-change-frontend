@@ -116,6 +116,9 @@ class ForeignPropertyReportingMethodController @Inject()(val authenticate: Authe
                             postAction: Call,
                             redirectCall: Call)
                            (implicit user: MtdItUser[_]): Future[Result] = {
+
+    println(s"\nXXXXXXX: ${user.incomeSources.properties.filter(_.isForeignProperty).find(x => x.incomeSourceId.contains(id))}\n")
+
     (for {
       isMandatoryOrVoluntary <- itsaStatusService.hasMandatedOrVoluntaryStatusCurrentYear
       latencyDetailsMaybe <- Future(user.incomeSources.properties.find(
@@ -214,30 +217,34 @@ class ForeignPropertyReportingMethodController @Inject()(val authenticate: Authe
     val currentTaxYearEnd = dateService.getCurrentTaxYearEnd(isEnabled(TimeMachineAddYear))
     latencyDetailsMaybe match {
       case Some(latencyDetails) if Try(latencyDetails.taxYear1.toInt).toOption.isDefined =>
-        calculationListService.isTaxYearCrystallised(latencyDetails.taxYear1.toInt).flatMap { isTaxYear1Crystallised =>
-          (latencyDetails, isTaxYear1Crystallised) match {
-            case _ if Try(latencyDetails.taxYear2.toInt).toOption.isEmpty =>
-              Future.successful( Left( new Error(s"Unable to convert taxYear2 to Int: ${latencyDetails.taxYear2}") ) )
-            case _ if latencyDetails.taxYear2.toInt < currentTaxYearEnd =>
-              Future.successful( Left( new Error("Current tax year not in scope of change period") ) )
-            case (_, Some(true)) =>
-              Future.successful(
-                Right(
-                  ForeignPropertyReportingMethodViewModel(
-                    taxYear2 = Some(latencyDetails.taxYear2),
-                  latencyIndicator2 = Some(latencyDetails.latencyIndicator2)
+        latencyDetails match {
+          case _ if Try(latencyDetails.taxYear2.toInt).toOption.isEmpty =>
+            Future.successful( Left( new Error(s"Unable to convert taxYear2 to Int: ${latencyDetails.taxYear2}") ) )
+          case _ if latencyDetails.taxYear2.toInt < currentTaxYearEnd =>
+            Future.successful( Left( new Error("Current tax year not in scope of change period") ) )
+          case LatencyDetails(_, tY1, tY1LatencyIndicator, tY2, tY2LatencyIndicator) =>
+            calculationListService.isTaxYearCrystallised(tY1.toInt).flatMap {
+              case Some(true) =>
+                Future.successful(
+                  Right(
+                    ForeignPropertyReportingMethodViewModel(
+                      taxYear2 = Some(tY2),
+                      latencyIndicator2 = Some(tY2LatencyIndicator)
+                    )
+                  )
                 )
+              case _ =>
+                Future.successful(
+                  Right(
+                    ForeignPropertyReportingMethodViewModel(
+                      taxYear1 = Some(tY1),
+                      latencyIndicator1 = Some(tY1LatencyIndicator),
+                      taxYear2 = Some(tY2),
+                      latencyIndicator2 = Some(tY2LatencyIndicator)
+                    )
+                  )
                 )
-              )
-            case _ =>
-              Future.successful(
-                Right(ForeignPropertyReportingMethodViewModel(
-                taxYear1 = Some(latencyDetails.taxYear1),
-                latencyIndicator1 = Some(latencyDetails.latencyIndicator1),
-                taxYear2 = Some(latencyDetails.taxYear2),
-                latencyIndicator2 = Some(latencyDetails.taxYear2)
-              )))
-          }
+            }
         }
       case Some(latencyDetails) =>
         Future(Left(new Error(s"Unable to convert taxYear1 to Int: ${latencyDetails.taxYear1}")))
