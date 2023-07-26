@@ -138,30 +138,37 @@ class ManageObligationsController @Inject()(val manageIncomeSources: ManageIncom
       val backUrl: String = if(isAgent) controllers.incomeSources.manage.routes.ManageConfirmController.showAgent().url else controllers.incomeSources.manage.routes.ManageConfirmController.show().url
       val postUrl: Call = if (isAgent) controllers.incomeSources.manage.routes.ManageObligationsController.agentSubmit() else controllers.incomeSources.manage.routes.ManageObligationsController.submit()
 
-      val addedBusinessName: Option[String] = if (mode == "SE"){
-        val businessDetailsParams = for {
-          addedBusiness <- user.incomeSources.businesses.find(x => x.incomeSourceId.contains(incomeSourceId))
-          businessName <- addedBusiness.tradingName
-        } yield (addedBusiness, businessName)
-        businessDetailsParams match {
-          case Some((_, name)) => Some(name)
-          case None => Some("Not Found")
-        }
+      if (mode == "SE" && !user.incomeSources.businesses.exists(x => x.incomeSourceId.contains(incomeSourceId))) {
+        Logger("application").error(
+          s"[BusinessAddedObligationsController][handleRequest] - unable to find incomeSource by id: $incomeSourceId ")
+        if (isAgent) Future(itvcErrorHandlerAgent.showInternalServerError())
+        else Future(itvcErrorHandler.showInternalServerError())
       }
       else{
-        None
-      }
+        val addedBusinessName: Option[String] = if (mode == "SE") {
+          val businessDetailsParams = for {
+            addedBusiness <- user.incomeSources.businesses.find(x => x.incomeSourceId.contains(incomeSourceId))
+            businessName <- addedBusiness.tradingName
+          } yield (addedBusiness, businessName)
+          businessDetailsParams match {
+            case Some((_, name)) => Some(name)
+            case None => Some("Not Found")
+          }
+        }
+        else {
+          None
+        }
 
+        val idDef: String = mode match {
+          case "SE" => incomeSourceId
+          case "UK" => user.incomeSources.properties.find(x => x.isUkProperty).get.incomeSourceId.getOrElse("")
+          case "FP" => user.incomeSources.properties.find(x => x.isForeignProperty).get.incomeSourceId.getOrElse("")
+        }
 
-      val idDef: String = mode match {
-        case "SE" => incomeSourceId
-        case "UK" => user.incomeSources.properties.find(x => x.isUkProperty).get.incomeSourceId.getOrElse("")
-        case "FP" => user.incomeSources.properties.find(x => x.isForeignProperty).get.incomeSourceId.getOrElse("")
-      }
-
-      nextUpdatesService.getObligationsViewModel(idDef, showPreviousTaxYears = false) map { viewModel =>
-        if (isAgent) Ok(obligationsView(viewModel, mode, addedBusinessName, taxYear, changeTo, isAgent, backUrl, postUrl))
-        else Ok(obligationsView(viewModel, mode, addedBusinessName, taxYear, changeTo, isAgent, backUrl, postUrl))
+        nextUpdatesService.getObligationsViewModel(idDef, showPreviousTaxYears = false) map { viewModel =>
+          if (isAgent) Ok(obligationsView(viewModel, mode, addedBusinessName, taxYear, changeTo, isAgent, backUrl, postUrl))
+          else Ok(obligationsView(viewModel, mode, addedBusinessName, taxYear, changeTo, isAgent, backUrl, postUrl))
+        }
       }
     }
   }

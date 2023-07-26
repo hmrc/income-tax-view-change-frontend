@@ -75,7 +75,12 @@
     taxYear.subSequence(0,4) + " " + getUniqueMessage("to") + " " + taxYear.subSequence(5,9)
 }
 
-@mainTemplate(pageTitle = "",
+@getPageTitle = @{
+    val title = getUniqueMessage("h1")+" "+getBusinessName(businessName, mode)+" "+getUniqueMessage("h2")+" "+getPeriodMessage(changeTo)+" "+getUniqueMessage("tax-year")+" "+getTaxYears(taxYear)
+    title.trim
+}
+
+@mainTemplate(pageTitle = getPageTitle,
     backUrl = Some(backUrl),
     isAgent = isAgent,
     btaNavPartial = user.btaNavPartial) {
@@ -99,7 +104,7 @@
 
         <h2 class="govuk-label-wrapper">
             <label class="govuk-label govuk-label--l govuk-!-margin-top-8">
-            @getUniqueMessage("heading")
+                @getUniqueMessage("heading")
             </label>
         </h2>
 
