@@ -1424,7 +1424,7 @@ business-added.previous-tax-years-heading               = Previous tax years
 business-added.previous-tax-years-t1                    = You must make sure that you have sent all the required income and expenses, and final declarations for tax years earlier than
 
 # Foreign Property Added - Uses above keys as base also, intentionally empty field below.
-business-added.foreign-property-h1                      = Foreign Property
+business-added.foreign-property-h1                      = Foreign property
 business-added.foreign-property-head                    =
 business-added.foreign-property-base                    = has been added to your account
 
