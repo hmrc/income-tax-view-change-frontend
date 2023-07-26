@@ -28,7 +28,7 @@ import java.time.LocalDate
 class ForeignPropertyAddedObligationsViewSpec extends ViewSpec{
 
   object ForeignPropertyAddedMessages {
-    val h1: String = "Foreign Property"
+    val h1: String = "Foreign property"
     val h2: String = "has been added to your account"
     val h2Content: String = "What you must do"
     val quarterlyHeading: String = "Send quarterly updates"
