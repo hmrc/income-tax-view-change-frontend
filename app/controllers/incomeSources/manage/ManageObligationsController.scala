@@ -31,8 +31,7 @@ import views.html.incomeSources.manage.{ManageIncomeSources, ManageObligations}
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class ManageObligationsController @Inject()(val manageIncomeSources: ManageIncomeSources,
-                                            val checkSessionTimeout: SessionTimeoutPredicate,
+class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTimeoutPredicate,
                                             val authenticate: AuthenticationPredicate,
                                             val authorisedFunctions: AuthorisedFunctions,
                                             val retrieveNino: NinoPredicate,
@@ -156,6 +155,8 @@ class ManageObligationsController @Inject()(val manageIncomeSources: ManageIncom
           if (mode == "UK") "UK property"
           else "Foreign property"
         }
+
+        //sanity check on taxYear and changeTo?
 
         getIncomeSourceId(mode, incomeSourceId) match {
           case Left(error) => Logger("application").error(
