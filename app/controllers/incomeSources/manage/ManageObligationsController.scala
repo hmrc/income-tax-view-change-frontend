@@ -17,15 +17,12 @@
 package controllers.incomeSources.manage
 
 import auth.MtdItUser
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import config.featureswitch.{FeatureSwitching, IncomeSources}
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
-import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
-import models.incomeSourceDetails.BusinessDetailsModel
-import models.nextUpdates.ObligationsModel
-import org.joda.time.LocalDate
+import controllers.predicates._
 import play.api.Logger
-import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents, Result}
+import play.api.mvc._
 import services.{IncomeSourceDetailsService, NextUpdatesService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
@@ -145,30 +142,46 @@ class ManageObligationsController @Inject()(val manageIncomeSources: ManageIncom
         else Future(itvcErrorHandler.showInternalServerError())
       }
       else{
-        val addedBusinessName: Option[String] = if (mode == "SE") {
+        val addedBusinessName: String = if (mode == "SE") {
           val businessDetailsParams = for {
             addedBusiness <- user.incomeSources.businesses.find(x => x.incomeSourceId.contains(incomeSourceId))
             businessName <- addedBusiness.tradingName
           } yield (addedBusiness, businessName)
           businessDetailsParams match {
-            case Some((_, name)) => Some(name)
-            case None => Some("Not Found")
+            case Some((_, name)) => name
+            case None => "Not Found"
           }
         }
         else {
-          None
+          if (mode == "UK") "UK property"
+          else "Foreign property"
         }
 
-        val idDef: String = mode match {
-          case "SE" => incomeSourceId
-          case "UK" => user.incomeSources.properties.find(x => x.isUkProperty).get.incomeSourceId.getOrElse("")
-          case "FP" => user.incomeSources.properties.find(x => x.isForeignProperty).get.incomeSourceId.getOrElse("")
+        getIncomeSourceId(mode, incomeSourceId) match {
+          case Left(error) => Logger("application").error(
+            s"[BusinessAddedObligationsController][handleRequest] - ${error.getMessage}")
+            if (isAgent) Future(itvcErrorHandlerAgent.showInternalServerError())
+            else Future(itvcErrorHandler.showInternalServerError())
+          case Right(value) =>
+            nextUpdatesService.getObligationsViewModel(value, showPreviousTaxYears = false) map { viewModel =>
+              if (isAgent) Ok(obligationsView(viewModel, mode, addedBusinessName, taxYear, changeTo, isAgent, backUrl, postUrl))
+              else Ok(obligationsView(viewModel, mode, addedBusinessName, taxYear, changeTo, isAgent, backUrl, postUrl))
+          }
         }
+      }
+    }
+  }
 
-        nextUpdatesService.getObligationsViewModel(idDef, showPreviousTaxYears = false) map { viewModel =>
-          if (isAgent) Ok(obligationsView(viewModel, mode, addedBusinessName, taxYear, changeTo, isAgent, backUrl, postUrl))
-          else Ok(obligationsView(viewModel, mode, addedBusinessName, taxYear, changeTo, isAgent, backUrl, postUrl))
-        }
+  def getIncomeSourceId(mode: String, id: String)(implicit user: MtdItUser[_]): Either[Throwable, String] = {
+    mode match {
+      case "SE" => Right(id)
+      case "UK" => user.incomeSources.properties.find(x => x.isUkProperty) match {
+        case Some(value) => Right(value.incomeSourceId.getOrElse(""))
+        case None => Left(new Error("Failed to find incomeSource Id"))
+      }
+      case "FP" => user.incomeSources.properties.find(x => x.isForeignProperty) match {
+        case Some(value) => Right(value.incomeSourceId.getOrElse(""))
+        case None => Left(new Error("Failed to find incomeSource Id"))
       }
     }
   }

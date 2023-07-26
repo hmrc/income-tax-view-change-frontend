@@ -37,7 +37,7 @@
 @(
         sources: ObligationsViewModel,
         mode: String,
-        businessName: Option[String],
+        businessName: String,
         taxYear: String,
         changeTo: String,
         isAgent: Boolean,
@@ -55,15 +55,9 @@
     messages(s"incomeSources.add.manageObligations.$key", args: _*)
 }
 
-@getBusinessName(name: Option[String], mode: String) = @{
-    if (name.isDefined) {
-        if(name.get == "Not Found") getUniqueMessage("sole-trader")
-        else name.get
-    }
-    else {
-        if(mode == "UK") "UK property"
-        else "Foreign property"
-    }
+@getBusinessName(name: String, mode: String) = @{
+    if(name == "Not Found") getUniqueMessage("sole-trader")
+    else name
 }
 
 @getPeriodMessage(changeTo: String) = @{
