@@ -1484,3 +1484,14 @@ incomeSources.add.ukPropertyReportingMethod.chooseAnnualReport        =   Choose
 incomeSources.add.ukPropertyReportingMethod.chooseQuarterlyReport     =   Choose quarterly reporting
 incomeSources.add.ukPropertyReportingMethod.error                     =   Select if you want to report annually or quarterly for tax year {0} to {1}
 
+# manage obligations page
+incomeSources.add.manageObligations.h1                                =
+incomeSources.add.manageObligations.h2                                =   will report
+incomeSources.add.manageObligations.annually                          =   annually
+incomeSources.add.manageObligations.quarterly                         =   quarterly
+incomeSources.add.manageObligations.tax-year                          =   for the tax year
+incomeSources.add.manageObligations.to                                =   to
+incomeSources.add.manageObligations.sole-trader                       =   Sole trader business
+incomeSources.add.manageObligations.heading                           =   What you must do
+
+

@@ -138,18 +138,18 @@ class ManageObligationsController @Inject()(val manageIncomeSources: ManageIncom
       val backUrl: String = if(isAgent) controllers.incomeSources.manage.routes.ManageConfirmController.showAgent().url else controllers.incomeSources.manage.routes.ManageConfirmController.show().url
       val postUrl: Call = if (isAgent) controllers.incomeSources.manage.routes.ManageObligationsController.agentSubmit() else controllers.incomeSources.manage.routes.ManageObligationsController.submit()
 
-      val addedBusinessName: String = if (mode == "SE"){
+      val addedBusinessName: Option[String] = if (mode == "SE"){
         val businessDetailsParams = for {
           addedBusiness <- user.incomeSources.businesses.find(x => x.incomeSourceId.contains(incomeSourceId))
           businessName <- addedBusiness.tradingName
         } yield (addedBusiness, businessName)
         businessDetailsParams match {
-          case Some((_, name)) => name
-          case None => ""
+          case Some((_, name)) => Some(name)
+          case None => Some("Not Found")
         }
       }
       else{
-        ""
+        None
       }
 
 

@@ -37,7 +37,7 @@
 @(
         sources: ObligationsViewModel,
         mode: String,
-        businessName: String,
+        businessName: Option[String],
         taxYear: String,
         changeTo: String,
         isAgent: Boolean,
@@ -51,12 +51,57 @@
     messages(s"business-added.$key", args: _*)
 }
 
+@getUniqueMessage(key: String, args: String*) = @{
+    messages(s"incomeSources.add.manageObligations.$key", args: _*)
+}
+
+@getBusinessName(name: Option[String], mode: String) = @{
+    if (name.isDefined) {
+        if(name.get == "Not Found") getUniqueMessage("sole-trader")
+        else name.get
+    }
+    else {
+        if(mode == "UK") "UK property"
+        else "Foreign property"
+    }
+}
+
+@getPeriodMessage(changeTo: String) = @{
+    if (changeTo == "annual") getUniqueMessage("annually")
+    else getUniqueMessage("quarterly")
+}
+
+@getTaxYears(taxYear:String) = @{
+    taxYear.subSequence(0,4) + " " + getUniqueMessage("to") + " " + taxYear.subSequence(5,9)
+}
+
 @mainTemplate(pageTitle = "",
     backUrl = Some(backUrl),
     isAgent = isAgent,
     btaNavPartial = user.btaNavPartial) {
 
     @formWithCSRF(action = postAction) {
+
+        <div class="govuk-panel govuk-panel--confirmation" id="banner">
+            <div class="govuk-panel__body govuk-!-margin-bottom-3">
+                @getUniqueMessage("h1")
+            </div>
+            <h1 class="govuk-panel__title">
+                @getBusinessName(businessName, mode)
+            </h1>
+            <div class="govuk-panel__body">
+                @getUniqueMessage("h2")
+                @getPeriodMessage(changeTo)
+                @getUniqueMessage("tax-year")
+                @getTaxYears(taxYear)
+            </div>
+        </div>
+
+        <h2 class="govuk-label-wrapper">
+            <label class="govuk-label govuk-label--l govuk-!-margin-top-8">
+            @getUniqueMessage("heading")
+            </label>
+        </h2>
 
         @if(sources.quarterlyObligationsDatesYearOne.nonEmpty) {
             <div class="box-simple" id="quarterly">
@@ -149,6 +194,8 @@
                 </tbody>
             </table>
         </div>
+
+        <div class="govuk-!-margin-top-4"> </div>
 
         @continueButton(
             Some(getMessage("income-sources-button"))
