@@ -17,15 +17,13 @@
 package controllers.incomeSources.add
 
 import auth.{FrontendAuthorisedFunctions, MtdItUser}
-import config.featureswitch.{FeatureSwitching, IncomeSources}
+import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
-import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
-import models.incomeSourceDetails.{BusinessDetailsModel, PropertyDetailsModel}
-import models.incomeSourceDetails.viewmodels.ObligationsViewModel
+import controllers.predicates._
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages}
-import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents, Result}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.{DateService, IncomeSourceDetailsService, NextUpdatesService}
 import utils.IncomeSourcesUtils
 import views.html.incomeSources.add.UKPropertyAdded
@@ -73,9 +71,9 @@ class UKPropertyAddedController @Inject()(val authenticate: AuthenticationPredic
 
   def getUKPropertyStartDate(incomeSourceId: String)(implicit user: MtdItUser[_]): Option[(LocalDate)] = {
     for {
-      newlyAddedUKProperty <- user.incomeSources.properties.find(x => {
-        x.incomeSourceId.contains(incomeSourceId) && x.isUkProperty
-      })
+      newlyAddedUKProperty <- user.incomeSources.properties.find(incomeSource =>
+        incomeSource.incomeSourceId.contains(incomeSourceId) && incomeSource.isUkProperty
+      )
       startDate <- newlyAddedUKProperty.tradingStartDate
     } yield startDate
   }
@@ -85,13 +83,10 @@ class UKPropertyAddedController @Inject()(val authenticate: AuthenticationPredic
       val backUrl = getBackUrl(incomeSourceId, isAgent)
       val UKPropertyStartDate = getUKPropertyStartDate(incomeSourceId)
 
-      println(Console.MAGENTA + user.incomeSources + Console.WHITE)
-
       UKPropertyStartDate match {
         case Some(startDate) =>
           val showPreviousTaxYears: Boolean = startDate.isBefore(dateService.getCurrentTaxYearStart())
           nextUpdatesService.getObligationsViewModel(incomeSourceId, showPreviousTaxYears).map { viewModel =>
-            println(Console.MAGENTA + viewModel + Console.WHITE)
             Ok(view(viewModel, isAgent = isAgent, backUrl)(messages, user))
           }
         case _ =>

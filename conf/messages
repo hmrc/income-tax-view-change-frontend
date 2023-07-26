@@ -1405,24 +1405,42 @@ check-business-details.accounting-method                = Accounting method for 
 check-business-details.cash-accounting                  = Cash basis accounting
 check-business-details.traditional-accounting           = Traditional accounting
 
+# business added page - h1 intentionally empty
+business-added.h1                                       =
+business-added.h2                                       = has been added to your account
+business-added.text                                     = What you must do
+business-added.to                                       =  to
+
+business-added.quarterly-heading                        = Send quarterly updates
+business-added.quarterly-p1                             = You must send quarterly updates of your income and expenses using compatible software by the following deadlines:
+business-added.eops-heading                             = Send end of period statements
+business-added.eops-p1                                  = You must submit end of period statements using your software by the deadline.
+business-added.final-declaration-heading                = Submit final declarations and pay your tax
+business-added.final-declaration-text                   = You must submit your final declarations and pay the tax you owe by the deadline.
+business-added.table.heading-1                          = Tax year
+business-added.table.heading-2                          = Deadline
+business-added.income-sources-button                    = Your income sources
+business-added.previous-tax-years-heading               = Previous tax years
+business-added.previous-tax-years-t1                    = You must make sure that you have sent all the required income and expenses, and final declarations for tax years earlier than
+
 ## Income Source Added Pages ##
-incomeSourceAdded.additionalWelshContent                          =
+incomeSourceAdded.additionalWelshContent                                =
 #The above key is intentionally blank
 incomeSourceAdded.heading                                               = has been added to your account
 incomeSourceAdded.ukProperty                                            = UK Property
 incomeSourceAdded.subheading                                            = What you must do
 incomeSourceAdded.to                                                    = to
-incomeSourceAdded.quarterly-heading                                     = Send quarterly updates
-incomeSourceAdded.quarterly-p1                                          = You must send quarterly updates of your income and expenses using compatible software by the following deadlines:
-incomeSourceAdded.eops-heading                                          = Send end of period statements
-incomeSourceAdded.eops-p1                                               = You must submit end of period statements using your software by the deadline.
-incomeSourceAdded.final-declaration-heading                              = Submit final declarations and pay your tax
-incomeSourceAdded.final-declaration-text                                 = You must submit your final declarations and pay the tax you owe by the deadline.
-incomeSourceAdded.table.heading-1                                       = Tax year
-incomeSourceAdded.table.heading-2                                       = Deadline
-incomeSourceAdded.income-sources-button                                 = Your income sources
-incomeSourceAdded.previous-tax-years-heading                            = Previous tax years
-incomeSourceAdded.previous-tax-years-t1                                 = You must make sure that you have sent all the required income and expenses, and final declarations for tax years earlier than
+incomeSourceAdded.quarterly.heading                                     = Send quarterly updates
+incomeSourceAdded.quarterly.text                                        = You must send quarterly updates of your income and expenses using compatible software by the following deadlines:
+incomeSourceAdded.eops.heading                                          = Send end of period statements
+incomeSourceAdded.eops.text                                             = You must submit end of period statements using your software by the deadline.
+incomeSourceAdded.finalDeclaration.heading                               = Submit final declarations and pay your tax
+incomeSourceAdded.finalDeclaration.text                                  = You must submit your final declarations and pay the tax you owe by the deadline.
+incomeSourceAdded.table.taxYear.heading                                 = Tax year
+incomeSourceAdded.table.deadline.heading                                = Deadline
+incomeSourceAdded.button.text                                           = Your income sources
+incomeSourceAdded.previousTaxYears.heading                              = Previous tax years
+incomeSourceAdded.previousTaxYears.text                                 = You must make sure that you have sent all the required income and expenses, and final declarations for tax years earlier than
 
 
 incomeSources.add.businessReportingMethod.heading                   =   Choose a reporting method

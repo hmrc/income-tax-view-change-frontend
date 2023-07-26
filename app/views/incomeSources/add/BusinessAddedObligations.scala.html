@@ -28,7 +28,7 @@
 mainTemplate: unifiedLayout,
 h1: h1,
 implicitDateFormatter: ImplicitDateFormatterImpl,
-        continueButton: ContinueButton,
+continueButton: ContinueButton,
 formWithCSRF: FormWithCSRF,
 errorSummary: ErrorSummary,
 govukTable: GovukTable,
@@ -37,12 +37,12 @@ govukTable: GovukTable,
 @(businessName: String, sources: ObligationsViewModel, postAction: Call, backUrl: String, isAgent: Boolean)(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @getMessage(key: String, args: String*) = @{
-  messages(s"incomeSourceAdded.$key", args: _*)
+messages(s"business-added.$key", args: _*)
 }
 
 @getPageTitle = @{
-    val title = getMessage("h1") + " " +  businessName + " " + getMessage("h2")
-    title.trim()
+val title = getMessage("h1") + " " +  businessName + " " + getMessage("h2")
+title.trim()
 }
 
 @import implicitDateFormatter.longDate
@@ -68,7 +68,7 @@ govukTable: GovukTable,
 
         <h2 class="govuk-label-wrapper">
             <label class="govuk-label govuk-label--l govuk-!-margin-top-8">
-            @getMessage("business.text")
+            @getMessage("text")
             </label>
         </h2>
 
@@ -175,9 +175,9 @@ govukTable: GovukTable,
             </div>
         }
 
-        <div class="govuk-!-margin-top-8">
+<div class="govuk-!-margin-top-8">
 
-        </div>
+</div>
 
         @continueButton(
             Some(getMessage("income-sources-button"))

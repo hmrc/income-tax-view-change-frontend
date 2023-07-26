@@ -73,16 +73,16 @@
 
     @if(incomeSources.quarterlyObligationsDatesYearOne.nonEmpty) {
         <div class="box-simple">
-            <div class="page_headers govuk-heading-m"> @messages(s"incomeSourceAdded.quarterly-heading") </div>
-            <p class="govuk-body"> @messages(s"incomeSourceAdded.quarterly-p1") </p>
+            <div class="page_headers govuk-heading-m"> @messages(s"incomeSourceAdded.quarterly.heading") </div>
+            <p class="govuk-body"> @messages(s"incomeSourceAdded.quarterly.text") </p>
 
             <table class="govuk-table">
                 <thead class="govuk-table__head">
                     <tr class="govuk-table__row">
-                        <th scope="col" class="govuk-table__header">@(messages(s"incomeSourceAdded.table.heading-1") + " " +
+                        <th scope="col" class="govuk-table__header">@(messages(s"incomeSourceAdded.table.taxYear.heading") + " " +
                             incomeSources.quarterlyObligationsDatesYearOne.head.inboundCorrespondenceFrom.getYear + " " + messages(s"incomeSourceAdded.to") + " " +
                             (incomeSources.quarterlyObligationsDatesYearOne.head.inboundCorrespondenceFrom.getYear + 1))</th>
-                        <th scope="col" class="govuk-table__header">@messages(s"incomeSourceAdded.table.heading-2")</th>
+                        <th scope="col" class="govuk-table__header">@messages(s"incomeSourceAdded.table.deadline.heading")</th>
                     </tr>
                 </thead>
 
@@ -100,7 +100,7 @@
                 <table class="govuk-table">
                     <thead class="govuk-table__head">
                         <tr class="govuk-table__row">
-                            <th scope="col" class="govuk-table__header">@(messages(s"incomeSourceAdded.table.heading-1") + " " +
+                            <th scope="col" class="govuk-table__header">@(messages(s"incomeSourceAdded.table.taxYear.heading") + " " +
                                 incomeSources.quarterlyObligationsDatesYearTwo.head.inboundCorrespondenceFrom.getYear + " " + messages(s"incomeSourceAdded.to") + " " +
                                 (incomeSources.quarterlyObligationsDatesYearTwo.head.inboundCorrespondenceFrom.getYear + 1))</th>
                             <th scope="col" class="govuk-table__header"> </th>
@@ -122,14 +122,14 @@
 
     @if(incomeSources.eopsObligationsDates.nonEmpty) {
         <div class="box-simple">
-            <div class="page_headers govuk-heading-m">@messages(s"incomeSourceAdded.eops-heading")</div>
-            <p class="govuk-body">@messages(s"incomeSourceAdded.eops-p1")</p>
+            <div class="page_headers govuk-heading-m">@messages(s"incomeSourceAdded.eops.heading")</div>
+            <p class="govuk-body">@messages(s"incomeSourceAdded.eops.text")</p>
 
             <table class="govuk-table">
                 <thead class="govuk-table__head">
                     <tr class="govuk-table__row">
-                        <th scope="col" class="govuk-table__header">@messages(s"incomeSourceAdded.table.heading-1")</th>
-                        <th scope="col" class="govuk-table__header">@messages(s"incomeSourceAdded.table.heading-2")</th>
+                        <th scope="col" class="govuk-table__header">@messages(s"incomeSourceAdded.table.taxYear.heading")</th>
+                        <th scope="col" class="govuk-table__header">@messages(s"incomeSourceAdded.table.deadline.heading")</th>
                     </tr>
                 </thead>
 
@@ -147,14 +147,14 @@
 
     @if(incomeSources.finalDeclarationDates.nonEmpty) {
         <div class="box-simple">
-            <div class="page_headers govuk-heading-m"> @messages(s"incomeSourceAdded.final-declaration-heading") </div>
-            <p class="govuk-body"> @messages(s"incomeSourceAdded.final-declaration-text") </p>
+            <div class="page_headers govuk-heading-m"> @messages(s"incomeSourceAdded.finalDeclaration.heading") </div>
+            <p class="govuk-body"> @messages(s"incomeSourceAdded.finalDeclaration.text") </p>
 
             <table class="govuk-table">
                 <thead class="govuk-table__head">
                     <tr class="govuk-table__row">
-                        <th scope="col" class="govuk-table__header">@messages(s"incomeSourceAdded.table.heading-1")</th>
-                        <th scope="col" class="govuk-table__header">@messages(s"incomeSourceAdded.table.heading-2")</th>
+                        <th scope="col" class="govuk-table__header">@messages(s"incomeSourceAdded.table.taxYear.heading")</th>
+                        <th scope="col" class="govuk-table__header">@messages(s"incomeSourceAdded.table.deadline.heading")</th>
                     </tr>
                 </thead>
 
@@ -172,9 +172,9 @@
 
     @if(incomeSources.showPrevTaxYears) {
         <div class="box-simple">
-            <div class="page_headers govuk-heading-m">@messages(s"incomeSourceAdded.previous-tax-years-heading")</div>
+            <div class="page_headers govuk-heading-m">@messages(s"incomeSourceAdded.previousTaxYears.heading")</div>
             <p class="govuk-body">
-                @(messages(s"incomeSourceAdded.previous-tax-years-t1")+ " " + (incomeSources.currentTaxYear-1).toString + " " +
+                @(messages(s"incomeSourceAdded.previousTaxYears.text")+ " " + (incomeSources.currentTaxYear-1).toString + " " +
                 messages(s"incomeSourceAdded.to") + " " + incomeSources.currentTaxYear.toString + ".")
             </p>
         </div>
@@ -182,7 +182,7 @@
 
     <div class="govuk-!-margin-top-8">
         @link(link = getAddIncomeSourcesLink,
-            messageKey = "incomeSourceAdded.income-sources-button", classes = "govuk-button", role = Some("button"),
+            messageKey = "incomeSourceAdded.button.text", classes = "govuk-button", role = Some("button"),
             id = Some("income-sources-link"))
     </div>
 }
