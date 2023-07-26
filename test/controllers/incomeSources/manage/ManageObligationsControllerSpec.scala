@@ -331,5 +331,30 @@ class ManageObligationsControllerSpec extends TestSupport
         status(result) shouldBe OK
       }
     }
+
+    "submit" should {
+      "take the individual back to add income sources" in {
+        disableAllSwitches()
+        enable(IncomeSources)
+
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
+        setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+
+        val result: Future[Result] = TestManageObligationsController.submit(fakeRequestWithActiveSession)
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.manage.routes.ManageIncomeSourceController.show().url)
+      }
+      "take the agent back to add income sources" in {
+        disableAllSwitches()
+        enable(IncomeSources)
+
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
+        setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+
+        val result: Future[Result] = TestManageObligationsController.agentSubmit(fakeRequestConfirmedClient())
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.manage.routes.ManageIncomeSourceController.showAgent().url)
+      }
+    }
   }
 }
