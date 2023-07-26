@@ -60,8 +60,8 @@ class UKPropertyReportingMethodControllerSpec extends TestSupport with MockAuthe
   val taxYear2 = s"${newTaxYear2ReportingMethod}_tax_year"
   val taxYear1ReportingMethod = "tax_year_1_reporting_method"
   val taxYear2ReportingMethod = "tax_year_2_reporting_method"
-  val redirectURL = "/report-quarterly/income-and-expenses/view/income-sources/add/error-uk-reporting-reporting-method-not-saved"
-  val redirectAgentURL = "/report-quarterly/income-and-expenses/view/agents/income-sources/add/error-uk-reporting-reporting-method-not-saved"
+  val redirectURL = "/report-quarterly/income-and-expenses/view/income-sources/add/error-uk-property-reporting-method-not-saved"
+  val redirectAgentURL = "/report-quarterly/income-and-expenses/view/agents/income-sources/add/error-uk-property-reporting-method-not-saved"
 
   object TestUKPropertyReportingMethodController extends UKPropertyReportingMethodController(
     MockAuthenticationPredicate,

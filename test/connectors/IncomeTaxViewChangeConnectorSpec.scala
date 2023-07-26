@@ -160,6 +160,10 @@ class IncomeTaxViewChangeConnectorSpec extends TestSupport with MockHttp with Mo
     }
   }
 
+  val incomeSourceOverride = Seq(
+    "uk-property-reporting-method", // UK Property Select reporting method
+    "foreign-property-reporting-method" // Foreign Property Select reporting method
+  )
 
   "getIncomeSources" should {
 
@@ -169,8 +173,10 @@ class IncomeTaxViewChangeConnectorSpec extends TestSupport with MockHttp with Mo
 
     val getIncomeSourcesTestUrl = s"http://localhost:9999/income-tax-view-change/income-sources/$testMtditid"
 
+
     "return an IncomeSourceDetailsModel when successful JSON is received" in new Setup {
       setupMockHttpGet(getIncomeSourcesTestUrl)(successResponse)
+      when(appConfig.incomeSourceOverrides()).thenReturn( Some(incomeSourceOverride) )
 
       val result: Future[IncomeSourceDetailsResponse] = getIncomeSources()
       result.futureValue shouldBe singleBusinessAndPropertyMigrat2019
@@ -180,6 +186,7 @@ class IncomeTaxViewChangeConnectorSpec extends TestSupport with MockHttp with Mo
 
     "return IncomeSourceDetailsError in case of bad/malformed JSON response" in new Setup {
       setupMockHttpGet(getIncomeSourcesTestUrl)(successResponseBadJson)
+      when(appConfig.incomeSourceOverrides()).thenReturn( Some(incomeSourceOverride) )
 
       val result: Future[IncomeSourceDetailsResponse] = getIncomeSources()
       result.futureValue shouldBe IncomeSourceDetailsError(Status.INTERNAL_SERVER_ERROR, "Json Validation Error Parsing Income Source Details response")
@@ -188,6 +195,7 @@ class IncomeTaxViewChangeConnectorSpec extends TestSupport with MockHttp with Mo
 
     "return IncomeSourceDetailsError model in case of failure" in new Setup {
       setupMockHttpGet(getIncomeSourcesTestUrl)(badResponse)
+      when(appConfig.incomeSourceOverrides()).thenReturn( Some(incomeSourceOverride) )
 
       val result: Future[IncomeSourceDetailsResponse] = getIncomeSources()
       result.futureValue shouldBe IncomeSourceDetailsError(Status.BAD_REQUEST, "Error Message")
@@ -196,6 +204,7 @@ class IncomeTaxViewChangeConnectorSpec extends TestSupport with MockHttp with Mo
 
     "return IncomeSourceDetailsError model in case of future failed scenario" in new Setup {
       setupMockFailedHttpGet(getIncomeSourcesTestUrl)
+      when(appConfig.incomeSourceOverrides()).thenReturn( Some(incomeSourceOverride) )
 
       val result: Future[IncomeSourceDetailsResponse] = getIncomeSources()
       result.futureValue shouldBe IncomeSourceDetailsError(Status.INTERNAL_SERVER_ERROR, "Unexpected future failed error, unknown error")
