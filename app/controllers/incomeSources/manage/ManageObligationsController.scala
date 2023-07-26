@@ -51,7 +51,7 @@ class ManageObligationsController @Inject()(val manageIncomeSources: ManageIncom
                                             val appConfig: FrontendAppConfig) extends ClientConfirmedController
   with FeatureSwitching {
 
-  def showSelfEmployment(id: String, taxYear: String, changeTo: String): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+  def showSelfEmployment(taxYear: String, changeTo: String, id: String): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
       handleRequest(
@@ -59,10 +59,10 @@ class ManageObligationsController @Inject()(val manageIncomeSources: ManageIncom
         isAgent = false,
         taxYear,
         changeTo,
-        Some(id)
+        id
       )
   }
-  def showAgentSelfEmployment(id: String, taxYear: String, changeTo: String): Action[AnyContent] = Authenticated.async {
+  def showAgentSelfEmployment(taxYear: String, changeTo: String, id: String): Action[AnyContent] = Authenticated.async {
     implicit request =>
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
@@ -72,7 +72,7 @@ class ManageObligationsController @Inject()(val manageIncomeSources: ManageIncom
               isAgent = true,
               taxYear,
               changeTo,
-              Some(id)
+              id
             )
         }
   }
@@ -85,7 +85,7 @@ class ManageObligationsController @Inject()(val manageIncomeSources: ManageIncom
         isAgent = false,
         taxYear,
         changeTo,
-        None
+        ""
       )
   }
   def showAgentUKProperty(taxYear: String, changeTo: String): Action[AnyContent] = Authenticated.async {
@@ -98,7 +98,7 @@ class ManageObligationsController @Inject()(val manageIncomeSources: ManageIncom
               isAgent = true,
               taxYear,
               changeTo,
-              None
+              ""
             )
         }
   }
@@ -111,7 +111,7 @@ class ManageObligationsController @Inject()(val manageIncomeSources: ManageIncom
         isAgent = false,
         taxYear,
         changeTo,
-        None
+        ""
       )
   }
   def showAgentForeignProperty(taxYear: String, changeTo: String): Action[AnyContent] = Authenticated.async {
@@ -124,23 +124,23 @@ class ManageObligationsController @Inject()(val manageIncomeSources: ManageIncom
               isAgent = true,
               taxYear,
               changeTo,
-              None
+              ""
             )
         }
   }
 
-  def handleRequest(mode: String, isAgent: Boolean, taxYear: String, changeTo: String, incomeSourceId: Option[String])(implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
+  def handleRequest(mode: String, isAgent: Boolean, taxYear: String, changeTo: String, incomeSourceId: String)(implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
     if (isDisabled(IncomeSources)) {
       if (isAgent) Future.successful(Redirect(controllers.routes.HomeController.showAgent))
       else Future.successful(Redirect(controllers.routes.HomeController.show()))
     }
     else {
       val backUrl: String = if(isAgent) controllers.incomeSources.manage.routes.ManageConfirmController.showAgent().url else controllers.incomeSources.manage.routes.ManageConfirmController.show().url
-      val postUrl: Call = if (isAgent) controllers.incomeSources.manage.routes.ManageObligationsController.agentSubmit else controllers.incomeSources.manage.routes.ManageObligationsController.submit
+      val postUrl: Call = if (isAgent) controllers.incomeSources.manage.routes.ManageObligationsController.agentSubmit() else controllers.incomeSources.manage.routes.ManageObligationsController.submit()
 
       val addedBusinessName: String = if (mode == "SE"){
         val businessDetailsParams = for {
-          addedBusiness <- user.incomeSources.businesses.find(x => x.incomeSourceId.contains(incomeSourceId.getOrElse("")))
+          addedBusiness <- user.incomeSources.businesses.find(x => x.incomeSourceId.contains(incomeSourceId))
           businessName <- addedBusiness.tradingName
         } yield (addedBusiness, businessName)
         businessDetailsParams match {
@@ -152,11 +152,13 @@ class ManageObligationsController @Inject()(val manageIncomeSources: ManageIncom
         ""
       }
 
+
       val idDef: String = mode match {
-        case "SE" => incomeSourceId.getOrElse("")
+        case "SE" => incomeSourceId
         case "UK" => user.incomeSources.properties.find(x => x.isUkProperty).get.incomeSourceId.getOrElse("")
         case "FP" => user.incomeSources.properties.find(x => x.isForeignProperty).get.incomeSourceId.getOrElse("")
       }
+
       nextUpdatesService.getObligationsViewModel(idDef, showPreviousTaxYears = false) map { viewModel =>
         if (isAgent) Ok(obligationsView(viewModel, mode, addedBusinessName, taxYear, changeTo, isAgent, backUrl, postUrl))
         else Ok(obligationsView(viewModel, mode, addedBusinessName, taxYear, changeTo, isAgent, backUrl, postUrl))

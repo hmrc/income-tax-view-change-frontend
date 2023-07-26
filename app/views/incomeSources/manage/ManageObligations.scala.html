@@ -24,6 +24,7 @@
         mainTemplate: unifiedLayout,
         implicitDateFormatter: ImplicitDateFormatterImpl,
         continueButton: ContinueButton,
+        formWithCSRF: FormWithCSRF,
         h1: h1,
         h2: h2,
         p: p,
@@ -55,54 +56,80 @@
     isAgent = isAgent,
     btaNavPartial = user.btaNavPartial) {
 
-    @if(sources.quarterlyObligationsDatesYearOne.nonEmpty){
-        <div class="box-simple" id="quarterly">
-            <div class="page_headers govuk-heading-m"> @getMessage("quarterly-heading") </div>
-            <p class="govuk-body"> @getMessage("quarterly-p1") </p>
+    @formWithCSRF(action = postAction) {
 
-            <table class="govuk-table">
-                <thead class="govuk-table__head">
-                    <tr class="govuk-table__row">
-                        <th scope="col" class="govuk-table__header">@(getMessage("table.heading-1")+" "+sources.quarterlyObligationsDatesYearOne.head.inboundCorrespondenceFrom.getYear+" "+getMessage("to")+" "+(sources.quarterlyObligationsDatesYearOne.head.inboundCorrespondenceFrom.getYear + 1))</th>
-                        <th scope="col" class="govuk-table__header">@getMessage("table.heading-2")</th>
-                    </tr>
-                </thead>
+        @if(sources.quarterlyObligationsDatesYearOne.nonEmpty) {
+            <div class="box-simple" id="quarterly">
+                <div class="page_headers govuk-heading-m"> @getMessage("quarterly-heading") </div>
+                <p class="govuk-body"> @getMessage("quarterly-p1") </p>
 
-                <tbody class="govuk-table__body">
-                @sources.quarterlyObligationsDatesYearOne.map{ x =>
-                    <tr class="govuk-table__row">
-                        <td class="govuk-table__cell">@(x.inboundCorrespondenceFrom.toLongDate + " " + getMessage("to") + " " + x.inboundCorrespondenceTo.toLongDate)</td>
-                        <td class="govuk-table__cell">@(x.inboundCorrespondenceDue.toLongDate)</td>
-                    </tr>
-                }
-                </tbody>
-
-                @if(sources.quarterlyObligationsDatesYearTwo.nonEmpty){
+                <table class="govuk-table">
                     <thead class="govuk-table__head">
                         <tr class="govuk-table__row">
-                            <th scope="col" class="govuk-table__header">@(getMessage("table.heading-1")+" "+sources.quarterlyObligationsDatesYearTwo.head.inboundCorrespondenceFrom.getYear+" "+getMessage("to")+" "+(sources.quarterlyObligationsDatesYearTwo.head.inboundCorrespondenceFrom.getYear + 1))</th>
-                            <th scope="col" class="govuk-table__header"> </th>
+                            <th scope="col" class="govuk-table__header">@(getMessage("table.heading-1") + " " + sources.quarterlyObligationsDatesYearOne.head.inboundCorrespondenceFrom.getYear + " " + getMessage("to") + " " + (sources.quarterlyObligationsDatesYearOne.head.inboundCorrespondenceFrom.getYear + 1))</th>
+                            <th scope="col" class="govuk-table__header">@getMessage("table.heading-2")</th>
                         </tr>
                     </thead>
 
                     <tbody class="govuk-table__body">
-                    @sources.quarterlyObligationsDatesYearTwo.map{ x =>
+                    @sources.quarterlyObligationsDatesYearOne.map { x =>
                         <tr class="govuk-table__row">
                             <td class="govuk-table__cell">@(x.inboundCorrespondenceFrom.toLongDate + " " + getMessage("to") + " " + x.inboundCorrespondenceTo.toLongDate)</td>
                             <td class="govuk-table__cell">@(x.inboundCorrespondenceDue.toLongDate)</td>
                         </tr>
                     }
                     </tbody>
-                }
-            </table>
-        </div>
-    }
+
+                    @if(sources.quarterlyObligationsDatesYearTwo.nonEmpty) {
+                        <thead class="govuk-table__head">
+                            <tr class="govuk-table__row">
+                                <th scope="col" class="govuk-table__header">@(getMessage("table.heading-1") + " " + sources.quarterlyObligationsDatesYearTwo.head.inboundCorrespondenceFrom.getYear + " " + getMessage("to") + " " + (sources.quarterlyObligationsDatesYearTwo.head.inboundCorrespondenceFrom.getYear + 1))</th>
+                                <th scope="col" class="govuk-table__header"> </th>
+                            </tr>
+                        </thead>
+
+                        <tbody class="govuk-table__body">
+                        @sources.quarterlyObligationsDatesYearTwo.map { x =>
+                            <tr class="govuk-table__row">
+                                <td class="govuk-table__cell">@(x.inboundCorrespondenceFrom.toLongDate + " " + getMessage("to") + " " + x.inboundCorrespondenceTo.toLongDate)</td>
+                                <td class="govuk-table__cell">@(x.inboundCorrespondenceDue.toLongDate)</td>
+                            </tr>
+                        }
+                        </tbody>
+                    }
+                </table>
+            </div>
+        }
+
+        @if(sources.eopsObligationsDates.nonEmpty) {
+            <div class="box-simple" id="eops">
+                <div class="page_headers govuk-heading-m"> @getMessage("eops-heading") </div>
+                <p class="govuk-body"> @getMessage("eops-p1") </p>
+
+                <table class="govuk-table">
+                    <thead class="govuk-table__head">
+                        <tr class="govuk-table__row">
+                            <th scope="col" class="govuk-table__header">@getMessage("table.heading-1")</th>
+                            <th scope="col" class="govuk-table__header">@getMessage("table.heading-2")</th>
+                        </tr>
+                    </thead>
+
+                    <tbody class="govuk-table__body">
+                    @sources.eopsObligationsDates.map { x =>
+                        <tr class="govuk-table__row">
+                            <td class="govuk-table__cell">@(x.inboundCorrespondenceFrom.getYear + " " + getMessage("to") + " " + x.inboundCorrespondenceTo.getYear)</td>
+                            <td class="govuk-table__cell">@(x.inboundCorrespondenceDue.toLongDate)</td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        }
 
 
-    @if(sources.eopsObligationsDates.nonEmpty){
-        <div class="box-simple" id="eops">
-            <div class="page_headers govuk-heading-m"> @getMessage("eops-heading") </div>
-            <p class="govuk-body"> @getMessage("eops-p1") </p>
+        <div class="box-simple" id="finalDec">
+            <div class="page_headers govuk-heading-m"> @getMessage("final-declaration-heading") </div>
+            <p class="govuk-body"> @getMessage("final-declaration-text") </p>
 
             <table class="govuk-table">
                 <thead class="govuk-table__head">
@@ -113,7 +140,7 @@
                 </thead>
 
                 <tbody class="govuk-table__body">
-                @sources.eopsObligationsDates.map{ x =>
+                @sources.finalDeclarationDates.map { x =>
                     <tr class="govuk-table__row">
                         <td class="govuk-table__cell">@(x.inboundCorrespondenceFrom.getYear + " " + getMessage("to") + " " + x.inboundCorrespondenceTo.getYear)</td>
                         <td class="govuk-table__cell">@(x.inboundCorrespondenceDue.toLongDate)</td>
@@ -122,34 +149,10 @@
                 </tbody>
             </table>
         </div>
+
+        @continueButton(
+            Some(getMessage("income-sources-button"))
+        )
     }
-
-
-    <div class="box-simple" id="finalDec">
-        <div class="page_headers govuk-heading-m"> @getMessage("final-declaration-heading") </div>
-        <p class="govuk-body"> @getMessage("final-declaration-text") </p>
-
-        <table class="govuk-table">
-            <thead class="govuk-table__head">
-                <tr class="govuk-table__row">
-                    <th scope="col" class="govuk-table__header">@getMessage("table.heading-1")</th>
-                    <th scope="col" class="govuk-table__header">@getMessage("table.heading-2")</th>
-                </tr>
-            </thead>
-
-            <tbody class="govuk-table__body">
-            @sources.finalDeclarationDates.map{ x =>
-                <tr class="govuk-table__row">
-                    <td class="govuk-table__cell">@(x.inboundCorrespondenceFrom.getYear + " " + getMessage("to") + " " + x.inboundCorrespondenceTo.getYear)</td>
-                    <td class="govuk-table__cell">@(x.inboundCorrespondenceDue.toLongDate)</td>
-                </tr>
-            }
-            </tbody>
-        </table>
-    </div>
-
-    @continueButton(
-        Some(getMessage("income-sources-button"))
-    )
 
 }
