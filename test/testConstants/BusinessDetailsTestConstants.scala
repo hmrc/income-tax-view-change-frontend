@@ -97,7 +97,7 @@ object BusinessDetailsTestConstants {
     firstAccountingPeriodEndDate = Some(LocalDate.of(year2018, Month.APRIL, 5)),
     tradingStartDate = Some(testStartDate),
     cessation = None,
-    latencyDetails = Some(testLatencyDetails),
+    latencyDetails = None,
     address = Some(addressModel1)
   )
 

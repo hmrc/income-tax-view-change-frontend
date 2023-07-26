@@ -17,13 +17,14 @@
 package controllers.incomeSources.manage
 
 import auth.MtdItUser
+import cats.data.EitherT
 import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import exceptions.MissingFieldException
 import models.incomeSourceDetails.viewmodels.{ViewBusinessDetailsViewModel, ViewLatencyDetailsViewModel}
-import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
+import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, LatencyDetails}
 import play.api.mvc._
 import services.{CalculationListService, DateService, ITSAStatusService, IncomeSourceDetailsService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
@@ -77,39 +78,72 @@ class ManageSelfEmploymentController @Inject()(val view: BusinessManageDetails,
         }
   }
 
+  def getCrystallisationInformation(incomeSource: BusinessDetailsModel)
+                                   (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): EitherT[Future, String, List[Boolean]] = {
+    EitherT {
+      incomeSource.latencyDetails match {
+        case Some(x) =>
+          for {
+            i <- calculationListService.isTaxYearCrystallised(incomeSource.latencyDetails.get.taxYear1.toInt)
+            j <- calculationListService.isTaxYearCrystallised(incomeSource.latencyDetails.get.taxYear2.toInt)
+          } yield
+            Right(List(i.get, j.get))
+
+        case None => Future.successful(Left(""))
+      }
+    }
+  }
+
   def getViewIncomeSourceChosenViewModel(sources: IncomeSourceDetailsModel, id: String)
                                         (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[ViewBusinessDetailsViewModel] = {
     val desiredIncomeSource: BusinessDetailsModel = sources.businesses
       .filterNot(_.isCeased)
       .filter(_.incomeSourceId.getOrElse(throw new MissingFieldException("incomeSourceId missing")) == id)
       .head
-
-    val isTaxYearOneCrystallised: Future[Option[Boolean]]  = calculationListService.isTaxYearCrystallised(desiredIncomeSource.latencyDetails.get.taxYear1.toInt)
-    val isTaxYearTwoCrystallised: Future[Option[Boolean]] = calculationListService.isTaxYearCrystallised(desiredIncomeSource.latencyDetails.get.taxYear2.toInt)
-    val istaStatus: Future[Boolean] = itsaStatusService.hasMandatedOrVoluntaryStatusCurrentYear
-
-    for {
-      i <- istaStatus
-      j <- isTaxYearOneCrystallised
-      k <- isTaxYearTwoCrystallised
-    } yield (
-      ViewBusinessDetailsViewModel(
-        incomeSourceId = desiredIncomeSource.incomeSourceId.getOrElse(throw new MissingFieldException("Missing incomeSourceId field")),
-        tradingName = desiredIncomeSource.tradingName,
-        tradingStartDate = desiredIncomeSource.tradingStartDate,
-        address = desiredIncomeSource.address,
-        businessAccountingMethod = desiredIncomeSource.cashOrAccruals,
-        itsaHasMandatedOrVoluntaryStatusCurrentYear = Option(i),
-        taxYearOneCrystallised = j,
-        taxYearTwoCrystallised = k,
-        latencyDetails = Option(ViewLatencyDetailsViewModel(
-          latencyEndDate = desiredIncomeSource.latencyDetails.get.latencyEndDate,
-          taxYear1 = desiredIncomeSource.latencyDetails.get.taxYear1.toInt,
-          latencyIndicator1 = desiredIncomeSource.latencyDetails.get.latencyIndicator1,
-          taxYear2 = desiredIncomeSource.latencyDetails.get.taxYear2.toInt,
-          latencyIndicator2 = desiredIncomeSource.latencyDetails.get.latencyIndicator2)
-      ))
-    )
+    val itsaStatus: Future[Boolean] = itsaStatusService.hasMandatedOrVoluntaryStatusCurrentYear
+    println("LLLLLLLL" + itsaStatus)
+    val latencyDetails: Option[LatencyDetails] = desiredIncomeSource.latencyDetails
+    getCrystallisationInformation(desiredIncomeSource).value.flatMap{
+      case Left(x) =>
+        println("this is running XXX")
+        for {
+          i <- itsaStatus
+        } yield {
+          ViewBusinessDetailsViewModel(
+            incomeSourceId = desiredIncomeSource.incomeSourceId.getOrElse(throw new MissingFieldException("Missing incomeSourceId field")),
+            tradingName = desiredIncomeSource.tradingName,
+            tradingStartDate = desiredIncomeSource.tradingStartDate,
+            address = desiredIncomeSource.address,
+            businessAccountingMethod = desiredIncomeSource.cashOrAccruals,
+            itsaHasMandatedOrVoluntaryStatusCurrentYear = Option(i),
+            taxYearOneCrystallised = None,
+            taxYearTwoCrystallised = None,
+            latencyDetails = None)
+        }
+      case Right(crystallisationData: List[Boolean]) =>
+        for {
+          i <- itsaStatus
+        } yield {
+          ViewBusinessDetailsViewModel(
+            incomeSourceId = desiredIncomeSource.incomeSourceId.getOrElse(throw new MissingFieldException("Missing incomeSourceId field")),
+            tradingName = desiredIncomeSource.tradingName,
+            tradingStartDate = desiredIncomeSource.tradingStartDate,
+            address = desiredIncomeSource.address,
+            businessAccountingMethod = desiredIncomeSource.cashOrAccruals,
+            itsaHasMandatedOrVoluntaryStatusCurrentYear = Option(i),
+            taxYearOneCrystallised = Option(crystallisationData.head),
+            taxYearTwoCrystallised = Option(crystallisationData(1)),
+            latencyDetails = Option(ViewLatencyDetailsViewModel(
+              latencyEndDate = latencyDetails.get.latencyEndDate,
+              taxYear1 = latencyDetails.get.taxYear1.toInt,
+              latencyIndicator1 = latencyDetails.get.latencyIndicator1,
+              taxYear2 = latencyDetails.get.taxYear2.toInt,
+              latencyIndicator2 = latencyDetails.get.latencyIndicator2
+            )
+            )
+          )
+        }
+    }
   }
 
   def handleRequest(sources: IncomeSourceDetailsModel, isAgent: Boolean, backUrl: String, id: String)
@@ -118,11 +152,15 @@ class ManageSelfEmploymentController @Inject()(val view: BusinessManageDetails,
     if (isDisabled(IncomeSources)) {
       Future.successful(Redirect(controllers.routes.HomeController.show()))
     } else {
-      getViewIncomeSourceChosenViewModel(sources = sources, id = id).flatMap{value =>
-        Future.successful(Ok(view(viewModel = value,
+      val ref = getViewIncomeSourceChosenViewModel(sources = sources, id = id)
+      Thread.sleep(1000)
+      println("AAAAAAAAA" + ref.toString)
+
+      ref.map{value =>
+        Ok(view(viewModel = value,
           isAgent = isAgent,
           backUrl = backUrl
-        )))
+        ))
       }
     }
   }

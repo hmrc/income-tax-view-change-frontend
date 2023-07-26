@@ -20,25 +20,29 @@ import config.featureswitch.FeatureSwitch.switches
 import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
+import mocks.connectors.MockIncomeTaxViewChangeConnector
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import org.mockito.ArgumentMatchers
+import org.mockito.Mockito.{mock, when}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
 import play.api.http.Status
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, status}
 import services.{CalculationListService, DateService, ITSAStatusService}
 import testConstants.BaseTestConstants
-import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
+import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testSelfEmploymentId}
 import testUtils.TestSupport
 import views.html.incomeSources.manage.BusinessManageDetails
 
 import scala.concurrent.Future
 
 class ManageSelfEmploymentControllerSpec extends TestSupport with MockAuthenticationPredicate
-  with MockIncomeSourceDetailsPredicate with MockNavBarEnumFsPredicate with FeatureSwitching {
+  with MockIncomeSourceDetailsPredicate with FeatureSwitching with MockIncomeTaxViewChangeConnector with MockNavBarEnumFsPredicate {
+
+  val mockDateService: DateService = mock(classOf[DateService])
+  val mockITSAStatusService: ITSAStatusService = mock(classOf[ITSAStatusService])
+
 
   def disableAllSwitches(): Unit = {
     switches.foreach(switch => disable(switch))
@@ -54,8 +58,8 @@ class ManageSelfEmploymentControllerSpec extends TestSupport with MockAuthentica
     itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
     itvcErrorHandlerAgent = app.injector.instanceOf[AgentItvcErrorHandler],
     incomeSourceDetailsService = mockIncomeSourceDetailsService,
-    itsaStatusService = app.injector.instanceOf[ITSAStatusService],
-    dateService = app.injector.instanceOf[DateService],
+    mockITSAStatusService,
+    mockDateService,
     retrieveBtaNavBar = MockNavBarPredicate,
     calculationListService = app.injector.instanceOf[CalculationListService]
   )(
@@ -88,33 +92,33 @@ class ManageSelfEmploymentControllerSpec extends TestSupport with MockAuthentica
 
     scenario match {
       case NO_LATENCY_INFORMATION =>
-        when(TestManageSelfEmploymentController.dateService.getCurrentTaxYearEnd(any)).thenReturn(2023)
+        when(mockDateService.getCurrentTaxYearEnd(any)).thenReturn(2024)
         when(TestManageSelfEmploymentController.itsaStatusService.hasMandatedOrVoluntaryStatusCurrentYear(any, any, any))
           .thenReturn(Future.successful(true))
         mockSingleBusinessIncomeSource()
 
       case FIRST_AND_SECOND_YEAR_CRYSTALLIZED =>
-        when(TestManageSelfEmploymentController.dateService.getCurrentTaxYearEnd(any)).thenReturn(2023)
+        when(mockDateService.getCurrentTaxYearEnd(any)).thenReturn(2023)
         when(TestManageSelfEmploymentController.itsaStatusService.hasMandatedOrVoluntaryStatusCurrentYear(any, any, any))
           .thenReturn(Future.successful(true))
-        when(TestManageSelfEmploymentController.calculationListService.isTaxYearCrystallised(ArgumentMatchers.eq(2023))(any, any, any))
+        when(TestManageSelfEmploymentController.calculationListService.isTaxYearCrystallised(2023)(any, any, any))
           .thenReturn(Future.successful(Some(true)))
-        when(TestManageSelfEmploymentController.calculationListService.isTaxYearCrystallised(ArgumentMatchers.eq(2024))(any, any, any))
+        when(TestManageSelfEmploymentController.calculationListService.isTaxYearCrystallised(2024)(any, any, any))
           .thenReturn(Future.successful(Some(true)))
         mockBusinessIncomeSourceWithLatency2023()
 
       case FIRST_AND_SECOND_YEAR_NOT_CRYSTALLIZED =>
-        when(TestManageSelfEmploymentController.dateService.getCurrentTaxYearEnd(any)).thenReturn(2023)
+        when(mockDateService.getCurrentTaxYearEnd(any)).thenReturn(2023)
         when(TestManageSelfEmploymentController.itsaStatusService.hasMandatedOrVoluntaryStatusCurrentYear(any, any, any))
           .thenReturn(Future.successful(true))
-        when(TestManageSelfEmploymentController.calculationListService.isTaxYearCrystallised(ArgumentMatchers.eq(2023))(any, any, any))
+        when(TestManageSelfEmploymentController.calculationListService.isTaxYearCrystallised(2023)(any, any, any))
           .thenReturn(Future.successful(Some(false)))
-        when(TestManageSelfEmploymentController.calculationListService.isTaxYearCrystallised(ArgumentMatchers.eq(2024))(any, any, any))
+        when(TestManageSelfEmploymentController.calculationListService.isTaxYearCrystallised(2024)(any, any, any))
           .thenReturn(Future.successful(Some(false)))
         mockBusinessIncomeSourceWithLatency2023()
 
       case NON_ELIGIBLE_ITS_STATUS =>
-        when(TestManageSelfEmploymentController.dateService.getCurrentTaxYearEnd(any)).thenReturn(2023)
+        when(mockDateService.getCurrentTaxYearEnd(any)).thenReturn(2023)
         when(TestManageSelfEmploymentController.itsaStatusService.hasMandatedOrVoluntaryStatusCurrentYear(any, any, any))
           .thenReturn(Future.successful(false))
         mockBusinessIncomeSourceWithLatency2023()
@@ -130,10 +134,10 @@ class ManageSelfEmploymentControllerSpec extends TestSupport with MockAuthentica
       "FS is enabled and the .show(id) method is called with a valid id parameter and no latency information" in {
         mockAndBasicSetup(Scenario.NO_LATENCY_INFORMATION)
 
-        val result: Future[Result] = TestManageSelfEmploymentController.show(TestManageSelfEmploymentController.incomeSourceId)(fakeRequestWithNino)
+        val result: Future[Result] = TestManageSelfEmploymentController.show(testSelfEmploymentId)(fakeRequestWithNino)
         val document: Document = Jsoup.parse(contentAsString(result))
-        println("TTTTTTTTT")
-        println(document)
+//        println("TTTTTTTTT")
+//        println(document)
 
         status(result) shouldBe Status.OK
         document.title shouldBe TestManageSelfEmploymentController.title

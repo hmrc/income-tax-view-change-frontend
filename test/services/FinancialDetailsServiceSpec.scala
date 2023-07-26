@@ -104,9 +104,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
         None,
         Some(getCurrentTaxYearEnd.minusYears(1)),
         tradingStartDate = None,
-        cessation = None,
-        firstAccountingPeriodEndDate = None
-      )
+        cessation = None)
     ),
     properties = Nil
   ), btaNavPartial = None, None, None, None, None)(FakeRequest())
