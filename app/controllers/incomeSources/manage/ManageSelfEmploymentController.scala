@@ -49,8 +49,7 @@ class ManageSelfEmploymentController @Inject()(val view: BusinessManageDetails,
                                                val retrieveBtaNavBar: NavBarPredicate,
                                                val calculationListService: CalculationListService)
                                               (implicit val ec: ExecutionContext,
-                                             implicit override val mcc: MessagesControllerComponents,
-                                             val appConfig: FrontendAppConfig) extends ClientConfirmedController
+                                               implicit override val mcc: MessagesControllerComponents, val appConfig: FrontendAppConfig) extends ClientConfirmedController
   with FeatureSwitching {
 
   def show(id: String): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
@@ -78,58 +77,65 @@ class ManageSelfEmploymentController @Inject()(val view: BusinessManageDetails,
         }
   }
 
-  def getCrystallisationInformation(incomeSource: BusinessDetailsModel)
+  def getCrystallisationInformation(incomeSource: Option[BusinessDetailsModel])
                                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): EitherT[Future, String, List[Boolean]] = {
     EitherT {
-      incomeSource.latencyDetails match {
-        case Some(x) =>
+      incomeSource match {
+        case Some(x) if x.latencyDetails.isDefined =>
           for {
-            i <- calculationListService.isTaxYearCrystallised(incomeSource.latencyDetails.get.taxYear1.toInt)
-            j <- calculationListService.isTaxYearCrystallised(incomeSource.latencyDetails.get.taxYear2.toInt)
+            i <- calculationListService.isTaxYearCrystallised(x.latencyDetails.get.taxYear1.toInt)
+            j <- calculationListService.isTaxYearCrystallised(x.latencyDetails.get.taxYear2.toInt)
           } yield
             Right(List(i.get, j.get))
-
-        case None => Future.successful(Left(""))
+        case _ =>
+          Future.successful(Left("No data ready"))
       }
     }
   }
 
   def getViewIncomeSourceChosenViewModel(sources: IncomeSourceDetailsModel, id: String)
-                                        (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[ViewBusinessDetailsViewModel] = {
-    val desiredIncomeSource: BusinessDetailsModel = sources.businesses
-      .filterNot(_.isCeased)
-      .filter(_.incomeSourceId.getOrElse(throw new MissingFieldException("incomeSourceId missing")) == id)
-      .head
-    val itsaStatus: Future[Boolean] = itsaStatusService.hasMandatedOrVoluntaryStatusCurrentYear
-    println("LLLLLLLL" + itsaStatus)
-    val latencyDetails: Option[LatencyDetails] = desiredIncomeSource.latencyDetails
-    getCrystallisationInformation(desiredIncomeSource).value.flatMap{
+                                        (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, ViewBusinessDetailsViewModel]] = {
+
+    val desiredIncomeSourceMaybe: Option[BusinessDetailsModel] = sources.businesses
+      //.filterNot(_.isCeased)
+      //.filter(e => e.incomeSourceId.isDefined && e.incomeSourceId.get == id)
+      .headOption
+
+    //val itsaStatus: Future[Boolean] =itsaStatusService.hasMandatedOrVoluntaryStatusCurrentYear
+    //println("LLLLLLLL" + itsaStatus)
+    val latencyDetails: Option[LatencyDetails] = desiredIncomeSourceMaybe.map(_.latencyDetails).flatten
+
+    getCrystallisationInformation(desiredIncomeSourceMaybe).value.flatMap {
       case Left(x) =>
-        println("this is running XXX")
         for {
-          i <- itsaStatus
+          i <- itsaStatusService.hasMandatedOrVoluntaryStatusCurrentYear
+          //if desiredIncomeSourceMaybe.isDefined
+          //if desiredIncomeSourceMaybe.get.incomeSourceId.isDefined
         } yield {
-          ViewBusinessDetailsViewModel(
-            incomeSourceId = desiredIncomeSource.incomeSourceId.getOrElse(throw new MissingFieldException("Missing incomeSourceId field")),
-            tradingName = desiredIncomeSource.tradingName,
-            tradingStartDate = desiredIncomeSource.tradingStartDate,
-            address = desiredIncomeSource.address,
-            businessAccountingMethod = desiredIncomeSource.cashOrAccruals,
+          Right(ViewBusinessDetailsViewModel(
+            incomeSourceId = desiredIncomeSourceMaybe.get.incomeSourceId.get,
+            tradingName = desiredIncomeSourceMaybe.get.tradingName,
+            tradingStartDate = desiredIncomeSourceMaybe.get.tradingStartDate,
+            address = desiredIncomeSourceMaybe.get.address,
+            businessAccountingMethod = desiredIncomeSourceMaybe.get.cashOrAccruals,
             itsaHasMandatedOrVoluntaryStatusCurrentYear = Option(i),
             taxYearOneCrystallised = None,
             taxYearTwoCrystallised = None,
             latencyDetails = None)
+          )
         }
       case Right(crystallisationData: List[Boolean]) =>
         for {
-          i <- itsaStatus
+          i <- itsaStatusService.hasMandatedOrVoluntaryStatusCurrentYear
+          if desiredIncomeSourceMaybe.isDefined
+          if desiredIncomeSourceMaybe.get.incomeSourceId.isDefined
         } yield {
-          ViewBusinessDetailsViewModel(
-            incomeSourceId = desiredIncomeSource.incomeSourceId.getOrElse(throw new MissingFieldException("Missing incomeSourceId field")),
-            tradingName = desiredIncomeSource.tradingName,
-            tradingStartDate = desiredIncomeSource.tradingStartDate,
-            address = desiredIncomeSource.address,
-            businessAccountingMethod = desiredIncomeSource.cashOrAccruals,
+          Right(ViewBusinessDetailsViewModel(
+            incomeSourceId = desiredIncomeSourceMaybe.get.incomeSourceId.get,
+            tradingName = desiredIncomeSourceMaybe.get.tradingName,
+            tradingStartDate = desiredIncomeSourceMaybe.get.tradingStartDate,
+            address = desiredIncomeSourceMaybe.get.address,
+            businessAccountingMethod = desiredIncomeSourceMaybe.get.cashOrAccruals,
             itsaHasMandatedOrVoluntaryStatusCurrentYear = Option(i),
             taxYearOneCrystallised = Option(crystallisationData.head),
             taxYearTwoCrystallised = Option(crystallisationData(1)),
@@ -139,8 +145,9 @@ class ManageSelfEmploymentController @Inject()(val view: BusinessManageDetails,
               latencyIndicator1 = latencyDetails.get.latencyIndicator1,
               taxYear2 = latencyDetails.get.taxYear2.toInt,
               latencyIndicator2 = latencyDetails.get.latencyIndicator2
-            )
-            )
+             )
+             )
+           )
           )
         }
     }
@@ -152,16 +159,21 @@ class ManageSelfEmploymentController @Inject()(val view: BusinessManageDetails,
     if (isDisabled(IncomeSources)) {
       Future.successful(Redirect(controllers.routes.HomeController.show()))
     } else {
-      val ref = getViewIncomeSourceChosenViewModel(sources = sources, id = id)
-      Thread.sleep(1000)
-      println("AAAAAAAAA" + ref.toString)
-
-      ref.map{value =>
-        Ok(view(viewModel = value,
-          isAgent = isAgent,
-          backUrl = backUrl
-        ))
+      println(s"Here is my incomeSource: ${sources.businesses.head.latencyDetails}")
+      for {
+        value <- getViewIncomeSourceChosenViewModel(sources = sources, id = id)
+      } yield {
+        value match {
+          case Right(v) =>
+            Ok(view(viewModel = v,
+              isAgent = isAgent,
+              backUrl = backUrl
+            ))
+          case Left(ex) =>
+            itvcErrorHandler.showInternalServerError()
+        }
       }
+
     }
   }
 }

@@ -31,14 +31,15 @@ import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, status}
 import services.{CalculationListService, DateService, ITSAStatusService}
 import testConstants.BaseTestConstants
-import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testSelfEmploymentId}
+import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testSelfEmploymentId, testTaxCalculationId}
 import testUtils.TestSupport
 import views.html.incomeSources.manage.BusinessManageDetails
 
 import scala.concurrent.Future
 
 class ManageSelfEmploymentControllerSpec extends TestSupport with MockAuthenticationPredicate
-  with MockIncomeSourceDetailsPredicate with FeatureSwitching with MockIncomeTaxViewChangeConnector with MockNavBarEnumFsPredicate {
+  with MockIncomeSourceDetailsPredicate with FeatureSwitching with MockIncomeTaxViewChangeConnector with MockNavBarEnumFsPredicate
+{
 
   val mockDateService: DateService = mock(classOf[DateService])
   val mockITSAStatusService: ITSAStatusService = mock(classOf[ITSAStatusService])
