@@ -22,13 +22,13 @@ import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, ObligationsModel}
 import java.time.LocalDate
 
 object IncomeSourcesObligationsTestConstants {
-  val taxYear: Int = 2022
+  val taxYear: Int = 2018
 
   val testObligationsViewModel: ObligationsViewModel = ObligationsViewModel(
-    quarterlyObligationsDatesYearOne = Seq(datesModel2022, datesModel2023),
-    quarterlyObligationsDatesYearTwo = Seq(datesModel2023),
-    eopsObligationsDates = Seq(datesModel2023),
-    finalDeclarationDates = Seq(datesModel2023),
+    quarterlyObligationsDatesYearOne = Seq(datesModel2018),
+    quarterlyObligationsDatesYearTwo = Seq(datesModel2019),
+    eopsObligationsDates = Seq(datesModel2019),
+    finalDeclarationDates = Seq(datesModel2019),
     currentTaxYear = taxYear,
     showPrevTaxYears = false
   )
@@ -39,8 +39,8 @@ object IncomeSourcesObligationsTestConstants {
       LocalDate.of(year, 5, 5), "EOPS", false)
   }
 
-  val datesModel2022: DatesModel = generateDatesModel(taxYear)
-  val datesModel2023: DatesModel = generateDatesModel(taxYear + 1)
+  val datesModel2018: DatesModel = generateDatesModel(taxYear)
+  val datesModel2019: DatesModel = generateDatesModel(taxYear + 1)
 
   val testObligationsModel: ObligationsModel = ObligationsModel(Seq(
     NextUpdatesModel("123", List(NextUpdateModel(

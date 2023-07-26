@@ -16,41 +16,90 @@
 
 package controllers.incomeSources.add
 
-import auth.FrontendAuthorisedFunctions
-import config.featureswitch.FeatureSwitching
+import auth.{FrontendAuthorisedFunctions, MtdItUser}
+import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
-import controllers.predicates._
-import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.IncomeSourceDetailsService
-import views.html.errorPages.CustomNotFoundError
+import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
+import models.incomeSourceDetails.{BusinessDetailsModel, PropertyDetailsModel}
+import models.incomeSourceDetails.viewmodels.ObligationsViewModel
+import play.api.Logger
+import play.api.i18n.{I18nSupport, Messages}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents, Result}
+import services.{DateService, IncomeSourceDetailsService, NextUpdatesService}
+import utils.IncomeSourcesUtils
+import views.html.incomeSources.add.UKPropertyAdded
 
+import java.time.LocalDate
 import javax.inject.Inject
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class UKPropertyAddedController @Inject()(val authenticate: AuthenticationPredicate,
                                           val authorisedFunctions: FrontendAuthorisedFunctions,
                                           val checkSessionTimeout: SessionTimeoutPredicate,
+                                          val dateService: DateService,
                                           val incomeSourceDetailsService: IncomeSourceDetailsService,
+                                          val nextUpdatesService: NextUpdatesService,
                                           val retrieveBtaNavBar: NavBarPredicate,
                                           val retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                           val retrieveNino: NinoPredicate,
-                                          val customNotFoundErrorView: CustomNotFoundError)
+                                          val view: UKPropertyAdded)
                                          (implicit val appConfig: FrontendAppConfig,
-                                               mcc: MessagesControllerComponents,
-                                               val ec: ExecutionContext,
-                                               val itvcErrorHandler: ItvcErrorHandler,
-                                               val itvcErrorHandlerAgent: AgentItvcErrorHandler
-                                              )
-  extends ClientConfirmedController with FeatureSwitching with I18nSupport {
+                                          mcc: MessagesControllerComponents,
+                                          val ec: ExecutionContext,
+                                          val itvcErrorHandler: ItvcErrorHandler,
+                                          val itvcErrorHandlerAgent: AgentItvcErrorHandler)
+  extends ClientConfirmedController with FeatureSwitching with I18nSupport with IncomeSourcesUtils {
 
-  def show(incomeSourceId: String): Action[AnyContent] = Action {
-    Ok("")
+  def getBackUrl(incomeSourceId: String, isAgent: Boolean): String = {
+    if (isAgent) controllers.incomeSources.add.routes.UKPropertyReportingMethodController.showAgent(incomeSourceId).url else
+      controllers.incomeSources.add.routes.UKPropertyReportingMethodController.show(incomeSourceId).url
   }
 
-  def showAgent( incomeSourceId: String): Action[AnyContent] = Action {
-    Ok("")
+  def show(incomeSourceId: String): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+    andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
+    implicit user =>
+      handleRequest(incomeSourceId, isAgent = false)
   }
 
+  def showAgent(incomeSourceId: String): Action[AnyContent] = Authenticated.async {
+    implicit request =>
+      implicit user =>
+        getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
+          implicit mtdItUser =>
+            handleRequest(incomeSourceId, isAgent = true)
+        }
+  }
+
+  def getUKPropertyStartDate(incomeSourceId: String)(implicit user: MtdItUser[_]): Option[(LocalDate)] = {
+    for {
+      newlyAddedUKProperty <- user.incomeSources.properties.find(x => {
+        x.incomeSourceId.contains(incomeSourceId) && x.isUkProperty
+      })
+      startDate <- newlyAddedUKProperty.tradingStartDate
+    } yield startDate
+  }
+
+  def handleRequest(incomeSourceId: String, isAgent: Boolean)(implicit messages: Messages, user: MtdItUser[_]): Future[Result] = {
+    withIncomeSourcesFS {
+      val backUrl = getBackUrl(incomeSourceId, isAgent)
+      val UKPropertyStartDate = getUKPropertyStartDate(incomeSourceId)
+
+      println(Console.MAGENTA + user.incomeSources + Console.WHITE)
+
+      UKPropertyStartDate match {
+        case Some(startDate) =>
+          val showPreviousTaxYears: Boolean = startDate.isBefore(dateService.getCurrentTaxYearStart())
+          nextUpdatesService.getObligationsViewModel(incomeSourceId, showPreviousTaxYears).map { viewModel =>
+            println(Console.MAGENTA + viewModel + Console.WHITE)
+            Ok(view(viewModel, isAgent = isAgent, backUrl)(messages, user))
+          }
+        case _ =>
+          Logger("application").error(
+            s"[UKPropertyAddedController][handleRequest] - unable to find incomeSource by id: $incomeSourceId")
+          if (isAgent) Future.successful(itvcErrorHandlerAgent.showInternalServerError())
+          else Future.successful(itvcErrorHandler.showInternalServerError())
+      }
+    }
+  }
 }

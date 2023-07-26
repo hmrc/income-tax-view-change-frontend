@@ -32,7 +32,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
 import services.{DateService, IncomeSourceDetailsService, NextUpdatesService}
 import testConstants.BaseTestConstants
-import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testIndividualAuthSuccessWithSaUtrResponse, testPropertyIncomeId}
+import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testIndividualAuthSuccessWithSaUtrResponse, testPropertyIncomeId, testSelfEmploymentId}
 import testConstants.incomeSources.IncomeSourcesObligationsTestConstants
 import testUtils.TestSupport
 import views.html.incomeSources.add.UKPropertyAdded
@@ -63,19 +63,18 @@ class UKPropertyAddedControllerSpec extends TestSupport with MockAuthenticationP
     app.injector.instanceOf[AgentItvcErrorHandler])
 
   object UKPropertyAddedTestConstants {
-    val incomeSourceId = "1234"
   }
 
   "UKPropertyAddedController.getBackUrl()" should {
     "return the correct back URL for individual user" in {
-      val expectedBackUrl = controllers.incomeSources.add.routes.UKPropertyReportingMethodController.show(UKPropertyAddedTestConstants.incomeSourceId).url
-      val backUrl = TestUKPropertyAddedController.getBackUrl(UKPropertyAddedTestConstants.incomeSourceId, isAgent = false)
+      val expectedBackUrl = controllers.incomeSources.add.routes.UKPropertyReportingMethodController.show(testPropertyIncomeId).url
+      val backUrl = TestUKPropertyAddedController.getBackUrl(testPropertyIncomeId, isAgent = false)
 
       backUrl shouldBe expectedBackUrl
     }
     "return the correct back URL for agent user" in {
-      val expectedBackUrl = controllers.incomeSources.add.routes.UKPropertyReportingMethodController.showAgent(UKPropertyAddedTestConstants.incomeSourceId).url
-      val backUrl = TestUKPropertyAddedController.getBackUrl(UKPropertyAddedTestConstants.incomeSourceId, isAgent = true)
+      val expectedBackUrl = controllers.incomeSources.add.routes.UKPropertyReportingMethodController.showAgent(testPropertyIncomeId).url
+      val backUrl = TestUKPropertyAddedController.getBackUrl(testPropertyIncomeId, isAgent = true)
 
       backUrl shouldBe expectedBackUrl
     }
@@ -90,18 +89,7 @@ class UKPropertyAddedControllerSpec extends TestSupport with MockAuthenticationP
         mockUKPropertyIncomeSource()
 
 
-        val sources: IncomeSourceDetailsModel = IncomeSourceDetailsModel("", Some("2022"), List.empty, List(PropertyDetailsModel(
-          Some(testPropertyIncomeId),
-          None,
-          None,
-          Some("uk-property"),
-          Some(LocalDate.of(2022, 4, 21)),
-          None
-        )))
-
-        setupMockGetIncomeSourceDetails()(sources)
-
-        when(mockDateService.getCurrentTaxYearStart(any())).thenReturn(LocalDate.of(2023, 4, 6))
+        when(mockDateService.getCurrentTaxYearStart(any())).thenReturn(LocalDate.of(2018, 4, 6))
 
         when(mockNextUpdatesService.getObligationsViewModel(any(), any())(any(), any(), any())).thenReturn(
           Future(IncomeSourcesObligationsTestConstants.testObligationsViewModel))
@@ -109,7 +97,7 @@ class UKPropertyAddedControllerSpec extends TestSupport with MockAuthenticationP
         when(mockNextUpdatesService.getNextUpdates(any())(any(), any())).
           thenReturn(Future(IncomeSourcesObligationsTestConstants.testObligationsModel))
 
-        val result = TestUKPropertyAddedController.show(testPropertyIncomeId)(fakeRequestWithActiveSession.withSession(addUkPropertyStartDate -> "2022-01-01", addUkPropertyAccountingMethod -> "cash"))
+        val result = TestUKPropertyAddedController.show(testSelfEmploymentId)(fakeRequestWithActiveSession.withSession(addUkPropertyStartDate -> "2022-01-01", addUkPropertyAccountingMethod -> "cash"))
         status(result) shouldBe OK
       }
     }
@@ -142,7 +130,7 @@ class UKPropertyAddedControllerSpec extends TestSupport with MockAuthenticationP
         when(mockNextUpdatesService.getNextUpdates(any())(any(), any())).
           thenReturn(Future(IncomeSourcesObligationsTestConstants.testObligationsModel))
 
-        val result = TestUKPropertyAddedController.showAgent(UKPropertyAddedTestConstants.incomeSourceId)(fakeRequestConfirmedClient())
+        val result = TestUKPropertyAddedController.showAgent(testPropertyIncomeId)(fakeRequestConfirmedClient())
         status(result) shouldBe OK
       }
     }
