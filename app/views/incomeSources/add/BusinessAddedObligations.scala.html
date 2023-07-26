@@ -37,12 +37,12 @@ govukTable: GovukTable,
 @(businessName: String, sources: ObligationsViewModel, postAction: Call, backUrl: String, isAgent: Boolean)(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @getMessage(key: String, args: String*) = @{
-messages(s"business-added.$key", args: _*)
+    messages(s"business-added.$key", args: _*)
 }
 
 @getPageTitle = @{
-val title = getMessage("h1") + " " +  businessName + " " + getMessage("h2")
-title.trim()
+    val title = getMessage("h1") + " " +  businessName + " " + getMessage("h2")
+    title.trim()
 }
 
 @import implicitDateFormatter.longDate
@@ -175,9 +175,9 @@ title.trim()
             </div>
         }
 
-<div class="govuk-!-margin-top-8">
+        <div class="govuk-!-margin-top-8">
 
-</div>
+        </div>
 
         @continueButton(
             Some(getMessage("income-sources-button"))
