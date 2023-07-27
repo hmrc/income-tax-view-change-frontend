@@ -23,7 +23,7 @@ import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import play.api.Logger
 import play.api.mvc._
-import services.{IncomeSourceDetailsService, NextUpdatesService}
+import services.{DateService, IncomeSourceDetailsService, NextUpdatesService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
 import views.html.incomeSources.manage.{ManageIncomeSources, ManageObligations}
@@ -41,7 +41,8 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
                                             val incomeSourceDetailsService: IncomeSourceDetailsService,
                                             val retrieveBtaNavBar: NavBarPredicate,
                                             val obligationsView: ManageObligations,
-                                            nextUpdatesService: NextUpdatesService)
+                                            nextUpdatesService: NextUpdatesService,
+                                            dateService: DateService)
                                            (implicit val ec: ExecutionContext,
                                             implicit override val mcc: MessagesControllerComponents,
                                             val appConfig: FrontendAppConfig) extends ClientConfirmedController
@@ -156,18 +157,35 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
           else "Foreign property"
         }
 
-        //sanity check on taxYear and changeTo?
-
-        getIncomeSourceId(mode, incomeSourceId) match {
-          case Left(error) => Logger("application").error(
-            s"[BusinessAddedObligationsController][handleRequest] - ${error.getMessage}")
+        val (year1,year2) = taxYear.splitAt(4)
+        val currenttaxYearStart = dateService.getCurrentTaxYearEnd() - 1
+        if ((year1.toInt == currenttaxYearStart && year2.drop(1).toInt == currenttaxYearStart+1)
+          || (year1.toInt == currenttaxYearStart+1 && year2.drop(1).toInt == currenttaxYearStart+2)){
+          if (changeTo == "annual" || changeTo == "quarterly") {
+            getIncomeSourceId(mode, incomeSourceId) match {
+              case Left(error) => Logger("application").error(
+                s"[BusinessAddedObligationsController][handleRequest] - ${error.getMessage}")
+                if (isAgent) Future(itvcErrorHandlerAgent.showInternalServerError())
+                else Future(itvcErrorHandler.showInternalServerError())
+              case Right(value) =>
+                nextUpdatesService.getObligationsViewModel(value, showPreviousTaxYears = false) map { viewModel =>
+                  if (isAgent) Ok(obligationsView(viewModel, mode, addedBusinessName, taxYear, changeTo, isAgent, backUrl, postUrl))
+                  else Ok(obligationsView(viewModel, mode, addedBusinessName, taxYear, changeTo, isAgent, backUrl, postUrl))
+                }
+            }
+          }
+          else{
+            Logger("application").error(
+              s"[BusinessAddedObligationsController][handleRequest] - invalid change to mode provided")
             if (isAgent) Future(itvcErrorHandlerAgent.showInternalServerError())
             else Future(itvcErrorHandler.showInternalServerError())
-          case Right(value) =>
-            nextUpdatesService.getObligationsViewModel(value, showPreviousTaxYears = false) map { viewModel =>
-              if (isAgent) Ok(obligationsView(viewModel, mode, addedBusinessName, taxYear, changeTo, isAgent, backUrl, postUrl))
-              else Ok(obligationsView(viewModel, mode, addedBusinessName, taxYear, changeTo, isAgent, backUrl, postUrl))
           }
+        }
+        else{
+          Logger("application").error(
+            s"[BusinessAddedObligationsController][handleRequest] - invalid tax year provided")
+          if (isAgent) Future(itvcErrorHandlerAgent.showInternalServerError())
+          else Future(itvcErrorHandler.showInternalServerError())
         }
       }
     }

@@ -26,12 +26,14 @@ import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSour
 import mocks.services.{MockClientDetailsService, MockNextUpdatesService}
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
 import models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
-import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, ObligationsModel}
+import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, NextUpdatesResponseModel, ObligationsModel}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{mock, when}
+import org.mockito.stubbing.OngoingStubbing
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
+import services.DateService
 import testConstants.BaseTestConstants
 import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
 import testConstants.IncomeSourceDetailsTestConstants.{businessesAndPropertyIncome, foreignPropertyIncome, ukPropertyIncome}
@@ -55,6 +57,7 @@ class ManageObligationsControllerSpec extends TestSupport
     switches.foreach(switch => disable(switch))
   }
 
+  val mockDateService: DateService = mock(classOf[DateService])
   object TestManageObligationsController extends ManageObligationsController(
     checkSessionTimeout = app.injector.instanceOf[SessionTimeoutPredicate],
     MockAuthenticationPredicate,
@@ -66,7 +69,8 @@ class ManageObligationsControllerSpec extends TestSupport
     incomeSourceDetailsService = mockIncomeSourceDetailsService,
     retrieveBtaNavBar = MockNavBarPredicate,
     obligationsView = app.injector.instanceOf[ManageObligations],
-    mockNextUpdatesService
+    mockNextUpdatesService,
+    mockDateService
   )(
     ec = ec,
     mcc = app.injector.instanceOf[MessagesControllerComponents],
@@ -97,10 +101,11 @@ class ManageObligationsControllerSpec extends TestSupport
     ))
   ))
 
-  def setUpBusiness(isAgent: Boolean) = {
+  def setUpBusiness(isAgent: Boolean): OngoingStubbing[Future[NextUpdatesResponseModel]] = {
     if (isAgent) setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
     else setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
+    when(mockDateService.getCurrentTaxYearEnd(any())).thenReturn(2023)
     setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
     val sources: IncomeSourceDetailsModel = IncomeSourceDetailsModel("", Some("2022"), List(BusinessDetailsModel(
       Some(testId),
@@ -129,10 +134,11 @@ class ManageObligationsControllerSpec extends TestSupport
       thenReturn(Future(testObligationsModel))
   }
 
-  def setUpUKProperty(isAgent: Boolean, isUkProperty: Boolean) = {
+  def setUpUKProperty(isAgent: Boolean, isUkProperty: Boolean): OngoingStubbing[Future[NextUpdatesResponseModel]] = {
     if (isAgent) setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
     else setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
+    when(mockDateService.getCurrentTaxYearEnd(any())).thenReturn(2023)
     if (isUkProperty) setupMockGetIncomeSourceDetails()(ukPropertyIncome)
     else setupMockGetIncomeSourceDetails()(foreignPropertyIncome)
     val day = LocalDate.of(2023, 1, 1)
@@ -356,5 +362,11 @@ class ManageObligationsControllerSpec extends TestSupport
         redirectLocation(result) shouldBe Some(controllers.incomeSources.manage.routes.ManageIncomeSourceController.showAgent().url)
       }
     }
+
+
+    //Not covered:
+    //mode = SE and no income source with provided id
+    //mode = SE and business with supplied id has no name
+    //mode = UK or FP and no property of that type with supplied id
   }
 }
