@@ -112,11 +112,11 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
     )
   }
 
-  private def getTaxYearStartYearEndYear(year: String): Option[TaxYear] = {
+  private def getTaxYearStartYearEndYear(years: String): Option[TaxYear] = {
 
     def isValidYear(year: String) = year.length == 4 && year.forall(_.isDigit)
 
-    year.split('-') match {
+    years.split('-') match {
       case Array(yearOne, yearTwo) if isValidYear(yearOne) && isValidYear(yearTwo) =>
         Some(TaxYear(yearOne, yearTwo))
       case _ => None
