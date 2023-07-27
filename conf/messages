@@ -1256,6 +1256,9 @@ radioForm.checkDate.heading                                         = Is this da
 radioForm.yes                                                       = Yes
 radioForm.no                                                        = No
 
+#Generic income sources messages
+incomeSources.generic.unknown                                    = Unknown
+
 incomeSources.ceaseUKProperty.heading                            = Cease UK property
 incomeSources.ceaseUKProperty.radioLabel                         = I declare that I no longer get an income from any property in the UK.
 incomeSources.ceaseUKProperty.radioError                         = You must declare that you no longer get an income from any property in the UK

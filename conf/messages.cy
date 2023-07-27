@@ -1257,6 +1257,9 @@ radioForm.checkDate.heading                                         = A yw’r d
 radioForm.yes                                                       = Iawn
 radioForm.no                                                        = Na
 
+#Generic income sources messages
+incomeSources.generic.unknown                                    = Anhysbys
+
 incomeSources.ceaseUKProperty.heading                            = Dod ag eiddo yn y DU i ben
 incomeSources.ceaseUKProperty.radioLabel                         = Rwy’n datgan nad wyf bellach yn cael incwm o unrhyw eiddo yn y DU.
 incomeSources.ceaseUKProperty.radioError                         = Mae’n rhaid i chi ddatgan nad ydych chi bellach yn cael incwm o unrhyw eiddo yn y DU

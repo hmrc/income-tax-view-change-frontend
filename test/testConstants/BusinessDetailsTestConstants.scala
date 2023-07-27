@@ -109,7 +109,7 @@ object BusinessDetailsTestConstants {
     tradingStartDate = Some(testStartDate),
     cessation = None,
     latencyDetails = Some(testLatencyDetails1),
-    address = None
+    address = Some(addressModel1)
   )
 
   val businessWithLatency2 = BusinessDetailsModel(

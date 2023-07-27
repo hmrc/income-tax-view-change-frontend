@@ -24,6 +24,7 @@ import mocks.connectors.MockIncomeTaxViewChangeConnector
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.{mock, when}
 import org.mockito.ArgumentMatchers.any
 import play.api.http.Status
@@ -43,7 +44,7 @@ class ManageSelfEmploymentControllerSpec extends TestSupport with MockAuthentica
 
   val mockDateService: DateService = mock(classOf[DateService])
   val mockITSAStatusService: ITSAStatusService = mock(classOf[ITSAStatusService])
-
+  val mockCalculationListService: CalculationListService = mock(classOf[CalculationListService])
 
   def disableAllSwitches(): Unit = {
     switches.foreach(switch => disable(switch))
@@ -62,7 +63,7 @@ class ManageSelfEmploymentControllerSpec extends TestSupport with MockAuthentica
     mockITSAStatusService,
     mockDateService,
     retrieveBtaNavBar = MockNavBarPredicate,
-    calculationListService = app.injector.instanceOf[CalculationListService]
+    mockCalculationListService
   )(
     ec,
     mcc = app.injector.instanceOf[MessagesControllerComponents],
@@ -94,33 +95,33 @@ class ManageSelfEmploymentControllerSpec extends TestSupport with MockAuthentica
     scenario match {
       case NO_LATENCY_INFORMATION =>
         when(mockDateService.getCurrentTaxYearEnd(any)).thenReturn(2024)
-        when(TestManageSelfEmploymentController.itsaStatusService.hasMandatedOrVoluntaryStatusCurrentYear(any, any, any))
+        when(mockITSAStatusService.hasMandatedOrVoluntaryStatusCurrentYear(any, any, any))
           .thenReturn(Future.successful(true))
         mockSingleBusinessIncomeSource()
 
-      case FIRST_AND_SECOND_YEAR_CRYSTALLIZED =>
-        when(mockDateService.getCurrentTaxYearEnd(any)).thenReturn(2023)
-        when(TestManageSelfEmploymentController.itsaStatusService.hasMandatedOrVoluntaryStatusCurrentYear(any, any, any))
-          .thenReturn(Future.successful(true))
-        when(TestManageSelfEmploymentController.calculationListService.isTaxYearCrystallised(2023)(any, any, any))
-          .thenReturn(Future.successful(Some(true)))
-        when(TestManageSelfEmploymentController.calculationListService.isTaxYearCrystallised(2024)(any, any, any))
-          .thenReturn(Future.successful(Some(true)))
-        mockBusinessIncomeSourceWithLatency2023()
-
       case FIRST_AND_SECOND_YEAR_NOT_CRYSTALLIZED =>
         when(mockDateService.getCurrentTaxYearEnd(any)).thenReturn(2023)
-        when(TestManageSelfEmploymentController.itsaStatusService.hasMandatedOrVoluntaryStatusCurrentYear(any, any, any))
+        when(mockITSAStatusService.hasMandatedOrVoluntaryStatusCurrentYear(any, any, any))
           .thenReturn(Future.successful(true))
-        when(TestManageSelfEmploymentController.calculationListService.isTaxYearCrystallised(2023)(any, any, any))
-          .thenReturn(Future.successful(Some(false)))
-        when(TestManageSelfEmploymentController.calculationListService.isTaxYearCrystallised(2024)(any, any, any))
-          .thenReturn(Future.successful(Some(false)))
         mockBusinessIncomeSourceWithLatency2023()
+        when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.eq(2022))(any, any, any))
+          .thenReturn(Future.successful(Some(false)))
+        when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.eq(2023))(any, any, any))
+          .thenReturn(Future.successful(Some(false)))
+
+      case FIRST_AND_SECOND_YEAR_CRYSTALLIZED =>
+        when(mockDateService.getCurrentTaxYearEnd(any)).thenReturn(2023)
+        when(mockITSAStatusService.hasMandatedOrVoluntaryStatusCurrentYear(any, any, any))
+          .thenReturn(Future.successful(true))
+        mockBusinessIncomeSourceWithLatency2023()
+        when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.eq(2022))(any, any, any))
+          .thenReturn(Future.successful(Some(true)))
+        when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.eq(2023))(any, any, any))
+          .thenReturn(Future.successful(Some(true)))
 
       case NON_ELIGIBLE_ITS_STATUS =>
         when(mockDateService.getCurrentTaxYearEnd(any)).thenReturn(2023)
-        when(TestManageSelfEmploymentController.itsaStatusService.hasMandatedOrVoluntaryStatusCurrentYear(any, any, any))
+        when(mockITSAStatusService.hasMandatedOrVoluntaryStatusCurrentYear(any, any, any))
           .thenReturn(Future.successful(false))
         mockBusinessIncomeSourceWithLatency2023()
 
@@ -137,14 +138,38 @@ class ManageSelfEmploymentControllerSpec extends TestSupport with MockAuthentica
 
         val result: Future[Result] = TestManageSelfEmploymentController.show(testSelfEmploymentId)(fakeRequestWithNino)
         val document: Document = Jsoup.parse(contentAsString(result))
-//        println("TTTTTTTTT")
-//        println(document)
 
         status(result) shouldBe Status.OK
         document.title shouldBe TestManageSelfEmploymentController.title
         document.select("h1:nth-child(1)").text shouldBe TestManageSelfEmploymentController.heading
-        Option(document.getElementById("change-link-1")) shouldBe None
-        Option(document.getElementById("change-link-2")) shouldBe None
+        Option(document.getElementById("change-link-1")).isDefined shouldBe false
+        Option(document.getElementById("change-link-2")).isDefined shouldBe false
+
+      }
+      "FS is enabled and the .show(id) method is called with a valid id parameter, valid latency information and two tax years not crystallised" in {
+        mockAndBasicSetup(FIRST_AND_SECOND_YEAR_NOT_CRYSTALLIZED)
+
+        val result: Future[Result] = TestManageSelfEmploymentController.show(testSelfEmploymentId)(fakeRequestWithNino)
+        val document: Document = Jsoup.parse(contentAsString(result))
+
+        status(result) shouldBe Status.OK
+        document.title shouldBe TestManageSelfEmploymentController.title
+        document.select("h1:nth-child(1)").text shouldBe TestManageSelfEmploymentController.heading
+        Option(document.getElementById("change-link-1")).isDefined shouldBe true
+        Option(document.getElementById("change-link-2")).isDefined shouldBe true
+
+      }
+      "FS is enabled and the .show(id) method is called with a valid id parameter, valid latency information and two tax years crystallised" in {
+        mockAndBasicSetup(FIRST_AND_SECOND_YEAR_CRYSTALLIZED)
+
+        val result: Future[Result] = TestManageSelfEmploymentController.show(testSelfEmploymentId)(fakeRequestWithNino)
+        val document: Document = Jsoup.parse(contentAsString(result))
+
+        status(result) shouldBe Status.OK
+        document.title shouldBe TestManageSelfEmploymentController.title
+        document.select("h1:nth-child(1)").text shouldBe TestManageSelfEmploymentController.heading
+        Option(document.getElementById("change-link-1")).isDefined shouldBe false
+        Option(document.getElementById("change-link-2")).isDefined shouldBe false
 
       }
     }
