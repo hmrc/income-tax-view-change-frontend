@@ -1417,6 +1417,9 @@ incomeSourceAdded.button.text                               = Eich ffynonellau i
 incomeSourceAdded.previousTaxYears.heading                  = Blynyddoedd treth blaenorol
 incomeSourceAdded.previousTaxYears.text                     = Mae’n rhaid i chi wneud yn siŵr eich bod wedi anfon yr holl Incwm a threuliau, a datganiadau terfynol ar gyfer blynyddoedd treth cyn
 
+business-added.foreign-property-h1                      = eiddo tramor
+business-added.foreign-property-head                    = Mae
+business-added.foreign-property-base                    = wedi cael ei ychwanegu i’ch cyfrif
 
 incomeSources.add.businessReportingMethod.heading                   =   Dewis dull o gyflwyno adroddiad
 incomeSources.add.businessReportingMethod.description1              =   Mae’ch busnes yn gymwys i gael cyfnod gras hyd at Ebrill {0}, lle y gallwch gyflwyno adroddiadau’n flynyddol.

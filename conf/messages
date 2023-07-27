@@ -1442,6 +1442,11 @@ incomeSourceAdded.button.text                                           = Your i
 incomeSourceAdded.previousTaxYears.heading                              = Previous tax years
 incomeSourceAdded.previousTaxYears.text                                 = You must make sure that you have sent all the required income and expenses, and final declarations for tax years earlier than
 
+# Foreign Property Added - Uses above keys as base also, intentionally empty field below.
+business-added.foreign-property-h1                      = Foreign property
+business-added.foreign-property-head                    =
+business-added.foreign-property-base                    = has been added to your account
+
 
 incomeSources.add.businessReportingMethod.heading                   =   Choose a reporting method
 incomeSources.add.businessReportingMethod.description1              =   Your business qualifies for a grace period available up until April {0} where you can report annually.
