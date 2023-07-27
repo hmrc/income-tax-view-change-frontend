@@ -304,6 +304,16 @@ GET          /agents/income-sources/manage/your-details-UK-property            c
 GET          /income-sources/manage/your-details-foreign-property              controllers.incomeSources.manage.ManageForeignPropertyController.show()
 GET          /agents/income-sources/manage/your-details-foreign-property       controllers.incomeSources.manage.ManageForeignPropertyController.showAgent()
 
+GET          /income-sources/manage/confirm-you-want-to-report                 controllers.incomeSources.manage.ConfirmReportingMethodSharedController.show(id: String, taxYear: String, changeTo: String)
+GET          /agents/income-sources/manage/confirm-you-want-to-report          controllers.incomeSources.manage.ConfirmReportingMethodSharedController.showAgent(id: String, taxYear: String, changeTo: String)
+
+GET          /income-sources/manage/confirm-you-want-to-report-uk-property                 controllers.incomeSources.manage.ConfirmReportingMethodSharedController.show(id: String, taxYear: String, changeTo: String)
+GET          /agents/income-sources/manage/confirm-you-want-to-report-uk-property          controllers.incomeSources.manage.ConfirmReportingMethodSharedController.showAgent(id: String, taxYear: String, changeTo: String)
+
+GET          /income-sources/manage/confirm-you-want-to-report-foreign-property                 controllers.incomeSources.manage.ConfirmReportingMethodSharedController.show(id: String, taxYear: String, changeTo: String)
+GET          /agents/income-sources/manage/confirm-you-want-to-report-foreign-property          controllers.incomeSources.manage.ConfirmReportingMethodSharedController.showAgent(id: String, taxYear: String, changeTo: String)
+
+
 # Income Sources - Reporting Method
 GET          /income-sources/add/business-reporting-method                controllers.incomeSources.add.BusinessReportingMethodController.show(id:String)
 GET          /agents/income-sources/add/business-reporting-method         controllers.incomeSources.add.BusinessReportingMethodController.showAgent(id:String)
@@ -341,3 +351,4 @@ GET          /income-sources/add/uk-property-added                           con
 GET          /agents/income-sources/add/uk-property-added                    controllers.incomeSources.add.UKPropertyAddedController.showAgent(id:String)
 GET          /income-sources/add/foreign-property-added                      controllers.incomeSources.add.ForeignPropertyAddedController.show(id:String)
 GET          /agents/income-sources/add/foreign-property-added               controllers.incomeSources.add.ForeignPropertyAddedController.showAgent(id:String)
+
