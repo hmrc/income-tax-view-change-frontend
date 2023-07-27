@@ -26,7 +26,7 @@ import play.api.mvc._
 import services.IncomeSourceDetailsService
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import views.html.errorPages.CustomNotFoundError
-import views.html.incomeSources.manage.{ConfirmForeignPropertyReportingMethod, ConfirmSEReportingMethod, ConfirmUKPropertyReportingMethod, ManageIncomeSources}
+import views.html.incomeSources.manage.{ConfirmSEReportingMethod, ManageIncomeSources}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -40,9 +40,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
                                                        val itvcErrorHandler: ItvcErrorHandler,
                                                        val customNotFoundErrorView: CustomNotFoundError,
                                                        implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
-                                                       val confirmForeignPropertyReportingMethod: ConfirmForeignPropertyReportingMethod,
-                                                       val confirmSEReportingMethod: ConfirmSEReportingMethod,
-                                                       val confirmUKPropertyReportingMethod: ConfirmUKPropertyReportingMethod,
+                                                       val confirmReportingMethod: ConfirmSEReportingMethod,
                                                        val incomeSourceDetailsService: IncomeSourceDetailsService,
                                                        val retrieveBtaNavBar: NavBarPredicate)
                                                       (implicit val ec: ExecutionContext,
@@ -83,16 +81,6 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
                     changeTo: String,
                     itvcErrorHandler: ShowInternalServerError)
                    (implicit user: MtdItUser[_]): Future[Result] = {
-
-    lazy val isSoleTraderBusiness = user.incomeSources.businesses.exists(business =>
-      business.incomeSourceId.contains(id) && !business.isCeased)
-
-    lazy val isForeignProperty = user.incomeSources.properties.exists(property =>
-      property.incomeSourceId.contains(id) && property.isForeignProperty && !property.isCeased)
-
-    lazy val isUKProperty = user.incomeSources.properties.exists(property =>
-      property.incomeSourceId.contains(id) && property.isUkProperty && !property.isCeased)
-
     Future(
       (isEnabled(IncomeSources), getTaxYearStartYearEndYear(taxYear), getReportingMethodKey(changeTo)) match {
         case (false, _, _) =>
@@ -107,27 +95,9 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
           Logger("application")
             .error(s"[ConfirmReportingMethodSharedController][handleRequest]: Could not parse taxYear: $taxYear")
           itvcErrorHandler.showInternalServerError()
-        case (_, Some(taxYear), Some(reportingMethodKey)) if isUKProperty =>
+        case (_, Some(taxYear), Some(reportingMethodKey)) =>
           Ok(
-            confirmUKPropertyReportingMethod(
-              isAgent = isAgent,
-              taxYearEndYear = taxYear.endYear,
-              taxYearStartYear = taxYear.startYear,
-              reportingMethodKey = reportingMethodKey
-            )
-          )
-        case (_, Some(taxYear), Some(reportingMethodKey)) if isForeignProperty =>
-          Ok(
-            confirmForeignPropertyReportingMethod(
-              isAgent = isAgent,
-              taxYearEndYear = taxYear.endYear,
-              taxYearStartYear = taxYear.startYear,
-              reportingMethodKey = reportingMethodKey
-            )
-          )
-        case (_, Some(taxYear), Some(reportingMethodKey)) if isSoleTraderBusiness =>
-          Ok(
-            confirmSEReportingMethod(
+            confirmReportingMethod(
               isAgent = isAgent,
               taxYearEndYear = taxYear.endYear,
               taxYearStartYear = taxYear.startYear,
