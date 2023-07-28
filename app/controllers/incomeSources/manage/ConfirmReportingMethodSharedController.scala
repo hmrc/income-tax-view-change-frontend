@@ -21,12 +21,13 @@ import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
+import models.incomeSourceDetails.TaxYear
 import play.api.Logger
 import play.api.mvc._
 import services.IncomeSourceDetailsService
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import views.html.errorPages.CustomNotFoundError
-import views.html.incomeSources.manage.{ConfirmSEReportingMethod, ManageIncomeSources}
+import views.html.incomeSources.manage.{ConfirmReportingMethod, ConfirmSEReportingMethod, ManageIncomeSources}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -40,7 +41,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
                                                        val itvcErrorHandler: ItvcErrorHandler,
                                                        val customNotFoundErrorView: CustomNotFoundError,
                                                        implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
-                                                       val confirmReportingMethod: ConfirmSEReportingMethod,
+                                                       val confirmReportingMethod: ConfirmReportingMethod,
                                                        val incomeSourceDetailsService: IncomeSourceDetailsService,
                                                        val retrieveBtaNavBar: NavBarPredicate)
                                                       (implicit val ec: ExecutionContext,
@@ -82,7 +83,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
                     itvcErrorHandler: ShowInternalServerError)
                    (implicit user: MtdItUser[_]): Future[Result] = {
     Future(
-      (isEnabled(IncomeSources), getTaxYearStartYearEndYear(taxYear), getReportingMethodKey(changeTo)) match {
+      (isEnabled(IncomeSources), TaxYear.getTaxYearStartYearEndYear(taxYear), getReportingMethodKey(changeTo)) match {
         case (false, _, _) =>
           Ok(
             customNotFoundErrorView()
@@ -112,17 +113,6 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
     )
   }
 
-  private def getTaxYearStartYearEndYear(years: String): Option[TaxYear] = {
-
-    def isValidYear(year: String) = year.length == 4 && year.forall(_.isDigit)
-
-    years.split('-') match {
-      case Array(yearOne, yearTwo) if isValidYear(yearOne) && isValidYear(yearTwo) =>
-        Some(TaxYear(yearOne, yearTwo))
-      case _ => None
-    }
-  }
-
   private def getReportingMethodKey(reportingMethod: String): Option[String] = {
     reportingMethod.toLowerCase match {
       case "annual" => Some("annual")
@@ -132,4 +122,3 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
   }
 }
 
-case class TaxYear(startYear: String, endYear: String)
