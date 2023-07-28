@@ -18,6 +18,7 @@
 @import views.html.layouts.unifiedLayout
 @import views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components._
+@import models.incomeSourceDetails.TaxYear
 @import models.incomeSourceDetails.viewmodels.ObligationsViewModel
 
 @this(
@@ -36,9 +37,8 @@
 
 @(
         sources: ObligationsViewModel,
-        mode: String,
         businessName: String,
-        taxYear: String,
+        taxYear: TaxYear,
         changeTo: String,
         isAgent: Boolean,
         backUrl: String,
@@ -65,12 +65,8 @@
     else getUniqueMessage("quarterly")
 }
 
-@getTaxYears(taxYear:String) = @{
-    taxYear.subSequence(0,4) + " " + getUniqueMessage("to") + " " + taxYear.subSequence(5,9)
-}
-
 @getPageTitle = @{
-    val title = getUniqueMessage("h1")+" "+getBusinessName(businessName)+" "+getUniqueMessage("h2")+" "+getPeriodMessage(changeTo)+" "+getUniqueMessage("tax-year")+" "+getTaxYears(taxYear)
+    val title = getUniqueMessage("h1")+" "+getBusinessName(businessName)+" "+getUniqueMessage("h2")+" "+getPeriodMessage(changeTo)+" "+getUniqueMessage("tax-year")+" "+taxYear.startYear+" "+getMessage("to")+" "+taxYear.endYear
     title.trim
 }
 
@@ -92,7 +88,9 @@
                 @getUniqueMessage("h2")
                 @getPeriodMessage(changeTo)
                 @getUniqueMessage("tax-year")
-                @getTaxYears(taxYear)
+                @taxYear.startYear
+                @getMessage("to")
+                @taxYear.endYear
             </div>
         </div>
 

@@ -21,6 +21,8 @@ import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
+import models.incomeSourceDetails.TaxYear
+import models.incomeSourceDetails.TaxYear.getTaxYearStartYearEndYear
 import play.api.Logger
 import play.api.mvc._
 import services.{DateService, IncomeSourceDetailsService, NextUpdatesService}
@@ -132,16 +134,13 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
       else Future.successful(Redirect(controllers.routes.HomeController.show()))
     }
     else {
-      val backUrl: String = if(isAgent) controllers.incomeSources.manage.routes.ManageConfirmController.showAgent().url else controllers.incomeSources.manage.routes.ManageConfirmController.show().url
+      val backUrl: String = if (isAgent) controllers.incomeSources.manage.routes.ManageConfirmController.showAgent().url else controllers.incomeSources.manage.routes.ManageConfirmController.show().url
       val postUrl: Call = if (isAgent) controllers.incomeSources.manage.routes.ManageObligationsController.agentSubmit() else controllers.incomeSources.manage.routes.ManageObligationsController.submit()
 
       if (mode == "SE" && !user.incomeSources.businesses.exists(x => x.incomeSourceId.contains(incomeSourceId))) {
-        Logger("application").error(
-          s"[BusinessAddedObligationsController][handleRequest] - unable to find incomeSource by id: $incomeSourceId ")
-        if (isAgent) Future(itvcErrorHandlerAgent.showInternalServerError())
-        else Future(itvcErrorHandler.showInternalServerError())
+        showError(isAgent, s"unable to find incomeSource by id: $incomeSourceId")
       }
-      else{
+      else {
         val addedBusinessName: String = if (mode == "SE") {
           val businessDetailsParams = for {
             addedBusiness <- user.incomeSources.businesses.find(x => x.incomeSourceId.contains(incomeSourceId))
@@ -157,51 +156,46 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
           else "Foreign property"
         }
 
-        val (year1,year2) = taxYear.splitAt(4)
-        val currenttaxYearStart = dateService.getCurrentTaxYearEnd() - 1
-        if ((year1.toInt == currenttaxYearStart && year2.drop(1).toInt == currenttaxYearStart+1)
-          || (year1.toInt == currenttaxYearStart+1 && year2.drop(1).toInt == currenttaxYearStart+2)){
-          if (changeTo == "annual" || changeTo == "quarterly") {
-            getIncomeSourceId(mode, incomeSourceId) match {
-              case Left(error) => Logger("application").error(
-                s"[BusinessAddedObligationsController][handleRequest] - ${error.getMessage}")
-                if (isAgent) Future(itvcErrorHandlerAgent.showInternalServerError())
-                else Future(itvcErrorHandler.showInternalServerError())
-              case Right(value) =>
-                nextUpdatesService.getObligationsViewModel(value, showPreviousTaxYears = false) map { viewModel =>
-                  if (isAgent) Ok(obligationsView(viewModel, mode, addedBusinessName, taxYear, changeTo, isAgent, backUrl, postUrl))
-                  else Ok(obligationsView(viewModel, mode, addedBusinessName, taxYear, changeTo, isAgent, backUrl, postUrl))
-                }
+        getTaxYearStartYearEndYear(taxYear) match {
+          case Some(years) =>
+            if (changeTo == "annual" || changeTo == "quarterly") {
+              getIncomeSourceId(mode, incomeSourceId) match {
+                case Left(error) => showError(isAgent, {error.getMessage})
+                case Right(value) =>
+                  nextUpdatesService.getObligationsViewModel(value, showPreviousTaxYears = false) map { viewModel =>
+                    if (isAgent) Ok(obligationsView(viewModel, addedBusinessName, years, changeTo, isAgent, backUrl, postUrl))
+                    else Ok(obligationsView(viewModel, addedBusinessName, years, changeTo, isAgent, backUrl, postUrl))
+                  }
+              }
             }
-          }
-          else{
-            Logger("application").error(
-              s"[BusinessAddedObligationsController][handleRequest] - invalid change to mode provided")
-            if (isAgent) Future(itvcErrorHandlerAgent.showInternalServerError())
-            else Future(itvcErrorHandler.showInternalServerError())
-          }
-        }
-        else{
-          Logger("application").error(
-            s"[BusinessAddedObligationsController][handleRequest] - invalid tax year provided")
-          if (isAgent) Future(itvcErrorHandlerAgent.showInternalServerError())
-          else Future(itvcErrorHandler.showInternalServerError())
+            else { showError(isAgent, "invalid changeTo mode provided")
+            }
+          case None => showError(isAgent, "invalid tax year provided")
         }
       }
     }
   }
 
+  def showError(isAgent: Boolean, message: String)(implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
+    Logger("application").error(
+      s"[BusinessAddedObligationsController][handleRequest] - $message")
+    if (isAgent) Future(itvcErrorHandlerAgent.showInternalServerError())
+    else Future(itvcErrorHandler.showInternalServerError())
+  }
+
   def getIncomeSourceId(mode: String, id: String)(implicit user: MtdItUser[_]): Either[Throwable, String] = {
     mode match {
       case "SE" => Right(id)
-      case "UK" => user.incomeSources.properties.find(x => x.isUkProperty) match {
-        case Some(value) => Right(value.incomeSourceId.getOrElse(""))
-        case None => Left(new Error("Failed to find incomeSource Id"))
-      }
-      case "FP" => user.incomeSources.properties.find(x => x.isForeignProperty) match {
-        case Some(value) => Right(value.incomeSourceId.getOrElse(""))
-        case None => Left(new Error("Failed to find incomeSource Id"))
-      }
+      case "UK" =>
+        user.incomeSources.properties.find(x => x.isUkProperty).flatMap(_.incomeSourceId) match {
+          case Some(incomeSourceId) => Right(incomeSourceId)
+          case None => Left(new Error("Failed to find incomeSource Id"))
+        }
+      case "FP" =>
+        user.incomeSources.properties.find(x => x.isForeignProperty).flatMap(_.incomeSourceId) match {
+          case Some(incomeSourceId) => Right(incomeSourceId)
+          case None => Left(new Error("Failed to find incomeSource Id"))
+        }
     }
   }
 
