@@ -390,6 +390,7 @@ income_breakdown.table.foreign_income_gains                     = Foreign income
 income_breakdown.table.foreign_benefits_gifts                   = Foreign benefits and gifts
 income_breakdown.table.gains_insurance                          = Gains on life insurance polices
 income_breakdown.table.share_schemes                            = Share schemes
+income_breakdown.table.other_income                             = Other Income
 income_breakdown.total                                          = Total income received
 
 ## Forecast Income Summary Page ##

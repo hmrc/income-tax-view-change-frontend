@@ -56,6 +56,7 @@ class IncomeBreakdownViewModelSpec extends UnitSpec {
           totalOccupationalPensionIncome = Some(5000.99),
           totalStateBenefitsIncome = Some(9000.99),
           totalShareSchemesIncome = Some(5000.99),
+          otherIncome = Some(500.00),
           totalIncomeReceived = Some(12500)
         )
 

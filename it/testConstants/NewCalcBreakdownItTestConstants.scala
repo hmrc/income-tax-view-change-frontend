@@ -112,6 +112,7 @@ object NewCalcBreakdownItTestConstants {
       shareSchemesIncome = Some(ShareSchemesIncome(
         totalIncome = 5000.99
       )),
+      otherIncome = Some(OtherIncome(totalOtherIncome = 500.00)),
       stateBenefitsIncome = Some(StateBenefitsIncome(totalStateBenefitsIncome = Some(5000.99),
         totalStateBenefitsIncomeExcStatePensionLumpSum = Some(5000.99))),
       taxCalculation = Some(TaxCalculation(
@@ -371,6 +372,7 @@ object NewCalcBreakdownItTestConstants {
       shareSchemesIncome = Some(ShareSchemesIncome(
         totalIncome = 5000.99
       )),
+      otherIncome = Some(OtherIncome(totalOtherIncome = 500.00)),
       stateBenefitsIncome = Some(StateBenefitsIncome(totalStateBenefitsIncome = Some(5000.99),
         totalStateBenefitsIncomeExcStatePensionLumpSum = Some(5000.99))),
       taxCalculation = Some(TaxCalculation(

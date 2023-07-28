@@ -383,6 +383,7 @@ income_breakdown.table.foreign_income_gains                     = Incwm ac enill
 income_breakdown.table.foreign_benefits_gifts                   = Buddiannau a rhoddion tramor
 income_breakdown.table.gains_insurance                          = Enillion ar bolisïau yswiriant bywyd
 income_breakdown.table.share_schemes                            = Cynlluniau cyfranddaliadau
+income_breakdown.table.other_income                             = Incwm arall
 income_breakdown.total                                          = Cyfanswm yr incwm a gafwyd
 
 ## Forecast Income Summary Page ##

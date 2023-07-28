@@ -50,6 +50,7 @@ class IncomeBreakdownViewSpec extends ViewSpec {
     totalOccupationalPensionIncome = None,
     totalStateBenefitsIncome = None,
     totalShareSchemesIncome = None,
+    otherIncome = None,
     totalIncomeReceived = None
   )
 
@@ -74,6 +75,7 @@ class IncomeBreakdownViewSpec extends ViewSpec {
     totalOccupationalPensionIncome = Some(8008.08),
     totalStateBenefitsIncome = Some(9009.09),
     totalShareSchemesIncome = Some(6010.00),
+    otherIncome = Some(500.00),
     totalIncomeReceived = Some(10010.10)
   )
 
@@ -155,8 +157,8 @@ class IncomeBreakdownViewSpec extends ViewSpec {
 
       "have an income table" which {
 
-        "has all twenty two table rows" in new Setup(view) {
-          layoutContent hasTableWithCorrectSize(1, 22)
+        "has all 23 table rows" in new Setup(view) {
+          layoutContent hasTableWithCorrectSize(1, 23)
         }
         "has a table header and amount section" in new Setup(view) {
           val row: Element = layoutContent.table().select("tr").get(0)
@@ -283,8 +285,14 @@ class IncomeBreakdownViewSpec extends ViewSpec {
           row.select("td").last().text() shouldBe "£6,010.00"
         }
 
-        "has a total line with the correct value" in new Setup(view) {
+        "has an other income line with the correct value" in new Setup(view) {
           val row: Element = layoutContent.table().select("tr").get(21)
+          row.select("td").first().text() shouldBe messages("income_breakdown.table.other_income")
+          row.select("td").last().text() shouldBe "£500.00"
+        }
+
+        "has a total line with the correct value" in new Setup(view) {
+          val row: Element = layoutContent.table().select("tr").get(22)
           row.select("td").first().text() shouldBe messages("income_breakdown.total")
           row.select("td").last().text() shouldBe "£10,010.10"
         }
