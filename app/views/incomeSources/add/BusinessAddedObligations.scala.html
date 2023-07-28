@@ -28,7 +28,7 @@
 mainTemplate: unifiedLayout,
 h1: h1,
 implicitDateFormatter: ImplicitDateFormatterImpl,
-        continueButton: ContinueButton,
+continueButton: ContinueButton,
 formWithCSRF: FormWithCSRF,
 errorSummary: ErrorSummary,
 govukTable: GovukTable,
@@ -37,7 +37,7 @@ govukTable: GovukTable,
 @(businessName: String, sources: ObligationsViewModel, postAction: Call, backUrl: String, isAgent: Boolean)(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @getMessage(key: String, args: String*) = @{
-  messages(s"business-added.$key", args: _*)
+    messages(s"business-added.$key", args: _*)
 }
 
 @getPageTitle = @{

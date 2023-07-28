@@ -92,6 +92,20 @@ trait CustomMatchers extends UnitSpec with GivenWhenThen {
       }
     }
 
+  def pageTitleCustom(title: String): HavePropertyMatcher[WSResponse, String] =
+    new HavePropertyMatcher[WSResponse, String] {
+      def apply(response: WSResponse) = {
+        val body = Jsoup.parse(response.body)
+
+        Then(s"the page title should be '$title'")
+        HavePropertyMatchResult(
+          body.title == title,
+          "pageTitle",
+          title,
+          body.title
+        )
+      }
+    }
   def pageTitleAgent(messageKey: String,
                      isInvalidInput: Boolean = false,
                      isErrorPage: Boolean = false,

@@ -26,9 +26,9 @@ import mocks.services.{MockCalculationService, MockIncomeSourceDetailsService}
 import models.liabilitycalculation.LiabilityCalculationError
 import play.api.http.Status
 import play.api.mvc.MessagesControllerComponents
-import play.api.test.Helpers.{contentType, _}
+import play.api.test.Helpers._
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testTaxYear}
-import testConstants.IncomeSourceDetailsTestConstants.businessIncome2018and2019
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessIncome2018and2019
 import testUtils.TestSupport
 import uk.gov.hmrc.http.InternalServerException
 import views.html.TaxCalcBreakdown

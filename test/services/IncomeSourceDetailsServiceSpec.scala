@@ -24,7 +24,7 @@ import org.scalacheck.Gen
 import play.api.cache.AsyncCacheApi
 import testConstants.BaseTestConstants._
 import testConstants.BusinessDetailsTestConstants._
-import testConstants.IncomeSourceDetailsTestConstants._
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants._
 import testConstants.PropertyDetailsTestConstants.viewUkPropertyDetailsViewModel
 import testUtils.TestSupport
 

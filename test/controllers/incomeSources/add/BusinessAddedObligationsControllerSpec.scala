@@ -32,10 +32,10 @@ import org.mockito.Mockito.{mock, when}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
-import services.{DateService}
+import services.DateService
 import testConstants.BaseTestConstants
 import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
-import testConstants.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 import testUtils.TestSupport
 import views.html.incomeSources.add.BusinessAddedObligations
 
