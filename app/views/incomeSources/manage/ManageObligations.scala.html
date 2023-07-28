@@ -55,7 +55,7 @@
     messages(s"incomeSources.add.manageObligations.$key", args: _*)
 }
 
-@getBusinessName(name: String, mode: String) = @{
+@getBusinessName(name: String) = @{
     if(name == "Not Found") getUniqueMessage("sole-trader")
     else name
 }
@@ -70,7 +70,7 @@
 }
 
 @getPageTitle = @{
-    val title = getUniqueMessage("h1")+" "+getBusinessName(businessName, mode)+" "+getUniqueMessage("h2")+" "+getPeriodMessage(changeTo)+" "+getUniqueMessage("tax-year")+" "+getTaxYears(taxYear)
+    val title = getUniqueMessage("h1")+" "+getBusinessName(businessName)+" "+getUniqueMessage("h2")+" "+getPeriodMessage(changeTo)+" "+getUniqueMessage("tax-year")+" "+getTaxYears(taxYear)
     title.trim
 }
 
@@ -86,7 +86,7 @@
                 @getUniqueMessage("h1")
             </div>
             <h1 class="govuk-panel__title">
-                @getBusinessName(businessName, mode)
+                @getBusinessName(businessName)
             </h1>
             <div class="govuk-panel__body">
                 @getUniqueMessage("h2")
@@ -123,12 +123,13 @@
                         </tr>
                     }
                     </tbody>
-
-                    @if(sources.quarterlyObligationsDatesYearTwo.nonEmpty) {
+                </table>
+                @if(sources.quarterlyObligationsDatesYearTwo.nonEmpty) {
+                    <table class="govuk-table">
                         <thead class="govuk-table__head">
                             <tr class="govuk-table__row">
                                 <th scope="col" class="govuk-table__header">@(getMessage("table.heading-1") + " " + sources.quarterlyObligationsDatesYearTwo.head.inboundCorrespondenceFrom.getYear + " " + getMessage("to") + " " + (sources.quarterlyObligationsDatesYearTwo.head.inboundCorrespondenceFrom.getYear + 1))</th>
-                                <th scope="col" class="govuk-table__header"> </th>
+                                <th scope="col" class="govuk-table__header">@getMessage("table.heading-2")</th>
                             </tr>
                         </thead>
 
@@ -140,8 +141,8 @@
                             </tr>
                         }
                         </tbody>
-                    }
-                </table>
+                    </table>
+                }
             </div>
         }
 

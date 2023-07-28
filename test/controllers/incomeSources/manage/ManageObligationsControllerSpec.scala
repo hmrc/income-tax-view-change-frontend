@@ -368,5 +368,7 @@ class ManageObligationsControllerSpec extends TestSupport
     //mode = SE and no income source with provided id
     //mode = SE and business with supplied id has no name
     //mode = UK or FP and no property of that type with supplied id
+    //mode = Any and invalid tax year
+    //mode = any and invalid changeTo
   }
 }
