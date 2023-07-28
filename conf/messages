@@ -1427,7 +1427,7 @@ business-added.previous-tax-years-t1                    = You must make sure tha
 incomeSourceAdded.additionalWelshContent                                =
 #The above key is intentionally blank
 incomeSourceAdded.heading                                               = has been added to your account
-incomeSourceAdded.ukProperty                                            = UK Property
+incomeSourceAdded.ukProperty                                            = UK property
 incomeSourceAdded.subheading                                            = What you must do
 incomeSourceAdded.to                                                    = to
 incomeSourceAdded.quarterly.heading                                     = Send quarterly updates
