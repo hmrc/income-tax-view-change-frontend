@@ -381,7 +381,6 @@ class ManageObligationsControllerSpec extends TestSupport
           val result: Future[Result] = TestManageObligationsController.handleRequest(SelfEmployment, isAgent = false, taxYear, changeToA, invalidId)(individualUser, headerCarrier)
           status(result) shouldBe INTERNAL_SERVER_ERROR
         }
-
         "invalid taxYear in url" in {
           disableAllSwitches()
           enable(IncomeSources)
@@ -392,7 +391,6 @@ class ManageObligationsControllerSpec extends TestSupport
           val result: Future[Result] = TestManageObligationsController.handleRequest(UkProperty, isAgent = false, invalidTaxYear, changeToQ, "")(individualUser, headerCarrier)
           status(result) shouldBe INTERNAL_SERVER_ERROR
         }
-
         "invalid changeTo in url" in {
           disableAllSwitches()
           enable(IncomeSources)
