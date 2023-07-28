@@ -29,7 +29,7 @@ import play.api.i18n.{Lang, Messages}
 import play.api.mvc.MessagesControllerComponents
 import services.BtaNavBarService
 import testConstants.BaseTestConstants.{testMtditid, testNino, testRetrievedUserName}
-import testConstants.IncomeSourceDetailsTestConstants.singleBusinessIncome
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants.singleBusinessIncome
 import testUtils.{TestSupport, UnitSpec}
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 import uk.gov.hmrc.http.HeaderCarrier

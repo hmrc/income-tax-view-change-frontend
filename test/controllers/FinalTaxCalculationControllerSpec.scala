@@ -39,7 +39,7 @@ import play.api.test.Helpers.{defaultAwaitTimeout, status}
 import play.twirl.api.HtmlFormat
 import services.{CalculationService, IncomeSourceDetailsService}
 import testConstants.BaseTestConstants.{testCredId, testMtditid, testNino, testRetrievedUserName, testUserTypeIndividual}
-import testConstants.IncomeSourceDetailsTestConstants.businessAndPropertyAligned
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessAndPropertyAligned
 import testUtils.TestSupport
 import views.html.FinalTaxCalculationView
 

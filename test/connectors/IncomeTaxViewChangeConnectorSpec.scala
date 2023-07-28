@@ -40,7 +40,7 @@ import testConstants.BaseTestConstants._
 import testConstants.ChargeHistoryTestConstants._
 import testConstants.FinancialDetailsTestConstants._
 import testConstants.ITSAStatusTestConstants.{badJsonErrorITSAStatusError, errorITSAStatusError}
-import testConstants.IncomeSourceDetailsTestConstants.{singleBusinessAndPropertyMigrat2019, singleBusinessIncome}
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{singleBusinessAndPropertyMigrat2019, singleBusinessIncome}
 import testConstants.NextUpdatesTestConstants._
 import testConstants.NinoLookupTestConstants._
 import testConstants.OutstandingChargesTestConstants._

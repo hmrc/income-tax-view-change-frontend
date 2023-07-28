@@ -1423,6 +1423,25 @@ business-added.income-sources-button                    = Your income sources
 business-added.previous-tax-years-heading               = Previous tax years
 business-added.previous-tax-years-t1                    = You must make sure that you have sent all the required income and expenses, and final declarations for tax years earlier than
 
+## Income Source Added Pages ##
+incomeSourceAdded.additionalWelshContent                                =
+#The above key is intentionally blank
+incomeSourceAdded.heading                                               = has been added to your account
+incomeSourceAdded.ukProperty                                            = UK Property
+incomeSourceAdded.subheading                                            = What you must do
+incomeSourceAdded.to                                                    = to
+incomeSourceAdded.quarterly.heading                                     = Send quarterly updates
+incomeSourceAdded.quarterly.text                                        = You must send quarterly updates of your income and expenses using compatible software by the following deadlines:
+incomeSourceAdded.eops.heading                                          = Send end of period statements
+incomeSourceAdded.eops.text                                             = You must submit end of period statements using your software by the deadline.
+incomeSourceAdded.finalDeclaration.heading                               = Submit final declarations and pay your tax
+incomeSourceAdded.finalDeclaration.text                                  = You must submit your final declarations and pay the tax you owe by the deadline.
+incomeSourceAdded.table.taxYear.heading                                 = Tax year
+incomeSourceAdded.table.deadline.heading                                = Deadline
+incomeSourceAdded.button.text                                           = Your income sources
+incomeSourceAdded.previousTaxYears.heading                              = Previous tax years
+incomeSourceAdded.previousTaxYears.text                                 = You must make sure that you have sent all the required income and expenses, and final declarations for tax years earlier than
+
 # Foreign Property Added - Uses above keys as base also, intentionally empty field below.
 business-added.foreign-property-h1                      = Foreign property
 business-added.foreign-property-head                    =
