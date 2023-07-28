@@ -98,7 +98,7 @@ object BusinessDetailsTestConstants {
     tradingStartDate = Some(testStartDate),
     cessation = None,
     latencyDetails = None,
-    address = Some(addressModel1)
+    address = Some(testBizAddress)
   )
 
   val businessWithLatency1 = BusinessDetailsModel(
@@ -109,7 +109,7 @@ object BusinessDetailsTestConstants {
     tradingStartDate = Some(testStartDate),
     cessation = None,
     latencyDetails = Some(testLatencyDetails1),
-    address = Some(addressModel1)
+    address = Some(testBizAddress)
   )
 
   val businessWithLatency2 = BusinessDetailsModel(
@@ -120,7 +120,19 @@ object BusinessDetailsTestConstants {
     tradingStartDate = Some(testStartDate),
     cessation = None,
     latencyDetails = Some(testLatencyDetails2),
-    address = None
+    address = Some(testBizAddress)
+  )
+
+  val businessWithLatencyAndUnknowns = BusinessDetailsModel(
+    incomeSourceId = Some(testSelfEmploymentId),
+    accountingPeriod = Some(testBusinessAccountingPeriod),
+    tradingName = None,
+    firstAccountingPeriodEndDate = Some(LocalDate.of(year2018, Month.APRIL, 5)),
+    tradingStartDate = None,
+    cessation = None,
+    latencyDetails = Some(testLatencyDetails2),
+    address = None,
+    cashOrAccruals = None
   )
 
 
@@ -303,15 +315,6 @@ object BusinessDetailsTestConstants {
     tradingStartDate = Some(testStartDate),
     cessation = None,
     address = None
-  )
-
-  val addressModel1 = AddressModel(
-    addressLine1 = "1 London Way",
-    addressLine2 = Some("City of London"),
-    addressLine3 = Some("London"),
-    addressLine4 = Some("UK"),
-    postCode = Some("SE1 1PJ"),
-    countryCode = "UK"
   )
 
   val businessErrorModel = ErrorModel(testErrorStatus, testErrorMessage)

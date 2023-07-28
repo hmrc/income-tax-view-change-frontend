@@ -123,7 +123,7 @@
                 }
             }</dd>
         </div>
-        @if(viewModel.itsaHasMandatedOrVoluntaryStatusCurrentYear
+        @if(viewModel.itsaHasMandatedOrVoluntaryStatusCurrentYear.getOrElse(throw MissingFieldException("Missing itsaHasMandatedOrVoluntaryStatusCurrentYear field"))
                 && viewModel.latencyDetails.isDefined) {
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">@getMessage("reporting-method", viewModel.latencyDetails.get.taxYear1.toString, (viewModel.latencyDetails.get.taxYear2).toString)</dt>

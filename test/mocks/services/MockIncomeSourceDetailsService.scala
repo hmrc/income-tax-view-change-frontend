@@ -87,6 +87,8 @@ trait MockIncomeSourceDetailsService extends BeforeAndAfterEach {
 
   def mockBusinessIncomeSourceWithLatency2023(): Unit = setupMockGetIncomeSourceDetails()(singleBusinessIncome2023)
 
+  def mockBusinessIncomeSourceWithLatency2023AndUnknownValues(): Unit = setupMockGetIncomeSourceDetails()(singleBusinessIncome2023WithUnknowns)
+
   def mockBusinessIncomeSourceWithLatency2024(): Unit = setupMockGetIncomeSourceDetails()(singleBusinessIncome2024)
 
   def mockUKPropertyIncomeSourceWithLatency2023(): Unit = setupMockGetIncomeSourceDetails()(singleUKPropertyIncome2023)

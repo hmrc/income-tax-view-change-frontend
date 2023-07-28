@@ -33,6 +33,7 @@ import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, status}
 import services.{CalculationListService, DateService, ITSAStatusService}
 import testConstants.BaseTestConstants
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testSelfEmploymentId, testTaxCalculationId}
+import testConstants.BusinessDetailsTestConstants.testBizAddress
 import testUtils.TestSupport
 import views.html.incomeSources.manage.BusinessManageDetails
 
@@ -73,16 +74,20 @@ class ManageSelfEmploymentControllerSpec extends TestSupport with MockAuthentica
     val title: String = s"${messages("htmlTitle", heading)}"
     val link: String = s"${messages("incomeSources.manage.business-manage-details.change")}"
     val incomeSourceId: String = "XAIS00000000008"
+    val businessWithLatencyAddress: String = "64 Zoo Lane, Happy Place, Magical Land, England, ZL1 064, UK"
+    val unknown: String = messages("incomeSources.generic.unknown")
   }
 
   object Scenario extends Enumeration {
     type Scenario = Value
-    val NO_LATENCY_INFORMATION, NON_ELIGIBLE_ITS_STATUS, FIRST_AND_SECOND_YEAR_CRYSTALLIZED,
+    val NO_LATENCY_INFORMATION, NON_ELIGIBLE_ITSA_STATUS, FIRST_AND_SECOND_YEAR_CRYSTALLIZED,
     FIRST_AND_SECOND_YEAR_NOT_CRYSTALLIZED, FIRST_YEAR_CRYSTALLISED_SECOND_NOT, SECOND_YEAR_CRYSTALLISED_FIRST_NOT,
     CURRENT_TAX_YEAR_IN_LATENCY_YEARS, LATENCY_PERIOD_EXPIRED, CURRENT_TAX_2024_YEAR_IN_LATENCY_YEARS = Value
   }
 
   import Scenario._
+
+  val testBusinessAddress = testBizAddress
 
   def mockAndBasicSetup(scenario: Scenario, isAgent: Boolean = false): Unit = {
     disableAllSwitches()
@@ -98,6 +103,8 @@ class ManageSelfEmploymentControllerSpec extends TestSupport with MockAuthentica
         when(mockITSAStatusService.hasMandatedOrVoluntaryStatusCurrentYear(any, any, any))
           .thenReturn(Future.successful(true))
         mockSingleBusinessIncomeSource()
+        when(mockIncomeSourceDetailsService.getLongAddressFromBusinessAddressDetails(ArgumentMatchers.eq(Option(testBizAddress))))
+          .thenReturn(Some("64 Zoo Lane, Happy Place, Magical Land, England, ZL1 064, UK"))
 
       case FIRST_AND_SECOND_YEAR_NOT_CRYSTALLIZED =>
         when(mockDateService.getCurrentTaxYearEnd(any)).thenReturn(2023)
@@ -108,6 +115,8 @@ class ManageSelfEmploymentControllerSpec extends TestSupport with MockAuthentica
           .thenReturn(Future.successful(Some(false)))
         when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.eq(2023))(any, any, any))
           .thenReturn(Future.successful(Some(false)))
+        when(mockIncomeSourceDetailsService.getLongAddressFromBusinessAddressDetails(ArgumentMatchers.eq(Option(testBizAddress))))
+          .thenReturn(Some("64 Zoo Lane, Happy Place, Magical Land, England, ZL1 064, UK"))
 
       case FIRST_AND_SECOND_YEAR_CRYSTALLIZED =>
         when(mockDateService.getCurrentTaxYearEnd(any)).thenReturn(2023)
@@ -118,12 +127,20 @@ class ManageSelfEmploymentControllerSpec extends TestSupport with MockAuthentica
           .thenReturn(Future.successful(Some(true)))
         when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.eq(2023))(any, any, any))
           .thenReturn(Future.successful(Some(true)))
+        when(mockIncomeSourceDetailsService.getLongAddressFromBusinessAddressDetails(any))
+          .thenReturn(Some("64 Zoo Lane, Happy Place, Magical Land, England, ZL1 064, UK"))
 
-      case NON_ELIGIBLE_ITS_STATUS =>
+      case NON_ELIGIBLE_ITSA_STATUS =>
         when(mockDateService.getCurrentTaxYearEnd(any)).thenReturn(2023)
         when(mockITSAStatusService.hasMandatedOrVoluntaryStatusCurrentYear(any, any, any))
           .thenReturn(Future.successful(false))
-        mockBusinessIncomeSourceWithLatency2023()
+        mockBusinessIncomeSourceWithLatency2023AndUnknownValues()
+        when(mockIncomeSourceDetailsService.getLongAddressFromBusinessAddressDetails(any))
+          .thenReturn(None)
+        when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.eq(2023))(any, any, any))
+          .thenReturn(Future.successful(Some(false)))
+        when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.eq(2024))(any, any, any))
+          .thenReturn(Future.successful(Some(false)))
 
     }
 
@@ -144,6 +161,7 @@ class ManageSelfEmploymentControllerSpec extends TestSupport with MockAuthentica
         document.select("h1:nth-child(1)").text shouldBe TestManageSelfEmploymentController.heading
         Option(document.getElementById("change-link-1")).isDefined shouldBe false
         Option(document.getElementById("change-link-2")).isDefined shouldBe false
+        document.getElementById("business-address").text shouldBe TestManageSelfEmploymentController.businessWithLatencyAddress
 
       }
       "FS is enabled and the .show(id) method is called with a valid id parameter, valid latency information and two tax years not crystallised" in {
@@ -157,6 +175,7 @@ class ManageSelfEmploymentControllerSpec extends TestSupport with MockAuthentica
         document.select("h1:nth-child(1)").text shouldBe TestManageSelfEmploymentController.heading
         Option(document.getElementById("change-link-1")).isDefined shouldBe true
         Option(document.getElementById("change-link-2")).isDefined shouldBe true
+        document.getElementById("business-address").text shouldBe TestManageSelfEmploymentController.businessWithLatencyAddress
 
       }
       "FS is enabled and the .show(id) method is called with a valid id parameter, valid latency information and two tax years crystallised" in {
@@ -170,6 +189,23 @@ class ManageSelfEmploymentControllerSpec extends TestSupport with MockAuthentica
         document.select("h1:nth-child(1)").text shouldBe TestManageSelfEmploymentController.heading
         Option(document.getElementById("change-link-1")).isDefined shouldBe false
         Option(document.getElementById("change-link-2")).isDefined shouldBe false
+        document.getElementById("business-address").text shouldBe TestManageSelfEmploymentController.businessWithLatencyAddress
+
+      }
+      "FS is enabled and the .show(id) method is called with a valid id parameter, but non eligable itsa status" in {
+        mockAndBasicSetup(NON_ELIGIBLE_ITSA_STATUS)
+
+        val result: Future[Result] = TestManageSelfEmploymentController.show(testSelfEmploymentId)(fakeRequestWithNino)
+        val document: Document = Jsoup.parse(contentAsString(result))
+
+        println("DDDDDDDDD" + document)
+
+        status(result) shouldBe Status.OK
+        document.title shouldBe TestManageSelfEmploymentController.title
+        document.select("h1:nth-child(1)").text shouldBe TestManageSelfEmploymentController.heading
+        Option(document.getElementById("change-link-1")).isDefined shouldBe false
+        Option(document.getElementById("change-link-2")).isDefined shouldBe false
+        document.getElementById("business-address").text shouldBe TestManageSelfEmploymentController.unknown
 
       }
     }

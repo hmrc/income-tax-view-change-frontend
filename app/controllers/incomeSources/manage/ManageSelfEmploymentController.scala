@@ -82,6 +82,7 @@ class ManageSelfEmploymentController @Inject()(val view: BusinessManageDetails,
     EitherT {
       incomeSource match {
         case Some(x) if x.latencyDetails.isDefined =>
+          println("LLLLLLLLLLLLLL" + incomeSource)
           for {
             i <- calculationListService.isTaxYearCrystallised(x.latencyDetails.get.taxYear1.toInt)
             j <- calculationListService.isTaxYearCrystallised(x.latencyDetails.get.taxYear2.toInt)
@@ -102,6 +103,8 @@ class ManageSelfEmploymentController @Inject()(val view: BusinessManageDetails,
     val latencyDetails: Option[LatencyDetails] = desiredIncomeSourceMaybe.flatMap(_.latencyDetails)
 
     val desiredIncomeSource: BusinessDetailsModel = desiredIncomeSourceMaybe.getOrElse(throw new InternalError("Income source id provided does not match any of the user's income sources"))
+
+    println("VVVVVVVVVVV" + desiredIncomeSource)
 
     getCrystallisationInformation(desiredIncomeSourceMaybe).value.flatMap {
       case Left(x) =>
