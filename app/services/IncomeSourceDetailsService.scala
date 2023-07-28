@@ -20,6 +20,7 @@ import auth.{MtdItUser, MtdItUserWithNino}
 import config.featureswitch.TimeMachineAddYear
 import connectors.IncomeTaxViewChangeConnector
 import exceptions.MissingFieldException
+import models.core.AddressModel
 import models.incomeSourceDetails.viewmodels._
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, IncomeSourceDetailsResponse, LatencyDetails}
 import play.api.Logger
@@ -201,5 +202,27 @@ class IncomeSourceDetailsService @Inject()(val incomeTaxViewChangeConnector: Inc
       )
     }.toEither
   }
+
+  def getLongAddressFromBusinessAddressDetails(address: Option[AddressModel]): Option[String] = {
+
+    address match {
+      case Some(address) => {
+        val nonNoneFields = List(
+          Some(address.addressLine1),
+          address.addressLine2,
+          address.addressLine3,
+          address.addressLine4,
+          address.postCode,
+          Some(address.countryCode)
+        ).flatten
+
+        Some(nonNoneFields.mkString(", "))
+      }
+      case None => None
+    }
+
+  }
+
+
 }
 

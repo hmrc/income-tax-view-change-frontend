@@ -96,23 +96,25 @@ class ManageSelfEmploymentController @Inject()(val view: BusinessManageDetails,
   def getViewIncomeSourceChosenViewModel(sources: IncomeSourceDetailsModel, id: String)
                                         (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, ViewBusinessDetailsViewModel]] = {
 
-    val desiredIncomeSource: Option[BusinessDetailsModel] = sources.businesses
+    val desiredIncomeSourceMaybe: Option[BusinessDetailsModel] = sources.businesses
       .filterNot(_.isCeased)
       .find(e => e.incomeSourceId.isDefined && e.incomeSourceId.get == id)
-    val latencyDetails: Option[LatencyDetails] = desiredIncomeSource.flatMap(_.latencyDetails)
+    val latencyDetails: Option[LatencyDetails] = desiredIncomeSourceMaybe.flatMap(_.latencyDetails)
 
-    getCrystallisationInformation(desiredIncomeSource).value.flatMap {
+    val desiredIncomeSource: BusinessDetailsModel = desiredIncomeSourceMaybe.getOrElse(throw new InternalError("Income source id provided does not match any of the user's income sources"))
+
+    getCrystallisationInformation(desiredIncomeSourceMaybe).value.flatMap {
       case Left(x) =>
         println("CASE LEFT: NO DATA READY")
         for {
           i <- itsaStatusService.hasMandatedOrVoluntaryStatusCurrentYear
         } yield {
           Right(ViewBusinessDetailsViewModel(
-            incomeSourceId = desiredIncomeSource.get.incomeSourceId.get,
-            tradingName = desiredIncomeSource.get.tradingName,
-            tradingStartDate = desiredIncomeSource.get.tradingStartDate,
-            address = desiredIncomeSource.get.address,
-            businessAccountingMethod = desiredIncomeSource.get.cashOrAccruals,
+            incomeSourceId = desiredIncomeSource.incomeSourceId.get,
+            tradingName = desiredIncomeSource.tradingName,
+            tradingStartDate = desiredIncomeSource.tradingStartDate,
+            address = incomeSourceDetailsService.getLongAddressFromBusinessAddressDetails(desiredIncomeSource.address),
+            businessAccountingMethod = desiredIncomeSource.cashOrAccruals,
             itsaHasMandatedOrVoluntaryStatusCurrentYear = Option(i),
             taxYearOneCrystallised = None,
             taxYearTwoCrystallised = None,
@@ -123,15 +125,15 @@ class ManageSelfEmploymentController @Inject()(val view: BusinessManageDetails,
         println("CASE RIGHT: " + crystallisationData)
         for {
           i <- itsaStatusService.hasMandatedOrVoluntaryStatusCurrentYear
-          if desiredIncomeSource.isDefined
-          if desiredIncomeSource.get.incomeSourceId.isDefined
+          if desiredIncomeSourceMaybe.isDefined
+          if desiredIncomeSourceMaybe.get.incomeSourceId.isDefined
         } yield {
           Right(ViewBusinessDetailsViewModel(
-            incomeSourceId = desiredIncomeSource.get.incomeSourceId.get,
-            tradingName = desiredIncomeSource.get.tradingName,
-            tradingStartDate = desiredIncomeSource.get.tradingStartDate,
-            address = desiredIncomeSource.get.address,
-            businessAccountingMethod = desiredIncomeSource.get.cashOrAccruals,
+            incomeSourceId = desiredIncomeSource.incomeSourceId.get,
+            tradingName = desiredIncomeSource.tradingName,
+            tradingStartDate = desiredIncomeSource.tradingStartDate,
+            address = incomeSourceDetailsService.getLongAddressFromBusinessAddressDetails(desiredIncomeSource.address),
+            businessAccountingMethod = desiredIncomeSource.cashOrAccruals,
             itsaHasMandatedOrVoluntaryStatusCurrentYear = Option(i),
             taxYearOneCrystallised = Option(crystallisationData.head),
             taxYearTwoCrystallised = Option(crystallisationData(1)),

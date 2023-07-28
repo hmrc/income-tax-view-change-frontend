@@ -29,7 +29,7 @@ case class ViewIncomeSourcesViewModel(viewSoleTraderBusinesses: List[ViewBusines
 case class ViewBusinessDetailsViewModel(incomeSourceId: String,
                                         tradingName: Option[String],
                                         tradingStartDate: Option[LocalDate],
-                                        address: Option[AddressModel] = None, // todo make a view model?
+                                        address: Option[String] = None,
                                         businessAccountingMethod: Option[String] = None,
                                         itsaHasMandatedOrVoluntaryStatusCurrentYear: Option[Boolean],
                                         taxYearOneCrystallised: Option[Boolean],
