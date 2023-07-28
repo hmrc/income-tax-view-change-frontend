@@ -33,6 +33,20 @@ import views.html.incomeSources.manage.{ManageIncomeSources, ManageObligations}
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
+sealed trait Mode {
+  val key: String
+}
+
+case object SelfEmployment extends Mode {
+  override val key = "SE"
+}
+case object UkProperty extends Mode {
+  override val key = "UK"
+}
+case object ForeignProperty extends Mode {
+  override val key = "FP"
+}
+
 class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTimeoutPredicate,
                                             val authenticate: AuthenticationPredicate,
                                             val authorisedFunctions: AuthorisedFunctions,
@@ -43,31 +57,31 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
                                             val incomeSourceDetailsService: IncomeSourceDetailsService,
                                             val retrieveBtaNavBar: NavBarPredicate,
                                             val obligationsView: ManageObligations,
-                                            nextUpdatesService: NextUpdatesService,
-                                            dateService: DateService)
+                                            nextUpdatesService: NextUpdatesService)
                                            (implicit val ec: ExecutionContext,
                                             implicit override val mcc: MessagesControllerComponents,
                                             val appConfig: FrontendAppConfig) extends ClientConfirmedController
   with FeatureSwitching {
 
-  def showSelfEmployment(taxYear: String, changeTo: String, id: String): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+
+  def showSelfEmployment(changeTo: String, taxYear: String, id: String): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
       handleRequest(
-       mode = "SE",
+        mode = SelfEmployment,
         isAgent = false,
         taxYear,
         changeTo,
         id
       )
   }
-  def showAgentSelfEmployment(taxYear: String, changeTo: String, id: String): Action[AnyContent] = Authenticated.async {
+  def showAgentSelfEmployment(changeTo: String, taxYear: String, id: String): Action[AnyContent] = Authenticated.async {
     implicit request =>
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
           implicit mtdItUser =>
             handleRequest(
-              mode = "SE",
+              mode = SelfEmployment,
               isAgent = true,
               taxYear,
               changeTo,
@@ -76,24 +90,24 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
         }
   }
 
-  def showUKProperty(taxYear: String, changeTo: String): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+  def showUKProperty(changeTo: String, taxYear: String): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
       handleRequest(
-        mode = "UK",
+        mode = UkProperty,
         isAgent = false,
         taxYear,
         changeTo,
         ""
       )
   }
-  def showAgentUKProperty(taxYear: String, changeTo: String): Action[AnyContent] = Authenticated.async {
+  def showAgentUKProperty(changeTo: String, taxYear: String): Action[AnyContent] = Authenticated.async {
     implicit request =>
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
           implicit mtdItUser =>
             handleRequest(
-              mode = "UK",
+              mode = UkProperty,
               isAgent = true,
               taxYear,
               changeTo,
@@ -102,24 +116,24 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
         }
   }
 
-  def showForeignProperty(taxYear: String, changeTo: String): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+  def showForeignProperty(changeTo: String, taxYear: String): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
       handleRequest(
-        mode = "FP",
+        mode = ForeignProperty,
         isAgent = false,
         taxYear,
         changeTo,
         ""
       )
   }
-  def showAgentForeignProperty(taxYear: String, changeTo: String): Action[AnyContent] = Authenticated.async {
+  def showAgentForeignProperty(changeTo: String, taxYear: String): Action[AnyContent] = Authenticated.async {
     implicit request =>
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
           implicit mtdItUser =>
             handleRequest(
-              mode = "FP",
+              mode = ForeignProperty,
               isAgent = true,
               taxYear,
               changeTo,
@@ -128,7 +142,7 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
         }
   }
 
-  def handleRequest(mode: String, isAgent: Boolean, taxYear: String, changeTo: String, incomeSourceId: String)(implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
+  def handleRequest(mode: Mode, isAgent: Boolean, taxYear: String, changeTo: String, incomeSourceId: String)(implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
     if (isDisabled(IncomeSources)) {
       if (isAgent) Future.successful(Redirect(controllers.routes.HomeController.showAgent))
       else Future.successful(Redirect(controllers.routes.HomeController.show()))
@@ -137,23 +151,23 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
       val backUrl: String = if (isAgent) controllers.incomeSources.manage.routes.ManageConfirmController.showAgent().url else controllers.incomeSources.manage.routes.ManageConfirmController.show().url
       val postUrl: Call = if (isAgent) controllers.incomeSources.manage.routes.ManageObligationsController.agentSubmit() else controllers.incomeSources.manage.routes.ManageObligationsController.submit()
 
-      if (mode == "SE" && !user.incomeSources.businesses.exists(x => x.incomeSourceId.contains(incomeSourceId))) {
+
+      if (mode == SelfEmployment && !user.incomeSources.businesses.exists(x => x.incomeSourceId.contains(incomeSourceId))) {
         showError(isAgent, s"unable to find incomeSource by id: $incomeSourceId")
       }
       else {
-        val addedBusinessName: String = if (mode == "SE") {
-          val businessDetailsParams = for {
-            addedBusiness <- user.incomeSources.businesses.find(x => x.incomeSourceId.contains(incomeSourceId))
-            businessName <- addedBusiness.tradingName
-          } yield (addedBusiness, businessName)
-          businessDetailsParams match {
-            case Some((_, name)) => name
-            case None => "Not Found"
-          }
-        }
-        else {
-          if (mode == "UK") "UK property"
-          else "Foreign property"
+        val addedBusinessName: String = mode match {
+          case SelfEmployment =>
+            val businessDetailsParams = for {
+              addedBusiness <- user.incomeSources.businesses.find(x => x.incomeSourceId.contains(incomeSourceId))
+              businessName <- addedBusiness.tradingName
+            } yield (addedBusiness, businessName)
+            businessDetailsParams match {
+              case Some((_, name)) => name
+              case None => "Not Found"
+            }
+          case UkProperty => "UK property"
+          case ForeignProperty => "Foreign property"
         }
 
         getTaxYearStartYearEndYear(taxYear) match {
@@ -183,15 +197,15 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
     else Future(itvcErrorHandler.showInternalServerError())
   }
 
-  def getIncomeSourceId(mode: String, id: String)(implicit user: MtdItUser[_]): Either[Throwable, String] = {
+  def getIncomeSourceId(mode: Mode, id: String)(implicit user: MtdItUser[_]): Either[Throwable, String] = {
     mode match {
-      case "SE" => Right(id)
-      case "UK" =>
+      case SelfEmployment => Right(id)
+      case UkProperty =>
         user.incomeSources.properties.find(x => x.isUkProperty).flatMap(_.incomeSourceId) match {
           case Some(incomeSourceId) => Right(incomeSourceId)
           case None => Left(new Error("Failed to find incomeSource Id"))
         }
-      case "FP" =>
+      case ForeignProperty =>
         user.incomeSources.properties.find(x => x.isForeignProperty).flatMap(_.incomeSourceId) match {
           case Some(incomeSourceId) => Right(incomeSourceId)
           case None => Left(new Error("Failed to find incomeSource Id"))
