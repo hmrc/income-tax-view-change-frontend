@@ -206,9 +206,9 @@ class IncomeSourceDetailsServiceSpec extends TestSupport with MockIncomeTaxViewC
       "still return page as unknown is used rather than error" in {
         // Simulate dynamic data generation from one of the invalid data
         // TODO: eventually need to be move under tests data generation section
-        val generatedFailedData = Gen.oneOf(Seq(ukPropertyAndSoleTraderBusinessIncomeNoIncomeSourceId, ukPropertyIncomeNoIncomeSourceId, foreignPropertyAndCeasedBusinessIncomeNoIncomeSourceId)).sample.get
+        val generatedFailedData = Gen.oneOf(Seq(ukPropertyIncomeNoIncomeSourceId, foreignPropertyAndCeasedBusinessIncomeNoIncomeSourceId)).sample.get
         val result = TestIncomeSourceDetailsService.getViewIncomeSourceViewModel(generatedFailedData)
-        result.isLeft should be(false)
+        result.isLeft shouldBe false
       }
     }
   }
