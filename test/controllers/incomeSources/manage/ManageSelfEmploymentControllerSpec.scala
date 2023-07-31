@@ -214,6 +214,9 @@ class ManageSelfEmploymentControllerSpec extends TestSupport with MockAuthentica
         Option(document.getElementById("reporting-method-1")).isDefined shouldBe false
         Option(document.getElementById("reporting-method-2")).isDefined shouldBe false
         document.getElementById("business-address").text shouldBe TestManageSelfEmploymentController.unknown
+        document.getElementById("business-name").text shouldBe TestManageSelfEmploymentController.unknown
+        document.getElementById("business-date-started").text shouldBe TestManageSelfEmploymentController.unknown
+        document.getElementById("business-accounting-method").text shouldBe TestManageSelfEmploymentController.unknown
 
       }
     }
