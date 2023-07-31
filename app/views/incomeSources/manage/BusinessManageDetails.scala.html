@@ -129,8 +129,8 @@
                 <dt class="govuk-summary-list__key">@getMessage("reporting-method", viewModel.latencyDetails.get.taxYear1.toString, (viewModel.latencyDetails.get.taxYear2).toString)</dt>
                 <dd class="govuk-summary-list__value" id="reporting-method-1">@{
                     viewModel.latencyDetails.get.latencyIndicator1 match {
-                        case method: String if method == "A" => getMessage("quarterly")
-                        case method: String if method == "Q" => getMessage("annually")
+                        case method: String if method == "A" => getMessage("annually")
+                        case method: String if method == "Q" => getMessage("quarterly")
                         case _ => "Field Missing"
                     }
                 }</dd>
@@ -146,8 +146,8 @@
                 <dt class="govuk-summary-list__key">@getMessage("reporting-method", viewModel.latencyDetails.get.taxYear2.toString, (viewModel.latencyDetails.get.taxYear2 + 1).toString)</dt>
                 <dd class="govuk-summary-list__value" id="reporting-method-2">@{
                     viewModel.latencyDetails.get.latencyIndicator2 match {
-                        case method: String if method == "A" => getMessage("quarterly")
-                        case method: String if method == "Q" => getMessage("annually")
+                        case method: String if method == "A" => getMessage("annually")
+                        case method: String if method == "Q" => getMessage("quarterly")
                         case _ => "Field Missing"
                     }
                 }</dd>

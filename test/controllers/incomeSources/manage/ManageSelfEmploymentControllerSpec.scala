@@ -25,14 +25,14 @@ import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSour
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.mockito.ArgumentMatchers
-import org.mockito.Mockito.{mock, when}
 import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.{mock, when}
 import play.api.http.Status
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, status}
 import services.{CalculationListService, DateService, ITSAStatusService}
 import testConstants.BaseTestConstants
-import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testSelfEmploymentId, testTaxCalculationId}
+import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testSelfEmploymentId}
 import testConstants.BusinessDetailsTestConstants.testBizAddress
 import testUtils.TestSupport
 import views.html.incomeSources.manage.BusinessManageDetails
@@ -76,13 +76,15 @@ class ManageSelfEmploymentControllerSpec extends TestSupport with MockAuthentica
     val incomeSourceId: String = "XAIS00000000008"
     val businessWithLatencyAddress: String = "64 Zoo Lane, Happy Place, Magical Land, England, ZL1 064, UK"
     val unknown: String = messages("incomeSources.generic.unknown")
+    val annually: String = messages("incomeSources.manage.business-manage-details.annually")
+    val quarterly: String = messages("incomeSources.manage.business-manage-details.quarterly")
+
   }
 
   object Scenario extends Enumeration {
     type Scenario = Value
-    val NO_LATENCY_INFORMATION, NON_ELIGIBLE_ITSA_STATUS, FIRST_AND_SECOND_YEAR_CRYSTALLIZED,
-    FIRST_AND_SECOND_YEAR_NOT_CRYSTALLIZED, FIRST_YEAR_CRYSTALLISED_SECOND_NOT, SECOND_YEAR_CRYSTALLISED_FIRST_NOT,
-    CURRENT_TAX_YEAR_IN_LATENCY_YEARS, LATENCY_PERIOD_EXPIRED, CURRENT_TAX_2024_YEAR_IN_LATENCY_YEARS = Value
+    val ITSA_STATUS_MANDATORY_OR_VOLUNTARY_BUT_NO_LATENCY_INFORMATION, NON_ELIGIBLE_ITSA_STATUS, FIRST_AND_SECOND_YEAR_CRYSTALLIZED,
+    FIRST_AND_SECOND_YEAR_NOT_CRYSTALLIZED = Value
   }
 
   import Scenario._
@@ -98,7 +100,7 @@ class ManageSelfEmploymentControllerSpec extends TestSupport with MockAuthentica
     }
 
     scenario match {
-      case NO_LATENCY_INFORMATION =>
+      case ITSA_STATUS_MANDATORY_OR_VOLUNTARY_BUT_NO_LATENCY_INFORMATION =>
         when(mockDateService.getCurrentTaxYearEnd(any)).thenReturn(2024)
         when(mockITSAStatusService.hasMandatedOrVoluntaryStatusCurrentYear(any, any, any))
           .thenReturn(Future.successful(true))
@@ -110,10 +112,10 @@ class ManageSelfEmploymentControllerSpec extends TestSupport with MockAuthentica
         when(mockDateService.getCurrentTaxYearEnd(any)).thenReturn(2023)
         when(mockITSAStatusService.hasMandatedOrVoluntaryStatusCurrentYear(any, any, any))
           .thenReturn(Future.successful(true))
-        mockBusinessIncomeSourceWithLatency2023()
-        when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.eq(2022))(any, any, any))
-          .thenReturn(Future.successful(Some(false)))
+        mockBusinessIncomeSourceWithLatency2024()
         when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.eq(2023))(any, any, any))
+          .thenReturn(Future.successful(Some(false)))
+        when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.eq(2024))(any, any, any))
           .thenReturn(Future.successful(Some(false)))
         when(mockIncomeSourceDetailsService.getLongAddressFromBusinessAddressDetails(ArgumentMatchers.eq(Option(testBizAddress))))
           .thenReturn(Some("64 Zoo Lane, Happy Place, Magical Land, England, ZL1 064, UK"))
@@ -122,10 +124,10 @@ class ManageSelfEmploymentControllerSpec extends TestSupport with MockAuthentica
         when(mockDateService.getCurrentTaxYearEnd(any)).thenReturn(2023)
         when(mockITSAStatusService.hasMandatedOrVoluntaryStatusCurrentYear(any, any, any))
           .thenReturn(Future.successful(true))
-        mockBusinessIncomeSourceWithLatency2023()
-        when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.eq(2022))(any, any, any))
-          .thenReturn(Future.successful(Some(true)))
+        mockBusinessIncomeSourceWithLatency2024()
         when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.eq(2023))(any, any, any))
+          .thenReturn(Future.successful(Some(true)))
+        when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.eq(2024))(any, any, any))
           .thenReturn(Future.successful(Some(true)))
         when(mockIncomeSourceDetailsService.getLongAddressFromBusinessAddressDetails(any))
           .thenReturn(Some("64 Zoo Lane, Happy Place, Magical Land, England, ZL1 064, UK"))
@@ -151,7 +153,7 @@ class ManageSelfEmploymentControllerSpec extends TestSupport with MockAuthentica
   "Individual - ManageSelfEmploymentController" should {
     "return 200 OK" when {
       "FS is enabled and the .show(id) method is called with a valid id parameter and no latency information" in {
-        mockAndBasicSetup(Scenario.NO_LATENCY_INFORMATION)
+        mockAndBasicSetup(Scenario.ITSA_STATUS_MANDATORY_OR_VOLUNTARY_BUT_NO_LATENCY_INFORMATION)
 
         val result: Future[Result] = TestManageSelfEmploymentController.show(testSelfEmploymentId)(fakeRequestWithNino)
         val document: Document = Jsoup.parse(contentAsString(result))
@@ -161,6 +163,8 @@ class ManageSelfEmploymentControllerSpec extends TestSupport with MockAuthentica
         document.select("h1:nth-child(1)").text shouldBe TestManageSelfEmploymentController.heading
         Option(document.getElementById("change-link-1")).isDefined shouldBe false
         Option(document.getElementById("change-link-2")).isDefined shouldBe false
+        Option(document.getElementById("reporting-method-1")).isDefined shouldBe false
+        Option(document.getElementById("reporting-method-2")).isDefined shouldBe false
         document.getElementById("business-address").text shouldBe TestManageSelfEmploymentController.businessWithLatencyAddress
 
       }
@@ -175,6 +179,8 @@ class ManageSelfEmploymentControllerSpec extends TestSupport with MockAuthentica
         document.select("h1:nth-child(1)").text shouldBe TestManageSelfEmploymentController.heading
         Option(document.getElementById("change-link-1")).isDefined shouldBe true
         Option(document.getElementById("change-link-2")).isDefined shouldBe true
+        document.getElementById("reporting-method-1").text shouldBe TestManageSelfEmploymentController.annually
+        document.getElementById("reporting-method-2").text shouldBe TestManageSelfEmploymentController.quarterly
         document.getElementById("business-address").text shouldBe TestManageSelfEmploymentController.businessWithLatencyAddress
 
       }
@@ -189,6 +195,8 @@ class ManageSelfEmploymentControllerSpec extends TestSupport with MockAuthentica
         document.select("h1:nth-child(1)").text shouldBe TestManageSelfEmploymentController.heading
         Option(document.getElementById("change-link-1")).isDefined shouldBe false
         Option(document.getElementById("change-link-2")).isDefined shouldBe false
+        document.getElementById("reporting-method-1").text shouldBe TestManageSelfEmploymentController.annually
+        document.getElementById("reporting-method-2").text shouldBe TestManageSelfEmploymentController.quarterly
         document.getElementById("business-address").text shouldBe TestManageSelfEmploymentController.businessWithLatencyAddress
 
       }
@@ -198,13 +206,13 @@ class ManageSelfEmploymentControllerSpec extends TestSupport with MockAuthentica
         val result: Future[Result] = TestManageSelfEmploymentController.show(testSelfEmploymentId)(fakeRequestWithNino)
         val document: Document = Jsoup.parse(contentAsString(result))
 
-        println("DDDDDDDDD" + document)
-
         status(result) shouldBe Status.OK
         document.title shouldBe TestManageSelfEmploymentController.title
         document.select("h1:nth-child(1)").text shouldBe TestManageSelfEmploymentController.heading
         Option(document.getElementById("change-link-1")).isDefined shouldBe false
         Option(document.getElementById("change-link-2")).isDefined shouldBe false
+        Option(document.getElementById("reporting-method-1")).isDefined shouldBe false
+        Option(document.getElementById("reporting-method-2")).isDefined shouldBe false
         document.getElementById("business-address").text shouldBe TestManageSelfEmploymentController.unknown
 
       }

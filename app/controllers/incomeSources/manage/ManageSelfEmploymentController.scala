@@ -82,7 +82,6 @@ class ManageSelfEmploymentController @Inject()(val view: BusinessManageDetails,
     EitherT {
       incomeSource match {
         case Some(x) if x.latencyDetails.isDefined =>
-          println("LLLLLLLLLLLLLL" + incomeSource)
           for {
             i <- calculationListService.isTaxYearCrystallised(x.latencyDetails.get.taxYear1.toInt)
             j <- calculationListService.isTaxYearCrystallised(x.latencyDetails.get.taxYear2.toInt)
@@ -104,11 +103,8 @@ class ManageSelfEmploymentController @Inject()(val view: BusinessManageDetails,
 
     val desiredIncomeSource: BusinessDetailsModel = desiredIncomeSourceMaybe.getOrElse(throw new InternalError("Income source id provided does not match any of the user's income sources"))
 
-    println("VVVVVVVVVVV" + desiredIncomeSource)
-
     getCrystallisationInformation(desiredIncomeSourceMaybe).value.flatMap {
       case Left(x) =>
-        println("CASE LEFT: NO DATA READY")
         for {
           i <- itsaStatusService.hasMandatedOrVoluntaryStatusCurrentYear
         } yield {
@@ -125,7 +121,6 @@ class ManageSelfEmploymentController @Inject()(val view: BusinessManageDetails,
           )
         }
       case Right(crystallisationData: List[Boolean]) =>
-        println("CASE RIGHT: " + crystallisationData)
         for {
           i <- itsaStatusService.hasMandatedOrVoluntaryStatusCurrentYear
           if desiredIncomeSourceMaybe.isDefined
@@ -157,15 +152,11 @@ class ManageSelfEmploymentController @Inject()(val view: BusinessManageDetails,
     if (isDisabled(IncomeSources)) {
       Future.successful(Redirect(controllers.routes.HomeController.show()))
     } else {
-      println(s"Here is my incomeSource: ${sources.businesses.head.latencyDetails}")
       for {
         value <- getViewIncomeSourceChosenViewModel(sources = sources, id = id)
       } yield {
         value match {
           case Right(v) =>
-
-            println("DDDDDDDDDDDDDD" + v)
-
             Ok(view(viewModel = v,
               isAgent = isAgent,
               backUrl = backUrl
