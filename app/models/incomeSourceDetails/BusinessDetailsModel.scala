@@ -23,12 +23,13 @@ import play.api.libs.json.{Format, Json}
 case class BusinessDetailsModel(incomeSourceId: Option[String],
                                 accountingPeriod: Option[AccountingPeriodModel],
                                 tradingName: Option[String],
-                                address: Option[AddressModel],
                                 firstAccountingPeriodEndDate: Option[LocalDate],
                                 tradingStartDate: Option[LocalDate],
                                 cessation: Option[CessationModel],
                                 cashOrAccruals: Option[String] = None,
-                                latencyDetails: Option[LatencyDetails] = None) {
+                                latencyDetails: Option[LatencyDetails] = None,
+                                address: Option[AddressModel] = None
+                               ) {
   def isCeased: Boolean = cessation.exists(_.date.nonEmpty)
 }
 
