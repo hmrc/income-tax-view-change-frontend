@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package testConstants
+package testConstants.incomeSources
 
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel}
 import testConstants.BaseTestConstants.{testErrorMessage, testErrorStatus, testMigrationYear2019, testMtditid, testMtditid2}
@@ -47,7 +47,7 @@ object IncomeSourceDetailsTestConstants {
   val businessIncome2 = IncomeSourceDetailsModel(testMtditid2, Some("2018"), List(soleTraderBusiness2), List())
   val businessIncome3 = IncomeSourceDetailsModel(testMtditid2, Some("2018"), List(soleTraderBusiness, soleTraderBusiness2), List())
   val businessIncome4 = IncomeSourceDetailsModel(testMtditid2, Some("2018"), List(soleTraderBusiness3), List())
-  val ukPropertyIncome  = IncomeSourceDetailsModel(testMtdItId, Some("2018"), List(), List(ukPropertyDetails))
+  val ukPropertyIncome = IncomeSourceDetailsModel(testMtdItId, Some("2018"), List(), List(ukPropertyDetails))
   val ukPropertyWithSoleTraderBusiness = IncomeSourceDetailsModel(testMtdItId, None, List(business2018), List(ukPropertyDetails))
   val ukPlusForeignPropertyWithSoleTraderIncomeSource = IncomeSourceDetailsModel(testMtdItId, Some("2018"), List(soleTraderBusiness), List(ukPropertyDetails, foreignPropertyDetails))
   val ukPropertyAndSoleTraderBusinessIncome = IncomeSourceDetailsModel(testMtdItId, Some("2018"), List(soleTraderBusiness), List(ukPropertyDetails))

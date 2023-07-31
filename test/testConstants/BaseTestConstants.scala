@@ -26,7 +26,7 @@ import play.api.http.Status
 import play.api.test.FakeRequest
 import play.twirl.api.{Html, HtmlFormat}
 import testConstants.BusinessDetailsTestConstants.business1
-import testConstants.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 import testConstants.PropertyDetailsTestConstants.propertyDetails
 import testUtils.UnitSpec
 import uk.gov.hmrc.auth.core._
