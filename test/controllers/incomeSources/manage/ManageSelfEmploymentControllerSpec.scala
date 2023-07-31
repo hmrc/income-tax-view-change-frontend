@@ -72,6 +72,7 @@ class ManageSelfEmploymentControllerSpec extends TestSupport with MockAuthentica
   ) {
     val heading: String = messages("incomeSources.manage.business-manage-details.heading")
     val title: String = s"${messages("htmlTitle", heading)}"
+    val titleAgent: String = s"${messages("htmlTitle.agent", heading)}"
     val link: String = s"${messages("incomeSources.manage.business-manage-details.change")}"
     val incomeSourceId: String = "XAIS00000000008"
     val businessWithLatencyAddress: String = "64 Zoo Lane, Happy Place, Magical Land, England, ZL1 064, UK"
@@ -222,4 +223,75 @@ class ManageSelfEmploymentControllerSpec extends TestSupport with MockAuthentica
     }
   }
 
+  "Agent - ManageSelfEmploymentController" should {
+    "return 200 OK" when {
+      "FS is enabled and the .showAgent(id) method is called with a valid id parameter and no latency information" in {
+        mockAndBasicSetup(Scenario.ITSA_STATUS_MANDATORY_OR_VOLUNTARY_BUT_NO_LATENCY_INFORMATION, isAgent = true)
+
+        val result: Future[Result] = TestManageSelfEmploymentController.showAgent(testSelfEmploymentId)(fakeRequestConfirmedClient())
+        val document: Document = Jsoup.parse(contentAsString(result))
+
+        status(result) shouldBe Status.OK
+        document.title shouldBe TestManageSelfEmploymentController.titleAgent
+        document.select("h1:nth-child(1)").text shouldBe TestManageSelfEmploymentController.heading
+        Option(document.getElementById("change-link-1")).isDefined shouldBe false
+        Option(document.getElementById("change-link-2")).isDefined shouldBe false
+        Option(document.getElementById("reporting-method-1")).isDefined shouldBe false
+        Option(document.getElementById("reporting-method-2")).isDefined shouldBe false
+        document.getElementById("business-address").text shouldBe TestManageSelfEmploymentController.businessWithLatencyAddress
+
+      }
+      "FS is enabled and the .showAgent(id) method is called with a valid id parameter, valid latency information and two tax years not crystallised" in {
+        mockAndBasicSetup(FIRST_AND_SECOND_YEAR_NOT_CRYSTALLIZED, isAgent = true)
+
+        val result: Future[Result] = TestManageSelfEmploymentController.showAgent(testSelfEmploymentId)(fakeRequestConfirmedClient())
+        val document: Document = Jsoup.parse(contentAsString(result))
+
+        status(result) shouldBe Status.OK
+        document.title shouldBe TestManageSelfEmploymentController.titleAgent
+        document.select("h1:nth-child(1)").text shouldBe TestManageSelfEmploymentController.heading
+        Option(document.getElementById("change-link-1")).isDefined shouldBe true
+        Option(document.getElementById("change-link-2")).isDefined shouldBe true
+        document.getElementById("reporting-method-1").text shouldBe TestManageSelfEmploymentController.annually
+        document.getElementById("reporting-method-2").text shouldBe TestManageSelfEmploymentController.quarterly
+        document.getElementById("business-address").text shouldBe TestManageSelfEmploymentController.businessWithLatencyAddress
+
+      }
+      "FS is enabled and the .showAgent(id) method is called with a valid id parameter, valid latency information and two tax years crystallised" in {
+        mockAndBasicSetup(FIRST_AND_SECOND_YEAR_CRYSTALLIZED, isAgent = true)
+
+        val result: Future[Result] = TestManageSelfEmploymentController.showAgent(testSelfEmploymentId)(fakeRequestConfirmedClient())
+        val document: Document = Jsoup.parse(contentAsString(result))
+
+        status(result) shouldBe Status.OK
+        document.title shouldBe TestManageSelfEmploymentController.titleAgent
+        document.select("h1:nth-child(1)").text shouldBe TestManageSelfEmploymentController.heading
+        Option(document.getElementById("change-link-1")).isDefined shouldBe false
+        Option(document.getElementById("change-link-2")).isDefined shouldBe false
+        document.getElementById("reporting-method-1").text shouldBe TestManageSelfEmploymentController.annually
+        document.getElementById("reporting-method-2").text shouldBe TestManageSelfEmploymentController.quarterly
+        document.getElementById("business-address").text shouldBe TestManageSelfEmploymentController.businessWithLatencyAddress
+
+      }
+      "FS is enabled and the .showAgent(id) method is called with a valid id parameter, but non eligable itsa status" in {
+        mockAndBasicSetup(NON_ELIGIBLE_ITSA_STATUS, isAgent = true)
+
+        val result: Future[Result] = TestManageSelfEmploymentController.showAgent(testSelfEmploymentId)(fakeRequestConfirmedClient())
+        val document: Document = Jsoup.parse(contentAsString(result))
+
+        status(result) shouldBe Status.OK
+        document.title shouldBe TestManageSelfEmploymentController.titleAgent
+        document.select("h1:nth-child(1)").text shouldBe TestManageSelfEmploymentController.heading
+        Option(document.getElementById("change-link-1")).isDefined shouldBe false
+        Option(document.getElementById("change-link-2")).isDefined shouldBe false
+        Option(document.getElementById("reporting-method-1")).isDefined shouldBe false
+        Option(document.getElementById("reporting-method-2")).isDefined shouldBe false
+        document.getElementById("business-address").text shouldBe TestManageSelfEmploymentController.unknown
+        document.getElementById("business-name").text shouldBe TestManageSelfEmploymentController.unknown
+        document.getElementById("business-date-started").text shouldBe TestManageSelfEmploymentController.unknown
+        document.getElementById("business-accounting-method").text shouldBe TestManageSelfEmploymentController.unknown
+
+      }
+    }
+  }
 }
