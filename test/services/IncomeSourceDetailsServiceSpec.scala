@@ -137,8 +137,8 @@ class IncomeSourceDetailsServiceSpec extends TestSupport with MockIncomeTaxViewC
         val result = TestIncomeSourceDetailsService.getCeaseIncomeSourceViewModel(ukPropertyAndSoleTraderBusinessIncome)
 
         result shouldBe Right(CeaseIncomeSourcesViewModel(
-          soleTraderBusinesses = List(CeaseBusinessDetailsViewModel(testSelfEmploymentId, Some(testTradeName), testStartDate, Some(address))),
-          ukProperty = Some(CeasePropertyDetailsViewModel(testStartDate)),
+          soleTraderBusinesses = List(CeaseBusinessDetailsViewModel(testSelfEmploymentId, Some(testTradeName), Some(testStartDate), Some(address))),
+          ukProperty = Some(CeasePropertyDetailsViewModel(Some(testStartDate))),
           foreignProperty = None,
           ceasedBusinesses = Nil
         ))
@@ -152,10 +152,10 @@ class IncomeSourceDetailsServiceSpec extends TestSupport with MockIncomeTaxViewC
         result shouldBe Right(CeaseIncomeSourcesViewModel(
           soleTraderBusinesses = Nil,
           ukProperty = None,
-          foreignProperty = Some(CeasePropertyDetailsViewModel(testStartDate)),
+          foreignProperty = Some(CeasePropertyDetailsViewModel(Some(testStartDate))),
           ceasedBusinesses = List(
-            CeaseCeasedBusinessDetailsViewModel(testTradeName, testStartDate, testCessation.date.get),
-            CeaseCeasedBusinessDetailsViewModel(testTradeName2, testStartDate2, testCessation2.date.get)
+            CeaseCeasedBusinessDetailsViewModel(Some(testTradeName), Some(testStartDate), testCessation.date.get),
+            CeaseCeasedBusinessDetailsViewModel(Some(testTradeName2), Some(testStartDate2), testCessation2.date.get)
           )
         ))
       }
@@ -165,9 +165,9 @@ class IncomeSourceDetailsServiceSpec extends TestSupport with MockIncomeTaxViewC
       "return failure" in {
         // Simulate dynamic data generation from one of the invalid data
         // TODO: eventually need to be move under tests data generation section
-        val generatedFailedData = Gen.oneOf(Seq(ukPropertyAndSoleTraderBusinessIncomeNoTradingName, ukPropertyAndSoleTraderBusinessIncomeNoTradingStartDate, foreignPropertyAndCeasedBusinessIncomeNoStartDate)).sample.get
+        val generatedFailedData = Gen.oneOf(Seq(ukPropertyAndSoleTraderBusinessIncomeNoIncomeSourceId)).sample.get
         val result = TestIncomeSourceDetailsService.getCeaseIncomeSourceViewModel(generatedFailedData)
-        result.isLeft should be(true)
+        result.isLeft shouldBe (true)
       }
     }
   }
@@ -206,9 +206,9 @@ class IncomeSourceDetailsServiceSpec extends TestSupport with MockIncomeTaxViewC
       "still return page as unknown is used rather than error" in {
         // Simulate dynamic data generation from one of the invalid data
         // TODO: eventually need to be move under tests data generation section
-        val generatedFailedData = Gen.oneOf(Seq(ukPropertyAndSoleTraderBusinessIncomeNoTradingName, ukPropertyAndSoleTraderBusinessIncomeNoTradingStartDate, foreignPropertyAndCeasedBusinessIncomeNoStartDate)).sample.get
+        val generatedFailedData = Gen.oneOf(Seq(ukPropertyIncomeNoIncomeSourceId, foreignPropertyAndCeasedBusinessIncomeNoIncomeSourceId)).sample.get
         val result = TestIncomeSourceDetailsService.getViewIncomeSourceViewModel(generatedFailedData)
-        result.isLeft should be(false)
+        result.isLeft shouldBe false
       }
     }
   }

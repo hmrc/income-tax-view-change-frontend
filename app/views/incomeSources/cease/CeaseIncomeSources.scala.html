@@ -59,6 +59,9 @@
     else controllers.incomeSources.cease.routes.CeaseForeignPropertyController.show().url
 }
 
+@noneToUnknown(value:Option[String]) = @{value.getOrElse(getMessage("unknown"))}
+
+
 @mainTemplate(pageTitle = getMessage("heading"),
     backUrl = Some(backUrl),
     btaNavPartial = user.btaNavPartial,
@@ -83,8 +86,8 @@
             <tbody>
                 @for((item, index) <- sources.soleTraderBusinesses.zipWithIndex) {
                 <tr class="govuk-table__row">
-                    <td class="govuk-table__cell" id="@{s"table-row-trading-name-$index"}">@item.tradingName</td>
-                    <td class="govuk-table__cell" id="@{s"table-row-trading-start-date-$index"}">@item.tradingStartDate.toLongDate</td>
+                    <td class="govuk-table__cell" id="@{s"table-row-trading-name-$index"}">@noneToUnknown(item.tradingName)</td>
+                    <td class="govuk-table__cell" id="@{s"table-row-trading-start-date-$index"}">@noneToUnknown(item.tradingStartDate.map(_.toLongDate))</td>
                     <td class="govuk-table__cell govuk-!-text-align-right">
                         <a class="govuk-link" id="@{s"cease-link-business-$index"}" href=@ceaseSoleTraderBusinessURL(item.incomeSourceId)>
                             @getMessage("cease")
@@ -116,7 +119,7 @@
             </thead>
             <tbody>
                 <tr class="govuk-table__row">
-                    <td class="govuk-table__cell" id="table-row-trading-start-date-uk">@sources.ukProperty.map(_.tradingStartDate.toLongDate).get</td>
+                    <td class="govuk-table__cell" id="table-row-trading-start-date-uk">@noneToUnknown(sources.ukProperty.flatMap(_.tradingStartDate.map(_.toLongDate)))</td>
                     <td class="govuk-table__cell govuk-!-text-align-right">
                         <a class="govuk-link" id="cease-link-uk" href=@ceaseUkPropertyURL>
                             @getMessage("cease")
@@ -147,7 +150,7 @@
             </thead>
             <tbody>
                 <tr class="govuk-table__row">
-                    <td class="govuk-table__cell" id="table-row-trading-start-date-foreign">@sources.foreignProperty.map(_.tradingStartDate.toLongDate).get</td>
+                    <td class="govuk-table__cell" id="table-row-trading-start-date-foreign">@noneToUnknown(sources.foreignProperty.flatMap(_.tradingStartDate.map(_.toLongDate)))</td>
                     <td class="govuk-table__cell govuk-!-text-align-right">
                         <a class="govuk-link" id="cease-link-foreign" href=@ceaseForeignPropertyURL>
                             @getMessage("cease")
@@ -176,8 +179,8 @@
             <tbody>
             @for((item, index) <- sources.ceasedBusinesses.zipWithIndex) {
                 <tr class="govuk-table__row">
-                    <td class="govuk-table__cell" id="@{s"table-row-trading-name-$index-ceased"}">@item.tradingName</td>
-                    <td class="govuk-table__cell" id="@{s"table-row-trading-start-date-$index-ceased"}">@item.tradingStartDate.toLongDate</td>
+                    <td class="govuk-table__cell" id="@{s"table-row-trading-name-$index-ceased"}">@noneToUnknown(item.tradingName)</td>
+                    <td class="govuk-table__cell" id="@{s"table-row-trading-start-date-$index-ceased"}">@noneToUnknown(item.tradingStartDate.map(_.toLongDate))</td>
                     <td class="govuk-table__cell" id="@{s"table-row-trading-end-date-$index-ceased"}">@item.cessationDate.toLongDate</td>
                 </tr>
             }
