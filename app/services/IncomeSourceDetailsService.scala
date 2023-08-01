@@ -96,7 +96,7 @@ class IncomeSourceDetailsService @Inject()(val incomeTaxViewChangeConnector: Inc
         CeasedBusinessDetailsViewModel(
           business.tradingName,
           business.tradingStartDate,
-          business.cessation.flatMap(_.date).getOrElse(throw MissingFieldException("Cessation Date"))
+          business.cessation.flatMap(_.date).get
         )
       }
     )
@@ -142,7 +142,7 @@ class IncomeSourceDetailsService @Inject()(val incomeTaxViewChangeConnector: Inc
             ViewCeasedBusinessDetailsViewModel(
               tradingName = business.tradingName,
               tradingStartDate = business.tradingStartDate,
-              cessationDate = business.cessation.flatMap(_.date).getOrElse(throw MissingFieldException("Cessation Date"))
+              cessationDate = business.cessation.flatMap(_.date).get
             )
           }
         } else Nil
@@ -171,27 +171,26 @@ class IncomeSourceDetailsService @Inject()(val incomeTaxViewChangeConnector: Inc
           maybeSoleTraderBusinesses.map { business =>
             CeaseBusinessDetailsViewModel(
               business.incomeSourceId.getOrElse(throw MissingFieldException("Income Source Id")),
-              business.tradingName.getOrElse(throw MissingFieldException("Trading Name")),
-              business.tradingStartDate.getOrElse(throw MissingFieldException("Trading Start Date"))
-            )
+              business.tradingName,
+              business.tradingStartDate)
           }
         } else Nil,
         ukProperty = if (ukPropertyExists) {
           Some(CeasePropertyDetailsViewModel(
-            maybeUkProperty.flatMap(_.tradingStartDate).getOrElse(throw MissingFieldException("UkProperty: Trading Start Date"))
+            maybeUkProperty.flatMap(_.tradingStartDate)
           ))
         } else None,
         foreignProperty = if (foreignPropertyExists) {
           Some(CeasePropertyDetailsViewModel(
-            maybeForeignProperty.flatMap(_.tradingStartDate).getOrElse(throw MissingFieldException("ForeignProperty: Trading Start Date"))
+            maybeForeignProperty.flatMap(_.tradingStartDate)
           ))
         } else None,
         ceasedBusinesses = if (ceasedBusinessExists) {
           maybeCeasedBusinesses.map { business =>
             CeaseCeasedBusinessDetailsViewModel(
-              tradingName = business.tradingName.getOrElse(throw MissingFieldException("CeasedBusiness: Trading Name")),
-              tradingStartDate = business.tradingStartDate.getOrElse(throw MissingFieldException("CeasedBusiness: Trading Start Date")),
-              cessationDate = business.cessation.flatMap(_.date).getOrElse(throw MissingFieldException("Cessation Date"))
+              tradingName = business.tradingName,
+              tradingStartDate = business.tradingStartDate,
+              cessationDate = business.cessation.flatMap(_.date).get
             )
           }
         } else Nil
