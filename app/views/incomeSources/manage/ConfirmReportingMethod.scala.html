@@ -36,7 +36,7 @@
         backUrl: String,
         taxYearStartYear: String,
         taxYearEndYear: String,
-        reportingMethodKey: String
+        reportingMethod: String
 )(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @prefix = @{ "incomeSources.manage.propertyReportingMethod" }
@@ -45,14 +45,14 @@
     messages(s"$prefix.$key", args: _*)
 }
 
-@mainTemplate(pageTitle = getMessage(s"heading.$reportingMethodKey"),
+@mainTemplate(pageTitle = getMessage(s"heading.$reportingMethod"),
     backUrl = Some(backUrl),
     isAgent = isAgent,
     btaNavPartial = user.btaNavPartial) {
 
     @errorSummary(form.copy(
         errors = form.errors.map(formError =>
-            FormError(formError.key, formError.messages.map(_ + s".$reportingMethodKey"))
+            FormError(formError.key, formError.messages.map(_ + s".$reportingMethod"))
         )
     ))
 
@@ -62,7 +62,7 @@
             fieldset = Some(Fieldset(
                 legend = Some(Legend(
                     content = Text(
-                        value = getMessage(s"heading.$reportingMethodKey", taxYearStartYear, taxYearEndYear)
+                        value = getMessage(s"heading.$reportingMethod", taxYearStartYear, taxYearEndYear)
                     ),
                     classes = "govuk-fieldset__legend--l govuk-!-margin-bottom-6",
                     isPageHeading = true
@@ -73,7 +73,7 @@
                 id = Some(prefix),
                 name = Some(prefix),
                 content = Text(
-                    value = getMessage(s"checkbox.$reportingMethodKey")
+                    value = getMessage(s"checkbox.$reportingMethod")
                 ),
                 value = "true",
                 checked = form.value.contains(true)
