@@ -21,7 +21,8 @@ import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
-import models.incomeSourceDetails.TaxYear
+import forms.incomeSources.manage.ConfirmReportingMethodForm
+import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import play.api.Logger
 import play.api.mvc._
 import services.IncomeSourceDetailsService
@@ -57,8 +58,8 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
         isAgent = true,
         taxYear = taxYear,
         changeTo = changeTo,
-        backUrl = backUrl(id, isAgent = false),
-        itvcErrorHandler = itvcErrorHandler
+        itvcErrorHandler = itvcErrorHandler,
+        backUrl = getBackUrl(id, isAgent = false)
       )
   }
 
@@ -72,8 +73,8 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
               isAgent = true,
               taxYear = taxYear,
               changeTo = changeTo,
-              backUrl = backUrl(id, isAgent = true),
-              itvcErrorHandler = itvcErrorHandlerAgent
+              itvcErrorHandler = itvcErrorHandlerAgent,
+              backUrl = getBackUrl(id, isAgent = true)
             )
         }
   }
@@ -82,6 +83,13 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
       handleSubmitRequest(
+        id = id,
+        isAgent = true,
+        taxYear = taxYear,
+        changeTo = changeTo,
+        itvcErrorHandler = itvcErrorHandler,
+        backUrl = getBackUrl(id, isAgent = false),
+        postAction = getPostAction(id, isAgent = false, taxYear, changeTo)
       )
   }
 
@@ -91,7 +99,13 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
         getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
           implicit mtdItUser =>
             handleSubmitRequest(
-
+              id = id,
+              isAgent = true,
+              taxYear = taxYear,
+              changeTo = changeTo,
+              itvcErrorHandler = itvcErrorHandlerAgent,
+              backUrl = getBackUrl(id, isAgent = true),
+              postAction = getPostAction(id, isAgent = true, taxYear, changeTo)
             )
         }
   }
@@ -117,13 +131,14 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
           Logger("application")
             .error(s"[ConfirmReportingMethodSharedController][handleRequest]: Could not parse taxYear: $taxYear")
           itvcErrorHandler.showInternalServerError()
-        case (_, Some(taxYear), Some(reportingMethodKey)) =>
+        case (_, Some(taxYears), Some(reportingMethodKey)) =>
           Ok(
             confirmReportingMethod(
+              form = ConfirmReportingMethodForm.form,
               isAgent = isAgent,
               backUrl = backUrl,
-              taxYearEndYear = taxYear.endYear,
-              taxYearStartYear = taxYear.startYear,
+              taxYearEndYear = taxYears.endYear,
+              taxYearStartYear = taxYears.startYear,
               reportingMethodKey = reportingMethodKey
             )
           )
@@ -140,15 +155,94 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
     }
   }
 
-  private def handleSubmitRequest() = Future.successful(Ok)
+  private def handleSubmitRequest(id: String,
+                                  isAgent: Boolean,
+                                  taxYear: String,
+                                  changeTo: String,
+                                  backUrl: String,
+                                  postAction: Either[Throwable, Call],
+                                  itvcErrorHandler: ShowInternalServerError)
+                                 (implicit user: MtdItUser[_]): Future[Result] = {
+
+    (isEnabled(IncomeSources), TaxYear.getTaxYearStartYearEndYear(taxYear), getReportingMethodKey(changeTo)) match {
+      case (false, _, _) =>
+        Future(
+          Ok(
+            customNotFoundErrorView()
+          )
+        )
+      case (_, _, None) =>
+        Logger("application")
+          .error(s"[ConfirmReportingMethodSharedController][handleSubmitRequest]: Could not parse reporting method: $changeTo")
+        Future(
+          itvcErrorHandler.showInternalServerError()
+        )
+      case (_, None, _) =>
+        Logger("application")
+          .error(s"[ConfirmReportingMethodSharedController][handleSubmitRequest]: Could not parse taxYear: $taxYear")
+        Future(
+          itvcErrorHandler.showInternalServerError()
+        )
+      case (_, Some(taxYears), Some(reportingMethodKey)) =>
+        ConfirmReportingMethodForm.form.bindFromRequest().fold(
+          formWithErrors =>
+            Future(
+              BadRequest(
+                confirmReportingMethod(
+                  form = formWithErrors,
+                  isAgent = isAgent,
+                  backUrl = backUrl,
+                  taxYearStartYear = taxYears.startYear,
+                  taxYearEndYear = taxYears.endYear,
+                  reportingMethodKey = reportingMethodKey
+                )
+              )
+            ),
+          formData =>
+
+            Future(Ok)
+        )
+    }
+
+  }
 
   private def getReportingMethodKey(reportingMethod: String): Option[String] = {
     Set("annual", "quarterly")
       .find(_== reportingMethod.toLowerCase)
   }
 
-  def backUrl(id: String, isAgent: Boolean): String = {
+  private def getBackUrl(id: String, isAgent: Boolean): String = {
     if (isAgent) controllers.incomeSources.manage.routes.ManageSelfEmploymentController.showAgent(id).url
     else controllers.incomeSources.manage.routes.ManageSelfEmploymentController.show(id).url
+  }
+
+  private def getPostAction(id: String,
+                            isAgent: Boolean,
+                            changeTo: String,
+                            taxYear: String)
+                           (implicit user: MtdItUser[_]): Either[Throwable, Call] = {
+
+    lazy val isUkProperty = user.incomeSources.properties.exists(p => p.incomeSourceId.contains(id) && p.isUkProperty)
+    lazy val isForeignProperty = user.incomeSources.properties.exists(p => p.incomeSourceId.contains(id) && p.isForeignProperty)
+    lazy val isSoleTraderBusiness = user.incomeSources.businesses.exists(_.incomeSourceId.contains(id))
+
+    lazy val redirectController = controllers.incomeSources.manage.routes.ManageObligationsController
+
+    (isAgent, isUkProperty, isForeignProperty, isSoleTraderBusiness) match {
+      case (false, true, false, false) =>
+        Right(redirectController.showUKProperty(changeTo, taxYear))
+      case (false, false, true, false) =>
+        Right(redirectController.showForeignProperty(changeTo, taxYear))
+      case (false, false, false, true) =>
+        Right(redirectController.showSelfEmployment(id, changeTo, taxYear))
+      case (true, true, false, false) =>
+        Right(redirectController.showAgentUKProperty(changeTo, taxYear))
+      case (true, false, true, false) =>
+        Right(redirectController.showAgentForeignProperty(changeTo, taxYear))
+      case (true, false, false, true) =>
+        Right(redirectController.showAgentSelfEmployment(id, changeTo, taxYear))
+      case _ =>
+        Left(new Error(s"Income source not found"))
+    }
   }
 }
