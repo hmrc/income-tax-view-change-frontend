@@ -35,7 +35,7 @@ import play.api.test.Helpers._
 import services.{AddressLookupService, IncomeSourceDetailsService}
 import testConstants.BaseTestConstants
 import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
-import testConstants.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 import testUtils.TestSupport
 import scala.concurrent.Future
 

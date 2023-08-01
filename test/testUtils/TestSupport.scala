@@ -33,7 +33,7 @@ import play.api.test.{FakeRequest, Injecting}
 import play.api.{Configuration, Environment}
 import services.DateService
 import testConstants.BaseTestConstants._
-import testConstants.IncomeSourceDetailsTestConstants._
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants._
 import uk.gov.hmrc.auth.core.retrieve.Name
 import uk.gov.hmrc.http.{HeaderCarrier, SessionKeys}
 import uk.gov.hmrc.play.language.LanguageUtils
