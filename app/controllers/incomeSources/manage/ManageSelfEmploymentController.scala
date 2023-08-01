@@ -29,13 +29,13 @@ import play.api.mvc._
 import services.{CalculationListService, DateService, ITSAStatusService, IncomeSourceDetailsService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
-import views.html.incomeSources.manage.BusinessManageDetails
+import views.html.incomeSources.manage.ManageSelfEmployment
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ManageSelfEmploymentController @Inject()(val view: BusinessManageDetails,
+class ManageSelfEmploymentController @Inject()(val view: ManageSelfEmployment,
                                                val checkSessionTimeout: SessionTimeoutPredicate,
                                                val authenticate: AuthenticationPredicate,
                                                val authorisedFunctions: AuthorisedFunctions,

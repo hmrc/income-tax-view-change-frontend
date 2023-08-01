@@ -89,6 +89,19 @@ object BusinessDetailsTestConstants {
     taxYear2 = year2024.toString,
     latencyIndicator2 = "Q")
 
+  val testLatencyDetailsViewModel1 = ViewLatencyDetailsViewModel(
+    latencyEndDate = LocalDate.of(year2023, 1, 1),
+    taxYear1 = year2023,
+    latencyIndicator1 = "A",
+    taxYear2 = year2024,
+    latencyIndicator2 = "Q")
+
+  val testLatencyDetails3 = LatencyDetails(
+    latencyEndDate = LocalDate.of(year2023, 1, 1),
+    taxYear1 = year2023.toString,
+    latencyIndicator1 = "A",
+    taxYear2 = year2024.toString,
+    latencyIndicator2 = "Q")
 
   val business1 = BusinessDetailsModel(
     incomeSourceId = Some(testSelfEmploymentId),
@@ -144,7 +157,7 @@ object BusinessDetailsTestConstants {
     tradingStartDate = Some(testStartDate),
     cessation = None,
     cashOrAccruals = Some("cash"),
-    latencyDetails = None,
+    latencyDetails = Some(testLatencyDetails3),
     address = None
   )
 
@@ -228,15 +241,21 @@ object BusinessDetailsTestConstants {
     address = None,
     taxYearOneCrystallised = None,
     taxYearTwoCrystallised = None,
-    latencyDetails = Some(testLatencyDetailsViewModel1)
+    latencyDetails = Some(testLatencyDetailsViewModel1),
+    businessAccountingMethod = None
   )
 
-  val testLatencyDetailsViewModel1 = ViewLatencyDetailsViewModel(
-    latencyEndDate = LocalDate.of(year2023, 1, 1),
-    taxYear1 = year2023,
-    latencyIndicator1 = "A",
-    taxYear2 = year2024,
-    latencyIndicator2 = "Q")
+  val viewBusinessDetailsViewModel2 = ViewBusinessDetailsViewModel(
+    incomeSourceId = testSelfEmploymentId,
+    tradingName = testTradeNameOption,
+    tradingStartDate = testStartDateOption,
+    itsaHasMandatedOrVoluntaryStatusCurrentYear = None,
+    address = None,
+    taxYearOneCrystallised = None,
+    taxYearTwoCrystallised = None,
+    latencyDetails = None,
+    businessAccountingMethod = None
+  )
 
   val business2 = BusinessDetailsModel(
     incomeSourceId = Some(testSelfEmploymentId2),

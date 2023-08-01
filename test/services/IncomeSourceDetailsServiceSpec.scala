@@ -34,6 +34,8 @@ import scala.util.Success
 class IncomeSourceDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChangeConnector with MockNextUpdatesService
   with MockAuditingService with MockAsyncCacheApi {
   val cache = app.injector.instanceOf[AsyncCacheApi]
+  val expectedAddressString1: Option[String] = Some("Line 1<br>Line 2<br>Line 3<br>Line 4<br>LN1 1NL<br>NI")
+  val expectedAddressString2: Option[String] = Some("A Line 1<br>A Line 3<br>LN2 2NL<br>GB")
 
   object TestIncomeSourceDetailsService extends IncomeSourceDetailsService(mockIncomeTaxViewChangeConnector, cache)
 
@@ -179,7 +181,7 @@ class IncomeSourceDetailsServiceSpec extends TestSupport with MockIncomeTaxViewC
         val result = TestIncomeSourceDetailsService.getViewIncomeSourceViewModel(ukPropertyAndSoleTraderBusinessIncome)
 
         result shouldBe Right(ViewIncomeSourcesViewModel(
-          viewSoleTraderBusinesses = List(viewBusinessDetailsViewModel),
+          viewSoleTraderBusinesses = List(viewBusinessDetailsViewModel2),
           viewUkProperty = Some(viewUkPropertyDetailsViewModel),
           viewForeignProperty = None,
           viewCeasedBusinesses = Nil))
@@ -210,6 +212,18 @@ class IncomeSourceDetailsServiceSpec extends TestSupport with MockIncomeTaxViewC
         val result = TestIncomeSourceDetailsService.getViewIncomeSourceViewModel(generatedFailedData)
         result.isLeft should be(false)
       }
+    }
+  }
+  "The IncomeSourceDetailsService.getViewIncomeSourceViewModel method" when {
+    "return a formatted string as a combination of the address field when all fields are full" in {
+      val result = TestIncomeSourceDetailsService.getLongAddressFromBusinessAddressDetails(addressModel1)
+
+      result shouldBe expectedAddressString1
+    }
+    "return a formatted string as a combination of the address field when some fields are missing" in {
+      val result = TestIncomeSourceDetailsService.getLongAddressFromBusinessAddressDetails(addressModel2)
+
+      result shouldBe expectedAddressString2
     }
   }
 }

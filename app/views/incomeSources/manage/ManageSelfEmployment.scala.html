@@ -45,7 +45,7 @@
         isAgent: Boolean,
         backUrl: String
 )(implicit messages: Messages, user: auth.MtdItUser[_])
-
+    @import play.twirl.api.HtmlFormat
 @import implicitDateFormatter.longDate
 
 @getMessage(key: String, args: String*) = @{
@@ -96,7 +96,7 @@
             <dt class="govuk-summary-list__key">@getMessage("business-address")</dt>
             <dd class="govuk-summary-list__value" id="business-address">@{
                 viewModel.address match {
-                    case Some(x) => x
+                    case Some(x) => HtmlFormat.raw(x)
                     case None => messages("incomeSources.generic.unknown")
                 }
             }</dd>

@@ -16,6 +16,7 @@
 
 package testConstants
 
+import models.core.AddressModel
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel}
 import testConstants.BaseTestConstants.{testErrorMessage, testErrorStatus, testMigrationYear2019, testMtditid, testMtditid2}
 import testConstants.BusinessDetailsTestConstants._
@@ -59,7 +60,22 @@ object IncomeSourceDetailsTestConstants {
   val singleForeignPropertyIncome2023 = IncomeSourceDetailsModel(testMtditid, Some("2023"), Nil, List(foreignPropertyWithLatencyDetails1))
   val singleUKPropertyIncome2024 = IncomeSourceDetailsModel(testMtditid, Some("2024"), Nil, List(ukPropertyWithLatencyDetails2))
   val singleForeignPropertyIncome2024 = IncomeSourceDetailsModel(testMtditid, Some("2024"), Nil, List(foreignPropertyWithLatencyDetails2))
-
+  val addressModel1: Option[AddressModel] = Some(AddressModel(
+    addressLine1 = "Line 1",
+    addressLine2 = Some("Line 2"),
+    addressLine3 = Some("Line 3"),
+    addressLine4 = Some("Line 4"),
+    postCode = Some("LN1 1NL"),
+    countryCode = "NI"
+  ))
+  val addressModel2: Option[AddressModel] = Option(AddressModel(
+    addressLine1 = "A Line 1",
+    addressLine2 = None,
+    addressLine3 = Some("A Line 3"),
+    addressLine4 = None,
+    postCode = Some("LN2 2NL"),
+    countryCode = "GB"
+  ))
 
   val foreignPropertyAndCeasedBusinessIncome = IncomeSourceDetailsModel(testMtdItId, Some("2018"), List(ceasedBusiness, ceasedBusiness2), List(foreignPropertyDetails))
   val foreignPropertyAndCeasedBusinessIncomeNoStartDate = IncomeSourceDetailsModel(testMtdItId, Some("2018"), List(ceasedBusiness, ceasedBusiness2), List(foreignPropertyDetailsNoStartDate))

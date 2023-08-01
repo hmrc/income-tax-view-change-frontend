@@ -216,13 +216,10 @@ class IncomeSourceDetailsService @Inject()(val incomeTaxViewChangeConnector: Inc
           Some(address.countryCode)
         ).flatten
 
-        Some(nonNoneFields.mkString(", "))
+        Some(nonNoneFields.mkString("<br>"))
       }
       case None => None
     }
-
   }
-
-
 }
 
