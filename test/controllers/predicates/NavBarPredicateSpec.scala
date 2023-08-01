@@ -28,7 +28,7 @@ import play.api.mvc.Results.InternalServerError
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
 import play.twirl.api.Html
 import testConstants.BaseTestConstants.{testListLink, testMtditid, testNino, testRetrievedUserName}
-import testConstants.IncomeSourceDetailsTestConstants.singleBusinessIncome
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants.singleBusinessIncome
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 import views.html.navBar.{BtaNavBar, PtaPartial}

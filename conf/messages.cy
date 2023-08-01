@@ -383,6 +383,7 @@ income_breakdown.table.foreign_income_gains                     = Incwm ac enill
 income_breakdown.table.foreign_benefits_gifts                   = Buddiannau a rhoddion tramor
 income_breakdown.table.gains_insurance                          = Enillion ar bolisïau yswiriant bywyd
 income_breakdown.table.share_schemes                            = Cynlluniau cyfranddaliadau
+income_breakdown.table.other_income                             = Incwm arall
 income_breakdown.total                                          = Cyfanswm yr incwm a gafwyd
 
 ## Forecast Income Summary Page ##
@@ -1408,6 +1409,27 @@ business-added.income-sources-button                    = Eich ffynonellau incwm
 business-added.previous-tax-years-heading               = Blynyddoedd treth blaenorol
 business-added.previous-tax-years-t1                    = Mae’n rhaid i chi wneud yn siŵr eich bod wedi anfon yr holl Incwm a threuliau, a datganiadau terfynol ar gyfer blynyddoedd treth cyn
 
+## Income Source Added Pages ##
+incomeSourceAdded.additionalWelshContent                    = Mae
+incomeSourceAdded.heading                                   = wedi cael ei ychwanegu i’ch cyfrif
+incomeSourceAdded.ukProperty                                = eiddo yn y DU
+incomeSourceAdded.subheading                                = Yr hyn y mae’n rhaid i chi ei wneud
+incomeSourceAdded.to                                        = i
+incomeSourceAdded.quarterly.heading                         = Anfon diweddariadau chwarterol
+incomeSourceAdded.quarterly.text                            = Mae’n rhaid i chi anfon diweddariadau chwarterol o’ch incwm a’ch treuliau, gan ddefnyddio meddalwedd sy’n cydweddu, erbyn y dyddiadau cau canlynol:
+incomeSourceAdded.eops.heading                              = Anfon datganiadau diwedd cyfnod
+incomeSourceAdded.eops.text                                 = Mae’n rhaid i chi gyflwyno datganiadau diwedd cyfnod gan ddefnyddio’ch meddalwedd, a hynny erbyn y dyddiad cau.
+incomeSourceAdded.finalDeclaration.heading                   = Cyflwyno’ch datganiadau terfynol a thalu’ch treth
+incomeSourceAdded.finalDeclaration.text                      = Bydd yn rhaid i chi gyflwyno’ch datganiadau terfynol a thalu’r dreth sydd arnoch erbyn y dyddiad cau.
+incomeSourceAdded.table.taxYear.heading                     = Blwyddyn dreth
+incomeSourceAdded.table.deadline.heading                    = Dyddiad cau
+incomeSourceAdded.button.text                               = Eich ffynonellau incwm
+incomeSourceAdded.previousTaxYears.heading                  = Blynyddoedd treth blaenorol
+incomeSourceAdded.previousTaxYears.text                     = Mae’n rhaid i chi wneud yn siŵr eich bod wedi anfon yr holl Incwm a threuliau, a datganiadau terfynol ar gyfer blynyddoedd treth cyn
+
+business-added.foreign-property-h1                      = eiddo tramor
+business-added.foreign-property-head                    = Mae
+business-added.foreign-property-base                    = wedi cael ei ychwanegu i’ch cyfrif
 
 incomeSources.add.businessReportingMethod.heading                   =   Dewis dull o gyflwyno adroddiad
 incomeSources.add.businessReportingMethod.description1              =   Mae’ch busnes yn gymwys i gael cyfnod gras hyd at Ebrill {0}, lle y gallwch gyflwyno adroddiadau’n flynyddol.

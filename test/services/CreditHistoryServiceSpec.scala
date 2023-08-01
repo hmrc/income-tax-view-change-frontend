@@ -24,7 +24,7 @@ import play.api.test.FakeRequest
 import services.CreditHistoryService.CreditHistoryError
 import services.helpers.CreditHistoryDataHelper
 import testConstants.BaseTestConstants.{testMtditid, testNino, testRetrievedUserName}
-import testConstants.IncomeSourceDetailsTestConstants.oldUserDetails
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants.oldUserDetails
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 

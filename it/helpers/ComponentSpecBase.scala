@@ -294,6 +294,16 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
     def getForeignPropertyEndDate: WSResponse = get("/income-sources/cease/foreign-property-end-date")
 
+    def getForeignPropertyAddedObligations(id: String): WSResponse = {
+      get(
+        uri = s"/income-sources/add/foreign-property-added/?id=$id"
+      )
+    }
+
+    def postForeignPropertyAddedObligations(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      post(s"/income-sources/add/foreign-property-added", additionalCookies)(Map.empty)
+    }
+
     def getAddBusinessStartDate: WSResponse = get("/income-sources/add/business-start-date")
 
     def getAddBusinessStartDateCheck(date: String): WSResponse = {
