@@ -85,8 +85,9 @@ class ManageSelfEmploymentController @Inject()(val view: BusinessManageDetails,
           for {
             i <- calculationListService.isTaxYearCrystallised(x.latencyDetails.get.taxYear1.toInt)
             j <- calculationListService.isTaxYearCrystallised(x.latencyDetails.get.taxYear2.toInt)
-          } yield
+          } yield {
             Right(List(i.get, j.get))
+          }
         case _ =>
           Future.successful(Left("No data ready"))
       }
@@ -94,7 +95,7 @@ class ManageSelfEmploymentController @Inject()(val view: BusinessManageDetails,
   }
 
   def getViewIncomeSourceChosenViewModel(sources: IncomeSourceDetailsModel, id: String)
-                                        (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, ViewBusinessDetailsViewModel]] = {
+                                        (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[ViewBusinessDetailsViewModel] = {
 
     val desiredIncomeSourceMaybe: Option[BusinessDetailsModel] = sources.businesses
       .filterNot(_.isCeased)
@@ -103,48 +104,56 @@ class ManageSelfEmploymentController @Inject()(val view: BusinessManageDetails,
 
     val desiredIncomeSource: BusinessDetailsModel = desiredIncomeSourceMaybe.getOrElse(throw new InternalError("Income source id provided does not match any of the user's income sources"))
 
-    getCrystallisationInformation(desiredIncomeSourceMaybe).value.flatMap {
-      case Left(x) =>
-        for {
-          i <- itsaStatusService.hasMandatedOrVoluntaryStatusCurrentYear
-        } yield {
-          Right(ViewBusinessDetailsViewModel(
-            incomeSourceId = desiredIncomeSource.incomeSourceId.get,
-            tradingName = desiredIncomeSource.tradingName,
-            tradingStartDate = desiredIncomeSource.tradingStartDate,
-            address = incomeSourceDetailsService.getLongAddressFromBusinessAddressDetails(desiredIncomeSource.address),
-            businessAccountingMethod = desiredIncomeSource.cashOrAccruals,
-            itsaHasMandatedOrVoluntaryStatusCurrentYear = Option(i),
-            taxYearOneCrystallised = None,
-            taxYearTwoCrystallised = None,
-            latencyDetails = None)
-          )
-        }
-      case Right(crystallisationData: List[Boolean]) =>
-        for {
-          i <- itsaStatusService.hasMandatedOrVoluntaryStatusCurrentYear
-          if desiredIncomeSourceMaybe.isDefined
-          if desiredIncomeSourceMaybe.get.incomeSourceId.isDefined
-        } yield {
-          Right(ViewBusinessDetailsViewModel(
-            incomeSourceId = desiredIncomeSource.incomeSourceId.get,
-            tradingName = desiredIncomeSource.tradingName,
-            tradingStartDate = desiredIncomeSource.tradingStartDate,
-            address = incomeSourceDetailsService.getLongAddressFromBusinessAddressDetails(desiredIncomeSource.address),
-            businessAccountingMethod = desiredIncomeSource.cashOrAccruals,
-            itsaHasMandatedOrVoluntaryStatusCurrentYear = Option(i),
-            taxYearOneCrystallised = Option(crystallisationData.head),
-            taxYearTwoCrystallised = Option(crystallisationData(1)),
-            latencyDetails = Option(ViewLatencyDetailsViewModel(
-              latencyEndDate = latencyDetails.get.latencyEndDate,
-              taxYear1 = latencyDetails.get.taxYear1.toInt,
-              latencyIndicator1 = latencyDetails.get.latencyIndicator1,
-              taxYear2 = latencyDetails.get.taxYear2.toInt,
-              latencyIndicator2 = latencyDetails.get.latencyIndicator2
-             ))))
-        }
+    itsaStatusService.hasMandatedOrVoluntaryStatusCurrentYear.flatMap {
+      case true =>
+        getCrystallisationInformation(desiredIncomeSourceMaybe).value.flatMap {
+          case Left(x) =>
+            for {
+              i <- itsaStatusService.hasMandatedOrVoluntaryStatusCurrentYear
+            } yield {
+              ViewBusinessDetailsViewModel(
+                incomeSourceId = desiredIncomeSource.incomeSourceId.get,
+                tradingName = desiredIncomeSource.tradingName,
+                tradingStartDate = desiredIncomeSource.tradingStartDate,
+                address = incomeSourceDetailsService.getLongAddressFromBusinessAddressDetails(desiredIncomeSource.address),
+                businessAccountingMethod = desiredIncomeSource.cashOrAccruals,
+                itsaHasMandatedOrVoluntaryStatusCurrentYear = Option(true),
+                taxYearOneCrystallised = None,
+                taxYearTwoCrystallised = None,
+                latencyDetails = None)
+            }
+          case Right(crystallisationData: List[Boolean]) =>
+              Future(ViewBusinessDetailsViewModel(
+                incomeSourceId = desiredIncomeSource.incomeSourceId.get,
+                tradingName = desiredIncomeSource.tradingName,
+                tradingStartDate = desiredIncomeSource.tradingStartDate,
+                address = incomeSourceDetailsService.getLongAddressFromBusinessAddressDetails(desiredIncomeSource.address),
+                businessAccountingMethod = desiredIncomeSource.cashOrAccruals,
+                itsaHasMandatedOrVoluntaryStatusCurrentYear = Option(true),
+                taxYearOneCrystallised = Option(crystallisationData.head),
+                taxYearTwoCrystallised = Option(crystallisationData(1)),
+                latencyDetails = Option(ViewLatencyDetailsViewModel(
+                  latencyEndDate = latencyDetails.get.latencyEndDate,
+                  taxYear1 = latencyDetails.get.taxYear1.toInt,
+                  latencyIndicator1 = latencyDetails.get.latencyIndicator1,
+                  taxYear2 = latencyDetails.get.taxYear2.toInt,
+                  latencyIndicator2 = latencyDetails.get.latencyIndicator2
+                ))))
+            }
+      case false =>
+        Future(ViewBusinessDetailsViewModel(
+          incomeSourceId = desiredIncomeSource.incomeSourceId.get,
+          tradingName = desiredIncomeSource.tradingName,
+          tradingStartDate = desiredIncomeSource.tradingStartDate,
+          address = incomeSourceDetailsService.getLongAddressFromBusinessAddressDetails(desiredIncomeSource.address),
+          businessAccountingMethod = desiredIncomeSource.cashOrAccruals,
+          itsaHasMandatedOrVoluntaryStatusCurrentYear = Option(false),
+          taxYearOneCrystallised = None,
+          taxYearTwoCrystallised = None,
+          latencyDetails = None))
     }
   }
+
 
   def handleRequest(sources: IncomeSourceDetailsModel, isAgent: Boolean, backUrl: String, id: String)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
@@ -155,17 +164,11 @@ class ManageSelfEmploymentController @Inject()(val view: BusinessManageDetails,
       for {
         value <- getViewIncomeSourceChosenViewModel(sources = sources, id = id)
       } yield {
-        value match {
-          case Right(v) =>
-            Ok(view(viewModel = v,
-              isAgent = isAgent,
-              backUrl = backUrl
-            ))
-          case Left(ex) =>
-            itvcErrorHandler.showInternalServerError()
-        }
+        Ok(view(viewModel = value,
+          isAgent = isAgent,
+          backUrl = backUrl
+        ))
       }
-
     }
   }
 }

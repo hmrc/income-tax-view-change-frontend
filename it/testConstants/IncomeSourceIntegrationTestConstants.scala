@@ -48,6 +48,13 @@ object IncomeSourceIntegrationTestConstants {
     yearOfMigration = Some("2018")
   )
 
+  def singleBusinessResponseWithUnknownsInLatencyPeriod(latencyDetails: LatencyDetails): IncomeSourceDetailsModel = IncomeSourceDetailsModel(
+    testMtdItId,
+    businesses = List(business3WithUnknowns.copy(latencyDetails = Some(latencyDetails))),
+    properties = Nil,
+    yearOfMigration = Some("2018")
+  )
+
   def singleUKPropertyResponseInLatencyPeriod(latencyDetails: LatencyDetails): IncomeSourceDetailsModel = IncomeSourceDetailsModel(
     testMtditid,
     businesses = List(business1.copy(latencyDetails = Some(latencyDetails))),

@@ -26,7 +26,7 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{mock, when}
+import org.mockito.Mockito.{mock, reset, when}
 import play.api.http.Status
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, status}
@@ -40,8 +40,7 @@ import views.html.incomeSources.manage.BusinessManageDetails
 import scala.concurrent.Future
 
 class ManageSelfEmploymentControllerSpec extends TestSupport with MockAuthenticationPredicate
-  with MockIncomeSourceDetailsPredicate with FeatureSwitching with MockIncomeTaxViewChangeConnector with MockNavBarEnumFsPredicate
-{
+  with MockIncomeSourceDetailsPredicate with FeatureSwitching with MockIncomeTaxViewChangeConnector with MockNavBarEnumFsPredicate {
 
   val mockDateService: DateService = mock(classOf[DateService])
   val mockITSAStatusService: ITSAStatusService = mock(classOf[ITSAStatusService])
@@ -49,6 +48,13 @@ class ManageSelfEmploymentControllerSpec extends TestSupport with MockAuthentica
 
   def disableAllSwitches(): Unit = {
     switches.foreach(switch => disable(switch))
+  }
+
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    reset(mockCalculationListService)
+    reset(mockITSAStatusService)
+    reset(mockDateService)
   }
 
   object TestManageSelfEmploymentController extends ManageSelfEmploymentController (
@@ -82,13 +88,11 @@ class ManageSelfEmploymentControllerSpec extends TestSupport with MockAuthentica
 
   }
 
-  object Scenario extends Enumeration {
-    type Scenario = Value
-    val ITSA_STATUS_MANDATORY_OR_VOLUNTARY_BUT_NO_LATENCY_INFORMATION, NON_ELIGIBLE_ITSA_STATUS, FIRST_AND_SECOND_YEAR_CRYSTALLIZED,
-    FIRST_AND_SECOND_YEAR_NOT_CRYSTALLIZED = Value
-  }
-
-  import Scenario._
+  sealed trait Scenario
+  case object ITSA_STATUS_MANDATORY_OR_VOLUNTARY_BUT_NO_LATENCY_INFORMATION extends Scenario
+  case object NON_ELIGIBLE_ITSA_STATUS extends Scenario
+  case object FIRST_AND_SECOND_YEAR_NOT_CRYSTALLIZED extends Scenario
+  case object FIRST_AND_SECOND_YEAR_CRYSTALLIZED extends Scenario
 
   val testBusinessAddress = testBizAddress
 
@@ -140,11 +144,6 @@ class ManageSelfEmploymentControllerSpec extends TestSupport with MockAuthentica
         mockBusinessIncomeSourceWithLatency2023AndUnknownValues()
         when(mockIncomeSourceDetailsService.getLongAddressFromBusinessAddressDetails(any))
           .thenReturn(None)
-        when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.eq(2023))(any, any, any))
-          .thenReturn(Future.successful(Some(false)))
-        when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.eq(2024))(any, any, any))
-          .thenReturn(Future.successful(Some(false)))
-
     }
 
     enable(IncomeSources)
@@ -154,7 +153,7 @@ class ManageSelfEmploymentControllerSpec extends TestSupport with MockAuthentica
   "Individual - ManageSelfEmploymentController" should {
     "return 200 OK" when {
       "FS is enabled and the .show(id) method is called with a valid id parameter and no latency information" in {
-        mockAndBasicSetup(Scenario.ITSA_STATUS_MANDATORY_OR_VOLUNTARY_BUT_NO_LATENCY_INFORMATION)
+        mockAndBasicSetup(ITSA_STATUS_MANDATORY_OR_VOLUNTARY_BUT_NO_LATENCY_INFORMATION)
 
         val result: Future[Result] = TestManageSelfEmploymentController.show(testSelfEmploymentId)(fakeRequestWithNino)
         val document: Document = Jsoup.parse(contentAsString(result))
@@ -167,7 +166,6 @@ class ManageSelfEmploymentControllerSpec extends TestSupport with MockAuthentica
         Option(document.getElementById("reporting-method-1")).isDefined shouldBe false
         Option(document.getElementById("reporting-method-2")).isDefined shouldBe false
         document.getElementById("business-address").text shouldBe TestManageSelfEmploymentController.businessWithLatencyAddress
-
       }
       "FS is enabled and the .show(id) method is called with a valid id parameter, valid latency information and two tax years not crystallised" in {
         mockAndBasicSetup(FIRST_AND_SECOND_YEAR_NOT_CRYSTALLIZED)
@@ -226,7 +224,7 @@ class ManageSelfEmploymentControllerSpec extends TestSupport with MockAuthentica
   "Agent - ManageSelfEmploymentController" should {
     "return 200 OK" when {
       "FS is enabled and the .showAgent(id) method is called with a valid id parameter and no latency information" in {
-        mockAndBasicSetup(Scenario.ITSA_STATUS_MANDATORY_OR_VOLUNTARY_BUT_NO_LATENCY_INFORMATION, isAgent = true)
+        mockAndBasicSetup(ITSA_STATUS_MANDATORY_OR_VOLUNTARY_BUT_NO_LATENCY_INFORMATION, isAgent = true)
 
         val result: Future[Result] = TestManageSelfEmploymentController.showAgent(testSelfEmploymentId)(fakeRequestConfirmedClient())
         val document: Document = Jsoup.parse(contentAsString(result))

@@ -98,12 +98,11 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
     yearOfMigration = Some(getCurrentTaxYearEnd.minusYears(1).getYear.toString),
     businesses = List(
       BusinessDetailsModel(
-        Some("testId"),
-        Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
-        None,
-        None,
-        Some(getCurrentTaxYearEnd.minusYears(1)),
-        tradingStartDate = None,
+        incomeSourceId = Some("testId"),
+        accountingPeriod = Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
+        tradingName = None,
+        firstAccountingPeriodEndDate = None,
+        tradingStartDate = Some(getCurrentTaxYearEnd.minusYears(1)),
         cessation = None)
     ),
     properties = Nil
