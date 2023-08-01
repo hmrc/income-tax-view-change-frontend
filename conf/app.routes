@@ -310,12 +310,19 @@ GET          /agents/income-sources/manage/your-details-foreign-property       c
 
 GET          /income-sources/manage/confirm-you-want-to-report                 controllers.incomeSources.manage.ConfirmReportingMethodSharedController.show(id: String, taxYear: String, changeTo: String)
 GET          /agents/income-sources/manage/confirm-you-want-to-report          controllers.incomeSources.manage.ConfirmReportingMethodSharedController.showAgent(id: String, taxYear: String, changeTo: String)
+POST         /income-sources/manage/confirm-you-want-to-report                 controllers.incomeSources.manage.ConfirmReportingMethodSharedController.submit(id: String, taxYear: String, changeTo: String)
+POST         /agents/income-sources/manage/confirm-you-want-to-report          controllers.incomeSources.manage.ConfirmReportingMethodSharedController.submitAgent(id: String, taxYear: String, changeTo: String)
 
 GET          /income-sources/manage/confirm-you-want-to-report-uk-property                 controllers.incomeSources.manage.ConfirmReportingMethodSharedController.show(id: String, taxYear: String, changeTo: String)
 GET          /agents/income-sources/manage/confirm-you-want-to-report-uk-property          controllers.incomeSources.manage.ConfirmReportingMethodSharedController.showAgent(id: String, taxYear: String, changeTo: String)
+POST         /income-sources/manage/confirm-you-want-to-report-uk-property                 controllers.incomeSources.manage.ConfirmReportingMethodSharedController.submit(id: String, taxYear: String, changeTo: String)
+POST         /agents/income-sources/manage/confirm-you-want-to-report-uk-property          controllers.incomeSources.manage.ConfirmReportingMethodSharedController.submitAgent(id: String, taxYear: String, changeTo: String)
+
 
 GET          /income-sources/manage/confirm-you-want-to-report-foreign-property                 controllers.incomeSources.manage.ConfirmReportingMethodSharedController.show(id: String, taxYear: String, changeTo: String)
 GET          /agents/income-sources/manage/confirm-you-want-to-report-foreign-property          controllers.incomeSources.manage.ConfirmReportingMethodSharedController.showAgent(id: String, taxYear: String, changeTo: String)
+POST         /income-sources/manage/confirm-you-want-to-report-foreign-property                 controllers.incomeSources.manage.ConfirmReportingMethodSharedController.submit(id: String, taxYear: String, changeTo: String)
+POST         /agents/income-sources/manage/confirm-you-want-to-report-foreign-property          controllers.incomeSources.manage.ConfirmReportingMethodSharedController.submitAgent(id: String, taxYear: String, changeTo: String)
 
 
 # Income Sources - Reporting Method

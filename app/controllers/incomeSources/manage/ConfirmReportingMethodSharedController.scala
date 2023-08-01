@@ -27,7 +27,7 @@ import play.api.mvc._
 import services.IncomeSourceDetailsService
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import views.html.errorPages.CustomNotFoundError
-import views.html.incomeSources.manage.{ConfirmReportingMethod, ConfirmSEReportingMethod, ManageIncomeSources}
+import views.html.incomeSources.manage.{ConfirmReportingMethod, ManageIncomeSources}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -71,7 +71,34 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
               isAgent = true,
               taxYear = taxYear,
               changeTo = changeTo,
-              itvcErrorHandler = itvcErrorHandler
+              itvcErrorHandler = itvcErrorHandlerAgent
+            )
+        }
+  }
+
+  def submit(id: String, taxYear: String, changeTo: String): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+    andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
+    implicit user =>
+      handleSubmitRequest(
+        id = id,
+        isAgent = true,
+        taxYear = taxYear,
+        changeTo = changeTo,
+        itvcErrorHandler = itvcErrorHandler
+      )
+  }
+
+  def submitAgent(id: String, taxYear: String, changeTo: String): Action[AnyContent] = Authenticated.async {
+    implicit request =>
+      implicit user =>
+        getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
+          implicit mtdItUser =>
+            handleSubmitRequest(
+              id = id,
+              isAgent = true,
+              taxYear = taxYear,
+              changeTo = changeTo,
+              itvcErrorHandler = itvcErrorHandlerAgent
             )
         }
   }
@@ -110,15 +137,19 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
             .error(s"[ConfirmReportingMethodSharedController][handleRequest]: Could not find property or business with incomeSourceId: $id")
           itvcErrorHandler.showInternalServerError()
       }
-    )
+    ) recover {
+      case ex: Exception =>
+        Logger("application").error(s"${if (isAgent) "[Agent]"}" +
+          s"Error getting confirmReportingMethod page: ${ex.getMessage}")
+        itvcErrorHandler.showInternalServerError()
+    }
   }
 
+  private def handleSubmitRequest = ???
+
   private def getReportingMethodKey(reportingMethod: String): Option[String] = {
-    reportingMethod.toLowerCase match {
-      case "annual" => Some("annual")
-      case "quarterly" => Some("quarterly")
-      case _ => None
-    }
+    Set("annual", "quarterly")
+      .find(_== reportingMethod.toLowerCase)
   }
 }
 
