@@ -1387,6 +1387,15 @@ incomeSources.cease.BusinessEndDate.error.future                          = You 
 incomeSources.cease.BusinessEndDate.error.beforeStartDate                 = The cessation date cannot be earlier than the start date for the business
 incomeSources.cease.BusinessEndDate.error.beforeEarliestDate              = The cessation date cannot be earlier than the 6th of April 2015
 
+incomeSources.ceaseBusiness.checkDetails.heading                    = Check your details
+incomeSources.ceaseBusiness.checkDetails.soloTrader                 = Sole trader business you entered
+incomeSources.ceaseBusiness.checkDetails.dateStopped                = Date business stopped
+incomeSources.ceaseBusiness.checkDetails.businessName               = Business that’s stopped
+incomeSources.ceaseBusiness.checkDetails.businessAddress            = Business address
+incomeSources.ceaseBusiness.checkDetails.confirm                    = Confirm and continue
+incomeSources.ceaseBusiness.checkDetails.change                     = Change
+incomeSources.ceaseBusiness.checkDetails.unknown                    = Unknown
+
 check-cease-foreign-property-details.heading            = Check your details
 check-cease-foreign-property-details.caption            = Foreign property business you entered
 check-cease-foreign-property-details.summary-list.key   = Date business stopped

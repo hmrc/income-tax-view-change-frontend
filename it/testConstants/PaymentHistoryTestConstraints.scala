@@ -4,6 +4,7 @@ import java.time.LocalDate
 import BaseIntegrationTestConstants.{getCurrentTaxYearEnd, otherTestSelfEmploymentId, testSelfEmploymentId}
 import models.core.{AccountingPeriodModel, AddressModel, CessationModel}
 import models.incomeSourceDetails.BusinessDetailsModel
+import testConstants.BusinessDetailsIntegrationTestConstants.address
 
 
 object PaymentHistoryTestConstraints {
@@ -43,7 +44,8 @@ object PaymentHistoryTestConstraints {
     tradingName = Some(b1TradingName),
     firstAccountingPeriodEndDate = Some(getCurrentTaxYearEnd.minusYears(1)),
     None,
-    None
+    None,
+    address = Some(address)
   )
 
   val business2 = BusinessDetailsModel(
@@ -55,7 +57,8 @@ object PaymentHistoryTestConstraints {
     tradingName = Some(b2TradingName),
     firstAccountingPeriodEndDate = Some(b2AccountingEnd),
     None,
-    None
+    None,
+    address = Some(address)
   )
 
 }

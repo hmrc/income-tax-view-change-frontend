@@ -19,6 +19,7 @@ package services
 import auth.MtdItUserWithNino
 import connectors.IncomeTaxViewChangeConnector
 import exceptions.MissingFieldException
+import models.core.AddressModel
 import models.incomeSourceDetails.viewmodels._
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, IncomeSourceDetailsResponse}
 import play.api.Logger
@@ -26,10 +27,9 @@ import play.api.cache.AsyncCacheApi
 import play.api.libs.json.{JsPath, JsSuccess, JsValue, Json}
 import uk.gov.hmrc.http.HeaderCarrier
 
-import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.duration.{Duration, DurationInt}
-import scala.concurrent.{Await, ExecutionContext, Future}
+import scala.concurrent.duration.Duration
+import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
 
 @Singleton
@@ -37,6 +37,14 @@ class IncomeSourceDetailsService @Inject()(val incomeTaxViewChangeConnector: Inc
                                            val cache: AsyncCacheApi) {
   implicit val ec = ExecutionContext.global
   val cacheExpiry: Duration = Duration(1, "day")
+  val emptyAddress = AddressModel(
+    addressLine1 = "",
+    addressLine2 = Some(""),
+    addressLine3 = Some(""),
+    addressLine4 = Some(""),
+    postCode = Some(""),
+    countryCode = ""
+  )
 
   def getCachedIncomeSources(cacheKey: String): Future[Option[IncomeSourceDetailsModel]] = {
     cache.get(cacheKey).map((incomeSources: Option[JsValue]) => {
@@ -171,8 +179,9 @@ class IncomeSourceDetailsService @Inject()(val incomeTaxViewChangeConnector: Inc
           maybeSoleTraderBusinesses.map { business =>
             CeaseBusinessDetailsViewModel(
               business.incomeSourceId.getOrElse(throw MissingFieldException("Income Source Id")),
-              business.tradingName.getOrElse(throw MissingFieldException("Trading Name")),
-              business.tradingStartDate.getOrElse(throw MissingFieldException("Trading Start Date"))
+              business.tradingName,
+              business.tradingStartDate.getOrElse(throw MissingFieldException("Trading Start Date")),
+              address = business.address
             )
           }
         } else Nil,

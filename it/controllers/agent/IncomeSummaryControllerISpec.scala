@@ -28,7 +28,7 @@ import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.ws.WSResponse
 import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants._
-import testConstants.BusinessDetailsIntegrationTestConstants.{b2CessationDate, b2CessationReason, b2TradingStart}
+import testConstants.BusinessDetailsIntegrationTestConstants.{address, b2CessationDate, b2CessationReason, b2TradingStart}
 import testConstants.IncomeSourceIntegrationTestConstants.businessAndPropertyResponse
 import testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessful
 import testConstants.PropertyDetailsIntegrationTestConstants.{propertyIncomeType, propertyTradingStartDate}
@@ -49,7 +49,8 @@ class IncomeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
       Some("Test Trading Name"),
       Some(getCurrentTaxYearEnd),
       Some(b2TradingStart),
-      Some(CessationModel(Some(b2CessationDate), Some(b2CessationReason)))
+      Some(CessationModel(Some(b2CessationDate), Some(b2CessationReason))),
+      address = Some(address)
     )),
     properties = List(
       PropertyDetailsModel(
