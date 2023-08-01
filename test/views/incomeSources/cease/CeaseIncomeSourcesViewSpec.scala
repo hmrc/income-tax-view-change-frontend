@@ -42,7 +42,7 @@ class CeaseIncomeSourcesViewSpec extends TestSupport with ImplicitDateFormatter 
       )
     } else {
       CeaseIncomeSourcesViewModel(
-        soleTraderBusinesses = List(CeaseBusinessDetailsViewModel(testSelfEmploymentId, Some(testTradeName), Some(testStartDate))),
+        soleTraderBusinesses = List(CeaseBusinessDetailsViewModel(testSelfEmploymentId, Some(testTradeName), Some(testStartDate), Some(address))),
         ukProperty = Some(CeasePropertyDetailsViewModel(Some(testStartDate))),
         foreignProperty = Some(CeasePropertyDetailsViewModel(Some(testStartDate))),
         ceasedBusinesses = List(
