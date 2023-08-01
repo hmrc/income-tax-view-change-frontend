@@ -86,7 +86,9 @@ class BusinessReportingMethodControllerSpec extends TestSupport with MockAuthent
     val description1_TY2: String = messages("incomeSources.add.businessReportingMethod.description1", "2022")
     val description2: String = messages("incomeSources.add.businessReportingMethod.description2")
     val description3: String = messages("incomeSources.add.businessReportingMethod.description3")
-    val description4: String = messages("incomeSources.add.businessReportingMethod.description4")
+    val description4: String = messages("incomeSources.add.businessReportingMethod.description4.bullet1") + " " +
+      messages("incomeSources.add.businessReportingMethod.description4.bullet2") + " " +
+      messages("incomeSources.add.businessReportingMethod.description4.bullet3")
     val chooseReport: String = messages("incomeSources.add.businessReportingMethod.chooseReport")
     val taxYear1_TY1: String = messages("incomeSources.add.businessReportingMethod.taxYear", "2021", "2022")
     val taxYear2_TY1: String = messages("incomeSources.add.businessReportingMethod.taxYear", "2022", "2023")
@@ -242,7 +244,7 @@ class BusinessReportingMethodControllerSpec extends TestSupport with MockAuthent
         document.getElementsByClass("govuk-body").get(0).text shouldBe TestBusinessReportingMethodController.description1_TY1
         document.getElementsByClass("govuk-body").get(1).text shouldBe TestBusinessReportingMethodController.description2
         document.getElementsByClass("govuk-body").get(2).text shouldBe TestBusinessReportingMethodController.description3
-        document.select("ul").get(1).select("li").toString.replaceAll("\n", "") shouldBe TestBusinessReportingMethodController.description4
+        document.select("ul").get(1).text shouldBe TestBusinessReportingMethodController.description4
         document.select("h1").get(1).text shouldBe TestBusinessReportingMethodController.chooseReport
         document.getElementsByTag("legend").get(0).text shouldBe TestBusinessReportingMethodController.taxYear1_TY1
         document.getElementById("new_tax_year_1_reporting_method_tax_year").`val`() shouldBe "2022"
@@ -265,7 +267,7 @@ class BusinessReportingMethodControllerSpec extends TestSupport with MockAuthent
         document.getElementsByClass("govuk-body").get(0).text shouldBe TestBusinessReportingMethodController.description1_TY1
         document.getElementsByClass("govuk-body").get(1).text shouldBe TestBusinessReportingMethodController.description2
         document.getElementsByClass("govuk-body").get(2).text shouldBe TestBusinessReportingMethodController.description3
-        document.select("ul").get(1).select("li").toString.replaceAll("\n", "") shouldBe TestBusinessReportingMethodController.description4
+        document.select("ul").get(1).text shouldBe TestBusinessReportingMethodController.description4
         document.select("h1").get(1).text shouldBe TestBusinessReportingMethodController.chooseReport
         document.getElementsByTag("legend").get(0).text shouldBe TestBusinessReportingMethodController.taxYear2_TY1
         document.getElementById("new_tax_year_2_reporting_method_tax_year").`val`() shouldBe "2023"
@@ -487,7 +489,7 @@ class BusinessReportingMethodControllerSpec extends TestSupport with MockAuthent
         document.getElementsByClass("govuk-body").get(0).text shouldBe TestBusinessReportingMethodController.description1_TY1
         document.getElementsByClass("govuk-body").get(1).text shouldBe TestBusinessReportingMethodController.description2
         document.getElementsByClass("govuk-body").get(2).text shouldBe TestBusinessReportingMethodController.description3
-        document.select("ul").get(1).select("li").toString.replaceAll("\n", "") shouldBe TestBusinessReportingMethodController.description4
+        document.select("ul").get(1).text shouldBe TestBusinessReportingMethodController.description4
         document.select("h1").get(1).text shouldBe TestBusinessReportingMethodController.chooseReport
         document.getElementsByTag("legend").get(0).text shouldBe TestBusinessReportingMethodController.taxYear1_TY1
         document.getElementById("new_tax_year_1_reporting_method_tax_year").`val`() shouldBe "2022"
@@ -510,7 +512,7 @@ class BusinessReportingMethodControllerSpec extends TestSupport with MockAuthent
         document.getElementsByClass("govuk-body").get(0).text shouldBe TestBusinessReportingMethodController.description1_TY1
         document.getElementsByClass("govuk-body").get(1).text shouldBe TestBusinessReportingMethodController.description2
         document.getElementsByClass("govuk-body").get(2).text shouldBe TestBusinessReportingMethodController.description3
-        document.select("ul").get(1).select("li").toString.replaceAll("\n", "") shouldBe TestBusinessReportingMethodController.description4
+        document.select("ul").get(1).text shouldBe TestBusinessReportingMethodController.description4
         document.select("h1").get(1).text shouldBe TestBusinessReportingMethodController.chooseReport
         document.getElementsByTag("legend").get(0).text shouldBe TestBusinessReportingMethodController.taxYear2_TY1
         document.getElementById("new_tax_year_2_reporting_method_tax_year").`val`() shouldBe "2023"
