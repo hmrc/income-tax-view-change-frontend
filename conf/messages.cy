@@ -1479,3 +1479,15 @@ incomeSources.add.ukPropertyReportingMethod.taxYear                   =   Blwydd
 incomeSources.add.ukPropertyReportingMethod.chooseAnnualReport        =   Dewis cyflwyno adroddiadau’n flynyddol
 incomeSources.add.ukPropertyReportingMethod.chooseQuarterlyReport     =   Dewis cyflwyno adroddiadau’n chwarterol
 incomeSources.add.ukPropertyReportingMethod.error                     =   Dewiswch a hoffech gyflwyno adroddiad yn flynyddol neu’n chwarterol ar gyfer blwyddyn dreth {0} i {1}
+
+# manage obligations page
+incomeSources.add.manageObligations.h1                                =   Bydd
+incomeSources.add.manageObligations.h2                                =   yn cyflwyno adroddiadau’n
+incomeSources.add.manageObligations.annually                          =   flynyddol
+incomeSources.add.manageObligations.quarterly                         =   chwarterol
+incomeSources.add.manageObligations.tax-year                          =   ar gyfer blwyddyn dreth
+incomeSources.add.manageObligations.to                                =   i
+incomeSources.add.manageObligations.sole-trader                       =   y busnes unig fasnachwr
+incomeSources.add.manageObligations.uk-property                       =   eiddo yn y DU
+incomeSources.add.manageObligations.foreign-property                  =   eiddo tramor
+incomeSources.add.manageObligations.heading                           =   Yr hyn y mae’n rhaid i chi ei wneud

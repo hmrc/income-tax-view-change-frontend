@@ -1516,6 +1516,8 @@ incomeSources.add.manageObligations.quarterly                         =   quarte
 incomeSources.add.manageObligations.tax-year                          =   for the tax year
 incomeSources.add.manageObligations.to                                =   to
 incomeSources.add.manageObligations.sole-trader                       =   Sole trader business
+incomeSources.add.manageObligations.uk-property                       =   UK property
+incomeSources.add.manageObligations.foreign-property                  =   Foreign property
 incomeSources.add.manageObligations.heading                           =   What you must do
 
 

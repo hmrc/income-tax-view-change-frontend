@@ -58,6 +58,12 @@
 @getBusinessName(name: String) = @{
     if(name == "Not Found") getUniqueMessage("sole-trader")
     else name
+    name match {
+        case "Not Found" => getUniqueMessage("sole-trader")
+        case "UK property" => getUniqueMessage("uk-property")
+        case "Foreign property" => getUniqueMessage("foreign-property")
+        case _ => name
+    }
 }
 
 @getPeriodMessage(changeTo: String) = @{
