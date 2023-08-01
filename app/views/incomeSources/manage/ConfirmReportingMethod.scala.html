@@ -27,6 +27,7 @@
 
 @(
         isAgent: Boolean,
+        backUrl: String,
         taxYearStartYear: String,
         taxYearEndYear: String,
         reportingMethodKey: String
@@ -37,7 +38,7 @@
 }
 
 @mainTemplate(pageTitle = getMessage(s"heading.$reportingMethodKey"),
-    backUrl = Some(""),
+    backUrl = Some(backUrl),
     isAgent = isAgent,
     btaNavPartial = user.btaNavPartial) {
 

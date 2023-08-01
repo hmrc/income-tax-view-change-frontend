@@ -57,6 +57,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
         isAgent = true,
         taxYear = taxYear,
         changeTo = changeTo,
+        backUrl = backUrl(id, isAgent = false),
         itvcErrorHandler = itvcErrorHandler
       )
   }
@@ -71,6 +72,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
               isAgent = true,
               taxYear = taxYear,
               changeTo = changeTo,
+              backUrl = backUrl(id, isAgent = true),
               itvcErrorHandler = itvcErrorHandlerAgent
             )
         }
@@ -80,11 +82,6 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
       handleSubmitRequest(
-        id = id,
-        isAgent = true,
-        taxYear = taxYear,
-        changeTo = changeTo,
-        itvcErrorHandler = itvcErrorHandler
       )
   }
 
@@ -94,11 +91,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
         getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
           implicit mtdItUser =>
             handleSubmitRequest(
-              id = id,
-              isAgent = true,
-              taxYear = taxYear,
-              changeTo = changeTo,
-              itvcErrorHandler = itvcErrorHandlerAgent
+
             )
         }
   }
@@ -107,6 +100,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
                     isAgent: Boolean,
                     taxYear: String,
                     changeTo: String,
+                    backUrl: String,
                     itvcErrorHandler: ShowInternalServerError)
                    (implicit user: MtdItUser[_]): Future[Result] = {
     Future(
@@ -127,6 +121,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
           Ok(
             confirmReportingMethod(
               isAgent = isAgent,
+              backUrl = backUrl,
               taxYearEndYear = taxYear.endYear,
               taxYearStartYear = taxYear.startYear,
               reportingMethodKey = reportingMethodKey
@@ -145,11 +140,15 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
     }
   }
 
-  private def handleSubmitRequest = ???
+  private def handleSubmitRequest() = Future.successful(Ok)
 
   private def getReportingMethodKey(reportingMethod: String): Option[String] = {
     Set("annual", "quarterly")
       .find(_== reportingMethod.toLowerCase)
   }
-}
 
+  def backUrl(id: String, isAgent: Boolean): String = {
+    if (isAgent) controllers.incomeSources.manage.routes.ManageSelfEmploymentController.showAgent(id).url
+    else controllers.incomeSources.manage.routes.ManageSelfEmploymentController.show(id).url
+  }
+}
