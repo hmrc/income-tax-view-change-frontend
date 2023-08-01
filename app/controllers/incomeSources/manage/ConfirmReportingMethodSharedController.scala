@@ -59,7 +59,8 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
         taxYear = taxYear,
         changeTo = changeTo,
         itvcErrorHandler = itvcErrorHandler,
-        backUrl = getBackUrl(id, isAgent = false)
+        backUrl = getBackUrl(id, isAgent = false),
+        postAction = getPostAction(id, isAgent = false, taxYear, changeTo)
       )
   }
 
@@ -74,7 +75,8 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
               taxYear = taxYear,
               changeTo = changeTo,
               itvcErrorHandler = itvcErrorHandlerAgent,
-              backUrl = getBackUrl(id, isAgent = true)
+              backUrl = getBackUrl(id, isAgent = true),
+              postAction = getPostAction(id, isAgent = true, taxYear, changeTo)
             )
         }
   }
@@ -115,26 +117,30 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
                     taxYear: String,
                     changeTo: String,
                     backUrl: String,
+                    postAction: Call,
                     itvcErrorHandler: ShowInternalServerError)
                    (implicit user: MtdItUser[_]): Future[Result] = {
     Future(
-      (isEnabled(IncomeSources), TaxYear.getTaxYearStartYearEndYear(taxYear), getReportingMethodKey(changeTo)) match {
-        case (false, _, _) =>
-          Ok(
-            customNotFoundErrorView()
-          )
-        case (_, _, None) =>
-          Logger("application")
-            .error(s"[ConfirmReportingMethodSharedController][handleRequest]: Could not parse reporting method: $changeTo")
-          itvcErrorHandler.showInternalServerError()
-        case (_, None, _) =>
+      (isEnabled(IncomeSources), TaxYear.getTaxYearStartYearEndYear(taxYear), getReportingMethodKey(changeTo), idIsValid(id)) match {
+        case (false, _, _, _) =>
+          Ok(customNotFoundErrorView())
+        case (_, None, _, _) =>
           Logger("application")
             .error(s"[ConfirmReportingMethodSharedController][handleRequest]: Could not parse taxYear: $taxYear")
           itvcErrorHandler.showInternalServerError()
-        case (_, Some(taxYears), Some(reportingMethodKey)) =>
+        case (_, _, None, _) =>
+          Logger("application")
+            .error(s"[ConfirmReportingMethodSharedController][handleRequest]: Could not parse reporting method: $changeTo")
+          itvcErrorHandler.showInternalServerError()
+        case (_, _, _, false) =>
+          Logger("application")
+            .error(s"[ConfirmReportingMethodSharedController][handleRequest]: Could not find property or business with incomeSourceId: $id")
+          itvcErrorHandler.showInternalServerError()
+        case (_, Some(taxYears), Some(reportingMethodKey), true) =>
           Ok(
             confirmReportingMethod(
               form = ConfirmReportingMethodForm.form,
+              postAction = postAction,
               isAgent = isAgent,
               backUrl = backUrl,
               taxYearEndYear = taxYears.endYear,
@@ -142,10 +148,6 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
               reportingMethodKey = reportingMethodKey
             )
           )
-        case _ =>
-          Logger("application")
-            .error(s"[ConfirmReportingMethodSharedController][handleRequest]: Could not find property or business with incomeSourceId: $id")
-          itvcErrorHandler.showInternalServerError()
       }
     ) recover {
       case ex: Exception =>
@@ -160,36 +162,29 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
                                   taxYear: String,
                                   changeTo: String,
                                   backUrl: String,
-                                  postAction: Either[Throwable, Call],
+                                  postAction: Call,
                                   itvcErrorHandler: ShowInternalServerError)
                                  (implicit user: MtdItUser[_]): Future[Result] = {
 
     (isEnabled(IncomeSources), TaxYear.getTaxYearStartYearEndYear(taxYear), getReportingMethodKey(changeTo)) match {
       case (false, _, _) =>
-        Future(
-          Ok(
-            customNotFoundErrorView()
-          )
-        )
-      case (_, _, None) =>
-        Logger("application")
-          .error(s"[ConfirmReportingMethodSharedController][handleSubmitRequest]: Could not parse reporting method: $changeTo")
-        Future(
-          itvcErrorHandler.showInternalServerError()
-        )
+        Future(Ok(customNotFoundErrorView()))
       case (_, None, _) =>
         Logger("application")
           .error(s"[ConfirmReportingMethodSharedController][handleSubmitRequest]: Could not parse taxYear: $taxYear")
-        Future(
-          itvcErrorHandler.showInternalServerError()
-        )
+        Future(itvcErrorHandler.showInternalServerError())
+      case (_, _, None) =>
+        Logger("application")
+          .error(s"[ConfirmReportingMethodSharedController][handleSubmitRequest]: Could not parse reporting method: $changeTo")
+        Future(itvcErrorHandler.showInternalServerError())
       case (_, Some(taxYears), Some(reportingMethodKey)) =>
         ConfirmReportingMethodForm.form.bindFromRequest().fold(
-          formWithErrors =>
+          formWithErrors => {
             Future(
               BadRequest(
                 confirmReportingMethod(
                   form = formWithErrors,
+                  postAction = postAction,
                   isAgent = isAgent,
                   backUrl = backUrl,
                   taxYearStartYear = taxYears.startYear,
@@ -197,18 +192,16 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
                   reportingMethodKey = reportingMethodKey
                 )
               )
-            ),
+            )},
           formData =>
-
-            Future(Ok)
+            Future.successful(NotImplemented)
         )
     }
-
   }
 
   private def getReportingMethodKey(reportingMethod: String): Option[String] = {
     Set("annual", "quarterly")
-      .find(_== reportingMethod.toLowerCase)
+      .find(_ == reportingMethod.toLowerCase)
   }
 
   private def getBackUrl(id: String, isAgent: Boolean): String = {
@@ -216,7 +209,19 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
     else controllers.incomeSources.manage.routes.ManageSelfEmploymentController.show(id).url
   }
 
+  private def idIsValid(id: String)(implicit user: MtdItUser[_]): Boolean = user.incomeSources.isOngoingBusinessOrPropertyIncome(id)
+
   private def getPostAction(id: String,
+                            isAgent: Boolean,
+                            taxYear: String,
+                            changeTo: String): Call = {
+    if (isAgent) controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController
+      .submitAgent(id = id, taxYear = taxYear, changeTo = changeTo)
+    else controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController
+      .submit(id = id, taxYear = taxYear, changeTo = changeTo)
+  }
+
+  private def getRedirectCall(id: String,
                             isAgent: Boolean,
                             changeTo: String,
                             taxYear: String)
@@ -242,7 +247,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
       case (true, false, false, true) =>
         Right(redirectController.showAgentSelfEmployment(id, changeTo, taxYear))
       case _ =>
-        Left(new Error(s"Income source not found"))
+        Left(new Error(s"Income source type not found"))
     }
   }
 }

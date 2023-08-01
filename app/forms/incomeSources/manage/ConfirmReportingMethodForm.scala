@@ -21,17 +21,15 @@ import play.api.data.Forms._
 
 object ConfirmReportingMethodForm {
 
-  val confirmReportingMethod: String = "confirmReportingMethod"
+  val confirmReportingMethod: String = "incomeSources.manage.propertyReportingMethod"
+
+  private val isTrue: Boolean => Boolean = (input: Boolean) => input
 
   val form: Form[ConfirmReportingMethodForm] = Form(
     mapping(
-      confirmReportingMethod -> boolean
+      confirmReportingMethod -> boolean.verifying("confirmReportingMethodForm.error.mustBeSelected", isTrue)
     )(ConfirmReportingMethodForm.apply)(ConfirmReportingMethodForm.unapply)
-      .verifying("confirmReportingMethodForm.error.mustBeSelected", _.isSelected)
   )
 }
 
-case class ConfirmReportingMethodForm(confirmReportingMethod: Boolean) {
-
-  val isSelected: Boolean = confirmReportingMethod
-}
+case class ConfirmReportingMethodForm(confirmReportingMethod: Boolean)

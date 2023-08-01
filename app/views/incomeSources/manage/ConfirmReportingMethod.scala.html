@@ -31,6 +31,7 @@
 
 @(
         form: Form[_],
+        postAction: Call,
         isAgent: Boolean,
         backUrl: String,
         taxYearStartYear: String,
@@ -41,7 +42,7 @@
 @prefix = @{ "incomeSources.manage.propertyReportingMethod" }
 
 @getMessage(key: String, args: String*) = @{
-    messages(s"prefix.$key", args: _*)
+    messages(s"$prefix.$key", args: _*)
 }
 
 @mainTemplate(pageTitle = getMessage(s"heading.$reportingMethodKey"),
@@ -63,15 +64,15 @@
                     isPageHeading = true
                 ))
             )),
-            name = "ConfirmSelfEmploymentReportingMethod",
+            name = "confirmReportingMethod",
             items = Seq(CheckboxItem(
-                id = Some("confirm-self-employment-reporting-method"),
-                name = Some(getMessage(reportingMethodKey)),
+                id = Some(prefix),
+                name = Some(prefix),
                 content = Text(
                     value = getMessage(s"checkbox.$reportingMethodKey")
                 ),
                 value = "true",
-                checked = form(ConfirmReportingMethodForm.confirmReportingMethod).value.contains("true"))
+                checked = form.value.contains(true)
             ))
         ))
 
