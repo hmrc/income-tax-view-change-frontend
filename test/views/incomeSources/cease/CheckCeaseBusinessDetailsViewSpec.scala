@@ -22,8 +22,8 @@ import org.jsoup.nodes.Document
 import play.api.test.FakeRequest
 import play.twirl.api.HtmlFormat
 import testConstants.BaseTestConstants.{testArn, testCredId, testMtditid, testNino, testRetrievedUserName, testSaUtr, testSelfEmploymentId, testUserTypeAgent, testUserTypeIndividual}
-import testConstants.BusinessDetailsTestConstants.{address, businessIncomeSourceId, testBizAddress, testStartDate, testTradeName}
-import testConstants.IncomeSourceDetailsTestConstants.{businessAndPropertyAligned, businessesAndPropertyIncome}
+import testConstants.BusinessDetailsTestConstants.{address, businessIncomeSourceId, testStartDate, testTradeName}
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{businessAndPropertyAligned, businessesAndPropertyIncome}
 import testUtils.{TestSupport, ViewSpec}
 import uk.gov.hmrc.auth.core.retrieve.Name
 import views.html.incomeSources.cease.CheckCeaseBusinessDetails
@@ -61,7 +61,7 @@ class CheckCeaseBusinessDetailsViewSpec extends TestSupport with ViewSpec{
   val ceaseBusinessDetailsViewModel = CeaseBusinessDetailsViewModel(
     incomeSourceId = testSelfEmploymentId,
     tradingName = Some(testTradeName),
-    tradingStartDate = testStartDate,
+    tradingStartDate = Some(testStartDate),
     address = Some(address)
   )
 

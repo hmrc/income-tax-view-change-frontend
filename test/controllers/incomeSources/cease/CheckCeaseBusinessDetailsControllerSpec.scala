@@ -31,8 +31,8 @@ import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLoca
 import services.{UpdateIncomeSourceService, UpdateIncomeSourceSuccess}
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testIndividualAuthSuccessWithSaUtrResponse, testSelfEmploymentId}
 import testConstants.BusinessDetailsTestConstants.businessIncomeSourceId
-import testConstants.IncomeSourceDetailsTestConstants.ceaseBusinessDetailsModel
 import testConstants.UpdateIncomeSourceTestConstants.cessationDate
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants.ceaseBusinessDetailsModel
 import testUtils.TestSupport
 import uk.gov.hmrc.http.HttpClient
 import views.html.errorPages.CustomNotFoundError
