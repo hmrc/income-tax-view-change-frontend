@@ -113,13 +113,13 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
   }
 
   private def handleRequest(id: String,
-                    isAgent: Boolean,
-                    taxYear: String,
-                    changeTo: String,
-                    backUrl: String,
-                    postAction: Call,
-                    itvcErrorHandler: ShowInternalServerError)
-                   (implicit user: MtdItUser[_]): Future[Result] = {
+                            isAgent: Boolean,
+                            taxYear: String,
+                            changeTo: String,
+                            backUrl: String,
+                            postAction: Call,
+                            itvcErrorHandler: ShowInternalServerError)
+                           (implicit user: MtdItUser[_]): Future[Result] = {
     Future(
       (isEnabled(IncomeSources), TaxYear.getTaxYearStartYearEndYear(taxYear), getReportingMethodKey(changeTo), idIsValid(id)) match {
         case (false, _, _, _) =>
@@ -136,7 +136,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
           Logger("application")
             .error(s"[ConfirmReportingMethodSharedController][handleRequest]: Could not find property or business with incomeSourceId: $id")
           itvcErrorHandler.showInternalServerError()
-        case (_, Some(taxYears), Some(reportingMethodKey), true) =>
+        case (_, Some(taxYears), Some(reportingMethodKey), _) =>
           Ok(
             confirmReportingMethod(
               form = ConfirmReportingMethodForm.form,
@@ -179,7 +179,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
         Future(itvcErrorHandler.showInternalServerError())
       case (_, Some(taxYears), Some(reportingMethodKey)) =>
         ConfirmReportingMethodForm.form.bindFromRequest().fold(
-          formWithErrors => {
+          formWithErrors =>
             Future(
               BadRequest(
                 confirmReportingMethod(
@@ -192,7 +192,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
                   reportingMethodKey = reportingMethodKey
                 )
               )
-            )},
+            ),
           formData =>
             Future.successful(NotImplemented)
         )

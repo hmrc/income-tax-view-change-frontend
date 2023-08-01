@@ -1487,3 +1487,5 @@ incomeSources.manage.propertyReportingMethod.heading.annual         = Cadarnhewc
 incomeSources.manage.propertyReportingMethod.heading.quarterly      = Cadarnhewch eich bod am gyflwyno adroddiadau’n chwarterol ar gyfer blwyddyn dreth {0} i {1}
 incomeSources.manage.propertyReportingMethod.checkbox.annual        = Hoffwn newid i adrodd yn flynyddol
 incomeSources.manage.propertyReportingMethod.checkbox.quarterly     = Hoffwn newid i adrodd yn chwarterol
+incomeSources.manage.propertyReportingMethod.error.quarterly        = Dewiswch eich bod am newid i gyflwyno adroddiadau’n chwarterol
+incomeSources.manage.propertyReportingMethod.error.annual           = Dewiswch eich bod am newid i gyflwyno adroddiadau’n flynyddol

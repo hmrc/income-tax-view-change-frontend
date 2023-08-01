@@ -30,7 +30,7 @@
 )
 
 @(
-        form: Form[_],
+        form: Form[ConfirmReportingMethodForm],
         postAction: Call,
         isAgent: Boolean,
         backUrl: String,
@@ -50,7 +50,11 @@
     isAgent = isAgent,
     btaNavPartial = user.btaNavPartial) {
 
-    @errorSummary(form)
+    @errorSummary(form.copy(
+        errors = form.errors.map(formError =>
+            FormError(formError.key, formError.messages.map(_ + s".$reportingMethodKey"))
+        )
+    ))
 
     @formWithCSRF(action = postAction, Symbol("id") -> s"$prefix-form") {
 

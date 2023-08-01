@@ -1515,3 +1515,5 @@ incomeSources.manage.propertyReportingMethod.heading.annual         = Confirm yo
 incomeSources.manage.propertyReportingMethod.heading.quarterly      = Confirm you want to report quarterly for the tax year {0} to {1}
 incomeSources.manage.propertyReportingMethod.checkbox.annual        = Yes, I want to switch to annual reporting
 incomeSources.manage.propertyReportingMethod.checkbox.quarterly     = Yes, I want to switch to quarterly reporting
+incomeSources.manage.propertyReportingMethod.error.quarterly        = Select that you want to switch to quarterly reporting
+incomeSources.manage.propertyReportingMethod.error.annual           = Select that you want to switch to annual reporting
