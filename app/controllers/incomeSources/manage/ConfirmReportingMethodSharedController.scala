@@ -195,7 +195,12 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
             ),
           formData =>
             Future.successful(NotImplemented)
-        )
+        ) recover {
+          case ex: Exception =>
+            Logger("application").error(s"${if (isAgent) "[Agent]"}" +
+              s"Error updating reporting method: ${ex.getMessage}")
+            itvcErrorHandler.showInternalServerError()
+        }
     }
   }
 
@@ -209,7 +214,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
     else controllers.incomeSources.manage.routes.ManageSelfEmploymentController.show(id).url
   }
 
-  private def idIsValid(id: String)(implicit user: MtdItUser[_]): Boolean = user.incomeSources.isOngoingBusinessOrPropertyIncome(id)
+  private def idIsValid(id: Option[String])(implicit user: MtdItUser[_]): Boolean = user.incomeSources.isOngoingBusinessOrPropertyIncome(id)
 
   private def getPostAction(id: String,
                             isAgent: Boolean,
