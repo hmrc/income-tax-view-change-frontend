@@ -240,7 +240,9 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
                            (implicit user: MtdItUser[_]): Future[Result] = {
 
     val maybeTaxYearModel: Option[TaxYear] = TaxYear.getTaxYearStartYearEndYear(taxYear)
+
     val maybeIncomeSourceId: Option[String] = getIncomeSourceId(soleTraderBusinessId, incomeSourceType)
+
     val newReportingMethod: Option[String] = getReportingMethod(changeTo)
 
     Future(
@@ -303,7 +305,9 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
                                  (implicit user: MtdItUser[_]): Future[Result] = {
 
     val maybeTaxYearModel: Option[TaxYear] = TaxYear.getTaxYearStartYearEndYear(taxYear)
+
     val newReportingMethod: Option[String] = getReportingMethod(changeTo)
+
     val redirectCalls: (Call, Call, Call) = getRedirectCalls(incomeSourceId, incomeSourceType, isAgent, changeTo, taxYear)
 
     (isEnabled(IncomeSources), maybeTaxYearModel, newReportingMethod, redirectCalls) match {
