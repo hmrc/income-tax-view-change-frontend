@@ -184,7 +184,9 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
     (isEnabled(IncomeSources), TaxYear.getTaxYearStartYearEndYear(taxYear), getReportingMethod(changeTo), getRedirectCalls(id, isAgent, changeTo, taxYear)) match {
       case (false, _, _, _) =>
         Future(
-          Ok(customNotFoundErrorView())
+          Ok(
+            customNotFoundErrorView()
+          )
         )
       case (_, None, _, _) =>
         Logger("application")
