@@ -51,6 +51,8 @@
   }
 }
 
+@import implicitDateFormatter.longDate
+
 
 @heading = @{"incomeSources.ceaseBusiness.checkDetails.heading"}
 
@@ -62,7 +64,7 @@
   <div class="govuk-summary-list__row">
 
    <dt class="govuk-summary-list__key" id="businessStopDateLabel">@messages("incomeSources.ceaseBusiness.checkDetails.dateStopped")</dt>
-    <dd class="govuk-summary-list__value" id="businessStopDate">@sources.businessEndDate</dd>
+    <dd class="govuk-summary-list__value" id="businessStopDate">@sources.businessEndDate.toLongDate</dd>
    <dd class="govuk-summary-list__actions">
     <a class="govuk-link" href="@getChangeHref" id="change">
      @messages("incomeSources.ceaseBusiness.checkDetails.change")
