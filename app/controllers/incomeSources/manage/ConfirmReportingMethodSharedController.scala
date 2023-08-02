@@ -157,9 +157,10 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
                   reportingMethod = reportingMethod
                 )
               )
-            case Left(ex) => Logger("application")
-              .error(s"[ConfirmReportingMethodSharedController][handleRequest]: " +
-                s"Failed to get redirect urls, reason: $ex")
+            case Left(ex) =>
+              Logger("application")
+                .error(s"[ConfirmReportingMethodSharedController][handleRequest]: " +
+                  s"Failed to get redirect urls, reason: $ex")
               itvcErrorHandler.showInternalServerError()
           }
       }
@@ -235,21 +236,26 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
               )
             ) flatMap {
               case err: UpdateIncomeSourceResponseError =>
-                Logger("application").error(s"[ConfirmReportingMethodSharedController][handleSubmitRequest]: " +
-                  s"Failed to Update tax year specific reporting method: $err")
+                Logger("application")
+                  .error(s"[ConfirmReportingMethodSharedController][handleSubmitRequest]: " +
+                    s"Failed to Update tax year specific reporting method: $err")
                 Future(
                   itvcErrorHandler.showInternalServerError()
                 )
               case res: UpdateIncomeSourceResponseModel =>
-                Logger("application").info(s"[ConfirmReportingMethodSharedController][handleSubmitRequest]: " +
-                  s"Updated tax year specific reporting method : $res")
+                Logger("application")
+                  .info(s"[ConfirmReportingMethodSharedController][handleSubmitRequest]: " +
+                    s"Updated tax year specific reporting method : $res")
                 Future.successful(
-                  Redirect(successRedirectCall)
+                  Redirect(
+                    successRedirectCall
+                  )
                 )
             } recover {
               case ex: Exception =>
-                Logger("application").error(s"[ConfirmReportingMethodSharedController][handleSubmitRequest]: " +
-                  s"Error updating reporting method: ${ex.getMessage}")
+                Logger("application")
+                  .error(s"[ConfirmReportingMethodSharedController][handleSubmitRequest]: " +
+                    s"Error updating reporting method: ${ex.getMessage}")
                 itvcErrorHandler.showInternalServerError()
             }
         )
@@ -330,18 +336,26 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
   }
 
   private def maybeUkProperty(implicit user: MtdItUser[_]): Option[PropertyDetailsModel] = {
-    user.incomeSources.properties.find(p => p.isUkProperty && !p.isCeased)
+    user.incomeSources.properties
+      .find(p => p.isUkProperty && !p.isCeased)
   }
 
   private def maybeForeignProperty(implicit user: MtdItUser[_]): Option[PropertyDetailsModel] = {
-    user.incomeSources.properties.find(p => p.isForeignProperty && !p.isCeased)
+    user.incomeSources.properties
+      .find(p => p.isForeignProperty && !p.isCeased)
   }
 
   private def isSoleTraderBusiness(id: String)(implicit user: MtdItUser[_]): Boolean = {
-    user.incomeSources.businesses.exists(b => b.incomeSourceId.contains(id) && !b.isCeased)
+    user.incomeSources.businesses
+      .exists(b => b.incomeSourceId.contains(id) && !b.isCeased)
   }
 
-  lazy val manageObligationsController = controllers.incomeSources.manage.routes.ManageObligationsController
-  lazy val confirmReportingMethodSharedController = controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController
-  lazy val manageIncomeSourceDetailsController = controllers.incomeSources.manage.routes.ManageIncomeSourceDetailsController
+  private lazy val manageObligationsController = controllers.incomeSources.manage.routes
+    .ManageObligationsController
+
+  private lazy val confirmReportingMethodSharedController = controllers.incomeSources.manage.routes
+    .ConfirmReportingMethodSharedController
+
+  private lazy val manageIncomeSourceDetailsController = controllers.incomeSources.manage.routes
+    .ManageIncomeSourceDetailsController
 }
