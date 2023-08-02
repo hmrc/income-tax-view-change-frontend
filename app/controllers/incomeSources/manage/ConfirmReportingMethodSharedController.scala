@@ -180,22 +180,30 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
 
     (isEnabled(IncomeSources), TaxYear.getTaxYearStartYearEndYear(taxYear), getReportingMethod(changeTo), getRedirectCalls(id, isAgent, changeTo, taxYear)) match {
       case (false, _, _, _) =>
-        Future(Ok(customNotFoundErrorView()))
+        Future(
+          Ok(customNotFoundErrorView())
+        )
       case (_, None, _, _) =>
         Logger("application")
           .error(s"[ConfirmReportingMethodSharedController][handleSubmitRequest]: " +
             s"Could not parse taxYear: $taxYear")
-        Future(itvcErrorHandler.showInternalServerError())
+        Future(
+          itvcErrorHandler.showInternalServerError()
+        )
       case (_, _, None, _) =>
         Logger("application")
           .error(s"[ConfirmReportingMethodSharedController][handleSubmitRequest]: " +
             s"Could not parse reporting method: $changeTo")
-        Future(itvcErrorHandler.showInternalServerError())
+        Future(
+          itvcErrorHandler.showInternalServerError()
+        )
       case (_, _, _, Left(ex)) =>
         Logger("application")
           .error(s"[ConfirmReportingMethodSharedController][handleSubmitRequest]: " +
             s"Failed to get redirect urls, reason: $ex")
-        Future(itvcErrorHandler.showInternalServerError())
+        Future(
+          itvcErrorHandler.showInternalServerError()
+        )
       case (_, Some(taxYears), Some(reportingMethod), Right((backCall, postAction, successRedirectCall))) =>
         ConfirmReportingMethodForm.form.bindFromRequest().fold(
           formWithErrors =>
@@ -226,14 +234,18 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
                 )
               )
             ) flatMap {
-              case res: UpdateIncomeSourceResponseModel =>
-                Logger("application").info(s"[ConfirmReportingMethodSharedController][handleSubmitRequest]: " +
-                  s"Updated tax year specific reporting method : $res")
-                Future.successful(Redirect(successRedirectCall))
               case err: UpdateIncomeSourceResponseError =>
                 Logger("application").error(s"[ConfirmReportingMethodSharedController][handleSubmitRequest]: " +
                   s"Failed to Update tax year specific reporting method: $err")
-                Future(itvcErrorHandler.showInternalServerError())
+                Future(
+                  itvcErrorHandler.showInternalServerError()
+                )
+              case res: UpdateIncomeSourceResponseModel =>
+                Logger("application").info(s"[ConfirmReportingMethodSharedController][handleSubmitRequest]: " +
+                  s"Updated tax year specific reporting method : $res")
+                Future.successful(
+                  Redirect(successRedirectCall)
+                )
             } recover {
               case ex: Exception =>
                 Logger("application").error(s"[ConfirmReportingMethodSharedController][handleSubmitRequest]: " +
