@@ -195,7 +195,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
                 )
               )
             ),
-          _ => {
+          _ =>
             updateIncomeSourceService.updateTaxYearSpecific(
               nino = user.nino,
               incomeSourceId = id,
@@ -231,7 +231,6 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
                   s"Error updating reporting method: ${ex.getMessage}")
                 itvcErrorHandler.showInternalServerError()
             }
-          }
         )
     }
   }
