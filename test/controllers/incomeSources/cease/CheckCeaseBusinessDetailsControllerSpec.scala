@@ -86,6 +86,22 @@ class CheckCeaseBusinessDetailsControllerSpec extends TestSupport with MockAuthe
         document.select("h1").text shouldBe TestCheckCeaseBusinessDetailsController.heading
       }
     }
+
+    "return Internal Server Error" when {
+      "navigating to the page with no IncomeSourceId & End date values in session" in {
+        setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
+        enable(IncomeSources)
+        mockBusinessIncomeSource()
+
+        when(mockIncomeSourceDetailsService.getCeaseIncomeSourceViewModel(any()))
+          .thenReturn(Right(ceaseBusinessDetailsModel))
+
+        val result: Future[Result] = TestCheckCeaseBusinessDetailsController.show()(fakeRequestWithNinoAndOrigin("pta"))
+
+        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+      }
+    }
+
     "return 303 SEE_OTHER and redirect to custom not found error page" when {
       "navigating to the page with FS Disabled" in {
         disable(IncomeSources)
@@ -144,6 +160,22 @@ class CheckCeaseBusinessDetailsControllerSpec extends TestSupport with MockAuthe
         document.select("h1").text shouldBe TestCheckCeaseBusinessDetailsController.heading
       }
     }
+
+    "return Internal Server Error" when {
+      "navigating to the page with no IncomeSourceId & End date values in session" in {
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+        enable(IncomeSources)
+        mockBusinessIncomeSource()
+
+        when(mockIncomeSourceDetailsService.getCeaseIncomeSourceViewModel(any()))
+          .thenReturn(Right(ceaseBusinessDetailsModel))
+
+        val result: Future[Result] = TestCheckCeaseBusinessDetailsController.showAgent()(fakeRequestConfirmedClient())
+
+        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+      }
+    }
+
     "return 303 SEE_OTHER and redirect to custom not found error page" when {
       "navigating to the page with FS Disabled" in {
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)

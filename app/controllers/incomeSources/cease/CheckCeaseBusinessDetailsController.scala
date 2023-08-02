@@ -56,23 +56,24 @@ class CheckCeaseBusinessDetailsController @Inject()(val authenticate: Authentica
 
     val incomeSourcesEnabled: Boolean = isEnabled(IncomeSources)
     val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-    val incomeSourceId = request.session.get(ceaseBusinessIncomeSourceId) match {
-      case Some(incomeSourceId) => incomeSourceId
-      case _ =>
-        Logger("application").error(s"[CheckCeaseBusinessDetailsController][handleSubmitRequest]:" +
-          s" Could not get incomeSourceId or ceaseBusinessEndDate from session")
-        Future(errorHandler.showInternalServerError())
-    }
+
     if (incomeSourcesEnabled) {
-      incomeSourceDetailsService.getCeaseIncomeSourceViewModel(sources) match {
-        case Right(viewModel) =>
-          Future.successful(Ok(view(
-            viewModel.soleTraderBusinesses.find(x => x.incomeSourceId.equals(incomeSourceId)).get,
-            isAgent = isAgent,
-            origin = origin)(user, messages)))
-        case Left(ex) =>
-          Logger("application").error(
-            s"[CheckCeaseBusinessDetailsController][handleRequest] - Error: ${ex.getMessage}")
+      (request.session.get(ceaseBusinessIncomeSourceId), request.session.get(ceaseBusinessEndDate)) match {
+        case (Some(incomeSourceId), Some(cessationEndDate)) =>
+          incomeSourceDetailsService.getCheckCeaseBusinessDetailsViewModel(sources, incomeSourceId, cessationEndDate) match {
+            case Right(viewModel) =>
+              Future.successful(Ok(view(
+                viewModel.get,
+                isAgent = isAgent,
+                origin = origin)(user, messages)))
+            case Left(ex) =>
+              Logger("application").error(
+                s"[CheckCeaseBusinessDetailsController][handleRequest] - Error: ${ex.getMessage}")
+              Future.successful(errorHandler.showInternalServerError())
+          }
+        case _ =>
+          Logger("application").error(s"[CheckCeaseBusinessDetailsController][handleSubmitRequest]:" +
+            s" Could not get incomeSourceId or ceaseBusinessEndDate from session")
           Future.successful(errorHandler.showInternalServerError())
       }
     } else {

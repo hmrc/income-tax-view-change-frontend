@@ -17,12 +17,12 @@
 package views.incomeSources.cease
 
 import auth.MtdItUser
-import models.incomeSourceDetails.viewmodels.CeaseBusinessDetailsViewModel
+import models.incomeSourceDetails.viewmodels.CheckCeaseBusinessDetailsViewModel
 import org.jsoup.nodes.Document
 import play.api.test.FakeRequest
 import play.twirl.api.HtmlFormat
 import testConstants.BaseTestConstants.{testArn, testCredId, testMtditid, testNino, testRetrievedUserName, testSaUtr, testSelfEmploymentId, testUserTypeAgent, testUserTypeIndividual}
-import testConstants.BusinessDetailsTestConstants.{address, businessIncomeSourceId, testStartDate, testTradeName}
+import testConstants.BusinessDetailsTestConstants.{address, businessIncomeSourceId, testEndDate, testStartDate, testTradeName}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{businessAndPropertyAligned, businessesAndPropertyIncome}
 import testUtils.{TestSupport, ViewSpec}
 import uk.gov.hmrc.auth.core.retrieve.Name
@@ -58,11 +58,11 @@ class CheckCeaseBusinessDetailsViewSpec extends TestSupport with ViewSpec{
   )(FakeRequest().withSession(forms.utils.SessionKeys.ceaseBusinessEndDate -> businessEndDate)
    .withSession(forms.utils.SessionKeys.ceaseBusinessIncomeSourceId -> businessIncomeSourceId))
 
-  val ceaseBusinessDetailsViewModel = CeaseBusinessDetailsViewModel(
+  val ceaseBusinessDetailsViewModel = CheckCeaseBusinessDetailsViewModel(
     incomeSourceId = testSelfEmploymentId,
     tradingName = Some(testTradeName),
-    tradingStartDate = Some(testStartDate),
-    address = Some(address)
+    address = Some(address),
+    businessEndDate = testEndDate
   )
 
   lazy val viewAgent: HtmlFormat.Appendable = checkCeaseBusinessDetailsView(ceaseBusinessDetailsViewModel, true)(agentUserConfirmedClientWithSession(), implicitly)

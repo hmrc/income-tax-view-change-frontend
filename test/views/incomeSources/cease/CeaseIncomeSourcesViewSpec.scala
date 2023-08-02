@@ -33,7 +33,7 @@ class CeaseIncomeSourcesViewSpec extends TestSupport with ImplicitDateFormatter 
   class Setup(isAgent: Boolean, missingValues: Boolean = false) {
     val viewModel = if (missingValues) {
       CeaseIncomeSourcesViewModel(
-        soleTraderBusinesses = List(CeaseBusinessDetailsViewModel(testSelfEmploymentId, None, None, Some(address))),
+        soleTraderBusinesses = List(CeaseBusinessDetailsViewModel(testSelfEmploymentId, None, None)),
         ukProperty = Some(CeasePropertyDetailsViewModel(None)),
         foreignProperty = Some(CeasePropertyDetailsViewModel(None)),
         ceasedBusinesses = List(
@@ -42,7 +42,7 @@ class CeaseIncomeSourcesViewSpec extends TestSupport with ImplicitDateFormatter 
       )
     } else {
       CeaseIncomeSourcesViewModel(
-        soleTraderBusinesses = List(CeaseBusinessDetailsViewModel(testSelfEmploymentId, Some(testTradeName), Some(testStartDate), Some(address))),
+        soleTraderBusinesses = List(CeaseBusinessDetailsViewModel(testSelfEmploymentId, Some(testTradeName), Some(testStartDate))),
         ukProperty = Some(CeasePropertyDetailsViewModel(Some(testStartDate))),
         foreignProperty = Some(CeasePropertyDetailsViewModel(Some(testStartDate))),
         ceasedBusinesses = List(

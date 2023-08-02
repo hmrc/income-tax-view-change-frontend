@@ -137,7 +137,7 @@ class IncomeSourceDetailsServiceSpec extends TestSupport with MockIncomeTaxViewC
         val result = TestIncomeSourceDetailsService.getCeaseIncomeSourceViewModel(ukPropertyAndSoleTraderBusinessIncome)
 
         result shouldBe Right(CeaseIncomeSourcesViewModel(
-          soleTraderBusinesses = List(CeaseBusinessDetailsViewModel(testSelfEmploymentId, Some(testTradeName), Some(testStartDate), Some(address))),
+          soleTraderBusinesses = List(CeaseBusinessDetailsViewModel(testSelfEmploymentId, Some(testTradeName), Some(testStartDate))),
           ukProperty = Some(CeasePropertyDetailsViewModel(Some(testStartDate))),
           foreignProperty = None,
           ceasedBusinesses = Nil

@@ -19,10 +19,8 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components.FormWithCSRF
 @import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 @import views.html.components._
-@import exceptions.MissingSessionKey
-@import java.time.LocalDate
 @import _root_.implicits.ImplicitDateFormatterImpl
-@import models.incomeSourceDetails.viewmodels.CeaseBusinessDetailsViewModel
+@import models.incomeSourceDetails.viewmodels.CheckCeaseBusinessDetailsViewModel
 @import exceptions.MissingFieldException
 
 
@@ -35,7 +33,7 @@
     continueButton: ContinueButton,
     implicitDateFormatter: ImplicitDateFormatterImpl
 )
-@(sources: CeaseBusinessDetailsViewModel, isAgent: Boolean = false, origin: Option[String] = None)(implicit request: auth.MtdItUser[_], messages: Messages)
+@(sources: CheckCeaseBusinessDetailsViewModel, isAgent: Boolean = false, origin: Option[String] = None)(implicit request: auth.MtdItUser[_], messages: Messages)
 
 @getChangeHref = @{
    if(isAgent){
@@ -53,13 +51,6 @@
   }
 }
 
-@import implicitDateFormatter.longDate
-@businessStopDate = @{
- request.session.get("ceaseBusinessEndDate") match {
-   case Some(date) => LocalDate.parse(date).toLongDateShort
-   case _ => throw MissingSessionKey("ceaseBusinessEndDate")
- }
-}
 
 @heading = @{"incomeSources.ceaseBusiness.checkDetails.heading"}
 
@@ -71,7 +62,7 @@
   <div class="govuk-summary-list__row">
 
    <dt class="govuk-summary-list__key" id="businessStopDateLabel">@messages("incomeSources.ceaseBusiness.checkDetails.dateStopped")</dt>
-    <dd class="govuk-summary-list__value" id="businessStopDate">@businessStopDate</dd>
+    <dd class="govuk-summary-list__value" id="businessStopDate">@sources.businessEndDate</dd>
    <dd class="govuk-summary-list__actions">
     <a class="govuk-link" href="@getChangeHref" id="change">
      @messages("incomeSources.ceaseBusiness.checkDetails.change")

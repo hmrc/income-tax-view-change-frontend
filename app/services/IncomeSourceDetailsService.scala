@@ -27,6 +27,7 @@ import play.api.cache.AsyncCacheApi
 import play.api.libs.json.{JsPath, JsSuccess, JsValue, Json}
 import uk.gov.hmrc.http.HeaderCarrier
 
+import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.duration.Duration
 import scala.concurrent.{ExecutionContext, Future}
@@ -180,8 +181,7 @@ class IncomeSourceDetailsService @Inject()(val incomeTaxViewChangeConnector: Inc
             CeaseBusinessDetailsViewModel(
               business.incomeSourceId.getOrElse(throw MissingFieldException("Income Source Id")),
               business.tradingName,
-              business.tradingStartDate,
-              address = business.address
+              business.tradingStartDate
             )
           }
         } else Nil,
@@ -205,6 +205,23 @@ class IncomeSourceDetailsService @Inject()(val incomeTaxViewChangeConnector: Inc
           }
         } else Nil
       )
+    }.toEither
+  }
+
+  def getCheckCeaseBusinessDetailsViewModel(sources: IncomeSourceDetailsModel, incomeSourceId: String, businessEndDate: String)
+  : Either[Throwable, Option[CheckCeaseBusinessDetailsViewModel]] = {
+
+    val soleTraderBusinesses = sources.businesses.filterNot(_.isCeased).find(x => x.incomeSourceId.get.equals(incomeSourceId))
+
+    Try {
+      soleTraderBusinesses.map { business =>
+        CheckCeaseBusinessDetailsViewModel(
+          business.incomeSourceId.get,
+          business.tradingName,
+          business.address,
+          LocalDate.parse(businessEndDate)
+        )
+      }
     }.toEither
   }
 }

@@ -218,15 +218,13 @@ object BusinessDetailsTestConstants {
   val ceaseBusinessDetailsViewModel = CeaseBusinessDetailsViewModel(
     incomeSourceId = "1234",
     tradingName = Some(testTradeName),
-    tradingStartDate = Some(testStartDate),
-    address = Some(address)
+    tradingStartDate = Some(testStartDate)
   )
 
   val ceaseBusinessDetailsViewModel2 = CeaseBusinessDetailsViewModel(
     incomeSourceId = "1234",
     tradingName = Some(testTradeName2),
-    tradingStartDate = Some(testStartDate2),
-    address = Some(address)
+    tradingStartDate = Some(testStartDate2)
   )
 
   val ceasedBusinessDetailsViewModel = CeasedBusinessDetailsViewModel(
