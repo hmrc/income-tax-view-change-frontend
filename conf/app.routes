@@ -332,6 +332,13 @@ GET          /agents/income-sources/manage/confirm-you-want-to-report-foreign-pr
 POST         /income-sources/manage/confirm-you-want-to-report-foreign-property            controllers.incomeSources.manage.ConfirmReportingMethodSharedController.submit(incomeSourceId: String, taxYear: String, changeTo: String)
 POST         /agents/income-sources/manage/confirm-you-want-to-report-foreign-property     controllers.incomeSources.manage.ConfirmReportingMethodSharedController.submitAgent(incomeSourceId: String, taxYear: String, changeTo: String)
 
+GET          /income-sources/manage/your-details                               controllers.incomeSources.manage.ManageIncomeSourceDetailsController.showSoleTraderBusiness(incomeSourceId: String)
+GET          /agents/income-sources/manage/your-details                        controllers.incomeSources.manage.ManageIncomeSourceDetailsController.showSoleTraderBusinessAgent(incomeSourceId: String)
+GET          /income-sources/manage/your-details-uk-property                   controllers.incomeSources.manage.ManageIncomeSourceDetailsController.showUkProperty
+GET          /agents/income-sources/manage/your-details-uk-property            controllers.incomeSources.manage.ManageIncomeSourceDetailsController.showUkPropertyAgent
+GET          /income-sources/manage/your-details-foreign-property              controllers.incomeSources.manage.ManageIncomeSourceDetailsController.showForeignProperty
+GET          /agents/income-sources/manage/your-details-foreign-property       controllers.incomeSources.manage.ManageIncomeSourceDetailsController.showForeignPropertyAgent
+
 GET          /income-sources/manage/business-will-report                   controllers.incomeSources.manage.ManageObligationsController.showSelfEmployment(changeTo: String, taxYear: String, id: String)
 GET          /agents/income-sources/manage/business-will-report            controllers.incomeSources.manage.ManageObligationsController.showAgentSelfEmployment(changeTo: String, taxYear: String, id: String)
 GET          /income-sources/manage/uk-property-will-report                controllers.incomeSources.manage.ManageObligationsController.showUKProperty(changeTo: String, taxYear: String)

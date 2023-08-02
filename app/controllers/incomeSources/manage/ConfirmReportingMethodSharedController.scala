@@ -137,17 +137,30 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
             .error(s"[ConfirmReportingMethodSharedController][handleRequest]: $ex")
           itvcErrorHandler.showInternalServerError()
         case (_, Some(taxYears), Some(reportingMethod), Right(id)) =>
-          Ok(
-            confirmReportingMethod(
-              form = ConfirmReportingMethodForm.form,
-              incomeSourceId = id,
-              isAgent = isAgent,
-              taxYear = taxYear,
-              taxYearEndYear = taxYears.endYear,
-              taxYearStartYear = taxYears.startYear,
-              reportingMethod = reportingMethod
-            )
-          )
+          getRedirectCalls(
+            id = id,
+            isAgent = isAgent,
+            changeTo = changeTo,
+            taxYear = taxYear
+          ) match {
+            case Right((backCall, postAction, _)) =>
+              Ok(
+                confirmReportingMethod(
+                  form = ConfirmReportingMethodForm.form,
+                  incomeSourceId = id,
+                  backUrl = backCall.url,
+                  postAction = postAction,
+                  isAgent = isAgent,
+                  taxYear = taxYear,
+                  taxYearEndYear = taxYears.endYear,
+                  taxYearStartYear = taxYears.startYear,
+                  reportingMethod = reportingMethod
+                )
+              )
+            case Left(ex) => Logger("application")
+              .error(s"[ConfirmReportingMethodSharedController][handleRequest]: Failed to get redirect urls, reason: $ex")
+              itvcErrorHandler.showInternalServerError()
+          }
       }
     ) recover {
       case ex: Exception =>
@@ -164,18 +177,22 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
                                   itvcErrorHandler: ShowInternalServerError)
                                  (implicit user: MtdItUser[_]): Future[Result] = {
 
-    (isEnabled(IncomeSources), TaxYear.getTaxYearStartYearEndYear(taxYear), getReportingMethod(changeTo)) match {
-      case (false, _, _) =>
+    (isEnabled(IncomeSources), TaxYear.getTaxYearStartYearEndYear(taxYear), getReportingMethod(changeTo), getRedirectCalls(id, isAgent, changeTo, taxYear)) match {
+      case (false, _, _, _) =>
         Future(Ok(customNotFoundErrorView()))
-      case (_, None, _) =>
+      case (_, None, _, _) =>
         Logger("application")
           .error(s"[ConfirmReportingMethodSharedController][handleSubmitRequest]: Could not parse taxYear: $taxYear")
         Future(itvcErrorHandler.showInternalServerError())
-      case (_, _, None) =>
+      case (_, _, None, _) =>
         Logger("application")
           .error(s"[ConfirmReportingMethodSharedController][handleSubmitRequest]: Could not parse reporting method: $changeTo")
         Future(itvcErrorHandler.showInternalServerError())
-      case (_, Some(taxYears), Some(reportingMethod)) =>
+      case (_, _, _, Left(ex)) =>
+        Logger("application")
+          .error(s"[ConfirmReportingMethodSharedController][handleSubmitRequest]: Failed to get redirect urls, reason: $ex")
+        Future(itvcErrorHandler.showInternalServerError())
+      case (_, Some(taxYears), Some(reportingMethod), Right((backCall, postAction, _))) =>
         ConfirmReportingMethodForm.form.bindFromRequest().fold(
           formWithErrors =>
             Future(
@@ -183,6 +200,8 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
                 confirmReportingMethod(
                   form = formWithErrors,
                   incomeSourceId = id,
+                  backUrl = backCall.url,
+                  postAction = postAction,
                   taxYear = taxYear,
                   isAgent = isAgent,
                   taxYearStartYear = taxYears.startYear,
@@ -208,13 +227,13 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
               case res: UpdateIncomeSourceResponseModel =>
                 Logger("application").info(s"[ConfirmReportingMethodSharedController][handleSubmitRequest]: " +
                   s"Updated tax year specific reporting method : $res")
-                getRedirectCall(
+                getRedirectCalls(
                   id = id,
                   isAgent = isAgent,
                   changeTo = changeTo,
                   taxYear = taxYear
                 ) match {
-                  case Right(call) => Future.successful(Redirect(call))
+                  case Right((_, _, redirectCall)) => Future.successful(Redirect(redirectCall))
                   case Left(ex) =>
                     Logger("application").error(s"[ConfirmReportingMethodSharedController][handleSubmitRequest]: " +
                       s"Failed to redirect to update success page, reason: $ex")
@@ -249,13 +268,17 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
     }
   }
 
-  private def getRedirectCall(id: String,
+  private def getRedirectCalls(id: String,
                               isAgent: Boolean,
                               changeTo: String,
                               taxYear: String)
-                             (implicit user: MtdItUser[_]): Either[Throwable, Call] = {
+                             (implicit user: MtdItUser[_]): Either[Throwable, (Call, Call, Call)] = {
 
-    lazy val redirectController = controllers.incomeSources.manage.routes.ManageObligationsController
+    lazy val manageObligationsController = controllers.incomeSources.manage.routes.ManageObligationsController
+
+    lazy val confirmReportingMethodSharedController = controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController
+
+    lazy val manageIncomeSourceDetailsController = controllers.incomeSources.manage.routes.ManageIncomeSourceDetailsController
 
     (isAgent,
       maybeUkProperty.exists(_.incomeSourceId.contains(id)),
@@ -263,17 +286,47 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
       isSoleTraderBusiness(id)
     ) match {
       case (false, false, false, true) =>
-        Right(redirectController.showSelfEmployment(id, changeTo, taxYear))
+        Right(
+          (manageIncomeSourceDetailsController.showSoleTraderBusiness(id),
+          confirmReportingMethodSharedController.submit(id, taxYear, changeTo),
+            manageObligationsController.showSelfEmployment(id, changeTo, taxYear)
+          )
+        )
       case (false, false, true, false) =>
-        Right(redirectController.showForeignProperty(changeTo, taxYear))
+        Right(
+          (manageIncomeSourceDetailsController.showForeignProperty,
+            confirmReportingMethodSharedController.submit(id, taxYear, changeTo),
+            manageObligationsController.showForeignProperty(changeTo, taxYear)
+          )
+        )
       case (false, true, false, false) =>
-        Right(redirectController.showUKProperty(changeTo, taxYear))
+        Right(
+          (manageIncomeSourceDetailsController.showUkProperty,
+            confirmReportingMethodSharedController.submit(id, taxYear, changeTo),
+            manageObligationsController.showUKProperty(changeTo, taxYear)
+          )
+        )
       case (true, false, false, true) =>
-        Right(redirectController.showAgentSelfEmployment(id, changeTo, taxYear))
+        Right(
+          (manageIncomeSourceDetailsController.showSoleTraderBusinessAgent(id),
+            confirmReportingMethodSharedController.submitAgent(id, taxYear, changeTo),
+            manageObligationsController.showAgentSelfEmployment(id, changeTo, taxYear)
+          )
+        )
       case (true, false, true, false) =>
-        Right(redirectController.showAgentForeignProperty(changeTo, taxYear))
+        Right(
+          (manageIncomeSourceDetailsController.showForeignPropertyAgent,
+            confirmReportingMethodSharedController.submitAgent(id, taxYear, changeTo),
+            manageObligationsController.showAgentForeignProperty(changeTo, taxYear)
+          )
+        )
       case (true, true, false, false) =>
-        Right(redirectController.showAgentUKProperty(changeTo, taxYear))
+        Right(
+          (manageIncomeSourceDetailsController.showUkPropertyAgent,
+            confirmReportingMethodSharedController.submitAgent(id, taxYear, changeTo),
+            manageObligationsController.showAgentUKProperty(changeTo, taxYear),
+          )
+        )
       case _ =>
         Left(new Error(s"Could not find income source type for incomeSourceId: $id"))
     }

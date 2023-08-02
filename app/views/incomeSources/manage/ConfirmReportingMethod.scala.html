@@ -32,6 +32,8 @@
 @(
         form: Form[ConfirmReportingMethodForm],
         incomeSourceId: String,
+        backUrl: String,
+        postAction: Call,
         isAgent: Boolean,
         taxYear: String,
         taxYearStartYear: String,
@@ -45,25 +47,8 @@
     messages(s"$prefix.$key", args: _*)
 }
 
-@postAction = @{
-    if(isAgent) {
-        controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController.submitAgent(
-            incomeSourceId = incomeSourceId,
-            taxYear = taxYear,
-            changeTo = reportingMethod
-        )
-    } else {
-        controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController.submit(
-            incomeSourceId = incomeSourceId,
-            taxYear = taxYear,
-            changeTo = reportingMethod
-        )
-    }
-}
-
 @mainTemplate(pageTitle = getMessage(s"heading.$reportingMethod"),
-    backUrl = None,
-    useFallbackBackLink = true,
+    backUrl = Some(backUrl),
     isAgent = isAgent,
     btaNavPartial = user.btaNavPartial) {
 
