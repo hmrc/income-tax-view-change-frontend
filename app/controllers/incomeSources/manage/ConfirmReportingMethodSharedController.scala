@@ -52,7 +52,9 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
                                                       val appConfig: FrontendAppConfig) extends ClientConfirmedController
   with FeatureSwitching {
 
-  def show(incomeSourceId: Option[String], taxYear: String, changeTo: String): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+  def show(incomeSourceId: Option[String],
+           taxYear: String,
+           changeTo: String): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
       handleRequest(
@@ -64,7 +66,9 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
       )
   }
 
-  def showAgent(incomeSourceId: Option[String], taxYear: String, changeTo: String): Action[AnyContent] = Authenticated.async {
+  def showAgent(incomeSourceId: Option[String],
+                taxYear: String,
+                changeTo: String): Action[AnyContent] = Authenticated.async {
     implicit request =>
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
@@ -79,7 +83,9 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
         }
   }
 
-  def submit(incomeSourceId: String, taxYear: String, changeTo: String): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+  def submit(incomeSourceId: String,
+             taxYear: String,
+             changeTo: String): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
       handleSubmitRequest(
@@ -91,7 +97,9 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
       )
   }
 
-  def submitAgent(incomeSourceId: String, taxYear: String, changeTo: String): Action[AnyContent] = Authenticated.async {
+  def submitAgent(incomeSourceId: String,
+                  taxYear: String,
+                  changeTo: String): Action[AnyContent] = Authenticated.async {
     implicit request =>
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
@@ -268,11 +276,11 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
     }
   }
 
-  def maybeUkProperty(implicit user: MtdItUser[_]): Option[PropertyDetailsModel] = {
+  private def maybeUkProperty(implicit user: MtdItUser[_]): Option[PropertyDetailsModel] = {
     user.incomeSources.properties.find(p => p.isUkProperty && !p.isCeased)
   }
 
-  def maybeForeignProperty(implicit user: MtdItUser[_]): Option[PropertyDetailsModel] = {
+  private def maybeForeignProperty(implicit user: MtdItUser[_]): Option[PropertyDetailsModel] = {
     user.incomeSources.properties.find(p => p.isForeignProperty && !p.isCeased)
   }
 
