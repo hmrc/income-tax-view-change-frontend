@@ -121,16 +121,22 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
                             itvcErrorHandler: ShowInternalServerError)
                            (implicit user: MtdItUser[_]): Future[Result] = {
     Future(
-      (isEnabled(IncomeSources), TaxYear.getTaxYearStartYearEndYear(taxYear), getReportingMethod(changeTo), getIncomeSourceId(id)) match {
+      (isEnabled(IncomeSources),
+        TaxYear.getTaxYearStartYearEndYear(taxYear),
+        getReportingMethod(changeTo),
+        getIncomeSourceId(id)
+      ) match {
         case (false, _, _, _) =>
           Ok(customNotFoundErrorView())
         case (_, None, _, _) =>
           Logger("application")
-            .error(s"[ConfirmReportingMethodSharedController][handleRequest]: Could not parse taxYear: $taxYear")
+            .error(s"[ConfirmReportingMethodSharedController][handleRequest]: " +
+              s"Could not parse taxYear: $taxYear")
           itvcErrorHandler.showInternalServerError()
         case (_, _, None, _) =>
           Logger("application")
-            .error(s"[ConfirmReportingMethodSharedController][handleRequest]: Could not parse reporting method: $changeTo")
+            .error(s"[ConfirmReportingMethodSharedController][handleRequest]: " +
+              s"Could not parse reporting method: $changeTo")
           itvcErrorHandler.showInternalServerError()
         case (_, _, _, Left(ex)) =>
           Logger("application")
@@ -156,7 +162,8 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
                 )
               )
             case Left(ex) => Logger("application")
-              .error(s"[ConfirmReportingMethodSharedController][handleRequest]: Failed to get redirect urls, reason: $ex")
+              .error(s"[ConfirmReportingMethodSharedController][handleRequest]: " +
+                s"Failed to get redirect urls, reason: $ex")
               itvcErrorHandler.showInternalServerError()
           }
       }
@@ -175,20 +182,27 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
                                   itvcErrorHandler: ShowInternalServerError)
                                  (implicit user: MtdItUser[_]): Future[Result] = {
 
-    (isEnabled(IncomeSources), TaxYear.getTaxYearStartYearEndYear(taxYear), getReportingMethod(changeTo), getRedirectCalls(id, isAgent, changeTo, taxYear)) match {
+    (isEnabled(IncomeSources),
+      TaxYear.getTaxYearStartYearEndYear(taxYear),
+      getReportingMethod(changeTo),
+      getRedirectCalls(id, isAgent, changeTo, taxYear)
+    ) match {
       case (false, _, _, _) =>
         Future(Ok(customNotFoundErrorView()))
       case (_, None, _, _) =>
         Logger("application")
-          .error(s"[ConfirmReportingMethodSharedController][handleSubmitRequest]: Could not parse taxYear: $taxYear")
+          .error(s"[ConfirmReportingMethodSharedController][handleSubmitRequest]: " +
+            s"Could not parse taxYear: $taxYear")
         Future(itvcErrorHandler.showInternalServerError())
       case (_, _, None, _) =>
         Logger("application")
-          .error(s"[ConfirmReportingMethodSharedController][handleSubmitRequest]: Could not parse reporting method: $changeTo")
+          .error(s"[ConfirmReportingMethodSharedController][handleSubmitRequest]: " +
+            s"Could not parse reporting method: $changeTo")
         Future(itvcErrorHandler.showInternalServerError())
       case (_, _, _, Left(ex)) =>
         Logger("application")
-          .error(s"[ConfirmReportingMethodSharedController][handleSubmitRequest]: Failed to get redirect urls, reason: $ex")
+          .error(s"[ConfirmReportingMethodSharedController][handleSubmitRequest]: " +
+            s"Failed to get redirect urls, reason: $ex")
         Future(itvcErrorHandler.showInternalServerError())
       case (_, Some(taxYears), Some(reportingMethod), Right((backCall, postAction, _))) =>
         ConfirmReportingMethodForm.form.bindFromRequest().fold(
@@ -255,7 +269,8 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
       .find(_ == reportingMethod.toLowerCase)
   }
 
-  private def getIncomeSourceId(incomeSourceId: Option[String])(implicit user: MtdItUser[_]): Either[Throwable, String] = {
+  private def getIncomeSourceId(incomeSourceId: Option[String])
+                               (implicit user: MtdItUser[_]): Either[Throwable, String] = {
 
     (maybeUkProperty, maybeForeignProperty, incomeSourceId) match {
       case (_, _, Some(id)) if isSoleTraderBusiness(id) => Right(id)
@@ -335,8 +350,6 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
   }
 
   lazy val manageObligationsController = controllers.incomeSources.manage.routes.ManageObligationsController
-
   lazy val confirmReportingMethodSharedController = controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController
-
   lazy val manageIncomeSourceDetailsController = controllers.incomeSources.manage.routes.ManageIncomeSourceDetailsController
 }
