@@ -34,7 +34,7 @@ class CheckCeaseBusinessDetailsControllerISpec extends ComponentSpecBase {
   val showCheckCeaseBusinessDetailsControllerUrl = controllers.incomeSources.cease.routes.CheckCeaseBusinessDetailsController.showAgent().url
   val submitCheckCeaseBusinessDetailsControllerUrl = controllers.incomeSources.cease.routes.CheckCeaseBusinessDetailsController.submitAgent().url
   val formAction = controllers.incomeSources.cease.routes.CheckCeaseBusinessDetailsController.submitAgent().url
-  val businessEndShortLongDate = "23 Apr 2022"
+  val businessEndShortLongDate = "23 April 2022"
   val businessStopDateLabel = messagesAPI("incomeSources.ceaseBusiness.checkDetails.dateStopped")
   val businessNameLabel = messagesAPI("incomeSources.ceaseBusiness.checkDetails.businessName")
   val businessAddressLabel = messagesAPI("incomeSources.ceaseBusiness.checkDetails.businessAddress")
