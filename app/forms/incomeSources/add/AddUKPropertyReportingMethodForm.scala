@@ -57,11 +57,11 @@ object AddUKPropertyReportingMethodForm extends Constraints {
 }
 
 case class AddUKPropertyReportingMethodForm(newTaxYear1ReportingMethod: Option[String],
-                                          newTaxYear2ReportingMethod: Option[String],
-                                          taxYear1: Option[String],
-                                          taxYear1ReportingMethod: Option[String],
-                                          taxYear2: Option[String],
-                                          taxYear2ReportingMethod: Option[String]) {
+                                            newTaxYear2ReportingMethod: Option[String],
+                                            taxYear1: Option[String],
+                                            taxYear1ReportingMethod: Option[String],
+                                            taxYear2: Option[String],
+                                            taxYear2ReportingMethod: Option[String]) {
 
   def toFormMap: Map[String, Option[String]] = Map(
     AddUKPropertyReportingMethodForm.newTaxYear1ReportingMethod -> newTaxYear1ReportingMethod,
