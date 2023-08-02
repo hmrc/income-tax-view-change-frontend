@@ -16,14 +16,12 @@
 
 @import views.html.layouts.unifiedLayout
 @import uk.gov.hmrc.govukfrontend.views.html.components._
-@import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcPageHeading
 @import forms.incomeSources.manage.ConfirmReportingMethodForm
 @import views.html.helpers.injected.ErrorSummary
 
 @this(
         mainTemplate: unifiedLayout,
         govukCheckboxes: GovukCheckboxes,
-        hmrcPageHeading: HmrcPageHeading,
         govukButton: GovukButton,
         formWithCSRF: FormWithCSRF,
         errorSummary: ErrorSummary
@@ -52,12 +50,14 @@
 
     @errorSummary(form.copy(
         errors = form.errors.map(formError =>
-            FormError(formError.key, formError.messages.map(_ + s".$reportingMethod"))
+            FormError(
+                key = formError.key,
+                messages = formError.messages.map(_ + s".$reportingMethod")
+            )
         )
     ))
 
     @formWithCSRF(action = postAction, Symbol("id") -> s"$prefix-form") {
-
         @govukCheckboxes(Checkboxes(
             fieldset = Some(Fieldset(
                 legend = Some(Legend(
@@ -79,7 +79,6 @@
                 checked = form.value.contains(true)
             ))
         ))
-
         @govukButton(Button(
             content = Text(messages("base.confirm-and-continue"))
         ))
