@@ -356,7 +356,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
                   taxYear = taxYears.endYear,
                   latencyIndicator = reportingMethod match {
                     case "annual" => true
-                    case _ => false
+                    case "quarterly" => false
                   }
                 )
               )
