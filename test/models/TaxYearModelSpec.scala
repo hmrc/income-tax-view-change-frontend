@@ -63,6 +63,11 @@ class TaxYearModelSpec extends UnitSpec {
         TaxYear.getTaxYearStartYearEndYear("2020-2022").isDefined shouldBe false
       }
     }
+    "given an input where yearOne is greater than yearTwo" should {
+      "not return a TaxYear model" in {
+        TaxYear.getTaxYearStartYearEndYear("2022-2021").isDefined shouldBe false
+      }
+    }
     "given an input with numerical years in the format YYYY-YYYY with a numerical difference of 1" should {
       "return a TaxYear model" in {
         TaxYear.getTaxYearStartYearEndYear("2021-2022").isDefined shouldBe true

@@ -31,7 +31,7 @@ object TaxYear {
 
     def differenceIsOne(yearOne: String, yearTwo: String): Boolean =
       if(isValidYear(yearOne) && isValidYear(yearTwo)) {
-        yearTwo.toInt - yearOne.toInt == 1
+        yearOne.toInt + 1 == yearTwo.toInt
       } else false
 
     years.split('-') match {
