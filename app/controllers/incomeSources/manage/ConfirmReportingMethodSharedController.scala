@@ -306,7 +306,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
             manageIncomeSourceDetailsController.showForeignProperty,
             confirmReportingMethodSharedController.submit(id, taxYear, changeTo),
             manageObligationsController.showForeignProperty(changeTo, taxYear)
-        )
+          )
         )
       case (false, true, false, false) =>
         Right(
