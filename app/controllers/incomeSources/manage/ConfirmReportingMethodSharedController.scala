@@ -206,7 +206,8 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
               )
             ) flatMap {
               case res: UpdateIncomeSourceResponseModel =>
-                Logger("application").info(s"${if (isAgent) "[Agent]"}" + s" Updated tax year specific reporting method : $res")
+                Logger("application").info(s"[ConfirmReportingMethodSharedController][handleSubmitRequest]: " +
+                  s"Updated tax year specific reporting method : $res")
                 getRedirectCall(
                   id = id,
                   isAgent = isAgent,
@@ -215,15 +216,17 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
                 ) match {
                   case Right(call) => Future.successful(Redirect(call))
                   case Left(ex) =>
-                    Logger("application").error(s"${if (isAgent) "[Agent]"}" + s" Failed to redirect to update success page, reason : $ex")
+                    Logger("application").error(s"[ConfirmReportingMethodSharedController][handleSubmitRequest]: " +
+                      s"Failed to redirect to update success page, reason: $ex")
                     Future(itvcErrorHandler.showInternalServerError())
                 }
               case err: UpdateIncomeSourceResponseError =>
-                Logger("application").error(s"${if (isAgent) "[Agent]"}" + s" Failed to Update tax year specific reporting method : $err")
+                Logger("application").error(s"[ConfirmReportingMethodSharedController][handleSubmitRequest]: " +
+                  s"Failed to Update tax year specific reporting method: $err")
                 Future(itvcErrorHandler.showInternalServerError())
             } recover {
               case ex: Exception =>
-                Logger("application").error(s"${if (isAgent) "[Agent]"}" +
+                Logger("application").error(s"[ConfirmReportingMethodSharedController][handleSubmitRequest]: " +
                   s"Error updating reporting method: ${ex.getMessage}")
                 itvcErrorHandler.showInternalServerError()
             }
