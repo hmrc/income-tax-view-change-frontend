@@ -56,8 +56,6 @@
     }
 
     @getBusinessName(name: String) = @{
-        if(name == "Not Found") getUniqueMessage("sole-trader")
-        else name
         name match {
             case "Not Found" => getUniqueMessage("sole-trader")
             case "UK property" => getUniqueMessage("uk-property")

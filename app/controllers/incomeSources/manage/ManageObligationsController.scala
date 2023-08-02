@@ -21,33 +21,17 @@ import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
-import models.incomeSourceDetails.TaxYear
+import enums.IncomeSourceJourney._
 import models.incomeSourceDetails.TaxYear.getTaxYearStartYearEndYear
 import play.api.Logger
 import play.api.mvc._
-import services.{DateService, IncomeSourceDetailsService, NextUpdatesService}
+import services.{IncomeSourceDetailsService, NextUpdatesService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
-import views.html.incomeSources.manage.{ManageIncomeSources, ManageObligations}
+import views.html.incomeSources.manage.ManageObligations
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-
-sealed trait Mode {
-  val key: String
-}
-
-case object SelfEmployment extends Mode {
-  override val key = "SE"
-}
-
-case object UkProperty extends Mode {
-  override val key = "UK"
-}
-
-case object ForeignProperty extends Mode {
-  override val key = "FP"
-}
 
 class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTimeoutPredicate,
                                             val authenticate: AuthenticationPredicate,
@@ -66,7 +50,7 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
   with FeatureSwitching {
 
 
-  def showSelfEmployment(changeTo: String, taxYear: String, id: String): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+  def showSelfEmployment(changeTo: String, taxYear: String, incomeSourceId: String): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
       handleRequest(
@@ -74,11 +58,11 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
         isAgent = false,
         taxYear,
         changeTo,
-        id
+        incomeSourceId
       )
   }
 
-  def showAgentSelfEmployment(changeTo: String, taxYear: String, id: String): Action[AnyContent] = Authenticated.async {
+  def showAgentSelfEmployment(changeTo: String, taxYear: String, incomeSourceId: String): Action[AnyContent] = Authenticated.async {
     implicit request =>
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
@@ -88,7 +72,7 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
               isAgent = true,
               taxYear,
               changeTo,
-              id
+              incomeSourceId
             )
         }
   }
@@ -147,7 +131,7 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
         }
   }
 
-  def handleRequest(mode: Mode, isAgent: Boolean, taxYear: String, changeTo: String, incomeSourceId: String)(implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
+  def handleRequest(mode: IncomeSourceJourney, isAgent: Boolean, taxYear: String, changeTo: String, incomeSourceId: String)(implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
     if (isDisabled(IncomeSources)) {
       if (isAgent) Future.successful(Redirect(controllers.routes.HomeController.showAgent))
       else Future.successful(Redirect(controllers.routes.HomeController.show()))
@@ -161,19 +145,7 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
         showError(isAgent, s"unable to find incomeSource by id: $incomeSourceId")
       }
       else {
-        val addedBusinessName: String = mode match {
-          case SelfEmployment =>
-            val businessDetailsParams = for {
-              addedBusiness <- user.incomeSources.businesses.find(x => x.incomeSourceId.contains(incomeSourceId))
-              businessName <- addedBusiness.tradingName
-            } yield (addedBusiness, businessName)
-            businessDetailsParams match {
-              case Some((_, name)) => name
-              case None => "Not Found"
-            }
-          case UkProperty => "UK property"
-          case ForeignProperty => "Foreign property"
-        }
+        val addedBusinessName: String = getBusinessName(mode, incomeSourceId)
 
         getTaxYearStartYearEndYear(taxYear) match {
           case Some(years) =>
@@ -205,7 +177,23 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
     else Future(itvcErrorHandler.showInternalServerError())
   }
 
-  def getIncomeSourceId(mode: Mode, id: String)(implicit user: MtdItUser[_]): Either[Throwable, String] = {
+  def getBusinessName(mode: IncomeSourceJourney, incomeSourceId: String)(implicit user: MtdItUser[_]): String = {
+    mode match {
+      case SelfEmployment =>
+        val businessDetailsParams = for {
+          addedBusiness <- user.incomeSources.businesses.find(x => x.incomeSourceId.contains(incomeSourceId))
+          businessName <- addedBusiness.tradingName
+        } yield (addedBusiness, businessName)
+        businessDetailsParams match {
+          case Some((_, name)) => name
+          case None => "Not Found"
+        }
+      case UkProperty => "UK property"
+      case ForeignProperty => "Foreign property"
+    }
+  }
+
+  def getIncomeSourceId(mode: IncomeSourceJourney, id: String)(implicit user: MtdItUser[_]): Either[Throwable, String] = {
     mode match {
       case SelfEmployment => Right(id)
       case UkProperty =>

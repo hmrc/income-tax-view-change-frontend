@@ -50,7 +50,7 @@ class ManageObligationsViewSpec extends ViewSpec {
 
   val view: ManageObligations = app.injector.instanceOf[ManageObligations]
 
-  val day = LocalDate.of(2022, 1, 1)
+  val day: LocalDate = LocalDate.of(2022, 1, 1)
   val viewModelWithAllData: ObligationsViewModel = ObligationsViewModel(
     Seq(DatesModel(day, day.plusDays(1), day.plusDays(2), "#001", isFinalDec = false)),
     Seq(DatesModel(day.plusYears(1), day.plusYears(1).plusDays(1), day.plusYears(1).plusDays(2), "#001", isFinalDec = false)),
@@ -60,7 +60,7 @@ class ManageObligationsViewSpec extends ViewSpec {
     showPrevTaxYears = true
   )
 
-  val taxYear: TaxYear = TaxYear("2023", "2024")
+  val taxYear: TaxYear = TaxYear(2023, 2024)
   val quarterly = "quarterly"
   val annually = "annual"
 

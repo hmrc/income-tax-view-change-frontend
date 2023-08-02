@@ -16,7 +16,10 @@
 
 package models.incomeSourceDetails
 
-case class TaxYear(startYear: String, endYear: String)
+import java.lang.reflect.UndeclaredThrowableException
+import scala.util.Try
+
+case class TaxYear(startYear: Int, endYear: Int)
 
 object TaxYear {
 
@@ -26,7 +29,10 @@ object TaxYear {
 
     years.split('-') match {
       case Array(yearOne, yearTwo) if isValidYear(yearOne) && isValidYear(yearTwo) =>
-        Some(TaxYear(yearOne, yearTwo))
+        (Try(yearOne.toInt).toOption, Try(yearTwo.toInt).toOption) match {
+          case (Some(one), Some(two)) => if (one + 1 == two) Some(TaxYear(one, two)) else None
+          case _ => None
+        }
       case _ => None
     }
   }
