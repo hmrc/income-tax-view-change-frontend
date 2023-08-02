@@ -25,14 +25,11 @@ object TaxYear {
 
   def getTaxYearStartYearEndYear(years: String): Option[TaxYear] = {
 
-    def isValidYear(year: String): Boolean = year.length == 4 && year.forall(_.isDigit)
+    def isValidYear(year: String): Boolean = year.length == 4 && year.forall(_.isDigit) && Try(year.toInt).toOption.isDefined
 
     years.split('-') match {
       case Array(yearOne, yearTwo) if isValidYear(yearOne) && isValidYear(yearTwo) =>
-        (Try(yearOne.toInt).toOption, Try(yearTwo.toInt).toOption) match {
-          case (Some(one), Some(two)) => if (one + 1 == two) Some(TaxYear(one, two)) else None
-          case _ => None
-        }
+        Some(TaxYear(yearOne.toInt, yearTwo.toInt))
       case _ => None
     }
   }
