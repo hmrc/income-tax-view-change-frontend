@@ -27,7 +27,7 @@ import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import play.twirl.api.HtmlFormat
 import services.DateService
 import testConstants.BaseTestConstants.{testMtditid, testNavHtml, testNino}
-import testConstants.IncomeSourceDetailsTestConstants.ukPropertyIncome
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants.ukPropertyIncome
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 import views.html.incomeSources.cease.UKPropertyEndDate

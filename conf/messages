@@ -390,6 +390,7 @@ income_breakdown.table.foreign_income_gains                     = Foreign income
 income_breakdown.table.foreign_benefits_gifts                   = Foreign benefits and gifts
 income_breakdown.table.gains_insurance                          = Gains on life insurance polices
 income_breakdown.table.share_schemes                            = Share schemes
+income_breakdown.table.other_income                             = Other Income
 income_breakdown.total                                          = Total income received
 
 ## Forecast Income Summary Page ##
@@ -1147,6 +1148,7 @@ cease-income-sources.foreign-property.h1      = Foreign property
 cease-income-sources.foreign-property.p1      = You should only cease your foreign property if you no longer receive any income from it.
 cease-income-sources.ceased-businesses.h1     = Businesses that have ceased
 cease-income-sources.table-head.date-ended    = Date ended
+cease-income-sources.unknown                  = Unknown
 
 ## view Income Sources
 view-income-sources.heading                  = View and manage income sources
@@ -1426,12 +1428,38 @@ business-added.income-sources-button                    = Your income sources
 business-added.previous-tax-years-heading               = Previous tax years
 business-added.previous-tax-years-t1                    = You must make sure that you have sent all the required income and expenses, and final declarations for tax years earlier than
 
+## Income Source Added Pages ##
+incomeSourceAdded.additionalWelshContent                                =
+#The above key is intentionally blank
+incomeSourceAdded.heading                                               = has been added to your account
+incomeSourceAdded.ukProperty                                            = UK property
+incomeSourceAdded.subheading                                            = What you must do
+incomeSourceAdded.to                                                    = to
+incomeSourceAdded.quarterly.heading                                     = Send quarterly updates
+incomeSourceAdded.quarterly.text                                        = You must send quarterly updates of your income and expenses using compatible software by the following deadlines:
+incomeSourceAdded.eops.heading                                          = Send end of period statements
+incomeSourceAdded.eops.text                                             = You must submit end of period statements using your software by the deadline.
+incomeSourceAdded.finalDeclaration.heading                               = Submit final declarations and pay your tax
+incomeSourceAdded.finalDeclaration.text                                  = You must submit your final declarations and pay the tax you owe by the deadline.
+incomeSourceAdded.table.taxYear.heading                                 = Tax year
+incomeSourceAdded.table.deadline.heading                                = Deadline
+incomeSourceAdded.button.text                                           = Your income sources
+incomeSourceAdded.previousTaxYears.heading                              = Previous tax years
+incomeSourceAdded.previousTaxYears.text                                 = You must make sure that you have sent all the required income and expenses, and final declarations for tax years earlier than
+
+# Foreign Property Added - Uses above keys as base also, intentionally empty field below.
+business-added.foreign-property-h1                      = Foreign property
+business-added.foreign-property-head                    =
+business-added.foreign-property-base                    = has been added to your account
+
 
 incomeSources.add.businessReportingMethod.heading                   =   Choose a reporting method
 incomeSources.add.businessReportingMethod.description1              =   Your business qualifies for a grace period available up until April {0} where you can report annually.
 incomeSources.add.businessReportingMethod.description2              =   This involves a single update no later than 31 January.
 incomeSources.add.businessReportingMethod.description3              =   This grace period is not affected by either:
-incomeSources.add.businessReportingMethod.description4              =   <li>your level of income from other sources</li><li>the turnover you expect your new business to make</li><li>how you report with any existing income sources</li>
+incomeSources.add.businessReportingMethod.description4.bullet1      =   your level of income from other sources
+incomeSources.add.businessReportingMethod.description4.bullet2      =   the turnover you expect your new business to make
+incomeSources.add.businessReportingMethod.description4.bullet3      =   how you report with any existing income sources
 incomeSources.add.businessReportingMethod.chooseReport              =   Choose how you want to report
 incomeSources.add.businessReportingMethod.taxYear                   =   Tax year {0}-{1}
 incomeSources.add.businessReportingMethod.chooseAnnualReport        =   Choose annual reporting
@@ -1480,7 +1508,9 @@ incomeSources.add.ukPropertyReportingMethod.heading                   =   Choose
 incomeSources.add.ukPropertyReportingMethod.description1              =   Your business qualifies for a grace period available up until April {0} where you can report annually.
 incomeSources.add.ukPropertyReportingMethod.description2              =   This involves a single update no later than 31 January.
 incomeSources.add.ukPropertyReportingMethod.description3              =   This grace period is not affected by either:
-incomeSources.add.ukPropertyReportingMethod.description4              =   <li>your level of income from other source</li><li>the turnover you expect your new business to make</li><li>how you report with any existing income sources</li>
+incomeSources.add.ukPropertyReportingMethod.description4.bullet1      =   your level of income from other sources
+incomeSources.add.ukPropertyReportingMethod.description4.bullet2      =   the turnover you expect your new business to make
+incomeSources.add.ukPropertyReportingMethod.description4.bullet3      =   how you report with any existing income sources
 incomeSources.add.ukPropertyReportingMethod.chooseReport              =   Choose how you want to report
 incomeSources.add.ukPropertyReportingMethod.taxYear                   =   Tax year {0}-{1}
 incomeSources.add.ukPropertyReportingMethod.chooseAnnualReport        =   Choose annual reporting

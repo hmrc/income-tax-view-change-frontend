@@ -149,7 +149,12 @@ GET          /agents/how-to-claim-refund                                  contro
 GET          /how-to-claim-refund-external                                controllers.NotMigratedUserController.redirect()
 GET          /agents/how-to-claim-refund-external                         controllers.NotMigratedUserController.redirectAgent()
 
-# Income Sources - Add
+########################################################################################################################################################
+#                                                               Income Sources                                                                         #
+########################################################################################################################################################
+
+##################################################################    Add    ###########################################################################
+
 GET          /income-sources/add/new-income-sources                       controllers.incomeSources.add.AddIncomeSourceController.show()
 GET          /agents/income-sources/add/new-income-sources                controllers.incomeSources.add.AddIncomeSourceController.showAgent()
 GET          /income-sources/add/business-name                            controllers.incomeSources.add.AddBusinessNameController.show()
@@ -213,6 +218,12 @@ GET          /agents/income-sources/add/foreign-property-business-accounting-met
 POST         /income-sources/add/foreign-property-business-accounting-method         controllers.incomeSources.add.ForeignPropertyAccountingMethodController.submit()
 POST         /agents/income-sources/add/foreign-property-business-accounting-method  controllers.incomeSources.add.ForeignPropertyAccountingMethodController.submitAgent()
 
+GET          /income-sources/add/foreign-property-added                       controllers.incomeSources.add.ForeignPropertyAddedController.show(id: String)
+GET          /agents/income-sources/add/foreign-property-added                controllers.incomeSources.add.ForeignPropertyAddedController.showAgent(id: String)
+POST         /income-sources/add/foreign-property-added                       controllers.incomeSources.add.ForeignPropertyAddedController.submit()
+POST         /agents/income-sources/add/foreign-property-added                controllers.incomeSources.add.ForeignPropertyAddedController.submitAgent()
+GET          /income-sources/add/uk-property-added                           controllers.incomeSources.add.UKPropertyAddedController.show(id:String)
+GET          /agents/income-sources/add/uk-property-added                    controllers.incomeSources.add.UKPropertyAddedController.showAgent(id:String)
 
 GET          /income-sources/add/business-accounting-method                   controllers.incomeSources.add.BusinessAccountingMethodController.show()
 GET          /agents/income-sources/add/business-accounting-method            controllers.incomeSources.add.BusinessAccountingMethodController.showAgent()
@@ -309,20 +320,19 @@ GET          /agents/income-sources/add/business-reporting-method         contro
 POST         /income-sources/add/business-reporting-method                controllers.incomeSources.add.BusinessReportingMethodController.submit(id:String)
 POST         /agents/income-sources/add/business-reporting-method         controllers.incomeSources.add.BusinessReportingMethodController.submitAgent(id:String)
 
-GET          /income-sources/add/uk-property-reporting-method                               controllers.incomeSources.add.UKPropertyReportingMethodController.show(id:String)
-GET          /agents/income-sources/add/uk-property-reporting-method                        controllers.incomeSources.add.UKPropertyReportingMethodController.showAgent(id:String)
-POST         /income-sources/add/uk-property-reporting-method                               controllers.incomeSources.add.UKPropertyReportingMethodController.submit(id:String)
-POST         /agents/income-sources/add/uk-property-reporting-method                        controllers.incomeSources.add.UKPropertyReportingMethodController.submitAgent(id:String)
-GET          /income-sources/add/error-uk-reporting-reporting-method-not-saved              controllers.incomeSources.add.UKPropertyReportingMethodErrorController.show()
-GET          /agents/income-sources/add/error-uk-reporting-reporting-method-not-saved       controllers.incomeSources.add.UKPropertyReportingMethodErrorController.showAgent()
+GET          /income-sources/add/uk-property-reporting-method                              controllers.incomeSources.add.UKPropertyReportingMethodController.show(id:String)
+GET          /agents/income-sources/add/uk-property-reporting-method                       controllers.incomeSources.add.UKPropertyReportingMethodController.showAgent(id:String)
+POST         /income-sources/add/uk-property-reporting-method                              controllers.incomeSources.add.UKPropertyReportingMethodController.submit(id:String)
+POST         /agents/income-sources/add/uk-property-reporting-method                       controllers.incomeSources.add.UKPropertyReportingMethodController.submitAgent(id:String)
+GET          /income-sources/add/error-uk-property-reporting-method-not-saved              controllers.incomeSources.add.UKPropertyReportingMethodErrorController.show()
+GET          /agents/income-sources/add/error-uk-property-reporting-method-not-saved       controllers.incomeSources.add.UKPropertyReportingMethodErrorController.showAgent()
 
 GET          /income-sources/add/foreign-property-reporting-method                               controllers.incomeSources.add.ForeignPropertyReportingMethodController.show(id:String)
 GET          /agents/income-sources/add/foreign-property-reporting-method                        controllers.incomeSources.add.ForeignPropertyReportingMethodController.showAgent(id:String)
 POST         /income-sources/add/foreign-property-reporting-method                               controllers.incomeSources.add.ForeignPropertyReportingMethodController.submit(id:String)
 POST         /agents/income-sources/add/foreign-property-reporting-method                        controllers.incomeSources.add.ForeignPropertyReportingMethodController.submitAgent(id:String)
-GET          /income-sources/add/error-foreign-reporting-reporting-method-not-saved              controllers.incomeSources.add.ForeignPropertyReportingMethodErrorController.show()
-GET          /agents/income-sources/add/error-foreign-reporting-reporting-method-not-saved       controllers.incomeSources.add.ForeignPropertyReportingMethodErrorController.showAgent()
-
+GET          /income-sources/add/error-foreign-property-reporting-method-not-saved               controllers.incomeSources.add.ForeignPropertyReportingMethodErrorController.show()
+GET          /agents/income-sources/add/error-foreign-property-reporting-method-not-saved        controllers.incomeSources.add.ForeignPropertyReportingMethodErrorController.showAgent()
 # Income Sources - TO BE IMPLEMENTED
 GET          /income-sources/cease/cease-uk-property-success                controllers.incomeSources.cease.CeaseUKPropertySuccessController.show()
 GET          /agents/income-sources/cease/cease-uk-property-success         controllers.incomeSources.cease.CeaseUKPropertySuccessController.showAgent()
@@ -333,8 +343,3 @@ GET          /income-sources/add/foreign-property-accounting-method             
 GET          /agents/income-sources/add/foreign-property-accounting-method          controllers.incomeSources.add.ForeignPropertyAccountingMethodController.showAgent()
 GET          /income-sources/add/change-foreign-property-accounting-method          controllers.incomeSources.add.ForeignPropertyAccountingMethodController.changeForeignPropertyAccountingMethod()
 GET          /agents/income-sources/add/change-foreign-property-accounting-method   controllers.incomeSources.add.ForeignPropertyAccountingMethodController.changeForeignPropertyAccountingMethodAgent()
-
-GET          /income-sources/add/uk-property-added                           controllers.incomeSources.add.UKPropertyAddedController.show(id:String)
-GET          /agents/income-sources/add/uk-property-added                    controllers.incomeSources.add.UKPropertyAddedController.showAgent(id:String)
-GET          /income-sources/add/foreign-property-added                      controllers.incomeSources.add.ForeignPropertyAddedController.show(id:String)
-GET          /agents/income-sources/add/foreign-property-added               controllers.incomeSources.add.ForeignPropertyAddedController.showAgent(id:String)

@@ -383,6 +383,7 @@ income_breakdown.table.foreign_income_gains                     = Incwm ac enill
 income_breakdown.table.foreign_benefits_gifts                   = Buddiannau a rhoddion tramor
 income_breakdown.table.gains_insurance                          = Enillion ar bolisïau yswiriant bywyd
 income_breakdown.table.share_schemes                            = Cynlluniau cyfranddaliadau
+income_breakdown.table.other_income                             = Incwm arall
 income_breakdown.total                                          = Cyfanswm yr incwm a gafwyd
 
 ## Forecast Income Summary Page ##
@@ -1173,6 +1174,7 @@ cease-income-sources.foreign-property.h1      = Eiddo tramor
 cease-income-sources.foreign-property.p1      = Dylech ond dod â’ch eiddo tramor i ben os nad ydych yn cael unrhyw incwm oddi wrtho mwyach.
 cease-income-sources.ceased-businesses.h1     = Busnesau sydd wedi dod i ben
 cease-income-sources.table-head.date-ended    = Y dyddiad dod i ben
+cease-income-sources.unknown                  = Anhysbys
 
 ## view Income Sources
 view-income-sources.heading                  = Bwrw golwg dros eich ffynonellau incwm a’u rheoli
@@ -1402,12 +1404,35 @@ business-added.income-sources-button                    = Eich ffynonellau incwm
 business-added.previous-tax-years-heading               = Blynyddoedd treth blaenorol
 business-added.previous-tax-years-t1                    = Mae’n rhaid i chi wneud yn siŵr eich bod wedi anfon yr holl Incwm a threuliau, a datganiadau terfynol ar gyfer blynyddoedd treth cyn
 
+## Income Source Added Pages ##
+incomeSourceAdded.additionalWelshContent                    = Mae
+incomeSourceAdded.heading                                   = wedi cael ei ychwanegu i’ch cyfrif
+incomeSourceAdded.ukProperty                                = eiddo yn y DU
+incomeSourceAdded.subheading                                = Yr hyn y mae’n rhaid i chi ei wneud
+incomeSourceAdded.to                                        = i
+incomeSourceAdded.quarterly.heading                         = Anfon diweddariadau chwarterol
+incomeSourceAdded.quarterly.text                            = Mae’n rhaid i chi anfon diweddariadau chwarterol o’ch incwm a’ch treuliau, gan ddefnyddio meddalwedd sy’n cydweddu, erbyn y dyddiadau cau canlynol:
+incomeSourceAdded.eops.heading                              = Anfon datganiadau diwedd cyfnod
+incomeSourceAdded.eops.text                                 = Mae’n rhaid i chi gyflwyno datganiadau diwedd cyfnod gan ddefnyddio’ch meddalwedd, a hynny erbyn y dyddiad cau.
+incomeSourceAdded.finalDeclaration.heading                   = Cyflwyno’ch datganiadau terfynol a thalu’ch treth
+incomeSourceAdded.finalDeclaration.text                      = Bydd yn rhaid i chi gyflwyno’ch datganiadau terfynol a thalu’r dreth sydd arnoch erbyn y dyddiad cau.
+incomeSourceAdded.table.taxYear.heading                     = Blwyddyn dreth
+incomeSourceAdded.table.deadline.heading                    = Dyddiad cau
+incomeSourceAdded.button.text                               = Eich ffynonellau incwm
+incomeSourceAdded.previousTaxYears.heading                  = Blynyddoedd treth blaenorol
+incomeSourceAdded.previousTaxYears.text                     = Mae’n rhaid i chi wneud yn siŵr eich bod wedi anfon yr holl Incwm a threuliau, a datganiadau terfynol ar gyfer blynyddoedd treth cyn
+
+business-added.foreign-property-h1                      = eiddo tramor
+business-added.foreign-property-head                    = Mae
+business-added.foreign-property-base                    = wedi cael ei ychwanegu i’ch cyfrif
 
 incomeSources.add.businessReportingMethod.heading                   =   Dewis dull o gyflwyno adroddiad
 incomeSources.add.businessReportingMethod.description1              =   Mae’ch busnes yn gymwys i gael cyfnod gras hyd at Ebrill {0}, lle y gallwch gyflwyno adroddiadau’n flynyddol.
 incomeSources.add.businessReportingMethod.description2              =   Bydd yn rhaid gwneud un diweddariad, a hynny erbyn 31 Ionawr fan bellaf.
 incomeSources.add.businessReportingMethod.description3              =   Nid yw’r canlynol yn cael effaith ar eich cyfnod gras:
-incomeSources.add.businessReportingMethod.description4              =   <li>lefel eich incwm o ffynonellau eraill</li><li>y trosiant rydych yn disgwyl i’ch busnes newydd ei wneud</li><li>sut yr ydych yn cyflwyno adroddiadau ar gyfer unrhyw ffynonellau incwm presennol</li>
+incomeSources.add.businessReportingMethod.description4.bullet1      =   lefel eich incwm o ffynonellau eraill
+incomeSources.add.businessReportingMethod.description4.bullet2      =   y trosiant rydych yn disgwyl i’ch busnes newydd ei wneud
+incomeSources.add.businessReportingMethod.description4.bullet3      =   sut yr ydych yn cyflwyno adroddiadau ar gyfer unrhyw ffynonellau incwm presennol
 incomeSources.add.businessReportingMethod.chooseReport              =   Dewiswch sut yr hoffech gyflwyno adroddiadau
 incomeSources.add.businessReportingMethod.taxYear                   =   Blwyddyn dreth {0}-{1}
 incomeSources.add.businessReportingMethod.chooseAnnualReport        =   Dewis cyflwyno adroddiadau’n flynyddol
@@ -1455,7 +1480,9 @@ incomeSources.add.ukPropertyReportingMethod.heading                   =   Dewis 
 incomeSources.add.ukPropertyReportingMethod.description1              =   Mae’ch busnes yn gymwys i gael cyfnod gras hyd at Ebrill {0}, lle y gallwch gyflwyno adroddiadau’n flynyddol.
 incomeSources.add.ukPropertyReportingMethod.description2              =   Bydd yn rhaid gwneud un diweddariad, a hynny erbyn 31 Ionawr fan bellaf.
 incomeSources.add.ukPropertyReportingMethod.description3              =   Nid yw’r canlynol yn cael effaith ar eich cyfnod gras:
-incomeSources.add.ukPropertyReportingMethod.description4              =   <li>lefel eich incwm o ffynonellau eraill</li><li>y trosiant rydych yn disgwyl i’ch busnes newydd ei wneud</li><li>sut yr ydych yn cyflwyno adroddiadau ar gyfer unrhyw ffynonellau incwm presennol</li>
+incomeSources.add.ukPropertyReportingMethod.description4.bullet1      =   lefel eich incwm o ffynonellau eraill
+incomeSources.add.ukPropertyReportingMethod.description4.bullet2      =   y trosiant rydych yn disgwyl i’ch busnes newydd ei wneud
+incomeSources.add.ukPropertyReportingMethod.description4.bullet3      =   sut yr ydych yn cyflwyno adroddiadau ar gyfer unrhyw ffynonellau incwm presennol
 incomeSources.add.ukPropertyReportingMethod.chooseReport              =   Dewiswch sut yr hoffech gyflwyno adroddiadau
 incomeSources.add.ukPropertyReportingMethod.taxYear                   =   Blwyddyn dreth {0}-{1}
 incomeSources.add.ukPropertyReportingMethod.chooseAnnualReport        =   Dewis cyflwyno adroddiadau’n flynyddol

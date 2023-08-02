@@ -28,10 +28,10 @@ import mocks.views.agent.MockIncomeSummary
 import models.liabilitycalculation.viewmodels.IncomeBreakdownViewModel
 import play.api.http.Status
 import play.api.mvc.{MessagesControllerComponents, Result}
-import play.api.test.Helpers.{charset, contentType, _}
+import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testMtditid, testTaxYear}
-import testConstants.IncomeSourceDetailsTestConstants.businessIncome2018and2019
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessIncome2018and2019
 import testConstants.NewCalcBreakdownUnitTestConstants.liabilityCalculationModelSuccessful
 import testUtils.TestSupport
 import uk.gov.hmrc.http.InternalServerException

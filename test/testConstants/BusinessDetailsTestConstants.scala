@@ -206,6 +206,26 @@ object BusinessDetailsTestConstants {
     address = None
   )
 
+  val soleTraderBusinessNoTradingNameNoStartDate = BusinessDetailsModel(
+    incomeSourceId = Some(testSelfEmploymentId),
+    accountingPeriod = Some(testBusinessAccountingPeriod),
+    tradingName = None,
+    firstAccountingPeriodEndDate = Some(LocalDate.of(year2018, Month.APRIL, 5)),
+    tradingStartDate = None,
+    cessation = None,
+    latencyDetails = None
+  )
+
+  val soleTraderBusinessNoIncomeSourceId = BusinessDetailsModel(
+    incomeSourceId = None,
+    accountingPeriod = Some(testBusinessAccountingPeriod),
+    tradingName = None,
+    firstAccountingPeriodEndDate = Some(LocalDate.of(year2018, Month.APRIL, 5)),
+    tradingStartDate = Some(testStartDate),
+    cessation = None,
+    latencyDetails = None
+  )
+
   val soleTraderBusinessNoTradingStartDate = BusinessDetailsModel(
     incomeSourceId = Some(testSelfEmploymentId),
     accountingPeriod = Some(testBusinessAccountingPeriod),
@@ -229,14 +249,14 @@ object BusinessDetailsTestConstants {
 
   val ceaseBusinessDetailsViewModel = CeaseBusinessDetailsViewModel(
     incomeSourceId = "1234",
-    tradingName = testTradeName,
-    tradingStartDate = testStartDate
+    tradingName = Some(testTradeName),
+    tradingStartDate = Some(testStartDate)
   )
 
   val ceaseBusinessDetailsViewModel2 = CeaseBusinessDetailsViewModel(
     incomeSourceId = "1234",
-    tradingName = testTradeName2,
-    tradingStartDate = testStartDate2
+    tradingName = Some(testTradeName2),
+    tradingStartDate = Some(testStartDate2)
   )
 
   val ceasedBusinessDetailsViewModel = CeasedBusinessDetailsViewModel(
@@ -337,6 +357,7 @@ object BusinessDetailsTestConstants {
     cessation = Some(testCessation2),
     address = None
   )
+
 
   val oldUseralignedBusiness = BusinessDetailsModel(
     incomeSourceId = Some(testSelfEmploymentId),

@@ -76,7 +76,9 @@ class BusinessReportingMethodViewSpec extends TestSupport {
         doc.getElementsByTag("p").get(0).text() shouldBe messages("incomeSources.add.businessReportingMethod.description1", viewModelScenario1.taxYear2.get)
         doc.getElementsByTag("p").get(1).text() shouldBe messages("incomeSources.add.businessReportingMethod.description2")
         doc.getElementsByTag("p").get(2).text() shouldBe messages("incomeSources.add.businessReportingMethod.description3")
-        doc.getElementsByTag("ul").get(0).text() shouldBe Jsoup.parse(messages("incomeSources.add.businessReportingMethod.description4")).text()
+        doc.getElementsByTag("ul").get(0).text() shouldBe Jsoup.parse(messages("incomeSources.add.businessReportingMethod.description4.bullet1") + " " +
+          messages("incomeSources.add.businessReportingMethod.description4.bullet2") + " " +
+          messages("incomeSources.add.businessReportingMethod.description4.bullet3")).text()
       }
 
     }
@@ -151,7 +153,9 @@ class BusinessReportingMethodViewSpec extends TestSupport {
         doc.getElementsByTag("p").get(0).text() shouldBe messages("incomeSources.add.businessReportingMethod.description1", viewModelScenario1.taxYear2.get)
         doc.getElementsByTag("p").get(1).text() shouldBe messages("incomeSources.add.businessReportingMethod.description2")
         doc.getElementsByTag("p").get(2).text() shouldBe messages("incomeSources.add.businessReportingMethod.description3")
-        doc.getElementsByTag("ul").get(0).text() shouldBe Jsoup.parse(messages("incomeSources.add.businessReportingMethod.description4")).text()
+        doc.getElementsByTag("ul").get(0).text() shouldBe Jsoup.parse(messages("incomeSources.add.businessReportingMethod.description4.bullet1") + " " +
+          messages("incomeSources.add.businessReportingMethod.description4.bullet2") + " " +
+          messages("incomeSources.add.businessReportingMethod.description4.bullet3")).text()
       }
 
     }

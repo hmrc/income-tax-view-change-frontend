@@ -20,7 +20,7 @@ import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsMode
 import org.scalatest.Matchers
 import testConstants.BaseTestConstants._
 import testConstants.BusinessDetailsTestConstants.{testLatencyDetails, _}
-import testConstants.IncomeSourceDetailsTestConstants._
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants._
 import testConstants.PropertyDetailsTestConstants._
 import testUtils.UnitSpec
 
@@ -128,13 +128,13 @@ class IncomeSourceDetailsModelSpec extends UnitSpec with Matchers {
             )
           ),
           List(PropertyDetailsModel(
-              incomeSourceId = None,
-              accountingPeriod = None,
-              firstAccountingPeriodEndDate = None,
-              incomeSourceType = Some("property-unspecified"),
-              tradingStartDate = Some(LocalDate.parse("2022-01-01")),
-              None
-            )
+            incomeSourceId = None,
+            accountingPeriod = None,
+            firstAccountingPeriodEndDate = None,
+            incomeSourceType = Some("property-unspecified"),
+            tradingStartDate = Some(LocalDate.parse("2022-01-01")),
+            None
+          )
           ))
         preSanitised.sanitise shouldBe expected
       }

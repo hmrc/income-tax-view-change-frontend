@@ -27,7 +27,7 @@ class HeadersSpec extends TestSupport {
 
   "Return updated Gov-Test-Scenario headers" when {
     "the action scenario matches the govUKTestHeaderValuesMap" in {
-        val updatedHeaders = checkAndAddTestHeader(ukSelectReportingMethod, headerCarrier)
+        val updatedHeaders = checkAndAddTestHeader(ukSelectReportingMethod, headerCarrier, appConfig.incomeSourceOverrides())
         val hc = headerCarrier.withExtraHeaders(testHeader -> incomeSourceCreatedJourney)
         updatedHeaders shouldBe hc
     }
@@ -35,7 +35,7 @@ class HeadersSpec extends TestSupport {
 
   "Return empty Gov-Test-Scenario headers" when {
     "the action scenario does not matches the govUKTestHeaderValuesMap" in {
-      val updatedHeaders = checkAndAddTestHeader("otherAction", headerCarrier)
+      val updatedHeaders = checkAndAddTestHeader("otherAction", headerCarrier, appConfig.incomeSourceOverrides())
       val hc = headerCarrier.withExtraHeaders(testHeader -> "")
       updatedHeaders shouldBe hc
     }
