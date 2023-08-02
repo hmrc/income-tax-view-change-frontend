@@ -162,7 +162,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
       }
     ) recover {
       case ex: Exception =>
-        Logger("application").error(s"[ConfirmReportingMethodSharedController][handleSubmitRequest]: " +
+        Logger("application").error(s"[ConfirmReportingMethodSharedController][handleRequest]: " +
           s"Error getting confirmReportingMethod page: ${ex.getMessage}")
         itvcErrorHandler.showInternalServerError()
     }
