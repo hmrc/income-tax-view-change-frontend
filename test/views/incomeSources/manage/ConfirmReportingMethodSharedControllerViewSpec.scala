@@ -98,7 +98,6 @@ class ConfirmReportingMethodSharedControllerViewSpec extends TestSupport {
     lazy val document: Document = if (error) Jsoup.parse(contentAsString(viewWithInputErrors)) else Jsoup.parse(contentAsString(view))
   }
 
-
   "UKPropertyEndDateView - Individual" should {
     "render the heading" in new Setup(false) {
 //      document.getElementsByClass("govuk-fieldset__heading").first().text() shouldBe messages("incomeSources.cease.UKPropertyEndDate.heading")
