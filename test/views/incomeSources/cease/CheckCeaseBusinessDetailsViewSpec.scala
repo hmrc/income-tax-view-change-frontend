@@ -28,10 +28,12 @@ import testUtils.{TestSupport, ViewSpec}
 import uk.gov.hmrc.auth.core.retrieve.Name
 import views.html.incomeSources.cease.CheckCeaseBusinessDetails
 
+import java.time.LocalDate
+
 class CheckCeaseBusinessDetailsViewSpec extends TestSupport with ViewSpec{
   val checkCeaseBusinessDetailsView = app.injector.instanceOf[CheckCeaseBusinessDetails]
   val businessEndDate = "2022-04-23"
-  val businessEndShortLongDate = "23 Apr 2022"
+  val businessEndShortLongDate = "23 April 2022"
   val individualUseWithSession: MtdItUser[_] = MtdItUser(
     mtditid = testMtditid,
     nino = testNino,
@@ -62,7 +64,7 @@ class CheckCeaseBusinessDetailsViewSpec extends TestSupport with ViewSpec{
     incomeSourceId = testSelfEmploymentId,
     tradingName = Some(testTradeName),
     address = Some(address),
-    businessEndDate = testEndDate
+    businessEndDate = LocalDate.parse(businessEndDate)
   )
 
   lazy val viewAgent: HtmlFormat.Appendable = checkCeaseBusinessDetailsView(ceaseBusinessDetailsViewModel, true)(agentUserConfirmedClientWithSession(), implicitly)

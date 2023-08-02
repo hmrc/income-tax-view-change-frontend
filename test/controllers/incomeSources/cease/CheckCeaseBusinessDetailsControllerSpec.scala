@@ -32,7 +32,7 @@ import services.{UpdateIncomeSourceService, UpdateIncomeSourceSuccess}
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testIndividualAuthSuccessWithSaUtrResponse, testSelfEmploymentId}
 import testConstants.BusinessDetailsTestConstants.businessIncomeSourceId
 import testConstants.UpdateIncomeSourceTestConstants.cessationDate
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.ceaseBusinessDetailsModel
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants.checkCeaseBusinessDetailsModel
 import testUtils.TestSupport
 import uk.gov.hmrc.http.HttpClient
 import views.html.errorPages.CustomNotFoundError
@@ -75,8 +75,8 @@ class CheckCeaseBusinessDetailsControllerSpec extends TestSupport with MockAuthe
         enable(IncomeSources)
         mockBusinessIncomeSource()
 
-        when(mockIncomeSourceDetailsService.getCeaseIncomeSourceViewModel(any()))
-          .thenReturn(Right(ceaseBusinessDetailsModel))
+        when(mockIncomeSourceDetailsService.getCheckCeaseBusinessDetailsViewModel(any(), any(), any()))
+          .thenReturn(Right(Some(checkCeaseBusinessDetailsModel)))
 
         val result: Future[Result] = TestCheckCeaseBusinessDetailsController.show()(fakeRequestWithCeaseBusinessDetails(cessationDate, businessIncomeSourceId))
         val document: Document = Jsoup.parse(contentAsString(result))
@@ -93,8 +93,8 @@ class CheckCeaseBusinessDetailsControllerSpec extends TestSupport with MockAuthe
         enable(IncomeSources)
         mockBusinessIncomeSource()
 
-        when(mockIncomeSourceDetailsService.getCeaseIncomeSourceViewModel(any()))
-          .thenReturn(Right(ceaseBusinessDetailsModel))
+        when(mockIncomeSourceDetailsService.getCheckCeaseBusinessDetailsViewModel(any(), any(), any()))
+          .thenReturn(Right(Some(checkCeaseBusinessDetailsModel)))
 
         val result: Future[Result] = TestCheckCeaseBusinessDetailsController.show()(fakeRequestWithNinoAndOrigin("pta"))
 
@@ -146,8 +146,8 @@ class CheckCeaseBusinessDetailsControllerSpec extends TestSupport with MockAuthe
         enable(IncomeSources)
         mockBusinessIncomeSource()
 
-        when(mockIncomeSourceDetailsService.getCeaseIncomeSourceViewModel(any()))
-          .thenReturn(Right(ceaseBusinessDetailsModel))
+        when(mockIncomeSourceDetailsService.getCheckCeaseBusinessDetailsViewModel(any(), any(), any()))
+          .thenReturn(Right(Some(checkCeaseBusinessDetailsModel)))
 
         val result: Future[Result] = TestCheckCeaseBusinessDetailsController.showAgent()(fakeRequestConfirmedClient()
           .withSession(forms.utils.SessionKeys.ceaseBusinessEndDate -> cessationDate)
@@ -167,8 +167,8 @@ class CheckCeaseBusinessDetailsControllerSpec extends TestSupport with MockAuthe
         enable(IncomeSources)
         mockBusinessIncomeSource()
 
-        when(mockIncomeSourceDetailsService.getCeaseIncomeSourceViewModel(any()))
-          .thenReturn(Right(ceaseBusinessDetailsModel))
+        when(mockIncomeSourceDetailsService.getCheckCeaseBusinessDetailsViewModel(any(), any(), any()))
+          .thenReturn(Right(Some(checkCeaseBusinessDetailsModel)))
 
         val result: Future[Result] = TestCheckCeaseBusinessDetailsController.showAgent()(fakeRequestConfirmedClient())
 
@@ -182,8 +182,8 @@ class CheckCeaseBusinessDetailsControllerSpec extends TestSupport with MockAuthe
         disable(IncomeSources)
         mockBusinessIncomeSource()
 
-        when(mockIncomeSourceDetailsService.getCeaseIncomeSourceViewModel(any()))
-          .thenReturn(Right(ceaseBusinessDetailsModel))
+        when(mockIncomeSourceDetailsService.getCheckCeaseBusinessDetailsViewModel(any(), any(), any()))
+          .thenReturn(Right(Some(checkCeaseBusinessDetailsModel)))
 
         val result: Future[Result] = TestCheckCeaseBusinessDetailsController.showAgent()(fakeRequestConfirmedClient()
           .withSession(forms.utils.SessionKeys.ceaseBusinessEndDate -> cessationDate)
