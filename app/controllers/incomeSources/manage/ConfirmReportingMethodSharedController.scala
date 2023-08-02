@@ -162,7 +162,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
       }
     ) recover {
       case ex: Exception =>
-        Logger("application").error(s"${if (isAgent) "[Agent]"}" +
+        Logger("application").error(s"[ConfirmReportingMethodSharedController][handleSubmitRequest]: " +
           s"Error getting confirmReportingMethod page: ${ex.getMessage}")
         itvcErrorHandler.showInternalServerError()
     }
@@ -229,10 +229,11 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
                   changeTo = changeTo,
                   taxYear = taxYear
                 ) match {
-                  case Right((_, _, redirectCall)) => Future.successful(Redirect(redirectCall))
+                  case Right((_, _, successRedirectCall)) =>
+                    Future.successful(Redirect(successRedirectCall))
                   case Left(ex) =>
                     Logger("application").error(s"[ConfirmReportingMethodSharedController][handleSubmitRequest]: " +
-                      s"Failed to redirect to update success page, reason: $ex")
+                      s"Failed to get successRedirectCall, reason: $ex")
                     Future(itvcErrorHandler.showInternalServerError())
                 }
               case err: UpdateIncomeSourceResponseError =>
@@ -270,17 +271,10 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
                               taxYear: String)
                              (implicit user: MtdItUser[_]): Either[Throwable, (Call, Call, Call)] = {
 
-    lazy val manageObligationsController = controllers.incomeSources.manage.routes.ManageObligationsController
+    val isUkProperty = maybeUkProperty.exists(_.incomeSourceId.contains(id))
+    val isForeignProperty = maybeForeignProperty.exists(_.incomeSourceId.contains(id))
 
-    lazy val confirmReportingMethodSharedController = controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController
-
-    lazy val manageIncomeSourceDetailsController = controllers.incomeSources.manage.routes.ManageIncomeSourceDetailsController
-
-    (isAgent,
-      maybeUkProperty.exists(_.incomeSourceId.contains(id)),
-      maybeForeignProperty.exists(_.incomeSourceId.contains(id)),
-      isSoleTraderBusiness(id)
-    ) match {
+    (isAgent, isUkProperty, isForeignProperty, isSoleTraderBusiness(id)) match {
       case (false, false, false, true) =>
         Right(
           (manageIncomeSourceDetailsController.showSoleTraderBusiness(id),
@@ -339,4 +333,10 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
   private def isSoleTraderBusiness(id: String)(implicit user: MtdItUser[_]): Boolean = {
     user.incomeSources.businesses.exists(b => b.incomeSourceId.contains(id) && !b.isCeased)
   }
+
+  lazy val manageObligationsController = controllers.incomeSources.manage.routes.ManageObligationsController
+
+  lazy val confirmReportingMethodSharedController = controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController
+
+  lazy val manageIncomeSourceDetailsController = controllers.incomeSources.manage.routes.ManageIncomeSourceDetailsController
 }
