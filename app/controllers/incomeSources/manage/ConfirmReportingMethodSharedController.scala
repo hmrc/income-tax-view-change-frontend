@@ -147,11 +147,9 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
               Ok(
                 confirmReportingMethod(
                   form = ConfirmReportingMethodForm.form,
-                  incomeSourceId = id,
                   backUrl = backCall.url,
                   postAction = postAction,
                   isAgent = isAgent,
-                  taxYear = taxYear,
                   taxYearEndYear = taxYears.endYear,
                   taxYearStartYear = taxYears.startYear,
                   reportingMethod = reportingMethod
@@ -199,10 +197,8 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
               BadRequest(
                 confirmReportingMethod(
                   form = formWithErrors,
-                  incomeSourceId = id,
                   backUrl = backCall.url,
                   postAction = postAction,
-                  taxYear = taxYear,
                   isAgent = isAgent,
                   taxYearStartYear = taxYears.startYear,
                   taxYearEndYear = taxYears.endYear,
