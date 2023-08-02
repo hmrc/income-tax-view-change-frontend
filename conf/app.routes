@@ -291,8 +291,8 @@ POST         /agents/income-sources/cease/foreign-property-check-details/:cessat
 GET          /income-sources/manage/view-and-manage-income-sources             controllers.incomeSources.manage.ManageIncomeSourceController.show()
 GET          /agents/income-sources/manage/view-and-manage-income-sources      controllers.incomeSources.manage.ManageIncomeSourceController.showAgent()
 
-GET          /income-sources/manage/your-details                               controllers.incomeSources.manage.ManageSelfEmploymentController.show(id: String)
-GET          /agents/income-sources/manage/your-details                        controllers.incomeSources.manage.ManageSelfEmploymentController.showAgent(id: String)
+GET          /income-sources/manage/your-details                               controllers.incomeSources.manage.ManageIncomeSourceDetailsController.showSoleTraderBusiness(id: String)
+GET          /agents/income-sources/manage/your-details                        controllers.incomeSources.manage.ManageIncomeSourceDetailsController.showSoleTraderBusinessAgent(id: String)
 
 GET          /income-sources/manage/confirm-you-want-to-switch                 controllers.incomeSources.manage.ChangeBusinessReportingMethodController.show(id: String, taxYear: String, changeTo: String)
 GET          /agents/income-sources/manage/confirm-you-want-to-switch          controllers.incomeSources.manage.ChangeBusinessReportingMethodController.showAgent(id: String, taxYear: String, changeTo: String)

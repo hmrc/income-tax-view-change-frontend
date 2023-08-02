@@ -39,7 +39,7 @@ import views.html.incomeSources.manage.ManageSelfEmployment
 
 import scala.concurrent.Future
 
-class ManageSelfEmploymentControllerSpec extends TestSupport with MockAuthenticationPredicate
+class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthenticationPredicate
   with MockIncomeSourceDetailsPredicate with FeatureSwitching with MockIncomeTaxViewChangeConnector with MockNavBarEnumFsPredicate {
 
   val mockDateService: DateService = mock(classOf[DateService])
@@ -57,7 +57,7 @@ class ManageSelfEmploymentControllerSpec extends TestSupport with MockAuthentica
     reset(mockDateService)
   }
 
-  object TestManageSelfEmploymentController extends ManageSelfEmploymentController (
+  object TestManageIncomeSourceDetailsController$ extends ManageIncomeSourceDetailsController(
     view = app.injector.instanceOf[ManageSelfEmployment],
     checkSessionTimeout = app.injector.instanceOf[SessionTimeoutPredicate],
     authenticate = MockAuthenticationPredicate,
@@ -89,9 +89,13 @@ class ManageSelfEmploymentControllerSpec extends TestSupport with MockAuthentica
   }
 
   sealed trait Scenario
+
   case object ITSA_STATUS_MANDATORY_OR_VOLUNTARY_BUT_NO_LATENCY_INFORMATION extends Scenario
+
   case object NON_ELIGIBLE_ITSA_STATUS extends Scenario
+
   case object FIRST_AND_SECOND_YEAR_NOT_CRYSTALLIZED extends Scenario
+
   case object FIRST_AND_SECOND_YEAR_CRYSTALLIZED extends Scenario
 
   val testBusinessAddress = testBizAddress
@@ -155,67 +159,67 @@ class ManageSelfEmploymentControllerSpec extends TestSupport with MockAuthentica
       "FS is enabled and the .show(id) method is called with a valid id parameter and no latency information" in {
         mockAndBasicSetup(ITSA_STATUS_MANDATORY_OR_VOLUNTARY_BUT_NO_LATENCY_INFORMATION)
 
-        val result: Future[Result] = TestManageSelfEmploymentController.show(testSelfEmploymentId)(fakeRequestWithNino)
+        val result: Future[Result] = TestManageIncomeSourceDetailsController$.showSoleTraderBusiness(testSelfEmploymentId)(fakeRequestWithNino)
         val document: Document = Jsoup.parse(contentAsString(result))
 
         status(result) shouldBe Status.OK
-        document.title shouldBe TestManageSelfEmploymentController.title
-        document.select("h1:nth-child(1)").text shouldBe TestManageSelfEmploymentController.heading
+        document.title shouldBe TestManageIncomeSourceDetailsController$.title
+        document.select("h1:nth-child(1)").text shouldBe TestManageIncomeSourceDetailsController$.heading
         Option(document.getElementById("change-link-1")).isDefined shouldBe false
         Option(document.getElementById("change-link-2")).isDefined shouldBe false
         Option(document.getElementById("reporting-method-1")).isDefined shouldBe false
         Option(document.getElementById("reporting-method-2")).isDefined shouldBe false
-        document.getElementById("business-address").text shouldBe TestManageSelfEmploymentController.businessWithLatencyAddress
+        document.getElementById("business-address").text shouldBe TestManageIncomeSourceDetailsController$.businessWithLatencyAddress
       }
       "FS is enabled and the .show(id) method is called with a valid id parameter, valid latency information and two tax years not crystallised" in {
         mockAndBasicSetup(FIRST_AND_SECOND_YEAR_NOT_CRYSTALLIZED)
 
-        val result: Future[Result] = TestManageSelfEmploymentController.show(testSelfEmploymentId)(fakeRequestWithNino)
+        val result: Future[Result] = TestManageIncomeSourceDetailsController$.showSoleTraderBusiness(testSelfEmploymentId)(fakeRequestWithNino)
         val document: Document = Jsoup.parse(contentAsString(result))
 
         status(result) shouldBe Status.OK
-        document.title shouldBe TestManageSelfEmploymentController.title
-        document.select("h1:nth-child(1)").text shouldBe TestManageSelfEmploymentController.heading
+        document.title shouldBe TestManageIncomeSourceDetailsController$.title
+        document.select("h1:nth-child(1)").text shouldBe TestManageIncomeSourceDetailsController$.heading
         Option(document.getElementById("change-link-1")).isDefined shouldBe true
         Option(document.getElementById("change-link-2")).isDefined shouldBe true
-        document.getElementById("reporting-method-1").text shouldBe TestManageSelfEmploymentController.annually
-        document.getElementById("reporting-method-2").text shouldBe TestManageSelfEmploymentController.quarterly
-        document.getElementById("business-address").text shouldBe TestManageSelfEmploymentController.businessWithLatencyAddress
+        document.getElementById("reporting-method-1").text shouldBe TestManageIncomeSourceDetailsController$.annually
+        document.getElementById("reporting-method-2").text shouldBe TestManageIncomeSourceDetailsController$.quarterly
+        document.getElementById("business-address").text shouldBe TestManageIncomeSourceDetailsController$.businessWithLatencyAddress
 
       }
       "FS is enabled and the .show(id) method is called with a valid id parameter, valid latency information and two tax years crystallised" in {
         mockAndBasicSetup(FIRST_AND_SECOND_YEAR_CRYSTALLIZED)
 
-        val result: Future[Result] = TestManageSelfEmploymentController.show(testSelfEmploymentId)(fakeRequestWithNino)
+        val result: Future[Result] = TestManageIncomeSourceDetailsController$.showSoleTraderBusiness(testSelfEmploymentId)(fakeRequestWithNino)
         val document: Document = Jsoup.parse(contentAsString(result))
 
         status(result) shouldBe Status.OK
-        document.title shouldBe TestManageSelfEmploymentController.title
-        document.select("h1:nth-child(1)").text shouldBe TestManageSelfEmploymentController.heading
+        document.title shouldBe TestManageIncomeSourceDetailsController$.title
+        document.select("h1:nth-child(1)").text shouldBe TestManageIncomeSourceDetailsController$.heading
         Option(document.getElementById("change-link-1")).isDefined shouldBe false
         Option(document.getElementById("change-link-2")).isDefined shouldBe false
-        document.getElementById("reporting-method-1").text shouldBe TestManageSelfEmploymentController.annually
-        document.getElementById("reporting-method-2").text shouldBe TestManageSelfEmploymentController.quarterly
-        document.getElementById("business-address").text shouldBe TestManageSelfEmploymentController.businessWithLatencyAddress
+        document.getElementById("reporting-method-1").text shouldBe TestManageIncomeSourceDetailsController$.annually
+        document.getElementById("reporting-method-2").text shouldBe TestManageIncomeSourceDetailsController$.quarterly
+        document.getElementById("business-address").text shouldBe TestManageIncomeSourceDetailsController$.businessWithLatencyAddress
 
       }
       "FS is enabled and the .show(id) method is called with a valid id parameter, but non eligable itsa status" in {
         mockAndBasicSetup(NON_ELIGIBLE_ITSA_STATUS)
 
-        val result: Future[Result] = TestManageSelfEmploymentController.show(testSelfEmploymentId)(fakeRequestWithNino)
+        val result: Future[Result] = TestManageIncomeSourceDetailsController$.showSoleTraderBusiness(testSelfEmploymentId)(fakeRequestWithNino)
         val document: Document = Jsoup.parse(contentAsString(result))
 
         status(result) shouldBe Status.OK
-        document.title shouldBe TestManageSelfEmploymentController.title
-        document.select("h1:nth-child(1)").text shouldBe TestManageSelfEmploymentController.heading
+        document.title shouldBe TestManageIncomeSourceDetailsController$.title
+        document.select("h1:nth-child(1)").text shouldBe TestManageIncomeSourceDetailsController$.heading
         Option(document.getElementById("change-link-1")).isDefined shouldBe false
         Option(document.getElementById("change-link-2")).isDefined shouldBe false
         Option(document.getElementById("reporting-method-1")).isDefined shouldBe false
         Option(document.getElementById("reporting-method-2")).isDefined shouldBe false
-        document.getElementById("business-address").text shouldBe TestManageSelfEmploymentController.unknown
-        document.getElementById("business-name").text shouldBe TestManageSelfEmploymentController.unknown
-        document.getElementById("business-date-started").text shouldBe TestManageSelfEmploymentController.unknown
-        document.getElementById("business-accounting-method").text shouldBe TestManageSelfEmploymentController.unknown
+        document.getElementById("business-address").text shouldBe TestManageIncomeSourceDetailsController$.unknown
+        document.getElementById("business-name").text shouldBe TestManageIncomeSourceDetailsController$.unknown
+        document.getElementById("business-date-started").text shouldBe TestManageIncomeSourceDetailsController$.unknown
+        document.getElementById("business-accounting-method").text shouldBe TestManageIncomeSourceDetailsController$.unknown
 
       }
     }
@@ -226,68 +230,68 @@ class ManageSelfEmploymentControllerSpec extends TestSupport with MockAuthentica
       "FS is enabled and the .showAgent(id) method is called with a valid id parameter and no latency information" in {
         mockAndBasicSetup(ITSA_STATUS_MANDATORY_OR_VOLUNTARY_BUT_NO_LATENCY_INFORMATION, isAgent = true)
 
-        val result: Future[Result] = TestManageSelfEmploymentController.showAgent(testSelfEmploymentId)(fakeRequestConfirmedClient())
+        val result: Future[Result] = TestManageIncomeSourceDetailsController$.showSoleTraderBusinessAgent(testSelfEmploymentId)(fakeRequestConfirmedClient())
         val document: Document = Jsoup.parse(contentAsString(result))
 
         status(result) shouldBe Status.OK
-        document.title shouldBe TestManageSelfEmploymentController.titleAgent
-        document.select("h1:nth-child(1)").text shouldBe TestManageSelfEmploymentController.heading
+        document.title shouldBe TestManageIncomeSourceDetailsController$.titleAgent
+        document.select("h1:nth-child(1)").text shouldBe TestManageIncomeSourceDetailsController$.heading
         Option(document.getElementById("change-link-1")).isDefined shouldBe false
         Option(document.getElementById("change-link-2")).isDefined shouldBe false
         Option(document.getElementById("reporting-method-1")).isDefined shouldBe false
         Option(document.getElementById("reporting-method-2")).isDefined shouldBe false
-        document.getElementById("business-address").text shouldBe TestManageSelfEmploymentController.businessWithLatencyAddress
+        document.getElementById("business-address").text shouldBe TestManageIncomeSourceDetailsController$.businessWithLatencyAddress
 
       }
       "FS is enabled and the .showAgent(id) method is called with a valid id parameter, valid latency information and two tax years not crystallised" in {
         mockAndBasicSetup(FIRST_AND_SECOND_YEAR_NOT_CRYSTALLIZED, isAgent = true)
 
-        val result: Future[Result] = TestManageSelfEmploymentController.showAgent(testSelfEmploymentId)(fakeRequestConfirmedClient())
+        val result: Future[Result] = TestManageIncomeSourceDetailsController$.showSoleTraderBusinessAgent(testSelfEmploymentId)(fakeRequestConfirmedClient())
         val document: Document = Jsoup.parse(contentAsString(result))
 
         status(result) shouldBe Status.OK
-        document.title shouldBe TestManageSelfEmploymentController.titleAgent
-        document.select("h1:nth-child(1)").text shouldBe TestManageSelfEmploymentController.heading
+        document.title shouldBe TestManageIncomeSourceDetailsController$.titleAgent
+        document.select("h1:nth-child(1)").text shouldBe TestManageIncomeSourceDetailsController$.heading
         Option(document.getElementById("change-link-1")).isDefined shouldBe true
         Option(document.getElementById("change-link-2")).isDefined shouldBe true
-        document.getElementById("reporting-method-1").text shouldBe TestManageSelfEmploymentController.annually
-        document.getElementById("reporting-method-2").text shouldBe TestManageSelfEmploymentController.quarterly
-        document.getElementById("business-address").text shouldBe TestManageSelfEmploymentController.businessWithLatencyAddress
+        document.getElementById("reporting-method-1").text shouldBe TestManageIncomeSourceDetailsController$.annually
+        document.getElementById("reporting-method-2").text shouldBe TestManageIncomeSourceDetailsController$.quarterly
+        document.getElementById("business-address").text shouldBe TestManageIncomeSourceDetailsController$.businessWithLatencyAddress
 
       }
       "FS is enabled and the .showAgent(id) method is called with a valid id parameter, valid latency information and two tax years crystallised" in {
         mockAndBasicSetup(FIRST_AND_SECOND_YEAR_CRYSTALLIZED, isAgent = true)
 
-        val result: Future[Result] = TestManageSelfEmploymentController.showAgent(testSelfEmploymentId)(fakeRequestConfirmedClient())
+        val result: Future[Result] = TestManageIncomeSourceDetailsController$.showSoleTraderBusinessAgent(testSelfEmploymentId)(fakeRequestConfirmedClient())
         val document: Document = Jsoup.parse(contentAsString(result))
 
         status(result) shouldBe Status.OK
-        document.title shouldBe TestManageSelfEmploymentController.titleAgent
-        document.select("h1:nth-child(1)").text shouldBe TestManageSelfEmploymentController.heading
+        document.title shouldBe TestManageIncomeSourceDetailsController$.titleAgent
+        document.select("h1:nth-child(1)").text shouldBe TestManageIncomeSourceDetailsController$.heading
         Option(document.getElementById("change-link-1")).isDefined shouldBe false
         Option(document.getElementById("change-link-2")).isDefined shouldBe false
-        document.getElementById("reporting-method-1").text shouldBe TestManageSelfEmploymentController.annually
-        document.getElementById("reporting-method-2").text shouldBe TestManageSelfEmploymentController.quarterly
-        document.getElementById("business-address").text shouldBe TestManageSelfEmploymentController.businessWithLatencyAddress
+        document.getElementById("reporting-method-1").text shouldBe TestManageIncomeSourceDetailsController$.annually
+        document.getElementById("reporting-method-2").text shouldBe TestManageIncomeSourceDetailsController$.quarterly
+        document.getElementById("business-address").text shouldBe TestManageIncomeSourceDetailsController$.businessWithLatencyAddress
 
       }
       "FS is enabled and the .showAgent(id) method is called with a valid id parameter, but non eligable itsa status" in {
         mockAndBasicSetup(NON_ELIGIBLE_ITSA_STATUS, isAgent = true)
 
-        val result: Future[Result] = TestManageSelfEmploymentController.showAgent(testSelfEmploymentId)(fakeRequestConfirmedClient())
+        val result: Future[Result] = TestManageIncomeSourceDetailsController$.showSoleTraderBusinessAgent(testSelfEmploymentId)(fakeRequestConfirmedClient())
         val document: Document = Jsoup.parse(contentAsString(result))
 
         status(result) shouldBe Status.OK
-        document.title shouldBe TestManageSelfEmploymentController.titleAgent
-        document.select("h1:nth-child(1)").text shouldBe TestManageSelfEmploymentController.heading
+        document.title shouldBe TestManageIncomeSourceDetailsController$.titleAgent
+        document.select("h1:nth-child(1)").text shouldBe TestManageIncomeSourceDetailsController$.heading
         Option(document.getElementById("change-link-1")).isDefined shouldBe false
         Option(document.getElementById("change-link-2")).isDefined shouldBe false
         Option(document.getElementById("reporting-method-1")).isDefined shouldBe false
         Option(document.getElementById("reporting-method-2")).isDefined shouldBe false
-        document.getElementById("business-address").text shouldBe TestManageSelfEmploymentController.unknown
-        document.getElementById("business-name").text shouldBe TestManageSelfEmploymentController.unknown
-        document.getElementById("business-date-started").text shouldBe TestManageSelfEmploymentController.unknown
-        document.getElementById("business-accounting-method").text shouldBe TestManageSelfEmploymentController.unknown
+        document.getElementById("business-address").text shouldBe TestManageIncomeSourceDetailsController$.unknown
+        document.getElementById("business-name").text shouldBe TestManageIncomeSourceDetailsController$.unknown
+        document.getElementById("business-date-started").text shouldBe TestManageIncomeSourceDetailsController$.unknown
+        document.getElementById("business-accounting-method").text shouldBe TestManageIncomeSourceDetailsController$.unknown
 
       }
     }

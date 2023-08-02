@@ -28,9 +28,9 @@ import testConstants.IncomeSourceIntegrationTestConstants.{singleBusinessRespons
 import java.time.LocalDate
 import java.time.Month.APRIL
 
-class ManageSelfEmploymentControllerISpec extends ComponentSpecBase {
+class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
 
-  val manageSelfEmploymentShowAgentUrl: String = controllers.incomeSources.manage.routes.ManageSelfEmploymentController.showAgent(testSelfEmploymentId).url
+  val manageSelfEmploymentShowAgentUrl: String = controllers.incomeSources.manage.routes.ManageIncomeSourceDetailsController.showSoleTraderBusinessAgent(testSelfEmploymentId).url
   val currentTaxYear: Int = dateService.getCurrentTaxYearEnd()
   val lastDayOfCurrentTaxYear: LocalDate = LocalDate.of(currentTaxYear, APRIL, 5)
   val taxYear1: Int = currentTaxYear

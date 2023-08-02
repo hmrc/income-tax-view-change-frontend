@@ -52,8 +52,8 @@ class ManageSelfEmploymentViewSpec extends TestSupport {
   val expectedViewAddressString1: String = "Line 1 Line 2 Line 3 Line 4 LN1 1NL NI"
   val expectedBusinessName: String = "nextUpdates.business"
   val expectedBusinessStartDate: String = "1 January 2022"
-//  val changeLinkHref1: String = "/report-quarterly/income-and-expenses/view/income-sources/manage/confirm-you-want-to-switch?id=XA00001234&taxYear=2023&changeTo=Q"
-//  val changeLinkHref2: String = "/report-quarterly/income-and-expenses/view/income-sources/manage/confirm-you-want-to-switch?id=XA00001234&taxYear=2024&changeTo=A"
+  //  val changeLinkHref1: String = "/report-quarterly/income-and-expenses/view/income-sources/manage/confirm-you-want-to-switch?id=XA00001234&taxYear=2023&changeTo=Q"
+  //  val changeLinkHref2: String = "/report-quarterly/income-and-expenses/view/income-sources/manage/confirm-you-want-to-switch?id=XA00001234&taxYear=2024&changeTo=A"
   val changeLinkAgentHref1: String = "/report-quarterly/income-and-expenses/view/agents/income-sources/manage/confirm-you-want-to-switch?id=XA00001234&taxYear=2023&changeTo=Q"
   val changeLinkAgentHref2: String = "/report-quarterly/income-and-expenses/view/agents/income-sources/manage/confirm-you-want-to-switch?id=XA00001234&taxYear=2024&changeTo=A"
 

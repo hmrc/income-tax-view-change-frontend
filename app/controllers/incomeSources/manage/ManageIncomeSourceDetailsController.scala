@@ -35,24 +35,24 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ManageSelfEmploymentController @Inject()(val view: ManageSelfEmployment,
-                                               val checkSessionTimeout: SessionTimeoutPredicate,
-                                               val authenticate: AuthenticationPredicate,
-                                               val authorisedFunctions: AuthorisedFunctions,
-                                               val retrieveNino: NinoPredicate,
-                                               val retrieveIncomeSources: IncomeSourceDetailsPredicate,
-                                               val itvcErrorHandler: ItvcErrorHandler,
-                                               implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
-                                               val incomeSourceDetailsService: IncomeSourceDetailsService,
-                                               val itsaStatusService: ITSAStatusService,
-                                               val dateService: DateService,
-                                               val retrieveBtaNavBar: NavBarPredicate,
-                                               val calculationListService: CalculationListService)
-                                              (implicit val ec: ExecutionContext,
-                                               implicit override val mcc: MessagesControllerComponents, val appConfig: FrontendAppConfig) extends ClientConfirmedController
+class ManageIncomeSourceDetailsController @Inject()(val view: ManageSelfEmployment,
+                                                    val checkSessionTimeout: SessionTimeoutPredicate,
+                                                    val authenticate: AuthenticationPredicate,
+                                                    val authorisedFunctions: AuthorisedFunctions,
+                                                    val retrieveNino: NinoPredicate,
+                                                    val retrieveIncomeSources: IncomeSourceDetailsPredicate,
+                                                    val itvcErrorHandler: ItvcErrorHandler,
+                                                    implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
+                                                    val incomeSourceDetailsService: IncomeSourceDetailsService,
+                                                    val itsaStatusService: ITSAStatusService,
+                                                    val dateService: DateService,
+                                                    val retrieveBtaNavBar: NavBarPredicate,
+                                                    val calculationListService: CalculationListService)
+                                                   (implicit val ec: ExecutionContext,
+                                                    implicit override val mcc: MessagesControllerComponents, val appConfig: FrontendAppConfig) extends ClientConfirmedController
   with FeatureSwitching {
 
-  def show(id: String): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+  def showSoleTraderBusiness(id: String): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
       handleRequest(
@@ -63,7 +63,7 @@ class ManageSelfEmploymentController @Inject()(val view: ManageSelfEmployment,
       )
   }
 
-  def showAgent(id: String): Action[AnyContent] = Authenticated.async {
+  def showSoleTraderBusinessAgent(id: String): Action[AnyContent] = Authenticated.async {
     implicit request =>
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
@@ -123,23 +123,23 @@ class ManageSelfEmploymentController @Inject()(val view: ManageSelfEmployment,
                 latencyDetails = None)
             }
           case Right(crystallisationData: List[Boolean]) =>
-              Future(ViewBusinessDetailsViewModel(
-                incomeSourceId = desiredIncomeSource.incomeSourceId.get,
-                tradingName = desiredIncomeSource.tradingName,
-                tradingStartDate = desiredIncomeSource.tradingStartDate,
-                address = incomeSourceDetailsService.getLongAddressFromBusinessAddressDetails(desiredIncomeSource.address),
-                businessAccountingMethod = desiredIncomeSource.cashOrAccruals,
-                itsaHasMandatedOrVoluntaryStatusCurrentYear = Option(true),
-                taxYearOneCrystallised = Option(crystallisationData.head),
-                taxYearTwoCrystallised = Option(crystallisationData(1)),
-                latencyDetails = Option(ViewLatencyDetailsViewModel(
-                  latencyEndDate = latencyDetails.get.latencyEndDate,
-                  taxYear1 = latencyDetails.get.taxYear1.toInt,
-                  latencyIndicator1 = latencyDetails.get.latencyIndicator1,
-                  taxYear2 = latencyDetails.get.taxYear2.toInt,
-                  latencyIndicator2 = latencyDetails.get.latencyIndicator2
-                ))))
-            }
+            Future(ViewBusinessDetailsViewModel(
+              incomeSourceId = desiredIncomeSource.incomeSourceId.get,
+              tradingName = desiredIncomeSource.tradingName,
+              tradingStartDate = desiredIncomeSource.tradingStartDate,
+              address = incomeSourceDetailsService.getLongAddressFromBusinessAddressDetails(desiredIncomeSource.address),
+              businessAccountingMethod = desiredIncomeSource.cashOrAccruals,
+              itsaHasMandatedOrVoluntaryStatusCurrentYear = Option(true),
+              taxYearOneCrystallised = Option(crystallisationData.head),
+              taxYearTwoCrystallised = Option(crystallisationData(1)),
+              latencyDetails = Option(ViewLatencyDetailsViewModel(
+                latencyEndDate = latencyDetails.get.latencyEndDate,
+                taxYear1 = latencyDetails.get.taxYear1.toInt,
+                latencyIndicator1 = latencyDetails.get.latencyIndicator1,
+                taxYear2 = latencyDetails.get.taxYear2.toInt,
+                latencyIndicator2 = latencyDetails.get.latencyIndicator2
+              ))))
+        }
       case false =>
         Future(ViewBusinessDetailsViewModel(
           incomeSourceId = desiredIncomeSource.incomeSourceId.get,
