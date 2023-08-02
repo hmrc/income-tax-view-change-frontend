@@ -50,7 +50,7 @@ class ManageObligationsControllerSpec extends TestSupport
   with MockNavBarEnumFsPredicate
   with MockClientDetailsService
   with MockNextUpdatesService
-  with FeatureSwitching{
+  with FeatureSwitching {
 
   def disableAllSwitches(): Unit = {
     switches.foreach(switch => disable(switch))
@@ -274,7 +274,7 @@ class ManageObligationsControllerSpec extends TestSupport
         disableAllSwitches()
         enable(IncomeSources)
 
-        setUpBusiness(isAgent= false)
+        setUpBusiness(isAgent = false)
 
         val result: Future[Result] = TestManageObligationsController.showSelfEmployment(changeToA, taxYear, testId)(fakeRequestWithActiveSession)
         status(result) shouldBe OK
@@ -375,7 +375,7 @@ class ManageObligationsControllerSpec extends TestSupport
           disableAllSwitches()
           enable(IncomeSources)
 
-          setUpBusiness(isAgent= false)
+          setUpBusiness(isAgent = false)
           val invalidId = "2345"
 
           val result: Future[Result] = TestManageObligationsController.handleRequest(SelfEmployment, isAgent = false, taxYear, changeToA, invalidId)(individualUser, headerCarrier)

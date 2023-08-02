@@ -36,12 +36,15 @@ import scala.concurrent.{ExecutionContext, Future}
 sealed trait Mode {
   val key: String
 }
+
 case object SelfEmployment extends Mode {
   override val key = "SE"
 }
+
 case object UkProperty extends Mode {
   override val key = "UK"
 }
+
 case object ForeignProperty extends Mode {
   override val key = "FP"
 }
@@ -74,6 +77,7 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
         id
       )
   }
+
   def showAgentSelfEmployment(changeTo: String, taxYear: String, id: String): Action[AnyContent] = Authenticated.async {
     implicit request =>
       implicit user =>
@@ -100,6 +104,7 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
         ""
       )
   }
+
   def showAgentUKProperty(changeTo: String, taxYear: String): Action[AnyContent] = Authenticated.async {
     implicit request =>
       implicit user =>
@@ -126,6 +131,7 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
         ""
       )
   }
+
   def showAgentForeignProperty(changeTo: String, taxYear: String): Action[AnyContent] = Authenticated.async {
     implicit request =>
       implicit user =>
@@ -173,7 +179,9 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
           case Some(years) =>
             if (changeTo == "annual" || changeTo == "quarterly") {
               getIncomeSourceId(mode, incomeSourceId) match {
-                case Left(error) => showError(isAgent, {error.getMessage})
+                case Left(error) => showError(isAgent, {
+                  error.getMessage
+                })
                 case Right(value) =>
                   nextUpdatesService.getObligationsViewModel(value, showPreviousTaxYears = false) map { viewModel =>
                     if (isAgent) Ok(obligationsView(viewModel, addedBusinessName, years, changeTo, isAgent, backUrl, postUrl))
@@ -181,7 +189,8 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
                   }
               }
             }
-            else { showError(isAgent, "invalid changeTo mode provided")
+            else {
+              showError(isAgent, "invalid changeTo mode provided")
             }
           case None => showError(isAgent, "invalid tax year provided")
         }

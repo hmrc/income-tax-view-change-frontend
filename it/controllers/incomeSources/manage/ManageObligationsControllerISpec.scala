@@ -9,7 +9,7 @@ import testConstants.BusinessDetailsIntegrationTestConstants.business1
 import testConstants.IncomeSourceIntegrationTestConstants.{businessAndPropertyResponse, businessOnlyResponse, foreignPropertyOnlyResponse, ukPropertyOnlyResponse}
 import testConstants.IncomeSourcesObligationsIntegrationTestConstants.testObligationsModel
 
-class ManageObligationsControllerISpec extends ComponentSpecBase{
+class ManageObligationsControllerISpec extends ComponentSpecBase {
 
   val annual = "annual"
   val quarterly = "quarterly"
@@ -47,10 +47,10 @@ class ManageObligationsControllerISpec extends ComponentSpecBase{
         verifyIncomeSourceDetailsCall(testMtditid)
 
         val expectedText: String = if (messagesAPI(s"$prefix.h1").nonEmpty) {
-          messagesAPI(s"$prefix.h1") + " " + business1.tradingName.getOrElse("") + " " + messagesAPI(s"$prefix.h2")+" "+ messagesAPI(s"$prefix.annually")+" "+messagesAPI(s"$prefix.tax-year")+" "+"2023 to 2024"
+          messagesAPI(s"$prefix.h1") + " " + business1.tradingName.getOrElse("") + " " + messagesAPI(s"$prefix.h2") + " " + messagesAPI(s"$prefix.annually") + " " + messagesAPI(s"$prefix.tax-year") + " " + "2023 to 2024"
         }
         else {
-          business1.tradingName.getOrElse("") + " " + messagesAPI(s"$prefix.h2")+" "+ messagesAPI(s"$prefix.annually")+" "+messagesAPI(s"$prefix.tax-year")+" "+"2023 to 2024"
+          business1.tradingName.getOrElse("") + " " + messagesAPI(s"$prefix.h2") + " " + messagesAPI(s"$prefix.annually") + " " + messagesAPI(s"$prefix.tax-year") + " " + "2023 to 2024"
         }
 
         result should have(

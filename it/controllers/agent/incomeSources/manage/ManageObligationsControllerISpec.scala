@@ -9,7 +9,7 @@ import testConstants.BusinessDetailsIntegrationTestConstants.business1
 import testConstants.IncomeSourceIntegrationTestConstants.{businessAndPropertyResponse, businessOnlyResponse, foreignPropertyOnlyResponse, ukPropertyOnlyResponse}
 import testConstants.IncomeSourcesObligationsIntegrationTestConstants.testObligationsModel
 
-class ManageObligationsControllerISpec extends ComponentSpecBase{
+class ManageObligationsControllerISpec extends ComponentSpecBase {
 
   val annual = "annual"
   val quarterly = "quarterly"
