@@ -196,7 +196,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
           .error(s"[ConfirmReportingMethodSharedController][handleSubmitRequest]: " +
             s"Failed to get redirect urls, reason: $ex")
         Future(itvcErrorHandler.showInternalServerError())
-      case (_, Some(taxYears), Some(reportingMethod), Right((backCall, postAction, _))) =>
+      case (_, Some(taxYears), Some(reportingMethod), Right((backCall, postAction, successRedirectCall))) =>
         ConfirmReportingMethodForm.form.bindFromRequest().fold(
           formWithErrors =>
             Future(
@@ -229,19 +229,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
               case res: UpdateIncomeSourceResponseModel =>
                 Logger("application").info(s"[ConfirmReportingMethodSharedController][handleSubmitRequest]: " +
                   s"Updated tax year specific reporting method : $res")
-                getRedirectCalls(
-                  id = id,
-                  isAgent = isAgent,
-                  changeTo = changeTo,
-                  taxYear = taxYear
-                ) match {
-                  case Right((_, _, successRedirectCall)) =>
-                    Future.successful(Redirect(successRedirectCall))
-                  case Left(ex) =>
-                    Logger("application").error(s"[ConfirmReportingMethodSharedController][handleSubmitRequest]: " +
-                      s"Failed to get successRedirectCall, reason: $ex")
-                    Future(itvcErrorHandler.showInternalServerError())
-                }
+                Future.successful(Redirect(successRedirectCall))
               case err: UpdateIncomeSourceResponseError =>
                 Logger("application").error(s"[ConfirmReportingMethodSharedController][handleSubmitRequest]: " +
                   s"Failed to Update tax year specific reporting method: $err")
