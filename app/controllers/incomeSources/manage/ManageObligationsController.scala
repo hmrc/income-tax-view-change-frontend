@@ -36,7 +36,6 @@ import scala.concurrent.{ExecutionContext, Future}
 sealed trait Mode {
   val key: String
 }
-
 case object SelfEmployment extends Mode {
   override val key = "SE"
 }
