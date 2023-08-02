@@ -48,13 +48,13 @@
 @postAction = @{
     if(isAgent) {
         controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController.submitAgent(
-            id = incomeSourceId,
+            incomeSourceId = incomeSourceId,
             taxYear = taxYear,
             changeTo = reportingMethod
         )
     } else {
         controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController.submit(
-            id = incomeSourceId,
+            incomeSourceId = incomeSourceId,
             taxYear = taxYear,
             changeTo = reportingMethod
         )
