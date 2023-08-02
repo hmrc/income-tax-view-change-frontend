@@ -283,7 +283,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
       case (true, false, false, true) =>
         Right(redirectController.showAgentSelfEmployment(id, changeTo, taxYear))
       case _ =>
-        Left(new Error(s"Income source type not found"))
+        Left(new Error(s"Income source type not found for incomeSourceId: $id"))
     }
   }
 }
