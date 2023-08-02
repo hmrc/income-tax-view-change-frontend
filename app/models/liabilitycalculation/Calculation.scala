@@ -34,6 +34,7 @@ case class Calculation(
                         chargeableEventGainsIncome: Option[ChargeableEventGainsIncome] = None,
                         savingsAndGainsIncome: Option[SavingsAndGainsIncome] = None,
                         dividendsIncome: Option[DividendsIncome] = None,
+                        otherIncome: Option[OtherIncome] = None,
                         incomeSummaryTotals: Option[IncomeSummaryTotals] = None,
                         taxCalculation: Option[TaxCalculation] = None,
                         endOfYearEstimate: Option[EndOfYearEstimate] = None,
@@ -81,6 +82,12 @@ case class ForeignIncome(
 
 object ForeignIncome {
   implicit val format: OFormat[ForeignIncome] = Json.format[ForeignIncome]
+}
+
+final case class OtherIncome(totalOtherIncome: BigDecimal)
+
+object OtherIncome {
+  implicit val format: OFormat[OtherIncome] = Json.format[OtherIncome]
 }
 
 case class OverseasIncomeAndGains(gainAmount: BigDecimal)
@@ -132,6 +139,7 @@ object ShareSchemesIncome {
 
 case class StateBenefitsIncome(totalStateBenefitsIncome: Option[BigDecimal] = None,
                                totalStateBenefitsIncomeExcStatePensionLumpSum: Option[BigDecimal] = None)
+
 object StateBenefitsIncome {
   implicit val format: OFormat[StateBenefitsIncome] = Json.format[StateBenefitsIncome]
 }

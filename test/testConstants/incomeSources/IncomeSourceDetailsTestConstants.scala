@@ -53,7 +53,8 @@ object IncomeSourceDetailsTestConstants {
   val ukPropertyAndSoleTraderBusinessIncome = IncomeSourceDetailsModel(testMtdItId, Some("2018"), List(soleTraderBusiness), List(ukPropertyDetails))
   val ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome = IncomeSourceDetailsModel(testMtdItId, Some("2018"), List(soleTraderBusiness, ceasedBusiness), List(ukPropertyDetails, foreignPropertyDetails))
   val ukPropertyAndSoleTraderBusinessIncomeNoTradingName = IncomeSourceDetailsModel(testMtdItId, Some("2018"), List(soleTraderBusinessNoTradingName), List(ukPropertyDetails))
-  val ukPropertyAndSoleTraderBusinessIncomeNoTradingStartDate = IncomeSourceDetailsModel(testMtdItId, Some("2018"), List(soleTraderBusinessNoTradingStartDate), List(ukPropertyDetails))
+  val ukPropertyAndSoleTraderBusinessIncomeNoIncomeSourceId = IncomeSourceDetailsModel(testMtdItId, Some("2018"), List(soleTraderBusinessNoIncomeSourceId), List(ukPropertyDetails))
+  val ukPropertyIncomeNoIncomeSourceId = IncomeSourceDetailsModel(testMtdItId, Some("2018"), List(soleTraderBusinessNoTradingStartDate), List(ukPropertyDetailsNoIncomeSourceId))
   val singleUKPropertyIncome2023 = IncomeSourceDetailsModel(testMtditid, Some("2023"), Nil, List(ukPropertyWithLatencyDetails1))
   val singleForeignPropertyIncome2023 = IncomeSourceDetailsModel(testMtditid, Some("2023"), Nil, List(foreignPropertyWithLatencyDetails1))
   val singleUKPropertyIncome2024 = IncomeSourceDetailsModel(testMtditid, Some("2024"), Nil, List(ukPropertyWithLatencyDetails2))
@@ -62,6 +63,7 @@ object IncomeSourceDetailsTestConstants {
 
   val foreignPropertyAndCeasedBusinessIncome = IncomeSourceDetailsModel(testMtdItId, Some("2018"), List(ceasedBusiness, ceasedBusiness2), List(foreignPropertyDetails))
   val foreignPropertyAndCeasedBusinessIncomeNoStartDate = IncomeSourceDetailsModel(testMtdItId, Some("2018"), List(ceasedBusiness, ceasedBusiness2), List(foreignPropertyDetailsNoStartDate))
+  val foreignPropertyAndCeasedBusinessIncomeNoIncomeSourceId = IncomeSourceDetailsModel(testMtdItId, Some("2018"), List(ceasedBusiness, ceasedBusiness2), List(foreignPropertyDetailsNoIncomeSourceId))
 
 
   val foreignPropertyIncome = IncomeSourceDetailsModel(testMtdItId, Some("2018"), Nil, List(foreignPropertyDetails))

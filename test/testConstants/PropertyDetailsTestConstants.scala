@@ -58,7 +58,7 @@ object PropertyDetailsTestConstants {
   )
 
   val ceaseUkPropertyDetailsViewModel = CeasePropertyDetailsViewModel(
-    tradingStartDate = testStartDate
+    tradingStartDate = Some(testStartDate)
   )
 
   val viewUkPropertyDetailsViewModel = ViewPropertyDetailsViewModel(
@@ -83,12 +83,21 @@ object PropertyDetailsTestConstants {
     None
   )
 
+  val foreignPropertyDetailsNoIncomeSourceId = PropertyDetailsModel(
+    incomeSourceId = None,
+    accountingPeriod = None,
+    firstAccountingPeriodEndDate = None,
+    incomeSourceType = Some(foreignIncomeType),
+    tradingStartDate = None,
+    None
+  )
+
   val foreignPropertyDetailsViewModel = PropertyDetailsViewModel(
     tradingStartDate = Some(testStartDate2)
   )
 
   val ceaseForeignPropertyDetailsViewModel = CeasePropertyDetailsViewModel(
-    tradingStartDate = testStartDate2
+    tradingStartDate = Some(testStartDate2)
   )
 
   val ceasedPropertyDetails = PropertyDetailsModel(
@@ -96,6 +105,24 @@ object PropertyDetailsTestConstants {
     accountingPeriod = Some(testPropertyAccountingPeriod),
     firstAccountingPeriodEndDate = None,
     incomeSourceType = Some(testIncomeType),
+    tradingStartDate = Some(testStartDate),
+    cessation = Some(testCessation)
+  )
+
+  val ceasedUKPropertyDetails = PropertyDetailsModel(
+    incomeSourceId = Some(testPropertyIncomeId),
+    accountingPeriod = Some(testPropertyAccountingPeriod),
+    firstAccountingPeriodEndDate = None,
+    incomeSourceType = Some(ukIncomeType),
+    tradingStartDate = Some(testStartDate),
+    cessation = Some(testCessation)
+  )
+
+  val ceasedForeignPropertyDetails = PropertyDetailsModel(
+    incomeSourceId = Some(testPropertyIncomeId),
+    accountingPeriod = Some(testPropertyAccountingPeriod),
+    firstAccountingPeriodEndDate = None,
+    incomeSourceType = Some(foreignIncomeType),
     tradingStartDate = Some(testStartDate),
     cessation = Some(testCessation)
   )
@@ -132,6 +159,16 @@ object PropertyDetailsTestConstants {
 
   val ukPropertyDetails = PropertyDetailsModel(
     incomeSourceId = Some(testSelfEmploymentId),
+    accountingPeriod = Some(testPropertyAccountingPeriod),
+    firstAccountingPeriodEndDate = None,
+    incomeSourceType = Some(ukIncomeType),
+    tradingStartDate = Some(testStartDate),
+    cessation = None,
+    latencyDetails = Some(testLatencyDetails)
+  )
+
+  val ukPropertyDetailsNoIncomeSourceId = PropertyDetailsModel(
+    incomeSourceId = None,
     accountingPeriod = Some(testPropertyAccountingPeriod),
     firstAccountingPeriodEndDate = None,
     incomeSourceType = Some(ukIncomeType),
