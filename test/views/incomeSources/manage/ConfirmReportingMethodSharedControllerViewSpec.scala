@@ -27,7 +27,6 @@ import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import play.twirl.api.HtmlFormat
 import services.DateService
 import testConstants.BaseTestConstants.{testMtditid, testNino}
-import testConstants.BusinessDetailsIntegrationTestConstants.testMtdItId
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.ukPropertyIncome
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
@@ -65,13 +64,13 @@ class ConfirmReportingMethodSharedControllerViewSpec extends TestSupport {
       confirmReportingMethodView(
         form = form,
         postAction = {
-          if (isAgent) controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController.submitAgent(testMtdItId, testTaxYear, testChangeToAnnual)
-          else controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController.submit(testMtdItId, testTaxYear, testChangeToAnnual)
+          if (isAgent) controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController.submitAgent(testMtditid, testTaxYear, testChangeToAnnual)
+          else controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController.submit(testMtditid, testTaxYear, testChangeToAnnual)
         },
         isAgent = isAgent,
         backUrl = {
-          if (isAgent) controllers.incomeSources.manage.routes.ManageSelfEmploymentController.showAgent(testMtdItId).url
-          else controllers.incomeSources.manage.routes.ManageSelfEmploymentController.show(testMtdItId).url
+          if (isAgent) controllers.incomeSources.manage.routes.ManageSelfEmploymentController.showAgent(testMtditid).url
+          else controllers.incomeSources.manage.routes.ManageSelfEmploymentController.show(testMtditid).url
         },
         taxYearStartYear = testTaxYearStartYear,
         taxYearEndYear = testTaxYearEndYear,
@@ -83,13 +82,13 @@ class ConfirmReportingMethodSharedControllerViewSpec extends TestSupport {
       confirmReportingMethodView(
         form = form.withError(FormError("incomeSources.manage.propertyReportingMethod", "incomeSources.manage.propertyReportingMethod.error.quarterly")),
         postAction = {
-          if (isAgent) controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController.submitAgent(testMtdItId, testTaxYear, testChangeToAnnual)
-          else controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController.submit(testMtdItId, testTaxYear, testChangeToAnnual)
+          if (isAgent) controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController.submitAgent(testMtditid, testTaxYear, testChangeToAnnual)
+          else controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController.submit(testMtditid, testTaxYear, testChangeToAnnual)
         },
         isAgent = true,
         backUrl = {
-          if (isAgent) controllers.incomeSources.manage.routes.ManageSelfEmploymentController.showAgent(testMtdItId).url
-          else controllers.incomeSources.manage.routes.ManageSelfEmploymentController.show(testMtdItId).url
+          if (isAgent) controllers.incomeSources.manage.routes.ManageSelfEmploymentController.showAgent(testMtditid).url
+          else controllers.incomeSources.manage.routes.ManageSelfEmploymentController.show(testMtditid).url
         },
         taxYearStartYear = testTaxYearStartYear,
         taxYearEndYear = testTaxYearEndYear,
