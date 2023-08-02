@@ -121,11 +121,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
                             itvcErrorHandler: ShowInternalServerError)
                            (implicit user: MtdItUser[_]): Future[Result] = {
     Future(
-      (isEnabled(IncomeSources),
-        TaxYear.getTaxYearStartYearEndYear(taxYear),
-        getReportingMethod(changeTo),
-        getIncomeSourceId(id)
-      ) match {
+      (isEnabled(IncomeSources), TaxYear.getTaxYearStartYearEndYear(taxYear), getReportingMethod(changeTo), getIncomeSourceId(id)) match {
         case (false, _, _, _) =>
           Ok(customNotFoundErrorView())
         case (_, None, _, _) =>
@@ -182,11 +178,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
                                   itvcErrorHandler: ShowInternalServerError)
                                  (implicit user: MtdItUser[_]): Future[Result] = {
 
-    (isEnabled(IncomeSources),
-      TaxYear.getTaxYearStartYearEndYear(taxYear),
-      getReportingMethod(changeTo),
-      getRedirectCalls(id, isAgent, changeTo, taxYear)
-    ) match {
+    (isEnabled(IncomeSources), TaxYear.getTaxYearStartYearEndYear(taxYear), getReportingMethod(changeTo), getRedirectCalls(id, isAgent, changeTo, taxYear)) match {
       case (false, _, _, _) =>
         Future(Ok(customNotFoundErrorView()))
       case (_, None, _, _) =>
