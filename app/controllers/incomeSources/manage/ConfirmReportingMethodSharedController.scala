@@ -209,7 +209,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
         Future(
           itvcErrorHandler.showInternalServerError()
         )
-      case (_, Some(taxYears), Some(reportingMethod), Right((backCall, postAction, successRedirectCall))) =>
+      case (_, Some(taxYears), Some(reportingMethod), Right((backCall, postAction, successCall))) =>
         ConfirmReportingMethodForm.form.bindFromRequest().fold(
           formWithErrors =>
             Future(
@@ -252,7 +252,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
                     s"Updated tax year specific reporting method : $res")
                 Future.successful(
                   Redirect(
-                    successRedirectCall
+                    successCall
                   )
                 )
             } recover {
