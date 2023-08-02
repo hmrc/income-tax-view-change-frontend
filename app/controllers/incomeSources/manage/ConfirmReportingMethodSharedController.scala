@@ -52,64 +52,64 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
                                                       val appConfig: FrontendAppConfig) extends ClientConfirmedController
   with FeatureSwitching {
 
-  def show(id: String, taxYear: String, changeTo: String): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+  def show(incomeSourceId: String, taxYear: String, changeTo: String): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
       handleRequest(
-        id = id,
+        id = incomeSourceId,
         isAgent = true,
         taxYear = taxYear,
         changeTo = changeTo,
         itvcErrorHandler = itvcErrorHandler,
-        backUrl = getBackUrl(id, isAgent = false),
-        postAction = getPostAction(id, isAgent = false, taxYear, changeTo)
+        backUrl = getBackUrl(incomeSourceId, isAgent = false),
+        postAction = getPostAction(incomeSourceId, isAgent = false, taxYear, changeTo)
       )
   }
 
-  def showAgent(id: String, taxYear: String, changeTo: String): Action[AnyContent] = Authenticated.async {
+  def showAgent(incomeSourceId: String, taxYear: String, changeTo: String): Action[AnyContent] = Authenticated.async {
     implicit request =>
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
           implicit mtdItUser =>
             handleRequest(
-              id = id,
+              id = incomeSourceId,
               isAgent = true,
               taxYear = taxYear,
               changeTo = changeTo,
               itvcErrorHandler = itvcErrorHandlerAgent,
-              backUrl = getBackUrl(id, isAgent = true),
-              postAction = getPostAction(id, isAgent = true, taxYear, changeTo)
+              backUrl = getBackUrl(incomeSourceId, isAgent = true),
+              postAction = getPostAction(incomeSourceId, isAgent = true, taxYear, changeTo)
             )
         }
   }
 
-  def submit(id: String, taxYear: String, changeTo: String): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+  def submit(incomeSourceId: String, taxYear: String, changeTo: String): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
       handleSubmitRequest(
-        id = id,
+        id = incomeSourceId,
         isAgent = true,
         taxYear = taxYear,
         changeTo = changeTo,
         itvcErrorHandler = itvcErrorHandler,
-        backUrl = getBackUrl(id, isAgent = false),
-        postAction = getPostAction(id, isAgent = false, taxYear, changeTo)
+        backUrl = getBackUrl(incomeSourceId, isAgent = false),
+        postAction = getPostAction(incomeSourceId, isAgent = false, taxYear, changeTo)
       )
   }
 
-  def submitAgent(id: String, taxYear: String, changeTo: String): Action[AnyContent] = Authenticated.async {
+  def submitAgent(incomeSourceId: String, taxYear: String, changeTo: String): Action[AnyContent] = Authenticated.async {
     implicit request =>
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
           implicit mtdItUser =>
             handleSubmitRequest(
-              id = id,
+              id = incomeSourceId,
               isAgent = true,
               taxYear = taxYear,
               changeTo = changeTo,
               itvcErrorHandler = itvcErrorHandlerAgent,
-              backUrl = getBackUrl(id, isAgent = true),
-              postAction = getPostAction(id, isAgent = true, taxYear, changeTo)
+              backUrl = getBackUrl(incomeSourceId, isAgent = true),
+              postAction = getPostAction(incomeSourceId, isAgent = true, taxYear, changeTo)
             )
         }
   }
