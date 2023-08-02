@@ -51,7 +51,7 @@ class ManageSelfEmploymentControllerISpec extends ComponentSpecBase {
     taxYear2 = taxYear2.toString,
     latencyIndicator2 = quarterlyIndicator
   )
-  val addressAsString: String = "64 Zoo Lane, Happy Place, Magical Land, England, ZL1 064, UK"
+  val addressAsString: String = "64 Zoo Lane Happy Place Magical Land England ZL1 064 UK"
   val businessTradingName: String = "business"
   val businessStartDate: String = "1 January 2017"
   val businessAccountingMethod: String = "Cash basis accounting"
