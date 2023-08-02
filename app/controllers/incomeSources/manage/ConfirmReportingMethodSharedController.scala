@@ -290,42 +290,48 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
     (isAgent, isUkProperty, isForeignProperty, isSoleTraderBusiness(id)) match {
       case (false, false, false, true) =>
         Right(
-          (manageIncomeSourceDetailsController.showSoleTraderBusiness(id),
-          confirmReportingMethodSharedController.submit(id, taxYear, changeTo),
+          (
+            manageIncomeSourceDetailsController.showSoleTraderBusiness(id),
+            confirmReportingMethodSharedController.submit(id, taxYear, changeTo),
             manageObligationsController.showSelfEmployment(id, changeTo, taxYear)
           )
         )
       case (false, false, true, false) =>
         Right(
-          (manageIncomeSourceDetailsController.showForeignProperty,
+          (
+            manageIncomeSourceDetailsController.showForeignProperty,
             confirmReportingMethodSharedController.submit(id, taxYear, changeTo),
             manageObligationsController.showForeignProperty(changeTo, taxYear)
           )
         )
       case (false, true, false, false) =>
         Right(
-          (manageIncomeSourceDetailsController.showUkProperty,
+          (
+            manageIncomeSourceDetailsController.showUkProperty,
             confirmReportingMethodSharedController.submit(id, taxYear, changeTo),
             manageObligationsController.showUKProperty(changeTo, taxYear)
           )
         )
       case (true, false, false, true) =>
         Right(
-          (manageIncomeSourceDetailsController.showSoleTraderBusinessAgent(id),
+          (
+            manageIncomeSourceDetailsController.showSoleTraderBusinessAgent(id),
             confirmReportingMethodSharedController.submitAgent(id, taxYear, changeTo),
             manageObligationsController.showAgentSelfEmployment(id, changeTo, taxYear)
           )
         )
       case (true, false, true, false) =>
         Right(
-          (manageIncomeSourceDetailsController.showForeignPropertyAgent,
+          (
+            manageIncomeSourceDetailsController.showForeignPropertyAgent,
             confirmReportingMethodSharedController.submitAgent(id, taxYear, changeTo),
             manageObligationsController.showAgentForeignProperty(changeTo, taxYear)
           )
         )
       case (true, true, false, false) =>
         Right(
-          (manageIncomeSourceDetailsController.showUkPropertyAgent,
+          (
+            manageIncomeSourceDetailsController.showUkPropertyAgent,
             confirmReportingMethodSharedController.submitAgent(id, taxYear, changeTo),
             manageObligationsController.showAgentUKProperty(changeTo, taxYear),
           )
