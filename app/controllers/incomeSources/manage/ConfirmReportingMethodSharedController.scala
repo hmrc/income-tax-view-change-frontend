@@ -284,7 +284,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
                   reportingMethod = reportingMethod,
                   taxYearEndYear = taxYearModel.endYear,
                   form = ConfirmReportingMethodForm.form,
-                  taxYearStartYear = taxYearModel.startYear,
+                  taxYearStartYear = taxYearModel.startYear
                 )
               )
           }
