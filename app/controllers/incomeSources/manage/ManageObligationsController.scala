@@ -137,7 +137,7 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
       else Future.successful(Redirect(controllers.routes.HomeController.show()))
     }
     else {
-      val backUrl: String = if (isAgent) controllers.incomeSources.manage.routes.ManageConfirmController.showAgent().url else controllers.incomeSources.manage.routes.ManageConfirmController.show().url
+      val backUrl: String = getBackurl(isAgent, mode, incomeSourceId, changeTo, taxYear)
       val postUrl: Call = if (isAgent) controllers.incomeSources.manage.routes.ManageObligationsController.agentSubmit() else controllers.incomeSources.manage.routes.ManageObligationsController.submit()
 
 
@@ -168,6 +168,17 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
         }
       }
     }
+  }
+
+  def getBackurl(isAgent: Boolean, mode: IncomeSourceJourney, incomeSourceId: String, changeTo: String, taxYear: String): String = {
+    ((isAgent, mode) match {
+      case (false, UkProperty) => controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController.showUKProperty(taxYear = taxYear, changeTo = changeTo)
+      case (false, ForeignProperty) => controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController.showForeignProperty(taxYear = taxYear, changeTo = changeTo)
+      case (false, SelfEmployment) => controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController.showSoleTraderBusiness(incomeSourceId = incomeSourceId, taxYear = taxYear, changeTo = changeTo)
+      case (true, UkProperty) => controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController.showUKPropertyAgent(taxYear = taxYear, changeTo = changeTo)
+      case (true, ForeignProperty) => controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController.showForeignPropertyAgent(taxYear = taxYear, changeTo = changeTo)
+      case (true, SelfEmployment) => controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController.showSoleTraderBusinessAgent(incomeSourceId = incomeSourceId, taxYear = taxYear, changeTo = changeTo)
+    }).url
   }
 
   def showError(isAgent: Boolean, message: String)(implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
