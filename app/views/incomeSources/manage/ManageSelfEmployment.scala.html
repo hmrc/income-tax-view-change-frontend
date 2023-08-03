@@ -125,13 +125,12 @@
                     case Some(x) => x match {
                         case value if value == "cash" => getMessage("cash-accounting")
                         case value if value == "accruals" => getMessage("traditional-accounting")
-                        case _ => throw new MissingFieldException("Unexpected value for businessAccountingMethod field")
                     }
                     case None => messages("incomeSources.generic.unknown")
                 }
             }</dd>
         </div>
-        @if(viewModel.itsaHasMandatedOrVoluntaryStatusCurrentYear.getOrElse(throw MissingFieldException("Missing itsaHasMandatedOrVoluntaryStatusCurrentYear field"))
+        @if(viewModel.itsaHasMandatedOrVoluntaryStatusCurrentYear)
                 && viewModel.latencyDetails.isDefined) {
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">@getMessage("reporting-method", viewModel.latencyDetails.get.taxYear1.toString, (viewModel.latencyDetails.get.taxYear2).toString)</dt>
@@ -139,7 +138,6 @@
                     viewModel.latencyDetails.get.latencyIndicator1 match {
                         case method: String if method == "A" => getMessage("annually")
                         case method: String if method == "Q" => getMessage("quarterly")
-                        case _ => "Field Missing"
                     }
                 }</dd>
                 @if(!viewModel.taxYearOneCrystallised.get){
@@ -156,7 +154,6 @@
                     viewModel.latencyDetails.get.latencyIndicator2 match {
                         case method: String if method == "A" => getMessage("annually")
                         case method: String if method == "Q" => getMessage("quarterly")
-                        case _ => "Field Missing"
                     }
                 }</dd>
                 @if(!viewModel.taxYearTwoCrystallised.get){

@@ -31,7 +31,7 @@ case class ViewBusinessDetailsViewModel(incomeSourceId: String,
                                         tradingStartDate: Option[LocalDate],
                                         address: Option[String],
                                         businessAccountingMethod: Option[String] = None,
-                                        itsaHasMandatedOrVoluntaryStatusCurrentYear: Option[Boolean],
+                                        itsaHasMandatedOrVoluntaryStatusCurrentYear: Boolean,
                                         taxYearOneCrystallised: Option[Boolean],
                                         taxYearTwoCrystallised: Option[Boolean],
                                         latencyDetails: Option[ViewLatencyDetailsViewModel]

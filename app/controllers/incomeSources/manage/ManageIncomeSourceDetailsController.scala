@@ -117,7 +117,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageSelfEmployme
                   tradingStartDate = desiredIncomeSourceMaybe.get.tradingStartDate,
                   address = incomeSourceDetailsService.getLongAddressFromBusinessAddressDetails(desiredIncomeSourceMaybe.get.address),
                   businessAccountingMethod = desiredIncomeSourceMaybe.get.cashOrAccruals,
-                  itsaHasMandatedOrVoluntaryStatusCurrentYear = Option(true),
+                  itsaHasMandatedOrVoluntaryStatusCurrentYear = true,
                   taxYearOneCrystallised = None,
                   taxYearTwoCrystallised = None,
                   latencyDetails = None))
@@ -136,7 +136,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageSelfEmployme
                 tradingStartDate = desiredIncomeSourceMaybe.get.tradingStartDate,
                 address = incomeSourceDetailsService.getLongAddressFromBusinessAddressDetails(desiredIncomeSourceMaybe.get.address),
                 businessAccountingMethod = desiredIncomeSourceMaybe.get.cashOrAccruals,
-                itsaHasMandatedOrVoluntaryStatusCurrentYear = Option(true),
+                itsaHasMandatedOrVoluntaryStatusCurrentYear = true,
                 taxYearOneCrystallised = Option(crystallisationData.head),
                 taxYearTwoCrystallised = Option(crystallisationData(1)),
                 latencyDetails = Option(ViewLatencyDetailsViewModel(
@@ -160,7 +160,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageSelfEmployme
             tradingStartDate = desiredIncomeSourceMaybe.get.tradingStartDate,
             address = incomeSourceDetailsService.getLongAddressFromBusinessAddressDetails(desiredIncomeSourceMaybe.get.address),
             businessAccountingMethod = desiredIncomeSourceMaybe.get.cashOrAccruals,
-            itsaHasMandatedOrVoluntaryStatusCurrentYear = Option(false),
+            itsaHasMandatedOrVoluntaryStatusCurrentYear = false,
             taxYearOneCrystallised = None,
             taxYearTwoCrystallised = None,
             latencyDetails = None)))
