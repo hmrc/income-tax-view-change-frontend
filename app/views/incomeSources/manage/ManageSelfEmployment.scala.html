@@ -68,6 +68,17 @@
     }
 }
 
+@taxYearValue(taxYear: Int) = @{
+    s"${taxYear.toString}-${(taxYear + 1).toString}"
+}
+
+@extractOption(content: Option[String]) = @{
+    content match {
+        case Some(x) => x
+        case None => messages("incomeSources.generic.unknown")
+    }
+}
+
 @mainTemplate(
     pageTitle = getMessage("heading"),
     backUrl = Some(backUrl),
@@ -86,10 +97,7 @@
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">@getMessage("business-name")</dt>
             <dd class="govuk-summary-list__value" id="business-name">@{
-                viewModel.tradingName match {
-                    case Some(x) => x
-                    case None => messages("incomeSources.generic.unknown")
-                }
+                extractOption(viewModel.tradingName)
             }</dd>
         </div>
         <div class="govuk-summary-list__row">
@@ -136,7 +144,7 @@
                 }</dd>
                 @if(!viewModel.taxYearOneCrystallised.get){
                     <dd class="govuk-summary-list__actions govuk-!-text-align-right govuk-!-margin-0" id="change-box-1">
-                        <a class="govuk-link" id="change-link-1" href=@changeReportingMethodUrl(viewModel.incomeSourceId, viewModel.latencyDetails.get.taxYear1.toString, changeToValue(viewModel.latencyDetails.get.latencyIndicator1))>
+                        <a class="govuk-link" id="change-link-1" href=@changeReportingMethodUrl(viewModel.incomeSourceId, taxYearValue(viewModel.latencyDetails.get.taxYear1), changeToValue(viewModel.latencyDetails.get.latencyIndicator1))>
                         @getMessage("change")
                         </a>
                     </dd>
@@ -153,7 +161,7 @@
                 }</dd>
                 @if(!viewModel.taxYearTwoCrystallised.get){
                     <dd class="govuk-summary-list__actions govuk-!-text-align-right govuk-!-margin-0" id="change-box-2">
-                        <a class="govuk-link" id="change-link-2" href=@changeReportingMethodUrl(viewModel.incomeSourceId, viewModel.latencyDetails.get.taxYear2.toString, changeToValue(viewModel.latencyDetails.get.latencyIndicator2))>
+                        <a class="govuk-link" id="change-link-2" href=@changeReportingMethodUrl(viewModel.incomeSourceId, taxYearValue(viewModel.latencyDetails.get.taxYear2), changeToValue(viewModel.latencyDetails.get.latencyIndicator2))>
                         @getMessage("change")
                         </a>
                     </dd>

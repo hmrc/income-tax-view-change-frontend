@@ -25,6 +25,7 @@ import controllers.predicates._
 import exceptions.MissingFieldException
 import models.incomeSourceDetails.viewmodels.{ViewBusinessDetailsViewModel, ViewLatencyDetailsViewModel}
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, LatencyDetails}
+import play.api.Logger
 import play.api.mvc._
 import services.{CalculationListService, DateService, ITSAStatusService, IncomeSourceDetailsService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
@@ -94,15 +95,13 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageSelfEmployme
     }
   }
 
-  def getViewIncomeSourceChosenViewModel(sources: IncomeSourceDetailsModel, id: String)
-                                        (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[ViewBusinessDetailsViewModel] = {
+  def getViewIncomeSourceChosenViewModel(sources: IncomeSourceDetailsModel, id: String, isAgent: Boolean)
+                                        (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, ViewBusinessDetailsViewModel]] = {
 
     val desiredIncomeSourceMaybe: Option[BusinessDetailsModel] = sources.businesses
       .filterNot(_.isCeased)
       .find(e => e.incomeSourceId.isDefined && e.incomeSourceId.get == id)
     val latencyDetails: Option[LatencyDetails] = desiredIncomeSourceMaybe.flatMap(_.latencyDetails)
-
-    val desiredIncomeSource: BusinessDetailsModel = desiredIncomeSourceMaybe.getOrElse(throw new InternalError("Income source id provided does not match any of the user's income sources"))
 
     itsaStatusService.hasMandatedOrVoluntaryStatusCurrentYear.flatMap {
       case true =>
@@ -111,46 +110,65 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageSelfEmployme
             for {
               i <- itsaStatusService.hasMandatedOrVoluntaryStatusCurrentYear
             } yield {
-              ViewBusinessDetailsViewModel(
-                incomeSourceId = desiredIncomeSource.incomeSourceId.get,
-                tradingName = desiredIncomeSource.tradingName,
-                tradingStartDate = desiredIncomeSource.tradingStartDate,
-                address = incomeSourceDetailsService.getLongAddressFromBusinessAddressDetails(desiredIncomeSource.address),
-                businessAccountingMethod = desiredIncomeSource.cashOrAccruals,
-                itsaHasMandatedOrVoluntaryStatusCurrentYear = Option(true),
-                taxYearOneCrystallised = None,
-                taxYearTwoCrystallised = None,
-                latencyDetails = None)
+              if (desiredIncomeSourceMaybe.isDefined) {
+                Right(ViewBusinessDetailsViewModel(
+                  incomeSourceId = desiredIncomeSourceMaybe.get.incomeSourceId.get,
+                  tradingName = desiredIncomeSourceMaybe.get.tradingName,
+                  tradingStartDate = desiredIncomeSourceMaybe.get.tradingStartDate,
+                  address = incomeSourceDetailsService.getLongAddressFromBusinessAddressDetails(desiredIncomeSourceMaybe.get.address),
+                  businessAccountingMethod = desiredIncomeSourceMaybe.get.cashOrAccruals,
+                  itsaHasMandatedOrVoluntaryStatusCurrentYear = Option(true),
+                  taxYearOneCrystallised = None,
+                  taxYearTwoCrystallised = None,
+                  latencyDetails = None))
+              }
+              else {
+                Left(
+                  new Error("Unable to find income source")
+                )
+              }
             }
           case Right(crystallisationData: List[Boolean]) =>
-            Future(ViewBusinessDetailsViewModel(
-              incomeSourceId = desiredIncomeSource.incomeSourceId.get,
-              tradingName = desiredIncomeSource.tradingName,
-              tradingStartDate = desiredIncomeSource.tradingStartDate,
-              address = incomeSourceDetailsService.getLongAddressFromBusinessAddressDetails(desiredIncomeSource.address),
-              businessAccountingMethod = desiredIncomeSource.cashOrAccruals,
-              itsaHasMandatedOrVoluntaryStatusCurrentYear = Option(true),
-              taxYearOneCrystallised = Option(crystallisationData.head),
-              taxYearTwoCrystallised = Option(crystallisationData(1)),
-              latencyDetails = Option(ViewLatencyDetailsViewModel(
-                latencyEndDate = latencyDetails.get.latencyEndDate,
-                taxYear1 = latencyDetails.get.taxYear1.toInt,
-                latencyIndicator1 = latencyDetails.get.latencyIndicator1,
-                taxYear2 = latencyDetails.get.taxYear2.toInt,
-                latencyIndicator2 = latencyDetails.get.latencyIndicator2
-              ))))
+            if (desiredIncomeSourceMaybe.isDefined) {
+              Future(Right(ViewBusinessDetailsViewModel(
+                incomeSourceId = desiredIncomeSourceMaybe.get.incomeSourceId.get,
+                tradingName = desiredIncomeSourceMaybe.get.tradingName,
+                tradingStartDate = desiredIncomeSourceMaybe.get.tradingStartDate,
+                address = incomeSourceDetailsService.getLongAddressFromBusinessAddressDetails(desiredIncomeSourceMaybe.get.address),
+                businessAccountingMethod = desiredIncomeSourceMaybe.get.cashOrAccruals,
+                itsaHasMandatedOrVoluntaryStatusCurrentYear = Option(true),
+                taxYearOneCrystallised = Option(crystallisationData.head),
+                taxYearTwoCrystallised = Option(crystallisationData(1)),
+                latencyDetails = Option(ViewLatencyDetailsViewModel(
+                  latencyEndDate = latencyDetails.get.latencyEndDate,
+                  taxYear1 = latencyDetails.get.taxYear1.toInt,
+                  latencyIndicator1 = latencyDetails.get.latencyIndicator1,
+                  taxYear2 = latencyDetails.get.taxYear2.toInt,
+                  latencyIndicator2 = latencyDetails.get.latencyIndicator2
+                )))))
+            } else {
+              Future(Left(
+                new Error("Unable to find income source")
+              ))
+            }
         }
       case false =>
-        Future(ViewBusinessDetailsViewModel(
-          incomeSourceId = desiredIncomeSource.incomeSourceId.get,
-          tradingName = desiredIncomeSource.tradingName,
-          tradingStartDate = desiredIncomeSource.tradingStartDate,
-          address = incomeSourceDetailsService.getLongAddressFromBusinessAddressDetails(desiredIncomeSource.address),
-          businessAccountingMethod = desiredIncomeSource.cashOrAccruals,
-          itsaHasMandatedOrVoluntaryStatusCurrentYear = Option(false),
-          taxYearOneCrystallised = None,
-          taxYearTwoCrystallised = None,
-          latencyDetails = None))
+        if (desiredIncomeSourceMaybe.isDefined) {
+          Future(Right(ViewBusinessDetailsViewModel(
+            incomeSourceId = desiredIncomeSourceMaybe.get.incomeSourceId.get,
+            tradingName = desiredIncomeSourceMaybe.get.tradingName,
+            tradingStartDate = desiredIncomeSourceMaybe.get.tradingStartDate,
+            address = incomeSourceDetailsService.getLongAddressFromBusinessAddressDetails(desiredIncomeSourceMaybe.get.address),
+            businessAccountingMethod = desiredIncomeSourceMaybe.get.cashOrAccruals,
+            itsaHasMandatedOrVoluntaryStatusCurrentYear = Option(false),
+            taxYearOneCrystallised = None,
+            taxYearTwoCrystallised = None,
+            latencyDetails = None)))
+        } else {
+          Future(Left(
+            new Error("Unable to find income source")
+          ))
+        }
     }
   }
 
@@ -162,12 +180,22 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageSelfEmployme
       Future.successful(Redirect(controllers.routes.HomeController.show()))
     } else {
       for {
-        value <- getViewIncomeSourceChosenViewModel(sources = sources, id = id)
+        value <- getViewIncomeSourceChosenViewModel(sources = sources, id = id, isAgent = isAgent)
       } yield {
-        Ok(view(viewModel = value,
-          isAgent = isAgent,
-          backUrl = backUrl
-        ))
+        value match {
+          case Right(viewModel) =>
+            Ok(view(viewModel = viewModel,
+              isAgent = isAgent,
+              backUrl = backUrl
+            ))
+          case Left(error) =>
+            Logger("application").error(s"[ManageIncomeSourceDetailsController][extractIncomeSource] unable to find income source. isAgent = $isAgent")
+            if (isAgent) {
+              itvcErrorHandlerAgent.showInternalServerError()
+            } else {
+              itvcErrorHandler.showInternalServerError()
+            }
+        }
       }
     }
   }

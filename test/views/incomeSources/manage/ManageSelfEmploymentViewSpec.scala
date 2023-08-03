@@ -156,8 +156,8 @@ class ManageSelfEmploymentViewSpec extends TestSupport {
       document.getElementsByClass("govuk-summary-list__actions").eq(0).text() shouldBe change
       document.getElementsByClass("govuk-summary-list__actions").eq(1).text() shouldBe change
 
-      document.getElementById("change-link-1").attr("href") shouldBe changeReportingMethodUrl(id = "XA00001234", taxYear = "2023", changeTo = "quarterly")
-      document.getElementById("change-link-2").attr("href") shouldBe changeReportingMethodUrl(id = "XA00001234", taxYear = "2024", changeTo = "annual")
+      document.getElementById("change-link-1").attr("href") shouldBe changeReportingMethodUrl(id = "XA00001234", taxYear = "2023-2024", changeTo = "quarterly")
+      document.getElementById("change-link-2").attr("href") shouldBe changeReportingMethodUrl(id = "XA00001234", taxYear = "2024-2025", changeTo = "annual")
       document.getElementById("reporting-method-1").text shouldBe annually
       document.getElementById("reporting-method-2").text shouldBe quarterly
       document.getElementById("business-address").text shouldBe expectedViewAddressString1
@@ -199,8 +199,8 @@ class ManageSelfEmploymentViewSpec extends TestSupport {
       document.getElementsByClass("govuk-summary-list__actions").eq(0).text() shouldBe change
       document.getElementsByClass("govuk-summary-list__actions").eq(1).text() shouldBe change
 
-      document.getElementById("change-link-1").attr("href") shouldBe changeReportingMethodUrl(id = "XA00001234", taxYear = "2023", changeTo = "quarterly")
-      document.getElementById("change-link-2").attr("href") shouldBe changeReportingMethodUrl(id = "XA00001234", taxYear = "2024", changeTo = "annual")
+      document.getElementById("change-link-1").attr("href") shouldBe changeReportingMethodUrl(id = "XA00001234", taxYear = "2023-2024", changeTo = "quarterly")
+      document.getElementById("change-link-2").attr("href") shouldBe changeReportingMethodUrl(id = "XA00001234", taxYear = "2024-2025", changeTo = "annual")
       document.getElementById("reporting-method-1").text shouldBe annually
       document.getElementById("reporting-method-2").text shouldBe quarterly
       document.getElementById("business-address").text shouldBe expectedViewAddressString1
