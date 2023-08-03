@@ -1463,7 +1463,9 @@ incomeSources.add.businessReportingMethod.heading                   =   Choose a
 incomeSources.add.businessReportingMethod.description1              =   Your business qualifies for a grace period available up until April {0} where you can report annually.
 incomeSources.add.businessReportingMethod.description2              =   This involves a single update no later than 31 January.
 incomeSources.add.businessReportingMethod.description3              =   This grace period is not affected by either:
-incomeSources.add.businessReportingMethod.description4              =   <li>your level of income from other sources</li><li>the turnover you expect your new business to make</li><li>how you report with any existing income sources</li>
+incomeSources.add.businessReportingMethod.description4.bullet1      =   your level of income from other sources
+incomeSources.add.businessReportingMethod.description4.bullet2      =   the turnover you expect your new business to make
+incomeSources.add.businessReportingMethod.description4.bullet3      =   how you report with any existing income sources
 incomeSources.add.businessReportingMethod.chooseReport              =   Choose how you want to report
 incomeSources.add.businessReportingMethod.taxYear                   =   Tax year {0}-{1}
 incomeSources.add.businessReportingMethod.chooseAnnualReport        =   Choose annual reporting
@@ -1512,10 +1514,25 @@ incomeSources.add.ukPropertyReportingMethod.heading                   =   Choose
 incomeSources.add.ukPropertyReportingMethod.description1              =   Your business qualifies for a grace period available up until April {0} where you can report annually.
 incomeSources.add.ukPropertyReportingMethod.description2              =   This involves a single update no later than 31 January.
 incomeSources.add.ukPropertyReportingMethod.description3              =   This grace period is not affected by either:
-incomeSources.add.ukPropertyReportingMethod.description4              =   <li>your level of income from other source</li><li>the turnover you expect your new business to make</li><li>how you report with any existing income sources</li>
+incomeSources.add.ukPropertyReportingMethod.description4.bullet1      =   your level of income from other sources
+incomeSources.add.ukPropertyReportingMethod.description4.bullet2      =   the turnover you expect your new business to make
+incomeSources.add.ukPropertyReportingMethod.description4.bullet3      =   how you report with any existing income sources
 incomeSources.add.ukPropertyReportingMethod.chooseReport              =   Choose how you want to report
 incomeSources.add.ukPropertyReportingMethod.taxYear                   =   Tax year {0}-{1}
 incomeSources.add.ukPropertyReportingMethod.chooseAnnualReport        =   Choose annual reporting
 incomeSources.add.ukPropertyReportingMethod.chooseQuarterlyReport     =   Choose quarterly reporting
 incomeSources.add.ukPropertyReportingMethod.error                     =   Select if you want to report annually or quarterly for tax year {0} to {1}
+
+# manage obligations page
+incomeSources.add.manageObligations.h1                                =
+incomeSources.add.manageObligations.h2                                =   will report
+incomeSources.add.manageObligations.annually                          =   annually
+incomeSources.add.manageObligations.quarterly                         =   quarterly
+incomeSources.add.manageObligations.tax-year                          =   for the tax year
+incomeSources.add.manageObligations.to                                =   to
+incomeSources.add.manageObligations.sole-trader                       =   Sole trader business
+incomeSources.add.manageObligations.uk-property                       =   UK property
+incomeSources.add.manageObligations.foreign-property                  =   Foreign property
+incomeSources.add.manageObligations.heading                           =   What you must do
+
 

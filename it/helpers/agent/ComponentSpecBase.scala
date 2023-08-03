@@ -347,6 +347,22 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
       post(s"/income-sources/add/foreign-property-reporting-method?id=$testPropertyIncomeId", additionalCookies = additionalCookies)(formData)
     }
 
+    def getManageSEObligations(changeTo: String, taxYear: String, id: String, additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      get(s"/income-sources/manage/business-will-report?changeTo=$changeTo&taxYear=$taxYear&id=$id", additionalCookies)
+    }
+
+    def getManageUKObligations(changeTo: String, taxYear: String, additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      get(s"/income-sources/manage/uk-property-will-report?changeTo=$changeTo&taxYear=$taxYear", additionalCookies)
+    }
+
+    def getManageFPObligations(changeTo: String, taxYear: String, additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      get(s"/income-sources/manage/foreign-property-will-report?changeTo=$changeTo&taxYear=$taxYear", additionalCookies)
+    }
+
+    def postManageObligations(mode: String, additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      post(s"/income-sources/manage/$mode-will-report", additionalCookies)(Map.empty)
+    }
+
     def getCheckCeaseBusinessDetails(additionalCookies: Map[String, String]): WSResponse =
       getWithClientDetailsInSession("/agents/income-sources/cease/business-check-details", additionalCookies)
 
