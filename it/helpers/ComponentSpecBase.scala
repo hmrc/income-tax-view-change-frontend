@@ -342,6 +342,33 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
     def getManageIncomeSource: WSResponse = get("/income-sources/manage/view-and-manage-income-sources")
 
+    def getCheckBusinessReportingMethod(taxYear: String, changeTo: String): WSResponse = {
+      get(s"/income-sources/manage/confirm-you-want-to-report?incomeSourceId=$testSelfEmploymentId&taxYear=$taxYear&changeTo=$changeTo")
+    }
+
+    def getCheckUKPropertyReportingMethod(taxYear: String, changeTo: String): WSResponse = {
+      get(s"/income-sources/manage/confirm-you-want-to-report-uk-property?taxYear=$taxYear&changeTo=$changeTo")
+    }
+
+    def getCheckForeignPropertyReportingMethod(taxYear: String, changeTo: String): WSResponse = {
+      get(s"/income-sources/add/foreign-property-reporting-method?taxYear=$taxYear&changeTo=$changeTo")
+    }
+
+    def postCheckBusinessReportingMethod(form: AddBusinessReportingMethodForm, taxYear: String, changeTo: String): WSResponse = {
+      val formData = form.toFormMap.map { case (k, v) => (k -> Seq(v.getOrElse(""))) }
+      post(s"/income-sources/manage/confirm-you-want-to-report?incomeSourceId=$testSelfEmploymentId&taxYear=$taxYear&changeTo=$changeTo")(formData)
+    }
+
+    def postCheckUKPropertyReportingMethod(form: AddUKPropertyReportingMethodForm, taxYear: String, changeTo: String): WSResponse = {
+      val formData = form.toFormMap.map { case (k, v) => (k -> Seq(v.getOrElse(""))) }
+      post(s"/income-sources/manage/confirm-you-want-to-report-uk-property?incomeSourceId=$testPropertyIncomeId&taxYear=$taxYear&changeTo=$changeTo")(formData)
+    }
+
+    def postCheckForeignPropertyReportingMethod(form: AddForeignPropertyReportingMethodForm, taxYear: String, changeTo: String): WSResponse = {
+      val formData = form.toFormMap.map { case (k, v) => (k -> Seq(v.getOrElse(""))) }
+      post(s"/income-sources/add/foreign-property-reporting-method?id=$testPropertyIncomeId&taxYear=$taxYear&changeTo=$changeTo")(formData)
+    }
+
     def getManageSEObligations(changeTo: String, taxYear: String, id: String): WSResponse = {
       get(s"/income-sources/manage/business-will-report?changeTo=$changeTo&taxYear=$taxYear&incomeSourceId=$id")
     }
