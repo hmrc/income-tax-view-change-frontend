@@ -114,7 +114,7 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         when(mockDateService.getCurrentTaxYearEnd(any)).thenReturn(2024)
         when(mockITSAStatusService.hasMandatedOrVoluntaryStatusCurrentYear(any, any, any))
           .thenReturn(Future.successful(true))
-        mockSingleBusinessIncomeSource()
+        mockSingleBusinessIncomeSourceNoLatency()
         when(mockIncomeSourceDetailsService.getLongAddressFromBusinessAddressDetails(ArgumentMatchers.eq(Option(testBizAddress))))
           .thenReturn(Some("64 Zoo Lane, Happy Place, Magical Land, England, ZL1 064, UK"))
 

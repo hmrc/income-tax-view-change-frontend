@@ -184,6 +184,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageSelfEmployme
       } yield {
         value match {
           case Right(viewModel) =>
+            println("XXXXXXXXX" + viewModel + "ZZZZZZZZZ" + viewModel.address)
             Ok(view(viewModel = viewModel,
               isAgent = isAgent,
               backUrl = backUrl

@@ -77,7 +77,7 @@ object BusinessDetailsIntegrationTestConstants {
     address = Some(address)
   )
 
-  val business1Address2 = BusinessDetailsModel(
+  val business1WithAddress2 = BusinessDetailsModel(
     incomeSourceId = Some(testSelfEmploymentId),
     accountingPeriod = Some(AccountingPeriodModel(
       start = b1AccountingStart,

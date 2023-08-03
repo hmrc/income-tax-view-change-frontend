@@ -117,6 +117,17 @@ object BusinessDetailsTestConstants {
     address = Some(address)
   )
 
+  val business1NoLatency = BusinessDetailsModel(
+    incomeSourceId = Some(testSelfEmploymentId),
+    accountingPeriod = Some(testBusinessAccountingPeriod),
+    tradingName = Some(testTradeName),
+    firstAccountingPeriodEndDate = Some(LocalDate.of(year2018, Month.APRIL, 5)),
+    tradingStartDate = Some(testStartDate),
+    cessation = None,
+    latencyDetails = None,
+    address = Some(testBizAddress)
+  )
+
   val business1Address2 = BusinessDetailsModel(
     incomeSourceId = Some(testSelfEmploymentId),
     accountingPeriod = Some(testBusinessAccountingPeriod),
@@ -170,6 +181,18 @@ object BusinessDetailsTestConstants {
     cessation = None,
     latencyDetails = Some(testLatencyDetails2),
     address = Some(testBizAddress)
+  )
+
+  val businessWithLatencyAndUnknowns = BusinessDetailsModel(
+    incomeSourceId = Some(testSelfEmploymentId),
+    accountingPeriod = Some(testBusinessAccountingPeriod),
+    tradingName = None,
+    firstAccountingPeriodEndDate = Some(LocalDate.of(year2018, Month.APRIL, 5)),
+    tradingStartDate = None,
+    cessation = None,
+    latencyDetails = Some(testLatencyDetails2),
+    address = None,
+    cashOrAccruals = None
   )
 
   val businessWithLatency2019 = BusinessDetailsModel(
