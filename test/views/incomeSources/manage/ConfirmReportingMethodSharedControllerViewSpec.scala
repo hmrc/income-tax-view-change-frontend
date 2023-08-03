@@ -134,6 +134,9 @@ class ConfirmReportingMethodSharedControllerViewSpec extends TestSupport {
     "render the error summary heading" in new Setup(isAgent = false, error = true, incomeSourceType = UKProperty) {
       document.getElementById("error-summary-heading").text() shouldBe messages("base.error_summary.heading")
     }
+    "render the error message" in new Setup(isAgent = false, error = true, incomeSourceType = SoleTraderBusiness) {
+      document.getElementById("incomeSources.manage.propertyReportingMethod-error").text() shouldBe messages(s"$formErrorMessage.quarterly")
+    }
   }
 
   "ConfirmReportingMethodView - ForeignProperty - Individual" should {
@@ -159,6 +162,9 @@ class ConfirmReportingMethodSharedControllerViewSpec extends TestSupport {
     }
     "render the error summary heading" in new Setup(isAgent = false, error = true, incomeSourceType = ForeignProperty) {
       document.getElementById("error-summary-heading").text() shouldBe messages("base.error_summary.heading")
+    }
+    "render the error message" in new Setup(isAgent = false, error = true, incomeSourceType = SoleTraderBusiness) {
+      document.getElementById("incomeSources.manage.propertyReportingMethod-error").text() shouldBe messages(s"$formErrorMessage.quarterly")
     }
   }
 
@@ -186,6 +192,9 @@ class ConfirmReportingMethodSharedControllerViewSpec extends TestSupport {
     "render the error summary heading" in new Setup(isAgent = false, error = true, incomeSourceType = SoleTraderBusiness) {
       document.getElementById("error-summary-heading").text() shouldBe messages("base.error_summary.heading")
     }
+    "render the error message" in new Setup(isAgent = false, error = true, incomeSourceType = SoleTraderBusiness) {
+      document.getElementById("incomeSources.manage.propertyReportingMethod-error").text() shouldBe messages(s"$formErrorMessage.quarterly")
+    }
   }
 
   "ConfirmReportingMethodView - UKProperty - Agent" should {
@@ -211,6 +220,9 @@ class ConfirmReportingMethodSharedControllerViewSpec extends TestSupport {
     }
     "render the error summary heading" in new Setup(isAgent = true, error = true, incomeSourceType = UKProperty) {
       document.getElementById("error-summary-heading").text() shouldBe messages("base.error_summary.heading")
+    }
+    "render the error message" in new Setup(isAgent = true, error = true, incomeSourceType = SoleTraderBusiness) {
+      document.getElementById("incomeSources.manage.propertyReportingMethod-error").text() shouldBe messages(s"$formErrorMessage.quarterly")
     }
   }
 
@@ -238,6 +250,9 @@ class ConfirmReportingMethodSharedControllerViewSpec extends TestSupport {
     "render the error summary heading" in new Setup(isAgent = true, error = true, incomeSourceType = ForeignProperty) {
       document.getElementById("error-summary-heading").text() shouldBe messages("base.error_summary.heading")
     }
+    "render the error message" in new Setup(isAgent = true, error = true, incomeSourceType = SoleTraderBusiness) {
+      document.getElementById("incomeSources.manage.propertyReportingMethod-error").text() shouldBe messages(s"$formErrorMessage.quarterly")
+    }
   }
 
   "ConfirmReportingMethodView - Sole Trader Business - Agent" should {
@@ -258,16 +273,16 @@ class ConfirmReportingMethodSharedControllerViewSpec extends TestSupport {
     "render the continue button" in new Setup(isAgent = true, error = false, incomeSourceType = SoleTraderBusiness) {
       document.getElementById("confirm-and-continue-button").text() shouldBe messages("base.confirm-and-continue")
     }
-    "render the error message" in new Setup(isAgent = true, error = true, incomeSourceType = SoleTraderBusiness) {
+    "render the error summary message" in new Setup(isAgent = true, error = true, incomeSourceType = SoleTraderBusiness) {
       document.getElementsByClass("govuk-list govuk-error-summary__list").get(0).text() shouldBe messages(s"$formErrorMessage.quarterly")
     }
     "render the error summary heading" in new Setup(isAgent = true, error = true, incomeSourceType = SoleTraderBusiness) {
       document.getElementById("error-summary-heading").text() shouldBe messages("base.error_summary.heading")
     }
+    "render the error message" in new Setup(isAgent = true, error = true, incomeSourceType = SoleTraderBusiness) {
+      document.getElementById("incomeSources.manage.propertyReportingMethod-error").text() shouldBe messages(s"$formErrorMessage.quarterly")
+    }
   }
-
-
-
 
   private sealed trait IncomeSourceType
   private case object UKProperty extends IncomeSourceType
