@@ -1521,3 +1521,16 @@ incomeSources.manage.propertyReportingMethod.checkbox.annual        = Yes, I wan
 incomeSources.manage.propertyReportingMethod.checkbox.quarterly     = Yes, I want to switch to quarterly reporting
 incomeSources.manage.propertyReportingMethod.error.quarterly        = Select that you want to switch to quarterly reporting
 incomeSources.manage.propertyReportingMethod.error.annual           = Select that you want to switch to annual reporting
+# manage obligations page
+incomeSources.add.manageObligations.h1                                =
+incomeSources.add.manageObligations.h2                                =   will report
+incomeSources.add.manageObligations.annually                          =   annually
+incomeSources.add.manageObligations.quarterly                         =   quarterly
+incomeSources.add.manageObligations.tax-year                          =   for the tax year
+incomeSources.add.manageObligations.to                                =   to
+incomeSources.add.manageObligations.sole-trader                       =   Sole trader business
+incomeSources.add.manageObligations.uk-property                       =   UK property
+incomeSources.add.manageObligations.foreign-property                  =   Foreign property
+incomeSources.add.manageObligations.heading                           =   What you must do
+
+

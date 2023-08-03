@@ -333,6 +333,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     def postAddedBusinessObligations(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
       post(s"/income-sources/add/business-added", additionalCookies)(Map.empty)
     }
+
     def getCheckCeaseUKPropertyDetails(session: Map[String, String]): WSResponse =
       getWithClientDetailsInSession("/income-sources/cease/uk-property-check-details", session)
 
@@ -340,6 +341,22 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
       post("/income-sources/cease/uk-property-check-details", session)(Map.empty)
 
     def getManageIncomeSource: WSResponse = get("/income-sources/manage/view-and-manage-income-sources")
+
+    def getManageSEObligations(changeTo: String, taxYear: String, id: String): WSResponse = {
+      get(s"/income-sources/manage/business-will-report?changeTo=$changeTo&taxYear=$taxYear&id=$id")
+    }
+
+    def getManageUKObligations(changeTo: String, taxYear: String): WSResponse = {
+      get(s"/income-sources/manage/uk-property-will-report?changeTo=$changeTo&taxYear=$taxYear")
+    }
+
+    def getManageFPObligations(changeTo: String, taxYear: String): WSResponse = {
+      get(s"/income-sources/manage/foreign-property-will-report?changeTo=$changeTo&taxYear=$taxYear")
+    }
+
+    def postManageObligations(mode: String, additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      post(s"/income-sources/manage/$mode-will-report", additionalCookies)(Map.empty)
+    }
 
     def getCheckCeaseForeignPropertyDetails(session: Map[String, String]): WSResponse =
       getWithClientDetailsInSession("/income-sources/cease/foreign-property-check-details", session)

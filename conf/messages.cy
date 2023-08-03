@@ -1493,3 +1493,14 @@ incomeSources.manage.propertyReportingMethod.checkbox.annual        = Hoffwn new
 incomeSources.manage.propertyReportingMethod.checkbox.quarterly     = Hoffwn newid i adrodd yn chwarterol
 incomeSources.manage.propertyReportingMethod.error.quarterly        = Dewiswch eich bod am newid i gyflwyno adroddiadau’n chwarterol
 incomeSources.manage.propertyReportingMethod.error.annual           = Dewiswch eich bod am newid i gyflwyno adroddiadau’n flynyddol
+# manage obligations page
+incomeSources.add.manageObligations.h1                                =   Bydd
+incomeSources.add.manageObligations.h2                                =   yn cyflwyno adroddiadau’n
+incomeSources.add.manageObligations.annually                          =   flynyddol
+incomeSources.add.manageObligations.quarterly                         =   chwarterol
+incomeSources.add.manageObligations.tax-year                          =   ar gyfer blwyddyn dreth
+incomeSources.add.manageObligations.to                                =   i
+incomeSources.add.manageObligations.sole-trader                       =   y busnes unig fasnachwr
+incomeSources.add.manageObligations.uk-property                       =   eiddo yn y DU
+incomeSources.add.manageObligations.foreign-property                  =   eiddo tramor
+incomeSources.add.manageObligations.heading                           =   Yr hyn y mae’n rhaid i chi ei wneud
