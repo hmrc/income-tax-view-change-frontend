@@ -348,7 +348,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     }
 
     def getManageSEObligations(changeTo: String, taxYear: String, id: String, additionalCookies: Map[String, String] = Map.empty): WSResponse = {
-      get(s"/income-sources/manage/business-will-report?changeTo=$changeTo&taxYear=$taxYear&id=$id", additionalCookies)
+      get(s"/income-sources/manage/business-will-report?changeTo=$changeTo&taxYear=$taxYear&incomeSourceId=$id", additionalCookies)
     }
 
     def getManageUKObligations(changeTo: String, taxYear: String, additionalCookies: Map[String, String] = Map.empty): WSResponse = {

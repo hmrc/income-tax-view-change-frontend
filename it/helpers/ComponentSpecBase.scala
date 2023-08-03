@@ -343,7 +343,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     def getManageIncomeSource: WSResponse = get("/income-sources/manage/view-and-manage-income-sources")
 
     def getManageSEObligations(changeTo: String, taxYear: String, id: String): WSResponse = {
-      get(s"/income-sources/manage/business-will-report?changeTo=$changeTo&taxYear=$taxYear&id=$id")
+      get(s"/income-sources/manage/business-will-report?changeTo=$changeTo&taxYear=$taxYear&incomeSourceId=$id")
     }
 
     def getManageUKObligations(changeTo: String, taxYear: String): WSResponse = {
