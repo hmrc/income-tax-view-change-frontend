@@ -26,8 +26,8 @@ import play.api.data.{Form, FormError}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import play.twirl.api.HtmlFormat
 import services.DateService
-import testConstants.BaseTestConstants.{testMtditid, testNino}
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.ukPropertyIncome
+import testConstants.BaseTestConstants.{testMtditid, testNino, testPropertyIncomeId}
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{ukPlusForeignPropertyWithSoleTraderIncomeSource, ukPropertyIncome}
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 import views.html.incomeSources.cease.UKPropertyEndDate
@@ -46,7 +46,7 @@ class ConfirmReportingMethodSharedControllerViewSpec extends TestSupport {
     credId = Some("12345-credId"),
     userType = Some(Individual),
     arn = None,
-    incomeSources = ukPropertyIncome
+    incomeSources = ukPlusForeignPropertyWithSoleTraderIncomeSource
   )(fakeRequestNoSession)
 
   val testTaxYear = "2021-2022"
@@ -64,13 +64,13 @@ class ConfirmReportingMethodSharedControllerViewSpec extends TestSupport {
       confirmReportingMethodView(
         form = form,
         postAction = {
-          if (isAgent) controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController.submitAgent(testMtditid, testTaxYear, testChangeToAnnual)
-          else controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController.submit(testMtditid, testTaxYear, testChangeToAnnual)
+          if (isAgent) controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController.submitUKPropertyAgent(testMtditid, testTaxYear, testChangeToAnnual)
+          else controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController.submitUKProperty(testMtditid, testTaxYear, testChangeToAnnual)
         },
         isAgent = isAgent,
         backUrl = {
-          if (isAgent) controllers.incomeSources.manage.routes.ManageSelfEmploymentController.showAgent(testMtditid).url
-          else controllers.incomeSources.manage.routes.ManageSelfEmploymentController.show(testMtditid).url
+          if (isAgent) controllers.incomeSources.manage.routes.ManageIncomeSourceDetailsController.showUkProperty.url
+          else controllers.incomeSources.manage.routes.ManageIncomeSourceDetailsController.showUkPropertyAgent.url
         },
         taxYearStartYear = testTaxYearStartYear,
         taxYearEndYear = testTaxYearEndYear,
@@ -82,13 +82,13 @@ class ConfirmReportingMethodSharedControllerViewSpec extends TestSupport {
       confirmReportingMethodView(
         form = form.withError(FormError("incomeSources.manage.propertyReportingMethod", "incomeSources.manage.propertyReportingMethod.error.quarterly")),
         postAction = {
-          if (isAgent) controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController.submitAgent(testMtditid, testTaxYear, testChangeToAnnual)
-          else controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController.submit(testMtditid, testTaxYear, testChangeToAnnual)
+          if (isAgent) controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController.submitSoleTraderBusinessAgent(testMtditid, testTaxYear, testChangeToAnnual)
+          else controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController.submitSoleTraderBusinessAgent(testMtditid, testTaxYear, testChangeToAnnual)
         },
         isAgent = true,
         backUrl = {
-          if (isAgent) controllers.incomeSources.manage.routes.ManageSelfEmploymentController.showAgent(testMtditid).url
-          else controllers.incomeSources.manage.routes.ManageSelfEmploymentController.show(testMtditid).url
+          if (isAgent) controllers.incomeSources.manage.routes.ManageIncomeSourceDetailsController.showSoleTraderBusinessAgent(testPropertyIncomeId).url
+          else controllers.incomeSources.manage.routes.ManageIncomeSourceDetailsController.showSoleTraderBusiness(testPropertyIncomeId).url
         },
         taxYearStartYear = testTaxYearStartYear,
         taxYearEndYear = testTaxYearEndYear,
