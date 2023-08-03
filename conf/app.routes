@@ -341,9 +341,6 @@ GET          /agents/income-sources/manage/your-details-uk-property            c
 GET          /income-sources/manage/your-details-foreign-property              controllers.incomeSources.manage.ManageIncomeSourceDetailsController.showForeignProperty
 GET          /agents/income-sources/manage/your-details-foreign-property       controllers.incomeSources.manage.ManageIncomeSourceDetailsController.showForeignPropertyAgent
 
-GET          /income-sources/manage/confirm-you-want-to-report                 controllers.incomeSources.manage.ManageConfirmController.show()
-GET          /agents/income-sources/manage/confirm-you-want-to-report          controllers.incomeSources.manage.ManageConfirmController.showAgent()
-
 GET          /income-sources/manage/business-will-report                        controllers.incomeSources.manage.ManageObligationsController.showSelfEmployment(changeTo: String, taxYear: String, incomeSourceId: String)
 GET          /agents/income-sources/manage/business-will-report                 controllers.incomeSources.manage.ManageObligationsController.showAgentSelfEmployment(changeTo: String, taxYear: String, incomeSourceId: String)
 GET          /income-sources/manage/uk-property-will-report                     controllers.incomeSources.manage.ManageObligationsController.showUKProperty(changeTo: String, taxYear: String)

@@ -59,7 +59,6 @@ class ManageObligationsViewSpec extends ViewSpec {
   )
 
   val taxYear: TaxYear = TaxYear("2023", "2024")
-  val taxYear: TaxYear = TaxYear("2023", "2024")
   val taxYearString: String = "2023-2024"
   val quarterly = "quarterly"
   val annually = "annual"

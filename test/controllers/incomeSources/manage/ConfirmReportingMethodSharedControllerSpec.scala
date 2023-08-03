@@ -291,7 +291,7 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
           ConfirmReportingMethodForm.confirmReportingMethod -> "true"
         ))
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(manageObligationsController.showSelfEmployment(testSelfEmploymentId, testChangeToAnnual, testTaxYear).url)
+        redirectLocation(result) shouldBe Some(manageObligationsController.showSelfEmployment(testChangeToAnnual, testTaxYear, testSelfEmploymentId).url)
       }
     }
     "redirect to the Manage Obligations page for a Sole Trader Business" when {
@@ -309,7 +309,7 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
           ConfirmReportingMethodForm.confirmReportingMethod -> "true"
         ))
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(manageObligationsController.showSelfEmployment(testSelfEmploymentId, testChangeToQuarterly, testTaxYear).url)
+        redirectLocation(result) shouldBe Some(manageObligationsController.showSelfEmployment(testChangeToQuarterly, testTaxYear, testSelfEmploymentId).url)
       }
     }
     s"return ${Status.INTERNAL_SERVER_ERROR}" when {
@@ -555,7 +555,7 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
           ConfirmReportingMethodForm.confirmReportingMethod -> "true"
         ))
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(manageObligationsController.showAgentSelfEmployment(testSelfEmploymentId, testChangeToAnnual, testTaxYear).url)
+        redirectLocation(result) shouldBe Some(manageObligationsController.showAgentSelfEmployment(testChangeToAnnual, testTaxYear, testSelfEmploymentId).url)
       }
     }
     "redirect to the Manage Obligations page for a Sole Trader Business" when {
@@ -574,7 +574,7 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
         ))
         status(result) shouldBe Status.SEE_OTHER
         redirectLocation(result) shouldBe Some(manageObligationsController
-          .showAgentSelfEmployment(testSelfEmploymentId, testChangeToQuarterly, testTaxYear).url)
+          .showAgentSelfEmployment(testChangeToQuarterly, testTaxYear, testSelfEmploymentId).url)
       }
     }
     s"return ${Status.INTERNAL_SERVER_ERROR}" when {
