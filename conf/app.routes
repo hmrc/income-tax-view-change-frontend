@@ -342,8 +342,8 @@ GET          /agents/income-sources/manage/your-details-foreign-property       c
 GET          /income-sources/manage/confirm-you-want-to-report                 controllers.incomeSources.manage.ManageConfirmController.show()
 GET          /agents/income-sources/manage/confirm-you-want-to-report          controllers.incomeSources.manage.ManageConfirmController.showAgent()
 
-GET          /income-sources/manage/business-will-report                        controllers.incomeSources.manage.ManageObligationsController.showSelfEmployment(changeTo: String, taxYear: String, id: String)
-GET          /agents/income-sources/manage/business-will-report                 controllers.incomeSources.manage.ManageObligationsController.showAgentSelfEmployment(changeTo: String, taxYear: String, id: String)
+GET          /income-sources/manage/business-will-report                        controllers.incomeSources.manage.ManageObligationsController.showSelfEmployment(changeTo: String, taxYear: String, incomeSourceId: String)
+GET          /agents/income-sources/manage/business-will-report                 controllers.incomeSources.manage.ManageObligationsController.showAgentSelfEmployment(changeTo: String, taxYear: String, incomeSourceId: String)
 GET          /income-sources/manage/uk-property-will-report                     controllers.incomeSources.manage.ManageObligationsController.showUKProperty(changeTo: String, taxYear: String)
 GET          /agents/income-sources/manage/uk-property-will-report              controllers.incomeSources.manage.ManageObligationsController.showAgentUKProperty(changeTo: String, taxYear: String)
 GET          /income-sources/manage/foreign-property-will-report                controllers.incomeSources.manage.ManageObligationsController.showForeignProperty(changeTo: String, taxYear: String)
