@@ -135,7 +135,7 @@ class ConfirmReportingMethodSharedControllerViewSpec extends TestSupport {
       document.getElementById("error-summary-heading").text() shouldBe messages("base.error_summary.heading")
     }
     "render the error message" in new Setup(isAgent = false, error = true, incomeSourceType = SoleTraderBusiness) {
-      document.getElementById("incomeSources.manage.propertyReportingMethod-error").text() shouldBe messages(s"$formErrorMessage.quarterly")
+      document.getElementById("incomeSources.manage.propertyReportingMethod-error").text() shouldBe s"Error: ${messages(s"$formErrorMessage.quarterly")}"
     }
   }
 
@@ -164,7 +164,7 @@ class ConfirmReportingMethodSharedControllerViewSpec extends TestSupport {
       document.getElementById("error-summary-heading").text() shouldBe messages("base.error_summary.heading")
     }
     "render the error message" in new Setup(isAgent = false, error = true, incomeSourceType = SoleTraderBusiness) {
-      document.getElementById("incomeSources.manage.propertyReportingMethod-error").text() shouldBe messages(s"$formErrorMessage.quarterly")
+      document.getElementById("incomeSources.manage.propertyReportingMethod-error").text() shouldBe s"Error: ${messages(s"$formErrorMessage.quarterly")}"
     }
   }
 
@@ -193,7 +193,7 @@ class ConfirmReportingMethodSharedControllerViewSpec extends TestSupport {
       document.getElementById("error-summary-heading").text() shouldBe messages("base.error_summary.heading")
     }
     "render the error message" in new Setup(isAgent = false, error = true, incomeSourceType = SoleTraderBusiness) {
-      document.getElementById("incomeSources.manage.propertyReportingMethod-error").text() shouldBe messages(s"$formErrorMessage.quarterly")
+      document.getElementById("incomeSources.manage.propertyReportingMethod-error").text() shouldBe s"Error: ${messages(s"$formErrorMessage.quarterly")}"
     }
   }
 
@@ -222,7 +222,7 @@ class ConfirmReportingMethodSharedControllerViewSpec extends TestSupport {
       document.getElementById("error-summary-heading").text() shouldBe messages("base.error_summary.heading")
     }
     "render the error message" in new Setup(isAgent = true, error = true, incomeSourceType = SoleTraderBusiness) {
-      document.getElementById("incomeSources.manage.propertyReportingMethod-error").text() shouldBe messages(s"$formErrorMessage.quarterly")
+      document.getElementById("incomeSources.manage.propertyReportingMethod-error").text() shouldBe s"Error: ${messages(s"$formErrorMessage.quarterly")}"
     }
   }
 
@@ -251,7 +251,7 @@ class ConfirmReportingMethodSharedControllerViewSpec extends TestSupport {
       document.getElementById("error-summary-heading").text() shouldBe messages("base.error_summary.heading")
     }
     "render the error message" in new Setup(isAgent = true, error = true, incomeSourceType = SoleTraderBusiness) {
-      document.getElementById("incomeSources.manage.propertyReportingMethod-error").text() shouldBe messages(s"$formErrorMessage.quarterly")
+      document.getElementById("incomeSources.manage.propertyReportingMethod-error").text() shouldBe s"Error: ${messages(s"$formErrorMessage.quarterly")}"
     }
   }
 
@@ -280,7 +280,7 @@ class ConfirmReportingMethodSharedControllerViewSpec extends TestSupport {
       document.getElementById("error-summary-heading").text() shouldBe messages("base.error_summary.heading")
     }
     "render the error message" in new Setup(isAgent = true, error = true, incomeSourceType = SoleTraderBusiness) {
-      document.getElementById("incomeSources.manage.propertyReportingMethod-error").text() shouldBe messages(s"Error: $formErrorMessage.quarterly")
+      document.getElementById("incomeSources.manage.propertyReportingMethod-error").text() shouldBe s"Error: ${messages(s"$formErrorMessage.quarterly")}"
     }
   }
 
