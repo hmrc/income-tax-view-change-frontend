@@ -28,6 +28,7 @@ import models.liabilitycalculation.viewmodels.AllowancesAndDeductionsViewModel
 import play.api.http.Status._
 import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants._
+import testConstants.BusinessDetailsIntegrationTestConstants.address
 import testConstants.NewCalcBreakdownItTestConstants._
 import uk.gov.hmrc.auth.core.retrieve.Name
 
@@ -50,7 +51,8 @@ class DeductionsSummaryControllerISpec extends ComponentSpecBase with FeatureSwi
       None,
       None,
       Some(getCurrentTaxYearEnd),
-      None
+      None,
+      address = Some(address)
     )),
     properties = Nil
   )

@@ -14,6 +14,7 @@ import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
 import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants._
+import testConstants.BusinessDetailsIntegrationTestConstants.address
 import testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessful
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 
@@ -83,7 +84,8 @@ class ForecastTaxCalcSummaryControllerISpec extends ComponentSpecBase {
       Some("Test Trading Name"),
       None,
       Some(getCurrentTaxYearEnd),
-      None
+      None,
+      address = Some(address)
     )),
     properties = List(
       PropertyDetailsModel(

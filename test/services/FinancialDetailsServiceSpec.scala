@@ -17,7 +17,7 @@
 package services
 
 import testConstants.BaseTestConstants._
-import testConstants.BusinessDetailsTestConstants.getCurrentTaxYearEnd
+import testConstants.BusinessDetailsTestConstants.{address, getCurrentTaxYearEnd}
 import testConstants.ChargeHistoryTestConstants.{testChargeHistoryErrorModel, testValidChargeHistoryModel}
 import testConstants.FinancialDetailsTestConstants.{documentDetailModel, _}
 import auth.MtdItUser
@@ -78,7 +78,8 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
           None,
           firstAccountingPeriodEndDate = Some(LocalDate.of(getTaxEndYear(LocalDate.now.minusYears(count - 1)), april, fifth)),
           tradingStartDate = None,
-          cessation = None
+          cessation = None,
+          address = Some(address)
         )
       },
       properties = Nil
@@ -102,7 +103,8 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
         None,
         Some(getCurrentTaxYearEnd.minusYears(1)),
         tradingStartDate = None,
-        cessation = None
+        cessation = None,
+        address = Some(address)
       )
     ),
     properties = Nil

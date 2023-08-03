@@ -362,6 +362,12 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     def postManageObligations(mode: String, additionalCookies: Map[String, String] = Map.empty): WSResponse = {
       post(s"/income-sources/manage/$mode-will-report", additionalCookies)(Map.empty)
     }
+
+    def getCheckCeaseBusinessDetails(additionalCookies: Map[String, String]): WSResponse =
+      getWithClientDetailsInSession("/agents/income-sources/cease/business-check-details", additionalCookies)
+
+    def postCheckCeaseBusinessDetails(additionalCookies: Map[String, String]): WSResponse =
+      post("/income-sources/cease/business-check-details", additionalCookies)(Map.empty)
   }
 
   def unauthorisedTest(uri: String): Unit = {

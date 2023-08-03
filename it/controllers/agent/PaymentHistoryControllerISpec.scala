@@ -29,6 +29,7 @@ import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsMode
 import play.api.http.Status._
 import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants._
+import testConstants.BusinessDetailsIntegrationTestConstants.address
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.auth.core.retrieve.Name
 
@@ -75,7 +76,8 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase {
       None,
       None,
       Some(getCurrentTaxYearEnd),
-      None
+      None,
+      address = Some(address)
     )),
     properties = Nil
   )
