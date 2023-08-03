@@ -138,7 +138,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
       taxYear = taxYear,
       changeTo = changeTo,
       incomeSourceId = None,
-      incomeSourceType = ForeignProperty,
+      incomeSourceType = ForeignProperty
     )
   }
 
