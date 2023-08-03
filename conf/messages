@@ -1392,6 +1392,15 @@ incomeSources.cease.BusinessEndDate.error.future                          = You 
 incomeSources.cease.BusinessEndDate.error.beforeStartDate                 = The cessation date cannot be earlier than the start date for the business
 incomeSources.cease.BusinessEndDate.error.beforeEarliestDate              = The cessation date cannot be earlier than the 6th of April 2015
 
+incomeSources.ceaseBusiness.checkDetails.heading                    = Check your details
+incomeSources.ceaseBusiness.checkDetails.soloTrader                 = Sole trader business you entered
+incomeSources.ceaseBusiness.checkDetails.dateStopped                = Date business stopped
+incomeSources.ceaseBusiness.checkDetails.businessName               = Business that’s stopped
+incomeSources.ceaseBusiness.checkDetails.businessAddress            = Business address
+incomeSources.ceaseBusiness.checkDetails.confirm                    = Confirm and continue
+incomeSources.ceaseBusiness.checkDetails.change                     = Change
+incomeSources.ceaseBusiness.checkDetails.unknown                    = Unknown
+
 check-cease-foreign-property-details.heading            = Check your details
 check-cease-foreign-property-details.caption            = Foreign property business you entered
 check-cease-foreign-property-details.summary-list.key   = Date business stopped
@@ -1516,6 +1525,19 @@ incomeSources.add.ukPropertyReportingMethod.taxYear                   =   Tax ye
 incomeSources.add.ukPropertyReportingMethod.chooseAnnualReport        =   Choose annual reporting
 incomeSources.add.ukPropertyReportingMethod.chooseQuarterlyReport     =   Choose quarterly reporting
 incomeSources.add.ukPropertyReportingMethod.error                     =   Select if you want to report annually or quarterly for tax year {0} to {1}
+
+# manage obligations page
+incomeSources.add.manageObligations.h1                                =
+incomeSources.add.manageObligations.h2                                =   will report
+incomeSources.add.manageObligations.annually                          =   annually
+incomeSources.add.manageObligations.quarterly                         =   quarterly
+incomeSources.add.manageObligations.tax-year                          =   for the tax year
+incomeSources.add.manageObligations.to                                =   to
+incomeSources.add.manageObligations.sole-trader                       =   Sole trader business
+incomeSources.add.manageObligations.uk-property                       =   UK property
+incomeSources.add.manageObligations.foreign-property                  =   Foreign property
+incomeSources.add.manageObligations.heading                           =   What you must do
+
 
 # manage journey manage income source
 incomeSources.manage.business-manage-details.heading                  =   Manage your details

@@ -17,7 +17,7 @@
 package services
 
 import testConstants.BaseTestConstants._
-import testConstants.BusinessDetailsTestConstants.getCurrentTaxYearEnd
+import testConstants.BusinessDetailsTestConstants.{address, getCurrentTaxYearEnd}
 import testConstants.ChargeHistoryTestConstants.{testChargeHistoryErrorModel, testValidChargeHistoryModel}
 import testConstants.FinancialDetailsTestConstants.{documentDetailModel, _}
 import auth.MtdItUser
@@ -79,7 +79,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
           firstAccountingPeriodEndDate = Some(LocalDate.of(getTaxEndYear(LocalDate.now.minusYears(count - 1)), april, fifth)),
           tradingStartDate = None,
           cessation = None,
-          address = None
+          address = Some(address)
         )
       },
       properties = Nil
@@ -98,12 +98,14 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
     yearOfMigration = Some(getCurrentTaxYearEnd.minusYears(1).getYear.toString),
     businesses = List(
       BusinessDetailsModel(
-        incomeSourceId = Some("testId"),
-        accountingPeriod = Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
-        tradingName = None,
-        firstAccountingPeriodEndDate = None,
-        tradingStartDate = Some(getCurrentTaxYearEnd.minusYears(1)),
-        cessation = None)
+        Some("testId"),
+        Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
+        None,
+        Some(getCurrentTaxYearEnd.minusYears(1)),
+        tradingStartDate = None,
+        cessation = None,
+        address = Some(address)
+      )
     ),
     properties = Nil
   ), btaNavPartial = None, None, None, None, None)(FakeRequest())

@@ -16,6 +16,8 @@
 
 package models.incomeSourceDetails.viewmodels
 
+import models.core.AddressModel
+
 import java.time.LocalDate
 
 case class CeaseIncomeSourcesViewModel(soleTraderBusinesses: List[CeaseBusinessDetailsViewModel],
@@ -24,6 +26,12 @@ case class CeaseIncomeSourcesViewModel(soleTraderBusinesses: List[CeaseBusinessD
                                      ceasedBusinesses: List[CeaseCeasedBusinessDetailsViewModel])
 
 case class CeaseBusinessDetailsViewModel(incomeSourceId: String, tradingName: Option[String], tradingStartDate: Option[LocalDate])
+
+case class CheckCeaseBusinessDetailsViewModel(incomeSourceId: String,
+                                              tradingName: Option[String],
+                                              address: Option[AddressModel],
+                                              businessEndDate: LocalDate
+                                             )
 
 case class CeasePropertyDetailsViewModel(tradingStartDate: Option[LocalDate])
 

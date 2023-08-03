@@ -23,6 +23,7 @@ import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsMode
 import play.api.http.Status.OK
 import play.api.libs.json.{JsValue, Json}
 import testConstants.BaseIntegrationTestConstants._
+import testConstants.BusinessDetailsIntegrationTestConstants.address
 
 import java.time.LocalDate
 
@@ -60,7 +61,8 @@ class PaymentControllerISpec extends ComponentSpecBase {
               None,
               None,
               Some(getCurrentTaxYearEnd),
-              None
+              None,
+              address = Some(address)
             )),
             properties = Nil
           )
@@ -92,7 +94,8 @@ class PaymentControllerISpec extends ComponentSpecBase {
               None,
               None,
               Some(getCurrentTaxYearEnd),
-              None
+              None,
+              address = Some(address)
             )),
             properties = Nil
           )

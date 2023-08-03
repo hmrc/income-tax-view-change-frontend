@@ -30,8 +30,8 @@ import uk.gov.hmrc.http.HeaderCarrier
 
 import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.duration.{Duration, DurationInt}
-import scala.concurrent.{Await, ExecutionContext, Future}
+import scala.concurrent.duration.Duration
+import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
 
 @Singleton
@@ -39,6 +39,14 @@ class IncomeSourceDetailsService @Inject()(val incomeTaxViewChangeConnector: Inc
                                            val cache: AsyncCacheApi) {
   implicit val ec = ExecutionContext.global
   val cacheExpiry: Duration = Duration(1, "day")
+  val emptyAddress = AddressModel(
+    addressLine1 = "",
+    addressLine2 = Some(""),
+    addressLine3 = Some(""),
+    addressLine4 = Some(""),
+    postCode = Some(""),
+    countryCode = ""
+  )
 
   def getCachedIncomeSources(cacheKey: String): Future[Option[IncomeSourceDetailsModel]] = {
     cache.get(cacheKey).map((incomeSources: Option[JsValue]) => {
@@ -108,10 +116,13 @@ class IncomeSourceDetailsService @Inject()(val incomeTaxViewChangeConnector: Inc
 
     val maybeSoleTraderBusinesses = sources.businesses.filterNot(_.isCeased)
     val soleTraderBusinessesExists = maybeSoleTraderBusinesses.nonEmpty
+
     val maybeUkProperty = sources.properties.filterNot(_.isCeased).find(_.isUkProperty)
     val ukPropertyExists = maybeUkProperty.nonEmpty
+
     val maybeForeignProperty = sources.properties.filterNot(_.isCeased).find(_.isForeignProperty)
     val foreignPropertyExists = maybeForeignProperty.nonEmpty
+
     val maybeCeasedBusinesses = sources.businesses.filter(_.isCeased)
     val ceasedBusinessExists = maybeCeasedBusinesses.nonEmpty
 
@@ -176,7 +187,8 @@ class IncomeSourceDetailsService @Inject()(val incomeTaxViewChangeConnector: Inc
             CeaseBusinessDetailsViewModel(
               business.incomeSourceId.getOrElse(throw MissingFieldException("Income Source Id")),
               business.tradingName,
-              business.tradingStartDate)
+              business.tradingStartDate
+            )
           }
         } else Nil,
         ukProperty = if (ukPropertyExists) {
@@ -199,6 +211,23 @@ class IncomeSourceDetailsService @Inject()(val incomeTaxViewChangeConnector: Inc
           }
         } else Nil
       )
+    }.toEither
+  }
+
+  def getCheckCeaseBusinessDetailsViewModel(sources: IncomeSourceDetailsModel, incomeSourceId: String, businessEndDate: String)
+  : Either[Throwable, Option[CheckCeaseBusinessDetailsViewModel]] = {
+
+    val soleTraderBusinesses = sources.businesses.filterNot(_.isCeased).find(x => x.incomeSourceId.get.equals(incomeSourceId))
+
+    Try {
+      soleTraderBusinesses.map { business =>
+        CheckCeaseBusinessDetailsViewModel(
+          business.incomeSourceId.get,
+          business.tradingName,
+          business.address,
+          LocalDate.parse(businessEndDate)
+        )
+      }
     }.toEither
   }
 

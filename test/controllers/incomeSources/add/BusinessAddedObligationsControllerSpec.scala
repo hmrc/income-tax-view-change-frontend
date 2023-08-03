@@ -16,9 +16,9 @@
 
 package controllers.incomeSources.add
 
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import config.featureswitch.FeatureSwitch.switches
 import config.featureswitch.{FeatureSwitching, IncomeSources}
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
@@ -35,6 +35,7 @@ import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
 import services.DateService
 import testConstants.BaseTestConstants
 import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
+import testConstants.BusinessDetailsTestConstants.address
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 import testUtils.TestSupport
 import views.html.incomeSources.add.BusinessAddedObligations
@@ -159,7 +160,7 @@ class BusinessAddedObligationsControllerSpec extends TestSupport
           None,
           Some(LocalDate.of(2022,1,1)),
           None,
-          None
+          address = Some(address)
         )), List.empty)
 
         val day = LocalDate.of(2023,1,1)
@@ -196,7 +197,7 @@ class BusinessAddedObligationsControllerSpec extends TestSupport
           None,
           Some(LocalDate.of(2022,1,1)),
           None,
-          None
+          address = Some(address)
         )), List.empty)
 
         val day = LocalDate.of(2023, 1, 1)
@@ -233,7 +234,7 @@ class BusinessAddedObligationsControllerSpec extends TestSupport
           None,
           Some(LocalDate.of(2022,1,1)),
           None,
-          None
+          address = Some(address)
         )), List.empty)
         setupMockGetIncomeSourceDetails()(sources)
         when(mockNextUpdatesService.getNextUpdates(any())(any(), any())).
@@ -255,7 +256,7 @@ class BusinessAddedObligationsControllerSpec extends TestSupport
           None,
           Some(LocalDate.of(2022,1,1)),
           None,
-          None
+          address = Some(address)
         )), List.empty)
         setupMockGetIncomeSourceDetails()(sources)
         when(mockNextUpdatesService.getNextUpdates(any())(any(), any())).
@@ -274,10 +275,8 @@ class BusinessAddedObligationsControllerSpec extends TestSupport
           Some("123"),
           None,
           Some("test"),
-          None,
-          None,
-          None,
-          None
+          None, None, None,
+          address = Some(address)
         )), List.empty)
         setupMockGetIncomeSourceDetails()(sources)
         when(mockNextUpdatesService.getNextUpdates(any())(any(), any())).

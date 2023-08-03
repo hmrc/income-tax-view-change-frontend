@@ -62,7 +62,22 @@ object BusinessDetailsIntegrationTestConstants {
     countryCode = "UK"
   )
 
+  val address = AddressModel("8 Test", Some("New Court"), Some("New Town"), Some("New City"), Some("NE12 6CI"), "United Kingdom")
+
   val business1 = BusinessDetailsModel(
+    incomeSourceId = Some(testSelfEmploymentId),
+    accountingPeriod = Some(AccountingPeriodModel(
+      start = b1AccountingStart,
+      end = b1AccountingEnd
+    )),
+    tradingName = Some(b1TradingName),
+    firstAccountingPeriodEndDate = Some(b1AccountingEnd),
+    tradingStartDate = Some(b1TradingStart),
+    cessation = None,
+    address = Some(address)
+  )
+
+  val business1Address2 = BusinessDetailsModel(
     incomeSourceId = Some(testSelfEmploymentId),
     accountingPeriod = Some(AccountingPeriodModel(
       start = b1AccountingStart,
@@ -85,7 +100,8 @@ object BusinessDetailsIntegrationTestConstants {
     tradingName = Some(b2TradingName),
     firstAccountingPeriodEndDate = Some(b2AccountingEnd),
     tradingStartDate = Some(b2TradingStart),
-    cessation = None
+    cessation = None,
+    address = Some(address)
   )
 
   val business3WithUnknowns: BusinessDetailsModel = BusinessDetailsModel(
@@ -125,6 +141,20 @@ object BusinessDetailsIntegrationTestConstants {
     tradingName = Some(ceasedBusinessTradingName),
     firstAccountingPeriodEndDate = Some(b2AccountingEnd),
     tradingStartDate = Some(b2TradingStart),
-    cessation = Some(CessationModel(Some(b2CessationDate), Some(b2CessationReason)))
+    cessation = Some(CessationModel(Some(b2CessationDate), Some(b2CessationReason))),
+    address = Some(address)
+  )
+
+  val businessUnknownAddressName = BusinessDetailsModel(
+    incomeSourceId = Some(testSelfEmploymentId),
+    accountingPeriod = Some(AccountingPeriodModel(
+      start = b1AccountingStart,
+      end = b1AccountingEnd
+    )),
+    tradingName = None,
+    firstAccountingPeriodEndDate = Some(b1AccountingEnd),
+    tradingStartDate = Some(b1TradingStart),
+    cessation = None,
+    address = None
   )
 }

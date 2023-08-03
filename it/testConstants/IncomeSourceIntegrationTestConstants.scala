@@ -1169,6 +1169,15 @@ object IncomeSourceIntegrationTestConstants {
       )
     )
   )
+
+  val businessOnlyResponseWithUnknownAddressName: IncomeSourceDetailsResponse = IncomeSourceDetailsModel(
+    testMtdItId,
+    businesses = List(
+      businessUnknownAddressName
+    ),
+    properties = List(),
+    yearOfMigration = Some("2018")
+  )
 }
 
 

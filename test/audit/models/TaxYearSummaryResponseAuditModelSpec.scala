@@ -28,6 +28,7 @@ import org.scalatest.WordSpecLike
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import testConstants.BaseTestConstants.taxYear
+import testConstants.BusinessDetailsTestConstants.address
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
@@ -124,7 +125,7 @@ class TaxYearSummaryResponseAuditModelSpec extends WordSpecLike with TestSupport
     None,
     Some(getCurrentTaxYearEnd),
     None,
-    None
+    address = Some(address)
   ))
 
   val singleErrorMessage: Option[Messages] = Some(Messages(errors = Some(Seq(
