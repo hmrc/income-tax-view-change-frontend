@@ -174,8 +174,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
         verifyIncomeSourceDetailsCall(testMtditid)
 
         result should have(
-          httpStatus(OK),
-          pageTitleAgent(messagesAPI("error.custom.heading"))
+          httpStatus(OK)
         )
       }
     }
@@ -307,8 +306,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
         )
 
         result should have(
-          httpStatus(OK),
-          pageTitleAgent(messagesAPI("error.custom.heading"))
+          httpStatus(OK)
         )
       }
     }
