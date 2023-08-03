@@ -80,7 +80,8 @@
             ))
         ))
         @govukButton(Button(
-            content = Text(messages("base.confirm-and-continue"))
+            content = Text(messages("base.confirm-and-continue")),
+            attributes = Map("id" -> "confirm-and-continue-button")
         ))
     }
 }

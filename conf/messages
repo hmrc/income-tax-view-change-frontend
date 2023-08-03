@@ -1521,6 +1521,7 @@ incomeSources.manage.propertyReportingMethod.checkbox.annual        = Yes, I wan
 incomeSources.manage.propertyReportingMethod.checkbox.quarterly     = Yes, I want to switch to quarterly reporting
 incomeSources.manage.propertyReportingMethod.error.quarterly        = Select that you want to switch to quarterly reporting
 incomeSources.manage.propertyReportingMethod.error.annual           = Select that you want to switch to annual reporting
+
 # manage obligations page
 incomeSources.add.manageObligations.h1                                =
 incomeSources.add.manageObligations.h2                                =   will report
