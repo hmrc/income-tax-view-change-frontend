@@ -279,6 +279,8 @@ POST         /income-sources/cease/business-end-date                      contro
 POST         /agents/income-sources/cease/business-end-date               controllers.incomeSources.cease.BusinessEndDateController.submitAgent(id: String)
 GET          /income-sources/cease/business-check-details                 controllers.incomeSources.cease.CheckCeaseBusinessDetailsController.show()
 GET          /agents/income-sources/cease/business-check-details          controllers.incomeSources.cease.CheckCeaseBusinessDetailsController.showAgent()
+POST         /income-sources/cease/business-check-details                 controllers.incomeSources.cease.CheckCeaseBusinessDetailsController.submit()
+POST         /agents/income-sources/cease/business-check-details          controllers.incomeSources.cease.CheckCeaseBusinessDetailsController.submitAgent()
 
 GET          /income-sources/cease/uk-property-declare                    controllers.incomeSources.cease.CeaseUKPropertyController.show()
 GET          /agents/income-sources/cease/uk-property-declare             controllers.incomeSources.cease.CeaseUKPropertyController.showAgent()
@@ -369,3 +371,6 @@ GET          /agents/income-sources/add/change-foreign-property-accounting-metho
 
 GET          /income-sources/add/uk-property-added                           controllers.incomeSources.add.UKPropertyAddedController.show(id:String)
 GET          /agents/income-sources/add/uk-property-added                    controllers.incomeSources.add.UKPropertyAddedController.showAgent(id:String)
+
+GET          /income-sources/cease/cease-business-success           controllers.incomeSources.cease.CeaseBusinessSuccessController.show()
+GET          /agents/income-sources/cease/cease-business-success    controllers.incomeSources.cease.CeaseBusinessSuccessController.showAgent()

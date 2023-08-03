@@ -33,7 +33,7 @@ import play.api.libs.json.Json
 import play.api.libs.ws.WSResponse
 import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants._
-import testConstants.BusinessDetailsIntegrationTestConstants.{b2CessationDate, b2CessationReason, b2TradingStart}
+import testConstants.BusinessDetailsIntegrationTestConstants.{address, b2CessationDate, b2CessationReason, b2TradingStart}
 import testConstants.OutstandingChargesIntegrationTestConstants._
 import testConstants.messages.HomeMessages.{noPaymentsDue, overdue, overduePayments, overdueUpdates}
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
@@ -60,7 +60,8 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
       None,
       Some(getCurrentTaxYearEnd),
       Some(b2TradingStart),
-      Some(CessationModel(Some(b2CessationDate), Some(b2CessationReason)))
+      Some(CessationModel(Some(b2CessationDate), Some(b2CessationReason))),
+      address = Some(address)
     )),
     properties = Nil
   )
@@ -566,7 +567,8 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
             None,
             Some(getCurrentTaxYearEnd),
             Some(b2TradingStart),
-            Some(CessationModel(Some(b2CessationDate), Some(b2CessationReason)))
+            Some(CessationModel(Some(b2CessationDate), Some(b2CessationReason))),
+            address = Some(address)
           )),
           properties = Nil
         )

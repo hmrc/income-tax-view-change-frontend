@@ -378,6 +378,12 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
       val formData = form.toFormMap.map { case (k, v) => (k -> Seq(v.getOrElse(""))) }
       post(s"/income-sources/add/foreign-property-reporting-method?id=$testPropertyIncomeId", additionalCookies = additionalCookies)(formData)
     }
+
+    def getCheckCeaseBusinessDetails(session: Map[String, String]): WSResponse =
+      getWithClientDetailsInSession("/income-sources/cease/business-check-details", session)
+
+    def postCheckCeaseBusinessDetails(session: Map[String, String]): WSResponse =
+      post("/income-sources/cease/business-check-details", session)(Map.empty)
   }
 
   def unauthorisedTest(uri: String): Unit = {
