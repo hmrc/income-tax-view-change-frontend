@@ -273,7 +273,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
             isAgent = isAgent,
             taxYear = taxYear,
             changeTo = changeTo,
-            incomeSourceType = incomeSourceType,
+            incomeSourceType = incomeSourceType
           ) match {
             case (backCall, postAction, _) =>
               Ok(
