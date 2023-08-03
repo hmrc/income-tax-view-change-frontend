@@ -369,7 +369,6 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     def postCheckCeaseBusinessDetails(additionalCookies: Map[String, String]): WSResponse =
       post("/income-sources/cease/business-check-details", additionalCookies)(Map.empty)
   }
-
   def unauthorisedTest(uri: String): Unit = {
     "unauthorised" should {
 
