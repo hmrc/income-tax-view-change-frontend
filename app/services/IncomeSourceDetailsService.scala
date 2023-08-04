@@ -133,7 +133,7 @@ class IncomeSourceDetailsService @Inject()(val incomeTaxViewChangeConnector: Inc
             ViewBusinessDetailsViewModel(
               business.incomeSourceId.getOrElse(throw new MissingFieldException("Missing incomeSourceId field")),
               business.tradingName,
-              business.tradingStartDate,
+              business.tradingStartDate
             )
           }
         } else Nil,
