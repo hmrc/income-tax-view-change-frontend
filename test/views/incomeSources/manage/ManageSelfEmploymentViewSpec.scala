@@ -88,9 +88,9 @@ class ManageSelfEmploymentViewSpec extends TestSupport {
 
     def changeReportingMethodUrl(id: String, taxYear: String, changeTo: String): String = {
       if (isAgent) {
-        controllers.incomeSources.manage.routes.ChangeBusinessReportingMethodController.showAgent(id, taxYear, changeTo: String).url
+        controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController.showSoleTraderBusinessAgent(id, taxYear, changeTo: String).url
       } else {
-        controllers.incomeSources.manage.routes.ChangeBusinessReportingMethodController.show(id, taxYear, changeTo: String).url
+        controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController.showSoleTraderBusiness(id, taxYear, changeTo: String).url
       }
     }
 
@@ -115,9 +115,9 @@ class ManageSelfEmploymentViewSpec extends TestSupport {
 
     def changeReportingMethodUrl2(id: String, taxYear: String, changeTo: String): String = {
       if (isAgent) {
-        controllers.incomeSources.manage.routes.ChangeBusinessReportingMethodController.showAgent(id, taxYear, changeTo: String).url
+        controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController.showSoleTraderBusinessAgent(id, taxYear, changeTo: String).url
       } else {
-        controllers.incomeSources.manage.routes.ChangeBusinessReportingMethodController.show(id, taxYear, changeTo: String).url
+        controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController.showSoleTraderBusiness(id, taxYear, changeTo: String).url
       }
     }
 
