@@ -16,20 +16,22 @@
 
 package models.incomeSourceDetails.viewmodels
 
+import enums.IncomeSourceType
 import models.core.AddressModel
 
 import java.time.LocalDate
 
 case class ManageBusinessDetailsViewModel(incomeSourceId: String,
-                                        tradingName: Option[String],
-                                        tradingStartDate: Option[LocalDate],
-                                        address: Option[AddressModel],
-                                        businessAccountingMethod: Option[String] = None,
-                                        itsaHasMandatedOrVoluntaryStatusCurrentYear: Boolean,
-                                        taxYearOneCrystallised: Option[Boolean],
-                                        taxYearTwoCrystallised: Option[Boolean],
-                                        latencyDetails: Option[ViewLatencyDetailsViewModel]
-                                       )
+                                          tradingName: Option[String],
+                                          tradingStartDate: Option[LocalDate],
+                                          address: Option[AddressModel],
+                                          businessAccountingMethod: Option[String] = None,
+                                          itsaHasMandatedOrVoluntaryStatusCurrentYear: Boolean,
+                                          taxYearOneCrystallised: Option[Boolean],
+                                          taxYearTwoCrystallised: Option[Boolean],
+                                          latencyDetails: Option[ViewLatencyDetailsViewModel],
+                                          incomeSourceType: IncomeSourceType
+                                         )
 
 case class ViewLatencyDetailsViewModel(latencyEndDate: LocalDate, taxYear1: Int, latencyIndicator1: String,
                                        taxYear2: Int, latencyIndicator2: String)

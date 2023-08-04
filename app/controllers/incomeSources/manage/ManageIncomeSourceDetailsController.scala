@@ -54,7 +54,12 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageSelfEmployme
   with FeatureSwitching {
 
 
-  def showUkProperty: Action[AnyContent] = Action(Ok)
+  def showUkProperty(id: String): Action[AnyContent] =
+    (checkSessionTimeout andThen authenticate andThen retrieveNino
+      andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
+      implicit user =>
+        individualHandleRequestHandler(id)(user)
+    }
 
   def showUkPropertyAgent: Action[AnyContent] = Action(Ok)
 
@@ -74,15 +79,20 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageSelfEmployme
 
   def submitSoleTraderBusinessAgent: Action[AnyContent] = Action(Ok)
 
-  def showSoleTraderBusiness(id: String): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+  def showSoleTraderBusiness(id: String): Action[AnyContent] =
+    (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
-      handleRequest(
-        sources = user.incomeSources,
-        isAgent = false,
-        backUrl = controllers.incomeSources.manage.routes.ManageIncomeSourceController.show().url,
-        id = id
-      )
+      individualHandleRequestHandler(id)(user)
+  }
+
+  private def individualHandleRequestHandler(id: String)(implicit user: MtdItUser[AnyContent]) = {
+    handleRequest(
+      sources = user.incomeSources,
+      isAgent = false,
+      backUrl = controllers.incomeSources.manage.routes.ManageIncomeSourceController.show().url,
+      id = id
+    )
   }
 
   def showSoleTraderBusinessAgent(id: String): Action[AnyContent] = Authenticated.async {
