@@ -17,7 +17,9 @@
 package models.incomeSourceDetails
 
 import models.core.{AccountingPeriodModel, AddressModel, CessationModel}
+import models.incomeSourceDetails.viewmodels.ViewLatencyDetailsViewModel
 import play.api.libs.json.{Format, Json}
+
 import java.time.LocalDate
 
 case class BusinessDetailsModel(incomeSourceId: Option[String],
@@ -28,10 +30,14 @@ case class BusinessDetailsModel(incomeSourceId: Option[String],
                                 cessation: Option[CessationModel],
                                 cashOrAccruals: Option[String] = None,
                                 address: Option[AddressModel] = None,
-                                latencyDetails: Option[LatencyDetails] = None) {
+                                latencyDetails: Option[LatencyDetails]) extends LatencyInformation {
   def isCeased: Boolean = cessation.exists(_.date.nonEmpty)
 }
 
 object BusinessDetailsModel {
   implicit val format: Format[BusinessDetailsModel] = Json.format[BusinessDetailsModel]
+}
+
+trait LatencyInformation {
+  def latencyDetails: Option[LatencyDetails]
 }

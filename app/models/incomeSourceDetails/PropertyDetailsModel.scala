@@ -26,7 +26,8 @@ case class PropertyDetailsModel(incomeSourceId: Option[String],
                                 incomeSourceType: Option[String],
                                 tradingStartDate: Option[LocalDate],
                                 cessation: Option[CessationModel],
-                                latencyDetails: Option[LatencyDetails] = None) {
+                                latencyDetails: Option[LatencyDetails] = None,
+                                cashOrAccruals: Option[String] = None) {
 
   def isUkProperty: Boolean = incomeSourceType.contains("uk-property")
 

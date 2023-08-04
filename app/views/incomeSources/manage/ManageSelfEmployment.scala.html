@@ -23,6 +23,8 @@
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.pageheading.PageHeading
 @import models.core.AddressModel
 @import models.incomeSourceDetails.viewmodels.ManageBusinessDetailsViewModel
+@import play.twirl.api.HtmlFormat
+@import enums.SELF_EMPLOYMENT
 
 @this(
         mainTemplate: unifiedLayout,
@@ -44,7 +46,6 @@
         isAgent: Boolean,
         backUrl: String
 )(implicit messages: Messages, user: auth.MtdItUser[_])
-    @import play.twirl.api.HtmlFormat
 @import implicitDateFormatter.longDate
 
 @getMessage(key: String, args: String*) = @{
@@ -108,22 +109,24 @@
         captionClasses = Some("govuk-caption-l")
     ))
 
-    <dl class="govuk-summary-list" id="refund-to-taxpayer-table">
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">@getMessage("business-name")</dt>
-            <dd class="govuk-summary-list__value" id="business-name">@{
-                extractOption(viewModel.tradingName)
-            }</dd>
-        </div>
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">@getMessage("business-address")</dt>
-            <dd class="govuk-summary-list__value" id="business-address">@{
-                getLongAddressFromBusinessAddressDetails(viewModel.address) match {
-                    case Some(x) => HtmlFormat.raw(x)
-                    case None => messages("incomeSources.generic.unknown")
-                }
-            }</dd>
-        </div>
+    <dl class="govuk-summary-list" id="manage-details-table">
+        @{if (viewModel.incomeSourceType == SELF_EMPLOYMENT)} {
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">@getMessage("business-name")</dt>
+                <dd class="govuk-summary-list__value" id="business-name">@{
+                    extractOption(viewModel.tradingName)
+                }</dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">@getMessage("business-address")</dt>
+                <dd class="govuk-summary-list__value" id="business-address">@{
+                    getLongAddressFromBusinessAddressDetails(viewModel.address) match {
+                        case Some(x) => HtmlFormat.raw(x)
+                        case None => messages("incomeSources.generic.unknown")
+                    }
+                }</dd>
+            </div>
+        }
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">@getMessage("date-started")</dt>
             <dd class="govuk-summary-list__value" id="business-date-started">@{

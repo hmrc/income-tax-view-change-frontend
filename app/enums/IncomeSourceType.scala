@@ -20,7 +20,6 @@ sealed trait IncomeSourceType
 
 case object SELF_EMPLOYMENT extends IncomeSourceType
 
-case object UK_PROPERTY extends IncomeSourceType
+case object PROPERTY_BUSINESS extends IncomeSourceType
 
-case object FOREIGN_PROPERTY extends IncomeSourceType
 
