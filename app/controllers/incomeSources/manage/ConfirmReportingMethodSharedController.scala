@@ -175,7 +175,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
           incomeSourceType = incomeSourceType,
           soleTraderBusinessId = incomeSourceId
         )
-  }
+    }
 
   private def showAgent(incomeSourceId: Option[String],
                         incomeSourceType: IncomeSourceType,
@@ -399,9 +399,10 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
                                (implicit user: MtdItUser[_]): Option[String] = {
     incomeSourceType match {
       case SoleTraderBusiness =>
-        user.incomeSources.businesses
-          .find(business => !business.isCeased && business.incomeSourceId == maybeSoleTraderBusinessId)
-          .map(_.incomeSourceId)
+        maybeSoleTraderBusinessId.filter { soleTraderBusinessId =>
+          user.incomeSources.businesses
+            .exists(business => business.incomeSourceId == soleTraderBusinessId && !business.isCeased)
+        }
       case UKProperty =>
         user.incomeSources.properties
           .find(property => property.isUkProperty && !property.isCeased)
@@ -469,7 +470,10 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
     .ManageIncomeSourceDetailsController
 
   private sealed trait IncomeSourceType
+
   private case object UKProperty extends IncomeSourceType
+
   private case object ForeignProperty extends IncomeSourceType
+
   private case object SoleTraderBusiness extends IncomeSourceType
 }

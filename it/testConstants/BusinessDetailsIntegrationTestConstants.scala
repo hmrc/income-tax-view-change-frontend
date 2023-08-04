@@ -95,7 +95,7 @@ object BusinessDetailsIntegrationTestConstants {
   )
 
   val businessUnknownAddressName = BusinessDetailsModel(
-    incomeSourceId = Some(testSelfEmploymentId),
+    incomeSourceId = testSelfEmploymentId,
     accountingPeriod = Some(AccountingPeriodModel(
       start = b1AccountingStart,
       end = b1AccountingEnd
