@@ -45,21 +45,21 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
   val confirmReportingMethodShowForeignPropertyUrl: String = confirmReportingMethodSharedController
     .showForeignProperty(taxYear = testPropertyIncomeId, changeTo = annual).url
   val confirmReportingMethodShowSoleTraderBusinessUrl: String = confirmReportingMethodSharedController
-    .showSoleTraderBusiness(incomeSourceId = testSelfEmploymentId, taxYear = taxYear, changeTo = annual).url
+    .showSoleTraderBusiness(id = testSelfEmploymentId, taxYear = taxYear, changeTo = annual).url
 
   val confirmReportingMethodSubmitUKPropertyUrl: String = confirmReportingMethodSharedController
-    .submitUKProperty(incomeSourceId = testPropertyIncomeId, taxYear = taxYear, changeTo = annual).url
+    .submitUKProperty(id = testPropertyIncomeId, taxYear = taxYear, changeTo = annual).url
   val confirmReportingMethodSubmitForeignPropertyUrl: String = confirmReportingMethodSharedController
-    .submitForeignProperty(incomeSourceId = testPropertyIncomeId, taxYear = taxYear, changeTo = annual).url
+    .submitForeignProperty(id = testPropertyIncomeId, taxYear = taxYear, changeTo = annual).url
   val confirmReportingMethodSubmitSoleTraderBusinessUrl: String = confirmReportingMethodSharedController
-    .submitSoleTraderBusiness(incomeSourceId = testSelfEmploymentId, taxYear = taxYear, changeTo = annual).url
+    .submitSoleTraderBusiness(id = testSelfEmploymentId, taxYear = taxYear, changeTo = annual).url
 
   val manageObligationsShowUKPropertyUrl: String = manageObligationsController
     .showUKProperty(changeTo = annual, taxYear = taxYear).url
   val manageObligationsShowForeignPropertyUrl: String = manageObligationsController
     .showForeignProperty(changeTo = annual, taxYear = taxYear).url
   val manageObligationsShowSelfEmploymentUrl: String = manageObligationsController
-    .showSelfEmployment(incomeSourceId = testSelfEmploymentId,changeTo = annual, taxYear = taxYear).url
+    .showSelfEmployment(id = testSelfEmploymentId,changeTo = annual, taxYear = taxYear).url
 
   val prefix: String = "incomeSources.manage.propertyReportingMethod"
 

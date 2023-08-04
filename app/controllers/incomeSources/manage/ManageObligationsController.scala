@@ -174,10 +174,10 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
     ((isAgent, mode) match {
       case (false, UkProperty) => controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController.showUKProperty(taxYear = taxYear, changeTo = changeTo)
       case (false, ForeignProperty) => controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController.showForeignProperty(taxYear = taxYear, changeTo = changeTo)
-      case (false, SelfEmployment) => controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController.showSoleTraderBusiness(incomeSourceId = incomeSourceId, taxYear = taxYear, changeTo = changeTo)
+      case (false, SelfEmployment) => controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController.showSoleTraderBusiness(id = incomeSourceId, taxYear = taxYear, changeTo = changeTo)
       case (true, UkProperty) => controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController.showUKPropertyAgent(taxYear = taxYear, changeTo = changeTo)
       case (true, ForeignProperty) => controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController.showForeignPropertyAgent(taxYear = taxYear, changeTo = changeTo)
-      case (true, SelfEmployment) => controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController.showSoleTraderBusinessAgent(incomeSourceId = incomeSourceId, taxYear = taxYear, changeTo = changeTo)
+      case (true, SelfEmployment) => controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController.showSoleTraderBusinessAgent(id = incomeSourceId, taxYear = taxYear, changeTo = changeTo)
     }).url
   }
 

@@ -52,38 +52,38 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
                                                        val appConfig: FrontendAppConfig) extends ClientConfirmedController
   with FeatureSwitching {
 
-  def showSoleTraderBusiness(incomeSourceId: String, taxYear: String, changeTo: String): Action[AnyContent] = {
+  def showSoleTraderBusiness(id: String, taxYear: String, changeTo: String): Action[AnyContent] = {
     show(
       taxYear = taxYear,
       changeTo = changeTo,
-      incomeSourceId = Some(incomeSourceId),
+      incomeSourceId = Some(id),
       incomeSourceType = SoleTraderBusiness
     )
   }
 
-  def showSoleTraderBusinessAgent(incomeSourceId: String, taxYear: String, changeTo: String): Action[AnyContent] = {
+  def showSoleTraderBusinessAgent(id: String, taxYear: String, changeTo: String): Action[AnyContent] = {
     showAgent(
       taxYear = taxYear,
       changeTo = changeTo,
-      incomeSourceId = Some(incomeSourceId),
+      incomeSourceId = Some(id),
       incomeSourceType = SoleTraderBusiness
     )
   }
 
-  def submitSoleTraderBusiness(incomeSourceId: String, taxYear: String, changeTo: String): Action[AnyContent] = {
+  def submitSoleTraderBusiness(id: String, taxYear: String, changeTo: String): Action[AnyContent] = {
     submit(
       taxYear = taxYear,
       changeTo = changeTo,
-      incomeSourceId = incomeSourceId,
+      incomeSourceId = id,
       incomeSourceType = SoleTraderBusiness
     )
   }
 
-  def submitSoleTraderBusinessAgent(incomeSourceId: String, taxYear: String, changeTo: String): Action[AnyContent] = {
+  def submitSoleTraderBusinessAgent(id: String, taxYear: String, changeTo: String): Action[AnyContent] = {
     submitAgent(
       taxYear = taxYear,
       changeTo = changeTo,
-      incomeSourceId = incomeSourceId,
+      incomeSourceId = id,
       incomeSourceType = SoleTraderBusiness
     )
   }
@@ -106,21 +106,21 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
     )
   }
 
-  def submitUKProperty(incomeSourceId: String, taxYear: String, changeTo: String): Action[AnyContent] = {
+  def submitUKProperty(id: String, taxYear: String, changeTo: String): Action[AnyContent] = {
     submit(
       taxYear = taxYear,
       changeTo = changeTo,
       incomeSourceType = UKProperty,
-      incomeSourceId = incomeSourceId
+      incomeSourceId = id
     )
   }
 
-  def submitUKPropertyAgent(incomeSourceId: String, taxYear: String, changeTo: String): Action[AnyContent] = {
+  def submitUKPropertyAgent(id: String, taxYear: String, changeTo: String): Action[AnyContent] = {
     submitAgent(
       taxYear = taxYear,
       changeTo = changeTo,
       incomeSourceType = UKProperty,
-      incomeSourceId = incomeSourceId
+      incomeSourceId = id
     )
   }
 
@@ -142,20 +142,20 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
     )
   }
 
-  def submitForeignProperty(incomeSourceId: String, taxYear: String, changeTo: String): Action[AnyContent] = {
+  def submitForeignProperty(id: String, taxYear: String, changeTo: String): Action[AnyContent] = {
     submit(
       taxYear = taxYear,
       changeTo = changeTo,
-      incomeSourceId = incomeSourceId,
+      incomeSourceId = id,
       incomeSourceType = ForeignProperty
     )
   }
 
-  def submitForeignPropertyAgent(incomeSourceId: String, taxYear: String, changeTo: String): Action[AnyContent] = {
+  def submitForeignPropertyAgent(id: String, taxYear: String, changeTo: String): Action[AnyContent] = {
     submitAgent(
       taxYear = taxYear,
       changeTo = changeTo,
-      incomeSourceId = incomeSourceId,
+      incomeSourceId = id,
       incomeSourceType = ForeignProperty
     )
   }
@@ -269,7 +269,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
           itvcErrorHandler.showInternalServerError()
         case (_, Some(taxYearModel), Some(reportingMethod), Some(id)) =>
           getRedirectCalls(
-            id = id,
+            incomeSourceId = id,
             isAgent = isAgent,
             taxYear = taxYear,
             changeTo = changeTo,
@@ -282,9 +282,9 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
                   backUrl = backCall.url,
                   postAction = postAction,
                   reportingMethod = reportingMethod,
-                  taxYearEndYear = taxYearModel.endYear,
+                  taxYearEndYear = taxYearModel.endYear.toString,
                   form = ConfirmReportingMethodForm.form,
-                  taxYearStartYear = taxYearModel.startYear
+                  taxYearStartYear = taxYearModel.startYear.toString
                 )
               )
           }
@@ -342,9 +342,9 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
                   form = formWithErrors,
                   backUrl = backCall.url,
                   postAction = postAction,
-                  taxYearEndYear = taxYears.endYear,
+                  taxYearEndYear = taxYears.endYear.toString,
                   reportingMethod = reportingMethod,
-                  taxYearStartYear = taxYears.startYear
+                  taxYearStartYear = taxYears.startYear.toString
                 )
               )
             ),
@@ -354,7 +354,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
               incomeSourceId = incomeSourceId,
               taxYearSpecific = List(
                 TaxYearSpecific(
-                  taxYear = taxYears.endYear,
+                  taxYear = taxYears.endYear.toString,
                   latencyIndicator = reportingMethod match {
                     case "annual" => true
                     case "quarterly" => false
@@ -413,7 +413,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
     }
   }
 
-  private def getRedirectCalls(id: String,
+  private def getRedirectCalls(incomeSourceId: String,
                                taxYear: String,
                                isAgent: Boolean,
                                changeTo: String,
@@ -423,38 +423,38 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
       case (false, UKProperty) =>
         (
           manageIncomeSourceDetailsController.showUkProperty,
-          confirmReportingMethodSharedController.submitUKProperty(incomeSourceId = id, changeTo = changeTo, taxYear = taxYear),
+          confirmReportingMethodSharedController.submitUKProperty(id = incomeSourceId, changeTo = changeTo, taxYear = taxYear),
           manageObligationsController.showUKProperty(changeTo = changeTo, taxYear = taxYear)
         )
       case (false, ForeignProperty) =>
         (
           manageIncomeSourceDetailsController.showForeignProperty,
-          confirmReportingMethodSharedController.submitForeignProperty(incomeSourceId = id, changeTo = changeTo, taxYear = taxYear),
+          confirmReportingMethodSharedController.submitForeignProperty(id = incomeSourceId, changeTo = changeTo, taxYear = taxYear),
           manageObligationsController.showForeignProperty(changeTo = changeTo, taxYear = taxYear)
         )
       case (false, SoleTraderBusiness) =>
         (
-          manageIncomeSourceDetailsController.showSoleTraderBusiness(incomeSourceId = id),
-          confirmReportingMethodSharedController.submitSoleTraderBusiness(incomeSourceId = id, changeTo = changeTo, taxYear = taxYear),
-          manageObligationsController.showSelfEmployment(incomeSourceId = id, changeTo = changeTo, taxYear = taxYear)
+          manageIncomeSourceDetailsController.showSoleTraderBusiness(id = incomeSourceId),
+          confirmReportingMethodSharedController.submitSoleTraderBusiness(id = incomeSourceId, changeTo = changeTo, taxYear = taxYear),
+          manageObligationsController.showSelfEmployment(id = incomeSourceId, changeTo = changeTo, taxYear = taxYear)
         )
       case (true, UKProperty) =>
         (
           manageIncomeSourceDetailsController.showUkPropertyAgent,
-          confirmReportingMethodSharedController.submitUKPropertyAgent(incomeSourceId = id, changeTo = changeTo, taxYear = taxYear),
+          confirmReportingMethodSharedController.submitUKPropertyAgent(id = incomeSourceId, changeTo = changeTo, taxYear = taxYear),
           manageObligationsController.showAgentUKProperty(changeTo = changeTo, taxYear = taxYear)
         )
       case (true, ForeignProperty) =>
         (
           manageIncomeSourceDetailsController.showForeignPropertyAgent,
-          confirmReportingMethodSharedController.submitForeignPropertyAgent(incomeSourceId = id, changeTo = changeTo, taxYear = taxYear),
+          confirmReportingMethodSharedController.submitForeignPropertyAgent(id = incomeSourceId, changeTo = changeTo, taxYear = taxYear),
           manageObligationsController.showAgentForeignProperty(changeTo = changeTo, taxYear = taxYear)
         )
       case (true, SoleTraderBusiness) =>
         (
-          manageIncomeSourceDetailsController.showSoleTraderBusinessAgent(incomeSourceId = id),
-          confirmReportingMethodSharedController.submitSoleTraderBusinessAgent(incomeSourceId = id, changeTo = changeTo, taxYear = taxYear),
-          manageObligationsController.showAgentSelfEmployment(incomeSourceId = id, changeTo = changeTo, taxYear = taxYear)
+          manageIncomeSourceDetailsController.showSoleTraderBusinessAgent(id = incomeSourceId),
+          confirmReportingMethodSharedController.submitSoleTraderBusinessAgent(id = incomeSourceId, changeTo = changeTo, taxYear = taxYear),
+          manageObligationsController.showAgentSelfEmployment(id = incomeSourceId, changeTo = changeTo, taxYear = taxYear)
         )
     }
   }

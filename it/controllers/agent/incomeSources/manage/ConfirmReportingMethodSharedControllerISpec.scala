@@ -45,21 +45,21 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
   val confirmReportingMethodShowForeignPropertyUrl: String = confirmReportingMethodSharedController
     .showForeignPropertyAgent(taxYear = testPropertyIncomeId, changeTo = annual).url
   val confirmReportingMethodShowSoleTraderBusinessUrl: String = confirmReportingMethodSharedController
-    .showSoleTraderBusinessAgent(incomeSourceId = testSelfEmploymentId, taxYear = taxYear, changeTo = annual).url
+    .showSoleTraderBusinessAgent(id = testSelfEmploymentId, taxYear = taxYear, changeTo = annual).url
 
   val confirmReportingMethodSubmitUKPropertyUrl: String = confirmReportingMethodSharedController
-    .submitUKPropertyAgent(incomeSourceId = testPropertyIncomeId, taxYear = taxYear, changeTo = annual).url
+    .submitUKPropertyAgent(id = testPropertyIncomeId, taxYear = taxYear, changeTo = annual).url
   val confirmReportingMethodSubmitForeignPropertyUrl: String = confirmReportingMethodSharedController
-    .submitForeignPropertyAgent(incomeSourceId = testPropertyIncomeId, taxYear = taxYear, changeTo = annual).url
+    .submitForeignPropertyAgent(id = testPropertyIncomeId, taxYear = taxYear, changeTo = annual).url
   val confirmReportingMethodSubmitSoleTraderBusinessUrl: String = confirmReportingMethodSharedController
-    .submitSoleTraderBusinessAgent(incomeSourceId = testSelfEmploymentId, taxYear = taxYear, changeTo = annual).url
+    .submitSoleTraderBusinessAgent(id = testSelfEmploymentId, taxYear = taxYear, changeTo = annual).url
 
   val manageObligationsShowUKPropertyUrl: String = manageObligationsController
     .showAgentUKProperty(changeTo = annual, taxYear = taxYear).url
   val manageObligationsShowForeignPropertyUrl: String = manageObligationsController
     .showAgentForeignProperty(changeTo = annual, taxYear = taxYear).url
   val manageObligationsShowSelfEmploymentUrl: String = manageObligationsController
-    .showAgentSelfEmployment(incomeSourceId = testSelfEmploymentId,changeTo = annual, taxYear = taxYear).url
+    .showAgentSelfEmployment(id = testSelfEmploymentId,changeTo = annual, taxYear = taxYear).url
 
   val prefix: String = "incomeSources.manage.propertyReportingMethod"
 
