@@ -74,10 +74,10 @@ class ConfirmReportingMethodSharedControllerViewSpec extends TestSupport {
     val backUrl = ((isAgent, incomeSourceType) match {
       case (false, UKProperty) => manageIncomeSourceDetailsController.showUkProperty
       case (false, ForeignProperty) => manageIncomeSourceDetailsController.showForeignProperty
-      case (false, SoleTraderBusiness) => manageIncomeSourceDetailsController.showSoleTraderBusiness(incomeSourceId = testSelfEmploymentId)
+      case (false, SoleTraderBusiness) => manageIncomeSourceDetailsController.showSoleTraderBusiness(id = testSelfEmploymentId)
       case (true, UKProperty) => manageIncomeSourceDetailsController.showUkPropertyAgent
       case (true, ForeignProperty) => manageIncomeSourceDetailsController.showForeignPropertyAgent
-      case (true, SoleTraderBusiness) => manageIncomeSourceDetailsController.showSoleTraderBusinessAgent(incomeSourceId = testSelfEmploymentId)
+      case (true, SoleTraderBusiness) => manageIncomeSourceDetailsController.showSoleTraderBusinessAgent(id = testSelfEmploymentId)
     }).url
 
     val form: Form[ConfirmReportingMethodForm] = ConfirmReportingMethodForm.form

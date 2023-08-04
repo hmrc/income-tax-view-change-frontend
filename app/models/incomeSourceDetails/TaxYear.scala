@@ -18,7 +18,7 @@ package models.incomeSourceDetails
 
 import scala.util.Try
 
-case class TaxYear(startYear: String, endYear: String)
+case class TaxYear(startYear: Int, endYear: Int)
 
 object TaxYear {
 
@@ -37,7 +37,7 @@ object TaxYear {
     years.split('-') match {
       case Array(yearOne, yearTwo) if differenceIsOne(yearOne, yearTwo) =>
         Some(
-          TaxYear(yearOne, yearTwo)
+          TaxYear(yearOne.toInt, yearTwo.toInt)
         )
       case _ => None
     }

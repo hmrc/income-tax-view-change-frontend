@@ -348,7 +348,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     }
 
     def getConfirmSoleTraderBusinessReportingMethod(taxYear: String, changeTo: String, additionalCookies: Map[String, String] = Map.empty): WSResponse = {
-      get(s"/income-sources/manage/confirm-you-want-to-report?incomeSourceId=$testSelfEmploymentId&taxYear=$taxYear&changeTo=$changeTo", additionalCookies)
+      get(s"/income-sources/manage/confirm-you-want-to-report?id=$testSelfEmploymentId&taxYear=$taxYear&changeTo=$changeTo", additionalCookies)
     }
 
     def getConfirmUKPropertyReportingMethod(taxYear: String, changeTo: String, additionalCookies: Map[String, String] = Map.empty): WSResponse = {
@@ -360,19 +360,19 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     }
 
     def postConfirmSoleTraderBusinessReportingMethod(taxYear: String, changeTo: String, additionalCookies: Map[String, String] = Map.empty)(formData: Map[String, Seq[String]]): WSResponse = {
-      post(s"/income-sources/manage/confirm-you-want-to-report?incomeSourceId=$testSelfEmploymentId&taxYear=$taxYear&changeTo=$changeTo", additionalCookies)(formData)
+      post(s"/income-sources/manage/confirm-you-want-to-report?id=$testSelfEmploymentId&taxYear=$taxYear&changeTo=$changeTo", additionalCookies)(formData)
     }
 
     def postConfirmUKPropertyReportingMethod(taxYear: String, changeTo: String, additionalCookies: Map[String, String] = Map.empty)(formData: Map[String, Seq[String]]): WSResponse = {
-      post(s"/income-sources/manage/confirm-you-want-to-report-uk-property?incomeSourceId=$testPropertyIncomeId&taxYear=$taxYear&changeTo=$changeTo", additionalCookies)(formData)
+      post(s"/income-sources/manage/confirm-you-want-to-report-uk-property?id=$testPropertyIncomeId&taxYear=$taxYear&changeTo=$changeTo", additionalCookies)(formData)
     }
 
     def postConfirmForeignPropertyReportingMethod(taxYear: String, changeTo: String, additionalCookies: Map[String, String] = Map.empty)(formData: Map[String, Seq[String]]): WSResponse = {
-      post(s"/income-sources/manage/confirm-you-want-to-report-foreign-property?incomeSourceId=$testPropertyIncomeId&taxYear=$taxYear&changeTo=$changeTo", additionalCookies)(formData)
+      post(s"/income-sources/manage/confirm-you-want-to-report-foreign-property?id=$testPropertyIncomeId&taxYear=$taxYear&changeTo=$changeTo", additionalCookies)(formData)
     }
 
     def getManageSEObligations(changeTo: String, taxYear: String, id: String, additionalCookies: Map[String, String] = Map.empty): WSResponse = {
-      get(s"/income-sources/manage/business-will-report?changeTo=$changeTo&taxYear=$taxYear&incomeSourceId=$id", additionalCookies)
+      get(s"/income-sources/manage/business-will-report?changeTo=$changeTo&taxYear=$taxYear&id=$id", additionalCookies)
     }
 
     def getManageUKObligations(changeTo: String, taxYear: String, additionalCookies: Map[String, String] = Map.empty): WSResponse = {
