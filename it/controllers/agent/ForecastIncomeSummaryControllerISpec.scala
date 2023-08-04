@@ -32,6 +32,7 @@ import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.ws.WSResponse
 import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants._
+import testConstants.BusinessDetailsIntegrationTestConstants.address
 import testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessful
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 
@@ -112,7 +113,8 @@ class ForecastIncomeSummaryControllerISpec extends ComponentSpecBase with Featur
       Some("Test Trading Name"),
       None,
       Some(getCurrentTaxYearEnd),
-      None
+      None,
+      address = Some(address)
     )),
     properties = List(
       PropertyDetailsModel(

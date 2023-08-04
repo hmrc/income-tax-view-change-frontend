@@ -16,6 +16,7 @@ import play.api.libs.json.Json
 import play.api.libs.ws.WSResponse
 import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants._
+import testConstants.BusinessDetailsIntegrationTestConstants.address
 import testConstants.IncomeSourceIntegrationTestConstants._
 import testConstants.PaymentAllocationIntegrationTestConstants._
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
@@ -51,7 +52,8 @@ class PaymentAllocationsControllerISpec extends ComponentSpecBase with FeatureSw
       Some("Test Trading Name"),
       None,
       Some(getCurrentTaxYearEnd),
-      None
+      None,
+      address = Some(address)
     )),
     properties = List(
       PropertyDetailsModel(

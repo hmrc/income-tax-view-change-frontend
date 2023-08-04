@@ -342,6 +342,30 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
     def getManageIncomeSource: WSResponse = get("/income-sources/manage/view-and-manage-income-sources")
 
+    def getConfirmSoleTraderBusinessReportingMethod(taxYear: String, changeTo: String): WSResponse = {
+      get(s"/income-sources/manage/confirm-you-want-to-report?id=$testSelfEmploymentId&taxYear=$taxYear&changeTo=$changeTo")
+    }
+
+    def getConfirmUKPropertyReportingMethod(taxYear: String, changeTo: String): WSResponse = {
+      get(s"/income-sources/manage/confirm-you-want-to-report-uk-property?taxYear=$taxYear&changeTo=$changeTo")
+    }
+
+    def getConfirmForeignPropertyReportingMethod(taxYear: String, changeTo: String): WSResponse = {
+      get(s"/income-sources/manage/confirm-you-want-to-report-foreign-property?taxYear=$taxYear&changeTo=$changeTo")
+    }
+
+    def postConfirmSoleTraderBusinessReportingMethod(taxYear: String, changeTo: String)(formData: Map[String, Seq[String]]): WSResponse = {
+      post(s"/income-sources/manage/confirm-you-want-to-report?id=$testSelfEmploymentId&taxYear=$taxYear&changeTo=$changeTo")(formData)
+    }
+
+    def postConfirmUKPropertyReportingMethod(taxYear: String, changeTo: String)(formData: Map[String, Seq[String]]): WSResponse = {
+      post(s"/income-sources/manage/confirm-you-want-to-report-uk-property?id=$testPropertyIncomeId&taxYear=$taxYear&changeTo=$changeTo")(formData)
+    }
+
+    def postConfirmForeignPropertyReportingMethod(taxYear: String, changeTo: String)(formData: Map[String, Seq[String]]): WSResponse = {
+      post(s"/income-sources/manage/confirm-you-want-to-report-foreign-property?id=$testPropertyIncomeId&taxYear=$taxYear&changeTo=$changeTo")(formData)
+    }
+
     def getManageSEObligations(changeTo: String, taxYear: String, id: String): WSResponse = {
       get(s"/income-sources/manage/business-will-report?changeTo=$changeTo&taxYear=$taxYear&id=$id")
     }
@@ -378,6 +402,12 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
       val formData = form.toFormMap.map { case (k, v) => (k -> Seq(v.getOrElse(""))) }
       post(s"/income-sources/add/foreign-property-reporting-method?id=$testPropertyIncomeId", additionalCookies = additionalCookies)(formData)
     }
+
+    def getCheckCeaseBusinessDetails(session: Map[String, String]): WSResponse =
+      getWithClientDetailsInSession("/income-sources/cease/business-check-details", session)
+
+    def postCheckCeaseBusinessDetails(session: Map[String, String]): WSResponse =
+      post("/income-sources/cease/business-check-details", session)(Map.empty)
   }
 
   def unauthorisedTest(uri: String): Unit = {

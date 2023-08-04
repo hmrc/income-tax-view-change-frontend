@@ -27,6 +27,7 @@ import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsMode
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants._
+import testConstants.BusinessDetailsIntegrationTestConstants.address
 import testConstants.FinancialDetailsIntegrationTestConstants.documentDetailWithDueDateFinancialDetailListModel
 import testConstants.IncomeSourceIntegrationTestConstants.{multipleBusinessesAndPropertyResponse, propertyOnlyResponseWithMigrationData, testValidFinancialDetailsModelCreditAndRefundsJson, testValidFinancialDetailsModelJson}
 import testConstants.OutstandingChargesIntegrationTestConstants.validOutStandingChargeResponseJsonWithAciAndBcdCharges
@@ -156,7 +157,8 @@ class CreditAndRefundControllerISpec extends ComponentSpecBase {
               None,
               None,
               Some(getCurrentTaxYearEnd),
-              None
+              None,
+              address = Some(address)
             )),
             properties = Nil
           )

@@ -18,7 +18,7 @@ package testConstants
 
 import java.time.LocalDate
 import BaseIntegrationTestConstants.{otherTestSelfEmploymentId, testSelfEmploymentId}
-import models.core.{AccountingPeriodModel, CessationModel}
+import models.core.{AccountingPeriodModel, AddressModel, CessationModel}
 import models.incomeSourceDetails.BusinessDetailsModel
 import testConstants.BaseIntegrationTestConstants.getCurrentTaxYearEnd
 
@@ -53,6 +53,8 @@ object BusinessDetailsIntegrationTestConstants {
   val testMtdItId = "XIAT0000000000A"
   val ceasedBusinessTradingName = "ceasedBusiness"
 
+  val address = AddressModel("8 Test", Some("New Court"), Some("New Town"), Some("New City"), Some("NE12 6CI"), "United Kingdom")
+
   val business1 = BusinessDetailsModel(
     incomeSourceId = testSelfEmploymentId,
     accountingPeriod = Some(AccountingPeriodModel(
@@ -62,7 +64,8 @@ object BusinessDetailsIntegrationTestConstants {
     tradingName = Some(b1TradingName),
     firstAccountingPeriodEndDate = Some(b1AccountingEnd),
     tradingStartDate = Some(b1TradingStart),
-    cessation = None
+    cessation = None,
+    address = Some(address)
   )
 
   val business2 = BusinessDetailsModel(
@@ -74,7 +77,8 @@ object BusinessDetailsIntegrationTestConstants {
     tradingName = Some(b2TradingName),
     firstAccountingPeriodEndDate = Some(b2AccountingEnd),
     tradingStartDate = Some(b2TradingStart),
-    cessation = None
+    cessation = None,
+    address = Some(address)
   )
 
   val ceasedBusiness1 = BusinessDetailsModel(
@@ -86,7 +90,21 @@ object BusinessDetailsIntegrationTestConstants {
     tradingName = Some(ceasedBusinessTradingName),
     firstAccountingPeriodEndDate = Some(b2AccountingEnd),
     tradingStartDate = Some(b2TradingStart),
-    cessation = Some(CessationModel(Some(b2CessationDate), Some(b2CessationReason)))
+    cessation = Some(CessationModel(Some(b2CessationDate), Some(b2CessationReason))),
+    address = Some(address)
+  )
+
+  val businessUnknownAddressName = BusinessDetailsModel(
+    incomeSourceId = Some(testSelfEmploymentId),
+    accountingPeriod = Some(AccountingPeriodModel(
+      start = b1AccountingStart,
+      end = b1AccountingEnd
+    )),
+    tradingName = None,
+    firstAccountingPeriodEndDate = Some(b1AccountingEnd),
+    tradingStartDate = Some(b1TradingStart),
+    cessation = None,
+    address = None
   )
 
 }

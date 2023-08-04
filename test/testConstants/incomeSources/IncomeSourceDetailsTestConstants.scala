@@ -16,8 +16,10 @@
 
 package testConstants.incomeSources
 
+import models.incomeSourceDetails.viewmodels.CeaseIncomeSourcesViewModel
+import models.incomeSourceDetails.viewmodels.CheckCeaseBusinessDetailsViewModel
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel}
-import testConstants.BaseTestConstants.{testErrorMessage, testErrorStatus, testMigrationYear2019, testMtditid, testMtditid2}
+import testConstants.BaseTestConstants.{testErrorMessage, testErrorStatus, testMigrationYear2019, testMtditid, testMtditid2, testSelfEmploymentId}
 import testConstants.BusinessDetailsTestConstants._
 import testConstants.PropertyDetailsTestConstants._
 
@@ -65,6 +67,18 @@ object IncomeSourceDetailsTestConstants {
 
   val foreignPropertyIncome = IncomeSourceDetailsModel(testMtdItId, Some("2018"), Nil, List(foreignPropertyDetails))
 
+  val ceaseBusinessDetailsModel = CeaseIncomeSourcesViewModel(
+    soleTraderBusinesses = List(ceaseBusinessDetailsViewModel, ceaseBusinessDetailsViewModel2),
+    ukProperty = Some(ceaseUkPropertyDetailsViewModel),
+    foreignProperty = Some(ceaseForeignPropertyDetailsViewModel),
+    ceasedBusinesses = Nil)
+
+  val checkCeaseBusinessDetailsModel = CheckCeaseBusinessDetailsViewModel(
+    incomeSourceId = testSelfEmploymentId,
+    tradingName = Some(testTradeName),
+    address = Some(address),
+    businessEndDate = LocalDate.parse("2022-04-23")
+  )
 
   def getCurrentTaxEndYear(currentDate: LocalDate): Int = {
     if (currentDate.isBefore(LocalDate.of(currentDate.getYear, 4, 6))) currentDate.getYear

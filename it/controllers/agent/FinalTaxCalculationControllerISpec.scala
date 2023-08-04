@@ -29,6 +29,7 @@ import play.api.i18n.{Lang, Messages, MessagesApi}
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testMtditid, testNino}
+import testConstants.BusinessDetailsIntegrationTestConstants.address
 import testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessful
 
 import java.time.LocalDate
@@ -149,7 +150,8 @@ class FinalTaxCalculationControllerISpec extends ComponentSpecBase with SessionC
       Some("Test Trading Name"),
       None,
       Some(LocalDate.of(2018, 1, 1)),
-      None
+      None,
+      address = Some(address)
     )),
     properties = List(
       PropertyDetailsModel(

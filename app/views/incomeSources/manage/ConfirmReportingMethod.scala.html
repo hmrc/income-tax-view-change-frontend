@@ -1,0 +1,89 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import views.html.layouts.unifiedLayout
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import forms.incomeSources.manage.ConfirmReportingMethodForm
+@import views.html.helpers.injected.ErrorSummary
+
+@this(
+        mainTemplate: unifiedLayout,
+        govukCheckboxes: GovukCheckboxes,
+        govukButton: GovukButton,
+        formWithCSRF: FormWithCSRF,
+        errorSummary: ErrorSummary
+)
+
+@(
+        form: Form[ConfirmReportingMethodForm],
+        backUrl: String,
+        postAction: Call,
+        isAgent: Boolean,
+        taxYearStartYear: String,
+        taxYearEndYear: String,
+        reportingMethod: String
+)(implicit messages: Messages, user: auth.MtdItUser[_])
+
+@prefix = @{ "incomeSources.manage.propertyReportingMethod" }
+
+@getMessage(key: String, args: String*) = @{
+    messages(s"$prefix.$key", args: _*)
+}
+
+@mainTemplate(pageTitle = getMessage(s"heading.$reportingMethod"),
+    backUrl = Some(backUrl),
+    isAgent = isAgent,
+    btaNavPartial = user.btaNavPartial) {
+
+    @errorSummary(form.copy(
+        errors = form.errors.map(formError =>
+            FormError(
+                key = formError.key,
+                messages = formError.messages.map(_ + s".$reportingMethod")
+            )
+        )
+    ))
+
+    @formWithCSRF(action = postAction, Symbol("id") -> s"$prefix-form") {
+        @govukCheckboxes(Checkboxes(
+            fieldset = Some(Fieldset(
+                legend = Some(Legend(
+                    content = Text(
+                        value = getMessage(s"heading.$reportingMethod", taxYearStartYear, taxYearEndYear)
+                    ),
+                    classes = "govuk-fieldset__legend--l govuk-!-margin-bottom-6",
+                    isPageHeading = true
+                ))
+            )),
+            name = prefix,
+            items = Seq(CheckboxItem(
+                id = Some(prefix),
+                name = Some(prefix),
+                content = Text(
+                    value = getMessage(s"checkbox.$reportingMethod")
+                ),
+                value = "true",
+                checked = form.value.contains(true),
+
+            )),
+            errorMessage = form.errors.headOption.map(err => ErrorMessage(content = Text(messages(s"${err.message}.$reportingMethod", err.args:_*))))
+        ))
+        @govukButton(Button(
+            content = Text(messages("base.confirm-and-continue")),
+            attributes = Map("id" -> "confirm-and-continue-button")
+        ))
+    }
+}

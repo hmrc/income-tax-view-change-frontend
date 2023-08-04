@@ -26,6 +26,7 @@ import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.ws.WSResponse
 import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants._
+import testConstants.BusinessDetailsIntegrationTestConstants.address
 import testConstants.messages.TaxYearsMessages.{taxYearMessage, updateReturn, viewSummary}
 
 import java.time.LocalDate
@@ -48,7 +49,8 @@ class TaxYearsControllerISpec extends ComponentSpecBase with FeatureSwitching {
       Some("Test Trading Name"),
       Some(getCurrentTaxYearEnd),
       None,
-      None
+      None,
+      address = Some(address)
     )),
     properties = List(
       PropertyDetailsModel(
@@ -71,7 +73,8 @@ class TaxYearsControllerISpec extends ComponentSpecBase with FeatureSwitching {
       Some("Test Trading Name"),
       None,
       None,
-      None
+      None,
+      address = Some(address)
     )),
     properties = List(
       PropertyDetailsModel(

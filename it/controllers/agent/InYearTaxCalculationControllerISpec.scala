@@ -32,6 +32,7 @@ import play.api.libs.ws.WSResponse
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testMtditid, testNino}
+import testConstants.BusinessDetailsIntegrationTestConstants.address
 import testConstants.IncomeSourceIntegrationTestConstants.multipleBusinessesAndPropertyResponseWoMigration
 import testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessful
 
@@ -92,7 +93,8 @@ class InYearTaxCalculationControllerISpec extends ComponentSpecBase {
       Some("Test Trading Name"),
       None,
       Some(LocalDate.of(taxYear, month, dayOfMonth)),
-      None
+      None,
+      address = Some(address)
     )),
     properties = List(
       PropertyDetailsModel(

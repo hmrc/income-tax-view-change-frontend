@@ -13,6 +13,7 @@ import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.libs.json.{JsValue, Json}
 import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants._
+import testConstants.BusinessDetailsIntegrationTestConstants.address
 import testConstants.FinancialDetailsIntegrationTestConstants._
 import testConstants.IncomeSourceIntegrationTestConstants._
 import testConstants.OutstandingChargesIntegrationTestConstants._
@@ -37,7 +38,8 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
       None,
       None,
       Some(getCurrentTaxYearEnd),
-      None
+      None,
+      address = Some(address)
     )),
     properties = Nil
   )
@@ -88,7 +90,8 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
               None,
               None,
               Some(getCurrentTaxYearEnd),
-              None
+              None,
+              address = Some(address)
             )),
             properties = Nil
           )

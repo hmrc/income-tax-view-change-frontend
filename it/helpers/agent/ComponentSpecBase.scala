@@ -347,6 +347,30 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
       post(s"/income-sources/add/foreign-property-reporting-method?id=$testPropertyIncomeId", additionalCookies = additionalCookies)(formData)
     }
 
+    def getConfirmSoleTraderBusinessReportingMethod(taxYear: String, changeTo: String, additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      get(s"/income-sources/manage/confirm-you-want-to-report?id=$testSelfEmploymentId&taxYear=$taxYear&changeTo=$changeTo", additionalCookies)
+    }
+
+    def getConfirmUKPropertyReportingMethod(taxYear: String, changeTo: String, additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      get(s"/income-sources/manage/confirm-you-want-to-report-uk-property?taxYear=$taxYear&changeTo=$changeTo", additionalCookies)
+    }
+
+    def getConfirmForeignPropertyReportingMethod(taxYear: String, changeTo: String, additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      get(s"/income-sources/manage/confirm-you-want-to-report-foreign-property?taxYear=$taxYear&changeTo=$changeTo", additionalCookies)
+    }
+
+    def postConfirmSoleTraderBusinessReportingMethod(taxYear: String, changeTo: String, additionalCookies: Map[String, String] = Map.empty)(formData: Map[String, Seq[String]]): WSResponse = {
+      post(s"/income-sources/manage/confirm-you-want-to-report?id=$testSelfEmploymentId&taxYear=$taxYear&changeTo=$changeTo", additionalCookies)(formData)
+    }
+
+    def postConfirmUKPropertyReportingMethod(taxYear: String, changeTo: String, additionalCookies: Map[String, String] = Map.empty)(formData: Map[String, Seq[String]]): WSResponse = {
+      post(s"/income-sources/manage/confirm-you-want-to-report-uk-property?id=$testPropertyIncomeId&taxYear=$taxYear&changeTo=$changeTo", additionalCookies)(formData)
+    }
+
+    def postConfirmForeignPropertyReportingMethod(taxYear: String, changeTo: String, additionalCookies: Map[String, String] = Map.empty)(formData: Map[String, Seq[String]]): WSResponse = {
+      post(s"/income-sources/manage/confirm-you-want-to-report-foreign-property?id=$testPropertyIncomeId&taxYear=$taxYear&changeTo=$changeTo", additionalCookies)(formData)
+    }
+
     def getManageSEObligations(changeTo: String, taxYear: String, id: String, additionalCookies: Map[String, String] = Map.empty): WSResponse = {
       get(s"/income-sources/manage/business-will-report?changeTo=$changeTo&taxYear=$taxYear&id=$id", additionalCookies)
     }
@@ -362,6 +386,12 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     def postManageObligations(mode: String, additionalCookies: Map[String, String] = Map.empty): WSResponse = {
       post(s"/income-sources/manage/$mode-will-report", additionalCookies)(Map.empty)
     }
+
+    def getCheckCeaseBusinessDetails(additionalCookies: Map[String, String]): WSResponse =
+      getWithClientDetailsInSession("/agents/income-sources/cease/business-check-details", additionalCookies)
+
+    def postCheckCeaseBusinessDetails(additionalCookies: Map[String, String]): WSResponse =
+      post("/income-sources/cease/business-check-details", additionalCookies)(Map.empty)
   }
 
   def unauthorisedTest(uri: String): Unit = {

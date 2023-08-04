@@ -1364,6 +1364,15 @@ incomeSources.cease.BusinessEndDate.error.future                          = Ni a
 incomeSources.cease.BusinessEndDate.error.beforeStartDate                 = Ni all y dyddiad dod i ben ar gyfer y busnes fod cyn y dyddiad dechrau
 incomeSources.cease.BusinessEndDate.error.beforeEarliestDate              = Ni all y dyddiad dod i ben fod cyn 6 Ebrill 2015
 
+incomeSources.ceaseBusiness.checkDetails.heading                    = Gwirio’ch manylion
+incomeSources.ceaseBusiness.checkDetails.soloTrader                 = Y busnes unig fasnachwr a nodwyd gennych
+incomeSources.ceaseBusiness.checkDetails.dateStopped                = Dyddiad y gwnaeth y busnes stopio
+incomeSources.ceaseBusiness.checkDetails.businessName               = Busnes sydd wedi stopio
+incomeSources.ceaseBusiness.checkDetails.businessAddress            = Cyfeiriad y busnes
+incomeSources.ceaseBusiness.checkDetails.confirm                    = Cadarnhau ac yn eich blaen
+incomeSources.ceaseBusiness.checkDetails.change                     = Newid
+incomeSources.ceaseBusiness.checkDetails.unknown                    = Anhysbys
+
 check-cease-foreign-property-details.heading            = Gwirio’ch manylion
 check-cease-foreign-property-details.caption            = Y busnes eiddo tramor a nodwyd gennych
 check-cease-foreign-property-details.summary-list.key   = Dyddiad y gwnaeth y busnes stopio
@@ -1486,6 +1495,13 @@ incomeSources.add.ukPropertyReportingMethod.chooseAnnualReport        =   Dewis 
 incomeSources.add.ukPropertyReportingMethod.chooseQuarterlyReport     =   Dewis cyflwyno adroddiadau’n chwarterol
 incomeSources.add.ukPropertyReportingMethod.error                     =   Dewiswch a hoffech gyflwyno adroddiad yn flynyddol neu’n chwarterol ar gyfer blwyddyn dreth {0} i {1}
 
+# manage uk property reporting method
+incomeSources.manage.propertyReportingMethod.heading.annual         = Cadarnhewch eich bod am gyflwyno adroddiadau’n flynyddol ar gyfer blwyddyn dreth {0} i {1}
+incomeSources.manage.propertyReportingMethod.heading.quarterly      = Cadarnhewch eich bod am gyflwyno adroddiadau’n chwarterol ar gyfer blwyddyn dreth {0} i {1}
+incomeSources.manage.propertyReportingMethod.checkbox.annual        = Hoffwn newid i adrodd yn flynyddol
+incomeSources.manage.propertyReportingMethod.checkbox.quarterly     = Hoffwn newid i adrodd yn chwarterol
+incomeSources.manage.propertyReportingMethod.error.quarterly        = Dewiswch eich bod am newid i gyflwyno adroddiadau’n chwarterol
+incomeSources.manage.propertyReportingMethod.error.annual           = Dewiswch eich bod am newid i gyflwyno adroddiadau’n flynyddol
 # manage obligations page
 incomeSources.add.manageObligations.h1                                =   Bydd
 incomeSources.add.manageObligations.h2                                =   yn cyflwyno adroddiadau’n
