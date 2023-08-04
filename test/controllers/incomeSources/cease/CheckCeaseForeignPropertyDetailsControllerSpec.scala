@@ -67,10 +67,6 @@ class CheckCeaseForeignPropertyDetailsControllerSpec extends TestSupport with Mo
 
   }
 
-  def disableAllSwitches(): Unit = {
-    switches.foreach(switch => disable(switch))
-  }
-
   val testIncomeSourceId = "123"
 
 

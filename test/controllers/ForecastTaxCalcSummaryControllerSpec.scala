@@ -58,10 +58,6 @@ class ForecastTaxCalcSummaryControllerSpec extends TestSupport with MockCalculat
     super.beforeEach()
   }
 
-  def disableAllSwitches() : Unit = {
-    switches.foreach(switch => disable(switch))
-  }
-
   "individual user" when {
     "show(taxYear) with forecast calculation fs disabled" when {
       lazy val result = TestForecastTaxCalcSummaryController.show(testTaxYear)(fakeRequestWithActiveSession)

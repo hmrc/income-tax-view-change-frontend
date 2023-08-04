@@ -161,15 +161,6 @@ class IncomeSourceDetailsServiceSpec extends TestSupport with MockIncomeTaxViewC
       }
     }
 
-    "invalid data provided" should {
-      "return failure" in {
-        // Simulate dynamic data generation from one of the invalid data
-        // TODO: eventually need to be move under tests data generation section
-        val generatedFailedData = Gen.oneOf(Seq(ukPropertyAndSoleTraderBusinessIncomeNoIncomeSourceId)).sample.get
-        val result = TestIncomeSourceDetailsService.getCeaseIncomeSourceViewModel(generatedFailedData)
-        result.isLeft shouldBe (true)
-      }
-    }
   }
 
   "The IncomeSourceDetailsService.getViewIncomeSourceViewModel method" when {
@@ -199,16 +190,6 @@ class IncomeSourceDetailsServiceSpec extends TestSupport with MockIncomeTaxViewC
             ViewCeasedBusinessDetailsViewModel(testTradeNameOption2, testStartDateOption2, testCessation2.date.get)
           )
         ))
-      }
-    }
-
-    "invalid data provided" should {
-      "still return page as unknown is used rather than error" in {
-        // Simulate dynamic data generation from one of the invalid data
-        // TODO: eventually need to be move under tests data generation section
-        val generatedFailedData = Gen.oneOf(Seq(ukPropertyIncomeNoIncomeSourceId, foreignPropertyAndCeasedBusinessIncomeNoIncomeSourceId)).sample.get
-        val result = TestIncomeSourceDetailsService.getViewIncomeSourceViewModel(generatedFailedData)
-        result.isLeft shouldBe false
       }
     }
   }

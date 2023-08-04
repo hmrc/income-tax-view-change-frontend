@@ -72,7 +72,7 @@ class UKPropertyAddedController @Inject()(val authenticate: AuthenticationPredic
   def getUKPropertyStartDate(incomeSourceId: String)(implicit user: MtdItUser[_]): Option[(LocalDate)] = {
     for {
       newlyAddedUKProperty <- user.incomeSources.properties.find(incomeSource =>
-        incomeSource.incomeSourceId.contains(incomeSourceId) && incomeSource.isUkProperty
+        incomeSource.incomeSourceId.equals(incomeSourceId) && incomeSource.isUkProperty
       )
       startDate <- newlyAddedUKProperty.tradingStartDate
     } yield startDate
@@ -89,7 +89,7 @@ class UKPropertyAddedController @Inject()(val authenticate: AuthenticationPredic
           nextUpdatesService.getObligationsViewModel(incomeSourceId, showPreviousTaxYears).map { viewModel =>
             Ok(view(viewModel, isAgent = isAgent, backUrl)(messages, user))
           }
-        case _ =>
+        case None =>
           Logger("application").error(
             s"[UKPropertyAddedController][handleRequest] - unable to find incomeSource by id: $incomeSourceId")
           if (isAgent) Future.successful(itvcErrorHandlerAgent.showInternalServerError())

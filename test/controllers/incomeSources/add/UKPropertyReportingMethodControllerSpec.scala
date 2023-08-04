@@ -115,10 +115,6 @@ class UKPropertyReportingMethodControllerSpec extends TestSupport with MockAuthe
     val isAgent: Boolean = true
   }
 
-  def disableAllSwitches(): Unit = {
-    switches.foreach(switch => disable(switch))
-  }
-
   object Scenario extends Enumeration {
     type Scenario = Value
     val NO_LATENCY, NON_ELIGIBLE_ITS_STATUS, FIRST_YEAR_CRYSTALLIZED,
@@ -269,7 +265,6 @@ class UKPropertyReportingMethodControllerSpec extends TestSupport with MockAuthe
         document.getElementsByClass("govuk-body").get(0).text shouldBe TestUKPropertyReportingMethodController.description1_TY1
         document.getElementsByClass("govuk-body").get(1).text shouldBe TestUKPropertyReportingMethodController.description2
         document.getElementsByClass("govuk-body").get(2).text shouldBe TestUKPropertyReportingMethodController.description3
-        println(Console.MAGENTA + document.select("ul").get(1).text() + Console.WHITE)
         document.select("ul").get(1).text shouldBe TestUKPropertyReportingMethodController.description4
         document.select("h1").get(1).text shouldBe TestUKPropertyReportingMethodController.chooseReport
         document.getElementsByTag("legend").get(0).text shouldBe TestUKPropertyReportingMethodController.taxYear2_TY1

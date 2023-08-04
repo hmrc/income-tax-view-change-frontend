@@ -46,7 +46,7 @@ class PaymentAllocationsControllerISpec extends ComponentSpecBase with FeatureSw
     mtdbsa = testMtditid,
     yearOfMigration = None,
     businesses = List(BusinessDetailsModel(
-      Some("testId"),
+      "testId",
       Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
       Some("Test Trading Name"),
       None,
@@ -55,7 +55,7 @@ class PaymentAllocationsControllerISpec extends ComponentSpecBase with FeatureSw
     )),
     properties = List(
       PropertyDetailsModel(
-        Some("testId2"),
+        "testId2",
         Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
         None,
         None,

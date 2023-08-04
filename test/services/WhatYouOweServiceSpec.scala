@@ -51,11 +51,6 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
     None
   )(FakeRequest())
 
-
-  def disableAllSwitches(): Unit = {
-    switches.foreach(switch => disable(switch))
-  }
-
   override def beforeEach(): Unit = {
     super.beforeEach()
     disableAllSwitches

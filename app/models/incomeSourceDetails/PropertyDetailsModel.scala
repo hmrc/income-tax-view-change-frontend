@@ -20,7 +20,7 @@ import java.time.LocalDate
 import models.core.{AccountingPeriodModel, CessationModel}
 import play.api.libs.json.{Json, OFormat}
 
-case class PropertyDetailsModel(incomeSourceId: Option[String],
+case class PropertyDetailsModel(incomeSourceId: String,
                                 accountingPeriod: Option[AccountingPeriodModel],
                                 firstAccountingPeriodEndDate: Option[LocalDate],
                                 incomeSourceType: Option[String],

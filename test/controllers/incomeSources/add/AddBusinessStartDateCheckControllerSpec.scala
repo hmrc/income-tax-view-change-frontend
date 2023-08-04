@@ -51,10 +51,6 @@ class AddBusinessStartDateCheckControllerSpec extends TestSupport
   with ImplicitDateFormatter
   with FeatureSwitching {
 
-  def disableAllSwitches(): Unit = {
-    switches.foreach(switch => disable(switch))
-  }
-
   val testBusinessStartDate: String = "2022-11-11"
   val testBusinessAccountingPeriodStartDate: String = "2022-11-11"
   val testBusinessAccountingPeriodEndDate: String = "2023-04-05"

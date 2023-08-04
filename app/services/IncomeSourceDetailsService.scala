@@ -18,7 +18,6 @@ package services
 
 import auth.MtdItUserWithNino
 import connectors.IncomeTaxViewChangeConnector
-import exceptions.MissingFieldException
 import models.incomeSourceDetails.viewmodels._
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, IncomeSourceDetailsResponse}
 import play.api.Logger
@@ -26,10 +25,9 @@ import play.api.cache.AsyncCacheApi
 import play.api.libs.json.{JsPath, JsSuccess, JsValue, Json}
 import uk.gov.hmrc.http.HeaderCarrier
 
-import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.duration.{Duration, DurationInt}
-import scala.concurrent.{Await, ExecutionContext, Future}
+import scala.concurrent.duration.Duration
+import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
 
 @Singleton
@@ -121,7 +119,7 @@ class IncomeSourceDetailsService @Inject()(val incomeTaxViewChangeConnector: Inc
         viewSoleTraderBusinesses = if (soleTraderBusinessesExists) {
           maybeSoleTraderBusinesses.map { business =>
             ViewBusinessDetailsViewModel(
-              business.incomeSourceId.getOrElse(throw new MissingFieldException("Missing incomeSourceId field")),
+              business.incomeSourceId,
               business.tradingName,
               business.tradingStartDate
             )
@@ -170,7 +168,7 @@ class IncomeSourceDetailsService @Inject()(val incomeTaxViewChangeConnector: Inc
         soleTraderBusinesses = if (soleTraderBusinessesExists) {
           maybeSoleTraderBusinesses.map { business =>
             CeaseBusinessDetailsViewModel(
-              business.incomeSourceId.getOrElse(throw MissingFieldException("Income Source Id")),
+              business.incomeSourceId,
               business.tradingName,
               business.tradingStartDate)
           }

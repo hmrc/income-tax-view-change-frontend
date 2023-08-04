@@ -137,10 +137,6 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
 
   when(mockDateService.getCurrentDate(any())) thenReturn LocalDate.now()
 
-  def disableAllSwitches(): Unit = {
-    switches.foreach(switch => disable(switch))
-  }
-
   override def beforeEach(): Unit = {
     super.beforeEach()
     disableAllSwitches()

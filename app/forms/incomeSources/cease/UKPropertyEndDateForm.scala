@@ -54,10 +54,4 @@ class UKPropertyEndDateForm @Inject()(val dateService: DateServiceInterface) ext
         .verifying(maxDate(currentDate, dateMustNotBeInTheFuture))
       )(DateFormElement.apply)(DateFormElement.unapply))
   }
-
-  object UKPropertyEndDateForm {
-    def apply(dateService: DateServiceInterface)(implicit user: MtdItUser[_]): Form[DateFormElement] = {
-      new UKPropertyEndDateForm(dateService).apply
-    }
-  }
 }

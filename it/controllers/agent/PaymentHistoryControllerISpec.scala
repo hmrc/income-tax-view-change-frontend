@@ -70,7 +70,7 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase {
     mtdbsa = testMtditid,
     yearOfMigration = Some(getCurrentTaxYearEnd.getYear.toString),
     businesses = List(BusinessDetailsModel(
-      Some("testId"),
+      "testId",
       Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
       None,
       None,

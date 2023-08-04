@@ -277,10 +277,6 @@ class NextUpdatesServiceSpec extends TestSupport with MockIncomeTaxViewChangeCon
     }
   }
 
-  def disableAllSwitches(): Unit = {
-    switches.foreach(switch => disable(switch))
-  }
-
   "getObligationDates" should {
     "return the correct set of dates given an ObligationsModel" in {
       disableAllSwitches()

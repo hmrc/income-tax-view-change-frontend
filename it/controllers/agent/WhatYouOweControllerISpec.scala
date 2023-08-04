@@ -32,7 +32,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
     mtdbsa = testMtditid,
     yearOfMigration = None,
     businesses = List(BusinessDetailsModel(
-      Some("testId"),
+      "testId",
       Some(AccountingPeriodModel(testDate, testDate.plusYears(1))),
       None,
       None,
@@ -83,7 +83,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
             mtdbsa = testMtditid,
             yearOfMigration = None,
             businesses = List(BusinessDetailsModel(
-              Some("testId"),
+              "testId",
               Some(AccountingPeriodModel(testDate, testDate.plusYears(1))),
               None,
               None,

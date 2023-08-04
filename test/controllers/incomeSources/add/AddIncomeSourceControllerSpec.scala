@@ -67,10 +67,6 @@ class AddIncomeSourceControllerSpec extends MockAuthenticationPredicate
 
   )
 
-  def disableAllSwitches(): Unit = {
-    switches.foreach(switch => disable(switch))
-  }
-
 
   "The AddIncomeSourcesController" should {
 

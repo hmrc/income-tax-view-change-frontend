@@ -87,7 +87,7 @@ class InYearTaxCalculationControllerISpec extends ComponentSpecBase {
     mtdbsa = testMtditid,
     yearOfMigration = None,
     businesses = List(BusinessDetailsModel(
-      Some("testId"),
+      "testId",
       Some(AccountingPeriodModel(currentDate, currentDate.plusYears(1))),
       Some("Test Trading Name"),
       None,
@@ -96,7 +96,7 @@ class InYearTaxCalculationControllerISpec extends ComponentSpecBase {
     )),
     properties = List(
       PropertyDetailsModel(
-        Some("testId2"),
+        "testId2",
         Some(AccountingPeriodModel(currentDate, currentDate.plusYears(1))),
         None,
         None,

@@ -29,6 +29,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.{DateServiceInterface, IncomeSourceDetailsService, NextUpdatesService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
+import utils.IncomeSourcesUtils
 import views.html.incomeSources.add.BusinessAddedObligations
 
 import java.time.LocalDate
@@ -52,8 +53,52 @@ class BusinessAddedObligationsController @Inject()(authenticate: AuthenticationP
                                                    implicit override val mcc: MessagesControllerComponents,
                                                    val ec: ExecutionContext,
                                                    dateService: DateServiceInterface)
-  extends ClientConfirmedController with I18nSupport with FeatureSwitching {
+  extends ClientConfirmedController with I18nSupport with FeatureSwitching with IncomeSourcesUtils {
 
+  private def getBusinessNameAndStartDate(incomeSourceId: String)(implicit user: MtdItUser[_]): Option[(String, LocalDate)] = {
+    user.incomeSources.businesses
+      .find(_.incomeSourceId.equals(incomeSourceId))
+      .flatMap { addedBusiness =>
+        for {
+          businessName <- addedBusiness.tradingName
+          startDate <- addedBusiness.tradingStartDate
+        } yield (businessName, startDate)
+      }
+  }
+
+  private def getBackUrl(incomeSourceId: String, isAgent: Boolean): String = {
+    val baseRoute = if (isAgent) controllers.incomeSources.add.routes.BusinessReportingMethodController.showAgent _ else
+      controllers.incomeSources.add.routes.BusinessReportingMethodController.show _
+    baseRoute(incomeSourceId).url
+  }
+
+  private def handleRequest(isAgent: Boolean, incomeSourceId: String)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
+    withIncomeSourcesFS {
+      val businessNameAndStartDate = getBusinessNameAndStartDate(incomeSourceId)
+
+      businessNameAndStartDate match {
+        case Some((businessName, startDate)) =>
+          val showPreviousTaxYears: Boolean = startDate.isBefore(dateService.getCurrentTaxYearStart())
+          nextUpdatesService.getObligationsViewModel(incomeSourceId, showPreviousTaxYears) map { viewModel =>
+            val backUrl = getBackUrl(incomeSourceId, isAgent)
+            if (isAgent) Ok(obligationsView(businessName, viewModel,
+              controllers.incomeSources.add.routes.BusinessAddedObligationsController.agentSubmit(), backUrl, isAgent = true))
+            else Ok(obligationsView(businessName, viewModel,
+              controllers.incomeSources.add.routes.BusinessAddedObligationsController.submit(), backUrl, isAgent = false))
+          }
+        case None =>
+          val errorMessage = s"Unable to find incomeSource by id: $incomeSourceId"
+          Logger("application").error(errorMessage)
+          val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
+          Future.successful(errorHandler.showInternalServerError())
+      }
+    }
+  }
+
+  private def handleSubmitRequest(isAgent: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
+    val redirectUrl = if (isAgent) routes.AddIncomeSourceController.showAgent().url else routes.AddIncomeSourceController.show().url
+    Future.successful(Redirect(redirectUrl))
+  }
 
   def show(incomeSourceId: String): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
@@ -61,53 +106,13 @@ class BusinessAddedObligationsController @Inject()(authenticate: AuthenticationP
       handleRequest(isAgent = false, incomeSourceId)
   }
 
-  def showAgent(incomeSourceId: String): Action[AnyContent] =
-    Authenticated.async {
-      implicit request =>
-        implicit user =>
-          getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
-            implicit mtdItUser =>
-              handleRequest(isAgent = true, incomeSourceId)
-          }
-    }
-
-  def handleRequest(isAgent: Boolean, incomeSourceId: String)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
-    lazy val backUrl: String = controllers.incomeSources.add.routes.BusinessReportingMethodController.show(incomeSourceId).url
-    lazy val agentBackUrl = controllers.incomeSources.add.routes.BusinessReportingMethodController.showAgent(incomeSourceId).url
-
-    if (isDisabled(IncomeSources)) {
-      if (isAgent) Future.successful(Redirect(controllers.routes.HomeController.showAgent))
-      else Future.successful(Redirect(controllers.routes.HomeController.show()))
-    } else {
-      val businessDetailsParams = for {
-        addedBusiness <- user.incomeSources.businesses.find(x => x.incomeSourceId.contains(incomeSourceId))
-        businessName <- addedBusiness.tradingName
-        startDate <- addedBusiness.tradingStartDate
-      } yield (addedBusiness, businessName, startDate)
-      businessDetailsParams match {
-        case Some((_, businessName, startDate)) =>
-          val showPreviousTaxYears: Boolean = startDate.isBefore(dateService.getCurrentTaxYearStart())
-          nextUpdatesService.getObligationsViewModel(incomeSourceId, showPreviousTaxYears) map { viewModel =>
-            if (isAgent) Ok(obligationsView(businessName, viewModel,
-              controllers.incomeSources.add.routes.BusinessAddedObligationsController.agentSubmit(), agentBackUrl, isAgent = true))
-            else Ok(obligationsView(businessName, viewModel,
-              controllers.incomeSources.add.routes.BusinessAddedObligationsController.submit(), backUrl, isAgent = false))
-          }
-        case _ =>
-          Logger("application").error(
-            s"[BusinessAddedObligationsController][handleRequest] - unable to find incomeSource by id: $incomeSourceId ")
-          if (isAgent) Future(itvcErrorHandlerAgent.showInternalServerError())
-          else Future(itvcErrorHandler.showInternalServerError())
-      }
-
-    }
-  }
-
-  def handleSubmitRequest(isAgent: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
-    val redirectUrl = if (isAgent) routes.AddIncomeSourceController.showAgent().url else routes.AddIncomeSourceController.show().url
-    Future.successful {
-      Redirect(redirectUrl)
-    }
+  def showAgent(incomeSourceId: String): Action[AnyContent] = Authenticated.async {
+    implicit request =>
+      implicit user =>
+        getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
+          implicit mtdItUser =>
+            handleRequest(isAgent = true, incomeSourceId)
+        }
   }
 
   def submit: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
@@ -124,5 +129,4 @@ class BusinessAddedObligationsController @Inject()(authenticate: AuthenticationP
             handleSubmitRequest(isAgent = true)
         }
   }
-
 }

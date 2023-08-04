@@ -16,11 +16,12 @@
 
 package models.incomeSourceDetails
 
-import java.time.LocalDate
-import models.core.{AccountingPeriodModel, AddressModel, CessationModel, ContactDetailsModel}
+import models.core.{AccountingPeriodModel, CessationModel}
 import play.api.libs.json.{Format, Json}
 
-case class BusinessDetailsModel(incomeSourceId: Option[String],
+import java.time.LocalDate
+
+case class BusinessDetailsModel(incomeSourceId: String,
                                 accountingPeriod: Option[AccountingPeriodModel],
                                 tradingName: Option[String],
                                 firstAccountingPeriodEndDate: Option[LocalDate],
@@ -28,6 +29,7 @@ case class BusinessDetailsModel(incomeSourceId: Option[String],
                                 cessation: Option[CessationModel],
                                 cashOrAccruals: Option[String] = None,
                                 latencyDetails: Option[LatencyDetails] = None) {
+
   def isCeased: Boolean = cessation.exists(_.date.nonEmpty)
 }
 
