@@ -134,12 +134,6 @@ class IncomeSourceDetailsService @Inject()(val incomeTaxViewChangeConnector: Inc
               business.incomeSourceId.getOrElse(throw new MissingFieldException("Missing incomeSourceId field")),
               business.tradingName,
               business.tradingStartDate,
-              address = None,
-              businessAccountingMethod = None,
-              itsaHasMandatedOrVoluntaryStatusCurrentYear = None,
-              taxYearOneCrystallised = None,
-              taxYearTwoCrystallised = None,
-              latencyDetails = None
             )
           }
         } else Nil,
@@ -229,25 +223,6 @@ class IncomeSourceDetailsService @Inject()(val incomeTaxViewChangeConnector: Inc
         )
       }
     }.toEither
-  }
-
-  def getLongAddressFromBusinessAddressDetails(address: Option[AddressModel]): Option[String] = {
-
-    address match {
-      case Some(address) => {
-        val nonNoneFields = List(
-          Some(address.addressLine1),
-          address.addressLine2,
-          address.addressLine3,
-          address.addressLine4,
-          address.postCode,
-          Some(address.countryCode)
-        ).flatten
-
-        Some(nonNoneFields.mkString("<br>"))
-      }
-      case None => None
-    }
   }
 }
 

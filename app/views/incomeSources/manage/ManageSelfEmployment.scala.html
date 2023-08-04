@@ -21,9 +21,8 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components.FormWithCSRF
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcPageHeading
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.pageheading.PageHeading
-@import models.incomeSourceDetails.viewmodels.ViewIncomeSourcesViewModel
-@import exceptions.MissingFieldException
-@import models.incomeSourceDetails.viewmodels.ViewBusinessDetailsViewModel
+@import models.core.AddressModel
+@import models.incomeSourceDetails.viewmodels.ManageBusinessDetailsViewModel
 
 @this(
         mainTemplate: unifiedLayout,
@@ -41,7 +40,7 @@
 )
 
 @(
-        viewModel: ViewBusinessDetailsViewModel,
+        viewModel: ManageBusinessDetailsViewModel,
         isAgent: Boolean,
         backUrl: String
 )(implicit messages: Messages, user: auth.MtdItUser[_])
@@ -79,6 +78,22 @@
     }
 }
 
+@getLongAddressFromBusinessAddressDetails(address: Option[AddressModel]) = @{
+    address match {
+        case Some(address) =>
+            val nonNoneFields = List(
+                Some(address.addressLine1),
+                address.addressLine2,
+                address.addressLine3,
+                address.addressLine4,
+                address.postCode,
+                Some(address.countryCode)
+            ).flatten
+            Some(nonNoneFields.mkString("<br>"))
+        case None => None
+    }
+}
+
 @mainTemplate(
     pageTitle = getMessage("heading"),
     backUrl = Some(backUrl),
@@ -103,7 +118,7 @@
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">@getMessage("business-address")</dt>
             <dd class="govuk-summary-list__value" id="business-address">@{
-                viewModel.address match {
+                getLongAddressFromBusinessAddressDetails(viewModel.address) match {
                     case Some(x) => HtmlFormat.raw(x)
                     case None => messages("incomeSources.generic.unknown")
                 }
@@ -130,7 +145,7 @@
                 }
             }</dd>
         </div>
-        @if(viewModel.itsaHasMandatedOrVoluntaryStatusCurrentYear)
+        @if(viewModel.itsaHasMandatedOrVoluntaryStatusCurrentYear
                 && viewModel.latencyDetails.isDefined) {
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">@getMessage("reporting-method", viewModel.latencyDetails.get.taxYear1.toString, (viewModel.latencyDetails.get.taxYear2).toString)</dt>

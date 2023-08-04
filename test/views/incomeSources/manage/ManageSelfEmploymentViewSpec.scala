@@ -18,7 +18,8 @@ package views.incomeSources.manage
 
 import testUtils.TestSupport
 import forms.incomeSources.add.AddBusinessReportingMethodForm
-import models.incomeSourceDetails.viewmodels.{BusinessReportingMethodViewModel, ViewBusinessDetailsViewModel}
+import models.core.AddressModel
+import models.incomeSourceDetails.viewmodels.{BusinessReportingMethodViewModel, ManageBusinessDetailsViewModel, ViewBusinessDetailsViewModel}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.data.Form
@@ -48,34 +49,30 @@ class ManageSelfEmploymentViewSpec extends TestSupport {
   val annually = messages("incomeSources.manage.business-manage-details.annually")
   val cash = messages("incomeSources.manage.business-manage-details.cash-accounting")
   val traditional = messages("incomeSources.manage.business-manage-details.traditional-accounting")
-  val expectedViewModelAddressString1: Option[String] = Some("Line 1<br>Line 2<br>Line 3<br>Line 4<br>LN1 1NL<br>NI")
-  val expectedViewAddressString1: String = "Line 1 Line 2 Line 3 Line 4 LN1 1NL NI"
+  val expectedAddress: Option[AddressModel] = Some(AddressModel("Line 1", Some("Line 2"), Some("Line 3"), Some("Line 4"), Some("LN12 2NL"), "NI"))
+  val expectedViewAddressString1: String = "Line 1 Line 2 Line 3 Line 4 LN12 2NL NI"
   val expectedBusinessName: String = "nextUpdates.business"
   val expectedBusinessStartDate: String = "1 January 2022"
-  //  val changeLinkHref1: String = "/report-quarterly/income-and-expenses/view/income-sources/manage/confirm-you-want-to-switch?id=XA00001234&taxYear=2023&changeTo=Q"
-  //  val changeLinkHref2: String = "/report-quarterly/income-and-expenses/view/income-sources/manage/confirm-you-want-to-switch?id=XA00001234&taxYear=2024&changeTo=A"
-  val changeLinkAgentHref1: String = "/report-quarterly/income-and-expenses/view/agents/income-sources/manage/confirm-you-want-to-switch?id=XA00001234&taxYear=2023&changeTo=Q"
-  val changeLinkAgentHref2: String = "/report-quarterly/income-and-expenses/view/agents/income-sources/manage/confirm-you-want-to-switch?id=XA00001234&taxYear=2024&changeTo=A"
 
-  val viewModel: ViewBusinessDetailsViewModel = ViewBusinessDetailsViewModel(
+  val viewModel: ManageBusinessDetailsViewModel = ManageBusinessDetailsViewModel(
     incomeSourceId = testSelfEmploymentId,
     tradingName = Some(testTradeName),
     tradingStartDate = Some(testStartDate),
-    address = expectedViewModelAddressString1,
+    address = expectedAddress,
     businessAccountingMethod = Some("cash"),
-    itsaHasMandatedOrVoluntaryStatusCurrentYear = Some(true),
+    itsaHasMandatedOrVoluntaryStatusCurrentYear = true,
     taxYearOneCrystallised = Some(false),
     taxYearTwoCrystallised = Some(false),
     latencyDetails = Some(testLatencyDetailsViewModel1)
   )
 
-  val viewModel2: ViewBusinessDetailsViewModel = ViewBusinessDetailsViewModel(
+  val viewModel2: ManageBusinessDetailsViewModel = ManageBusinessDetailsViewModel(
     incomeSourceId = testSelfEmploymentId,
     tradingName = None,
     tradingStartDate = None,
     address = None,
     businessAccountingMethod = None,
-    itsaHasMandatedOrVoluntaryStatusCurrentYear = Some(false),
+    itsaHasMandatedOrVoluntaryStatusCurrentYear = false,
     taxYearOneCrystallised = None,
     taxYearTwoCrystallised = None,
     latencyDetails = None

@@ -29,12 +29,6 @@ case class ViewIncomeSourcesViewModel(viewSoleTraderBusinesses: List[ViewBusines
 case class ViewBusinessDetailsViewModel(incomeSourceId: String,
                                         tradingName: Option[String],
                                         tradingStartDate: Option[LocalDate],
-                                        address: Option[String],
-                                        businessAccountingMethod: Option[String] = None,
-                                        itsaHasMandatedOrVoluntaryStatusCurrentYear: Boolean,
-                                        taxYearOneCrystallised: Option[Boolean],
-                                        taxYearTwoCrystallised: Option[Boolean],
-                                        latencyDetails: Option[ViewLatencyDetailsViewModel]
                                        )
 
 case class ViewPropertyDetailsViewModel(tradingStartDate: Option[LocalDate])
@@ -42,6 +36,3 @@ case class ViewPropertyDetailsViewModel(tradingStartDate: Option[LocalDate])
 case class ViewCeasedBusinessDetailsViewModel(tradingName: Option[String],
                                               tradingStartDate: Option[LocalDate],
                                               cessationDate: LocalDate)
-
-case class ViewLatencyDetailsViewModel(latencyEndDate: LocalDate, taxYear1: Int, latencyIndicator1: String,
-                                       taxYear2: Int, latencyIndicator2: String)

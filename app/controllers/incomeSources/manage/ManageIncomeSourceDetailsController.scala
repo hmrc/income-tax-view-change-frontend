@@ -23,7 +23,7 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import exceptions.MissingFieldException
-import models.incomeSourceDetails.viewmodels.{ViewBusinessDetailsViewModel, ViewLatencyDetailsViewModel}
+import models.incomeSourceDetails.viewmodels.{ViewLatencyDetailsViewModel, ManageBusinessDetailsViewModel}
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, LatencyDetails}
 import play.api.Logger
 import play.api.mvc._
@@ -95,8 +95,8 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageSelfEmployme
     }
   }
 
-  def getViewIncomeSourceChosenViewModel(sources: IncomeSourceDetailsModel, id: String, isAgent: Boolean)
-                                        (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, ViewBusinessDetailsViewModel]] = {
+  def getManageIncomeSourceViewModel(sources: IncomeSourceDetailsModel, id: String, isAgent: Boolean)
+                                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, ManageBusinessDetailsViewModel]] = {
 
     val desiredIncomeSourceMaybe: Option[BusinessDetailsModel] = sources.businesses
       .filterNot(_.isCeased)
@@ -111,11 +111,11 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageSelfEmployme
               i <- itsaStatusService.hasMandatedOrVoluntaryStatusCurrentYear
             } yield {
               if (desiredIncomeSourceMaybe.isDefined) {
-                Right(ViewBusinessDetailsViewModel(
+                Right(ManageBusinessDetailsViewModel(
                   incomeSourceId = desiredIncomeSourceMaybe.get.incomeSourceId.get,
                   tradingName = desiredIncomeSourceMaybe.get.tradingName,
                   tradingStartDate = desiredIncomeSourceMaybe.get.tradingStartDate,
-                  address = incomeSourceDetailsService.getLongAddressFromBusinessAddressDetails(desiredIncomeSourceMaybe.get.address),
+                  address = desiredIncomeSourceMaybe.get.address,
                   businessAccountingMethod = desiredIncomeSourceMaybe.get.cashOrAccruals,
                   itsaHasMandatedOrVoluntaryStatusCurrentYear = true,
                   taxYearOneCrystallised = None,
@@ -130,11 +130,11 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageSelfEmployme
             }
           case Right(crystallisationData: List[Boolean]) =>
             if (desiredIncomeSourceMaybe.isDefined) {
-              Future(Right(ViewBusinessDetailsViewModel(
+              Future(Right(ManageBusinessDetailsViewModel(
                 incomeSourceId = desiredIncomeSourceMaybe.get.incomeSourceId.get,
                 tradingName = desiredIncomeSourceMaybe.get.tradingName,
                 tradingStartDate = desiredIncomeSourceMaybe.get.tradingStartDate,
-                address = incomeSourceDetailsService.getLongAddressFromBusinessAddressDetails(desiredIncomeSourceMaybe.get.address),
+                address = desiredIncomeSourceMaybe.get.address,
                 businessAccountingMethod = desiredIncomeSourceMaybe.get.cashOrAccruals,
                 itsaHasMandatedOrVoluntaryStatusCurrentYear = true,
                 taxYearOneCrystallised = Option(crystallisationData.head),
@@ -154,11 +154,11 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageSelfEmployme
         }
       case false =>
         if (desiredIncomeSourceMaybe.isDefined) {
-          Future(Right(ViewBusinessDetailsViewModel(
+          Future(Right(ManageBusinessDetailsViewModel(
             incomeSourceId = desiredIncomeSourceMaybe.get.incomeSourceId.get,
             tradingName = desiredIncomeSourceMaybe.get.tradingName,
             tradingStartDate = desiredIncomeSourceMaybe.get.tradingStartDate,
-            address = incomeSourceDetailsService.getLongAddressFromBusinessAddressDetails(desiredIncomeSourceMaybe.get.address),
+            address = desiredIncomeSourceMaybe.get.address,
             businessAccountingMethod = desiredIncomeSourceMaybe.get.cashOrAccruals,
             itsaHasMandatedOrVoluntaryStatusCurrentYear = false,
             taxYearOneCrystallised = None,
@@ -180,7 +180,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageSelfEmployme
       Future.successful(Redirect(controllers.routes.HomeController.show()))
     } else {
       for {
-        value <- getViewIncomeSourceChosenViewModel(sources = sources, id = id, isAgent = isAgent)
+        value <- getManageIncomeSourceViewModel(sources = sources, id = id, isAgent = isAgent)
       } yield {
         value match {
           case Right(viewModel) =>
@@ -189,7 +189,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageSelfEmployme
               backUrl = backUrl
             ))
           case Left(error) =>
-            Logger("application").error(s"[ManageIncomeSourceDetailsController][extractIncomeSource] unable to find income source. isAgent = $isAgent")
+            Logger("application").error(s"[ManageIncomeSourceDetailsController][extractIncomeSource] unable to find income source: $error. isAgent = $isAgent")
             if (isAgent) {
               itvcErrorHandlerAgent.showInternalServerError()
             } else {

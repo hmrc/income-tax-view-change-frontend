@@ -21,7 +21,7 @@ import testConstants.BaseTestConstants._
 import testConstants.NextUpdatesTestConstants.{fakeNextUpdatesModel, openObligation, overdueObligation}
 import models.core._
 import models.incomeSourceDetails.{BusinessDetailsModel, LatencyDetails}
-import models.incomeSourceDetails.viewmodels.{BusinessDetailsViewModel, CeaseBusinessDetailsViewModel, ViewBusinessDetailsViewModel, ViewLatencyDetailsViewModel}
+import models.incomeSourceDetails.viewmodels.{BusinessDetailsViewModel, CeaseBusinessDetailsViewModel, ViewBusinessDetailsViewModel, ViewLatencyDetailsViewModel, ManageBusinessDetailsViewModel}
 import models.incomeSourceDetails.viewmodels.{BusinessDetailsViewModel, CeasedBusinessDetailsViewModel}
 import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, ObligationsModel}
 
@@ -316,26 +316,38 @@ object BusinessDetailsTestConstants {
   val viewBusinessDetailsViewModel = ViewBusinessDetailsViewModel(
     incomeSourceId = testSelfEmploymentId,
     tradingName = testTradeNameOption,
-    tradingStartDate = testStartDateOption,
-    itsaHasMandatedOrVoluntaryStatusCurrentYear = None,
-    address = None,
-    taxYearOneCrystallised = None,
-    taxYearTwoCrystallised = None,
-    latencyDetails = Some(testLatencyDetailsViewModel1),
-    businessAccountingMethod = None
+    tradingStartDate = testStartDateOption
   )
 
   val viewBusinessDetailsViewModel2 = ViewBusinessDetailsViewModel(
     incomeSourceId = testSelfEmploymentId,
     tradingName = testTradeNameOption,
-    tradingStartDate = testStartDateOption,
-    itsaHasMandatedOrVoluntaryStatusCurrentYear = None,
-    address = None,
-    taxYearOneCrystallised = None,
-    taxYearTwoCrystallised = None,
-    latencyDetails = None,
-    businessAccountingMethod = None
+    tradingStartDate = testStartDateOption
   )
+
+//  val manageBusinessDetailsViewModel = ManageBusinessDetailsViewModel(
+//    incomeSourceId = testSelfEmploymentId,
+//    tradingName = testTradeNameOption,
+//    tradingStartDate = testStartDateOption,
+//    itsaHasMandatedOrVoluntaryStatusCurrentYear = true,
+//    address = None,
+//    taxYearOneCrystallised = None,
+//    taxYearTwoCrystallised = None,
+//    latencyDetails = Some(testLatencyDetailsViewModel1),
+//    businessAccountingMethod = None
+//  )
+//
+//  val manageBusinessDetailsViewModel2 = ManageBusinessDetailsViewModel(
+//    incomeSourceId = testSelfEmploymentId,
+//    tradingName = testTradeNameOption,
+//    tradingStartDate = testStartDateOption,
+//    itsaHasMandatedOrVoluntaryStatusCurrentYear = false,
+//    address = None,
+//    taxYearOneCrystallised = None,
+//    taxYearTwoCrystallised = None,
+//    latencyDetails = None,
+//    businessAccountingMethod = None
+//  )
 
   val business2 = BusinessDetailsModel(
     incomeSourceId = Some(testSelfEmploymentId2),

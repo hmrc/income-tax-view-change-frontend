@@ -82,7 +82,7 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
     val titleAgent: String = s"${messages("htmlTitle.agent", heading)}"
     val link: String = s"${messages("incomeSources.manage.business-manage-details.change")}"
     val incomeSourceId: String = "XAIS00000000008"
-    val businessWithLatencyAddress: String = "64 Zoo Lane, Happy Place, Magical Land, England, ZL1 064, UK"
+    val businessWithLatencyAddress: String = "64 Zoo Lane Happy Place Magical Land England ZL1 064 UK"
     val unknown: String = messages("incomeSources.generic.unknown")
     val annually: String = messages("incomeSources.manage.business-manage-details.annually")
     val quarterly: String = messages("incomeSources.manage.business-manage-details.quarterly")
@@ -115,8 +115,6 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         when(mockITSAStatusService.hasMandatedOrVoluntaryStatusCurrentYear(any, any, any))
           .thenReturn(Future.successful(true))
         mockSingleBusinessIncomeSourceNoLatency()
-        when(mockIncomeSourceDetailsService.getLongAddressFromBusinessAddressDetails(ArgumentMatchers.eq(Option(testBizAddress))))
-          .thenReturn(Some("64 Zoo Lane, Happy Place, Magical Land, England, ZL1 064, UK"))
 
       case FIRST_AND_SECOND_YEAR_NOT_CRYSTALLIZED =>
         when(mockDateService.getCurrentTaxYearEnd(any)).thenReturn(2023)
@@ -127,8 +125,6 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
           .thenReturn(Future.successful(Some(false)))
         when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.eq(2024))(any, any, any))
           .thenReturn(Future.successful(Some(false)))
-        when(mockIncomeSourceDetailsService.getLongAddressFromBusinessAddressDetails(ArgumentMatchers.eq(Option(testBizAddress))))
-          .thenReturn(Some("64 Zoo Lane, Happy Place, Magical Land, England, ZL1 064, UK"))
 
       case FIRST_AND_SECOND_YEAR_CRYSTALLIZED =>
         when(mockDateService.getCurrentTaxYearEnd(any)).thenReturn(2023)
@@ -139,16 +135,12 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
           .thenReturn(Future.successful(Some(true)))
         when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.eq(2024))(any, any, any))
           .thenReturn(Future.successful(Some(true)))
-        when(mockIncomeSourceDetailsService.getLongAddressFromBusinessAddressDetails(any))
-          .thenReturn(Some("64 Zoo Lane, Happy Place, Magical Land, England, ZL1 064, UK"))
 
       case NON_ELIGIBLE_ITSA_STATUS =>
         when(mockDateService.getCurrentTaxYearEnd(any)).thenReturn(2023)
         when(mockITSAStatusService.hasMandatedOrVoluntaryStatusCurrentYear(any, any, any))
           .thenReturn(Future.successful(false))
         mockBusinessIncomeSourceWithLatency2023AndUnknownValues()
-        when(mockIncomeSourceDetailsService.getLongAddressFromBusinessAddressDetails(any))
-          .thenReturn(None)
     }
 
     enable(IncomeSources)

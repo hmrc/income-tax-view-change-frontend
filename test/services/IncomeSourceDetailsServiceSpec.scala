@@ -214,16 +214,4 @@ class IncomeSourceDetailsServiceSpec extends TestSupport with MockIncomeTaxViewC
       }
     }
   }
-  "The IncomeSourceDetailsService.getViewIncomeSourceViewModel method" when {
-    "return a formatted string as a combination of the address field when all fields are full" in {
-      val result = TestIncomeSourceDetailsService.getLongAddressFromBusinessAddressDetails(addressModel1)
-
-      result shouldBe expectedAddressString1
-    }
-    "return a formatted string as a combination of the address field when some fields are missing" in {
-      val result = TestIncomeSourceDetailsService.getLongAddressFromBusinessAddressDetails(addressModel2)
-
-      result shouldBe expectedAddressString2
-    }
-  }
 }
