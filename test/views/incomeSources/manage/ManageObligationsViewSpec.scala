@@ -46,8 +46,6 @@ class ManageObligationsViewSpec extends ViewSpec {
     val buttonText: String = "Your income sources"
   }
 
-  val backUrl: String = controllers.incomeSources.manage.routes.ManageConfirmController.show().url
-
   val view: ManageObligations = app.injector.instanceOf[ManageObligations]
 
   val day: LocalDate = LocalDate.of(2022, 1, 1)
@@ -61,8 +59,11 @@ class ManageObligationsViewSpec extends ViewSpec {
   )
 
   val taxYear: TaxYear = TaxYear(2023, 2024)
+  val taxYearString: String = "2023-2024"
   val quarterly = "quarterly"
   val annually = "annual"
+
+  val backUrl: String = controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController.showUKProperty(annually, taxYearString).url
 
   val emptyViewModel: ObligationsViewModel = ObligationsViewModel(Seq.empty, Seq.empty, Seq.empty, Seq.empty, 2023, showPrevTaxYears = false)
 

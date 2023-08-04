@@ -1498,6 +1498,13 @@ incomeSources.add.ukPropertyReportingMethod.chooseAnnualReport        =   Dewis 
 incomeSources.add.ukPropertyReportingMethod.chooseQuarterlyReport     =   Dewis cyflwyno adroddiadau’n chwarterol
 incomeSources.add.ukPropertyReportingMethod.error                     =   Dewiswch a hoffech gyflwyno adroddiad yn flynyddol neu’n chwarterol ar gyfer blwyddyn dreth {0} i {1}
 
+# manage uk property reporting method
+incomeSources.manage.propertyReportingMethod.heading.annual         = Cadarnhewch eich bod am gyflwyno adroddiadau’n flynyddol ar gyfer blwyddyn dreth {0} i {1}
+incomeSources.manage.propertyReportingMethod.heading.quarterly      = Cadarnhewch eich bod am gyflwyno adroddiadau’n chwarterol ar gyfer blwyddyn dreth {0} i {1}
+incomeSources.manage.propertyReportingMethod.checkbox.annual        = Hoffwn newid i adrodd yn flynyddol
+incomeSources.manage.propertyReportingMethod.checkbox.quarterly     = Hoffwn newid i adrodd yn chwarterol
+incomeSources.manage.propertyReportingMethod.error.quarterly        = Dewiswch eich bod am newid i gyflwyno adroddiadau’n chwarterol
+incomeSources.manage.propertyReportingMethod.error.annual           = Dewiswch eich bod am newid i gyflwyno adroddiadau’n flynyddol
 # manage obligations page
 incomeSources.add.manageObligations.h1                                =   Bydd
 incomeSources.add.manageObligations.h2                                =   yn cyflwyno adroddiadau’n

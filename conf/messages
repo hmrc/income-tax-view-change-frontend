@@ -1526,6 +1526,14 @@ incomeSources.add.ukPropertyReportingMethod.chooseAnnualReport        =   Choose
 incomeSources.add.ukPropertyReportingMethod.chooseQuarterlyReport     =   Choose quarterly reporting
 incomeSources.add.ukPropertyReportingMethod.error                     =   Select if you want to report annually or quarterly for tax year {0} to {1}
 
+# manage uk property reporting method
+incomeSources.manage.propertyReportingMethod.heading.annual         = Confirm you want to report annually for the tax year {0} to {1}
+incomeSources.manage.propertyReportingMethod.heading.quarterly      = Confirm you want to report quarterly for the tax year {0} to {1}
+incomeSources.manage.propertyReportingMethod.checkbox.annual        = Yes, I want to switch to annual reporting
+incomeSources.manage.propertyReportingMethod.checkbox.quarterly     = Yes, I want to switch to quarterly reporting
+incomeSources.manage.propertyReportingMethod.error.quarterly        = Select that you want to switch to quarterly reporting
+incomeSources.manage.propertyReportingMethod.error.annual           = Select that you want to switch to annual reporting
+
 # manage obligations page
 incomeSources.add.manageObligations.h1                                =
 incomeSources.add.manageObligations.h2                                =   will report

@@ -53,6 +53,27 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageSelfEmployme
                                                     implicit override val mcc: MessagesControllerComponents, val appConfig: FrontendAppConfig) extends ClientConfirmedController
   with FeatureSwitching {
 
+
+  def showUkProperty: Action[AnyContent] = Action(Ok)
+
+  def showUkPropertyAgent: Action[AnyContent] = Action(Ok)
+
+  def showForeignProperty: Action[AnyContent] = Action(Ok)
+
+  def showForeignPropertyAgent: Action[AnyContent] = Action(Ok)
+
+  def submitUkProperty: Action[AnyContent] = Action(Ok)
+
+  def submitUkPropertyAgent: Action[AnyContent] = Action(Ok)
+
+  def submitForeignProperty: Action[AnyContent] = Action(Ok)
+
+  def submitForeignPropertyAgent: Action[AnyContent] = Action(Ok)
+
+  def submitSoleTraderBusiness: Action[AnyContent] = Action(Ok)
+
+  def submitSoleTraderBusinessAgent: Action[AnyContent] = Action(Ok)
+
   def showSoleTraderBusiness(id: String): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
