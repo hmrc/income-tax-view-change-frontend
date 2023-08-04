@@ -128,26 +128,22 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageSelfEmployme
       case true =>
         getCrystallisationInformation(desiredIncomeSourceMaybe).value.flatMap {
           case Left(x) =>
-            for {
-              i <- itsaStatusService.hasMandatedOrVoluntaryStatusCurrentYear
-            } yield {
-              if (desiredIncomeSourceMaybe.isDefined) {
-                Right(ManageBusinessDetailsViewModel(
-                  incomeSourceId = desiredIncomeSourceMaybe.get.incomeSourceId.get,
-                  tradingName = desiredIncomeSourceMaybe.get.tradingName,
-                  tradingStartDate = desiredIncomeSourceMaybe.get.tradingStartDate,
-                  address = desiredIncomeSourceMaybe.get.address,
-                  businessAccountingMethod = desiredIncomeSourceMaybe.get.cashOrAccruals,
-                  itsaHasMandatedOrVoluntaryStatusCurrentYear = true,
-                  taxYearOneCrystallised = None,
-                  taxYearTwoCrystallised = None,
-                  latencyDetails = None))
-              }
-              else {
-                Left(
-                  new Error("Unable to find income source")
-                )
-              }
+            if (desiredIncomeSourceMaybe.isDefined) {
+              Future(Right(ManageBusinessDetailsViewModel(
+                incomeSourceId = desiredIncomeSourceMaybe.get.incomeSourceId.get,
+                tradingName = desiredIncomeSourceMaybe.get.tradingName,
+                tradingStartDate = desiredIncomeSourceMaybe.get.tradingStartDate,
+                address = desiredIncomeSourceMaybe.get.address,
+                businessAccountingMethod = desiredIncomeSourceMaybe.get.cashOrAccruals,
+                itsaHasMandatedOrVoluntaryStatusCurrentYear = true,
+                taxYearOneCrystallised = None,
+                taxYearTwoCrystallised = None,
+                latencyDetails = None)))
+            }
+            else {
+              Future(Left(
+                new Error("Unable to find income source")
+              ))
             }
           case Right(crystallisationData: List[Boolean]) =>
             if (desiredIncomeSourceMaybe.isDefined) {
