@@ -68,7 +68,7 @@
 }
 
 @taxYearValue(taxYear: Int) = @{
-    s"${taxYear.toString}-${(taxYear + 1).toString}"
+    s"$taxYear-${taxYear + 1}"
 }
 
 @extractOption(content: Option[String]) = @{
