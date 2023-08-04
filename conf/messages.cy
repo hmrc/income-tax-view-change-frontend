@@ -1365,7 +1365,7 @@ incomeSources.cease.BusinessEndDate.error.beforeStartDate                 = Ni a
 incomeSources.cease.BusinessEndDate.error.beforeEarliestDate              = Ni all y dyddiad dod i ben fod cyn 6 Ebrill 2015
 
 incomeSources.ceaseBusiness.checkDetails.heading                    = Gwirio’ch manylion
-incomeSources.ceaseBusiness.checkDetails.soloTrader                 = Y busnes unig fasnachwr a nodwyd gennych
+incomeSources.ceaseBusiness.checkDetails.soloTrader                 = Busnesau unig fasnachwr
 incomeSources.ceaseBusiness.checkDetails.dateStopped                = Dyddiad y gwnaeth y busnes stopio
 incomeSources.ceaseBusiness.checkDetails.businessName               = Busnes sydd wedi stopio
 incomeSources.ceaseBusiness.checkDetails.businessAddress            = Cyfeiriad y busnes
