@@ -325,30 +325,6 @@ object BusinessDetailsTestConstants {
     tradingStartDate = testStartDateOption
   )
 
-//  val manageBusinessDetailsViewModel = ManageBusinessDetailsViewModel(
-//    incomeSourceId = testSelfEmploymentId,
-//    tradingName = testTradeNameOption,
-//    tradingStartDate = testStartDateOption,
-//    itsaHasMandatedOrVoluntaryStatusCurrentYear = true,
-//    address = None,
-//    taxYearOneCrystallised = None,
-//    taxYearTwoCrystallised = None,
-//    latencyDetails = Some(testLatencyDetailsViewModel1),
-//    businessAccountingMethod = None
-//  )
-//
-//  val manageBusinessDetailsViewModel2 = ManageBusinessDetailsViewModel(
-//    incomeSourceId = testSelfEmploymentId,
-//    tradingName = testTradeNameOption,
-//    tradingStartDate = testStartDateOption,
-//    itsaHasMandatedOrVoluntaryStatusCurrentYear = false,
-//    address = None,
-//    taxYearOneCrystallised = None,
-//    taxYearTwoCrystallised = None,
-//    latencyDetails = None,
-//    businessAccountingMethod = None
-//  )
-
   val business2 = BusinessDetailsModel(
     incomeSourceId = Some(testSelfEmploymentId2),
     accountingPeriod = Some(testBusinessAccountingPeriod),
