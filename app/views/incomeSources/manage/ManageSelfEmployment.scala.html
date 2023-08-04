@@ -53,9 +53,9 @@
 
 @changeReportingMethodUrl(id: String, taxYear: String, changeTo: String) = @{
     if(isAgent){
-        controllers.incomeSources.manage.routes.ChangeBusinessReportingMethodController.showAgent(id, taxYear, changeTo: String).url
+        controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController.showSoleTraderBusinessAgent(id, taxYear, changeTo: String).url
     } else {
-        controllers.incomeSources.manage.routes.ChangeBusinessReportingMethodController.show(id, taxYear, changeTo: String).url
+        controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController.showSoleTraderBusiness(id, taxYear, changeTo: String).url
     }
 }
 
