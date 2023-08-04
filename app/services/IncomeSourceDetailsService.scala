@@ -16,12 +16,13 @@
 
 package services
 
-import auth.MtdItUserWithNino
+import auth.{MtdItUser, MtdItUserWithNino}
+import config.featureswitch.TimeMachineAddYear
 import connectors.IncomeTaxViewChangeConnector
 import exceptions.MissingFieldException
 import models.core.AddressModel
 import models.incomeSourceDetails.viewmodels._
-import models.incomeSourceDetails.{IncomeSourceDetailsModel, IncomeSourceDetailsResponse}
+import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, IncomeSourceDetailsResponse, LatencyDetails}
 import play.api.Logger
 import play.api.cache.AsyncCacheApi
 import play.api.libs.json.{JsPath, JsSuccess, JsValue, Json}
@@ -158,7 +159,6 @@ class IncomeSourceDetailsService @Inject()(val incomeTaxViewChangeConnector: Inc
       )
     }.toEither
   }
-
 
   def getCeaseIncomeSourceViewModel(sources: IncomeSourceDetailsModel): Either[Throwable, CeaseIncomeSourcesViewModel] = {
 

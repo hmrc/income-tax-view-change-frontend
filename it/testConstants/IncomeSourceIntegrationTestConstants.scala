@@ -34,6 +34,13 @@ object IncomeSourceIntegrationTestConstants {
     yearOfMigration = Some("2018")
   )
 
+  val singleBusinessResponse2: IncomeSourceDetailsModel = IncomeSourceDetailsModel(
+    testMtdItId,
+    businesses = List(business1WithAddress2),
+    properties = Nil,
+    yearOfMigration = Some("2018")
+  )
+
   val singleBusinessResponseWoMigration: IncomeSourceDetailsModel = IncomeSourceDetailsModel(
     testMtdItId,
     businesses = List(business1),
@@ -44,6 +51,20 @@ object IncomeSourceIntegrationTestConstants {
   def singleBusinessResponseInLatencyPeriod(latencyDetails: LatencyDetails): IncomeSourceDetailsModel = IncomeSourceDetailsModel(
     testMtdItId,
     businesses = List(business1.copy(latencyDetails = Some(latencyDetails))),
+    properties = Nil,
+    yearOfMigration = Some("2018")
+  )
+
+  def singleBusinessResponseInLatencyPeriod2(latencyDetails: LatencyDetails): IncomeSourceDetailsModel = IncomeSourceDetailsModel(
+    testMtdItId,
+    businesses = List(business1WithAddress2.copy(latencyDetails = Some(latencyDetails))),
+    properties = Nil,
+    yearOfMigration = Some("2018")
+  )
+
+  def singleBusinessResponseWithUnknownsInLatencyPeriod(latencyDetails: LatencyDetails): IncomeSourceDetailsModel = IncomeSourceDetailsModel(
+    testMtdItId,
+    businesses = List(business3WithUnknowns.copy(latencyDetails = Some(latencyDetails))),
     properties = Nil,
     yearOfMigration = Some("2018")
   )

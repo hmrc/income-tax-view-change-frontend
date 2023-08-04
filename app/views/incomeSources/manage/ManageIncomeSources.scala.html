@@ -46,9 +46,9 @@
 
 @viewSelfEmploymentDetailsURL(id: String) = @{
     if(isAgent){
-        controllers.incomeSources.manage.routes.ManageSelfEmploymentController.showAgent(id).url
+        controllers.incomeSources.manage.routes.ManageIncomeSourceDetailsController.showSoleTraderBusinessAgent(id).url
     } else {
-        controllers.incomeSources.manage.routes.ManageSelfEmploymentController.show(id).url
+        controllers.incomeSources.manage.routes.ManageIncomeSourceDetailsController.showSoleTraderBusiness(id).url
     }
 }
 

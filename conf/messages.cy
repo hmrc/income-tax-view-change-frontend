@@ -1259,6 +1259,9 @@ radioForm.checkDate.heading                                         = A yw’r d
 radioForm.yes                                                       = Iawn
 radioForm.no                                                        = Na
 
+#Generic income sources messages
+incomeSources.generic.unknown                                    = Anhysbys
+
 incomeSources.ceaseUKProperty.heading                            = Dod ag eiddo yn y DU i ben
 incomeSources.ceaseUKProperty.radioLabel                         = Rwy’n datgan nad wyf bellach yn cael incwm o unrhyw eiddo yn y DU.
 incomeSources.ceaseUKProperty.radioError                         = Mae’n rhaid i chi ddatgan nad ydych chi bellach yn cael incwm o unrhyw eiddo yn y DU
@@ -1513,3 +1516,16 @@ incomeSources.add.manageObligations.sole-trader                       =   y busn
 incomeSources.add.manageObligations.uk-property                       =   eiddo yn y DU
 incomeSources.add.manageObligations.foreign-property                  =   eiddo tramor
 incomeSources.add.manageObligations.heading                           =   Yr hyn y mae’n rhaid i chi ei wneud
+# manage journey manage income source
+incomeSources.manage.business-manage-details.heading                  =   Gwirio’ch manylion
+incomeSources.manage.business-manage-details.sole-trader-section      =   Dull cyfrifyddu ar gyfer incwm unig fasnachwr
+incomeSources.manage.business-manage-details.business-name            =   Enw’r busnes
+incomeSources.manage.business-manage-details.business-address         =   Cyfeiriad y busnes
+incomeSources.manage.business-manage-details.date-started             =   Dyddiad cychwyn
+incomeSources.manage.business-manage-details.accounting-method        =   Dull cyfrifyddu ar gyfer incwm unig fasnachwr
+incomeSources.manage.business-manage-details.reporting-method         =   Dull o adrodd am incwm ar gyfer {0}-{1}
+incomeSources.manage.business-manage-details.change                   =   Newid
+incomeSources.manage.business-manage-details.quarterly                =   Bob chwarter
+incomeSources.manage.business-manage-details.annually                 =   Bob blwyddyn
+incomeSources.manage.business-manage-details.cash-accounting          =   Cyfrifyddu ar sail arian parod
+incomeSources.manage.business-manage-details.traditional-accounting   =   Cyfrifyddu traddodiadol

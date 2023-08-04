@@ -51,6 +51,10 @@ trait MockIncomeSourceDetailsService extends BeforeAndAfterEach {
     }
   )
 
+  def mockSingleBusinessIncomeSourceNoLatency(userMigrated: Boolean = true): Unit = setupMockGetIncomeSourceDetails()(
+      singleBusinessIncomeNoLatency
+  )
+
   def mockSingleBusinessIncomeSourceError(): Unit = setupMockGetIncomeSourceDetails()(
     errorResponse
   )
@@ -86,6 +90,8 @@ trait MockIncomeSourceDetailsService extends BeforeAndAfterEach {
   def mockBothPropertyBothBusiness(): Unit = setupMockGetIncomeSourceDetails()(ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome)
 
   def mockBusinessIncomeSourceWithLatency2023(): Unit = setupMockGetIncomeSourceDetails()(singleBusinessIncome2023)
+
+  def mockBusinessIncomeSourceWithLatency2023AndUnknownValues(): Unit = setupMockGetIncomeSourceDetails()(singleBusinessIncome2023WithUnknowns)
 
   def mockBusinessIncomeSourceWithLatency2024(): Unit = setupMockGetIncomeSourceDetails()(singleBusinessIncome2024)
 
