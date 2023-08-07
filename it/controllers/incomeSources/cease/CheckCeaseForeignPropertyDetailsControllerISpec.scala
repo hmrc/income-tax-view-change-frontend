@@ -22,7 +22,7 @@ class CheckCeaseForeignPropertyDetailsControllerISpec extends ComponentSpecBase 
   val redirectUri = controllers.incomeSources.cease.routes.CeaseForeignPropertySuccessController.show().url
   val request: UpdateIncomeSourceRequestModel = UpdateIncomeSourceRequestModel(
     nino = testNino,
-    incomeSourceId = foreignProperty.incomeSourceId.get,
+    incomeSourceId = foreignProperty.incomeSourceId,
     cessation = Some(Cessation(true, Some(LocalDate.parse(cessationDate))))
   )
 

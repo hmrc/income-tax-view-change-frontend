@@ -46,10 +46,6 @@ import scala.concurrent.Future
 class CheckUKPropertyDetailsControllerSpec extends TestSupport with MockAuthenticationPredicate
   with MockIncomeSourceDetailsPredicate with MockNavBarEnumFsPredicate with FeatureSwitching with ImplicitDateFormatter with IncomeSourcesUtils {
 
-  def disableAllSwitches(): Unit = {
-    switches.foreach(switch => disable(switch))
-  }
-
   val mockHttpClient: HttpClient = mock(classOf[HttpClient])
   val mockCheckBusinessDetails: CheckBusinessDetails = app.injector.instanceOf[CheckBusinessDetails]
   val mockBusinessDetailsService: CreateBusinessDetailsService = mock(classOf[CreateBusinessDetailsService])

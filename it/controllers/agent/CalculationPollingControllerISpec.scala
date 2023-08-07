@@ -66,7 +66,7 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
     mtdbsa = testMtditid,
     yearOfMigration = None,
     businesses = List(BusinessDetailsModel(
-      Some("testId"),
+      "testId",
       Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
       Some("Test Trading Name"),
       Some(LocalDate.of(2018,1,1)),
@@ -77,7 +77,7 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
     ),
     properties = List(
       PropertyDetailsModel(
-        Some("testId2"),
+        "testId2",
         Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
         Some(LocalDate.of(2018,1,1)),
         propertyIncomeType,

@@ -20,7 +20,7 @@ import models.core.{AccountingPeriodModel, AddressModel, CessationModel}
 import play.api.libs.json.{Format, Json}
 import java.time.LocalDate
 
-case class BusinessDetailsModel(incomeSourceId: Option[String],
+case class BusinessDetailsModel(incomeSourceId: String,
                                 accountingPeriod: Option[AccountingPeriodModel],
                                 tradingName: Option[String],
                                 firstAccountingPeriodEndDate: Option[LocalDate],
@@ -29,6 +29,7 @@ case class BusinessDetailsModel(incomeSourceId: Option[String],
                                 cashOrAccruals: Option[String] = None,
                                 address: Option[AddressModel] = None,
                                 latencyDetails: Option[LatencyDetails] = None) {
+
   def isCeased: Boolean = cessation.exists(_.date.nonEmpty)
 }
 

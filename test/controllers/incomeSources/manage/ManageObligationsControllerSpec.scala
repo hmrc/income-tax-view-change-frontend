@@ -53,10 +53,6 @@ class ManageObligationsControllerSpec extends TestSupport
   with MockNextUpdatesService
   with FeatureSwitching {
 
-  def disableAllSwitches(): Unit = {
-    switches.foreach(switch => disable(switch))
-  }
-
   object TestManageObligationsController extends ManageObligationsController(
     checkSessionTimeout = app.injector.instanceOf[SessionTimeoutPredicate],
     MockAuthenticationPredicate,
@@ -105,7 +101,7 @@ class ManageObligationsControllerSpec extends TestSupport
     else setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
     val sources: IncomeSourceDetailsModel = IncomeSourceDetailsModel("", Some("2022"), List(BusinessDetailsModel(
-      Some(testId),
+      testId,
       None,
       Some("Test name"),
       None,
@@ -297,7 +293,7 @@ class ManageObligationsControllerSpec extends TestSupport
 
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
         val sources: IncomeSourceDetailsModel = IncomeSourceDetailsModel("", Some("2022"), List(BusinessDetailsModel(
-          Some(testId),
+          testId,
           None,
           None,
           None,

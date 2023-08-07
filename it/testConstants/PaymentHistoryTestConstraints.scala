@@ -36,7 +36,7 @@ object PaymentHistoryTestConstraints {
   val testMtdItId = "XIAT0000000000A"
 
   val oldBusiness1 = BusinessDetailsModel(
-    incomeSourceId = Some(testSelfEmploymentId),
+    incomeSourceId = testSelfEmploymentId,
     accountingPeriod = Some(AccountingPeriodModel(
       start = b1AccountingStart,
       end = b1AccountingEnd
@@ -49,7 +49,7 @@ object PaymentHistoryTestConstraints {
   )
 
   val business2 = BusinessDetailsModel(
-    incomeSourceId = Some(otherTestSelfEmploymentId),
+    incomeSourceId = otherTestSelfEmploymentId,
     accountingPeriod = Some(AccountingPeriodModel(
       start = b2AccountingStart,
       end = b2AccountingEnd

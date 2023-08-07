@@ -113,10 +113,6 @@ class BusinessReportingMethodControllerSpec extends TestSupport with MockAuthent
     val isAgent: Boolean = true
   }
 
-  def disableAllSwitches(): Unit = {
-    switches.foreach(switch => disable(switch))
-  }
-
   object Scenario extends Enumeration {
     type Scenario = Value
     val NO_LATENCY, NON_ELIGIBLE_ITS_STATUS, FIRST_YEAR_CRYSTALLIZED,

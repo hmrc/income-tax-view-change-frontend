@@ -43,7 +43,7 @@ class CheckCeaseBusinessDetailsControllerISpec extends ComponentSpecBase {
   val redirectUri = controllers.incomeSources.cease.routes.CeaseBusinessSuccessController.showAgent().url
   val request: UpdateIncomeSourceRequestModel = UpdateIncomeSourceRequestModel(
     nino = testNino,
-    incomeSourceId = business1.incomeSourceId.get,
+    incomeSourceId = business1.incomeSourceId,
     cessation = Some(Cessation(true, Some(LocalDate.parse(cessationDate))))
   )
 

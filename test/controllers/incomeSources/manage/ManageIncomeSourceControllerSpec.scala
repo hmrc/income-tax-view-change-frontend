@@ -67,10 +67,6 @@ class ManageIncomeSourceControllerSpec extends MockAuthenticationPredicate
       ec = ec
     )
 
-  def disableAllSwitches(): Unit = {
-    switches.foreach(switch => disable(switch))
-  }
-
   "The ManageIncomeSourcesController" should {
     "redirect an individual back to the home page" when {
       "the IncomeSources FS is disabled" in {

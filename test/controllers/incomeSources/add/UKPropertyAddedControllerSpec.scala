@@ -80,7 +80,7 @@ class UKPropertyAddedControllerSpec extends TestSupport with MockAuthenticationP
   "UKPropertyAddedController.show" should {
     "return 200 OK" when {
       "FS enabled with newly added UK Property and obligations view model" in {
-        disable(NavBarFs)
+        disableAllSwitches()
         enable(IncomeSources)
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         mockUKPropertyIncomeSource()
@@ -142,8 +142,8 @@ class UKPropertyAddedControllerSpec extends TestSupport with MockAuthenticationP
     }
     "return 303 SEE_OTHER" when {
       "Income Sources FS is disabled" in {
-        disable(IncomeSources)
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+        disable(IncomeSources)
         mockUKPropertyIncomeSource()
 
         val result = TestUKPropertyAddedController.showAgent(testPropertyIncomeId)(fakeRequestConfirmedClient())
@@ -152,7 +152,7 @@ class UKPropertyAddedControllerSpec extends TestSupport with MockAuthenticationP
       }
     }
     "return 500 ISE" when {
-      "UK Property start date was not retrieved" in {
+      "income source id is invalid" in {
         enable(IncomeSources)
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         mockUKPropertyIncomeSource()

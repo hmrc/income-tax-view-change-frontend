@@ -119,7 +119,7 @@ class TaxYearSummaryResponseAuditModelSpec extends WordSpecLike with TestSupport
   ))
 
   val business = List(BusinessDetailsModel(
-    Some("testId"),
+    "testId",
     Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
     Some("Test Trading Name"),
     None,

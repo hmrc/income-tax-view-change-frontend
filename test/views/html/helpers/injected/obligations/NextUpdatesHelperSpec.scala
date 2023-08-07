@@ -36,12 +36,12 @@ class  NextUpdatesHelperSpec extends TestSupport {
   }
 
   lazy val obligationsModel = ObligationsModel(Seq(NextUpdatesModel(
-    business1.incomeSourceId.get,
+    business1.incomeSourceId,
     twoObligationsSuccessModel.obligations
   )))
 
   lazy val crystallisedObligationsModel = ObligationsModel(Seq(NextUpdatesModel(
-    business1.incomeSourceId.get,
+    business1.incomeSourceId,
     List(crystallisedObligation)
   )))
 
