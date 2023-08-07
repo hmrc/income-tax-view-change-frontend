@@ -16,6 +16,7 @@
 
 package testConstants.incomeSources
 
+import models.core.AddressModel
 import models.incomeSourceDetails.viewmodels.CeaseIncomeSourcesViewModel
 import models.incomeSourceDetails.viewmodels.CheckCeaseBusinessDetailsViewModel
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel}
@@ -29,8 +30,11 @@ object IncomeSourceDetailsTestConstants {
   val businessesAndPropertyIncome = IncomeSourceDetailsModel(testMtdItId, Some("2018"), List(business1, business2), List(propertyDetails))
   val businessesAndPropertyIncomeCeased = IncomeSourceDetailsModel(testMtdItId, Some("2018"), List(ceasedBusiness), List(ceasedPropertyDetails))
   val singleBusinessIncome = IncomeSourceDetailsModel(testMtdItId, Some("2017"), List(business1), Nil)
+  val singleBusinessIncomeNoLatency = IncomeSourceDetailsModel(testMtdItId, Some("2017"), List(business1NoLatency), Nil)
+  val singleBusinessIncomeWithLatency2019 = IncomeSourceDetailsModel(testMtdItId, Some("2017"), List(businessWithLatency2019), Nil)
   val singleBusinessIncome2023 = IncomeSourceDetailsModel(testMtdItId, Some("2023"), List(businessWithLatency1), Nil)
-  val singleBusinessIncome2024 = IncomeSourceDetailsModel(testMtdItId, Some("2024"), List(businessWithLatency2), Nil)
+  val singleBusinessIncome2023WithUnknowns = IncomeSourceDetailsModel(testMtdItId, Some("2023"), List(businessWithLatencyAndUnknowns), Nil)
+  val singleBusinessIncome2024 = IncomeSourceDetailsModel(testMtdItId, Some("2024"), List(businessWithLatency4), Nil)
   val singleBusinessIncomeNotMigrated = IncomeSourceDetailsModel(testMtdItId, None, List(business1), Nil)
   val singleBusinessIncomeWithCurrentYear = IncomeSourceDetailsModel(testMtdItId, Some(LocalDate.now().getYear.toString), List(business1), Nil)
   val businessIncome2018and2019 = IncomeSourceDetailsModel(testMtdItId, None, List(business2018, business2019), Nil)
@@ -59,7 +63,22 @@ object IncomeSourceDetailsTestConstants {
   val singleForeignPropertyIncome2023 = IncomeSourceDetailsModel(testMtditid, Some("2023"), Nil, List(foreignPropertyWithLatencyDetails1))
   val singleUKPropertyIncome2024 = IncomeSourceDetailsModel(testMtditid, Some("2024"), Nil, List(ukPropertyWithLatencyDetails2))
   val singleForeignPropertyIncome2024 = IncomeSourceDetailsModel(testMtditid, Some("2024"), Nil, List(foreignPropertyWithLatencyDetails2))
-
+  val addressModel1: Option[AddressModel] = Some(AddressModel(
+    addressLine1 = "Line 1",
+    addressLine2 = Some("Line 2"),
+    addressLine3 = Some("Line 3"),
+    addressLine4 = Some("Line 4"),
+    postCode = Some("LN1 1NL"),
+    countryCode = "NI"
+  ))
+  val addressModel2: Option[AddressModel] = Option(AddressModel(
+    addressLine1 = "A Line 1",
+    addressLine2 = None,
+    addressLine3 = Some("A Line 3"),
+    addressLine4 = None,
+    postCode = Some("LN2 2NL"),
+    countryCode = "GB"
+  ))
 
   val foreignPropertyAndCeasedBusinessIncome = IncomeSourceDetailsModel(testMtdItId, Some("2018"), List(ceasedBusiness, ceasedBusiness2), List(foreignPropertyDetails))
   val foreignPropertyAndCeasedBusinessIncomeNoStartDate = IncomeSourceDetailsModel(testMtdItId, Some("2018"), List(ceasedBusiness, ceasedBusiness2), List(foreignPropertyDetailsNoStartDate))

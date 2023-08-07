@@ -1258,6 +1258,9 @@ radioForm.checkDate.heading                                         = Is this da
 radioForm.yes                                                       = Yes
 radioForm.no                                                        = No
 
+#Generic income sources messages
+incomeSources.generic.unknown                                    = Unknown
+
 incomeSources.ceaseUKProperty.heading                            = Cease UK property
 incomeSources.ceaseUKProperty.radioLabel                         = I declare that I no longer get an income from any property in the UK.
 incomeSources.ceaseUKProperty.radioError                         = You must declare that you no longer get an income from any property in the UK
@@ -1390,7 +1393,7 @@ incomeSources.cease.BusinessEndDate.error.beforeStartDate                 = The 
 incomeSources.cease.BusinessEndDate.error.beforeEarliestDate              = The cessation date cannot be earlier than the 6th of April 2015
 
 incomeSources.ceaseBusiness.checkDetails.heading                    = Check your details
-incomeSources.ceaseBusiness.checkDetails.soloTrader                 = Sole trader business you entered
+incomeSources.ceaseBusiness.checkDetails.soloTrader                 = Sole trader business
 incomeSources.ceaseBusiness.checkDetails.dateStopped                = Date business stopped
 incomeSources.ceaseBusiness.checkDetails.businessName               = Business that’s stopped
 incomeSources.ceaseBusiness.checkDetails.businessAddress            = Business address
@@ -1542,5 +1545,20 @@ incomeSources.add.manageObligations.sole-trader                       =   Sole t
 incomeSources.add.manageObligations.uk-property                       =   UK property
 incomeSources.add.manageObligations.foreign-property                  =   Foreign property
 incomeSources.add.manageObligations.heading                           =   What you must do
+
+
+# manage journey manage income source
+incomeSources.manage.business-manage-details.heading                  =   Manage your details
+incomeSources.manage.business-manage-details.sole-trader-section      =   Sole trader business
+incomeSources.manage.business-manage-details.business-name            =   Business name
+incomeSources.manage.business-manage-details.business-address         =   Business address
+incomeSources.manage.business-manage-details.date-started             =   Date started
+incomeSources.manage.business-manage-details.accounting-method        =   Accounting method for sole trader income
+incomeSources.manage.business-manage-details.reporting-method         =   Income reporting method {0}-{1}
+incomeSources.manage.business-manage-details.change                   =   Change
+incomeSources.manage.business-manage-details.quarterly                =   Quarterly
+incomeSources.manage.business-manage-details.annually                 =   Annually
+incomeSources.manage.business-manage-details.cash-accounting          =   Cash basis accounting
+incomeSources.manage.business-manage-details.traditional-accounting   =   Traditional accounting
 
 

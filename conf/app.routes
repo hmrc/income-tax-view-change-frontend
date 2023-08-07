@@ -200,14 +200,8 @@ POST         /income-sources/add/uk-property-accounting-method            contro
 POST         /agents/income-sources/add/uk-property-accounting-method     controllers.incomeSources.add.UKPropertyAccountingMethodController.submitAgent()
 GET          /income-sources/add/uk-property-check-details                controllers.incomeSources.add.CheckUKPropertyDetailsController.show()
 GET          /agents/income-sources/add/uk-property-check-details         controllers.incomeSources.add.CheckUKPropertyDetailsController.showAgent()
-GET          /income-sources/add/uk-property-reporting-method             controllers.incomeSources.add.UKPropertyReportingMethodController.show(id:String)
-GET          /agents/income-sources/add/uk-property-reporting-method      controllers.incomeSources.add.UKPropertyReportingMethodController.showAgent(id:String)
-GET          /income-sources/add/uk-property-added                        controllers.incomeSources.add.UKPropertyAddedController.show(id: String)
-GET          /agents/income-sources/add/uk-property-added                 controllers.incomeSources.add.UKPropertyAddedController.showAgent(id: String)
 POST         /income-sources/add/uk-property-check-details                controllers.incomeSources.add.CheckUKPropertyDetailsController.submit()
 POST         /agents/income-sources/add/uk-property-check-details         controllers.incomeSources.add.CheckUKPropertyDetailsController.submitAgent()
-GET          /income-sources/add/uk-property-reporting-method             controllers.incomeSources.add.UKPropertyReportingMethodController.show(id:String)
-GET          /agents/income-sources/add/uk-property-reporting-method      controllers.incomeSources.add.UKPropertyReportingMethodController.showAgent(id:String)
 GET          /income-sources/add/foreign-property-start-date              controllers.incomeSources.add.ForeignPropertyStartDateController.show()
 GET          /agents/income-sources/add/foreign-property-start-date       controllers.incomeSources.add.ForeignPropertyStartDateController.showAgent()
 GET          /income-sources/add/change-foreign-property-start-date              controllers.incomeSources.add.ForeignPropertyStartDateController.changeForeignPropertyStartDate()
@@ -267,8 +261,6 @@ GET          /agents/income-sources/add/change-uk-property-accounting-method    
 GET          /income-sources/add/error-uk-property-not-added                    controllers.incomeSources.add.UKPropertyNotAddedController.show()
 GET          /agents/income-sources/add/error-uk-property-not-added             controllers.incomeSources.add.UKPropertyNotAddedController.showAgent()
 
-
-
 # Income Sources - Cease
 GET          /income-sources/cease/cease-an-income-source                 controllers.incomeSources.cease.CeaseIncomeSourceController.show()
 GET          /agents/income-sources/cease/cease-an-income-source          controllers.incomeSources.cease.CeaseIncomeSourceController.showAgent()
@@ -312,8 +304,8 @@ POST         /agents/income-sources/cease/foreign-property-check-details/:cessat
 GET          /income-sources/manage/view-and-manage-income-sources             controllers.incomeSources.manage.ManageIncomeSourceController.show()
 GET          /agents/income-sources/manage/view-and-manage-income-sources      controllers.incomeSources.manage.ManageIncomeSourceController.showAgent()
 
-GET          /income-sources/manage/your-details                               controllers.incomeSources.manage.ManageSelfEmploymentController.show(id: String)
-GET          /agents/income-sources/manage/your-details                        controllers.incomeSources.manage.ManageSelfEmploymentController.showAgent(id: String)
+GET          /income-sources/manage/your-details                               controllers.incomeSources.manage.ManageIncomeSourceDetailsController.showSoleTraderBusiness(id: String)
+GET          /agents/income-sources/manage/your-details                        controllers.incomeSources.manage.ManageIncomeSourceDetailsController.showSoleTraderBusinessAgent(id: String)
 
 GET          /income-sources/manage/your-details-UK-property                   controllers.incomeSources.manage.ManageUKPropertyController.show()
 GET          /agents/income-sources/manage/your-details-UK-property            controllers.incomeSources.manage.ManageUKPropertyController.showAgent()
@@ -384,10 +376,6 @@ GET          /income-sources/add/foreign-property-accounting-method             
 GET          /agents/income-sources/add/foreign-property-accounting-method          controllers.incomeSources.add.ForeignPropertyAccountingMethodController.showAgent()
 GET          /income-sources/add/change-foreign-property-accounting-method          controllers.incomeSources.add.ForeignPropertyAccountingMethodController.changeForeignPropertyAccountingMethod()
 GET          /agents/income-sources/add/change-foreign-property-accounting-method   controllers.incomeSources.add.ForeignPropertyAccountingMethodController.changeForeignPropertyAccountingMethodAgent()
-
-
-GET          /income-sources/add/uk-property-added                           controllers.incomeSources.add.UKPropertyAddedController.show(id:String)
-GET          /agents/income-sources/add/uk-property-added                    controllers.incomeSources.add.UKPropertyAddedController.showAgent(id:String)
 
 GET          /income-sources/cease/cease-business-success           controllers.incomeSources.cease.CeaseBusinessSuccessController.show()
 GET          /agents/income-sources/cease/cease-business-success    controllers.incomeSources.cease.CeaseBusinessSuccessController.showAgent()
