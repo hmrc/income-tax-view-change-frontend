@@ -18,18 +18,18 @@ package controllers.incomeSources.manage
 
 import auth.MtdItUser
 import cats.data.EitherT
-import config.featureswitch.{FeatureSwitching, IncomeSources}
+import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
-import exceptions.MissingFieldException
-import models.incomeSourceDetails.viewmodels.{ViewLatencyDetailsViewModel, ManageBusinessDetailsViewModel}
+import models.incomeSourceDetails.viewmodels.{ManageBusinessDetailsViewModel, ViewLatencyDetailsViewModel}
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, LatencyDetails}
 import play.api.Logger
 import play.api.mvc._
 import services.{CalculationListService, DateService, ITSAStatusService, IncomeSourceDetailsService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
+import utils.IncomeSourcesUtils
 import views.html.incomeSources.manage.ManageSelfEmployment
 
 import javax.inject.{Inject, Singleton}
@@ -50,8 +50,9 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageSelfEmployme
                                                     val retrieveBtaNavBar: NavBarPredicate,
                                                     val calculationListService: CalculationListService)
                                                    (implicit val ec: ExecutionContext,
-                                                    implicit override val mcc: MessagesControllerComponents, val appConfig: FrontendAppConfig) extends ClientConfirmedController
-  with FeatureSwitching {
+                                                    implicit override val mcc: MessagesControllerComponents,
+                                                    val appConfig: FrontendAppConfig)
+  extends ClientConfirmedController with FeatureSwitching with IncomeSourcesUtils {
 
 
   def showUkProperty: Action[AnyContent] = Action(Ok)
@@ -121,7 +122,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageSelfEmployme
 
     val desiredIncomeSourceMaybe: Option[BusinessDetailsModel] = sources.businesses
       .filterNot(_.isCeased)
-      .find(e => e.incomeSourceId.isDefined && e.incomeSourceId.get == id)
+      .find(e => e.incomeSourceId == id)
     val latencyDetails: Option[LatencyDetails] = desiredIncomeSourceMaybe.flatMap(_.latencyDetails)
 
     itsaStatusService.hasMandatedOrVoluntaryStatusCurrentYear.flatMap {
@@ -130,7 +131,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageSelfEmployme
           case Left(x) =>
             if (desiredIncomeSourceMaybe.isDefined) {
               Future(Right(ManageBusinessDetailsViewModel(
-                incomeSourceId = desiredIncomeSourceMaybe.get.incomeSourceId.get,
+                incomeSourceId = desiredIncomeSourceMaybe.get.incomeSourceId,
                 tradingName = desiredIncomeSourceMaybe.get.tradingName,
                 tradingStartDate = desiredIncomeSourceMaybe.get.tradingStartDate,
                 address = desiredIncomeSourceMaybe.get.address,
@@ -148,7 +149,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageSelfEmployme
           case Right(crystallisationData: List[Boolean]) =>
             if (desiredIncomeSourceMaybe.isDefined) {
               Future(Right(ManageBusinessDetailsViewModel(
-                incomeSourceId = desiredIncomeSourceMaybe.get.incomeSourceId.get,
+                incomeSourceId = desiredIncomeSourceMaybe.get.incomeSourceId,
                 tradingName = desiredIncomeSourceMaybe.get.tradingName,
                 tradingStartDate = desiredIncomeSourceMaybe.get.tradingStartDate,
                 address = desiredIncomeSourceMaybe.get.address,
@@ -172,7 +173,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageSelfEmployme
       case false =>
         if (desiredIncomeSourceMaybe.isDefined) {
           Future(Right(ManageBusinessDetailsViewModel(
-            incomeSourceId = desiredIncomeSourceMaybe.get.incomeSourceId.get,
+            incomeSourceId = desiredIncomeSourceMaybe.get.incomeSourceId,
             tradingName = desiredIncomeSourceMaybe.get.tradingName,
             tradingStartDate = desiredIncomeSourceMaybe.get.tradingStartDate,
             address = desiredIncomeSourceMaybe.get.address,
@@ -193,9 +194,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageSelfEmployme
   def handleRequest(sources: IncomeSourceDetailsModel, isAgent: Boolean, backUrl: String, id: String)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
 
-    if (isDisabled(IncomeSources)) {
-      Future.successful(Redirect(controllers.routes.HomeController.show()))
-    } else {
+    withIncomeSourcesFS {
       for {
         value <- getManageIncomeSourceViewModel(sources = sources, id = id, isAgent = isAgent)
       } yield {
