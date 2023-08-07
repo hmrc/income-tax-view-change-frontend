@@ -22,8 +22,9 @@ import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
-import models.incomeSourceDetails.viewmodels.{ManageBusinessDetailsViewModel, ViewLatencyDetailsViewModel}
-import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, LatencyDetails}
+import enums.IncomeSourceJourney.{PropertyBusiness, SelfEmployment}
+import models.incomeSourceDetails.viewmodels.{ManageBusinessDetailsViewModel}
+import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, LatencyDetails, PropertyDetailsModel}
 import play.api.Logger
 import play.api.mvc._
 import services.{CalculationListService, DateService, ITSAStatusService, IncomeSourceDetailsService}
@@ -100,14 +101,14 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageSelfEmployme
         }
   }
 
-  def getCrystallisationInformation(incomeSource: Option[BusinessDetailsModel])
+  def getCrystallisationInformation(latencyDetails: Option[LatencyDetails])
                                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): EitherT[Future, String, List[Boolean]] = {
     EitherT {
-      incomeSource match {
-        case Some(x) if x.latencyDetails.isDefined =>
+      latencyDetails match {
+        case Some(x) =>
           for {
-            i <- calculationListService.isTaxYearCrystallised(x.latencyDetails.get.taxYear1.toInt)
-            j <- calculationListService.isTaxYearCrystallised(x.latencyDetails.get.taxYear2.toInt)
+            i <- calculationListService.isTaxYearCrystallised(x.taxYear1.toInt)
+            j <- calculationListService.isTaxYearCrystallised(x.taxYear2.toInt)
           } yield {
             Right(List(i.get, j.get))
           }
@@ -117,76 +118,60 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageSelfEmployme
     }
   }
 
+  def variableViewModelSEBusiness(incomeSource: BusinessDetailsModel, itsaStatus: Boolean, crystallisationTaxYear1: Option[Boolean],
+                                  crystallisationTaxYear2: Option[Boolean]): ManageBusinessDetailsViewModel = {
+    ManageBusinessDetailsViewModel(
+      incomeSourceId = incomeSource.incomeSourceId,
+      tradingName = incomeSource.tradingName,
+      tradingStartDate = incomeSource.tradingStartDate,
+      address = incomeSource.address,
+      businessAccountingMethod = incomeSource.cashOrAccruals,
+      itsaHasMandatedOrVoluntaryStatusCurrentYear = itsaStatus,
+      taxYearOneCrystallised = crystallisationTaxYear1,
+      taxYearTwoCrystallised = crystallisationTaxYear2,
+      latencyDetails = incomeSource.latencyDetails,
+      incomeSourceType = SelfEmployment
+    )
+  }
+
   def getManageIncomeSourceViewModel(sources: IncomeSourceDetailsModel, id: String, isAgent: Boolean)
                                     (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, ManageBusinessDetailsViewModel]] = {
 
     val desiredIncomeSourceMaybe: Option[BusinessDetailsModel] = sources.businesses
       .filterNot(_.isCeased)
       .find(e => e.incomeSourceId == id)
-    val latencyDetails: Option[LatencyDetails] = desiredIncomeSourceMaybe.flatMap(_.latencyDetails)
 
-    itsaStatusService.hasMandatedOrVoluntaryStatusCurrentYear.flatMap {
-      case true =>
-        getCrystallisationInformation(desiredIncomeSourceMaybe).value.flatMap {
-          case Left(x) =>
-            if (desiredIncomeSourceMaybe.isDefined) {
-              Future(Right(ManageBusinessDetailsViewModel(
-                incomeSourceId = desiredIncomeSourceMaybe.get.incomeSourceId,
-                tradingName = desiredIncomeSourceMaybe.get.tradingName,
-                tradingStartDate = desiredIncomeSourceMaybe.get.tradingStartDate,
-                address = desiredIncomeSourceMaybe.get.address,
-                businessAccountingMethod = desiredIncomeSourceMaybe.get.cashOrAccruals,
-                itsaHasMandatedOrVoluntaryStatusCurrentYear = true,
-                taxYearOneCrystallised = None,
-                taxYearTwoCrystallised = None,
-                latencyDetails = None)))
-            }
-            else {
-              Future(Left(
-                new Error("Unable to find income source")
+    if (desiredIncomeSourceMaybe.isDefined) {
+      itsaStatusService.hasMandatedOrVoluntaryStatusCurrentYear.flatMap {
+        case true =>
+          getCrystallisationInformation(desiredIncomeSourceMaybe.get.latencyDetails).value.flatMap {
+            case Left(x) => Future(Right(variableViewModelSEBusiness(
+              incomeSource = desiredIncomeSourceMaybe.get,
+              itsaStatus = true,
+              crystallisationTaxYear1 = None,
+              crystallisationTaxYear2 = None)))
+            case Right(crystallisationData: List[Boolean]) =>
+              Future(Right(
+                variableViewModelSEBusiness(
+                  incomeSource = desiredIncomeSourceMaybe.get,
+                  itsaStatus = true,
+                  crystallisationTaxYear1 = Option(crystallisationData.head),
+                  crystallisationTaxYear2 = Option(crystallisationData(1)))
               ))
-            }
-          case Right(crystallisationData: List[Boolean]) =>
-            if (desiredIncomeSourceMaybe.isDefined) {
-              Future(Right(ManageBusinessDetailsViewModel(
-                incomeSourceId = desiredIncomeSourceMaybe.get.incomeSourceId,
-                tradingName = desiredIncomeSourceMaybe.get.tradingName,
-                tradingStartDate = desiredIncomeSourceMaybe.get.tradingStartDate,
-                address = desiredIncomeSourceMaybe.get.address,
-                businessAccountingMethod = desiredIncomeSourceMaybe.get.cashOrAccruals,
-                itsaHasMandatedOrVoluntaryStatusCurrentYear = true,
-                taxYearOneCrystallised = Option(crystallisationData.head),
-                taxYearTwoCrystallised = Option(crystallisationData(1)),
-                latencyDetails = Option(ViewLatencyDetailsViewModel(
-                  latencyEndDate = latencyDetails.get.latencyEndDate,
-                  taxYear1 = latencyDetails.get.taxYear1.toInt,
-                  latencyIndicator1 = latencyDetails.get.latencyIndicator1,
-                  taxYear2 = latencyDetails.get.taxYear2.toInt,
-                  latencyIndicator2 = latencyDetails.get.latencyIndicator2
-                )))))
-            } else {
-              Future(Left(
-                new Error("Unable to find income source")
-              ))
-            }
-        }
-      case false =>
-        if (desiredIncomeSourceMaybe.isDefined) {
-          Future(Right(ManageBusinessDetailsViewModel(
-            incomeSourceId = desiredIncomeSourceMaybe.get.incomeSourceId,
-            tradingName = desiredIncomeSourceMaybe.get.tradingName,
-            tradingStartDate = desiredIncomeSourceMaybe.get.tradingStartDate,
-            address = desiredIncomeSourceMaybe.get.address,
-            businessAccountingMethod = desiredIncomeSourceMaybe.get.cashOrAccruals,
-            itsaHasMandatedOrVoluntaryStatusCurrentYear = false,
-            taxYearOneCrystallised = None,
-            taxYearTwoCrystallised = None,
-            latencyDetails = None)))
-        } else {
-          Future(Left(
-            new Error("Unable to find income source")
+          }
+        case false =>
+          Future(Right(
+            variableViewModelSEBusiness(
+              incomeSource = desiredIncomeSourceMaybe.get,
+              itsaStatus = true,
+              crystallisationTaxYear1 = None,
+              crystallisationTaxYear2 = None)
           ))
-        }
+      }
+    } else {
+      Future(Left(
+        new Error("Unable to find income source")
+      ))
     }
   }
 
