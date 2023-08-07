@@ -138,8 +138,8 @@ class ManageSelfEmploymentViewSpec extends TestSupport {
       document.getElementsByClass("govuk-heading-l").text shouldBe heading
     }
     "render the back correct back Url" in new Setup(false) {
-      document.getElementById("back-fallback").text() shouldBe messages("base.back")
-      document.getElementById("back-fallback").attr("href") shouldBe backUrl
+      document.getElementById("back").text() shouldBe messages("base.back")
+      document.getElementById("back").attr("href") shouldBe backUrl
     }
     "render the whole page" in new Setup(false) {
 
@@ -181,8 +181,8 @@ class ManageSelfEmploymentViewSpec extends TestSupport {
       document.getElementsByClass("govuk-heading-l").text shouldBe heading
     }
     "render the back correct back Url" in new Setup(true) {
-      document.getElementById("back-fallback").text() shouldBe messages("base.back")
-      document.getElementById("back-fallback").attr("href") shouldBe backUrl
+      document.getElementById("back").text() shouldBe messages("base.back")
+      document.getElementById("back").attr("href") shouldBe backUrl
     }
     "render the whole page" in new Setup(true) {
 

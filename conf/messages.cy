@@ -1518,7 +1518,7 @@ incomeSources.add.manageObligations.foreign-property                  =   eiddo 
 incomeSources.add.manageObligations.heading                           =   Yr hyn y mae’n rhaid i chi ei wneud
 # manage journey manage income source
 incomeSources.manage.business-manage-details.heading                  =   Gwirio’ch manylion
-incomeSources.manage.business-manage-details.sole-trader-section      =   Dull cyfrifyddu ar gyfer incwm unig fasnachwr
+incomeSources.manage.business-manage-details.sole-trader-section      =   Busnesau unig fasnachwr
 incomeSources.manage.business-manage-details.business-name            =   Enw’r busnes
 incomeSources.manage.business-manage-details.business-address         =   Cyfeiriad y busnes
 incomeSources.manage.business-manage-details.date-started             =   Dyddiad cychwyn
