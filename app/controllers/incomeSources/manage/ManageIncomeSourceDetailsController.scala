@@ -56,25 +56,24 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageSelfEmployme
   extends ClientConfirmedController with FeatureSwitching with IncomeSourcesUtils {
 
 
-  def showUkProperty: Action[AnyContent] = Action(Ok)
+  def showUkProperty: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+    andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
+    implicit user =>
+      println("KKKKKKKKKKKKKKK")
+      handleRequest(
+        sources = user.incomeSources,
+        isAgent = false,
+        id = None,
+        backUrl = controllers.incomeSources.manage.routes.ManageIncomeSourceController.show().url,
+        incomeSourceType = UkProperty
+      )
+  }
 
   def showUkPropertyAgent: Action[AnyContent] = Action(Ok)
 
   def showForeignProperty: Action[AnyContent] = Action(Ok)
 
   def showForeignPropertyAgent: Action[AnyContent] = Action(Ok)
-
-  def submitUkProperty: Action[AnyContent] = Action(Ok)
-
-  def submitUkPropertyAgent: Action[AnyContent] = Action(Ok)
-
-  def submitForeignProperty: Action[AnyContent] = Action(Ok)
-
-  def submitForeignPropertyAgent: Action[AnyContent] = Action(Ok)
-
-  def submitSoleTraderBusiness: Action[AnyContent] = Action(Ok)
-
-  def submitSoleTraderBusinessAgent: Action[AnyContent] = Action(Ok)
 
   def showSoleTraderBusiness(id: String): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
@@ -83,7 +82,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageSelfEmployme
         sources = user.incomeSources,
         isAgent = false,
         backUrl = controllers.incomeSources.manage.routes.ManageIncomeSourceController.show().url,
-        id = id,
+        id = Some(id),
         incomeSourceType = SelfEmployment
       )
   }
@@ -97,7 +96,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageSelfEmployme
               sources = mtdItUser.incomeSources,
               isAgent = true,
               backUrl = controllers.incomeSources.manage.routes.ManageIncomeSourceController.showAgent().url,
-              id = id,
+              id = Some(id),
               incomeSourceType = SelfEmployment
             )
         }
@@ -193,23 +192,21 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageSelfEmployme
     }
   }
 
-  def getManageIncomeSourceViewModelProperty(sources: IncomeSourceDetailsModel, id: String, incomeSourceType: IncomeSourceJourney, isAgent: Boolean)
+  def getManageIncomeSourceViewModelProperty(sources: IncomeSourceDetailsModel, incomeSourceType: IncomeSourceJourney, isAgent: Boolean)
                                             (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, ManageBusinessDetailsViewModel]] = {
-
+    println("MMMMMMMMMMMM")
     val desiredIncomeSourceMaybe: Option[PropertyDetailsModel] = {
       if (incomeSourceType == UkProperty) {
         sources.properties
           .filterNot(_.isCeased)
-          .filter(_.isUkProperty)
-          .find(e => e.incomeSourceId == id)
+          .find(_.isUkProperty)
       } else {
         sources.properties
           .filterNot(_.isCeased)
-          .filter(_.isForeignProperty)
-          .find(e => e.incomeSourceId == id)
+          .find(_.isForeignProperty)
       }
     }
-
+    println("NNNNNNNNNNNNN")
 
     if (desiredIncomeSourceMaybe.isDefined) {
       itsaStatusService.hasMandatedOrVoluntaryStatusCurrentYear.flatMap {
@@ -246,17 +243,18 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageSelfEmployme
   }
 
 
-  def handleRequest(sources: IncomeSourceDetailsModel, isAgent: Boolean, backUrl: String, id: String, incomeSourceType: IncomeSourceJourney)
+  def handleRequest(sources: IncomeSourceDetailsModel, isAgent: Boolean, backUrl: String, id: Option[String], incomeSourceType: IncomeSourceJourney)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
 
     withIncomeSourcesFS {
       for {
         value <- if (incomeSourceType == SelfEmployment) {
-          getManageIncomeSourceViewModel(sources = sources, id = id, isAgent = isAgent)
+          getManageIncomeSourceViewModel(sources = sources, id = id.get, isAgent = isAgent)
         } else {
-          getManageIncomeSourceViewModelProperty(sources = sources, id = id, isAgent = isAgent, incomeSourceType = incomeSourceType)
+          getManageIncomeSourceViewModelProperty(sources = sources, isAgent = isAgent, incomeSourceType = incomeSourceType)
       }
       } yield {
+        println("LLLLLLLLLL" + value)
         value match {
           case Right(viewModel) =>
             Ok(view(viewModel = viewModel,
