@@ -47,10 +47,6 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
   val mockITSAStatusService: ITSAStatusService = mock(classOf[ITSAStatusService])
   val mockCalculationListService: CalculationListService = mock(classOf[CalculationListService])
 
-  def disableAllSwitches(): Unit = {
-    switches.foreach(switch => disable(switch))
-  }
-
   override def beforeEach(): Unit = {
     super.beforeEach()
     reset(mockCalculationListService)
