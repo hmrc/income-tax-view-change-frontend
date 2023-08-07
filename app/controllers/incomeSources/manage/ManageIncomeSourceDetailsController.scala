@@ -121,7 +121,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageSelfEmployme
 
     val desiredIncomeSourceMaybe: Option[BusinessDetailsModel] = sources.businesses
       .filterNot(_.isCeased)
-      .find(e => e.incomeSourceId == id)
+      .find(e => e.incomeSourceId.isDefined && e.incomeSourceId.get == id)
     val latencyDetails: Option[LatencyDetails] = desiredIncomeSourceMaybe.flatMap(_.latencyDetails)
 
     itsaStatusService.hasMandatedOrVoluntaryStatusCurrentYear.flatMap {
@@ -130,7 +130,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageSelfEmployme
           case Left(x) =>
             if (desiredIncomeSourceMaybe.isDefined) {
               Future(Right(ManageBusinessDetailsViewModel(
-                incomeSourceId = desiredIncomeSourceMaybe.get.incomeSourceId,
+                incomeSourceId = desiredIncomeSourceMaybe.get.incomeSourceId.get,
                 tradingName = desiredIncomeSourceMaybe.get.tradingName,
                 tradingStartDate = desiredIncomeSourceMaybe.get.tradingStartDate,
                 address = desiredIncomeSourceMaybe.get.address,
@@ -148,7 +148,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageSelfEmployme
           case Right(crystallisationData: List[Boolean]) =>
             if (desiredIncomeSourceMaybe.isDefined) {
               Future(Right(ManageBusinessDetailsViewModel(
-                incomeSourceId = desiredIncomeSourceMaybe.get.incomeSourceId,
+                incomeSourceId = desiredIncomeSourceMaybe.get.incomeSourceId.get,
                 tradingName = desiredIncomeSourceMaybe.get.tradingName,
                 tradingStartDate = desiredIncomeSourceMaybe.get.tradingStartDate,
                 address = desiredIncomeSourceMaybe.get.address,
@@ -172,7 +172,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageSelfEmployme
       case false =>
         if (desiredIncomeSourceMaybe.isDefined) {
           Future(Right(ManageBusinessDetailsViewModel(
-            incomeSourceId = desiredIncomeSourceMaybe.get.incomeSourceId,
+            incomeSourceId = desiredIncomeSourceMaybe.get.incomeSourceId.get,
             tradingName = desiredIncomeSourceMaybe.get.tradingName,
             tradingStartDate = desiredIncomeSourceMaybe.get.tradingStartDate,
             address = desiredIncomeSourceMaybe.get.address,
