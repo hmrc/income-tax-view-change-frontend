@@ -131,7 +131,7 @@ class IncomeSourceDetailsService @Inject()(val incomeTaxViewChangeConnector: Inc
         viewSoleTraderBusinesses = if (soleTraderBusinessesExists) {
           maybeSoleTraderBusinesses.map { business =>
             ViewBusinessDetailsViewModel(
-              business.incomeSourceId.getOrElse(throw new MissingFieldException("Missing incomeSourceId field")),
+              business.incomeSourceId,
               business.tradingName,
               business.tradingStartDate
             )
@@ -179,7 +179,7 @@ class IncomeSourceDetailsService @Inject()(val incomeTaxViewChangeConnector: Inc
         soleTraderBusinesses = if (soleTraderBusinessesExists) {
           maybeSoleTraderBusinesses.map { business =>
             CeaseBusinessDetailsViewModel(
-              business.incomeSourceId.getOrElse(throw MissingFieldException("Income Source Id")),
+              business.incomeSourceId,
               business.tradingName,
               business.tradingStartDate
             )
@@ -211,12 +211,12 @@ class IncomeSourceDetailsService @Inject()(val incomeTaxViewChangeConnector: Inc
   def getCheckCeaseBusinessDetailsViewModel(sources: IncomeSourceDetailsModel, incomeSourceId: String, businessEndDate: String)
   : Either[Throwable, Option[CheckCeaseBusinessDetailsViewModel]] = {
 
-    val soleTraderBusinesses = sources.businesses.filterNot(_.isCeased).find(x => x.incomeSourceId.get.equals(incomeSourceId))
+    val soleTraderBusinesses = sources.businesses.filterNot(_.isCeased).find(x => x.incomeSourceId.equals(incomeSourceId))
 
     Try {
       soleTraderBusinesses.map { business =>
         CheckCeaseBusinessDetailsViewModel(
-          business.incomeSourceId.get,
+          business.incomeSourceId,
           business.tradingName,
           business.address,
           LocalDate.parse(businessEndDate)

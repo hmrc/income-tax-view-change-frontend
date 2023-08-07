@@ -56,10 +56,6 @@ class AddBusinessTradeControllerSpec extends TestSupport
 
   val postAction: Call = controllers.incomeSources.add.routes.AddBusinessTradeController.submit()
 
-  def disableAllSwitches(): Unit = {
-    switches.foreach(switch => disable(switch))
-  }
-
   object TestAddBusinessTradeController
     extends AddBusinessTradeController(
       MockAuthenticationPredicate,

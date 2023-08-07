@@ -44,10 +44,6 @@ import scala.concurrent.Future
 class CheckBusinessDetailsControllerSpec extends TestSupport with MockAuthenticationPredicate
   with MockIncomeSourceDetailsPredicate with MockNavBarEnumFsPredicate with FeatureSwitching {
 
-  def disableAllSwitches(): Unit = {
-    switches.foreach(switch => disable(switch))
-  }
-
   val testBusinessName: String = "Test Business"
   val testBusinessStartDate: String = LocalDate.of(2023, 1, 2).toString
   val testBusinessTrade: String = "Plumbing"

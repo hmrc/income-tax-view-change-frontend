@@ -88,10 +88,6 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
   val homeBackLink: String = "/report-quarterly/income-and-expenses/view"
   val agentHomeBackLink: String = "/report-quarterly/income-and-expenses/view/agents/client-income-tax"
 
-  def disableAllSwitches(): Unit = {
-    switches.foreach(switch => disable(switch))
-  }
-
   "The TaxYearSummary.renderTaxYearSummaryPage(year) action" when {
     def runForecastTest(crystallised: Boolean, calcDataNotFound: Boolean = false, forecastCalcFeatureSwitchEnabled: Boolean, taxYear: Int = testTaxYear,
                         shouldShowForecastData: Boolean): Unit = {

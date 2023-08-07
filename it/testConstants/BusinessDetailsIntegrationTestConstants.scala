@@ -65,7 +65,7 @@ object BusinessDetailsIntegrationTestConstants {
   val address = AddressModel("8 Test", Some("New Court"), Some("New Town"), Some("New City"), Some("NE12 6CI"), "United Kingdom")
 
   val business1 = BusinessDetailsModel(
-    incomeSourceId = Some(testSelfEmploymentId),
+    incomeSourceId = testSelfEmploymentId,
     accountingPeriod = Some(AccountingPeriodModel(
       start = b1AccountingStart,
       end = b1AccountingEnd
@@ -92,7 +92,7 @@ object BusinessDetailsIntegrationTestConstants {
   )
 
   val business2 = BusinessDetailsModel(
-    incomeSourceId = Some(otherTestSelfEmploymentId),
+    incomeSourceId = otherTestSelfEmploymentId,
     accountingPeriod = Some(AccountingPeriodModel(
       start = b2AccountingStart,
       end = b2AccountingEnd
@@ -133,7 +133,7 @@ object BusinessDetailsIntegrationTestConstants {
   )
 
   val ceasedBusiness1 = BusinessDetailsModel(
-    incomeSourceId = Some(otherTestSelfEmploymentId),
+    incomeSourceId = otherTestSelfEmploymentId,
     accountingPeriod = Some(AccountingPeriodModel(
       start = b2AccountingStart,
       end = b2AccountingEnd
@@ -146,7 +146,7 @@ object BusinessDetailsIntegrationTestConstants {
   )
 
   val businessUnknownAddressName = BusinessDetailsModel(
-    incomeSourceId = Some(testSelfEmploymentId),
+    incomeSourceId = testSelfEmploymentId,
     accountingPeriod = Some(AccountingPeriodModel(
       start = b1AccountingStart,
       end = b1AccountingEnd

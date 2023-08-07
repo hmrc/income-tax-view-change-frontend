@@ -56,10 +56,6 @@ class AddBusinessNameControllerSpec extends TestSupport
 
   val postAction: Call = controllers.incomeSources.add.routes.AddBusinessNameController.submit()
 
-  def disableAllSwitches(): Unit = {
-    switches.foreach(switch => disable(switch))
-  }
-
   object TestAddBusinessNameNameController$
     extends AddBusinessNameController(
       MockAuthenticationPredicate,

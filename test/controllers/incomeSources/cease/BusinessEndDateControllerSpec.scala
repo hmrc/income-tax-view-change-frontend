@@ -64,12 +64,6 @@ class BusinessEndDateControllerSpec extends TestSupport with MockAuthenticationP
     val heading: String = messages("incomeSources.cease.BusinessEndDate.heading")
   }
 
-  def disableAllSwitches(): Unit = {
-    switches.foreach(switch => disable(switch))
-  }
-
-  disableAllSwitches()
-
   "Individual - BusinessEndDateController.show(id)" should {
     "return 200 OK" when {
       "navigating to the page with FS Enabled" in {

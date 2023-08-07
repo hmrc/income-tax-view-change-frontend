@@ -54,10 +54,4 @@ class ForeignPropertyEndDateForm @Inject()(val dateService: DateService) extends
         .verifying(maxDate(currentDate, dateMustNotBeInTheFuture))
       )(DateFormElement.apply)(DateFormElement.unapply))
   }
-
-  object ForeignPropertyEndDateForm {
-    def apply(dateService: DateService)(implicit user: MtdItUser[_]): Form[DateFormElement] = {
-      new ForeignPropertyEndDateForm(dateService).apply
-    }
-  }
 }

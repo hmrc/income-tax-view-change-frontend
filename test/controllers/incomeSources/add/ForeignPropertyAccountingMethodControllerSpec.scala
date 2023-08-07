@@ -64,10 +64,6 @@ class ForeignPropertyAccountingMethodControllerSpec extends TestSupport with Moc
     val titleAgent: String = s"${messages("htmlTitle.agent", headingAgent)}"
   }
 
-  def disableAllSwitches(): Unit = {
-    switches.foreach(switch => disable(switch))
-  }
-
   "Individual - ForeignPropertyAccountingMethodController.show()" should {
     "return 200 OK" when {
       "navigating to the page with FS Enabled" in {

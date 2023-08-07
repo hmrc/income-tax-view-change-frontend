@@ -74,7 +74,7 @@ class BusinessEndDateController @Inject()(val authenticate: AuthenticationPredic
         }
   }
 
-  def handleRequest(isAgent: Boolean, id: String, origin: Option[String] = None)
+  def handleRequest(isAgent: Boolean, id: String)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
 
     val incomeSourcesEnabled: Boolean = isEnabled(IncomeSources)
@@ -86,7 +86,7 @@ class BusinessEndDateController @Inject()(val authenticate: AuthenticationPredic
 
     if (incomeSourcesEnabled) {
       Future.successful(Ok(businessEndDate(
-        BusinessEndDateForm = businessEndDateForm.apply(user, Option(id)),
+        BusinessEndDateForm = businessEndDateForm.apply(user, id),
         postAction = postAction,
         isAgent = isAgent,
         backUrl = backUrl,
@@ -130,7 +130,7 @@ class BusinessEndDateController @Inject()(val authenticate: AuthenticationPredic
           routes.CheckCeaseBusinessDetailsController.show())
     }
 
-    businessEndDateForm.apply(user, Option(id)).bindFromRequest().fold(
+    businessEndDateForm.apply(user, id).bindFromRequest().fold(
       hasErrors => Future.successful(BadRequest(businessEndDate(
         BusinessEndDateForm = hasErrors,
         postAction = postAction(id),

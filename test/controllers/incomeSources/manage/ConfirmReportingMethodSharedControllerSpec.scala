@@ -16,27 +16,22 @@
 
 package controllers.incomeSources.manage
 
-import config.featureswitch.FeatureSwitch.switches
 import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
-import exceptions.MissingFieldException
 import forms.incomeSources.manage.ConfirmReportingMethodForm
 import implicits.ImplicitDateFormatter
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
 import mocks.services.MockIncomeSourceDetailsService
-import models.incomeSourceDetails.viewmodels.ViewIncomeSourcesViewModel
 import models.updateIncomeSource.{UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import play.api.http.Status
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
-import services.{IncomeSourceDetailsService, UpdateIncomeSourceService}
+import services.UpdateIncomeSourceService
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testIndividualAuthSuccessWithSaUtrResponse, testPropertyIncomeId, testSelfEmploymentId}
-import testConstants.BusinessDetailsTestConstants.viewBusinessDetailsViewModel
-import testConstants.PropertyDetailsTestConstants.viewUkPropertyDetailsViewModel
 import testUtils.TestSupport
 import views.html.errorPages.CustomNotFoundError
 import views.html.incomeSources.manage.{ConfirmReportingMethod, ManageIncomeSources}
@@ -82,10 +77,6 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
 
   private lazy val manageIncomeSourceDetailsController = controllers.incomeSources.manage.routes
     .ManageIncomeSourceDetailsController
-
-  def disableAllSwitches(): Unit = {
-    switches.foreach(switch => disable(switch))
-  }
 
   val testIncomeSourceId = "XAIS00000099004"
 

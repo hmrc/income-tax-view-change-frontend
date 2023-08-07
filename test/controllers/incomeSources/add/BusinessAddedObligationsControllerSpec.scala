@@ -16,9 +16,9 @@
 
 package controllers.incomeSources.add
 
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import config.featureswitch.FeatureSwitch.switches
 import config.featureswitch.{FeatureSwitching, IncomeSources}
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
@@ -34,8 +34,7 @@ import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
 import services.DateService
 import testConstants.BaseTestConstants
-import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
-import testConstants.BusinessDetailsTestConstants.address
+import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testSelfEmploymentId}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 import testUtils.TestSupport
 import views.html.incomeSources.add.BusinessAddedObligations
@@ -53,10 +52,6 @@ class BusinessAddedObligationsControllerSpec extends TestSupport
   with MockClientDetailsService
   with MockNextUpdatesService
   with FeatureSwitching {
-
-  def disableAllSwitches(): Unit = {
-    switches.foreach(switch => disable(switch))
-  }
 
   val mockDateService: DateService = mock(classOf[DateService])
 
@@ -80,7 +75,7 @@ class BusinessAddedObligationsControllerSpec extends TestSupport
   )
 
   val testObligationsModel: ObligationsModel = ObligationsModel(Seq(
-    NextUpdatesModel("123", List(NextUpdateModel(
+    NextUpdatesModel(testSelfEmploymentId, List(NextUpdateModel(
       LocalDate.of(2022, 7, 1),
       LocalDate.of(2022, 7, 2),
       LocalDate.of(2022, 8, 2),
@@ -136,7 +131,7 @@ class BusinessAddedObligationsControllerSpec extends TestSupport
       "redirect to home page (agent)" in {
         disableAllSwitches()
 
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
         val result: Future[Result] = TestObligationsController.showAgent("123")(fakeRequestConfirmedClient())
@@ -152,22 +147,20 @@ class BusinessAddedObligationsControllerSpec extends TestSupport
         enable(IncomeSources)
 
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-        setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
         val sources: IncomeSourceDetailsModel = IncomeSourceDetailsModel("", Some("2022"), List(BusinessDetailsModel(
-          Some("123"),
+          testSelfEmploymentId,
           None,
           Some("Test name"),
           None,
-          Some(LocalDate.of(2022,1,1)),
-          None,
-          address = Some(address)
+          Some(LocalDate.of(2022, 1, 1)),
+          None
         )), List.empty)
 
-        val day = LocalDate.of(2023,1,1)
+        val day = LocalDate.of(2023, 1, 1)
         val dates: Seq[DatesModel] = Seq(
           DatesModel(day, day, day, "EOPS", isFinalDec = false)
         )
-        when(mockDateService.getCurrentTaxYearStart(any())).thenReturn(LocalDate.of(2023,1,1))
+        when(mockDateService.getCurrentTaxYearStart(any())).thenReturn(LocalDate.of(2023, 1, 1))
         setupMockGetIncomeSourceDetails()(sources)
         when(mockNextUpdatesService.getObligationsViewModel(any(), any())(any(), any(), any())).thenReturn(Future(ObligationsViewModel(
           dates,
@@ -180,7 +173,7 @@ class BusinessAddedObligationsControllerSpec extends TestSupport
         when(mockNextUpdatesService.getNextUpdates(any())(any(), any())).
           thenReturn(Future(testObligationsModel))
 
-        val result: Future[Result] = TestObligationsController.show("123")(fakeRequestWithActiveSession)
+        val result: Future[Result] = TestObligationsController.show(testSelfEmploymentId)(fakeRequestWithActiveSession)
         status(result) shouldBe OK
       }
       "show correct page when agent valid" in {
@@ -188,23 +181,21 @@ class BusinessAddedObligationsControllerSpec extends TestSupport
         enable(IncomeSources)
 
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
-        setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
         mockSingleBusinessIncomeSourceWithDeadlines()
         val sources: IncomeSourceDetailsModel = IncomeSourceDetailsModel("", Some("2022"), List(BusinessDetailsModel(
-          Some("123"),
+          testSelfEmploymentId,
           None,
           Some("Test name"),
           None,
-          Some(LocalDate.of(2022,1,1)),
-          None,
-          address = Some(address)
+          Some(LocalDate.of(2022, 1, 1)),
+          None
         )), List.empty)
 
         val day = LocalDate.of(2023, 1, 1)
         val dates: Seq[DatesModel] = Seq(
           DatesModel(day, day, day, "EOPS", isFinalDec = false)
         )
-        when(mockDateService.getCurrentTaxYearStart(any())).thenReturn(LocalDate.of(2023,12,1))
+        when(mockDateService.getCurrentTaxYearStart(any())).thenReturn(LocalDate.of(2023, 12, 1))
         setupMockGetIncomeSourceDetails()(sources)
         when(mockNextUpdatesService.getObligationsViewModel(any(), any())(any(), any(), any())).thenReturn(Future(ObligationsViewModel(
           dates,
@@ -217,7 +208,7 @@ class BusinessAddedObligationsControllerSpec extends TestSupport
         when(mockNextUpdatesService.getNextUpdates(any())(any(), any())).
           thenReturn(Future(testObligationsModel))
 
-        val result: Future[Result] = TestObligationsController.showAgent("123")(fakeRequestConfirmedClient())
+        val result: Future[Result] = TestObligationsController.showAgent(testSelfEmploymentId)(fakeRequestConfirmedClient())
         status(result) shouldBe OK
       }
       //common code edge/error cases:
@@ -226,21 +217,19 @@ class BusinessAddedObligationsControllerSpec extends TestSupport
         enable(IncomeSources)
 
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-        setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
         val sources: IncomeSourceDetailsModel = IncomeSourceDetailsModel("", Some("2022"), List(BusinessDetailsModel(
-          Some("123"),
+          testSelfEmploymentId,
           None,
           None,
           None,
-          Some(LocalDate.of(2022,1,1)),
-          None,
-          address = Some(address)
+          Some(LocalDate.of(2022, 1, 1)),
+          None
         )), List.empty)
         setupMockGetIncomeSourceDetails()(sources)
         when(mockNextUpdatesService.getNextUpdates(any())(any(), any())).
           thenReturn(Future(testObligationsModel))
 
-        val result: Future[Result] = TestObligationsController.show("123")(fakeRequestWithActiveSession)
+        val result: Future[Result] = TestObligationsController.show(testSelfEmploymentId)(fakeRequestWithActiveSession)
         status(result) shouldBe INTERNAL_SERVER_ERROR
       }
       "throw an error when no id is supplied" in {
@@ -249,16 +238,6 @@ class BusinessAddedObligationsControllerSpec extends TestSupport
 
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-        val sources: IncomeSourceDetailsModel = IncomeSourceDetailsModel("", Some("2022"), List(BusinessDetailsModel(
-          Some("123"),
-          None,
-          Some("Test name"),
-          None,
-          Some(LocalDate.of(2022,1,1)),
-          None,
-          address = Some(address)
-        )), List.empty)
-        setupMockGetIncomeSourceDetails()(sources)
         when(mockNextUpdatesService.getNextUpdates(any())(any(), any())).
           thenReturn(Future(testObligationsModel))
 
@@ -270,19 +249,17 @@ class BusinessAddedObligationsControllerSpec extends TestSupport
         enable(IncomeSources)
 
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-        setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
         val sources: IncomeSourceDetailsModel = IncomeSourceDetailsModel("", Some("2022"), List(BusinessDetailsModel(
-          Some("123"),
+          testSelfEmploymentId,
           None,
           Some("test"),
-          None, None, None,
-          address = Some(address)
+          None, None, None
         )), List.empty)
         setupMockGetIncomeSourceDetails()(sources)
         when(mockNextUpdatesService.getNextUpdates(any())(any(), any())).
           thenReturn(Future(testObligationsModel))
 
-        val result: Future[Result] = TestObligationsController.show("123")(fakeRequestWithActiveSession)
+        val result: Future[Result] = TestObligationsController.show(testSelfEmploymentId)(fakeRequestWithActiveSession)
         status(result) shouldBe INTERNAL_SERVER_ERROR
       }
     }

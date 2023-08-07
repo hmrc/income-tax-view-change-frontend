@@ -63,11 +63,6 @@ class UKPropertyAccountingMethodControllerSpec extends TestSupport with MockAuth
     val title: String = s"${messages("htmlTitle", heading)}"
     val titleAgent: String = s"${messages("htmlTitle.agent", headingAgent)}"
   }
-
-  def disableAllSwitches(): Unit = {
-    switches.foreach(switch => disable(switch))
-  }
-
   "Individual - UKPropertyAccountingMethodController.show()" should {
     "return 200 OK" when {
       "navigating to the page with FS Enabled and no active UK Property" in {

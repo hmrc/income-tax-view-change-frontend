@@ -41,7 +41,7 @@ class CheckCeaseUKPropertyDetailsControllerISpec extends ComponentSpecBase {
   val redirectUri = controllers.incomeSources.cease.routes.CeaseUKPropertySuccessController.showAgent().url
   val request: UpdateIncomeSourceRequestModel = UpdateIncomeSourceRequestModel(
     nino = testNino,
-    incomeSourceId = ukProperty.incomeSourceId.get,
+    incomeSourceId = ukProperty.incomeSourceId,
     cessation = Some(Cessation(true, Some(LocalDate.parse(cessationDate))))
   )
 

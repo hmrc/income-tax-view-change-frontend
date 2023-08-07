@@ -40,10 +40,6 @@ import scala.concurrent.Future
 
 class AddressLookupConnectorSpec extends TestSupport with FeatureSwitching with MockHttp {
 
-  def disableAllSwitches(): Unit = {
-    switches.foreach(switch => disable(switch))
-  }
-
   val baseUrl: String = appConfig.addressLookupService
 
   override def messagesApi: MessagesApi = inject[MessagesApi]

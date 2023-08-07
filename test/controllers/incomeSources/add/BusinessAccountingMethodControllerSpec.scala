@@ -64,12 +64,6 @@ class BusinessAccountingMethodControllerSpec extends TestSupport with MockAuthen
     val titleAgent: String = s"${messages("htmlTitle.agent", headingAgent)}"
   }
 
-  def disableAllSwitches(): Unit = {
-    switches.foreach(switch => disable(switch))
-  }
-
-  disableAllSwitches()
-
   "Individual - BusinessAccountingMethodController.show()" should {
     "return 200 OK" when {
       "navigating to the page with FS Enabled and no active self employment businesses" in {

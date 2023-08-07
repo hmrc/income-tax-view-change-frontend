@@ -60,10 +60,6 @@ class ForeignPropertyStartDateControllerSpec extends TestSupport
     .longDate(currentDate.plusWeeks(1).plusDays(1))
     .toLongDate
 
-  def disableAllSwitches(): Unit = {
-    switches.foreach(switch => disable(switch))
-  }
-
   object TestForeignPropertyStartDateController
     extends ForeignPropertyStartDateController(
       MockAuthenticationPredicate,

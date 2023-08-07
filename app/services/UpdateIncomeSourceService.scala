@@ -33,7 +33,7 @@ class UpdateIncomeSourceService @Inject()(connector: IncomeTaxViewChangeConnecto
   //TODO: We should use updateCessationDatev2 method
   def updateCessationDate(implicit request: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Exception, UpdateIncomeSourceResponse]] = {
     val nino: String = request.nino
-    val incomeSourceId: Option[String] = request.incomeSources.properties.filter(_.isUkProperty).flatMap(_.incomeSourceId).headOption
+    val incomeSourceId: Option[String] = request.incomeSources.properties.filter(_.isUkProperty).map(_.incomeSourceId).headOption
     request.session.get(ceaseUKPropertyEndDate) match {
       case Some(date) =>
         connector.updateCessationDate(

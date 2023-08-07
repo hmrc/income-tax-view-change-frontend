@@ -34,7 +34,7 @@ class IncomeSourceDetailsModelSpec extends UnitSpec with Matchers {
 
       //Test Business details
       s"have a business ID of $testSelfEmploymentId" in {
-        businessesAndPropertyIncome.businesses.head.incomeSourceId.get shouldBe testSelfEmploymentId
+        businessesAndPropertyIncome.businesses.head.incomeSourceId shouldBe testSelfEmploymentId
       }
       s"have the businesses accounting period start date of ${testBusinessAccountingPeriod.start}" in {
         businessesAndPropertyIncome.businesses.head.accountingPeriod.get.start shouldBe testBusinessAccountingPeriod.start
@@ -56,7 +56,7 @@ class IncomeSourceDetailsModelSpec extends UnitSpec with Matchers {
 
     "the user has just a business income source" should {
       s"have a business ID of $testSelfEmploymentId" in {
-        singleBusinessIncome.businesses.head.incomeSourceId.get shouldBe testSelfEmploymentId
+        singleBusinessIncome.businesses.head.incomeSourceId shouldBe testSelfEmploymentId
       }
       s"have the businesses accounting period start date of ${testBusinessAccountingPeriod.start}" in {
         singleBusinessIncome.businesses.head.accountingPeriod.get.start shouldBe testBusinessAccountingPeriod.start
@@ -107,7 +107,7 @@ class IncomeSourceDetailsModelSpec extends UnitSpec with Matchers {
           Some((LocalDate.now.getYear - 1).toString),
           List(
             BusinessDetailsModel(
-              incomeSourceId = None,
+              incomeSourceId = "",
               accountingPeriod = None,
               tradingName = Some("nextUpdates.business"),
               firstAccountingPeriodEndDate = None,
@@ -117,7 +117,7 @@ class IncomeSourceDetailsModelSpec extends UnitSpec with Matchers {
               address = Some(address)
             ),
             BusinessDetailsModel(
-              incomeSourceId = None,
+              incomeSourceId = "",
               accountingPeriod = None,
               tradingName = Some("nextUpdates.business"),
               tradingStartDate = Some(LocalDate.parse("2022-01-01")),
@@ -128,7 +128,7 @@ class IncomeSourceDetailsModelSpec extends UnitSpec with Matchers {
             )
           ),
           List(PropertyDetailsModel(
-            incomeSourceId = None,
+            incomeSourceId = "",
             accountingPeriod = None,
             firstAccountingPeriodEndDate = None,
             incomeSourceType = Some("property-unspecified"),

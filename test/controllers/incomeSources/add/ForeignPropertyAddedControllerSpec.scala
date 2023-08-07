@@ -51,10 +51,6 @@ class ForeignPropertyAddedControllerSpec extends TestSupport
   with MockNextUpdatesService
   with FeatureSwitching {
 
-  def disableAllSwitches(): Unit = {
-    switches.foreach(switch => disable(switch))
-  }
-
   val mockDateService: DateService = mock(classOf[DateService])
 
   object TestForeignPropertyObligationsController extends ForeignPropertyAddedController(
@@ -104,7 +100,7 @@ class ForeignPropertyAddedControllerSpec extends TestSupport
         mockForeignPropertyIncomeSource()
 
         val sources: IncomeSourceDetailsModel = IncomeSourceDetailsModel("", Some("2022"), List.empty, List(PropertyDetailsModel(
-          Some("123456"),
+          "123456",
           None,
           None,
           Some("foreign-property"),
@@ -184,7 +180,7 @@ class ForeignPropertyAddedControllerSpec extends TestSupport
         mockForeignPropertyIncomeSource()
 
         val sources: IncomeSourceDetailsModel = IncomeSourceDetailsModel("", Some("2022"), List.empty, List(PropertyDetailsModel(
-          Some("123"),
+          "123",
           None,
           None,
           Some("foreign-property"),

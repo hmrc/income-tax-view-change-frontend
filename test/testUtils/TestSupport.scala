@@ -17,6 +17,8 @@
 package testUtils
 
 import auth.MtdItUser
+import config.featureswitch.FeatureSwitch.switches
+import config.featureswitch.FeatureSwitching
 import config.{FrontendAppConfig, ItvcHeaderCarrierForPartialsConverter}
 import controllers.agent.utils
 import implicits.ImplicitDateFormatterImpl
@@ -42,7 +44,7 @@ import uk.gov.hmrc.play.partials.HeaderCarrierForPartials
 import scala.concurrent.duration._
 import scala.concurrent.{ExecutionContext, Future}
 
-trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterEach with MaterializerSupport with Injecting {
+trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterEach with MaterializerSupport with Injecting with FeatureSwitching {
   this: Suite =>
 
   import org.scalactic.Equality
@@ -212,6 +214,7 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterE
   )(FakeRequest())
 
   lazy val fakeRequestWithNino: FakeRequest[AnyContentAsEmpty.type] = fakeRequestWithActiveSession.withSession("nino" -> testNino)
+
   def fakeRequestWithNinoAndOrigin(origin: String): FakeRequest[AnyContentAsEmpty.type] = fakeRequestWithActiveSession.withSession("nino" -> testNino,
     "origin" -> origin)
 
@@ -258,8 +261,8 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterE
     forms.utils.SessionKeys.ceaseForeignPropertyDeclare -> "false"
   )
 
-   def fakeRequestWithCeaseUKPropertyDate(endDate: String): FakeRequest[AnyContentAsEmpty.type] = fakeRequestWithNinoAndOrigin("pta")
-     .withSession(forms.utils.SessionKeys.ceaseUKPropertyEndDate -> endDate).withMethod("POST")
+  def fakeRequestWithCeaseUKPropertyDate(endDate: String): FakeRequest[AnyContentAsEmpty.type] = fakeRequestWithNinoAndOrigin("pta")
+    .withSession(forms.utils.SessionKeys.ceaseUKPropertyEndDate -> endDate).withMethod("POST")
 
   def fakeRequestWithCeaseForeignPropertyDate(endDate: String): FakeRequest[AnyContentAsEmpty.type] = fakeRequestWithNinoAndOrigin("pta")
     .withSession(forms.utils.SessionKeys.ceaseForeignPropertyEndDate -> endDate).withMethod("POST")
@@ -273,6 +276,10 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterE
     def addingToSession(newSessions: (String, String)*): FakeRequest[C] = {
       fakeRequest.withSession(fakeRequest.session.data ++: newSessions: _*)
     }
+  }
+
+  def disableAllSwitches(): Unit = {
+    switches.foreach(switch => disable(switch))
   }
 
 }

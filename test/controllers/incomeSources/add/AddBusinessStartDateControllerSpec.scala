@@ -56,10 +56,6 @@ class AddBusinessStartDateControllerSpec extends TestSupport
     .longDate(currentDate.plusWeeks(1).plusDays(1))
     .toLongDate
 
-  def disableAllSwitches(): Unit = {
-    switches.foreach(switch => disable(switch))
-  }
-
   object TestAddBusinessStartDateController
     extends AddBusinessStartDateController(
       MockAuthenticationPredicate,

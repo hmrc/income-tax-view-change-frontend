@@ -42,12 +42,13 @@ class BusinessEndDateForm @Inject()(val dateService: DateService) extends Constr
   val dateMustBeAfterBusinessStartDate = "incomeSources.cease.BusinessEndDate.error.beforeStartDate"
   val dateMustNotBeBefore6April2015 = "incomeSources.cease.BusinessEndDate.error.beforeEarliestDate"
 
-  def apply (implicit user: MtdItUser[_], id: Option[String]): Form[DateFormElement] = {
+  def apply (implicit user: MtdItUser[_], id: String): Form[DateFormElement] = {
     val currentDate: LocalDate = dateService.getCurrentDate()
+    val minimumDate: LocalDate = LocalDate.of(2015, 4, 6)
 
     val businessStartDate = user.incomeSources.businesses
-      .find(_.incomeSourceId.getOrElse(throw new MissingFieldException("Income Source Id from User Income Sources")) == id.getOrElse(throw new MissingFieldException("Income Source Id from Frontend")))
-      .flatMap(_.tradingStartDate).get
+      .find(_.incomeSourceId == id)
+      .flatMap(_.tradingStartDate)
 
     Form(
       mapping("business-end-date" -> tuple(
@@ -63,8 +64,9 @@ class BusinessEndDateForm @Inject()(val dateService: DateService) extends Constr
             LocalDate.of(year.toInt, month.toInt, day.toInt)
         },
         date => (date.getDayOfMonth.toString, date.getMonthValue.toString, date.getYear.toString)
-      ).verifying(maxDate(currentDate, dateMustNotBeInFuture))
-        .verifying(minDateWithSixAprilTwentyFifteenMinimum(businessStartDate, dateMustBeAfterBusinessStartDate, dateMustNotBeBefore6April2015))
+      ).verifying(firstError(maxDate(currentDate, dateMustNotBeInFuture),
+        minDate(minimumDate, dateMustNotBeBefore6April2015),
+        minDate(businessStartDate.getOrElse(LocalDate.MIN), dateMustBeAfterBusinessStartDate)))
       )(DateFormElement.apply)(DateFormElement.unapply))
   }
 
@@ -87,9 +89,4 @@ class BusinessEndDateForm @Inject()(val dateService: DateService) extends Constr
       Valid
   }
 
-  object BusinessEndDateForm {
-    def apply(dateService: DateService)(implicit user: MtdItUser[_]): Form[DateFormElement] = {
-      new BusinessEndDateForm(dateService).apply(user, None)
-    }
-  }
 }

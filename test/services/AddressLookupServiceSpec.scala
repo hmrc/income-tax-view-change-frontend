@@ -33,10 +33,6 @@ import scala.util.Success
 class AddressLookupServiceSpec extends TestSupport
   with FeatureSwitching {
 
-  def disableAllSwitches(): Unit = {
-    switches.foreach(switch => disable(switch))
-  }
-
   case class AddressError(status: String) extends RuntimeException
   val testBusinessAddressModel: BusinessAddressModel = BusinessAddressModel("auditRef", Address(Seq("Line 1", "Line 2"), Some("AA1 1AA")))
 

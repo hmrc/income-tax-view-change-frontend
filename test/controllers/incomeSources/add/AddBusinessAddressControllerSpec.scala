@@ -53,10 +53,6 @@ class AddBusinessAddressControllerSpec extends TestSupport
 
   val postAction: Call = controllers.incomeSources.add.routes.AddBusinessAddressController.submit(None)
 
-  def disableAllSwitches(): Unit = {
-    switches.foreach(switch => disable(switch))
-  }
-
   val mockAddressLookupService: AddressLookupService = mock(classOf[AddressLookupService])
 
   object TestAddBusinessAddressController

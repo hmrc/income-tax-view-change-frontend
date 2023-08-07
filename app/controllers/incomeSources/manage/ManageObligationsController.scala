@@ -184,8 +184,8 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
   def showError(isAgent: Boolean, message: String)(implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
     Logger("application").error(
       s"[BusinessAddedObligationsController][handleRequest] - $message")
-    if (isAgent) Future(itvcErrorHandlerAgent.showInternalServerError())
-    else Future(itvcErrorHandler.showInternalServerError())
+    if (isAgent) Future.successful(itvcErrorHandlerAgent.showInternalServerError())
+    else Future.successful(itvcErrorHandler.showInternalServerError())
   }
 
   def getBusinessName(mode: IncomeSourceJourney, incomeSourceId: String)(implicit user: MtdItUser[_]): String = {
@@ -208,12 +208,12 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
     mode match {
       case SelfEmployment => Right(id)
       case UkProperty =>
-        user.incomeSources.properties.find(x => x.isUkProperty).flatMap(_.incomeSourceId) match {
+        user.incomeSources.properties.find(x => x.isUkProperty).map(_.incomeSourceId) match {
           case Some(incomeSourceId) => Right(incomeSourceId)
           case None => Left(new Error("Failed to find incomeSource Id"))
         }
       case ForeignProperty =>
-        user.incomeSources.properties.find(x => x.isForeignProperty).flatMap(_.incomeSourceId) match {
+        user.incomeSources.properties.find(x => x.isForeignProperty).map(_.incomeSourceId) match {
           case Some(incomeSourceId) => Right(incomeSourceId)
           case None => Left(new Error("Failed to find incomeSource Id"))
         }

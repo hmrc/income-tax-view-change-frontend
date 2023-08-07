@@ -72,10 +72,6 @@ class CreditAndRefundControllerSpec extends MockAuthenticationPredicate with Moc
     )
   }
 
-  def disableAllSwitches() : Unit = {
-    switches.foreach(switch => disable(switch))
-  }
-
   def testFinancialDetail(taxYear: Int): FinancialDetailsModel = financialDetailsModel(taxYear)
 
   "The CreditAndRefund Controller" should {
