@@ -31,13 +31,13 @@ import services.{CalculationListService, DateService, ITSAStatusService, IncomeS
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.IncomeSourcesUtils
-import views.html.incomeSources.manage.ManageSelfEmployment
+import views.html.incomeSources.manage.ManageIncomeSourceDetails
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ManageIncomeSourceDetailsController @Inject()(val view: ManageSelfEmployment,
+class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSourceDetails,
                                                     val checkSessionTimeout: SessionTimeoutPredicate,
                                                     val authenticate: AuthenticationPredicate,
                                                     val authorisedFunctions: AuthorisedFunctions,
