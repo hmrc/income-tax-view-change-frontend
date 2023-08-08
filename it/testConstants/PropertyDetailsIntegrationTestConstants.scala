@@ -88,6 +88,18 @@ object PropertyDetailsIntegrationTestConstants {
     None
   )
 
+  val ukPropertyWithUnknowns: PropertyDetailsModel = PropertyDetailsModel(
+    incomeSourceId = testPropertyIncomeId,
+    accountingPeriod = Some(AccountingPeriodModel(
+      start = propertyAccountingStartLocalDate,
+      end = propertyAccounringEndLocalDate
+    )),
+    firstAccountingPeriodEndDate = Some(propertyAccounringEndLocalDate),
+    ukPropertyIncomeType,
+    None,
+    None
+  )
+
   val foreignProperty: PropertyDetailsModel = PropertyDetailsModel(
     incomeSourceId = testPropertyIncomeId,
     accountingPeriod = Some(AccountingPeriodModel(
@@ -97,6 +109,18 @@ object PropertyDetailsIntegrationTestConstants {
     firstAccountingPeriodEndDate = Some(propertyAccounringEndLocalDate),
     foreignPropertyIncomeType,
     propertyTradingStartDate,
+    None
+  )
+
+  val foreignPropertyWithUnknowns: PropertyDetailsModel = PropertyDetailsModel(
+    incomeSourceId = testPropertyIncomeId,
+    accountingPeriod = Some(AccountingPeriodModel(
+      start = propertyAccountingStartLocalDate,
+      end = propertyAccounringEndLocalDate
+    )),
+    firstAccountingPeriodEndDate = Some(propertyAccounringEndLocalDate),
+    foreignPropertyIncomeType,
+    None,
     None
   )
 
