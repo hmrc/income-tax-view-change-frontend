@@ -22,7 +22,7 @@ import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
-import enums.IncomeSourceJourney.{IncomeSourceJourney, PropertyBusiness, SelfEmployment, UkProperty}
+import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceJourney, PropertyBusiness, SelfEmployment, UkProperty}
 import models.incomeSourceDetails.viewmodels.ManageBusinessDetailsViewModel
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, LatencyDetails, PropertyDetailsModel}
 import play.api.Logger
@@ -59,7 +59,6 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageSelfEmployme
   def showUkProperty: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
-      println("KKKKKKKKKKKKKKK")
       handleRequest(
         sources = user.incomeSources,
         isAgent = false,
@@ -69,11 +68,47 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageSelfEmployme
       )
   }
 
-  def showUkPropertyAgent: Action[AnyContent] = Action(Ok)
+  def showUkPropertyAgent: Action[AnyContent] = Authenticated.async {
+    implicit request =>
+      implicit user =>
+        getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
+          implicit mtdItUser =>
+            handleRequest(
+              sources = mtdItUser.incomeSources,
+              isAgent = true,
+              backUrl = controllers.incomeSources.manage.routes.ManageIncomeSourceController.showAgent().url,
+              None,
+              incomeSourceType = UkProperty
+            )
+        }
+  }
 
-  def showForeignProperty: Action[AnyContent] = Action(Ok)
+  def showForeignProperty: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+    andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
+    implicit user =>
+      handleRequest(
+        sources = user.incomeSources,
+        isAgent = false,
+        id = None,
+        backUrl = controllers.incomeSources.manage.routes.ManageIncomeSourceController.show().url,
+        incomeSourceType = ForeignProperty
+      )
+  }
 
-  def showForeignPropertyAgent: Action[AnyContent] = Action(Ok)
+  def showForeignPropertyAgent: Action[AnyContent] = Authenticated.async {
+    implicit request =>
+      implicit user =>
+        getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
+          implicit mtdItUser =>
+            handleRequest(
+              sources = mtdItUser.incomeSources,
+              isAgent = true,
+              backUrl = controllers.incomeSources.manage.routes.ManageIncomeSourceController.showAgent().url,
+              None,
+              incomeSourceType = ForeignProperty
+            )
+        }
+  }
 
   def showSoleTraderBusiness(id: String): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
@@ -194,7 +229,6 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageSelfEmployme
 
   def getManageIncomeSourceViewModelProperty(sources: IncomeSourceDetailsModel, incomeSourceType: IncomeSourceJourney, isAgent: Boolean)
                                             (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, ManageBusinessDetailsViewModel]] = {
-    println("MMMMMMMMMMMM")
     val desiredIncomeSourceMaybe: Option[PropertyDetailsModel] = {
       if (incomeSourceType == UkProperty) {
         sources.properties
@@ -206,7 +240,6 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageSelfEmployme
           .find(_.isForeignProperty)
       }
     }
-    println("NNNNNNNNNNNNN")
 
     if (desiredIncomeSourceMaybe.isDefined) {
       itsaStatusService.hasMandatedOrVoluntaryStatusCurrentYear.flatMap {
@@ -252,9 +285,8 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageSelfEmployme
           getManageIncomeSourceViewModel(sources = sources, id = id.get, isAgent = isAgent)
         } else {
           getManageIncomeSourceViewModelProperty(sources = sources, isAgent = isAgent, incomeSourceType = incomeSourceType)
-      }
+        }
       } yield {
-        println("LLLLLLLLLL" + value)
         value match {
           case Right(viewModel) =>
             Ok(view(viewModel = viewModel,
