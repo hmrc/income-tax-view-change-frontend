@@ -171,7 +171,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
   }
 
   def variableViewModelPropertyBusiness(incomeSource: PropertyDetailsModel, itsaStatus: Boolean, crystallisationTaxYear1: Option[Boolean],
-                                        crystallisationTaxYear2: Option[Boolean]): ManageBusinessDetailsViewModel = {
+                                        crystallisationTaxYear2: Option[Boolean], incomeSourceType: IncomeSourceJourney): ManageBusinessDetailsViewModel = {
     ManageBusinessDetailsViewModel(
       incomeSourceId = incomeSource.incomeSourceId,
       tradingName = None,
@@ -182,7 +182,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
       taxYearOneCrystallised = crystallisationTaxYear1,
       taxYearTwoCrystallised = crystallisationTaxYear2,
       latencyDetails = incomeSource.latencyDetails,
-      incomeSourceType = PropertyBusiness
+      incomeSourceType = incomeSourceType
     )
   }
 
@@ -193,6 +193,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
       .filterNot(_.isCeased)
       .find(e => e.incomeSourceId == id)
 
+    println("LLLLLLLLLL" + desiredIncomeSourceMaybe)
     if (desiredIncomeSourceMaybe.isDefined) {
       itsaStatusService.hasMandatedOrVoluntaryStatusCurrentYear.flatMap {
         case true =>
@@ -215,7 +216,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
           Future(Right(
             variableViewModelSEBusiness(
               incomeSource = desiredIncomeSourceMaybe.get,
-              itsaStatus = true,
+              itsaStatus = false,
               crystallisationTaxYear1 = None,
               crystallisationTaxYear2 = None)
           ))
@@ -249,23 +250,26 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
               incomeSource = desiredIncomeSourceMaybe.get,
               itsaStatus = true,
               crystallisationTaxYear1 = None,
-              crystallisationTaxYear2 = None)))
+              crystallisationTaxYear2 = None,
+              incomeSourceType = incomeSourceType)))
             case Right(crystallisationData: List[Boolean]) =>
               Future(Right(
                 variableViewModelPropertyBusiness(
                   incomeSource = desiredIncomeSourceMaybe.get,
                   itsaStatus = true,
                   crystallisationTaxYear1 = crystallisationData.headOption,
-                  crystallisationTaxYear2 = crystallisationData.lastOption
+                  crystallisationTaxYear2 = crystallisationData.lastOption,
+                  incomeSourceType = incomeSourceType
                 )))
           }
         case false =>
           Future(Right(
             variableViewModelPropertyBusiness(
               incomeSource = desiredIncomeSourceMaybe.get,
-              itsaStatus = true,
+              itsaStatus = false,
               crystallisationTaxYear1 = None,
-              crystallisationTaxYear2 = None)
+              crystallisationTaxYear2 = None,
+              incomeSourceType = incomeSourceType)
           ))
       }
     } else {
