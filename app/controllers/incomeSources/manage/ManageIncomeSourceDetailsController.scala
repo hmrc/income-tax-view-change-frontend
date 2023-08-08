@@ -154,6 +154,13 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
     }
   }
 
+  def convertCashOrAccrualsFlagIntoString(cashOrAccrualsFlag: Option[Boolean]): Option[String] = {
+    cashOrAccrualsFlag match {
+      case Some(value) => if (value) {Some("accruals")} else {Some("cash")}
+      case None => None
+    }
+  }
+
   def variableViewModelSEBusiness(incomeSource: BusinessDetailsModel, itsaStatus: Boolean, crystallisationTaxYear1: Option[Boolean],
                                   crystallisationTaxYear2: Option[Boolean]): ManageBusinessDetailsViewModel = {
     ManageBusinessDetailsViewModel(
@@ -177,7 +184,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
       tradingName = None,
       tradingStartDate = incomeSource.tradingStartDate,
       address = None,
-      businessAccountingMethod = incomeSource.cashOrAccruals,
+      businessAccountingMethod = convertCashOrAccrualsFlagIntoString(incomeSource.cashOrAccrualsFlag),
       itsaHasMandatedOrVoluntaryStatusCurrentYear = itsaStatus,
       taxYearOneCrystallised = crystallisationTaxYear1,
       taxYearTwoCrystallised = crystallisationTaxYear2,
@@ -193,7 +200,6 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
       .filterNot(_.isCeased)
       .find(e => e.incomeSourceId == id)
 
-    println("LLLLLLLLLL" + desiredIncomeSourceMaybe)
     if (desiredIncomeSourceMaybe.isDefined) {
       itsaStatusService.hasMandatedOrVoluntaryStatusCurrentYear.flatMap {
         case true =>

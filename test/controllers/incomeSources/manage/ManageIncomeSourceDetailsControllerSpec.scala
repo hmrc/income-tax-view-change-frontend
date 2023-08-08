@@ -36,7 +36,7 @@ import testConstants.BaseTestConstants
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testSelfEmploymentId}
 import testConstants.BusinessDetailsTestConstants.testBizAddress
 import testUtils.TestSupport
-import views.html.incomeSources.manage.ManageSelfEmployment
+import views.html.incomeSources.manage.{ManageIncomeSourceDetails}
 
 import scala.concurrent.Future
 
@@ -55,7 +55,7 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
   }
 
   object TestManageIncomeSourceDetailsController extends ManageIncomeSourceDetailsController(
-    view = app.injector.instanceOf[ManageSelfEmployment],
+    view = app.injector.instanceOf[ManageIncomeSourceDetails],
     checkSessionTimeout = app.injector.instanceOf[SessionTimeoutPredicate],
     authenticate = MockAuthenticationPredicate,
     authorisedFunctions = mockAuthService,

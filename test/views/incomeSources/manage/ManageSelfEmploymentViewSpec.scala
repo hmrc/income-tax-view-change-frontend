@@ -16,6 +16,7 @@
 
 package views.incomeSources.manage
 
+import enums.IncomeSourceJourney.SelfEmployment
 import testUtils.TestSupport
 import forms.incomeSources.add.AddBusinessReportingMethodForm
 import models.core.AddressModel
@@ -27,7 +28,7 @@ import play.api.mvc.Call
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import play.twirl.api.HtmlFormat
 import testConstants.BaseTestConstants.testSelfEmploymentId
-import testConstants.BusinessDetailsTestConstants.{testLatencyDetailsViewModel1, testStartDate, testTradeName}
+import testConstants.BusinessDetailsTestConstants.{testLatencyDetails3, testStartDate, testTradeName}
 import testUtils.TestSupport
 import views.html.incomeSources.manage.ManageSelfEmployment
 
@@ -63,7 +64,8 @@ class ManageSelfEmploymentViewSpec extends TestSupport {
     itsaHasMandatedOrVoluntaryStatusCurrentYear = true,
     taxYearOneCrystallised = Some(false),
     taxYearTwoCrystallised = Some(false),
-    latencyDetails = Some(testLatencyDetailsViewModel1)
+    latencyDetails = Some(testLatencyDetails3),
+    incomeSourceType = SelfEmployment
   )
 
   val viewModel2: ManageBusinessDetailsViewModel = ManageBusinessDetailsViewModel(
@@ -75,7 +77,8 @@ class ManageSelfEmploymentViewSpec extends TestSupport {
     itsaHasMandatedOrVoluntaryStatusCurrentYear = false,
     taxYearOneCrystallised = None,
     taxYearTwoCrystallised = None,
-    latencyDetails = None
+    latencyDetails = None,
+    incomeSourceType = SelfEmployment
   )
 
 
