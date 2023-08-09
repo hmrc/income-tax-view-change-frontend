@@ -169,7 +169,7 @@
         </div>
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">@getAccountingMethodMessage</dt>
-            <dd class="govuk-summary-list__value" id=s"business-accounting-method">@{
+            <dd class="govuk-summary-list__value" id="business-accounting-method">@{
                 viewModel.businessAccountingMethod match {
                     case Some(x) => x match {
                         case value if value == "cash" => getMessage("cash-accounting")
