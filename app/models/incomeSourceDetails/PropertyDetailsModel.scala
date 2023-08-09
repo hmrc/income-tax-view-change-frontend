@@ -28,9 +28,9 @@ case class PropertyDetailsModel(incomeSourceId: String,
                                 cessation: Option[CessationModel],
                                 latencyDetails: Option[LatencyDetails] = None) {
 
-  def isUkProperty: Boolean = incomeSourceType.contains("uk-property")
+  def isUkProperty: Boolean = incomeSourceType.contains("02-uk-property")
 
-  def isForeignProperty: Boolean = incomeSourceType.contains("foreign-property")
+  def isForeignProperty: Boolean = incomeSourceType.contains("03-foreign-property")
 
   def isCeased: Boolean = cessation.exists(_.date.nonEmpty)
 
