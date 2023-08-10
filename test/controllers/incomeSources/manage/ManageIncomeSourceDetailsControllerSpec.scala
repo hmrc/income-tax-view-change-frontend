@@ -22,6 +22,7 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import mocks.connectors.MockIncomeTaxViewChangeConnector
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
+import models.core.AddressModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.mockito.ArgumentMatchers
@@ -34,9 +35,9 @@ import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, status}
 import services.{CalculationListService, DateService, ITSAStatusService}
 import testConstants.BaseTestConstants
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testSelfEmploymentId}
-import testConstants.BusinessDetailsTestConstants.testBizAddress
+import testConstants.BusinessDetailsTestConstants.{address, testBizAddress}
 import testUtils.TestSupport
-import views.html.incomeSources.manage.{ManageIncomeSourceDetails}
+import views.html.incomeSources.manage.ManageIncomeSourceDetails
 
 import scala.concurrent.Future
 
@@ -78,7 +79,7 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
     val titleAgent: String = s"${messages("htmlTitle.agent", heading)}"
     val link: String = s"${messages("incomeSources.manage.business-manage-details.change")}"
     val incomeSourceId: String = "XAIS00000000008"
-    val businessWithLatencyAddress: String = "64 Zoo Lane Happy Place Magical Land England ZL1 064 UK"
+    val businessWithLatencyAddress: String = "8 Test New Court New Town New City NE12 6CI United Kingdom"
     val unknown: String = messages("incomeSources.generic.unknown")
     val annually: String = messages("incomeSources.manage.business-manage-details.annually")
     val quarterly: String = messages("incomeSources.manage.business-manage-details.quarterly")
@@ -95,7 +96,7 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
 
   case object FIRST_AND_SECOND_YEAR_CRYSTALLIZED extends Scenario
 
-  val testBusinessAddress = testBizAddress
+  val testBusinessAddress: AddressModel = address
 
   def mockAndBasicSetup(scenario: Scenario, isAgent: Boolean = false): Unit = {
     disableAllSwitches()
@@ -110,13 +111,13 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         when(mockDateService.getCurrentTaxYearEnd(any)).thenReturn(2024)
         when(mockITSAStatusService.hasMandatedOrVoluntaryStatusCurrentYear(any, any, any))
           .thenReturn(Future.successful(true))
-        mockSingleBusinessIncomeSourceNoLatency()
+        mockUkPlusForeignPlusSoleTraderNoLatency()
 
       case FIRST_AND_SECOND_YEAR_NOT_CRYSTALLIZED =>
         when(mockDateService.getCurrentTaxYearEnd(any)).thenReturn(2023)
         when(mockITSAStatusService.hasMandatedOrVoluntaryStatusCurrentYear(any, any, any))
           .thenReturn(Future.successful(true))
-        mockBusinessIncomeSourceWithLatency2024()
+        mockUkPlusForeignPlusSoleTraderWithLatency()
         when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.eq(2023))(any, any, any))
           .thenReturn(Future.successful(Some(false)))
         when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.eq(2024))(any, any, any))
@@ -126,7 +127,7 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         when(mockDateService.getCurrentTaxYearEnd(any)).thenReturn(2023)
         when(mockITSAStatusService.hasMandatedOrVoluntaryStatusCurrentYear(any, any, any))
           .thenReturn(Future.successful(true))
-        mockBusinessIncomeSourceWithLatency2024()
+        mockUkPlusForeignPlusSoleTraderWithLatency()
         when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.eq(2023))(any, any, any))
           .thenReturn(Future.successful(Some(true)))
         when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.eq(2024))(any, any, any))
@@ -136,14 +137,14 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         when(mockDateService.getCurrentTaxYearEnd(any)).thenReturn(2023)
         when(mockITSAStatusService.hasMandatedOrVoluntaryStatusCurrentYear(any, any, any))
           .thenReturn(Future.successful(false))
-        mockBusinessIncomeSourceWithLatency2023AndUnknownValues()
+        mockUkPlusForeignPlusSoleTrader2023WithLatencyAndUnknowns()
     }
 
     enable(IncomeSources)
 
   }
 
-  "Individual - ManageSelfEmploymentController" should {
+  "Individual - ManageIncomeSourceDetailsController" should {
     "redirect an user to the home page" when {
       "incomeSources FS is disabled" in {
         disableAllSwitches()
@@ -158,6 +159,24 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
 
       }
     }
+  }
+  "Agent - ManageIncomeSourceDetailsController" should {
+    "redirect an agent to the home page" when {
+      "incomeSources FS is disabled" in {
+        disableAllSwitches()
+        disable(IncomeSources)
+
+        mockNoIncomeSources()
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+
+        val result = TestManageIncomeSourceDetailsController.showSoleTraderBusinessAgent(testSelfEmploymentId)(fakeRequestConfirmedClient())
+
+        status(result) shouldBe SEE_OTHER
+      }
+    }
+  }
+
+  "ManageIncomeSourceDetailsController.showSoleTraderBusiness" should {
     "return 200 OK" when {
       "FS is enabled and the .show(id) method is called with a valid id parameter and no latency information" in {
         mockAndBasicSetup(ITSA_STATUS_MANDATORY_OR_VOLUNTARY_BUT_NO_LATENCY_INFORMATION)
@@ -228,20 +247,7 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
     }
   }
 
-  "Agent - ManageSelfEmploymentController" should {
-    "redirect an agent to the home page" when {
-      "incomeSources FS is disabled" in {
-        disableAllSwitches()
-        disable(IncomeSources)
-
-        mockNoIncomeSources()
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-
-        val result = TestManageIncomeSourceDetailsController.showSoleTraderBusinessAgent(testSelfEmploymentId)(fakeRequestConfirmedClient())
-
-        status(result) shouldBe SEE_OTHER
-      }
-    }
+  "ManageIncomeSourceDetailsController.showSoleTraderBusinessAgent" should {
     "return 200 OK" when {
       "FS is enabled and the .showAgent(id) method is called with a valid id parameter and no latency information" in {
         mockAndBasicSetup(ITSA_STATUS_MANDATORY_OR_VOLUNTARY_BUT_NO_LATENCY_INFORMATION, isAgent = true)
@@ -306,6 +312,272 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         Option(document.getElementById("reporting-method-2")).isDefined shouldBe false
         document.getElementById("business-address").text shouldBe TestManageIncomeSourceDetailsController.unknown
         document.getElementById("business-name").text shouldBe TestManageIncomeSourceDetailsController.unknown
+        document.getElementById("business-date-started").text shouldBe TestManageIncomeSourceDetailsController.unknown
+        document.getElementById("business-accounting-method").text shouldBe TestManageIncomeSourceDetailsController.unknown
+
+      }
+    }
+  }
+
+  "ManageIncomeSourceDetailsController.showUkProperty" should {
+    "return 200 OK" when {
+      "FS is enabled and the .show method is called with a valid id parameter and no latency information" in {
+        mockAndBasicSetup(ITSA_STATUS_MANDATORY_OR_VOLUNTARY_BUT_NO_LATENCY_INFORMATION)
+
+        val result: Future[Result] = TestManageIncomeSourceDetailsController.showUkProperty(fakeRequestWithNino)
+        val document: Document = Jsoup.parse(contentAsString(result))
+
+        status(result) shouldBe Status.OK
+        document.title shouldBe TestManageIncomeSourceDetailsController.title
+        document.select("h1:nth-child(1)").text shouldBe TestManageIncomeSourceDetailsController.heading
+        Option(document.getElementById("change-link-1")).isDefined shouldBe false
+        Option(document.getElementById("change-link-2")).isDefined shouldBe false
+        Option(document.getElementById("reporting-method-1")).isDefined shouldBe false
+        Option(document.getElementById("reporting-method-2")).isDefined shouldBe false
+      }
+      "FS is enabled and the .show method is called with a valid id parameter, valid latency information and two tax years not crystallised" in {
+        mockAndBasicSetup(FIRST_AND_SECOND_YEAR_NOT_CRYSTALLIZED)
+
+        val result: Future[Result] = TestManageIncomeSourceDetailsController.showUkProperty(fakeRequestWithNino)
+        val document: Document = Jsoup.parse(contentAsString(result))
+
+        status(result) shouldBe Status.OK
+        document.title shouldBe TestManageIncomeSourceDetailsController.title
+        document.select("h1:nth-child(1)").text shouldBe TestManageIncomeSourceDetailsController.heading
+        Option(document.getElementById("change-link-1")).isDefined shouldBe true
+        Option(document.getElementById("change-link-2")).isDefined shouldBe true
+        document.getElementById("reporting-method-1").text shouldBe TestManageIncomeSourceDetailsController.annually
+        document.getElementById("reporting-method-2").text shouldBe TestManageIncomeSourceDetailsController.quarterly
+
+      }
+      "FS is enabled and the .show method is called with a valid id parameter, valid latency information and two tax years crystallised" in {
+        mockAndBasicSetup(FIRST_AND_SECOND_YEAR_CRYSTALLIZED)
+
+        val result: Future[Result] = TestManageIncomeSourceDetailsController.showUkProperty(fakeRequestWithNino)
+        val document: Document = Jsoup.parse(contentAsString(result))
+
+        status(result) shouldBe Status.OK
+        document.title shouldBe TestManageIncomeSourceDetailsController.title
+        document.select("h1:nth-child(1)").text shouldBe TestManageIncomeSourceDetailsController.heading
+        Option(document.getElementById("change-link-1")).isDefined shouldBe false
+        Option(document.getElementById("change-link-2")).isDefined shouldBe false
+        document.getElementById("reporting-method-1").text shouldBe TestManageIncomeSourceDetailsController.annually
+        document.getElementById("reporting-method-2").text shouldBe TestManageIncomeSourceDetailsController.quarterly
+
+      }
+      "FS is enabled and the .show method is called with a valid id parameter, but non eligable itsa status" in {
+        mockAndBasicSetup(NON_ELIGIBLE_ITSA_STATUS)
+
+        val result: Future[Result] = TestManageIncomeSourceDetailsController.showUkProperty(fakeRequestWithNino)
+        val document: Document = Jsoup.parse(contentAsString(result))
+
+        status(result) shouldBe Status.OK
+        document.title shouldBe TestManageIncomeSourceDetailsController.title
+        document.select("h1:nth-child(1)").text shouldBe TestManageIncomeSourceDetailsController.heading
+        Option(document.getElementById("change-link-1")).isDefined shouldBe false
+        Option(document.getElementById("change-link-2")).isDefined shouldBe false
+        Option(document.getElementById("reporting-method-1")).isDefined shouldBe false
+        Option(document.getElementById("reporting-method-2")).isDefined shouldBe false
+        document.getElementById("business-date-started").text shouldBe TestManageIncomeSourceDetailsController.unknown
+        document.getElementById("business-accounting-method").text shouldBe TestManageIncomeSourceDetailsController.unknown
+
+      }
+    }
+  }
+
+  "ManageIncomeSourceDetailsController.showUkPropertyAgent" should {
+    "return 200 OK" when {
+      "FS is enabled and the .showAgent method is called with a valid id parameter and no latency information" in {
+        mockAndBasicSetup(ITSA_STATUS_MANDATORY_OR_VOLUNTARY_BUT_NO_LATENCY_INFORMATION, isAgent = true)
+
+        val result: Future[Result] = TestManageIncomeSourceDetailsController.showUkPropertyAgent(fakeRequestConfirmedClient())
+        val document: Document = Jsoup.parse(contentAsString(result))
+
+        status(result) shouldBe Status.OK
+        document.title shouldBe TestManageIncomeSourceDetailsController.titleAgent
+        document.select("h1:nth-child(1)").text shouldBe TestManageIncomeSourceDetailsController.heading
+        Option(document.getElementById("change-link-1")).isDefined shouldBe false
+        Option(document.getElementById("change-link-2")).isDefined shouldBe false
+        Option(document.getElementById("reporting-method-1")).isDefined shouldBe false
+        Option(document.getElementById("reporting-method-2")).isDefined shouldBe false
+
+      }
+      "FS is enabled and the .showAgent method is called with a valid id parameter, valid latency information and two tax years not crystallised" in {
+        mockAndBasicSetup(FIRST_AND_SECOND_YEAR_NOT_CRYSTALLIZED, isAgent = true)
+
+        val result: Future[Result] = TestManageIncomeSourceDetailsController.showUkPropertyAgent(fakeRequestConfirmedClient())
+        val document: Document = Jsoup.parse(contentAsString(result))
+
+        status(result) shouldBe Status.OK
+        document.title shouldBe TestManageIncomeSourceDetailsController.titleAgent
+        document.select("h1:nth-child(1)").text shouldBe TestManageIncomeSourceDetailsController.heading
+        Option(document.getElementById("change-link-1")).isDefined shouldBe true
+        Option(document.getElementById("change-link-2")).isDefined shouldBe true
+        document.getElementById("reporting-method-1").text shouldBe TestManageIncomeSourceDetailsController.annually
+        document.getElementById("reporting-method-2").text shouldBe TestManageIncomeSourceDetailsController.quarterly
+
+      }
+      "FS is enabled and the .showAgent method is called with a valid id parameter, valid latency information and two tax years crystallised" in {
+        mockAndBasicSetup(FIRST_AND_SECOND_YEAR_CRYSTALLIZED, isAgent = true)
+
+        val result: Future[Result] = TestManageIncomeSourceDetailsController.showUkPropertyAgent(fakeRequestConfirmedClient())
+        val document: Document = Jsoup.parse(contentAsString(result))
+
+        status(result) shouldBe Status.OK
+        document.title shouldBe TestManageIncomeSourceDetailsController.titleAgent
+        document.select("h1:nth-child(1)").text shouldBe TestManageIncomeSourceDetailsController.heading
+        Option(document.getElementById("change-link-1")).isDefined shouldBe false
+        Option(document.getElementById("change-link-2")).isDefined shouldBe false
+        document.getElementById("reporting-method-1").text shouldBe TestManageIncomeSourceDetailsController.annually
+        document.getElementById("reporting-method-2").text shouldBe TestManageIncomeSourceDetailsController.quarterly
+
+      }
+      "FS is enabled and the .showAgent method is called with a valid id parameter, but non eligable itsa status" in {
+        mockAndBasicSetup(NON_ELIGIBLE_ITSA_STATUS, isAgent = true)
+
+        val result: Future[Result] = TestManageIncomeSourceDetailsController.showUkPropertyAgent(fakeRequestConfirmedClient())
+        val document: Document = Jsoup.parse(contentAsString(result))
+
+        status(result) shouldBe Status.OK
+        document.title shouldBe TestManageIncomeSourceDetailsController.titleAgent
+        document.select("h1:nth-child(1)").text shouldBe TestManageIncomeSourceDetailsController.heading
+        Option(document.getElementById("change-link-1")).isDefined shouldBe false
+        Option(document.getElementById("change-link-2")).isDefined shouldBe false
+        Option(document.getElementById("reporting-method-1")).isDefined shouldBe false
+        Option(document.getElementById("reporting-method-2")).isDefined shouldBe false
+        document.getElementById("business-date-started").text shouldBe TestManageIncomeSourceDetailsController.unknown
+        document.getElementById("business-accounting-method").text shouldBe TestManageIncomeSourceDetailsController.unknown
+
+      }
+    }
+  }
+
+  "ManageIncomeSourceDetailsController.showForeignProperty" should {
+    "return 200 OK" when {
+      "FS is enabled and the .show method is called with a valid id parameter and no latency information" in {
+        mockAndBasicSetup(ITSA_STATUS_MANDATORY_OR_VOLUNTARY_BUT_NO_LATENCY_INFORMATION)
+
+        val result: Future[Result] = TestManageIncomeSourceDetailsController.showForeignProperty(fakeRequestWithNino)
+        val document: Document = Jsoup.parse(contentAsString(result))
+
+        status(result) shouldBe Status.OK
+        document.title shouldBe TestManageIncomeSourceDetailsController.title
+        document.select("h1:nth-child(1)").text shouldBe TestManageIncomeSourceDetailsController.heading
+        Option(document.getElementById("change-link-1")).isDefined shouldBe false
+        Option(document.getElementById("change-link-2")).isDefined shouldBe false
+        Option(document.getElementById("reporting-method-1")).isDefined shouldBe false
+        Option(document.getElementById("reporting-method-2")).isDefined shouldBe false
+      }
+      "FS is enabled and the .show method is called with a valid id parameter, valid latency information and two tax years not crystallised" in {
+        mockAndBasicSetup(FIRST_AND_SECOND_YEAR_NOT_CRYSTALLIZED)
+
+        val result: Future[Result] = TestManageIncomeSourceDetailsController.showForeignProperty(fakeRequestWithNino)
+        val document: Document = Jsoup.parse(contentAsString(result))
+
+        status(result) shouldBe Status.OK
+        document.title shouldBe TestManageIncomeSourceDetailsController.title
+        document.select("h1:nth-child(1)").text shouldBe TestManageIncomeSourceDetailsController.heading
+        Option(document.getElementById("change-link-1")).isDefined shouldBe true
+        Option(document.getElementById("change-link-2")).isDefined shouldBe true
+        document.getElementById("reporting-method-1").text shouldBe TestManageIncomeSourceDetailsController.annually
+        document.getElementById("reporting-method-2").text shouldBe TestManageIncomeSourceDetailsController.quarterly
+
+      }
+      "FS is enabled and the .show method is called with a valid id parameter, valid latency information and two tax years crystallised" in {
+        mockAndBasicSetup(FIRST_AND_SECOND_YEAR_CRYSTALLIZED)
+
+        val result: Future[Result] = TestManageIncomeSourceDetailsController.showForeignProperty(fakeRequestWithNino)
+        val document: Document = Jsoup.parse(contentAsString(result))
+
+        status(result) shouldBe Status.OK
+        document.title shouldBe TestManageIncomeSourceDetailsController.title
+        document.select("h1:nth-child(1)").text shouldBe TestManageIncomeSourceDetailsController.heading
+        Option(document.getElementById("change-link-1")).isDefined shouldBe false
+        Option(document.getElementById("change-link-2")).isDefined shouldBe false
+        document.getElementById("reporting-method-1").text shouldBe TestManageIncomeSourceDetailsController.annually
+        document.getElementById("reporting-method-2").text shouldBe TestManageIncomeSourceDetailsController.quarterly
+
+      }
+      "FS is enabled and the .show method is called with a valid id parameter, but non eligable itsa status" in {
+        mockAndBasicSetup(NON_ELIGIBLE_ITSA_STATUS)
+
+        val result: Future[Result] = TestManageIncomeSourceDetailsController.showForeignProperty(fakeRequestWithNino)
+        val document: Document = Jsoup.parse(contentAsString(result))
+
+        status(result) shouldBe Status.OK
+        document.title shouldBe TestManageIncomeSourceDetailsController.title
+        document.select("h1:nth-child(1)").text shouldBe TestManageIncomeSourceDetailsController.heading
+        Option(document.getElementById("change-link-1")).isDefined shouldBe false
+        Option(document.getElementById("change-link-2")).isDefined shouldBe false
+        Option(document.getElementById("reporting-method-1")).isDefined shouldBe false
+        Option(document.getElementById("reporting-method-2")).isDefined shouldBe false
+        document.getElementById("business-date-started").text shouldBe TestManageIncomeSourceDetailsController.unknown
+        document.getElementById("business-accounting-method").text shouldBe TestManageIncomeSourceDetailsController.unknown
+
+      }
+    }
+  }
+
+  "ManageIncomeSourceDetailsController.showForeignPropertyAgent" should {
+    "return 200 OK" when {
+      "FS is enabled and the .showAgent method is called with a valid id parameter and no latency information" in {
+        mockAndBasicSetup(ITSA_STATUS_MANDATORY_OR_VOLUNTARY_BUT_NO_LATENCY_INFORMATION, isAgent = true)
+
+        val result: Future[Result] = TestManageIncomeSourceDetailsController.showForeignPropertyAgent(fakeRequestConfirmedClient())
+        val document: Document = Jsoup.parse(contentAsString(result))
+
+        status(result) shouldBe Status.OK
+        document.title shouldBe TestManageIncomeSourceDetailsController.titleAgent
+        document.select("h1:nth-child(1)").text shouldBe TestManageIncomeSourceDetailsController.heading
+        Option(document.getElementById("change-link-1")).isDefined shouldBe false
+        Option(document.getElementById("change-link-2")).isDefined shouldBe false
+        Option(document.getElementById("reporting-method-1")).isDefined shouldBe false
+        Option(document.getElementById("reporting-method-2")).isDefined shouldBe false
+
+      }
+      "FS is enabled and the .showAgent method is called with a valid id parameter, valid latency information and two tax years not crystallised" in {
+        mockAndBasicSetup(FIRST_AND_SECOND_YEAR_NOT_CRYSTALLIZED, isAgent = true)
+
+        val result: Future[Result] = TestManageIncomeSourceDetailsController.showForeignPropertyAgent(fakeRequestConfirmedClient())
+        val document: Document = Jsoup.parse(contentAsString(result))
+
+        status(result) shouldBe Status.OK
+        document.title shouldBe TestManageIncomeSourceDetailsController.titleAgent
+        document.select("h1:nth-child(1)").text shouldBe TestManageIncomeSourceDetailsController.heading
+        Option(document.getElementById("change-link-1")).isDefined shouldBe true
+        Option(document.getElementById("change-link-2")).isDefined shouldBe true
+        document.getElementById("reporting-method-1").text shouldBe TestManageIncomeSourceDetailsController.annually
+        document.getElementById("reporting-method-2").text shouldBe TestManageIncomeSourceDetailsController.quarterly
+
+      }
+      "FS is enabled and the .showAgent method is called with a valid id parameter, valid latency information and two tax years crystallised" in {
+        mockAndBasicSetup(FIRST_AND_SECOND_YEAR_CRYSTALLIZED, isAgent = true)
+
+        val result: Future[Result] = TestManageIncomeSourceDetailsController.showForeignPropertyAgent(fakeRequestConfirmedClient())
+        val document: Document = Jsoup.parse(contentAsString(result))
+
+        status(result) shouldBe Status.OK
+        document.title shouldBe TestManageIncomeSourceDetailsController.titleAgent
+        document.select("h1:nth-child(1)").text shouldBe TestManageIncomeSourceDetailsController.heading
+        Option(document.getElementById("change-link-1")).isDefined shouldBe false
+        Option(document.getElementById("change-link-2")).isDefined shouldBe false
+        document.getElementById("reporting-method-1").text shouldBe TestManageIncomeSourceDetailsController.annually
+        document.getElementById("reporting-method-2").text shouldBe TestManageIncomeSourceDetailsController.quarterly
+
+      }
+      "FS is enabled and the .showAgent method is called with a valid id parameter, but non eligable itsa status" in {
+        mockAndBasicSetup(NON_ELIGIBLE_ITSA_STATUS, isAgent = true)
+
+        val result: Future[Result] = TestManageIncomeSourceDetailsController.showForeignPropertyAgent(fakeRequestConfirmedClient())
+        val document: Document = Jsoup.parse(contentAsString(result))
+
+        status(result) shouldBe Status.OK
+        document.title shouldBe TestManageIncomeSourceDetailsController.titleAgent
+        document.select("h1:nth-child(1)").text shouldBe TestManageIncomeSourceDetailsController.heading
+        Option(document.getElementById("change-link-1")).isDefined shouldBe false
+        Option(document.getElementById("change-link-2")).isDefined shouldBe false
+        Option(document.getElementById("reporting-method-1")).isDefined shouldBe false
+        Option(document.getElementById("reporting-method-2")).isDefined shouldBe false
         document.getElementById("business-date-started").text shouldBe TestManageIncomeSourceDetailsController.unknown
         document.getElementById("business-accounting-method").text shouldBe TestManageIncomeSourceDetailsController.unknown
 
