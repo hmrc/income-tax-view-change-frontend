@@ -58,59 +58,54 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
                                                    val ec: ExecutionContext)
   extends ClientConfirmedController with I18nSupport with FeatureSwitching {
 
-  def showSoleTraderBusiness: Action[AnyContent] = show(SoleTraderBusiness)
-  def showSoleTraderBusinessAgent: Action[AnyContent] = showAgent(SoleTraderBusiness)
-  def showUKProperty: Action[AnyContent] = show(UKProperty)
-  def showUKPropertyAgent: Action[AnyContent] = showAgent(UKProperty)
-  def showForeignProperty: Action[AnyContent] = show(ForeignProperty)
-  def showForeignPropertyAgent: Action[AnyContent] = showAgent(ForeignProperty)
+  def showUKProperty: Action[AnyContent] = handleRequestMethod(UKProperty)(isGet = true)
+  def showUKPropertyAgent: Action[AnyContent] = handleRequestMethodAgent(UKProperty)(isGet = true)
+  def showForeignProperty: Action[AnyContent] = handleRequestMethod(ForeignProperty)(isGet = true)
+  def showForeignPropertyAgent: Action[AnyContent] = handleRequestMethodAgent(ForeignProperty)(isGet = true)
+  def showSoleTraderBusiness: Action[AnyContent] = handleRequestMethod(SoleTraderBusiness)(isGet = true)
+  def showSoleTraderBusinessAgent: Action[AnyContent] = handleRequestMethodAgent(SoleTraderBusiness)(isGet = true)
 
-  def submitSoleTraderBusiness: Action[AnyContent] = submit(SoleTraderBusiness)
-  def submitSoleTraderBusinessAgent: Action[AnyContent] = submitAgent(SoleTraderBusiness)
-  def submitUKProperty: Action[AnyContent] = submit(UKProperty)
-  def submitUKPropertyAgent: Action[AnyContent] = submitAgent(UKProperty)
-  def submitForeignProperty: Action[AnyContent] = submit(ForeignProperty)
-  def submitForeignPropertyAgent: Action[AnyContent] = submitAgent(ForeignProperty)
+  def submitUKProperty: Action[AnyContent] = handleRequestMethod(UKProperty)(isGet = false)
+  def submitUKPropertyAgent: Action[AnyContent] = handleRequestMethodAgent(UKProperty)(isGet = false)
+  def submitForeignProperty: Action[AnyContent] = handleRequestMethod(ForeignProperty)(isGet = false)
+  def submitForeignPropertyAgent: Action[AnyContent] = handleRequestMethodAgent(ForeignProperty)(isGet = false)
+  def submitSoleTraderBusiness: Action[AnyContent] = handleRequestMethod(SoleTraderBusiness)(isGet = false)
+  def submitSoleTraderBusinessAgent: Action[AnyContent] = handleRequestMethodAgent(SoleTraderBusiness)(isGet = false)
 
-  private def show(incomeSourceType: IncomeSourceType): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+  private def handleRequestMethod(incomeSourceType: IncomeSourceType)
+                                 (isGet: Boolean): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
-      handleRequest(
-        isAgent = false,
-        incomeSourceType = incomeSourceType
-      )
+      if(isGet) {
+        handleRequest(
+          isAgent = false,
+          incomeSourceType = incomeSourceType
+        )
+      } else {
+        handleSubmitRequest(
+          isAgent = false,
+          incomeSourceType = incomeSourceType
+        )
+      }
   }
 
-  private def showAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = Authenticated.async {
+  private def handleRequestMethodAgent(incomeSourceType: IncomeSourceType)
+                                      (isGet: Boolean): Action[AnyContent] = Authenticated.async {
     implicit request =>
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
           implicit mtdItUser =>
-            handleRequest(
-              isAgent = true,
-              incomeSourceType = incomeSourceType
-            )
-        }
-  }
-
-  private def submit(incomeSourceType: IncomeSourceType): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
-    andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
-    implicit request =>
-      handleSubmitRequest(
-        isAgent = false,
-        incomeSourceType = incomeSourceType
-      )
-  }
-
-  private def submitAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = Authenticated.async {
-    implicit request =>
-      implicit user =>
-        getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
-          implicit mtdItUser =>
-            handleSubmitRequest(
-              isAgent = true,
-              incomeSourceType = incomeSourceType
-            )
+            if(isGet) {
+              handleRequest(
+                isAgent = true,
+                incomeSourceType = incomeSourceType
+              )
+            } else {
+              handleSubmitRequest(
+                isAgent = false,
+                incomeSourceType = incomeSourceType
+              )
+            }
         }
   }
 
