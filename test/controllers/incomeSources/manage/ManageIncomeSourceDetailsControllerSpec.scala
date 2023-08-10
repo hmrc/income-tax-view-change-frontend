@@ -96,6 +96,8 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
 
   case object FIRST_AND_SECOND_YEAR_CRYSTALLIZED extends Scenario
 
+  case object ERROR_TESTING extends Scenario
+
   val testBusinessAddress: AddressModel = address
 
   def mockAndBasicSetup(scenario: Scenario, isAgent: Boolean = false): Unit = {
@@ -138,6 +140,11 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         when(mockITSAStatusService.hasMandatedOrVoluntaryStatusCurrentYear(any, any, any))
           .thenReturn(Future.successful(false))
         mockUkPlusForeignPlusSoleTrader2023WithLatencyAndUnknowns()
+
+      case ERROR_TESTING =>
+        when(mockDateService.getCurrentTaxYearEnd(any)).thenReturn(2023)
+        when(mockITSAStatusService.hasMandatedOrVoluntaryStatusCurrentYear(any, any, any))
+          .thenReturn(Future.successful(false))
     }
 
     enable(IncomeSources)
@@ -582,6 +589,29 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         document.getElementById("business-accounting-method").text shouldBe TestManageIncomeSourceDetailsController.unknown
 
       }
+    }
+  }
+
+  //error scenarios:
+  "Any .show method" should {
+    "throw an error" when {
+      "User has no income source of the called type" in {
+        mockAndBasicSetup(ERROR_TESTING)
+        mockUKPropertyIncomeSource()
+        val resultSE: Future[Result] = TestManageIncomeSourceDetailsController.showSoleTraderBusiness(testSelfEmploymentId)(fakeRequestWithNino)
+        status(resultSE) shouldBe Status.INTERNAL_SERVER_ERROR
+
+        mockAndBasicSetup(ERROR_TESTING)
+        mockSingleBusinessIncomeSource()
+        val resultUk: Future[Result] = TestManageIncomeSourceDetailsController.showUkProperty(fakeRequestWithNino)
+        status(resultUk) shouldBe Status.INTERNAL_SERVER_ERROR
+
+        mockAndBasicSetup(ERROR_TESTING)
+        mockSingleBusinessIncomeSource()
+        val resultFP: Future[Result] = TestManageIncomeSourceDetailsController.showForeignProperty(fakeRequestWithNino)
+        status(resultFP) shouldBe Status.INTERNAL_SERVER_ERROR
+      }
+
     }
   }
 }
