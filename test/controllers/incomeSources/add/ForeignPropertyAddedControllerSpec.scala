@@ -103,7 +103,7 @@ class ForeignPropertyAddedControllerSpec extends TestSupport
           "123456",
           None,
           None,
-          Some("foreign-property"),
+          Some("03-foreign-property"),
           Some(LocalDate.of(2022, 4, 21)),
           None
         )))
@@ -183,7 +183,7 @@ class ForeignPropertyAddedControllerSpec extends TestSupport
           "123",
           None,
           None,
-          Some("foreign-property"),
+          Some("03-foreign-property"),
           Some(LocalDate.of(2022, 4, 21)),
           None
         )))
