@@ -23,10 +23,25 @@
 @import views.html.helpers.injected.ErrorSummary
 @import views.html.components._
 
-@this(mainTemplate: unifiedLayout, dateInput: dateInput, continueButton: ContinueButton, formWithCSRF: FormWithCSRF, errorSummary: ErrorSummary, p: p)
+@this(
+        mainTemplate: unifiedLayout,
+        dateInput: dateInput,
+        continueButton: ContinueButton,
+        formWithCSRF: FormWithCSRF,
+        errorSummary: ErrorSummary,
+        p: p
+)
 
-@(addUKPropertyStartDateForm: Form[_], postAction: Call, isAgent: Boolean = false, backUrl: String,
-    btaNavPartial: Option[Html] = None)(implicit user: auth.MtdItUser[_], messages: Messages)
+@(
+        addUKPropertyStartDateForm: Form[_],
+        postAction: Call,
+        isAgent: Boolean = false,
+        backUrl: String,
+        btaNavPartial: Option[Html] = None
+)(
+        implicit user: auth.MtdItUser[_],
+        messages: Messages
+)
 
 @getHintContent = {
     @p(classes = "govuk-hint") {

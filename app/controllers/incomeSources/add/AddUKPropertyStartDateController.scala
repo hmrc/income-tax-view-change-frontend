@@ -30,7 +30,7 @@ import play.api.mvc._
 import services.{DateService, IncomeSourceDetailsService}
 import uk.gov.hmrc.http.HeaderCarrier
 import views.html.errorPages.CustomNotFoundError
-import views.html.incomeSources.add.AddUKPropertyStartDate
+import views.html.incomeSources.add.{AddIncomeSourceStartDate, AddUKPropertyStartDate}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -42,7 +42,7 @@ class AddUKPropertyStartDateController @Inject()(val authenticate: Authenticatio
                                                  val retrieveBtaNavBar: NavBarPredicate,
                                                  val retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                                  val retrieveNino: NinoPredicate,
-                                                 val view: AddUKPropertyStartDate,
+                                                 val view: AddIncomeSourceStartDate,
                                                  val customNotFoundErrorView: CustomNotFoundError)
                                                 (implicit val appConfig: FrontendAppConfig,
                                                  val dateFormatter: ImplicitDateFormatterImpl,
@@ -52,6 +52,8 @@ class AddUKPropertyStartDateController @Inject()(val authenticate: Authenticatio
                                                  val itvcErrorHandler: ItvcErrorHandler,
                                                  val itvcErrorHandlerAgent: AgentItvcErrorHandler)
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {
+
+  private lazy val messagesPrefix = "incomeSources.add.UKPropertyStartDate"
 
   def handleRequest(isAgent: Boolean)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
@@ -65,10 +67,11 @@ class AddUKPropertyStartDateController @Inject()(val authenticate: Authenticatio
 
     if (incomeSourcesEnabled) {
       Future.successful(Ok(view(
-        addUKPropertyStartDateForm = AddUKPropertyStartDateForm()(dateFormatter, dateService, messages),
+        messagesPrefix = messagesPrefix,
+        form = AddUKPropertyStartDateForm()(dateFormatter, dateService, messages),
         postAction = postAction,
         isAgent = isAgent,
-        backUrl = backUrl)(user, messages)))
+        backUrl = backUrl)(messages, user)))
     } else {
       Future.successful(Ok(customNotFoundErrorView()(user, messages)))
     } recover {
@@ -97,7 +100,8 @@ class AddUKPropertyStartDateController @Inject()(val authenticate: Authenticatio
     }
     AddUKPropertyStartDateForm().bindFromRequest().fold(
       hasErrors => Future.successful(BadRequest(view(
-        addUKPropertyStartDateForm = hasErrors,
+        messagesPrefix = "incomeSources.add.UKPropertyStartDate",
+        form = hasErrors,
         postAction = postAction,
         backUrl = backUrl,
         isAgent = isAgent

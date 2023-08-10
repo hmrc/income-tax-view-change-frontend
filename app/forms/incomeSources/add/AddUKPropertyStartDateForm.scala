@@ -52,7 +52,7 @@ object AddUKPropertyStartDateForm extends Constraints {
     }
 
     Form(
-      mapping("add-uk-property-start-date" -> tuple(
+      mapping("incomeSources.add.UKPropertyStartDate" -> tuple(
         "day" -> default(text(), ""),
         "month" -> default(text(), ""),
         "year" -> default(text(), ""))

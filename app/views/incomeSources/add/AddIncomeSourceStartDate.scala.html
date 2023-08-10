@@ -33,7 +33,10 @@
         backUrl: String,
         isAgent: Boolean,
         messagesPrefix: String
-)(implicit messages: Messages, user: auth.MtdItUser[_])
+)(
+        implicit messages: Messages,
+        user: auth.MtdItUser[_]
+)
 
 @getMessage(key: String, args: String*) = @{
     messages(s"$messagesPrefix.$key", args: _*)
@@ -45,14 +48,14 @@
     isAgent = isAgent,
     btaNavPartial = user.btaNavPartial) {
 
-    @formWithCSRF(action = postAction, Symbol("id") -> s"$messagesPrefix-form") {
+    @errorSummary(form)
 
-        @errorSummary(form)
+    @formWithCSRF(action = postAction, Symbol("id") -> s"$messagesPrefix-form") {
 
         @govukDateInput(DateInput(
             hint = Some(Hint(
                 id = Some(s"$messagesPrefix-hint"),
-                content = HtmlContent(s"<div>${getMessage("hint-prt1")}</div></br><div>${messages("dateForm.hint")}</div>")
+                content = HtmlContent(s"<div>${getMessage("hint")}</div></br><div>${messages("dateForm.hint")}</div>")
             )),
             fieldset = Some(Fieldset(
                 legend = Some(Legend(

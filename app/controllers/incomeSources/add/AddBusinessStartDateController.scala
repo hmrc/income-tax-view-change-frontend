@@ -53,6 +53,20 @@ class AddBusinessStartDateController @Inject()(authenticate: AuthenticationPredi
                                                val ec: ExecutionContext)
   extends ClientConfirmedController with I18nSupport with FeatureSwitching {
 
+  lazy val backUrl: String = controllers.incomeSources.add.routes.AddBusinessNameController.show().url
+  lazy val backUrlAgent: String = controllers.incomeSources.add.routes.AddBusinessNameController.showAgent().url
+
+  lazy val postAction: Call = controllers.incomeSources.add.routes.AddBusinessStartDateController.submit()
+  lazy val postActionAgent: Call = controllers.incomeSources.add.routes.AddBusinessStartDateController.submitAgent()
+
+  lazy val homePageCall: Call = routes.HomeController.show()
+  lazy val homePageCallAgent: Call = routes.HomeController.showAgent
+
+  lazy val redirectCall: Call = controllers.incomeSources.add.routes.AddBusinessStartDateCheckController.show()
+  lazy val redirectCallAgent: Call = controllers.incomeSources.add.routes.AddBusinessStartDateCheckController.showAgent()
+
+  private lazy val messagesPrefix = "add-business-start-date"
+
   def show: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
@@ -90,11 +104,11 @@ class AddBusinessStartDateController @Inject()(authenticate: AuthenticationPredi
       Future.successful(Redirect(homePageCall))
     } else {
       Future.successful(Ok(addIncomeSourceStartDate(
+        messagesPrefix = messagesPrefix,
         form = BusinessStartDateForm(),
         postAction = postAction,
         backUrl = backUrl,
-        isAgent = isAgent,
-        messagesPrefix = "add-business-start-date"
+        isAgent = isAgent
       )))
     } recover {
       case ex: Exception =>
@@ -124,11 +138,11 @@ class AddBusinessStartDateController @Inject()(authenticate: AuthenticationPredi
     BusinessStartDateForm().bindFromRequest().fold(
       formWithErrors =>
         Future.successful(BadRequest(addIncomeSourceStartDate(
+          messagesPrefix = messagesPrefix,
           form = formWithErrors,
           postAction = postActionLocal,
           backUrl = backAction,
-          isAgent = isAgent,
-          messagesPrefix = "add-business-start-date"
+          isAgent = isAgent
         ))),
       formData => {
         val businessStartDate = formData.date
@@ -147,17 +161,5 @@ class AddBusinessStartDateController @Inject()(authenticate: AuthenticationPredi
   def changeBusinessStartDateAgent(): Action[AnyContent] = Action {
     Ok("Agent Change Business Start Date WIP")
   }
-
-  lazy val backUrl: String = controllers.incomeSources.add.routes.AddBusinessNameController.show().url
-  lazy val backUrlAgent: String = controllers.incomeSources.add.routes.AddBusinessNameController.showAgent().url
-
-  lazy val postAction: Call = controllers.incomeSources.add.routes.AddBusinessStartDateController.submit()
-  lazy val postActionAgent: Call = controllers.incomeSources.add.routes.AddBusinessStartDateController.submitAgent()
-
-  lazy val homePageCall: Call = routes.HomeController.show()
-  lazy val homePageCallAgent: Call = routes.HomeController.showAgent
-
-  lazy val redirectCall: Call = controllers.incomeSources.add.routes.AddBusinessStartDateCheckController.show()
-  lazy val redirectCallAgent: Call = controllers.incomeSources.add.routes.AddBusinessStartDateCheckController.showAgent()
 
 }

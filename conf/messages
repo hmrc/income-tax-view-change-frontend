@@ -1354,12 +1354,10 @@ add-business-address.edit.heading           = Enter your business address
 
 # add Business start date
 add-business-start-date.heading                      = When did your business start trading?
-add-business-start-date.hint-prt1                    = This is the date we’ll use to calculate your Class 2 National Insurance charge, if appropriate.
-add-business-start-date.hint-prt2                    = For example, 27 3 2020
+add-business-start-date.hint                         = This is the date we’ll use to calculate your Class 2 National Insurance charge, if appropriate.
 add-business-start-date.day                          = Day
 add-business-start-date.form.month                   = Month
 add-business-start-date.form.year                    = Year
-add-business-start-date.form.continue                = Continue
 add-business-start-date.error.future                 = The date your business started trading must be before {0}
 add-business-start-date.error.error.required         = Enter the date your business started trading
 add-business-start-date.error.invalid                = The date your business started trading must be a real date
