@@ -14,17 +14,36 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import play.api.data.Form
+@import play.api.data._
 
-@this(govukErrorSummary: GovukErrorSummary)
-
+@this()
 @(form: Form[_])(implicit messages: Messages)
 
-@if(form.errors.nonEmpty) {
-    @govukErrorSummary(ErrorSummary(
-        errorList = form.errors
-        .map(err => err.copy(key = err.key, args = err.args))
-        .asTextErrorLinks,
-        title = Text(messages("base.error_summary.heading"))
-    ))
+@errors = @{
+    form.errors
+}
+
+@errMsg(err: FormError) = {
+    <li class="bold"><a href="#@err.key">@{messages(err.message, err.args: _*)}</a></li>
+}
+
+@if(form.hasErrors) {
+
+    <div
+        class="flash govuk-error-summary govuk-error-summary--show"
+        id="error-summary-display"
+        role="alert"
+        aria-labelledby="error-summary-heading"
+        tabindex="-1"
+        data-module="govuk-error-summary"
+    >
+        <h2 id="error-summary-heading" class="govuk-error-summary__title">@messages("base.error_summary.heading")</h2>
+        <div class="govuk-error-summary__body">
+            <ul class="govuk-list govuk-error-summary__list">
+                @errors.map(errMsg)
+            </ul>
+        </div>
+    </div>
+
 }
