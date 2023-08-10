@@ -112,7 +112,7 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
   private def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)
                    (implicit user: MtdItUser[_]): Future[Result] = {
 
-    (isEnabled(IncomeSources), getCallsAndMessagesKey(isAgent, incomeSourceType)) match {
+    (isEnabled(IncomeSources), getCallsAndForm(isAgent, incomeSourceType)) match {
       case (false, _) =>
         Future(
           Ok(
@@ -123,11 +123,11 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
         Future(
           Ok(
             addIncomeSourceStartDate(
-              messagesPrefix = messagesPrefix,
               form = form,
-              postAction = postAction,
+              isAgent = isAgent,
               backUrl = backCall.url,
-              isAgent = isAgent
+              postAction = postAction,
+              messagesPrefix = messagesPrefix
             )
           )
         )
@@ -142,7 +142,7 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
   private def handleSubmitRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)
                          (implicit user: MtdItUser[_]): Future[Result] = {
 
-    (isEnabled(IncomeSources), getCallsAndMessagesKey(isAgent, incomeSourceType)) match {
+    (isEnabled(IncomeSources), getCallsAndForm(isAgent, incomeSourceType)) match {
       case (false, _) =>
         Future(
           Ok(
@@ -155,11 +155,11 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
             Future(
               BadRequest(
                 addIncomeSourceStartDate(
-                  messagesPrefix = messagesPrefix,
+                  isAgent = isAgent,
                   form = formWithErrors,
-                  postAction = postAction,
                   backUrl = backCall.url,
-                  isAgent = isAgent
+                  postAction = postAction,
+                  messagesPrefix = messagesPrefix
                 )
               )
             ),
@@ -186,7 +186,7 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
       else itvcErrorHandler.showInternalServerError()
   }
 
-  private def getCallsAndMessagesKey(isAgent: Boolean, incomeSourceType: IncomeSourceType)
+  private def getCallsAndForm(isAgent: Boolean, incomeSourceType: IncomeSourceType)
                                     (implicit user: MtdItUser[_]): (Call, Call, Call, String, Form[_]) = {
 
     (isAgent, incomeSourceType) match {
@@ -256,5 +256,4 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
   def changeUKPropertyStartDateAgent(): Action[AnyContent] = Action(Ok("Agent Change UK Property Start Date WIP"))
   def changeForeignPropertyStartDate(): Action[AnyContent] = Action(Ok("Change Foreign Property Start Date WIP"))
   def changeForeignPropertyStartDateAgent(): Action[AnyContent] = Action(Ok("Agent Change Foreign Property Start Date WIP"))
-
 }
