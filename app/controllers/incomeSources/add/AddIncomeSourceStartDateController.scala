@@ -112,7 +112,7 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
   private def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)
                    (implicit user: MtdItUser[_]): Future[Result] = {
 
-    (isEnabled(IncomeSources), getCallsAndForm(isAgent, incomeSourceType)) match {
+    (isEnabled(IncomeSources), getCallsAndFormModel(isAgent, incomeSourceType)) match {
       case (false, _) =>
         Future(
           Ok(
@@ -142,7 +142,7 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
   private def handleSubmitRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)
                          (implicit user: MtdItUser[_]): Future[Result] = {
 
-    (isEnabled(IncomeSources), getCallsAndForm(isAgent, incomeSourceType)) match {
+    (isEnabled(IncomeSources), getCallsAndFormModel(isAgent, incomeSourceType)) match {
       case (false, _) =>
         Future(
           Ok(
@@ -186,7 +186,7 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
       else itvcErrorHandler.showInternalServerError()
   }
 
-  private def getCallsAndForm(isAgent: Boolean, incomeSourceType: IncomeSourceType)
+  private def getCallsAndFormModel(isAgent: Boolean, incomeSourceType: IncomeSourceType)
                                     (implicit user: MtdItUser[_]): (Call, Call, Call, String, Form[_]) = {
 
     (isAgent, incomeSourceType) match {
