@@ -33,7 +33,7 @@ import services.DateService
 import testConstants.BaseTestConstants
 import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
 import testUtils.TestSupport
-import views.html.incomeSources.add.AddBusinessStartDate
+import views.html.incomeSources.add.AddIncomeSourceStartDate
 
 
 class AddBusinessStartDateControllerSpec extends TestSupport
@@ -62,7 +62,7 @@ class AddBusinessStartDateControllerSpec extends TestSupport
       mockAuthService,
       app.injector.instanceOf[SessionTimeoutPredicate],
       app.injector.instanceOf[NinoPredicate],
-      app.injector.instanceOf[AddBusinessStartDate],
+      app.injector.instanceOf[AddIncomeSourceStartDate],
       MockIncomeSourceDetailsPredicate,
       MockNavBarPredicate,
       mockIncomeSourceDetailsService
