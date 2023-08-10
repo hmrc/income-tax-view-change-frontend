@@ -31,7 +31,7 @@ import javax.inject.{Inject, Singleton}
 
 
 @Singleton
-class ForeignPropertyStartDateForm @Inject()(val dateService: DateService)(implicit val languageUtils: LanguageUtils) extends Constraints with ImplicitDateFormatter {
+class AddForeignPropertyStartDateForm @Inject()(val dateService: DateService)(implicit val languageUtils: LanguageUtils) extends Constraints with ImplicitDateFormatter {
 
   val messagePrefix = "incomeSources.add.foreignProperty.startDate.error"
   val dateMustBeEntered = s"$messagePrefix.empty"

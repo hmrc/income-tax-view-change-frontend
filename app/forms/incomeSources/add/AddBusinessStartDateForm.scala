@@ -28,7 +28,7 @@ import services.{DateService, DateServiceInterface}
 
 import java.time.LocalDate
 
-object BusinessStartDateForm extends Constraints {
+object AddBusinessStartDateForm extends Constraints {
 
   private val messagePrefix = "add-business-start-date"
   private val dateMustNotBeTooFarInFuture = s"$messagePrefix.error.future"

@@ -16,7 +16,7 @@
 
 package forms
 
-import forms.incomeSources.add.{BusinessStartDateForm, BusinessTradeForm}
+import forms.incomeSources.add.{AddBusinessStartDateForm, BusinessTradeForm}
 import forms.incomeSources.cease.UKPropertyEndDateForm
 import generators.IncomeSourceGens.{Day, businessNameGenerator, businessTradeGenerator, dateGenerator}
 import implicits.ImplicitDateFormatter
@@ -76,7 +76,7 @@ object IncomeSourcesFormsSpec extends Properties("incomeSourcesForms.validation"
   )
 
   val businessStartDateCheckForm = (date: Day) => {
-    BusinessStartDateForm()(messages, testDateService, mockImplicitDateFormatter).bind(
+    AddBusinessStartDateForm()(messages, testDateService, mockImplicitDateFormatter).bind(
       Map("add-business-start-date.day" -> date.day,
         "add-business-start-date.month" -> date.month,
         "add-business-start-date.year" -> date.year)

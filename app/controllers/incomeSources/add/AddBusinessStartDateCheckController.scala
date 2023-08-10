@@ -62,8 +62,8 @@ class AddBusinessStartDateCheckController @Inject()(authenticate: Authentication
   extends ClientConfirmedController with I18nSupport with FeatureSwitching {
 
   private def getBackUrl(isAgent: Boolean): String = {
-    if (isAgent) controllers.incomeSources.add.routes.AddBusinessStartDateController.showAgent().url
-    else controllers.incomeSources.add.routes.AddBusinessStartDateController.show().url
+    if (isAgent) controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showSoleTraderBusinessAgent.url
+    else controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showSoleTraderBusiness.url
   }
 
   private def getContinueUrl(isAgent: Boolean): String = {
