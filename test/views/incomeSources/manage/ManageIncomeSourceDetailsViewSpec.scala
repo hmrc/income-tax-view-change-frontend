@@ -16,7 +16,7 @@
 
 package views.incomeSources.manage
 
-import enums.IncomeSourceJourney.SelfEmployment
+import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import testUtils.TestSupport
 import forms.incomeSources.add.AddBusinessReportingMethodForm
 import models.core.AddressModel
@@ -34,7 +34,7 @@ import views.html.incomeSources.manage.ManageIncomeSourceDetails
 
 class ManageIncomeSourceDetailsViewSpec extends TestSupport {
 
-  val manageSelfEmploymentView: ManageIncomeSourceDetails = app.injector.instanceOf[ManageIncomeSourceDetails]
+  val manageIncomeSourceDetailsView: ManageIncomeSourceDetails = app.injector.instanceOf[ManageIncomeSourceDetails]
 
   val unknown = messages("incomeSources.generic.unknown")
   val heading = messages("incomeSources.manage.business-manage-details.heading")
@@ -42,7 +42,9 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
   val businessName = messages("incomeSources.manage.business-manage-details.business-name")
   val businessAddress = messages("incomeSources.manage.business-manage-details.business-address")
   val dateStarted = messages("incomeSources.manage.business-manage-details.date-started")
-  val accountingMethod = messages("incomeSources.manage.business-manage-details.accounting-method")
+  val businessAccountingMethod = messages("incomeSources.manage.business-manage-details.accounting-method")
+  val ukAccountingMethod = messages("incomeSources.manage.uk-property-manage-details.accounting-method")
+  val foreignAccountingMethod = messages("incomeSources.manage.foreign-property-manage-details.accounting-method")
   val reportingMethod1 = messages("incomeSources.manage.business-manage-details.reporting-method", "2023", "2024")
   val reportingMethod2 = messages("incomeSources.manage.business-manage-details.reporting-method", "2024", "2025")
   val change = messages("incomeSources.manage.business-manage-details.change")
@@ -80,6 +82,58 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
     latencyDetails = None,
     incomeSourceType = SelfEmployment
   )
+  
+  val ukViewModel: ManageBusinessDetailsViewModel = ManageBusinessDetailsViewModel(
+    incomeSourceId = testSelfEmploymentId,
+    tradingName = None,
+    tradingStartDate = Some(testStartDate),
+    address = None,
+    businessAccountingMethod = Some("cash"),
+    itsaHasMandatedOrVoluntaryStatusCurrentYear = true,
+    taxYearOneCrystallised = Some(false),
+    taxYearTwoCrystallised = Some(false),
+    latencyDetails = Some(testLatencyDetails3),
+    incomeSourceType = UkProperty
+  )
+
+  val ukViewModelUnknowns: ManageBusinessDetailsViewModel = ManageBusinessDetailsViewModel(
+    incomeSourceId = testSelfEmploymentId,
+    tradingName = None,
+    tradingStartDate = None,
+    address = None,
+    businessAccountingMethod = None,
+    itsaHasMandatedOrVoluntaryStatusCurrentYear = false,
+    taxYearOneCrystallised = None,
+    taxYearTwoCrystallised = None,
+    latencyDetails = None,
+    incomeSourceType = UkProperty
+  )
+
+  val foreignViewModel: ManageBusinessDetailsViewModel = ManageBusinessDetailsViewModel(
+    incomeSourceId = testSelfEmploymentId,
+    tradingName = None,
+    tradingStartDate = Some(testStartDate),
+    address = None,
+    businessAccountingMethod = Some("cash"),
+    itsaHasMandatedOrVoluntaryStatusCurrentYear = true,
+    taxYearOneCrystallised = Some(false),
+    taxYearTwoCrystallised = Some(false),
+    latencyDetails = Some(testLatencyDetails3),
+    incomeSourceType = ForeignProperty
+  )
+
+  val foreignViewModelUnknowns: ManageBusinessDetailsViewModel = ManageBusinessDetailsViewModel(
+    incomeSourceId = testSelfEmploymentId,
+    tradingName = None,
+    tradingStartDate = None,
+    address = None,
+    businessAccountingMethod = None,
+    itsaHasMandatedOrVoluntaryStatusCurrentYear = false,
+    taxYearOneCrystallised = None,
+    taxYearTwoCrystallised = None,
+    latencyDetails = None,
+    incomeSourceType = ForeignProperty
+  )
 
 
   class Setup(isAgent: Boolean, error: Boolean = false) {
@@ -98,7 +152,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
     }
 
     lazy val view: HtmlFormat.Appendable = {
-      manageSelfEmploymentView(
+      manageIncomeSourceDetailsView(
         viewModel,
         isAgent,
         backUrl
@@ -125,7 +179,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
     }
 
     lazy val view: HtmlFormat.Appendable = {
-      manageSelfEmploymentView(
+      manageIncomeSourceDetailsView(
         viewModel2,
         isAgent,
         backUrl
@@ -134,6 +188,110 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
 
     lazy val document: Document = Jsoup.parse(contentAsString(view))
 
+  }
+
+  class ukSetup(isAgent: Boolean, error: Boolean = false ) {
+    val backUrl: String = if (isAgent) {
+      controllers.incomeSources.manage.routes.ManageIncomeSourceController.showAgent().url
+    } else {
+      controllers.incomeSources.manage.routes.ManageIncomeSourceController.show().url
+    }
+
+    def changeReportingMethodUrl(taxYear: String, changeTo: String): String = {
+      if (isAgent) {
+        controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController.showUKPropertyAgent(taxYear, changeTo: String).url
+      } else {
+        controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController.showUKProperty(taxYear, changeTo: String).url
+      }
+    }
+
+    lazy val view: HtmlFormat.Appendable = {
+      manageIncomeSourceDetailsView(
+        ukViewModel,
+        isAgent,
+        backUrl
+      )(messages, implicitly)
+    }
+
+    lazy val document: Document = Jsoup.parse(contentAsString(view))
+  }
+
+  class ukSetupUnknowns(isAgent: Boolean, error: Boolean = false) {
+    val backUrl: String = if (isAgent) {
+      controllers.incomeSources.manage.routes.ManageIncomeSourceController.showAgent().url
+    } else {
+      controllers.incomeSources.manage.routes.ManageIncomeSourceController.show().url
+    }
+
+    def changeReportingMethodUrl(taxYear: String, changeTo: String): String = {
+      if (isAgent) {
+        controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController.showUKPropertyAgent(taxYear, changeTo: String).url
+      } else {
+        controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController.showUKProperty(taxYear, changeTo: String).url
+      }
+    }
+
+    lazy val view: HtmlFormat.Appendable = {
+      manageIncomeSourceDetailsView(
+        ukViewModelUnknowns,
+        isAgent,
+        backUrl
+      )(messages, implicitly)
+    }
+
+    lazy val document: Document = Jsoup.parse(contentAsString(view))
+  }
+
+  class foreignSetup(isAgent: Boolean, error: Boolean = false) {
+    val backUrl: String = if (isAgent) {
+      controllers.incomeSources.manage.routes.ManageIncomeSourceController.showAgent().url
+    } else {
+      controllers.incomeSources.manage.routes.ManageIncomeSourceController.show().url
+    }
+
+    def changeReportingMethodUrl(taxYear: String, changeTo: String): String = {
+      if (isAgent) {
+        controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController.showForeignPropertyAgent(taxYear, changeTo: String).url
+      } else {
+        controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController.showForeignProperty(taxYear, changeTo: String).url
+      }
+    }
+
+    lazy val view: HtmlFormat.Appendable = {
+      manageIncomeSourceDetailsView(
+        foreignViewModel,
+        isAgent,
+        backUrl
+      )(messages, implicitly)
+    }
+
+    lazy val document: Document = Jsoup.parse(contentAsString(view))
+  }
+
+  class foreignSetupUnknowns(isAgent: Boolean, error: Boolean = false) {
+    val backUrl: String = if (isAgent) {
+      controllers.incomeSources.manage.routes.ManageIncomeSourceController.showAgent().url
+    } else {
+      controllers.incomeSources.manage.routes.ManageIncomeSourceController.show().url
+    }
+
+    def changeReportingMethodUrl(taxYear: String, changeTo: String): String = {
+      if (isAgent) {
+        controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController.showForeignPropertyAgent(taxYear, changeTo: String).url
+      } else {
+        controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController.showForeignProperty(taxYear, changeTo: String).url
+      }
+    }
+
+    lazy val view: HtmlFormat.Appendable = {
+      manageIncomeSourceDetailsView(
+        foreignViewModelUnknowns,
+        isAgent,
+        backUrl
+      )(messages, implicitly)
+    }
+
+    lazy val document: Document = Jsoup.parse(contentAsString(view))
   }
 
   "ManageSelfEmployment - Individual" should {
@@ -149,7 +307,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
       document.getElementsByClass("govuk-summary-list__key").eq(0).text() shouldBe businessName
       document.getElementsByClass("govuk-summary-list__key").eq(1).text() shouldBe businessAddress
       document.getElementsByClass("govuk-summary-list__key").eq(2).text() shouldBe dateStarted
-      document.getElementsByClass("govuk-summary-list__key").eq(3).text() shouldBe accountingMethod
+      document.getElementsByClass("govuk-summary-list__key").eq(3).text() shouldBe businessAccountingMethod
       document.getElementsByClass("govuk-summary-list__key").eq(4).text() shouldBe reportingMethod1
       document.getElementsByClass("govuk-summary-list__key").eq(5).text() shouldBe reportingMethod2
 
@@ -171,7 +329,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
       document.getElementsByClass("govuk-summary-list__key").eq(0).text() shouldBe businessName
       document.getElementsByClass("govuk-summary-list__key").eq(1).text() shouldBe businessAddress
       document.getElementsByClass("govuk-summary-list__key").eq(2).text() shouldBe dateStarted
-      document.getElementsByClass("govuk-summary-list__key").eq(3).text() shouldBe accountingMethod
+      document.getElementsByClass("govuk-summary-list__key").eq(3).text() shouldBe businessAccountingMethod
 
       document.getElementById("business-address").text shouldBe unknown
       document.getElementById("business-name").text shouldBe unknown
@@ -192,7 +350,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
       document.getElementsByClass("govuk-summary-list__key").eq(0).text() shouldBe businessName
       document.getElementsByClass("govuk-summary-list__key").eq(1).text() shouldBe businessAddress
       document.getElementsByClass("govuk-summary-list__key").eq(2).text() shouldBe dateStarted
-      document.getElementsByClass("govuk-summary-list__key").eq(3).text() shouldBe accountingMethod
+      document.getElementsByClass("govuk-summary-list__key").eq(3).text() shouldBe businessAccountingMethod
       document.getElementsByClass("govuk-summary-list__key").eq(4).text() shouldBe reportingMethod1
       document.getElementsByClass("govuk-summary-list__key").eq(5).text() shouldBe reportingMethod2
 
@@ -210,4 +368,141 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
     }
   }
 
+  "Manage Uk Property - Individual" should {
+    "render the heading" in new ukSetup(false) {
+      document.getElementsByClass("govuk-heading-l").text shouldBe heading
+    }
+    "render the back correct back Url" in new ukSetup(false) {
+      document.getElementById("back").text() shouldBe messages("base.back")
+      document.getElementById("back").attr("href") shouldBe backUrl
+    }
+    "render the whole page" in new ukSetup(false) {
+
+      document.getElementsByClass("govuk-summary-list__key").eq(0).text() shouldBe dateStarted
+      document.getElementsByClass("govuk-summary-list__key").eq(1).text() shouldBe ukAccountingMethod
+      document.getElementsByClass("govuk-summary-list__key").eq(2).text() shouldBe reportingMethod1
+      document.getElementsByClass("govuk-summary-list__key").eq(3).text() shouldBe reportingMethod2
+
+      document.getElementsByClass("govuk-summary-list__actions").eq(0).text() shouldBe change
+      document.getElementsByClass("govuk-summary-list__actions").eq(1).text() shouldBe change
+
+      document.getElementById("change-link-1").attr("href") shouldBe changeReportingMethodUrl(taxYear = "2023-2024", changeTo = "quarterly")
+      document.getElementById("change-link-2").attr("href") shouldBe changeReportingMethodUrl(taxYear = "2024-2025", changeTo = "annual")
+      document.getElementById("reporting-method-1").text shouldBe annually
+      document.getElementById("reporting-method-2").text shouldBe quarterly
+      document.getElementById("business-date-started").text shouldBe expectedBusinessStartDate
+      document.getElementById("business-accounting-method").text shouldBe cash
+    }
+    "render the whole page with unknowns and no change links" in new ukSetupUnknowns(false) {
+
+      document.getElementsByClass("govuk-summary-list__key").eq(0).text() shouldBe dateStarted
+      document.getElementsByClass("govuk-summary-list__key").eq(1).text() shouldBe ukAccountingMethod
+
+      document.getElementById("business-date-started").text shouldBe unknown
+      document.getElementById("business-accounting-method").text shouldBe unknown
+    }
+  }
+  "Manage Uk Property - Agent" should {
+    "render the heading" in new ukSetup(true) {
+      document.getElementsByClass("govuk-heading-l").text shouldBe heading
+    }
+    "render the back correct back Url" in new ukSetup(true) {
+      document.getElementById("back").text() shouldBe messages("base.back")
+      document.getElementById("back").attr("href") shouldBe backUrl
+    }
+    "render the whole page" in new ukSetup(true) {
+
+      document.getElementsByClass("govuk-summary-list__key").eq(0).text() shouldBe dateStarted
+      document.getElementsByClass("govuk-summary-list__key").eq(1).text() shouldBe ukAccountingMethod
+      document.getElementsByClass("govuk-summary-list__key").eq(2).text() shouldBe reportingMethod1
+      document.getElementsByClass("govuk-summary-list__key").eq(3).text() shouldBe reportingMethod2
+
+      document.getElementsByClass("govuk-summary-list__actions").eq(0).text() shouldBe change
+      document.getElementsByClass("govuk-summary-list__actions").eq(1).text() shouldBe change
+
+      document.getElementById("change-link-1").attr("href") shouldBe changeReportingMethodUrl(taxYear = "2023-2024", changeTo = "quarterly")
+      document.getElementById("change-link-2").attr("href") shouldBe changeReportingMethodUrl(taxYear = "2024-2025", changeTo = "annual")
+      document.getElementById("reporting-method-1").text shouldBe annually
+      document.getElementById("reporting-method-2").text shouldBe quarterly
+      document.getElementById("business-date-started").text shouldBe expectedBusinessStartDate
+      document.getElementById("business-accounting-method").text shouldBe cash
+    }
+    "render the whole page with unknowns and no change links" in new ukSetupUnknowns(true) {
+
+      document.getElementsByClass("govuk-summary-list__key").eq(0).text() shouldBe dateStarted
+      document.getElementsByClass("govuk-summary-list__key").eq(1).text() shouldBe ukAccountingMethod
+
+      document.getElementById("business-date-started").text shouldBe unknown
+      document.getElementById("business-accounting-method").text shouldBe unknown
+    }
+  }
+
+  "Manage Foreign Property - Individual" should {
+    "render the heading" in new foreignSetup(false) {
+      document.getElementsByClass("govuk-heading-l").text shouldBe heading
+    }
+    "render the back correct back Url" in new foreignSetup(false) {
+      document.getElementById("back").text() shouldBe messages("base.back")
+      document.getElementById("back").attr("href") shouldBe backUrl
+    }
+    "render the whole page" in new foreignSetup(false) {
+
+      document.getElementsByClass("govuk-summary-list__key").eq(0).text() shouldBe dateStarted
+      document.getElementsByClass("govuk-summary-list__key").eq(1).text() shouldBe foreignAccountingMethod
+      document.getElementsByClass("govuk-summary-list__key").eq(2).text() shouldBe reportingMethod1
+      document.getElementsByClass("govuk-summary-list__key").eq(3).text() shouldBe reportingMethod2
+
+      document.getElementsByClass("govuk-summary-list__actions").eq(0).text() shouldBe change
+      document.getElementsByClass("govuk-summary-list__actions").eq(1).text() shouldBe change
+
+      document.getElementById("change-link-1").attr("href") shouldBe changeReportingMethodUrl(taxYear = "2023-2024", changeTo = "quarterly")
+      document.getElementById("change-link-2").attr("href") shouldBe changeReportingMethodUrl(taxYear = "2024-2025", changeTo = "annual")
+      document.getElementById("reporting-method-1").text shouldBe annually
+      document.getElementById("reporting-method-2").text shouldBe quarterly
+      document.getElementById("business-date-started").text shouldBe expectedBusinessStartDate
+      document.getElementById("business-accounting-method").text shouldBe cash
+    }
+    "render the whole page with unknowns and no change links" in new foreignSetupUnknowns(false) {
+
+      document.getElementsByClass("govuk-summary-list__key").eq(0).text() shouldBe dateStarted
+      document.getElementsByClass("govuk-summary-list__key").eq(1).text() shouldBe foreignAccountingMethod
+
+      document.getElementById("business-date-started").text shouldBe unknown
+      document.getElementById("business-accounting-method").text shouldBe unknown
+    }
+  }
+  "Manage Foreign Property - Agent" should {
+    "render the heading" in new foreignSetup(true) {
+      document.getElementsByClass("govuk-heading-l").text shouldBe heading
+    }
+    "render the back correct back Url" in new foreignSetup(true) {
+      document.getElementById("back").text() shouldBe messages("base.back")
+      document.getElementById("back").attr("href") shouldBe backUrl
+    }
+    "render the whole page" in new foreignSetup(true) {
+
+      document.getElementsByClass("govuk-summary-list__key").eq(0).text() shouldBe dateStarted
+      document.getElementsByClass("govuk-summary-list__key").eq(1).text() shouldBe foreignAccountingMethod
+      document.getElementsByClass("govuk-summary-list__key").eq(2).text() shouldBe reportingMethod1
+      document.getElementsByClass("govuk-summary-list__key").eq(3).text() shouldBe reportingMethod2
+
+      document.getElementsByClass("govuk-summary-list__actions").eq(0).text() shouldBe change
+      document.getElementsByClass("govuk-summary-list__actions").eq(1).text() shouldBe change
+
+      document.getElementById("change-link-1").attr("href") shouldBe changeReportingMethodUrl(taxYear = "2023-2024", changeTo = "quarterly")
+      document.getElementById("change-link-2").attr("href") shouldBe changeReportingMethodUrl(taxYear = "2024-2025", changeTo = "annual")
+      document.getElementById("reporting-method-1").text shouldBe annually
+      document.getElementById("reporting-method-2").text shouldBe quarterly
+      document.getElementById("business-date-started").text shouldBe expectedBusinessStartDate
+      document.getElementById("business-accounting-method").text shouldBe cash
+    }
+    "render the whole page with unknowns and no change links" in new foreignSetupUnknowns(true) {
+
+      document.getElementsByClass("govuk-summary-list__key").eq(0).text() shouldBe dateStarted
+      document.getElementsByClass("govuk-summary-list__key").eq(1).text() shouldBe foreignAccountingMethod
+
+      document.getElementById("business-date-started").text shouldBe unknown
+      document.getElementById("business-accounting-method").text shouldBe unknown
+    }
+  }
 }
