@@ -30,11 +30,11 @@ import play.twirl.api.HtmlFormat
 import testConstants.BaseTestConstants.testSelfEmploymentId
 import testConstants.BusinessDetailsTestConstants.{testLatencyDetails3, testStartDate, testTradeName}
 import testUtils.TestSupport
-import views.html.incomeSources.manage.ManageSelfEmployment
+import views.html.incomeSources.manage.ManageIncomeSourceDetails
 
-class ManageSelfEmploymentViewSpec extends TestSupport {
+class ManageIncomeSourceDetailsViewSpec extends TestSupport {
 
-  val manageSelfEmploymentView: ManageSelfEmployment = app.injector.instanceOf[ManageSelfEmployment]
+  val manageSelfEmploymentView: ManageIncomeSourceDetails = app.injector.instanceOf[ManageIncomeSourceDetails]
 
   val unknown = messages("incomeSources.generic.unknown")
   val heading = messages("incomeSources.manage.business-manage-details.heading")
@@ -207,7 +207,6 @@ class ManageSelfEmploymentViewSpec extends TestSupport {
       document.getElementById("business-name").text shouldBe expectedBusinessName
       document.getElementById("business-date-started").text shouldBe expectedBusinessStartDate
       document.getElementById("business-accounting-method").text shouldBe cash
-
     }
   }
 
