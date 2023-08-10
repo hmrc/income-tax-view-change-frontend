@@ -32,8 +32,8 @@ object PropertyDetailsIntegrationTestConstants {
   val propertyAccounringEndLocalDate = LocalDate.of(startYear, 12, 31)
   val propertyIncomeType = Some("property-unspecified")
   val propertyTradingStartDate = Some(LocalDate.parse((startYear - 1).toString + "-01-01"))
-  val ukPropertyIncomeType = Some("uk-property")
-  val foreignPropertyIncomeType = Some("foreign-property")
+  val ukPropertyIncomeType = Some("02-uk-property")
+  val foreignPropertyIncomeType = Some("03-foreign-property")
 
   def propertyAccountingStartLocalDateOfCurrentYear(year: Int) = LocalDate.of(year, 1, 1)
 
@@ -86,7 +86,7 @@ object PropertyDetailsIntegrationTestConstants {
     ukPropertyIncomeType,
     propertyTradingStartDate,
     None,
-    cashOrAccruals = Some("cash")
+    cashOrAccrualsFlag = Some(false)
   )
 
   val ukPropertyWithUnknowns: PropertyDetailsModel = PropertyDetailsModel(
@@ -111,7 +111,7 @@ object PropertyDetailsIntegrationTestConstants {
     foreignPropertyIncomeType,
     propertyTradingStartDate,
     None,
-    cashOrAccruals = Some("cash")
+    cashOrAccrualsFlag = Some(false)
   )
 
   val foreignPropertyWithUnknowns: PropertyDetailsModel = PropertyDetailsModel(
