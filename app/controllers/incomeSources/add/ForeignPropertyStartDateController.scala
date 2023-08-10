@@ -29,7 +29,7 @@ import play.api.mvc._
 import services.IncomeSourceDetailsService
 import uk.gov.hmrc.http.HeaderCarrier
 import views.html.errorPages.CustomNotFoundError
-import views.html.incomeSources.add.ForeignPropertyStartDate
+import views.html.incomeSources.add.{AddIncomeSourceStartDate, ForeignPropertyStartDate}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -43,7 +43,7 @@ class ForeignPropertyStartDateController @Inject()(val authenticate: Authenticat
                                                    val retrieveBtaNavBar: NavBarPredicate,
                                                    val retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                                    val retrieveNino: NinoPredicate,
-                                                   val view: ForeignPropertyStartDate,
+                                                   val view: AddIncomeSourceStartDate,
                                                    val customNotFoundErrorView: CustomNotFoundError)
                                                   (implicit val appConfig: FrontendAppConfig,
                                                    mcc: MessagesControllerComponents,
@@ -62,11 +62,11 @@ class ForeignPropertyStartDateController @Inject()(val authenticate: Authenticat
 
     if (incomeSourcesEnabled) {
       Future.successful(Ok(view(
-        foreignPropertyStartDateForm = form.apply(user,messages),
+        form = form.apply(user,messages),
+        messagesPrefix = "incomeSources.add.foreignProperty.startDate",
         postAction = postAction,
         isAgent = isAgent,
-        backUrl = backUrl,
-        origin = origin)(user, messages)))
+        backUrl = backUrl)(messages, user)))
     } else {
       Future.successful(Ok(customNotFoundErrorView()(user, messages)))
     } recover {
@@ -82,10 +82,11 @@ class ForeignPropertyStartDateController @Inject()(val authenticate: Authenticat
     form.apply(user = user, messages = messages).bindFromRequest().fold(
 
       hasErrors => Future.successful(BadRequest(view(
-        foreignPropertyStartDateForm = hasErrors,
+        form = hasErrors,
+        messagesPrefix = "incomeSources.add.foreignProperty.startDate",
         postAction = postAction,
         backUrl = backUrl,
-        isAgent = isAgent)(user, messages))),
+        isAgent = isAgent)(messages, user))),
 
       validatedInput =>
         Future.successful(

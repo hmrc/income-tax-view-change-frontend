@@ -23,7 +23,13 @@
 @import views.html.helpers.injected.ContinueButton
 @import views.html.helpers.injected.ErrorSummary
 
-@this(mainTemplate: unifiedLayout, dateInput: dateInput, continueButton: ContinueButton, formWithCSRF: FormWithCSRF, errorSummary: ErrorSummary)
+@this(
+        mainTemplate: unifiedLayout,
+        dateInput: dateInput,
+        continueButton: ContinueButton,
+        formWithCSRF: FormWithCSRF,
+        errorSummary: ErrorSummary
+)
 
 @(foreignPropertyStartDateForm: Form[_],
   postAction: Call,

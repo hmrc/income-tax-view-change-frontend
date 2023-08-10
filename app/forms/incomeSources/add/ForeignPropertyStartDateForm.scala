@@ -53,7 +53,7 @@ class ForeignPropertyStartDateForm @Inject()(val dateService: DateService)(impli
 
 
     Form(
-      mapping("foreign-property-start-date" -> tuple(
+      mapping("incomeSources.add.foreignProperty.startDate" -> tuple(
         "day" -> default(text(), ""),
         "month" -> default(text(), ""),
         "year" -> default(text(), ""))
