@@ -138,26 +138,17 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
   }
 
   def getCrystallisationInformation(latencyDetails: Option[LatencyDetails])
-                                   (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): EitherT[Future, String, List[Boolean]] = {
-    EitherT {
-      latencyDetails match {
-        case Some(x) =>
-          for {
-            i <- calculationListService.isTaxYearCrystallised(x.taxYear1.toInt)
-            j <- calculationListService.isTaxYearCrystallised(x.taxYear2.toInt)
-          } yield {
-            Right(List(i.get, j.get))
-          }
-        case _ =>
-          Future.successful(Left("No data ready"))
-      }
-    }
-  }
-
-  def convertCashOrAccrualsFlagIntoString(cashOrAccrualsFlag: Option[Boolean]): Option[String] = {
-    cashOrAccrualsFlag match {
-      case Some(value) => if (value) {Some("accruals")} else {Some("cash")}
-      case None => None
+                                   (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Option[List[Boolean]]] = {
+    latencyDetails match {
+      case Some(x) =>
+        for {
+          i <- calculationListService.isTaxYearCrystallised(x.taxYear1.toInt)
+          j <- calculationListService.isTaxYearCrystallised(x.taxYear2.toInt)
+        } yield {
+          Some(List(i.get, j.get))
+        }
+      case _ =>
+        Future.successful(None)
     }
   }
 
@@ -184,7 +175,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
       tradingName = None,
       tradingStartDate = incomeSource.tradingStartDate,
       address = None,
-      businessAccountingMethod = convertCashOrAccrualsFlagIntoString(incomeSource.cashOrAccrualsFlag),
+      businessAccountingMethod = incomeSource.convertCashOrAccrualsFlagIntoString(incomeSource.cashOrAccrualsFlag),
       itsaHasMandatedOrVoluntaryStatusCurrentYear = itsaStatus,
       taxYearOneCrystallised = crystallisationTaxYear1,
       taxYearTwoCrystallised = crystallisationTaxYear2,
@@ -203,13 +194,13 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
     if (desiredIncomeSourceMaybe.isDefined) {
       itsaStatusService.hasMandatedOrVoluntaryStatusCurrentYear.flatMap {
         case true =>
-          getCrystallisationInformation(desiredIncomeSourceMaybe.get.latencyDetails).value.flatMap {
-            case Left(x) => Future(Right(variableViewModelSEBusiness(
+          getCrystallisationInformation(desiredIncomeSourceMaybe.get.latencyDetails).flatMap {
+            case None => Future(Right(variableViewModelSEBusiness(
               incomeSource = desiredIncomeSourceMaybe.get,
               itsaStatus = true,
               crystallisationTaxYear1 = None,
               crystallisationTaxYear2 = None)))
-            case Right(crystallisationData: List[Boolean]) =>
+            case Some(crystallisationData: List[Boolean]) =>
               Future(Right(
                 variableViewModelSEBusiness(
                   incomeSource = desiredIncomeSourceMaybe.get,
@@ -251,14 +242,14 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
     if (desiredIncomeSourceMaybe.isDefined) {
       itsaStatusService.hasMandatedOrVoluntaryStatusCurrentYear.flatMap {
         case true =>
-          getCrystallisationInformation(desiredIncomeSourceMaybe.get.latencyDetails).value.flatMap {
-            case Left(x) => Future(Right(variableViewModelPropertyBusiness(
+          getCrystallisationInformation(desiredIncomeSourceMaybe.get.latencyDetails).flatMap {
+            case None => Future(Right(variableViewModelPropertyBusiness(
               incomeSource = desiredIncomeSourceMaybe.get,
               itsaStatus = true,
               crystallisationTaxYear1 = None,
               crystallisationTaxYear2 = None,
               incomeSourceType = incomeSourceType)))
-            case Right(crystallisationData: List[Boolean]) =>
+            case Some(crystallisationData: List[Boolean]) =>
               Future(Right(
                 variableViewModelPropertyBusiness(
                   incomeSource = desiredIncomeSourceMaybe.get,
