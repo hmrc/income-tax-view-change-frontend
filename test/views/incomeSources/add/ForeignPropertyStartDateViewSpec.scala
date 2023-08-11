@@ -17,7 +17,7 @@
 package views.incomeSources.add
 
 import auth.MtdItUser
-import forms.incomeSources.add.ForeignPropertyStartDateForm
+import forms.incomeSources.add.AddForeignPropertyStartDateForm
 import forms.models.DateFormElement
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -50,7 +50,7 @@ class ForeignPropertyStartDateViewSpec extends TestSupport {
 
   class Setup(isAgent: Boolean, error: Boolean = false) extends TestSupport {
     val mockDateService: DateService = app.injector.instanceOf[DateService]
-    val form: Form[DateFormElement] = new ForeignPropertyStartDateForm(mockDateService)(languageUtils).apply
+    val form: Form[DateFormElement] = new AddForeignPropertyStartDateForm(mockDateService)(languageUtils).apply
 
     lazy val view: HtmlFormat.Appendable = if (isAgent) {
       foreignPropertyStartDateView(

@@ -41,8 +41,7 @@ import services.{DateService, DateServiceInterface}
 import java.time.LocalDate
 import javax.inject.Singleton
 import scala.concurrent.Future
-import forms.BusinessStartDateCheckForm
-import forms.incomeSources.add.{AddBusinessReportingMethodForm, AddForeignPropertyReportingMethodForm, AddUKPropertyReportingMethodForm}
+import forms.incomeSources.add.{AddBusinessReportingMethodForm, AddForeignPropertyReportingMethodForm, AddUKPropertyReportingMethodForm, BusinessStartDateCheckForm}
 import testConstants.BaseIntegrationTestConstants.{testPropertyIncomeId, testSelfEmploymentId}
 
 import java.time.Month.APRIL

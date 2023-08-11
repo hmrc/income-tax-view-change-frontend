@@ -20,7 +20,7 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import config.featureswitch.FeatureSwitch.switches
 import config.featureswitch.{FeatureSwitching, IncomeSources}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
-import forms.incomeSources.add.{ForeignPropertyStartDateCheckForm, ForeignPropertyStartDateForm}
+import forms.incomeSources.add.{ForeignPropertyStartDateCheckForm, AddForeignPropertyStartDateForm}
 import forms.utils.SessionKeys.foreignPropertyStartDate
 import implicits.ImplicitDateFormatter
 import mocks.MockItvcErrorHandler

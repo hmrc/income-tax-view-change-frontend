@@ -22,8 +22,8 @@
 @this(
         mainTemplate: unifiedLayout,
         formWithCSRF: FormWithCSRF,
+        govukRadios: GovukRadios,
         errorSummary: ErrorSummary,
-        govukDateInput: GovukDateInput,
         govukButton: GovukButton
 )
 
@@ -32,10 +32,12 @@
         postAction: Call,
         backUrl: String,
         isAgent: Boolean,
+        incomeSourceStartDate: String,
+        btaNavPartial: Option[Html] = None,
         messagesPrefix: String
 )(
         implicit messages: Messages,
-        user: auth.MtdItUser[_]
+        request: Request[_]
 )
 
 @getMessage(key: String, args: String*) = @{
@@ -46,33 +48,38 @@
     pageTitle = getMessage("heading"),
     backUrl = Some(backUrl),
     isAgent = isAgent,
-    btaNavPartial = user.btaNavPartial) {
+    btaNavPartial = btaNavPartial) {
 
     @formWithCSRF(action = postAction, Symbol("id") -> s"$messagesPrefix-form") {
 
         @errorSummary(form)
 
-        @govukDateInput(DateInput(
-            hint = Some(Hint(
-                id = Some(s"$messagesPrefix-hint"),
-                content = HtmlContent(s"<div>${getMessage("hint")}</div></br><div>${messages("dateForm.hint")}</div>")
-            )),
+        @govukRadios(Radios(
             fieldset = Some(Fieldset(
                 legend = Some(Legend(
                     content = Text(getMessage("heading")),
-                    classes = "govuk-label--l",
-                    isPageHeading = true
+                    classes = "govuk-fieldset__legend--l"
                 ))
             )),
             items = Seq(
-                InputItem(attributes = Map("maxLength" -> "2")),
-                InputItem(attributes = Map("maxLength" -> "2")),
-                InputItem(attributes = Map("maxLength" -> "4"))
-            )
+                RadioItem(
+                    id = Some(s"$messagesPrefix-yes-response"),
+                    value = Some("Yes"),
+                    content = Text(getMessage("radio.yes"))
+                ),
+                RadioItem(
+                    id = Some(s"$messagesPrefix-no-response"),
+                    value = Some("No"),
+                    content = Text(getMessage("radio.no"))
+                )
+            ),
+            hint = Some(Hint(
+                content = HtmlContent(incomeSourceStartDate)
+            ))
         ).withFormField(form(messagesPrefix)))
 
         @govukButton(Button(
-            content = Text(messages("base.continue")),
+            content = Text(getMessage("button")),
             attributes = Map("id" -> "continue-button")
         ))
     }

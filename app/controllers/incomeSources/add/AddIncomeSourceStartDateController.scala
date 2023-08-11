@@ -149,7 +149,7 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
             customNotFoundErrorView()
           )
         )
-      case (_, (backCall, postAction, redirectCall, messagesPrefix, form)) =>
+      case (_, (backCall, postAction, successCall, messagesPrefix, form)) =>
         form.bindFromRequest().fold(
           formWithErrors =>
             Future(
@@ -165,7 +165,7 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
             ),
           formData =>
             Future.successful(
-              Redirect(redirectCall)
+              Redirect(successCall)
                 .addingToSession(
                   (formData, incomeSourceType) match {
                     case (d: DateFormElement, SoleTraderBusiness) =>

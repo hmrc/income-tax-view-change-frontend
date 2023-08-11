@@ -20,10 +20,10 @@ import auth.HeaderExtractor
 import com.github.tomakehurst.wiremock.client.WireMock
 import config.FrontendAppConfig
 import config.featureswitch.{FeatureSwitch, FeatureSwitching}
-import forms.incomeSources.add.{AddBusinessReportingMethodForm, AddForeignPropertyReportingMethodForm, AddUKPropertyReportingMethodForm}
+import forms.incomeSources.add.{AddBusinessReportingMethodForm, AddForeignPropertyReportingMethodForm, AddUKPropertyReportingMethodForm, BusinessStartDateCheckForm}
 import forms.incomeSources.cease.CeaseUKPropertyForm
 import forms.utils.SessionKeys
-import forms.{BusinessStartDateCheckForm, CeaseForeignPropertyForm}
+import forms.CeaseForeignPropertyForm
 import helpers.agent.SessionCookieBaker
 import helpers.servicemocks.AuditStub
 import implicits.ImplicitDateFormatterImpl

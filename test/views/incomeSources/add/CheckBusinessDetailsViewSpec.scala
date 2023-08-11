@@ -16,7 +16,7 @@
 
 package views.incomeSources.add
 
-import forms.incomeSources.add.CheckUKPropertyStartDateForm
+import forms.incomeSources.add.AddUKPropertyStartDateCheckForm
 import models.incomeSourceDetails.viewmodels.CheckBusinessDetailsViewModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document

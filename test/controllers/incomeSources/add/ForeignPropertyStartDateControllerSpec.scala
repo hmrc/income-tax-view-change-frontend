@@ -20,7 +20,7 @@ import config.featureswitch.FeatureSwitch.switches
 import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
-import forms.incomeSources.add.ForeignPropertyStartDateForm
+import forms.incomeSources.add.AddForeignPropertyStartDateForm
 import implicits.ImplicitDateFormatter
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
@@ -65,7 +65,7 @@ class ForeignPropertyStartDateControllerSpec extends TestSupport
       MockAuthenticationPredicate,
       mockAuthService,
       app.injector.instanceOf[SessionTimeoutPredicate],
-      app.injector.instanceOf[ForeignPropertyStartDateForm],
+      app.injector.instanceOf[AddForeignPropertyStartDateForm],
       mockIncomeSourceDetailsService,
       MockNavBarPredicate,
       MockIncomeSourceDetailsPredicate,

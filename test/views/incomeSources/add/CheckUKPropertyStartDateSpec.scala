@@ -16,7 +16,7 @@
 
 package views.incomeSources.add
 
-import forms.incomeSources.add.CheckUKPropertyStartDateForm
+import forms.incomeSources.add.AddUKPropertyStartDateCheckForm
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.data.{Form, FormError}
@@ -37,7 +37,7 @@ class CheckUKPropertyStartDateSpec extends TestSupport {
 
   class Setup(isAgent: Boolean, error: Boolean = false) {
     val mockDateService: DateService = app.injector.instanceOf[DateService]
-    val form: Form[_] = CheckUKPropertyStartDateForm.form
+    val form: Form[_] = AddUKPropertyStartDateCheckForm.form
     val startDate: String = "2022-06-30"
     val formattedStartDate: String = mockImplicitDateFormatter.longDate(LocalDate.parse(startDate)).toLongDate
     val backUrl: String = if (isAgent) controllers.incomeSources.add.routes.AddUKPropertyStartDateController.showAgent().url else

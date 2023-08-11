@@ -14,31 +14,30 @@
  * limitations under the License.
  */
 
-package forms
+package forms.incomeSources.add
 
 import play.api.data.Form
 import play.api.data.Forms._
 
 
-object BusinessStartDateCheckForm {
+object AddBusinessStartDateCheckForm {
 
   val responseNo: String = "No"
   val responseYes: String = "Yes"
-  val response: String = "add-business-start-date-check"
+  val response: String = "start-date-check"
   val radiosEmptyError: String = "add-business-start-date-check.radio.error"
   val csrfToken: String = "csrfToken"
 
-  val form: Form[BusinessStartDateCheckForm] = Form[BusinessStartDateCheckForm](
+  val form: Form[AddBusinessStartDateCheckForm] = Form[AddBusinessStartDateCheckForm](
     mapping(
       response -> optional(text)
         .verifying(radiosEmptyError, _.nonEmpty)
-    )(BusinessStartDateCheckForm.apply)(BusinessStartDateCheckForm.unapply)
+    )(AddBusinessStartDateCheckForm.apply)(AddBusinessStartDateCheckForm.unapply)
   )
 }
 
-case class BusinessStartDateCheckForm(response: Option[String]) {
-
-  def toFormMap: Map[String, Seq[String]] = Map(
-    BusinessStartDateCheckForm.response -> Seq(response.getOrElse("N/A"))
+case class AddBusinessStartDateCheckForm(response: Option[String]) extends IncomeSourceStartDateCheckForm {
+  override def toFormMap: Map[String, Seq[String]] = Map(
+    AddBusinessStartDateCheckForm.response -> Seq(response.getOrElse("N/A"))
   )
 }

@@ -16,21 +16,6 @@
 
 package forms.incomeSources.add
 
-import forms.validation.Constraints
-import play.api.data.Form
-import play.api.data.Forms.{mapping, optional, text}
-
-object CheckUKPropertyStartDateForm extends Constraints {
-  private val radioMustBeSelected = "incomeSources.add.checkUKPropertyStartDate.error.required"
-  private val validRadioOptions = Set("yes", "no")
-
-  val form: Form[_] = {
-    Form(
-      mapping(
-        "check-uk-property-start-date" -> optional(text)
-          .verifying(radioMustBeSelected, value => value.isDefined && validRadioOptions.contains(value.get))
-      )(identity)(Option(_))
-    )
-  }
+trait IncomeSourceStartDateCheckForm {
+  def toFormMap: Map[String, Seq[String]]
 }
-

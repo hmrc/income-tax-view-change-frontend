@@ -21,8 +21,8 @@ import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
-import forms.BusinessStartDateCheckForm
-import forms.BusinessStartDateCheckForm.{response, responseNo, responseYes}
+import forms.incomeSources.add.BusinessStartDateCheckForm.{response, responseNo, responseYes}
+import forms.incomeSources.add.BusinessStartDateCheckForm
 import forms.utils.SessionKeys
 import forms.utils.SessionKeys.addBusinessStartDate
 import implicits.ImplicitDateFormatterImpl
