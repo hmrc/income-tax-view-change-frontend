@@ -22,7 +22,6 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import forms.incomeSources.add.AddIncomeSourceStartDateForm
-import forms.models.DateFormElement
 import forms.utils.SessionKeys
 import implicits.ImplicitDateFormatterImpl
 import play.api.Logger
@@ -164,14 +163,14 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
             Future.successful(
               Redirect(redirectCall)
                 .addingToSession(
-                  incomeSourceType match {
+                  (incomeSourceType match {
                     case SoleTraderBusiness =>
-                      SessionKeys.addBusinessStartDate -> formData.date.toString
+                      SessionKeys.addBusinessStartDate
                     case UKProperty =>
-                      SessionKeys.addUkPropertyStartDate -> formData.date.toString
+                      SessionKeys.addUkPropertyStartDate
                     case ForeignProperty =>
-                      SessionKeys.foreignPropertyStartDate -> formData.date.toString
-                  }
+                      SessionKeys.foreignPropertyStartDate
+                  }) -> formData.date.toString
                 )
             )
         )
