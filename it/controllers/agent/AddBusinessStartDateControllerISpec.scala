@@ -24,8 +24,8 @@ import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation
 import testConstants.IncomeSourceIntegrationTestConstants.ukPropertyOnlyResponse
 
 class AddBusinessStartDateControllerISpec extends ComponentSpecBase {
-  val addBusinessStartDateShowUrl: String = controllers.incomeSources.add.routes.AddBusinessStartDateController.showAgent().url
-  val addBusinessStartDateSubmitUrl: String = controllers.incomeSources.add.routes.AddBusinessStartDateController.submitAgent().url
+  val addBusinessStartDateShowUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showSoleTraderBusinessAgent.url
+  val addBusinessStartDateSubmitUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.submitSoleTraderBusinessAgent.url
   val addBusinessStartDateCheckShowUrl: String = controllers.incomeSources.add.routes.AddBusinessStartDateCheckController.showAgent().url
   val prefix: String = "add-business-start-date"
   val continueButtonText: String = messagesAPI("base.continue")

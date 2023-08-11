@@ -24,8 +24,8 @@ import testConstants.BaseIntegrationTestConstants.testMtditid
 import testConstants.IncomeSourceIntegrationTestConstants.noPropertyOrBusinessResponse
 
 class AddUKPropertyStartDateControllerISpec extends ComponentSpecBase {
-  val addUKPropertyStartDateShowUrl: String = controllers.incomeSources.add.routes.AddUKPropertyStartDateController.show().url
-  val addUKPropertyStartDateSubmitUrl: String = controllers.incomeSources.add.routes.AddUKPropertyStartDateController.submit().url
+  val addUKPropertyStartDateShowUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showUKProperty.url
+  val addUKPropertyStartDateSubmitUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.submitUKProperty.url
   val checkUKPropertyStartDateShowUrl: String = controllers.incomeSources.add.routes.CheckUKPropertyStartDateController.show().url
 
   val hintText: String = messagesAPI("incomeSources.add.UKPropertyStartDate.hint") + " " +

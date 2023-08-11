@@ -114,7 +114,7 @@ class CheckUKPropertyStartDateController @Inject()(val authenticate: Authenticat
           routes.UKPropertyAccountingMethodController.showAgent())
       else
         (routes.CheckUKPropertyStartDateController.submit(),
-          routes.AddIncomeSourceStartDateController.showUKPropertyAgent,
+          routes.AddIncomeSourceStartDateController.showUKProperty,
           routes.UKPropertyAccountingMethodController.show())
     }
     val startDate = user.session.get(SessionKeys.addUkPropertyStartDate).get

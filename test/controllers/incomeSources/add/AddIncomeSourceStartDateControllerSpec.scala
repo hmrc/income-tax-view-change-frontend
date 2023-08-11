@@ -94,7 +94,7 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport
         val result = TestAddIncomeSourceStartDateController.showSoleTraderBusiness()(fakeRequestWithActiveSession)
 
         val document: Document = Jsoup.parse(contentAsString(result))
-        document.title should contain(messages("error.custom.heading"))
+        document.title should include(messages("error.custom.heading"))
         status(result) shouldBe OK
       }
     }
@@ -109,7 +109,7 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport
 
 
         val document: Document = Jsoup.parse(contentAsString(result))
-        document.title should contain(messages("add-business-start-date.heading"))
+        document.title should include(messages("add-business-start-date.heading"))
         status(result) shouldBe OK
       }
     }
@@ -124,7 +124,7 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport
         val result = TestAddIncomeSourceStartDateController.showUKProperty()(fakeRequestWithActiveSession)
 
         val document: Document = Jsoup.parse(contentAsString(result))
-        document.title should contain(messages("incomeSources.add.UKPropertyStartDate.heading"))
+        document.title should include(messages("incomeSources.add.UKPropertyStartDate.heading"))
         status(result) shouldBe OK
       }
     }
@@ -139,7 +139,7 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport
         val result = TestAddIncomeSourceStartDateController.showForeignProperty()(fakeRequestWithActiveSession)
 
         val document: Document = Jsoup.parse(contentAsString(result))
-        document.title should contain(messages("incomeSources.add.foreignProperty.startDate.heading"))
+        document.title should include(messages("incomeSources.add.foreignProperty.startDate.heading"))
         status(result) shouldBe OK
       }
     }
@@ -156,7 +156,7 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport
         val result = TestAddIncomeSourceStartDateController.submitSoleTraderBusiness()(fakeRequestWithActiveSession)
 
         val document: Document = Jsoup.parse(contentAsString(result))
-        document.title should contain(messages("error.custom.heading"))
+        document.title should include(messages("error.custom.heading"))
         status(result) shouldBe OK
       }
     }
@@ -454,7 +454,7 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport
         val result = TestAddIncomeSourceStartDateController.showSoleTraderBusinessAgent()(fakeRequestConfirmedClient())
 
         val document: Document = Jsoup.parse(contentAsString(result))
-        document.title should contain(messages("error.custom.heading"))
+        document.title should include(messages("error.custom.heading"))
         status(result) shouldBe OK
       }
     }
@@ -469,7 +469,7 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport
 
 
         val document: Document = Jsoup.parse(contentAsString(result))
-        document.title should contain(messages("add-business-start-date.heading"))
+        document.title should include(messages("add-business-start-date.heading"))
         status(result) shouldBe OK
       }
     }
@@ -484,7 +484,7 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport
         val result = TestAddIncomeSourceStartDateController.showUKPropertyAgent()(fakeRequestConfirmedClient())
 
         val document: Document = Jsoup.parse(contentAsString(result))
-        document.title should contain(messages("incomeSources.add.UKPropertyStartDate.heading"))
+        document.title should include(messages("incomeSources.add.UKPropertyStartDate.heading"))
         status(result) shouldBe OK
       }
     }
@@ -499,7 +499,7 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport
         val result = TestAddIncomeSourceStartDateController.showForeignPropertyAgent()(fakeRequestConfirmedClient())
 
         val document: Document = Jsoup.parse(contentAsString(result))
-        document.title should contain(messages("incomeSources.add.foreignProperty.startDate.heading"))
+        document.title should include(messages("incomeSources.add.foreignProperty.startDate.heading"))
         status(result) shouldBe OK
       }
     }
@@ -516,7 +516,7 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport
         val result = TestAddIncomeSourceStartDateController.submitSoleTraderBusinessAgent()(fakeRequestConfirmedClient())
 
         val document: Document = Jsoup.parse(contentAsString(result))
-        document.title should contain(messages("error.custom.heading"))
+        document.title should include(messages("error.custom.heading"))
         status(result) shouldBe OK
       }
     }

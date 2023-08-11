@@ -24,8 +24,8 @@ import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation
 import testConstants.IncomeSourceIntegrationTestConstants.noPropertyOrBusinessResponse
 
 class ForeignPropertyStartDateControllerISpec extends ComponentSpecBase {
-  val foreignPropertyStartDateShowUrl: String = controllers.incomeSources.add.routes.ForeignPropertyStartDateController.showAgent().url
-  val foreignPropertyStartDateSubmitUrl: String = controllers.incomeSources.add.routes.ForeignPropertyStartDateController.submitAgent().url
+  val foreignPropertyStartDateShowUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showForeignPropertyAgent.url
+  val foreignPropertyStartDateSubmitUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.submitForeignPropertyAgent.url
   val foreignPropertyStartDateCheckUrl: String = controllers.incomeSources.add.routes.ForeignPropertyStartDateCheckController.showAgent().url
 
   val hintText: String = messagesAPI("incomeSources.add.foreignProperty.startDate.hint") + " " +

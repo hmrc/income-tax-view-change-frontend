@@ -8,8 +8,8 @@ import testConstants.BaseIntegrationTestConstants.testMtditid
 import testConstants.IncomeSourceIntegrationTestConstants.noPropertyOrBusinessResponse
 
 class ForeignPropertyStartDateControllerISpec extends ComponentSpecBase {
-  val foreignPropertyStartDateShowUrl: String = controllers.incomeSources.add.routes.ForeignPropertyStartDateController.show().url
-  val foreignPropertyStartDateSubmitUrl: String = controllers.incomeSources.add.routes.ForeignPropertyStartDateController.submit().url
+  val foreignPropertyStartDateShowUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showForeignProperty.url
+  val foreignPropertyStartDateSubmitUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.submitForeignProperty.url
   val foreignPropertyStartDateCheckUrl: String = controllers.incomeSources.add.routes.ForeignPropertyStartDateCheckController.show().url
 
   val hintText: String = messagesAPI("incomeSources.add.foreignProperty.startDate.hint") + " " +
