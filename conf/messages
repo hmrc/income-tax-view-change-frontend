@@ -1303,7 +1303,7 @@ incomeSources.add.foreignProperty.startDate.error.missingDayMonth    = The date 
 incomeSources.add.foreignProperty.startDate.error.missingYear        = The date must include a year
 incomeSources.add.foreignProperty.startDate.error.missingMonth       = The date must include a month
 incomeSources.add.foreignProperty.startDate.error.missingDay         = The date must include a day
-incomeSources.add.foreignProperty.startDate.error.invalid            = The date your foreign property business started must be a real date
+incomeSources.add.foreignProperty.startDate.error.required            = The date your foreign property business started must be a real date
 incomeSources.add.foreignProperty.startDate.error.future             = The date your foreign property business started must be before {0}
 incomeSources.add.foreignProperty.startDate.check.heading            = Is this date correct?
 incomeSources.add.foreignProperty.startDate.check.error              = Select yes if your foreign property business start date is correct
@@ -1359,7 +1359,7 @@ add-business-start-date.day                          = Day
 add-business-start-date.form.month                   = Month
 add-business-start-date.form.year                    = Year
 add-business-start-date.error.future                 = The date your business started trading must be before {0}
-add-business-start-date.error.error.required         = Enter the date your business started trading
+add-business-start-date.error.required               = Enter the date your business started trading
 add-business-start-date.error.invalid                = The date your business started trading must be a real date
 
 # add Business start date check

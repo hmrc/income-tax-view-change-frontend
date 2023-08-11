@@ -22,7 +22,7 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowI
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import controllers.routes
-import forms.incomeSources.add.{AddBusinessStartDateForm, AddForeignPropertyStartDateForm, AddUKPropertyStartDateForm}
+import forms.incomeSources.add.AddIncomeSourceStartDateForm
 import forms.models.DateFormElement
 import forms.utils.SessionKeys
 import implicits.ImplicitDateFormatterImpl
@@ -46,7 +46,6 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
                                                    val addIncomeSourceStartDate: AddIncomeSourceStartDate,
                                                    val retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                                    val retrieveBtaNavBar: NavBarPredicate,
-                                                   addForeignPropertyStartDateForm: AddForeignPropertyStartDateForm,
                                                    val customNotFoundErrorView: CustomNotFoundError,
                                                    incomeSourceDetailsService: IncomeSourceDetailsService)
                                                   (implicit val appConfig: FrontendAppConfig,
@@ -112,18 +111,18 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
   private def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)
                    (implicit user: MtdItUser[_]): Future[Result] = {
 
-    (isEnabled(IncomeSources), getCallsAndFormModel(isAgent, incomeSourceType)) match {
+    (isEnabled(IncomeSources), getCallsAndMessagesKeyPrefix(isAgent, incomeSourceType)) match {
       case (false, _) =>
         Future(
           Ok(
             customNotFoundErrorView()
           )
         )
-      case (_, (backCall, postAction, _, messagesPrefix, form)) =>
+      case (_, (backCall, postAction, _, messagesPrefix)) =>
         Future(
           Ok(
             addIncomeSourceStartDate(
-              form = form,
+              form = AddIncomeSourceStartDateForm(messagesPrefix),
               isAgent = isAgent,
               backUrl = backCall.url,
               postAction = postAction,
@@ -142,15 +141,15 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
   private def handleSubmitRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)
                          (implicit user: MtdItUser[_]): Future[Result] = {
 
-    (isEnabled(IncomeSources), getCallsAndFormModel(isAgent, incomeSourceType)) match {
+    (isEnabled(IncomeSources), getCallsAndMessagesKeyPrefix(isAgent, incomeSourceType)) match {
       case (false, _) =>
         Future(
           Ok(
             customNotFoundErrorView()
           )
         )
-      case (_, (backCall, postAction, redirectCall, messagesPrefix, form)) =>
-        form.bindFromRequest().fold(
+      case (_, (backCall, postAction, redirectCall, messagesPrefix)) =>
+        AddIncomeSourceStartDateForm(messagesPrefix).bindFromRequest().fold(
           formWithErrors =>
             Future(
               BadRequest(
@@ -186,8 +185,8 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
       else itvcErrorHandler.showInternalServerError()
   }
 
-  private def getCallsAndFormModel(isAgent: Boolean, incomeSourceType: IncomeSourceType)
-                                    (implicit user: MtdItUser[_]): (Call, Call, Call, String, Form[_]) = {
+  private def getCallsAndMessagesKeyPrefix(isAgent: Boolean, incomeSourceType: IncomeSourceType)
+                                    (implicit user: MtdItUser[_]): (Call, Call, Call, String) = {
 
     (isAgent, incomeSourceType) match {
       case (false, SoleTraderBusiness) =>
@@ -195,48 +194,42 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
           controllers.incomeSources.add.routes.AddBusinessNameController.show(),
           controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.submitSoleTraderBusiness,
           controllers.incomeSources.add.routes.AddBusinessStartDateCheckController.show(),
-          soleTraderBusinessMessagesPrefix,
-          AddBusinessStartDateForm()
+          soleTraderBusinessMessagesPrefix
         )
       case (false, UKProperty) =>
         (
           controllers.incomeSources.add.routes.AddIncomeSourceController.show(),
           controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.submitUKProperty,
           controllers.incomeSources.add.routes.CheckUKPropertyStartDateController.show(),
-          uKPropertyMessagesPrefix,
-          AddUKPropertyStartDateForm()
+          uKPropertyMessagesPrefix
         )
       case (false, ForeignProperty) =>
         (
           controllers.incomeSources.add.routes.AddIncomeSourceController.show(),
           controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.submitForeignProperty,
           controllers.incomeSources.add.routes.ForeignPropertyStartDateCheckController.show(),
-          foreignPropertyMessagesPrefix,
-          addForeignPropertyStartDateForm(user, implicitly)
+          foreignPropertyMessagesPrefix
         )
       case (true, SoleTraderBusiness) =>
         (
           controllers.incomeSources.add.routes.AddBusinessNameController.showAgent(),
           controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.submitSoleTraderBusinessAgent,
           controllers.incomeSources.add.routes.AddBusinessStartDateCheckController.showAgent(),
-          soleTraderBusinessMessagesPrefix,
-          AddBusinessStartDateForm()
+          soleTraderBusinessMessagesPrefix
         )
       case (true, UKProperty) =>
         (
           controllers.incomeSources.add.routes.AddIncomeSourceController.showAgent(),
           controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.submitUKPropertyAgent,
           controllers.incomeSources.add.routes.CheckUKPropertyStartDateController.showAgent(),
-          uKPropertyMessagesPrefix,
-          AddUKPropertyStartDateForm()
+          uKPropertyMessagesPrefix
         )
       case (true, ForeignProperty) =>
         (
           controllers.incomeSources.add.routes.AddIncomeSourceController.showAgent(),
           controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.submitForeignPropertyAgent,
           controllers.incomeSources.add.routes.ForeignPropertyStartDateCheckController.showAgent(),
-          foreignPropertyMessagesPrefix,
-          addForeignPropertyStartDateForm(user, implicitly)
+          foreignPropertyMessagesPrefix
         )
     }
   }
