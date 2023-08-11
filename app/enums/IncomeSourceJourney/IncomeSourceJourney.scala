@@ -31,3 +31,7 @@ case object UkProperty extends IncomeSourceJourney {
 case object ForeignProperty extends IncomeSourceJourney {
   override val key = "FP"
 }
+
+case object PropertyBusiness extends IncomeSourceJourney {
+  override val key = "PROPERTY_BUSINESS"
+}
