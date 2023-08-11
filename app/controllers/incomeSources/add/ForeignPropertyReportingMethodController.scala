@@ -184,15 +184,15 @@ class ForeignPropertyReportingMethodController @Inject()(val authenticate: Authe
 
           if (valid.reportingMethodIsChanged) {
 
-            val updatedReportingMethods = List(
-              getTaxYearSpecific(valid.taxYear1, valid.taxYear1ReportingMethod),
-              getTaxYearSpecific(valid.taxYear2, valid.taxYear2ReportingMethod)
-            ).flatten
+            val updatedReportingMethods =
+              getTaxYearSpecific(valid.taxYear1, valid.taxYear1ReportingMethod)
+//              getTaxYearSpecific(valid.taxYear2, valid.taxYear2ReportingMethod)
+            //TODO: fix
 
             updateIncomeSourceService.updateTaxYearSpecific(
               nino = user.nino,
               incomeSourceId = id,
-              taxYearSpecific = updatedReportingMethods
+              taxYearSpecific = updatedReportingMethods.get
             ).map {
               case res: UpdateIncomeSourceResponseModel =>
                 Logger("application").info(s"${if (isAgent) "[Agent]"}" + s" Updated tax year specific reporting method : $res")

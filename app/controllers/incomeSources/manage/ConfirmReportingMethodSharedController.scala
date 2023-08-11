@@ -17,17 +17,23 @@
 package controllers.incomeSources.manage
 
 import auth.MtdItUser
-import config.featureswitch.{FeatureSwitching, IncomeSources}
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
+import config.featureswitch.FeatureSwitching
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
+import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceJourney, SelfEmployment, UkProperty}
 import forms.incomeSources.manage.ConfirmReportingMethodForm
 import models.incomeSourceDetails.TaxYear
 import models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
 import play.api.Logger
-import play.api.mvc.{Action, _}
+import play.api.MarkerContext.NoMarker
+import play.api.data.Form
+import play.api.i18n.Messages
+import play.api.mvc._
 import services.{IncomeSourceDetailsService, UpdateIncomeSourceService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
+import uk.gov.hmrc.http.HeaderCarrier
+import utils.IncomeSourcesUtils
 import views.html.errorPages.CustomNotFoundError
 import views.html.incomeSources.manage.{ConfirmReportingMethod, ManageIncomeSources}
 
@@ -41,23 +47,23 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
                                                        val retrieveNino: NinoPredicate,
                                                        val updateIncomeSourceService: UpdateIncomeSourceService,
                                                        val retrieveIncomeSources: IncomeSourceDetailsPredicate,
-                                                       val itvcErrorHandler: ItvcErrorHandler,
                                                        val customNotFoundErrorView: CustomNotFoundError,
-                                                       implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                                        val confirmReportingMethod: ConfirmReportingMethod,
                                                        val incomeSourceDetailsService: IncomeSourceDetailsService,
                                                        val retrieveBtaNavBar: NavBarPredicate)
                                                       (implicit val ec: ExecutionContext,
+                                                       implicit val itvcErrorHandler: ItvcErrorHandler,
+                                                       implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                                        implicit override val mcc: MessagesControllerComponents,
-                                                       val appConfig: FrontendAppConfig) extends ClientConfirmedController
-  with FeatureSwitching {
+                                                       implicit val appConfig: FrontendAppConfig) extends ClientConfirmedController
+  with FeatureSwitching with IncomeSourcesUtils {
 
   def showSoleTraderBusiness(id: String, taxYear: String, changeTo: String): Action[AnyContent] = {
     show(
       taxYear = taxYear,
       changeTo = changeTo,
       incomeSourceId = Some(id),
-      incomeSourceType = SoleTraderBusiness
+      incomeSourceJourney = SelfEmployment
     )
   }
 
@@ -66,7 +72,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
       taxYear = taxYear,
       changeTo = changeTo,
       incomeSourceId = Some(id),
-      incomeSourceType = SoleTraderBusiness
+      incomeSourceJourney = SelfEmployment
     )
   }
 
@@ -75,7 +81,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
       taxYear = taxYear,
       changeTo = changeTo,
       incomeSourceId = id,
-      incomeSourceType = SoleTraderBusiness
+      incomeSourceJourney = SelfEmployment
     )
   }
 
@@ -84,7 +90,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
       taxYear = taxYear,
       changeTo = changeTo,
       incomeSourceId = id,
-      incomeSourceType = SoleTraderBusiness
+      incomeSourceJourney = SelfEmployment
     )
   }
 
@@ -93,7 +99,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
       taxYear = taxYear,
       changeTo = changeTo,
       incomeSourceId = None,
-      incomeSourceType = UKProperty
+      incomeSourceJourney = UkProperty
     )
   }
 
@@ -102,7 +108,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
       taxYear = taxYear,
       changeTo = changeTo,
       incomeSourceId = None,
-      incomeSourceType = UKProperty
+      incomeSourceJourney = UkProperty
     )
   }
 
@@ -110,7 +116,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
     submit(
       taxYear = taxYear,
       changeTo = changeTo,
-      incomeSourceType = UKProperty,
+      incomeSourceJourney = UkProperty,
       incomeSourceId = id
     )
   }
@@ -119,7 +125,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
     submitAgent(
       taxYear = taxYear,
       changeTo = changeTo,
-      incomeSourceType = UKProperty,
+      incomeSourceJourney = UkProperty,
       incomeSourceId = id
     )
   }
@@ -129,7 +135,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
       taxYear = taxYear,
       changeTo = changeTo,
       incomeSourceId = None,
-      incomeSourceType = ForeignProperty
+      incomeSourceJourney = ForeignProperty
     )
   }
 
@@ -138,7 +144,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
       taxYear = taxYear,
       changeTo = changeTo,
       incomeSourceId = None,
-      incomeSourceType = ForeignProperty
+      incomeSourceJourney = ForeignProperty
     )
   }
 
@@ -147,7 +153,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
       taxYear = taxYear,
       changeTo = changeTo,
       incomeSourceId = id,
-      incomeSourceType = ForeignProperty
+      incomeSourceJourney = ForeignProperty
     )
   }
 
@@ -156,12 +162,12 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
       taxYear = taxYear,
       changeTo = changeTo,
       incomeSourceId = id,
-      incomeSourceType = ForeignProperty
+      incomeSourceJourney = ForeignProperty
     )
   }
 
   private def show(incomeSourceId: Option[String],
-                   incomeSourceType: IncomeSourceType,
+                   incomeSourceJourney: IncomeSourceJourney,
                    taxYear: String,
                    changeTo: String): Action[AnyContent] =
     (checkSessionTimeout andThen authenticate andThen retrieveNino
@@ -171,14 +177,13 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
           isAgent = false,
           taxYear = taxYear,
           changeTo = changeTo,
-          itvcErrorHandler = itvcErrorHandler,
-          incomeSourceType = incomeSourceType,
-          soleTraderBusinessId = incomeSourceId
+          incomeSourceJourney = incomeSourceJourney,
+          incomeSourceId = incomeSourceId
         )
     }
 
   private def showAgent(incomeSourceId: Option[String],
-                        incomeSourceType: IncomeSourceType,
+                        incomeSourceJourney: IncomeSourceJourney,
                         taxYear: String,
                         changeTo: String): Action[AnyContent] = Authenticated.async {
     implicit request =>
@@ -186,18 +191,17 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
         getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
           implicit mtdItUser =>
             handleRequest(
-              soleTraderBusinessId = incomeSourceId,
+              incomeSourceId = incomeSourceId,
               isAgent = true,
               taxYear = taxYear,
               changeTo = changeTo,
-              incomeSourceType = incomeSourceType,
-              itvcErrorHandler = itvcErrorHandlerAgent
+              incomeSourceJourney = incomeSourceJourney
             )
         }
   }
 
   private def submit(incomeSourceId: String,
-                     incomeSourceType: IncomeSourceType,
+                     incomeSourceJourney: IncomeSourceJourney,
                      taxYear: String,
                      changeTo: String): Action[AnyContent] =
     (checkSessionTimeout andThen authenticate andThen retrieveNino
@@ -208,15 +212,14 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
           taxYear = taxYear,
           changeTo = changeTo,
           incomeSourceId = incomeSourceId,
-          incomeSourceType = incomeSourceType,
-          itvcErrorHandler = itvcErrorHandler
+          incomeSourceJourney = incomeSourceJourney
         )
     }
 
   private def submitAgent(incomeSourceId: String,
-                          incomeSourceType: IncomeSourceType,
+                          incomeSourceJourney: IncomeSourceJourney,
                           taxYear: String,
-                          changeTo: String) = Authenticated.async {
+                          changeTo: String): Action[AnyContent] = Authenticated.async {
     implicit request =>
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
@@ -226,56 +229,42 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
               taxYear = taxYear,
               changeTo = changeTo,
               incomeSourceId = incomeSourceId,
-              incomeSourceType = incomeSourceType,
-              itvcErrorHandler = itvcErrorHandlerAgent
+              incomeSourceJourney = incomeSourceJourney
             )
         }
   }
 
-  private def handleRequest(soleTraderBusinessId: Option[String],
+  private def handleRequest(incomeSourceId: Option[String],
                             isAgent: Boolean,
                             taxYear: String,
                             changeTo: String,
-                            incomeSourceType: IncomeSourceType,
-                            itvcErrorHandler: ShowInternalServerError)
-                           (implicit user: MtdItUser[_]): Future[Result] = {
+                            incomeSourceJourney: IncomeSourceJourney)
+                           (implicit user: MtdItUser[_], messages: Messages): Future[Result] = {
 
     val newReportingMethod: Option[String] = getReportingMethod(changeTo)
 
     val maybeTaxYearModel: Option[TaxYear] = TaxYear.getTaxYearStartYearEndYear(taxYear)
 
-    val maybeIncomeSourceId: Option[String] = getIncomeSourceId(soleTraderBusinessId, incomeSourceType)
+    val maybeIncomeSourceId: Option[String] = getIncomeSourceId(incomeSourceId, incomeSourceJourney)
 
-    Future(
-      (isEnabled(IncomeSources), maybeTaxYearModel, newReportingMethod, maybeIncomeSourceId) match {
-        case (false, _, _, _) =>
-          Ok(
-            customNotFoundErrorView()
-          )
-        case (_, None, _, _) =>
-          Logger("application")
-            .error(s"[ConfirmReportingMethodSharedController][handleRequest]: " +
-              s"Could not parse taxYear: $taxYear")
-          itvcErrorHandler.showInternalServerError()
-        case (_, _, None, _) =>
-          Logger("application")
-            .error(s"[ConfirmReportingMethodSharedController][handleRequest]: " +
-              s"Could not parse reporting method: $changeTo")
-          itvcErrorHandler.showInternalServerError()
-        case (_, _, _, None) =>
-          Logger("application")
-            .error(s"[ConfirmReportingMethodSharedController][handleRequest]: " +
-              s"Could not find incomeSourceId")
-          itvcErrorHandler.showInternalServerError()
-        case (_, Some(taxYearModel), Some(reportingMethod), Some(id)) =>
-          getRedirectCalls(
-            incomeSourceId = id,
-            isAgent = isAgent,
-            taxYear = taxYear,
-            changeTo = changeTo,
-            incomeSourceType = incomeSourceType
-          ) match {
-            case (backCall, postAction, _) =>
+
+    (maybeTaxYearModel, newReportingMethod, maybeIncomeSourceId) match {
+      case (None, _, _) =>
+        Future.successful(logAndShowError(isAgent, s"[handleRequest]: Could not parse taxYear: $taxYear"))
+      case (_, None, _) =>
+        Future.successful(logAndShowError(isAgent, s"[handleRequest]:Could not parse reporting method: $changeTo"))
+      case (_, _, None) =>
+        Future.successful(logAndShowError(isAgent, s"[handleRequest]: Could not find incomeSourceId: $incomeSourceId"))
+      case (Some(taxYearModel), Some(reportingMethod), Some(id)) =>
+        getRedirectCalls(
+          incomeSourceId = id,
+          isAgent = isAgent,
+          taxYear = taxYear,
+          changeTo = changeTo,
+          incomeSourceJourney = incomeSourceJourney
+        ) match {
+          case (backCall, postAction, _) =>
+            Future.successful(
               Ok(
                 confirmReportingMethod(
                   isAgent = isAgent,
@@ -285,15 +274,19 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
                   taxYearEndYear = taxYearModel.endYear.toString,
                   form = ConfirmReportingMethodForm.form,
                   taxYearStartYear = taxYearModel.startYear.toString
-                )
+                )(messages, user)
               )
-          }
-      }
-    ) recover {
-      case ex: Exception =>
-        Logger("application").error(s"[ConfirmReportingMethodSharedController][handleRequest]: " +
-          s"Error getting confirmReportingMethod page: ${ex.getMessage}")
-        itvcErrorHandler.showInternalServerError()
+            )
+        }
+    }
+  }
+
+  private def logAndShowError(isAgent: Boolean, errorMessage: String)(implicit user: MtdItUser[_]): Result = {
+    Logger("application").error("[ConfirmReportingMethodSharedController]" + errorMessage)
+    if (isAgent) {
+      itvcErrorHandler.showInternalServerError()
+    } else {
+      itvcErrorHandlerAgent.showInternalServerError()
     }
   }
 
@@ -301,91 +294,70 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
                                   isAgent: Boolean,
                                   changeTo: String,
                                   incomeSourceId: String,
-                                  incomeSourceType: IncomeSourceType,
-                                  itvcErrorHandler: ShowInternalServerError)
+                                  incomeSourceJourney: IncomeSourceJourney)
                                  (implicit user: MtdItUser[_]): Future[Result] = {
 
     val newReportingMethod: Option[String] = getReportingMethod(changeTo)
-
     val maybeTaxYearModel: Option[TaxYear] = TaxYear.getTaxYearStartYearEndYear(taxYear)
+    val redirectCalls: (Call, Call, Call) = getRedirectCalls(incomeSourceId, taxYear, isAgent, changeTo, incomeSourceJourney)
 
-    val redirectCalls: (Call, Call, Call) = getRedirectCalls(incomeSourceId, taxYear, isAgent, changeTo, incomeSourceType)
-
-    (isEnabled(IncomeSources), maybeTaxYearModel, newReportingMethod, redirectCalls) match {
-      case (false, _, _, _) =>
-        Future(
-          Ok(
-            customNotFoundErrorView()
+    withIncomeSourcesFS {
+      (maybeTaxYearModel, newReportingMethod, redirectCalls) match {
+        case (None, _, _) => Future.successful(logAndShowError(isAgent, s"[handleSubmitRequest]: Could not parse taxYear: $taxYear"))
+        case (_, None, _) => Future.successful(logAndShowError(isAgent, s"[handleSubmitRequest]: Could not parse reporting method: $changeTo"))
+        case (Some(taxYears), Some(reportingMethod), redirectCallsTuple) =>
+          ConfirmReportingMethodForm.form.bindFromRequest().fold(
+            formWithErrors => handleFormError(formWithErrors, isAgent, taxYears, reportingMethod, redirectCallsTuple),
+            _ => handleUpdateSuccess(isAgent, incomeSourceId, taxYears, reportingMethod, redirectCallsTuple)
           )
-        )
-      case (_, None, _, _) =>
-        Logger("application")
-          .error(s"[ConfirmReportingMethodSharedController][handleSubmitRequest]: " +
-            s"Could not parse taxYear: $taxYear")
-        Future(
-          itvcErrorHandler.showInternalServerError()
-        )
-      case (_, _, None, _) =>
-        Logger("application")
-          .error(s"[ConfirmReportingMethodSharedController][handleSubmitRequest]: " +
-            s"Could not parse reporting method: $changeTo")
-        Future(
-          itvcErrorHandler.showInternalServerError()
-        )
-      case (_, Some(taxYears), Some(reportingMethod), (backCall, postAction, successCall)) =>
-        ConfirmReportingMethodForm.form.bindFromRequest().fold(
-          formWithErrors =>
-            Future(
-              BadRequest(
-                confirmReportingMethod(
-                  isAgent = isAgent,
-                  form = formWithErrors,
-                  backUrl = backCall.url,
-                  postAction = postAction,
-                  taxYearEndYear = taxYears.endYear.toString,
-                  reportingMethod = reportingMethod,
-                  taxYearStartYear = taxYears.startYear.toString
-                )
-              )
-            ),
-          _ =>
-            updateIncomeSourceService.updateTaxYearSpecific(
-              nino = user.nino,
-              incomeSourceId = incomeSourceId,
-              taxYearSpecific = List(
-                TaxYearSpecific(
-                  taxYear = taxYears.endYear.toString,
-                  latencyIndicator = reportingMethod match {
-                    case "annual" => true
-                    case "quarterly" => false
-                  }
-                )
-              )
-            ) flatMap {
-              case err: UpdateIncomeSourceResponseError =>
-                Logger("application")
-                  .error(s"[ConfirmReportingMethodSharedController][handleSubmitRequest]: " +
-                    s"Failed to Update tax year specific reporting method: $err")
-                Future(
-                  itvcErrorHandler.showInternalServerError()
-                )
-              case res: UpdateIncomeSourceResponseModel =>
-                Logger("application")
-                  .info(s"[ConfirmReportingMethodSharedController][handleSubmitRequest]: " +
-                    s"Updated tax year specific reporting method : $res")
-                Future.successful(
-                  Redirect(
-                    successCall
-                  )
-                )
-            } recover {
-              case ex: Exception =>
-                Logger("application")
-                  .error(s"[ConfirmReportingMethodSharedController][handleSubmitRequest]: " +
-                    s"Error updating reporting method: ${ex.getMessage}")
-                itvcErrorHandler.showInternalServerError()
-            }
-        )
+      }
+    }
+  }
+
+  private def handleFormError(formWithErrors: Form[ConfirmReportingMethodForm],
+                              isAgent: Boolean,
+                              taxYears: TaxYear,
+                              reportingMethod: String,
+                              redirectCallsTuple: (Call, Call, Call))(implicit messages: Messages, user: MtdItUser[_]): Future[Result] = {
+    val (backCall, postAction, _) = redirectCallsTuple
+    Future.successful(BadRequest(
+      confirmReportingMethod(
+        isAgent = isAgent,
+        form = formWithErrors,
+        backUrl = backCall.url,
+        postAction = postAction,
+        taxYearEndYear = taxYears.endYear.toString,
+        reportingMethod = reportingMethod,
+        taxYearStartYear = taxYears.startYear.toString
+      )(messages, user)
+    )
+    )
+  }
+
+  private def handleUpdateSuccess(isAgent: Boolean,
+                                  incomeSourceId: String,
+                                  taxYears: TaxYear,
+                                  reportingMethod: String,
+                                  redirectCallsTuple: (Call, Call, Call))(implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
+    val latencyIndicator = reportingMethod match {
+      case "annual" => true
+      case "quarterly" => false
+    }
+
+    val taxYearSpecific = TaxYearSpecific(taxYear = taxYears.endYear.toString, latencyIndicator = latencyIndicator)
+    println(Console.MAGENTA + taxYearSpecific + Console.WHITE)
+
+    updateIncomeSourceService.updateTaxYearSpecific(
+      nino = user.nino,
+      incomeSourceId = incomeSourceId,
+      taxYearSpecific = taxYearSpecific
+    ).flatMap {
+      case err: UpdateIncomeSourceResponseError => Future.successful(logAndShowError(isAgent, s"Failed to Update tax year specific reporting method: $err"))
+      case res: UpdateIncomeSourceResponseModel =>
+        Logger("application").info(s"Updated tax year specific reporting method: $res")
+        Future.successful(Redirect(redirectCallsTuple._3))
+    }.recover {
+      case ex: Exception => logAndShowError(isAgent, s"[handleUpdateSuccess]: Error updating reporting method: ${ex.getMessage}")
     }
   }
 
@@ -395,15 +367,15 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
   }
 
   private def getIncomeSourceId(maybeSoleTraderBusinessId: Option[String],
-                                incomeSourceType: IncomeSourceType)
+                                incomeSourceJourney: IncomeSourceJourney)
                                (implicit user: MtdItUser[_]): Option[String] = {
-    incomeSourceType match {
-      case SoleTraderBusiness =>
-        maybeSoleTraderBusinessId.filter { soleTraderBusinessId =>
+    incomeSourceJourney match {
+      case SelfEmployment =>
+        maybeSoleTraderBusinessId.filter { incomeSourceId =>
           user.incomeSources.businesses
-            .exists(business => business.incomeSourceId == soleTraderBusinessId && !business.isCeased)
+            .exists(business => business.incomeSourceId == incomeSourceId && !business.isCeased)
         }
-      case UKProperty =>
+      case UkProperty =>
         user.incomeSources.properties
           .find(property => property.isUkProperty && !property.isCeased)
           .map(_.incomeSourceId)
@@ -418,10 +390,10 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
                                taxYear: String,
                                isAgent: Boolean,
                                changeTo: String,
-                               incomeSourceType: IncomeSourceType): (Call, Call, Call) = {
+                               incomeSourceJourney: IncomeSourceJourney): (Call, Call, Call) = {
 
-    (isAgent, incomeSourceType) match {
-      case (false, UKProperty) =>
+    (isAgent, incomeSourceJourney) match {
+      case (false, UkProperty) =>
         (
           manageIncomeSourceDetailsController.showUkProperty,
           confirmReportingMethodSharedController.submitUKProperty(id = incomeSourceId, changeTo = changeTo, taxYear = taxYear),
@@ -433,13 +405,13 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
           confirmReportingMethodSharedController.submitForeignProperty(id = incomeSourceId, changeTo = changeTo, taxYear = taxYear),
           manageObligationsController.showForeignProperty(changeTo = changeTo, taxYear = taxYear)
         )
-      case (false, SoleTraderBusiness) =>
+      case (false, SelfEmployment) =>
         (
           manageIncomeSourceDetailsController.showSoleTraderBusiness(id = incomeSourceId),
           confirmReportingMethodSharedController.submitSoleTraderBusiness(id = incomeSourceId, changeTo = changeTo, taxYear = taxYear),
           manageObligationsController.showSelfEmployment(id = incomeSourceId, changeTo = changeTo, taxYear = taxYear)
         )
-      case (true, UKProperty) =>
+      case (true, UkProperty) =>
         (
           manageIncomeSourceDetailsController.showUkPropertyAgent,
           confirmReportingMethodSharedController.submitUKPropertyAgent(id = incomeSourceId, changeTo = changeTo, taxYear = taxYear),
@@ -451,7 +423,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
           confirmReportingMethodSharedController.submitForeignPropertyAgent(id = incomeSourceId, changeTo = changeTo, taxYear = taxYear),
           manageObligationsController.showAgentForeignProperty(changeTo = changeTo, taxYear = taxYear)
         )
-      case (true, SoleTraderBusiness) =>
+      case (true, SelfEmployment) =>
         (
           manageIncomeSourceDetailsController.showSoleTraderBusinessAgent(id = incomeSourceId),
           confirmReportingMethodSharedController.submitSoleTraderBusinessAgent(id = incomeSourceId, changeTo = changeTo, taxYear = taxYear),
@@ -469,11 +441,5 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
   private lazy val manageIncomeSourceDetailsController = controllers.incomeSources.manage.routes
     .ManageIncomeSourceDetailsController
 
-  private sealed trait IncomeSourceType
 
-  private case object UKProperty extends IncomeSourceType
-
-  private case object ForeignProperty extends IncomeSourceType
-
-  private case object SoleTraderBusiness extends IncomeSourceType
 }

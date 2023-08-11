@@ -62,6 +62,7 @@ class BusinessReportingMethodController @Inject()(val authenticate: Authenticati
     case Some("Q") => Some(false)
     case _ => None
   }
+
   private def getBusinessReportingMethodDetails(incomeSourceId: String)(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Option[BusinessReportingMethodViewModel]] = {
     val latencyDetails: Option[LatencyDetails] = user.incomeSources.businesses.find(_.incomeSourceId.equals(incomeSourceId)).flatMap(_.latencyDetails)
     latencyDetails match {
@@ -83,6 +84,7 @@ class BusinessReportingMethodController @Inject()(val authenticate: Authenticati
     }
 
   }
+
   private def handleRequest(isAgent: Boolean, id: String)
                            (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
 
@@ -156,7 +158,8 @@ class BusinessReportingMethodController @Inject()(val authenticate: Authenticati
               case Some(s) => Some(TaxYearSpecific(valid.taxYear2.get, annualQuarterlyToBoolean(Some(s)).get))
               case _ => None
             }
-            updateIncomeSourceService.updateTaxYearSpecific(user.nino, id, List(taxYearSpecific1, taxYearSpecific2).flatten).map {
+            updateIncomeSourceService.updateTaxYearSpecific(user.nino, id, taxYearSpecific1.get).map {
+              //TODO: fix
               case res: UpdateIncomeSourceResponseModel =>
                 Logger("application").info(s"${if (isAgent) "[Agent]"}" + s" Updated tax year specific reporting method : $res")
                 Redirect(redirectUrl)
