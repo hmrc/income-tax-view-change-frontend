@@ -185,8 +185,7 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
       else itvcErrorHandler.showInternalServerError()
   }
 
-  private def getCallsAndMessagesKeyPrefix(isAgent: Boolean, incomeSourceType: IncomeSourceType)
-                                    (implicit user: MtdItUser[_]): (Call, Call, Call, String) = {
+  private def getCallsAndMessagesKeyPrefix(isAgent: Boolean, incomeSourceType: IncomeSourceType): (Call, Call, Call, String) = {
 
     (isAgent, incomeSourceType) match {
       case (false, SoleTraderBusiness) =>
