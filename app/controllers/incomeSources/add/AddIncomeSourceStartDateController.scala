@@ -164,13 +164,13 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
             Future.successful(
               Redirect(redirectCall)
                 .addingToSession(
-                  (formData, incomeSourceType) match {
-                    case (d: DateFormElement, SoleTraderBusiness) =>
-                      SessionKeys.addBusinessStartDate -> d.date.toString
-                    case (d: DateFormElement, UKProperty) =>
-                      SessionKeys.addUkPropertyStartDate -> d.date.toString
-                    case (d: DateFormElement, ForeignProperty) =>
-                      SessionKeys.foreignPropertyStartDate -> d.date.toString
+                  incomeSourceType match {
+                    case SoleTraderBusiness =>
+                      SessionKeys.addBusinessStartDate -> formData.date.toString
+                    case UKProperty =>
+                      SessionKeys.addUkPropertyStartDate -> formData.date.toString
+                    case ForeignProperty =>
+                      SessionKeys.foreignPropertyStartDate -> formData.date.toString
                   }
                 )
             )
