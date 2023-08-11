@@ -98,7 +98,7 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
               )
             } else {
               handleSubmitRequest(
-                isAgent = false,
+                isAgent = true,
                 incomeSourceType = incomeSourceType
               )
             }

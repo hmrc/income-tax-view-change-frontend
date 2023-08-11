@@ -48,9 +48,9 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport
   with ImplicitDateFormatter
   with FeatureSwitching {
 
-  val dayField = "day"
-  val monthField = "month"
-  val yearField = "year"
+  val dayField = "income-source-start-date.day"
+  val monthField = "income-source-start-date.month"
+  val yearField = "income-source-start-date.year"
 
   val testDay = "01"
   val testMonth = "01"
@@ -163,7 +163,7 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport
     "return BAD_REQUEST" when {
       "an invalid form is submitted" in {
         disableAllSwitches()
-        disable(IncomeSources)
+        enable(IncomeSources)
 
         mockNoIncomeSources()
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
@@ -176,7 +176,7 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport
     "return BAD_REQUEST" when {
       "an empty form is submitted" in {
         disableAllSwitches()
-        disable(IncomeSources)
+        enable(IncomeSources)
 
         mockNoIncomeSources()
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
@@ -189,7 +189,7 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport
     "return BAD_REQUEST" when {
       "no form is submitted" in {
         disableAllSwitches()
-        disable(IncomeSources)
+        enable(IncomeSources)
 
         mockNoIncomeSources()
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
@@ -202,33 +202,33 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport
     "redirect to the Add Business Start Date Check page" when {
       "a valid form is submitted" in {
         disableAllSwitches()
-        disable(IncomeSources)
+        enable(IncomeSources)
 
         mockNoIncomeSources()
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
         val result = TestAddIncomeSourceStartDateController.submitSoleTraderBusiness()(fakeRequestWithActiveSession.withFormUrlEncodedBody(
-          dayField -> testDay,
-          monthField -> testMonth,
-          yearField -> testYear
+          dayField -> "12",
+          monthField -> "08",
+          yearField -> "2023"
         ))
 
-        redirectLocation(result) shouldBe Some(routes.AddBusinessStartDateCheckController.show().url)
         status(result) shouldBe SEE_OTHER
+        redirectLocation(result) shouldBe Some(routes.AddBusinessStartDateCheckController.show().url)
       }
     }
     "redirect to the Add Foreign Property Start Date Check page" when {
       "a valid form is submitted" in {
         disableAllSwitches()
-        disable(IncomeSources)
+        enable(IncomeSources)
 
         mockNoIncomeSources()
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
         val result = TestAddIncomeSourceStartDateController.submitForeignProperty()(fakeRequestWithActiveSession.withFormUrlEncodedBody(
-          dayField -> testDay,
-          monthField -> testMonth,
-          yearField -> testYear
+          dayField -> "12",
+          monthField -> "08",
+          yearField -> "2023"
         ))
 
         redirectLocation(result) shouldBe Some(routes.ForeignPropertyStartDateCheckController.show().url)
@@ -238,7 +238,7 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport
     "redirect to the Add UK Property Start Date Check page" when {
       "a valid form is submitted" in {
         disableAllSwitches()
-        disable(IncomeSources)
+        enable(IncomeSources)
 
         mockNoIncomeSources()
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
@@ -265,7 +265,7 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport
           currentDate.plusDays(8)
         ).date
 
-        val result = TestAddIncomeSourceStartDateController.submitUKProperty()(
+        val result = TestAddIncomeSourceStartDateController.submitSoleTraderBusiness()(
           fakeRequestWithActiveSession.withFormUrlEncodedBody(
             dayField -> testDate.getDayOfMonth.toString,
             monthField -> testDate.getMonthValue.toString,
@@ -523,7 +523,7 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport
     "return BAD_REQUEST" when {
       "an invalid form is submitted" in {
         disableAllSwitches()
-        disable(IncomeSources)
+        enable(IncomeSources)
 
         mockNoIncomeSources()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
@@ -536,7 +536,7 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport
     "return BAD_REQUEST" when {
       "an empty form is submitted" in {
         disableAllSwitches()
-        disable(IncomeSources)
+        enable(IncomeSources)
 
         mockNoIncomeSources()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
@@ -549,7 +549,7 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport
     "return BAD_REQUEST" when {
       "no form is submitted" in {
         disableAllSwitches()
-        disable(IncomeSources)
+        enable(IncomeSources)
 
         mockNoIncomeSources()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
@@ -562,7 +562,7 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport
     "redirect to the Add Business Start Date Check page" when {
       "a valid form is submitted" in {
         disableAllSwitches()
-        disable(IncomeSources)
+        enable(IncomeSources)
 
         mockNoIncomeSources()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
@@ -580,7 +580,7 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport
     "redirect to the Add Foreign Property Start Date Check page" when {
       "a valid form is submitted" in {
         disableAllSwitches()
-        disable(IncomeSources)
+        enable(IncomeSources)
 
         mockNoIncomeSources()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
@@ -598,7 +598,7 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport
     "redirect to the Add UK Property Start Date Check page" when {
       "a valid form is submitted" in {
         disableAllSwitches()
-        disable(IncomeSources)
+        enable(IncomeSources)
 
         mockNoIncomeSources()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
@@ -625,7 +625,7 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport
           currentDate.plusDays(8)
         ).date
 
-        val result = TestAddIncomeSourceStartDateController.submitUKPropertyAgent()(
+        val result = TestAddIncomeSourceStartDateController.submitSoleTraderBusinessAgent()(
           fakeRequestConfirmedClient().withFormUrlEncodedBody(
             dayField -> testDate.getDayOfMonth.toString,
             monthField -> testDate.getMonthValue.toString,

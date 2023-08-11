@@ -98,8 +98,8 @@ class ForeignPropertyStartDateCheckViewSpec extends TestSupport {
     }
 
     "render the back link with the correct URL" in new Setup(false) {
-      document.getElementById("back-fallback").text() shouldBe messages("base.back")
-      document.getElementById("back-fallback").attr("href") shouldBe controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showForeignProperty.url
+      document.getElementById("back").text() shouldBe messages("base.back")
+      document.getElementById("back").attr("href") shouldBe controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showForeignProperty.url
     }
 
     "render the continue button" in new Setup(false) {
@@ -136,8 +136,8 @@ class ForeignPropertyStartDateCheckViewSpec extends TestSupport {
     }
 
     "render the back link with the correct URL" in new Setup(true) {
-      document.getElementById("back-fallback").text() shouldBe messages("base.back")
-      document.getElementById("back-fallback").attr("href") shouldBe controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showForeignPropertyAgent.url
+      document.getElementById("back").text() shouldBe messages("base.back")
+      document.getElementById("back").attr("href") shouldBe controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showForeignPropertyAgent.url
     }
 
     "render the continue button" in new Setup(true) {
