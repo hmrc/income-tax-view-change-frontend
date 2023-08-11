@@ -44,7 +44,7 @@ class ForeignPropertyStartDateFormSpec extends TestSupport with ImplicitDateForm
     incomeSources = noIncomeDetails
   )(fakeRequestNoSession)
 
-  lazy val form: Form[DateFormElement] = new ForeignPropertyStartDateForm(mockDateService)(languageUtils).apply(testUser, messages)
+  lazy val form: Form[DateFormElement] = new AddForeignPropertyStartDateForm(mockDateService)(languageUtils).apply(testUser, messages)
 
   "ForeignPropertyStartDate form" should {
     "bind with a valid date" in {

@@ -56,9 +56,9 @@ class CheckUKPropertyDetailsViewSpec extends TestSupport with ImplicitDateFormat
       controllers.incomeSources.add.routes.CheckUKPropertyDetailsController.show()
     }
     val changeStartDateUrl = if (isAgent) {
-      controllers.incomeSources.add.routes.AddUKPropertyStartDateController.changeAgent().url
+      controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.changeUKPropertyStartDateAgent.url
     } else {
-      controllers.incomeSources.add.routes.AddUKPropertyStartDateController.change().url
+      controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.changeUKPropertyStartDate.url
     }
 
     val changeAccountingMethodUrl = if (isAgent) {

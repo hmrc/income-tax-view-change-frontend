@@ -38,8 +38,8 @@ class AddUKPropertyStartDateSpec extends TestSupport {
 
     val backUrl: String = if (isAgent) controllers.incomeSources.add.routes.AddIncomeSourceController.showAgent().url else
       controllers.incomeSources.add.routes.AddIncomeSourceController.show().url
-    val postAction: Call = if (isAgent) controllers.incomeSources.add.routes.AddUKPropertyStartDateController.submitAgent() else
-      controllers.incomeSources.add.routes.AddUKPropertyStartDateController.submit()
+    val postAction: Call = if (isAgent) controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.submitUKPropertyAgent else
+      controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.submitUKProperty
 
 
     lazy val view: HtmlFormat.Appendable = {
