@@ -1527,3 +1527,10 @@ incomeSources.manage.business-manage-details.quarterly                =   Bob ch
 incomeSources.manage.business-manage-details.annually                 =   Bob blwyddyn
 incomeSources.manage.business-manage-details.cash-accounting          =   Cyfrifyddu ar sail arian parod
 incomeSources.manage.business-manage-details.traditional-accounting   =   Cyfrifyddu traddodiadol
+
+
+incomeSources.manage.uk-property-manage-details.heading                   =   Y busnes unig fasnachwr a nodwyd gennych
+incomeSources.manage.uk-property-manage-details.accounting-method         =   Dull cyfrifyddu ar gyfer incwm o eiddo yn y DU
+
+incomeSources.manage.foreign-property-manage-details.heading              =   Y busnes unig fasnachwr a nodwyd gennych
+incomeSources.manage.foreign-property-manage-details.accounting-method    =   Dull cyfrifyddu ar gyfer incwm o eiddo tramor

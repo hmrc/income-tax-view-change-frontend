@@ -1559,4 +1559,8 @@ incomeSources.manage.business-manage-details.annually                 =   Annual
 incomeSources.manage.business-manage-details.cash-accounting          =   Cash basis accounting
 incomeSources.manage.business-manage-details.traditional-accounting   =   Traditional accounting
 
+incomeSources.manage.uk-property-manage-details.uk-property-section              =   UK property business
+incomeSources.manage.uk-property-manage-details.accounting-method                =   Accounting method for UK property income
 
+incomeSources.manage.foreign-property-manage-details.foreign-property-section    =   Foreign property business
+incomeSources.manage.foreign-property-manage-details.accounting-method           =   Accounting method for foreign property income

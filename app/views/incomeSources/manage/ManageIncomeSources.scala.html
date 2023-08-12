@@ -54,17 +54,17 @@
 
 @viewUKPropertyDetailsURL = @{
     if(isAgent){
-        controllers.incomeSources.manage.routes.ManageUKPropertyController.showAgent().url
+        controllers.incomeSources.manage.routes.ManageIncomeSourceDetailsController.showUkPropertyAgent().url
     } else {
-        controllers.incomeSources.manage.routes.ManageUKPropertyController.show().url
+        controllers.incomeSources.manage.routes.ManageIncomeSourceDetailsController.showUkProperty().url
     }
 }
 
 @viewForeignPropertyDetailsURL = @{
     if(isAgent){
-        controllers.incomeSources.manage.routes.ManageForeignPropertyController.showAgent().url
+        controllers.incomeSources.manage.routes.ManageIncomeSourceDetailsController.showForeignPropertyAgent().url
     } else {
-        controllers.incomeSources.manage.routes.ManageForeignPropertyController.show().url
+        controllers.incomeSources.manage.routes.ManageIncomeSourceDetailsController.showForeignProperty().url
     }
 }
 
