@@ -14,36 +14,38 @@
 // * limitations under the License.
 // */
 //
-//package controllers.incomeSources.add
+//package controllers.agent.incomeSources.add
 //
 //import config.featureswitch.IncomeSources
-//import helpers.ComponentSpecBase
+//import helpers.agent.ComponentSpecBase
 //import helpers.servicemocks.IncomeTaxViewChangeStub
 //import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
-//import testConstants.BaseIntegrationTestConstants.testMtditid
+//import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testMtditid}
 //import testConstants.IncomeSourceIntegrationTestConstants.businessOnlyResponse
 //
 //class AddBusinessStartDateControllerISpec extends ComponentSpecBase {
-//  val addBusinessStartDateShowUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showSoleTraderBusiness.url
-//  val addBusinessStartDateSubmitUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.submitSoleTraderBusiness.url
-//  val addBusinessStartDateCheckShowUrl: String = controllers.incomeSources.add.routes.AddBusinessStartDateCheckController.show().url
+//  val addBusinessStartDateShowUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showSoleTraderBusinessAgent.url
+//  val addBusinessStartDateSubmitUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.submitSoleTraderBusinessAgent.url
+//  val addBusinessStartDateCheckShowUrl: String = controllers.incomeSources.add.routes.AddBusinessStartDateCheckController.showAgent().url
 //  val prefix: String = "add-business-start-date"
 //  val continueButtonText: String = messagesAPI("base.continue")
 //
 //  s"calling GET $addBusinessStartDateShowUrl" should {
 //    "render the Add Business Start Date Page" when {
 //      "User is authorised" in {
+//        stubAuthorisedAgentUser(true)
+//
 //        Given("I wiremock stub a successful Income Source Details response with UK property")
 //        enable(IncomeSources)
 //        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 //
 //        When(s"I call GET $addBusinessStartDateShowUrl")
-//        val result = IncomeTaxViewChangeFrontend.getAddBusinessStartDate
+//        val result = IncomeTaxViewChangeFrontend.getAddBusinessStartDate(clientDetailsWithConfirmation)
 //        verifyIncomeSourceDetailsCall(testMtditid)
 //
 //        result should have(
 //          httpStatus(OK),
-//          pageTitleIndividual(s"$prefix.heading"),
+//          pageTitleAgent(s"$prefix.heading"),
 //          elementTextByID("continue-button")(continueButtonText)
 //        )
 //      }
@@ -60,9 +62,11 @@
 //          )
 //        }
 //        enable(IncomeSources)
+//        stubAuthorisedAgentUser(true)
 //        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 //
-//        val result = IncomeTaxViewChangeFrontend.post("/income-sources/add/business-start-date")(formData)
+//        val result = IncomeTaxViewChangeFrontend
+//          .post("/income-sources/add/business-start-date", clientDetailsWithConfirmation)(formData)
 //
 //        result should have(
 //          httpStatus(SEE_OTHER),
@@ -80,9 +84,13 @@
 //          )
 //        }
 //        enable(IncomeSources)
+//        stubAuthorisedAgentUser(true)
 //        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 //
-//        val result = IncomeTaxViewChangeFrontend.post("/income-sources/add/business-start-date")(formData)
+//        val result = IncomeTaxViewChangeFrontend
+//          .post("/income-sources/add/business-start-date", clientDetailsWithConfirmation)(formData)
+//
+//        println(s"\nRESULT: $result\n")
 //
 //        result should have(
 //          httpStatus(BAD_REQUEST),
