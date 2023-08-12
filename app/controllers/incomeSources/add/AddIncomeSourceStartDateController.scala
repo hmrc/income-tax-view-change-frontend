@@ -69,20 +69,21 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
   def submitSoleTraderBusinessAgent: Action[AnyContent] = handleRequestMethodAgent(SoleTraderBusiness)(isGet = false)
 
   private def handleRequestMethod(incomeSourceType: IncomeSourceType)
-                                 (isGet: Boolean): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
-    andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
-    implicit user =>
-      if(isGet) {
-        handleRequest(
-          isAgent = false,
-          incomeSourceType = incomeSourceType
-        )
-      } else {
-        handleSubmitRequest(
-          isAgent = false,
-          incomeSourceType = incomeSourceType
-        )
-      }
+                                 (isGet: Boolean): Action[AnyContent] =
+    (checkSessionTimeout andThen authenticate andThen retrieveNino
+      andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
+      implicit user =>
+        if(isGet) {
+          handleRequest(
+            isAgent = false,
+            incomeSourceType = incomeSourceType
+          )
+        } else {
+          handleSubmitRequest(
+            isAgent = false,
+            incomeSourceType = incomeSourceType
+          )
+        }
   }
 
   private def handleRequestMethodAgent(incomeSourceType: IncomeSourceType)
