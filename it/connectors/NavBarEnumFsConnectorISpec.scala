@@ -1,7 +1,6 @@
 
 package connectors
 
-import connectors.BtaNavBarPartialConnector
 import helpers.ComponentSpecBase
 import helpers.servicemocks.BtaNavBarPartialConnectorStub
 import helpers.servicemocks.BtaNavBarPartialConnectorStub.testNavLinkJson
