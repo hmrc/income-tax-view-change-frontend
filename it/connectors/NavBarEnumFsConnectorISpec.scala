@@ -1,5 +1,5 @@
 
-package it.connectors
+package connectors
 
 import connectors.BtaNavBarPartialConnector
 import helpers.ComponentSpecBase
