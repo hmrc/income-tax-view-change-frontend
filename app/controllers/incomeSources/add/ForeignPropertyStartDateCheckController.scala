@@ -56,8 +56,8 @@ class ForeignPropertyStartDateCheckController @Inject()(authenticate: Authentica
                                                         val itvcErrorHandlerAgent: AgentItvcErrorHandler)
   extends ClientConfirmedController with I18nSupport with FeatureSwitching with ImplicitDateFormatter {
 
-  lazy val backUrl: String = routes.ForeignPropertyStartDateController.show().url
-  lazy val backUrlAgent: String = routes.ForeignPropertyStartDateController.showAgent().url
+  lazy val backUrl: String = routes.AddIncomeSourceStartDateController.showForeignProperty.url
+  lazy val backUrlAgent: String = routes.AddIncomeSourceStartDateController.showForeignPropertyAgent.url
   lazy val nextPage: String = routes.ForeignPropertyAccountingMethodController.show().url
   lazy val nextPageAgent: String = routes.ForeignPropertyAccountingMethodController.showAgent().url
 

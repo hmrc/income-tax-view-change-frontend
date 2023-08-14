@@ -28,7 +28,7 @@ class AddBusinessStartDateCheckControllerISpec extends ComponentSpecBase {
   val testDate: String = "2020-11-1"
   val addBusinessStartDateCheckShowUrl: String = controllers.incomeSources.add.routes.AddBusinessStartDateCheckController.submitAgent().url
   val addBusinessTradeShowUrl: String = controllers.incomeSources.add.routes.AddBusinessTradeController.showAgent().url
-  val addBusinessStartDateShowUrl: String = controllers.incomeSources.add.routes.AddBusinessStartDateController.showAgent().url
+  val addBusinessStartDateShowUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showSoleTraderBusinessAgent.url
   val addBusinessStartDateCheckSubmitUrl: String = controllers.incomeSources.add.routes.AddBusinessStartDateCheckController.submitAgent().url
   val continueButtonText: String = messagesAPI("base.continue")
   val prefix: String = "add-business-start-date-check"
