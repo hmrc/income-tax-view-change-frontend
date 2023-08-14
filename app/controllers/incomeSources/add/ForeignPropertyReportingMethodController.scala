@@ -17,7 +17,6 @@
 package controllers.incomeSources.add
 
 import auth.{FrontendAuthorisedFunctions, MtdItUser}
-import cats.data.OptionT
 import config.featureswitch.{FeatureSwitching, TimeMachineAddYear}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
@@ -25,7 +24,7 @@ import controllers.predicates._
 import forms.incomeSources.add.AddForeignPropertyReportingMethodForm
 import models.incomeSourceDetails.LatencyDetails
 import models.incomeSourceDetails.viewmodels.ForeignPropertyReportingMethodViewModel
-import models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
+import models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponse, UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
 import play.api.Logger
 import play.api.data.Form
 import play.api.i18n.I18nSupport
@@ -116,33 +115,34 @@ class ForeignPropertyReportingMethodController @Inject()(val authenticate: Authe
                             postAction: Call,
                             redirectCall: Call)
                            (implicit user: MtdItUser[_]): Future[Result] = {
+    withIncomeSourcesFS {
+      (for {
+        isMandatoryOrVoluntary <- itsaStatusService.hasMandatedOrVoluntaryStatusCurrentYear
+        latencyDetailsMaybe <- Future(user.incomeSources.properties.find(
+          propertyDetails => propertyDetails.incomeSourceId.contains(id) && propertyDetails.isForeignProperty
+        ).flatMap(_.latencyDetails))
+        viewModel <- getForeignPropertyReportingMethodDetails(latencyDetailsMaybe)
+      } yield {
+        (isMandatoryOrVoluntary, viewModel) match {
 
-    (for {
-      isMandatoryOrVoluntary <- itsaStatusService.hasMandatedOrVoluntaryStatusCurrentYear
-      latencyDetailsMaybe <- Future(user.incomeSources.properties.find(
-        propertyDetails => propertyDetails.incomeSourceId.contains(id) && propertyDetails.isForeignProperty
-      ).flatMap(_.latencyDetails))
-      viewModel <- getForeignPropertyReportingMethodDetails(latencyDetailsMaybe)
-    } yield {
-      (isMandatoryOrVoluntary, viewModel) match {
-
-        case (_, Left(ex)) =>
-          Logger("application")
-            .error(s"[ForeignPropertyReportingMethodController][handleRequest]: Failed with error - $ex")
-          Future.successful(Redirect(redirectCall))
-        case (true, Right(viewModel)) =>
-          Future.successful(Ok(foreignPropertyReportingMethodView(
-            form = AddForeignPropertyReportingMethodForm.form,
-            viewModel = viewModel,
-            postAction = postAction,
-            isAgent = isAgent
-          )))
-        case _ =>
-          Logger("application")
-            .error(s"[ForeignPropertyReportingMethodController][handleRequest]: second level not found error")
-          Future(Ok(customNotFoundErrorView()))
-      }
-    }).flatten
+          case (_, Left(ex)) =>
+            Logger("application")
+              .error(s"[ForeignPropertyReportingMethodController][handleRequest]: Failed with error - $ex")
+            Future.successful(Redirect(redirectCall))
+          case (true, Right(viewModel)) =>
+            Future.successful(Ok(foreignPropertyReportingMethodView(
+              form = AddForeignPropertyReportingMethodForm.form,
+              viewModel = viewModel,
+              postAction = postAction,
+              isAgent = isAgent
+            )))
+          case _ =>
+            Logger("application")
+              .error(s"[ForeignPropertyReportingMethodController][handleRequest]: second level not found error")
+            Future(Ok(customNotFoundErrorView()))
+        }
+      }).flatten
+    }
   }
 
   private def handleSubmitRequest(id: String,
@@ -214,37 +214,78 @@ class ForeignPropertyReportingMethodController @Inject()(val authenticate: Authe
 
   private def updateReportingMethod(isAgent: Boolean, id: String, taxYearSpecific1Opt: Option[TaxYearSpecific], taxYearSpecific2Opt: Option[TaxYearSpecific])
                                    (implicit user: MtdItUser[_]): Future[Result] = {
-    
-    val redirectCall: Call = if (isAgent) routes.ForeignPropertyAddedController.showAgent(id) else routes.ForeignPropertyAddedController.show(id)
-    val redirectErrorCall: Call = if (isAgent) routes.IncomeSourceNotAddedController.showForeignPropertyAgent() else
-      routes.IncomeSourceNotAddedController.showForeignProperty()
 
-    val updateResults = for {
-      result1 <- OptionT.fromOption[Future](taxYearSpecific1Opt)
-        .semiflatMap(taxYearSpecific => updateIncomeSourceService.updateTaxYearSpecific(user.nino, id, taxYearSpecific))
-      result2 <- OptionT.fromOption[Future](taxYearSpecific2Opt)
-        .semiflatMap(taxYearSpecific => updateIncomeSourceService.updateTaxYearSpecific(user.nino, id, taxYearSpecific))
-    } yield (result1, result2)
+    val redirectUrl: Call = if (isAgent) routes.ForeignPropertyAddedController.showAgent(id) else routes.ForeignPropertyAddedController.show(id)
+    val redirectErrorUrl: Call = if (isAgent) routes.IncomeSourceReportingMethodNotSavedController.showForeignPropertyAgent() else
+      routes.IncomeSourceReportingMethodNotSavedController.showForeignProperty()
 
-    updateResults.value.flatMap {
-      case Some((result1: UpdateIncomeSourceResponseModel, result2: UpdateIncomeSourceResponseModel)) =>
-        Logger("application").info(s"[ForeignPropertyReportingMethodController][updateReportingMethod]:" +
-          s"Updated tax year specific reporting method : $result1 and $result2")
-        Future.successful(Redirect(redirectCall))
-      case Some((_: UpdateIncomeSourceResponseError, _: UpdateIncomeSourceResponseModel)) =>
-        //TODO: redirect to custom error page based on one failure response & one success response
-        Future.successful(Redirect(redirectErrorCall))
-      case Some((_: UpdateIncomeSourceResponseError, _: UpdateIncomeSourceResponseError)) =>
-        Future.successful(Redirect(redirectErrorCall))
-      case _ =>
-        Logger("application").error("[ForeignPropertyReportingMethodController][updateReportingMethod]:" +
-          "Unexpected response when updating tax year specific reporting methods")
-        Future.successful(Redirect(redirectErrorCall))
+    val futures = Seq(
+      taxYearSpecific1Opt.map(taxYearSpecific => updateIncomeSourceService.updateTaxYearSpecific(user.nino, id, taxYearSpecific)),
+      taxYearSpecific2Opt.map(taxYearSpecific => updateIncomeSourceService.updateTaxYearSpecific(user.nino, id, taxYearSpecific))
+    ).flatten
+
+    val updateResults: Future[Seq[UpdateIncomeSourceResponse]] = Future.sequence(futures)
+
+    updateResults.map { results =>
+      val responseCount = results.length
+
+      responseCount match {
+        case 0 =>
+          Logger("application").error("[UKPropertyReportingMethodController][updateReportingMethod]: " +
+            "No responses received when updating tax year specific reporting methods")
+          Redirect(redirectErrorUrl)
+        case 1 =>
+          val result = results.head
+          result match {
+            case _: UpdateIncomeSourceResponseModel =>
+              Logger("application").info(s"[UKPropertyReportingMethodController][updateReportingMethod]: " +
+                s"Updated tax year specific reporting method: $result")
+              Redirect(redirectUrl)
+            case _: UpdateIncomeSourceResponseError =>
+              Logger("application").info(s"[UKPropertyReportingMethodController][updateReportingMethod]: " +
+                s"Error response received when updating tax year specific reporting method: $result")
+              Redirect(redirectErrorUrl)
+            case _ =>
+              Logger("application").info(s"[UKPropertyReportingMethodController][updateReportingMethod]: " +
+                s"Unexpected response received when updating tax year specific reporting method: $result")
+              Redirect(redirectErrorUrl)
+          }
+        case 2 =>
+          val (result1, result2) = (results.head, results(1))
+          (result1, result2) match {
+            case (_: UpdateIncomeSourceResponseError, _: UpdateIncomeSourceResponseError) =>
+              Logger("application").info(s"[UKPropertyReportingMethodController][updateReportingMethod]: " +
+                s"Errors received when updating tax year specific reporting methods: $result1\n$result2")
+              Redirect(redirectErrorUrl)
+            case (_: UpdateIncomeSourceResponseModel, _: UpdateIncomeSourceResponseError) =>
+              Logger("application").info(s"[UKPropertyReportingMethodController][updateReportingMethod]: " +
+                s"Updated tax year specific reporting method: $result1")
+              Logger("application").info(s"[UKPropertyReportingMethodController][updateReportingMethod]: " +
+                s"Error received when updating tax year specific reporting method: $result2")
+              //TODO: redirect to a new error page based on 1 success, 1 error
+              Redirect(redirectErrorUrl)
+            case (_: UpdateIncomeSourceResponseError, _: UpdateIncomeSourceResponseModel) =>
+              Logger("application").info(s"[UKPropertyReportingMethodController][updateReportingMethod]: " +
+                s"Error received when updating tax year specific reporting method: $result2")
+              Logger("application").info(s"[UKPropertyReportingMethodController][updateReportingMethod]: " +
+                s"Updated tax year specific reporting method: $result1")
+              //TODO: redirect to a new error page based on 1 success, 1 error
+              Redirect(redirectErrorUrl)
+            case (_: UpdateIncomeSourceResponseModel, _: UpdateIncomeSourceResponseModel) =>
+              Logger("application").info(s"[UKPropertyReportingMethodController][updateReportingMethod]: " +
+                s"Updated tax year specific reporting methods: $result1\n$result2")
+              Redirect(redirectUrl)
+          }
+        case _ =>
+          Logger("application").error("[UKPropertyReportingMethodController][updateReportingMethod]: " +
+            "Unexpected response received when updating tax year specific reporting methods")
+          Redirect(redirectErrorUrl)
+      }
     }.recover {
       case ex: Exception =>
-        Logger("application").error(s"[ForeignPropertyReportingMethodController][updateReportingMethod]:" +
+        Logger("application").error(s"[UKPropertyReportingMethodController][updateReportingMethod]: " +
           s"Error updating tax year specific reporting method: ${ex.getMessage}")
-        Redirect(redirectErrorCall)
+        Redirect(redirectErrorUrl)
     }
   }
 

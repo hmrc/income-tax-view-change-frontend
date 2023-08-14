@@ -192,10 +192,9 @@ class ForeignPropertyReportingMethodControllerSpec extends TestSupport with Mock
         mockAndBasicSetup(CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
         disable(IncomeSources)
         val result: Future[Result] = TestForeignPropertyReportingMethodController.show(TestForeignPropertyReportingMethodController.incomeSourceId)(fakeRequestWithActiveSession)
-        val expectedContent: String = TestForeignPropertyReportingMethodController.customNotFoundErrorView().toString()
 
-        status(result) shouldBe Status.OK
-        contentAsString(result) shouldBe expectedContent
+        status(result) shouldBe Status.SEE_OTHER
+        redirectLocation(result) shouldBe Some(controllers.routes.HomeController.show().url)
       }
       "called with an unauthenticated user" in {
         setupMockAuthorisationException()
@@ -478,10 +477,9 @@ class ForeignPropertyReportingMethodControllerSpec extends TestSupport with Mock
         mockAndBasicSetup(CURRENT_TAX_YEAR_IN_LATENCY_YEARS, true)
         disable(IncomeSources)
         val result: Future[Result] = TestForeignPropertyReportingMethodController.showAgent(TestForeignPropertyReportingMethodController.incomeSourceId)(fakeRequestConfirmedClient())
-        val expectedContent: String = TestForeignPropertyReportingMethodController.customNotFoundErrorView().toString()
 
-        status(result) shouldBe Status.OK
-        contentAsString(result) shouldBe expectedContent
+        status(result) shouldBe Status.SEE_OTHER
+        redirectLocation(result) shouldBe Some(controllers.routes.HomeController.showAgent.url)
       }
       "called with an unauthenticated user" in {
         setupMockAgentAuthorisationException()

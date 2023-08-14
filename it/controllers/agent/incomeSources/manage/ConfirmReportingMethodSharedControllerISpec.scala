@@ -154,7 +154,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
   }
 
   s"calling GET $confirmReportingMethodShowSoleTraderBusinessUrl" should {
-    "render the Custom Not Found Error page" when {
+    "redirect to home page" when {
       "Income Sources FS is Disabled" in {
 
         stubAuthorisedAgentUser(authorised = true)
@@ -174,7 +174,8 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
         verifyIncomeSourceDetailsCall(testMtditid)
 
         result should have(
-          httpStatus(OK)
+          httpStatus(SEE_OTHER),
+          redirectURI(controllers.routes.HomeController.showAgent.url)
         )
       }
     }
@@ -288,7 +289,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
   }
 
   s"calling POST $confirmReportingMethodSubmitSoleTraderBusinessUrl" should {
-    "render the Custom Not Found Error Page" when {
+    "redirect to home page" when {
       "Income Sources FS is disabled" in {
 
         stubAuthorisedAgentUser(authorised = true)
@@ -306,7 +307,8 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
         )
 
         result should have(
-          httpStatus(OK)
+          httpStatus(SEE_OTHER),
+          redirectURI(controllers.routes.HomeController.showAgent.url)
         )
       }
     }

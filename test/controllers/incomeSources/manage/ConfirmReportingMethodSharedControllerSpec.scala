@@ -162,12 +162,13 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
     s"return ${Status.INTERNAL_SERVER_ERROR}" when {
       "taxYear parameter has an invalid format" in {
         disableAllSwitches()
+        enable(IncomeSources)
         mockSingleBISWithCurrentYearAsMigrationYear()
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
 
         val result: Future[Result] = TestConfirmReportingMethodSharedController.submitSoleTraderBusiness(
           testIncomeSourceId, "$$$$-££££", testChangeToAnnual)(fakeRequestWithActiveSession)
-        status(result) shouldBe Status.OK
+        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
       }
     }
     s"return ${Status.INTERNAL_SERVER_ERROR}" when {
@@ -430,8 +431,7 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
 
         val result: Future[Result] = TestConfirmReportingMethodSharedController.submitSoleTraderBusinessAgent(
           testIncomeSourceId, "$$$$-££££", testChangeToAnnual)(fakeRequestConfirmedClient())
-        status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.IncomeSourceNotAddedController.showUKProperty())
+        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
       }
     }
     s"return ${Status.INTERNAL_SERVER_ERROR}" when {

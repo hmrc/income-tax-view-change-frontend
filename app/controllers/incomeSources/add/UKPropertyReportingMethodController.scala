@@ -17,8 +17,6 @@
 package controllers.incomeSources.add
 
 import auth.{FrontendAuthorisedFunctions, MtdItUser}
-import cats.data.OptionT
-import cats.implicits._
 import config.featureswitch.{FeatureSwitching, TimeMachineAddYear}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
@@ -26,7 +24,7 @@ import controllers.predicates._
 import forms.incomeSources.add.AddUKPropertyReportingMethodForm
 import models.incomeSourceDetails.LatencyDetails
 import models.incomeSourceDetails.viewmodels.UKPropertyReportingMethodViewModel
-import models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
+import models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponse, UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
 import play.api.Logger
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, Messages}
@@ -194,30 +192,71 @@ class UKPropertyReportingMethodController @Inject()(val authenticate: Authentica
     val redirectErrorUrl: Call = if (isAgent) routes.IncomeSourceReportingMethodNotSavedController.showUKPropertyAgent() else
       routes.IncomeSourceReportingMethodNotSavedController.showUKProperty()
 
-    val updateResults = for {
-      result1 <- OptionT.fromOption[Future](taxYearSpecific1Opt)
-        .semiflatMap(taxYearSpecific => updateIncomeSourceService.updateTaxYearSpecific(user.nino, id, taxYearSpecific))
-      result2 <- OptionT.fromOption[Future](taxYearSpecific2Opt)
-        .semiflatMap(taxYearSpecific => updateIncomeSourceService.updateTaxYearSpecific(user.nino, id, taxYearSpecific))
-    } yield (result1, result2)
+    val futures = Seq(
+      taxYearSpecific1Opt.map(taxYearSpecific => updateIncomeSourceService.updateTaxYearSpecific(user.nino, id, taxYearSpecific)),
+      taxYearSpecific2Opt.map(taxYearSpecific => updateIncomeSourceService.updateTaxYearSpecific(user.nino, id, taxYearSpecific))
+    ).flatten
 
-    updateResults.value.flatMap {
-      case Some((result1: UpdateIncomeSourceResponseModel, result2: UpdateIncomeSourceResponseModel)) =>
-        Logger("application").info(s"[UKPropertyReportingMethodController][updateReportingMethod]:" +
-          s"Updated tax year specific reporting method : $result1 and $result2")
-        Future.successful(Redirect(redirectUrl))
-      case Some((_: UpdateIncomeSourceResponseError, _: UpdateIncomeSourceResponseModel)) =>
-        //TODO: redirect to custom error page based on one failure response & one success response
-        Future.successful(Redirect(redirectErrorUrl))
-      case Some((_: UpdateIncomeSourceResponseError, _: UpdateIncomeSourceResponseError)) =>
-        Future.successful(Redirect(redirectErrorUrl))
-      case _ =>
-        Logger("application").error("[UKPropertyReportingMethodController][updateReportingMethod]:" +
-          "Unexpected response when updating tax year specific reporting methods")
-        Future.successful(Redirect(redirectErrorUrl))
+    val updateResults: Future[Seq[UpdateIncomeSourceResponse]] = Future.sequence(futures)
+
+    updateResults.map { results =>
+      val responseCount = results.length
+
+      responseCount match {
+        case 0 =>
+          Logger("application").error("[UKPropertyReportingMethodController][updateReportingMethod]: " +
+            "No responses received when updating tax year specific reporting methods")
+          Redirect(redirectErrorUrl)
+        case 1 =>
+          val result = results.head
+          result match {
+            case _: UpdateIncomeSourceResponseModel =>
+              Logger("application").info(s"[UKPropertyReportingMethodController][updateReportingMethod]: " +
+                s"Updated tax year specific reporting method: $result")
+              Redirect(redirectUrl)
+            case _: UpdateIncomeSourceResponseError =>
+              Logger("application").info(s"[UKPropertyReportingMethodController][updateReportingMethod]: " +
+                s"Error response received when updating tax year specific reporting method: $result")
+              Redirect(redirectErrorUrl)
+            case _ =>
+              Logger("application").info(s"[UKPropertyReportingMethodController][updateReportingMethod]: " +
+                s"Unexpected response received when updating tax year specific reporting method: $result")
+              Redirect(redirectErrorUrl)
+          }
+        case 2 =>
+          val (result1, result2) = (results.head, results(1))
+          (result1, result2) match {
+            case (_: UpdateIncomeSourceResponseError, _: UpdateIncomeSourceResponseError) =>
+              Logger("application").info(s"[UKPropertyReportingMethodController][updateReportingMethod]: " +
+                s"Errors received when updating tax year specific reporting methods: $result1\n$result2")
+              Redirect(redirectErrorUrl)
+            case (_: UpdateIncomeSourceResponseModel, _: UpdateIncomeSourceResponseError) =>
+              Logger("application").info(s"[UKPropertyReportingMethodController][updateReportingMethod]: " +
+                s"Updated tax year specific reporting method: $result1")
+              Logger("application").info(s"[UKPropertyReportingMethodController][updateReportingMethod]: " +
+                s"Error received when updating tax year specific reporting method: $result2")
+              //TODO: redirect to a new error page based on 1 success, 1 error
+              Redirect(redirectErrorUrl)
+            case (_: UpdateIncomeSourceResponseError, _: UpdateIncomeSourceResponseModel) =>
+              Logger("application").info(s"[UKPropertyReportingMethodController][updateReportingMethod]: " +
+                s"Error received when updating tax year specific reporting method: $result2")
+              Logger("application").info(s"[UKPropertyReportingMethodController][updateReportingMethod]: " +
+                s"Updated tax year specific reporting method: $result1")
+              //TODO: redirect to a new error page based on 1 success, 1 error
+              Redirect(redirectErrorUrl)
+            case (_: UpdateIncomeSourceResponseModel, _: UpdateIncomeSourceResponseModel) =>
+              Logger("application").info(s"[UKPropertyReportingMethodController][updateReportingMethod]: " +
+                s"Updated tax year specific reporting methods: $result1\n$result2")
+              Redirect(redirectUrl)
+          }
+        case _ =>
+          Logger("application").error("[UKPropertyReportingMethodController][updateReportingMethod]: " +
+            "Unexpected response received when updating tax year specific reporting methods")
+          Redirect(redirectErrorUrl)
+      }
     }.recover {
       case ex: Exception =>
-        Logger("application").error(s"[UKPropertyReportingMethodController][updateReportingMethod]:" +
+        Logger("application").error(s"[UKPropertyReportingMethodController][updateReportingMethod]: " +
           s"Error updating tax year specific reporting method: ${ex.getMessage}")
         Redirect(redirectErrorUrl)
     }
