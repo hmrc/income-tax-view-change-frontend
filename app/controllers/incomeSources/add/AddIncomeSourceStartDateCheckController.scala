@@ -18,24 +18,21 @@ package controllers.incomeSources.add
 
 import auth.MtdItUser
 import config.featureswitch.{FeatureSwitching, IncomeSources}
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import forms.incomeSources.add.{AddBusinessStartDateCheckForm, AddForeignPropertyStartDateCheckForm, AddIncomeSourceStartDateCheckForm, AddUKPropertyStartDateCheckForm, IncomeSourceStartDateCheckForm}
+import forms.incomeSources.add.AddIncomeSourceStartDateCheckForm
 import forms.utils.SessionKeys.{addUkPropertyStartDate, businessStartDate, foreignPropertyStartDate}
 import implicits.ImplicitDateFormatter
 import play.api.Logger
-import play.api.data.Form
-import play.api.i18n.{I18nSupport, Messages}
+import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.IncomeSourceDetailsService
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.language.LanguageUtils
 import views.html.errorPages.CustomNotFoundError
-import views.html.incomeSources.add.{AddIncomeSourceStartDateCheck, ForeignPropertyStartDateCheck}
-
+import views.html.incomeSources.add.AddIncomeSourceStartDateCheck
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
