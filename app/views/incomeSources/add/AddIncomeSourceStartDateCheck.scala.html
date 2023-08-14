@@ -32,18 +32,17 @@
         postAction: Call,
         backUrl: String,
         isAgent: Boolean,
-        incomeSourceStartDate: String,
-        btaNavPartial: Option[Html] = None
+        incomeSourceStartDate: String
 )(
         implicit messages: Messages,
-        request: Request[_]
+        user:auth.MtdItUser[_]
 )
 
 @mainTemplate(
     pageTitle = messages("dateForm.check.heading"),
     backUrl = Some(backUrl),
     isAgent = isAgent,
-    btaNavPartial = btaNavPartial) {
+    btaNavPartial = user.btaNavPartial) {
 
     @formWithCSRF(action = postAction, Symbol("id") -> "add-income-source-start-date-check-form") {
 
@@ -72,7 +71,7 @@
                 content = HtmlContent(incomeSourceStartDate)
             )),
             errorMessage = form.errors.headOption.map(err => ErrorMessage(content = Text(messages(err.message, err.args:_*))))
-        ).withFormField(form("add-income-source-start-date-check")))
+        ).withFormField(form("start-date-check")))
 
         @govukButton(Button(
             content = Text(messages("base.continue")),
