@@ -68,6 +68,7 @@
                 )
             ),
             hint = Some(Hint(
+                id = Some("add-income-source-start-date-check-hint"),
                 content = HtmlContent(incomeSourceStartDate)
             )),
             errorMessage = form.errors.headOption.map(err => ErrorMessage(content = Text(messages(err.message, err.args:_*))))

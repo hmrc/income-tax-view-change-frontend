@@ -20,7 +20,8 @@ import auth.HeaderExtractor
 import com.github.tomakehurst.wiremock.client.WireMock
 import config.FrontendAppConfig
 import config.featureswitch.{FeatureSwitch, FeatureSwitching}
-import forms.incomeSources.add.{AddBusinessReportingMethodForm, AddForeignPropertyReportingMethodForm, AddUKPropertyReportingMethodForm, BusinessStartDateCheckForm}
+import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
+import forms.incomeSources.add.{AddBusinessReportingMethodForm, AddForeignPropertyReportingMethodForm, AddIncomeSourceStartDateCheckForm, AddUKPropertyReportingMethodForm}
 import forms.incomeSources.cease.CeaseUKPropertyForm
 import forms.utils.SessionKeys
 import forms.CeaseForeignPropertyForm
@@ -306,20 +307,42 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
     def getAddBusinessStartDate: WSResponse = get("/income-sources/add/business-start-date")
 
-    def getAddBusinessStartDateCheck(date: String): WSResponse = {
-      getWithCalcIdInSessionAndWithoutAwait(
-        uri = "/income-sources/add/business-start-date-check",
-        additionalCookies = Map(SessionKeys.addBusinessStartDate -> date)
-      ).futureValue
+    def getAddBusinessStartDateCheck(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      get(
+        uri = "/income-sources/add/business-start-date-check", additionalCookies
+      )
     }
 
     def postAddBusinessStartDateCheck(answer: Option[String])(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
       post(s"/income-sources/add/business-start-date-check",
         additionalCookies = additionalCookies)(
         answer.fold(Map.empty[String, Seq[String]])(
-          selection => BusinessStartDateCheckForm.form.fill(BusinessStartDateCheckForm(Some(selection))).data.map {
-            case (k, v) => (k, Seq(v))
-          }
+          selection => AddIncomeSourceStartDateCheckForm(SelfEmployment.addIncomeSourceStartDateCheckMessagesPrefix)
+            .fill(AddIncomeSourceStartDateCheckForm(Some(selection))).data.map { case (k, v) => (k, Seq(v)) }
+        )
+      )
+    }
+
+    def postAddForeignPropertyStartDateCheck(answer: Option[String])(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      post(
+        uri = s"/income-sources/add/foreign-property-start-date-check",
+        additionalCookies = additionalCookies
+      )(
+        answer.fold(Map.empty[String, Seq[String]])(
+          selection => AddIncomeSourceStartDateCheckForm(ForeignProperty.addIncomeSourceStartDateCheckMessagesPrefix)
+            .fill(AddIncomeSourceStartDateCheckForm(Some(selection))).data.map { case (k, v) => (k, Seq(v)) }
+        )
+      )
+    }
+
+    def postAddUKPropertyStartDateCheck(answer: Option[String])(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      post(
+        uri = s"/income-sources/add/uk-property-start-date-check",
+        additionalCookies = additionalCookies
+      )(
+        answer.fold(Map.empty[String, Seq[String]])(
+          selection => AddIncomeSourceStartDateCheckForm(UkProperty.addIncomeSourceStartDateCheckMessagesPrefix)
+            .fill(AddIncomeSourceStartDateCheckForm(Some(selection))).data.map { case (k, v) => (k, Seq(v)) }
         )
       )
     }
