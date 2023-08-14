@@ -32,8 +32,8 @@ object AddBusinessStartDateForm extends Constraints {
 
   private val messagePrefix = "add-business-start-date"
   private val dateMustNotBeTooFarInFuture = s"$messagePrefix.error.future"
-  private val dateMustBeEntered = s"$messagePrefix.error.error.required"
-  private val dateMustBeReal = s"$messagePrefix.error.invalid"
+  private val dateMustBeEntered = "error.required"
+  private val dateMustBeReal = "error.invalid"
   private val dayRequired = s"dateForm.error.day.required"
   private val monthRequired = s"dateForm.error.month.required"
   private val yearRequired = s"dateForm.error.year.required"
@@ -89,3 +89,5 @@ object AddBusinessStartDateForm extends Constraints {
       Valid
   }
 }
+
+class AddBusinessStartDateForm

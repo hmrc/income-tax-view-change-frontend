@@ -40,8 +40,8 @@ class CheckUKPropertyStartDateSpec extends TestSupport {
     val form: Form[_] = AddUKPropertyStartDateCheckForm.form
     val startDate: String = "2022-06-30"
     val formattedStartDate: String = mockImplicitDateFormatter.longDate(LocalDate.parse(startDate)).toLongDate
-    val backUrl: String = if (isAgent) controllers.incomeSources.add.routes.AddUKPropertyStartDateController.showAgent().url else
-      controllers.incomeSources.add.routes.AddUKPropertyStartDateController.show().url
+    val backUrl: String = if (isAgent) controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showForeignPropertyAgent.url else
+      controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showForeignProperty.url
     val postAction: Call = if (isAgent) controllers.incomeSources.add.routes.CheckUKPropertyStartDateController.submitAgent() else
       controllers.incomeSources.add.routes.CheckUKPropertyStartDateController.submit()
 

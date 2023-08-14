@@ -51,8 +51,7 @@
     pageTitle = getMessage("heading"),
     backUrl = Some(backUrl),
     isAgent = isAgent,
-    btaNavPartial = user.btaNavPartial,
-    useFallbackBackLink = true) {
+    btaNavPartial = user.btaNavPartial) {
 
 
     @formWithCSRF(action = postAction, Symbol("id") -> formId) {

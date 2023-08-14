@@ -21,7 +21,7 @@ import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
-import forms.incomeSources.add.AddUKPropertyStartDateCheckForm
+import forms.incomeSources.add.CheckUKPropertyStartDateForm
 import forms.utils.SessionKeys
 import implicits.ImplicitDateFormatterImpl
 import play.api.Logger
@@ -65,7 +65,7 @@ class CheckUKPropertyStartDateController @Inject()(val authenticate: Authenticat
 
     if (incomeSourcesEnabled) {
       Future.successful(Ok(view(
-        checkUKPropertyStartDateForm = AddUKPropertyStartDateCheckForm.form,
+        checkUKPropertyStartDateForm = CheckUKPropertyStartDateForm.form,
         startDate = startDate,
         postAction = postAction,
         isAgent = isAgent,
@@ -114,12 +114,12 @@ class CheckUKPropertyStartDateController @Inject()(val authenticate: Authenticat
           routes.UKPropertyAccountingMethodController.showAgent())
       else
         (routes.CheckUKPropertyStartDateController.submit(),
-          routes.AddIncomeSourceStartDateController.showUKPropertyAgent,
+          routes.AddIncomeSourceStartDateController.showUKProperty,
           routes.UKPropertyAccountingMethodController.show())
     }
     val startDate = user.session.get(SessionKeys.addUkPropertyStartDate).get
     val formattedStartDate = dateFormatter.longDate(LocalDate.parse(startDate)).toLongDate
-    AddUKPropertyStartDateCheckForm.form.bindFromRequest().fold(
+    CheckUKPropertyStartDateForm.form.bindFromRequest().fold(
       hasErrors => Future.successful(BadRequest(view(
         checkUKPropertyStartDateForm = hasErrors,
         postAction = postAction,

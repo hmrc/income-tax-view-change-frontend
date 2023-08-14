@@ -18,16 +18,20 @@ package enums.IncomeSourceJourney
 
 sealed trait IncomeSourceJourney {
   val key: String
+  val messagesPrefix: String
 }
 
 case object SelfEmployment extends IncomeSourceJourney {
   override val key = "SE"
+  override val messagesPrefix = "add-business-start-date"
 }
 
 case object UkProperty extends IncomeSourceJourney {
   override val key = "UK"
+  override val messagesPrefix = "incomeSources.add.UKPropertyStartDate"
 }
 
 case object ForeignProperty extends IncomeSourceJourney {
   override val key = "FP"
+  override val messagesPrefix = "incomeSources.add.foreignProperty.startDate"
 }

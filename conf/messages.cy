@@ -1304,7 +1304,7 @@ incomeSources.add.foreignProperty.startDate.error.missingDayMonth    = Mae’n r
 incomeSources.add.foreignProperty.startDate.error.missingYear        = Mae’n rhaid i’r dyddiad gynnwys blwyddyn
 incomeSources.add.foreignProperty.startDate.error.missingMonth       = Mae’n rhaid i’r dyddiad gynnwys mis
 incomeSources.add.foreignProperty.startDate.error.missingDay         = Mae’n rhaid i’r dyddiad gynnwys diwrnod
-incomeSources.add.foreignProperty.startDate.error.invalid            = Mae’n rhaid i’r dyddiad y dechreuodd eich busnes eiddo tramor fod yn ddyddiad go iawn
+incomeSources.add.foreignProperty.startDate.error.required            = Mae’n rhaid i’r dyddiad y dechreuodd eich busnes eiddo tramor fod yn ddyddiad go iawn
 incomeSources.add.foreignProperty.startDate.error.future             = Mae’n rhaid i’r dyddiad y dechreuodd eich busnes eiddo tramor fod cyn {0}
 incomeSources.add.foreignProperty.startDate.check.heading            = A yw’r dyddiad hwn yn gywir?
 incomeSources.add.foreignProperty.startDate.check.error              = Dewiswch ‘Iawn’ os yw dyddiad dechrau’r busnes eiddo tramor yn gywir
@@ -1337,7 +1337,7 @@ add-business-start-date.month                        = Mis
 add-business-start-date.year                         = Blwyddyn
 add-business-start-date.form.error.emptyDateField    = Nodwch y dyddiad y dechreuodd eich busnes fasnachu
 add-business-start-date.error.future                 = Mae’n rhaid i’r dyddiad y dechreuodd eich busnes eiddo tramor fod cyn {0}
-add-business-start-date.error.error.required         = Nodwch y dyddiad y dechreuodd eich busnes fasnachu
+add-business-start-date.error.required               = Nodwch y dyddiad y dechreuodd eich busnes fasnachu
 add-business-start-date.error.invalid                = Mae’n rhaid i’r dyddiad y dechreuodd eich busnes fasnachu fod yn ddyddiad go iawn
 
 # add business accounting method
@@ -1527,3 +1527,10 @@ incomeSources.manage.business-manage-details.quarterly                =   Bob ch
 incomeSources.manage.business-manage-details.annually                 =   Bob blwyddyn
 incomeSources.manage.business-manage-details.cash-accounting          =   Cyfrifyddu ar sail arian parod
 incomeSources.manage.business-manage-details.traditional-accounting   =   Cyfrifyddu traddodiadol
+
+
+incomeSources.manage.uk-property-manage-details.heading                   =   Y busnes unig fasnachwr a nodwyd gennych
+incomeSources.manage.uk-property-manage-details.accounting-method         =   Dull cyfrifyddu ar gyfer incwm o eiddo yn y DU
+
+incomeSources.manage.foreign-property-manage-details.heading              =   Y busnes unig fasnachwr a nodwyd gennych
+incomeSources.manage.foreign-property-manage-details.accounting-method    =   Dull cyfrifyddu ar gyfer incwm o eiddo tramor

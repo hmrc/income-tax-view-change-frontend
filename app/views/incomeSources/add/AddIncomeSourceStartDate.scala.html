@@ -17,6 +17,7 @@
 @import views.html.layouts.unifiedLayout
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components.FormWithCSRF
+@import forms.models.DateFormElement
 @import views.html.helpers.injected.ErrorSummary
 
 @this(
@@ -28,7 +29,7 @@
 )
 
 @(
-        form: Form[_],
+        form: Form[DateFormElement],
         postAction: Call,
         backUrl: String,
         isAgent: Boolean,
@@ -68,8 +69,9 @@
                 InputItem(attributes = Map("maxLength" -> "2")),
                 InputItem(attributes = Map("maxLength" -> "2")),
                 InputItem(attributes = Map("maxLength" -> "4"))
-            )
-        ).withFormField(form(messagesPrefix)))
+            ),
+            errorMessage = form.errors.headOption.map(err => ErrorMessage(content = Text(messages(err.message, err.args:_*))))
+        ).withFormField(form("income-source-start-date")))
 
         @govukButton(Button(
             content = Text(messages("base.continue")),

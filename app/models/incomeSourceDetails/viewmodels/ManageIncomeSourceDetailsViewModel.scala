@@ -16,7 +16,9 @@
 
 package models.incomeSourceDetails.viewmodels
 
+import enums.IncomeSourceJourney.IncomeSourceJourney
 import models.core.AddressModel
+import models.incomeSourceDetails.LatencyDetails
 
 import java.time.LocalDate
 
@@ -28,10 +30,8 @@ case class ManageBusinessDetailsViewModel(incomeSourceId: String,
                                           itsaHasMandatedOrVoluntaryStatusCurrentYear: Boolean,
                                           taxYearOneCrystallised: Option[Boolean],
                                           taxYearTwoCrystallised: Option[Boolean],
-                                          latencyDetails: Option[ViewLatencyDetailsViewModel]
+                                          latencyDetails: Option[LatencyDetails],
+                                          incomeSourceType: IncomeSourceJourney
                                          )
-
-case class ViewLatencyDetailsViewModel(latencyEndDate: LocalDate, taxYear1: Int, latencyIndicator1: String,
-                                       taxYear2: Int, latencyIndicator2: String)
 
 

@@ -92,13 +92,6 @@ object BusinessDetailsTestConstants {
     taxYear2 = year2024.toString,
     latencyIndicator2 = "Q")
 
-  val testLatencyDetailsViewModel1 = ViewLatencyDetailsViewModel(
-    latencyEndDate = LocalDate.of(year2023, 1, 1),
-    taxYear1 = year2023,
-    latencyIndicator1 = "A",
-    taxYear2 = year2024,
-    latencyIndicator2 = "Q")
-
   val testLatencyDetails3 = LatencyDetails(
     latencyEndDate = LocalDate.of(year2023, 1, 1),
     taxYear1 = year2023.toString,

@@ -155,7 +155,7 @@ object PropertyDetailsTestConstants {
     incomeSourceType = Some(ukIncomeType),
     tradingStartDate = Some(testStartDate),
     cessation = None,
-    latencyDetails = Some(testLatencyDetails)
+    latencyDetails = None
   )
 
   val ukPropertyWithLatencyDetails1 = PropertyDetailsModel(
@@ -178,6 +178,16 @@ object PropertyDetailsTestConstants {
     latencyDetails = Some(testLatencyDetails2)
   )
 
+  val ukPropertyWithLatencyDetailsAndUnknowns = PropertyDetailsModel(
+    incomeSourceId = testSelfEmploymentId,
+    accountingPeriod = None,
+    firstAccountingPeriodEndDate = None,
+    incomeSourceType = Some(ukIncomeType),
+    tradingStartDate = None,
+    cessation = None,
+    latencyDetails = Some(testLatencyDetails2)
+  )
+
   val foreignPropertyWithLatencyDetails1 = PropertyDetailsModel(
     incomeSourceId = testSelfEmploymentId,
     accountingPeriod = Some(testPropertyAccountingPeriod),
@@ -194,6 +204,16 @@ object PropertyDetailsTestConstants {
     firstAccountingPeriodEndDate = None,
     incomeSourceType = Some(foreignIncomeType),
     tradingStartDate = Some(testStartDate),
+    cessation = None,
+    latencyDetails = Some(testLatencyDetails2)
+  )
+
+  val foreignPropertyWithLatencyDetailsAndUnknowns = PropertyDetailsModel(
+    incomeSourceId = testSelfEmploymentId,
+    accountingPeriod = None,
+    firstAccountingPeriodEndDate = None,
+    incomeSourceType = Some(foreignIncomeType),
+    tradingStartDate = None,
     cessation = None,
     latencyDetails = Some(testLatencyDetails2)
   )
