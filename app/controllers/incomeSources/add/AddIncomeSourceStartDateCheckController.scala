@@ -18,21 +18,24 @@ package controllers.incomeSources.add
 
 import auth.MtdItUser
 import config.featureswitch.{FeatureSwitching, IncomeSources}
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import forms.incomeSources.add.AddIncomeSourceStartDateCheckForm
+import forms.incomeSources.add.{AddIncomeSourceStartDateCheckForm => form}
+import forms.utils.SessionKeys
 import forms.utils.SessionKeys.{addUkPropertyStartDate, businessStartDate, foreignPropertyStartDate}
 import implicits.ImplicitDateFormatter
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.IncomeSourceDetailsService
+import services.{DateService, IncomeSourceDetailsService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.play.language.LanguageUtils
 import views.html.errorPages.CustomNotFoundError
 import views.html.incomeSources.add.AddIncomeSourceStartDateCheck
+
+import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -48,6 +51,7 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
                                                      val customNotFoundErrorView: CustomNotFoundError,
                                                      val languageUtils: LanguageUtils)
                                                     (implicit val appConfig: FrontendAppConfig,
+                                                     implicit val dateService: DateService,
                                                      mcc: MessagesControllerComponents,
                                                      val ec: ExecutionContext,
                                                      val itvcErrorHandler: ItvcErrorHandler,
@@ -123,14 +127,13 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
             .error(s"[AddIncomeSourceStartDateCheckController][handleRequest]: " +
               s"failed to get start date for $incomeSourceType from session")
           Future(
-            if(isAgent) itvcErrorHandlerAgent.showInternalServerError()
-            else itvcErrorHandler.showInternalServerError()
+            getErrorHandler(isAgent).showInternalServerError()
           )
         case (Some(startDate), (backCall, postAction, _)) =>
           Future(
             Ok(
               addIncomeSourceStartDateCheckView(
-                form = AddIncomeSourceStartDateCheckForm(incomeSourceType.addIncomeSourceStartDateCheckMessagesPrefix),
+                form = form(incomeSourceType.addIncomeSourceStartDateCheckMessagesPrefix),
                 postAction = postAction,
                 backUrl = backCall.url,
                 isAgent = isAgent,
@@ -150,8 +153,7 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
     case ex: Exception =>
       Logger("application").error(s"[AddIncomeSourceStartDateCheckController][handleRequest]: " +
         s"Error getting AddIncomeSourceStartDateCheck page: ${ex.getMessage}")
-      if(isAgent) itvcErrorHandlerAgent.showInternalServerError()
-      else itvcErrorHandler.showInternalServerError()
+      getErrorHandler(isAgent).showInternalServerError()
   }
 
   def handleSubmitRequest(isAgent: Boolean,
@@ -162,14 +164,13 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
       (getStartDate(incomeSourceType), getCalls(isAgent, incomeSourceType)) match {
         case (None, _) =>
           Logger("application").error(s"[AddIncomeSourceStartDateCheckController][handleSubmitRequest]: " +
-            s"failed to get start date for $incomeSourceType from session")
+            s"failed to get start date from session for incomeSourceType: $incomeSourceType")
           Future(
-            if (isAgent) itvcErrorHandlerAgent.showInternalServerError()
-            else itvcErrorHandler.showInternalServerError()
+            getErrorHandler(isAgent).showInternalServerError()
           )
         case (Some(startDate), (backCall, postAction, successCall)) =>
 
-          AddIncomeSourceStartDateCheckForm(incomeSourceType.addIncomeSourceStartDateCheckMessagesPrefix)
+          form(incomeSourceType.addIncomeSourceStartDateCheckMessagesPrefix)
             .bindFromRequest().fold(
               formWithErrors =>
                 Future(
@@ -183,8 +184,8 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
                     )
                   )
                 ),
-              _.toFormMap(AddIncomeSourceStartDateCheckForm.response).headOption match {
-                case Some(AddIncomeSourceStartDateCheckForm.responseNo) =>
+              _.toFormMap(form.response).headOption match {
+                case Some(form.responseNo) =>
                   Future.successful(
                     Redirect(backCall)
                       .removingFromSession(
@@ -195,14 +196,29 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
                         }
                       )
                   )
-                case Some(AddIncomeSourceStartDateCheckForm.responseYes) =>
-                  Future.successful(Redirect(successCall))
+                case Some(form.responseYes) if incomeSourceType == SelfEmployment =>
+
+                  val businessAccountingPeriodEndDate = dateService
+                    .getAccountingPeriodEndDate(
+                      LocalDate.parse(startDate)
+                    )
+
+                  Future.successful(
+                    Redirect(successCall)
+                      .addingToSession(
+                        SessionKeys.addBusinessAccountingPeriodStartDate -> startDate,
+                        SessionKeys.addBusinessAccountingPeriodEndDate -> businessAccountingPeriodEndDate
+                      )
+                  )
+                case Some(form.responseYes) =>
+                  Future.successful(
+                    Redirect(successCall)
+                  )
                 case ex =>
                   Logger("application").error(s"[ForeignPropertyStartDateCheckController][handleSubmitRequest]: " +
                     s"invalid form: $ex")
                   Future(
-                    if (isAgent) itvcErrorHandlerAgent.showInternalServerError()
-                    else itvcErrorHandler.showInternalServerError()
+                    getErrorHandler(isAgent).showInternalServerError()
                   )
               }
             )
@@ -218,8 +234,7 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
     case ex: Exception =>
       Logger("application").error(s"[AddIncomeSourceStartDateCheckController][handleSubmitRequest]: " +
         s"Error getting AddIncomeSourceStartDateCheck page: ${ex.getMessage}")
-      if (isAgent) itvcErrorHandlerAgent.showInternalServerError()
-      else itvcErrorHandler.showInternalServerError()
+      getErrorHandler(isAgent).showInternalServerError()
   }
 
   private def getStartDate(incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Option[String] = {
@@ -228,6 +243,11 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
       case UkProperty => user.session.get(addUkPropertyStartDate)
       case ForeignProperty => user.session.get(foreignPropertyStartDate)
     }
+  }
+
+  private def getErrorHandler(isAgent: Boolean): ShowInternalServerError = {
+    if(isAgent) itvcErrorHandlerAgent
+    else itvcErrorHandler
   }
 
   private def getCalls(isAgent: Boolean, incomeSourceType: IncomeSourceType): (Call, Call, Call) = {
@@ -269,14 +289,6 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
           controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.submitForeignPropertyAgent,
           controllers.incomeSources.add.routes.ForeignPropertyAccountingMethodController.showAgent()
         )
-    }
-  }
-
-  private def getMessagesPrefix(incomeSourceType: IncomeSourceType): String = {
-    incomeSourceType match {
-      case SelfEmployment => SelfEmployment.addIncomeSourceStartDateCheckMessagesPrefix
-      case ForeignProperty => ForeignProperty.addIncomeSourceStartDateCheckMessagesPrefix
-      case UkProperty => UkProperty.addIncomeSourceStartDateCheckMessagesPrefix
     }
   }
 }
