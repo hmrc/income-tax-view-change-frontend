@@ -194,7 +194,7 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
                         incomeSourceType match {
                           case SelfEmployment => businessStartDate
                           case UkProperty => addUkPropertyStartDate
-                          case SelfEmployment => foreignPropertyStartDate
+                          case ForeignProperty => foreignPropertyStartDate
                         }
                       )
                   )
