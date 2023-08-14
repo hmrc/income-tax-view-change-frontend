@@ -23,6 +23,7 @@
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.pageheading.PageHeading
 @import models.core.AddressModel
 @import models.incomeSourceDetails.viewmodels.ManageBusinessDetailsViewModel
+@import enums.IncomeSourceJourney.{SelfEmployment, ForeignProperty, UkProperty}
 
 @this(
         mainTemplate: unifiedLayout,
@@ -52,11 +53,27 @@
 }
 
 @changeReportingMethodUrl(id: String, taxYear: String, changeTo: String) = @{
-    if(isAgent){
-        controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController.showSoleTraderBusinessAgent(id, taxYear, changeTo: String).url
-    } else {
-        controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController.showSoleTraderBusiness(id, taxYear, changeTo: String).url
+    viewModel.incomeSourceType match {
+        case SelfEmployment =>
+            if(isAgent){
+                controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController.showSoleTraderBusinessAgent(id, taxYear, changeTo: String).url
+            } else {
+                controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController.showSoleTraderBusiness(id, taxYear, changeTo: String).url
+            }
+        case UkProperty =>
+            if(isAgent){
+                controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController.showUKPropertyAgent(taxYear, changeTo: String).url
+            } else {
+                controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController.showUKProperty(taxYear, changeTo: String).url
+            }
+        case ForeignProperty =>
+            if(isAgent){
+                controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController.showForeignPropertyAgent(taxYear, changeTo: String).url
+            } else {
+                controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController.showForeignProperty(taxYear, changeTo: String).url
+            }
     }
+
 }
 
 @changeToValue(currentMethod: String) = @{
@@ -67,14 +84,30 @@
     }
 }
 
-@taxYearValue(taxYear: Int) = @{
-    s"${taxYear.toString}-${(taxYear + 1).toString}"
+@taxYearValue(taxYear: String) = @{
+    s"${taxYear}-${(taxYear.toInt + 1).toString}"
 }
 
 @extractOption(content: Option[String]) = @{
     content match {
         case Some(x) => x
         case None => messages("incomeSources.generic.unknown")
+    }
+}
+
+@getAccountingMethodMessage = @{
+    viewModel.incomeSourceType match {
+        case SelfEmployment => messages("incomeSources.manage.business-manage-details.accounting-method")
+        case UkProperty => messages("incomeSources.manage.uk-property-manage-details.accounting-method")
+        case ForeignProperty => messages("incomeSources.manage.foreign-property-manage-details.accounting-method")
+    }
+}
+
+@getSectionMessage = @{
+    viewModel.incomeSourceType match {
+        case SelfEmployment => messages("incomeSources.manage.business-manage-details.sole-trader-section")
+        case UkProperty => messages("incomeSources.manage.uk-property-manage-details.uk-property-section")
+        case ForeignProperty => messages("incomeSources.manage.foreign-property-manage-details.foreign-property-section")
     }
 }
 
@@ -103,26 +136,28 @@
     @hmrcPageHeading(PageHeading(
         text = getMessage("heading"),
         headingClasses = Some("govuk-heading-l"),
-        section = Some(getMessage("sole-trader-section")),
+        section = Some(getSectionMessage),
         captionClasses = Some("govuk-caption-l")
     ))
 
-    <dl class="govuk-summary-list" id="refund-to-taxpayer-table">
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">@getMessage("business-name")</dt>
-            <dd class="govuk-summary-list__value" id="business-name">@{
-                extractOption(viewModel.tradingName)
-            }</dd>
-        </div>
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">@getMessage("business-address")</dt>
-            <dd class="govuk-summary-list__value" id="business-address">@{
-                getLongAddressFromBusinessAddressDetails(viewModel.address) match {
-                    case Some(x) => HtmlFormat.raw(x)
-                    case None => messages("incomeSources.generic.unknown")
-                }
-            }</dd>
-        </div>
+    <dl class="govuk-summary-list" id="manage-details-table">
+        @if(viewModel.incomeSourceType == SelfEmployment) {
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">@getMessage("business-name")</dt>
+                <dd class="govuk-summary-list__value" id="business-name">@{
+                    extractOption(viewModel.tradingName)
+                }</dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">@getMessage("business-address")</dt>
+                <dd class="govuk-summary-list__value" id="business-address">@{
+                    getLongAddressFromBusinessAddressDetails(viewModel.address) match {
+                        case Some(x) => HtmlFormat.raw(x)
+                        case None => messages("incomeSources.generic.unknown")
+                    }
+                }</dd>
+            </div>
+        }
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">@getMessage("date-started")</dt>
             <dd class="govuk-summary-list__value" id="business-date-started">@{
@@ -133,7 +168,7 @@
             }</dd>
         </div>
         <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">@getMessage("accounting-method")</dt>
+            <dt class="govuk-summary-list__key">@getAccountingMethodMessage</dt>
             <dd class="govuk-summary-list__value" id="business-accounting-method">@{
                 viewModel.businessAccountingMethod match {
                     case Some(x) => x match {
@@ -147,11 +182,11 @@
         @if(viewModel.itsaHasMandatedOrVoluntaryStatusCurrentYear
                 && viewModel.latencyDetails.isDefined) {
             <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">@getMessage("reporting-method", viewModel.latencyDetails.get.taxYear1.toString, (viewModel.latencyDetails.get.taxYear2).toString)</dt>
+                <dt class="govuk-summary-list__key">@getMessage("reporting-method", viewModel.latencyDetails.get.taxYear1, viewModel.latencyDetails.get.taxYear2)</dt>
                 <dd class="govuk-summary-list__value" id="reporting-method-1">@{
                     viewModel.latencyDetails.get.latencyIndicator1 match {
-                        case method: String if method == "A" => getMessage("annually")
-                        case method: String if method == "Q" => getMessage("quarterly")
+                        case "A" => getMessage("annually")
+                        case "Q" => getMessage("quarterly")
                     }
                 }</dd>
                 @if(!viewModel.taxYearOneCrystallised.get){
@@ -163,11 +198,11 @@
                 }
             </div>
             <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">@getMessage("reporting-method", viewModel.latencyDetails.get.taxYear2.toString, (viewModel.latencyDetails.get.taxYear2 + 1).toString)</dt>
+                <dt class="govuk-summary-list__key">@getMessage("reporting-method", viewModel.latencyDetails.get.taxYear2, (viewModel.latencyDetails.get.taxYear2.toInt + 1).toString)</dt>
                 <dd class="govuk-summary-list__value" id="reporting-method-2">@{
                     viewModel.latencyDetails.get.latencyIndicator2 match {
-                        case method: String if method == "A" => getMessage("annually")
-                        case method: String if method == "Q" => getMessage("quarterly")
+                        case "A" => getMessage("annually")
+                        case "Q" => getMessage("quarterly")
                     }
                 }</dd>
                 @if(!viewModel.taxYearTwoCrystallised.get){

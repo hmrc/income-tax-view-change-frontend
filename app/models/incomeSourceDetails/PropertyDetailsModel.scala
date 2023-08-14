@@ -26,13 +26,25 @@ case class PropertyDetailsModel(incomeSourceId: String,
                                 incomeSourceType: Option[String],
                                 tradingStartDate: Option[LocalDate],
                                 cessation: Option[CessationModel],
+                                cashOrAccrualsFlag: Option[Boolean] = None,
                                 latencyDetails: Option[LatencyDetails] = None) {
 
-  def isUkProperty: Boolean = incomeSourceType.contains("uk-property")
+  def isUkProperty: Boolean = incomeSourceType.contains("02-uk-property")
 
-  def isForeignProperty: Boolean = incomeSourceType.contains("foreign-property")
+  def isForeignProperty: Boolean = incomeSourceType.contains("03-foreign-property")
 
   def isCeased: Boolean = cessation.exists(_.date.nonEmpty)
+
+  def convertCashOrAccrualsFlagIntoString(cashOrAccrualsFlag: Option[Boolean]): Option[String] = {
+    cashOrAccrualsFlag match {
+      case Some(value) => if (value) {
+        Some("accruals")
+      } else {
+        Some("cash")
+      }
+      case None => None
+    }
+  }
 
 }
 
