@@ -172,8 +172,8 @@
             <dd class="govuk-summary-list__value" id="business-accounting-method">@{
                 viewModel.businessAccountingMethod match {
                     case Some(x) => x match {
-                        case value if value == "cash" => getMessage("cash-accounting")
-                        case value if value == "accruals" => getMessage("traditional-accounting")
+                        case value if !value => getMessage("cash-accounting")
+                        case value if value => getMessage("traditional-accounting")
                     }
                     case None => messages("incomeSources.generic.unknown")
                 }

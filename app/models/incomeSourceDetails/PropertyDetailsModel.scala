@@ -35,17 +35,6 @@ case class PropertyDetailsModel(incomeSourceId: String,
 
   def isCeased: Boolean = cessation.exists(_.date.nonEmpty)
 
-  def convertCashOrAccrualsFlagIntoString(cashOrAccrualsFlag: Option[Boolean]): Option[String] = {
-    cashOrAccrualsFlag match {
-      case Some(value) => if (value) {
-        Some("accruals")
-      } else {
-        Some("cash")
-      }
-      case None => None
-    }
-  }
-
 }
 
 object PropertyDetailsModel {
