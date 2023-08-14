@@ -201,7 +201,7 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
                 case Some(AddIncomeSourceStartDateCheckForm.responseYes) =>
                   Future.successful(Redirect(successCall))
                 case ex =>
-                  Logger("application").error(s"[ForeignPropertyStartDateCheckController][handleSubmitRequest]: invalid form submission: $ex")
+                  Logger("application").error(s"[ForeignPropertyStartDateCheckController][handleSubmitRequest]: invalid form: $ex")
                   Future(
                     if (isAgent) itvcErrorHandlerAgent.showInternalServerError()
                     else itvcErrorHandler.showInternalServerError()
