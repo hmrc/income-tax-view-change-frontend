@@ -47,7 +47,6 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
                                                        val retrieveNino: NinoPredicate,
                                                        val updateIncomeSourceService: UpdateIncomeSourceService,
                                                        val retrieveIncomeSources: IncomeSourceDetailsPredicate,
-                                                       val customNotFoundErrorView: CustomNotFoundError,
                                                        val confirmReportingMethod: ConfirmReportingMethod,
                                                        val incomeSourceDetailsService: IncomeSourceDetailsService,
                                                        val retrieveBtaNavBar: NavBarPredicate)
@@ -247,37 +246,38 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
 
     val maybeIncomeSourceId: Option[String] = getIncomeSourceId(incomeSourceId, incomeSourceJourney)
 
-
-    (maybeTaxYearModel, newReportingMethod, maybeIncomeSourceId) match {
-      case (None, _, _) =>
-        Future.successful(logAndShowError(isAgent, s"[handleRequest]: Could not parse taxYear: $taxYear"))
-      case (_, None, _) =>
-        Future.successful(logAndShowError(isAgent, s"[handleRequest]:Could not parse reporting method: $changeTo"))
-      case (_, _, None) =>
-        Future.successful(logAndShowError(isAgent, s"[handleRequest]: Could not find incomeSourceId: $incomeSourceId"))
-      case (Some(taxYearModel), Some(reportingMethod), Some(id)) =>
-        getRedirectCalls(
-          incomeSourceId = id,
-          isAgent = isAgent,
-          taxYear = taxYear,
-          changeTo = changeTo,
-          incomeSourceJourney = incomeSourceJourney
-        ) match {
-          case (backCall, postAction, _) =>
-            Future.successful(
-              Ok(
-                confirmReportingMethod(
-                  isAgent = isAgent,
-                  backUrl = backCall.url,
-                  postAction = postAction,
-                  reportingMethod = reportingMethod,
-                  taxYearEndYear = taxYearModel.endYear.toString,
-                  form = ConfirmReportingMethodForm.form,
-                  taxYearStartYear = taxYearModel.startYear.toString
-                )(messages, user)
+    withIncomeSourcesFS {
+      (maybeTaxYearModel, newReportingMethod, maybeIncomeSourceId) match {
+        case (None, _, _) =>
+          Future.successful(logAndShowError(isAgent, s"[handleRequest]: Could not parse taxYear: $taxYear"))
+        case (_, None, _) =>
+          Future.successful(logAndShowError(isAgent, s"[handleRequest]:Could not parse reporting method: $changeTo"))
+        case (_, _, None) =>
+          Future.successful(logAndShowError(isAgent, s"[handleRequest]: Could not find incomeSourceId: $incomeSourceId"))
+        case (Some(taxYearModel), Some(reportingMethod), Some(id)) =>
+          getRedirectCalls(
+            incomeSourceId = id,
+            isAgent = isAgent,
+            taxYear = taxYear,
+            changeTo = changeTo,
+            incomeSourceJourney = incomeSourceJourney
+          ) match {
+            case (backCall, postAction, _) =>
+              Future.successful(
+                Ok(
+                  confirmReportingMethod(
+                    isAgent = isAgent,
+                    backUrl = backCall.url,
+                    postAction = postAction,
+                    reportingMethod = reportingMethod,
+                    taxYearEndYear = taxYearModel.endYear.toString,
+                    form = ConfirmReportingMethodForm.form,
+                    taxYearStartYear = taxYearModel.startYear.toString
+                  )(messages, user)
+                )
               )
-            )
-        }
+          }
+      }
     }
   }
 
@@ -345,7 +345,6 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
     }
 
     val taxYearSpecific = TaxYearSpecific(taxYear = taxYears.endYear.toString, latencyIndicator = latencyIndicator)
-    println(Console.MAGENTA + taxYearSpecific + Console.WHITE)
 
     updateIncomeSourceService.updateTaxYearSpecific(
       nino = user.nino,

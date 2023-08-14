@@ -17,7 +17,8 @@
 package controllers.incomeSources.add
 
 import auth.{FrontendAuthorisedFunctions, MtdItUser}
-import config.featureswitch.{FeatureSwitching, IncomeSources, TimeMachineAddYear}
+import cats.data.OptionT
+import config.featureswitch.{FeatureSwitching, TimeMachineAddYear}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
@@ -26,10 +27,12 @@ import models.incomeSourceDetails.LatencyDetails
 import models.incomeSourceDetails.viewmodels.BusinessReportingMethodViewModel
 import models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
 import play.api.Logger
+import play.api.data.Form
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc._
 import services._
 import uk.gov.hmrc.http.HeaderCarrier
+import utils.IncomeSourcesUtils
 import views.html.errorPages.CustomNotFoundError
 import views.html.incomeSources.add.BusinessReportingMethod
 
@@ -55,12 +58,11 @@ class BusinessReportingMethodController @Inject()(val authenticate: Authenticati
                                                   val itvcErrorHandler: ItvcErrorHandler,
                                                   val itvcErrorHandlerAgent: AgentItvcErrorHandler
                                                  )
-  extends ClientConfirmedController with FeatureSwitching with I18nSupport {
+  extends ClientConfirmedController with FeatureSwitching with I18nSupport with IncomeSourcesUtils {
 
-  private def annualQuarterlyToBoolean(method: Option[String]): Option[Boolean] = method match {
-    case Some("A") => Some(true)
-    case Some("Q") => Some(false)
-    case _ => None
+  private def annualQuarterlyToBoolean(method: Option[String]): Boolean = method match {
+    case Some("A") => true
+    case _ => false
   }
 
   private def getBusinessReportingMethodDetails(incomeSourceId: String)(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Option[BusinessReportingMethodViewModel]] = {
@@ -79,7 +81,7 @@ class BusinessReportingMethodController @Inject()(val authenticate: Authenticati
             }
         }
       case None =>
-        Logger("application").info(s"[BusinessReportingMethodService][getBusinessReportingMethodDetails] latency details not available")
+        Logger("application").info(s"[BusinessReportingMethodService][getBusinessReportingMethodDetails]: Latency details not available")
         Future.successful(None)
     }
 
@@ -88,14 +90,13 @@ class BusinessReportingMethodController @Inject()(val authenticate: Authenticati
   private def handleRequest(isAgent: Boolean, id: String)
                            (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
 
-    val incomeSourcesEnabled: Boolean = isEnabled(IncomeSources)
     val postAction: Call = if (isAgent) controllers.incomeSources.add.routes.BusinessReportingMethodController.submitAgent(id) else
       controllers.incomeSources.add.routes.BusinessReportingMethodController.submit(id)
     val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
     val redirectUrl: Call = if (isAgent) controllers.incomeSources.add.routes.BusinessAddedObligationsController.showAgent(id) else
       controllers.incomeSources.add.routes.BusinessAddedObligationsController.show(id)
 
-    if (incomeSourcesEnabled) {
+    withIncomeSourcesFS {
       itsaStatusService.hasMandatedOrVoluntaryStatusCurrentYear.flatMap {
         case true =>
           getBusinessReportingMethodDetails(id).map {
@@ -111,10 +112,7 @@ class BusinessReportingMethodController @Inject()(val authenticate: Authenticati
 
         case false => Future.successful(Redirect(redirectUrl))
       }
-
-    } else {
-      Future.successful(Ok(customNotFoundErrorView()(user, messages)))
-    } recover {
+    }.recover {
       case ex: Exception =>
         Logger("application").error(s"${if (isAgent) "[Agent]"}" +
           s"Error getting BusinessReportingMethodController page: ${ex.getMessage}")
@@ -123,63 +121,91 @@ class BusinessReportingMethodController @Inject()(val authenticate: Authenticati
   }
 
   private def handleSubmitRequest(isAgent: Boolean, id: String)(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] = {
-    val incomeSourcesEnabled: Boolean = isEnabled(IncomeSources)
-    val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-    val redirectUrl: Call = if (isAgent) controllers.incomeSources.add.routes.BusinessAddedObligationsController.showAgent(id) else controllers.incomeSources.add.routes.BusinessAddedObligationsController.show(id)
+    withIncomeSourcesFS {
+      AddBusinessReportingMethodForm.form.bindFromRequest().fold(
+        formWithErrors => handleFormErrors(formWithErrors, id, isAgent),
+        valid => handleFormData(valid, id, isAgent))
+    }
+  }
+
+  private def handleFormErrors(formWithErrors: Form[AddBusinessReportingMethodForm], id: String, isAgent: Boolean)
+                              (implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
+
+    val redirectErrorUrl: Call = if (isAgent) routes.IncomeSourceReportingMethodNotSavedController.showBusinessAgent() else
+      routes.IncomeSourceReportingMethodNotSavedController.showBusiness()
     val submitUrl: Call = if (isAgent) controllers.incomeSources.add.routes.BusinessReportingMethodController.submitAgent(id) else
       controllers.incomeSources.add.routes.BusinessReportingMethodController.submit(id)
 
-    if (incomeSourcesEnabled) {
-      AddBusinessReportingMethodForm.form.bindFromRequest().fold(
-        hasErrors => {
-          val updatedForm = AddBusinessReportingMethodForm.updateErrorMessagesWithValues(hasErrors)
-          getBusinessReportingMethodDetails(id).map {
-            case Some(viewModel) =>
-              BadRequest(view(
-                addBusinessReportingMethodForm = updatedForm,
-                businessReportingViewModel = viewModel,
-                postAction = submitUrl,
-                isAgent = isAgent))
-            case None => Redirect(redirectUrl)
-          }
-        },
-        valid => {
-          val taxYear1ReportingMethod = valid.taxYear1ReportingMethod
-          val taxYear2ReportingMethod = valid.taxYear2ReportingMethod
-          val newTaxYear1ReportingMethod = valid.newTaxYear1ReportingMethod
-          val newTaxYear2ReportingMethod = valid.newTaxYear2ReportingMethod
-
-          if (taxYear1ReportingMethod != newTaxYear1ReportingMethod || taxYear2ReportingMethod != newTaxYear2ReportingMethod) {
-            val taxYearSpecific1 = newTaxYear1ReportingMethod match {
-              case Some(s) => Some(TaxYearSpecific(valid.taxYear1.get, annualQuarterlyToBoolean(Some(s)).get))
-              case _ => None
-            }
-            val taxYearSpecific2 = newTaxYear2ReportingMethod match {
-              case Some(s) => Some(TaxYearSpecific(valid.taxYear2.get, annualQuarterlyToBoolean(Some(s)).get))
-              case _ => None
-            }
-            updateIncomeSourceService.updateTaxYearSpecific(user.nino, id, taxYearSpecific1.get).map {
-              //TODO: fix
-              case res: UpdateIncomeSourceResponseModel =>
-                Logger("application").info(s"${if (isAgent) "[Agent]"}" + s" Updated tax year specific reporting method : $res")
-                Redirect(redirectUrl)
-              case err: UpdateIncomeSourceResponseError =>
-                Logger("application").error(s"${if (isAgent) "[Agent]"}" + s" Failed to Updated tax year specific reporting method : $err")
-                errorHandler.showInternalServerError()
-            }
-          } else {
-            Logger("application").info(s"${if (isAgent) "[Agent]"}" + s" Updating the tax year specific reporting method not required.")
-            Future(Redirect(redirectUrl))
-          }
-        })
-    } else {
-      Future.successful(Ok(customNotFoundErrorView()))
-    } recover {
-      case ex: Exception =>
-        Logger("application").error(s"Error getting BusinessReportingMethodController page: ${ex.getMessage}")
-        errorHandler.showInternalServerError()
+    val updatedForm = AddBusinessReportingMethodForm.updateErrorMessagesWithValues(formWithErrors)
+    getBusinessReportingMethodDetails(id).map {
+      case Some(viewModel) =>
+        BadRequest(view(
+          addBusinessReportingMethodForm = updatedForm,
+          businessReportingViewModel = viewModel,
+          postAction = submitUrl,
+          isAgent = isAgent))
+      case None => Redirect(redirectErrorUrl)
     }
+  }
 
+  private def handleFormData(form: AddBusinessReportingMethodForm, id: String, isAgent: Boolean)
+                            (implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
+    val redirectUrl: Call = if (isAgent) routes.BusinessAddedObligationsController.showAgent(id) else routes.BusinessAddedObligationsController.show(id)
+    val reportingMethodNeedsUpdating = form.taxYear1ReportingMethod != form.newTaxYear1ReportingMethod ||
+      form.taxYear2ReportingMethod != form.newTaxYear2ReportingMethod
+
+    if (reportingMethodNeedsUpdating) {
+      val taxYearSpecific1Opt = for {
+        newReportingMethod <- form.newTaxYear1ReportingMethod
+        taxYear <- form.taxYear1
+      } yield TaxYearSpecific(taxYear, annualQuarterlyToBoolean(Some(newReportingMethod)))
+
+      val taxYearSpecific2Opt = for {
+        newReportingMethod <- form.newTaxYear2ReportingMethod
+        taxYear <- form.taxYear2
+      } yield TaxYearSpecific(taxYear, annualQuarterlyToBoolean(Some(newReportingMethod)))
+
+      updateReportingMethod(isAgent, id, taxYearSpecific1Opt, taxYearSpecific2Opt)
+
+    } else {
+      Future.successful(Redirect(redirectUrl))
+    }
+  }
+
+  private def updateReportingMethod(isAgent: Boolean, id: String, taxYearSpecific1Opt: Option[TaxYearSpecific], taxYearSpecific2Opt: Option[TaxYearSpecific])
+                                   (implicit user: MtdItUser[_]): Future[Result] = {
+
+    val redirectUrl: Call = if (isAgent) routes.BusinessAddedObligationsController.showAgent(id) else routes.BusinessAddedObligationsController.show(id)
+    val redirectErrorUrl: Call = if (isAgent) routes.IncomeSourceReportingMethodNotSavedController.showBusinessAgent() else
+      routes.IncomeSourceReportingMethodNotSavedController.showBusiness()
+
+    val updateResults = for {
+      result1 <- OptionT.fromOption[Future](taxYearSpecific1Opt)
+        .semiflatMap(taxYearSpecific => updateIncomeSourceService.updateTaxYearSpecific(user.nino, id, taxYearSpecific))
+      result2 <- OptionT.fromOption[Future](taxYearSpecific2Opt)
+        .semiflatMap(taxYearSpecific => updateIncomeSourceService.updateTaxYearSpecific(user.nino, id, taxYearSpecific))
+    } yield (result1, result2)
+
+    updateResults.value.flatMap {
+      case Some((result1: UpdateIncomeSourceResponseModel, result2: UpdateIncomeSourceResponseModel)) =>
+        Logger("application").info(s"[BusinessReportingMethodController][updateReportingMethod]:" +
+          s"Updated tax year specific reporting method : $result1 and $result2")
+        Future.successful(Redirect(redirectUrl))
+      case Some((_: UpdateIncomeSourceResponseError, _: UpdateIncomeSourceResponseModel)) =>
+        //TODO: redirect to custom error page based on one failure response & one success response
+        Future.successful(Redirect(redirectErrorUrl))
+      case Some((_: UpdateIncomeSourceResponseError, _: UpdateIncomeSourceResponseError)) =>
+        Future.successful(Redirect(redirectErrorUrl))
+      case _ =>
+        Logger("application").error("[BusinessReportingMethodController][updateReportingMethod]:" +
+          "Unexpected response when updating tax year specific reporting methods")
+        Future.successful(Redirect(redirectErrorUrl))
+    }.recover {
+      case ex: Exception =>
+        Logger("application").error(s"[BusinessReportingMethodController][updateReportingMethod]:" +
+          s"Error updating tax year specific reporting method: ${ex.getMessage}")
+        Redirect(redirectErrorUrl)
+    }
   }
 
   def show(id: String): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino

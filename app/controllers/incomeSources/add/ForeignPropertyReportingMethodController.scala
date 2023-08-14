@@ -17,26 +17,26 @@
 package controllers.incomeSources.add
 
 import auth.{FrontendAuthorisedFunctions, MtdItUser}
-import config.featureswitch.{FeatureSwitching, IncomeSources, TimeMachineAddYear}
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
+import cats.data.OptionT
+import config.featureswitch.{FeatureSwitching, TimeMachineAddYear}
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
-import forms.incomeSources.add.{AddBusinessReportingMethodForm, AddForeignPropertyReportingMethodForm}
-import models.incomeSourceDetails.{LatencyDetails, PropertyDetailsModel}
-import models.incomeSourceDetails.viewmodels.{BusinessReportingMethodViewModel, ForeignPropertyReportingMethodViewModel}
+import forms.incomeSources.add.AddForeignPropertyReportingMethodForm
+import models.incomeSourceDetails.LatencyDetails
+import models.incomeSourceDetails.viewmodels.ForeignPropertyReportingMethodViewModel
 import models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
 import play.api.Logger
-import play.api.i18n.{I18nSupport, Messages}
+import play.api.data.Form
+import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services._
-import uk.gov.hmrc.http.HeaderCarrier
+import utils.IncomeSourcesUtils
 import views.html.errorPages.CustomNotFoundError
-import views.html.incomeSources.add.{BusinessReportingMethod, ForeignPropertyReportingMethod}
+import views.html.incomeSources.add.ForeignPropertyReportingMethod
 
-import java.time.LocalDate
 import javax.inject.Inject
-import scala.concurrent.duration.DurationInt
-import scala.concurrent.{Await, ExecutionContext, Future}
+import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
 
 class ForeignPropertyReportingMethodController @Inject()(val authenticate: AuthenticationPredicate,
@@ -57,7 +57,7 @@ class ForeignPropertyReportingMethodController @Inject()(val authenticate: Authe
                                                          val ec: ExecutionContext,
                                                          val itvcErrorHandler: ItvcErrorHandler,
                                                          val itvcErrorHandlerAgent: AgentItvcErrorHandler)
-  extends ClientConfirmedController with FeatureSwitching with I18nSupport {
+  extends ClientConfirmedController with FeatureSwitching with I18nSupport with IncomeSourcesUtils {
 
   def show(id: String): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
@@ -124,17 +124,14 @@ class ForeignPropertyReportingMethodController @Inject()(val authenticate: Authe
       ).flatMap(_.latencyDetails))
       viewModel <- getForeignPropertyReportingMethodDetails(latencyDetailsMaybe)
     } yield {
-      (isEnabled(IncomeSources), isMandatoryOrVoluntary, viewModel) match {
-        case (false, _, _) =>
-          Logger("application")
-            .error(s"[ForeignPropertyReportingMethodController][handleRequest]: not found error")
-          Future(Ok(customNotFoundErrorView()))
-        case (_, _, Left(ex)) =>
+      (isMandatoryOrVoluntary, viewModel) match {
+
+        case (_, Left(ex)) =>
           Logger("application")
             .error(s"[ForeignPropertyReportingMethodController][handleRequest]: Failed with error - $ex")
           Future.successful(Redirect(redirectCall))
-        case (_, true, Right(viewModel)) =>
-          Future(Ok(foreignPropertyReportingMethodView(
+        case (true, Right(viewModel)) =>
+          Future.successful(Ok(foreignPropertyReportingMethodView(
             form = AddForeignPropertyReportingMethodForm.form,
             viewModel = viewModel,
             postAction = postAction,
@@ -155,58 +152,100 @@ class ForeignPropertyReportingMethodController @Inject()(val authenticate: Authe
                                   errorCall: Call)
                                  (implicit user: MtdItUser[_]): Future[Result] = {
 
-    if (isEnabled(IncomeSources)) {
+    withIncomeSourcesFS {
       AddForeignPropertyReportingMethodForm.form.bindFromRequest().fold(
-        formWithErrors => {
-          for {
-            latencyDetailsMaybe <- Future(user.incomeSources.properties
-              .find(_.incomeSourceId.contains(id))
-              .flatMap(_.latencyDetails))
-            fPropertyReportingMethodViewModel <- getForeignPropertyReportingMethodDetails(latencyDetailsMaybe)
-          } yield {
-            fPropertyReportingMethodViewModel match {
-              case Right(viewModel) =>
-                BadRequest(foreignPropertyReportingMethodView(
-                  form = AddForeignPropertyReportingMethodForm.updateErrorMessagesWithValues(formWithErrors),
-                  viewModel = viewModel,
-                  postAction = postAction,
-                  isAgent = isAgent
-                ))
-              case Left(ex) =>
-                Logger("application")
-                  .error(s"[ForeignPropertyReportingMethodController][handleRequest]: " +
-                    s"Failed to retrieve latency details - $ex")
-                Redirect(redirectCall)
-            }
-          }
-        },
-        valid => {
+        formWithErrors => handleFormErrors(formWithErrors, id, isAgent),
+        valid => handleFormData(valid, id, isAgent))
+    }
+  }
 
-          if (valid.reportingMethodIsChanged) {
+  private def handleFormErrors(errors: Form[AddForeignPropertyReportingMethodForm], id: String, isAgent: Boolean)
+                              (implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
+    val postAction = if (isAgent) controllers.incomeSources.add.routes.ForeignPropertyReportingMethodController.submitAgent(id) else
+      controllers.incomeSources.add.routes.ForeignPropertyReportingMethodController.submit(id)
+    val redirectCall = if (isAgent) controllers.incomeSources.add.routes.ForeignPropertyAddedController.showAgent(id) else
+      controllers.incomeSources.add.routes.ForeignPropertyAddedController.show(id)
 
-            val updatedReportingMethods =
-              getTaxYearSpecific(valid.taxYear1, valid.taxYear1ReportingMethod)
-//              getTaxYearSpecific(valid.taxYear2, valid.taxYear2ReportingMethod)
-            //TODO: fix
+    for {
+      latencyDetailsMaybe <- Future(user.incomeSources.properties
+        .find(_.incomeSourceId.contains(id))
+        .flatMap(_.latencyDetails))
+      fPropertyReportingMethodViewModel <- getForeignPropertyReportingMethodDetails(latencyDetailsMaybe)
+    } yield {
+      fPropertyReportingMethodViewModel match {
+        case Right(viewModel) =>
+          BadRequest(foreignPropertyReportingMethodView(
+            form = AddForeignPropertyReportingMethodForm.updateErrorMessagesWithValues(errors),
+            viewModel = viewModel,
+            postAction = postAction,
+            isAgent = isAgent
+          ))
+        case Left(ex) =>
+          Logger("application")
+            .error(s"[ForeignPropertyReportingMethodController][handleRequest]: " +
+              s"Failed to retrieve latency details - $ex")
+          Redirect(redirectCall)
+      }
+    }
+  }
 
-            updateIncomeSourceService.updateTaxYearSpecific(
-              nino = user.nino,
-              incomeSourceId = id,
-              taxYearSpecific = updatedReportingMethods.get
-            ).map {
-              case res: UpdateIncomeSourceResponseModel =>
-                Logger("application").info(s"${if (isAgent) "[Agent]"}" + s" Updated tax year specific reporting method : $res")
-                Redirect(redirectCall)
-              case err: UpdateIncomeSourceResponseError =>
-                Logger("application").error(s"${if (isAgent) "[Agent]"}" + s" Failed to Updated tax year specific reporting method : $err")
-                Redirect(errorCall)
-            }
-          } else {
-            Logger("application").info(s"${if (isAgent) "[Agent]"}" + s" Updating the tax year specific reporting method not required.")
-            Future.successful(Redirect(redirectCall))
-          }
-        })
-    } else Future(Ok(customNotFoundErrorView()))
+  private def handleFormData(form: AddForeignPropertyReportingMethodForm, id: String, isAgent: Boolean)
+                            (implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
+
+    val redirectUrl: Call = if (isAgent) routes.ForeignPropertyAddedController.showAgent(id) else routes.ForeignPropertyAddedController.show(id)
+
+    if (form.reportingMethodIsChanged) {
+      val taxYearSpecific1Opt = for {
+        newReportingMethod <- form.newTaxYear1ReportingMethod
+        taxYear <- form.taxYear1
+      } yield TaxYearSpecific(taxYear, isAnnualReporting(newReportingMethod))
+
+      val taxYearSpecific2Opt = for {
+        newReportingMethod <- form.newTaxYear2ReportingMethod
+        taxYear <- form.taxYear2
+      } yield TaxYearSpecific(taxYear, isAnnualReporting(newReportingMethod))
+
+      updateReportingMethod(isAgent, id, taxYearSpecific1Opt, taxYearSpecific2Opt)
+
+    } else {
+      Future.successful(Redirect(redirectUrl))
+    }
+  }
+
+  private def updateReportingMethod(isAgent: Boolean, id: String, taxYearSpecific1Opt: Option[TaxYearSpecific], taxYearSpecific2Opt: Option[TaxYearSpecific])
+                                   (implicit user: MtdItUser[_]): Future[Result] = {
+    
+    val redirectCall: Call = if (isAgent) routes.ForeignPropertyAddedController.showAgent(id) else routes.ForeignPropertyAddedController.show(id)
+    val redirectErrorCall: Call = if (isAgent) routes.IncomeSourceNotAddedController.showForeignPropertyAgent() else
+      routes.IncomeSourceNotAddedController.showForeignProperty()
+
+    val updateResults = for {
+      result1 <- OptionT.fromOption[Future](taxYearSpecific1Opt)
+        .semiflatMap(taxYearSpecific => updateIncomeSourceService.updateTaxYearSpecific(user.nino, id, taxYearSpecific))
+      result2 <- OptionT.fromOption[Future](taxYearSpecific2Opt)
+        .semiflatMap(taxYearSpecific => updateIncomeSourceService.updateTaxYearSpecific(user.nino, id, taxYearSpecific))
+    } yield (result1, result2)
+
+    updateResults.value.flatMap {
+      case Some((result1: UpdateIncomeSourceResponseModel, result2: UpdateIncomeSourceResponseModel)) =>
+        Logger("application").info(s"[ForeignPropertyReportingMethodController][updateReportingMethod]:" +
+          s"Updated tax year specific reporting method : $result1 and $result2")
+        Future.successful(Redirect(redirectCall))
+      case Some((_: UpdateIncomeSourceResponseError, _: UpdateIncomeSourceResponseModel)) =>
+        //TODO: redirect to custom error page based on one failure response & one success response
+        Future.successful(Redirect(redirectErrorCall))
+      case Some((_: UpdateIncomeSourceResponseError, _: UpdateIncomeSourceResponseError)) =>
+        Future.successful(Redirect(redirectErrorCall))
+      case _ =>
+        Logger("application").error("[ForeignPropertyReportingMethodController][updateReportingMethod]:" +
+          "Unexpected response when updating tax year specific reporting methods")
+        Future.successful(Redirect(redirectErrorCall))
+    }.recover {
+      case ex: Exception =>
+        Logger("application").error(s"[ForeignPropertyReportingMethodController][updateReportingMethod]:" +
+          s"Error updating tax year specific reporting method: ${ex.getMessage}")
+        Redirect(redirectErrorCall)
+    }
   }
 
   private def getForeignPropertyReportingMethodDetails(latencyDetailsMaybe: Option[LatencyDetails])
@@ -217,9 +256,9 @@ class ForeignPropertyReportingMethodController @Inject()(val authenticate: Authe
       case Some(latencyDetails) if Try(latencyDetails.taxYear1.toInt).toOption.isDefined =>
         latencyDetails match {
           case _ if Try(latencyDetails.taxYear2.toInt).toOption.isEmpty =>
-            Future.successful( Left( new Error(s"Unable to convert taxYear2 to Int: ${latencyDetails.taxYear2}") ) )
+            Future.successful(Left(new Error(s"Unable to convert taxYear2 to Int: ${latencyDetails.taxYear2}")))
           case _ if latencyDetails.taxYear2.toInt < currentTaxYearEnd =>
-            Future.successful( Left( new Error("Current tax year not in scope of change period") ) )
+            Future.successful(Left(new Error("Current tax year not in scope of change period")))
           case LatencyDetails(_, tY1, tY1LatencyIndicator, tY2, tY2LatencyIndicator) =>
             calculationListService.isTaxYearCrystallised(tY1.toInt).flatMap {
               case Some(true) =>
@@ -253,23 +292,15 @@ class ForeignPropertyReportingMethodController @Inject()(val authenticate: Authe
 
   private def isAnnualReporting(taxYearReportingMethod: String): Boolean = taxYearReportingMethod.toUpperCase().equals("A")
 
-  private def getTaxYearSpecific(taxYearMaybe: Option[String], reportingMethod: Option[String]): Option[TaxYearSpecific] = for {
-    taxYear <- taxYearMaybe
-    taxYearReportingMethod <- reportingMethod
-  } yield {
-    TaxYearSpecific(
-      taxYear = taxYear,
-      latencyIndicator = isAnnualReporting(taxYearReportingMethod)
-    )
-  }
-
   private def postAction(id: String) = controllers.incomeSources.add.routes.ForeignPropertyReportingMethodController.submit(id)
+
   private def postActionAgent(id: String) = controllers.incomeSources.add.routes.ForeignPropertyReportingMethodController.submitAgent(id)
 
   private def redirectCall(id: String) = controllers.incomeSources.add.routes.ForeignPropertyAddedController.show(id)
+
   private def redirectCallAgent(id: String) = controllers.incomeSources.add.routes.ForeignPropertyAddedController.showAgent(id)
 
-  val redirectErrorCall: Call = controllers.incomeSources.add.routes.ForeignPropertyReportingMethodErrorController.show()
-  val redirectErrorCallAgent: Call = controllers.incomeSources.add.routes.ForeignPropertyReportingMethodErrorController.showAgent()
+  val redirectErrorCall: Call = controllers.incomeSources.add.routes.IncomeSourceNotAddedController.showForeignProperty()
+  val redirectErrorCallAgent: Call = controllers.incomeSources.add.routes.IncomeSourceNotAddedController.showForeignPropertyAgent()
 
 }

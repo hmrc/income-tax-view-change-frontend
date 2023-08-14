@@ -191,15 +191,14 @@ class UKPropertyReportingMethodControllerSpec extends TestSupport with MockAuthe
       }
     }
 
-    "return 303 SEE_OTHER and redirect to custom not found error page" when {
+    "return 303 SEE_OTHER" when {
       "navigating to the page with FS Disabled" in {
         mockAndBasicSetup(CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
         disable(IncomeSources)
         val result: Future[Result] = TestUKPropertyReportingMethodController.show(TestUKPropertyReportingMethodController.incomeSourceId)(fakeRequestWithActiveSession)
-        val expectedContent: String = TestUKPropertyReportingMethodController.customNotFoundErrorView().toString()
 
-        status(result) shouldBe Status.OK
-        contentAsString(result) shouldBe expectedContent
+        status(result) shouldBe Status.SEE_OTHER
+        redirectLocation(result) shouldBe Some(controllers.routes.HomeController.show().url)
       }
       "called with an unauthenticated user" in {
         setupMockAuthorisationException()
@@ -358,7 +357,12 @@ class UKPropertyReportingMethodControllerSpec extends TestSupport with MockAuthe
         when(mockUpdateIncomeSourceService.updateTaxYearSpecific(
           ArgumentMatchers.eq(TestUKPropertyReportingMethodController.testNino),
           ArgumentMatchers.eq(TestUKPropertyReportingMethodController.incomeSourceId),
-          ArgumentMatchers.eq(List(tySpecific1, tySpecific2)))(any, any)).thenReturn(Future.successful(UpdateIncomeSourceResponseModel("")))
+          ArgumentMatchers.eq(tySpecific1))(any, any)).thenReturn(Future.successful(UpdateIncomeSourceResponseModel("")))
+
+        when(mockUpdateIncomeSourceService.updateTaxYearSpecific(
+          ArgumentMatchers.eq(TestUKPropertyReportingMethodController.testNino),
+          ArgumentMatchers.eq(TestUKPropertyReportingMethodController.incomeSourceId),
+          ArgumentMatchers.eq(tySpecific2))(any, any)).thenReturn(Future.successful(UpdateIncomeSourceResponseModel("")))
 
 
         val result = TestUKPropertyReportingMethodController.submit(TestUKPropertyReportingMethodController.incomeSourceId)(
@@ -396,14 +400,46 @@ class UKPropertyReportingMethodControllerSpec extends TestSupport with MockAuthe
     }
 
     "Update failed and error page shown" when {
-      "some internal failure in the update action" in {
+      "some internal failure in the update action (both calls)" in {
         val tySpecific1 = TaxYearSpecific("2022", false)
         val tySpecific2 = TaxYearSpecific("2023", true)
         mockAndBasicSetup(CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
         when(mockUpdateIncomeSourceService.updateTaxYearSpecific(
           ArgumentMatchers.eq(TestUKPropertyReportingMethodController.testNino),
           ArgumentMatchers.eq(TestUKPropertyReportingMethodController.incomeSourceId),
-          ArgumentMatchers.eq(List(tySpecific1, tySpecific2)))(any, any)).thenReturn(Future(UpdateIncomeSourceResponseError(Status.SEE_OTHER, "")))
+          ArgumentMatchers.eq(tySpecific1))(any, any)).thenReturn(Future.successful(UpdateIncomeSourceResponseError(Status.INTERNAL_SERVER_ERROR, "")))
+
+        when(mockUpdateIncomeSourceService.updateTaxYearSpecific(
+          ArgumentMatchers.eq(TestUKPropertyReportingMethodController.testNino),
+          ArgumentMatchers.eq(TestUKPropertyReportingMethodController.incomeSourceId),
+          ArgumentMatchers.eq(tySpecific2))(any, any)).thenReturn(Future.successful(UpdateIncomeSourceResponseError(Status.INTERNAL_SERVER_ERROR, "")))
+
+        val result = TestUKPropertyReportingMethodController.submit(TestUKPropertyReportingMethodController.incomeSourceId)(
+          fakeRequestWithActiveSession.withFormUrlEncodedBody(
+            newTaxYear1ReportingMethod -> "Q",
+            newTaxYear2ReportingMethod -> "A",
+            taxYear1 -> "2022",
+            taxYear1ReportingMethod -> "A",
+            taxYear2 -> "2023",
+            taxYear2ReportingMethod -> "Q"
+          ))
+
+        status(result) shouldBe Status.SEE_OTHER
+        redirectLocation(result).get shouldBe redirectURL
+      }
+      "some internal failure in the update action (one call)" in {
+        val tySpecific1 = TaxYearSpecific("2022", false)
+        val tySpecific2 = TaxYearSpecific("2023", true)
+        mockAndBasicSetup(CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
+        when(mockUpdateIncomeSourceService.updateTaxYearSpecific(
+          ArgumentMatchers.eq(TestUKPropertyReportingMethodController.testNino),
+          ArgumentMatchers.eq(TestUKPropertyReportingMethodController.incomeSourceId),
+          ArgumentMatchers.eq(tySpecific1))(any, any)).thenReturn(Future.successful(UpdateIncomeSourceResponseError(Status.INTERNAL_SERVER_ERROR, "")))
+
+        when(mockUpdateIncomeSourceService.updateTaxYearSpecific(
+          ArgumentMatchers.eq(TestUKPropertyReportingMethodController.testNino),
+          ArgumentMatchers.eq(TestUKPropertyReportingMethodController.incomeSourceId),
+          ArgumentMatchers.eq(tySpecific2))(any, any)).thenReturn(Future.successful(UpdateIncomeSourceResponseModel("")))
 
         val result = TestUKPropertyReportingMethodController.submit(TestUKPropertyReportingMethodController.incomeSourceId)(
           fakeRequestWithActiveSession.withFormUrlEncodedBody(
@@ -436,15 +472,14 @@ class UKPropertyReportingMethodControllerSpec extends TestSupport with MockAuthe
       }
     }
 
-    "return 303 SEE_OTHER and redirect to custom not found error page" when {
+    "return 303 SEE_OTHER" when {
       "navigating to the page with FS Disabled" in {
         mockAndBasicSetup(CURRENT_TAX_YEAR_IN_LATENCY_YEARS, true)
         disable(IncomeSources)
         val result: Future[Result] = TestUKPropertyReportingMethodController.showAgent(TestUKPropertyReportingMethodController.incomeSourceId)(fakeRequestConfirmedClient())
-        val expectedContent: String = TestUKPropertyReportingMethodController.customNotFoundErrorView().toString()
 
-        status(result) shouldBe Status.OK
-        contentAsString(result) shouldBe expectedContent
+        status(result) shouldBe Status.SEE_OTHER
+        redirectLocation(result) shouldBe Some(controllers.routes.HomeController.showAgent.url)
       }
       "called with an unauthenticated user" in {
         setupMockAgentAuthorisationException()
@@ -603,7 +638,12 @@ class UKPropertyReportingMethodControllerSpec extends TestSupport with MockAuthe
         when(mockUpdateIncomeSourceService.updateTaxYearSpecific(
           ArgumentMatchers.eq(TestUKPropertyReportingMethodController.testNino),
           ArgumentMatchers.eq(TestUKPropertyReportingMethodController.incomeSourceId),
-          ArgumentMatchers.eq(List(tySpecific1, tySpecific2)))(any, any)).thenReturn(Future.successful(UpdateIncomeSourceResponseModel("")))
+          ArgumentMatchers.eq(tySpecific1))(any, any)).thenReturn(Future.successful(UpdateIncomeSourceResponseModel("")))
+
+        when(mockUpdateIncomeSourceService.updateTaxYearSpecific(
+          ArgumentMatchers.eq(TestUKPropertyReportingMethodController.testNino),
+          ArgumentMatchers.eq(TestUKPropertyReportingMethodController.incomeSourceId),
+          ArgumentMatchers.eq(tySpecific2))(any, any)).thenReturn(Future.successful(UpdateIncomeSourceResponseModel("")))
 
 
         val result = TestUKPropertyReportingMethodController.submitAgent(TestUKPropertyReportingMethodController.incomeSourceId)(
@@ -641,14 +681,47 @@ class UKPropertyReportingMethodControllerSpec extends TestSupport with MockAuthe
     }
 
     "Update failed and error page shown" when {
-      "some internal failure in the update action" in {
+      "some internal failure in the update action (both calls)" in {
         val tySpecific1 = TaxYearSpecific("2022", false)
         val tySpecific2 = TaxYearSpecific("2023", true)
         mockAndBasicSetup(CURRENT_TAX_YEAR_IN_LATENCY_YEARS, true)
         when(mockUpdateIncomeSourceService.updateTaxYearSpecific(
           ArgumentMatchers.eq(TestUKPropertyReportingMethodController.testNino),
           ArgumentMatchers.eq(TestUKPropertyReportingMethodController.incomeSourceId),
-          ArgumentMatchers.eq(List(tySpecific1, tySpecific2)))(any, any)).thenReturn(Future(UpdateIncomeSourceResponseError(Status.SEE_OTHER, "")))
+          ArgumentMatchers.eq(tySpecific1))(any, any)).thenReturn(Future.successful(UpdateIncomeSourceResponseError(Status.INTERNAL_SERVER_ERROR, "")))
+
+        when(mockUpdateIncomeSourceService.updateTaxYearSpecific(
+          ArgumentMatchers.eq(TestUKPropertyReportingMethodController.testNino),
+          ArgumentMatchers.eq(TestUKPropertyReportingMethodController.incomeSourceId),
+          ArgumentMatchers.eq(tySpecific2))(any, any)).thenReturn(Future.successful(UpdateIncomeSourceResponseError(Status.INTERNAL_SERVER_ERROR, "")))
+
+        val result = TestUKPropertyReportingMethodController.submitAgent(TestUKPropertyReportingMethodController.incomeSourceId)(
+          fakeRequestConfirmedClient(TestUKPropertyReportingMethodController.testNino).withFormUrlEncodedBody(
+            newTaxYear1ReportingMethod -> "Q",
+            newTaxYear2ReportingMethod -> "A",
+            taxYear1 -> "2022",
+            taxYear1ReportingMethod -> "A",
+            taxYear2 -> "2023",
+            taxYear2ReportingMethod -> "Q"
+          ))
+
+        status(result) shouldBe Status.SEE_OTHER
+        redirectLocation(result).get shouldBe redirectAgentURL
+      }
+
+      "some internal failure in the update action (one call)" in {
+        val tySpecific1 = TaxYearSpecific("2022", false)
+        val tySpecific2 = TaxYearSpecific("2023", true)
+        mockAndBasicSetup(CURRENT_TAX_YEAR_IN_LATENCY_YEARS, true)
+        when(mockUpdateIncomeSourceService.updateTaxYearSpecific(
+          ArgumentMatchers.eq(TestUKPropertyReportingMethodController.testNino),
+          ArgumentMatchers.eq(TestUKPropertyReportingMethodController.incomeSourceId),
+          ArgumentMatchers.eq(tySpecific1))(any, any)).thenReturn(Future.successful(UpdateIncomeSourceResponseError(Status.INTERNAL_SERVER_ERROR, "")))
+
+        when(mockUpdateIncomeSourceService.updateTaxYearSpecific(
+          ArgumentMatchers.eq(TestUKPropertyReportingMethodController.testNino),
+          ArgumentMatchers.eq(TestUKPropertyReportingMethodController.incomeSourceId),
+          ArgumentMatchers.eq(tySpecific2))(any, any)).thenReturn(Future.successful(UpdateIncomeSourceResponseModel("")))
 
         val result = TestUKPropertyReportingMethodController.submitAgent(TestUKPropertyReportingMethodController.incomeSourceId)(
           fakeRequestConfirmedClient(TestUKPropertyReportingMethodController.testNino).withFormUrlEncodedBody(

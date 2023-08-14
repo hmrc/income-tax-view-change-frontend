@@ -33,7 +33,6 @@ import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
 import services.UpdateIncomeSourceService
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testIndividualAuthSuccessWithSaUtrResponse, testPropertyIncomeId, testSelfEmploymentId}
 import testUtils.TestSupport
-import views.html.errorPages.CustomNotFoundError
 import views.html.incomeSources.manage.{ConfirmReportingMethod, ManageIncomeSources}
 
 import scala.concurrent.Future
@@ -56,13 +55,11 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
       retrieveNino = app.injector.instanceOf[NinoPredicate],
       retrieveIncomeSources = MockIncomeSourceDetailsPredicate,
       retrieveBtaNavBar = MockNavBarPredicate,
-      itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
-      itvcErrorHandlerAgent = app.injector.instanceOf[AgentItvcErrorHandler],
       incomeSourceDetailsService = mockIncomeSourceDetailsService,
       updateIncomeSourceService = mock(classOf[UpdateIncomeSourceService]),
-      customNotFoundErrorView = app.injector.instanceOf[CustomNotFoundError],
       confirmReportingMethod = app.injector.instanceOf[ConfirmReportingMethod]
-    )(
+    )(itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
+      itvcErrorHandlerAgent = app.injector.instanceOf[AgentItvcErrorHandler],
       mcc = app.injector.instanceOf[MessagesControllerComponents],
       appConfig = app.injector.instanceOf[FrontendAppConfig],
       ec = ec
@@ -87,7 +84,7 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
   val testChangeToQuarterly = "quarterly"
 
   "ConfirmReportingMethodSharedController.show" should {
-    "show the Custom Not Found Error Page" when {
+    "redirect to home page" when {
       "the IncomeSources FS is disabled" in {
         disableAllSwitches()
         mockSingleBISWithCurrentYearAsMigrationYear()
@@ -95,7 +92,8 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
 
         val result: Future[Result] = TestConfirmReportingMethodSharedController.showSoleTraderBusiness(
           testIncomeSourceId, testTaxYear, testChangeToAnnual)(fakeRequestWithActiveSession)
-        status(result) shouldBe Status.OK
+        status(result) shouldBe Status.SEE_OTHER
+        redirectLocation(result) shouldBe Some(controllers.routes.HomeController.show().url)
       }
     }
     s"return ${Status.INTERNAL_SERVER_ERROR}" when {
@@ -149,7 +147,7 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
   }
 
   "ConfirmReportingMethodSharedController.submit" should {
-    "show the Custom Not Found Error Page" when {
+    "redirect to home page" when {
       "the IncomeSources FS is disabled" in {
         disableAllSwitches()
         mockSingleBISWithCurrentYearAsMigrationYear()
@@ -157,7 +155,8 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
 
         val result: Future[Result] = TestConfirmReportingMethodSharedController.submitSoleTraderBusiness(
           testIncomeSourceId, testTaxYear, testChangeToAnnual)(fakeRequestWithActiveSession)
-        status(result) shouldBe Status.OK
+        status(result) shouldBe Status.SEE_OTHER
+        redirectLocation(result) shouldBe Some(controllers.routes.HomeController.show().url)
       }
     }
     s"return ${Status.INTERNAL_SERVER_ERROR}" when {
@@ -323,7 +322,7 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
   }
 
   "ConfirmReportingMethodSharedController.showAgent" should {
-    "show the Custom Not Found Error Page" when {
+    "redirect to home page" when {
       "the IncomeSources FS is disabled" in {
         disableAllSwitches()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
@@ -331,7 +330,8 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
 
         val result: Future[Result] = TestConfirmReportingMethodSharedController.showSoleTraderBusinessAgent(
           testIncomeSourceId, testTaxYear, testChangeToAnnual)(fakeRequestConfirmedClient())
-        status(result) shouldBe Status.OK
+        status(result) shouldBe Status.SEE_OTHER
+        redirectLocation(result) shouldBe Some(controllers.routes.HomeController.showAgent.url)
       }
     }
     s"return ${Status.INTERNAL_SERVER_ERROR}" when {
@@ -409,7 +409,7 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
   }
 
   "ConfirmReportingMethodSharedController.submitAgent" should {
-    "show the Custom Not Found Error Page" when {
+    "redirect to home page" when {
       "the IncomeSources FS is disabled" in {
         disableAllSwitches()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
@@ -417,7 +417,8 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
 
         val result: Future[Result] = TestConfirmReportingMethodSharedController.submitSoleTraderBusinessAgent(
           testIncomeSourceId, testTaxYear, testChangeToAnnual)(fakeRequestConfirmedClient())
-        status(result) shouldBe Status.OK
+        status(result) shouldBe Status.SEE_OTHER
+        redirectLocation(result) shouldBe Some(controllers.routes.HomeController.showAgent.url)
       }
     }
     s"return ${Status.INTERNAL_SERVER_ERROR}" when {
@@ -429,7 +430,8 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
 
         val result: Future[Result] = TestConfirmReportingMethodSharedController.submitSoleTraderBusinessAgent(
           testIncomeSourceId, "$$$$-££££", testChangeToAnnual)(fakeRequestConfirmedClient())
-        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+        status(result) shouldBe Status.SEE_OTHER
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.IncomeSourceNotAddedController.showUKProperty())
       }
     }
     s"return ${Status.INTERNAL_SERVER_ERROR}" when {
