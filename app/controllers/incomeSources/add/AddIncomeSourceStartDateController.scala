@@ -108,73 +108,76 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
 
   private def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)
                    (implicit user: MtdItUser[_]): Future[Result] = {
-
-    (isEnabled(IncomeSources), getCallsAndMessagesKeyPrefix(isAgent, incomeSourceType)) match {
-      case (false, _) =>
-        Future(
-          Ok(
-            customNotFoundErrorView()
-          )
-        )
-      case (_, (backCall, postAction, _, messagesPrefix)) =>
-        Future(
-          Ok(
-            addIncomeSourceStartDate(
-              form = AddIncomeSourceStartDateForm(messagesPrefix),
-              isAgent = isAgent,
-              backUrl = backCall.url,
-              postAction = postAction,
-              messagesPrefix = messagesPrefix
+    if(isEnabled(IncomeSources)) {
+      getCallsAndMessagesKeyPrefix(isAgent, incomeSourceType) match {
+        case (backCall, postAction, _, messagesPrefix) =>
+          Future(
+            Ok(
+              addIncomeSourceStartDate(
+                form = AddIncomeSourceStartDateForm(messagesPrefix),
+                isAgent = isAgent,
+                backUrl = backCall.url,
+                postAction = postAction,
+                messagesPrefix = messagesPrefix
+              )
             )
           )
+      }
+    } else {
+      Future(
+        Ok(
+          customNotFoundErrorView()
         )
+      )
+    } recover {
+      case ex: Exception =>
+        Logger("application").error(s"[AddIncomeSourceStartDateController][handleRequest] - Error: ${ex.getMessage}")
+        if (isAgent) itvcErrorHandlerAgent.showInternalServerError()
+        else itvcErrorHandler.showInternalServerError()
     }
-  } recover {
-    case ex: Exception =>
-      Logger("application").error(s"[AddIncomeSourceStartDateController][handleRequest] - Error: ${ex.getMessage}")
-      if(isAgent) itvcErrorHandlerAgent.showInternalServerError()
-      else itvcErrorHandler.showInternalServerError()
   }
 
   private def handleSubmitRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)
                          (implicit user: MtdItUser[_]): Future[Result] = {
 
-    (isEnabled(IncomeSources), getCallsAndMessagesKeyPrefix(isAgent, incomeSourceType)) match {
-      case (false, _) =>
-        Future(
-          Ok(
-            customNotFoundErrorView()
-          )
-        )
-      case (_, (backCall, postAction, redirectCall, messagesPrefix)) =>
-        AddIncomeSourceStartDateForm(messagesPrefix).bindFromRequest().fold(
-          formWithErrors =>
-            Future(
-              BadRequest(
-                addIncomeSourceStartDate(
-                  isAgent = isAgent,
-                  form = formWithErrors,
-                  backUrl = backCall.url,
-                  postAction = postAction,
-                  messagesPrefix = messagesPrefix
+    if(isEnabled(IncomeSources)) {
+      getCallsAndMessagesKeyPrefix(isAgent, incomeSourceType) match {
+        case (backCall, postAction, redirectCall, messagesPrefix) =>
+          AddIncomeSourceStartDateForm(messagesPrefix).bindFromRequest().fold(
+            formWithErrors =>
+              Future(
+                BadRequest(
+                  addIncomeSourceStartDate(
+                    isAgent = isAgent,
+                    form = formWithErrors,
+                    backUrl = backCall.url,
+                    postAction = postAction,
+                    messagesPrefix = messagesPrefix
+                  )
                 )
+              ),
+            formData =>
+              Future.successful(
+                Redirect(redirectCall)
+                  .addingToSession(
+                    (incomeSourceType match {
+                      case SoleTraderBusiness =>
+                        SessionKeys.addBusinessStartDate
+                      case UKProperty =>
+                        SessionKeys.addUkPropertyStartDate
+                      case ForeignProperty =>
+                        SessionKeys.foreignPropertyStartDate
+                    }) -> formData.date.toString
+                  )
               )
-            ),
-          formData =>
-            Future.successful(
-              Redirect(redirectCall)
-                .addingToSession(
-                  (incomeSourceType match {
-                    case SoleTraderBusiness =>
-                      SessionKeys.addBusinessStartDate
-                    case UKProperty =>
-                      SessionKeys.addUkPropertyStartDate
-                    case ForeignProperty =>
-                      SessionKeys.foreignPropertyStartDate
-                  }) -> formData.date.toString
-                )
-            )
+          )
+      }
+    } else {
+      Future(
+        Ok(
+          customNotFoundErrorView()
         )
+      )
     }
   } recover {
     case ex: Exception =>
