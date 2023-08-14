@@ -16,7 +16,7 @@
 
 package models.incomeSourceDetails.viewmodels
 
-import enums.IncomeSourceJourney.IncomeSourceJourney
+import enums.IncomeSourceJourney.IncomeSourceType
 import models.core.AddressModel
 import models.incomeSourceDetails.LatencyDetails
 
@@ -31,7 +31,7 @@ case class ManageBusinessDetailsViewModel(incomeSourceId: String,
                                           taxYearOneCrystallised: Option[Boolean],
                                           taxYearTwoCrystallised: Option[Boolean],
                                           latencyDetails: Option[LatencyDetails],
-                                          incomeSourceType: IncomeSourceJourney
+                                          incomeSourceType: IncomeSourceType
                                          )
 
 

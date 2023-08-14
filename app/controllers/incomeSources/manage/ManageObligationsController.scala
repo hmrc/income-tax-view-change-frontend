@@ -131,7 +131,7 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
         }
   }
 
-  def handleRequest(mode: IncomeSourceJourney, isAgent: Boolean, taxYear: String, changeTo: String, incomeSourceId: String)(implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
+  def handleRequest(mode: IncomeSourceType, isAgent: Boolean, taxYear: String, changeTo: String, incomeSourceId: String)(implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
     if (isDisabled(IncomeSources)) {
       if (isAgent) Future.successful(Redirect(controllers.routes.HomeController.showAgent))
       else Future.successful(Redirect(controllers.routes.HomeController.show()))
@@ -170,7 +170,7 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
     }
   }
 
-  def getBackurl(isAgent: Boolean, mode: IncomeSourceJourney, incomeSourceId: String, changeTo: String, taxYear: String): String = {
+  def getBackurl(isAgent: Boolean, mode: IncomeSourceType, incomeSourceId: String, changeTo: String, taxYear: String): String = {
     ((isAgent, mode) match {
       case (false, UkProperty) => controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController.showUKProperty(taxYear = taxYear, changeTo = changeTo)
       case (false, ForeignProperty) => controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController.showForeignProperty(taxYear = taxYear, changeTo = changeTo)
@@ -188,7 +188,7 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
     else Future.successful(itvcErrorHandler.showInternalServerError())
   }
 
-  def getBusinessName(mode: IncomeSourceJourney, incomeSourceId: String)(implicit user: MtdItUser[_]): String = {
+  def getBusinessName(mode: IncomeSourceType, incomeSourceId: String)(implicit user: MtdItUser[_]): String = {
     mode match {
       case SelfEmployment =>
         val businessDetailsParams = for {
@@ -204,7 +204,7 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
     }
   }
 
-  def getIncomeSourceId(mode: IncomeSourceJourney, id: String)(implicit user: MtdItUser[_]): Either[Throwable, String] = {
+  def getIncomeSourceId(mode: IncomeSourceType, id: String)(implicit user: MtdItUser[_]): Either[Throwable, String] = {
     mode match {
       case SelfEmployment => Right(id)
       case UkProperty =>

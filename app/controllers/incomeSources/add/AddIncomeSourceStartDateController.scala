@@ -21,7 +21,7 @@ import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
-import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceJourney, SelfEmployment, UkProperty}
+import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import forms.incomeSources.add.AddIncomeSourceStartDateForm
 import forms.utils.SessionKeys
 import implicits.ImplicitDateFormatterImpl
@@ -68,7 +68,7 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
   def submitSoleTraderBusiness: Action[AnyContent] = submit(SelfEmployment)
   def submitSoleTraderBusinessAgent: Action[AnyContent] = submitAgent(SelfEmployment)
 
-  private def show(incomeSourceType: IncomeSourceJourney): Action[AnyContent] = {
+  private def show(incomeSourceType: IncomeSourceType): Action[AnyContent] = {
     (checkSessionTimeout andThen authenticate andThen retrieveNino
       andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
       implicit user =>
@@ -79,7 +79,7 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
     }
   }
 
-  private def submit(incomeSourceType: IncomeSourceJourney): Action[AnyContent] = {
+  private def submit(incomeSourceType: IncomeSourceType): Action[AnyContent] = {
     (checkSessionTimeout andThen authenticate andThen retrieveNino
       andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
       implicit user =>
@@ -90,7 +90,7 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
     }
   }
 
-  private def showAgent(incomeSourceType: IncomeSourceJourney): Action[AnyContent] = Authenticated.async {
+  private def showAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = Authenticated.async {
     implicit request =>
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
@@ -102,7 +102,7 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
         }
   }
 
-  private def submitAgent(incomeSourceType: IncomeSourceJourney): Action[AnyContent] = Authenticated.async {
+  private def submitAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = Authenticated.async {
     implicit request =>
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
@@ -115,11 +115,14 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
   }
 
 
-  private def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceJourney)
+  private def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)
                    (implicit user: MtdItUser[_]): Future[Result] = {
+
+    val messagesPrefix = getMessagesPrefix(incomeSourceType)
+
     if(isEnabled(IncomeSources)) {
-      getCallsAndMessagesKeyPrefix(isAgent, incomeSourceType) match {
-        case (backCall, postAction, _, messagesPrefix) =>
+      getCalls(isAgent, incomeSourceType) match {
+        case (backCall, postAction, _) =>
           Future(
             Ok(
               addIncomeSourceStartDate(
@@ -146,12 +149,14 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
     }
   }
 
-  private def handleSubmitRequest(isAgent: Boolean, incomeSourceType: IncomeSourceJourney)
+  private def handleSubmitRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)
                          (implicit user: MtdItUser[_]): Future[Result] = {
 
+    val messagesPrefix = getMessagesPrefix(incomeSourceType)
+
     if(isEnabled(IncomeSources)) {
-      getCallsAndMessagesKeyPrefix(isAgent, incomeSourceType) match {
-        case (backCall, postAction, redirectCall, messagesPrefix) =>
+      getCalls(isAgent, incomeSourceType) match {
+        case (backCall, postAction, redirectCall) =>
           AddIncomeSourceStartDateForm(messagesPrefix).bindFromRequest().fold(
             formWithErrors =>
               Future(
@@ -195,51 +200,53 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
       else itvcErrorHandler.showInternalServerError()
   }
 
-  private def getCallsAndMessagesKeyPrefix(isAgent: Boolean, incomeSourceType: IncomeSourceJourney): (Call, Call, Call, String) = {
+  private def getCalls(isAgent: Boolean, incomeSourceType: IncomeSourceType): (Call, Call, Call) = {
 
     (isAgent, incomeSourceType) match {
       case (false, SelfEmployment) =>
         (
           controllers.incomeSources.add.routes.AddBusinessNameController.show(),
           controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.submitSoleTraderBusiness,
-          controllers.incomeSources.add.routes.AddBusinessStartDateCheckController.show(),
-          SelfEmployment.messagesPrefix
+          controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.showSoleTraderBusiness,
         )
       case (false, UkProperty) =>
         (
           controllers.incomeSources.add.routes.AddIncomeSourceController.show(),
           controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.submitUKProperty,
-          controllers.incomeSources.add.routes.CheckUKPropertyStartDateController.show(),
-          UkProperty.messagesPrefix
+          controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.showUKProperty,
         )
       case (false, ForeignProperty) =>
         (
           controllers.incomeSources.add.routes.AddIncomeSourceController.show(),
           controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.submitForeignProperty,
-          controllers.incomeSources.add.routes.ForeignPropertyStartDateCheckController.show(),
-          ForeignProperty.messagesPrefix
+          controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.showForeignProperty,
         )
       case (true, SelfEmployment) =>
         (
           controllers.incomeSources.add.routes.AddBusinessNameController.showAgent(),
           controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.submitSoleTraderBusinessAgent,
-          controllers.incomeSources.add.routes.AddBusinessStartDateCheckController.showAgent(),
-          SelfEmployment.messagesPrefix
+          controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.showSoleTraderBusinessAgent,
         )
       case (true, UkProperty) =>
         (
           controllers.incomeSources.add.routes.AddIncomeSourceController.showAgent(),
           controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.submitUKPropertyAgent,
-          controllers.incomeSources.add.routes.CheckUKPropertyStartDateController.showAgent(),
-          UkProperty.messagesPrefix
+          controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.showUKPropertyAgent,
         )
       case (true, ForeignProperty) =>
         (
           controllers.incomeSources.add.routes.AddIncomeSourceController.showAgent(),
           controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.submitForeignPropertyAgent,
-          controllers.incomeSources.add.routes.ForeignPropertyStartDateCheckController.showAgent(),
-          ForeignProperty.messagesPrefix
+          controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.showForeignPropertyAgent,
         )
+    }
+  }
+
+  private def getMessagesPrefix(incomeSourceType: IncomeSourceType): String = {
+    incomeSourceType match {
+      case SelfEmployment => SelfEmployment.addIncomeSourceStartDateMessagesPrefix
+      case ForeignProperty => ForeignProperty.addIncomeSourceStartDateMessagesPrefix
+      case UkProperty => UkProperty.addIncomeSourceStartDateMessagesPrefix
     }
   }
 

@@ -43,8 +43,8 @@
 }
 
 @postAction = @{
-    if(isAgent) controllers.incomeSources.add.routes.ForeignPropertyStartDateCheckController.submitAgent()
-    else controllers.incomeSources.add.routes.ForeignPropertyStartDateCheckController.submit()
+    if(isAgent) controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.submitForeignPropertyAgent
+    else controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.submitForeignProperty
 }
 
 @mainTemplate(

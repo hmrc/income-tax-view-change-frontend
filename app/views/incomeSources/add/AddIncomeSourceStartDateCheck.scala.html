@@ -33,53 +33,49 @@
         backUrl: String,
         isAgent: Boolean,
         incomeSourceStartDate: String,
-        btaNavPartial: Option[Html] = None,
-        messagesPrefix: String
+        btaNavPartial: Option[Html] = None
 )(
         implicit messages: Messages,
         request: Request[_]
 )
 
-@getMessage(key: String, args: String*) = @{
-    messages(s"$messagesPrefix.$key", args: _*)
-}
-
 @mainTemplate(
-    pageTitle = getMessage("heading"),
+    pageTitle = messages("dateForm.check.heading"),
     backUrl = Some(backUrl),
     isAgent = isAgent,
     btaNavPartial = btaNavPartial) {
 
-    @formWithCSRF(action = postAction, Symbol("id") -> s"$messagesPrefix-form") {
+    @formWithCSRF(action = postAction, Symbol("id") -> "add-income-source-start-date-check-form") {
 
         @errorSummary(form)
 
         @govukRadios(Radios(
             fieldset = Some(Fieldset(
                 legend = Some(Legend(
-                    content = Text(getMessage("heading")),
+                    content = Text(messages("radioForm.checkDate.heading")),
                     classes = "govuk-fieldset__legend--l"
                 ))
             )),
             items = Seq(
                 RadioItem(
-                    id = Some(s"$messagesPrefix-yes-response"),
+                    id = Some("yes-response"),
                     value = Some("Yes"),
-                    content = Text(getMessage("radio.yes"))
+                    content = Text(messages("radioForm.yes"))
                 ),
                 RadioItem(
-                    id = Some(s"$messagesPrefix-no-response"),
+                    id = Some("no-response"),
                     value = Some("No"),
-                    content = Text(getMessage("radio.no"))
+                    content = Text(messages("radioForm.no"))
                 )
             ),
             hint = Some(Hint(
                 content = HtmlContent(incomeSourceStartDate)
-            ))
-        ).withFormField(form(messagesPrefix)))
+            )),
+            errorMessage = form.errors.headOption.map(err => ErrorMessage(content = Text(messages(err.message, err.args:_*))))
+        ).withFormField(form("add-income-source-start-date-check")))
 
         @govukButton(Button(
-            content = Text(getMessage("button")),
+            content = Text(messages("base.continue")),
             attributes = Map("id" -> "continue-button")
         ))
     }
