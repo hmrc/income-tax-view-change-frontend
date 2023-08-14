@@ -1421,9 +1421,19 @@ check-business-details.traditional-accounting           = Traditional accounting
 
 # business added page - h1 intentionally empty
 business-added.h1                                       =
-business-added.h2                                       = has been added to your account
 business-added.text                                     = What you must do
 business-added.to                                       =  to
+
+# Foreign Property Added - Uses above keys as base also, intentionally empty field below.
+business-added.foreign-property.head                    =
+business-added.foreign-property.h1                      = Foreign property
+business-added.foreign-property.base                    = has been added to your account
+business-added.uk-property.head                         =
+business-added.uk-property.h1                           = UK property
+business-added.uk-property.base                         = has been added to your account
+business-added.sole-treader.head                        =
+business-added.sole-treader.base                        = has been added to your account
+
 
 business-added.quarterly-heading                        = Send quarterly updates
 business-added.quarterly-p1                             = You must send quarterly updates of your income and expenses using compatible software by the following deadlines:
@@ -1455,11 +1465,6 @@ incomeSourceAdded.table.deadline.heading                                = Deadli
 incomeSourceAdded.button.text                                           = Your income sources
 incomeSourceAdded.previousTaxYears.heading                              = Previous tax years
 incomeSourceAdded.previousTaxYears.text                                 = You must make sure that you have sent all the required income and expenses, and final declarations for tax years earlier than
-
-# Foreign Property Added - Uses above keys as base also, intentionally empty field below.
-business-added.foreign-property-h1                      = Foreign property
-business-added.foreign-property-head                    =
-business-added.foreign-property-base                    = has been added to your account
 
 
 incomeSources.add.businessReportingMethod.heading                   =   Choose a reporting method

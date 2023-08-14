@@ -19,7 +19,7 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components.FormWithCSRF
 @import views.html.helpers.injected.ErrorSummary
-@import models.incomeSourceDetails.viewmodels.ObligationsViewModel
+@import models.incomeSourceDetails.viewmodels._
 @import java.time.LocalDate
 @import _root_.implicits.ImplicitDateFormatterImpl
 
@@ -34,31 +34,72 @@
   govukTable: GovukTable,
 )
 
-@(sources: ObligationsViewModel, postAction: Call, backUrl: String, isAgent: Boolean)(implicit messages: Messages, user: auth.MtdItUser[_])
+@(sources: ObligationsViewModel, backUrl: String, isAgent: Boolean, businessType: BusinessType, businessName: Option[String] = None)(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @getMessage(key: String, args: String*) = @{
   messages(s"business-added.$key", args: _*)
 }
 
+
+@getPageTitle = @{
+
+    businessType match {
+        case businessType:SoleTreaderBusiness =>
+            s"""${getMessage("sole-treader.head")} ${businessName.get} ${getMessage("sole-treader.base")}""".trim()
+
+        case businessType:UkPropertyBusiness =>
+            s"${getMessage("uk-property.head")} " +
+            s"${getMessage("uk-property.h1")} " +
+            s"${getMessage("uk-property.base")}".trim()
+
+        case businessType:ForeignPropertyBusiness =>
+            s"""${getMessage("foreign-property.h1")} ${getMessage("foreign-property.base")}"""
+    }
+}
+
+@getAddIncomeSourcesCall = @{
+    if(isAgent) {
+        controllers.incomeSources.add.routes.AddIncomeSourceController.showAgent()
+    } else {
+        controllers.incomeSources.add.routes.AddIncomeSourceController.show()
+    }
+}
+
+@bannerHtmlContent(head:String, h1:String, base:String) = {
+    <div class="govuk-panel__body govuk-!-margin-bottom-3">
+        @head
+    </div>
+    <h1 class="govuk-panel__title">
+        @h1
+    </h1>
+    <div class="govuk-panel__body">
+        @base
+    </div>
+}
+
+@getBannerContent() = @{
+    businessType match {
+        case businessType:SoleTreaderBusiness =>
+            bannerHtmlContent(getMessage("sole-treader.head"),businessName.get,getMessage("sole-treader.base"))
+        case businessType:UkPropertyBusiness =>
+            bannerHtmlContent(getMessage("uk-property.head"),getMessage("uk-property.h1"),getMessage("uk-property.base"))
+        case businessType:ForeignPropertyBusiness =>
+        bannerHtmlContent(getMessage("foreign-property.head"),getMessage("foreign-property.h1"),getMessage("foreign-property.base"))
+    }
+}
+
+
 @import implicitDateFormatter.longDate
 
-@mainTemplate(pageTitle = getMessage("foreign-property-h1") + " " + getMessage("h2"),
+@mainTemplate(pageTitle = getPageTitle,
   backUrl = Some(backUrl),
   isAgent = isAgent,
   btaNavPartial = user.btaNavPartial) {
 
-    @formWithCSRF(action = postAction) {
+    @formWithCSRF(action = getAddIncomeSourcesCall) {
 
         <div class="govuk-panel govuk-panel--confirmation" id="banner">
-            <div class="govuk-panel__body govuk-!-margin-bottom-3">
-                @getMessage("foreign-property-head")
-            </div>
-            <h1 class="govuk-panel__title">
-                @getMessage("foreign-property-h1")
-            </h1>
-            <div class="govuk-panel__body">
-                @getMessage("foreign-property-base")
-            </div>
+            @getBannerContent()
         </div>
 
         <h2 class="govuk-label-wrapper">
@@ -135,28 +176,31 @@
             </div>
         }
 
-        <div class="box-simple" id="finalDeclaration">
-            <div class="page_headers govuk-heading-m"> @getMessage("final-declaration-heading") </div>
-            <p class="govuk-body"> @getMessage("final-declaration-text") </p>
 
-            <table class="govuk-table">
-                <thead class="govuk-table__head">
-                    <tr class="govuk-table__row">
-                        <th scope="col" class="govuk-table__header govuk">@getMessage("table.heading-1")</th>
-                        <th scope="col" class="govuk-table__header govuk">@getMessage("table.heading-2")</th>
-                    </tr>
-                </thead>
+        @if(sources.finalDeclarationDates.nonEmpty) {
+            <div class="box-simple" id="finalDeclaration">
+                <div class="page_headers govuk-heading-m"> @getMessage("final-declaration-heading") </div>
+                <p class="govuk-body"> @getMessage("final-declaration-text") </p>
 
-                <tbody class="govuk-table__body">
-                    @sources.finalDeclarationDates.map{ x =>
+                <table class="govuk-table">
+                    <thead class="govuk-table__head">
                         <tr class="govuk-table__row">
-                            <td class="govuk-table__cell">@(x.inboundCorrespondenceFrom.getYear + " " + getMessage("to") + " " + x.inboundCorrespondenceTo.getYear)</td>
-                            <td class="govuk-table__cell">@(x.inboundCorrespondenceDue.toLongDate)</td>
+                            <th scope="col" class="govuk-table__header govuk">@getMessage("table.heading-1")</th>
+                            <th scope="col" class="govuk-table__header govuk">@getMessage("table.heading-2")</th>
                         </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
+                    </thead>
+
+                    <tbody class="govuk-table__body">
+                        @sources.finalDeclarationDates.map{ x =>
+                            <tr class="govuk-table__row">
+                                <td class="govuk-table__cell">@(x.inboundCorrespondenceFrom.getYear + " " + getMessage("to") + " " + x.inboundCorrespondenceTo.getYear)</td>
+                                <td class="govuk-table__cell">@(x.inboundCorrespondenceDue.toLongDate)</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
 
         @if(sources.showPrevTaxYears) {
             <div class="box-simple" id="prevYears">
@@ -168,11 +212,8 @@
         }
 
         <div class="govuk-!-margin-top-8">
-
+            @continueButton( Some(getMessage("income-sources-button")) )
         </div>
 
-        @continueButton(
-            Some(getMessage("income-sources-button"))
-        )
     }
 }

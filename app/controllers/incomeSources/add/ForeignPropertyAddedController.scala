@@ -21,23 +21,18 @@ import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
-import models.incomeSourceDetails.BusinessDetailsModel
-import models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
-import models.nextUpdates.{NextUpdateModel, NextUpdatesErrorModel, ObligationsModel}
+import models.incomeSourceDetails.viewmodels.ForeignPropertyBusiness
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.{DateServiceInterface, IncomeSourceDetailsService, NextUpdatesService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import views.html.incomeSources.add.ForeignPropertyAddedObligations
+import views.html.incomeSources.add.IncomeSourceAddedObligations
 
-import java.time.LocalDate
-import java.time.Month.APRIL
 import javax.inject.Inject
-import scala.concurrent.duration.{Duration, MILLISECONDS}
-import scala.concurrent.{Await, ExecutionContext, Future}
+import scala.concurrent.{ExecutionContext, Future}
 
-class ForeignPropertyAddedController @Inject()(val foreignPropertyObligationsView: ForeignPropertyAddedObligations,
+class ForeignPropertyAddedController @Inject()(val view: IncomeSourceAddedObligations,
                                                val checkSessionTimeout: SessionTimeoutPredicate,
                                                val authenticate: AuthenticationPredicate,
                                                val authorisedFunctions: AuthorisedFunctions,
@@ -47,11 +42,11 @@ class ForeignPropertyAddedController @Inject()(val foreignPropertyObligationsVie
                                                val retrieveBtaNavBar: NavBarPredicate,
                                                val nextUpdatesService: NextUpdatesService)
                                               (implicit val appConfig: FrontendAppConfig,
-                                                   val itvcErrorHandler: ItvcErrorHandler,
-                                                   implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
-                                                   implicit override val mcc: MessagesControllerComponents,
-                                                   val ec: ExecutionContext,
-                                                   dateService: DateServiceInterface)
+                                               val itvcErrorHandler: ItvcErrorHandler,
+                                               implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
+                                               implicit override val mcc: MessagesControllerComponents,
+                                               val ec: ExecutionContext,
+                                               dateService: DateServiceInterface)
   extends ClientConfirmedController with I18nSupport with FeatureSwitching {
 
 
@@ -90,10 +85,8 @@ class ForeignPropertyAddedController @Inject()(val foreignPropertyObligationsVie
         case Some((_, startDate)) =>
           val showPreviousTaxYears: Boolean = startDate.isBefore(dateService.getCurrentTaxYearStart())
           nextUpdatesService.getObligationsViewModel(incomeSourceId, showPreviousTaxYears) map { viewModel =>
-            if (isAgent) Ok(foreignPropertyObligationsView(viewModel,
-              controllers.incomeSources.add.routes.ForeignPropertyAddedController.submitAgent(), agentBackUrl, isAgent = true))
-            else Ok(foreignPropertyObligationsView(viewModel,
-              controllers.incomeSources.add.routes.ForeignPropertyAddedController.submit(), backUrl, isAgent = false))
+            if (isAgent) Ok(view(viewModel, agentBackUrl, isAgent = isAgent, businessType = ForeignPropertyBusiness()))
+            else Ok(view(viewModel, backUrl, isAgent = isAgent, businessType = ForeignPropertyBusiness()))
           }
         case _ =>
           Logger("application").error(

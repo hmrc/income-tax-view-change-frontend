@@ -35,7 +35,7 @@ import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
 import services.{DateService, DateServiceInterface}
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testIndividualAuthSuccessWithSaUtrResponse}
 import testUtils.TestSupport
-import views.html.incomeSources.add.ForeignPropertyAddedObligations
+import views.html.incomeSources.add.IncomeSourceAddedObligations
 
 import java.time.LocalDate
 import scala.concurrent.Future
@@ -54,7 +54,7 @@ class ForeignPropertyAddedControllerSpec extends TestSupport
   val mockDateService: DateService = mock(classOf[DateService])
 
   object TestForeignPropertyObligationsController extends ForeignPropertyAddedController(
-    foreignPropertyObligationsView = app.injector.instanceOf[ForeignPropertyAddedObligations],
+    view = app.injector.instanceOf[IncomeSourceAddedObligations],
     checkSessionTimeout = app.injector.instanceOf[SessionTimeoutPredicate],
     authenticate = MockAuthenticationPredicate,
     authorisedFunctions = mockAuthService,
@@ -246,3 +246,4 @@ class ForeignPropertyAddedControllerSpec extends TestSupport
     }
   }
 }
+

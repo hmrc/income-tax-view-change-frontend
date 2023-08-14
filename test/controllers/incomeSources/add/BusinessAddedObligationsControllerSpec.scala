@@ -37,7 +37,7 @@ import testConstants.BaseTestConstants
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testSelfEmploymentId}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 import testUtils.TestSupport
-import views.html.incomeSources.add.BusinessAddedObligations
+import views.html.incomeSources.add.IncomeSourceAddedObligations
 
 import java.time.LocalDate
 import scala.concurrent.Future
@@ -64,7 +64,7 @@ class BusinessAddedObligationsControllerSpec extends TestSupport
     retrieveBtaNavBar = MockNavBarPredicate,
     itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
     incomeSourceDetailsService = mockIncomeSourceDetailsService,
-    obligationsView = app.injector.instanceOf[BusinessAddedObligations],
+    obligationsView = app.injector.instanceOf[IncomeSourceAddedObligations],
     mockNextUpdatesService
   )(
     appConfig = app.injector.instanceOf[FrontendAppConfig],

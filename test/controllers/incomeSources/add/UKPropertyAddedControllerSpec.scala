@@ -32,7 +32,7 @@ import testConstants.BaseTestConstants
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testPropertyIncomeId, testSelfEmploymentId}
 import testConstants.incomeSources.IncomeSourcesObligationsTestConstants
 import testUtils.TestSupport
-import views.html.incomeSources.add.UKPropertyAdded
+import views.html.incomeSources.add.IncomeSourceAddedObligations
 
 import java.time.LocalDate
 import scala.concurrent.Future
@@ -40,7 +40,7 @@ import scala.concurrent.Future
 class UKPropertyAddedControllerSpec extends TestSupport with MockAuthenticationPredicate
   with MockIncomeSourceDetailsPredicate with MockNextUpdatesService with MockIncomeSourceDetailsService with FeatureSwitching {
 
-  val view: UKPropertyAdded = app.injector.instanceOf[UKPropertyAdded]
+  val view: IncomeSourceAddedObligations = app.injector.instanceOf[IncomeSourceAddedObligations]
   val mockDateService: DateService = mock(classOf[DateService])
 
   object TestUKPropertyAddedController extends UKPropertyAddedController(

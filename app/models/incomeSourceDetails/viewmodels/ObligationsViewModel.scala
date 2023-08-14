@@ -18,6 +18,10 @@ package models.incomeSourceDetails.viewmodels
 
 import java.time.LocalDate
 
+trait BusinessType
+final case class SoleTreaderBusiness() extends BusinessType
+final case class UkPropertyBusiness() extends BusinessType
+final case class ForeignPropertyBusiness() extends BusinessType
 final case class ObligationsViewModel(quarterlyObligationsDatesYearOne: Seq[DatesModel], quarterlyObligationsDatesYearTwo: Seq[DatesModel],
                                       eopsObligationsDates: Seq[DatesModel], finalDeclarationDates: Seq[DatesModel], currentTaxYear: Int, showPrevTaxYears: Boolean)
 
