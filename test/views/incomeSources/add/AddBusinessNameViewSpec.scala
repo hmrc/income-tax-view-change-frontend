@@ -46,7 +46,9 @@ class AddBusinessNameViewSpec extends ViewSpec {
   val formModeUpdate: String = "update"
 
 
-  val pageWithoutError: Html = addBusinessName(BusinessNameForm.form, false, testCall, backUrl, formModeAdd)
+  val addPageWithoutError: Html = addBusinessName(BusinessNameForm.form, false, testCall, backUrl, formModeAdd)
+  val changePageWithoutError: Html = addBusinessName(BusinessNameForm.form, false, testCall, backUrl, formModeUpdate)
+
 
 
 
@@ -58,14 +60,14 @@ class AddBusinessNameViewSpec extends ViewSpec {
   }
 
   "The add business name page" when {
-    "there is no error on the page" should {
-      "have the correct heading" in new Setup(pageWithoutError) {
+    "there is no error on the add page" should {
+      "have the correct heading" in new Setup(addPageWithoutError) {
         layoutContent hasPageHeading AddBusinessNameMessages.heading
       }
-      "have a form with the correct attributes" in new Setup(pageWithoutError) {
+      "have a form with the correct attributes" in new Setup(addPageWithoutError) {
         layoutContent.hasFormWith(testCall.method, testCall.url)
       }
-      "have an input with associated hint and label" in new Setup(pageWithoutError) {
+      "have an input with associated hint and label" in new Setup(addPageWithoutError) {
         val form: Element = layoutContent.selectHead("form")
         val label: Element = form.selectHead("label")
         val hint: Element = layoutContent.selectHead(".govuk-hint")
@@ -81,13 +83,72 @@ class AddBusinessNameViewSpec extends ViewSpec {
         input.attr("type") shouldBe "text"
         input.attr("aria-describedby") shouldBe s"${SessionKeys.businessName}-hint"
       }
-      "have a continue button" in new Setup(pageWithoutError) {
+      "have a continue button" in new Setup(addPageWithoutError) {
         val button: Element = layoutContent.selectHead("form").selectHead("button")
         button.text shouldBe AddBusinessNameMessages.continue
       }
     }
 
-    "there is an input error on the page" should {
+    "there is an input error on the add page" should {
+      List(
+        BusinessNameForm.businessNameEmptyError -> AddBusinessNameMessages.errorBusinessNameEmpty,
+        BusinessNameForm.businessNameLengthIncorrect -> AddBusinessNameMessages.errorBusinessNameLength,
+        BusinessNameForm.businessNameInvalidChar -> AddBusinessNameMessages.errorBusinessNameChar
+      ) foreach { case (errorKey, errorMessage) =>
+        s"for the error '$errorMessage'" should {
+
+          "have the error message display with the input described by it" in new Setup(pageWithError(errorKey)) {
+            val form: Element = layoutContent.selectHead("form")
+            form.selectHead("div").attr("class").contains("govuk-form-group--error") shouldBe true
+
+
+            val error: Element = form.selectHead("span")
+            val input: Element = form.selectHead("input")
+
+            error.attr("id") shouldBe s"${SessionKeys.businessName}-error"
+            error.text shouldBe s"${AddBusinessNameMessages.errorPrefix} $errorMessage"
+            val errorPrefix: Element = error.selectHead("span > span")
+            errorPrefix.attr("class") shouldBe "govuk-visually-hidden"
+            errorPrefix.text shouldBe AddBusinessNameMessages.errorPrefix
+
+            input.attr("aria-describedby") shouldBe s"${SessionKeys.businessName}-hint ${SessionKeys.businessName}-error"
+          }
+        }
+      }
+    }
+  }
+
+  "The change business name page" when {
+    "there is no error on the change page" should {
+      "have the correct heading" in new Setup(changePageWithoutError) {
+        layoutContent hasPageHeading AddBusinessNameMessages.heading
+      }
+      "have a form with the correct attributes" in new Setup(changePageWithoutError) {
+        layoutContent.hasFormWith(testCall.method, testCall.url)
+      }
+      "have an input with associated hint and label" in new Setup(changePageWithoutError) {
+        val form: Element = layoutContent.selectHead("form")
+        val label: Element = form.selectHead("label")
+        val hint: Element = layoutContent.selectHead(".govuk-hint")
+
+        val input: Element = form.selectHead("input")
+
+        label.text shouldBe AddBusinessNameMessages.heading
+
+
+        label.attr("for") shouldBe input.attr("id")
+        input.attr("id") shouldBe SessionKeys.businessName
+        input.attr("name") shouldBe SessionKeys.businessName
+        input.attr("type") shouldBe "text"
+        input.attr("aria-describedby") shouldBe s"${SessionKeys.businessName}-hint"
+      }
+      "have a continue button" in new Setup(addPageWithoutError) {
+        val button: Element = layoutContent.selectHead("form").selectHead("button")
+        button.text shouldBe AddBusinessNameMessages.continue
+      }
+    }
+
+    "there is an input error on the change page" should {
       List(
         BusinessNameForm.businessNameEmptyError -> AddBusinessNameMessages.errorBusinessNameEmpty,
         BusinessNameForm.businessNameLengthIncorrect -> AddBusinessNameMessages.errorBusinessNameLength,

@@ -57,6 +57,10 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
 
   lazy val submitAction: Call = controllers.incomeSources.add.routes.AddBusinessNameController.submit()
   lazy val submitActionAgent: Call = controllers.incomeSources.add.routes.AddBusinessNameController.submitAgent()
+
+  lazy val submitChangeAction: Call = controllers.incomeSources.add.routes.AddBusinessNameController.submitChange()
+  lazy val submitChangeActionAgent: Call = controllers.incomeSources.add.routes.AddBusinessNameController.submitAgent()
+
   lazy val redirect: Call = controllers.incomeSources.add.routes.AddBusinessStartDateController.show()
   lazy val redirectAgent: Call = controllers.incomeSources.add.routes.AddBusinessStartDateController.showAgent()
 
@@ -67,14 +71,12 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
   lazy val addBusinessNameUrl: String = controllers.incomeSources.add.routes.AddBusinessNameController.show().url
   lazy val agentAddBusinessAddressUrl: String = controllers.incomeSources.add.routes.AddBusinessAddressController.showAgent().url
 
-  lazy val changeBusinessNameUrl: String = controllers.incomeSources.add.routes.BusinessAccountingMethodController.show().url
-  lazy val agentChangeBusinessNameUrl: String = controllers.incomeSources.add.routes.BusinessAccountingMethodController.showAgent().url
-
 
   def show(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
       val formMode = getModeFromURL(user)
+      println(s"FormMode show() = $formMode")
       handleRequest(
         isAgent = false,
         backUrl = backUrl,
@@ -96,6 +98,19 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
               )
           }
     }
+
+  private def getModeFromURL(request: RequestHeader): String = {
+    val urlPath = request.uri
+
+    println("LOOOOOOOOK HERE")
+    println(s"urlPath: $urlPath")
+    println(addBusinessNameUrl)
+
+    urlPath match {
+      case path if path == addBusinessNameUrl => "add"
+      case _ => "update"
+    }
+  }
 
   def handleRequest(isAgent: Boolean, backUrl: String, formMode: String)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
 
@@ -122,7 +137,7 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
   def submit: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit request =>
-      handleSubmitRequest(isAgent = false)
+      handleSubmitRequest(isAgent = false, formMode = "add")
   }
 
   def submitAgent: Action[AnyContent] = Authenticated.async {
@@ -130,18 +145,34 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
           implicit mtdItUser =>
-            handleSubmitRequest(isAgent = true)
+            handleSubmitRequest(isAgent = true, formMode = "add")
         }
   }
 
-  def handleSubmitRequest(isAgent: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
+  def submitChange: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+    andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
+    implicit request =>
+      handleSubmitRequest(isAgent = false, formMode = "update")
+  }
+//
+//  def submitChangeAgent: Action[AnyContent] = Authenticated.async {
+//    implicit request =>
+//      implicit user =>
+//        getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
+//          implicit mtdItUser =>
+//            handleSubmitRequest(isAgent = true, formMode = "update")
+//        }
+//  }
+
+  def handleSubmitRequest(isAgent: Boolean, formMode: String)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
     val (backUrlLocal, submitActionLocal, redirectLocal) = {
       if (isAgent)
         (backUrlAgent, submitActionAgent, redirectAgent)
       else
         (backUrl, submitAction, redirect)
     }
-    val formMode = getModeFromURL(user)
+
+    println(s"FormMode handleSubmit() = $formMode")
 
     BusinessNameForm.form.bindFromRequest().fold(
       formWithErrors => {
@@ -150,10 +181,11 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
         }
       },
       formData => {
-        val updatedRedirect = user.session.get(SessionKeys.addBusinessAddressLine1) match {
-          case Some(_) => if(isAgent)(checkDetailsRedirectAgent) else (checkDetailsRedirect)
-          case None => redirectLocal
+        val updatedRedirect = formMode match {
+          case "add" => redirectLocal
+          case _ => if(isAgent)(checkDetailsRedirectAgent) else (checkDetailsRedirect)
         }
+
 
         Future.successful {
           Redirect(updatedRedirect)
@@ -163,23 +195,11 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
     )
   }
 
-  private def getModeFromURL(request: RequestHeader): String = {
-    val urlPath = request.uri
-
-    println("LOOOOOOOOK HERE")
-    println(s"urlPath: $urlPath")
-    println(addBusinessNameUrl)
-
-    urlPath match {
-      case path if path == addBusinessNameUrl => "add"
-      case _ => "update"
-    }
-  }
-
   def changeBusinessName(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
       val formMode = getModeFromURL(user)
+      println(s"FormMode changeBusinessName() = $formMode")
       handleRequest(
         isAgent = false,
         backUrl = checkDetailsBackUrl,
