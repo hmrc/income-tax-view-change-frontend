@@ -119,9 +119,7 @@ class AddIncomeSourceStartDateCheckControllerISpec extends ComponentSpecBase {
       }
     }
     "return INTERNAL_SERVER_ERROR" when {
-      "impossible entry given" in {
-
-        stubAuthorisedAgentUser(authorised = true)
+      "invalid entry given" in {
 
         enable(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
@@ -130,7 +128,7 @@ class AddIncomeSourceStartDateCheckControllerISpec extends ComponentSpecBase {
           .postAddBusinessStartDateCheck(Some("@"))(clientDetailsWithConfirmation ++ testAddBusinessStartDate)
 
         result should have(
-          httpStatus(INTERNAL_SERVER_ERROR)
+          httpStatus(BAD_REQUEST)
         )
       }
     }

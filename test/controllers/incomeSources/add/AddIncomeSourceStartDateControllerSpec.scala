@@ -82,7 +82,7 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport
     ec = ec
   )
 
-  "Individual: AddBusinessStartDateController.handleRequest" should {
+  "Individual: AddIncomeSourceStartDateController.handleRequest" should {
     "redirect to the Custom Not Found Error page" when {
       "incomeSources FS is disabled" in {
         disableAllSwitches()
@@ -144,7 +144,7 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport
       }
     }
   }
-  "Individual: AddBusinessStartDateController.handleSubmitRequest" should {
+  "Individual: AddIncomeSourceStartDateController.handleSubmitRequest" should {
     "redirect to the Custom Not Found Error page" when {
       "incomeSources FS is disabled" in {
         disableAllSwitches()
@@ -442,7 +442,7 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport
     }
   }
 
-  "Agent: AddBusinessStartDateController.handleRequest" should {
+  "Agent: AddIncomeSourceStartDateController.handleRequest" should {
     "redirect to the Custom Not Found Error page" when {
       "incomeSources FS is disabled" in {
         disableAllSwitches()
@@ -504,7 +504,7 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport
       }
     }
   }
-  "Agent: AddBusinessStartDateController.handleSubmitRequest" should {
+  "Agent: AddIncomeSourceStartDateController.handleSubmitRequest" should {
     "redirect to the Custom Not Found Error page" when {
       "incomeSources FS is disabled" in {
         disableAllSwitches()

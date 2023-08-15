@@ -126,7 +126,7 @@ class AddIncomeSourceStartDateCheckControllerISpec extends ComponentSpecBase {
       }
     }
     "return INTERNAL_SERVER_ERROR" when {
-      "impossible entry given" in {
+      "invalid entry given" in {
 
         stubAuthorisedAgentUser(authorised = true)
 
@@ -137,7 +137,7 @@ class AddIncomeSourceStartDateCheckControllerISpec extends ComponentSpecBase {
           .postAddBusinessStartDateCheck(Some("@"))(clientDetailsWithConfirmation ++ testAddBusinessStartDate)
 
         result should have(
-          httpStatus(INTERNAL_SERVER_ERROR)
+          httpStatus(BAD_REQUEST)
         )
       }
     }

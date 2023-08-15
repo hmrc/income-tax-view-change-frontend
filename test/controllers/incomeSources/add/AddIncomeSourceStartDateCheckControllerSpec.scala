@@ -91,8 +91,8 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
     val title: String = s"${messages("htmlTitle", heading)}"
   }
 
-  "AddBusinessStartDateCheckController.show()" should {
-    "return the not found view" when {
+  "AddIncomeSourceStartDateCheckController.show()" should {
+    "render the custom not found error view" when {
       "Income Sources FS is disabled" in {
         disableAllSwitches()
         disable(IncomeSources)
@@ -137,7 +137,8 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
       }
     }
 
-    "AddBusinessStartDateCheckController.submit()" should {
+    "AddIncomeSourceStartDateCheckController.submit()" should {
+
       "redirect back to add business start date page with businessStartDate removed from session" when {
         "No is submitted with the form" in {
           disableAllSwitches()
@@ -220,8 +221,21 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
   }
 
 
-  "AddBusinessStartDateCheckController.showAgent()" should {
+  "AddIncomeSourceStartDateCheckController.showAgent()" should {
+    "render the custom not found error view" when {
+      "Income Sources FS is disabled" in {
+        disableAllSwitches()
 
+        mockNoIncomeSources()
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
+
+        val result: Future[Result] = TestAddIncomeSourceStartDateCheckController.submitSoleTraderBusiness(fakeRequestWithActiveSession)
+        val expectedContent: String = TestAddIncomeSourceStartDateCheckController.customNotFoundErrorView().toString()
+        status(result) shouldBe Status.OK
+        contentAsString(result) shouldBe expectedContent
+
+      }
+    }
     "return 500 INTERNAL_SERVER_ERROR" when {
       "there is no businessStartDate in session" in {
         disableAllSwitches()
