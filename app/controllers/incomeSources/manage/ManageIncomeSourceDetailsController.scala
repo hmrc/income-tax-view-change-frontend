@@ -113,7 +113,6 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
   def showSoleTraderBusiness(id: String): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
-      println("UUUUUUUUUU" + user.incomeSources)
       handleRequest(
         sources = user.incomeSources,
         isAgent = false,
@@ -291,7 +290,6 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
       } yield {
         value match {
           case Right(viewModel) =>
-            println("OOOOOOOOO" + viewModel)
             Ok(view(viewModel = viewModel,
               isAgent = isAgent,
               backUrl = backUrl
