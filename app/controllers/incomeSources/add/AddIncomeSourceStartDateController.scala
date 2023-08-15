@@ -207,37 +207,37 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
         (
           controllers.incomeSources.add.routes.AddBusinessNameController.show(),
           controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.submitSoleTraderBusiness,
-          controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.showSoleTraderBusiness,
+          controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.showSoleTraderBusiness
         )
       case (false, UkProperty) =>
         (
           controllers.incomeSources.add.routes.AddIncomeSourceController.show(),
           controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.submitUKProperty,
-          controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.showUKProperty,
+          controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.showUKProperty
         )
       case (false, ForeignProperty) =>
         (
           controllers.incomeSources.add.routes.AddIncomeSourceController.show(),
           controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.submitForeignProperty,
-          controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.showForeignProperty,
+          controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.showForeignProperty
         )
       case (true, SelfEmployment) =>
         (
           controllers.incomeSources.add.routes.AddBusinessNameController.showAgent(),
           controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.submitSoleTraderBusinessAgent,
-          controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.showSoleTraderBusinessAgent,
+          controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.showSoleTraderBusinessAgent
         )
       case (true, UkProperty) =>
         (
           controllers.incomeSources.add.routes.AddIncomeSourceController.showAgent(),
           controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.submitUKPropertyAgent,
-          controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.showUKPropertyAgent,
+          controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.showUKPropertyAgent
         )
       case (true, ForeignProperty) =>
         (
           controllers.incomeSources.add.routes.AddIncomeSourceController.showAgent(),
           controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.submitForeignPropertyAgent,
-          controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.showForeignPropertyAgent,
+          controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.showForeignPropertyAgent
         )
     }
   }
