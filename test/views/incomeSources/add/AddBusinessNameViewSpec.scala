@@ -42,12 +42,19 @@ class AddBusinessNameViewSpec extends ViewSpec {
 
   val addBusinessName: AddBusinessName = app.injector.instanceOf[AddBusinessName]
 
-  val pageWithoutError: Html = addBusinessName(BusinessNameForm.form, false, testCall, backUrl)
+  val formModeAdd: String = "add"
+  val formModeUpdate: String = "update"
+
+
+  val pageWithoutError: Html = addBusinessName(BusinessNameForm.form, false, testCall, backUrl, formModeAdd)
+
+
+
 
   def pageWithError(error: String = BusinessNameForm.businessNameEmptyError): Html = {
     val modifiedForm = BusinessNameForm.form.withError(SessionKeys.businessName, error)
       .fill(BusinessNameForm(invalidName))
-    addBusinessName(modifiedForm, false, testCall, backUrl)
+    addBusinessName(modifiedForm, false, testCall, backUrl, formModeAdd)
   }
 
   "The add business name page" when {

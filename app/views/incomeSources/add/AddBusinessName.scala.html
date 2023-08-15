@@ -23,6 +23,8 @@
 @import helper._
 @import views.html.helpers.injected.ErrorSummary
 @import views.html.helpers.injected.InputHelper
+@import models.incomeSourceDetails.viewmodels.CheckBusinessDetailsViewModel
+
 
 
 @this(
@@ -39,7 +41,13 @@
     errorSummary: ErrorSummary
 )
 
-@(businessNameForm: Form[BusinessNameForm], isAgent: Boolean, postAction: Call, backUrl: String)(implicit messages: Messages, user: auth.MtdItUser[_])
+@(
+    businessNameForm: Form[BusinessNameForm],
+    isAgent: Boolean,
+    postAction: Call,
+    backUrl: String,
+    formMode: String
+)(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @import forms.utils.SessionKeys
 
@@ -55,9 +63,13 @@
     field.error
 }
 
+@modeFromUrl = @{
+    formMode
+}
 @mainTemplate(
     pageTitle = messages("add-business-name.heading"),
     isAgent = isAgent,
+    useFallbackBackLink = true,
     backUrl = Some(backUrl),
     btaNavPartial = user.btaNavPartial) {
 
@@ -89,6 +101,13 @@
             }
 
             <input
+                    name="mode"
+                    type="hidden"
+                    value="@modeFromUrl"
+                    aria-hidden="true"
+            >
+
+            <input
                 name="@field.name"
                 class="govuk-input govuk-input--width-20"
                 id="@field.name"
@@ -100,7 +119,7 @@
                 }
                 @if(field.value.isDefined){
                     value="@field.value.get"
-                    }
+                }
             >
         </div>
 
