@@ -128,7 +128,7 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
     } else {
       (getAndValidateStartDate(incomeSourceType), getCalls(isAgent, incomeSourceType)) match {
         case (Left(ex), _) =>
-          Logger("application").error(s"[AddIncomeSourceStartDateCheckController][handleSubmitRequest]: " +
+          Logger("application").error(s"[AddIncomeSourceStartDateCheckController][handleRequest]: " +
             s"Failed to get income source start date, Error: $ex")
           Future {
             getErrorHandler(isAgent).showInternalServerError()
