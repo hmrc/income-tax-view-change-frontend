@@ -195,6 +195,44 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
         status(result) shouldBe BAD_REQUEST
       }
 
+      "return INTERNAL_SERVER_ERROR" when {
+        "the session value of addBusinessStartDate cannot be parsed as a LocalDate" in {
+          disableAllSwitches()
+          enable(IncomeSources)
+
+          mockNoIncomeSources()
+          setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
+
+          val result = TestAddIncomeSourceStartDateCheckController.submitSoleTraderBusiness(
+            fakeRequestWithActiveSession
+              .withSession(SessionKeys.addBusinessStartDate -> "INVALID_DATE")
+              .withFormUrlEncodedBody(
+                AddIncomeSourceStartDateCheckForm.response -> responseYes
+              ))
+
+          status(result) shouldBe INTERNAL_SERVER_ERROR
+        }
+      }
+
+      "return INTERNAL_SERVER_ERROR" when {
+        "the session value of an income source start date cannot be parsed as a LocalDate" in {
+          disableAllSwitches()
+          enable(IncomeSources)
+
+          mockNoIncomeSources()
+          setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
+
+          val result = TestAddIncomeSourceStartDateCheckController.submitSoleTraderBusiness(
+            fakeRequestWithActiveSession
+              .withSession(SessionKeys.addBusinessStartDate -> "INVALID_DATE")
+              .withFormUrlEncodedBody(
+                AddIncomeSourceStartDateCheckForm.response -> responseYes
+              ))
+
+          status(result) shouldBe INTERNAL_SERVER_ERROR
+        }
+      }
+
       "redirect to add business trade page" when {
         "Yes is submitted with the form with a valid session" in {
           disableAllSwitches()
@@ -321,6 +359,44 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
           ))
 
       status(result) shouldBe BAD_REQUEST
+    }
+
+    "return INTERNAL_SERVER_ERROR" when {
+      "the session value of addBusinessStartDate cannot be parsed as a LocalDate" in {
+        disableAllSwitches()
+        enable(IncomeSources)
+
+        mockNoIncomeSources()
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+
+        val result = TestAddIncomeSourceStartDateCheckController.submitSoleTraderBusinessAgent(
+          fakeRequestConfirmedClient()
+            .withSession(SessionKeys.addBusinessStartDate -> "INVALID_DATE")
+            .withFormUrlEncodedBody(
+              AddIncomeSourceStartDateCheckForm.response -> responseYes
+            ))
+
+        status(result) shouldBe INTERNAL_SERVER_ERROR
+      }
+    }
+
+    "return INTERNAL_SERVER_ERROR" when {
+      "the session value of an income source start date cannot be parsed as a LocalDate" in {
+        disableAllSwitches()
+        enable(IncomeSources)
+
+        mockNoIncomeSources()
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+
+        val result = TestAddIncomeSourceStartDateCheckController.submitSoleTraderBusinessAgent(
+          fakeRequestConfirmedClient()
+            .withSession(SessionKeys.addBusinessStartDate -> "INVALID_DATE")
+            .withFormUrlEncodedBody(
+              AddIncomeSourceStartDateCheckForm.response -> responseYes
+            ))
+
+        status(result) shouldBe INTERNAL_SERVER_ERROR
+      }
     }
 
     "redirect to add business trade page" when {

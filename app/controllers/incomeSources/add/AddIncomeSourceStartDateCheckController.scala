@@ -38,6 +38,7 @@ import views.html.incomeSources.add.AddIncomeSourceStartDateCheck
 import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.Try
 
 @Singleton
 class AddIncomeSourceStartDateCheckController @Inject()(authenticate: AuthenticationPredicate,
@@ -120,17 +121,20 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
   def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)
                    (implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
 
-    if(isEnabled(IncomeSources)) {
-      (getStartDate(incomeSourceType), getCalls(isAgent, incomeSourceType)) match {
-        case (None, _) =>
-          Logger("application")
-            .error(s"[AddIncomeSourceStartDateCheckController][handleRequest]: " +
-              s"failed to get start date for $incomeSourceType from session")
-          Future(
+    if(isDisabled(IncomeSources)) {
+      Future {
+        Ok(customNotFoundErrorView())
+      }
+    } else {
+      (getAndValidateStartDate(incomeSourceType), getCalls(isAgent, incomeSourceType)) match {
+        case (Left(ex), _) =>
+          Logger("application").error(s"[AddIncomeSourceStartDateCheckController][handleSubmitRequest]: " +
+            s"Failed to get income source start date, Error: $ex")
+          Future {
             getErrorHandler(isAgent).showInternalServerError()
-          )
-        case (Some(startDate), (backCall, postAction, _)) =>
-          Future(
+          }
+        case (Right(startDate), (backCall, postAction, _)) =>
+          Future {
             Ok(
               addIncomeSourceStartDateCheckView(
                 form = form(incomeSourceType.addIncomeSourceStartDateCheckMessagesPrefix),
@@ -140,14 +144,8 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
                 incomeSourceStartDate = longDate(startDate.toLocalDate).toLongDate
               )
             )
-          )
+          }
       }
-    } else {
-      Future(
-        Ok(
-          customNotFoundErrorView()
-        )
-      )
     }
   } recover {
     case ex: Exception =>
@@ -159,69 +157,43 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
   def handleSubmitRequest(isAgent: Boolean,
                           incomeSourceType: IncomeSourceType)
                          (implicit mtdItUser: MtdItUser[_]): Future[Result] = {
-
-    if (isDisabled(IncomeSources)) {
-      Future(
-        Ok(
-          customNotFoundErrorView()
-        )
-      )
-    } else {
-      (getStartDate(incomeSourceType), getCalls(isAgent, incomeSourceType)) match {
-        case (None, _) =>
+    if (isDisabled(IncomeSources))
+      Future {
+        Ok(customNotFoundErrorView())
+      }
+    else {
+      (getAndValidateStartDate(incomeSourceType), getCalls(isAgent, incomeSourceType)) match {
+        case (Left(ex), _) =>
           Logger("application").error(s"[AddIncomeSourceStartDateCheckController][handleSubmitRequest]: " +
-            s"failed to get start date from session for incomeSourceType: $incomeSourceType")
-          Future(
+            s"Failed to get income source start date, Error: $ex")
+          Future {
             getErrorHandler(isAgent).showInternalServerError()
+          }
+        case (Right(startDate), (backCall, postAction, successCall)) =>
+          form(incomeSourceType.addIncomeSourceStartDateCheckMessagesPrefix).bindFromRequest().fold(
+            formWithErrors =>
+              Future {
+                BadRequest(
+                  addIncomeSourceStartDateCheckView(
+                    form = formWithErrors,
+                    postAction = postAction,
+                    backUrl = backCall.url,
+                    isAgent = isAgent,
+                    incomeSourceStartDate = longDate(startDate).toLongDate
+                  )
+                )
+              },
+            formData =>
+              Future.successful(
+                handleValidForm(
+                  validForm = formData,
+                  incomeSourceType = incomeSourceType,
+                  backCall = backCall,
+                  successCall = successCall,
+                  incomeSourceStartDate = startDate
+                )
+              )
           )
-        case (Some(startDate), (backCall, postAction, successCall)) =>
-
-          form(incomeSourceType.addIncomeSourceStartDateCheckMessagesPrefix)
-            .bindFromRequest().fold(
-              formWithErrors =>
-                Future(
-                  BadRequest(
-                    addIncomeSourceStartDateCheckView(
-                      form = formWithErrors,
-                      postAction = postAction,
-                      backUrl = backCall.url,
-                      isAgent = isAgent,
-                      incomeSourceStartDate = longDate(startDate.toLocalDate).toLongDate
-                    )
-                  )
-                ),
-              _.toFormMap(form.response).headOption match {
-                case Some(form.responseNo) =>
-                  Future.successful(
-                    Redirect(backCall)
-                      .removingFromSession(
-                        incomeSourceType match {
-                          case SelfEmployment => businessStartDate
-                          case UkProperty => addUkPropertyStartDate
-                          case ForeignProperty => foreignPropertyStartDate
-                        }
-                      )
-                  )
-                case Some(form.responseYes) if incomeSourceType == SelfEmployment =>
-
-                  val businessAccountingPeriodEndDate = dateService
-                    .getAccountingPeriodEndDate(
-                      LocalDate.parse(startDate)
-                    )
-
-                  Future.successful(
-                    Redirect(successCall)
-                      .addingToSession(
-                        SessionKeys.addBusinessAccountingPeriodStartDate -> startDate,
-                        SessionKeys.addBusinessAccountingPeriodEndDate -> businessAccountingPeriodEndDate
-                      )
-                  )
-                case Some(form.responseYes) =>
-                  Future.successful(
-                    Redirect(successCall)
-                  )
-              }
-            )
       }
     }
   } recover {
@@ -231,11 +203,52 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
       getErrorHandler(isAgent).showInternalServerError()
   }
 
-  private def getStartDate(incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Option[String] = {
-    incomeSourceType match {
-      case SelfEmployment => user.session.get(businessStartDate)
-      case UkProperty => user.session.get(addUkPropertyStartDate)
-      case ForeignProperty => user.session.get(foreignPropertyStartDate)
+  private def handleValidForm(validForm: form,
+                              incomeSourceType: IncomeSourceType,
+                              backCall: Call,
+                              successCall: Call,
+                              incomeSourceStartDate: String)
+                             (implicit mtdItUser: MtdItUser[_]): Result = {
+
+    val formResponse: Option[String] = validForm.toFormMap(form.response).headOption
+
+    (formResponse, incomeSourceType) match {
+      case (Some(form.responseNo), _) =>
+        Redirect(backCall)
+          .removingFromSession(
+            incomeSourceType match {
+              case SelfEmployment => businessStartDate
+              case UkProperty => addUkPropertyStartDate
+              case ForeignProperty => foreignPropertyStartDate
+            }
+          )
+      case (Some(form.responseYes), SelfEmployment) =>
+        Redirect(successCall)
+          .addingToSession(
+            SessionKeys.addBusinessAccountingPeriodStartDate -> incomeSourceStartDate,
+            SessionKeys.addBusinessAccountingPeriodEndDate -> dateService.getAccountingPeriodEndDate(incomeSourceStartDate)
+          )
+      case (Some(form.responseYes), _) =>
+        Redirect(successCall)
+    }
+  }
+
+  private def getAndValidateStartDate(incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Either[Throwable, String] = {
+
+    def getSessionKey(incomeSourceType: IncomeSourceType): String = {
+      incomeSourceType match {
+        case SelfEmployment => businessStartDate
+        case UkProperty => addUkPropertyStartDate
+        case ForeignProperty => foreignPropertyStartDate
+      }
+    }
+
+    val maybeIncomeSourceStartDate = user.session.get(getSessionKey(incomeSourceType))
+
+    maybeIncomeSourceStartDate match {
+      case None => Left(new Error(s"Session value not found for key: ${getSessionKey(incomeSourceType)}"))
+      case Some(date) if Try(date.toLocalDate).toOption.isDefined => Right(date)
+      case Some(invalidDate) => Left(new Error(s"Failed to parse to LocalDate - ${getSessionKey(incomeSourceType)}: $invalidDate"))
     }
   }
 
