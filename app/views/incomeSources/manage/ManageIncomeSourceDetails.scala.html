@@ -22,7 +22,7 @@
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcPageHeading
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.pageheading.PageHeading
 @import models.core.AddressModel
-@import models.incomeSourceDetails.viewmodels.ManageBusinessDetailsViewModel
+@import models.incomeSourceDetails.viewmodels.ManageIncomeSourceDetailsViewModel
 @import enums.IncomeSourceJourney.{SelfEmployment, ForeignProperty, UkProperty}
 
 @this(
@@ -41,7 +41,7 @@
 )
 
 @(
-        viewModel: ManageBusinessDetailsViewModel,
+        viewModel: ManageIncomeSourceDetailsViewModel,
         isAgent: Boolean,
         backUrl: String
 )(implicit messages: Messages, user: auth.MtdItUser[_])
@@ -170,13 +170,7 @@
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">@getAccountingMethodMessage</dt>
             <dd class="govuk-summary-list__value" id="business-accounting-method">@{
-                viewModel.businessAccountingMethod match {
-                    case Some(x) => x match {
-                        case value if !value => getMessage("cash-accounting")
-                        case value if value => getMessage("traditional-accounting")
-                    }
-                    case None => messages("incomeSources.generic.unknown")
-                }
+                messages(viewModel.businessAccountingMethodAsKey(viewModel.businessAccountingMethod))
             }</dd>
         </div>
         @if(viewModel.itsaHasMandatedOrVoluntaryStatusCurrentYear
@@ -184,10 +178,7 @@
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">@getMessage("reporting-method", viewModel.latencyDetails.get.taxYear1, viewModel.latencyDetails.get.taxYear2)</dt>
                 <dd class="govuk-summary-list__value" id="reporting-method-1">@{
-                    viewModel.latencyDetails.get.latencyIndicator1 match {
-                        case "A" => getMessage("annually")
-                        case "Q" => getMessage("quarterly")
-                    }
+                    getMessage(viewModel.latencyValueAsKey(viewModel.latencyDetails.get.latencyIndicator1))
                 }</dd>
                 @if(!viewModel.taxYearOneCrystallised.get){
                     <dd class="govuk-summary-list__actions govuk-!-text-align-right govuk-!-margin-0" id="change-box-1">
@@ -200,10 +191,7 @@
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">@getMessage("reporting-method", viewModel.latencyDetails.get.taxYear2, (viewModel.latencyDetails.get.taxYear2.toInt + 1).toString)</dt>
                 <dd class="govuk-summary-list__value" id="reporting-method-2">@{
-                    viewModel.latencyDetails.get.latencyIndicator2 match {
-                        case "A" => getMessage("annually")
-                        case "Q" => getMessage("quarterly")
-                    }
+                    getMessage(viewModel.latencyValueAsKey(viewModel.latencyDetails.get.latencyIndicator2))
                 }</dd>
                 @if(!viewModel.taxYearTwoCrystallised.get){
                     <dd class="govuk-summary-list__actions govuk-!-text-align-right govuk-!-margin-0" id="change-box-2">

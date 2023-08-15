@@ -20,7 +20,7 @@ import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import testUtils.TestSupport
 import forms.incomeSources.add.AddBusinessReportingMethodForm
 import models.core.AddressModel
-import models.incomeSourceDetails.viewmodels.{BusinessReportingMethodViewModel, ManageBusinessDetailsViewModel, ViewBusinessDetailsViewModel}
+import models.incomeSourceDetails.viewmodels.{BusinessReportingMethodViewModel, ManageIncomeSourceDetailsViewModel, ViewBusinessDetailsViewModel}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.data.Form
@@ -57,7 +57,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
   val expectedBusinessName: String = "nextUpdates.business"
   val expectedBusinessStartDate: String = "1 January 2022"
 
-  val viewModel: ManageBusinessDetailsViewModel = ManageBusinessDetailsViewModel(
+  val viewModel: ManageIncomeSourceDetailsViewModel = ManageIncomeSourceDetailsViewModel(
     incomeSourceId = testSelfEmploymentId,
     tradingName = Some(testTradeName),
     tradingStartDate = Some(testStartDate),
@@ -70,7 +70,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
     incomeSourceType = SelfEmployment
   )
 
-  val viewModel2: ManageBusinessDetailsViewModel = ManageBusinessDetailsViewModel(
+  val viewModel2: ManageIncomeSourceDetailsViewModel = ManageIncomeSourceDetailsViewModel(
     incomeSourceId = testSelfEmploymentId,
     tradingName = None,
     tradingStartDate = None,
@@ -83,7 +83,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
     incomeSourceType = SelfEmployment
   )
   
-  val ukViewModel: ManageBusinessDetailsViewModel = ManageBusinessDetailsViewModel(
+  val ukViewModel: ManageIncomeSourceDetailsViewModel = ManageIncomeSourceDetailsViewModel(
     incomeSourceId = testSelfEmploymentId,
     tradingName = None,
     tradingStartDate = Some(testStartDate),
@@ -96,7 +96,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
     incomeSourceType = UkProperty
   )
 
-  val ukViewModelUnknowns: ManageBusinessDetailsViewModel = ManageBusinessDetailsViewModel(
+  val ukViewModelUnknowns: ManageIncomeSourceDetailsViewModel = ManageIncomeSourceDetailsViewModel(
     incomeSourceId = testSelfEmploymentId,
     tradingName = None,
     tradingStartDate = None,
@@ -109,7 +109,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
     incomeSourceType = UkProperty
   )
 
-  val foreignViewModel: ManageBusinessDetailsViewModel = ManageBusinessDetailsViewModel(
+  val foreignViewModel: ManageIncomeSourceDetailsViewModel = ManageIncomeSourceDetailsViewModel(
     incomeSourceId = testSelfEmploymentId,
     tradingName = None,
     tradingStartDate = Some(testStartDate),
@@ -122,7 +122,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
     incomeSourceType = ForeignProperty
   )
 
-  val foreignViewModelUnknowns: ManageBusinessDetailsViewModel = ManageBusinessDetailsViewModel(
+  val foreignViewModelUnknowns: ManageIncomeSourceDetailsViewModel = ManageIncomeSourceDetailsViewModel(
     incomeSourceId = testSelfEmploymentId,
     tradingName = None,
     tradingStartDate = None,
