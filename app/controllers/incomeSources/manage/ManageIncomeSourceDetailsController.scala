@@ -159,7 +159,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
       tradingName = incomeSource.tradingName,
       tradingStartDate = incomeSource.tradingStartDate,
       address = incomeSource.address,
-      businessAccountingMethod = incomeSource.cashOrAccrualsFlag,
+      businessAccountingMethod = incomeSource.cashOrAccruals,
       itsaHasMandatedOrVoluntaryStatusCurrentYear = itsaStatus,
       taxYearOneCrystallised = crystallisationTaxYear1,
       taxYearTwoCrystallised = crystallisationTaxYear2,

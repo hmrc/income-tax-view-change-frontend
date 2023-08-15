@@ -186,7 +186,7 @@ object BusinessDetailsTestConstants {
     cessation = None,
     latencyDetails = Some(testLatencyDetails2),
     address = None,
-    cashOrAccrualsFlag = None
+    cashOrAccruals = None
   )
 
   val businessWithLatency2019 = BusinessDetailsModel(
@@ -198,7 +198,7 @@ object BusinessDetailsTestConstants {
     cessation = None,
     latencyDetails = Some(testLatencyDetails),
     address = Some(testBizAddress),
-    cashOrAccrualsFlag = Some(false)
+    cashOrAccruals = Some(false)
   )
 
   val soleTraderBusiness = BusinessDetailsModel(
@@ -208,7 +208,7 @@ object BusinessDetailsTestConstants {
     firstAccountingPeriodEndDate = Some(LocalDate.of(year2018, Month.APRIL, 5)),
     tradingStartDate = Some(testStartDate),
     cessation = None,
-    cashOrAccrualsFlag = Some(false),
+    cashOrAccruals = Some(false),
     latencyDetails = None,
     address = Some(address)
   )
@@ -220,7 +220,7 @@ object BusinessDetailsTestConstants {
     firstAccountingPeriodEndDate = Some(LocalDate.of(year2018, Month.APRIL, 5)),
     tradingStartDate = Some(testStartDate3),
     cessation = None,
-    cashOrAccrualsFlag = Some(true),
+    cashOrAccruals = Some(true),
     latencyDetails = None,
     address = Some(address)
   )

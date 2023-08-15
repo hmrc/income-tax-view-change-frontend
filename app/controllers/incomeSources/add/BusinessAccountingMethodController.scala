@@ -56,12 +56,12 @@ class BusinessAccountingMethodController @Inject()(val authenticate: Authenticat
                                               (implicit user: MtdItUser[_], backUrl: String, postAction: Call, messages: Messages): Future[Result] = {
     val userActiveBusinesses: List[BusinessDetailsModel] = user.incomeSources.businesses.filterNot(_.isCeased)
 
-    if (userActiveBusinesses.flatMap(_.cashOrAccrualsFlag).distinct.size > 1) {
+    if (userActiveBusinesses.flatMap(_.cashOrAccruals).distinct.size > 1) {
       Logger("application").error(s"${if (isAgent) "[Agent]"}" +
         s"Error getting business cashOrAccrualsFlag Field")
     }
 
-    userActiveBusinesses.map(_.cashOrAccrualsFlag).headOption match {
+    userActiveBusinesses.map(_.cashOrAccruals).headOption match {
       case Some(cashOrAccrualsFlagMaybe) if (cashOrAccrualsFlagMaybe.isDefined) =>
         val accountingMethod: String = if (cashOrAccrualsFlagMaybe.get) {
           "accruals"
