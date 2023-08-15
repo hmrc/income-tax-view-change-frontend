@@ -16,22 +16,41 @@
 
 package models.incomeSourceDetails.viewmodels
 
-import enums.IncomeSourceJourney.IncomeSourceType
+import enums.IncomeSourceJourney.IncomeSourceJourney
 import models.core.AddressModel
 import models.incomeSourceDetails.LatencyDetails
 
 import java.time.LocalDate
 
-case class ManageBusinessDetailsViewModel(incomeSourceId: String,
-                                          tradingName: Option[String],
-                                          tradingStartDate: Option[LocalDate],
-                                          address: Option[AddressModel],
-                                          businessAccountingMethod: Option[String] = None,
-                                          itsaHasMandatedOrVoluntaryStatusCurrentYear: Boolean,
-                                          taxYearOneCrystallised: Option[Boolean],
-                                          taxYearTwoCrystallised: Option[Boolean],
-                                          latencyDetails: Option[LatencyDetails],
-                                          incomeSourceType: IncomeSourceType
-                                         )
+case class ManageIncomeSourceDetailsViewModel(incomeSourceId: String,
+                                              tradingName: Option[String],
+                                              tradingStartDate: Option[LocalDate],
+                                              address: Option[AddressModel],
+                                              businessAccountingMethod: Option[Boolean] = None,
+                                              itsaHasMandatedOrVoluntaryStatusCurrentYear: Boolean,
+                                              taxYearOneCrystallised: Option[Boolean],
+                                              taxYearTwoCrystallised: Option[Boolean],
+                                              latencyDetails: Option[LatencyDetails],
+                                              incomeSourceType: IncomeSourceJourney
+                                         ) {
+
+  def latencyValueAsKey(latencyIndicator: String): String = {
+    latencyIndicator match {
+      case "A" => "annually"
+      case "Q" => "quarterly"
+    }
+  }
+
+  def businessAccountingMethodAsKey(businessAccountingMethod: Option[Boolean]): String = {
+    businessAccountingMethod match {
+      case Some(value) => value match {
+        case value if !value => "incomeSources.manage.business-manage-details.cash-accounting"
+        case value if value => "incomeSources.manage.business-manage-details.traditional-accounting"
+      }
+      case None => "incomeSources.generic.unknown"
+    }
+  }
+}
+
 
 
