@@ -34,7 +34,7 @@ object AddIncomeSourceStartDateCheckForm {
     Form[AddIncomeSourceStartDateCheckForm](
       mapping(
         response -> optional(text)
-          .verifying(radiosEmptyError, _.nonEmpty)
+          .verifying(radiosEmptyError, value => value.nonEmpty && (value.contains(responseYes) || value.contains(responseNo)))
       )(AddIncomeSourceStartDateCheckForm.apply)(AddIncomeSourceStartDateCheckForm.unapply)
     )
   }

@@ -191,7 +191,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
               AddIncomeSourceStartDateCheckForm.response -> invalidResponse
             ))
 
-        status(result) shouldBe INTERNAL_SERVER_ERROR
+        status(result) shouldBe BAD_REQUEST
       }
 
       "redirect to add business trade page" when {
@@ -306,7 +306,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
             AddIncomeSourceStartDateCheckForm.response -> invalidResponse
           ))
 
-      status(result) shouldBe INTERNAL_SERVER_ERROR
+      status(result) shouldBe BAD_REQUEST
     }
 
     "redirect to add business trade page" when {

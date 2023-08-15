@@ -160,7 +160,13 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
                           incomeSourceType: IncomeSourceType)
                          (implicit mtdItUser: MtdItUser[_]): Future[Result] = {
 
-    if (isEnabled(IncomeSources)) {
+    if (isDisabled(IncomeSources)) {
+      Future(
+        Ok(
+          customNotFoundErrorView()
+        )
+      )
+    } else {
       (getStartDate(incomeSourceType), getCalls(isAgent, incomeSourceType)) match {
         case (None, _) =>
           Logger("application").error(s"[AddIncomeSourceStartDateCheckController][handleSubmitRequest]: " +
@@ -214,21 +220,9 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
                   Future.successful(
                     Redirect(successCall)
                   )
-                case ex =>
-                  Logger("application").error(s"[ForeignPropertyStartDateCheckController][handleSubmitRequest]: " +
-                    s"invalid form: $ex")
-                  Future(
-                    getErrorHandler(isAgent).showInternalServerError()
-                  )
               }
             )
       }
-    } else {
-      Future(
-        Ok(
-          customNotFoundErrorView()
-        )
-      )
     }
   } recover {
     case ex: Exception =>
