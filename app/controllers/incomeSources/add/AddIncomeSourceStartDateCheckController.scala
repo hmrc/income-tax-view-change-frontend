@@ -126,7 +126,7 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
       (getAndValidateStartDate(incomeSourceType), getCalls(isAgent, incomeSourceType)) match {
         case (Left(ex), _) =>
           Logger("application").error(s"[AddIncomeSourceStartDateCheckController][handleRequest]: " +
-            s"Failed to get income source start date from session, reason: $ex")
+            s"Failed to get income source start date from session, reason: ${ex.getMessage}")
           Future {
             getErrorHandler(isAgent).showInternalServerError()
           }
@@ -161,7 +161,7 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
       (getAndValidateStartDate(incomeSourceType), getCalls(isAgent, incomeSourceType)) match {
         case (Left(ex), _) =>
           Logger("application").error(s"[AddIncomeSourceStartDateCheckController][handleSubmitRequest]: " +
-            s"Failed to get income source start date from session, reason: $ex")
+            s"Failed to get income source start date from session, reason: ${ex.getMessage}")
           Future {
             getErrorHandler(isAgent).showInternalServerError()
           }
@@ -245,7 +245,7 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
     maybeIncomeSourceStartDate match {
       case None => Left(new Error(s"Session value not found for key: ${getSessionKey(incomeSourceType)}"))
       case Some(date) if Try(date.toLocalDate).toOption.isDefined => Right(date)
-      case Some(invalidDate) => Left(new Error(s"Failed to parse to LocalDate - ${getSessionKey(incomeSourceType)}: $invalidDate"))
+      case Some(invalidDate) => Left(new Error(s"Could not parse to LocalDate - ${getSessionKey(incomeSourceType)}: $invalidDate"))
     }
   }
 
