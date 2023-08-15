@@ -34,8 +34,6 @@ import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.play.language.LanguageUtils
 import views.html.errorPages.CustomNotFoundError
 import views.html.incomeSources.add.AddIncomeSourceStartDateCheck
-
-import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
@@ -118,18 +116,17 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
         }
   }
 
-  def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)
+  private def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)
                    (implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
-
-    if(isDisabled(IncomeSources)) {
+    if(isDisabled(IncomeSources))
       Future {
         Ok(customNotFoundErrorView())
       }
-    } else {
+    else
       (getAndValidateStartDate(incomeSourceType), getCalls(isAgent, incomeSourceType)) match {
         case (Left(ex), _) =>
           Logger("application").error(s"[AddIncomeSourceStartDateCheckController][handleRequest]: " +
-            s"Failed to get income source start date, Error: $ex")
+            s"Failed to get income source start date from session, reason: $ex")
           Future {
             getErrorHandler(isAgent).showInternalServerError()
           }
@@ -146,7 +143,6 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
             )
           }
       }
-    }
   } recover {
     case ex: Exception =>
       Logger("application").error(s"[AddIncomeSourceStartDateCheckController][handleRequest]: " +
@@ -154,7 +150,7 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
       getErrorHandler(isAgent).showInternalServerError()
   }
 
-  def handleSubmitRequest(isAgent: Boolean,
+  private def handleSubmitRequest(isAgent: Boolean,
                           incomeSourceType: IncomeSourceType)
                          (implicit mtdItUser: MtdItUser[_]): Future[Result] = {
     if (isDisabled(IncomeSources))
@@ -165,7 +161,7 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
       (getAndValidateStartDate(incomeSourceType), getCalls(isAgent, incomeSourceType)) match {
         case (Left(ex), _) =>
           Logger("application").error(s"[AddIncomeSourceStartDateCheckController][handleSubmitRequest]: " +
-            s"Failed to get income source start date, Error: $ex")
+            s"Failed to get income source start date from session, reason: $ex")
           Future {
             getErrorHandler(isAgent).showInternalServerError()
           }
@@ -233,7 +229,8 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
     }
   }
 
-  private def getAndValidateStartDate(incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Either[Throwable, String] = {
+  private def getAndValidateStartDate(incomeSourceType: IncomeSourceType)
+                                     (implicit user: MtdItUser[_]): Either[Throwable, String] = {
 
     def getSessionKey(incomeSourceType: IncomeSourceType): String = {
       incomeSourceType match {
