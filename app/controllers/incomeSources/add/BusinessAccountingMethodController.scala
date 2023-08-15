@@ -61,9 +61,9 @@ class BusinessAccountingMethodController @Inject()(val authenticate: Authenticat
         s"Error getting business cashOrAccrualsFlag Field")
     }
 
-    userActiveBusinesses match {
-      case head :: _ if (head.cashOrAccrualsFlag.isDefined) =>
-        val accountingMethod: String = if (head.cashOrAccrualsFlag.get) {
+    userActiveBusinesses.map(_.cashOrAccrualsFlag).headOption match {
+      case Some(cashOrAccrualsFlagMaybe) if (cashOrAccrualsFlagMaybe.isDefined) =>
+        val accountingMethod: String = if (cashOrAccrualsFlagMaybe.get) {
           "accruals"
         } else {
           "cash"
@@ -75,11 +75,11 @@ class BusinessAccountingMethodController @Inject()(val authenticate: Authenticat
           Future.successful(Redirect(controllers.incomeSources.add.routes.CheckBusinessDetailsController.show())
             .addingToSession(addBusinessAccountingMethod -> accountingMethod))
         }
-      case head :: _ if head.cashOrAccrualsFlag.isEmpty =>
+      case Some(cashOrAccrualsFlagMaybe) if cashOrAccrualsFlagMaybe.isEmpty =>
         Logger("application").error(s"${if (isAgent) "[Agent]"}" +
           s"Error getting business cashOrAccrualsFlag field")
         Future.successful(errorHandler.showInternalServerError())
-      case _ =>
+      case None =>
         Future.successful(Ok(view(
           form = BusinessAccountingMethodForm.form,
           postAction = postAction,
