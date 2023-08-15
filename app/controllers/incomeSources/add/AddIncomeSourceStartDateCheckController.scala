@@ -243,9 +243,9 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
     val maybeIncomeSourceStartDate = user.session.get(getSessionKey(incomeSourceType))
 
     maybeIncomeSourceStartDate match {
-      case None => Left(new Error(s"Session value not found for key: ${getSessionKey(incomeSourceType)}"))
+      case None => Left(new Error(s"Session value not found for Key: ${getSessionKey(incomeSourceType)}"))
       case Some(date) if Try(date.toLocalDate).toOption.isDefined => Right(date)
-      case Some(invalidDate) => Left(new Error(s"Could not parse to LocalDate - ${getSessionKey(incomeSourceType)}: $invalidDate"))
+      case Some(invalidDate) => Left(new Error(s"Could not parse: $invalidDate as LocalDate for Key: ${getSessionKey(incomeSourceType)}"))
     }
   }
 
