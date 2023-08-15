@@ -14,35 +14,33 @@
  * limitations under the License.
  *@
 
-@import _root_.implicits.ImplicitDateFormatterImpl
 @import views.html.layouts.unifiedLayout
-@import views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components.FormWithCSRF
+@import forms.models.DateFormElement
 @import views.html.helpers.injected.ErrorSummary
 
 @this(
-    mainTemplate: unifiedLayout,
-    implicitDateFormatter: ImplicitDateFormatterImpl,
-    h1: h1,
-    dateInput: dateInput,
-    continueButton: ContinueButton,
-    formWithCSRF: FormWithCSRF,
-    errorSummary: ErrorSummary,
-    govukDateInput: GovukDateInput
+        mainTemplate: unifiedLayout,
+        formWithCSRF: FormWithCSRF,
+        errorSummary: ErrorSummary,
+        govukDateInput: GovukDateInput,
+        govukButton: GovukButton
 )
 
 @(
-    form: Form[_],
-    postAction: Call,
-    backUrl: String,
-    isAgent: Boolean
-)(implicit messages: Messages, user: auth.MtdItUser[_])
-
-@prefix = @{ "add-business-start-date" }
+        form: Form[DateFormElement],
+        postAction: Call,
+        backUrl: String,
+        isAgent: Boolean,
+        messagesPrefix: String
+)(
+        implicit messages: Messages,
+        user: auth.MtdItUser[_]
+)
 
 @getMessage(key: String, args: String*) = @{
-    messages(s"$prefix.$key", args: _*)
+    messages(s"$messagesPrefix.$key", args: _*)
 }
 
 @mainTemplate(
@@ -51,14 +49,14 @@
     isAgent = isAgent,
     btaNavPartial = user.btaNavPartial) {
 
-    @errorSummary(form)
+    @formWithCSRF(action = postAction, Symbol("id") -> s"$messagesPrefix-form") {
 
-    @formWithCSRF(action = postAction, Symbol("id") -> s"$prefix-form") {
+        @errorSummary(form)
 
         @govukDateInput(DateInput(
             hint = Some(Hint(
-                id = Some(s"$prefix-hint"),
-                content = HtmlContent(s"<div>${getMessage("hint-prt1")}</div></br><div>${getMessage("hint-prt2")}</div>")
+                id = Some(s"$messagesPrefix-hint"),
+                content = HtmlContent(s"<div>${getMessage("hint")}</div></br><div>${messages("dateForm.hint")}</div>")
             )),
             fieldset = Some(Fieldset(
                 legend = Some(Legend(
@@ -71,9 +69,13 @@
                 InputItem(attributes = Map("maxLength" -> "2")),
                 InputItem(attributes = Map("maxLength" -> "2")),
                 InputItem(attributes = Map("maxLength" -> "4"))
-            )
-        ).withFormField(form(prefix)))
+            ),
+            errorMessage = form.errors.headOption.map(err => ErrorMessage(content = Text(messages(err.message, err.args:_*))))
+        ).withFormField(form("income-source-start-date")))
 
-        @continueButton()
+        @govukButton(Button(
+            content = Text(messages("base.continue")),
+            attributes = Map("id" -> "continue-button")
+        ))
     }
 }

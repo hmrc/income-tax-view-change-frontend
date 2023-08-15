@@ -22,21 +22,22 @@ import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
-import models.incomeSourceDetails.viewmodels.{ManageBusinessDetailsViewModel, ViewLatencyDetailsViewModel}
-import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, LatencyDetails}
+import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceJourney, SelfEmployment, UkProperty}
+import models.incomeSourceDetails.viewmodels.ManageIncomeSourceDetailsViewModel
+import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, LatencyDetails, PropertyDetailsModel}
 import play.api.Logger
 import play.api.mvc._
 import services.{CalculationListService, DateService, ITSAStatusService, IncomeSourceDetailsService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.IncomeSourcesUtils
-import views.html.incomeSources.manage.ManageSelfEmployment
+import views.html.incomeSources.manage.ManageIncomeSourceDetails
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ManageIncomeSourceDetailsController @Inject()(val view: ManageSelfEmployment,
+class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSourceDetails,
                                                     val checkSessionTimeout: SessionTimeoutPredicate,
                                                     val authenticate: AuthenticationPredicate,
                                                     val authorisedFunctions: AuthorisedFunctions,
@@ -55,25 +56,59 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageSelfEmployme
   extends ClientConfirmedController with FeatureSwitching with IncomeSourcesUtils {
 
 
-  def showUkProperty: Action[AnyContent] = Action(Ok)
+  def showUkProperty: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+    andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
+    implicit user =>
+      handleRequest(
+        sources = user.incomeSources,
+        isAgent = false,
+        id = None,
+        backUrl = controllers.incomeSources.manage.routes.ManageIncomeSourceController.show().url,
+        incomeSourceType = UkProperty
+      )
+  }
 
-  def showUkPropertyAgent: Action[AnyContent] = Action(Ok)
+  def showUkPropertyAgent: Action[AnyContent] = Authenticated.async {
+    implicit request =>
+      implicit user =>
+        getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
+          implicit mtdItUser =>
+            handleRequest(
+              sources = mtdItUser.incomeSources,
+              isAgent = true,
+              backUrl = controllers.incomeSources.manage.routes.ManageIncomeSourceController.showAgent().url,
+              None,
+              incomeSourceType = UkProperty
+            )
+        }
+  }
 
-  def showForeignProperty: Action[AnyContent] = Action(Ok)
+  def showForeignProperty: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+    andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
+    implicit user =>
+      handleRequest(
+        sources = user.incomeSources,
+        isAgent = false,
+        id = None,
+        backUrl = controllers.incomeSources.manage.routes.ManageIncomeSourceController.show().url,
+        incomeSourceType = ForeignProperty
+      )
+  }
 
-  def showForeignPropertyAgent: Action[AnyContent] = Action(Ok)
-
-  def submitUkProperty: Action[AnyContent] = Action(Ok)
-
-  def submitUkPropertyAgent: Action[AnyContent] = Action(Ok)
-
-  def submitForeignProperty: Action[AnyContent] = Action(Ok)
-
-  def submitForeignPropertyAgent: Action[AnyContent] = Action(Ok)
-
-  def submitSoleTraderBusiness: Action[AnyContent] = Action(Ok)
-
-  def submitSoleTraderBusinessAgent: Action[AnyContent] = Action(Ok)
+  def showForeignPropertyAgent: Action[AnyContent] = Authenticated.async {
+    implicit request =>
+      implicit user =>
+        getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
+          implicit mtdItUser =>
+            handleRequest(
+              sources = mtdItUser.incomeSources,
+              isAgent = true,
+              backUrl = controllers.incomeSources.manage.routes.ManageIncomeSourceController.showAgent().url,
+              None,
+              incomeSourceType = ForeignProperty
+            )
+        }
+  }
 
   def showSoleTraderBusiness(id: String): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
@@ -82,7 +117,8 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageSelfEmployme
         sources = user.incomeSources,
         isAgent = false,
         backUrl = controllers.incomeSources.manage.routes.ManageIncomeSourceController.show().url,
-        id = id
+        id = Some(id),
+        incomeSourceType = SelfEmployment
       )
   }
 
@@ -95,108 +131,162 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageSelfEmployme
               sources = mtdItUser.incomeSources,
               isAgent = true,
               backUrl = controllers.incomeSources.manage.routes.ManageIncomeSourceController.showAgent().url,
-              id = id
+              id = Some(id),
+              incomeSourceType = SelfEmployment
             )
         }
   }
 
-  def getCrystallisationInformation(incomeSource: Option[BusinessDetailsModel])
-                                   (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): EitherT[Future, String, List[Boolean]] = {
-    EitherT {
-      incomeSource match {
-        case Some(x) if x.latencyDetails.isDefined =>
-          for {
-            i <- calculationListService.isTaxYearCrystallised(x.latencyDetails.get.taxYear1.toInt)
-            j <- calculationListService.isTaxYearCrystallised(x.latencyDetails.get.taxYear2.toInt)
-          } yield {
-            Right(List(i.get, j.get))
-          }
-        case _ =>
-          Future.successful(Left("No data ready"))
-      }
+  def getCrystallisationInformation(latencyDetails: Option[LatencyDetails])
+                                   (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Option[List[Boolean]]] = {
+    latencyDetails match {
+      case Some(x) =>
+        for {
+          i <- calculationListService.isTaxYearCrystallised(x.taxYear1.toInt)
+          j <- calculationListService.isTaxYearCrystallised(x.taxYear2.toInt)
+        } yield {
+          Some(List(i.get, j.get))
+        }
+      case _ =>
+        Future.successful(None)
     }
   }
 
+  def variableViewModelSEBusiness(incomeSource: BusinessDetailsModel, itsaStatus: Boolean, crystallisationTaxYear1: Option[Boolean],
+                                  crystallisationTaxYear2: Option[Boolean]): ManageIncomeSourceDetailsViewModel = {
+    ManageIncomeSourceDetailsViewModel(
+      incomeSourceId = incomeSource.incomeSourceId,
+      tradingName = incomeSource.tradingName,
+      tradingStartDate = incomeSource.tradingStartDate,
+      address = incomeSource.address,
+      businessAccountingMethod = incomeSource.cashOrAccrualsFlag,
+      itsaHasMandatedOrVoluntaryStatusCurrentYear = itsaStatus,
+      taxYearOneCrystallised = crystallisationTaxYear1,
+      taxYearTwoCrystallised = crystallisationTaxYear2,
+      latencyDetails = incomeSource.latencyDetails,
+      incomeSourceType = SelfEmployment
+    )
+  }
+
+  def variableViewModelPropertyBusiness(incomeSource: PropertyDetailsModel, itsaStatus: Boolean, crystallisationTaxYear1: Option[Boolean],
+                                        crystallisationTaxYear2: Option[Boolean], incomeSourceType: IncomeSourceJourney): ManageIncomeSourceDetailsViewModel = {
+    ManageIncomeSourceDetailsViewModel(
+      incomeSourceId = incomeSource.incomeSourceId,
+      tradingName = None,
+      tradingStartDate = incomeSource.tradingStartDate,
+      address = None,
+      businessAccountingMethod = incomeSource.cashOrAccrualsFlag,
+      itsaHasMandatedOrVoluntaryStatusCurrentYear = itsaStatus,
+      taxYearOneCrystallised = crystallisationTaxYear1,
+      taxYearTwoCrystallised = crystallisationTaxYear2,
+      latencyDetails = incomeSource.latencyDetails,
+      incomeSourceType = incomeSourceType
+    )
+  }
+
   def getManageIncomeSourceViewModel(sources: IncomeSourceDetailsModel, id: String, isAgent: Boolean)
-                                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, ManageBusinessDetailsViewModel]] = {
+                                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, ManageIncomeSourceDetailsViewModel]] = {
 
     val desiredIncomeSourceMaybe: Option[BusinessDetailsModel] = sources.businesses
       .filterNot(_.isCeased)
       .find(e => e.incomeSourceId == id)
-    val latencyDetails: Option[LatencyDetails] = desiredIncomeSourceMaybe.flatMap(_.latencyDetails)
 
-    itsaStatusService.hasMandatedOrVoluntaryStatusCurrentYear.flatMap {
-      case true =>
-        getCrystallisationInformation(desiredIncomeSourceMaybe).value.flatMap {
-          case Left(x) =>
-            if (desiredIncomeSourceMaybe.isDefined) {
-              Future(Right(ManageBusinessDetailsViewModel(
-                incomeSourceId = desiredIncomeSourceMaybe.get.incomeSourceId,
-                tradingName = desiredIncomeSourceMaybe.get.tradingName,
-                tradingStartDate = desiredIncomeSourceMaybe.get.tradingStartDate,
-                address = desiredIncomeSourceMaybe.get.address,
-                businessAccountingMethod = desiredIncomeSourceMaybe.get.cashOrAccruals,
-                itsaHasMandatedOrVoluntaryStatusCurrentYear = true,
-                taxYearOneCrystallised = None,
-                taxYearTwoCrystallised = None,
-                latencyDetails = None)))
-            }
-            else {
-              Future(Left(
-                new Error("Unable to find income source")
-              ))
-            }
-          case Right(crystallisationData: List[Boolean]) =>
-            if (desiredIncomeSourceMaybe.isDefined) {
-              Future(Right(ManageBusinessDetailsViewModel(
-                incomeSourceId = desiredIncomeSourceMaybe.get.incomeSourceId,
-                tradingName = desiredIncomeSourceMaybe.get.tradingName,
-                tradingStartDate = desiredIncomeSourceMaybe.get.tradingStartDate,
-                address = desiredIncomeSourceMaybe.get.address,
-                businessAccountingMethod = desiredIncomeSourceMaybe.get.cashOrAccruals,
-                itsaHasMandatedOrVoluntaryStatusCurrentYear = true,
-                taxYearOneCrystallised = Option(crystallisationData.head),
-                taxYearTwoCrystallised = Option(crystallisationData(1)),
-                latencyDetails = Option(ViewLatencyDetailsViewModel(
-                  latencyEndDate = latencyDetails.get.latencyEndDate,
-                  taxYear1 = latencyDetails.get.taxYear1.toInt,
-                  latencyIndicator1 = latencyDetails.get.latencyIndicator1,
-                  taxYear2 = latencyDetails.get.taxYear2.toInt,
-                  latencyIndicator2 = latencyDetails.get.latencyIndicator2
-                )))))
-            } else {
-              Future(Left(
-                new Error("Unable to find income source")
-              ))
-            }
-        }
-      case false =>
-        if (desiredIncomeSourceMaybe.isDefined) {
-          Future(Right(ManageBusinessDetailsViewModel(
-            incomeSourceId = desiredIncomeSourceMaybe.get.incomeSourceId,
-            tradingName = desiredIncomeSourceMaybe.get.tradingName,
-            tradingStartDate = desiredIncomeSourceMaybe.get.tradingStartDate,
-            address = desiredIncomeSourceMaybe.get.address,
-            businessAccountingMethod = desiredIncomeSourceMaybe.get.cashOrAccruals,
-            itsaHasMandatedOrVoluntaryStatusCurrentYear = false,
-            taxYearOneCrystallised = None,
-            taxYearTwoCrystallised = None,
-            latencyDetails = None)))
-        } else {
-          Future(Left(
-            new Error("Unable to find income source")
+    if (desiredIncomeSourceMaybe.isDefined) {
+      itsaStatusService.hasMandatedOrVoluntaryStatusCurrentYear.flatMap {
+        case true =>
+          getCrystallisationInformation(desiredIncomeSourceMaybe.get.latencyDetails).flatMap {
+            case None => Future(Right(variableViewModelSEBusiness(
+              incomeSource = desiredIncomeSourceMaybe.get,
+              itsaStatus = true,
+              crystallisationTaxYear1 = None,
+              crystallisationTaxYear2 = None)))
+            case Some(crystallisationData: List[Boolean]) =>
+              Future(Right(
+                variableViewModelSEBusiness(
+                  incomeSource = desiredIncomeSourceMaybe.get,
+                  itsaStatus = true,
+                  crystallisationTaxYear1 = crystallisationData.headOption,
+                  crystallisationTaxYear2 = crystallisationData.lastOption
+                )))
+          }
+        case false =>
+          Future(Right(
+            variableViewModelSEBusiness(
+              incomeSource = desiredIncomeSourceMaybe.get,
+              itsaStatus = false,
+              crystallisationTaxYear1 = None,
+              crystallisationTaxYear2 = None)
           ))
-        }
+      }
+    } else {
+      Future(Left(
+        new Error("Unable to find income source")
+      ))
+    }
+  }
+
+  def getManageIncomeSourceViewModelProperty(sources: IncomeSourceDetailsModel, incomeSourceType: IncomeSourceJourney, isAgent: Boolean)
+                                            (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, ManageIncomeSourceDetailsViewModel]] = {
+    val desiredIncomeSourceMaybe: Option[PropertyDetailsModel] = {
+      if (incomeSourceType == UkProperty) {
+        sources.properties
+          .filterNot(_.isCeased)
+          .find(_.isUkProperty)
+      } else {
+        sources.properties
+          .filterNot(_.isCeased)
+          .find(_.isForeignProperty)
+      }
+    }
+
+    if (desiredIncomeSourceMaybe.isDefined) {
+      itsaStatusService.hasMandatedOrVoluntaryStatusCurrentYear.flatMap {
+        case true =>
+          getCrystallisationInformation(desiredIncomeSourceMaybe.get.latencyDetails).flatMap {
+            case None => Future(Right(variableViewModelPropertyBusiness(
+              incomeSource = desiredIncomeSourceMaybe.get,
+              itsaStatus = true,
+              crystallisationTaxYear1 = None,
+              crystallisationTaxYear2 = None,
+              incomeSourceType = incomeSourceType)))
+            case Some(crystallisationData: List[Boolean]) =>
+              Future(Right(
+                variableViewModelPropertyBusiness(
+                  incomeSource = desiredIncomeSourceMaybe.get,
+                  itsaStatus = true,
+                  crystallisationTaxYear1 = crystallisationData.headOption,
+                  crystallisationTaxYear2 = crystallisationData.lastOption,
+                  incomeSourceType = incomeSourceType
+                )))
+          }
+        case false =>
+          Future(Right(
+            variableViewModelPropertyBusiness(
+              incomeSource = desiredIncomeSourceMaybe.get,
+              itsaStatus = false,
+              crystallisationTaxYear1 = None,
+              crystallisationTaxYear2 = None,
+              incomeSourceType = incomeSourceType)
+          ))
+      }
+    } else {
+      Future(Left(
+        new Error("Unable to find income source")
+      ))
     }
   }
 
 
-  def handleRequest(sources: IncomeSourceDetailsModel, isAgent: Boolean, backUrl: String, id: String)
+  def handleRequest(sources: IncomeSourceDetailsModel, isAgent: Boolean, backUrl: String, id: Option[String], incomeSourceType: IncomeSourceJourney)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
 
     withIncomeSourcesFS {
       for {
-        value <- getManageIncomeSourceViewModel(sources = sources, id = id, isAgent = isAgent)
+        value <- if (incomeSourceType == SelfEmployment) {
+          getManageIncomeSourceViewModel(sources = sources, id = id.get, isAgent = isAgent)
+        } else {
+          getManageIncomeSourceViewModelProperty(sources = sources, isAgent = isAgent, incomeSourceType = incomeSourceType)
+        }
       } yield {
         value match {
           case Right(viewModel) =>
