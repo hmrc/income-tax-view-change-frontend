@@ -73,7 +73,7 @@ class IncomeSourceDetailsModelSpec extends UnitSpec with Matchers {
       "should have an address" in {
         singleBusinessIncomeWithLatency2019.businesses.head.address.get shouldBe testBizAddress
       }
-      "should have a cashOrAccrualsFlag field" in {
+      "should have a cashOrAccruals field" in {
         singleBusinessIncomeWithLatency2019.businesses.head.cashOrAccruals.get shouldBe false
       }
       //Test Property details
