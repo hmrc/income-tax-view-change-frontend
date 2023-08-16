@@ -57,6 +57,11 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
 
   lazy val submitAction: Call = controllers.incomeSources.add.routes.AddBusinessNameController.submit()
   lazy val submitActionAgent: Call = controllers.incomeSources.add.routes.AddBusinessNameController.submitAgent()
+  lazy val submitChangeAction: Call = controllers.incomeSources.add.routes.AddBusinessNameController.submitChange()
+  lazy val submitChangeActionAgent: Call = controllers.incomeSources.add.routes.AddBusinessNameController.submitChangeAgent()
+
+
+
   lazy val redirect: Call = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showSoleTraderBusiness
   lazy val redirectAgent: Call = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showSoleTraderBusinessAgent
 
@@ -71,12 +76,10 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
   def show(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
-      val formMode = getModeFromURL(user)
-      println(s"FormMode show() = $formMode")
       handleRequest(
         isAgent = false,
         backUrl = backUrl,
-        formMode = formMode
+        isChange = isChangeRequest(user)
       )
   }
 
@@ -86,29 +89,19 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
         implicit user =>
           getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
             implicit mtdItUser =>
-              val formMode = getModeFromURL(request)
               handleRequest(
                 isAgent = true,
                 backUrl = backUrlAgent,
-                formMode = formMode
+                isChange = isChangeRequest(request)
               )
           }
     }
 
-  private def getModeFromURL(request: RequestHeader): String = {
-    val urlPath = request.uri
-
-    println("LOOOOOOOOK HERE")
-    println(s"urlPath: $urlPath")
-    println(addBusinessNameUrl)
-
-    urlPath match {
-      case path if path == addBusinessNameUrl => "add"
-      case _ => "update"
-    }
+  private def isChangeRequest(request: RequestHeader): Boolean = {
+    request.uri.contains("change")
   }
 
-  def handleRequest(isAgent: Boolean, backUrl: String, formMode: String)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
+  def handleRequest(isAgent: Boolean, backUrl: String, isChange: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
 
     if (isDisabled(IncomeSources)) {
       Future.successful(Redirect(
@@ -121,10 +114,17 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
           case Some(name) => BusinessNameForm.form.fill(BusinessNameForm(name))
           case None => BusinessNameForm.form
         }
-        if (isAgent) {
-          Ok(addBusinessView(filledForm, isAgent, submitActionAgent, backUrl, formMode))
+        if (isChange) {
+          if (isAgent)
+            Ok(addBusinessView(filledForm, isAgent, submitChangeActionAgent, backUrl))
+          else
+            Ok(addBusinessView(filledForm, isAgent, submitChangeAction, backUrl))
         } else {
-          Ok(addBusinessView(filledForm, isAgent, submitAction, backUrl, formMode))
+          if (isAgent) {
+            Ok(addBusinessView(filledForm, isAgent, submitActionAgent, backUrl))
+          } else {
+            Ok(addBusinessView(filledForm, isAgent, submitAction, backUrl))
+          }
         }
       }
     }
@@ -133,7 +133,7 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
   def submit: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit request =>
-      handleSubmitRequest(isAgent = false, formMode = "add")
+      handleSubmitRequest(isAgent = false, isChange = false)
   }
 
   def submitAgent: Action[AnyContent] = Authenticated.async {
@@ -141,47 +141,54 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
           implicit mtdItUser =>
-            handleSubmitRequest(isAgent = true, formMode = "add")
+            handleSubmitRequest(isAgent = true, isChange = false)
         }
   }
 
   def submitChange: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit request =>
-      handleSubmitRequest(isAgent = false, formMode = "update")
+      handleSubmitRequest(isAgent = false, isChange = true)
   }
-//
-//  def submitChangeAgent: Action[AnyContent] = Authenticated.async {
-//    implicit request =>
-//      implicit user =>
-//        getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
-//          implicit mtdItUser =>
-//            handleSubmitRequest(isAgent = true, formMode = "update")
-//        }
-//  }
 
-  def handleSubmitRequest(isAgent: Boolean, formMode: String)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
+  def submitChangeAgent: Action[AnyContent] = Authenticated.async {
+    implicit request =>
+      implicit user =>
+        getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
+          implicit mtdItUser =>
+            handleSubmitRequest(isAgent = true, isChange = true)
+        }
+  }
+
+  def handleSubmitRequest(isAgent: Boolean, isChange: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
     val (backUrlLocal, submitActionLocal, redirectLocal) = {
-      if (isAgent)
-        (backUrlAgent, submitActionAgent, redirectAgent)
-      else
-        (backUrl, submitAction, redirect)
-    }
+      if(isChange) {
+        if (isAgent)
+          (backUrlAgent, submitChangeActionAgent, redirectAgent)
+        else
+          (backUrl, submitChangeAction, redirect)
+      } else {
+        if (isAgent)
+          (backUrlAgent, submitActionAgent, redirectAgent)
+        else
+          (backUrl, submitAction, redirect)
+      }
 
-    println(s"FormMode handleSubmit() = $formMode")
+    }
+    println(isChange)
 
     BusinessNameForm.form.bindFromRequest().fold(
       formWithErrors => {
         Future {
-          Ok(addBusinessView(formWithErrors, isAgent, submitActionLocal, backUrlLocal, formMode))
+          Ok(addBusinessView(formWithErrors, isAgent, submitActionLocal, backUrlLocal))
         }
       },
       formData => {
-        val updatedRedirect = formMode match {
-          case "add" => redirectLocal
-          case _ => if(isAgent)(checkDetailsRedirectAgent) else (checkDetailsRedirect)
+      val updatedRedirect = if (isChange) {
+            if(isAgent)(checkDetailsRedirectAgent) else (checkDetailsRedirect)
+        } else {
+          redirectLocal
         }
-
 
         Future.successful {
           Redirect(updatedRedirect)
@@ -194,12 +201,10 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
   def changeBusinessName(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
-      val formMode = getModeFromURL(user)
-      println(s"FormMode changeBusinessName() = $formMode")
       handleRequest(
         isAgent = false,
         backUrl = checkDetailsBackUrl,
-        formMode = formMode
+        isChange = true
       )
   }
 
@@ -209,11 +214,10 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
         implicit user =>
           getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
             implicit mtdItUser =>
-              val formMode = getModeFromURL(request)
               handleRequest(
                 isAgent = true,
                 backUrl = checkDetailsBackUrlAgent,
-                formMode = formMode
+                isChange = true
               )
           }
     }

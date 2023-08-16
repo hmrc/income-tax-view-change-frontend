@@ -45,8 +45,7 @@
     businessNameForm: Form[BusinessNameForm],
     isAgent: Boolean,
     postAction: Call,
-    backUrl: String,
-    formMode: String
+    backUrl: String
 )(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @import forms.utils.SessionKeys
@@ -63,9 +62,6 @@
     field.error
 }
 
-@modeFromUrl = @{
-    formMode
-}
 @mainTemplate(
     pageTitle = messages("add-business-name.heading"),
     isAgent = isAgent,
@@ -99,13 +95,6 @@
                     @messages(s"${error.message}", error.args:_*)
                 </span>
             }
-
-            <input
-                    name="mode"
-                    type="hidden"
-                    value="@modeFromUrl"
-                    aria-hidden="true"
-            >
 
             <input
                 name="@field.name"
