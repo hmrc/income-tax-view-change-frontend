@@ -59,24 +59,28 @@ class IncomeSourcesAccountingMethodController @Inject()(val authenticate: Authen
 
     if (userActiveBusinesses.flatMap(_.cashOrAccruals).distinct.size > 1) {
       Logger("application").error(s"${if (isAgent) "[Agent]"}" +
-        s"Error getting business cashOrAccrualsField")
+        s"Error getting business cashOrAccruals Field")
     }
 
-    userActiveBusinesses match {
-      case head :: _ if (head.cashOrAccruals.isDefined) =>
-        val accountingMethod: String = head.cashOrAccruals.get
+    userActiveBusinesses.map(_.cashOrAccruals).headOption match {
+      case Some(cashOrAccrualsFieldMaybe) if (cashOrAccrualsFieldMaybe.isDefined) =>
+        val accountingMethodIsAccruals: String = if (cashOrAccrualsFieldMaybe.get) {
+          "accruals"
+        } else {
+          "cash"
+        }
         if (isAgent) {
           Future.successful(Redirect(controllers.incomeSources.add.routes.CheckBusinessDetailsController.showAgent())
-            .addingToSession(addIncomeSourcesAccountingMethod -> accountingMethod))
+            .addingToSession(addIncomeSourcesAccountingMethod -> accountingMethodIsAccruals))
         } else {
           Future.successful(Redirect(controllers.incomeSources.add.routes.CheckBusinessDetailsController.show())
-            .addingToSession(addIncomeSourcesAccountingMethod -> accountingMethod))
+            .addingToSession(addIncomeSourcesAccountingMethod -> accountingMethodIsAccruals))
         }
-      case head :: _ if head.cashOrAccruals.isEmpty =>
+      case Some(cashOrAccrualsFieldMaybe) if cashOrAccrualsFieldMaybe.isEmpty =>
         Logger("application").error(s"${if (isAgent) "[Agent]"}" +
-          s"Error getting business cashOrAccrualsField")
+          s"Error getting business cashOrAccruals field")
         Future.successful(errorHandler.showInternalServerError())
-      case _ =>
+      case None =>
         Future.successful(Ok(view(
           incomeSourcesType = incomeSourceType,
           form = IncomeSourcesAccountingMethodForm(incomeSourceType),
