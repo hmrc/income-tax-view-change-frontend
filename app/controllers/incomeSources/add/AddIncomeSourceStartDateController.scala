@@ -105,7 +105,11 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
           Future {
             Ok(
               addIncomeSourceStartDate(
-                form = getFilledForm(form(messagesPrefix), incomeSourceType, isUpdate),
+                form = getFilledForm(
+                  form = form(messagesPrefix),
+                  maybeStartDateKey = user.session.get(getStartDateKey(incomeSourceType)),
+                  isUpdate = isUpdate
+                ),
                 isAgent = isAgent,
                 backUrl = backCall.url,
                 postAction = postAction,
@@ -181,7 +185,9 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
       else itvcErrorHandler.showInternalServerError
   }
 
-  private def getCalls(incomeSourceType: IncomeSourceType, isAgent: Boolean, isUpdate: Boolean): (Call, Call, Call) = {
+  private def getCalls(incomeSourceType: IncomeSourceType,
+                       isAgent: Boolean,
+                       isUpdate: Boolean): (Call, Call, Call) = {
 
     incomeSourceType match {
       case SelfEmployment =>
@@ -238,11 +244,8 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
   }
 
   private def getFilledForm(form: Form[DateFormElement],
-                            incomeSourceType: IncomeSourceType,
-                            isUpdate: Boolean)
-                           (implicit user: MtdItUser[_]) = {
-
-    val maybeStartDateKey = user.session.get(getStartDateKey(incomeSourceType))
+                            maybeStartDateKey: Option[String],
+                            isUpdate: Boolean): Form[DateFormElement] = {
 
     (maybeStartDateKey, isUpdate) match {
       case (Some(key), true) if Try(LocalDate.parse(key)).toOption.isDefined =>

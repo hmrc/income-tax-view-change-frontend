@@ -44,11 +44,7 @@
 @import implicitDateFormatter.longDate
 
 @getChangeUKPropertyStartDateUrl = @{
-    if (isAgent) {
-        controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.changeUKPropertyStartDateAgent.url
-    } else {
-        controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.changeUKPropertyStartDate.url
-    }
+    controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showUKProperty(isAgent = isAgent, isUpdate = true).url
 }
 
 @getChangeUKPropertyAccountingMethodUrl = @{
