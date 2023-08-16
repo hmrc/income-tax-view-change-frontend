@@ -56,21 +56,30 @@ class BusinessAccountingMethodController @Inject()(val authenticate: Authenticat
                                               (implicit user: MtdItUser[_], backUrl: String, postAction: Call, messages: Messages): Future[Result] = {
     val userActiveBusinesses: List[BusinessDetailsModel] = user.incomeSources.businesses.filterNot(_.isCeased)
 
-    if (userActiveBusinesses.flatMap(_.cashOrAccrualsFlag).distinct.size > 1) {
+    if (userActiveBusinesses.flatMap(_.cashOrAccruals).distinct.size > 1) {
       Logger("application").error(s"${if (isAgent) "[Agent]"}" +
-        s"Error getting business cashOrAccrualsFlag Field")
+        s"Error getting business cashOrAccruals Field")
     }
 
-        val accountingMethod: String = "cash"
+    userActiveBusinesses.map(_.cashOrAccruals).headOption match {
+      case Some(cashOrAccrualsFieldMaybe) if (cashOrAccrualsFieldMaybe.isDefined) =>
+        val accountingMethodIsAccruals: String = if (cashOrAccrualsFieldMaybe.get) {
+          "accruals"
+        } else {
+          "cash"
+        }
         if (isAgent) {
           Future.successful(Redirect(controllers.incomeSources.add.routes.CheckBusinessDetailsController.showAgent())
-            .addingToSession(addBusinessAccountingMethod -> accountingMethod))
+            .addingToSession(addBusinessAccountingMethod -> accountingMethodIsAccruals))
         } else {
           Future.successful(Redirect(controllers.incomeSources.add.routes.CheckBusinessDetailsController.show())
-            .addingToSession(addBusinessAccountingMethod -> accountingMethod))
+            .addingToSession(addBusinessAccountingMethod -> accountingMethodIsAccruals))
         }
-      accountingMethod match {
-    case _ =>
+      case Some(cashOrAccrualsFieldMaybe) if cashOrAccrualsFieldMaybe.isEmpty =>
+        Logger("application").error(s"${if (isAgent) "[Agent]"}" +
+          s"Error getting business cashOrAccruals field")
+        Future.successful(errorHandler.showInternalServerError())
+      case None =>
         Future.successful(Ok(view(
           form = BusinessAccountingMethodForm.form,
           postAction = postAction,
