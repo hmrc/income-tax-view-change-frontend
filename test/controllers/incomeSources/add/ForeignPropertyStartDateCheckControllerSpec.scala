@@ -16,11 +16,10 @@
 
 package controllers.incomeSources.add
 
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import config.featureswitch.{FeatureSwitching, IncomeSources}
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import enums.IncomeSourceJourney.ForeignProperty
-import forms.incomeSources.add.{ForeignPropertyStartDateCheckForm, ForeignPropertyStartDateForm}
 import forms.utils.SessionKeys.foreignPropertyStartDate
 import implicits.ImplicitDateFormatter
 import mocks.MockItvcErrorHandler
@@ -30,7 +29,7 @@ import mocks.services.MockClientDetailsService
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.http.Status
-import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
+import play.api.http.Status.{BAD_REQUEST, SEE_OTHER}
 import play.api.mvc.{Call, MessagesControllerComponents, Result}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import testConstants.BaseTestConstants
