@@ -52,8 +52,7 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
   lazy val backUrlAgent: String = controllers.incomeSources.add.routes.AddIncomeSourceController.showAgent().url
   lazy val submitAction: Call = controllers.incomeSources.add.routes.AddBusinessNameController.submit()
   lazy val submitActionAgent: Call = controllers.incomeSources.add.routes.AddBusinessNameController.submitAgent()
-  lazy val redirect: Call = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showSoleTraderBusiness
-  lazy val redirectAgent: Call = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showSoleTraderBusinessAgent
+  def redirect(isAgent: Boolean): Call = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showSoleTraderBusiness(isAgent = isAgent, isUpdate = false)
 
   def show(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
@@ -112,9 +111,9 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
   def handleSubmitRequest(isAgent: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
     val (backUrlLocal, submitActionLocal, redirectLocal) = {
       if (isAgent)
-        (backUrlAgent, submitActionAgent, redirectAgent)
+        (backUrlAgent, submitActionAgent, redirect(isAgent))
       else
-        (backUrl, submitAction, redirect)
+        (backUrl, submitAction, redirect(isAgent))
     }
 
     BusinessNameForm.form.bindFromRequest().fold(

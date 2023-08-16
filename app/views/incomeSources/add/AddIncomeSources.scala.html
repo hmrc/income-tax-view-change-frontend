@@ -55,13 +55,11 @@
 }
 
 @addUKPropertyStartDateURL = @{
-    if(isAgent) controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showUKPropertyAgent.url
-    else controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showUKProperty.url
+    controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showUKProperty(isAgent = isAgent, isUpdate = false).url
 }
 
 @addForeignPropertyBusinessStartDateURL = @{
-    if(isAgent) controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showForeignPropertyAgent.url
-    else controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showForeignProperty.url
+    controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showForeignProperty(isAgent = isAgent, isUpdate = false).url
 }
 
 @mainTemplate(pageTitle = getMessage("heading"),

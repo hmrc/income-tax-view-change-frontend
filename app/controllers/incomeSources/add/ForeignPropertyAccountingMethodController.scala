@@ -76,8 +76,7 @@ class ForeignPropertyAccountingMethodController @Inject()(val authenticate: Auth
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
 
     val incomeSourcesEnabled: Boolean = isEnabled(IncomeSources)
-    val backUrl: String = if (isAgent) controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.showForeignPropertyAgent.url else
-      controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.showForeignProperty.url
+    val backUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.showForeignProperty(isAgent = isAgent, isUpdate = false).url
     val postAction: Call = if (isAgent) controllers.incomeSources.add.routes.ForeignPropertyAccountingMethodController.submitAgent() else
       controllers.incomeSources.add.routes.ForeignPropertyAccountingMethodController.submit()
 
@@ -121,11 +120,11 @@ class ForeignPropertyAccountingMethodController @Inject()(val authenticate: Auth
     val (postAction, backAction, redirectAction) = {
       if (isAgent)
         (routes.ForeignPropertyAccountingMethodController.submitAgent(),
-          routes.AddIncomeSourceStartDateCheckController.showForeignPropertyAgent,
+          routes.AddIncomeSourceStartDateCheckController.showForeignProperty(isAgent = isAgent, isUpdate = false),
           routes.ForeignPropertyCheckDetailsController.showAgent())
       else
         (routes.ForeignPropertyAccountingMethodController.submit(),
-          routes.AddIncomeSourceStartDateCheckController.showForeignProperty,
+          routes.AddIncomeSourceStartDateCheckController.showForeignProperty(isAgent = isAgent, isUpdate = false),
           routes.ForeignPropertyCheckDetailsController.show())
     }
 

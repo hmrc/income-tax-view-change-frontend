@@ -22,7 +22,7 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import forms.incomeSources.add.AddIncomeSourceStartDateForm
+import forms.incomeSources.add.{AddIncomeSourceStartDateForm => form}
 import forms.utils.SessionKeys
 import implicits.ImplicitDateFormatterImpl
 import play.api.Logger
@@ -58,46 +58,53 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
   def showUKProperty(isAgent: Boolean, isUpdate: Boolean): Action[AnyContent] = handleRequest(UkProperty, isAgent, isUpdate)
   def showForeignProperty(isAgent: Boolean, isUpdate: Boolean): Action[AnyContent] = handleRequest(ForeignProperty, isAgent, isUpdate)
   def showSoleTraderBusiness(isAgent: Boolean, isUpdate: Boolean): Action[AnyContent] = handleRequest(SelfEmployment, isAgent, isUpdate)
-  def submitUKProperty(isAgent: Boolean, isUpdate: Boolean): Action[AnyContent] = handleRequest(UkProperty, isAgent, isUpdate)
+  def submitUKProperty(isAgent: Boolean, isUpdate: Boolean): Action[AnyContent] = {
+    println("\nGOT INTO submitUKProperty\n")
+    handleRequest(UkProperty, isAgent, isUpdate)
+  }
   def submitForeignProperty(isAgent: Boolean, isUpdate: Boolean): Action[AnyContent] = handleRequest(ForeignProperty, isAgent, isUpdate)
   def submitSoleTraderBusiness(isAgent: Boolean, isUpdate: Boolean): Action[AnyContent] = handleRequest(SelfEmployment, isAgent, isUpdate)
 
   private def handleRequest(incomeSourceType: IncomeSourceType,
-                     isAgent: Boolean,
-                     isUpdate: Boolean): Action[AnyContent] = {
+                            isAgent: Boolean,
+                            isUpdate: Boolean): Action[AnyContent] = {
     if (isAgent)
       Authenticated.async {
         implicit request =>
           implicit user =>
             getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
               implicit mtdItUser =>
-                if (isUpdate) submit(incomeSourceType, isAgent, isUpdate)
-                else show(incomeSourceType, isAgent, isUpdate)
+                request.method match {
+                  case "POST" => submit(incomeSourceType, isAgent, isUpdate)
+                  case "GET" => show(incomeSourceType, isAgent, isUpdate)
+                }
             }
       }
     else
       (checkSessionTimeout andThen authenticate andThen retrieveNino
         andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
         implicit user =>
-          if (isUpdate) submit(incomeSourceType, isAgent, isUpdate)
-          else show(incomeSourceType, isAgent, isUpdate)
+          user.method match {
+            case "POST" => submit(incomeSourceType, isAgent, isUpdate)
+            case "GET" => show(incomeSourceType, isAgent, isUpdate)
+          }
       }
   }
 
   private def show(incomeSourceType: IncomeSourceType,
-                            isAgent: Boolean,
-                            isUpdate: Boolean)
-                           (implicit user: MtdItUser[_]): Future[Result] = {
+                   isAgent: Boolean,
+                   isUpdate: Boolean)
+                  (implicit user: MtdItUser[_]): Future[Result] = {
 
     val messagesPrefix = getMessagesPrefix(incomeSourceType)
 
     if(isEnabled(IncomeSources)) {
-      getCalls(isAgent, incomeSourceType) match {
+      getCalls(incomeSourceType, isAgent, isUpdate) match {
         case (backCall, postAction, _) =>
           Future(
             Ok(
               addIncomeSourceStartDate(
-                form = AddIncomeSourceStartDateForm(messagesPrefix),
+                form = form(messagesPrefix),
                 isAgent = isAgent,
                 backUrl = backCall.url,
                 postAction = postAction,
@@ -121,16 +128,16 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
   }
 
   private def submit(incomeSourceType: IncomeSourceType,
-                                  isAgent: Boolean,
-                                  isUpdate: Boolean)
-                                 (implicit user: MtdItUser[_]): Future[Result] = {
+                     isAgent: Boolean,
+                     isUpdate: Boolean)
+                    (implicit user: MtdItUser[_]): Future[Result] = {
 
     val messagesPrefix = getMessagesPrefix(incomeSourceType)
 
     if(isEnabled(IncomeSources)) {
-      getCalls(isAgent, incomeSourceType) match {
+      getCalls(incomeSourceType, isAgent, isUpdate) match {
         case (backCall, postAction, redirectCall) =>
-          AddIncomeSourceStartDateForm(messagesPrefix).bindFromRequest().fold(
+          form(messagesPrefix).bindFromRequest().fold(
             formWithErrors =>
               Future(
                 BadRequest(
@@ -173,44 +180,42 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
       else itvcErrorHandler.showInternalServerError()
   }
 
-  private def getCalls(isAgent: Boolean, incomeSourceType: IncomeSourceType): (Call, Call, Call) = {
+  private def getCalls(incomeSourceType: IncomeSourceType, isAgent: Boolean, isUpdate: Boolean): (Call, Call, Call) = {
 
-    (isAgent, incomeSourceType) match {
-      case (false, SelfEmployment) =>
+    incomeSourceType match {
+      case SelfEmployment =>
         (
-          controllers.incomeSources.add.routes.AddBusinessNameController.show(),
-          controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.submitSoleTraderBusiness,
-          controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.showSoleTraderBusiness
+          (isAgent, isUpdate) match {
+            case (false, false) => routes.AddBusinessNameController.show()
+            case (false, true) => routes.CheckBusinessDetailsController.show()
+            case (true, false) => routes.AddBusinessNameController.showAgent()
+            case (true, true) => routes.CheckBusinessDetailsController.showAgent()
+          },
+          routes.AddIncomeSourceStartDateController.submitSoleTraderBusiness(isAgent = isAgent, isUpdate = isUpdate),
+          routes.AddIncomeSourceStartDateCheckController.showSoleTraderBusiness(isAgent = isAgent, isUpdate = isUpdate)
         )
-      case (false, UkProperty) =>
+      case UkProperty =>
         (
-          controllers.incomeSources.add.routes.AddIncomeSourceController.show(),
-          controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.submitUKProperty,
-          controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.showUKProperty
+          (isAgent, isUpdate) match {
+            case (false, false) => controllers.incomeSources.add.routes.AddIncomeSourceController.show()
+            case (false, true) => controllers.incomeSources.add.routes.CheckUKPropertyDetailsController.show()
+            case (true, false) => controllers.incomeSources.add.routes.AddIncomeSourceController.showAgent()
+            case (true, true) => controllers.incomeSources.add.routes.CheckUKPropertyDetailsController.showAgent()
+          },
+          controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.submitUKProperty(isAgent = isAgent, isUpdate = isUpdate),
+          controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.submitUKProperty(isAgent = isAgent, isUpdate = isUpdate)
         )
-      case (false, ForeignProperty) =>
+
+      case ForeignProperty =>
         (
-          controllers.incomeSources.add.routes.AddIncomeSourceController.show(),
-          controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.submitForeignProperty,
-          controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.showForeignProperty
-        )
-      case (true, SelfEmployment) =>
-        (
-          controllers.incomeSources.add.routes.AddBusinessNameController.showAgent(),
-          controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.submitSoleTraderBusinessAgent,
-          controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.showSoleTraderBusinessAgent
-        )
-      case (true, UkProperty) =>
-        (
-          controllers.incomeSources.add.routes.AddIncomeSourceController.showAgent(),
-          controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.submitUKPropertyAgent,
-          controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.showUKPropertyAgent
-        )
-      case (true, ForeignProperty) =>
-        (
-          controllers.incomeSources.add.routes.AddIncomeSourceController.showAgent(),
-          controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.submitForeignPropertyAgent,
-          controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.showForeignPropertyAgent
+          (isAgent, isUpdate) match {
+            case (false, false) => routes.AddIncomeSourceController.show()
+            case (false, true) => routes.ForeignPropertyCheckDetailsController.show()
+            case (true, false) => routes.AddIncomeSourceController.showAgent()
+            case (true, true) => routes.ForeignPropertyCheckDetailsController.showAgent()
+          },
+          routes.AddIncomeSourceStartDateController.submitForeignProperty(isAgent = isAgent, isUpdate = isUpdate),
+          routes.AddIncomeSourceStartDateCheckController.submitForeignProperty(isAgent = isAgent, isUpdate = isUpdate)
         )
     }
   }
