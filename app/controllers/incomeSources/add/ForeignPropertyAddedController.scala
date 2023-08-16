@@ -21,7 +21,7 @@ import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
-import models.incomeSourceDetails.viewmodels.ForeignPropertyBusiness
+import enums.IncomeSourceJourney.ForeignProperty
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
@@ -85,8 +85,8 @@ class ForeignPropertyAddedController @Inject()(val view: IncomeSourceAddedObliga
         case Some((_, startDate)) =>
           val showPreviousTaxYears: Boolean = startDate.isBefore(dateService.getCurrentTaxYearStart())
           nextUpdatesService.getObligationsViewModel(incomeSourceId, showPreviousTaxYears) map { viewModel =>
-            if (isAgent) Ok(view(viewModel, agentBackUrl, isAgent = isAgent, businessType = ForeignPropertyBusiness()))
-            else Ok(view(viewModel, backUrl, isAgent = isAgent, businessType = ForeignPropertyBusiness()))
+            if (isAgent) Ok(view(viewModel, agentBackUrl, isAgent = isAgent, journeyType = ForeignProperty))
+            else Ok(view(viewModel, backUrl, isAgent = isAgent, journeyType = ForeignProperty))
           }
         case _ =>
           Logger("application").error(

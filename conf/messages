@@ -1447,6 +1447,28 @@ business-added.income-sources-button                    = Your income sources
 business-added.previous-tax-years-heading               = Previous tax years
 business-added.previous-tax-years-t1                    = You must make sure that you have sent all the required income and expenses, and final declarations for tax years earlier than
 
+## Income Source Creased Obligation Page ##
+business-ceased.obligation.heading1.se.part1                        =
+business-ceased.obligation.heading1.se.part2                        = Sole trader business
+business-ceased.obligation.heading1.uk-property.part2               = UK Property
+business-ceased.obligation.heading1.foreign-property.part2          = Foreign Property
+business-ceased.obligation.heading1.base                            = has ceased
+business-ceased.obligation.heading2.text                            = What you must do
+business-ceased.obligation.button.text                              = Your income sources
+
+business-ceased.obligation.quarterly-heading                        = Send quarterly updates
+business-ceased.obligation.quarterly-p1                             = You must send quarterly updates of your income and expenses using compatible software by the following deadlines:
+business-ceased.obligation.eops-heading                             = Send end of period statements
+business-ceased.obligation.eops-p1                                  = You must submit end of period statements using your software by the deadline.
+business-ceased.obligation.final-declaration-heading                = Submit final declarations and pay your tax
+business-ceased.obligation.final-declaration-text                   = You must submit your final declarations and pay the tax you owe by the deadline.
+business-ceased.obligation.table.heading-1                          = Tax year
+business-ceased.obligation.table.heading-2                          = Deadline
+business-ceased.obligation.income-sources-button                    = Your income sources
+business-ceased.obligation.previous-tax-years-heading               = Previous tax years
+business-ceased.obligation.previous-tax-years-t1                    = You must make sure that you have sent all the required income and expenses, and final declarations for tax years earlier than
+business-ceased.obligation.to                                       =  to
+
 ## Income Source Added Pages ##
 incomeSourceAdded.additionalWelshContent                                =
 #The above key is intentionally blank
@@ -1458,8 +1480,8 @@ incomeSourceAdded.quarterly.heading                                     = Send q
 incomeSourceAdded.quarterly.text                                        = You must send quarterly updates of your income and expenses using compatible software by the following deadlines:
 incomeSourceAdded.eops.heading                                          = Send end of period statements
 incomeSourceAdded.eops.text                                             = You must submit end of period statements using your software by the deadline.
-incomeSourceAdded.finalDeclaration.heading                               = Submit final declarations and pay your tax
-incomeSourceAdded.finalDeclaration.text                                  = You must submit your final declarations and pay the tax you owe by the deadline.
+incomeSourceAdded.finalDeclaration.heading                              = Submit final declarations and pay your tax
+incomeSourceAdded.finalDeclaration.text                                 = You must submit your final declarations and pay the tax you owe by the deadline.
 incomeSourceAdded.table.taxYear.heading                                 = Tax year
 incomeSourceAdded.table.deadline.heading                                = Deadline
 incomeSourceAdded.button.text                                           = Your income sources

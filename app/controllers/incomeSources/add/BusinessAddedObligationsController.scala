@@ -21,7 +21,7 @@ import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
-import models.incomeSourceDetails.viewmodels.SoleTreaderBusiness
+import enums.IncomeSourceJourney.SelfEmployment
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
@@ -77,7 +77,7 @@ class BusinessAddedObligationsController @Inject()(authenticate: AuthenticationP
           val showPreviousTaxYears: Boolean = startDate.isBefore(dateService.getCurrentTaxYearStart())
           nextUpdatesService.getObligationsViewModel(incomeSourceId, showPreviousTaxYears) map { viewModel =>
             val backUrl = getBackUrl(incomeSourceId, isAgent)
-            Ok(obligationsView(businessName = Some(businessName), sources = viewModel, backUrl = backUrl, isAgent = isAgent, businessType = SoleTreaderBusiness()))
+            Ok(obligationsView(businessName = Some(businessName), sources = viewModel, backUrl = backUrl, isAgent = isAgent, journeyType = SelfEmployment))
           }
         case None =>
           val errorMessage = s"Unable to find incomeSource by id: $incomeSourceId"

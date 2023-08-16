@@ -35,26 +35,26 @@
   govukTable: GovukTable,
 )
 
-@(sources: ObligationsViewModel, backUrl: String, isAgent: Boolean, journeyType: IncomeSourceJourney, businessName: Option[String] = None)(implicit messages: Messages, user: auth.MtdItUser[_])
+@(sources: ObligationsViewModel, backUrl: Option[String], isAgent: Boolean, journeyType: IncomeSourceJourney, businessName: Option[String] = None)(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @getMessage(key: String, args: String*) = @{
-  messages(s"business-added.$key", args: _*)
+  messages(s"business-ceased.obligation.$key", args: _*)
 }
 
+@businessNameFinal = @{ businessName.getOrElse(getMessage("heading1.se.part2")) }
 
 @getPageTitle = @{
 
-    journeyType match {
-        case _:SelfEmployment.type =>
-            s"""${getMessage("sole-treader.head")} ${businessName.get} ${getMessage("sole-treader.base")}""".trim()
+journeyType match {
+        case  _:SelfEmployment.type =>
+            s"""${getMessage("heading1.se.part1")} ${businessNameFinal} ${getMessage("heading1.base")}""".trim()
 
         case _:UkProperty.type =>
-            s"${getMessage("uk-property.head")} " +
-            s"${getMessage("uk-property.h1")} " +
-            s"${getMessage("uk-property.base")}".trim()
+            s"${getMessage("heading1.uk-property.part2")} " +
+            s"${getMessage("heading1.base")}".trim()
 
         case _:ForeignProperty.type =>
-            s"""${getMessage("foreign-property.h1")} ${getMessage("foreign-property.base")}"""
+            s"""${getMessage("heading1.foreign-property.part2")} ${getMessage("heading1.base")}"""
     }
 }
 
@@ -81,11 +81,11 @@
 @getBannerContent() = @{
     journeyType match {
         case _:SelfEmployment.type =>
-            bannerHtmlContent(getMessage("sole-treader.head"),businessName.get,getMessage("sole-treader.base"))
+            bannerHtmlContent(getMessage("heading1.se.part1"),businessNameFinal,getMessage("heading1.base"))
         case _:UkProperty.type =>
-            bannerHtmlContent(getMessage("uk-property.head"),getMessage("uk-property.h1"),getMessage("uk-property.base"))
+            bannerHtmlContent("",getMessage("heading1.uk-property.part2"),getMessage("heading1.base"))
         case _:ForeignProperty.type =>
-        bannerHtmlContent(getMessage("foreign-property.head"),getMessage("foreign-property.h1"),getMessage("foreign-property.base"))
+        bannerHtmlContent("",getMessage("heading1.foreign-property.part2"),getMessage("heading1.base"))
     }
 }
 
@@ -93,7 +93,7 @@
 @import implicitDateFormatter.longDate
 
 @mainTemplate(pageTitle = getPageTitle,
-  backUrl = Some(backUrl),
+  backUrl = None,
   isAgent = isAgent,
   btaNavPartial = user.btaNavPartial) {
 
@@ -105,7 +105,7 @@
 
         <h2 class="govuk-label-wrapper">
             <label class="govuk-label govuk-label--l govuk-!-margin-top-8">
-                @getMessage("text")
+                @getMessage("heading2.text")
             </label>
         </h2>
 

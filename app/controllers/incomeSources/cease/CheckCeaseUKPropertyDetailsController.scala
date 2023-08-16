@@ -92,9 +92,9 @@ class CheckCeaseUKPropertyDetailsController @Inject()(val authenticate: Authenti
   def handleSubmitRequest(isAgent: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
     lazy val (redirectAction, errorHandler) = {
       if (isAgent)
-        (routes.CeaseUKPropertySuccessController.showAgent(), itvcErrorHandlerAgent)
+        (routes.UkPropertyCeasedObligationsController.showAgent(), itvcErrorHandlerAgent)
       else
-        (routes.CeaseUKPropertySuccessController.show(), itvcErrorHandler)
+        (routes.UkPropertyCeasedObligationsController.show(), itvcErrorHandler)
     }
     if (isEnabled(IncomeSources)) {
       service.updateCessationDate.map {

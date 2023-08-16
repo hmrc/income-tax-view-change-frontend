@@ -21,7 +21,7 @@ import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
-import models.incomeSourceDetails.viewmodels.UkPropertyBusiness
+import enums.IncomeSourceJourney.UkProperty
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
@@ -88,7 +88,7 @@ class UKPropertyAddedController @Inject()(val authenticate: AuthenticationPredic
         case Some(startDate) =>
           val showPreviousTaxYears: Boolean = startDate.isBefore(dateService.getCurrentTaxYearStart())
           nextUpdatesService.getObligationsViewModel(incomeSourceId, showPreviousTaxYears).map { viewModel =>
-            Ok(view(sources = viewModel, isAgent = isAgent, backUrl = backUrl, businessType = UkPropertyBusiness())(messages, user))
+            Ok(view(sources = viewModel, isAgent = isAgent, backUrl = backUrl, journeyType = UkProperty)(messages, user))
           }
         case None =>
           Logger("application").error(
