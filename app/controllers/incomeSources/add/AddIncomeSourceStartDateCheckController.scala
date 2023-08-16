@@ -209,7 +209,7 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
   private def getAndValidateStartDate(incomeSourceType: IncomeSourceType)
                                      (implicit user: MtdItUser[_]): Either[Throwable, String] = {
 
-    def getSessionKey(incomeSourceType: IncomeSourceType): String = {
+    def getStartDateKey(incomeSourceType: IncomeSourceType): String = {
       incomeSourceType match {
         case SelfEmployment => businessStartDate
         case UkProperty => addUkPropertyStartDate
@@ -217,12 +217,12 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
       }
     }
 
-    val maybeIncomeSourceStartDate = user.session.get(getSessionKey(incomeSourceType))
+    val maybeIncomeSourceStartDate = user.session.get(getStartDateKey(incomeSourceType))
 
     maybeIncomeSourceStartDate match {
-      case None => Left(new Error(s"Session value not found for Key: ${getSessionKey(incomeSourceType)}"))
+      case None => Left(new Error(s"Session value not found for Key: ${getStartDateKey(incomeSourceType)}"))
       case Some(date) if Try(date.toLocalDate).toOption.isDefined => Right(date)
-      case Some(invalidDate) => Left(new Error(s"Could not parse: $invalidDate as LocalDate for Key: ${getSessionKey(incomeSourceType)}"))
+      case Some(invalidDate) => Left(new Error(s"Could not parse: $invalidDate as LocalDate for Key: ${getStartDateKey(incomeSourceType)}"))
     }
   }
 

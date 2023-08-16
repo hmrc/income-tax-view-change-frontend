@@ -222,14 +222,6 @@ GET          /agents/income-sources/add/change-foreign-property-start-date-check
 POST         /income-sources/add/change-foreign-property-start-date-check              controllers.incomeSources.add.AddIncomeSourceStartDateCheckController.submitForeignProperty(isAgent: Boolean = false, isUpdate: Boolean = true)
 POST         /agents/income-sources/add/change-foreign-property-start-date-check       controllers.incomeSources.add.AddIncomeSourceStartDateCheckController.submitForeignProperty(isAgent: Boolean = true, isUpdate: Boolean = true)
 
-
-GET          /income-sources/add/change-business-start-date                 controllers.incomeSources.add.AddIncomeSourceStartDateController.changeBusinessStartDate
-GET          /agents/income-sources/add/change-business-start-date          controllers.incomeSources.add.AddIncomeSourceStartDateController.changeBusinessStartDateAgent
-GET          /income-sources/add/change-uk-property-start-date              controllers.incomeSources.add.AddIncomeSourceStartDateController.changeUKPropertyStartDate
-GET          /agents/income-sources/add/change-uk-property-start-date       controllers.incomeSources.add.AddIncomeSourceStartDateController.changeUKPropertyStartDateAgent
-GET          /income-sources/add/change-foreign-property-start-date         controllers.incomeSources.add.AddIncomeSourceStartDateController.changeForeignPropertyStartDate
-GET          /agents/income-sources/add/change-foreign-property-start-date  controllers.incomeSources.add.AddIncomeSourceStartDateController.changeForeignPropertyStartDateAgent
-
 GET          /income-sources/add/business-added                           controllers.incomeSources.add.BusinessAddedObligationsController.show(id: String)
 GET          /agents/income-sources/add/business-added                    controllers.incomeSources.add.BusinessAddedObligationsController.showAgent(id: String)
 POST         /income-sources/add/business-added                           controllers.incomeSources.add.BusinessAddedObligationsController.submit()
