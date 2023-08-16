@@ -168,34 +168,36 @@ class UKPropertyReportingMethodController @Inject()(val authenticate: Authentica
       form.taxYear2ReportingMethod != form.newTaxYear2ReportingMethod
 
     if (reportingMethodNeedsUpdating) {
-      val taxYearSpecific1Opt = for {
-        newReportingMethod <- form.newTaxYear1ReportingMethod
-        taxYear <- form.taxYear1
-      } yield TaxYearSpecific(taxYear, annualQuarterlyToBoolean(Some(newReportingMethod)))
+      val newReportingMethods: Seq[TaxYearSpecific] = Seq(
+        getSelectedReportingMethodValues(form.taxYear1ReportingMethod, form.newTaxYear1ReportingMethod, form.taxYear1),
+        getSelectedReportingMethodValues(form.taxYear2ReportingMethod, form.newTaxYear2ReportingMethod, form.taxYear2)
+      ).flatten
 
-      val taxYearSpecific2Opt = for {
-        newReportingMethod <- form.newTaxYear2ReportingMethod
-        taxYear <- form.taxYear2
-      } yield TaxYearSpecific(taxYear, annualQuarterlyToBoolean(Some(newReportingMethod)))
-
-      updateReportingMethod(isAgent, id, taxYearSpecific1Opt, taxYearSpecific2Opt)
+      updateReportingMethod(isAgent, id, newReportingMethods)
 
     } else {
       Future.successful(Redirect(redirectUrl))
     }
   }
 
-  private def updateReportingMethod(isAgent: Boolean, id: String, taxYearSpecific1Opt: Option[TaxYearSpecific], taxYearSpecific2Opt: Option[TaxYearSpecific])
+  private def getSelectedReportingMethodValues(existingMethod: Option[String], newMethod: Option[String], taxYear: Option[String]): Option[TaxYearSpecific] = {
+    (existingMethod, newMethod, taxYear) match {
+      case (Some(existing), Some(newMethod), Some(taxYear)) if existing != newMethod =>
+        Some(TaxYearSpecific(taxYear, annualQuarterlyToBoolean(Some(newMethod))))
+      case _ =>
+        None
+    }
+  }
+
+  private def updateReportingMethod(isAgent: Boolean, id: String, newReportingMethods: Seq[TaxYearSpecific])
                                    (implicit user: MtdItUser[_]): Future[Result] = {
 
     val redirectUrl: Call = if (isAgent) routes.UKPropertyAddedController.showAgent(id) else routes.UKPropertyAddedController.show(id)
     val redirectErrorUrl: Call = if (isAgent) routes.IncomeSourceReportingMethodNotSavedController.showUKPropertyAgent() else
       routes.IncomeSourceReportingMethodNotSavedController.showUKProperty()
 
-    val futures = Seq(
-      taxYearSpecific1Opt.map(taxYearSpecific => updateIncomeSourceService.updateTaxYearSpecific(user.nino, id, taxYearSpecific)),
-      taxYearSpecific2Opt.map(taxYearSpecific => updateIncomeSourceService.updateTaxYearSpecific(user.nino, id, taxYearSpecific))
-    ).flatten
+    val futures = newReportingMethods.map(taxYearSpecific =>
+      updateIncomeSourceService.updateTaxYearSpecific(user.nino, id, taxYearSpecific))
 
     val updateResults: Future[Seq[UpdateIncomeSourceResponse]] = Future.sequence(futures)
 
