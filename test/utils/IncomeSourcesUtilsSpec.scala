@@ -44,7 +44,7 @@ class IncomeSourcesUtilsSpec extends TestSupport with IncomeSourcesUtils {
 
   val checkUKPropertyViewModel = CheckUKPropertyViewModel(
     tradingStartDate = LocalDate.of(2023, 5, 1),
-    cashOrAccrualsFlag = "CASH")
+    cashOrAccrualsFlag = "Cash")
 
   val fakeRequest = fakeRequestWithActiveSession.withSession(
     businessName -> viewModelMax.businessName.get,
