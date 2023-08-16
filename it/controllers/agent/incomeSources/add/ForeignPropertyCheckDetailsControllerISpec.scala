@@ -1,7 +1,8 @@
 package controllers.agent.incomeSources.add
 
 import config.featureswitch.IncomeSources
-import forms.utils.SessionKeys.{addForeignPropertyAccountingMethod, foreignPropertyStartDate}
+import enums.IncomeSourceJourney.ForeignProperty
+import forms.utils.SessionKeys.{addIncomeSourcesAccountingMethod, foreignPropertyStartDate}
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.createIncomeSource.CreateIncomeSourceResponse
@@ -13,7 +14,7 @@ import scala.collection.immutable.Seq
 
 class ForeignPropertyCheckDetailsControllerISpec extends ComponentSpecBase{
   val foreignPropertyCheckDetailsShowAgentUrl: String = controllers.incomeSources.add.routes.ForeignPropertyCheckDetailsController.showAgent().url
-  val foreignPropertyAccountingMethodAgentUrl: String = controllers.incomeSources.add.routes.ForeignPropertyAccountingMethodController.showAgent().url
+  val foreignPropertyAccountingMethodAgentUrl: String = controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.showAgent(ForeignProperty.key).url
 
   val foreignPropertyCheckDetailsSubmitAgentUrl: String = controllers.incomeSources.add.routes.ForeignPropertyCheckDetailsController.submitAgent().url
   val foreignPropertyReportingMethodShowAgentUrl: String = controllers.incomeSources.add.routes.ForeignPropertyReportingMethodController.showAgent("ABC123456789").url
@@ -22,7 +23,7 @@ class ForeignPropertyCheckDetailsControllerISpec extends ComponentSpecBase{
 
   val sessionData: Map[String, String] = Map(
     foreignPropertyStartDate -> "2023-01-01",
-    addForeignPropertyAccountingMethod -> "ACCRUALS"
+    addIncomeSourcesAccountingMethod -> "ACCRUALS"
   )
 
   val testStartDate = "1 January 2023"
@@ -61,7 +62,7 @@ class ForeignPropertyCheckDetailsControllerISpec extends ComponentSpecBase{
           When(s"I call $foreignPropertyCheckDetailsShowAgentUrl")
           val result = IncomeTaxViewChangeFrontend.get("/income-sources/add/foreign-property-check-details", Map(
             foreignPropertyStartDate -> "",
-            addForeignPropertyAccountingMethod -> ""
+            addIncomeSourcesAccountingMethod -> ""
           ) ++ clientDetailsWithConfirmation)
           result should have(
             httpStatus(INTERNAL_SERVER_ERROR)
@@ -81,7 +82,7 @@ class ForeignPropertyCheckDetailsControllerISpec extends ComponentSpecBase{
 
         val formData: Map[String, Seq[String]] = Map(
           "foreignPropertyStartDate" -> Seq("2023-01-01"),
-          "addForeignPropertyAccountingMethod" -> Seq("ACCRUALS")
+          "addIncomeSourcesAccountingMethod" -> Seq("ACCRUALS")
         )
 
         val response = List(CreateIncomeSourceResponse(testSelfEmploymentId))
@@ -105,7 +106,7 @@ class ForeignPropertyCheckDetailsControllerISpec extends ComponentSpecBase{
 
         val formData: Map[String, Seq[String]] = Map(
           "foreignPropertyStartDate" -> Seq("2023-01-01"),
-          "addForeignPropertyAccountingMethod" -> Seq("ACCRUALS")
+          "addIncomeSourcesAccountingMethod" -> Seq("ACCRUALS")
         )
 
         IncomeTaxViewChangeStub.stubCreateBusinessDetailsResponse(testMtditid)(OK, List.empty)

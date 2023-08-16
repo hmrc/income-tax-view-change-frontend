@@ -17,6 +17,7 @@
 package controllers.agent.incomeSources.add
 
 import config.featureswitch.IncomeSources
+import enums.IncomeSourceJourney.ForeignProperty
 import forms.utils.SessionKeys.foreignPropertyStartDate
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
@@ -27,7 +28,7 @@ import testConstants.IncomeSourceIntegrationTestConstants.noPropertyOrBusinessRe
 class ForeignPropertyStartDateCheckControllerISpec extends ComponentSpecBase {
   val foreignPropertyStartDateCheckShowUrl: String = controllers.incomeSources.add.routes.ForeignPropertyStartDateCheckController.showAgent().url
   val foreignPropertyStartDateCheckSubmitUrl: String = controllers.incomeSources.add.routes.ForeignPropertyStartDateCheckController.submitAgent().url
-  val foreignPropertyAccountingMethodShowUrl: String = controllers.incomeSources.add.routes.ForeignPropertyAccountingMethodController.showAgent().url
+  val foreignPropertyAccountingMethodShowUrl: String = controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.showAgent(ForeignProperty.key).url
   val foreignPropertyStartDateShowUrl: String = controllers.incomeSources.add.routes.ForeignPropertyStartDateController.showAgent().url
 
   val dateCookie: Map[String, String] = Map(foreignPropertyStartDate -> "2022-10-10")

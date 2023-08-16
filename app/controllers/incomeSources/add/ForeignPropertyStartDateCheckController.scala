@@ -21,6 +21,7 @@ import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
+import enums.IncomeSourceJourney.ForeignProperty
 import forms.incomeSources.add.ForeignPropertyStartDateCheckForm
 import forms.incomeSources.add.ForeignPropertyStartDateCheckForm.{response, responseNo, responseYes}
 import forms.utils.SessionKeys.foreignPropertyStartDate
@@ -58,8 +59,8 @@ class ForeignPropertyStartDateCheckController @Inject()(authenticate: Authentica
 
   lazy val backUrl: String = routes.ForeignPropertyStartDateController.show().url
   lazy val backUrlAgent: String = routes.ForeignPropertyStartDateController.showAgent().url
-  lazy val nextPage: String = routes.ForeignPropertyAccountingMethodController.show().url
-  lazy val nextPageAgent: String = routes.ForeignPropertyAccountingMethodController.showAgent().url
+  lazy val nextPage: String = routes.IncomeSourcesAccountingMethodController.show(ForeignProperty.key).url
+  lazy val nextPageAgent: String = routes.IncomeSourcesAccountingMethodController.showAgent(ForeignProperty.key).url
 
 
   def show(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino

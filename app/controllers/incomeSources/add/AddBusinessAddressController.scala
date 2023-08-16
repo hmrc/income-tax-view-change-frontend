@@ -22,6 +22,7 @@ import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
+import enums.IncomeSourceJourney.SelfEmployment
 import forms.utils.SessionKeys
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -87,7 +88,7 @@ class AddBusinessAddressController @Inject()(authenticate: AuthenticationPredica
 
   def handleSubmitRequest(isAgent: Boolean, id: Option[String])(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
     val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-    val redirectUrl = if (isAgent) routes.BusinessAccountingMethodController.showAgent().url else routes.BusinessAccountingMethodController.show().url
+    val redirectUrl = if (isAgent) routes.IncomeSourcesAccountingMethodController.showAgent(SelfEmployment.key).url else routes.IncomeSourcesAccountingMethodController.show(SelfEmployment.key).url
     val res = addressLookupService.fetchAddress(id)
     res map {
       case Right(value) =>

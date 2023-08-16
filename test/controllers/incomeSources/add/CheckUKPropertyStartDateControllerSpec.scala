@@ -19,6 +19,7 @@ package controllers.incomeSources.add
 import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
+import enums.IncomeSourceJourney.UkProperty
 import forms.utils.SessionKeys
 import forms.utils.SessionKeys.addUkPropertyStartDate
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
@@ -99,7 +100,7 @@ class CheckUKPropertyStartDateControllerSpec extends TestSupport with MockAuthen
   }
 
   "Individual - AddUKPropertyStartDateController.submit" should {
-    s"return 303 SEE_OTHER and redirect to ${controllers.incomeSources.add.routes.UKPropertyAccountingMethodController.show().url}" when {
+    s"return 303 SEE_OTHER and redirect to ${controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.show(UkProperty.key).url}" when {
       "user confirms the date is correct" in {
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
         enable(IncomeSources)
@@ -115,7 +116,7 @@ class CheckUKPropertyStartDateControllerSpec extends TestSupport with MockAuthen
         }
 
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.UKPropertyAccountingMethodController.show().url)
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.show(UkProperty.key).url)
       }
       s"return 303 SEE_OTHER and redirect to ${controllers.incomeSources.add.routes.AddUKPropertyStartDateController.show().url}" when {
         "user confirms the date is incorrect" in {
@@ -195,7 +196,7 @@ class CheckUKPropertyStartDateControllerSpec extends TestSupport with MockAuthen
   }
 
   "Agent - AddUKPropertyStartDateController.submitAgent" should {
-    s"return 303 SEE_OTHER and redirect to ${controllers.incomeSources.add.routes.UKPropertyAccountingMethodController.showAgent().url}" when {
+    s"return 303 SEE_OTHER and redirect to ${controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.showAgent(UkProperty.key).url}" when {
       "user confirms the date is correct" in {
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         enable(IncomeSources)
@@ -212,7 +213,7 @@ class CheckUKPropertyStartDateControllerSpec extends TestSupport with MockAuthen
 
         status(result) shouldBe Status.SEE_OTHER
 
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.UKPropertyAccountingMethodController.showAgent().url)
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.showAgent(UkProperty.key).url)
       }
       "user confirms the date is incorrect" in {
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)

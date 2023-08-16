@@ -20,6 +20,7 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import config.featureswitch.FeatureSwitch.switches
 import config.featureswitch.{FeatureSwitching, IncomeSources}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
+import enums.IncomeSourceJourney.ForeignProperty
 import forms.incomeSources.add.{ForeignPropertyStartDateCheckForm, ForeignPropertyStartDateForm}
 import forms.utils.SessionKeys.foreignPropertyStartDate
 import implicits.ImplicitDateFormatter
@@ -144,7 +145,7 @@ class ForeignPropertyStartDateCheckControllerSpec extends TestSupport
         mockNoIncomeSources()
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
-        val postAction: Call = controllers.incomeSources.add.routes.ForeignPropertyAccountingMethodController.show()
+        val postAction: Call = controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.show(ForeignProperty.key)
 
         val result = TestForeignPropertyStartDateCheckController.submit()(
           fakeRequestWithActiveSession.withFormUrlEncodedBody(
@@ -234,7 +235,7 @@ class ForeignPropertyStartDateCheckControllerSpec extends TestSupport
         mockNoIncomeSources()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
-        val postActionAgent: Call = controllers.incomeSources.add.routes.ForeignPropertyAccountingMethodController.showAgent()
+        val postActionAgent: Call = controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.showAgent(ForeignProperty.key)
 
         val result = TestForeignPropertyStartDateCheckController.submitAgent()(
           fakeRequestConfirmedClient().withFormUrlEncodedBody(

@@ -16,6 +16,7 @@
 
 package views.incomeSources.add
 
+import enums.IncomeSourceJourney.UkProperty
 import implicits.ImplicitDateFormatter
 import models.incomeSourceDetails.viewmodels.CheckUKPropertyViewModel
 import org.jsoup.Jsoup
@@ -62,9 +63,9 @@ class CheckUKPropertyDetailsViewSpec extends TestSupport with ImplicitDateFormat
     }
 
     val changeAccountingMethodUrl = if (isAgent) {
-      controllers.incomeSources.add.routes.UKPropertyAccountingMethodController.changeAgent().url
+      controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.changeIncomeSourcesAccountingMethodAgent(UkProperty.key).url
     } else {
-      controllers.incomeSources.add.routes.UKPropertyAccountingMethodController.change().url
+      controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.changeIncomeSourcesAccountingMethod(UkProperty.key).url
     }
 
     lazy val view: HtmlFormat.Appendable = {

@@ -21,6 +21,7 @@ import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
+import enums.IncomeSourceJourney.UkProperty
 import forms.incomeSources.add.CheckUKPropertyStartDateForm
 import forms.utils.SessionKeys
 import implicits.ImplicitDateFormatterImpl
@@ -111,11 +112,11 @@ class CheckUKPropertyStartDateController @Inject()(val authenticate: Authenticat
       if (isAgent)
         (routes.CheckUKPropertyStartDateController.submitAgent(),
           routes.AddUKPropertyStartDateController.showAgent(),
-          routes.UKPropertyAccountingMethodController.showAgent())
+          routes.IncomeSourcesAccountingMethodController.showAgent(UkProperty.key))
       else
         (routes.CheckUKPropertyStartDateController.submit(),
           routes.AddUKPropertyStartDateController.show(),
-          routes.UKPropertyAccountingMethodController.show())
+          routes.IncomeSourcesAccountingMethodController.show(UkProperty.key))
     }
     val startDate = user.session.get(SessionKeys.addUkPropertyStartDate).get
     val formattedStartDate = dateFormatter.longDate(LocalDate.parse(startDate)).toLongDate
