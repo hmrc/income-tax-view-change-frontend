@@ -46,17 +46,14 @@ class AddBusinessNameViewSpec extends ViewSpec {
   val formModeUpdate: String = "update"
 
 
-  val addPageWithoutError: Html = addBusinessName(BusinessNameForm.form, false, testCall, backUrl, formModeAdd)
-  val changePageWithoutError: Html = addBusinessName(BusinessNameForm.form, false, testCall, backUrl, formModeUpdate)
-
-
-
+  val addPageWithoutError: Html = addBusinessName(BusinessNameForm.form, false, testCall, backUrl)
+  val changePageWithoutError: Html = addBusinessName(BusinessNameForm.form, false, testCall, backUrl)
 
 
   def pageWithError(error: String = BusinessNameForm.businessNameEmptyError): Html = {
     val modifiedForm = BusinessNameForm.form.withError(SessionKeys.businessName, error)
       .fill(BusinessNameForm(invalidName))
-    addBusinessName(modifiedForm, false, testCall, backUrl, formModeAdd)
+    addBusinessName(modifiedForm, false, testCall, backUrl)
   }
 
   "The add business name page" when {
