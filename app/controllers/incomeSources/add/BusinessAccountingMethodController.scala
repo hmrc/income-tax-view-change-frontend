@@ -56,28 +56,28 @@ class BusinessAccountingMethodController @Inject()(val authenticate: Authenticat
                                               (implicit user: MtdItUser[_], backUrl: String, postAction: Call, messages: Messages): Future[Result] = {
     val userActiveBusinesses: List[BusinessDetailsModel] = user.incomeSources.businesses.filterNot(_.isCeased)
 
-    if (userActiveBusinesses.flatMap(_.cashOrAccrualsFlag).distinct.size > 1) {
+    if (userActiveBusinesses.flatMap(_.cashOrAccruals).distinct.size > 1) {
       Logger("application").error(s"${if (isAgent) "[Agent]"}" +
-        s"Error getting business cashOrAccrualsFlag Field")
+        s"Error getting business cashOrAccruals Field")
     }
 
-    userActiveBusinesses.map(_.cashOrAccrualsFlag).headOption match {
-      case Some(cashOrAccrualsFlagMaybe) if (cashOrAccrualsFlagMaybe.isDefined) =>
-        val accountingMethod: String = if (cashOrAccrualsFlagMaybe.get) {
+    userActiveBusinesses.map(_.cashOrAccruals).headOption match {
+      case Some(cashOrAccrualsFieldMaybe) if (cashOrAccrualsFieldMaybe.isDefined) =>
+        val accountingMethodIsAccruals: String = if (cashOrAccrualsFieldMaybe.get) {
           "accruals"
         } else {
           "cash"
         }
         if (isAgent) {
           Future.successful(Redirect(controllers.incomeSources.add.routes.CheckBusinessDetailsController.showAgent())
-            .addingToSession(addBusinessAccountingMethod -> accountingMethod))
+            .addingToSession(addBusinessAccountingMethod -> accountingMethodIsAccruals))
         } else {
           Future.successful(Redirect(controllers.incomeSources.add.routes.CheckBusinessDetailsController.show())
-            .addingToSession(addBusinessAccountingMethod -> accountingMethod))
+            .addingToSession(addBusinessAccountingMethod -> accountingMethodIsAccruals))
         }
-      case Some(cashOrAccrualsFlagMaybe) if cashOrAccrualsFlagMaybe.isEmpty =>
+      case Some(cashOrAccrualsFieldMaybe) if cashOrAccrualsFieldMaybe.isEmpty =>
         Logger("application").error(s"${if (isAgent) "[Agent]"}" +
-          s"Error getting business cashOrAccrualsFlag field")
+          s"Error getting business cashOrAccruals field")
         Future.successful(errorHandler.showInternalServerError())
       case None =>
         Future.successful(Ok(view(

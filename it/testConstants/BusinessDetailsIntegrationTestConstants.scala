@@ -88,7 +88,7 @@ object BusinessDetailsIntegrationTestConstants {
     tradingStartDate = Some(b1TradingStart),
     cessation = None,
     address = Some(testBusinessAddress),
-    cashOrAccrualsFlag = Some(b1AccountingMethod)
+    cashOrAccruals = Some(b1AccountingMethod)
   )
 
   val business2 = BusinessDetailsModel(
@@ -115,7 +115,7 @@ object BusinessDetailsIntegrationTestConstants {
     tradingStartDate = None,
     cessation = None,
     address = None,
-    cashOrAccrualsFlag = None
+    cashOrAccruals = None
   )
 
   val businessWithAddressAndAccountingMethod = BusinessDetailsModel(
@@ -129,7 +129,7 @@ object BusinessDetailsIntegrationTestConstants {
     tradingStartDate = Some(b1TradingStart),
     cessation = None,
     address = Some(testBusinessAddress),
-    cashOrAccrualsFlag = Some(b1AccountingMethod)
+    cashOrAccruals = Some(b1AccountingMethod)
   )
 
   val ceasedBusiness1 = BusinessDetailsModel(
