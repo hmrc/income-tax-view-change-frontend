@@ -165,6 +165,11 @@ GET          /income-sources/add/business-trade                           contro
 GET          /agents/income-sources/add/business-trade                    controllers.incomeSources.add.AddBusinessTradeController.showAgent()
 POST         /income-sources/add/business-trade                           controllers.incomeSources.add.AddBusinessTradeController.submit()
 POST         /agents/income-sources/add/business-trade                    controllers.incomeSources.add.AddBusinessTradeController.agentSubmit()
+GET          /income-sources/add/change-business-trade                    controllers.incomeSources.add.AddBusinessTradeController.change()
+GET          /agents/income-sources/add/change-business-trade             controllers.incomeSources.add.AddBusinessTradeController.changeAgent()
+POST         /income-sources/add/change-business-trade                    controllers.incomeSources.add.AddBusinessTradeController.change()
+POST         /agents/income-sources/add/change-business-trade             controllers.incomeSources.add.AddBusinessTradeController.changeAgent()
+
 GET          /income-sources/add/business-address                         controllers.incomeSources.add.AddBusinessAddressController.show()
 GET          /agents/income-sources/add/business-address                  controllers.incomeSources.add.AddBusinessAddressController.showAgent()
 GET          /income-sources/add/business-address/id/                     controllers.incomeSources.add.AddBusinessAddressController.submit(id: Option[String])
@@ -243,8 +248,6 @@ GET          /agents/income-sources/add/business-check-details              cont
 
 GET          /income-sources/add/change-business-name                       controllers.incomeSources.add.AddBusinessNameController.changeBusinessName()
 GET          /agents/income-sources/add/change-business-name                controllers.incomeSources.add.AddBusinessNameController.changeBusinessNameAgent()
-GET          /income-sources/add/change-business-trade                      controllers.incomeSources.add.AddBusinessTradeController.changeBusinessTrade()
-GET          /agents/income-sources/add/change-business-trade               controllers.incomeSources.add.AddBusinessTradeController.changeBusinessTradeAgent()
 GET          /income-sources/add/change-business-address-lookup             controllers.incomeSources.add.AddBusinessAddressController.changeBusinessAddress()
 GET          /agents/income-sources/add/change-business-address-lookup      controllers.incomeSources.add.AddBusinessAddressController.changeBusinessAddressAgent()
 GET          /income-sources/add/change-business-accounting-method          controllers.incomeSources.add.BusinessAccountingMethodController.changeBusinessAccountingMethod()

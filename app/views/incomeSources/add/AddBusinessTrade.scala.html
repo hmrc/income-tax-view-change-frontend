@@ -42,7 +42,7 @@ inputHelper: InputHelper,
 errorSummary: ErrorSummary
 )
 
-@(businessTradeForm: Form[BusinessTradeForm], postAction: Call, isUserAgent: Boolean, backURL: String, sameNameError: Boolean)(implicit messages: Messages, user: auth.MtdItUser[_])
+@(businessTradeForm: Form[BusinessTradeForm], postAction: Call, isAgent: Boolean, backURL: String, sameNameError: Boolean, businessTrade: Option[String] = None)(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @getMessage(key: String, args: String*) = @{
     messages(s"add-business-trade.$key", args: _*)
@@ -58,7 +58,7 @@ errorSummary: ErrorSummary
 @mainTemplate(pageTitle = getMessage("heading"),
     form = Some(businessTradeForm),
     backUrl = Some(backURL),
-    isAgent = isUserAgent,
+    isAgent = isAgent,
     btaNavPartial = user.btaNavPartial) {
 
     @errorSummary(form = businessTradeForm)
@@ -119,8 +119,8 @@ errorSummary: ErrorSummary
                     } else {
                     aria-describedby="@field.name-hint"
                     }
-                    @if(field.value.isDefined){
-                    value ="@field.value.get"
+                    @if(businessTrade.isDefined) {
+                    value ="businessTrade"
                     }
             >
         </div>
