@@ -55,68 +55,39 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
                                                    val ec: ExecutionContext)
   extends ClientConfirmedController with I18nSupport with FeatureSwitching {
 
-  def showUKProperty: Action[AnyContent] = show(UkProperty)
-  def showUKPropertyAgent: Action[AnyContent] = showAgent(UkProperty)
-  def showForeignProperty: Action[AnyContent] = show(ForeignProperty)
-  def showForeignPropertyAgent: Action[AnyContent] = showAgent(ForeignProperty)
-  def showSoleTraderBusiness: Action[AnyContent] = show(SelfEmployment)
-  def showSoleTraderBusinessAgent: Action[AnyContent] = showAgent(SelfEmployment)
-  def submitUKProperty: Action[AnyContent] = submit(UkProperty)
-  def submitUKPropertyAgent: Action[AnyContent] = submitAgent(UkProperty)
-  def submitForeignProperty: Action[AnyContent] = submit(ForeignProperty)
-  def submitForeignPropertyAgent: Action[AnyContent] = submitAgent(ForeignProperty)
-  def submitSoleTraderBusiness: Action[AnyContent] = submit(SelfEmployment)
-  def submitSoleTraderBusinessAgent: Action[AnyContent] = submitAgent(SelfEmployment)
+  def showUKProperty(isAgent: Boolean, isUpdate: Boolean): Action[AnyContent] = handleRequest(UkProperty, isAgent, isUpdate)
+  def showForeignProperty(isAgent: Boolean, isUpdate: Boolean): Action[AnyContent] = handleRequest(ForeignProperty, isAgent, isUpdate)
+  def showSoleTraderBusiness(isAgent: Boolean, isUpdate: Boolean): Action[AnyContent] = handleRequest(SelfEmployment, isAgent, isUpdate)
+  def submitUKProperty(isAgent: Boolean, isUpdate: Boolean): Action[AnyContent] = handleRequest(UkProperty, isAgent, isUpdate)
+  def submitForeignProperty(isAgent: Boolean, isUpdate: Boolean): Action[AnyContent] = handleRequest(ForeignProperty, isAgent, isUpdate)
+  def submitSoleTraderBusiness(isAgent: Boolean, isUpdate: Boolean): Action[AnyContent] = handleRequest(SelfEmployment, isAgent, isUpdate)
 
-  private def show(incomeSourceType: IncomeSourceType): Action[AnyContent] = {
-    (checkSessionTimeout andThen authenticate andThen retrieveNino
-      andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
-      implicit user =>
-        handleRequest(
-          isAgent = false,
-          incomeSourceType = incomeSourceType
-        )
-    }
+  private def handleRequest(incomeSourceType: IncomeSourceType,
+                     isAgent: Boolean,
+                     isUpdate: Boolean): Action[AnyContent] = {
+    if (isAgent)
+      Authenticated.async {
+        implicit request =>
+          implicit user =>
+            getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
+              implicit mtdItUser =>
+                if (isUpdate) submit(incomeSourceType, isAgent, isUpdate)
+                else show(incomeSourceType, isAgent, isUpdate)
+            }
+      }
+    else
+      (checkSessionTimeout andThen authenticate andThen retrieveNino
+        andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
+        implicit user =>
+          if (isUpdate) submit(incomeSourceType, isAgent, isUpdate)
+          else show(incomeSourceType, isAgent, isUpdate)
+      }
   }
 
-  private def submit(incomeSourceType: IncomeSourceType): Action[AnyContent] = {
-    (checkSessionTimeout andThen authenticate andThen retrieveNino
-      andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
-      implicit user =>
-        handleSubmitRequest(
-          isAgent = false,
-          incomeSourceType = incomeSourceType
-        )
-    }
-  }
-
-  private def showAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = Authenticated.async {
-    implicit request =>
-      implicit user =>
-        getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
-          implicit mtdItUser =>
-              handleRequest(
-                isAgent = true,
-                incomeSourceType = incomeSourceType
-              )
-        }
-  }
-
-  private def submitAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = Authenticated.async {
-    implicit request =>
-      implicit user =>
-        getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
-          implicit mtdItUser =>
-            handleSubmitRequest(
-              isAgent = true,
-              incomeSourceType = incomeSourceType
-            )
-        }
-  }
-
-
-  private def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)
-                   (implicit user: MtdItUser[_]): Future[Result] = {
+  private def show(incomeSourceType: IncomeSourceType,
+                            isAgent: Boolean,
+                            isUpdate: Boolean)
+                           (implicit user: MtdItUser[_]): Future[Result] = {
 
     val messagesPrefix = getMessagesPrefix(incomeSourceType)
 
@@ -149,8 +120,10 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
     }
   }
 
-  private def handleSubmitRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)
-                         (implicit user: MtdItUser[_]): Future[Result] = {
+  private def submit(incomeSourceType: IncomeSourceType,
+                                  isAgent: Boolean,
+                                  isUpdate: Boolean)
+                                 (implicit user: MtdItUser[_]): Future[Result] = {
 
     val messagesPrefix = getMessagesPrefix(incomeSourceType)
 
