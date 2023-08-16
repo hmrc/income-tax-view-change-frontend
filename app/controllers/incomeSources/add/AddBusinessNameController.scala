@@ -52,8 +52,8 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
   lazy val backUrlAgent: String = controllers.incomeSources.add.routes.AddIncomeSourceController.showAgent().url
   lazy val submitAction: Call = controllers.incomeSources.add.routes.AddBusinessNameController.submit()
   lazy val submitActionAgent: Call = controllers.incomeSources.add.routes.AddBusinessNameController.submitAgent()
-  lazy val redirect: Call = controllers.incomeSources.add.routes.AddBusinessStartDateController.show()
-  lazy val redirectAgent: Call = controllers.incomeSources.add.routes.AddBusinessStartDateController.showAgent()
+  lazy val redirect: Call = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showSoleTraderBusiness
+  lazy val redirectAgent: Call = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showSoleTraderBusinessAgent
 
   def show(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {

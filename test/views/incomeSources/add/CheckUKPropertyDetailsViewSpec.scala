@@ -57,9 +57,9 @@ class CheckUKPropertyDetailsViewSpec extends TestSupport with ImplicitDateFormat
       controllers.incomeSources.add.routes.CheckUKPropertyDetailsController.show()
     }
     val changeStartDateUrl = if (isAgent) {
-      controllers.incomeSources.add.routes.AddUKPropertyStartDateController.changeAgent().url
+      controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.changeUKPropertyStartDateAgent.url
     } else {
-      controllers.incomeSources.add.routes.AddUKPropertyStartDateController.change().url
+      controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.changeUKPropertyStartDate.url
     }
 
     val changeAccountingMethodUrl = if (isAgent) {
@@ -80,14 +80,14 @@ class CheckUKPropertyDetailsViewSpec extends TestSupport with ImplicitDateFormat
   }
 
   "CheckUKPropertyDetails - Individual" should {
-    "renders the heading" in new Setup(false) {
+    "renders the heading" in new Setup(isAgent = false) {
       document.getElementsByClass("govuk-heading-l").text() shouldBe heading
     }
-    "renders the back correct back Url" in new Setup(false) {
+    "renders the back correct back Url" in new Setup(isAgent = false) {
       document.getElementById("back").text() shouldBe messages("base.back")
       document.getElementById("back").attr("href") shouldBe backUrl.url
     }
-    "renders the summary" in new Setup(false) {
+    "renders the summary" in new Setup(isAgent = false) {
       document.select("dl:nth-of-type(1) > div > dt.govuk-summary-list__key").text() shouldBe startDateLabel
       document.select("dl:nth-of-type(1) > div > dd.govuk-summary-list__value").text() shouldBe tradingStartDate.toLongDate
       document.getElementById("change-start-date-link").attr("href") shouldBe changeStartDateUrl
@@ -103,14 +103,14 @@ class CheckUKPropertyDetailsViewSpec extends TestSupport with ImplicitDateFormat
   }
 
   "CheckUKPropertyDetails - Agent" should {
-    "renders the heading" in new Setup(true) {
+    "renders the heading" in new Setup(isAgent = true) {
       document.getElementsByClass("govuk-heading-l").text() shouldBe heading
     }
-    "renders the back correct back Url" in new Setup(true) {
+    "renders the back correct back Url" in new Setup(isAgent = true) {
       document.getElementById("back").text() shouldBe messages("base.back")
       document.getElementById("back").attr("href") shouldBe backUrl.url
     }
-    "renders the summary" in new Setup(true) {
+    "renders the summary" in new Setup(isAgent = true) {
       document.select("dl:nth-of-type(1) > div > dt.govuk-summary-list__key").text()  shouldBe startDateLabel
       document.select("dl:nth-of-type(1) > div > dd.govuk-summary-list__value").text() shouldBe tradingStartDate.toLongDate
       document.getElementById("change-start-date-link").attr("href") shouldBe changeStartDateUrl

@@ -148,7 +148,7 @@ class AddBusinessStartDateCheckControllerSpec extends TestSupport
 
           result.futureValue.session.get(SessionKeys.addBusinessStartDate).isDefined shouldBe false
           status(result) shouldBe SEE_OTHER
-          redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.AddBusinessStartDateController.show().url)
+          redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showSoleTraderBusiness.url)
         }
       }
       "return BAD_REQUEST with an error summary" when {
@@ -266,7 +266,7 @@ class AddBusinessStartDateCheckControllerSpec extends TestSupport
 
         result.futureValue.session.get(SessionKeys.addBusinessStartDate).isDefined shouldBe false
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.AddBusinessStartDateController.showAgent().url)
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showSoleTraderBusinessAgent.url)
       }
     }
     "return BAD_REQUEST with an error summary" when {

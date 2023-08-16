@@ -29,7 +29,7 @@ class ForeignPropertyStartDateCheckControllerISpec extends ComponentSpecBase {
   val foreignPropertyStartDateCheckShowUrl: String = controllers.incomeSources.add.routes.ForeignPropertyStartDateCheckController.showAgent().url
   val foreignPropertyStartDateCheckSubmitUrl: String = controllers.incomeSources.add.routes.ForeignPropertyStartDateCheckController.submitAgent().url
   val foreignPropertyAccountingMethodShowUrl: String = controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.showAgent(ForeignProperty.key).url
-  val foreignPropertyStartDateShowUrl: String = controllers.incomeSources.add.routes.ForeignPropertyStartDateController.showAgent().url
+  val foreignPropertyStartDateShowUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showForeignPropertyAgent.url
 
   val dateCookie: Map[String, String] = Map(foreignPropertyStartDate -> "2022-10-10")
   val dateText: String = "10 October 2022"

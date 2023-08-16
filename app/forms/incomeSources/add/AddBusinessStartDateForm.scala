@@ -16,46 +16,47 @@
 
 package forms.incomeSources.add
 
+import auth.MtdItUser
 import forms.models.DateFormElement
 import forms.validation.Constraints
-import implicits.ImplicitDateFormatterImpl
+import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
 import play.api.data.Form
-import play.api.data.Forms._
+import play.api.data.Forms.{default, mapping, text, tuple}
 import play.api.data.validation.{Constraint, Invalid, Valid, ValidationError}
 import play.api.i18n.Messages
-import services.DateService
+import services.{DateService, DateServiceInterface}
 
 import java.time.LocalDate
 
+object AddBusinessStartDateForm extends Constraints {
 
-object AddUKPropertyStartDateForm extends Constraints {
+  private val messagePrefix = "add-business-start-date"
+  private val dateMustNotBeTooFarInFuture = s"$messagePrefix.error.future"
+  private val dateMustBeEntered = "error.required"
+  private val dateMustBeReal = "error.invalid"
+  private val dayRequired = s"dateForm.error.day.required"
+  private val monthRequired = s"dateForm.error.month.required"
+  private val yearRequired = s"dateForm.error.year.required"
+  private val dayAndMonthRequired = s"dateForm.error.dayAndMonth.required"
+  private val dayAndYearRequired = s"dateForm.error.dayAndYear.required"
+  private val monthAndYearRequired = s"dateForm.error.monthAndYear.required"
 
-  private val dateMustBeEntered = "incomeSources.add.UKPropertyStartDate.error.required"
-  private val dateMustBeReal = "incomeSources.add.UKPropertyStartDate.error.invalid"
-  private val dayRequired = "dateForm.error.day.required"
-  private val monthRequired = "dateForm.error.month.required"
-  private val yearRequired = "dateForm.error.year.required"
-  private val dayAndMonthRequired = "dateForm.error.dayAndMonth.required"
-  private val dayAndYearRequired = "dateForm.error.dayAndYear.required"
-  private val monthAndYearRequired = "dateForm.error.monthAndYear.required"
+  val dayInputFieldName: String = "day"
+  val monthInputFieldName: String = "month"
+  val yearInputFieldName: String = "year"
 
-  def apply()(implicit dateFormatter: ImplicitDateFormatterImpl, dateService: DateService, messages: Messages): Form[DateFormElement] = {
-    val MAXIMUM_ALLOWABLE_DAYS = 7
-    val ADDITIONAL_DAYS = 1
-    val currentDate: LocalDate = dateService.getCurrentDate()
-    val maximumDate: LocalDate = currentDate.plusDays(MAXIMUM_ALLOWABLE_DAYS)
-    val errorDate: LocalDate = currentDate.plusDays(MAXIMUM_ALLOWABLE_DAYS + ADDITIONAL_DAYS)
+  def apply()(implicit messages: Messages, dateService: DateServiceInterface, dateFormatter: ImplicitDateFormatter): Form[DateFormElement] = {
 
-    def futureDateErrorMessage: String = {
-      val formattedErrorDate: String = dateFormatter.longDate(errorDate).toLongDate
-      messages("incomeSources.add.UKPropertyStartDate.error.future", formattedErrorDate)
-    }
+    val maximumAllowableDate: LocalDate = dateService.getCurrentDate().plusWeeks(1)
+    val maximumAllowableDatePlusOneDay: LocalDate = maximumAllowableDate.plusDays(1)
+    val futureErrorMessage: String = dateFormatter.longDate(maximumAllowableDatePlusOneDay)(messages).toLongDate
+    def dateMustNotBeInTheFuture(date: String): String = messages(dateMustNotBeTooFarInFuture, date)
 
     Form(
-      mapping("add-uk-property-start-date" -> tuple(
-        "day" -> default(text(), ""),
-        "month" -> default(text(), ""),
-        "year" -> default(text(), ""))
+      mapping(s"$messagePrefix" -> tuple(
+        dayInputFieldName -> default(text(), ""),
+        monthInputFieldName -> default(text(), ""),
+        yearInputFieldName -> default(text(), ""))
         .verifying(firstError(
           checkRequiredFields,
           validDate(dateMustBeReal)
@@ -64,7 +65,8 @@ object AddUKPropertyStartDateForm extends Constraints {
           case (day, month, year) => LocalDate.of(year.toInt, month.toInt, day.toInt)
         },
         date => (date.getDayOfMonth.toString, date.getMonthValue.toString, date.getYear.toString)
-      ).verifying(maxDate(maximumDate, futureDateErrorMessage))
+      )
+        .verifying(maxDate(maximumAllowableDate, dateMustNotBeInTheFuture(futureErrorMessage)))
       )(DateFormElement.apply)(DateFormElement.unapply))
   }
 
@@ -88,3 +90,4 @@ object AddUKPropertyStartDateForm extends Constraints {
   }
 }
 
+class AddBusinessStartDateForm

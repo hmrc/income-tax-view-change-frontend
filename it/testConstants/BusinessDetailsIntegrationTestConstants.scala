@@ -37,7 +37,7 @@ object BusinessDetailsIntegrationTestConstants {
   val b1AddressLine4 = "England"
   val b1AddressLine5 = "ZL1 064"
   val b1CountryCode = "UK"
-  val b1AccountingMethod = "cash"
+  val b1AccountingMethod = false
 
   val b2CessationDate = LocalDate.of(endYear, 12, 31)
   val b2CessationReason = "It really, really was a bad idea"

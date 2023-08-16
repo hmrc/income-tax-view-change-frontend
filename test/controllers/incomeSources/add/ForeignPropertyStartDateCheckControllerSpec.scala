@@ -17,7 +17,6 @@
 package controllers.incomeSources.add
 
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import config.featureswitch.FeatureSwitch.switches
 import config.featureswitch.{FeatureSwitching, IncomeSources}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import enums.IncomeSourceJourney.ForeignProperty
@@ -39,7 +38,7 @@ import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
 import testUtils.TestSupport
 import uk.gov.hmrc.play.language.LanguageUtils
 import views.html.errorPages.CustomNotFoundError
-import views.html.incomeSources.add.{ForeignPropertyStartDate, ForeignPropertyStartDateCheck}
+import views.html.incomeSources.add.ForeignPropertyStartDateCheck
 
 import scala.concurrent.Future
 
@@ -163,7 +162,7 @@ class ForeignPropertyStartDateCheckControllerSpec extends TestSupport
         mockNoIncomeSources()
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
-        val postAction: Call = controllers.incomeSources.add.routes.ForeignPropertyStartDateController.show()
+        val postAction: Call = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showForeignProperty
 
         val result = TestForeignPropertyStartDateCheckController.submit()(
           fakeRequestWithActiveSession.withFormUrlEncodedBody(
@@ -253,7 +252,7 @@ class ForeignPropertyStartDateCheckControllerSpec extends TestSupport
         mockNoIncomeSources()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
-        val postActionAgent: Call = controllers.incomeSources.add.routes.ForeignPropertyStartDateController.showAgent()
+        val postActionAgent: Call = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showForeignPropertyAgent
 
         val result = TestForeignPropertyStartDateCheckController.submitAgent()(
           fakeRequestConfirmedClient().withFormUrlEncodedBody(

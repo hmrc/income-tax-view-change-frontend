@@ -118,7 +118,7 @@ class CheckUKPropertyStartDateControllerSpec extends TestSupport with MockAuthen
         status(result) shouldBe Status.SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.show(UkProperty.key).url)
       }
-      s"return 303 SEE_OTHER and redirect to ${controllers.incomeSources.add.routes.AddUKPropertyStartDateController.show().url}" when {
+      s"return 303 SEE_OTHER and redirect to ${controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showUKProperty.url}" when {
         "user confirms the date is incorrect" in {
           setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
           enable(IncomeSources)
@@ -134,7 +134,7 @@ class CheckUKPropertyStartDateControllerSpec extends TestSupport with MockAuthen
           }
 
           status(result) shouldBe Status.SEE_OTHER
-          redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.AddUKPropertyStartDateController.show().url)
+          redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showUKProperty.url)
           result.futureValue.session.get(addUkPropertyStartDate) shouldBe None
         }
       }
@@ -231,7 +231,7 @@ class CheckUKPropertyStartDateControllerSpec extends TestSupport with MockAuthen
 
         status(result) shouldBe Status.SEE_OTHER
 
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.AddUKPropertyStartDateController.showAgent().url)
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showUKPropertyAgent.url)
       }
     }
     "return 400 BAD_REQUEST" when {
