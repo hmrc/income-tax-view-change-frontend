@@ -198,13 +198,13 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
       case UkProperty =>
         (
           (isAgent, isUpdate) match {
-            case (false, false) => controllers.incomeSources.add.routes.AddIncomeSourceController.show()
-            case (false, true) => controllers.incomeSources.add.routes.CheckUKPropertyDetailsController.show()
-            case (true, false) => controllers.incomeSources.add.routes.AddIncomeSourceController.showAgent()
-            case (true, true) => controllers.incomeSources.add.routes.CheckUKPropertyDetailsController.showAgent()
+            case (false, false) => routes.AddIncomeSourceController.show()
+            case (false, true) => routes.CheckUKPropertyDetailsController.show()
+            case (true, false) => routes.AddIncomeSourceController.showAgent()
+            case (true, true) => routes.CheckUKPropertyDetailsController.showAgent()
           },
-          controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.submitUKProperty(isAgent = isAgent, isUpdate = isUpdate),
-          controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.submitUKProperty(isAgent = isAgent, isUpdate = isUpdate)
+          routes.AddIncomeSourceStartDateController.submitUKProperty(isAgent = isAgent, isUpdate = isUpdate),
+          routes.AddIncomeSourceStartDateCheckController.submitUKProperty(isAgent = isAgent, isUpdate = isUpdate)
         )
 
       case ForeignProperty =>
