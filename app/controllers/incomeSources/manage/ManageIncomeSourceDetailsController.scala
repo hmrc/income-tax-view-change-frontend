@@ -23,7 +23,7 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceJourney, SelfEmployment, UkProperty}
-import models.incomeSourceDetails.viewmodels.ManageBusinessDetailsViewModel
+import models.incomeSourceDetails.viewmodels.ManageIncomeSourceDetailsViewModel
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, LatencyDetails, PropertyDetailsModel}
 import play.api.Logger
 import play.api.mvc._
@@ -153,8 +153,8 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
   }
 
   def variableViewModelSEBusiness(incomeSource: BusinessDetailsModel, itsaStatus: Boolean, crystallisationTaxYear1: Option[Boolean],
-                                  crystallisationTaxYear2: Option[Boolean]): ManageBusinessDetailsViewModel = {
-    ManageBusinessDetailsViewModel(
+                                  crystallisationTaxYear2: Option[Boolean]): ManageIncomeSourceDetailsViewModel = {
+    ManageIncomeSourceDetailsViewModel(
       incomeSourceId = incomeSource.incomeSourceId,
       tradingName = incomeSource.tradingName,
       tradingStartDate = incomeSource.tradingStartDate,
@@ -169,13 +169,13 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
   }
 
   def variableViewModelPropertyBusiness(incomeSource: PropertyDetailsModel, itsaStatus: Boolean, crystallisationTaxYear1: Option[Boolean],
-                                        crystallisationTaxYear2: Option[Boolean], incomeSourceType: IncomeSourceJourney): ManageBusinessDetailsViewModel = {
-    ManageBusinessDetailsViewModel(
+                                        crystallisationTaxYear2: Option[Boolean], incomeSourceType: IncomeSourceJourney): ManageIncomeSourceDetailsViewModel = {
+    ManageIncomeSourceDetailsViewModel(
       incomeSourceId = incomeSource.incomeSourceId,
       tradingName = None,
       tradingStartDate = incomeSource.tradingStartDate,
       address = None,
-      businessAccountingMethod = incomeSource.convertCashOrAccrualsFlagIntoString(incomeSource.cashOrAccrualsFlag),
+      businessAccountingMethod = incomeSource.cashOrAccruals,
       itsaHasMandatedOrVoluntaryStatusCurrentYear = itsaStatus,
       taxYearOneCrystallised = crystallisationTaxYear1,
       taxYearTwoCrystallised = crystallisationTaxYear2,
@@ -185,7 +185,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
   }
 
   def getManageIncomeSourceViewModel(sources: IncomeSourceDetailsModel, id: String, isAgent: Boolean)
-                                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, ManageBusinessDetailsViewModel]] = {
+                                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, ManageIncomeSourceDetailsViewModel]] = {
 
     val desiredIncomeSourceMaybe: Option[BusinessDetailsModel] = sources.businesses
       .filterNot(_.isCeased)
@@ -226,7 +226,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
   }
 
   def getManageIncomeSourceViewModelProperty(sources: IncomeSourceDetailsModel, incomeSourceType: IncomeSourceJourney, isAgent: Boolean)
-                                            (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, ManageBusinessDetailsViewModel]] = {
+                                            (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, ManageIncomeSourceDetailsViewModel]] = {
     val desiredIncomeSourceMaybe: Option[PropertyDetailsModel] = {
       if (incomeSourceType == UkProperty) {
         sources.properties

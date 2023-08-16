@@ -45,9 +45,9 @@
 
 @getChangeUKPropertyStartDateUrl = @{
     if (isAgent) {
-        controllers.incomeSources.add.routes.AddUKPropertyStartDateController.changeAgent().url
+        controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.changeUKPropertyStartDateAgent.url
     } else {
-        controllers.incomeSources.add.routes.AddUKPropertyStartDateController.change().url
+        controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.changeUKPropertyStartDate.url
     }
 }
 
