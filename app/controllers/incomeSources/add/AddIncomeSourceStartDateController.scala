@@ -18,7 +18,7 @@ package controllers.incomeSources.add
 
 import auth.MtdItUser
 import config.featureswitch.{FeatureSwitching, IncomeSources}
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
@@ -82,8 +82,7 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
                 }
             }
       }
-    }
-    else {
+    } else {
       (checkSessionTimeout andThen authenticate andThen retrieveNino
         andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
         implicit user =>
@@ -99,17 +98,19 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
                    isAgent: Boolean,
                    isUpdate: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
 
-    val messagesPrefix = incomeSourceType.addStartDateMessagesPrefix
+    val messagesPrefix = incomeSourceType.startDateMessagesPrefix
 
-    if(isEnabled(IncomeSources)) {
-      getCalls(incomeSourceType, isAgent, isUpdate) match {
-        case (backCall, postAction, _) =>
-          Future {
+    val maybeStartDateSessionKey = user.session.get(incomeSourceType.startDateSessionKey)
+
+    Future.successful(
+      if (isEnabled(IncomeSources)) {
+        getCalls(incomeSourceType, isAgent, isUpdate) match {
+          case (backCall, postAction, _) =>
             Ok(
               addIncomeSourceStartDate(
                 form = getFilledForm(
                   form = form(messagesPrefix),
-                  maybeStartDateKey = user.session.get(incomeSourceType.addStartDateSessionKey),
+                  startDateKey = maybeStartDateSessionKey,
                   isUpdate = isUpdate
                 ),
                 isAgent = isAgent,
@@ -118,34 +119,28 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
                 messagesPrefix = messagesPrefix
               )
             )
-          }
-      }
-    } else {
-      Future {
-        Ok(
-          customNotFoundErrorView()
-        )
-      }
-    } recover {
-      case ex: Exception =>
-        Logger("application").error(s"[AddIncomeSourceStartDateController][handleRequest] - Error: ${ex.getMessage}")
-        if (isAgent) itvcErrorHandlerAgent.showInternalServerError
-        else itvcErrorHandler.showInternalServerError
-    }
+        }
+      } else Ok(customNotFoundErrorView())
+    )
+  } recover {
+    case ex: Exception =>
+      Logger("application").error(s"[AddIncomeSourceStartDateController][handleRequest] - Error: ${ex.getMessage}")
+      getErrorHandler(isAgent).showInternalServerError()
   }
+
 
   private def submit(incomeSourceType: IncomeSourceType,
                      isAgent: Boolean,
                      isUpdate: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
 
-    val messagesPrefix = incomeSourceType.addStartDateMessagesPrefix
+    val messagesPrefix = incomeSourceType.startDateMessagesPrefix
 
-    if(isEnabled(IncomeSources)) {
-      getCalls(incomeSourceType, isAgent, isUpdate) match {
-        case (backCall, postAction, redirectCall) =>
-          form(messagesPrefix).bindFromRequest().fold(
-            formWithErrors =>
-              Future {
+    Future.successful(
+      if (isEnabled(IncomeSources)) {
+        getCalls(incomeSourceType, isAgent, isUpdate) match {
+          case (backCall, postAction, redirectCall) =>
+            form(messagesPrefix).bindFromRequest().fold(
+              formWithErrors =>
                 BadRequest(
                   addIncomeSourceStartDate(
                     isAgent = isAgent,
@@ -154,10 +149,8 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
                     postAction = postAction,
                     messagesPrefix = messagesPrefix
                   )
-                )
-              },
-            formData =>
-              Future.successful(
+                ),
+              formData =>
                 Redirect(redirectCall)
                   .addingToSession(
                     (incomeSourceType match {
@@ -169,21 +162,14 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
                         SessionKeys.foreignPropertyStartDate
                     }) -> formData.date.toString
                   )
-              )
-          )
-      }
-    } else {
-      Future {
-        Ok(
-          customNotFoundErrorView()
-        )
-      }
-    }
+            )
+        }
+      } else Ok(customNotFoundErrorView())
+    )
   } recover {
     case ex: Exception =>
       Logger("application").error(s"[AddIncomeSourceStartDateController][handleSubmitRequest] - Error: ${ex.getMessage}")
-      if (isAgent) itvcErrorHandlerAgent.showInternalServerError
-      else itvcErrorHandler.showInternalServerError
+      getErrorHandler(isAgent).showInternalServerError()
   }
 
   private def getCalls(incomeSourceType: IncomeSourceType,
@@ -227,11 +213,16 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
     }
   }
 
+  private def getErrorHandler(isAgent: Boolean): ShowInternalServerError = {
+    if (isAgent) itvcErrorHandlerAgent
+    else itvcErrorHandler
+  }
+
   private def getFilledForm(form: Form[DateFormElement],
-                            maybeStartDateKey: Option[String],
+                            startDateKey: Option[String],
                             isUpdate: Boolean): Form[DateFormElement] = {
 
-    (maybeStartDateKey, isUpdate) match {
+    (startDateKey, isUpdate) match {
       case (Some(key), true) if Try(LocalDate.parse(key)).toOption.isDefined =>
         form.fill(
           DateFormElement(

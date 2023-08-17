@@ -20,29 +20,29 @@ import forms.utils.SessionKeys
 
 sealed trait IncomeSourceType {
   val key: String
-  val addStartDateMessagesPrefix: String
+  val startDateMessagesPrefix: String
   val addStartDateCheckMessagesPrefix: String
-  val addStartDateSessionKey: String
+  val startDateSessionKey: String
 }
 
 case object SelfEmployment extends IncomeSourceType {
   override val key = "SE"
-  override val addStartDateMessagesPrefix = "add-business-start-date"
+  override val startDateMessagesPrefix = "add-business-start-date"
   override val addStartDateCheckMessagesPrefix = "add-business-start-date-check"
-  override val addStartDateSessionKey = SessionKeys.addBusinessStartDate
+  override val startDateSessionKey = SessionKeys.addBusinessStartDate
 
 }
 
 case object UkProperty extends IncomeSourceType {
   override val key = "UK"
-  override val addStartDateMessagesPrefix = "incomeSources.add.UKPropertyStartDate"
+  override val startDateMessagesPrefix = "incomeSources.add.UKPropertyStartDate"
   override val addStartDateCheckMessagesPrefix = "add-uk-property-start-date-check"
-  override val addStartDateSessionKey = SessionKeys.addUkPropertyStartDate
+  override val startDateSessionKey = SessionKeys.addUkPropertyStartDate
 }
 
 case object ForeignProperty extends IncomeSourceType {
   override val key = "FP"
-  override val addStartDateMessagesPrefix = "incomeSources.add.foreignProperty.startDate"
+  override val startDateMessagesPrefix = "incomeSources.add.foreignProperty.startDate"
   override val addStartDateCheckMessagesPrefix = "add-foreign-property-start-date-check"
-  override val addStartDateSessionKey = SessionKeys.foreignPropertyStartDate
+  override val startDateSessionKey = SessionKeys.foreignPropertyStartDate
 }
