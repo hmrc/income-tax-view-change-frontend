@@ -79,8 +79,8 @@ with MockIncomeSourceDetailsPredicate with MockNavBarEnumFsPredicate with Featur
     switches.foreach(switch => disable(switch))
   }
 
-  lazy val errorUrl: String = controllers.incomeSources.add.routes.ForeignPropertyBusinessNotAddedErrorController.show().url
-  lazy val agentErrorUrl: String = controllers.incomeSources.add.routes.ForeignPropertyBusinessNotAddedErrorController.showAgent().url
+  lazy val errorUrl: String = controllers.incomeSources.add.routes.IncomeSourceNotAddedController.showForeignProperty().url
+  lazy val agentErrorUrl: String = controllers.incomeSources.add.routes.IncomeSourceNotAddedController.showForeignProperty().url
 
   "ForeignPropertyCheckDetailsController" should {
 
