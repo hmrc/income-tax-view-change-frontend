@@ -27,24 +27,36 @@ import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class UKPropertyNotAddedController @Inject()(val checkSessionTimeout: SessionTimeoutPredicate,
-                                             val authenticate: AuthenticationPredicate,
-                                             val authorisedFunctions: AuthorisedFunctions,
-                                             val retrieveNino: NinoPredicate,
-                                             val retrieveIncomeSources: IncomeSourceDetailsPredicate,
-                                             val businessDetailsService: CreateBusinessDetailsService,
-                                             val incomeSourceDetailsService: IncomeSourceDetailsService,
-                                             val retrieveBtaNavBar: NavBarPredicate)
-                                            (implicit val appConfig: FrontendAppConfig,
-                                             mcc: MessagesControllerComponents,
-                                             val ec: ExecutionContext,
-                                             val itvcErrorHandler: ItvcErrorHandler,
-                                             val itvcErrorHandlerAgent: AgentItvcErrorHandler) extends ClientConfirmedController {
+class IncomeSourceNotAddedController @Inject()(val checkSessionTimeout: SessionTimeoutPredicate,
+                                               val authenticate: AuthenticationPredicate,
+                                               val authorisedFunctions: AuthorisedFunctions,
+                                               val retrieveNino: NinoPredicate,
+                                               val retrieveIncomeSources: IncomeSourceDetailsPredicate,
+                                               val businessDetailsService: CreateBusinessDetailsService,
+                                               val incomeSourceDetailsService: IncomeSourceDetailsService,
+                                               val retrieveBtaNavBar: NavBarPredicate)
+                                              (implicit val appConfig: FrontendAppConfig,
+                                               mcc: MessagesControllerComponents,
+                                               val ec: ExecutionContext,
+                                               val itvcErrorHandler: ItvcErrorHandler,
+                                               val itvcErrorHandlerAgent: AgentItvcErrorHandler) extends ClientConfirmedController {
+
+  def showUKProperty(): Action[AnyContent] = show()
+
+  def showUKPropertyAgent(): Action[AnyContent] = showAgent()
+
+  def showForeignProperty(): Action[AnyContent] = show()
+
+  def showForeignPropertyAgent(): Action[AnyContent] = showAgent()
+
+  def showBusiness(): Action[AnyContent] = show()
+
+  def showBusinessAgent(): Action[AnyContent] = showAgent()
 
   def show(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
-      Future.successful(errorHandler(false).showInternalServerError())
+      handleRequest(isAgent = false)
   }
 
   def showAgent(): Action[AnyContent] = Authenticated.async {
@@ -52,7 +64,7 @@ class UKPropertyNotAddedController @Inject()(val checkSessionTimeout: SessionTim
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService).map {
           implicit mtdItUser =>
-            errorHandler(true).showInternalServerError()
+            errorHandler(isAgent = true).showInternalServerError()
         }
   }
 

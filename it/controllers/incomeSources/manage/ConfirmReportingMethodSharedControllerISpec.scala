@@ -148,7 +148,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
   }
 
   s"calling GET $confirmReportingMethodShowSoleTraderBusinessUrl" should {
-    "render the Custom Not Found Error page" when {
+    "redirect to home page" when {
       "Income Sources FS is Disabled" in {
 
         Given("Income Sources FS is disabled")
@@ -164,10 +164,9 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
 
         val result = IncomeTaxViewChangeFrontend.getConfirmSoleTraderBusinessReportingMethod(taxYear, annual)
         verifyIncomeSourceDetailsCall(testMtditid)
-
         result should have(
-          httpStatus(OK),
-          pageTitleIndividual(messagesAPI("error.custom.heading"))
+          httpStatus(SEE_OTHER),
+          redirectURI(controllers.routes.HomeController.show().url)
         )
       }
     }
@@ -273,7 +272,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
   }
 
   s"calling POST $confirmReportingMethodSubmitSoleTraderBusinessUrl" should {
-    "render the Custom Not Found Error Page" when {
+    "redirect to home page" when {
       "Income Sources FS is disabled" in {
 
         disable(IncomeSources)
@@ -289,8 +288,8 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
         )
 
         result should have(
-          httpStatus(OK),
-          pageTitleIndividual(messagesAPI("error.custom.heading"))
+          httpStatus(SEE_OTHER),
+          redirectURI(controllers.routes.HomeController.show().url)
         )
       }
     }
