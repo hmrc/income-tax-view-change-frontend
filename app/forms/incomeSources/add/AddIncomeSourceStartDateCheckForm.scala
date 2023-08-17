@@ -20,24 +20,28 @@ import play.api.data.Form
 import play.api.data.Forms._
 
 
-object ForeignPropertyStartDateCheckForm {
+object AddIncomeSourceStartDateCheckForm {
+
   val responseNo: String = "No"
   val responseYes: String = "Yes"
-  val response: String = "foreign-property-start-date-check"
-  val radiosEmptyError: String = "incomeSources.add.foreignProperty.startDate.check.error"
-  val csrfToken: String = "csrfToken"
+  val response: String = "start-date-check"
 
-  val form: Form[ForeignPropertyStartDateCheckForm] = Form[ForeignPropertyStartDateCheckForm](
-    mapping(
-      response -> optional(text)
-        .verifying(radiosEmptyError, value => value.nonEmpty && (value.contains(responseYes) || value.contains(responseNo)))
-    )(ForeignPropertyStartDateCheckForm.apply)(ForeignPropertyStartDateCheckForm.unapply)
-  )
+
+  def apply(messagesPrefix: String): Form[AddIncomeSourceStartDateCheckForm] = {
+
+    val radiosEmptyError: String = s"$messagesPrefix.error"
+
+    Form[AddIncomeSourceStartDateCheckForm](
+      mapping(
+        response -> optional(text)
+          .verifying(radiosEmptyError, value => value.nonEmpty && (value.contains(responseYes) || value.contains(responseNo)))
+      )(AddIncomeSourceStartDateCheckForm.apply)(AddIncomeSourceStartDateCheckForm.unapply)
+    )
+  }
 }
 
-case class ForeignPropertyStartDateCheckForm(response: Option[String]) {
-
+case class AddIncomeSourceStartDateCheckForm(response: Option[String]) {
   def toFormMap: Map[String, Seq[String]] = Map(
-    ForeignPropertyStartDateCheckForm.response -> Seq(response.getOrElse("N/A"))
+    AddIncomeSourceStartDateCheckForm.response -> Seq(response.getOrElse("N/A"))
   )
 }

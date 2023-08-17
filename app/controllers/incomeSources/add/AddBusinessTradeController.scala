@@ -49,8 +49,8 @@ class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate
                                            val ec: ExecutionContext)
   extends ClientConfirmedController with I18nSupport with FeatureSwitching {
 
-  lazy val backURL: String = controllers.incomeSources.add.routes.AddBusinessStartDateCheckController.show().url
-  lazy val agentBackURL: String = controllers.incomeSources.add.routes.AddBusinessStartDateCheckController.showAgent().url
+  lazy val backURL: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.submitSoleTraderBusiness.url
+  lazy val agentBackURL: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.submitSoleTraderBusinessAgent.url
   lazy val postAction: Call = controllers.incomeSources.add.routes.AddBusinessTradeController.submit()
   lazy val postActionAgent: Call = controllers.incomeSources.add.routes.AddBusinessTradeController.agentSubmit()
   lazy val redirect: String = controllers.incomeSources.add.routes.AddBusinessAddressController.show().url

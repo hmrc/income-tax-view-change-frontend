@@ -14,24 +14,14 @@
  * limitations under the License.
  */
 
-package enums.IncomeSourceJourney
+package forms.models
 
-sealed trait IncomeSourceJourney {
-  val key: String
-  val messagesPrefix: String
-}
+import play.api.libs.json.{Json, OFormat}
 
-case object SelfEmployment extends IncomeSourceJourney {
-  override val key = "SE"
-  override val messagesPrefix = "add-business-start-date"
-}
+import java.time.LocalDate
 
-case object UkProperty extends IncomeSourceJourney {
-  override val key = "UK"
-  override val messagesPrefix = "incomeSources.add.UKPropertyStartDate"
-}
+case class IncomeSourceFormElement(response: String)
 
-case object ForeignProperty extends IncomeSourceJourney {
-  override val key = "FP"
-  override val messagesPrefix = "incomeSources.add.foreignProperty.startDate"
+object IncomeSourceFormElement {
+  implicit val IncomeSourceFormElement: OFormat[IncomeSourceFormElement] = Json.format[IncomeSourceFormElement]
 }

@@ -183,6 +183,19 @@ GET          /agents/income-sources/add/foreign-property-start-date         cont
 POST         /income-sources/add/foreign-property-start-date                controllers.incomeSources.add.AddIncomeSourceStartDateController.submitForeignProperty
 POST         /agents/income-sources/add/foreign-property-start-date         controllers.incomeSources.add.AddIncomeSourceStartDateController.submitForeignPropertyAgent
 
+GET          /income-sources/add/business-start-date-check                      controllers.incomeSources.add.AddIncomeSourceStartDateCheckController.showSoleTraderBusiness
+GET          /agents/income-sources/add/business-start-date-check               controllers.incomeSources.add.AddIncomeSourceStartDateCheckController.showSoleTraderBusinessAgent
+POST         /income-sources/add/business-start-date-check                      controllers.incomeSources.add.AddIncomeSourceStartDateCheckController.submitSoleTraderBusiness
+POST         /agents/income-sources/add/business-start-date-check               controllers.incomeSources.add.AddIncomeSourceStartDateCheckController.submitSoleTraderBusinessAgent
+GET          /income-sources/add/uk-property-start-date-check                   controllers.incomeSources.add.AddIncomeSourceStartDateCheckController.showUKProperty
+GET          /agents/income-sources/add/uk-property-start-date-check            controllers.incomeSources.add.AddIncomeSourceStartDateCheckController.showUKPropertyAgent
+POST         /income-sources/add/uk-property-start-date-check                   controllers.incomeSources.add.AddIncomeSourceStartDateCheckController.submitUKProperty
+POST         /agents/income-sources/add/uk-property-start-date-check            controllers.incomeSources.add.AddIncomeSourceStartDateCheckController.submitUKPropertyAgent
+GET          /income-sources/add/foreign-property-start-date-check              controllers.incomeSources.add.AddIncomeSourceStartDateCheckController.showForeignProperty
+GET          /agents/income-sources/add/foreign-property-start-date-check       controllers.incomeSources.add.AddIncomeSourceStartDateCheckController.showForeignPropertyAgent
+POST         /income-sources/add/foreign-property-start-date-check              controllers.incomeSources.add.AddIncomeSourceStartDateCheckController.submitForeignProperty
+POST         /agents/income-sources/add/foreign-property-start-date-check       controllers.incomeSources.add.AddIncomeSourceStartDateCheckController.submitForeignPropertyAgent
+
 GET          /income-sources/add/change-business-start-date                 controllers.incomeSources.add.AddIncomeSourceStartDateController.changeBusinessStartDate
 GET          /agents/income-sources/add/change-business-start-date          controllers.incomeSources.add.AddIncomeSourceStartDateController.changeBusinessStartDateAgent
 GET          /income-sources/add/change-uk-property-start-date              controllers.incomeSources.add.AddIncomeSourceStartDateController.changeUKPropertyStartDate
@@ -190,21 +203,12 @@ GET          /agents/income-sources/add/change-uk-property-start-date       cont
 GET          /income-sources/add/change-foreign-property-start-date         controllers.incomeSources.add.AddIncomeSourceStartDateController.changeForeignPropertyStartDate
 GET          /agents/income-sources/add/change-foreign-property-start-date  controllers.incomeSources.add.AddIncomeSourceStartDateController.changeForeignPropertyStartDateAgent
 
-GET          /income-sources/add/business-start-date-check                controllers.incomeSources.add.AddBusinessStartDateCheckController.show()
-GET          /agents/income-sources/add/business-start-date-check         controllers.incomeSources.add.AddBusinessStartDateCheckController.showAgent()
-POST         /income-sources/add/business-start-date-check                controllers.incomeSources.add.AddBusinessStartDateCheckController.submit()
-POST         /agents/income-sources/add/business-start-date-check         controllers.incomeSources.add.AddBusinessStartDateCheckController.submitAgent()
-
 GET          /income-sources/add/business-added                           controllers.incomeSources.add.BusinessAddedObligationsController.show(id: String)
 GET          /agents/income-sources/add/business-added                    controllers.incomeSources.add.BusinessAddedObligationsController.showAgent(id: String)
 POST         /income-sources/add/business-added                           controllers.incomeSources.add.BusinessAddedObligationsController.submit()
 POST         /agents/income-sources/add/business-added                    controllers.incomeSources.add.BusinessAddedObligationsController.agentSubmit()
 
 
-GET          /income-sources/add/uk-property-start-date-check             controllers.incomeSources.add.CheckUKPropertyStartDateController.show()
-GET          /agents/income-sources/add/uk-property-start-date-check      controllers.incomeSources.add.CheckUKPropertyStartDateController.showAgent()
-POST         /income-sources/add/uk-property-start-date-check             controllers.incomeSources.add.CheckUKPropertyStartDateController.submit()
-POST         /agents/income-sources/add/uk-property-start-date-check      controllers.incomeSources.add.CheckUKPropertyStartDateController.submitAgent()
 GET          /income-sources/add/uk-property-accounting-method            controllers.incomeSources.add.UKPropertyAccountingMethodController.show()
 GET          /agents/income-sources/add/uk-property-accounting-method     controllers.incomeSources.add.UKPropertyAccountingMethodController.showAgent()
 POST         /income-sources/add/uk-property-accounting-method            controllers.incomeSources.add.UKPropertyAccountingMethodController.submit()
@@ -213,12 +217,6 @@ GET          /income-sources/add/uk-property-check-details                contro
 GET          /agents/income-sources/add/uk-property-check-details         controllers.incomeSources.add.CheckUKPropertyDetailsController.showAgent()
 POST         /income-sources/add/uk-property-check-details                controllers.incomeSources.add.CheckUKPropertyDetailsController.submit()
 POST         /agents/income-sources/add/uk-property-check-details         controllers.incomeSources.add.CheckUKPropertyDetailsController.submitAgent()
-
-
-GET          /income-sources/add/foreign-property-start-date-check              controllers.incomeSources.add.ForeignPropertyStartDateCheckController.show()
-GET          /agents/income-sources/add/foreign-property-start-date-check       controllers.incomeSources.add.ForeignPropertyStartDateCheckController.showAgent()
-POST         /income-sources/add/foreign-property-start-date-check              controllers.incomeSources.add.ForeignPropertyStartDateCheckController.submit()
-POST         /agents/income-sources/add/foreign-property-start-date-check       controllers.incomeSources.add.ForeignPropertyStartDateCheckController.submitAgent()
 
 GET          /income-sources/add/foreign-property-business-accounting-method         controllers.incomeSources.add.ForeignPropertyAccountingMethodController.show()
 GET          /agents/income-sources/add/foreign-property-business-accounting-method  controllers.incomeSources.add.ForeignPropertyAccountingMethodController.showAgent()

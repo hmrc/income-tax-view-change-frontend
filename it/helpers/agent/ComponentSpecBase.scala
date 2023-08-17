@@ -19,6 +19,7 @@ package helpers.agent
 import com.github.tomakehurst.wiremock.client.WireMock
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
+import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import forms.CeaseForeignPropertyForm
 import forms.agent.ClientsUTRForm
 import forms.incomeSources.cease.CeaseUKPropertyForm
@@ -41,8 +42,7 @@ import services.{DateService, DateServiceInterface}
 import java.time.LocalDate
 import javax.inject.Singleton
 import scala.concurrent.Future
-import forms.BusinessStartDateCheckForm
-import forms.incomeSources.add.{AddBusinessReportingMethodForm, AddForeignPropertyReportingMethodForm, AddUKPropertyReportingMethodForm}
+import forms.incomeSources.add.{AddBusinessReportingMethodForm, AddForeignPropertyReportingMethodForm, AddIncomeSourceStartDateCheckForm, AddUKPropertyReportingMethodForm}
 import testConstants.BaseIntegrationTestConstants.{testPropertyIncomeId, testSelfEmploymentId}
 
 import java.time.Month.APRIL
@@ -307,7 +307,32 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
         additionalCookies = additionalCookies
       )(
         answer.fold(Map.empty[String, Seq[String]])(
-          selection => BusinessStartDateCheckForm.form.fill(BusinessStartDateCheckForm(Some(selection))).data.map { case (k, v) => (k, Seq(v)) }
+          selection => AddIncomeSourceStartDateCheckForm(SelfEmployment.addIncomeSourceStartDateCheckMessagesPrefix)
+            .fill(AddIncomeSourceStartDateCheckForm(Some(selection))).data.map { case (k, v) => (k, Seq(v)) }
+        )
+      )
+    }
+
+    def postAddUKPropertyStartDateCheck(answer: Option[String])(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      post(
+        uri = s"/income-sources/add/uk-property-start-date-check",
+        additionalCookies = additionalCookies
+      )(
+        answer.fold(Map.empty[String, Seq[String]])(
+          selection => AddIncomeSourceStartDateCheckForm(UkProperty.addIncomeSourceStartDateCheckMessagesPrefix)
+            .fill(AddIncomeSourceStartDateCheckForm(Some(selection))).data.map { case (k, v) => (k, Seq(v)) }
+        )
+      )
+    }
+
+    def postAddForeignPropertyStartDateCheck(answer: Option[String])(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      post(
+        uri = s"/income-sources/add/foreign-property-start-date-check",
+        additionalCookies = additionalCookies
+      )(
+        answer.fold(Map.empty[String, Seq[String]])(
+          selection => AddIncomeSourceStartDateCheckForm(ForeignProperty.addIncomeSourceStartDateCheckMessagesPrefix)
+            .fill(AddIncomeSourceStartDateCheckForm(Some(selection))).data.map { case (k, v) => (k, Seq(v)) }
         )
       )
     }
