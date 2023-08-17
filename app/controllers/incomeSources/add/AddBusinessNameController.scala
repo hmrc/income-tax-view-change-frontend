@@ -175,7 +175,6 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
       }
 
     }
-    println(isChange)
 
     BusinessNameForm.form.bindFromRequest().fold(
       formWithErrors => {

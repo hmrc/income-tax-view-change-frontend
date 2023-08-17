@@ -73,7 +73,7 @@
         form = businessNameForm
     )
 
-    @form(action = postAction) {
+    @form(action = postAction, Symbol("id") -> "business-name-form") {
 
         <div class="govuk-form-group form-field-group  @if(fieldError.isDefined) {govuk-form-group--error}">
 
