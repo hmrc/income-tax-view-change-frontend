@@ -118,7 +118,7 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
   private def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)
                    (implicit user: MtdItUser[_]): Future[Result] = {
 
-    val messagesPrefix = getMessagesPrefix(incomeSourceType)
+    val messagesPrefix = incomeSourceType.addIncomeSourceStartDateMessagesPrefix
 
     if(isEnabled(IncomeSources)) {
       getCalls(isAgent, incomeSourceType) match {
@@ -152,7 +152,7 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
   private def handleSubmitRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)
                          (implicit user: MtdItUser[_]): Future[Result] = {
 
-    val messagesPrefix = getMessagesPrefix(incomeSourceType)
+    val messagesPrefix = incomeSourceType.addIncomeSourceStartDateMessagesPrefix
 
     if(isEnabled(IncomeSources)) {
       getCalls(isAgent, incomeSourceType) match {
@@ -239,14 +239,6 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
           controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.submitForeignPropertyAgent,
           controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.showForeignPropertyAgent
         )
-    }
-  }
-
-  private def getMessagesPrefix(incomeSourceType: IncomeSourceType): String = {
-    incomeSourceType match {
-      case SelfEmployment => SelfEmployment.addIncomeSourceStartDateMessagesPrefix
-      case ForeignProperty => ForeignProperty.addIncomeSourceStartDateMessagesPrefix
-      case UkProperty => UkProperty.addIncomeSourceStartDateMessagesPrefix
     }
   }
 
