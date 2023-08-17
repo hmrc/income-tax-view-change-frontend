@@ -82,6 +82,9 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
   val validCallWithData: Html = view(viewModelWithAllData, backUrl, isAgent = false, SelfEmployment, Some("Test Name"))
   val validAgentCallWithData: Html = view(viewModelWithAllData, agentBackUrl, isAgent = true, SelfEmployment, Some("Test Name"))
 
+  val addIncomeSourceShowURL = controllers.incomeSources.add.routes.AddIncomeSourceController.show().url
+  val addIncomeSourceShowAgentURL = controllers.incomeSources.add.routes.AddIncomeSourceController.showAgent().url
+
   "Income Source Added Obligations - Individual" should {
     "Display the correct banner message and heading" when  {
       "Business type is UK Property Business" in new Setup(validUKPropertyBusinessCall){
@@ -192,6 +195,11 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
     "render the your income sources button" in new Setup(validCallWithData) {
       document.getElementById("continue-button").text() shouldBe (IncomeSourceAddedMessages.buttonText)
+    }
+
+    s"has GET form action to $addIncomeSourceShowURL" in new Setup(validCallWithData) {
+      document.getElementsByTag("form").get(0).attr("action") shouldBe addIncomeSourceShowURL
+      document.getElementsByTag("form").get(0).attr("method") shouldBe "GET"
     }
   }
 
@@ -305,6 +313,11 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
     "render the your income sources button" in new Setup(validAgentCallWithData) {
       document.getElementById("continue-button").text() shouldBe (IncomeSourceAddedMessages.buttonText)
+    }
+
+    s"has GET form action to $addIncomeSourceShowAgentURL" in new Setup(validAgentCallWithData) {
+      document.getElementsByTag("form").get(0).attr("action") shouldBe addIncomeSourceShowAgentURL
+      document.getElementsByTag("form").get(0).attr("method") shouldBe "GET"
     }
   }
 

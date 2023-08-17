@@ -65,7 +65,7 @@ class UKPropertyCeasedObligationsController @Inject()(val authenticate: Authenti
               incomeSourceType = UkProperty))
           }
         case None =>
-          Logger("application").error(s"${if (isAgent) "[Agent]"}[UkPropertyCeasedObligationsController][handleRequest]:Failed to retrieve incomeSourceId for UK property")
+          Logger("application").error(s"${if (isAgent) "[Agent]"}[UkPropertyCeasedObligationsController][handleRequest]:Failed to retrieve UK property details")
           Future.successful(errorHandler.showInternalServerError())
       }
 

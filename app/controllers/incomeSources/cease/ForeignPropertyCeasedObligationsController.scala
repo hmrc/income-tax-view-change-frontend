@@ -65,7 +65,7 @@ class ForeignPropertyCeasedObligationsController @Inject()(val authenticate: Aut
               incomeSourceType = ForeignProperty))
           }
         case None =>
-          Logger("application").error(s"${if (isAgent) "[Agent]"}[ForeignPropertyCeasedObligationsController][handleRequest]:Failed to retrieve incomeSourceId for foreign property")
+          Logger("application").error(s"${if (isAgent) "[Agent]"}[ForeignPropertyCeasedObligationsController][handleRequest]:Failed to retrieve foreign property details")
           Future.successful(errorHandler.showInternalServerError())
       }
 

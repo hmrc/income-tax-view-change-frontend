@@ -74,7 +74,7 @@ class BusinessCeasedObligationsController @Inject()(authenticate: Authentication
               incomeSourceType = SelfEmployment))
           }
         case None =>
-          Logger("application").error(s"Missing Session Key: $ceaseBusinessIncomeSourceId")
+          Logger("application").error(s"${if(isAgent)"[Agent]"}[BusinessCeasedObligationsController][handleRequest]:Missing Session Key: $ceaseBusinessIncomeSourceId")
           Future.successful(errorHandler.showInternalServerError())
       }
 

@@ -57,11 +57,11 @@ incomeSourceType match {
     }
 }
 
-@getAddIncomeSourcesCall = @{
+@getCeaseIncomeSourceCall = @{
     if(isAgent) {
-        controllers.incomeSources.add.routes.AddIncomeSourceController.showAgent()
+        controllers.incomeSources.cease.routes.CeaseIncomeSourceController.showAgent()
     } else {
-        controllers.incomeSources.add.routes.AddIncomeSourceController.show()
+        controllers.incomeSources.cease.routes.CeaseIncomeSourceController.show()
     }
 }
 
@@ -96,7 +96,7 @@ incomeSourceType match {
   isAgent = isAgent,
   btaNavPartial = user.btaNavPartial) {
 
-    @formWithCSRF(action = getAddIncomeSourcesCall) {
+    @formWithCSRF(action = getCeaseIncomeSourceCall) {
 
         <div class="govuk-panel govuk-panel--confirmation" id="banner">
             @getBannerContent()

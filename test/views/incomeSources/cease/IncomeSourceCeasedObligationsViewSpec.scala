@@ -86,6 +86,9 @@ class IncomeSourceCeasedObligationsViewSpec extends ViewSpec {
   val validCallWithData: Html = view(viewModelWithAllData, backUrl, isAgent = false, SelfEmployment, Some("Test Name"))
   val validAgentCallWithData: Html = view(viewModelWithAllData, agentBackUrl, isAgent = true, SelfEmployment, Some("Test Name"))
 
+  val ceaseIncomeSourceShowURL = controllers.incomeSources.cease.routes.CeaseIncomeSourceController.show().url
+  val ceaseIncomeSourceShowAgentURL = controllers.incomeSources.cease.routes.CeaseIncomeSourceController.showAgent().url
+
   "Income Source Ceased Obligations - Individual" should {
     "Display the correct banner message and heading" when {
       "Business type is UK Property Business" in new Setup(validUKPropertyBusinessCall) {
@@ -204,6 +207,11 @@ class IncomeSourceCeasedObligationsViewSpec extends ViewSpec {
 
     "render the your income sources button" in new Setup(validCallWithData) {
       document.getElementById("continue-button").text() shouldBe (IncomeSourceCeasedMessages.buttonText)
+    }
+
+    s"has GET form action to $ceaseIncomeSourceShowURL" in new Setup(validCallWithData) {
+      document.getElementsByTag("form").get(0).attr("method") shouldBe "GET"
+      document.getElementsByTag("form").get(0).attr("action") shouldBe ceaseIncomeSourceShowURL
     }
   }
 
@@ -325,6 +333,11 @@ class IncomeSourceCeasedObligationsViewSpec extends ViewSpec {
 
     "render the your income sources button" in new Setup(validAgentCallWithData) {
       document.getElementById("continue-button").text() shouldBe (IncomeSourceCeasedMessages.buttonText)
+    }
+
+    s"has GET form action to $ceaseIncomeSourceShowAgentURL" in new Setup(validAgentCallWithData) {
+      document.getElementsByTag("form").get(0).attr("action") shouldBe ceaseIncomeSourceShowAgentURL
+      document.getElementsByTag("form").get(0).attr("method") shouldBe "GET"
     }
   }
 
