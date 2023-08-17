@@ -1431,18 +1431,18 @@ business-ceased.obligation.heading1.base                            = wedi dod i
 business-ceased.obligation.heading2.text                            = Yr hyn y mae’n rhaid i chi ei wneud
 business-ceased.obligation.income-sources-button                    = Eich ffynonellau incwm
 
-income-source.obligation.quarterly-heading                        = Anfon diweddariadau chwarterol
-income-source.obligation.quarterly-p1                             = Mae’n rhaid i chi anfon diweddariadau chwarterol o’ch incwm a’ch treuliau, gan ddefnyddio meddalwedd sy’n cydweddu, erbyn y dyddiadau cau canlynol:
-income-source.obligation.eops-heading                             = Anfon datganiadau diwedd cyfnod
-income-source.obligation.eops-p1                                  = Mae’n rhaid i chi gyflwyno datganiadau diwedd cyfnod gan ddefnyddio’ch meddalwedd, a hynny erbyn y dyddiad cau.
-income-source.obligation.final-declaration-heading                = Cyflwyno’ch datganiadau terfynol a thalu’ch treth
-income-source.obligation.final-declaration-text                   = Bydd yn rhaid i chi gyflwyno’ch datganiadau terfynol a thalu’r dreth sydd arnoch erbyn y dyddiad cau.
-income-source.obligation.table.heading-1                          = Blwyddyn dreth
-income-source.obligation.table.heading-2                          = Dyddiad cau
-income-source.obligation.income-sources-button                    = Eich ffynonellau incwm
-income-source.obligation.previous-tax-years-heading               = Blynyddoedd treth blaenorol
-income-source.obligation.previous-tax-years-t1                    = Mae’n rhaid i chi wneud yn siŵr eich bod wedi anfon yr holl Incwm a threuliau, a datganiadau terfynol ar gyfer blynyddoedd treth cyn
-income-source.obligation.to                                       = i
+business-ceased.obligation.quarterly-heading                        = Anfon diweddariadau chwarterol
+business-ceased.obligation.quarterly-p1                             = Mae’n rhaid i chi anfon diweddariadau chwarterol o’ch incwm a’ch treuliau, gan ddefnyddio meddalwedd sy’n cydweddu, erbyn y dyddiadau cau canlynol:
+business-ceased.obligation.eops-heading                             = Anfon datganiadau diwedd cyfnod
+business-ceased.obligation.eops-p1                                  = Mae’n rhaid i chi gyflwyno datganiadau diwedd cyfnod gan ddefnyddio’ch meddalwedd, a hynny erbyn y dyddiad cau.
+business-ceased.obligation.final-declaration-heading                = Cyflwyno’ch datganiadau terfynol a thalu’ch treth
+business-ceased.obligation.final-declaration-text                   = Bydd yn rhaid i chi gyflwyno’ch datganiadau terfynol a thalu’r dreth sydd arnoch erbyn y dyddiad cau.
+business-ceased.obligation.table.heading-1                          = Blwyddyn dreth
+business-ceased.obligation.table.heading-2                          = Dyddiad cau
+business-ceased.obligation.income-sources-button                    = Eich ffynonellau incwm
+business-ceased.obligation.previous-tax-years-heading               = Blynyddoedd treth blaenorol
+business-ceased.obligation.previous-tax-years-t1                    = Mae’n rhaid i chi wneud yn siŵr eich bod wedi anfon yr holl Incwm a threuliau, a datganiadau terfynol ar gyfer blynyddoedd treth cyn
+business-ceased.obligation.to                                       = i
 
 ## Income Source Added Pages ##
 incomeSourceAdded.additionalWelshContent                    = Mae

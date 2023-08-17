@@ -19,6 +19,7 @@ package views.incomeSources.cease
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
 import org.jsoup.nodes.Element
+import org.jsoup.select.Elements
 import play.twirl.api.Html
 import testUtils.ViewSpec
 import views.html.incomeSources.cease.IncomeSourceCeasedObligations
@@ -149,24 +150,56 @@ class IncomeSourceCeasedObligationsViewSpec extends ViewSpec {
       }
     }
 
-    "Display obligations if the user has them" in new Setup(validCallWithData) {
+    "Display quarterly obligations if the user has them" in new Setup(validCallWithData) {
       val quarterlySection: Element = layoutContent.getElementById("quarterly")
       quarterlySection.text() should include(IncomeSourceCeasedMessages.quarterlyHeading)
       quarterlySection.text() should include(IncomeSourceCeasedMessages.quarterlyText)
 
+      val tableHeadings: Elements = quarterlySection.getElementsByClass("govuk-table__head")
+      tableHeadings.text() should include(IncomeSourceCeasedMessages.tableHeading1 + " 2022 to 2023")
+      tableHeadings.text() should include(IncomeSourceCeasedMessages.tableHeading1 + " 2023 to 2024")
+      tableHeadings.text() should include(IncomeSourceCeasedMessages.tableHeading2)
+
+
+      val tableContent: Elements = quarterlySection.getElementsByClass("govuk-table__body")
+      tableContent.text() should include("1 January 2022 to 2 January 2022")
+      tableContent.text() should include("3 January 2022")
+
+      tableContent.text() should include("1 January 2023 to 2 January 2023")
+      tableContent.text() should include("3 January 2023")
+    }
+
+    "Display EOPS obligations if the user has them" in new Setup(validCallWithData) {
       val eopsSection: Element = layoutContent.getElementById("eops")
       eopsSection.text() should include(IncomeSourceCeasedMessages.eopsHeading)
       eopsSection.text() should include(IncomeSourceCeasedMessages.eopsText)
 
+      val tableHeadings: Elements = eopsSection.getElementsByClass("govuk-table__head")
+      tableHeadings.text() should include(IncomeSourceCeasedMessages.tableHeading1)
+      tableHeadings.text() should include(IncomeSourceCeasedMessages.tableHeading2)
+
+      val tableContent: Elements = eopsSection.getElementsByClass("govuk-table__body")
+      tableContent.text() should include("1 January 2022 to 2 January 2022 3 January 2022")
+      tableContent.text() should include("3 January 2022")
+    }
+
+    "Display final declaration obligations if the user has them" in new Setup(validCallWithData) {
       val finalDecSection: Element = layoutContent.getElementById("finalDeclaration")
       finalDecSection.text() should include(IncomeSourceCeasedMessages.finalDecHeading)
       finalDecSection.text() should include(IncomeSourceCeasedMessages.finalDecText)
+
+      val tableHeadings: Elements = finalDecSection.getElementsByClass("govuk-table__head")
+      tableHeadings.text() should include(IncomeSourceCeasedMessages.tableHeading1)
+      tableHeadings.text() should include(IncomeSourceCeasedMessages.tableHeading2)
+
+      val tableContent: Elements = finalDecSection.getElementsByClass("govuk-table__body")
+      tableContent.text() should include("1 January 2022 to 2 January 2022 3 January 2022")
+      tableContent.text() should include("3 January 2022")
     }
 
     "Not display any obligation sections when user has no obligations" in new Setup(validUKPropertyBusinessCall) {
       Option(layoutContent.getElementById("quarterly")) shouldBe None
       Option(layoutContent.getElementById("eops")) shouldBe None
-      Option(layoutContent.getElementById("prevyears")) shouldBe None
     }
 
     "render the your income sources button" in new Setup(validCallWithData) {
@@ -238,24 +271,56 @@ class IncomeSourceCeasedObligationsViewSpec extends ViewSpec {
       }
     }
 
-    "Display obligations if the user has them" in new Setup(validAgentCallWithData) {
+    "Display quarterly obligations if the user has them" in new Setup(validCallWithData) {
       val quarterlySection: Element = layoutContent.getElementById("quarterly")
       quarterlySection.text() should include(IncomeSourceCeasedMessages.quarterlyHeading)
       quarterlySection.text() should include(IncomeSourceCeasedMessages.quarterlyText)
 
+      val tableHeadings: Elements = quarterlySection.getElementsByClass("govuk-table__head")
+      tableHeadings.text() should include(IncomeSourceCeasedMessages.tableHeading1 + " 2022 to 2023")
+      tableHeadings.text() should include(IncomeSourceCeasedMessages.tableHeading1 + " 2023 to 2024")
+      tableHeadings.text() should include(IncomeSourceCeasedMessages.tableHeading2)
+
+
+      val tableContent: Elements = quarterlySection.getElementsByClass("govuk-table__body")
+      tableContent.text() should include("1 January 2022 to 2 January 2022")
+      tableContent.text() should include("3 January 2022")
+
+      tableContent.text() should include("1 January 2023 to 2 January 2023")
+      tableContent.text() should include("3 January 2023")
+    }
+
+    "Display EOPS obligations if the user has them" in new Setup(validCallWithData) {
       val eopsSection: Element = layoutContent.getElementById("eops")
       eopsSection.text() should include(IncomeSourceCeasedMessages.eopsHeading)
       eopsSection.text() should include(IncomeSourceCeasedMessages.eopsText)
 
+      val tableHeadings: Elements = eopsSection.getElementsByClass("govuk-table__head")
+      tableHeadings.text() should include(IncomeSourceCeasedMessages.tableHeading1)
+      tableHeadings.text() should include(IncomeSourceCeasedMessages.tableHeading2)
+
+      val tableContent: Elements = eopsSection.getElementsByClass("govuk-table__body")
+      tableContent.text() should include("1 January 2022 to 2 January 2022 3 January 2022")
+      tableContent.text() should include("3 January 2022")
+    }
+
+    "Display final declaration obligations if the user has them" in new Setup(validCallWithData) {
       val finalDecSection: Element = layoutContent.getElementById("finalDeclaration")
       finalDecSection.text() should include(IncomeSourceCeasedMessages.finalDecHeading)
       finalDecSection.text() should include(IncomeSourceCeasedMessages.finalDecText)
+
+      val tableHeadings: Elements = finalDecSection.getElementsByClass("govuk-table__head")
+      tableHeadings.text() should include(IncomeSourceCeasedMessages.tableHeading1)
+      tableHeadings.text() should include(IncomeSourceCeasedMessages.tableHeading2)
+
+      val tableContent: Elements = finalDecSection.getElementsByClass("govuk-table__body")
+      tableContent.text() should include("1 January 2022 to 2 January 2022 3 January 2022")
+      tableContent.text() should include("3 January 2022")
     }
 
     "Not display any obligation sections when user has no obligations" in new Setup(validUKPropertyBusinessAgentCall) {
       Option(layoutContent.getElementById("quarterly")) shouldBe None
       Option(layoutContent.getElementById("eops")) shouldBe None
-      Option(layoutContent.getElementById("prevyears")) shouldBe None
     }
 
     "render the your income sources button" in new Setup(validAgentCallWithData) {
