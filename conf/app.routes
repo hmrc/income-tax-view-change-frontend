@@ -257,9 +257,6 @@ GET          /agents/income-sources/add/foreign-property-check-details          
 POST         /income-sources/add/foreign-property-check-details                         controllers.incomeSources.add.ForeignPropertyCheckDetailsController.submit()
 POST         /agents/income-sources/add/foreign-property-check-details                  controllers.incomeSources.add.ForeignPropertyCheckDetailsController.submitAgent()
 
-GET          /income-sources/add/error-foreign-property-not-added                       controllers.incomeSources.add.ForeignPropertyBusinessNotAddedErrorController.show()
-GET          /agents/income-sources/add/error-foreign-property-not-added                controllers.incomeSources.add.ForeignPropertyBusinessNotAddedErrorController.showAgent()
-
 GET          /income-sources/add/change-uk-property-accounting-method                   controllers.incomeSources.add.UKPropertyAccountingMethodController.change()
 GET          /agents/income-sources/add/change-uk-property-accounting-method            controllers.incomeSources.add.UKPropertyAccountingMethodController.changeAgent()
 
@@ -378,8 +375,6 @@ GET          /income-sources/add/foreign-property-reporting-method              
 GET          /agents/income-sources/add/foreign-property-reporting-method                        controllers.incomeSources.add.ForeignPropertyReportingMethodController.showAgent(id:String)
 POST         /income-sources/add/foreign-property-reporting-method                               controllers.incomeSources.add.ForeignPropertyReportingMethodController.submit(id:String)
 POST         /agents/income-sources/add/foreign-property-reporting-method                        controllers.incomeSources.add.ForeignPropertyReportingMethodController.submitAgent(id:String)
-GET          /income-sources/add/error-foreign-property-reporting-method-not-saved               controllers.incomeSources.add.ForeignPropertyReportingMethodErrorController.show()
-GET          /agents/income-sources/add/error-foreign-property-reporting-method-not-saved        controllers.incomeSources.add.ForeignPropertyReportingMethodErrorController.showAgent()
 
 # Income Sources - TO BE IMPLEMENTED
 GET          /income-sources/add/foreign-property-accounting-method                 controllers.incomeSources.add.ForeignPropertyAccountingMethodController.show()
