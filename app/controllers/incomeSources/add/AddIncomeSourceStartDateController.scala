@@ -90,11 +90,8 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
         andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
         implicit user =>
           user.method match {
-            case "POST" =>
-              submit(incomeSourceType, isAgent, isUpdate)
-            case "GET" =>
-              show(incomeSourceType, isAgent, isUpdate)
-            case _ => Future(ImATeapot)
+            case "POST" => submit(incomeSourceType, isAgent, isUpdate)
+            case "GET" => show(incomeSourceType, isAgent, isUpdate)
           }
       }
     }
