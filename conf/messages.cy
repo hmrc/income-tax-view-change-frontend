@@ -1394,8 +1394,6 @@ check-business-details.cash-accounting                  = Cyfrifyddu ar sail ari
 check-business-details.traditional-accounting           = Cyfrifyddu traddodiadol
 
 # business added page
-business-added.h1                                       = Ychwanegwyd
-business-added.h2                                       = i’ch cyfrif
 business-added.text                                     = Yr hyn y mae’n rhaid i chi ei wneud
 business-added.to                                       = i
 
@@ -1407,8 +1405,6 @@ business-added.uk-property.h1                           = eiddo yn y DU
 business-added.uk-property.base                         = wedi cael ei ychwanegu i’ch cyfrif
 business-added.sole-treader.head                        = Ychwanegwyd
 business-added.sole-treader.base                        = i’ch cyfrif
-
-
 
 business-added.quarterly-heading                        = Anfon diweddariadau chwarterol
 business-added.quarterly-p1                             = Mae’n rhaid i chi anfon diweddariadau chwarterol o’ch incwm a’ch treuliau, gan ddefnyddio meddalwedd sy’n cydweddu, erbyn y dyddiadau cau canlynol:
@@ -1429,7 +1425,6 @@ business-ceased.obligation.heading1.uk-property.part2               = Eiddo yn y
 business-ceased.obligation.heading1.foreign-property.part2          = Eiddo tramor
 business-ceased.obligation.heading1.base                            = wedi dod i ben
 business-ceased.obligation.heading2.text                            = Yr hyn y mae’n rhaid i chi ei wneud
-business-ceased.obligation.income-sources-button                    = Eich ffynonellau incwm
 
 business-ceased.obligation.quarterly-heading                        = Anfon diweddariadau chwarterol
 business-ceased.obligation.quarterly-p1                             = Mae’n rhaid i chi anfon diweddariadau chwarterol o’ch incwm a’ch treuliau, gan ddefnyddio meddalwedd sy’n cydweddu, erbyn y dyddiadau cau canlynol:
@@ -1443,28 +1438,6 @@ business-ceased.obligation.income-sources-button                    = Eich ffyno
 business-ceased.obligation.previous-tax-years-heading               = Blynyddoedd treth blaenorol
 business-ceased.obligation.previous-tax-years-t1                    = Mae’n rhaid i chi wneud yn siŵr eich bod wedi anfon yr holl Incwm a threuliau, a datganiadau terfynol ar gyfer blynyddoedd treth cyn
 business-ceased.obligation.to                                       = i
-
-## Income Source Added Pages ##
-incomeSourceAdded.additionalWelshContent                    = Mae
-incomeSourceAdded.heading                                   = wedi cael ei ychwanegu i’ch cyfrif
-incomeSourceAdded.ukProperty                                = eiddo yn y DU
-incomeSourceAdded.subheading                                = Yr hyn y mae’n rhaid i chi ei wneud
-incomeSourceAdded.to                                        = i
-incomeSourceAdded.quarterly.heading                         = Anfon diweddariadau chwarterol
-incomeSourceAdded.quarterly.text                            = Mae’n rhaid i chi anfon diweddariadau chwarterol o’ch incwm a’ch treuliau, gan ddefnyddio meddalwedd sy’n cydweddu, erbyn y dyddiadau cau canlynol:
-incomeSourceAdded.eops.heading                              = Anfon datganiadau diwedd cyfnod
-incomeSourceAdded.eops.text                                 = Mae’n rhaid i chi gyflwyno datganiadau diwedd cyfnod gan ddefnyddio’ch meddalwedd, a hynny erbyn y dyddiad cau.
-incomeSourceAdded.finalDeclaration.heading                   = Cyflwyno’ch datganiadau terfynol a thalu’ch treth
-incomeSourceAdded.finalDeclaration.text                      = Bydd yn rhaid i chi gyflwyno’ch datganiadau terfynol a thalu’r dreth sydd arnoch erbyn y dyddiad cau.
-incomeSourceAdded.table.taxYear.heading                     = Blwyddyn dreth
-incomeSourceAdded.table.deadline.heading                    = Dyddiad cau
-incomeSourceAdded.button.text                               = Eich ffynonellau incwm
-incomeSourceAdded.previousTaxYears.heading                  = Blynyddoedd treth blaenorol
-incomeSourceAdded.previousTaxYears.text                     = Mae’n rhaid i chi wneud yn siŵr eich bod wedi anfon yr holl Incwm a threuliau, a datganiadau terfynol ar gyfer blynyddoedd treth cyn
-
-business-added.foreign-property-h1                      = eiddo tramor
-business-added.foreign-property-head                    = Mae
-business-added.foreign-property-base                    = wedi cael ei ychwanegu i’ch cyfrif
 
 incomeSources.add.businessReportingMethod.heading                   =   Dewis dull o gyflwyno adroddiad
 incomeSources.add.businessReportingMethod.description1              =   Mae’ch busnes yn gymwys i gael cyfnod gras hyd at Ebrill {0}, lle y gallwch gyflwyno adroddiadau’n flynyddol.
