@@ -53,7 +53,7 @@ class AddBusinessAddressController @Inject()(authenticate: AuthenticationPredica
   def show: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
-      handleRequest(isAgent = false)
+      handleRequest(isAgent = false, isChange = false)
   }
 
   def showAgent(): Action[AnyContent] =
@@ -62,16 +62,17 @@ class AddBusinessAddressController @Inject()(authenticate: AuthenticationPredica
         implicit user =>
           getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
             implicit mtdItUser =>
-              handleRequest(isAgent = true)
+              handleRequest(isAgent = true, isChange = false)
           }
     }
 
-  def handleRequest(isAgent: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
+  def handleRequest(isAgent: Boolean, isChange: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
     if (isDisabled(IncomeSources)) {
       Future.successful(if (isAgent) Redirect(controllers.routes.HomeController.showAgent) else Redirect(controllers.routes.HomeController.show()))
     } else {
       addressLookupService.initialiseAddressJourney(
-        isAgent = isAgent
+        isAgent = isAgent,
+        isChange = isChange
       ) map {
         case Right(Some(location)) =>
           Redirect(location)
@@ -85,9 +86,16 @@ class AddBusinessAddressController @Inject()(authenticate: AuthenticationPredica
     }
   }
 
-  def handleSubmitRequest(isAgent: Boolean, id: Option[String])(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
+  def getRedirectUrl(isAgent: Boolean, isChange: Boolean): String = {
+    if (isChange) {
+      if (isAgent) routes.CheckBusinessDetailsController.showAgent().url else routes.CheckBusinessDetailsController.show().url
+    } else {
+      if (isAgent) routes.BusinessAccountingMethodController.showAgent().url else routes.BusinessAccountingMethodController.show().url
+    }
+  }
+  def handleSubmitRequest(isAgent: Boolean, id: Option[String], isChange: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
     val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-    val redirectUrl = if (isAgent) routes.BusinessAccountingMethodController.showAgent().url else routes.BusinessAccountingMethodController.show().url
+    val redirectUrl = getRedirectUrl(isAgent = isAgent, isChange = isChange)
     val res = addressLookupService.fetchAddress(id)
     res map {
       case Right(value) =>
@@ -115,7 +123,7 @@ class AddBusinessAddressController @Inject()(authenticate: AuthenticationPredica
 
   def submit(id: Option[String]): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
-    implicit user => handleSubmitRequest(isAgent = false, id)
+    implicit user => handleSubmitRequest(isAgent = false, id, isChange = false)
   }
 
   def agentSubmit(id: Option[String]): Action[AnyContent] = Authenticated.async {
@@ -123,16 +131,38 @@ class AddBusinessAddressController @Inject()(authenticate: AuthenticationPredica
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
           implicit mtdItUser =>
-            handleSubmitRequest(isAgent = true, id)
+            handleSubmitRequest(isAgent = true, id, isChange = false)
         }
 
   }
 
-  def changeBusinessAddress(): Action[AnyContent] = Action {
-    Ok("Change Business Address  WIP")
+  def showChange: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+    andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
+    implicit user =>
+      handleRequest(isAgent = false, isChange = true)
   }
 
-  def changeBusinessAddressAgent(): Action[AnyContent] = Action {
-    Ok("Agent Change Business Address  WIP")
+  def showChangeAgent(): Action[AnyContent] =
+    Authenticated.async {
+      implicit request =>
+        implicit user =>
+          getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
+            implicit mtdItUser =>
+              handleRequest(isAgent = true, isChange = true)
+          }
+    }
+
+  def changeSubmit(id: Option[String]): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+    andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
+    implicit user => handleSubmitRequest(isAgent = false, id, isChange = true)
+  }
+
+  def changeAgentSubmit(id: Option[String]): Action[AnyContent] = Authenticated.async {
+    implicit request =>
+      implicit user =>
+        getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
+          implicit mtdItUser =>
+            handleSubmitRequest(isAgent = true, id, isChange = true)
+        }
   }
 }

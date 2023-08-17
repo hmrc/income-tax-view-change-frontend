@@ -45,12 +45,11 @@ class AddressLookupConnector @Inject()(val appConfig: FrontendAppConfig,
     s"${baseUrl}/api/v2/confirmed?id=$id"
   }
 
-  lazy val individualContinueUrl: String = controllers.incomeSources.add.routes.AddBusinessAddressController.submit(None).url
-  lazy val agentContinueUrl: String = controllers.incomeSources.add.routes.AddBusinessAddressController.agentSubmit(None).url
+  def individualContinueUrl(isChange: Boolean): String = if (isChange) controllers.incomeSources.add.routes.AddBusinessAddressController.changeSubmit(None).url else controllers.incomeSources.add.routes.AddBusinessAddressController.submit(None).url
+  def agentContinueUrl(isChange: Boolean): String = if (isChange) controllers.incomeSources.add.routes.AddBusinessAddressController.changeAgentSubmit(None).url else controllers.incomeSources.add.routes.AddBusinessAddressController.agentSubmit(None).url
 
   lazy val individualFeedbackUrl: String = controllers.feedback.routes.FeedbackController.show.url
   lazy val agentFeedbackUrl: String = controllers.feedback.routes.FeedbackController.showAgent.url
-
 
   lazy val individualEnglishBanner: String = messagesApi.preferred(Seq(Lang("en")))("header.serviceName")
   lazy val agentEnglishBanner: String = messagesApi.preferred(Seq(Lang("en")))("agent.header.serviceName")
@@ -159,9 +158,9 @@ class AddressLookupConnector @Inject()(val appConfig: FrontendAppConfig,
   }
 
 
-  def initialiseAddressLookup(isAgent: Boolean)(implicit hc: HeaderCarrier, request: RequestHeader): Future[PostAddressLookupResponse] = {
+  def initialiseAddressLookup(isAgent: Boolean, isChange: Boolean)(implicit hc: HeaderCarrier, request: RequestHeader): Future[PostAddressLookupResponse] = {
     Logger("application").info(s"[AddressLookupConnector] - URL: $addressLookupInitializeUrl")
-    val payload = if (isAgent) {addressJson(agentContinueUrl, agentFeedbackUrl, agentEnglishBanner, agentWelshBanner)} else {addressJson(individualContinueUrl, individualFeedbackUrl, individualEnglishBanner, individualWelshBanner)}
+    val payload = if (isAgent) {addressJson(agentContinueUrl(isChange), agentFeedbackUrl, agentEnglishBanner, agentWelshBanner)} else {addressJson(individualContinueUrl(isChange), individualFeedbackUrl, individualEnglishBanner, individualWelshBanner)}
     http.POST[JsValue, PostAddressLookupResponse](
       url = addressLookupInitializeUrl,
       body = payload
