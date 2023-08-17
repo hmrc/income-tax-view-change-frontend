@@ -21,8 +21,7 @@ import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
-import enums.IncomeSourceJourney.{SelfEmployment, UkProperty}
-import forms.utils.SessionKeys.ceaseBusinessIncomeSourceId
+import enums.IncomeSourceJourney.UkProperty
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
@@ -66,7 +65,7 @@ class UKPropertyCeasedObligationsController @Inject()(val authenticate: Authenti
               incomeSourceType = UkProperty))
           }
         case None =>
-          Logger("application").error(s"${if(isAgent) "[Agent]"}[UkPropertyCeasedObligationsController][handleRequest]:Failed to retrieve incomeSourceId for UK property")
+          Logger("application").error(s"${if (isAgent) "[Agent]"}[UkPropertyCeasedObligationsController][handleRequest]:Failed to retrieve incomeSourceId for UK property")
           Future.successful(errorHandler.showInternalServerError())
       }
 

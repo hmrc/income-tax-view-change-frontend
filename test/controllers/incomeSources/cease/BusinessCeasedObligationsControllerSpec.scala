@@ -37,7 +37,6 @@ import testConstants.BaseTestConstants
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testSelfEmploymentId}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 import testUtils.TestSupport
-import views.html.incomeSources.add.IncomeSourceAddedObligations
 import views.html.incomeSources.cease.IncomeSourceCeasedObligations
 
 import java.time.LocalDate
@@ -171,7 +170,7 @@ class BusinessCeasedObligationsControllerSpec extends TestSupport
         when(mockNextUpdatesService.getNextUpdates(any())(any(), any())).
           thenReturn(Future(testObligationsModel))
 
-        val result: Future[Result] = TestObligationsController.show()(fakeRequestWithActiveSession.withSession(ceaseBusinessIncomeSourceId->testSelfEmploymentId))
+        val result: Future[Result] = TestObligationsController.show()(fakeRequestWithActiveSession.withSession(ceaseBusinessIncomeSourceId -> testSelfEmploymentId))
         status(result) shouldBe OK
       }
       "show correct page when agent valid" in {
@@ -206,7 +205,7 @@ class BusinessCeasedObligationsControllerSpec extends TestSupport
         when(mockNextUpdatesService.getNextUpdates(any())(any(), any())).
           thenReturn(Future(testObligationsModel))
 
-        val result: Future[Result] = TestObligationsController.showAgent()(fakeRequestConfirmedClient().withSession(ceaseBusinessIncomeSourceId->testSelfEmploymentId))
+        val result: Future[Result] = TestObligationsController.showAgent()(fakeRequestConfirmedClient().withSession(ceaseBusinessIncomeSourceId -> testSelfEmploymentId))
         status(result) shouldBe OK
       }
       "throw an error when no id is supplied" in {

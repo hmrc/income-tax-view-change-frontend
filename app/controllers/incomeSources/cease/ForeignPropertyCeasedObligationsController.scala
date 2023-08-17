@@ -21,8 +21,7 @@ import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
-import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment}
-import forms.utils.SessionKeys.ceaseBusinessIncomeSourceId
+import enums.IncomeSourceJourney.ForeignProperty
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
@@ -66,7 +65,7 @@ class ForeignPropertyCeasedObligationsController @Inject()(val authenticate: Aut
               incomeSourceType = ForeignProperty))
           }
         case None =>
-          Logger("application").error(s"${if(isAgent) "[Agent]"}[ForeignPropertyCeasedObligationsController][handleRequest]:Failed to retrieve incomeSourceId for foreign property")
+          Logger("application").error(s"${if (isAgent) "[Agent]"}[ForeignPropertyCeasedObligationsController][handleRequest]:Failed to retrieve incomeSourceId for foreign property")
           Future.successful(errorHandler.showInternalServerError())
       }
 

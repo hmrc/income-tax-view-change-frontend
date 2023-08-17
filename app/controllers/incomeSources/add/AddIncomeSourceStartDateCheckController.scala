@@ -34,40 +34,52 @@ import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.play.language.LanguageUtils
 import views.html.errorPages.CustomNotFoundError
 import views.html.incomeSources.add.AddIncomeSourceStartDateCheck
+
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
 
 @Singleton
 class AddIncomeSourceStartDateCheckController @Inject()(authenticate: AuthenticationPredicate,
-                                                     val authorisedFunctions: AuthorisedFunctions,
-                                                     val checkSessionTimeout: SessionTimeoutPredicate,
-                                                     val retrieveIncomeSources: IncomeSourceDetailsPredicate,
-                                                     val retrieveBtaNavBar: NavBarPredicate,
-                                                     val retrieveNino: NinoPredicate,
-                                                     val incomeSourceDetailsService: IncomeSourceDetailsService,
-                                                     val addIncomeSourceStartDateCheckView: AddIncomeSourceStartDateCheck,
-                                                     val customNotFoundErrorView: CustomNotFoundError,
-                                                     val languageUtils: LanguageUtils)
-                                                    (implicit val appConfig: FrontendAppConfig,
-                                                     implicit val dateService: DateService,
-                                                     mcc: MessagesControllerComponents,
-                                                     val ec: ExecutionContext,
-                                                     val itvcErrorHandler: ItvcErrorHandler,
-                                                     val itvcErrorHandlerAgent: AgentItvcErrorHandler)
+                                                        val authorisedFunctions: AuthorisedFunctions,
+                                                        val checkSessionTimeout: SessionTimeoutPredicate,
+                                                        val retrieveIncomeSources: IncomeSourceDetailsPredicate,
+                                                        val retrieveBtaNavBar: NavBarPredicate,
+                                                        val retrieveNino: NinoPredicate,
+                                                        val incomeSourceDetailsService: IncomeSourceDetailsService,
+                                                        val addIncomeSourceStartDateCheckView: AddIncomeSourceStartDateCheck,
+                                                        val customNotFoundErrorView: CustomNotFoundError,
+                                                        val languageUtils: LanguageUtils)
+                                                       (implicit val appConfig: FrontendAppConfig,
+                                                        implicit val dateService: DateService,
+                                                        mcc: MessagesControllerComponents,
+                                                        val ec: ExecutionContext,
+                                                        val itvcErrorHandler: ItvcErrorHandler,
+                                                        val itvcErrorHandlerAgent: AgentItvcErrorHandler)
   extends ClientConfirmedController with I18nSupport with FeatureSwitching with ImplicitDateFormatter {
 
   def showUKProperty: Action[AnyContent] = show(UkProperty)
+
   def showUKPropertyAgent: Action[AnyContent] = showAgent(UkProperty)
+
   def showForeignProperty: Action[AnyContent] = show(ForeignProperty)
+
   def showForeignPropertyAgent: Action[AnyContent] = showAgent(ForeignProperty)
+
   def showSoleTraderBusiness: Action[AnyContent] = show(SelfEmployment)
+
   def showSoleTraderBusinessAgent: Action[AnyContent] = showAgent(SelfEmployment)
+
   def submitUKProperty: Action[AnyContent] = submit(UkProperty)
+
   def submitUKPropertyAgent: Action[AnyContent] = submitAgent(UkProperty)
+
   def submitForeignProperty: Action[AnyContent] = submit(ForeignProperty)
+
   def submitForeignPropertyAgent: Action[AnyContent] = submitAgent(ForeignProperty)
+
   def submitSoleTraderBusiness: Action[AnyContent] = submit(SelfEmployment)
+
   def submitSoleTraderBusinessAgent: Action[AnyContent] = submitAgent(SelfEmployment)
 
   private def show(incomeSourceType: IncomeSourceType): Action[AnyContent] = {
@@ -117,8 +129,8 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
   }
 
   private def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)
-                   (implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
-    if(isDisabled(IncomeSources))
+                           (implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
+    if (isDisabled(IncomeSources))
       Future {
         Ok(customNotFoundErrorView())
       }
@@ -151,8 +163,8 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
   }
 
   private def handleSubmitRequest(isAgent: Boolean,
-                          incomeSourceType: IncomeSourceType)
-                         (implicit mtdItUser: MtdItUser[_]): Future[Result] = {
+                                  incomeSourceType: IncomeSourceType)
+                                 (implicit mtdItUser: MtdItUser[_]): Future[Result] = {
     if (isDisabled(IncomeSources))
       Future {
         Ok(customNotFoundErrorView())
@@ -250,7 +262,7 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
   }
 
   private def getErrorHandler(isAgent: Boolean): ShowInternalServerError = {
-    if(isAgent) itvcErrorHandlerAgent
+    if (isAgent) itvcErrorHandlerAgent
     else itvcErrorHandler
   }
 
