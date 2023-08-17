@@ -141,8 +141,8 @@ class CheckUKPropertyDetailsController @Inject()(val checkUKPropertyDetails: Che
             case Left(ex) => Logger("application").error(
               s"[CheckUKPropertyDetailsController][handleRequest] - Unable to create income source: ${ex.getMessage}")
               withIncomeSourcesRemovedFromSession {
-                if (isAgent) Redirect(controllers.incomeSources.add.routes.UKPropertyNotAddedController.showAgent())
-                else Redirect(controllers.incomeSources.add.routes.UKPropertyNotAddedController.show())
+                if (isAgent) Redirect(controllers.incomeSources.add.routes.IncomeSourceNotAddedController.showUKPropertyAgent())
+                else Redirect(controllers.incomeSources.add.routes.IncomeSourceNotAddedController.showUKProperty())
               }
             case Right(CreateIncomeSourceResponse(id)) =>
               val redirectUrl = getUKPropertyReportingMethodUrl(isAgent, id)
@@ -154,8 +154,8 @@ class CheckUKPropertyDetailsController @Inject()(val checkUKPropertyDetails: Che
               Logger("application").error(
                 s"[CheckUKPropertyDetailsController][handleRequest] - Error while processing request: ${ex.getMessage}")
               withIncomeSourcesRemovedFromSession {
-                if (isAgent) Redirect(controllers.incomeSources.add.routes.UKPropertyNotAddedController.showAgent())
-                else Redirect(controllers.incomeSources.add.routes.UKPropertyNotAddedController.show())
+                if (isAgent) Redirect(controllers.incomeSources.add.routes.IncomeSourceNotAddedController.showUKPropertyAgent())
+                else Redirect(controllers.incomeSources.add.routes.IncomeSourceNotAddedController.showUKProperty())
               }
           }
         case Left(ex: Throwable) =>
