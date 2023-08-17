@@ -75,10 +75,6 @@ with MockIncomeSourceDetailsPredicate with MockNavBarEnumFsPredicate with Featur
     val link: String = s"${messages("incomeSources.add.foreign-property-check-details.change")}"
   }
 
-  override def disableAllSwitches(): Unit = {
-    switches.foreach(switch => disable(switch))
-  }
-
   lazy val errorUrl: String = controllers.incomeSources.add.routes.IncomeSourceNotAddedController.showForeignProperty().url
   lazy val agentErrorUrl: String = controllers.incomeSources.add.routes.IncomeSourceNotAddedController.showForeignPropertyAgent().url
 
