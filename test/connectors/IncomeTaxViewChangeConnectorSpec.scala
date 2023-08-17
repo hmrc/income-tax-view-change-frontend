@@ -758,7 +758,7 @@ class IncomeTaxViewChangeConnectorSpec extends TestSupport with MockHttp with Mo
         UpdateIncomeSourceTestConstants.requestTaxYearSpecific,
         UpdateIncomeSourceTestConstants.successHttpResponse)
       val result: Future[UpdateIncomeSourceResponse] = updateIncomeSourceTaxYearSpecific(
-        testNino, incomeSourceId, List(taxYearSpecific))
+        testNino, incomeSourceId, taxYearSpecific)
       result.futureValue shouldBe successResponse
     }
 
@@ -768,7 +768,7 @@ class IncomeTaxViewChangeConnectorSpec extends TestSupport with MockHttp with Mo
           UpdateIncomeSourceTestConstants.requestTaxYearSpecific,
           UpdateIncomeSourceTestConstants.successInvalidJsonResponse)
         val result: Future[UpdateIncomeSourceResponse] = updateIncomeSourceTaxYearSpecific(
-          testNino, incomeSourceId, List(taxYearSpecific))
+          testNino, incomeSourceId, taxYearSpecific)
         result.futureValue shouldBe badJsonResponse
       }
       "receiving a 500+ response" in new Setup {
@@ -777,7 +777,7 @@ class IncomeTaxViewChangeConnectorSpec extends TestSupport with MockHttp with Mo
           HttpResponse(status = Status.INTERNAL_SERVER_ERROR,
             json = Json.toJson("Error message"), headers = Map.empty))
         val result: Future[UpdateIncomeSourceResponse] = updateIncomeSourceTaxYearSpecific(
-          testNino, incomeSourceId, List(taxYearSpecific))
+          testNino, incomeSourceId, taxYearSpecific)
         result.futureValue shouldBe failureResponse
       }
     }

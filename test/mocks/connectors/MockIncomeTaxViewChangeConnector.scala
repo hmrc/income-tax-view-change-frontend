@@ -22,16 +22,15 @@ import models.core.{Nino, NinoResponse}
 import models.financialDetails.{FinancialDetailsResponseModel, PaymentsResponse}
 import models.incomeSourceDetails.IncomeSourceDetailsResponse
 import models.itsaStatus.{ITSAStatusResponse, ITSAStatusResponseModel}
+import models.nextUpdates.NextUpdatesResponseModel
 import models.paymentAllocationCharges.FinancialDetailsWithDocumentDetailsResponse
 import models.paymentAllocations.PaymentAllocationsResponse
-import models.nextUpdates.NextUpdatesResponseModel
 import models.repaymentHistory.{RepaymentHistoryErrorModel, RepaymentHistoryModel}
 import models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponse}
 import org.mockito.ArgumentMatchers
-import org.mockito.ArgumentMatchers.{any, anyString, eq => matches}
+import org.mockito.ArgumentMatchers.{any, eq => matches}
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
-import org.mockito.Mockito.mock
 import testUtils.UnitSpec
 import uk.gov.hmrc.auth.core.AffinityGroup
 
@@ -134,7 +133,7 @@ trait MockIncomeTaxViewChangeConnector extends UnitSpec with BeforeAndAfterEach 
       .thenReturn(Future.successful(response))
   }
 
-  def setupUpdateIncomeSourceTaxYearSpecific(nino: String, incomeSourceId: String, taxYearSpecific: List[TaxYearSpecific])(response: UpdateIncomeSourceResponse): Unit = {
+  def setupUpdateIncomeSourceTaxYearSpecific(nino: String, incomeSourceId: String, taxYearSpecific: TaxYearSpecific)(response: UpdateIncomeSourceResponse): Unit = {
     when(mockIncomeTaxViewChangeConnector.updateIncomeSourceTaxYearSpecific(ArgumentMatchers.eq(nino), ArgumentMatchers.eq(incomeSourceId), ArgumentMatchers.eq(taxYearSpecific))(any()))
       .thenReturn(Future.successful(response))
   }

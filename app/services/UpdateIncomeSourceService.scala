@@ -20,7 +20,8 @@ import auth.MtdItUser
 import connectors.IncomeTaxViewChangeConnector
 import exceptions.MissingSessionKey
 import forms.utils.SessionKeys.ceaseUKPropertyEndDate
-import models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponse, UpdateIncomeSourceResponseModel}
+import models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponse, UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
+import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
 
 import java.time.LocalDate
@@ -57,9 +58,16 @@ class UpdateIncomeSourceService @Inject()(connector: IncomeTaxViewChangeConnecto
     }
   }
 
-  def updateTaxYearSpecific(nino: String, incomeSourceId: String, taxYearSpecific: List[TaxYearSpecific])
+  def updateTaxYearSpecific(nino: String, incomeSourceId: String, taxYearSpecific: TaxYearSpecific)
                            (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[UpdateIncomeSourceResponse] = {
-    connector.updateIncomeSourceTaxYearSpecific(nino = nino, incomeSourceId = incomeSourceId, taxYearSpecific)
+    connector.updateIncomeSourceTaxYearSpecific(nino = nino, incomeSourceId = incomeSourceId, taxYearSpecific).map {
+      case res: UpdateIncomeSourceResponseModel =>
+        Logger("application").info(s"Updated tax year specific reporting method : $res")
+        res
+      case err: UpdateIncomeSourceResponseError =>
+        Logger("application").error(s"Failed to Updated tax year specific reporting method : $err")
+        err
+    }
   }
 
 }
