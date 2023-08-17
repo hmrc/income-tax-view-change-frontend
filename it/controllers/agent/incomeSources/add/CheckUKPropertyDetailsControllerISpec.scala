@@ -32,7 +32,7 @@ class CheckUKPropertyDetailsControllerISpec extends ComponentSpecBase {
     val submitUrl: String = controllers.incomeSources.add.routes.CheckUKPropertyDetailsController.submitAgent().url
     val backUrl: String = controllers.incomeSources.add.routes.UKPropertyAccountingMethodController.showAgent().url
     val successUrl: String = controllers.incomeSources.add.routes.UKPropertyReportingMethodController.showAgent("1234567890").url
-    val failureUrl: String = controllers.incomeSources.add.routes.UKPropertyNotAddedController.showAgent().url
+    val failureUrl: String = controllers.incomeSources.add.routes.IncomeSourceNotAddedController.showUKPropertyAgent().url
     val completedJourneyCookies: Map[String, String] = Map(addUkPropertyStartDate -> "2022-10-10",
       addUkPropertyAccountingMethod -> "CASH") ++ clientDetailsWithConfirmation
     val changeText: String = messagesAPI("incomeSources.add.checkUKPropertyDetails.change") + " " +

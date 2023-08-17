@@ -626,7 +626,7 @@ trait IncomeTaxViewChangeConnector extends RawResponseReads with FeatureSwitchin
     }
   }
 
-  def updateIncomeSourceTaxYearSpecific(nino: String, incomeSourceId: String, taxYearSpecific: List[TaxYearSpecific])(implicit headerCarrier: HeaderCarrier): Future[UpdateIncomeSourceResponse] = {
+  def updateIncomeSourceTaxYearSpecific(nino: String, incomeSourceId: String, taxYearSpecific: TaxYearSpecific)(implicit headerCarrier: HeaderCarrier): Future[UpdateIncomeSourceResponse] = {
     val body = UpdateIncomeSourceRequestModel(nino = nino, incomeSourceId = incomeSourceId, taxYearSpecific = Some(taxYearSpecific))
 
     http.PUT[UpdateIncomeSourceRequestModel, HttpResponse](

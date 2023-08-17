@@ -147,11 +147,11 @@ class BusinessReportingMethodControllerSpec extends TestSupport with MockAuthent
         when(mockITSAStatusService.hasMandatedOrVoluntaryStatusCurrentYear(any, any, any))
           .thenReturn(Future.successful(true))
         mockBusinessIncomeSourceWithLatency2023()
-        when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.eq(2022))(any, any, any)).thenReturn(Future(Some(true)))
+        when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.eq(2022))(any, any, any)).thenReturn(Future.successful(Some(true)))
 
       case CURRENT_TAX_YEAR_IN_LATENCY_YEARS =>
         when(mockDateService.getCurrentTaxYearEnd(any)).thenReturn(2023)
-        when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.eq(2022))(any, any, any)).thenReturn(Future(Some(false)))
+        when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.eq(2022))(any, any, any)).thenReturn(Future.successful(Some(false)))
         when(mockITSAStatusService.hasMandatedOrVoluntaryStatusCurrentYear(any, any, any))
           .thenReturn(Future.successful(true))
         mockBusinessIncomeSourceWithLatency2023()
@@ -161,7 +161,7 @@ class BusinessReportingMethodControllerSpec extends TestSupport with MockAuthent
         when(mockITSAStatusService.hasMandatedOrVoluntaryStatusCurrentYear(any, any, any))
           .thenReturn(Future.successful(true))
         mockBusinessIncomeSourceWithLatency2024()
-        when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.eq(2023))(any, any, any)).thenReturn(Future(Some(false)))
+        when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.eq(2023))(any, any, any)).thenReturn(Future.successful(Some(false)))
 
       case NON_ELIGIBLE_ITS_STATUS =>
         when(mockDateService.getCurrentTaxYearEnd(any)).thenReturn(2023)
@@ -189,15 +189,14 @@ class BusinessReportingMethodControllerSpec extends TestSupport with MockAuthent
       }
     }
 
-    "return 303 SEE_OTHER and redirect to custom not found error page" when {
+    "return 303 SEE_OTHER" when {
       "navigating to the page with FS Disabled" in {
         mockAndBasicSetup(CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
         disable(IncomeSources)
         val result: Future[Result] = TestBusinessReportingMethodController.show(TestBusinessReportingMethodController.incomeSourceId)(fakeRequestWithActiveSession)
-        val expectedContent: String = TestBusinessReportingMethodController.customNotFoundErrorView().toString()
 
-        status(result) shouldBe Status.OK
-        contentAsString(result) shouldBe expectedContent
+        status(result) shouldBe Status.SEE_OTHER
+        redirectLocation(result) shouldBe Some(controllers.routes.HomeController.show().url)
       }
       "called with an unauthenticated user" in {
         setupMockAuthorisationException()
@@ -356,7 +355,12 @@ class BusinessReportingMethodControllerSpec extends TestSupport with MockAuthent
         when(mockUpdateIncomeSourceService.updateTaxYearSpecific(
           ArgumentMatchers.eq(TestBusinessReportingMethodController.testNino),
           ArgumentMatchers.eq(TestBusinessReportingMethodController.incomeSourceId),
-          ArgumentMatchers.eq(List(tySpecific1, tySpecific2)))(any, any)).thenReturn(Future.successful(UpdateIncomeSourceResponseModel("")))
+          ArgumentMatchers.eq(tySpecific1))(any, any)).thenReturn(Future.successful(UpdateIncomeSourceResponseModel("")))
+
+        when(mockUpdateIncomeSourceService.updateTaxYearSpecific(
+          ArgumentMatchers.eq(TestBusinessReportingMethodController.testNino),
+          ArgumentMatchers.eq(TestBusinessReportingMethodController.incomeSourceId),
+          ArgumentMatchers.eq(tySpecific2))(any, any)).thenReturn(Future.successful(UpdateIncomeSourceResponseModel("")))
 
 
         val result = TestBusinessReportingMethodController.submit(TestBusinessReportingMethodController.incomeSourceId)(
@@ -394,14 +398,19 @@ class BusinessReportingMethodControllerSpec extends TestSupport with MockAuthent
     }
 
     "Update failed and error page shown" when {
-      "some internal failure in the update action" in {
+      "some internal failure in the update action (both calls)" in {
         val tySpecific1 = TaxYearSpecific("2022", false)
         val tySpecific2 = TaxYearSpecific("2023", true)
         mockAndBasicSetup(CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
         when(mockUpdateIncomeSourceService.updateTaxYearSpecific(
           ArgumentMatchers.eq(TestBusinessReportingMethodController.testNino),
           ArgumentMatchers.eq(TestBusinessReportingMethodController.incomeSourceId),
-          ArgumentMatchers.eq(List(tySpecific1, tySpecific2)))(any, any)).thenReturn(Future(UpdateIncomeSourceResponseError(Status.INTERNAL_SERVER_ERROR, "")))
+          ArgumentMatchers.eq(tySpecific1))(any, any)).thenReturn(Future.successful(UpdateIncomeSourceResponseError(Status.INTERNAL_SERVER_ERROR, "")))
+
+        when(mockUpdateIncomeSourceService.updateTaxYearSpecific(
+          ArgumentMatchers.eq(TestBusinessReportingMethodController.testNino),
+          ArgumentMatchers.eq(TestBusinessReportingMethodController.incomeSourceId),
+          ArgumentMatchers.eq(tySpecific2))(any, any)).thenReturn(Future.successful(UpdateIncomeSourceResponseModel("")))
 
         val result = TestBusinessReportingMethodController.submit(TestBusinessReportingMethodController.incomeSourceId)(
           fakeRequestWithActiveSession.withFormUrlEncodedBody(
@@ -413,8 +422,35 @@ class BusinessReportingMethodControllerSpec extends TestSupport with MockAuthent
             taxYear2ReportingMethod -> "Q"
           ))
 
-        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-        redirectLocation(result) shouldBe None
+        status(result) shouldBe Status.SEE_OTHER
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.IncomeSourceReportingMethodNotSavedController.showBusiness().url)
+      }
+      "some internal failure in the update action (one call)" in {
+        val tySpecific1 = TaxYearSpecific("2022", false)
+        val tySpecific2 = TaxYearSpecific("2023", true)
+        mockAndBasicSetup(CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
+        when(mockUpdateIncomeSourceService.updateTaxYearSpecific(
+          ArgumentMatchers.eq(TestBusinessReportingMethodController.testNino),
+          ArgumentMatchers.eq(TestBusinessReportingMethodController.incomeSourceId),
+          ArgumentMatchers.eq(tySpecific1))(any, any)).thenReturn(Future.successful(UpdateIncomeSourceResponseError(Status.INTERNAL_SERVER_ERROR, "")))
+
+        when(mockUpdateIncomeSourceService.updateTaxYearSpecific(
+          ArgumentMatchers.eq(TestBusinessReportingMethodController.testNino),
+          ArgumentMatchers.eq(TestBusinessReportingMethodController.incomeSourceId),
+          ArgumentMatchers.eq(tySpecific2))(any, any)).thenReturn(Future.successful(UpdateIncomeSourceResponseError(Status.INTERNAL_SERVER_ERROR, "")))
+
+        val result = TestBusinessReportingMethodController.submit(TestBusinessReportingMethodController.incomeSourceId)(
+          fakeRequestWithActiveSession.withFormUrlEncodedBody(
+            newTaxYear1ReportingMethod -> "Q",
+            newTaxYear2ReportingMethod -> "A",
+            taxYear1 -> "2022",
+            taxYear1ReportingMethod -> "A",
+            taxYear2 -> "2023",
+            taxYear2ReportingMethod -> "Q"
+          ))
+
+        status(result) shouldBe Status.SEE_OTHER
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.IncomeSourceReportingMethodNotSavedController.showBusiness().url)
       }
     }
   }
@@ -434,15 +470,14 @@ class BusinessReportingMethodControllerSpec extends TestSupport with MockAuthent
       }
     }
 
-    "return 303 SEE_OTHER and redirect to custom not found error page" when {
+    "return 303 SEE_OTHER" when {
       "navigating to the page with FS Disabled" in {
         mockAndBasicSetup(CURRENT_TAX_YEAR_IN_LATENCY_YEARS, true)
         disable(IncomeSources)
         val result: Future[Result] = TestBusinessReportingMethodController.showAgent(TestBusinessReportingMethodController.incomeSourceId)(fakeRequestConfirmedClient())
-        val expectedContent: String = TestBusinessReportingMethodController.customNotFoundErrorView().toString()
 
-        status(result) shouldBe Status.OK
-        contentAsString(result) shouldBe expectedContent
+        status(result) shouldBe Status.SEE_OTHER
+        redirectLocation(result) shouldBe Some(controllers.routes.HomeController.showAgent.url)
       }
       "called with an unauthenticated user" in {
         setupMockAgentAuthorisationException()
@@ -601,8 +636,12 @@ class BusinessReportingMethodControllerSpec extends TestSupport with MockAuthent
         when(mockUpdateIncomeSourceService.updateTaxYearSpecific(
           ArgumentMatchers.eq(TestBusinessReportingMethodController.testNino),
           ArgumentMatchers.eq(TestBusinessReportingMethodController.incomeSourceId),
-          ArgumentMatchers.eq(List(tySpecific1, tySpecific2)))(any, any)).thenReturn(Future.successful(UpdateIncomeSourceResponseModel("")))
+          ArgumentMatchers.eq(tySpecific1))(any, any)).thenReturn(Future.successful(UpdateIncomeSourceResponseModel("")))
 
+        when(mockUpdateIncomeSourceService.updateTaxYearSpecific(
+          ArgumentMatchers.eq(TestBusinessReportingMethodController.testNino),
+          ArgumentMatchers.eq(TestBusinessReportingMethodController.incomeSourceId),
+          ArgumentMatchers.eq(tySpecific2))(any, any)).thenReturn(Future.successful(UpdateIncomeSourceResponseModel("")))
 
         val result = TestBusinessReportingMethodController.submitAgent(TestBusinessReportingMethodController.incomeSourceId)(
           fakeRequestConfirmedClient(TestBusinessReportingMethodController.testNino).withFormUrlEncodedBody(
@@ -639,14 +678,19 @@ class BusinessReportingMethodControllerSpec extends TestSupport with MockAuthent
     }
 
     "Update failed and error page shown" when {
-      "some internal failure in the update action" in {
+      "some internal failure in the update action (both calls)" in {
         val tySpecific1 = TaxYearSpecific("2022", false)
         val tySpecific2 = TaxYearSpecific("2023", true)
         mockAndBasicSetup(CURRENT_TAX_YEAR_IN_LATENCY_YEARS, true)
         when(mockUpdateIncomeSourceService.updateTaxYearSpecific(
           ArgumentMatchers.eq(TestBusinessReportingMethodController.testNino),
           ArgumentMatchers.eq(TestBusinessReportingMethodController.incomeSourceId),
-          ArgumentMatchers.eq(List(tySpecific1, tySpecific2)))(any, any)).thenReturn(Future(UpdateIncomeSourceResponseError(Status.INTERNAL_SERVER_ERROR, "")))
+          ArgumentMatchers.eq(tySpecific1))(any, any)).thenReturn(Future.successful(UpdateIncomeSourceResponseError(Status.INTERNAL_SERVER_ERROR, "")))
+
+        when(mockUpdateIncomeSourceService.updateTaxYearSpecific(
+          ArgumentMatchers.eq(TestBusinessReportingMethodController.testNino),
+          ArgumentMatchers.eq(TestBusinessReportingMethodController.incomeSourceId),
+          ArgumentMatchers.eq(tySpecific2))(any, any)).thenReturn(Future.successful(UpdateIncomeSourceResponseError(Status.INTERNAL_SERVER_ERROR, "")))
 
         val result = TestBusinessReportingMethodController.submitAgent(TestBusinessReportingMethodController.incomeSourceId)(
           fakeRequestConfirmedClient(TestBusinessReportingMethodController.testNino).withFormUrlEncodedBody(
@@ -658,8 +702,36 @@ class BusinessReportingMethodControllerSpec extends TestSupport with MockAuthent
             taxYear2ReportingMethod -> "Q"
           ))
 
-        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-        redirectLocation(result) shouldBe None
+        status(result) shouldBe Status.SEE_OTHER
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.IncomeSourceReportingMethodNotSavedController.showBusinessAgent().url)
+      }
+
+      "some internal failure in the update action (one call)" in {
+        val tySpecific1 = TaxYearSpecific("2022", false)
+        val tySpecific2 = TaxYearSpecific("2023", true)
+        mockAndBasicSetup(CURRENT_TAX_YEAR_IN_LATENCY_YEARS, true)
+        when(mockUpdateIncomeSourceService.updateTaxYearSpecific(
+          ArgumentMatchers.eq(TestBusinessReportingMethodController.testNino),
+          ArgumentMatchers.eq(TestBusinessReportingMethodController.incomeSourceId),
+          ArgumentMatchers.eq(tySpecific1))(any, any)).thenReturn(Future.successful(UpdateIncomeSourceResponseError(Status.INTERNAL_SERVER_ERROR, "")))
+
+        when(mockUpdateIncomeSourceService.updateTaxYearSpecific(
+          ArgumentMatchers.eq(TestBusinessReportingMethodController.testNino),
+          ArgumentMatchers.eq(TestBusinessReportingMethodController.incomeSourceId),
+          ArgumentMatchers.eq(tySpecific2))(any, any)).thenReturn(Future.successful(UpdateIncomeSourceResponseModel("")))
+
+        val result = TestBusinessReportingMethodController.submitAgent(TestBusinessReportingMethodController.incomeSourceId)(
+          fakeRequestConfirmedClient(TestBusinessReportingMethodController.testNino).withFormUrlEncodedBody(
+            newTaxYear1ReportingMethod -> "Q",
+            newTaxYear2ReportingMethod -> "A",
+            taxYear1 -> "2022",
+            taxYear1ReportingMethod -> "A",
+            taxYear2 -> "2023",
+            taxYear2ReportingMethod -> "Q"
+          ))
+
+        status(result) shouldBe Status.SEE_OTHER
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.IncomeSourceReportingMethodNotSavedController.showBusinessAgent().url)
       }
     }
   }
