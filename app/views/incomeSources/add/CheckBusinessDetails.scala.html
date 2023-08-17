@@ -63,11 +63,7 @@
 }
 
 @changeBusinessStartDateURL = @{
-    if(isAgent) {
-        controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.changeBusinessStartDateAgent.url
-    } else {
-        controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.changeBusinessStartDate.url
-    }
+    controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showSoleTraderBusiness(isAgent = isAgent, isUpdate = true).url
 }
 
 @changeBusinessTradeURL = @{

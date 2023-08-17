@@ -52,11 +52,7 @@
 }
 
 @changeForeignPropertyStartDateURL = @{
-    if(isAgent) {
-        controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.changeForeignPropertyStartDateAgent.url
-    } else {
-        controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.changeForeignPropertyStartDate.url
-    }
+    controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showForeignProperty(isAgent = isAgent, isUpdate = true).url
 }
 
 @changeForeignPropertyAccountingMethodURL = @{
