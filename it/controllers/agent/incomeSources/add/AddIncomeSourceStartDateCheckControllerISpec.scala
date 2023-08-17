@@ -27,10 +27,10 @@ import testConstants.IncomeSourceIntegrationTestConstants.{noPropertyOrBusinessR
 
 class AddIncomeSourceStartDateCheckControllerISpec extends ComponentSpecBase {
   val testDate: String = "2020-11-1"
-  val addBusinessStartDateCheckShowUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.showSoleTraderBusinessAgent.url
+  val addBusinessStartDateCheckShowUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.showSoleTraderBusiness(isAgent = true, isUpdate = false).url
   val addBusinessTradeShowUrl: String = controllers.incomeSources.add.routes.AddBusinessTradeController.showAgent().url
-  val addBusinessStartDateShowUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showSoleTraderBusinessAgent.url
-  val addBusinessStartDateCheckSubmitUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.submitSoleTraderBusinessAgent.url
+  val addBusinessStartDateShowUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showSoleTraderBusiness(isAgent = true, isUpdate = false).url
+  val addBusinessStartDateCheckSubmitUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.submitSoleTraderBusiness(isAgent = true, isUpdate = false).url
   val continueButtonText: String = messagesAPI("base.continue")
   val incomeSourcePrefix: String = "start-date-check"
   val soleTraderBusinessPrefix: String = SelfEmployment.addIncomeSourceStartDateCheckMessagesPrefix
@@ -38,19 +38,19 @@ class AddIncomeSourceStartDateCheckControllerISpec extends ComponentSpecBase {
   val foreignPropertyPrefix: String = ForeignProperty.addIncomeSourceStartDateCheckMessagesPrefix
   val testAddBusinessStartDate: Map[String, String] = Map(SessionKeys.addBusinessStartDate -> "2022-10-10")
 
-  val foreignPropertyStartDateCheckShowUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.showForeignPropertyAgent.url
-  val foreignPropertyStartDateCheckSubmitUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.showForeignPropertyAgent.url
+  val foreignPropertyStartDateCheckShowUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.showForeignProperty(isAgent = true, isUpdate = false).url
+  val foreignPropertyStartDateCheckSubmitUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.showForeignProperty(isAgent = true, isUpdate = false).url
   val foreignPropertyAccountingMethodShowUrl: String = controllers.incomeSources.add.routes.ForeignPropertyAccountingMethodController.showAgent().url
-  val foreignPropertyStartDateShowUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showForeignPropertyAgent.url
+  val foreignPropertyStartDateShowUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showForeignProperty(isAgent = true, isUpdate = false).url
 
   val testAddForeignPropertyStartDate: Map[String, String] = Map(SessionKeys.foreignPropertyStartDate -> "2022-10-10")
 
   val testAddUKPropertyStartDate: Map[String, String] = Map(SessionKeys.addUkPropertyStartDate -> "2022-10-10")
   val dateText: String = "10 October 2022"
 
-  val checkUKPropertyStartDateShowUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.showUKPropertyAgent.url
-  val checkUKPropertyStartDateSubmitUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.submitUKPropertyAgent.url
-  val addUKPropertyStartDateShowUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showUKPropertyAgent.url
+  val checkUKPropertyStartDateShowUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.showUKProperty(isAgent = true, isUpdate = false).url
+  val checkUKPropertyStartDateSubmitUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.submitUKProperty(isAgent = true, isUpdate = false).url
+  val addUKPropertyStartDateShowUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showUKProperty(isAgent = true, isUpdate = false).url
   val ukPropertyAccountingMethodShowUrl: String = controllers.incomeSources.add.routes.UKPropertyAccountingMethodController.showAgent().url
 
   s"calling GET $addBusinessStartDateCheckShowUrl" should {

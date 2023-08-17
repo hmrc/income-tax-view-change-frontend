@@ -44,9 +44,9 @@ class AddIncomeSourceStartDateCheckViewSpec extends TestSupport {
         Jsoup.parse(contentAsString(
           addIncomeSourceStartDateCheck(
             form = AddIncomeSourceStartDateCheckForm(ForeignProperty.addIncomeSourceStartDateCheckMessagesPrefix),
-            postAction = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.submitForeignProperty,
+            postAction = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.submitForeignProperty(isAgent = false, isUpdate = false),
             isAgent = false,
-            backUrl = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showForeignProperty.url,
+            backUrl = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showForeignProperty(isAgent = false, isUpdate = false).url,
             incomeSourceStartDate = formattedStartDate
           )
         ))
@@ -55,9 +55,9 @@ class AddIncomeSourceStartDateCheckViewSpec extends TestSupport {
           addIncomeSourceStartDateCheck(
             form = AddIncomeSourceStartDateCheckForm(ForeignProperty.addIncomeSourceStartDateCheckMessagesPrefix)
               .withError(FormError("start-date-check", s"${ForeignProperty.addIncomeSourceStartDateCheckMessagesPrefix}.error")),
-            postAction = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.submitForeignProperty,
+            postAction = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.submitForeignProperty(isAgent = false, isUpdate = false),
             isAgent = false,
-            backUrl = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showForeignProperty.url,
+            backUrl = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showForeignProperty(isAgent = false, isUpdate = false).url,
             incomeSourceStartDate = formattedStartDate
           )
         ))
@@ -65,9 +65,9 @@ class AddIncomeSourceStartDateCheckViewSpec extends TestSupport {
         Jsoup.parse(contentAsString(
           addIncomeSourceStartDateCheck(
             form = AddIncomeSourceStartDateCheckForm(ForeignProperty.addIncomeSourceStartDateCheckMessagesPrefix),
-            postAction = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.submitForeignPropertyAgent,
+            postAction = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.submitForeignProperty(isAgent = true, isUpdate = false),
             isAgent = true,
-            backUrl = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showForeignPropertyAgent.url,
+            backUrl = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showForeignProperty(isAgent = true, isUpdate = false).url,
             incomeSourceStartDate = formattedStartDate
           )
         ))
@@ -76,9 +76,9 @@ class AddIncomeSourceStartDateCheckViewSpec extends TestSupport {
           addIncomeSourceStartDateCheck(
             form = AddIncomeSourceStartDateCheckForm(ForeignProperty.addIncomeSourceStartDateCheckMessagesPrefix)
               .withError(FormError("start-date-check", s"${ForeignProperty.addIncomeSourceStartDateCheckMessagesPrefix}.error")),
-            postAction = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.submitForeignPropertyAgent,
+            postAction = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.submitForeignProperty(isAgent = true, isUpdate = false),
             isAgent = true,
-            backUrl = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showForeignPropertyAgent.url,
+            backUrl = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showForeignProperty(isAgent = true, isUpdate = false).url,
             incomeSourceStartDate = formattedStartDate
           )
         ))
@@ -86,9 +86,9 @@ class AddIncomeSourceStartDateCheckViewSpec extends TestSupport {
         Jsoup.parse(contentAsString(
           addIncomeSourceStartDateCheck(
             form = AddIncomeSourceStartDateCheckForm(UkProperty.addIncomeSourceStartDateCheckMessagesPrefix),
-            postAction = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.submitUKProperty,
+            postAction = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.submitUKProperty(isAgent = false, isUpdate = false),
             isAgent = false,
-            backUrl = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showUKProperty.url,
+            backUrl = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showUKProperty(isAgent = false, isUpdate = false).url,
             incomeSourceStartDate = formattedStartDate
           )
         ))
@@ -97,9 +97,9 @@ class AddIncomeSourceStartDateCheckViewSpec extends TestSupport {
           addIncomeSourceStartDateCheck(
             form = AddIncomeSourceStartDateCheckForm(UkProperty.addIncomeSourceStartDateCheckMessagesPrefix)
               .withError(FormError("start-date-check", s"${UkProperty.addIncomeSourceStartDateCheckMessagesPrefix}.error")),
-            postAction = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.submitUKProperty,
+            postAction = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.submitUKProperty(isAgent = false, isUpdate = false),
             isAgent = false,
-            backUrl = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showUKProperty.url,
+            backUrl = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showUKProperty(isAgent = false, isUpdate = false).url,
             incomeSourceStartDate = formattedStartDate
           )
         ))
@@ -107,9 +107,9 @@ class AddIncomeSourceStartDateCheckViewSpec extends TestSupport {
         Jsoup.parse(contentAsString(
           addIncomeSourceStartDateCheck(
             form = AddIncomeSourceStartDateCheckForm(UkProperty.addIncomeSourceStartDateCheckMessagesPrefix),
-            postAction = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.submitUKPropertyAgent,
+            postAction = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.submitUKProperty(isAgent = true, isUpdate = false),
             isAgent = true,
-            backUrl = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showUKPropertyAgent.url,
+            backUrl = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showUKProperty(isAgent = true, isUpdate = false).url,
             incomeSourceStartDate = formattedStartDate
           )
         ))
@@ -118,9 +118,9 @@ class AddIncomeSourceStartDateCheckViewSpec extends TestSupport {
           addIncomeSourceStartDateCheck(
             form = AddIncomeSourceStartDateCheckForm(UkProperty.addIncomeSourceStartDateCheckMessagesPrefix)
               .withError(FormError("start-date-check", s"${UkProperty.addIncomeSourceStartDateCheckMessagesPrefix}.error")),
-            postAction = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.submitUKPropertyAgent,
+            postAction = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.submitUKProperty(isAgent = true, isUpdate = false),
             isAgent = true,
-            backUrl = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showUKPropertyAgent.url,
+            backUrl = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showUKProperty(isAgent = true, isUpdate = false).url,
             incomeSourceStartDate = formattedStartDate
           )
         ))
@@ -128,9 +128,9 @@ class AddIncomeSourceStartDateCheckViewSpec extends TestSupport {
         Jsoup.parse(contentAsString(
           addIncomeSourceStartDateCheck(
             form = AddIncomeSourceStartDateCheckForm(SelfEmployment.addIncomeSourceStartDateCheckMessagesPrefix),
-            postAction = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.submitSoleTraderBusiness,
+            postAction = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.submitSoleTraderBusiness(isAgent = false, isUpdate = false),
             isAgent = false,
-            backUrl = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showSoleTraderBusiness.url,
+            backUrl = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showSoleTraderBusiness(isAgent = false, isUpdate = false).url,
             incomeSourceStartDate = formattedStartDate
           )
         ))
@@ -139,9 +139,9 @@ class AddIncomeSourceStartDateCheckViewSpec extends TestSupport {
           addIncomeSourceStartDateCheck(
             form = AddIncomeSourceStartDateCheckForm(SelfEmployment.addIncomeSourceStartDateCheckMessagesPrefix)
               .withError(FormError("start-date-check", s"${SelfEmployment.addIncomeSourceStartDateCheckMessagesPrefix}.error")),
-            postAction = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.submitSoleTraderBusiness,
+            postAction = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.submitSoleTraderBusiness(isAgent = false, isUpdate = false),
             isAgent = false,
-            backUrl = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showSoleTraderBusiness.url,
+            backUrl = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showSoleTraderBusiness(isAgent = false, isUpdate = false).url,
             incomeSourceStartDate = formattedStartDate
           )
         ))
@@ -149,9 +149,9 @@ class AddIncomeSourceStartDateCheckViewSpec extends TestSupport {
         Jsoup.parse(contentAsString(
           addIncomeSourceStartDateCheck(
             form = AddIncomeSourceStartDateCheckForm(SelfEmployment.addIncomeSourceStartDateCheckMessagesPrefix),
-            postAction = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.submitSoleTraderBusinessAgent,
+            postAction = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.submitSoleTraderBusiness(isAgent = true, isUpdate = false),
             isAgent = true,
-            backUrl = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showSoleTraderBusinessAgent.url,
+            backUrl = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showSoleTraderBusiness(isAgent = true, isUpdate = false).url,
             incomeSourceStartDate = formattedStartDate
           )
         ))
@@ -160,9 +160,9 @@ class AddIncomeSourceStartDateCheckViewSpec extends TestSupport {
           addIncomeSourceStartDateCheck(
             form = AddIncomeSourceStartDateCheckForm(SelfEmployment.addIncomeSourceStartDateCheckMessagesPrefix)
               .withError(FormError("start-date-check", s"${SelfEmployment.addIncomeSourceStartDateCheckMessagesPrefix}.error")),
-            postAction = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.submitSoleTraderBusinessAgent,
+            postAction = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.submitSoleTraderBusiness(isAgent = true, isUpdate = false),
             isAgent = true,
-            backUrl = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showSoleTraderBusinessAgent.url,
+            backUrl = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showSoleTraderBusiness(isAgent = true, isUpdate = false).url,
             incomeSourceStartDate = formattedStartDate
           )
         ))
@@ -183,7 +183,7 @@ class AddIncomeSourceStartDateCheckViewSpec extends TestSupport {
     }
     "render the back link with the correct URL" in new Setup(false, false, UkProperty) {
       document.getElementById("back").text() shouldBe messages("base.back")
-      document.getElementById("back").attr("href") shouldBe controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showUKProperty.url
+      document.getElementById("back").attr("href") shouldBe controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showUKProperty(isAgent = false, isUpdate = false).url
     }
     "render the continue button" in new Setup(false, false, UkProperty) {
       document.getElementById("continue-button").text() shouldBe messages("base.continue")
@@ -197,7 +197,7 @@ class AddIncomeSourceStartDateCheckViewSpec extends TestSupport {
       document.getElementsByClass("govuk-list govuk-error-summary__list").text() shouldBe messages(s"${UkProperty.addIncomeSourceStartDateCheckMessagesPrefix}.error")
     }
     "render the back url" in new Setup(false, true, UkProperty) {
-      document.getElementById("back").attr("href") shouldBe controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showUKProperty.url
+      document.getElementById("back").attr("href") shouldBe controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showUKProperty(isAgent = false, isUpdate = false).url
     }
   }
 
@@ -215,7 +215,7 @@ class AddIncomeSourceStartDateCheckViewSpec extends TestSupport {
     }
     "render the back link with the correct URL" in new Setup(true, false, UkProperty) {
       document.getElementById("back").text() shouldBe messages("base.back")
-      document.getElementById("back").attr("href") shouldBe controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showUKPropertyAgent.url
+      document.getElementById("back").attr("href") shouldBe controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showUKProperty(isAgent = true, isUpdate = false).url
     }
     "render the continue button" in new Setup(true, false, UkProperty) {
       document.getElementById("continue-button").text() shouldBe messages("base.continue")
@@ -229,7 +229,7 @@ class AddIncomeSourceStartDateCheckViewSpec extends TestSupport {
       document.getElementsByClass("govuk-list govuk-error-summary__list").text() shouldBe messages(s"${UkProperty.addIncomeSourceStartDateCheckMessagesPrefix}.error")
     }
     "render the back url" in new Setup(true, true, UkProperty) {
-      document.getElementById("back").attr("href") shouldBe controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showUKPropertyAgent.url
+      document.getElementById("back").attr("href") shouldBe controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showUKProperty(isAgent = true, isUpdate = false).url
     }
   }
 
@@ -247,7 +247,7 @@ class AddIncomeSourceStartDateCheckViewSpec extends TestSupport {
     }
     "render the back link with the correct URL" in new Setup(false, false, ForeignProperty) {
       document.getElementById("back").text() shouldBe messages("base.back")
-      document.getElementById("back").attr("href") shouldBe controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showForeignProperty.url
+      document.getElementById("back").attr("href") shouldBe controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showForeignProperty(isAgent = false, isUpdate = false).url
     }
     "render the continue button" in new Setup(false, false, ForeignProperty) {
       document.getElementById("continue-button").text() shouldBe messages("base.continue")
@@ -261,7 +261,7 @@ class AddIncomeSourceStartDateCheckViewSpec extends TestSupport {
       document.getElementsByClass("govuk-list govuk-error-summary__list").text() shouldBe messages(s"${ForeignProperty.addIncomeSourceStartDateCheckMessagesPrefix}.error")
     }
     "render the back url" in new Setup(false, true, ForeignProperty) {
-      document.getElementById("back").attr("href") shouldBe controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showForeignProperty.url
+      document.getElementById("back").attr("href") shouldBe controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showForeignProperty(isAgent = false, isUpdate = false).url
     }
   }
 
@@ -279,7 +279,7 @@ class AddIncomeSourceStartDateCheckViewSpec extends TestSupport {
     }
     "render the back link with the correct URL" in new Setup(true, false, ForeignProperty) {
       document.getElementById("back").text() shouldBe messages("base.back")
-      document.getElementById("back").attr("href") shouldBe controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showForeignPropertyAgent.url
+      document.getElementById("back").attr("href") shouldBe controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showForeignProperty(isAgent = true, isUpdate = false).url
     }
     "render the continue button" in new Setup(true, false, ForeignProperty) {
       document.getElementById("continue-button").text() shouldBe messages("base.continue")
@@ -293,7 +293,7 @@ class AddIncomeSourceStartDateCheckViewSpec extends TestSupport {
       document.getElementsByClass("govuk-list govuk-error-summary__list").text() shouldBe messages(s"${ForeignProperty.addIncomeSourceStartDateCheckMessagesPrefix}.error")
     }
     "render the back url" in new Setup(true, true, ForeignProperty) {
-      document.getElementById("back").attr("href") shouldBe controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showForeignPropertyAgent.url
+      document.getElementById("back").attr("href") shouldBe controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showForeignProperty(isAgent = true, isUpdate = false).url
     }
   }
 
@@ -311,7 +311,7 @@ class AddIncomeSourceStartDateCheckViewSpec extends TestSupport {
     }
     "render the back link with the correct URL" in new Setup(false, false, SelfEmployment) {
       document.getElementById("back").text() shouldBe messages("base.back")
-      document.getElementById("back").attr("href") shouldBe controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showSoleTraderBusiness.url
+      document.getElementById("back").attr("href") shouldBe controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showSoleTraderBusiness(isAgent = false, isUpdate = false).url
     }
     "render the continue button" in new Setup(false, false, SelfEmployment) {
       document.getElementById("continue-button").text() shouldBe messages("base.continue")
@@ -325,7 +325,7 @@ class AddIncomeSourceStartDateCheckViewSpec extends TestSupport {
       document.getElementsByClass("govuk-list govuk-error-summary__list").text() shouldBe messages(s"${SelfEmployment.addIncomeSourceStartDateCheckMessagesPrefix}.error")
     }
     "render the back url" in new Setup(false, true, SelfEmployment) {
-      document.getElementById("back").attr("href") shouldBe controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showSoleTraderBusiness.url
+      document.getElementById("back").attr("href") shouldBe controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showSoleTraderBusiness(isAgent = false, isUpdate = false).url
     }
   }
 
@@ -343,7 +343,7 @@ class AddIncomeSourceStartDateCheckViewSpec extends TestSupport {
     }
     "render the back link with the correct URL" in new Setup(true, false, SelfEmployment) {
       document.getElementById("back").text() shouldBe messages("base.back")
-      document.getElementById("back").attr("href") shouldBe controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showSoleTraderBusinessAgent.url
+      document.getElementById("back").attr("href") shouldBe controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showSoleTraderBusiness(isAgent = true, isUpdate = false).url
     }
     "render the continue button" in new Setup(true, false, SelfEmployment) {
       document.getElementById("continue-button").text() shouldBe messages("base.continue")
@@ -357,7 +357,7 @@ class AddIncomeSourceStartDateCheckViewSpec extends TestSupport {
       document.getElementsByClass("govuk-list govuk-error-summary__list").text() shouldBe messages(s"${SelfEmployment.addIncomeSourceStartDateCheckMessagesPrefix}.error")
     }
     "render the back url" in new Setup(true, true, SelfEmployment) {
-      document.getElementById("back").attr("href") shouldBe controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showSoleTraderBusinessAgent.url
+      document.getElementById("back").attr("href") shouldBe controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showSoleTraderBusiness(isAgent = true, isUpdate = false).url
     }
   }
 }

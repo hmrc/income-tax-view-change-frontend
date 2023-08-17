@@ -91,7 +91,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
     val title: String = s"${messages("htmlTitle", heading)}"
   }
 
-  "AddIncomeSourceStartDateCheckController.show()" should {
+  "Individual: AddIncomeSourceStartDateCheckController.show()" should {
     "render the custom not found error view" when {
       "Income Sources FS is disabled" in {
         disableAllSwitches()
@@ -100,7 +100,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
         mockNoIncomeSources()
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
-        val result: Future[Result] = TestAddIncomeSourceStartDateCheckController.showSoleTraderBusiness(fakeRequestWithActiveSession)
+        val result: Future[Result] = TestAddIncomeSourceStartDateCheckController.showSoleTraderBusiness(isAgent = false, isUpdate = false)(fakeRequestWithActiveSession)
         val expectedContent: String = TestAddIncomeSourceStartDateCheckController.customNotFoundErrorView().toString()
         status(result) shouldBe Status.OK
         contentAsString(result) shouldBe expectedContent
@@ -115,7 +115,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
         mockNoIncomeSources()
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
-        val result = TestAddIncomeSourceStartDateCheckController.showSoleTraderBusiness()(fakeRequestWithActiveSession)
+        val result = TestAddIncomeSourceStartDateCheckController.showSoleTraderBusiness(isAgent = false, isUpdate = false)(fakeRequestWithActiveSession)
 
         status(result) shouldBe INTERNAL_SERVER_ERROR
       }
@@ -128,7 +128,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
         mockNoIncomeSources()
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
-        val result = TestAddIncomeSourceStartDateCheckController.showSoleTraderBusiness(
+        val result = TestAddIncomeSourceStartDateCheckController.showSoleTraderBusiness(isAgent = false, isUpdate = false)(
           fakeRequestWithActiveSession
             .withSession(SessionKeys.addBusinessStartDate -> testBusinessStartDate))
 
@@ -137,8 +137,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
       }
     }
 
-    "AddIncomeSourceStartDateCheckController.submit()" should {
-
+    "Individual: AddIncomeSourceStartDateCheckController.submit()" should {
       "redirect back to add business start date page with businessStartDate removed from session" when {
         "No is submitted with the form" in {
           disableAllSwitches()
@@ -147,8 +146,8 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
           mockNoIncomeSources()
           setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
-          val result = TestAddIncomeSourceStartDateCheckController.submitSoleTraderBusiness(
-            fakeRequestWithActiveSession
+          val result = TestAddIncomeSourceStartDateCheckController.submitSoleTraderBusiness(isAgent = false, isUpdate = false)(
+            fakePostRequestWithActiveSession
               .withSession(SessionKeys.addBusinessStartDate -> testBusinessStartDate)
               .withFormUrlEncodedBody(
                 AddIncomeSourceStartDateCheckForm.response -> responseNo
@@ -156,7 +155,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
 
           result.futureValue.session.get(SessionKeys.addBusinessStartDate).isDefined shouldBe false
           status(result) shouldBe SEE_OTHER
-          redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showSoleTraderBusiness.url)
+          redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showSoleTraderBusiness(isAgent = false, isUpdate = false).url)
         }
       }
       "return BAD_REQUEST with an error summary" when {
@@ -167,8 +166,8 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
           mockNoIncomeSources()
           setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
-          val result = TestAddIncomeSourceStartDateCheckController.submitSoleTraderBusiness(
-            fakeRequestWithActiveSession
+          val result = TestAddIncomeSourceStartDateCheckController.submitSoleTraderBusiness(isAgent = false, isUpdate = false)(
+            fakePostRequestWithActiveSession
               .withSession(SessionKeys.addBusinessStartDate -> testBusinessStartDate)
               .withFormUrlEncodedBody())
 
@@ -185,8 +184,8 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
 
         val invalidResponse: String = "£££"
 
-        val result = TestAddIncomeSourceStartDateCheckController.submitSoleTraderBusiness(
-          fakeRequestWithActiveSession
+        val result = TestAddIncomeSourceStartDateCheckController.submitSoleTraderBusiness(isAgent = false, isUpdate = false)(
+          fakePostRequestWithActiveSession
             .withSession(SessionKeys.addBusinessStartDate -> testBusinessStartDate)
             .withFormUrlEncodedBody(
               AddIncomeSourceStartDateCheckForm.response -> invalidResponse
@@ -203,8 +202,8 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
           mockNoIncomeSources()
           setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
-          val result = TestAddIncomeSourceStartDateCheckController.submitSoleTraderBusiness(
-            fakeRequestWithActiveSession
+          val result = TestAddIncomeSourceStartDateCheckController.submitSoleTraderBusiness(isAgent = false, isUpdate = false)(
+            fakePostRequestWithActiveSession
               .withSession(SessionKeys.addBusinessStartDate -> "INVALID_DATE")
               .withFormUrlEncodedBody(
                 AddIncomeSourceStartDateCheckForm.response -> responseYes
@@ -222,8 +221,8 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
           mockNoIncomeSources()
           setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
-          val result = TestAddIncomeSourceStartDateCheckController.submitSoleTraderBusiness(
-            fakeRequestWithActiveSession
+          val result = TestAddIncomeSourceStartDateCheckController.submitSoleTraderBusiness(isAgent = false, isUpdate = false)(
+            fakePostRequestWithActiveSession
               .withSession(SessionKeys.addBusinessStartDate -> "INVALID_DATE")
               .withFormUrlEncodedBody(
                 AddIncomeSourceStartDateCheckForm.response -> responseYes
@@ -241,8 +240,8 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
           mockNoIncomeSources()
           setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
-          val result = TestAddIncomeSourceStartDateCheckController.submitSoleTraderBusiness(
-            fakeRequestWithActiveSession
+          val result = TestAddIncomeSourceStartDateCheckController.submitSoleTraderBusiness(isAgent = false, isUpdate = false)(
+            fakePostRequestWithActiveSession
               .withSession(SessionKeys.addBusinessStartDate -> testBusinessStartDate)
               .withFormUrlEncodedBody(
                 AddIncomeSourceStartDateCheckForm.response -> responseYes
@@ -259,7 +258,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
   }
 
 
-  "AddIncomeSourceStartDateCheckController.showAgent()" should {
+  "Agent: AddIncomeSourceStartDateCheckController.show()" should {
     "render the custom not found error view" when {
       "Income Sources FS is disabled" in {
         disableAllSwitches()
@@ -267,7 +266,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
         mockNoIncomeSources()
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
-        val result: Future[Result] = TestAddIncomeSourceStartDateCheckController.submitSoleTraderBusiness(fakeRequestWithActiveSession)
+        val result: Future[Result] = TestAddIncomeSourceStartDateCheckController.submitSoleTraderBusiness(isAgent = false, isUpdate = false)(fakePostRequestWithActiveSession)
         val expectedContent: String = TestAddIncomeSourceStartDateCheckController.customNotFoundErrorView().toString()
         status(result) shouldBe Status.OK
         contentAsString(result) shouldBe expectedContent
@@ -282,7 +281,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
         mockNoIncomeSources()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
-        val result = TestAddIncomeSourceStartDateCheckController.showSoleTraderBusinessAgent(fakeRequestConfirmedClient())
+        val result = TestAddIncomeSourceStartDateCheckController.showSoleTraderBusiness(isAgent = true, isUpdate = false)(fakeRequestConfirmedClient())
 
         status(result) shouldBe INTERNAL_SERVER_ERROR
       }
@@ -295,7 +294,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
         mockNoIncomeSources()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
-        val result = TestAddIncomeSourceStartDateCheckController.showSoleTraderBusinessAgent()(
+        val result = TestAddIncomeSourceStartDateCheckController.showSoleTraderBusiness(isAgent = true, isUpdate = false)(
           fakeRequestConfirmedClient()
             .withSession(SessionKeys.addBusinessStartDate -> testBusinessStartDate))
 
@@ -304,7 +303,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
     }
   }
 
-  "AddBusinessStartDateCheckController.submitAgent()" should {
+  "Agent: AddBusinessStartDateCheckController.submit()" should {
     "redirect back to add business start date page with businessStartDate removed from session" when {
       "No is submitted with the form" in {
         disableAllSwitches()
@@ -313,8 +312,8 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
         mockNoIncomeSources()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
-        val result = TestAddIncomeSourceStartDateCheckController.submitSoleTraderBusinessAgent(
-          fakeRequestConfirmedClient()
+        val result = TestAddIncomeSourceStartDateCheckController.submitSoleTraderBusiness(isAgent = true, isUpdate = false)(
+          fakePostRequestConfirmedClient()
             .withSession(SessionKeys.addBusinessStartDate -> testBusinessStartDate)
             .withFormUrlEncodedBody(
               AddIncomeSourceStartDateCheckForm.response -> responseNo
@@ -322,7 +321,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
 
         result.futureValue.session.get(SessionKeys.addBusinessStartDate).isDefined shouldBe false
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showSoleTraderBusinessAgent.url)
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showSoleTraderBusiness(isAgent = true, isUpdate = false).url)
       }
     }
     "return BAD_REQUEST with an error summary" when {
@@ -333,8 +332,8 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
         mockNoIncomeSources()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
-        val result = TestAddIncomeSourceStartDateCheckController.submitSoleTraderBusinessAgent(
-          fakeRequestConfirmedClient()
+        val result = TestAddIncomeSourceStartDateCheckController.submitSoleTraderBusiness(isAgent = true, isUpdate = false)(
+          fakePostRequestConfirmedClient()
             .withSession(SessionKeys.addBusinessStartDate -> testBusinessStartDate)
             .withFormUrlEncodedBody())
 
@@ -351,8 +350,8 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
 
       val invalidResponse: String = "£££"
 
-      val result = TestAddIncomeSourceStartDateCheckController.submitSoleTraderBusinessAgent(
-        fakeRequestConfirmedClient()
+      val result = TestAddIncomeSourceStartDateCheckController.submitSoleTraderBusiness(isAgent = true, isUpdate = false)(
+        fakePostRequestConfirmedClient()
           .withSession(SessionKeys.addBusinessStartDate -> testBusinessStartDate)
           .withFormUrlEncodedBody(
             AddIncomeSourceStartDateCheckForm.response -> invalidResponse
@@ -369,8 +368,8 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
         mockNoIncomeSources()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
-        val result = TestAddIncomeSourceStartDateCheckController.submitSoleTraderBusinessAgent(
-          fakeRequestConfirmedClient()
+        val result = TestAddIncomeSourceStartDateCheckController.submitSoleTraderBusiness(isAgent = true, isUpdate = false)(
+          fakePostRequestConfirmedClient()
             .withSession(SessionKeys.addBusinessStartDate -> "INVALID_DATE")
             .withFormUrlEncodedBody(
               AddIncomeSourceStartDateCheckForm.response -> responseYes
@@ -388,8 +387,8 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
         mockNoIncomeSources()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
-        val result = TestAddIncomeSourceStartDateCheckController.submitSoleTraderBusinessAgent(
-          fakeRequestConfirmedClient()
+        val result = TestAddIncomeSourceStartDateCheckController.submitSoleTraderBusiness(isAgent = true, isUpdate = false)(
+          fakePostRequestConfirmedClient()
             .withSession(SessionKeys.addBusinessStartDate -> "INVALID_DATE")
             .withFormUrlEncodedBody(
               AddIncomeSourceStartDateCheckForm.response -> responseYes
@@ -407,8 +406,8 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
         mockNoIncomeSources()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
-        val result = TestAddIncomeSourceStartDateCheckController.submitSoleTraderBusinessAgent(
-          fakeRequestConfirmedClient()
+        val result = TestAddIncomeSourceStartDateCheckController.submitSoleTraderBusiness(isAgent = true, isUpdate = false)(
+          fakePostRequestConfirmedClient()
             .withSession(SessionKeys.addBusinessStartDate -> testBusinessStartDate)
             .withFormUrlEncodedBody(
               AddIncomeSourceStartDateCheckForm.response -> responseYes
@@ -429,7 +428,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
       "navigating to the page with FS Enabled" in {
         enable(IncomeSources)
         mockSingleBusinessIncomeSource()
-        val result: Future[Result] = TestAddIncomeSourceStartDateCheckController.showUKProperty(fakeRequestWithActiveSession
+        val result: Future[Result] = TestAddIncomeSourceStartDateCheckController.showUKProperty(isAgent = false, isUpdate = false)(fakeRequestWithActiveSession
           .withSession(SessionKeys.addUkPropertyStartDate -> "2022-04-15"))
         val document: Document = Jsoup.parse(contentAsString(result))
 
@@ -443,7 +442,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
         disable(IncomeSources)
         mockSingleBusinessIncomeSource()
 
-        val result: Future[Result] = TestAddIncomeSourceStartDateCheckController.showUKProperty(fakeRequestWithActiveSession
+        val result: Future[Result] = TestAddIncomeSourceStartDateCheckController.showUKProperty(isAgent = false, isUpdate = false)(fakeRequestWithActiveSession
           .withSession(SessionKeys.addUkPropertyStartDate -> "2022-04-15"))
         val expectedContent: String = TestAddIncomeSourceStartDateCheckController.customNotFoundErrorView().toString()
         status(result) shouldBe Status.OK
@@ -451,7 +450,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
       }
       "called with an unauthenticated user" in {
         setupMockAuthorisationException()
-        val result: Future[Result] = TestAddIncomeSourceStartDateCheckController.showUKProperty(fakeRequestWithActiveSession)
+        val result: Future[Result] = TestAddIncomeSourceStartDateCheckController.showUKProperty(isAgent = false, isUpdate = false)(fakeRequestWithActiveSession)
         status(result) shouldBe Status.SEE_OTHER
       }
     }
@@ -468,7 +467,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
           .thenReturn(Future.successful(HttpResponse(OK)))
 
         lazy val result: Future[Result] = {
-          TestAddIncomeSourceStartDateCheckController.submitUKProperty(fakeRequestWithActiveSession
+          TestAddIncomeSourceStartDateCheckController.submitUKProperty(isAgent = false, isUpdate = false)(fakePostRequestWithActiveSession
             .withSession(SessionKeys.addUkPropertyStartDate -> "2022-04-15")
             .withFormUrlEncodedBody(AddIncomeSourceStartDateCheckForm.response -> "Yes"))
         }
@@ -476,7 +475,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
         status(result) shouldBe Status.SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.UKPropertyAccountingMethodController.show().url)
       }
-      s"return 303 SEE_OTHER and redirect to ${controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showUKProperty.url}" when {
+      s"return 303 SEE_OTHER and redirect to ${controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showUKProperty(isAgent = false, isUpdate = false).url}" when {
         "user confirms the date is incorrect" in {
           setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
           enable(IncomeSources)
@@ -486,13 +485,13 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
             .thenReturn(Future.successful(HttpResponse(OK)))
 
           lazy val result: Future[Result] = {
-            TestAddIncomeSourceStartDateCheckController.submitUKProperty(fakeRequestWithActiveSession
+            TestAddIncomeSourceStartDateCheckController.submitUKProperty(isAgent = false, isUpdate = false)(fakePostRequestWithActiveSession
               .withSession(SessionKeys.addUkPropertyStartDate -> "2022-04-15")
               .withFormUrlEncodedBody(AddIncomeSourceStartDateCheckForm.response -> "No"))
           }
 
           status(result) shouldBe Status.SEE_OTHER
-          redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showUKProperty.url)
+          redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showUKProperty(isAgent = false, isUpdate = false).url)
           result.futureValue.session.get(addUkPropertyStartDate) shouldBe None
         }
       }
@@ -507,7 +506,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
           .thenReturn(Future.successful(HttpResponse(OK, "")))
 
         lazy val result: Future[Result] = {
-          TestAddIncomeSourceStartDateCheckController.submitUKProperty(fakeRequestWithActiveSession
+          TestAddIncomeSourceStartDateCheckController.submitUKProperty(isAgent = false, isUpdate = false)(fakeRequestWithActiveSession
             .withMethod("POST")
             .withSession(SessionKeys.addUkPropertyStartDate -> "2022-04-15")
             .withFormUrlEncodedBody(AddIncomeSourceStartDateCheckForm.response -> ""))
@@ -523,7 +522,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         enable(IncomeSources)
         mockSingleBusinessIncomeSource()
-        val result: Future[Result] = TestAddIncomeSourceStartDateCheckController.showUKPropertyAgent(fakeRequestConfirmedClient()
+        val result: Future[Result] = TestAddIncomeSourceStartDateCheckController.showUKProperty(isAgent = true, isUpdate = false)(fakeRequestConfirmedClient()
           .withSession(SessionKeys.addUkPropertyStartDate -> "2022-04-15"))
         val document: Document = Jsoup.parse(contentAsString(result))
 
@@ -538,7 +537,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
         disable(IncomeSources)
         mockSingleBusinessIncomeSource()
 
-        val result: Future[Result] = TestAddIncomeSourceStartDateCheckController.showUKPropertyAgent(fakeRequestConfirmedClient()
+        val result: Future[Result] = TestAddIncomeSourceStartDateCheckController.showUKProperty(isAgent = true, isUpdate = false)(fakeRequestConfirmedClient()
           .withSession(SessionKeys.addUkPropertyStartDate -> "2022-04-15"))
         val expectedContent: String = TestAddIncomeSourceStartDateCheckController.customNotFoundErrorView().toString()
         status(result) shouldBe Status.OK
@@ -546,7 +545,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
       }
       "called with an unauthenticated user" in {
         setupMockAgentAuthorisationException()
-        val result: Future[Result] = TestAddIncomeSourceStartDateCheckController.showUKPropertyAgent(fakeRequestConfirmedClient()
+        val result: Future[Result] = TestAddIncomeSourceStartDateCheckController.showUKProperty(isAgent = true, isUpdate = false)(fakeRequestConfirmedClient()
           .withSession(SessionKeys.addUkPropertyStartDate -> "2022-04-15"))
         status(result) shouldBe Status.SEE_OTHER
       }
@@ -564,7 +563,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
           .thenReturn(Future.successful(HttpResponse(OK)))
 
         lazy val result: Future[Result] = {
-          TestAddIncomeSourceStartDateCheckController.submitUKPropertyAgent(fakeRequestConfirmedClient()
+          TestAddIncomeSourceStartDateCheckController.submitUKProperty(isAgent = true, isUpdate = false)(fakePostRequestConfirmedClient()
             .withSession(SessionKeys.addUkPropertyStartDate -> "2022-04-15")
             .withFormUrlEncodedBody(AddIncomeSourceStartDateCheckForm.response -> "Yes"))
         }
@@ -582,14 +581,14 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
           .thenReturn(Future.successful(HttpResponse(OK)))
 
         lazy val result: Future[Result] = {
-          TestAddIncomeSourceStartDateCheckController.submitUKPropertyAgent(fakeRequestConfirmedClient()
+          TestAddIncomeSourceStartDateCheckController.submitUKProperty(isAgent = true, isUpdate = false)(fakePostRequestConfirmedClient()
             .withSession(SessionKeys.addUkPropertyStartDate -> "2022-04-15")
             .withFormUrlEncodedBody(AddIncomeSourceStartDateCheckForm.response -> "No"))
         }
 
         status(result) shouldBe Status.SEE_OTHER
 
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showUKPropertyAgent.url)
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showUKProperty(isAgent = true, isUpdate = false).url)
       }
     }
     "return 400 BAD_REQUEST" when {
@@ -602,7 +601,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
           .thenReturn(Future.successful(HttpResponse(OK)))
 
         lazy val result: Future[Result] = {
-          TestAddIncomeSourceStartDateCheckController.submitUKPropertyAgent(fakeRequestConfirmedClient()
+          TestAddIncomeSourceStartDateCheckController.submitUKProperty(isAgent = true, isUpdate = false)(fakePostRequestConfirmedClient()
             .withSession(SessionKeys.addUkPropertyStartDate -> "2022-04-15")
             .withFormUrlEncodedBody(AddIncomeSourceStartDateCheckForm.response -> ""))
         }
@@ -620,7 +619,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
         mockNoIncomeSources()
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
-        val result = TestAddIncomeSourceStartDateCheckController.showForeignProperty(fakeRequestWithActiveSession)
+        val result = TestAddIncomeSourceStartDateCheckController.showForeignProperty(isAgent = false, isUpdate = false)(fakeRequestWithActiveSession)
         val expectedContent: String = TestAddIncomeSourceStartDateCheckController.customNotFoundErrorView().toString()
         status(result) shouldBe Status.OK
         contentAsString(result) shouldBe expectedContent
@@ -634,7 +633,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
         mockNoIncomeSources()
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
-        val result = TestAddIncomeSourceStartDateCheckController.showForeignProperty(fakeRequestWithActiveSession
+        val result = TestAddIncomeSourceStartDateCheckController.showForeignProperty(isAgent = false, isUpdate = false)(fakeRequestWithActiveSession
           .withSession(SessionKeys.foreignPropertyStartDate -> "2022-01-01"))
         val document: Document = Jsoup.parse(contentAsString(result))
 
@@ -645,7 +644,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
     "should redirect" when {
       "called with an unauthenticated user" in {
         setupMockAuthorisationException()
-        val result: Future[Result] = TestAddIncomeSourceStartDateCheckController.showForeignProperty(fakeRequestWithActiveSession)
+        val result: Future[Result] = TestAddIncomeSourceStartDateCheckController.showForeignProperty(isAgent = false, isUpdate = false)(fakePostRequestWithActiveSession)
         status(result) shouldBe Status.SEE_OTHER
       }
     }
@@ -657,8 +656,8 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         mockBothIncomeSources()
 
-        val result = TestAddIncomeSourceStartDateCheckController.submitForeignProperty(
-          fakeRequestWithActiveSession.withFormUrlEncodedBody().withSession(SessionKeys.foreignPropertyStartDate -> "2022-01-01"))
+        val result = TestAddIncomeSourceStartDateCheckController.submitForeignProperty(isAgent = false, isUpdate = false)(
+          fakePostRequestWithActiveSession.withFormUrlEncodedBody().withSession(SessionKeys.foreignPropertyStartDate -> "2022-01-01"))
 
         status(result) shouldBe BAD_REQUEST
         contentAsString(result) should include(messages("add-foreign-property-start-date-check.error"))
@@ -674,8 +673,8 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
 
         val postAction: Call = controllers.incomeSources.add.routes.ForeignPropertyAccountingMethodController.show()
 
-        val result = TestAddIncomeSourceStartDateCheckController.submitForeignProperty(
-          fakeRequestWithActiveSession.withFormUrlEncodedBody(
+        val result = TestAddIncomeSourceStartDateCheckController.submitForeignProperty(isAgent = false, isUpdate = false)(
+          fakePostRequestWithActiveSession.withFormUrlEncodedBody(
             AddIncomeSourceStartDateCheckForm.response -> "Yes"
           ).withSession(SessionKeys.foreignPropertyStartDate -> "2022-01-01")
         )
@@ -690,10 +689,10 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
         mockNoIncomeSources()
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
-        val postAction: Call = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showForeignProperty
+        val postAction: Call = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showForeignProperty(isAgent = false, isUpdate = false)
 
-        val result = TestAddIncomeSourceStartDateCheckController.submitForeignProperty(
-          fakeRequestWithActiveSession.withFormUrlEncodedBody(
+        val result = TestAddIncomeSourceStartDateCheckController.submitForeignProperty(isAgent = false, isUpdate = false)(
+          fakePostRequestWithActiveSession.withFormUrlEncodedBody(
             AddIncomeSourceStartDateCheckForm.response -> "No"
           ).withSession(SessionKeys.foreignPropertyStartDate -> "2022-01-01")
         )
@@ -711,7 +710,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
         mockNoIncomeSources()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
-        val result = TestAddIncomeSourceStartDateCheckController.showForeignPropertyAgent(fakeRequestConfirmedClient())
+        val result = TestAddIncomeSourceStartDateCheckController.showForeignProperty(isAgent = true, isUpdate = false)(fakePostRequestConfirmedClient())
         val expectedContent: String = TestAddIncomeSourceStartDateCheckController.customNotFoundErrorView().toString()
         status(result) shouldBe Status.OK
         contentAsString(result) shouldBe expectedContent
@@ -726,7 +725,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
         mockNoIncomeSources()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
-        val result = TestAddIncomeSourceStartDateCheckController.showForeignPropertyAgent(fakeRequestConfirmedClient()
+        val result = TestAddIncomeSourceStartDateCheckController.showForeignProperty(isAgent = true, isUpdate = false)(fakeRequestConfirmedClient()
           .withSession(SessionKeys.foreignPropertyStartDate -> "2022-01-01"))
         val document: Document = Jsoup.parse(contentAsString(result))
 
@@ -737,7 +736,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
     "should redirect" when {
       "called with an unauthenticated user" in {
         setupMockAgentAuthorisationException()
-        val result: Future[Result] = TestAddIncomeSourceStartDateCheckController.showForeignPropertyAgent(fakeRequestConfirmedClient())
+        val result: Future[Result] = TestAddIncomeSourceStartDateCheckController.showForeignProperty(isAgent = true, isUpdate = false)(fakePostRequestConfirmedClient())
         status(result) shouldBe Status.SEE_OTHER
       }
     }
@@ -749,8 +748,8 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
         mockNoIncomeSources()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
-        val result = TestAddIncomeSourceStartDateCheckController.submitForeignPropertyAgent(
-          fakeRequestConfirmedClient().withFormUrlEncodedBody().withSession(SessionKeys.foreignPropertyStartDate -> "2022-01-01"))
+        val result = TestAddIncomeSourceStartDateCheckController.submitForeignProperty(isAgent = true, isUpdate = false)(
+          fakePostRequestConfirmedClient().withFormUrlEncodedBody().withSession(SessionKeys.foreignPropertyStartDate -> "2022-01-01"))
         status(result) shouldBe BAD_REQUEST
         contentAsString(result) should include(messages("add-foreign-property-start-date-check.error"))
       }
@@ -765,8 +764,8 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
 
         val postActionAgent: Call = controllers.incomeSources.add.routes.ForeignPropertyAccountingMethodController.showAgent()
 
-        val result = TestAddIncomeSourceStartDateCheckController.submitForeignPropertyAgent(
-          fakeRequestConfirmedClient().withFormUrlEncodedBody(
+        val result = TestAddIncomeSourceStartDateCheckController.submitForeignProperty(isAgent = true, isUpdate = false)(
+          fakePostRequestConfirmedClient().withFormUrlEncodedBody(
             AddIncomeSourceStartDateCheckForm.response -> "Yes"
           ).withSession(SessionKeys.foreignPropertyStartDate -> "2022-01-01")
         )
@@ -781,10 +780,10 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
         mockNoIncomeSources()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
-        val postActionAgent: Call = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showForeignPropertyAgent
+        val postActionAgent: Call = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showForeignProperty(isAgent = true, isUpdate = false)
 
-        val result = TestAddIncomeSourceStartDateCheckController.submitForeignPropertyAgent(
-          fakeRequestConfirmedClient().withFormUrlEncodedBody(
+        val result = TestAddIncomeSourceStartDateCheckController.submitForeignProperty(isAgent = true, isUpdate = false)(
+          fakePostRequestConfirmedClient().withFormUrlEncodedBody(
             AddIncomeSourceStartDateCheckForm.response -> "No"
           ).withSession(SessionKeys.foreignPropertyStartDate -> "2022-01-01")
         )

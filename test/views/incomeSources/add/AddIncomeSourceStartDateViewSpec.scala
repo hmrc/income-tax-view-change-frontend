@@ -52,7 +52,7 @@ class AddIncomeSourceStartDateViewSpec extends TestSupport {
         Jsoup.parse(contentAsString(
           addIncomeSourceStartDate(
             form = AddIncomeSourceStartDateForm(messagesPrefix),
-            postAction = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.submitForeignPropertyAgent,
+            postAction = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.submitForeignProperty(isAgent = true, isUpdate = false),
             isAgent = true,
             backUrl = controllers.incomeSources.add.routes.AddIncomeSourceController.showAgent().url,
             messagesPrefix = messagesPrefix
@@ -63,7 +63,7 @@ class AddIncomeSourceStartDateViewSpec extends TestSupport {
         Jsoup.parse(contentAsString(
           addIncomeSourceStartDate(
             form = AddIncomeSourceStartDateForm(messagesPrefix),
-            postAction = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.submitForeignProperty,
+            postAction = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.submitForeignProperty(isAgent = false, isUpdate = false),
             isAgent = false,
             backUrl = controllers.incomeSources.add.routes.AddIncomeSourceController.show().url,
             messagesPrefix = messagesPrefix
@@ -74,7 +74,7 @@ class AddIncomeSourceStartDateViewSpec extends TestSupport {
         Jsoup.parse(contentAsString(
           addIncomeSourceStartDate(
             form = AddIncomeSourceStartDateForm(messagesPrefix).withError(FormError("income-source-start-date", s"$messagesPrefix.error.required")),
-            postAction = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.submitForeignPropertyAgent,
+            postAction = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.submitForeignProperty(isAgent = true, isUpdate = false),
             isAgent = true,
             backUrl = controllers.incomeSources.add.routes.AddIncomeSourceController.showAgent().url,
             messagesPrefix = messagesPrefix
@@ -85,7 +85,7 @@ class AddIncomeSourceStartDateViewSpec extends TestSupport {
         Jsoup.parse(contentAsString(
           addIncomeSourceStartDate(
             form = AddIncomeSourceStartDateForm(messagesPrefix).withError(FormError("income-source-start-date", s"$messagesPrefix.error.required")),
-            postAction = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.submitForeignProperty,
+            postAction = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.submitForeignProperty(isAgent = false, isUpdate = false),
             isAgent = false,
             backUrl = controllers.incomeSources.add.routes.AddIncomeSourceController.show().url,
             messagesPrefix = messagesPrefix
@@ -96,7 +96,7 @@ class AddIncomeSourceStartDateViewSpec extends TestSupport {
         Jsoup.parse(contentAsString(
           addIncomeSourceStartDate(
             form = AddIncomeSourceStartDateForm(messagesPrefix).withError(FormError("income-source-start-date", s"$messagesPrefix.error.required")),
-            postAction = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.submitForeignPropertyAgent,
+            postAction = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.submitForeignProperty(isAgent = true, isUpdate = false),
             isAgent = true,
             backUrl = controllers.incomeSources.add.routes.AddIncomeSourceController.showAgent().url,
             messagesPrefix = messagesPrefix
@@ -107,7 +107,7 @@ class AddIncomeSourceStartDateViewSpec extends TestSupport {
         Jsoup.parse(contentAsString(
           addIncomeSourceStartDate(
             form = AddIncomeSourceStartDateForm(messagesPrefix).withError(FormError("income-source-start-date", s"$messagesPrefix.error.required")),
-            postAction = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.submitUKProperty,
+            postAction = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.submitUKProperty(isAgent = false, isUpdate = false),
             isAgent = false,
             backUrl = controllers.incomeSources.add.routes.AddIncomeSourceController.show().url,
             messagesPrefix = messagesPrefix
@@ -118,7 +118,7 @@ class AddIncomeSourceStartDateViewSpec extends TestSupport {
         Jsoup.parse(contentAsString(
           addIncomeSourceStartDate(
             form = AddIncomeSourceStartDateForm(messagesPrefix).withError(FormError("income-source-start-date", s"$messagesPrefix.error.required")),
-            postAction = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.submitSoleTraderBusiness,
+            postAction = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.submitSoleTraderBusiness(isAgent = false, isUpdate = false),
             isAgent = false,
             backUrl = controllers.incomeSources.add.routes.AddIncomeSourceController.show().url,
             messagesPrefix = messagesPrefix
@@ -129,7 +129,7 @@ class AddIncomeSourceStartDateViewSpec extends TestSupport {
         Jsoup.parse(contentAsString(
           addIncomeSourceStartDate(
             form = AddIncomeSourceStartDateForm(messagesPrefix).withError(FormError("income-source-start-date", s"$messagesPrefix.error.required")),
-            postAction = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.submitSoleTraderBusinessAgent,
+            postAction = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.submitSoleTraderBusiness(isAgent = true, isUpdate = false),
             isAgent = true,
             backUrl = controllers.incomeSources.add.routes.AddIncomeSourceController.showAgent().url,
             messagesPrefix = messagesPrefix
@@ -140,7 +140,7 @@ class AddIncomeSourceStartDateViewSpec extends TestSupport {
         Jsoup.parse(contentAsString(
           addIncomeSourceStartDate(
             form = AddIncomeSourceStartDateForm(messagesPrefix).withError(FormError("income-source-start-date", s"$messagesPrefix.error.required")),
-            postAction = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.submitSoleTraderBusiness,
+            postAction = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.submitSoleTraderBusiness(isAgent = false, isUpdate = false),
             isAgent = false,
             backUrl = controllers.incomeSources.add.routes.AddIncomeSourceController.show().url,
             messagesPrefix = messagesPrefix

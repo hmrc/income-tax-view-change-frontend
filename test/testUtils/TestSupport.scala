@@ -104,6 +104,13 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterE
     HeaderNames.REFERER -> "/test/url"
   )
 
+  lazy val fakePostRequestWithActiveSession: FakeRequest[AnyContentAsEmpty.type] = FakeRequest().withMethod("POST").withSession(
+    SessionKeys.lastRequestTimestamp -> "1498236506662",
+    SessionKeys.authToken -> "Bearer Token"
+  ).withHeaders(
+    HeaderNames.REFERER -> "/test/url"
+  )
+
   lazy val fakeRequestWithActiveSessionWithBusinessName: FakeRequest[AnyContentAsEmpty.type] = FakeRequest().withSession(
     SessionKeys.lastRequestTimestamp -> "1498236506662",
     SessionKeys.authToken -> "Bearer Token",
@@ -143,6 +150,16 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterE
 
   def fakeRequestConfirmedClient(clientNino: String = "AA111111A"): FakeRequest[AnyContentAsEmpty.type] =
     fakeRequestWithActiveSession.withSession(
+      utils.SessionKeys.clientFirstName -> "Test",
+      utils.SessionKeys.clientLastName -> "User",
+      utils.SessionKeys.clientUTR -> "1234567890",
+      utils.SessionKeys.clientMTDID -> "XAIT00000000015",
+      utils.SessionKeys.clientNino -> clientNino,
+      utils.SessionKeys.confirmedClient -> "true"
+    )
+
+  def fakePostRequestConfirmedClient(clientNino: String = "AA111111A"): FakeRequest[AnyContentAsEmpty.type] =
+    fakePostRequestWithActiveSession.withSession(
       utils.SessionKeys.clientFirstName -> "Test",
       utils.SessionKeys.clientLastName -> "User",
       utils.SessionKeys.clientUTR -> "1234567890",

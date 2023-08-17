@@ -51,8 +51,8 @@ class ForeignPropertyAccountingMethodViewSpec extends TestSupport {
 
     val form: Form[_] = ForeignPropertyAccountingMethodForm.form
 
-    val backUrl: String = if (isAgent) controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.showForeignPropertyAgent.url else
-      controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.showForeignProperty.url
+    val backUrl: String = if (isAgent) controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.showForeignProperty(isAgent = true, isUpdate = false).url else
+      controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.showForeignProperty(isAgent = false, isUpdate = false).url
     val postAction: Call = if (isAgent) controllers.incomeSources.add.routes.ForeignPropertyAccountingMethodController.submitAgent() else
       controllers.incomeSources.add.routes.ForeignPropertyAccountingMethodController.submit()
 
@@ -77,14 +77,14 @@ class ForeignPropertyAccountingMethodViewSpec extends TestSupport {
         form = form.withError(s"$prefix", s"$prefix.no-selection"),
         postAction = postAction,
         isAgent = true,
-        backUrl = controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.showForeignPropertyAgent.url)
+        backUrl = controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.showForeignProperty(isAgent = true, isUpdate = false).url)
 
     } else {
       foreignPropertyAccountingMethodView(
         form = form.withError(s"$prefix", s"$prefix.no-selection"),
         postAction = postAction,
         isAgent = false,
-        backUrl = controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.showForeignProperty.url)
+        backUrl = controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.showForeignProperty(isAgent = false, isUpdate = false).url)
     }
 
     lazy val document: Document = if (error) Jsoup.parse(contentAsString(viewWithInputErrors)) else Jsoup.parse(contentAsString(view))

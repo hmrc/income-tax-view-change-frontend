@@ -64,12 +64,15 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
   def showSoleTraderBusiness(isAgent: Boolean, isUpdate: Boolean): Action[AnyContent] = handleRequest(SelfEmployment, isAgent, isUpdate)
   def submitUKProperty(isAgent: Boolean, isUpdate: Boolean): Action[AnyContent] = handleRequest(UkProperty, isAgent, isUpdate)
   def submitForeignProperty(isAgent: Boolean, isUpdate: Boolean): Action[AnyContent] = handleRequest(ForeignProperty, isAgent, isUpdate)
-  def submitSoleTraderBusiness(isAgent: Boolean, isUpdate: Boolean): Action[AnyContent] = handleRequest(SelfEmployment, isAgent, isUpdate)
+  def submitSoleTraderBusiness(isAgent: Boolean, isUpdate: Boolean): Action[AnyContent] = {
+    handleRequest(SelfEmployment, isAgent, isUpdate)
+  }
 
   private def handleRequest(incomeSourceType: IncomeSourceType,
                             isAgent: Boolean,
                             isUpdate: Boolean): Action[AnyContent] = {
-    if (isAgent)
+
+    if (isAgent) {
       Authenticated.async {
         implicit request =>
           implicit user =>
@@ -81,15 +84,20 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
                 }
             }
       }
-    else
+    }
+    else {
       (checkSessionTimeout andThen authenticate andThen retrieveNino
         andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
         implicit user =>
           user.method match {
-            case "POST" => submit(incomeSourceType, isAgent, isUpdate)
-            case "GET" => show(incomeSourceType, isAgent, isUpdate)
+            case "POST" =>
+              submit(incomeSourceType, isAgent, isUpdate)
+            case "GET" =>
+              show(incomeSourceType, isAgent, isUpdate)
+            case _ => Future(ImATeapot)
           }
       }
+    }
   }
 
   private def show(incomeSourceType: IncomeSourceType,
@@ -136,7 +144,6 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
                      isAgent: Boolean,
                      isUpdate: Boolean)
                     (implicit user: MtdItUser[_]): Future[Result] = {
-
     val messagesPrefix = getMessagesPrefix(incomeSourceType)
 
     if(isEnabled(IncomeSources)) {
