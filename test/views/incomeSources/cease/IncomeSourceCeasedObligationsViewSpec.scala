@@ -19,10 +19,10 @@ package views.incomeSources.cease
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
 import org.jsoup.nodes.Element
-import org.jsoup.select.Elements
 import play.twirl.api.Html
 import testUtils.ViewSpec
 import views.html.incomeSources.add.IncomeSourceAddedObligations
+import views.html.incomeSources.cease.IncomeSourceCeasedObligations
 
 import java.time.LocalDate
 
@@ -49,10 +49,10 @@ class IncomeSourceCeasedObligationsViewSpec extends ViewSpec {
   }
 
   val testId: String = "XAIS00000000005"
-  val backUrl: String = "/individual/back/test/url"
-  val agentBackUrl: String = "/agent/back/test/url"
+  val backUrl: Option[String] = Some("/individual/back/test/url")
+  val agentBackUrl: Option[String] = Some("/agent/back/test/url")
 
-  val view: IncomeSourceAddedObligations = app.injector.instanceOf[IncomeSourceAddedObligations]
+  val view: IncomeSourceCeasedObligations = app.injector.instanceOf[IncomeSourceCeasedObligations]
   val viewModel: ObligationsViewModel = ObligationsViewModel(Seq.empty, Seq.empty, Seq.empty, Seq.empty, 2023, showPrevTaxYears = false)
 
   val day = LocalDate.of(2022, 1, 1)
@@ -86,23 +86,23 @@ class IncomeSourceCeasedObligationsViewSpec extends ViewSpec {
   val validCallWithData: Html = view(viewModelWithAllData, backUrl, isAgent = false, SelfEmployment, Some("Test Name"))
   val validAgentCallWithData: Html = view(viewModelWithAllData, agentBackUrl, isAgent = true, SelfEmployment, Some("Test Name"))
 
-  "Income Source Added Obligations - Individual" should {
-    "Display the correct banner message and heading" when  {
-      "Business type is UK Property Business" in new Setup(validUKPropertyBusinessCall){
-      val banner: Element = layoutContent.getElementsByTag("h1").first()
-      banner.text() shouldBe IncomeSourceCeasedMessages.h1UKProperty
+  "Income Source Ceased Obligations - Individual" should {
+    "Display the correct banner message and heading" when {
+      "Business type is UK Property Business" in new Setup(validUKPropertyBusinessCall) {
+        val banner: Element = layoutContent.getElementsByTag("h1").first()
+        banner.text() shouldBe IncomeSourceCeasedMessages.h1UKProperty
 
 
-      val subText: Option[Element] = layoutContent.select("div").eq(3)
+        val subText: Option[Element] = layoutContent.select("div").eq(3)
 
-      subText match {
-        case Some(heading) => heading.text shouldBe IncomeSourceCeasedMessages.h1UKProperty + " " + IncomeSourceCeasedMessages.headingBase
-        case _ => fail("No 2nd h2 element found.")
+        subText match {
+          case Some(heading) => heading.text shouldBe IncomeSourceCeasedMessages.h1UKProperty + " " + IncomeSourceCeasedMessages.headingBase
+          case _ => fail("No 2nd h2 element found.")
+        }
+
+        val subHeading: Element = layoutContent.getElementsByTag("h2").last()
+        subHeading.text shouldBe IncomeSourceCeasedMessages.h2Content
       }
-
-      val subHeading: Element = layoutContent.getElementsByTag("h2").last()
-      subHeading.text shouldBe IncomeSourceCeasedMessages.h2Content
-    }
       "Business type is Foreign Property Business" in new Setup(validForeignPropertyBusinessCall) {
         val banner: Element = layoutContent.getElementsByTag("h1").first()
         banner.text() shouldBe IncomeSourceCeasedMessages.h1ForeignProperty
@@ -135,7 +135,7 @@ class IncomeSourceCeasedObligationsViewSpec extends ViewSpec {
       }
       "Business type is Self Employment Business and business name is empty" in new Setup(validSoleTreaderBusinessWithNoBusinessNameCall) {
         val banner: Element = layoutContent.getElementsByTag("h1").first()
-        banner.text() shouldBe IncomeSourceCeasedMessages.h1SelfEmployment
+        banner.text() shouldBe IncomeSourceCeasedMessages.h1SelfEmploymentIfEmpty
 
 
         val subText: Option[Element] = layoutContent.select("div").eq(3)
@@ -175,7 +175,7 @@ class IncomeSourceCeasedObligationsViewSpec extends ViewSpec {
     }
   }
 
-  "Foreign Property Added Obligations - Agent" should {
+  "Income Source Ceased Obligations - Agent" should {
     "Display the correct banner message and heading" when {
       "Business type is UK Property Business" in new Setup(validUKPropertyBusinessAgentCall) {
         val banner: Element = layoutContent.getElementsByTag("h1").first()
@@ -224,7 +224,7 @@ class IncomeSourceCeasedObligationsViewSpec extends ViewSpec {
       }
       "Business type is Self Employment Business and business name is empty" in new Setup(validSoleTreaderBusinessWithNoBusinessNameAgentCall) {
         val banner: Element = layoutContent.getElementsByTag("h1").first()
-        banner.text() shouldBe IncomeSourceCeasedMessages.h1SelfEmployment
+        banner.text() shouldBe IncomeSourceCeasedMessages.h1SelfEmploymentIfEmpty
 
 
         val subText: Option[Element] = layoutContent.select("div").eq(3)

@@ -1448,11 +1448,11 @@ business-added.previous-tax-years-t1                    = You must make sure tha
 ## Income Source Creased Obligation Page ##
 business-ceased.obligation.heading1.se.part1                        =
 business-ceased.obligation.heading1.se.part2                        = Sole trader business
-business-ceased.obligation.heading1.uk-property.part2               = UK Property
-business-ceased.obligation.heading1.foreign-property.part2          = Foreign Property
+business-ceased.obligation.heading1.uk-property.part2               = UK property
+business-ceased.obligation.heading1.foreign-property.part2          = Foreign property
 business-ceased.obligation.heading1.base                            = has ceased
 business-ceased.obligation.heading2.text                            = What you must do
-business-ceased.obligation.button.text                              = Your income sources
+business-ceased.obligation.income-sources-button                    = Your income sources
 
 income-source.obligation.quarterly-heading                        = Send quarterly updates
 income-source.obligation.quarterly-p1                             = You must send quarterly updates of your income and expenses using compatible software by the following deadlines:

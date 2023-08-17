@@ -195,7 +195,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
     }
   }
 
-  "Foreign Property Added Obligations - Agent" should {
+  "Income Source Added Obligations - Agent" should {
     "Display the correct banner message and heading" when {
       "Business type is UK Property Business" in new Setup(validUKPropertyBusinessAgentCall) {
         val banner: Element = layoutContent.getElementsByTag("h1").first()
