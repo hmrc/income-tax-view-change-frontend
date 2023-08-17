@@ -80,7 +80,7 @@ with MockIncomeSourceDetailsPredicate with MockNavBarEnumFsPredicate with Featur
   }
 
   lazy val errorUrl: String = controllers.incomeSources.add.routes.IncomeSourceNotAddedController.showForeignProperty().url
-  lazy val agentErrorUrl: String = controllers.incomeSources.add.routes.IncomeSourceNotAddedController.showForeignProperty().url
+  lazy val agentErrorUrl: String = controllers.incomeSources.add.routes.IncomeSourceNotAddedController.showForeignPropertyAgent().url
 
   "ForeignPropertyCheckDetailsController" should {
 
