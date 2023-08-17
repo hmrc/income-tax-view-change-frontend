@@ -97,8 +97,7 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
 
   private def show(incomeSourceType: IncomeSourceType,
                    isAgent: Boolean,
-                   isUpdate: Boolean)
-                  (implicit user: MtdItUser[_]): Future[Result] = {
+                   isUpdate: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
 
     val messagesPrefix = getMessagesPrefix(incomeSourceType)
 
@@ -137,8 +136,8 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
 
   private def submit(incomeSourceType: IncomeSourceType,
                      isAgent: Boolean,
-                     isUpdate: Boolean)
-                    (implicit user: MtdItUser[_]): Future[Result] = {
+                     isUpdate: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
+
     val messagesPrefix = getMessagesPrefix(incomeSourceType)
 
     if(isEnabled(IncomeSources)) {
@@ -187,7 +186,9 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
       else itvcErrorHandler.showInternalServerError
   }
 
-  private def getCalls(incomeSourceType: IncomeSourceType, isAgent: Boolean, isUpdate: Boolean): (Call, Call, Call) = {
+  private def getCalls(incomeSourceType: IncomeSourceType,
+                       isAgent: Boolean,
+                       isUpdate: Boolean): (Call, Call, Call) = {
 
     incomeSourceType match {
       case SelfEmployment =>
@@ -198,8 +199,8 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
             case (true, false) => routes.AddBusinessNameController.showAgent()
             case (true, true) => routes.CheckBusinessDetailsController.showAgent()
           },
-          routes.AddIncomeSourceStartDateController.submitSoleTraderBusiness(isAgent = isAgent, isUpdate = isUpdate),
-          routes.AddIncomeSourceStartDateCheckController.showSoleTraderBusiness(isAgent = isAgent, isUpdate = isUpdate)
+          routes.AddIncomeSourceStartDateController.submitSoleTraderBusiness(isAgent, isUpdate),
+          routes.AddIncomeSourceStartDateCheckController.showSoleTraderBusiness(isAgent, isUpdate)
         )
       case UkProperty =>
         (
@@ -209,10 +210,9 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
             case (true, false) => routes.AddIncomeSourceController.showAgent()
             case (true, true) => routes.CheckUKPropertyDetailsController.showAgent()
           },
-          routes.AddIncomeSourceStartDateController.submitUKProperty(isAgent = isAgent, isUpdate = isUpdate),
-          routes.AddIncomeSourceStartDateCheckController.submitUKProperty(isAgent = isAgent, isUpdate = isUpdate)
+          routes.AddIncomeSourceStartDateController.submitUKProperty(isAgent, isUpdate),
+          routes.AddIncomeSourceStartDateCheckController.submitUKProperty(isAgent, isUpdate)
         )
-
       case ForeignProperty =>
         (
           (isAgent, isUpdate) match {
@@ -221,8 +221,8 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
             case (true, false) => routes.AddIncomeSourceController.showAgent()
             case (true, true) => routes.ForeignPropertyCheckDetailsController.showAgent()
           },
-          routes.AddIncomeSourceStartDateController.submitForeignProperty(isAgent = isAgent, isUpdate = isUpdate),
-          routes.AddIncomeSourceStartDateCheckController.submitForeignProperty(isAgent = isAgent, isUpdate = isUpdate)
+          routes.AddIncomeSourceStartDateController.submitForeignProperty(isAgent, isUpdate),
+          routes.AddIncomeSourceStartDateCheckController.submitForeignProperty(isAgent, isUpdate)
         )
     }
   }
