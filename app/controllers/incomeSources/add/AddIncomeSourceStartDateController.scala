@@ -64,9 +64,7 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
   def showSoleTraderBusiness(isAgent: Boolean, isUpdate: Boolean): Action[AnyContent] = handleRequest(SelfEmployment, isAgent, isUpdate)
   def submitUKProperty(isAgent: Boolean, isUpdate: Boolean): Action[AnyContent] = handleRequest(UkProperty, isAgent, isUpdate)
   def submitForeignProperty(isAgent: Boolean, isUpdate: Boolean): Action[AnyContent] = handleRequest(ForeignProperty, isAgent, isUpdate)
-  def submitSoleTraderBusiness(isAgent: Boolean, isUpdate: Boolean): Action[AnyContent] = {
-    handleRequest(SelfEmployment, isAgent, isUpdate)
-  }
+  def submitSoleTraderBusiness(isAgent: Boolean, isUpdate: Boolean): Action[AnyContent] = handleRequest(SelfEmployment, isAgent, isUpdate)
 
   private def handleRequest(incomeSourceType: IncomeSourceType,
                             isAgent: Boolean,
