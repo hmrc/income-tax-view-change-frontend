@@ -72,7 +72,7 @@ class BusinessCeasedObligationsController @Inject()(authenticate: Authentication
               sources = viewModel,
               backUrl = None,
               isAgent = isAgent,
-              journeyType = SelfEmployment))
+              incomeSourceType = SelfEmployment))
           }
         case None =>
           Logger("application").error(s"Missing Session Key: $ceaseBusinessIncomeSourceId")

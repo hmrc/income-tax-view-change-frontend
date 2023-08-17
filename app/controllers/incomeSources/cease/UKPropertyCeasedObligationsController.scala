@@ -63,7 +63,7 @@ class UKPropertyCeasedObligationsController @Inject()(val authenticate: Authenti
               sources = viewModel,
               backUrl = None,
               isAgent = isAgent,
-              journeyType = UkProperty))
+              incomeSourceType = UkProperty))
           }
         case None =>
           Logger("application").error(s"${if(isAgent) "[Agent]"}[UkPropertyCeasedObligationsController][handleRequest]:Failed to retrieve incomeSourceId for UK property")

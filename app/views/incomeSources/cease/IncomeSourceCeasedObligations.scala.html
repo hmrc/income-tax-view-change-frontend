@@ -23,7 +23,7 @@
 @import models.incomeSourceDetails.viewmodels._
 @import java.time.LocalDate
 
-@import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceJourney, SelfEmployment, UkProperty}
+@import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 
 
 @this(
@@ -35,7 +35,7 @@
   incomeSourceObligationsPartial: IncomeSourceObligationsPartial
 )
 
-@(sources: ObligationsViewModel, backUrl: Option[String], isAgent: Boolean, journeyType: IncomeSourceJourney, businessName: Option[String] = None)(implicit messages: Messages, user: auth.MtdItUser[_])
+@(sources: ObligationsViewModel, backUrl: Option[String], isAgent: Boolean, incomeSourceType: IncomeSourceType, businessName: Option[String] = None)(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @getMessage(key: String, args: String*) = @{
   messages(s"business-ceased.obligation.$key", args: _*)
@@ -45,7 +45,7 @@
 
 @getPageTitle = @{
 
-journeyType match {
+incomeSourceType match {
         case  _:SelfEmployment.type =>
             s"""${getMessage("heading1.se.part1")} ${businessNameFinal} ${getMessage("heading1.base")}""".trim()
 
@@ -79,7 +79,7 @@ journeyType match {
 }
 
 @getBannerContent() = @{
-    journeyType match {
+    incomeSourceType match {
         case _:SelfEmployment.type =>
             bannerHtmlContent(getMessage("heading1.se.part1"),businessNameFinal,getMessage("heading1.base"))
         case _:UkProperty.type =>

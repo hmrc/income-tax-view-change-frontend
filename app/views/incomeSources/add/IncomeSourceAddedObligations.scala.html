@@ -23,7 +23,7 @@
 @import java.time.LocalDate
 @import _root_.implicits.ImplicitDateFormatterImpl
 @import views.html.partials.IncomeSourceObligationsPartial
-@import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceJourney, SelfEmployment, UkProperty}
+@import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 
 
 @this(
@@ -35,7 +35,7 @@
   incomeSourceObligationsPartial: IncomeSourceObligationsPartial
 )
 
-@(sources: ObligationsViewModel, backUrl: String, isAgent: Boolean, journeyType: IncomeSourceJourney, businessName: Option[String] = None)(implicit messages: Messages, user: auth.MtdItUser[_])
+@(sources: ObligationsViewModel, backUrl: String, isAgent: Boolean, incomeSourceType: IncomeSourceType, businessName: Option[String] = None)(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @getMessage(key: String, args: String*) = @{
   messages(s"business-added.$key", args: _*)
@@ -44,7 +44,7 @@
 
 @getPageTitle = @{
 
-    journeyType match {
+    incomeSourceType match {
         case _:SelfEmployment.type =>
             s"""${getMessage("sole-treader.head")} ${businessName.get} ${getMessage("sole-treader.base")}""".trim()
 
@@ -79,7 +79,7 @@
 }
 
 @getBannerContent() = @{
-    journeyType match {
+    incomeSourceType match {
         case _:SelfEmployment.type =>
             bannerHtmlContent(getMessage("sole-treader.head"),businessName.get,getMessage("sole-treader.base"))
         case _:UkProperty.type =>

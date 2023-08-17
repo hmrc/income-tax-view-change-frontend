@@ -77,7 +77,7 @@ class BusinessAddedObligationsController @Inject()(authenticate: AuthenticationP
           val showPreviousTaxYears: Boolean = startDate.isBefore(dateService.getCurrentTaxYearStart())
           nextUpdatesService.getObligationsViewModel(incomeSourceId, showPreviousTaxYears) map { viewModel =>
             val backUrl = getBackUrl(incomeSourceId, isAgent)
-            Ok(obligationsView(businessName = Some(businessName), sources = viewModel, backUrl = backUrl, isAgent = isAgent, journeyType = SelfEmployment))
+            Ok(obligationsView(businessName = Some(businessName), sources = viewModel, backUrl = backUrl, isAgent = isAgent, incomeSourceType = SelfEmployment))
           }
         case None =>
           val errorMessage = s"Unable to find incomeSource by id: $incomeSourceId"

@@ -85,8 +85,8 @@ class ForeignPropertyAddedController @Inject()(val view: IncomeSourceAddedObliga
         case Some((_, startDate)) =>
           val showPreviousTaxYears: Boolean = startDate.isBefore(dateService.getCurrentTaxYearStart())
           nextUpdatesService.getObligationsViewModel(incomeSourceId, showPreviousTaxYears) map { viewModel =>
-            if (isAgent) Ok(view(viewModel, agentBackUrl, isAgent = isAgent, journeyType = ForeignProperty))
-            else Ok(view(viewModel, backUrl, isAgent = isAgent, journeyType = ForeignProperty))
+            if (isAgent) Ok(view(viewModel, agentBackUrl, isAgent = isAgent, incomeSourceType = ForeignProperty))
+            else Ok(view(viewModel, backUrl, isAgent = isAgent, incomeSourceType = ForeignProperty))
           }
         case _ =>
           Logger("application").error(

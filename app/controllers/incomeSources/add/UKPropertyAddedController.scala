@@ -88,7 +88,7 @@ class UKPropertyAddedController @Inject()(val authenticate: AuthenticationPredic
         case Some(startDate) =>
           val showPreviousTaxYears: Boolean = startDate.isBefore(dateService.getCurrentTaxYearStart())
           nextUpdatesService.getObligationsViewModel(incomeSourceId, showPreviousTaxYears).map { viewModel =>
-            Ok(view(sources = viewModel, isAgent = isAgent, backUrl = backUrl, journeyType = UkProperty)(messages, user))
+            Ok(view(sources = viewModel, isAgent = isAgent, backUrl = backUrl, incomeSourceType = UkProperty)(messages, user))
           }
         case None =>
           Logger("application").error(

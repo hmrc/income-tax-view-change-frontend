@@ -63,7 +63,7 @@ class ForeignPropertyCeasedObligationsController @Inject()(val authenticate: Aut
               sources = viewModel,
               backUrl = None,
               isAgent = isAgent,
-              journeyType = ForeignProperty))
+              incomeSourceType = ForeignProperty))
           }
         case None =>
           Logger("application").error(s"${if(isAgent) "[Agent]"}[ForeignPropertyCeasedObligationsController][handleRequest]:Failed to retrieve incomeSourceId for foreign property")
