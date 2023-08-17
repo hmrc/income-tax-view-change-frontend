@@ -1233,7 +1233,7 @@ incomeSources.add.UKPropertyStartDate.hint                      = This is the da
 incomeSources.add.UKPropertyStartDate.error.required            = Enter the date your UK property business started trading
 incomeSources.add.UKPropertyStartDate.error.future              = The date your UK property business started must be before {0}
 incomeSources.add.UKPropertyStartDate.error.invalid             = The date your UK property business started must be a real date
-incomeSources.add.checkUKPropertyStartDate.error.required       = Select yes if your UK property business start date is correct
+add-uk-property-start-date-check.error                          = Select yes if your UK property business start date is correct
 
 incomeSources.add.checkUKPropertyDetails.heading                = Check your details
 incomeSources.add.checkUKPropertyDetails.caption                = UK property business you entered
@@ -1306,7 +1306,7 @@ incomeSources.add.foreignProperty.startDate.error.missingDay         = The date 
 incomeSources.add.foreignProperty.startDate.error.invalid            = The date your foreign property business started must be a real date
 incomeSources.add.foreignProperty.startDate.error.future             = The date your foreign property business started must be before {0}
 incomeSources.add.foreignProperty.startDate.check.heading            = Is this date correct?
-incomeSources.add.foreignProperty.startDate.check.error              = Select yes if your foreign property business start date is correct
+add-foreign-property-start-date-check.error                          = Select yes if your foreign property business start date is correct
 incomeSources.add.foreignProperty.startDate.check.radio.yes          = Yes
 incomeSources.add.foreignProperty.startDate.check.radio.no           = No
 
@@ -1366,7 +1366,7 @@ add-business-start-date.error.invalid                = The date your business st
 add-business-start-date-check.heading                 = Is this date correct?
 add-business-start-date-check.radio.yes               = Yes
 add-business-start-date-check.radio.no                = No
-add-business-start-date-check.radio.error             = Select yes if your business start date is correct
+add-business-start-date-check.error                   = Select yes if your business start date is correct
 
 incomeSources.add.accountingMethod.cash               = Cash basis accounting
 incomeSources.add.accountingMethod.accruals           = Traditional accounting

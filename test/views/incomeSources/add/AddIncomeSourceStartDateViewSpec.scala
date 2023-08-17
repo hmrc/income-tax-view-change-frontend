@@ -28,7 +28,7 @@ import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 import views.html.incomeSources.add.AddIncomeSourceStartDate
 
-class IncomeSourceStartDateViewSpec extends TestSupport {
+class AddIncomeSourceStartDateViewSpec extends TestSupport {
 
   val addIncomeSourceStartDate: AddIncomeSourceStartDate = app.injector.instanceOf[AddIncomeSourceStartDate]
 

@@ -265,5 +265,3 @@ class CheckUKPropertyDetailsControllerSpec extends TestSupport with MockAuthenti
   }
 
 }
-
-
