@@ -42,7 +42,7 @@ class AddIncomeSourceStartDateCheckFormSpec extends TestSupport with ImplicitDat
     incomeSources = noIncomeDetails
   )(fakeRequestNoSession)
 
-  lazy val form: Form[AddIncomeSourceStartDateCheckForm] = AddIncomeSourceStartDateCheckForm(SelfEmployment.addIncomeSourceStartDateCheckMessagesPrefix)
+  lazy val form: Form[AddIncomeSourceStartDateCheckForm] = AddIncomeSourceStartDateCheckForm(SelfEmployment.addStartDateCheckMessagesPrefix)
   "ForeignPropertyStartDateCheck form" should {
     "bind with a valid response - yes" in {
       val formData = AddIncomeSourceStartDateCheckForm(Some("Yes"))

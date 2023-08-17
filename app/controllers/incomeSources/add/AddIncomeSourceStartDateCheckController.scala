@@ -110,7 +110,7 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
           Future {
             Ok(
               addIncomeSourceStartDateCheckView(
-                form = form(incomeSourceType.addIncomeSourceStartDateCheckMessagesPrefix),
+                form = form(incomeSourceType.addStartDateCheckMessagesPrefix),
                 postAction = postAction,
                 backUrl = backCall.url,
                 isAgent = isAgent,
@@ -143,7 +143,7 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
             getErrorHandler(isAgent).showInternalServerError()
           }
         case (Right(startDate), (backCall, postAction, successCall)) =>
-          form(incomeSourceType.addIncomeSourceStartDateCheckMessagesPrefix).bindFromRequest().fold(
+          form(incomeSourceType.addStartDateCheckMessagesPrefix).bindFromRequest().fold(
             formWithErrors =>
               Future {
                 BadRequest(

@@ -99,7 +99,7 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
                    isAgent: Boolean,
                    isUpdate: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
 
-    val messagesPrefix = getMessagesPrefix(incomeSourceType)
+    val messagesPrefix = incomeSourceType.addStartDateMessagesPrefix
 
     if(isEnabled(IncomeSources)) {
       getCalls(incomeSourceType, isAgent, isUpdate) match {
@@ -109,7 +109,7 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
               addIncomeSourceStartDate(
                 form = getFilledForm(
                   form = form(messagesPrefix),
-                  maybeStartDateKey = user.session.get(getStartDateKey(incomeSourceType)),
+                  maybeStartDateKey = user.session.get(incomeSourceType.addStartDateSessionKey),
                   isUpdate = isUpdate
                 ),
                 isAgent = isAgent,
@@ -138,7 +138,7 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
                      isAgent: Boolean,
                      isUpdate: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
 
-    val messagesPrefix = getMessagesPrefix(incomeSourceType)
+    val messagesPrefix = incomeSourceType.addStartDateMessagesPrefix
 
     if(isEnabled(IncomeSources)) {
       getCalls(incomeSourceType, isAgent, isUpdate) match {
@@ -224,22 +224,6 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
           routes.AddIncomeSourceStartDateController.submitForeignProperty(isAgent, isUpdate),
           routes.AddIncomeSourceStartDateCheckController.submitForeignProperty(isAgent, isUpdate)
         )
-    }
-  }
-
-  private def getMessagesPrefix(incomeSourceType: IncomeSourceType): String = {
-    incomeSourceType match {
-      case SelfEmployment => SelfEmployment.addIncomeSourceStartDateMessagesPrefix
-      case ForeignProperty => ForeignProperty.addIncomeSourceStartDateMessagesPrefix
-      case UkProperty => UkProperty.addIncomeSourceStartDateMessagesPrefix
-    }
-  }
-
-  def getStartDateKey(incomeSourceType: IncomeSourceType): String = {
-    incomeSourceType match {
-      case SelfEmployment => SessionKeys.businessStartDate
-      case UkProperty => SessionKeys.addUkPropertyStartDate
-      case ForeignProperty => SessionKeys.foreignPropertyStartDate
     }
   }
 

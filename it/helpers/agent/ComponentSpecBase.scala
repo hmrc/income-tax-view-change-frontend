@@ -307,7 +307,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
         additionalCookies = additionalCookies
       )(
         answer.fold(Map.empty[String, Seq[String]])(
-          selection => AddIncomeSourceStartDateCheckForm(SelfEmployment.addIncomeSourceStartDateCheckMessagesPrefix)
+          selection => AddIncomeSourceStartDateCheckForm(SelfEmployment.addStartDateCheckMessagesPrefix)
             .fill(AddIncomeSourceStartDateCheckForm(Some(selection))).data.map { case (k, v) => (k, Seq(v)) }
         )
       )
@@ -319,7 +319,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
         additionalCookies = additionalCookies
       )(
         answer.fold(Map.empty[String, Seq[String]])(
-          selection => AddIncomeSourceStartDateCheckForm(UkProperty.addIncomeSourceStartDateCheckMessagesPrefix)
+          selection => AddIncomeSourceStartDateCheckForm(UkProperty.addStartDateCheckMessagesPrefix)
             .fill(AddIncomeSourceStartDateCheckForm(Some(selection))).data.map { case (k, v) => (k, Seq(v)) }
         )
       )
@@ -331,7 +331,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
         additionalCookies = additionalCookies
       )(
         answer.fold(Map.empty[String, Seq[String]])(
-          selection => AddIncomeSourceStartDateCheckForm(ForeignProperty.addIncomeSourceStartDateCheckMessagesPrefix)
+          selection => AddIncomeSourceStartDateCheckForm(ForeignProperty.addStartDateCheckMessagesPrefix)
             .fill(AddIncomeSourceStartDateCheckForm(Some(selection))).data.map { case (k, v) => (k, Seq(v)) }
         )
       )

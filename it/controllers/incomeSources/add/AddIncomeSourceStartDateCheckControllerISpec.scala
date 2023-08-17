@@ -33,9 +33,9 @@ class AddIncomeSourceStartDateCheckControllerISpec extends ComponentSpecBase {
   val addBusinessStartDateCheckSubmitUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.submitSoleTraderBusiness(isAgent = false, isUpdate = false).url
   val continueButtonText: String = messagesAPI("base.continue")
   val incomeSourcePrefix: String = "start-date-check"
-  val soleTraderBusinessPrefix: String = SelfEmployment.addIncomeSourceStartDateCheckMessagesPrefix
-  val ukPropertyPrefix: String = UkProperty.addIncomeSourceStartDateCheckMessagesPrefix
-  val foreignPropertyPrefix: String = ForeignProperty.addIncomeSourceStartDateCheckMessagesPrefix
+  val soleTraderBusinessPrefix: String = SelfEmployment.addStartDateCheckMessagesPrefix
+  val ukPropertyPrefix: String = UkProperty.addStartDateCheckMessagesPrefix
+  val foreignPropertyPrefix: String = ForeignProperty.addStartDateCheckMessagesPrefix
   val testAddBusinessStartDate: Map[String, String] = Map(SessionKeys.addBusinessStartDate -> "2022-10-10")
 
   val foreignPropertyStartDateCheckShowUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.showForeignProperty(isAgent = false, isUpdate = false).url
