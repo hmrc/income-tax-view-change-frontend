@@ -116,14 +116,14 @@ class IncomeSourcesAccountingMethodController @Inject()(val authenticate: Authen
             routes.AddBusinessAddressController.show().url
       case UkProperty.key =>
         if (isAgent)
-            routes.CheckUKPropertyStartDateController.showAgent().url
+            routes.AddIncomeSourceStartDateCheckController.showUKPropertyAgent.url
         else
-            routes.CheckUKPropertyStartDateController.show().url
+            routes.AddIncomeSourceStartDateCheckController.showUKProperty.url
       case ForeignProperty.key =>
         if (isAgent)
-            routes.ForeignPropertyStartDateCheckController.showAgent().url
+            routes.AddIncomeSourceStartDateCheckController.showForeignPropertyAgent.url
         else
-            routes.ForeignPropertyStartDateCheckController.show().url
+            routes.AddIncomeSourceStartDateCheckController.showForeignProperty.url
     }
     val postAction: Call = if (isAgent) controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.submitAgent(incomeSourceType) else
       controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.submit(incomeSourceType)
@@ -162,20 +162,20 @@ class IncomeSourcesAccountingMethodController @Inject()(val authenticate: Authen
       case UkProperty.key =>
         if (isAgent)
           (routes.IncomeSourcesAccountingMethodController.submitAgent(incomeSourceType),
-            routes.CheckUKPropertyStartDateController.showAgent().url,
+            routes.AddIncomeSourceStartDateCheckController.showUKPropertyAgent.url,
             routes.CheckUKPropertyDetailsController.showAgent())
         else
           (routes.IncomeSourcesAccountingMethodController.submit(incomeSourceType),
-            routes.CheckUKPropertyStartDateController.show().url,
+            routes.AddIncomeSourceStartDateCheckController.showUKProperty.url,
             routes.CheckUKPropertyDetailsController.show())
       case ForeignProperty.key =>
         if (isAgent)
           (routes.IncomeSourcesAccountingMethodController.submitAgent(incomeSourceType),
-            routes.ForeignPropertyStartDateCheckController.showAgent().url,
+            routes.AddIncomeSourceStartDateCheckController.showForeignPropertyAgent.url,
             routes.ForeignPropertyCheckDetailsController.showAgent())
         else
           (routes.IncomeSourcesAccountingMethodController.submit(incomeSourceType),
-            routes.ForeignPropertyStartDateCheckController.show().url,
+            routes.AddIncomeSourceStartDateCheckController.showForeignProperty.url,
             routes.ForeignPropertyCheckDetailsController.show())
     }
     IncomeSourcesAccountingMethodForm(incomeSourceType).bindFromRequest().fold(
