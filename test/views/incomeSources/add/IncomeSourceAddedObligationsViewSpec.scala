@@ -16,7 +16,8 @@
 
 package views.incomeSources.add
 
-import models.incomeSourceDetails.viewmodels.{DatesModel, ForeignPropertyBusiness, ObligationsViewModel, SoleTreaderBusiness, UkPropertyBusiness}
+import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
+import models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
 import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
 import play.twirl.api.Html
@@ -30,7 +31,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
   object IncomeSourceAddedMessages {
     val h1ForeignProperty: String = "Foreign property"
     val h1UKProperty: String = "UK property"
-    val h1SoleTreaderProperty: String = "Test Name"
+    val h1SelfEmployment: String = "Test Name"
     val headingBase: String = "has been added to your account"
     val h2Content: String = "What you must do"
     val quarterlyHeading: String = "Send quarterly updates"
@@ -69,17 +70,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
     showPrevTaxYears = true
   )
 
-  val validUKPropertyBusinessCall: Html = view(viewModel, backUrl, isAgent = false, UkPropertyBusiness(), None)
-  val validUKPropertyBusinessAgentCall: Html = view(viewModel, agentBackUrl, isAgent = true, UkPropertyBusiness(), None)
+  val validUKPropertyBusinessCall: Html = view(viewModel, backUrl, isAgent = false, UkProperty, None)
+  val validUKPropertyBusinessAgentCall: Html = view(viewModel, agentBackUrl, isAgent = true, UkProperty, None)
 
-  val validForeignPropertyBusinessCall: Html = view(viewModel, backUrl, isAgent = false, ForeignPropertyBusiness(), None)
-  val validForeignPropertyBusinessAgentCall: Html = view(viewModel, agentBackUrl, isAgent = true, ForeignPropertyBusiness(), None)
+  val validForeignPropertyBusinessCall: Html = view(viewModel, backUrl, isAgent = false, ForeignProperty, None)
+  val validForeignPropertyBusinessAgentCall: Html = view(viewModel, agentBackUrl, isAgent = true, ForeignProperty, None)
 
-  val validSoleTreaderBusinessCall: Html = view(viewModel, backUrl, isAgent = false, SoleTreaderBusiness(), Some("Test Name"))
-  val validSoleTreaderBusinessAgentCall: Html = view(viewModel, agentBackUrl, isAgent = true, SoleTreaderBusiness(), Some("Test Name"))
+  val validSoleTreaderBusinessCall: Html = view(viewModel, backUrl, isAgent = false, SelfEmployment, Some("Test Name"))
+  val validSoleTreaderBusinessAgentCall: Html = view(viewModel, agentBackUrl, isAgent = true, SelfEmployment, Some("Test Name"))
 
-  val validCallWithData: Html = view(viewModelWithAllData, backUrl, isAgent = false, SoleTreaderBusiness(), Some("Test Name"))
-  val validAgentCallWithData: Html = view(viewModelWithAllData, agentBackUrl, isAgent = true, SoleTreaderBusiness(), Some("Test Name"))
+  val validCallWithData: Html = view(viewModelWithAllData, backUrl, isAgent = false, SelfEmployment, Some("Test Name"))
+  val validAgentCallWithData: Html = view(viewModelWithAllData, agentBackUrl, isAgent = true, SelfEmployment, Some("Test Name"))
 
   "Income Source Added Obligations - Individual" should {
     "Display the correct banner message and heading" when  {
@@ -115,13 +116,13 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
       }
       "Business type is Sole Trader Business" in new Setup(validSoleTreaderBusinessCall) {
         val banner: Element = layoutContent.getElementsByTag("h1").first()
-        banner.text() shouldBe IncomeSourceAddedMessages.h1SoleTreaderProperty
+        banner.text() shouldBe IncomeSourceAddedMessages.h1SelfEmployment
 
 
         val subText: Option[Element] = layoutContent.select("div").eq(3)
 
         subText match {
-          case Some(heading) => heading.text shouldBe IncomeSourceAddedMessages.h1SoleTreaderProperty + " " + IncomeSourceAddedMessages.headingBase
+          case Some(heading) => heading.text shouldBe IncomeSourceAddedMessages.h1SelfEmployment + " " + IncomeSourceAddedMessages.headingBase
           case _ => fail("No 2nd h2 element found.")
         }
 
@@ -228,13 +229,13 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
       }
       "Business type is Sole Trader Business" in new Setup(validSoleTreaderBusinessAgentCall) {
         val banner: Element = layoutContent.getElementsByTag("h1").first()
-        banner.text() shouldBe IncomeSourceAddedMessages.h1SoleTreaderProperty
+        banner.text() shouldBe IncomeSourceAddedMessages.h1SelfEmployment
 
 
         val subText: Option[Element] = layoutContent.select("div").eq(3)
 
         subText match {
-          case Some(heading) => heading.text shouldBe IncomeSourceAddedMessages.h1SoleTreaderProperty + " " + IncomeSourceAddedMessages.headingBase
+          case Some(heading) => heading.text shouldBe IncomeSourceAddedMessages.h1SelfEmployment + " " + IncomeSourceAddedMessages.headingBase
           case _ => fail("No 2nd h2 element found.")
         }
 
