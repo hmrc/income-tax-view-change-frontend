@@ -59,19 +59,12 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
                                                    val ec: ExecutionContext)
   extends ClientConfirmedController with I18nSupport with FeatureSwitching {
 
-  def showUKProperty(isUpdate: Boolean): Action[AnyContent] = handleRequest(UkProperty, false, isUpdate)
-  def showForeignProperty(isUpdate: Boolean): Action[AnyContent] = handleRequest(ForeignProperty, false, isUpdate)
-  def showSoleTraderBusiness(isUpdate: Boolean): Action[AnyContent] = handleRequest(SelfEmployment, false, isUpdate)
-  def submitUKProperty(isUpdate: Boolean): Action[AnyContent] = handleRequest(UkProperty, false, isUpdate)
-  def submitForeignProperty(isUpdate: Boolean): Action[AnyContent] = handleRequest(ForeignProperty, false, isUpdate)
-  def submitSoleTraderBusiness(isUpdate: Boolean): Action[AnyContent] = handleRequest(SelfEmployment, false, isUpdate)
-
-  def showUKPropertyAgent(isUpdate: Boolean): Action[AnyContent] = handleRequest(UkProperty, true, isUpdate)
-  def showForeignPropertyAgent(isUpdate: Boolean): Action[AnyContent] = handleRequest(ForeignProperty, true, isUpdate)
-  def showSoleTraderBusinessAgent(isUpdate: Boolean): Action[AnyContent] = handleRequest(SelfEmployment, true, isUpdate)
-  def submitUKPropertyAgent(isUpdate: Boolean): Action[AnyContent] = handleRequest(UkProperty, true, isUpdate)
-  def submitForeignPropertyAgent(isUpdate: Boolean): Action[AnyContent] = handleRequest(ForeignProperty, true, isUpdate)
-  def submitSoleTraderBusinessAgent(isUpdate: Boolean): Action[AnyContent] = handleRequest(SelfEmployment, true, isUpdate)
+  def showUKProperty(isAgent: Boolean, isUpdate: Boolean): Action[AnyContent] = handleRequest(UkProperty, isAgent, isUpdate)
+  def showForeignProperty(isAgent: Boolean, isUpdate: Boolean): Action[AnyContent] = handleRequest(ForeignProperty, isAgent, isUpdate)
+  def showSoleTraderBusiness(isAgent: Boolean, isUpdate: Boolean): Action[AnyContent] = handleRequest(SelfEmployment, isAgent, isUpdate)
+  def submitUKProperty(isAgent: Boolean, isUpdate: Boolean): Action[AnyContent] = handleRequest(UkProperty, isAgent, isUpdate)
+  def submitForeignProperty(isAgent: Boolean, isUpdate: Boolean): Action[AnyContent] = handleRequest(ForeignProperty, isAgent, isUpdate)
+  def submitSoleTraderBusiness(isAgent: Boolean, isUpdate: Boolean): Action[AnyContent] = handleRequest(SelfEmployment, isAgent, isUpdate)
 
   private def handleRequest(incomeSourceType: IncomeSourceType,
                             isAgent: Boolean,
