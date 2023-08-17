@@ -25,9 +25,9 @@ import testConstants.BaseIntegrationTestConstants.testMtditid
 import testConstants.IncomeSourceIntegrationTestConstants.noPropertyOrBusinessResponse
 
 class ForeignPropertyStartDateCheckControllerISpec extends ComponentSpecBase {
-  val foreignPropertyStartDateCheckShowUrl: String = controllers.incomeSources.add.routes.ForeignPropertyStartDateCheckController.show.url
-  val foreignPropertyStartDateCheckSubmitUrl: String = controllers.incomeSources.add.routes.ForeignPropertyStartDateCheckController.submit.url
-  val foreignPropertyAccountingMethodShowUrl: String = controllers.incomeSources.add.routes.ForeignPropertyAccountingMethodController.show.url
+  val foreignPropertyStartDateCheckShowUrl: String = controllers.incomeSources.add.routes.ForeignPropertyStartDateCheckController.show().url
+  val foreignPropertyStartDateCheckSubmitUrl: String = controllers.incomeSources.add.routes.ForeignPropertyStartDateCheckController.submit().url
+  val foreignPropertyAccountingMethodShowUrl: String = controllers.incomeSources.add.routes.ForeignPropertyAccountingMethodController.show().url
   val foreignPropertyStartDateShowUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showForeignProperty.url
 
   val dateCookie: Map[String, String] = Map(foreignPropertyStartDate -> "2022-10-10")

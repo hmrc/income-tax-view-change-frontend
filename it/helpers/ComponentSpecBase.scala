@@ -156,7 +156,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     .overrides(bind[HeaderExtractor].to[TestHeaderExtractor]) // adding dumy Authorization header in order for it:tests to pass
     .overrides(bind[DateServiceInterface].to[TestDateService])
     .configure(config)
-    .build
+    .build()
 
   override def beforeAll(): Unit = {
     super.beforeAll()
@@ -408,6 +408,12 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
     def postCheckCeaseBusinessDetails(session: Map[String, String]): WSResponse =
       post("/income-sources/cease/business-check-details", session)(Map.empty)
+
+    def getForeignPropertyCeasedObligations(session: Map[String, String]): WSResponse = get(uri = "/income-sources/cease/cease-foreign-property-success",session)
+
+    def getUkPropertyCeasedObligations(session: Map[String, String]): WSResponse = get(uri = "/income-sources/cease/cease-uk-property-success",session)
+
+    def getBusinessCeasedObligations(session: Map[String, String]): WSResponse = get(uri = "/income-sources/cease/cease-business-success",session)
   }
 
   def unauthorisedTest(uri: String): Unit = {

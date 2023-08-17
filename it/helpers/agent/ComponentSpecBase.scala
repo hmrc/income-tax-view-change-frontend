@@ -125,7 +125,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     .in(Environment.simple(mode = Mode.Dev))
     .overrides(bind[DateServiceInterface].to[TestDateService])
     .configure(config)
-    .build
+    .build()
 
 
   val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
@@ -392,6 +392,12 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
     def postCheckCeaseBusinessDetails(additionalCookies: Map[String, String]): WSResponse =
       post("/income-sources/cease/business-check-details", additionalCookies)(Map.empty)
+
+    def getForeignPropertyCeasedObligations(session: Map[String, String]): WSResponse = get(uri = "/income-sources/cease/cease-foreign-property-success", session)
+
+    def getUkPropertyCeasedObligations(session: Map[String, String]): WSResponse = get(uri = "/income-sources/cease/cease-uk-property-success", session)
+
+    def getBusinessCeasedObligations(session: Map[String, String]): WSResponse = get(uri = "/income-sources/cease/cease-business-success", session)
   }
 
   def unauthorisedTest(uri: String): Unit = {

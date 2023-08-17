@@ -316,8 +316,8 @@ POST         /agents/income-sources/cease/foreign-property-check-details/:cessat
 
 GET          /income-sources/cease/cease-business-success                                  controllers.incomeSources.cease.BusinessCeasedObligationsController.show()
 GET          /agents/income-sources/cease/cease-business-success                           controllers.incomeSources.cease.BusinessCeasedObligationsController.showAgent()
-GET          /income-sources/cease/cease-uk-property-success                               controllers.incomeSources.cease.UkPropertyCeasedObligationsController.show()
-GET          /agents/income-sources/cease/cease-uk-property-success                        controllers.incomeSources.cease.UkPropertyCeasedObligationsController.showAgent()
+GET          /income-sources/cease/cease-uk-property-success                               controllers.incomeSources.cease.UKPropertyCeasedObligationsController.show()
+GET          /agents/income-sources/cease/cease-uk-property-success                        controllers.incomeSources.cease.UKPropertyCeasedObligationsController.showAgent()
 GET          /income-sources/cease/cease-foreign-property-success                          controllers.incomeSources.cease.ForeignPropertyCeasedObligationsController.show()
 GET          /agents/income-sources/cease/cease-foreign-property-success                   controllers.incomeSources.cease.ForeignPropertyCeasedObligationsController.showAgent()
 

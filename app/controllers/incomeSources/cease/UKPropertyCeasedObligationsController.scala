@@ -34,21 +34,21 @@ import views.html.incomeSources.cease.IncomeSourceCeasedObligations
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class UkPropertyCeasedObligationsController @Inject()(authenticate: AuthenticationPredicate,
+class UKPropertyCeasedObligationsController @Inject()(val authenticate: AuthenticationPredicate,
                                                       val authorisedFunctions: AuthorisedFunctions,
-                                                      checkSessionTimeout: SessionTimeoutPredicate,
-                                                      retrieveNino: NinoPredicate,
+                                                      val checkSessionTimeout: SessionTimeoutPredicate,
+                                                      val retrieveNino: NinoPredicate,
                                                       val retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                                       val retrieveBtaNavBar: NavBarPredicate,
-                                                      val itvcErrorHandler: ItvcErrorHandler,
-                                                      incomeSourceDetailsService: IncomeSourceDetailsService,
+                                                      val incomeSourceDetailsService: IncomeSourceDetailsService,
                                                       val obligationsView: IncomeSourceCeasedObligations,
-                                                      nextUpdatesService: NextUpdatesService)
+                                                      val dateService: DateServiceInterface,
+                                                      val nextUpdatesService: NextUpdatesService)
                                                      (implicit val appConfig: FrontendAppConfig,
-                                                    implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
-                                                    implicit override val mcc: MessagesControllerComponents,
-                                                    val ec: ExecutionContext,
-                                                    dateService: DateServiceInterface)
+                                                      val itvcErrorHandler: ItvcErrorHandler,
+                                                      val itvcErrorHandlerAgent: AgentItvcErrorHandler,
+                                                      mcc: MessagesControllerComponents,
+                                                      val ec: ExecutionContext)
   extends ClientConfirmedController with I18nSupport with FeatureSwitching with IncomeSourcesUtils {
 
   private def handleRequest(isAgent: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {

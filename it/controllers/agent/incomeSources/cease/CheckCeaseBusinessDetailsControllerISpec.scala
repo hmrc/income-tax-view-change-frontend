@@ -40,7 +40,7 @@ class CheckCeaseBusinessDetailsControllerISpec extends ComponentSpecBase {
   val businessAddressLabel = messagesAPI("incomeSources.ceaseBusiness.checkDetails.businessAddress")
   val pageTitleMsgKey = messagesAPI("incomeSources.ceaseBusiness.checkDetails.heading")
   val timestamp = "2023-01-31T09:26:17Z"
-  val redirectUri = controllers.incomeSources.cease.routes.CeaseBusinessSuccessController.showAgent().url
+  val redirectUri = controllers.incomeSources.cease.routes.BusinessCeasedObligationsController.showAgent().url
   val request: UpdateIncomeSourceRequestModel = UpdateIncomeSourceRequestModel(
     nino = testNino,
     incomeSourceId = business1.incomeSourceId,
