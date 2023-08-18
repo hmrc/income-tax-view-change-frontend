@@ -135,18 +135,4 @@ class AddBusinessAddressController @Inject()(authenticate: AuthenticationPredica
         }
 
   }
-
-  def changeSubmit(id: Option[String]): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
-    andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
-    implicit user => handleSubmitRequest(isAgent = false, id, isChange = true)
-  }
-
-  def changeAgentSubmit(id: Option[String]): Action[AnyContent] = Authenticated.async {
-    implicit request =>
-      implicit user =>
-        getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
-          implicit mtdItUser =>
-            handleSubmitRequest(isAgent = true, id, isChange = true)
-        }
-  }
 }
