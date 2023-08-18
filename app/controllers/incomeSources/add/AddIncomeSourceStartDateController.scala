@@ -166,28 +166,17 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
                        isAgent: Boolean,
                        isUpdate: Boolean): (Call, Call, Call) = {
     (
-      incomeSourceType match {
-        case SelfEmployment =>
-          (isAgent, isUpdate) match {
-            case (false, false) => routes.AddBusinessNameController.show()
-            case (false, true) => routes.CheckBusinessDetailsController.show()
-            case (true, false) => routes.AddBusinessNameController.showAgent()
-            case (true, true) => routes.CheckBusinessDetailsController.showAgent()
-          }
-        case UkProperty =>
-          (isAgent, isUpdate) match {
-            case (false, false) => routes.AddIncomeSourceController.show()
-            case (false, true) => routes.CheckUKPropertyDetailsController.show()
-            case (true, false) => routes.AddIncomeSourceController.showAgent()
-            case (true, true) => routes.CheckUKPropertyDetailsController.showAgent()
-          }
-        case ForeignProperty =>
-          (isAgent, isUpdate) match {
-            case (false, false) => routes.AddIncomeSourceController.show()
-            case (false, true) => routes.ForeignPropertyCheckDetailsController.show()
-            case (true, false) => routes.AddIncomeSourceController.showAgent()
-            case (true, true) => routes.ForeignPropertyCheckDetailsController.showAgent()
-          }
+      (isAgent, isUpdate, incomeSourceType) match {
+        case (false, false, SelfEmployment) => routes.AddBusinessNameController.show()
+        case (false, true,  SelfEmployment) => routes.CheckBusinessDetailsController.show()
+        case (true,  false, SelfEmployment) => routes.AddBusinessNameController.showAgent()
+        case (true,  true,  SelfEmployment) => routes.CheckBusinessDetailsController.showAgent()
+        case (false, false, _)              => routes.AddIncomeSourceController.show()
+        case (true,  false, _)              => routes.AddIncomeSourceController.showAgent()
+        case (false, true, UkProperty)      => routes.CheckUKPropertyDetailsController.show()
+        case (true,  true, UkProperty)      => routes.CheckUKPropertyDetailsController.showAgent()
+        case (false, true, ForeignProperty) => routes.ForeignPropertyCheckDetailsController.show()
+        case (true,  true, ForeignProperty) => routes.ForeignPropertyCheckDetailsController.showAgent()
       },
       routes.AddIncomeSourceStartDateController.handleRequest(incomeSourceType.key, isAgent, isUpdate),
       routes.AddIncomeSourceStartDateCheckController.handleRequest(incomeSourceType.key, isAgent, isUpdate)
