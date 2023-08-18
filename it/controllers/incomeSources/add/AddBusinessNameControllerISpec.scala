@@ -17,6 +17,8 @@ class AddBusinessNameControllerISpec extends ComponentSpecBase {
   val addBusinessStartDateUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showSoleTraderBusiness.url
   val checkBusinessDetailsUrl: String = controllers.incomeSources.add.routes.CheckBusinessDetailsController.show().url
   val addIncomeSourceUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceController.show().url
+  val incomeSourcesUrl: String = controllers.routes.HomeController.show().url
+
 
   val prefix: String = "add-business-name"
   val htmlTitle = messagesAPI("htmlTitle")
@@ -51,11 +53,11 @@ class AddBusinessNameControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
         When(s"I call GET ${addBusinessNameShowUrl}")
-        val result = IncomeTaxViewChangeFrontend.get("/income-sources/add/business-name")
+        val result = IncomeTaxViewChangeFrontend.getAddBusinessName
 
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI("/report-quarterly/income-and-expenses/view")
+          redirectURI(incomeSourcesUrl)
         )
       }
     }
@@ -129,7 +131,7 @@ class AddBusinessNameControllerISpec extends ComponentSpecBase {
         val result = IncomeTaxViewChangeFrontend.get("/income-sources/add/change-business-name")
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI("/report-quarterly/income-and-expenses/view")
+          redirectURI(incomeSourcesUrl)
         )
       }
     }

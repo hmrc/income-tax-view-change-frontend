@@ -307,7 +307,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     def getAddBusinessName: WSResponse = get("/income-sources/add/business-name")
 
     def postAddBusinessName(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
-      post(s"/income-sources/add/business-added", additionalCookies)(Map.empty)
+      post(s"/income-sources/add/business-name", additionalCookies)(Map.empty)
     }
     def getAddBusinessStartDate: WSResponse = get("/income-sources/add/business-start-date")
 
