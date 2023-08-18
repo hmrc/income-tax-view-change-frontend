@@ -148,36 +148,46 @@ class IncomeSourcesAccountingMethodController @Inject()(val authenticate: Authen
     }
   }
 
-  def handleSubmitRequest(isAgent: Boolean, incomeSourceType: String)(implicit user: MtdItUser[_]): Future[Result] = {
-    val (postAction, backUrl, redirect) = incomeSourceType match {
+   private def actionIndividualSubmitRequest(incomeSourceType: String): (Call, String, Call) = {
+    incomeSourceType match {
       case SelfEmployment.key =>
-        if (isAgent)
-        (routes.IncomeSourcesAccountingMethodController.submitAgent(incomeSourceType),
-          routes.AddBusinessAddressController.showAgent().url,
-          routes.CheckBusinessDetailsController.showAgent())
-      else
-        (routes.IncomeSourcesAccountingMethodController.submit(incomeSourceType),
-          routes.AddBusinessAddressController.show().url,
-          routes.CheckBusinessDetailsController.show())
+          (routes.IncomeSourcesAccountingMethodController.submit(incomeSourceType),
+            routes.AddBusinessAddressController.show().url,
+            routes.CheckBusinessDetailsController.show())
       case UkProperty.key =>
-        if (isAgent)
-          (routes.IncomeSourcesAccountingMethodController.submitAgent(incomeSourceType),
-            routes.AddIncomeSourceStartDateCheckController.showUKPropertyAgent.url,
-            routes.CheckUKPropertyDetailsController.showAgent())
-        else
           (routes.IncomeSourcesAccountingMethodController.submit(incomeSourceType),
             routes.AddIncomeSourceStartDateCheckController.showUKProperty.url,
             routes.CheckUKPropertyDetailsController.show())
       case ForeignProperty.key =>
-        if (isAgent)
-          (routes.IncomeSourcesAccountingMethodController.submitAgent(incomeSourceType),
-            routes.AddIncomeSourceStartDateCheckController.showForeignPropertyAgent.url,
-            routes.ForeignPropertyCheckDetailsController.showAgent())
-        else
           (routes.IncomeSourcesAccountingMethodController.submit(incomeSourceType),
             routes.AddIncomeSourceStartDateCheckController.showForeignProperty.url,
             routes.ForeignPropertyCheckDetailsController.show())
     }
+  }
+
+  private def actionAgentSubmitRequest(incomeSourceType: String): (Call, String, Call) = {
+    incomeSourceType match {
+      case SelfEmployment.key =>
+          (routes.IncomeSourcesAccountingMethodController.submitAgent(incomeSourceType),
+            routes.AddBusinessAddressController.showAgent().url,
+            routes.CheckBusinessDetailsController.showAgent())
+      case UkProperty.key =>
+          (routes.IncomeSourcesAccountingMethodController.submitAgent(incomeSourceType),
+            routes.AddIncomeSourceStartDateCheckController.showUKPropertyAgent.url,
+            routes.CheckUKPropertyDetailsController.showAgent())
+      case ForeignProperty.key =>
+          (routes.IncomeSourcesAccountingMethodController.submitAgent(incomeSourceType),
+            routes.AddIncomeSourceStartDateCheckController.showForeignPropertyAgent.url,
+            routes.ForeignPropertyCheckDetailsController.showAgent())
+    }
+  }
+
+  def handleSubmitRequest(isAgent: Boolean, incomeSourceType: String)(implicit user: MtdItUser[_]): Future[Result] = {
+    val (postAction, backUrl, redirect) = if (isAgent)
+      actionAgentSubmitRequest(incomeSourceType)
+    else
+      actionIndividualSubmitRequest(incomeSourceType)
+
     IncomeSourcesAccountingMethodForm(incomeSourceType).bindFromRequest().fold(
       hasErrors => Future.successful(BadRequest(view(
         incomeSourcesType = incomeSourceType,
