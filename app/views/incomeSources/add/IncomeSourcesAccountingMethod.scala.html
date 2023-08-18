@@ -20,6 +20,7 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components.FormWithCSRF
 @import views.html.helpers.injected.ErrorSummary
+@import enums.IncomeSourceJourney.SelfEmployment
 
 @this(mainTemplate: unifiedLayout,
     implicitDateFormatter: ImplicitDateFormatterImpl,
@@ -33,9 +34,9 @@
     inputRadios: input_radios,
     detailsDropdown: detailsDropdown)
 
-@(form: Form[_], postAction: Call, isAgent: Boolean = false, backUrl: String, btaNavPartial: Option[Html] = None)(implicit request: Request[_], messages: Messages)
+@(incomeSourcesType: String, form: Form[_], postAction: Call, isAgent: Boolean = false, backUrl: String, btaNavPartial: Option[Html] = None)(implicit request: Request[_], messages: Messages)
 
-@prefix = @{"incomeSources.add.uk-property-business-accounting-method"}
+@prefix = @{"incomeSources.add." + incomeSourcesType + ".AccountingMethod"}
 
 @getMessage(key: String, args: String*) = @{
     messages(s"$prefix.$key", args: _*)
@@ -49,6 +50,14 @@
         <li>@getMessage("drop-down-text-bp-1")</li>
         <li>@getMessage("drop-down-text-bp-2")</li>
     </ul>
+}
+
+@hintContent = {
+    @if(incomeSourcesType == SelfEmployment.key) {
+        <br><div>@getMessage("hint")</div></br><div>@detailsDropdown(getMessage("example"), detailsContent)</div>
+    } else {
+        <br><div>@detailsDropdown(getMessage("example"), detailsContent)</div>
+    }
 }
 
 @mainTemplate(
@@ -66,13 +75,13 @@
             fieldset = Some(Fieldset(
                 legend = Some(Legend(
                     content = Text(getMessage("heading")),
-                    classes = "govuk-fieldset__legend--l govuk-tabs"
+                    classes = "govuk-fieldset__legend--l"
                 ))
             )),
             hint = Some(Hint(
                 id = Some(s"$prefix-hint"),
-                classes = "govuk-hint",
-                content = HtmlContent(s"""<div>${detailsDropdown("incomeSources.add.uk-property-business-accounting-method.example", detailsContent)}</div>""")
+                classes = "!",
+                content = HtmlContent(hintContent)
             )),
             items = Seq(
                 RadioItem(

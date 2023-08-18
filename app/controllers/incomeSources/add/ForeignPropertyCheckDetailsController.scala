@@ -21,6 +21,7 @@ import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
+import enums.IncomeSourceJourney.ForeignProperty
 import forms.utils.SessionKeys._
 import models.createIncomeSource.CreateIncomeSourceResponse
 import models.incomeSourceDetails.IncomeSourceDetailsModel
@@ -53,8 +54,8 @@ class ForeignPropertyCheckDetailsController @Inject()(val checkForeignPropertyDe
                                                       implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler) extends ClientConfirmedController
   with FeatureSwitching {
 
-  lazy val foreignPropertyAccountingMethodUrl: String = controllers.incomeSources.add.routes.ForeignPropertyAccountingMethodController.show().url
-  lazy val agentForeignPropertyAccountingMethodUrl: String = controllers.incomeSources.add.routes.ForeignPropertyAccountingMethodController.showAgent().url
+  lazy val foreignPropertyAccountingMethodUrl: String = controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.show(ForeignProperty.key).url
+  lazy val agentForeignPropertyAccountingMethodUrl: String = controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.showAgent(ForeignProperty.key).url
   lazy val backUrlIndividual: String = foreignPropertyAccountingMethodUrl
   lazy val backUrlAgent: String = agentForeignPropertyAccountingMethodUrl
 
@@ -109,14 +110,14 @@ class ForeignPropertyCheckDetailsController @Inject()(val checkForeignPropertyDe
 
     val errors: Seq[String] = Seq(
       user.session.data.get(foreignPropertyStartDate).orElse(Option(MissingKey("MissingKey: addForeignPropertyStartDate"))),
-      user.session.data.get(addForeignPropertyAccountingMethod).orElse(Option(MissingKey("MissingKey: addForeignPropertyAccountingMethod")))
+      user.session.data.get(addIncomeSourcesAccountingMethod).orElse(Option(MissingKey("MissingKey: addIncomeSourcesAccountingMethod")))
     ).collect {
       case Some(MissingKey(msg)) => MissingKey(msg)
     }.map(e => e.msg)
 
     val result: Option[CheckForeignPropertyViewModel] = for {
       foreignPropertyStartDate <- user.session.data.get(foreignPropertyStartDate).map(LocalDate.parse)
-      cashOrAccrualsFlag <- user.session.data.get(addForeignPropertyAccountingMethod)
+      cashOrAccrualsFlag <- user.session.data.get(addIncomeSourcesAccountingMethod)
     } yield {
       CheckForeignPropertyViewModel(
         tradingStartDate = foreignPropertyStartDate,
@@ -168,7 +169,7 @@ class ForeignPropertyCheckDetailsController @Inject()(val checkForeignPropertyDe
         }
   }
 
-  private val sessionKeys = Seq(foreignPropertyStartDate, addForeignPropertyAccountingMethod)
+  private val sessionKeys = Seq(foreignPropertyStartDate, addIncomeSourcesAccountingMethod)
 
   private lazy val errorUrl: String = controllers.incomeSources.add.routes.IncomeSourceNotAddedController.showForeignProperty().url
   private lazy val agentErrorUrl: String = controllers.incomeSources.add.routes.IncomeSourceNotAddedController.showForeignPropertyAgent().url

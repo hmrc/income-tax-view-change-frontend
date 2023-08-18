@@ -21,6 +21,7 @@
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.pageheading.PageHeading
 @import views.html.components._
 @import views.html.layouts.unifiedLayout
+@import enums.IncomeSourceJourney.ForeignProperty
 
 @this(
         mainTemplate: unifiedLayout,
@@ -57,9 +58,9 @@
 
 @changeForeignPropertyAccountingMethodURL = @{
     if(isAgent) {
-        controllers.incomeSources.add.routes.ForeignPropertyAccountingMethodController.changeForeignPropertyAccountingMethodAgent().url
+        controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.changeIncomeSourcesAccountingMethodAgent(ForeignProperty.key).url
     } else {
-        controllers.incomeSources.add.routes.ForeignPropertyAccountingMethodController.changeForeignPropertyAccountingMethod().url
+        controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.changeIncomeSourcesAccountingMethod(ForeignProperty.key).url
     }
 }
 

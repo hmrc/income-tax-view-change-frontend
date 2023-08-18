@@ -23,6 +23,7 @@
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.pageheading.PageHeading
 @import views.html.helpers.injected.ErrorSummary
 @import models.incomeSourceDetails.viewmodels.CheckUKPropertyViewModel
+@import enums.IncomeSourceJourney.UkProperty
 
 
 @this(
@@ -49,9 +50,9 @@
 
 @getChangeUKPropertyAccountingMethodUrl = @{
     if (isAgent) {
-        controllers.incomeSources.add.routes.UKPropertyAccountingMethodController.changeAgent().url
+        controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.changeIncomeSourcesAccountingMethodAgent(UkProperty.key).url
     } else {
-        controllers.incomeSources.add.routes.UKPropertyAccountingMethodController.change().url
+        controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.changeIncomeSourcesAccountingMethod(UkProperty.key).url
     }
 }
 
