@@ -48,10 +48,10 @@ class AddressLookupServiceSpec extends TestSupport
         disableAllSwitches()
         enable(IncomeSources)
 
-        when(mockAddressLookupConnector.initialiseAddressLookup(any())(any(),any()))
+        when(mockAddressLookupConnector.initialiseAddressLookup(any(), any())(any(),any()))
           .thenReturn(Future(Left(UnexpectedPostStatusFailure(418))))
 
-        val result: Future[Either[Throwable, Option[String]]] = TestAddressLookupService.initialiseAddressJourney(isAgent = false)
+        val result: Future[Either[Throwable, Option[String]]] = TestAddressLookupService.initialiseAddressJourney(isAgent = false, isChange = false)
         result map {
           case Left(AddressError(value)) => value shouldBe "status: 418"
           case Right(_) => Fail("Error not returned")
@@ -62,10 +62,10 @@ class AddressLookupServiceSpec extends TestSupport
         disableAllSwitches()
         enable(IncomeSources)
 
-        when(mockAddressLookupConnector.initialiseAddressLookup(any())(any(), any()))
+        when(mockAddressLookupConnector.initialiseAddressLookup(any(), any())(any(), any()))
           .thenReturn(Future(Right(PostAddressLookupSuccessResponse(None))))
 
-        val result: Future[Either[Throwable, Option[String]]] = TestAddressLookupService.initialiseAddressJourney(isAgent = false)
+        val result: Future[Either[Throwable, Option[String]]] = TestAddressLookupService.initialiseAddressJourney(isAgent = false, isChange = false)
         result map {
           case Left(_) => Fail("Error returned from connector")
           case Right(None) => Success
@@ -77,10 +77,10 @@ class AddressLookupServiceSpec extends TestSupport
         disableAllSwitches()
         enable(IncomeSources)
 
-        when(mockAddressLookupConnector.initialiseAddressLookup(any())(any(), any()))
+        when(mockAddressLookupConnector.initialiseAddressLookup(any(), any())(any(), any()))
           .thenReturn(Future(Right(PostAddressLookupSuccessResponse(Some("sample location")))))
 
-        val result: Future[Either[Throwable, Option[String]]] = TestAddressLookupService.initialiseAddressJourney(isAgent = false)
+        val result: Future[Either[Throwable, Option[String]]] = TestAddressLookupService.initialiseAddressJourney(isAgent = false, isChange = false)
         result map {
           case Left(_) => Fail("Error returned from connector")
           case Right(None) => Fail("No redirect location returned from connector")

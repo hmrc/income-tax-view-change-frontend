@@ -136,7 +136,7 @@ class AddBusinessTradeControllerSpec extends TestSupport
             SessionKeys.businessTrade -> validBusinessTrade
           ))
           status(result) mustBe SEE_OTHER
-          redirectLocation(result) mustBe Some(controllers.incomeSources.add.routes.AddBusinessAddressController.show().url)
+          redirectLocation(result) mustBe Some(controllers.incomeSources.add.routes.AddBusinessAddressController.show(isChange = false).url)
           session(result).get(SessionKeys.businessTrade) mustBe Some(validBusinessTrade)
         }
 
@@ -154,7 +154,7 @@ class AddBusinessTradeControllerSpec extends TestSupport
           ))
 
           status(result) mustBe SEE_OTHER
-          redirectLocation(result) mustBe Some(controllers.incomeSources.add.routes.AddBusinessAddressController.showAgent().url)
+          redirectLocation(result) mustBe Some(controllers.incomeSources.add.routes.AddBusinessAddressController.showAgent(isChange = false).url)
           session(result).get(SessionKeys.businessTrade) mustBe Some(validBusinessTrade)
         }
       }

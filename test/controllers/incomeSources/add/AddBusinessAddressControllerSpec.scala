@@ -51,7 +51,8 @@ class AddBusinessAddressControllerSpec extends TestSupport
 
   val incomeSourceDetailsService: IncomeSourceDetailsService = mock(classOf[IncomeSourceDetailsService])
 
-  val postAction: Call = controllers.incomeSources.add.routes.AddBusinessAddressController.submit(None)
+  val postAction: Call = controllers.incomeSources.add.routes.AddBusinessAddressController.submit(None, isChange = false)
+  val postActionChange: Call = controllers.incomeSources.add.routes.AddBusinessAddressController.submit(None, isChange = true)
 
   val mockAddressLookupService: AddressLookupService = mock(classOf[AddressLookupService])
 
@@ -83,7 +84,7 @@ class AddBusinessAddressControllerSpec extends TestSupport
       "the indivdual is not authenticated" should {
         "redirect them to sign in" in {
           setupMockAuthorisationException()
-          val result = TestAddBusinessAddressController.show()(fakeRequestWithActiveSession)
+          val result = TestAddBusinessAddressController.show(isChange = false)(fakeRequestWithActiveSession)
           status(result) shouldBe SEE_OTHER
           redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn.url)
         }
@@ -93,7 +94,7 @@ class AddBusinessAddressControllerSpec extends TestSupport
       "redirect to the session timeout page" in {
         setupMockAuthorisationException()
 
-        val result = TestAddBusinessAddressController.submit(None)(fakeRequestWithTimeoutSession)
+        val result = TestAddBusinessAddressController.submit(None, isChange = false)(fakeRequestWithTimeoutSession)
 
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout.url)
@@ -108,10 +109,10 @@ class AddBusinessAddressControllerSpec extends TestSupport
 
           setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
           setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-          when(mockAddressLookupService.initialiseAddressJourney(any())(any(), any()))
+          when(mockAddressLookupService.initialiseAddressJourney(any(), any())(any(), any()))
             .thenReturn(Future(Right(Some("Sample location"))))
 
-          val result: Future[Result] = TestAddBusinessAddressController.show()(fakeRequestWithActiveSession)
+          val result: Future[Result] = TestAddBusinessAddressController.show(isChange = false)(fakeRequestWithActiveSession)
           status(result) shouldBe SEE_OTHER
           redirectLocation(result) mustBe Some("Sample location")
         }
@@ -122,10 +123,10 @@ class AddBusinessAddressControllerSpec extends TestSupport
 
           setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
           setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-          when(mockAddressLookupService.initialiseAddressJourney(any())(any(), any()))
+          when(mockAddressLookupService.initialiseAddressJourney(any(), any())(any(), any()))
             .thenReturn(Future(Right(Some("Sample location"))))
 
-          val result: Future[Result] = TestAddBusinessAddressController.showAgent()(fakeRequestConfirmedClient())
+          val result: Future[Result] = TestAddBusinessAddressController.showAgent(isChange = false)(fakeRequestConfirmedClient())
           status(result) shouldBe SEE_OTHER
           redirectLocation(result) mustBe Some("Sample location")
         }
@@ -138,7 +139,7 @@ class AddBusinessAddressControllerSpec extends TestSupport
           setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
           setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
-          val result: Future[Result] = TestAddBusinessAddressController.show()(fakeRequestWithActiveSession)
+          val result: Future[Result] = TestAddBusinessAddressController.show(isChange = false)(fakeRequestWithActiveSession)
           status(result) shouldBe SEE_OTHER
           redirectLocation(result) shouldBe Some(controllers.routes.HomeController.show().url)
         }
@@ -148,7 +149,7 @@ class AddBusinessAddressControllerSpec extends TestSupport
           setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
           setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
-          val result: Future[Result] = TestAddBusinessAddressController.showAgent()(fakeRequestConfirmedClient())
+          val result: Future[Result] = TestAddBusinessAddressController.showAgent(isChange = false)(fakeRequestConfirmedClient())
           status(result) shouldBe SEE_OTHER
           redirectLocation(result) shouldBe Some(controllers.routes.HomeController.showAgent.url)
         }
@@ -161,10 +162,10 @@ class AddBusinessAddressControllerSpec extends TestSupport
 
           setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
           setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-          when(mockAddressLookupService.initialiseAddressJourney(any())(any(), any()))
+          when(mockAddressLookupService.initialiseAddressJourney(any(), any())(any(), any()))
             .thenReturn(Future(Right(None)))
 
-          val result: Future[Result] = TestAddBusinessAddressController.show()(fakeRequestWithActiveSession)
+          val result: Future[Result] = TestAddBusinessAddressController.show(isChange = false)(fakeRequestWithActiveSession)
           status(result) shouldBe INTERNAL_SERVER_ERROR
         }
         "no location returned to the agent" in {
@@ -173,10 +174,10 @@ class AddBusinessAddressControllerSpec extends TestSupport
 
           setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
           setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-          when(mockAddressLookupService.initialiseAddressJourney(any())(any(), any()))
+          when(mockAddressLookupService.initialiseAddressJourney(any(), any())(any(), any()))
             .thenReturn(Future(Right(None)))
 
-          val result: Future[Result] = TestAddBusinessAddressController.showAgent()(fakeRequestConfirmedClient())
+          val result: Future[Result] = TestAddBusinessAddressController.showAgent(isChange = false)(fakeRequestConfirmedClient())
           status(result) shouldBe INTERNAL_SERVER_ERROR
         }
 
@@ -186,10 +187,10 @@ class AddBusinessAddressControllerSpec extends TestSupport
 
           setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
           setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-          when(mockAddressLookupService.initialiseAddressJourney(any())(any(), any()))
+          when(mockAddressLookupService.initialiseAddressJourney(any(), any())(any(), any()))
             .thenReturn(Future(Left(AddressError("Test status"))))
 
-          val result: Future[Result] = TestAddBusinessAddressController.show()(fakeRequestWithActiveSession)
+          val result: Future[Result] = TestAddBusinessAddressController.show(isChange = false)(fakeRequestWithActiveSession)
           status(result) shouldBe INTERNAL_SERVER_ERROR
         }
         "failure returned to the agent" in {
@@ -198,10 +199,10 @@ class AddBusinessAddressControllerSpec extends TestSupport
 
           setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
           setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-          when(mockAddressLookupService.initialiseAddressJourney(any())(any(), any()))
+          when(mockAddressLookupService.initialiseAddressJourney(any(), any())(any(), any()))
             .thenReturn(Future(Left(AddressError("Test status"))))
 
-          val result: Future[Result] = TestAddBusinessAddressController.showAgent()(fakeRequestConfirmedClient())
+          val result: Future[Result] = TestAddBusinessAddressController.showAgent(isChange = false)(fakeRequestConfirmedClient())
           status(result) shouldBe INTERNAL_SERVER_ERROR
         }
       }
@@ -219,7 +220,7 @@ class AddBusinessAddressControllerSpec extends TestSupport
           when(mockAddressLookupService.fetchAddress(any())(any()))
             .thenReturn(Future(Right(testBusinessAddressModel)))
 
-          val result: Future[Result] = TestAddBusinessAddressController.submit(Some("123"))(fakeRequestWithActiveSession)
+          val result: Future[Result] = TestAddBusinessAddressController.submit(Some("123"), isChange = false)(fakeRequestWithActiveSession)
           status(result) shouldBe SEE_OTHER
           session(result).get(SessionKeys.addBusinessAddressLine1) mustBe Some("Line 1")
           session(result).get(SessionKeys.addBusinessPostalCode) mustBe Some("AA1 1AA")
@@ -235,7 +236,7 @@ class AddBusinessAddressControllerSpec extends TestSupport
           when(mockAddressLookupService.fetchAddress(any())(any()))
             .thenReturn(Future(Right(testBusinessAddressModel)))
 
-          val result: Future[Result] = TestAddBusinessAddressController.agentSubmit(Some("123"))(fakeRequestConfirmedClient())
+          val result: Future[Result] = TestAddBusinessAddressController.agentSubmit(Some("123"), isChange = false)(fakeRequestConfirmedClient())
           status(result) shouldBe SEE_OTHER
           session(result).get(SessionKeys.addBusinessAddressLine1) mustBe Some("Line 1")
           session(result).get(SessionKeys.addBusinessPostalCode) mustBe Some("AA1 1AA")
@@ -253,7 +254,7 @@ class AddBusinessAddressControllerSpec extends TestSupport
           when(mockAddressLookupService.fetchAddress(any())(any()))
             .thenReturn(Future(Left(AddressError("Test status"))))
 
-          val result: Future[Result] = TestAddBusinessAddressController.submit(Some("123"))(fakeRequestWithActiveSession)
+          val result: Future[Result] = TestAddBusinessAddressController.submit(Some("123"), isChange = false)(fakeRequestWithActiveSession)
           status(result) shouldBe INTERNAL_SERVER_ERROR
         }
         "error returned to agent" in {
@@ -266,7 +267,7 @@ class AddBusinessAddressControllerSpec extends TestSupport
           when(mockAddressLookupService.fetchAddress(any())(any()))
             .thenReturn(Future(Left(AddressError("Test status"))))
 
-          val result: Future[Result] = TestAddBusinessAddressController.agentSubmit(Some("123"))(fakeRequestConfirmedClient())
+          val result: Future[Result] = TestAddBusinessAddressController.agentSubmit(Some("123"), isChange = false)(fakeRequestConfirmedClient())
           status(result) shouldBe INTERNAL_SERVER_ERROR
         }
       }
