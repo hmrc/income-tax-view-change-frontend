@@ -131,6 +131,35 @@ class AddBusinessAddressControllerSpec extends TestSupport
           redirectLocation(result) mustBe Some("Sample location")
         }
       }
+      "redirect to the address lookup service on change page" when {
+        "location redirect is returned by the lookup service to individual and isChange = true" in {
+          disableAllSwitches()
+          enable(IncomeSources)
+
+          setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
+          setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+          when(mockAddressLookupService.initialiseAddressJourney(any(), any())(any(), any()))
+            .thenReturn(Future(Right(Some("Sample location"))))
+
+          val result: Future[Result] = TestAddBusinessAddressController.show(isChange = true)(fakeRequestWithActiveSession)
+          status(result) shouldBe SEE_OTHER
+          redirectLocation(result) mustBe Some("Sample location")
+        }
+
+        "location redirect is returned by the lookup service to agent and isChange = true" in {
+          disableAllSwitches()
+          enable(IncomeSources)
+
+          setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
+          setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+          when(mockAddressLookupService.initialiseAddressJourney(any(), any())(any(), any()))
+            .thenReturn(Future(Right(Some("Sample location"))))
+
+          val result: Future[Result] = TestAddBusinessAddressController.showAgent(isChange = true)(fakeRequestConfirmedClient())
+          status(result) shouldBe SEE_OTHER
+          redirectLocation(result) mustBe Some("Sample location")
+        }
+      }
 
       "redirect back to the home page" when {
         "incomeSources switch disabled for individual" in {
@@ -150,6 +179,29 @@ class AddBusinessAddressControllerSpec extends TestSupport
           setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
           val result: Future[Result] = TestAddBusinessAddressController.showAgent(isChange = false)(fakeRequestConfirmedClient())
+          status(result) shouldBe SEE_OTHER
+          redirectLocation(result) shouldBe Some(controllers.routes.HomeController.showAgent.url)
+        }
+      }
+
+      "redirect back to the home page after pressing change link" when {
+        "incomeSources switch disabled for individual" in {
+          disableAllSwitches()
+
+          setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
+          setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+
+          val result: Future[Result] = TestAddBusinessAddressController.show(isChange = true)(fakeRequestWithActiveSession)
+          status(result) shouldBe SEE_OTHER
+          redirectLocation(result) shouldBe Some(controllers.routes.HomeController.show().url)
+        }
+        "incomeSources switch disabled for agent" in {
+          disableAllSwitches()
+
+          setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
+          setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+
+          val result: Future[Result] = TestAddBusinessAddressController.showAgent(isChange = true)(fakeRequestConfirmedClient())
           status(result) shouldBe SEE_OTHER
           redirectLocation(result) shouldBe Some(controllers.routes.HomeController.showAgent.url)
         }
@@ -206,6 +258,57 @@ class AddBusinessAddressControllerSpec extends TestSupport
           status(result) shouldBe INTERNAL_SERVER_ERROR
         }
       }
+      "return the correct error on change page" when {
+        "no location returned to the individual and isChange = true" in {
+          disableAllSwitches()
+          enable(IncomeSources)
+
+          setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
+          setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+          when(mockAddressLookupService.initialiseAddressJourney(any(), any())(any(), any()))
+            .thenReturn(Future(Right(None)))
+
+          val result: Future[Result] = TestAddBusinessAddressController.show(isChange = true)(fakeRequestWithActiveSession)
+          status(result) shouldBe INTERNAL_SERVER_ERROR
+        }
+        "no location returned to the agent and isChange = true" in {
+          disableAllSwitches()
+          enable(IncomeSources)
+
+          setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
+          setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+          when(mockAddressLookupService.initialiseAddressJourney(any(), any())(any(), any()))
+            .thenReturn(Future(Right(None)))
+
+          val result: Future[Result] = TestAddBusinessAddressController.showAgent(isChange = true)(fakeRequestConfirmedClient())
+          status(result) shouldBe INTERNAL_SERVER_ERROR
+        }
+
+        "failure returned to the individual and isChange = true" in {
+          disableAllSwitches()
+          enable(IncomeSources)
+
+          setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
+          setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+          when(mockAddressLookupService.initialiseAddressJourney(any(), any())(any(), any()))
+            .thenReturn(Future(Left(AddressError("Test status"))))
+
+          val result: Future[Result] = TestAddBusinessAddressController.show(isChange = true)(fakeRequestWithActiveSession)
+          status(result) shouldBe INTERNAL_SERVER_ERROR
+        }
+        "failure returned to the agent and isChange = true" in {
+          disableAllSwitches()
+          enable(IncomeSources)
+
+          setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
+          setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+          when(mockAddressLookupService.initialiseAddressJourney(any(), any())(any(), any()))
+            .thenReturn(Future(Left(AddressError("Test status"))))
+
+          val result: Future[Result] = TestAddBusinessAddressController.showAgent(isChange = true)(fakeRequestConfirmedClient())
+          status(result) shouldBe INTERNAL_SERVER_ERROR
+        }
+      }
     }
 
     ".submit" should {
@@ -243,6 +346,40 @@ class AddBusinessAddressControllerSpec extends TestSupport
           session(result).get(SessionKeys.addBusinessCountryCode) mustBe Some("GB")
         }
       }
+      "redirect to the check your details page" when {
+        "valid data received by individual and isChange = true" in {
+          disableAllSwitches()
+          enable(IncomeSources)
+
+          setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
+          setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+
+          when(mockAddressLookupService.fetchAddress(any())(any()))
+            .thenReturn(Future(Right(testBusinessAddressModel)))
+
+          val result: Future[Result] = TestAddBusinessAddressController.submit(Some("123"), isChange = true)(fakeRequestWithActiveSession)
+          status(result) shouldBe SEE_OTHER
+          session(result).get(SessionKeys.addBusinessAddressLine1) mustBe Some("Line 1")
+          session(result).get(SessionKeys.addBusinessPostalCode) mustBe Some("AA1 1AA")
+          session(result).get(SessionKeys.addBusinessCountryCode) mustBe Some("GB")
+        }
+        "valid data received by agent and isChange = true" in {
+          disableAllSwitches()
+          enable(IncomeSources)
+
+          setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
+          setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+
+          when(mockAddressLookupService.fetchAddress(any())(any()))
+            .thenReturn(Future(Right(testBusinessAddressModel)))
+
+          val result: Future[Result] = TestAddBusinessAddressController.agentSubmit(Some("123"), isChange = true)(fakeRequestConfirmedClient())
+          status(result) shouldBe SEE_OTHER
+          session(result).get(SessionKeys.addBusinessAddressLine1) mustBe Some("Line 1")
+          session(result).get(SessionKeys.addBusinessPostalCode) mustBe Some("AA1 1AA")
+          session(result).get(SessionKeys.addBusinessCountryCode) mustBe Some("GB")
+        }
+      }
       "show correct error" when {
         "error returned to individual" in {
           disableAllSwitches()
@@ -268,6 +405,34 @@ class AddBusinessAddressControllerSpec extends TestSupport
             .thenReturn(Future(Left(AddressError("Test status"))))
 
           val result: Future[Result] = TestAddBusinessAddressController.agentSubmit(Some("123"), isChange = false)(fakeRequestConfirmedClient())
+          status(result) shouldBe INTERNAL_SERVER_ERROR
+        }
+      }
+      "show correct error on change page" when {
+        "error returned to individual when isChange = true" in {
+          disableAllSwitches()
+          enable(IncomeSources)
+
+          setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
+          setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+
+          when(mockAddressLookupService.fetchAddress(any())(any()))
+            .thenReturn(Future(Left(AddressError("Test status"))))
+
+          val result: Future[Result] = TestAddBusinessAddressController.submit(Some("123"), isChange = true)(fakeRequestWithActiveSession)
+          status(result) shouldBe INTERNAL_SERVER_ERROR
+        }
+        "error returned to agent when isChange = true" in {
+          disableAllSwitches()
+          enable(IncomeSources)
+
+          setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
+          setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+
+          when(mockAddressLookupService.fetchAddress(any())(any()))
+            .thenReturn(Future(Left(AddressError("Test status"))))
+
+          val result: Future[Result] = TestAddBusinessAddressController.agentSubmit(Some("123"), isChange = true)(fakeRequestConfirmedClient())
           status(result) shouldBe INTERNAL_SERVER_ERROR
         }
       }
