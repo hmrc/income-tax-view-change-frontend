@@ -60,7 +60,6 @@ class UKPropertyCeasedObligationsController @Inject()(val authenticate: Authenti
             Ok(obligationsView(
               businessName = None,
               sources = viewModel,
-              backUrl = None,
               isAgent = isAgent,
               incomeSourceType = UkProperty))
           }

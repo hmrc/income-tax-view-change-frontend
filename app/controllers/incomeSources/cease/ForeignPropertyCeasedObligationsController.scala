@@ -60,7 +60,6 @@ class ForeignPropertyCeasedObligationsController @Inject()(val authenticate: Aut
             Ok(obligationsView(
               businessName = None,
               sources = viewModel,
-              backUrl = None,
               isAgent = isAgent,
               incomeSourceType = ForeignProperty))
           }

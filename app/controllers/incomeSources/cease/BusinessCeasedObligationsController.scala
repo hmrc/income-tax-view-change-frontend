@@ -69,7 +69,6 @@ class BusinessCeasedObligationsController @Inject()(authenticate: Authentication
             Ok(obligationsView(
               businessName = businessName,
               sources = viewModel,
-              backUrl = None,
               isAgent = isAgent,
               incomeSourceType = SelfEmployment))
           }
