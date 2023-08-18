@@ -151,15 +151,15 @@ class IncomeSourcesAccountingMethodController @Inject()(val authenticate: Authen
    private def actionIndividualSubmitRequest(incomeSourceType: String): (Call, String, Call) = {
     incomeSourceType match {
       case SelfEmployment.key =>
-          (routes.IncomeSourcesAccountingMethodController.submit(incomeSourceType),
+          (routes.IncomeSourcesAccountingMethodController.submit(SelfEmployment.key),
             routes.AddBusinessAddressController.show().url,
             routes.CheckBusinessDetailsController.show())
       case UkProperty.key =>
-          (routes.IncomeSourcesAccountingMethodController.submit(incomeSourceType),
+          (routes.IncomeSourcesAccountingMethodController.submit(UkProperty.key),
             routes.AddIncomeSourceStartDateCheckController.showUKProperty.url,
             routes.CheckUKPropertyDetailsController.show())
       case ForeignProperty.key =>
-          (routes.IncomeSourcesAccountingMethodController.submit(incomeSourceType),
+          (routes.IncomeSourcesAccountingMethodController.submit(ForeignProperty.key),
             routes.AddIncomeSourceStartDateCheckController.showForeignProperty.url,
             routes.ForeignPropertyCheckDetailsController.show())
     }
@@ -168,15 +168,15 @@ class IncomeSourcesAccountingMethodController @Inject()(val authenticate: Authen
   private def actionAgentSubmitRequest(incomeSourceType: String): (Call, String, Call) = {
     incomeSourceType match {
       case SelfEmployment.key =>
-          (routes.IncomeSourcesAccountingMethodController.submitAgent(incomeSourceType),
+          (routes.IncomeSourcesAccountingMethodController.submitAgent(SelfEmployment.key),
             routes.AddBusinessAddressController.showAgent().url,
             routes.CheckBusinessDetailsController.showAgent())
       case UkProperty.key =>
-          (routes.IncomeSourcesAccountingMethodController.submitAgent(incomeSourceType),
+          (routes.IncomeSourcesAccountingMethodController.submitAgent(UkProperty.key),
             routes.AddIncomeSourceStartDateCheckController.showUKPropertyAgent.url,
             routes.CheckUKPropertyDetailsController.showAgent())
       case ForeignProperty.key =>
-          (routes.IncomeSourcesAccountingMethodController.submitAgent(incomeSourceType),
+          (routes.IncomeSourcesAccountingMethodController.submitAgent(ForeignProperty.key),
             routes.AddIncomeSourceStartDateCheckController.showForeignPropertyAgent.url,
             routes.ForeignPropertyCheckDetailsController.showAgent())
     }
