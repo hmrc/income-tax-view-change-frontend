@@ -59,44 +59,43 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
                                                    val ec: ExecutionContext)
   extends ClientConfirmedController with I18nSupport with FeatureSwitching {
 
-  def showUKProperty(isAgent: Boolean, isUpdate: Boolean): Action[AnyContent] = handleRequest(UkProperty, isAgent, isUpdate)
-  def showForeignProperty(isAgent: Boolean, isUpdate: Boolean): Action[AnyContent] = handleRequest(ForeignProperty, isAgent, isUpdate)
-  def showSoleTraderBusiness(isAgent: Boolean, isUpdate: Boolean): Action[AnyContent] = handleRequest(SelfEmployment, isAgent, isUpdate)
-  def submitUKProperty(isAgent: Boolean, isUpdate: Boolean): Action[AnyContent] = handleRequest(UkProperty, isAgent, isUpdate)
-  def submitForeignProperty(isAgent: Boolean, isUpdate: Boolean): Action[AnyContent] = handleRequest(ForeignProperty, isAgent, isUpdate)
-  def submitSoleTraderBusiness(isAgent: Boolean, isUpdate: Boolean): Action[AnyContent] = handleRequest(SelfEmployment, isAgent, isUpdate)
+  def showUKProperty(isAgent: Boolean, isUpdate: Boolean): Action[AnyContent] = handleRequestMethod(UkProperty, isAgent, isUpdate)
+  def showForeignProperty(isAgent: Boolean, isUpdate: Boolean): Action[AnyContent] = handleRequestMethod(ForeignProperty, isAgent, isUpdate)
+  def showSoleTraderBusiness(isAgent: Boolean, isUpdate: Boolean): Action[AnyContent] = handleRequestMethod(SelfEmployment, isAgent, isUpdate)
+  def submitUKProperty(isAgent: Boolean, isUpdate: Boolean): Action[AnyContent] = handleRequestMethod(UkProperty, isAgent, isUpdate)
+  def submitForeignProperty(isAgent: Boolean, isUpdate: Boolean): Action[AnyContent] = handleRequestMethod(ForeignProperty, isAgent, isUpdate)
+  def submitSoleTraderBusiness(isAgent: Boolean, isUpdate: Boolean): Action[AnyContent] = handleRequestMethod(SelfEmployment, isAgent, isUpdate)
 
-  private def handleRequest(incomeSourceType: IncomeSourceType,
-                            isAgent: Boolean,
-                            isUpdate: Boolean): Action[AnyContent] = {
+  private def handleRequestMethod(incomeSourceType: IncomeSourceType,
+                                  isAgent: Boolean,
+                                  isUpdate: Boolean): Action[AnyContent] = {
 
-    if (isAgent) {
+    if (isAgent)
       Authenticated.async {
         implicit request =>
           implicit user =>
             getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
               implicit mtdItUser =>
                 request.method match {
-                  case "POST" => submit(incomeSourceType, isAgent, isUpdate)
-                  case "GET" => show(incomeSourceType, isAgent, isUpdate)
+                  case "GET" => handleRequest(incomeSourceType, isAgent, isUpdate)
+                  case "POST" => handleSubmitRequest(incomeSourceType, isAgent, isUpdate)
                 }
             }
       }
-    } else {
+    else
       (checkSessionTimeout andThen authenticate andThen retrieveNino
         andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
         implicit user =>
           user.method match {
-            case "POST" => submit(incomeSourceType, isAgent, isUpdate)
-            case "GET" => show(incomeSourceType, isAgent, isUpdate)
+            case "GET" => handleRequest(incomeSourceType, isAgent, isUpdate)
+            case "POST" => handleSubmitRequest(incomeSourceType, isAgent, isUpdate)
           }
       }
-    }
   }
 
-  private def show(incomeSourceType: IncomeSourceType,
-                   isAgent: Boolean,
-                   isUpdate: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
+  private def handleRequest(incomeSourceType: IncomeSourceType,
+                            isAgent: Boolean,
+                            isUpdate: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
 
     val messagesPrefix = incomeSourceType.startDateMessagesPrefix
 
@@ -129,9 +128,9 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
   }
 
 
-  private def submit(incomeSourceType: IncomeSourceType,
-                     isAgent: Boolean,
-                     isUpdate: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
+  private def handleSubmitRequest(incomeSourceType: IncomeSourceType,
+                                  isAgent: Boolean,
+                                  isUpdate: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
 
     val messagesPrefix = incomeSourceType.startDateMessagesPrefix
 

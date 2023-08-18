@@ -301,6 +301,25 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
       )
     }
 
+
+    def getAddBusinessStartDateCheckChange(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      get(
+        uri = "/income-sources/add/change-business-start-date-check", additionalCookies
+      )
+    }
+
+    def getAddForeignPropertyStartDateCheckChange(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      get(
+        uri = "/income-sources/add/change-foreign-property-start-date-check", additionalCookies
+      )
+    }
+
+    def getAddUKPropertyStartDateCheckChange(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      get(
+        uri = "/income-sources/add/change-uk-property-start-date-check", additionalCookies
+      )
+    }
+
     def postForeignPropertyAddedObligations(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
       post(s"/income-sources/add/foreign-property-added", additionalCookies)(Map.empty)
     }
@@ -326,6 +345,42 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     def postAddForeignPropertyStartDateCheck(answer: Option[String])(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
       post(
         uri = s"/income-sources/add/foreign-property-start-date-check",
+        additionalCookies = additionalCookies
+      )(
+        answer.fold(Map.empty[String, Seq[String]])(
+          selection => AddIncomeSourceStartDateCheckForm(ForeignProperty.addStartDateCheckMessagesPrefix)
+            .fill(AddIncomeSourceStartDateCheckForm(Some(selection))).data.map { case (k, v) => (k, Seq(v)) }
+        )
+      )
+    }
+
+    def postAddBusinessStartDateCheckChange(answer: Option[String])(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      post(
+        uri = s"/income-sources/add/change-business-start-date-check",
+        additionalCookies = additionalCookies
+      )(
+        answer.fold(Map.empty[String, Seq[String]])(
+          selection => AddIncomeSourceStartDateCheckForm(SelfEmployment.addStartDateCheckMessagesPrefix)
+            .fill(AddIncomeSourceStartDateCheckForm(Some(selection))).data.map { case (k, v) => (k, Seq(v)) }
+        )
+      )
+    }
+
+    def postAddUKPropertyStartDateCheckChange(answer: Option[String])(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      post(
+        uri = s"/income-sources/add/change-uk-property-start-date-check",
+        additionalCookies = additionalCookies
+      )(
+        answer.fold(Map.empty[String, Seq[String]])(
+          selection => AddIncomeSourceStartDateCheckForm(UkProperty.addStartDateCheckMessagesPrefix)
+            .fill(AddIncomeSourceStartDateCheckForm(Some(selection))).data.map { case (k, v) => (k, Seq(v)) }
+        )
+      )
+    }
+
+    def postAddForeignPropertyStartDateCheckChange(answer: Option[String])(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      post(
+        uri = s"/income-sources/add/change-foreign-property-start-date-check",
         additionalCookies = additionalCookies
       )(
         answer.fold(Map.empty[String, Seq[String]])(
