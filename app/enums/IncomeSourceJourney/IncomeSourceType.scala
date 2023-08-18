@@ -46,3 +46,13 @@ case object ForeignProperty extends IncomeSourceType {
   override val addStartDateCheckMessagesPrefix = "add-foreign-property-start-date-check"
   override val startDateSessionKey = SessionKeys.foreignPropertyStartDate
 }
+
+object IncomeSourceType {
+  def get(key: String): IncomeSourceType = {
+    key match {
+      case "FP" => ForeignProperty
+      case "UK" => UkProperty
+      case "SE" => SelfEmployment
+    }
+  }
+}

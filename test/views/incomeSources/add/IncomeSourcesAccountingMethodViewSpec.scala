@@ -56,11 +56,11 @@ class IncomeSourcesAccountingMethodViewSpec extends TestSupport {
 
     val (backUrl, postAction) = incomeSourceType match {
       case SelfEmployment.key =>
-        (controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.showSoleTraderBusiness(isAgent, isUpdate = false).url, controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.submitAgent (SelfEmployment.key))
+        (controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.handleRequest(SelfEmployment.key, isAgent, isUpdate = false).url, controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.submitAgent (SelfEmployment.key))
       case UkProperty.key =>
-        (controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.showUKProperty(isAgent, isUpdate = false).url, controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.submitAgent(UkProperty.key))
+        (controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.handleRequest(UkProperty.key, isAgent, isUpdate = false).url, controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.submitAgent(UkProperty.key))
       case ForeignProperty.key =>
-        (controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.showForeignProperty(isAgent, isUpdate = false).url, controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.submitAgent(ForeignProperty.key))
+        (controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.handleRequest(ForeignProperty.key, isAgent, isUpdate = false).url, controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.submitAgent(ForeignProperty.key))
     }
 
     lazy val view: HtmlFormat.Appendable = incomeSourcesAccountingMethodView(

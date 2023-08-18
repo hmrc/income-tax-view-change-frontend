@@ -16,6 +16,7 @@
 
 package views.incomeSources.add
 
+import enums.IncomeSourceJourney.SelfEmployment
 import forms.incomeSources.add.BusinessTradeForm
 import forms.utils.SessionKeys
 import org.jsoup.nodes.Element
@@ -37,8 +38,8 @@ class AddBusinessTradeViewSpec extends ViewSpec {
     val errorPrefix: String = messages("base.error-prefix")
   }
 
-  val backUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showSoleTraderBusiness(isAgent = false, isUpdate = false).url
-  val agentBackUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showSoleTraderBusiness(isAgent = true, isUpdate = false).url
+  val backUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.handleRequest(SelfEmployment.key, isAgent = false, isUpdate = false).url
+  val agentBackUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.handleRequest(SelfEmployment.key, isAgent = true, isUpdate = false).url
 
   val addBusinessTradeView: AddBusinessTrade = app.injector.instanceOf[AddBusinessTrade]
 

@@ -64,7 +64,7 @@
 }
 
 @changeBusinessStartDateURL = @{
-    controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showSoleTraderBusiness(isAgent = isAgent, isUpdate = true).url
+    controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.handleRequest(SelfEmployment.key, isAgent = isAgent, isUpdate = true).url
 }
 
 @changeBusinessTradeURL = @{

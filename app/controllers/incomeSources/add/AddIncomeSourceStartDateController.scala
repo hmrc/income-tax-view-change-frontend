@@ -59,17 +59,17 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
                                                    val ec: ExecutionContext)
   extends ClientConfirmedController with I18nSupport with FeatureSwitching {
 
-  def showUKProperty(isAgent: Boolean, isUpdate: Boolean): Action[AnyContent] = handleRequestMethod(UkProperty, isAgent, isUpdate)
-  def showForeignProperty(isAgent: Boolean, isUpdate: Boolean): Action[AnyContent] = handleRequestMethod(ForeignProperty, isAgent, isUpdate)
-  def showSoleTraderBusiness(isAgent: Boolean, isUpdate: Boolean): Action[AnyContent] = handleRequestMethod(SelfEmployment, isAgent, isUpdate)
-  def submitUKProperty(isAgent: Boolean, isUpdate: Boolean): Action[AnyContent] = handleRequestMethod(UkProperty, isAgent, isUpdate)
-  def submitForeignProperty(isAgent: Boolean, isUpdate: Boolean): Action[AnyContent] = handleRequestMethod(ForeignProperty, isAgent, isUpdate)
-  def submitSoleTraderBusiness(isAgent: Boolean, isUpdate: Boolean): Action[AnyContent] = handleRequestMethod(SelfEmployment, isAgent, isUpdate)
+  def handleRequest(incomeSourceKey: String, isAgent: Boolean, isUpdate: Boolean): Action[AnyContent] = {
+    handleRequestMethod(
+      incomeSourceType = IncomeSourceType.get(incomeSourceKey),
+      isAgent = isAgent,
+      isUpdate = isUpdate
+    )
+  }
 
   private def handleRequestMethod(incomeSourceType: IncomeSourceType,
                                   isAgent: Boolean,
                                   isUpdate: Boolean): Action[AnyContent] = {
-
     if (isAgent)
       Authenticated.async {
         implicit request =>
@@ -77,8 +77,8 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
             getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
               implicit mtdItUser =>
                 request.method match {
-                  case "GET" => handleRequest(incomeSourceType, isAgent, isUpdate)
-                  case "POST" => handleSubmitRequest(incomeSourceType, isAgent, isUpdate)
+                  case "GET" => show(incomeSourceType, isAgent, isUpdate)
+                  case "POST" => submit(incomeSourceType, isAgent, isUpdate)
                 }
             }
       }
@@ -87,13 +87,13 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
         andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
         implicit user =>
           user.method match {
-            case "GET" => handleRequest(incomeSourceType, isAgent, isUpdate)
-            case "POST" => handleSubmitRequest(incomeSourceType, isAgent, isUpdate)
+            case "GET" => show(incomeSourceType, isAgent, isUpdate)
+            case "POST" => submit(incomeSourceType, isAgent, isUpdate)
           }
       }
   }
 
-  private def handleRequest(incomeSourceType: IncomeSourceType,
+  private def show(incomeSourceType: IncomeSourceType,
                             isAgent: Boolean,
                             isUpdate: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
 
@@ -128,7 +128,7 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
   }
 
 
-  private def handleSubmitRequest(incomeSourceType: IncomeSourceType,
+  private def submit(incomeSourceType: IncomeSourceType,
                                   isAgent: Boolean,
                                   isUpdate: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
 
@@ -174,42 +174,33 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
   private def getCalls(incomeSourceType: IncomeSourceType,
                        isAgent: Boolean,
                        isUpdate: Boolean): (Call, Call, Call) = {
-
-    incomeSourceType match {
-      case SelfEmployment =>
-        (
+    (
+      incomeSourceType match {
+        case SelfEmployment =>
           (isAgent, isUpdate) match {
             case (false, false) => routes.AddBusinessNameController.show()
             case (false, true) => routes.CheckBusinessDetailsController.show()
             case (true, false) => routes.AddBusinessNameController.showAgent()
             case (true, true) => routes.CheckBusinessDetailsController.showAgent()
-          },
-          routes.AddIncomeSourceStartDateController.submitSoleTraderBusiness(isAgent, isUpdate),
-          routes.AddIncomeSourceStartDateCheckController.showSoleTraderBusiness(isAgent, isUpdate)
-        )
-      case UkProperty =>
-        (
+          }
+        case UkProperty =>
           (isAgent, isUpdate) match {
             case (false, false) => routes.AddIncomeSourceController.show()
             case (false, true) => routes.CheckUKPropertyDetailsController.show()
             case (true, false) => routes.AddIncomeSourceController.showAgent()
             case (true, true) => routes.CheckUKPropertyDetailsController.showAgent()
-          },
-          routes.AddIncomeSourceStartDateController.submitUKProperty(isAgent, isUpdate),
-          routes.AddIncomeSourceStartDateCheckController.submitUKProperty(isAgent, isUpdate)
-        )
-      case ForeignProperty =>
-        (
+          }
+        case ForeignProperty =>
           (isAgent, isUpdate) match {
             case (false, false) => routes.AddIncomeSourceController.show()
             case (false, true) => routes.ForeignPropertyCheckDetailsController.show()
             case (true, false) => routes.AddIncomeSourceController.showAgent()
             case (true, true) => routes.ForeignPropertyCheckDetailsController.showAgent()
-          },
-          routes.AddIncomeSourceStartDateController.submitForeignProperty(isAgent, isUpdate),
-          routes.AddIncomeSourceStartDateCheckController.submitForeignProperty(isAgent, isUpdate)
-        )
-    }
+          }
+      },
+      routes.AddIncomeSourceStartDateController.handleRequest(incomeSourceType.key, isAgent, isUpdate),
+      routes.AddIncomeSourceStartDateCheckController.handleRequest(incomeSourceType.key, isAgent, isUpdate)
+    )
   }
 
   private def getErrorHandler(isAgent: Boolean): ShowInternalServerError = {

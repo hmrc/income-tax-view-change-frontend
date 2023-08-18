@@ -16,6 +16,7 @@
 
 package views.incomeSources.add
 
+import enums.IncomeSourceJourney.SelfEmployment
 import models.incomeSourceDetails.viewmodels.CheckBusinessDetailsViewModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -68,8 +69,8 @@ class CheckBusinessDetailsViewSpec extends TestSupport {
 
     val backUrl: String = if (isAgent) controllers.routes.HomeController.showAgent.url else
       controllers.routes.HomeController.show().url
-    val postAction: Call = if (isAgent) controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.submitSoleTraderBusiness(isAgent = true, isUpdate = false) else
-      controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.submitSoleTraderBusiness(isAgent = false, isUpdate = false)
+    val postAction: Call = if (isAgent) controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.handleRequest(SelfEmployment.key, isAgent = true, isUpdate = false) else
+      controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.handleRequest(SelfEmployment.key, isAgent = false, isUpdate = false)
 
 
     lazy val view: HtmlFormat.Appendable = {

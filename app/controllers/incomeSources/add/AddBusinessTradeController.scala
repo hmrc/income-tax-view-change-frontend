@@ -21,6 +21,7 @@ import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
+import enums.IncomeSourceJourney.SelfEmployment
 import forms.incomeSources.add.BusinessTradeForm
 import forms.utils.SessionKeys
 import play.api.i18n.I18nSupport
@@ -49,7 +50,7 @@ class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate
                                            val ec: ExecutionContext)
   extends ClientConfirmedController with I18nSupport with FeatureSwitching {
 
-  def backURL(isAgent: Boolean): String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.submitSoleTraderBusiness(isAgent = isAgent, isUpdate = false).url
+  def backURL(isAgent: Boolean): String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.handleRequest(SelfEmployment.key, isAgent = isAgent, isUpdate = false).url
   lazy val postAction: Call = controllers.incomeSources.add.routes.AddBusinessTradeController.submit()
   lazy val postActionAgent: Call = controllers.incomeSources.add.routes.AddBusinessTradeController.agentSubmit()
   lazy val redirect: String = controllers.incomeSources.add.routes.AddBusinessAddressController.show().url
