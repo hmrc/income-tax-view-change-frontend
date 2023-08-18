@@ -17,29 +17,25 @@
 package views.incomeSources.add
 
 import forms.BusinessNameForm
-import forms.BusinessNameForm.invalidName
-import forms.IncomeSourcesFormsSpec.businessNameForm
-import forms.incomeSources.add.CheckUKPropertyStartDateForm
 import forms.utils.SessionKeys
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import play.api.data.{Form, FormError}
 import play.api.mvc.Call
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
-import play.twirl.api.{Html, HtmlFormat}
-import services.DateService
+import play.twirl.api.HtmlFormat
 import testUtils.ViewSpec
-import views.html.incomeSources.add.{AddBusinessName, CheckUKPropertyStartDate}
-
-import java.time.LocalDate
+import views.html.incomeSources.add.AddBusinessName
 
 class AddBusinessNameViewSpec extends ViewSpec {
 
   val addBusinessName: AddBusinessName = app.injector.instanceOf[AddBusinessName]
-  class Setup(isAgent: Boolean, error: Boolean = false, isChange: Boolean)(errorKey: String) {
+  class Setup(isAgent: Boolean, error: Boolean = false, isChange: Boolean) {
     val addBusinessNameForm: Form[BusinessNameForm] = BusinessNameForm.form
-
+    val changeBusinessNameForm: Form[BusinessNameForm] = BusinessNameForm.form.fill(BusinessNameForm("Test Business"))
     val testBusinessName: String = "Test Business"
+    val testChangeCall: Call = Call("POST", "/test-change-url")
+
     val postAction: Call = {
       if (isChange) {
         if (isAgent) {
@@ -71,7 +67,8 @@ class AddBusinessNameViewSpec extends ViewSpec {
         addBusinessNameForm,
         isAgent,
         postAction,
-        backUrl)(messages, implicitly)
+        backUrl,
+        useFallbackLink = false)(messages, implicitly)
     }
 
     lazy val viewWithInputErrors: HtmlFormat.Appendable = {
@@ -81,18 +78,39 @@ class AddBusinessNameViewSpec extends ViewSpec {
         isAgent,
         postAction,
         backUrl,
-      )(messages, implicitly)
+        useFallbackLink = false)(messages, implicitly)
     }
 
     lazy val changeView: HtmlFormat.Appendable = {
       addBusinessName(
-        addBusinessNameForm,
+        changeBusinessNameForm,
         isAgent,
         postAction,
-        backUrl)(messages, implicitly)
+        backUrl,
+        useFallbackLink = true)(messages, implicitly)
     }
 
-    lazy val document: Document = if (error) Jsoup.parse(contentAsString(viewWithInputErrors)) else Jsoup.parse(contentAsString(view))
+    lazy val changeViewWithError: HtmlFormat.Appendable = {
+      addBusinessName(
+        changeBusinessNameForm.withError(FormError("addBusinessName",
+          "add-business-name.form.error.required")),
+        isAgent,
+        postAction,
+        backUrl,
+        useFallbackLink = true)(messages, implicitly)
+    }
+
+    lazy val document: Document = {
+      if (isChange) {
+        if (error) {
+          Jsoup.parse(contentAsString(changeViewWithError))
+        } else {
+          Jsoup.parse(contentAsString(changeView))        }
+      } else {
+        if (error) Jsoup.parse(contentAsString(viewWithInputErrors)) else
+          Jsoup.parse(contentAsString(view))
+      }
+    }
   }
 
   object AddBusinessNameMessages {
@@ -106,24 +124,19 @@ class AddBusinessNameViewSpec extends ViewSpec {
     val errorPrefix: String = messages("base.error-prefix")
   }
 
-
-  val testChangeCall: Call = Call("POST", "/test-change-url")
-
   "AddBusinessNameView - ADD - Individual" when {
     "there is no error on the add page" should {
-      "have the correct heading" in new Setup(false, false, false)("") {
+      "have the correct heading" in new Setup(false, false, false){
         document hasPageHeading AddBusinessNameMessages.heading
       }
-      "render the back link with the correct URL" in new Setup(false, false, false)("") {
+      "render the back link with the correct URL" in new Setup(false, false, false){
         document.getElementsByClass("govuk-back-link").text() shouldBe messages("base.back")
         document.getElementsByClass("govuk-back-link").attr("href") shouldBe backUrl
       }
-      "have a form with the correct attributes" in new Setup(false, false, false)("") {
+      "have a form with the correct attributes" in new Setup(false, false, false){
         document.hasFormWith(testCall.method, postAction.url)
-        print(postAction.url)
-        println("LOOOOK")
       }
-      "have an input with associated hint and label" in new Setup(false, false, false)("") {
+      "have an input with associated hint and label" in new Setup(false, false, false){
         val form: Element = document.selectHead("form")
         val label: Element = form.selectHead("label")
         val hint: Element = document.selectHead(".govuk-hint")
@@ -132,6 +145,7 @@ class AddBusinessNameViewSpec extends ViewSpec {
 
         label.text shouldBe AddBusinessNameMessages.heading
         label.attr("for") shouldBe input.attr("id")
+        hint.text contains AddBusinessNameMessages.paragraph1
         input.attr("id") shouldBe SessionKeys.businessName
         input.attr("name") shouldBe SessionKeys.businessName
         input.attr("type") shouldBe "text"
@@ -139,230 +153,139 @@ class AddBusinessNameViewSpec extends ViewSpec {
         input.attr("value") shouldBe("")
 
       }
-      "have a continue button" in new Setup(false, false, false)("") {
+      "have a continue button" in new Setup(false, false, false) {
         val button: Element = document.selectHead("form").selectHead("button")
         button.text shouldBe AddBusinessNameMessages.continue
       }
     }
-
-    "there is an input error on the add page" should {
-      List(
-        BusinessNameForm.businessNameEmptyError -> AddBusinessNameMessages.errorBusinessNameEmpty,
-        BusinessNameForm.businessNameLengthIncorrect -> AddBusinessNameMessages.errorBusinessNameLength,
-        BusinessNameForm.businessNameInvalidChar -> AddBusinessNameMessages.errorBusinessNameChar
-      ) foreach { case (errorKey, errorMessage) =>
-        s"for the error '$errorMessage'" should {
-
-          "have the error message display with the input described by it" in new Setup(false, true, false)(errorKey) {
-            val form: Element = document.selectHead("form")
-            form.selectHead("div").attr("class").contains("govuk-form-group--error") shouldBe true
-
-            val error: Element = form.selectHead("span")
-            val input: Element = form.selectHead("input")
-
-            error.attr("id") shouldBe s"${SessionKeys.businessName}-error"
-            error.text shouldBe s"${AddBusinessNameMessages.errorPrefix} $errorMessage"
-            val errorPrefix: Element = error.selectHead("span > span")
-            errorPrefix.attr("class") shouldBe "govuk-visually-hidden"
-            errorPrefix.text shouldBe AddBusinessNameMessages.errorPrefix
-
-            input.attr("aria-describedby") shouldBe s"${SessionKeys.businessName}-hint ${SessionKeys.businessName}-error"
-          }
-        }
+    "there is an error on the page" should{
+      "render the error summary" in new Setup(false, true, false) {
+        document.getElementById("error-summary-heading").text() shouldBe messages("base.error_summary.heading")
+        document.getElementsByClass("govuk-error-summary__body").first().text() shouldBe messages("add-business-name.form.error.required")
       }
     }
   }
 
   "AddBusinessNameView - CHANGE - Individual" when {
     "there is no error on the change page" should {
-      "have the correct heading" in new Setup(false, false, true)("") {
+      "have the correct heading" in new Setup(false, false, true) {
         document hasPageHeading AddBusinessNameMessages.heading
       }
-      "render the back link with the correct URL" in new Setup(false, false, true)(""){
+      "render the back link with the correct URL" in new Setup(false, false, true){
 
         document.getElementsByClass("govuk-back-link").text() shouldBe messages("base.back")
         document.getElementsByClass("govuk-back-link").attr("href") shouldBe backUrl
       }
-      "have a form with the correct attributes" in new Setup(false, false, true)("") {
-
+      "have a form with the correct attributes" in new Setup(false, false, true){
         document.hasFormWith(testChangeCall.method, postAction.url)
-        print(postAction.url)
-        println("LOOOOK")
       }
-      "have an input with associated hint and label" in new Setup(false, false, true)("") {
+      "have an input with associated hint and label" in new Setup(false, false, true){
         val form: Element = document.selectHead("form")
         val label: Element = form.selectHead("label")
         val hint: Element = document.selectHead(".govuk-hint")
         val input: Element = form.selectHead("input")
 
         label.text shouldBe AddBusinessNameMessages.heading
-
         label.attr("for") shouldBe input.attr("id")
+        hint.text contains AddBusinessNameMessages.paragraph1
         input.attr("id") shouldBe SessionKeys.businessName
         input.attr("name") shouldBe SessionKeys.businessName
         input.attr("type") shouldBe "text"
         input.attr("aria-describedby") shouldBe s"${SessionKeys.businessName}-hint"
         input.attr("value") shouldBe(testBusinessName)
       }
-      "have a continue button" in new Setup(false, false, true)("") {
+      "have a continue button" in new Setup(false, false, true){
         val button: Element = document.selectHead("form").selectHead("button")
         button.text shouldBe AddBusinessNameMessages.continue
       }
     }
-
-    "there is an input error on the change page" should {
-      List(
-        BusinessNameForm.businessNameEmptyError -> AddBusinessNameMessages.errorBusinessNameEmpty,
-        BusinessNameForm.businessNameLengthIncorrect -> AddBusinessNameMessages.errorBusinessNameLength,
-        BusinessNameForm.businessNameInvalidChar -> AddBusinessNameMessages.errorBusinessNameChar
-      ) foreach { case (errorKey, errorMessage) =>
-        s"for the error '$errorMessage'" should {
-
-          "have the error message display with the input described by it" in new Setup(false, true, true)(errorKey) {
-            val form: Element = document.selectHead("form")
-            form.selectHead("div").attr("class").contains("govuk-form-group--error") shouldBe true
-
-            val error: Element = form.selectHead("span")
-            val input: Element = form.selectHead("input")
-
-            error.attr("id") shouldBe s"${SessionKeys.businessName}-error"
-            error.text shouldBe s"${AddBusinessNameMessages.errorPrefix} $errorMessage"
-            val errorPrefix: Element = error.selectHead("span > span")
-            errorPrefix.attr("class") shouldBe "govuk-visually-hidden"
-            errorPrefix.text shouldBe AddBusinessNameMessages.errorPrefix
-
-            input.attr("aria-describedby") shouldBe s"${SessionKeys.businessName}-hint ${SessionKeys.businessName}-error"
-          }
-        }
+    "there is an error on the page" should {
+      "render the error summary" in new Setup(false, true, false) {
+        document.getElementById("error-summary-heading").text() shouldBe messages("base.error_summary.heading")
+        document.getElementsByClass("govuk-error-summary__body").first().text() shouldBe messages("add-business-name.form.error.required")
       }
     }
   }
-//
-//  "AddBusinessNameView - ADD - Agent" when {
-//    "there is no error on the add page" should {
-//      "have the correct heading" in new Setup(true, false, false)("") {
-//        document hasPageHeading AddBusinessNameMessages.heading
-//      }
-//      "render the back link with the correct URL" in new Setup(true, false, false)("") {
-//        document.getElementsByClass("govuk-back-link").text() shouldBe messages("base.back")
-//        document.getElementsByClass("govuk-back-link").attr("href") shouldBe backUrl
-//      }
-//      "have a form with the correct attributes" in new Setup(true, false, false)("") {
-//        document.hasFormWith(testCall.method, postAction.url)
-//      }
-//      "have an input with associated hint and label" in new Setup(true, false, false)("") {
-//        val form: Element = document.selectHead("form")
-//        val label: Element = form.selectHead("label")
-//        val hint: Element = document.selectHead(".govuk-hint")
-//
-//        val input: Element = form.selectHead("input")
-//
-//        label.text shouldBe AddBusinessNameMessages.heading
-//        label.attr("for") shouldBe input.attr("id")
-//        input.attr("id") shouldBe SessionKeys.businessName
-//        input.attr("name") shouldBe SessionKeys.businessName
-//        input.attr("type") shouldBe "text"
-//        input.attr("aria-describedby") shouldBe s"${SessionKeys.businessName}-hint"
-//        input.attr("value") shouldBe ("")
-//
-//      }
-//      "have a continue button" in new Setup(true, false, false)("") {
-//        val button: Element = document.selectHead("form").selectHead("button")
-//        button.text shouldBe AddBusinessNameMessages.continue
-//      }
-//    }
-//
-//    "there is an input error on the add page" should {
-//      List(
-//        BusinessNameForm.businessNameEmptyError -> AddBusinessNameMessages.errorBusinessNameEmpty,
-//        BusinessNameForm.businessNameLengthIncorrect -> AddBusinessNameMessages.errorBusinessNameLength,
-//        BusinessNameForm.businessNameInvalidChar -> AddBusinessNameMessages.errorBusinessNameChar
-//      ) foreach { case (errorKey, errorMessage) =>
-//        s"for the error '$errorMessage'" should {
-//
-//          "have the error message display with the input described by it" in new Setup(true, true, false)(errorKey) {
-//            val form: Element = document.selectHead("form")
-//            form.selectHead("div").attr("class").contains("govuk-form-group--error") shouldBe true
-//
-//            val error: Element = form.selectHead("span")
-//            val input: Element = form.selectHead("input")
-//
-//            error.attr("id") shouldBe s"${SessionKeys.businessName}-error"
-//            error.text shouldBe s"${AddBusinessNameMessages.errorPrefix} $errorMessage"
-//            val errorPrefix: Element = error.selectHead("span > span")
-//            errorPrefix.attr("class") shouldBe "govuk-visually-hidden"
-//            errorPrefix.text shouldBe AddBusinessNameMessages.errorPrefix
-//
-//            input.attr("aria-describedby") shouldBe s"${SessionKeys.businessName}-hint ${SessionKeys.businessName}-error"
-//          }
-//        }
-//      }
-//    }
-//  }
-//
-//  "AddBusinessNameView - CHANGE - Agent" when {
-//    "there is no error on the change page" should {
-//      "have the correct heading" in new Setup(true, false, true)("") {
-//        document hasPageHeading AddBusinessNameMessages.heading
-//      }
-//      "render the back link with the correct URL" in new Setup(true, false, true)("") {
-//        document.getElementsByClass("govuk-back-link").text() shouldBe messages("base.back")
-//        document.getElementsByClass("govuk-back-link").attr("href") shouldBe backUrl
-//      }
-//      "have a form with the correct attributes" in new Setup(true, false, true)("") {
-//        document.hasFormWith(testChangeCall.method, postAction.url)
-//      }
-//      "have an input with associated hint and label" in new Setup(true, false, true)("") {
-//        val form: Element = document.selectHead("form")
-//        val label: Element = form.selectHead("label")
-//        val hint: Element = document.selectHead(".govuk-hint")
-//        val input: Element = form.selectHead("input")
-//
-//        label.text shouldBe AddBusinessNameMessages.heading
-//
-//        label.attr("for") shouldBe input.attr("id")
-//        input.attr("id") shouldBe SessionKeys.businessName
-//        input.attr("name") shouldBe SessionKeys.businessName
-//        input.attr("type") shouldBe "text"
-//        input.attr("aria-describedby") shouldBe s"${SessionKeys.businessName}-hint"
-//        input.attr("value") shouldBe (testBusinessName)
-//      }
-//      "have a continue button" in new Setup(true, false, true)("") {
-//        val button: Element = document.selectHead("form").selectHead("button")
-//        button.text shouldBe AddBusinessNameMessages.continue
-//      }
-//    }
-//
-//    "there is an input error on the change page" should {
-//      List(
-//        BusinessNameForm.businessNameEmptyError -> AddBusinessNameMessages.errorBusinessNameEmpty,
-//        BusinessNameForm.businessNameLengthIncorrect -> AddBusinessNameMessages.errorBusinessNameLength,
-//        BusinessNameForm.businessNameInvalidChar -> AddBusinessNameMessages.errorBusinessNameChar
-//      ) foreach { case (errorKey, errorMessage) =>
-//        s"for the error '$errorMessage'" should {
-//
-//          "have the error message display with the input described by it" in new Setup(true, true, true)(errorKey) {
-//            val form: Element = document.selectHead("form")
-//            form.selectHead("div").attr("class").contains("govuk-form-group--error") shouldBe true
-//
-//            document.getElementsByClass("govuk-list govuk-error-summary__list").text() shouldBe messages(errorKey)
-//
-//            println(s"error key -  $errorKey")
-//            println(s"error message -  $errorMessage")
-//
-//            val error: Element = form.selectHead("span")
-//            val input: Element = form.selectHead("input")
-//
-//            error.attr("id") shouldBe s"${SessionKeys.businessName}-error"
-//            error.text shouldBe s"${AddBusinessNameMessages.errorPrefix} $errorMessage"
-//            val errorPrefix: Element = error.selectHead("span > span")
-//            errorPrefix.attr("class") shouldBe "govuk-visually-hidden"
-//            errorPrefix.text shouldBe AddBusinessNameMessages.errorPrefix
-//
-//            input.attr("aria-describedby") shouldBe s"${SessionKeys.businessName}-hint ${SessionKeys.businessName}-error"
-//          }
-//        }
-//      }
-//    }
-//  }
+
+  "AddBusinessNameView - ADD - Agent" when {
+    "there is no error on the add page" should {
+      "have the correct heading" in new Setup(true, false, false) {
+        document hasPageHeading AddBusinessNameMessages.heading
+      }
+      "render the back link with the correct URL" in new Setup(true, false, false){
+        document.getElementsByClass("govuk-back-link").text() shouldBe messages("base.back")
+        document.getElementsByClass("govuk-back-link").attr("href") shouldBe backUrl
+      }
+      "have a form with the correct attributes" in new Setup(true, false, false){
+        document.hasFormWith(testCall.method, postAction.url)
+      }
+      "have an input with associated hint and label" in new Setup(true, false, false) {
+        val form: Element = document.selectHead("form")
+        val label: Element = form.selectHead("label")
+        val hint: Element = document.selectHead(".govuk-hint")
+
+        val input: Element = form.selectHead("input")
+
+        label.text shouldBe AddBusinessNameMessages.heading
+        label.attr("for") shouldBe input.attr("id")
+        hint.text contains AddBusinessNameMessages.paragraph1
+        input.attr("id") shouldBe SessionKeys.businessName
+        input.attr("name") shouldBe SessionKeys.businessName
+        input.attr("type") shouldBe "text"
+        input.attr("aria-describedby") shouldBe s"${SessionKeys.businessName}-hint"
+        input.attr("value") shouldBe ("")
+
+      }
+      "have a continue button" in new Setup(true, false, false){
+        val button: Element = document.selectHead("form").selectHead("button")
+        button.text shouldBe AddBusinessNameMessages.continue
+      }
+    }
+    "there is an error on the page" should {
+      "render the error summary" in new Setup(false, true, false) {
+        document.getElementById("error-summary-heading").text() shouldBe messages("base.error_summary.heading")
+        document.getElementsByClass("govuk-error-summary__body").first().text() shouldBe messages("add-business-name.form.error.required")
+      }
+    }
+  }
+
+  "AddBusinessNameView - CHANGE - Agent" when {
+    "there is no error on the change page" should {
+      "have the correct heading" in new Setup(true, false, true){
+        document hasPageHeading AddBusinessNameMessages.heading
+      }
+      "render the back link with the correct URL" in new Setup(true, false, true){
+        document.getElementsByClass("govuk-back-link").text() shouldBe messages("base.back")
+        document.getElementsByClass("govuk-back-link").attr("href") shouldBe backUrl
+      }
+      "have a form with the correct attributes" in new Setup(true, false, true){
+        document.hasFormWith(testChangeCall.method, postAction.url)
+      }
+      "have an input with associated hint and label" in new Setup(true, false, true){
+        val form: Element = document.selectHead("form")
+        val label: Element = form.selectHead("label")
+        val hint: Element = document.selectHead(".govuk-hint")
+        val input: Element = form.selectHead("input")
+
+        label.text shouldBe AddBusinessNameMessages.heading
+        label.attr("for") shouldBe input.attr("id")
+        hint.text contains AddBusinessNameMessages.paragraph1
+        input.attr("id") shouldBe SessionKeys.businessName
+        input.attr("name") shouldBe SessionKeys.businessName
+        input.attr("type") shouldBe "text"
+        input.attr("aria-describedby") shouldBe s"${SessionKeys.businessName}-hint"
+        input.attr("value") shouldBe (testBusinessName)
+      }
+      "have a continue button" in new Setup(true, false, true){
+        val button: Element = document.selectHead("form").selectHead("button")
+        button.text shouldBe AddBusinessNameMessages.continue
+      }
+    }
+    "there is an error on the page" should {
+      "render the error summary" in new Setup(false, true, false) {
+        document.getElementById("error-summary-heading").text() shouldBe messages("base.error_summary.heading")
+        document.getElementsByClass("govuk-error-summary__body").first().text() shouldBe messages("add-business-name.form.error.required")
+      }
+    }
+  }
 }

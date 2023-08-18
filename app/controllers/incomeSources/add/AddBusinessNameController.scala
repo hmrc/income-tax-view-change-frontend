@@ -51,7 +51,6 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
 
   lazy val backUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceController.show().url
   lazy val backUrlAgent: String = controllers.incomeSources.add.routes.AddIncomeSourceController.showAgent().url
-
   lazy val checkDetailsBackUrl: String = controllers.incomeSources.add.routes.CheckBusinessDetailsController.show().url
   lazy val checkDetailsBackUrlAgent: String = controllers.incomeSources.add.routes.CheckBusinessDetailsController.showAgent().url
 
@@ -60,17 +59,10 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
   lazy val submitChangeAction: Call = controllers.incomeSources.add.routes.AddBusinessNameController.submitChange()
   lazy val submitChangeActionAgent: Call = controllers.incomeSources.add.routes.AddBusinessNameController.submitChangeAgent()
 
-
-
   lazy val redirect: Call = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showSoleTraderBusiness
   lazy val redirectAgent: Call = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showSoleTraderBusinessAgent
-
   lazy val checkDetailsRedirect: Call = controllers.incomeSources.add.routes.CheckBusinessDetailsController.show()
   lazy val checkDetailsRedirectAgent: Call = controllers.incomeSources.add.routes.CheckBusinessDetailsController.showAgent()
-
-
-  lazy val addBusinessNameUrl: String = controllers.incomeSources.add.routes.AddBusinessNameController.show().url
-  lazy val agentAddBusinessAddressUrl: String = controllers.incomeSources.add.routes.AddBusinessAddressController.showAgent().url
 
 
   def show(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
@@ -116,14 +108,14 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
         }
         if (isChange) {
           if (isAgent)
-            Ok(addBusinessView(filledForm, isAgent, submitChangeActionAgent, backUrl))
+            Ok(addBusinessView(filledForm, isAgent, submitChangeActionAgent, backUrl, useFallbackLink = true))
           else
-            Ok(addBusinessView(filledForm, isAgent, submitChangeAction, backUrl))
+            Ok(addBusinessView(filledForm, isAgent, submitChangeAction, backUrl, useFallbackLink = true))
         } else {
           if (isAgent) {
-            Ok(addBusinessView(filledForm, isAgent, submitActionAgent, backUrl))
+            Ok(addBusinessView(filledForm, isAgent, submitActionAgent, backUrl, useFallbackLink = false))
           } else {
-            Ok(addBusinessView(filledForm, isAgent, submitAction, backUrl))
+            Ok(addBusinessView(filledForm, isAgent, submitAction, backUrl, useFallbackLink = false))
           }
         }
       }
@@ -179,7 +171,7 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
     BusinessNameForm.form.bindFromRequest().fold(
       formWithErrors => {
         Future {
-          Ok(addBusinessView(formWithErrors, isAgent, submitActionLocal, backUrlLocal))
+          Ok(addBusinessView(formWithErrors, isAgent, submitActionLocal, backUrlLocal, useFallbackLink = true))
         }
       },
       formData => {

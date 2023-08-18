@@ -45,7 +45,8 @@
     businessNameForm: Form[BusinessNameForm],
     isAgent: Boolean,
     postAction: Call,
-    backUrl: String
+    backUrl: String,
+    useFallbackLink: Boolean
 )(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @import forms.utils.SessionKeys
@@ -65,7 +66,7 @@
 @mainTemplate(
     pageTitle = messages("add-business-name.heading"),
     isAgent = isAgent,
-    useFallbackBackLink = true,
+    useFallbackBackLink = useFallbackLink,
     backUrl = Some(backUrl),
     btaNavPartial = user.btaNavPartial) {
 
@@ -113,8 +114,10 @@
         </div>
 
         @govukButton(Button(
-            content = Text(messages("base.continue"))
+            content = Text(messages("base.continue")),
+            attributes = Map("id" -> "continue-button")
         ))
+
     }
 }
 
