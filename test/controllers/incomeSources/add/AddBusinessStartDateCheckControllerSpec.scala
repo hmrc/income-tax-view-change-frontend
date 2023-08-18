@@ -205,7 +205,7 @@ class AddBusinessStartDateCheckControllerSpec extends TestSupport
               ))
 
           status(result) shouldBe SEE_OTHER
-          redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.AddBusinessTradeController.show().url)
+          redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.AddBusinessTradeController.show(isAgent = false, isChange = false).url)
           result.futureValue.session.get(SessionKeys.addBusinessStartDate) shouldBe Some(testBusinessStartDate)
           result.futureValue.session.get(SessionKeys.addBusinessAccountingPeriodStartDate) shouldBe Some(testBusinessAccountingPeriodStartDate)
           result.futureValue.session.get(SessionKeys.addBusinessAccountingPeriodEndDate) shouldBe Some(testBusinessAccountingPeriodEndDate)
@@ -324,7 +324,7 @@ class AddBusinessStartDateCheckControllerSpec extends TestSupport
 
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.AddBusinessTradeController.showAgent().url)
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.AddBusinessTradeController.show(isAgent = true, isChange = false).url)
         result.futureValue.session.get(SessionKeys.addBusinessStartDate) shouldBe Some(testBusinessStartDate)
         result.futureValue.session.get(SessionKeys.addBusinessAccountingPeriodStartDate) shouldBe Some(testBusinessAccountingPeriodStartDate)
         result.futureValue.session.get(SessionKeys.addBusinessAccountingPeriodEndDate) shouldBe Some(testBusinessAccountingPeriodEndDate)

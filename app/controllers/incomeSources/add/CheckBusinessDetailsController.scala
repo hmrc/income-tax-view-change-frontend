@@ -106,7 +106,7 @@ class CheckBusinessDetailsController @Inject()(val checkBusinessDetails: CheckBu
     withIncomeSourcesFS {
       Future {
         getBusinessDetailsFromSession(user) match {
-          case Right(viewModel) => println(Console.MAGENTA + viewModel.businessTrade + Console.WHITE)
+          case Right(viewModel) =>
             Ok(checkBusinessDetails(
               viewModel = viewModel,
               postAction = postAction,

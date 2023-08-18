@@ -72,9 +72,9 @@
 
 @changeBusinessTradeURL = @{
     if(isAgent) {
-        controllers.incomeSources.add.routes.AddBusinessTradeController.changeAgent().url
+        controllers.incomeSources.add.routes.AddBusinessTradeController.show(true, true).url
     } else {
-        controllers.incomeSources.add.routes.AddBusinessTradeController.change().url
+        controllers.incomeSources.add.routes.AddBusinessTradeController.show(false, true).url
     }
 }
 

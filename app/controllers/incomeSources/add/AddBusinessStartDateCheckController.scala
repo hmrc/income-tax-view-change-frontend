@@ -67,8 +67,8 @@ class AddBusinessStartDateCheckController @Inject()(authenticate: Authentication
   }
 
   private def getContinueUrl(isAgent: Boolean): String = {
-    if (isAgent) controllers.incomeSources.add.routes.AddBusinessTradeController.showAgent().url
-    else controllers.incomeSources.add.routes.AddBusinessTradeController.show().url
+    if (isAgent) controllers.incomeSources.add.routes.AddBusinessTradeController.show(isAgent = true, isChange = false).url
+    else controllers.incomeSources.add.routes.AddBusinessTradeController.show(isAgent = false, isChange = false).url
   }
 
   private def getPostAction(isAgent: Boolean): Call = {

@@ -260,7 +260,7 @@ class CheckBusinessDetailsControllerSpec extends TestSupport with MockAuthentica
         val result: Future[Result] = TestCheckBusinessDetailsController.showAgent()(fakeRequestConfirmedClientwithFullBusinessDetails())
 
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.routes.HomeController.show().url)
+        redirectLocation(result) shouldBe Some(controllers.routes.HomeController.showAgent.url)
       }
       "called with an unauthenticated user" in {
         setupMockAgentAuthorisationException()
