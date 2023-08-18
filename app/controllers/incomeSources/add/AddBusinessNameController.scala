@@ -28,8 +28,6 @@ import play.api.mvc._
 import services.IncomeSourceDetailsService
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import views.html.incomeSources.add.AddBusinessName
-
-import java.net.URI
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -154,7 +152,7 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
 
   def handleSubmitRequest(isAgent: Boolean, isChange: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
     val (backUrlLocal, submitActionLocal, redirectLocal) = {
-      if(isChange) {
+      if (isChange) {
         if (isAgent)
           (backUrlAgent, submitChangeActionAgent, redirectAgent)
         else
@@ -175,8 +173,8 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
         }
       },
       formData => {
-      val updatedRedirect = if (isChange) {
-            if(isAgent)(checkDetailsRedirectAgent) else (checkDetailsRedirect)
+        val updatedRedirect = if (isChange) {
+          if (isAgent) (checkDetailsRedirectAgent) else (checkDetailsRedirect)
         } else {
           redirectLocal
         }

@@ -6,8 +6,8 @@ import forms.utils.SessionKeys.businessName
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import play.api.http.Status.{OK, SEE_OTHER}
-import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, clientDetailsWithoutConfirmation, testMtditid}
-import testConstants.IncomeSourceIntegrationTestConstants.{businessOnlyResponse, noPropertyOrBusinessResponse}
+import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testMtditid}
+import testConstants.IncomeSourceIntegrationTestConstants.noPropertyOrBusinessResponse
 
 
 class AddBusinessNameControllerISpec extends ComponentSpecBase {
