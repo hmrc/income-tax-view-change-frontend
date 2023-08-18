@@ -21,6 +21,7 @@ import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
+import enums.IncomeSourceJourney.UkProperty
 import implicits.ImplicitDateFormatter
 import models.createIncomeSource.CreateIncomeSourceResponse
 import models.incomeSourceDetails.viewmodels.CheckUKPropertyViewModel
@@ -58,8 +59,8 @@ class CheckUKPropertyDetailsController @Inject()(val checkUKPropertyDetails: Che
   extends ClientConfirmedController with I18nSupport with FeatureSwitching with ImplicitDateFormatter with IncomeSourcesUtils {
 
   def getBackUrl(isAgent: Boolean): String = {
-    if (isAgent) controllers.incomeSources.add.routes.UKPropertyAccountingMethodController.showAgent().url else
-      controllers.incomeSources.add.routes.UKPropertyAccountingMethodController.show().url
+    if (isAgent) controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.showAgent(UkProperty.key).url else
+      controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.show(UkProperty.key).url
   }
 
   def getSubmitUrl(isAgent: Boolean): Call = {

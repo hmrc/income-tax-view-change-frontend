@@ -28,7 +28,7 @@ case class CheckBusinessDetailsViewModel(businessName: Option[String],
                                          businessAddressLine4: Option[String],
                                          businessPostalCode: Option[String],
                                          businessCountryCode: Option[String],
-                                         businessAccountingMethod: Option[String],
+                                         incomeSourcesAccountingMethod: Option[String],
                                          cashOrAccrualsFlag: String,
                                          skippedAccountingMethod: Boolean)
 

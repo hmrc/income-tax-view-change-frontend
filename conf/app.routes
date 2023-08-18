@@ -213,19 +213,19 @@ POST         /income-sources/add/business-added                           contro
 POST         /agents/income-sources/add/business-added                    controllers.incomeSources.add.BusinessAddedObligationsController.agentSubmit()
 
 
-GET          /income-sources/add/uk-property-accounting-method            controllers.incomeSources.add.UKPropertyAccountingMethodController.show()
-GET          /agents/income-sources/add/uk-property-accounting-method     controllers.incomeSources.add.UKPropertyAccountingMethodController.showAgent()
-POST         /income-sources/add/uk-property-accounting-method            controllers.incomeSources.add.UKPropertyAccountingMethodController.submit()
-POST         /agents/income-sources/add/uk-property-accounting-method     controllers.incomeSources.add.UKPropertyAccountingMethodController.submitAgent()
+GET          /income-sources/add/uk-property-accounting-method            controllers.incomeSources.add.IncomeSourcesAccountingMethodController.show(incomeSourceType: String = "UK")
+GET          /agents/income-sources/add/uk-property-accounting-method     controllers.incomeSources.add.IncomeSourcesAccountingMethodController.showAgent(incomeSourceType: String = "UK")
+POST         /income-sources/add/uk-property-accounting-method            controllers.incomeSources.add.IncomeSourcesAccountingMethodController.submit(incomeSourceType: String = "UK")
+POST         /agents/income-sources/add/uk-property-accounting-method     controllers.incomeSources.add.IncomeSourcesAccountingMethodController.submitAgent(incomeSourceType: String = "UK")
 GET          /income-sources/add/uk-property-check-details                controllers.incomeSources.add.CheckUKPropertyDetailsController.show()
 GET          /agents/income-sources/add/uk-property-check-details         controllers.incomeSources.add.CheckUKPropertyDetailsController.showAgent()
 POST         /income-sources/add/uk-property-check-details                controllers.incomeSources.add.CheckUKPropertyDetailsController.submit()
 POST         /agents/income-sources/add/uk-property-check-details         controllers.incomeSources.add.CheckUKPropertyDetailsController.submitAgent()
 
-GET          /income-sources/add/foreign-property-business-accounting-method         controllers.incomeSources.add.ForeignPropertyAccountingMethodController.show()
-GET          /agents/income-sources/add/foreign-property-business-accounting-method  controllers.incomeSources.add.ForeignPropertyAccountingMethodController.showAgent()
-POST         /income-sources/add/foreign-property-business-accounting-method         controllers.incomeSources.add.ForeignPropertyAccountingMethodController.submit()
-POST         /agents/income-sources/add/foreign-property-business-accounting-method  controllers.incomeSources.add.ForeignPropertyAccountingMethodController.submitAgent()
+GET          /income-sources/add/foreign-property-business-accounting-method         controllers.incomeSources.add.IncomeSourcesAccountingMethodController.show(incomeSourceType: String = "FP")
+GET          /agents/income-sources/add/foreign-property-business-accounting-method  controllers.incomeSources.add.IncomeSourcesAccountingMethodController.showAgent(incomeSourceType: String = "FP")
+POST         /income-sources/add/foreign-property-business-accounting-method         controllers.incomeSources.add.IncomeSourcesAccountingMethodController.submit(incomeSourceType: String = "FP")
+POST         /agents/income-sources/add/foreign-property-business-accounting-method  controllers.incomeSources.add.IncomeSourcesAccountingMethodController.submitAgent(incomeSourceType: String = "FP")
 
 GET          /income-sources/add/foreign-property-added                       controllers.incomeSources.add.ForeignPropertyAddedController.show(id: String)
 GET          /agents/income-sources/add/foreign-property-added                controllers.incomeSources.add.ForeignPropertyAddedController.showAgent(id: String)
@@ -234,10 +234,10 @@ POST         /agents/income-sources/add/foreign-property-added                co
 GET          /income-sources/add/uk-property-added                           controllers.incomeSources.add.UKPropertyAddedController.show(id:String)
 GET          /agents/income-sources/add/uk-property-added                    controllers.incomeSources.add.UKPropertyAddedController.showAgent(id:String)
 
-GET          /income-sources/add/business-accounting-method                   controllers.incomeSources.add.BusinessAccountingMethodController.show()
-GET          /agents/income-sources/add/business-accounting-method            controllers.incomeSources.add.BusinessAccountingMethodController.showAgent()
-POST         /income-sources/add/business-accounting-method                   controllers.incomeSources.add.BusinessAccountingMethodController.submit()
-POST         /agents/income-sources/add/business-accounting-method            controllers.incomeSources.add.BusinessAccountingMethodController.submitAgent()
+GET          /income-sources/add/business-accounting-method                   controllers.incomeSources.add.IncomeSourcesAccountingMethodController.show(incomeSourceType: String = "SE")
+GET          /agents/income-sources/add/business-accounting-method            controllers.incomeSources.add.IncomeSourcesAccountingMethodController.showAgent(incomeSourceType: String = "SE")
+POST         /income-sources/add/business-accounting-method                   controllers.incomeSources.add.IncomeSourcesAccountingMethodController.submit(incomeSourceType: String = "SE")
+POST         /agents/income-sources/add/business-accounting-method            controllers.incomeSources.add.IncomeSourcesAccountingMethodController.submitAgent(incomeSourceType: String = "SE")
 
 #Check details / Change
 GET          /income-sources/add/business-check-details                     controllers.incomeSources.add.CheckBusinessDetailsController.show()
@@ -249,8 +249,8 @@ GET          /income-sources/add/change-business-trade                      cont
 GET          /agents/income-sources/add/change-business-trade               controllers.incomeSources.add.AddBusinessTradeController.changeBusinessTradeAgent()
 GET          /income-sources/add/change-business-address-lookup             controllers.incomeSources.add.AddBusinessAddressController.changeBusinessAddress()
 GET          /agents/income-sources/add/change-business-address-lookup      controllers.incomeSources.add.AddBusinessAddressController.changeBusinessAddressAgent()
-GET          /income-sources/add/change-business-accounting-method          controllers.incomeSources.add.BusinessAccountingMethodController.changeBusinessAccountingMethod()
-GET          /agents/income-sources/add/change-business-accounting-method   controllers.incomeSources.add.BusinessAccountingMethodController.changeBusinessAccountingMethodAgent()
+GET          /income-sources/add/change-business-accounting-method          controllers.incomeSources.add.IncomeSourcesAccountingMethodController.changeIncomeSourcesAccountingMethod(incomeSourceType: String = "SE")
+GET          /agents/income-sources/add/change-business-accounting-method   controllers.incomeSources.add.IncomeSourcesAccountingMethodController.changeIncomeSourcesAccountingMethodAgent(incomeSourceType: String = "SE")
 POST          /income-sources/add/business-check-details                    controllers.incomeSources.add.CheckBusinessDetailsController.submit()
 POST          /agents/income-sources/add/business-check-details              controllers.incomeSources.add.CheckBusinessDetailsController.submitAgent()
 
@@ -259,8 +259,8 @@ GET          /agents/income-sources/add/foreign-property-check-details          
 POST         /income-sources/add/foreign-property-check-details                    controllers.incomeSources.add.ForeignPropertyCheckDetailsController.submit()
 POST         /agents/income-sources/add/foreign-property-check-details              controllers.incomeSources.add.ForeignPropertyCheckDetailsController.submitAgent()
 
-GET          /income-sources/add/change-uk-property-accounting-method                   controllers.incomeSources.add.UKPropertyAccountingMethodController.change()
-GET          /agents/income-sources/add/change-uk-property-accounting-method            controllers.incomeSources.add.UKPropertyAccountingMethodController.changeAgent()
+GET          /income-sources/add/change-uk-property-accounting-method            controllers.incomeSources.add.IncomeSourcesAccountingMethodController.changeIncomeSourcesAccountingMethod(incomeSourceType: String = "UK")
+GET          /agents/income-sources/add/change-uk-property-accounting-method     controllers.incomeSources.add.IncomeSourcesAccountingMethodController.changeIncomeSourcesAccountingMethodAgent(incomeSourceType: String = "UK")
 
 
 GET          /income-sources/add/error-business-not-added                                       controllers.incomeSources.add.IncomeSourceNotAddedController.showBusiness()
@@ -376,10 +376,10 @@ GET          /agents/income-sources/cease/cease-uk-property-success         cont
 GET          /income-sources/cease/cease-foreign-property-success           controllers.incomeSources.cease.CeaseForeignPropertySuccessController.show()
 GET          /agents/income-sources/cease/cease-foreign-property-success    controllers.incomeSources.cease.CeaseForeignPropertySuccessController.showAgent()
 
-GET          /income-sources/add/foreign-property-accounting-method                 controllers.incomeSources.add.ForeignPropertyAccountingMethodController.show()
-GET          /agents/income-sources/add/foreign-property-accounting-method          controllers.incomeSources.add.ForeignPropertyAccountingMethodController.showAgent()
-GET          /income-sources/add/change-foreign-property-accounting-method          controllers.incomeSources.add.ForeignPropertyAccountingMethodController.changeForeignPropertyAccountingMethod()
-GET          /agents/income-sources/add/change-foreign-property-accounting-method   controllers.incomeSources.add.ForeignPropertyAccountingMethodController.changeForeignPropertyAccountingMethodAgent()
+GET          /income-sources/add/foreign-property-accounting-method                 controllers.incomeSources.add.IncomeSourcesAccountingMethodController.show(incomeSourceType: String = "FP")
+GET          /agents/income-sources/add/foreign-property-accounting-method          controllers.incomeSources.add.IncomeSourcesAccountingMethodController.showAgent(incomeSourceType: String = "FP")
+GET          /income-sources/add/change-foreign-property-accounting-method          controllers.incomeSources.add.IncomeSourcesAccountingMethodController.changeIncomeSourcesAccountingMethod(incomeSourceType: String = "FP")
+GET          /agents/income-sources/add/change-foreign-property-accounting-method   controllers.incomeSources.add.IncomeSourcesAccountingMethodController.changeIncomeSourcesAccountingMethodAgent(incomeSourceType: String = "FP")
 
 GET          /income-sources/cease/cease-business-success           controllers.incomeSources.cease.CeaseBusinessSuccessController.show()
 GET          /agents/income-sources/cease/cease-business-success    controllers.incomeSources.cease.CeaseBusinessSuccessController.showAgent()
