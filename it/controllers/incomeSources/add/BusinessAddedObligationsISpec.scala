@@ -45,11 +45,11 @@ class BusinessAddedObligationsISpec extends ComponentSpecBase {
         val result = IncomeTaxViewChangeFrontend.getAddBusinessObligations(incomeSourceId)
         verifyIncomeSourceDetailsCall(testMtditid)
 
-        val expectedText: String = if (messagesAPI("business-added.sole-treader.head").nonEmpty) {
-            messagesAPI("business-added.sole-treader.head") + " " + business1.tradingName.getOrElse("") + " " + messagesAPI("business-added.sole-treader.base")
+        val expectedText: String = if (messagesAPI("business-added.sole-trader.head").nonEmpty) {
+            messagesAPI("business-added.sole-trader.head") + " " + business1.tradingName.getOrElse("") + " " + messagesAPI("business-added.sole-trader.base")
           }
           else {
-            business1.tradingName.getOrElse("") + " " + messagesAPI("business-added.sole-treader.base")
+            business1.tradingName.getOrElse("") + " " + messagesAPI("business-added.sole-trader.base")
           }
 
         result should have(
