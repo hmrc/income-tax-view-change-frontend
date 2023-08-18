@@ -45,7 +45,7 @@
 
     incomeSourceType match {
         case _:SelfEmployment.type =>
-            s"""${getMessage("sole-treader.head")} ${businessName.get} ${getMessage("sole-treader.base")}""".trim()
+            s"""${getMessage("sole-trader.head")} ${businessName.get} ${getMessage("sole-trader.base")}""".trim()
 
         case _:UkProperty.type =>
             s"${getMessage("uk-property.head")} " +
@@ -80,7 +80,7 @@
 @getBannerContent() = @{
     incomeSourceType match {
         case _:SelfEmployment.type =>
-            bannerHtmlContent(getMessage("sole-treader.head"),businessName.get,getMessage("sole-treader.base"))
+            bannerHtmlContent(getMessage("sole-trader.head"),businessName.get,getMessage("sole-trader.base"))
         case _:UkProperty.type =>
             bannerHtmlContent(getMessage("uk-property.head"),getMessage("uk-property.h1"),getMessage("uk-property.base"))
         case _:ForeignProperty.type =>

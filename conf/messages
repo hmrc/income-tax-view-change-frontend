@@ -1428,8 +1428,8 @@ business-added.foreign-property.base                    = has been added to your
 business-added.uk-property.head                         =
 business-added.uk-property.h1                           = UK property
 business-added.uk-property.base                         = has been added to your account
-business-added.sole-treader.head                        =
-business-added.sole-treader.base                        = has been added to your account
+business-added.sole-trader.head                         =
+business-added.sole-trader.base                         = has been added to your account
 
 business-added.quarterly-heading                        = Send quarterly updates
 business-added.quarterly-p1                             = You must send quarterly updates of your income and expenses using compatible software by the following deadlines:

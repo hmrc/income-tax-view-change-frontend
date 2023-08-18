@@ -1403,8 +1403,8 @@ business-added.foreign-property.base                    = wedi cael ei ychwanegu
 business-added.uk-property.head                         = Mae
 business-added.uk-property.h1                           = eiddo yn y DU
 business-added.uk-property.base                         = wedi cael ei ychwanegu i’ch cyfrif
-business-added.sole-treader.head                        = Ychwanegwyd
-business-added.sole-treader.base                        = i’ch cyfrif
+business-added.sole-trader.head                        = Ychwanegwyd
+business-added.sole-trader.base                        = i’ch cyfrif
 
 business-added.quarterly-heading                        = Anfon diweddariadau chwarterol
 business-added.quarterly-p1                             = Mae’n rhaid i chi anfon diweddariadau chwarterol o’ch incwm a’ch treuliau, gan ddefnyddio meddalwedd sy’n cydweddu, erbyn y dyddiadau cau canlynol:
