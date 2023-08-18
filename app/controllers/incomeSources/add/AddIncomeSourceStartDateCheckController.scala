@@ -217,28 +217,17 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
     (
       routes.AddIncomeSourceStartDateController.handleRequest(incomeSourceType.key, isAgent, isUpdate),
       routes.AddIncomeSourceStartDateCheckController.handleRequest(incomeSourceType.key, isAgent, isUpdate),
-      incomeSourceType match {
-        case SelfEmployment =>
-          (isAgent, isUpdate) match {
-            case (false, false) => routes.AddBusinessTradeController.show()
-            case (false, true) => routes.CheckBusinessDetailsController.show()
-            case (true, false) => routes.AddBusinessTradeController.showAgent()
-            case (true, true) => routes.CheckBusinessDetailsController.showAgent()
-          }
-        case UkProperty =>
-          (isAgent, isUpdate) match {
-            case (false, false) => routes.IncomeSourcesAccountingMethodController.show(UkProperty.key)
-            case (false, true) => routes.CheckUKPropertyDetailsController.show()
-            case (true, false) => routes.IncomeSourcesAccountingMethodController.showAgent(UkProperty.key)
-            case (true, true) => routes.CheckUKPropertyDetailsController.showAgent()
-          }
-        case ForeignProperty =>
-          (isAgent, isUpdate) match {
-            case (false, false) => routes.IncomeSourcesAccountingMethodController.show(ForeignProperty.key)
-            case (false, true) => routes.ForeignPropertyCheckDetailsController.show()
-            case (true, false) => routes.IncomeSourcesAccountingMethodController.showAgent(ForeignProperty.key)
-            case (true, true) => routes.ForeignPropertyCheckDetailsController.showAgent()
-          }
+      (isAgent, isUpdate, incomeSourceType) match {
+        case (false, false, SelfEmployment) => routes.AddBusinessTradeController.show()
+        case (false, true,  SelfEmployment) => routes.CheckBusinessDetailsController.show()
+        case (true,  false, SelfEmployment) => routes.AddBusinessTradeController.showAgent()
+        case (true,  true,  SelfEmployment) => routes.CheckBusinessDetailsController.showAgent()
+        case (false, false, _)              => routes.IncomeSourcesAccountingMethodController.show(incomeSourceType.key)
+        case (true,  false, _)              => routes.IncomeSourcesAccountingMethodController.showAgent(incomeSourceType.key)
+        case (false, true, UkProperty)      => routes.CheckUKPropertyDetailsController.show()
+        case (true,  true, UkProperty)      => routes.CheckUKPropertyDetailsController.showAgent()
+        case (false, true, ForeignProperty) => routes.ForeignPropertyCheckDetailsController.show()
+        case (true,  true, ForeignProperty) => routes.ForeignPropertyCheckDetailsController.showAgent()
       }
     )
   }
