@@ -97,7 +97,7 @@ trait IncomeSourcesDataHelper {
     businessTrade = "someBusinessTrade",
     businessAddressLine1 = "businessAddressLine1",
     businessPostalCode = Some("SE15 4ER"),
-    businessAccountingMethod = None,
+    incomeSourcesAccountingMethod = None,
     accountingPeriodEndDate = LocalDate.of(2022, 11, 11),
     businessAddressLine2 = None,
     businessAddressLine3 = None,

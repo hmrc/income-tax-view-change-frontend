@@ -1311,16 +1311,16 @@ incomeSources.add.foreignProperty.startDate.check.radio.yes          = Yes
 incomeSources.add.foreignProperty.startDate.check.radio.no           = No
 
 # add foreign property accounting method
-incomeSources.add.foreignPropertyAccountingMethod.heading                 = What accounting method do you use for your foreign property business?
-incomeSources.add.foreignPropertyAccountingMethod.example                 = Show me an example
-incomeSources.add.foreignPropertyAccountingMethod.radio-1-title           = Cash basis accounting
-incomeSources.add.foreignPropertyAccountingMethod.radio-1-hint            = You record on the date you either receive a payment from your tenants into your bank account, or pay a bill, for example for repairs and maintenance. Most small businesses use this method.
-incomeSources.add.foreignPropertyAccountingMethod.radio-2-title           = Traditional accounting
-incomeSources.add.foreignPropertyAccountingMethod.radio-2-hint            = You record on the date you send an invoice to, or request a payment from your tenants, even if you do not receive or pay any money. You record the date you receive an invoice for repairs or maintenance. This is also called '‘accruals'’ or '‘standard accounting'’.
-incomeSources.add.foreignPropertyAccountingMethod.drop-down-text          = You created an invoice for someone in March 2017, but did not receive the money until May 2017. If you tell HMRC you received this income in:
-incomeSources.add.foreignPropertyAccountingMethod.drop-down-text-bp-1     = May 2017, you use ''cash basis accounting''
-incomeSources.add.foreignPropertyAccountingMethod.drop-down-text-bp-2     = March 2017, you use ''traditional accounting''
-incomeSources.add.foreignPropertyAccountingMethod.no-selection            = Enter the accounting method you use for your foreign property business
+incomeSources.add.FP.AccountingMethod.heading                 = What accounting method do you use for your foreign property business?
+incomeSources.add.FP.AccountingMethod.example                 = Show me an example
+incomeSources.add.FP.AccountingMethod.radio-1-title           = Cash basis accounting
+incomeSources.add.FP.AccountingMethod.radio-1-hint            = You record on the date you either receive a payment from your tenants into your bank account, or pay a bill, for example for repairs and maintenance. Most small businesses use this method.
+incomeSources.add.FP.AccountingMethod.radio-2-title           = Traditional accounting
+incomeSources.add.FP.AccountingMethod.radio-2-hint            = You record on the date you send an invoice to, or request a payment from your tenants, even if you do not receive or pay any money. You record the date you receive an invoice for repairs or maintenance. This is also called '‘accruals'’ or '‘standard accounting'’.
+incomeSources.add.FP.AccountingMethod.drop-down-text          = You created an invoice for someone in March 2017, but did not receive the money until May 2017. If you tell HMRC you received this income in:
+incomeSources.add.FP.AccountingMethod.drop-down-text-bp-1     = May 2017, you use ''cash basis accounting''
+incomeSources.add.FP.AccountingMethod.drop-down-text-bp-2     = March 2017, you use ''traditional accounting''
+incomeSources.add.FP.AccountingMethod.no-selection            = Enter the accounting method you use for your foreign property business
 
 
 incomeSources.ceaseUKProperty.checkDetails.heading               = Check your details
@@ -1372,17 +1372,17 @@ incomeSources.add.accountingMethod.cash               = Cash basis accounting
 incomeSources.add.accountingMethod.accruals           = Traditional accounting
 
 # add business accounting method
-incomeSources.add.business-accounting-method.heading                 = What accounting method do you use for your sole trader business?
-incomeSources.add.business-accounting-method.hint                    = If you have more than one sole trader business, all your businesses need to have the same accounting method.
-incomeSources.add.business-accounting-method.example                 = Show me an example
-incomeSources.add.business-accounting-method.radio-1-title           = Cash basis accounting
-incomeSources.add.business-accounting-method.radio-1-hint            = You record on the date you receive money or pay a bill. Most sole traders and small businesses use this method.
-incomeSources.add.business-accounting-method.radio-2-title           = Traditional accounting
-incomeSources.add.business-accounting-method.radio-2-hint            = You record on the date you send or receive an invoice, even if you do not receive or pay any money. This is called ''accruals'' or ''standard accounting''.
-incomeSources.add.business-accounting-method.drop-down-text          = You created an invoice for someone in March 2017, but did not receive the money until May 2017. If you tell HMRC you received this income in:
-incomeSources.add.business-accounting-method.drop-down-text-bp-1     = May 2017, you use ’cash basis accounting’
-incomeSources.add.business-accounting-method.drop-down-text-bp-2     = March 2017, you use ’traditional accounting’
-incomeSources.add.business-accounting-method.no-selection            = Enter the accounting method you use for your sole trader business
+incomeSources.add.SE.AccountingMethod.heading                 = What accounting method do you use for your sole trader business?
+incomeSources.add.SE.AccountingMethod.hint                    = If you have more than one sole trader business, all your businesses need to have the same accounting method.
+incomeSources.add.SE.AccountingMethod.example                 = Show me an example
+incomeSources.add.SE.AccountingMethod.radio-1-title           = Cash basis accounting
+incomeSources.add.SE.AccountingMethod.radio-1-hint            = You record on the date you receive money or pay a bill. Most sole traders and small businesses use this method.
+incomeSources.add.SE.AccountingMethod.radio-2-title           = Traditional accounting
+incomeSources.add.SE.AccountingMethod.radio-2-hint            = You record on the date you send or receive an invoice, even if you do not receive or pay any money. This is called ''accruals'' or ''standard accounting''.
+incomeSources.add.SE.AccountingMethod.drop-down-text          = You created an invoice for someone in March 2017, but did not receive the money until May 2017. If you tell HMRC you received this income in:
+incomeSources.add.SE.AccountingMethod.drop-down-text-bp-1     = May 2017, you use ’cash basis accounting’
+incomeSources.add.SE.AccountingMethod.drop-down-text-bp-2     = March 2017, you use ’traditional accounting’
+incomeSources.add.SE.AccountingMethod.no-selection            = Enter the accounting method you use for your sole trader business
 
 incomeSources.cease.BusinessEndDate.heading                               = Date your self-employed business stopped
 incomeSources.cease.BusinessEndDate.error.invalid                         = The date your self-employed business stopped trading must be a real date
@@ -1503,16 +1503,16 @@ incomeSources.add.foreignPropertyReportingMethod.error                     =   S
 
 
 # add uk property business accounting method
-incomeSources.add.uk-property-business-accounting-method.heading                 = What accounting method do you use for your UK property business?
-incomeSources.add.uk-property-business-accounting-method.example                 = Show me an example
-incomeSources.add.uk-property-business-accounting-method.radio-1-title           = Cash basis accounting
-incomeSources.add.uk-property-business-accounting-method.radio-1-hint            = You record on the date you either receive a payment from your tenants into your bank account, or pay a bill, for example for repairs and maintenance. Most small businesses use this method.
-incomeSources.add.uk-property-business-accounting-method.radio-2-title           = Traditional accounting
-incomeSources.add.uk-property-business-accounting-method.radio-2-hint            = You record on the date you send an invoice to, or request a payment from your tenants, even if you do not receive or pay any money. You record the date you receive an invoice for repairs or maintenance. This is also called ‘accruals’ or ‘standard accounting’.
-incomeSources.add.uk-property-business-accounting-method.drop-down-text          = You created an invoice for someone in March 2017, but did not receive the money until May 2017. If you tell HMRC you received this income in:
-incomeSources.add.uk-property-business-accounting-method.drop-down-text-bp-1     = May 2017, you use ’cash basis accounting’
-incomeSources.add.uk-property-business-accounting-method.drop-down-text-bp-2     = March 2017, you use ’traditional accounting’
-incomeSources.add.uk-property-business-accounting-method.no-selection            = Enter the accounting method you use for your UK property business
+incomeSources.add.UK.AccountingMethod.heading                 = What accounting method do you use for your UK property business?
+incomeSources.add.UK.AccountingMethod.example                 = Show me an example
+incomeSources.add.UK.AccountingMethod.radio-1-title           = Cash basis accounting
+incomeSources.add.UK.AccountingMethod.radio-1-hint            = You record on the date you either receive a payment from your tenants into your bank account, or pay a bill, for example for repairs and maintenance. Most small businesses use this method.
+incomeSources.add.UK.AccountingMethod.radio-2-title           = Traditional accounting
+incomeSources.add.UK.AccountingMethod.radio-2-hint            = You record on the date you send an invoice to, or request a payment from your tenants, even if you do not receive or pay any money. You record the date you receive an invoice for repairs or maintenance. This is also called ‘accruals’ or ‘standard accounting’.
+incomeSources.add.UK.AccountingMethod.drop-down-text          = You created an invoice for someone in March 2017, but did not receive the money until May 2017. If you tell HMRC you received this income in:
+incomeSources.add.UK.AccountingMethod.drop-down-text-bp-1     = May 2017, you use ’cash basis accounting’
+incomeSources.add.UK.AccountingMethod.drop-down-text-bp-2     = March 2017, you use ’traditional accounting’
+incomeSources.add.UK.AccountingMethod.no-selection            = Enter the accounting method you use for your UK property business
 
 # uk property reporting method
 incomeSources.add.ukPropertyReportingMethod.heading                   =   Choose a reporting method

@@ -37,7 +37,7 @@ class CheckBusinessDetailsControllerISpec extends ComponentSpecBase {
     businessTrade -> "Plumbing",
     addBusinessAddressLine1 -> "Test Road",
     addBusinessPostalCode -> "B32 1PQ",
-    addBusinessAccountingMethod -> "ACCRUALS",
+    addIncomeSourcesAccountingMethod -> "ACCRUALS",
     addBusinessAccountingPeriodEndDate -> "2023-11-11")
 
   val testBusinessName: String = "Test Business"
@@ -110,7 +110,7 @@ class CheckBusinessDetailsControllerISpec extends ComponentSpecBase {
           "addBusinessStartDate" -> Seq("Test Business Name"),
           "addBusinessAddressLine1" -> Seq("Test Business Name"),
           "addBusinessPostalCode" -> Seq("Test Business Name"),
-          "addBusinessAccountingMethod" -> Seq("Test Business Name"))
+          "addIncomeSourcesAccountingMethod" -> Seq("Test Business Name"))
         stubAuthorisedAgentUser(authorised = true)
 
         enable(IncomeSources)
@@ -134,7 +134,7 @@ class CheckBusinessDetailsControllerISpec extends ComponentSpecBase {
           "addBusinessStartDate" -> Seq(""),
           "addBusinessAddressLine1" -> Seq(""),
           "addBusinessPostalCode" -> Seq(""),
-          "addBusinessAccountingMethod" -> Seq(""))
+          "addIncomeSourcesAccountingMethod" -> Seq(""))
         stubAuthorisedAgentUser(authorised = true)
 
         enable(IncomeSources)

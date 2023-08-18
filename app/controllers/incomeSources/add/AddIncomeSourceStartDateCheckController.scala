@@ -279,13 +279,13 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
         (
           controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showUKProperty,
           controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.submitUKProperty,
-          controllers.incomeSources.add.routes.UKPropertyAccountingMethodController.show()
+          controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.show(UkProperty.key)
         )
       case (false, ForeignProperty) =>
         (
           controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showForeignProperty,
           controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.submitForeignProperty,
-          controllers.incomeSources.add.routes.ForeignPropertyAccountingMethodController.show()
+          controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.show(ForeignProperty.key)
         )
       case (true, SelfEmployment) =>
         (
@@ -297,13 +297,13 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
         (
           controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showUKPropertyAgent,
           controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.submitUKPropertyAgent,
-          controllers.incomeSources.add.routes.UKPropertyAccountingMethodController.showAgent()
+          controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.showAgent(UkProperty.key)
         )
       case (true, ForeignProperty) =>
         (
           controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showForeignPropertyAgent,
           controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.submitForeignPropertyAgent,
-          controllers.incomeSources.add.routes.ForeignPropertyAccountingMethodController.showAgent()
+          controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.showAgent(ForeignProperty.key)
         )
     }
   }

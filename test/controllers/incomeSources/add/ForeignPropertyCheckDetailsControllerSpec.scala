@@ -142,7 +142,7 @@ with MockIncomeSourceDetailsPredicate with MockNavBarEnumFsPredicate with Featur
           fakeRequestWithActiveSession
             .withSession(
               SessionKeys.foreignPropertyStartDate -> testForeignPropertyStartDate,
-              SessionKeys.addForeignPropertyAccountingMethod -> testForeignPropertyAccountingMethod
+              SessionKeys.addIncomeSourcesAccountingMethod -> testForeignPropertyAccountingMethod
             ))
 
         val document: Document = Jsoup.parse(contentAsString(result))
@@ -164,7 +164,7 @@ with MockIncomeSourceDetailsPredicate with MockNavBarEnumFsPredicate with Featur
           fakeRequestConfirmedClient()
             .withSession(
               SessionKeys.foreignPropertyStartDate -> testForeignPropertyStartDate,
-              SessionKeys.addForeignPropertyAccountingMethod -> testForeignPropertyAccountingMethod
+              SessionKeys.addIncomeSourcesAccountingMethod -> testForeignPropertyAccountingMethod
             ))
 
         val document: Document = Jsoup.parse(contentAsString(result))
@@ -189,7 +189,7 @@ with MockIncomeSourceDetailsPredicate with MockNavBarEnumFsPredicate with Featur
         val result = TestForeignPropertyCheckDetailsController.show()(
           fakeRequestWithActiveSession
             .withSession(
-              SessionKeys.addForeignPropertyAccountingMethod -> testForeignPropertyAccountingMethod
+              SessionKeys.addIncomeSourcesAccountingMethod -> testForeignPropertyAccountingMethod
             ))
 
         val document: Document = Jsoup.parse(contentAsString(result))
@@ -206,7 +206,7 @@ with MockIncomeSourceDetailsPredicate with MockNavBarEnumFsPredicate with Featur
         val result = TestForeignPropertyCheckDetailsController.showAgent()(
           fakeRequestConfirmedClient()
             .withSession(
-              SessionKeys.addForeignPropertyAccountingMethod -> testForeignPropertyAccountingMethod
+              SessionKeys.addIncomeSourcesAccountingMethod -> testForeignPropertyAccountingMethod
             ))
 
         val document: Document = Jsoup.parse(contentAsString(result))
@@ -267,7 +267,7 @@ with MockIncomeSourceDetailsPredicate with MockNavBarEnumFsPredicate with Featur
           fakeRequestWithActiveSession
             .withSession(
               SessionKeys.foreignPropertyStartDate -> testForeignPropertyStartDate,
-              SessionKeys.addForeignPropertyAccountingMethod -> testForeignPropertyAccountingMethod
+              SessionKeys.addIncomeSourcesAccountingMethod -> testForeignPropertyAccountingMethod
             )
         )
 
@@ -286,7 +286,7 @@ with MockIncomeSourceDetailsPredicate with MockNavBarEnumFsPredicate with Featur
         val result = TestForeignPropertyCheckDetailsController.submitAgent(fakeRequestConfirmedClient()
           .withSession(
             SessionKeys.foreignPropertyStartDate -> testForeignPropertyStartDate,
-            SessionKeys.addForeignPropertyAccountingMethod -> testForeignPropertyAccountingMethod
+            SessionKeys.addIncomeSourcesAccountingMethod -> testForeignPropertyAccountingMethod
           ))
 
         status(result) shouldBe SEE_OTHER
@@ -332,7 +332,7 @@ with MockIncomeSourceDetailsPredicate with MockNavBarEnumFsPredicate with Featur
           fakeRequestWithActiveSession
             .withSession(
               SessionKeys.foreignPropertyStartDate -> testForeignPropertyStartDate,
-              SessionKeys.addForeignPropertyAccountingMethod -> testForeignPropertyAccountingMethod
+              SessionKeys.addIncomeSourcesAccountingMethod -> testForeignPropertyAccountingMethod
             )
         )
 
@@ -351,7 +351,7 @@ with MockIncomeSourceDetailsPredicate with MockNavBarEnumFsPredicate with Featur
         val result = TestForeignPropertyCheckDetailsController.submitAgent(fakeRequestConfirmedClient()
           .withSession(
             SessionKeys.foreignPropertyStartDate -> testForeignPropertyStartDate,
-            SessionKeys.addForeignPropertyAccountingMethod -> testForeignPropertyAccountingMethod
+            SessionKeys.addIncomeSourcesAccountingMethod -> testForeignPropertyAccountingMethod
           ))
 
         status(result) shouldBe SEE_OTHER

@@ -32,7 +32,7 @@ class IncomeSourcesUtilsSpec extends TestSupport with IncomeSourcesUtils {
     businessTrade = "Test Trade",
     businessAddressLine1 = "Test Business Address Line 1",
     businessPostalCode = Some("Test Business Postal Code"),
-    businessAccountingMethod = Some("Cash"),
+    incomeSourcesAccountingMethod = Some("Cash"),
     accountingPeriodEndDate = LocalDate.of(2022, 1, 1),
     businessAddressLine2 = None,
     businessAddressLine3 = None,
@@ -44,7 +44,7 @@ class IncomeSourcesUtilsSpec extends TestSupport with IncomeSourcesUtils {
 
   val checkUKPropertyViewModel = CheckUKPropertyViewModel(
     tradingStartDate = LocalDate.of(2023, 5, 1),
-    cashOrAccrualsFlag = "CASH")
+    cashOrAccrualsFlag = "Cash")
 
   val fakeRequest = fakeRequestWithActiveSession.withSession(
     businessName -> viewModelMax.businessName.get,
@@ -52,10 +52,10 @@ class IncomeSourcesUtilsSpec extends TestSupport with IncomeSourcesUtils {
     businessTrade -> viewModelMax.businessTrade,
     addBusinessAddressLine1 -> viewModelMax.businessAddressLine1,
     addBusinessPostalCode -> viewModelMax.businessPostalCode.get,
-    addBusinessAccountingMethod -> viewModelMax.businessAccountingMethod.get,
+    addIncomeSourcesAccountingMethod -> viewModelMax.incomeSourcesAccountingMethod.get,
     addBusinessAccountingPeriodEndDate -> viewModelMax.accountingPeriodEndDate.toString,
     addUkPropertyStartDate -> checkUKPropertyViewModel.tradingStartDate.toString,
-    addUkPropertyAccountingMethod -> checkUKPropertyViewModel.cashOrAccrualsFlag
+    addIncomeSourcesAccountingMethod -> checkUKPropertyViewModel.cashOrAccrualsFlag
   )
 
   "getBusinessDetailsFromSession" when {
@@ -105,7 +105,7 @@ class IncomeSourcesUtilsSpec extends TestSupport with IncomeSourcesUtils {
         redirect.session.get("addUkPropertyStartDate") shouldBe None
         redirect.session.get("addBusinessName") shouldBe None
         redirect.session.get("addBusinessTrade") shouldBe None
-        redirect.session.get("addBusinessAccountingMethod") shouldBe None
+        redirect.session.get("addIncomeSourcesAccountingMethod") shouldBe None
         redirect.session.get("addBusinessStartDate") shouldBe None
         redirect.session.get("addBusinessAccountingPeriodStartDate") shouldBe None
         redirect.session.get("addBusinessAccountingPeriodEndDate") shouldBe None
