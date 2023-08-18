@@ -16,10 +16,10 @@
 
 package views.incomeSources.add
 
+import enums.IncomeSourceJourney.ForeignProperty
 import models.incomeSourceDetails.viewmodels.CheckForeignPropertyViewModel
 import org.jsoup.nodes.Element
 import play.twirl.api.Html
-import testUtils.TestSupport
 import testUtils.ViewSpec
 import views.html.incomeSources.add.ForeignPropertyCheckDetails
 
@@ -40,13 +40,13 @@ class ForeignPropertyCheckDetailsViewSpec extends ViewSpec{
 
   val foreignPropertyCheckDetailsView: ForeignPropertyCheckDetails = app.injector.instanceOf[ForeignPropertyCheckDetails]
 
-  val backUrl: String = controllers.incomeSources.add.routes.ForeignPropertyAccountingMethodController.show().url
-  val agentBackUrl: String = controllers.incomeSources.add.routes.ForeignPropertyAccountingMethodController.showAgent().url
+  val backUrl: String = controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.show(ForeignProperty.key).url
+  val agentBackUrl: String = controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.showAgent(ForeignProperty.key).url
 
   val foreignReportingMethodUrl: String = controllers.incomeSources.add.routes.ForeignPropertyReportingMethodController.show("123").url
 
   val changeDateLinkIndiv: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.changeForeignPropertyStartDate.url
-  val changeAccMethodIndiv: String = controllers.incomeSources.add.routes.ForeignPropertyAccountingMethodController.changeForeignPropertyAccountingMethod().url
+  val changeAccMethodIndiv: String = controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.changeIncomeSourcesAccountingMethod(ForeignProperty.key).url
 
   val viewModel: CheckForeignPropertyViewModel = CheckForeignPropertyViewModel(LocalDate.of(2023,1,1), "cash")
   val validCallWithSessionDataCash: Html = foreignPropertyCheckDetailsView(viewModel, testCall, isAgent = false, backUrl)

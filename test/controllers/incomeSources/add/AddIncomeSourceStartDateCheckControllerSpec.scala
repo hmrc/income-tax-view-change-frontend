@@ -19,6 +19,7 @@ package controllers.incomeSources.add
 import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
+import enums.IncomeSourceJourney.{ForeignProperty, UkProperty}
 import forms.incomeSources.add.AddIncomeSourceStartDateCheckForm
 import forms.utils.SessionKeys
 import forms.utils.SessionKeys.addUkPropertyStartDate
@@ -458,7 +459,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
   }
 
   "Individual - AddUKPropertyStartDateController.submit" should {
-    s"return 303 SEE_OTHER and redirect to ${controllers.incomeSources.add.routes.UKPropertyAccountingMethodController.show().url}" when {
+    s"return 303 SEE_OTHER and redirect to ${controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.show(UkProperty.key).url}" when {
       "user confirms the date is correct" in {
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
         enable(IncomeSources)
@@ -474,7 +475,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
         }
 
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.UKPropertyAccountingMethodController.show().url)
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.show(UkProperty.key).url)
       }
       s"return 303 SEE_OTHER and redirect to ${controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showUKProperty.url}" when {
         "user confirms the date is incorrect" in {
@@ -554,7 +555,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
   }
 
   "Agent - AddUKPropertyStartDateController.submitAgent" should {
-    s"return 303 SEE_OTHER and redirect to ${controllers.incomeSources.add.routes.UKPropertyAccountingMethodController.showAgent().url}" when {
+    s"return 303 SEE_OTHER and redirect to ${controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.showAgent(UkProperty.key).url}" when {
       "user confirms the date is correct" in {
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         enable(IncomeSources)
@@ -571,7 +572,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
 
         status(result) shouldBe Status.SEE_OTHER
 
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.UKPropertyAccountingMethodController.showAgent().url)
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.showAgent(UkProperty.key).url)
       }
       "user confirms the date is incorrect" in {
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
@@ -672,7 +673,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
         mockNoIncomeSources()
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
-        val postAction: Call = controllers.incomeSources.add.routes.ForeignPropertyAccountingMethodController.show()
+        val postAction: Call = controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.show(ForeignProperty.key)
 
         val result = TestAddIncomeSourceStartDateCheckController.submitForeignProperty(
           fakeRequestWithActiveSession.withFormUrlEncodedBody(
@@ -763,7 +764,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
         mockNoIncomeSources()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
-        val postActionAgent: Call = controllers.incomeSources.add.routes.ForeignPropertyAccountingMethodController.showAgent()
+        val postActionAgent: Call = controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.showAgent(ForeignProperty.key)
 
         val result = TestAddIncomeSourceStartDateCheckController.submitForeignPropertyAgent(
           fakeRequestConfirmedClient().withFormUrlEncodedBody(

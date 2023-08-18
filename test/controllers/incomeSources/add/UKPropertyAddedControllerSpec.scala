@@ -19,7 +19,7 @@ package controllers.incomeSources.add
 import config.featureswitch.{FeatureSwitching, IncomeSources, NavBarFs}
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import controllers.predicates._
-import forms.utils.SessionKeys.{addUkPropertyAccountingMethod, addUkPropertyStartDate}
+import forms.utils.SessionKeys.{addIncomeSourcesAccountingMethod, addUkPropertyStartDate}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import mocks.services.{MockIncomeSourceDetailsService, MockNextUpdatesService}
 import org.mockito.ArgumentMatchers.any
@@ -94,7 +94,7 @@ class UKPropertyAddedControllerSpec extends TestSupport with MockAuthenticationP
         when(mockNextUpdatesService.getNextUpdates(any())(any(), any())).
           thenReturn(Future(IncomeSourcesObligationsTestConstants.testObligationsModel))
 
-        val result = TestUKPropertyAddedController.show(testSelfEmploymentId)(fakeRequestWithActiveSession.withSession(addUkPropertyStartDate -> "2022-01-01", addUkPropertyAccountingMethod -> "cash"))
+        val result = TestUKPropertyAddedController.show(testSelfEmploymentId)(fakeRequestWithActiveSession.withSession(addUkPropertyStartDate -> "2022-01-01", addIncomeSourcesAccountingMethod -> "cash"))
         status(result) shouldBe OK
       }
     }
