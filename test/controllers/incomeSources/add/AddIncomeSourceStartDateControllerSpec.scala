@@ -93,7 +93,7 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport
         mockNoIncomeSources()
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
-        val result = TestAddIncomeSourceStartDateController.handleRequest(SelfEmployment.key, isAgent = false, isUpdate = false)(fakeRequestWithActiveSession)
+        val result = TestAddIncomeSourceStartDateController.handleRequest(SelfEmployment.key, isAgent = false, isChange = false)(fakeRequestWithActiveSession)
 
         val document: Document = Jsoup.parse(contentAsString(result))
         document.title should include(messages("error.custom.heading"))
@@ -107,7 +107,7 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport
         mockNoIncomeSources()
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
-        val result = TestAddIncomeSourceStartDateController.handleRequest(SelfEmployment.key, isAgent = false, isUpdate = false)(fakeRequestWithActiveSession)
+        val result = TestAddIncomeSourceStartDateController.handleRequest(SelfEmployment.key, isAgent = false, isChange = false)(fakeRequestWithActiveSession)
 
 
         val document: Document = Jsoup.parse(contentAsString(result))
@@ -123,7 +123,7 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport
         mockNoIncomeSources()
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
-        val result = TestAddIncomeSourceStartDateController.handleRequest(UkProperty.key, isAgent = false, isUpdate = false)(fakeRequestWithActiveSession)
+        val result = TestAddIncomeSourceStartDateController.handleRequest(UkProperty.key, isAgent = false, isChange = false)(fakeRequestWithActiveSession)
 
         val document: Document = Jsoup.parse(contentAsString(result))
         document.title should include(messages("incomeSources.add.UKPropertyStartDate.heading"))
@@ -138,7 +138,7 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport
         mockNoIncomeSources()
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
-        val result = TestAddIncomeSourceStartDateController.handleRequest(ForeignProperty.key, isAgent = false, isUpdate = false)(fakeRequestWithActiveSession)
+        val result = TestAddIncomeSourceStartDateController.handleRequest(ForeignProperty.key, isAgent = false, isChange = false)(fakeRequestWithActiveSession)
 
         val document: Document = Jsoup.parse(contentAsString(result))
         document.title should include(messages("incomeSources.add.foreignProperty.startDate.heading"))
@@ -153,7 +153,7 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport
         mockNoIncomeSources()
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
-        val result = TestAddIncomeSourceStartDateController.handleRequest(SelfEmployment.key, isAgent = false, isUpdate = true)(fakeRequestWithActiveSession)
+        val result = TestAddIncomeSourceStartDateController.handleRequest(SelfEmployment.key, isAgent = false, isChange = true)(fakeRequestWithActiveSession)
 
         val document: Document = Jsoup.parse(contentAsString(result))
         document.title should include(messages("add-business-start-date.heading"))
@@ -169,7 +169,7 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport
         mockNoIncomeSources()
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
-        val result = TestAddIncomeSourceStartDateController.handleRequest(UkProperty.key, isAgent = false, isUpdate = true)(fakeRequestWithActiveSession)
+        val result = TestAddIncomeSourceStartDateController.handleRequest(UkProperty.key, isAgent = false, isChange = true)(fakeRequestWithActiveSession)
 
         val document: Document = Jsoup.parse(contentAsString(result))
         document.title should include(messages("incomeSources.add.UKPropertyStartDate.heading"))
@@ -185,7 +185,7 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport
         mockNoIncomeSources()
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
-        val result = TestAddIncomeSourceStartDateController.handleRequest(ForeignProperty.key, isAgent = false, isUpdate = true)(fakeRequestWithActiveSession)
+        val result = TestAddIncomeSourceStartDateController.handleRequest(ForeignProperty.key, isAgent = false, isChange = true)(fakeRequestWithActiveSession)
 
         val document: Document = Jsoup.parse(contentAsString(result))
         document.title should include(messages("incomeSources.add.foreignProperty.startDate.heading"))
@@ -203,7 +203,7 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport
         mockNoIncomeSources()
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
-        val result = TestAddIncomeSourceStartDateController.handleRequest(SelfEmployment.key, isAgent = false, isUpdate = false)(fakePostRequestWithActiveSession)
+        val result = TestAddIncomeSourceStartDateController.handleRequest(SelfEmployment.key, isAgent = false, isChange = false)(fakePostRequestWithActiveSession)
 
         val document: Document = Jsoup.parse(contentAsString(result))
         document.title should include(messages("error.custom.heading"))
@@ -218,7 +218,7 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport
         mockNoIncomeSources()
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
-        val result = TestAddIncomeSourceStartDateController.handleRequest(SelfEmployment.key, isAgent = false, isUpdate = false)(fakePostRequestWithActiveSession.withFormUrlEncodedBody("INVALID" -> "INVALID"))
+        val result = TestAddIncomeSourceStartDateController.handleRequest(SelfEmployment.key, isAgent = false, isChange = false)(fakePostRequestWithActiveSession.withFormUrlEncodedBody("INVALID" -> "INVALID"))
 
         status(result) shouldBe BAD_REQUEST
       }
@@ -229,7 +229,7 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport
         mockNoIncomeSources()
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
-        val result = TestAddIncomeSourceStartDateController.handleRequest(SelfEmployment.key, isAgent = false, isUpdate = false)(fakePostRequestWithActiveSession.withFormUrlEncodedBody("" -> ""))
+        val result = TestAddIncomeSourceStartDateController.handleRequest(SelfEmployment.key, isAgent = false, isChange = false)(fakePostRequestWithActiveSession.withFormUrlEncodedBody("" -> ""))
 
         status(result) shouldBe BAD_REQUEST
       }
@@ -240,7 +240,7 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport
         mockNoIncomeSources()
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
-        val result = TestAddIncomeSourceStartDateController.handleRequest(SelfEmployment.key, isAgent = false, isUpdate = false)(fakePostRequestWithActiveSession)
+        val result = TestAddIncomeSourceStartDateController.handleRequest(SelfEmployment.key, isAgent = false, isChange = false)(fakePostRequestWithActiveSession)
 
         status(result) shouldBe BAD_REQUEST
       }
@@ -255,7 +255,7 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport
           currentDate.plusDays(8)
         ).date
 
-        val result = TestAddIncomeSourceStartDateController.handleRequest(SelfEmployment.key, isAgent = false, isUpdate = false)()(
+        val result = TestAddIncomeSourceStartDateController.handleRequest(SelfEmployment.key, isAgent = false, isChange = false)()(
           fakePostRequestWithActiveSession.withFormUrlEncodedBody(
             dayField -> testDate.getDayOfMonth.toString,
             monthField -> testDate.getMonthValue.toString,
@@ -277,7 +277,7 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport
         val testMonth = "99"
         val testYear = "9999"
 
-        val result = TestAddIncomeSourceStartDateController.handleRequest(SelfEmployment.key, isAgent = false, isUpdate = false)(
+        val result = TestAddIncomeSourceStartDateController.handleRequest(SelfEmployment.key, isAgent = false, isChange = false)(
           fakePostRequestWithActiveSession.withFormUrlEncodedBody(
             dayField -> testDay,
             monthField -> testMonth,
@@ -298,7 +298,7 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport
         val testMonth = "01"
         val testYear = "2020"
 
-        val result = TestAddIncomeSourceStartDateController.handleRequest(UkProperty.key, isAgent = false, isUpdate = false)(
+        val result = TestAddIncomeSourceStartDateController.handleRequest(UkProperty.key, isAgent = false, isChange = false)(
           fakePostRequestWithActiveSession.withFormUrlEncodedBody(
             dayField -> testDay,
             monthField -> testMonth,
@@ -319,7 +319,7 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport
         val testMonth = ""
         val testYear = "2021"
 
-        val result = TestAddIncomeSourceStartDateController.handleRequest(UkProperty.key, isAgent = false, isUpdate = false)(
+        val result = TestAddIncomeSourceStartDateController.handleRequest(UkProperty.key, isAgent = false, isChange = false)(
           fakePostRequestWithActiveSession.withFormUrlEncodedBody(
             dayField -> testDay,
             monthField -> testMonth,
@@ -340,7 +340,7 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport
         val testMonth = "01"
         val testYear = ""
 
-        val result = TestAddIncomeSourceStartDateController.handleRequest(SelfEmployment.key, isAgent = false, isUpdate = false)(
+        val result = TestAddIncomeSourceStartDateController.handleRequest(SelfEmployment.key, isAgent = false, isChange = false)(
           fakePostRequestWithActiveSession.withFormUrlEncodedBody(
             dayField -> testDay,
             monthField -> testMonth,
@@ -361,7 +361,7 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport
         val testMonth = ""
         val testYear = ""
 
-        val result = TestAddIncomeSourceStartDateController.handleRequest(UkProperty.key, isAgent = false, isUpdate = false)(
+        val result = TestAddIncomeSourceStartDateController.handleRequest(UkProperty.key, isAgent = false, isChange = false)(
           fakePostRequestWithActiveSession.withFormUrlEncodedBody(
             dayField -> testDay,
             monthField -> testMonth,
@@ -380,14 +380,14 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport
         mockNoIncomeSources()
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
-        val result = TestAddIncomeSourceStartDateController.handleRequest(SelfEmployment.key, isAgent = false, isUpdate = false)(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
+        val result = TestAddIncomeSourceStartDateController.handleRequest(SelfEmployment.key, isAgent = false, isChange = false)(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
           dayField -> "12",
           monthField -> "08",
           yearField -> "2023"
         ))
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(routes.AddIncomeSourceStartDateCheckController.handleRequest(SelfEmployment.key, isAgent = false, isUpdate = false).url)
+        redirectLocation(result) shouldBe Some(routes.AddIncomeSourceStartDateCheckController.handleRequest(SelfEmployment.key, isAgent = false, isChange = false).url)
       }
     }
     s"return ${Status.SEE_OTHER}: redirect to the Add Foreign Property Start Date Check page" when {
@@ -398,13 +398,13 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport
         mockNoIncomeSources()
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
-        val result = TestAddIncomeSourceStartDateController.handleRequest(ForeignProperty.key, isAgent = false, isUpdate = false)(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
+        val result = TestAddIncomeSourceStartDateController.handleRequest(ForeignProperty.key, isAgent = false, isChange = false)(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
           dayField -> "12",
           monthField -> "08",
           yearField -> "2023"
         ))
 
-        redirectLocation(result) shouldBe Some(routes.AddIncomeSourceStartDateCheckController.handleRequest(ForeignProperty.key, isAgent = false, isUpdate = false).url)
+        redirectLocation(result) shouldBe Some(routes.AddIncomeSourceStartDateCheckController.handleRequest(ForeignProperty.key, isAgent = false, isChange = false).url)
         status(result) shouldBe SEE_OTHER
       }
     }
@@ -416,13 +416,13 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport
         mockNoIncomeSources()
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
-        val result = TestAddIncomeSourceStartDateController.handleRequest(UkProperty.key, isAgent = false, isUpdate = false)(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
+        val result = TestAddIncomeSourceStartDateController.handleRequest(UkProperty.key, isAgent = false, isChange = false)(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
           dayField -> testDay,
           monthField -> testMonth,
           yearField -> testYear
         ))
 
-        redirectLocation(result) shouldBe Some(routes.AddIncomeSourceStartDateCheckController.handleRequest(UkProperty.key, isAgent = false, isUpdate = false).url)
+        redirectLocation(result) shouldBe Some(routes.AddIncomeSourceStartDateCheckController.handleRequest(UkProperty.key, isAgent = false, isChange = false).url)
         status(result) shouldBe SEE_OTHER
       }
     }
@@ -438,7 +438,7 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport
           currentDate.plusDays(7)
         ).date
 
-        val result = TestAddIncomeSourceStartDateController.handleRequest(ForeignProperty.key, isAgent = false, isUpdate = false)(
+        val result = TestAddIncomeSourceStartDateController.handleRequest(ForeignProperty.key, isAgent = false, isChange = false)(
           fakePostRequestWithActiveSession.withFormUrlEncodedBody(
             dayField -> testDate.getDayOfMonth.toString,
             monthField -> testDate.getMonthValue.toString,
@@ -447,7 +447,7 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport
         )
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(routes.AddIncomeSourceStartDateCheckController.handleRequest(ForeignProperty.key, isAgent = false, isUpdate = false).url)
+        redirectLocation(result) shouldBe Some(routes.AddIncomeSourceStartDateCheckController.handleRequest(ForeignProperty.key, isAgent = false, isChange = false).url)
       }
     }
     s"return ${Status.SEE_OTHER}: redirect to the Add UK Property Start Date Check Change page" when {
@@ -458,13 +458,13 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport
         mockNoIncomeSources()
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
-        val result = TestAddIncomeSourceStartDateController.handleRequest(UkProperty.key, isAgent = false, isUpdate = true)(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
+        val result = TestAddIncomeSourceStartDateController.handleRequest(UkProperty.key, isAgent = false, isChange = true)(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
           dayField -> testDay,
           monthField -> testMonth,
           yearField -> testYear
         ))
 
-        redirectLocation(result) shouldBe Some(routes.AddIncomeSourceStartDateCheckController.handleRequest(UkProperty.key, isAgent = false, isUpdate = true).url)
+        redirectLocation(result) shouldBe Some(routes.AddIncomeSourceStartDateCheckController.handleRequest(UkProperty.key, isAgent = false, isChange = true).url)
         status(result) shouldBe SEE_OTHER
       }
     }
@@ -476,13 +476,13 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport
         mockNoIncomeSources()
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
-        val result = TestAddIncomeSourceStartDateController.handleRequest(ForeignProperty.key, isAgent = false, isUpdate = true)(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
+        val result = TestAddIncomeSourceStartDateController.handleRequest(ForeignProperty.key, isAgent = false, isChange = true)(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
           dayField -> testDay,
           monthField -> testMonth,
           yearField -> testYear
         ))
 
-        redirectLocation(result) shouldBe Some(routes.AddIncomeSourceStartDateCheckController.handleRequest(ForeignProperty.key, isAgent = false, isUpdate = true).url)
+        redirectLocation(result) shouldBe Some(routes.AddIncomeSourceStartDateCheckController.handleRequest(ForeignProperty.key, isAgent = false, isChange = true).url)
         status(result) shouldBe SEE_OTHER
       }
     }
@@ -494,13 +494,13 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport
         mockNoIncomeSources()
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
-        val result = TestAddIncomeSourceStartDateController.handleRequest(SelfEmployment.key, isAgent = false, isUpdate = true)(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
+        val result = TestAddIncomeSourceStartDateController.handleRequest(SelfEmployment.key, isAgent = false, isChange = true)(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
           dayField -> testDay,
           monthField -> testMonth,
           yearField -> testYear
         ))
 
-        redirectLocation(result) shouldBe Some(routes.AddIncomeSourceStartDateCheckController.handleRequest(SelfEmployment.key, isAgent = false, isUpdate = true).url)
+        redirectLocation(result) shouldBe Some(routes.AddIncomeSourceStartDateCheckController.handleRequest(SelfEmployment.key, isAgent = false, isChange = true).url)
         status(result) shouldBe SEE_OTHER
       }
     }
@@ -515,7 +515,7 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport
         mockNoIncomeSources()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
-        val result = TestAddIncomeSourceStartDateController.handleRequest(SelfEmployment.key, isAgent = true, isUpdate = false)(fakeRequestConfirmedClient())
+        val result = TestAddIncomeSourceStartDateController.handleRequest(SelfEmployment.key, isAgent = true, isChange = false)(fakeRequestConfirmedClient())
 
         val document: Document = Jsoup.parse(contentAsString(result))
         document.title should include(messages("error.custom.heading"))
@@ -529,7 +529,7 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport
         mockNoIncomeSources()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
-        val result = TestAddIncomeSourceStartDateController.handleRequest(SelfEmployment.key, isAgent = true, isUpdate = false)(fakeRequestConfirmedClient())
+        val result = TestAddIncomeSourceStartDateController.handleRequest(SelfEmployment.key, isAgent = true, isChange = false)(fakeRequestConfirmedClient())
 
 
         val document: Document = Jsoup.parse(contentAsString(result))
@@ -545,7 +545,7 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport
         mockNoIncomeSources()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
-        val result = TestAddIncomeSourceStartDateController.handleRequest(UkProperty.key, isAgent = true, isUpdate = false)(fakeRequestConfirmedClient())
+        val result = TestAddIncomeSourceStartDateController.handleRequest(UkProperty.key, isAgent = true, isChange = false)(fakeRequestConfirmedClient())
 
         val document: Document = Jsoup.parse(contentAsString(result))
         document.title should include(messages("incomeSources.add.UKPropertyStartDate.heading"))
@@ -560,7 +560,7 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport
         mockNoIncomeSources()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
-        val result = TestAddIncomeSourceStartDateController.handleRequest(ForeignProperty.key, isAgent = true, isUpdate = false)(fakeRequestConfirmedClient())
+        val result = TestAddIncomeSourceStartDateController.handleRequest(ForeignProperty.key, isAgent = true, isChange = false)(fakeRequestConfirmedClient())
 
         val document: Document = Jsoup.parse(contentAsString(result))
         document.title should include(messages("incomeSources.add.foreignProperty.startDate.heading"))
@@ -575,7 +575,7 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport
         mockNoIncomeSources()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
-        val result = TestAddIncomeSourceStartDateController.handleRequest(ForeignProperty.key, isAgent = true, isUpdate = true)(fakeRequestConfirmedClient())
+        val result = TestAddIncomeSourceStartDateController.handleRequest(ForeignProperty.key, isAgent = true, isChange = true)(fakeRequestConfirmedClient())
 
         val document: Document = Jsoup.parse(contentAsString(result))
         document.title should include(messages("incomeSources.add.foreignProperty.startDate.heading"))
@@ -591,7 +591,7 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport
         mockNoIncomeSources()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
-        val result = TestAddIncomeSourceStartDateController.handleRequest(UkProperty.key, isAgent = true, isUpdate = true)(fakeRequestConfirmedClient())
+        val result = TestAddIncomeSourceStartDateController.handleRequest(UkProperty.key, isAgent = true, isChange = true)(fakeRequestConfirmedClient())
 
         val document: Document = Jsoup.parse(contentAsString(result))
         document.title should include(messages("incomeSources.add.UKPropertyStartDate.heading"))
@@ -607,7 +607,7 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport
         mockNoIncomeSources()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
-        val result = TestAddIncomeSourceStartDateController.handleRequest(SelfEmployment.key, isAgent = true, isUpdate = true)(fakeRequestConfirmedClient())
+        val result = TestAddIncomeSourceStartDateController.handleRequest(SelfEmployment.key, isAgent = true, isChange = true)(fakeRequestConfirmedClient())
 
         val document: Document = Jsoup.parse(contentAsString(result))
         document.title should include(messages("add-business-start-date.heading"))
@@ -625,7 +625,7 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport
         mockNoIncomeSources()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
-        val result = TestAddIncomeSourceStartDateController.handleRequest(SelfEmployment.key, isAgent = true, isUpdate = false)(fakePostRequestConfirmedClient())
+        val result = TestAddIncomeSourceStartDateController.handleRequest(SelfEmployment.key, isAgent = true, isChange = false)(fakePostRequestConfirmedClient())
 
         val document: Document = Jsoup.parse(contentAsString(result))
         document.title should include(messages("error.custom.heading"))
@@ -640,7 +640,7 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport
         mockNoIncomeSources()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
-        val result = TestAddIncomeSourceStartDateController.handleRequest(SelfEmployment.key, isAgent = true, isUpdate = false)(fakePostRequestConfirmedClient().withFormUrlEncodedBody("INVALID" -> "INVALID"))
+        val result = TestAddIncomeSourceStartDateController.handleRequest(SelfEmployment.key, isAgent = true, isChange = false)(fakePostRequestConfirmedClient().withFormUrlEncodedBody("INVALID" -> "INVALID"))
 
         status(result) shouldBe BAD_REQUEST
       }
@@ -653,13 +653,13 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport
         mockNoIncomeSources()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
-        val result = TestAddIncomeSourceStartDateController.handleRequest(SelfEmployment.key, isAgent = true, isUpdate = false)(fakePostRequestConfirmedClient().withFormUrlEncodedBody(
+        val result = TestAddIncomeSourceStartDateController.handleRequest(SelfEmployment.key, isAgent = true, isChange = false)(fakePostRequestConfirmedClient().withFormUrlEncodedBody(
           dayField -> testDay,
           monthField -> testMonth,
           yearField -> testYear
         ))
 
-        redirectLocation(result) shouldBe Some(routes.AddIncomeSourceStartDateCheckController.handleRequest(SelfEmployment.key, isAgent = true, isUpdate = false).url)
+        redirectLocation(result) shouldBe Some(routes.AddIncomeSourceStartDateCheckController.handleRequest(SelfEmployment.key, isAgent = true, isChange = false).url)
         status(result) shouldBe SEE_OTHER
       }
     }
@@ -671,13 +671,13 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport
         mockNoIncomeSources()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
-        val result = TestAddIncomeSourceStartDateController.handleRequest(ForeignProperty.key, isAgent = true, isUpdate = false)(fakePostRequestConfirmedClient().withFormUrlEncodedBody(
+        val result = TestAddIncomeSourceStartDateController.handleRequest(ForeignProperty.key, isAgent = true, isChange = false)(fakePostRequestConfirmedClient().withFormUrlEncodedBody(
           dayField -> testDay,
           monthField -> testMonth,
           yearField -> testYear
         ))
 
-        redirectLocation(result) shouldBe Some(routes.AddIncomeSourceStartDateCheckController.handleRequest(ForeignProperty.key, isAgent = true, isUpdate = false).url)
+        redirectLocation(result) shouldBe Some(routes.AddIncomeSourceStartDateCheckController.handleRequest(ForeignProperty.key, isAgent = true, isChange = false).url)
         status(result) shouldBe SEE_OTHER
       }
     }
@@ -689,13 +689,13 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport
         mockNoIncomeSources()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
-        val result = TestAddIncomeSourceStartDateController.handleRequest(UkProperty.key, isAgent = true, isUpdate = false)(fakePostRequestConfirmedClient().withFormUrlEncodedBody(
+        val result = TestAddIncomeSourceStartDateController.handleRequest(UkProperty.key, isAgent = true, isChange = false)(fakePostRequestConfirmedClient().withFormUrlEncodedBody(
           dayField -> testDay,
           monthField -> testMonth,
           yearField -> testYear
         ))
 
-        redirectLocation(result) shouldBe Some(routes.AddIncomeSourceStartDateCheckController.handleRequest(UkProperty.key, isAgent = true, isUpdate = false).url)
+        redirectLocation(result) shouldBe Some(routes.AddIncomeSourceStartDateCheckController.handleRequest(UkProperty.key, isAgent = true, isChange = false).url)
         status(result) shouldBe SEE_OTHER
       }
     }
@@ -707,13 +707,13 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport
         mockNoIncomeSources()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
-        val result = TestAddIncomeSourceStartDateController.handleRequest(SelfEmployment.key, isAgent = true, isUpdate = true)(fakePostRequestConfirmedClient().withFormUrlEncodedBody(
+        val result = TestAddIncomeSourceStartDateController.handleRequest(SelfEmployment.key, isAgent = true, isChange = true)(fakePostRequestConfirmedClient().withFormUrlEncodedBody(
           dayField -> testDay,
           monthField -> testMonth,
           yearField -> testYear
         ))
 
-        redirectLocation(result) shouldBe Some(routes.AddIncomeSourceStartDateCheckController.handleRequest(SelfEmployment.key, isAgent = true, isUpdate = true).url)
+        redirectLocation(result) shouldBe Some(routes.AddIncomeSourceStartDateCheckController.handleRequest(SelfEmployment.key, isAgent = true, isChange = true).url)
         status(result) shouldBe SEE_OTHER
       }
     }
@@ -725,13 +725,13 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport
         mockNoIncomeSources()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
-        val result = TestAddIncomeSourceStartDateController.handleRequest(ForeignProperty.key, isAgent = true, isUpdate = true)(fakePostRequestConfirmedClient().withFormUrlEncodedBody(
+        val result = TestAddIncomeSourceStartDateController.handleRequest(ForeignProperty.key, isAgent = true, isChange = true)(fakePostRequestConfirmedClient().withFormUrlEncodedBody(
           dayField -> testDay,
           monthField -> testMonth,
           yearField -> testYear
         ))
 
-        redirectLocation(result) shouldBe Some(routes.AddIncomeSourceStartDateCheckController.handleRequest(ForeignProperty.key, isAgent = true, isUpdate = true).url)
+        redirectLocation(result) shouldBe Some(routes.AddIncomeSourceStartDateCheckController.handleRequest(ForeignProperty.key, isAgent = true, isChange = true).url)
         status(result) shouldBe SEE_OTHER
       }
     }
@@ -743,13 +743,13 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport
         mockNoIncomeSources()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
-        val result = TestAddIncomeSourceStartDateController.handleRequest(UkProperty.key, isAgent = true, isUpdate = true)(fakePostRequestConfirmedClient().withFormUrlEncodedBody(
+        val result = TestAddIncomeSourceStartDateController.handleRequest(UkProperty.key, isAgent = true, isChange = true)(fakePostRequestConfirmedClient().withFormUrlEncodedBody(
           dayField -> testDay,
           monthField -> testMonth,
           yearField -> testYear
         ))
 
-        redirectLocation(result) shouldBe Some(routes.AddIncomeSourceStartDateCheckController.handleRequest(UkProperty.key, isAgent = true, isUpdate = true).url)
+        redirectLocation(result) shouldBe Some(routes.AddIncomeSourceStartDateCheckController.handleRequest(UkProperty.key, isAgent = true, isChange = true).url)
         status(result) shouldBe SEE_OTHER
       }
     }

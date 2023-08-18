@@ -57,17 +57,17 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
                                                         val itvcErrorHandlerAgent: AgentItvcErrorHandler)
   extends ClientConfirmedController with I18nSupport with FeatureSwitching with ImplicitDateFormatter {
 
-  def handleRequest(incomeSourceKey: String, isAgent: Boolean, isUpdate: Boolean): Action[AnyContent] = {
+  def handleRequest(incomeSourceKey: String, isAgent: Boolean, isChange: Boolean): Action[AnyContent] = {
     handleRequestMethod(
       incomeSourceType = IncomeSourceType.get(incomeSourceKey),
       isAgent = isAgent,
-      isUpdate = isUpdate
+      isChange = isChange
     )
   }
 
   private def handleRequestMethod(incomeSourceType: IncomeSourceType,
                                   isAgent: Boolean,
-                                  isUpdate: Boolean): Action[AnyContent] = {
+                                  isChange: Boolean): Action[AnyContent] = {
     if (isAgent)
       Authenticated.async {
         implicit request =>
@@ -75,8 +75,8 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
             getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
               implicit mtdItUser =>
                 request.method match {
-                  case "GET" => show(incomeSourceType, isAgent, isUpdate)
-                  case "POST" => submit(incomeSourceType, isAgent, isUpdate)
+                  case "GET" => show(incomeSourceType, isAgent, isChange)
+                  case "POST" => submit(incomeSourceType, isAgent, isChange)
                 }
             }
       }
@@ -85,8 +85,8 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
         andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
         implicit user =>
           user.method match {
-            case "GET" => show(incomeSourceType, isAgent, isUpdate)
-            case "POST" => submit(incomeSourceType, isAgent, isUpdate)
+            case "GET" => show(incomeSourceType, isAgent, isChange)
+            case "POST" => submit(incomeSourceType, isAgent, isChange)
           }
       }
   }

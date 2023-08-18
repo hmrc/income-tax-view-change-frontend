@@ -200,7 +200,7 @@ class AddIncomeSourceStartDateCheckViewSpec extends TestSupport {
           addIncomeSourceStartDateCheck(
             form = AddIncomeSourceStartDateCheckForm(SelfEmployment.addStartDateCheckMessagesPrefix)
               .withError(FormError("start-date-check", s"${SelfEmployment.addStartDateCheckMessagesPrefix}.error")),
-            postAction = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.handleRequest(SelfEmployment.key, isAgent = true, isUpdate = false),
+            postAction = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.handleRequest(SelfEmployment.key, isAgent = true, isChange = false),
             isAgent = isAgent,
             backUrl = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.handleRequest(SelfEmployment.key, isAgent, isUpdate).url,
             incomeSourceStartDate = formattedStartDate
@@ -243,7 +243,7 @@ class AddIncomeSourceStartDateCheckViewSpec extends TestSupport {
     }
     "render the back link with the correct URL" in new Setup(false, false, UkProperty) {
       document.getElementById("back").text() shouldBe messages("base.back")
-      document.getElementById("back").attr("href") shouldBe controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.handleRequest(UkProperty.key, isAgent = false, isUpdate = false).url
+      document.getElementById("back").attr("href") shouldBe controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.handleRequest(UkProperty.key, isAgent = false, isChange = false).url
     }
     "render the continue button" in new Setup(false, false, UkProperty) {
       document.getElementById("continue-button").text() shouldBe messages("base.continue")
@@ -257,10 +257,10 @@ class AddIncomeSourceStartDateCheckViewSpec extends TestSupport {
       document.getElementsByClass("govuk-list govuk-error-summary__list").text() shouldBe messages(s"${UkProperty.addStartDateCheckMessagesPrefix}.error")
     }
     "render the back url which redirects to Add Income Source Start Date Page" in new Setup(false, false, UkProperty, true) {
-      document.getElementById("back").attr("href") shouldBe controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.handleRequest(UkProperty.key, isAgent = false, isUpdate = true).url
+      document.getElementById("back").attr("href") shouldBe controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.handleRequest(UkProperty.key, isAgent = false, isChange = true).url
     }
     "render the back url which redirects to Add Income Source Start Date Change page" in new Setup(false, false, UkProperty, true) {
-      document.getElementById("back").attr("href") shouldBe controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.handleRequest(UkProperty.key, isAgent = false, isUpdate = true).url
+      document.getElementById("back").attr("href") shouldBe controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.handleRequest(UkProperty.key, isAgent = false, isChange = true).url
     }
   }
 
@@ -278,7 +278,7 @@ class AddIncomeSourceStartDateCheckViewSpec extends TestSupport {
     }
     "render the back link with the correct URL" in new Setup(true, false, UkProperty) {
       document.getElementById("back").text() shouldBe messages("base.back")
-      document.getElementById("back").attr("href") shouldBe controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.handleRequest(UkProperty.key, isAgent = true, isUpdate = false).url
+      document.getElementById("back").attr("href") shouldBe controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.handleRequest(UkProperty.key, isAgent = true, isChange = false).url
     }
     "render the continue button" in new Setup(true, false, UkProperty) {
       document.getElementById("continue-button").text() shouldBe messages("base.continue")
@@ -292,10 +292,10 @@ class AddIncomeSourceStartDateCheckViewSpec extends TestSupport {
       document.getElementsByClass("govuk-list govuk-error-summary__list").text() shouldBe messages(s"${UkProperty.addStartDateCheckMessagesPrefix}.error")
     }
     "render the back url which redirects to Add Income Source Start Date Page" in new Setup(true, false, UkProperty, true) {
-      document.getElementById("back").attr("href") shouldBe controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.handleRequest(UkProperty.key, isAgent = true, isUpdate = true).url
+      document.getElementById("back").attr("href") shouldBe controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.handleRequest(UkProperty.key, isAgent = true, isChange = true).url
     }
     "render the back url which redirects to Add Income Source Start Date Change page" in new Setup(true, false, UkProperty, true) {
-      document.getElementById("back").attr("href") shouldBe controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.handleRequest(UkProperty.key, isAgent = true, isUpdate = true).url
+      document.getElementById("back").attr("href") shouldBe controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.handleRequest(UkProperty.key, isAgent = true, isChange = true).url
     }
   }
 
@@ -313,7 +313,7 @@ class AddIncomeSourceStartDateCheckViewSpec extends TestSupport {
     }
     "render the back link with the correct URL" in new Setup(false, false, ForeignProperty) {
       document.getElementById("back").text() shouldBe messages("base.back")
-      document.getElementById("back").attr("href") shouldBe controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.handleRequest(ForeignProperty.key, isAgent = false, isUpdate = false).url
+      document.getElementById("back").attr("href") shouldBe controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.handleRequest(ForeignProperty.key, isAgent = false, isChange = false).url
     }
     "render the continue button" in new Setup(false, false, ForeignProperty) {
       document.getElementById("continue-button").text() shouldBe messages("base.continue")
@@ -327,10 +327,10 @@ class AddIncomeSourceStartDateCheckViewSpec extends TestSupport {
       document.getElementsByClass("govuk-list govuk-error-summary__list").text() shouldBe messages(s"${ForeignProperty.addStartDateCheckMessagesPrefix}.error")
     }
     "render the back url which redirects to Add Income Source Start Date Page" in new Setup(false, false, ForeignProperty, true) {
-      document.getElementById("back").attr("href") shouldBe controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.handleRequest(ForeignProperty.key, isAgent = false, isUpdate = true).url
+      document.getElementById("back").attr("href") shouldBe controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.handleRequest(ForeignProperty.key, isAgent = false, isChange = true).url
     }
     "render the back url which redirects to Add Income Source Start Date Check page" in new Setup(false, false, ForeignProperty, true) {
-      document.getElementById("back").attr("href") shouldBe controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.handleRequest(ForeignProperty.key, isAgent = false, isUpdate = true).url
+      document.getElementById("back").attr("href") shouldBe controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.handleRequest(ForeignProperty.key, isAgent = false, isChange = true).url
     }
   }
 
@@ -348,7 +348,7 @@ class AddIncomeSourceStartDateCheckViewSpec extends TestSupport {
     }
     "render the back link with the correct URL" in new Setup(true, false, ForeignProperty) {
       document.getElementById("back").text() shouldBe messages("base.back")
-      document.getElementById("back").attr("href") shouldBe controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.handleRequest(ForeignProperty.key, isAgent = true, isUpdate = false).url
+      document.getElementById("back").attr("href") shouldBe controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.handleRequest(ForeignProperty.key, isAgent = true, isChange = false).url
     }
     "render the continue button" in new Setup(true, false, ForeignProperty) {
       document.getElementById("continue-button").text() shouldBe messages("base.continue")
@@ -362,10 +362,10 @@ class AddIncomeSourceStartDateCheckViewSpec extends TestSupport {
       document.getElementsByClass("govuk-list govuk-error-summary__list").text() shouldBe messages(s"${ForeignProperty.addStartDateCheckMessagesPrefix}.error")
     }
     "render the back url which redirects to Add Income Source Start Date Page" in new Setup(true, false, ForeignProperty, true) {
-      document.getElementById("back").attr("href") shouldBe controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.handleRequest(ForeignProperty.key, isAgent = true, isUpdate = true).url
+      document.getElementById("back").attr("href") shouldBe controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.handleRequest(ForeignProperty.key, isAgent = true, isChange = true).url
     }
     "render the back url which redirects to Add Income Source Start Date Change Page" in new Setup(true, false, ForeignProperty, true) {
-      document.getElementById("back").attr("href") shouldBe controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.handleRequest(ForeignProperty.key, isAgent = true, isUpdate = true).url
+      document.getElementById("back").attr("href") shouldBe controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.handleRequest(ForeignProperty.key, isAgent = true, isChange = true).url
     }
   }
 
@@ -383,7 +383,7 @@ class AddIncomeSourceStartDateCheckViewSpec extends TestSupport {
     }
     "render the back link with the correct URL" in new Setup(false, false, SelfEmployment) {
       document.getElementById("back").text() shouldBe messages("base.back")
-      document.getElementById("back").attr("href") shouldBe controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.handleRequest(SelfEmployment.key, isAgent = false, isUpdate = false).url
+      document.getElementById("back").attr("href") shouldBe controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.handleRequest(SelfEmployment.key, isAgent = false, isChange = false).url
     }
     "render the continue button" in new Setup(false, false, SelfEmployment) {
       document.getElementById("continue-button").text() shouldBe messages("base.continue")
@@ -397,10 +397,10 @@ class AddIncomeSourceStartDateCheckViewSpec extends TestSupport {
       document.getElementsByClass("govuk-list govuk-error-summary__list").text() shouldBe messages(s"${SelfEmployment.addStartDateCheckMessagesPrefix}.error")
     }
     "render the back url which redirects to Add Income Source Start Date Page" in new Setup(false, false, SelfEmployment, true) {
-      document.getElementById("back").attr("href") shouldBe controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.handleRequest(SelfEmployment.key, isAgent = false, isUpdate = true).url
+      document.getElementById("back").attr("href") shouldBe controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.handleRequest(SelfEmployment.key, isAgent = false, isChange = true).url
     }
     "render the back url which redirects to Add Income Source Start Date Change Page" in new Setup(false, false, SelfEmployment, true) {
-      document.getElementById("back").attr("href") shouldBe controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.handleRequest(SelfEmployment.key, isAgent = false, isUpdate = true).url
+      document.getElementById("back").attr("href") shouldBe controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.handleRequest(SelfEmployment.key, isAgent = false, isChange = true).url
     }
   }
 
@@ -418,7 +418,7 @@ class AddIncomeSourceStartDateCheckViewSpec extends TestSupport {
     }
     "render the back link with the correct URL" in new Setup(true, false, SelfEmployment) {
       document.getElementById("back").text() shouldBe messages("base.back")
-      document.getElementById("back").attr("href") shouldBe controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.handleRequest(SelfEmployment.key, isAgent = true, isUpdate = false).url
+      document.getElementById("back").attr("href") shouldBe controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.handleRequest(SelfEmployment.key, isAgent = true, isChange = false).url
     }
     "render the continue button" in new Setup(true, false, SelfEmployment) {
       document.getElementById("continue-button").text() shouldBe messages("base.continue")
@@ -432,10 +432,10 @@ class AddIncomeSourceStartDateCheckViewSpec extends TestSupport {
       document.getElementsByClass("govuk-list govuk-error-summary__list").text() shouldBe messages(s"${SelfEmployment.addStartDateCheckMessagesPrefix}.error")
     }
     "render the back url which redirects to Add Income Source Start Date Page" in new Setup(true, false, SelfEmployment, true) {
-      document.getElementById("back").attr("href") shouldBe controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.handleRequest(SelfEmployment.key, isAgent = true, isUpdate = true).url
+      document.getElementById("back").attr("href") shouldBe controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.handleRequest(SelfEmployment.key, isAgent = true, isChange = true).url
     }
     "render the back url which redirects to Add Income Source Start Date Change Page" in new Setup(true, false, SelfEmployment, true) {
-      document.getElementById("back").attr("href") shouldBe controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.handleRequest(SelfEmployment.key, isAgent = true, isUpdate = true).url
+      document.getElementById("back").attr("href") shouldBe controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.handleRequest(SelfEmployment.key, isAgent = true, isChange = true).url
     }
   }
 }
