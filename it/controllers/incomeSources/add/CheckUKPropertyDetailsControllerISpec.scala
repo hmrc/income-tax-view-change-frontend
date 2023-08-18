@@ -17,7 +17,8 @@
 package controllers.incomeSources.add
 
 import config.featureswitch.IncomeSources
-import forms.utils.SessionKeys.{addUkPropertyAccountingMethod, addUkPropertyStartDate}
+import enums.IncomeSourceJourney.UkProperty
+import forms.utils.SessionKeys.{addIncomeSourcesAccountingMethod, addUkPropertyStartDate}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.createIncomeSource.CreateIncomeSourceResponse
@@ -30,11 +31,11 @@ class CheckUKPropertyDetailsControllerISpec extends ComponentSpecBase {
   object CheckUKPropertyDetails {
     val showUrl: String = controllers.incomeSources.add.routes.CheckUKPropertyDetailsController.show().url
     val submitUrl: String = controllers.incomeSources.add.routes.CheckUKPropertyDetailsController.submit().url
-    val backUrl: String = controllers.incomeSources.add.routes.UKPropertyAccountingMethodController.show().url
+    val backUrl: String = controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.show(UkProperty.key).url
     val successUrl: String = controllers.incomeSources.add.routes.UKPropertyReportingMethodController.show("1234567890").url
-    val failureUrl: String = controllers.incomeSources.add.routes.UKPropertyNotAddedController.show().url
+    val failureUrl: String = controllers.incomeSources.add.routes.IncomeSourceNotAddedController.showUKProperty().url
     val completedJourneyCookies: Map[String, String] = Map(addUkPropertyStartDate -> "2022-10-10",
-      addUkPropertyAccountingMethod -> "CASH")
+      addIncomeSourcesAccountingMethod -> "CASH")
     val changeText: String = messagesAPI("incomeSources.add.checkUKPropertyDetails.change") + " " +
       messagesAPI("incomeSources.add.checkUKPropertyDetails.change") // duplicated due to visually hidden text
     val confirmText: String = messagesAPI("incomeSources.add.checkUKPropertyDetails.confirm")

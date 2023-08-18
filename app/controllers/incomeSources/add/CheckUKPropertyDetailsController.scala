@@ -21,6 +21,7 @@ import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
+import enums.IncomeSourceJourney.UkProperty
 import implicits.ImplicitDateFormatter
 import models.createIncomeSource.CreateIncomeSourceResponse
 import models.incomeSourceDetails.viewmodels.CheckUKPropertyViewModel
@@ -58,8 +59,8 @@ class CheckUKPropertyDetailsController @Inject()(val checkUKPropertyDetails: Che
   extends ClientConfirmedController with I18nSupport with FeatureSwitching with ImplicitDateFormatter with IncomeSourcesUtils {
 
   def getBackUrl(isAgent: Boolean): String = {
-    if (isAgent) controllers.incomeSources.add.routes.UKPropertyAccountingMethodController.showAgent().url else
-      controllers.incomeSources.add.routes.UKPropertyAccountingMethodController.show().url
+    if (isAgent) controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.showAgent(UkProperty.key).url else
+      controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.show(UkProperty.key).url
   }
 
   def getSubmitUrl(isAgent: Boolean): Call = {
@@ -140,8 +141,8 @@ class CheckUKPropertyDetailsController @Inject()(val checkUKPropertyDetails: Che
             case Left(ex) => Logger("application").error(
               s"[CheckUKPropertyDetailsController][handleRequest] - Unable to create income source: ${ex.getMessage}")
               withIncomeSourcesRemovedFromSession {
-                if (isAgent) Redirect(controllers.incomeSources.add.routes.UKPropertyNotAddedController.showAgent())
-                else Redirect(controllers.incomeSources.add.routes.UKPropertyNotAddedController.show())
+                if (isAgent) Redirect(controllers.incomeSources.add.routes.IncomeSourceNotAddedController.showUKPropertyAgent())
+                else Redirect(controllers.incomeSources.add.routes.IncomeSourceNotAddedController.showUKProperty())
               }
             case Right(CreateIncomeSourceResponse(id)) =>
               val redirectUrl = getUKPropertyReportingMethodUrl(isAgent, id)
@@ -153,8 +154,8 @@ class CheckUKPropertyDetailsController @Inject()(val checkUKPropertyDetails: Che
               Logger("application").error(
                 s"[CheckUKPropertyDetailsController][handleRequest] - Error while processing request: ${ex.getMessage}")
               withIncomeSourcesRemovedFromSession {
-                if (isAgent) Redirect(controllers.incomeSources.add.routes.UKPropertyNotAddedController.showAgent())
-                else Redirect(controllers.incomeSources.add.routes.UKPropertyNotAddedController.show())
+                if (isAgent) Redirect(controllers.incomeSources.add.routes.IncomeSourceNotAddedController.showUKPropertyAgent())
+                else Redirect(controllers.incomeSources.add.routes.IncomeSourceNotAddedController.showUKProperty())
               }
           }
         case Left(ex: Throwable) =>

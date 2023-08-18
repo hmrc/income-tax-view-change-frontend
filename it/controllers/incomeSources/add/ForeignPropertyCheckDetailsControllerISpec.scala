@@ -1,27 +1,28 @@
 package controllers.incomeSources.add
 
 import config.featureswitch.IncomeSources
-import forms.utils.SessionKeys.{addBusinessAccountingMethod, addBusinessAccountingPeriodEndDate, addBusinessAddressLine1, addBusinessPostalCode, addForeignPropertyAccountingMethod, businessName, businessStartDate, businessTrade, foreignPropertyStartDate}
+import enums.IncomeSourceJourney.ForeignProperty
+import forms.utils.SessionKeys.{addIncomeSourcesAccountingMethod, foreignPropertyStartDate}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.createIncomeSource.CreateIncomeSourceResponse
-import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, NOT_FOUND, OK, SEE_OTHER}
+import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testSelfEmploymentId}
-import testConstants.IncomeSourceIntegrationTestConstants.{errorResponse, multipleBusinessesAndUkProperty, noPropertyOrBusinessResponse}
+import testConstants.IncomeSourceIntegrationTestConstants.noPropertyOrBusinessResponse
 
 class ForeignPropertyCheckDetailsControllerISpec extends ComponentSpecBase{
 
   val foreignPropertyCheckDetailsShowUrl: String = controllers.incomeSources.add.routes.ForeignPropertyCheckDetailsController.show().url
-  val foreignPropertyAccountingMethodUrl: String = controllers.incomeSources.add.routes.ForeignPropertyAccountingMethodController.show().url
+  val foreignPropertyAccountingMethodUrl: String = controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.show(ForeignProperty.key).url
 
   val foreignPropertyCheckDetailsSubmitUrl: String = controllers.incomeSources.add.routes.ForeignPropertyCheckDetailsController.submit().url
   val foreignPropertyReportingMethodShowUrl: String = controllers.incomeSources.add.routes.ForeignPropertyReportingMethodController.show("ABC123456789").url
 
-  val errorPageUrl: String = controllers.incomeSources.add.routes.ForeignPropertyBusinessNotAddedErrorController.show().url
+  val errorPageUrl: String = controllers.incomeSources.add.routes.IncomeSourceNotAddedController.showForeignProperty().url
 
   val sessionData: Map[String, String] = Map(
     foreignPropertyStartDate -> "2023-01-01",
-    addForeignPropertyAccountingMethod -> "ACCRUALS"
+    addIncomeSourcesAccountingMethod -> "ACCRUALS"
   )
 
   val testStartDate = "1 January 2023"
@@ -58,7 +59,7 @@ class ForeignPropertyCheckDetailsControllerISpec extends ComponentSpecBase{
           When(s"I call $foreignPropertyCheckDetailsShowUrl")
           val result = IncomeTaxViewChangeFrontend.get("/income-sources/add/foreign-property-check-details", Map(
             foreignPropertyStartDate -> "",
-            addForeignPropertyAccountingMethod -> ""
+            addIncomeSourcesAccountingMethod -> ""
           ))
           result should have(
             httpStatus(INTERNAL_SERVER_ERROR)
@@ -78,7 +79,7 @@ class ForeignPropertyCheckDetailsControllerISpec extends ComponentSpecBase{
 
         val formData: Map[String, Seq[String]] = Map(
           "foreignPropertyStartDate" -> Seq("2023-01-01"),
-          "addForeignPropertyAccountingMethod" -> Seq("ACCRUALS")
+          "addIncomeSourcesAccountingMethod" -> Seq("ACCRUALS")
         )
 
         val response = List(CreateIncomeSourceResponse(testSelfEmploymentId))
@@ -101,7 +102,7 @@ class ForeignPropertyCheckDetailsControllerISpec extends ComponentSpecBase{
 
         val formData: Map[String, Seq[String]] = Map(
           "foreignPropertyStartDate" -> Seq("2023-01-01"),
-          "addForeignPropertyAccountingMethod" -> Seq("ACCRUALS")
+          "addIncomeSourcesAccountingMethod" -> Seq("ACCRUALS")
         )
 
         IncomeTaxViewChangeStub.stubCreateBusinessDetailsResponse(testMtditid)(OK, List.empty)

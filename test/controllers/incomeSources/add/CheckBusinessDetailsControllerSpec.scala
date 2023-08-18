@@ -94,7 +94,7 @@ class CheckBusinessDetailsControllerSpec extends TestSupport with MockAuthentica
               SessionKeys.businessStartDate -> testBusinessStartDate,
               SessionKeys.businessTrade -> testBusinessTrade,
               SessionKeys.addBusinessAddressLine1 -> testBusinessAddressLine1,
-              SessionKeys.addBusinessAccountingMethod -> testBusinessAccountingMethod,
+              SessionKeys.addIncomeSourcesAccountingMethod -> testBusinessAccountingMethod,
               SessionKeys.addBusinessAccountingPeriodEndDate -> testAccountingPeriodEndDate,
               SessionKeys.addBusinessPostalCode -> testBusinessPostCode,
             ))
@@ -132,7 +132,7 @@ class CheckBusinessDetailsControllerSpec extends TestSupport with MockAuthentica
               SessionKeys.businessTrade -> testBusinessTrade,
               SessionKeys.addBusinessAddressLine1 -> testBusinessAddressLine1,
               SessionKeys.addBusinessPostalCode -> testBusinessPostCode,
-              SessionKeys.addBusinessAccountingMethod -> testBusinessAccountingMethod,
+              SessionKeys.addIncomeSourcesAccountingMethod -> testBusinessAccountingMethod,
               SessionKeys.addBusinessAccountingPeriodEndDate -> testAccountingPeriodEndDate,
               SessionKeys.addBusinessPostalCode -> testBusinessPostCode,
             ))
@@ -206,7 +206,7 @@ class CheckBusinessDetailsControllerSpec extends TestSupport with MockAuthentica
             SessionKeys.businessTrade -> testBusinessTrade,
             SessionKeys.addBusinessAddressLine1 -> testBusinessAddressLine1,
             SessionKeys.addBusinessPostalCode -> testBusinessPostCode,
-            SessionKeys.addBusinessAccountingMethod -> testBusinessAccountingMethod,
+            SessionKeys.addIncomeSourcesAccountingMethod -> testBusinessAccountingMethod,
             SessionKeys.addBusinessAccountingPeriodEndDate -> testAccountingPeriodEndDate,
             SessionKeys.addBusinessPostalCode -> testBusinessPostCode
           ))
@@ -241,7 +241,7 @@ class CheckBusinessDetailsControllerSpec extends TestSupport with MockAuthentica
             SessionKeys.businessTrade -> testBusinessTrade,
             SessionKeys.addBusinessAddressLine1 -> testBusinessAddressLine1,
             SessionKeys.addBusinessPostalCode -> testBusinessPostCode,
-            SessionKeys.addBusinessAccountingMethod -> testBusinessAccountingMethod,
+            SessionKeys.addIncomeSourcesAccountingMethod -> testBusinessAccountingMethod,
             SessionKeys.addBusinessAccountingPeriodEndDate -> testAccountingPeriodEndDate,
             SessionKeys.addBusinessPostalCode -> testBusinessPostCode,
           ))

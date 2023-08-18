@@ -21,12 +21,14 @@ import config.featureswitch.{FeatureSwitching, IncomeSources}
 import forms.utils.SessionKeys._
 import models.incomeSourceDetails.BusinessDetailsModel
 import models.incomeSourceDetails.viewmodels.{CheckBusinessDetailsViewModel, CheckUKPropertyViewModel}
+import models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponse, UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
+import play.api.Logger
 import play.api.mvc.Result
 import play.api.mvc.Results.Redirect
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 
 import java.time.LocalDate
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 trait IncomeSourcesUtils extends FeatureSwitching {
   def withIncomeSourcesFS(codeBlock: => Future[Result])(implicit user: MtdItUser[_]): Future[Result] = {
@@ -45,7 +47,7 @@ trait IncomeSourcesUtils extends FeatureSwitching {
       "addUkPropertyStartDate",
       "addBusinessName",
       "addBusinessTrade",
-      "addBusinessAccountingMethod",
+      "addIncomeSourcesAccountingMethod",
       "addBusinessStartDate",
       "addBusinessAccountingPeriodStartDate",
       "addBusinessAccountingPeriodEndDate",
@@ -80,7 +82,7 @@ object IncomeSourcesUtils {
       businessStartDate <- user.session.data.get(businessStartDate).map(LocalDate.parse)
       businessTrade <- user.session.data.get(businessTrade)
       businessAddressLine1 <- user.session.data.get(addBusinessAddressLine1)
-      businessAccountingMethod <- user.session.data.get(addBusinessAccountingMethod)
+      businessAccountingMethod <- user.session.data.get(addIncomeSourcesAccountingMethod)
       accountingPeriodEndDate <- user.session.data.get(addBusinessAccountingPeriodEndDate).map(LocalDate.parse)
     } yield {
       Right(CheckBusinessDetailsViewModel(
@@ -94,7 +96,7 @@ object IncomeSourcesUtils {
         businessAddressLine4 = user.session.data.get(addBusinessAddressLine4),
         businessPostalCode = user.session.data.get(addBusinessPostalCode),
         businessCountryCode = user.session.data.get(addBusinessCountryCode),
-        businessAccountingMethod = user.session.data.get(addBusinessAccountingMethod),
+        incomeSourcesAccountingMethod = user.session.data.get(addIncomeSourcesAccountingMethod),
         cashOrAccrualsFlag = businessAccountingMethod,
         skippedAccountingMethod = skipAccountingMethod
       ))
@@ -120,7 +122,7 @@ object IncomeSourcesUtils {
   def getUKPropertyDetailsFromSession(implicit user: MtdItUser[_]): Either[Throwable, CheckUKPropertyViewModel] = {
     val result: Option[Either[Throwable, CheckUKPropertyViewModel]] = for {
       tradingStartDate <- user.session.data.get(addUkPropertyStartDate)
-      cashOrAccrualsFlag <- user.session.data.get(addUkPropertyAccountingMethod)
+      cashOrAccrualsFlag <- user.session.data.get(addIncomeSourcesAccountingMethod)
     } yield {
       Right(CheckUKPropertyViewModel(
         tradingStartDate = LocalDate.parse(tradingStartDate),

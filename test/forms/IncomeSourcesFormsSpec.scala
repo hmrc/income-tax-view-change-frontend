@@ -16,7 +16,7 @@
 
 package forms
 
-import forms.incomeSources.add.{AddBusinessStartDateForm, BusinessTradeForm}
+import forms.incomeSources.add.BusinessTradeForm
 import forms.incomeSources.cease.UKPropertyEndDateForm
 import generators.IncomeSourceGens.{Day, businessNameGenerator, businessTradeGenerator, dateGenerator}
 import implicits.ImplicitDateFormatter
@@ -75,14 +75,6 @@ object IncomeSourcesFormsSpec extends Properties("incomeSourcesForms.validation"
       "uk-property-end-date.year" -> date.year)
   )
 
-  val businessStartDateCheckForm = (date: Day) => {
-    AddBusinessStartDateForm()(messages, testDateService, mockImplicitDateFormatter).bind(
-      Map("add-business-start-date.day" -> date.day,
-        "add-business-start-date.month" -> date.month,
-        "add-business-start-date.year" -> date.year)
-    )
-  }
-
   property("businessName") = forAll(businessNameGenerator) { (charsList: List[Char]) =>
     (charsList.length > 0 && charsList.length <= BusinessNameForm.businessNameLength) ==> {
       val businessName = charsList.mkString("")
@@ -100,9 +92,4 @@ object IncomeSourcesFormsSpec extends Properties("incomeSourcesForms.validation"
   property("ukPropertyEndDate") = forAll(dateGenerator(currentDate)) { date =>
     ukPropertyFormUnderTest(date).errors.isEmpty
   }
-
-  property("businessStartDate") = forAll(dateGenerator(currentDate)) { date =>
-    businessStartDateCheckForm(date).errors.isEmpty
-  }
-
 }

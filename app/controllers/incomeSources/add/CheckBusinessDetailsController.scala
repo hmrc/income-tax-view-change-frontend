@@ -21,7 +21,7 @@ import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
-import forms.utils.SessionKeys
+import enums.IncomeSourceJourney.SelfEmployment
 import models.createIncomeSource.CreateIncomeSourceResponse
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import models.incomeSourceDetails.viewmodels.CheckBusinessDetailsViewModel
@@ -58,19 +58,19 @@ class CheckBusinessDetailsController @Inject()(val checkBusinessDetails: CheckBu
   lazy val businessAddressUrl: String = controllers.incomeSources.add.routes.AddBusinessAddressController.show().url
   lazy val agentBusinessAddressUrl: String = controllers.incomeSources.add.routes.AddBusinessAddressController.showAgent().url
 
-  lazy val businessAccountingMethodUrl: String = controllers.incomeSources.add.routes.BusinessAccountingMethodController.show().url
-  lazy val agentBusinessAccountingMethodUrl: String = controllers.incomeSources.add.routes.BusinessAccountingMethodController.showAgent().url
+  lazy val incomeSourcesAccountingMethodUrl: String = controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.show(SelfEmployment.key).url
+  lazy val agentIncomeSourcesAccountingMethodUrl: String = controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.showAgent(SelfEmployment.key).url
 
   private def getBackURL(referer: Option[String]): String = {
     referer.map(URI.create(_).getPath) match {
-      case Some(url) if url.equals(businessAccountingMethodUrl) => businessAccountingMethodUrl
+      case Some(url) if url.equals(incomeSourcesAccountingMethodUrl) => incomeSourcesAccountingMethodUrl
       case _ => businessAddressUrl
     }
   }
 
   private def getAgentBackURL(referer: Option[String]): String = {
     referer.map(URI.create(_).getPath) match {
-      case Some(`agentBusinessAccountingMethodUrl`) => agentBusinessAccountingMethodUrl
+      case Some(`agentIncomeSourcesAccountingMethodUrl`) => agentIncomeSourcesAccountingMethodUrl
       case _ => agentBusinessAddressUrl
     }
   }

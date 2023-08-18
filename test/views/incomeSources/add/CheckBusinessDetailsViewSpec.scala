@@ -16,7 +16,6 @@
 
 package views.incomeSources.add
 
-import forms.incomeSources.add.CheckUKPropertyStartDateForm
 import models.incomeSourceDetails.viewmodels.CheckBusinessDetailsViewModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -36,13 +35,16 @@ class CheckBusinessDetailsViewSpec extends TestSupport {
 
   val checkBusinessDetailsView: CheckBusinessDetails = app.injector.instanceOf[CheckBusinessDetails]
 
+
+
+
   val viewModelMax: CheckBusinessDetailsViewModel = CheckBusinessDetailsViewModel(
     businessName = Some("Test Business"),
     businessStartDate = Some(LocalDate.of(2022, 1, 1)),
     businessTrade = "Test Trade",
     businessAddressLine1 = "Test Business Address Line 1",
     businessPostalCode = Some("Test Business Postal Code"),
-    businessAccountingMethod = Some("ACCRUALS"),
+    incomeSourcesAccountingMethod = Some("ACCRUALS"),
     accountingPeriodEndDate = LocalDate.of(2022, 1, 1),
     businessAddressLine2 = None,
     businessAddressLine3 = None,
@@ -66,8 +68,8 @@ class CheckBusinessDetailsViewSpec extends TestSupport {
 
     val backUrl: String = if (isAgent) controllers.routes.HomeController.showAgent.url else
       controllers.routes.HomeController.show().url
-    val postAction: Call = if (isAgent) controllers.incomeSources.add.routes.CheckUKPropertyStartDateController.submitAgent() else
-      controllers.incomeSources.add.routes.CheckUKPropertyStartDateController.submit()
+    val postAction: Call = if (isAgent) controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.submitSoleTraderBusinessAgent else
+      controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.submitSoleTraderBusiness
 
 
     lazy val view: HtmlFormat.Appendable = {

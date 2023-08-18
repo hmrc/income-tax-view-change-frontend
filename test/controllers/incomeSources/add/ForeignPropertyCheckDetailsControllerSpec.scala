@@ -75,12 +75,8 @@ with MockIncomeSourceDetailsPredicate with MockNavBarEnumFsPredicate with Featur
     val link: String = s"${messages("incomeSources.add.foreign-property-check-details.change")}"
   }
 
-  override def disableAllSwitches(): Unit = {
-    switches.foreach(switch => disable(switch))
-  }
-
-  lazy val errorUrl: String = controllers.incomeSources.add.routes.ForeignPropertyBusinessNotAddedErrorController.show().url
-  lazy val agentErrorUrl: String = controllers.incomeSources.add.routes.ForeignPropertyBusinessNotAddedErrorController.showAgent().url
+  lazy val errorUrl: String = controllers.incomeSources.add.routes.IncomeSourceNotAddedController.showForeignProperty().url
+  lazy val agentErrorUrl: String = controllers.incomeSources.add.routes.IncomeSourceNotAddedController.showForeignPropertyAgent().url
 
   "ForeignPropertyCheckDetailsController" should {
 
@@ -147,7 +143,7 @@ with MockIncomeSourceDetailsPredicate with MockNavBarEnumFsPredicate with Featur
           fakeRequestWithActiveSession
             .withSession(
               SessionKeys.foreignPropertyStartDate -> testForeignPropertyStartDate,
-              SessionKeys.addForeignPropertyAccountingMethod -> testForeignPropertyAccountingMethod
+              SessionKeys.addIncomeSourcesAccountingMethod -> testForeignPropertyAccountingMethod
             ))
 
         val document: Document = Jsoup.parse(contentAsString(result))
@@ -169,7 +165,7 @@ with MockIncomeSourceDetailsPredicate with MockNavBarEnumFsPredicate with Featur
           fakeRequestConfirmedClient()
             .withSession(
               SessionKeys.foreignPropertyStartDate -> testForeignPropertyStartDate,
-              SessionKeys.addForeignPropertyAccountingMethod -> testForeignPropertyAccountingMethod
+              SessionKeys.addIncomeSourcesAccountingMethod -> testForeignPropertyAccountingMethod
             ))
 
         val document: Document = Jsoup.parse(contentAsString(result))
@@ -194,7 +190,7 @@ with MockIncomeSourceDetailsPredicate with MockNavBarEnumFsPredicate with Featur
         val result = TestForeignPropertyCheckDetailsController.show()(
           fakeRequestWithActiveSession
             .withSession(
-              SessionKeys.addForeignPropertyAccountingMethod -> testForeignPropertyAccountingMethod
+              SessionKeys.addIncomeSourcesAccountingMethod -> testForeignPropertyAccountingMethod
             ))
 
         val document: Document = Jsoup.parse(contentAsString(result))
@@ -211,7 +207,7 @@ with MockIncomeSourceDetailsPredicate with MockNavBarEnumFsPredicate with Featur
         val result = TestForeignPropertyCheckDetailsController.showAgent()(
           fakeRequestConfirmedClient()
             .withSession(
-              SessionKeys.addForeignPropertyAccountingMethod -> testForeignPropertyAccountingMethod
+              SessionKeys.addIncomeSourcesAccountingMethod -> testForeignPropertyAccountingMethod
             ))
 
         val document: Document = Jsoup.parse(contentAsString(result))
@@ -272,7 +268,7 @@ with MockIncomeSourceDetailsPredicate with MockNavBarEnumFsPredicate with Featur
           fakeRequestWithActiveSession
             .withSession(
               SessionKeys.foreignPropertyStartDate -> testForeignPropertyStartDate,
-              SessionKeys.addForeignPropertyAccountingMethod -> testForeignPropertyAccountingMethod
+              SessionKeys.addIncomeSourcesAccountingMethod -> testForeignPropertyAccountingMethod
             )
         )
 
@@ -291,7 +287,7 @@ with MockIncomeSourceDetailsPredicate with MockNavBarEnumFsPredicate with Featur
         val result = TestForeignPropertyCheckDetailsController.submitAgent(fakeRequestConfirmedClient()
           .withSession(
             SessionKeys.foreignPropertyStartDate -> testForeignPropertyStartDate,
-            SessionKeys.addForeignPropertyAccountingMethod -> testForeignPropertyAccountingMethod
+            SessionKeys.addIncomeSourcesAccountingMethod -> testForeignPropertyAccountingMethod
           ))
 
         status(result) shouldBe SEE_OTHER
@@ -337,7 +333,7 @@ with MockIncomeSourceDetailsPredicate with MockNavBarEnumFsPredicate with Featur
           fakeRequestWithActiveSession
             .withSession(
               SessionKeys.foreignPropertyStartDate -> testForeignPropertyStartDate,
-              SessionKeys.addForeignPropertyAccountingMethod -> testForeignPropertyAccountingMethod
+              SessionKeys.addIncomeSourcesAccountingMethod -> testForeignPropertyAccountingMethod
             )
         )
 
@@ -356,7 +352,7 @@ with MockIncomeSourceDetailsPredicate with MockNavBarEnumFsPredicate with Featur
         val result = TestForeignPropertyCheckDetailsController.submitAgent(fakeRequestConfirmedClient()
           .withSession(
             SessionKeys.foreignPropertyStartDate -> testForeignPropertyStartDate,
-            SessionKeys.addForeignPropertyAccountingMethod -> testForeignPropertyAccountingMethod
+            SessionKeys.addIncomeSourcesAccountingMethod -> testForeignPropertyAccountingMethod
           ))
 
         status(result) shouldBe SEE_OTHER
