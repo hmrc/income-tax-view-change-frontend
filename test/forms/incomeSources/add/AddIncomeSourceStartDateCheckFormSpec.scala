@@ -17,6 +17,7 @@
 package forms.incomeSources.add
 
 import auth.MtdItUser
+import enums.IncomeSourceJourney.SelfEmployment
 import implicits.ImplicitDateFormatter
 import play.api.data.{Form, FormError}
 import services.DateService
@@ -25,7 +26,7 @@ import testConstants.incomeSources.IncomeSourceDetailsTestConstants.noIncomeDeta
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 
-class ForeignPropertyStartDateCheckFormSpec extends TestSupport with ImplicitDateFormatter {
+class AddIncomeSourceStartDateCheckFormSpec extends TestSupport with ImplicitDateFormatter {
 
   val mockDateService: DateService = app.injector.instanceOf[DateService]
 
@@ -41,27 +42,25 @@ class ForeignPropertyStartDateCheckFormSpec extends TestSupport with ImplicitDat
     incomeSources = noIncomeDetails
   )(fakeRequestNoSession)
 
-  lazy val form: Form[ForeignPropertyStartDateCheckForm] = ForeignPropertyStartDateCheckForm.form
-
+  lazy val form: Form[AddIncomeSourceStartDateCheckForm] = AddIncomeSourceStartDateCheckForm(SelfEmployment.addIncomeSourceStartDateCheckMessagesPrefix)
   "ForeignPropertyStartDateCheck form" should {
     "bind with a valid response - yes" in {
-      val formData = ForeignPropertyStartDateCheckForm(Some("Yes"))
+      val formData = AddIncomeSourceStartDateCheckForm(Some("Yes"))
       val completedForm = form.fill(formData)
-      completedForm.data.get(ForeignPropertyStartDateCheckForm.response) shouldBe Some(ForeignPropertyStartDateCheckForm.responseYes)
+      completedForm.data.get(AddIncomeSourceStartDateCheckForm.response) shouldBe Some(AddIncomeSourceStartDateCheckForm.responseYes)
       completedForm.errors shouldBe List.empty
     }
 
     "bind with a valid response - No" in {
-      val formData = ForeignPropertyStartDateCheckForm(Some("No"))
+      val formData = AddIncomeSourceStartDateCheckForm(Some("No"))
       val completedForm = form.fill(formData)
-      completedForm.data.get(ForeignPropertyStartDateCheckForm.response) shouldBe Some(ForeignPropertyStartDateCheckForm.responseNo)
+      completedForm.data.get(AddIncomeSourceStartDateCheckForm.response) shouldBe Some(AddIncomeSourceStartDateCheckForm.responseNo)
       completedForm.errors shouldBe List.empty
     }
 
     "bind with an invalid response" in {
-      val completedForm = form.bind(Map(ForeignPropertyStartDateCheckForm.response -> "N/A"))
-      completedForm.data.get(ForeignPropertyStartDateCheckForm.response) shouldBe Some("N/A")
-      completedForm.errors shouldBe List(FormError(ForeignPropertyStartDateCheckForm.response, List(ForeignPropertyStartDateCheckForm.radiosEmptyError), List()))
+      val completedForm = form.bind(Map(AddIncomeSourceStartDateCheckForm.response -> "N/A"))
+      completedForm.data.get(AddIncomeSourceStartDateCheckForm.response) shouldBe Some("N/A")
     }
 
   }

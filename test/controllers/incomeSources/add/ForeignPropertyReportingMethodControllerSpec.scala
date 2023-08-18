@@ -192,10 +192,9 @@ class ForeignPropertyReportingMethodControllerSpec extends TestSupport with Mock
         mockAndBasicSetup(CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
         disable(IncomeSources)
         val result: Future[Result] = TestForeignPropertyReportingMethodController.show(TestForeignPropertyReportingMethodController.incomeSourceId)(fakeRequestWithActiveSession)
-        val expectedContent: String = TestForeignPropertyReportingMethodController.customNotFoundErrorView().toString()
 
-        status(result) shouldBe Status.OK
-        contentAsString(result) shouldBe expectedContent
+        status(result) shouldBe Status.SEE_OTHER
+        redirectLocation(result) shouldBe Some(controllers.routes.HomeController.show().url)
       }
       "called with an unauthenticated user" in {
         setupMockAuthorisationException()
@@ -358,7 +357,12 @@ class ForeignPropertyReportingMethodControllerSpec extends TestSupport with Mock
         when(mockUpdateIncomeSourceService.updateTaxYearSpecific(
           any(),
           any(),
-          any())(any, any)).thenReturn(Future.successful(UpdateIncomeSourceResponseModel("")))
+          ArgumentMatchers.eq(tySpecific1))(any, any)).thenReturn(Future.successful(UpdateIncomeSourceResponseModel("")))
+
+        when(mockUpdateIncomeSourceService.updateTaxYearSpecific(
+          any(),
+          any(),
+          ArgumentMatchers.eq(tySpecific2))(any, any)).thenReturn(Future.successful(UpdateIncomeSourceResponseModel("")))
 
 
         val result = TestForeignPropertyReportingMethodController.submit(TestForeignPropertyReportingMethodController.incomeSourceId)(
@@ -396,14 +400,19 @@ class ForeignPropertyReportingMethodControllerSpec extends TestSupport with Mock
     }
 
     "Update failed and error page shown" when {
-      "some internal failure in the update action" in {
+      "some internal failure in the update action (both calls)" in {
         val tySpecific1 = TaxYearSpecific("2022", false)
         val tySpecific2 = TaxYearSpecific("2023", true)
         mockAndBasicSetup(CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
         when(mockUpdateIncomeSourceService.updateTaxYearSpecific(
           any(),
           any(),
-          any())(any, any)).thenReturn(Future(UpdateIncomeSourceResponseError(Status.INTERNAL_SERVER_ERROR, "")))
+          ArgumentMatchers.eq(tySpecific1))(any, any)).thenReturn(Future.successful(UpdateIncomeSourceResponseError(Status.INTERNAL_SERVER_ERROR, "")))
+
+        when(mockUpdateIncomeSourceService.updateTaxYearSpecific(
+          any(),
+          any(),
+          ArgumentMatchers.eq(tySpecific2))(any, any)).thenReturn(Future.successful(UpdateIncomeSourceResponseError(Status.INTERNAL_SERVER_ERROR, "")))
 
         val result = TestForeignPropertyReportingMethodController.submit(TestForeignPropertyReportingMethodController.incomeSourceId)(
           fakeRequestWithActiveSession.withFormUrlEncodedBody(
@@ -416,7 +425,34 @@ class ForeignPropertyReportingMethodControllerSpec extends TestSupport with Mock
           ))
 
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.ForeignPropertyReportingMethodErrorController.show().url)
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.IncomeSourceReportingMethodNotSavedController.showForeignProperty().url)
+      }
+      "some internal failure in the update action (one call)" in {
+        val tySpecific1 = TaxYearSpecific("2022", false)
+        val tySpecific2 = TaxYearSpecific("2023", true)
+        mockAndBasicSetup(CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
+        when(mockUpdateIncomeSourceService.updateTaxYearSpecific(
+          any(),
+          any(),
+          ArgumentMatchers.eq(tySpecific1))(any, any)).thenReturn(Future.successful(UpdateIncomeSourceResponseModel("")))
+
+        when(mockUpdateIncomeSourceService.updateTaxYearSpecific(
+          any(),
+          any(),
+          ArgumentMatchers.eq(tySpecific2))(any, any)).thenReturn(Future.successful(UpdateIncomeSourceResponseError(Status.INTERNAL_SERVER_ERROR, "")))
+
+        val result = TestForeignPropertyReportingMethodController.submit(TestForeignPropertyReportingMethodController.incomeSourceId)(
+          fakeRequestWithActiveSession.withFormUrlEncodedBody(
+            newTaxYear1ReportingMethod -> "Q",
+            newTaxYear2ReportingMethod -> "A",
+            taxYear1 -> "2022",
+            taxYear1ReportingMethod -> "A",
+            taxYear2 -> "2023",
+            taxYear2ReportingMethod -> "Q"
+          ))
+
+        status(result) shouldBe Status.SEE_OTHER
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.IncomeSourceReportingMethodNotSavedController.showForeignProperty().url)
       }
     }
   }
@@ -441,10 +477,9 @@ class ForeignPropertyReportingMethodControllerSpec extends TestSupport with Mock
         mockAndBasicSetup(CURRENT_TAX_YEAR_IN_LATENCY_YEARS, true)
         disable(IncomeSources)
         val result: Future[Result] = TestForeignPropertyReportingMethodController.showAgent(TestForeignPropertyReportingMethodController.incomeSourceId)(fakeRequestConfirmedClient())
-        val expectedContent: String = TestForeignPropertyReportingMethodController.customNotFoundErrorView().toString()
 
-        status(result) shouldBe Status.OK
-        contentAsString(result) shouldBe expectedContent
+        status(result) shouldBe Status.SEE_OTHER
+        redirectLocation(result) shouldBe Some(controllers.routes.HomeController.showAgent.url)
       }
       "called with an unauthenticated user" in {
         setupMockAgentAuthorisationException()
@@ -643,13 +678,21 @@ class ForeignPropertyReportingMethodControllerSpec extends TestSupport with Mock
     }
 
     "Update failed and error page shown" when {
-      "some internal failure in the update action" in {
+      "some internal failure in the update action (both calls)" in {
         mockAndBasicSetup(CURRENT_TAX_YEAR_IN_LATENCY_YEARS, true)
+
+        val tySpecific1 = TaxYearSpecific("2022", false)
+        val tySpecific2 = TaxYearSpecific("2023", true)
+        mockAndBasicSetup(CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
         when(mockUpdateIncomeSourceService.updateTaxYearSpecific(
           any(),
           any(),
-          any()
-        )(any, any)).thenReturn(Future(UpdateIncomeSourceResponseError(Status.INTERNAL_SERVER_ERROR, "")))
+          ArgumentMatchers.eq(tySpecific1))(any, any)).thenReturn(Future.successful(UpdateIncomeSourceResponseError(Status.INTERNAL_SERVER_ERROR, "")))
+
+        when(mockUpdateIncomeSourceService.updateTaxYearSpecific(
+          any(),
+          any(),
+          ArgumentMatchers.eq(tySpecific2))(any, any)).thenReturn(Future.successful(UpdateIncomeSourceResponseError(Status.INTERNAL_SERVER_ERROR, "")))
 
         val result = TestForeignPropertyReportingMethodController.submitAgent(TestForeignPropertyReportingMethodController.incomeSourceId)(
           fakeRequestConfirmedClient(TestForeignPropertyReportingMethodController.testNino).withFormUrlEncodedBody(
@@ -662,7 +705,36 @@ class ForeignPropertyReportingMethodControllerSpec extends TestSupport with Mock
           ))
 
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.ForeignPropertyReportingMethodErrorController.showAgent().url)
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.IncomeSourceReportingMethodNotSavedController.showForeignPropertyAgent().url)
+      }
+      "some internal failure in the update action (one call)" in {
+        mockAndBasicSetup(CURRENT_TAX_YEAR_IN_LATENCY_YEARS, true)
+
+        val tySpecific1 = TaxYearSpecific("2022", false)
+        val tySpecific2 = TaxYearSpecific("2023", true)
+        mockAndBasicSetup(CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
+        when(mockUpdateIncomeSourceService.updateTaxYearSpecific(
+          any(),
+          any(),
+          ArgumentMatchers.eq(tySpecific1))(any, any)).thenReturn(Future.successful(UpdateIncomeSourceResponseError(Status.INTERNAL_SERVER_ERROR, "")))
+
+        when(mockUpdateIncomeSourceService.updateTaxYearSpecific(
+          any(),
+          any(),
+          ArgumentMatchers.eq(tySpecific2))(any, any)).thenReturn(Future.successful(UpdateIncomeSourceResponseModel("")))
+
+        val result = TestForeignPropertyReportingMethodController.submitAgent(TestForeignPropertyReportingMethodController.incomeSourceId)(
+          fakeRequestConfirmedClient(TestForeignPropertyReportingMethodController.testNino).withFormUrlEncodedBody(
+            newTaxYear1ReportingMethod -> "Q",
+            newTaxYear2ReportingMethod -> "A",
+            taxYear1 -> "2022",
+            taxYear1ReportingMethod -> "A",
+            taxYear2 -> "2023",
+            taxYear2ReportingMethod -> "Q"
+          ))
+
+        status(result) shouldBe Status.SEE_OTHER
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.IncomeSourceReportingMethodNotSavedController.showForeignPropertyAgent().url)
       }
     }
   }

@@ -82,7 +82,7 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport
     ec = ec
   )
 
-  "Individual: AddBusinessStartDateController.handleRequest" should {
+  "Individual: AddIncomeSourceStartDateController.handleRequest" should {
     "redirect to the Custom Not Found Error page" when {
       "incomeSources FS is disabled" in {
         disableAllSwitches()
@@ -144,7 +144,7 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport
       }
     }
   }
-  "Individual: AddBusinessStartDateController.handleSubmitRequest" should {
+  "Individual: AddIncomeSourceStartDateController.handleSubmitRequest" should {
     "redirect to the Custom Not Found Error page" when {
       "incomeSources FS is disabled" in {
         disableAllSwitches()
@@ -214,7 +214,7 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport
         ))
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(routes.AddBusinessStartDateCheckController.show().url)
+        redirectLocation(result) shouldBe Some(routes.AddIncomeSourceStartDateCheckController.showSoleTraderBusiness.url)
       }
     }
     "redirect to the Add Foreign Property Start Date Check page" when {
@@ -231,7 +231,7 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport
           yearField -> "2023"
         ))
 
-        redirectLocation(result) shouldBe Some(routes.ForeignPropertyStartDateCheckController.show().url)
+        redirectLocation(result) shouldBe Some(routes.AddIncomeSourceStartDateCheckController.showForeignProperty.url)
         status(result) shouldBe SEE_OTHER
       }
     }
@@ -249,7 +249,7 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport
           yearField -> testYear
         ))
 
-        redirectLocation(result) shouldBe Some(routes.CheckUKPropertyStartDateController.show().url)
+        redirectLocation(result) shouldBe Some(routes.AddIncomeSourceStartDateCheckController.showUKProperty.url)
         status(result) shouldBe SEE_OTHER
       }
     }
@@ -298,7 +298,7 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport
         )
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(routes.ForeignPropertyStartDateCheckController.show().url)
+        redirectLocation(result) shouldBe Some(routes.AddIncomeSourceStartDateCheckController.showForeignProperty.url)
       }
     }
     "display invalid date error message" when {
@@ -442,7 +442,7 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport
     }
   }
 
-  "Agent: AddBusinessStartDateController.handleRequest" should {
+  "Agent: AddIncomeSourceStartDateController.handleRequest" should {
     "redirect to the Custom Not Found Error page" when {
       "incomeSources FS is disabled" in {
         disableAllSwitches()
@@ -504,7 +504,7 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport
       }
     }
   }
-  "Agent: AddBusinessStartDateController.handleSubmitRequest" should {
+  "Agent: AddIncomeSourceStartDateController.handleSubmitRequest" should {
     "redirect to the Custom Not Found Error page" when {
       "incomeSources FS is disabled" in {
         disableAllSwitches()
@@ -573,7 +573,7 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport
           yearField -> testYear
         ))
 
-        redirectLocation(result) shouldBe Some(routes.AddBusinessStartDateCheckController.showAgent().url)
+        redirectLocation(result) shouldBe Some(routes.AddIncomeSourceStartDateCheckController.showSoleTraderBusinessAgent.url)
         status(result) shouldBe SEE_OTHER
       }
     }
@@ -591,7 +591,7 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport
           yearField -> testYear
         ))
 
-        redirectLocation(result) shouldBe Some(routes.ForeignPropertyStartDateCheckController.showAgent().url)
+        redirectLocation(result) shouldBe Some(routes.AddIncomeSourceStartDateCheckController.showForeignPropertyAgent.url)
         status(result) shouldBe SEE_OTHER
       }
     }
@@ -609,7 +609,7 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport
           yearField -> testYear
         ))
 
-        redirectLocation(result) shouldBe Some(routes.CheckUKPropertyStartDateController.showAgent().url)
+        redirectLocation(result) shouldBe Some(routes.AddIncomeSourceStartDateCheckController.showUKPropertyAgent.url)
         status(result) shouldBe SEE_OTHER
       }
     }
@@ -658,7 +658,7 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport
         )
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(routes.ForeignPropertyStartDateCheckController.showAgent().url)
+        redirectLocation(result) shouldBe Some(routes.AddIncomeSourceStartDateCheckController.showForeignPropertyAgent.url)
       }
     }
     "display invalid date error message" when {

@@ -86,7 +86,7 @@ object PropertyDetailsIntegrationTestConstants {
     ukPropertyIncomeType,
     propertyTradingStartDate,
     None,
-    cashOrAccrualsFlag = Some(false)
+    cashOrAccruals = Some(false)
   )
 
   val ukPropertyWithUnknowns: PropertyDetailsModel = PropertyDetailsModel(
@@ -111,7 +111,7 @@ object PropertyDetailsIntegrationTestConstants {
     foreignPropertyIncomeType,
     propertyTradingStartDate,
     None,
-    cashOrAccrualsFlag = Some(false)
+    cashOrAccruals = Some(false)
   )
 
   val foreignPropertyWithUnknowns: PropertyDetailsModel = PropertyDetailsModel(

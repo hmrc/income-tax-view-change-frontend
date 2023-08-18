@@ -56,8 +56,8 @@ class UKPropertyAccountingMethodController @Inject()(val authenticate: Authentic
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
 
     val incomeSourcesEnabled: Boolean = isEnabled(IncomeSources)
-    val backUrl: String = if (isAgent) controllers.incomeSources.add.routes.CheckUKPropertyStartDateController.showAgent().url else
-      controllers.incomeSources.add.routes.CheckUKPropertyStartDateController.show().url
+    val backUrl: String = if (isAgent) controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.showUKPropertyAgent.url else
+      controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.showUKProperty.url
     val postAction: Call = if (isAgent) controllers.incomeSources.add.routes.UKPropertyAccountingMethodController.submitAgent() else
       controllers.incomeSources.add.routes.UKPropertyAccountingMethodController.submit()
 
@@ -125,8 +125,8 @@ class UKPropertyAccountingMethodController @Inject()(val authenticate: Authentic
     val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
     val submitUrl: Call = if (isAgent) controllers.incomeSources.add.routes.UKPropertyAccountingMethodController.submitAgent() else
       controllers.incomeSources.add.routes.UKPropertyAccountingMethodController.submit()
-    val backUrl: String = if (isAgent) controllers.incomeSources.add.routes.CheckUKPropertyStartDateController.showAgent().url else
-      controllers.incomeSources.add.routes.CheckUKPropertyStartDateController.show().url
+    val backUrl: String = if (isAgent) controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.showUKPropertyAgent.url else
+      controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.showUKProperty.url
     val redirectUrl: Call = if (isAgent) controllers.incomeSources.add.routes.CheckUKPropertyDetailsController.showAgent() else
       controllers.incomeSources.add.routes.CheckUKPropertyDetailsController.show()
 

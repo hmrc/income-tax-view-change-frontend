@@ -14,72 +14,69 @@
  * limitations under the License.
  *@
 
-@import _root_.implicits.ImplicitDateFormatterImpl
 @import views.html.layouts.unifiedLayout
-@import views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components.FormWithCSRF
 @import views.html.helpers.injected.ErrorSummary
 
 @this(
         mainTemplate: unifiedLayout,
-        implicitDateFormatter: ImplicitDateFormatterImpl,
-        h1: h1,
-        dateInput: dateInput,
-        continueButton: ContinueButton,
         formWithCSRF: FormWithCSRF,
         govukRadios: GovukRadios,
         errorSummary: ErrorSummary,
-        inputRadios: input_radios,
+        govukButton: GovukButton
 )
 
-@(form: Form[_],backUrl:String,isAgent: Boolean,foreignPropertyStartDate: String)(implicit user:auth.MtdItUser[_], messages: Messages)
-
-@prefix = @{"incomeSources.add.foreignProperty.startDate.check" }
-@formId = @{"foreign-property-start-date-check-form" }
-
-@getMessage(key: String, args: String*) = @{
-    messages(s"$prefix.$key", args: _*)
-}
-
-@postAction = @{
-    if(isAgent) controllers.incomeSources.add.routes.ForeignPropertyStartDateCheckController.submitAgent()
-    else controllers.incomeSources.add.routes.ForeignPropertyStartDateCheckController.submit()
-}
+@(
+        form: Form[_],
+        postAction: Call,
+        backUrl: String,
+        isAgent: Boolean,
+        incomeSourceStartDate: String
+)(
+        implicit messages: Messages,
+        user:auth.MtdItUser[_]
+)
 
 @mainTemplate(
-    pageTitle = getMessage("heading"),
+    pageTitle = messages("dateForm.check.heading"),
     backUrl = Some(backUrl),
     isAgent = isAgent,
     btaNavPartial = user.btaNavPartial) {
 
-
-    @formWithCSRF(action = postAction, Symbol("id") -> formId) {
+    @formWithCSRF(action = postAction, Symbol("id") -> "add-income-source-start-date-check-form") {
 
         @errorSummary(form)
 
         @govukRadios(Radios(
             fieldset = Some(Fieldset(
                 legend = Some(Legend(
-                    content = Text(getMessage("heading")),
+                    content = Text(messages("radioForm.checkDate.heading")),
                     classes = "govuk-fieldset__legend--l"
                 ))
             )),
             items = Seq(
                 RadioItem(
-                    id = Some(s"$prefix-yes-response"),
+                    id = Some("yes-response"),
                     value = Some("Yes"),
-                    content = Text(getMessage("radio.yes"))
+                    content = Text(messages("radioForm.yes"))
                 ),
                 RadioItem(
-                    id = Some(s"$prefix-no-response"),
+                    id = Some("no-response"),
                     value = Some("No"),
-                    content = Text(getMessage("radio.no"))
+                    content = Text(messages("radioForm.no"))
                 )
             ),
-            hint = Some(Hint(content = HtmlContent(foreignPropertyStartDate)))
-        ).withFormField(form("foreign-property-start-date-check")))
+            hint = Some(Hint(
+                id = Some("add-income-source-start-date-check-hint"),
+                content = HtmlContent(incomeSourceStartDate)
+            )),
+            errorMessage = form.errors.headOption.map(err => ErrorMessage(content = Text(messages(err.message, err.args:_*))))
+        ).withFormField(form("start-date-check")))
 
-        @continueButton()
+        @govukButton(Button(
+            content = Text(messages("base.continue")),
+            attributes = Map("id" -> "continue-button")
+        ))
     }
 }
