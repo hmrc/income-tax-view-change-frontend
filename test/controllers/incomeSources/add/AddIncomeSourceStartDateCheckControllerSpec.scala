@@ -19,6 +19,7 @@ package controllers.incomeSources.add
 import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
+import enums.IncomeSourceJourney.{ForeignProperty, UkProperty}
 import forms.incomeSources.add.AddIncomeSourceStartDateCheckForm
 import forms.utils.SessionKeys
 import forms.utils.SessionKeys.addUkPropertyStartDate
@@ -476,7 +477,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
             ))
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.UKPropertyAccountingMethodController.show().url)
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.show(UkProperty.key).url)
       }
     }
     s"return ${Status.SEE_OTHER}: redirect to check uk property details page" when {
@@ -588,7 +589,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
             ))
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.ForeignPropertyAccountingMethodController.show().url)
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.show(ForeignProperty.key).url)
       }
     }
     s"return ${Status.SEE_OTHER}: redirect to check foreign property details page" when {
@@ -997,7 +998,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
             ))
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.UKPropertyAccountingMethodController.showAgent().url)
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.showAgent(UkProperty.key).url)
       }
     }
     s"return ${Status.SEE_OTHER}: redirect to check uk property details page" when {
@@ -1109,7 +1110,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
             ))
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.ForeignPropertyAccountingMethodController.showAgent().url)
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.showAgent(ForeignProperty.key).url)
       }
     }
     s"return ${Status.SEE_OTHER}: redirect to check foreign property details page" when {

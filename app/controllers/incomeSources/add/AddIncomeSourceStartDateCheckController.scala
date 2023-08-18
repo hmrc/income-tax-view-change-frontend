@@ -235,9 +235,9 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
           routes.AddIncomeSourceStartDateController.showUKProperty(isAgent = isAgent, isUpdate = isUpdate),
           routes.AddIncomeSourceStartDateCheckController.submitUKProperty(isAgent = isAgent, isUpdate = isUpdate),
           (isAgent, isUpdate) match {
-            case (false, false) => routes.UKPropertyAccountingMethodController.show()
+            case (false, false) => routes.IncomeSourcesAccountingMethodController.show(UkProperty.key)
             case (false, true) => routes.CheckUKPropertyDetailsController.show()
-            case (true, false) => routes.UKPropertyAccountingMethodController.showAgent()
+            case (true, false) => routes.IncomeSourcesAccountingMethodController.showAgent(UkProperty.key)
             case (true, true) => routes.CheckUKPropertyDetailsController.showAgent()
           }
         )
@@ -246,9 +246,9 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
           routes.AddIncomeSourceStartDateController.showForeignProperty(isAgent = isAgent, isUpdate = isUpdate),
           routes.AddIncomeSourceStartDateCheckController.submitForeignProperty(isAgent = isAgent, isUpdate = isUpdate),
           (isAgent, isUpdate) match {
-            case (false, false) => routes.ForeignPropertyAccountingMethodController.show()
+            case (false, false) => routes.IncomeSourcesAccountingMethodController.show(ForeignProperty.key)
             case (false, true) => routes.ForeignPropertyCheckDetailsController.show()
-            case (true, false) => routes.ForeignPropertyAccountingMethodController.showAgent()
+            case (true, false) => routes.IncomeSourcesAccountingMethodController.showAgent(ForeignProperty.key)
             case (true, true) => routes.ForeignPropertyCheckDetailsController.showAgent()
           }
         )
