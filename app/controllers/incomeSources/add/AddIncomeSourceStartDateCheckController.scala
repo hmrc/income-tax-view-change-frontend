@@ -27,6 +27,7 @@ import forms.utils.SessionKeys
 import forms.utils.SessionKeys.{addUkPropertyStartDate, businessStartDate, foreignPropertyStartDate}
 import implicits.ImplicitDateFormatter
 import play.api.Logger
+import play.api.http.HttpVerbs
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.{DateService, IncomeSourceDetailsService}
@@ -34,6 +35,7 @@ import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.play.language.LanguageUtils
 import views.html.errorPages.CustomNotFoundError
 import views.html.incomeSources.add.AddIncomeSourceStartDateCheck
+
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
@@ -57,38 +59,15 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
                                                         val itvcErrorHandlerAgent: AgentItvcErrorHandler)
   extends ClientConfirmedController with I18nSupport with FeatureSwitching with ImplicitDateFormatter {
 
-  def handleRequest(incomeSourceKey: String, isAgent: Boolean, isChange: Boolean): Action[AnyContent] = {
-    handleRequestMethod(
-      incomeSourceType = IncomeSourceType.get(incomeSourceKey),
-      isAgent = isAgent,
-      isChange = isChange
-    )
-  }
+  def handleRequest(incomeSourceKey: String,
+                    isAgent: Boolean,
+                    isChange: Boolean
+                   ): Action[AnyContent] = authenticatedAction(isAgent) { implicit user =>
 
-  private def handleRequestMethod(incomeSourceType: IncomeSourceType,
-                                  isAgent: Boolean,
-                                  isChange: Boolean): Action[AnyContent] = {
-    if (isAgent)
-      Authenticated.async {
-        implicit request =>
-          implicit user =>
-            getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
-              implicit mtdItUser =>
-                request.method match {
-                  case "GET" => show(incomeSourceType, isAgent, isChange)
-                  case "POST" => submit(incomeSourceType, isAgent, isChange)
-                }
-            }
-      }
-    else
-      (checkSessionTimeout andThen authenticate andThen retrieveNino
-        andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
-        implicit user =>
-          user.method match {
-            case "GET" => show(incomeSourceType, isAgent, isChange)
-            case "POST" => submit(incomeSourceType, isAgent, isChange)
-          }
-      }
+    user.method match {
+      case HttpVerbs.GET => show(IncomeSourceType.get(incomeSourceKey), isAgent, isChange)
+      case HttpVerbs.POST => submit(IncomeSourceType.get(incomeSourceKey), isAgent, isChange)
+    }
   }
 
   private def show(incomeSourceType: IncomeSourceType,
@@ -166,6 +145,23 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
       Logger("application").error(s"[AddIncomeSourceStartDateCheckController][handleSubmitRequest]: " +
         s"Error getting AddIncomeSourceStartDateCheck page: ${ex.getMessage}")
       getErrorHandler(isAgent).showInternalServerError()
+  }
+
+  private def authenticatedAction(isAgent: Boolean)(authenticatedCodeBlock: MtdItUser[_] => Future[Result]): Action[AnyContent] = {
+    if (isAgent) {
+      Authenticated.async {
+        implicit request =>
+          implicit user =>
+            getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap { implicit mtdItUser =>
+              authenticatedCodeBlock(mtdItUser)
+            }
+      }
+    } else {
+      (checkSessionTimeout andThen authenticate andThen retrieveNino
+        andThen retrieveIncomeSources andThen retrieveBtaNavBar).async { implicit user =>
+        authenticatedCodeBlock(user)
+      }
+    }
   }
 
   private def handleValidForm(backCall: Call,

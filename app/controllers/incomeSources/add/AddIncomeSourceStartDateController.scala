@@ -28,6 +28,7 @@ import forms.utils.SessionKeys
 import implicits.ImplicitDateFormatterImpl
 import play.api.Logger
 import play.api.data.Form
+import play.api.http.HttpVerbs
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.{DateService, IncomeSourceDetailsService}
@@ -65,8 +66,8 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
                    ): Action[AnyContent] = authenticatedAction(isAgent) { implicit user =>
 
     user.method match {
-      case "GET" => show(IncomeSourceType.get(incomeSourceKey), isAgent, isChange)
-      case "POST" => submit(IncomeSourceType.get(incomeSourceKey), isAgent, isChange)
+      case HttpVerbs.GET => show(IncomeSourceType.get(incomeSourceKey), isAgent, isChange)
+      case HttpVerbs.POST => submit(IncomeSourceType.get(incomeSourceKey), isAgent, isChange)
     }
   }
 
