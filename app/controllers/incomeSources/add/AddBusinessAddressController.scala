@@ -50,19 +50,19 @@ class AddBusinessAddressController @Inject()(authenticate: AuthenticationPredica
                                             )
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
-  def show: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+  def show(isChange: Boolean): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
-      handleRequest(isAgent = false, isChange = false)
+      handleRequest(isAgent = false, isChange = isChange)
   }
 
-  def showAgent(): Action[AnyContent] =
+  def showAgent(isChange: Boolean): Action[AnyContent] =
     Authenticated.async {
       implicit request =>
         implicit user =>
           getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
             implicit mtdItUser =>
-              handleRequest(isAgent = true, isChange = false)
+              handleRequest(isAgent = true, isChange = isChange)
           }
     }
 
@@ -121,36 +121,20 @@ class AddBusinessAddressController @Inject()(authenticate: AuthenticationPredica
     }
   }
 
-  def submit(id: Option[String]): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+  def submit(id: Option[String], isChange: Boolean): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
-    implicit user => handleSubmitRequest(isAgent = false, id, isChange = false)
+    implicit user => handleSubmitRequest(isAgent = false, id, isChange = isChange)
   }
 
-  def agentSubmit(id: Option[String]): Action[AnyContent] = Authenticated.async {
+  def agentSubmit(id: Option[String], isChange: Boolean): Action[AnyContent] = Authenticated.async {
     implicit request =>
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
           implicit mtdItUser =>
-            handleSubmitRequest(isAgent = true, id, isChange = false)
+            handleSubmitRequest(isAgent = true, id, isChange = isChange)
         }
 
   }
-
-  def showChange: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
-    andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
-    implicit user =>
-      handleRequest(isAgent = false, isChange = true)
-  }
-
-  def showChangeAgent(): Action[AnyContent] =
-    Authenticated.async {
-      implicit request =>
-        implicit user =>
-          getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
-            implicit mtdItUser =>
-              handleRequest(isAgent = true, isChange = true)
-          }
-    }
 
   def changeSubmit(id: Option[String]): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {

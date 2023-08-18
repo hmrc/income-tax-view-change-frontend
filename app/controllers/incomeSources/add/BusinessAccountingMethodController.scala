@@ -94,8 +94,8 @@ class BusinessAccountingMethodController @Inject()(val authenticate: Authenticat
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
 
     val incomeSourcesEnabled: Boolean = isEnabled(IncomeSources)
-    val backUrl: String = if (isAgent) controllers.incomeSources.add.routes.AddBusinessAddressController.showAgent().url else
-      controllers.incomeSources.add.routes.AddBusinessAddressController.show().url
+    val backUrl: String = if (isAgent) controllers.incomeSources.add.routes.AddBusinessAddressController.showAgent(isChange = false).url else
+      controllers.incomeSources.add.routes.AddBusinessAddressController.show(isChange = false).url
     val postAction: Call = if (isAgent) controllers.incomeSources.add.routes.BusinessAccountingMethodController.submitAgent() else
       controllers.incomeSources.add.routes.BusinessAccountingMethodController.submit()
 
@@ -118,11 +118,11 @@ class BusinessAccountingMethodController @Inject()(val authenticate: Authenticat
     val (postAction, backUrl, redirect) = {
       if (isAgent)
         (routes.BusinessAccountingMethodController.submitAgent(),
-          routes.AddBusinessAddressController.showAgent().url,
+          routes.AddBusinessAddressController.showAgent(isChange = false).url,
           routes.CheckBusinessDetailsController.showAgent())
       else
         (routes.BusinessAccountingMethodController.submit(),
-          routes.AddBusinessAddressController.show().url,
+          routes.AddBusinessAddressController.show(isChange = false).url,
           routes.CheckBusinessDetailsController.show())
     }
     BusinessAccountingMethodForm.form.bindFromRequest().fold(

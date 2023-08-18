@@ -80,9 +80,9 @@
 
 @changeBusinessAddressURL = @{
     if(isAgent) {
-        controllers.incomeSources.add.routes.AddBusinessAddressController.showChangeAgent().url
+        controllers.incomeSources.add.routes.AddBusinessAddressController.showAgent(isChange = true).url
     } else {
-        controllers.incomeSources.add.routes.AddBusinessAddressController.showChange().url
+        controllers.incomeSources.add.routes.AddBusinessAddressController.show(isChange = true).url
     }
 }
 

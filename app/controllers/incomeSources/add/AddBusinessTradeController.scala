@@ -53,8 +53,8 @@ class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate
   lazy val agentBackURL: String = controllers.incomeSources.add.routes.AddBusinessStartDateCheckController.showAgent().url
   lazy val postAction: Call = controllers.incomeSources.add.routes.AddBusinessTradeController.submit()
   lazy val postActionAgent: Call = controllers.incomeSources.add.routes.AddBusinessTradeController.agentSubmit()
-  lazy val redirect: String = controllers.incomeSources.add.routes.AddBusinessAddressController.show().url
-  lazy val redirectAgent: String = controllers.incomeSources.add.routes.AddBusinessAddressController.showAgent().url
+  lazy val redirect: String = controllers.incomeSources.add.routes.AddBusinessAddressController.show(isChange = false).url
+  lazy val redirectAgent: String = controllers.incomeSources.add.routes.AddBusinessAddressController.showAgent(isChange = false).url
 
   def show: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {

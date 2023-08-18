@@ -45,8 +45,7 @@ class AddressLookupConnector @Inject()(val appConfig: FrontendAppConfig,
     s"${baseUrl}/api/v2/confirmed?id=$id"
   }
 
-  def individualContinueUrl(isChange: Boolean): String = if (isChange) controllers.incomeSources.add.routes.AddBusinessAddressController.changeSubmit(None).url else controllers.incomeSources.add.routes.AddBusinessAddressController.submit(None).url
-  def agentContinueUrl(isChange: Boolean): String = if (isChange) controllers.incomeSources.add.routes.AddBusinessAddressController.changeAgentSubmit(None).url else controllers.incomeSources.add.routes.AddBusinessAddressController.agentSubmit(None).url
+  def continueUrl(isAgent: Boolean, isChange: Boolean): String = if (isAgent) controllers.incomeSources.add.routes.AddBusinessAddressController.agentSubmit(None, isChange = isChange).url else controllers.incomeSources.add.routes.AddBusinessAddressController.submit(None, isChange = isChange).url
 
   lazy val individualFeedbackUrl: String = controllers.feedback.routes.FeedbackController.show.url
   lazy val agentFeedbackUrl: String = controllers.feedback.routes.FeedbackController.showAgent.url
@@ -160,7 +159,7 @@ class AddressLookupConnector @Inject()(val appConfig: FrontendAppConfig,
 
   def initialiseAddressLookup(isAgent: Boolean, isChange: Boolean)(implicit hc: HeaderCarrier, request: RequestHeader): Future[PostAddressLookupResponse] = {
     Logger("application").info(s"[AddressLookupConnector] - URL: $addressLookupInitializeUrl")
-    val payload = if (isAgent) {addressJson(agentContinueUrl(isChange), agentFeedbackUrl, agentEnglishBanner, agentWelshBanner)} else {addressJson(individualContinueUrl(isChange), individualFeedbackUrl, individualEnglishBanner, individualWelshBanner)}
+    val payload = if (isAgent) {addressJson(continueUrl(isAgent, isChange), agentFeedbackUrl, agentEnglishBanner, agentWelshBanner)} else {addressJson(continueUrl(isAgent, isChange), individualFeedbackUrl, individualEnglishBanner, individualWelshBanner)}
     http.POST[JsValue, PostAddressLookupResponse](
       url = addressLookupInitializeUrl,
       body = payload
