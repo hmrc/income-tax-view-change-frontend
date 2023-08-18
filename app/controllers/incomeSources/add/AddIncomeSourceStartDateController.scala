@@ -59,43 +59,20 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
                                                    val ec: ExecutionContext)
   extends ClientConfirmedController with I18nSupport with FeatureSwitching {
 
-  def handleRequest(incomeSourceKey: String, isAgent: Boolean, isChange: Boolean): Action[AnyContent] = {
-    handleRequestMethod(
-      incomeSourceType = IncomeSourceType.get(incomeSourceKey),
-      isAgent = isAgent,
-      isChange = isChange
-    )
-  }
+  def handleRequest(incomeSourceKey: String,
+                    isAgent: Boolean,
+                    isChange: Boolean
+                   ): Action[AnyContent] = authenticatedAction(isAgent) { implicit user =>
 
-  private def handleRequestMethod(incomeSourceType: IncomeSourceType,
-                                  isAgent: Boolean,
-                                  isChange: Boolean): Action[AnyContent] = {
-    if (isAgent)
-      Authenticated.async {
-        implicit request =>
-          implicit user =>
-            getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
-              implicit mtdItUser =>
-                request.method match {
-                  case "GET" => show(incomeSourceType, isAgent, isChange)
-                  case "POST" => submit(incomeSourceType, isAgent, isChange)
-                }
-            }
-      }
-    else
-      (checkSessionTimeout andThen authenticate andThen retrieveNino
-        andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
-        implicit user =>
-          user.method match {
-            case "GET" => show(incomeSourceType, isAgent, isChange)
-            case "POST" => submit(incomeSourceType, isAgent, isChange)
-          }
-      }
+    user.method match {
+      case "GET" => show(IncomeSourceType.get(incomeSourceKey), isAgent, isChange)
+      case "POST" => submit(IncomeSourceType.get(incomeSourceKey), isAgent, isChange)
+    }
   }
 
   private def show(incomeSourceType: IncomeSourceType,
-                            isAgent: Boolean,
-                            isUpdate: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
+                   isAgent: Boolean,
+                   isUpdate: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
 
     val messagesPrefix = incomeSourceType.startDateMessagesPrefix
 
@@ -107,11 +84,7 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
           case (backCall, postAction, _) =>
             Ok(
               addIncomeSourceStartDate(
-                form = getFilledForm(
-                  form = form(messagesPrefix),
-                  startDateKey = maybeStartDateSessionKey,
-                  isUpdate = isUpdate
-                ),
+                form = getFilledForm(form(messagesPrefix), maybeStartDateSessionKey, isUpdate),
                 isAgent = isAgent,
                 backUrl = backCall.url,
                 postAction = postAction,
@@ -129,8 +102,8 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
 
 
   private def submit(incomeSourceType: IncomeSourceType,
-                                  isAgent: Boolean,
-                                  isUpdate: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
+                     isAgent: Boolean,
+                     isUpdate: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
 
     val messagesPrefix = incomeSourceType.startDateMessagesPrefix
 
@@ -169,6 +142,23 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
     case ex: Exception =>
       Logger("application").error(s"[AddIncomeSourceStartDateController][handleSubmitRequest] - Error: ${ex.getMessage}")
       getErrorHandler(isAgent).showInternalServerError()
+  }
+
+  private def authenticatedAction(isAgent: Boolean)(authenticatedCodeBlock: MtdItUser[_] => Future[Result]): Action[AnyContent] = {
+    if (isAgent) {
+      Authenticated.async {
+        implicit request =>
+          implicit user =>
+            getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap { implicit mtdItUser =>
+              authenticatedCodeBlock(mtdItUser)
+            }
+      }
+    } else {
+      (checkSessionTimeout andThen authenticate andThen retrieveNino
+        andThen retrieveIncomeSources andThen retrieveBtaNavBar).async { implicit user =>
+        authenticatedCodeBlock(user)
+      }
+    }
   }
 
   private def getCalls(incomeSourceType: IncomeSourceType,
