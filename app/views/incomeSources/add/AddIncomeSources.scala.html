@@ -56,11 +56,11 @@
 }
 
 @addUKPropertyStartDateURL = @{
-    controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.handleRequest(UkProperty.key, isAgent = isAgent, isChange = false).url
+    controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.show(UkProperty.key, isAgent = isAgent, isChange = false).url
 }
 
 @addForeignPropertyBusinessStartDateURL = @{
-    controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.handleRequest(ForeignProperty.key, isAgent = isAgent, isChange = false).url
+    controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.show(ForeignProperty.key, isAgent = isAgent, isChange = false).url
 }
 
 @mainTemplate(pageTitle = getMessage("heading"),
