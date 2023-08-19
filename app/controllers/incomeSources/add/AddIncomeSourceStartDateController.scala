@@ -95,10 +95,6 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
         }
       } else Ok(customNotFoundErrorView())
     )
-  } recover {
-    case ex: Exception =>
-      Logger("application").error(s"[AddIncomeSourceStartDateController][handleRequest] - Error: ${ex.getMessage}")
-      getErrorHandler(isAgent).showInternalServerError()
   }
 
 
