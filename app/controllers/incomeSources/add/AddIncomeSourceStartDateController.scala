@@ -150,10 +150,6 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
         }
       } else Ok(customNotFoundErrorView())
     )
-  } recover {
-    case ex: Exception =>
-      Logger("application").error(s"[AddIncomeSourceStartDateController][handleSubmitRequest] - Error: ${ex.getMessage}")
-      getErrorHandler(isAgent).showInternalServerError()
   }
 
   private def authenticatedAction(isAgent: Boolean)(authenticatedCodeBlock: MtdItUser[_] => Future[Result]): Action[AnyContent] = {
@@ -171,11 +167,6 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
         authenticatedCodeBlock(user)
       }
     }
-  }
-
-  private def getErrorHandler(isAgent: Boolean): ShowInternalServerError = {
-    if (isAgent) itvcErrorHandlerAgent
-    else itvcErrorHandler
   }
 
   private def getFilledForm(form: Form[DateFormElement],
