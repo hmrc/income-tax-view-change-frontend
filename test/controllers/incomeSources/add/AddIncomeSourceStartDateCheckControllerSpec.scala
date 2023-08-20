@@ -254,6 +254,26 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
       }
     }
   }
+  "Individual - AddIncomeSourceStartDateCheckController.submit" should {
+    s"return ${Status.OK}: render custom not found error page" when {
+      "IncomeSources FS is disabled" in {
+        disableAllSwitches()
+
+        mockNoIncomeSources()
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
+
+        val result = TestAddIncomeSourceStartDateCheckController.submit(SelfEmployment.key, isAgent = false, isChange = false)(
+          fakePostRequestWithActiveSession
+            .withSession(SessionKeys.addBusinessStartDate -> testStartDate)
+            .withFormUrlEncodedBody(
+              AddIncomeSourceStartDateCheckForm.response -> responseYes
+            ))
+
+        status(result) shouldBe Status.OK
+        val expectedContent: String = TestAddIncomeSourceStartDateCheckController.customNotFoundErrorView().toString()
+        contentAsString(result) shouldBe expectedContent      }
+    }
+  }
   "Individual - Sole Trader Business - AddIncomeSourceStartDateCheckController.submit" should {
     s"return ${Status.BAD_REQUEST} with an error summary" when {
       "form is submitted with neither radio option selected" in {
@@ -775,6 +795,27 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
 
         document.getElementById("back").attr("href") shouldBe routes.AddIncomeSourceStartDateController.show(UkProperty.key, isAgent = true, isChange = true).url
         status(result) shouldBe OK
+      }
+    }
+  }
+  "Agent - AddIncomeSourceStartDateCheckController.submit" should {
+    s"return ${Status.OK}: render custom not found error page" when {
+      "IncomeSources FS is disabled" in {
+        disableAllSwitches()
+
+        mockNoIncomeSources()
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+
+        val result = TestAddIncomeSourceStartDateCheckController.submit(SelfEmployment.key, isAgent = true, isChange = false)(
+          fakeRequestConfirmedClient()
+            .withSession(SessionKeys.addBusinessStartDate -> testStartDate)
+            .withFormUrlEncodedBody(
+              AddIncomeSourceStartDateCheckForm.response -> responseYes
+            ))
+
+        status(result) shouldBe Status.OK
+        val expectedContent: String = TestAddIncomeSourceStartDateCheckController.customNotFoundErrorView().toString()
+        contentAsString(result) shouldBe expectedContent
       }
     }
   }

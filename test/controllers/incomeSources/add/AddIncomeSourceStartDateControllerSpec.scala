@@ -22,6 +22,7 @@ import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import forms.IncomeSourcesFormsSpec.include
 import forms.models.DateFormElement
+import forms.utils.SessionKeys
 import implicits.ImplicitDateFormatter
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
@@ -57,6 +58,8 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport
   val testDay = "01"
   val testMonth = "01"
   val testYear = "2022"
+
+  val testStartDate: String = s"$testYear-$testMonth-$testDay"
 
   val currentDate = dateService.getCurrentDate()
 
@@ -190,6 +193,27 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport
         val document: Document = Jsoup.parse(contentAsString(result))
         document.title should include(messages("incomeSources.add.foreignProperty.startDate.heading"))
         document.getElementById("back").attr("href") shouldBe routes.ForeignPropertyCheckDetailsController.show().url
+        status(result) shouldBe OK
+      }
+    }
+    s"return ${Status.OK}: render the Add Business start date Change page with form filled" when {
+      s"session contains key: ${SessionKeys.addBusinessStartDate} " in {
+        disableAllSwitches()
+        enable(IncomeSources)
+
+        mockNoIncomeSources()
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
+
+        val result = TestAddIncomeSourceStartDateController
+          .show(SelfEmployment.key, isAgent = false, isChange = true)(
+            fakeRequestWithActiveSession.withSession(SessionKeys.addBusinessStartDate -> testStartDate))
+
+        val document: Document = Jsoup.parse(contentAsString(result))
+        document.title should include(messages("add-business-start-date.heading"))
+        document.getElementById("back").attr("href") shouldBe routes.CheckBusinessDetailsController.show().url
+        document.getElementById("income-source-start-date.day").attr("value") shouldBe "1"
+        document.getElementById("income-source-start-date.month").attr("value") shouldBe "1"
+        document.getElementById("income-source-start-date.year").attr("value") shouldBe "2022"
         status(result) shouldBe OK
       }
     }
@@ -612,6 +636,27 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport
         val document: Document = Jsoup.parse(contentAsString(result))
         document.title should include(messages("add-business-start-date.heading"))
         document.getElementById("back").attr("href") shouldBe routes.CheckBusinessDetailsController.showAgent().url
+        status(result) shouldBe OK
+      }
+    }
+    s"return ${Status.OK}: render the Add Business start date Change page with form filled" when {
+      s"session contains key: ${SessionKeys.addBusinessStartDate} " in {
+        disableAllSwitches()
+        enable(IncomeSources)
+
+        mockNoIncomeSources()
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+
+        val result = TestAddIncomeSourceStartDateController
+          .show(SelfEmployment.key, isAgent = true, isChange = true)(
+            fakeRequestConfirmedClient().withSession(SessionKeys.addBusinessStartDate -> testStartDate))
+
+        val document: Document = Jsoup.parse(contentAsString(result))
+        document.title should include(messages("add-business-start-date.heading"))
+        document.getElementById("back").attr("href") shouldBe routes.CheckBusinessDetailsController.showAgent().url
+        document.getElementById("income-source-start-date.day").attr("value") shouldBe "1"
+        document.getElementById("income-source-start-date.month").attr("value") shouldBe "1"
+        document.getElementById("income-source-start-date.year").attr("value") shouldBe "2022"
         status(result) shouldBe OK
       }
     }
