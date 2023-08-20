@@ -171,7 +171,7 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
         authenticatedCodeBlock(user) recover {
           case ex: Exception =>
             Logger("application").error(s"[AddIncomeSourceStartDateCheckController][authenticatedAction] - Error: ${ex.getMessage}")
-            itvcErrorHandlerAgent.showInternalServerError()
+            itvcErrorHandler.showInternalServerError()
         }
       }
   }
