@@ -308,7 +308,7 @@ class AddBusinessNameControllerSpec extends TestSupport
             SessionKeys.businessTrade -> "Plumber",
             SessionKeys.addBusinessAddressLine1 -> "10 Test Road",
             SessionKeys.addBusinessPostalCode -> "TE5 T69",
-            SessionKeys.addBusinessAccountingMethod -> "Quarterly"
+            SessionKeys.addIncomeSourcesAccountingMethod -> "Quarterly"
           )
           )
 

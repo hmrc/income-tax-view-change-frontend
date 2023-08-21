@@ -104,17 +104,15 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
           case Some(name) => BusinessNameForm.form.fill(BusinessNameForm(name))
           case None => BusinessNameForm.form
         }
-        if (isChange) {
-          if (isAgent)
-            Ok(addBusinessView(filledForm, isAgent, submitChangeActionAgent, backUrl, useFallbackLink = true))
-          else
-            Ok(addBusinessView(filledForm, isAgent, submitChangeAction, backUrl, useFallbackLink = true))
-        } else {
-          if (isAgent) {
-            Ok(addBusinessView(filledForm, isAgent, submitActionAgent, backUrl, useFallbackLink = false))
-          } else {
+        (isAgent, isChange) match {
+          case (false, false) =>
             Ok(addBusinessView(filledForm, isAgent, submitAction, backUrl, useFallbackLink = false))
-          }
+          case (true, false) =>
+            Ok(addBusinessView(filledForm, isAgent, submitActionAgent, backUrl, useFallbackLink = false))
+          case (false, true) =>
+            Ok(addBusinessView(filledForm, isAgent, submitChangeAction, backUrl, useFallbackLink = true))
+          case (true, true) =>
+            Ok(addBusinessView(filledForm, isAgent, submitChangeActionAgent, backUrl, useFallbackLink = true))
         }
       }
     }
@@ -151,36 +149,23 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
   }
 
   def handleSubmitRequest(isAgent: Boolean, isChange: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
-    val (backUrlLocal, submitActionLocal, redirectLocal) = {
-      if (isChange) {
-        if (isAgent)
-          (backUrlAgent, submitChangeActionAgent, redirectAgent)
-        else
-          (backUrl, submitChangeAction, redirect)
-      } else {
-        if (isAgent)
-          (backUrlAgent, submitActionAgent, redirectAgent)
-        else
-          (backUrl, submitAction, redirect)
-      }
 
+    val (backUrlLocal, submitActionLocal, redirectLocal) = (isAgent, isChange) match {
+      case (false, false) => (backUrl, submitAction, redirect)
+      case (true, false) => (backUrlAgent, submitActionAgent, redirectAgent)
+      case (false, true) => (checkDetailsBackUrl, submitChangeAction, checkDetailsRedirect)
+      case (true, true) => (checkDetailsBackUrlAgent, submitChangeActionAgent, checkDetailsRedirectAgent)
     }
 
-    BusinessNameForm.form.bindFromRequest().fold(
+      BusinessNameForm.form.bindFromRequest().fold(
       formWithErrors => {
         Future {
           Ok(addBusinessView(formWithErrors, isAgent, submitActionLocal, backUrlLocal, useFallbackLink = true))
         }
       },
       formData => {
-        val updatedRedirect = if (isChange) {
-          if (isAgent) (checkDetailsRedirectAgent) else (checkDetailsRedirect)
-        } else {
-          redirectLocal
-        }
-
         Future.successful {
-          Redirect(updatedRedirect)
+          Redirect(redirectLocal)
             .addingToSession(SessionKeys.businessName -> formData.name)
         }
       }
