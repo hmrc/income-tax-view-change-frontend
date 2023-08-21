@@ -101,6 +101,36 @@ class AddressLookupConnectorSpec extends TestSupport with FeatureSwitching with 
           }
         }
       }
+      "return the redirect location when on the change page" when {
+        "location returned from the lookup-service (individual) and isChange = true" in {
+          disableAllSwitches()
+          enable(IncomeSources)
+          beforeEach()
+
+          setupMockHttpPost(TestAddressLookupConnector.addressLookupInitializeUrl, addressJson(changeIndividualContinueUrl, individualFeedbackUrl, individualEnglishBanner, individualWelshBanner))(HttpResponse(status = ACCEPTED,
+            json = JsString(""), headers = Map("Location" -> Seq("Sample location"))))
+
+          val result = TestAddressLookupConnector.initialiseAddressLookup(isAgent = false, isChange = true)
+          result map {
+            case Left(_) => Fail("Error returned from lookup service")
+            case Right(PostAddressLookupSuccessResponse(location)) => location shouldBe Some("Sample location")
+          }
+        }
+        "location returned from lookup-service (agent) when isChange = true" in { //this is the only specific agent test, just to test that everything works with both possible json payloads
+          disableAllSwitches()
+          enable(IncomeSources)
+          beforeEach()
+
+          setupMockHttpPost(TestAddressLookupConnector.addressLookupInitializeUrl, addressJson(changeAgentContinueUrl, agentFeedbackUrl, agentEnglishBanner, agentWelshBanner))(HttpResponse(status = ACCEPTED,
+            json = JsString(""), headers = Map("Location" -> Seq("Sample location"))))
+
+          val result = TestAddressLookupConnector.initialiseAddressLookup(isAgent = true, isChange = true)
+          result map {
+            case Left(_) => Fail("Error returned from lookup service")
+            case Right(PostAddressLookupSuccessResponse(location)) => location shouldBe Some("Sample location")
+          }
+        }
+      }
 
       "return an error" when {
         "non-standard status returned from lookup-service" in {
@@ -117,11 +147,28 @@ class AddressLookupConnectorSpec extends TestSupport with FeatureSwitching with 
             case Right(_) => Fail("error should be returned")
           }
         }
+        "non-standard status returned from lookup-service on change page" in {
+          disableAllSwitches()
+          enable(IncomeSources)
+          beforeEach()
+
+          setupMockHttpPost(TestAddressLookupConnector.addressLookupInitializeUrl, addressJson(changeIndividualContinueUrl, individualFeedbackUrl, individualEnglishBanner, individualWelshBanner))(HttpResponse(status = OK,
+            json = JsString(""), headers = Map.empty))
+
+          val result = TestAddressLookupConnector.initialiseAddressLookup(isAgent = false, isChange = true)
+          result map {
+            case Left(UnexpectedPostStatusFailure(status)) => status shouldBe OK
+            case Right(_) => Fail("error should be returned")
+          }
+        }
       }
     }
 
     lazy val individualContinueUrl: String = controllers.incomeSources.add.routes.AddBusinessAddressController.submit(None, isChange = false).url
     lazy val agentContinueUrl: String = controllers.incomeSources.add.routes.AddBusinessAddressController.agentSubmit(None, isChange = false).url
+
+    lazy val changeIndividualContinueUrl: String = controllers.incomeSources.add.routes.AddBusinessAddressController.submit(None, isChange = true).url
+    lazy val changeAgentContinueUrl: String = controllers.incomeSources.add.routes.AddBusinessAddressController.agentSubmit(None, isChange = true).url
 
     lazy val individualFeedbackUrl: String = controllers.feedback.routes.FeedbackController.show.url
     lazy val agentFeedbackUrl: String = controllers.feedback.routes.FeedbackController.showAgent.url
