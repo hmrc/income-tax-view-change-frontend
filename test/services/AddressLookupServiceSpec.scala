@@ -88,6 +88,51 @@ class AddressLookupServiceSpec extends TestSupport
         }
       }
     }
+    "initialiseAddressJourney on change page" should {
+      "return an error when connector lookup fails and isChange = true" in {
+        disableAllSwitches()
+        enable(IncomeSources)
+
+        when(mockAddressLookupConnector.initialiseAddressLookup(any(), any())(any(), any()))
+          .thenReturn(Future(Left(UnexpectedPostStatusFailure(418))))
+
+        val result: Future[Either[Throwable, Option[String]]] = TestAddressLookupService.initialiseAddressJourney(isAgent = false, isChange = true)
+        result map {
+          case Left(AddressError(value)) => value shouldBe "status: 418"
+          case Right(_) => Fail("Error not returned")
+        }
+      }
+
+      "return an error when an empty location is returned and isChange = true" in {
+        disableAllSwitches()
+        enable(IncomeSources)
+
+        when(mockAddressLookupConnector.initialiseAddressLookup(any(), any())(any(), any()))
+          .thenReturn(Future(Right(PostAddressLookupSuccessResponse(None))))
+
+        val result: Future[Either[Throwable, Option[String]]] = TestAddressLookupService.initialiseAddressJourney(isAgent = false, isChange = true)
+        result map {
+          case Left(_) => Fail("Error returned from connector")
+          case Right(None) => Success
+          case Right(Some(_)) => Fail("Shouldn't return redirect location")
+        }
+      }
+
+      "return a redirect location when connector lookup works and isChange = true" in {
+        disableAllSwitches()
+        enable(IncomeSources)
+
+        when(mockAddressLookupConnector.initialiseAddressLookup(any(), any())(any(), any()))
+          .thenReturn(Future(Right(PostAddressLookupSuccessResponse(Some("sample location")))))
+
+        val result: Future[Either[Throwable, Option[String]]] = TestAddressLookupService.initialiseAddressJourney(isAgent = false, isChange = true)
+        result map {
+          case Left(_) => Fail("Error returned from connector")
+          case Right(None) => Fail("No redirect location returned from connector")
+          case Right(Some(value)) => value shouldBe "sample location"
+        }
+      }
+    }
 
     "fetchAddress" should {
       "return an error when getting address details fails" in {
