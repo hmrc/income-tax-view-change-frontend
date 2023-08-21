@@ -156,7 +156,8 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport
         mockNoIncomeSources()
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
-        val result = TestAddIncomeSourceStartDateController.show(SelfEmployment.key, isAgent = false, isChange = true)(fakeRequestWithActiveSession)
+        val result = TestAddIncomeSourceStartDateController.show(SelfEmployment.key, isAgent = false, isChange = true)(
+          fakeRequestWithActiveSession.withSession(SessionKeys.addBusinessStartDate -> testStartDate))
 
         val document: Document = Jsoup.parse(contentAsString(result))
         document.title should include(messages("add-business-start-date.heading"))
@@ -172,7 +173,8 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport
         mockNoIncomeSources()
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
-        val result = TestAddIncomeSourceStartDateController.show(UkProperty.key, isAgent = false, isChange = true)(fakeRequestWithActiveSession)
+        val result = TestAddIncomeSourceStartDateController.show(UkProperty.key, isAgent = false, isChange = true)(
+          fakeRequestWithActiveSession.withSession(SessionKeys.addUkPropertyStartDate -> testStartDate))
 
         val document: Document = Jsoup.parse(contentAsString(result))
         document.title should include(messages("incomeSources.add.UKPropertyStartDate.heading"))
@@ -188,7 +190,8 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport
         mockNoIncomeSources()
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
-        val result = TestAddIncomeSourceStartDateController.show(ForeignProperty.key, isAgent = false, isChange = true)(fakeRequestWithActiveSession)
+        val result = TestAddIncomeSourceStartDateController.show(ForeignProperty.key, isAgent = false, isChange = true)(
+          fakeRequestWithActiveSession.withSession(SessionKeys.foreignPropertyStartDate -> testStartDate))
 
         val document: Document = Jsoup.parse(contentAsString(result))
         document.title should include(messages("incomeSources.add.foreignProperty.startDate.heading"))
@@ -215,6 +218,21 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport
         document.getElementById("income-source-start-date.month").attr("value") shouldBe "1"
         document.getElementById("income-source-start-date.year").attr("value") shouldBe "2022"
         status(result) shouldBe OK
+      }
+    }
+    s"return ${Status.INTERNAL_SERVER_ERROR}" when {
+      s"session contains IncomeSourceStartDate with invalid format for the change journey" in {
+        disableAllSwitches()
+        enable(IncomeSources)
+
+        mockNoIncomeSources()
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
+
+        val result = TestAddIncomeSourceStartDateController
+          .show(SelfEmployment.key, isAgent = false, isChange = true)(
+            fakeRequestWithActiveSession.withSession(SessionKeys.addBusinessStartDate -> "INVALID_FORMAT"))
+
+        status(result) shouldBe INTERNAL_SERVER_ERROR
       }
     }
   }
@@ -658,6 +676,21 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport
         document.getElementById("income-source-start-date.month").attr("value") shouldBe "1"
         document.getElementById("income-source-start-date.year").attr("value") shouldBe "2022"
         status(result) shouldBe OK
+      }
+    }
+    s"return ${Status.INTERNAL_SERVER_ERROR}" when {
+      s"session contains IncomeSourceStartDate with invalid format for the change journey" in {
+        disableAllSwitches()
+        enable(IncomeSources)
+
+        mockNoIncomeSources()
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+
+        val result = TestAddIncomeSourceStartDateController
+          .show(SelfEmployment.key, isAgent = true, isChange = true)(
+            fakeRequestConfirmedClient().withSession(SessionKeys.addBusinessStartDate -> "INVALID_FORMAT"))
+
+        status(result) shouldBe INTERNAL_SERVER_ERROR
       }
     }
   }
