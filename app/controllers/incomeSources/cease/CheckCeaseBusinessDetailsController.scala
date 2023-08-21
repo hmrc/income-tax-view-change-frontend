@@ -125,7 +125,7 @@ class CheckCeaseBusinessDetailsController @Inject()(val authenticate: Authentica
             case _ =>
               Logger("application").error(s"[CheckCeaseBusinessDetailsController][handleSubmitRequest]:" +
                 s" Unsuccessful update response received")
-              Future(itvcErrorHandler.showInternalServerError)
+              Future(itvcErrorHandler.showInternalServerError())
           }
         case _ =>
           Logger("application").error(s"[CheckCeaseBusinessDetailsController][handleSubmitRequest]:" +

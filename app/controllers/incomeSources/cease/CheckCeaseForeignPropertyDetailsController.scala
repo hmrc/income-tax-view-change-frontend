@@ -143,7 +143,7 @@ class CheckCeaseForeignPropertyDetailsController @Inject()(val authenticate: Aut
       if (foreignPropertyIncomeSources.isEmpty) {
         Logger("application").error(s"[CheckCeaseForeignPropertyDetailsController][handleSubmitRequest]:" +
           s" Failed to retrieve incomeSourceId for foreign property")
-        Future(itvcErrorHandler.showInternalServerError)
+        Future(itvcErrorHandler.showInternalServerError())
       } else {
         val incomeSourceId = foreignPropertyIncomeSources.head.incomeSourceId
 
@@ -154,7 +154,7 @@ class CheckCeaseForeignPropertyDetailsController @Inject()(val authenticate: Aut
           case _ =>
             Logger("application").error(s"[CheckCeaseForeignPropertyDetailsController][handleSubmitRequest]:" +
               s" Unsuccessful update response received")
-            Future(itvcErrorHandler.showInternalServerError)
+            Future(itvcErrorHandler.showInternalServerError())
         }
       }
     }

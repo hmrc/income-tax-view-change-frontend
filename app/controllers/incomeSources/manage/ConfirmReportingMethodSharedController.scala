@@ -393,13 +393,13 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
     (isAgent, incomeSourceJourney) match {
       case (false, UkProperty) =>
         (
-          manageIncomeSourceDetailsController.showUkProperty,
+          manageIncomeSourceDetailsController.showUkProperty(),
           confirmReportingMethodSharedController.submitUKProperty(id = incomeSourceId, changeTo = changeTo, taxYear = taxYear),
           manageObligationsController.showUKProperty(changeTo = changeTo, taxYear = taxYear)
         )
       case (false, ForeignProperty) =>
         (
-          manageIncomeSourceDetailsController.showForeignProperty,
+          manageIncomeSourceDetailsController.showForeignProperty(),
           confirmReportingMethodSharedController.submitForeignProperty(id = incomeSourceId, changeTo = changeTo, taxYear = taxYear),
           manageObligationsController.showForeignProperty(changeTo = changeTo, taxYear = taxYear)
         )
@@ -411,13 +411,13 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
         )
       case (true, UkProperty) =>
         (
-          manageIncomeSourceDetailsController.showUkPropertyAgent,
+          manageIncomeSourceDetailsController.showUkPropertyAgent(),
           confirmReportingMethodSharedController.submitUKPropertyAgent(id = incomeSourceId, changeTo = changeTo, taxYear = taxYear),
           manageObligationsController.showAgentUKProperty(changeTo = changeTo, taxYear = taxYear)
         )
       case (true, ForeignProperty) =>
         (
-          manageIncomeSourceDetailsController.showForeignPropertyAgent,
+          manageIncomeSourceDetailsController.showForeignPropertyAgent(),
           confirmReportingMethodSharedController.submitForeignPropertyAgent(id = incomeSourceId, changeTo = changeTo, taxYear = taxYear),
           manageObligationsController.showAgentForeignProperty(changeTo = changeTo, taxYear = taxYear)
         )

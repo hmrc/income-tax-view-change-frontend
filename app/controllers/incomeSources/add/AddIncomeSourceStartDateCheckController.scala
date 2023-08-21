@@ -186,7 +186,8 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
                   incomeSourceType = incomeSourceType,
                   backCall = backCall,
                   successCall = successCall,
-                  incomeSourceStartDate = startDate
+                  incomeSourceStartDate = startDate,
+                  isAgent = isAgent
                 )
               )
           )
@@ -203,7 +204,8 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
                               incomeSourceType: IncomeSourceType,
                               backCall: Call,
                               successCall: Call,
-                              incomeSourceStartDate: String)
+                              incomeSourceStartDate: String,
+                              isAgent: Boolean)
                              (implicit mtdItUser: MtdItUser[_]): Result = {
 
     val formResponse: Option[String] = validForm.toFormMap(form.response).headOption
@@ -226,6 +228,10 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
           )
       case (Some(form.responseYes), _) =>
         Redirect(successCall)
+      case (Some(_), _) => Logger("application").error(s"[AddIncomeSourceStartDateCheckController][handleValidForm] - Unexpected response")
+        if (isAgent) itvcErrorHandlerAgent.showInternalServerError() else itvcErrorHandler.showInternalServerError()
+      case (None, _) => Logger("application").error(s"[AddIncomeSourceStartDateCheckController][handleValidForm] - Unexpected response")
+         if(isAgent) itvcErrorHandlerAgent.showInternalServerError() else itvcErrorHandler.showInternalServerError()
     }
   }
 

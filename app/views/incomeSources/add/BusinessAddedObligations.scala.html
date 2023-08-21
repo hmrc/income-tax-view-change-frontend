@@ -133,7 +133,7 @@ govukTable: GovukTable,
                     <tbody class="govuk-table__body">
                         @sources.eopsObligationsDates.map{ x =>
                             <tr class="govuk-table__row">
-                                <td class="govuk-table__cell">@(x.inboundCorrespondenceFrom.getYear + " " + getMessage("to") + " " + x.inboundCorrespondenceTo.getYear)</td>
+                                <td class="govuk-table__cell">@(x.inboundCorrespondenceFrom.getYear.toString + " " + getMessage("to") + " " + x.inboundCorrespondenceTo.getYear.toString)</td>
                                 <td class="govuk-table__cell">@(x.inboundCorrespondenceDue.toLongDate)</td>
                             </tr>
                         }
@@ -158,7 +158,7 @@ govukTable: GovukTable,
                 <tbody class="govuk-table__body">
                     @sources.finalDeclarationDates.map{ x =>
                         <tr class="govuk-table__row">
-                            <td class="govuk-table__cell">@(x.inboundCorrespondenceFrom.getYear + " " + getMessage("to") + " " + x.inboundCorrespondenceTo.getYear)</td>
+                            <td class="govuk-table__cell">@(x.inboundCorrespondenceFrom.getYear.toString + " " + getMessage("to") + " " + x.inboundCorrespondenceTo.getYear.toString)</td>
                             <td class="govuk-table__cell">@(x.inboundCorrespondenceDue.toLongDate)</td>
                         </tr>
                     }
