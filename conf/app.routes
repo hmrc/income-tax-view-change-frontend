@@ -161,6 +161,9 @@ GET          /income-sources/add/business-name                            contro
 GET          /agents/income-sources/add/business-name                     controllers.incomeSources.add.AddBusinessNameController.showAgent()
 POST         /income-sources/add/business-name                            controllers.incomeSources.add.AddBusinessNameController.submit()
 POST         /agents/income-sources/add/business-name                     controllers.incomeSources.add.AddBusinessNameController.submitAgent()
+POST         /income-sources/add/change-business-name                     controllers.incomeSources.add.AddBusinessNameController.submitChange()
+POST         /agents/income-sources/add/change-business-name              controllers.incomeSources.add.AddBusinessNameController.submitChangeAgent()
+
 GET          /income-sources/add/business-address                         controllers.incomeSources.add.AddBusinessAddressController.show(isChange: Boolean = false)
 GET          /agents/income-sources/add/business-address                  controllers.incomeSources.add.AddBusinessAddressController.showAgent(isChange: Boolean = false)
 GET          /income-sources/add/business-address/id/                     controllers.incomeSources.add.AddBusinessAddressController.submit(id: Option[String], isChange: Boolean = false)

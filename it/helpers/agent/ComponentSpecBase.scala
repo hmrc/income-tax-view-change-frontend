@@ -295,6 +295,20 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
       post(s"/income-sources/add/foreign-property-added", additionalCookies)(Map.empty)
     }
 
+    def getAddBusinessName(additionalCookies: Map[String, String] = Map.empty): WSResponse =
+      get("/income-sources/add/business-name", additionalCookies)
+
+    def postAddBusinessName(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      post(s"/income-sources/add/business-name", additionalCookies)(Map.empty)
+    }
+
+    def getChangeBusinessName(additionalCookies: Map[String, String] = Map.empty): WSResponse =
+      get("/income-sources/add/change-business-name", additionalCookies)
+
+    def postChangeBusinessName(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      post(s"/income-sources/add/change-business-name", additionalCookies)(Map.empty)
+    }
+
     def getAddBusinessStartDateCheck(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
       get(
         uri = "/income-sources/add/business-start-date-check", additionalCookies
