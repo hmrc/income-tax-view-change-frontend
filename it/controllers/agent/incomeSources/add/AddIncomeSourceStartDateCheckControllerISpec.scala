@@ -21,37 +21,48 @@ import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import forms.utils.SessionKeys
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
+import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, clientDetailsWithStartDate, testMtditid}
-import testConstants.IncomeSourceIntegrationTestConstants.{noPropertyOrBusinessResponse, ukPropertyOnlyResponse}
+import testConstants.IncomeSourceIntegrationTestConstants.{businessOnlyResponse, foreignPropertyOnlyResponse, noPropertyOrBusinessResponse, ukPropertyOnlyResponse}
 
 class AddIncomeSourceStartDateCheckControllerISpec extends ComponentSpecBase {
   val testDate: String = "2020-11-1"
-  val addBusinessStartDateCheckShowUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.showSoleTraderBusinessAgent.url
+  val addBusinessStartDateCheckDetailsShowUrl: String = controllers.incomeSources.add.routes.CheckBusinessDetailsController.showAgent().url
+  val addBusinessStartDateCheckShowUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.show(SelfEmployment.key, isAgent = true, isChange = false).url
+  val addBusinessStartDateCheckChangeShowUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.show(SelfEmployment.key, isAgent = true, isChange = true).url
+  val addBusinessStartDateCheckChangeSubmitUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.submit(SelfEmployment.key, isAgent = true, isChange = true).url
   val addBusinessTradeShowUrl: String = controllers.incomeSources.add.routes.AddBusinessTradeController.showAgent().url
-  val addBusinessStartDateShowUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showSoleTraderBusinessAgent.url
-  val addBusinessStartDateCheckSubmitUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.submitSoleTraderBusinessAgent.url
+  val addBusinessStartDateShowUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.show(SelfEmployment.key, isAgent = true, isChange = false).url
+  val addBusinessStartDateCheckSubmitUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.submit(SelfEmployment.key, isAgent = true, isChange = false).url
   val continueButtonText: String = messagesAPI("base.continue")
   val incomeSourcePrefix: String = "start-date-check"
-  val soleTraderBusinessPrefix: String = SelfEmployment.addIncomeSourceStartDateCheckMessagesPrefix
-  val ukPropertyPrefix: String = UkProperty.addIncomeSourceStartDateCheckMessagesPrefix
-  val foreignPropertyPrefix: String = ForeignProperty.addIncomeSourceStartDateCheckMessagesPrefix
+  val soleTraderBusinessPrefix: String = SelfEmployment.addStartDateCheckMessagesPrefix
+  val ukPropertyPrefix: String = UkProperty.addStartDateCheckMessagesPrefix
+  val foreignPropertyPrefix: String = ForeignProperty.addStartDateCheckMessagesPrefix
   val testAddBusinessStartDate: Map[String, String] = Map(SessionKeys.addBusinessStartDate -> "2022-10-10")
 
-  val foreignPropertyStartDateCheckShowUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.showForeignPropertyAgent.url
-  val foreignPropertyStartDateCheckSubmitUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.showForeignPropertyAgent.url
+  val foreignPropertyStartDateCheckShowUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.show(ForeignProperty.key, isAgent = true, isChange = false).url
+  val foreignPropertyStartDateCheckSubmitUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.submit(ForeignProperty.key, isAgent = true, isChange = false).url
   val foreignPropertyAccountingMethodShowUrl: String = controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.showAgent(ForeignProperty.key).url
-  val foreignPropertyStartDateShowUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showForeignPropertyAgent.url
+  val foreignPropertyStartDateShowUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.show(ForeignProperty.key, isAgent = true, isChange = false).url
+  val addForeignPropertyStartDateCheckChangeShowUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.show(ForeignProperty.key, isAgent = true, isChange = true).url
+  val addForeignPropertyStartDateCheckChangeSubmitUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.submit(ForeignProperty.key, isAgent = true, isChange = true).url
+  val addForeignPropertyStartDateCheckDetailsShowUrl: String = controllers.incomeSources.add.routes.ForeignPropertyCheckDetailsController.showAgent().url
+
 
   val testAddForeignPropertyStartDate: Map[String, String] = Map(SessionKeys.foreignPropertyStartDate -> "2022-10-10")
 
   val testAddUKPropertyStartDate: Map[String, String] = Map(SessionKeys.addUkPropertyStartDate -> "2022-10-10")
   val dateText: String = "10 October 2022"
 
-  val checkUKPropertyStartDateShowUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.showUKPropertyAgent.url
-  val checkUKPropertyStartDateSubmitUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.submitUKPropertyAgent.url
-  val addUKPropertyStartDateShowUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showUKPropertyAgent.url
+  val checkUKPropertyStartDateShowUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.show(UkProperty.key, isAgent = true, isChange = false).url
+  val checkUKPropertyStartDateSubmitUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.submit(UkProperty.key, isAgent = true, isChange = false).url
+  val addUKPropertyStartDateShowUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.show(UkProperty.key, isAgent = true, isChange = false).url
   val ukPropertyAccountingMethodShowUrl: String = controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.showAgent(UkProperty.key).url
+  val addUKPropertyStartDateCheckChangeSubmitUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.submit(UkProperty.key, isAgent = true, isChange = true).url
+  val addUKPropertyStartDateCheckChangeShowUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.show(UkProperty.key, isAgent = true, isChange = true).url
+  val addUKPropertyStartDateCheckDetailsShowUrl: String = controllers.incomeSources.add.routes.CheckUKPropertyDetailsController.showAgent().url
+
 
   s"calling GET $addBusinessStartDateCheckShowUrl" should {
     "render the Add Business Start Date Check Page" when {
@@ -274,6 +285,135 @@ class AddIncomeSourceStartDateCheckControllerISpec extends ComponentSpecBase {
               messagesAPI(s"$ukPropertyPrefix.error"))
           )
         }
+      }
+    }
+  }
+  s"calling GET $addBusinessStartDateCheckChangeShowUrl" should {
+    s"render the Start Date Check Change Page" when {
+      "User is authorised" in {
+        stubAuthorisedAgentUser(authorised = true)
+
+        Given("I wiremock stub a successful Income Source Details response with UK property")
+        enable(IncomeSources)
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
+
+        When(s"I call GET $addBusinessStartDateCheckChangeShowUrl")
+
+        val result = IncomeTaxViewChangeFrontend.getAddBusinessStartDateCheckChange(clientDetailsWithStartDate ++ testAddBusinessStartDate)
+        verifyIncomeSourceDetailsCall(testMtditid)
+
+        result should have(
+          httpStatus(OK),
+          pageTitleAgent("dateForm.check.heading"),
+          elementTextByID("continue-button")(continueButtonText)
+        )
+      }
+    }
+  }
+  s"calling GET $addForeignPropertyStartDateCheckChangeShowUrl" should {
+    s"render the Start Date Check Change Page" when {
+      "User is authorised" in {
+        stubAuthorisedAgentUser(authorised = true)
+
+        Given("I wiremock stub a successful Income Source Details response with UK property")
+        enable(IncomeSources)
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
+
+        When(s"I call GET $addForeignPropertyStartDateCheckChangeShowUrl")
+
+        val result = IncomeTaxViewChangeFrontend.getAddForeignPropertyStartDateCheckChange(clientDetailsWithStartDate ++ testAddForeignPropertyStartDate)
+        verifyIncomeSourceDetailsCall(testMtditid)
+
+        result should have(
+          httpStatus(OK),
+          pageTitleAgent("dateForm.check.heading"),
+          elementTextByID("continue-button")(continueButtonText)
+        )
+      }
+    }
+  }
+  s"calling GET $addUKPropertyStartDateCheckChangeShowUrl" should {
+    s"render the Start Date Check Change Page" when {
+      "User is authorised" in {
+        stubAuthorisedAgentUser(authorised = true)
+
+        Given("I wiremock stub a successful Income Source Details response with UK property")
+        enable(IncomeSources)
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
+
+        When(s"I call GET $addUKPropertyStartDateCheckChangeSubmitUrl")
+
+        val result = IncomeTaxViewChangeFrontend.getAddUKPropertyStartDateCheckChange(clientDetailsWithStartDate ++ testAddUKPropertyStartDate)
+        verifyIncomeSourceDetailsCall(testMtditid)
+
+        result should have(
+          httpStatus(OK),
+          pageTitleAgent("dateForm.check.heading"),
+          elementTextByID("continue-button")(continueButtonText)
+        )
+      }
+    }
+  }
+  s"calling POST $addBusinessStartDateCheckChangeSubmitUrl" should {
+    s"render the Check Business Details Page" when {
+      "User selects 'Yes" in {
+        stubAuthorisedAgentUser(authorised = true)
+
+        Given("I wiremock stub a successful Income Source Details response with UK property")
+        enable(IncomeSources)
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
+
+        When(s"I call GET $addBusinessStartDateCheckChangeSubmitUrl")
+
+        val result = IncomeTaxViewChangeFrontend.postAddBusinessStartDateCheckChange(Some("Yes"))(clientDetailsWithStartDate ++ testAddBusinessStartDate)
+        verifyIncomeSourceDetailsCall(testMtditid)
+
+        result should have(
+          httpStatus(SEE_OTHER),
+          redirectURI(addBusinessStartDateCheckDetailsShowUrl)
+        )
+      }
+    }
+  }
+  s"calling POST $addForeignPropertyStartDateCheckChangeSubmitUrl" should {
+    s"render the Check Foreign Property Details Page" when {
+      "User selects 'Yes" in {
+        stubAuthorisedAgentUser(authorised = true)
+
+        Given("I wiremock stub a successful Income Source Details response with UK property")
+        enable(IncomeSources)
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
+
+        When(s"I call GET $addForeignPropertyStartDateCheckChangeSubmitUrl")
+
+        val result = IncomeTaxViewChangeFrontend.postAddForeignPropertyStartDateCheckChange(Some("Yes"))(clientDetailsWithStartDate ++ testAddForeignPropertyStartDate)
+        verifyIncomeSourceDetailsCall(testMtditid)
+
+        result should have(
+          httpStatus(SEE_OTHER),
+          redirectURI(addForeignPropertyStartDateCheckDetailsShowUrl)
+        )
+      }
+    }
+  }
+  s"calling POST $addUKPropertyStartDateCheckChangeSubmitUrl" should {
+    s"render the Check UK Property Details Page" when {
+      "User selects 'Yes" in {
+        stubAuthorisedAgentUser(authorised = true)
+
+        Given("I wiremock stub a successful Income Source Details response with UK property")
+        enable(IncomeSources)
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
+
+        When(s"I call GET $addUKPropertyStartDateCheckChangeSubmitUrl")
+
+        val result = IncomeTaxViewChangeFrontend.postAddUKPropertyStartDateCheckChange(Some("Yes"))(clientDetailsWithStartDate ++ testAddUKPropertyStartDate)
+        verifyIncomeSourceDetailsCall(testMtditid)
+
+        result should have(
+          httpStatus(SEE_OTHER),
+          redirectURI(addUKPropertyStartDateCheckDetailsShowUrl)
+        )
       }
     }
   }

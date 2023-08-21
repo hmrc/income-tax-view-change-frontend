@@ -21,6 +21,7 @@ import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
+import enums.IncomeSourceJourney.SelfEmployment
 import forms.incomeSources.add.BusinessTradeForm
 import forms.utils.SessionKeys
 import play.api.i18n.I18nSupport
@@ -49,8 +50,7 @@ class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate
                                            val ec: ExecutionContext)
   extends ClientConfirmedController with I18nSupport with FeatureSwitching {
 
-  lazy val backURL: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.submitSoleTraderBusiness.url
-  lazy val agentBackURL: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.submitSoleTraderBusinessAgent.url
+  def backURL(isAgent: Boolean): String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.show(SelfEmployment.key, isAgent = isAgent, isChange = false).url
   lazy val postAction: Call = controllers.incomeSources.add.routes.AddBusinessTradeController.submit()
   lazy val postActionAgent: Call = controllers.incomeSources.add.routes.AddBusinessTradeController.agentSubmit()
   lazy val redirect: String = controllers.incomeSources.add.routes.AddBusinessAddressController.show().url
@@ -77,8 +77,8 @@ class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate
       Future.successful(Redirect(controllers.routes.HomeController.show()))
     } else {
       Future {
-        if (!isAgent) Ok(addBusinessTradeView(BusinessTradeForm.form, controllers.incomeSources.add.routes.AddBusinessTradeController.submit(), isAgent, backURL, sameNameError = false))
-        else Ok(addBusinessTradeView(BusinessTradeForm.form, controllers.incomeSources.add.routes.AddBusinessTradeController.agentSubmit(), isAgent, agentBackURL, sameNameError = false))
+        if (!isAgent) Ok(addBusinessTradeView(BusinessTradeForm.form, controllers.incomeSources.add.routes.AddBusinessTradeController.submit(), isAgent, backURL(isAgent), sameNameError = false))
+        else Ok(addBusinessTradeView(BusinessTradeForm.form, controllers.incomeSources.add.routes.AddBusinessTradeController.agentSubmit(), isAgent, backURL(isAgent), sameNameError = false))
       }
     }
   }
@@ -100,13 +100,13 @@ class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate
 
   def handelSubmitRequest(isAgent: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
     val (postActionLocal, backUrlLocal, redirectLocal) = {
-      if (isAgent) (postActionAgent, agentBackURL, redirectAgent)
-      else (postAction, backURL, redirect)
+      if (isAgent) (postActionAgent, backURL(isAgent), redirectAgent)
+      else (postAction, backURL(isAgent), redirect)
     }
     BusinessTradeForm.form.bindFromRequest().fold(
       formWithErrors => {
         Future {
-          Ok(addBusinessTradeView(formWithErrors, postActionLocal, isUserAgent = true, backUrlLocal, sameNameError = false))
+          Ok(addBusinessTradeView(formWithErrors, postActionLocal, isUserAgent = true, backURL(isAgent), sameNameError = false))
         }
       },
       formData => {

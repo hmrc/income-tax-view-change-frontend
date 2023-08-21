@@ -114,19 +114,13 @@ class IncomeSourcesAccountingMethodController @Inject()(val authenticate: Authen
     val backUrl = incomeSourceType match {
       case SelfEmployment.key =>
         if (isAgent)
-            routes.AddBusinessAddressController.showAgent().url
+          routes.AddBusinessAddressController.showAgent().url
         else
-            routes.AddBusinessAddressController.show().url
+          routes.AddBusinessAddressController.show().url
       case UkProperty.key =>
-        if (isAgent)
-            routes.AddIncomeSourceStartDateCheckController.showUKPropertyAgent.url
-        else
-            routes.AddIncomeSourceStartDateCheckController.showUKProperty.url
+          routes.AddIncomeSourceStartDateCheckController.show(UkProperty.key, isAgent, isChange = false).url
       case _ =>
-        if (isAgent)
-            routes.AddIncomeSourceStartDateCheckController.showForeignPropertyAgent.url
-        else
-            routes.AddIncomeSourceStartDateCheckController.showForeignProperty.url
+          routes.AddIncomeSourceStartDateCheckController.show(ForeignProperty.key, isAgent, isChange = false).url
     }
     val postAction: Call = if (isAgent) controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.submitAgent(incomeSourceType) else
       controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.submit(incomeSourceType)
@@ -159,11 +153,11 @@ class IncomeSourcesAccountingMethodController @Inject()(val authenticate: Authen
             routes.CheckBusinessDetailsController.show())
       case UkProperty.key =>
           (routes.IncomeSourcesAccountingMethodController.submit(UkProperty.key),
-            routes.AddIncomeSourceStartDateCheckController.showUKProperty.url,
+            routes.AddIncomeSourceStartDateCheckController.show(UkProperty.key, isAgent = false, isChange = false).url,
             routes.CheckUKPropertyDetailsController.show())
       case _ =>
           (routes.IncomeSourcesAccountingMethodController.submit(ForeignProperty.key),
-            routes.AddIncomeSourceStartDateCheckController.showForeignProperty.url,
+            routes.AddIncomeSourceStartDateCheckController.show(ForeignProperty.key, isAgent = false, isChange = false).url,
             routes.ForeignPropertyCheckDetailsController.show())
     }
   }
@@ -176,11 +170,11 @@ class IncomeSourcesAccountingMethodController @Inject()(val authenticate: Authen
             routes.CheckBusinessDetailsController.showAgent())
       case UkProperty.key =>
           (routes.IncomeSourcesAccountingMethodController.submitAgent(UkProperty.key),
-            routes.AddIncomeSourceStartDateCheckController.showUKPropertyAgent.url,
+            routes.AddIncomeSourceStartDateCheckController.show(UkProperty.key, isAgent = true, isChange = false).url,
             routes.CheckUKPropertyDetailsController.showAgent())
       case _ =>
           (routes.IncomeSourcesAccountingMethodController.submitAgent(ForeignProperty.key),
-            routes.AddIncomeSourceStartDateCheckController.showForeignPropertyAgent.url,
+            routes.AddIncomeSourceStartDateCheckController.show(ForeignProperty.key, isAgent = true, isChange = false).url,
             routes.ForeignPropertyCheckDetailsController.showAgent())
     }
   }

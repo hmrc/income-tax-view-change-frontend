@@ -20,6 +20,7 @@
 @import exceptions.MissingFieldException
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import models.incomeSourceDetails.viewmodels.AddIncomeSourcesViewModel
+@import enums.IncomeSourceJourney._
 
 @this(mainTemplate: unifiedLayout,
     implicitDateFormatter: ImplicitDateFormatterImpl,
@@ -55,13 +56,11 @@
 }
 
 @addUKPropertyStartDateURL = @{
-    if(isAgent) controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showUKPropertyAgent.url
-    else controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showUKProperty.url
+    controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.show(UkProperty.key, isAgent = isAgent, isChange = false).url
 }
 
 @addForeignPropertyBusinessStartDateURL = @{
-    if(isAgent) controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showForeignPropertyAgent.url
-    else controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showForeignProperty.url
+    controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.show(ForeignProperty.key, isAgent = isAgent, isChange = false).url
 }
 
 @mainTemplate(pageTitle = getMessage("heading"),
