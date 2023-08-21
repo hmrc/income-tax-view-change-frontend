@@ -164,11 +164,6 @@ POST         /agents/income-sources/add/business-name                     contro
 POST         /income-sources/add/change-business-name                     controllers.incomeSources.add.AddBusinessNameController.submitChange()
 POST         /agents/income-sources/add/change-business-name              controllers.incomeSources.add.AddBusinessNameController.submitChangeAgent()
 
-
-GET          /income-sources/add/business-trade                           controllers.incomeSources.add.AddBusinessTradeController.show()
-GET          /agents/income-sources/add/business-trade                    controllers.incomeSources.add.AddBusinessTradeController.showAgent()
-POST         /income-sources/add/business-trade                           controllers.incomeSources.add.AddBusinessTradeController.submit()
-POST         /agents/income-sources/add/business-trade                    controllers.incomeSources.add.AddBusinessTradeController.agentSubmit()
 GET          /income-sources/add/business-trade                           controllers.incomeSources.add.AddBusinessTradeController.show(isAgent: Boolean = false, isChange: Boolean = false)
 GET          /agents/income-sources/add/business-trade                    controllers.incomeSources.add.AddBusinessTradeController.show(isAgent: Boolean = true, isChange: Boolean = false)
 POST         /income-sources/add/business-trade                           controllers.incomeSources.add.AddBusinessTradeController.submit(isAgent: Boolean = false, isChange: Boolean = false)
