@@ -135,7 +135,7 @@ class AddBusinessNameControllerSpec extends TestSupport
         ))
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showSoleTraderBusiness.url)
+        redirectLocation(result) mustBe Some(controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.show(incomeSourceKey = "SE", isAgent = false, isChange = false).url)
         session(result).get(SessionKeys.businessName) mustBe Some(validBusinessName)
       }
 
@@ -237,7 +237,7 @@ class AddBusinessNameControllerSpec extends TestSupport
         ))
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showSoleTraderBusinessAgent.url)
+        redirectLocation(result) mustBe Some(controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.show(incomeSourceKey = "SE", isAgent = true, isChange = false).url)
         session(result).get(SessionKeys.businessName) mustBe Some(validBusinessName)
       }
     }
