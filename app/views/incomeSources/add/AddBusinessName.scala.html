@@ -23,6 +23,8 @@
 @import helper._
 @import views.html.helpers.injected.ErrorSummary
 @import views.html.helpers.injected.InputHelper
+@import models.incomeSourceDetails.viewmodels.CheckBusinessDetailsViewModel
+
 
 
 @this(
@@ -39,7 +41,13 @@
     errorSummary: ErrorSummary
 )
 
-@(businessNameForm: Form[BusinessNameForm], isAgent: Boolean, postAction: Call, backUrl: String)(implicit messages: Messages, user: auth.MtdItUser[_])
+@(
+    businessNameForm: Form[BusinessNameForm],
+    isAgent: Boolean,
+    postAction: Call,
+    backUrl: String,
+    useFallbackLink: Boolean
+)(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @import forms.utils.SessionKeys
 
@@ -58,6 +66,7 @@
 @mainTemplate(
     pageTitle = messages("add-business-name.heading"),
     isAgent = isAgent,
+    useFallbackBackLink = useFallbackLink,
     backUrl = Some(backUrl),
     btaNavPartial = user.btaNavPartial) {
 
@@ -65,7 +74,7 @@
         form = businessNameForm
     )
 
-    @form(action = postAction) {
+    @form(action = postAction, Symbol("id") -> "business-name-form") {
 
         <div class="govuk-form-group form-field-group  @if(fieldError.isDefined) {govuk-form-group--error}">
 
@@ -100,13 +109,15 @@
                 }
                 @if(field.value.isDefined){
                     value="@field.value.get"
-                    }
+                }
             >
         </div>
 
         @govukButton(Button(
-            content = Text(messages("base.continue"))
+            content = Text(messages("base.continue")),
+            attributes = Map("id" -> "continue-button")
         ))
+
     }
 }
 
