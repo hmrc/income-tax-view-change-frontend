@@ -158,21 +158,13 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
         implicit request =>
           implicit user =>
             getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap { implicit mtdItUser =>
-              authenticatedCodeBlock(mtdItUser) recover {
-                case ex: Exception =>
-                  Logger("application").error(s"[Agent][AddIncomeSourceStartDateController][authenticatedAction] - Error: ${ex.getMessage}")
-                  itvcErrorHandlerAgent.showInternalServerError()
-              }
+              authenticatedCodeBlock(mtdItUser)
             }
       }
     } else {
       (checkSessionTimeout andThen authenticate andThen retrieveNino
         andThen retrieveIncomeSources andThen retrieveBtaNavBar).async { implicit user =>
-        authenticatedCodeBlock(user) recover {
-          case ex: Exception =>
-            Logger("application").error(s"[AddIncomeSourceStartDateController][authenticatedAction] - Error: ${ex.getMessage}")
-            itvcErrorHandler.showInternalServerError()
-        }
+        authenticatedCodeBlock(user)
       }
     }
   }
