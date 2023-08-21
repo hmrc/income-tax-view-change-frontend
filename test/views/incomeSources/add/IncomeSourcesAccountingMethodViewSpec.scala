@@ -56,20 +56,11 @@ class IncomeSourcesAccountingMethodViewSpec extends TestSupport {
 
     val (backUrl, postAction) = incomeSourceType match {
       case SelfEmployment.key =>
-        if (isAgent)
-          (controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.showSoleTraderBusinessAgent.url, controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.submitAgent (SelfEmployment.key))
-        else
-          (controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.showSoleTraderBusiness.url, controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.submit(SelfEmployment.key))
+        (controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.show(SelfEmployment.key, isAgent, isChange = false).url, controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.submitAgent (SelfEmployment.key))
       case UkProperty.key =>
-        if (isAgent)
-          (controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.showUKPropertyAgent.url, controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.submitAgent(UkProperty.key))
-        else
-          (controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.showUKProperty.url, controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.submit(UkProperty.key))
+        (controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.show(UkProperty.key, isAgent, isChange = false).url, controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.submitAgent(UkProperty.key))
       case ForeignProperty.key =>
-        if (isAgent)
-          (controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.showForeignPropertyAgent.url, controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.submitAgent(ForeignProperty.key))
-        else
-          (controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.showForeignProperty.url, controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.submit(ForeignProperty.key))
+        (controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.show(ForeignProperty.key, isAgent, isChange = false).url, controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.submitAgent(ForeignProperty.key))
     }
 
     lazy val view: HtmlFormat.Appendable = incomeSourcesAccountingMethodView(

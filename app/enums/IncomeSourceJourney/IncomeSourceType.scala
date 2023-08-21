@@ -16,28 +16,43 @@
 
 package enums.IncomeSourceJourney
 
+import forms.utils.SessionKeys
+
 sealed trait IncomeSourceType {
   val key: String
-  val addIncomeSourceStartDateMessagesPrefix: String
-  val addIncomeSourceStartDateCheckMessagesPrefix: String
+  val startDateMessagesPrefix: String
+  val addStartDateCheckMessagesPrefix: String
+  val startDateSessionKey: String
 }
 
 case object SelfEmployment extends IncomeSourceType {
   override val key = "SE"
-  override val addIncomeSourceStartDateMessagesPrefix = "add-business-start-date"
-  override val addIncomeSourceStartDateCheckMessagesPrefix = "add-business-start-date-check"
+  override val startDateMessagesPrefix = "add-business-start-date"
+  override val addStartDateCheckMessagesPrefix = "add-business-start-date-check"
+  override val startDateSessionKey = SessionKeys.addBusinessStartDate
 
 }
 
 case object UkProperty extends IncomeSourceType {
   override val key = "UK"
-  override val addIncomeSourceStartDateMessagesPrefix = "incomeSources.add.UKPropertyStartDate"
-  override val addIncomeSourceStartDateCheckMessagesPrefix = "add-uk-property-start-date-check"
+  override val startDateMessagesPrefix = "incomeSources.add.UKPropertyStartDate"
+  override val addStartDateCheckMessagesPrefix = "add-uk-property-start-date-check"
+  override val startDateSessionKey = SessionKeys.addUkPropertyStartDate
 }
 
 case object ForeignProperty extends IncomeSourceType {
   override val key = "FP"
-  override val addIncomeSourceStartDateMessagesPrefix = "incomeSources.add.foreignProperty.startDate"
-  override val addIncomeSourceStartDateCheckMessagesPrefix = "add-foreign-property-start-date-check"
+  override val startDateMessagesPrefix = "incomeSources.add.foreignProperty.startDate"
+  override val addStartDateCheckMessagesPrefix = "add-foreign-property-start-date-check"
+  override val startDateSessionKey = SessionKeys.foreignPropertyStartDate
+}
 
+object IncomeSourceType {
+  def get(key: String): IncomeSourceType = {
+    key match {
+      case "FP" => ForeignProperty
+      case "UK" => UkProperty
+      case "SE" => SelfEmployment
+    }
+  }
 }
