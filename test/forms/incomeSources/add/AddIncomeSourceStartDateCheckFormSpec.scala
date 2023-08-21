@@ -17,6 +17,7 @@
 package forms.incomeSources.add
 
 import auth.MtdItUser
+import enums.IncomeSourceJourney.SelfEmployment
 import implicits.ImplicitDateFormatter
 import play.api.data.{Form, FormError}
 import services.DateService
@@ -25,7 +26,7 @@ import testConstants.incomeSources.IncomeSourceDetailsTestConstants.noIncomeDeta
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 
-class UKPropertyBusinessAccountingMethodFormSpec extends TestSupport with ImplicitDateFormatter {
+class AddIncomeSourceStartDateCheckFormSpec extends TestSupport with ImplicitDateFormatter {
 
   val mockDateService: DateService = app.injector.instanceOf[DateService]
 
@@ -41,25 +42,28 @@ class UKPropertyBusinessAccountingMethodFormSpec extends TestSupport with Implic
     incomeSources = noIncomeDetails
   )(fakeRequestNoSession)
 
-  lazy val form: Form[_] = UKPropertyBusinessAccountingMethodForm.form
+  lazy val form: Form[AddIncomeSourceStartDateCheckForm] = AddIncomeSourceStartDateCheckForm(SelfEmployment.addIncomeSourceStartDateCheckMessagesPrefix)
+  "ForeignPropertyStartDateCheck form" should {
+    "bind with a valid response - yes" in {
+      val formData = AddIncomeSourceStartDateCheckForm(Some("Yes"))
+      val completedForm = form.fill(formData)
+      completedForm.data.get(AddIncomeSourceStartDateCheckForm.response) shouldBe Some(AddIncomeSourceStartDateCheckForm.responseYes)
+      completedForm.errors shouldBe List.empty
+    }
 
-  "UKPropertyBusinessAccountingMethodForm" should {
-    "bind with a valid response - cash" in {
-      val formData = Map("incomeSources.add.uk-property-business-accounting-method" -> "cash")
-      val completedForm = form.bind(formData)
-      completedForm.data.get(UKPropertyBusinessAccountingMethodForm.response) shouldBe Some(UKPropertyBusinessAccountingMethodForm.cashAccountingMethod)
+    "bind with a valid response - No" in {
+      val formData = AddIncomeSourceStartDateCheckForm(Some("No"))
+      val completedForm = form.fill(formData)
+      completedForm.data.get(AddIncomeSourceStartDateCheckForm.response) shouldBe Some(AddIncomeSourceStartDateCheckForm.responseNo)
       completedForm.errors shouldBe List.empty
     }
-    "bind with a valid response - traditional" in {
-      val formData = Map("incomeSources.add.uk-property-business-accounting-method" -> "traditional")
-      val completedForm = form.bind(formData)
-      completedForm.data.get(UKPropertyBusinessAccountingMethodForm.response) shouldBe Some(UKPropertyBusinessAccountingMethodForm.traditionalAccountingMethod)
-      completedForm.errors shouldBe List.empty
-    }
+
     "bind with an invalid response" in {
-      val completedForm = form.bind(Map(UKPropertyBusinessAccountingMethodForm.response -> ""))
-      completedForm.data.get(UKPropertyBusinessAccountingMethodForm.response) shouldBe Some("")
-      completedForm.errors shouldBe List(FormError(UKPropertyBusinessAccountingMethodForm.response, List(UKPropertyBusinessAccountingMethodForm.radioEmptyError), List()))
+      val completedForm = form.bind(Map(AddIncomeSourceStartDateCheckForm.response -> "N/A"))
+      completedForm.data.get(AddIncomeSourceStartDateCheckForm.response) shouldBe Some("N/A")
     }
+
   }
 }
+
+

@@ -19,15 +19,14 @@ package forms.incomeSources.add
 import play.api.data.Form
 import play.api.data.Forms.{mapping, optional, text}
 
-object ForeignPropertyAccountingMethodForm {
+object IncomeSourcesAccountingMethodForm {
 
-  val radioEmptyError: String = "incomeSources.add.foreignPropertyAccountingMethod.no-selection"
-  private val validRadioOptions = Set("cash", "traditional")
-  val cashAccountingMethod = "cash"
-  val traditionalAccountingMethod = "traditional"
-  val response: String = "incomeSources.add.foreignPropertyAccountingMethod"
+  def apply(incomeSourceType: String): Form[Option[String]] = {
 
-  val form: Form[_] = {
+    val response: String = "incomeSources.add." + incomeSourceType + ".AccountingMethod"
+    val radioEmptyError: String = "incomeSources.add." + incomeSourceType + ".AccountingMethod.no-selection"
+    val validRadioOptions = Set("cash", "traditional")
+
     Form(
       mapping(
         response -> optional(text)
@@ -35,13 +34,5 @@ object ForeignPropertyAccountingMethodForm {
       )(identity)(Option(_))
     )
   }
+
 }
-
-case class ForeignPropertyAccountingMethodForm(response: Option[String]) {
-  def toFormMap: Map[String, Seq[String]] = Map(
-    ForeignPropertyAccountingMethodForm.response -> Seq(response.getOrElse(""))
-  )
-}
-
-
-

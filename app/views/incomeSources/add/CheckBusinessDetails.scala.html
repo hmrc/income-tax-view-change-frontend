@@ -23,6 +23,7 @@
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.pageheading.PageHeading
 @import views.html.helpers.injected.ErrorSummary
 @import models.incomeSourceDetails.viewmodels.CheckBusinessDetailsViewModel
+@import enums.IncomeSourceJourney.SelfEmployment
 
 
 @this(
@@ -86,11 +87,11 @@
     }
 }
 
-@changeBusinessAccountingMethodURL = @{
+@changeIncomeSourcesAccountingMethodURL = @{
     if(isAgent) {
-        controllers.incomeSources.add.routes.BusinessAccountingMethodController.changeBusinessAccountingMethodAgent().url
+        controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.changeIncomeSourcesAccountingMethodAgent(SelfEmployment.key).url
     } else {
-        controllers.incomeSources.add.routes.BusinessAccountingMethodController.changeBusinessAccountingMethod().url
+        controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.changeIncomeSourcesAccountingMethod(SelfEmployment.key).url
     }
 }
 
@@ -159,13 +160,13 @@
                 <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key">@getMessage("accounting-method")</dt>
                     <dd class="govuk-summary-list__value" id="business-accounting-value">
-                        @viewModel.businessAccountingMethod match {
+                        @viewModel.incomeSourcesAccountingMethod match {
                             case Some(method) if method == "cash" => { @getMessage("cash-accounting") }
                             case _ => { @getMessage("traditional-accounting") }
                         }
                     </dd>
                     <dd class="govuk-summary-list__actions govuk-!-text-align-right govuk-!-margin-0">
-                        <a class="govuk-link" href=@changeBusinessAccountingMethodURL>
+                        <a class="govuk-link" href=@changeIncomeSourcesAccountingMethodURL>
                             @getMessage("change-details-link")
                         </a>
                     </dd>

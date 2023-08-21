@@ -36,7 +36,7 @@ class CheckBusinessDetailsControllerISpec extends ComponentSpecBase {
     businessTrade -> "Plumbing",
     addBusinessAddressLine1 -> "Test Road",
     addBusinessPostalCode -> "B32 1PQ",
-    addBusinessAccountingMethod -> "ACCRUALS",
+    addIncomeSourcesAccountingMethod -> "ACCRUALS",
     addBusinessAccountingPeriodEndDate -> "2023-11-11")
 
   val testBusinessName: String = "Test Business"
@@ -109,7 +109,7 @@ class CheckBusinessDetailsControllerISpec extends ComponentSpecBase {
           "addBusinessStartDate" -> Seq("2011-11-11"),
           "addBusinessAddressLine1" -> Seq("Test Business Name"),
           "addBusinessPostalCode" -> Seq("SE15 1WR"),
-          "addBusinessAccountingMethod" -> Seq("CASH"),
+          "addIncomeSourcesAccountingMethod" -> Seq("CASH"),
           "addBusinessAccountingPeriodEndDate" -> Seq("2023-11-11"))
         enable(IncomeSources)
         val response = List(CreateIncomeSourceResponse(testSelfEmploymentId))
@@ -132,7 +132,7 @@ class CheckBusinessDetailsControllerISpec extends ComponentSpecBase {
           "addBusinessStartDate" -> Seq(""),
           "addBusinessAddressLine1" -> Seq(""),
           "addBusinessPostalCode" -> Seq(""),
-          "addBusinessAccountingMethod" -> Seq(""))
+          "addIncomeSourcesAccountingMethod" -> Seq(""))
         enable(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 

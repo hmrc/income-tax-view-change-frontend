@@ -22,6 +22,7 @@ import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
+import enums.IncomeSourceJourney.SelfEmployment
 import forms.utils.SessionKeys
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -90,7 +91,8 @@ class AddBusinessAddressController @Inject()(authenticate: AuthenticationPredica
     if (isChange) {
       if (isAgent) routes.CheckBusinessDetailsController.showAgent().url else routes.CheckBusinessDetailsController.show().url
     } else {
-      if (isAgent) routes.BusinessAccountingMethodController.showAgent().url else routes.BusinessAccountingMethodController.show().url
+      if (isAgent) routes.IncomeSourcesAccountingMethodController.showAgent(incomeSourceType = SelfEmployment.key).url
+      else routes.IncomeSourcesAccountingMethodController.show(incomeSourceType = SelfEmployment.key).url
     }
   }
   def handleSubmitRequest(isAgent: Boolean, id: Option[String], isChange: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {

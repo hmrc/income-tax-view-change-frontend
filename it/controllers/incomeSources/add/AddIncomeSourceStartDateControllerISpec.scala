@@ -26,20 +26,20 @@ import testConstants.IncomeSourceIntegrationTestConstants.{businessOnlyResponse,
 class AddIncomeSourceStartDateControllerISpec extends ComponentSpecBase {
   val addBusinessStartDateShowUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showSoleTraderBusiness.url
   val addBusinessStartDateSubmitUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.submitSoleTraderBusiness.url
-  val addBusinessStartDateCheckShowUrl: String = controllers.incomeSources.add.routes.AddBusinessStartDateCheckController.show().url
+  val addBusinessStartDateCheckShowUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.showSoleTraderBusiness.url
   val prefix: String = "add-business-start-date"
   val continueButtonText: String = messagesAPI("base.continue")
 
   val addUKPropertyStartDateShowUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showUKProperty.url
   val addUKPropertyStartDateSubmitUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.submitUKProperty.url
-  val checkUKPropertyStartDateShowUrl: String = controllers.incomeSources.add.routes.CheckUKPropertyStartDateController.show().url
+  val checkUKPropertyStartDateShowUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.showUKProperty.url
 
   val hintTextUkProperty: String = messagesAPI("incomeSources.add.UKPropertyStartDate.hint") + " " +
     messagesAPI("dateForm.hint")
 
   val foreignPropertyStartDateShowUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showForeignProperty.url
   val foreignPropertyStartDateSubmitUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.submitForeignProperty.url
-  val foreignPropertyStartDateCheckUrl: String = controllers.incomeSources.add.routes.ForeignPropertyStartDateCheckController.show().url
+  val foreignPropertyStartDateCheckUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.showForeignProperty.url
 
   val hintTextForeignProperty: String = messagesAPI("incomeSources.add.foreignProperty.startDate.hint") + " " +
     messagesAPI("incomeSources.add.foreignProperty.startDate.hintExample")

@@ -21,7 +21,7 @@ import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
-import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceJourney, SelfEmployment, UkProperty}
+import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import forms.incomeSources.manage.ConfirmReportingMethodForm
 import models.incomeSourceDetails.TaxYear
 import models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
@@ -165,7 +165,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
   }
 
   private def show(incomeSourceId: Option[String],
-                   incomeSourceJourney: IncomeSourceJourney,
+                   incomeSourceJourney: IncomeSourceType,
                    taxYear: String,
                    changeTo: String): Action[AnyContent] =
     (checkSessionTimeout andThen authenticate andThen retrieveNino
@@ -181,7 +181,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
     }
 
   private def showAgent(incomeSourceId: Option[String],
-                        incomeSourceJourney: IncomeSourceJourney,
+                        incomeSourceJourney: IncomeSourceType,
                         taxYear: String,
                         changeTo: String): Action[AnyContent] = Authenticated.async {
     implicit request =>
@@ -199,7 +199,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
   }
 
   private def submit(incomeSourceId: String,
-                     incomeSourceJourney: IncomeSourceJourney,
+                     incomeSourceJourney: IncomeSourceType,
                      taxYear: String,
                      changeTo: String): Action[AnyContent] =
     (checkSessionTimeout andThen authenticate andThen retrieveNino
@@ -215,7 +215,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
     }
 
   private def submitAgent(incomeSourceId: String,
-                          incomeSourceJourney: IncomeSourceJourney,
+                          incomeSourceJourney: IncomeSourceType,
                           taxYear: String,
                           changeTo: String): Action[AnyContent] = Authenticated.async {
     implicit request =>
@@ -236,7 +236,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
                             isAgent: Boolean,
                             taxYear: String,
                             changeTo: String,
-                            incomeSourceJourney: IncomeSourceJourney)
+                            incomeSourceJourney: IncomeSourceType)
                            (implicit user: MtdItUser[_], messages: Messages): Future[Result] = {
 
     val newReportingMethod: Option[String] = getReportingMethod(changeTo)
@@ -293,7 +293,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
                                   isAgent: Boolean,
                                   changeTo: String,
                                   incomeSourceId: String,
-                                  incomeSourceJourney: IncomeSourceJourney)
+                                  incomeSourceJourney: IncomeSourceType)
                                  (implicit user: MtdItUser[_]): Future[Result] = {
 
     val newReportingMethod: Option[String] = getReportingMethod(changeTo)
@@ -365,7 +365,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
   }
 
   private def getIncomeSourceId(maybeSoleTraderBusinessId: Option[String],
-                                incomeSourceJourney: IncomeSourceJourney)
+                                incomeSourceJourney: IncomeSourceType)
                                (implicit user: MtdItUser[_]): Option[String] = {
     incomeSourceJourney match {
       case SelfEmployment =>
@@ -388,7 +388,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
                                taxYear: String,
                                isAgent: Boolean,
                                changeTo: String,
-                               incomeSourceJourney: IncomeSourceJourney): (Call, Call, Call) = {
+                               incomeSourceJourney: IncomeSourceType): (Call, Call, Call) = {
 
     (isAgent, incomeSourceJourney) match {
       case (false, UkProperty) =>

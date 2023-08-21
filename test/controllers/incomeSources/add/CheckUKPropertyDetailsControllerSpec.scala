@@ -16,11 +16,10 @@
 
 package controllers.incomeSources.add
 
-import config.featureswitch.FeatureSwitch.switches
 import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
-import forms.utils.SessionKeys.{addUkPropertyAccountingMethod, addUkPropertyStartDate}
+import forms.utils.SessionKeys.{addIncomeSourcesAccountingMethod, addUkPropertyStartDate}
 import implicits.ImplicitDateFormatter
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
 import models.createIncomeSource.CreateIncomeSourceResponse
@@ -93,7 +92,7 @@ class CheckUKPropertyDetailsControllerSpec extends TestSupport with MockAuthenti
           fakeRequestWithActiveSession
             .withSession(
               addUkPropertyStartDate -> date,
-              addUkPropertyAccountingMethod -> "CASH"
+              addIncomeSourcesAccountingMethod -> "CASH"
             ))
 
         val document: Document = Jsoup.parse(contentAsString(result))
@@ -124,7 +123,7 @@ class CheckUKPropertyDetailsControllerSpec extends TestSupport with MockAuthenti
           fakeRequestWithActiveSession
             .withSession(
               addUkPropertyStartDate -> date,
-              addUkPropertyAccountingMethod -> "CASH"
+              addIncomeSourcesAccountingMethod -> "CASH"
             ))
 
         status(result) shouldBe Status.SEE_OTHER
@@ -186,7 +185,7 @@ class CheckUKPropertyDetailsControllerSpec extends TestSupport with MockAuthenti
           fakeRequestConfirmedClient()
             .withSession(
               addUkPropertyStartDate -> date,
-              addUkPropertyAccountingMethod -> "CASH"
+              addIncomeSourcesAccountingMethod -> "CASH"
             ))
 
         val document: Document = Jsoup.parse(contentAsString(result))
@@ -216,7 +215,7 @@ class CheckUKPropertyDetailsControllerSpec extends TestSupport with MockAuthenti
           fakeRequestConfirmedClient()
             .withSession(
               addUkPropertyStartDate -> date,
-              addUkPropertyAccountingMethod -> "CASH"
+              addIncomeSourcesAccountingMethod -> "CASH"
             ))
 
         status(result) shouldBe Status.SEE_OTHER
@@ -266,5 +265,3 @@ class CheckUKPropertyDetailsControllerSpec extends TestSupport with MockAuthenti
   }
 
 }
-
-
