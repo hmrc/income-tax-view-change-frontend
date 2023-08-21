@@ -63,23 +63,26 @@ class IncomeSourcesAccountingMethodController @Inject()(val authenticate: Authen
     }
 
     userActiveBusinesses.map(_.cashOrAccruals).headOption match {
-      case Some(cashOrAccrualsFieldMaybe) if (cashOrAccrualsFieldMaybe.isDefined) =>
-        val accountingMethodIsAccruals: String = if (cashOrAccrualsFieldMaybe.get) {
-          "accruals"
-        } else {
-          "cash"
+      case Some(cashOrAccrualsFieldMaybe) =>
+        if (cashOrAccrualsFieldMaybe.isDefined) {
+          val accountingMethodIsAccruals: String = if (cashOrAccrualsFieldMaybe.get) {
+            "accruals"
+          } else {
+            "cash"
+          }
+          if (isAgent) {
+            Future.successful(Redirect(controllers.incomeSources.add.routes.CheckBusinessDetailsController.showAgent())
+              .addingToSession(addIncomeSourcesAccountingMethod -> accountingMethodIsAccruals))
+          } else {
+            Future.successful(Redirect(controllers.incomeSources.add.routes.CheckBusinessDetailsController.show())
+              .addingToSession(addIncomeSourcesAccountingMethod -> accountingMethodIsAccruals))
+          }
         }
-        if (isAgent) {
-          Future.successful(Redirect(controllers.incomeSources.add.routes.CheckBusinessDetailsController.showAgent())
-            .addingToSession(addIncomeSourcesAccountingMethod -> accountingMethodIsAccruals))
-        } else {
-          Future.successful(Redirect(controllers.incomeSources.add.routes.CheckBusinessDetailsController.show())
-            .addingToSession(addIncomeSourcesAccountingMethod -> accountingMethodIsAccruals))
+        else {
+          Logger("application").error(s"${if (isAgent) "[Agent]"}" +
+            s"Error getting business cashOrAccruals field")
+          Future.successful(errorHandler.showInternalServerError())
         }
-      case Some(cashOrAccrualsFieldMaybe) if cashOrAccrualsFieldMaybe.isEmpty =>
-        Logger("application").error(s"${if (isAgent) "[Agent]"}" +
-          s"Error getting business cashOrAccruals field")
-        Future.successful(errorHandler.showInternalServerError())
       case None =>
         Future.successful(Ok(view(
           incomeSourcesType = incomeSourceType,
@@ -119,7 +122,7 @@ class IncomeSourcesAccountingMethodController @Inject()(val authenticate: Authen
             routes.AddIncomeSourceStartDateCheckController.showUKPropertyAgent.url
         else
             routes.AddIncomeSourceStartDateCheckController.showUKProperty.url
-      case ForeignProperty.key =>
+      case _ =>
         if (isAgent)
             routes.AddIncomeSourceStartDateCheckController.showForeignPropertyAgent.url
         else
@@ -158,7 +161,7 @@ class IncomeSourcesAccountingMethodController @Inject()(val authenticate: Authen
           (routes.IncomeSourcesAccountingMethodController.submit(UkProperty.key),
             routes.AddIncomeSourceStartDateCheckController.showUKProperty.url,
             routes.CheckUKPropertyDetailsController.show())
-      case ForeignProperty.key =>
+      case _ =>
           (routes.IncomeSourcesAccountingMethodController.submit(ForeignProperty.key),
             routes.AddIncomeSourceStartDateCheckController.showForeignProperty.url,
             routes.ForeignPropertyCheckDetailsController.show())
@@ -175,7 +178,7 @@ class IncomeSourcesAccountingMethodController @Inject()(val authenticate: Authen
           (routes.IncomeSourcesAccountingMethodController.submitAgent(UkProperty.key),
             routes.AddIncomeSourceStartDateCheckController.showUKPropertyAgent.url,
             routes.CheckUKPropertyDetailsController.showAgent())
-      case ForeignProperty.key =>
+      case _ =>
           (routes.IncomeSourcesAccountingMethodController.submitAgent(ForeignProperty.key),
             routes.AddIncomeSourceStartDateCheckController.showForeignPropertyAgent.url,
             routes.ForeignPropertyCheckDetailsController.showAgent())
