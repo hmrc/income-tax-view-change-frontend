@@ -55,6 +55,7 @@ class AddressLookupServiceSpec extends TestSupport
         result map {
           case Left(AddressError(value)) => value shouldBe "status: 418"
           case Right(_) => Fail("Error not returned")
+          case Left(_) => Fail ("Wrong error type returned")
         }
       }
 
@@ -101,6 +102,7 @@ class AddressLookupServiceSpec extends TestSupport
         result map {
           case Left(AddressError(value)) => value shouldBe "status: 418"
           case Right(_) => Fail("Error not returned")
+          case Left(_) => Fail ("Wrong error type returned")
         }
       }
 
@@ -115,6 +117,7 @@ class AddressLookupServiceSpec extends TestSupport
         result map {
           case Left(AddressError(value)) => value shouldBe "No id provided"
           case Right(_) => Fail("Error not returned")
+          case Left(_) => Fail ("Wrong error type returned")
         }
       }
 
@@ -129,6 +132,7 @@ class AddressLookupServiceSpec extends TestSupport
         result map {
           case Left(AddressError(value)) => value shouldBe "Not found"
           case Right(_) => Fail("Error not returned")
+          case Left(_) => Fail("Wrong error type returned")
         }
       }
 
