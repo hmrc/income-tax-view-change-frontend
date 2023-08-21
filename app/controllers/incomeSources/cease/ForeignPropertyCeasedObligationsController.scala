@@ -56,7 +56,7 @@ class ForeignPropertyCeasedObligationsController @Inject()(val authenticate: Aut
       val foreignPropertyIncomeSources = user.incomeSources.properties.filter(_.isForeignProperty)
       foreignPropertyIncomeSources.headOption match {
         case Some(property) =>
-          nextUpdatesService.getObligationsViewModel(property.incomeSourceId, showPreviousTaxYears = false) map { viewModel =>
+          nextUpdatesService.getObligationsViewModel(property.incomeSourceId, showPreviousTaxYears = false).map { viewModel =>
             Ok(obligationsView(
               businessName = None,
               sources = viewModel,
@@ -80,7 +80,7 @@ class ForeignPropertyCeasedObligationsController @Inject()(val authenticate: Aut
   def showAgent(): Action[AnyContent] = Authenticated.async {
     implicit request =>
       implicit user =>
-        getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
+        getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
           implicit mtdItUser =>
             handleRequest(isAgent = true)
         }

@@ -36,14 +36,14 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class BusinessCeasedObligationsController @Inject()(authenticate: AuthenticationPredicate,
                                                     val authorisedFunctions: AuthorisedFunctions,
-                                                    checkSessionTimeout: SessionTimeoutPredicate,
-                                                    retrieveNino: NinoPredicate,
+                                                    val checkSessionTimeout: SessionTimeoutPredicate,
+                                                    val retrieveNino: NinoPredicate,
                                                     val retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                                     val retrieveBtaNavBar: NavBarPredicate,
                                                     val itvcErrorHandler: ItvcErrorHandler,
-                                                    incomeSourceDetailsService: IncomeSourceDetailsService,
+                                                    val incomeSourceDetailsService: IncomeSourceDetailsService,
                                                     val obligationsView: IncomeSourceCeasedObligations,
-                                                    nextUpdatesService: NextUpdatesService)
+                                                    val nextUpdatesService: NextUpdatesService)
                                                    (implicit val appConfig: FrontendAppConfig,
                                                     implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                                     implicit override val mcc: MessagesControllerComponents,
@@ -65,7 +65,7 @@ class BusinessCeasedObligationsController @Inject()(authenticate: Authentication
         case Some(incomeSourceId) =>
           val businessName = getBusinessName(incomeSourceId)
 
-          nextUpdatesService.getObligationsViewModel(incomeSourceId, showPreviousTaxYears = false) map { viewModel =>
+          nextUpdatesService.getObligationsViewModel(incomeSourceId, showPreviousTaxYears = false).map { viewModel =>
             Ok(obligationsView(
               businessName = businessName,
               sources = viewModel,
@@ -89,7 +89,7 @@ class BusinessCeasedObligationsController @Inject()(authenticate: Authentication
   def showAgent(): Action[AnyContent] = Authenticated.async {
     implicit request =>
       implicit user =>
-        getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
+        getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
           implicit mtdItUser =>
             handleRequest(isAgent = true)
         }

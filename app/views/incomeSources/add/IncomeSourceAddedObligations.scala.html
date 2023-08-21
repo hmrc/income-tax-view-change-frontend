@@ -84,7 +84,9 @@
         case _:UkProperty.type =>
             bannerHtmlContent(getMessage("uk-property.head"),getMessage("uk-property.h1"),getMessage("uk-property.base"))
         case _:ForeignProperty.type =>
-        bannerHtmlContent(getMessage("foreign-property.head"),getMessage("foreign-property.h1"),getMessage("foreign-property.base"))
+            bannerHtmlContent( getMessage("foreign-property.head"),
+                                getMessage("foreign-property.h1"),
+                                getMessage("foreign-property.base"))
     }
 }
 
@@ -117,7 +119,16 @@
             <table class="govuk-table">
                 <thead class="govuk-table__head">
                 <tr class="govuk-table__row">
-                    <th scope="col" class="govuk-table__header govuk">@(getMessage("table.heading-1")+" "+sources.quarterlyObligationsDatesYearOne.head.inboundCorrespondenceFrom.getYear+" "+getMessage("to")+" "+(sources.quarterlyObligationsDatesYearOne.head.inboundCorrespondenceFrom.getYear + 1))</th>
+                    <th scope="col" class="govuk-table__header govuk">
+                        @{
+                            val head = getMessage("table.heading-1")
+                            val to = getMessage("to")
+                            val fromYear = sources.quarterlyObligationsDatesYearOne.head.inboundCorrespondenceFrom.getYear
+                            val toYear = fromYear + 1
+
+                            s"""$head $fromYear $to $toYear"""
+                        }
+                    </th>
                     <th scope="col" class="govuk-table__header govuk">@getMessage("table.heading-2")</th>
                 </tr>
                 </thead>
@@ -125,7 +136,15 @@
                 <tbody class="govuk-table__body">
                 @sources.quarterlyObligationsDatesYearOne.map{ x =>
                 <tr class="govuk-table__row">
-                    <td class="govuk-table__cell">@(x.inboundCorrespondenceFrom.toLongDate + " " + getMessage("to") + " " + x.inboundCorrespondenceTo.toLongDate)</td>
+                    <td class="govuk-table__cell">
+                        @{
+                            val fromDate = x.inboundCorrespondenceFrom.toLongDate
+                            val to = getMessage("to")
+                            val toDate = x.inboundCorrespondenceTo.toLongDate
+
+                            s"""$fromDate $to $toDate"""
+                        }
+                    </td>
                     <td class="govuk-table__cell">@(x.inboundCorrespondenceDue.toLongDate)</td>
                 </tr>
                 }
@@ -134,7 +153,16 @@
                 @if(sources.quarterlyObligationsDatesYearTwo.nonEmpty){
                 <thead class="govuk-table__head">
                 <tr class="govuk-table__row">
-                    <th scope="col" class="govuk-table__header govuk">@(getMessage("table.heading-1")+" "+sources.quarterlyObligationsDatesYearTwo.head.inboundCorrespondenceFrom.getYear+" "+getMessage("to")+" "+(sources.quarterlyObligationsDatesYearTwo.head.inboundCorrespondenceFrom.getYear + 1))</th>
+                    <th scope="col" class="govuk-table__header govuk">
+                        @{
+                            val head = getMessage("table.heading-1")
+                            val to = getMessage("to")
+                            val fromYear = sources.quarterlyObligationsDatesYearTwo.head.inboundCorrespondenceFrom.getYear
+                            val toYear = fromYear + 1
+
+                            s"""$head $fromYear $to $toYear"""
+                        }
+                    </th>
                     <th scope="col" class="govuk-table__header govuk"> </th>
                 </tr>
                 </thead>
@@ -142,7 +170,15 @@
                 <tbody class="govuk-table__body">
                 @sources.quarterlyObligationsDatesYearTwo.map{ x =>
                 <tr class="govuk-table__row">
-                    <td class="govuk-table__cell">@(x.inboundCorrespondenceFrom.toLongDate + " " + getMessage("to") + " " + x.inboundCorrespondenceTo.toLongDate)</td>
+                    <td class="govuk-table__cell">
+                        @{
+                            val fromDate = x.inboundCorrespondenceFrom.toLongDate
+                            val to = getMessage("to")
+                            val toDate = x.inboundCorrespondenceTo.toLongDate
+
+                            s"""$fromDate $to $toDate"""
+                        }
+                    </td>
                     <td class="govuk-table__cell">@(x.inboundCorrespondenceDue.toLongDate)</td>
                 </tr>
                 }
@@ -168,7 +204,15 @@
                 <tbody class="govuk-table__body">
                 @sources.eopsObligationsDates.map{ x =>
                 <tr class="govuk-table__row">
-                    <td class="govuk-table__cell">@(x.inboundCorrespondenceFrom.getYear + " " + getMessage("to") + " " + x.inboundCorrespondenceTo.getYear)</td>
+                    <td class="govuk-table__cell">
+                        @{
+                            val fromDate = x.inboundCorrespondenceFrom.getYear
+                            val to = getMessage("to")
+                            val toDate = x.inboundCorrespondenceTo.getYear
+
+                            s"""$fromDate $to $toDate"""
+                        }
+                    </td>
                     <td class="govuk-table__cell">@(x.inboundCorrespondenceDue.toLongDate)</td>
                 </tr>
                 }
@@ -194,7 +238,15 @@
                 <tbody class="govuk-table__body">
                 @sources.finalDeclarationDates.map{ x =>
                 <tr class="govuk-table__row">
-                    <td class="govuk-table__cell">@(x.inboundCorrespondenceFrom.getYear + " " + getMessage("to") + " " + x.inboundCorrespondenceTo.getYear)</td>
+                    <td class="govuk-table__cell">
+                        @{
+                            val fromDate = x.inboundCorrespondenceFrom.getYear
+                            val to = getMessage("to")
+                            val toDate = x.inboundCorrespondenceTo.getYear
+
+                            s"""$fromDate $to $toDate"""
+                        }
+                    </td>
                     <td class="govuk-table__cell">@(x.inboundCorrespondenceDue.toLongDate)</td>
                 </tr>
                 }
@@ -207,7 +259,14 @@
         <div class="box-simple" id="prevYears">
             <div class="page_headers govuk-heading-m"> @getMessage("previous-tax-years-heading") </div>
             <p class="govuk-body">
-                @(getMessage("previous-tax-years-t1")+" "+(sources.currentTaxYear-1).toString+" "+getMessage("to")+" "+sources.currentTaxYear.toString+".")
+                @{
+                    val head = getMessage("previous-tax-years-t1")
+                    val to = getMessage("to")
+                    val fromYear = sources.currentTaxYear - 1
+                    val toYear = sources.currentTaxYear
+
+                    s"""$head $fromYear $to $toYear."""
+                }
             </p>
         </div>
         }
