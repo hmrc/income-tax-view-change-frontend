@@ -17,26 +17,27 @@
 package services
 
 import config.FrontendAppConfig
-import config.featureswitch.FeatureSwitch.switches
 import config.featureswitch.{FeatureSwitching, IncomeSources}
 import connectors.AddressLookupConnector
 import models.incomeSourceDetails.viewmodels.httpparser.GetAddressLookupDetailsHttpParser.UnexpectedGetStatusFailure
-import models.incomeSourceDetails.{Address, BusinessAddressModel}
 import models.incomeSourceDetails.viewmodels.httpparser.PostAddressLookupHttpParser.{PostAddressLookupSuccessResponse, UnexpectedPostStatusFailure}
+import models.incomeSourceDetails.{Address, BusinessAddressModel}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import org.scalactic.Fail
 import testUtils.TestSupport
-
 import scala.concurrent.Future
 import scala.util.Success
+
 class AddressLookupServiceSpec extends TestSupport
   with FeatureSwitching {
 
   case class AddressError(status: String) extends RuntimeException
+
   val testBusinessAddressModel: BusinessAddressModel = BusinessAddressModel("auditRef", Address(Seq("Line 1", "Line 2"), Some("AA1 1AA")))
 
   val mockAddressLookupConnector: AddressLookupConnector = mock(classOf[AddressLookupConnector])
+
   object TestAddressLookupService extends AddressLookupService(
     app.injector.instanceOf[FrontendAppConfig],
     addressLookupConnector = mockAddressLookupConnector
@@ -48,7 +49,7 @@ class AddressLookupServiceSpec extends TestSupport
         disableAllSwitches()
         enable(IncomeSources)
 
-        when(mockAddressLookupConnector.initialiseAddressLookup(any(), any())(any(),any()))
+        when(mockAddressLookupConnector.initialiseAddressLookup(any(), any())(any(), any()))
           .thenReturn(Future(Left(UnexpectedPostStatusFailure(418))))
 
         val result: Future[Either[Throwable, Option[String]]] = TestAddressLookupService.initialiseAddressJourney(isAgent = false, isChange = false)

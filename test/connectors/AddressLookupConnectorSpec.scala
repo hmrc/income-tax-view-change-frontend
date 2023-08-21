@@ -16,27 +16,16 @@
 
 package connectors
 
-import config.featureswitch.FeatureSwitch.switches
 import config.featureswitch.{FeatureSwitching, IncomeSources}
-import controllers.routes
-import models.incomeSourceDetails.viewmodels.httpparser.PostAddressLookupHttpParser.{PostAddressLookupSuccessResponse, UnexpectedPostStatusFailure}
-import models.incomeSourceDetails.viewmodels.httpparser.GetAddressLookupDetailsHttpParser.UnexpectedGetStatusFailure
-import org.mockito.ArgumentMatchers
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{mock, when}
-import org.mockito.stubbing.OngoingStubbing
-import play.api.libs.json.{JsObject, JsString, JsValue}
-import org.scalactic.{Fail, Pass}
-import play.api.i18n.{Lang, MessagesApi}
 import mocks.MockHttp
+import models.incomeSourceDetails.viewmodels.httpparser.PostAddressLookupHttpParser.{PostAddressLookupSuccessResponse, UnexpectedPostStatusFailure}
 import models.incomeSourceDetails.{Address, BusinessAddressModel}
-import play.api.Logger
-import play.api.http.Status.{ACCEPTED, IM_A_TEAPOT, INTERNAL_SERVER_ERROR, NOT_FOUND, OK}
-import testUtils.TestSupport
-import uk.gov.hmrc.http.{HttpClient, HttpResponse}
+import org.scalactic.Fail
+import play.api.http.Status.{ACCEPTED, OK}
+import play.api.i18n.{Lang, MessagesApi}
 import play.api.libs.json._
-
-import scala.concurrent.Future
+import testUtils.TestSupport
+import uk.gov.hmrc.http.HttpResponse
 
 class AddressLookupConnectorSpec extends TestSupport with FeatureSwitching with MockHttp {
 

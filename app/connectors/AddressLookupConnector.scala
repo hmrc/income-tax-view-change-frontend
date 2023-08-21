@@ -20,13 +20,11 @@ import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
 import models.incomeSourceDetails.viewmodels.httpparser.GetAddressLookupDetailsHttpParser.GetAddressLookupDetailsResponse
 import models.incomeSourceDetails.viewmodels.httpparser.PostAddressLookupHttpParser.PostAddressLookupResponse
-import play.api.libs.json.{JsObject, JsValue}
-import play.api.mvc.{AnyContent, RequestHeader}
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
-import controllers.routes
 import play.api.Logger
 import play.api.i18n.{Lang, MessagesApi}
 import play.api.libs.json._
+import play.api.mvc.RequestHeader
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -71,7 +69,7 @@ class AddressLookupConnector @Inject()(val appConfig: FrontendAppConfig,
               )
             ),
             "signOutHref" -> JsString(appConfig.itvcFrontendEnvironment + controllers.routes.SignOutController.signOut.url),
-            "accessibilityFooterUrl" -> JsString(appConfig.itvcFrontendEnvironment +  "/accessibility-statement/income-tax-view-change?referrerUrl=%2Freport-quarterly%2Fincome-and-expenses%2Fview"),
+            "accessibilityFooterUrl" -> JsString(appConfig.itvcFrontendEnvironment + "/accessibility-statement/income-tax-view-change?referrerUrl=%2Freport-quarterly%2Fincome-and-expenses%2Fview"),
             "selectPageConfig" -> JsObject(
               Seq(
                 "proposalListLimit" -> JsNumber(15)
@@ -159,7 +157,11 @@ class AddressLookupConnector @Inject()(val appConfig: FrontendAppConfig,
 
   def initialiseAddressLookup(isAgent: Boolean, isChange: Boolean)(implicit hc: HeaderCarrier, request: RequestHeader): Future[PostAddressLookupResponse] = {
     Logger("application").info(s"[AddressLookupConnector] - URL: $addressLookupInitializeUrl")
-    val payload = if (isAgent) {addressJson(continueUrl(isAgent, isChange), agentFeedbackUrl, agentEnglishBanner, agentWelshBanner)} else {addressJson(continueUrl(isAgent, isChange), individualFeedbackUrl, individualEnglishBanner, individualWelshBanner)}
+    val payload = if (isAgent) {
+      addressJson(continueUrl(isAgent, isChange), agentFeedbackUrl, agentEnglishBanner, agentWelshBanner)
+    } else {
+      addressJson(continueUrl(isAgent, isChange), individualFeedbackUrl, individualEnglishBanner, individualWelshBanner)
+    }
     http.POST[JsValue, PostAddressLookupResponse](
       url = addressLookupInitializeUrl,
       body = payload

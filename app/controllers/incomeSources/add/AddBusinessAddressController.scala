@@ -95,6 +95,7 @@ class AddBusinessAddressController @Inject()(authenticate: AuthenticationPredica
       else routes.IncomeSourcesAccountingMethodController.show(incomeSourceType = SelfEmployment.key).url
     }
   }
+
   def handleSubmitRequest(isAgent: Boolean, id: Option[String], isChange: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
     val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
     val redirectUrl = getRedirectUrl(isAgent = isAgent, isChange = isChange)
