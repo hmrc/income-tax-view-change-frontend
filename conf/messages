@@ -1418,10 +1418,18 @@ check-business-details.cash-accounting                  = Cash basis accounting
 check-business-details.traditional-accounting           = Traditional accounting
 
 # business added page - h1 intentionally empty
-business-added.h1                                       =
-business-added.h2                                       = has been added to your account
 business-added.text                                     = What you must do
 business-added.to                                       =  to
+
+# Foreign Property Added - Uses above keys as base also, intentionally empty field below.
+business-added.foreign-property.head                    =
+business-added.foreign-property.h1                      = Foreign property
+business-added.foreign-property.base                    = has been added to your account
+business-added.uk-property.head                         =
+business-added.uk-property.h1                           = UK property
+business-added.uk-property.base                         = has been added to your account
+business-added.sole-trader.head                         =
+business-added.sole-trader.base                         = has been added to your account
 
 business-added.quarterly-heading                        = Send quarterly updates
 business-added.quarterly-p1                             = You must send quarterly updates of your income and expenses using compatible software by the following deadlines:
@@ -1435,30 +1443,26 @@ business-added.income-sources-button                    = Your income sources
 business-added.previous-tax-years-heading               = Previous tax years
 business-added.previous-tax-years-t1                    = You must make sure that you have sent all the required income and expenses, and final declarations for tax years earlier than
 
-## Income Source Added Pages ##
-incomeSourceAdded.additionalWelshContent                                =
-#The above key is intentionally blank
-incomeSourceAdded.heading                                               = has been added to your account
-incomeSourceAdded.ukProperty                                            = UK property
-incomeSourceAdded.subheading                                            = What you must do
-incomeSourceAdded.to                                                    = to
-incomeSourceAdded.quarterly.heading                                     = Send quarterly updates
-incomeSourceAdded.quarterly.text                                        = You must send quarterly updates of your income and expenses using compatible software by the following deadlines:
-incomeSourceAdded.eops.heading                                          = Send end of period statements
-incomeSourceAdded.eops.text                                             = You must submit end of period statements using your software by the deadline.
-incomeSourceAdded.finalDeclaration.heading                               = Submit final declarations and pay your tax
-incomeSourceAdded.finalDeclaration.text                                  = You must submit your final declarations and pay the tax you owe by the deadline.
-incomeSourceAdded.table.taxYear.heading                                 = Tax year
-incomeSourceAdded.table.deadline.heading                                = Deadline
-incomeSourceAdded.button.text                                           = Your income sources
-incomeSourceAdded.previousTaxYears.heading                              = Previous tax years
-incomeSourceAdded.previousTaxYears.text                                 = You must make sure that you have sent all the required income and expenses, and final declarations for tax years earlier than
+## Income Source Creased Obligation Page ##
+business-ceased.obligation.heading1.se.part1                        =
+business-ceased.obligation.heading1.se.part2                        = Sole trader business
+business-ceased.obligation.heading1.uk-property.part2               = UK property
+business-ceased.obligation.heading1.foreign-property.part2          = Foreign property
+business-ceased.obligation.heading1.base                            = has ceased
+business-ceased.obligation.heading2.text                            = What you must do
 
-# Foreign Property Added - Uses above keys as base also, intentionally empty field below.
-business-added.foreign-property-h1                      = Foreign property
-business-added.foreign-property-head                    =
-business-added.foreign-property-base                    = has been added to your account
-
+business-ceased.obligation.quarterly-heading                        = Send quarterly updates
+business-ceased.obligation.quarterly-p1                             = You must send quarterly updates of your income and expenses using compatible software by the following deadlines:
+business-ceased.obligation.eops-heading                             = Send end of period statements
+business-ceased.obligation.eops-p1                                  = You must submit end of period statements using your software by the deadline.
+business-ceased.obligation.final-declaration-heading                = Submit final declarations and pay your tax
+business-ceased.obligation.final-declaration-text                   = You must submit your final declarations and pay the tax you owe by the deadline.
+business-ceased.obligation.table.heading-1                          = Tax year
+business-ceased.obligation.table.heading-2                          = Deadline
+business-ceased.obligation.income-sources-button                    = Your income sources
+business-ceased.obligation.previous-tax-years-heading               = Previous tax years
+business-ceased.obligation.previous-tax-years-t1                    = You must make sure that you have sent all the required income and expenses, and final declarations for tax years earlier than
+business-ceased.obligation.to                                       =  to
 
 incomeSources.add.businessReportingMethod.heading                   =   Choose a reporting method
 incomeSources.add.businessReportingMethod.description1              =   Your business qualifies for a grace period available up until April {0} where you can report annually.
