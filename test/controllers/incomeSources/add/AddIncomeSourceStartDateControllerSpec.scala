@@ -115,6 +115,7 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport
 
         val document: Document = Jsoup.parse(contentAsString(result))
         document.title should include(messages("add-business-start-date.heading"))
+        document.getElementById("back").attr("href") shouldBe routes.AddBusinessNameController.show().url
         status(result) shouldBe OK
       }
     }
@@ -130,6 +131,7 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport
 
         val document: Document = Jsoup.parse(contentAsString(result))
         document.title should include(messages("incomeSources.add.UKPropertyStartDate.heading"))
+        document.getElementById("back").attr("href") shouldBe routes.AddIncomeSourceController.show().url
         status(result) shouldBe OK
       }
     }
@@ -145,6 +147,7 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport
 
         val document: Document = Jsoup.parse(contentAsString(result))
         document.title should include(messages("incomeSources.add.foreignProperty.startDate.heading"))
+        document.getElementById("back").attr("href") shouldBe routes.AddIncomeSourceController.show().url
         status(result) shouldBe OK
       }
     }
@@ -576,6 +579,7 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport
 
         val document: Document = Jsoup.parse(contentAsString(result))
         document.title should include(messages("add-business-start-date.heading"))
+        document.getElementById("back").attr("href") shouldBe routes.AddBusinessNameController.showAgent().url
         status(result) shouldBe OK
       }
     }
@@ -591,6 +595,7 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport
 
         val document: Document = Jsoup.parse(contentAsString(result))
         document.title should include(messages("incomeSources.add.UKPropertyStartDate.heading"))
+        document.getElementById("back").attr("href") shouldBe routes.AddIncomeSourceController.showAgent().url
         status(result) shouldBe OK
       }
     }
@@ -606,6 +611,7 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport
 
         val document: Document = Jsoup.parse(contentAsString(result))
         document.title should include(messages("incomeSources.add.foreignProperty.startDate.heading"))
+        document.getElementById("back").attr("href") shouldBe routes.AddIncomeSourceController.showAgent().url
         status(result) shouldBe OK
       }
     }

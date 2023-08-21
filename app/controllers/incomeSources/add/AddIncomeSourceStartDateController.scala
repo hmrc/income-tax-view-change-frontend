@@ -246,8 +246,8 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
     else
       Map(
         SelfEmployment -> routes.AddBusinessNameController.show(),
-        UkProperty -> routes.CheckUKPropertyDetailsController.show(),
-        ForeignProperty -> routes.ForeignPropertyCheckDetailsController.show()
+        UkProperty -> routes.AddIncomeSourceController.show(),
+        ForeignProperty -> routes.AddIncomeSourceController.show()
       )
   }
 }

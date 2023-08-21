@@ -166,6 +166,9 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
           fakeRequestWithActiveSession
             .withSession(SessionKeys.addBusinessStartDate -> testStartDate))
 
+        val document: Document = Jsoup.parse(contentAsString(result))
+
+        document.getElementById("back").attr("href") shouldBe routes.AddIncomeSourceStartDateController.show(SelfEmployment.key, isAgent = false, isChange = false).url
         status(result) shouldBe OK
       }
     }
@@ -181,6 +184,9 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
           fakeRequestWithActiveSession
             .withSession(SessionKeys.foreignPropertyStartDate -> testStartDate))
 
+        val document: Document = Jsoup.parse(contentAsString(result))
+
+        document.getElementById("back").attr("href") shouldBe routes.AddIncomeSourceStartDateController.show(ForeignProperty.key, isAgent = false, isChange = false).url
         status(result) shouldBe OK
       }
     }
@@ -196,6 +202,9 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
           fakeRequestWithActiveSession
             .withSession(SessionKeys.addUkPropertyStartDate -> testStartDate))
 
+        val document: Document = Jsoup.parse(contentAsString(result))
+
+        document.getElementById("back").attr("href") shouldBe routes.AddIncomeSourceStartDateController.show(UkProperty.key, isAgent = false, isChange = false).url
         status(result) shouldBe OK
       }
     }
@@ -709,6 +718,9 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
           fakeRequestConfirmedClient()
             .withSession(SessionKeys.addBusinessStartDate -> testStartDate))
 
+        val document: Document = Jsoup.parse(contentAsString(result))
+
+        document.getElementById("back").attr("href") shouldBe routes.AddIncomeSourceStartDateController.show(SelfEmployment.key, isAgent = true, isChange = false).url
         status(result) shouldBe OK
       }
     }
@@ -725,6 +737,9 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
             SessionKeys.addUkPropertyStartDate -> testStartDate
           ))
 
+        val document: Document = Jsoup.parse(contentAsString(result))
+
+        document.getElementById("back").attr("href") shouldBe routes.AddIncomeSourceStartDateController.show(UkProperty.key, isAgent = true, isChange = false).url
         status(result) shouldBe OK
       }
     }
@@ -740,6 +755,9 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
           fakeRequestConfirmedClient()
             .withSession(SessionKeys.foreignPropertyStartDate -> testStartDate))
 
+        val document: Document = Jsoup.parse(contentAsString(result))
+
+        document.getElementById("back").attr("href") shouldBe routes.AddIncomeSourceStartDateController.show(ForeignProperty.key, isAgent = true, isChange = false).url
         status(result) shouldBe OK
       }
     }
