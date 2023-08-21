@@ -168,6 +168,11 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
       }
   }
 
+  private def getErrorHandler(isAgent: Boolean): ShowInternalServerError = {
+    if (isAgent) itvcErrorHandlerAgent
+    else itvcErrorHandler
+  }
+
   private def handleValidForm(backCall: Call,
                               validForm: form,
                               successCall: Call,
