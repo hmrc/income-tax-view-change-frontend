@@ -16,6 +16,8 @@
 
 package enums
 
+import scala.language.implicitConversions
+
 sealed trait ChargeType {
   val name: String
 
