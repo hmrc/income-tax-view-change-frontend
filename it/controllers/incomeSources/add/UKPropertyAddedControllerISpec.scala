@@ -14,12 +14,12 @@ class UKPropertyAddedControllerISpec extends ComponentSpecBase {
   val UKPropertyAddedControllerShowUrl: String = controllers.incomeSources.add.routes.UKPropertyAddedController.show(testPropertyIncomeId).url
   val HomeControllerShowUrl: String = controllers.routes.HomeController.show().url
   val pageTitle: String = messagesAPI("htmlTitle", {
-    s"${messagesAPI("incomeSourceAdded.ukProperty")} " +
-      s"${messagesAPI("incomeSourceAdded.heading")}".trim()
+    s"${messagesAPI("business-added.uk-property.h1")} " +
+      s"${messagesAPI("business-added.uk-property.base")}".trim()
   })
   val confirmationPanelContent: String = {
-    s"${messagesAPI("incomeSourceAdded.ukProperty")} " +
-      s"${messagesAPI("incomeSourceAdded.heading")}"
+    s"${messagesAPI("business-added.uk-property.h1")} " +
+      s"${messagesAPI("business-added.uk-property.base")}"
   }
 
   s"calling GET $UKPropertyAddedControllerShowUrl" should {

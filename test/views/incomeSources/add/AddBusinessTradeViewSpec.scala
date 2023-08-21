@@ -16,6 +16,7 @@
 
 package views.incomeSources.add
 
+import enums.IncomeSourceJourney.SelfEmployment
 import forms.incomeSources.add.BusinessTradeForm
 import forms.utils.SessionKeys
 import org.jsoup.nodes.Element
@@ -37,12 +38,13 @@ class AddBusinessTradeViewSpec extends ViewSpec {
     val errorPrefix: String = messages("base.error-prefix")
   }
 
-  val backUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showSoleTraderBusiness.url
-  val agentBackUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showSoleTraderBusinessAgent.url
+  val backUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.show(SelfEmployment.key, isAgent = false, isChange = false).url
+  val agentBackUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.show(SelfEmployment.key, isAgent = true, isChange = false).url
 
   val addBusinessTradeView: AddBusinessTrade = app.injector.instanceOf[AddBusinessTrade]
 
-  val pageWithoutError: Html = addBusinessTradeView(BusinessTradeForm.form, testCall, false, backUrl, false)
+  val pageWithoutError: Html = addBusinessTradeView(BusinessTradeForm.form, testCall, isAgent = false, backUrl, sameNameError = false)
+  val changePageWithoutError: Html = addBusinessTradeView(BusinessTradeForm.form, testCall, false, backUrl, false, Some("Oops wrong trade"))
 
   def pageWithError(error: String = BusinessTradeForm.tradeEmptyError): Html = {
     val modifiedForm = BusinessTradeForm.form.withError(SessionKeys.businessTrade, error)
@@ -109,6 +111,9 @@ class AddBusinessTradeViewSpec extends ViewSpec {
           }
         }
       }
+    }
+    "pre-populate the previously saved business trade on change route" in new Setup(changePageWithoutError) {
+      document.getElementById("addBusinessTrade").attr("value") shouldBe "Oops wrong trade"
     }
   }
 

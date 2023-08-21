@@ -64,18 +64,14 @@
 }
 
 @changeBusinessStartDateURL = @{
-    if(isAgent) {
-        controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.changeBusinessStartDateAgent.url
-    } else {
-        controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.changeBusinessStartDate.url
-    }
+    controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.show(SelfEmployment.key, isAgent = isAgent, isChange = true).url
 }
 
 @changeBusinessTradeURL = @{
     if(isAgent) {
-        controllers.incomeSources.add.routes.AddBusinessTradeController.changeBusinessTradeAgent().url
+        controllers.incomeSources.add.routes.AddBusinessTradeController.show(true, true).url
     } else {
-        controllers.incomeSources.add.routes.AddBusinessTradeController.changeBusinessTrade().url
+        controllers.incomeSources.add.routes.AddBusinessTradeController.show(false, true).url
     }
 }
 

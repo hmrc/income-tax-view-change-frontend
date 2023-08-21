@@ -161,10 +161,6 @@ GET          /income-sources/add/business-name                            contro
 GET          /agents/income-sources/add/business-name                     controllers.incomeSources.add.AddBusinessNameController.showAgent()
 POST         /income-sources/add/business-name                            controllers.incomeSources.add.AddBusinessNameController.submit()
 POST         /agents/income-sources/add/business-name                     controllers.incomeSources.add.AddBusinessNameController.submitAgent()
-GET          /income-sources/add/business-trade                           controllers.incomeSources.add.AddBusinessTradeController.show()
-GET          /agents/income-sources/add/business-trade                    controllers.incomeSources.add.AddBusinessTradeController.showAgent()
-POST         /income-sources/add/business-trade                           controllers.incomeSources.add.AddBusinessTradeController.submit()
-POST         /agents/income-sources/add/business-trade                    controllers.incomeSources.add.AddBusinessTradeController.agentSubmit()
 GET          /income-sources/add/business-address                         controllers.incomeSources.add.AddBusinessAddressController.show(isChange: Boolean = false)
 GET          /agents/income-sources/add/business-address                  controllers.incomeSources.add.AddBusinessAddressController.showAgent(isChange: Boolean = false)
 GET          /income-sources/add/business-address/id/                     controllers.incomeSources.add.AddBusinessAddressController.submit(id: Option[String], isChange: Boolean = false)
@@ -173,39 +169,64 @@ GET          /income-sources/add/change-business-address-lookup           contro
 GET          /agents/income-sources/add/change-business-address-lookup    controllers.incomeSources.add.AddBusinessAddressController.showAgent(isChange: Boolean = true)
 GET          /income-sources/add/change-business-address/id/              controllers.incomeSources.add.AddBusinessAddressController.submit(id: Option[String], isChange: Boolean = true)
 GET          /agents/income-sources/add/change-business-address/id/       controllers.incomeSources.add.AddBusinessAddressController.agentSubmit(id: Option[String], isChange: Boolean = true)
+GET          /income-sources/add/business-trade                           controllers.incomeSources.add.AddBusinessTradeController.show(isAgent: Boolean = false, isChange: Boolean = false)
+GET          /agents/income-sources/add/business-trade                    controllers.incomeSources.add.AddBusinessTradeController.show(isAgent: Boolean = true, isChange: Boolean = false)
+POST         /income-sources/add/business-trade                           controllers.incomeSources.add.AddBusinessTradeController.submit(isAgent: Boolean = false, isChange: Boolean = false)
+POST         /agents/income-sources/add/business-trade                    controllers.incomeSources.add.AddBusinessTradeController.submit(isAgent: Boolean = true, isChange: Boolean = false)
+GET          /income-sources/add/change-business-trade                    controllers.incomeSources.add.AddBusinessTradeController.show(isAgent: Boolean = false, isChange: Boolean = true)
+GET          /agents/income-sources/add/change-business-trade             controllers.incomeSources.add.AddBusinessTradeController.show(isAgent: Boolean = true, isChange: Boolean = true)
+POST         /income-sources/add/change-business-trade                    controllers.incomeSources.add.AddBusinessTradeController.submit(isAgent: Boolean = false, isChange: Boolean = true)
+POST         /agents/income-sources/add/change-business-trade             controllers.incomeSources.add.AddBusinessTradeController.submit(isAgent: Boolean = true, isChange: Boolean = true)
 
-GET          /income-sources/add/business-start-date                        controllers.incomeSources.add.AddIncomeSourceStartDateController.showSoleTraderBusiness
-GET          /agents/income-sources/add/business-start-date                 controllers.incomeSources.add.AddIncomeSourceStartDateController.showSoleTraderBusinessAgent
-POST         /income-sources/add/business-start-date                        controllers.incomeSources.add.AddIncomeSourceStartDateController.submitSoleTraderBusiness
-POST         /agents/income-sources/add/business-start-date                 controllers.incomeSources.add.AddIncomeSourceStartDateController.submitSoleTraderBusinessAgent
-GET          /income-sources/add/uk-property-start-date                     controllers.incomeSources.add.AddIncomeSourceStartDateController.showUKProperty
-GET          /agents/income-sources/add/uk-property-start-date              controllers.incomeSources.add.AddIncomeSourceStartDateController.showUKPropertyAgent
-POST         /income-sources/add/uk-property-start-date                     controllers.incomeSources.add.AddIncomeSourceStartDateController.submitUKProperty
-POST         /agents/income-sources/add/uk-property-start-date              controllers.incomeSources.add.AddIncomeSourceStartDateController.submitUKPropertyAgent
-GET          /income-sources/add/foreign-property-start-date                controllers.incomeSources.add.AddIncomeSourceStartDateController.showForeignProperty
-GET          /agents/income-sources/add/foreign-property-start-date         controllers.incomeSources.add.AddIncomeSourceStartDateController.showForeignPropertyAgent
-POST         /income-sources/add/foreign-property-start-date                controllers.incomeSources.add.AddIncomeSourceStartDateController.submitForeignProperty
-POST         /agents/income-sources/add/foreign-property-start-date         controllers.incomeSources.add.AddIncomeSourceStartDateController.submitForeignPropertyAgent
+GET          /income-sources/add/business-start-date                                   controllers.incomeSources.add.AddIncomeSourceStartDateController.show(incomeSourceKey:   String = "SE", isAgent: Boolean = false, isChange: Boolean = false)
+GET          /agents/income-sources/add/business-start-date                            controllers.incomeSources.add.AddIncomeSourceStartDateController.show(incomeSourceKey:   String = "SE", isAgent: Boolean = true,  isChange: Boolean = false)
+POST         /income-sources/add/business-start-date                                   controllers.incomeSources.add.AddIncomeSourceStartDateController.submit(incomeSourceKey: String = "SE", isAgent: Boolean = false, isChange: Boolean = false)
+POST         /agents/income-sources/add/business-start-date                            controllers.incomeSources.add.AddIncomeSourceStartDateController.submit(incomeSourceKey: String = "SE", isAgent: Boolean = true,  isChange: Boolean = false)
+GET          /income-sources/add/uk-property-start-date                                controllers.incomeSources.add.AddIncomeSourceStartDateController.show(incomeSourceKey:   String = "UK", isAgent: Boolean = false, isChange: Boolean = false)
+GET          /agents/income-sources/add/uk-property-start-date                         controllers.incomeSources.add.AddIncomeSourceStartDateController.show(incomeSourceKey:   String = "UK", isAgent: Boolean = true,  isChange: Boolean = false)
+POST         /income-sources/add/uk-property-start-date                                controllers.incomeSources.add.AddIncomeSourceStartDateController.submit(incomeSourceKey: String = "UK", isAgent: Boolean = false, isChange: Boolean = false)
+POST         /agents/income-sources/add/uk-property-start-date                         controllers.incomeSources.add.AddIncomeSourceStartDateController.submit(incomeSourceKey: String = "UK", isAgent: Boolean = true,  isChange: Boolean = false)
+GET          /income-sources/add/foreign-property-start-date                           controllers.incomeSources.add.AddIncomeSourceStartDateController.show(incomeSourceKey:   String = "FP", isAgent: Boolean = false, isChange: Boolean = false)
+GET          /agents/income-sources/add/foreign-property-start-date                    controllers.incomeSources.add.AddIncomeSourceStartDateController.show(incomeSourceKey:   String = "FP", isAgent: Boolean = true,  isChange: Boolean = false)
+POST         /income-sources/add/foreign-property-start-date                           controllers.incomeSources.add.AddIncomeSourceStartDateController.submit(incomeSourceKey: String = "FP", isAgent: Boolean = false, isChange: Boolean = false)
+POST         /agents/income-sources/add/foreign-property-start-date                    controllers.incomeSources.add.AddIncomeSourceStartDateController.submit(incomeSourceKey: String = "FP", isAgent: Boolean = true,  isChange: Boolean = false)
+GET          /income-sources/add/change-business-start-date                            controllers.incomeSources.add.AddIncomeSourceStartDateController.show(incomeSourceKey:   String = "SE", isAgent: Boolean = false, isChange: Boolean = true)
+GET          /agents/income-sources/add/change-business-start-date                     controllers.incomeSources.add.AddIncomeSourceStartDateController.show(incomeSourceKey:   String = "SE", isAgent: Boolean = true,  isChange: Boolean = true)
+POST         /income-sources/add/change-business-start-date                            controllers.incomeSources.add.AddIncomeSourceStartDateController.submit(incomeSourceKey: String = "SE", isAgent: Boolean = false, isChange: Boolean = true)
+POST         /agents/income-sources/add/change-business-start-date                     controllers.incomeSources.add.AddIncomeSourceStartDateController.submit(incomeSourceKey: String = "SE", isAgent: Boolean = true,  isChange: Boolean = true)
+GET          /income-sources/add/change-uk-property-start-date                         controllers.incomeSources.add.AddIncomeSourceStartDateController.show(incomeSourceKey:   String = "UK", isAgent: Boolean = false, isChange: Boolean = true)
+GET          /agents/income-sources/add/change-uk-property-start-date                  controllers.incomeSources.add.AddIncomeSourceStartDateController.show(incomeSourceKey:   String = "UK", isAgent: Boolean = true,  isChange: Boolean = true)
+POST         /income-sources/add/change-uk-property-start-date                         controllers.incomeSources.add.AddIncomeSourceStartDateController.submit(incomeSourceKey: String = "UK", isAgent: Boolean = false, isChange: Boolean = true)
+POST         /agents/income-sources/add/change-uk-property-start-date                  controllers.incomeSources.add.AddIncomeSourceStartDateController.submit(incomeSourceKey: String = "UK", isAgent: Boolean = true,  isChange: Boolean = true)
+GET          /income-sources/add/change-foreign-property-start-date                    controllers.incomeSources.add.AddIncomeSourceStartDateController.show(incomeSourceKey:   String = "FP", isAgent: Boolean = false, isChange: Boolean = true)
+GET          /agents/income-sources/add/change-foreign-property-start-date             controllers.incomeSources.add.AddIncomeSourceStartDateController.show(incomeSourceKey:   String = "FP", isAgent: Boolean = true,  isChange: Boolean = true)
+POST         /income-sources/add/change-foreign-property-start-date                    controllers.incomeSources.add.AddIncomeSourceStartDateController.submit(incomeSourceKey: String = "FP", isAgent: Boolean = false, isChange: Boolean = true)
+POST         /agents/income-sources/add/change-foreign-property-start-date             controllers.incomeSources.add.AddIncomeSourceStartDateController.submit(incomeSourceKey: String = "FP", isAgent: Boolean = true,  isChange: Boolean = true)
 
-GET          /income-sources/add/business-start-date-check                      controllers.incomeSources.add.AddIncomeSourceStartDateCheckController.showSoleTraderBusiness
-GET          /agents/income-sources/add/business-start-date-check               controllers.incomeSources.add.AddIncomeSourceStartDateCheckController.showSoleTraderBusinessAgent
-POST         /income-sources/add/business-start-date-check                      controllers.incomeSources.add.AddIncomeSourceStartDateCheckController.submitSoleTraderBusiness
-POST         /agents/income-sources/add/business-start-date-check               controllers.incomeSources.add.AddIncomeSourceStartDateCheckController.submitSoleTraderBusinessAgent
-GET          /income-sources/add/uk-property-start-date-check                   controllers.incomeSources.add.AddIncomeSourceStartDateCheckController.showUKProperty
-GET          /agents/income-sources/add/uk-property-start-date-check            controllers.incomeSources.add.AddIncomeSourceStartDateCheckController.showUKPropertyAgent
-POST         /income-sources/add/uk-property-start-date-check                   controllers.incomeSources.add.AddIncomeSourceStartDateCheckController.submitUKProperty
-POST         /agents/income-sources/add/uk-property-start-date-check            controllers.incomeSources.add.AddIncomeSourceStartDateCheckController.submitUKPropertyAgent
-GET          /income-sources/add/foreign-property-start-date-check              controllers.incomeSources.add.AddIncomeSourceStartDateCheckController.showForeignProperty
-GET          /agents/income-sources/add/foreign-property-start-date-check       controllers.incomeSources.add.AddIncomeSourceStartDateCheckController.showForeignPropertyAgent
-POST         /income-sources/add/foreign-property-start-date-check              controllers.incomeSources.add.AddIncomeSourceStartDateCheckController.submitForeignProperty
-POST         /agents/income-sources/add/foreign-property-start-date-check       controllers.incomeSources.add.AddIncomeSourceStartDateCheckController.submitForeignPropertyAgent
-
-GET          /income-sources/add/change-business-start-date                 controllers.incomeSources.add.AddIncomeSourceStartDateController.changeBusinessStartDate
-GET          /agents/income-sources/add/change-business-start-date          controllers.incomeSources.add.AddIncomeSourceStartDateController.changeBusinessStartDateAgent
-GET          /income-sources/add/change-uk-property-start-date              controllers.incomeSources.add.AddIncomeSourceStartDateController.changeUKPropertyStartDate
-GET          /agents/income-sources/add/change-uk-property-start-date       controllers.incomeSources.add.AddIncomeSourceStartDateController.changeUKPropertyStartDateAgent
-GET          /income-sources/add/change-foreign-property-start-date         controllers.incomeSources.add.AddIncomeSourceStartDateController.changeForeignPropertyStartDate
-GET          /agents/income-sources/add/change-foreign-property-start-date  controllers.incomeSources.add.AddIncomeSourceStartDateController.changeForeignPropertyStartDateAgent
+GET          /income-sources/add/business-start-date-check                             controllers.incomeSources.add.AddIncomeSourceStartDateCheckController.show(incomeSourceKey:   String = "SE", isAgent: Boolean = false, isChange: Boolean = false)
+GET          /agents/income-sources/add/business-start-date-check                      controllers.incomeSources.add.AddIncomeSourceStartDateCheckController.show(incomeSourceKey:   String = "SE", isAgent: Boolean = true,  isChange: Boolean = false)
+POST         /income-sources/add/business-start-date-check                             controllers.incomeSources.add.AddIncomeSourceStartDateCheckController.submit(incomeSourceKey: String = "SE", isAgent: Boolean = false, isChange: Boolean = false)
+POST         /agents/income-sources/add/business-start-date-check                      controllers.incomeSources.add.AddIncomeSourceStartDateCheckController.submit(incomeSourceKey: String = "SE", isAgent: Boolean = true,  isChange: Boolean = false)
+GET          /income-sources/add/uk-property-start-date-check                          controllers.incomeSources.add.AddIncomeSourceStartDateCheckController.show(incomeSourceKey:   String = "UK", isAgent: Boolean = false, isChange: Boolean = false)
+GET          /agents/income-sources/add/uk-property-start-date-check                   controllers.incomeSources.add.AddIncomeSourceStartDateCheckController.show(incomeSourceKey:   String = "UK", isAgent: Boolean = true,  isChange: Boolean = false)
+POST         /income-sources/add/uk-property-start-date-check                          controllers.incomeSources.add.AddIncomeSourceStartDateCheckController.submit(incomeSourceKey: String = "UK", isAgent: Boolean = false, isChange: Boolean = false)
+POST         /agents/income-sources/add/uk-property-start-date-check                   controllers.incomeSources.add.AddIncomeSourceStartDateCheckController.submit(incomeSourceKey: String = "UK", isAgent: Boolean = true,  isChange: Boolean = false)
+GET          /income-sources/add/foreign-property-start-date-check                     controllers.incomeSources.add.AddIncomeSourceStartDateCheckController.show(incomeSourceKey:   String = "FP", isAgent: Boolean = false, isChange: Boolean = false)
+GET          /agents/income-sources/add/foreign-property-start-date-check              controllers.incomeSources.add.AddIncomeSourceStartDateCheckController.show(incomeSourceKey:   String = "FP", isAgent: Boolean = true,  isChange: Boolean = false)
+POST         /income-sources/add/foreign-property-start-date-check                     controllers.incomeSources.add.AddIncomeSourceStartDateCheckController.submit(incomeSourceKey: String = "FP", isAgent: Boolean = false, isChange: Boolean = false)
+POST         /agents/income-sources/add/foreign-property-start-date-check              controllers.incomeSources.add.AddIncomeSourceStartDateCheckController.submit(incomeSourceKey: String = "FP", isAgent: Boolean = true,  isChange: Boolean = false)
+GET          /income-sources/add/change-business-start-date-check                      controllers.incomeSources.add.AddIncomeSourceStartDateCheckController.show(incomeSourceKey:   String = "SE", isAgent: Boolean = false, isChange: Boolean = true)
+GET          /agents/income-sources/add/change-business-start-date-check               controllers.incomeSources.add.AddIncomeSourceStartDateCheckController.show(incomeSourceKey:   String = "SE", isAgent: Boolean = true,  isChange: Boolean = true)
+POST         /income-sources/add/change-business-start-date-check                      controllers.incomeSources.add.AddIncomeSourceStartDateCheckController.submit(incomeSourceKey: String = "SE", isAgent: Boolean = false, isChange: Boolean = true)
+POST         /agents/income-sources/add/change-business-start-date-check               controllers.incomeSources.add.AddIncomeSourceStartDateCheckController.submit(incomeSourceKey: String = "SE", isAgent: Boolean = true,  isChange: Boolean = true)
+GET          /income-sources/add/change-uk-property-start-date-check                   controllers.incomeSources.add.AddIncomeSourceStartDateCheckController.show(incomeSourceKey:   String = "UK", isAgent: Boolean = false, isChange: Boolean = true)
+GET          /agents/income-sources/add/change-uk-property-start-date-check            controllers.incomeSources.add.AddIncomeSourceStartDateCheckController.show(incomeSourceKey:   String = "UK", isAgent: Boolean = true,  isChange: Boolean = true)
+POST         /income-sources/add/change-uk-property-start-date-check                   controllers.incomeSources.add.AddIncomeSourceStartDateCheckController.submit(incomeSourceKey: String = "UK", isAgent: Boolean = false, isChange: Boolean = true)
+POST         /agents/income-sources/add/change-uk-property-start-date-check            controllers.incomeSources.add.AddIncomeSourceStartDateCheckController.submit(incomeSourceKey: String = "UK", isAgent: Boolean = true,  isChange: Boolean = true)
+GET          /income-sources/add/change-foreign-property-start-date-check              controllers.incomeSources.add.AddIncomeSourceStartDateCheckController.show(incomeSourceKey:   String = "FP", isAgent: Boolean = false, isChange: Boolean = true)
+GET          /agents/income-sources/add/change-foreign-property-start-date-check       controllers.incomeSources.add.AddIncomeSourceStartDateCheckController.show(incomeSourceKey:   String = "FP", isAgent: Boolean = true,  isChange: Boolean = true)
+POST         /income-sources/add/change-foreign-property-start-date-check              controllers.incomeSources.add.AddIncomeSourceStartDateCheckController.submit(incomeSourceKey: String = "FP", isAgent: Boolean = false, isChange: Boolean = true)
+POST         /agents/income-sources/add/change-foreign-property-start-date-check       controllers.incomeSources.add.AddIncomeSourceStartDateCheckController.submit(incomeSourceKey: String = "FP", isAgent: Boolean = true,  isChange: Boolean = true)
 
 GET          /income-sources/add/business-added                           controllers.incomeSources.add.BusinessAddedObligationsController.show(id: String)
 GET          /agents/income-sources/add/business-added                    controllers.incomeSources.add.BusinessAddedObligationsController.showAgent(id: String)
@@ -245,17 +266,15 @@ GET          /agents/income-sources/add/business-check-details              cont
 
 GET          /income-sources/add/change-business-name                       controllers.incomeSources.add.AddBusinessNameController.changeBusinessName()
 GET          /agents/income-sources/add/change-business-name                controllers.incomeSources.add.AddBusinessNameController.changeBusinessNameAgent()
-GET          /income-sources/add/change-business-trade                      controllers.incomeSources.add.AddBusinessTradeController.changeBusinessTrade()
-GET          /agents/income-sources/add/change-business-trade               controllers.incomeSources.add.AddBusinessTradeController.changeBusinessTradeAgent()
 GET          /income-sources/add/change-business-accounting-method          controllers.incomeSources.add.IncomeSourcesAccountingMethodController.changeIncomeSourcesAccountingMethod(incomeSourceType: String = "SE")
 GET          /agents/income-sources/add/change-business-accounting-method   controllers.incomeSources.add.IncomeSourcesAccountingMethodController.changeIncomeSourcesAccountingMethodAgent(incomeSourceType: String = "SE")
 POST          /income-sources/add/business-check-details                    controllers.incomeSources.add.CheckBusinessDetailsController.submit()
 POST          /agents/income-sources/add/business-check-details              controllers.incomeSources.add.CheckBusinessDetailsController.submitAgent()
 
-GET          /income-sources/add/foreign-property-check-details                     controllers.incomeSources.add.ForeignPropertyCheckDetailsController.show()
-GET          /agents/income-sources/add/foreign-property-check-details              controllers.incomeSources.add.ForeignPropertyCheckDetailsController.showAgent()
-POST         /income-sources/add/foreign-property-check-details                    controllers.incomeSources.add.ForeignPropertyCheckDetailsController.submit()
-POST         /agents/income-sources/add/foreign-property-check-details              controllers.incomeSources.add.ForeignPropertyCheckDetailsController.submitAgent()
+GET          /income-sources/add/foreign-property-check-details                         controllers.incomeSources.add.ForeignPropertyCheckDetailsController.show()
+GET          /agents/income-sources/add/foreign-property-check-details                  controllers.incomeSources.add.ForeignPropertyCheckDetailsController.showAgent()
+POST         /income-sources/add/foreign-property-check-details                         controllers.incomeSources.add.ForeignPropertyCheckDetailsController.submit()
+POST         /agents/income-sources/add/foreign-property-check-details                  controllers.incomeSources.add.ForeignPropertyCheckDetailsController.submitAgent()
 
 GET          /income-sources/add/change-uk-property-accounting-method            controllers.incomeSources.add.IncomeSourcesAccountingMethodController.changeIncomeSourcesAccountingMethod(incomeSourceType: String = "UK")
 GET          /agents/income-sources/add/change-uk-property-accounting-method     controllers.incomeSources.add.IncomeSourcesAccountingMethodController.changeIncomeSourcesAccountingMethodAgent(incomeSourceType: String = "UK")
@@ -274,7 +293,6 @@ GET          /income-sources/add/error-foreign-property-reporting-method-not-sav
 GET          /agents/income-sources/add/error-foreign-property-reporting-method-not-saved       controllers.incomeSources.add.IncomeSourceReportingMethodNotSavedController.showForeignPropertyAgent()
 GET          /income-sources/add/error-uk-property-reporting-method-not-saved                  controllers.incomeSources.add.IncomeSourceReportingMethodNotSavedController.showUKProperty()
 GET          /agents/income-sources/add/error-uk-property-reporting-method-not-saved            controllers.incomeSources.add.IncomeSourceReportingMethodNotSavedController.showUKPropertyAgent()
-
 
 # Income Sources - Cease
 GET          /income-sources/cease/cease-an-income-source                 controllers.incomeSources.cease.CeaseIncomeSourceController.show()
@@ -315,9 +333,17 @@ GET          /agents/income-sources/cease/foreign-property-check-details  contro
 POST         /income-sources/cease/foreign-property-check-details/:cessationDate          controllers.incomeSources.cease.CheckCeaseForeignPropertyDetailsController.submit(cessationDate: String)
 POST         /agents/income-sources/cease/foreign-property-check-details/:cessationDate   controllers.incomeSources.cease.CheckCeaseForeignPropertyDetailsController.submitAgent(cessationDate: String)
 
+GET          /income-sources/cease/cease-business-success                                  controllers.incomeSources.cease.BusinessCeasedObligationsController.show()
+GET          /agents/income-sources/cease/cease-business-success                           controllers.incomeSources.cease.BusinessCeasedObligationsController.showAgent()
+GET          /income-sources/cease/cease-uk-property-success                               controllers.incomeSources.cease.UKPropertyCeasedObligationsController.show()
+GET          /agents/income-sources/cease/cease-uk-property-success                        controllers.incomeSources.cease.UKPropertyCeasedObligationsController.showAgent()
+GET          /income-sources/cease/cease-foreign-property-success                          controllers.incomeSources.cease.ForeignPropertyCeasedObligationsController.show()
+GET          /agents/income-sources/cease/cease-foreign-property-success                   controllers.incomeSources.cease.ForeignPropertyCeasedObligationsController.showAgent()
+
+
 # Income Sources - Manage
-GET          /income-sources/manage/view-and-manage-income-sources             controllers.incomeSources.manage.ManageIncomeSourceController.show()
-GET          /agents/income-sources/manage/view-and-manage-income-sources      controllers.incomeSources.manage.ManageIncomeSourceController.showAgent()
+GET          /income-sources/manage/view-and-manage-income-sources                         controllers.incomeSources.manage.ManageIncomeSourceController.show()
+GET          /agents/income-sources/manage/view-and-manage-income-sources                  controllers.incomeSources.manage.ManageIncomeSourceController.showAgent()
 
 GET          /income-sources/manage/confirm-you-want-to-report                             controllers.incomeSources.manage.ConfirmReportingMethodSharedController.showSoleTraderBusiness(id: String, taxYear: String, changeTo: String)
 GET          /agents/income-sources/manage/confirm-you-want-to-report                      controllers.incomeSources.manage.ConfirmReportingMethodSharedController.showSoleTraderBusinessAgent(id: String, taxYear: String, changeTo: String)
@@ -368,16 +394,9 @@ GET          /income-sources/add/foreign-property-reporting-method              
 GET          /agents/income-sources/add/foreign-property-reporting-method                        controllers.incomeSources.add.ForeignPropertyReportingMethodController.showAgent(id:String)
 POST         /income-sources/add/foreign-property-reporting-method                               controllers.incomeSources.add.ForeignPropertyReportingMethodController.submit(id:String)
 POST         /agents/income-sources/add/foreign-property-reporting-method                        controllers.incomeSources.add.ForeignPropertyReportingMethodController.submitAgent(id:String)
-# Income Sources - TO BE IMPLEMENTED
-GET          /income-sources/cease/cease-uk-property-success                controllers.incomeSources.cease.CeaseUKPropertySuccessController.show()
-GET          /agents/income-sources/cease/cease-uk-property-success         controllers.incomeSources.cease.CeaseUKPropertySuccessController.showAgent()
-GET          /income-sources/cease/cease-foreign-property-success           controllers.incomeSources.cease.CeaseForeignPropertySuccessController.show()
-GET          /agents/income-sources/cease/cease-foreign-property-success    controllers.incomeSources.cease.CeaseForeignPropertySuccessController.showAgent()
 
+# Income Sources - TO BE IMPLEMENTED
 GET          /income-sources/add/foreign-property-accounting-method                 controllers.incomeSources.add.IncomeSourcesAccountingMethodController.show(incomeSourceType: String = "FP")
 GET          /agents/income-sources/add/foreign-property-accounting-method          controllers.incomeSources.add.IncomeSourcesAccountingMethodController.showAgent(incomeSourceType: String = "FP")
 GET          /income-sources/add/change-foreign-property-accounting-method          controllers.incomeSources.add.IncomeSourcesAccountingMethodController.changeIncomeSourcesAccountingMethod(incomeSourceType: String = "FP")
 GET          /agents/income-sources/add/change-foreign-property-accounting-method   controllers.incomeSources.add.IncomeSourcesAccountingMethodController.changeIncomeSourcesAccountingMethodAgent(incomeSourceType: String = "FP")
-
-GET          /income-sources/cease/cease-business-success           controllers.incomeSources.cease.CeaseBusinessSuccessController.show()
-GET          /agents/income-sources/cease/cease-business-success    controllers.incomeSources.cease.CeaseBusinessSuccessController.showAgent()
