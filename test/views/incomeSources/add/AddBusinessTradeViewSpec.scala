@@ -43,7 +43,8 @@ class AddBusinessTradeViewSpec extends ViewSpec {
 
   val addBusinessTradeView: AddBusinessTrade = app.injector.instanceOf[AddBusinessTrade]
 
-  val pageWithoutError: Html = addBusinessTradeView(BusinessTradeForm.form, testCall, false, backUrl, false)
+  val pageWithoutError: Html = addBusinessTradeView(BusinessTradeForm.form, testCall, isAgent = false, backUrl, sameNameError = false)
+  val changePageWithoutError: Html = addBusinessTradeView(BusinessTradeForm.form, testCall, false, backUrl, false, Some("Oops wrong trade"))
 
   def pageWithError(error: String = BusinessTradeForm.tradeEmptyError): Html = {
     val modifiedForm = BusinessTradeForm.form.withError(SessionKeys.businessTrade, error)
@@ -110,6 +111,9 @@ class AddBusinessTradeViewSpec extends ViewSpec {
           }
         }
       }
+    }
+    "pre-populate the previously saved business trade on change route" in new Setup(changePageWithoutError) {
+      document.getElementById("addBusinessTrade").attr("value") shouldBe "Oops wrong trade"
     }
   }
 
