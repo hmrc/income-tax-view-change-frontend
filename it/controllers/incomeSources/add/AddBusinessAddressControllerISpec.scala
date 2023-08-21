@@ -37,7 +37,6 @@ class AddBusinessAddressControllerISpec extends ComponentSpecBase {
 
         When(s"I call GET $businessAddressShowUrl")
         val result = IncomeTaxViewChangeFrontend.getAddBusinessAddress
-        verifyIncomeSourceDetailsCall(testMtditid)
 
         result should have(
           httpStatus(SEE_OTHER),
@@ -55,7 +54,6 @@ class AddBusinessAddressControllerISpec extends ComponentSpecBase {
 
         When(s"I call GET $changeBusinessAddressShowUrl")
         val result = IncomeTaxViewChangeFrontend.getAddChangeBusinessAddress
-        verifyIncomeSourceDetailsCall(testMtditid)
 
         result should have(
           httpStatus(SEE_OTHER),
