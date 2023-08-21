@@ -17,26 +17,22 @@
 package controllers.incomeSources.add
 
 import auth.MtdItUser
-import config.featureswitch.{FeatureSwitching, IncomeSources}
+import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
-import models.incomeSourceDetails.BusinessDetailsModel
-import models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
-import models.nextUpdates.{NextUpdateModel, NextUpdatesErrorModel, ObligationsModel}
+import enums.IncomeSourceJourney.SelfEmployment
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.{DateServiceInterface, IncomeSourceDetailsService, NextUpdatesService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import utils.IncomeSourcesUtils
-import views.html.incomeSources.add.BusinessAddedObligations
+import views.html.incomeSources.add.IncomeSourceAddedObligations
 
 import java.time.LocalDate
-import java.time.Month.APRIL
 import javax.inject.Inject
-import scala.concurrent.duration.{Duration, MILLISECONDS}
-import scala.concurrent.{Await, ExecutionContext, Future}
+import scala.concurrent.{ExecutionContext, Future}
 
 class BusinessAddedObligationsController @Inject()(authenticate: AuthenticationPredicate,
                                                    val authorisedFunctions: AuthorisedFunctions,
@@ -46,7 +42,7 @@ class BusinessAddedObligationsController @Inject()(authenticate: AuthenticationP
                                                    val retrieveBtaNavBar: NavBarPredicate,
                                                    val itvcErrorHandler: ItvcErrorHandler,
                                                    incomeSourceDetailsService: IncomeSourceDetailsService,
-                                                   val obligationsView: BusinessAddedObligations,
+                                                   val obligationsView: IncomeSourceAddedObligations,
                                                    nextUpdatesService: NextUpdatesService)
                                                   (implicit val appConfig: FrontendAppConfig,
                                                    implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
@@ -81,10 +77,7 @@ class BusinessAddedObligationsController @Inject()(authenticate: AuthenticationP
           val showPreviousTaxYears: Boolean = startDate.isBefore(dateService.getCurrentTaxYearStart())
           nextUpdatesService.getObligationsViewModel(incomeSourceId, showPreviousTaxYears) map { viewModel =>
             val backUrl = getBackUrl(incomeSourceId, isAgent)
-            if (isAgent) Ok(obligationsView(businessName, viewModel,
-              controllers.incomeSources.add.routes.BusinessAddedObligationsController.agentSubmit(), backUrl, isAgent = true))
-            else Ok(obligationsView(businessName, viewModel,
-              controllers.incomeSources.add.routes.BusinessAddedObligationsController.submit(), backUrl, isAgent = false))
+            Ok(obligationsView(businessName = Some(businessName), sources = viewModel, backUrl = backUrl, isAgent = isAgent, incomeSourceType = SelfEmployment))
           }
         case None =>
           val errorMessage = s"Unable to find incomeSource by id: $incomeSourceId"

@@ -121,7 +121,7 @@ class CheckCeaseBusinessDetailsControllerSpec extends TestSupport with MockAuthe
   }
 
   "Individual - CheckCeaseBusinessDetailsController.submit" should {
-    s"return 303 SEE_OTHER and redirect to ${controllers.incomeSources.cease.routes.CeaseBusinessSuccessController.show().url}" when {
+    s"return 303 SEE_OTHER and redirect to ${controllers.incomeSources.cease.routes.BusinessCeasedObligationsController.show().url}" when {
       "submitted" in {
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
         enable(IncomeSources)
@@ -134,7 +134,7 @@ class CheckCeaseBusinessDetailsControllerSpec extends TestSupport with MockAuthe
           TestCheckCeaseBusinessDetailsController.submit()(fakeRequestWithCeaseBusinessDetails(cessationDate, businessIncomeSourceId))
         }
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.CeaseBusinessSuccessController.show().url)
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.BusinessCeasedObligationsController.show().url)
       }
     }
   }
@@ -222,7 +222,7 @@ class CheckCeaseBusinessDetailsControllerSpec extends TestSupport with MockAuthe
         }
 
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.CeaseBusinessSuccessController.showAgent().url)
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.BusinessCeasedObligationsController.showAgent().url)
       }
     }
   }

@@ -21,12 +21,13 @@ import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
+import enums.IncomeSourceJourney.UkProperty
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.{DateService, IncomeSourceDetailsService, NextUpdatesService}
 import utils.IncomeSourcesUtils
-import views.html.incomeSources.add.UKPropertyAdded
+import views.html.incomeSources.add.IncomeSourceAddedObligations
 
 import java.time.LocalDate
 import javax.inject.Inject
@@ -41,7 +42,7 @@ class UKPropertyAddedController @Inject()(val authenticate: AuthenticationPredic
                                           val retrieveBtaNavBar: NavBarPredicate,
                                           val retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                           val retrieveNino: NinoPredicate,
-                                          val view: UKPropertyAdded)
+                                          val view: IncomeSourceAddedObligations)
                                          (implicit val appConfig: FrontendAppConfig,
                                           mcc: MessagesControllerComponents,
                                           val ec: ExecutionContext,
@@ -69,7 +70,7 @@ class UKPropertyAddedController @Inject()(val authenticate: AuthenticationPredic
         }
   }
 
-  def getUKPropertyStartDate(incomeSourceId: String)(implicit user: MtdItUser[_]): Option[(LocalDate)] = {
+  def getUKPropertyStartDate(incomeSourceId: String)(implicit user: MtdItUser[_]): Option[LocalDate] = {
     for {
       newlyAddedUKProperty <- user.incomeSources.properties.find(incomeSource =>
         incomeSource.incomeSourceId.equals(incomeSourceId) && incomeSource.isUkProperty
@@ -87,7 +88,7 @@ class UKPropertyAddedController @Inject()(val authenticate: AuthenticationPredic
         case Some(startDate) =>
           val showPreviousTaxYears: Boolean = startDate.isBefore(dateService.getCurrentTaxYearStart())
           nextUpdatesService.getObligationsViewModel(incomeSourceId, showPreviousTaxYears).map { viewModel =>
-            Ok(view(viewModel, isAgent = isAgent, backUrl)(messages, user))
+            Ok(view(sources = viewModel, isAgent = isAgent, backUrl = backUrl, incomeSourceType = UkProperty)(messages, user))
           }
         case None =>
           Logger("application").error(
