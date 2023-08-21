@@ -22,7 +22,6 @@ import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import forms.incomeSources.add.AddIncomeSourceStartDateCheckForm
 import forms.utils.SessionKeys
-import forms.utils.SessionKeys.addUkPropertyStartDate
 import implicits.ImplicitDateFormatter
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
@@ -30,16 +29,15 @@ import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSour
 import mocks.services.MockClientDetailsService
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{mock, when}
+import org.mockito.Mockito.mock
 import play.api.http.Status
 import play.api.http.Status.OK
-import play.api.mvc.{Call, MessagesControllerComponents, Result}
+import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers._
 import testConstants.BaseTestConstants
-import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testIndividualAuthSuccessWithSaUtrResponse}
+import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
 import testUtils.TestSupport
-import uk.gov.hmrc.http.{HttpClient, HttpResponse}
+import uk.gov.hmrc.http.HttpClient
 import views.html.errorPages.CustomNotFoundError
 import views.html.incomeSources.add.AddIncomeSourceStartDateCheck
 
@@ -388,7 +386,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
             ))
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.AddBusinessTradeController.show().url)
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.AddBusinessTradeController.show(isAgent = false, isChange = false).url)
         result.futureValue.session.get(SessionKeys.addBusinessStartDate) shouldBe Some(testStartDate)
         result.futureValue.session.get(SessionKeys.addBusinessAccountingPeriodStartDate) shouldBe Some(testBusinessAccountingPeriodStartDate)
         result.futureValue.session.get(SessionKeys.addBusinessAccountingPeriodEndDate) shouldBe Some(testBusinessAccountingPeriodEndDate)
@@ -942,7 +940,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
             ))
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.AddBusinessTradeController.showAgent().url)
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.AddBusinessTradeController.show(isAgent = true, isChange = false).url)
         result.futureValue.session.get(SessionKeys.addBusinessStartDate) shouldBe Some(testStartDate)
         result.futureValue.session.get(SessionKeys.addBusinessAccountingPeriodStartDate) shouldBe Some(testBusinessAccountingPeriodStartDate)
         result.futureValue.session.get(SessionKeys.addBusinessAccountingPeriodEndDate) shouldBe Some(testBusinessAccountingPeriodEndDate)
