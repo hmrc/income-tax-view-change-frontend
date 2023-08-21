@@ -18,7 +18,7 @@ package models
 
 import implicits.ImplicitDateFormatter
 import models.nextUpdates._
-import org.scalatest.Matchers
+import org.scalatest.matchers.should.Matchers
 import play.api.libs.json.{JsSuccess, Json}
 import testConstants.BaseTestConstants._
 import testConstants.BusinessDetailsTestConstants.obligationsAllDeadlinesSuccessNotValidObligationType

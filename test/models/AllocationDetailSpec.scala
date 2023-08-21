@@ -18,7 +18,7 @@ package models
 
 import enums.ChargeType.{CGT, SL}
 import models.paymentAllocations.AllocationDetail
-import org.scalatest.Matchers
+import org.scalatest.matchers.should.Matchers
 import testUtils.TestSupport
 
 import java.time.LocalDate

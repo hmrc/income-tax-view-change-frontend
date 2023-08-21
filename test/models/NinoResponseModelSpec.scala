@@ -19,7 +19,7 @@ package models
 import testConstants.BaseTestConstants._
 import testConstants.NinoLookupTestConstants._
 import models.core.{NinoResponseError, NinoResponseSuccess}
-import org.scalatest.Matchers
+import org.scalatest.matchers.should.Matchers
 import play.api.libs.json.Json
 import testUtils.UnitSpec
 

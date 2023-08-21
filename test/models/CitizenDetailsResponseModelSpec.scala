@@ -18,7 +18,7 @@ package models
 
 import testConstants.CitizenDetailsTestConstants._
 import models.citizenDetails._
-import org.scalatest.Matchers
+import org.scalatest.matchers.should.Matchers
 import play.api.libs.json.{JsSuccess, Json}
 import testUtils.UnitSpec
 
