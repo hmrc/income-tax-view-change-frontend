@@ -21,6 +21,7 @@ import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import controllers.routes
+import enums.IncomeSourceJourney.SelfEmployment
 import forms.BusinessNameForm
 import forms.utils.SessionKeys
 import mocks.MockItvcErrorHandler
@@ -112,7 +113,7 @@ class AddBusinessNameControllerSpec extends TestSupport
           ))
 
           status(result) mustBe SEE_OTHER
-          redirectLocation(result) mustBe Some(controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showSoleTraderBusiness.url)
+          redirectLocation(result) mustBe Some(controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.show(SelfEmployment.key, isAgent = false, isChange = false).url)
           session(result).get(SessionKeys.businessName) mustBe Some(validBusinessName)
         }
 
@@ -130,7 +131,7 @@ class AddBusinessNameControllerSpec extends TestSupport
           ))
 
           status(result) mustBe SEE_OTHER
-          redirectLocation(result) mustBe Some(controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.showSoleTraderBusinessAgent.url)
+          redirectLocation(result) mustBe Some(controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.show(SelfEmployment.key, isAgent = true, isChange = false).url)
           session(result).get(SessionKeys.businessName) mustBe Some(validBusinessName)
         }
 

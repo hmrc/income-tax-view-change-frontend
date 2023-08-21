@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-package controllers.incomeSources.add
+package controllers.incomeSources.cease
 
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import config.featureswitch.FeatureSwitch.switches
 import config.featureswitch.{FeatureSwitching, IncomeSources}
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
@@ -33,15 +32,15 @@ import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
 import services.{DateService, DateServiceInterface}
-import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testIndividualAuthSuccessWithSaUtrResponse}
+import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
 import testUtils.TestSupport
-import views.html.incomeSources.add.IncomeSourceAddedObligations
+import views.html.incomeSources.cease.IncomeSourceCeasedObligations
 
 import java.time.LocalDate
 import scala.concurrent.Future
 
 
-class ForeignPropertyAddedControllerSpec extends TestSupport
+class ForeignPropertyCeasedObligationsControllerSpec extends TestSupport
   with MockFrontendAuthorisedFunctions
   with MockIncomeSourceDetailsPredicate
   with MockAuthenticationPredicate
@@ -53,8 +52,8 @@ class ForeignPropertyAddedControllerSpec extends TestSupport
 
   val mockDateService: DateService = mock(classOf[DateService])
 
-  object TestForeignPropertyObligationsController extends ForeignPropertyAddedController(
-    view = app.injector.instanceOf[IncomeSourceAddedObligations],
+  object TestForeignPropertyObligationsController extends ForeignPropertyCeasedObligationsController(
+    obligationsView = app.injector.instanceOf[IncomeSourceCeasedObligations],
     checkSessionTimeout = app.injector.instanceOf[SessionTimeoutPredicate],
     authenticate = MockAuthenticationPredicate,
     authorisedFunctions = mockAuthService,
@@ -62,14 +61,14 @@ class ForeignPropertyAddedControllerSpec extends TestSupport
     retrieveIncomeSources = MockIncomeSourceDetailsPredicate,
     incomeSourceDetailsService = mockIncomeSourceDetailsService,
     retrieveBtaNavBar = MockNavBarPredicate,
-    mockNextUpdatesService
+    nextUpdatesService = mockNextUpdatesService,
+    dateService = app.injector.instanceOf[DateServiceInterface]
   )(
-    ec = ec,
-    mcc = app.injector.instanceOf[MessagesControllerComponents],
     appConfig = app.injector.instanceOf[FrontendAppConfig],
     itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
     itvcErrorHandlerAgent = app.injector.instanceOf[AgentItvcErrorHandler],
-    dateService = app.injector.instanceOf[DateServiceInterface]
+    ec = ec,
+    mcc = app.injector.instanceOf[MessagesControllerComponents],
   )
 
   val testObligationsModel: ObligationsModel = ObligationsModel(Seq(
@@ -92,7 +91,7 @@ class ForeignPropertyAddedControllerSpec extends TestSupport
     ))
   ))
 
-  "Individual - ForeignPropertyAddedObligationsController.show" should {
+  "Individual - ForeignPropertyCeasedObligationsController.show" should {
     "return 200 OK" when {
       "navigating to the page with FS Enabled" in {
         disableAllSwitches()
@@ -126,7 +125,7 @@ class ForeignPropertyAddedControllerSpec extends TestSupport
         when(mockNextUpdatesService.getNextUpdates(any())(any(), any())).
           thenReturn(Future(testObligationsModel))
 
-        val result: Future[Result] = TestForeignPropertyObligationsController.show("123456")(fakeRequestWithActiveSession)
+        val result: Future[Result] = TestForeignPropertyObligationsController.show()(fakeRequestWithActiveSession)
         status(result) shouldBe OK
 
       }
@@ -137,39 +136,26 @@ class ForeignPropertyAddedControllerSpec extends TestSupport
         disable(IncomeSources)
         mockForeignPropertyIncomeSource()
 
-        val result: Future[Result] = TestForeignPropertyObligationsController.show("123")(fakeRequestWithActiveSession)
+        val result: Future[Result] = TestForeignPropertyObligationsController.show()(fakeRequestWithActiveSession)
         redirectLocation(result) shouldBe Some(controllers.routes.HomeController.show().url)
         status(result) shouldBe SEE_OTHER
       }
       "called with an unauthenticated user" in {
         setupMockAuthorisationException()
 
-        val result: Future[Result] = TestForeignPropertyObligationsController.show("123")(fakeRequestWithActiveSession)
+        val result: Future[Result] = TestForeignPropertyObligationsController.show()(fakeRequestWithActiveSession)
         status(result) shouldBe SEE_OTHER
       }
       "user has timed out, show timeout" in {
         setupMockAuthorisationException()
 
-        val result = TestForeignPropertyObligationsController.submit()(fakeRequestWithTimeoutSession)
+        val result = TestForeignPropertyObligationsController.show()(fakeRequestWithTimeoutSession)
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout.url)
       }
     }
   }
 
-  "Individual - ForeignPropertyAddedObligationsController.submit" should {
-    s"return 303 SEE_OTHER and redirect to ${controllers.incomeSources.add.routes.AddIncomeSourceController.show().url}" when {
-      "view income sources button pressed" in {
-        disableAllSwitches()
-        enable(IncomeSources)
-        mockForeignPropertyIncomeSource()
-
-        val result: Future[Result] = TestForeignPropertyObligationsController.submit()(fakeRequestWithActiveSession)
-        status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.AddIncomeSourceController.show().url)
-      }
-    }
-  }
 
   "Agent - ForeignPropertyAddedObligationsController.showAgent" should {
     "return 200 OK" when {
@@ -206,7 +192,7 @@ class ForeignPropertyAddedControllerSpec extends TestSupport
         when(mockNextUpdatesService.getNextUpdates(any())(any(), any())).
           thenReturn(Future(testObligationsModel))
 
-        val result: Future[Result] = TestForeignPropertyObligationsController.showAgent("123")(fakeRequestConfirmedClient())
+        val result: Future[Result] = TestForeignPropertyObligationsController.showAgent()(fakeRequestConfirmedClient())
         status(result) shouldBe OK
 
       }
@@ -218,30 +204,15 @@ class ForeignPropertyAddedControllerSpec extends TestSupport
         disable(IncomeSources)
         mockForeignPropertyIncomeSource()
 
-        val result: Future[Result] = TestForeignPropertyObligationsController.showAgent("123")(fakeRequestConfirmedClient())
+        val result: Future[Result] = TestForeignPropertyObligationsController.showAgent()(fakeRequestConfirmedClient())
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.routes.HomeController.showAgent.url)
       }
       "called with an unauthenticated user" in {
         setupMockAgentAuthorisationException()
 
-        val result: Future[Result] = TestForeignPropertyObligationsController.showAgent("123")(fakeRequestConfirmedClient())
+        val result: Future[Result] = TestForeignPropertyObligationsController.showAgent()(fakeRequestConfirmedClient())
         status(result) shouldBe SEE_OTHER
-      }
-    }
-  }
-
-  "Agent - ForeignPropertyAddedObligationsController.submit" should {
-    s"return 303 SEE_OTHER and redirect to ${controllers.incomeSources.add.routes.AddIncomeSourceController.showAgent().url}" when {
-      "view income sources button pressed" in {
-        disableAllSwitches()
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        enable(IncomeSources)
-        mockForeignPropertyIncomeSource()
-
-        val result: Future[Result] = TestForeignPropertyObligationsController.submitAgent()(fakeRequestConfirmedClient())
-        status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.AddIncomeSourceController.showAgent().url)
       }
     }
   }

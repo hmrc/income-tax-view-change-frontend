@@ -58,8 +58,8 @@ class CheckCeaseForeignPropertyDetailsController @Inject()(val authenticate: Aut
   lazy val changeUrl: String = routes.ForeignPropertyEndDateController.show().url
   lazy val changeUrlAgent: String = routes.ForeignPropertyEndDateController.showAgent().url
 
-  lazy val successCall: Call = controllers.incomeSources.cease.routes.CeaseForeignPropertySuccessController.show()
-  lazy val successCallAgent: Call = controllers.incomeSources.cease.routes.CeaseForeignPropertySuccessController.showAgent()
+  lazy val successCall: Call = controllers.incomeSources.cease.routes.ForeignPropertyCeasedObligationsController.show()
+  lazy val successCallAgent: Call = controllers.incomeSources.cease.routes.ForeignPropertyCeasedObligationsController.showAgent()
 
   def show(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {

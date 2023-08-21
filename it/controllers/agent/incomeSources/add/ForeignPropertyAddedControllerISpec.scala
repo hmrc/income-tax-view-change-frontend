@@ -46,7 +46,7 @@ class ForeignPropertyAddedControllerISpec extends ComponentSpecBase {
         val result = IncomeTaxViewChangeFrontend.getForeignPropertyAddedObligations(incomeSourceId, clientDetailsWithConfirmation)
         verifyIncomeSourceDetailsCall(testMtditid)
 
-        val expectedText: String = messagesAPI("business-added.foreign-property-h1") + " " + messagesAPI("business-added.h2")
+        val expectedText: String = messagesAPI("business-added.foreign-property.h1") + " " + messagesAPI("business-added.foreign-property.base")
 
         result should have(
           httpStatus(OK),
