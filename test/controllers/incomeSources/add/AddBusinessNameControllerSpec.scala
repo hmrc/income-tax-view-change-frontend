@@ -434,5 +434,3 @@ class AddBusinessNameControllerSpec extends TestSupport
     }
   }
 }
-
-

@@ -111,9 +111,9 @@ class CheckCeaseBusinessDetailsController @Inject()(val authenticate: Authentica
   def handleSubmitRequest(isAgent: Boolean)(implicit user: MtdItUser[_], request: Request[_]): Future[Result] = {
     lazy val (redirectAction, errorHandler) = {
       if (isAgent)
-        (routes.CeaseBusinessSuccessController.showAgent(), itvcErrorHandlerAgent)
+        (routes.BusinessCeasedObligationsController.showAgent(), itvcErrorHandlerAgent)
       else
-        (routes.CeaseBusinessSuccessController.show(), itvcErrorHandler)
+        (routes.BusinessCeasedObligationsController.show(), itvcErrorHandler)
     }
     if (isEnabled(IncomeSources)) {
       (request.session.get(ceaseBusinessIncomeSourceId), request.session.get(ceaseBusinessEndDate)) match {

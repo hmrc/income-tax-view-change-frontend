@@ -115,7 +115,7 @@ class CheckCeaseForeignPropertyDetailsControllerSpec extends TestSupport with Mo
   }
 
   "Individual - CheckCeaseForeignPropertyDetailsController.submit" should {
-    s"return 303 SEE_OTHER and redirect to ${controllers.incomeSources.cease.routes.CeaseForeignPropertySuccessController.show().url}" when {
+    s"return 303 SEE_OTHER and redirect to ${controllers.incomeSources.cease.routes.ForeignPropertyCeasedObligationsController.show().url}" when {
       "submitted" in {
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
         enable(IncomeSources)
@@ -128,7 +128,7 @@ class CheckCeaseForeignPropertyDetailsControllerSpec extends TestSupport with Mo
           TestCheckCeaseForeignPropertyDetailsController.submit(cessationDate)(fakeRequestWithCeaseForeignPropertyDate(cessationDate))
         }
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.CeaseForeignPropertySuccessController.show().url)
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.ForeignPropertyCeasedObligationsController.show().url)
       }
     }
     s"return 203 SEE_OTHER and redirect to the home page" when {
