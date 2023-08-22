@@ -49,7 +49,7 @@ class IncomeSourceDetailsPredicateSpec extends TestSupport with MockIncomeSource
       "return the expected MtdItUser" in {
         mockSingleBusinessIncomeSource()
         val result = IncomeSourceDetailsPredicate.refine(userWithNino)
-        result.futureValue.right.get shouldBe successResponse
+        result.futureValue.toOption.get shouldBe successResponse
       }
 
     }
