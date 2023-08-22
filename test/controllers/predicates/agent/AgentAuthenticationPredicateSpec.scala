@@ -22,7 +22,7 @@ import controllers.predicates.AuthPredicate.AuthPredicateSuccess
 import controllers.predicates.IncomeTaxAgentUser
 import controllers.predicates.agent.AgentAuthenticationPredicate._
 import org.scalatest.EitherValues
-import org.scalatest.MustMatchers.convertToAnyMustWrapper
+import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import org.scalatest.concurrent.ScalaFutures
 import org.mockito.Mockito.mock
 import play.api.mvc.{AnyContentAsEmpty, Result}

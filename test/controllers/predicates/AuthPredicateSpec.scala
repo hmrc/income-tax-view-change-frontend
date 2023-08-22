@@ -16,9 +16,11 @@
 
 package controllers.predicates
 
-import org.scalatest.{Matchers, WordSpecLike}
+import org.scalatest.wordspec.AnyWordSpecLike
+import org.scalatest.matchers.must.Matchers
 
-class AuthPredicateSpec extends WordSpecLike with Matchers {
+
+class AuthPredicateSpec extends AnyWordSpecLike with Matchers {
   import controllers.predicates.AuthPredicate._
 
   "AuthPredicateSuccessMonoid" when {
