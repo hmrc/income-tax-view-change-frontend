@@ -38,6 +38,8 @@ class AddBusinessAddressControllerISpec extends ComponentSpecBase {
         When(s"I call GET $businessAddressShowUrl")
         val result = IncomeTaxViewChangeFrontend.getAddBusinessAddress
 
+        // TODO: remove after fix
+        println( result.body )
         result should have(
           httpStatus(SEE_OTHER),
         )
@@ -55,6 +57,8 @@ class AddBusinessAddressControllerISpec extends ComponentSpecBase {
         When(s"I call GET $changeBusinessAddressShowUrl")
         val result = IncomeTaxViewChangeFrontend.getAddChangeBusinessAddress
 
+        // TODO: remove after fix
+        println(result.body)
         result should have(
           httpStatus(SEE_OTHER),
         )
