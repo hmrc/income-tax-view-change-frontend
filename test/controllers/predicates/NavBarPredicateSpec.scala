@@ -66,7 +66,7 @@ class NavBarPredicateSpec extends TestSupport with MockAsyncCacheApi with Featur
           when(mockBtaNavBarController.btaNavBarPartial(any())(any(), any())).thenReturn(Future.successful(Some(testView.apply(testListLink))))
 
           val result = NavBarPredicate.refine(successResponseWithBtaOrigin)
-          result.futureValue.right.get shouldBe successResponseWithBtaOrigin
+          result.futureValue.toOption.value shouldBe successResponseWithBtaOrigin
         }
         "Return a valid response when origin pta is present in session" should {
           "return the expected MtdItUserWithNino with a ptaPartial" in {
@@ -74,15 +74,15 @@ class NavBarPredicateSpec extends TestSupport with MockAsyncCacheApi with Featur
             when(mockPtaPartial.apply()(any(), any(), any())).thenReturn(Html(""))
 
             val result = NavBarPredicate.refine(successResponseWithPtaOrigin)
-            result.futureValue.right.get shouldBe successResponseWithPtaOrigin
+            result.futureValue.toOption.value shouldBe successResponseWithPtaOrigin
           }
         }
         "Return a redirect to TaxAccountRouter when origin is not present in session which" should {
           "return the expected Redirect with a tax account router" in {
             enable(NavBarFs)
             val result = NavBarPredicate.refine(successResponseWithoutOrigin)
-            status(Future.successful(result.futureValue.left.get)) shouldBe Status.SEE_OTHER
-            redirectLocation(Future.successful(result.futureValue.left.get)).get shouldBe "http://localhost:9280/account"
+            status(Future.successful(result.futureValue.swap.toOption.value)) shouldBe Status.SEE_OTHER
+            redirectLocation(Future.successful(result.futureValue.swap.toOption.value)).get shouldBe "http://localhost:9280/account"
           }
         }
 
@@ -93,7 +93,7 @@ class NavBarPredicateSpec extends TestSupport with MockAsyncCacheApi with Featur
             when(mockItvcErrorHandler.showInternalServerError()(any())).thenReturn(InternalServerError(""))
 
             val result = NavBarPredicate.refine(successResponseWithBtaOrigin)
-            status(Future.successful(result.futureValue.left.get)) shouldBe Status.INTERNAL_SERVER_ERROR
+            status(Future.successful(result.futureValue.swap.toOption.value)) shouldBe Status.INTERNAL_SERVER_ERROR
           }
         }
       }
@@ -104,7 +104,7 @@ class NavBarPredicateSpec extends TestSupport with MockAsyncCacheApi with Featur
         disable(NavBarFs)
 
         val result = NavBarPredicate.refine(successResponseWithoutOrigin)
-        result.futureValue.right.get shouldBe successResponseWithoutOrigin
+        result.futureValue.toOption.value shouldBe successResponseWithoutOrigin
       }
     }
   }

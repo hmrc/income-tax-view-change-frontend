@@ -70,7 +70,7 @@ class AgentAuthenticationPredicateSpec extends TestSupport with ScalaFutures wit
 
   "arnPredicate" should {
     "return an AuthPredicateSuccess where an arn enrolment already exists" in {
-      arnPredicate().apply(FakeRequest())(userWithArnIdEnrolment).right.value mustBe AuthPredicateSuccess
+      arnPredicate().apply(FakeRequest())(userWithArnIdEnrolment).toOption.value mustBe AuthPredicateSuccess
     }
 
     "return a MissingAgentReferenceNumber where a user does not have it in their enrolments" in {
@@ -86,11 +86,11 @@ class AgentAuthenticationPredicateSpec extends TestSupport with ScalaFutures wit
 
   "timeoutPredicate" should {
     "return an AuthPredicateSuccess where the lastRequestTimestamp is not set" in {
-      timeoutPredicate(FakeRequest())(blankUser).right.value mustBe AuthPredicateSuccess
+      timeoutPredicate(FakeRequest())(blankUser).toOption.value mustBe AuthPredicateSuccess
     }
 
     "return an AuthPredicateSuccess where the authToken is set and the lastRequestTimestamp is set" in {
-      timeoutPredicate(authorisedRequest)(blankUser).right.value mustBe AuthPredicateSuccess
+      timeoutPredicate(authorisedRequest)(blankUser).toOption.value mustBe AuthPredicateSuccess
     }
 
     "return the timeout page where the lastRequestTimestamp is set but the auth token is not" in {
@@ -101,7 +101,7 @@ class AgentAuthenticationPredicateSpec extends TestSupport with ScalaFutures wit
 
   "detailsPredicate" should {
     "return an AuthPredicateSuccess where the client's details are in session" in {
-      detailsPredicate(clientDetailsPopulated)(blankUser).right.value mustBe AuthPredicateSuccess
+      detailsPredicate(clientDetailsPopulated)(blankUser).toOption.value mustBe AuthPredicateSuccess
     }
 
     "return the Enter Client UTR page where the client's details are not in session" in {
@@ -111,7 +111,7 @@ class AgentAuthenticationPredicateSpec extends TestSupport with ScalaFutures wit
 
   "selectedClientPredicate" should {
     "return an AuthPredicateSuccess where the confirmedClient key is in session" in {
-      selectedClientPredicate(confirmedClientPopulated)(blankUser).right.value mustBe AuthPredicateSuccess
+      selectedClientPredicate(confirmedClientPopulated)(blankUser).toOption.value mustBe AuthPredicateSuccess
     }
 
     "return an Enter Client UTR page where the confirmedClient key is not in session" in {
