@@ -19,7 +19,8 @@ package audit.models
 import auth.MtdItUser
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import models.liabilitycalculation.viewmodels.TaxDueSummaryViewModel
-import org.scalatest.{MustMatchers, WordSpecLike}
+import org.scalatest.matchers.must.Matchers
+import org.scalatest.wordspec.AnyWordSpecLike
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import testConstants.BaseTestConstants.{testMtditid, testTaxYear}
@@ -28,7 +29,7 @@ import uk.gov.hmrc.auth.core.AffinityGroup
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
 import uk.gov.hmrc.auth.core.retrieve.Name
 
-class TaxCalculationDetailsResponseAuditModelSpec extends WordSpecLike with MustMatchers {
+class TaxCalculationDetailsResponseAuditModelSpec extends AnyWordSpecLike with Matchers {
 
   val transactionName: String = "tax-calculation-response"
   val auditType: String = "TaxCalculationDetailsResponse"

@@ -37,8 +37,8 @@ class AddBusinessNameViewSpec extends ViewSpec {
     val errorPrefix: String = messages("base.error-prefix")
   }
 
-  lazy val backUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceController.show.url
-  lazy val backUrlAgent: String = controllers.incomeSources.add.routes.AddIncomeSourceController.showAgent.url
+  lazy val backUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceController.show().url
+  lazy val backUrlAgent: String = controllers.incomeSources.add.routes.AddIncomeSourceController.showAgent().url
 
   val addBusinessName: AddBusinessName = app.injector.instanceOf[AddBusinessName]
 
@@ -61,7 +61,6 @@ class AddBusinessNameViewSpec extends ViewSpec {
       "have an input with associated hint and label" in new Setup(pageWithoutError) {
         val form: Element = layoutContent.selectHead("form")
         val label: Element = form.selectHead("label")
-        val hint: Element = layoutContent.selectHead(".govuk-hint")
 
         val input: Element = form.selectHead("input")
 
