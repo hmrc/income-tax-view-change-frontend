@@ -78,7 +78,7 @@ class AddBusinessAddressController @Inject()(authenticate: AuthenticationPredica
         case Right(Some(location)) =>
           Redirect(location)
         case Right(None) =>
-          Logger("application").error(s"[AddBusinessAddressController][handleRequest] - No redirect location returned from connector")
+          Logger("application").error(s"[AddBusinessAddressController][handleRequest] - No redirect location returned from connector $isAgent - $isChange")
           itvcErrorHandler.showInternalServerError()
         case Left(_) =>
           Logger("application").error(s"[AddBusinessAddressController][handleRequest] - Unexpected response")
