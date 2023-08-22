@@ -25,6 +25,8 @@ import play.api.i18n.{Messages, MessagesApi}
 import play.api.mvc.Call
 import play.twirl.api.Html
 
+import scala.language.implicitConversions
+
 trait ViewSpec extends TestSupport {
 
   val testCall: Call = Call("POST", "/test-url")
