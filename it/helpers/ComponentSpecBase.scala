@@ -30,6 +30,7 @@ import helpers.servicemocks.AuditStub
 import implicits.ImplicitDateFormatterImpl
 import org.scalatest._
 import org.scalatest.concurrent.{Eventually, IntegrationPatience, ScalaFutures}
+import org.scalatest.time.{Millis, Seconds, Span}
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
 import play.api.cache.AsyncCacheApi
 import play.api.http.HeaderNames
@@ -108,6 +109,8 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
     override def getCurrentTaxYearEnd(isTimeMachineEnabled: Boolean = false): Int = 2023
   }
+
+  implicit val defaultPatience = PatienceConfig(timeout = Span(3, Seconds), interval = Span(5, Millis))
 
   override lazy val cookieSigner: DefaultCookieSigner = app.injector.instanceOf[DefaultCookieSigner]
 
