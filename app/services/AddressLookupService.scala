@@ -42,8 +42,8 @@ class AddressLookupService @Inject()(val frontendAppConfig: FrontendAppConfig,
       case Left(UnexpectedPostStatusFailure(status)) =>
         Logger("application").info(s"[AddressLookupService][initialiseAddressJourney] - error during initialise $status")
         Left(AddressError("status: " + status))
-      case Right(PostAddressLookupSuccessResponse(location: Option[String])) =>
-        Logger("application").info(message = s"[AddressLookupService][initialiseAddressJourney] - success response: $location")
+      case Right(PostAddressLookupSuccessResponse(location: Option[String], header)) =>
+        Logger("application").info(message = s"[AddressLookupService][initialiseAddressJourney] - success response: $location - $header ")
         Right(location)
     }
   }

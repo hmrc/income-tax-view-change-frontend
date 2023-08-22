@@ -29,8 +29,10 @@ object PostAddressLookupHttpParser {
       override def read(method: String, url: String, response: HttpResponse): PostAddressLookupResponse = {
         response.status match {
           case ACCEPTED => Right(
-            if (response.header(key = "location").isEmpty) PostAddressLookupSuccessResponse(response.header(key = "Location"))
-            else PostAddressLookupSuccessResponse(response.header(key = "location"))
+            if (response.header(key = "location").isEmpty)
+              PostAddressLookupSuccessResponse(response.header(key = "Location"), Some(response.headers.mkString("\n") ) )
+            else
+              PostAddressLookupSuccessResponse(response.header(key = "location"), Some(response.headers.mkString("\n") ) )
           )
           case status => Left(UnexpectedPostStatusFailure(status))
         }
@@ -39,7 +41,7 @@ object PostAddressLookupHttpParser {
 
   sealed trait PostAddressLookupSuccess
 
-  case class PostAddressLookupSuccessResponse(location: Option[String]) extends PostAddressLookupSuccess
+  case class PostAddressLookupSuccessResponse(location: Option[String], header: Option[String] = None) extends PostAddressLookupSuccess
 
   sealed trait PostAddressLookupFailure
 
