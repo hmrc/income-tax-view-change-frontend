@@ -27,7 +27,6 @@ import forms.utils.SessionKeys
 import forms.utils.SessionKeys.{addUkPropertyStartDate, businessStartDate, foreignPropertyStartDate}
 import implicits.ImplicitDateFormatter
 import play.api.Logger
-import play.api.http.HttpVerbs
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.{DateService, IncomeSourceDetailsService}
@@ -222,9 +221,9 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
       routes.AddIncomeSourceStartDateController.show(incomeSourceType.key, isAgent, isUpdate),
       routes.AddIncomeSourceStartDateCheckController.submit(incomeSourceType.key, isAgent, isUpdate),
       (isAgent, isUpdate, incomeSourceType) match {
-        case (false, false, SelfEmployment) => routes.AddBusinessTradeController.show()
+        case (false, false, SelfEmployment) => routes.AddBusinessTradeController.show(isAgent = false, isChange = false)
         case (false, true,  SelfEmployment) => routes.CheckBusinessDetailsController.show()
-        case (true,  false, SelfEmployment) => routes.AddBusinessTradeController.showAgent()
+        case (true,  false, SelfEmployment) => routes.AddBusinessTradeController.show(isAgent = true, isChange = false)
         case (true,  true,  SelfEmployment) => routes.CheckBusinessDetailsController.showAgent()
         case (false, false, _)              => routes.IncomeSourcesAccountingMethodController.show(incomeSourceType.key)
         case (true,  false, _)              => routes.IncomeSourcesAccountingMethodController.showAgent(incomeSourceType.key)

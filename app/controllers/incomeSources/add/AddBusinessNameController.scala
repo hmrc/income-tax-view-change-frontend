@@ -21,15 +21,14 @@ import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
-import enums.IncomeSourceJourney.SelfEmployment
 import forms.BusinessNameForm
+import enums.IncomeSourceJourney.SelfEmployment
 import forms.utils.SessionKeys
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.IncomeSourceDetailsService
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import views.html.incomeSources.add.AddBusinessName
-
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -51,16 +50,27 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
 
   lazy val backUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceController.show().url
   lazy val backUrlAgent: String = controllers.incomeSources.add.routes.AddIncomeSourceController.showAgent().url
+  lazy val checkDetailsBackUrl: String = controllers.incomeSources.add.routes.CheckBusinessDetailsController.show().url
+  lazy val checkDetailsBackUrlAgent: String = controllers.incomeSources.add.routes.CheckBusinessDetailsController.showAgent().url
+
   lazy val submitAction: Call = controllers.incomeSources.add.routes.AddBusinessNameController.submit()
   lazy val submitActionAgent: Call = controllers.incomeSources.add.routes.AddBusinessNameController.submitAgent()
-  def redirect(isAgent: Boolean): Call = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.show(SelfEmployment.key, isAgent = isAgent, isChange = false)
+  lazy val submitChangeAction: Call = controllers.incomeSources.add.routes.AddBusinessNameController.submitChange()
+  lazy val submitChangeActionAgent: Call = controllers.incomeSources.add.routes.AddBusinessNameController.submitChangeAgent()
+
+  lazy val redirect: Call = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.show(incomeSourceKey = "SE", isAgent = false, isChange = false )
+  lazy val redirectAgent: Call = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.show(incomeSourceKey = "SE", isAgent = true, isChange = false )
+  lazy val checkDetailsRedirect: Call = controllers.incomeSources.add.routes.CheckBusinessDetailsController.show()
+  lazy val checkDetailsRedirectAgent: Call = controllers.incomeSources.add.routes.CheckBusinessDetailsController.showAgent()
+
 
   def show(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
       handleRequest(
         isAgent = false,
-        backUrl = backUrl
+        backUrl = backUrl,
+        isChange = isChangeRequest(user)
       )
   }
 
@@ -72,12 +82,18 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
             implicit mtdItUser =>
               handleRequest(
                 isAgent = true,
-                backUrl = backUrlAgent
+                backUrl = backUrlAgent,
+                isChange = isChangeRequest(request)
               )
           }
     }
 
-  def handleRequest(isAgent: Boolean, backUrl: String)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
+  private def isChangeRequest(request: RequestHeader): Boolean = {
+    request.uri.contains("change")
+  }
+
+  def handleRequest(isAgent: Boolean, backUrl: String, isChange: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
+
     if (isDisabled(IncomeSources)) {
       Future.successful(Redirect(
         if (isAgent) controllers.routes.HomeController.showAgent
@@ -85,10 +101,19 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
       ))
     } else {
       Future {
-        if (isAgent) {
-          Ok(addBusinessView(BusinessNameForm.form, isAgent, submitActionAgent, backUrl))
-        } else {
-          Ok(addBusinessView(BusinessNameForm.form, isAgent, submitAction, backUrl))
+        val filledForm = user.session.get(SessionKeys.businessName) match {
+          case Some(name) => BusinessNameForm.form.fill(BusinessNameForm(name))
+          case None => BusinessNameForm.form
+        }
+        (isAgent, isChange) match {
+          case (false, false) =>
+            Ok(addBusinessView(filledForm, isAgent, submitAction, backUrl, useFallbackLink = false))
+          case (true, false) =>
+            Ok(addBusinessView(filledForm, isAgent, submitActionAgent, backUrl, useFallbackLink = false))
+          case (false, true) =>
+            Ok(addBusinessView(filledForm, isAgent, submitChangeAction, backUrl, useFallbackLink = true))
+          case (true, true) =>
+            Ok(addBusinessView(filledForm, isAgent, submitChangeActionAgent, backUrl, useFallbackLink = true))
         }
       }
     }
@@ -97,7 +122,7 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
   def submit: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit request =>
-      handleSubmitRequest(isAgent = false)
+      handleSubmitRequest(isAgent = false, isChange = false)
   }
 
   def submitAgent: Action[AnyContent] = Authenticated.async {
@@ -105,22 +130,38 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
           implicit mtdItUser =>
-            handleSubmitRequest(isAgent = true)
+            handleSubmitRequest(isAgent = true, isChange = false)
         }
   }
 
-  def handleSubmitRequest(isAgent: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
-    val (backUrlLocal, submitActionLocal, redirectLocal) = {
-      if (isAgent)
-        (backUrlAgent, submitActionAgent, redirect(isAgent))
-      else
-        (backUrl, submitAction, redirect(isAgent))
+  def submitChange: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+    andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
+    implicit request =>
+      handleSubmitRequest(isAgent = false, isChange = true)
+  }
+
+  def submitChangeAgent: Action[AnyContent] = Authenticated.async {
+    implicit request =>
+      implicit user =>
+        getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
+          implicit mtdItUser =>
+            handleSubmitRequest(isAgent = true, isChange = true)
+        }
+  }
+
+  def handleSubmitRequest(isAgent: Boolean, isChange: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
+
+    val (backUrlLocal, submitActionLocal, redirectLocal) = (isAgent, isChange) match {
+      case (false, false) => (backUrl, submitAction, redirect)
+      case (true, false) => (backUrlAgent, submitActionAgent, redirectAgent)
+      case (false, true) => (checkDetailsBackUrl, submitChangeAction, checkDetailsRedirect)
+      case (true, true) => (checkDetailsBackUrlAgent, submitChangeActionAgent, checkDetailsRedirectAgent)
     }
 
-    BusinessNameForm.form.bindFromRequest().fold(
+      BusinessNameForm.form.bindFromRequest().fold(
       formWithErrors => {
         Future {
-          Ok(addBusinessView(formWithErrors, isAgent, submitActionLocal, backUrlLocal))
+          Ok(addBusinessView(formWithErrors, isAgent, submitActionLocal, backUrlLocal, useFallbackLink = true))
         }
       },
       formData => {
@@ -132,11 +173,27 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
     )
   }
 
-  def changeBusinessName(): Action[AnyContent] = Action {
-    Ok("Change Business Name WIP")
+  def changeBusinessName(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+    andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
+    implicit user =>
+      handleRequest(
+        isAgent = false,
+        backUrl = checkDetailsBackUrl,
+        isChange = true
+      )
   }
 
-  def changeBusinessNameAgent(): Action[AnyContent] = Action {
-    Ok("Agent Change Business Name WIP")
-  }
+  def changeBusinessNameAgent(): Action[AnyContent] =
+    Authenticated.async {
+      implicit request =>
+        implicit user =>
+          getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
+            implicit mtdItUser =>
+              handleRequest(
+                isAgent = true,
+                backUrl = checkDetailsBackUrlAgent,
+                isChange = true
+              )
+          }
+    }
 }

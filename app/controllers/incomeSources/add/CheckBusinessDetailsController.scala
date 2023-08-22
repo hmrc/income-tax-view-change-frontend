@@ -17,7 +17,7 @@
 package controllers.incomeSources.add
 
 import auth.MtdItUser
-import config.featureswitch.{FeatureSwitching, IncomeSources}
+import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
@@ -52,8 +52,8 @@ class CheckBusinessDetailsController @Inject()(val checkBusinessDetails: CheckBu
                                                implicit override val mcc: MessagesControllerComponents,
                                                val appConfig: FrontendAppConfig,
                                                implicit val itvcErrorHandler: ItvcErrorHandler,
-                                               implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler) extends ClientConfirmedController with IncomeSourcesUtils
-  with FeatureSwitching {
+                                               implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler) extends ClientConfirmedController
+  with IncomeSourcesUtils with FeatureSwitching {
 
   lazy val businessAddressUrl: String = controllers.incomeSources.add.routes.AddBusinessAddressController.show().url
   lazy val agentBusinessAddressUrl: String = controllers.incomeSources.add.routes.AddBusinessAddressController.showAgent().url
@@ -103,9 +103,7 @@ class CheckBusinessDetailsController @Inject()(val checkBusinessDetails: CheckBu
     val postAction: Call = if (isAgent) controllers.incomeSources.add.routes.CheckBusinessDetailsController.submitAgent() else
       controllers.incomeSources.add.routes.CheckBusinessDetailsController.submit()
 
-    if (isDisabled(IncomeSources)) {
-      Future.successful(Redirect(controllers.routes.HomeController.show()))
-    } else {
+    withIncomeSourcesFS {
       Future {
         getBusinessDetailsFromSession(user) match {
           case Right(viewModel) =>
@@ -131,27 +129,29 @@ class CheckBusinessDetailsController @Inject()(val checkBusinessDetails: CheckBu
   }
 
   def handleSubmitRequest(isAgent: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
-    val (redirect, errorHandler) = {
-      if (isAgent)
-        (routes.BusinessReportingMethodController.showAgent _, itvcErrorHandlerAgent)
-      else
-        (routes.BusinessReportingMethodController.show _, itvcErrorHandler)
-    }
-    getBusinessDetailsFromSession(user).toOption match {
-      case Some(viewModel: CheckBusinessDetailsViewModel) =>
-        businessDetailsService.createBusinessDetails(viewModel).map {
-          case Left(ex) => Logger("application").error(
-            s"${if (isAgent) "[Agents]"}[CheckBusinessDetailsController][handleSubmitRequest] - Unable to create income source: ${ex.getMessage}")
-            errorHandler.showInternalServerError()
+    withIncomeSourcesFS {
+      val (redirect, errorHandler) = {
+        if (isAgent)
+          (routes.BusinessReportingMethodController.showAgent _, itvcErrorHandlerAgent)
+        else
+          (routes.BusinessReportingMethodController.show _, itvcErrorHandler)
+      }
+      getBusinessDetailsFromSession(user).toOption match {
+        case Some(viewModel: CheckBusinessDetailsViewModel) =>
+          businessDetailsService.createBusinessDetails(viewModel).map {
+            case Left(ex) => Logger("application").error(
+              s"${if (isAgent) "[Agents]"}[CheckBusinessDetailsController][handleSubmitRequest] - Unable to create income source: ${ex.getMessage}")
+              errorHandler.showInternalServerError()
 
-          case Right(CreateIncomeSourceResponse(id)) =>
-            withIncomeSourcesRemovedFromSession {
-              Redirect(redirect(id).url)
-            }
-        }
-      case None => Logger("application").error(
-        s"${if (isAgent) "[Agents]"}[CheckBusinessDetailsController][handleSubmitRequest] - Error: Unable to build view model on submit")
-        Future.successful(errorHandler.showInternalServerError())
+            case Right(CreateIncomeSourceResponse(id)) =>
+              withIncomeSourcesRemovedFromSession {
+                Redirect(redirect(id).url)
+              }
+          }
+        case None => Logger("application").error(
+          s"${if (isAgent) "[Agents]"}[CheckBusinessDetailsController][handleSubmitRequest] - Error: Unable to build view model on submit")
+          Future.successful(errorHandler.showInternalServerError())
+      }
     }
   }
 
