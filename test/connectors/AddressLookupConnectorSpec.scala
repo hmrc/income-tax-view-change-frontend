@@ -72,7 +72,7 @@ class AddressLookupConnectorSpec extends TestSupport with FeatureSwitching with 
           val result = TestAddressLookupConnector.initialiseAddressLookup(isAgent = false, isChange = false)
           result map {
             case Left(_) => Fail("Error returned from lookup service")
-            case Right(PostAddressLookupSuccessResponse(location)) => location shouldBe Some("Sample location")
+            case Right(PostAddressLookupSuccessResponse(location, _)) => location shouldBe Some("Sample location")
           }
         }
         "location returned from lookup-service (agent)" in { //this is the only specific agent test, just to test that everything works with both possible json payloads
@@ -86,7 +86,7 @@ class AddressLookupConnectorSpec extends TestSupport with FeatureSwitching with 
           val result = TestAddressLookupConnector.initialiseAddressLookup(isAgent = true, isChange = false)
           result map {
             case Left(_) => Fail("Error returned from lookup service")
-            case Right(PostAddressLookupSuccessResponse(location)) => location shouldBe Some("Sample location")
+            case Right(PostAddressLookupSuccessResponse(location, _)) => location shouldBe Some("Sample location")
           }
         }
       }
@@ -102,7 +102,7 @@ class AddressLookupConnectorSpec extends TestSupport with FeatureSwitching with 
           val result = TestAddressLookupConnector.initialiseAddressLookup(isAgent = false, isChange = true)
           result map {
             case Left(_) => Fail("Error returned from lookup service")
-            case Right(PostAddressLookupSuccessResponse(location)) => location shouldBe Some("Sample location")
+            case Right(PostAddressLookupSuccessResponse(location, _)) => location shouldBe Some("Sample location")
           }
         }
         "location returned from lookup-service (agent) when isChange = true" in { //this is the only specific agent test, just to test that everything works with both possible json payloads
@@ -116,7 +116,7 @@ class AddressLookupConnectorSpec extends TestSupport with FeatureSwitching with 
           val result = TestAddressLookupConnector.initialiseAddressLookup(isAgent = true, isChange = true)
           result map {
             case Left(_) => Fail("Error returned from lookup service")
-            case Right(PostAddressLookupSuccessResponse(location)) => location shouldBe Some("Sample location")
+            case Right(PostAddressLookupSuccessResponse(location, _)) => location shouldBe Some("Sample location")
           }
         }
       }
