@@ -43,6 +43,7 @@ import java.time.LocalDate
 import javax.inject.Singleton
 import scala.concurrent.Future
 import forms.incomeSources.add.{AddBusinessReportingMethodForm, AddForeignPropertyReportingMethodForm, AddIncomeSourceStartDateCheckForm, AddUKPropertyReportingMethodForm}
+import org.scalatest.time.{Millis, Seconds, Span}
 import testConstants.BaseIntegrationTestConstants.{testPropertyIncomeId, testSelfEmploymentId}
 
 import java.time.Month.APRIL
@@ -81,6 +82,8 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
   val mockHost: String = WiremockHelper.wiremockHost
   val mockPort: String = WiremockHelper.wiremockPort.toString
   val mockUrl: String = s"http://$mockHost:$mockPort"
+
+  implicit val defaultPatience = PatienceConfig(timeout = Span(3, Seconds), interval = Span(5, Millis))
 
   override lazy val cookieSigner: DefaultCookieSigner = app.injector.instanceOf[DefaultCookieSigner]
 
