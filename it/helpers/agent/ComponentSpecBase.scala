@@ -26,6 +26,7 @@ import forms.incomeSources.cease.CeaseUKPropertyForm
 import helpers.servicemocks.AuditStub
 import helpers.{CustomMatchers, GenericStubMethods, WiremockHelper}
 import org.scalatest._
+import org.scalatest.matchers.should.Matchers
 import org.scalatest.concurrent.{Eventually, IntegrationPatience, ScalaFutures}
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
 import play.api.cache.AsyncCacheApi
