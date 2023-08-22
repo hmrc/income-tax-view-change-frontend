@@ -79,10 +79,10 @@ class AddBusinessAddressController @Inject()(authenticate: AuthenticationPredica
           Redirect(location)
         case Right(None) =>
           Logger("application").error(s"[AddBusinessAddressController][handleRequest] - No redirect location returned from connector")
-          Accepted("FAILED")
+          itvcErrorHandler.showInternalServerError()
         case Left(_) =>
           Logger("application").error(s"[AddBusinessAddressController][handleRequest] - Unexpected response")
-          Ok("Failed")
+          itvcErrorHandler.showInternalServerError()
       }
     }
   }
