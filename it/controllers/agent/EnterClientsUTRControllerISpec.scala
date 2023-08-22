@@ -307,9 +307,9 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
         val result: WSResponse = IncomeTaxViewChangeFrontend.getConfirmClientUTR(clientDetailsWithoutConfirmation)
 
         val document: Document = Jsoup.parse(result.toString)
-        assertThat(document.select(".govuk-header__content")
+        document.select(".govuk-header__content")
           .select(".hmrc-header__service-name hmrc-header__service-name--linked")
-          .text(), is(""));
+          .text() shouldBe ""
 
         result should have(
           httpStatus(OK),
