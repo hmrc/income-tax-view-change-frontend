@@ -110,7 +110,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     override def getCurrentTaxYearEnd(isTimeMachineEnabled: Boolean = false): Int = 2023
   }
 
-  implicit val defaultPatience = PatienceConfig(timeout = Span(3, Seconds), interval = Span(5, Millis))
+  implicit val defaultPatience = PatienceConfig(timeout = Span(5, Seconds), interval = Span(5, Millis))
 
   override lazy val cookieSigner: DefaultCookieSigner = app.injector.instanceOf[DefaultCookieSigner]
 

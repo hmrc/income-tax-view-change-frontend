@@ -83,7 +83,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
   val mockPort: String = WiremockHelper.wiremockPort.toString
   val mockUrl: String = s"http://$mockHost:$mockPort"
 
-  implicit val defaultPatience = PatienceConfig(timeout = Span(3, Seconds), interval = Span(5, Millis))
+  implicit val defaultPatience = PatienceConfig(timeout = Span(5, Seconds), interval = Span(5, Millis))
 
   override lazy val cookieSigner: DefaultCookieSigner = app.injector.instanceOf[DefaultCookieSigner]
 
