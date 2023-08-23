@@ -162,6 +162,7 @@ class AddressLookupConnector @Inject()(val appConfig: FrontendAppConfig,
     } else {
       addressJson(continueUrl(isAgent, isChange), individualFeedbackUrl, individualEnglishBanner, individualWelshBanner)
     }
+
     http.POST[JsValue, PostAddressLookupResponse](
       url = addressLookupInitializeUrl,
       body = payload
