@@ -17,6 +17,7 @@
 package controllers.agent.incomeSources.manage
 
 import config.featureswitch.IncomeSources
+import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import forms.incomeSources.manage.ConfirmReportingMethodForm
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
@@ -41,18 +42,18 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
     .ConfirmReportingMethodSharedController
 
   val confirmReportingMethodShowUKPropertyUrl: String = confirmReportingMethodSharedController
-    .showUKPropertyAgent(taxYear = testPropertyIncomeId, changeTo = annual).url
+    .show(None, taxYear = testPropertyIncomeId, changeTo = annual, UkProperty.key, isAgent = true).url
   val confirmReportingMethodShowForeignPropertyUrl: String = confirmReportingMethodSharedController
-    .showForeignPropertyAgent(taxYear = testPropertyIncomeId, changeTo = annual).url
+    .show(None, taxYear = testPropertyIncomeId, changeTo = annual, ForeignProperty.key, isAgent = true).url
   val confirmReportingMethodShowSoleTraderBusinessUrl: String = confirmReportingMethodSharedController
-    .showSoleTraderBusinessAgent(id = testSelfEmploymentId, taxYear = taxYear, changeTo = annual).url
+    .show(id = Some(testSelfEmploymentId), taxYear = taxYear, changeTo = annual, SelfEmployment.key, isAgent = true).url
 
   val confirmReportingMethodSubmitUKPropertyUrl: String = confirmReportingMethodSharedController
-    .submitUKPropertyAgent(id = testPropertyIncomeId, taxYear = taxYear, changeTo = annual).url
+    .submit(id = testPropertyIncomeId, taxYear = taxYear, changeTo = annual, UkProperty.key, isAgent = true).url
   val confirmReportingMethodSubmitForeignPropertyUrl: String = confirmReportingMethodSharedController
-    .submitForeignPropertyAgent(id = testPropertyIncomeId, taxYear = taxYear, changeTo = annual).url
+    .submit(id = testPropertyIncomeId, taxYear = taxYear, changeTo = annual, ForeignProperty.key, isAgent = true).url
   val confirmReportingMethodSubmitSoleTraderBusinessUrl: String = confirmReportingMethodSharedController
-    .submitSoleTraderBusinessAgent(id = testSelfEmploymentId, taxYear = taxYear, changeTo = annual).url
+    .submit(id = testSelfEmploymentId, taxYear = taxYear, changeTo = annual, SelfEmployment.key, isAgent = true).url
 
   val manageObligationsShowUKPropertyUrl: String = manageObligationsController
     .showAgentUKProperty(changeTo = annual, taxYear = taxYear).url

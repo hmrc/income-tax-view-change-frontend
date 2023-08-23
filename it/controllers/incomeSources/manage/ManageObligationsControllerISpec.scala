@@ -17,6 +17,7 @@
 package controllers.incomeSources.manage
 
 import config.featureswitch.IncomeSources
+import enums.IncomeSourceJourney.UkProperty
 import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import play.api.http.Status.{OK, SEE_OTHER}
@@ -35,7 +36,7 @@ class ManageObligationsControllerISpec extends ComponentSpecBase {
   val manageUKObligationsShowUrl: String = controllers.incomeSources.manage.routes.ManageObligationsController.showUKProperty(annual, taxYear).url
   val manageFPObligationsShowUrl: String = controllers.incomeSources.manage.routes.ManageObligationsController.showForeignProperty(annual, taxYear).url
 
-  val manageConfirmShowUrl: String = controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController.showUKProperty(taxYear, quarterly).url
+  val manageConfirmShowUrl: String = controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController.show(None, taxYear, quarterly, UkProperty.key, isAgent = false).url
 
   val manageObligationsSubmitUrl: String = controllers.incomeSources.manage.routes.ManageObligationsController.submit().url
   val manageIncomeSourcesShowUrl: String = controllers.incomeSources.manage.routes.ManageIncomeSourceController.show().url

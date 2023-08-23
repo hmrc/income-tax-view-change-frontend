@@ -19,21 +19,26 @@ package controllers.incomeSources.manage
 import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
+import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import forms.incomeSources.manage.ConfirmReportingMethodForm
 import implicits.ImplicitDateFormatter
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
 import mocks.services.MockIncomeSourceDetailsService
 import models.updateIncomeSource.{UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
+import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import play.api.http.Status
 import play.api.mvc.{MessagesControllerComponents, Result}
-import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
+import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import services.UpdateIncomeSourceService
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testIndividualAuthSuccessWithSaUtrResponse, testPropertyIncomeId, testSelfEmploymentId}
 import testUtils.TestSupport
 import views.html.incomeSources.manage.{ConfirmReportingMethod, ManageIncomeSources}
+import play.i18n.MessagesApi
+
 
 import scala.concurrent.Future
 
@@ -77,15 +82,15 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
 
   val testChangeToQuarterly = "quarterly"
 
-  "ConfirmReportingMethodSharedController.show" should {
+  "Individual: ConfirmReportingMethodSharedController.show" should {
     "redirect to home page" when {
       "the IncomeSources FS is disabled" in {
         disableAllSwitches()
         mockSingleBISWithCurrentYearAsMigrationYear()
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
 
-        val result: Future[Result] = TestConfirmReportingMethodSharedController.showSoleTraderBusiness(
-          testIncomeSourceId, testTaxYear, testChangeToAnnual)(fakeRequestWithActiveSession)
+        val result: Future[Result] = TestConfirmReportingMethodSharedController.show(
+          Some(testIncomeSourceId), testTaxYear, testChangeToAnnual, SelfEmployment.key, isAgent = false)(fakeRequestWithActiveSession)
         status(result) shouldBe Status.SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.routes.HomeController.show().url)
       }
@@ -97,8 +102,8 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
         mockSingleBISWithCurrentYearAsMigrationYear()
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
 
-        val result: Future[Result] = TestConfirmReportingMethodSharedController.showSoleTraderBusiness(
-          testIncomeSourceId, "$$$$-££££", testChangeToAnnual)(fakeRequestWithActiveSession)
+        val result: Future[Result] = TestConfirmReportingMethodSharedController.show(
+          Some(testIncomeSourceId), "$$$$-££££", testChangeToAnnual, SelfEmployment.key, isAgent = false)(fakeRequestWithActiveSession)
         status(result) shouldBe Status.INTERNAL_SERVER_ERROR
       }
     }
@@ -109,8 +114,8 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
         mockSingleBISWithCurrentYearAsMigrationYear()
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
 
-        val result: Future[Result] = TestConfirmReportingMethodSharedController.showForeignProperty(
-          testTaxYear, "randomText")(fakeRequestWithActiveSession)
+        val result: Future[Result] = TestConfirmReportingMethodSharedController.show(
+          None, testTaxYear, "randomText", ForeignProperty.key, isAgent = false)(fakeRequestWithActiveSession)
         status(result) shouldBe Status.INTERNAL_SERVER_ERROR
       }
     }
@@ -121,8 +126,8 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
         mockSingleBISWithCurrentYearAsMigrationYear()
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
 
-        val result: Future[Result] = TestConfirmReportingMethodSharedController.showSoleTraderBusiness(
-          "RANDOM_ID", testTaxYear, testChangeToQuarterly)(fakeRequestWithActiveSession)
+        val result: Future[Result] = TestConfirmReportingMethodSharedController.show(
+          Some("RANDOM_ID"), testTaxYear, testChangeToQuarterly, SelfEmployment.key, isAgent = false)(fakeRequestWithActiveSession)
         status(result) shouldBe Status.INTERNAL_SERVER_ERROR
       }
     }
@@ -133,22 +138,22 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
         mockUKPropertyIncomeSource()
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
 
-        val result: Future[Result] = TestConfirmReportingMethodSharedController.showUKProperty(
-          testTaxYear, testChangeToQuarterly)(fakeRequestWithActiveSession)
+        val result: Future[Result] = TestConfirmReportingMethodSharedController.show(
+          None, testTaxYear, testChangeToQuarterly, UkProperty.key, isAgent = false)(fakeRequestWithActiveSession)
         status(result) shouldBe Status.OK
       }
     }
   }
 
-  "ConfirmReportingMethodSharedController.submit" should {
+  "Individual: ConfirmReportingMethodSharedController.submit" should {
     "redirect to home page" when {
       "the IncomeSources FS is disabled" in {
         disableAllSwitches()
         mockSingleBISWithCurrentYearAsMigrationYear()
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
 
-        val result: Future[Result] = TestConfirmReportingMethodSharedController.submitSoleTraderBusiness(
-          testIncomeSourceId, testTaxYear, testChangeToAnnual)(fakeRequestWithActiveSession)
+        val result: Future[Result] = TestConfirmReportingMethodSharedController.submit(
+          testIncomeSourceId, testTaxYear, testChangeToAnnual, SelfEmployment.key, isAgent = false)(fakeRequestWithActiveSession)
         status(result) shouldBe Status.SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.routes.HomeController.show().url)
       }
@@ -160,8 +165,8 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
         mockSingleBISWithCurrentYearAsMigrationYear()
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
 
-        val result: Future[Result] = TestConfirmReportingMethodSharedController.submitSoleTraderBusiness(
-          testIncomeSourceId, "$$$$-££££", testChangeToAnnual)(fakeRequestWithActiveSession)
+        val result: Future[Result] = TestConfirmReportingMethodSharedController.submit(
+          testIncomeSourceId, "$$$$-££££", testChangeToAnnual, SelfEmployment.key, isAgent = false)(fakeRequestWithActiveSession)
         status(result) shouldBe Status.INTERNAL_SERVER_ERROR
       }
     }
@@ -172,8 +177,8 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
         mockForeignPropertyIncomeSource()
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
 
-        val result: Future[Result] = TestConfirmReportingMethodSharedController.submitForeignProperty(
-          testPropertyIncomeId, testTaxYear, "randomText")(fakeRequestWithActiveSession)
+        val result: Future[Result] = TestConfirmReportingMethodSharedController.submit(
+          testPropertyIncomeId, testTaxYear, "randomText", ForeignProperty.key, isAgent = false)(fakeRequestWithActiveSession)
         status(result) shouldBe Status.INTERNAL_SERVER_ERROR
       }
     }
@@ -184,8 +189,8 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
         mockUKPropertyIncomeSource()
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
 
-        val result: Future[Result] = TestConfirmReportingMethodSharedController.submitUKProperty(
-          testPropertyIncomeId, testTaxYear, testChangeToAnnual)(fakeRequestWithActiveSession.withFormUrlEncodedBody())
+        val result: Future[Result] = TestConfirmReportingMethodSharedController.submit(
+          testPropertyIncomeId, testTaxYear, testChangeToAnnual, UkProperty.key, isAgent = false)(fakeRequestWithActiveSession.withFormUrlEncodedBody())
         status(result) shouldBe Status.BAD_REQUEST
       }
     }
@@ -199,8 +204,8 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
         when(TestConfirmReportingMethodSharedController.updateIncomeSourceService.updateTaxYearSpecific(any(), any(), any())(any(), any()))
           .thenReturn(Future(UpdateIncomeSourceResponseModel("2022-01-31T09:26:17Z")))
 
-        val result: Future[Result] = TestConfirmReportingMethodSharedController.submitUKProperty(
-          testPropertyIncomeId, testTaxYear, testChangeToAnnual)(fakeRequestWithActiveSession.withFormUrlEncodedBody(
+        val result: Future[Result] = TestConfirmReportingMethodSharedController.submit(
+          testPropertyIncomeId, testTaxYear, testChangeToAnnual, UkProperty.key, isAgent = false)(fakeRequestWithActiveSession.withFormUrlEncodedBody(
           ConfirmReportingMethodForm.confirmReportingMethod -> "true"
         ))
         status(result) shouldBe Status.SEE_OTHER
@@ -217,8 +222,8 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
         when(TestConfirmReportingMethodSharedController.updateIncomeSourceService.updateTaxYearSpecific(any(), any(), any())(any(), any()))
           .thenReturn(Future(UpdateIncomeSourceResponseModel("2022-01-31T09:26:17Z")))
 
-        val result: Future[Result] = TestConfirmReportingMethodSharedController.submitUKProperty(
-          testPropertyIncomeId, testTaxYear, testChangeToQuarterly)(fakeRequestWithActiveSession.withFormUrlEncodedBody(
+        val result: Future[Result] = TestConfirmReportingMethodSharedController.submit(
+          testPropertyIncomeId, testTaxYear, testChangeToQuarterly, UkProperty.key, isAgent = false)(fakeRequestWithActiveSession.withFormUrlEncodedBody(
           ConfirmReportingMethodForm.confirmReportingMethod -> "true"
         ))
         status(result) shouldBe Status.SEE_OTHER
@@ -235,8 +240,8 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
         when(TestConfirmReportingMethodSharedController.updateIncomeSourceService.updateTaxYearSpecific(any(), any(), any())(any(), any()))
           .thenReturn(Future(UpdateIncomeSourceResponseModel("2022-01-31T09:26:17Z")))
 
-        val result: Future[Result] = TestConfirmReportingMethodSharedController.submitForeignProperty(
-          testPropertyIncomeId, testTaxYear, testChangeToAnnual)(fakeRequestWithActiveSession.withFormUrlEncodedBody(
+        val result: Future[Result] = TestConfirmReportingMethodSharedController.submit(
+          testPropertyIncomeId, testTaxYear, testChangeToAnnual, ForeignProperty.key, isAgent = false)(fakeRequestWithActiveSession.withFormUrlEncodedBody(
           ConfirmReportingMethodForm.confirmReportingMethod -> "true"
         ))
         status(result) shouldBe Status.SEE_OTHER
@@ -253,8 +258,8 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
         when(TestConfirmReportingMethodSharedController.updateIncomeSourceService.updateTaxYearSpecific(any(), any(), any())(any(), any()))
           .thenReturn(Future(UpdateIncomeSourceResponseModel("2022-01-31T09:26:17Z")))
 
-        val result: Future[Result] = TestConfirmReportingMethodSharedController.submitForeignProperty(
-          testPropertyIncomeId, testTaxYear, testChangeToQuarterly)(fakeRequestWithActiveSession.withFormUrlEncodedBody(
+        val result: Future[Result] = TestConfirmReportingMethodSharedController.submit(
+          testPropertyIncomeId, testTaxYear, testChangeToQuarterly, ForeignProperty.key, isAgent = false)(fakeRequestWithActiveSession.withFormUrlEncodedBody(
           ConfirmReportingMethodForm.confirmReportingMethod -> "true"
         ))
         status(result) shouldBe Status.SEE_OTHER
@@ -271,8 +276,8 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
         when(TestConfirmReportingMethodSharedController.updateIncomeSourceService.updateTaxYearSpecific(any(), any(), any())(any(), any()))
           .thenReturn(Future(UpdateIncomeSourceResponseModel("2022-01-31T09:26:17Z")))
 
-        val result: Future[Result] = TestConfirmReportingMethodSharedController.submitSoleTraderBusiness(
-          testSelfEmploymentId, testTaxYear, testChangeToAnnual)(fakeRequestWithActiveSession.withFormUrlEncodedBody(
+        val result: Future[Result] = TestConfirmReportingMethodSharedController.submit(
+          testSelfEmploymentId, testTaxYear, testChangeToAnnual, SelfEmployment.key, isAgent = false)(fakeRequestWithActiveSession.withFormUrlEncodedBody(
           ConfirmReportingMethodForm.confirmReportingMethod -> "true"
         ))
         status(result) shouldBe Status.SEE_OTHER
@@ -289,8 +294,8 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
         when(TestConfirmReportingMethodSharedController.updateIncomeSourceService.updateTaxYearSpecific(any(), any(), any())(any(), any()))
           .thenReturn(Future(UpdateIncomeSourceResponseModel("2022-01-31T09:26:17Z")))
 
-        val result: Future[Result] = TestConfirmReportingMethodSharedController.submitSoleTraderBusiness(
-          testSelfEmploymentId, testTaxYear, testChangeToQuarterly)(fakeRequestWithActiveSession.withFormUrlEncodedBody(
+        val result: Future[Result] = TestConfirmReportingMethodSharedController.submit(
+          testSelfEmploymentId, testTaxYear, testChangeToQuarterly, SelfEmployment.key, isAgent = false)(fakeRequestWithActiveSession.withFormUrlEncodedBody(
           ConfirmReportingMethodForm.confirmReportingMethod -> "true"
         ))
         status(result) shouldBe Status.SEE_OTHER
@@ -307,24 +312,26 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
         when(TestConfirmReportingMethodSharedController.updateIncomeSourceService.updateTaxYearSpecific(any(), any(), any())(any(), any()))
           .thenReturn(Future(UpdateIncomeSourceResponseError(Status.INTERNAL_SERVER_ERROR, "Dummy message")))
 
-        val result: Future[Result] = TestConfirmReportingMethodSharedController.submitSoleTraderBusiness(
-          testSelfEmploymentId, testTaxYear, testChangeToQuarterly)(fakeRequestWithActiveSession.withFormUrlEncodedBody(
+        val result: Future[Result] = TestConfirmReportingMethodSharedController.submit(
+          testSelfEmploymentId, testTaxYear, testChangeToQuarterly, SelfEmployment.key, isAgent = false)(fakeRequestWithActiveSession.withFormUrlEncodedBody(
           ConfirmReportingMethodForm.confirmReportingMethod -> "true"
         ))
-        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.manage.routes.ReportingMethodChangeErrorController.show(Some(testSelfEmploymentId), SelfEmployment.key, isAgent = false).url)
+        status(result) shouldBe Status.SEE_OTHER
       }
     }
   }
 
-  "ConfirmReportingMethodSharedController.showAgent" should {
+  "Agent: ConfirmReportingMethodSharedController.show" should {
     "redirect to home page" when {
       "the IncomeSources FS is disabled" in {
         disableAllSwitches()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         mockSingleBISWithCurrentYearAsMigrationYear()
 
-        val result: Future[Result] = TestConfirmReportingMethodSharedController.showSoleTraderBusinessAgent(
-          testIncomeSourceId, testTaxYear, testChangeToAnnual)(fakeRequestConfirmedClient())
+        val result: Future[Result] = TestConfirmReportingMethodSharedController.show(
+          Some(testIncomeSourceId), testTaxYear, testChangeToAnnual, SelfEmployment.key, isAgent = true)(fakeRequestConfirmedClient())
         status(result) shouldBe Status.SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.routes.HomeController.showAgent.url)
       }
@@ -336,8 +343,8 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
         mockSingleBISWithCurrentYearAsMigrationYear()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
-        val result: Future[Result] = TestConfirmReportingMethodSharedController.showSoleTraderBusinessAgent(
-          testIncomeSourceId, "$$$$-££££", testChangeToAnnual)(fakeRequestConfirmedClient())
+        val result: Future[Result] = TestConfirmReportingMethodSharedController.show(
+          Some(testIncomeSourceId), "$$$$-££££", testChangeToAnnual, SelfEmployment.key, isAgent = true)(fakeRequestConfirmedClient())
         status(result) shouldBe Status.INTERNAL_SERVER_ERROR
       }
     }
@@ -348,8 +355,8 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
         mockSingleBISWithCurrentYearAsMigrationYear()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
-        val result: Future[Result] = TestConfirmReportingMethodSharedController.showForeignPropertyAgent(
-          testTaxYear, "randomText")(fakeRequestConfirmedClient())
+        val result: Future[Result] = TestConfirmReportingMethodSharedController.show(
+          None, testTaxYear, "randomText", ForeignProperty.key, isAgent = true)(fakeRequestConfirmedClient())
         status(result) shouldBe Status.INTERNAL_SERVER_ERROR
       }
     }
@@ -360,8 +367,8 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
         mockSingleBISWithCurrentYearAsMigrationYear()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
-        val result: Future[Result] = TestConfirmReportingMethodSharedController.showSoleTraderBusinessAgent(
-          "RANDOM_ID", testTaxYear, testChangeToQuarterly)(fakeRequestConfirmedClient())
+        val result: Future[Result] = TestConfirmReportingMethodSharedController.show(
+          Some("RANDOM_ID"), testTaxYear, testChangeToQuarterly, SelfEmployment.key, isAgent = true)(fakeRequestConfirmedClient())
         status(result) shouldBe Status.INTERNAL_SERVER_ERROR
       }
     }
@@ -372,8 +379,8 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
         mockUKPropertyIncomeSource()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
-        val result: Future[Result] = TestConfirmReportingMethodSharedController.showUKPropertyAgent(
-          testTaxYear, testChangeToQuarterly)(fakeRequestConfirmedClient())
+        val result: Future[Result] = TestConfirmReportingMethodSharedController.show(
+          None, testTaxYear, testChangeToQuarterly, UkProperty.key, isAgent = true)(fakeRequestConfirmedClient())
         status(result) shouldBe Status.OK
       }
     }
@@ -384,8 +391,8 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
         mockSingleBISWithCurrentYearAsMigrationYear()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
-        val result: Future[Result] = TestConfirmReportingMethodSharedController.showSoleTraderBusinessAgent(
-          testSelfEmploymentId, testTaxYear, testChangeToQuarterly)(fakeRequestConfirmedClient())
+        val result: Future[Result] = TestConfirmReportingMethodSharedController.show(
+          Some(testSelfEmploymentId), testTaxYear, testChangeToQuarterly, SelfEmployment.key, isAgent = true)(fakeRequestConfirmedClient())
         status(result) shouldBe Status.OK
       }
     }
@@ -396,8 +403,8 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
         mockForeignPropertyIncomeSource()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
-        val result: Future[Result] = TestConfirmReportingMethodSharedController.showForeignPropertyAgent(
-          testTaxYear, testChangeToQuarterly)(fakeRequestConfirmedClient())
+        val result: Future[Result] = TestConfirmReportingMethodSharedController.show(
+          None, testTaxYear, testChangeToQuarterly, ForeignProperty.key, isAgent = true)(fakeRequestConfirmedClient())
         status(result) shouldBe Status.OK
       }
     }
@@ -410,8 +417,8 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         mockSingleBISWithCurrentYearAsMigrationYear()
 
-        val result: Future[Result] = TestConfirmReportingMethodSharedController.submitSoleTraderBusinessAgent(
-          testIncomeSourceId, testTaxYear, testChangeToAnnual)(fakeRequestConfirmedClient())
+        val result: Future[Result] = TestConfirmReportingMethodSharedController.submit(
+          testIncomeSourceId, testTaxYear, testChangeToAnnual, SelfEmployment.key, isAgent = true)(fakeRequestConfirmedClient())
         status(result) shouldBe Status.SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.routes.HomeController.showAgent.url)
       }
@@ -423,8 +430,8 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
         mockSingleBISWithCurrentYearAsMigrationYear()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
-        val result: Future[Result] = TestConfirmReportingMethodSharedController.submitSoleTraderBusinessAgent(
-          testIncomeSourceId, "$$$$-££££", testChangeToAnnual)(fakeRequestConfirmedClient())
+        val result: Future[Result] = TestConfirmReportingMethodSharedController.submit(
+          testIncomeSourceId, "$$$$-££££", testChangeToAnnual, SelfEmployment.key, isAgent = true)(fakeRequestConfirmedClient())
         status(result) shouldBe Status.INTERNAL_SERVER_ERROR
       }
     }
@@ -435,8 +442,8 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
         mockForeignPropertyIncomeSource()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
-        val result: Future[Result] = TestConfirmReportingMethodSharedController.submitForeignPropertyAgent(
-          testPropertyIncomeId, testTaxYear, "randomText")(fakeRequestConfirmedClient())
+        val result: Future[Result] = TestConfirmReportingMethodSharedController.submit(
+          testPropertyIncomeId, testTaxYear, "randomText", ForeignProperty.key, isAgent = true)(fakeRequestConfirmedClient())
         status(result) shouldBe Status.INTERNAL_SERVER_ERROR
       }
     }
@@ -447,8 +454,8 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
         mockUKPropertyIncomeSource()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
-        val result: Future[Result] = TestConfirmReportingMethodSharedController.submitUKPropertyAgent(
-          testPropertyIncomeId, testTaxYear, testChangeToAnnual)(fakeRequestConfirmedClient().withFormUrlEncodedBody())
+        val result: Future[Result] = TestConfirmReportingMethodSharedController.submit(
+          testPropertyIncomeId, testTaxYear, testChangeToAnnual, UkProperty.key, isAgent = true)(fakeRequestConfirmedClient().withFormUrlEncodedBody())
         status(result) shouldBe Status.BAD_REQUEST
       }
     }
@@ -462,8 +469,8 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
         when(TestConfirmReportingMethodSharedController.updateIncomeSourceService.updateTaxYearSpecific(any(), any(), any())(any(), any()))
           .thenReturn(Future(UpdateIncomeSourceResponseModel("2022-01-31T09:26:17Z")))
 
-        val result: Future[Result] = TestConfirmReportingMethodSharedController.submitUKPropertyAgent(
-          testPropertyIncomeId, testTaxYear, testChangeToAnnual)(fakeRequestConfirmedClient().withFormUrlEncodedBody(
+        val result: Future[Result] = TestConfirmReportingMethodSharedController.submit(
+          testPropertyIncomeId, testTaxYear, testChangeToAnnual, UkProperty.key, isAgent = true)(fakeRequestConfirmedClient().withFormUrlEncodedBody(
           ConfirmReportingMethodForm.confirmReportingMethod -> "true"
         ))
         status(result) shouldBe Status.SEE_OTHER
@@ -481,8 +488,8 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
         when(TestConfirmReportingMethodSharedController.updateIncomeSourceService.updateTaxYearSpecific(any(), any(), any())(any(), any()))
           .thenReturn(Future(UpdateIncomeSourceResponseModel("2022-01-31T09:26:17Z")))
 
-        val result: Future[Result] = TestConfirmReportingMethodSharedController.submitUKPropertyAgent(
-          testPropertyIncomeId, testTaxYear, testChangeToQuarterly)(fakeRequestConfirmedClient().withFormUrlEncodedBody(
+        val result: Future[Result] = TestConfirmReportingMethodSharedController.submit(
+          testPropertyIncomeId, testTaxYear, testChangeToQuarterly, UkProperty.key, isAgent = true)(fakeRequestConfirmedClient().withFormUrlEncodedBody(
           ConfirmReportingMethodForm.confirmReportingMethod -> "true"
         ))
         status(result) shouldBe Status.SEE_OTHER
@@ -500,8 +507,8 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
         when(TestConfirmReportingMethodSharedController.updateIncomeSourceService.updateTaxYearSpecific(any(), any(), any())(any(), any()))
           .thenReturn(Future(UpdateIncomeSourceResponseModel("2022-01-31T09:26:17Z")))
 
-        val result: Future[Result] = TestConfirmReportingMethodSharedController.submitForeignPropertyAgent(
-          testPropertyIncomeId, testTaxYear, testChangeToAnnual)(fakeRequestConfirmedClient().withFormUrlEncodedBody(
+        val result: Future[Result] = TestConfirmReportingMethodSharedController.submit(
+          testPropertyIncomeId, testTaxYear, testChangeToAnnual, ForeignProperty.key, isAgent = true)(fakeRequestConfirmedClient().withFormUrlEncodedBody(
           ConfirmReportingMethodForm.confirmReportingMethod -> "true"
         ))
         status(result) shouldBe Status.SEE_OTHER
@@ -518,8 +525,8 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
         when(TestConfirmReportingMethodSharedController.updateIncomeSourceService.updateTaxYearSpecific(any(), any(), any())(any(), any()))
           .thenReturn(Future(UpdateIncomeSourceResponseModel("2022-01-31T09:26:17Z")))
 
-        val result: Future[Result] = TestConfirmReportingMethodSharedController.submitForeignPropertyAgent(
-          testPropertyIncomeId, testTaxYear, testChangeToQuarterly)(fakeRequestConfirmedClient().withFormUrlEncodedBody(
+        val result: Future[Result] = TestConfirmReportingMethodSharedController.submit(
+          testPropertyIncomeId, testTaxYear, testChangeToQuarterly, ForeignProperty.key, isAgent = true)(fakeRequestConfirmedClient().withFormUrlEncodedBody(
           ConfirmReportingMethodForm.confirmReportingMethod -> "true"
         ))
         status(result) shouldBe Status.SEE_OTHER
@@ -537,8 +544,8 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
         when(TestConfirmReportingMethodSharedController.updateIncomeSourceService.updateTaxYearSpecific(any(), any(), any())(any(), any()))
           .thenReturn(Future(UpdateIncomeSourceResponseModel("2022-01-31T09:26:17Z")))
 
-        val result: Future[Result] = TestConfirmReportingMethodSharedController.submitSoleTraderBusinessAgent(
-          testSelfEmploymentId, testTaxYear, testChangeToAnnual)(fakeRequestConfirmedClient().withFormUrlEncodedBody(
+        val result: Future[Result] = TestConfirmReportingMethodSharedController.submit(
+          testSelfEmploymentId, testTaxYear, testChangeToAnnual, SelfEmployment.key, isAgent = true)(fakeRequestConfirmedClient().withFormUrlEncodedBody(
           ConfirmReportingMethodForm.confirmReportingMethod -> "true"
         ))
         status(result) shouldBe Status.SEE_OTHER
@@ -555,8 +562,8 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
         when(TestConfirmReportingMethodSharedController.updateIncomeSourceService.updateTaxYearSpecific(any(), any(), any())(any(), any()))
           .thenReturn(Future(UpdateIncomeSourceResponseModel("2022-01-31T09:26:17Z")))
 
-        val result: Future[Result] = TestConfirmReportingMethodSharedController.submitSoleTraderBusinessAgent(
-          testSelfEmploymentId, testTaxYear, testChangeToQuarterly)(fakeRequestConfirmedClient().withFormUrlEncodedBody(
+        val result: Future[Result] = TestConfirmReportingMethodSharedController.submit(
+          testSelfEmploymentId, testTaxYear, testChangeToQuarterly, SelfEmployment.key, isAgent = true)(fakeRequestConfirmedClient().withFormUrlEncodedBody(
           ConfirmReportingMethodForm.confirmReportingMethod -> "true"
         ))
         status(result) shouldBe Status.SEE_OTHER
@@ -574,11 +581,13 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
         when(TestConfirmReportingMethodSharedController.updateIncomeSourceService.updateTaxYearSpecific(any(), any(), any())(any(), any()))
           .thenReturn(Future(UpdateIncomeSourceResponseError(Status.INTERNAL_SERVER_ERROR, "Dummy message")))
 
-        val result: Future[Result] = TestConfirmReportingMethodSharedController.submitSoleTraderBusinessAgent(
-          testSelfEmploymentId, testTaxYear, testChangeToQuarterly)(fakeRequestConfirmedClient().withFormUrlEncodedBody(
+        val result: Future[Result] = TestConfirmReportingMethodSharedController.submit(
+          testSelfEmploymentId, testTaxYear, testChangeToQuarterly, SelfEmployment.key, isAgent = true)(fakeRequestConfirmedClient().withFormUrlEncodedBody(
           ConfirmReportingMethodForm.confirmReportingMethod -> "true"
         ))
-        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.manage.routes.ReportingMethodChangeErrorController.show(Some(testSelfEmploymentId), SelfEmployment.key, isAgent = true).url)
+        status(result) shouldBe Status.SEE_OTHER
       }
     }
   }

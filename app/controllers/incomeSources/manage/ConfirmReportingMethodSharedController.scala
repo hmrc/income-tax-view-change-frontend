@@ -228,7 +228,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
       case (true, SelfEmployment) =>
          (routes.ManageIncomeSourceDetailsController.showSoleTraderBusinessAgent(incomeSourceId),
           routes.ManageObligationsController.showAgentSelfEmployment(changeTo, taxYear, incomeSourceId),
-          routes.ReportingMethodChangeErrorController.show(None, incomeSourceType.key, isAgent))
+          routes.ReportingMethodChangeErrorController.show(Some(incomeSourceId), incomeSourceType.key, isAgent))
       case (false, UkProperty) =>
          (routes.ManageIncomeSourceDetailsController.showUkProperty(),
           routes.ManageObligationsController.showUKProperty(changeTo, taxYear),
