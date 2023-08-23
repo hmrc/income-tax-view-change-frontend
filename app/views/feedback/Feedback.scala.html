@@ -53,7 +53,7 @@
 
     @p(){@messages("feedback.description")}
 
-    @form(action = postAction, 'id -> "feedback-form") {
+    @form(action = postAction, Symbol("id") -> "feedback-form") {
         @inputRadios(
             feedbackForm("feedback-rating"),
             legend = messages("feedback.radiosDescription"),

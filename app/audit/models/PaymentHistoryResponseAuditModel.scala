@@ -49,6 +49,7 @@ case class PaymentHistoryResponseAuditModel(mtdItUser: MtdItUser[_],
       case (false, false, true, false) =>
         Some(getPayment(payment, "Balancing charge credit"))
       case (false, false, false, true) => Some(getPayment(payment, "Payment Made to HMRC"))
+      case _ => None
     }
   }
 

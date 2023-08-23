@@ -98,7 +98,7 @@ case class ChargeSummaryAudit(mtdItUser: MtdItUser[_], docDateDetail: DocumentDe
   }
 
   private val interestPeriod: Option[String] = (docDateDetail.documentDetail.interestFromDate, docDateDetail.documentDetail.interestEndDate) match {
-    case (Some(fromDate), Some(endDate)) => Some(fromDate + " to " + endDate)
+    case (Some(fromDate), Some(endDate)) => Some(s"$fromDate to $endDate")
     case _ => None
   }
 

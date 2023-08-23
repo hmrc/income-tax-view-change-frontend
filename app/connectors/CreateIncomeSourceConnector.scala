@@ -20,8 +20,9 @@ import config.FrontendAppConfig
 import models.createIncomeSource._
 import play.api.Logger
 import play.api.http.Status.OK
-import play.api.libs.json.{JsError, Json}
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
+import play.api.libs.json.{JsError, JsValue, Json}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReads, HttpResponse}
+import uk.gov.hmrc.http.HttpReads.Implicits._
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -39,7 +40,7 @@ class CreateIncomeSourceConnector @Inject()(val http: HttpClient,
     val url = createBusinessIncomeSourcesUrl(mtdItid)
     val jsonRequest = Json.toJson(request)
 
-    http.POST(url, jsonRequest).flatMap(handleResponse)
+    http.POST[JsValue, HttpResponse](url, jsonRequest).flatMap(handleResponse)
   }
 
   def createForeignProperty(mtdItid: String, request: CreateForeignPropertyIncomeSourceRequest)
@@ -47,7 +48,7 @@ class CreateIncomeSourceConnector @Inject()(val http: HttpClient,
     val url = createBusinessIncomeSourcesUrl(mtdItid)
     val jsonRequest = Json.toJson(request)
 
-    http.POST(url, jsonRequest).flatMap(handleResponse)
+    http.POST[JsValue, HttpResponse](url, jsonRequest).flatMap(handleResponse)
   }
 
   def createUKProperty(mtdItid: String, request: CreateUKPropertyIncomeSourceRequest)
@@ -55,7 +56,7 @@ class CreateIncomeSourceConnector @Inject()(val http: HttpClient,
     val url = createBusinessIncomeSourcesUrl(mtdItid)
     val jsonRequest = Json.toJson(request)
 
-    http.POST(url, jsonRequest).flatMap(handleResponse)
+    http.POST[JsValue, HttpResponse](url, jsonRequest).flatMap(handleResponse)
   }
 
 

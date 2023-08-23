@@ -22,6 +22,7 @@ import play.api.libs.json._
 import uk.gov.hmrc.auth.core.PlayAuthConnector
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse, TooManyRequestException}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+import uk.gov.hmrc.http.HttpReads.Implicits._
 
 import javax.inject.{Inject, Singleton}
 import scala.collection.Seq
