@@ -71,7 +71,7 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
         handleShowRequest(
           incomeSourceType = value,
           isAgent = isAgent,
-          isUpdate = isChange
+          isChange = isChange
         )
     }
   }
@@ -88,19 +88,19 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
         handleSubmitRequest(
           incomeSourceType = value,
           isAgent = isAgent,
-          isUpdate = isChange
+          isChange = isChange
         )
     }
   }
 
   private def handleShowRequest(incomeSourceType: IncomeSourceType,
                                 isAgent: Boolean,
-                                isUpdate: Boolean)
+                                isChange: Boolean)
                                (implicit user: MtdItUser[_]): Future[Result] = {
 
     Future.successful(
       if (isEnabled(IncomeSources))
-        (getAndValidateStartDate(incomeSourceType), getCalls(isAgent, isUpdate, incomeSourceType)) match {
+        (getAndValidateStartDate(incomeSourceType), getCalls(isAgent, isChange, incomeSourceType)) match {
           case (Right(startDate), (backCall, postAction, _)) =>
             Ok(
               addIncomeSourceStartDateCheckView(
@@ -122,14 +122,14 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
 
   private def handleSubmitRequest(incomeSourceType: IncomeSourceType,
                                   isAgent: Boolean,
-                                  isUpdate: Boolean)
+                                  isChange: Boolean)
                                  (implicit mtdItUser: MtdItUser[_]): Future[Result] = {
 
     val messagesPrefix = incomeSourceType.addStartDateCheckMessagesPrefix
 
     Future.successful(
       if (isEnabled(IncomeSources))
-        (getAndValidateStartDate(incomeSourceType), getCalls(isAgent, isUpdate, incomeSourceType)) match {
+        (getAndValidateStartDate(incomeSourceType), getCalls(isAgent, isChange, incomeSourceType)) match {
           case (Right(startDate), (backCall, postAction, successCall)) =>
             form(messagesPrefix).bindFromRequest().fold(
               formWithErrors => {
@@ -215,7 +215,7 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
       case (Some(_), _) => Logger("application").error(s"[AddIncomeSourceStartDateCheckController][handleValidForm] - Empty response, isAgent = $isAgent")
         if (isAgent) itvcErrorHandlerAgent.showInternalServerError() else itvcErrorHandler.showInternalServerError()
       case (None, _) => Logger("application").error(s"[AddIncomeSourceStartDateCheckController][handleValidForm] - Unexpected response, isAgent = $isAgent")
-         if(isAgent) itvcErrorHandlerAgent.showInternalServerError() else itvcErrorHandler.showInternalServerError()
+        if (isAgent) itvcErrorHandlerAgent.showInternalServerError() else itvcErrorHandler.showInternalServerError()
     }
   }
 
@@ -232,15 +232,15 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
   }
 
   private def getCalls(isAgent: Boolean,
-                       isUpdate: Boolean,
+                       isChange: Boolean,
                        incomeSourceType: IncomeSourceType): (Call, Call, Call) = {
     (
-      routes.AddIncomeSourceStartDateController.show(incomeSourceType.key, isAgent, isUpdate),
-      routes.AddIncomeSourceStartDateCheckController.submit(incomeSourceType.key, isAgent, isUpdate),
-      (isAgent, isUpdate, incomeSourceType) match {
+      routes.AddIncomeSourceStartDateController.show(incomeSourceType.key, isAgent, isChange),
+      routes.AddIncomeSourceStartDateCheckController.submit(incomeSourceType.key, isAgent, isChange),
+      (isAgent, isChange, incomeSourceType) match {
         case (false, true,  SelfEmployment) => routes.CheckBusinessDetailsController.show()
         case (true,  true,  SelfEmployment) => routes.CheckBusinessDetailsController.showAgent()
-        case (_,     false, SelfEmployment) => routes.AddBusinessTradeController.show(isAgent = isAgent, isChange = isUpdate)
+        case (_,     false, SelfEmployment) => routes.AddBusinessTradeController.show(isAgent, isChange)
         case (false, false, _)              => routes.IncomeSourcesAccountingMethodController.show(incomeSourceType.key)
         case (true,  false, _)              => routes.IncomeSourcesAccountingMethodController.showAgent(incomeSourceType.key)
         case (false, true, UkProperty)      => routes.CheckUKPropertyDetailsController.show()

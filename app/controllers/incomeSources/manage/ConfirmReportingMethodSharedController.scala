@@ -18,7 +18,7 @@ package controllers.incomeSources.manage
 
 import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
@@ -63,13 +63,10 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
            isAgent: Boolean
           ): Action[AnyContent] = authenticatedAction(isAgent) { implicit user =>
 
-    handleShowRequest(
-      incomeSourceId = id,
-      incomeSourceType = IncomeSourceType.get(incomeSourceKey),
-      isAgent = isAgent,
-      taxYear = taxYear,
-      changeTo = changeTo
-    )
+    IncomeSourceType.get(incomeSourceKey) match {
+      case Right(value) => handleShowRequest(id, value, isAgent, taxYear, changeTo)
+      case Left(ex: Exception) => Future.successful(logAndShowError(isAgent, s"[show]: Failed to fulfil show request: ${ex.getMessage}"))
+    }
   }
 
   def submit(id: String,
@@ -79,13 +76,10 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
              isAgent: Boolean
             ): Action[AnyContent] = authenticatedAction(isAgent) { implicit user =>
 
-    handleSubmitRequest(
-      incomeSourceId = id,
-      incomeSourceType = IncomeSourceType.get(incomeSourceKey),
-      isAgent = isAgent,
-      taxYear = taxYear,
-      changeTo = changeTo
-    )
+    IncomeSourceType.get(incomeSourceKey) match {
+      case Right(value) => handleSubmitRequest(id, value, isAgent, taxYear, changeTo)
+      case Left(ex: Exception) => Future.successful(logAndShowError(isAgent, s"[submit]: Failed to fulfil submit request: ${ex.getMessage}"))
+    }
   }
 
   private def handleShowRequest(incomeSourceId: Option[String],
@@ -156,12 +150,12 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
   }
 
   private def handleFormWithErrors(formWithErrors: Form[ConfirmReportingMethodForm],
-                              isAgent: Boolean,
-                              taxYears: TaxYear,
-                              reportingMethod: String,
-                              postAction: Call,
-                              backCall: Call)
-                             (implicit user: MtdItUser[_]): Future[Result] = {
+                                   isAgent: Boolean,
+                                   taxYears: TaxYear,
+                                   reportingMethod: String,
+                                   postAction: Call,
+                                   backCall: Call)
+                                  (implicit user: MtdItUser[_]): Future[Result] = {
     Future.successful(
       BadRequest(
         confirmReportingMethod(
@@ -178,11 +172,11 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
   }
 
   private def handleValidForm(isAgent: Boolean,
-                                  incomeSourceId: String,
-                                  taxYears: TaxYear,
-                                  reportingMethod: String,
-                                  successCall: Call)
-                                 (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
+                              incomeSourceId: String,
+                              taxYears: TaxYear,
+                              reportingMethod: String,
+                              successCall: Call)
+                             (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
 
     val latencyIndicator = reportingMethod match {
       case "annual" => true
