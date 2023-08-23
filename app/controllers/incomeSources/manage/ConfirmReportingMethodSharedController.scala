@@ -58,8 +58,8 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
   def show(id: Option[String],
            taxYear: String,
            changeTo: String,
-           isAgent: Boolean,
-           incomeSourceKey: String
+           incomeSourceKey: String,
+           isAgent: Boolean
           ): Action[AnyContent] = authenticatedAction(isAgent) { implicit user =>
 
     IncomeSourceType.get(incomeSourceKey) match {
@@ -71,8 +71,8 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
   def submit(id: String,
              taxYear: String,
              changeTo: String,
-             isAgent: Boolean,
-             incomeSourceKey: String
+             incomeSourceKey: String,
+             isAgent: Boolean
             ): Action[AnyContent] = authenticatedAction(isAgent) { implicit user =>
 
     IncomeSourceType.get(incomeSourceKey) match {

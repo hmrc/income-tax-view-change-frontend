@@ -51,8 +51,8 @@ class ReportingMethodChangeErrorController @Inject()(val manageIncomeSources: Ma
   with FeatureSwitching with IncomeSourcesUtils {
 
   def show(id: Option[String],
-           isAgent: Boolean,
-           incomeSourceKey: String
+           incomeSourceKey: String,
+           isAgent: Boolean
           ): Action[AnyContent] = authenticatedAction(isAgent) { implicit user =>
 
     IncomeSourceType.get(incomeSourceKey) match {
