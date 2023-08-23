@@ -28,7 +28,7 @@ import play.api.libs.ws.WSResponse
 import play.api.test.FakeRequest
 
 import scala.annotation.tailrec
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 trait CustomMatchers extends UnitSpec with GivenWhenThen {
 

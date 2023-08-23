@@ -63,23 +63,34 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
            isChange: Boolean
           ): Action[AnyContent] = authenticatedAction(isAgent) { implicit user =>
 
-    handleShowRequest(
-      incomeSourceType = IncomeSourceType.get(incomeSourceKey),
-      isAgent = isAgent,
-      isUpdate = isChange
-    )
+    IncomeSourceType.get(incomeSourceKey) match {
+      case Left(ex: Exception) => Logger("application").error(s"[AddIncomeSourceStartDateCheckController][handleShowRequest]: " +
+        s"Failed fulfil show request: ${ex.getMessage}")
+        Future.successful(getErrorHandler(isAgent).showInternalServerError())
+      case Right(value) =>
+        handleShowRequest(
+          incomeSourceType = value,
+          isAgent = isAgent,
+          isUpdate = isChange
+        )
+    }
   }
 
   def submit(incomeSourceKey: String,
              isAgent: Boolean,
              isChange: Boolean
             ): Action[AnyContent] = authenticatedAction(isAgent) { implicit user =>
-
-    handleSubmitRequest(
-      incomeSourceType = IncomeSourceType.get(incomeSourceKey),
-      isAgent = isAgent,
-      isUpdate = isChange
-    )
+    IncomeSourceType.get(incomeSourceKey) match {
+      case Left(ex: Exception) => Logger("application").error(s"[AddIncomeSourceStartDateController][handleShowRequest]: " +
+        s"Failed fulfil submit request: ${ex.getMessage}")
+        Future.successful(getErrorHandler(isAgent).showInternalServerError())
+      case Right(value) =>
+        handleSubmitRequest(
+          incomeSourceType = value,
+          isAgent = isAgent,
+          isUpdate = isChange
+        )
+    }
   }
 
   private def handleShowRequest(incomeSourceType: IncomeSourceType,
@@ -138,6 +149,7 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
                   validForm = formData,
                   successCall = successCall,
                   incomeSourceStartDate = startDate,
+                  isAgent = isAgent,
                   incomeSourceType = incomeSourceType
                 )
               }
@@ -176,6 +188,7 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
                               validForm: form,
                               successCall: Call,
                               incomeSourceStartDate: String,
+                              isAgent: Boolean,
                               incomeSourceType: IncomeSourceType)
                              (implicit mtdItUser: MtdItUser[_]): Result = {
 
@@ -199,6 +212,10 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
           )
       case (Some(form.responseYes), _) =>
         Redirect(successCall)
+      case (Some(_), _) => Logger("application").error(s"[AddIncomeSourceStartDateCheckController][handleValidForm] - Empty response, isAgent = $isAgent")
+        if (isAgent) itvcErrorHandlerAgent.showInternalServerError() else itvcErrorHandler.showInternalServerError()
+      case (None, _) => Logger("application").error(s"[AddIncomeSourceStartDateCheckController][handleValidForm] - Unexpected response, isAgent = $isAgent")
+         if(isAgent) itvcErrorHandlerAgent.showInternalServerError() else itvcErrorHandler.showInternalServerError()
     }
   }
 

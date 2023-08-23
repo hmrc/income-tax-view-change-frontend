@@ -31,7 +31,7 @@ class AddBusinessNameViewSpec extends ViewSpec {
 
   val addBusinessName: AddBusinessName = app.injector.instanceOf[AddBusinessName]
 
-  class Setup(isAgent: Boolean, error: Boolean = false, isChange: Boolean) {
+  class TestSetup(isAgent: Boolean, error: Boolean = false, isChange: Boolean) {
     val addBusinessNameForm: Form[BusinessNameForm] = BusinessNameForm.form
     val changeBusinessNameForm: Form[BusinessNameForm] = BusinessNameForm.form.fill(BusinessNameForm("Test Business"))
     val testBusinessName: String = "Test Business"
@@ -55,11 +55,11 @@ class AddBusinessNameViewSpec extends ViewSpec {
         if (isAgent) {
           controllers.incomeSources.add.routes.CheckBusinessDetailsController.showAgent().url
         } else {
-          controllers.incomeSources.add.routes.CheckBusinessDetailsController.show.url
+          controllers.incomeSources.add.routes.CheckBusinessDetailsController.show().url
         }
       } else {
-        if (isAgent) controllers.incomeSources.add.routes.AddIncomeSourceController.showAgent.url else
-          controllers.incomeSources.add.routes.AddIncomeSourceController.show.url
+        if (isAgent) controllers.incomeSources.add.routes.AddIncomeSourceController.showAgent().url else
+          controllers.incomeSources.add.routes.AddIncomeSourceController.show().url
       }
     }
 
@@ -128,17 +128,17 @@ class AddBusinessNameViewSpec extends ViewSpec {
 
   "AddBusinessNameView - ADD - Individual" when {
     "there is no error on the add page" should {
-      "have the correct heading" in new Setup(false, false, false) {
+      "have the correct heading" in new TestSetup(false, false, false) {
         document hasPageHeading AddBusinessNameMessages.heading
       }
-      "render the back link with the correct URL" in new Setup(false, false, false) {
+      "render the back link with the correct URL" in new TestSetup(false, false, false) {
         document.getElementsByClass("govuk-back-link").text() shouldBe messages("base.back")
         document.getElementsByClass("govuk-back-link").attr("href") shouldBe backUrl
       }
-      "have a form with the correct attributes" in new Setup(false, false, false) {
+      "have a form with the correct attributes" in new TestSetup(false, false, false) {
         document.hasFormWith(testCall.method, postAction.url)
       }
-      "have an input with associated hint and label" in new Setup(false, false, false) {
+      "have an input with associated hint and label" in new TestSetup(false, false, false) {
         val form: Element = document.selectHead("form")
         val label: Element = form.selectHead("label")
         val hint: Element = document.selectHead(".govuk-hint")
@@ -155,13 +155,13 @@ class AddBusinessNameViewSpec extends ViewSpec {
         input.attr("value") shouldBe ("")
 
       }
-      "have a continue button" in new Setup(false, false, false) {
+      "have a continue button" in new TestSetup(false, false, false) {
         val button: Element = document.selectHead("form").selectHead("button")
         button.text shouldBe AddBusinessNameMessages.continue
       }
     }
     "there is an error on the page" should {
-      "render the error summary" in new Setup(false, true, false) {
+      "render the error summary" in new TestSetup(false, true, false) {
         document.getElementById("error-summary-heading").text() shouldBe messages("base.error_summary.heading")
         document.getElementsByClass("govuk-error-summary__body").first().text() shouldBe messages("add-business-name.form.error.required")
       }
@@ -170,18 +170,18 @@ class AddBusinessNameViewSpec extends ViewSpec {
 
   "AddBusinessNameView - CHANGE - Individual" when {
     "there is no error on the change page" should {
-      "have the correct heading" in new Setup(false, false, true) {
+      "have the correct heading" in new TestSetup(false, false, true) {
         document hasPageHeading AddBusinessNameMessages.heading
       }
-      "render the back link with the correct URL" in new Setup(false, false, true) {
+      "render the back link with the correct URL" in new TestSetup(false, false, true) {
 
         document.getElementsByClass("govuk-back-link").text() shouldBe messages("base.back")
         document.getElementsByClass("govuk-back-link").attr("href") shouldBe backUrl
       }
-      "have a form with the correct attributes" in new Setup(false, false, true) {
+      "have a form with the correct attributes" in new TestSetup(false, false, true) {
         document.hasFormWith(testChangeCall.method, postAction.url)
       }
-      "have an input with associated hint and label" in new Setup(false, false, true) {
+      "have an input with associated hint and label" in new TestSetup(false, false, true) {
         val form: Element = document.selectHead("form")
         val label: Element = form.selectHead("label")
         val hint: Element = document.selectHead(".govuk-hint")
@@ -196,13 +196,13 @@ class AddBusinessNameViewSpec extends ViewSpec {
         input.attr("aria-describedby") shouldBe s"${SessionKeys.businessName}-hint"
         input.attr("value") shouldBe (testBusinessName)
       }
-      "have a continue button" in new Setup(false, false, true) {
+      "have a continue button" in new TestSetup(false, false, true) {
         val button: Element = document.selectHead("form").selectHead("button")
         button.text shouldBe AddBusinessNameMessages.continue
       }
     }
     "there is an error on the page" should {
-      "render the error summary" in new Setup(false, true, false) {
+      "render the error summary" in new TestSetup(false, true, false) {
         document.getElementById("error-summary-heading").text() shouldBe messages("base.error_summary.heading")
         document.getElementsByClass("govuk-error-summary__body").first().text() shouldBe messages("add-business-name.form.error.required")
       }
@@ -211,17 +211,17 @@ class AddBusinessNameViewSpec extends ViewSpec {
 
   "AddBusinessNameView - ADD - Agent" when {
     "there is no error on the add page" should {
-      "have the correct heading" in new Setup(true, false, false) {
+      "have the correct heading" in new TestSetup(true, false, false) {
         document hasPageHeading AddBusinessNameMessages.heading
       }
-      "render the back link with the correct URL" in new Setup(true, false, false) {
+      "render the back link with the correct URL" in new TestSetup(true, false, false) {
         document.getElementsByClass("govuk-back-link").text() shouldBe messages("base.back")
         document.getElementsByClass("govuk-back-link").attr("href") shouldBe backUrl
       }
-      "have a form with the correct attributes" in new Setup(true, false, false) {
+      "have a form with the correct attributes" in new TestSetup(true, false, false) {
         document.hasFormWith(testCall.method, postAction.url)
       }
-      "have an input with associated hint and label" in new Setup(true, false, false) {
+      "have an input with associated hint and label" in new TestSetup(true, false, false) {
         val form: Element = document.selectHead("form")
         val label: Element = form.selectHead("label")
         val hint: Element = document.selectHead(".govuk-hint")
@@ -238,13 +238,13 @@ class AddBusinessNameViewSpec extends ViewSpec {
         input.attr("value") shouldBe ("")
 
       }
-      "have a continue button" in new Setup(true, false, false) {
+      "have a continue button" in new TestSetup(true, false, false) {
         val button: Element = document.selectHead("form").selectHead("button")
         button.text shouldBe AddBusinessNameMessages.continue
       }
     }
     "there is an error on the page" should {
-      "render the error summary" in new Setup(false, true, false) {
+      "render the error summary" in new TestSetup(false, true, false) {
         document.getElementById("error-summary-heading").text() shouldBe messages("base.error_summary.heading")
         document.getElementsByClass("govuk-error-summary__body").first().text() shouldBe messages("add-business-name.form.error.required")
       }
@@ -253,17 +253,17 @@ class AddBusinessNameViewSpec extends ViewSpec {
 
   "AddBusinessNameView - CHANGE - Agent" when {
     "there is no error on the change page" should {
-      "have the correct heading" in new Setup(true, false, true) {
+      "have the correct heading" in new TestSetup(true, false, true) {
         document hasPageHeading AddBusinessNameMessages.heading
       }
-      "render the back link with the correct URL" in new Setup(true, false, true) {
+      "render the back link with the correct URL" in new TestSetup(true, false, true) {
         document.getElementsByClass("govuk-back-link").text() shouldBe messages("base.back")
         document.getElementsByClass("govuk-back-link").attr("href") shouldBe backUrl
       }
-      "have a form with the correct attributes" in new Setup(true, false, true) {
+      "have a form with the correct attributes" in new TestSetup(true, false, true) {
         document.hasFormWith(testChangeCall.method, postAction.url)
       }
-      "have an input with associated hint and label" in new Setup(true, false, true) {
+      "have an input with associated hint and label" in new TestSetup(true, false, true) {
         val form: Element = document.selectHead("form")
         val label: Element = form.selectHead("label")
         val hint: Element = document.selectHead(".govuk-hint")
@@ -278,13 +278,13 @@ class AddBusinessNameViewSpec extends ViewSpec {
         input.attr("aria-describedby") shouldBe s"${SessionKeys.businessName}-hint"
         input.attr("value") shouldBe (testBusinessName)
       }
-      "have a continue button" in new Setup(true, false, true) {
+      "have a continue button" in new TestSetup(true, false, true) {
         val button: Element = document.selectHead("form").selectHead("button")
         button.text shouldBe AddBusinessNameMessages.continue
       }
     }
     "there is an error on the page" should {
-      "render the error summary" in new Setup(false, true, false) {
+      "render the error summary" in new TestSetup(false, true, false) {
         document.getElementById("error-summary-heading").text() shouldBe messages("base.error_summary.heading")
         document.getElementsByClass("govuk-error-summary__body").first().text() shouldBe messages("add-business-name.form.error.required")
       }

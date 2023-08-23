@@ -232,7 +232,7 @@ class IncomeSourcesAccountingMethodControllerSpec extends TestSupport with MockA
         mockNoIncomeSources()
 
         when(mockHttpClient.POSTForm[HttpResponse](any(), any(), any())(any(), any(), any()))
-          .thenReturn(Future.successful(HttpResponse(OK)))
+          .thenReturn(Future.successful(HttpResponse(OK, "valid")))
 
         lazy val result: Future[Result] = submitResult(incomeSourceType, "", isAgent)
         val document: Document = Jsoup.parse(contentAsString(result))

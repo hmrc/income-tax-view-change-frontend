@@ -124,7 +124,7 @@ class ForeignPropertyEndDateControllerSpec extends TestSupport with MockAuthenti
         mockForeignPropertyIncomeSource()
 
         when(mockHttpClient.POSTForm[HttpResponse](any(), any(), any())(any(), any(), any()))
-          .thenReturn(Future.successful(HttpResponse(OK)))
+          .thenReturn(Future.successful(HttpResponse(OK, "valid")))
 
         lazy val result: Future[Result] = {
           TestForeignPropertyEndDateController.submit()(fakeRequestCeaseForeignPropertyDeclarationComplete.withMethod("POST")
@@ -180,7 +180,7 @@ class ForeignPropertyEndDateControllerSpec extends TestSupport with MockAuthenti
         mockForeignPropertyIncomeSource()
 
         when(mockHttpClient.POSTForm[HttpResponse](any(), any(), any())(any(), any(), any()))
-          .thenReturn(Future.successful(HttpResponse(OK)))
+          .thenReturn(Future.successful(HttpResponse(OK, "valid")))
 
         lazy val result: Future[Result] = {
           TestForeignPropertyEndDateController.submitAgent()(fakeRequestConfirmedClient()
@@ -200,7 +200,7 @@ class ForeignPropertyEndDateControllerSpec extends TestSupport with MockAuthenti
         mockForeignPropertyIncomeSource()
 
         when(mockHttpClient.POSTForm[HttpResponse](any(), any(), any())(any(), any(), any()))
-          .thenReturn(Future.successful(HttpResponse(OK)))
+          .thenReturn(Future.successful(HttpResponse(OK, "valid")))
 
         lazy val result: Future[Result] = {
           TestForeignPropertyEndDateController.submitAgent()(fakeRequestCeaseForeignPropertyDeclarationCompleteAgent.withMethod("POST")

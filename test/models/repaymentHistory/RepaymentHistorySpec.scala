@@ -16,7 +16,7 @@
 
 package models.repaymentHistory
 
-import org.scalatest.Matchers
+import org.scalatest.matchers.should.Matchers
 import testUtils.UnitSpec
 import play.api.libs.json.{JsSuccess, JsValue, Json}
 

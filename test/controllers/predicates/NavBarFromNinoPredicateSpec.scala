@@ -67,7 +67,7 @@ class NavBarFromNinoPredicateSpec extends TestSupport with MockAsyncCacheApi wit
           when(mockBtaNavBarController.btaNavBarPartial(any())(any(), any())).thenReturn(Future.successful(Some(testView.apply(testListLink))))
 
           val result = NavBarFromNinoPredicate.refine(userWithNinoAndOriginBta)
-          result.futureValue.right.get shouldBe userWithNinoAndOriginBta
+          result.futureValue.toOption.value shouldBe userWithNinoAndOriginBta
         }
 
       }
@@ -78,7 +78,7 @@ class NavBarFromNinoPredicateSpec extends TestSupport with MockAsyncCacheApi wit
           when(mockPtaPartial.apply()(any(), any(), any())).thenReturn(Html(""))
 
           val result = NavBarFromNinoPredicate.refine(userWithNinoAndOriginPta)
-          result.futureValue.right.get shouldBe userWithNinoAndOriginPta
+          result.futureValue.toOption.value shouldBe userWithNinoAndOriginPta
         }
       }
 
@@ -88,8 +88,8 @@ class NavBarFromNinoPredicateSpec extends TestSupport with MockAsyncCacheApi wit
           enable(NavBarFs)
 
           val result = NavBarFromNinoPredicate.refine(userWithNinoAndWithoutOrigin)
-          status(Future.successful(result.futureValue.left.get)) shouldBe Status.SEE_OTHER
-          redirectLocation(Future.successful(result.futureValue.left.get)).get shouldBe "http://localhost:9280/account"
+          status(Future.successful(result.futureValue.swap.toOption.value)) shouldBe Status.SEE_OTHER
+          redirectLocation(Future.successful(result.futureValue.swap.toOption.value)).get shouldBe "http://localhost:9280/account"
         }
       }
 
@@ -100,7 +100,7 @@ class NavBarFromNinoPredicateSpec extends TestSupport with MockAsyncCacheApi wit
           when(mockItvcErrorHandler.showInternalServerError()(any())).thenReturn(InternalServerError(""))
 
           val result = NavBarFromNinoPredicate.refine(noAddedPartial)
-          status(Future.successful(result.futureValue.left.get)) shouldBe Status.INTERNAL_SERVER_ERROR
+          status(Future.successful(result.futureValue.swap.toOption.value)) shouldBe Status.INTERNAL_SERVER_ERROR
         }
       }
     }
@@ -110,7 +110,7 @@ class NavBarFromNinoPredicateSpec extends TestSupport with MockAsyncCacheApi wit
         disable(NavBarFs)
 
         val result = NavBarFromNinoPredicate.refine(userWithNinoAndWithoutOrigin)
-        result.futureValue.right.get shouldBe userWithNinoAndWithoutOrigin
+        result.futureValue.toOption.value shouldBe userWithNinoAndWithoutOrigin
       }
     }
   }

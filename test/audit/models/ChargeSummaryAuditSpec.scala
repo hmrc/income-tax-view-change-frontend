@@ -22,7 +22,8 @@ import enums.CodingOutType.{CODING_OUT_ACCEPTED, CODING_OUT_CANCELLED}
 import models.chargeHistory.ChargeHistoryModel
 import models.financialDetails._
 import models.incomeSourceDetails.IncomeSourceDetailsModel
-import org.scalatest.{MustMatchers, WordSpecLike}
+import org.scalatest.matchers.must.Matchers
+import org.scalatest.wordspec.AnyWordSpecLike
 import play.api.Logger
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.json.Json
@@ -36,7 +37,7 @@ import uk.gov.hmrc.auth.core.retrieve.Name
 
 import java.time.LocalDate
 
-class ChargeSummaryAuditSpec extends WordSpecLike with MustMatchers {
+class ChargeSummaryAuditSpec extends AnyWordSpecLike with Matchers {
 
   implicit val dateService: DateService = app.injector.instanceOf[DateService]
 

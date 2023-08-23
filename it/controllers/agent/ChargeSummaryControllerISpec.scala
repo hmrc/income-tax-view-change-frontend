@@ -231,7 +231,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
       stubAuthorisedAgentUser(authorised = true)
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
       stubChargeHistorySuccess()
-      stubGetFinancialDetailsSuccessForCodingOut
+      stubGetFinancialDetailsSuccessForCodingOut()
 
       val result = IncomeTaxViewChangeFrontend.getChargeSummary(
         getCurrentTaxYearEnd.getYear.toString, "CODINGOUT01", clientDetailsWithConfirmation
@@ -400,7 +400,7 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
     )
   }
 
-  private def stubGetFinancialDetailsSuccessForCodingOut: Unit = {
+  private def stubGetFinancialDetailsSuccessForCodingOut(): Unit = {
     IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
       nino = testNino,
       from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
@@ -565,16 +565,6 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
           )
         )
       )
-    )
-
-    val docDetailUnpaid = DocumentDetail(
-      taxYear = 2018,
-      transactionId = "1040000124",
-      documentDescription = Some("TRM New Charge"),
-      documentText = Some("documentText"),
-      originalAmount = Some(1200),
-      outstandingAmount = Some(1200),
-      documentDate = LocalDate.of(2018, 3, 29)
     )
 
     "load the charge summary page with an UNPAID MFADebit" in {

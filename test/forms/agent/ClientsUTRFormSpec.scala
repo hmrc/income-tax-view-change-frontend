@@ -16,10 +16,11 @@
 
 package forms.agent
 
-import org.scalatest.{MustMatchers, WordSpec}
+import org.scalatest.wordspec.AnyWordSpec
+import org.scalatest.matchers.must.Matchers
 import play.api.data.{Form, FormError}
 
-class ClientsUTRFormSpec extends WordSpec with MustMatchers {
+class ClientsUTRFormSpec extends AnyWordSpec with Matchers {
 
   def form(optValue: Option[String]): Form[String] = ClientsUTRForm.form.bind(
     optValue.fold[Map[String, String]](Map.empty)(value => Map(ClientsUTRForm.utr -> value))

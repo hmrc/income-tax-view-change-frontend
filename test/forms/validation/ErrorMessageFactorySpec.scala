@@ -17,9 +17,10 @@
 package forms.validation
 
 import forms.validation.models.{FieldError, SummaryError}
-import org.scalatest.{MustMatchers, WordSpec}
+import org.scalatest.wordspec.AnyWordSpec
+import org.scalatest.matchers.must.Matchers
 
-class ErrorMessageFactorySpec extends WordSpec with MustMatchers {
+class ErrorMessageFactorySpec extends AnyWordSpec with Matchers {
 
   "ErrorMessageFactory" must {
     "mark form as Invalid" when {

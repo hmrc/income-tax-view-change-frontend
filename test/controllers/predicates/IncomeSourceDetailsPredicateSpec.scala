@@ -49,7 +49,7 @@ class IncomeSourceDetailsPredicateSpec extends TestSupport with MockIncomeSource
       "return the expected MtdItUser" in {
         mockSingleBusinessIncomeSource()
         val result = IncomeSourceDetailsPredicate.refine(userWithNino)
-        result.futureValue.right.get shouldBe successResponse
+        result.futureValue.toOption.get shouldBe successResponse
       }
 
     }
@@ -59,7 +59,7 @@ class IncomeSourceDetailsPredicateSpec extends TestSupport with MockIncomeSource
       "Return Status of 500 (ISE)" in {
         mockErrorIncomeSource()
         val result = IncomeSourceDetailsPredicate.refine(userWithNino)
-        status(Future.successful(result.futureValue.left.get)) shouldBe Status.INTERNAL_SERVER_ERROR
+        status(Future.successful(result.futureValue.swap.toOption.value)) shouldBe Status.INTERNAL_SERVER_ERROR
       }
     }
 

@@ -45,7 +45,7 @@ case class ManageIncomeSourceDetailsViewModel(incomeSourceId: String,
     businessAccountingMethod match {
       case Some(value) => value match {
         case value if !value => "incomeSources.manage.business-manage-details.cash-accounting"
-        case value if value => "incomeSources.manage.business-manage-details.traditional-accounting"
+        case _ => "incomeSources.manage.business-manage-details.traditional-accounting"
       }
       case None => "incomeSources.generic.unknown"
     }
