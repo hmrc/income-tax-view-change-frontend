@@ -55,10 +55,10 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
                                                        implicit val appConfig: FrontendAppConfig) extends ClientConfirmedController
   with FeatureSwitching with IncomeSourcesUtils {
 
-  def show(taxYear: String,
+  def show(id: Option[String],
+           taxYear: String,
            changeTo: String,
            isAgent: Boolean,
-           id: Option[String],
            incomeSourceKey: String
           ): Action[AnyContent] = authenticatedAction(isAgent) { implicit user =>
 
@@ -70,8 +70,8 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
 
   def submit(id: String,
              taxYear: String,
-             isAgent: Boolean,
              changeTo: String,
+             isAgent: Boolean,
              incomeSourceKey: String
             ): Action[AnyContent] = authenticatedAction(isAgent) { implicit user =>
 

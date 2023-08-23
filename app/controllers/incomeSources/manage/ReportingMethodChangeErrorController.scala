@@ -50,8 +50,8 @@ class ReportingMethodChangeErrorController @Inject()(val manageIncomeSources: Ma
                                                      implicit val appConfig: FrontendAppConfig) extends ClientConfirmedController
   with FeatureSwitching with IncomeSourcesUtils {
 
-  def show(isAgent: Boolean,
-           id: Option[String],
+  def show(id: Option[String],
+           isAgent: Boolean,
            incomeSourceKey: String
           ): Action[AnyContent] = authenticatedAction(isAgent) { implicit user =>
 
