@@ -21,7 +21,7 @@ import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
-import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
+import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import forms.incomeSources.add.IncomeSourcesAccountingMethodForm
 import forms.utils.SessionKeys.addIncomeSourcesAccountingMethod
 import models.incomeSourceDetails.BusinessDetailsModel
@@ -107,41 +107,56 @@ class IncomeSourcesAccountingMethodController @Inject()(val authenticate: Authen
     )(user, messages)))
   }
 
+  def convertToIncomeSourceType(incomeSource: String): Either[Throwable, IncomeSourceType] = {
+    incomeSource match{
+      case SelfEmployment.key => Right(SelfEmployment)
+      case UkProperty.key => Right(SelfEmployment)
+      case ForeignProperty.key => Right(ForeignProperty)
+      case _ => Left(new Error)
+    }
+  }
+
   def handleRequest(isAgent: Boolean, incomeSourceType: String)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
 
     val incomeSourcesEnabled: Boolean = isEnabled(IncomeSources)
-    val backUrl = incomeSourceType match {
-      case SelfEmployment.key =>
-        if (isAgent)
-          routes.AddBusinessAddressController.showAgent().url
-        else
-          routes.AddBusinessAddressController.show().url
-      case UkProperty.key =>
-          routes.AddIncomeSourceStartDateCheckController.show(UkProperty.key, isAgent, isChange = false).url
-      case _ =>
-          routes.AddIncomeSourceStartDateCheckController.show(ForeignProperty.key, isAgent, isChange = false).url
-    }
-    val postAction: Call = if (isAgent) controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.submitAgent(incomeSourceType) else
-      controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.submit(incomeSourceType)
-
     val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
-    if (incomeSourcesEnabled) {
-      if(incomeSourceType == SelfEmployment.key) {
-        handleUserActiveBusinessesCashOrAccruals(isAgent = isAgent, errorHandler = errorHandler, incomeSourceType)(
-          user = user, backUrl = backUrl, postAction = postAction, messages = messages)
-      } else {
-        loadIncomeSourceAccountingMethod(isAgent = isAgent, errorHandler = errorHandler, incomeSourceType)(
-          user = user, backUrl = backUrl, postAction = postAction, messages = messages)
-      }
-    } else {
-      Future.successful(Ok(customNotFoundErrorView()(user, messages)))
-    } recover {
-      case ex: Exception =>
-        Logger("application").error(s"${if (isAgent) "[Agent]"}" +
-          s"Error getting BusinessEndDate page: ${ex.getMessage}")
-        errorHandler.showInternalServerError()
+    convertToIncomeSourceType(incomeSourceType) match {
+      case Left(_) => Logger("application").error(s"${if (isAgent) "[Agent]"}" +
+        s"[IncomeSourcesAccountingMethodController][handeRequest] Invalid incomeSourceType provided")
+        Future.successful(errorHandler.showInternalServerError())
+      case Right(incomeSource) =>
+        val backUrl = incomeSource match {
+          case SelfEmployment =>
+            if (isAgent)
+              routes.AddBusinessAddressController.showAgent().url
+            else
+              routes.AddBusinessAddressController.show().url
+          case UkProperty =>
+            routes.AddIncomeSourceStartDateCheckController.show(UkProperty.key, isAgent, isChange = false).url
+          case _ =>
+            routes.AddIncomeSourceStartDateCheckController.show(ForeignProperty.key, isAgent, isChange = false).url
+        }
+        val postAction: Call = if (isAgent) controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.submitAgent(incomeSourceType) else
+          controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.submit(incomeSourceType)
+
+        if (incomeSourcesEnabled) {
+          if (incomeSourceType == SelfEmployment.key) {
+            handleUserActiveBusinessesCashOrAccruals(isAgent = isAgent, errorHandler = errorHandler, incomeSourceType)(
+              user = user, backUrl = backUrl, postAction = postAction, messages = messages)
+          } else {
+            loadIncomeSourceAccountingMethod(isAgent = isAgent, errorHandler = errorHandler, incomeSourceType)(
+              user = user, backUrl = backUrl, postAction = postAction, messages = messages)
+          }
+        } else {
+          Future.successful(Ok(customNotFoundErrorView()(user, messages)))
+        } recover {
+          case ex: Exception =>
+            Logger("application").error(s"${if (isAgent) "[Agent]"}" +
+              s"Error getting BusinessEndDate page: ${ex.getMessage}")
+            errorHandler.showInternalServerError()
+        }
     }
   }
 
